@@ -40,10 +40,10 @@ public class GalaxyGenerator implements IObserver {
     private static boolean bar = true;
 
     /** The length of the bar, if it has one **/
-    private static float barLength = 3f;
+    private static float barLength = 0.4f;
 
     /** Radius of the galaxy **/
-    private static float radius = 10f;
+    private static float radius = 1.5f;
 
     /** Number of particles **/
     private static int N = 5000;
@@ -118,7 +118,7 @@ public class GalaxyGenerator implements IObserver {
         for (int j = 0; j < Nbar; j++) {
             float z = rand.nextFloat() * barLength - barLength / 2f;
             float x = (float) (rand.nextGaussian() * armWidth);
-            float y = (float) (rand.nextGaussian() * armWidth / 2f);
+            float y = (float) (rand.nextGaussian() * armWidth / 4f);
 
             Vector3 particle = new Vector3(x, y, z);
             particles.add(particle);
@@ -136,11 +136,11 @@ public class GalaxyGenerator implements IObserver {
                 if (bar) {
                     z = rand.nextFloat() * radius;
                     x = (float) (rand.nextGaussian() * armWidth);
-                    y = (float) (rand.nextGaussian() * armWidth);
+                    y = (float) (rand.nextGaussian() * armWidth / 4f);
                 } else {
                     z = rand.nextFloat() * radius;
                     x = (float) (rand.nextGaussian() * armWidth);
-                    y = (float) (rand.nextGaussian() * armWidth);
+                    y = (float) (rand.nextGaussian() * armWidth / 4f);
                 }
 
                 Vector3 particle = new Vector3(x, y, z);

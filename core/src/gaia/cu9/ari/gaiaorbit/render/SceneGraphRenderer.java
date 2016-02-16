@@ -33,6 +33,7 @@ import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.render.IPostProcessor.PostProcessBean;
 import gaia.cu9.ari.gaiaorbit.render.system.AbstractRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.FontRenderSystem;
+import gaia.cu9.ari.gaiaorbit.render.system.GalaxyRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.IRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.LineQuadRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.LineRenderSystem;
@@ -218,6 +219,10 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         AbstractRenderSystem shaderFrontProc = new QuadRenderSystem(RenderGroup.SHADER_F, priority++, alphas, starShader, false);
         shaderFrontProc.setPreRunnable(blendNoDepthRunnable);
 
+        // GALAXY
+        AbstractRenderSystem galaxyProc = new GalaxyRenderSystem(RenderGroup.GALAXY, priority++, alphas);
+        galaxyProc.setPreRunnable(blendNoDepthRunnable);
+
         // MODEL FRONT
         AbstractRenderSystem modelFrontProc = new ModelBatchRenderSystem(RenderGroup.MODEL_F, priority++, alphas, modelBatchF, false);
         modelFrontProc.setPreRunnable(blendDepthRunnable);
@@ -251,6 +256,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         renderProcesses.add(shaderFrontProc);
         renderProcesses.add(shaderBackProc);
         renderProcesses.add(modelFrontProc);
+        renderProcesses.add(galaxyProc);
         renderProcesses.add(modelStarsProc);
         renderProcesses.add(lineProc);
         renderProcesses.add(labelsProc);

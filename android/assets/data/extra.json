@@ -35,41 +35,13 @@
 	},
 	
 	
-	{
-	"name" : "Milky Way",
-	"color" : [1.0, 1.0, 1.0, 1.0],
-	"labelcolor" : [1.0, 0.4, 0.7, 1.0],
-	"size" : 1.04913038e+18,
-	"ct" : MilkyWay,
-	"transformName" : equatorialToGalactic,
 
-
-	"parent" : "Universe", 
-	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.MilkyWay",
-	
-	"coordinates" : {
-				// This must implement gaia.cu9.ari.gaiaorbit.util.coord.IBodyCoordinates				
-				"impl" : "gaia.cu9.ari.gaiaorbit.util.coord.StaticCoordinates",
-				"position" : [-2.1696166830918058e+17, -1.2574136144478805e+17, -1.8981686396725044e+16]
-				},
-	
-	"model" : {
-				"args" : [true],	
-				"type" : "disc",
-				"params" : {
-							"diameter" : 1.0
-							},
-				"texture" : {
-							"base" : "data/tex/milky_way.png"
-							}
-				}
-	},
 	
 	{
 	"name" : "Milky Way Real",
 	"color" : [1.0, 1.0, 1.0, 1.0],
 	"labelcolor" : [1.0, 0.4, 0.7, 1.0],
-	"size" : 1.04913038e+18,
+	"size" : 3.5e17,
 	"ct" : MilkyWay,
 	"transformName" : equatorialToGalactic,
 
@@ -84,7 +56,7 @@
 				},
 	
 	"pointdata" : {
-				"source" : "data/galaxy/galaxy_bar3.0_4arms_5000particles_10.0radius_0.05ratio_220.0deg.txt"
+				"source" : "data/galaxy/galaxy_bar0.4_4arms_5000particles_1.5radius_0.05ratio_220.0deg.txt"
 				}
 	},
 	
@@ -95,7 +67,7 @@
 	"ct" : MilkyWay,
 	"transformName" : equatorialToGalactic,
 
-	"parent" : "Milky Way", 
+	"parent" : "Milky Way Real", 
 	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Mw",
 	
 	"coordinates" : {

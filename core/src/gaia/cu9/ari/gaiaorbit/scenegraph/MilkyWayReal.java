@@ -30,15 +30,15 @@ public class MilkyWayReal extends Blob implements I3DTextRenderable {
     String transformName;
     Matrix4 coordinateSystem;
 
-    private List<Vector3> pointData;
+    public List<Vector3> pointData;
     protected String provider;
     public PointdataComponent pc;
 
     public MilkyWayReal() {
         super();
         localTransform = new Matrix4();
-        lowAngle = (float) Math.toRadians(60);
-        highAngle = (float) Math.toRadians(75.51);
+        lowAngle = (float) Math.toRadians(28);
+        highAngle = (float) Math.toRadians(36);
     }
 
     public void initialize() {
@@ -65,7 +65,9 @@ public class MilkyWayReal extends Blob implements I3DTextRenderable {
             try {
                 Method m = ClassReflection.getMethod(c, transformName);
                 Matrix4d trf = (Matrix4d) m.invoke(null);
-                coordinateSystem = new Matrix4(trf.valuesf());
+
+                coordinateSystem = new Matrix4(trf.valuesf()).rotate(0, 1, 0, 70);
+
             } catch (ReflectionException e) {
                 Gdx.app.error(this.getClass().getName(), "Error getting/invoking method Coordinates." + transformName + "()");
             }
@@ -75,18 +77,21 @@ public class MilkyWayReal extends Blob implements I3DTextRenderable {
 
         // Transform all
         for (Vector3 point : pointData) {
-            point.scl(size).mul(coordinateSystem);
+            point.scl(size).mul(coordinateSystem).add(pos.toVector3());
         }
 
     }
 
     @Override
     protected void addToRenderLists(ICamera camera) {
-        if (viewAngle <= highAngle) {
+        System.out.println(Math.toDegrees(viewAngle / camera.getFovFactor()));
+        if (viewAngle / camera.getFovFactor() <= highAngle) {
 
             if (renderText()) {
                 addToRender(this, RenderGroup.LABEL);
             }
+
+            addToRender(this, RenderGroup.GALAXY);
         }
     }
 

@@ -58,6 +58,8 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
         LABEL(8),
         /** Model star **/
         MODEL_S(9),
+        /** Galaxy as a whole **/
+        GALAXY(10),
 
         /** None **/
         NONE(-1);
