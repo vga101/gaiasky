@@ -193,8 +193,6 @@ public class GalaxyRenderSystem extends ImmediateRenderSystem implements IObserv
                         tl.set(-1, 1, 0).scl(quadsize).rotate(rotaxis, rotangle).add(transl);
                         normal.set(0, 0, 1).rotate(rotaxis, rotangle);
 
-                        System.out.println((normal.x * 100.0) % 4);
-
                         // Bottom left
                         quad.vertices[quad.vertexIdx] = bl.x;
                         quad.vertices[quad.vertexIdx + 1] = bl.y;
