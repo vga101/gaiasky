@@ -2,11 +2,11 @@
 <classpath>
 	<classpathentry kind="output" path="bin"/>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER" exported="true"/>
-	<classpathentry sourcepath="/home/tsagrista/.gradle/caches/modules-2/files-2.1/com.badlogicgames.gdx/gdx/1.8.0/8277330a2b704388b9e941994a146aa48b79664c/gdx-1.8.0-sources.jar" kind="lib" path="/home/tsagrista/.gradle/caches/modules-2/files-2.1/com.badlogicgames.gdx/gdx/1.8.0/8aaf0d40f211e94051538d28b06996a6cc5ed2af/gdx-1.8.0.jar" exported="true"/>
-	<classpathentry sourcepath="/home/tsagrista/.gradle/caches/modules-2/files-2.1/com.badlogicgames.gdx/gdx-controllers/1.8.0/6c8fb50d13857d4392e6974a5b2876859717b0a1/gdx-controllers-1.8.0-sources.jar" kind="lib" path="/home/tsagrista/.gradle/caches/modules-2/files-2.1/com.badlogicgames.gdx/gdx-controllers/1.8.0/bf285cf72cebbb4e0f364a2c9efbed2ee6bf54ba/gdx-controllers-1.8.0.jar" exported="true"/>
-	<classpathentry sourcepath="/home/tsagrista/.gradle/caches/modules-2/files-2.1/junit/junit/4.12/a6c32b40bf3d76eca54e3c601e5d1470c86fcdfa/junit-4.12-sources.jar" kind="lib" path="/home/tsagrista/.gradle/caches/modules-2/files-2.1/junit/junit/4.12/2973d150c0dc1fefe998f834810d68f278ea58ec/junit-4.12.jar" exported="true"/>
-	<classpathentry sourcepath="/home/tsagrista/.gradle/caches/modules-2/files-2.1/org.hamcrest/hamcrest-core/1.3/1dc37250fbc78e23a65a67fbbaf71d2e9cbc3c0b/hamcrest-core-1.3-sources.jar" kind="lib" path="/home/tsagrista/.gradle/caches/modules-2/files-2.1/org.hamcrest/hamcrest-core/1.3/42a25dc3219429f0e5d060061f71acb49bf010a0/hamcrest-core-1.3.jar" exported="true"/>
-	<classpathentry kind="lib" path="/home/tsagrista/git/gaiasandbox/core/lib/postprocessing.jar" exported="true"/>
-	<classpathentry kind="lib" path="/home/tsagrista/git/gaiasandbox/core/lib/postprocessing-sources.jar" exported="true"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry sourcepath="/home/tsagrista/.gradle/caches/modules-2/files-2.1/com.badlogicgames.gdx/gdx/1.9.2/b6c7422c6740f86a9a84fdcbc4c62a1f46db317d/gdx-1.9.2-sources.jar" kind="lib" path="/home/tsagrista/.gradle/caches/modules-2/files-2.1/com.badlogicgames.gdx/gdx/1.9.2/e641cb91bec06bc64d9ddf7a7d7062caceec73cd/gdx-1.9.2.jar"/>
+	<classpathentry sourcepath="/home/tsagrista/.gradle/caches/modules-2/files-2.1/com.badlogicgames.gdx/gdx-controllers/1.9.2/e729f524826e9c852d058005f741b84fad2a2025/gdx-controllers-1.9.2-sources.jar" kind="lib" path="/home/tsagrista/.gradle/caches/modules-2/files-2.1/com.badlogicgames.gdx/gdx-controllers/1.9.2/d651e0d52443b1c1a943641eebc06482e29923bc/gdx-controllers-1.9.2.jar"/>
+	<classpathentry sourcepath="/home/tsagrista/.gradle/caches/modules-2/files-2.1/junit/junit/4.12/a6c32b40bf3d76eca54e3c601e5d1470c86fcdfa/junit-4.12-sources.jar" kind="lib" path="/home/tsagrista/.gradle/caches/modules-2/files-2.1/junit/junit/4.12/2973d150c0dc1fefe998f834810d68f278ea58ec/junit-4.12.jar"/>
+	<classpathentry sourcepath="/home/tsagrista/.gradle/caches/modules-2/files-2.1/org.hamcrest/hamcrest-core/1.3/1dc37250fbc78e23a65a67fbbaf71d2e9cbc3c0b/hamcrest-core-1.3-sources.jar" kind="lib" path="/home/tsagrista/.gradle/caches/modules-2/files-2.1/org.hamcrest/hamcrest-core/1.3/42a25dc3219429f0e5d060061f71acb49bf010a0/hamcrest-core-1.3.jar"/>
+	<classpathentry kind="lib" path="/home/tsagrista/git/gaiasandbox/core/lib/postprocessing.jar"/>
+	<classpathentry kind="lib" path="/home/tsagrista/git/gaiasandbox/core/lib/postprocessing-sources.jar"/>
 </classpath>

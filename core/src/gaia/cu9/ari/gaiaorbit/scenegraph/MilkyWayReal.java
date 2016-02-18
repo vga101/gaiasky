@@ -84,7 +84,6 @@ public class MilkyWayReal extends Blob implements I3DTextRenderable {
 
     @Override
     protected void addToRenderLists(ICamera camera) {
-        System.out.println(Math.toDegrees(viewAngle / camera.getFovFactor()));
         if (viewAngle / camera.getFovFactor() <= highAngle) {
 
             if (renderText()) {
