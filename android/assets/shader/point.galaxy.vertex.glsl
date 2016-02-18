@@ -3,14 +3,11 @@ precision mediump float;
 precision mediump int;
 #endif
 
-// cartesian position
 attribute vec4 a_position;
-// cartesian proper motion vector, same units as position
-attribute vec4 a_pm;
-// color
 attribute vec4 a_color;
 // x - size, y - th_angle_point
 attribute vec4 a_additional;
+
 
 uniform float u_pointAlphaMin;
 uniform float u_pointAlphaMax;

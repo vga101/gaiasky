@@ -55,8 +55,9 @@
 				"position" : [-2.1696166830918058e+17, -1.2574136144478805e+17, -1.8981686396725044e+16]
 				},
 	
-	"pointdata" : {
-				"source" : "data/galaxy/galaxy_bar0.4_4arms_5000particles_1.5radius_0.05ratio_220.0deg.txt"
+	"galaxydata" : {
+				"pointsource" : "data/galaxy/galaxy_bar0.4_4arms_5000particles_1.5radius_0.05ratio_220.0deg.txt",
+				"nebulasource" : "data/galaxy/galaxy_bar0.4_4arms_150particles_1.5radius_0.05ratio_220.0deg.txt"
 				}
 	},
 	

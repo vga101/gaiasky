@@ -63,11 +63,6 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
     public CelestialBody focus, focusBak, closest;
 
     /**
-     * Distance from the center (Sun)
-     */
-    public double distance;
-
-    /**
      * The direction point to seek
      */
     private Vector3d lastvel;

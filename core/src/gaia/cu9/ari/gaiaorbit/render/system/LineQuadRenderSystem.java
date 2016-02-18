@@ -55,9 +55,9 @@ public class LineQuadRenderSystem extends LineRenderSystem {
 
     @Override
     protected void initShaderProgram() {
-        shaderProgram = new ShaderProgram(Gdx.files.internal("shader/line.quad.vertex.glsl"), Gdx.files.internal("shader/line.quad.fragment.glsl"));
-        if (!shaderProgram.isCompiled()) {
-            Gdx.app.error(this.getClass().getName(), "Line shader compilation failed:\n" + shaderProgram.getLog());
+        pointProgram = new ShaderProgram(Gdx.files.internal("shader/line.quad.vertex.glsl"), Gdx.files.internal("shader/line.quad.fragment.glsl"));
+        if (!pointProgram.isCompiled()) {
+            Gdx.app.error(this.getClass().getName(), "Line shader compilation failed:\n" + pointProgram.getLog());
         }
     }
 
@@ -219,19 +219,19 @@ public class LineQuadRenderSystem extends LineRenderSystem {
 
         }
 
-        shaderProgram.begin();
-        shaderProgram.setUniformMatrix("u_projModelView", camera.getCamera().combined);
+        pointProgram.begin();
+        pointProgram.setUniformMatrix("u_projModelView", camera.getCamera().combined);
 
         for (int i = 0; i < meshIdx; i++) {
             MeshDataExt md = (MeshDataExt) meshes[i];
             md.mesh.setVertices(md.vertices, 0, md.vertexIdx);
             md.mesh.setIndices(md.indices, 0, md.indexIdx);
-            md.mesh.render(shaderProgram, GL20.GL_TRIANGLES);
+            md.mesh.render(pointProgram, GL20.GL_TRIANGLES);
 
             md.clear();
         }
 
-        shaderProgram.end();
+        pointProgram.end();
 
         // Reset mesh index and current
         meshIdx = 1;

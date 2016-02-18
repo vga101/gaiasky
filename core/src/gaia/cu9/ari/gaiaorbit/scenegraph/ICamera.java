@@ -1,11 +1,11 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph;
 
+import com.badlogic.gdx.graphics.PerspectiveCamera;
+import com.badlogic.gdx.utils.viewport.Viewport;
+
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
-
-import com.badlogic.gdx.graphics.PerspectiveCamera;
-import com.badlogic.gdx.utils.viewport.Viewport;
 
 public interface ICamera {
 
@@ -79,6 +79,12 @@ public interface ICamera {
      * @return True if the velocity is bigger than a certain high value.
      */
     public boolean superVelocity();
+
+    /**
+     * Gets the distance from the camera to the centre of our reference frame (Sun)
+     * @return The distance
+     */
+    public double getDistance();
 
     /**
      * Returns the foucs if any.

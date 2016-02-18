@@ -1,32 +1,42 @@
 package gaia.cu9.ari.gaiaorbit.render.system;
 
-import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
-
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 
+import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
+
 public abstract class ImmediateRenderSystem extends AbstractRenderSystem {
 
-    protected ShaderProgram shaderProgram;
+    protected ShaderProgram pointProgram;
 
     protected int meshIdx;
     protected MeshData[] meshes;
     protected MeshData curr;
 
     protected class MeshData {
-        protected int vertexIdx;
+
         protected Mesh mesh;
-        protected int vertexSize;
+
         protected int colorOffset;
+
+        protected int vertexIdx;
+        protected int vertexSize;
         protected float[] vertices;
+
+        protected int indexIdx;
+        protected short indexVert;
+        protected short[] indices;
         protected int numVertices;
 
-        public void clear(){
+        public void clear() {
             vertexIdx = 0;
+            indexIdx = 0;
+            indexVert = 0;
             numVertices = 0;
         }
     }
+
     protected int maxVertices;
 
     protected ImmediateRenderSystem(RenderGroup rg, int priority, float[] alphas) {

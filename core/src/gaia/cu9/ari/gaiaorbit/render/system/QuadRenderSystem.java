@@ -1,17 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.render.system;
 
-import gaia.cu9.ari.gaiaorbit.event.EventManager;
-import gaia.cu9.ari.gaiaorbit.event.Events;
-import gaia.cu9.ari.gaiaorbit.event.IObserver;
-import gaia.cu9.ari.gaiaorbit.render.IRenderable;
-import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
-import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
-import gaia.cu9.ari.gaiaorbit.util.Constants;
-import gaia.cu9.ari.gaiaorbit.util.DecalUtils;
-import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
-import gaia.cu9.ari.gaiaorbit.util.comp.DistToCameraComparator;
-import gaia.cu9.ari.gaiaorbit.util.time.TimeUtils;
-
 import java.util.Collections;
 import java.util.List;
 
@@ -25,6 +13,18 @@ import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Quaternion;
+
+import gaia.cu9.ari.gaiaorbit.event.EventManager;
+import gaia.cu9.ari.gaiaorbit.event.Events;
+import gaia.cu9.ari.gaiaorbit.event.IObserver;
+import gaia.cu9.ari.gaiaorbit.render.IRenderable;
+import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
+import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
+import gaia.cu9.ari.gaiaorbit.util.Constants;
+import gaia.cu9.ari.gaiaorbit.util.DecalUtils;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
+import gaia.cu9.ari.gaiaorbit.util.comp.DistToCameraComparator;
+import gaia.cu9.ari.gaiaorbit.util.time.TimeUtils;
 
 public class QuadRenderSystem extends AbstractRenderSystem implements IObserver {
 
@@ -64,24 +64,13 @@ public class QuadRenderSystem extends AbstractRenderSystem implements IObserver 
 
         // We wont need indices if we use GL_TRIANGLE_FAN to draw our quad
         // TRIANGLE_FAN will draw the verts in this order: 0, 1, 2; 0, 2, 3
-        mesh = new Mesh(VertexDataType.VertexArray, false, 4, 6, new VertexAttribute(Usage.Position, 2,
-                ShaderProgram.POSITION_ATTRIBUTE), new VertexAttribute(Usage.ColorPacked, 4, ShaderProgram.COLOR_ATTRIBUTE),
-                new VertexAttribute(Usage.TextureCoordinates, 2, ShaderProgram.TEXCOORD_ATTRIBUTE + "0"));
+        mesh = new Mesh(VertexDataType.VertexArray, true, 4, 6, new VertexAttribute(Usage.Position, 2, ShaderProgram.POSITION_ATTRIBUTE), new VertexAttribute(Usage.ColorPacked, 4, ShaderProgram.COLOR_ATTRIBUTE), new VertexAttribute(Usage.TextureCoordinates, 2, ShaderProgram.TEXCOORD_ATTRIBUTE + "0"));
 
         mesh.setVertices(vertices, 0, vertices.length);
         mesh.getIndicesBuffer().position(0);
         mesh.getIndicesBuffer().limit(6);
 
-        short[] indices = new short[6];
-        short j = 0;
-        for (int i = 0; i < 6; i += 6, j += 4) {
-            indices[i] = j;
-            indices[i + 1] = (short) (j + 1);
-            indices[i + 2] = (short) (j + 2);
-            indices[i + 3] = (short) (j + 2);
-            indices[i + 4] = (short) (j + 3);
-            indices[i + 5] = j;
-        }
+        short[] indices = new short[] { 0, 1, 2, 0, 2, 3 };
         mesh.setIndices(indices);
 
         quaternion = new Quaternion();
@@ -145,7 +134,7 @@ public class QuadRenderSystem extends AbstractRenderSystem implements IObserver 
             shaderProgram.setUniformf("u_time", TimeUtils.getRunningTimeSecs());
             // Bind
             noise.bind(0);
-            shaderProgram.setUniformi("u_noiseTexture", 0);
+            shaderProgram.setUniformi("u_nebulaTexture", 0);
         }
 
         int size = renderables.size();

@@ -29,9 +29,9 @@ public class LineRenderSystem extends ImmediateRenderSystem {
 
     @Override
     protected void initShaderProgram() {
-        shaderProgram = new ShaderProgram(Gdx.files.internal("shader/line.vertex.glsl"), Gdx.files.internal("shader/line.fragment.glsl"));
-        if (!shaderProgram.isCompiled()) {
-            Gdx.app.error(this.getClass().getName(), "Line shader compilation failed:\n" + shaderProgram.getLog());
+        pointProgram = new ShaderProgram(Gdx.files.internal("shader/line.vertex.glsl"), Gdx.files.internal("shader/line.fragment.glsl"));
+        if (!pointProgram.isCompiled()) {
+            Gdx.app.error(this.getClass().getName(), "Line shader compilation failed:\n" + pointProgram.getLog());
         }
     }
 
@@ -78,11 +78,11 @@ public class LineRenderSystem extends ImmediateRenderSystem {
                 l.render(this, camera, alphas[l.getComponentType().ordinal()]);
         }
 
-        shaderProgram.begin();
-        shaderProgram.setUniformMatrix("u_projModelView", camera.getCamera().combined);
+        pointProgram.begin();
+        pointProgram.setUniformMatrix("u_projModelView", camera.getCamera().combined);
         curr.mesh.setVertices(curr.vertices, 0, curr.vertexIdx);
-        curr.mesh.render(shaderProgram, glType);
-        shaderProgram.end();
+        curr.mesh.render(pointProgram, glType);
+        pointProgram.end();
 
         curr.clear();
     }

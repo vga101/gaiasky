@@ -46,7 +46,7 @@ public class GalaxyGenerator implements IObserver {
     private static float radius = 1.5f;
 
     /** Number of particles **/
-    private static int N = 5000;
+    private static int N = 150;
 
     /** Ratio radius/armWidth **/
     private static float armWidthRatio = 1f / 20f;
@@ -133,15 +133,9 @@ public class GalaxyGenerator implements IObserver {
 
             for (int j = 0; j < NperArm; j++) {
                 float x, y, z;
-                if (bar) {
-                    z = rand.nextFloat() * radius;
-                    x = (float) (rand.nextGaussian() * armWidth);
-                    y = (float) (rand.nextGaussian() * armWidth / 4f);
-                } else {
-                    z = rand.nextFloat() * radius;
-                    x = (float) (rand.nextGaussian() * armWidth);
-                    y = (float) (rand.nextGaussian() * armWidth / 4f);
-                }
+                z = rand.nextFloat() * radius + radius / 4f;
+                x = (float) (rand.nextGaussian() * armWidth);
+                y = (float) (rand.nextGaussian() * armWidth / 4f);
 
                 Vector3 particle = new Vector3(x, y, z);
                 particle.rotate(rotAxis, angle);

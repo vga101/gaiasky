@@ -16,36 +16,43 @@ import com.badlogic.gdx.utils.reflect.ReflectionException;
 
 import gaia.cu9.ari.gaiaorbit.data.galaxy.PointDataProvider;
 import gaia.cu9.ari.gaiaorbit.render.I3DTextRenderable;
-import gaia.cu9.ari.gaiaorbit.scenegraph.component.PointdataComponent;
+import gaia.cu9.ari.gaiaorbit.scenegraph.component.GalaxydataComponent;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
+import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
-public class MilkyWayReal extends Blob implements I3DTextRenderable {
+public class MilkyWayReal extends AbstractPositionEntity implements I3DTextRenderable {
     float[] labelColour = new float[] { 1f, 1f, 1f, 1f };
     String transformName;
     Matrix4 coordinateSystem;
 
-    public List<Vector3> pointData;
+    public List<Vector3> pointData, nebulaData;
     protected String provider;
-    public PointdataComponent pc;
+    public GalaxydataComponent gc;
+
+    /** Distance from origin at which this entity is fully visible with an alpha of 1f **/
+    private float lowDist;
+    /** Distance from origin at which this entity is first rendered, but its alpha value is 0f **/
+    private float highDist;
 
     public MilkyWayReal() {
         super();
         localTransform = new Matrix4();
-        lowAngle = (float) Math.toRadians(28);
-        highAngle = (float) Math.toRadians(36);
+        lowDist = (float) (1e3 * Constants.PC_TO_U);
+        highDist = (float) (8e3 * Constants.PC_TO_U);
     }
 
     public void initialize() {
         /** Load data **/
         PointDataProvider provider = new PointDataProvider();
         try {
-            pointData = provider.loadData(pc.source);
+            pointData = provider.loadData(gc.pointsource);
+            nebulaData = provider.loadData(gc.nebulasource);
         } catch (Exception e) {
             Logger.error(e, getClass().getSimpleName());
         }
@@ -59,7 +66,7 @@ public class MilkyWayReal extends Blob implements I3DTextRenderable {
         // Set static coordinates to position
         coordinates.getEquatorialCartesianCoordinates(null, pos);
 
-        // Initialize transform
+        // Initialise transform
         if (transformName != null) {
             Class<Coordinates> c = Coordinates.class;
             try {
@@ -80,25 +87,55 @@ public class MilkyWayReal extends Blob implements I3DTextRenderable {
             point.scl(size).mul(coordinateSystem).add(pos.toVector3());
         }
 
+        for (Vector3 point : nebulaData) {
+            point.scl(size).mul(coordinateSystem).add(pos.toVector3());
+        }
+
+    }
+
+    public void update(ITimeFrameProvider time, final Transform parentTransform, ICamera camera, float opacity) {
+        this.opacity = opacity * this.opacity;
+        transform.set(parentTransform);
+
+        // Update with translation/rotation/etc
+        updateLocal(time, camera);
+
+        if (children != null && camera.getDistance() / camera.getFovFactor() < highDist) {
+            for (int i = 0; i < children.size(); i++) {
+                float childOpacity = 1 - this.opacity;
+                SceneGraphNode child = children.get(i);
+                child.update(time, transform, camera, childOpacity);
+            }
+        }
     }
 
     @Override
-    protected void addToRenderLists(ICamera camera) {
-        if (viewAngle / camera.getFovFactor() <= highAngle) {
+    public void update(ITimeFrameProvider time, Transform parentTransform, ICamera camera) {
 
-            if (renderText()) {
-                addToRender(this, RenderGroup.LABEL);
-            }
-
-            addToRender(this, RenderGroup.GALAXY);
-        }
     }
 
     @Override
     public void updateLocal(ITimeFrameProvider time, ICamera camera) {
         super.updateLocal(time, camera);
+
+        // Update alpha
+        this.opacity = MathUtilsd.lint((float) camera.getDistance() / camera.getFovFactor(), lowDist, highDist, 0, 1);
+
+        //        System.out.println(camera.getDistance() + ", " + lowDist + ", " + highDist + ", " + this.opacity);
         // Directional light comes from up
         updateLocalTransform();
+
+    }
+
+    @Override
+    protected void addToRenderLists(ICamera camera) {
+        if ((float) camera.getDistance() / camera.getFovFactor() >= lowDist) {
+
+            if (renderText()) {
+                addToRender(this, RenderGroup.LABEL);
+            }
+            addToRender(this, RenderGroup.GALAXY);
+        }
 
     }
 
@@ -199,8 +236,20 @@ public class MilkyWayReal extends Blob implements I3DTextRenderable {
         this.provider = provider;
     }
 
-    public void setPointdata(PointdataComponent pc) {
-        this.pc = pc;
+    public void setGalaxydata(GalaxydataComponent gc) {
+        this.gc = gc;
+    }
+
+    /**
+     * Sets the size of this entity in kilometres
+     * @param size The diameter of the entity
+     */
+    public void setSize(Float size) {
+        this.size = (float) (size * Constants.KM_TO_U);
+    }
+
+    @Override
+    public void updateLocalValues(ITimeFrameProvider time, ICamera camera) {
     }
 
 }

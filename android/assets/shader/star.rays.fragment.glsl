@@ -21,7 +21,7 @@ uniform float u_distance;
 #define ang_th 0.00000001
 
 float noise(float t){
-    return texture2D (u_noiseTexture, vec2 (t, .0)).x;
+    return texture2D(u_noiseTexture, vec2 (t, .0)).x;
 }
 
 vec3 cc(vec3 color, float factor,float factor2) // color modifier

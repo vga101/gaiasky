@@ -16,6 +16,9 @@ public abstract class AbstractCamera implements ICamera {
     /** Aspect ratio **/
     protected float ar;
 
+    /** Distance of camera to center **/
+    protected double distance;
+
     /** The parent **/
     protected CameraManager parent;
 
@@ -109,6 +112,10 @@ public abstract class AbstractCamera implements ICamera {
         dirs = fcamera.directions;
         visible = visible || MathUtilsd.acos(pos.dot(dirs[0]) / poslen) < coneAngle || MathUtilsd.acos(pos.dot(dirs[1]) / poslen) < coneAngle;
         return visible;
+    }
+
+    public double getDistance() {
+        return distance;
     }
 
 }

@@ -27,14 +27,12 @@ void main()
 
    v_color = vec4(u_color.rgb, u_color.a * alpha);
    v_texCoords = a_texCoord0;
-   vec4 vertex = a_position;
    
    mat4 transform = u_projTrans;
    
-   // Scale
+   // Translate
    mat4 translate = mat4(1.0);
    
-   // Translate
    translate[3][0] = u_pos.x;
    translate[3][1] = u_pos.y;
    translate[3][2] = u_pos.z;
