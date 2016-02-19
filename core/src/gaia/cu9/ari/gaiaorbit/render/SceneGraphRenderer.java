@@ -221,7 +221,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         shaderFrontProc.setPreRunnable(blendNoDepthRunnable);
 
         // GALAXY
-        AbstractRenderSystem galaxyProc = new GalaxyRenderSystem(RenderGroup.GALAXY, priority++, alphas);
+        AbstractRenderSystem galaxyProc = new GalaxyRenderSystem(RenderGroup.GALAXY, priority++, alphas, modelBatchF);
         galaxyProc.setPreRunnable(blendNoDepthRunnable);
 
         // MODEL FRONT

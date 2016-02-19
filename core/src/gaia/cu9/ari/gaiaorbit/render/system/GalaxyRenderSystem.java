@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
+import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Vector3;
@@ -23,6 +24,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.MilkyWayReal;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
+import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 
 public class GalaxyRenderSystem extends ImmediateRenderSystem implements IObserver {
     private boolean UPDATE_POINTS = true;
@@ -34,8 +36,11 @@ public class GalaxyRenderSystem extends ImmediateRenderSystem implements IObserv
     private MeshData quad;
     private Texture[] nebulatextures;
 
-    public GalaxyRenderSystem(RenderGroup rg, int priority, float[] alphas) {
+    private ModelBatch modelBatch;
+
+    public GalaxyRenderSystem(RenderGroup rg, int priority, float[] alphas, ModelBatch modelBatch) {
         super(rg, priority, alphas);
+        this.modelBatch = modelBatch;
     }
 
     @Override
@@ -58,7 +63,7 @@ public class GalaxyRenderSystem extends ImmediateRenderSystem implements IObserv
         }
         nebulatextures = new Texture[4];
         for (int i = 0; i < 4; i++) {
-            Texture tex = new Texture(Gdx.files.internal(GlobalConf.TEXTURES_FOLDER + "nebula0" + (i + 1) + ".png"));
+            Texture tex = new Texture(Gdx.files.internal(GlobalConf.TEXTURES_FOLDER + "nebula00" + (i + 1) + ".png"));
             tex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
             nebulatextures[i] = tex;
         }
@@ -92,43 +97,10 @@ public class GalaxyRenderSystem extends ImmediateRenderSystem implements IObserv
         int maxQuadIndices = maxQuads * 6;
         quad = new MeshData();
 
-        quad.mesh = new Mesh(false, maxQuadVertices, maxQuadIndices, VertexAttribute.Position(), VertexAttribute.Normal(), VertexAttribute.TexCoords(0));
+        quad.mesh = new Mesh(false, maxQuadVertices, maxQuadIndices, VertexAttribute.Position(), VertexAttribute.Normal(), VertexAttribute.TexCoords(0), new VertexAttribute(Usage.Generic, 2, "a_additional"));
         quad.vertices = new float[maxQuadVertices * (quad.mesh.getVertexAttributes().vertexSize / 4)];
         quad.vertexSize = quad.mesh.getVertexAttributes().vertexSize / 4;
         quad.indices = new short[maxQuadIndices];
-    }
-
-    /** For the Quad mesh **/
-    private void fillVertices(float[] vertices) {
-        final float u = 0;
-        final float v = 1;
-        final float u2 = 1;
-        final float v2 = 0;
-
-        int idx = 0;
-        vertices[idx++] = -1; // x
-        vertices[idx++] = -1; // y
-        vertices[idx++] = 0; // z
-        vertices[idx++] = u;
-        vertices[idx++] = v;
-
-        vertices[idx++] = 1;
-        vertices[idx++] = -1;
-        vertices[idx++] = 0;
-        vertices[idx++] = u;
-        vertices[idx++] = v2;
-
-        vertices[idx++] = 1;
-        vertices[idx++] = 1;
-        vertices[idx++] = 0;
-        vertices[idx++] = u2;
-        vertices[idx++] = v2;
-
-        vertices[idx++] = -1;
-        vertices[idx++] = 1;
-        vertices[idx++] = 0;
-        vertices[idx++] = u2;
-        vertices[idx++] = v;
     }
 
     @Override
@@ -145,16 +117,14 @@ public class GalaxyRenderSystem extends ImmediateRenderSystem implements IObserv
                 /** STARS **/
                 curr.clear();
 
-                float[] col = new float[] { 1.0f, 1.0f, 1.0f, 1.0f };
-
                 for (Vector3 star : mw.pointData) {
+                    float[] col = new float[] { (float) (rand.nextGaussian() * 0.02f) + 0.9f, (float) (rand.nextGaussian() * 0.02) + 0.7f, (float) (rand.nextGaussian() * 0.02) + 0.92f, rand.nextFloat() * 0.5f };
 
                     // COLOR
-                    float colcorr = (rand.nextFloat() * 0.7f + 0.05f);
-                    curr.vertices[curr.vertexIdx + curr.colorOffset] = Color.toFloatBits(col[0] * colcorr, col[1] * colcorr, col[2] * colcorr, col[3]);
+                    curr.vertices[curr.vertexIdx + curr.colorOffset] = Color.toFloatBits(col[0], col[1], col[2], col[3]);
 
                     // SIZE
-                    curr.vertices[curr.vertexIdx + additionalOffset] = rand.nextFloat() + 6.0f;
+                    curr.vertices[curr.vertexIdx + additionalOffset] = rand.nextFloat() * 2f + 5.0f;
                     curr.vertices[curr.vertexIdx + additionalOffset + 1] = 0.7f;
 
                     // VERTEX
@@ -181,8 +151,16 @@ public class GalaxyRenderSystem extends ImmediateRenderSystem implements IObserv
                 for (Vector3 quadpoint : mw.nebulaData) {
                     // 10 quads per nebula
                     for (int i = 0; i < 7; i++) {
+                        float quadpointdist = quadpoint.len();
+                        float texnum, alphamultiplier, quadsize;
+                        if (quadpointdist < mw.size / 2f) {
+                            texnum = (float) Math.floor(rand.nextFloat() + 0.3f);
+                        } else {
+                            texnum = rand.nextInt(4);
+                        }
+                        quadsize = (float) (rand.nextFloat() + 1.0f) * 1.5e11f;
+                        alphamultiplier = MathUtilsd.lint(quadpointdist, 0, mw.size * 3, 6.0f, 1.0f);
 
-                        float quadsize = (float) (rand.nextFloat() + 1.0f) * 4e11f;
                         rotaxis.set(rand.nextFloat(), rand.nextFloat(), rand.nextFloat());
                         float rotangle = rand.nextFloat() * 360f;
                         transl.set(rand.nextFloat() * 1e10f, rand.nextFloat() * 1e10f, rand.nextFloat() * 1e10f).add(quadpoint);
@@ -202,6 +180,8 @@ public class GalaxyRenderSystem extends ImmediateRenderSystem implements IObserv
                         quad.vertices[quad.vertexIdx + 5] = normal.z;
                         quad.vertices[quad.vertexIdx + 6] = 0;
                         quad.vertices[quad.vertexIdx + 7] = 0;
+                        quad.vertices[quad.vertexIdx + 8] = texnum; // texture number
+                        quad.vertices[quad.vertexIdx + 9] = alphamultiplier; // alpha multiplier 
                         quad.vertexIdx += quad.vertexSize;
 
                         // Bottom right
@@ -213,6 +193,8 @@ public class GalaxyRenderSystem extends ImmediateRenderSystem implements IObserv
                         quad.vertices[quad.vertexIdx + 5] = normal.z;
                         quad.vertices[quad.vertexIdx + 6] = 1;
                         quad.vertices[quad.vertexIdx + 7] = 0;
+                        quad.vertices[quad.vertexIdx + 8] = texnum; // texture number
+                        quad.vertices[quad.vertexIdx + 9] = alphamultiplier; // alpha multiplier 
                         quad.vertexIdx += quad.vertexSize;
 
                         // Top right
@@ -224,6 +206,8 @@ public class GalaxyRenderSystem extends ImmediateRenderSystem implements IObserv
                         quad.vertices[quad.vertexIdx + 5] = normal.z;
                         quad.vertices[quad.vertexIdx + 6] = 1;
                         quad.vertices[quad.vertexIdx + 7] = 1;
+                        quad.vertices[quad.vertexIdx + 8] = texnum; // texture number
+                        quad.vertices[quad.vertexIdx + 9] = alphamultiplier; // alpha multiplier 
                         quad.vertexIdx += quad.vertexSize;
 
                         // Top left
@@ -235,6 +219,8 @@ public class GalaxyRenderSystem extends ImmediateRenderSystem implements IObserv
                         quad.vertices[quad.vertexIdx + 5] = normal.z;
                         quad.vertices[quad.vertexIdx + 6] = 0;
                         quad.vertices[quad.vertexIdx + 7] = 1;
+                        quad.vertices[quad.vertexIdx + 8] = texnum; // texture number
+                        quad.vertices[quad.vertexIdx + 9] = alphamultiplier; // alpha multiplier 
                         quad.vertexIdx += quad.vertexSize;
 
                         // Indices
@@ -293,6 +279,14 @@ public class GalaxyRenderSystem extends ImmediateRenderSystem implements IObserv
             quad.mesh.render(quadProgram, GL20.GL_TRIANGLES, 0, quad.indexIdx);
 
             quadProgram.end();
+
+            /**
+             * IMAGE RENDERER
+             */
+            mw.mc.setTransparency(mw.opacity * alphas[mw.ct.ordinal()] * 0.2f);
+            modelBatch.begin(camera.getCamera());
+            modelBatch.render(mw.mc.instance, mw.mc.env);
+            modelBatch.end();
 
         }
 

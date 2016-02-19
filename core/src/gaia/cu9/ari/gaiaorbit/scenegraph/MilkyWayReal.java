@@ -7,6 +7,7 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
@@ -17,6 +18,7 @@ import com.badlogic.gdx.utils.reflect.ReflectionException;
 import gaia.cu9.ari.gaiaorbit.data.galaxy.PointDataProvider;
 import gaia.cu9.ari.gaiaorbit.render.I3DTextRenderable;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.GalaxydataComponent;
+import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
@@ -28,8 +30,10 @@ import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
 public class MilkyWayReal extends AbstractPositionEntity implements I3DTextRenderable {
     float[] labelColour = new float[] { 1f, 1f, 1f, 1f };
-    String transformName;
+    String model, transformName;
     Matrix4 coordinateSystem;
+
+    public ModelComponent mc;
 
     public List<Vector3> pointData, nebulaData;
     protected String provider;
@@ -56,6 +60,8 @@ public class MilkyWayReal extends AbstractPositionEntity implements I3DTextRende
         } catch (Exception e) {
             Logger.error(e, getClass().getSimpleName());
         }
+        mc.initialize();
+        mc.env.set(new ColorAttribute(ColorAttribute.AmbientLight, cc[0], cc[1], cc[2], 1));
 
     }
 
@@ -81,6 +87,9 @@ public class MilkyWayReal extends AbstractPositionEntity implements I3DTextRende
         } else {
             // Equatorial, nothing
         }
+
+        // Model
+        mc.doneLoading(manager, localTransform, null);
 
         // Transform all
         for (Vector3 point : pointData) {
@@ -123,6 +132,15 @@ public class MilkyWayReal extends AbstractPositionEntity implements I3DTextRende
 
         // Directional light comes from up
         updateLocalTransform();
+
+        if (mc != null) {
+            Vector3 d = v3fpool.obtain();
+            d.set(0, 1, 0);
+            d.mul(coordinateSystem);
+
+            mc.dlight.direction.set(d);
+            v3fpool.free(d);
+        }
 
     }
 
@@ -251,4 +269,11 @@ public class MilkyWayReal extends AbstractPositionEntity implements I3DTextRende
     public void updateLocalValues(ITimeFrameProvider time, ICamera camera) {
     }
 
+    public void setModel(String model) {
+        this.model = model;
+    }
+
+    public void setModel(ModelComponent mc) {
+        this.mc = mc;
+    }
 }

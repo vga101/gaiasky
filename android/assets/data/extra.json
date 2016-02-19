@@ -54,8 +54,18 @@
 				},
 	
 	"galaxydata" : {
-				"pointsource" : "data/galaxy/galaxy_bar0.4_4arms_5000particles_1.5radius_0.6666667ratio_180.0deg.txt",
-				"nebulasource" : "data/galaxy/galaxy_nobar_5arms_100particles_2.0radius_1.0ratio_50.0deg.txt"
+				"pointsource" : "data/galaxy/galaxy_bar0.5_4arms_12000particles_1.5radius_0.5ratio_220.0deg.txt",
+				"nebulasource" : "data/galaxy/galaxy_nobar_6arms_45particles_1.5radius_1.0ratio_0.0deg.txt"
+				},
+	"model" : {
+				"args" : [true],	
+				"type" : "disc",
+				"params" : {
+							"diameter" : 7.0
+							},
+				"texture" : {
+							"base" : "data/tex/milky_way.png"
+							}
 				}
 	},
 	
