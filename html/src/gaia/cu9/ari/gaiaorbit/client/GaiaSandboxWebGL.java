@@ -1,5 +1,10 @@
 package gaia.cu9.ari.gaiaorbit.client;
 
+import com.badlogic.gdx.ApplicationListener;
+import com.badlogic.gdx.backends.gwt.GwtApplication;
+import com.badlogic.gdx.backends.gwt.GwtApplicationConfiguration;
+import com.google.gwt.dom.client.Element;
+
 import gaia.cu9.ari.gaiaorbit.GaiaSandbox;
 import gaia.cu9.ari.gaiaorbit.client.data.WebGLSceneGraphImplementationProvider;
 import gaia.cu9.ari.gaiaorbit.client.format.GwtDateFormatFactory;
@@ -21,12 +26,9 @@ import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadIndexer;
 import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
 
-import com.badlogic.gdx.ApplicationListener;
-import com.badlogic.gdx.backends.gwt.GwtApplication;
-import com.badlogic.gdx.backends.gwt.GwtApplicationConfiguration;
-import com.google.gwt.dom.client.Element;
-
 public class GaiaSandboxWebGL extends GwtApplication implements IObserver {
+
+    private GaiaSandbox application;
 
     @Override
     public GwtApplicationConfiguration getConfig() {
@@ -54,8 +56,7 @@ public class GaiaSandboxWebGL extends GwtApplication implements IObserver {
 
     @Override
     public ApplicationListener getApplicationListener() {
-        EventManager.instance.subscribe(this, Events.FOCUS_CHANGED);
-        return new GaiaSandbox();
+        return application;
     }
 
     @Override
@@ -78,6 +79,13 @@ public class GaiaSandboxWebGL extends GwtApplication implements IObserver {
     }
 
     protected native void reloadIFrame(Element iframeEl) /*-{
-                                                         iframeEl.contentWindow.location.reload(true);
-                                                         }-*/;
+		iframeEl.contentWindow.location.reload(true);
+    }-*/;
+
+    @Override
+    public ApplicationListener createApplicationListener() {
+        EventManager.instance.subscribe(this, Events.FOCUS_CHANGED);
+        application = new GaiaSandbox();
+        return application;
+    }
 }

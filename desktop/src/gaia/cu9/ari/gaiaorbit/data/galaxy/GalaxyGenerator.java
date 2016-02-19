@@ -34,25 +34,30 @@ public class GalaxyGenerator implements IObserver {
     private static final boolean writeFile = true;
 
     /** Number of spiral arms **/
-    private static int Narms = 4;
+    private static int Narms = 5;
 
     /** Does the galaxy have a bar? **/
-    private static boolean bar = true;
+    private static boolean bar = false;
 
     /** The length of the bar, if it has one **/
     private static float barLength = 0.4f;
 
     /** Radius of the galaxy **/
-    private static float radius = 1.5f;
+    private static float radius = 2f;
 
     /** Number of particles **/
-    private static int N = 150;
+    private static int N = 100;
 
     /** Ratio radius/armWidth **/
-    private static float armWidthRatio = 1f / 20f;
+    private static float armWidthRatio = 1f;
+
+    /** Ratio radius/armHeight **/
+    private static float armHeightRatio = 1f / 10f;
 
     /** Maximum spiral rotation (end of arm) in degrees **/
-    private static float maxRotation = 220f;
+    private static float maxRotation = 50f;
+
+    private static boolean radialDensity = true;
 
     public static void main(String[] args) {
         try {
@@ -106,6 +111,7 @@ public class GalaxyGenerator implements IObserver {
         int Nbar = Math.round(N * barOverTotal);
 
         float armWidth = radius * armWidthRatio;
+        float armHeight = radius * armHeightRatio;
 
         List<Vector3> particles = new ArrayList<Vector3>(N);
 
@@ -118,7 +124,7 @@ public class GalaxyGenerator implements IObserver {
         for (int j = 0; j < Nbar; j++) {
             float z = rand.nextFloat() * barLength - barLength / 2f;
             float x = (float) (rand.nextGaussian() * armWidth);
-            float y = (float) (rand.nextGaussian() * armWidth / 4f);
+            float y = (float) (rand.nextGaussian() * armHeight);
 
             Vector3 particle = new Vector3(x, y, z);
             particles.add(particle);
@@ -133,9 +139,13 @@ public class GalaxyGenerator implements IObserver {
 
             for (int j = 0; j < NperArm; j++) {
                 float x, y, z;
-                z = rand.nextFloat() * radius + radius / 4f;
+                if (!radialDensity) {
+                    z = rand.nextFloat() * radius;
+                } else {
+                    z = (float) Math.abs(rand.nextGaussian()) * radius;
+                }
                 x = (float) (rand.nextGaussian() * armWidth);
-                y = (float) (rand.nextGaussian() * armWidth / 4f);
+                y = (float) (rand.nextGaussian() * armHeight);
 
                 Vector3 particle = new Vector3(x, y, z);
                 particle.rotate(rotAxis, angle);

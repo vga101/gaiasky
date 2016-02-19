@@ -182,7 +182,7 @@ public class GalaxyRenderSystem extends ImmediateRenderSystem implements IObserv
                     // 10 quads per nebula
                     for (int i = 0; i < 7; i++) {
 
-                        float quadsize = (float) (rand.nextFloat() + 1.0f) * 1e11f;
+                        float quadsize = (float) (rand.nextFloat() + 1.0f) * 4e11f;
                         rotaxis.set(rand.nextFloat(), rand.nextFloat(), rand.nextFloat());
                         float rotangle = rand.nextFloat() * 360f;
                         transl.set(rand.nextFloat() * 1e10f, rand.nextFloat() * 1e10f, rand.nextFloat() * 1e10f).add(quadpoint);
@@ -278,7 +278,7 @@ public class GalaxyRenderSystem extends ImmediateRenderSystem implements IObserv
             // General uniforms
             quadProgram.setUniformMatrix("u_projModelView", camera.getCamera().combined);
             quadProgram.setUniformf("u_camPos", camera.getCurrent().getPos().setVector3(aux));
-            quadProgram.setUniformf("u_alpha", 0.03f * mw.opacity * alphas[mw.ct.ordinal()]);
+            quadProgram.setUniformf("u_alpha", 0.04f * mw.opacity * alphas[mw.ct.ordinal()]);
 
             for (int i = 0; i < 4; i++) {
                 nebulatextures[i].bind(i);
