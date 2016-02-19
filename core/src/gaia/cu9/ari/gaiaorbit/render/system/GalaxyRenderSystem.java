@@ -42,7 +42,7 @@ public class GalaxyRenderSystem extends ImmediateRenderSystem implements IObserv
     protected void initShaderProgram() {
 
         // POINT (STARS) PROGRAM
-        pointProgram = new ShaderProgram(Gdx.files.internal("shader/point.galaxy.vertex.glsl"), Gdx.files.internal("shader/point.fragment.glsl"));
+        pointProgram = new ShaderProgram(Gdx.files.internal("shader/point.galaxy.vertex.glsl"), Gdx.files.internal("shader/point.galaxy.fragment.glsl"));
         if (!pointProgram.isCompiled()) {
             Gdx.app.error(this.getClass().getName(), "Point shader compilation failed:\n" + pointProgram.getLog());
         }
@@ -154,7 +154,7 @@ public class GalaxyRenderSystem extends ImmediateRenderSystem implements IObserv
                     curr.vertices[curr.vertexIdx + curr.colorOffset] = Color.toFloatBits(col[0] * colcorr, col[1] * colcorr, col[2] * colcorr, col[3]);
 
                     // SIZE
-                    curr.vertices[curr.vertexIdx + additionalOffset] = rand.nextFloat() * 2f;
+                    curr.vertices[curr.vertexIdx + additionalOffset] = rand.nextFloat() + 6.0f;
                     curr.vertices[curr.vertexIdx + additionalOffset + 1] = 0.7f;
 
                     // VERTEX
@@ -259,7 +259,10 @@ public class GalaxyRenderSystem extends ImmediateRenderSystem implements IObserv
              * STAR RENDERER
              */
 
-            Gdx.graphics.getGL20().glEnable(0x8642);
+            // Enable gl_PointCoord
+            Gdx.gl20.glEnable(34913);
+            // Enable point sizes
+            Gdx.gl20.glEnable(0x8642);
             pointProgram.begin();
             pointProgram.setUniformMatrix("u_projModelView", camera.getCamera().combined);
             pointProgram.setUniformf("u_camPos", camera.getCurrent().getPos().setVector3(aux));
