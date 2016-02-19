@@ -42,7 +42,7 @@ void main() {
     float a_thAnglePoint = a_additional.y;
     
     float viewAngleApparent = atan((a_size * u_starBrightness) / length(pos)) / u_fovFactor;
-    float opacity = pow(lint(viewAngleApparent, 0.0, a_thAnglePoint, u_pointAlphaMin, u_pointAlphaMax), 1.6);
+    float opacity = pow(lint(viewAngleApparent, 0.0, a_thAnglePoint, u_pointAlphaMin, u_pointAlphaMax), 1.2);
     
     v_col = vec4(a_color.rgb, a_color.a * opacity * u_alpha * step(viewAngleApparent, a_thAnglePoint * 10.0));
 

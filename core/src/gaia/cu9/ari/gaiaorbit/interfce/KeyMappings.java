@@ -1,18 +1,18 @@
 package gaia.cu9.ari.gaiaorbit.interfce;
 
-import gaia.cu9.ari.gaiaorbit.event.EventManager;
-import gaia.cu9.ari.gaiaorbit.event.Events;
-import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
-import gaia.cu9.ari.gaiaorbit.util.Constants;
-import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
-import gaia.cu9.ari.gaiaorbit.util.I18n;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeSet;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
+
+import gaia.cu9.ari.gaiaorbit.event.EventManager;
+import gaia.cu9.ari.gaiaorbit.event.Events;
+import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
+import gaia.cu9.ari.gaiaorbit.util.Constants;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
+import gaia.cu9.ari.gaiaorbit.util.I18n;
 
 /**
  * Contains the key mappings and the actions. This should be persisted somehow in the future.
@@ -298,13 +298,13 @@ public class KeyMappings {
         }), SPECIAL1, Keys.U);
 
         // CTRL + P -> Change pixel renderer
-        addMapping(new ProgramAction(txt("action.toggle", txt("element.pixelrenderer")), new Runnable() {
-            @Override
-            public void run() {
-                EventManager.instance.post(Events.PIXEL_RENDERER_CMD, (GlobalConf.scene.PIXEL_RENDERER + 1) % 3);
-                EventManager.instance.post(Events.PIXEL_RENDERER_UPDATE);
-            }
-        }), SPECIAL1, Keys.P);
+        //        addMapping(new ProgramAction(txt("action.toggle", txt("element.pixelrenderer")), new Runnable() {
+        //            @Override
+        //            public void run() {
+        //                EventManager.instance.post(Events.PIXEL_RENDERER_CMD, (GlobalConf.scene.PIXEL_RENDERER + 1) % 3);
+        //                EventManager.instance.post(Events.PIXEL_RENDERER_UPDATE);
+        //            }
+        //        }), SPECIAL1, Keys.P);
 
         // CTRL + G -> Travel to focus object
         addMapping(new ProgramAction(txt("action.gotoobject"), new Runnable() {

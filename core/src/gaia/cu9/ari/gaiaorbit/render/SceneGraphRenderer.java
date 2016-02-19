@@ -184,7 +184,8 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         int priority = 1;
 
         // POINTS
-        AbstractRenderSystem pixelProc = getPixelRenderSystem();
+        AbstractRenderSystem pixelProc = new PixelRenderSystem(RenderGroup.POINT, 0, alphas);
+        pixelProc.setPreRunnable(blendNoDepthRunnable);
 
         // MODEL BACK
         AbstractRenderSystem modelBackProc = new ModelBatchRenderSystem(RenderGroup.MODEL_B, priority++, alphas, modelBatchB, false);
@@ -493,6 +494,11 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         return sys;
     }
 
+    /**
+     * Gets the render system
+     * @deprecated
+     * @return
+     */
     private AbstractRenderSystem getPixelRenderSystem() {
         AbstractRenderSystem sys = null;
         int pxidx = GlobalConf.scene.PIXEL_RENDERER;
@@ -514,6 +520,9 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         return sys;
     }
 
+    /**
+     * @deprecated
+     */
     private void updatePixelRenderSystem() {
         if (renderProcesses != null && !renderProcesses.isEmpty()) {
             IRenderSystem sys = renderProcesses.get(0);

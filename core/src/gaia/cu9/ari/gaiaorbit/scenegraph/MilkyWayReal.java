@@ -100,7 +100,7 @@ public class MilkyWayReal extends AbstractPositionEntity implements I3DTextRende
         // Update with translation/rotation/etc
         updateLocal(time, camera);
 
-        if (children != null && camera.getDistance() / camera.getFovFactor() < highDist) {
+        if (children != null && camera.getDistance() * camera.getFovFactor() < highDist) {
             for (int i = 0; i < children.size(); i++) {
                 float childOpacity = 1 - this.opacity;
                 SceneGraphNode child = children.get(i);
@@ -119,9 +119,8 @@ public class MilkyWayReal extends AbstractPositionEntity implements I3DTextRende
         super.updateLocal(time, camera);
 
         // Update alpha
-        this.opacity = MathUtilsd.lint((float) camera.getDistance() / camera.getFovFactor(), lowDist, highDist, 0, 1);
+        this.opacity = MathUtilsd.lint((float) camera.getDistance() * camera.getFovFactor(), lowDist, highDist, 0, 1);
 
-        //        System.out.println(camera.getDistance() + ", " + lowDist + ", " + highDist + ", " + this.opacity);
         // Directional light comes from up
         updateLocalTransform();
 
@@ -129,7 +128,7 @@ public class MilkyWayReal extends AbstractPositionEntity implements I3DTextRende
 
     @Override
     protected void addToRenderLists(ICamera camera) {
-        if ((float) camera.getDistance() / camera.getFovFactor() >= lowDist) {
+        if ((float) camera.getDistance() * camera.getFovFactor() >= lowDist) {
 
             if (renderText()) {
                 addToRender(this, RenderGroup.LABEL);

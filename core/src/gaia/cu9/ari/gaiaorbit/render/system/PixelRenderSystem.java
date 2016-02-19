@@ -36,7 +36,7 @@ public class PixelRenderSystem extends ImmediateRenderSystem implements IObserve
         super(rg, priority, alphas);
         EventManager.instance.subscribe(this, Events.TRANSIT_COLOUR_CMD, Events.ONLY_OBSERVED_STARS_CMD);
         BRIGHTNESS_FACTOR = Constants.webgl ? 15f : 2.7f;
-        POINT_SIZE = GlobalConf.runtime.STRIPPED_FOV_MODE ? 2 : 2;
+        POINT_SIZE = GlobalConf.runtime.STRIPPED_FOV_MODE ? 8 : 8;
     }
 
     @Override
@@ -111,7 +111,10 @@ public class PixelRenderSystem extends ImmediateRenderSystem implements IObserve
             // Put flag down
             POINT_UPDATE_FLAG = false;
         }
-        Gdx.graphics.getGL20().glEnable(0x8642);
+        // Enable gl_PointCoord
+        Gdx.gl20.glEnable(34913);
+        // Enable point sizes
+        Gdx.gl20.glEnable(0x8642);
         pointProgram.begin();
         pointProgram.setUniformMatrix("u_projModelView", camera.getCamera().combined);
         pointProgram.setUniformf("u_camPos", camera.getCurrent().getPos().setVector3(aux));
