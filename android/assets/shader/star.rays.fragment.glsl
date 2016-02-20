@@ -21,7 +21,7 @@ uniform float u_distance;
 #define ang_th 0.00000001
 
 float noise(float t){
-    return texture2D(u_noiseTexture, vec2 (t, .0)).x;
+    return texture2D(u_noiseTexture, vec2(t, .0)).x;
 }
 
 vec3 cc(vec3 color, float factor,float factor2) // color modifier
@@ -38,8 +38,8 @@ vec4 draw_star_rays(vec2 uv, vec2 pos, float distanceCenter) {
 
     float f0 = 1.0 / (length (uv) * 16.0 + 1.0);
 
-    float idx = mod((ang/3.1415 + 1.0)/4.0 + time * 0.1, 0.5) ;
-    f0 = f0 + f0 * (sin (noise (idx) * 16.0) * sin(time * 50.0)  * 0.1 + dist * 0.1 + 0.8);
+    float idx = mod((ang/3.1415 + 2.0)/4.0 + time * 0.2, 0.5) ;
+    f0 = f0 + f0 * (sin(noise(idx) * 16.0) * 0.1 + dist * 0.1 + 0.4);
 
     vec3 c = vec3 (0.0);
     c = c * 1.3 - vec3 (length (uv) * 0.05);
@@ -48,7 +48,7 @@ vec4 draw_star_rays(vec2 uv, vec2 pos, float distanceCenter) {
     vec3 color = v_color.rgb * c;
     color -= 0.015;
     color = cc (color, .2, .1);
-    return vec4 (color, ((1.0 + sin(time * 80.0)) * 0.2 + 0.6) * v_color.a * (1.0 - distanceCenter) * (color.r + color.g + color.b) / 3.0);
+    return vec4 (color, ((1.0 + sin(time * 80.0)) * 0.08 + 0.6) * v_color.a * (1.0 - distanceCenter) * (color.r + color.g + color.b) / 3.0);
 }
 
 vec4 draw_simple_star(float distanceCenter) {
@@ -63,14 +63,14 @@ vec4
 draw_star() {
     float dist = distance (vec2 (0.5), v_texCoords.xy) * 2.0;
     vec2 uv = v_texCoords - 0.5;
-    if (u_distance < u_th_dist_up) {
+    if (u_distance < u_th_dist_up * 10000.0) {
         // Level is 0 when dist <= dist_down and 1 when dist >= dist_up
-        float level = min ((u_distance) / u_th_dist_up, 1.0);
+        float level = min((u_distance) / (u_th_dist_up * 10000.0), 1.0);
 
         vec4 c = draw_star_rays(uv, vec2 (0.5), dist);
         vec4 s = draw_simple_star(dist);
 
-        return c  * (1.0 - level) + s * level;
+        return c  * (1.0 - level) + s;
     } else {
         return draw_simple_star(dist);
     }

@@ -24,7 +24,7 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
     private PostProcessBean[] pps;
 
     float bloomFboScale = 0.5f;
-    float lensFboScale = 0.25f;
+    float lensFboScale = 0.3f;
 
     public DesktopPostProcessor() {
         ShaderLoader.BasePath = "shaders/";
@@ -92,14 +92,14 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
         // LENS FLARE
         ppb.lens = new LensFlare2((int) (width * lensFboScale), (int) (height * lensFboScale));
         ppb.lens.setGhosts(14);
-        ppb.lens.setHaloWidth(0.55f);
+        ppb.lens.setHaloWidth(0.8f);
         ppb.lens.setLensColorTexture(new Texture(Gdx.files.internal("img/lenscolor.png")));
-        ppb.lens.setFlareIntesity(.39f);
-        ppb.lens.setFlareSaturation(0.7f);
+        ppb.lens.setFlareIntesity(0.7f);
+        ppb.lens.setFlareSaturation(0.9f);
         ppb.lens.setBaseIntesity(1f);
-        ppb.lens.setBias(-0.99f);
-        ppb.lens.setBlurAmount(0.0f);
-        ppb.lens.setBlurPasses(2);
+        ppb.lens.setBias(-0.995f);
+        ppb.lens.setBlurAmount(0.9f);
+        ppb.lens.setBlurPasses(5);
         ppb.lens.setEnabled(GlobalConf.postprocess.POSTPROCESS_LENS_FLARE);
         ppb.pp.addEffect(ppb.lens);
 
