@@ -124,7 +124,7 @@ public class GalaxyRenderSystem extends ImmediateRenderSystem implements IObserv
                     curr.vertices[curr.vertexIdx + curr.colorOffset] = Color.toFloatBits(col[0], col[1], col[2], col[3]);
 
                     // SIZE
-                    curr.vertices[curr.vertexIdx + additionalOffset] = rand.nextFloat() * 2f + 5.0f;
+                    curr.vertices[curr.vertexIdx + additionalOffset] = (float) Math.abs(rand.nextGaussian()) * 5f + 4.0f;
                     curr.vertices[curr.vertexIdx + additionalOffset + 1] = 0.7f;
 
                     // VERTEX
