@@ -150,15 +150,6 @@ public class ControlsWindow extends CollapsibleWindow implements IObserver {
         camera.align(Align.left);
         mainActors.add(camera);
 
-        /** ----OBJECTS TREE---- **/
-        ObjectsComponent objectsComponent = new ObjectsComponent(skin, ui);
-        objectsComponent.setSceneGraph(sg);
-        objectsComponent.initialize();
-
-        CollapsiblePane objects = new CollapsiblePane(ui, txt("gui.objects"), objectsComponent.getActor(), skin);
-        objects.align(Align.left);
-        mainActors.add(objects);
-
         /** ----OBJECT TOGGLES GROUP---- **/
         VisibilityComponent visibilityComponent = new VisibilityComponent(skin, ui);
         visibilityComponent.setVisibilityEntitites(visibilityEntities, visible);
@@ -176,6 +167,15 @@ public class ControlsWindow extends CollapsibleWindow implements IObserver {
         visualEffects.align(Align.left);
         mainActors.add(visualEffects);
 
+        /** ----OBJECTS TREE---- **/
+        ObjectsComponent objectsComponent = new ObjectsComponent(skin, ui);
+        objectsComponent.setSceneGraph(sg);
+        objectsComponent.initialize();
+
+        CollapsiblePane objects = new CollapsiblePane(ui, txt("gui.objects"), objectsComponent.getActor(), skin);
+        objects.align(Align.left);
+        mainActors.add(objects);
+        
         /** ----GAIA SCAN GROUP---- **/
         GaiaComponent gaiaComponent = new GaiaComponent(skin, ui);
         gaiaComponent.initialize();
