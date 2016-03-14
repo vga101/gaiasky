@@ -1,12 +1,12 @@
 package gaia.cu9.ari.gaiaorbit.util.coord.vsop87;
 
+import java.util.Date;
+
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
 import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
 import gaia.cu9.ari.gaiaorbit.util.coord.IBodyCoordinates;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
-
-import java.util.Date;
 
 public abstract class AbstractVSOP87 implements iVSOP87, IBodyCoordinates {
 
@@ -24,6 +24,14 @@ public abstract class AbstractVSOP87 implements iVSOP87, IBodyCoordinates {
         R = R * AstroUtils.AU_TO_KM;
 
         out.set(L, B, R * Constants.KM_TO_U);
+        return out;
+
+    }
+
+    @Override
+    public Vector3d getEclipticCartesianCoordinates(Date date, Vector3d out) {
+        getEclipticSphericalCoordinates(date, out);
+        Coordinates.sphericalToCartesian(out, out);
         return out;
 
     }

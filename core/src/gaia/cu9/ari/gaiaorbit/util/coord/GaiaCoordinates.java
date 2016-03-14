@@ -1,11 +1,11 @@
 package gaia.cu9.ari.gaiaorbit.util.coord;
 
+import java.util.Date;
+
 import gaia.cu9.ari.gaiaorbit.data.orbit.OrbitData;
 import gaia.cu9.ari.gaiaorbit.scenegraph.HeliotropicOrbit;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
-
-import java.util.Date;
 
 public class GaiaCoordinates implements IBodyCoordinates {
     HeliotropicOrbit orbit;
@@ -15,6 +15,11 @@ public class GaiaCoordinates implements IBodyCoordinates {
     public void doneLoading(Object... params) {
         orbit = (HeliotropicOrbit) ((ISceneGraph) params[0]).getNode("Gaia orbit");
         data = orbit.orbitData;
+    }
+
+    @Override
+    public Vector3d getEclipticCartesianCoordinates(Date date, Vector3d out) {
+        return null;
     }
 
     @Override

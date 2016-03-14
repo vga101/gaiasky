@@ -1,5 +1,7 @@
 package gaia.cu9.ari.gaiaorbit.util.coord;
 
+import java.util.Date;
+
 import gaia.cu9.ari.gaiaorbit.data.orbit.OrbitData;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
@@ -9,8 +11,6 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.component.OrbitComponent;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
-
-import java.util.Date;
 
 public class OrbitLintCoordinates implements IBodyCoordinates {
     String orbitname;
@@ -40,6 +40,13 @@ public class OrbitLintCoordinates implements IBodyCoordinates {
 
         // To spherical
         Coordinates.cartesianToSpherical(out, out);
+        return out;
+    }
+
+    @Override
+    public Vector3d getEclipticCartesianCoordinates(Date date, Vector3d out) {
+        getEquatorialCartesianCoordinates(date, out);
+        out.mul(Coordinates.eclipticToEquatorial());
         return out;
     }
 

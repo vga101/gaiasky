@@ -1,9 +1,9 @@
 package gaia.cu9.ari.gaiaorbit.util.coord;
 
+import java.util.Date;
+
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
-
-import java.util.Date;
 
 /**
  * Coordinates of the Moon given by the algorithm in Jean Meeus' Astronomical
@@ -25,10 +25,18 @@ public class MoonAACoordinates implements IBodyCoordinates {
     }
 
     @Override
+    public Vector3d getEclipticCartesianCoordinates(Date date, Vector3d out) {
+        getEclipticSphericalCoordinates(date, out);
+        Coordinates.sphericalToCartesian(out, out);
+        return out;
+    }
+
+    @Override
     public Vector3d getEquatorialCartesianCoordinates(Date date, Vector3d out) {
         getEclipticSphericalCoordinates(date, out);
         Coordinates.sphericalToCartesian(out, out);
         out.mul(Coordinates.equatorialToEcliptic());
+
         return out;
     }
 
