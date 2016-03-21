@@ -104,7 +104,7 @@ public class Positions2DExtractor implements IObserver {
         bw.write(Long.toString(ini.getTime()));
         bw.newLine();
 
-        bw.write("#t x y mass");
+        bw.write("#t[ms] x[km] y[km] mass[kg]");
         bw.newLine();
         for (long t = inims; t < inims + MS_IN_YEAR; t += dtms) {
             Date now = new Date(t);
@@ -114,11 +114,13 @@ public class Positions2DExtractor implements IObserver {
 
             // Earth
             earthCoord.getEclipticCartesianCoordinates(now, e);
+            e.scl(Constants.U_TO_KM);
             bw.write(t + " " + e.x + " " + e.z + " " + Me);
             bw.newLine();
 
             // Moon
             moonCoord.getEclipticCartesianCoordinates(now, m);
+            m.scl(Constants.U_TO_KM);
             m.add(e);
             bw.write(t + " " + m.x + " " + m.z + " " + Mm);
             bw.newLine();
