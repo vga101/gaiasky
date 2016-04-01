@@ -16,7 +16,7 @@ uniform float u_time;
 // Distance in km to the star
 uniform float u_distance;
 
-#define time u_time * 0.01
+#define time u_time * 0.001
 // Angle threshold. If angle is smaller, we don't draw core. To avoid flickering
 #define ang_th 0.00000001
 

@@ -34,6 +34,7 @@ public class Orbit extends LineObject {
     protected float alpha;
     public Matrix4d localTransformD, transformFunction;
     protected String provider;
+    protected Double multiplier = 1.0d;
     protected Class<? extends IOrbitDataProvider> providerClass;
     public OrbitComponent oc;
 
@@ -52,7 +53,7 @@ public class Orbit extends LineObject {
             IOrbitDataProvider provider;
             try {
                 provider = ClassReflection.newInstance(providerClass);
-                provider.load(oc.source, new OrbitDataLoader.OrbitDataLoaderParameter(name, providerClass, oc));
+                provider.load(oc.source, new OrbitDataLoader.OrbitDataLoaderParameter(name, providerClass, oc, multiplier));
                 orbitData = provider.getData();
             } catch (Exception e) {
                 Logger.error(e, getClass().getSimpleName());
@@ -104,18 +105,16 @@ public class Orbit extends LineObject {
 
     @Override
     protected void addToRenderLists(ICamera camera) {
-        if (!name.equals("Gaia orbit")) {
-            float angleLimit = ANGLE_LIMIT * camera.getFovFactor();
-            if (viewAngle > angleLimit) {
-                if (viewAngle < angleLimit * SHADER_MODEL_OVERLAP_FACTOR) {
-                    float alpha = MathUtilsd.lint(viewAngle, angleLimit, angleLimit * SHADER_MODEL_OVERLAP_FACTOR, 0, cc[3]);
-                    this.alpha = alpha;
-                } else {
-                    this.alpha = cc[3];
-                }
-
-                addToRender(this, RenderGroup.LINE);
+        float angleLimit = ANGLE_LIMIT * camera.getFovFactor();
+        if (viewAngle > angleLimit) {
+            if (viewAngle < angleLimit * SHADER_MODEL_OVERLAP_FACTOR) {
+                float alpha = MathUtilsd.lint(viewAngle, angleLimit, angleLimit * SHADER_MODEL_OVERLAP_FACTOR, 0, cc[3]);
+                this.alpha = alpha;
+            } else {
+                this.alpha = cc[3];
             }
+
+            addToRender(this, RenderGroup.LINE);
         }
 
     }
@@ -178,6 +177,10 @@ public class Orbit extends LineObject {
             }
 
         }
+    }
+
+    public void setMultiplier(Double multiplier) {
+        this.multiplier = multiplier;
     }
 
 }

@@ -1,5 +1,8 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph;
 
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.graphics.g3d.ModelBatch;
+
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.render.IAtmosphereRenderable;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.AtmosphereComponent;
@@ -9,13 +12,10 @@ import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
-import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.graphics.g3d.ModelBatch;
-
 public class Planet extends ModelBody implements IAtmosphereRenderable {
 
     private static final double TH_ANGLE_NONE = ModelBody.TH_ANGLE_POINT / 1e6;
-    private static final double TH_ANGLE_POINT = ModelBody.TH_ANGLE_POINT / 1e5;
+    private static final double TH_ANGLE_POINT = ModelBody.TH_ANGLE_POINT / .5e5;
     private static final double TH_ANGLE_QUAD = ModelBody.TH_ANGLE_POINT * 2;
 
     @Override
@@ -147,6 +147,7 @@ public class Planet extends ModelBody implements IAtmosphereRenderable {
         if (ac != null && isInRender(this, RenderGroup.MODEL_F)) {
             addToRender(this, RenderGroup.MODEL_F_ATM);
         }
+
     }
 
     @Override
