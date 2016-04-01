@@ -1,6 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph;
 
-import gaia.cu9.ari.gaiaorbit.GaiaSandbox;
+import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.render.I3DTextRenderable;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
@@ -91,7 +91,7 @@ public class Loc extends AbstractPositionEntity implements I3DTextRenderable {
         Vector3d aux = v3dpool.obtain();
         transform.getTranslation(aux).scl(-1);
 
-        double cosalpha = aux.add(location3d.x, location3d.y, location3d.z).nor().dot(GaiaSandbox.instance.cam.getDirection().nor());
+        double cosalpha = aux.add(location3d.x, location3d.y, location3d.z).nor().dot(GaiaSky.instance.cam.getDirection().nor());
         v3dpool.free(aux);
         return cosalpha < -0.2f;
     }

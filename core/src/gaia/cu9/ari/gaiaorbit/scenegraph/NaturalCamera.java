@@ -6,7 +6,7 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
-import gaia.cu9.ari.gaiaorbit.GaiaSandbox;
+import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
@@ -198,9 +198,9 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
             break;
         case Gaia_Scene:
             if (entity1 == null || entity2 == null) {
-                entity1 = (CelestialBody) GaiaSandbox.instance.sg.getNode("Gaia");
-                entity2 = (CelestialBody) GaiaSandbox.instance.sg.getNode("Earth");
-                entity3 = (CelestialBody) GaiaSandbox.instance.sg.getNode("Mars");
+                entity1 = (CelestialBody) GaiaSky.instance.sg.getNode("Gaia");
+                entity2 = (CelestialBody) GaiaSky.instance.sg.getNode("Earth");
+                entity3 = (CelestialBody) GaiaSky.instance.sg.getNode("Mars");
             }
             AbstractPositionEntity fccopy = entity1.getLineCopy();
             fccopy.getRoot().transform.position.set(0f, 0f, 0f);
@@ -628,7 +628,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
             // Check the type of the parameter: CelestialBody or String
             CelestialBody focus = null;
             if (data[0] instanceof String) {
-                SceneGraphNode sgn = GaiaSandbox.instance.sg.getNode((String) data[0]);
+                SceneGraphNode sgn = GaiaSky.instance.sg.getNode((String) data[0]);
                 if (sgn instanceof CelestialBody) {
                     focus = (CelestialBody) sgn;
                     diverted = false;

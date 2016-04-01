@@ -1,6 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.interfce;
 
-import gaia.cu9.ari.gaiaorbit.GaiaSandbox;
+import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
@@ -355,7 +355,7 @@ public class FullGui implements IGui, IObserver {
     }
 
     public void addWebglInterface() {
-        webglInterface = new WebGLInterface(skin, GaiaSandbox.instance.current);
+        webglInterface = new WebGLInterface(skin, GaiaSky.instance.current);
         wgl = new Container<WebGLInterface>(webglInterface);
         wgl.setFillParent(true);
         wgl.left().bottom();

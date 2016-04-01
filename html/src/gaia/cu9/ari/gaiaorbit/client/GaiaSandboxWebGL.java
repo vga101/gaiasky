@@ -5,7 +5,7 @@ import com.badlogic.gdx.backends.gwt.GwtApplication;
 import com.badlogic.gdx.backends.gwt.GwtApplicationConfiguration;
 import com.google.gwt.dom.client.Element;
 
-import gaia.cu9.ari.gaiaorbit.GaiaSandbox;
+import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.client.data.WebGLSceneGraphImplementationProvider;
 import gaia.cu9.ari.gaiaorbit.client.format.GwtDateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.client.format.GwtNumberFormatFactory;
@@ -28,7 +28,7 @@ import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
 
 public class GaiaSandboxWebGL extends GwtApplication implements IObserver {
 
-    private GaiaSandbox application;
+    private GaiaSky application;
 
     @Override
     public GwtApplicationConfiguration getConfig() {
@@ -85,7 +85,7 @@ public class GaiaSandboxWebGL extends GwtApplication implements IObserver {
     @Override
     public ApplicationListener createApplicationListener() {
         EventManager.instance.subscribe(this, Events.FOCUS_CHANGED);
-        application = new GaiaSandbox();
+        application = new GaiaSky();
         return application;
     }
 }

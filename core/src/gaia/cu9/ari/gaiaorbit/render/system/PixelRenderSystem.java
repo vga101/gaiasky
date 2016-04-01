@@ -12,7 +12,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 
-import gaia.cu9.ari.gaiaorbit.GaiaSandbox;
+import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
@@ -122,7 +122,7 @@ public class PixelRenderSystem extends ImmediateRenderSystem implements IObserve
         pointProgram.setUniformf("u_alpha", alphas[0]);
         pointProgram.setUniformf("u_starBrightness", GlobalConf.scene.STAR_BRIGHTNESS * BRIGHTNESS_FACTOR);
         pointProgram.setUniformf("u_pointSize", POINT_SIZE);
-        pointProgram.setUniformf("u_t", (float) AstroUtils.getMsSinceJ2000(GaiaSandbox.instance.current.getTime()));
+        pointProgram.setUniformf("u_t", (float) AstroUtils.getMsSinceJ2000(GaiaSky.instance.current.getTime()));
         curr.mesh.setVertices(curr.vertices, 0, curr.vertexIdx);
         curr.mesh.render(pointProgram, ShapeType.Point.getGlType());
         pointProgram.end();

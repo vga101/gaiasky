@@ -1,6 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.event;
 
-import gaia.cu9.ari.gaiaorbit.GaiaSandbox;
+import gaia.cu9.ari.gaiaorbit.GaiaSky;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -29,7 +29,7 @@ public class EventManager implements IObserver {
             if (this.equals(REAL_TIME)) {
                 return System.currentTimeMillis();
             } else if (this.equals(SIMULATION_TIME)) {
-                return GaiaSandbox.instance.current.getTime().getTime();
+                return GaiaSky.instance.current.getTime().getTime();
             }
             return -1;
         }

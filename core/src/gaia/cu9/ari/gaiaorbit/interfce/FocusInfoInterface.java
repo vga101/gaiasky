@@ -3,7 +3,7 @@ package gaia.cu9.ari.gaiaorbit.interfce;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 
-import gaia.cu9.ari.gaiaorbit.GaiaSandbox;
+import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
@@ -112,7 +112,7 @@ public class FocusInfoInterface extends Table implements IObserver {
         case FOCUS_CHANGED:
             CelestialBody cb = null;
             if (data[0] instanceof String) {
-                cb = (CelestialBody) GaiaSandbox.instance.sg.getNode((String) data[0]);
+                cb = (CelestialBody) GaiaSky.instance.sg.getNode((String) data[0]);
             } else {
                 cb = (CelestialBody) data[0];
             }

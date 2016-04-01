@@ -17,7 +17,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
-import gaia.cu9.ari.gaiaorbit.GaiaSandbox;
+import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.interfce.KeyMappings.ProgramAction;
@@ -195,7 +195,7 @@ public class GaiaInputController extends GestureDetector {
 
                                 if (!stopped && !focusRemoved) {
                                     // Select star, if any
-                                    List<CelestialBody> l = GaiaSandbox.instance.getFocusableEntities();
+                                    List<CelestialBody> l = GaiaSky.instance.getFocusableEntities();
 
                                     List<CelestialBody> hits = new ArrayList<CelestialBody>();
 

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import gaia.cu9.ari.gaiaorbit.GaiaSandbox;
+import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
@@ -21,7 +21,7 @@ import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
  *
  */
 public class GlobalConf {
-    public static final String APPLICATION_NAME = "Gaia Sandbox";
+    public static final String APPLICATION_NAME = "Gaia Sky";
     public static final String WEBPAGE = "http://www.zah.uni-heidelberg.de/gaia/outreach/gaiasandbox/";
     public static final String WIKI = "https://github.com/ari-zah/gaiasandbox/wiki";
     public static final String ICON_URL = "http://www.zah.uni-heidelberg.de/uploads/pics/gaiasandboxlogo_02.png";
@@ -259,7 +259,7 @@ public class GlobalConf {
                     RENDER_OUTPUT = !RENDER_OUTPUT;
                 }
                 // Flush buffer if needed
-                if (!RENDER_OUTPUT && GaiaSandbox.instance != null) {
+                if (!RENDER_OUTPUT && GaiaSky.instance != null) {
                     EventManager.instance.post(Events.FLUSH_FRAMES);
                 }
             }

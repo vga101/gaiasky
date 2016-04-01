@@ -1,6 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.interfce;
 
-import gaia.cu9.ari.gaiaorbit.GaiaSandbox;
+import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.data.orbit.OrbitData;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
@@ -159,7 +159,7 @@ public class NotificationsInterface extends Table implements IObserver {
                 if (data[0] != null) {
                     SceneGraphNode sgn = null;
                     if (data[0] instanceof String) {
-                        sgn = GaiaSandbox.instance.sg.getNode((String) data[0]);
+                        sgn = GaiaSky.instance.sg.getNode((String) data[0]);
                     } else {
                         sgn = (SceneGraphNode) data[0];
                     }

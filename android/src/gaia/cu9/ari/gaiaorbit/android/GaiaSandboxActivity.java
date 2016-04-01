@@ -1,6 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.android;
 
-import gaia.cu9.ari.gaiaorbit.GaiaSandbox;
+import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.android.util.AndroidConfInit;
 import gaia.cu9.ari.gaiaorbit.scenegraph.NaturalCamera;
 import gaia.cu9.ari.gaiaorbit.util.ConfInit;
@@ -60,7 +60,7 @@ public class GaiaSandboxActivity extends AndroidApplication {
         sensorAcce = sensorMan.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         sensorMagn = sensorMan.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
 
-        initialize(new GaiaSandbox(), cfg);
+        initialize(new GaiaSky(), cfg);
     }
 
     SensorManager sensorMan;

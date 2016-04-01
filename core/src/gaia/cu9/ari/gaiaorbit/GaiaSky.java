@@ -73,14 +73,14 @@ import com.badlogic.gdx.graphics.glutils.FrameBuffer;
  * @author Toni Sagrista
  *
  */
-public class GaiaSandbox implements ApplicationListener, IObserver, IMainRenderer {
+public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
     private static boolean LOADING = true;
 
     /** Attitude folder **/
     private static String ATTITUDE_FOLDER = "data/attitudexml/";
 
     /** Singleton instance **/
-    public static GaiaSandbox instance;
+    public static GaiaSky instance;
 
     // Asset manager
     public AssetManager manager;
@@ -118,7 +118,7 @@ public class GaiaSandbox implements ApplicationListener, IObserver, IMainRendere
      *            This will paint the GUI in OpenGL. True for Desktop (if not
      *            Swing GUI) and Android.
      */
-    public GaiaSandbox() {
+    public GaiaSky() {
         super();
         instance = this;
     }

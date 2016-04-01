@@ -1,6 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.interfce.components;
 
-import gaia.cu9.ari.gaiaorbit.GaiaSandbox;
+import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
@@ -65,7 +65,7 @@ public class TimeComponent extends GuiComponent implements IObserver {
                     if (dateDialog == null) {
                         dateDialog = new DateDialog(stage, skin);
                     }
-                    dateDialog.updateTime(GaiaSandbox.instance.current.getTime());
+                    dateDialog.updateTime(GaiaSky.instance.current.getTime());
                     dateDialog.display();
                 }
                 return false;
@@ -103,7 +103,7 @@ public class TimeComponent extends GuiComponent implements IObserver {
                 return false;
             }
         });
-        inputPace = new OwnTextField(Double.toString(GaiaSandbox.instance.current.getPace()), skin);
+        inputPace = new OwnTextField(Double.toString(GaiaSky.instance.current.getPace()), skin);
         inputPace.setName("input pace");
         inputPace.setMaxLength(15);
         inputPace.setWidth(60f);

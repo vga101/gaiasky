@@ -1,6 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.desktop;
 
-import gaia.cu9.ari.gaiaorbit.GaiaSandbox;
+import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.data.SceneGraphImplementationProvider;
 import gaia.cu9.ari.gaiaorbit.data.WebGLSceneGraphImplementationProvider;
 import gaia.cu9.ari.gaiaorbit.desktop.format.DesktopDateFormatFactory;
@@ -47,6 +47,6 @@ public class GaiaSandboxDesktopWebGL {
         cfg.addIcon("icon/ic_launcher.png", Files.FileType.Internal);
 
         // Launch app
-        new LwjglApplication(new GaiaSandbox(), cfg);
+        new LwjglApplication(new GaiaSky(), cfg);
     }
 }
