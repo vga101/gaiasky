@@ -39,7 +39,7 @@
 	"name" : "Milky Way",
 	"color" : [1.0, 1.0, 1.0, 1.0],
 	"labelcolor" : [1.0, 0.4, 0.7, 1.0],
-	"size" : 3.5e17,
+	"size" : 9.25e17,
 	"ct" : MilkyWay,
 	"transformName" : equatorialToGalactic,
 
@@ -54,8 +54,8 @@
 				},
 	
 	"galaxydata" : {
-				"pointsource" : "data/galaxy/galaxy_bar0.5_4arms_12000particles_1.5radius_0.5ratio_220.0deg.txt",
-				"nebulasource" : "data/galaxy/galaxy_nobar_6arms_45particles_1.5radius_1.0ratio_0.0deg.txt"
+				"pointsource" : "data/galaxy/galaxy_20000particles.txt",
+				"nebulasource" : "data/galaxy/galaxy_70particles.txt"
 				},
 	"model" : {
 				"args" : [true],	

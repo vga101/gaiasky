@@ -35,7 +35,7 @@ public class MilkyWayReal extends AbstractPositionEntity implements I3DTextRende
 
     public ModelComponent mc;
 
-    public List<Vector3> pointData, nebulaData;
+    public List<float[]> pointData, nebulaData;
     protected String provider;
     public GalaxydataComponent gc;
 
@@ -90,14 +90,27 @@ public class MilkyWayReal extends AbstractPositionEntity implements I3DTextRende
 
         // Model
         mc.doneLoading(manager, localTransform, null);
+        Vector3 aux = new Vector3();
+        Vector3 pos3 = pos.toVector3();
 
         // Transform all
-        for (Vector3 point : pointData) {
-            point.scl(size).mul(coordinateSystem).add(pos.toVector3());
+        for (int i = 0; i < pointData.size(); i++) {
+            float[] pointf = pointData.get(i);
+
+            aux.set(pointf[0], pointf[2], pointf[1]);
+            aux.scl(size).mul(coordinateSystem).add(pos3);
+            pointf[0] = aux.x;
+            pointf[1] = aux.y;
+            pointf[2] = aux.z;
         }
 
-        for (Vector3 point : nebulaData) {
-            point.scl(size).mul(coordinateSystem).add(pos.toVector3());
+        for (int i = 0; i < nebulaData.size(); i++) {
+            float[] pointf = nebulaData.get(i);
+            aux.set(pointf[0], pointf[2], pointf[1]);
+            aux.scl(size).mul(coordinateSystem).add(pos3);
+            pointf[0] = aux.x;
+            pointf[1] = aux.y;
+            pointf[2] = aux.z;
         }
 
     }

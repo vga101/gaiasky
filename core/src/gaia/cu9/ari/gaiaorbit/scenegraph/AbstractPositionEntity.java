@@ -44,8 +44,7 @@ public abstract class AbstractPositionEntity extends SceneGraphNode {
     public Vector2 posSph;
 
     /**
-     * Size factor in units
-     * of {@link gaia.cu9.ari.gaiaorbit.util.Constants#U_TO_KM}.
+     * Size factor in Kilometres.
      */
     public float size;
 

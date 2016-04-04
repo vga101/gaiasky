@@ -7,7 +7,6 @@ import java.util.List;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.math.Vector3;
 
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
@@ -15,18 +14,23 @@ import gaia.cu9.ari.gaiaorbit.util.parse.Parser;
 
 public class PointDataProvider {
 
-    public List<Vector3> loadData(String file) {
-        List<Vector3> pointData = new ArrayList<Vector3>();
+    public List<float[]> loadData(String file) {
+        List<float[]> pointData = new ArrayList<float[]>();
         FileHandle f = Gdx.files.internal(file);
 
         try {
+            int tokenslen;
             BufferedReader br = new BufferedReader(new InputStreamReader(f.read()));
             String line;
             while ((line = br.readLine()) != null) {
                 if (!line.isEmpty() && !line.startsWith("#")) {
                     // Read line
                     String[] tokens = line.split("\\s+");
-                    Vector3 point = new Vector3(Parser.parseFloat(tokens[0]), Parser.parseFloat(tokens[1]), Parser.parseFloat(tokens[2]));
+                    tokenslen = tokens.length;
+                    float[] point = new float[tokenslen];
+                    for (int j = 0; j < tokenslen; j++) {
+                        point[j] = Parser.parseFloat(tokens[j]);
+                    }
                     pointData.add(point);
                 }
             }

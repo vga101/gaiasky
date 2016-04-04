@@ -8,7 +8,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl.LwjglFiles;
@@ -27,11 +26,15 @@ import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
+import gaia.cu9.ari.gaiaorbit.util.math.StdRandom;
 
 public class GalaxyGenerator implements IObserver {
 
     /** Whether to write the results to disk **/
     private static final boolean writeFile = true;
+
+    /** Whether to generate a spiral galaxy or the real Milky Way with the right parameters **/
+    private static boolean SPIRAL = false;
 
     /** Number of spiral arms **/
     private static int Narms = 6;
@@ -46,7 +49,7 @@ public class GalaxyGenerator implements IObserver {
     private static float radius = 1.5f;
 
     /** Number of particles **/
-    private static int N = 45;
+    private static int N = 20000;
 
     /** Ratio radius/armWidth **/
     private static float armWidthRatio = 1f;
@@ -76,7 +79,13 @@ public class GalaxyGenerator implements IObserver {
             // Add notif watch
             EventManager.instance.subscribe(new OctreeGeneratorTest(), Events.POST_NOTIFICATION, Events.JAVA_EXCEPTION);
 
-            List<Vector3> gal = generateGalaxy();
+            List<float[]> gal = null;
+
+            if (SPIRAL) {
+                gal = generateGalaxySpiral();
+            } else {
+                gal = generateMilkyWay();
+            }
 
             if (writeFile) {
                 writeToDisk(gal, "/home/tsagrista/Documents/");
@@ -92,12 +101,41 @@ public class GalaxyGenerator implements IObserver {
     }
 
     /**
+     * Generates the Milky Way with the following parameters:
+     * radius: 15 Kpc
+     * thin disk height: 0.3 Kpc
+     * thick disk height: 1.5 Kpc
+     * density profile: normal with sigma^2 = 0.2
+     * The normalisation factor is 1/30 units/Kpc
+     * @return The list of stars
+     * @throws IOException
+     * @throws RuntimeException
+     */
+    private static List<float[]> generateMilkyWay() throws IOException, RuntimeException {
+        StdRandom.setSeed(100l);
+
+        // x, y, z, size
+        List<float[]> particles = new ArrayList<float[]>(N);
+
+        for (int i = 0; i < N; i++) {
+            float x = (float) StdRandom.gaussian();
+            float y = (float) StdRandom.gaussian();
+            // 1/30 is the relation diameter/height of the galaxy (diameter=30 Kpc, height=0.3-1 Kpc)
+            float z = (float) StdRandom.gaussian(0, 1.0 / 30.0);
+
+            particles.add(new float[] { x, y, z, (float) Math.abs(StdRandom.gaussian(0, 0.4)) });
+        }
+
+        return particles;
+    }
+
+    /**
      * Generates a galaxy (particle positions) with spiral arms and so on.
      * The galactic plane is XZ and Y points to the galactic north pole.
      * @throws IOException
      */
-    private static List<Vector3> generateGalaxy() throws IOException, RuntimeException {
-        Random rand = new Random();
+    private static List<float[]> generateGalaxySpiral() throws IOException, RuntimeException {
+        StdRandom.setSeed(100l);
 
         if (bar && Narms % 2 == 1) {
             throw new RuntimeException("Galaxies with bars can only have an even number of arms");
@@ -113,7 +151,8 @@ public class GalaxyGenerator implements IObserver {
         float armWidth = radius * armWidthRatio;
         float armHeight = radius * armHeightRatio;
 
-        List<Vector3> particles = new ArrayList<Vector3>(N);
+        // x, y, z, size
+        List<float[]> particles = new ArrayList<float[]>(N);
 
         float stepAngle = bar ? 60f / Math.max(1f, ((Narms / 2f) - 1)) : 360f / Narms;
         float angle = bar ? 10f : 0;
@@ -122,12 +161,11 @@ public class GalaxyGenerator implements IObserver {
 
         // Generate bar
         for (int j = 0; j < Nbar; j++) {
-            float z = rand.nextFloat() * barLength - barLength / 2f;
-            float x = (float) (rand.nextGaussian() * armWidth);
-            float y = (float) (rand.nextGaussian() * armHeight);
+            float z = (float) StdRandom.uniform() * barLength - barLength / 2f;
+            float x = (float) (StdRandom.gaussian() * armWidth);
+            float y = (float) (StdRandom.gaussian() * armHeight);
 
-            Vector3 particle = new Vector3(x, y, z);
-            particles.add(particle);
+            particles.add(new float[] { x, y, z, (float) Math.abs(StdRandom.gaussian()) });
         }
 
         // Generate arms
@@ -140,12 +178,12 @@ public class GalaxyGenerator implements IObserver {
             for (int j = 0; j < NperArm; j++) {
                 float x, y, z;
                 if (!radialDensity) {
-                    z = rand.nextFloat() * radius;
+                    z = (float) StdRandom.uniform() * radius;
                 } else {
-                    z = (float) Math.abs(rand.nextGaussian()) * radius;
+                    z = (float) Math.abs(StdRandom.gaussian()) * radius;
                 }
-                x = (float) (rand.nextGaussian() * armWidth);
-                y = (float) (rand.nextGaussian() * armHeight);
+                x = (float) (StdRandom.gaussian() * armWidth);
+                y = (float) (StdRandom.gaussian() * armHeight);
 
                 Vector3 particle = new Vector3(x, y, z);
                 particle.rotate(rotAxis, angle);
@@ -155,7 +193,7 @@ public class GalaxyGenerator implements IObserver {
 
                 particle.add(0f, 0f, zplus);
 
-                particles.add(particle);
+                particles.add(new float[] { x, y, z, (float) Math.abs(StdRandom.gaussian()) });
             }
             angle += stepAngle;
         }
@@ -163,8 +201,13 @@ public class GalaxyGenerator implements IObserver {
         return particles;
     }
 
-    private static void writeToDisk(List<Vector3> gal, String dir) throws IOException {
-        String filePath = dir + "galaxy_" + (bar ? "bar" + barLength + "_" : "nobar_") + Narms + "arms_" + N + "particles_" + radius + "radius_" + armWidthRatio + "ratio_" + maxRotation + "deg.txt";
+    private static void writeToDisk(List<float[]> gal, String dir) throws IOException {
+        String filePath = dir + "galaxy_";
+        if (SPIRAL) {
+            filePath += (bar ? "bar" + barLength + "_" : "nobar_") + Narms + "arms_" + N + "particles_" + radius + "radius_" + armWidthRatio + "ratio_" + maxRotation + "deg.txt";
+        } else {
+            filePath += N + "particles.txt";
+        }
 
         FileHandle fh = new FileHandle(filePath);
         File f = fh.file();
@@ -182,8 +225,9 @@ public class GalaxyGenerator implements IObserver {
         bw.write("#X Y Z");
         bw.newLine();
 
-        for (Vector3 particle : gal) {
-            bw.write(particle.x + " " + particle.y + " " + particle.z);
+        for (int i = 0; i < gal.size(); i++) {
+            float[] star = gal.get(i);
+            bw.write(star[0] + " " + star[1] + " " + star[2] + " " + star[3]);
             bw.newLine();
         }
 

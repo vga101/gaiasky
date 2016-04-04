@@ -117,18 +117,24 @@ public class GalaxyRenderSystem extends ImmediateRenderSystem implements IObserv
                 /** STARS **/
                 curr.clear();
 
-                for (Vector3 star : mw.pointData) {
-                    float[] col = new float[] { (float) (rand.nextGaussian() * 0.02f) + 0.9f, (float) (rand.nextGaussian() * 0.02) + 0.7f, (float) (rand.nextGaussian() * 0.02) + 0.92f, rand.nextFloat() * 0.5f };
+                for (float[] star : mw.pointData) {
+                    float[] col = new float[] { (float) (rand.nextGaussian() * 0.02f) + 0.9f, (float) (rand.nextGaussian() * 0.02) + 0.8f, (float) (rand.nextGaussian() * 0.02) + 0.95f, rand.nextFloat() * 0.5f };
 
                     // COLOR
                     curr.vertices[curr.vertexIdx + curr.colorOffset] = Color.toFloatBits(col[0], col[1], col[2], col[3]);
 
                     // SIZE
-                    curr.vertices[curr.vertexIdx + additionalOffset] = (float) Math.abs(rand.nextGaussian()) * 5f + 4.0f;
+                    float starSize = 0;
+                    if (star.length > 3) {
+                        starSize = star[3] * 20f + 1.0f;
+                    } else {
+                        starSize = (float) Math.abs(rand.nextGaussian()) * 5f + 1.0f;
+                    }
+                    curr.vertices[curr.vertexIdx + additionalOffset] = starSize;
                     curr.vertices[curr.vertexIdx + additionalOffset + 1] = 0.7f;
 
                     // VERTEX
-                    aux.set(star.x, star.y, star.z);
+                    aux.set(star[0], star[1], star[2]);
                     //cb.transform.getTranslationf(aux);
                     final int idx = curr.vertexIdx;
                     curr.vertices[idx] = aux.x;
@@ -148,9 +154,11 @@ public class GalaxyRenderSystem extends ImmediateRenderSystem implements IObserv
                 Vector3 tl = new Vector3();
                 Vector3 tr = new Vector3();
                 Vector3 normal = new Vector3();
-                for (Vector3 quadpoint : mw.nebulaData) {
+                Vector3 quadpoint = new Vector3();
+                for (float[] qp : mw.nebulaData) {
                     // 10 quads per nebula
                     for (int i = 0; i < 7; i++) {
+                        quadpoint.set(qp[0], qp[1], qp[2]);
                         float quadpointdist = quadpoint.len();
                         float texnum, alphamultiplier, quadsize;
                         if (quadpointdist < mw.size / 2f) {
@@ -158,7 +166,7 @@ public class GalaxyRenderSystem extends ImmediateRenderSystem implements IObserv
                         } else {
                             texnum = rand.nextInt(4);
                         }
-                        quadsize = (float) (rand.nextFloat() + 1.0f) * 1.5e11f;
+                        quadsize = qp.length > 3 ? (qp[3] + 1.0f) * 2e11f : (float) (rand.nextFloat() + 1.0f) * 1.5e11f;
                         alphamultiplier = MathUtilsd.lint(quadpointdist, 0, mw.size * 3, 6.0f, 1.0f);
 
                         rotaxis.set(rand.nextFloat(), rand.nextFloat(), rand.nextFloat());
@@ -242,23 +250,6 @@ public class GalaxyRenderSystem extends ImmediateRenderSystem implements IObserv
             }
 
             /**
-             * STAR RENDERER
-             */
-
-            // Enable gl_PointCoord
-            Gdx.gl20.glEnable(34913);
-            // Enable point sizes
-            Gdx.gl20.glEnable(0x8642);
-            pointProgram.begin();
-            pointProgram.setUniformMatrix("u_projModelView", camera.getCamera().combined);
-            pointProgram.setUniformf("u_camPos", camera.getCurrent().getPos().setVector3(aux));
-            pointProgram.setUniformf("u_fovFactor", camera.getFovFactor());
-            pointProgram.setUniformf("u_alpha", mw.opacity * alphas[mw.ct.ordinal()]);
-            curr.mesh.setVertices(curr.vertices, 0, curr.vertexIdx);
-            curr.mesh.render(pointProgram, ShapeType.Point.getGlType());
-            pointProgram.end();
-
-            /**
              * NEBULA RENDERER
              */
 
@@ -281,9 +272,26 @@ public class GalaxyRenderSystem extends ImmediateRenderSystem implements IObserv
             quadProgram.end();
 
             /**
+             * STAR RENDERER
+             */
+
+            // Enable gl_PointCoord
+            Gdx.gl20.glEnable(34913);
+            // Enable point sizes
+            Gdx.gl20.glEnable(0x8642);
+            pointProgram.begin();
+            pointProgram.setUniformMatrix("u_projModelView", camera.getCamera().combined);
+            pointProgram.setUniformf("u_camPos", camera.getCurrent().getPos().setVector3(aux));
+            pointProgram.setUniformf("u_fovFactor", camera.getFovFactor());
+            pointProgram.setUniformf("u_alpha", mw.opacity * alphas[mw.ct.ordinal()]);
+            curr.mesh.setVertices(curr.vertices, 0, curr.vertexIdx);
+            curr.mesh.render(pointProgram, ShapeType.Point.getGlType());
+            pointProgram.end();
+
+            /**
              * IMAGE RENDERER
              */
-            mw.mc.setTransparency(mw.opacity * alphas[mw.ct.ordinal()] * 0.2f);
+            mw.mc.setTransparency(mw.opacity * alphas[mw.ct.ordinal()] * 0.3f);
             modelBatch.begin(camera.getCamera());
             modelBatch.render(mw.mc.instance, mw.mc.env);
             modelBatch.end();
