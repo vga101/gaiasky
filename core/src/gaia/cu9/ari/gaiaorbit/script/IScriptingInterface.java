@@ -325,6 +325,18 @@ public interface IScriptingInterface {
     public void configureRenderOutput(int width, int height, int fps, String folder, String namePrefix);
 
     /**
+     * Is the system outputting frames to images?
+     * @return True if the render output is active.
+     */
+    public boolean isRenderOutputActive();
+
+    /**
+     * Gets the current FPS setting in the render output system.
+     * @return The FPS setting.
+     */
+    public int getRenderOutputFps();
+
+    /**
      * Activates or deactivates the image output system. If called with true,
      * the system starts outputting images right away.
      * @param active Whether to activate or deactivate the frame output system.
@@ -347,6 +359,18 @@ public interface IScriptingInterface {
      * @param distance The distance in km.
      */
     public void goToObject(String name, double distance);
+
+    /**
+     * Runs a seamless trip to the object with the given name until the camera is at the given distance.
+     * If distance is negative, the default distance is six times the radius of the object. If focusWait is
+     * positive, it indicates the number of seconds to wait for the focus to be centred before starting
+     * the forward movement.
+     * <strong>Warning> This will only work in asynchronous mode.</strong>
+     * @param name The name of the object.
+     * @param distance The distance in Km.
+     * @param focusWait The seconds to wait for focus. Negative to wait till fully focused.
+     */
+    public void goToObject(String name, double distance, float focusWait);
 
     /**
      * Returns the distance to the surface of the object identified with the given name.
@@ -448,5 +472,19 @@ public interface IScriptingInterface {
      * @param path The path of the camera recording file to run.
      */
     public void runCameraRecording(String path);
+
+    /**
+     * Sleeps for the given number of seconds in the application time (FPS), so if we are 
+     * capturing and the frame rate is set to 30 FPS, the command sleep(1) will put the
+     * script to sleep for 30 frames.
+     * @param seconds The number of seconds to wait.
+     */
+    public void sleep(float seconds);
+
+    /**
+     * Sleeps for a number of frames
+     * @param frames The number of frames to wait.
+     */
+    public void sleepFrames(int frames);
 
 }

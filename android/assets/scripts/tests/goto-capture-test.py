@@ -1,4 +1,4 @@
-# This script tests the go-to commands. To be run asynchronously.
+# This script tests the go-to and capture frame commands. To be run asynchronously.
 # Created by Toni Sagrista
 
 from time import sleep
@@ -11,16 +11,19 @@ gs.disableInput()
 gs.cameraStop()
 gs.minimizeInterfaceWindow()
 
-gs.setRotationCameraSpeed(20)
-gs.setTurningCameraSpeed(20)
-gs.setCameraSpeed(20)
+gs.setRotationCameraSpeed(40)
+gs.setTurningCameraSpeed(30)
+gs.setCameraSpeed(30)
+
+gs.configureRenderOutput(1280, 720, 60, '/home/tsagrista/.gaiasandbox/frames', 'scripting-test')
+gs.setFrameOutput(True)
 
 gs.goToObject("Sol", -1, 2.5)
 
 gs.setHeadlineMessage("Sun")
 gs.setSubheadMessage("This is the Sun, our star")
 
-gs.sleep(5)
+gs.sleepFrames(120)
 gs.clearAllMessages()
 
 gs.goToObject("Earth", -1, 2.5)
@@ -28,11 +31,14 @@ gs.goToObject("Earth", -1, 2.5)
 gs.setHeadlineMessage("Earth")
 gs.setSubheadMessage("This is the Earth, our home")
 
-gs.sleep(5)
+gs.sleepFrames(60)
 gs.clearAllMessages()
 
 gs.setCameraFocus("Sol")
 gs.sleep(4)
+
+gs.setFrameOutput(False)
+
 
 gs.enableInput()
 gs.maximizeInterfaceWindow()

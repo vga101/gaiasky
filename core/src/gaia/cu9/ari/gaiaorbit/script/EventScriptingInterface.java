@@ -1,5 +1,14 @@
 package gaia.cu9.ari.gaiaorbit.script;
 
+import java.util.Date;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Group;
+
 import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.EventManager.TimeFrame;
@@ -16,15 +25,6 @@ import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.LruCache;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
-
-import java.util.Date;
-
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input.Keys;
-import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.Group;
 
 /**
  * Implementation of the scripting interface using the event system.
@@ -423,6 +423,16 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
     }
 
     @Override
+    public boolean isRenderOutputActive() {
+        return GlobalConf.frame.RENDER_OUTPUT;
+    }
+
+    @Override
+    public int getRenderOutputFps() {
+        return GlobalConf.frame.RENDER_TARGET_FPS;
+    }
+
+    @Override
     public void setFrameOutput(boolean active) {
         em.post(Events.FRAME_OUTPUT_CMD, active);
     }
@@ -434,6 +444,11 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
 
     @Override
     public void goToObject(String name, double distance) {
+        goToObject(name, distance, -1);
+    }
+
+    @Override
+    public void goToObject(String name, double distance, float focusWait) {
         ISceneGraph sg = GaiaSky.instance.sg;
         if (sg.containsNode(name)) {
             CelestialBody focus = sg.findFocus(name);
@@ -450,12 +465,16 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
             }
 
             // Wait til camera is facing focus
-            while (!cam.facingFocus) {
-                // Wait
-                try {
-                    Thread.sleep(10);
-                } catch (Exception e) {
+            if (focusWait < 0) {
+                while (!cam.facingFocus) {
+                    // Wait
+                    try {
+                        Thread.sleep(100);
+                    } catch (Exception e) {
+                    }
                 }
+            } else {
+                this.sleep(focusWait);
             }
 
             double radius = focus.getRadius();
@@ -466,7 +485,7 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
             }
 
             // Add forward movement while distance > target distance
-            while (!weAreThere(focus.distToCamera - radius, target, 0.2)) {
+            while (!weAreThere(focus.distToCamera - radius, target, 0.4)) {
                 em.post(Events.CAMERA_FWD, (focus.distToCamera - radius < target ? -1d : 1d) * 0.05d);
                 try {
                     Thread.sleep(50);
@@ -763,6 +782,34 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
     @Override
     public void runCameraRecording(String path) {
         em.post(Events.PLAY_CAMERA_CMD, path);
+    }
+
+    @Override
+    public void sleep(float seconds) {
+        if (this.isRenderOutputActive()) {
+            this.sleepFrames(Math.round(this.getRenderOutputFps() * seconds));
+        } else {
+            try {
+                Thread.sleep(Math.round(seconds * 1000));
+            } catch (InterruptedException e) {
+                em.post(Events.JAVA_EXCEPTION, e);
+            }
+        }
+
+    }
+
+    @Override
+    public void sleepFrames(int frames) {
+        long iniframe = GaiaSky.instance.frames;
+        while (GaiaSky.instance.frames - iniframe < frames) {
+            // Active wait, fix this
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                em.post(Events.JAVA_EXCEPTION, e);
+            }
+        }
+
     }
 
 }

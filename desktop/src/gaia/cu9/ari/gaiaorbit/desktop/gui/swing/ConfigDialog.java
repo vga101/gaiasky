@@ -1,20 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.desktop.gui.swing;
 
-import gaia.cu9.ari.gaiaorbit.desktop.GaiaSandboxDesktop;
-import gaia.cu9.ari.gaiaorbit.desktop.gui.swing.callback.Callback;
-import gaia.cu9.ari.gaiaorbit.desktop.gui.swing.callback.CallbackTask;
-import gaia.cu9.ari.gaiaorbit.desktop.gui.swing.jsplash.GuiUtility;
-import gaia.cu9.ari.gaiaorbit.desktop.gui.swing.jsplash.JSplashLabel;
-import gaia.cu9.ari.gaiaorbit.desktop.gui.swing.version.VersionChecker;
-import gaia.cu9.ari.gaiaorbit.event.EventManager;
-import gaia.cu9.ari.gaiaorbit.event.Events;
-import gaia.cu9.ari.gaiaorbit.interfce.KeyMappings;
-import gaia.cu9.ari.gaiaorbit.interfce.KeyMappings.ProgramAction;
-import gaia.cu9.ari.gaiaorbit.interfce.TextUtils;
-import gaia.cu9.ari.gaiaorbit.util.ConfInit;
-import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
-import gaia.cu9.ari.gaiaorbit.util.I18n;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -75,14 +60,28 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import net.miginfocom.swing.MigLayout;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Graphics.DisplayMode;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.JsonValue;
+
+import gaia.cu9.ari.gaiaorbit.desktop.GaiaSandboxDesktop;
+import gaia.cu9.ari.gaiaorbit.desktop.gui.swing.callback.Callback;
+import gaia.cu9.ari.gaiaorbit.desktop.gui.swing.callback.CallbackTask;
+import gaia.cu9.ari.gaiaorbit.desktop.gui.swing.jsplash.GuiUtility;
+import gaia.cu9.ari.gaiaorbit.desktop.gui.swing.jsplash.JSplashLabel;
+import gaia.cu9.ari.gaiaorbit.desktop.gui.swing.version.VersionChecker;
+import gaia.cu9.ari.gaiaorbit.event.EventManager;
+import gaia.cu9.ari.gaiaorbit.event.Events;
+import gaia.cu9.ari.gaiaorbit.interfce.KeyMappings;
+import gaia.cu9.ari.gaiaorbit.interfce.KeyMappings.ProgramAction;
+import gaia.cu9.ari.gaiaorbit.interfce.TextUtils;
+import gaia.cu9.ari.gaiaorbit.util.ConfInit;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
+import gaia.cu9.ari.gaiaorbit.util.I18n;
+import net.miginfocom.swing.MigLayout;
 
 /**
  * The configuration dialog to set the resolution, the screen mode, etc.
@@ -276,9 +275,9 @@ public class ConfigDialog extends I18nJFrame {
         final JCheckBox vsync = new JCheckBox(txt("gui.vsync"), GlobalConf.screen.VSYNC);
 
         // Pixel renderer
-        ComboBoxBean[] pixelRenderers = new ComboBoxBean[] { new ComboBoxBean(txt("gui.pixrenderer.normal"), 0), new ComboBoxBean(txt("gui.pixrenderer.bloom"), 1), new ComboBoxBean(txt("gui.pixrenderer.fuzzy"), 2) };
-        final JComboBox<ComboBoxBean> pixelRenderer = new JComboBox<ComboBoxBean>(pixelRenderers);
-        pixelRenderer.setSelectedItem(pixelRenderers[GlobalConf.scene.PIXEL_RENDERER]);
+        //        ComboBoxBean[] pixelRenderers = new ComboBoxBean[] { new ComboBoxBean(txt("gui.pixrenderer.normal"), 0), new ComboBoxBean(txt("gui.pixrenderer.bloom"), 1), new ComboBoxBean(txt("gui.pixrenderer.fuzzy"), 2) };
+        //        final JComboBox<ComboBoxBean> pixelRenderer = new JComboBox<ComboBoxBean>(pixelRenderers);
+        //        pixelRenderer.setSelectedItem(pixelRenderers[GlobalConf.scene.PIXEL_RENDERER]);
 
         // Line renderer
         ComboBoxBean[] lineRenderers = new ComboBoxBean[] { new ComboBoxBean(txt("gui.linerenderer.normal"), 0), new ComboBoxBean(txt("gui.linerenderer.quad"), 1) };
@@ -290,8 +289,8 @@ public class ConfigDialog extends I18nJFrame {
         graphics.add(new JLabel(txt("gui.aa") + ":"));
         graphics.add(msaa);
         graphics.add(vsync, "wrap");
-        graphics.add(new JLabel(txt("gui.pixrenderer") + ":"));
-        graphics.add(pixelRenderer, "span,wrap");
+        //        graphics.add(new JLabel(txt("gui.pixrenderer") + ":"));
+        //        graphics.add(pixelRenderer, "span,wrap");
         graphics.add(new JLabel(txt("gui.linerenderer") + ":"));
         graphics.add(lineRenderer, "span");
 
@@ -841,13 +840,13 @@ public class ConfigDialog extends I18nJFrame {
                     GlobalConf.screen.VSYNC = vsync.isSelected();
 
                     // Pixel renderer
-                    bean = (ComboBoxBean) pixelRenderer.getSelectedItem();
-                    int oldPx = GlobalConf.scene.PIXEL_RENDERER;
-                    GlobalConf.scene.PIXEL_RENDERER = bean.value;
-                    if (oldPx != bean.value) {
-                        // Issue command
-                        EventManager.instance.post(Events.PIXEL_RENDERER_UPDATE);
-                    }
+                    //                    bean = (ComboBoxBean) pixelRenderer.getSelectedItem();
+                    //                    int oldPx = GlobalConf.scene.PIXEL_RENDERER;
+                    //                    GlobalConf.scene.PIXEL_RENDERER = bean.value;
+                    //                    if (oldPx != bean.value) {
+                    //                        // Issue command
+                    //                        EventManager.instance.post(Events.PIXEL_RENDERER_UPDATE);
+                    //                    }
 
                     // Line renderer
                     bean = (ComboBoxBean) lineRenderer.getSelectedItem();

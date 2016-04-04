@@ -1,9 +1,9 @@
 package gaia.cu9.ari.gaiaorbit.util.time;
 
+import java.util.Date;
+
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
-
-import java.util.Date;
 
 public class RealTimeClock implements ITimeFrameProvider {
     private static final double SEC_TO_HOUR = 1d / 3600d;
@@ -45,6 +45,16 @@ public class RealTimeClock implements ITimeFrameProvider {
     @Override
     public double getPace() {
         return SEC_TO_HOUR;
+    }
+
+    @Override
+    public boolean isFixedRateMode() {
+        return false;
+    }
+
+    @Override
+    public float getFixedRate() {
+        return -1;
     }
 
 }

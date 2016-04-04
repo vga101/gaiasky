@@ -1,11 +1,11 @@
 package gaia.cu9.ari.gaiaorbit.util.time;
 
+import java.util.Date;
+
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
-
-import java.util.Date;
 
 /**
  * Keeps pace of the simulation time vs real time and holds the global clock
@@ -116,6 +116,15 @@ public class GlobalClock implements IObserver, ITimeFrameProvider {
     @Override
     public double getPace() {
         return pace;
+    }
+
+    public boolean isFixedRateMode() {
+        return fps > 0;
+    }
+
+    @Override
+    public float getFixedRate() {
+        return fps;
     }
 
 }

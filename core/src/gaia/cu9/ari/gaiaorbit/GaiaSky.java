@@ -1,5 +1,24 @@
 package gaia.cu9.ari.gaiaorbit;
 
+import java.io.File;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import com.badlogic.gdx.Application;
+import com.badlogic.gdx.ApplicationListener;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.assets.loaders.FileHandleResolver;
+import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
+import com.badlogic.gdx.controllers.Controllers;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Pixmap.Format;
+import com.badlogic.gdx.graphics.glutils.FrameBuffer;
+
 import gaia.cu9.ari.gaiaorbit.data.AssetBean;
 import gaia.cu9.ari.gaiaorbit.data.GaiaAttitudeLoader;
 import gaia.cu9.ari.gaiaorbit.data.GaiaAttitudeLoader.GaiaAttitudeLoaderParameter;
@@ -47,25 +66,6 @@ import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 import gaia.cu9.ari.gaiaorbit.util.time.RealTimeClock;
 import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
 
-import java.io.File;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import com.badlogic.gdx.Application;
-import com.badlogic.gdx.ApplicationListener;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.InputMultiplexer;
-import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.assets.loaders.FileHandleResolver;
-import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
-import com.badlogic.gdx.controllers.Controllers;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Pixmap.Format;
-import com.badlogic.gdx.graphics.glutils.FrameBuffer;
-
 /**
  * The main class. Holds all the entities manages the update/draw cycle as well
  * as the image rendering.
@@ -95,6 +95,9 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
     private SceneGraphRenderer sgr;
     private IPostProcessor pp;
 
+    // The frame number
+    public long frames;
+
     // Frame buffer map
     private Map<String, FrameBuffer> fbmap;
 
@@ -106,7 +109,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
     /**
      * Time
      */
-    public ITimeFrameProvider current;
+    public ITimeFrameProvider time;
     private ITimeFrameProvider clock, real;
 
     private boolean initialized = false;
@@ -144,7 +147,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         // Initialize times
         clock = new GlobalClock(0.000277778, new Date());
         real = new RealTimeClock();
-        current = GlobalConf.runtime.REAL_TIME ? real : clock;
+        time = GlobalConf.runtime.REAL_TIME ? real : clock;
 
         // Precompute some math functions
         MathUtilsd.initialize();
@@ -173,7 +176,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
 
         /** LOAD SCENE GRAPH **/
         if (sg == null) {
-            manager.load(GlobalConf.data.DATA_JSON_FILE, ISceneGraph.class, new SGLoaderParameter(current, GlobalConf.performance.MULTITHREADING, GlobalConf.performance.NUMBER_THREADS()));
+            manager.load(GlobalConf.data.DATA_JSON_FILE, ISceneGraph.class, new SGLoaderParameter(time, GlobalConf.performance.MULTITHREADING, GlobalConf.performance.NUMBER_THREADS()));
         }
 
         // Load scene graph
@@ -238,9 +241,9 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
 
         // Update whole tree to initialize positions
         OctreeNode.LOAD_ACTIVE = false;
-        current.update(0.000000001f);
-        sg.update(current, cam);
-        current.update(0);
+        time.update(0.000000001f);
+        sg.update(time, cam);
+        time.update(0);
         OctreeNode.LOAD_ACTIVE = true;
 
         // Initialize input handlers
@@ -283,10 +286,10 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
 
         // Update whole tree to reinitialize positions with the new camera
         // position
-        current.update(0.0000000001f);
-        sg.update(current, cam);
+        time.update(0.0000000001f);
+        sg.update(time, cam);
         sgr.clearLists();
-        current.update(0);
+        time.update(0);
 
         if (!Constants.webgl) {
             Vector3d newCameraDir = focus.pos.cpy().sub(newCameraPos);
@@ -294,7 +297,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         }
 
         // Initialize time in GUI
-        EventManager.instance.post(Events.TIME_CHANGE_INFO, current.getTime());
+        EventManager.instance.post(Events.TIME_CHANGE_INFO, time.getTime());
 
         // Subscribe to events
         EventManager.instance.subscribe(this, Events.TOGGLE_AMBIENT_LIGHT, Events.AMBIENT_LIGHT_CMD);
@@ -310,6 +313,9 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
             // Activate time
             EventManager.instance.post(Events.TOGGLE_TIME_CMD, true, false);
         }
+
+        // Initialize frames
+        frames = 0;
 
         initialized = true;
 
@@ -388,6 +394,8 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
                 }
 
                 sgr.clearLists();
+                // Number of frames
+                frames++;
             }
 
         }
@@ -419,16 +427,16 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
             dtScene = 0;
         }
         // Update clock
-        current.update(dtScene);
+        time.update(dtScene);
 
         // Update events
         EventManager.instance.dispatchDelayedMessages();
 
         // Update cameras
-        cam.update(dt, current);
+        cam.update(dt, time);
 
         // Update scene graph
-        sg.update(current, cam);
+        sg.update(time, cam);
 
     }
 

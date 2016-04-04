@@ -34,4 +34,17 @@ public interface ITimeFrameProvider {
      */
     public double getPace();
 
+    /**
+     * Returns whether the frame rate is set to fixed or not.
+     * @return
+     */
+    public boolean isFixedRateMode();
+
+    /**
+     * Returns the fixed frame rate if the mode is fixed frame rate. Returns
+     * -1 otherwise.
+     * @return
+     */
+    public float getFixedRate();
+
 }

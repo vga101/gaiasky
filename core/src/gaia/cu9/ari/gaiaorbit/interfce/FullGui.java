@@ -355,7 +355,7 @@ public class FullGui implements IGui, IObserver {
     }
 
     public void addWebglInterface() {
-        webglInterface = new WebGLInterface(skin, GaiaSky.instance.current);
+        webglInterface = new WebGLInterface(skin, GaiaSky.instance.time);
         wgl = new Container<WebGLInterface>(webglInterface);
         wgl.setFillParent(true);
         wgl.left().bottom();
