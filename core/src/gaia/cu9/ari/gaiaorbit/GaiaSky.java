@@ -454,20 +454,24 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         Gdx.app.postRunnable(new Runnable() {
             @Override
             public void run() {
-                if (!initialized) {
-                    loadingGui.resize(width, height);
-                } else {
-                    pp.resize(width, height);
-                    gui.resize(width, height);
-                    sgr.resize(width, height);
-                }
-
-                cam.updateAngleEdge(width, height);
-
-                EventManager.instance.post(Events.SCREEN_RESIZE, width, height);
+                resizeImmediate(width, height);
             }
         });
 
+    }
+
+    public void resizeImmediate(final int width, final int height) {
+        if (!initialized) {
+            loadingGui.resize(width, height);
+        } else {
+            pp.resize(width, height);
+            gui.resize(width, height);
+            sgr.resize(width, height);
+        }
+
+        cam.updateAngleEdge(width, height);
+
+        EventManager.instance.post(Events.SCREEN_RESIZE, width, height);
     }
 
     /**

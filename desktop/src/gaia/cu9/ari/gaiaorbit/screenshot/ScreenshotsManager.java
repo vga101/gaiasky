@@ -1,5 +1,9 @@
 package gaia.cu9.ari.gaiaorbit.screenshot;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.glutils.FrameBuffer;
+
+import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
@@ -10,9 +14,6 @@ import gaia.cu9.ari.gaiaorbit.render.IPostProcessor.PostProcessBean;
 import gaia.cu9.ari.gaiaorbit.render.IPostProcessor.RenderType;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
-
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 
 public class ScreenshotsManager implements IObserver {
     public static ScreenshotsManager system;
@@ -56,12 +57,15 @@ public class ScreenshotsManager implements IObserver {
 
     public void renderFrame(IMainRenderer mr) {
         if (GlobalConf.frame.RENDER_OUTPUT) {
+
             switch (GlobalConf.frame.FRAME_MODE) {
             case simple:
                 frameRenderer.saveScreenshot(GlobalConf.frame.RENDER_FOLDER, GlobalConf.frame.RENDER_FILE_NAME, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
                 break;
             case redraw:
+                GaiaSky.instance.resizeImmediate(GlobalConf.frame.RENDER_WIDTH, GlobalConf.frame.RENDER_HEIGHT);
                 renderToImage(mr, mr.getCameraManager(), mr.getPostProcessor().getPostProcessBean(RenderType.frame), GlobalConf.frame.RENDER_WIDTH, GlobalConf.frame.RENDER_HEIGHT, GlobalConf.frame.RENDER_FOLDER, GlobalConf.frame.RENDER_FILE_NAME, frameRenderer);
+                GaiaSky.instance.resizeImmediate(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
                 break;
             }
         }
@@ -75,7 +79,9 @@ public class ScreenshotsManager implements IObserver {
                 file = ImageRenderer.renderToImageGl20(screenshot.folder, ScreenshotCmd.FILENAME, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
                 break;
             case redraw:
+                GaiaSky.instance.resizeImmediate(screenshot.width, screenshot.height);
                 file = renderToImage(mr, mr.getCameraManager(), mr.getPostProcessor().getPostProcessBean(RenderType.screenshot), screenshot.width, screenshot.height, screenshot.folder, ScreenshotCmd.FILENAME, screenshotRenderer);
+                GaiaSky.instance.resizeImmediate(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
                 break;
             }
             if (file != null) {
