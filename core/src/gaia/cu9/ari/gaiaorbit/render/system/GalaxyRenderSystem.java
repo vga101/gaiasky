@@ -116,7 +116,7 @@ public class GalaxyRenderSystem extends ImmediateRenderSystem implements IObserv
             if (UPDATE_POINTS) {
                 /** STARS **/
                 curr.clear();
-
+                float density = Gdx.graphics.getDensity() * 1.66666f;
                 for (float[] star : mw.pointData) {
                     float[] col = new float[] { (float) (rand.nextGaussian() * 0.02f) + 0.9f, (float) (rand.nextGaussian() * 0.02) + 0.8f, (float) (rand.nextGaussian() * 0.02) + 0.95f, rand.nextFloat() * 0.5f };
 
@@ -130,7 +130,7 @@ public class GalaxyRenderSystem extends ImmediateRenderSystem implements IObserv
                     } else {
                         starSize = (float) Math.abs(rand.nextGaussian()) * 5f + 1.0f;
                     }
-                    curr.vertices[curr.vertexIdx + additionalOffset] = starSize;
+                    curr.vertices[curr.vertexIdx + additionalOffset] = starSize * density;
                     curr.vertices[curr.vertexIdx + additionalOffset + 1] = 0.7f;
 
                     // VERTEX

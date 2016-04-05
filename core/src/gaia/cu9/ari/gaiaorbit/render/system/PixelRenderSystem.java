@@ -35,8 +35,19 @@ public class PixelRenderSystem extends ImmediateRenderSystem implements IObserve
     public PixelRenderSystem(RenderGroup rg, int priority, float[] alphas) {
         super(rg, priority, alphas);
         EventManager.instance.subscribe(this, Events.TRANSIT_COLOUR_CMD, Events.ONLY_OBSERVED_STARS_CMD);
-        BRIGHTNESS_FACTOR = Constants.webgl ? 15f : 2.7f;
-        POINT_SIZE = GlobalConf.runtime.STRIPPED_FOV_MODE ? 8 : 8;
+        BRIGHTNESS_FACTOR = Constants.webgl ? 15f : 4f;
+        updatePointSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+
+    }
+
+    protected void updatePointSize(int width, int height) {
+        POINT_SIZE = GlobalConf.runtime.STRIPPED_FOV_MODE ? 8 : 12;
+
+        // Factor POINT_SIZE with resolution
+        float baseResolution = (float) Math.sqrt(1280 * 1280 + 720 * 720);
+        float currentResolution = (float) Math.sqrt(width * width + height * height);
+        float factor = currentResolution / baseResolution;
+        POINT_SIZE = Math.min(15, Math.max(3, POINT_SIZE * factor * Gdx.graphics.getDensity()));
     }
 
     @Override
@@ -150,5 +161,10 @@ public class PixelRenderSystem extends ImmediateRenderSystem implements IObserve
         } else if (event == Events.ONLY_OBSERVED_STARS_CMD) {
             POINT_UPDATE_FLAG = true;
         }
+    }
+
+    @Override
+    public void resize(int w, int h) {
+        updatePointSize(w, h);
     }
 }

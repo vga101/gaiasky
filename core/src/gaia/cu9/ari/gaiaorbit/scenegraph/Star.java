@@ -208,7 +208,7 @@ public class Star extends Particle {
             addToRender(this, RenderGroup.SHADER);
             addToRender(this, RenderGroup.LABEL);
         } else {
-            if (viewAngleApparent >= (THRESHOLD_POINT() / 1.5f) * camera.getFovFactor()) {
+            if (viewAngleApparent >= THRESHOLD_POINT() * camera.getFovFactor()) {
                 addToRender(this, RenderGroup.SHADER);
                 if (distToCamera < modelDistance) {
                     camera.checkClosest(this);

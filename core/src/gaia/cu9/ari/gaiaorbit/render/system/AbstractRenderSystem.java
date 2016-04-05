@@ -1,12 +1,12 @@
 package gaia.cu9.ari.gaiaorbit.render.system;
 
+import java.util.Comparator;
+import java.util.List;
+
 import gaia.cu9.ari.gaiaorbit.render.IRenderable;
 import gaia.cu9.ari.gaiaorbit.render.RenderContext;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
-
-import java.util.Comparator;
-import java.util.List;
 
 public abstract class AbstractRenderSystem implements IRenderSystem {
     /** When this is true, new point information is available, so new data is streamed to the GPU **/
@@ -67,6 +67,11 @@ public abstract class AbstractRenderSystem implements IRenderSystem {
     @Override
     public int compareTo(IRenderSystem o) {
         return Integer.compare(priority, o.getPriority());
+    }
+
+    @Override
+    public void resize(int w, int h) {
+        // Empty, to override in subclasses if needed
     }
 
 }

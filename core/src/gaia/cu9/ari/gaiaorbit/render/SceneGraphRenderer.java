@@ -488,6 +488,9 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
     public void resize(final int w, final int h) {
         extendViewport.update(w, h);
         stretchViewport.update(w, h);
+        for (IRenderSystem rendSys : renderProcesses) {
+            rendSys.resize(w, h);
+        }
     }
 
     private AbstractRenderSystem getLineRenderSystem() {
