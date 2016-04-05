@@ -166,7 +166,7 @@ public class GalaxyRenderSystem extends ImmediateRenderSystem implements IObserv
                         } else {
                             texnum = rand.nextInt(4);
                         }
-                        quadsize = qp.length > 3 ? (qp[3] + 1.0f) * 2e11f : (float) (rand.nextFloat() + 1.0f) * 1.5e11f;
+                        quadsize = qp.length > 3 ? (qp[3] + 1.0f) * .5e11f : (float) (rand.nextFloat() + 1.0f) * 1.5e11f;
                         alphamultiplier = MathUtilsd.lint(quadpointdist, 0, mw.size * 3, 6.0f, 1.0f);
 
                         rotaxis.set(rand.nextFloat(), rand.nextFloat(), rand.nextFloat());
