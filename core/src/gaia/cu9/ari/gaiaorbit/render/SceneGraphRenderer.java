@@ -1,5 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.render;
 
+import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -21,6 +22,7 @@ import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.BufferUtils;
 import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
@@ -50,6 +52,7 @@ import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf.ProgramConf.StereoProfile;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
+import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.MyPools;
 import gaia.cu9.ari.gaiaorbit.util.ds.Multilist;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
@@ -76,6 +79,8 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
     private RenderContext rc;
 
+    private int maxTexSize;
+
     /** Render lists for all render groups **/
     public static Map<RenderGroup, Multilist<IRenderable>> render_lists;
 
@@ -97,6 +102,11 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
     @Override
     public void initialize(AssetManager manager) {
+        IntBuffer intBuffer = BufferUtils.newIntBuffer(16);
+        Gdx.gl20.glGetIntegerv(GL20.GL_MAX_TEXTURE_SIZE, intBuffer);
+        maxTexSize = intBuffer.get();
+        Logger.debug(this.getClass().getSimpleName(), "Max texture size: " + maxTexSize);
+
         ShaderLoader.Pedantic = false;
         ShaderProgram.pedantic = false;
         starShader = new ShaderProgram(Gdx.files.internal("shader/star.vertex.glsl"), Gdx.files.internal("shader/star.rays.fragment.glsl"));

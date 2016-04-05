@@ -252,19 +252,28 @@ public class ConfigDialog extends I18nJFrame {
         mode.add(windowedResolutions);
 
         /** GRAPHICS **/
-        JPanel graphics = new JPanel(new MigLayout("", "[][]", ""));
+        JPanel graphics = new JPanel(new MigLayout("", "[grow,fill][grow,fill][]", ""));
         graphics.setBorder(new TitledBorder(new MatteBorder(new Insets(thick, 0, 0, 0), bcol), txt("gui.graphicssettings"), just, pos));
 
-        // AA
-        JTextArea msaaInfo = new JTextArea(txt("gui.aa.info")) {
-            @Override
-            public void setBorder(Border border) {
-                // No!
+        // Quality
+        JLabel gqTooltip = new JLabel(IconManager.get("gui/info-tooltip"));
+        gqTooltip.setToolTipText(txt("gui.gquality.info"));
+
+        ComboBoxBean[] gqs = new ComboBoxBean[] { new ComboBoxBean(txt("gui.gquality.high"), 0), new ComboBoxBean(txt("gui.gquality.normal"), 1) };
+        final JComboBox<ComboBoxBean> gquality = new JComboBox<ComboBoxBean>(gqs);
+        int index = -1;
+        for (int i = 0; i < GlobalConf.data.DATA_JSON_FILE_GQ.length; i++) {
+            if (GlobalConf.data.DATA_JSON_FILE_GQ[i].equals(GlobalConf.data.DATA_JSON_FILE)) {
+                index = i;
+                break;
             }
-        };
-        msaaInfo.setBackground(transparent);
-        msaaInfo.setForeground(darkgreen);
-        msaaInfo.setEditable(false);
+        }
+        int gqidx = index;
+        gquality.setSelectedItem(gqs[gqidx]);
+
+        // AA
+        JLabel aaTooltip = new JLabel(IconManager.get("gui/info-tooltip"));
+        aaTooltip.setToolTipText(txt("gui.aa.info"));
 
         ComboBoxBean[] aas = new ComboBoxBean[] { new ComboBoxBean(txt("gui.aa.no"), 0), new ComboBoxBean(txt("gui.aa.fxaa"), -1), new ComboBoxBean(txt("gui.aa.nfaa"), -2), new ComboBoxBean(txt("gui.aa.msaa", 2), 2), new ComboBoxBean(txt("gui.aa.msaa", 4), 4), new ComboBoxBean(txt("gui.aa.msaa", 8), 8), new ComboBoxBean(txt("gui.aa.msaa", 16), 16) };
         final JComboBox<ComboBoxBean> msaa = new JComboBox<ComboBoxBean>(aas);
@@ -273,25 +282,24 @@ public class ConfigDialog extends I18nJFrame {
         // Vsync
         final JCheckBox vsync = new JCheckBox(txt("gui.vsync"), GlobalConf.screen.VSYNC);
 
-        // Pixel renderer
-        //        ComboBoxBean[] pixelRenderers = new ComboBoxBean[] { new ComboBoxBean(txt("gui.pixrenderer.normal"), 0), new ComboBoxBean(txt("gui.pixrenderer.bloom"), 1), new ComboBoxBean(txt("gui.pixrenderer.fuzzy"), 2) };
-        //        final JComboBox<ComboBoxBean> pixelRenderer = new JComboBox<ComboBoxBean>(pixelRenderers);
-        //        pixelRenderer.setSelectedItem(pixelRenderers[GlobalConf.scene.PIXEL_RENDERER]);
-
         // Line renderer
         ComboBoxBean[] lineRenderers = new ComboBoxBean[] { new ComboBoxBean(txt("gui.linerenderer.normal"), 0), new ComboBoxBean(txt("gui.linerenderer.quad"), 1) };
         final JComboBox<ComboBoxBean> lineRenderer = new JComboBox<ComboBoxBean>(lineRenderers);
         lineRenderer.setSelectedItem(lineRenderers[GlobalConf.scene.LINE_RENDERER]);
 
-        // AA
-        graphics.add(msaaInfo, "span,wrap");
+        // Add all
+        graphics.add(new JLabel(txt("gui.gquality") + ":"));
+        graphics.add(gquality);
+        graphics.add(gqTooltip, "wrap");
+
         graphics.add(new JLabel(txt("gui.aa") + ":"));
         graphics.add(msaa);
-        graphics.add(vsync, "wrap");
-        //        graphics.add(new JLabel(txt("gui.pixrenderer") + ":"));
-        //        graphics.add(pixelRenderer, "span,wrap");
+        graphics.add(aaTooltip, "wrap");
+
         graphics.add(new JLabel(txt("gui.linerenderer") + ":"));
         graphics.add(lineRenderer, "span");
+
+        graphics.add(vsync, "span,wrap");
 
         /** NOTICE **/
         JPanel notice = new JPanel(new MigLayout("", "[]", ""));
@@ -834,7 +842,10 @@ public class ConfigDialog extends I18nJFrame {
                     GlobalConf.screen.RESIZABLE = resizable.isSelected();
 
                     // Graphics
-                    ComboBoxBean bean = (ComboBoxBean) msaa.getSelectedItem();
+                    ComboBoxBean bean = (ComboBoxBean) gquality.getSelectedItem();
+                    GlobalConf.data.DATA_JSON_FILE = GlobalConf.data.DATA_JSON_FILE_GQ[bean.value];
+
+                    bean = (ComboBoxBean) msaa.getSelectedItem();
                     GlobalConf.postprocess.POSTPROCESS_ANTIALIAS = bean.value;
                     GlobalConf.screen.VSYNC = vsync.isSelected();
 

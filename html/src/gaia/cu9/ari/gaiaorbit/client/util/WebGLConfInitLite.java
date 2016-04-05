@@ -34,7 +34,7 @@ public class WebGLConfInitLite extends ConfInit {
         rc.initialize(false, false, true, false, false, false, 20, true);
 
         DataConf dc = new DataConf();
-        dc.initialize(true, "data/data-lite.json", "", 0, "", 20f, true);
+        dc.initialize(true, "data/data-lite.json", null, "", 0, "", 20f, true);
 
         ProgramConf prc = new ProgramConf();
         prc.initialize(false, false, "dark", "en-GB", false, StereoProfile.CROSSEYE);

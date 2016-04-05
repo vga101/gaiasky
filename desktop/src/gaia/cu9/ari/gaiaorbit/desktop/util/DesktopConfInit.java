@@ -6,7 +6,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.channels.FileChannel;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Properties;
 
 import gaia.cu9.ari.gaiaorbit.desktop.GaiaSandboxDesktop;
@@ -112,6 +114,15 @@ public class DesktopConfInit extends ConfInit {
         DataConf dc = new DataConf();
         boolean DATA_SOURCE_LOCAL = Boolean.parseBoolean(p.getProperty("data.source.local"));
         String DATA_JSON_FILE = p.getProperty("data.json.file");
+        List<String> files = new ArrayList<String>();
+        int i = 0;
+        String gqualityFile;
+        while ((gqualityFile = p.getProperty("data.json.gq." + i)) != null) {
+            files.add(gqualityFile);
+            i++;
+        }
+        String[] DATA_JSON_FILE_GQ = new String[files.size()];
+        DATA_JSON_FILE_GQ = files.toArray(DATA_JSON_FILE_GQ);
         String OBJECT_SERVER_HOSTNAME = p.getProperty("data.source.hostname");
         int OBJECT_SERVER_PORT = Integer.parseInt(p.getProperty("data.source.port"));
         String VISUALIZATION_ID = p.getProperty("data.source.visid");
@@ -123,7 +134,7 @@ public class DesktopConfInit extends ConfInit {
         } else {
             LIMIT_MAG_LOAD = Float.MAX_VALUE;
         }
-        dc.initialize(DATA_SOURCE_LOCAL, DATA_JSON_FILE, OBJECT_SERVER_HOSTNAME, OBJECT_SERVER_PORT, VISUALIZATION_ID, LIMIT_MAG_LOAD, REAL_GAIA_ATTITUDE);
+        dc.initialize(DATA_SOURCE_LOCAL, DATA_JSON_FILE, DATA_JSON_FILE_GQ, OBJECT_SERVER_HOSTNAME, OBJECT_SERVER_PORT, VISUALIZATION_ID, LIMIT_MAG_LOAD, REAL_GAIA_ATTITUDE);
 
         /** PROGRAM CONF **/
         ProgramConf prc = new ProgramConf();

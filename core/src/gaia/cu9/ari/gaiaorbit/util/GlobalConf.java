@@ -276,6 +276,8 @@ public class GlobalConf {
         public boolean DATA_SOURCE_LOCAL = false;
         /** The json data file in case of local data source **/
         public String DATA_JSON_FILE;
+        /** String with different files for different qualities **/
+        public String[] DATA_JSON_FILE_GQ;
         /** If we use the ObjectServer, this contains the visualization id **/
         public String VISUALIZATION_ID;
         /** Object server IP address/hostname **/
@@ -291,9 +293,10 @@ public class GlobalConf {
         /** Whether to use the real attitude of Gaia or the NSL approximation **/
         public boolean REAL_GAIA_ATTITUDE;
 
-        public void initialize(boolean dATA_SOURCE_LOCAL, String dATA_JSON_FILE, String oBJECT_SERVER_HOSTNAME, int oBJECT_SERVER_PORT, String vISUALIZATION_ID, float lIMIT_MAG_LOAD, boolean rEAL_GAIA_ATTITUDE) {
+        public void initialize(boolean dATA_SOURCE_LOCAL, String dATA_JSON_FILE, String[] dATA_JSON_FILE_GQ, String oBJECT_SERVER_HOSTNAME, int oBJECT_SERVER_PORT, String vISUALIZATION_ID, float lIMIT_MAG_LOAD, boolean rEAL_GAIA_ATTITUDE) {
             DATA_SOURCE_LOCAL = dATA_SOURCE_LOCAL;
             DATA_JSON_FILE = dATA_JSON_FILE;
+            DATA_JSON_FILE_GQ = dATA_JSON_FILE_GQ;
             OBJECT_SERVER_HOSTNAME = oBJECT_SERVER_HOSTNAME;
             OBJECT_SERVER_PORT = oBJECT_SERVER_PORT;
             VISUALIZATION_ID = vISUALIZATION_ID;

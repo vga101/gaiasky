@@ -32,9 +32,12 @@
 						"args" : [true],
 						"type" : "sphere",
 						"params" : {
-									"quality" : 10,
+									"quality" : 90,
 									"diameter" : 1.0,
 									"flip" : false
+									},
+						"texture" : {
+									"base" : "data/tex/mercury.jpg"
 									}
 						}
 	},
@@ -71,9 +74,25 @@
 						"args" : [true],
 						"type" : "sphere",
 						"params" : {
-									"quality" : 10,
+									"quality" : 90,
 									"diameter" : 1.0,
 									"flip" : false
+									},
+						"texture" : {
+									"base" : "data/tex/venus-1k.jpg"
+									}
+						},
+	"atmosphere" 	: {
+						"size" : 6300.0,
+						"wavelengths" : [0.5, 0.6, 0.6],
+						"m_Kr" : 0.0025,
+						"m_Km" : 0.001,
+						
+						"params" : {
+									"quality" : 110,
+									// Atmosphere diameters are always 2
+									"diameter" : 2.0,
+									"flip" : true
 									}
 						}
 	},
@@ -110,9 +129,29 @@
 						"args" : [true],
 						"type" : "sphere",
 						"params" : {
-									"quality" : 10,
+									"quality" : 90,
 									"diameter" : 1.0,
 									"flip" : false
+									},
+						"texture" : {
+									"base" : "data/tex/earth.jpg",
+									"specular" : "data/tex/earth-specular.jpg",
+									//"normal" : "data/tex/earth-normal.jpg",
+									"night" : "data/tex/earth-night.jpg"
+									}
+						},
+									
+	"atmosphere" 	: {
+						"size" : 6600.0,
+						"wavelengths" : [0.650, 0.570, 0.475],
+						"m_Kr" : 0.0025,
+						"m_Km" : 0.001,
+						
+						"params" : {
+									"quality" : 110,
+									// Atmosphere diameters are always 2
+									"diameter" : 2.0,
+									"flip" : true
 									}
 						}
 	},
@@ -150,9 +189,26 @@
 						"args" : [true],
 						"type" : "sphere",
 						"params" : {
-									"quality" : 10,
+									"quality" : 90,
 									"diameter" : 1.0,
 									"flip" : false
+									},
+						"texture" : {
+									"base" : "data/tex/mars.jpg",
+									"normal" : "data/tex/mars-normal.jpg"
+									}
+						},
+	"atmosphere" 	: {
+						"size" : 3490.0,
+						"wavelengths" : [0.600, 0.7, 0.7],
+						"m_Kr" : 0.0025,
+						"m_Km" : 0.001,
+						
+						"params" : {
+									"quality" : 110,
+									// Atmosphere diameters are always 2
+									"diameter" : 2.0,
+									"flip" : true
 									}
 						}
 	},
@@ -190,7 +246,7 @@
 						"args" : [true],
 						"type" : "sphere",
 						"params" : {
-									"quality" : 10,
+									"quality" : 90,
 									"diameter" : 1.0,
 									"flip" : false
 									}
@@ -229,13 +285,17 @@
 						"args" : [true],
 						"type" : "ring",
 						"params" : {
-									"quality" : 10,
+									"quality" : 90,
 									"diameter" : 1.0,
 									"flip" : false,
 									"divisions" : 90,
 									"innerradius" : 0.6396826,
 									"outerradius" : 1.20397719
-									}
+									},
+						"texture" : {
+									"base" : "data/tex/saturn.jpg",
+									"ring" : "data/tex/saturn-ring.png"
+									},
 						}
 	},
 
@@ -271,9 +331,12 @@
 						"args" : [true],
 						"type" : "sphere",
 						"params" : {
-									"quality" : 10,
+									"quality" : 90,
 									"diameter" : 1.0,
 									"flip" : false
+									},
+						"texture" : {
+									"base" : "data/tex/uranus.jpg",
 									}
 						}
 	},
@@ -311,9 +374,12 @@
 						"args" : [true],
 						"type" : "sphere",
 						"params" : {
-									"quality" : 10,
+									"quality" : 90,
 									"diameter" : 1.0,
 									"flip" : false
+									},
+						"texture" : {
+									"base" : "data/tex/neptune.jpg",
 									}
 						}
 	}
