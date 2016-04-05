@@ -114,6 +114,7 @@ public class GalaxyGenerator implements IObserver {
     private static List<float[]> generateMilkyWay() throws IOException, RuntimeException {
         StdRandom.setSeed(100l);
 
+        Vector3 aux = new Vector3();
         // x, y, z, size
         List<float[]> particles = new ArrayList<float[]>(N);
 
@@ -123,7 +124,12 @@ public class GalaxyGenerator implements IObserver {
             // 1/30 is the relation diameter/height of the galaxy (diameter=30 Kpc, height=0.3-1 Kpc)
             float z = (float) StdRandom.gaussian(0, 1.0 / 30.0);
 
-            particles.add(new float[] { x, y, z, (float) Math.abs(StdRandom.gaussian(0, 0.4)) });
+            aux.set(x, y, z);
+            float len = aux.len();
+
+            float size = (float) Math.abs(StdRandom.gaussian(0, 0.4f) * (4f - len));
+
+            particles.add(new float[] { x, y, z, size });
         }
 
         return particles;

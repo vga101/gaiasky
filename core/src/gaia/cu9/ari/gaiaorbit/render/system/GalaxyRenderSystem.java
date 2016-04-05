@@ -126,7 +126,7 @@ public class GalaxyRenderSystem extends ImmediateRenderSystem implements IObserv
                     // SIZE
                     float starSize = 0;
                     if (star.length > 3) {
-                        starSize = star[3] * 20f + 1.0f;
+                        starSize = star[3] * 12f + 1f;
                     } else {
                         starSize = (float) Math.abs(rand.nextGaussian()) * 5f + 1.0f;
                     }
