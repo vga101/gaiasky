@@ -89,7 +89,7 @@ public class VisibilityComponent extends GuiComponent implements IObserver {
         }
 
         /** Focus lock **/
-        properMotions = new CheckBox(txt("gui.checkbox.propermotionvectors"), skin);
+        properMotions = new CheckBox(" " + txt("gui.checkbox.propermotionvectors"), skin);
         properMotions.setName("pm vectors");
         properMotions.setChecked(GlobalConf.scene.PROPER_MOTION_VECTORS);
         properMotions.addListener(new EventListener() {
@@ -112,7 +112,7 @@ public class VisibilityComponent extends GuiComponent implements IObserver {
             }
         }
         for (Button b : buttons) {
-            b.setSize(maxw, 20);
+            b.setSize(maxw, GlobalConf.program.UI_THEME.contains("HiDPI") ? 27 : 20);
         }
         visibilityTable.pack();
 

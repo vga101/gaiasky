@@ -31,7 +31,6 @@ import java.util.TreeSet;
 import javax.swing.AbstractAction;
 import javax.swing.ButtonGroup;
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -350,20 +349,20 @@ public class ConfigDialog extends I18nJFrame {
 
         // Theme sample image
         JPanel sampleImagePanel = new JPanel(new MigLayout("", "push[]", ""));
-        final JLabel sampleImage = new JLabel();
-        sampleImagePanel.add(sampleImage);
+        //        final JLabel sampleImage = new JLabel();
+        //        sampleImagePanel.add(sampleImage);
 
         // Theme chooser
-        String[] themes = new String[] { "dark", "bright", "dark-big" };
+        String[] themes = new String[] { "dark", "bright", "dark-big", "HiDPI" };
         final JComboBox<String> theme = new JComboBox<String>(themes);
-        theme.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String selected = (String) theme.getSelectedItem();
-                ImageIcon icon = new ImageIcon(GaiaSandboxDesktop.ASSETS_LOC + "img/themes/" + selected + ".png");
-                sampleImage.setIcon(icon);
-            }
-        });
+        //        theme.addActionListener(new ActionListener() {
+        //            @Override
+        //            public void actionPerformed(ActionEvent e) {
+        //                String selected = (String) theme.getSelectedItem();
+        //                ImageIcon icon = new ImageIcon(GaiaSandboxDesktop.ASSETS_LOC + "img/themes/" + selected + ".png");
+        //                sampleImage.setIcon(icon);
+        //            }
+        //        });
         theme.setSelectedItem(GlobalConf.program.UI_THEME);
 
         ui.add(new JLabel(txt("gui.ui.language") + ":"));

@@ -1,26 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.interfce;
 
-import gaia.cu9.ari.gaiaorbit.event.EventManager;
-import gaia.cu9.ari.gaiaorbit.event.Events;
-import gaia.cu9.ari.gaiaorbit.event.IObserver;
-import gaia.cu9.ari.gaiaorbit.interfce.components.CameraComponent;
-import gaia.cu9.ari.gaiaorbit.interfce.components.GaiaComponent;
-import gaia.cu9.ari.gaiaorbit.interfce.components.ObjectsComponent;
-import gaia.cu9.ari.gaiaorbit.interfce.components.TimeComponent;
-import gaia.cu9.ari.gaiaorbit.interfce.components.VisibilityComponent;
-import gaia.cu9.ari.gaiaorbit.interfce.components.VisualEffectsComponent;
-import gaia.cu9.ari.gaiaorbit.render.ComponentType;
-import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
-import gaia.cu9.ari.gaiaorbit.util.Constants;
-import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
-import gaia.cu9.ari.gaiaorbit.util.I18n;
-import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
-import gaia.cu9.ari.gaiaorbit.util.scene2d.CollapsiblePane;
-import gaia.cu9.ari.gaiaorbit.util.scene2d.CollapsibleWindow;
-import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnImageButton;
-import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnScrollPane;
-import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextButton;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,6 +20,27 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TiledDrawable;
 import com.badlogic.gdx.utils.Align;
+
+import gaia.cu9.ari.gaiaorbit.event.EventManager;
+import gaia.cu9.ari.gaiaorbit.event.Events;
+import gaia.cu9.ari.gaiaorbit.event.IObserver;
+import gaia.cu9.ari.gaiaorbit.interfce.components.CameraComponent;
+import gaia.cu9.ari.gaiaorbit.interfce.components.GaiaComponent;
+import gaia.cu9.ari.gaiaorbit.interfce.components.ObjectsComponent;
+import gaia.cu9.ari.gaiaorbit.interfce.components.TimeComponent;
+import gaia.cu9.ari.gaiaorbit.interfce.components.VisibilityComponent;
+import gaia.cu9.ari.gaiaorbit.interfce.components.VisualEffectsComponent;
+import gaia.cu9.ari.gaiaorbit.render.ComponentType;
+import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
+import gaia.cu9.ari.gaiaorbit.util.Constants;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
+import gaia.cu9.ari.gaiaorbit.util.I18n;
+import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
+import gaia.cu9.ari.gaiaorbit.util.scene2d.CollapsiblePane;
+import gaia.cu9.ari.gaiaorbit.util.scene2d.CollapsibleWindow;
+import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnImageButton;
+import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnScrollPane;
+import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextButton;
 
 public class ControlsWindow extends CollapsibleWindow implements IObserver {
     /**
@@ -175,7 +175,7 @@ public class ControlsWindow extends CollapsibleWindow implements IObserver {
         CollapsiblePane objects = new CollapsiblePane(ui, txt("gui.objects"), objectsComponent.getActor(), skin);
         objects.align(Align.left);
         mainActors.add(objects);
-        
+
         /** ----GAIA SCAN GROUP---- **/
         GaiaComponent gaiaComponent = new GaiaComponent(skin, ui);
         gaiaComponent.initialize();
@@ -256,6 +256,10 @@ public class ControlsWindow extends CollapsibleWindow implements IObserver {
 
             int buttonwidth = 85;
             int buttonheight = 20;
+            if (GlobalConf.program.UI_THEME.contains("HiDPI")) {
+                buttonwidth = 95;
+                buttonheight = 27;
+            }
             runScript.setSize(buttonwidth, buttonheight);
             preferences.setSize(buttonwidth, buttonheight);
             tutorial.setSize(buttonwidth, buttonheight);

@@ -1,12 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.interfce.components;
 
-import gaia.cu9.ari.gaiaorbit.event.EventManager;
-import gaia.cu9.ari.gaiaorbit.event.Events;
-import gaia.cu9.ari.gaiaorbit.util.Constants;
-import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
-import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
-import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnLabel;
-
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -18,6 +11,13 @@ import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
 import com.badlogic.gdx.utils.Align;
+
+import gaia.cu9.ari.gaiaorbit.event.EventManager;
+import gaia.cu9.ari.gaiaorbit.event.Events;
+import gaia.cu9.ari.gaiaorbit.util.Constants;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
+import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
+import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnLabel;
 
 public class VisualEffectsComponent extends GuiComponent {
 
@@ -123,7 +123,7 @@ public class VisualEffectsComponent extends GuiComponent {
             motionGroup.addActor(motion);
 
             /** Lens flare **/
-            lensFlare = new CheckBox(txt("gui.lensflare"), skin);
+            lensFlare = new CheckBox(" " + txt("gui.lensflare"), skin);
             lensFlare.setName("lens flare");
             lensFlare.addListener(new EventListener() {
                 @Override
