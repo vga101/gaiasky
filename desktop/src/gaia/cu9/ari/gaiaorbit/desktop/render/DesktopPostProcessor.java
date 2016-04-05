@@ -1,14 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.desktop.render;
 
-import gaia.cu9.ari.gaiaorbit.event.EventManager;
-import gaia.cu9.ari.gaiaorbit.event.Events;
-import gaia.cu9.ari.gaiaorbit.event.IObserver;
-import gaia.cu9.ari.gaiaorbit.render.IPostProcessor;
-import gaia.cu9.ari.gaiaorbit.util.Constants;
-import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
-import gaia.cu9.ari.gaiaorbit.util.I18n;
-import gaia.cu9.ari.gaiaorbit.util.Logger;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.bitfire.postprocessing.PostProcessor;
@@ -18,6 +9,15 @@ import com.bitfire.postprocessing.effects.LensFlare2;
 import com.bitfire.postprocessing.effects.MotionBlur;
 import com.bitfire.postprocessing.effects.Nfaa;
 import com.bitfire.utils.ShaderLoader;
+
+import gaia.cu9.ari.gaiaorbit.event.EventManager;
+import gaia.cu9.ari.gaiaorbit.event.Events;
+import gaia.cu9.ari.gaiaorbit.event.IObserver;
+import gaia.cu9.ari.gaiaorbit.render.IPostProcessor;
+import gaia.cu9.ari.gaiaorbit.util.Constants;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
+import gaia.cu9.ari.gaiaorbit.util.I18n;
+import gaia.cu9.ari.gaiaorbit.util.Logger;
 
 public class DesktopPostProcessor implements IPostProcessor, IObserver {
 
@@ -80,6 +80,7 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
         // MOTION BLUR
         ppb.motionblur = new MotionBlur();
         ppb.motionblur.setBlurOpacity(GlobalConf.postprocess.POSTPROCESS_MOTION_BLUR);
+        ppb.motionblur.setEnabled(GlobalConf.postprocess.POSTPROCESS_MOTION_BLUR > 0);
         ppb.pp.addEffect(ppb.motionblur);
 
         // BLOOM
@@ -107,11 +108,13 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
         if (GlobalConf.postprocess.POSTPROCESS_ANTIALIAS == -1) {
             ppb.antialiasing = new Fxaa(width, height);
             ((Fxaa) ppb.antialiasing).setSpanMax(2f);
-        } else {
+        } else if (GlobalConf.postprocess.POSTPROCESS_ANTIALIAS == -2) {
             ppb.antialiasing = new Nfaa(width, height);
         }
-        ppb.antialiasing.setEnabled(GlobalConf.postprocess.POSTPROCESS_ANTIALIAS < 0);
-        ppb.pp.addEffect(ppb.antialiasing);
+        if (ppb.antialiasing != null) {
+            ppb.antialiasing.setEnabled(GlobalConf.postprocess.POSTPROCESS_ANTIALIAS < 0);
+            ppb.pp.addEffect(ppb.antialiasing);
+        }
 
         return ppb;
     }
