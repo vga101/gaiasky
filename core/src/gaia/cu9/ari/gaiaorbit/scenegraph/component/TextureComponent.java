@@ -1,8 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph.component;
 
-import gaia.cu9.ari.gaiaorbit.data.AssetBean;
-import gaia.cu9.ari.gaiaorbit.util.Constants;
-
 import java.util.Map;
 
 import com.badlogic.gdx.assets.AssetManager;
@@ -14,6 +11,9 @@ import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.attributes.BlendingAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
+
+import gaia.cu9.ari.gaiaorbit.data.AssetBean;
+import gaia.cu9.ari.gaiaorbit.util.Constants;
 
 /**
  * A basic component that contains the info on the textures.
