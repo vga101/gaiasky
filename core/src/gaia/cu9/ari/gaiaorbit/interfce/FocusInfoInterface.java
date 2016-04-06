@@ -1,5 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.interfce;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -229,6 +230,7 @@ public class FocusInfoInterface extends Table implements IObserver {
         private CelestialBody focus;
         public Object monitor;
         public boolean executing = false;
+        final LabelStyle linkStyle = skin.get("link", LabelStyle.class);
 
         public NetworkThread() {
             super("NetworkThread");
@@ -266,18 +268,23 @@ public class FocusInfoInterface extends Table implements IObserver {
                         Logger.info(this.getClass().getSimpleName(), "Looking up network resources for '" + focus.name + "'");
 
                         String wikiname = focus.name.replace(' ', '_');
-                        LabelStyle linkStyle = skin.get("link", LabelStyle.class);
 
-                        String gaialink = getGaiaLink(focus);
-                        String wikilink = getWikiLink(wikiname, focus);
-                        String simbadlink = getSimbadLink(focus);
+                        final String gaialink = getGaiaLink(focus);
+                        final String wikilink = getWikiLink(wikiname, focus);
+                        final String simbadlink = getSimbadLink(focus);
 
-                        if (gaialink != null)
-                            moreInfo.add(new Link("Gaia", linkStyle, gaialink));
-                        if (simbadlink != null)
-                            moreInfo.add(new Link("Simbad", linkStyle, simbadlink)).padLeft(10);
-                        if (wikilink != null)
-                            moreInfo.add(new Link("Wikipedia ", linkStyle, wikilink)).padLeft(10);
+                        Gdx.app.postRunnable(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (gaialink != null)
+                                    moreInfo.add(new Link("Gaia", linkStyle, gaialink));
+                                if (simbadlink != null)
+                                    moreInfo.add(new Link("Simbad", linkStyle, simbadlink)).padLeft(10);
+                                if (wikilink != null)
+                                    moreInfo.add(new Link("Wikipedia ", linkStyle, wikilink)).padLeft(10);
+                            }
+
+                        });
 
                         pack();
                         focus = null;
@@ -300,7 +307,7 @@ public class FocusInfoInterface extends Table implements IObserver {
             String url = "http://simbad.u-strasbg.fr/simbad/sim-id?Ident=";
             if (focus instanceof Star) {
                 Star st = (Star) focus;
-                if (st.hip >= 0) {
+                if (st.hip > 0) {
                     return url + "HIP+" + st.hip;
                 } else if (st.tychostr != null) {
                     return url + "TYC+" + st.tychostr;

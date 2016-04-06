@@ -90,10 +90,12 @@ public class HYGCSVLoader extends AbstractCatalogLoader implements ISceneGraphLo
                 name = st[6].trim().replaceAll("\\s+", " ");
             } else if (!st[5].trim().isEmpty()) {
                 name = st[5].trim().replaceAll("\\s+", " ");
+            } else if (!st[1].trim().isEmpty() && Parser.parseInt(st[1]) > 0) {
+                name = "HIP " + st[1].trim();
+            } else if (!st[2].trim().isEmpty() && Parser.parseInt(st[2]) > 0) {
+                name = "HD " + st[2].trim();
             } else if (!st[4].trim().isEmpty()) {
                 name = st[4].trim().replaceAll("\\s+", " ");
-            } else if (!st[2].trim().isEmpty()) {
-                name = "Hip " + st[1].trim();
             }
             long starid = Parser.parseLong(st[0].trim());
             int hip = Parser.parseInt(st[1].trim());
