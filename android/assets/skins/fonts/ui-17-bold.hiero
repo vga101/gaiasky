@@ -1,12 +1,7 @@
-font.name=Arial
+font.name=DejaVu Sans Condensed
 font.size=17
-font.bold=false
+font.bold=true
 font.italic=false
-font.gamma=0.0
-font.mono=false
-
-font2.file=
-font2.use=false
 
 pad.top=0
 pad.right=0
