@@ -28,6 +28,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.TwoWayHashmap;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnScrollPane;
@@ -91,8 +92,8 @@ public class ObjectsComponent extends GuiComponent implements IObserver {
         if (tree) {
             final Tree objectsTree = new Tree(skin, "bright");
             objectsTree.setName("objects list");
-            objectsTree.setPadding(1);
-            objectsTree.setIconSpacing(1, 1);
+            objectsTree.setPadding(1 * GlobalConf.SCALE_FACTOR);
+            objectsTree.setIconSpacing(1 * GlobalConf.SCALE_FACTOR, 1 * GlobalConf.SCALE_FACTOR);
             objectsTree.setYSpacing(0);
             Array<Node> nodes = createTree(sg.getRoot().children);
             for (Node node : nodes) {
@@ -178,11 +179,11 @@ public class ObjectsComponent extends GuiComponent implements IObserver {
             focusListScrollPane.setFadeScrollBars(false);
             focusListScrollPane.setScrollingDisabled(true, false);
 
-            focusListScrollPane.setHeight(tree ? 200 : 100);
+            focusListScrollPane.setHeight(tree ? 200  * GlobalConf.SCALE_FACTOR : 100 * GlobalConf.SCALE_FACTOR);
             focusListScrollPane.setWidth(160);
         }
 
-        VerticalGroup objectsGroup = new VerticalGroup().align(Align.left).space(3);
+        VerticalGroup objectsGroup = new VerticalGroup().align(Align.left).space(3 * GlobalConf.SCALE_FACTOR);
         objectsGroup.addActor(searchBox);
         if (focusListScrollPane != null) {
             objectsGroup.addActor(focusListScrollPane);

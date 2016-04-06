@@ -27,6 +27,8 @@ public class GlobalConf {
     public static final String ICON_URL = "http://www.zah.uni-heidelberg.de/uploads/pics/gaiasandboxlogo_02.png";
 
     public static final String TEXTURES_FOLDER = "data/tex/";
+    
+    public static float SCALE_FACTOR = 1.0f;
 
     public static interface IConf {
     }

@@ -192,23 +192,25 @@ public class CameraComponent extends GuiComponent implements IObserver {
         cameraGroup.addActor(cameraMode);
         cameraGroup.addActor(fovLabel);
 
+       float space3 = 3 * GlobalConf.SCALE_FACTOR;
+        
         HorizontalGroup fovGroup = new HorizontalGroup();
-        fovGroup.space(3);
+        fovGroup.space(space3);
         fovGroup.addActor(fieldOfView);
         fovGroup.addActor(fov);
 
         HorizontalGroup speedGroup = new HorizontalGroup();
-        speedGroup.space(3);
+        speedGroup.space(space3);
         speedGroup.addActor(cameraSpeed);
         speedGroup.addActor(speed);
 
         HorizontalGroup rotateGroup = new HorizontalGroup();
-        rotateGroup.space(3);
+        rotateGroup.space(space3);
         rotateGroup.addActor(rotateSpeed);
         rotateGroup.addActor(rotate);
 
         HorizontalGroup turnGroup = new HorizontalGroup();
-        turnGroup.space(3);
+        turnGroup.space(space3);
         turnGroup.addActor(turnSpeed);
         turnGroup.addActor(turn);
 

@@ -5,6 +5,7 @@ import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.interfce.DateDialog;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory.DateType;
@@ -106,7 +107,7 @@ public class TimeComponent extends GuiComponent implements IObserver {
         inputPace = new OwnTextField(Double.toString(GaiaSky.instance.time.getPace()), skin);
         inputPace.setName("input pace");
         inputPace.setMaxLength(15);
-        inputPace.setWidth(60f);
+        inputPace.setWidth(60f * GlobalConf.SCALE_FACTOR);
         inputPace.addListener(new EventListener() {
             @Override
             public boolean handle(Event event) {
@@ -126,16 +127,16 @@ public class TimeComponent extends GuiComponent implements IObserver {
             }
         });
 
-        VerticalGroup timeGroup = new VerticalGroup().align(Align.left).space(3).padTop(3);
+        VerticalGroup timeGroup = new VerticalGroup().align(Align.left).space(3 * GlobalConf.SCALE_FACTOR).padTop(3 * GlobalConf.SCALE_FACTOR);
 
         HorizontalGroup dateGroup = new HorizontalGroup();
-        dateGroup.space(4);
+        dateGroup.space(4 * GlobalConf.SCALE_FACTOR);
         dateGroup.addActor(date);
         dateGroup.addActor(dateEdit);
         timeGroup.addActor(dateGroup);
 
         HorizontalGroup paceGroup = new HorizontalGroup();
-        paceGroup.space(1);
+        paceGroup.space(1 * GlobalConf.SCALE_FACTOR);
         paceGroup.addActor(paceLabel);
         paceGroup.addActor(minus);
         paceGroup.addActor(inputPace);

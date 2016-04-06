@@ -14,6 +14,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ModelBody;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
@@ -37,6 +38,8 @@ public class FocusInfoInterface extends Table implements IObserver {
     INumberFormat nf, sf;
 
     private NetworkThread daemon;
+    
+    float pad5, pad10;
 
     public FocusInfoInterface(Skin skin) {
         super(skin);
@@ -45,11 +48,14 @@ public class FocusInfoInterface extends Table implements IObserver {
 
         nf = NumberFormatFactory.getFormatter("#0.###");
         sf = NumberFormatFactory.getFormatter("##0.###E0");
+        
+        pad10 = 10 * GlobalConf.SCALE_FACTOR;
+        pad5 = 5 *  GlobalConf.SCALE_FACTOR;
 
         focusInfo = new Table();
-        focusInfo.pad(5);
+        focusInfo.pad(pad5);
         cameraInfo = new Table();
-        cameraInfo.pad(5);
+        cameraInfo.pad(pad5);
         moreInfo = new Table();
 
         focusName = new OwnLabel("", skin, "hud-header");
@@ -66,7 +72,7 @@ public class FocusInfoInterface extends Table implements IObserver {
         camVel = new OwnLabel("", skin, "hud");
         camPos = new OwnLabel("", skin, "hud");
 
-        float w = 100;
+        float w = 100 * GlobalConf.SCALE_FACTOR;
         focusId.setWidth(w);
         focusRA.setWidth(w);
         focusDEC.setWidth(w);
@@ -77,36 +83,36 @@ public class FocusInfoInterface extends Table implements IObserver {
         focusInfo.add(focusName).left().colspan(2);
         focusInfo.row();
         focusInfo.add(new OwnLabel("ID", skin, "hud-big")).left();
-        focusInfo.add(focusId).left().padLeft(10);
+        focusInfo.add(focusId).left().padLeft(pad10);
         focusInfo.row();
         focusInfo.add(new OwnLabel(txt("gui.focusinfo.alpha"), skin, "hud-big")).left();
-        focusInfo.add(focusRA).left().padLeft(10);
+        focusInfo.add(focusRA).left().padLeft(pad10);
         focusInfo.row();
         focusInfo.add(new OwnLabel(txt("gui.focusinfo.delta"), skin, "hud-big")).left();
-        focusInfo.add(focusDEC).left().padLeft(10);
+        focusInfo.add(focusDEC).left().padLeft(pad10);
         focusInfo.row();
         focusInfo.add(new OwnLabel(txt("gui.focusinfo.appmag"), skin, "hud-big")).left();
-        focusInfo.add(focusAppMag).left().padLeft(10);
+        focusInfo.add(focusAppMag).left().padLeft(pad10);
         focusInfo.row();
         focusInfo.add(new OwnLabel(txt("gui.focusinfo.absmag"), skin, "hud-big")).left();
-        focusInfo.add(focusAbsMag).left().padLeft(10);
+        focusInfo.add(focusAbsMag).left().padLeft(pad10);
         focusInfo.row();
         focusInfo.add(new OwnLabel(txt("gui.focusinfo.angle"), skin, "hud-big")).left();
-        focusInfo.add(focusAngle).left().padLeft(10);
+        focusInfo.add(focusAngle).left().padLeft(pad10);
         focusInfo.row();
         focusInfo.add(new OwnLabel(txt("gui.focusinfo.distance"), skin, "hud-big")).left();
-        focusInfo.add(focusDist).left().padLeft(10);
+        focusInfo.add(focusDist).left().padLeft(pad10);
         focusInfo.row();
         focusInfo.add(new OwnLabel(txt("gui.focusinfo.radius"), skin, "hud-big")).left();
-        focusInfo.add(focusRadius).left().padLeft(10);
+        focusInfo.add(focusRadius).left().padLeft(pad10);
         focusInfo.row();
         //        focusInfo.add(new OwnLabel(txt("gui.focusinfo.moreinfo"), skin, "hud-big")).left();
-        focusInfo.add(moreInfo).center().colspan(2).padBottom(5).padTop(10);
+        focusInfo.add(moreInfo).center().colspan(2).padBottom(pad5).padTop(pad10);
 
         cameraInfo.add(camName).left().colspan(2);
         cameraInfo.row();
         cameraInfo.add(new OwnLabel(txt("gui.camera.vel"), skin, "hud-big")).left();
-        cameraInfo.add(camVel).left().padLeft(10);
+        cameraInfo.add(camVel).left().padLeft(pad10);
         cameraInfo.row();
         cameraInfo.add(camPos).left().colspan(2);
 
@@ -279,9 +285,9 @@ public class FocusInfoInterface extends Table implements IObserver {
                                 if (gaialink != null)
                                     moreInfo.add(new Link("Gaia", linkStyle, gaialink));
                                 if (simbadlink != null)
-                                    moreInfo.add(new Link("Simbad", linkStyle, simbadlink)).padLeft(10);
+                                    moreInfo.add(new Link("Simbad", linkStyle, simbadlink)).padLeft(pad10);
                                 if (wikilink != null)
-                                    moreInfo.add(new Link("Wikipedia ", linkStyle, wikilink)).padLeft(10);
+                                    moreInfo.add(new Link("Wikipedia ", linkStyle, wikilink)).padLeft(pad10);
                             }
 
                         });

@@ -108,11 +108,11 @@ public class VisibilityComponent extends GuiComponent implements IObserver {
         float maxw = 0f;
         for (Button b : buttons) {
             if (b.getWidth() > maxw) {
-                maxw = b.getWidth();
+                maxw = b.getWidth() ;
             }
         }
         for (Button b : buttons) {
-            b.setSize(maxw, GlobalConf.program.UI_THEME.contains("HiDPI") ? 27 : 20);
+            b.setSize(maxw, 20 * GlobalConf.SCALE_FACTOR);
         }
         visibilityTable.pack();
 

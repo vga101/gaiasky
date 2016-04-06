@@ -98,8 +98,6 @@ public class ConfigDialog extends I18nJFrame {
 	private static final int just = TitledBorder.LEADING;
 	private static final int pos = TitledBorder.ABOVE_TOP;
 	private static int thick = 2;
-
-	private static float scaleFactor;
 	
 	JFrame frame;
 	JLabel checkLabel;
@@ -116,8 +114,8 @@ public class ConfigDialog extends I18nJFrame {
 		Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
 		Vector2 screenSize = new Vector2((float)size.getWidth(), (float)size.getHeight());
 		Vector2 referenceSize = new Vector2(1920, 1080);
-		scaleFactor = Math.max(0.8f,  Math.min(screenSize.x, screenSize.y) / Math.min(referenceSize.x, referenceSize.y));
-		FontUtilities.setFontScale(scaleFactor);
+		GlobalConf.SCALE_FACTOR = Math.max(0.8f,  Math.min(screenSize.x, screenSize.y) / Math.min(referenceSize.x, referenceSize.y));
+		FontUtilities.setFontScale(GlobalConf.SCALE_FACTOR);
 		
 		thick = scale(thick);
 		
@@ -1331,7 +1329,7 @@ public class ConfigDialog extends I18nJFrame {
 	}
 	
 	private int scale(int value){
-		return Math.round(value * scaleFactor);
+		return Math.round(value * GlobalConf.SCALE_FACTOR);
 	}
 
 }
