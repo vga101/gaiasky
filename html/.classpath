@@ -4,5 +4,6 @@
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry exported="true" kind="con" path="org.springsource.ide.eclipse.gradle.classpathcontainer"/>
 	<classpathentry exported="true" kind="con" path="com.google.gwt.eclipse.core.GWT_CONTAINER"/>
+	<classpathentry kind="lib" path="/home/tsagrista/git/gaiasandbox/core/lib/postprocessing.jar"/>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>
