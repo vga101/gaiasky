@@ -28,6 +28,9 @@ public abstract class ModelBody extends CelestialBody {
     /** MODEL **/
     public ModelComponent mc;
 
+    /** NAME FOR WIKIPEDIA **/
+    public String wikiname;
+
     public ModelBody() {
         super();
         localTransform = new Matrix4();
@@ -154,4 +157,13 @@ public abstract class ModelBody extends CelestialBody {
     public boolean renderText() {
         return name != null && Math.pow(viewAngle, 1.1) > TH_OVER_FACTOR * 100;
     }
+
+    public String getWikiname() {
+        return wikiname;
+    }
+
+    public void setWikiname(String wikiname) {
+        this.wikiname = wikiname;
+    }
+
 }

@@ -2,6 +2,7 @@
 
 	{
 		"name" : "Vesta",
+		"wikiname" : "4 Vesta",
 		"color" : [.6, .6, .6, 1.0],
 		"size" : 286.3,
 		"ct" : Asteroids,
@@ -46,6 +47,7 @@
 	
 	{
 		"name" : "Ceres",
+		"wikiname" : "Ceres (dwarf planet)",
 		"color" : [.6, .6, .6, 1.0],
 		"size" : 238.1,
 		"ct" : Asteroids,
@@ -89,6 +91,7 @@
 	
 	{
 		"name" : "Pallas",
+		"wikiname" : "2 Pallas",
 		"color" : [.6, .6, .6, 1.0],
 		"size" : 272.0,
 		"ct" : Asteroids,
@@ -132,6 +135,7 @@
 	
 	{
 		"name" : "Hygieia",
+		"wikiname" : "10 Hygiea",
 		"color" : [.6, .6, .6, 1.0],
 		"size" : 215.5,
 		"ct" : Asteroids,

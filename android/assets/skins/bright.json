@@ -95,6 +95,8 @@ com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
 	hud-big:	 { font: ui-13, fontColor: black },
 	hud-header:	 { font: ui-15, fontColor: blue },
 	
+	link: { font: ui-11, fontColor: blue},
+	
 	tooltip: { font: ui-11, fontColor: black, background: tooltip-bg }
 },
 com.badlogic.gdx.scenes.scene2d.ui.TextField$TextFieldStyle: {

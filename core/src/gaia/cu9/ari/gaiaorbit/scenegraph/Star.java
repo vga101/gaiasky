@@ -44,6 +44,8 @@ public class Star extends Particle {
     public int hip = -1;
     /** TYCHO star number, negative if non existent **/
     public int tycho = -1;
+    /** TYCHO string **/
+    public String tychostr = null;
 
     public static void initModel() {
         if (mc == null) {

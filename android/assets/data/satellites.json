@@ -2,6 +2,7 @@
 
 	{
 	"name" : "Gaia",
+	"wikiname" : "Gaia (spacecraft)",
 	"color" : [.7, .8, .1, 1.0],
 	// 5m of radius, 0.005 Km
 	"size" : 0.005,

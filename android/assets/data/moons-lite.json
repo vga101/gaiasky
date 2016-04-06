@@ -2,6 +2,7 @@
 
 	{
 	"name" : "Moon",
+	"wikiname" : "Moon",
 	"color" : [.7, .7, .7, 1.0],
 	"size" : 1737.4,
 	"ct" : Moons,
@@ -46,6 +47,7 @@
 	
 	{
 		"name" : "Phobos",
+		"wikiname" : "Phobos (moon)",
 		"color" : [.6, .4, .4, 1.0],
 		"size" : 11.2667,
 		"ct" : Moons,
@@ -86,6 +88,7 @@
 	
 	{
 		"name" : "Deimos",
+		"wikiname" : "Deimos (moon)",
 		"color" : [.6, .4, .4, 1.0],
 		"size" : 6.38,
 		"ct" : Moons,
@@ -126,6 +129,7 @@
 	
 	{
 		"name" : "Amalthea",
+		"wikiname" : "Amalthea (moon)",
 		"color" : [.6, .4, .4, 1.0],
 		"size" : 83.5,
 		"ct" : Moons,
@@ -163,6 +167,7 @@
 	
 	{
 		"name" : "Io",
+		"wikiname" : "Io (moon)",
 		"color" : [.6, .4, .4, 1.0],
 		"size" : 1821.6,
 		"ct" : Moons,
@@ -207,6 +212,7 @@
 	
 	{
 		"name" : "Europa",
+		"wikiname" : "Europa (moon)",
 		"color" : [.6, .4, .4, 1.0],
 		"size" : 1560.8,
 		"ct" : Moons,
@@ -251,6 +257,7 @@
 	
 	{
 		"name" : "Ganymede",
+		"wikiname" : "Ganymede (moon)",
 		"color" : [.6, .4, .4, 1.0],
 		"size" : 2631.2,
 		"ct" : Moons,
@@ -295,6 +302,7 @@
 
 	{
 		"name" : "Callisto",
+		"wikiname" : "Callisto (moon)",
 		"color" : [.6, .4, .4, 1.0],
 		"size" : 2410.3,
 		"ct" : Moons,
@@ -339,6 +347,7 @@
 
 	{
 		"name" : "Prometheus",
+		"wikiname" : "Prometheus (moon)",
 		"color" : [.6, .4, .4, 1.0],
 		"size" : 6.38,
 		"ct" : Moons,
