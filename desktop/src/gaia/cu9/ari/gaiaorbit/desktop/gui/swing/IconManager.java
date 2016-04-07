@@ -1,11 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.desktop.gui.swing;
 
-import gaia.cu9.ari.gaiaorbit.event.EventManager;
-import gaia.cu9.ari.gaiaorbit.event.Events;
-import gaia.cu9.ari.gaiaorbit.render.ComponentType;
-import gaia.cu9.ari.gaiaorbit.util.I18n;
-import gaia.cu9.ari.gaiaorbit.util.Logger;
-
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -15,6 +9,11 @@ import javax.swing.ImageIcon;
 
 import com.badlogic.gdx.files.FileHandle;
 
+import gaia.cu9.ari.gaiaorbit.event.EventManager;
+import gaia.cu9.ari.gaiaorbit.event.Events;
+import gaia.cu9.ari.gaiaorbit.render.ComponentType;
+import gaia.cu9.ari.gaiaorbit.util.I18n;
+
 public class IconManager {
 
     public static Map<String, Icon> icons;
@@ -22,11 +21,11 @@ public class IconManager {
     public static void initialise(FileHandle folder) {
         if (folder.exists() && folder.isDirectory()) {
             icons = new HashMap<String, Icon>();
-            Logger.info(I18n.bundle.get("notif.icon.initialising"));
+            // Logger.info(I18n.bundle.get("notif.icon.initialising"));
 
             initialiseDirectory(folder, "");
 
-            Logger.info(I18n.bundle.format("notif.icon.init", icons.size()));
+            // Logger.info(I18n.bundle.format("notif.icon.init", icons.size()));
         }
     }
 

@@ -21,6 +21,8 @@ public class WebGLConfInitLite extends ConfInit {
 
     @Override
     public void initGlobalConf() throws Exception {
+        GlobalConf.updateScaleFactor(1);
+
         VersionConf vc = new VersionConf();
         vc.initialize("0.706b", null, null, null, null, 0, 706);
 

@@ -1,5 +1,8 @@
 package gaia.cu9.ari.gaiaorbit.desktop.util;
 
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.geom.AffineTransform;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -84,6 +87,12 @@ public class DesktopConfInit extends ConfInit {
 
     @Override
     public void initGlobalConf() throws Exception {
+
+        // Scale factor
+        // Calculate scale factor
+        GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+        AffineTransform at = gd.getDefaultConfiguration().getNormalizingTransform();
+        GlobalConf.updateScaleFactor((float) (at.getScaleX() / 1.33333f));
 
         /** VERSION CONF **/
         VersionConf vc = new VersionConf();

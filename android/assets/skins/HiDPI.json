@@ -1,5 +1,5 @@
 {
-com.badlogic.gdx.graphics.g2d.BitmapFont: { ui-9: { file: fonts/ui-9.fnt } },
+com.badlogic.gdx.graphics.g2d.BitmapFont: { ui-09: { file: fonts/ui-09.fnt } },
 com.badlogic.gdx.graphics.g2d.BitmapFont: { ui-10: { file: fonts/ui-10.fnt } },
 com.badlogic.gdx.graphics.g2d.BitmapFont: { ui-11: { file: fonts/ui-11.fnt } },
 com.badlogic.gdx.graphics.g2d.BitmapFont: { ui-12: { file: fonts/ui-12.fnt } },
@@ -13,6 +13,8 @@ com.badlogic.gdx.graphics.g2d.BitmapFont: { ui-19: { file: fonts/ui-19.fnt } },
 com.badlogic.gdx.graphics.g2d.BitmapFont: { ui-20: { file: fonts/ui-20.fnt } },
 com.badlogic.gdx.graphics.g2d.BitmapFont: { ui-21: { file: fonts/ui-21.fnt } },
 com.badlogic.gdx.graphics.g2d.BitmapFont: { ui-23: { file: fonts/ui-23.fnt } },
+com.badlogic.gdx.graphics.g2d.BitmapFont: { ui-23-bold: { file: fonts/ui-23-bold.fnt } },
+com.badlogic.gdx.graphics.g2d.BitmapFont: { ui-25: { file: fonts/ui-25.fnt } },
 com.badlogic.gdx.graphics.g2d.BitmapFont: { ui-25-shadow: { file: fonts/ui-25-shadow.fnt } },
 com.badlogic.gdx.graphics.Color: {
 	green: { a: 1, b: 0, g: 1, r: 0 },
@@ -97,7 +99,7 @@ com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
 	hud:	 { font: ui-18, fontColor: white },
 	hud-med:	 { font: ui-17-bold, fontColor: white },
 	hud-big:	 { font: ui-19, fontColor: white },
-	hud-header:	 { font: ui-21, fontColor: orange },
+	hud-header:	 { font: ui-25-shadow, fontColor: orange },
 	
 	link: { font: ui-17, fontColor: blue},
 	

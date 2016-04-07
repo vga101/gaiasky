@@ -1,7 +1,9 @@
-font.name=SansSerif
+font.name=Open Sans
 font.size=11
 font.bold=false
 font.italic=false
+font.gamma=0.0
+font.mono=false
 
 font2.file=/home/tsagrista/ws/GaiaOrbit-android/assets/skins/default/jgfont.fnt
 font2.use=false

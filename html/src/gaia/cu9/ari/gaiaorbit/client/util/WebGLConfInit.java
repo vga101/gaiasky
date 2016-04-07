@@ -23,6 +23,8 @@ public class WebGLConfInit extends ConfInit {
     public void initGlobalConf() throws Exception {
         this.webgl = true;
 
+        GlobalConf.updateScaleFactor(1);
+
         VersionConf vc = new VersionConf();
         vc.initialize("0.706b", null, null, null, null, 0, 706);
 

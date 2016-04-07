@@ -1,11 +1,11 @@
 font.name=Open Sans
-font.size=21
+font.size=25
 font.bold=false
 font.italic=false
 font.gamma=0.0
 font.mono=false
 
-font2.file=/home/tsagrista/.fonts/Tahoma.ttf
+font2.file=/home/tsagrista/ws/GaiaOrbit-android/assets/skins/default/jgfont.fnt
 font2.use=false
 
 pad.top=0

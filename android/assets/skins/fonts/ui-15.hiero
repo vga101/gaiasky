@@ -1,7 +1,9 @@
-font.name=SansSerif
+font.name=Open Sans
 font.size=15
 font.bold=false
 font.italic=false
+font.gamma=0.0
+font.mono=false
 
 font2.file=/home/tsagrista/.fonts/Tahoma.ttf
 font2.use=false

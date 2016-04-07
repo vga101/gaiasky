@@ -19,7 +19,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.badlogic.gdx.backends.lwjgl.LwjglFiles;
-import com.badlogic.gdx.backends.lwjgl.LwjglGraphics;
 
 import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.data.DesktopSceneGraphImplementationProvider;
@@ -281,7 +280,19 @@ public class GaiaSandboxDesktop implements IObserver {
             ((Throwable) data[0]).printStackTrace(System.err);
             break;
         case POST_NOTIFICATION:
-            System.out.println((String) data[0]);
+            String message = "";
+            boolean perm = false;
+            for (int i = 0; i < data.length; i++) {
+                if (i == data.length - 1 && data[i] instanceof Boolean) {
+                    perm = (Boolean) data[i];
+                } else {
+                    message += (String) data[i];
+                    if (i < data.length - 1 && !(i == data.length - 2 && data[data.length - 1] instanceof Boolean)) {
+                        message += " - ";
+                    }
+                }
+            }
+            System.out.println(message);
             break;
         }
 
