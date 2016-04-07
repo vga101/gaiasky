@@ -3,7 +3,7 @@
 	
 	{
 		"name" : "Moon orbit",
-		"color" : [0.7, 0.7, 1.0, 0.4],
+		"color" : [1.0, 1.0, 1.0, 0.3],
 		"ct" : Orbits,
 		
 		"parent" : "Earth", 
@@ -44,7 +44,7 @@
 	
 	{
 		"name" : "Deimos orbit",
-		"color" : [.7, .7, 1.0, 0.4],
+		"color" : [1.0, 1.0, 1.0, 0.3],
 		"ct" : Orbits,
 		
 		"parent" : "Mars", 
@@ -70,7 +70,7 @@
 	
 	{
 		"name" : "Amalthea orbit",
-		"color" : [.7, .7, 1.0, 0.4],
+		"color" : [1.0, 1.0, 1.0, 0.3],
 		"ct" : Orbits,
 		
 		"parent" : "Jupiter", 
@@ -96,7 +96,7 @@
 	
 	{
 		"name" : "Io orbit",
-		"color" : [.7, .7, 1.0, 0.4],
+		"color" : [1.0, 1.0, 1.0, 0.3],
 		"ct" : Orbits,
 		
 		"parent" : "Jupiter", 
@@ -121,7 +121,7 @@
 	
 	{
 		"name" : "Europa orbit",
-		"color" : [.7, .7, 1.0, 0.4],
+		"color" : [1.0, 1.0, 1.0, 0.3],
 		"ct" : Orbits,
 		
 		"parent" : "Jupiter", 
@@ -146,7 +146,7 @@
 	
 	{
 		"name" : "Ganymede orbit",
-		"color" : [.7, .7, 1.0, 0.4],
+		"color" : [1.0, 1.0, 1.0, 0.3],
 		"ct" : Orbits,
 		
 		"parent" : "Jupiter", 
@@ -171,7 +171,7 @@
 	
 	{
 		"name" : "Callisto orbit",
-		"color" : [.7, .7, 1.0, 0.4],
+		"color" : [1.0, 1.0, 1.0, 0.3],
 		"ct" : Orbits,
 		
 		"parent" : "Jupiter", 
@@ -196,7 +196,7 @@
 	
 	{
 		"name" : "Prometheus orbit",
-		"color" : [.7, .7, 1.0, 0.4],
+		"color" : [1.0, 1.0, 1.0, 0.3],
 		"ct" : Orbits,
 		
 		"parent" : "Saturn", 
