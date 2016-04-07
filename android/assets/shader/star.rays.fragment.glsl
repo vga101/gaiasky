@@ -15,6 +15,8 @@ uniform float u_inner_rad;
 uniform float u_time;
 // Distance in km to the star
 uniform float u_distance;
+// Is a star
+uniform float u_star;
 
 #define time u_time * 0.001
 // Angle threshold. If angle is smaller, we don't draw core. To avoid flickering
@@ -45,7 +47,7 @@ vec4 draw_star_rays(vec2 uv, vec2 pos, float distanceCenter) {
     c = c * 1.3 - vec3 (length (uv) * 0.05);
     c += vec3 (f0);
 
-    vec3 color = v_color.rgb * c;
+    vec3 color = v_color.rgb * c / 2.0;
     color -= 0.015;
     color = cc (color, .2, .1);
     return vec4 (color, ((1.0 + sin(time * 80.0)) * 0.08 + 0.6) * v_color.a * (1.0 - distanceCenter) * (color.r + color.g + color.b) / 3.0);
@@ -56,7 +58,14 @@ vec4 draw_simple_star(float distanceCenter) {
     float fac = 1.0 - pow(distanceCenter, 0.15);
     float core = step(ang_th, u_apparent_angle) * smoothstep(u_inner_rad, 0.0, distanceCenter);
 
-    return vec4 (v_color.rgb + core, v_color.a * (fac + core));
+    vec4 col = vec4 (v_color.rgb + core, v_color.a * (fac + core));
+    if(u_star < 0.0){
+		col.r = clamp(col.r, 0, 0.6);
+		col.g = clamp(col.g, 0, 0.6);
+		col.b = clamp(col.b, 0, 0.6);
+		col.a = clamp(col.a, 0, 0.6);
+	}
+	return col;
 }
 
 vec4
@@ -67,7 +76,7 @@ draw_star() {
         // Level is 0 when dist <= dist_down and 1 when dist >= dist_up
         float level = min((u_distance) / (u_th_dist_up * 10000.0), 1.0);
 
-        vec4 c = draw_star_rays(uv, vec2 (0.5), dist);
+        vec4 c = draw_star_rays(uv, vec2(0.5), dist);
         vec4 s = draw_simple_star(dist);
 
         return c  * (1.0 - level) + s;

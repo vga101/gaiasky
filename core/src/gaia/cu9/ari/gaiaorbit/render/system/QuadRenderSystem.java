@@ -13,12 +13,15 @@ import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Quaternion;
+import com.badlogic.gdx.math.Vector3;
+import com.bitfire.postprocessing.filters.Scattering;
 
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.render.IRenderable;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
+import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.DecalUtils;
@@ -34,6 +37,9 @@ public class QuadRenderSystem extends AbstractRenderSystem implements IObserver 
     private boolean starColorTransit = false;
     private Texture noise;
     private Quaternion quaternion;
+
+    private float[] aux;
+    private Vector3 auxv;
 
     /**
      * Creates a new shader quad render component.
@@ -74,6 +80,9 @@ public class QuadRenderSystem extends AbstractRenderSystem implements IObserver 
         mesh.setIndices(indices);
 
         quaternion = new Quaternion();
+
+        aux = new float[Scattering.N * 2];
+        auxv = new Vector3();
     }
 
     private void fillVertices(float[] vertices) {
@@ -120,6 +129,26 @@ public class QuadRenderSystem extends AbstractRenderSystem implements IObserver 
     public void renderStud(List<IRenderable> renderables, ICamera camera) {
         Collections.sort(renderables, comp);
 
+        // Get N closer stars and project position to screen, then post event
+        int nrend = renderables.size();
+
+        int w = Gdx.graphics.getWidth();
+        int h = Gdx.graphics.getHeight();
+        IRenderable r = renderables.get(nrend - 1);
+        if (r instanceof Particle) {
+            Particle p = (Particle) r;
+            if (p.name.equalsIgnoreCase("Sol")) {
+                camera.getCamera().project(p.transform.getTranslationf(auxv));
+                if (auxv.x >= 0 && auxv.y >= 0 && auxv.x <= w && auxv.y <= h) {
+                    aux[0] = auxv.x / w;
+                    aux[1] = auxv.y / h;
+                }
+                EventManager.instance.post(Events.LIGHT_POS_2D_UPDATED, 1, aux);
+            } else {
+                EventManager.instance.post(Events.LIGHT_POS_2D_UPDATED, 0, aux);
+            }
+        }
+
         // Calculate billobard rotation quaternion ONCE
         DecalUtils.setBillboardRotation(quaternion, camera.getCamera().direction, camera.getCamera().up);
 
@@ -128,6 +157,7 @@ public class QuadRenderSystem extends AbstractRenderSystem implements IObserver 
         // General uniforms
         shaderProgram.setUniformMatrix("u_projTrans", camera.getCamera().combined);
         shaderProgram.setUniformf("u_quaternion", quaternion.x, quaternion.y, quaternion.z, quaternion.w);
+        shaderProgram.setUniformf("u_star", r instanceof Particle ? 1.0f : -1.0f);
 
         if (!Constants.mobile) {
             // Global uniforms

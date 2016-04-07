@@ -1,0 +1,44 @@
+// Lens flare implementation by Toni Sagrista
+// From John Chapman's article http://john-chapman-graphics.blogspot.co.uk/2013/02/pseudo-lens-flare.html
+
+#ifdef GL_ES
+precision mediump float;
+precision mediump int;
+#endif
+
+uniform sampler2D u_texture0;
+
+varying vec2 v_texCoords;
+
+uniform vec2 u_viewportInverse;
+uniform vec2 u_lightPositions[10];
+
+uniform float u_decay;
+uniform float u_density;
+uniform float u_weight;
+uniform int u_numSamples;
+uniform int u_nLights;
+
+
+float u_ghostDispersal = 0.4;
+float u_distortion = 1.0;
+
+void main()
+{
+	 for (int clpos = 0; clpos < u_nLights; clpos++){
+		 vec2 deltaTexCoord = (v_texCoords - u_lightPositions[clpos]);
+		 
+		 deltaTexCoord *= 1.0 / float(u_numSamples) * u_density;
+		 float illuminationDecay = 1.0;
+		 
+		 vec4 color = texture2D(u_texture0, v_texCoords) * 0.4;
+		 for(int i = 0; i < u_numSamples; i++){
+		    v_texCoords -= deltaTexCoord;
+		    vec4 sample = texture2D(u_texture0, v_texCoords) * 0.4;
+		    sample *= illuminationDecay * u_weight;
+		    color += sample;
+		    illuminationDecay *= u_decay;
+		 }
+	 	gl_FragColor += color;
+	 }
+}

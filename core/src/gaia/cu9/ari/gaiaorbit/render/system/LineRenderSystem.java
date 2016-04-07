@@ -65,7 +65,7 @@ public class LineRenderSystem extends ImmediateRenderSystem {
 
     @Override
     public void renderStud(List<IRenderable> renderables, ICamera camera) {
-        Gdx.gl.glLineWidth(1.5f);
+        Gdx.gl.glLineWidth(2f);
 
         this.camera = camera;
         int size = renderables.size();

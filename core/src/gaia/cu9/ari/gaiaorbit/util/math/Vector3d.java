@@ -592,7 +592,7 @@ public class Vector3d implements Serializable {
     /**
      * Returns set v to this vector by casting
      * doubles to floats.
-     * @return
+     * @return The float vector v.
      */
     public Vector3 setVector3(Vector3 v) {
         return v.set((float) x, (float) y, (float) z);

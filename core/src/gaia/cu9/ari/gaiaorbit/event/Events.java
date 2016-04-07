@@ -140,6 +140,8 @@ public enum Events {
     FOV_CHANGE_NOTIFICATION,
     /** Contains a Vector3d with the position and a double with the velocity [km/h] **/
     CAMERA_MOTION_UPDATED,
+    /** Contains an int with the number of lights and a float[] with [x, y] of the 10 closest stars in screen coordinates in [0..1] **/
+    LIGHT_POS_2D_UPDATED,
     /** Executes the command to position the camera near the object in focus **/
     GO_TO_OBJECT_CMD,
     /** Contains an optional boolean indicating whether debug info should be shown or not. Otherwise, it toggles its state **/

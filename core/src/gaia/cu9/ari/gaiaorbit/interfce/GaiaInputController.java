@@ -43,15 +43,15 @@ public class GaiaInputController extends GestureDetector {
     public KeyMappings mappings;
 
     /** The button for rotating the camera either around its center or around the focus. */
-    public int rotateButton = Buttons.LEFT;
+    public int leftMouseButton = Buttons.LEFT;
     /** The angle to rotate when moved the full width or height of the screen. */
     public float rotateAngle = 360f;
     /** The button for panning the camera along the up/right plane */
-    public int panButton = Buttons.RIGHT;
+    public int rightMouseButton = Buttons.RIGHT;
     /** The units to translate the camera when moved the full width or height of the screen. */
     public final float translateUnits = 1000f;
     /** The button for moving the camera along the direction axis */
-    public int movementButton = Buttons.MIDDLE;
+    public int middleMouseButton = Buttons.MIDDLE;
     /** Whether scrolling requires the activeKey to be pressed (false) or always allow scrolling (true). */
     public boolean alwaysScroll = true;
     /** The weight for each scrolled amount. */
@@ -241,6 +241,19 @@ public class GaiaInputController extends GestureDetector {
                             }
                         }
                     });
+                } else if (button == this.button && button == Input.Buttons.RIGHT) {
+                    // Ensure Octants observed property is computed
+                    Gdx.app.postRunnable(new Runnable() {
+                        @Override
+                        public void run() {
+                            // 5% of width pixels distance
+                            if (gesture.dst(screenX, screenY) < MOVE_PX_DIST) {
+                                // Stop
+                                camera.setYaw(0);
+                                camera.setPitch(0);
+                            }
+                        }
+                    });
                 }
             }
 
@@ -253,17 +266,18 @@ public class GaiaInputController extends GestureDetector {
     }
 
     protected boolean process(float deltaX, float deltaY, int button) {
-        if (button == rotateButton) {
+        if (button == leftMouseButton) {
             if (isKeyPressed(rollKey)) {
                 //camera.rotate(camera.direction, deltaX * rotateAngle);
                 if (deltaX != 0)
                     cam.naturalCamera.addRoll(deltaX);
             } else {
-                cam.naturalCamera.addRotateMovement(deltaX, deltaY, isKeyPressed(lookFocusKey));
+                cam.naturalCamera.addRotateMovement(deltaX, deltaY, false);
             }
-        } else if (button == panButton) {
-            cam.naturalCamera.addPanMovement(deltaX, deltaY);
-        } else if (button == movementButton) {
+        } else if (button == rightMouseButton) {
+            //            cam.naturalCamera.addPanMovement(deltaX, deltaY);
+            cam.naturalCamera.addRotateMovement(deltaX, deltaY, true);
+        } else if (button == middleMouseButton) {
             if (deltaX != 0)
                 cam.naturalCamera.addForwardForce(deltaX);
         }

@@ -6,6 +6,7 @@ import com.bitfire.postprocessing.PostProcessor;
 import com.bitfire.postprocessing.effects.Bloom;
 import com.bitfire.postprocessing.effects.Fxaa;
 import com.bitfire.postprocessing.effects.LensFlare2;
+import com.bitfire.postprocessing.effects.LightScattering;
 import com.bitfire.postprocessing.effects.MotionBlur;
 import com.bitfire.postprocessing.effects.Nfaa;
 import com.bitfire.utils.ShaderLoader;
@@ -25,6 +26,7 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
 
     float bloomFboScale = 0.5f;
     float lensFboScale = 0.3f;
+    float scatteringFboScale = 1.0f;
 
     public DesktopPostProcessor() {
         ShaderLoader.BasePath = "shaders/";
@@ -44,7 +46,7 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
             Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.selected", "NFAA"));
         }
 
-        EventManager.instance.subscribe(this, Events.PROPERTIES_WRITTEN, Events.BLOOM_CMD, Events.LENS_FLARE_CMD, Events.MOTION_BLUR_CMD);
+        EventManager.instance.subscribe(this, Events.PROPERTIES_WRITTEN, Events.BLOOM_CMD, Events.LENS_FLARE_CMD, Events.MOTION_BLUR_CMD, Events.LIGHT_POS_2D_UPDATED);
 
     }
 
@@ -90,15 +92,26 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
         ppb.bloom.setEnabled(GlobalConf.postprocess.POSTPROCESS_BLOOM_INTENSITY > 0);
         ppb.pp.addEffect(ppb.bloom);
 
+        // LIGHT SCATTERING
+        ppb.lscatter = new LightScattering((int) (width * scatteringFboScale), (int) (height * scatteringFboScale));
+        ppb.lscatter.setScatteringIntesity(0.9f);
+        ppb.lscatter.setScatteringSaturation(1f);
+        ppb.lscatter.setBaseIntesity(1f);
+        ppb.lscatter.setBias(-0.9999f);
+        ppb.lscatter.setBlurAmount(0.5f);
+        ppb.lscatter.setBlurPasses(1);
+        ppb.lscatter.setEnabled(true);
+        ppb.pp.addEffect(ppb.lscatter);
+
         // LENS FLARE
         ppb.lens = new LensFlare2((int) (width * lensFboScale), (int) (height * lensFboScale));
-        ppb.lens.setGhosts(14);
+        ppb.lens.setGhosts(10);
         ppb.lens.setHaloWidth(0.8f);
         ppb.lens.setLensColorTexture(new Texture(Gdx.files.internal("img/lenscolor.png")));
-        ppb.lens.setFlareIntesity(0.7f);
-        ppb.lens.setFlareSaturation(0.9f);
+        ppb.lens.setFlareIntesity(0.6f);
+        ppb.lens.setFlareSaturation(0.7f);
         ppb.lens.setBaseIntesity(1f);
-        ppb.lens.setBias(-0.995f);
+        ppb.lens.setBias(-0.996f);
         ppb.lens.setBlurAmount(0.9f);
         ppb.lens.setBlurPasses(5);
         ppb.lens.setEnabled(GlobalConf.postprocess.POSTPROCESS_LENS_FLARE);
@@ -198,6 +211,15 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
                     }
                 }
             });
+            break;
+
+        case LIGHT_POS_2D_UPDATED:
+            Integer nLights = (Integer) data[0];
+            float[] lightpos = (float[]) data[1];
+            for (int i = 0; i < RenderType.values().length; i++) {
+                PostProcessBean ppb = pps[i];
+                ppb.lscatter.setLightPositions(nLights, lightpos);
+            }
             break;
         }
 
