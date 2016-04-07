@@ -1,12 +1,18 @@
 package gaia.cu9.ari.gaiaorbit.desktop;
 
+import com.badlogic.gdx.Files;
+import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
+import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
+
 import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.data.SceneGraphImplementationProvider;
 import gaia.cu9.ari.gaiaorbit.data.WebGLSceneGraphImplementationProvider;
 import gaia.cu9.ari.gaiaorbit.desktop.format.DesktopDateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.desktop.format.DesktopNumberFormatFactory;
 import gaia.cu9.ari.gaiaorbit.desktop.render.DesktopPostProcessorFactory;
+import gaia.cu9.ari.gaiaorbit.desktop.util.DesktopNetworkChecker;
 import gaia.cu9.ari.gaiaorbit.desktop.util.WebGLConfInit;
+import gaia.cu9.ari.gaiaorbit.interfce.NetworkCheckerManager;
 import gaia.cu9.ari.gaiaorbit.render.PostProcessorFactory;
 import gaia.cu9.ari.gaiaorbit.script.DummyFactory;
 import gaia.cu9.ari.gaiaorbit.script.ScriptingFactory;
@@ -18,10 +24,6 @@ import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 
-import com.badlogic.gdx.Files;
-import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
-import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
-
 public class GaiaSandboxDesktopWebGL {
 
     public static void main(String[] args) throws Exception {
@@ -32,6 +34,7 @@ public class GaiaSandboxDesktopWebGL {
         PostProcessorFactory.initialize(new DesktopPostProcessorFactory());
         ThreadIndexer.initialize(new SingleThreadIndexer());
         SceneGraphImplementationProvider.initialize(new WebGLSceneGraphImplementationProvider());
+        NetworkCheckerManager.initialize(new DesktopNetworkChecker());
 
         LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
         LwjglApplicationConfiguration.disableAudio = true;

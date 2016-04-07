@@ -12,10 +12,12 @@ import gaia.cu9.ari.gaiaorbit.client.format.GwtNumberFormatFactory;
 import gaia.cu9.ari.gaiaorbit.client.render.WebGLPostProcessorFactory;
 import gaia.cu9.ari.gaiaorbit.client.script.DummyFactory;
 import gaia.cu9.ari.gaiaorbit.client.util.WebGLConfInitLite;
+import gaia.cu9.ari.gaiaorbit.client.util.WebGLNetworkChecker;
 import gaia.cu9.ari.gaiaorbit.data.SceneGraphImplementationProvider;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
+import gaia.cu9.ari.gaiaorbit.interfce.NetworkCheckerManager;
 import gaia.cu9.ari.gaiaorbit.render.PostProcessorFactory;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
 import gaia.cu9.ari.gaiaorbit.script.ScriptingFactory;
@@ -37,6 +39,7 @@ public class GaiaSandboxWebGL extends GwtApplication implements IObserver {
         ScriptingFactory.initialize(new DummyFactory());
         ThreadIndexer.initialize(new SingleThreadIndexer());
         SceneGraphImplementationProvider.initialize(new WebGLSceneGraphImplementationProvider());
+        NetworkCheckerManager.initialize(new WebGLNetworkChecker());
 
         GwtApplicationConfiguration config = new GwtApplicationConfiguration(1024, 600);
 
@@ -79,8 +82,8 @@ public class GaiaSandboxWebGL extends GwtApplication implements IObserver {
     }
 
     protected native void reloadIFrame(Element iframeEl) /*-{
-		iframeEl.contentWindow.location.reload(true);
-    }-*/;
+                                                         iframeEl.contentWindow.location.reload(true);
+                                                         }-*/;
 
     @Override
     public ApplicationListener createApplicationListener() {

@@ -332,8 +332,8 @@ public class ConfigDialog extends I18nJFrame {
         tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
 
         /**
-        		 * ====== USER INTERFACE TAB =======
-        		 */
+        * ====== USER INTERFACE TAB =======
+        **/
         JPanel ui = new JPanel(new MigLayout("", "[grow,fill][grow,fill]", ""));
         ui.setBorder(new TitledBorder(new MatteBorder(new Insets(thick, 0, 0, 0), bcol), txt("gui.ui.interfacesettings"), just, pos));
 
