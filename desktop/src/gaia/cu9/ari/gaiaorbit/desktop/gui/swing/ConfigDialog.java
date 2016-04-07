@@ -367,7 +367,7 @@ public class ConfigDialog extends I18nJFrame {
         // sampleImagePanel.add(sampleImage);
 
         // Theme chooser
-        String[] themes = new String[] { "dark-orange", "dark-orange-large", "light-blue", "HiDPI" };
+        String[] themes = new String[] { "dark-orange", "dark-orange-large", "dark-green", "light-blue", "HiDPI" };
         final JComboBox<String> theme = new JComboBox<String>(themes);
         // theme.addActionListener(new ActionListener() {
         // @Override
