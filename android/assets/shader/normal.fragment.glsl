@@ -249,4 +249,8 @@ void main() {
 
     gl_FragColor.rgb += selfShadow * spec * specular;
     gl_FragColor.rgb += (vec3(1.0) - exp(v_atmosphereColor * -exposure));
+    
+    // Prevent saturation
+    gl_FragColor = clamp(gl_FragColor, 0.0, 1.0);
+    gl_FragColor.rgb *= 0.98;
 }
