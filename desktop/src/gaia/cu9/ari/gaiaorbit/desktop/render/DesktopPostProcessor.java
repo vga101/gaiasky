@@ -94,7 +94,7 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
 
         // LIGHT SCATTERING
         ppb.lscatter = new LightScattering((int) (width * scatteringFboScale), (int) (height * scatteringFboScale));
-        ppb.lscatter.setScatteringIntesity(0.9f);
+        ppb.lscatter.setScatteringIntesity(1f);
         ppb.lscatter.setScatteringSaturation(1f);
         ppb.lscatter.setBaseIntesity(1f);
         ppb.lscatter.setBias(-0.9999f);

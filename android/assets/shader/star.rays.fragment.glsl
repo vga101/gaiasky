@@ -17,6 +17,8 @@ uniform float u_time;
 uniform float u_distance;
 // Is a star
 uniform float u_star;
+// Whether to draw stray light or not
+uniform int u_strayLight;
 
 #define time u_time * 0.001
 // Angle threshold. If angle is smaller, we don't draw core. To avoid flickering
@@ -56,6 +58,9 @@ vec4 draw_star_rays(vec2 uv, vec2 pos, float distanceCenter) {
 vec4 draw_simple_star(float distanceCenter) {
     // Distance from the center of the image to the border, in [0, 1]
     float fac = 1.0 - pow(distanceCenter, 0.15);
+    if(u_strayLight < 0){
+    	fac = 0.0;
+    }
     float core = step(ang_th, u_apparent_angle) * smoothstep(u_inner_rad, 0.0, distanceCenter);
 
     vec4 col = vec4 (v_color.rgb + core, v_color.a * (fac + core));
@@ -68,6 +73,11 @@ vec4 draw_simple_star(float distanceCenter) {
 	return col;
 }
 
+vec4 draw_circle(float distanceCenter){
+	float core = step(distanceCenter, u_inner_rad);
+	return vec4 (v_color.rgb + core, v_color.a * core);
+}
+
 vec4
 draw_star() {
     float dist = distance (vec2 (0.5), v_texCoords.xy) * 2.0;
@@ -75,11 +85,15 @@ draw_star() {
     if (u_distance < u_th_dist_up * 10000.0) {
         // Level is 0 when dist <= dist_down and 1 when dist >= dist_up
         float level = min((u_distance) / (u_th_dist_up * 10000.0), 1.0);
-
-        vec4 c = draw_star_rays(uv, vec2(0.5), dist);
-        vec4 s = draw_simple_star(dist);
-
-        return c  * (1.0 - level) + s;
+		
+		if(u_strayLight < 0){
+			return  draw_circle(dist);
+		}else{
+	        vec4 c = draw_star_rays(uv, vec2(0.5), dist);
+	        vec4 s = draw_simple_star(dist);
+	
+	        return c  * (1.0 - level) + s;
+	    }
     } else {
         return draw_simple_star(dist);
     }
