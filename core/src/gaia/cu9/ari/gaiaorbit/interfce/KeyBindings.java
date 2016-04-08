@@ -158,7 +158,7 @@ public class KeyBindings {
         addMapping(new ProgramAction(txt("action.dividetime"), new Runnable() {
             @Override
             public void run() {
-                EventManager.instance.post(Events.PACE_DIVIDE_CMD);
+                EventManager.instance.post(Events.TIME_WARP_DECREASE_CMD);
             }
         }), Keys.COMMA);
 
@@ -166,7 +166,7 @@ public class KeyBindings {
         addMapping(new ProgramAction(txt("action.doubletime"), new Runnable() {
             @Override
             public void run() {
-                EventManager.instance.post(Events.PACE_DOUBLE_CMD);
+                EventManager.instance.post(Events.TIME_WARP_INCREASE_CMD);
             }
         }), Keys.PERIOD);
 

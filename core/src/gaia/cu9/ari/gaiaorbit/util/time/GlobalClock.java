@@ -20,8 +20,8 @@ public class GlobalClock implements IObserver, ITimeFrameProvider {
     /** The hour difference from the last frame **/
     public double hdiff;
 
-    /** Represents the pace in simulation hours/real seconds **/
-    public double pace = 2;
+    /** Represents the time wrap multiplier. Scales the real time pace **/
+    public double timeWarp = 1;
     // Seconds since last event POST
     private float lastUpdate = 1;
     /** The fixed frame rate when not in real time. Set negative to use real time **/
@@ -29,21 +29,25 @@ public class GlobalClock implements IObserver, ITimeFrameProvider {
 
     /**
      * Creates a new GlobalClock
-     * @param pace The pace of the clock in [simulation hours/real seconds]
+     * @param timeWrap The time wrap multiplier
      * @param date The date with which to initialise the clock
      */
-    public GlobalClock(double pace, Date date) {
+    public GlobalClock(double timeWrap, Date date) {
         super();
         // Now
-        this.pace = pace;
+        this.timeWarp = timeWrap;
         hdiff = 0d;
         time = date;
         lastTime = new Date(time.getTime());
-        EventManager.instance.subscribe(this, Events.PACE_CHANGE_CMD, Events.PACE_DIVIDE_CMD, Events.PACE_DOUBLE_CMD, Events.TIME_CHANGE_CMD);
+        EventManager.instance.subscribe(this, Events.PACE_CHANGE_CMD, Events.TIME_WARP_DECREASE_CMD, Events.TIME_WARP_INCREASE_CMD, Events.TIME_CHANGE_CMD);
     }
 
     double msacum = 0d;
 
+    /** 
+     * Update function
+     * @param dt Delta time in seconds
+     */
     public void update(double dt) {
         if (dt != 0) {
             // In case we are in constant rate mode
@@ -51,8 +55,8 @@ public class GlobalClock implements IObserver, ITimeFrameProvider {
                 dt = 1 / fps;
             }
 
-            int sign = (int) Math.signum(pace);
-            double h = Math.abs(dt * pace);
+            int sign = (int) Math.signum(timeWarp);
+            double h = Math.abs(dt * timeWarp * Constants.S_TO_H);
             hdiff = h * sign;
 
             double ms = sign * h * Constants.H_TO_MS;
@@ -85,16 +89,32 @@ public class GlobalClock implements IObserver, ITimeFrameProvider {
         switch (event) {
         case PACE_CHANGE_CMD:
             // Update pace
-            this.pace = (Double) data[0];
-            EventManager.instance.post(Events.PACE_CHANGED_INFO, this.pace);
+            this.timeWarp = (Double) data[0];
+            EventManager.instance.post(Events.PACE_CHANGED_INFO, this.timeWarp);
             break;
-        case PACE_DOUBLE_CMD:
-            this.pace *= 2d;
-            EventManager.instance.post(Events.PACE_CHANGED_INFO, this.pace);
+        case TIME_WARP_INCREASE_CMD:
+            if (timeWarp == 0) {
+                timeWarp = 0.125;
+            } else if (timeWarp == -0.125) {
+                timeWarp = 0;
+            } else if (timeWarp < 0) {
+                timeWarp /= 2.0;
+            } else {
+                timeWarp *= 2.0;
+            }
+            EventManager.instance.post(Events.PACE_CHANGED_INFO, this.timeWarp);
             break;
-        case PACE_DIVIDE_CMD:
-            this.pace /= 2d;
-            EventManager.instance.post(Events.PACE_CHANGED_INFO, this.pace);
+        case TIME_WARP_DECREASE_CMD:
+            if (timeWarp == 0.125) {
+                timeWarp = 0;
+            } else if (timeWarp == 0) {
+                timeWarp = -0.125;
+            } else if (timeWarp < 0) {
+                timeWarp *= 2.0;
+            } else {
+                timeWarp /= 2.0;
+            }
+            EventManager.instance.post(Events.PACE_CHANGED_INFO, this.timeWarp);
             break;
         case TIME_CHANGE_CMD:
             // Update time
@@ -114,8 +134,8 @@ public class GlobalClock implements IObserver, ITimeFrameProvider {
     }
 
     @Override
-    public double getPace() {
-        return pace;
+    public double getWarpFactor() {
+        return timeWarp;
     }
 
     public boolean isFixedRateMode() {

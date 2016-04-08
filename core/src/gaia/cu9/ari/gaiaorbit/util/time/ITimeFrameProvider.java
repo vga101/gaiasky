@@ -29,10 +29,10 @@ public interface ITimeFrameProvider {
     public void update(double dt);
 
     /**
-     * Gets the current pace.
+     * Gets the current warp factor.
      * @return
      */
-    public double getPace();
+    public double getWarpFactor();
 
     /**
      * Returns whether the frame rate is set to fixed or not.

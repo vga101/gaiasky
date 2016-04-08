@@ -6,6 +6,8 @@ com.badlogic.gdx.graphics.g2d.BitmapFont: { ui-12: { file: fonts/ui-12.fnt } },
 com.badlogic.gdx.graphics.g2d.BitmapFont: { ui-13: { file: fonts/ui-13.fnt } },
 com.badlogic.gdx.graphics.g2d.BitmapFont: { ui-14: { file: fonts/ui-14.fnt } },
 com.badlogic.gdx.graphics.g2d.BitmapFont: { ui-15: { file: fonts/ui-15.fnt } },
+com.badlogic.gdx.graphics.g2d.BitmapFont: { ui-15-bold: { file: fonts/ui-15-bold.fnt } },
+com.badlogic.gdx.graphics.g2d.BitmapFont: { ui-16: { file: fonts/ui-16.fnt } },
 com.badlogic.gdx.graphics.g2d.BitmapFont: { ui-17: { file: fonts/ui-17.fnt } },
 com.badlogic.gdx.graphics.g2d.BitmapFont: { ui-17-bold: { file: fonts/ui-17-bold.fnt } },
 com.badlogic.gdx.graphics.g2d.BitmapFont: { ui-18: { file: fonts/ui-18.fnt } },
@@ -91,6 +93,8 @@ com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
 	msg-19:   { font: ui-19, fontColor: white},
 	msg-21:   { font: ui-21, fontColor: white},
 	msg-23:   { font: ui-23, fontColor: white},
+	
+	warp:     {font: ui-15-bold, fontColor: blue},
 	
 	headline:   { font: ui-25-shadow, fontColor: white},
 	subhead:   { font: ui-15, fontColor: white},

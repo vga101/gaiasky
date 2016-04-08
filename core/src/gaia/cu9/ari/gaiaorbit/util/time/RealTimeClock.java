@@ -43,7 +43,7 @@ public class RealTimeClock implements ITimeFrameProvider {
     }
 
     @Override
-    public double getPace() {
+    public double getWarpFactor() {
         return SEC_TO_HOUR;
     }
 

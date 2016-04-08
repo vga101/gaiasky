@@ -1,5 +1,21 @@
 package gaia.cu9.ari.gaiaorbit.interfce.components;
 
+import java.util.Date;
+
+import com.badlogic.gdx.scenes.scene2d.Event;
+import com.badlogic.gdx.scenes.scene2d.EventListener;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.Container;
+import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.TextTooltip;
+import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
+import com.badlogic.gdx.utils.Align;
+
 import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
@@ -10,36 +26,21 @@ import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory.DateType;
 import gaia.cu9.ari.gaiaorbit.util.format.IDateFormat;
+import gaia.cu9.ari.gaiaorbit.util.format.INumberFormat;
+import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnImageButton;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnLabel;
-import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextField;
-
-import java.util.Date;
-
-import com.badlogic.gdx.scenes.scene2d.Event;
-import com.badlogic.gdx.scenes.scene2d.EventListener;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.InputEvent.Type;
-import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Button;
-import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup;
-import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.TextField;
-import com.badlogic.gdx.scenes.scene2d.ui.TextTooltip;
-import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
-import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
-import com.badlogic.gdx.utils.Align;
 
 public class TimeComponent extends GuiComponent implements IObserver {
 
     /** Date format **/
     private IDateFormat df;
+    /** Decimal format **/
+    private INumberFormat nf, nfsci;
 
     protected OwnLabel date;
     protected Button plus, minus;
-    protected TextField inputPace;
+    protected Label timeWarp;
     protected ImageButton dateEdit;
     protected DateDialog dateDialog;
 
@@ -47,6 +48,8 @@ public class TimeComponent extends GuiComponent implements IObserver {
         super(skin, stage);
 
         df = DateFormatFactory.getFormatter(I18n.locale, DateType.DATE);
+        nf = NumberFormatFactory.getFormatter("#########.###");
+        nfsci = NumberFormatFactory.getFormatter("0.#E0");
         EventManager.instance.subscribe(this, Events.TIME_CHANGE_INFO, Events.TIME_CHANGE_CMD, Events.PACE_CHANGED_INFO);
     }
 
@@ -84,7 +87,7 @@ public class TimeComponent extends GuiComponent implements IObserver {
             public boolean handle(Event event) {
                 if (event instanceof ChangeEvent) {
                     // Plus pressed
-                    EventManager.instance.post(Events.PACE_DOUBLE_CMD);
+                    EventManager.instance.post(Events.TIME_WARP_INCREASE_CMD);
 
                     return true;
                 }
@@ -98,34 +101,18 @@ public class TimeComponent extends GuiComponent implements IObserver {
             public boolean handle(Event event) {
                 if (event instanceof ChangeEvent) {
                     // Minus pressed
-                    EventManager.instance.post(Events.PACE_DIVIDE_CMD);
+                    EventManager.instance.post(Events.TIME_WARP_DECREASE_CMD);
                     return true;
                 }
                 return false;
             }
         });
-        inputPace = new OwnTextField(Double.toString(GaiaSky.instance.time.getPace()), skin);
-        inputPace.setName("input pace");
-        inputPace.setMaxLength(15);
-        inputPace.setWidth(60f * GlobalConf.SCALE_FACTOR);
-        inputPace.addListener(new EventListener() {
-            @Override
-            public boolean handle(Event event) {
-                if (event instanceof InputEvent) {
-                    InputEvent ie = (InputEvent) event;
-                    if (ie.getType() == Type.keyTyped) {
-                        try {
-                            double pace = Double.parseDouble(inputPace.getText());
-                            EventManager.instance.post(Events.PACE_CHANGE_CMD, pace, true);
-                        } catch (Exception e) {
-                            return false;
-                        }
-                        return true;
-                    }
-                }
-                return false;
-            }
-        });
+
+        timeWarp = new OwnLabel(getFormattedTimeWrap(), skin, "warp");
+        timeWarp.setName("time wrap");
+        Container wrapWrapper = new Container(timeWarp);
+        wrapWrapper.width(60f * GlobalConf.SCALE_FACTOR);
+        wrapWrapper.align(Align.center);
 
         VerticalGroup timeGroup = new VerticalGroup().align(Align.left).space(3 * GlobalConf.SCALE_FACTOR).padTop(3 * GlobalConf.SCALE_FACTOR);
 
@@ -139,7 +126,7 @@ public class TimeComponent extends GuiComponent implements IObserver {
         paceGroup.space(1 * GlobalConf.SCALE_FACTOR);
         paceGroup.addActor(paceLabel);
         paceGroup.addActor(minus);
-        paceGroup.addActor(inputPace);
+        paceGroup.addActor(wrapWrapper);
         paceGroup.addActor(plus);
 
         timeGroup.addActor(paceGroup);
@@ -160,10 +147,29 @@ public class TimeComponent extends GuiComponent implements IObserver {
             break;
         case PACE_CHANGED_INFO:
             if (data.length == 1)
-                this.inputPace.setText(Double.toString((double) data[0]));
+                this.timeWarp.setText(getFormattedTimeWarp((double) data[0]));
             break;
         }
 
+    }
+
+    private String getFormattedTimeWarp(double warp) {
+        if (warp > 0.9 || warp < -0.9) {
+            // Remove decimals
+            warp = Math.round(warp);
+        } else {
+            // Round to 2 decimal places
+            warp = Math.round(warp * 1000.0) / 1000.0;
+        }
+        if (warp > 99999 || warp < -99999) {
+            return "x" + nfsci.format(warp);
+        } else {
+            return "x" + nf.format(warp);
+        }
+    }
+
+    private String getFormattedTimeWrap() {
+        return getFormattedTimeWarp(GaiaSky.instance.time.getWarpFactor());
     }
 
 }

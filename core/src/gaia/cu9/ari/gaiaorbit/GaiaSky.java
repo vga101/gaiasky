@@ -145,7 +145,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         }
 
         // Initialize times
-        clock = new GlobalClock(0.000277778, new Date());
+        clock = new GlobalClock(1, new Date());
         real = new RealTimeClock();
         time = GlobalConf.runtime.REAL_TIME ? real : clock;
 

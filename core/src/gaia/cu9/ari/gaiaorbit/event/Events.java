@@ -102,9 +102,9 @@ public enum Events {
     /** Contains a float with the pace **/
     PACE_CHANGE_CMD,
     /** Double the pace **/
-    PACE_DOUBLE_CMD,
+    TIME_WARP_INCREASE_CMD,
     /** Divide the pace by 2 **/
-    PACE_DIVIDE_CMD,
+    TIME_WARP_DECREASE_CMD,
     /** Contains the new pace **/
     PACE_CHANGED_INFO,
     /** Issues the command to enable camera recording. Contains the boolean indicating the state (may be null) and a boolean indicating whether this comes from the interface. **/
