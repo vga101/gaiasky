@@ -137,6 +137,7 @@ public class QuadRenderSystem extends AbstractRenderSystem implements IObserver 
         IRenderable r = renderables.get(nrend - 1);
         if (r instanceof Particle) {
             Particle p = (Particle) r;
+            // TODO This is an ugly hack
             if (p.name.equalsIgnoreCase("Sol")) {
                 camera.getCamera().project(p.transform.getTranslationf(auxv));
                 if (auxv.x >= 0 && auxv.y >= 0 && auxv.x <= w && auxv.y <= h) {

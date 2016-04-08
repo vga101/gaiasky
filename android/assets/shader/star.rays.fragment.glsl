@@ -55,20 +55,14 @@ vec4 draw_star_rays(vec2 uv, vec2 pos, float distanceCenter) {
     return vec4 (color, ((1.0 + sin(time * 80.0)) * 0.08 + 0.6) * v_color.a * (1.0 - distanceCenter) * (color.r + color.g + color.b) / 3.0);
 }
 
-vec4 draw_simple_star(float distanceCenter) {
+vec4 draw_simple_star(float distanceCenter, float inner_rad, float decay) {
     // Distance from the center of the image to the border, in [0, 1]
-    float fac = 1.0 - pow(distanceCenter, 0.15);
-    if(u_strayLight < 0){
-    	fac = 0.0;
-    }
-    float core = step(ang_th, u_apparent_angle) * smoothstep(u_inner_rad, 0.0, distanceCenter);
+    float fac = 1.0 - pow(distanceCenter, decay);
+    float core = step(ang_th, u_apparent_angle) * smoothstep(inner_rad, 0.0, distanceCenter);
 
     vec4 col = vec4 (v_color.rgb + core, v_color.a * (fac + core));
     if(u_star < 0.0){
-		col.r = clamp(col.r, 0, 0.6);
-		col.g = clamp(col.g, 0, 0.6);
-		col.b = clamp(col.b, 0, 0.6);
-		col.a = clamp(col.a, 0, 0.6);
+		col.rgb = clamp(col.rgb, 0.0, 0.7);
 	}
 	return col;
 }
@@ -87,15 +81,15 @@ draw_star() {
         float level = min((u_distance) / (u_th_dist_up * 10000.0), 1.0);
 		
 		if(u_strayLight < 0){
-			return  draw_circle(dist);
+			return  draw_simple_star(dist, u_inner_rad, 0.15);
 		}else{
 	        vec4 c = draw_star_rays(uv, vec2(0.5), dist);
-	        vec4 s = draw_simple_star(dist);
+	        vec4 s = draw_simple_star(dist, u_inner_rad, 0.15);
 	
 	        return c  * (1.0 - level) + s;
 	    }
     } else {
-        return draw_simple_star(dist);
+        return draw_simple_star(dist, u_inner_rad, 0.15);
     }
 }
 

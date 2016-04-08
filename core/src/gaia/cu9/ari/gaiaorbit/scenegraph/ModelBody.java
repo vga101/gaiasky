@@ -146,7 +146,7 @@ public abstract class ModelBody extends CelestialBody {
 
     @Override
     public float textScale() {
-        return Math.max(1.5f, labelSizeConcrete() * .5e2f);
+        return Math.max(2f, labelSizeConcrete() * .5e2f);
     }
 
     protected float labelSizeConcrete() {
@@ -155,7 +155,7 @@ public abstract class ModelBody extends CelestialBody {
 
     @Override
     public boolean renderText() {
-        return name != null && Math.pow(viewAngle, 1.1) > TH_OVER_FACTOR * 100;
+        return name != null && Math.pow(viewAngle, 1.1) > TH_OVER_FACTOR * 500;
     }
 
     public String getWikiname() {
