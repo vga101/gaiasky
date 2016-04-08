@@ -1,13 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.interfce;
 
-import gaia.cu9.ari.gaiaorbit.event.EventManager;
-import gaia.cu9.ari.gaiaorbit.event.Events;
-import gaia.cu9.ari.gaiaorbit.util.I18n;
-import gaia.cu9.ari.gaiaorbit.util.scene2d.CollapsibleWindow;
-import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnLabel;
-import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextButton;
-import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextField;
-
+import java.util.Calendar;
 import java.util.Date;
 
 import com.badlogic.gdx.graphics.Color;
@@ -24,6 +17,14 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
 import com.badlogic.gdx.utils.Align;
+
+import gaia.cu9.ari.gaiaorbit.event.EventManager;
+import gaia.cu9.ari.gaiaorbit.event.Events;
+import gaia.cu9.ari.gaiaorbit.util.I18n;
+import gaia.cu9.ari.gaiaorbit.util.scene2d.CollapsibleWindow;
+import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnLabel;
+import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextButton;
+import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextField;
 
 public class DateDialog extends CollapsibleWindow {
     private final Window me;
@@ -189,16 +190,17 @@ public class DateDialog extends CollapsibleWindow {
 
                     if (cool) {
                         // Set the date
-                        Date date = new Date();
-                        date.setYear(Integer.parseInt(year.getText()));
-                        date.setMonth(month.getSelectedIndex());
-                        date.setDate(Integer.parseInt(day.getText()));
-                        date.setHours(Integer.parseInt(hour.getText()));
-                        date.setMinutes(Integer.parseInt(min.getText()));
-                        date.setSeconds(Integer.parseInt(sec.getText()));
+                        Calendar cal = Calendar.getInstance();
+
+                        cal.set(Calendar.YEAR, Integer.parseInt(year.getText()));
+                        cal.set(Calendar.MONTH, month.getSelectedIndex());
+                        cal.set(Calendar.DAY_OF_MONTH, Integer.parseInt(day.getText()));
+                        cal.set(Calendar.HOUR_OF_DAY, Integer.parseInt(hour.getText()));
+                        cal.set(Calendar.MINUTE, Integer.parseInt(min.getText()));
+                        cal.set(Calendar.SECOND, Integer.parseInt(sec.getText()));
 
                         // Send time change command
-                        EventManager.instance.post(Events.TIME_CHANGE_CMD, date);
+                        EventManager.instance.post(Events.TIME_CHANGE_CMD, cal.getTime());
 
                         me.remove();
                     }
@@ -264,13 +266,16 @@ public class DateDialog extends CollapsibleWindow {
 
     /** Updates the time **/
     public void updateTime(Date date) {
-        int year = date.getYear();
-        int month = date.getMonth();
-        int day = date.getDate();
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
 
-        int hour = date.getHours();
-        int min = date.getMinutes();
-        int sec = date.getSeconds();
+        int year = cal.get(Calendar.YEAR);
+        int month = cal.get(Calendar.MONTH);
+        int day = cal.get(Calendar.DAY_OF_MONTH);
+
+        int hour = cal.get(Calendar.HOUR_OF_DAY);
+        int min = cal.get(Calendar.MINUTE);
+        int sec = cal.get(Calendar.SECOND);
 
         this.day.setText(String.valueOf(day));
         this.month.setSelectedIndex(month);
