@@ -1,4 +1,4 @@
-package gaia.cu9.ari.gaiaorbit.util.network;
+package gaia.cu9.ari.gaiaorbit.desktop.network;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;

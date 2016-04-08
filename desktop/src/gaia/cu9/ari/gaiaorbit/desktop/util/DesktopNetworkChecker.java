@@ -5,12 +5,12 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 
+import gaia.cu9.ari.gaiaorbit.desktop.network.HttpQuery;
 import gaia.cu9.ari.gaiaorbit.interfce.INetworkChecker;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ModelBody;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
-import gaia.cu9.ari.gaiaorbit.util.network.HttpQuery;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.Link;
 
 public class DesktopNetworkChecker extends Thread implements INetworkChecker {
