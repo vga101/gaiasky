@@ -62,7 +62,7 @@ vec4 draw_simple_star(float distanceCenter, float inner_rad, float decay) {
 
     vec4 col = vec4 (v_color.rgb + core, v_color.a * (fac + core));
     if(u_star < 0.0){
-		col.rgb = clamp(col.rgb, 0.0, 0.7);
+		col.rgb = clamp(col.rgb, 0.0, 0.65);
 	}
 	return col;
 }

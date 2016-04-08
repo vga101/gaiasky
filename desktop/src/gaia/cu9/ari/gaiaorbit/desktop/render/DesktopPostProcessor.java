@@ -2,8 +2,6 @@ package gaia.cu9.ari.gaiaorbit.desktop.render;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g3d.Shader;
-import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.bitfire.postprocessing.PostProcessor;
 import com.bitfire.postprocessing.effects.Bloom;
 import com.bitfire.postprocessing.effects.Fxaa;
@@ -102,6 +100,8 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
         ppb.lscatter.setBias(-0.9999f);
         ppb.lscatter.setBlurAmount(0.5f);
         ppb.lscatter.setBlurPasses(1);
+        ppb.lscatter.setDensity(1.2f);
+        ppb.lscatter.setNumSamples(120);
         ppb.lscatter.setEnabled(true);
         ppb.pp.addEffect(ppb.lscatter);
 
