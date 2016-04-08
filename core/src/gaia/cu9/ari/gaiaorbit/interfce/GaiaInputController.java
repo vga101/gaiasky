@@ -20,7 +20,7 @@ import com.badlogic.gdx.math.Vector3;
 import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
-import gaia.cu9.ari.gaiaorbit.interfce.KeyMappings.ProgramAction;
+import gaia.cu9.ari.gaiaorbit.interfce.KeyBindings.ProgramAction;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
@@ -40,7 +40,7 @@ import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 public class GaiaInputController extends GestureDetector {
     public static final float WASD_MOVEMENT_SENSITIVITY = .5f;
 
-    public KeyMappings mappings;
+    public KeyBindings mappings;
 
     /** The button for rotating the camera either around its center or around the focus. */
     public int leftMouseButton = Buttons.LEFT;
@@ -146,8 +146,8 @@ public class GaiaInputController extends GestureDetector {
         this.MOVE_PX_DIST = !Constants.mobile ? (float) Math.max(5, Gdx.graphics.getWidth() * 0.01) : (float) Math.max(80, Gdx.graphics.getWidth() * 0.05);
         this.MAX_PX_DIST = !Constants.mobile ? 5 : 150;
 
-        KeyMappings.initialize();
-        mappings = KeyMappings.instance;
+        KeyBindings.initialize();
+        mappings = KeyBindings.instance;
     }
 
     public GaiaInputController(final CameraManager camera, IGui gui) {

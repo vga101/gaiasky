@@ -40,7 +40,7 @@ import gaia.cu9.ari.gaiaorbit.desktop.util.SysUtils;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
-import gaia.cu9.ari.gaiaorbit.interfce.KeyMappings;
+import gaia.cu9.ari.gaiaorbit.interfce.KeyBindings;
 import gaia.cu9.ari.gaiaorbit.interfce.NetworkCheckerManager;
 import gaia.cu9.ari.gaiaorbit.render.PostProcessorFactory;
 import gaia.cu9.ari.gaiaorbit.screenshot.ScreenshotsManager;
@@ -115,7 +115,7 @@ public class GaiaSandboxDesktop implements IObserver {
 
             // Key mappings
             Constants.desktop = true;
-            KeyMappings.initialize();
+            KeyBindings.initialize();
 
             // Scene graph implementation provider
             SceneGraphImplementationProvider.initialize(new DesktopSceneGraphImplementationProvider());

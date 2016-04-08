@@ -19,14 +19,14 @@ import gaia.cu9.ari.gaiaorbit.util.I18n;
  * @author Toni Sagrista
  *
  */
-public class KeyMappings {
+public class KeyBindings {
     public Map<TreeSet<Integer>, ProgramAction> mappings;
 
-    public static KeyMappings instance;
+    public static KeyBindings instance;
 
     public static void initialize() {
         if (instance == null) {
-            instance = new KeyMappings();
+            instance = new KeyBindings();
         }
     }
 
@@ -35,7 +35,7 @@ public class KeyMappings {
     /**
      * Creates a key mappings instance.
      */
-    public KeyMappings() {
+    public KeyBindings() {
         mappings = new HashMap<TreeSet<Integer>, ProgramAction>();
         // Init special keys
         SPECIAL1 = Constants.webgl ? Keys.SHIFT_LEFT : Keys.CONTROL_LEFT;
@@ -160,7 +160,7 @@ public class KeyMappings {
             public void run() {
                 EventManager.instance.post(Events.PACE_DIVIDE_CMD);
             }
-        }), Keys.LEFT_BRACKET);
+        }), Keys.COMMA);
 
         // Right bracket -> double speed
         addMapping(new ProgramAction(txt("action.doubletime"), new Runnable() {
@@ -168,7 +168,7 @@ public class KeyMappings {
             public void run() {
                 EventManager.instance.post(Events.PACE_DOUBLE_CMD);
             }
-        }), Keys.RIGHT_BRACKET);
+        }), Keys.PERIOD);
 
         // SPACE -> toggle time
         addMapping(new ProgramAction(txt("action.pauseresume"), new Runnable() {

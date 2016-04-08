@@ -74,8 +74,8 @@ import gaia.cu9.ari.gaiaorbit.desktop.gui.swing.jsplash.JSplashLabel;
 import gaia.cu9.ari.gaiaorbit.desktop.gui.swing.version.VersionChecker;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
-import gaia.cu9.ari.gaiaorbit.interfce.KeyMappings;
-import gaia.cu9.ari.gaiaorbit.interfce.KeyMappings.ProgramAction;
+import gaia.cu9.ari.gaiaorbit.interfce.KeyBindings;
+import gaia.cu9.ari.gaiaorbit.interfce.KeyBindings.ProgramAction;
 import gaia.cu9.ari.gaiaorbit.interfce.TextUtils;
 import gaia.cu9.ari.gaiaorbit.util.ConfInit;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
@@ -444,7 +444,7 @@ public class ConfigDialog extends I18nJFrame {
         JPanel controls = new JPanel(new MigLayout("", "[grow,fill][]", ""));
         controls.setBorder(new TitledBorder(new MatteBorder(new Insets(thick, 0, 0, 0), bcol), txt("gui.keymappings"), just, pos));
 
-        Map<TreeSet<Integer>, ProgramAction> maps = KeyMappings.instance.mappings;
+        Map<TreeSet<Integer>, ProgramAction> maps = KeyBindings.instance.mappings;
         Set<TreeSet<Integer>> keymaps = maps.keySet();
 
         String[] headers = new String[] { txt("gui.keymappings.action"), txt("gui.keymappings.keys") };
