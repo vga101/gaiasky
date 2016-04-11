@@ -275,7 +275,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
             EventManager.instance.post(Events.FOCUS_CHANGE_CMD, focus, true);
             EventManager.instance.post(Events.CAMERA_MODE_CMD, CameraMode.Focus);
             float dst = focus.size * 3;
-            newCameraPos = focus.pos.cpy().add(0, 0, -dst);
+            newCameraPos = focus.pos.cpy().add(0, dst / 5f, -dst);
             EventManager.instance.post(Events.CAMERA_POS_CMD, newCameraPos.values());
 
         } else {
