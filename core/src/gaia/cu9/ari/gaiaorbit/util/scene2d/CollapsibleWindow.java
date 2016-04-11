@@ -33,8 +33,8 @@ public class CollapsibleWindow extends Window {
     private float collapseHeight = 20f;
     private float expandHeight;
     private Vector2 vec2;
-    Actor me;
-    Skin skin;
+    protected Actor me;
+    protected Skin skin;
 
     String expandIcon = "window-expand";
     String collapseIcon = "window-collapse";

@@ -390,3 +390,10 @@ window-collapse
   orig: 8, 8
   offset: 0, 0
   index: -1 
+tooltip-icon
+  rotate: false
+  xy: 217, 21
+  size: 14, 14
+  orig: 14, 14
+  offset: 0, 0
+  index: -1

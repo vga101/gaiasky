@@ -287,7 +287,7 @@ public class DateDialog extends CollapsibleWindow {
 
     public void display() {
         if (!stage.getActors().contains(me, true))
-            stage.addActor(this);
+            stage.addActor(me);
     }
 
 }

@@ -45,7 +45,8 @@ com.badlogic.gdx.scenes.scene2d.ui.ImageButton$ImageButtonStyle: {
 	play: { imageUp: play-icon, imageChecked: play-icon },
 	eye: { imageUp: eye-icon },
 	expand-collapse: { imageUp: plus-icon, imageChecked: minus-icon, imageDisabled: disabled-icon },
-	detach: { imageUp: detach-icon, imageDisabled: detach-disabled-icon }
+	detach: { imageUp: detach-icon, imageDisabled: detach-disabled-icon },
+	tooltip: { imageUp: tooltip-icon }
 },
 com.badlogic.gdx.scenes.scene2d.ui.ScrollPane$ScrollPaneStyle: {
 	default: { vScroll: default-round-down, hScrollKnob: default-round, background: default-rect, hScroll: default-round-down, vScrollKnob: default-round },

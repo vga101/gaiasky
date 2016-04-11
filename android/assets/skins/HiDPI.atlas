@@ -232,7 +232,14 @@ tooltip-bg
   offset: 0, 0
   index: -1
 scrollbar-knob
+  rotate: falsetooltip-icon
   rotate: false
+  xy: 217, 21
+  size: 14, 14
+  orig: 14, 14
+  offset: 0, 0
+  index: -1
+  
   xy: 170, 36
   size: 6, 7
   split: 2, 2, 2, 2
@@ -286,7 +293,14 @@ separator
   offset: 0, 0
   index: -1
 table-bg
+  rotate: falsetooltip-icon
   rotate: false
+  xy: 217, 21
+  size: 14, 14
+  orig: 14, 14
+  offset: 0, 0
+  index: -1
+  
   xy: 1, 13
   size: 1, 1
   orig: 1, 1
@@ -338,7 +352,14 @@ eye-icon
   rotate: false
   xy: 202, 3
   size: 16, 16
-  orig: 16, 16
+  orig: 16, 16tooltip-icon
+  rotate: false
+  xy: 217, 21
+  size: 14, 14
+  orig: 14, 14
+  offset: 0, 0
+  index: -1
+  
   offset: 0, 0
   index: -1  
 plus-icon
@@ -390,3 +411,11 @@ window-collapse
   orig: 8, 8
   offset: 0, 0
   index: -1 
+tooltip-icon
+  rotate: false
+  xy: 217, 21
+  size: 14, 14
+  orig: 14, 14
+  offset: 0, 0
+  index: -1
+  
