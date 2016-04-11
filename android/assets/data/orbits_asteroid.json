@@ -2,7 +2,7 @@
 	
 	{
 		"name" : "Vesta orbit",
-		"color" : [1.0, 1.0, 1.0, 0.15],
+		"color" : [1.0, 0.7, 0.7, 0.3],
 		"ct" : Orbits,
 		
 		"parent" : "Sol", 
@@ -30,7 +30,7 @@
 	
 	{
 		"name" : "Ceres orbit",
-		"color" : [1.0, 1.0, 1.0, 0.15],
+		"color" : [1.0, 0.7, 0.7, 0.3],
 		"ct" : Orbits,
 		
 		"parent" : "Sol", 
@@ -59,7 +59,7 @@
 	
 	{
 		"name" : "Pallas orbit",
-		"color" : [1.0, 1.0, 1.0, 0.15],
+		"color" : [1.0, 0.7, 0.7, 0.3],
 		"ct" : Orbits,
 		
 		"parent" : "Sol", 
@@ -88,7 +88,7 @@
 	
 	{
 		"name" : "Hygieia orbit",
-		"color" : [1.0, 1.0, 1.0, 0.15],
+		"color" : [1.0, 0.7, 0.7, 0.3],
 		"ct" : Orbits,
 		
 		"parent" : "Sol", 
