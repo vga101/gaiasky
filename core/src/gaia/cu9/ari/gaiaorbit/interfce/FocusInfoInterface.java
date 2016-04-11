@@ -9,6 +9,7 @@ import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
+import gaia.cu9.ari.gaiaorbit.scenegraph.Planet;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
@@ -27,8 +28,8 @@ import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnLabel;
  */
 public class FocusInfoInterface extends Table implements IObserver {
 
-    protected OwnLabel focusName, focusId, focusRA, focusDEC, focusAngle, focusDist, focusAppMag, focusAbsMag, focusRadius;
-    protected OwnLabel camName, camVel, camPos;
+    protected OwnLabel focusName, focusId, focusRA, focusDEC, focusAngle, focusDist, focusAppMag, focusAbsMag, focusRadius, focusLonLat;
+    protected OwnLabel camName, camVel, camPos, lonLatLabel;
 
     private Table focusInfo, cameraInfo, moreInfo;
     private Skin skin;
@@ -45,7 +46,7 @@ public class FocusInfoInterface extends Table implements IObserver {
         this.setBackground("table-bg");
         this.skin = skin;
 
-        nf = NumberFormatFactory.getFormatter("#0.###");
+        nf = NumberFormatFactory.getFormatter("##0.###");
         sf = NumberFormatFactory.getFormatter("##0.###E0");
 
         pad10 = 10 * GlobalConf.SCALE_FACTOR;
@@ -66,10 +67,13 @@ public class FocusInfoInterface extends Table implements IObserver {
         focusAngle = new OwnLabel("", skin, "hud");
         focusDist = new OwnLabel("", skin, "hud");
         focusRadius = new OwnLabel("", skin, "hud");
+        focusLonLat = new OwnLabel("", skin, "hud");
 
         camName = new OwnLabel(I18n.bundle.get("gui.camera"), skin, "hud-header");
         camVel = new OwnLabel("", skin, "hud");
         camPos = new OwnLabel("", skin, "hud");
+
+        lonLatLabel = new OwnLabel("Lat/Lon", skin, "hud-big");
 
         float w = 100 * GlobalConf.SCALE_FACTOR;
         focusId.setWidth(w);
@@ -105,6 +109,9 @@ public class FocusInfoInterface extends Table implements IObserver {
         focusInfo.add(new OwnLabel(txt("gui.focusinfo.radius"), skin, "hud-big")).left();
         focusInfo.add(focusRadius).left().padLeft(pad10);
         focusInfo.row();
+        focusInfo.add(lonLatLabel).left();
+        focusInfo.add(focusLonLat).left().padLeft(pad10);
+        focusInfo.row();
         //        focusInfo.add(new OwnLabel(txt("gui.focusinfo.moreinfo"), skin, "hud-big")).left();
         focusInfo.add(moreInfo).center().colspan(2).padBottom(pad5).padTop(pad10);
 
@@ -125,7 +132,7 @@ public class FocusInfoInterface extends Table implements IObserver {
         daemon.start();
 
         pos = new Vector3d();
-        EventManager.instance.subscribe(this, Events.FOCUS_CHANGED, Events.FOCUS_INFO_UPDATED, Events.CAMERA_MOTION_UPDATED, Events.CAMERA_MODE_CMD);
+        EventManager.instance.subscribe(this, Events.FOCUS_CHANGED, Events.FOCUS_INFO_UPDATED, Events.CAMERA_MOTION_UPDATED, Events.CAMERA_MODE_CMD, Events.LON_LAT_UPDATED);
     }
 
     @Override
@@ -152,6 +159,16 @@ public class FocusInfoInterface extends Table implements IObserver {
             } else {
                 id = "-";
             }
+
+            if (cb instanceof Planet) {
+                lonLatLabel.setVisible(true);
+                focusLonLat.setVisible(true);
+                focusLonLat.setText("-/-");
+            } else {
+                lonLatLabel.setVisible(false);
+                focusLonLat.setVisible(false);
+            }
+
             focusId.setText(id);
 
             // Update focus information
@@ -211,6 +228,10 @@ public class FocusInfoInterface extends Table implements IObserver {
                 hideFocusInfo();
             }
             break;
+        case LON_LAT_UPDATED:
+            Double lon = (Double) data[0];
+            Double lat = (Double) data[1];
+            focusLonLat.setText(nf.format(lat) + "°/" + nf.format(lon) + "°");
         }
     }
 

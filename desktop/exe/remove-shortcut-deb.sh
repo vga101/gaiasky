@@ -3,4 +3,4 @@
 # Removes the .desktop shortcut in Debian systems
 #
 
-rm $HOME/.local/share/applications/gaiasandbox.desktop
+rm $HOME/.local/share/applications/gaiasky.desktop

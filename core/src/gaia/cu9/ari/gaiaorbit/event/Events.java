@@ -75,6 +75,9 @@ public enum Events {
     /** Contains the distance [0] and the viewing angle [1] **/
     FOCUS_INFO_UPDATED,
 
+    /** Contains two Double values, the longitude and latitude in degrees **/
+    LON_LAT_UPDATED,
+
     /** Issues the command to toggle the time. Contains the boolean indicating the state (may be null) and a boolean indicating whether this comes from the interface. **/
     TOGGLE_TIME_CMD,
     /** Contains the name of the type, a boolean indicating if this comes from the interface and an optional boolean with the state **/
