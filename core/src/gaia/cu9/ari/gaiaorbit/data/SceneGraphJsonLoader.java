@@ -54,7 +54,6 @@ public class SceneGraphJsonLoader {
                 node.initialize();
                 if (node instanceof AbstractOctreeWrapper) {
                     hasOctree = true;
-                    break;
                 }
             }
 

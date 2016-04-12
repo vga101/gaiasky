@@ -1,5 +1,12 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph.octreewrapper;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import com.badlogic.gdx.utils.Pool;
+
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
@@ -13,13 +20,6 @@ import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.MyPools;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
-
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import com.badlogic.gdx.utils.Pool;
 
 /**
  * Abstract Octree wrapper with the common parts of the regular Octree wrapper and
@@ -60,7 +60,6 @@ public abstract class AbstractOctreeWrapper extends SceneGraphNode implements It
     @Override
     public void initialize() {
         super.initialize();
-
     }
 
     /**
