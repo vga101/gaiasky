@@ -1,9 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.util.scene2d;
 
-import gaia.cu9.ari.gaiaorbit.event.EventManager;
-import gaia.cu9.ari.gaiaorbit.event.Events;
-import gaia.cu9.ari.gaiaorbit.util.I18n;
-
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
@@ -20,6 +16,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
 import com.badlogic.gdx.utils.Align;
 
+import gaia.cu9.ari.gaiaorbit.event.EventManager;
+import gaia.cu9.ari.gaiaorbit.event.Events;
+import gaia.cu9.ari.gaiaorbit.util.I18n;
+
 /** 
  * A collapsible pane with a detach-to-window button.
  * @author Toni Sagrista
@@ -30,6 +30,10 @@ public class CollapsiblePane extends VerticalGroup {
     CollapsibleWindow dialogWindow;
     ImageButton expandIcon, detachIcon;
     float lastx = -1, lasty = -1;
+    Actor content;
+    String labelText;
+    Skin skin;
+    Stage stage;
 
     /**
      * Creates a collapsible pane.
@@ -42,9 +46,12 @@ public class CollapsiblePane extends VerticalGroup {
      * @param detachButtonStyle The style of the detach icon.
      * @param topIcons List of top icons that will be added between the label and the expand/detach icons.
      */
-    public CollapsiblePane(final Stage stage, final String labelText, final Actor content, final Skin skin, String labelStyle, String expandButtonStyle, String detachButtonStyle, Actor... topIcons) {
+    public CollapsiblePane(final Stage stage, final String labelText, final Actor content, final Skin skin, String labelStyle, String expandButtonStyle, String detachButtonStyle, boolean expanded, Actor... topIcons) {
         super();
-
+        this.stage = stage;
+        this.labelText = labelText;
+        this.content = content;
+        this.skin = skin;
         Label mainLabel = new Label(labelText, skin, labelStyle);
 
         // Expand icon
@@ -54,12 +61,7 @@ public class CollapsiblePane extends VerticalGroup {
             @Override
             public boolean handle(Event event) {
                 if (event instanceof ChangeEvent) {
-                    if (expandIcon.isChecked() && dialogWindow == null) {
-                        addActor(content);
-                    } else {
-                        removeActor(content);
-                    }
-                    EventManager.instance.post(Events.RECALCULATE_OPTIONS_SIZE);
+                    toggleExpandCollapse();
                     return true;
                 }
                 return false;
@@ -75,15 +77,7 @@ public class CollapsiblePane extends VerticalGroup {
             @Override
             public boolean handle(Event event) {
                 if (event instanceof ChangeEvent) {
-                    dialogWindow = createWindow(labelText, content, skin, stage, lastx, lasty);
-
-                    // Display
-                    if (!stage.getActors().contains(dialogWindow, true))
-                        stage.addActor(dialogWindow);
-
-                    expandIcon.setChecked(false);
-                    expandIcon.setDisabled(true);
-                    detachIcon.setDisabled(true);
+                    detach();
                     return true;
                 }
                 return false;
@@ -107,7 +101,41 @@ public class CollapsiblePane extends VerticalGroup {
 
         addActor(headerGroup);
 
-        expandIcon.setChecked(true);
+        expandIcon.setChecked(expanded);
+
+    }
+
+    public void expand() {
+        if (!expandIcon.isChecked()) {
+            toggleExpandCollapse();
+        }
+    }
+
+    public void collapse() {
+        if (expandIcon.isChecked()) {
+            toggleExpandCollapse();
+        }
+    }
+
+    private void toggleExpandCollapse() {
+        if (expandIcon.isChecked() && dialogWindow == null) {
+            addActor(content);
+        } else {
+            removeActor(content);
+        }
+        EventManager.instance.post(Events.RECALCULATE_OPTIONS_SIZE);
+    }
+
+    public void detach() {
+        dialogWindow = createWindow(labelText, content, skin, stage, lastx, lasty);
+
+        // Display
+        if (!stage.getActors().contains(dialogWindow, true))
+            stage.addActor(dialogWindow);
+
+        expandIcon.setChecked(false);
+        expandIcon.setDisabled(true);
+        detachIcon.setDisabled(true);
     }
 
     /**
@@ -118,8 +146,8 @@ public class CollapsiblePane extends VerticalGroup {
      * @param skin The skin to use.
      * @param topIcons List of top icons that will be added between the label and the expand/detach icons.
      */
-    public CollapsiblePane(Stage stage, String labelText, final Actor content, Skin skin, Actor... topIcons) {
-        this(stage, labelText, content, skin, "header", "expand-collapse", "detach", topIcons);
+    public CollapsiblePane(Stage stage, String labelText, final Actor content, Skin skin, boolean expanded, Actor... topIcons) {
+        this(stage, labelText, content, skin, "header", "expand-collapse", "detach", expanded, topIcons);
     }
 
     private CollapsibleWindow createWindow(String labelText, final Actor content, Skin skin, Stage stage, float x, float y) {

@@ -26,6 +26,7 @@ import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.interfce.components.CameraComponent;
 import gaia.cu9.ari.gaiaorbit.interfce.components.GaiaComponent;
+import gaia.cu9.ari.gaiaorbit.interfce.components.MusicComponent;
 import gaia.cu9.ari.gaiaorbit.interfce.components.ObjectsComponent;
 import gaia.cu9.ari.gaiaorbit.interfce.components.TimeComponent;
 import gaia.cu9.ari.gaiaorbit.interfce.components.VisibilityComponent;
@@ -51,7 +52,7 @@ public class ControlsWindow extends CollapsibleWindow implements IObserver {
     protected VerticalGroup mainVertical;
     protected OwnScrollPane windowScroll;
     protected Table guiLayout;
-    protected OwnImageButton recCamera = null, playCamera = null, playstop = null;
+    protected OwnImageButton recCamera = null, playCamera = null, playstop = null, reloadMusic = null;
     protected TiledDrawable separator;
     /**
     	 * The scene graph
@@ -103,7 +104,7 @@ public class ControlsWindow extends CollapsibleWindow implements IObserver {
         TimeComponent timeComponent = new TimeComponent(skin, ui);
         timeComponent.initialize();
 
-        CollapsiblePane time = new CollapsiblePane(ui, txt("gui.time"), timeComponent.getActor(), skin, playstop);
+        CollapsiblePane time = new CollapsiblePane(ui, txt("gui.time"), timeComponent.getActor(), skin, true, playstop);
         time.align(Align.left);
         mainActors.add(time);
 
@@ -146,7 +147,7 @@ public class ControlsWindow extends CollapsibleWindow implements IObserver {
         CameraComponent cameraComponent = new CameraComponent(skin, ui);
         cameraComponent.initialize();
 
-        CollapsiblePane camera = new CollapsiblePane(ui, txt("gui.camera"), cameraComponent.getActor(), skin, recCamera, playCamera);
+        CollapsiblePane camera = new CollapsiblePane(ui, txt("gui.camera"), cameraComponent.getActor(), skin, false, recCamera, playCamera);
         camera.align(Align.left);
         mainActors.add(camera);
 
@@ -155,7 +156,7 @@ public class ControlsWindow extends CollapsibleWindow implements IObserver {
         visibilityComponent.setVisibilityEntitites(visibilityEntities, visible);
         visibilityComponent.initialize();
 
-        CollapsiblePane visibility = new CollapsiblePane(ui, txt("gui.visibility"), visibilityComponent.getActor(), skin);
+        CollapsiblePane visibility = new CollapsiblePane(ui, txt("gui.visibility"), visibilityComponent.getActor(), skin, true);
         visibility.align(Align.left);
         mainActors.add(visibility);
 
@@ -163,7 +164,7 @@ public class ControlsWindow extends CollapsibleWindow implements IObserver {
         VisualEffectsComponent visualEffectsComponent = new VisualEffectsComponent(skin, ui);
         visualEffectsComponent.initialize();
 
-        CollapsiblePane visualEffects = new CollapsiblePane(ui, txt("gui.lighting"), visualEffectsComponent.getActor(), skin);
+        CollapsiblePane visualEffects = new CollapsiblePane(ui, txt("gui.lighting"), visualEffectsComponent.getActor(), skin, false);
         visualEffects.align(Align.left);
         mainActors.add(visualEffects);
 
@@ -172,7 +173,7 @@ public class ControlsWindow extends CollapsibleWindow implements IObserver {
         objectsComponent.setSceneGraph(sg);
         objectsComponent.initialize();
 
-        CollapsiblePane objects = new CollapsiblePane(ui, txt("gui.objects"), objectsComponent.getActor(), skin);
+        CollapsiblePane objects = new CollapsiblePane(ui, txt("gui.objects"), objectsComponent.getActor(), skin, false);
         objects.align(Align.left);
         mainActors.add(objects);
 
@@ -180,9 +181,31 @@ public class ControlsWindow extends CollapsibleWindow implements IObserver {
         GaiaComponent gaiaComponent = new GaiaComponent(skin, ui);
         gaiaComponent.initialize();
 
-        CollapsiblePane gaia = new CollapsiblePane(ui, txt("gui.gaiascan"), gaiaComponent.getActor(), skin);
+        CollapsiblePane gaia = new CollapsiblePane(ui, txt("gui.gaiascan"), gaiaComponent.getActor(), skin, true);
         gaia.align(Align.left);
         mainActors.add(gaia);
+
+        /** ----MUSIC GROUP---- **/
+        MusicComponent musicComponent = new MusicComponent(skin, ui);
+        musicComponent.initialize();
+
+        reloadMusic = new OwnImageButton(skin, "reload");
+        reloadMusic.setName("reload music");
+        reloadMusic.addListener(new EventListener() {
+            @Override
+            public boolean handle(Event event) {
+                if (event instanceof ChangeEvent) {
+                    EventManager.instance.post(Events.MUSIC_RELOAD_CMD);
+                    return true;
+                }
+                return false;
+            }
+        });
+        reloadMusic.addListener(new TextTooltip(txt("gui.music.reload"), skin));
+
+        CollapsiblePane music = new CollapsiblePane(ui, txt("gui.music"), musicComponent.getActor(), skin, true, reloadMusic);
+        music.align(Align.left);
+        mainActors.add(music);
 
         /** ----BACK TO WEBGL LINK---- **/
         Button switchWebgl = new OwnTextButton(txt("gui.webgl.back"), skin, "link");

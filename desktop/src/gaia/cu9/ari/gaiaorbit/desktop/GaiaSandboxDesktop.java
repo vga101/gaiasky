@@ -50,6 +50,7 @@ import gaia.cu9.ari.gaiaorbit.util.ConfInit;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
+import gaia.cu9.ari.gaiaorbit.util.MusicManager;
 import gaia.cu9.ari.gaiaorbit.util.concurrent.SingleThreadIndexer;
 import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadIndexer;
 import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
@@ -110,6 +111,9 @@ public class GaiaSandboxDesktop implements IObserver {
             // Init cam recorder
             CamRecorder.initialize();
 
+            // Init music manager
+            MusicManager.initialize(Gdx.files.absolute(ASSETS_LOC + "music"));
+
             // Initialize post processor factory
             PostProcessorFactory.initialize(new DesktopPostProcessorFactory());
 
@@ -164,7 +168,7 @@ public class GaiaSandboxDesktop implements IObserver {
 
     public void launchMainApp() {
         LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
-        LwjglApplicationConfiguration.disableAudio = true;
+        LwjglApplicationConfiguration.disableAudio = false;
         cfg.title = GlobalConf.getFullApplicationName();
         cfg.fullscreen = GlobalConf.screen.FULLSCREEN;
         cfg.resizable = GlobalConf.screen.RESIZABLE;

@@ -14,6 +14,7 @@ import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.FileHandleResolver;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.controllers.Controllers;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap.Format;
@@ -58,6 +59,7 @@ import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.ModelCache;
+import gaia.cu9.ari.gaiaorbit.util.MusicManager;
 import gaia.cu9.ari.gaiaorbit.util.gaia.GaiaAttitudeServer;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
@@ -111,6 +113,11 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
      */
     public ITimeFrameProvider time;
     private ITimeFrameProvider clock, real;
+
+    /**
+     * Music
+     */
+    public Music music;
 
     private boolean initialized = false;
 
@@ -343,6 +350,9 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
             sg.dispose();
         }
         ModelCache.cache.dispose();
+
+        // Dispose music manager
+        MusicManager.dispose();
     }
 
     @Override

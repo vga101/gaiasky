@@ -397,3 +397,39 @@ tooltip-icon
   orig: 14, 14
   offset: 0, 0
   index: -1
+audio-bwd
+  rotate: false
+  xy: 136, 20
+  size: 14, 14
+  orig: 14, 14
+  offset: 0, 0
+  index: -1
+audio-pause
+  rotate: false
+  xy: 150, 20
+  size: 14, 14
+  orig: 14, 14
+  offset: 0, 0
+  index: -1
+audio-play
+  rotate: false
+  xy: 161, 20
+  size: 14, 14
+  orig: 14, 14
+  offset: 0, 0
+  index: -1
+audio-fwd
+  rotate: false
+  xy: 174, 20
+  size: 14, 14
+  orig: 14, 14
+  offset: 0, 0
+  index: -1
+reload
+  rotate: false
+  xy: 203, 32
+  size: 14, 14
+  orig: 14, 14
+  offset: 0, 0
+  index: -1
+    

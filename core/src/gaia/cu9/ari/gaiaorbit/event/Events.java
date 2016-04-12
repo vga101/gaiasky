@@ -313,6 +313,17 @@ public enum Events {
     /** Adds the gui component identified by the given name **/
     ADD_GUI_COMPONENT,
 
+    /** Volume of music, contains the volume (float in [0..1]) **/
+    MUSIC_VOLUME_CMD,
+    /** Toggles the play **/
+    MUSIC_PLAYPAUSE_CMD,
+    /** Plays previous music **/
+    MUSIC_PREVIOUS_CMD,
+    /** Plays next music **/
+    MUSIC_NEXT_CMD,
+    /** Reload music files **/
+    MUSIC_RELOAD_CMD,
+
     /** Toggles the fading of particles in the octree. Contains a boolean with the state of the flag. **/
     OCTREE_PARTICLE_FADE_CMD,
 
