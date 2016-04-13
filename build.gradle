@@ -86,9 +86,10 @@ project(":desktop") {
     project.ext.baseDir = System.getProperty("user.dir")
     project.ext.tagRev = project.tag + "." + project.rev
     project.ext.distName = "gaiasky-$tagRev"
-    project.ext.distDir = "$baseDir/releases/$distName"
+    project.ext.releasesDir = "$baseDir/releases"
+    project.ext.distDir = "$releasesDir/$distName"
     project.ext.packageName = "packages-$tagRev"
-    project.ext.packageDir = "$baseDir/releases/$packageName"
+    project.ext.packageDir = "$releasesDir/$packageName"
 
     println ""
     println "BUILD VARIABLES AND INFO"

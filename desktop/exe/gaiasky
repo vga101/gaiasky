@@ -28,8 +28,8 @@ fi
 #
 # Settings.
 #
-# Properties file
-OPTS="$OPTS -Dproperties.file=$GSDIRESC/conf/global.properties"
+# Properties file - by default we use the file at $HOME/.gaiasky/global.properties
+#OPTS="$OPTS -Dproperties.file=$GSDIRESC/conf/global.properties"
 
 # Memory
 OPTS="$OPTS -Xmx1g"

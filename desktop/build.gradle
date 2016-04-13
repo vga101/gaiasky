@@ -216,11 +216,12 @@ task createTar(dependsOn: dist, description: "Creates application tar package") 
     mkdir packageDir
 
     ant.tar(destfile: "$packageDir/" + project.distName + ".tar.gz", compression: 'gzip', longfile: 'gnu') {
-        tarfileset(dir: "$distDir") {
-            exclude (name: "gaiasky")
+        tarfileset(dir: "$releasesDir") {
+        	include (name: "$distName/**")
+            exclude (name: "$distName/gaiasky")
         }
-        tarfileset(dir: "$distDir", filemode:'755') {
-            include(name: "gaiasky")
+        tarfileset(dir: "$releasesDir", filemode:'755') {
+            include(name: "$distName/gaiasky")
         }
     }
 
