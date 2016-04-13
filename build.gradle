@@ -23,7 +23,7 @@ allprojects {
     version = '1.0'
 
     ext {
-        appName = 'GaiaSandbox'
+        appName = 'GaiaSky'
         gdxVersion = '1.9.2'
         roboVMVersion = '1.4.0'
         box2DLightsVersion = '1.3'
@@ -85,7 +85,7 @@ project(":desktop") {
     // Set some build variables
     project.ext.baseDir = System.getProperty("user.dir")
     project.ext.tagRev = project.tag + "." + project.rev
-    project.ext.distName = "gaiasandbox-$tagRev"
+    project.ext.distName = "gaiasky-$tagRev"
     project.ext.distDir = "$baseDir/releases/$distName"
     project.ext.packageName = "packages-$tagRev"
     project.ext.packageDir = "$baseDir/releases/$packageName"
@@ -118,7 +118,7 @@ project(":desktop") {
 
     jar {
         manifest {
-            attributes 'Implementation-Title': 'Gaia Sandbox desktop',
+            attributes 'Implementation-Title': 'Gaia Sky desktop',
                        'Implementation-Version': version
         }
         from('../android/assets') {
@@ -181,7 +181,7 @@ project(":core") {
 
     jar {
         manifest {
-            attributes 'Implementation-Title': 'Gaia Sandbox core',
+            attributes 'Implementation-Title': 'Gaia Sky core',
                        'Implementation-Version': version
         }
         println "Creating core jar file"

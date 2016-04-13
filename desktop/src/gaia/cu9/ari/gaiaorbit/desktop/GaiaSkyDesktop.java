@@ -62,14 +62,14 @@ import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
  * @author Toni Sagrista
  *
  */
-public class GaiaSandboxDesktop implements IObserver {
-    private static GaiaSandboxDesktop gsd;
+public class GaiaSkyDesktop implements IObserver {
+    private static GaiaSkyDesktop gsd;
     public static String ASSETS_LOC;
 
     public static void main(String[] args) {
 
         try {
-            gsd = new GaiaSandboxDesktop();
+            gsd = new GaiaSkyDesktop();
             // Assets location
             ASSETS_LOC = (System.getProperty("assets.location") != null ? System.getProperty("assets.location") : "");
 
@@ -148,7 +148,7 @@ public class GaiaSandboxDesktop implements IObserver {
         }
     }
 
-    public GaiaSandboxDesktop() {
+    public GaiaSkyDesktop() {
         super();
         EventManager.instance.subscribe(this, Events.SHOW_PREFERENCES_ACTION, Events.SHOW_ABOUT_ACTION, Events.SHOW_RUNSCRIPT_ACTION, Events.JAVA_EXCEPTION, Events.SHOW_PLAYCAMERA_ACTION, Events.POST_NOTIFICATION);
     }

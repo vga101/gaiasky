@@ -4,7 +4,7 @@ apply plugin: 'install4j'
 sourceCompatibility = 1.7
 sourceSets.main.java.srcDirs = ["src/"]
 
-project.ext.mainClassName = "gaia.cu9.ari.gaiaorbit.desktop.GaiaSandboxDesktop"
+project.ext.mainClassName = "gaia.cu9.ari.gaiaorbit.desktop.GaiaSkyDesktop"
 project.ext.assetsDir = new File("../android/assets");
 project.ext.workDir = new File(".");
 
@@ -108,15 +108,15 @@ task copyToLib (dependsOn: [compileJava, createDistDir], description: "Copies th
 
 }
 
-task gaiasandboxJar (dependsOn: [compileJava, jar, copyToLib],  description: "Creates the gaiasandbox jar and puts it to the dist folder") << {
+task gaiaskyJar (dependsOn: [compileJava, jar, copyToLib],  description: "Creates the gaiasky jar and puts it to the dist folder") << {
     copy {
         from "$baseDir/desktop/build/libs/desktop-" + version + ".jar"
         into "$distLib/"
     }
-    file("$distLib/desktop-" + version + ".jar").renameTo(file("$distLib/gaiasandbox.jar"))
+    file("$distLib/desktop-" + version + ".jar").renameTo(file("$distLib/gaiasky.jar"))
 }
 
-task dist (dependsOn: gaiasandboxJar, description: "Compiles the project, creates the jar and moves it all to releases/gaiasandbox-\$tag-\$rev") << {
+task dist (dependsOn: gaiaskyJar, description: "Compiles the project, creates the jar and moves it all to releases/gaiasky-\$tag-\$rev") << {
     // Copy conf
     mkdir "$distDir/conf"
     copy {
@@ -192,8 +192,8 @@ task dist (dependsOn: gaiasandboxJar, description: "Compiles the project, create
         include "ic_launcher.svg"
     }
 
-    // Make gaiasandbox script executable
-    def cmd = "chmod u+x $distDir/gaiasandbox"
+    // Make gaiasky script executable
+    def cmd = "chmod u+x $distDir/gaiasky"
     cmd.execute()
 
     // Replace version in readme file
@@ -212,10 +212,10 @@ task createTar(dependsOn: dist, description: "Creates application tar package") 
 
     ant.tar(destfile: "$packageDir/" + project.distName + ".tar.gz", compression: 'gzip', longfile: 'gnu') {
         tarfileset(dir: "$distDir") {
-            exclude (name: "gaiasandbox")
+            exclude (name: "gaiasky")
         }
         tarfileset(dir: "$distDir", filemode:'755') {
-            include(name: "gaiasandbox")
+            include(name: "gaiasky")
         }
     }
 

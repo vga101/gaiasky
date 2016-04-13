@@ -2,7 +2,7 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="src" path="/GaiaSandbox-core"/>
+	<classpathentry kind="src" path="/GaiaSky-core"/>
 	<classpathentry kind="lib" path="/home/tsagrista/.gradle/caches/modules-2/files-2.1/com.badlogicgames.gdx/gdx-backend-lwjgl/1.9.2/d710a8704ed584ec2ba9ca52e3a6a5885dd759cc/gdx-backend-lwjgl-1.9.2.jar" sourcepath="/home/tsagrista/.gradle/caches/modules-2/files-2.1/com.badlogicgames.gdx/gdx-backend-lwjgl/1.9.2/888ddbf116b94ab6dbe07178e035091031425b67/gdx-backend-lwjgl-1.9.2-sources.jar"/>
 	<classpathentry kind="lib" path="/home/tsagrista/.gradle/caches/modules-2/files-2.1/org.lwjgl.lwjgl/lwjgl/2.9.3/3df168ac74e4a8c96562cdff24ad352e255bf89c/lwjgl-2.9.3.jar" sourcepath="/home/tsagrista/.gradle/caches/modules-2/files-2.1/org.lwjgl.lwjgl/lwjgl/2.9.3/34682f36cee6cded40df9829bb352f2bdce5b14e/lwjgl-2.9.3-sources.jar"/>
 	<classpathentry kind="lib" path="/home/tsagrista/.gradle/caches/modules-2/files-2.1/com.badlogicgames.gdx/gdx-platform/1.9.2/dde4cf7e9ce61c24042f512203aed87657496639/gdx-platform-1.9.2-natives-desktop.jar"/>
@@ -30,7 +30,7 @@
 	<classpathentry kind="lib" path="/home/tsagrista/git/gaiasandbox/android/assets"/>
 	<classpathentry kind="lib" path="/home/tsagrista/git/gaiasandbox/desktop/lib/stil.jar"/>
 	<classpathentry kind="src" path="assets"/>
-	<classpathentry kind="lib" path="/GaiaSandbox-core/lib/postprocessing-sources.jar"/>
-	<classpathentry kind="lib" path="/GaiaSandbox-core/lib/postprocessing.jar"/>
+	<classpathentry kind="lib" path="/GaiaSky-core/lib/postprocessing-sources.jar"/>
+	<classpathentry kind="lib" path="/GaiaSky-core/lib/postprocessing.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

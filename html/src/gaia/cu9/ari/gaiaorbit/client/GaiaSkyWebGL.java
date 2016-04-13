@@ -28,7 +28,7 @@ import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadIndexer;
 import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
 
-public class GaiaSandboxWebGL extends GwtApplication implements IObserver {
+public class GaiaSkyWebGL extends GwtApplication implements IObserver {
 
     private GaiaSky application;
 

@@ -66,7 +66,7 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.JsonValue;
 
-import gaia.cu9.ari.gaiaorbit.desktop.GaiaSandboxDesktop;
+import gaia.cu9.ari.gaiaorbit.desktop.GaiaSkyDesktop;
 import gaia.cu9.ari.gaiaorbit.desktop.gui.swing.callback.Callback;
 import gaia.cu9.ari.gaiaorbit.desktop.gui.swing.callback.CallbackTask;
 import gaia.cu9.ari.gaiaorbit.desktop.gui.swing.jsplash.GuiUtility;
@@ -105,7 +105,7 @@ public class ConfigDialog extends I18nJFrame {
     String vislistdata;
     JTree visualisationsTree;
 
-    public ConfigDialog(final GaiaSandboxDesktop gsd, boolean startup) {
+    public ConfigDialog(final GaiaSkyDesktop gsd, boolean startup) {
         super(startup ? GlobalConf.getFullApplicationName() : txt("gui.settings"));
 
         FontUtilities.setFontScale(GlobalConf.SCALE_FACTOR);
@@ -151,7 +151,7 @@ public class ConfigDialog extends I18nJFrame {
         okButton.requestFocus();
     }
 
-    private void initialize(final GaiaSandboxDesktop gsd, final boolean startup) {
+    private void initialize(final GaiaSkyDesktop gsd, final boolean startup) {
         frame = this;
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setResizable(false);
@@ -337,7 +337,7 @@ public class ConfigDialog extends I18nJFrame {
         JPanel ui = new JPanel(new MigLayout("", "[grow,fill][grow,fill]", ""));
         ui.setBorder(new TitledBorder(new MatteBorder(new Insets(thick, 0, 0, 0), bcol), txt("gui.ui.interfacesettings"), just, pos));
 
-        File i18nfolder = new File(GaiaSandboxDesktop.ASSETS_LOC + "i18n/");
+        File i18nfolder = new File(GaiaSkyDesktop.ASSETS_LOC + "i18n/");
 
         String i18nname = "gsbundle";
         String[] files = i18nfolder.list();

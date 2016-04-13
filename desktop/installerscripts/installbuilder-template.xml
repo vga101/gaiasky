@@ -1,6 +1,6 @@
 <project>
-    <shortName>gaiasandbox</shortName>
-    <fullName>Gaia Sandbox</fullName>
+    <shortName>gaiasky</shortName>
+    <fullName>Gaia Sky</fullName>
     <version>@version-tag@</version>
     <readmeFile>@gs-release-folder@/README.md</readmeFile>
     <licenseFile>@gs-release-folder@/LICENSE</licenseFile>
@@ -37,10 +37,10 @@
                             <origin>@gs-release-folder@/AUTHORS</origin>
                         </distributionFile>
                         <distributionFile>
-                            <origin>@gs-release-folder@/gaiasandbox</origin>
+                            <origin>@gs-release-folder@/gaiasky</origin>
                         </distributionFile>
                         <distributionFile>
-                            <origin>@gs-release-folder@/gaiasandbox.jar</origin>
+                            <origin>@gs-release-folder@/gaiasky.jar</origin>
                         </distributionFile>
                         <distributionFile>
                             <origin>@gs-release-folder@/LICENSE</origin>
@@ -107,15 +107,15 @@
                     <platforms>linux linux-x64</platforms>
                     <shortcutList>
                         <shortcut>
-                            <comment>Gaia Sandbox 3D astronomy software to observe the galaxy and beyond</comment>
-                            <exec>${installdir}/gaiasandbox</exec>
+                            <comment>Gaia Sky 3D astronomy software to observe the galaxy and beyond</comment>
+                            <exec>${installdir}/gaiasky</exec>
                             <icon>${installdir}/ic_launcher.svg</icon>
                             <name>gaiasandbox</name>
                             <path>${installdir}</path>
                             <platforms>all</platforms>
                             <runAsAdmin>0</runAsAdmin>
                             <runInTerminal>0</runInTerminal>
-                            <windowsExec>${installdir}/gaiasandbox.bat</windowsExec>
+                            <windowsExec>${installdir}/gaiasky.bat</windowsExec>
                             <windowsExecArgs></windowsExecArgs>
                             <windowsIcon>${installdir}/ic_launcher.ico</windowsIcon>
                             <windowsPath>${installdir}</windowsPath>
@@ -139,7 +139,7 @@
                     <name>${product_fullname}</name>
                     <runAsAdmin>0</runAsAdmin>
                     <runInTerminal>0</runInTerminal>
-                    <windowsExec>${installdir}/gaiasandbox.bat</windowsExec>
+                    <windowsExec>${installdir}/gaiasky.bat</windowsExec>
                     <windowsExecArgs></windowsExecArgs>
                     <windowsIcon>${installdir}/ic_launcher.ico</windowsIcon>
                     <windowsPath>${installdir}</windowsPath>

@@ -24,7 +24,7 @@ import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 
-public class GaiaSandboxDesktopWebGL {
+public class GaiaSkyDesktopWebGL {
 
     public static void main(String[] args) throws Exception {
         NumberFormatFactory.initialize(new DesktopNumberFormatFactory());

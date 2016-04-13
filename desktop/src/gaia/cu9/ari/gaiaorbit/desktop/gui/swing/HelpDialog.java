@@ -1,11 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.desktop.gui.swing;
 
-import com.badlogic.gdx.utils.BufferUtils;
-
-import gaia.cu9.ari.gaiaorbit.desktop.gui.swing.components.LinkLabel;
-import gaia.cu9.ari.gaiaorbit.desktop.gui.swing.jsplash.GuiUtility;
-import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -29,11 +23,15 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
-import net.miginfocom.swing.MigLayout;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.utils.BufferUtils;
+
+import gaia.cu9.ari.gaiaorbit.desktop.gui.swing.components.LinkLabel;
+import gaia.cu9.ari.gaiaorbit.desktop.gui.swing.jsplash.GuiUtility;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
+import net.miginfocom.swing.MigLayout;
 
 public class HelpDialog extends I18nJFrame {
 
@@ -54,8 +52,7 @@ public class HelpDialog extends I18nJFrame {
     }
 
     /** Returns an ImageIcon, or null if the path was invalid. */
-    protected ImageIcon createImageIcon(String path,
-            String description) {
+    protected ImageIcon createImageIcon(String path, String description) {
         java.net.URL imgURL = getClass().getResource(path);
         if (imgURL != null) {
             return new ImageIcon(imgURL, description);
@@ -87,8 +84,7 @@ public class HelpDialog extends I18nJFrame {
         JPanel help = new JPanel(new MigLayout("fillx", "[grow,fill][grow,fill]", ""));
         help.setBorder(new EmptyBorder(10, 10, 10, 10));
 
-        ImageIcon icon = createImageIcon("/img/gaiasandboxlogo.png",
-                txt("gui.help.logo", GlobalConf.APPLICATION_NAME));
+        ImageIcon icon = createImageIcon("/img/gaiaskylogo.png", txt("gui.help.logo", GlobalConf.APPLICATION_NAME));
         JLabel label1 = new JLabel(icon, JLabel.CENTER);
 
         help.add(label1, "span,wrap");
@@ -279,8 +275,7 @@ public class HelpDialog extends I18nJFrame {
 
         JPanel license = new JPanel(new MigLayout("fillx", "[grow,fill][grow,fill][]", ""));
         license.setBorder(new LineBorder(Color.LIGHT_GRAY));
-        ImageIcon lgpl = createImageIcon("/img/license.png",
-                txt("gui.help.logo", GlobalConf.APPLICATION_NAME));
+        ImageIcon lgpl = createImageIcon("/img/license.png", txt("gui.help.logo", GlobalConf.APPLICATION_NAME));
         license.add(new JLabel(lgpl, JLabel.CENTER));
 
         JTextArea licensetext = new JTextArea(txt("gui.help.license"));
@@ -295,16 +290,13 @@ public class HelpDialog extends I18nJFrame {
         JPanel supporting = new JPanel(new MigLayout("fillx", "[grow,fill][grow,fill][grow,fill]", ""));
         supporting.setBorder(new LineBorder(Color.LIGHT_GRAY));
 
-        icon = createImageIcon("/img/zah.png",
-                "ZAH");
+        icon = createImageIcon("/img/zah.png", "ZAH");
         label1 = new JLabel(icon, JLabel.CENTER);
         supporting.add(label1);
-        icon = createImageIcon("/img/dlr.png",
-                "DLR");
+        icon = createImageIcon("/img/dlr.png", "DLR");
         label1 = new JLabel(icon, JLabel.CENTER);
         supporting.add(label1);
-        icon = createImageIcon("/img/bwt.png",
-                "BWT");
+        icon = createImageIcon("/img/bwt.png", "BWT");
         label1 = new JLabel(icon, JLabel.CENTER);
         supporting.add(label1);
 

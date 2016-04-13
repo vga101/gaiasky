@@ -59,10 +59,10 @@ task afterGwtCompileFull << {
     // update logo
     delete 'war/html/logo.png'
     copy {
-        from '../android/assets/img/gaiasandboxlogo.png'
+        from '../android/assets/img/gaiaskylogo.png'
         into 'war/html/'
     }
-    file('war/html/gaiasandboxlogo.png').renameTo(file('war/html/logo.png'))
+    file('war/html/gaiaskylogo.png').renameTo(file('war/html/logo.png'))
     
     // update index.html
     delete 'war/index.html'
@@ -153,10 +153,10 @@ task afterGwtCompileLite << {
     // update logo
     delete 'war/html/logo.png'
     copy {
-        from '../android/assets/img/gaiasandboxlogo.png'
+        from '../android/assets/img/gaiaskylogo.png'
         into 'war/html/'
     }
-    file('war/html/gaiasandboxlogo.png').renameTo(file('war/html/logo.png'))
+    file('war/html/gaiaskylogo.png').renameTo(file('war/html/logo.png'))
     
     // update index.html
     delete 'war/index.html'

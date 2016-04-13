@@ -14,7 +14,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
-import gaia.cu9.ari.gaiaorbit.desktop.GaiaSandboxDesktop;
+import gaia.cu9.ari.gaiaorbit.desktop.GaiaSkyDesktop;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.util.ConfInit;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
@@ -57,10 +57,10 @@ public class DesktopConfInit extends ConfInit {
             File confFile = new File(propsFileProperty);
             InputStream fis = new FileInputStream(confFile);
             // This should work for the normal execution
-            InputStream vis = GaiaSandboxDesktop.class.getResourceAsStream("/version");
+            InputStream vis = GaiaSkyDesktop.class.getResourceAsStream("/version");
             if (vis == null) {
                 // In case of running in 'developer' mode
-                vis = new FileInputStream(GaiaSandboxDesktop.ASSETS_LOC + "data/dummyversion");
+                vis = new FileInputStream(GaiaSkyDesktop.ASSETS_LOC + "data/dummyversion");
             }
             vp = new Properties();
             vp.load(vis);

@@ -2,7 +2,7 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
-	<classpathentry exported="true" kind="src" path="/GaiaSandbox-core"/>
+	<classpathentry exported="true" kind="src" path="/GaiaSky-core"/>
 	<classpathentry exported="true" kind="lib" path="/home/tsagrista/.gradle/caches/modules-2/files-2.1/com.badlogicgames.gdx/gdx-backend-android/1.6.4/d681be06ea6873f2056bbcbe091367bd9f7c23f2/gdx-backend-android-1.6.4.jar" sourcepath="/home/tsagrista/.gradle/caches/modules-2/files-2.1/com.badlogicgames.gdx/gdx-backend-android/1.6.4/21c8def1fec1403d507c5731b679159223c01454/gdx-backend-android-1.6.4-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="/home/tsagrista/.gradle/caches/modules-2/files-2.1/com.badlogicgames.gdx/gdx-controllers/1.6.4/2a313baf017a28b3361716c84e6cfb46ef8ea0aa/gdx-controllers-1.6.4.jar" sourcepath="/home/tsagrista/.gradle/caches/modules-2/files-2.1/com.badlogicgames.gdx/gdx-controllers/1.6.4/743aade53c057b498b6a1fc95e0b90bf96862df6/gdx-controllers-1.6.4-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="/home/tsagrista/.gradle/caches/modules-2/files-2.1/org.python/jython-standalone/2.7.0/cdfb38bc6f8343bcf1d6accc2e1147e8e7b63b75/jython-standalone-2.7.0.jar" sourcepath="/home/tsagrista/.gradle/caches/modules-2/files-2.1/org.python/jython-standalone/2.7.0/7ffff3853a1c497ea4543849935a5c360d853ee2/jython-standalone-2.7.0-sources.jar"/>
