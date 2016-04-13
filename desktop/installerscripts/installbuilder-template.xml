@@ -49,7 +49,7 @@
                             <origin>@gs-release-folder@/README.md</origin>
                         </distributionFile>
                         <distributionFile>
-                            <origin>@gs-release-folder@/gaiasandbox.bat</origin>
+                            <origin>@gs-release-folder@/gaiasky.bat</origin>
                         </distributionFile>
                         <distributionFile>
                             <origin>@gs-release-folder@/ic_launcher.ico</origin>
@@ -110,7 +110,7 @@
                             <comment>Gaia Sky 3D astronomy software to observe the galaxy and beyond</comment>
                             <exec>${installdir}/gaiasky</exec>
                             <icon>${installdir}/ic_launcher.svg</icon>
-                            <name>gaiasandbox</name>
+                            <name>gaiasky</name>
                             <path>${installdir}</path>
                             <platforms>all</platforms>
                             <runAsAdmin>0</runAsAdmin>
