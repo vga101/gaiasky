@@ -32,7 +32,7 @@ fi
 OPTS="$OPTS -Dproperties.file=$GSDIRESC/conf/global.properties"
 
 # Memory
-OPTS="$OPTS -Xmx512m"
+OPTS="$OPTS -Xmx1g"
 
 # Parallel GC 
 #OPTS="$OPTS -XX:+UseParallelGC"
@@ -52,7 +52,7 @@ OPTS="$OPTS -XX:+UseConcMarkSweepGC"
 # Run.
 #
 
-CMD="$JAVA $OPTS -cp \"$LIB_PATH\" gaia.cu9.ari.gaiaorbit.desktop.GaiaSandboxDesktop $@"
+CMD="$JAVA $OPTS -cp \"$LIB_PATH\" gaia.cu9.ari.gaiaorbit.desktop.GaiaSkyDesktop $@"
 echo "$CMD"
 
 ( cd "$GSDIR" && eval $CMD )

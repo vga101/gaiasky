@@ -100,6 +100,7 @@ task copyToLib (dependsOn: [compileJava, createDistDir], description: "Copies th
     delete project.distLib + '/i18n'
     delete project.distLib + '/icon'
     delete project.distLib + '/img'
+    delete project.distLib + '/music'
     delete project.distLib + '/scripts'
     delete project.distLib + '/shader'
     delete project.distLib + '/shaders'
@@ -131,22 +132,19 @@ task dist (dependsOn: gaiaskyJar, description: "Compiles the project, creates th
         from "../android/assets/data"
         into "$distDir/data"
         exclude "**/android"
+		exclude "**/octree"
+		exclude "**/tgas_201507"
 
         exclude "**/earth-8k.jpg"
-        exclude "**/earth.jpg"
-        exclude "**/earth-normal.jpg"
-        exclude "**/earth-specular.jpg"
-        exclude "**/earth-night.jpg"
         exclude "**/earth-night-2k.jpg"
-        exclude "**/mars.jpg"
-        exclude "**/jupiter.jpg"
-        exclude "**/venus.jpg"
 
-
+		exclude "**/catalog.txt"
         exclude "**/hyg_metadata.bin"
         exclude "**/hyg_particles.bin"
         exclude "**/*-wgl.json"
-        exclude "**/*-lite.json"
+        
+        exclude "**/galaxy_bar*.txt"
+        exclude "**/galaxy_nobar*.txt"
     }
 
     // Add icons to data
@@ -162,6 +160,13 @@ task dist (dependsOn: gaiaskyJar, description: "Compiles the project, creates th
         from "$baseDir/android/assets/i18n"
         into "$distDir/i18n"
         exclude "**/android/"
+    }
+    
+    // Copy music
+    mkdir "$distDir/music"
+    copy{
+    	from "../android/assets/music"
+    	into "$distDir/music"
     }
 
     // Copy script files
