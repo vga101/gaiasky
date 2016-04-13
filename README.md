@@ -1,10 +1,10 @@
-![Gaia Sandbox](http://www.zah.uni-heidelberg.de/fileadmin/user_upload/gaia/gaiasandbox/img/splash-s.jpg)
+![Gaia Sky](http://www.zah.uni-heidelberg.de/fileadmin/user_upload/gaia/gaiasandbox/img/splash-s.jpg)
 -------------------------
 --------------------------
 [![Circle CI](https://circleci.com/gh/ari-zah/gaiasandbox/tree/master.svg?style=svg)](https://circleci.com/gh/ari-zah/gaiasandbox/tree/master)
 
 
-The **Gaia Sandbox** is a real-time, 3D, astronomy visualisation software that
+The **Gaia Sky** is a real-time, 3D, astronomy visualisation software that
 runs on Windows, Linux and MacOS. It is developed in the framework of
 [ESA](http://www.esa.int/ESA)'s [Gaia mission](http://sci.esa.int/gaia) to chart about 1 billion stars of our Galaxy.
 To get the latest up-to-date and most complete information,
@@ -28,7 +28,7 @@ This file contains the following sections:
 ###1.1 Requirements
 
 - **Operating System** -
-The Gaia Sandbox application runs on Windows, MacOS and
+The Gaia Sky runs on Windows, MacOS and
 Linux.
 
 - **Java** -
@@ -56,17 +56,17 @@ available.
 
 Two windows installers are available for 32 and 64-bit systems.
 
-- `gaiasandbox_windows_[version].exe` - 32 bit installer.
-- `gaiasandbox_windows-x64_[version].exe` - 64 bit installer.
+- `gaiasky_windows_[version].exe` - 32 bit installer.
+- `gaiasky_windows-x64_[version].exe` - 64 bit installer.
 
 Both versions will automatically install the JRE if it is not present
 in the system.
-To install the Gaia Sandbox, just double click on the installer and
+To install the Gaia Sky, just double click on the installer and
 then follow the on-screen instructions. You will need to choose the
 directory where the application is to be installed.
 
 In order to **uninstall** the application you can use the Windows Control Panel or
-you can use the provided uninstaller in the Gaia Sandbox folder.
+you can use the provided uninstaller in the Gaia Sky folder.
 
 ####1.2.2 Linux
 
@@ -80,36 +80,36 @@ following command. You will need root privileges to install a `deb` package in
 your system.
 
 ```
-sudo dpkg -i gaiasandbox_linux_[version].deb
+sudo dpkg -i gaiasky_linux_[version].deb
 ```
 
-This will install the application in the `/opt/gaiasandbox/` folder
+This will install the application in the `/opt/gaiasky/` folder
 and it will create the necessary shortcuts.
 
 In order to **uninstall**, just type:
 
 ```
-sudo apt-get remove gaiasandbox
+sudo apt-get remove gaiasky
 ```
 
 #####1.2.2.2 RPM
 
 This is the package for RPM-based distributions (Red Hat, Fedora, Mandriva, SUSE, CentOS, etc.)
-Download the `gaiasandbox_linux_[version].rpm` file and run the
+Download the `gaiasky_linux_[version].rpm` file and run the
 following command. You will need root privileges to install a `rpm` package in
 your system.
 
 ```
-sudo yum install gaiasandbox_linux_[version].rpm
+sudo yum install gaiasky_linux_[version].rpm
 ```
 
-This will install the application in the `/opt/gaiasandbox/` folder
+This will install the application in the `/opt/gaiasky/` folder
 and it will create the necessary shortcuts.
 
 In order to **uninstall**, just type:
 
 ```
-sudo yum remove gaiasandbox-x86
+sudo yum remove gaiasky-x86
 ```
 
 #####1.2.2.3 Linux installer
@@ -120,7 +120,7 @@ Download the file `gaiasandbox_unix_[version].sh` to your disk.
 Then run the following to start the installation.
 
 ```
-./gaiasandbox_unix_[version].sh
+./gaiasky_unix_[version].sh
 ```
 
 Follow the on-screen instructions to proceed with the installation.
@@ -130,13 +130,13 @@ installation folder.
 
 ####1.2.3 OS X - Mac
 
-For OS X we provide a `gaiasandbox_macos_0_704b_d327966.dmg` file
+For OS X we provide a `gaiasky_macos_0_704b_d327966.dmg` file
 which is installed by unpacking into the Applications folder. Once unpacked, the
 installer will come up, just follow its instructions.
 
 ####1.2.4 Compressed (TGZ) package
 
-A `gaiasandbox-[version].tgz` package file is also provided. It will work
+A `gaiasky-[version].tgz` package file is also provided. It will work
 in all systems but you need to unpack it yourself and create the desired
 shortcuts.
 In **Windows**, use an archiver software (7zip, iZArc, etc.) to unpack it.
@@ -144,7 +144,7 @@ In **Windows**, use an archiver software (7zip, iZArc, etc.) to unpack it.
 In **Linux** and **OS X**, you can use:
 ```
 mkdir [target-directory]/
-tar zxvf gaiasandbox-[version].tgz -C [target-directory]/
+tar zxvf gaiasky-[version].tgz -C [target-directory]/
 ```
 
 
@@ -154,7 +154,7 @@ tar zxvf gaiasandbox-[version].tgz -C [target-directory]/
 ##  2. Running instructions                          #
 ######################################################
 
-###2.1 Running the Gaia Sandbox
+###2.1 Running the Gaia Sky
 
 In order to run the program just click on the shortcut
 provided in your operating system.
@@ -172,17 +172,17 @@ sudo apt-get install gradle
 # arch/manjaro
 sudo pacman -S gradle
 ```
-First, clone the [GitHub](https://github.com/ari-zah/gaiasandbox) repository:
+First, clone the [GitHub](https://github.com/ari-zah/gaiasky) repository:
 ```
 cd $GIT_FOLDER
-git clone https://github.com/ari-zah/gaiasandbox.git
+git clone https://github.com/ari-zah/gaiasky.git
 ```
 Then, run the following commands to compile and run:
 ```
-cd $GIT_FOLDER/gaiasandbox
+cd $GIT_FOLDER/gaiasky
 gradle desktop:run
 ```
-Et voilà! The Gaia Sandbox is running in your machine.
+Et voilà! The Gaia Sky is running in your machine.
 
 
 ######################################################
@@ -192,12 +192,12 @@ Et voilà! The Gaia Sandbox is running in your machine.
 In order to get the full up-to-date documentation, visit our Wiki
 pages in GitHub:
 
-[https://github.com/ari-zah/gaiasandbox/wiki](https://github.com/ari-zah/gaiasandbox/wiki)
+[https://github.com/ari-zah/gaiasky/wiki](https://github.com/ari-zah/gaiasky/wiki)
 
 There you will find a thorough documentation of all the features of the
-Gaia Sandbox. If you need to load your data into the sandbox or just
+Gaia Sky. If you need to load your data into the sandbox or just
 find out how to enable the 3D mode to experience it on your 3DTV, think no further,
-the [Gaia Sandbox wiki](https://github.com/ari-zah/gaiasandbox/wiki) is the way to go.
+the [Gaia Sky wiki](https://github.com/ari-zah/gaiasky/wiki) is the way to go.
 
 
 
@@ -207,7 +207,7 @@ the [Gaia Sandbox wiki](https://github.com/ari-zah/gaiasandbox/wiki) is the way 
 
 This software is published and distributed under the LGPL
 (Lesser General Public License) license. You can find the full license
-text here https://github.com/ari-zah/gaiasandbox/blob/master/LICENSE
+text here https://github.com/ari-zah/gaiasky/blob/master/LICENSE
 or visiting https://www.gnu.org/licenses/lgpl-3.0-standalone.html
 
 
@@ -217,10 +217,10 @@ or visiting https://www.gnu.org/licenses/lgpl-3.0-standalone.html
 ######################################################
 
 The main webpage of the project is
-http://www.zah.uni-heidelberg.de/gaia2/outreach/gaiasandbox. There you can find
-the latest versions and the latest information on the Gaia Sandbox. You can also
+http://www.zah.uni-heidelberg.de/gaia2/outreach/gaiasky. There you can find
+the latest versions and the latest information on the Gaia Sky. You can also
 visit our Github account to inspect the code, check the wiki or report bugs:
-https://github.com/ari-zah/gaiasandbox
+https://github.com/ari-zah/gaiasky
 
 ###5.1 Main designer and developer
 - **Toni Sagrista Selles**
