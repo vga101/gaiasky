@@ -1,4 +1,4 @@
-![Gaia Sky](http://www.zah.uni-heidelberg.de/fileadmin/user_upload/gaia/gaiasandbox/img/splash-s.jpg)
+![Gaia Sky](https://zah.uni-heidelberg.de/fileadmin/user_upload/gaia/gaiasky/img/GaiaSkyBanner.jpg)
 -------------------------
 --------------------------
 [![Circle CI](https://circleci.com/gh/ari-zah/gaiasandbox/tree/master.svg?style=svg)](https://circleci.com/gh/ari-zah/gaiasandbox/tree/master)
@@ -8,7 +8,7 @@ The **Gaia Sky** is a real-time, 3D, astronomy visualisation software that
 runs on Windows, Linux and MacOS. It is developed in the framework of
 [ESA](http://www.esa.int/ESA)'s [Gaia mission](http://sci.esa.int/gaia) to chart about 1 billion stars of our Galaxy.
 To get the latest up-to-date and most complete information,
-visit our **wiki** pages in <https://github.com/ari-zah/gaiasandbox/wiki>.
+visit our **wiki** pages in <https://github.com/ari-zah/gaiasky/wiki>.
 
 This file contains the following sections:
 
