@@ -31,7 +31,7 @@ void main() {
     float a_size = a_additional.x;
     float a_thAnglePoint = a_additional.y;
     
-    float viewAngleApparent = atan(1f / length(pos)) / u_fovFactor;
+    float viewAngleApparent = atan(1.0 / length(pos)) / u_fovFactor;
     float opacity = lint(viewAngleApparent, 0.0, a_thAnglePoint, u_pointAlphaMin, u_pointAlphaMax);
     
     v_col = vec4(a_color.rgb, a_color.a * u_alpha );
