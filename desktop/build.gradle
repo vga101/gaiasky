@@ -227,7 +227,25 @@ task createTar(dependsOn: dist, description: "Creates application tar package") 
 
 }
 
-task prepareInstall4jScript (dependsOn: createTar, description: "Prepares the install4j script and copies it to the packages folder") << {
+task updateCopyArchPKGBUILD(dependsOn: createTar, description: "Copies Arch Linux AUR build scripts PKGBUILD and gaiasky.install and replaces version and md5") << {
+	File archDir = new File(project.packageDir + "/arch/")
+	mkdir archDir
+	copy {
+		from "installerscripts/arch"
+		into "$packageDir/arch"
+	}
+	
+	File tarFile = new File("$packageDir/" + project.distName + ".tar.gz")
+	ant.checksum(file: tarFile, algorithm: "md5", todir: "$packageDir/")
+	
+	String md5Tar = new File("$packageDir/" + project.distName + ".tar.gz.md5").text
+	md5Tar = md5Tar.replace("\n", "").replace("\r", "");
+	
+	ant.replace(file: "$packageDir/arch/PKGBUILD", token: '@version.revision@', value: "$tagRev")
+	ant.replace(file: "$packageDir/arch/PKGBUILD", token: '@md5checksum@', value: md5Tar)
+}
+
+task prepareInstall4jScript (dependsOn: updateCopyArchPKGBUILD, description: "Prepares the install4j script and copies it to the packages folder") << {
     copy {
         from "installerscripts/template.install4j"
         into "$packageDir"
