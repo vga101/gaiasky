@@ -27,7 +27,8 @@ com.badlogic.gdx.graphics.Color: {
 	orange: { a: 1, b: 0, g: 0.7, r: 1 }
 },
 com.badlogic.gdx.scenes.scene2d.ui.Skin$TintedDrawable: {
-	dialogDim: { name: white, color: { r: 0, g: 0, b: 0, a: 0.45 } }
+	dialogDim: { name: white, color: { r: 0, g: 0, b: 0, a: 0.45 } },
+	bg-clear: { name: white, color: { r: 1, g: 1, b: 1, a: 0.7 } }
 },
 com.badlogic.gdx.scenes.scene2d.ui.Button$ButtonStyle: {
 	default: { down: default-round-down, up: default-round },
@@ -36,6 +37,7 @@ com.badlogic.gdx.scenes.scene2d.ui.Button$ButtonStyle: {
 com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle: {
 	default: { down: default-round-down, up: default-round, font: ui-11, fontColor: black },
 	toggle: { down: default-round-down, up: default-round, checked: default-round-down, font: ui-11, fontColor: black, downFontColor: blue },
+	toggle-big: { down: default-round-down, up: default-round, checked: default-round-down, font: ui-13, fontColor: black, downFontColor: blue },
 	link: { font: ui-11, fontColor: blue, downFontColor: orange }
 },
 com.badlogic.gdx.scenes.scene2d.ui.ImageButton$ImageButtonStyle: {

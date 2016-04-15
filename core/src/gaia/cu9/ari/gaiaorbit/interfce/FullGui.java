@@ -56,6 +56,7 @@ public class FullGui implements IGui, IObserver {
     protected WebGLInterface webglInterface;
 
     protected SearchDialog searchDialog;
+    protected AboutWindow aboutWindow;
     protected VisualEffectsComponent visualEffectsComponent;
 
     protected ISceneGraph sg;
@@ -91,7 +92,7 @@ public class FullGui implements IGui, IObserver {
         buildGui();
 
         // We must subscribe to the desired events
-        EventManager.instance.subscribe(this, Events.FOV_CHANGED_CMD, Events.SHOW_TUTORIAL_ACTION, Events.SHOW_SEARCH_ACTION, Events.REMOVE_KEYBOARD_FOCUS, Events.REMOVE_GUI_COMPONENT, Events.ADD_GUI_COMPONENT);
+        EventManager.instance.subscribe(this, Events.FOV_CHANGED_CMD, Events.SHOW_TUTORIAL_ACTION, Events.SHOW_SEARCH_ACTION, Events.REMOVE_KEYBOARD_FOCUS, Events.REMOVE_GUI_COMPONENT, Events.ADD_GUI_COMPONENT, Events.SHOW_ABOUT_ACTION);
     }
 
     private void buildGui() {
@@ -273,6 +274,12 @@ public class FullGui implements IGui, IObserver {
                 searchDialog.clearText();
             }
             searchDialog.display();
+            break;
+        case SHOW_ABOUT_ACTION:
+            if (aboutWindow == null) {
+                aboutWindow = new AboutWindow(ui, skin);
+            }
+            aboutWindow.display();
             break;
         case REMOVE_KEYBOARD_FOCUS:
             ui.setKeyboardFocus(null);
