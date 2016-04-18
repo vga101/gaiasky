@@ -136,7 +136,8 @@ com.badlogic.gdx.scenes.scene2d.ui.CheckBox$CheckBoxStyle: {
 },
 com.badlogic.gdx.scenes.scene2d.ui.List$ListStyle: {
 	default: { fontColorUnselected: white, selection: selection, fontColorSelected: white, font: ui-18 },
-	light: { fontColorUnselected: black, selection: selection, fontColorSelected: black, font: ui-18, background: light-grey }
+	light: { fontColorUnselected: black, selection: selection, fontColorSelected: black, font: ui-18, background: light-grey },
+	normal: { fontColorUnselected: black, selection: selection, fontColorSelected: black, font: ui-21, background: light-grey }
 },
 com.badlogic.gdx.scenes.scene2d.ui.Touchpad$TouchpadStyle: {
 	default: { background: default-pane, knob: default-round-large }

@@ -15,7 +15,7 @@ gs.setRotationCameraSpeed(40)
 gs.setTurningCameraSpeed(30)
 gs.setCameraSpeed(30)
 
-gs.configureRenderOutput(1280, 720, 60, '/home/tsagrista/.gaiasandbox/frames', 'scripting-test')
+gs.configureRenderOutput(1280, 720, 60, '/home/tsagrista/.gaiasky/frames', 'scripting-test')
 gs.setFrameOutput(True)
 
 gs.goToObject("Sol", -1, 2.5)

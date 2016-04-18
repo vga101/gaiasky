@@ -13,7 +13,7 @@ gs.cameraStop()
 gs.minimizeInterfaceWindow()
 
 # Welcome
-gs.setHeadlineMessage("Welcome to the Gaia Sandbox")
+gs.setHeadlineMessage("Welcome to the Gaia Sky")
 gs.setSubheadMessage("Explore Gaia, the Solar System and the whole Galaxy!")
 
 sleep(2.5)

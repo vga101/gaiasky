@@ -19,6 +19,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.badlogic.gdx.backends.lwjgl.LwjglFiles;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
 import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.data.DesktopSceneGraphImplementationProvider;
@@ -29,12 +31,12 @@ import gaia.cu9.ari.gaiaorbit.desktop.format.DesktopDateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.desktop.format.DesktopNumberFormatFactory;
 import gaia.cu9.ari.gaiaorbit.desktop.gui.swing.ConfigDialog;
 import gaia.cu9.ari.gaiaorbit.desktop.gui.swing.IconManager;
-import gaia.cu9.ari.gaiaorbit.desktop.gui.swing.ScriptDialog;
 import gaia.cu9.ari.gaiaorbit.desktop.render.DesktopPostProcessorFactory;
 import gaia.cu9.ari.gaiaorbit.desktop.render.FullscreenCmd;
 import gaia.cu9.ari.gaiaorbit.desktop.util.CamRecorder;
 import gaia.cu9.ari.gaiaorbit.desktop.util.DesktopConfInit;
 import gaia.cu9.ari.gaiaorbit.desktop.util.DesktopNetworkChecker;
+import gaia.cu9.ari.gaiaorbit.desktop.util.RunScriptWindow;
 import gaia.cu9.ari.gaiaorbit.desktop.util.SysUtils;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
@@ -195,8 +197,10 @@ public class GaiaSkyDesktop implements IObserver {
         EventManager.instance.unsubscribe(this, Events.POST_NOTIFICATION, Events.JAVA_EXCEPTION);
     }
 
+    RunScriptWindow scriptWindow = null;
+
     @Override
-    public void notify(Events event, Object... data) {
+    public void notify(Events event, final Object... data) {
         switch (event) {
         case SHOW_PLAYCAMERA_ACTION:
             // Exit fullscreen
@@ -251,8 +255,12 @@ public class GaiaSkyDesktop implements IObserver {
 
                 @Override
                 public void run() {
-                    JFrame frame = new ScriptDialog();
-                    frame.toFront();
+                    //                    JFrame frame = new ScriptDialog();
+                    //                    frame.toFront();
+
+                    if (scriptWindow == null)
+                        scriptWindow = new RunScriptWindow((Stage) data[0], (Skin) data[1]);
+                    scriptWindow.display();
                 }
 
             });

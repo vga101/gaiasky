@@ -1,7 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.android.util;
 
-import java.io.File;
-
 /**
  * Wee utility class to check the operating system and the desktop environment.
  * It also offers retrieval of common system folders.
@@ -77,19 +75,27 @@ public class SysUtils {
     }
 
     /**
-     * Gets a file pointer to the $HOME/.gaiasky/camera directory.
-     * @return A pointer to the GaiaSandbox camera directory in the user's home.
+     * Gets a file pointer to the $HOME/.gaiasky/screenshots directory.
+     * @return A pointer to the GaiaSandbox screenshots directory in the user's home.
      */
     public static File getDefaultScreenshotsDir() {
         return new File(System.getProperty("user.home") + File.separator + GAIASKY_DIR_NAME + File.separator + SCREENSHOTS_DIR_NAME + File.separator);
     }
 
     /**
-     * Gets a file pointer to the $HOME/.gaiasky/camera directory.
-     * @return A pointer to the GaiaSandbox camera directory in the user's home.
+     * Gets a file pointer to the $HOME/.gaiasky/frames directory.
+     * @return A pointer to the GaiaSandbox frames directory in the user's home.
      */
     public static File getDefaultFramesDir() {
         return new File(System.getProperty("user.home") + File.separator + GAIASKY_DIR_NAME + File.separator + FRAMES_DIR_NAME + File.separator);
+    }
+
+    /**
+     * Gets a file pointer to the $HOME/.gaiasky/script directory.
+     * @return A pointer to the GaiaSandbox script directory in the user's home.
+     */
+    public static File getDefaultScriptDir() {
+        return new File(System.getProperty("user.home") + File.separator + GAIASKY_DIR_NAME + File.separator + SCRIPT_DIR_NAME + File.separator);
     }
 
 }

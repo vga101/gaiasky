@@ -99,7 +99,7 @@ gs.goToObject("Earth")
 #
 # WELCOME
 #
-gs.displayMessageObject(0, "Gaia Sandbox tutorial", 0.3, 0.9, 1.0, 0.7, 0.0, 1.0, headerSize)
+gs.displayMessageObject(0, "Gaia Sky tutorial", 0.3, 0.9, 1.0, 0.7, 0.0, 1.0, headerSize)
 sleep(1.0)
 typewriter(1, "Welcome! In this tutorial you will learn the basic functionality and interface of this application in an interactive mode.\nHang on, it is starting...", 0.3, 0.75, 0.6, 0.1, 1.0, 1.0, 1.0, 1.0, twdelay)
 sleep(1.0)
@@ -113,7 +113,7 @@ gs.displayImageObject(0, "scripts/tutorial/gaia.png", 0.25, 0.88)
 gs.displayMessageObject(1, "General navigation", 0.33, 0.9, 1.0, 0.7, 0.0, 1.0, headerSize)
 sleep(1.0)
 
-typewriter(2, 'The Gaia Sandbox (' + version + ') is an interactive 3D visualisation application that permits the real time exploration of the galaxy in space and time.', 0.3, 0.75, 0.6, 0.1, 1.0, 1.0, 1.0, 1.0, twdelay)
+typewriter(2, 'The Gaia Sky (' + version + ') is an interactive 3D visualisation application that permits the real time exploration of the galaxy in space and time.', 0.3, 0.75, 0.6, 0.1, 1.0, 1.0, 1.0, 1.0, twdelay)
 wait_input(0.75, [])
 typewriter(3, 'You can move around using the mouse and keyboard (or touch screen if applicable), clicking and dragging the LEFT MOUSE button to rotate the scene and using the SCROLL WHEEL to zoom in and out.', 0.3, 0.7, 0.6, 0.08, 1.0, 1.0, 1.0, 1.0, twdelay)
 wait_input(0.65, [2, 3])
