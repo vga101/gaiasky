@@ -112,6 +112,7 @@ com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
 	hud-header:	 { font: ui-23-bold, fontColor: orange },
 	
 	link: { font: ui-13, fontColor: blue},
+	help-title: {font: ui-15, fontColor: orange},
 	
 	tooltip: { font: ui-13, fontColor: white, background: tooltip-bg }
 },

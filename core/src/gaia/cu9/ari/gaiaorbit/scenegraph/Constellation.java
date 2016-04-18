@@ -10,6 +10,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Vector3;
 
+import gaia.cu9.ari.gaiaorbit.GaiaSky;
+import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.render.I3DTextRenderable;
 import gaia.cu9.ari.gaiaorbit.render.system.ImmediateRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.LineRenderSystem;
@@ -175,7 +177,7 @@ public class Constellation extends LineObject implements I3DTextRenderable {
 
     @Override
     public boolean renderText() {
-        return true;
+        return !GaiaSky.instance.isOn(ComponentType.Labels);
     }
 
     @Override

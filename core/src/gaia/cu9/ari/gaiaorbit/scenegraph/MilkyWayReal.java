@@ -15,7 +15,9 @@ import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.badlogic.gdx.utils.reflect.Method;
 import com.badlogic.gdx.utils.reflect.ReflectionException;
 
+import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.data.galaxy.PointDataProvider;
+import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.render.I3DTextRenderable;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.GalaxydataComponent;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
@@ -206,7 +208,7 @@ public class MilkyWayReal extends AbstractPositionEntity implements I3DTextRende
 
     @Override
     public boolean renderText() {
-        return true;
+        return GaiaSky.instance.isOn(ComponentType.Labels);
     }
 
     /**

@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.glutils.ImmediateModeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
+import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.render.ILineRenderable;
 import gaia.cu9.ari.gaiaorbit.render.IPointRenderable;
@@ -191,8 +192,7 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
     @Override
     protected void addToRenderLists(ICamera camera) {
         if (camera.getCurrent() instanceof FovCamera) {
-            // Only shader for FovCamera
-            addToRender(this, RenderGroup.SHADER);
+            // Render as point, do nothing
         } else {
 
             if (viewAngleApparent >= THRESHOLD_POINT() * camera.getFovFactor()) {
@@ -201,7 +201,7 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
                     addToRender(this, RenderGroup.LINE);
             }
         }
-        if (renderText()) {
+        if (renderText() && camera.isVisible(GaiaSky.instance.time, this, GlobalConf.scene.COMPUTE_GAIA_SCAN)) {
             addToRender(this, RenderGroup.LABEL);
         }
 

@@ -410,7 +410,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
             alphas[ct.ordinal()] = calculateAlpha(ct, now);
         }
 
-        EventManager.instance.post(Events.DEBUG1, "quad: " + (render_lists.get(RenderGroup.SHADER).size() + render_lists.get(RenderGroup.SHADER_F).size()) + ", point: " + render_lists.get(RenderGroup.POINT).size());
+        EventManager.instance.post(Events.DEBUG1, "quads: " + (render_lists.get(RenderGroup.SHADER).size() + render_lists.get(RenderGroup.SHADER_F).size()) + ", points: " + render_lists.get(RenderGroup.POINT).size() + ", labels: " + render_lists.get(RenderGroup.LABEL).size());
 
         int size = renderProcesses.size();
         for (int i = 0; i < size; i++) {

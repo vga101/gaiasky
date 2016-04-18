@@ -857,15 +857,6 @@ public class ConfigDialog extends I18nJFrame {
                     GlobalConf.postprocess.POSTPROCESS_ANTIALIAS = bean.value;
                     GlobalConf.screen.VSYNC = vsync.isSelected();
 
-                    // Pixel renderer
-                    // bean = (ComboBoxBean) pixelRenderer.getSelectedItem();
-                    // int oldPx = GlobalConf.scene.PIXEL_RENDERER;
-                    // GlobalConf.scene.PIXEL_RENDERER = bean.value;
-                    // if (oldPx != bean.value) {
-                    // // Issue command
-                    // EventManager.instance.post(Events.PIXEL_RENDERER_UPDATE);
-                    // }
-
                     // Line renderer
                     bean = (ComboBoxBean) lineRenderer.getSelectedItem();
                     GlobalConf.scene.LINE_RENDERER = bean.value;
@@ -875,6 +866,9 @@ public class ConfigDialog extends I18nJFrame {
                     GlobalConf.program.LOCALE = lbean.locale.toLanguageTag();
                     I18n.forceinit(Gdx.files.internal("data/i18n/gsbundle"));
                     GlobalConf.program.UI_THEME = (String) theme.getSelectedItem();
+                    if (GlobalConf.program.UI_THEME.equalsIgnoreCase("hidpi")) {
+                        GlobalConf.updateScaleFactor(Math.max(GlobalConf.SCALE_FACTOR, 1.6f));
+                    }
 
                     // Performance
                     bean = (ComboBoxBean) numThreads.getSelectedItem();

@@ -41,7 +41,7 @@ public class PixelRenderSystem extends ImmediateRenderSystem implements IObserve
     }
 
     protected void updatePointSize(int width, int height) {
-        POINT_SIZE = GlobalConf.runtime.STRIPPED_FOV_MODE ? 8 : 12;
+        POINT_SIZE = GlobalConf.runtime.STRIPPED_FOV_MODE ? 8 : 9;
 
         // Factor POINT_SIZE with resolution
         float baseResolution = (float) Math.sqrt(1280 * 1280 + 720 * 720);

@@ -1,5 +1,17 @@
 package gaia.cu9.ari.gaiaorbit.interfce;
 
+import java.util.Date;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.scenes.scene2d.Event;
+import com.badlogic.gdx.scenes.scene2d.EventListener;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Slider;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
+
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
@@ -14,18 +26,6 @@ import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnSlider;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextButton;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
-import java.util.Date;
-
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.scenes.scene2d.Event;
-import com.badlogic.gdx.scenes.scene2d.EventListener;
-import com.badlogic.gdx.scenes.scene2d.ui.Button;
-import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Slider;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
-
 public class WebGLInterface extends Table implements IObserver {
 
     protected OwnLabel date;
@@ -38,8 +38,10 @@ public class WebGLInterface extends Table implements IObserver {
 
     public WebGLInterface(Skin skin, ITimeFrameProvider time) {
         super(skin);
+        float pad = 5 * GlobalConf.SCALE_FACTOR;
+
         this.setBackground("table-bg-inv");
-        this.pad(5);
+        this.pad(pad);
 
         df = DateFormatFactory.getFormatter(I18n.locale, DateType.DATE);
 
@@ -48,7 +50,7 @@ public class WebGLInterface extends Table implements IObserver {
         gaiaObsLabel = new OwnLabel(txt("gui.webgl.gaiaobs"), skin, "default-inv");
         sceneModeLabel = new OwnLabel(txt("gui.webgl.scenemode"), skin, "default-inv");
         slider = new OwnSlider(0, 1, 1, false, skin);
-        slider.setWidth(20);
+        slider.setWidth(20 * GlobalConf.SCALE_FACTOR);
         slider.addListener(new EventListener() {
             @Override
             public boolean handle(Event event) {
@@ -135,15 +137,15 @@ public class WebGLInterface extends Table implements IObserver {
         });
 
         add(date).left();
-        padBottom(10);
+        padBottom(pad * 2);
         row();
         if (!GlobalConf.runtime.STRIPPED_FOV_MODE) {
             add(hg).left();
             row();
             add(switchFull).left();
         } else {
-            add(toggleLabels).left().padRight(5);
-            add(minus).left().padRight(5);
+            add(toggleLabels).left().padRight(pad);
+            add(minus).left().padRight(pad);
             add(plus).left();
         }
 

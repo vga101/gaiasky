@@ -28,7 +28,6 @@ import gaia.cu9.ari.gaiaorbit.desktop.concurrent.ThreadPoolManager;
 import gaia.cu9.ari.gaiaorbit.desktop.format.DesktopDateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.desktop.format.DesktopNumberFormatFactory;
 import gaia.cu9.ari.gaiaorbit.desktop.gui.swing.ConfigDialog;
-import gaia.cu9.ari.gaiaorbit.desktop.gui.swing.HelpDialog;
 import gaia.cu9.ari.gaiaorbit.desktop.gui.swing.IconManager;
 import gaia.cu9.ari.gaiaorbit.desktop.gui.swing.ScriptDialog;
 import gaia.cu9.ari.gaiaorbit.desktop.render.DesktopPostProcessorFactory;
@@ -274,16 +273,16 @@ public class GaiaSkyDesktop implements IObserver {
             break;
         case SHOW_ABOUT_ACTION:
             // Exit fullscreen
-            EventManager.instance.post(Events.FULLSCREEN_CMD, false);
-            Gdx.app.postRunnable(new Runnable() {
-
-                @Override
-                public void run() {
-                    JFrame frame = new HelpDialog();
-                    frame.toFront();
-                }
-
-            });
+            //            EventManager.instance.post(Events.FULLSCREEN_CMD, false);
+            //            Gdx.app.postRunnable(new Runnable() {
+            //
+            //                @Override
+            //                public void run() {
+            //                    JFrame frame = new HelpDialog();
+            //                    frame.toFront();
+            //                }
+            //
+            //            });
             break;
         case JAVA_EXCEPTION:
             ((Throwable) data[0]).printStackTrace(System.err);

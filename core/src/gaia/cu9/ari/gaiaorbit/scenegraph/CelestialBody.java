@@ -12,6 +12,8 @@ import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
+import gaia.cu9.ari.gaiaorbit.GaiaSky;
+import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.render.I3DTextRenderable;
 import gaia.cu9.ari.gaiaorbit.render.IModelRenderable;
 import gaia.cu9.ari.gaiaorbit.render.IQuadRenderable;
@@ -275,7 +277,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
 
     @Override
     public boolean renderText() {
-        return name != null && viewAngle > TH_OVER_FACTOR;
+        return name != null && GaiaSky.instance.isOn(ComponentType.Labels) && viewAngle > TH_OVER_FACTOR;
     }
 
     @Override

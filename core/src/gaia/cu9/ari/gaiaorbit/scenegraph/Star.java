@@ -21,6 +21,7 @@ import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 
+import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
@@ -206,9 +207,7 @@ public class Star extends Particle {
     @Override
     protected void addToRenderLists(ICamera camera) {
         if (camera.getCurrent() instanceof FovCamera) {
-            // Only shader for FovCamera
-            addToRender(this, RenderGroup.SHADER);
-            addToRender(this, RenderGroup.LABEL);
+            // Render as point, do nothing
         } else {
             if (viewAngleApparent >= THRESHOLD_POINT() * camera.getFovFactor()) {
                 addToRender(this, RenderGroup.SHADER);
@@ -216,12 +215,12 @@ public class Star extends Particle {
                     camera.checkClosest(this);
                     addToRender(this, RenderGroup.MODEL_S);
                 }
-                if (pm.len2() != 0)
+                if (this.hasPm)
                     addToRender(this, RenderGroup.LINE);
             }
-            if (renderText()) {
-                addToRender(this, RenderGroup.LABEL);
-            }
+        }
+        if (renderText() && camera.isVisible(GaiaSky.instance.time, this, GlobalConf.scene.COMPUTE_GAIA_SCAN)) {
+            addToRender(this, RenderGroup.LABEL);
         }
 
     }

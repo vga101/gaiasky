@@ -1,11 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph;
 
-import gaia.cu9.ari.gaiaorbit.GaiaSky;
-import gaia.cu9.ari.gaiaorbit.render.I3DTextRenderable;
-import gaia.cu9.ari.gaiaorbit.util.Constants;
-import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
-import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -14,6 +8,13 @@ import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+
+import gaia.cu9.ari.gaiaorbit.GaiaSky;
+import gaia.cu9.ari.gaiaorbit.render.ComponentType;
+import gaia.cu9.ari.gaiaorbit.render.I3DTextRenderable;
+import gaia.cu9.ari.gaiaorbit.util.Constants;
+import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
+import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
 public class Loc extends AbstractPositionEntity implements I3DTextRenderable {
     private static final float LOWER_LIMIT = 3e-4f;
@@ -85,7 +86,7 @@ public class Loc extends AbstractPositionEntity implements I3DTextRenderable {
 
     @Override
     public boolean renderText() {
-        if (viewAngle < LOWER_LIMIT || viewAngle > UPPER_LIMIT) {
+        if (viewAngle < LOWER_LIMIT || viewAngle > UPPER_LIMIT || !GaiaSky.instance.isOn(ComponentType.Labels)) {
             return false;
         }
         Vector3d aux = v3dpool.obtain();

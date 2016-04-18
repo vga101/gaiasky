@@ -1,18 +1,19 @@
 package gaia.cu9.ari.gaiaorbit.interfce;
 
-import gaia.cu9.ari.gaiaorbit.render.ComponentType;
-import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
-import gaia.cu9.ari.gaiaorbit.util.Constants;
-import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
-import gaia.cu9.ari.gaiaorbit.util.format.INumberFormat;
-import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+
+import gaia.cu9.ari.gaiaorbit.render.ComponentType;
+import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
+import gaia.cu9.ari.gaiaorbit.util.Constants;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
+import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
+import gaia.cu9.ari.gaiaorbit.util.format.INumberFormat;
+import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
 
 /**
  * Head-up display GUI which only displays information and has no options window.
@@ -57,11 +58,13 @@ public class HUDGui implements IGui {
     }
 
     private void initialize() {
+        float pad = 5 * GlobalConf.SCALE_FACTOR;
+
         // FOCUS INFORMATION - BOTTOM RIGHT
         focusInterface = new FocusInfoInterface(skin);
         focusInterface.setFillParent(true);
         focusInterface.right().bottom();
-        focusInterface.pad(0, 0, 5, 5);
+        focusInterface.pad(0, 0, pad, pad);
 
         // DEBUG INFO - TOP RIGHT
         debugInterface = new DebugInterface(skin, lock);
@@ -72,20 +75,20 @@ public class HUDGui implements IGui {
         notificationsInterface = new NotificationsInterface(skin, lock, true);
         notificationsInterface.setFillParent(true);
         notificationsInterface.left().bottom();
-        notificationsInterface.pad(0, 5, 5, 0);
+        notificationsInterface.pad(0, pad, pad, 0);
 
         // MESSAGES INTERFACE - LOW CENTER
         messagesInterface = new MessagesInterface(skin, lock);
         messagesInterface.setFillParent(true);
         messagesInterface.left().bottom();
-        messagesInterface.pad(0, 300, 150, 0);
+        messagesInterface.pad(0, 300 * GlobalConf.SCALE_FACTOR, 150 * GlobalConf.SCALE_FACTOR, 0);
 
         if (Constants.desktop) {
             // INPUT STATE
             inputInterface = new ScriptStateInterface(skin);
             inputInterface.setFillParent(true);
             inputInterface.right().top();
-            inputInterface.pad(50, 0, 0, 5);
+            inputInterface.pad(50 * GlobalConf.SCALE_FACTOR, 0, 0, pad);
         }
 
         // Add to GUI

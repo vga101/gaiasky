@@ -1,15 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph;
 
-import gaia.cu9.ari.gaiaorbit.render.I3DTextRenderable;
-import gaia.cu9.ari.gaiaorbit.render.IModelRenderable;
-import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
-import gaia.cu9.ari.gaiaorbit.util.Constants;
-import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
-import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
-import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
-import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
-import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
@@ -23,6 +13,18 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.badlogic.gdx.utils.reflect.Method;
 import com.badlogic.gdx.utils.reflect.ReflectionException;
+
+import gaia.cu9.ari.gaiaorbit.GaiaSky;
+import gaia.cu9.ari.gaiaorbit.render.ComponentType;
+import gaia.cu9.ari.gaiaorbit.render.I3DTextRenderable;
+import gaia.cu9.ari.gaiaorbit.render.IModelRenderable;
+import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
+import gaia.cu9.ari.gaiaorbit.util.Constants;
+import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
+import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
+import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
+import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
+import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
 public class MilkyWay extends Blob implements IModelRenderable, I3DTextRenderable {
     float[] labelColour = new float[] { 1f, 1f, 1f, 1f };
@@ -151,7 +153,7 @@ public class MilkyWay extends Blob implements IModelRenderable, I3DTextRenderabl
 
     @Override
     public boolean renderText() {
-        return true;
+        return GaiaSky.instance.isOn(ComponentType.Labels);
     }
 
     /**

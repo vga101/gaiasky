@@ -20,6 +20,7 @@ import com.badlogic.gdx.utils.Align;
 
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.CollapsibleWindow;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnLabel;
@@ -40,6 +41,8 @@ public class DateDialog extends CollapsibleWindow {
         this.me = this;
         this.stage = stage;
 
+        float pad = 5 * GlobalConf.SCALE_FACTOR;
+
         /** SET NOW **/
         setNow = new OwnTextButton("Set current time", skin);
         setNow.addListener(new EventListener() {
@@ -52,14 +55,15 @@ public class DateDialog extends CollapsibleWindow {
                 return false;
             }
         });
-        add(setNow).center().colspan(2).padTop(5);
+        setNow.setSize(100 * GlobalConf.SCALE_FACTOR, 20 * GlobalConf.SCALE_FACTOR);
+        add(setNow).center().colspan(2).padTop(pad);
         row();
 
         /** DAY GROUP **/
         HorizontalGroup dayGroup = new HorizontalGroup();
         day = new OwnTextField("", skin);
         day.setMaxLength(2);
-        day.setWidth(40);
+        day.setWidth(40 * GlobalConf.SCALE_FACTOR);
         day.addListener(new EventListener() {
             @Override
             public boolean handle(Event event) {
@@ -77,11 +81,11 @@ public class DateDialog extends CollapsibleWindow {
 
         month = new SelectBox<String>(skin);
         month.setItems("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec");
-        month.setWidth(40);
+        month.setWidth(40 * GlobalConf.SCALE_FACTOR);
 
         year = new OwnTextField("", skin);
         year.setMaxLength(5);
-        year.setWidth(40);
+        year.setWidth(40 * GlobalConf.SCALE_FACTOR);
         year.addListener(new EventListener() {
             @Override
             public boolean handle(Event event) {
@@ -104,14 +108,14 @@ public class DateDialog extends CollapsibleWindow {
         dayGroup.addActor(year);
 
         add(new OwnLabel(I18n.bundle.get("gui.time.date") + " (dd/MM/yyyy):", skin)).pad(5, 5, 0, 5).right();
-        add(dayGroup).pad(5, 0, 0, 5);
+        add(dayGroup).pad(pad, 0, 0, pad);
         row();
 
         /** HOUR GROUP **/
         HorizontalGroup hourGroup = new HorizontalGroup();
         hour = new OwnTextField("", skin);
         hour.setMaxLength(2);
-        hour.setWidth(40);
+        hour.setWidth(40 * GlobalConf.SCALE_FACTOR);
         hour.addListener(new EventListener() {
             @Override
             public boolean handle(Event event) {
@@ -129,7 +133,7 @@ public class DateDialog extends CollapsibleWindow {
 
         min = new OwnTextField("", skin);
         min.setMaxLength(2);
-        min.setWidth(40);
+        min.setWidth(40 * GlobalConf.SCALE_FACTOR);
         min.addListener(new EventListener() {
             @Override
             public boolean handle(Event event) {
@@ -147,7 +151,7 @@ public class DateDialog extends CollapsibleWindow {
 
         sec = new OwnTextField("", skin);
         sec.setMaxLength(2);
-        sec.setWidth(40);
+        sec.setWidth(40 * GlobalConf.SCALE_FACTOR);
         sec.addListener(new EventListener() {
             @Override
             public boolean handle(Event event) {
@@ -170,7 +174,7 @@ public class DateDialog extends CollapsibleWindow {
         hourGroup.addActor(sec);
 
         add(new OwnLabel(I18n.bundle.get("gui.time.time") + " (hh:mm:ss):", skin)).pad(5, 5, 0, 5).right();
-        add(hourGroup).pad(5, 0, 0, 5);
+        add(hourGroup).pad(pad, 0, 0, pad);
         row();
 
         /** BUTTONS **/
@@ -227,19 +231,19 @@ public class DateDialog extends CollapsibleWindow {
 
         });
         buttonGroup.addActor(ok);
-        ok.setSize(70, 20);
+        ok.setSize(70 * GlobalConf.SCALE_FACTOR, 20 * GlobalConf.SCALE_FACTOR);
         buttonGroup.addActor(cancel);
-        cancel.setSize(70, 20);
+        cancel.setSize(70 * GlobalConf.SCALE_FACTOR, 20 * GlobalConf.SCALE_FACTOR);
         buttonGroup.align(Align.right).space(10);
 
-        add(buttonGroup).colspan(2).pad(5, 0, 0, 0).bottom().right();
+        add(buttonGroup).colspan(2).pad(pad, 0, 0, 0).bottom().right();
         getTitleTable().align(Align.left);
 
         pack();
 
         defaultColor = day.getColor().cpy();
 
-        this.setPosition(stage.getWidth() / 2f - this.getWidth() / 2f, stage.getHeight() / 2f - this.getHeight() / 2f);
+        this.setPosition(Math.round(stage.getWidth() / 2f - this.getWidth() / 2f), Math.round(stage.getHeight() / 2f - this.getHeight() / 2f));
     }
 
     /**

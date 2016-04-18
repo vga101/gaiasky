@@ -4,6 +4,8 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.math.Matrix4;
 
+import gaia.cu9.ari.gaiaorbit.GaiaSky;
+import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
@@ -155,7 +157,7 @@ public abstract class ModelBody extends CelestialBody {
 
     @Override
     public boolean renderText() {
-        return name != null && Math.pow(viewAngle, 1.1) > TH_OVER_FACTOR * 500;
+        return name != null && GaiaSky.instance.isOn(ComponentType.Labels) && Math.pow(viewAngle, 1.1) > TH_OVER_FACTOR * 500;
     }
 
     public String getWikiname() {

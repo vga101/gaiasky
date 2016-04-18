@@ -1,10 +1,12 @@
 package gaia.cu9.ari.gaiaorbit.interfce;
 
+import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -31,6 +33,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.BufferUtils;
 
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
@@ -50,6 +53,8 @@ public class AboutWindow extends CollapsibleWindow {
 
     private LabelStyle linkStyle;
 
+    private MemInfoWindow meminfoWindow;
+
     private List<OwnScrollPane> scrolls;
     private List<Actor> textareas;
 
@@ -60,8 +65,11 @@ public class AboutWindow extends CollapsibleWindow {
         this.me = this;
         this.linkStyle = skin.get("link", LabelStyle.class);
 
+        meminfoWindow = new MemInfoWindow(stage, skin);
+
         float tawidth = 440 * GlobalConf.SCALE_FACTOR;
         float taheight = 250 * GlobalConf.SCALE_FACTOR;
+        float taheight_s = 60 * GlobalConf.SCALE_FACTOR;
         float tabwidth = 60 * GlobalConf.SCALE_FACTOR;
         float pad = 5 * GlobalConf.SCALE_FACTOR;
 
@@ -70,12 +78,6 @@ public class AboutWindow extends CollapsibleWindow {
 
         /** TABLE and SCROLL **/
         table = new Table(skin);
-        //        scroll = new OwnScrollPane(table, skin, "minimalist-nobg");
-        //        scroll.setFadeScrollBars(false);
-        //        scroll.setScrollingDisabled(true, false);
-        //        scroll.setOverscroll(false, false);
-        //        scroll.setSmoothScrolling(true);
-        //        scrolls.add(scroll);
 
         // Create the tab buttons
         HorizontalGroup group = new HorizontalGroup();
@@ -244,8 +246,139 @@ public class AboutWindow extends CollapsibleWindow {
         /** CONTENT 3 - SYSTEM **/
         final Table content3 = new Table(skin);
         content3.align(Align.top);
-        final Image content3im = new Image(skin.newDrawable("white", 0, 0, 1, 1));
-        content3.add(content3im);
+
+        // Build info
+        Label buildinfo = new OwnLabel(txt("gui.help.buildinfo"), skin, "help-title");
+
+        Label versiontitle = new OwnLabel(txt("gui.help.version", GlobalConf.APPLICATION_NAME), skin, "ui-12");
+        Label version = new OwnLabel(GlobalConf.version.version, skin, "ui-11");
+
+        Label revisiontitle = new OwnLabel(txt("gui.help.buildnumber"), skin, "ui-12");
+        Label revision = new OwnLabel(GlobalConf.version.build, skin, "ui-11");
+
+        Label timetitle = new OwnLabel(txt("gui.help.buildtime"), skin, "ui-12");
+        Label time = new OwnLabel(GlobalConf.version.buildtime, skin, "ui-11");
+
+        Label systemtitle = new OwnLabel(txt("gui.help.buildsys"), skin, "ui-12");
+        TextArea system = new OwnTextArea(GlobalConf.version.system, skin.get("msg-11", TextFieldStyle.class));
+        system.setDisabled(true);
+        system.setPrefRows(3);
+        system.setWidth(tawidth * 2f / 3f);
+        textareas.add(system);
+
+        Label buildertitle = new OwnLabel(txt("gui.help.builder"), skin, "ui-12");
+        Label builder = new OwnLabel(GlobalConf.version.builder, skin, "ui-11");
+
+        // Java info
+        Label javainfo = new OwnLabel(txt("gui.help.javainfo"), skin, "help-title");
+
+        Label javaversiontitle = new OwnLabel(txt("gui.help.javaversion"), skin, "ui-12");
+        Label javaversion = new OwnLabel(System.getProperty("java.version"), skin, "ui-11");
+
+        Label javaruntimetitle = new OwnLabel(txt("gui.help.javaname"), skin, "ui-12");
+        Label javaruntime = new OwnLabel(System.getProperty("java.runtime.name"), skin, "ui-11");
+
+        Label javavmnametitle = new OwnLabel(txt("gui.help.javavmname"), skin, "ui-12");
+        Label javavmname = new OwnLabel(System.getProperty("java.vm.name"), skin, "ui-11");
+
+        Label javavmversiontitle = new OwnLabel(txt("gui.help.javavmversion"), skin, "ui-12");
+        Label javavmversion = new OwnLabel(System.getProperty("java.vm.version"), skin, "ui-11");
+
+        Label javavmvendortitle = new OwnLabel(txt("gui.help.javavmvendor"), skin, "ui-12");
+        Label javavmvendor = new OwnLabel(System.getProperty("java.vm.vendor"), skin, "ui-11");
+
+        TextButton memoryinfobutton = new OwnTextButton(txt("gui.help.meminfo"), skin, "default");
+        memoryinfobutton.setName("memoryinfo");
+        memoryinfobutton.setSize(150 * GlobalConf.SCALE_FACTOR, 20 * GlobalConf.SCALE_FACTOR);
+        memoryinfobutton.addListener(new EventListener() {
+            @Override
+            public boolean handle(Event event) {
+                if (event instanceof ChangeEvent) {
+                    meminfoWindow.display();
+                    return true;
+                }
+
+                return false;
+            }
+
+        });
+
+        // OpenGL info
+        Label glinfo = new OwnLabel(txt("gui.help.openglinfo"), skin, "help-title");
+
+        Label glversiontitle = new OwnLabel(txt("gui.help.openglversion"), skin, "ui-12");
+        Label glversion = new OwnLabel(Gdx.gl.glGetString(GL20.GL_VERSION), skin, "ui-11");
+
+        Label glslversiontitle = new OwnLabel(txt("gui.help.glslversion"), skin, "ui-12");
+        Label glslversion = new OwnLabel(Gdx.gl.glGetString(GL20.GL_SHADING_LANGUAGE_VERSION), skin, "ui-11");
+
+        Label glextensionstitle = new OwnLabel(txt("gui.help.glextensions"), skin, "ui-12");
+        String glextensionsstr = Gdx.gl.glGetString(GL20.GL_EXTENSIONS).replace(' ', '\r');
+        lines = GlobalResources.countOccurrences(glextensionsstr, '\r') + 1;
+        IntBuffer buf = BufferUtils.newIntBuffer(16);
+        Gdx.gl.glGetIntegerv(Gdx.graphics.getGL20().GL_MAX_TEXTURE_SIZE, buf);
+        int maxSize = buf.get(0);
+        TextArea glextensions = new TextArea("Max texture size: " + maxSize + "\r" + glextensionsstr, skin);
+        glextensions.setDisabled(true);
+        glextensions.setPrefRows(lines);
+
+        textareas.add(glextensions);
+
+        OwnScrollPane glextensionsscroll = new OwnScrollPane(glextensions, skin, "default-nobg");
+        glextensionsscroll.setWidth(tawidth / 1.7f);
+        glextensionsscroll.setHeight(taheight_s);
+        glextensionsscroll.setForceScroll(false, true);
+        glextensionsscroll.setSmoothScrolling(true);
+        glextensionsscroll.setFadeScrollBars(false);
+        scrolls.add(glextensionsscroll);
+
+        content3.add(buildinfo).colspan(2).align(Align.left).padTop(pad * 3);
+        content3.row();
+        content3.add(versiontitle).align(Align.topLeft).padRight(pad * 2);
+        content3.add(version).align(Align.left);
+        content3.row();
+        content3.add(revisiontitle).align(Align.topLeft).padRight(pad * 2);
+        content3.add(revision).align(Align.left);
+        content3.row();
+        content3.add(timetitle).align(Align.topLeft).padRight(pad * 2);
+        content3.add(time).align(Align.left);
+        content3.row();
+        content3.add(buildertitle).align(Align.topLeft).padRight(pad * 2);
+        content3.add(builder).align(Align.left).padBottom(pad * 3);
+        content3.row();
+        content3.add(systemtitle).align(Align.topLeft).padRight(pad * 2);
+        content3.add(system).align(Align.left);
+        content3.row();
+
+        content3.add(javainfo).colspan(2).align(Align.left).padTop(pad * 2);
+        content3.row();
+        content3.add(javaversiontitle).align(Align.topLeft).padRight(pad * 2);
+        content3.add(javaversion).align(Align.left);
+        content3.row();
+        content3.add(javaruntimetitle).align(Align.topLeft).padRight(pad * 2);
+        content3.add(javaruntime).align(Align.left);
+        content3.row();
+        content3.add(javavmnametitle).align(Align.topLeft).padRight(pad * 2);
+        content3.add(javavmname).align(Align.left);
+        content3.row();
+        content3.add(javavmversiontitle).align(Align.topLeft).padRight(pad * 2);
+        content3.add(javavmversion).align(Align.left);
+        content3.row();
+        content3.add(javavmvendortitle).align(Align.topLeft).padRight(pad * 2);
+        content3.add(javavmvendor).align(Align.left).padBottom(pad * 2);
+        content3.row();
+        content3.add(memoryinfobutton).colspan(2).align(Align.left).padBottom(pad * 3);
+        content3.row();
+        content3.add(glinfo).colspan(2).align(Align.left).padTop(pad * 2);
+        content3.row();
+        content3.add(glversiontitle).align(Align.topLeft).padRight(pad * 2);
+        content3.add(glversion).align(Align.left);
+        content3.row();
+        content3.add(glslversiontitle).align(Align.topLeft).padRight(pad * 2);
+        content3.add(glslversion).align(Align.left);
+        content3.row();
+        content3.add(glextensionstitle).align(Align.topLeft).padRight(pad * 2);
+        content3.add(glextensionsscroll).align(Align.left);
 
         /** ADD ALL CONTENT **/
         content.addActor(content1);
@@ -278,9 +411,9 @@ public class AboutWindow extends CollapsibleWindow {
 
         /** BUTTONS **/
         HorizontalGroup buttonGroup = new HorizontalGroup();
-        TextButton close = new OwnTextButton(I18n.bundle.get("gui.close"), skin, "default");
+        TextButton close = new OwnTextButton(txt("gui.close"), skin, "default");
         close.setName("close");
-        close.setSize(70, 20);
+        close.setSize(70 * GlobalConf.SCALE_FACTOR, 20 * GlobalConf.SCALE_FACTOR);
         close.addListener(new EventListener() {
             @Override
             public boolean handle(Event event) {
@@ -302,13 +435,7 @@ public class AboutWindow extends CollapsibleWindow {
 
         pack();
 
-        //float width = this.getWidth();
-        //for (Actor ta : textareas) {
-        // ta.setWidth(width - 20 * GlobalConf.SCALE_FACTOR);
-        //}
-
-        //layout();
-        //pack();
+        this.setPosition(Math.round(stage.getWidth() / 2f - this.getWidth() / 2f), Math.round(stage.getHeight() / 2f - this.getHeight() / 2f));
 
         /** CAPTURE SCROLL FOCUS **/
         stage.addListener(new EventListener() {
@@ -319,13 +446,12 @@ public class AboutWindow extends CollapsibleWindow {
                     InputEvent ie = (InputEvent) event;
 
                     if (ie.getType() == Type.mouseMoved) {
-
                         for (OwnScrollPane scroll : scrolls) {
                             if (ie.getTarget().isDescendantOf(scroll)) {
                                 stage.setScrollFocus(scroll);
                             }
-                            return true;
                         }
+                        return true;
                     }
                 }
                 return false;
