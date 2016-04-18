@@ -54,6 +54,8 @@ public class RunScriptWindow extends CollapsibleWindow {
 
     private List<FileHandle> scripts = null;
     private FileHandle selectedScript = null;
+    
+    private float pad;
 
     public RunScriptWindow(Stage stg, Skin skin) {
         super(txt("gui.script.title"), skin);
@@ -61,11 +63,80 @@ public class RunScriptWindow extends CollapsibleWindow {
         this.stage = stg;
         this.me = this;
 
-        float pad = 5 * GlobalConf.SCALE_FACTOR;
-
+        pad = 5 * GlobalConf.SCALE_FACTOR;
         table = new Table(skin);
+        
+        /** BUTTONS **/
+        HorizontalGroup buttonGroup = new HorizontalGroup();
+        buttonGroup.space(pad);
+        TextButton cancel = new OwnTextButton(txt("gui.cancel"), skin, "default");
+        cancel.setName("cancel");
+        cancel.setSize(70 * GlobalConf.SCALE_FACTOR, 20 * GlobalConf.SCALE_FACTOR);
+        cancel.addListener(new EventListener() {
+            @Override
+            public boolean handle(Event event) {
+                if (event instanceof ChangeEvent) {
+                    me.hide();
+                    return true;
+                }
 
-        // Choose script
+                return false;
+            }
+
+        });
+        run = new OwnTextButton(txt("gui.script.run"), skin, "default");
+        run.setName("run");
+        run.setSize(70 * GlobalConf.SCALE_FACTOR, 20 * GlobalConf.SCALE_FACTOR);
+        run.setDisabled(true);
+        run.addListener(new EventListener() {
+            @Override
+            public boolean handle(Event event) {
+                boolean async = true;
+                if (event instanceof ChangeEvent) {
+                    me.hide();
+                    if (code != null) {
+                        EventManager.instance.post(Events.RUN_SCRIPT_PYCODE, code, GlobalConf.program.SCRIPT_LOCATION, async);
+                    }
+                    return true;
+                }
+
+                return false;
+            }
+
+        });
+        buttonGroup.addActor(cancel);
+        buttonGroup.addActor(run);
+        
+        add(table).pad(pad);
+        row();
+        add(buttonGroup).pad(pad).bottom().right();
+        getTitleTable().align(Align.left);
+
+        this.setPosition(Math.round(stage.getWidth() / 2f - this.getWidth() / 2f), Math.round(stage.getHeight() / 2f - this.getHeight() / 2f));
+    }
+
+    List<FileHandle> listRec(FileHandle f, List<FileHandle> l) {
+        if (f.exists()) {
+            if (f.isDirectory()) {
+                FileHandle[] partial = f.list();
+                for (FileHandle fh : partial) {
+                    l = listRec(fh, l);
+                }
+
+            } else {
+                if (f.name().endsWith(".py")) {
+                    l.add(f);
+                }
+            }
+        }
+
+        return l;
+    }
+    
+    private void initialize(){
+    	table.clear();
+    	
+    	// Choose script
         FileHandle scriptFolder1 = Gdx.files.internal(GlobalConf.program.SCRIPT_LOCATION);
         FileHandle scriptFolder2 = Gdx.files.absolute(SysUtils.getDefaultScriptDir().getPath());
 
@@ -147,73 +218,7 @@ public class RunScriptWindow extends CollapsibleWindow {
         table.add(outConsole).align(Align.center).pad(pad);
         table.row();
 
-        /** BUTTONS **/
-        HorizontalGroup buttonGroup = new HorizontalGroup();
-        buttonGroup.space(pad);
-        TextButton cancel = new OwnTextButton(txt("gui.cancel"), skin, "default");
-        cancel.setName("cancel");
-        cancel.setSize(70 * GlobalConf.SCALE_FACTOR, 20 * GlobalConf.SCALE_FACTOR);
-        cancel.addListener(new EventListener() {
-            @Override
-            public boolean handle(Event event) {
-                if (event instanceof ChangeEvent) {
-                    me.hide();
-                    return true;
-                }
-
-                return false;
-            }
-
-        });
-        run = new OwnTextButton(txt("gui.script.run"), skin, "default");
-        run.setName("run");
-        run.setSize(70 * GlobalConf.SCALE_FACTOR, 20 * GlobalConf.SCALE_FACTOR);
-        run.setDisabled(true);
-        run.addListener(new EventListener() {
-            @Override
-            public boolean handle(Event event) {
-                boolean async = true;
-                if (event instanceof ChangeEvent) {
-                    me.hide();
-                    if (code != null) {
-                        EventManager.instance.post(Events.RUN_SCRIPT_PYCODE, code, GlobalConf.program.SCRIPT_LOCATION, async);
-                    }
-                    return true;
-                }
-
-                return false;
-            }
-
-        });
-        buttonGroup.addActor(cancel);
-        buttonGroup.addActor(run);
-
-        add(table).pad(pad);
-        row();
-        add(buttonGroup).pad(pad).bottom().right();
-        getTitleTable().align(Align.left);
-
         pack();
-
-        this.setPosition(Math.round(stage.getWidth() / 2f - this.getWidth() / 2f), Math.round(stage.getHeight() / 2f - this.getHeight() / 2f));
-    }
-
-    List<FileHandle> listRec(FileHandle f, List<FileHandle> l) {
-        if (f.exists()) {
-            if (f.isDirectory()) {
-                FileHandle[] partial = f.list();
-                for (FileHandle fh : partial) {
-                    l = listRec(fh, l);
-                }
-
-            } else {
-                if (f.name().endsWith(".py")) {
-                    l.add(f);
-                }
-            }
-        }
-
-        return l;
     }
 
     public void hide() {
@@ -222,6 +227,8 @@ public class RunScriptWindow extends CollapsibleWindow {
     }
 
     public void display() {
+    	initialize();
+    	
         if (!stage.getActors().contains(me, true))
             stage.addActor(this);
 
