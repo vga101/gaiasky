@@ -85,7 +85,7 @@ public class SearchDialog extends Window {
         setModal(false);
         pack();
 
-        this.setPosition(gui.getGuiStage().getWidth() / 2f - this.getWidth() / 2f, gui.getGuiStage().getHeight() / 2f - this.getHeight() / 2f);
+        this.setPosition(Math.round(gui.getGuiStage().getWidth() / 2f - this.getWidth() / 2f), Math.round(gui.getGuiStage().getHeight() / 2f - this.getHeight() / 2f));
 
     }
 

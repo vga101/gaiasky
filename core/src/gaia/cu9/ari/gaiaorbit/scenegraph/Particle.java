@@ -186,6 +186,7 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
                     child.update(time, parentTransform, camera, opacity);
                 }
             }
+            camera.computeGaiaScan(time, this);
         }
     }
 
@@ -201,7 +202,7 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
                     addToRender(this, RenderGroup.LINE);
             }
         }
-        if (renderText() && camera.isVisible(GaiaSky.instance.time, this, GlobalConf.scene.COMPUTE_GAIA_SCAN)) {
+        if (renderText() && camera.isVisible(GaiaSky.instance.time, this)) {
             addToRender(this, RenderGroup.LABEL);
         }
 

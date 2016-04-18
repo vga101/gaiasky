@@ -106,5 +106,7 @@ public interface ICamera {
      */
     public void checkClosest(CelestialBody cb);
 
-    public boolean isVisible(ITimeFrameProvider time, CelestialBody cb, boolean computeGaiaScan);
+    public boolean isVisible(ITimeFrameProvider time, CelestialBody cb);
+
+    public void computeGaiaScan(ITimeFrameProvider time, CelestialBody cb);
 }

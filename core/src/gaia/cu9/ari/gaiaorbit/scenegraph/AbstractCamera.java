@@ -78,16 +78,16 @@ public abstract class AbstractCamera implements ICamera {
 
     private static final double VIEW_ANGLE = Math.toRadians(0.05);
 
-    @Override
-    public boolean isVisible(ITimeFrameProvider time, CelestialBody cb, boolean computeGaiaScan) {
-        boolean visible = cb.viewAngle > VIEW_ANGLE || GlobalResources.isInView(cb.transform.position, cb.distToCamera, angleEdgeRad, getDirection());
-        /** If time is running, check Gaia **/
-        if (computeGaiaScan && time.getDt() != 0) {
+    public void computeGaiaScan(ITimeFrameProvider time, CelestialBody cb) {
+        if (GlobalConf.scene.COMPUTE_GAIA_SCAN && time.getDt() != 0) {
             boolean visibleByGaia = computeVisibleFovs(cb.pos, parent.fovCamera, cb.pos.len());
-
             cb.updateTransitNumber(visibleByGaia, time, parent.fovCamera);
         }
-        return visible && !(GlobalConf.scene.ONLY_OBSERVED_STARS && cb.transits == 0);
+    }
+
+    @Override
+    public boolean isVisible(ITimeFrameProvider time, CelestialBody cb) {
+        return cb.viewAngle > VIEW_ANGLE || GlobalResources.isInView(cb.transform.position, cb.distToCamera, angleEdgeRad, getDirection());
     }
 
     /**

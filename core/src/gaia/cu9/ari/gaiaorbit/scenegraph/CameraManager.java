@@ -335,9 +335,13 @@ public class CameraManager implements ICamera, IObserver {
         return current.getFocus();
     }
 
+    public void computeGaiaScan(ITimeFrameProvider time, CelestialBody cb) {
+        current.computeGaiaScan(time, cb);
+    }
+
     @Override
-    public boolean isVisible(ITimeFrameProvider time, CelestialBody cb, boolean computeGaiaScan) {
-        return current.isVisible(time, cb, computeGaiaScan);
+    public boolean isVisible(ITimeFrameProvider time, CelestialBody cb) {
+        return current.isVisible(time, cb);
     }
 
     @Override

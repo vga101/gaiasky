@@ -219,7 +219,7 @@ public class Star extends Particle {
                     addToRender(this, RenderGroup.LINE);
             }
         }
-        if (renderText() && camera.isVisible(GaiaSky.instance.time, this, GlobalConf.scene.COMPUTE_GAIA_SCAN)) {
+        if (renderText() && camera.isVisible(GaiaSky.instance.time, this)) {
             addToRender(this, RenderGroup.LABEL);
         }
 
@@ -228,7 +228,8 @@ public class Star extends Particle {
     @Override
     public void render(ModelBatch modelBatch, float alpha) {
         mc.setTransparency(alpha);
-        ((ColorAttribute) mc.env.get(ColorAttribute.AmbientLight)).color.set(cc[0], cc[1], cc[2], 1f);
+        float[] col = GlobalConf.scene.STAR_COLOR_TRANSIT ? ccTransit : cc;
+        ((ColorAttribute) mc.env.get(ColorAttribute.AmbientLight)).color.set(col[0], col[1], col[2], 1f);
         ((FloatAttribute) mc.env.get(FloatAttribute.Shininess)).value = TimeUtils.getRunningTimeSecs();
         // Local transform
         mc.instance.transform.set(transform.getMatrix().valuesf()).scl(getRadius() * 2);
