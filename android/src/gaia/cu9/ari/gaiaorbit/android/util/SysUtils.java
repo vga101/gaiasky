@@ -1,5 +1,7 @@
 package gaia.cu9.ari.gaiaorbit.android.util;
 
+import java.io.File;
+
 /**
  * Wee utility class to check the operating system and the desktop environment.
  * It also offers retrieval of common system folders.
@@ -65,6 +67,7 @@ public class SysUtils {
     private static final String CAMERA_DIR_NAME = "camera";
     private static final String SCREENSHOTS_DIR_NAME = "screenshots";
     private static final String FRAMES_DIR_NAME = "frames";
+    private static final String SCRIPT_DIR_NAME = "script";
 
     /**
      * Gets a file pointer to the $HOME/.gaiasky/camera directory.
