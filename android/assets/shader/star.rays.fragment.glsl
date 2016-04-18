@@ -97,4 +97,9 @@ draw_star() {
 void
 main() {
     gl_FragColor = draw_star();
+    if(u_strayLight >= 0) {
+	    // Prevent saturation
+	    gl_FragColor = clamp(gl_FragColor, 0.0, 1.0);
+	    gl_FragColor.rgb *= 0.98;
+    }
 }

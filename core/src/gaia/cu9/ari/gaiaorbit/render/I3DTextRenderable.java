@@ -1,11 +1,11 @@
 package gaia.cu9.ari.gaiaorbit.render;
 
-import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
-import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
-
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+
+import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
+import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
 /**
  * Interface to be implemented by all entities that can render a text in 3d space.
@@ -51,7 +51,7 @@ public interface I3DTextRenderable extends IRenderable {
      * Sets the position of this text in the out vector.
      * @param out The out parameter with the result.
      */
-    public void textPosition(Vector3d out);
+    public void textPosition(ICamera cam, Vector3d out);
 
     /**
      * Returns the text.

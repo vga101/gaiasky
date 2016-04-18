@@ -129,7 +129,7 @@ public abstract class ModelBody extends CelestialBody {
 
     @Override
     protected float labelMax() {
-        return 1e-4f;
+        return 2e-4f;
     }
 
     public void setModel(ModelComponent mc) {
@@ -152,12 +152,12 @@ public abstract class ModelBody extends CelestialBody {
     }
 
     protected float labelSizeConcrete() {
-        return (float) Math.pow(this.size, 0.5);
+        return (float) Math.pow(this.size * .6e1f, 1.2f);
     }
 
     @Override
     public boolean renderText() {
-        return name != null && GaiaSky.instance.isOn(ComponentType.Labels) && Math.pow(viewAngle, 1.1) > TH_OVER_FACTOR * 500;
+        return name != null && GaiaSky.instance.isOn(ComponentType.Labels) && Math.pow(viewAngle, 1.14) > TH_OVER_FACTOR * 500;
     }
 
     public String getWikiname() {

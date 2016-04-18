@@ -264,12 +264,12 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
 
     @Override
     protected float labelFactor() {
-        return 2e-1f;
+        return 1.34e-1f;
     }
 
     @Override
     protected float labelMax() {
-        return 0.01f;
+        return 0.012f;
     }
 
     public float getFuzzyRenderSize(ICamera camera) {

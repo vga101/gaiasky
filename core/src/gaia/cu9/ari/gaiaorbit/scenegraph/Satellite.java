@@ -4,7 +4,6 @@ import com.badlogic.gdx.math.Matrix4;
 
 import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
-import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
 public abstract class Satellite extends ModelBody {
@@ -64,11 +63,6 @@ public abstract class Satellite extends ModelBody {
             localTransform.set(this.localTransform);
         }
 
-    }
-
-    @Override
-    public void textPosition(Vector3d out) {
-        transform.getTranslation(out);
     }
 
     @Override

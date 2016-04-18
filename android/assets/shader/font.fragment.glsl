@@ -13,12 +13,13 @@ uniform float u_opacity;
 
 void main(void){
     // Smoothing is adapted arbitrarily to produce crisp borders at all sizes
-    float smoothing = 0.25 / (4.0 * scale);
+    float smoothing = 1.0 / (16.0 * scale);
     float dist = texture2D(u_texture, v_texCoords).a;
-    float alpha = smoothstep(0.5 - smoothing, 0.5 + smoothing, dist);
+    float alpha = smoothstep(0.6 - smoothing, 0.6 + smoothing, dist);
     float aa = alpha * v_opacity * u_opacity;
-    if (aa < 0.001)
+	
+	if (aa < 0.001)
 	    discard;
-
+	    
     gl_FragColor = vec4(v_color.rgb, aa);
 }

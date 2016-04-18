@@ -101,7 +101,7 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
         ppb.lscatter.setBlurAmount(0.5f);
         ppb.lscatter.setBlurPasses(1);
         ppb.lscatter.setDensity(1.2f);
-        ppb.lscatter.setNumSamples(120);
+        ppb.lscatter.setNumSamples(160);
         ppb.lscatter.setEnabled(true);
         ppb.pp.addEffect(ppb.lscatter);
 

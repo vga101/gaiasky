@@ -1,13 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.render.system;
 
-import gaia.cu9.ari.gaiaorbit.render.ComponentType;
-import gaia.cu9.ari.gaiaorbit.render.I3DTextRenderable;
-import gaia.cu9.ari.gaiaorbit.render.IRenderable;
-import gaia.cu9.ari.gaiaorbit.scenegraph.FovCamera;
-import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
-import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
-import gaia.cu9.ari.gaiaorbit.util.comp.DistToCameraComparator;
-
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -19,6 +11,14 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+
+import gaia.cu9.ari.gaiaorbit.render.ComponentType;
+import gaia.cu9.ari.gaiaorbit.render.I3DTextRenderable;
+import gaia.cu9.ari.gaiaorbit.render.IRenderable;
+import gaia.cu9.ari.gaiaorbit.scenegraph.FovCamera;
+import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
+import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
+import gaia.cu9.ari.gaiaorbit.util.comp.DistToCameraComparator;
 
 public class FontRenderSystem extends AbstractRenderSystem {
     private SpriteBatch batch;
@@ -49,13 +49,15 @@ public class FontRenderSystem extends AbstractRenderSystem {
         Collections.sort(renderables, comp);
         batch.begin();
         int size = renderables.size();
-        for (int i = 0; i < size; i++) {
-            IRenderable s = renderables.get(i);
-            if (shaderProgram == null) {
+        if (shaderProgram == null) {
+            for (int i = 0; i < size; i++) {
+                IRenderable s = renderables.get(i);
                 // Render sprite
                 s.render(batch, camera, alphas[s.getComponentType().ordinal()]);
-            } else {
-
+            }
+        } else {
+            for (int i = 0; i < size; i++) {
+                IRenderable s = renderables.get(i);
                 // Regular mode, we use 3D distance field font
                 I3DTextRenderable lr = (I3DTextRenderable) s;
                 shaderProgram.setUniformf("a_labelAlpha", (lr.isLabel() || camera.getCurrent() instanceof FovCamera ? alphas[ComponentType.Labels.ordinal()] : 1f));

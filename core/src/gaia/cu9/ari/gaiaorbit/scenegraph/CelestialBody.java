@@ -157,12 +157,12 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
     @Override
     public void render(SpriteBatch batch, ShaderProgram shader, BitmapFont font, ICamera camera) {
         if (camera.getCurrent() instanceof FovCamera) {
-
             render2DLabel(batch, shader, font, camera, text(), pos);
         } else {
+            //render2DLabel(batch, shader, font, camera, text(), transform.position);
             // 3D distance font
             Vector3d pos = v3dpool.obtain();
-            textPosition(pos);
+            textPosition(camera, pos);
             shader.setUniformf("a_viewAngle", viewAngle);
             shader.setUniformf("a_thOverFactor", TH_OVER_FACTOR);
             render3DLabel(batch, shader, font, camera, text(), pos, textScale(), textSize(), textColour());
@@ -290,7 +290,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
 
     @Override
     public float textSize() {
-        return (float) Math.min(labelSizeConcrete() / distToCamera, labelMax()) * distToCamera * labelFactor();
+        return (float) (Math.min(labelSizeConcrete() / Math.pow(distToCamera, 1.05f), labelMax()) * Math.pow(distToCamera, 1.01f) * labelFactor());
     }
 
     protected float labelSizeConcrete() {
@@ -302,10 +302,24 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
     protected abstract float labelMax();
 
     @Override
-    public void textPosition(Vector3d out) {
+    public void textPosition(ICamera cam, Vector3d out) {
         transform.getTranslation(out);
         double len = out.len();
         out.clamp(0, len - getRadius()).scl(0.8f);
+
+        Vector3d aux = v3dpool.obtain();
+        aux.set(cam.getUp());
+
+        aux.crs(out).nor();
+
+        float dist = (float) Math.min(-0.03f * out.len(), getRadius());
+
+        aux.add(cam.getUp()).nor().scl(dist);
+
+        out.add(aux);
+
+        v3dpool.free(aux);
+
     }
 
     @Override

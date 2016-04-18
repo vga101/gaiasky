@@ -161,7 +161,7 @@ public class Planet extends ModelBody implements IAtmosphereRenderable {
 
     @Override
     protected float labelFactor() {
-        return 2e1f;
+        return 1.5e1f;
     }
 
     public void dispose() {

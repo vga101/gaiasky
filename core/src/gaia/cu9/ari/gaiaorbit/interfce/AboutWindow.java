@@ -45,6 +45,11 @@ import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnScrollPane;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextArea;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextButton;
 
+/**
+ * The help window with About, Help and System sections.
+ * @author tsagrista
+ *
+ */
 public class AboutWindow extends CollapsibleWindow {
     final private Stage stage;
     private AboutWindow me;

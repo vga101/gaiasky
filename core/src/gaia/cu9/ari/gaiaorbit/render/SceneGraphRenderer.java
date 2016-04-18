@@ -441,7 +441,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
     }
 
     public boolean isOn(ComponentType comp) {
-        return visible[comp.ordinal()];
+        return visible[comp.ordinal()] || alphas[comp.ordinal()] > 0;
     }
 
     @Override

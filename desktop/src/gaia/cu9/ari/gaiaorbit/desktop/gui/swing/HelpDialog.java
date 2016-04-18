@@ -33,6 +33,11 @@ import gaia.cu9.ari.gaiaorbit.desktop.gui.swing.jsplash.GuiUtility;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import net.miginfocom.swing.MigLayout;
 
+/**
+ * @deprecated Using {@link gaia.cu9.ari.gaiaorbit.interfce.AboutWindow} instead
+ * @author tsagrista
+ *
+ */
 public class HelpDialog extends I18nJFrame {
 
     JFrame frame;
