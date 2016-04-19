@@ -1,5 +1,14 @@
 package gaia.cu9.ari.gaiaorbit.interfce;
 
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+
 import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.data.orbit.OrbitData;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
@@ -13,15 +22,6 @@ import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory.DateType;
 import gaia.cu9.ari.gaiaorbit.util.format.IDateFormat;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnLabel;
-
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
 
 /**
  * Widget that captures and displays messages in a GUI.
@@ -175,8 +175,8 @@ public class NotificationsInterface extends Table implements IObserver {
                 }
                 break;
             case TOGGLE_VISIBILITY_CMD:
-                if (data.length == 2)
-                    addMessage(I18n.bundle.format("notif.visibility." + (((Boolean) data[1]) ? "on" : "off"), (String) data[0]));
+                if (data.length == 3)
+                    addMessage(I18n.bundle.format("notif.visibility." + (((Boolean) data[2]) ? "on" : "off"), (String) data[0]));
                 else
                     addMessage(I18n.bundle.format("notif.visibility.toggle", (String) data[0]));
                 break;
