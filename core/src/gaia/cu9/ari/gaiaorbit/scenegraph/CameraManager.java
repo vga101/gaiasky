@@ -3,6 +3,11 @@ package gaia.cu9.ari.gaiaorbit.scenegraph;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
+import com.badlogic.gdx.math.Intersector;
+import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.math.collision.Ray;
+import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
@@ -10,11 +15,17 @@ import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
+import gaia.cu9.ari.gaiaorbit.util.Logger;
+import gaia.cu9.ari.gaiaorbit.util.MyPools;
 import gaia.cu9.ari.gaiaorbit.util.TwoWayHashmap;
+import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
+import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
 public class CameraManager implements ICamera, IObserver {
+    protected static Pool<Vector3d> v3dpool = MyPools.get(Vector3d.class);
+    protected static Pool<Vector3> v3pool = MyPools.get(Vector3.class);
 
     /**
      * Convenience enum to describe the camera mode
@@ -188,6 +199,83 @@ public class CameraManager implements ICamera, IObserver {
 
         // Update last pos
         lastPos.set(current.getPos());
+
+        int screenX = Gdx.input.getX();
+        int screenY = Gdx.input.getY();
+        // Update Pointer LAT/LON
+        updateFocusLatLon(screenX, screenY);
+        // Update Pointer Alpha/Delta
+        updatePointerRADEC(screenX, screenY);
+    }
+
+    private void updatePointerRADEC(int screenX, int screenY) {
+        Vector3 vec = v3pool.obtain().set(screenX, screenY, 0.5f);
+        ICamera camera = current;
+        camera.getCamera().unproject(vec);
+
+        Vector3d vecd = v3dpool.obtain().set(vec);
+        Vector3d out = v3dpool.obtain();
+
+        Coordinates.cartesianToSpherical(vecd, out);
+
+        double alpha = out.x * AstroUtils.TO_DEG;
+        double delta = out.y * AstroUtils.TO_DEG;
+
+        Logger.debug("Alpha/delta: " + alpha + "/" + delta);
+        EventManager.instance.post(Events.RA_DEC_UPDATED, alpha, delta);
+
+        v3dpool.free(out);
+        v3dpool.free(vecd);
+        v3pool.free(vec);
+    }
+
+    private void updateFocusLatLon(int screenX, int screenY) {
+        if (isNatural()) {
+            // Hover over planets gets us lat/lon
+            if (current.getFocus() != null && current.getFocus() instanceof Planet) {
+                Planet p = (Planet) current.getFocus();
+                Vector3 pcenter = v3pool.obtain();
+                p.transform.getTranslationf(pcenter);
+                //pcenter.set((float) p.pos.x, (float) p.pos.y, (float) p.pos.z);
+                ICamera camera = current;
+                Vector3 v0 = v3pool.obtain().set(screenX, screenY, 0f);
+                Vector3 v1 = v3pool.obtain().set(screenX, screenY, 0.5f);
+                camera.getCamera().unproject(v0);
+                camera.getCamera().unproject(v1);
+
+                Ray ray = new Ray(v0, v1.sub(v0));
+                Vector3 intersection = new Vector3();
+                boolean inter = Intersector.intersectRaySphere(ray, pcenter, p.getRadius(), intersection);
+
+                if (inter) {
+                    // We found an intersection point
+                    Matrix4 localTransformInv = new Matrix4();
+                    p.setToLocalTransform(1, localTransformInv, false);
+                    localTransformInv.inv();
+                    intersection.mul(localTransformInv);
+
+                    Vector3d vec = v3dpool.obtain();
+                    vec.set(intersection);
+                    Vector3d out = v3dpool.obtain();
+                    Coordinates.cartesianToSpherical(vec, out);
+
+                    double lon = (Math.toDegrees(out.x) + 90) % 360;
+                    double lat = Math.toDegrees(out.y);
+
+                    Logger.debug("Lon/lat: " + lon + "/" + lat);
+                    EventManager.instance.post(Events.LON_LAT_UPDATED, lon, lat);
+
+                    v3dpool.free(vec);
+                    v3dpool.free(out);
+                }
+
+                v3pool.free(pcenter);
+                v3pool.free(v0);
+                v3pool.free(v1);
+
+            }
+
+        }
     }
 
     int pxRendererBackup = -1;

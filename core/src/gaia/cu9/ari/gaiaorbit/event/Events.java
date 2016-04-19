@@ -78,6 +78,9 @@ public enum Events {
     /** Contains two Double values, the longitude and latitude in degrees **/
     LON_LAT_UPDATED,
 
+    /** Contains two Double values, the Right ascension and the declination of the pointer in degrees **/
+    RA_DEC_UPDATED,
+
     /** Issues the command to toggle the time. Contains the boolean indicating the state (may be null) and a boolean indicating whether this comes from the interface. **/
     TOGGLE_TIME_CMD,
     /** Contains the name of the type, a boolean indicating if this comes from the interface and an optional boolean with the state **/

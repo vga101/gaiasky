@@ -2,6 +2,7 @@ package gaia.cu9.ari.gaiaorbit.interfce;
 
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.utils.Align;
 
 import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
@@ -28,10 +29,11 @@ import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnLabel;
  */
 public class FocusInfoInterface extends Table implements IObserver {
 
-    protected OwnLabel focusName, focusId, focusRA, focusDEC, focusAngle, focusDist, focusAppMag, focusAbsMag, focusRadius, focusLonLat;
-    protected OwnLabel camName, camVel, camPos, lonLatLabel;
+    protected OwnLabel focusName, focusId, focusRA, focusDEC, focusAngle, focusDist, focusAppMag, focusAbsMag, focusRadius;
+    protected OwnLabel pointerName, pointerLonLat, pointerRADEC;
+    protected OwnLabel camName, camVel, camPos, lonLatLabel, RADECLabel;
 
-    private Table focusInfo, cameraInfo, moreInfo;
+    private Table focusInfo, pointerInfo, cameraInfo, moreInfo;
     private Skin skin;
     Vector3d pos;
 
@@ -56,6 +58,8 @@ public class FocusInfoInterface extends Table implements IObserver {
         focusInfo.pad(pad5);
         cameraInfo = new Table();
         cameraInfo.pad(pad5);
+        pointerInfo = new Table();
+        pointerInfo.pad(pad5);
         moreInfo = new Table();
 
         focusName = new OwnLabel("", skin, "hud-header");
@@ -67,13 +71,16 @@ public class FocusInfoInterface extends Table implements IObserver {
         focusAngle = new OwnLabel("", skin, "hud");
         focusDist = new OwnLabel("", skin, "hud");
         focusRadius = new OwnLabel("", skin, "hud");
-        focusLonLat = new OwnLabel("", skin, "hud");
 
-        camName = new OwnLabel(I18n.bundle.get("gui.camera"), skin, "hud-header");
+        pointerName = new OwnLabel(I18n.bundle.get("gui.pointer"), skin, "hud-subheader");
+        pointerRADEC = new OwnLabel("", skin, "hud");
+        pointerLonLat = new OwnLabel("", skin, "hud");
+        lonLatLabel = new OwnLabel("Lat/Lon", skin, "hud-big");
+        RADECLabel = new OwnLabel(txt("gui.focusinfo.alpha") + "/" + txt("gui.focusinfo.delta"), skin, "hud-big");
+
+        camName = new OwnLabel(I18n.bundle.get("gui.camera"), skin, "hud-subheader");
         camVel = new OwnLabel("", skin, "hud");
         camPos = new OwnLabel("", skin, "hud");
-
-        lonLatLabel = new OwnLabel("Lat/Lon", skin, "hud-big");
 
         float w = 100 * GlobalConf.SCALE_FACTOR;
         focusId.setWidth(w);
@@ -82,6 +89,8 @@ public class FocusInfoInterface extends Table implements IObserver {
         focusAngle.setWidth(w);
         focusDist.setWidth(w);
         camVel.setWidth(w);
+
+        /** FOCUS INFO **/
 
         focusInfo.add(focusName).left().colspan(2);
         focusInfo.row();
@@ -109,11 +118,18 @@ public class FocusInfoInterface extends Table implements IObserver {
         focusInfo.add(new OwnLabel(txt("gui.focusinfo.radius"), skin, "hud-big")).left();
         focusInfo.add(focusRadius).left().padLeft(pad10);
         focusInfo.row();
-        focusInfo.add(lonLatLabel).left();
-        focusInfo.add(focusLonLat).left().padLeft(pad10);
-        focusInfo.row();
-        //        focusInfo.add(new OwnLabel(txt("gui.focusinfo.moreinfo"), skin, "hud-big")).left();
         focusInfo.add(moreInfo).center().colspan(2).padBottom(pad5).padTop(pad10);
+
+        /** POINTER INFO **/
+        pointerInfo.add(pointerName).left().colspan(2);
+        pointerInfo.row();
+        pointerInfo.add(RADECLabel).left();
+        pointerInfo.add(pointerRADEC).left().padLeft(pad10);
+        pointerInfo.row();
+        pointerInfo.add(lonLatLabel).left();
+        pointerInfo.add(pointerLonLat).left().padLeft(pad10);
+
+        /** CAMERA INFO **/
 
         cameraInfo.add(camName).left().colspan(2);
         cameraInfo.row();
@@ -122,9 +138,11 @@ public class FocusInfoInterface extends Table implements IObserver {
         cameraInfo.row();
         cameraInfo.add(camPos).left().colspan(2);
 
-        add(focusInfo);
+        add(focusInfo).align(Align.left);
         row();
-        add(cameraInfo);
+        add(pointerInfo).align(Align.left);
+        row();
+        add(cameraInfo).align(Align.left);
         pack();
 
         daemon = NetworkCheckerManager.getNewtorkChecker();
@@ -132,7 +150,7 @@ public class FocusInfoInterface extends Table implements IObserver {
         daemon.start();
 
         pos = new Vector3d();
-        EventManager.instance.subscribe(this, Events.FOCUS_CHANGED, Events.FOCUS_INFO_UPDATED, Events.CAMERA_MOTION_UPDATED, Events.CAMERA_MODE_CMD, Events.LON_LAT_UPDATED);
+        EventManager.instance.subscribe(this, Events.FOCUS_CHANGED, Events.FOCUS_INFO_UPDATED, Events.CAMERA_MOTION_UPDATED, Events.CAMERA_MODE_CMD, Events.LON_LAT_UPDATED, Events.RA_DEC_UPDATED);
     }
 
     @Override
@@ -162,11 +180,11 @@ public class FocusInfoInterface extends Table implements IObserver {
 
             if (cb instanceof Planet) {
                 lonLatLabel.setVisible(true);
-                focusLonLat.setVisible(true);
-                focusLonLat.setText("-/-");
+                pointerLonLat.setVisible(true);
+                pointerLonLat.setText("-/-");
             } else {
                 lonLatLabel.setVisible(false);
-                focusLonLat.setVisible(false);
+                pointerLonLat.setVisible(false);
             }
 
             focusId.setText(id);
@@ -231,7 +249,13 @@ public class FocusInfoInterface extends Table implements IObserver {
         case LON_LAT_UPDATED:
             Double lon = (Double) data[0];
             Double lat = (Double) data[1];
-            focusLonLat.setText(nf.format(lat) + "°/" + nf.format(lon) + "°");
+            pointerLonLat.setText(nf.format(lat) + "°/" + nf.format(lon) + "°");
+            break;
+        case RA_DEC_UPDATED:
+            Double ra = (Double) data[0];
+            Double dec = (Double) data[1];
+            pointerRADEC.setText(nf.format(ra) + "°/" + nf.format(dec) + "°");
+            break;
         }
     }
 
@@ -241,15 +265,19 @@ public class FocusInfoInterface extends Table implements IObserver {
 
     public void displayFocusInfo() {
         this.clearChildren();
-        add(focusInfo);
+        add(focusInfo).align(Align.left);
         row();
-        add(cameraInfo);
+        add(pointerInfo).align(Align.left);
+        row();
+        add(cameraInfo).align(Align.left);
         pack();
     }
 
     public void hideFocusInfo() {
         this.clearChildren();
-        add(cameraInfo);
+        add(pointerInfo).align(Align.left);
+        row();
+        add(cameraInfo).align(Align.left);
         pack();
     }
 
