@@ -122,53 +122,57 @@ public class GaiaCatalogWindow extends CollapsibleWindow {
         table.clear();
 
         // Make request
-        String[][] data = getData();
-        if (data != null) {
+        try {
+            String[][] data = getData();
+            if (data != null) {
 
-            HorizontalGroup links = new HorizontalGroup();
-            links.align(Align.center);
-            links.pad(5, 5, 5, 5);
-            links.space(10);
+                HorizontalGroup links = new HorizontalGroup();
+                links.align(Align.center);
+                links.pad(5, 5, 5, 5);
+                links.space(10);
 
-            links.addActor(new Link(txt("gui.data.json"), linkStyle, URL_GAIA_JSON_SOURCE + st.id));
-            links.addActor(new OwnLabel("|", skin));
-            links.addActor(new Link(txt("gui.data.archive"), linkStyle, URL_WEB));
+                links.addActor(new Link(txt("gui.data.json"), linkStyle, URL_GAIA_JSON_SOURCE + st.id));
+                links.addActor(new OwnLabel("|", skin));
+                links.addActor(new Link(txt("gui.data.archive"), linkStyle, URL_WEB));
 
-            table.add(links).colspan(2).padTop(10).padBottom(10);
-            table.row();
-
-            table.add(new OwnLabel(txt("gui.data.name"), skin, "msg-17")).padLeft(10).left();
-            table.add(new OwnLabel(st.name, skin, "msg-17")).padLeft(10).padRight(10).left();
-            table.row();
-            for (int col = 0; col < data[0].length; col++) {
-                Actor first = null;
-
-                if (data.length <= 2) {
-                    first = new OwnLabel(data[0][col], skin, "ui-13");
-                } else {
-                    HorizontalGroup hg = new HorizontalGroup();
-                    hg.space(5);
-                    ImageButton tooltip = new ImageButton(skin, "tooltip");
-                    tooltip.addListener(new TextTooltip(data[2][col], skin));
-                    hg.addActor(tooltip);
-                    hg.addActor(new OwnLabel(data[0][col], skin, "ui-13"));
-
-                    first = hg;
-
-                }
-
-                table.add(first).padLeft(10).left();
-                table.add(new OwnLabel(data[1][col], skin, "ui-12")).padLeft(10).padRight(10).left();
-                left();
+                table.add(links).colspan(2).padTop(10).padBottom(10);
                 table.row();
-            }
-            scroll.setHeight(Gdx.graphics.getHeight() * 0.7f);
-            scroll.pack();
 
-        } else {
-            // Message
-            String msg = I18n.bundle.format("error.gaiacatalog.notfound", st.name);
-            table.add(new OwnLabel(msg, skin, "ui-15"));
+                table.add(new OwnLabel(txt("gui.data.name"), skin, "msg-17")).padLeft(10).left();
+                table.add(new OwnLabel(st.name, skin, "msg-17")).padLeft(10).padRight(10).left();
+                table.row();
+                for (int col = 0; col < data[0].length; col++) {
+                    Actor first = null;
+
+                    if (data.length <= 2) {
+                        first = new OwnLabel(data[0][col], skin, "ui-13");
+                    } else {
+                        HorizontalGroup hg = new HorizontalGroup();
+                        hg.space(5);
+                        ImageButton tooltip = new ImageButton(skin, "tooltip");
+                        tooltip.addListener(new TextTooltip(data[2][col], skin));
+                        hg.addActor(tooltip);
+                        hg.addActor(new OwnLabel(data[0][col], skin, "ui-13"));
+
+                        first = hg;
+
+                    }
+
+                    table.add(first).padLeft(10).left();
+                    table.add(new OwnLabel(data[1][col], skin, "ui-12")).padLeft(10).padRight(10).left();
+                    left();
+                    table.row();
+                }
+                scroll.setHeight(Gdx.graphics.getHeight() * 0.7f);
+                scroll.pack();
+
+            } else {
+                // Message
+                String msg = I18n.bundle.format("error.gaiacatalog.notfound", st.name);
+                table.add(new OwnLabel(msg, skin, "ui-15"));
+            }
+        } catch (Exception e) {
+            table.add(new OwnLabel(e.getLocalizedMessage(), skin, "ui-15"));
         }
         table.pack();
         scroll.pack();
@@ -184,21 +188,19 @@ public class GaiaCatalogWindow extends CollapsibleWindow {
             stage.addActor(me);
     }
 
-    private String[][] getData() {
+    private String[][] getData() throws MalformedURLException, IOException {
         if (st.catalogSource > 0) {
-            try {
-                if (st.catalogSource == 1) {
-                    // GAIA
-                    return getDataBySourceId(st.id);
-                } else if (st.catalogSource == 2 && st.hip > 0) {
-                    // HIPPARCOS
-                    // Get sourceId corresponding to HIP number
-                    return getDataByHipId(st.hip);
 
-                }
-            } catch (Exception e) {
-                Logger.error(e);
+            if (st.catalogSource == 1) {
+                // GAIA
+                return getDataBySourceId(st.id);
+            } else if (st.catalogSource == 2 && st.hip > 0) {
+                // HIPPARCOS
+                // Get sourceId corresponding to HIP number
+                return getDataByHipId(st.hip);
+
             }
+
         }
         return null;
     }
