@@ -1,5 +1,7 @@
 package gaia.cu9.ari.gaiaorbit.util;
 
+import java.util.List;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.files.FileHandle;
@@ -182,6 +184,31 @@ public class GlobalResources {
             }
         }
         return count;
+    }
+
+    /**
+     * Gets all the files with the given extension in the given file handle f.
+     * @param f The directory to get all the files
+     * @param l The list with re results
+     * @param extension The extension of the files
+     * @return The list l
+     */
+    public static List<FileHandle> listRec(FileHandle f, List<FileHandle> l, String extension) {
+        if (f.exists()) {
+            if (f.isDirectory()) {
+                FileHandle[] partial = f.list();
+                for (FileHandle fh : partial) {
+                    l = listRec(fh, l, extension);
+                }
+
+            } else {
+                if (f.name().endsWith(extension)) {
+                    l.add(f);
+                }
+            }
+        }
+
+        return l;
     }
 
 }

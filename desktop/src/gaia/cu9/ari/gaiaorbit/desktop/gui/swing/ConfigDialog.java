@@ -770,9 +770,9 @@ public class ConfigDialog extends I18nJFrame {
         tabbedPane.addTab(txt("gui.data"), IconManager.get("config/data"), dataPanel);
         tabbedPane.setMnemonicAt(6, KeyEvent.VK_7);
 
-        /**
-        		 * ====== GAIA TAB =======
-        		 */
+        /** 
+        * ====== GAIA TAB =======
+        */
         JPanel gaia = new JPanel(new MigLayout("", "[][grow,fill][]", ""));
         gaia.setBorder(new TitledBorder(new MatteBorder(new Insets(thick, 0, 0, 0), bcol), txt("gui.gaia.attitude"), just, pos));
 
@@ -864,7 +864,7 @@ public class ConfigDialog extends I18nJFrame {
                     // Interface
                     LangComboBoxBean lbean = (LangComboBoxBean) lang.getSelectedItem();
                     GlobalConf.program.LOCALE = lbean.locale.toLanguageTag();
-                    I18n.forceinit(Gdx.files.internal("data/i18n/gsbundle"));
+                    I18n.forceinit(Gdx.files.internal("i18n/gsbundle"));
                     GlobalConf.program.UI_THEME = (String) theme.getSelectedItem();
                     if (GlobalConf.program.UI_THEME.equalsIgnoreCase("hidpi")) {
                         GlobalConf.updateScaleFactor(Math.max(GlobalConf.SCALE_FACTOR, 1.6f));

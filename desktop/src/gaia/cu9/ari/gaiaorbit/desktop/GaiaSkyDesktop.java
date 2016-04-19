@@ -7,11 +7,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
 
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.UIManager;
-import javax.swing.filechooser.FileFilter;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.plaf.FontUIResource;
 
 import com.badlogic.gdx.Files;
@@ -36,6 +33,7 @@ import gaia.cu9.ari.gaiaorbit.desktop.render.FullscreenCmd;
 import gaia.cu9.ari.gaiaorbit.desktop.util.CamRecorder;
 import gaia.cu9.ari.gaiaorbit.desktop.util.DesktopConfInit;
 import gaia.cu9.ari.gaiaorbit.desktop.util.DesktopNetworkChecker;
+import gaia.cu9.ari.gaiaorbit.desktop.util.RunCameraWindow;
 import gaia.cu9.ari.gaiaorbit.desktop.util.RunScriptWindow;
 import gaia.cu9.ari.gaiaorbit.desktop.util.SysUtils;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
@@ -95,7 +93,7 @@ public class GaiaSkyDesktop implements IObserver {
             ConfInit.initialize(new DesktopConfInit());
 
             // Initialize i18n
-            I18n.initialize(Gdx.files.internal("data/i18n/gsbundle"));
+            I18n.initialize(Gdx.files.internal("i18n/gsbundle"));
 
             // Dev mode
             I18n.initialize(Gdx.files.absolute(ASSETS_LOC + "i18n/gsbundle"));
@@ -198,71 +196,29 @@ public class GaiaSkyDesktop implements IObserver {
     }
 
     RunScriptWindow scriptWindow = null;
+    RunCameraWindow cameraWindow = null;
 
     @Override
     public void notify(Events event, final Object... data) {
         switch (event) {
         case SHOW_PLAYCAMERA_ACTION:
-            // Exit fullscreen
-            EventManager.instance.post(Events.FULLSCREEN_CMD, false);
             Gdx.app.postRunnable(new Runnable() {
-
                 @Override
                 public void run() {
-                    // Show file dialog
-                    SecurityManager sm = System.getSecurityManager();
-                    System.setSecurityManager(null);
-                    JFileChooser chooser = new JFileChooser();
-
-                    chooser.setFileHidingEnabled(false);
-                    chooser.setMultiSelectionEnabled(false);
-                    chooser.setAcceptAllFileFilterUsed(false);
-                    chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-                    chooser.setCurrentDirectory(SysUtils.getGSHomeDir());
-
-                    // Filter
-                    FileFilter filter = new FileNameExtensionFilter("Camera data files", new String[] { "dat", "txt", "csv" });
-                    chooser.addChoosableFileFilter(filter);
-                    chooser.setFileFilter(filter);
-
-                    int v = chooser.showOpenDialog(null);
-
-                    switch (v) {
-                    case JFileChooser.APPROVE_OPTION:
-                        File choice = null;
-                        if (chooser.getSelectedFile() != null) {
-                            File file = chooser.getSelectedFile();
-                            // Send command to play file
-                            EventManager.instance.post(Events.PLAY_CAMERA_CMD, file.getAbsolutePath());
-                        }
-
-                        break;
-                    case JFileChooser.CANCEL_OPTION:
-                    case JFileChooser.ERROR_OPTION:
-                    }
-                    chooser.removeAll();
-                    chooser = null;
-                    System.setSecurityManager(sm);
-
+                    if (cameraWindow == null)
+                        cameraWindow = new RunCameraWindow((Stage) data[0], (Skin) data[1]);
+                    cameraWindow.display();
                 }
-
             });
             break;
         case SHOW_RUNSCRIPT_ACTION:
-            // Exit fullscreen
-            EventManager.instance.post(Events.FULLSCREEN_CMD, false);
             Gdx.app.postRunnable(new Runnable() {
-
                 @Override
                 public void run() {
-                    //                    JFrame frame = new ScriptDialog();
-                    //                    frame.toFront();
-
                     if (scriptWindow == null)
                         scriptWindow = new RunScriptWindow((Stage) data[0], (Skin) data[1]);
                     scriptWindow.display();
                 }
-
             });
 
             break;

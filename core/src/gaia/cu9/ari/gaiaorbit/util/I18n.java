@@ -41,11 +41,13 @@ public class I18n {
             bundle = I18NBundle.createBundle(baseFileHandle, locale);
             return true;
         } catch (MissingResourceException e) {
+            Logger.info(I18n.class.getSimpleName(), e.getLocalizedMessage());
             // Use default locale - en_GB
             locale = new Locale("en", "GB");
             try {
                 bundle = I18NBundle.createBundle(baseFileHandle, locale);
             } catch (Exception e2) {
+                Logger.error(e, I18n.class.getSimpleName());
             }
             return false;
         }

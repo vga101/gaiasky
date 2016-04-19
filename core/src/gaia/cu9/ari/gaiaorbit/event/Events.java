@@ -148,7 +148,9 @@ public enum Events {
     /** Executes the command to position the camera near the object in focus **/
     GO_TO_OBJECT_CMD,
     /** Contains an optional boolean indicating whether debug info should be shown or not. Otherwise, it toggles its state **/
-    SHOW_DEBUG_CMD, SHOW_ABOUT_ACTION, SHOW_TUTORIAL_ACTION, SHOW_PREFERENCES_ACTION, SHOW_RUNSCRIPT_ACTION, SHOW_PLAYCAMERA_ACTION,
+    SHOW_DEBUG_CMD, SHOW_ABOUT_ACTION, SHOW_TUTORIAL_ACTION, SHOW_PREFERENCES_ACTION, SHOW_RUNSCRIPT_ACTION,
+    /** Shows the camera path file selector, contains the stage and the skin **/
+    SHOW_PLAYCAMERA_ACTION,
     /** Informs about the number of running scripts **/
     NUM_RUNNING_SCRIPTS,
     /** Cancels the next script **/

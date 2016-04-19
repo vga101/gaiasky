@@ -134,7 +134,7 @@ public class ControlsWindow extends CollapsibleWindow implements IObserver {
                 @Override
                 public boolean handle(Event event) {
                     if (event instanceof ChangeEvent) {
-                        EventManager.instance.post(Events.SHOW_PLAYCAMERA_ACTION);
+                        EventManager.instance.post(Events.SHOW_PLAYCAMERA_ACTION, ui, skin);
                         return true;
                     }
                     return false;

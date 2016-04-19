@@ -3,11 +3,12 @@ package gaia.cu9.ari.gaiaorbit.desktop.util;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Date;
+
+import com.badlogic.gdx.files.FileHandle;
 
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
@@ -122,7 +123,7 @@ public class CamRecorder implements IObserver {
                     Logger.info(I18n.bundle.get("error.camerarecord.already"));
                     return;
                 }
-                f = new File(SysUtils.getGSHomeDir(), System.currentTimeMillis() + "_gscamera.dat");
+                f = new File(SysUtils.getGSCameraDir(), System.currentTimeMillis() + "_gscamera.dat");
                 if (f.exists()) {
                     f.delete();
                 }
@@ -165,15 +166,11 @@ public class CamRecorder implements IObserver {
             if (mode != RecorderMode.IDLE) {
                 throw new RuntimeException("The recorder is busy! The current mode is " + mode);
             }
-            String filepath = (String) data[0];
-            f = new File(filepath);
-            try {
-                is = new BufferedReader(new FileReader(f));
-            } catch (FileNotFoundException e) {
-                Logger.error(e);
-                return;
-            }
-            Logger.info(I18n.bundle.format("notif.cameraplay.start", filepath));
+            FileHandle file = (FileHandle) data[0];
+
+            is = new BufferedReader(new InputStreamReader(file.read()));
+
+            Logger.info(I18n.bundle.format("notif.cameraplay.start", file.path()));
             mode = RecorderMode.PLAYING;
 
             break;

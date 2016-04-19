@@ -4,9 +4,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.python.core.PyCode;
-import org.python.core.PySyntaxError;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
@@ -28,7 +25,6 @@ import com.badlogic.gdx.utils.Array;
 
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
-import gaia.cu9.ari.gaiaorbit.script.JythonFactory;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
@@ -39,17 +35,15 @@ import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnScrollPane;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextButton;
 
 /**
- * The run script window, which allows the user to choose a script to run.
+ * The run camera path file window, which allows the user to choose a script to run.
  * @author tsagrista
  *
  */
-public class RunScriptWindow extends CollapsibleWindow {
+public class RunCameraWindow extends CollapsibleWindow {
 
     final private Stage stage;
-    private RunScriptWindow me;
+    private RunCameraWindow me;
     private Table table;
-
-    private PyCode code;
 
     private TextButton run;
 
@@ -61,8 +55,8 @@ public class RunScriptWindow extends CollapsibleWindow {
 
     private float pad;
 
-    public RunScriptWindow(Stage stg, Skin skin) {
-        super(txt("gui.script.title"), skin);
+    public RunCameraWindow(Stage stg, Skin skin) {
+        super(txt("gui.camera.title"), skin);
 
         this.stage = stg;
         this.me = this;
@@ -89,9 +83,9 @@ public class RunScriptWindow extends CollapsibleWindow {
             }
 
         });
-        TextButton reload = new OwnTextButton(txt("gui.script.reload"), skin, "default");
+        TextButton reload = new OwnTextButton(txt("gui.camera.reload"), skin, "default");
         reload.setName("reload");
-        reload.setSize(100 * GlobalConf.SCALE_FACTOR, 20 * GlobalConf.SCALE_FACTOR);
+        reload.setSize(130 * GlobalConf.SCALE_FACTOR, 20 * GlobalConf.SCALE_FACTOR);
         reload.addListener(new EventListener() {
             @Override
             public boolean handle(Event event) {
@@ -104,9 +98,9 @@ public class RunScriptWindow extends CollapsibleWindow {
             }
 
         });
-        reload.addListener(new TextTooltip(txt("gui.script.reload"), skin));
+        reload.addListener(new TextTooltip(txt("gui.camera.reload"), skin));
 
-        run = new OwnTextButton(txt("gui.script.run"), skin, "default");
+        run = new OwnTextButton(txt("gui.camera.run"), skin, "default");
         run.setName("run");
         run.setSize(70 * GlobalConf.SCALE_FACTOR, 20 * GlobalConf.SCALE_FACTOR);
         run.setDisabled(true);
@@ -116,8 +110,8 @@ public class RunScriptWindow extends CollapsibleWindow {
                 boolean async = true;
                 if (event instanceof ChangeEvent) {
                     me.hide();
-                    if (code != null) {
-                        EventManager.instance.post(Events.RUN_SCRIPT_PYCODE, code, GlobalConf.program.SCRIPT_LOCATION, async);
+                    if (selectedScript != null) {
+                        EventManager.instance.post(Events.PLAY_CAMERA_CMD, selectedScript);
                     }
                     return true;
                 }
@@ -142,29 +136,25 @@ public class RunScriptWindow extends CollapsibleWindow {
         table.clear();
 
         // Choose script
-        FileHandle scriptFolder1 = Gdx.files.internal(GlobalConf.program.SCRIPT_LOCATION);
-        FileHandle scriptFolder2 = Gdx.files.absolute(SysUtils.getDefaultScriptDir().getPath());
+        FileHandle scriptFolder = Gdx.files.absolute(SysUtils.getGSCameraDir().getPath());
 
         scripts = new ArrayList<FileHandle>();
 
-        if (scriptFolder1.exists())
-            scripts = GlobalResources.listRec(scriptFolder1, scripts, ".py");
-
-        if (scriptFolder2.exists())
-            scripts = GlobalResources.listRec(scriptFolder2, scripts, ".py");
+        if (scriptFolder.exists())
+            scripts = GlobalResources.listRec(scriptFolder, scripts, ".dat");
 
         HorizontalGroup titlegroup = new HorizontalGroup();
         titlegroup.space(pad);
         ImageButton tooltip = new OwnImageButton(skin, "tooltip");
-        tooltip.addListener(new TextTooltip(txt("gui.tooltip.script", SysUtils.getDefaultScriptDir()), skin));
-        Label choosetitle = new OwnLabel(txt("gui.script.choose"), skin, "help-title");
+        tooltip.addListener(new TextTooltip(txt("gui.tooltip.camera", SysUtils.getGSCameraDir()), skin));
+        Label choosetitle = new OwnLabel(txt("gui.camera.choose"), skin, "help-title");
         titlegroup.addActor(choosetitle);
         titlegroup.addActor(tooltip);
         table.add(titlegroup).align(Align.left).padTop(pad * 2);
         table.row();
 
         final com.badlogic.gdx.scenes.scene2d.ui.List<FileHandle> scriptsList = new com.badlogic.gdx.scenes.scene2d.ui.List<FileHandle>(skin, "normal");
-        scriptsList.setName("scripts list");
+        scriptsList.setName("camera path files list");
 
         Array<String> names = new Array<String>();
         for (FileHandle fh : scripts)
@@ -189,18 +179,12 @@ public class RunScriptWindow extends CollapsibleWindow {
                         if (selectedScript != null) {
                             File choice = selectedScript.file();
                             try {
-                                code = JythonFactory.getInstance().compileJythonScript(choice);
-                                outConsole.setText(txt("gui.script.ready"));
+                                outConsole.setText(txt("gui.camera.ready"));
                                 outConsole.setColor(0, 1, 0, 1);
                                 run.setDisabled(false);
                                 me.pack();
-                            } catch (PySyntaxError e1) {
-                                outConsole.setText(txt("gui.script.error", e1.type, e1.value));
-                                outConsole.setColor(1, 0, 0, 1);
-                                run.setDisabled(true);
-                                me.pack();
-                            } catch (Exception e2) {
-                                outConsole.setText(txt("gui.script.error2", e2.getMessage()));
+                            } catch (Exception e) {
+                                outConsole.setText(txt("gui.camera.error2", e.getMessage()));
                                 outConsole.setColor(1, 0, 0, 1);
                                 run.setDisabled(true);
                                 me.pack();
@@ -213,7 +197,7 @@ public class RunScriptWindow extends CollapsibleWindow {
             }
         });
         ScrollPane scriptsScroll = new OwnScrollPane(scriptsList, skin, "minimalist");
-        scriptsScroll.setName("scripts list scroll");
+        scriptsScroll.setName("camera path files list scroll");
         scriptsScroll.setFadeScrollBars(false);
         scriptsScroll.setScrollingDisabled(true, false);
 
