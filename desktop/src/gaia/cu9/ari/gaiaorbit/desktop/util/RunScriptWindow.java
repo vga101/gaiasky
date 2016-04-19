@@ -15,11 +15,13 @@ import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.TextTooltip;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
@@ -30,6 +32,7 @@ import gaia.cu9.ari.gaiaorbit.script.JythonFactory;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.CollapsibleWindow;
+import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnImageButton;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnLabel;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnScrollPane;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextButton;
@@ -54,7 +57,7 @@ public class RunScriptWindow extends CollapsibleWindow {
 
     private List<FileHandle> scripts = null;
     private FileHandle selectedScript = null;
-    
+
     private float pad;
 
     public RunScriptWindow(Stage stg, Skin skin) {
@@ -65,7 +68,7 @@ public class RunScriptWindow extends CollapsibleWindow {
 
         pad = 5 * GlobalConf.SCALE_FACTOR;
         table = new Table(skin);
-        
+
         /** BUTTONS **/
         HorizontalGroup buttonGroup = new HorizontalGroup();
         buttonGroup.space(pad);
@@ -84,6 +87,23 @@ public class RunScriptWindow extends CollapsibleWindow {
             }
 
         });
+        TextButton reload = new OwnTextButton(txt("gui.script.reload"), skin, "default");
+        reload.setName("reload");
+        reload.setSize(100 * GlobalConf.SCALE_FACTOR, 20 * GlobalConf.SCALE_FACTOR);
+        reload.addListener(new EventListener() {
+            @Override
+            public boolean handle(Event event) {
+                if (event instanceof ChangeEvent) {
+                    me.initialize();
+                    return true;
+                }
+
+                return false;
+            }
+
+        });
+        reload.addListener(new TextTooltip(txt("gui.script.reload"), skin));
+
         run = new OwnTextButton(txt("gui.script.run"), skin, "default");
         run.setName("run");
         run.setSize(70 * GlobalConf.SCALE_FACTOR, 20 * GlobalConf.SCALE_FACTOR);
@@ -105,8 +125,9 @@ public class RunScriptWindow extends CollapsibleWindow {
 
         });
         buttonGroup.addActor(cancel);
+        buttonGroup.addActor(reload);
         buttonGroup.addActor(run);
-        
+
         add(table).pad(pad);
         row();
         add(buttonGroup).pad(pad).bottom().right();
@@ -132,11 +153,11 @@ public class RunScriptWindow extends CollapsibleWindow {
 
         return l;
     }
-    
-    private void initialize(){
-    	table.clear();
-    	
-    	// Choose script
+
+    private void initialize() {
+        table.clear();
+
+        // Choose script
         FileHandle scriptFolder1 = Gdx.files.internal(GlobalConf.program.SCRIPT_LOCATION);
         FileHandle scriptFolder2 = Gdx.files.absolute(SysUtils.getDefaultScriptDir().getPath());
 
@@ -148,8 +169,14 @@ public class RunScriptWindow extends CollapsibleWindow {
         if (scriptFolder2.exists())
             scripts = listRec(scriptFolder2, scripts);
 
+        HorizontalGroup titlegroup = new HorizontalGroup();
+        titlegroup.space(pad);
+        ImageButton tooltip = new OwnImageButton(skin, "tooltip");
+        tooltip.addListener(new TextTooltip(txt("gui.tooltip.script", SysUtils.getDefaultScriptDir()), skin));
         Label choosetitle = new OwnLabel(txt("gui.script.choose"), skin, "help-title");
-        table.add(choosetitle).align(Align.left).padTop(pad * 2);
+        titlegroup.addActor(choosetitle);
+        titlegroup.addActor(tooltip);
+        table.add(titlegroup).align(Align.left).padTop(pad * 2);
         table.row();
 
         final com.badlogic.gdx.scenes.scene2d.ui.List<FileHandle> scriptsList = new com.badlogic.gdx.scenes.scene2d.ui.List<FileHandle>(skin, "normal");
@@ -227,8 +254,8 @@ public class RunScriptWindow extends CollapsibleWindow {
     }
 
     public void display() {
-    	initialize();
-    	
+        initialize();
+
         if (!stage.getActors().contains(me, true))
             stage.addActor(this);
 

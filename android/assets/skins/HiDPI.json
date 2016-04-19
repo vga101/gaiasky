@@ -53,7 +53,9 @@ com.badlogic.gdx.scenes.scene2d.ui.ImageButton$ImageButtonStyle: {
 	audio-playpause: { imageUp: audio-play, imageChecked: audio-pause },
 	audio-fwd: {imageUp: audio-fwd },
 	audio-bwd: {imageUp: audio-bwd },
-	reload: {imageUp: reload }
+	reload: {imageUp: reload },
+	plus: {imageUp: tree-plus},
+	minus: {imageUp: tree-minus}
 },
 com.badlogic.gdx.scenes.scene2d.ui.ScrollPane$ScrollPaneStyle: {
 	default: { vScroll: default-round-down, hScrollKnob: default-round, background: default-rect, hScroll: default-round-down, vScrollKnob: default-round },

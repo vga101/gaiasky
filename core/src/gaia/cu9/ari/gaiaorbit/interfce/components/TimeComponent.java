@@ -5,7 +5,6 @@ import java.util.Date;
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Container;
 import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
@@ -39,7 +38,7 @@ public class TimeComponent extends GuiComponent implements IObserver {
     private INumberFormat nf, nfsci;
 
     protected OwnLabel date;
-    protected Button plus, minus;
+    protected ImageButton plus, minus;
     protected Label timeWarp;
     protected ImageButton dateEdit;
     protected DateDialog dateDialog;
@@ -80,7 +79,7 @@ public class TimeComponent extends GuiComponent implements IObserver {
 
         // Pace
         Label paceLabel = new Label(txt("gui.pace"), skin);
-        plus = new ImageButton(skin.getDrawable("tree-plus"));
+        plus = new OwnImageButton(skin, "plus");
         plus.setName("plus");
         plus.addListener(new EventListener() {
             @Override
@@ -94,7 +93,9 @@ public class TimeComponent extends GuiComponent implements IObserver {
                 return false;
             }
         });
-        minus = new ImageButton(skin.getDrawable("tree-minus"));
+        plus.addListener(new TextTooltip(txt("gui.tooltip.timewarpplus"), skin));
+
+        minus = new OwnImageButton(skin, "minus");
         minus.setName("minus");
         minus.addListener(new EventListener() {
             @Override
@@ -107,6 +108,7 @@ public class TimeComponent extends GuiComponent implements IObserver {
                 return false;
             }
         });
+        minus.addListener(new TextTooltip(txt("gui.tooltip.timewarpminus"), skin));
 
         timeWarp = new OwnLabel(getFormattedTimeWrap(), skin, "warp");
         timeWarp.setName("time wrap");
