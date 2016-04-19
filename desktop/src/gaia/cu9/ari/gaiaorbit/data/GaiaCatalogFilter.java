@@ -1,4 +1,4 @@
-package gaia.cu9.ari.gaiaorbit.desktop.util;
+package gaia.cu9.ari.gaiaorbit.data;
 
 import java.io.DataOutputStream;
 import java.io.File;
@@ -19,6 +19,8 @@ import com.badlogic.gdx.backends.lwjgl.LwjglFiles;
 import gaia.cu9.ari.gaiaorbit.data.stars.HYGBinaryLoader;
 import gaia.cu9.ari.gaiaorbit.data.stars.STILCatalogLoader;
 import gaia.cu9.ari.gaiaorbit.desktop.format.DesktopDateFormatFactory;
+import gaia.cu9.ari.gaiaorbit.desktop.util.LogWriter;
+import gaia.cu9.ari.gaiaorbit.desktop.util.WebGLConfInit;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
@@ -214,6 +216,6 @@ public class GaiaCatalogFilter {
     public static void main(String[] args) throws Exception {
         GaiaCatalogFilter gcf = new GaiaCatalogFilter();
         gcf.initialize();
-        gcf.filterCatalog(2016, 8, 25, 2017, 1, 1);
+        gcf.filterCatalog(2016, 4, 18, 2017, 12, 30);
     }
 }

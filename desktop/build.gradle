@@ -39,7 +39,7 @@ task run(dependsOn: jar, type: JavaExec, description: "Runs the desktop project"
 }
 
 task runCatalogFilter(dependsOn: jar, type: JavaExec, description: "Runs the catalog filter application to generate day catalogs for WebGL") {
-    main = 'gaia.cu9.ari.gaiaorbit.desktop.util.GaiaCatalogFilter'
+    main = 'gaia.cu9.ari.gaiaorbit.data.GaiaCatalogFilter'
     classpath = sourceSets.main.runtimeClasspath
     classpath += files(project.assetsDir)
     standardInput = System.in

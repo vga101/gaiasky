@@ -212,8 +212,21 @@ public class STILCatalogLoader extends AbstractCatalogLoader {
                     float color = coli > 0 ? ((Number) row[coli]).floatValue() : 0.656f;
 
                     starid++;
+                    String idstr = null;
+                    if (idstrc == null || !idstrc.getContentClass().isAssignableFrom(String.class)) {
+                        // ID string from catalog if possible
+                        if (hipi >= 0 && row[hipi] != null) {
+                            idstr = "HIP" + row[hipi];
+                        } else if (tychoi >= 0 && row[tychoi] != null) {
+                            idstr = "TYC" + row[tychoi];
+                        } else {
+                            idstr = "star_" + starid;
+                        }
 
-                    String idstr = (idstrc == null || !idstrc.getContentClass().isAssignableFrom(String.class)) ? "star_" + starid : (String) row[idstri];
+                    } else {
+                        idstr = (String) row[idstri];
+                    }
+
                     Long id = (idc == null || !idc.getContentClass().isAssignableFrom(Number.class)) ? starid : ((Number) row[idi]).longValue();
 
                     CelestialBody s = null;
@@ -237,4 +250,5 @@ public class STILCatalogLoader extends AbstractCatalogLoader {
         Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.catalog.init", result.size()));
         return result;
     }
+
 }
