@@ -52,7 +52,7 @@ public class ControlsWindow extends CollapsibleWindow implements IObserver {
     protected VerticalGroup mainVertical;
     protected OwnScrollPane windowScroll;
     protected Table guiLayout;
-    protected OwnImageButton recCamera = null, playCamera = null, playstop = null, reloadMusic = null;
+    protected OwnImageButton recCamera = null, playCamera = null, playstop = null;
     protected TiledDrawable separator;
     /**
     	 * The scene graph
@@ -189,21 +189,9 @@ public class ControlsWindow extends CollapsibleWindow implements IObserver {
         MusicComponent musicComponent = new MusicComponent(skin, ui);
         musicComponent.initialize();
 
-        reloadMusic = new OwnImageButton(skin, "reload");
-        reloadMusic.setName("reload music");
-        reloadMusic.addListener(new EventListener() {
-            @Override
-            public boolean handle(Event event) {
-                if (event instanceof ChangeEvent) {
-                    EventManager.instance.post(Events.MUSIC_RELOAD_CMD);
-                    return true;
-                }
-                return false;
-            }
-        });
-        reloadMusic.addListener(new TextTooltip(txt("gui.music.reload"), skin));
+        Actor[] musicActors = MusicActorsManager.getMusicActors() != null ? MusicActorsManager.getMusicActors().getActors(skin) : null;
 
-        CollapsiblePane music = new CollapsiblePane(ui, txt("gui.music"), musicComponent.getActor(), skin, true, reloadMusic);
+        CollapsiblePane music = new CollapsiblePane(ui, txt("gui.music"), musicComponent.getActor(), skin, true, musicActors);
         music.align(Align.left);
         mainActors.add(music);
 

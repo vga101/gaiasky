@@ -291,7 +291,7 @@ public class GalaxyRenderSystem extends ImmediateRenderSystem implements IObserv
             /**
              * IMAGE RENDERER
              */
-            mw.mc.setTransparency(mw.opacity * alphas[mw.ct.ordinal()] * 0.2f);
+            mw.mc.setTransparency(mw.opacity * alphas[mw.ct.ordinal()] * 0.5f);
             modelBatch.begin(camera.getCamera());
             modelBatch.render(mw.mc.instance, mw.mc.env);
             modelBatch.end();

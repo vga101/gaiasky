@@ -2,6 +2,8 @@ package gaia.cu9.ari.gaiaorbit.util;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
@@ -15,57 +17,61 @@ import gaia.cu9.ari.gaiaorbit.event.IObserver;
 public class MusicManager implements IObserver {
 
     public static MusicManager instance;
-    private static FileHandle folder;
+    private static FileHandle[] folders;
 
-    public static void initialize(FileHandle folder) {
-        MusicManager.folder = folder;
-        instance = new MusicManager(folder);
+    public static void initialize(FileHandle... folders) {
+        MusicManager.folders = folders;
+        instance = new MusicManager(folders);
     }
 
     public static boolean initialized() {
         return instance != null;
     }
 
-    private FileHandle[] musicFiles;
+    private List<FileHandle> musicFiles;
     private int i = 0;
     private Music currentMusic;
     private float volume = 0.05f;
 
-    public MusicManager(FileHandle dir) {
+    public MusicManager(FileHandle[] dirs) {
         super();
-        initFiles(dir);
+        initFiles(dirs);
 
         EventManager.instance.subscribe(this, Events.MUSIC_NEXT_CMD, Events.MUSIC_PLAYPAUSE_CMD, Events.MUSIC_PREVIOUS_CMD, Events.MUSIC_VOLUME_CMD, Events.MUSIC_RELOAD_CMD);
     }
 
-    private void initFiles(FileHandle folder) {
-        if (folder != null) {
-            musicFiles = folder.list(new MusicFileFilter());
-            Logger.info(I18n.bundle.format("gui.music.load", musicFiles.length));
+    private void initFiles(FileHandle[] folders) {
+        if (folders != null) {
+            musicFiles = new ArrayList<FileHandle>();
+
+            for (FileHandle folder : folders) {
+                GlobalResources.listRec(folder, musicFiles, new MusicFileFilter());
+            }
+            Logger.info(I18n.bundle.format("gui.music.load", musicFiles.size()));
         } else {
-            musicFiles = new FileHandle[] {};
+            musicFiles = new ArrayList<FileHandle>();
         }
         i = 0;
     }
 
     public void start() {
-        if (musicFiles.length > 0) {
+        if (musicFiles.size() > 0) {
             playNextMusic();
         }
     }
 
     private void playNextMusic() {
-        i = (i + 1) % musicFiles.length;
+        i = (i + 1) % musicFiles.size();
         playIndex(i);
     }
 
     private void playPreviousMusic() {
-        i = (i - 1) % musicFiles.length;
+        i = (((i - 1) % musicFiles.size()) + musicFiles.size()) % musicFiles.size();
         playIndex(i);
     }
 
     private void playIndex(int i) {
-        FileHandle f = musicFiles[i];
+        FileHandle f = musicFiles.get(i);
 
         if (currentMusic != null) {
             if (currentMusic.isPlaying())
@@ -82,7 +88,7 @@ public class MusicManager implements IObserver {
                 }
             });
             currentMusic.play();
-            Logger.info(I18n.bundle.format("gui.music.playing", musicFiles[i].name()));
+            Logger.info(I18n.bundle.format("gui.music.playing", musicFiles.get(i).name()));
         } catch (Exception e) {
             Logger.error(e);
         }
@@ -136,7 +142,7 @@ public class MusicManager implements IObserver {
     }
 
     public void reload() {
-        initFiles(folder);
+        initFiles(folders);
     }
 
     private class MusicFileFilter implements FilenameFilter {

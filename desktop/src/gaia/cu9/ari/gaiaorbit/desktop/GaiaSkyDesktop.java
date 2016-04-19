@@ -32,6 +32,7 @@ import gaia.cu9.ari.gaiaorbit.desktop.render.DesktopPostProcessorFactory;
 import gaia.cu9.ari.gaiaorbit.desktop.render.FullscreenCmd;
 import gaia.cu9.ari.gaiaorbit.desktop.util.CamRecorder;
 import gaia.cu9.ari.gaiaorbit.desktop.util.DesktopConfInit;
+import gaia.cu9.ari.gaiaorbit.desktop.util.DesktopMusicActors;
 import gaia.cu9.ari.gaiaorbit.desktop.util.DesktopNetworkChecker;
 import gaia.cu9.ari.gaiaorbit.desktop.util.RunCameraWindow;
 import gaia.cu9.ari.gaiaorbit.desktop.util.RunScriptWindow;
@@ -40,6 +41,7 @@ import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.interfce.KeyBindings;
+import gaia.cu9.ari.gaiaorbit.interfce.MusicActorsManager;
 import gaia.cu9.ari.gaiaorbit.interfce.NetworkCheckerManager;
 import gaia.cu9.ari.gaiaorbit.render.PostProcessorFactory;
 import gaia.cu9.ari.gaiaorbit.screenshot.ScreenshotsManager;
@@ -110,8 +112,11 @@ public class GaiaSkyDesktop implements IObserver {
             // Init cam recorder
             CamRecorder.initialize();
 
+            // Music actors
+            MusicActorsManager.initialize(new DesktopMusicActors());
+
             // Init music manager
-            MusicManager.initialize(Gdx.files.absolute(ASSETS_LOC + "music"));
+            MusicManager.initialize(Gdx.files.absolute(ASSETS_LOC + "music"), Gdx.files.absolute(SysUtils.getDefaultMusicDir().getAbsolutePath()));
 
             // Initialize post processor factory
             PostProcessorFactory.initialize(new DesktopPostProcessorFactory());

@@ -1,5 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.util;
 
+import java.io.FilenameFilter;
 import java.util.List;
 
 import com.badlogic.gdx.Gdx;
@@ -203,6 +204,24 @@ public class GlobalResources {
 
             } else {
                 if (f.name().endsWith(extension)) {
+                    l.add(f);
+                }
+            }
+        }
+
+        return l;
+    }
+
+    public static List<FileHandle> listRec(FileHandle f, List<FileHandle> l, FilenameFilter filter) {
+        if (f.exists()) {
+            if (f.isDirectory()) {
+                FileHandle[] partial = f.list();
+                for (FileHandle fh : partial) {
+                    l = listRec(fh, l, filter);
+                }
+
+            } else {
+                if (filter.accept(f.parent().file(), f.name())) {
                     l.add(f);
                 }
             }

@@ -68,6 +68,7 @@ public class SysUtils {
     private static final String SCREENSHOTS_DIR_NAME = "screenshots";
     private static final String FRAMES_DIR_NAME = "frames";
     private static final String SCRIPT_DIR_NAME = "script";
+    private static final String MUSIC_DIR_NAME = "music";
 
     /**
      * Gets a file pointer to the $HOME/.gaiasky/camera directory.
@@ -99,6 +100,14 @@ public class SysUtils {
      */
     public static File getDefaultScriptDir() {
         return new File(System.getProperty("user.home") + File.separator + GAIASKY_DIR_NAME + File.separator + SCRIPT_DIR_NAME + File.separator);
+    }
+
+    /**
+     * Gets a file pointer to the $HOME/.gaiasky/music directory.
+     * @return A pointer to the GaiaSandbox music directory in the user's home.
+     */
+    public static File getDefaultMusicDir() {
+        return new File(System.getProperty("user.home") + File.separator + GAIASKY_DIR_NAME + File.separator + MUSIC_DIR_NAME + File.separator);
     }
 
 }
