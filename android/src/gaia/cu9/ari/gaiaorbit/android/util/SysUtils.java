@@ -74,7 +74,7 @@ public class SysUtils {
      * Gets a file pointer to the $HOME/.gaiasky/camera directory.
      * @return A pointer to the GaiaSandbox camera directory in the user's home.
      */
-    public static File getGSCameraDir() {
+    public static File getDefaultCameraDir() {
         return new File(System.getProperty("user.home") + File.separator + GAIASKY_DIR_NAME + File.separator + CAMERA_DIR_NAME + File.separator);
     }
 

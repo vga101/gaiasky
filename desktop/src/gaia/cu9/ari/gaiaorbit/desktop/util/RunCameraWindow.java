@@ -136,7 +136,7 @@ public class RunCameraWindow extends CollapsibleWindow {
         table.clear();
 
         // Choose script
-        FileHandle scriptFolder = Gdx.files.absolute(SysUtils.getGSCameraDir().getPath());
+        FileHandle scriptFolder = Gdx.files.absolute(SysUtils.getDefaultCameraDir().getPath());
 
         scripts = new ArrayList<FileHandle>();
 
@@ -146,7 +146,7 @@ public class RunCameraWindow extends CollapsibleWindow {
         HorizontalGroup titlegroup = new HorizontalGroup();
         titlegroup.space(pad);
         ImageButton tooltip = new OwnImageButton(skin, "tooltip");
-        tooltip.addListener(new TextTooltip(txt("gui.tooltip.camera", SysUtils.getGSCameraDir()), skin));
+        tooltip.addListener(new TextTooltip(txt("gui.tooltip.camera", SysUtils.getDefaultCameraDir()), skin));
         Label choosetitle = new OwnLabel(txt("gui.camera.choose"), skin, "help-title");
         titlegroup.addActor(choosetitle);
         titlegroup.addActor(tooltip);

@@ -86,6 +86,10 @@ public class GaiaSkyDesktop implements IObserver {
 
             setUIFont(new javax.swing.plaf.FontUIResource("SansSerif", Font.PLAIN, 10));
 
+            // Init .gaiasky folder in user's home folder
+            initUserDirectory();
+
+            // Init properties file
             String props = System.getProperty("properties.file");
             if (props == null || props.isEmpty()) {
                 props = initConfigFile(false);
@@ -273,6 +277,15 @@ public class GaiaSkyDesktop implements IObserver {
             break;
         }
 
+    }
+
+    private static void initUserDirectory() {
+        SysUtils.getGSHomeDir().mkdirs();
+        SysUtils.getDefaultFramesDir().mkdirs();
+        SysUtils.getDefaultScreenshotsDir().mkdirs();
+        SysUtils.getDefaultMusicDir().mkdirs();
+        SysUtils.getDefaultScriptDir().mkdirs();
+        SysUtils.getDefaultCameraDir().mkdirs();
     }
 
     private static String initConfigFile(boolean ow) throws IOException {
