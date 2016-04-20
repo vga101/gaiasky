@@ -1,10 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.script;
 
-import gaia.cu9.ari.gaiaorbit.event.EventManager;
-import gaia.cu9.ari.gaiaorbit.event.Events;
-import gaia.cu9.ari.gaiaorbit.event.IObserver;
-import gaia.cu9.ari.gaiaorbit.util.I18n;
-
 import java.io.File;
 import java.io.FileReader;
 import java.util.Collections;
@@ -18,6 +13,11 @@ import org.python.util.PythonInterpreter;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
+
+import gaia.cu9.ari.gaiaorbit.event.EventManager;
+import gaia.cu9.ari.gaiaorbit.event.Events;
+import gaia.cu9.ari.gaiaorbit.event.IObserver;
+import gaia.cu9.ari.gaiaorbit.util.I18n;
 
 /**
  * Factory class to create, execute and cancel Jython scripts.
@@ -51,7 +51,6 @@ public class JythonFactory extends ScriptingFactory implements IObserver {
 
     /**
      * Initializes the JythonFactory.
-     * @return
      */
     public synchronized static void initialize() {
         if (instance == null) {
@@ -96,6 +95,7 @@ public class JythonFactory extends ScriptingFactory implements IObserver {
     /**
      * Runs the given PyCode, optionally in a thread.
      * @param code The already compiled PyCode object.
+     * @param path The path to the script file.
      * @param async Boolean indicating whether to run the script in a separate thread or not. If 
      * true, the execution is asynchronous and the call returns immediately.
      */
@@ -116,6 +116,7 @@ public class JythonFactory extends ScriptingFactory implements IObserver {
     /**
      * Runs the given script, optionally in a thread.
      * @param script The python script to run.
+     * @param path The path to the script file.
      * @param async Boolean indicating whether to run the script in a separate thread or not. If 
      * true, the execution is asynchronous and the call returns immediately.
      */
