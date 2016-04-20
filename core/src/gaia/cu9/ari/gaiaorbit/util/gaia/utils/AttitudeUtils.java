@@ -18,7 +18,6 @@
  */
 package gaia.cu9.ari.gaiaorbit.util.gaia.utils;
 
-
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 
 /**
@@ -30,9 +29,9 @@ import gaia.cu9.ari.gaiaorbit.util.Logger;
 public class AttitudeUtils {
 
     /**
-     * In the non-decreasing sequence xa[0:n-1], finds the left index such that xa[left] <= x < xa[left+1]
+     * In the non-decreasing sequence xa[0:n-1], finds the left index such that xa[left] &lt;= x &lt; xa[left+1]
      *
-     * If x < xa[0] the method returns left = -1. If x >= xa[n-1] the method returns left = n-1 (the last valid index to
+     * If x &lt; xa[0] the method returns left = -1. If x &gt;= xa[n-1] the method returns left = n-1 (the last valid index to
      * the array). These are the logical extensions of the basic condition when x is outside the interval defined by the
      * array - formally they could be derived by putting xa[-1] = -inf and xa[n] = +inf.
      *
@@ -116,23 +115,23 @@ public class AttitudeUtils {
 
     /**
      * Variant of findLeftIndex to be used for BSpline interpolation. In general the value of left is determined such
-     * that * xa[left] and xa[left+1] exist * xa[left+1] - xa[left] > 0 * xa[left] <= x < xa[left+1]
+     * that * xa[left] and xa[left+1] exist * xa[left+1] - xa[left] &gt; 0 * xa[left] &lt;= x &lt; xa[left+1]
      *
      * More specific, this means that
      *
-     * if x > xa[xa.length - 1], then the BSpline cannot be evaluated so -1 is returned.
+     * if x &gt; xa[xa.length - 1], then the BSpline cannot be evaluated so -1 is returned.
      *
-     * if x == xa[xa.length-1] then left is determined such that left is the largest value for which xa[left] <
-     * xa[xa.length-n] for the largest value of n > 0 for which xa[xa.length-n] == xa[xa.length-1].
+     * if x == xa[xa.length-1] then left is determined such that left is the largest value for which xa[left] &lt;
+     * xa[xa.length-n] for the largest value of n &gt; 0 for which xa[xa.length-n] == xa[xa.length-1].
      *
-     * for all xa[0] < x < xa[xa.length-1] left is determined such that xa[left] <= x < xa[left+1]. If then xa[left] ==
-     * xa[left-1] <= x then n is determined to be the smallest value for which xa[left-n] < xa[left] and then left - n
+     * for all xa[0] &lt; x &lt; xa[xa.length-1] left is determined such that xa[left] &lt;= x &lt; xa[left+1]. If then xa[left] ==
+     * xa[left-1] &lt;= x then n is determined to be the smallest value for which xa[left-n] &lt; xa[left] and then left - n
      * is returned.
      *
-     * if xa[left] <= x and left == 0, then n is determined to be the largest value for which xa[left] == xa[left+n] and
+     * if xa[left] &lt;= x and left == 0, then n is determined to be the largest value for which xa[left] == xa[left+n] and
      * then left + n is returned.
      *
-     * if x < xa[0], then the BSpline cannot be evaluated so -1 is returned.
+     * if x &lt; xa[0], then the BSpline cannot be evaluated so -1 is returned.
      *
      * For more info see the discussion in Mantis 27523.
      *
@@ -193,9 +192,9 @@ public class AttitudeUtils {
     }
 
     /**
-     * In the non-decreasing sequence xa[0:n-1], finds the left index such that xa[left] <= x < xa[left+1]
+     * In the non-decreasing sequence xa[0:n-1], finds the left index such that xa[left] &lt;= x &lt; xa[left+1]
      *
-     * If x < xa[0] the method returns left = -1. If x >= xa[n-1] the method returns left = n-1 (the last valid index to
+     * If x &lt; xa[0] the method returns left = -1. If x &gt;= xa[n-1] the method returns left = n-1 (the last valid index to
      * the array). These are the logical extensions of the basic condition when x is outside the interval defined by the
      * array - formally they could be derived by putting xa[-1] = -inf and xa[n] = +inf.
      *
@@ -255,9 +254,9 @@ public class AttitudeUtils {
     }
 
     /**
-     * In the non-decreasing sequence xa[0:n-1], finds the left index such that xa[left] <= x < xa[left+1]
+     * In the non-decreasing sequence xa[0:n-1], finds the left index such that xa[left] &lt;= x &lt; xa[left+1]
      *
-     * If x < xa[0] the method returns left = -1. If x >= xa[n-1] the method returns left = n-1 (the last valid index to
+     * If x &lt; xa[0] the method returns left = -1. If x &gt;= xa[n-1] the method returns left = n-1 (the last valid index to
      * the array). These are the logical extensions of the basic condition when x is outside the interval defined by the
      * array - formally they could be derived by putting xa[-1] = -inf and xa[n] = +inf.
      *
@@ -317,7 +316,7 @@ public class AttitudeUtils {
     }
 
     /**
-     * Returns the values and first derivatives of the four non-zero cubic B-splines in the interval tau(left) <= x <
+     * Returns the values and first derivatives of the four non-zero cubic B-splines in the interval tau(left) &lt;= x &lt;
      * tau(left+1)
      * <p>
      * Based on the subroutine BSPLVB in C. de Boor, A Practical Guide to Splines, Springer 1978
@@ -334,7 +333,7 @@ public class AttitudeUtils {
      * @param splineOrder
      *            order of the spline
      * @param leftIndex
-     *            integer chosen (usually) such that tau(leftIndex) <= x < tau(leftIndex+1) (left can be found by
+     *            integer chosen (usually) such that tau(leftIndex) &lt;= x &lt; tau(leftIndex+1) (left can be found by
      *            {@link #findLeftIndex(long, long[], int)}
      * @param b0
      *            values of the cubic B-splines at point {@code x}
@@ -343,16 +342,14 @@ public class AttitudeUtils {
      * @throws RuntimeException
      *             if input is inconsistent
      */
-    public static void calcBsplines(final long x, final long[] tau, int splineOrder, final int leftIndex,
-            final double[] b0, final double[] b1) throws RuntimeException {
+    public static void calcBsplines(final long x, final long[] tau, int splineOrder, final int leftIndex, final double[] b0, final double[] b1) throws RuntimeException {
         /*
          * check that left index is in correct range to avoid AIOBE below: See B.2 in AGIS A&A paper: The knots used for
          * computing the B-spline values in the interval [tau_l, tau_(l+1)) are tau_(l-M+2) through tau_(l+M-1) hence
          * l-M+2 >= 0 => l>=M-2 l+M-1 <= N+M-1 => l<=N and since L=N+M => N=L-M, so, l<=L-M
          */
         if (leftIndex < splineOrder - 2 || leftIndex > tau.length - splineOrder) {
-            throw new RuntimeException("leftIndex (" + leftIndex + ")" + " is not within valid bounds [M-2, N]=["
-                    + (splineOrder - 2) + ", " + (tau.length - splineOrder) + "]");
+            throw new RuntimeException("leftIndex (" + leftIndex + ")" + " is not within valid bounds [M-2, N]=[" + (splineOrder - 2) + ", " + (tau.length - splineOrder) + "]");
         }
 
         long[] deltal = new long[splineOrder];
@@ -400,7 +397,7 @@ public class AttitudeUtils {
      *
      * Compute the angular differences about the principal axes of two body-triads represented by two quaternions. This
      * calculation comes from SAG-LL-30 where an inertial rotation vector between to attitudes represented by quaternion
-     * q0 and q1 is derived. It is a SMALL ANGLE approximation. If the algorithm finds a difference>EPS between the
+     * q0 and q1 is derived. It is a SMALL ANGLE approximation. If the algorithm finds a difference&gt;EPS between the
      * components of the 2 quaternions, it will flip sign of q1. This is vain if the angular difference is too large and
      * a warning is then logged. Note this is a static utility.
      *
@@ -432,9 +429,7 @@ public class AttitudeUtils {
                 }
             }
         }
-        return new double[] { 2. * ((dq[0] * q0[3]) + (dq[1] * q0[2]) - (dq[2] * q0[1]) - (dq[3] * q0[0])),
-                2. * ((-dq[0] * q0[2]) + (dq[1] * q0[3]) + (dq[2] * q0[0]) - (dq[3] * q0[1])),
-                2. * ((dq[0] * q0[1]) - (dq[1] * q0[0]) + (dq[2] * q0[3]) - (dq[3] * q0[2])) };
+        return new double[] { 2. * ((dq[0] * q0[3]) + (dq[1] * q0[2]) - (dq[2] * q0[1]) - (dq[3] * q0[0])), 2. * ((-dq[0] * q0[2]) + (dq[1] * q0[3]) + (dq[2] * q0[0]) - (dq[3] * q0[1])), 2. * ((dq[0] * q0[1]) - (dq[1] * q0[0]) + (dq[2] * q0[3]) - (dq[3] * q0[2])) };
     }
 
     /**
@@ -492,13 +487,10 @@ public class AttitudeUtils {
      *         including inserted splines at knots of multiplicity
      *
      */
-    public static KnotsAndSplines insertKnotsAndSplines(KnotsAndSplines old, long[] tInsert, int multiplicity,
-            int splineOrder) {
+    public static KnotsAndSplines insertKnotsAndSplines(KnotsAndSplines old, long[] tInsert, int multiplicity, int splineOrder) {
 
         int nDegsFreedomN = old.knots.length - splineOrder;
-        KnotsAndSplines out = new KnotsAndSplines(
-                new long[nDegsFreedomN + multiplicity * tInsert.length + splineOrder],
-                new double[4][nDegsFreedomN + multiplicity * tInsert.length]);
+        KnotsAndSplines out = new KnotsAndSplines(new long[nDegsFreedomN + multiplicity * tInsert.length + splineOrder], new double[4][nDegsFreedomN + multiplicity * tInsert.length]);
 
         int count = 0;
         out.knots[0] = old.knots[0];
@@ -547,8 +539,7 @@ public class AttitudeUtils {
      * @return elements The updated elements including inserted knots of multiplicity
      *
      */
-    public static double[] insertElements(double[] oldElements, long[] knots, long[] tInsert, int multiplicity,
-            int splineOrder) {
+    public static double[] insertElements(double[] oldElements, long[] knots, long[] tInsert, int multiplicity, int splineOrder) {
 
         int nDegsFreedomN = knots.length - splineOrder;
         double[] elements = new double[nDegsFreedomN + multiplicity * tInsert.length + splineOrder - 1];
@@ -586,6 +577,5 @@ public class AttitudeUtils {
         public long[] knots;
         public double[][] splines;
     }
-
 
 }

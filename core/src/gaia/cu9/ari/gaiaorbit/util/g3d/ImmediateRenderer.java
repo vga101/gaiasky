@@ -26,7 +26,7 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.utils.Array;
 
 /** Immediate mode rendering class for GLES 2.0. The renderer will allow you to specify vertices on the fly and provides a default
- * shader for (unlit) rendering.</p> *
+ * shader for (unlit) rendering.
  * 
  * @author mzechner */
 public class ImmediateRenderer implements ImmediateModeRenderer {
@@ -69,10 +69,8 @@ public class ImmediateRenderer implements ImmediateModeRenderer {
         vertices = new float[maxVertices * (mesh.getVertexAttributes().vertexSize / 4)];
         vertexSize = mesh.getVertexAttributes().vertexSize / 4;
         normalOffset = mesh.getVertexAttribute(Usage.Normal) != null ? mesh.getVertexAttribute(Usage.Normal).offset / 4 : 0;
-        colorOffset = mesh.getVertexAttribute(Usage.ColorPacked) != null ? mesh.getVertexAttribute(Usage.ColorPacked).offset / 4
-                : 0;
-        texCoordOffset = mesh.getVertexAttribute(Usage.TextureCoordinates) != null ? mesh
-                .getVertexAttribute(Usage.TextureCoordinates).offset / 4 : 0;
+        colorOffset = mesh.getVertexAttribute(Usage.ColorPacked) != null ? mesh.getVertexAttribute(Usage.ColorPacked).offset / 4 : 0;
+        texCoordOffset = mesh.getVertexAttribute(Usage.TextureCoordinates) != null ? mesh.getVertexAttribute(Usage.TextureCoordinates).offset / 4 : 0;
 
         shaderUniformNames = new String[numTexCoords];
         for (int i = 0; i < numTexCoords; i++) {
@@ -181,9 +179,7 @@ public class ImmediateRenderer implements ImmediateModeRenderer {
     }
 
     static private String createVertexShader(boolean hasNormals, boolean hasColors, int numTexCoords) {
-        String shader = "attribute vec4 " + ShaderProgram.POSITION_ATTRIBUTE + ";\n"
-                + (hasNormals ? "attribute vec3 " + ShaderProgram.NORMAL_ATTRIBUTE + ";\n" : "")
-                + (hasColors ? "attribute vec4 " + ShaderProgram.COLOR_ATTRIBUTE + ";\n" : "");
+        String shader = "attribute vec4 " + ShaderProgram.POSITION_ATTRIBUTE + ";\n" + (hasNormals ? "attribute vec3 " + ShaderProgram.NORMAL_ATTRIBUTE + ";\n" : "") + (hasColors ? "attribute vec4 " + ShaderProgram.COLOR_ATTRIBUTE + ";\n" : "");
 
         for (int i = 0; i < numTexCoords; i++) {
             shader += "attribute vec2 " + ShaderProgram.TEXCOORD_ATTRIBUTE + i + ";\n";
@@ -196,8 +192,7 @@ public class ImmediateRenderer implements ImmediateModeRenderer {
             shader += "varying vec2 v_tex" + i + ";\n";
         }
 
-        shader += "void main() {\n" + "   gl_Position = u_projModelView * " + ShaderProgram.POSITION_ATTRIBUTE + ";\n"
-                + (hasColors ? "   v_col = " + ShaderProgram.COLOR_ATTRIBUTE + ";\n" : "");
+        shader += "void main() {\n" + "   gl_Position = u_projModelView * " + ShaderProgram.POSITION_ATTRIBUTE + ";\n" + (hasColors ? "   v_col = " + ShaderProgram.COLOR_ATTRIBUTE + ";\n" : "");
 
         for (int i = 0; i < numTexCoords; i++) {
             shader += "   v_tex" + i + " = " + ShaderProgram.TEXCOORD_ATTRIBUTE + i + ";\n";
@@ -234,7 +229,9 @@ public class ImmediateRenderer implements ImmediateModeRenderer {
         return shader;
     }
 
-    /** Returns a new instance of the default shader used by SpriteBatch for GL2 when no shader is specified. */
+    /** 
+     * Returns a new instance of the default shader used by SpriteBatch for GL2 when no shader is specified. 
+     **/
     static public ShaderProgram createDefaultShader(boolean hasNormals, boolean hasColors, int numTexCoords) {
         String vertexShader = createVertexShader(hasNormals, hasColors, numTexCoords);
         String fragmentShader = createFragmentShader(hasNormals, hasColors, numTexCoords);

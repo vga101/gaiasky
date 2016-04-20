@@ -122,11 +122,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
     private boolean initialized = false;
 
     /**
-     * Creates a Gaia Sandbox instance.
-     * 
-     * @param openGLGUI
-     *            This will paint the GUI in OpenGL. True for Desktop (if not
-     *            Swing GUI) and Android.
+     * Creates a GaiaSky instance.
      */
     public GaiaSky() {
         super();

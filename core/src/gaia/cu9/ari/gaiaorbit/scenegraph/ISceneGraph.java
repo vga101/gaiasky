@@ -25,7 +25,7 @@ public interface ISceneGraph extends Serializable {
     public HashMap<String, SceneGraphNode> getStringToNodeMap();
 
     /** 
-     * Gets a star map: HIP -> Star
+     * Gets a star map: HIP -&gt; Star
      * It only contains the stars with HIP number
      * @return The HIP star map
      */

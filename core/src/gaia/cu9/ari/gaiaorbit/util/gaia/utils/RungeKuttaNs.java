@@ -8,8 +8,7 @@ package gaia.cu9.ari.gaiaorbit.util.gaia.utils;
  * <p>
  * 
  * This class is taken from the Java library developed by Michael Thomas
- * Flanagan available at <a
- * href="http://www.ee.ucl.ac.uk/~mflanaga/java/RungeKutta.html">
+ * Flanagan available at <a href="http://www.ee.ucl.ac.uk/~mflanaga/java/RungeKutta.html">
  * http://www.ee.ucl.ac.uk/~mflanaga/java/RungeKutta.html </a>
  * 
  *  
@@ -26,10 +25,9 @@ public class RungeKuttaNs {
 
     /**
      * Returns the value of y at a given value of x (<b>xn</b>) for a set of
-     * ordinary differential equation (ODEs)<br />
+     * ordinary differential equation (ODEs)<br>
      * 
-     * See <a
-     * href="http://www.ee.ucl.ac.uk/~mflanaga/java/RungeKutta.html#four">
+     * See <a href="http://www.ee.ucl.ac.uk/~mflanaga/java/RungeKutta.html#four">
      * http://www.ee.ucl.ac.uk/~mflanaga/java/RungeKutta.html#four</a>
      * 
      * @param g

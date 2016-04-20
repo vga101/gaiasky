@@ -133,7 +133,6 @@ public class Star extends Particle {
      * @param dec in degrees 
      * @param starid The star id
      * @param hip The HIP identifier
-     * @param tycho The TYC identifier, remove the dashes '-' and join the strings, then parse to integer
      * @param source Catalog source. See {#Particle}
      */
     public Star(Vector3d pos, Vector3 vel, float appmag, float absmag, float colorbv, String name, float ra, float dec, long starid, int hip, byte source) {

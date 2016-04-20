@@ -23,8 +23,7 @@ public abstract class AnalyticalAttitudeDataServer extends BaseAttitudeDataServe
     protected static final double PI_HALF = 0.5 * Math.PI;
 
     /** Factor converting from arcsec/s to deg/day **/
-    protected static final double ARCSEC_PER_S_TO_DEG_PER_DAY = 86400.D
-            * (1d / 3600d);
+    protected static final double ARCSEC_PER_S_TO_DEG_PER_DAY = 86400.D * (1d / 3600d);
 
     /** Unit vectors **/
     protected static final Vector3d X_AXIS = Vector3d.getUnitX();
@@ -38,8 +37,7 @@ public abstract class AnalyticalAttitudeDataServer extends BaseAttitudeDataServe
     /**
      * The time in ns of one rotation of the satellite around its spin axis.
      */
-    protected long targetScanPeriod = Math
-            .round(360.0 * 3600.0 * 1.e9 / Satellite.SCANRATE);
+    protected long targetScanPeriod = Math.round(360.0 * 3600.0 * 1.e9 / Satellite.SCANRATE);
 
     /**
      * Reference time
@@ -122,7 +120,7 @@ public abstract class AnalyticalAttitudeDataServer extends BaseAttitudeDataServe
         // nativeTimeContext = TimeContext.TCB;
 
         // Default reference epoch - 2010
-        setRefTime((long)(AstroUtils.JD_J2010 * AstroUtils.DAY_TO_NS));
+        setRefTime((long) (AstroUtils.JD_J2010 * AstroUtils.DAY_TO_NS));
 
         // Default reference solar aspect angle [rad]
         setXiRef(Math.toRadians(Satellite.SOLARASPECTANGLE_NOMINAL));
@@ -216,7 +214,7 @@ public abstract class AnalyticalAttitudeDataServer extends BaseAttitudeDataServe
     }
 
     /**
-     * @overide
+     * @Override
      */
     public boolean inGap(long time) {
         return false;

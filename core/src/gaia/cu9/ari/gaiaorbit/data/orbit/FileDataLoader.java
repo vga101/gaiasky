@@ -20,7 +20,6 @@ public class FileDataLoader {
     /**
      * Loads the data in the input stream into an OrbitData object.
      * @param data
-     * @param referenceFrame
      * @throws Exception
      */
     public OrbitData load(InputStream data) throws Exception {
