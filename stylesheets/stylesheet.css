@@ -61,7 +61,7 @@ a {
 .page-header {
   color: #fff;
   text-align: center;
-  background-color: #159957;
+  background-color: #000;
   background-image: url("../images/header-full.jpg");
   background-size: cover;
   background-repeat: no-repeat;
@@ -79,18 +79,22 @@ a {
   .page-header {
     padding: 2rem 1rem; } }
 
+font-face { font-family: comfortaa; src: url('../fonts/comfortaa.ttf');}
+
 .project-name {
   margin-top: 0;
   margin-bottom: 0.1rem;
-  text-shadow: 0px 0px 5px #000; }
+  text-shadow: 0px 0px 5px #000;
+  font-family: comfortaa; }
 
 @media screen and (min-width: 64em) {
   .project-name {
-    font-size: 3.25rem; } }
+    font-size: 2.25rem; } }
 
 @media screen and (min-width: 42em) and (max-width: 64em) {
   .project-name {
-    font-size: 2.25rem; } }
+    font-size: 3.0rem;
+    letter-spacing: 0.7em; } }
 
 @media screen and (max-width: 42em) {
   .project-name {
@@ -253,3 +257,11 @@ a {
 @media screen and (max-width: 42em) {
   .site-footer {
     font-size: 0.9rem; } }
+
+.img-seq {
+  text-align: center;
+  -ms-text-justify: distribute-all-lines;
+  text-justify: distribute-all-lines;
+}
+
+.img-seq img{ display: inline-block;}
