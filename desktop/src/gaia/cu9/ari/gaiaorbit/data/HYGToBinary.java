@@ -45,14 +45,14 @@ import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
  */
 public class HYGToBinary implements IObserver {
 
-    static String fileIn = "/home/tsagrista/git/gaiasandbox/android/assets-bak/data/hygxyz.csv";
-    static String fileOut = "/home/tsagrista/git/gaiasandbox/android/assets-bak/data/hygxyz.bin";
+    static String fileIn = "/home/tsagrista/git/gaiasky/android/assets-bak/data/hygxyz.csv";
+    static String fileOut = "/home/tsagrista/git/gaiasky/android/assets-bak/data/hygxyz.bin";
 
     public static void main(String[] args) {
         HYGToBinary hyg = new HYGToBinary();
         EventManager.instance.subscribe(hyg, Events.POST_NOTIFICATION, Events.JAVA_EXCEPTION);
 
-        I18n.initialize(new FileHandle("/home/tsagrista/git/gaiasandbox/android/assets/i18n/gsbundle"));
+        I18n.initialize(new FileHandle("/home/tsagrista/git/gaiasky/android/assets/i18n/gsbundle"));
 
         Gdx.files = new LwjglFiles();
         try {

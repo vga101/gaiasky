@@ -28,8 +28,10 @@ import com.badlogic.gdx.utils.JsonValue;
 
 import gaia.cu9.ari.gaiaorbit.desktop.network.HttpQuery;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
+import gaia.cu9.ari.gaiaorbit.util.Pair;
 import gaia.cu9.ari.gaiaorbit.util.parse.Parser;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.CollapsibleWindow;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.Link;
@@ -50,6 +52,7 @@ public class GaiaCatalogWindow extends CollapsibleWindow {
     private OwnScrollPane scroll;
 
     private LabelStyle linkStyle;
+    private float pad;
 
     private Star st;
 
@@ -58,6 +61,7 @@ public class GaiaCatalogWindow extends CollapsibleWindow {
 
         this.stage = stg;
         this.linkStyle = skin.get("link", LabelStyle.class);
+        this.pad = 5 * GlobalConf.SCALE_FACTOR;
 
         /** BUTTONS **/
         buttonGroup = new HorizontalGroup();
@@ -75,11 +79,12 @@ public class GaiaCatalogWindow extends CollapsibleWindow {
             }
 
         });
-        ok.setSize(70, 20);
+        ok.setSize(70 * GlobalConf.SCALE_FACTOR, 20 * GlobalConf.SCALE_FACTOR);
         buttonGroup.addActor(ok);
 
         /** TABLE and SCROLL **/
         table = new Table(skin);
+        table.pad(pad);
         scroll = new OwnScrollPane(table, skin, "minimalist-nobg");
         scroll.setFadeScrollBars(false);
         scroll.setScrollingDisabled(true, false);
@@ -88,7 +93,7 @@ public class GaiaCatalogWindow extends CollapsibleWindow {
 
         add(scroll);
         row();
-        add(buttonGroup).colspan(2).pad(5, 5, 5, 5).bottom().right();
+        add(buttonGroup).colspan(2).pad(pad, pad, pad, pad).bottom().right();
         getTitleTable().align(Align.left);
 
         pack();
@@ -123,8 +128,16 @@ public class GaiaCatalogWindow extends CollapsibleWindow {
 
         // Make request
         try {
-            String[][] data = getData();
-            if (data != null) {
+            Pair<String[][], Integer> pair = getData();
+            String[][] data = pair.getFirst();
+            Integer code = pair.getSecond();
+            if (code == -1) {
+                // No ID
+                String msg = I18n.bundle.format("error.gaiacatalog.noid", st.name);
+                table.add(new OwnLabel(msg, skin, "ui-15"));
+                table.pack();
+                scroll.setHeight(table.getHeight() + pad);
+            } else if (data != null) {
 
                 HorizontalGroup links = new HorizontalGroup();
                 links.align(Align.center);
@@ -135,11 +148,11 @@ public class GaiaCatalogWindow extends CollapsibleWindow {
                 links.addActor(new OwnLabel("|", skin));
                 links.addActor(new Link(txt("gui.data.archive"), linkStyle, URL_WEB));
 
-                table.add(links).colspan(2).padTop(10).padBottom(10);
+                table.add(links).colspan(2).padTop(pad * 2).padBottom(pad * 2);
                 table.row();
 
-                table.add(new OwnLabel(txt("gui.data.name"), skin, "msg-17")).padLeft(10).left();
-                table.add(new OwnLabel(st.name, skin, "msg-17")).padLeft(10).padRight(10).left();
+                table.add(new OwnLabel(txt("gui.data.name"), skin, "msg-17")).padLeft(pad * 2).left();
+                table.add(new OwnLabel(st.name, skin, "msg-17")).padLeft(pad * 2).padRight(pad * 2).left();
                 table.row();
                 for (int col = 0; col < data[0].length; col++) {
                     Actor first = null;
@@ -164,22 +177,39 @@ public class GaiaCatalogWindow extends CollapsibleWindow {
                     table.row();
                 }
                 scroll.setHeight(Gdx.graphics.getHeight() * 0.7f);
-                scroll.pack();
-
             } else {
-                // Message
+                // Not found
                 String msg = I18n.bundle.format("error.gaiacatalog.notfound", st.name);
                 table.add(new OwnLabel(msg, skin, "ui-15"));
+                table.pack();
+                scroll.setHeight(table.getHeight() + pad);
             }
         } catch (Exception e) {
-            table.add(new OwnLabel(e.getLocalizedMessage(), skin, "ui-15"));
+            String msg = e.getLocalizedMessage();
+
+            StringBuilder sb = new StringBuilder(msg);
+            int charsperline = 50;
+            int i = charsperline;
+            while (i < sb.length()) {
+                if (sb.substring(i - charsperline, i).lastIndexOf(" ") > 0) {
+                    int spaceidx = sb.substring(i - charsperline, i).lastIndexOf(" ");
+                    sb.setCharAt(spaceidx, '\n');
+                    i = spaceidx + charsperline;
+                } else {
+                    sb.insert(i, '\n');
+                    i += charsperline;
+                }
+            }
+            table.add(new OwnLabel(sb.toString(), skin, "ui-15"));
+            table.pack();
+            scroll.setHeight(table.getHeight() + pad);
         }
         table.pack();
-        scroll.pack();
+
         scroll.setWidth(table.getWidth() + scroll.getStyle().vScroll.getMinWidth());
 
         pack();
-        //this.setPosition(stage.getWidth() / 2f - this.getWidth() / 2f, stage.getHeight() / 2f - this.getHeight() / 2f);
+        this.setPosition(Math.round(stage.getWidth() / 2f - this.getWidth() / 2f), Math.round(stage.getHeight() / 2f - this.getHeight() / 2f));
 
     }
 
@@ -188,21 +218,29 @@ public class GaiaCatalogWindow extends CollapsibleWindow {
             stage.addActor(me);
     }
 
-    private String[][] getData() throws MalformedURLException, IOException {
+    /**
+     * Codes: 
+     *  1 - ok
+     * -1 - no id
+     * @return
+     * @throws MalformedURLException
+     * @throws IOException
+     */
+    private Pair<String[][], Integer> getData() throws MalformedURLException, IOException {
         if (st.catalogSource > 0) {
 
             if (st.catalogSource == 1) {
                 // GAIA
-                return getDataBySourceId(st.id);
+                return new Pair<String[][], Integer>(getDataBySourceId(st.id), 1);
             } else if (st.catalogSource == 2 && st.hip > 0) {
                 // HIPPARCOS
                 // Get sourceId corresponding to HIP number
-                return getDataByHipId(st.hip);
+                return new Pair<String[][], Integer>(getDataByHipId(st.hip), 1);
 
             }
 
         }
-        return null;
+        return new Pair<String[][], Integer>(null, -1);
     }
 
     private String[][] getDataBySourceId(long sourceid) throws MalformedURLException, IOException {
