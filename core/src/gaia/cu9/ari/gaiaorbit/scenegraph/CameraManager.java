@@ -202,10 +202,11 @@ public class CameraManager implements ICamera, IObserver {
 
         int screenX = Gdx.input.getX();
         int screenY = Gdx.input.getY();
-        // Update Pointer LAT/LON
-        updateFocusLatLon(screenX, screenY);
+
         // Update Pointer Alpha/Delta
         updatePointerRADEC(screenX, screenY);
+        // Update Pointer LAT/LON
+        updateFocusLatLon(screenX, screenY);
     }
 
     private void updatePointerRADEC(int screenX, int screenY) {
@@ -263,7 +264,7 @@ public class CameraManager implements ICamera, IObserver {
                     double lat = Math.toDegrees(out.y);
 
                     Logger.debug("Lon/lat: " + lon + "/" + lat);
-                    EventManager.instance.post(Events.LON_LAT_UPDATED, lon, lat);
+                    EventManager.instance.post(Events.LON_LAT_UPDATED, lon, lat, screenX, screenY);
 
                     v3dpool.free(vec);
                     v3dpool.free(out);

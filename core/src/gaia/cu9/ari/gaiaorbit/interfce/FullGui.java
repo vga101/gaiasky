@@ -64,7 +64,7 @@ public class FullGui implements IGui, IObserver {
     protected VisualEffectsComponent visualEffectsComponent;
 
     protected INumberFormat nf;
-    protected Label mouseRA, mouseDEC;
+    protected Label mouseXCoord, mouseYCoord;
 
     protected ISceneGraph sg;
     private ComponentType[] visibilityEntities;
@@ -99,7 +99,7 @@ public class FullGui implements IGui, IObserver {
         buildGui();
 
         // We must subscribe to the desired events
-        EventManager.instance.subscribe(this, Events.FOV_CHANGED_CMD, Events.SHOW_TUTORIAL_ACTION, Events.SHOW_SEARCH_ACTION, Events.REMOVE_KEYBOARD_FOCUS, Events.REMOVE_GUI_COMPONENT, Events.ADD_GUI_COMPONENT, Events.SHOW_ABOUT_ACTION, Events.RA_DEC_UPDATED);
+        EventManager.instance.subscribe(this, Events.FOV_CHANGED_CMD, Events.SHOW_TUTORIAL_ACTION, Events.SHOW_SEARCH_ACTION, Events.REMOVE_KEYBOARD_FOCUS, Events.REMOVE_GUI_COMPONENT, Events.ADD_GUI_COMPONENT, Events.SHOW_ABOUT_ACTION, Events.RA_DEC_UPDATED, Events.LON_LAT_UPDATED);
     }
 
     private void buildGui() {
@@ -154,9 +154,9 @@ public class FullGui implements IGui, IObserver {
         // CUSTOM OBJECTS INTERFACE
         customInterface = new CustomInterface(ui, skin, lock);
 
-        // MOUSE RA/DEC
-        mouseRA = new OwnLabel("", skin, "default");
-        mouseDEC = new OwnLabel("", skin, "default");
+        // MOUSE X/Y COORDINATES
+        mouseXCoord = new OwnLabel("", skin, "default");
+        mouseYCoord = new OwnLabel("", skin, "default");
 
         /** ADD TO UI **/
         rebuildGui();
@@ -193,9 +193,9 @@ public class FullGui implements IGui, IObserver {
             if (inputInterface != null && Constants.desktop) {
                 ui.addActor(inputInterface);
             }
-            if (mouseRA != null && mouseDEC != null) {
-                ui.addActor(mouseRA);
-                ui.addActor(mouseDEC);
+            if (mouseXCoord != null && mouseYCoord != null) {
+                ui.addActor(mouseXCoord);
+                ui.addActor(mouseYCoord);
             }
 
             if (customInterface != null) {
@@ -329,11 +329,21 @@ public class FullGui implements IGui, IObserver {
             Integer x = (Integer) data[2];
             Integer y = (Integer) data[3];
 
-            mouseRA.setText("RA/" + nf.format(ra) + "°");
-            mouseRA.setPosition(x, 10);
-            mouseDEC.setText("DEC/" + nf.format(dec) + "°");
-            mouseDEC.setPosition(Gdx.graphics.getWidth() - 65, Gdx.graphics.getHeight() - y);
+            mouseXCoord.setText("RA/" + nf.format(ra) + "°");
+            mouseXCoord.setPosition(x, 10);
+            mouseYCoord.setText("DEC/" + nf.format(dec) + "°");
+            mouseYCoord.setPosition(Gdx.graphics.getWidth() - 65, Gdx.graphics.getHeight() - y);
             break;
+        case LON_LAT_UPDATED:
+            Double lon = (Double) data[0];
+            Double lat = (Double) data[1];
+            x = (Integer) data[2];
+            y = (Integer) data[3];
+
+            mouseXCoord.setText("Lon/" + nf.format(lon) + "°");
+            mouseXCoord.setPosition(x, 10);
+            mouseYCoord.setText("Lat/" + nf.format(lat) + "°");
+            mouseYCoord.setPosition(Gdx.graphics.getWidth() - 65, Gdx.graphics.getHeight() - y);
         }
 
     }

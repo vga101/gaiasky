@@ -13,12 +13,9 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.input.GestureDetector;
-import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.math.collision.Ray;
 import com.badlogic.gdx.utils.Pool;
 
 import gaia.cu9.ari.gaiaorbit.GaiaSky;
@@ -28,17 +25,13 @@ import gaia.cu9.ari.gaiaorbit.interfce.KeyBindings.ProgramAction;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
-import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.NaturalCamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
-import gaia.cu9.ari.gaiaorbit.scenegraph.Planet;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
-import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.MyPools;
 import gaia.cu9.ari.gaiaorbit.util.comp.ViewAngleComparator;
-import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
 /**
@@ -309,61 +302,6 @@ public class GaiaInputController extends GestureDetector {
                 return processDrag(deltaX, deltaY, button);
             }
             return false;
-        }
-        return false;
-    }
-
-    @Override
-    public boolean mouseMoved(int screenX, int screenY) {
-        if (GlobalConf.runtime.INPUT_ENABLED && cam.isNatural()) {
-            if (cam.isNatural()) {
-                // Hover over planets gets us lat/lon
-                if (cam.getFocus() != null && cam.getFocus() instanceof Planet) {
-                    Planet p = (Planet) cam.getFocus();
-                    Vector3 pcenter = v3pool.obtain();
-                    p.transform.getTranslationf(pcenter);
-                    //pcenter.set((float) p.pos.x, (float) p.pos.y, (float) p.pos.z);
-                    ICamera camera = cam.current;
-                    Vector3 v0 = v3pool.obtain().set(screenX, screenY, 0f);
-                    Vector3 v1 = v3pool.obtain().set(screenX, screenY, 0.5f);
-                    camera.getCamera().unproject(v0);
-                    camera.getCamera().unproject(v1);
-
-                    Ray ray = new Ray(v0, v1.sub(v0));
-                    Vector3 intersection = new Vector3();
-                    boolean inter = Intersector.intersectRaySphere(ray, pcenter, p.getRadius(), intersection);
-
-                    if (inter) {
-                        // We found an intersection point
-                        Matrix4 localTransformInv = new Matrix4();
-                        p.setToLocalTransform(1, localTransformInv, false);
-                        localTransformInv.inv();
-                        intersection.mul(localTransformInv);
-
-                        Vector3d vec = v3dpool.obtain();
-                        vec.set(intersection);
-                        Vector3d out = v3dpool.obtain();
-                        Coordinates.cartesianToSpherical(vec, out);
-
-                        double lon = (Math.toDegrees(out.x) + 90) % 360;
-                        double lat = Math.toDegrees(out.y);
-
-                        Logger.debug("Lon/lat: " + lon + "/" + lat);
-                        EventManager.instance.post(Events.LON_LAT_UPDATED, lon, lat);
-
-                        v3dpool.free(vec);
-                        v3dpool.free(out);
-                    }
-
-                    v3pool.free(pcenter);
-                    v3pool.free(v0);
-                    v3pool.free(v1);
-
-                }
-
-                return true;
-            }
-
         }
         return false;
     }
