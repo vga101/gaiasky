@@ -222,7 +222,7 @@ public class CameraManager implements ICamera, IObserver {
         double delta = out.y * AstroUtils.TO_DEG;
 
         Logger.debug("Alpha/delta: " + alpha + "/" + delta);
-        EventManager.instance.post(Events.RA_DEC_UPDATED, alpha, delta);
+        EventManager.instance.post(Events.RA_DEC_UPDATED, alpha, delta, screenX, screenY);
 
         v3dpool.free(out);
         v3dpool.free(vecd);

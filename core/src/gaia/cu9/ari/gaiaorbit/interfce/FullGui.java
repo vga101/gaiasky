@@ -9,6 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputEvent.Type;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Container;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
@@ -30,6 +31,9 @@ import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
+import gaia.cu9.ari.gaiaorbit.util.format.INumberFormat;
+import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
+import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnLabel;
 
 /**
  * Full OpenGL GUI with all the controls and whistles.
@@ -58,6 +62,9 @@ public class FullGui implements IGui, IObserver {
     protected SearchDialog searchDialog;
     protected AboutWindow aboutWindow;
     protected VisualEffectsComponent visualEffectsComponent;
+
+    protected INumberFormat nf;
+    protected Label mouseRA, mouseDEC;
 
     protected ISceneGraph sg;
     private ComponentType[] visibilityEntities;
@@ -92,7 +99,7 @@ public class FullGui implements IGui, IObserver {
         buildGui();
 
         // We must subscribe to the desired events
-        EventManager.instance.subscribe(this, Events.FOV_CHANGED_CMD, Events.SHOW_TUTORIAL_ACTION, Events.SHOW_SEARCH_ACTION, Events.REMOVE_KEYBOARD_FOCUS, Events.REMOVE_GUI_COMPONENT, Events.ADD_GUI_COMPONENT, Events.SHOW_ABOUT_ACTION);
+        EventManager.instance.subscribe(this, Events.FOV_CHANGED_CMD, Events.SHOW_TUTORIAL_ACTION, Events.SHOW_SEARCH_ACTION, Events.REMOVE_KEYBOARD_FOCUS, Events.REMOVE_GUI_COMPONENT, Events.ADD_GUI_COMPONENT, Events.SHOW_ABOUT_ACTION, Events.RA_DEC_UPDATED);
     }
 
     private void buildGui() {
@@ -108,6 +115,8 @@ public class FullGui implements IGui, IObserver {
             // CONTROLS WINDOW
             addControlsWindow();
         }
+
+        nf = NumberFormatFactory.getFormatter("##0.###");
 
         // FOCUS INFORMATION - BOTTOM RIGHT
         focusInterface = new FocusInfoInterface(skin);
@@ -145,6 +154,10 @@ public class FullGui implements IGui, IObserver {
         // CUSTOM OBJECTS INTERFACE
         customInterface = new CustomInterface(ui, skin, lock);
 
+        // MOUSE RA/DEC
+        mouseRA = new OwnLabel("", skin, "default");
+        mouseDEC = new OwnLabel("", skin, "default");
+
         /** ADD TO UI **/
         rebuildGui();
         //controls.collapse();
@@ -179,6 +192,10 @@ public class FullGui implements IGui, IObserver {
                 ui.addActor(fi);
             if (inputInterface != null && Constants.desktop) {
                 ui.addActor(inputInterface);
+            }
+            if (mouseRA != null && mouseDEC != null) {
+                ui.addActor(mouseRA);
+                ui.addActor(mouseDEC);
             }
 
             if (customInterface != null) {
@@ -305,6 +322,17 @@ public class FullGui implements IGui, IObserver {
                 Logger.error(e);
             }
             rebuildGui();
+            break;
+        case RA_DEC_UPDATED:
+            Double ra = (Double) data[0];
+            Double dec = (Double) data[1];
+            Integer x = (Integer) data[2];
+            Integer y = (Integer) data[3];
+
+            mouseRA.setText("RA/" + nf.format(ra) + "°");
+            mouseRA.setPosition(x, 10);
+            mouseDEC.setText("DEC/" + nf.format(dec) + "°");
+            mouseDEC.setPosition(Gdx.graphics.getWidth() - 65, Gdx.graphics.getHeight() - y);
             break;
         }
 
