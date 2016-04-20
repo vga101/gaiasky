@@ -42,5 +42,6 @@ package() {
 	rm gaiasky.bat
 	mkdir -p "$pkgdir/opt/gaiasky/"
 	mv * "$pkgdir/opt/gaiasky/"
+	mv "$pkgdir/opt/gaiasky/gaiasky.desktop" "/usr/share/applications"
 }
 

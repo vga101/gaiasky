@@ -227,7 +227,7 @@ task createTar(dependsOn: dist, description: "Creates application tar package") 
 
 }
 
-task updateCopyArchPKGBUILD(dependsOn: createTar, description: "Copies Arch Linux AUR build scripts PKGBUILD and gaiasky.install and replaces version and md5") << {
+task createArch(dependsOn: createTar, description: "Copies Arch Linux AUR build scripts PKGBUILD and gaiasky.install and replaces version and md5") << {
 	File archDir = new File(project.packageDir + "/arch/")
 	mkdir archDir
 	copy {
@@ -245,7 +245,51 @@ task updateCopyArchPKGBUILD(dependsOn: createTar, description: "Copies Arch Linu
 	ant.replace(file: "$packageDir/arch/PKGBUILD", token: '@md5checksum@', value: md5Tar)
 }
 
-task prepareInstall4jScript (dependsOn: updateCopyArchPKGBUILD, description: "Prepares the install4j script and copies it to the packages folder") << {
+def buildTime() {
+    return new Date()
+}
+
+def distDirSize() {
+	File dist = new File(project.distDir)
+	return Math.round(dist.directorySize() / 1024)
+}
+
+task createDeb(dependsOn: createArch, description: "Creates the .deb package") << {
+	// Base deb directory
+	File debDir = new File(project.packageDir + "/$distName")
+	// Opt dir
+	File debOptDir = new File(project.packageDir + "/$distName/opt/gaiasky")
+	mkdir debOptDir
+	// DEBIAN directory
+	File debDEBIANDir = new File(project.packageDir + "/$distName/DEBIAN")
+	mkdir debDEBIANDir
+	
+	copy {
+		from "installerscripts/debian"
+		into "$packageDir/$distName/DEBIAN"
+	}
+	
+	ant.replace(file: "$packageDir/$distName/DEBIAN/control", token: '@version.revision@', value: "$tagRev")
+	ant.replace(file: "$packageDir/$distName/DEBIAN/control", token: '@installedsize@', value: "${distDirSize()}")
+	ant.replace(file: "$packageDir/$distName/DEBIAN/control", token: '@date@', value: "${buildTime()}")
+	
+	copy {
+		from "$distDir"
+		into "$packageDir/$distName/opt/gaiasky/"
+	}
+	
+	// Create deb
+	exec {
+     	executable "dpkg-deb"
+    	args "--build","$packageDir/$distName"
+    }
+    
+    // Remove temp dir directory
+    delete debDir
+    
+}
+
+task prepareInstall4jScript (dependsOn: createDeb, description: "Prepares the install4j script and copies it to the packages folder") << {
     copy {
         from "installerscripts/template.install4j"
         into "$packageDir"
