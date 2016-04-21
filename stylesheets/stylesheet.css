@@ -61,12 +61,8 @@ a {
   background-color: #000;
   background-size: cover;
   background-repeat: no-repeat;
-  background:
-   linear-gradient(
-     rgba(0, 0, 0, 0.0),
-     rgba(0, 0, 0, 1.0)
-   ),
-   url("../images/header-full.jpg");
+  background-image: url("../images/header-full.jpg");
+
 }
 
 @media screen and (min-width: 64em) {
@@ -109,7 +105,7 @@ font-face { font-family: comfortaa; src: url('../fonts/comfortaa.ttf');}
 .project-tagline {
   margin-bottom: 2rem;
   font-weight: normal;
-  opacity: 0.8;
+  opacity: 1.0;
   text-shadow: 0px 0px 2px #000; }
 
 @media screen and (min-width: 64em) {
