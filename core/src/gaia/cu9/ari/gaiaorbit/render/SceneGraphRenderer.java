@@ -281,11 +281,8 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
     }
 
-    @Override
-    public void render(ICamera camera, int rw, int rh, FrameBuffer fb, PostProcessBean ppb) {
-
-        // Prepare render context
-        boolean postproc = ppb.capture();
+    private boolean postprocessCapture(PostProcessBean ppb, FrameBuffer fb, int rw, int rh){
+    	boolean postproc = ppb.capture();
         if (postproc) {
             rc.ppb = ppb;
         } else {
@@ -294,9 +291,31 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         rc.fb = fb;
         rc.w = rw;
         rc.h = rh;
+        return postproc;
+    }
+    
+    private void postprocessRender(PostProcessBean ppb, FrameBuffer fb, boolean postproc, ICamera camera){
+    	ppb.render(fb);
+
+        // Render camera
+        if (fb != null && postproc) {
+            fb.begin();
+        }
+        camera.render();
+        if (fb != null && postproc) {
+            fb.end();
+        }
+    }
+    
+    @Override
+    public void render(ICamera camera, int rw, int rh, FrameBuffer fb, PostProcessBean ppb) {
+
+        // Prepare render context
+        boolean postproc;
 
         if (camera.getNCameras() > 1) {
-
+        	postproc = postprocessCapture(ppb, fb, rw, rh);
+        	
             /** FIELD OF VIEW CAMERA **/
 
             CameraMode aux = camera.getMode();
@@ -310,9 +329,12 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
             renderScene(camera, rc);
 
             camera.updateMode(aux, false);
+            
+            postprocessRender(ppb, fb, postproc, camera);
 
         } else {
             /** NORMAL MODE **/
+        	
             if (GlobalConf.program.STEREOSCOPIC_MODE) {
                 // Update rc
                 rc.w = rw / 2;
@@ -383,24 +405,19 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
                 vectorPool.free(backup);
 
             } else {
+            	postproc = postprocessCapture(ppb, fb, rw, rh);
+            	
                 camera.setViewport(extendViewport);
                 extendViewport.setCamera(camera.getCamera());
                 extendViewport.setWorldSize(rw, rh);
                 extendViewport.setScreenSize(rw, rh);
                 extendViewport.apply();
                 renderScene(camera, rc);
+                
+                postprocessRender(ppb, fb, postproc, camera);
             }
         }
-        ppb.render(fb);
-
-        // Render camera
-        if (fb != null && postproc) {
-            fb.begin();
-        }
-        camera.render();
-        if (fb != null && postproc) {
-            fb.end();
-        }
+        
     }
 
     public void renderScene(ICamera camera, RenderContext rc) {
