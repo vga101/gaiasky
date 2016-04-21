@@ -54,8 +54,8 @@
 				},
 	
 	"galaxydata" : {
-				"pointsource" : "data/galaxy/galaxy_20000particles.txt",
-				"nebulasource" : "data/galaxy/galaxy_70particles.txt"
+				"pointsource" : "data/galaxy/galaxy_40000particles.txt",
+				"nebulasource" : "data/galaxy/galaxy_80particles.txt"
 				},
 	"model" : {
 				"args" : [true],	

@@ -27,6 +27,7 @@ float lint(float x, float x0, float x1, float y0, float y1) {
 
 void main() {
     vec3 pos = a_position.xyz - u_camPos;
+    float distNorm = length(pos) / 800000000000.0;
   
     float a_size = a_additional.x;
     float a_thAnglePoint = a_additional.y;
@@ -37,5 +38,5 @@ void main() {
     v_col = vec4(a_color.rgb, a_color.a * u_alpha );
 
     gl_Position = u_projModelView * vec4(pos, 0.0);
-    gl_PointSize = a_size;
+    gl_PointSize = a_size / distNorm;
 }

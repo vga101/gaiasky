@@ -33,8 +33,8 @@ public class GalaxyGenerator implements IObserver {
     /** Whether to write the results to disk **/
     private static final boolean writeFile = true;
 
-    /** Whether to generate a spiral galaxy or the real Milky Way with the right parameters **/
-    private static boolean SPIRAL = false;
+    /** spiral | milkyway | uniform **/
+    private static String TYPE = "milkyway";
 
     /** Number of spiral arms **/
     private static int Narms = 6;
@@ -49,7 +49,7 @@ public class GalaxyGenerator implements IObserver {
     private static float radius = 1.5f;
 
     /** Number of particles **/
-    private static int N = 20000;
+    private static int N = 40000;
 
     /** Ratio radius/armWidth **/
     private static float armWidthRatio = 1f;
@@ -81,10 +81,12 @@ public class GalaxyGenerator implements IObserver {
 
             List<float[]> gal = null;
 
-            if (SPIRAL) {
+            if (TYPE.equals("spiral")) {
                 gal = generateGalaxySpiral();
-            } else {
+            } else if (TYPE.equals("milkyway")) {
                 gal = generateMilkyWay();
+            } else {
+                gal = generateUniform();
             }
 
             if (writeFile) {
@@ -98,6 +100,23 @@ public class GalaxyGenerator implements IObserver {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private static List<float[]> generateUniform() throws IOException, RuntimeException {
+        StdRandom.setSeed(100l);
+
+        Vector3 aux = new Vector3();
+        // x, y, z, size
+        List<float[]> particles = new ArrayList<float[]>(N);
+
+        for (int i = 0; i < N; i++) {
+            float x = ((float) StdRandom.uniform() - 0.5f) * 4f;
+            float y = ((float) StdRandom.uniform() - 0.5f) * 4f;
+            float z = (float) StdRandom.gaussian(0, 1.0 / 24.0);
+
+            addMWParticle(x, y, z, aux, particles);
+        }
+        return particles;
     }
 
     /**
@@ -118,21 +137,57 @@ public class GalaxyGenerator implements IObserver {
         // x, y, z, size
         List<float[]> particles = new ArrayList<float[]>(N);
 
-        for (int i = 0; i < N; i++) {
+        int Nbar = N / 10;
+        int Nbulge = N / 6;
+        int Nrest = 7 * N / 6;
+
+        // BAR
+        for (int i = 0; i < Nbar; i++) {
+            float x = (float) StdRandom.gaussian(0, 0.18f);
+            float y = (float) StdRandom.gaussian(0, 0.03f);
+            float z = (float) StdRandom.gaussian(0, 1.0 / 24.0);
+
+            addMWParticle(x, y, z, aux, particles);
+        }
+
+        // BULGE
+        for (int i = 0; i < Nbulge; i++) {
+            float x = (float) StdRandom.gaussian(0, 0.18f);
+            float y = (float) StdRandom.gaussian(0, 0.18f);
+            float z = (float) StdRandom.gaussian(0, 1.0 / 24.0);
+
+            addMWParticle(x, y, z, aux, particles);
+        }
+
+        // REST
+        for (int i = 0; i < Nrest; i++) {
             float x = (float) StdRandom.gaussian();
             float y = (float) StdRandom.gaussian();
             // 1/30 is the relation diameter/height of the galaxy (diameter=30 Kpc, height=0.3-1 Kpc)
             float z = (float) StdRandom.gaussian(0, 1.0 / 30.0);
 
-            aux.set(x, y, z);
-            float len = aux.len();
+            addMWParticle(x, y, z, aux, particles);
+        }
 
-            float size = (float) Math.abs(StdRandom.gaussian(0, 0.4f) * (4f - len));
-
-            particles.add(new float[] { x, y, z, size });
+        // Rotate to align bar
+        for (float[] particle : particles) {
+            aux.set(particle[0], particle[1], particle[2]);
+            aux.rotate(-45, 0, 0, 1);
+            particle[0] = aux.x;
+            particle[1] = aux.y;
+            particle[2] = aux.z;
         }
 
         return particles;
+    }
+
+    private static void addMWParticle(float x, float y, float z, Vector3 aux, List<float[]> particles) {
+        aux.set(x, y, z);
+        float len = aux.len();
+
+        float size = (float) Math.abs(StdRandom.gaussian(0, 0.4f) * (4f - len));
+
+        particles.add(new float[] { x, y, z, size });
     }
 
     /**
@@ -209,7 +264,7 @@ public class GalaxyGenerator implements IObserver {
 
     private static void writeToDisk(List<float[]> gal, String dir) throws IOException {
         String filePath = dir + "galaxy_";
-        if (SPIRAL) {
+        if (TYPE.equals("spiral")) {
             filePath += (bar ? "bar" + barLength + "_" : "nobar_") + Narms + "arms_" + N + "particles_" + radius + "radius_" + armWidthRatio + "ratio_" + maxRotation + "deg.txt";
         } else {
             filePath += N + "particles.txt";
