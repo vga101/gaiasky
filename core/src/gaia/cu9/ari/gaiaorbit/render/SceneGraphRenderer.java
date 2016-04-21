@@ -265,8 +265,8 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         renderProcesses.add(modelBackProc);
         renderProcesses.add(annotationsProc);
         renderProcesses.add(shaderFrontProc);
-        renderProcesses.add(shaderBackProc);
         renderProcesses.add(modelFrontProc);
+        renderProcesses.add(shaderBackProc);
         renderProcesses.add(galaxyProc);
         renderProcesses.add(modelStarsProc);
         renderProcesses.add(lineProc);
