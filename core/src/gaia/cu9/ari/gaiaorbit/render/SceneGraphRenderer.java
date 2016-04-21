@@ -12,6 +12,8 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.Renderable;
@@ -93,6 +95,9 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
     private Viewport stretchViewport;
     /** Viewport to use in normal mode **/
     private Viewport extendViewport;
+    
+    /** Frame buffer for 3D mode **/
+    FrameBuffer fb3D;
 
     Runnable blendNoDepthRunnable, blendDepthRunnable;
 
@@ -276,6 +281,9 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         // INIT VIEWPORTS
         stretchViewport = new StretchViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         extendViewport = new ExtendViewport(200, 200);
+        
+        // INIT FRAME BUFFER FOR 3D MODE
+        fb3D = new FrameBuffer(Format.RGB888, Gdx.graphics.getWidth() /2, Gdx.graphics.getHeight(), true);
 
         EventManager.instance.subscribe(this, Events.TOGGLE_VISIBILITY_CMD, Events.PIXEL_RENDERER_UPDATE);
 
@@ -365,10 +373,12 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
                 viewport.setWorldSize(stretch ? rw : rw / 2, rh);
 
                 /** LEFT EYE **/
-
+                
                 viewport.setScreenBounds(0, 0, rw / 2, rh);
                 viewport.apply();
 
+                postproc = postprocessCapture(ppb, fb3D, rw / 2, rh);
+                
                 // Camera to left
                 if (movecam) {
                     if (crosseye) {
@@ -380,10 +390,21 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
                 }
 
                 renderScene(camera, rc);
-
+                
+                postprocessRender(ppb, fb3D, postproc, camera);
+                Texture tex = fb3D.getColorBufferTexture();
+                GlobalResources.spriteBatch.begin();
+                GlobalResources.spriteBatch.setColor(1f, 1f, 1f, 1f);
+                GlobalResources.spriteBatch.draw(tex, 0, 0, 0, 0, rw/2, rh, 1, 1, 0, 0, 0, rw/2, rh, false, true);
+                GlobalResources.spriteBatch.end();
+                
+                
                 /** RIGHT EYE **/
+                
                 viewport.setScreenBounds(rw / 2, 0, rw / 2, rh);
                 viewport.apply();
+                
+                postproc = postprocessCapture(ppb, fb3D, rw / 2, rh);
 
                 // Camera to right
                 if (movecam) {
@@ -396,6 +417,13 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
                     cam.update();
                 }
                 renderScene(camera, rc);
+                
+                postprocessRender(ppb, fb3D, postproc, camera);
+                tex = fb3D.getColorBufferTexture();
+                GlobalResources.spriteBatch.begin();
+                GlobalResources.spriteBatch.setColor(1f, 1f, 1f, 1f);
+                GlobalResources.spriteBatch.draw(tex,  rw/2, 0, 0, 0, rw/2, rh, 1, 1, 0, 0, 0, rw/2, rh, false, true);
+                GlobalResources.spriteBatch.end();
 
                 // Restore cam.position and viewport size
                 cam.position.set(backup);
