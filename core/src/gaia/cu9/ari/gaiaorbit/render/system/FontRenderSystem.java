@@ -63,7 +63,7 @@ public class FontRenderSystem extends AbstractRenderSystem {
                 shaderProgram.setUniformf("a_labelAlpha", (lr.isLabel() || camera.getCurrent() instanceof FovCamera ? alphas[ComponentType.Labels.ordinal()] : 1f));
                 shaderProgram.setUniformf("a_componentAlpha", alphas[s.getComponentType().ordinal()]);
                 // Font opacity multiplier
-                shaderProgram.setUniformf("u_opacity", 0.8f);
+                shaderProgram.setUniformf("u_opacity", 0.6f);
                 s.render(batch, shaderProgram, distanceFont, camera);
             }
         }

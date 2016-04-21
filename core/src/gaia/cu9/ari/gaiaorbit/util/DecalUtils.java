@@ -1,13 +1,13 @@
 package gaia.cu9.ari.gaiaorbit.util;
 
-import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
-
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
+
+import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
 /**
  * This class provides utils to use Sprites and Fonts as if they were Decals, this is, flat textures in the 3D space.
@@ -52,7 +52,7 @@ public class DecalUtils {
      * @param z The z coordinate.
      * @param scale The scale of the font.
      * @param camera The camera.
-     * @param faceCamera Whether to apply billboarding.
+     * @param faceCamera Whether to apply bill-boarding.
      */
     public static void drawFont3D(BitmapFont font, SpriteBatch batch, String text, float x, float y, float z, float scale, Camera camera, boolean faceCamera) {
         // Store batch matrices

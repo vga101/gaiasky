@@ -67,22 +67,17 @@ public abstract class Satellite extends ModelBody {
 
     @Override
     protected float labelFactor() {
-        return 2e1f;
+        return .5e1f;
     }
 
     @Override
     protected float labelMax() {
-        return super.labelMax() * 10;
-    }
-
-    @Override
-    public float textScale() {
-        return labelSizeConcrete() * .5e5f;
+        return super.labelMax() * 4;
     }
 
     @Override
     public boolean renderText() {
-        return name != null && GaiaSky.instance.isOn(ComponentType.Labels) && viewAngle > TH_ANGLE_POINT;
+        return name != null && GaiaSky.instance.isOn(ComponentType.Labels) && viewAngle > TH_OVER_FACTOR * 1e12f;
     }
 
 }
