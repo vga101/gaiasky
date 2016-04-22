@@ -23,7 +23,7 @@ void main()
 {
 	 vec4 col = vec4(0.0);
 	 for (int clpos = 0; clpos < u_nLights; clpos++){
-		 vec2 deltaTexCoord = (v_texCoords - u_lightPositions[clpos]);
+		 vec2 deltaTexCoord = (v_texCoords - u_lightPositions[clpos]);
 
 		 vec2 tc = vec2(v_texCoords);
 
