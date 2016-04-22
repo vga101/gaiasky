@@ -33,7 +33,7 @@ public class WebGLConfInitLite extends ConfInit {
         ppc.initialize(4, 0, 0, false);
 
         RuntimeConf rc = new RuntimeConf();
-        rc.initialize(false, false, true, false, false, false, 20, true);
+        rc.initialize(true, false, true, false, false, false, 20, true);
 
         DataConf dc = new DataConf();
         dc.initialize(true, "data/data-lite.json", null, "", 0, "", 20f, true);

@@ -117,7 +117,7 @@ public class DesktopConfInit extends ConfInit {
 
         /** RUNTIME CONF **/
         RuntimeConf rc = new RuntimeConf();
-        rc.initialize(false, false, false, false, true, false, 20, false);
+        rc.initialize(true, false, false, false, true, false, 20, false);
 
         /** DATA CONF **/
         DataConf dc = new DataConf();

@@ -33,7 +33,7 @@ public class WebGLConfInit extends ConfInit {
         ppc.initialize(4, 0, 0, false);
 
         RuntimeConf rc = new RuntimeConf();
-        rc.initialize(false, false, false, false, true, false, 8f, false);
+        rc.initialize(true, false, false, false, true, false, 8f, false);
 
         DataConf dc = new DataConf();
         dc.initialize("data/data-wgl.json", true, 7.8f);
