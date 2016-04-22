@@ -89,11 +89,11 @@ public class NotificationsInterface extends Table implements IObserver {
         this.add(message1).left();
         this.historical = new LinkedList<MessageBean>();
         this.df = DateFormatFactory.getFormatter(I18n.locale, DateType.TIME);
-        EventManager.instance.subscribe(this, Events.POST_NOTIFICATION, Events.FOCUS_CHANGED, Events.TOGGLE_TIME_CMD, Events.TOGGLE_VISIBILITY_CMD, Events.CAMERA_MODE_CMD, Events.PACE_CHANGED_INFO, Events.FOCUS_LOCK_CMD, Events.TOGGLE_AMBIENT_LIGHT, Events.FOV_CHANGE_NOTIFICATION, Events.JAVA_EXCEPTION, Events.ORBIT_DATA_LOADED, Events.SCREENSHOT_INFO, Events.COMPUTE_GAIA_SCAN_CMD, Events.ONLY_OBSERVED_STARS_CMD, Events.TRANSIT_COLOUR_CMD, Events.LIMIT_MAG_CMD, Events.TOGGLE_STEREOSCOPIC, Events.TOGGLE_CLEANMODE, Events.FRAME_OUTPUT_CMD, Events.TOGGLE_STEREO_PROFILE, Events.OCTREE_PARTICLE_FADE_CMD);
+        EventManager.instance.subscribe(this, Events.POST_NOTIFICATION, Events.FOCUS_CHANGED, Events.TOGGLE_TIME_CMD, Events.TOGGLE_VISIBILITY_CMD, Events.CAMERA_MODE_CMD, Events.PACE_CHANGED_INFO, Events.FOCUS_LOCK_CMD, Events.TOGGLE_AMBIENT_LIGHT, Events.FOV_CHANGE_NOTIFICATION, Events.JAVA_EXCEPTION, Events.ORBIT_DATA_LOADED, Events.SCREENSHOT_INFO, Events.COMPUTE_GAIA_SCAN_CMD, Events.ONLY_OBSERVED_STARS_CMD, Events.TRANSIT_COLOUR_CMD, Events.LIMIT_MAG_CMD, Events.TOGGLE_STEREOSCOPIC, Events.DISPLAY_GUI_CMD, Events.FRAME_OUTPUT_CMD, Events.TOGGLE_STEREO_PROFILE, Events.OCTREE_PARTICLE_FADE_CMD);
     }
 
     public void unsubscribe() {
-        EventManager.instance.unsubscribe(this, Events.POST_NOTIFICATION, Events.FOCUS_CHANGED, Events.TOGGLE_TIME_CMD, Events.TOGGLE_VISIBILITY_CMD, Events.CAMERA_MODE_CMD, Events.PACE_CHANGED_INFO, Events.FOCUS_LOCK_CMD, Events.TOGGLE_AMBIENT_LIGHT, Events.FOV_CHANGE_NOTIFICATION, Events.JAVA_EXCEPTION, Events.ORBIT_DATA_LOADED, Events.SCREENSHOT_INFO, Events.COMPUTE_GAIA_SCAN_CMD, Events.ONLY_OBSERVED_STARS_CMD, Events.TRANSIT_COLOUR_CMD, Events.LIMIT_MAG_CMD, Events.TOGGLE_STEREOSCOPIC, Events.TOGGLE_CLEANMODE, Events.FRAME_OUTPUT_CMD, Events.TOGGLE_STEREO_PROFILE, Events.OCTREE_PARTICLE_FADE_CMD);
+        EventManager.instance.unsubscribe(this, Events.POST_NOTIFICATION, Events.FOCUS_CHANGED, Events.TOGGLE_TIME_CMD, Events.TOGGLE_VISIBILITY_CMD, Events.CAMERA_MODE_CMD, Events.PACE_CHANGED_INFO, Events.FOCUS_LOCK_CMD, Events.TOGGLE_AMBIENT_LIGHT, Events.FOV_CHANGE_NOTIFICATION, Events.JAVA_EXCEPTION, Events.ORBIT_DATA_LOADED, Events.SCREENSHOT_INFO, Events.COMPUTE_GAIA_SCAN_CMD, Events.ONLY_OBSERVED_STARS_CMD, Events.TRANSIT_COLOUR_CMD, Events.LIMIT_MAG_CMD, Events.TOGGLE_STEREOSCOPIC, Events.DISPLAY_GUI_CMD, Events.FRAME_OUTPUT_CMD, Events.TOGGLE_STEREO_PROFILE, Events.OCTREE_PARTICLE_FADE_CMD);
     }
 
     private void addMessage(String msg) {
@@ -216,7 +216,7 @@ public class NotificationsInterface extends Table implements IObserver {
                 addMessage(I18n.bundle.format("notif.screenshot", data[0]));
                 break;
             case TOGGLE_STEREOSCOPIC:
-            case TOGGLE_CLEANMODE:
+            case DISPLAY_GUI_CMD:
                 addMessage(I18n.bundle.format("notif.toggle", data[0]));
                 break;
             case TOGGLE_STEREO_PROFILE:

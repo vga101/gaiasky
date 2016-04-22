@@ -12,8 +12,8 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Pixmap.Format;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.Renderable;
@@ -95,9 +95,9 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
     private Viewport stretchViewport;
     /** Viewport to use in normal mode **/
     private Viewport extendViewport;
-    
-    /** Frame buffer for 3D mode **/
-    FrameBuffer fb3D;
+
+    /** Frame buffers for 3D mode (screen, screenshot, frame output) **/
+    Map<Integer, FrameBuffer> fb3D;
 
     Runnable blendNoDepthRunnable, blendDepthRunnable;
 
@@ -281,16 +281,23 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         // INIT VIEWPORTS
         stretchViewport = new StretchViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         extendViewport = new ExtendViewport(200, 200);
-        
-        // INIT FRAME BUFFER FOR 3D MODE
-        fb3D = new FrameBuffer(Format.RGB888, Gdx.graphics.getWidth() /2, Gdx.graphics.getHeight(), true);
 
-        EventManager.instance.subscribe(this, Events.TOGGLE_VISIBILITY_CMD, Events.PIXEL_RENDERER_UPDATE);
+        // INIT FRAME BUFFER FOR 3D MODE
+        fb3D = new HashMap<Integer, FrameBuffer>();
+        fb3D.put(getKey(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight()), new FrameBuffer(Format.RGB888, Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight(), true));
+        fb3D.put(getKey(GlobalConf.screenshot.SCREENSHOT_WIDTH / 2, GlobalConf.screenshot.SCREENSHOT_HEIGHT), new FrameBuffer(Format.RGB888, GlobalConf.screenshot.SCREENSHOT_WIDTH / 2, GlobalConf.screenshot.SCREENSHOT_HEIGHT, true));
+        fb3D.put(getKey(GlobalConf.frame.RENDER_WIDTH / 2, GlobalConf.frame.RENDER_HEIGHT), new FrameBuffer(Format.RGB888, GlobalConf.frame.RENDER_WIDTH / 2, GlobalConf.frame.RENDER_HEIGHT, true));
+
+        EventManager.instance.subscribe(this, Events.TOGGLE_VISIBILITY_CMD, Events.PIXEL_RENDERER_UPDATE, Events.SCREENSHOT_SIZE_UDPATE, Events.FRAME_SIZE_UDPATE);
 
     }
 
-    private boolean postprocessCapture(PostProcessBean ppb, FrameBuffer fb, int rw, int rh){
-    	boolean postproc = ppb.capture();
+    private int getKey(int w, int h) {
+        return w * 31 + h;
+    }
+
+    private boolean postprocessCapture(PostProcessBean ppb, FrameBuffer fb, int rw, int rh) {
+        boolean postproc = ppb.capture();
         if (postproc) {
             rc.ppb = ppb;
         } else {
@@ -301,9 +308,9 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         rc.h = rh;
         return postproc;
     }
-    
-    private void postprocessRender(PostProcessBean ppb, FrameBuffer fb, boolean postproc, ICamera camera){
-    	ppb.render(fb);
+
+    private void postprocessRender(PostProcessBean ppb, FrameBuffer fb, boolean postproc, ICamera camera) {
+        ppb.render(fb);
 
         // Render camera
         if (fb != null && postproc) {
@@ -314,7 +321,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
             fb.end();
         }
     }
-    
+
     @Override
     public void render(ICamera camera, int rw, int rh, FrameBuffer fb, PostProcessBean ppb) {
 
@@ -322,8 +329,8 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         boolean postproc;
 
         if (camera.getNCameras() > 1) {
-        	postproc = postprocessCapture(ppb, fb, rw, rh);
-        	
+            postproc = postprocessCapture(ppb, fb, rw, rh);
+
             /** FIELD OF VIEW CAMERA **/
 
             CameraMode aux = camera.getMode();
@@ -337,12 +344,12 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
             renderScene(camera, rc);
 
             camera.updateMode(aux, false);
-            
+
             postprocessRender(ppb, fb, postproc, camera);
 
         } else {
             /** NORMAL MODE **/
-        	
+
             if (GlobalConf.program.STEREOSCOPIC_MODE) {
                 // Update rc
                 rc.w = rw / 2;
@@ -373,12 +380,14 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
                 viewport.setWorldSize(stretch ? rw : rw / 2, rh);
 
                 /** LEFT EYE **/
-                
+
                 viewport.setScreenBounds(0, 0, rw / 2, rh);
                 viewport.apply();
 
-                postproc = postprocessCapture(ppb, fb3D, rw / 2, rh);
-                
+                FrameBuffer fb3d = fb3D.get(getKey(rw / 2, rh));
+
+                postproc = postprocessCapture(ppb, fb3d, rw / 2, rh);
+
                 // Camera to left
                 if (movecam) {
                     if (crosseye) {
@@ -390,21 +399,33 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
                 }
 
                 renderScene(camera, rc);
-                
-                postprocessRender(ppb, fb3D, postproc, camera);
-                Texture tex = fb3D.getColorBufferTexture();
+
+                Texture tex = null;
+                postprocessRender(ppb, fb3d, postproc, camera);
+                tex = fb3d.getColorBufferTexture();
+
+                float scaleX = 1;
+                float scaleY = 1;
+                if (fb != null) {
+                    scaleX = (float) Gdx.graphics.getWidth() / (float) fb.getWidth();
+                    scaleY = (float) Gdx.graphics.getHeight() / (float) fb.getHeight();
+                    fb.begin();
+                }
+
                 GlobalResources.spriteBatch.begin();
                 GlobalResources.spriteBatch.setColor(1f, 1f, 1f, 1f);
-                GlobalResources.spriteBatch.draw(tex, 0, 0, 0, 0, rw/2, rh, 1, 1, 0, 0, 0, rw/2, rh, false, true);
+                GlobalResources.spriteBatch.draw(tex, 0, 0, 0, 0, rw / 2, rh, scaleX, scaleY, 0, 0, 0, rw / 2, rh, false, true);
                 GlobalResources.spriteBatch.end();
-                
-                
+
+                if (fb != null)
+                    fb.end();
+
                 /** RIGHT EYE **/
-                
+
                 viewport.setScreenBounds(rw / 2, 0, rw / 2, rh);
                 viewport.apply();
-                
-                postproc = postprocessCapture(ppb, fb3D, rw / 2, rh);
+
+                postproc = postprocessCapture(ppb, fb3d, rw / 2, rh);
 
                 // Camera to right
                 if (movecam) {
@@ -417,15 +438,22 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
                     cam.update();
                 }
                 renderScene(camera, rc);
-                
-                postprocessRender(ppb, fb3D, postproc, camera);
-                tex = fb3D.getColorBufferTexture();
+
+                postprocessRender(ppb, fb3d, postproc, camera);
+                tex = fb3d.getColorBufferTexture();
+
+                if (fb != null)
+                    fb.begin();
+
                 GlobalResources.spriteBatch.begin();
                 GlobalResources.spriteBatch.setColor(1f, 1f, 1f, 1f);
-                GlobalResources.spriteBatch.draw(tex,  rw/2, 0, 0, 0, rw/2, rh, 1, 1, 0, 0, 0, rw/2, rh, false, true);
+                GlobalResources.spriteBatch.draw(tex, scaleX * rw / 2, 0, 0, 0, rw / 2, rh, scaleX, scaleY, 0, 0, 0, rw / 2, rh, false, true);
                 GlobalResources.spriteBatch.end();
 
-                // Restore cam.position and viewport size
+                if (fb != null)
+                    fb.end();
+
+                /** RESTORE **/
                 cam.position.set(backup);
                 viewport.setScreenBounds(0, 0, rw, rh);
 
@@ -433,19 +461,19 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
                 vectorPool.free(backup);
 
             } else {
-            	postproc = postprocessCapture(ppb, fb, rw, rh);
-            	
+                postproc = postprocessCapture(ppb, fb, rw, rh);
+
                 camera.setViewport(extendViewport);
                 extendViewport.setCamera(camera.getCamera());
                 extendViewport.setWorldSize(rw, rh);
                 extendViewport.setScreenSize(rw, rh);
                 extendViewport.apply();
                 renderScene(camera, rc);
-                
+
                 postprocessRender(ppb, fb, postproc, camera);
             }
         }
-        
+
     }
 
     public void renderScene(ICamera camera, RenderContext rc) {
@@ -504,13 +532,29 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
                 times[idx] = new Date().getTime();
             }
             break;
+        case SCREENSHOT_SIZE_UDPATE:
+        case FRAME_SIZE_UDPATE:
+            final Integer w = (Integer) data[0];
+            final Integer h = (Integer) data[1];
+            final Integer key = getKey(w / 2, h);
+            if (!fb3D.containsKey(key)) {
+                Gdx.app.postRunnable(new Runnable() {
+                    @Override
+                    public void run() {
+                        fb3D.put(key, new FrameBuffer(Format.RGB888, w / 2, h, true));
+                    }
+                });
+            }
+            break;
         case PIXEL_RENDERER_UPDATE:
             Gdx.app.postRunnable(new Runnable() {
+
                 @Override
                 public void run() {
                     AbstractRenderSystem.POINT_UPDATE_FLAG = true;
                     updatePixelRenderSystem();
                 }
+
             });
             break;
         }
@@ -533,6 +577,12 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
     public void resize(final int w, final int h) {
         extendViewport.update(w, h);
         stretchViewport.update(w, h);
+
+        int key = getKey(w / 2, h);
+        if (!fb3D.containsKey(key)) {
+            fb3D.put(key, new FrameBuffer(Format.RGB888, w / 2, h, true));
+        }
+
         for (IRenderSystem rendSys : renderProcesses) {
             rendSys.resize(w, h);
         }

@@ -1,9 +1,9 @@
 package gaia.cu9.ari.gaiaorbit.render.system;
 
+import com.bitfire.postprocessing.PostProcessor;
+
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
 import gaia.cu9.ari.gaiaorbit.util.postprocessing.effects.Fuzzy;
-
-import com.bitfire.postprocessing.PostProcessor;
 
 public class PixelFuzzyRenderSystem extends PixelPostProcessRenderSystem {
 
@@ -12,7 +12,7 @@ public class PixelFuzzyRenderSystem extends PixelPostProcessRenderSystem {
     }
 
     protected PostProcessor getPostProcessor(int w, int h) {
-        String key = getKey(w, h);
+        Integer key = getKey(w, h);
         if (!ppmap.containsKey(key)) {
             PostProcessor pp = new PostProcessor(w, h, true, true, true);
 

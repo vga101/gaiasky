@@ -1,11 +1,11 @@
 package gaia.cu9.ari.gaiaorbit.render.system;
 
-import gaia.cu9.ari.gaiaorbit.event.IObserver;
-import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
-
 import com.bitfire.postprocessing.PostProcessor;
 import com.bitfire.postprocessing.effects.Bloom;
 import com.bitfire.postprocessing.filters.Blur.BlurType;
+
+import gaia.cu9.ari.gaiaorbit.event.IObserver;
+import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
 
 public class PixelBloomRenderSystem extends PixelPostProcessRenderSystem implements IObserver {
 
@@ -14,7 +14,7 @@ public class PixelBloomRenderSystem extends PixelPostProcessRenderSystem impleme
     }
 
     protected PostProcessor getPostProcessor(int w, int h) {
-        String key = getKey(w, h);
+        Integer key = getKey(w, h);
         if (!ppmap.containsKey(key)) {
             PostProcessor pp = new PostProcessor(w, h, true, true, true);
 

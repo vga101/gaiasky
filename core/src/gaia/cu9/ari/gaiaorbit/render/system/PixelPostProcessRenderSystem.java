@@ -1,16 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.render.system;
 
-import gaia.cu9.ari.gaiaorbit.event.EventManager;
-import gaia.cu9.ari.gaiaorbit.event.Events;
-import gaia.cu9.ari.gaiaorbit.event.IObserver;
-import gaia.cu9.ari.gaiaorbit.render.IRenderable;
-import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
-import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
-import gaia.cu9.ari.gaiaorbit.util.Constants;
-import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
-import gaia.cu9.ari.gaiaorbit.util.GlobalConf.ProgramConf.StereoProfile;
-import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,17 +11,28 @@ import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.bitfire.postprocessing.PostProcessor;
 
+import gaia.cu9.ari.gaiaorbit.event.EventManager;
+import gaia.cu9.ari.gaiaorbit.event.Events;
+import gaia.cu9.ari.gaiaorbit.event.IObserver;
+import gaia.cu9.ari.gaiaorbit.render.IRenderable;
+import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
+import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
+import gaia.cu9.ari.gaiaorbit.util.Constants;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf.ProgramConf.StereoProfile;
+import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
+
 public abstract class PixelPostProcessRenderSystem extends PixelRenderSystem implements IObserver {
 
-    Map<String, PostProcessor> ppmap;
-    Map<String, FrameBuffer> fbmap;
+    Map<Integer, PostProcessor> ppmap;
+    Map<Integer, FrameBuffer> fbmap;
     int fbkey = 0;
 
     public PixelPostProcessRenderSystem(RenderGroup rg, int priority, float[] alphas) {
         super(rg, priority, alphas);
 
         // Initialize post processors
-        ppmap = new HashMap<String, PostProcessor>();
+        ppmap = new HashMap<Integer, PostProcessor>();
         getPostProcessor(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         if (Constants.desktop) {
             getPostProcessor(GlobalConf.screenshot.SCREENSHOT_WIDTH, GlobalConf.screen.SCREEN_HEIGHT);
@@ -40,7 +40,7 @@ public abstract class PixelPostProcessRenderSystem extends PixelRenderSystem imp
         }
 
         // Initialize frame buffers
-        fbmap = new HashMap<String, FrameBuffer>();
+        fbmap = new HashMap<Integer, FrameBuffer>();
         getFrameBuffer(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         if (Constants.desktop) {
             getFrameBuffer(GlobalConf.screenshot.SCREENSHOT_WIDTH, GlobalConf.screen.SCREEN_HEIGHT);
@@ -137,7 +137,7 @@ public abstract class PixelPostProcessRenderSystem extends PixelRenderSystem imp
     }
 
     private FrameBuffer getFrameBuffer(int w, int h) {
-        String key = getKey(w, h);
+        Integer key = getKey(w, h);
         if (!fbmap.containsKey(key)) {
             FrameBuffer fb = new FrameBuffer(Format.RGB888, w, h, true);
             fbmap.put(key, fb);
@@ -147,8 +147,8 @@ public abstract class PixelPostProcessRenderSystem extends PixelRenderSystem imp
 
     protected abstract PostProcessor getPostProcessor(int w, int h);
 
-    protected String getKey(int w, int h) {
-        return w + "x" + h;
+    protected Integer getKey(int w, int h) {
+        return w * 31 + h;
     }
 
 }

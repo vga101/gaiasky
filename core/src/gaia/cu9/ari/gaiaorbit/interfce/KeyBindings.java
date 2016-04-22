@@ -293,7 +293,7 @@ public class KeyBindings {
         addMapping(new ProgramAction(txt("action.toggle", txt("element.cleanmode")), new Runnable() {
             @Override
             public void run() {
-                EventManager.instance.post(Events.TOGGLE_CLEANMODE, txt("notif.cleanmode"));
+                EventManager.instance.post(Events.DISPLAY_GUI_CMD, txt("notif.cleanmode"));
             }
         }), SPECIAL1, Keys.U);
 

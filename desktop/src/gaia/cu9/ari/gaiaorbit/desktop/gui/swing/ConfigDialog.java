@@ -882,6 +882,7 @@ public class ConfigDialog extends I18nJFrame {
                     GlobalConf.screenshot.SCREENSHOT_MODE = GlobalConf.ScreenshotMode.values()[screenshotsMode.getSelectedIndex()];
                     GlobalConf.screenshot.SCREENSHOT_WIDTH = ((Integer) sswidthField.getValue());
                     GlobalConf.screenshot.SCREENSHOT_HEIGHT = ((Integer) ssheightField.getValue());
+                    EventManager.instance.post(Events.SCREENSHOT_SIZE_UDPATE, GlobalConf.screenshot.SCREENSHOT_WIDTH, GlobalConf.screenshot.SCREENSHOT_HEIGHT);
 
                     // Frame output
                     File fofile = new File(frameTextContainer.getText());
@@ -895,6 +896,7 @@ public class ConfigDialog extends I18nJFrame {
                     GlobalConf.frame.RENDER_WIDTH = ((Integer) frameWidthField.getValue());
                     GlobalConf.frame.RENDER_HEIGHT = ((Integer) frameHeightField.getValue());
                     GlobalConf.frame.RENDER_TARGET_FPS = ((Integer) targetFPS.getValue());
+                    EventManager.instance.post(Events.FRAME_SIZE_UDPATE, GlobalConf.frame.RENDER_WIDTH, GlobalConf.frame.RENDER_HEIGHT);
 
                     // Save configuration
                     ConfInit.instance.persistGlobalConf(new File(System.getProperty("properties.file")));

@@ -167,8 +167,8 @@ public enum Events {
     TOGGLE_STEREOSCOPIC,
     /** Switches stereoscopic mode images, left to right and right to left **/
     TOGGLE_STEREO_PROFILE,
-    /** Toggles no GUI mode. Contains the localized name. **/
-    TOGGLE_CLEANMODE,
+    /** Toggles whole GUI display. Contains the localized name and an optional boolean with the state (display/no display) **/
+    DISPLAY_GUI_CMD,
     /** Toggles the pause of the update process. Contains the localized name. **/
     TOGGLE_UPDATEPAUSE,
     /** Contains the new value **/
@@ -266,11 +266,16 @@ public enum Events {
     SCREENSHOT_CMD,
     /** Contains the path where the screenshot has been saved */
     SCREENSHOT_INFO,
+    /** Informs of the new size of the screenshot system **/
+    SCREENSHOT_SIZE_UDPATE,
+    /** Informs of the new size of the frame output system **/
+    FRAME_SIZE_UDPATE,
 
     /** Issues the command to render a screenshot **/
     RENDER_SCREENSHOT,
     /** Issues the command to render a frame **/
     RENDER_FRAME,
+
     /** Issues the command to flush the frame system **/
     FLUSH_FRAMES,
     /** Contains an array of booleans with the visibility of each ComponentType, in the same order returned by ComponentType.values() **/

@@ -132,7 +132,7 @@ public class GlobalConf {
      */
     public static class RuntimeConf implements IConf, IObserver {
 
-        public boolean CLEAN_MODE;
+        public boolean DISPLAY_GUI;
         public boolean UPDATE_PAUSE;
         public boolean TIME_ON;
         /** Whether we use the RealTimeClock or the GlobalClock **/
@@ -144,11 +144,11 @@ public class GlobalConf {
         public boolean STRIPPED_FOV_MODE = false;
 
         public RuntimeConf() {
-            EventManager.instance.subscribe(this, Events.LIMIT_MAG_CMD, Events.INPUT_ENABLED_CMD, Events.TOGGLE_CLEANMODE, Events.TOGGLE_UPDATEPAUSE, Events.TOGGLE_TIME_CMD, Events.RECORD_CAMERA_CMD);
+            EventManager.instance.subscribe(this, Events.LIMIT_MAG_CMD, Events.INPUT_ENABLED_CMD, Events.DISPLAY_GUI_CMD, Events.TOGGLE_UPDATEPAUSE, Events.TOGGLE_TIME_CMD, Events.RECORD_CAMERA_CMD);
         }
 
-        public void initialize(boolean cLEAN_MODE, boolean uPDATE_PAUSE, boolean sTRIPPED_FOV_MODE, boolean tIME_ON, boolean iNPUT_ENABLED, boolean rECORD_CAMERA, float lIMIT_MAG_RUNTIME, boolean rEAL_TIME) {
-            CLEAN_MODE = cLEAN_MODE;
+        public void initialize(boolean dISPLAY_GUI, boolean uPDATE_PAUSE, boolean sTRIPPED_FOV_MODE, boolean tIME_ON, boolean iNPUT_ENABLED, boolean rECORD_CAMERA, float lIMIT_MAG_RUNTIME, boolean rEAL_TIME) {
+            DISPLAY_GUI = dISPLAY_GUI;
             UPDATE_PAUSE = uPDATE_PAUSE;
             TIME_ON = tIME_ON;
             INPUT_ENABLED = iNPUT_ENABLED;
@@ -170,8 +170,15 @@ public class GlobalConf {
                 INPUT_ENABLED = (boolean) data[0];
                 break;
 
-            case TOGGLE_CLEANMODE:
-                CLEAN_MODE = !CLEAN_MODE;
+            case DISPLAY_GUI_CMD:
+                if (data.length > 1) {
+                    // Value
+                    Boolean val = (Boolean) data[1];
+                    DISPLAY_GUI = val;
+                } else {
+                    // Toggle
+                    DISPLAY_GUI = !DISPLAY_GUI;
+                }
                 break;
             case TOGGLE_UPDATEPAUSE:
                 UPDATE_PAUSE = !UPDATE_PAUSE;
@@ -417,6 +424,8 @@ public class GlobalConf {
             switch (event) {
             case TOGGLE_STEREOSCOPIC:
                 STEREOSCOPIC_MODE = !STEREOSCOPIC_MODE;
+                // Enable/disable gui
+                EventManager.instance.post(Events.DISPLAY_GUI_CMD, I18n.bundle.get("notif.cleanmode"), !STEREOSCOPIC_MODE);
                 break;
             case TOGGLE_STEREO_PROFILE:
                 int idx = STEREO_PROFILE.ordinal();
