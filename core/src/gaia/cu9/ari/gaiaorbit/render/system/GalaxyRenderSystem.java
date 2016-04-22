@@ -143,9 +143,9 @@ public class GalaxyRenderSystem extends ImmediateRenderSystem implements IObserv
                     // SIZE
                     float starSize = 0;
                     if (star.length > 3) {
-                        starSize = star[3] * 15f + 1f;
+                        starSize = star[3] * 10f + 1f;
                     } else {
-                        starSize = (float) Math.abs(rand.nextGaussian()) * 7f + 1.0f;
+                        starSize = (float) Math.abs(rand.nextGaussian()) * 8f + 1.0f;
                     }
                     curr.vertices[curr.vertexIdx + additionalOffset] = starSize * density;
                     curr.vertices[curr.vertexIdx + additionalOffset + 1] = 0.7f;
@@ -183,7 +183,7 @@ public class GalaxyRenderSystem extends ImmediateRenderSystem implements IObserv
                         } else {
                             texnum = rand.nextInt(4);
                         }
-                        quadsize = qp.length > 3 ? (qp[3] + 1.0f) * .8e11f : (float) (rand.nextFloat() + 1.0f) * 2e11f;
+                        quadsize = qp.length > 3 ? (qp[3] + 1.0f) * .46e11f : (float) (rand.nextFloat() + 1.0f) * 2e11f;
                         alphamultiplier = MathUtilsd.lint(quadpointdist, 0, mw.size * 3, 6.0f, 1.0f);
 
                         rotaxis.set(rand.nextFloat(), rand.nextFloat(), rand.nextFloat());
@@ -275,7 +275,7 @@ public class GalaxyRenderSystem extends ImmediateRenderSystem implements IObserv
             // General uniforms
             quadProgram.setUniformMatrix("u_projModelView", camera.getCamera().combined);
             quadProgram.setUniformf("u_camPos", camera.getCurrent().getPos().setVector3(aux));
-            quadProgram.setUniformf("u_alpha", 0.04f * mw.opacity * alphas[mw.ct.ordinal()]);
+            quadProgram.setUniformf("u_alpha", 0.05f * mw.opacity * alphas[mw.ct.ordinal()]);
 
             for (int i = 0; i < 4; i++) {
                 nebulatextures[i].bind(i);

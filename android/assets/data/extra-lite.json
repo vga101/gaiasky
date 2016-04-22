@@ -39,7 +39,7 @@
 	"name" : "Milky Way",
 	"color" : [1.0, 1.0, 1.0, 1.0],
 	"labelcolor" : [1.0, 0.4, 0.7, 1.0],
-	"size" : 3.5e17,
+	"size" : 2e17,
 	"ct" : MilkyWay,
 	"transformName" : equatorialToGalactic,
 
@@ -64,7 +64,7 @@
 							"diameter" : 7.0
 							},
 				"texture" : {
-							"base" : "data/tex/milky_way.png"
+							"base" : "data/tex/milky_way_small.png"
 							}
 				}
 	},

@@ -81,7 +81,7 @@ public class MilkyWayReal extends AbstractPositionEntity implements I3DTextRende
                 Method m = ClassReflection.getMethod(c, transformName);
                 Matrix4d trf = (Matrix4d) m.invoke(null);
 
-                coordinateSystem = new Matrix4(trf.valuesf()).rotate(0, 1, 0, 70);
+                coordinateSystem = new Matrix4(trf.valuesf());
 
             } catch (ReflectionException e) {
                 Gdx.app.error(this.getClass().getName(), "Error getting/invoking method Coordinates." + transformName + "()");
