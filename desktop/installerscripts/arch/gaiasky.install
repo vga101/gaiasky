@@ -6,6 +6,7 @@
 ## arg 1:  the new package version
 post_install() {
 	ln -s /opt/gaiasky/gaiasky /usr/bin/gaiasky
+	cp /opt/gaiasky/gaiasky.desktop /usr/share/applications
 }
 
 ## arg 1:  the new package version
@@ -25,4 +26,5 @@ post_install() {
 
 ## arg 1:  the old package version
 #post_remove() {
+	rm /usr/share/applications/gaiasky.desktop
 #}
