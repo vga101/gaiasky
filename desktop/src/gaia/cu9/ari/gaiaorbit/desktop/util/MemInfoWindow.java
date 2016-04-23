@@ -1,4 +1,4 @@
-package gaia.cu9.ari.gaiaorbit.interfce;
+package gaia.cu9.ari.gaiaorbit.desktop.util;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryPoolMXBean;

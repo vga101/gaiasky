@@ -1,0 +1,633 @@
+#
+# There is insufficient memory for the Java Runtime Environment to continue.
+# Native memory allocation (mmap) failed to map 63963136 bytes for committing reserved memory.
+# Possible reasons:
+#   The system is out of physical RAM or swap space
+#   In 32 bit mode, the process size limit was hit
+# Possible solutions:
+#   Reduce memory load on the system
+#   Increase physical memory or swap space
+#   Check if swap backing store is full
+#   Use 64 bit Java on a 64 bit OS
+#   Decrease Java heap size (-Xmx/-Xms)
+#   Decrease number of Java threads
+#   Decrease Java thread stack sizes (-Xss)
+#   Set larger code cache with -XX:ReservedCodeCacheSize=
+# This output file may be truncated or incomplete.
+#
+#  Out of Memory Error (os_linux.cpp:2627), pid=3911, tid=140563209090816
+#
+# JRE version: Java(TM) SE Runtime Environment (8.0_60-b27) (build 1.8.0_60-b27)
+# Java VM: Java HotSpot(TM) 64-Bit Server VM (25.60-b23 mixed mode linux-amd64 compressed oops)
+# Core dump written. Default location: /home/tsagrista/git/gaiasky/html/core or core.3911
+#
+
+---------------  T H R E A D  ---------------
+
+Current thread (0x00007fd768078000):  VMThread [stack: 0x00007fd76c157000,0x00007fd76c258000] [id=3931]
+
+Stack: [0x00007fd76c157000,0x00007fd76c258000],  sp=0x00007fd76c2561a0,  free space=1020k
+Native frames: (J=compiled Java code, j=interpreted, Vv=VM code, C=native code)
+V  [libjvm.so+0xab97ea]  VMError::report_and_die()+0x2ba
+V  [libjvm.so+0x4f9dab]  report_vm_out_of_memory(char const*, int, unsigned long, VMErrorType, char const*)+0x8b
+V  [libjvm.so+0x91a7c3]  os::Linux::commit_memory_impl(char*, unsigned long, bool)+0x103
+V  [libjvm.so+0x91ad19]  os::pd_commit_memory(char*, unsigned long, unsigned long, bool)+0x29
+V  [libjvm.so+0x91502a]  os::commit_memory(char*, unsigned long, unsigned long, bool)+0x2a
+V  [libjvm.so+0x9886d3]  PSVirtualSpace::expand_by(unsigned long)+0x53
+V  [libjvm.so+0x989ad8]  PSYoungGen::resize_generation(unsigned long, unsigned long)+0xf8
+V  [libjvm.so+0x988c32]  PSYoungGen::resize(unsigned long, unsigned long)+0x22
+V  [libjvm.so+0x985f0b]  PSScavenge::invoke_no_policy()+0xf3b
+V  [libjvm.so+0x986691]  PSScavenge::invoke()+0x41
+V  [libjvm.so+0x93e430]  ParallelScavengeHeap::failed_mem_allocate(unsigned long)+0x70
+V  [libjvm.so+0xabb207]  VM_ParallelGCFailedAllocation::doit()+0x97
+V  [libjvm.so+0xac2c35]  VM_Operation::evaluate()+0x55
+V  [libjvm.so+0xac100a]  VMThread::evaluate_operation(VM_Operation*)+0xba
+V  [libjvm.so+0xac138e]  VMThread::loop()+0x1ce
+V  [libjvm.so+0xac1800]  VMThread::run()+0x70
+V  [libjvm.so+0x91cb88]  java_start(Thread*)+0x108
+
+VM_Operation (0x00007fd71f9fda30): ParallelGCFailedAllocation, mode: safepoint, requested by thread 0x00007fd768511800
+
+
+---------------  P R O C E S S  ---------------
+
+Java Threads: ( => current thread )
+  0x00007fd768511800 JavaThread "jscompiler" [_thread_blocked, id=3964, stack(0x00007fd71f7ff000,0x00007fd71fa00000)]
+  0x00007fd7680c2800 JavaThread "Service Thread" daemon [_thread_blocked, id=3950, stack(0x00007fd754862000,0x00007fd754963000)]
+  0x00007fd7680bd800 JavaThread "C1 CompilerThread2" daemon [_thread_blocked, id=3948, stack(0x00007fd754963000,0x00007fd754a64000)]
+  0x00007fd7680bb800 JavaThread "C2 CompilerThread1" daemon [_thread_blocked, id=3947, stack(0x00007fd754a64000,0x00007fd754b65000)]
+  0x00007fd7680b9000 JavaThread "C2 CompilerThread0" daemon [_thread_blocked, id=3946, stack(0x00007fd754b65000,0x00007fd754c66000)]
+  0x00007fd7680b7800 JavaThread "Signal Dispatcher" daemon [_thread_blocked, id=3945, stack(0x00007fd754c66000,0x00007fd754d67000)]
+  0x00007fd76807f800 JavaThread "Finalizer" daemon [_thread_blocked, id=3940, stack(0x00007fd754eff000,0x00007fd755000000)]
+  0x00007fd76807d000 JavaThread "Reference Handler" daemon [_thread_blocked, id=3938, stack(0x00007fd76c056000,0x00007fd76c157000)]
+  0x00007fd76800a000 JavaThread "main" [_thread_blocked, id=3917, stack(0x00007fd77171b000,0x00007fd77181c000)]
+
+Other Threads:
+=>0x00007fd768078000 VMThread [stack: 0x00007fd76c157000,0x00007fd76c258000] [id=3931]
+  0x00007fd7680c5800 WatcherThread [stack: 0x00007fd754761000,0x00007fd754862000] [id=3952]
+
+VM state:at safepoint (normal execution)
+
+VM Mutex/Monitor currently owned by a thread:  ([mutex/lock_event])
+[0x00007fd768007e00] Threads_lock - owner thread: 0x00007fd768078000
+[0x00007fd768008300] Heap_lock - owner thread: 0x00007fd768511800
+
+Heap:
+ PSYoungGen      total 557056K, used 63040K [0x00000000d5580000, 0x00000000fc300000, 0x0000000100000000)
+  eden space 477696K, 0% used [0x00000000d5580000,0x00000000d5580000,0x00000000f2800000)
+  from space 79360K, 79% used [0x00000000f7580000,0x00000000fb310020,0x00000000fc300000)
+  to   space 13824K, 0% used [0x00000000f3780000,0x00000000f3780000,0x00000000f4500000)
+ ParOldGen       total 699392K, used 317548K [0x0000000080000000, 0x00000000aab00000, 0x00000000d5580000)
+  object space 699392K, 45% used [0x0000000080000000,0x000000009361b2f8,0x00000000aab00000)
+ Metaspace       used 20182K, capacity 20738K, committed 20864K, reserved 1067008K
+  class space    used 2197K, capacity 2307K, committed 2432K, reserved 1048576K
+
+Card table byte_map: [0x00007fd76e716000,0x00007fd76eb17000] byte_map_base: 0x00007fd76e316000
+
+Marking Bits: (ParMarkBitMap*) 0x00007fd770bfade0
+ Begin Bits: [0x00007fd755000000, 0x00007fd757000000)
+ End Bits:   [0x00007fd757000000, 0x00007fd759000000)
+
+Polling page: 0x00007fd77171a000
+
+CodeCache: size=245760Kb used=23044Kb max_used=25918Kb free=222715Kb
+ bounds [0x00007fd759000000, 0x00007fd75a9e0000, 0x00007fd768000000]
+ total_blobs=6437 nmethods=6100 adapters=245
+ compilation: enabled
+
+Compilation events (10 events):
+Event: 391.737 Thread 0x00007fd7680bd800 10847       2       com.google.gwt.thirdparty.javascript.jscomp.graph.Graph::pushAnnotations (83 bytes)
+Event: 391.745 Thread 0x00007fd7680bd800 nmethod 10847 0x00007fd75a207190 code [0x00007fd75a2073a0, 0x00007fd75a207998]
+Event: 391.745 Thread 0x00007fd7680bd800 10848       2       com.google.gwt.thirdparty.javascript.jscomp.graph.Graph::popAnnotations (49 bytes)
+Event: 391.746 Thread 0x00007fd7680bd800 nmethod 10848 0x00007fd75940bbd0 code [0x00007fd75940bd60, 0x00007fd75940c068]
+Event: 391.954 Thread 0x00007fd7680bd800 10855       2       com.google.gwt.thirdparty.javascript.jscomp.ControlFlowAnalysis::handleDo (38 bytes)
+Event: 391.979 Thread 0x00007fd7680bd800 nmethod 10855 0x00007fd75a55fa50 code [0x00007fd75a55fc80, 0x00007fd75a560338]
+Event: 391.979 Thread 0x00007fd7680bd800 10856 %     3       com.google.gwt.thirdparty.javascript.jscomp.MaybeReachingVariableUse$ReachingUsesJoinOp::apply @ 15 (55 bytes)
+Event: 391.981 Thread 0x00007fd7680bd800 nmethod 10856% 0x00007fd75a4d2650 code [0x00007fd75a4d28a0, 0x00007fd75a4d3708]
+Event: 391.983 Thread 0x00007fd7680bd800 10857       3       com.google.gwt.thirdparty.javascript.jscomp.MaybeReachingVariableUse$ReachingUsesJoinOp::apply (55 bytes)
+Event: 391.984 Thread 0x00007fd7680bd800 nmethod 10857 0x00007fd759238350 code [0x00007fd7592385a0, 0x00007fd7592393a8]
+
+GC Heap History (10 events):
+Event: 74.156 GC heap after
+Heap after GC invocations=19 (full 0):
+ PSYoungGen      total 592384K, used 21781K [0x00000000d5580000, 0x00000000ffc00000, 0x0000000100000000)
+  eden space 495616K, 0% used [0x00000000d5580000,0x00000000d5580000,0x00000000f3980000)
+  from space 96768K, 22% used [0x00000000f3980000,0x00000000f4ec55b0,0x00000000f9800000)
+  to   space 92160K, 0% used [0x00000000fa200000,0x00000000fa200000,0x00000000ffc00000)
+ ParOldGen       total 699392K, used 276220K [0x0000000080000000, 0x00000000aab00000, 0x00000000d5580000)
+  object space 699392K, 39% used [0x0000000080000000,0x0000000090dbf380,0x00000000aab00000)
+ Metaspace       used 19941K, capacity 20482K, committed 20608K, reserved 1067008K
+  class space    used 2175K, capacity 2307K, committed 2432K, reserved 1048576K
+}
+Event: 103.525 GC heap before
+{Heap before GC invocations=20 (full 0):
+ PSYoungGen      total 592384K, used 517397K [0x00000000d5580000, 0x00000000ffc00000, 0x0000000100000000)
+  eden space 495616K, 100% used [0x00000000d5580000,0x00000000f3980000,0x00000000f3980000)
+  from space 96768K, 22% used [0x00000000f3980000,0x00000000f4ec55b0,0x00000000f9800000)
+  to   space 92160K, 0% used [0x00000000fa200000,0x00000000fa200000,0x00000000ffc00000)
+ ParOldGen       total 699392K, used 276220K [0x0000000080000000, 0x00000000aab00000, 0x00000000d5580000)
+  object space 699392K, 39% used [0x0000000080000000,0x0000000090dbf380,0x00000000aab00000)
+ Metaspace       used 19958K, capacity 20482K, committed 20608K, reserved 1067008K
+  class space    used 2176K, capacity 2307K, committed 2432K, reserved 1048576K
+Event: 103.601 GC heap after
+Heap after GC invocations=20 (full 0):
+ PSYoungGen      total 591360K, used 24053K [0x00000000d5580000, 0x00000000ff180000, 0x0000000100000000)
+  eden space 509952K, 0% used [0x00000000d5580000,0x00000000d5580000,0x00000000f4780000)
+  from space 81408K, 29% used [0x00000000fa200000,0x00000000fb97d488,0x00000000ff180000)
+  to   space 87040K, 0% used [0x00000000f4780000,0x00000000f4780000,0x00000000f9c80000)
+ ParOldGen       total 699392K, used 295044K [0x0000000080000000, 0x00000000aab00000, 0x00000000d5580000)
+  object space 699392K, 42% used [0x0000000080000000,0x0000000092021380,0x00000000aab00000)
+ Metaspace       used 19958K, capacity 20482K, committed 20608K, reserved 1067008K
+  class space    used 2176K, capacity 2307K, committed 2432K, reserved 1048576K
+}
+Event: 215.061 GC heap before
+{Heap before GC invocations=21 (full 0):
+ PSYoungGen      total 591360K, used 534005K [0x00000000d5580000, 0x00000000ff180000, 0x0000000100000000)
+  eden space 509952K, 100% used [0x00000000d5580000,0x00000000f4780000,0x00000000f4780000)
+  from space 81408K, 29% used [0x00000000fa200000,0x00000000fb97d488,0x00000000ff180000)
+  to   space 87040K, 0% used [0x00000000f4780000,0x00000000f4780000,0x00000000f9c80000)
+ ParOldGen       total 699392K, used 295044K [0x0000000080000000, 0x00000000aab00000, 0x00000000d5580000)
+  object space 699392K, 42% used [0x0000000080000000,0x0000000092021380,0x00000000aab00000)
+ Metaspace       used 19964K, capacity 20482K, committed 20608K, reserved 1067008K
+  class space    used 2176K, capacity 2307K, committed 2432K, reserved 1048576K
+Event: 215.148 GC heap after
+Heap after GC invocations=21 (full 0):
+ PSYoungGen      total 596992K, used 37729K [0x00000000d5580000, 0x00000000fff80000, 0x0000000100000000)
+  eden space 509952K, 0% used [0x00000000d5580000,0x00000000d5580000,0x00000000f4780000)
+  from space 87040K, 43% used [0x00000000f4780000,0x00000000f6c58588,0x00000000f9c80000)
+  to   space 83968K, 0% used [0x00000000fad80000,0x00000000fad80000,0x00000000fff80000)
+ ParOldGen       total 699392K, used 303868K [0x0000000080000000, 0x00000000aab00000, 0x00000000d5580000)
+  object space 699392K, 43% used [0x0000000080000000,0x00000000928bf390,0x00000000aab00000)
+ Metaspace       used 19964K, capacity 20482K, committed 20608K, reserved 1067008K
+  class space    used 2176K, capacity 2307K, committed 2432K, reserved 1048576K
+}
+Event: 273.262 GC heap before
+{Heap before GC invocations=22 (full 0):
+ PSYoungGen      total 596992K, used 547681K [0x00000000d5580000, 0x00000000fff80000, 0x0000000100000000)
+  eden space 509952K, 100% used [0x00000000d5580000,0x00000000f4780000,0x00000000f4780000)
+  from space 87040K, 43% used [0x00000000f4780000,0x00000000f6c58588,0x00000000f9c80000)
+  to   space 83968K, 0% used [0x00000000fad80000,0x00000000fad80000,0x00000000fff80000)
+ ParOldGen       total 699392K, used 303868K [0x0000000080000000, 0x00000000aab00000, 0x00000000d5580000)
+  object space 699392K, 43% used [0x0000000080000000,0x00000000928bf390,0x00000000aab00000)
+ Metaspace       used 19970K, capacity 20482K, committed 20608K, reserved 1067008K
+  class space    used 2176K, capacity 2307K, committed 2432K, reserved 1048576K
+Event: 273.314 GC heap after
+Heap after GC invocations=22 (full 0):
+ PSYoungGen      total 536576K, used 12873K [0x00000000d5580000, 0x00000000fd780000, 0x0000000100000000)
+  eden space 493568K, 0% used [0x00000000d5580000,0x00000000d5580000,0x00000000f3780000)
+  from space 43008K, 29% used [0x00000000fad80000,0x00000000fba125c0,0x00000000fd780000)
+  to   space 81920K, 0% used [0x00000000f3780000,0x00000000f3780000,0x00000000f8780000)
+ ParOldGen       total 699392K, used 304884K [0x0000000080000000, 0x00000000aab00000, 0x00000000d5580000)
+  object space 699392K, 43% used [0x0000000080000000,0x00000000929bd390,0x00000000aab00000)
+ Metaspace       used 19970K, capacity 20482K, committed 20608K, reserved 1067008K
+  class space    used 2176K, capacity 2307K, committed 2432K, reserved 1048576K
+}
+Event: 390.561 GC heap before
+{Heap before GC invocations=23 (full 0):
+ PSYoungGen      total 536576K, used 506441K [0x00000000d5580000, 0x00000000fd780000, 0x0000000100000000)
+  eden space 493568K, 100% used [0x00000000d5580000,0x00000000f3780000,0x00000000f3780000)
+  from space 43008K, 29% used [0x00000000fad80000,0x00000000fba125c0,0x00000000fd780000)
+  to   space 81920K, 0% used [0x00000000f3780000,0x00000000f3780000,0x00000000f8780000)
+ ParOldGen       total 699392K, used 304884K [0x0000000080000000, 0x00000000aab00000, 0x00000000d5580000)
+  object space 699392K, 43% used [0x0000000080000000,0x00000000929bd390,0x00000000aab00000)
+ Metaspace       used 20174K, capacity 20738K, committed 20864K, reserved 1067008K
+  class space    used 2197K, capacity 2307K, committed 2432K, reserved 1048576K
+Event: 390.630 GC heap after
+Heap after GC invocations=23 (full 0):
+ PSYoungGen      total 491520K, used 13446K [0x00000000d5580000, 0x00000000fc300000, 0x0000000100000000)
+  eden space 477696K, 0% used [0x00000000d5580000,0x00000000d5580000,0x00000000f2800000)
+  from space 13824K, 97% used [0x00000000f3780000,0x00000000f44a1910,0x00000000f4500000)
+  to   space 79360K, 0% used [0x00000000f7580000,0x00000000f7580000,0x00000000fc300000)
+ ParOldGen       total 699392K, used 304900K [0x0000000080000000, 0x00000000aab00000, 0x00000000d5580000)
+  object space 699392K, 43% used [0x0000000080000000,0x00000000929c1390,0x00000000aab00000)
+ Metaspace       used 20174K, capacity 20738K, committed 20864K, reserved 1067008K
+  class space    used 2197K, capacity 2307K, committed 2432K, reserved 1048576K
+}
+Event: 392.346 GC heap before
+{Heap before GC invocations=24 (full 0):
+ PSYoungGen      total 491520K, used 491142K [0x00000000d5580000, 0x00000000fc300000, 0x0000000100000000)
+  eden space 477696K, 100% used [0x00000000d5580000,0x00000000f2800000,0x00000000f2800000)
+  from space 13824K, 97% used [0x00000000f3780000,0x00000000f44a1910,0x00000000f4500000)
+  to   space 79360K, 0% used [0x00000000f7580000,0x00000000f7580000,0x00000000fc300000)
+ ParOldGen       total 699392K, used 304900K [0x0000000080000000, 0x00000000aab00000, 0x00000000d5580000)
+  object space 699392K, 43% used [0x0000000080000000,0x00000000929c1390,0x00000000aab00000)
+ Metaspace       used 20182K, capacity 20738K, committed 20864K, reserved 1067008K
+  class space    used 2197K, capacity 2307K, committed 2432K, reserved 1048576K
+
+Deoptimization events (10 events):
+Event: 390.332 Thread 0x00007fd768511800 Uncommon trap: reason=class_check action=maybe_recompile pc=0x00007fd7598f3724 method=com.google.gwt.thirdparty.javascript.jscomp.DataFlowAnalysis.joinInputs(Lcom/google/gwt/thirdparty/javascript/jscomp/graph/DiGraph$DiGraphNode;)V @ 362
+Event: 390.332 Thread 0x00007fd768511800 Uncommon trap: reason=class_check action=maybe_recompile pc=0x00007fd7598f3724 method=com.google.gwt.thirdparty.javascript.jscomp.DataFlowAnalysis.joinInputs(Lcom/google/gwt/thirdparty/javascript/jscomp/graph/DiGraph$DiGraphNode;)V @ 362
+Event: 390.332 Thread 0x00007fd768511800 Uncommon trap: reason=class_check action=maybe_recompile pc=0x00007fd7598f3724 method=com.google.gwt.thirdparty.javascript.jscomp.DataFlowAnalysis.joinInputs(Lcom/google/gwt/thirdparty/javascript/jscomp/graph/DiGraph$DiGraphNode;)V @ 362
+Event: 390.502 Thread 0x00007fd768511800 Uncommon trap: reason=bimorphic action=maybe_recompile pc=0x00007fd75a1f5abc method=com.google.gwt.thirdparty.javascript.jscomp.DataFlowAnalysis.analyze(I)V @ 98
+Event: 390.502 Thread 0x00007fd768511800 Uncommon trap: reason=bimorphic action=maybe_recompile pc=0x00007fd75a1f5abc method=com.google.gwt.thirdparty.javascript.jscomp.DataFlowAnalysis.analyze(I)V @ 98
+Event: 390.502 Thread 0x00007fd768511800 Uncommon trap: reason=bimorphic action=maybe_recompile pc=0x00007fd75a1f5abc method=com.google.gwt.thirdparty.javascript.jscomp.DataFlowAnalysis.analyze(I)V @ 98
+Event: 390.502 Thread 0x00007fd768511800 Uncommon trap: reason=bimorphic action=maybe_recompile pc=0x00007fd75a1f5abc method=com.google.gwt.thirdparty.javascript.jscomp.DataFlowAnalysis.analyze(I)V @ 98
+Event: 391.162 Thread 0x00007fd768511800 Uncommon trap: reason=unstable_if action=reinterpret pc=0x00007fd75a74fccc method=com.google.gwt.thirdparty.javascript.jscomp.ControlFlowAnalysis.connectToPossibleExceptionHandler(Lcom/google/gwt/thirdparty/javascript/rhino/Node;Lcom/google/gwt/thirdparty
+Event: 391.624 Thread 0x00007fd768511800 Uncommon trap: reason=class_check action=maybe_recompile pc=0x00007fd7599e9e14 method=com.google.gwt.thirdparty.guava.common.collect.AbstractMapBasedMultimap.removeAll(Ljava/lang/Object;)Ljava/util/Collection; @ 19
+Event: 391.627 Thread 0x00007fd768511800 Uncommon trap: reason=class_check action=maybe_recompile pc=0x00007fd7599e9e14 method=com.google.gwt.thirdparty.guava.common.collect.AbstractMapBasedMultimap.removeAll(Ljava/lang/Object;)Ljava/util/Collection; @ 19
+
+Internal exceptions (10 events):
+Event: 56.083 Thread 0x00007fd768511800 Implicit null exception at 0x00007fd7599e78b0 to 0x00007fd7599e8175
+Event: 56.725 Thread 0x00007fd768511800 Implicit null exception at 0x00007fd75a3a52fe to 0x00007fd75a3a54b1
+Event: 57.459 Thread 0x00007fd768511800 Implicit null exception at 0x00007fd75a5ee068 to 0x00007fd75a5f14c9
+Event: 59.477 Thread 0x00007fd768511800 Implicit null exception at 0x00007fd75a29e18f to 0x00007fd75a29e1ee
+Event: 61.416 Thread 0x00007fd768511800 Implicit null exception at 0x00007fd759187df0 to 0x00007fd7591885b9
+Event: 62.070 Thread 0x00007fd768511800 Implicit null exception at 0x00007fd7597c27a8 to 0x00007fd7597c2d4d
+Event: 64.903 Thread 0x00007fd768511800 Implicit null exception at 0x00007fd759c7f224 to 0x00007fd759c7f891
+Event: 65.080 Thread 0x00007fd768511800 Implicit null exception at 0x00007fd75a1b4b73 to 0x00007fd75a1b50f1
+Event: 102.907 Thread 0x00007fd768511800 Implicit null exception at 0x00007fd75a6df5cb to 0x00007fd75a6e08d1
+Event: 102.907 Thread 0x00007fd768511800 Implicit null exception at 0x00007fd75a6dbb40 to 0x00007fd75a6dc205
+
+Events (10 events):
+Event: 391.327 Thread 0x00007fd7680bb800 flushing nmethod 0x00007fd75a46e350
+Event: 391.333 Thread 0x00007fd7680bb800 flushing nmethod 0x00007fd75a522a10
+Event: 391.334 Thread 0x00007fd7680bb800 flushing nmethod 0x00007fd75a5a18d0
+Event: 391.622 Thread 0x00007fd768511800 Uncommon trap: trap_request=0xffffffde fr.pc=0x00007fd7599e9e14
+Event: 391.624 Thread 0x00007fd768511800 DEOPT PACKING pc=0x00007fd7599e9e14 sp=0x00007fd71f9fdb70
+Event: 391.624 Thread 0x00007fd768511800 DEOPT UNPACKING pc=0x00007fd759005229 sp=0x00007fd71f9fdba8 mode 2
+Event: 391.627 Thread 0x00007fd768511800 Uncommon trap: trap_request=0xffffffde fr.pc=0x00007fd7599e9e14
+Event: 391.628 Thread 0x00007fd768511800 DEOPT PACKING pc=0x00007fd7599e9e14 sp=0x00007fd71f9fdb70
+Event: 391.628 Thread 0x00007fd768511800 DEOPT UNPACKING pc=0x00007fd759005229 sp=0x00007fd71f9fdba8 mode 2
+Event: 392.332 Executing VM operation: ParallelGCFailedAllocation
+
+
+Dynamic libraries:
+00400000-00401000 r-xp 00000000 08:03 7341208                            /home/tsagrista/Programs/Java/jdk1.8.0_60/jre/bin/java
+00600000-00601000 rw-p 00000000 08:03 7341208                            /home/tsagrista/Programs/Java/jdk1.8.0_60/jre/bin/java
+00d86000-00da7000 rw-p 00000000 00:00 0                                  [heap]
+80000000-aab00000 rw-p 00000000 00:00 0 
+aab00000-d5580000 ---p 00000000 00:00 0 
+d5580000-fc300000 rw-p 00000000 00:00 0 
+100000000-100260000 rw-p 00000000 00:00 0 
+100260000-140000000 ---p 00000000 00:00 0 
+7fd718000000-7fd718101000 rw-p 00000000 00:00 0 
+7fd718101000-7fd71c000000 ---p 00000000 00:00 0 
+7fd71f3ff000-7fd71f5ff000 rw-p 00000000 00:00 0 
+7fd71f5ff000-7fd71f7ff000 rw-p 00000000 00:00 0 
+7fd71f7ff000-7fd71f802000 ---p 00000000 00:00 0 
+7fd71f802000-7fd71fc00000 rw-p 00000000 00:00 0                          [stack:3964]
+7fd71fc00000-7fd71fe00000 rw-p 00000000 00:00 0 
+7fd71fe00000-7fd720000000 rw-p 00000000 00:00 0 
+7fd720000000-7fd720021000 rw-p 00000000 00:00 0 
+7fd720021000-7fd724000000 ---p 00000000 00:00 0 
+7fd724000000-7fd724021000 rw-p 00000000 00:00 0 
+7fd724021000-7fd728000000 ---p 00000000 00:00 0 
+7fd728000000-7fd729931000 rw-p 00000000 00:00 0 
+7fd729931000-7fd72c000000 ---p 00000000 00:00 0 
+7fd72c000000-7fd72cf39000 rw-p 00000000 00:00 0 
+7fd72cf39000-7fd730000000 ---p 00000000 00:00 0 
+7fd730000000-7fd730021000 rw-p 00000000 00:00 0 
+7fd730021000-7fd734000000 ---p 00000000 00:00 0 
+7fd734000000-7fd735e49000 rw-p 00000000 00:00 0 
+7fd735e49000-7fd738000000 ---p 00000000 00:00 0 
+7fd738000000-7fd738021000 rw-p 00000000 00:00 0 
+7fd738021000-7fd73c000000 ---p 00000000 00:00 0 
+7fd73c000000-7fd73c021000 rw-p 00000000 00:00 0 
+7fd73c021000-7fd740000000 ---p 00000000 00:00 0 
+7fd740000000-7fd740021000 rw-p 00000000 00:00 0 
+7fd740021000-7fd744000000 ---p 00000000 00:00 0 
+7fd744000000-7fd74428d000 rw-p 00000000 00:00 0 
+7fd74428d000-7fd748000000 ---p 00000000 00:00 0 
+7fd748000000-7fd748021000 rw-p 00000000 00:00 0 
+7fd748021000-7fd74c000000 ---p 00000000 00:00 0 
+7fd74c000000-7fd74c021000 rw-p 00000000 00:00 0 
+7fd74c021000-7fd750000000 ---p 00000000 00:00 0 
+7fd750000000-7fd750021000 rw-p 00000000 00:00 0 
+7fd750021000-7fd754000000 ---p 00000000 00:00 0 
+7fd75414e000-7fd75414f000 r--p 00000000 08:03 656930                     /usr/share/locale/en_GB/LC_MESSAGES/libc.mo
+7fd75414f000-7fd754151000 r--s 00006000 08:03 5898603                    /home/tsagrista/.gradle/caches/modules-2/files-2.1/org.ow2.asm/asm-tree/5.0.3/287749b48ba7162fb67c93a026d690b29f410bed/asm-tree-5.0.3.jar
+7fd754151000-7fd754153000 r--s 00009000 08:03 6689517                    /home/tsagrista/.gradle/caches/modules-2/files-2.1/org.ow2.asm/asm-commons/5.0.3/a7111830132c7f87d08fe48cb0ca07630f8cb91c/asm-commons-5.0.3.jar
+7fd754153000-7fd754154000 r--s 0000a000 08:03 6689515                    /home/tsagrista/.gradle/caches/modules-2/files-2.1/org.ow2.asm/asm-util/5.0.3/1512e5571325854b05fb1efce1db75fcced54389/asm-util-5.0.3.jar
+7fd754154000-7fd754155000 r--s 0000c000 08:03 5898601                    /home/tsagrista/.gradle/caches/modules-2/files-2.1/org.ow2.asm/asm/5.0.3/dcc2193db20e19e1feca8b1240dbbc4e190824fa/asm-5.0.3.jar
+7fd754155000-7fd754159000 r--s 00095000 08:03 6047522                    /home/tsagrista/Programs/Java/jdk1.8.0_60/jre/lib/jsse.jar
+7fd754159000-7fd75418a000 rw-p 00000000 00:00 0 
+7fd75418a000-7fd7541a0000 r-xp 00000000 08:03 6167439                    /home/tsagrista/Programs/Java/jdk1.8.0_60/jre/lib/amd64/libnet.so
+7fd7541a0000-7fd7543a0000 ---p 00016000 08:03 6167439                    /home/tsagrista/Programs/Java/jdk1.8.0_60/jre/lib/amd64/libnet.so
+7fd7543a0000-7fd7543a1000 rw-p 00016000 08:03 6167439                    /home/tsagrista/Programs/Java/jdk1.8.0_60/jre/lib/amd64/libnet.so
+7fd7543a1000-7fd7543f1000 rw-p 00000000 00:00 0 
+7fd7543f1000-7fd7545ef000 r--s 02283000 08:03 1466325                    /home/tsagrista/.gradle/caches/modules-2/files-2.1/com.google.gwt/gwt-dev/2.7.0/c2c3dd5baf648a0bb199047a818be5e560f48982/gwt-dev-2.7.0.jar
+7fd7545ef000-7fd7545f3000 r--s 0002d000 08:03 1466323                    /home/tsagrista/.gradle/caches/modules-2/files-2.1/com.google.gwt/gwt-codeserver/2.7.0/74d5e4119d083f7ca97e3f01cbd666d025b314b3/gwt-codeserver-2.7.0.jar
+7fd7545f3000-7fd7545f5000 r--s 0000e000 08:03 1466321                    /home/tsagrista/.gradle/caches/modules-2/files-2.1/javax.validation/validation-api/1.0.0.GA/7a561191db2203550fbfa40d534d4997624cd369/validation-api-1.0.0.GA-sources.jar
+7fd7545f5000-7fd7545f8000 r--s 00009000 08:03 1466319                    /home/tsagrista/.gradle/caches/modules-2/files-2.1/javax.validation/validation-api/1.0.0.GA/b6bd7f9d78f6fdaa3c37dae18a4bd298915f328e/validation-api-1.0.0.GA.jar
+7fd7545f8000-7fd7545fa000 r--s 00009000 08:03 5898786                    /home/tsagrista/.gradle/caches/modules-2/files-2.1/org.hamcrest/hamcrest-core/1.3/42a25dc3219429f0e5d060061f71acb49bf010a0/hamcrest-core-1.3.jar
+7fd7545fa000-7fd754628000 rw-p 00000000 00:00 0 
+7fd754628000-7fd754759000 r--s 01d5a000 08:03 1466317                    /home/tsagrista/.gradle/caches/modules-2/files-2.1/com.google.gwt/gwt-user/2.7.0/bdc7af42581745d3d79c2efe0b514f432b998a5b/gwt-user-2.7.0.jar
+7fd754759000-7fd754761000 r--s 00045000 08:03 5898784                    /home/tsagrista/.gradle/caches/modules-2/files-2.1/junit/junit/4.12/2973d150c0dc1fefe998f834810d68f278ea58ec/junit-4.12.jar
+7fd754761000-7fd754762000 ---p 00000000 00:00 0 
+7fd754762000-7fd754862000 rw-p 00000000 00:00 0                          [stack:3952]
+7fd754862000-7fd754865000 ---p 00000000 00:00 0 
+7fd754865000-7fd754963000 rw-p 00000000 00:00 0                          [stack:3950]
+7fd754963000-7fd754966000 ---p 00000000 00:00 0 
+7fd754966000-7fd754a64000 rw-p 00000000 00:00 0                          [stack:3948]
+7fd754a64000-7fd754a67000 ---p 00000000 00:00 0 
+7fd754a67000-7fd754b65000 rw-p 00000000 00:00 0                          [stack:3947]
+7fd754b65000-7fd754b68000 ---p 00000000 00:00 0 
+7fd754b68000-7fd754c66000 rw-p 00000000 00:00 0                          [stack:3946]
+7fd754c66000-7fd754c69000 ---p 00000000 00:00 0 
+7fd754c69000-7fd754d67000 rw-p 00000000 00:00 0                          [stack:3945]
+7fd754d67000-7fd754eff000 r--p 00000000 08:03 293359                     /usr/lib/locale/locale-archive
+7fd754eff000-7fd754f02000 ---p 00000000 00:00 0 
+7fd754f02000-7fd759000000 rw-p 00000000 00:00 0                          [stack:3940]
+7fd759000000-7fd75a9e0000 rwxp 00000000 00:00 0 
+7fd75a9e0000-7fd768000000 ---p 00000000 00:00 0 
+7fd768000000-7fd7685ab000 rw-p 00000000 00:00 0 
+7fd7685ab000-7fd76c000000 ---p 00000000 00:00 0 
+7fd76c000000-7fd76c002000 r--s 00002000 08:03 1193490                    /home/tsagrista/.gradle/caches/modules-2/files-2.1/com.badlogicgames.gdx/gdx-controllers-gwt/1.9.2/fa704424cff599709d1ed28d03cf04dd361d6479/gdx-controllers-gwt-1.9.2-sources.jar
+7fd76c002000-7fd76c004000 r--s 00003000 08:03 1193489                    /home/tsagrista/.gradle/caches/modules-2/files-2.1/com.badlogicgames.gdx/gdx-controllers-gwt/1.9.2/e68235b6bfe75e3fc4db224ed68a8b8853290555/gdx-controllers-gwt-1.9.2.jar
+7fd76c004000-7fd76c006000 r--s 00002000 08:03 5904747                    /home/tsagrista/.gradle/caches/modules-2/files-2.1/com.badlogicgames.gdx/gdx-controllers/1.9.2/d651e0d52443b1c1a943641eebc06482e29923bc/gdx-controllers-1.9.2.jar
+7fd76c006000-7fd76c007000 r--s 00002000 08:03 5905988                    /home/tsagrista/.gradle/caches/modules-2/files-2.1/com.badlogicgames.gdx/gdx-controllers/1.9.2/e729f524826e9c852d058005f741b84fad2a2025/gdx-controllers-1.9.2-sources.jar
+7fd76c007000-7fd76c022000 r--s 001a7000 08:03 5904698                    /home/tsagrista/.gradle/caches/modules-2/files-2.1/com.badlogicgames.gdx/gdx/1.9.2/e641cb91bec06bc64d9ddf7a7d7062caceec73cd/gdx-1.9.2.jar
+7fd76c022000-7fd76c031000 r--s 0011f000 08:03 5905987                    /home/tsagrista/.gradle/caches/modules-2/files-2.1/com.badlogicgames.gdx/gdx/1.9.2/b6c7422c6740f86a9a84fdcbc4c62a1f46db317d/gdx-1.9.2-sources.jar
+7fd76c031000-7fd76c03a000 r--s 00060000 08:03 1059735                    /home/tsagrista/.gradle/caches/modules-2/files-2.1/com.badlogicgames.gdx/gdx-backend-gwt/1.9.2/16a698614e134d1071be093302c8537ff1dc8d65/gdx-backend-gwt-1.9.2-sources.jar
+7fd76c03a000-7fd76c042000 r--s 00058000 08:03 1059487                    /home/tsagrista/.gradle/caches/modules-2/files-2.1/com.badlogicgames.gdx/gdx-backend-gwt/1.9.2/e22c7ea8307d8fe16643b0d6582c93305b98d6a6/gdx-backend-gwt-1.9.2.jar
+7fd76c042000-7fd76c054000 r--s 00116000 08:03 5769607                    /home/tsagrista/git/gaiasky/core/build/libs/core-1.0.jar
+7fd76c054000-7fd76c056000 r--s 0000d000 08:03 5768299                    /home/tsagrista/git/gaiasky/core/lib/postprocessing-sources.jar
+7fd76c056000-7fd76c059000 ---p 00000000 00:00 0 
+7fd76c059000-7fd76c157000 rw-p 00000000 00:00 0                          [stack:3938]
+7fd76c157000-7fd76c158000 ---p 00000000 00:00 0 
+7fd76c158000-7fd76d219000 rw-p 00000000 00:00 0                          [stack:3931]
+7fd76d219000-7fd76d3f1000 r--s 03d17000 08:03 6047519                    /home/tsagrista/Programs/Java/jdk1.8.0_60/jre/lib/rt.jar
+7fd76d3f1000-7fd76e067000 rw-p 00000000 00:00 0 
+7fd76e067000-7fd76e068000 ---p 00000000 00:00 0 
+7fd76e068000-7fd76e168000 rw-p 00000000 00:00 0                          [stack:3925]
+7fd76e168000-7fd76e169000 ---p 00000000 00:00 0 
+7fd76e169000-7fd76e269000 rw-p 00000000 00:00 0                          [stack:3924]
+7fd76e269000-7fd76e26a000 ---p 00000000 00:00 0 
+7fd76e26a000-7fd76e36a000 rw-p 00000000 00:00 0                          [stack:3923]
+7fd76e36a000-7fd76e36b000 ---p 00000000 00:00 0 
+7fd76e36b000-7fd76e5c1000 rw-p 00000000 00:00 0                          [stack:3922]
+7fd76e5c1000-7fd76e716000 ---p 00000000 00:00 0 
+7fd76e716000-7fd76e86c000 rw-p 00000000 00:00 0 
+7fd76e86c000-7fd76e9c0000 ---p 00000000 00:00 0 
+7fd76e9c0000-7fd76eaf8000 rw-p 00000000 00:00 0 
+7fd76eaf8000-7fd76eb16000 ---p 00000000 00:00 0 
+7fd76eb16000-7fd76eb7f000 rw-p 00000000 00:00 0 
+7fd76eb7f000-7fd76eed7000 ---p 00000000 00:00 0 
+7fd76eed7000-7fd76eef1000 r-xp 00000000 08:03 6167434                    /home/tsagrista/Programs/Java/jdk1.8.0_60/jre/lib/amd64/libzip.so
+7fd76eef1000-7fd76f0f1000 ---p 0001a000 08:03 6167434                    /home/tsagrista/Programs/Java/jdk1.8.0_60/jre/lib/amd64/libzip.so
+7fd76f0f1000-7fd76f0f2000 rw-p 0001a000 08:03 6167434                    /home/tsagrista/Programs/Java/jdk1.8.0_60/jre/lib/amd64/libzip.so
+7fd76f0f2000-7fd76f0fd000 r-xp 00000000 08:03 268911                     /usr/lib/libnss_files-2.23.so
+7fd76f0fd000-7fd76f2fc000 ---p 0000b000 08:03 268911                     /usr/lib/libnss_files-2.23.so
+7fd76f2fc000-7fd76f2fd000 r--p 0000a000 08:03 268911                     /usr/lib/libnss_files-2.23.so
+7fd76f2fd000-7fd76f2fe000 rw-p 0000b000 08:03 268911                     /usr/lib/libnss_files-2.23.so
+7fd76f2fe000-7fd76f304000 rw-p 00000000 00:00 0 
+7fd76f304000-7fd76f32e000 r-xp 00000000 08:03 6167414                    /home/tsagrista/Programs/Java/jdk1.8.0_60/jre/lib/amd64/libjava.so
+7fd76f32e000-7fd76f52e000 ---p 0002a000 08:03 6167414                    /home/tsagrista/Programs/Java/jdk1.8.0_60/jre/lib/amd64/libjava.so
+7fd76f52e000-7fd76f530000 rw-p 0002a000 08:03 6167414                    /home/tsagrista/Programs/Java/jdk1.8.0_60/jre/lib/amd64/libjava.so
+7fd76f530000-7fd76f53d000 r-xp 00000000 08:03 6167428                    /home/tsagrista/Programs/Java/jdk1.8.0_60/jre/lib/amd64/libverify.so
+7fd76f53d000-7fd76f73d000 ---p 0000d000 08:03 6167428                    /home/tsagrista/Programs/Java/jdk1.8.0_60/jre/lib/amd64/libverify.so
+7fd76f73d000-7fd76f73f000 rw-p 0000d000 08:03 6167428                    /home/tsagrista/Programs/Java/jdk1.8.0_60/jre/lib/amd64/libverify.so
+7fd76f73f000-7fd76f746000 r-xp 00000000 08:03 268919                     /usr/lib/librt-2.23.so
+7fd76f746000-7fd76f945000 ---p 00007000 08:03 268919                     /usr/lib/librt-2.23.so
+7fd76f945000-7fd76f946000 r--p 00006000 08:03 268919                     /usr/lib/librt-2.23.so
+7fd76f946000-7fd76f947000 rw-p 00007000 08:03 268919                     /usr/lib/librt-2.23.so
+7fd76f947000-7fd76fa4a000 r-xp 00000000 08:03 268916                     /usr/lib/libm-2.23.so
+7fd76fa4a000-7fd76fc4a000 ---p 00103000 08:03 268916                     /usr/lib/libm-2.23.so
+7fd76fc4a000-7fd76fc4b000 r--p 00103000 08:03 268916                     /usr/lib/libm-2.23.so
+7fd76fc4b000-7fd76fc4c000 rw-p 00104000 08:03 268916                     /usr/lib/libm-2.23.so
+7fd76fc4c000-7fd77090a000 r-xp 00000000 08:03 6426066                    /home/tsagrista/Programs/Java/jdk1.8.0_60/jre/lib/amd64/server/libjvm.so
+7fd77090a000-7fd770b09000 ---p 00cbe000 08:03 6426066                    /home/tsagrista/Programs/Java/jdk1.8.0_60/jre/lib/amd64/server/libjvm.so
+7fd770b09000-7fd770be1000 rw-p 00cbd000 08:03 6426066                    /home/tsagrista/Programs/Java/jdk1.8.0_60/jre/lib/amd64/server/libjvm.so
+7fd770be1000-7fd770c26000 rw-p 00000000 00:00 0 
+7fd770c26000-7fd770dbe000 r-xp 00000000 08:03 267157                     /usr/lib/libc-2.23.so
+7fd770dbe000-7fd770fbd000 ---p 00198000 08:03 267157                     /usr/lib/libc-2.23.so
+7fd770fbd000-7fd770fc1000 r--p 00197000 08:03 267157                     /usr/lib/libc-2.23.so
+7fd770fc1000-7fd770fc3000 rw-p 0019b000 08:03 267157                     /usr/lib/libc-2.23.so
+7fd770fc3000-7fd770fc7000 rw-p 00000000 00:00 0 
+7fd770fc7000-7fd770fc9000 r-xp 00000000 08:03 268915                     /usr/lib/libdl-2.23.so
+7fd770fc9000-7fd7711c9000 ---p 00002000 08:03 268915                     /usr/lib/libdl-2.23.so
+7fd7711c9000-7fd7711ca000 r--p 00002000 08:03 268915                     /usr/lib/libdl-2.23.so
+7fd7711ca000-7fd7711cb000 rw-p 00003000 08:03 268915                     /usr/lib/libdl-2.23.so
+7fd7711cb000-7fd7711e0000 r-xp 00000000 08:03 6295750                    /home/tsagrista/Programs/Java/jdk1.8.0_60/jre/lib/amd64/jli/libjli.so
+7fd7711e0000-7fd7713e0000 ---p 00015000 08:03 6295750                    /home/tsagrista/Programs/Java/jdk1.8.0_60/jre/lib/amd64/jli/libjli.so
+7fd7713e0000-7fd7713e1000 rw-p 00015000 08:03 6295750                    /home/tsagrista/Programs/Java/jdk1.8.0_60/jre/lib/amd64/jli/libjli.so
+7fd7713e1000-7fd7713f9000 r-xp 00000000 08:03 266893                     /usr/lib/libpthread-2.23.so
+7fd7713f9000-7fd7715f8000 ---p 00018000 08:03 266893                     /usr/lib/libpthread-2.23.so
+7fd7715f8000-7fd7715f9000 r--p 00017000 08:03 266893                     /usr/lib/libpthread-2.23.so
+7fd7715f9000-7fd7715fa000 rw-p 00018000 08:03 266893                     /usr/lib/libpthread-2.23.so
+7fd7715fa000-7fd7715fe000 rw-p 00000000 00:00 0 
+7fd7715fe000-7fd771621000 r-xp 00000000 08:03 267155                     /usr/lib/ld-2.23.so
+7fd771621000-7fd771624000 r--s 00015000 08:03 5768300                    /home/tsagrista/git/gaiasky/core/lib/postprocessing.jar
+7fd771624000-7fd771711000 rw-p 00000000 00:00 0 
+7fd771711000-7fd771719000 rw-s 00000000 00:22 35                         /tmp/hsperfdata_tsagrista/3911
+7fd771719000-7fd77171a000 rw-p 00000000 00:00 0 
+7fd77171a000-7fd77171b000 ---p 00000000 00:00 0 
+7fd77171b000-7fd77171e000 ---p 00000000 00:00 0 
+7fd77171e000-7fd771821000 rw-p 00000000 00:00 0                          [stack:3917]
+7fd771821000-7fd771822000 r--p 00023000 08:03 267155                     /usr/lib/ld-2.23.so
+7fd771822000-7fd771823000 rw-p 00024000 08:03 267155                     /usr/lib/ld-2.23.so
+7fd771823000-7fd771824000 rw-p 00000000 00:00 0 
+7ffe7906c000-7ffe7908e000 rw-p 00000000 00:00 0                          [stack]
+7ffe790db000-7ffe790dd000 r--p 00000000 00:00 0                          [vvar]
+7ffe790dd000-7ffe790df000 r-xp 00000000 00:00 0                          [vdso]
+ffffffffff600000-ffffffffff601000 r-xp 00000000 00:00 0                  [vsyscall]
+
+VM Arguments:
+jvm_args: -Dgwt.persistentunitcachedir=/home/tsagrista/git/gaiasky/html/build/gwt/cache -Xms1G -Xmx2G -Dfile.encoding=UTF-8 -Duser.country=GB -Duser.language=en -Duser.variant 
+java_command: com.google.gwt.dev.CompilePermsServer -host localhost -port 45740 -logLevel WARN -cookie 862ECC8181CAA26B7A83D1E858DC63E4
+java_class_path (initial): /home/tsagrista/git/gaiasky/html/src:/home/tsagrista/git/gaiasky/core/lib/postprocessing.jar:/home/tsagrista/git/gaiasky/core/lib/postprocessing-sources.jar:/home/tsagrista/git/gaiasky/core/build/libs/core-1.0.jar:/home/tsagrista/.gradle/caches/modules-2/files-2.1/com.badlogicgames.gdx/gdx-backend-gwt/1.9.2/e22c7ea8307d8fe16643b0d6582c93305b98d6a6/gdx-backend-gwt-1.9.2.jar:/home/tsagrista/.gradle/caches/modules-2/files-2.1/com.badlogicgames.gdx/gdx-backend-gwt/1.9.2/16a698614e134d1071be093302c8537ff1dc8d65/gdx-backend-gwt-1.9.2-sources.jar:/home/tsagrista/.gradle/caches/modules-2/files-2.1/com.badlogicgames.gdx/gdx/1.9.2/b6c7422c6740f86a9a84fdcbc4c62a1f46db317d/gdx-1.9.2-sources.jar:/home/tsagrista/.gradle/caches/modules-2/files-2.1/com.badlogicgames.gdx/gdx/1.9.2/e641cb91bec06bc64d9ddf7a7d7062caceec73cd/gdx-1.9.2.jar:/home/tsagrista/.gradle/caches/modules-2/files-2.1/com.badlogicgames.gdx/gdx-controllers/1.9.2/e729f524826e9c852d058005f741b84fad2a2025/gdx-controllers-1.9.2-sources.jar:/home/tsagrista/.gradle/caches/modules-2/files-2.1/com.badlogicgames.gdx/gdx-controllers/1.9.2/d651e0d52443b1c1a943641eebc06482e29923bc/gdx-controllers-1.9.2.jar:/home/tsagrista/.gradle/caches/modules-2/files-2.1/com.badlogicgames.gdx/gdx-controllers-gwt/1.9.2/e68235b6bfe75e3fc4db224ed68a8b8853290555/gdx-controllers-gwt-1.9.2.jar:/home/tsagrista/.gradle/caches/modules-2/files-2.1/com.badlogicgames.gdx/gdx-controllers-gwt/1.9.2/fa704424cff599709d1ed28d03cf04dd361d6479/gdx-controllers-gwt-1.9.2-sources.jar:/home/tsagrista/.gradle/caches/modules-2/files-2.1/junit/junit/4.12/2973d150c0dc1fefe998f834810d68f278ea58ec/junit-4.12.jar:/home/tsagrista/.gradle/caches/modules-2/files-2.1/com.google.gwt/gwt-user/2.7.0/bdc7af42581745d3d79c2efe0b514f432b998a5b/gwt-user-2.7.0.jar:/home/tsagrista/.gradle/caches/modules-2/files-2.1/org.hamcrest/hamcrest-core/1.3/42a25dc3219429f0e5d060061f71acb49bf010a0/hamcrest-core-1.3.jar:/home/tsagrista/.gradle/caches/modules-2/files-2.1/
+Launcher Type: SUN_STANDARD
+
+Environment Variables:
+JAVA_HOME=/home/tsagrista/Programs/Java/jdk1.8.0_60
+JRE_HOME=/home/tsagrista/Programs/Java/jdk1.8.0_60/jre/
+PATH=/opt/cuda/bin/:.:/home/tsagrista/Programs/Java/jdk1.8.0_60/bin:/home/tsagrista/Programs/Java/jdk1.8.0_60/jre//bin:/home/tsagrista/Programs/Gradle/gradle-2.6//bin/:/home/tsagrista/Programs/Topcat:/home/tsagrista/Programs/Libraries/fbx-conv:/home/tsagrista/Programs/ffmpeg-64:/home/tsagrista/Programs/PythonTidy:/home/tsagrista/bin:/usr/local/sbin:/usr/local/bin:/usr/bin:/opt/cuda/bin:/usr/lib/jvm/default/bin:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl
+LD_LIBRARY_PATH=/usr/lib/nvidia::/usr/lib64:/usr/lib32:/usr/lib
+SHELL=/bin/bash
+DISPLAY=:0.0
+OS=/home/tsagrista/Workspaces/objectserver
+
+Signal Handlers:
+SIGSEGV: [libjvm.so+0xaba070], sa_mask[0]=11111111011111111101111111111110, sa_flags=SA_RESTART|SA_SIGINFO
+SIGBUS: [libjvm.so+0xaba070], sa_mask[0]=11111111011111111101111111111110, sa_flags=SA_RESTART|SA_SIGINFO
+SIGFPE: [libjvm.so+0x917630], sa_mask[0]=11111111011111111101111111111110, sa_flags=SA_RESTART|SA_SIGINFO
+SIGPIPE: [libjvm.so+0x917630], sa_mask[0]=11111111011111111101111111111110, sa_flags=SA_RESTART|SA_SIGINFO
+SIGXFSZ: [libjvm.so+0x917630], sa_mask[0]=11111111011111111101111111111110, sa_flags=SA_RESTART|SA_SIGINFO
+SIGILL: [libjvm.so+0x917630], sa_mask[0]=11111111011111111101111111111110, sa_flags=SA_RESTART|SA_SIGINFO
+SIGUSR1: SIG_DFL, sa_mask[0]=00000000000000000000000000000000, sa_flags=none
+SIGUSR2: [libjvm.so+0x918c60], sa_mask[0]=00100000000000000000000000000000, sa_flags=SA_RESTART|SA_SIGINFO
+SIGHUP: [libjvm.so+0x91a060], sa_mask[0]=11111111011111111101111111111110, sa_flags=SA_RESTART|SA_SIGINFO
+SIGINT: [libjvm.so+0x91a060], sa_mask[0]=11111111011111111101111111111110, sa_flags=SA_RESTART|SA_SIGINFO
+SIGTERM: [libjvm.so+0x91a060], sa_mask[0]=11111111011111111101111111111110, sa_flags=SA_RESTART|SA_SIGINFO
+SIGQUIT: [libjvm.so+0x91a060], sa_mask[0]=11111111011111111101111111111110, sa_flags=SA_RESTART|SA_SIGINFO
+
+
+---------------  S Y S T E M  ---------------
+
+OS:DISTRIB_ID=ManjaroLinux
+DISTRIB_RELEASE=15.12
+DISTRIB_CODENAME=Capella
+DISTRIB_DESCRIPTION="Manjaro Linux"
+
+uname:Linux 4.4.6-1-MANJARO #1 SMP PREEMPT Sat Mar 19 06:00:37 CET 2016 x86_64
+libc:glibc 2.23 NPTL 2.23 
+rlimit: STACK 8192k, CORE infinity, NPROC 31468, NOFILE 4096, AS infinity
+load average:21.93 9.60 4.16
+
+/proc/meminfo:
+MemTotal:        8062968 kB
+MemFree:           48132 kB
+MemAvailable:      63640 kB
+Buffers:             632 kB
+Cached:           329736 kB
+SwapCached:            0 kB
+Active:          7734040 kB
+Inactive:          34636 kB
+Active(anon):    7723004 kB
+Inactive(anon):    20460 kB
+Active(file):      11036 kB
+Inactive(file):    14176 kB
+Unevictable:           0 kB
+Mlocked:               0 kB
+SwapTotal:             0 kB
+SwapFree:              0 kB
+Dirty:               328 kB
+Writeback:             0 kB
+AnonPages:       7439556 kB
+Mapped:            64612 kB
+Shmem:            303908 kB
+Slab:              62640 kB
+SReclaimable:      31076 kB
+SUnreclaim:        31564 kB
+KernelStack:        8592 kB
+PageTables:        43592 kB
+NFS_Unstable:          0 kB
+Bounce:                0 kB
+WritebackTmp:          0 kB
+CommitLimit:     4031484 kB
+Committed_AS:   11769556 kB
+VmallocTotal:   34359738367 kB
+VmallocUsed:           0 kB
+VmallocChunk:          0 kB
+HardwareCorrupted:     0 kB
+AnonHugePages:   2811904 kB
+HugePages_Total:       0
+HugePages_Free:        0
+HugePages_Rsvd:        0
+HugePages_Surp:        0
+Hugepagesize:       2048 kB
+DirectMap4k:      279848 kB
+DirectMap2M:     6942720 kB
+DirectMap1G:     1048576 kB
+
+
+CPU:total 4 (4 cores per cpu, 1 threads per core) family 6 model 60 stepping 3, cmov, cx8, fxsr, mmx, sse, sse2, sse3, ssse3, sse4.1, sse4.2, popcnt, avx, avx2, aes, clmul, erms, lzcnt, tsc, tscinvbit, bmi1, bmi2
+
+/proc/cpuinfo:
+processor	: 0
+vendor_id	: GenuineIntel
+cpu family	: 6
+model		: 60
+model name	: Intel(R) Core(TM) i5-4460  CPU @ 3.20GHz
+stepping	: 3
+microcode	: 0x1e
+cpu MHz		: 3222.500
+cache size	: 6144 KB
+physical id	: 0
+siblings	: 4
+core id		: 0
+cpu cores	: 4
+apicid		: 0
+initial apicid	: 0
+fpu		: yes
+fpu_exception	: yes
+cpuid level	: 13
+wp		: yes
+flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc aperfmperf eagerfpu pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm ida arat pln pts dtherm tpr_shadow vnmi flexpriority ept vpid fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid xsaveopt
+bugs		:
+bogomips	: 6402.84
+clflush size	: 64
+cache_alignment	: 64
+address sizes	: 39 bits physical, 48 bits virtual
+power management:
+
+processor	: 1
+vendor_id	: GenuineIntel
+cpu family	: 6
+model		: 60
+model name	: Intel(R) Core(TM) i5-4460  CPU @ 3.20GHz
+stepping	: 3
+microcode	: 0x1e
+cpu MHz		: 3200.000
+cache size	: 6144 KB
+physical id	: 0
+siblings	: 4
+core id		: 1
+cpu cores	: 4
+apicid		: 2
+initial apicid	: 2
+fpu		: yes
+fpu_exception	: yes
+cpuid level	: 13
+wp		: yes
+flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc aperfmperf eagerfpu pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm ida arat pln pts dtherm tpr_shadow vnmi flexpriority ept vpid fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid xsaveopt
+bugs		:
+bogomips	: 6402.84
+clflush size	: 64
+cache_alignment	: 64
+address sizes	: 39 bits physical, 48 bits virtual
+power management:
+
+processor	: 2
+vendor_id	: GenuineIntel
+cpu family	: 6
+model		: 60
+model name	: Intel(R) Core(TM) i5-4460  CPU @ 3.20GHz
+stepping	: 3
+microcode	: 0x1e
+cpu MHz		: 3211.625
+cache size	: 6144 KB
+physical id	: 0
+siblings	: 4
+core id		: 2
+cpu cores	: 4
+apicid		: 4
+initial apicid	: 4
+fpu		: yes
+fpu_exception	: yes
+cpuid level	: 13
+wp		: yes
+flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc aperfmperf eagerfpu pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm ida arat pln pts dtherm tpr_shadow vnmi flexpriority ept vpid fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid xsaveopt
+bugs		:
+bogomips	: 6402.84
+clflush size	: 64
+cache_alignment	: 64
+address sizes	: 39 bits physical, 48 bits virtual
+power management:
+
+processor	: 3
+vendor_id	: GenuineIntel
+cpu family	: 6
+model		: 60
+model name	: Intel(R) Core(TM) i5-4460  CPU @ 3.20GHz
+stepping	: 3
+microcode	: 0x1e
+cpu MHz		: 3199.875
+cache size	: 6144 KB
+physical id	: 0
+siblings	: 4
+core id		: 3
+cpu cores	: 4
+apicid		: 6
+initial apicid	: 6
+fpu		: yes
+fpu_exception	: yes
+cpuid level	: 13
+wp		: yes
+flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc aperfmperf eagerfpu pni pclmulqdq dtes64 monitor ds_cpl vmx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm ida arat pln pts dtherm tpr_shadow vnmi flexpriority ept vpid fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid xsaveopt
+bugs		:
+bogomips	: 6402.84
+clflush size	: 64
+cache_alignment	: 64
+address sizes	: 39 bits physical, 48 bits virtual
+power management:
+
+
+
+Memory: 4k page, physical 8062968k(48132k free), swap 0k(0k free)
+
+vm_info: Java HotSpot(TM) 64-Bit Server VM (25.60-b23) for linux-amd64 JRE (1.8.0_60-b27), built on Aug  4 2015 12:19:40 by "java_re" with gcc 4.3.0 20080428 (Red Hat 4.3.0-8)
+
+time: Sat Apr 23 07:47:19 2016
+elapsed time: 392 seconds (0d 0h 6m 32s)
+

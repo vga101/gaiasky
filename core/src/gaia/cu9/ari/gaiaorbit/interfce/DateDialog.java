@@ -194,17 +194,16 @@ public class DateDialog extends CollapsibleWindow {
 
                     if (cool) {
                         // Set the date
-                        Calendar cal = Calendar.getInstance();
-
-                        cal.set(Calendar.YEAR, Integer.parseInt(year.getText()));
-                        cal.set(Calendar.MONTH, month.getSelectedIndex());
-                        cal.set(Calendar.DAY_OF_MONTH, Integer.parseInt(day.getText()));
-                        cal.set(Calendar.HOUR_OF_DAY, Integer.parseInt(hour.getText()));
-                        cal.set(Calendar.MINUTE, Integer.parseInt(min.getText()));
-                        cal.set(Calendar.SECOND, Integer.parseInt(sec.getText()));
+                        Date date = new Date();
+                        date.setYear(Integer.parseInt(year.getText())-1900);
+                        date.setMonth(month.getSelectedIndex());
+                        date.setDate(Integer.parseInt(day.getText()));
+                        date.setHours(Integer.parseInt(hour.getText()));
+                        date.setMinutes(Integer.parseInt(min.getText()));
+                        date.setSeconds(Integer.parseInt(sec.getText()));
 
                         // Send time change command
-                        EventManager.instance.post(Events.TIME_CHANGE_CMD, cal.getTime());
+                        EventManager.instance.post(Events.TIME_CHANGE_CMD, date);
 
                         me.remove();
                     }

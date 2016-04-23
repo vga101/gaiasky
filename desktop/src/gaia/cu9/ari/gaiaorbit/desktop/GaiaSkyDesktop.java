@@ -34,6 +34,7 @@ import gaia.cu9.ari.gaiaorbit.desktop.util.CamRecorder;
 import gaia.cu9.ari.gaiaorbit.desktop.util.DesktopConfInit;
 import gaia.cu9.ari.gaiaorbit.desktop.util.DesktopMusicActors;
 import gaia.cu9.ari.gaiaorbit.desktop.util.DesktopNetworkChecker;
+import gaia.cu9.ari.gaiaorbit.desktop.util.MemInfoWindow;
 import gaia.cu9.ari.gaiaorbit.desktop.util.RunCameraWindow;
 import gaia.cu9.ari.gaiaorbit.desktop.util.RunScriptWindow;
 import gaia.cu9.ari.gaiaorbit.desktop.util.SysUtils;
@@ -66,6 +67,8 @@ import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 public class GaiaSkyDesktop implements IObserver {
     private static GaiaSkyDesktop gsd;
     public static String ASSETS_LOC;
+    
+    private MemInfoWindow memInfoWindow;
 
     public static void main(String[] args) {
 
@@ -158,7 +161,7 @@ public class GaiaSkyDesktop implements IObserver {
 
     public GaiaSkyDesktop() {
         super();
-        EventManager.instance.subscribe(this, Events.SHOW_PREFERENCES_ACTION, Events.SHOW_ABOUT_ACTION, Events.SHOW_RUNSCRIPT_ACTION, Events.JAVA_EXCEPTION, Events.SHOW_PLAYCAMERA_ACTION, Events.POST_NOTIFICATION);
+        EventManager.instance.subscribe(this, Events.SHOW_PREFERENCES_ACTION, Events.SHOW_ABOUT_ACTION, Events.SHOW_RUNSCRIPT_ACTION, Events.JAVA_EXCEPTION, Events.SHOW_PLAYCAMERA_ACTION, Events.DISPLAY_MEM_INFO_WINDOW, Events.POST_NOTIFICATION);
     }
 
     private void init() {
@@ -244,6 +247,12 @@ public class GaiaSkyDesktop implements IObserver {
 
             });
             break;
+        case DISPLAY_MEM_INFO_WINDOW:
+        	if(memInfoWindow == null){
+        		memInfoWindow = new MemInfoWindow((Stage)data[0], (Skin)data[1]);
+        	}
+        	memInfoWindow.display();
+        	break;
         case SHOW_ABOUT_ACTION:
             // Exit fullscreen
             //            EventManager.instance.post(Events.FULLSCREEN_CMD, false);
