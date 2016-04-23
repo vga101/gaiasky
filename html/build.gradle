@@ -19,8 +19,8 @@ gwt {
 }
 
 compileGwt {
-    minHeapSize = "1G";
-    maxHeapSize = "2G";
+    minHeapSize = "2G";
+    maxHeapSize = "4G";
 }
 
 task draftRun(type: JettyRunWar) {
