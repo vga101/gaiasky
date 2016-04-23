@@ -221,7 +221,7 @@ public class GlobalResources {
                 }
 
             } else {
-                if (filter.accept(f.parent().file(), f.name())) {
+                if (filter.accept(null, f.name())) {
                     l.add(f);
                 }
             }
