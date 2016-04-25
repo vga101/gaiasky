@@ -156,23 +156,24 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
     public void notify(Events event, final Object... data) {
         switch (event) {
         case PROPERTIES_WRITTEN:
-            if (changed(pps[RenderType.screenshot.index].pp, GlobalConf.screenshot.SCREENSHOT_WIDTH, GlobalConf.screenshot.SCREENSHOT_HEIGHT)) {
-                Gdx.app.postRunnable(new Runnable() {
-                    @Override
-                    public void run() {
-                        replace(RenderType.screenshot.index, GlobalConf.screenshot.SCREENSHOT_WIDTH, GlobalConf.screenshot.SCREENSHOT_HEIGHT);
-                    }
-                });
-            }
-
-            if (changed(pps[RenderType.frame.index].pp, GlobalConf.frame.RENDER_WIDTH, GlobalConf.frame.RENDER_HEIGHT)) {
-                Gdx.app.postRunnable(new Runnable() {
-                    @Override
-                    public void run() {
-                        replace(RenderType.frame.index, GlobalConf.frame.RENDER_WIDTH, GlobalConf.frame.RENDER_HEIGHT);
-                    }
-                });
-            }
+            if (pps != null)
+                if (changed(pps[RenderType.screenshot.index].pp, GlobalConf.screenshot.SCREENSHOT_WIDTH, GlobalConf.screenshot.SCREENSHOT_HEIGHT)) {
+                    Gdx.app.postRunnable(new Runnable() {
+                        @Override
+                        public void run() {
+                            replace(RenderType.screenshot.index, GlobalConf.screenshot.SCREENSHOT_WIDTH, GlobalConf.screenshot.SCREENSHOT_HEIGHT);
+                        }
+                    });
+                }
+            if (pps != null)
+                if (changed(pps[RenderType.frame.index].pp, GlobalConf.frame.RENDER_WIDTH, GlobalConf.frame.RENDER_HEIGHT)) {
+                    Gdx.app.postRunnable(new Runnable() {
+                        @Override
+                        public void run() {
+                            replace(RenderType.frame.index, GlobalConf.frame.RENDER_WIDTH, GlobalConf.frame.RENDER_HEIGHT);
+                        }
+                    });
+                }
             break;
         case BLOOM_CMD:
             Gdx.app.postRunnable(new Runnable() {
@@ -180,9 +181,11 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
                 public void run() {
                     float intensity = (float) data[0];
                     for (int i = 0; i < RenderType.values().length; i++) {
-                        PostProcessBean ppb = pps[i];
-                        ppb.bloom.setBloomIntesity(intensity);
-                        ppb.bloom.setEnabled(intensity > 0);
+                        if (pps[i] != null) {
+                            PostProcessBean ppb = pps[i];
+                            ppb.bloom.setBloomIntesity(intensity);
+                            ppb.bloom.setEnabled(intensity > 0);
+                        }
                     }
                 }
             });
@@ -190,8 +193,10 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
         case LENS_FLARE_CMD:
             boolean active = (Boolean) data[0];
             for (int i = 0; i < RenderType.values().length; i++) {
-                PostProcessBean ppb = pps[i];
-                ppb.lens.setEnabled(active);
+                if (pps[i] != null) {
+                    PostProcessBean ppb = pps[i];
+                    ppb.lens.setEnabled(active);
+                }
             }
             break;
         case CAMERA_MOTION_UPDATED:
@@ -207,9 +212,11 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
                 public void run() {
                     float opacity = (float) data[0];
                     for (int i = 0; i < RenderType.values().length; i++) {
-                        PostProcessBean ppb = pps[i];
-                        ppb.motionblur.setBlurOpacity(opacity);
-                        ppb.motionblur.setEnabled(opacity > 0);
+                        if (pps[i] != null) {
+                            PostProcessBean ppb = pps[i];
+                            ppb.motionblur.setBlurOpacity(opacity);
+                            ppb.motionblur.setEnabled(opacity > 0);
+                        }
                     }
                 }
             });
@@ -218,9 +225,12 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
         case LIGHT_POS_2D_UPDATED:
             Integer nLights = (Integer) data[0];
             float[] lightpos = (float[]) data[1];
+
             for (int i = 0; i < RenderType.values().length; i++) {
-                PostProcessBean ppb = pps[i];
-                ppb.lscatter.setLightPositions(nLights, lightpos);
+                if (pps[i] != null) {
+                    PostProcessBean ppb = pps[i];
+                    ppb.lscatter.setLightPositions(nLights, lightpos);
+                }
             }
             break;
         }

@@ -186,14 +186,16 @@ public class ControlsWindow extends CollapsibleWindow implements IObserver {
         mainActors.add(gaia);
 
         /** ----MUSIC GROUP---- **/
-        MusicComponent musicComponent = new MusicComponent(skin, ui);
-        musicComponent.initialize();
+        if (Constants.desktop) {
+            MusicComponent musicComponent = new MusicComponent(skin, ui);
+            musicComponent.initialize();
 
-        Actor[] musicActors = MusicActorsManager.getMusicActors() != null ? MusicActorsManager.getMusicActors().getActors(skin) : null;
+            Actor[] musicActors = MusicActorsManager.getMusicActors() != null ? MusicActorsManager.getMusicActors().getActors(skin) : null;
 
-        CollapsiblePane music = new CollapsiblePane(ui, txt("gui.music"), musicComponent.getActor(), skin, true, musicActors);
-        music.align(Align.left);
-        mainActors.add(music);
+            CollapsiblePane music = new CollapsiblePane(ui, txt("gui.music"), musicComponent.getActor(), skin, true, musicActors);
+            music.align(Align.left);
+            mainActors.add(music);
+        }
 
         /** ----BACK TO WEBGL LINK---- **/
         Button switchWebgl = new OwnTextButton(txt("gui.webgl.back"), skin, "link");
