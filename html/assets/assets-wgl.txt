@@ -245,7 +245,6 @@ i:data/tex/phobos.jpg:77922:image/jpeg
 i:data/tex/static.jpg:402:image/jpeg
 i:data/tex/lut.jpg:333:image/jpeg
 i:data/tex/star.jpg:297682:image/jpeg
-i:data/tex/earth-4k.jpg:1452941:image/jpeg
 i:data/tex/venus.jpg:28969:image/jpeg
 i:data/tex/earth.jpg:662419:image/jpeg
 i:data/tex/deimos.jpg:46049:image/jpeg
@@ -258,7 +257,6 @@ i:data/tex/callisto.jpg:62676:image/jpeg
 d:data/tex/.comments:0:application/unknown
 t:data/tex/.comments/io.jpg.xml:788:application/xml
 i:data/tex/ceres.jpg:51363:image/jpeg
-i:data/tex/moon-normal.jpg:112038:image/jpeg
 b:data/hygxyz.bin:6455530:application/octet-stream
 b:data/orb.EARTH.dat:16407:application/unknown
 d:music:0:application/unknown
