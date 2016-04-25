@@ -22,6 +22,8 @@ public class WebGLConfInitLite extends ConfInit {
 
     @Override
     public void initGlobalConf() throws Exception {
+        this.webgl = true;
+
         GlobalConf.updateScaleFactor(1);
         Constants.focalplane = true;
 
