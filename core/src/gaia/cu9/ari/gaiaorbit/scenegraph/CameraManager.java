@@ -306,17 +306,17 @@ public class CameraManager implements ICamera, IObserver {
             EventManager.instance.post(Events.FOV_CHANGE_NOTIFICATION, this.getCamera().fieldOfView);
 
             // In fov1and2 mode we can only use the normal pixel renderer
-            if (mode.isGaiaFov() && !prevMode.isGaiaFov() && GlobalConf.scene.PIXEL_RENDERER != 0) {
-                // We change to FOV1and2 and the current renderer is not normal
-                pxRendererBackup = GlobalConf.scene.PIXEL_RENDERER;
-                EventManager.instance.post(Events.PIXEL_RENDERER_CMD, 0);
-                EventManager.instance.post(Events.PIXEL_RENDERER_UPDATE);
-            } else if (!mode.isGaiaFov() && prevMode.isGaiaFov() && pxRendererBackup >= 0) {
-                // We get out of Fov1and2
-                EventManager.instance.post(Events.PIXEL_RENDERER_CMD, pxRendererBackup);
-                EventManager.instance.post(Events.PIXEL_RENDERER_UPDATE);
-                pxRendererBackup = -1;
-            }
+            //            if (mode.isGaiaFov() && !prevMode.isGaiaFov() && GlobalConf.scene.PIXEL_RENDERER != 0) {
+            //                // We change to FOV1and2 and the current renderer is not normal
+            //                pxRendererBackup = GlobalConf.scene.PIXEL_RENDERER;
+            //                EventManager.instance.post(Events.PIXEL_RENDERER_CMD, 0);
+            //                EventManager.instance.post(Events.PIXEL_RENDERER_UPDATE);
+            //            } else if (!mode.isGaiaFov() && prevMode.isGaiaFov() && pxRendererBackup >= 0) {
+            //                // We get out of Fov1and2
+            //                EventManager.instance.post(Events.PIXEL_RENDERER_CMD, pxRendererBackup);
+            //                EventManager.instance.post(Events.PIXEL_RENDERER_UPDATE);
+            //                pxRendererBackup = -1;
+            //            }
         }
     }
 

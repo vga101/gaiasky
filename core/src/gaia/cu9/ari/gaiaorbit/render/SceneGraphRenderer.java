@@ -553,7 +553,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
                 @Override
                 public void run() {
                     AbstractRenderSystem.POINT_UPDATE_FLAG = true;
-                    updatePixelRenderSystem();
+                    //                    updatePixelRenderSystem();
                 }
 
             });
