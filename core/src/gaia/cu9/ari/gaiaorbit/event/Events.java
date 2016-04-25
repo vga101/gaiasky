@@ -322,6 +322,8 @@ public enum Events {
     REMOVE_GUI_COMPONENT,
     /** Adds the gui component identified by the given name **/
     ADD_GUI_COMPONENT,
+    
+    DISPLAY_MEM_INFO_WINDOW,
 
     /** Volume of music, contains the volume (float in [0..1]) **/
     MUSIC_VOLUME_CMD,

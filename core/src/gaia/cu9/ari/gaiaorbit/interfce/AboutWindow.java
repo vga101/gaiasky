@@ -1,5 +1,17 @@
 package gaia.cu9.ari.gaiaorbit.interfce;
 
+import gaia.cu9.ari.gaiaorbit.event.EventManager;
+import gaia.cu9.ari.gaiaorbit.event.Events;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
+import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
+import gaia.cu9.ari.gaiaorbit.util.I18n;
+import gaia.cu9.ari.gaiaorbit.util.scene2d.CollapsibleWindow;
+import gaia.cu9.ari.gaiaorbit.util.scene2d.Link;
+import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnLabel;
+import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnScrollPane;
+import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextArea;
+import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextButton;
+
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,16 +47,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.BufferUtils;
 
-import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
-import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
-import gaia.cu9.ari.gaiaorbit.util.I18n;
-import gaia.cu9.ari.gaiaorbit.util.scene2d.CollapsibleWindow;
-import gaia.cu9.ari.gaiaorbit.util.scene2d.Link;
-import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnLabel;
-import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnScrollPane;
-import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextArea;
-import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextButton;
-
 /**
  * The help window with About, Help and System sections.
  * @author tsagrista
@@ -52,25 +54,26 @@ import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextButton;
  */
 public class AboutWindow extends CollapsibleWindow {
     final private Stage stage;
+    final private Skin skin;
     private AboutWindow me;
     private Table table;
     private OwnScrollPane scroll;
 
     private LabelStyle linkStyle;
 
-    private MemInfoWindow meminfoWindow;
 
     private List<OwnScrollPane> scrolls;
     private List<Actor> textareas;
 
-    public AboutWindow(Stage stg, Skin skin) {
-        super(txt("gui.help.help") + " - " + GlobalConf.APPLICATION_NAME + " v" + GlobalConf.version.version, skin);
+    public AboutWindow(Stage stg, Skin sk) {
+        super(txt("gui.help.help") + " - " + GlobalConf.APPLICATION_NAME + " v" + GlobalConf.version.version, sk);
 
         this.stage = stg;
+        this.skin = sk;
         this.me = this;
         this.linkStyle = skin.get("link", LabelStyle.class);
 
-        meminfoWindow = new MemInfoWindow(stage, skin);
+        
 
         float tawidth = 440 * GlobalConf.SCALE_FACTOR;
         float taheight = 250 * GlobalConf.SCALE_FACTOR;
@@ -299,7 +302,7 @@ public class AboutWindow extends CollapsibleWindow {
             @Override
             public boolean handle(Event event) {
                 if (event instanceof ChangeEvent) {
-                    meminfoWindow.display();
+                	EventManager.instance.post(Events.DISPLAY_MEM_INFO_WINDOW, stage, skin);
                     return true;
                 }
 
