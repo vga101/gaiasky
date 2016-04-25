@@ -3,8 +3,8 @@ apply plugin: "jetty"
 
 gwt {
     gwtVersion='2.7.0' // Should match the gwt version used for building the gwt backend
-    minHeapSize="2G"
-    maxHeapSize="4G" // Default 256m is not enough for gwt compiler. GWT is HUNGRY
+    minHeapSize="1G"
+    maxHeapSize="3G" // Default 256m is not enough for gwt compiler. GWT is HUNGRY
 
     src = files(file("src/")) // Needs to be in front of "modules" below.
     modules 'gaia.cu9.ari.gaiaorbit.GdxDefinition'
@@ -19,8 +19,8 @@ gwt {
 }
 
 compileGwt {
-    minHeapSize = "2G";
-    maxHeapSize = "4G";
+    minHeapSize = "1G";
+    maxHeapSize = "3G";
 }
 
 task draftRun(type: JettyRunWar) {
@@ -56,181 +56,190 @@ task dist(dependsOn: [clean, compileGwt]) {
 }
 
 task afterGwtCompileFull << {
+	String distfold = "build/dist"
     // update logo
-    delete 'war/html/logo.png'
+    delete distfold + '/html/logo.png'
     copy {
         from '../android/assets/img/gaiaskylogo.png'
-        into 'war/html/'
+        into distfold + '/html/'
     }
-    file('war/html/gaiaskylogo.png').renameTo(file('war/html/logo.png'))
+    file(distfold + '/html/gaiaskylogo.png').renameTo(file(distfold + '/html/logo.png'))
     
     // update index.html
-    delete 'war/index.html'
+    delete distfold + '/index.html'
+    delete distfold + '/index-lite.html'
     copy {
         from 'webapp/index.html'
-        into 'war/'
+        into distfold
     }
+    
     
     // copy orbit files from android folder
     copy {
-        from 'war/assets/data/android/orb.EARTH.dat'
-        into 'war/assets/data/'
+        from distfold + '/assets/data/android/orb.EARTH.dat'
+        into distfold + '/assets/data/'
     }
     copy {
-        from 'war/assets/data/android/orb.GAIA.dat'
-        into 'war/assets/data/'
+        from distfold + '/assets/data/android/orb.GAIA.dat'
+        into distfold + '/assets/data/'
     }
     copy {
-        from 'war/assets/data/android/orb.JUPITER.dat'
-        into 'war/assets/data/'
+        from distfold + '/assets/data/android/orb.JUPITER.dat'
+        into distfold + '/assets/data/'
     }
     copy {
-        from 'war/assets/data/android/orb.MARS.dat'
-        into 'war/assets/data/'
+        from distfold + '/assets/data/android/orb.MARS.dat'
+        into distfold + '/assets/data/'
     }
     copy {
-        from 'war/assets/data/android/orb.MERCURY.dat'
-        into 'war/assets/data/'
+        from distfold + '/assets/data/android/orb.MERCURY.dat'
+        into distfold + '/assets/data/'
     }
     copy {
-        from 'war/assets/data/android/orb.MOON.dat'
-        into 'war/assets/data/'
+        from distfold + '/assets/data/android/orb.MOON.dat'
+        into distfold + '/assets/data/'
     }
     copy {
-        from 'war/assets/data/android/orb.NEPTUNE.dat'
-        into 'war/assets/data/'
+        from distfold + '/assets/data/android/orb.NEPTUNE.dat'
+        into distfold + '/assets/data/'
     }
     copy {
-        from 'war/assets/data/android/orb.SATURN.dat'
-        into 'war/assets/data/'
+        from distfold + '/assets/data/android/orb.SATURN.dat'
+        into distfold + '/assets/data/'
     }
     copy {
-        from 'war/assets/data/android/orb.URANUS.dat'
-        into 'war/assets/data/'
+        from distfold + '/assets/data/android/orb.URANUS.dat'
+        into distfold + '/assets/data/'
     }
     copy {
-        from 'war/assets/data/android/orb.VENUS.dat'
-        into 'war/assets/data/'
+        from distfold + '/assets/data/android/orb.VENUS.dat'
+        into distfold + '/assets/data/'
     }
     
     // update assets.txt
-    delete 'war/assets/assets.txt'
+    delete distfold + '/assets/assets.txt'
     copy {
         from 'assets/assets-wgl.txt'
-        into 'war/assets/'
+        into distfold + '/assets/'
     }
-    file('war/assets/assets-wgl.txt').renameTo(file('war/assets/assets.txt'))
+    file(distfold + '/assets/assets-wgl.txt').renameTo(file(distfold + '/assets/assets.txt'))
     
     // delete unused files
-    delete 'war/assets/conf',
-            'war/assets/data/android',
-            'war/assets/data/hyg_metadata.bin',
-            'war/assets/data/hyg_particles.bin',
-            'war/assets/data/data-lite.json',
-            'war/assets/data/extra-lite.json',
-            'war/assets/data/planets-lite.json',
-            'war/assets/data/satellites-lite.json',
-            'war/assets/data/tex/earth-4k.jpg',
-            'war/assets/data/tex/earth-8k.jpg',
-            'war/assets/data/tex/earth-night-2k.jpg',
-            'war/assets/data/tex/earth-night-4k.jpg',
-            'war/assets/data/tex/earth-normal-4k.jpg',
-            'war/assets/data/tex/earth-normal.jpg',
-            'war/assets/data/tex/earth-specular-4k.jpg',
-            'war/assets/data/tex/jupiter-4k.jpg',
-            'war/assets/data/tex/mars-2k.jpg',
-            'war/assets/data/tex/mars-normal.jpg',
-            'war/assets/data/tex/moon-4k.jpg',
-            'war/assets/data/tex/moon-normal.jpg',
-            'war/assets/data/tex/venus-1k.jpg',
-            'war/assets/data/tex/phobos-normal.jpg',
-            'war/assets/data/tex/deimos-normal.jpg',
-            'war/assets/scripts'
+    delete distfold + '/assets/conf',
+            distfold + '/assets/data/android',
+            distfold + '/assets/data/hyg_metadata.bin',
+            distfold + '/assets/data/hyg_particles.bin',
+            distfold + '/assets/data/data-lite.json',
+            distfold + '/assets/data/extra-lite.json',
+            distfold + '/assets/data/planets-lite.json',
+            distfold + '/assets/data/satellites-lite.json',
+            distfold + '/assets/data/tex/earth-4k.jpg',
+            distfold + '/assets/data/tex/earth-8k.jpg',
+            distfold + '/assets/data/tex/earth-night-2k.jpg',
+            distfold + '/assets/data/tex/earth-night-4k.jpg',
+            distfold + '/assets/data/tex/earth-normal-4k.jpg',
+            distfold + '/assets/data/tex/earth-normal.jpg',
+            distfold + '/assets/data/tex/earth-specular-4k.jpg',
+            distfold + '/assets/data/tex/jupiter-4k.jpg',
+            distfold + '/assets/data/tex/mars-2k.jpg',
+            distfold + '/assets/data/tex/mars-normal.jpg',
+            distfold + '/assets/data/tex/moon-4k.jpg',
+            distfold + '/assets/data/tex/moon-normal.jpg',
+            distfold + '/assets/data/tex/venus-1k.jpg',
+            distfold + '/assets/data/tex/phobos-normal.jpg',
+            distfold + '/assets/data/tex/deimos-normal.jpg',
+            distfold + '/assets/scripts',
+            distfold + '/assets/data/octree',
+            distfold + '/assets/data/tgas_201507'
     
 }
 
 task afterGwtCompileLite << {
+	String distfold = "build/dist"
     // update logo
-    delete 'war/html/logo.png'
+    delete distfold + '/html/logo.png'
     copy {
         from '../android/assets/img/gaiaskylogo.png'
-        into 'war/html/'
+        into distfold + '/html/'
     }
-    file('war/html/gaiaskylogo.png').renameTo(file('war/html/logo.png'))
+    file(distfold + '/html/gaiaskylogo.png').renameTo(file(distfold + '/html/logo.png'))
     
     // update index.html
-    delete 'war/index.html'
+    delete distfold + '/index.html'
+    delete distfold + '/index-lite.html'
     copy {
         from 'webapp/index-lite.html'
-        into 'war/'
+        into distfold + '/'
     }
-    file('war/index-lite.html').renameTo(file('war/index.html'))
+    file(distfold + '/index-lite.html').renameTo(file(distfold + '/index.html'))
     
     // update assets.txt
-    delete 'war/assets/assets.txt'
+    delete distfold + '/assets/assets.txt'
     copy {
         from 'assets/assets-lite.txt'
-        into 'war/assets/'
+        into distfold + '/assets/'
     }
-    file('war/assets/assets-lite.txt').renameTo(file('war/assets/assets.txt'))
+    file(distfold + '/assets/assets-lite.txt').renameTo(file(distfold + '/assets/assets.txt'))
     
     // delete unused files
-    delete 'war/assets/conf', 
-            'war/assets/data/android',
-            'war/assets/data/models',
-            'war/assets/data/hyg_metadata.bin',
-            'war/assets/data/hyg_particles.bin',
-            'war/assets/data/boundaries.csv',
-            'war/assets/data/constel.csv',
-            'war/assets/data/data.json',
-            'war/assets/data/data-wgl.json',
-            'war/assets/data/extra.json',
-            'war/assets/data/locations_earth.json',
-            'war/assets/data/locations_moon.json',
-            'war/assets/data/locations.json',
-            'war/assets/data/moons.json',
-            'war/assets/data/orbits_asteroid.json',
-            'war/assets/data/orbits_moon.json',
-            'war/assets/data/planets.json',
-            'war/assets/data/planets-wgl.json',
-            'war/assets/data/satellites.json',
-            'war/assets/data/tex/callisto.jpg',
-            'war/assets/data/tex/ceres.jpg',
-            'war/assets/data/tex/deimos.jpg',
-            'war/assets/data/tex/earth-4k.jpg',
-            'war/assets/data/tex/earth-8k.jpg',
-            'war/assets/data/tex/earth-night-2k.jpg',
-            'war/assets/data/tex/earth-night-4k.jpg',
-            'war/assets/data/tex/earth-night.jpg',
-            'war/assets/data/tex/earth-normal-4k.jpg',
-            'war/assets/data/tex/earth-normal.jpg',
-            'war/assets/data/tex/earth-specular-4k.jpg',
-            'war/assets/data/tex/earth-specular.jpg',
-            'war/assets/data/tex/earth.jpg',
-            'war/assets/data/tex/europa.jpg',
-            'war/assets/data/tex/ganymede.jpg',
-            'war/assets/data/tex/io.jpg',
-            'war/assets/data/tex/jupiter-4k.jpg',
-            'war/assets/data/tex/jupiter.jpg',
-            'war/assets/data/tex/mars-2k.jpg',
-            'war/assets/data/tex/mars-normal.jpg',
-            'war/assets/data/tex/mars.jpg',
-            'war/assets/data/tex/mercury.jpg',
-            'war/assets/data/tex/milky_way_small.png',
-            'war/assets/data/tex/moon-4k.jpg',
-            'war/assets/data/tex/moon-normal.jpg',
-            'war/assets/data/tex/moon.jpg',
-            'war/assets/data/tex/mw.png',
-            'war/assets/data/tex/neptune.jpg',
-            'war/assets/data/tex/pallas.jpg',
-            'war/assets/data/tex/phobos.jpg',
-            'war/assets/data/tex/saturn-ring.jpg',
-            'war/assets/data/tex/saturn.jpg',
-            'war/assets/data/tex/uranus.jpg',
-            'war/assets/data/tex/venus-1k.jpg',
-            'war/assets/data/tex/venus.jpg',
-            'war/assets/data/tex/vesta.jpg',
-            'war/assets/scripts'
+    delete distfold + '/assets/conf', 
+            distfold + '/assets/data/android',
+            distfold + '/assets/data/models',
+            distfold + '/assets/data/hyg_metadata.bin',
+            distfold + '/assets/data/hyg_particles.bin',
+            distfold + '/assets/data/boundaries.csv',
+            distfold + '/assets/data/constel.csv',
+            distfold + '/assets/data/data.json',
+            distfold + '/assets/data/data-wgl.json',
+            distfold + '/assets/data/extra.json',
+            distfold + '/assets/data/locations_earth.json',
+            distfold + '/assets/data/locations_moon.json',
+            distfold + '/assets/data/locations.json',
+            distfold + '/assets/data/moons.json',
+            distfold + '/assets/data/orbits_asteroid.json',
+            distfold + '/assets/data/orbits_moon.json',
+            distfold + '/assets/data/planets.json',
+            distfold + '/assets/data/planets-wgl.json',
+            distfold + '/assets/data/satellites.json',
+            distfold + '/assets/data/tex/callisto.jpg',
+            distfold + '/assets/data/tex/ceres.jpg',
+            distfold + '/assets/data/tex/deimos.jpg',
+            distfold + '/assets/data/tex/earth-4k.jpg',
+            distfold + '/assets/data/tex/earth-8k.jpg',
+            distfold + '/assets/data/tex/earth-night-2k.jpg',
+            distfold + '/assets/data/tex/earth-night-4k.jpg',
+            distfold + '/assets/data/tex/earth-night.jpg',
+            distfold + '/assets/data/tex/earth-normal-4k.jpg',
+            distfold + '/assets/data/tex/earth-normal.jpg',
+            distfold + '/assets/data/tex/earth-specular-4k.jpg',
+            distfold + '/assets/data/tex/earth-specular.jpg',
+            distfold + '/assets/data/tex/earth.jpg',
+            distfold + '/assets/data/tex/europa.jpg',
+            distfold + '/assets/data/tex/ganymede.jpg',
+            distfold + '/assets/data/tex/io.jpg',
+            distfold + '/assets/data/tex/jupiter-4k.jpg',
+            distfold + '/assets/data/tex/jupiter.jpg',
+            distfold + '/assets/data/tex/mars-2k.jpg',
+            distfold + '/assets/data/tex/mars-normal.jpg',
+            distfold + '/assets/data/tex/mars.jpg',
+            distfold + '/assets/data/tex/mercury.jpg',
+            distfold + '/assets/data/tex/milky_way_small.png',
+            distfold + '/assets/data/tex/moon-4k.jpg',
+            distfold + '/assets/data/tex/moon-normal.jpg',
+            distfold + '/assets/data/tex/moon.jpg',
+            distfold + '/assets/data/tex/mw.png',
+            distfold + '/assets/data/tex/neptune.jpg',
+            distfold + '/assets/data/tex/pallas.jpg',
+            distfold + '/assets/data/tex/phobos.jpg',
+            distfold + '/assets/data/tex/saturn-ring.jpg',
+            distfold + '/assets/data/tex/saturn.jpg',
+            distfold + '/assets/data/tex/uranus.jpg',
+            distfold + '/assets/data/tex/venus-1k.jpg',
+            distfold + '/assets/data/tex/venus.jpg',
+            distfold + '/assets/data/tex/vesta.jpg',
+            distfold + '/assets/scripts',
+            distfold + '/assets/data/octree',
+            distfold + '/assets/data/tgas_201507'
             
 }
 
