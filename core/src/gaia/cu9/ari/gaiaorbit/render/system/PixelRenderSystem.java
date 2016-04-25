@@ -2,6 +2,7 @@ package gaia.cu9.ari.gaiaorbit.render.system;
 
 import java.util.List;
 
+import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Mesh;
@@ -41,19 +42,22 @@ public class PixelRenderSystem extends ImmediateRenderSystem implements IObserve
     }
 
     protected void updatePointSize(int width, int height) {
-        POINT_SIZE = GlobalConf.runtime.STRIPPED_FOV_MODE ? 8 : 9;
+        POINT_SIZE = GlobalConf.runtime.STRIPPED_FOV_MODE ? 2 : 9;
 
         // Factor POINT_SIZE with resolution
         float baseResolution = (float) Math.sqrt(1280 * 1280 + 720 * 720);
         float currentResolution = (float) Math.sqrt(width * width + height * height);
         float factor = currentResolution / baseResolution;
-        POINT_SIZE = Math.min(15, Math.max(3, POINT_SIZE * factor * Gdx.graphics.getDensity()));
+        POINT_SIZE = /*Constants.webgl ? 2 : */Math.min(15, Math.max(3, POINT_SIZE * factor * Gdx.graphics.getDensity()));
     }
 
     @Override
     protected void initShaderProgram() {
         // Initialise renderer
-        pointProgram = new ShaderProgram(Gdx.files.internal("shader/point.vertex.glsl"), Gdx.files.internal("shader/point.fragment.glsl"));
+        if (Gdx.app.getType() == ApplicationType.WebGL)
+            pointProgram = new ShaderProgram(Gdx.files.internal("shader/point.vertex.glsl"), Gdx.files.internal("shader/point.fragment.wgl.glsl"));
+        else
+            pointProgram = new ShaderProgram(Gdx.files.internal("shader/point.vertex.glsl"), Gdx.files.internal("shader/point.fragment.glsl"));
         if (!pointProgram.isCompiled()) {
             Gdx.app.error(this.getClass().getName(), "Point shader compilation failed:\n" + pointProgram.getLog());
         }

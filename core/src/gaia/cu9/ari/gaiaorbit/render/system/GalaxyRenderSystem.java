@@ -3,6 +3,7 @@ package gaia.cu9.ari.gaiaorbit.render.system;
 import java.util.List;
 import java.util.Random;
 
+import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -47,7 +48,10 @@ public class GalaxyRenderSystem extends ImmediateRenderSystem implements IObserv
     protected void initShaderProgram() {
 
         // POINT (STARS) PROGRAM
-        pointProgram = new ShaderProgram(Gdx.files.internal("shader/point.galaxy.vertex.glsl"), Gdx.files.internal("shader/point.galaxy.fragment.glsl"));
+        if (Gdx.app.getType() == ApplicationType.WebGL)
+            pointProgram = new ShaderProgram(Gdx.files.internal("shader/point.galaxy.vertex.glsl"), Gdx.files.internal("shader/point.galaxy.fragment.wgl.glsl"));
+        else
+            pointProgram = new ShaderProgram(Gdx.files.internal("shader/point.galaxy.vertex.glsl"), Gdx.files.internal("shader/point.galaxy.fragment.glsl"));
         if (!pointProgram.isCompiled()) {
             Gdx.app.error(this.getClass().getName(), "Point shader compilation failed:\n" + pointProgram.getLog());
         }
@@ -143,7 +147,8 @@ public class GalaxyRenderSystem extends ImmediateRenderSystem implements IObserv
                     // SIZE
                     float starSize = 0;
                     if (star.length > 3) {
-                        starSize = star[3] * 10f + 1f;
+                        starSize = (star[3] * 10f + 1f) /** (Constants.webgl ? 0.08f : 1f)*/
+                        ;
                     } else {
                         starSize = (float) Math.abs(rand.nextGaussian()) * 8f + 1.0f;
                     }

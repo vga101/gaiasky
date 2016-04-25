@@ -16,12 +16,14 @@ t:shader/star.rays.fragment.glsl:2917:application/unknown
 t:shader/simple.vertex.glsl:335:application/unknown
 t:shader/point.galaxy.vertex.glsl:1028:application/unknown
 t:shader/point.fragment.glsl:356:application/unknown
+t:shader/point.fragment.wgl.glsl:342:application/unknown
 t:shader/font.vertex.glsl:598:application/unknown
 t:shader/line.quad.fragment.glsl:370:application/unknown
 t:shader/normal.vertex.glsl:16411:application/unknown
 t:shader/normal.fragment.glsl:8624:application/unknown
 t:shader/nebula.vertex.glsl:875:application/unknown
 t:shader/point.galaxy.fragment.glsl:276:application/unknown
+t:shader/point.galaxy.fragment.wgl.glsl:262:application/unknown
 t:shader/nebula.fragment.glsl:782:application/unknown
 d:img:0:application/unknown
 i:img/gaia-focalplane-fov2.png:8015:image/png
