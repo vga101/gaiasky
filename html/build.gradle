@@ -3,8 +3,8 @@ apply plugin: "jetty"
 
 gwt {
     gwtVersion='2.7.0' // Should match the gwt version used for building the gwt backend
-    minHeapSize="2G"
-    maxHeapSize="4G" // Default 256m is not enough for gwt compiler. GWT is HUNGRY
+    minHeapSize="1G"
+    maxHeapSize="3G" // Default 256m is not enough for gwt compiler. GWT is HUNGRY
 
     src = files(file("src/")) // Needs to be in front of "modules" below.
     modules 'gaia.cu9.ari.gaiaorbit.GdxDefinition'
@@ -19,8 +19,8 @@ gwt {
 }
 
 compileGwt {
-    minHeapSize = "2G";
-    maxHeapSize = "4G";
+    minHeapSize = "1G";
+    maxHeapSize = "3G";
 }
 
 task draftRun(type: JettyRunWar) {
@@ -69,6 +69,12 @@ task afterGwtCompileFull << {
     copy {
         from 'webapp/index.html'
         into 'war/'
+    }
+    
+    // copy fonts
+    copy{
+    	from 'webap/fonts'
+    	into 'war'
     }
     
     // copy orbit files from android folder
@@ -145,7 +151,9 @@ task afterGwtCompileFull << {
             'war/assets/data/tex/venus-1k.jpg',
             'war/assets/data/tex/phobos-normal.jpg',
             'war/assets/data/tex/deimos-normal.jpg',
-            'war/assets/scripts'
+            'war/assets/scripts',
+            'war/assets/data/octree',
+            'war/assets/data/tgas_201507'
     
 }
 
@@ -165,6 +173,12 @@ task afterGwtCompileLite << {
         into 'war/'
     }
     file('war/index-lite.html').renameTo(file('war/index.html'))
+    
+    // copy fonts
+    copy{
+    	from 'webap/fonts'
+    	into 'war'
+    }
     
     // update assets.txt
     delete 'war/assets/assets.txt'
@@ -230,7 +244,9 @@ task afterGwtCompileLite << {
             'war/assets/data/tex/venus-1k.jpg',
             'war/assets/data/tex/venus.jpg',
             'war/assets/data/tex/vesta.jpg',
-            'war/assets/scripts'
+            'war/assets/scripts',
+            'war/assets/data/octree',
+            'war/assets/data/tgas_201507'
             
 }
 

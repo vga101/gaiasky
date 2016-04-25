@@ -1,4 +1,4 @@
-@font-face { font-family: comfortaa; src: url('../fonts/comfortaa.ttf');}
+@font-face { font-family: comfortaa; src: url('fonts/comfortaa.ttf');}
 
 canvas {
     cursor: default;
