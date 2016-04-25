@@ -63,6 +63,9 @@ pickled_dict
 **.iml
 **/.idea
 /build/
+**/.settings
+**.classpath
+**.project
 
 # Gradle cache #
 ################
