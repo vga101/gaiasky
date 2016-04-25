@@ -63,6 +63,7 @@ import gaia.cu9.ari.gaiaorbit.util.override.AtmosphereShaderProvider;
 
 /**
  * Renders a scenegraph.
+ * 
  * @author Toni Sagrista
  *
  */
@@ -171,10 +172,10 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         }
 
         /**
-         *
-         * =======  INITIALIZE RENDER COMPONENTS  =======
-         *
-         **/
+        		 *
+        		 * ======= INITIALIZE RENDER COMPONENTS =======
+        		 *
+        		 **/
         pixelRenderSystems = new AbstractRenderSystem[3];
 
         renderProcesses = new ArrayList<IRenderSystem>();
@@ -285,8 +286,6 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         // INIT FRAME BUFFER FOR 3D MODE
         fb3D = new HashMap<Integer, FrameBuffer>();
         fb3D.put(getKey(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight()), new FrameBuffer(Format.RGB888, Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight(), true));
-        fb3D.put(getKey(GlobalConf.screenshot.SCREENSHOT_WIDTH / 2, GlobalConf.screenshot.SCREENSHOT_HEIGHT), new FrameBuffer(Format.RGB888, GlobalConf.screenshot.SCREENSHOT_WIDTH / 2, GlobalConf.screenshot.SCREENSHOT_HEIGHT, true));
-        fb3D.put(getKey(GlobalConf.frame.RENDER_WIDTH / 2, GlobalConf.frame.RENDER_HEIGHT), new FrameBuffer(Format.RGB888, GlobalConf.frame.RENDER_WIDTH / 2, GlobalConf.frame.RENDER_HEIGHT, true));
 
         EventManager.instance.subscribe(this, Events.TOGGLE_VISIBILITY_CMD, Events.PIXEL_RENDERER_UPDATE, Events.SCREENSHOT_SIZE_UDPATE, Events.FRAME_SIZE_UDPATE);
 
@@ -367,7 +366,8 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
                 Vector3 side = vectorPool.obtain().set(cam.direction);
                 float separation = (float) Constants.M_TO_U * GlobalConf.program.STEREOSCOPIC_EYE_SEPARATION_M;
                 if (camera.getMode() == CameraMode.Focus) {
-                    // In focus mode we keep the separation dependant on the distance with a fixed angle
+                    // In focus mode we keep the separation dependant on the
+                    // distance with a fixed angle
                     float distToFocus = ((NaturalCamera) camera.getCurrent()).focus.distToCamera - ((NaturalCamera) camera.getCurrent()).focus.getRadius();
                     separation = (float) Math.min((Math.tan(Math.toRadians(1.5)) * distToFocus), 1e11 * Constants.M_TO_U);
                 }
@@ -384,7 +384,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
                 viewport.setScreenBounds(0, 0, rw / 2, rh);
                 viewport.apply();
 
-                FrameBuffer fb3d = fb3D.get(getKey(rw / 2, rh));
+                FrameBuffer fb3d = getFrameBuffer(rw / 2, rh);
 
                 postproc = postprocessCapture(ppb, fb3d, rw / 2, rh);
 
@@ -495,8 +495,9 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
     }
 
     /**
-     * This must be called when all the rendering for the current frame has finished.
-     */
+    	 * This must be called when all the rendering for the current frame has
+    	 * finished.
+    	 */
     public void clearLists() {
         for (RenderGroup rg : RenderGroup.values()) {
             render_lists.get(rg).clear();
@@ -574,6 +575,14 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         }
     }
 
+    private FrameBuffer getFrameBuffer(int w, int h) {
+        int key = getKey(w, h);
+        if (!fb3D.containsKey(key)) {
+            fb3D.put(key, new FrameBuffer(Format.RGB888, w, h, true));
+        }
+        return fb3D.get(key);
+    }
+
     public void resize(final int w, final int h) {
         extendViewport.update(w, h);
         stretchViewport.update(w, h);
@@ -603,10 +612,11 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
     }
 
     /**
-     * Gets the render system
-     * @deprecated
-     * @return
-     */
+    	 * Gets the render system
+    	 * 
+    	 * @deprecated
+    	 * @return
+    	 */
     private AbstractRenderSystem getPixelRenderSystem() {
         AbstractRenderSystem sys = null;
         int pxidx = GlobalConf.scene.PIXEL_RENDERER;
@@ -629,8 +639,8 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
     }
 
     /**
-     * @deprecated
-     */
+    	 * @deprecated
+    	 */
     private void updatePixelRenderSystem() {
         if (renderProcesses != null && !renderProcesses.isEmpty()) {
             IRenderSystem sys = renderProcesses.get(0);

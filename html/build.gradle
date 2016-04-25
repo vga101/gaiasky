@@ -56,7 +56,7 @@ task dist(dependsOn: [clean, compileGwt]) {
 }
 
 task afterGwtCompileFull << {
-	String distfold = "build/dist"
+	String distfold = "war"
     // update logo
     delete distfold + '/html/logo.png'
     copy {
