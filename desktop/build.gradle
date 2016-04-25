@@ -22,7 +22,7 @@ sourceSets {
 
 task run(dependsOn: jar, type: JavaExec, description: "Runs the desktop project") {
     main = project.mainClassName
-    systemProperties['properties.file'] = '../android/assets/conf/global.properties'
+    systemProperties['properties.file'] = ''
     systemProperties['assets.location'] = '../android/assets/'
     	
     // Parallel GC
