@@ -296,11 +296,12 @@ public class GalaxyRenderSystem extends ImmediateRenderSystem implements IObserv
             /**
              * STAR RENDERER
              */
-
-            // Enable gl_PointCoord
-            Gdx.gl20.glEnable(34913);
-            // Enable point sizes
-            Gdx.gl20.glEnable(0x8642);
+            if (Gdx.app.getType() == ApplicationType.Desktop) {
+                // Enable gl_PointCoord
+                Gdx.gl20.glEnable(34913);
+                // Enable point sizes
+                Gdx.gl20.glEnable(0x8642);
+            }
             pointProgram.begin();
             pointProgram.setUniformMatrix("u_projModelView", camera.getCamera().combined);
             pointProgram.setUniformf("u_camPos", camera.getCurrent().getPos().setVector3(aux));

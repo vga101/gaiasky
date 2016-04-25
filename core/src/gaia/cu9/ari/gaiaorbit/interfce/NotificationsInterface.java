@@ -113,7 +113,7 @@ public class NotificationsInterface extends Table implements IObserver {
         this.historical.add(messageBean);
         this.displaying = true;
         this.permanent = permanent;
-        if (consoleLog) {
+        if (consoleLog && Gdx.graphics != null) {
             Gdx.app.log(df.format(messageBean.date), msg);
         }
     }
