@@ -4,6 +4,7 @@ import java.io.File;
 
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.util.ConfInit;
+import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf.DataConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf.FrameConf;
@@ -22,6 +23,7 @@ public class WebGLConfInitLite extends ConfInit {
     @Override
     public void initGlobalConf() throws Exception {
         GlobalConf.updateScaleFactor(1);
+        Constants.focalplane = true;
 
         VersionConf vc = new VersionConf();
         vc.initialize("0.706b", null, null, null, null, 0, 706);

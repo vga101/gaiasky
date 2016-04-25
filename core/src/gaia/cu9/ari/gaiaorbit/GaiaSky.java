@@ -273,7 +273,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
 
         AbstractPositionEntity focus = null;
         Vector3d newCameraPos = null;
-        if (!Constants.webgl) {
+        if (!Constants.focalplane) {
             focus = (AbstractPositionEntity) sg.getNode("Earth");
             EventManager.instance.post(Events.FOCUS_CHANGE_CMD, focus, true);
             EventManager.instance.post(Events.CAMERA_MODE_CMD, CameraMode.Focus);
@@ -294,7 +294,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         sgr.clearLists();
         time.update(0);
 
-        if (!Constants.webgl) {
+        if (!Constants.focalplane) {
             Vector3d newCameraDir = focus.pos.cpy().sub(newCameraPos);
             EventManager.instance.post(Events.CAMERA_DIR_CMD, newCameraDir.values());
         }
@@ -312,7 +312,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         // Set current date
         EventManager.instance.post(Events.TIME_CHANGE_CMD, new Date());
 
-        if (Constants.webgl) {
+        if (Constants.focalplane) {
             // Activate time
             EventManager.instance.post(Events.TOGGLE_TIME_CMD, true, false);
         }

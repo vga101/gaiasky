@@ -207,6 +207,8 @@ public class Star extends Particle {
     protected void addToRenderLists(ICamera camera) {
         if (camera.getCurrent() instanceof FovCamera) {
             // Render as point, do nothing
+            if (camera.isVisible(GaiaSky.instance.time, this))
+                addToRender(this, RenderGroup.SHADER);
         } else {
             if (viewAngleApparent >= THRESHOLD_POINT() * camera.getFovFactor()) {
                 addToRender(this, RenderGroup.SHADER);

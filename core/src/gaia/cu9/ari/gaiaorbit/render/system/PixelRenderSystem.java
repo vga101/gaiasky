@@ -132,7 +132,7 @@ public class PixelRenderSystem extends ImmediateRenderSystem implements IObserve
         pointProgram.setUniformf("u_fovFactor", camera.getFovFactor());
         pointProgram.setUniformf("u_alpha", alphas[0]);
         pointProgram.setUniformf("u_starBrightness", GlobalConf.scene.STAR_BRIGHTNESS * BRIGHTNESS_FACTOR);
-        pointProgram.setUniformf("u_pointSize", POINT_SIZE);
+        pointProgram.setUniformf("u_pointSize", camera.getNCameras() == 1 ? POINT_SIZE : POINT_SIZE * 10);
         pointProgram.setUniformf("u_t", (float) AstroUtils.getMsSinceJ2000(GaiaSky.instance.time.getTime()));
         curr.mesh.setVertices(curr.vertices, 0, curr.vertexIdx);
         curr.mesh.render(pointProgram, ShapeType.Point.getGlType());
