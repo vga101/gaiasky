@@ -1,3 +1,5 @@
+@font-face { font-family: comfortaa; src: url('../fonts/comfortaa.ttf');}
+
 canvas {
     cursor: default;
     outline: none;
@@ -40,15 +42,35 @@ div#controls{
 }
 
 div#title{
+	font-size: large;
 	width: 1024px;
     text-align: center;
-    font-size: xx-large;
+}
+
+.gs{
+	margin-bottom: 15px;
+	font-family: comfortaa;
+	letter-spacing: .5em;
+	font-variant: normal;
+	font-size: 35px;
+	color: #fff;
 }
 
 div#subtitle{
 	text-align: center;
     width: 1024px;
     font-size: 12px;
+    margin-bottom: 10px;
+}
+
+div#browser-warning{
+	width: 1000px;
+	font-size: 12px;
+	font-variant: normal;
+	font-weight: bold;
+	color: #999;
+	margin-top: 10px;
+	margin-left: 11px;
 }
 
 div#disclaimer{

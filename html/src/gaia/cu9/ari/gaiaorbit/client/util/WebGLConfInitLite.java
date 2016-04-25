@@ -39,7 +39,7 @@ public class WebGLConfInitLite extends ConfInit {
         dc.initialize(true, "data/data-lite.json", null, "", 0, "", 20f, true);
 
         ProgramConf prc = new ProgramConf();
-        prc.initialize(false, false, "dark", "en-GB", false, StereoProfile.CROSSEYE);
+        prc.initialize(false, false, "dark-green", "en-GB", false, StereoProfile.CROSSEYE);
 
         ComponentType[] cts = ComponentType.values();
         boolean[] VISIBILITY = new boolean[cts.length];

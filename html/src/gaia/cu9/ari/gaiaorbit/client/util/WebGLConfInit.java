@@ -41,7 +41,7 @@ public class WebGLConfInit extends ConfInit {
         dc.initialize("data/data-wgl.json", true, 7.3f);
 
         ProgramConf prc = new ProgramConf();
-        prc.initialize(false, false, "dark", "en-GB", false, StereoProfile.CROSSEYE);
+        prc.initialize(false, false, "dark-green", "en-GB", false, StereoProfile.CROSSEYE);
 
         ComponentType[] cts = ComponentType.values();
         boolean[] VISIBILITY = new boolean[cts.length];
