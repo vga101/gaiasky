@@ -190,6 +190,7 @@ task afterGwtCompileLite << {
             distfold + '/assets/data/boundaries.csv',
             distfold + '/assets/data/constel.csv',
             distfold + '/assets/data/data.json',
+            distfold + '/assets/data/data-lite.json',
             distfold + '/assets/data/data-wgl.json',
             distfold + '/assets/data/extra.json',
             distfold + '/assets/data/locations_earth.json',
