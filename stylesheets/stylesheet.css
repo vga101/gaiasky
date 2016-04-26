@@ -128,7 +128,9 @@ a {
   margin-top: 2rem;
   margin-bottom: 1rem;
   font-weight: bold;
-  color: #cc6600; }
+  color: #cc6600;
+  font-family: comfortaa;
+  font-size: 1.5em; }
 .main-content p {
   margin-bottom: 1em; }
 .main-content code {
