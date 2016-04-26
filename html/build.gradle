@@ -215,7 +215,6 @@ task afterGwtCompileLite << {
             distfold + '/assets/data/orbits_moon.json',
             distfold + '/assets/data/planets.json',
             distfold + '/assets/data/planets-wgl.json',
-            distfold + '/assets/data/satellites.json',
             distfold + '/assets/data/tex/callisto.jpg',
             distfold + '/assets/data/tex/ceres.jpg',
             distfold + '/assets/data/tex/deimos.jpg',

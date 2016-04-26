@@ -323,6 +323,13 @@ public class GlobalConf {
             this.DATA_SOURCE_LOCAL = dATA_SOURCE_LOCAL;
             this.LIMIT_MAG_LOAD = lIMIT_MAG_LOAD;
         }
+
+        public void initialize(String dATA_JSON_FILE, boolean dATA_SOURCE_LOCAL, float lIMIT_MAG_LOAD, boolean rEAL_GAIA_ATTITUDE) {
+            this.DATA_JSON_FILE = dATA_JSON_FILE;
+            this.DATA_SOURCE_LOCAL = dATA_SOURCE_LOCAL;
+            this.LIMIT_MAG_LOAD = lIMIT_MAG_LOAD;
+            this.REAL_GAIA_ATTITUDE = rEAL_GAIA_ATTITUDE;
+        }
     }
 
     public static class ScreenConf implements IConf {
