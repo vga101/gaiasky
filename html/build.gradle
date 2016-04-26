@@ -125,6 +125,11 @@ task afterGwtCompileFull << {
     file(distfold + '/assets/assets-wgl.txt').renameTo(file(distfold + '/assets/assets.txt'))
     
     // delete unused files
+    def galaxyUnused = fileTree(distfold + '/assets/data/galaxy/')
+    galaxyUnused.include 'galaxy_bar*'
+    galaxyUnused.include 'galaxy_nobar*'
+    galaxyUnused.each { it.delete() }
+    
     delete distfold + '/assets/conf',
             distfold + '/assets/data/android',
             distfold + '/assets/data/hyg_metadata.bin',
@@ -149,13 +154,14 @@ task afterGwtCompileFull << {
             distfold + '/assets/data/tex/phobos-normal.jpg',
             distfold + '/assets/data/tex/deimos-normal.jpg',
             distfold + '/assets/scripts',
+            distfold + '/assets/music',
             distfold + '/assets/data/octree',
             distfold + '/assets/data/tgas_201507'
     
 }
 
 task afterGwtCompileLite << {
-	String distfold = "build/dist"
+	String distfold = "war"
     // update logo
     delete distfold + '/html/logo.png'
     copy {
@@ -166,22 +172,27 @@ task afterGwtCompileLite << {
     
     // update index.html
     delete distfold + '/index.html'
-    delete distfold + '/index-lite.html'
+    delete distfold + '/index-fp.html'
     copy {
-        from 'webapp/index-lite.html'
+        from 'webapp/index-fp.html'
         into distfold + '/'
     }
-    file(distfold + '/index-lite.html').renameTo(file(distfold + '/index.html'))
+    file(distfold + '/index-fp.html').renameTo(file(distfold + '/index.html'))
     
     // update assets.txt
     delete distfold + '/assets/assets.txt'
     copy {
-        from 'assets/assets-lite.txt'
+        from 'assets/assets-wgl-fp.txt'
         into distfold + '/assets/'
     }
-    file(distfold + '/assets/assets-lite.txt').renameTo(file(distfold + '/assets/assets.txt'))
+    file(distfold + '/assets/assets-wgl-fp.txt').renameTo(file(distfold + '/assets/assets.txt'))
     
     // delete unused files
+    def galaxyUnused = fileTree(distfold + '/assets/data/galaxy/')
+    galaxyUnused.include 'galaxy_bar*'
+    galaxyUnused.include 'galaxy_nobar*'
+    galaxyUnused.each { it.delete() }
+    
     delete distfold + '/assets/conf', 
             distfold + '/assets/data/android',
             distfold + '/assets/data/models',
@@ -193,10 +204,13 @@ task afterGwtCompileLite << {
             distfold + '/assets/data/data-lite.json',
             distfold + '/assets/data/data-wgl.json',
             distfold + '/assets/data/extra.json',
+            distfold + '/assets/data/asteroids.json',
             distfold + '/assets/data/locations_earth.json',
             distfold + '/assets/data/locations_moon.json',
             distfold + '/assets/data/locations.json',
             distfold + '/assets/data/moons.json',
+            distfold + '/assets/data/moons-lite.json',
+            distfold + '/assets/data/moons-wgl.json',
             distfold + '/assets/data/orbits_asteroid.json',
             distfold + '/assets/data/orbits_moon.json',
             distfold + '/assets/data/planets.json',
@@ -205,6 +219,7 @@ task afterGwtCompileLite << {
             distfold + '/assets/data/tex/callisto.jpg',
             distfold + '/assets/data/tex/ceres.jpg',
             distfold + '/assets/data/tex/deimos.jpg',
+            distfold + '/assets/data/tex/deimos-normal.jpg',
             distfold + '/assets/data/tex/earth-4k.jpg',
             distfold + '/assets/data/tex/earth-8k.jpg',
             distfold + '/assets/data/tex/earth-night-2k.jpg',
@@ -232,6 +247,7 @@ task afterGwtCompileLite << {
             distfold + '/assets/data/tex/neptune.jpg',
             distfold + '/assets/data/tex/pallas.jpg',
             distfold + '/assets/data/tex/phobos.jpg',
+            distfold + '/assets/data/tex/phobos-normal.jpg',
             distfold + '/assets/data/tex/saturn-ring.jpg',
             distfold + '/assets/data/tex/saturn.jpg',
             distfold + '/assets/data/tex/uranus.jpg',
@@ -239,6 +255,7 @@ task afterGwtCompileLite << {
             distfold + '/assets/data/tex/venus.jpg',
             distfold + '/assets/data/tex/vesta.jpg',
             distfold + '/assets/scripts',
+            distfold + '/assets/music',
             distfold + '/assets/data/octree',
             distfold + '/assets/data/tgas_201507'
             

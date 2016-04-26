@@ -15,14 +15,12 @@ t:shader/atm.vertex.glsl:4149:application/unknown
 t:shader/star.rays.fragment.glsl:2917:application/unknown
 t:shader/simple.vertex.glsl:335:application/unknown
 t:shader/point.galaxy.vertex.glsl:1028:application/unknown
-t:shader/point.fragment.glsl:356:application/unknown
 t:shader/point.fragment.wgl.glsl:342:application/unknown
 t:shader/font.vertex.glsl:598:application/unknown
 t:shader/line.quad.fragment.glsl:370:application/unknown
 t:shader/normal.vertex.glsl:16411:application/unknown
 t:shader/normal.fragment.glsl:8624:application/unknown
 t:shader/nebula.vertex.glsl:875:application/unknown
-t:shader/point.galaxy.fragment.glsl:276:application/unknown
 t:shader/point.galaxy.fragment.wgl.glsl:262:application/unknown
 t:shader/nebula.fragment.glsl:782:application/unknown
 d:img:0:application/unknown
@@ -254,14 +252,9 @@ i:data/tex/milky_way.png:1907534:image/png
 i:data/tex/saturn-ring.png:12126:image/png
 i:data/tex/mercury.jpg:78618:image/jpeg
 i:data/tex/callisto.jpg:62676:image/jpeg
-d:data/tex/.comments:0:application/unknown
-t:data/tex/.comments/io.jpg.xml:788:application/xml
 i:data/tex/ceres.jpg:51363:image/jpeg
 b:data/hygxyz.bin:6455530:application/octet-stream
 b:data/orb.EARTH.dat:16407:application/unknown
-d:music:0:application/unknown
-a:music/Friends to the end.mp3:2915206:application/unknown
-a:music/Following the river.mp3:1443200:application/unknown
 t:com/badlogic/gdx/graphics/g3d/particles/particles.fragment.glsl:770:application/unknown
 t:com/badlogic/gdx/graphics/g3d/particles/particles.vertex.glsl:2886:application/unknown
 t:com/badlogic/gdx/graphics/g3d/shaders/default.fragment.glsl:5163:application/unknown
