@@ -81,7 +81,7 @@
 									"flip" : false
 									},
 						"texture" : {
-									"base" : "data/tex/venus-1k.jpg"
+									"base" : "data/tex/venus.jpg"
 									}
 						},
 	"atmosphere" 	: {

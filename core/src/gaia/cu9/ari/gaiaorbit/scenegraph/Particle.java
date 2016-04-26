@@ -147,6 +147,7 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
 
         // Calculate size - This contains arbitrary boundary values to make things nice on the render side
         size = (float) Math.max(Math.min((Math.pow(flux, 0.5f) * Constants.PC_TO_U * 0.16f), .5e8f), 0.8e6f) / DISC_FACTOR;
+        computedSize = size;
     }
 
     @Override

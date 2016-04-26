@@ -55,7 +55,7 @@ public class PixelRenderSystem extends ImmediateRenderSystem implements IObserve
     @Override
     protected void initShaderProgram() {
         // Initialise renderer
-        if (Gdx.app.getType() == ApplicationType.WebGL || Constants.webgl)
+        if (Gdx.app.getType() == ApplicationType.WebGL)
             pointProgram = new ShaderProgram(Gdx.files.internal("shader/point.vertex.glsl"), Gdx.files.internal("shader/point.fragment.wgl.glsl"));
         else
             pointProgram = new ShaderProgram(Gdx.files.internal("shader/point.vertex.glsl"), Gdx.files.internal("shader/point.fragment.glsl"));

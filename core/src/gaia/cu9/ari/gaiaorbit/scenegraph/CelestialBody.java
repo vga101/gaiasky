@@ -104,7 +104,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
     float precomp = -1;
 
     /**
-     * Shader render, for planets and bodies, not stars.
+     * Shader render, for planets and stars.
      */
     @Override
     public void render(ShaderProgram shader, float alpha, boolean colorTransit, Mesh mesh, ICamera camera) {

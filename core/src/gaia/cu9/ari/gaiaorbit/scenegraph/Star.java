@@ -220,7 +220,7 @@ public class Star extends Particle {
                     addToRender(this, RenderGroup.LINE);
             }
         }
-        if ((renderText() || camera.getNCameras() > 1) && camera.isVisible(GaiaSky.instance.time, this)) {
+        if ((renderText() || camera.getCurrent() instanceof FovCamera) && camera.isVisible(GaiaSky.instance.time, this)) {
             addToRender(this, RenderGroup.LABEL);
         }
 
