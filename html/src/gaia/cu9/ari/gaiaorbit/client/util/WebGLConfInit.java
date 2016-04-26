@@ -38,7 +38,7 @@ public class WebGLConfInit extends ConfInit {
         rc.initialize(true, false, false, false, true, false, 8f, false);
 
         DataConf dc = new DataConf();
-        dc.initialize("data/data-wgl.json", true, 7.3f);
+        dc.initialize("data/data-wgl.json", true, 7.8f);
 
         ProgramConf prc = new ProgramConf();
         prc.initialize(false, false, "dark-green", "en-GB", false, StereoProfile.CROSSEYE);
@@ -54,9 +54,10 @@ public class WebGLConfInit extends ConfInit {
         VISIBILITY[ComponentType.MilkyWay.ordinal()] = true;
         VISIBILITY[ComponentType.Asteroids.ordinal()] = true;
         VISIBILITY[ComponentType.Galaxies.ordinal()] = true;
+        VISIBILITY[ComponentType.Labels.ordinal()] = false;
         VISIBILITY[ComponentType.Others.ordinal()] = true;
         SceneConf sc = new SceneConf();
-        sc.initialize(2000, 1f, 0f, 50, 2.1f, 1866f, 2286f, 13, true, 7.0f, VISIBILITY, 2, 0, 0f, 2e-8f, 0f, 0.05f, 1f, false, 0.610865f, 1.0472f);
+        sc.initialize(2500, 6f, 0f, 50, 2.1f, 1866f, 2286f, 13, true, 10.0f, VISIBILITY, 2, 0, 0f, 1.6e-7f, 0f, 0.1f, 0.8f, false, 0.6f, 1.5f);
 
         FrameConf fc = new FrameConf();
 

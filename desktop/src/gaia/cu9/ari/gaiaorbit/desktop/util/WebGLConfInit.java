@@ -54,6 +54,7 @@ public class WebGLConfInit extends ConfInit {
         VISIBILITY[ComponentType.MilkyWay.ordinal()] = true;
         VISIBILITY[ComponentType.Asteroids.ordinal()] = true;
         VISIBILITY[ComponentType.Galaxies.ordinal()] = true;
+        VISIBILITY[ComponentType.Labels.ordinal()] = false;
         VISIBILITY[ComponentType.Others.ordinal()] = true;
         SceneConf sc = new SceneConf();
         sc.initialize(2500, 6f, 0f, 50, 2.1f, 1866f, 2286f, 13, true, 10.0f, VISIBILITY, 2, 0, 0f, 1.6e-7f, 0f, 0.1f, 0.8f, false, 0.6f, 1.5f);
@@ -65,10 +66,10 @@ public class WebGLConfInit extends ConfInit {
         ScreenshotConf shc = new ScreenshotConf();
 
         GlobalConf.initialize(vc, prc, sc, dc, rc, ppc, pc, fc, scrc, shc);
-
     }
 
     @Override
     public void persistGlobalConf(File propsFile) {
     }
+
 }
