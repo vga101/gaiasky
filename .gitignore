@@ -5,3 +5,5 @@ html/
 .gradle/
 releases/
 build/
+.project
+.settings/
