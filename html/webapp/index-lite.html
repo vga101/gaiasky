@@ -80,7 +80,14 @@
 				handleMouseUp, false);
 	</script>
 	<script type="text/javascript">
-		setTimeout(function(){ window.scrollTo(0,document.body.scrollHeight); }, 2000);
+		setTimeout(function(){ 
+			var divtest = document.getElementById('embed-html');
+			var children = divtest.children;
+			var n = children.length;
+			for(i = 0; i < n - 1; i++){
+				divtest.removeChild(children[0]);
+			}
+		}, 9000);
 	</script>
 </body>
 
