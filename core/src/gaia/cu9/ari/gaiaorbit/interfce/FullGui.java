@@ -108,7 +108,7 @@ public class FullGui implements IGui, IObserver {
             ct.getName();
         }
 
-        if (Constants.webgl) {
+        if (Constants.focalplane) {
             // WEBGL INTERFACE - TOP LEFT
             addWebglInterface();
         } else {
