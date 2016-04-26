@@ -5,7 +5,7 @@
 	},
 	{
 		"loader": gaia.cu9.ari.gaiaorbit.data.JsonLoader,
-		"files": [ "data/planets-lite.json",
+		"files": [ "data/planets-wgl-fp.json",
 					"data/satellites.json",
 					"data/orbits_planet.json", 
 					"data/orbits_satellite.json",
