@@ -171,7 +171,7 @@ b:data/orb.JUPITER.dat:81259:application/unknown
 t:data/orbits_planet.json:2493:application/unknown
 b:data/orb.NEPTUNE.dat:81385:application/unknown
 t:data/planets-wgl.json:8978:application/unknown
-t:data/data-wgl-fp.json:342:application/unknown
+t:data/data-wgl-fp.json:344:application/unknown
 b:data/dummyversion:238:application/unknown
 b:data/orb.MERCURY.dat:8345:application/unknown
 d:data/octree:0:application/unknown
@@ -245,6 +245,7 @@ t:data/data-lite.json:1050:application/unknown
 t:data/data-wgl.json:788:application/unknown
 b:data/orb.MARS.dat:30752:application/unknown
 t:data/extra.json:2270:application/unknown
+t:data/planets-wgl-fp.json:971:application/unknown
 t:data/moons.json:9201:application/unknown
 t:data/satellites.json:715:application/unknown
 t:data/moons-wgl.json:9040:application/unknown
@@ -300,7 +301,7 @@ i:data/models/gaia/black.jpg:307:image/jpeg
 b:data/models/prometheus.g3db:117033:application/unknown
 b:data/models/deimos.g3db:117029:application/unknown
 b:data/models/amalthea.g3db:117031:application/unknown
-t:data/planets-lite.json:9082:application/unknown
+t:data/planets-lite.json:9079:application/unknown
 d:data/tex:0:application/unknown
 i:data/tex/nebula003.png:322484:image/png
 i:data/tex/ganymede.jpg:173743:image/jpeg
@@ -348,8 +349,6 @@ i:data/tex/saturn-ring.png:12126:image/png
 i:data/tex/mercury.jpg:78618:image/jpeg
 i:data/tex/callisto.jpg:62676:image/jpeg
 i:data/tex/moon-4k.jpg:1721936:image/jpeg
-d:data/tex/.comments:0:application/unknown
-t:data/tex/.comments/io.jpg.xml:788:application/xml
 i:data/tex/ceres.jpg:51363:image/jpeg
 i:data/tex/moon-normal.jpg:112038:image/jpeg
 b:data/hygxyz.bin:6455530:application/octet-stream
