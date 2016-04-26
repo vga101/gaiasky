@@ -21,6 +21,7 @@ import gaia.cu9.ari.gaiaorbit.render.IModelRenderable;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
+import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
 import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
@@ -59,7 +60,7 @@ public class MilkyWay extends Blob implements IModelRenderable, I3DTextRenderabl
                 Matrix4d trf = (Matrix4d) m.invoke(null);
                 coordinateSystem = new Matrix4(trf.valuesf());
             } catch (ReflectionException e) {
-                Gdx.app.error(this.getClass().getName(), "Error getting/invoking method Coordinates." + transformName + "()");
+                Logger.error(this.getClass().getName(), "Error getting/invoking method Coordinates." + transformName + "()");
             }
         } else {
             // Equatorial, nothing

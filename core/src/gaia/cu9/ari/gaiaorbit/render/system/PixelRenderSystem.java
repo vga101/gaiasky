@@ -23,6 +23,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
+import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
 
 public class PixelRenderSystem extends ImmediateRenderSystem implements IObserver {
@@ -59,7 +60,7 @@ public class PixelRenderSystem extends ImmediateRenderSystem implements IObserve
         else
             pointProgram = new ShaderProgram(Gdx.files.internal("shader/point.vertex.glsl"), Gdx.files.internal("shader/point.fragment.glsl"));
         if (!pointProgram.isCompiled()) {
-            Gdx.app.error(this.getClass().getName(), "Point shader compilation failed:\n" + pointProgram.getLog());
+            Logger.error(this.getClass().getName(), "Point shader compilation failed:\n" + pointProgram.getLog());
         }
         pointProgram.begin();
         pointProgram.setUniformf("u_pointAlphaMin", GlobalConf.scene.POINT_ALPHA_MIN);

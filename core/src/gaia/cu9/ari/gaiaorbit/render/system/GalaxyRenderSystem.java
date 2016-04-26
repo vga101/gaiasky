@@ -25,6 +25,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.MilkyWayReal;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
+import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 
 public class GalaxyRenderSystem extends ImmediateRenderSystem implements IObserver {
@@ -53,7 +54,7 @@ public class GalaxyRenderSystem extends ImmediateRenderSystem implements IObserv
         else
             pointProgram = new ShaderProgram(Gdx.files.internal("shader/point.galaxy.vertex.glsl"), Gdx.files.internal("shader/point.galaxy.fragment.glsl"));
         if (!pointProgram.isCompiled()) {
-            Gdx.app.error(this.getClass().getName(), "Point shader compilation failed:\n" + pointProgram.getLog());
+            Logger.error(this.getClass().getName(), "Point shader compilation failed:\n" + pointProgram.getLog());
         }
         pointProgram.begin();
         pointProgram.setUniformf("u_pointAlphaMin", 0.1f);
@@ -63,7 +64,7 @@ public class GalaxyRenderSystem extends ImmediateRenderSystem implements IObserv
         // QUAD (NEBULA) PROGRAM
         quadProgram = new ShaderProgram(Gdx.files.internal("shader/nebula.vertex.glsl"), Gdx.files.internal("shader/nebula.fragment.glsl"));
         if (!quadProgram.isCompiled()) {
-            Gdx.app.error(this.getClass().getName(), "Nebula shader compilation failed:\n" + quadProgram.getLog());
+            Logger.error(this.getClass().getName(), "Nebula shader compilation failed:\n" + quadProgram.getLog());
         }
         nebulatextures = new Texture[4];
         for (int i = 0; i < 4; i++) {

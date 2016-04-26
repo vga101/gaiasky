@@ -117,12 +117,12 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         ShaderProgram.pedantic = false;
         starShader = new ShaderProgram(Gdx.files.internal("shader/star.vertex.glsl"), Gdx.files.internal("shader/star.rays.fragment.glsl"));
         if (!starShader.isCompiled()) {
-            Gdx.app.error(this.getClass().getName(), "Star shader compilation failed:\n" + starShader.getLog());
+            Logger.error(new RuntimeException(), this.getClass().getName() + " - Star shader compilation failed:\n" + starShader.getLog());
         }
 
         fontShader = new ShaderProgram(Gdx.files.internal("shader/font.vertex.glsl"), Gdx.files.internal("shader/font.fragment.glsl"));
         if (!fontShader.isCompiled()) {
-            Gdx.app.error(this.getClass().getName(), "Font shader compilation failed:\n" + fontShader.getLog());
+            Logger.error(new RuntimeException(), this.getClass().getName() + " - Font shader compilation failed:\n" + fontShader.getLog());
         }
 
         int numLists = GlobalConf.performance.MULTITHREADING ? GlobalConf.performance.NUMBER_THREADS() : 1;

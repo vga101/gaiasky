@@ -1,13 +1,13 @@
 package gaia.cu9.ari.gaiaorbit.util.coord.vsop87;
 
-import gaia.cu9.ari.gaiaorbit.interfce.TextUtils;
-
 import java.util.HashMap;
 import java.util.Map;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.badlogic.gdx.utils.reflect.ReflectionException;
+
+import gaia.cu9.ari.gaiaorbit.interfce.TextUtils;
+import gaia.cu9.ari.gaiaorbit.util.Logger;
 
 public class VSOP87 {
     public static VSOP87 instance;
@@ -37,7 +37,7 @@ public class VSOP87 {
             try {
                 elements.put(cb, (iVSOP87) ClassReflection.newInstance(clazz));
             } catch (ReflectionException e) {
-                Gdx.app.error("VSOP87", e.getLocalizedMessage());
+                Logger.error("VSOP87", e.getLocalizedMessage());
             }
             tried.put(cb, true);
         }

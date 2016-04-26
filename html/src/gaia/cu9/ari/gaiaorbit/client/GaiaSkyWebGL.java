@@ -82,8 +82,8 @@ public class GaiaSkyWebGL extends GwtApplication implements IObserver {
     }
 
     protected native void reloadIFrame(Element iframeEl) /*-{
-                                                         iframeEl.contentWindow.location.reload(true);
-                                                         }-*/;
+		iframeEl.contentWindow.location.reload(false);
+    }-*/;
 
     @Override
     public ApplicationListener createApplicationListener() {

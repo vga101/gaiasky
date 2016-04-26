@@ -16,6 +16,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
+import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
@@ -57,7 +58,7 @@ public class LineQuadRenderSystem extends LineRenderSystem {
     protected void initShaderProgram() {
         pointProgram = new ShaderProgram(Gdx.files.internal("shader/line.quad.vertex.glsl"), Gdx.files.internal("shader/line.quad.fragment.glsl"));
         if (!pointProgram.isCompiled()) {
-            Gdx.app.error(this.getClass().getName(), "Line shader compilation failed:\n" + pointProgram.getLog());
+            Logger.error(this.getClass().getName(), "Line shader compilation failed:\n" + pointProgram.getLog());
         }
     }
 

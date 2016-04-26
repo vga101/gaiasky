@@ -2,7 +2,6 @@ package gaia.cu9.ari.gaiaorbit.data.orbit;
 
 import java.util.Date;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetDescriptor;
 import com.badlogic.gdx.assets.AssetLoaderParameters;
 import com.badlogic.gdx.assets.AssetManager;
@@ -13,6 +12,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
 
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.OrbitComponent;
+import gaia.cu9.ari.gaiaorbit.util.Logger;
 
 /**
  * Abstract data loader to rule them all.
@@ -40,7 +40,7 @@ public class OrbitDataLoader extends AsynchronousAssetLoader<OrbitData, OrbitDat
             provider.load(fileName, parameter);
             data = provider.getData();
         } catch (Exception e) {
-            Gdx.app.error(getClass().getSimpleName(), e.getMessage());
+            Logger.error(e, getClass().getSimpleName());
         }
 
     }

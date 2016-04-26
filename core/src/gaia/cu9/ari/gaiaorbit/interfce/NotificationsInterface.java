@@ -37,7 +37,7 @@ public class NotificationsInterface extends Table implements IObserver {
     Label message2;
     LinkedList<MessageBean> historical;
     boolean displaying = false;
-    boolean consoleLog = true;
+    boolean consoleLog = false;
     boolean permanent = false;
     boolean multiple = false;
     boolean writeDates = true;

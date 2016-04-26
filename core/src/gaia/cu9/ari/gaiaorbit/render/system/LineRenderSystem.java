@@ -16,6 +16,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
+import gaia.cu9.ari.gaiaorbit.util.Logger;
 
 public class LineRenderSystem extends ImmediateRenderSystem {
 
@@ -31,7 +32,7 @@ public class LineRenderSystem extends ImmediateRenderSystem {
     protected void initShaderProgram() {
         pointProgram = new ShaderProgram(Gdx.files.internal("shader/line.vertex.glsl"), Gdx.files.internal("shader/line.fragment.glsl"));
         if (!pointProgram.isCompiled()) {
-            Gdx.app.error(this.getClass().getName(), "Line shader compilation failed:\n" + pointProgram.getLog());
+            Logger.error(this.getClass().getName(), "Line shader compilation failed:\n" + pointProgram.getLog());
         }
     }
 
