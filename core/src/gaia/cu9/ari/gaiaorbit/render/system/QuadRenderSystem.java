@@ -132,15 +132,14 @@ public class QuadRenderSystem extends AbstractRenderSystem implements IObserver 
         // Get N closer stars and project position to screen, then post event
         int nrend = renderables.size();
 
-        
         int w = Gdx.graphics.getWidth();
         int h = Gdx.graphics.getHeight();
-        
+
         IRenderable r = renderables.get(nrend - 1);
         if (r instanceof Particle) {
             Particle p = (Particle) r;
             // TODO This is an ugly hack
-            if (p.name.equalsIgnoreCase("Sol")) {
+            if (!Constants.webgl && p.name.equalsIgnoreCase("Sol")) {
                 camera.getCamera().project(p.transform.getTranslationf(auxv));
                 if (auxv.x >= 0 && auxv.y >= 0 && auxv.x <= w && auxv.y <= h) {
                     aux[0] = auxv.x / w;

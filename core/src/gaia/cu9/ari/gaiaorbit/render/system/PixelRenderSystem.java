@@ -49,13 +49,13 @@ public class PixelRenderSystem extends ImmediateRenderSystem implements IObserve
         float baseResolution = (float) Math.sqrt(1280 * 1280 + 720 * 720);
         float currentResolution = (float) Math.sqrt(width * width + height * height);
         float factor = currentResolution / baseResolution;
-        POINT_SIZE = /*Constants.webgl ? 2 : */Math.min(15, Math.max(3, POINT_SIZE * factor * Gdx.graphics.getDensity()));
+        POINT_SIZE = Constants.webgl ? Math.min(15, Math.max(4, POINT_SIZE * factor)) : Math.min(15, Math.max(3, POINT_SIZE * factor * Gdx.graphics.getDensity()));
     }
 
     @Override
     protected void initShaderProgram() {
         // Initialise renderer
-        if (Gdx.app.getType() == ApplicationType.WebGL)
+        if (Gdx.app.getType() == ApplicationType.WebGL || Constants.webgl)
             pointProgram = new ShaderProgram(Gdx.files.internal("shader/point.vertex.glsl"), Gdx.files.internal("shader/point.fragment.wgl.glsl"));
         else
             pointProgram = new ShaderProgram(Gdx.files.internal("shader/point.vertex.glsl"), Gdx.files.internal("shader/point.fragment.glsl"));
