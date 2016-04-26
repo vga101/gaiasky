@@ -233,8 +233,6 @@ i:data/tex/star.jpg:297682:image/jpeg
 i:data/tex/venus.jpg:28969:image/jpeg
 i:data/tex/earth.jpg:662419:image/jpeg
 i:data/tex/nebula001.png:278981:image/png
-i:data/tex/mw.png:740773:image/png
-i:data/tex/milky_way.png:1907534:image/png
 i:data/tex/saturn-ring.png:12126:image/png
 i:data/tex/mercury.jpg:78618:image/jpeg
 b:data/hygxyz.bin:6455530:application/octet-stream
