@@ -1,7 +1,7 @@
 ![Gaia Sky](https://zah.uni-heidelberg.de/fileadmin/user_upload/gaia/gaiasky/img/GaiaSkyBanner.jpg)
 -------------------------
 --------------------------
-[![Circle CI](https://circleci.com/gh/ari-zah/gaiasandbox/tree/master.svg?style=svg)](https://circleci.com/gh/ari-zah/gaiasandbox/tree/master)
+[![Circle CI](https://circleci.com/gh/ari-zah/gaiasky/tree/master.svg?style=svg)](https://circleci.com/gh/ari-zah/gaiasky/tree/master)
 
 
 The **Gaia Sky** (former Gaia Sandbox) is a real-time, 3D, astronomy visualisation software that
