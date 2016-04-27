@@ -243,6 +243,17 @@ task createArch(dependsOn: createTar, description: "Copies Arch Linux AUR build 
 	
 	ant.replace(file: "$packageDir/arch/PKGBUILD", token: '@version.revision@', value: "$tagRev")
 	ant.replace(file: "$packageDir/arch/PKGBUILD", token: '@md5checksum@', value: md5Tar)
+	
+	copy {
+		from "$baseDir/CHANGELOG.md"
+		into "$packageDir/arch/"
+	}
+	
+	// Run makepkg to create .SRCINFO
+	//exec {
+    // 	executable "makepkg"
+    //	args "--printsrcinfo",">","$packageDir/arch/.SRCINFO"
+    //}
 }
 
 def buildTime() {
