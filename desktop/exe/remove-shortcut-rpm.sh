@@ -3,4 +3,4 @@
 # Removes the .desktop shortcut in RPM based distros
 #
 
-rm /usr/local/share/applications/gaiasky.desktop
+rm /usr/share/applications/gaiasky.desktop
