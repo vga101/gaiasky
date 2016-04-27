@@ -91,8 +91,17 @@ In order to **uninstall**, just type:
 ```
 sudo apt-get remove gaiasky
 ```
+#####1.2.2.2 AUR
 
-#####1.2.2.2 RPM
+We also provide an [AUR package](https://aur.archlinux.org/packages/gaiasky/) called **gaiasky**. You can install it easily with any tool capable of accessing `AUR`, for example `yaourt`.
+
+```
+yaourt -S gaiasky
+```
+
+
+
+#####1.2.2.3 RPM
 
 This is the package for RPM-based distributions (Red Hat, Fedora, Mandriva, SUSE, CentOS, etc.)
 Download the `gaiasky_linux_[version].rpm` file and run the
@@ -112,7 +121,7 @@ In order to **uninstall**, just type:
 sudo yum remove gaiasky-x86
 ```
 
-#####1.2.2.3 Linux installer
+#####1.2.2.4 Linux installer
 
 We also provide a Linux installer which will trigger a graphical interface
 where you can choose the installation location and some other settings.
