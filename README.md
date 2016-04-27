@@ -50,14 +50,14 @@ Specific system requirements are yet to be determined.
 
 Depending on your system and your personal preferences the installation
 procedure may vary. Below is a description of the various installation methods
-available.
+available. You can download the packages [here](https://zah.uni-heidelberg.de/gaia/outreach/gaiasandbox/downloads/).
 
 ####1.2.1 Windows
 
-Two windows installers are available for 32 and 64-bit systems.
+Two windows installers are available for 32 and 64-bit systems [here](https://zah.uni-heidelberg.de/gaia/outreach/gaiasandbox/downloads/).
 
-- `gaiasky_windows_[version].exe` - 32 bit installer.
-- `gaiasky_windows-x64_[version].exe` - 64 bit installer.
+- `gaiasky_windows_<version>.exe` - 32 bit installer.
+- `gaiasky_windows-x64_<version>.exe` - 64 bit installer.
 
 Both versions will automatically install the JRE if it is not present
 in the system.
@@ -70,17 +70,17 @@ you can use the provided uninstaller in the Gaia Sky folder.
 
 ####1.2.2 Linux
 
-We provide 3 packages for linux systems. `deb`, `rpm` and a linux installer.
+We provide 3 packages for linux systems. `deb`, `rpm` and a linux installer. You can get them [here](https://zah.uni-heidelberg.de/gaia/outreach/gaiasandbox/downloads/).
 
 #####1.2.2.1 DEB
 
 This is the package for Debian-based distros (Debian, Ubuntu, Mint, SteamOS, etc.).
-Download the `gaiasandbox_linux_[version].deb` file and run the
+Download the `gaiasandbox_linux_<version>.deb` file and run the
 following command. You will need root privileges to install a `deb` package in
 your system.
 
 ```
-sudo dpkg -i gaiasky_linux_[version].deb
+sudo dpkg -i gaiasky_linux_<version>.deb
 ```
 
 This will install the application in the `/opt/gaiasky/` folder
@@ -104,12 +104,12 @@ yaourt -S gaiasky
 #####1.2.2.3 RPM
 
 This is the package for RPM-based distributions (Red Hat, Fedora, Mandriva, SUSE, CentOS, etc.)
-Download the `gaiasky_linux_[version].rpm` file and run the
+Download the `gaiasky_linux_<version>.rpm` file and run the
 following command. You will need root privileges to install a `rpm` package in
 your system.
 
 ```
-sudo yum install gaiasky_linux_[version].rpm
+sudo yum install gaiasky_linux_<version>.rpm
 ```
 
 This will install the application in the `/opt/gaiasky/` folder
@@ -123,9 +123,9 @@ sudo yum remove gaiasky-x86
 
 #####1.2.2.4 Linux installer
 
-We also provide a Linux installer which will trigger a graphical interface
+We also provide a Linux installer ([here](https://zah.uni-heidelberg.de/gaia/outreach/gaiasandbox/downloads/)) which will trigger a graphical interface
 where you can choose the installation location and some other settings.
-Download the file `gaiasandbox_unix_[version].sh` to your disk.
+Download the file `gaiasandbox_unix_<version>.sh` to your disk.
 Then run the following to start the installation.
 
 ```
@@ -139,21 +139,20 @@ installation folder.
 
 ####1.2.3 OS X - Mac
 
-For OS X we provide a `gaiasky_macos_0_704b_d327966.dmg` file
-which is installed by unpacking into the Applications folder. Once unpacked, the
+For OS X we provide a `gaiasky_macos_<version>.dmg` file
+which is installed by unpacking into the Applications folder. Get it [here](https://zah.uni-heidelberg.de/gaia/outreach/gaiasandbox/downloads/). Once unpacked, the
 installer will come up, just follow its instructions.
 
 ####1.2.4 Compressed (TGZ) package
 
-A `gaiasky-[version].tgz` package file is also provided. It will work
+A `gaiasky-<version>.tgz` package file is also provided. It will work
 in all systems but you need to unpack it yourself and create the desired
 shortcuts.
 In **Windows**, use an archiver software (7zip, iZArc, etc.) to unpack it.
 
 In **Linux** and **OS X**, you can use:
 ```
-mkdir [target-directory]/
-tar zxvf gaiasky-[version].tgz -C [target-directory]/
+tar zxvf gaiasky-<version>.tgz
 ```
 
 
