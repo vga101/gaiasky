@@ -125,6 +125,8 @@ project(":desktop") {
         from('../android/assets') {
             include 'font/main-font.fnt'
             include 'font/main-font.png'
+            include 'font/font2d.fnt'
+            include 'font/font2d.png'
             include 'icon/ic_launcher.png'
             include 'img/**'
             include 'shader/**'
