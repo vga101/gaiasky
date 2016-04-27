@@ -23,7 +23,7 @@ import gaia.cu9.ari.gaiaorbit.util.comp.DistToCameraComparator;
 public class FontRenderSystem extends AbstractRenderSystem {
     private SpriteBatch batch;
     private ShaderProgram shaderProgram;
-    private BitmapFont distanceFont;
+    private BitmapFont font3d, font2d;
     private Comparator<IRenderable> comp;
 
     public FontRenderSystem(RenderGroup rg, int priority, float[] alphas, SpriteBatch batch) {
@@ -37,11 +37,17 @@ public class FontRenderSystem extends AbstractRenderSystem {
     public FontRenderSystem(RenderGroup rg, int priority, float[] alphas, SpriteBatch batch, ShaderProgram shaderProgram) {
         this(rg, priority, alphas, batch);
         this.shaderProgram = shaderProgram;
-        // Init distance field font
-        Texture texture = new Texture(Gdx.files.internal("font/main-font.png"), true);
-        texture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-        distanceFont = new BitmapFont(Gdx.files.internal("font/main-font.fnt"), new TextureRegion(texture), false);
-        distanceFont.getData().setScale(12f / 32f);
+
+        // 3D font
+        Texture texture3d = new Texture(Gdx.files.internal("font/main-font.png"), true);
+        texture3d.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+        font3d = new BitmapFont(Gdx.files.internal("font/main-font.fnt"), new TextureRegion(texture3d), false);
+
+        // 2D font
+        Texture texture2d = new Texture(Gdx.files.internal("font/font2d.png"), true);
+        texture2d.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+        font2d = new BitmapFont(Gdx.files.internal("font/font2d.fnt"), new TextureRegion(texture2d), false);
+
     }
 
     @Override
@@ -63,8 +69,9 @@ public class FontRenderSystem extends AbstractRenderSystem {
                 shaderProgram.setUniformf("a_labelAlpha", (lr.isLabel() || camera.getCurrent() instanceof FovCamera ? alphas[ComponentType.Labels.ordinal()] : 1f));
                 shaderProgram.setUniformf("a_componentAlpha", alphas[s.getComponentType().ordinal()]);
                 // Font opacity multiplier
-                shaderProgram.setUniformf("u_opacity", 0.6f);
-                s.render(batch, shaderProgram, distanceFont, camera);
+                shaderProgram.setUniformf("u_opacity", 0.65f);
+
+                s.render(batch, shaderProgram, font3d, font2d, camera);
             }
         }
         batch.end();

@@ -264,13 +264,18 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
     }
 
     @Override
+    public float textScale() {
+        return (float) Math.atan(labelMax()) * labelFactor() * 1e3f;
+    }
+
+    @Override
     protected float labelFactor() {
-        return 1.34e-1f;
+        return .5e-1f;
     }
 
     @Override
     protected float labelMax() {
-        return 0.012f;
+        return 0.015f;
     }
 
     public float getFuzzyRenderSize(ICamera camera) {

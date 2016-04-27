@@ -47,9 +47,10 @@ import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 public class FovCamera extends AbstractCamera implements IObserver {
     private static final double CAM_NEAR = 1e6 * Constants.KM_TO_U;
     private static final double CAM_FAR = 1e22 * Constants.KM_TO_U;
-    private static final float FOV = (float) Satellite.FOV_AC_ACTIVE;
+    private static final float FOV_CORR = 0.2f;
+    private static final float FOV = (float) Satellite.FOV_AC + FOV_CORR;
     private static final float BAM_2 = (float) Satellite.BASICANGLE_DEGREE / 2f;
-    private static final double GAIA_ASPECT_RATIO = Satellite.FOV_AL / FOV;
+    private static final double GAIA_ASPECT_RATIO = (Satellite.FOV_AL + FOV_CORR) / FOV;
 
     /** time that has to pass with the current scan rate so that we scan to the
      * edge of the current field of view.
@@ -78,6 +79,7 @@ public class FovCamera extends AbstractCamera implements IObserver {
     @SuppressWarnings("unchecked")
     public FovCamera(AssetManager assetManager, CameraManager parent) {
         super(parent);
+        System.out.println("FOV: " + FOV);
         initialize(assetManager);
         directions = new Vector3d[] { new Vector3d(), new Vector3d() };
         interpolatedDirections = new ArrayList<Vector3d[]>();
@@ -120,21 +122,21 @@ public class FovCamera extends AbstractCamera implements IObserver {
         Image i = new Image(fp);
         i.setFillParent(true);
         i.setAlign(Align.center);
-        i.setColor(1, 1, 0, .7f);
+        i.setColor(0.3f, 0.8f, 0.3f, .9f);
         fov12.addActor(i);
 
         Stage fov1 = new Stage(new ScalingViewport(Scaling.stretch, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), new OrthographicCamera()), GlobalResources.spriteBatch);
         i = new Image(fp_fov1);
         i.setFillParent(true);
         i.setAlign(Align.center);
-        i.setColor(1, 1, 0, .7f);
+        i.setColor(0.3f, 0.8f, 0.3f, .9f);
         fov1.addActor(i);
 
         Stage fov2 = new Stage(new ScalingViewport(Scaling.stretch, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), new OrthographicCamera()), GlobalResources.spriteBatch);
         i = new Image(fp_fov2);
         i.setFillParent(true);
         i.setAlign(Align.center);
-        i.setColor(1, 1, 0, .7f);
+        i.setColor(0.3f, 0.8f, 0.3f, .9f);
         fov2.addActor(i);
 
         fpstages[0] = fov1;

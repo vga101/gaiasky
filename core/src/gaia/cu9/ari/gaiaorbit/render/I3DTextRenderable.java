@@ -24,10 +24,11 @@ public interface I3DTextRenderable extends IRenderable {
      * Renders the text.
      * @param batch
      * @param shader
-     * @param font
+     * @param font3d
+     * @param font2d
      * @param camera
      */
-    public void render(SpriteBatch batch, ShaderProgram shader, BitmapFont font, ICamera camera);
+    public void render(SpriteBatch batch, ShaderProgram shader, BitmapFont font3d, BitmapFont font2d, ICamera camera);
 
     /**
      * Returns an array with the text colour in the fashion [r, g, b, a].

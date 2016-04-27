@@ -129,7 +129,7 @@ public abstract class ModelBody extends CelestialBody {
 
     @Override
     protected float labelMax() {
-        return 2e-4f;
+        return 1e-4f;
     }
 
     public void setModel(ModelComponent mc) {
@@ -148,7 +148,7 @@ public abstract class ModelBody extends CelestialBody {
 
     @Override
     public float textScale() {
-        return Math.max(.5f, labelSizeConcrete());
+        return Math.max(1f, labelSizeConcrete());
     }
 
     protected float labelSizeConcrete() {

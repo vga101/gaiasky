@@ -256,10 +256,10 @@ public abstract class AbstractPositionEntity extends SceneGraphNode {
         pos.setVector3(p);
 
         camera.getCamera().project(p);
-        p.x += 5;
-        p.y -= 5;
+        p.x += 15;
+        p.y -= 15;
 
-        shader.setUniformf("scale", .5f);
+        shader.setUniformf("scale", 1f);
         DecalUtils.drawFont2D(font, batch, label, p);
         v3fpool.free(p);
     }

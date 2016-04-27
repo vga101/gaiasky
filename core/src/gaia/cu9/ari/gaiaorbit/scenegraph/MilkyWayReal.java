@@ -185,7 +185,7 @@ public class MilkyWayReal extends AbstractPositionEntity implements I3DTextRende
     @Override
     public void render(Object... params) {
         if (params[0] instanceof SpriteBatch) {
-            render((SpriteBatch) params[0], (ShaderProgram) params[1], (BitmapFont) params[2], (ICamera) params[3]);
+            render((SpriteBatch) params[0], (ShaderProgram) params[1], (BitmapFont) params[2], (BitmapFont) params[3], (ICamera) params[4]);
         }
     }
 
@@ -193,12 +193,12 @@ public class MilkyWayReal extends AbstractPositionEntity implements I3DTextRende
      * Label rendering.
      */
     @Override
-    public void render(SpriteBatch batch, ShaderProgram shader, BitmapFont font, ICamera camera) {
+    public void render(SpriteBatch batch, ShaderProgram shader, BitmapFont font3d, BitmapFont font2d, ICamera camera) {
         Vector3d pos = v3dpool.obtain();
         textPosition(camera, pos);
         shader.setUniformf("a_viewAngle", 90f);
         shader.setUniformf("a_thOverFactor", 1f);
-        render3DLabel(batch, shader, font, camera, text(), pos, textScale(), textSize(), textColour());
+        render3DLabel(batch, shader, font3d, camera, text(), pos, textScale(), textSize(), textColour());
         v3dpool.free(pos);
     }
 

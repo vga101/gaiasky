@@ -94,7 +94,7 @@ public class Constellation extends LineObject implements I3DTextRenderable {
         if (params[0] instanceof ImmediateRenderSystem) {
             super.render(params);
         } else if (params[0] instanceof SpriteBatch) {
-            render((SpriteBatch) params[0], (ShaderProgram) params[1], (BitmapFont) params[2], (ICamera) params[3]);
+            render((SpriteBatch) params[0], (ShaderProgram) params[1], (BitmapFont) params[2], (BitmapFont) params[3], (ICamera) params[4]);
         }
     }
 
@@ -128,12 +128,12 @@ public class Constellation extends LineObject implements I3DTextRenderable {
      * Label rendering.
      */
     @Override
-    public void render(SpriteBatch batch, ShaderProgram shader, BitmapFont font, ICamera camera) {
+    public void render(SpriteBatch batch, ShaderProgram shader, BitmapFont font3d, BitmapFont font2d, ICamera camera) {
         Vector3d pos = v3dpool.obtain();
         textPosition(camera, pos);
         shader.setUniformf("a_viewAngle", 90f);
         shader.setUniformf("a_thOverFactor", 1f);
-        render3DLabel(batch, shader, font, camera, text(), pos, textScale(), textSize(), textColour());
+        render3DLabel(batch, shader, font3d, camera, text(), pos, textScale(), textSize(), textColour());
         v3dpool.free(pos);
     }
 
@@ -157,12 +157,12 @@ public class Constellation extends LineObject implements I3DTextRenderable {
 
     @Override
     public float textSize() {
-        return .6e7f;
+        return .3e7f;
     }
 
     @Override
     public float textScale() {
-        return 1f;
+        return .5f;
     }
 
     @Override
@@ -177,7 +177,7 @@ public class Constellation extends LineObject implements I3DTextRenderable {
 
     @Override
     public boolean renderText() {
-        return !GaiaSky.instance.isOn(ComponentType.Labels);
+        return GaiaSky.instance.isOn(ComponentType.Labels);
     }
 
     @Override

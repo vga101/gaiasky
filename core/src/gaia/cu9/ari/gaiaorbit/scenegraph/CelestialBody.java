@@ -94,7 +94,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
             render((ShaderProgram) first, (Float) params[1], (Boolean) params[2], (Mesh) params[3], (ICamera) params[4]);
         } else if (first instanceof SpriteBatch) {
             // LABEL
-            render((SpriteBatch) first, (ShaderProgram) params[1], (BitmapFont) params[2], (ICamera) params[3]);
+            render((SpriteBatch) first, (ShaderProgram) params[1], (BitmapFont) params[2], (BitmapFont) params[3], (ICamera) params[4]);
         } else if (first instanceof ModelBatch) {
             // Normal model
             render((ModelBatch) first, (Float) params[1]);
@@ -156,9 +156,9 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
      * Label rendering.
      */
     @Override
-    public void render(SpriteBatch batch, ShaderProgram shader, BitmapFont font, ICamera camera) {
+    public void render(SpriteBatch batch, ShaderProgram shader, BitmapFont font3d, BitmapFont font2d, ICamera camera) {
         if (camera.getCurrent() instanceof FovCamera) {
-            render2DLabel(batch, shader, font, camera, text(), pos);
+            render2DLabel(batch, shader, font2d, camera, text(), pos);
         } else {
             //render2DLabel(batch, shader, font, camera, text(), transform.position);
             // 3D distance font
@@ -166,7 +166,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
             textPosition(camera, pos);
             shader.setUniformf("a_viewAngle", viewAngle);
             shader.setUniformf("a_thOverFactor", TH_OVER_FACTOR);
-            render3DLabel(batch, shader, font, camera, text(), pos, textScale(), textSize(), textColour());
+            render3DLabel(batch, shader, font3d, camera, text(), pos, textScale(), textSize(), textColour());
             v3dpool.free(pos);
         }
 
