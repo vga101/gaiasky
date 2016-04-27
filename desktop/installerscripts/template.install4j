@@ -546,9 +546,10 @@
         <content />
       </installerScript>
     </unixInstaller>
-    <!--
     <linuxDeb name="Linux Deb Archive" id="30" customizedId="" mediaFileName="" installDir="/opt/${compiler:sys.shortName}" overridePrincipalLanguage="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="" manualJREEntry="false" bzip="false" description="3D universe software" dependencies="" maintainerEmail="" architectureSet="false" architecture="">
-      <excludedLaunchers />
+      <excludedLaunchers>
+        <launcher id="83" />
+      </excludedLaunchers>
       <excludedBeans />
       <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
       <exclude>
@@ -576,7 +577,6 @@
         <content />
       </postUninstallScript>
     </linuxDeb>
-    -->
     <linuxRPM name="Linux RPM" id="77" customizedId="" mediaFileName="" installDir="/opt/${compiler:sys.shortName}" overridePrincipalLanguage="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="" manualJREEntry="false" os="linux" arch="i386">
       <excludedLaunchers>
         <launcher id="83" />

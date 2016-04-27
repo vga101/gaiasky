@@ -1,4 +1,0 @@
-#!/bin/sh
-
-# Remove .desktop file
-rm /usr/share/applications/gaiasky.desktop

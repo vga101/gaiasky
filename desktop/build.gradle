@@ -300,7 +300,7 @@ task createDeb(dependsOn: createArch, description: "Creates the .deb package") <
     
 }
 
-task prepareInstall4jScript (dependsOn: createDeb, description: "Prepares the install4j script and copies it to the packages folder") << {
+task prepareInstall4jScript (dependsOn: createArch, description: "Prepares the install4j script and copies it to the packages folder") << {
     copy {
         from "installerscripts/template.install4j"
         into "$packageDir"

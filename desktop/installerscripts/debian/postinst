@@ -6,4 +6,7 @@ cd "$GS_INSTALL_DIR"
 ln -sf "$GS_INSTALL_DIR/gaiasky" /usr/local/bin/
 
 # Move .desktop file
+chmod +x "$GS_INSTALL_DIR/gaiasky.desktop"
 mv "$GS_INSTALL_DIR/gaiasky.desktop" /usr/share/applications/
+
+exit 0
