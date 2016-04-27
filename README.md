@@ -93,7 +93,7 @@ sudo apt-get remove gaiasky
 ```
 #####1.2.2.2 AUR
 
-We also provide an [AUR package](https://aur.archlinux.org/packages/gaiasky/) called **gaiasky**. You can install it easily with any tool capable of accessing `AUR`, for example `yaourt`.
+We also provide an [AUR package](https://aur.archlinux.org/packages/gaiasky/) called `gaiasky`. You can install it easily with any tool capable of accessing `AUR`, for example `yaourt`.
 
 ```
 yaourt -S gaiasky
