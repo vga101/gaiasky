@@ -183,15 +183,11 @@ sudo pacman -S gradle
 ```
 First, clone the [GitHub](https://github.com/ari-zah/gaiasky) repository:
 ```
-cd $GIT_FOLDER
 git clone https://github.com/ari-zah/gaiasky.git
-```
-Then, run the following commands to compile and run:
-```
-cd $GIT_FOLDER/gaiasky
+cd gaiasky
 gradle desktop:run
 ```
-Et voilà! The Gaia Sky is running in your machine.
+Et voilà! The Gaia Sky is running on your machine.
 
 
 ######################################################
