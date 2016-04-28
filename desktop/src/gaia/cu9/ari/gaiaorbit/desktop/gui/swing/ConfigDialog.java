@@ -265,7 +265,7 @@ public class ConfigDialog extends I18nJFrame {
         JLabel gqTooltip = new JLabel(IconManager.get("gui/info-tooltip"));
         gqTooltip.setToolTipText(txt("gui.gquality.info"));
 
-        ComboBoxBean[] gqs = new ComboBoxBean[] { new ComboBoxBean(txt("gui.gquality.high"), 0), new ComboBoxBean(txt("gui.gquality.normal"), 1) };
+        ComboBoxBean[] gqs = new ComboBoxBean[] { new ComboBoxBean(txt("gui.gquality.high"), 0), new ComboBoxBean(txt("gui.gquality.normal"), 1), new ComboBoxBean(txt("gui.gquality.low"), 2) };
         final JComboBox<ComboBoxBean> gquality = new JComboBox<ComboBoxBean>(gqs);
         int index = -1;
         for (int i = 0; i < GlobalConf.data.DATA_JSON_FILE_GQ.length; i++) {

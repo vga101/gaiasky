@@ -503,6 +503,8 @@ public class GlobalConf {
         public int PIXEL_RENDERER;
         /** The line render system: 0 - normal, 1 - shader **/
         public int LINE_RENDERER;
+        /** The graphics quality mode: 0 - high, 1 - normal, 2 - low **/
+        public int GRAPHICS_QUALITY;
 
         public double STAR_THRESHOLD_NONE;
         public double STAR_THRESHOLD_POINT;
@@ -523,8 +525,9 @@ public class GlobalConf {
             EventManager.instance.subscribe(this, Events.FOCUS_LOCK_CMD, Events.PROPER_MOTIONS_CMD, Events.STAR_BRIGHTNESS_CMD, Events.FOV_CHANGED_CMD, Events.CAMERA_SPEED_CMD, Events.ROTATION_SPEED_CMD, Events.TURNING_SPEED_CMD, Events.SPEED_LIMIT_CMD, Events.TRANSIT_COLOUR_CMD, Events.ONLY_OBSERVED_STARS_CMD, Events.COMPUTE_GAIA_SCAN_CMD, Events.PIXEL_RENDERER_CMD, Events.OCTREE_PARTICLE_FADE_CMD);
         }
 
-        public void initialize(long oBJECT_FADE_MS, float sTAR_BRIGHTNESS, float aMBIENT_LIGHT, int cAMERA_FOV, float cAMERA_SPEED, float tURNING_SPEED, float rOTATION_SPEED, int cAMERA_SPEED_LIMIT_IDX, boolean fOCUS_LOCK, float lABEL_NUMBER_FACTOR, boolean[] vISIBILITY, int pIXEL_RENDERER, int lINE_RENDERER, double sTAR_TH_ANGLE_NONE, double sTAR_TH_ANGLE_POINT, double sTAR_TH_ANGLE_QUAD, float pOINT_ALPHA_MIN, float pOINT_ALPHA_MAX, boolean oCTREE_PARTICLE_FADE, float oCTANT_TH_ANGLE_0,
-                float oCTANT_TH_ANGLE_1) {
+        public void initialize(int gRAPHICS_QUALITY, long oBJECT_FADE_MS, float sTAR_BRIGHTNESS, float aMBIENT_LIGHT, int cAMERA_FOV, float cAMERA_SPEED, float tURNING_SPEED, float rOTATION_SPEED, int cAMERA_SPEED_LIMIT_IDX, boolean fOCUS_LOCK, float lABEL_NUMBER_FACTOR, boolean[] vISIBILITY, int pIXEL_RENDERER, int lINE_RENDERER, double sTAR_TH_ANGLE_NONE, double sTAR_TH_ANGLE_POINT, double sTAR_TH_ANGLE_QUAD, float pOINT_ALPHA_MIN, float pOINT_ALPHA_MAX, boolean oCTREE_PARTICLE_FADE,
+                float oCTANT_TH_ANGLE_0, float oCTANT_TH_ANGLE_1) {
+            GRAPHICS_QUALITY = gRAPHICS_QUALITY;
             OBJECT_FADE_MS = oBJECT_FADE_MS;
             STAR_BRIGHTNESS = sTAR_BRIGHTNESS;
             AMBIENT_LIGHT = aMBIENT_LIGHT;
@@ -669,6 +672,18 @@ public class GlobalConf {
 
         public boolean isQuadLineRenderer() {
             return LINE_RENDERER == 1;
+        }
+
+        public boolean isHighQuality() {
+            return GRAPHICS_QUALITY == 0;
+        }
+
+        public boolean isNormalQuality() {
+            return GRAPHICS_QUALITY == 1;
+        }
+
+        public boolean isLowQuality() {
+            return GRAPHICS_QUALITY == 2;
         }
     }
 
