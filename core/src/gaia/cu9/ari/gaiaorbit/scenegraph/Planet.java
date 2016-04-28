@@ -50,6 +50,12 @@ public class Planet extends ModelBody implements IAtmosphereRenderable {
 
     }
 
+    protected void setColor2Data() {
+        final float plus = .6f;
+        ccPale = new float[] { Math.min(1, cc[0] + plus), Math.min(1, cc[1] + plus), Math.min(1, cc[2] + plus) };
+        ccTransit = new float[] { ccPale[0], ccPale[1], ccPale[2], cc[3] };
+    }
+
     @Override
     public void doneLoading(AssetManager manager) {
         super.doneLoading(manager);

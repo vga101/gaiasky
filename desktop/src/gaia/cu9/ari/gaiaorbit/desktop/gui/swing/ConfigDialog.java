@@ -852,6 +852,7 @@ public class ConfigDialog extends I18nJFrame {
                     // Graphics
                     ComboBoxBean bean = (ComboBoxBean) gquality.getSelectedItem();
                     GlobalConf.data.DATA_JSON_FILE = GlobalConf.data.DATA_JSON_FILE_GQ[bean.value];
+                    GlobalConf.scene.GRAPHICS_QUALITY = bean.value;
 
                     bean = (ComboBoxBean) msaa.getSelectedItem();
                     GlobalConf.postprocess.POSTPROCESS_ANTIALIAS = bean.value;

@@ -138,8 +138,8 @@ public class QuadRenderSystem extends AbstractRenderSystem implements IObserver 
         IRenderable r = renderables.get(nrend - 1);
         if (r instanceof Particle) {
             Particle p = (Particle) r;
-            // TODO This is an ugly hack
-            if (!Constants.webgl && p.name.equalsIgnoreCase("Sol")) {
+            // TODO This is an ugly hack for volumetric lighting to work (only with Sol)
+            if (!Constants.webgl && !GlobalConf.scene.isLowQuality() && p.name.equalsIgnoreCase("Sol")) {
                 camera.getCamera().project(p.transform.getTranslationf(auxv));
                 if (auxv.x >= 0 && auxv.y >= 0 && auxv.x <= w && auxv.y <= h) {
                     aux[0] = auxv.x / w;
@@ -159,7 +159,6 @@ public class QuadRenderSystem extends AbstractRenderSystem implements IObserver 
         // General uniforms
         shaderProgram.setUniformMatrix("u_projTrans", camera.getCamera().combined);
         shaderProgram.setUniformf("u_quaternion", quaternion.x, quaternion.y, quaternion.z, quaternion.w);
-        shaderProgram.setUniformf("u_star", r instanceof Particle ? 1.0f : -1.0f);
 
         if (!Constants.mobile) {
             // Global uniforms

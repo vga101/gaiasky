@@ -126,7 +126,11 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
             shader.setUniformf("u_th_angle_point", (float) THRESHOLD_POINT() * camera.getFovFactor());
 
             // Stars with children do not have stray light, for we use volumetric light scattering
-            shader.setUniformi("u_strayLight", !Constants.webgl && children != null && !children.isEmpty() ? -1 : 1);
+            if (GlobalConf.scene.isLowQuality()) {
+                shader.setUniformi("u_strayLight", -1);
+            } else {
+                shader.setUniformi("u_strayLight", !Constants.webgl && children != null && !children.isEmpty() ? -1 : 1);
+            }
 
             if (precomp < 0) {
                 precomp = (float) (getRadius() * Constants.U_TO_KM * 172.4643429);

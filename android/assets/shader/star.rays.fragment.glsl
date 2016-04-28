@@ -15,8 +15,6 @@ uniform float u_inner_rad;
 uniform float u_time;
 // Distance in km to the star
 uniform float u_distance;
-// Is a star
-uniform float u_star;
 // Whether to draw stray light or not
 uniform int u_strayLight;
 
@@ -61,9 +59,6 @@ vec4 draw_simple_star(float distanceCenter, float inner_rad, float decay) {
     float core = step(ang_th, u_apparent_angle) * smoothstep(inner_rad, 0.0, distanceCenter);
 
     vec4 col = vec4 (v_color.rgb + core, v_color.a * (fac + core));
-    if(u_star < 0.0){
-		col.rgb = clamp(col.rgb, 0.0, 0.65);
-	}
 	return col;
 }
 
@@ -97,9 +92,4 @@ draw_star() {
 void
 main() {
     gl_FragColor = draw_star();
-    if(u_strayLight >= 0) {
-	    // Prevent saturation
-	    gl_FragColor = clamp(gl_FragColor, 0.0, 1.0);
-	    gl_FragColor.rgb *= 0.98;
-    }
 }

@@ -39,8 +39,4 @@ void main() {
     float offset = (sin(time) + 1.0) * 0.25;
     vec3 color = texture2D(u_normalTexture, vec2(grayscale + offset, 0.0)).rgb;
     gl_FragColor = vec4(color * 1.7 * v_lightDiffuse * percolor, v_opacity);
-    
-    // Prevent saturation
-    gl_FragColor = clamp(gl_FragColor, 0.0, 1.0);
-    gl_FragColor.rgb *= 0.99;
 }

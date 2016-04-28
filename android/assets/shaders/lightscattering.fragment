@@ -24,16 +24,23 @@ void main()
 	 vec4 col = vec4(0.0);
 	 for (int clpos = 0; clpos < u_nLights; clpos++){
 		 vec2 deltaTexCoord = (v_texCoords - u_lightPositions[clpos]);
-
+		 float d1 = length(deltaTexCoord);
+		 
 		 vec2 tc = vec2(v_texCoords);
 
 		 deltaTexCoord *= 1.0 / float(u_numSamples) * u_density;
 		 float illuminationDecay = 1.0;
 		 
 		 vec4 color = texture2D(u_texture0, tc) * 0.4;
+		 
 		 for(int i = 0; i < u_numSamples; i++){
 		    tc -= deltaTexCoord;
 		    vec4 sample = texture2D(u_texture0, tc) * 0.4;
+		    if(length(tc - u_lightPositions[clpos]) > 0.035){
+		    	sample = vec4(0.0, 0.0, 0.0, 0.0);
+		    }else{
+		    	sample = texture2D(u_texture0, tc) * 0.4;
+		    }
 		    sample *= illuminationDecay * u_weight;
 		    color += sample;
 		    illuminationDecay *= u_decay;

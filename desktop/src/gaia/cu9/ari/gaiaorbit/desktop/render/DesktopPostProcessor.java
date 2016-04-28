@@ -93,21 +93,43 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
         ppb.pp.addEffect(ppb.bloom);
 
         // LIGHT SCATTERING
+        int nsamples;
+        float density;
+        boolean lsenabled = true;
+        if (GlobalConf.scene.isHighQuality()) {
+            nsamples = 160;
+            density = 1.2f;
+        } else if (GlobalConf.scene.isNormalQuality()) {
+            nsamples = 90;
+            density = 0.95f;
+        } else {
+            nsamples = 50;
+            density = 0.5f;
+            lsenabled = false;
+        }
         ppb.lscatter = new LightScattering((int) (width * scatteringFboScale), (int) (height * scatteringFboScale));
         ppb.lscatter.setScatteringIntesity(1f);
         ppb.lscatter.setScatteringSaturation(1f);
         ppb.lscatter.setBaseIntesity(1f);
-        ppb.lscatter.setBias(-0.9999f);
+        ppb.lscatter.setBias(-0.95f);
         ppb.lscatter.setBlurAmount(0.5f);
         ppb.lscatter.setBlurPasses(1);
-        ppb.lscatter.setDensity(1.2f);
-        ppb.lscatter.setNumSamples(160);
-        ppb.lscatter.setEnabled(true);
+        ppb.lscatter.setDensity(density);
+        ppb.lscatter.setNumSamples(nsamples);
+        ppb.lscatter.setEnabled(lsenabled);
         ppb.pp.addEffect(ppb.lscatter);
 
         // LENS FLARE
+        int nghosts;
+        if (GlobalConf.scene.isHighQuality()) {
+            nghosts = 10;
+        } else if (GlobalConf.scene.isNormalQuality()) {
+            nghosts = 8;
+        } else {
+            nghosts = 6;
+        }
         ppb.lens = new LensFlare2((int) (width * lensFboScale), (int) (height * lensFboScale));
-        ppb.lens.setGhosts(10);
+        ppb.lens.setGhosts(nghosts);
         ppb.lens.setHaloWidth(0.8f);
         ppb.lens.setLensColorTexture(new Texture(Gdx.files.internal("img/lenscolor.png")));
         ppb.lens.setFlareIntesity(0.6f);
