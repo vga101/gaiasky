@@ -8,6 +8,7 @@ precision mediump int;
 #endif
 
 uniform sampler2D u_texture0;
+uniform vec2 u_viewport;
 
 varying vec2 v_texCoords;
 
@@ -19,8 +20,14 @@ uniform float u_weight;
 uniform int u_numSamples;
 uniform int u_nLights;
 
+float len(vec2 vect, float ar){
+	return sqrt(vect.x * vect.x * ar * ar + vect.y * vect.y);
+}
+
 void main()
 {
+	 float ar = u_viewport.x / u_viewport.y;
+
 	 vec4 col = vec4(0.0);
 	 for (int clpos = 0; clpos < u_nLights; clpos++){
 		 vec2 deltaTexCoord = (v_texCoords - u_lightPositions[clpos]);
@@ -36,7 +43,7 @@ void main()
 		 for(int i = 0; i < u_numSamples; i++){
 		    tc -= deltaTexCoord;
 		    vec4 sample = texture2D(u_texture0, tc) * 0.4;
-		    if(length(tc - u_lightPositions[clpos]) > 0.035){
+		    if(len(tc - u_lightPositions[clpos], ar) > 0.035){
 		    	sample = vec4(0.0, 0.0, 0.0, 0.0);
 		    }else{
 		    	sample = texture2D(u_texture0, tc) * 0.4;
