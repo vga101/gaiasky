@@ -20,6 +20,7 @@ import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.render.IRenderable;
+import gaia.cu9.ari.gaiaorbit.render.PostProcessorFactory;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
@@ -139,7 +140,7 @@ public class QuadRenderSystem extends AbstractRenderSystem implements IObserver 
         if (r instanceof Particle) {
             Particle p = (Particle) r;
             // TODO This is an ugly hack for volumetric lighting to work (only with Sol)
-            if (!Constants.webgl && !GlobalConf.scene.isLowQuality() && p.name.equalsIgnoreCase("Sol")) {
+            if (!Constants.webgl && p.name.equalsIgnoreCase("Sol") && PostProcessorFactory.instance.getPostProcessor().isLightScatterEnabled()) {
                 camera.getCamera().project(p.transform.getTranslationf(auxv));
                 if (auxv.x >= 0 && auxv.y >= 0 && auxv.x <= w && auxv.y <= h) {
                     aux[0] = auxv.x / w;

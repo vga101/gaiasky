@@ -75,4 +75,9 @@ public class WebGLPostProcessor implements IPostProcessor {
         return postProcess.getCombinedBuffer().width != width || postProcess.getCombinedBuffer().height != height;
     }
 
+	@Override
+	public boolean isLightScatterEnabled() {
+		return false;
+	}
+
 }

@@ -101,6 +101,8 @@ public enum Events {
     ONLY_OBSERVED_STARS_CMD,
     /** Activate/deactivate lens flare. Contains a boolean with the new state **/
     LENS_FLARE_CMD,
+    /** Activate/deactivate the light scattering. Contains boolean **/
+    LIGHT_SCATTERING_CMD,
     /** Contains the intensity value between 0 and 1 **/
     BLOOM_CMD,
     /** Contains the opacity of motion blur between 0 and 1 **/

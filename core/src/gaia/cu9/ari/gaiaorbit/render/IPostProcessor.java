@@ -53,4 +53,6 @@ public interface IPostProcessor {
     public PostProcessBean getPostProcessBean(RenderType type);
 
     public void resize(int width, int height);
+    
+    public boolean isLightScatterEnabled();
 }

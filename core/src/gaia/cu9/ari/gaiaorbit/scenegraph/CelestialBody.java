@@ -11,12 +11,14 @@ import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.bitfire.postprocessing.PostProcessor;
 
 import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.render.I3DTextRenderable;
 import gaia.cu9.ari.gaiaorbit.render.IModelRenderable;
 import gaia.cu9.ari.gaiaorbit.render.IQuadRenderable;
+import gaia.cu9.ari.gaiaorbit.render.PostProcessorFactory;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.RotationComponent;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
@@ -129,7 +131,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
             if (GlobalConf.scene.isLowQuality()) {
                 shader.setUniformi("u_strayLight", -1);
             } else {
-                shader.setUniformi("u_strayLight", !Constants.webgl && children != null && !children.isEmpty() ? -1 : 1);
+                shader.setUniformi("u_strayLight", !Constants.webgl && !PostProcessorFactory.instance.getPostProcessor().isLightScatterEnabled() ? 1 : -1);
             }
 
             if (precomp < 0) {
