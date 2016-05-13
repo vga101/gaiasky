@@ -12,6 +12,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
@@ -36,6 +37,7 @@ import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
 /**
  * Ripoff of libgdx's CameraInputController, for now.
+ * 
  * @author Toni Sagrista
  *
  */
@@ -46,17 +48,28 @@ public class GaiaInputController extends GestureDetector {
 
     public KeyBindings mappings;
 
-    /** The button for rotating the camera either around its center or around the focus. */
+    /**
+    	 * The button for rotating the camera either around its center or around the
+    	 * focus.
+    	 */
     public int leftMouseButton = Buttons.LEFT;
-    /** The angle to rotate when moved the full width or height of the screen. */
+    /**
+    	 * The angle to rotate when moved the full width or height of the screen.
+    	 */
     public float rotateAngle = 360f;
     /** The button for panning the camera along the up/right plane */
     public int rightMouseButton = Buttons.RIGHT;
-    /** The units to translate the camera when moved the full width or height of the screen. */
+    /**
+    	 * The units to translate the camera when moved the full width or height of
+    	 * the screen.
+    	 */
     public final float translateUnits = 1000f;
     /** The button for moving the camera along the direction axis */
     public int middleMouseButton = Buttons.MIDDLE;
-    /** Whether scrolling requires the activeKey to be pressed (false) or always allow scrolling (true). */
+    /**
+    	 * Whether scrolling requires the activeKey to be pressed (false) or always
+    	 * allow scrolling (true).
+    	 */
     public boolean alwaysScroll = true;
     /** The weight for each scrolled amount. */
     public float scrollFactor = -0.1f;
@@ -213,18 +226,39 @@ public class GaiaInputController extends GestureDetector {
 
                                             if (camera.direction.dot(posd) > 0) {
                                                 // The star is in front of us
-                                                // Diminish the size of the star when we are close by
+                                                // Diminish the size of the star
+                                                // when we are close by
                                                 float angle = s.viewAngle;
                                                 if (s instanceof Star && s.viewAngle > Constants.THRESHOLD_DOWN / camera.getFovFactor() && s.viewAngle < Constants.THRESHOLD_UP / camera.getFovFactor()) {
                                                     angle = 20f * (float) Constants.THRESHOLD_DOWN / camera.getFovFactor();
                                                 }
 
-                                                angle = (float) Math.toDegrees(angle * camera.fovFactor) * (40f / camera.camera.fieldOfView);
-                                                float pixelSize = Math.max(MAX_PX_DIST, ((angle * cam.getViewport().getScreenHeight()) / camera.camera.fieldOfView) / 2);
-                                                camera.camera.project(pos);
-                                                pos.y = cam.getViewport().getScreenHeight() - pos.y;
+                                                PerspectiveCamera pcamera;
+                                                int screenXaux = screenX;
+                                                if (GlobalConf.program.STEREOSCOPIC_MODE) {
+                                                    if (screenY < Gdx.graphics.getWidth() / 2f) {
+                                                        pcamera = camera.getCameraStereoLeft();
+                                                        pcamera.update();
+                                                    } else {
+                                                        pcamera = camera.getCameraStereoRight();
+                                                        pcamera.update();
+                                                        screenXaux -= pcamera.viewportWidth;
+                                                    }
+                                                } else {
+                                                    pcamera = camera.camera;
+                                                }
+
+                                                angle = (float) Math.toDegrees(angle * camera.fovFactor) * (40f / pcamera.fieldOfView);
+                                                float pixelSize = Math.max(MAX_PX_DIST, ((angle * pcamera.viewportHeight) / pcamera.fieldOfView) / 2);
+                                                pcamera.project(pos);
+                                                pos.y = pcamera.viewportHeight - pos.y;
+                                                if (GlobalConf.program.STEREOSCOPIC_MODE) {
+                                                    pos.x /= 2;
+                                                    if (screenX != screenXaux)
+                                                        pos.x -= pcamera.viewportWidth;
+                                                }
                                                 // Check click distance
-                                                if (pos.dst(screenX, screenY, pos.z) <= pixelSize) {
+                                                if (pos.dst(screenXaux, screenY, pos.z) <= pixelSize) {
                                                     // Hit
                                                     hits.add(s);
                                                 }
@@ -272,14 +306,14 @@ public class GaiaInputController extends GestureDetector {
     protected boolean processDrag(float deltaX, float deltaY, int button) {
         if (button == leftMouseButton) {
             if (isKeyPressed(rollKey)) {
-                //camera.rotate(camera.direction, deltaX * rotateAngle);
+                // camera.rotate(camera.direction, deltaX * rotateAngle);
                 if (deltaX != 0)
                     cam.naturalCamera.addRoll(deltaX);
             } else {
                 cam.naturalCamera.addRotateMovement(deltaX, deltaY, false);
             }
         } else if (button == rightMouseButton) {
-            //            cam.naturalCamera.addPanMovement(deltaX, deltaY);
+            // cam.naturalCamera.addPanMovement(deltaX, deltaY);
             cam.naturalCamera.addRotateMovement(deltaX, deltaY, true);
         } else if (button == middleMouseButton) {
             if (deltaX != 0)

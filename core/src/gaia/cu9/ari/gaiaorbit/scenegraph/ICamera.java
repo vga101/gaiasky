@@ -14,6 +14,18 @@ public interface ICamera {
      * @return The perspective camera.
      */
     public PerspectiveCamera getCamera();
+    
+    /**
+     * Sets the active camera
+     * @param cam
+     */
+    public void setCamera(PerspectiveCamera cam);
+    
+    public PerspectiveCamera getCameraStereoLeft();
+    public PerspectiveCamera getCameraStereoRight();
+    
+    public void setCameraStereoLeft(PerspectiveCamera cam);
+    public void setCameraStereoRight(PerspectiveCamera cam);
 
     public PerspectiveCamera[] getFrontCameras();
 

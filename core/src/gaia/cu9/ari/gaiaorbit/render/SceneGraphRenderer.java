@@ -365,11 +365,13 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
                 // Vector of 1 meter length pointing to the side of the camera
                 Vector3 side = vectorPool.obtain().set(cam.direction);
                 float separation = (float) Constants.M_TO_U * GlobalConf.program.STEREOSCOPIC_EYE_SEPARATION_M;
+                float dirangleDeg = 0;
                 if (camera.getMode() == CameraMode.Focus) {
-                    // In focus mode we keep the separation dependant on the
+                    // In focus mode we keep the separation dependent on the
                     // distance with a fixed angle
                     float distToFocus = ((NaturalCamera) camera.getCurrent()).focus.distToCamera - ((NaturalCamera) camera.getCurrent()).focus.getRadius();
-                    separation = (float) Math.min((Math.tan(Math.toRadians(1.5)) * distToFocus), 1e11 * Constants.M_TO_U);
+                    separation = (float) Math.min((Math.tan(Math.toRadians(1.5)) * distToFocus), 2e13 * Constants.M_TO_U);
+                    dirangleDeg = 1.5f;
                 }
 
                 side.crs(cam.up).nor().scl(separation);
@@ -392,12 +394,14 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
                 if (movecam) {
                     if (crosseye) {
                         cam.position.add(side);
+                        cam.direction.rotate(cam.up, dirangleDeg);
                     } else {
                         cam.position.sub(side);
+                        cam.direction.rotate(cam.up, -dirangleDeg);
                     }
                     cam.update();
                 }
-
+                camera.setCameraStereoLeft(cam);
                 renderScene(camera, rc);
 
                 Texture tex = null;
@@ -432,11 +436,14 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
                     cam.position.set(backup);
                     if (crosseye) {
                         cam.position.sub(side);
+                        cam.direction.rotate(cam.up, -dirangleDeg);
                     } else {
                         cam.position.add(side);
+                        cam.direction.rotate(cam.up, dirangleDeg);
                     }
                     cam.update();
                 }
+                camera.setCameraStereoRight(cam);
                 renderScene(camera, rc);
 
                 postprocessRender(ppb, fb3d, postproc, camera);

@@ -438,4 +438,29 @@ public class CameraManager implements ICamera, IObserver {
         return current.getDistance();
     }
 
+	@Override
+	public void setCamera(PerspectiveCamera cam) {
+		current.setCamera(cam);
+	}
+
+	@Override
+	public void setCameraStereoLeft(PerspectiveCamera cam) {
+		current.setCameraStereoLeft(cam);
+	}
+
+	@Override
+	public void setCameraStereoRight(PerspectiveCamera cam) {
+		current.setCameraStereoRight(cam);
+	}
+
+	@Override
+	public PerspectiveCamera getCameraStereoLeft() {
+		return current.getCameraStereoLeft();
+	}
+
+	@Override
+	public PerspectiveCamera getCameraStereoRight() {
+		return current.getCameraStereoRight();
+	}
+
 }
