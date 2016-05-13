@@ -234,15 +234,13 @@ public class GaiaInputController extends GestureDetector {
                                                 }
 
                                                 PerspectiveCamera pcamera;
-                                                int screenXaux = screenX;
                                                 if (GlobalConf.program.STEREOSCOPIC_MODE) {
-                                                    if (screenY < Gdx.graphics.getWidth() / 2f) {
+                                                    if (screenX < Gdx.graphics.getWidth() / 2f) {
                                                         pcamera = camera.getCameraStereoLeft();
                                                         pcamera.update();
                                                     } else {
                                                         pcamera = camera.getCameraStereoRight();
                                                         pcamera.update();
-                                                        screenXaux -= pcamera.viewportWidth;
                                                     }
                                                 } else {
                                                     pcamera = camera.camera;
@@ -254,11 +252,9 @@ public class GaiaInputController extends GestureDetector {
                                                 pos.y = pcamera.viewportHeight - pos.y;
                                                 if (GlobalConf.program.STEREOSCOPIC_MODE) {
                                                     pos.x /= 2;
-                                                    if (screenX != screenXaux)
-                                                        pos.x -= pcamera.viewportWidth;
                                                 }
                                                 // Check click distance
-                                                if (pos.dst(screenXaux, screenY, pos.z) <= pixelSize) {
+                                                if (pos.dst(screenX % pcamera.viewportWidth, screenY, pos.z) <= pixelSize) {
                                                     // Hit
                                                     hits.add(s);
                                                 }
