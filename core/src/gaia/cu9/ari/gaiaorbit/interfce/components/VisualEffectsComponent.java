@@ -23,7 +23,7 @@ public class VisualEffectsComponent extends GuiComponent {
 
 	protected Slider starBrightness, bloomEffect, ambientLight, motionBlur;
 	protected OwnLabel brightness, bloom, ambient, motion, bloomLabel, motionBlurLabel;
-	protected CheckBox lensFlare;
+	protected CheckBox lensFlare, lightScattering;
 	private HorizontalGroup motionGroup, bloomGroup;
 
 	public VisualEffectsComponent(Skin skin, Stage stage) {
@@ -143,6 +143,21 @@ public class VisualEffectsComponent extends GuiComponent {
 				}
 			});
 			lensFlare.setChecked(GlobalConf.postprocess.POSTPROCESS_LENS_FLARE);
+
+            /** Light scattering **/
+            lightScattering = new CheckBox(" " + txt("gui.lightscattering"), skin);
+            lightScattering.setName("light scattering");
+            lightScattering.addListener(new EventListener() {
+                    @Override
+                    public boolean handle(Event event) {
+                            if (event instanceof ChangeEvent) {
+                                    EventManager.instance.post(Events.LIGHT_SCATTERING_CMD, lightScattering.isChecked());
+                                    return true;
+                            }
+                            return false;
+                    }
+            });
+            lightScattering.setChecked(!GlobalConf.scene.isLowQuality());
 		}
 
 		VerticalGroup lightingGroup = new VerticalGroup().align(Align.left);
@@ -156,6 +171,7 @@ public class VisualEffectsComponent extends GuiComponent {
 			lightingGroup.addActor(motionBlurLabel);
 			lightingGroup.addActor(motionGroup);
 			lightingGroup.addActor(lensFlare);
+			lightingGroup.addActor(lightScattering);
 		}
 
 		component = lightingGroup;

@@ -27,4 +27,8 @@ void main(void) {
     gl_FragColor.rgb = vec3(1.0) - exp(gl_FragColor.rgb * -exposure);
     
     gl_FragColor.a = fAlpha * (gl_FragColor.b + fColorOpacity * length (gl_FragColor));
+    
+    // Prevent saturation
+    gl_FragColor = clamp(gl_FragColor, 0.0, 1.0);
+    gl_FragColor.rgb *= 0.98;
 }
