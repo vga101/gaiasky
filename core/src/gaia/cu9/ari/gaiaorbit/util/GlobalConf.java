@@ -95,18 +95,19 @@ public class GlobalConf {
         public int POSTPROCESS_ANTIALIAS;
         public float POSTPROCESS_BLOOM_INTENSITY;
         public float POSTPROCESS_MOTION_BLUR;
-        /** This should be no smaller than 1 and no bigger than 5. The bigger the more stars with labels **/
         public boolean POSTPROCESS_LENS_FLARE;
+        public boolean POSTPROCESS_LIGHT_SCATTERING;
 
         public PostprocessConf() {
-            EventManager.instance.subscribe(this, Events.BLOOM_CMD, Events.LENS_FLARE_CMD, Events.MOTION_BLUR_CMD);
+            EventManager.instance.subscribe(this, Events.BLOOM_CMD, Events.LENS_FLARE_CMD, Events.MOTION_BLUR_CMD, Events.LIGHT_SCATTERING_CMD);
         }
 
-        public void initialize(int POSTPROCESS_ANTIALIAS, float POSTPROCESS_BLOOM_INTENSITY, float POSTPROCESS_MOTION_BLUR, boolean POSTPROCESS_LENS_FLARE) {
+        public void initialize(int POSTPROCESS_ANTIALIAS, float POSTPROCESS_BLOOM_INTENSITY, float POSTPROCESS_MOTION_BLUR, boolean POSTPROCESS_LENS_FLARE, boolean POSTPROCESS_LIGHT_SCATTERING) {
             this.POSTPROCESS_ANTIALIAS = POSTPROCESS_ANTIALIAS;
             this.POSTPROCESS_BLOOM_INTENSITY = POSTPROCESS_BLOOM_INTENSITY;
             this.POSTPROCESS_MOTION_BLUR = POSTPROCESS_MOTION_BLUR;
             this.POSTPROCESS_LENS_FLARE = POSTPROCESS_LENS_FLARE;
+            this.POSTPROCESS_LIGHT_SCATTERING = POSTPROCESS_LIGHT_SCATTERING;
         }
 
         @Override
@@ -118,8 +119,12 @@ public class GlobalConf {
             case LENS_FLARE_CMD:
                 POSTPROCESS_LENS_FLARE = (Boolean) data[0];
                 break;
+            case LIGHT_SCATTERING_CMD:
+                POSTPROCESS_LIGHT_SCATTERING = (Boolean) data[0];
+                break;
             case MOTION_BLUR_CMD:
                 POSTPROCESS_MOTION_BLUR = (float) data[0];
+                break;
             }
         }
 
@@ -142,12 +147,14 @@ public class GlobalConf {
         public float LIMIT_MAG_RUNTIME;
         public int OUTPUT_FRAME_BUFFER_SIZE = 250;
         public boolean STRIPPED_FOV_MODE = false;
+        /** Whether octree drawing is active or not **/
+        public boolean DRAW_OCTREE;
 
         public RuntimeConf() {
             EventManager.instance.subscribe(this, Events.LIMIT_MAG_CMD, Events.INPUT_ENABLED_CMD, Events.DISPLAY_GUI_CMD, Events.TOGGLE_UPDATEPAUSE, Events.TOGGLE_TIME_CMD, Events.RECORD_CAMERA_CMD);
         }
 
-        public void initialize(boolean dISPLAY_GUI, boolean uPDATE_PAUSE, boolean sTRIPPED_FOV_MODE, boolean tIME_ON, boolean iNPUT_ENABLED, boolean rECORD_CAMERA, float lIMIT_MAG_RUNTIME, boolean rEAL_TIME) {
+        public void initialize(boolean dISPLAY_GUI, boolean uPDATE_PAUSE, boolean sTRIPPED_FOV_MODE, boolean tIME_ON, boolean iNPUT_ENABLED, boolean rECORD_CAMERA, float lIMIT_MAG_RUNTIME, boolean rEAL_TIME, boolean dRAW_OCTREE) {
             DISPLAY_GUI = dISPLAY_GUI;
             UPDATE_PAUSE = uPDATE_PAUSE;
             TIME_ON = tIME_ON;
@@ -156,6 +163,7 @@ public class GlobalConf {
             LIMIT_MAG_RUNTIME = lIMIT_MAG_RUNTIME;
             STRIPPED_FOV_MODE = sTRIPPED_FOV_MODE;
             REAL_TIME = rEAL_TIME;
+            DRAW_OCTREE = dRAW_OCTREE;
         }
 
         @Override
@@ -495,7 +503,14 @@ public class GlobalConf {
         public boolean FOCUS_LOCK;
         public float LABEL_NUMBER_FACTOR;
         public boolean[] VISIBILITY;
+
+        /** Whether to display proper motion vectors**/
         public boolean PROPER_MOTION_VECTORS;
+        /** Factor to apply to the length of the proper motion vectors [1-1e3] **/
+        public float PM_LEN_FACTOR;
+        /** This governs the number of proper motion vectors to display [1-100] **/
+        public float PM_NUM_FACTOR;
+
         public boolean STAR_COLOR_TRANSIT;
         public boolean ONLY_OBSERVED_STARS;
         public boolean COMPUTE_GAIA_SCAN;
@@ -526,7 +541,7 @@ public class GlobalConf {
         }
 
         public void initialize(int gRAPHICS_QUALITY, long oBJECT_FADE_MS, float sTAR_BRIGHTNESS, float aMBIENT_LIGHT, int cAMERA_FOV, float cAMERA_SPEED, float tURNING_SPEED, float rOTATION_SPEED, int cAMERA_SPEED_LIMIT_IDX, boolean fOCUS_LOCK, float lABEL_NUMBER_FACTOR, boolean[] vISIBILITY, int pIXEL_RENDERER, int lINE_RENDERER, double sTAR_TH_ANGLE_NONE, double sTAR_TH_ANGLE_POINT, double sTAR_TH_ANGLE_QUAD, float pOINT_ALPHA_MIN, float pOINT_ALPHA_MAX, boolean oCTREE_PARTICLE_FADE,
-                float oCTANT_TH_ANGLE_0, float oCTANT_TH_ANGLE_1) {
+                float oCTANT_TH_ANGLE_0, float oCTANT_TH_ANGLE_1, boolean pROPER_MOTION_VECTORS, float pM_NUM_FACTOR, float pM_LEN_FACTOR) {
             GRAPHICS_QUALITY = gRAPHICS_QUALITY;
             OBJECT_FADE_MS = oBJECT_FADE_MS;
             STAR_BRIGHTNESS = sTAR_BRIGHTNESS;
@@ -549,8 +564,10 @@ public class GlobalConf {
             POINT_ALPHA_MAX = pOINT_ALPHA_MAX;
             OCTREE_PARTICLE_FADE = oCTREE_PARTICLE_FADE;
             OCTANT_THRESHOLD_0 = oCTANT_TH_ANGLE_0;
-
             OCTANT_THRESHOLD_1 = oCTANT_TH_ANGLE_1;
+            PROPER_MOTION_VECTORS = pROPER_MOTION_VECTORS;
+            PM_NUM_FACTOR = pM_NUM_FACTOR;
+            PM_LEN_FACTOR = pM_LEN_FACTOR;
         }
 
         public void updateSpeedLimit() {

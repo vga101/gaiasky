@@ -199,8 +199,9 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
 
             if (viewAngleApparent >= THRESHOLD_POINT() * camera.getFovFactor()) {
                 addToRender(this, RenderGroup.SHADER);
-                if (this.hasPm)
-                    addToRender(this, RenderGroup.LINE);
+            }
+            if (viewAngleApparent >= THRESHOLD_POINT() * camera.getFovFactor() / GlobalConf.scene.PM_NUM_FACTOR && this.hasPm) {
+                addToRender(this, RenderGroup.LINE);
             }
         }
         if (renderText() && camera.isVisible(GaiaSky.instance.time, this)) {
@@ -328,11 +329,11 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
     public void render(LineRenderSystem renderer, ICamera camera, float alpha) {
         Vector3 campos = v3fpool.obtain();
         Vector3 p1 = transform.position.setVector3(v3fpool.obtain());
-        Vector3 ppm = v3fpool.obtain().set(pm).scl(1e3f);
+        Vector3 ppm = v3fpool.obtain().set(pm).scl(GlobalConf.scene.PM_LEN_FACTOR);
         Vector3 p2 = v3fpool.obtain().set(p1).add(ppm);
         camera.getPos().setVector3(campos);
 
-        renderer.addLine(p1.x, p1.y, p1.z, p2.x, p2.y, p2.z, 1.0f, 0.0f, 0.0f, alpha * 0.5f);
+        renderer.addLine(p1.x, p1.y, p1.z, p2.x, p2.y, p2.z, 1.0f, 0.0f, 0.0f, alpha * 0.8f);
 
         v3fpool.free(campos);
         v3fpool.free(p1);

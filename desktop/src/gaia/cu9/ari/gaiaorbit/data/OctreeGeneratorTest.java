@@ -116,14 +116,16 @@ public class OctreeGeneratorTest implements IObserver {
         TGASLoader tgas = new TGASLoader();
         tgas.initialize(new String[] { "data/tgas_201507/Solution1507280011.txt" });
 
+        /** LOAD HYG **/
         List<Particle> list = (List<Particle>) hyg.loadData();
         Set<Integer> hips = new HashSet<Integer>();
         for (Particle p : list) {
-            if (p instanceof Star) {
+            if (p instanceof Star && ((Star) p).hip > 0) {
                 hips.add(((Star) p).hip);
             }
         }
 
+        /** LOAD TGAS **/
         List<Particle> list2 = tgas.loadData();
         for (Particle p : list2) {
             if (!(p instanceof Star) || (p instanceof Star && !hips.contains(((Star) p).hip))) {

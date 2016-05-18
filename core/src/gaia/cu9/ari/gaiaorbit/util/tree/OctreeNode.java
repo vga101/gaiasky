@@ -41,9 +41,6 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
     /** Is dynamic loading active? **/
     public static boolean LOAD_ACTIVE;
 
-    /** Is the draw method actually drawing? **/
-    public static boolean DRAW_ACTIVE = true;
-
     /** Since OctreeNode is not to be parallelised, these can be static. Otherwise, use ThreadLocal **/
     private static BoundingBoxd boxcopy = new BoundingBoxd(new Vector3d(), new Vector3d());
     private static Matrix4d boxtransf = new Matrix4d();
@@ -537,89 +534,87 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
 
     @Override
     public void render(LineRenderSystem sr, ICamera camera, float alpha) {
-        if (DRAW_ACTIVE) {
-            float maxDepth = OctreeNode.maxDepth * 2;
-            // Colour depends on depth
-            int rgb = 0xff000000 | ColourUtils.HSBtoRGB((float) depth / (float) maxDepth, 1f, 0.5f);
+        float maxDepth = OctreeNode.maxDepth * 2;
+        // Colour depends on depth
+        int rgb = 0xff000000 | ColourUtils.HSBtoRGB((float) depth / (float) maxDepth, 1f, 0.5f);
 
-            alpha *= MathUtilsd.lint(depth, 0, maxDepth, 1.0, 0.5);
+        alpha *= MathUtilsd.lint(depth, 0, maxDepth, 1.0, 0.5);
 
-            this.col.set(ColourUtils.getRed(rgb) * alpha, ColourUtils.getGreen(rgb) * alpha, ColourUtils.getBlue(rgb) * alpha, alpha * opacity);
+        this.col.set(ColourUtils.getRed(rgb) * alpha, ColourUtils.getGreen(rgb) * alpha, ColourUtils.getBlue(rgb) * alpha, alpha * opacity);
 
-            if (this.observed) {
-                this.col.set(Color.YELLOW);
-            } else {
-                this.col.set(Color.BROWN);
-            }
-
-            // Camera correction
-            Vector3d loc = MyPools.get(Vector3d.class).obtain();
-            loc.set(this.blf).add(transform);
-
-            /*
-             *       .·------·
-             *     .' |    .'|
-             *    +---+--·'  |
-             *    |   |  |   |
-             *    |  ,+--+---·
-             *    |.'    | .'
-             *    +------+'
-             */
-            line(sr, loc.x, loc.y, loc.z, loc.x + size.x, loc.y, loc.z, this.col);
-            line(sr, loc.x, loc.y, loc.z, loc.x, loc.y + size.y, loc.z, this.col);
-            line(sr, loc.x, loc.y, loc.z, loc.x, loc.y, loc.z + size.z, this.col);
-
-            /*
-             *       .·------·
-             *     .' |    .'|
-             *    ·---+--+'  |
-             *    |   |  |   |
-             *    |  ,·--+---+
-             *    |.'    | .'
-             *    ·------+'
-             */
-            line(sr, loc.x + size.x, loc.y, loc.z, loc.x + size.x, loc.y + size.y, loc.z, this.col);
-            line(sr, loc.x + size.x, loc.y, loc.z, loc.x + size.x, loc.y, loc.z + size.z, this.col);
-
-            /*
-             *       .·------+
-             *     .' |    .'|
-             *    ·---+--·'  |
-             *    |   |  |   |
-             *    |  ,+--+---+
-             *    |.'    | .'
-             *    ·------·'
-             */
-            line(sr, loc.x + size.x, loc.y, loc.z + size.z, loc.x, loc.y, loc.z + size.z, this.col);
-            line(sr, loc.x + size.x, loc.y, loc.z + size.z, loc.x + size.x, loc.y + size.y, loc.z + size.z, this.col);
-
-            /*
-             *       .+------·
-             *     .' |    .'|
-             *    ·---+--·'  |
-             *    |   |  |   |
-             *    |  ,+--+---·
-             *    |.'    | .'
-             *    ·------·'
-             */
-            line(sr, loc.x, loc.y, loc.z + size.z, loc.x, loc.y + size.y, loc.z + size.z, this.col);
-
-            /*
-             *       .+------+
-             *     .' |    .'|
-             *    +---+--+'  |
-             *    |   |  |   |
-             *    |  ,·--+---·
-             *    |.'    | .'
-             *    ·------·'
-             */
-            line(sr, loc.x, loc.y + size.y, loc.z, loc.x + size.x, loc.y + size.y, loc.z, this.col);
-            line(sr, loc.x, loc.y + size.y, loc.z, loc.x, loc.y + size.y, loc.z + size.z, this.col);
-            line(sr, loc.x, loc.y + size.y, loc.z + size.z, loc.x + size.x, loc.y + size.y, loc.z + size.z, this.col);
-            line(sr, loc.x + size.x, loc.y + size.y, loc.z, loc.x + size.x, loc.y + size.y, loc.z + size.z, this.col);
-
-            MyPools.get(Vector3d.class).free(loc);
+        if (this.observed) {
+            this.col.set(Color.YELLOW);
+        } else {
+            this.col.set(Color.BROWN);
         }
+
+        // Camera correction
+        Vector3d loc = MyPools.get(Vector3d.class).obtain();
+        loc.set(this.blf).add(transform);
+
+        /*
+         *       .·------·
+         *     .' |    .'|
+         *    +---+--·'  |
+         *    |   |  |   |
+         *    |  ,+--+---·
+         *    |.'    | .'
+         *    +------+'
+         */
+        line(sr, loc.x, loc.y, loc.z, loc.x + size.x, loc.y, loc.z, this.col);
+        line(sr, loc.x, loc.y, loc.z, loc.x, loc.y + size.y, loc.z, this.col);
+        line(sr, loc.x, loc.y, loc.z, loc.x, loc.y, loc.z + size.z, this.col);
+
+        /*
+         *       .·------·
+         *     .' |    .'|
+         *    ·---+--+'  |
+         *    |   |  |   |
+         *    |  ,·--+---+
+         *    |.'    | .'
+         *    ·------+'
+         */
+        line(sr, loc.x + size.x, loc.y, loc.z, loc.x + size.x, loc.y + size.y, loc.z, this.col);
+        line(sr, loc.x + size.x, loc.y, loc.z, loc.x + size.x, loc.y, loc.z + size.z, this.col);
+
+        /*
+         *       .·------+
+         *     .' |    .'|
+         *    ·---+--·'  |
+         *    |   |  |   |
+         *    |  ,+--+---+
+         *    |.'    | .'
+         *    ·------·'
+         */
+        line(sr, loc.x + size.x, loc.y, loc.z + size.z, loc.x, loc.y, loc.z + size.z, this.col);
+        line(sr, loc.x + size.x, loc.y, loc.z + size.z, loc.x + size.x, loc.y + size.y, loc.z + size.z, this.col);
+
+        /*
+         *       .+------·
+         *     .' |    .'|
+         *    ·---+--·'  |
+         *    |   |  |   |
+         *    |  ,+--+---·
+         *    |.'    | .'
+         *    ·------·'
+         */
+        line(sr, loc.x, loc.y, loc.z + size.z, loc.x, loc.y + size.y, loc.z + size.z, this.col);
+
+        /*
+         *       .+------+
+         *     .' |    .'|
+         *    +---+--+'  |
+         *    |   |  |   |
+         *    |  ,·--+---·
+         *    |.'    | .'
+         *    ·------·'
+         */
+        line(sr, loc.x, loc.y + size.y, loc.z, loc.x + size.x, loc.y + size.y, loc.z, this.col);
+        line(sr, loc.x, loc.y + size.y, loc.z, loc.x, loc.y + size.y, loc.z + size.z, this.col);
+        line(sr, loc.x, loc.y + size.y, loc.z + size.z, loc.x + size.x, loc.y + size.y, loc.z + size.z, this.col);
+        line(sr, loc.x + size.x, loc.y + size.y, loc.z, loc.x + size.x, loc.y + size.y, loc.z + size.z, this.col);
+
+        MyPools.get(Vector3d.class).free(loc);
     }
 
     /** Draws a line **/

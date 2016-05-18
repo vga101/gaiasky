@@ -129,7 +129,7 @@ public class TGASLoader extends AbstractCatalogLoader implements ISceneGraphLoad
                 float absmag = appmag;
                 String name = Long.toString(sourceid);
 
-                Star star = new Star(pos, appmag, absmag, colorbv, name, (float) ra, (float) dec, sourceid, hip, (byte) 1);
+                Star star = new Star(pos, pmfloat, appmag, absmag, colorbv, name, (float) ra, (float) dec, sourceid, hip, (byte) 1);
                 if (runFiltersAnd(star))
                     stars.add(star);
             }

@@ -216,8 +216,9 @@ public class Star extends Particle {
                     camera.checkClosest(this);
                     addToRender(this, RenderGroup.MODEL_S);
                 }
-                if (this.hasPm)
-                    addToRender(this, RenderGroup.LINE);
+            }
+            if (viewAngleApparent >= THRESHOLD_POINT() * camera.getFovFactor() / GlobalConf.scene.PM_NUM_FACTOR && this.hasPm) {
+                addToRender(this, RenderGroup.LINE);
             }
         }
         if ((renderText() || camera.getCurrent() instanceof FovCamera) && camera.isVisible(GaiaSky.instance.time, this)) {
