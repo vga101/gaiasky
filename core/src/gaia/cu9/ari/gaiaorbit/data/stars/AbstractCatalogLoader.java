@@ -12,6 +12,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
  *
  */
 public abstract class AbstractCatalogLoader {
+    /** Catalog files to load **/
     public String[] files;
     public List<CatalogFilter> filters;
 

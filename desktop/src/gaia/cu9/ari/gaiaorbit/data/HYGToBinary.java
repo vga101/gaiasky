@@ -46,6 +46,7 @@ import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
 public class HYGToBinary implements IObserver {
 
     static String fileIn = "/home/tsagrista/git/gaiasky/android/assets-bak/data/hygxyz.csv";
+    static String fileInPm = "/home/tsagrista/git/gaiasky/android/assets-bak/data/hip_pm.csv";
     static String fileOut = "/home/tsagrista/git/gaiasky/android/assets-bak/data/hygxyz.bin";
 
     public static void main(String[] args) {
@@ -69,7 +70,7 @@ public class HYGToBinary implements IObserver {
 
         //hyg.compareCSVtoBinary(fileIn, fileOut);
 
-        hyg.convertToBinary(fileIn, fileOut);
+        hyg.convertToBinary(fileIn, fileInPm, fileOut);
 
     }
 
@@ -107,10 +108,11 @@ public class HYGToBinary implements IObserver {
 
     }
 
-    public void convertToBinary(String csv, String bin) {
+    public void convertToBinary(String csv, String pm, String bin) {
         HYGCSVLoader cat = new HYGCSVLoader();
         try {
             cat.files = new String[] { csv };
+            cat.setPmFile(pm);
             List<? extends Particle> stars = cat.loadData();
 
             // Write to binary
