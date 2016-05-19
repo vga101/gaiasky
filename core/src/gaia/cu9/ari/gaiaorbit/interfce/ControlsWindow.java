@@ -152,7 +152,7 @@ public class ControlsWindow extends CollapsibleWindow implements IObserver {
         mainActors.add(camera);
 
         /** ----OBJECT TOGGLES GROUP---- **/
-        VisibilityComponent visibilityComponent = new VisibilityComponent(skin, ui);
+        VisibilityComponent visibilityComponent = new VisibilityComponent(skin, ui, this);
         visibilityComponent.setVisibilityEntitites(visibilityEntities, visible);
         visibilityComponent.initialize();
 
@@ -312,7 +312,7 @@ public class ControlsWindow extends CollapsibleWindow implements IObserver {
 
         /** ADD TO MAIN WINDOW **/
         add(mainVertical).top().left().expand();
-        setPosition(0, Gdx.graphics.getHeight() - getHeight());
+        setPosition(0, Math.round(Gdx.graphics.getHeight() - getHeight()));
 
         setWidth(mainVertical.getWidth());
         pack();
@@ -402,7 +402,7 @@ public class ControlsWindow extends CollapsibleWindow implements IObserver {
             x = MathUtilsd.clamp(x * width, 0, width - windowWidth);
             y = MathUtilsd.clamp(y * height - windowHeight, 0, height - windowHeight);
 
-            setPosition(x, y);
+            setPosition(Math.round(x), Math.round(y));
 
             break;
         case RECALCULATE_OPTIONS_SIZE:

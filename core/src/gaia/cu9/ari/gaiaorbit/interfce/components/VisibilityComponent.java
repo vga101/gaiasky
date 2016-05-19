@@ -10,8 +10,11 @@ import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
+import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
@@ -20,8 +23,12 @@ import com.badlogic.gdx.utils.Align;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
+import gaia.cu9.ari.gaiaorbit.interfce.ControlsWindow;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
+import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
+import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
+import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnLabel;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextButton;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextIconButton;
 
@@ -33,9 +40,15 @@ public class VisibilityComponent extends GuiComponent implements IObserver {
     private ComponentType[] visibilityEntities;
     private boolean[] visible;
     private CheckBox properMotions;
+    private Slider pmNumFactorSlider, pmLenFactorSlider;
+    private Label pmNumFactor, pmLenFactor, pmNumFactorLabel, pmLenFactorLabel;
+    private VerticalGroup pmNumFactorGroup, pmLenFactorGroup;
+    private VerticalGroup visGroup;
+    private ControlsWindow window;
 
-    public VisibilityComponent(Skin skin, Stage stage) {
+    public VisibilityComponent(Skin skin, Stage stage, ControlsWindow window) {
         super(skin, stage);
+        this.window = window;
         EventManager.instance.subscribe(this, Events.TOGGLE_VISIBILITY_CMD);
     }
 
@@ -88,15 +101,81 @@ public class VisibilityComponent extends GuiComponent implements IObserver {
             }
         }
 
-        /** Focus lock **/
+        /** Proper motions **/
+        float space3 = 3 * GlobalConf.SCALE_FACTOR;
+
+        // NUM FACTOR
+        pmNumFactorLabel = new Label(txt("gui.pmnumfactor"), skin, "default");
+        pmNumFactor = new OwnLabel(Integer.toString((int) (MathUtilsd.lint(GlobalConf.scene.PM_NUM_FACTOR, Constants.MIN_PM_NUM_FACTOR, Constants.MAX_PM_NUM_FACTOR, Constants.MIN_SLIDER, Constants.MAX_SLIDER))), skin);
+
+        pmNumFactorSlider = new Slider(Constants.MIN_SLIDER, Constants.MAX_SLIDER, 1, false, skin);
+        pmNumFactorSlider.setName("proper motion vectors number factor");
+        pmNumFactorSlider.setValue(MathUtilsd.lint(GlobalConf.scene.PM_NUM_FACTOR, Constants.MIN_PM_NUM_FACTOR, Constants.MAX_PM_NUM_FACTOR, Constants.MIN_SLIDER, Constants.MAX_SLIDER));
+        pmNumFactorSlider.addListener(new EventListener() {
+            @Override
+            public boolean handle(Event event) {
+                if (event instanceof ChangeEvent) {
+                    EventManager.instance.post(Events.PM_NUM_FACTOR_CMD, MathUtilsd.lint(pmNumFactorSlider.getValue(), Constants.MIN_SLIDER, Constants.MAX_SLIDER, Constants.MIN_PM_NUM_FACTOR, Constants.MAX_PM_NUM_FACTOR));
+                    pmNumFactor.setText(Integer.toString((int) pmNumFactorSlider.getValue()));
+                    return true;
+                }
+                return false;
+            }
+        });
+
+        pmNumFactorGroup = new VerticalGroup();
+        pmNumFactorGroup.align(Align.left);
+        HorizontalGroup pnfg = new HorizontalGroup();
+        pnfg.space(space3);
+        pnfg.addActor(pmNumFactorSlider);
+        pnfg.addActor(pmNumFactor);
+        pmNumFactorGroup.addActor(pmNumFactorLabel);
+        pmNumFactorGroup.addActor(pnfg);
+
+        // LEN FACTOR
+        pmLenFactorLabel = new Label(txt("gui.pmlenfactor"), skin, "default");
+        pmLenFactor = new OwnLabel(Integer.toString((int) (MathUtilsd.lint(GlobalConf.scene.PM_LEN_FACTOR, Constants.MIN_PM_LEN_FACTOR, Constants.MAX_PM_LEN_FACTOR, Constants.MIN_SLIDER, Constants.MAX_SLIDER))), skin);
+
+        pmLenFactorSlider = new Slider(Constants.MIN_SLIDER, Constants.MAX_SLIDER, 1, false, skin);
+        pmLenFactorSlider.setName("proper motion vectors number factor");
+        pmLenFactorSlider.setValue(MathUtilsd.lint(GlobalConf.scene.PM_LEN_FACTOR, Constants.MIN_PM_LEN_FACTOR, Constants.MAX_PM_LEN_FACTOR, Constants.MIN_SLIDER, Constants.MAX_SLIDER));
+        pmLenFactorSlider.addListener(new EventListener() {
+            @Override
+            public boolean handle(Event event) {
+                if (event instanceof ChangeEvent) {
+                    EventManager.instance.post(Events.PM_LEN_FACTOR_CMD, MathUtilsd.lint(pmLenFactorSlider.getValue(), Constants.MIN_SLIDER, Constants.MAX_SLIDER, Constants.MIN_PM_LEN_FACTOR, Constants.MAX_PM_LEN_FACTOR));
+                    pmLenFactor.setText(Integer.toString((int) pmLenFactorSlider.getValue()));
+                    return true;
+                }
+                return false;
+            }
+        });
+        pmLenFactorGroup = new VerticalGroup();
+        pmLenFactorGroup.align(Align.left);
+        HorizontalGroup plfg = new HorizontalGroup();
+        plfg.space(space3);
+        plfg.addActor(pmLenFactorSlider);
+        plfg.addActor(pmLenFactor);
+        pmLenFactorGroup.addActor(pmLenFactorLabel);
+        pmLenFactorGroup.addActor(plfg);
+
+        // PM CHECKBOX
         properMotions = new CheckBox(" " + txt("gui.checkbox.propermotionvectors"), skin);
         properMotions.setName("pm vectors");
-        properMotions.setChecked(GlobalConf.scene.PROPER_MOTION_VECTORS);
         properMotions.addListener(new EventListener() {
             @Override
             public boolean handle(Event event) {
                 if (event instanceof ChangeEvent) {
                     EventManager.instance.post(Events.PROPER_MOTIONS_CMD, "Proper motions", properMotions.isChecked());
+                    if (visGroup != null) {
+                        if (properMotions.isChecked()) {
+                            visGroup.addActor(pmNumFactorGroup);
+                            visGroup.addActor(pmLenFactorGroup);
+                        } else {
+                            visGroup.removeActor(pmNumFactorGroup);
+                            visGroup.removeActor(pmLenFactorGroup);
+                        }
+                    }
                     return true;
                 }
                 return false;
@@ -108,7 +187,7 @@ public class VisibilityComponent extends GuiComponent implements IObserver {
         float maxw = 0f;
         for (Button b : buttons) {
             if (b.getWidth() > maxw) {
-                maxw = b.getWidth() ;
+                maxw = b.getWidth();
             }
         }
         for (Button b : buttons) {
@@ -116,9 +195,11 @@ public class VisibilityComponent extends GuiComponent implements IObserver {
         }
         visibilityTable.pack();
 
-        VerticalGroup visGroup = new VerticalGroup().align(Align.left);
+        visGroup = new VerticalGroup().align(Align.left);
         visGroup.addActor(visibilityTable);
         visGroup.addActor(properMotions);
+
+        properMotions.setChecked(GlobalConf.scene.PROPER_MOTION_VECTORS);
 
         component = visGroup;
     }

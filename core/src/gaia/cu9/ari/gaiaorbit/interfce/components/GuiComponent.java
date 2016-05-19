@@ -1,13 +1,13 @@
 package gaia.cu9.ari.gaiaorbit.interfce.components;
 
-import gaia.cu9.ari.gaiaorbit.util.I18n;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+
+import gaia.cu9.ari.gaiaorbit.util.I18n;
 
 /** 
  * A GUI component
@@ -28,7 +28,7 @@ public abstract class GuiComponent {
     }
 
     /**
-     * Initializes the component
+     * Initialises the component
      */
     public abstract void initialize();
 

@@ -506,9 +506,9 @@ public class GlobalConf {
 
         /** Whether to display proper motion vectors**/
         public boolean PROPER_MOTION_VECTORS;
-        /** Factor to apply to the length of the proper motion vectors [1-1e3] **/
+        /** Factor to apply to the length of the proper motion vectors [1-10] **/
         public float PM_LEN_FACTOR;
-        /** This governs the number of proper motion vectors to display [1-100] **/
+        /** This governs the number of proper motion vectors to display [1-30] **/
         public float PM_NUM_FACTOR;
 
         public boolean STAR_COLOR_TRANSIT;
@@ -537,7 +537,7 @@ public class GlobalConf {
         public float OCTANT_THRESHOLD_1;
 
         public SceneConf() {
-            EventManager.instance.subscribe(this, Events.FOCUS_LOCK_CMD, Events.PROPER_MOTIONS_CMD, Events.STAR_BRIGHTNESS_CMD, Events.FOV_CHANGED_CMD, Events.CAMERA_SPEED_CMD, Events.ROTATION_SPEED_CMD, Events.TURNING_SPEED_CMD, Events.SPEED_LIMIT_CMD, Events.TRANSIT_COLOUR_CMD, Events.ONLY_OBSERVED_STARS_CMD, Events.COMPUTE_GAIA_SCAN_CMD, Events.PIXEL_RENDERER_CMD, Events.OCTREE_PARTICLE_FADE_CMD);
+            EventManager.instance.subscribe(this, Events.FOCUS_LOCK_CMD, Events.PROPER_MOTIONS_CMD, Events.STAR_BRIGHTNESS_CMD, Events.PM_LEN_FACTOR_CMD, Events.PM_NUM_FACTOR_CMD, Events.FOV_CHANGED_CMD, Events.CAMERA_SPEED_CMD, Events.ROTATION_SPEED_CMD, Events.TURNING_SPEED_CMD, Events.SPEED_LIMIT_CMD, Events.TRANSIT_COLOUR_CMD, Events.ONLY_OBSERVED_STARS_CMD, Events.COMPUTE_GAIA_SCAN_CMD, Events.PIXEL_RENDERER_CMD, Events.OCTREE_PARTICLE_FADE_CMD);
         }
 
         public void initialize(int gRAPHICS_QUALITY, long oBJECT_FADE_MS, float sTAR_BRIGHTNESS, float aMBIENT_LIGHT, int cAMERA_FOV, float cAMERA_SPEED, float tURNING_SPEED, float rOTATION_SPEED, int cAMERA_SPEED_LIMIT_IDX, boolean fOCUS_LOCK, float lABEL_NUMBER_FACTOR, boolean[] vISIBILITY, int pIXEL_RENDERER, int lINE_RENDERER, double sTAR_TH_ANGLE_NONE, double sTAR_TH_ANGLE_POINT, double sTAR_TH_ANGLE_QUAD, float pOINT_ALPHA_MIN, float pOINT_ALPHA_MAX, boolean oCTREE_PARTICLE_FADE,
@@ -642,6 +642,12 @@ public class GlobalConf {
                 break;
             case FOV_CHANGED_CMD:
                 CAMERA_FOV = MathUtilsd.clamp(((Float) data[0]).intValue(), Constants.MIN_FOV, Constants.MAX_FOV);
+                break;
+            case PM_NUM_FACTOR_CMD:
+                PM_NUM_FACTOR = Math.min(Constants.MAX_PM_NUM_FACTOR, Math.max(Constants.MIN_PM_NUM_FACTOR, (float) data[0]));
+                break;
+            case PM_LEN_FACTOR_CMD:
+                PM_LEN_FACTOR = Math.min(Constants.MAX_PM_LEN_FACTOR, Math.max(Constants.MIN_PM_LEN_FACTOR, (float) data[0]));
                 break;
 
             case CAMERA_SPEED_CMD:
