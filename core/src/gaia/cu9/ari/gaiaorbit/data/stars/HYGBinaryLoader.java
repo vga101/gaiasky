@@ -10,6 +10,7 @@ import java.util.List;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.math.Vector3;
 
 import gaia.cu9.ari.gaiaorbit.data.ISceneGraphLoader;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
@@ -33,6 +34,9 @@ import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
  * - 32 bits (float) - ra
  * - 32 bits (float) - dec
  * - 32 bits (float) - distance
+ * - 32 bits (float) - proper motion x (internal units)
+ * - 32 bits (float) - proper motion y (internal units)
+ * - 32 bits (float) - proper motion z (internal units)
  * - 64 bits (long) - id
  *
  * @author Toni Sagrista
@@ -70,12 +74,19 @@ public class HYGBinaryLoader extends AbstractCatalogLoader implements ISceneGrap
                         float ra = data_in.readFloat();
                         float dec = data_in.readFloat();
                         float dist = data_in.readFloat();
+                        float mualpha = data_in.readFloat();
+                        float mudelta = data_in.readFloat();
+                        float radvel = data_in.readFloat();
                         long id = data_in.readInt();
                         int hip = data_in.readInt();
                         if (appmag < GlobalConf.data.LIMIT_MAG_LOAD) {
                             Vector3d pos = Coordinates.sphericalToCartesian(Math.toRadians(ra), Math.toRadians(dec), dist, new Vector3d());
+                            Vector3 pmSph = new Vector3(mualpha, mudelta, radvel);
+                            Vector3d pm = Coordinates.sphericalToCartesian(Math.toRadians(ra + mualpha), Math.toRadians(dec + mudelta), dist + radvel, new Vector3d());
+                            pm.sub(pos);
 
-                            Star s = new Star(pos, appmag, absmag, colorbv, name, ra, dec, id, hip, (byte) 2);
+                            Vector3 pmfloat = pm.toVector3();
+                            Star s = new Star(pos, pmfloat, pmSph, appmag, absmag, colorbv, name, ra, dec, id, hip, (byte) 2);
                             if (runFiltersAnd(s))
                                 stars.add(s);
                         }

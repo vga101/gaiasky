@@ -46,7 +46,7 @@ import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
 public class HYGToBinary implements IObserver {
 
     static String fileIn = "/home/tsagrista/git/gaiasky/android/assets-bak/data/hygxyz.csv";
-    static String fileInPm = "/home/tsagrista/git/gaiasky/android/assets-bak/data/hip_pm.csv";
+    static String fileInPm = "/home/tsagrista/git/gaiasky/android/assets/data/hip_pm.csv";
     static String fileOut = "/home/tsagrista/git/gaiasky/android/assets-bak/data/hygxyz.bin";
 
     public static void main(String[] args) {
@@ -130,7 +130,7 @@ public class HYGToBinary implements IObserver {
             // Size of stars
             data_out.writeInt(stars.size());
             for (Particle s : stars) {
-                // name_length, name, appmag, absmag, colorbv, ra, dec, dist, id, hip
+                // name_length, name, appmag, absmag, colorbv, ra, dec, dist, mualpha, mudelta, radvel, id, hip
                 data_out.writeInt(s.name.length());
                 data_out.writeChars(s.name);
                 data_out.writeFloat(s.appmag);
@@ -139,6 +139,9 @@ public class HYGToBinary implements IObserver {
                 data_out.writeFloat(s.posSph.x);
                 data_out.writeFloat(s.posSph.y);
                 data_out.writeFloat((float) s.pos.len());
+                data_out.writeFloat(s.pmSph.x);
+                data_out.writeFloat(s.pmSph.y);
+                data_out.writeFloat(s.pmSph.z);
                 data_out.writeInt(new Long(s.id).intValue());
                 data_out.writeInt(((Star) s).hip);
             }

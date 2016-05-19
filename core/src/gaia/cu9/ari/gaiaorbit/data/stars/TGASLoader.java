@@ -123,13 +123,14 @@ public class TGASLoader extends AbstractCatalogLoader implements ISceneGraphLoad
                 pm.sub(pos);
 
                 Vector3 pmfloat = pm.toVector3();
+                Vector3 pmSph = new Vector3(Parser.parseFloat(st[8].trim()), Parser.parseFloat(st[10].trim()), 0f);
 
                 float colorbv = new Double(Parser.parseDouble(st[17].trim())).floatValue();
 
                 float absmag = appmag;
                 String name = Long.toString(sourceid);
 
-                Star star = new Star(pos, pmfloat, appmag, absmag, colorbv, name, (float) ra, (float) dec, sourceid, hip, (byte) 1);
+                Star star = new Star(pos, pmfloat, pmSph, appmag, absmag, colorbv, name, (float) ra, (float) dec, sourceid, hip, (byte) 1);
                 if (runFiltersAnd(star))
                     stars.add(star);
             }

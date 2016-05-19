@@ -506,9 +506,9 @@ public class GlobalConf {
 
         /** Whether to display proper motion vectors**/
         public boolean PROPER_MOTION_VECTORS;
-        /** Factor to apply to the length of the proper motion vectors [1-10] **/
+        /** Factor to apply to the length of the proper motion vectors **/
         public float PM_LEN_FACTOR;
-        /** This governs the number of proper motion vectors to display [1-30] **/
+        /** This governs the number of proper motion vectors to display **/
         public float PM_NUM_FACTOR;
 
         public boolean STAR_COLOR_TRANSIT;

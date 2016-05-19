@@ -19,7 +19,6 @@ import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.color.ColourUtils;
 import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadIndexer;
-import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
@@ -52,7 +51,7 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
     }
 
     /** Proper motion in cartesian coordinates [U/yr] **/
-    public Vector3 pm;
+    public Vector3 pm, pmSph;
 
     /**
      * Source of this star:
@@ -117,6 +116,7 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
             this.name = "star_" + rnd.nextInt(10000000);
         }
         this.pm = new Vector3();
+        this.pmSph = new Vector3();
     }
 
     public Particle(Vector3d pos, float appmag, float absmag, float colorbv, String name, float ra, float dec, long starid) {
@@ -125,10 +125,11 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
 
     }
 
-    public Particle(Vector3d pos, Vector3 pm, float appmag, float absmag, float colorbv, String name, float ra, float dec, long starid) {
+    public Particle(Vector3d pos, Vector3 pm, Vector3 pmSph, float appmag, float absmag, float colorbv, String name, float ra, float dec, long starid) {
         this(pos, appmag, absmag, colorbv, name, starid);
         this.posSph = new Vector2(ra, dec);
         this.pm.set(pm);
+        this.pmSph.set(pmSph);
         this.hasPm = this.pm.len2() != 0;
 
     }
@@ -163,10 +164,10 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
         if (appmag <= GlobalConf.runtime.LIMIT_MAG_RUNTIME) {
             this.opacity = opacity;
             transform.position.set(parentTransform.position).add(pos);
-            if (hasPm) {
-                Vector3 pmv = new Vector3(pm).scl((float) Constants.S_TO_Y).scl((float) AstroUtils.getMsSinceJ2015(time.getTime()) / 1000f);
-                transform.position.add(pmv);
-            }
+            //            if (hasPm) {
+            //                Vector3 pmv = new Vector3(pm).scl((float) Constants.S_TO_Y).scl((float) AstroUtils.getMsSinceJ2015(time.getTime()) / 1000f);
+            //                transform.position.add(pmv);
+            //            }
             distToCamera = (float) transform.position.len();
 
             if (!copy) {

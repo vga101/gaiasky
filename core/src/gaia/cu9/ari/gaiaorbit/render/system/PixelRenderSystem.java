@@ -118,9 +118,9 @@ public class PixelRenderSystem extends ImmediateRenderSystem implements IObserve
                 curr.vertices[idx + 2] = aux.z;
 
                 // PROPER MOTION
-                curr.vertices[curr.vertexIdx + pmOffset] = (float) cb.getPmX();
-                curr.vertices[curr.vertexIdx + pmOffset + 1] = (float) cb.getPmY();
-                curr.vertices[curr.vertexIdx + pmOffset + 2] = (float) cb.getPmZ();
+                curr.vertices[curr.vertexIdx + pmOffset] = (float) cb.getPmX() * 0f;
+                curr.vertices[curr.vertexIdx + pmOffset + 1] = (float) cb.getPmY() * 0f;
+                curr.vertices[curr.vertexIdx + pmOffset + 2] = (float) cb.getPmZ() * 0f;
 
                 curr.vertexIdx += curr.vertexSize;
             }

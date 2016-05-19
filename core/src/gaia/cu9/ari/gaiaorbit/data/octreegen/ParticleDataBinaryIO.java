@@ -114,9 +114,13 @@ public class ParticleDataBinaryIO {
                     int type = data_in.readInt();
                     if (appmag < GlobalConf.data.LIMIT_MAG_LOAD) {
                         Vector3d pos = new Vector3d(x, y, z);
-                        Vector3 vel = new Vector3(vx, vy, vz);
+                        Vector3d pm = new Vector3d(vx, vy, vz);
+                        Vector3 pmfloat = pm.toVector3();
                         Vector3d sph = Coordinates.cartesianToSpherical(pos, new Vector3d());
-                        Star s = new Star(pos, vel, appmag, absmag, colorbv, name, (float) Math.toDegrees(sph.x), (float) Math.toDegrees(sph.y), id, hip, tycho, source);
+                        Vector3d pmSphd = Coordinates.cartesianToSpherical(pm, new Vector3d());
+                        Vector3 pmSph = new Vector3((float) (sph.x - pmSphd.x), (float) (sph.y - pmSphd.y), (float) (sph.z - pmSphd.z));
+
+                        Star s = new Star(pos, pmfloat, pmSph, appmag, absmag, colorbv, name, (float) Math.toDegrees(sph.x), (float) Math.toDegrees(sph.y), id, hip, tycho, source);
                         s.octantId = pageId;
                         s.type = type;
                         s.initialize();

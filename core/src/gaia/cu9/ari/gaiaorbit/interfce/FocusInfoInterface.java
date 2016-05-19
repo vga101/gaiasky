@@ -10,12 +10,14 @@ import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
+import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Planet;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
+import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
 import gaia.cu9.ari.gaiaorbit.util.format.INumberFormat;
 import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
@@ -201,6 +203,13 @@ public class FocusInfoInterface extends Table implements IObserver {
 
                 focusRA.setText(nf.format(cb.pos.x % 360) + "°");
                 focusDEC.setText(nf.format(cb.pos.y % 360) + "°");
+            }
+
+            if (cb instanceof Particle) {
+                Particle part = (Particle) cb;
+                if (part.pmSph != null) {
+                    Logger.info("MuAlpha: " + part.pmSph.x + ", MuDelta: " + part.pmSph.y);
+                }
             }
 
             Float appmag = cb.appmag;

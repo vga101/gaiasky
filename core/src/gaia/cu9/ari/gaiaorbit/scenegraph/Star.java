@@ -124,7 +124,8 @@ public class Star extends Particle {
     /**
      * Creates a new Star object
      * @param pos The position of the star in equatorial cartesian coordinates
-     * @param vel The proper motion of the star in equatorial cartesian coordinates.
+     * @param pm The proper motion of the star in equatorial cartesian coordinates.
+     * @param pmSph The proper motion with mualpha, mudelta, radvel.
      * @param appmag The apparent magnitude
      * @param absmag The absolute magnitude
      * @param colorbv The B-V color index
@@ -135,8 +136,8 @@ public class Star extends Particle {
      * @param hip The HIP identifier
      * @param source Catalog source. See {#Particle}
      */
-    public Star(Vector3d pos, Vector3 vel, float appmag, float absmag, float colorbv, String name, float ra, float dec, long starid, int hip, byte source) {
-        super(pos, vel, appmag, absmag, colorbv, name, ra, dec, starid);
+    public Star(Vector3d pos, Vector3 pm, Vector3 pmSph, float appmag, float absmag, float colorbv, String name, float ra, float dec, long starid, int hip, byte source) {
+        super(pos, pm, pmSph, appmag, absmag, colorbv, name, ra, dec, starid);
         this.hip = hip;
         this.catalogSource = source;
     }
@@ -163,7 +164,8 @@ public class Star extends Particle {
     /**
      * Creates a new Star object
      * @param pos The position of the star in equatorial cartesian coordinates
-     * @param vel The proper motion of the star in equatorial cartesian coordinates.
+     * @param pm The proper motion of the star in equatorial cartesian coordinates.
+     * @param pmSph The proper motion with mualpha, mudelta, radvel.
      * @param appmag The apparent magnitude
      * @param absmag The absolute magnitude
      * @param colorbv The B-V color index
@@ -175,8 +177,8 @@ public class Star extends Particle {
      * @param tycho The TYC identifier, remove the dashes '-' and join the strings, then parse to integer
      * @param source Catalog source. See {#Particle}
      */
-    public Star(Vector3d pos, Vector3 vel, float appmag, float absmag, float colorbv, String name, float ra, float dec, long starid, int hip, int tycho, byte source) {
-        this(pos, vel, appmag, absmag, colorbv, name, ra, dec, starid, hip, source);
+    public Star(Vector3d pos, Vector3 pm, Vector3 pmSph, float appmag, float absmag, float colorbv, String name, float ra, float dec, long starid, int hip, int tycho, byte source) {
+        this(pos, pm, pmSph, appmag, absmag, colorbv, name, ra, dec, starid, hip, source);
         this.tycho = tycho;
     }
 
@@ -184,6 +186,7 @@ public class Star extends Particle {
      * Creates a new Star object
      * @param pos The position of the star in equatorial cartesian coordinates
      * @param pm The proper motion of the star in equatorial cartesian coordinates
+     * @param pmSph The proper motion with mualpha, mudelta, radvel.
      * @param appmag The apparent magnitude
      * @param absmag The absolute magnitude
      * @param colorbv The B-V color index
@@ -192,8 +195,8 @@ public class Star extends Particle {
      * @param dec in degrees 
      * @param starid The star id
      */
-    public Star(Vector3d pos, Vector3 pm, float appmag, float absmag, float colorbv, String name, float ra, float dec, long starid) {
-        super(pos, pm, appmag, absmag, colorbv, name, ra, dec, starid);
+    public Star(Vector3d pos, Vector3 pm, Vector3 pmSph, float appmag, float absmag, float colorbv, String name, float ra, float dec, long starid) {
+        super(pos, pm, pmSph, appmag, absmag, colorbv, name, ra, dec, starid);
     }
 
     @Override

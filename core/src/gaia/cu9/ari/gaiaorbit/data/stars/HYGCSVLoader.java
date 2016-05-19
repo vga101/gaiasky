@@ -55,9 +55,10 @@ public class HYGCSVLoader extends AbstractCatalogLoader implements ISceneGraphLo
                     if (!line.startsWith("#")) {
                         String[] tokens = line.split(pmseparator);
                         Integer hip = Parser.parseInt(tokens[0]);
-                        float pmra = Parser.parseFloat(tokens[1]);
-                        float pmdec = Parser.parseFloat(tokens[2]);
-                        pmMap.put(hip, new float[] { pmra, pmdec });
+                        float mualpha = Parser.parseFloat(tokens[1]);
+                        float mudelta = Parser.parseFloat(tokens[2]);
+                        float radvel = 0f;
+                        pmMap.put(hip, new float[] { mualpha, mudelta, radvel });
                     }
                 }
             } catch (Exception e) {
@@ -122,15 +123,18 @@ public class HYGCSVLoader extends AbstractCatalogLoader implements ISceneGraphLo
 
         // Proper motion
         Vector3 pmfloat = new Vector3(0f, 0f, 0f);
+        Vector3 pmSph = new Vector3(0f, 0f, 0f);
         if (pmMap != null && hip > 0) {
             if (pmMap.containsKey(hip)) {
                 float[] pmf = pmMap.get(hip);
                 double mualpha = pmf[0] * AstroUtils.MILLARCSEC_TO_DEG;
                 double mudelta = pmf[1] * AstroUtils.MILLARCSEC_TO_DEG;
+                double radvel = pmf[2] * Constants.PC_TO_U;
 
                 // Proper motion vector = (pos+dx) - pos
-                Vector3d pm = Coordinates.sphericalToCartesian(Math.toRadians(ra + mualpha), Math.toRadians(dec + mudelta), dist, new Vector3d());
+                Vector3d pm = Coordinates.sphericalToCartesian(Math.toRadians(ra + mualpha), Math.toRadians(dec + mudelta), dist + radvel, new Vector3d());
                 pm.sub(pos);
+                pmSph.set(pmf);
 
                 pmfloat = pm.toVector3();
             }
@@ -160,7 +164,7 @@ public class HYGCSVLoader extends AbstractCatalogLoader implements ISceneGraphLo
                 name = st[4].trim().replaceAll("\\s+", " ");
             }
 
-            Star star = new Star(pos, pmfloat, appmag, absmag, colorbv, name, (float) ra, (float) dec, starid, hip, (byte) 2);
+            Star star = new Star(pos, pmfloat, pmSph, appmag, absmag, colorbv, name, (float) ra, (float) dec, starid, hip, (byte) 2);
             if (runFiltersAnd(star))
                 stars.add(star);
         }
