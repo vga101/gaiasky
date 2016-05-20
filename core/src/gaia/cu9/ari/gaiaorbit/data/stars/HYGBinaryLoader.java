@@ -86,8 +86,8 @@ public class HYGBinaryLoader extends AbstractCatalogLoader implements ISceneGrap
                             Vector3 pmSph = new Vector3(mualpha, mudelta, radvel);
                             Vector3d pm = Coordinates.sphericalToCartesian(Math.toRadians(ra + mualpha * AstroUtils.MILLARCSEC_TO_DEG), Math.toRadians(dec + mudelta * AstroUtils.MILLARCSEC_TO_DEG), dist + radvel * Constants.KM_TO_U * Constants.S_TO_Y, new Vector3d());
                             pm.sub(pos);
-
                             Vector3 pmfloat = pm.toVector3();
+
                             Star s = new Star(pos, pmfloat, pmSph, appmag, absmag, colorbv, name, ra, dec, id, hip, (byte) 2);
                             if (runFiltersAnd(s))
                                 stars.add(s);

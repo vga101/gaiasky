@@ -56,18 +56,18 @@ public class ParticleDataBinaryIO {
             // Size of stars
             data_out.writeInt(particles.size());
             for (Particle s : particles) {
-                // name_length, name, appmag, absmag, colorbv, x, y, z, pmx, pmy, pmz, id, hip, tycho, sourceCatalog, pageid, type
+                // name_length, name, appmag, absmag, colorbv, ra[deg], dec[deg], dist[u], mualpha[mas/yr], mudelta[mas/yr], radvel[km/s], id, hip, tycho, sourceCatalog, pageid, type
                 data_out.writeInt(s.name.length());
                 data_out.writeChars(s.name);
                 data_out.writeFloat(s.appmag);
                 data_out.writeFloat(s.absmag);
                 data_out.writeFloat(s.colorbv);
-                data_out.writeFloat((float) s.pos.x);
-                data_out.writeFloat((float) s.pos.y);
-                data_out.writeFloat((float) s.pos.z);
-                data_out.writeFloat(s.pm != null ? s.pm.x : 0f);
-                data_out.writeFloat(s.pm != null ? s.pm.y : 0f);
-                data_out.writeFloat(s.pm != null ? s.pm.z : 0f);
+                data_out.writeFloat((float) s.posSph.x);
+                data_out.writeFloat((float) s.posSph.y);
+                data_out.writeFloat((float) s.pos.len());
+                data_out.writeFloat(s.pmSph != null ? s.pmSph.x : 0f);
+                data_out.writeFloat(s.pmSph != null ? s.pmSph.y : 0f);
+                data_out.writeFloat(s.pmSph != null ? s.pmSph.z : 0f);
                 data_out.writeLong(s.id);
                 data_out.writeInt(s instanceof Star ? ((Star) s).hip : -1);
                 data_out.writeInt(s instanceof Star ? ((Star) s).tycho : -1);
@@ -92,7 +92,7 @@ public class ParticleDataBinaryIO {
 
             for (int idx = 0; idx < size; idx++) {
                 try {
-                    // name_length, name, appmag, absmag, colorbv, x, y, z, vx, vy, vz, id, hip, tycho, catalogSource, pageid, type
+                    // name_length, name, appmag, absmag, colorbv, ra[deg], dec[deg], dist[u], mualpha[mas/yr], mudelta[mas/yr], radvel[km/s], id, hip, tycho, sourceCatalog, pageid, type
                     int nameLength = data_in.readInt();
                     StringBuilder sb = new StringBuilder();
                     for (int i = 0; i < nameLength; i++) {
@@ -102,12 +102,12 @@ public class ParticleDataBinaryIO {
                     float appmag = data_in.readFloat();
                     float absmag = data_in.readFloat();
                     float colorbv = data_in.readFloat();
-                    float x = data_in.readFloat();
-                    float y = data_in.readFloat();
-                    float z = data_in.readFloat();
-                    float vx = data_in.readFloat();
-                    float vy = data_in.readFloat();
-                    float vz = data_in.readFloat();
+                    float ra = data_in.readFloat();
+                    float dec = data_in.readFloat();
+                    float dist = data_in.readFloat();
+                    float mualpha = data_in.readFloat();
+                    float mudelta = data_in.readFloat();
+                    float radvel = data_in.readFloat();
                     long id = data_in.readLong();
                     int hip = data_in.readInt();
                     int tycho = data_in.readInt();
@@ -115,15 +115,13 @@ public class ParticleDataBinaryIO {
                     long pageId = data_in.readInt();
                     int type = data_in.readInt();
                     if (appmag < GlobalConf.data.LIMIT_MAG_LOAD) {
-                        Vector3d pos = new Vector3d(x, y, z);
-                        Vector3d pm = new Vector3d(vx, vy, vz);
+                        Vector3d pos = Coordinates.sphericalToCartesian(Math.toRadians(ra), Math.toRadians(dec), dist, new Vector3d());
+                        Vector3 pmSph = new Vector3(mualpha, mudelta, radvel);
+                        Vector3d pm = Coordinates.sphericalToCartesian(Math.toRadians(ra + mualpha * AstroUtils.MILLARCSEC_TO_DEG), Math.toRadians(dec + mudelta * AstroUtils.MILLARCSEC_TO_DEG), dist + radvel * Constants.KM_TO_U * Constants.S_TO_Y, new Vector3d());
+                        pm.sub(pos);
                         Vector3 pmfloat = pm.toVector3();
-                        Vector3d sph = Coordinates.cartesianToSpherical(pos, new Vector3d());
-                        Vector3d pmSphd = Coordinates.cartesianToSpherical(pm, new Vector3d());
 
-                        Vector3 pmSph = new Vector3((float) (pmSphd.x * AstroUtils.DEG_TO_MILLARCSEC), (float) (pmSphd.y * AstroUtils.DEG_TO_MILLARCSEC), (float) (pmSphd.z * Constants.U_TO_KM * Constants.Y_TO_S));
-
-                        Star s = new Star(pos, pmfloat, pmSph, appmag, absmag, colorbv, name, (float) Math.toDegrees(sph.x), (float) Math.toDegrees(sph.y), id, hip, tycho, source);
+                        Star s = new Star(pos, pmfloat, pmSph, appmag, absmag, colorbv, name, ra, dec, id, hip, tycho, source);
                         s.octantId = pageId;
                         s.type = type;
                         s.initialize();

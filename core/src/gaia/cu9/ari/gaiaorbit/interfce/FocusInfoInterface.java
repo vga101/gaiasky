@@ -17,7 +17,6 @@ import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
-import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
 import gaia.cu9.ari.gaiaorbit.util.format.INumberFormat;
 import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
@@ -31,7 +30,7 @@ import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnLabel;
  */
 public class FocusInfoInterface extends Table implements IObserver {
 
-    protected OwnLabel focusName, focusId, focusRA, focusDEC, focusAngle, focusDist, focusAppMag, focusAbsMag, focusRadius;
+    protected OwnLabel focusName, focusId, focusRA, focusDEC, focusMuAlpha, focusMuDelta, focusAngle, focusDist, focusAppMag, focusAbsMag, focusRadius;
     protected OwnLabel pointerName, pointerLonLat, pointerRADEC;
     protected OwnLabel camName, camVel, camPos, lonLatLabel, RADECLabel;
 
@@ -68,6 +67,8 @@ public class FocusInfoInterface extends Table implements IObserver {
         focusId = new OwnLabel("", skin, "hud");
         focusRA = new OwnLabel("", skin, "hud");
         focusDEC = new OwnLabel("", skin, "hud");
+        focusMuAlpha = new OwnLabel("", skin, "hud");
+        focusMuDelta = new OwnLabel("", skin, "hud");
         focusAppMag = new OwnLabel("", skin, "hud");
         focusAbsMag = new OwnLabel("", skin, "hud");
         focusAngle = new OwnLabel("", skin, "hud");
@@ -88,6 +89,8 @@ public class FocusInfoInterface extends Table implements IObserver {
         focusId.setWidth(w);
         focusRA.setWidth(w);
         focusDEC.setWidth(w);
+        focusMuAlpha.setWidth(w);
+        focusMuDelta.setWidth(w);
         focusAngle.setWidth(w);
         focusDist.setWidth(w);
         camVel.setWidth(w);
@@ -104,6 +107,12 @@ public class FocusInfoInterface extends Table implements IObserver {
         focusInfo.row();
         focusInfo.add(new OwnLabel(txt("gui.focusinfo.delta"), skin, "hud-big")).left();
         focusInfo.add(focusDEC).left().padLeft(pad10);
+        focusInfo.row();
+        focusInfo.add(new OwnLabel(txt("gui.focusinfo.mualpha"), skin, "hud-big")).left();
+        focusInfo.add(focusMuAlpha).left().padLeft(pad10);
+        focusInfo.row();
+        focusInfo.add(new OwnLabel(txt("gui.focusinfo.mudelta"), skin, "hud-big")).left();
+        focusInfo.add(focusMuDelta).left().padLeft(pad10);
         focusInfo.row();
         focusInfo.add(new OwnLabel(txt("gui.focusinfo.appmag"), skin, "hud-big")).left();
         focusInfo.add(focusAppMag).left().padLeft(pad10);
@@ -207,9 +216,16 @@ public class FocusInfoInterface extends Table implements IObserver {
 
             if (cb instanceof Particle) {
                 Particle part = (Particle) cb;
-                if (part.pmSph != null) {
-                    Logger.info("MuAlpha: " + part.pmSph.x + ", MuDelta: " + part.pmSph.y);
+                if (part.pmSph != null && part.pmSph.len2() != 0) {
+                    focusMuAlpha.setText(nf.format(part.pmSph.x) + " mas/yr");
+                    focusMuDelta.setText(nf.format(part.pmSph.y) + " mas/yr");
+                } else {
+                    focusMuAlpha.setText("-");
+                    focusMuDelta.setText("-");
                 }
+            } else {
+                focusMuAlpha.setText("-");
+                focusMuDelta.setText("-");
             }
 
             Float appmag = cb.appmag;
