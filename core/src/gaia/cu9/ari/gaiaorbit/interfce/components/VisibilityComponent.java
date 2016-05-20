@@ -106,16 +106,16 @@ public class VisibilityComponent extends GuiComponent implements IObserver {
 
         // NUM FACTOR
         pmNumFactorLabel = new Label(txt("gui.pmnumfactor"), skin, "default");
-        pmNumFactor = new OwnLabel(Integer.toString((int) (MathUtilsd.lint(GlobalConf.scene.PM_NUM_FACTOR, Constants.MIN_PM_NUM_FACTOR, Constants.MAX_PM_NUM_FACTOR, Constants.MIN_SLIDER, Constants.MAX_SLIDER))), skin);
+        pmNumFactor = new OwnLabel(Integer.toString((int) (MathUtilsd.lint(GlobalConf.scene.PM_NUM_FACTOR, Constants.MIN_PM_NUM_FACTOR, Constants.MAX_PM_NUM_FACTOR, Constants.MIN_SLIDER_1, Constants.MAX_SLIDER))), skin);
 
-        pmNumFactorSlider = new Slider(Constants.MIN_SLIDER, Constants.MAX_SLIDER, 1, false, skin);
+        pmNumFactorSlider = new Slider(Constants.MIN_SLIDER_1, Constants.MAX_SLIDER, 1, false, skin);
         pmNumFactorSlider.setName("proper motion vectors number factor");
-        pmNumFactorSlider.setValue(MathUtilsd.lint(GlobalConf.scene.PM_NUM_FACTOR, Constants.MIN_PM_NUM_FACTOR, Constants.MAX_PM_NUM_FACTOR, Constants.MIN_SLIDER, Constants.MAX_SLIDER));
+        pmNumFactorSlider.setValue(MathUtilsd.lint(GlobalConf.scene.PM_NUM_FACTOR, Constants.MIN_PM_NUM_FACTOR, Constants.MAX_PM_NUM_FACTOR, Constants.MIN_SLIDER_1, Constants.MAX_SLIDER));
         pmNumFactorSlider.addListener(new EventListener() {
             @Override
             public boolean handle(Event event) {
                 if (event instanceof ChangeEvent) {
-                    EventManager.instance.post(Events.PM_NUM_FACTOR_CMD, MathUtilsd.lint(pmNumFactorSlider.getValue(), Constants.MIN_SLIDER, Constants.MAX_SLIDER, Constants.MIN_PM_NUM_FACTOR, Constants.MAX_PM_NUM_FACTOR));
+                    EventManager.instance.post(Events.PM_NUM_FACTOR_CMD, MathUtilsd.lint(pmNumFactorSlider.getValue(), Constants.MIN_SLIDER_1, Constants.MAX_SLIDER, Constants.MIN_PM_NUM_FACTOR, Constants.MAX_PM_NUM_FACTOR));
                     pmNumFactor.setText(Integer.toString((int) pmNumFactorSlider.getValue()));
                     return true;
                 }
@@ -134,17 +134,17 @@ public class VisibilityComponent extends GuiComponent implements IObserver {
 
         // LEN FACTOR
         pmLenFactorLabel = new Label(txt("gui.pmlenfactor"), skin, "default");
-        pmLenFactor = new OwnLabel(Integer.toString((int) (MathUtilsd.lint(GlobalConf.scene.PM_LEN_FACTOR, Constants.MIN_PM_LEN_FACTOR, Constants.MAX_PM_LEN_FACTOR, Constants.MIN_SLIDER, Constants.MAX_SLIDER))), skin);
+        pmLenFactor = new OwnLabel(Integer.toString(Math.round(GlobalConf.scene.PM_LEN_FACTOR)), skin);
 
-        pmLenFactorSlider = new Slider(Constants.MIN_SLIDER, Constants.MAX_SLIDER, 1, false, skin);
+        pmLenFactorSlider = new Slider(Constants.MIN_PM_LEN_FACTOR, Constants.MAX_PM_LEN_FACTOR, 0.5f, false, skin);
         pmLenFactorSlider.setName("proper motion vectors number factor");
-        pmLenFactorSlider.setValue(MathUtilsd.lint(GlobalConf.scene.PM_LEN_FACTOR, Constants.MIN_PM_LEN_FACTOR, Constants.MAX_PM_LEN_FACTOR, Constants.MIN_SLIDER, Constants.MAX_SLIDER));
+        pmLenFactorSlider.setValue(GlobalConf.scene.PM_LEN_FACTOR);
         pmLenFactorSlider.addListener(new EventListener() {
             @Override
             public boolean handle(Event event) {
                 if (event instanceof ChangeEvent) {
-                    EventManager.instance.post(Events.PM_LEN_FACTOR_CMD, MathUtilsd.lint(pmLenFactorSlider.getValue(), Constants.MIN_SLIDER, Constants.MAX_SLIDER, Constants.MIN_PM_LEN_FACTOR, Constants.MAX_PM_LEN_FACTOR));
-                    pmLenFactor.setText(Integer.toString((int) pmLenFactorSlider.getValue()));
+                    EventManager.instance.post(Events.PM_LEN_FACTOR_CMD, pmLenFactorSlider.getValue());
+                    pmLenFactor.setText(Integer.toString(Math.round(pmLenFactorSlider.getValue())));
                     return true;
                 }
                 return false;

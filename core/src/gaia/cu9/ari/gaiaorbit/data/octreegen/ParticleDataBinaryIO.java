@@ -15,8 +15,10 @@ import com.badlogic.gdx.math.Vector3;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
+import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
+import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
 import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
@@ -118,7 +120,8 @@ public class ParticleDataBinaryIO {
                         Vector3 pmfloat = pm.toVector3();
                         Vector3d sph = Coordinates.cartesianToSpherical(pos, new Vector3d());
                         Vector3d pmSphd = Coordinates.cartesianToSpherical(pm, new Vector3d());
-                        Vector3 pmSph = new Vector3((float) (sph.x - pmSphd.x), (float) (sph.y - pmSphd.y), (float) (sph.z - pmSphd.z));
+
+                        Vector3 pmSph = new Vector3((float) (pmSphd.x * AstroUtils.DEG_TO_MILLARCSEC), (float) (pmSphd.y * AstroUtils.DEG_TO_MILLARCSEC), (float) (pmSphd.z * Constants.U_TO_KM * Constants.Y_TO_S));
 
                         Star s = new Star(pos, pmfloat, pmSph, appmag, absmag, colorbv, name, (float) Math.toDegrees(sph.x), (float) Math.toDegrees(sph.y), id, hip, tycho, source);
                         s.octantId = pageId;

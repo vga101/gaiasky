@@ -130,7 +130,7 @@ public class HYGToBinary implements IObserver {
             // Size of stars
             data_out.writeInt(stars.size());
             for (Particle s : stars) {
-                // name_length, name, appmag, absmag, colorbv, ra, dec, dist, mualpha, mudelta, radvel, id, hip
+                // name_length, name, appmag, absmag, colorbv, ra[deg], dec[deg], dist[u], mualpha[mas/yr], mudelta[mas/yr], radvel[km/s], id, hip
                 data_out.writeInt(s.name.length());
                 data_out.writeChars(s.name);
                 data_out.writeFloat(s.appmag);
