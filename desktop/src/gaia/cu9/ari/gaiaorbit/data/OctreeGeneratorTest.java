@@ -104,7 +104,7 @@ public class OctreeGeneratorTest implements IObserver {
         hyg.addFilter(new CatalogFilter() {
             @Override
             public boolean filter(CelestialBody s) {
-                return (s instanceof Particle) && ((Particle) s).appmag <= 7.5f;
+                return (s instanceof Particle) && ((Particle) s).appmag <= 6.5f;
             }
         });
 
