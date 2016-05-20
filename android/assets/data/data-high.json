@@ -1,7 +1,7 @@
 { "data" : [
 	{
 		"loader": gaia.cu9.ari.gaiaorbit.data.stars.HYGBinaryLoader
-		//,"files": [ "data/hygxyz.bin" ]
+		,"files": [ "data/hygxyz.bin" ]
 	},
 	{
 		"loader": gaia.cu9.ari.gaiaorbit.data.stars.TGASLoader
@@ -14,7 +14,7 @@
 	},
 	{
 		"loader": gaia.cu9.ari.gaiaorbit.data.stars.OctreeCatalogLoader
-		,"files": [ "data/octree/tgashyg_particles.bin", "data/octree/tgashyg_metadata.bin" ]
+		//,"files": [ "data/octree/tgashyg_particles.bin", "data/octree/tgashyg_metadata.bin" ]
 	},
 	{
 		"loader": gaia.cu9.ari.gaiaorbit.data.JsonLoader,
