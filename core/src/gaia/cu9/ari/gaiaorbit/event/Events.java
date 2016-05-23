@@ -165,6 +165,13 @@ public enum Events {
     /** Issued when the viewport size changed. Contains the new width and height **/
     VIEWPORT_RESIZE,
 
+    /** Increase star point size by 0.5 **/
+    STAR_POINT_SIZE_INCREASE_CMD,
+    /** Decrease star point size by 0.5 **/
+    STAR_POINT_SIZE_DECREASE_CMD,
+    /** Reset star point size to original value **/
+    STAR_POINT_SIZE_RESET_CMD,
+
     /** Stereoscopic vision, side by side rendering. Contains the localized name. **/
     TOGGLE_STEREOSCOPIC,
     /** Switches stereoscopic mode images, left to right and right to left **/

@@ -234,6 +234,30 @@ public class KeyBindings {
             }
         }), Keys.U);
 
+        // CTRL + SHIFT + UP -> increase star point size by 0.5
+        addMapping(new ProgramAction(txt("action.starpointsize.inc"), new Runnable() {
+            @Override
+            public void run() {
+                EventManager.instance.post(Events.STAR_POINT_SIZE_INCREASE_CMD);
+            }
+        }), SPECIAL1, SPECIAL2, Keys.UP);
+
+        // CTRL + SHIFT + DOWN -> decrease star point size by 0.5
+        addMapping(new ProgramAction(txt("action.starpointsize.dec"), new Runnable() {
+            @Override
+            public void run() {
+                EventManager.instance.post(Events.STAR_POINT_SIZE_DECREASE_CMD);
+            }
+        }), SPECIAL1, SPECIAL2, Keys.DOWN);
+
+        // CTRL + SHIFT + R -> reset star point size
+        addMapping(new ProgramAction(txt("action.starpointsize.reset"), new Runnable() {
+            @Override
+            public void run() {
+                EventManager.instance.post(Events.STAR_POINT_SIZE_RESET_CMD);
+            }
+        }), SPECIAL1, SPECIAL2, Keys.R);
+
         // Camera modes (NUMERIC KEYPAD)
         for (int i = 144; i <= 153; i++) {
             // Camera mode

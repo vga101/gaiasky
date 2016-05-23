@@ -28,7 +28,6 @@ import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
 
 public class PixelRenderSystem extends ImmediateRenderSystem implements IObserver {
     private final float BRIGHTNESS_FACTOR;
-    private float POINT_SIZE;
 
     boolean starColorTransit = false;
     Vector3 aux;
@@ -43,13 +42,15 @@ public class PixelRenderSystem extends ImmediateRenderSystem implements IObserve
     }
 
     protected void updatePointSize(int width, int height) {
-        POINT_SIZE = GlobalConf.runtime.STRIPPED_FOV_MODE ? 2 : 9;
+        GlobalConf.runtime.STAR_POINT_SIZE = GlobalConf.runtime.STRIPPED_FOV_MODE ? 2 : 9;
 
         // Factor POINT_SIZE with resolution
         float baseResolution = (float) Math.sqrt(1280 * 1280 + 720 * 720);
         float currentResolution = (float) Math.sqrt(width * width + height * height);
         float factor = currentResolution / baseResolution;
-        POINT_SIZE = Constants.webgl ? Math.min(15, Math.max(4, POINT_SIZE * factor)) : Math.min(15, Math.max(3, POINT_SIZE * factor * Gdx.graphics.getDensity()));
+        GlobalConf.runtime.STAR_POINT_SIZE = Constants.webgl ? Math.min(15, Math.max(4, GlobalConf.runtime.STAR_POINT_SIZE * factor)) : Math.min(15, Math.max(3, GlobalConf.runtime.STAR_POINT_SIZE * factor * Gdx.graphics.getDensity()));
+
+        GlobalConf.runtime.STAR_POINT_SIZE_BAK = GlobalConf.runtime.STAR_POINT_SIZE;
     }
 
     @Override
@@ -139,7 +140,7 @@ public class PixelRenderSystem extends ImmediateRenderSystem implements IObserve
         pointProgram.setUniformf("u_fovFactor", camera.getFovFactor());
         pointProgram.setUniformf("u_alpha", alphas[0]);
         pointProgram.setUniformf("u_starBrightness", GlobalConf.scene.STAR_BRIGHTNESS * BRIGHTNESS_FACTOR);
-        pointProgram.setUniformf("u_pointSize", camera.getNCameras() == 1 ? POINT_SIZE : POINT_SIZE * 10);
+        pointProgram.setUniformf("u_pointSize", camera.getNCameras() == 1 ? GlobalConf.runtime.STAR_POINT_SIZE : GlobalConf.runtime.STAR_POINT_SIZE * 10);
         pointProgram.setUniformf("u_t", (float) AstroUtils.getMsSinceJ2000(GaiaSky.instance.time.getTime()));
         curr.mesh.setVertices(curr.vertices, 0, curr.vertexIdx);
         curr.mesh.render(pointProgram, ShapeType.Point.getGlType());

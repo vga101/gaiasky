@@ -149,9 +149,13 @@ public class GlobalConf {
         public boolean STRIPPED_FOV_MODE = false;
         /** Whether octree drawing is active or not **/
         public boolean DRAW_OCTREE;
+        /** Size of stars rendered as point primitives **/
+        public float STAR_POINT_SIZE;
+        /** Fallback value **/
+        public float STAR_POINT_SIZE_BAK;
 
         public RuntimeConf() {
-            EventManager.instance.subscribe(this, Events.LIMIT_MAG_CMD, Events.INPUT_ENABLED_CMD, Events.DISPLAY_GUI_CMD, Events.TOGGLE_UPDATEPAUSE, Events.TOGGLE_TIME_CMD, Events.RECORD_CAMERA_CMD);
+            EventManager.instance.subscribe(this, Events.LIMIT_MAG_CMD, Events.INPUT_ENABLED_CMD, Events.DISPLAY_GUI_CMD, Events.TOGGLE_UPDATEPAUSE, Events.TOGGLE_TIME_CMD, Events.RECORD_CAMERA_CMD, Events.STAR_POINT_SIZE_INCREASE_CMD, Events.STAR_POINT_SIZE_DECREASE_CMD, Events.STAR_POINT_SIZE_RESET_CMD);
         }
 
         public void initialize(boolean dISPLAY_GUI, boolean uPDATE_PAUSE, boolean sTRIPPED_FOV_MODE, boolean tIME_ON, boolean iNPUT_ENABLED, boolean rECORD_CAMERA, float lIMIT_MAG_RUNTIME, boolean rEAL_TIME, boolean dRAW_OCTREE) {
@@ -197,6 +201,15 @@ public class GlobalConf {
                 break;
             case RECORD_CAMERA_CMD:
                 toggleRecord((Boolean) data[0]);
+                break;
+            case STAR_POINT_SIZE_INCREASE_CMD:
+                STAR_POINT_SIZE = Math.min(STAR_POINT_SIZE + 0.5f, 30f);
+                break;
+            case STAR_POINT_SIZE_DECREASE_CMD:
+                STAR_POINT_SIZE = Math.max(STAR_POINT_SIZE - 0.5f, 0.5f);
+                break;
+            case STAR_POINT_SIZE_RESET_CMD:
+                STAR_POINT_SIZE = STAR_POINT_SIZE_BAK;
                 break;
             }
 
