@@ -96,22 +96,22 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
         int nsamples;
         float density;
         if (GlobalConf.scene.isHighQuality()) {
-            nsamples = 160;
-            density = 1.2f;
+            nsamples = 150;
+            density = 1.4f;
         } else if (GlobalConf.scene.isNormalQuality()) {
-            nsamples = 90;
-            density = 0.95f;
+            nsamples = 80;
+            density = 0.96f;
         } else {
-            nsamples = 60;
-            density = 0.8f;
+            nsamples = 40;
+            density = .9f;
         }
         ppb.lscatter = new LightScattering((int) (width * scatteringFboScale), (int) (height * scatteringFboScale));
         ppb.lscatter.setScatteringIntesity(1f);
         ppb.lscatter.setScatteringSaturation(1f);
         ppb.lscatter.setBaseIntesity(1f);
-        ppb.lscatter.setBias(-0.99f);
-        ppb.lscatter.setBlurAmount(0.5f);
-        ppb.lscatter.setBlurPasses(1);
+        ppb.lscatter.setBias(-0.999f);
+        ppb.lscatter.setBlurAmount(4f);
+        ppb.lscatter.setBlurPasses(2);
         ppb.lscatter.setDensity(density);
         ppb.lscatter.setNumSamples(nsamples);
         ppb.lscatter.setEnabled(GlobalConf.postprocess.POSTPROCESS_LIGHT_SCATTERING);
@@ -142,7 +142,7 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
         // ANTIALIAS
         if (GlobalConf.postprocess.POSTPROCESS_ANTIALIAS == -1) {
             ppb.antialiasing = new Fxaa(width, height);
-            ((Fxaa) ppb.antialiasing).setSpanMax(2f);
+            ((Fxaa) ppb.antialiasing).setSpanMax(6f);
         } else if (GlobalConf.postprocess.POSTPROCESS_ANTIALIAS == -2) {
             ppb.antialiasing = new Nfaa(width, height);
         }

@@ -57,16 +57,16 @@ public class PixelRenderSystem extends ImmediateRenderSystem implements IObserve
     protected void initShaderProgram() {
         // Initialise renderer
         if (Gdx.app.getType() == ApplicationType.WebGL)
-            pointProgram = new ShaderProgram(Gdx.files.internal("shader/point.vertex.glsl"), Gdx.files.internal("shader/point.fragment.wgl.glsl"));
+            lineProgram = new ShaderProgram(Gdx.files.internal("shader/point.vertex.glsl"), Gdx.files.internal("shader/point.fragment.wgl.glsl"));
         else
-            pointProgram = new ShaderProgram(Gdx.files.internal("shader/point.vertex.glsl"), Gdx.files.internal("shader/point.fragment.glsl"));
-        if (!pointProgram.isCompiled()) {
-            Logger.error(this.getClass().getName(), "Point shader compilation failed:\n" + pointProgram.getLog());
+            lineProgram = new ShaderProgram(Gdx.files.internal("shader/point.vertex.glsl"), Gdx.files.internal("shader/point.fragment.glsl"));
+        if (!lineProgram.isCompiled()) {
+            Logger.error(this.getClass().getName(), "Point shader compilation failed:\n" + lineProgram.getLog());
         }
-        pointProgram.begin();
-        pointProgram.setUniformf("u_pointAlphaMin", GlobalConf.scene.POINT_ALPHA_MIN);
-        pointProgram.setUniformf("u_pointAlphaMax", GlobalConf.scene.POINT_ALPHA_MAX);
-        pointProgram.end();
+        lineProgram.begin();
+        lineProgram.setUniformf("u_pointAlphaMin", GlobalConf.scene.POINT_ALPHA_MIN);
+        lineProgram.setUniformf("u_pointAlphaMax", GlobalConf.scene.POINT_ALPHA_MAX);
+        lineProgram.end();
 
     }
 
@@ -134,17 +134,17 @@ public class PixelRenderSystem extends ImmediateRenderSystem implements IObserve
             // Enable point sizes
             Gdx.gl20.glEnable(0x8642);
         }
-        pointProgram.begin();
-        pointProgram.setUniformMatrix("u_projModelView", camera.getCamera().combined);
-        pointProgram.setUniformf("u_camPos", camera.getCurrent().getPos().setVector3(aux));
-        pointProgram.setUniformf("u_fovFactor", camera.getFovFactor());
-        pointProgram.setUniformf("u_alpha", alphas[0]);
-        pointProgram.setUniformf("u_starBrightness", GlobalConf.scene.STAR_BRIGHTNESS * BRIGHTNESS_FACTOR);
-        pointProgram.setUniformf("u_pointSize", camera.getNCameras() == 1 ? GlobalConf.runtime.STAR_POINT_SIZE : GlobalConf.runtime.STAR_POINT_SIZE * 10);
-        pointProgram.setUniformf("u_t", (float) AstroUtils.getMsSinceJ2000(GaiaSky.instance.time.getTime()));
+        lineProgram.begin();
+        lineProgram.setUniformMatrix("u_projModelView", camera.getCamera().combined);
+        lineProgram.setUniformf("u_camPos", camera.getCurrent().getPos().setVector3(aux));
+        lineProgram.setUniformf("u_fovFactor", camera.getFovFactor());
+        lineProgram.setUniformf("u_alpha", alphas[0]);
+        lineProgram.setUniformf("u_starBrightness", GlobalConf.scene.STAR_BRIGHTNESS * BRIGHTNESS_FACTOR);
+        lineProgram.setUniformf("u_pointSize", camera.getNCameras() == 1 ? GlobalConf.runtime.STAR_POINT_SIZE : GlobalConf.runtime.STAR_POINT_SIZE * 10);
+        lineProgram.setUniformf("u_t", (float) AstroUtils.getMsSinceJ2000(GaiaSky.instance.time.getTime()));
         curr.mesh.setVertices(curr.vertices, 0, curr.vertexIdx);
-        curr.mesh.render(pointProgram, ShapeType.Point.getGlType());
-        pointProgram.end();
+        curr.mesh.render(lineProgram, ShapeType.Point.getGlType());
+        lineProgram.end();
 
     }
 

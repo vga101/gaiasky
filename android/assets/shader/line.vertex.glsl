@@ -14,6 +14,4 @@ varying vec4 v_col;
 void main() {
    gl_Position = u_projModelView * a_position;
    v_col = a_color;
-   
-   gl_PointSize = 1.0;
 }

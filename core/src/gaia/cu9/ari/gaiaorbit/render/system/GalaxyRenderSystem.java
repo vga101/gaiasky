@@ -50,16 +50,16 @@ public class GalaxyRenderSystem extends ImmediateRenderSystem implements IObserv
 
         // POINT (STARS) PROGRAM
         if (Gdx.app.getType() == ApplicationType.WebGL)
-            pointProgram = new ShaderProgram(Gdx.files.internal("shader/point.galaxy.vertex.glsl"), Gdx.files.internal("shader/point.galaxy.fragment.wgl.glsl"));
+            lineProgram = new ShaderProgram(Gdx.files.internal("shader/point.galaxy.vertex.glsl"), Gdx.files.internal("shader/point.galaxy.fragment.wgl.glsl"));
         else
-            pointProgram = new ShaderProgram(Gdx.files.internal("shader/point.galaxy.vertex.glsl"), Gdx.files.internal("shader/point.galaxy.fragment.glsl"));
-        if (!pointProgram.isCompiled()) {
-            Logger.error(this.getClass().getName(), "Point shader compilation failed:\n" + pointProgram.getLog());
+            lineProgram = new ShaderProgram(Gdx.files.internal("shader/point.galaxy.vertex.glsl"), Gdx.files.internal("shader/point.galaxy.fragment.glsl"));
+        if (!lineProgram.isCompiled()) {
+            Logger.error(this.getClass().getName(), "Point shader compilation failed:\n" + lineProgram.getLog());
         }
-        pointProgram.begin();
-        pointProgram.setUniformf("u_pointAlphaMin", 0.1f);
-        pointProgram.setUniformf("u_pointAlphaMax", 1.0f);
-        pointProgram.end();
+        lineProgram.begin();
+        lineProgram.setUniformf("u_pointAlphaMin", 0.1f);
+        lineProgram.setUniformf("u_pointAlphaMax", 1.0f);
+        lineProgram.end();
 
         // QUAD (NEBULA) PROGRAM
         quadProgram = new ShaderProgram(Gdx.files.internal("shader/nebula.vertex.glsl"), Gdx.files.internal("shader/nebula.fragment.glsl"));
@@ -303,14 +303,14 @@ public class GalaxyRenderSystem extends ImmediateRenderSystem implements IObserv
                 // Enable point sizes
                 Gdx.gl20.glEnable(0x8642);
             }
-            pointProgram.begin();
-            pointProgram.setUniformMatrix("u_projModelView", camera.getCamera().combined);
-            pointProgram.setUniformf("u_camPos", camera.getCurrent().getPos().setVector3(aux));
-            pointProgram.setUniformf("u_fovFactor", camera.getFovFactor());
-            pointProgram.setUniformf("u_alpha", mw.opacity * alphas[mw.ct.ordinal()]);
+            lineProgram.begin();
+            lineProgram.setUniformMatrix("u_projModelView", camera.getCamera().combined);
+            lineProgram.setUniformf("u_camPos", camera.getCurrent().getPos().setVector3(aux));
+            lineProgram.setUniformf("u_fovFactor", camera.getFovFactor());
+            lineProgram.setUniformf("u_alpha", mw.opacity * alphas[mw.ct.ordinal()]);
             curr.mesh.setVertices(curr.vertices, 0, curr.vertexIdx);
-            curr.mesh.render(pointProgram, ShapeType.Point.getGlType());
-            pointProgram.end();
+            curr.mesh.render(lineProgram, ShapeType.Point.getGlType());
+            lineProgram.end();
 
             /**
              * IMAGE RENDERER

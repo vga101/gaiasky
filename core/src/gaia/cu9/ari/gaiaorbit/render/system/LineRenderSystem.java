@@ -23,6 +23,8 @@ public class LineRenderSystem extends ImmediateRenderSystem {
     protected ICamera camera;
     protected int glType;
 
+    protected MeshData curr_outline;
+
     public LineRenderSystem(RenderGroup rg, int priority, float[] alphas) {
         super(rg, priority, alphas);
         glType = GL20.GL_LINES;
@@ -30,19 +32,20 @@ public class LineRenderSystem extends ImmediateRenderSystem {
 
     @Override
     protected void initShaderProgram() {
-        pointProgram = new ShaderProgram(Gdx.files.internal("shader/line.vertex.glsl"), Gdx.files.internal("shader/line.fragment.glsl"));
-        if (!pointProgram.isCompiled()) {
-            Logger.error(this.getClass().getName(), "Line shader compilation failed:\n" + pointProgram.getLog());
+        lineProgram = new ShaderProgram(Gdx.files.internal("shader/line.vertex.glsl"), Gdx.files.internal("shader/line.fragment.glsl"));
+        if (!lineProgram.isCompiled()) {
+            Logger.error(this.getClass().getName(), "Line shader compilation failed:\n" + lineProgram.getLog());
         }
     }
 
     @Override
     protected void initVertices() {
-        meshes = new MeshData[1];
+        meshes = new MeshData[2];
+        maxVertices = 400000;
+
+        // ORIGINAL LINES
         curr = new MeshData();
         meshes[0] = curr;
-
-        maxVertices = 400000;
 
         VertexAttribute[] attribs = buildVertexAttributes();
         curr.mesh = new Mesh(false, maxVertices, 0, attribs);
@@ -50,6 +53,16 @@ public class LineRenderSystem extends ImmediateRenderSystem {
         curr.vertices = new float[maxVertices * (curr.mesh.getVertexAttributes().vertexSize / 4)];
         curr.vertexSize = curr.mesh.getVertexAttributes().vertexSize / 4;
         curr.colorOffset = curr.mesh.getVertexAttribute(Usage.ColorPacked) != null ? curr.mesh.getVertexAttribute(Usage.ColorPacked).offset / 4 : 0;
+
+        // OUTLINES
+        curr_outline = new MeshData();
+        meshes[1] = curr_outline;
+
+        curr_outline.mesh = new Mesh(false, maxVertices, 0, attribs);
+
+        curr_outline.vertices = new float[maxVertices * (curr_outline.mesh.getVertexAttributes().vertexSize / 4)];
+        curr_outline.vertexSize = curr_outline.mesh.getVertexAttributes().vertexSize / 4;
+        curr_outline.colorOffset = curr_outline.mesh.getVertexAttribute(Usage.ColorPacked) != null ? curr_outline.mesh.getVertexAttribute(Usage.ColorPacked).offset / 4 : 0;
 
     }
 
@@ -66,8 +79,6 @@ public class LineRenderSystem extends ImmediateRenderSystem {
 
     @Override
     public void renderStud(List<IRenderable> renderables, ICamera camera) {
-        Gdx.gl.glLineWidth(2f);
-
         this.camera = camera;
         int size = renderables.size();
         for (int i = 0; i < size; i++) {
@@ -79,13 +90,24 @@ public class LineRenderSystem extends ImmediateRenderSystem {
                 l.render(this, camera, alphas[l.getComponentType().ordinal()]);
         }
 
-        pointProgram.begin();
-        pointProgram.setUniformMatrix("u_projModelView", camera.getCamera().combined);
-        curr.mesh.setVertices(curr.vertices, 0, curr.vertexIdx);
-        curr.mesh.render(pointProgram, glType);
-        pointProgram.end();
+        lineProgram.begin();
+        lineProgram.setUniformMatrix("u_projModelView", camera.getCamera().combined);
 
+        // Outlines
+        Gdx.gl.glLineWidth(4f);
+        curr_outline.mesh.setVertices(curr_outline.vertices, 0, curr_outline.vertexIdx);
+        curr_outline.mesh.render(lineProgram, glType);
+
+        // Regular
+        Gdx.gl.glLineWidth(2f);
+        curr.mesh.setVertices(curr.vertices, 0, curr.vertexIdx);
+        curr.mesh.render(lineProgram, glType);
+
+        lineProgram.end();
+
+        // CLEAR
         curr.clear();
+        curr_outline.clear();
     }
 
     public void addLine(double x0, double y0, double z0, double x1, double y1, double z1, Color col) {
@@ -93,10 +115,31 @@ public class LineRenderSystem extends ImmediateRenderSystem {
     }
 
     public void addLine(double x0, double y0, double z0, double x1, double y1, double z1, float r, float g, float b, float a) {
+        if (true) {
+            color_outline(0f, 0f, 0f, a / 2f);
+            vertex_outline((float) x0, (float) y0, (float) z0);
+            color_outline(0f, 0f, 0f, a / 2f);
+            vertex_outline((float) x1, (float) y1, (float) z1);
+        }
+
         color(r, g, b, a);
         vertex((float) x0, (float) y0, (float) z0);
         color(r, g, b, a);
         vertex((float) x1, (float) y1, (float) z1);
+
+    }
+
+    public void color_outline(float r, float g, float b, float a) {
+        curr_outline.vertices[curr_outline.vertexIdx + curr_outline.colorOffset] = Color.toFloatBits(r, g, b, a);
+    }
+
+    public void vertex_outline(float x, float y, float z) {
+        curr_outline.vertices[curr_outline.vertexIdx] = x;
+        curr_outline.vertices[curr_outline.vertexIdx + 1] = y;
+        curr_outline.vertices[curr_outline.vertexIdx + 2] = z;
+
+        curr_outline.vertexIdx += curr_outline.vertexSize;
+        curr_outline.numVertices++;
     }
 
 }
