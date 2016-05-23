@@ -749,20 +749,32 @@ public class ConfigDialog extends I18nJFrame {
         JPanel datasource = new JPanel(new MigLayout("", "[][grow,fill][]", ""));
         datasource.setBorder(new TitledBorder(new MatteBorder(new Insets(thick, 0, 0, 0), bcol), txt("gui.data.source"), just, pos));
 
-        // LOCAL DATA OR OBJECT SERVER RADIO BUTTONS
-        final JRadioButton local = new JRadioButton(txt("gui.data.local"));
-        local.addActionListener(new ActionListener() {
+        // HYG
+        final JRadioButton hyg = new JRadioButton(txt("gui.data.hyg"));
+        final JRadioButton tgas = new JRadioButton(txt("gui.data.tgas"));
+        hyg.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                GlobalConf.data.DATA_SOURCE_LOCAL = local.isSelected();
+                GlobalConf.data.DATA_SOURCE_LOCAL = tgas.isSelected() || hyg.isSelected();
             }
         });
-        local.setSelected(true);
+        hyg.setSelected(true);
+
+        // TGAS
+        tgas.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                GlobalConf.data.DATA_SOURCE_LOCAL = tgas.isSelected() || hyg.isSelected();
+            }
+        });
+        tgas.setSelected(true);
 
         ButtonGroup dataButtons = new ButtonGroup();
-        dataButtons.add(local);
+        dataButtons.add(hyg);
+        dataButtons.add(tgas);
 
-        datasource.add(local, "span,wrap");
+        datasource.add(hyg, "span,wrap");
+        datasource.add(tgas, "span,wrap");
 
         final JPanel dataPanel = new JPanel(new MigLayout("", "[grow,fill]", ""));
         dataPanel.add(datasource, "wrap");
@@ -793,7 +805,7 @@ public class ConfigDialog extends I18nJFrame {
                 GlobalConf.data.REAL_GAIA_ATTITUDE = !nsl.isSelected();
             }
         });
-        nsl.setSelected(!GlobalConf.data.DATA_SOURCE_LOCAL);
+        nsl.setSelected(!GlobalConf.data.REAL_GAIA_ATTITUDE);
 
         ButtonGroup gaiaButtons = new ButtonGroup();
         gaiaButtons.add(real);
