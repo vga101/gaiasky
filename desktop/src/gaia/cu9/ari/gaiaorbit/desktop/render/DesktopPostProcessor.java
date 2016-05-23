@@ -142,7 +142,7 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
         // ANTIALIAS
         if (GlobalConf.postprocess.POSTPROCESS_ANTIALIAS == -1) {
             ppb.antialiasing = new Fxaa(width, height);
-            ((Fxaa) ppb.antialiasing).setSpanMax(6f);
+            ((Fxaa) ppb.antialiasing).setSpanMax(4f);
         } else if (GlobalConf.postprocess.POSTPROCESS_ANTIALIAS == -2) {
             ppb.antialiasing = new Nfaa(width, height);
         }
