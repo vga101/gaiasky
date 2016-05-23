@@ -93,6 +93,9 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
     // Camera
     public CameraManager cam;
 
+    // Data load string
+    private String dataLoadString;
+
     public ISceneGraph sg;
     private SceneGraphRenderer sgr;
     private IPostProcessor pp;
@@ -179,7 +182,8 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
 
         /** LOAD SCENE GRAPH **/
         if (sg == null) {
-            manager.load(GlobalConf.data.DATA_JSON_FILE, ISceneGraph.class, new SGLoaderParameter(time, GlobalConf.performance.MULTITHREADING, GlobalConf.performance.NUMBER_THREADS()));
+            dataLoadString = GlobalConf.data.CATALOG_JSON_FILE + "," + GlobalConf.data.DATA_JSON_FILE;
+            manager.load(dataLoadString, ISceneGraph.class, new SGLoaderParameter(time, GlobalConf.performance.MULTITHREADING, GlobalConf.performance.NUMBER_THREADS()));
         }
 
         // Load scene graph
@@ -225,8 +229,8 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         /**
          * GET SCENE GRAPH
          */
-        if (manager.isLoaded(GlobalConf.data.DATA_JSON_FILE)) {
-            sg = manager.get(GlobalConf.data.DATA_JSON_FILE);
+        if (manager.isLoaded(dataLoadString)) {
+            sg = manager.get(dataLoadString);
         }
 
         /** 

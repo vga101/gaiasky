@@ -313,6 +313,8 @@ public class GlobalConf {
         public String DATA_JSON_FILE;
         /** String with different files for different qualities **/
         public String[] DATA_JSON_FILE_GQ;
+        /** The json file with the catalogue(s) to load **/
+        public String CATALOG_JSON_FILE;
         /** If we use the ObjectServer, this contains the visualization id **/
         public String VISUALIZATION_ID;
         /** Object server IP address/hostname **/
@@ -332,6 +334,9 @@ public class GlobalConf {
             DATA_SOURCE_LOCAL = dATA_SOURCE_LOCAL;
             DATA_JSON_FILE = dATA_JSON_FILE;
             DATA_JSON_FILE_GQ = dATA_JSON_FILE_GQ;
+
+            CATALOG_JSON_FILE = "data/catalog-tgas-octree.json";
+
             OBJECT_SERVER_HOSTNAME = oBJECT_SERVER_HOSTNAME;
             OBJECT_SERVER_PORT = oBJECT_SERVER_PORT;
             VISUALIZATION_ID = vISUALIZATION_ID;

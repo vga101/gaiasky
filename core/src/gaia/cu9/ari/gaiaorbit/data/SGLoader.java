@@ -1,11 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.data;
 
-import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
-import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
-import gaia.cu9.ari.gaiaorbit.util.I18n;
-import gaia.cu9.ari.gaiaorbit.util.Logger;
-import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
-
 import com.badlogic.gdx.assets.AssetDescriptor;
 import com.badlogic.gdx.assets.AssetLoaderParameters;
 import com.badlogic.gdx.assets.AssetManager;
@@ -14,6 +8,12 @@ import com.badlogic.gdx.assets.loaders.AsynchronousAssetLoader;
 import com.badlogic.gdx.assets.loaders.FileHandleResolver;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Array;
+
+import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
+import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
+import gaia.cu9.ari.gaiaorbit.util.I18n;
+import gaia.cu9.ari.gaiaorbit.util.Logger;
+import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
 /**
  * {@link AssetLoader} for all the {@link SceneGraphNode} instances. Loads all the entities in the scene graph.
@@ -34,8 +34,15 @@ public class SGLoader extends AsynchronousAssetLoader<ISceneGraph, SGLoader.SGLo
     }
 
     @Override
-    public void loadAsync(AssetManager manager, String fileName, FileHandle file, SGLoaderParameter parameter) {
-        sg = SceneGraphJsonLoader.loadSceneGraph(file.read(), parameter.time, parameter.multithreading, parameter.maxThreads);
+    public void loadAsync(AssetManager manager, String files, FileHandle file, SGLoaderParameter parameter) {
+        String[] tokens = files.split("\\s*,\\s*");
+
+        FileHandle[] filehandles = new FileHandle[tokens.length];
+        for (int i = 0; i < tokens.length; i++) {
+            filehandles[i] = this.resolve(tokens[i]);
+        }
+
+        sg = SceneGraphJsonLoader.loadSceneGraph(filehandles, parameter.time, parameter.multithreading, parameter.maxThreads);
         Logger.info(I18n.bundle.get("notif.render.init"));
     }
 
