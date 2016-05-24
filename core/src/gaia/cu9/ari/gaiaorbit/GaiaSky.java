@@ -182,7 +182,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
 
         /** LOAD SCENE GRAPH **/
         if (sg == null) {
-            dataLoadString = GlobalConf.data.CATALOG_JSON_FILE + "," + GlobalConf.data.DATA_JSON_FILE;
+            dataLoadString = GlobalConf.data.CATALOG_JSON_FILE + "," + GlobalConf.data.OBJECTS_JSON_FILE;
             manager.load(dataLoadString, ISceneGraph.class, new SGLoaderParameter(time, GlobalConf.performance.MULTITHREADING, GlobalConf.performance.NUMBER_THREADS()));
         }
 

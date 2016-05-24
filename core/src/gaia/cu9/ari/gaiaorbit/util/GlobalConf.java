@@ -17,6 +17,7 @@ import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 
 /**
  * Holds the global configuration options
+ * 
  * @author Toni Sagrista
  *
  */
@@ -77,8 +78,10 @@ public class GlobalConf {
         }
 
         /**
-         * Returns the actual number of threads. It accounts for the number of threads being 0 or less,
-         * "let the program decide" option, in which case the number of processors is returned.
+         * Returns the actual number of threads. It accounts for the number of
+         * threads being 0 or less, "let the program decide" option, in which
+         * case the number of processors is returned.
+         * 
          * @return
          */
         public int NUMBER_THREADS() {
@@ -132,6 +135,7 @@ public class GlobalConf {
 
     /**
      * Runtime configuration values, which are never persisted.
+     * 
      * @author Toni Sagrista
      *
      */
@@ -241,6 +245,7 @@ public class GlobalConf {
 
     /**
      * Holds the configuration for the output frame subsystem.
+     * 
      * @author Toni Sagrista
      *
      */
@@ -303,18 +308,26 @@ public class GlobalConf {
 
     /**
      * Holds all configuration values related to data.
+     * 
      * @author Toni Sagrista
      *
      */
     public static class DataConf implements IConf {
-        /** Whether we use the local data source (HYG binary) or the object server **/
-        public boolean DATA_SOURCE_LOCAL = false;
+
         /** The json data file in case of local data source **/
-        public String DATA_JSON_FILE;
+        public String OBJECTS_JSON_FILE;
         /** String with different files for different qualities **/
-        public String[] DATA_JSON_FILE_GQ;
+        public String[] OBJECTS_JSON_FILE_GQ;
+
         /** The json file with the catalogue(s) to load **/
         public String CATALOG_JSON_FILE;
+        /** HYG JSON file **/
+        public String HYG_JSON_FILE;
+        /** TGAS JSON file **/
+        public String TGAS_JSON_FILE;
+
+        /** Whether we are connected to the Object Server in this session **/
+        public boolean OBJECT_SERVER_CONNECTION = false;
         /** If we use the ObjectServer, this contains the visualization id **/
         public String VISUALIZATION_ID;
         /** Object server IP address/hostname **/
@@ -325,17 +338,25 @@ public class GlobalConf {
         public String OBJECT_SERVER_USERNAME;
         /** Object Server pass **/
         public String OBJECT_SERVER_PASSWORD;
-        /** Limit magnitude used for loading stars. All stars above this magnitude will not even be loaded by the sandbox. **/
+        /**
+         * Limit magnitude used for loading stars. All stars above this
+         * magnitude will not even be loaded by the sandbox.
+         **/
         public float LIMIT_MAG_LOAD;
-        /** Whether to use the real attitude of Gaia or the NSL approximation **/
+        /**
+         * Whether to use the real attitude of Gaia or the NSL approximation
+         **/
         public boolean REAL_GAIA_ATTITUDE;
 
-        public void initialize(boolean dATA_SOURCE_LOCAL, String dATA_JSON_FILE, String[] dATA_JSON_FILE_GQ, String oBJECT_SERVER_HOSTNAME, int oBJECT_SERVER_PORT, String vISUALIZATION_ID, float lIMIT_MAG_LOAD, boolean rEAL_GAIA_ATTITUDE) {
-            DATA_SOURCE_LOCAL = dATA_SOURCE_LOCAL;
-            DATA_JSON_FILE = dATA_JSON_FILE;
-            DATA_JSON_FILE_GQ = dATA_JSON_FILE_GQ;
+        public void initialize(boolean oBJECT_SERVER_CONNECTION, String cATALOG_JSON_FILE, String hYG_JSON_FILE, String tGAS_JSON_FILE, String oBJECTS_JSON_FILE, String[] oBJECTS_JSON_FILE_GQ, String oBJECT_SERVER_HOSTNAME, int oBJECT_SERVER_PORT, String vISUALIZATION_ID, float lIMIT_MAG_LOAD, boolean rEAL_GAIA_ATTITUDE) {
+            OBJECT_SERVER_CONNECTION = oBJECT_SERVER_CONNECTION;
 
-            CATALOG_JSON_FILE = "data/catalog-tgas-octree.json";
+            CATALOG_JSON_FILE = cATALOG_JSON_FILE;
+            HYG_JSON_FILE = hYG_JSON_FILE;
+            TGAS_JSON_FILE = tGAS_JSON_FILE;
+
+            OBJECTS_JSON_FILE = oBJECTS_JSON_FILE;
+            OBJECTS_JSON_FILE_GQ = oBJECTS_JSON_FILE_GQ;
 
             OBJECT_SERVER_HOSTNAME = oBJECT_SERVER_HOSTNAME;
             OBJECT_SERVER_PORT = oBJECT_SERVER_PORT;
@@ -344,15 +365,17 @@ public class GlobalConf {
             REAL_GAIA_ATTITUDE = rEAL_GAIA_ATTITUDE;
         }
 
-        public void initialize(String dATA_JSON_FILE, boolean dATA_SOURCE_LOCAL, float lIMIT_MAG_LOAD) {
-            this.DATA_JSON_FILE = dATA_JSON_FILE;
-            this.DATA_SOURCE_LOCAL = dATA_SOURCE_LOCAL;
+        public void initialize(String cATALOG_JSON_FILE, String oBJECTS_JSON_FILE, boolean dATA_SOURCE_LOCAL, float lIMIT_MAG_LOAD) {
+            this.CATALOG_JSON_FILE = cATALOG_JSON_FILE;
+            this.OBJECTS_JSON_FILE = oBJECTS_JSON_FILE;
+            this.OBJECT_SERVER_CONNECTION = dATA_SOURCE_LOCAL;
             this.LIMIT_MAG_LOAD = lIMIT_MAG_LOAD;
         }
 
-        public void initialize(String dATA_JSON_FILE, boolean dATA_SOURCE_LOCAL, float lIMIT_MAG_LOAD, boolean rEAL_GAIA_ATTITUDE) {
-            this.DATA_JSON_FILE = dATA_JSON_FILE;
-            this.DATA_SOURCE_LOCAL = dATA_SOURCE_LOCAL;
+        public void initialize(String cATALOG_JSON_FILE, String dATA_JSON_FILE, boolean dATA_SOURCE_LOCAL, float lIMIT_MAG_LOAD, boolean rEAL_GAIA_ATTITUDE) {
+            this.CATALOG_JSON_FILE = cATALOG_JSON_FILE;
+            this.OBJECTS_JSON_FILE = dATA_JSON_FILE;
+            this.OBJECT_SERVER_CONNECTION = dATA_SOURCE_LOCAL;
             this.LIMIT_MAG_LOAD = lIMIT_MAG_LOAD;
             this.REAL_GAIA_ATTITUDE = rEAL_GAIA_ATTITUDE;
         }
@@ -522,7 +545,7 @@ public class GlobalConf {
         public float LABEL_NUMBER_FACTOR;
         public boolean[] VISIBILITY;
 
-        /** Whether to display proper motion vectors**/
+        /** Whether to display proper motion vectors **/
         public boolean PROPER_MOTION_VECTORS;
         /** Factor to apply to the length of the proper motion vectors **/
         public float PM_LEN_FACTOR;
@@ -546,12 +569,21 @@ public class GlobalConf {
         public float POINT_ALPHA_MIN;
         public float POINT_ALPHA_MAX;
 
-        /** Particle fade in/out flag for octree-backed catalogs. WARNING: This implies particles are sent to GPU at each cycle **/
+        /**
+         * Particle fade in/out flag for octree-backed catalogs. WARNING: This
+         * implies particles are sent to GPU at each cycle
+         **/
         public boolean OCTREE_PARTICLE_FADE;
 
-        /** Angle [rad] above which we start painting stars in octant with fade in **/
+        /**
+         * Angle [rad] above which we start painting stars in octant with fade
+         * in
+         **/
         public float OCTANT_THRESHOLD_0;
-        /** Angle [rad] below which we paint stars in octant with fade out. Above this angle, inner stars are painted with full brightness **/
+        /**
+         * Angle [rad] below which we paint stars in octant with fade out. Above
+         * this angle, inner stars are painted with full brightness
+         **/
         public float OCTANT_THRESHOLD_1;
 
         public SceneConf() {

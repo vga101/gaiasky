@@ -80,6 +80,7 @@ import gaia.cu9.ari.gaiaorbit.interfce.TextUtils;
 import gaia.cu9.ari.gaiaorbit.util.ConfInit;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
+import gaia.cu9.ari.gaiaorbit.util.Logger;
 import net.miginfocom.swing.MigLayout;
 
 /**
@@ -188,8 +189,8 @@ public class ConfigDialog extends I18nJFrame {
         renderer.setHorizontalTextAlignment(SwingConstants.LEADING);
 
         /**
-        		 * ====== GRAPHICS TAB =======
-        		 */
+         * ====== GRAPHICS TAB =======
+         */
 
         /** RESOLUTION **/
         JPanel mode = new JPanel(new MigLayout("fillx", "[grow,fill][grow,fill]", ""));
@@ -268,8 +269,8 @@ public class ConfigDialog extends I18nJFrame {
         ComboBoxBean[] gqs = new ComboBoxBean[] { new ComboBoxBean(txt("gui.gquality.high"), 0), new ComboBoxBean(txt("gui.gquality.normal"), 1), new ComboBoxBean(txt("gui.gquality.low"), 2) };
         final JComboBox<ComboBoxBean> gquality = new JComboBox<ComboBoxBean>(gqs);
         int index = -1;
-        for (int i = 0; i < GlobalConf.data.DATA_JSON_FILE_GQ.length; i++) {
-            if (GlobalConf.data.DATA_JSON_FILE_GQ[i].equals(GlobalConf.data.DATA_JSON_FILE)) {
+        for (int i = 0; i < GlobalConf.data.OBJECTS_JSON_FILE_GQ.length; i++) {
+            if (GlobalConf.data.OBJECTS_JSON_FILE_GQ[i].equals(GlobalConf.data.OBJECTS_JSON_FILE)) {
                 index = i;
                 break;
             }
@@ -332,8 +333,8 @@ public class ConfigDialog extends I18nJFrame {
         tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
 
         /**
-        * ====== USER INTERFACE TAB =======
-        **/
+         * ====== USER INTERFACE TAB =======
+         **/
         JPanel ui = new JPanel(new MigLayout("", "[grow,fill][grow,fill]", ""));
         ui.setBorder(new TitledBorder(new MatteBorder(new Insets(thick, 0, 0, 0), bcol), txt("gui.ui.interfacesettings"), just, pos));
 
@@ -402,8 +403,8 @@ public class ConfigDialog extends I18nJFrame {
         tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
 
         /**
-        		 * ====== PERFORMANCE TAB =======
-        		 */
+         * ====== PERFORMANCE TAB =======
+         */
 
         /** MULTITHREAD **/
         JPanel multithread = new JPanel(new MigLayout("", "[grow,fill][grow,fill]", ""));
@@ -439,8 +440,8 @@ public class ConfigDialog extends I18nJFrame {
         tabbedPane.setMnemonicAt(2, KeyEvent.VK_3);
 
         /**
-        		 * ====== CONTROLS TAB =======
-        		 */
+         * ====== CONTROLS TAB =======
+         */
         JPanel controls = new JPanel(new MigLayout("", "[grow,fill][]", ""));
         controls.setBorder(new TitledBorder(new MatteBorder(new Insets(thick, 0, 0, 0), bcol), txt("gui.keymappings"), just, pos));
 
@@ -449,6 +450,7 @@ public class ConfigDialog extends I18nJFrame {
 
         String[] headers = new String[] { txt("gui.keymappings.action"), txt("gui.keymappings.keys") };
         String[][] data = new String[maps.size()][2];
+
         i = 0;
         for (TreeSet<Integer> keys : keymaps) {
             ProgramAction action = maps.get(keys);
@@ -478,8 +480,8 @@ public class ConfigDialog extends I18nJFrame {
         tabbedPane.setMnemonicAt(3, KeyEvent.VK_4);
 
         /**
-        		 * ====== SCREENSHOTS TAB =======
-        		 */
+         * ====== SCREENSHOTS TAB =======
+         */
 
         /** SCREENSHOTS CONFIG **/
         JPanel screenshots = new JPanel(new MigLayout("", "[grow,fill][grow,fill]", ""));
@@ -594,8 +596,8 @@ public class ConfigDialog extends I18nJFrame {
         tabbedPane.setMnemonicAt(4, KeyEvent.VK_5);
 
         /**
-        		 * ====== FRAME OUTPUT TAB =======
-        		 */
+         * ====== FRAME OUTPUT TAB =======
+         */
 
         /** IMAGE OUTPUT CONFIG **/
         JPanel imageOutput = new JPanel(new MigLayout("", "[grow,fill][grow,fill]", ""));
@@ -744,30 +746,18 @@ public class ConfigDialog extends I18nJFrame {
         tabbedPane.setMnemonicAt(5, KeyEvent.VK_6);
 
         /**
-        		 * ====== DATA TAB =======
-        		 */
+         * ====== DATA TAB =======
+         */
         JPanel datasource = new JPanel(new MigLayout("", "[][grow,fill][]", ""));
         datasource.setBorder(new TitledBorder(new MatteBorder(new Insets(thick, 0, 0, 0), bcol), txt("gui.data.source"), just, pos));
 
-        // HYG
+        // HYG 
         final JRadioButton hyg = new JRadioButton(txt("gui.data.hyg"));
-        final JRadioButton tgas = new JRadioButton(txt("gui.data.tgas"));
-        hyg.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                GlobalConf.data.DATA_SOURCE_LOCAL = tgas.isSelected() || hyg.isSelected();
-            }
-        });
-        hyg.setSelected(true);
+        hyg.setSelected(GlobalConf.data.CATALOG_JSON_FILE.equals(GlobalConf.data.HYG_JSON_FILE));
 
         // TGAS
-        tgas.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                GlobalConf.data.DATA_SOURCE_LOCAL = tgas.isSelected() || hyg.isSelected();
-            }
-        });
-        tgas.setSelected(true);
+        final JRadioButton tgas = new JRadioButton(txt("gui.data.tgas"));
+        tgas.setSelected(GlobalConf.data.CATALOG_JSON_FILE.equals(GlobalConf.data.TGAS_JSON_FILE));
 
         ButtonGroup dataButtons = new ButtonGroup();
         dataButtons.add(hyg);
@@ -782,9 +772,9 @@ public class ConfigDialog extends I18nJFrame {
         tabbedPane.addTab(txt("gui.data"), IconManager.get("config/data"), dataPanel);
         tabbedPane.setMnemonicAt(6, KeyEvent.VK_7);
 
-        /** 
-        * ====== GAIA TAB =======
-        */
+        /**
+         * ====== GAIA TAB =======
+         */
         JPanel gaia = new JPanel(new MigLayout("", "[][grow,fill][]", ""));
         gaia.setBorder(new TitledBorder(new MatteBorder(new Insets(thick, 0, 0, 0), bcol), txt("gui.gaia.attitude"), just, pos));
 
@@ -863,7 +853,7 @@ public class ConfigDialog extends I18nJFrame {
 
                     // Graphics
                     ComboBoxBean bean = (ComboBoxBean) gquality.getSelectedItem();
-                    GlobalConf.data.DATA_JSON_FILE = GlobalConf.data.DATA_JSON_FILE_GQ[bean.value];
+                    GlobalConf.data.OBJECTS_JSON_FILE = GlobalConf.data.OBJECTS_JSON_FILE_GQ[bean.value];
                     GlobalConf.scene.GRAPHICS_QUALITY = bean.value;
 
                     bean = (ComboBoxBean) msaa.getSelectedItem();
@@ -887,6 +877,14 @@ public class ConfigDialog extends I18nJFrame {
                     bean = (ComboBoxBean) numThreads.getSelectedItem();
                     GlobalConf.performance.NUMBER_THREADS = bean.value;
                     GlobalConf.performance.MULTITHREADING = multithreadCb.isSelected();
+
+                    // Data
+                    if (hyg.isSelected())
+                        GlobalConf.data.CATALOG_JSON_FILE = GlobalConf.data.HYG_JSON_FILE;
+                    else if (tgas.isSelected())
+                        GlobalConf.data.CATALOG_JSON_FILE = GlobalConf.data.TGAS_JSON_FILE;
+                    else
+                        Logger.error(this.getClass().getSimpleName(), "No catalog file selected!");
 
                     // Screenshots
                     File ssfile = new File(screenshotsTextContainer.getText());
@@ -1058,17 +1056,17 @@ public class ConfigDialog extends I18nJFrame {
     }
 
     /**
-    	 * Checks the given version against the current version and:
-    	 * <ul>
-    	 * <li>Displays a "new version available" message if the given version is
-    	 * newer than the current.</li>
-    	 * <li>Display a "you have the latest version" message and a "check now"
-    	 * button if the given version is older.</li>
-    	 * </ul>
-    	 * 
-    	 * @param version
-    	 *            The version to check.
-    	 */
+     * Checks the given version against the current version and:
+     * <ul>
+     * <li>Displays a "new version available" message if the given version is
+     * newer than the current.</li>
+     * <li>Display a "you have the latest version" message and a "check now"
+     * button if the given version is older.</li>
+     * </ul>
+     * 
+     * @param version
+     *            The version to check.
+     */
     private void newVersionCheck(String version) {
         int[] majmin = GlobalConf.VersionConf.getMajorMinorFromString(version);
 

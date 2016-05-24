@@ -122,17 +122,22 @@ public class DesktopConfInit extends ConfInit {
 
         /** DATA CONF **/
         DataConf dc = new DataConf();
-        boolean DATA_SOURCE_LOCAL = Boolean.parseBoolean(p.getProperty("data.source.local"));
-        String DATA_JSON_FILE = p.getProperty("data.json.file");
+        boolean DATA_SOURCE_LOCAL = Boolean.parseBoolean(p.getProperty("data.source.objectserver"));
+
+        String CATALOG_JSON_FILE = p.getProperty("data.json.catalog");
+        String HYG_JSON_FILE = p.getProperty("data.json.catalog.hyg");
+        String TGAS_JSON_FILE = p.getProperty("data.json.catalog.tgas");
+
+        String OBJECTS_JSON_FILE = p.getProperty("data.json.objects");
         List<String> files = new ArrayList<String>();
         int i = 0;
         String gqualityFile;
-        while ((gqualityFile = p.getProperty("data.json.gq." + i)) != null) {
+        while ((gqualityFile = p.getProperty("data.json.objects.gq." + i)) != null) {
             files.add(gqualityFile);
             i++;
         }
-        String[] DATA_JSON_FILE_GQ = new String[files.size()];
-        DATA_JSON_FILE_GQ = files.toArray(DATA_JSON_FILE_GQ);
+        String[] OBJECTS_JSON_FILE_GQ = new String[files.size()];
+        OBJECTS_JSON_FILE_GQ = files.toArray(OBJECTS_JSON_FILE_GQ);
         String OBJECT_SERVER_HOSTNAME = p.getProperty("data.source.hostname");
         int OBJECT_SERVER_PORT = Integer.parseInt(p.getProperty("data.source.port"));
         String VISUALIZATION_ID = p.getProperty("data.source.visid");
@@ -144,7 +149,7 @@ public class DesktopConfInit extends ConfInit {
         } else {
             LIMIT_MAG_LOAD = Float.MAX_VALUE;
         }
-        dc.initialize(DATA_SOURCE_LOCAL, DATA_JSON_FILE, DATA_JSON_FILE_GQ, OBJECT_SERVER_HOSTNAME, OBJECT_SERVER_PORT, VISUALIZATION_ID, LIMIT_MAG_LOAD, REAL_GAIA_ATTITUDE);
+        dc.initialize(DATA_SOURCE_LOCAL, CATALOG_JSON_FILE, HYG_JSON_FILE, TGAS_JSON_FILE, OBJECTS_JSON_FILE, OBJECTS_JSON_FILE_GQ, OBJECT_SERVER_HOSTNAME, OBJECT_SERVER_PORT, VISUALIZATION_ID, LIMIT_MAG_LOAD, REAL_GAIA_ATTITUDE);
 
         /** PROGRAM CONF **/
         ProgramConf prc = new ProgramConf();
@@ -288,8 +293,9 @@ public class DesktopConfInit extends ConfInit {
         p.setProperty("graphics.render.mode", GlobalConf.frame.FRAME_MODE.toString());
 
         /** DATA **/
-        p.setProperty("data.source.local", Boolean.toString(GlobalConf.data.DATA_SOURCE_LOCAL));
-        p.setProperty("data.json.file", GlobalConf.data.DATA_JSON_FILE);
+        p.setProperty("data.json.catalog", GlobalConf.data.CATALOG_JSON_FILE);
+        p.setProperty("data.json.objects", GlobalConf.data.OBJECTS_JSON_FILE);
+        p.setProperty("data.source.objectserver", Boolean.toString(GlobalConf.data.OBJECT_SERVER_CONNECTION));
         p.setProperty("data.source.hostname", GlobalConf.data.OBJECT_SERVER_HOSTNAME);
         p.setProperty("data.source.port", Integer.toString(GlobalConf.data.OBJECT_SERVER_PORT));
         p.setProperty("data.source.visid", GlobalConf.data.VISUALIZATION_ID);
