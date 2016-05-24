@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.bitfire.postprocessing.PostProcessor;
 import com.bitfire.postprocessing.effects.Bloom;
+import com.bitfire.postprocessing.effects.Curvature;
 import com.bitfire.postprocessing.effects.Fxaa;
 import com.bitfire.postprocessing.effects.LensFlare2;
 import com.bitfire.postprocessing.effects.LightScattering;
@@ -17,6 +18,7 @@ import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.render.IPostProcessor;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf.ProgramConf.StereoProfile;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 
@@ -46,7 +48,7 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
             Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.selected", "NFAA"));
         }
 
-        EventManager.instance.subscribe(this, Events.PROPERTIES_WRITTEN, Events.BLOOM_CMD, Events.LENS_FLARE_CMD, Events.MOTION_BLUR_CMD, Events.LIGHT_POS_2D_UPDATED, Events.LIGHT_SCATTERING_CMD);
+        EventManager.instance.subscribe(this, Events.PROPERTIES_WRITTEN, Events.BLOOM_CMD, Events.LENS_FLARE_CMD, Events.MOTION_BLUR_CMD, Events.LIGHT_POS_2D_UPDATED, Events.LIGHT_SCATTERING_CMD, Events.TOGGLE_STEREOSCOPIC, Events.TOGGLE_STEREO_PROFILE);
 
     }
 
@@ -138,6 +140,13 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
         ppb.lens.setBlurPasses(5);
         ppb.lens.setEnabled(GlobalConf.postprocess.POSTPROCESS_LENS_FLARE);
         ppb.pp.addEffect(ppb.lens);
+
+        // DISTORTION (STEREOSCOPIC MODE)
+        ppb.curvature = new Curvature();
+        ppb.curvature.setDistortion(0.8f);
+        ppb.curvature.setZoom(0.8f);
+        ppb.curvature.setEnabled(GlobalConf.program.STEREOSCOPIC_MODE && GlobalConf.program.STEREO_PROFILE == StereoProfile.VR_HEADSET);
+        ppb.pp.addEffect(ppb.curvature);
 
         // ANTIALIAS
         if (GlobalConf.postprocess.POSTPROCESS_ANTIALIAS == -1) {
@@ -263,18 +272,28 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
                 }
             }
             break;
+        case TOGGLE_STEREOSCOPIC:
+        case TOGGLE_STEREO_PROFILE:
+            boolean curvatureEnabled = GlobalConf.program.STEREOSCOPIC_MODE && GlobalConf.program.STEREO_PROFILE == StereoProfile.VR_HEADSET;
+            for (int i = 0; i < RenderType.values().length; i++) {
+                if (pps[i] != null) {
+                    PostProcessBean ppb = pps[i];
+                    ppb.curvature.setEnabled(curvatureEnabled);
+                }
+            }
+            break;
         }
 
     }
 
     /**
-    	 * Reloads the postprocessor at the given index with the given width and
-    	 * height.
-    	 * 
-    	 * @param index
-    	 * @param width
-    	 * @param height
-    	 */
+     * Reloads the postprocessor at the given index with the given width and
+     * height.
+     * 
+     * @param index
+     * @param width
+     * @param height
+     */
     private void replace(int index, final int width, final int height) {
         // pps[index].pp.dispose(false);
         pps[index] = newPostProcessor(width, height);

@@ -42,8 +42,6 @@ import gaia.cu9.ari.gaiaorbit.render.system.IRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.LineQuadRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.LineRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.ModelBatchRenderSystem;
-import gaia.cu9.ari.gaiaorbit.render.system.PixelBloomRenderSystem;
-import gaia.cu9.ari.gaiaorbit.render.system.PixelFuzzyRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.PixelRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.QuadRenderSystem;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
@@ -172,10 +170,10 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         }
 
         /**
-        		 *
-        		 * ======= INITIALIZE RENDER COMPONENTS =======
-        		 *
-        		 **/
+         *
+         * ======= INITIALIZE RENDER COMPONENTS =======
+         *
+         **/
         pixelRenderSystems = new AbstractRenderSystem[3];
 
         renderProcesses = new ArrayList<IRenderSystem>();
@@ -503,9 +501,9 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
     }
 
     /**
-    	 * This must be called when all the rendering for the current frame has
-    	 * finished.
-    	 */
+     * This must be called when all the rendering for the current frame has
+     * finished.
+     */
     public void clearLists() {
         for (RenderGroup rg : RenderGroup.values()) {
             render_lists.get(rg).clear();
@@ -617,47 +615,6 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
             sys.setPreRunnable(blendDepthRunnable);
         }
         return sys;
-    }
-
-    /**
-    	 * Gets the render system
-    	 * 
-    	 * @deprecated
-    	 * @return
-    	 */
-    private AbstractRenderSystem getPixelRenderSystem() {
-        AbstractRenderSystem sys = null;
-        int pxidx = GlobalConf.scene.PIXEL_RENDERER;
-        if (pixelRenderSystems[pxidx] == null) {
-            if (GlobalConf.scene.isBloomPixelRenderer()) {
-                sys = new PixelBloomRenderSystem(RenderGroup.POINT, 0, alphas);
-                sys.setPreRunnable(blendNoDepthRunnable);
-            } else if (GlobalConf.scene.isFuzzyPixelRenderer()) {
-                sys = new PixelFuzzyRenderSystem(RenderGroup.POINT, 0, alphas);
-                sys.setPreRunnable(blendDepthRunnable);
-            } else {
-                sys = new PixelRenderSystem(RenderGroup.POINT, 0, alphas);
-                sys.setPreRunnable(blendNoDepthRunnable);
-            }
-            pixelRenderSystems[pxidx] = sys;
-        } else {
-            sys = pixelRenderSystems[pxidx];
-        }
-        return sys;
-    }
-
-    /**
-    	 * @deprecated
-    	 */
-    private void updatePixelRenderSystem() {
-        if (renderProcesses != null && !renderProcesses.isEmpty()) {
-            IRenderSystem sys = renderProcesses.get(0);
-            if ((sys instanceof PixelBloomRenderSystem && !GlobalConf.scene.isBloomPixelRenderer()) || (sys instanceof PixelRenderSystem && !GlobalConf.scene.isNormalPixelRenderer()) || (sys instanceof PixelFuzzyRenderSystem && !GlobalConf.scene.isFuzzyPixelRenderer())) {
-                IRenderSystem newsys = getPixelRenderSystem();
-                renderProcesses.remove(sys);
-                renderProcesses.add(0, newsys);
-            }
-        }
     }
 
 }

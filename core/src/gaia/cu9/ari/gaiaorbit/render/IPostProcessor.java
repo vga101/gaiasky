@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.bitfire.postprocessing.PostProcessor;
 import com.bitfire.postprocessing.effects.Antialiasing;
 import com.bitfire.postprocessing.effects.Bloom;
+import com.bitfire.postprocessing.effects.Curvature;
 import com.bitfire.postprocessing.effects.LensFlare2;
 import com.bitfire.postprocessing.effects.LightScattering;
 import com.bitfire.postprocessing.effects.MotionBlur;
@@ -14,6 +15,7 @@ public interface IPostProcessor {
         public Bloom bloom;
         public Antialiasing antialiasing;
         public LensFlare2 lens;
+        public Curvature curvature;
         public LightScattering lscatter;
         public MotionBlur motionblur;
 
@@ -53,6 +55,6 @@ public interface IPostProcessor {
     public PostProcessBean getPostProcessBean(RenderType type);
 
     public void resize(int width, int height);
-    
+
     public boolean isLightScatterEnabled();
 }
