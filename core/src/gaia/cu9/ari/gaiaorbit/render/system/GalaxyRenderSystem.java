@@ -25,6 +25,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.MilkyWayReal;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf.ProgramConf.StereoProfile;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 
@@ -50,16 +51,16 @@ public class GalaxyRenderSystem extends ImmediateRenderSystem implements IObserv
 
         // POINT (STARS) PROGRAM
         if (Gdx.app.getType() == ApplicationType.WebGL)
-            lineProgram = new ShaderProgram(Gdx.files.internal("shader/point.galaxy.vertex.glsl"), Gdx.files.internal("shader/point.galaxy.fragment.wgl.glsl"));
+            shaderProgram = new ShaderProgram(Gdx.files.internal("shader/point.galaxy.vertex.glsl"), Gdx.files.internal("shader/point.galaxy.fragment.wgl.glsl"));
         else
-            lineProgram = new ShaderProgram(Gdx.files.internal("shader/point.galaxy.vertex.glsl"), Gdx.files.internal("shader/point.galaxy.fragment.glsl"));
-        if (!lineProgram.isCompiled()) {
-            Logger.error(this.getClass().getName(), "Point shader compilation failed:\n" + lineProgram.getLog());
+            shaderProgram = new ShaderProgram(Gdx.files.internal("shader/point.galaxy.vertex.glsl"), Gdx.files.internal("shader/point.galaxy.fragment.glsl"));
+        if (!shaderProgram.isCompiled()) {
+            Logger.error(this.getClass().getName(), "Point shader compilation failed:\n" + shaderProgram.getLog());
         }
-        lineProgram.begin();
-        lineProgram.setUniformf("u_pointAlphaMin", 0.1f);
-        lineProgram.setUniformf("u_pointAlphaMax", 1.0f);
-        lineProgram.end();
+        shaderProgram.begin();
+        shaderProgram.setUniformf("u_pointAlphaMin", 0.1f);
+        shaderProgram.setUniformf("u_pointAlphaMax", 1.0f);
+        shaderProgram.end();
 
         // QUAD (NEBULA) PROGRAM
         quadProgram = new ShaderProgram(Gdx.files.internal("shader/nebula.vertex.glsl"), Gdx.files.internal("shader/nebula.fragment.glsl"));
@@ -148,7 +149,8 @@ public class GalaxyRenderSystem extends ImmediateRenderSystem implements IObserv
                     // SIZE
                     float starSize = 0;
                     if (star.length > 3) {
-                        starSize = (star[3] * 10f + 1f) /** (Constants.webgl ? 0.08f : 1f)*/
+                        starSize = (star[3] * 10f
+                                + 1f) /** (Constants.webgl ? 0.08f : 1f) */
                         ;
                     } else {
                         starSize = (float) Math.abs(rand.nextGaussian()) * 8f + 1.0f;
@@ -303,14 +305,15 @@ public class GalaxyRenderSystem extends ImmediateRenderSystem implements IObserv
                 // Enable point sizes
                 Gdx.gl20.glEnable(0x8642);
             }
-            lineProgram.begin();
-            lineProgram.setUniformMatrix("u_projModelView", camera.getCamera().combined);
-            lineProgram.setUniformf("u_camPos", camera.getCurrent().getPos().setVector3(aux));
-            lineProgram.setUniformf("u_fovFactor", camera.getFovFactor());
-            lineProgram.setUniformf("u_alpha", mw.opacity * alphas[mw.ct.ordinal()]);
+            shaderProgram.begin();
+            shaderProgram.setUniformMatrix("u_projModelView", camera.getCamera().combined);
+            shaderProgram.setUniformf("u_camPos", camera.getCurrent().getPos().setVector3(aux));
+            shaderProgram.setUniformf("u_fovFactor", camera.getFovFactor());
+            shaderProgram.setUniformf("u_alpha", mw.opacity * alphas[mw.ct.ordinal()]);
+            shaderProgram.setUniformf("u_ar", GlobalConf.program.STEREOSCOPIC_MODE && GlobalConf.program.STEREO_PROFILE != StereoProfile.HD_3DTV ? 0.5f : 1f);
             curr.mesh.setVertices(curr.vertices, 0, curr.vertexIdx);
-            curr.mesh.render(lineProgram, ShapeType.Point.getGlType());
-            lineProgram.end();
+            curr.mesh.render(shaderProgram, ShapeType.Point.getGlType());
+            shaderProgram.end();
 
             /**
              * IMAGE RENDERER

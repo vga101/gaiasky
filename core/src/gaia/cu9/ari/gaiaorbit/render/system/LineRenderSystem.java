@@ -32,9 +32,9 @@ public class LineRenderSystem extends ImmediateRenderSystem {
 
     @Override
     protected void initShaderProgram() {
-        lineProgram = new ShaderProgram(Gdx.files.internal("shader/line.vertex.glsl"), Gdx.files.internal("shader/line.fragment.glsl"));
-        if (!lineProgram.isCompiled()) {
-            Logger.error(this.getClass().getName(), "Line shader compilation failed:\n" + lineProgram.getLog());
+        shaderProgram = new ShaderProgram(Gdx.files.internal("shader/line.vertex.glsl"), Gdx.files.internal("shader/line.fragment.glsl"));
+        if (!shaderProgram.isCompiled()) {
+            Logger.error(this.getClass().getName(), "Line shader compilation failed:\n" + shaderProgram.getLog());
         }
     }
 
@@ -90,20 +90,20 @@ public class LineRenderSystem extends ImmediateRenderSystem {
                 l.render(this, camera, alphas[l.getComponentType().ordinal()]);
         }
 
-        lineProgram.begin();
-        lineProgram.setUniformMatrix("u_projModelView", camera.getCamera().combined);
+        shaderProgram.begin();
+        shaderProgram.setUniformMatrix("u_projModelView", camera.getCamera().combined);
 
         // Outlines
         Gdx.gl.glLineWidth(4f);
         curr_outline.mesh.setVertices(curr_outline.vertices, 0, curr_outline.vertexIdx);
-        curr_outline.mesh.render(lineProgram, glType);
+        curr_outline.mesh.render(shaderProgram, glType);
 
         // Regular
         Gdx.gl.glLineWidth(2f);
         curr.mesh.setVertices(curr.vertices, 0, curr.vertexIdx);
-        curr.mesh.render(lineProgram, glType);
+        curr.mesh.render(shaderProgram, glType);
 
-        lineProgram.end();
+        shaderProgram.end();
 
         // CLEAR
         curr.clear();

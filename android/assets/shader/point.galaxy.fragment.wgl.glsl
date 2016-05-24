@@ -3,9 +3,13 @@ precision mediump float;
 precision mediump int;
 #endif
 
+uniform float u_ar;
+
 varying vec4 v_col;
 void main() {
-	float dist = distance(vec2(0.5), gl_PointCoord.st) * 2.0;
+	vec2 uv = vec2(gl_PointCoord.s, gl_PointCoord.t);
+	uv.y = uv.y / u_ar;
+	float dist = distance(vec2(0.5), uv) * 2.0;
 	if(dist > 0.9){
 		discard;
 	}

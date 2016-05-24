@@ -23,6 +23,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf.ProgramConf.StereoProfile;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
 
@@ -57,16 +58,16 @@ public class PixelRenderSystem extends ImmediateRenderSystem implements IObserve
     protected void initShaderProgram() {
         // Initialise renderer
         if (Gdx.app.getType() == ApplicationType.WebGL)
-            lineProgram = new ShaderProgram(Gdx.files.internal("shader/point.vertex.glsl"), Gdx.files.internal("shader/point.fragment.wgl.glsl"));
+            shaderProgram = new ShaderProgram(Gdx.files.internal("shader/point.vertex.glsl"), Gdx.files.internal("shader/point.fragment.wgl.glsl"));
         else
-            lineProgram = new ShaderProgram(Gdx.files.internal("shader/point.vertex.glsl"), Gdx.files.internal("shader/point.fragment.glsl"));
-        if (!lineProgram.isCompiled()) {
-            Logger.error(this.getClass().getName(), "Point shader compilation failed:\n" + lineProgram.getLog());
+            shaderProgram = new ShaderProgram(Gdx.files.internal("shader/point.vertex.glsl"), Gdx.files.internal("shader/point.fragment.glsl"));
+        if (!shaderProgram.isCompiled()) {
+            Logger.error(this.getClass().getName(), "Point shader compilation failed:\n" + shaderProgram.getLog());
         }
-        lineProgram.begin();
-        lineProgram.setUniformf("u_pointAlphaMin", GlobalConf.scene.POINT_ALPHA_MIN);
-        lineProgram.setUniformf("u_pointAlphaMax", GlobalConf.scene.POINT_ALPHA_MAX);
-        lineProgram.end();
+        shaderProgram.begin();
+        shaderProgram.setUniformf("u_pointAlphaMin", GlobalConf.scene.POINT_ALPHA_MIN);
+        shaderProgram.setUniformf("u_pointAlphaMax", GlobalConf.scene.POINT_ALPHA_MAX);
+        shaderProgram.end();
 
     }
 
@@ -134,17 +135,18 @@ public class PixelRenderSystem extends ImmediateRenderSystem implements IObserve
             // Enable point sizes
             Gdx.gl20.glEnable(0x8642);
         }
-        lineProgram.begin();
-        lineProgram.setUniformMatrix("u_projModelView", camera.getCamera().combined);
-        lineProgram.setUniformf("u_camPos", camera.getCurrent().getPos().setVector3(aux));
-        lineProgram.setUniformf("u_fovFactor", camera.getFovFactor());
-        lineProgram.setUniformf("u_alpha", alphas[0]);
-        lineProgram.setUniformf("u_starBrightness", GlobalConf.scene.STAR_BRIGHTNESS * BRIGHTNESS_FACTOR);
-        lineProgram.setUniformf("u_pointSize", camera.getNCameras() == 1 ? GlobalConf.runtime.STAR_POINT_SIZE : GlobalConf.runtime.STAR_POINT_SIZE * 10);
-        lineProgram.setUniformf("u_t", (float) AstroUtils.getMsSinceJ2000(GaiaSky.instance.time.getTime()));
+        shaderProgram.begin();
+        shaderProgram.setUniformMatrix("u_projModelView", camera.getCamera().combined);
+        shaderProgram.setUniformf("u_camPos", camera.getCurrent().getPos().setVector3(aux));
+        shaderProgram.setUniformf("u_fovFactor", camera.getFovFactor());
+        shaderProgram.setUniformf("u_alpha", alphas[0]);
+        shaderProgram.setUniformf("u_starBrightness", GlobalConf.scene.STAR_BRIGHTNESS * BRIGHTNESS_FACTOR);
+        shaderProgram.setUniformf("u_pointSize", camera.getNCameras() == 1 ? GlobalConf.runtime.STAR_POINT_SIZE : GlobalConf.runtime.STAR_POINT_SIZE * 10);
+        shaderProgram.setUniformf("u_t", (float) AstroUtils.getMsSinceJ2000(GaiaSky.instance.time.getTime()));
+        shaderProgram.setUniformf("u_ar", GlobalConf.program.STEREOSCOPIC_MODE && GlobalConf.program.STEREO_PROFILE != StereoProfile.HD_3DTV ? 0.5f : 1f);
         curr.mesh.setVertices(curr.vertices, 0, curr.vertexIdx);
-        curr.mesh.render(lineProgram, ShapeType.Point.getGlType());
-        lineProgram.end();
+        curr.mesh.render(shaderProgram, ShapeType.Point.getGlType());
+        shaderProgram.end();
 
     }
 

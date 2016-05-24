@@ -8,7 +8,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
 
 public abstract class ImmediateRenderSystem extends AbstractRenderSystem {
 
-    protected ShaderProgram lineProgram;
+    protected ShaderProgram shaderProgram;
 
     protected int meshIdx;
     protected MeshData[] meshes;
