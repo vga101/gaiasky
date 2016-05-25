@@ -1,5 +1,5 @@
 apply plugin: "java"
-apply plugin: 'install4j'
+apply plugin: "com.install4j.gradle"
 
 sourceCompatibility = 1.7
 sourceSets.main.java.srcDirs = ["src/"]
