@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.bitfire.postprocessing.PostProcessor;
 import com.bitfire.postprocessing.effects.Bloom;
 import com.bitfire.postprocessing.effects.Curvature;
+import com.bitfire.postprocessing.effects.Fisheye;
 import com.bitfire.postprocessing.effects.Fxaa;
 import com.bitfire.postprocessing.effects.LensFlare2;
 import com.bitfire.postprocessing.effects.LightScattering;
@@ -48,7 +49,7 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
             Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.selected", "NFAA"));
         }
 
-        EventManager.instance.subscribe(this, Events.PROPERTIES_WRITTEN, Events.BLOOM_CMD, Events.LENS_FLARE_CMD, Events.MOTION_BLUR_CMD, Events.LIGHT_POS_2D_UPDATED, Events.LIGHT_SCATTERING_CMD, Events.TOGGLE_STEREOSCOPIC, Events.TOGGLE_STEREO_PROFILE);
+        EventManager.instance.subscribe(this, Events.PROPERTIES_WRITTEN, Events.BLOOM_CMD, Events.LENS_FLARE_CMD, Events.MOTION_BLUR_CMD, Events.LIGHT_POS_2D_UPDATED, Events.LIGHT_SCATTERING_CMD, Events.TOGGLE_STEREOSCOPIC, Events.TOGGLE_STEREO_PROFILE, Events.FISHEYE_CMD);
 
     }
 
@@ -148,6 +149,11 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
         ppb.curvature.setEnabled(GlobalConf.program.STEREOSCOPIC_MODE && GlobalConf.program.STEREO_PROFILE == StereoProfile.VR_HEADSET);
         ppb.pp.addEffect(ppb.curvature);
 
+        // FISHEYE DISTORTION (DOME)
+        ppb.fisheye = new Fisheye();
+        ppb.fisheye.setEnabled(GlobalConf.postprocess.POSTPROCESS_FISHEYE);
+        ppb.pp.addEffect(ppb.fisheye);
+
         // ANTIALIAS
         if (GlobalConf.postprocess.POSTPROCESS_ANTIALIAS == -1) {
             ppb.antialiasing = new Fxaa(width, height);
@@ -234,6 +240,15 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
                 if (pps[i] != null) {
                     PostProcessBean ppb = pps[i];
                     ppb.lscatter.setEnabled(active);
+                }
+            }
+            break;
+        case FISHEYE_CMD:
+            active = (Boolean) data[0];
+            for (int i = 0; i < RenderType.values().length; i++) {
+                if (pps[i] != null) {
+                    PostProcessBean ppb = pps[i];
+                    ppb.fisheye.setEnabled(active);
                 }
             }
             break;

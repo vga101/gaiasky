@@ -35,7 +35,7 @@ public class WebGLConfInitLite extends ConfInit {
         pc.initialize(false, 1);
 
         PostprocessConf ppc = new PostprocessConf();
-        ppc.initialize(4, 0, 0, false, false);
+        ppc.initialize(4, 0, 0, false, false, false);
 
         RuntimeConf rc = new RuntimeConf();
         rc.initialize(true, false, true, false, false, false, 20, true, false);

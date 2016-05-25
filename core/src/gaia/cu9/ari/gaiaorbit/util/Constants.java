@@ -27,7 +27,7 @@ public class Constants {
      */
     public static final double R_o = .6957964e6;
 
-    /** 
+    /**
      * Metre to local unit conversion. Multiply this by all values in m.
      */
     public static final double M_TO_U = 1e-9;
@@ -36,7 +36,7 @@ public class Constants {
      */
     public static final double U_TO_M = 1 / M_TO_U;
 
-    /** 
+    /**
      * Kilometre to local unit conversion. Multiply this by all values in Km.
      */
     public static final double KM_TO_U = M_TO_U * 1000;
@@ -55,7 +55,7 @@ public class Constants {
      */
     public static final double U_TO_AU = 1 / AU_TO_U;
 
-    /** 
+    /**
      * Parsec to local unit conversion. Multiply this by all values in pc.
      */
     public static final double PC_TO_U = AstroUtils.PC_TO_KM * KM_TO_U;
@@ -88,7 +88,10 @@ public class Constants {
     /** Distance from Sun that marks the end of the solar system **/
     public static final double SOLAR_SYSTEM_THRESHOLD = 5e9 * KM_MULTIPLIER;
 
-    /** Factor we need to use to get the real size of the star given its quad *texture* size **/
+    /**
+     * Factor we need to use to get the real size of the star given its quad
+     * *texture* size
+     **/
     public static final double STAR_SIZE_FACTOR = 1.31526e-6;
     public static final double STAR_SIZE_FACTOR_INV = 1d / STAR_SIZE_FACTOR;
 
@@ -98,7 +101,8 @@ public class Constants {
 
     /**
      * 
-     * MAXIMUM AND MINIMUM VALUES FOR SEVERAL PARAMETERS - THESE SHOULD BE ENFORCED
+     * MAXIMUM AND MINIMUM VALUES FOR SEVERAL PARAMETERS - THESE SHOULD BE
+     * ENFORCED
      *
      */
 
@@ -110,7 +114,7 @@ public class Constants {
     public static final float MAX_SLIDER = 100;
 
     /** Maximum fov value, in degrees **/
-    public static final int MAX_FOV = 145;
+    public static final int MAX_FOV = 175;
     /** Minimum fov value, in degrees **/
     public static final int MIN_FOV = 20;
 
@@ -172,13 +176,15 @@ public class Constants {
         /** Number of days per Julian year */
         public static final double JULIANYEAR_DAY = 365.25D;
         /**
-        	 * Mean (geometric) longitude rate of the nominal Sun for use in simulations of the
-        	 * NSL (mean ecliptic orbital elements, at the standard epoch J2000.0). Note that a value
-        	 * of 1295977422.83429 / (1.0E3 * 365.25 * 3600.0) = 0.98560911 degrees day^-1 is given in
-        	 * Section 5.8.3 of J.L. Simon, P. Bretagnon, J. Chapront, M. Chapront-Touze, G. Francou,
-        	 * J. Laskar, 1994, \'Numerical expressions for precession formulae and mean elements for
-        	 * the Moon and the planets\', A\&A, 282, 663 (1994A\&A...282..663S)
-        	 */
+         * Mean (geometric) longitude rate of the nominal Sun for use in
+         * simulations of the NSL (mean ecliptic orbital elements, at the
+         * standard epoch J2000.0). Note that a value of 1295977422.83429 /
+         * (1.0E3 * 365.25 * 3600.0) = 0.98560911 degrees day^-1 is given in
+         * Section 5.8.3 of J.L. Simon, P. Bretagnon, J. Chapront, M.
+         * Chapront-Touze, G. Francou, J. Laskar, 1994, \'Numerical expressions
+         * for precession formulae and mean elements for the Moon and the
+         * planets\', A\&A, 282, 663 (1994A\&A...282..663S)
+         */
         public static final double NOMINALSUN_MEANLONGITUDERATE_J2000 = 0.98560903D;
     }
 

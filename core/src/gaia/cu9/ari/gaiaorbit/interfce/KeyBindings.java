@@ -15,7 +15,9 @@ import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 
 /**
- * Contains the key mappings and the actions. This should be persisted somehow in the future.
+ * Contains the key mappings and the actions. This should be persisted somehow
+ * in the future.
+ * 
  * @author Toni Sagrista
  *
  */
@@ -53,8 +55,8 @@ public class KeyBindings {
     }
 
     /**
-     * Initializes the default keyboard mappings. In the future these
-     * should be read from a configuration file.
+     * Initializes the default keyboard mappings. In the future these should be
+     * read from a configuration file.
      */
     public void initDefault() {
 
@@ -210,6 +212,14 @@ public class KeyBindings {
             }
         }), Keys.F11);
 
+        // F4 -> toggle fisheye effect
+        addMapping(new ProgramAction(txt("action.fisheye"), new Runnable() {
+            @Override
+            public void run() {
+                EventManager.instance.post(Events.FISHEYE_CMD, !GlobalConf.postprocess.POSTPROCESS_FISHEYE);
+            }
+        }), Keys.F4);
+
         // F5 -> take screenshot
         addMapping(new ProgramAction(txt("action.screenshot"), new Runnable() {
             @Override
@@ -342,6 +352,7 @@ public class KeyBindings {
 
     /**
      * A simple program action.
+     * 
      * @author Toni Sagrista
      *
      */

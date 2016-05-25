@@ -100,17 +100,19 @@ public class GlobalConf {
         public float POSTPROCESS_MOTION_BLUR;
         public boolean POSTPROCESS_LENS_FLARE;
         public boolean POSTPROCESS_LIGHT_SCATTERING;
+        public boolean POSTPROCESS_FISHEYE;
 
         public PostprocessConf() {
-            EventManager.instance.subscribe(this, Events.BLOOM_CMD, Events.LENS_FLARE_CMD, Events.MOTION_BLUR_CMD, Events.LIGHT_SCATTERING_CMD);
+            EventManager.instance.subscribe(this, Events.BLOOM_CMD, Events.LENS_FLARE_CMD, Events.MOTION_BLUR_CMD, Events.LIGHT_SCATTERING_CMD, Events.FISHEYE_CMD);
         }
 
-        public void initialize(int POSTPROCESS_ANTIALIAS, float POSTPROCESS_BLOOM_INTENSITY, float POSTPROCESS_MOTION_BLUR, boolean POSTPROCESS_LENS_FLARE, boolean POSTPROCESS_LIGHT_SCATTERING) {
+        public void initialize(int POSTPROCESS_ANTIALIAS, float POSTPROCESS_BLOOM_INTENSITY, float POSTPROCESS_MOTION_BLUR, boolean POSTPROCESS_LENS_FLARE, boolean POSTPROCESS_LIGHT_SCATTERING, boolean POSTPROCESS_FISHEYE) {
             this.POSTPROCESS_ANTIALIAS = POSTPROCESS_ANTIALIAS;
             this.POSTPROCESS_BLOOM_INTENSITY = POSTPROCESS_BLOOM_INTENSITY;
             this.POSTPROCESS_MOTION_BLUR = POSTPROCESS_MOTION_BLUR;
             this.POSTPROCESS_LENS_FLARE = POSTPROCESS_LENS_FLARE;
             this.POSTPROCESS_LIGHT_SCATTERING = POSTPROCESS_LIGHT_SCATTERING;
+            this.POSTPROCESS_FISHEYE = POSTPROCESS_FISHEYE;
         }
 
         @Override
@@ -127,6 +129,9 @@ public class GlobalConf {
                 break;
             case MOTION_BLUR_CMD:
                 POSTPROCESS_MOTION_BLUR = (float) data[0];
+                break;
+            case FISHEYE_CMD:
+                POSTPROCESS_FISHEYE = (Boolean) data[0];
                 break;
             }
         }
