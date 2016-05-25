@@ -116,9 +116,9 @@ public class LineRenderSystem extends ImmediateRenderSystem {
 
     public void addLine(double x0, double y0, double z0, double x1, double y1, double z1, float r, float g, float b, float a) {
         if (true) {
-            color_outline(0f, 0f, 0f, a / 2f);
+            color_outline(0f, 0f, 0f, 1f);
             vertex_outline((float) x0, (float) y0, (float) z0);
-            color_outline(0f, 0f, 0f, a / 2f);
+            color_outline(0f, 0f, 0f, 1f);
             vertex_outline((float) x1, (float) y1, (float) z1);
         }
 
