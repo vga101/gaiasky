@@ -468,9 +468,9 @@ public class ConfigDialog extends I18nJFrame {
         JScrollPane controlsScrollPane = new JScrollPane(table);
         controlsScrollPane.setPreferredSize(new Dimension(0, scale(180)));
 
-        JLabel lab = new JLabel(txt("gui.noteditable"));
-        lab.setForeground(darkred);
-        controls.add(lab, "wrap");
+        //        JLabel lab = new JLabel(txt("gui.noteditable"));
+        //        lab.setForeground(darkred);
+        //        controls.add(lab, "wrap");
         controls.add(controlsScrollPane, "wrap");
 
         JPanel controlsPanel = new JPanel(new MigLayout("", "[grow,fill]", ""));
