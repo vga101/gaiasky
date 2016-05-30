@@ -161,8 +161,9 @@ public class TGASLoader extends AbstractCatalogLoader implements ISceneGraphLoad
         float appmag = new Double(Parser.parseDouble(st[indices[G_MAG]].trim())).floatValue();
 
         if (appmag < GlobalConf.data.LIMIT_MAG_LOAD) {
-            double ra = AstroUtils.TO_DEG * Parser.parseDouble(st[indices[RA]].trim());
-            double dec = AstroUtils.TO_DEG * Parser.parseDouble(st[indices[DEC]].trim());
+            double todeg = VERSION == 0 ? AstroUtils.TO_DEG : 1d;
+            double ra = todeg * Parser.parseDouble(st[indices[RA]].trim());
+            double dec = todeg * Parser.parseDouble(st[indices[DEC]].trim());
             double pllx = Parser.parseDouble(st[indices[PLLX]].trim());
             double pllxerr = Parser.parseDouble(st[indices[PLLX_ERR]].trim());
 
