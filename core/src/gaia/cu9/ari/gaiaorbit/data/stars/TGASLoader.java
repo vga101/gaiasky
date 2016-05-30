@@ -28,33 +28,83 @@ import gaia.cu9.ari.gaiaorbit.util.parse.Parser;
 
 /**
  * Loads TGAS stars in the original ASCII format:
- *  
- *  # 0    1         2      3               4      5           6      7           8            9                 10       11            12       13    14           15    16     17 18
- *  # cat  sourceId  alpha  alphaStarError  delta  deltaError  varpi  varpiError  muAlphaStar  muAlphaStarError  muDelta  muDeltaError  nObsAl   nOut  excessNoise  gMag  nuEff  C  M 
- *  
- * Source position and corresponding errors are in radian, parallax in mas and propermotion in mas/yr
- * Color and magnitude are based on 2Mass catalogue C = Jmag-Kmag and M = (VTmag+5*(1+log10(varPi/1000))) set to NaN if some data is not available
+ * 
+ * # 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 # cat sourceId alpha
+ * alphaStarError delta deltaError varpi varpiError muAlphaStar muAlphaStarError
+ * muDelta muDeltaError nObsAl nOut excessNoise gMag nuEff C M
+ * 
+ * Source position and corresponding errors are in radian, parallax in mas and
+ * propermotion in mas/yr Color and magnitude are based on 2Mass catalogue C =
+ * Jmag-Kmag and M = (VTmag+5*(1+log10(varPi/1000))) set to NaN if some data is
+ * not available
  * 
  * @author Toni Sagrista
  *
  */
 public class TGASLoader extends AbstractCatalogLoader implements ISceneGraphLoader {
 
-    private static final String separator = "\\s+";
+    // Version to load; 0 - old, 1 - new
+    public static int VERSION = 1;
+
+    private static final String separator_old = "\\s+";
+    private static final String separator_new = ",";
+
     private static final String comma = ",";
     private static final String comment = "#";
 
     /** Whether to load the sourceId->HIP correspondences file **/
-    private static final boolean useHIP = true;
+    public boolean useHIP = false;
     /** Gaia sourceId to HIP numbers csv file **/
     private static final String idCorrespondences = "data/tgas_201507/hip-sourceid-correspondences.csv";
     /** Map of Gaia sourceId to HIP id **/
     private Map<Long, Integer> sidHIPMap;
 
+    /**
+     * INDICES: source_id ra[deg] dec[deg] parallax[mas] parallax_error[mas]
+     * pmra[mas/yr] pmdec[mas/yr] radial_velocity[km/s]
+     * radial_velocity_error[km/s] phot_g_mean_mag[mag] phot_bp_mean_mag[mag]
+     * phot_rp_mean_mag[mag] hip tycho2_id ref_epoch[julianyears]
+     */
+    private static final int SOURCE_ID = 0;
+    private static final int RA = 1;
+    private static final int DEC = 2;
+    private static final int PLLX = 3;
+    private static final int PLLX_ERR = 4;
+    private static final int MUALPHA = 5;
+    private static final int MUDELTA = 6;
+    private static final int RADVEL = 7;
+    private static final int RADVEL_ERR = 8;
+    private static final int G_MAG = 9;
+    private static final int BP_MAG = 10;
+    private static final int RP_MAG = 11;
+    private static final int HIP = 12;
+    private static final int TYCHO2 = 13;
+    private static final int REF_EPOCH = 14;
+
+    private static final int[] indices_old = new int[] { 1, 2, 4, 6, 7, 8, 10, -1, -1, 15, 17, -1, -1, -1, -1 };
+    private static final int[] indices_new = new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14 };
+
     private int sidhipfound = 0;
 
     @Override
     public List<Particle> loadData() throws FileNotFoundException {
+        String separator = null;
+        int[] indices = null;
+        if (VERSION == 0) {
+            // OLD
+            useHIP = true;
+            separator = separator_old;
+            indices = indices_old;
+        } else if (VERSION == 1) {
+            // NEW
+            useHIP = false;
+            separator = separator_new;
+            indices = indices_new;
+        } else {
+            Logger.error("VERSION number not recognized");
+            return null;
+        }
+
         if (useHIP) {
             sidHIPMap = loadSourceidHipCorrespondences(idCorrespondences);
         }
@@ -70,7 +120,8 @@ public class TGASLoader extends AbstractCatalogLoader implements ISceneGraphLoad
                 while ((line = br.readLine()) != null) {
                     if (!line.startsWith(comment))
                         //Add star
-                        addStar(line, stars);
+                        addStar(line, stars, indices, separator);
+                    // addStar(line, stars, indices_old, separator_old);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -89,24 +140,31 @@ public class TGASLoader extends AbstractCatalogLoader implements ISceneGraphLoad
         return stars;
     }
 
-    private void addStar(String line, List<Particle> stars) {
+    private void addStar(String line, List<Particle> stars, int[] indices, String separator) {
         String[] st = line.split(separator);
 
-        String catalog = st[0];
         int hip = -1;
-        long sourceid = Parser.parseLong(st[1]);
+        long sourceid = Parser.parseLong(st[indices[SOURCE_ID]]);
 
         if (sidHIPMap != null && sidHIPMap.containsKey(sourceid)) {
             hip = sidHIPMap.get(sourceid);
             sidhipfound++;
+        } else if (indices[HIP] >= 0) {
+            hip = Parser.parseInt(st[indices[HIP]].trim());
         }
-        float appmag = new Double(Parser.parseDouble(st[15].trim())).floatValue();
+
+        String tycho2 = null;
+        if (indices[TYCHO2] >= 0) {
+            tycho2 = st[indices[TYCHO2]].trim();
+        }
+
+        float appmag = new Double(Parser.parseDouble(st[indices[G_MAG]].trim())).floatValue();
 
         if (appmag < GlobalConf.data.LIMIT_MAG_LOAD) {
-            double ra = AstroUtils.TO_DEG * Parser.parseDouble(st[2].trim());
-            double dec = AstroUtils.TO_DEG * Parser.parseDouble(st[4].trim());
-            double pllx = Parser.parseDouble(st[6].trim());
-            double pllxerr = Parser.parseDouble(st[7].trim());
+            double ra = AstroUtils.TO_DEG * Parser.parseDouble(st[indices[RA]].trim());
+            double dec = AstroUtils.TO_DEG * Parser.parseDouble(st[indices[DEC]].trim());
+            double pllx = Parser.parseDouble(st[indices[PLLX]].trim());
+            double pllxerr = Parser.parseDouble(st[indices[PLLX_ERR]].trim());
 
             double dist = (1000d / pllx) * Constants.PC_TO_U;
             // Keep only stars with relevant parallaxes
@@ -114,23 +172,41 @@ public class TGASLoader extends AbstractCatalogLoader implements ISceneGraphLoad
 
                 Vector3d pos = Coordinates.sphericalToCartesian(Math.toRadians(ra), Math.toRadians(dec), dist, new Vector3d());
 
-                // Mu_alpha Mu_delta in mas/yr
-                double mualpha = Parser.parseDouble(st[8].trim()) * AstroUtils.MILLARCSEC_TO_DEG;
-                double mudelta = Parser.parseDouble(st[10].trim()) * AstroUtils.MILLARCSEC_TO_DEG;
+                /** PROPER MOTIONS in mas/yr **/
+                double mualpha = Parser.parseDouble(st[indices[MUALPHA]].trim()) * AstroUtils.MILLARCSEC_TO_DEG;
+                double mudelta = Parser.parseDouble(st[indices[MUDELTA]].trim()) * AstroUtils.MILLARCSEC_TO_DEG;
 
-                // Proper motion vector = (pos+dx) - pos
+                /** RADIAL VELOCITY in km/s **/
+                double radvel = 0;
+                if (indices[RADVEL] >= 0) {
+                    radvel = Parser.parseDouble(st[indices[RADVEL]].trim());
+                }
+
+                /** PROPER MOTION VECTOR = (pos+dx) - pos **/
                 Vector3d pm = Coordinates.sphericalToCartesian(Math.toRadians(ra + mualpha), Math.toRadians(dec + mudelta), dist, new Vector3d());
                 pm.sub(pos);
 
-                Vector3 pmfloat = pm.toVector3();
-                Vector3 pmSph = new Vector3(Parser.parseFloat(st[8].trim()), Parser.parseFloat(st[10].trim()), 0f);
+                // TODO Use radial velocity if necessary to get a 3D proper motion
 
-                float colorbv = new Double(Parser.parseDouble(st[17].trim())).floatValue();
+                Vector3 pmfloat = pm.toVector3();
+                Vector3 pmSph = new Vector3(Parser.parseFloat(st[indices[MUALPHA]].trim()), Parser.parseFloat(st[indices[MUDELTA]].trim()), 0f);
+
+                /** COLOR **/
+                float color = 0;
+                if (indices[BP_MAG] >= 0 && indices[RP_MAG] >= 0) {
+                    // Real TGAS
+                    float bp = new Double(Parser.parseDouble(st[indices[BP_MAG]].trim())).floatValue();
+                    float rp = new Double(Parser.parseDouble(st[indices[RP_MAG]].trim())).floatValue();
+                    color = bp - rp;
+                } else {
+                    // Use color value in BP
+                    color = new Double(Parser.parseDouble(st[indices[BP_MAG]].trim())).floatValue();
+                }
 
                 float absmag = appmag;
                 String name = Long.toString(sourceid);
 
-                Star star = new Star(pos, pmfloat, pmSph, appmag, absmag, colorbv, name, (float) ra, (float) dec, sourceid, hip, (byte) 1);
+                Star star = new Star(pos, pmfloat, pmSph, appmag, absmag, color, name, (float) ra, (float) dec, sourceid, hip, tycho2, (byte) 1);
                 if (runFiltersAnd(star))
                     stars.add(star);
             }

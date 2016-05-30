@@ -24,22 +24,17 @@ import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
 /**
- * Loads the HYG catalog in binary (own) format. The format is defined as follows
+ * Loads the HYG catalog in binary (own) format. The format is defined as
+ * follows
  *
- * - 32 bits (int) with the number of stars, starNum
- * repeat the following starNum times (for each star)
- * - 32 bits (int) - The the length of the name, or nameLength
- * - 16 bits * nameLength (chars) - The name of the star
- * - 32 bits (float) - appmag
- * - 32 bits (float) - absmag
- * - 32 bits (float) - colorbv
- * - 32 bits (float) - ra
- * - 32 bits (float) - dec
- * - 32 bits (float) - distance
- * - 32 bits (float) - proper motion x (internal units)
- * - 32 bits (float) - proper motion y (internal units)
- * - 32 bits (float) - proper motion z (internal units)
- * - 64 bits (long) - id
+ * - 32 bits (int) with the number of stars, starNum repeat the following
+ * starNum times (for each star) - 32 bits (int) - The the length of the name,
+ * or nameLength - 16 bits * nameLength (chars) - The name of the star - 32 bits
+ * (float) - appmag - 32 bits (float) - absmag - 32 bits (float) - colorbv - 32
+ * bits (float) - ra - 32 bits (float) - dec - 32 bits (float) - distance - 32
+ * bits (float) - proper motion x (internal units) - 32 bits (float) - proper
+ * motion y (internal units) - 32 bits (float) - proper motion z (internal
+ * units) - 64 bits (long) - id
  *
  * @author Toni Sagrista
  *
@@ -88,7 +83,7 @@ public class HYGBinaryLoader extends AbstractCatalogLoader implements ISceneGrap
                             pm.sub(pos);
                             Vector3 pmfloat = pm.toVector3();
 
-                            Star s = new Star(pos, pmfloat, pmSph, appmag, absmag, colorbv, name, ra, dec, id, hip, (byte) 2);
+                            Star s = new Star(pos, pmfloat, pmSph, appmag, absmag, colorbv, name, ra, dec, id, hip, null, (byte) 2);
                             if (runFiltersAnd(s))
                                 stars.add(s);
                         }

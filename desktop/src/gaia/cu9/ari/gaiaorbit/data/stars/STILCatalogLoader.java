@@ -16,7 +16,6 @@ import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
-import gaia.cu9.ari.gaiaorbit.util.parse.Parser;
 import gaia.cu9.ari.gaiaorbit.util.units.Position;
 import gaia.cu9.ari.gaiaorbit.util.units.Position.PositionType;
 import uk.ac.starlink.table.ColumnInfo;
@@ -188,9 +187,9 @@ public class STILCatalogLoader extends AbstractCatalogLoader {
                 for (long i = 0; i < rowcount; i++) {
                     Object[] row = table.getRow(i);
 
-                    int tycho = -1;
+                    String tycho = "";
                     if (tychoi >= 0 && row[tychoi] != null)
-                        tycho = Parser.parseInt(((String) row[tychoi]).replaceAll("\\s+", ""));
+                        tycho = (String) row[tychoi];
 
                     int hip = -1;
                     if (hipi >= 0 && row[hipi] != null)

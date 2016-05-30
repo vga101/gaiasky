@@ -24,7 +24,9 @@ import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnLabel;
 
 /**
- * Part of the user interface which holds the information on the current focus object and on the camera.
+ * Part of the user interface which holds the information on the current focus
+ * object and on the camera.
+ * 
  * @author tsagrista
  *
  */
@@ -178,9 +180,9 @@ public class FocusInfoInterface extends Table implements IObserver {
             String id = "";
             if (cb instanceof Star) {
                 Star s = (Star) cb;
-                if (s.hip >= 0) {
+                if (s.hip > 0) {
                     id = "HIP " + s.hip;
-                } else if (s.tycho >= 0) {
+                } else if (s.tycho != null && s.tycho.length() > 0) {
                     id = "TYC " + s.tycho;
                 } else {
                     id = "" + s.id;

@@ -23,24 +23,16 @@ import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
 /**
- * Loads and writes particle data to/from our own binary format. The format is defined as follows
+ * Loads and writes particle data to/from our own binary format. The format is
+ * defined as follows
  * 
- * - 32 bits (int) with the number of stars, starNum
- * repeat the following starNum times (for each star)
- * - 32 bits (int) - The the length of the name, or nameLength
- * - 16 bits * nameLength (chars) - The name of the star
- * - 32 bits (float) - appmag
- * - 32 bits (float) - absmag
- * - 32 bits (float) - colorbv
- * - 32 bits (float) - x
- * - 32 bits (float) - y
- * - 32 bits (float) - z
- * - 64 bits (long)  - id
- * - 32 bits (int)   - HIP
- * - 32 bits (int)   - TYC
- * - 8 bits (byte)   - catalogSource
- * - 64 bits (long)  - pageId
- * - 32 bits (int)   - particleType
+ * - 32 bits (int) with the number of stars, starNum repeat the following
+ * starNum times (for each star) - 32 bits (int) - The the length of the name,
+ * or nameLength - 16 bits * nameLength (chars) - The name of the star - 32 bits
+ * (float) - appmag - 32 bits (float) - absmag - 32 bits (float) - colorbv - 32
+ * bits (float) - x - 32 bits (float) - y - 32 bits (float) - z - 64 bits (long)
+ * - id - 32 bits (int) - HIP - 32 bits (int) - TYC - 8 bits (byte) -
+ * catalogSource - 64 bits (long) - pageId - 32 bits (int) - particleType
  * 
  * @author Toni Sagrista
  *
@@ -56,7 +48,7 @@ public class ParticleDataBinaryIO {
             // Size of stars
             data_out.writeInt(particles.size());
             for (Particle s : particles) {
-                // name_length, name, appmag, absmag, colorbv, ra[deg], dec[deg], dist[u], mualpha[mas/yr], mudelta[mas/yr], radvel[km/s], id, hip, tycho, sourceCatalog, pageid, type
+                // name_length, name, appmag, absmag, colorbv, ra[deg], dec[deg], dist[u], mualpha[mas/yr], mudelta[mas/yr], radvel[km/s], id, hip, tychoLength, tycho, sourceCatalog, pageid, type
                 data_out.writeInt(s.name.length());
                 data_out.writeChars(s.name);
                 data_out.writeFloat(s.appmag);
@@ -70,7 +62,12 @@ public class ParticleDataBinaryIO {
                 data_out.writeFloat(s.pmSph != null ? s.pmSph.z : 0f);
                 data_out.writeLong(s.id);
                 data_out.writeInt(s instanceof Star ? ((Star) s).hip : -1);
-                data_out.writeInt(s instanceof Star ? ((Star) s).tycho : -1);
+                if (((Star) s).tycho != null && ((Star) s).tycho.length() > 0) {
+                    data_out.writeInt(((Star) s).tycho.length());
+                    data_out.writeChars(((Star) s).tycho);
+                } else {
+                    data_out.writeInt(0);
+                }
                 data_out.writeByte(s.catalogSource);
                 data_out.writeInt((int) s.octantId);
                 data_out.writeInt(s.type);
@@ -92,7 +89,7 @@ public class ParticleDataBinaryIO {
 
             for (int idx = 0; idx < size; idx++) {
                 try {
-                    // name_length, name, appmag, absmag, colorbv, ra[deg], dec[deg], dist[u], mualpha[mas/yr], mudelta[mas/yr], radvel[km/s], id, hip, tycho, sourceCatalog, pageid, type
+                    // name_length, name, appmag, absmag, colorbv, ra[deg], dec[deg], dist[u], mualpha[mas/yr], mudelta[mas/yr], radvel[km/s], id, hip, tychoLength, tycho, sourceCatalog, pageid, type
                     int nameLength = data_in.readInt();
                     StringBuilder sb = new StringBuilder();
                     for (int i = 0; i < nameLength; i++) {
@@ -110,7 +107,13 @@ public class ParticleDataBinaryIO {
                     float radvel = data_in.readFloat();
                     long id = data_in.readLong();
                     int hip = data_in.readInt();
-                    int tycho = data_in.readInt();
+                    int tychoLength = data_in.readInt();
+                    sb = new StringBuilder();
+                    for (int i = 0; i < tychoLength; i++) {
+                        sb.append(data_in.readChar());
+                    }
+                    String tycho = sb.toString();
+
                     byte source = data_in.readByte();
                     long pageId = data_in.readInt();
                     int type = data_in.readInt();

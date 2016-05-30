@@ -31,7 +31,9 @@ import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.TimeUtils;
 
 /**
- * Represents a star. The Gaia sourceid is put in the id attribute. Otherwise, the id is fabricated.
+ * Represents a star. The Gaia sourceid is put in the id attribute. Otherwise,
+ * the id is fabricated.
+ * 
  * @author tsagrista
  *
  */
@@ -43,10 +45,8 @@ public class Star extends Particle {
 
     /** HIP number, negative if non existent **/
     public int hip = -1;
-    /** TYCHO star number, negative if non existent **/
-    public int tycho = -1;
-    /** TYCHO string **/
-    public String tychostr = null;
+    /** TYCHO2 identifier string **/
+    public String tycho = null;
 
     public static void initModel() {
         if (mc == null) {
@@ -89,14 +89,23 @@ public class Star extends Particle {
 
     /**
      * Creates a new Star object
-     * @param pos The position of the star in equatorial cartesian coordinates
-     * @param appmag The apparent magnitude
-     * @param absmag The absolute magnitude
-     * @param colorbv The B-V color index
-     * @param name The proper name of the star, if any
-     * @param ra in degrees
-     * @param dec in degrees 
-     * @param starid The star id
+     * 
+     * @param pos
+     *            The position of the star in equatorial cartesian coordinates
+     * @param appmag
+     *            The apparent magnitude
+     * @param absmag
+     *            The absolute magnitude
+     * @param colorbv
+     *            The B-V color index
+     * @param name
+     *            The proper name of the star, if any
+     * @param ra
+     *            in degrees
+     * @param dec
+     *            in degrees
+     * @param starid
+     *            The star id
      */
     public Star(Vector3d pos, float appmag, float absmag, float colorbv, String name, float ra, float dec, long starid) {
         super(pos, appmag, absmag, colorbv, name, ra, dec, starid);
@@ -104,16 +113,27 @@ public class Star extends Particle {
 
     /**
      * Creates a new Star object
-     * @param pos The position of the star in equatorial cartesian coordinates
-     * @param appmag The apparent magnitude
-     * @param absmag The absolute magnitude
-     * @param colorbv The B-V color index
-     * @param name The proper name of the star, if any
-     * @param ra in degrees
-     * @param dec in degrees 
-     * @param starid The star id
-     * @param hip The HIP identifier
-     * @param source Catalog source. 1: Gaia, 2: HIP, 3: TYC, -1: Unknown
+     * 
+     * @param pos
+     *            The position of the star in equatorial cartesian coordinates
+     * @param appmag
+     *            The apparent magnitude
+     * @param absmag
+     *            The absolute magnitude
+     * @param colorbv
+     *            The B-V color index
+     * @param name
+     *            The proper name of the star, if any
+     * @param ra
+     *            in degrees
+     * @param dec
+     *            in degrees
+     * @param starid
+     *            The star id
+     * @param hip
+     *            The HIP identifier
+     * @param source
+     *            Catalog source. 1: Gaia, 2: HIP, 3: TYC, -1: Unknown
      */
     public Star(Vector3d pos, float appmag, float absmag, float colorbv, String name, float ra, float dec, long starid, int hip, byte source) {
         super(pos, appmag, absmag, colorbv, name, ra, dec, starid);
@@ -123,77 +143,95 @@ public class Star extends Particle {
 
     /**
      * Creates a new Star object
-     * @param pos The position of the star in equatorial cartesian coordinates
-     * @param pm The proper motion of the star in equatorial cartesian coordinates.
-     * @param pmSph The proper motion with mualpha, mudelta, radvel.
-     * @param appmag The apparent magnitude
-     * @param absmag The absolute magnitude
-     * @param colorbv The B-V color index
-     * @param name The proper name of the star, if any
-     * @param ra in degrees
-     * @param dec in degrees 
-     * @param starid The star id
-     * @param hip The HIP identifier
-     * @param source Catalog source. See {#Particle}
+     * 
+     * @param pos
+     *            The position of the star in equatorial cartesian coordinates
+     * @param pm
+     *            The proper motion of the star in equatorial cartesian
+     *            coordinates.
+     * @param pmSph
+     *            The proper motion with mualpha, mudelta, radvel.
+     * @param appmag
+     *            The apparent magnitude
+     * @param absmag
+     *            The absolute magnitude
+     * @param colorbv
+     *            The B-V color index
+     * @param name
+     *            The proper name of the star, if any
+     * @param ra
+     *            in degrees
+     * @param dec
+     *            in degrees
+     * @param starid
+     *            The star id
+     * @param hip
+     *            The HIP identifier
+     * @param source
+     *            Catalog source. See {#Particle}
      */
-    public Star(Vector3d pos, Vector3 pm, Vector3 pmSph, float appmag, float absmag, float colorbv, String name, float ra, float dec, long starid, int hip, byte source) {
+    public Star(Vector3d pos, Vector3 pm, Vector3 pmSph, float appmag, float absmag, float colorbv, String name, float ra, float dec, long starid, int hip, String tycho, byte source) {
         super(pos, pm, pmSph, appmag, absmag, colorbv, name, ra, dec, starid);
         this.hip = hip;
         this.catalogSource = source;
+        this.tycho = tycho;
     }
 
     /**
      * Creates a new Star object
-     * @param pos The position of the star in equatorial cartesian coordinates
-     * @param appmag The apparent magnitude
-     * @param absmag The absolute magnitude
-     * @param colorbv The B-V color index
-     * @param name The proper name of the star, if any
-     * @param ra in degrees
-     * @param dec in degrees 
-     * @param starid The star id
-     * @param hip The HIP identifier
-     * @param tycho The TYC identifier, remove the dashes '-' and join the strings, then parse to integer
-     * @param source Catalog source. See {#Particle}
+     * 
+     * @param pos
+     *            The position of the star in equatorial cartesian coordinates
+     * @param appmag
+     *            The apparent magnitude
+     * @param absmag
+     *            The absolute magnitude
+     * @param colorbv
+     *            The B-V color index
+     * @param name
+     *            The proper name of the star, if any
+     * @param ra
+     *            in degrees
+     * @param dec
+     *            in degrees
+     * @param starid
+     *            The star id
+     * @param hip
+     *            The HIP identifier
+     * @param tycho
+     *            The TYC identifier
+     * @param source
+     *            Catalog source. See {#Particle}
      */
-    public Star(Vector3d pos, float appmag, float absmag, float colorbv, String name, float ra, float dec, long starid, int hip, int tycho, byte source) {
+    public Star(Vector3d pos, float appmag, float absmag, float colorbv, String name, float ra, float dec, long starid, int hip, String tycho, byte source) {
         this(pos, appmag, absmag, colorbv, name, ra, dec, starid, hip, source);
         this.tycho = tycho;
     }
 
     /**
      * Creates a new Star object
-     * @param pos The position of the star in equatorial cartesian coordinates
-     * @param pm The proper motion of the star in equatorial cartesian coordinates.
-     * @param pmSph The proper motion with mualpha, mudelta, radvel.
-     * @param appmag The apparent magnitude
-     * @param absmag The absolute magnitude
-     * @param colorbv The B-V color index
-     * @param name The proper name of the star, if any
-     * @param ra in degrees
-     * @param dec in degrees 
-     * @param starid The star id
-     * @param hip The HIP identifier
-     * @param tycho The TYC identifier, remove the dashes '-' and join the strings, then parse to integer
-     * @param source Catalog source. See {#Particle}
-     */
-    public Star(Vector3d pos, Vector3 pm, Vector3 pmSph, float appmag, float absmag, float colorbv, String name, float ra, float dec, long starid, int hip, int tycho, byte source) {
-        this(pos, pm, pmSph, appmag, absmag, colorbv, name, ra, dec, starid, hip, source);
-        this.tycho = tycho;
-    }
-
-    /**
-     * Creates a new Star object
-     * @param pos The position of the star in equatorial cartesian coordinates
-     * @param pm The proper motion of the star in equatorial cartesian coordinates
-     * @param pmSph The proper motion with mualpha, mudelta, radvel.
-     * @param appmag The apparent magnitude
-     * @param absmag The absolute magnitude
-     * @param colorbv The B-V color index
-     * @param name The proper name of the star, if any
-     * @param ra in degrees
-     * @param dec in degrees 
-     * @param starid The star id
+     * 
+     * @param pos
+     *            The position of the star in equatorial cartesian coordinates
+     * @param pm
+     *            The proper motion of the star in equatorial cartesian
+     *            coordinates
+     * @param pmSph
+     *            The proper motion with mualpha, mudelta, radvel.
+     * @param appmag
+     *            The apparent magnitude
+     * @param absmag
+     *            The absolute magnitude
+     * @param colorbv
+     *            The B-V color index
+     * @param name
+     *            The proper name of the star, if any
+     * @param ra
+     *            in degrees
+     * @param dec
+     *            in degrees
+     * @param starid
+     *            The star id
      */
     public Star(Vector3d pos, Vector3 pm, Vector3 pmSph, float appmag, float absmag, float colorbv, String name, float ra, float dec, long starid) {
         super(pos, pm, pmSph, appmag, absmag, colorbv, name, ra, dec, starid);

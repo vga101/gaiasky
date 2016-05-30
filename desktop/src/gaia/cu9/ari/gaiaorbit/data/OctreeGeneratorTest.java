@@ -114,7 +114,7 @@ public class OctreeGeneratorTest implements IObserver {
 
         /** TGAS **/
         TGASLoader tgas = new TGASLoader();
-        tgas.initialize(new String[] { "data/tgas_201507/Solution1507280011.txt" });
+        tgas.initialize(new String[] { "data/tgas_final/tgas.csv" });
 
         /** LOAD HYG **/
         List<Particle> list = (List<Particle>) hyg.loadData();

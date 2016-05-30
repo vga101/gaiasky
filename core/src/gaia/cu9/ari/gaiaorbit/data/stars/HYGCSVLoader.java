@@ -29,6 +29,7 @@ import gaia.cu9.ari.gaiaorbit.util.parse.Parser;
 
 /**
  * Loads the HYG catalog in CSV format
+ * 
  * @author Toni Sagrista
  *
  */
@@ -164,7 +165,7 @@ public class HYGCSVLoader extends AbstractCatalogLoader implements ISceneGraphLo
                 name = st[4].trim().replaceAll("\\s+", " ");
             }
 
-            Star star = new Star(pos, pmfloat, pmSph, appmag, absmag, colorbv, name, (float) ra, (float) dec, starid, hip, (byte) 2);
+            Star star = new Star(pos, pmfloat, pmSph, appmag, absmag, colorbv, name, (float) ra, (float) dec, starid, hip, null, (byte) 2);
             if (runFiltersAnd(star))
                 stars.add(star);
         }

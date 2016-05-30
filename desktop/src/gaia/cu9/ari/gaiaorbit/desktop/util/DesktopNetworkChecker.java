@@ -143,8 +143,8 @@ public class DesktopNetworkChecker extends Thread implements INetworkChecker {
             Star st = (Star) focus;
             if (st.hip > 0) {
                 return url + "HIP+" + st.hip;
-            } else if (st.tychostr != null) {
-                return url + "TYC+" + st.tychostr;
+            } else if (st.tycho != null) {
+                return url + "TYC+" + st.tycho;
             }
         }
         return null;
