@@ -236,4 +236,4 @@ task versionFile << {
     }
 }
 
-task createWrapper(type: Wrapper) { gradleVersion = "2.10" }
+task createWrapper(type: Wrapper) { gradleVersion = "2.13" }
