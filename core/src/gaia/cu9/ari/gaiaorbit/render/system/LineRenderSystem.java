@@ -94,12 +94,12 @@ public class LineRenderSystem extends ImmediateRenderSystem {
         shaderProgram.setUniformMatrix("u_projModelView", camera.getCamera().combined);
 
         // Outlines
-        Gdx.gl.glLineWidth(4f);
+        Gdx.gl.glLineWidth(3.5f);
         curr_outline.mesh.setVertices(curr_outline.vertices, 0, curr_outline.vertexIdx);
         curr_outline.mesh.render(shaderProgram, glType);
 
         // Regular
-        Gdx.gl.glLineWidth(2f);
+        Gdx.gl.glLineWidth(1.5f);
         curr.mesh.setVertices(curr.vertices, 0, curr.vertexIdx);
         curr.mesh.render(shaderProgram, glType);
 
