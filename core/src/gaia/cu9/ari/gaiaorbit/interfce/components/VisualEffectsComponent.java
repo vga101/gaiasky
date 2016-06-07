@@ -147,6 +147,7 @@ public class VisualEffectsComponent extends GuiComponent {
             /** Light scattering **/
             lightScattering = new CheckBox(" " + txt("gui.lightscattering"), skin);
             lightScattering.setName("light scattering");
+            lightScattering.setChecked(GlobalConf.postprocess.POSTPROCESS_LIGHT_SCATTERING);
             lightScattering.addListener(new EventListener() {
                     @Override
                     public boolean handle(Event event) {
@@ -157,7 +158,7 @@ public class VisualEffectsComponent extends GuiComponent {
                             return false;
                     }
             });
-            lightScattering.setChecked(!GlobalConf.scene.isLowQuality());
+            
 		}
 
 		VerticalGroup lightingGroup = new VerticalGroup().align(Align.left);
