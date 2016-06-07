@@ -552,8 +552,8 @@ public class ConfigDialog extends I18nJFrame {
         // SCREENSHOT WIDTH AND HEIGHT
         final JLabel screenshotsSizeLabel = new JLabel(txt("gui.screenshots.size") + ":");
         final JLabel xLabel = new JLabel("\u2715");
-        final JSpinner sswidthField = new JSpinner(new SpinnerNumberModel(GlobalConf.screenshot.SCREENSHOT_WIDTH, 100, 5000, 1));
-        final JSpinner ssheightField = new JSpinner(new SpinnerNumberModel(GlobalConf.screenshot.SCREENSHOT_HEIGHT, 100, 5000, 1));
+        final JSpinner sswidthField = new JSpinner(new SpinnerNumberModel(GlobalConf.screenshot.SCREENSHOT_WIDTH, 50, 25000, 1));
+        final JSpinner ssheightField = new JSpinner(new SpinnerNumberModel(GlobalConf.screenshot.SCREENSHOT_HEIGHT, 50, 25000, 1));
 
         // SCREENSHOTS MODE
         ComboBoxBean[] screenshotModes = new ComboBoxBean[] { new ComboBoxBean(txt("gui.screenshots.mode.simple"), 0), new ComboBoxBean(txt("gui.screenshots.mode.redraw"), 1) };
@@ -697,8 +697,8 @@ public class ConfigDialog extends I18nJFrame {
         // FRAME OUTPUT WIDTH AND HEIGHT
         final JLabel frameSizeLabel = new JLabel(txt("gui.frameoutput.size") + ":");
         final JLabel frameXLabel = new JLabel("\u2715");
-        final JSpinner frameWidthField = new JSpinner(new SpinnerNumberModel(GlobalConf.frame.RENDER_WIDTH, 100, 5000, 1));
-        final JSpinner frameHeightField = new JSpinner(new SpinnerNumberModel(GlobalConf.frame.RENDER_HEIGHT, 100, 5000, 1));
+        final JSpinner frameWidthField = new JSpinner(new SpinnerNumberModel(GlobalConf.frame.RENDER_WIDTH, 50, 25000, 1));
+        final JSpinner frameHeightField = new JSpinner(new SpinnerNumberModel(GlobalConf.frame.RENDER_HEIGHT, 50, 25000, 1));
 
         // FRAME OUTPUT MODE
         ComboBoxBean[] frameModesBean = new ComboBoxBean[] { new ComboBoxBean(txt("gui.screenshots.mode.simple"), 0), new ComboBoxBean(txt("gui.screenshots.mode.redraw"), 1) };
