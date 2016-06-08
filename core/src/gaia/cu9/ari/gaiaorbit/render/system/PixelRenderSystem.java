@@ -38,20 +38,24 @@ public class PixelRenderSystem extends ImmediateRenderSystem implements IObserve
         super(rg, priority, alphas);
         EventManager.instance.subscribe(this, Events.TRANSIT_COLOUR_CMD, Events.ONLY_OBSERVED_STARS_CMD);
         BRIGHTNESS_FACTOR = Constants.webgl ? 15f : 4f;
-        updatePointSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        updatePointSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
 
     }
 
-    protected void updatePointSize(int width, int height) {
-        GlobalConf.runtime.STAR_POINT_SIZE = GlobalConf.runtime.STRIPPED_FOV_MODE ? 2 : 9;
+    private float lastResolution = -1;
+
+    protected void updatePointSize(int width, int height, boolean initialize) {
+        if (initialize)
+            GlobalConf.runtime.STAR_POINT_SIZE = GlobalConf.runtime.STRIPPED_FOV_MODE ? 2 : 6;
 
         // Factor POINT_SIZE with resolution
-        float baseResolution = (float) Math.sqrt(1280 * 1280 + 720 * 720);
-        float currentResolution = (float) Math.sqrt(width * width + height * height);
+        float baseResolution = lastResolution < 0 ? 720f : lastResolution;
+        float currentResolution = (float) Math.min(width, height);
         float factor = currentResolution / baseResolution;
-        GlobalConf.runtime.STAR_POINT_SIZE = Constants.webgl ? Math.min(15, Math.max(4, GlobalConf.runtime.STAR_POINT_SIZE * factor)) : Math.min(15, Math.max(3, GlobalConf.runtime.STAR_POINT_SIZE * factor * Gdx.graphics.getDensity()));
+        GlobalConf.runtime.STAR_POINT_SIZE = Constants.webgl ? Math.min(300, Math.max(3, GlobalConf.runtime.STAR_POINT_SIZE * factor)) : Math.min(300, Math.max(3, GlobalConf.runtime.STAR_POINT_SIZE * factor));
 
         GlobalConf.runtime.STAR_POINT_SIZE_BAK = GlobalConf.runtime.STAR_POINT_SIZE;
+        lastResolution = currentResolution;
     }
 
     @Override
@@ -175,6 +179,6 @@ public class PixelRenderSystem extends ImmediateRenderSystem implements IObserve
 
     @Override
     public void resize(int w, int h) {
-        updatePointSize(w, h);
+        updatePointSize(w, h, false);
     }
 }

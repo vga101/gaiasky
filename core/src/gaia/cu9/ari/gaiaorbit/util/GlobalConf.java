@@ -212,10 +212,10 @@ public class GlobalConf {
                 toggleRecord((Boolean) data[0]);
                 break;
             case STAR_POINT_SIZE_INCREASE_CMD:
-                STAR_POINT_SIZE = Math.min(STAR_POINT_SIZE + 0.5f, 30f);
+                STAR_POINT_SIZE = Math.min(STAR_POINT_SIZE + 1f, 300f);
                 break;
             case STAR_POINT_SIZE_DECREASE_CMD:
-                STAR_POINT_SIZE = Math.max(STAR_POINT_SIZE - 0.5f, 0.5f);
+                STAR_POINT_SIZE = Math.max(STAR_POINT_SIZE - 1f, 0.5f);
                 break;
             case STAR_POINT_SIZE_RESET_CMD:
                 STAR_POINT_SIZE = STAR_POINT_SIZE_BAK;

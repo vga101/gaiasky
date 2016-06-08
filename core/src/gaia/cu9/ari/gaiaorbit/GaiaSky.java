@@ -233,7 +233,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
             sg = manager.get(dataLoadString);
         }
 
-        /** 
+        /**
          * INITIALIZE RENDERER
          */
         AbstractRenderer.initialize(sg);
