@@ -311,7 +311,7 @@ public class KeyBindings {
         addMapping(new ProgramAction(txt("action.toggle", txt("element.stereomode")), new Runnable() {
             @Override
             public void run() {
-                EventManager.instance.post(Events.TOGGLE_STEREOSCOPIC, txt("notif.stereoscopic"));
+                EventManager.instance.post(Events.TOGGLE_STEREOSCOPIC_CMD, txt("notif.stereoscopic"));
             }
         }), SPECIAL1, Keys.S);
 
@@ -319,7 +319,7 @@ public class KeyBindings {
         addMapping(new ProgramAction(txt("action.switchstereoprofile"), new Runnable() {
             @Override
             public void run() {
-                EventManager.instance.post(Events.TOGGLE_STEREO_PROFILE);
+                EventManager.instance.post(Events.TOGGLE_STEREO_PROFILE_CMD);
             }
         }), SPECIAL1, SPECIAL2, Keys.S);
 

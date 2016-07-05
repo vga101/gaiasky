@@ -234,18 +234,23 @@ public enum Events {
     STAR_POINT_SIZE_RESET_CMD,
 
     /**
-     * Stereoscopic vision, side by side rendering. Contains the localized name.
+     * Stereoscopic vision, side by side rendering. Contains the localised name.
      **/
-    TOGGLE_STEREOSCOPIC,
-    /** Switches stereoscopic mode images, left to right and right to left **/
-    TOGGLE_STEREO_PROFILE,
+    TOGGLE_STEREOSCOPIC_CMD,
     /**
-     * Toggles whole GUI display. Contains the localized name and an optional
+     * Informs the stereoscopic mode has been toggled. Contains the new state
+     * (true/false)
+     **/
+    TOGGLE_STEREOSCOPIC_INFO,
+    /** Switches stereoscopic mode images, left to right and right to left **/
+    TOGGLE_STEREO_PROFILE_CMD,
+    /**
+     * Toggles whole GUI display. Contains the localised name and an optional
      * boolean with the state (display/no display)
      **/
     DISPLAY_GUI_CMD,
     /**
-     * Toggles the pause of the update process. Contains the localized name.
+     * Toggles the pause of the update process. Contains the localised name.
      **/
     TOGGLE_UPDATEPAUSE,
     /** Contains the new value **/

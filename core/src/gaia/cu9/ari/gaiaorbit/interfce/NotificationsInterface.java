@@ -25,6 +25,7 @@ import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnLabel;
 
 /**
  * Widget that captures and displays messages in a GUI.
+ * 
  * @author Toni Sagrista
  *
  */
@@ -47,10 +48,15 @@ public class NotificationsInterface extends Table implements IObserver {
 
     /**
      * Initializes the notifications interface.
-     * @param skin The skin.
-     * @param lock The lock object.
-     * @param multiple Allow multiple messages?
-     * @param writeDates Write dates with messages?
+     * 
+     * @param skin
+     *            The skin.
+     * @param lock
+     *            The lock object.
+     * @param multiple
+     *            Allow multiple messages?
+     * @param writeDates
+     *            Write dates with messages?
      */
     public NotificationsInterface(Skin skin, Object lock, boolean multiple, boolean writeDates) {
         this(skin, lock, multiple);
@@ -59,9 +65,13 @@ public class NotificationsInterface extends Table implements IObserver {
 
     /**
      * Initializes the notifications interface.
-     * @param skin The skin.
-     * @param lock The lock object.
-     * @param multiple Allow multiple messages?
+     * 
+     * @param skin
+     *            The skin.
+     * @param lock
+     *            The lock object.
+     * @param multiple
+     *            Allow multiple messages?
      */
     public NotificationsInterface(Skin skin, Object lock, boolean multiple) {
         this(DEFAULT_TIMEOUT, skin, multiple);
@@ -71,8 +81,11 @@ public class NotificationsInterface extends Table implements IObserver {
 
     /**
      * Initializes the notifications interface.
-     * @param msTimeout The timeout in ms.
-     * @param skin The skin.
+     * 
+     * @param msTimeout
+     *            The timeout in ms.
+     * @param skin
+     *            The skin.
      */
     public NotificationsInterface(long msTimeout, Skin skin, boolean multiple) {
         super(skin);
@@ -89,11 +102,11 @@ public class NotificationsInterface extends Table implements IObserver {
         this.add(message1).left();
         this.historical = new LinkedList<MessageBean>();
         this.df = DateFormatFactory.getFormatter(I18n.locale, DateType.TIME);
-        EventManager.instance.subscribe(this, Events.POST_NOTIFICATION, Events.FOCUS_CHANGED, Events.TOGGLE_TIME_CMD, Events.TOGGLE_VISIBILITY_CMD, Events.CAMERA_MODE_CMD, Events.PACE_CHANGED_INFO, Events.FOCUS_LOCK_CMD, Events.TOGGLE_AMBIENT_LIGHT, Events.FOV_CHANGE_NOTIFICATION, Events.JAVA_EXCEPTION, Events.ORBIT_DATA_LOADED, Events.SCREENSHOT_INFO, Events.COMPUTE_GAIA_SCAN_CMD, Events.ONLY_OBSERVED_STARS_CMD, Events.TRANSIT_COLOUR_CMD, Events.LIMIT_MAG_CMD, Events.TOGGLE_STEREOSCOPIC, Events.DISPLAY_GUI_CMD, Events.FRAME_OUTPUT_CMD, Events.TOGGLE_STEREO_PROFILE, Events.OCTREE_PARTICLE_FADE_CMD);
+        EventManager.instance.subscribe(this, Events.POST_NOTIFICATION, Events.FOCUS_CHANGED, Events.TOGGLE_TIME_CMD, Events.TOGGLE_VISIBILITY_CMD, Events.CAMERA_MODE_CMD, Events.PACE_CHANGED_INFO, Events.FOCUS_LOCK_CMD, Events.TOGGLE_AMBIENT_LIGHT, Events.FOV_CHANGE_NOTIFICATION, Events.JAVA_EXCEPTION, Events.ORBIT_DATA_LOADED, Events.SCREENSHOT_INFO, Events.COMPUTE_GAIA_SCAN_CMD, Events.ONLY_OBSERVED_STARS_CMD, Events.TRANSIT_COLOUR_CMD, Events.LIMIT_MAG_CMD, Events.TOGGLE_STEREOSCOPIC_CMD, Events.DISPLAY_GUI_CMD, Events.FRAME_OUTPUT_CMD, Events.TOGGLE_STEREO_PROFILE_CMD, Events.OCTREE_PARTICLE_FADE_CMD);
     }
 
     public void unsubscribe() {
-        EventManager.instance.unsubscribe(this, Events.POST_NOTIFICATION, Events.FOCUS_CHANGED, Events.TOGGLE_TIME_CMD, Events.TOGGLE_VISIBILITY_CMD, Events.CAMERA_MODE_CMD, Events.PACE_CHANGED_INFO, Events.FOCUS_LOCK_CMD, Events.TOGGLE_AMBIENT_LIGHT, Events.FOV_CHANGE_NOTIFICATION, Events.JAVA_EXCEPTION, Events.ORBIT_DATA_LOADED, Events.SCREENSHOT_INFO, Events.COMPUTE_GAIA_SCAN_CMD, Events.ONLY_OBSERVED_STARS_CMD, Events.TRANSIT_COLOUR_CMD, Events.LIMIT_MAG_CMD, Events.TOGGLE_STEREOSCOPIC, Events.DISPLAY_GUI_CMD, Events.FRAME_OUTPUT_CMD, Events.TOGGLE_STEREO_PROFILE, Events.OCTREE_PARTICLE_FADE_CMD);
+        EventManager.instance.unsubscribe(this, Events.POST_NOTIFICATION, Events.FOCUS_CHANGED, Events.TOGGLE_TIME_CMD, Events.TOGGLE_VISIBILITY_CMD, Events.CAMERA_MODE_CMD, Events.PACE_CHANGED_INFO, Events.FOCUS_LOCK_CMD, Events.TOGGLE_AMBIENT_LIGHT, Events.FOV_CHANGE_NOTIFICATION, Events.JAVA_EXCEPTION, Events.ORBIT_DATA_LOADED, Events.SCREENSHOT_INFO, Events.COMPUTE_GAIA_SCAN_CMD, Events.ONLY_OBSERVED_STARS_CMD, Events.TRANSIT_COLOUR_CMD, Events.LIMIT_MAG_CMD, Events.TOGGLE_STEREOSCOPIC_CMD, Events.DISPLAY_GUI_CMD, Events.FRAME_OUTPUT_CMD, Events.TOGGLE_STEREO_PROFILE_CMD, Events.OCTREE_PARTICLE_FADE_CMD);
     }
 
     private void addMessage(String msg) {
@@ -215,11 +228,11 @@ public class NotificationsInterface extends Table implements IObserver {
             case SCREENSHOT_INFO:
                 addMessage(I18n.bundle.format("notif.screenshot", data[0]));
                 break;
-            case TOGGLE_STEREOSCOPIC:
+            case TOGGLE_STEREOSCOPIC_CMD:
             case DISPLAY_GUI_CMD:
                 addMessage(I18n.bundle.format("notif.toggle", data[0]));
                 break;
-            case TOGGLE_STEREO_PROFILE:
+            case TOGGLE_STEREO_PROFILE_CMD:
                 addMessage(I18n.bundle.format("notif.stereoscopic.profile", GlobalConf.program.STEREO_PROFILE.toString()));
                 break;
             case FRAME_OUTPUT_CMD:

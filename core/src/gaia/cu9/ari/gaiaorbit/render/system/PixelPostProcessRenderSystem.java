@@ -47,7 +47,7 @@ public abstract class PixelPostProcessRenderSystem extends PixelRenderSystem imp
             getFrameBuffer(GlobalConf.frame.RENDER_WIDTH, GlobalConf.frame.RENDER_HEIGHT);
         }
 
-        EventManager.instance.subscribe(this, Events.SCREEN_RESIZE, Events.TOGGLE_STEREOSCOPIC);
+        EventManager.instance.subscribe(this, Events.SCREEN_RESIZE, Events.TOGGLE_STEREOSCOPIC_INFO);
     }
 
     @Override
@@ -127,9 +127,9 @@ public abstract class PixelPostProcessRenderSystem extends PixelRenderSystem imp
         case SCREEN_RESIZE:
             getFrameBuffer((Integer) data[0], (Integer) data[1]);
             break;
-        case TOGGLE_STEREOSCOPIC:
+        case TOGGLE_STEREOSCOPIC_INFO:
             // Update size
-            if (GlobalConf.program.STEREOSCOPIC_MODE) {
+            if ((Boolean) data[0]) {
                 getFrameBuffer(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight());
             }
             break;

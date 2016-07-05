@@ -448,7 +448,7 @@ public class GlobalConf {
         private IDateFormat df = DateFormatFactory.getFormatter("dd/MM/yyyy HH:mm:ss");
 
         public ProgramConf() {
-            EventManager.instance.subscribe(this, Events.TOGGLE_STEREOSCOPIC, Events.TOGGLE_STEREO_PROFILE);
+            EventManager.instance.subscribe(this, Events.TOGGLE_STEREOSCOPIC_CMD, Events.TOGGLE_STEREO_PROFILE_CMD);
         }
 
         public void initialize(boolean dISPLAY_TUTORIAL, String tUTORIAL_SCRIPT_LOCATION, boolean sHOW_CONFIG_DIALOG, boolean sHOW_DEBUG_INFO, Date lAST_CHECKED, String lAST_VERSION, String vERSION_CHECK_URL, String uI_THEME, String sCRIPT_LOCATION, String lOCALE, boolean sTEREOSCOPIC_MODE, StereoProfile sTEREO_PROFILE) {
@@ -483,12 +483,15 @@ public class GlobalConf {
         @Override
         public void notify(Events event, Object... data) {
             switch (event) {
-            case TOGGLE_STEREOSCOPIC:
-                STEREOSCOPIC_MODE = !STEREOSCOPIC_MODE;
-                // Enable/disable gui
-                EventManager.instance.post(Events.DISPLAY_GUI_CMD, I18n.bundle.get("notif.cleanmode"), !STEREOSCOPIC_MODE);
+            case TOGGLE_STEREOSCOPIC_CMD:
+                if (!GaiaSky.instance.cam.mode.isGaiaFov()) {
+                    STEREOSCOPIC_MODE = !STEREOSCOPIC_MODE;
+                    // Enable/disable gui
+                    EventManager.instance.post(Events.DISPLAY_GUI_CMD, I18n.bundle.get("notif.cleanmode"), !STEREOSCOPIC_MODE);
+                    EventManager.instance.post(Events.TOGGLE_STEREOSCOPIC_INFO, STEREOSCOPIC_MODE);
+                }
                 break;
-            case TOGGLE_STEREO_PROFILE:
+            case TOGGLE_STEREO_PROFILE_CMD:
                 int idx = STEREO_PROFILE.ordinal();
                 StereoProfile[] vals = StereoProfile.values();
                 idx = (idx + 1) % vals.length;

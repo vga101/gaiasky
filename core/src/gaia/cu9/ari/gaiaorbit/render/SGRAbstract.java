@@ -1,0 +1,57 @@
+package gaia.cu9.ari.gaiaorbit.render;
+
+import com.badlogic.gdx.graphics.glutils.FrameBuffer;
+import com.badlogic.gdx.utils.viewport.ExtendViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
+
+import gaia.cu9.ari.gaiaorbit.render.IPostProcessor.PostProcessBean;
+import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
+
+public class SGRAbstract {
+
+    protected RenderContext rc;
+    /** Viewport to use in normal mode **/
+    protected Viewport extendViewport;
+
+    public SGRAbstract() {
+        // Render context
+        rc = new RenderContext();
+        // Viewport
+        extendViewport = new ExtendViewport(200, 200);
+    }
+
+    protected int getKey(int w, int h) {
+        return w * 100 + h * 10;
+    }
+
+    protected int getKey(int w, int h, int extra) {
+        return w * 100 + h * 10 + extra;
+    }
+
+    protected boolean postprocessCapture(PostProcessBean ppb, FrameBuffer fb, int rw, int rh) {
+        boolean postproc = ppb.capture();
+        if (postproc) {
+            rc.ppb = ppb;
+        } else {
+            rc.ppb = null;
+        }
+        rc.fb = fb;
+        rc.w = rw;
+        rc.h = rh;
+        return postproc;
+    }
+
+    protected void postprocessRender(PostProcessBean ppb, FrameBuffer fb, boolean postproc, ICamera camera) {
+        ppb.render(fb);
+
+        // Render camera
+        if (fb != null && postproc) {
+            fb.begin();
+        }
+        camera.render();
+        if (fb != null && postproc) {
+            fb.end();
+        }
+    }
+
+}

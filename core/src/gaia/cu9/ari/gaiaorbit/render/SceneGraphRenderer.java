@@ -11,9 +11,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.PerspectiveCamera;
-import com.badlogic.gdx.graphics.Pixmap.Format;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.Renderable;
@@ -22,13 +19,8 @@ import com.badlogic.gdx.graphics.g3d.utils.RenderableSorter;
 import com.badlogic.gdx.graphics.g3d.utils.ShaderProvider;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
-import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.BufferUtils;
-import com.badlogic.gdx.utils.Pool;
-import com.badlogic.gdx.utils.viewport.ExtendViewport;
-import com.badlogic.gdx.utils.viewport.StretchViewport;
-import com.badlogic.gdx.utils.viewport.Viewport;
 import com.bitfire.utils.ShaderLoader;
 
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
@@ -46,14 +38,11 @@ import gaia.cu9.ari.gaiaorbit.render.system.PixelRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.QuadRenderSystem;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
-import gaia.cu9.ari.gaiaorbit.scenegraph.NaturalCamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
-import gaia.cu9.ari.gaiaorbit.util.GlobalConf.ProgramConf.StereoProfile;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
-import gaia.cu9.ari.gaiaorbit.util.MyPools;
 import gaia.cu9.ari.gaiaorbit.util.ds.Multilist;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.override.AtmosphereGroundShaderProvider;
@@ -78,8 +67,6 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
     private ShaderProgram starShader, fontShader;
 
-    private RenderContext rc;
-
     private int maxTexSize;
 
     /** Render lists for all render groups **/
@@ -90,15 +77,12 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
     private List<IRenderSystem> renderProcesses;
 
-    /** Viewport to use in steoeroscopic mode **/
-    private Viewport stretchViewport;
-    /** Viewport to use in normal mode **/
-    private Viewport extendViewport;
-
-    /** Frame buffers for 3D mode (screen, screenshot, frame output) **/
-    Map<Integer, FrameBuffer> fb3D;
-
     Runnable blendNoDepthRunnable, blendDepthRunnable;
+
+    /** The particular current scene graph renderer **/
+    private ISGR sgr;
+    /** Renderer vector, with 0 = normal, 1 = stereoscopic, 2 = FOV **/
+    private ISGR[] sgrs;
 
     public SceneGraphRenderer() {
         super();
@@ -155,9 +139,6 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         fontBatch = new SpriteBatch(1000, fontShader);
         fontBatch.enableBlending();
 
-        // Render context
-        rc = new RenderContext();
-
         ComponentType[] comps = ComponentType.values();
 
         // Set reference
@@ -168,6 +149,15 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         for (int i = 0; i < comps.length; i++) {
             alphas[i] = 1f;
         }
+
+        /**
+         * INITIALIZE SGRs
+         */
+        sgrs = new ISGR[3];
+        sgrs[0] = new SGR();
+        sgrs[1] = new SGRStereoscopic();
+        sgrs[2] = new SGRFov();
+        sgr = null;
 
         /**
          *
@@ -277,207 +267,27 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         renderProcesses.add(labelsProc);
         renderProcesses.add(modelAtmProc);
 
-        // INIT VIEWPORTS
-        stretchViewport = new StretchViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        extendViewport = new ExtendViewport(200, 200);
-
-        // INIT FRAME BUFFER FOR 3D MODE
-        fb3D = new HashMap<Integer, FrameBuffer>();
-        fb3D.put(getKey(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight()), new FrameBuffer(Format.RGB888, Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight(), true));
-
-        EventManager.instance.subscribe(this, Events.TOGGLE_VISIBILITY_CMD, Events.PIXEL_RENDERER_UPDATE, Events.SCREENSHOT_SIZE_UDPATE, Events.FRAME_SIZE_UDPATE);
+        EventManager.instance.subscribe(this, Events.TOGGLE_VISIBILITY_CMD, Events.PIXEL_RENDERER_UPDATE, Events.TOGGLE_STEREOSCOPIC_INFO, Events.CAMERA_MODE_CMD);
 
     }
 
-    private int getKey(int w, int h) {
-        return w * 31 + h;
-    }
-
-    private boolean postprocessCapture(PostProcessBean ppb, FrameBuffer fb, int rw, int rh) {
-        boolean postproc = ppb.capture();
-        if (postproc) {
-            rc.ppb = ppb;
+    private void initSGR(ICamera camera) {
+        if (camera.getNCameras() > 1) {
+            sgr = sgrs[2];
+        } else if (GlobalConf.program.STEREOSCOPIC_MODE) {
+            sgr = sgrs[1];
         } else {
-            rc.ppb = null;
-        }
-        rc.fb = fb;
-        rc.w = rw;
-        rc.h = rh;
-        return postproc;
-    }
-
-    private void postprocessRender(PostProcessBean ppb, FrameBuffer fb, boolean postproc, ICamera camera) {
-        ppb.render(fb);
-
-        // Render camera
-        if (fb != null && postproc) {
-            fb.begin();
-        }
-        camera.render();
-        if (fb != null && postproc) {
-            fb.end();
+            sgr = sgrs[0];
         }
     }
 
     @Override
     public void render(ICamera camera, int rw, int rh, FrameBuffer fb, PostProcessBean ppb) {
 
-        // Prepare render context
-        boolean postproc;
+        if (sgr == null)
+            initSGR(camera);
 
-        if (camera.getNCameras() > 1) {
-            postproc = postprocessCapture(ppb, fb, rw, rh);
-
-            /** FIELD OF VIEW CAMERA **/
-
-            CameraMode aux = camera.getMode();
-
-            camera.updateMode(CameraMode.Gaia_FOV1, false);
-
-            renderScene(camera, rc);
-
-            camera.updateMode(CameraMode.Gaia_FOV2, false);
-
-            renderScene(camera, rc);
-
-            camera.updateMode(aux, false);
-
-            postprocessRender(ppb, fb, postproc, camera);
-
-        } else {
-            /** NORMAL MODE **/
-
-            if (GlobalConf.program.STEREOSCOPIC_MODE) {
-                // Update rc
-                rc.w = rw / 2;
-
-                boolean movecam = camera.getMode() == CameraMode.Free_Camera || camera.getMode() == CameraMode.Focus;
-                boolean stretch = GlobalConf.program.STEREO_PROFILE == StereoProfile.HD_3DTV;
-                boolean crosseye = GlobalConf.program.STEREO_PROFILE == StereoProfile.CROSSEYE;
-
-                // Side by side rendering
-                Viewport viewport = stretch ? stretchViewport : extendViewport;
-
-                PerspectiveCamera cam = camera.getCamera();
-                Pool<Vector3> vectorPool = MyPools.get(Vector3.class);
-                // Vector of 1 meter length pointing to the side of the camera
-                Vector3 side = vectorPool.obtain().set(cam.direction);
-                float separation = (float) Constants.M_TO_U * GlobalConf.program.STEREOSCOPIC_EYE_SEPARATION_M;
-                float dirangleDeg = 0;
-                if (camera.getMode() == CameraMode.Focus) {
-                    // In focus mode we keep the separation dependent on the
-                    // distance with a fixed angle
-                    float distToFocus = ((NaturalCamera) camera.getCurrent()).focus.distToCamera - ((NaturalCamera) camera.getCurrent()).focus.getRadius();
-                    separation = (float) Math.min((Math.tan(Math.toRadians(1.5)) * distToFocus), 3e13 * Constants.M_TO_U);
-                    dirangleDeg = 3f;
-                }
-
-                side.crs(cam.up).nor().scl(separation);
-                Vector3 backup = vectorPool.obtain().set(cam.position);
-
-                camera.setViewport(viewport);
-                viewport.setCamera(camera.getCamera());
-                viewport.setWorldSize(stretch ? rw : rw / 2, rh);
-
-                /** LEFT EYE **/
-
-                viewport.setScreenBounds(0, 0, rw / 2, rh);
-                viewport.apply();
-
-                FrameBuffer fb3d = getFrameBuffer(rw / 2, rh);
-
-                postproc = postprocessCapture(ppb, fb3d, rw / 2, rh);
-
-                // Camera to left
-                if (movecam) {
-                    if (crosseye) {
-                        cam.position.add(side);
-                        cam.direction.rotate(cam.up, dirangleDeg);
-                    } else {
-                        cam.position.sub(side);
-                        cam.direction.rotate(cam.up, -dirangleDeg);
-                    }
-                    cam.update();
-                }
-                camera.setCameraStereoLeft(cam);
-                renderScene(camera, rc);
-
-                Texture tex = null;
-                postprocessRender(ppb, fb3d, postproc, camera);
-                tex = fb3d.getColorBufferTexture();
-
-                float scaleX = 1;
-                float scaleY = 1;
-                if (fb != null) {
-                    scaleX = (float) Gdx.graphics.getWidth() / (float) fb.getWidth();
-                    scaleY = (float) Gdx.graphics.getHeight() / (float) fb.getHeight();
-                    fb.begin();
-                }
-
-                GlobalResources.spriteBatch.begin();
-                GlobalResources.spriteBatch.setColor(1f, 1f, 1f, 1f);
-                GlobalResources.spriteBatch.draw(tex, 0, 0, 0, 0, rw / 2, rh, scaleX, scaleY, 0, 0, 0, rw / 2, rh, false, true);
-                GlobalResources.spriteBatch.end();
-
-                if (fb != null)
-                    fb.end();
-
-                /** RIGHT EYE **/
-
-                viewport.setScreenBounds(rw / 2, 0, rw / 2, rh);
-                viewport.apply();
-
-                postproc = postprocessCapture(ppb, fb3d, rw / 2, rh);
-
-                // Camera to right
-                if (movecam) {
-                    cam.position.set(backup);
-                    if (crosseye) {
-                        cam.position.sub(side);
-                        cam.direction.rotate(cam.up, -dirangleDeg);
-                    } else {
-                        cam.position.add(side);
-                        cam.direction.rotate(cam.up, dirangleDeg);
-                    }
-                    cam.update();
-                }
-                camera.setCameraStereoRight(cam);
-                renderScene(camera, rc);
-
-                postprocessRender(ppb, fb3d, postproc, camera);
-                tex = fb3d.getColorBufferTexture();
-
-                if (fb != null)
-                    fb.begin();
-
-                GlobalResources.spriteBatch.begin();
-                GlobalResources.spriteBatch.setColor(1f, 1f, 1f, 1f);
-                GlobalResources.spriteBatch.draw(tex, scaleX * rw / 2, 0, 0, 0, rw / 2, rh, scaleX, scaleY, 0, 0, 0, rw / 2, rh, false, true);
-                GlobalResources.spriteBatch.end();
-
-                if (fb != null)
-                    fb.end();
-
-                /** RESTORE **/
-                cam.position.set(backup);
-                viewport.setScreenBounds(0, 0, rw, rh);
-
-                vectorPool.free(side);
-                vectorPool.free(backup);
-
-            } else {
-                postproc = postprocessCapture(ppb, fb, rw, rh);
-
-                camera.setViewport(extendViewport);
-                extendViewport.setCamera(camera.getCamera());
-                extendViewport.setWorldSize(rw, rh);
-                extendViewport.setScreenSize(rw, rh);
-                extendViewport.apply();
-                renderScene(camera, rc);
-
-                postprocessRender(ppb, fb, postproc, camera);
-            }
-        }
+        sgr.render(this, camera, rw, rh, fb, ppb);
 
     }
 
@@ -538,20 +348,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
                 times[idx] = new Date().getTime();
             }
             break;
-        case SCREENSHOT_SIZE_UDPATE:
-        case FRAME_SIZE_UDPATE:
-            final Integer w = (Integer) data[0];
-            final Integer h = (Integer) data[1];
-            final Integer key = getKey(w / 2, h);
-            if (!fb3D.containsKey(key)) {
-                Gdx.app.postRunnable(new Runnable() {
-                    @Override
-                    public void run() {
-                        fb3D.put(key, new FrameBuffer(Format.RGB888, w / 2, h, true));
-                    }
-                });
-            }
-            break;
+
         case PIXEL_RENDERER_UPDATE:
             Gdx.app.postRunnable(new Runnable() {
 
@@ -562,6 +359,26 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
                 }
 
             });
+            break;
+        case TOGGLE_STEREOSCOPIC_INFO:
+            boolean stereo = (Boolean) data[0];
+            if (stereo)
+                sgr = sgrs[1];
+            else {
+                sgr = sgrs[0];
+            }
+            break;
+        case CAMERA_MODE_CMD:
+            CameraMode cm = (CameraMode) data[0];
+            if (cm.isGaiaFov())
+                sgr = sgrs[2];
+            else {
+                if (GlobalConf.program.STEREOSCOPIC_MODE)
+                    sgr = sgrs[1];
+                else
+                    sgr = sgrs[0];
+
+            }
             break;
         }
     }
@@ -580,22 +397,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         }
     }
 
-    private FrameBuffer getFrameBuffer(int w, int h) {
-        int key = getKey(w, h);
-        if (!fb3D.containsKey(key)) {
-            fb3D.put(key, new FrameBuffer(Format.RGB888, w, h, true));
-        }
-        return fb3D.get(key);
-    }
-
     public void resize(final int w, final int h) {
-        extendViewport.update(w, h);
-        stretchViewport.update(w, h);
-
-        int key = getKey(w / 2, h);
-        if (!fb3D.containsKey(key)) {
-            fb3D.put(key, new FrameBuffer(Format.RGB888, w / 2, h, true));
-        }
 
         for (IRenderSystem rendSys : renderProcesses) {
             rendSys.resize(w, h);
