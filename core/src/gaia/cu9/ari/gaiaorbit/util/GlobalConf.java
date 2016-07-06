@@ -426,7 +426,9 @@ public class GlobalConf {
             /** Left image -> left eye, distortion **/
             HD_3DTV,
             /** Left image -> right eye, no distortion **/
-            CROSSEYE
+            CROSSEYE,
+            /** Red-cyan anaglyphic 3D mode **/
+            ANAGLYPHIC
         }
 
         public boolean DISPLAY_TUTORIAL;

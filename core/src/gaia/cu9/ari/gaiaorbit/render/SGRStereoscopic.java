@@ -12,6 +12,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.bitfire.postprocessing.effects.Anaglyphic;
 
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
@@ -34,6 +35,8 @@ public class SGRStereoscopic extends SGRAbstract implements ISGR, IObserver {
     /** Frame buffers for 3D mode (screen, screenshot, frame output) **/
     Map<Integer, FrameBuffer> fb3D;
 
+    private Anaglyphic anaglyphic;
+
     public SGRStereoscopic() {
         super();
         // INIT VIEWPORT
@@ -43,20 +46,15 @@ public class SGRStereoscopic extends SGRAbstract implements ISGR, IObserver {
         fb3D = new HashMap<Integer, FrameBuffer>();
         fb3D.put(getKey(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight()), new FrameBuffer(Format.RGB888, Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight(), true));
 
+        // Init anaglyphic effect
+        anaglyphic = new Anaglyphic();
+
         EventManager.instance.subscribe(this, Events.FRAME_SIZE_UDPATE, Events.SCREENSHOT_SIZE_UDPATE);
     }
 
     @Override
     public void render(SceneGraphRenderer sgr, ICamera camera, int rw, int rh, FrameBuffer fb, PostProcessBean ppb) {
-        // Update rc
-        rc.w = rw / 2;
-
         boolean movecam = camera.getMode() == CameraMode.Free_Camera || camera.getMode() == CameraMode.Focus;
-        boolean stretch = GlobalConf.program.STEREO_PROFILE == StereoProfile.HD_3DTV;
-        boolean crosseye = GlobalConf.program.STEREO_PROFILE == StereoProfile.CROSSEYE;
-
-        // Side by side rendering
-        Viewport viewport = stretch ? stretchViewport : extendViewport;
 
         PerspectiveCamera cam = camera.getCamera();
         Pool<Vector3> vectorPool = MyPools.get(Vector3.class);
@@ -73,106 +71,190 @@ public class SGRStereoscopic extends SGRAbstract implements ISGR, IObserver {
         }
 
         side.crs(cam.up).nor().scl(separation);
-        Vector3 backup = vectorPool.obtain().set(cam.position);
+        Vector3 backupPos = vectorPool.obtain().set(cam.position);
+        Vector3 backupDir = vectorPool.obtain().set(cam.direction);
 
-        camera.setViewport(viewport);
-        viewport.setCamera(camera.getCamera());
-        viewport.setWorldSize(stretch ? rw : rw / 2, rh);
+        if (GlobalConf.program.STEREO_PROFILE == StereoProfile.ANAGLYPHIC) {
+            camera.setViewport(extendViewport);
+            extendViewport.setCamera(camera.getCamera());
+            extendViewport.setWorldSize(rw, rh);
+            extendViewport.setScreenBounds(0, 0, rw, rh);
+            extendViewport.apply();
 
-        /** LEFT EYE **/
+            /** LEFT EYE **/
+            FrameBuffer fb1 = getFrameBuffer(rw, rh);
+            boolean postproc = postprocessCapture(ppb, fb1, rw, rh);
 
-        viewport.setScreenBounds(0, 0, rw / 2, rh);
-        viewport.apply();
-
-        FrameBuffer fb3d = getFrameBuffer(rw / 2, rh);
-
-        boolean postproc = postprocessCapture(ppb, fb3d, rw / 2, rh);
-
-        // Camera to left
-        if (movecam) {
-            if (crosseye) {
-                cam.position.add(side);
-                cam.direction.rotate(cam.up, dirangleDeg);
-            } else {
-                cam.position.sub(side);
-                cam.direction.rotate(cam.up, -dirangleDeg);
+            // Camera to the left
+            if (movecam) {
+                moveCamera(cam, side, dirangleDeg, false);
             }
-            cam.update();
-        }
-        camera.setCameraStereoLeft(cam);
-        sgr.renderScene(camera, rc);
+            camera.setCameraStereoLeft(cam);
+            sgr.renderScene(camera, rc);
 
-        Texture tex = null;
-        postprocessRender(ppb, fb3d, postproc, camera);
-        tex = fb3d.getColorBufferTexture();
+            postprocessRender(ppb, fb1, postproc, camera);
+            Texture texLeft = fb1.getColorBufferTexture();
 
-        float scaleX = 1;
-        float scaleY = 1;
-        if (fb != null) {
-            scaleX = (float) Gdx.graphics.getWidth() / (float) fb.getWidth();
-            scaleY = (float) Gdx.graphics.getHeight() / (float) fb.getHeight();
-            fb.begin();
-        }
+            /** RIGHT EYE **/
+            FrameBuffer fb2 = getFrameBuffer(rw, rh, 1);
+            postproc = postprocessCapture(ppb, fb2, rw, rh);
 
-        GlobalResources.spriteBatch.begin();
-        GlobalResources.spriteBatch.setColor(1f, 1f, 1f, 1f);
-        GlobalResources.spriteBatch.draw(tex, 0, 0, 0, 0, rw / 2, rh, scaleX, scaleY, 0, 0, 0, rw / 2, rh, false, true);
-        GlobalResources.spriteBatch.end();
-
-        if (fb != null)
-            fb.end();
-
-        /** RIGHT EYE **/
-
-        viewport.setScreenBounds(rw / 2, 0, rw / 2, rh);
-        viewport.apply();
-
-        postproc = postprocessCapture(ppb, fb3d, rw / 2, rh);
-
-        // Camera to right
-        if (movecam) {
-            cam.position.set(backup);
-            if (crosseye) {
-                cam.position.sub(side);
-                cam.direction.rotate(cam.up, -dirangleDeg);
-            } else {
-                cam.position.add(side);
-                cam.direction.rotate(cam.up, dirangleDeg);
+            // Camera to the right
+            if (movecam) {
+                cam.position.set(backupPos);
+                cam.direction.set(backupDir);
+                moveCamera(cam, side, dirangleDeg, true);
             }
-            cam.update();
+            camera.setCameraStereoRight(cam);
+            sgr.renderScene(camera, rc);
+
+            postprocessRender(ppb, fb2, postproc, camera);
+            Texture texRight = fb2.getColorBufferTexture();
+
+            // We have left and right images to texLeft and texRight
+
+            anaglyphic.setTextureLeft(texLeft);
+            anaglyphic.setTextureRight(texRight);
+
+            if (fb != null)
+                anaglyphic.render(fb2, fb);
+            else
+                anaglyphic.render(fb2, null);
+
+            //            if (fb != null)
+            //                fb.begin();
+            //
+            //            GlobalResources.spriteBatch.begin();
+            //            GlobalResources.spriteBatch.setColor(1f, 1f, 1f, 1f);
+            //            GlobalResources.spriteBatch.draw(texRight, 0, 0, 0, 0, rw, rh, 1, 1, 0, 0, 0, rw, rh, false, true);
+            //            GlobalResources.spriteBatch.end();
+            //
+            //            if (fb != null)
+            //                fb.end();
+
+        } else {
+            // Update rc
+            rc.w = rw / 2;
+
+            boolean stretch = GlobalConf.program.STEREO_PROFILE == StereoProfile.HD_3DTV;
+            boolean crosseye = GlobalConf.program.STEREO_PROFILE == StereoProfile.CROSSEYE;
+
+            // Side by side rendering
+            Viewport viewport = stretch ? stretchViewport : extendViewport;
+
+            camera.setViewport(viewport);
+            viewport.setCamera(camera.getCamera());
+            viewport.setWorldSize(stretch ? rw : rw / 2, rh);
+
+            /** LEFT EYE **/
+
+            viewport.setScreenBounds(0, 0, rw / 2, rh);
+            viewport.apply();
+
+            FrameBuffer fb3d = getFrameBuffer(rw / 2, rh);
+
+            boolean postproc = postprocessCapture(ppb, fb3d, rw / 2, rh);
+
+            // Camera to left
+            if (movecam) {
+                moveCamera(cam, side, dirangleDeg, crosseye);
+            }
+            camera.setCameraStereoLeft(cam);
+            sgr.renderScene(camera, rc);
+
+            Texture tex = null;
+            postprocessRender(ppb, fb3d, postproc, camera);
+            tex = fb3d.getColorBufferTexture();
+
+            float scaleX = 1;
+            float scaleY = 1;
+            if (fb != null) {
+                scaleX = (float) Gdx.graphics.getWidth() / (float) fb.getWidth();
+                scaleY = (float) Gdx.graphics.getHeight() / (float) fb.getHeight();
+                fb.begin();
+            }
+
+            GlobalResources.spriteBatch.begin();
+            GlobalResources.spriteBatch.setColor(1f, 1f, 1f, 1f);
+            GlobalResources.spriteBatch.draw(tex, 0, 0, 0, 0, rw / 2, rh, scaleX, scaleY, 0, 0, 0, rw / 2, rh, false, true);
+            GlobalResources.spriteBatch.end();
+
+            if (fb != null)
+                fb.end();
+
+            /** RIGHT EYE **/
+
+            viewport.setScreenBounds(rw / 2, 0, rw / 2, rh);
+            viewport.apply();
+
+            postproc = postprocessCapture(ppb, fb3d, rw / 2, rh);
+
+            // Camera to right
+            if (movecam) {
+                cam.position.set(backupPos);
+                cam.direction.set(backupDir);
+                moveCamera(cam, side, dirangleDeg, !crosseye);
+            }
+            camera.setCameraStereoRight(cam);
+            sgr.renderScene(camera, rc);
+
+            postprocessRender(ppb, fb3d, postproc, camera);
+            tex = fb3d.getColorBufferTexture();
+
+            if (fb != null)
+                fb.begin();
+
+            GlobalResources.spriteBatch.begin();
+            GlobalResources.spriteBatch.setColor(1f, 1f, 1f, 1f);
+            GlobalResources.spriteBatch.draw(tex, scaleX * rw / 2, 0, 0, 0, rw / 2, rh, scaleX, scaleY, 0, 0, 0, rw / 2, rh, false, true);
+            GlobalResources.spriteBatch.end();
+
+            if (fb != null)
+                fb.end();
+
+            // Restore viewport
+            viewport.setScreenBounds(0, 0, rw, rh);
+
         }
-        camera.setCameraStereoRight(cam);
-        sgr.renderScene(camera, rc);
-
-        postprocessRender(ppb, fb3d, postproc, camera);
-        tex = fb3d.getColorBufferTexture();
-
-        if (fb != null)
-            fb.begin();
-
-        GlobalResources.spriteBatch.begin();
-        GlobalResources.spriteBatch.setColor(1f, 1f, 1f, 1f);
-        GlobalResources.spriteBatch.draw(tex, scaleX * rw / 2, 0, 0, 0, rw / 2, rh, scaleX, scaleY, 0, 0, 0, rw / 2, rh, false, true);
-        GlobalResources.spriteBatch.end();
-
-        if (fb != null)
-            fb.end();
 
         /** RESTORE **/
-        cam.position.set(backup);
-        viewport.setScreenBounds(0, 0, rw, rh);
-
+        cam.position.set(backupPos);
+        cam.direction.set(backupDir);
         vectorPool.free(side);
-        vectorPool.free(backup);
+        vectorPool.free(backupPos);
+        vectorPool.free(backupDir);
 
     }
 
-    public FrameBuffer getFrameBuffer(int w, int h) {
-        int key = getKey(w, h);
+    private void moveCamera(PerspectiveCamera cam, Vector3 side, float angle, boolean switchSides) {
+        if (switchSides) {
+            cam.position.add(side);
+            cam.direction.rotate(cam.up, angle);
+        } else {
+            cam.position.sub(side);
+            cam.direction.rotate(cam.up, -angle);
+        }
+        cam.update();
+    }
+
+    private int getKey(int w, int h) {
+        return getKey(w, h, 0);
+    }
+
+    private int getKey(int w, int h, int extra) {
+        return w * 100 + h * 10 + extra;
+    }
+
+    private FrameBuffer getFrameBuffer(int w, int h, int extra) {
+        int key = getKey(w, h, extra);
         if (!fb3D.containsKey(key)) {
             fb3D.put(key, new FrameBuffer(Format.RGB888, w, h, true));
         }
         return fb3D.get(key);
+    }
+
+    private FrameBuffer getFrameBuffer(int w, int h) {
+        return getFrameBuffer(w, h, 0);
     }
 
     public void resize(final int w, final int h) {

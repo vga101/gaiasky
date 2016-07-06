@@ -20,14 +20,6 @@ public class SGRAbstract {
         extendViewport = new ExtendViewport(200, 200);
     }
 
-    protected int getKey(int w, int h) {
-        return w * 100 + h * 10;
-    }
-
-    protected int getKey(int w, int h, int extra) {
-        return w * 100 + h * 10 + extra;
-    }
-
     protected boolean postprocessCapture(PostProcessBean ppb, FrameBuffer fb, int rw, int rh) {
         boolean postproc = ppb.capture();
         if (postproc) {
