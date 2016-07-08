@@ -67,7 +67,7 @@ public class SGRStereoscopic extends SGRAbstract implements ISGR, IObserver {
             // distance with a fixed angle
             float distToFocus = ((NaturalCamera) camera.getCurrent()).focus.distToCamera - ((NaturalCamera) camera.getCurrent()).focus.getRadius();
             separation = (float) Math.min((Math.tan(Math.toRadians(1.5)) * distToFocus), 3e13 * Constants.M_TO_U);
-            dirangleDeg = 3f;
+            dirangleDeg = 1.5f;
         }
 
         side.crs(cam.up).nor().scl(separation);
@@ -120,17 +120,6 @@ public class SGRStereoscopic extends SGRAbstract implements ISGR, IObserver {
                 anaglyphic.render(fb2, fb);
             else
                 anaglyphic.render(fb2, null);
-
-            //            if (fb != null)
-            //                fb.begin();
-            //
-            //            GlobalResources.spriteBatch.begin();
-            //            GlobalResources.spriteBatch.setColor(1f, 1f, 1f, 1f);
-            //            GlobalResources.spriteBatch.draw(texRight, 0, 0, 0, 0, rw, rh, 1, 1, 0, 0, 0, rw, rh, false, true);
-            //            GlobalResources.spriteBatch.end();
-            //
-            //            if (fb != null)
-            //                fb.end();
 
         } else {
             // Update rc
