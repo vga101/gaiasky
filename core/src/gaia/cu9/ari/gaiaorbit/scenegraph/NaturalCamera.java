@@ -28,6 +28,8 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 	public static final double CAM_FAR = 1e6 * Constants.PC_TO_U;
 	/** Camera near values **/
 	public static final double CAM_NEAR = 1e5 * Constants.KM_TO_U;
+	
+	private static final double MIN_DIST = 5 * Constants.M_TO_U;
 
 	/** Stereoscopic mode cameras **/
 	private PerspectiveCamera camLeft, camRight;
@@ -54,6 +56,8 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 	private Vector3d hor, vert;
 	/** Time since last forward control issued, in seconds **/
 	private double lastFwdTime = 0d;
+	/** The last forward amount, positive forward, negative backward **/
+	private double lastFwdAmount = 0;
 
 	/** Info about whether the previous state is saved **/
 	protected boolean stateSaved = false;
@@ -166,7 +170,8 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 		// The whole update thread must lock the value of direction and up
 		distance = pos.len();
 		CameraMode m = (parent.current == this ? parent.mode : lastMode);
-		double translateUnits = Math.max(10d * Constants.M_TO_U, getTranslateUnits());
+		double realTransUnits = getTranslateUnits();
+		double translateUnits = Math.max(10d * Constants.M_TO_U, realTransUnits);
 		switch (m) {
 		case Focus:
 			if (focus.withinMagLimit()) {
@@ -185,7 +190,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 
 				// Update direction to follow focus and activate custom input
 				// listener
-				updatePosition(dt, translateUnits);
+				updatePosition(dt, translateUnits, realTransUnits);
 				updateRotation(dt, focusPos);
 
 				if (!diverted) {
@@ -215,7 +220,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 			}
 			break;
 		case Free_Camera:
-			updatePosition(dt, translateUnits);
+			updatePosition(dt, translateUnits, 1);
 
 			// Update direction with pitch, yaw, roll
 			updateRotationFree(dt, GlobalConf.scene.TURNING_SPEED);
@@ -288,6 +293,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 		force.add(desired);
 		// We reset the time counter
 		lastFwdTime = 0;
+		lastFwdAmount = amount;
 	}
 
 	/**
@@ -462,7 +468,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 	 * @param dt
 	 * @param multiplier
 	 */
-	protected void updatePosition(double dt, double multiplier) {
+	protected void updatePosition(double dt, double multiplier, double transUnits) {
 		// Calculate velocity if coming from gamepad
 		if (velocityGamepad != 0) {
 			vel.set(direction).nor().scl(velocityGamepad * gamepadMultiplier * multiplier);
@@ -479,9 +485,8 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 
 		force.add(friction);
 
-		if (lastFwdTime > 1.2 && velocityGamepad == 0) {
-			if (fullStop)
-				stopForwardMovement();
+		if (lastFwdTime > 1.2 && velocityGamepad == 0 && fullStop || lastFwdAmount > 0 && transUnits == 0) {
+			stopForwardMovement();
 		}
 
 		applyForce(force);
@@ -656,11 +661,11 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 		double dist;
 		if (parent.mode == CameraMode.Focus && focus != null) {
 			AbstractPositionEntity ancestor = focus.getComputedAncestor();
-			dist = ancestor.distToCamera - ancestor.getRadius();
+			dist = ancestor.distToCamera - (ancestor.getRadius() + MIN_DIST);
 		} else {
 			dist = distance;
 		}
-		return dist * GlobalConf.scene.CAMERA_SPEED;
+		return dist > 0 ? dist * GlobalConf.scene.CAMERA_SPEED : 0;
 	}
 
 	/**
@@ -972,8 +977,8 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 	public void setCameraStereoRight(PerspectiveCamera cam) {
 		copyCamera(cam, camRight);
 	}
-	
-	private void copyCamera(PerspectiveCamera source, PerspectiveCamera target){
+
+	private void copyCamera(PerspectiveCamera source, PerspectiveCamera target) {
 		target.far = source.far;
 		target.near = source.near;
 		target.direction.set(source.direction);
