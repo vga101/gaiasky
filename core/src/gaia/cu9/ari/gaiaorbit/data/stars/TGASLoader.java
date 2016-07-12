@@ -33,10 +33,9 @@ import gaia.cu9.ari.gaiaorbit.util.parse.Parser;
  * alphaStarError delta deltaError varpi varpiError muAlphaStar muAlphaStarError
  * muDelta muDeltaError nObsAl nOut excessNoise gMag nuEff C M
  * 
- * Source position and corresponding errors are in radian, parallax in mas and
- * propermotion in mas/yr Color and magnitude are based on 2Mass catalogue C =
- * Jmag-Kmag and M = (VTmag+5*(1+log10(varPi/1000))) set to NaN if some data is
- * not available
+ * Source position and corresponding errors are in radians, parallax in mas and
+ * propermotion in mas/yr. The colors we get from the BT and VT magnitudes in
+ * the original Tycho2 catalog: B-V = 0.85 * (BT - VT)
  * 
  * @author Toni Sagrista
  *
@@ -55,9 +54,14 @@ public class TGASLoader extends AbstractCatalogLoader implements ISceneGraphLoad
     /** Whether to load the sourceId->HIP correspondences file **/
     public boolean useHIP = false;
     /** Gaia sourceId to HIP numbers csv file **/
-    private static final String idCorrespondences = "data/tgas_201507/hip-sourceid-correspondences.csv";
+    private static final String idCorrespondencesFile = "data/tgas_201507/hip-sourceid-correspondences.csv";
     /** Map of Gaia sourceId to HIP id **/
     private Map<Long, Integer> sidHIPMap;
+
+    /** Colors BT, VT for all Tycho2 stars file **/
+    private static final String btvtColorsFile = "data/tgas_final/bt-vt-tycho.csv";
+    /** TYC identifier to B-V colours **/
+    private Map<String, Float> tycBV;
 
     /**
      * INDICES: source_id ra[deg] dec[deg] parallax[mas] parallax_error[mas]
@@ -106,8 +110,10 @@ public class TGASLoader extends AbstractCatalogLoader implements ISceneGraphLoad
         }
 
         if (useHIP) {
-            sidHIPMap = loadSourceidHipCorrespondences(idCorrespondences);
+            sidHIPMap = loadSourceidHipCorrespondences(idCorrespondencesFile);
         }
+
+        tycBV = loadTYCBVColours(btvtColorsFile);
 
         List<Particle> stars = new ArrayList<Particle>();
         for (String file : files) {
@@ -192,22 +198,28 @@ public class TGASLoader extends AbstractCatalogLoader implements ISceneGraphLoad
                 Vector3 pmfloat = pm.toVector3();
                 Vector3 pmSph = new Vector3(Parser.parseFloat(st[indices[MUALPHA]].trim()), Parser.parseFloat(st[indices[MUDELTA]].trim()), 0f);
 
-                /** COLOR **/
-                float color = 0;
-                if (indices[BP_MAG] >= 0 && indices[RP_MAG] >= 0) {
-                    // Real TGAS
-                    float bp = new Double(Parser.parseDouble(st[indices[BP_MAG]].trim())).floatValue();
-                    float rp = new Double(Parser.parseDouble(st[indices[RP_MAG]].trim())).floatValue();
-                    color = bp - rp;
+                /** COLOR, we use the tycBV map if present **/
+                float colorbv = 0;
+                if (tycBV != null) {
+                    if (tycBV.containsKey(tycho2)) {
+                        colorbv = tycBV.get(tycho2);
+                    }
                 } else {
-                    // Use color value in BP
-                    color = new Double(Parser.parseDouble(st[indices[BP_MAG]].trim())).floatValue();
+                    if (indices[BP_MAG] >= 0 && indices[RP_MAG] >= 0) {
+                        // Real TGAS
+                        float bp = new Double(Parser.parseDouble(st[indices[BP_MAG]].trim())).floatValue();
+                        float rp = new Double(Parser.parseDouble(st[indices[RP_MAG]].trim())).floatValue();
+                        colorbv = bp - rp;
+                    } else {
+                        // Use color value in BP
+                        colorbv = new Double(Parser.parseDouble(st[indices[BP_MAG]].trim())).floatValue();
+                    }
                 }
 
                 float absmag = appmag;
                 String name = Long.toString(sourceid);
 
-                Star star = new Star(pos, pmfloat, pmSph, appmag, absmag, color, name, (float) ra, (float) dec, sourceid, hip, tycho2, (byte) 1);
+                Star star = new Star(pos, pmfloat, pmSph, appmag, absmag, colorbv, name, (float) ra, (float) dec, sourceid, hip, tycho2, (byte) 1);
                 if (runFiltersAnd(star))
                     stars.add(star);
             }
@@ -232,7 +244,7 @@ public class TGASLoader extends AbstractCatalogLoader implements ISceneGraphLoad
                     addCorrespondence(line, result);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            Logger.error(e);
         } finally {
             try {
                 br.close();
@@ -251,6 +263,53 @@ public class TGASLoader extends AbstractCatalogLoader implements ISceneGraphLoad
         long sourceId = Parser.parseLong(st[3].trim());
 
         map.put(sourceId, hip);
+    }
+
+    private Map<String, Float> loadTYCBVColours(String file) {
+        Map<String, Float> result = new HashMap<String, Float>();
+        FileHandle f = Gdx.files.internal(file);
+        InputStream data = f.read();
+        BufferedReader br = new BufferedReader(new InputStreamReader(data));
+        try {
+            // skip first line with headers
+            br.readLine();
+            int i = 1;
+            String line;
+            while ((line = br.readLine()) != null) {
+
+                if (!line.startsWith(comment))
+                    //Add B-V colour
+                    addColour(line, result);
+                Logger.debug("Line " + i++);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                br.close();
+            } catch (IOException e) {
+                Logger.error(e);
+            }
+
+        }
+
+        return result;
+    }
+
+    private void addColour(String line, Map<String, Float> map) {
+        String[] st = line.split(comma);
+        int tyc1 = Parser.parseInt(st[1].trim());
+        int tyc2 = Parser.parseInt(st[2].trim());
+        int tyc3 = Parser.parseInt(st[3].trim());
+
+        float BV = 0;
+        if (st.length >= 7) {
+            float bt = Parser.parseFloat(st[5].trim());
+            float vt = Parser.parseFloat(st[6].trim());
+            BV = 0.850f * (bt - vt);
+        }
+
+        map.put(String.format("%04d", tyc1) + "-" + String.format("%05d", tyc2) + "-" + tyc3, BV);
     }
 
 }

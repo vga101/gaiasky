@@ -48,7 +48,8 @@ public class ScreenshotsManager implements IObserver {
 
     public ScreenshotsManager() {
         super();
-        frameRenderer = new BufferedFileImageRenderer(GlobalConf.runtime.OUTPUT_FRAME_BUFFER_SIZE);
+        //frameRenderer = new BufferedFileImageRenderer(GlobalConf.runtime.OUTPUT_FRAME_BUFFER_SIZE);
+        frameRenderer = new BasicFileImageRenderer();
         screenshotRenderer = new BasicFileImageRenderer();
         screenshot = new ScreenshotCmd();
 
