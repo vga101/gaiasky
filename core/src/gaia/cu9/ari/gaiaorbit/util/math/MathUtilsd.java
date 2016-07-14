@@ -3,25 +3,28 @@ package gaia.cu9.ari.gaiaorbit.util.math;
 /*******************************************************************************
  * Copyright 2011 See AUTHORS file.
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  ******************************************************************************/
 
 import java.util.Random;
 
-/** Utility and fast math functions.
+/**
+ * Utility and fast math functions.
  * <p>
  * Thanks to Riven on JavaGaming.org for the basis of sin/cos/atan2/floor/ceil.
- * @author Nathan Sweet */
+ * 
+ * @author Nathan Sweet
+ */
 public final class MathUtilsd {
     static public final double nanoToSec = 1 / 1000000000;
 
@@ -92,6 +95,7 @@ public final class MathUtilsd {
 
     /**
      * Arc cos approximation
+     * 
      * @return
      */
     static public final double acos_v1(double x) {
@@ -163,12 +167,17 @@ public final class MathUtilsd {
 
     static public Random random = new Random();
 
-    /** Returns a random number between 0 (inclusive) and the specified value (inclusive). */
+    /**
+     * Returns a random number between 0 (inclusive) and the specified value
+     * (inclusive).
+     */
     static public final int random(int range) {
         return random.nextInt(range + 1);
     }
 
-    /** Returns a random number between start (inclusive) and end (inclusive). */
+    /**
+     * Returns a random number between start (inclusive) and end (inclusive).
+     */
     static public final int random(int start, int end) {
         return start + random.nextInt(end - start + 1);
     }
@@ -178,7 +187,10 @@ public final class MathUtilsd {
         return random.nextBoolean();
     }
 
-    /** Returns true if a random value between 0 and 1 is less than the specified value. */
+    /**
+     * Returns true if a random value between 0 and 1 is less than the specified
+     * value.
+     */
     static public final boolean randomBoolean(double chance) {
         return MathUtilsd.random() < chance;
     }
@@ -188,19 +200,27 @@ public final class MathUtilsd {
         return random.nextDouble();
     }
 
-    /** Returns a random number between 0 (inclusive) and the specified value (exclusive). */
+    /**
+     * Returns a random number between 0 (inclusive) and the specified value
+     * (exclusive).
+     */
     static public final double random(double range) {
         return random.nextDouble() * range;
     }
 
-    /** Returns a random number between start (inclusive) and end (exclusive). */
+    /**
+     * Returns a random number between start (inclusive) and end (exclusive).
+     */
     static public final double random(double start, double end) {
         return start + random.nextDouble() * (end - start);
     }
 
     // ---
 
-    /** Returns the next power of two. Returns the specified value if the value is already a power of two. */
+    /**
+     * Returns the next power of two. Returns the specified value if the value
+     * is already a power of two.
+     */
     static public int nextPowerOfTwo(int value) {
         if (value == 0)
             return 1;
@@ -261,68 +281,106 @@ public final class MathUtilsd {
     static private final double BIG_ENOUGH_CEIL = 16384.999999999996;
     static private final double BIG_ENOUGH_ROUND = BIG_ENOUGH_INT + 0.5f;
 
-    /** Returns the largest integer less than or equal to the specified double. This method will only properly floor doubles from
-     * -(2^14) to (Float.MAX_VALUE - 2^14). */
+    /**
+     * Returns the largest integer less than or equal to the specified double.
+     * This method will only properly floor doubles from -(2^14) to
+     * (Float.MAX_VALUE - 2^14).
+     */
     static public int floor(double x) {
         return (int) (x + BIG_ENOUGH_FLOOR) - BIG_ENOUGH_INT;
     }
 
-    /** Returns the largest integer less than or equal to the specified double. This method will only properly floor doubles that are
-     * positive. Note this method simply casts the double to int. */
+    /**
+     * Returns the largest integer less than or equal to the specified double.
+     * This method will only properly floor doubles that are positive. Note this
+     * method simply casts the double to int.
+     */
     static public int floorPositive(double x) {
         return (int) x;
     }
 
-    /** Returns the smallest integer greater than or equal to the specified double. This method will only properly ceil doubles from
-     * -(2^14) to (Float.MAX_VALUE - 2^14). */
+    /**
+     * Returns the smallest integer greater than or equal to the specified
+     * double. This method will only properly ceil doubles from -(2^14) to
+     * (Float.MAX_VALUE - 2^14).
+     */
     static public int ceil(double x) {
         return (int) (x + BIG_ENOUGH_CEIL) - BIG_ENOUGH_INT;
     }
 
-    /** Returns the smallest integer greater than or equal to the specified double. This method will only properly ceil doubles that
-     * are positive. */
+    /**
+     * Returns the smallest integer greater than or equal to the specified
+     * double. This method will only properly ceil doubles that are positive.
+     */
     static public int ceilPositive(double x) {
         return (int) (x + CEIL);
     }
 
-    /** Returns the closest integer to the specified double. This method will only properly round doubles from -(2^14) to
-     * (Float.MAX_VALUE - 2^14). */
+    /**
+     * Returns the closest integer to the specified double. This method will
+     * only properly round doubles from -(2^14) to (Float.MAX_VALUE - 2^14).
+     */
     static public int round(double x) {
         return (int) (x + BIG_ENOUGH_ROUND) - BIG_ENOUGH_INT;
     }
 
-    /** Returns the closest integer to the specified double. This method will only properly round doubles that are positive. */
+    /**
+     * Returns the closest integer to the specified double. This method will
+     * only properly round doubles that are positive.
+     */
     static public int roundPositive(double x) {
         return (int) (x + 0.5f);
     }
 
-    /** Returns true if the value is zero (using the default tolerance as upper bound) */
+    /**
+     * Returns true if the value is zero (using the default tolerance as upper
+     * bound)
+     */
     static public boolean isZero(double value) {
         return Math.abs(value) <= FLOAT_ROUNDING_ERROR;
     }
 
-    /** Returns true if the value is zero.
-     * @param tolerance represent an upper bound below which the value is considered zero. */
+    /**
+     * Returns true if the value is zero.
+     * 
+     * @param tolerance
+     *            represent an upper bound below which the value is considered
+     *            zero.
+     */
     static public boolean isZero(double value, double tolerance) {
         return Math.abs(value) <= tolerance;
     }
 
-    /** Returns true if a is nearly equal to b. The function uses the default doubleing error tolerance.
-     * @param a the first value.
-     * @param b the second value. */
+    /**
+     * Returns true if a is nearly equal to b. The function uses the default
+     * doubleing error tolerance.
+     * 
+     * @param a
+     *            the first value.
+     * @param b
+     *            the second value.
+     */
     static public boolean isEqual(double a, double b) {
         return Math.abs(a - b) <= FLOAT_ROUNDING_ERROR;
     }
 
-    /** Returns true if a is nearly equal to b.
-     * @param a the first value.
-     * @param b the second value.
-     * @param tolerance represent an upper bound below which the two values are considered equal. */
+    /**
+     * Returns true if a is nearly equal to b.
+     * 
+     * @param a
+     *            the first value.
+     * @param b
+     *            the second value.
+     * @param tolerance
+     *            represent an upper bound below which the two values are
+     *            considered equal.
+     */
     static public boolean isEqual(double a, double b, double tolerance) {
         return Math.abs(a - b) <= tolerance;
     }
 
-    /** Fast sqrt method. Default passes it through one round of Newton's method.
+    /**
+     * Fast sqrt method. Default passes it through one round of Newton's method.
      * 
      * @param value
      * @return
@@ -338,7 +396,9 @@ public final class MathUtilsd {
         return (x < 0.0) ? -t : t;
     }
 
-    /* minimax approximation to cos on [-pi/4, pi/4] with rel. err. ~= 7.5e-13 */
+    /*
+     * minimax approximation to cos on [-pi/4, pi/4] with rel. err. ~= 7.5e-13
+     */
     static public double cos_core(double x) {
         double x8, x4, x2;
         x2 = x * x;
@@ -348,7 +408,9 @@ public final class MathUtilsd {
         return (-2.7236370439787708e-7 * x2 + 2.4799852696610628e-5) * x8 + (-1.3888885054799695e-3 * x2 + 4.1666666636943683e-2) * x4 + (-4.9999999999963024e-1 * x2 + 1.0000000000000000e+0);
     }
 
-    /* minimax approximation to sin on [-pi/4, pi/4] with rel. err. ~= 5.5e-12 */
+    /*
+     * minimax approximation to sin on [-pi/4, pi/4] with rel. err. ~= 5.5e-12
+     */
     static public double sin_core(double x) {
         double x4, x2;
         x2 = x * x;
@@ -357,7 +419,9 @@ public final class MathUtilsd {
         return ((2.7181216275479732e-6 * x2 - 1.9839312269456257e-4) * x4 + (8.3333293048425631e-3 * x2 - 1.6666666640797048e-1)) * x2 * x + x;
     }
 
-    /* minimax approximation to arcsin on [0, 0.5625] with rel. err. ~= 1.5e-11 */
+    /*
+     * minimax approximation to arcsin on [0, 0.5625] with rel. err. ~= 1.5e-11
+     */
     static public double asin_core(double x) {
         double x8, x4, x2;
         x2 = x * x;
@@ -388,9 +452,9 @@ public final class MathUtilsd {
     static public double acos_v2(double x) {
         double xa, t;
         xa = Math.abs(x);
-        /* arcsin(x) = pi/2 - 2 * arcsin (sqrt ((1-x) / 2)) 
-         * arccos(x) = pi/2 - arcsin(x)
-         * arccos(x) = 2 * arcsin (sqrt ((1-x) / 2))
+        /*
+         * arcsin(x) = pi/2 - 2 * arcsin (sqrt ((1-x) / 2)) arccos(x) = pi/2 -
+         * arcsin(x) arccos(x) = 2 * arcsin (sqrt ((1-x) / 2))
          */
         if (xa > 0.5625) {
             t = 2.0 * asin_core(sqrt(0.5 * (1.0 - xa)));
@@ -403,11 +467,17 @@ public final class MathUtilsd {
 
     /**
      * Lineal interpolation.
-     * @param x The value to interpolate.
-     * @param x0 Inferior limit to the independent value.
-     * @param x1 Superior limit to the independent value.
-     * @param y0 Inferior limit to the dependent value.
-     * @param y1 Superior limit to the dependent value.
+     * 
+     * @param x
+     *            The value to interpolate.
+     * @param x0
+     *            Inferior limit to the independent value.
+     * @param x1
+     *            Superior limit to the independent value.
+     * @param y0
+     *            Inferior limit to the dependent value.
+     * @param y1
+     *            Superior limit to the dependent value.
      * @return
      */
     public static double lint(double x, double x0, double x1, double y0, double y1) {
@@ -430,11 +500,17 @@ public final class MathUtilsd {
 
     /**
      * Lineal interpolation.
-     * @param x The value to interpolate.
-     * @param x0 Inferior limit to the independent value.
-     * @param x1 Superior limit to the independent value.
-     * @param y0 Inferior limit to the dependent value.
-     * @param y1 Superior limit to the dependent value.
+     * 
+     * @param x
+     *            The value to interpolate.
+     * @param x0
+     *            Inferior limit to the independent value.
+     * @param x1
+     *            Superior limit to the independent value.
+     * @param y0
+     *            Inferior limit to the dependent value.
+     * @param y1
+     *            Superior limit to the dependent value.
      * @return
      */
     public static float lint(float x, float x0, float x1, float y0, float y1) {
@@ -457,11 +533,17 @@ public final class MathUtilsd {
 
     /**
      * Lineal interpolation.
-     * @param x The value to interpolate.
-     * @param x0 Inferior limit to the independent value.
-     * @param x1 Superior limit to the independent value.
-     * @param y0 Inferior limit to the dependent value.
-     * @param y1 Superior limit to the dependent value.
+     * 
+     * @param x
+     *            The value to interpolate.
+     * @param x0
+     *            Inferior limit to the independent value.
+     * @param x1
+     *            Superior limit to the independent value.
+     * @param y0
+     *            Inferior limit to the dependent value.
+     * @param y1
+     *            Superior limit to the dependent value.
      * @return
      */
     public static float lint(long x, long x0, long x1, float y0, float y1) {
@@ -482,21 +564,28 @@ public final class MathUtilsd {
         return (float) (y0 + (y1 - y0) * (x - rx0) / (rx1 - rx0));
     }
 
-    static Vector3d aux0, aux1, aux2, aux3, aux4;
+    static Vector3d aux0, aux1, aux2, aux3, aux4, aux5;
     static {
         aux0 = new Vector3d();
         aux1 = new Vector3d();
         aux2 = new Vector3d();
         aux3 = new Vector3d();
         aux4 = new Vector3d();
+        aux5 = new Vector3d();
     }
 
     /**
      * Gets the distance from the point x0 to the line denoted by x1-x2.<br/>
-     * Check <a href="http://mathworld.wolfram.com/Point-LineDistance3-Dimensional.html">this link</a>.
-     * @param x1 The first point in the line.
-     * @param x2 The second point in the line.
-     * @param x0 The point.
+     * Check <a href=
+     * "http://mathworld.wolfram.com/Point-LineDistance3-Dimensional.html">this
+     * link</a>.
+     * 
+     * @param x1
+     *            The first point in the line.
+     * @param x2
+     *            The second point in the line.
+     * @param x0
+     *            The point.
      * @return The euclidean distance between the line (x1, x2) and x0.
      */
     public static double distancePointLine(double x1, double y1, double z1, double x2, double y2, double z2, double x0, double y0, double z0) {
@@ -510,11 +599,17 @@ public final class MathUtilsd {
     }
 
     /**
-     * Gets the distance from the point x0 to the segment denoted by x1-x2.<br/>
-     * Check <a href="http://mathworld.wolfram.com/Point-LineDistance3-Dimensional.html">this link</a>.
-     * @param x1 The first segment delimiter.
-     * @param x2 The second segment delimiter.
-     * @param x0 The point.
+     * Gets the distance from the point p0 to the segment denoted by p1-p2.<br/>
+     * Check <a href=
+     * "http://mathworld.wolfram.com/Point-LineDistance3-Dimensional.html">this
+     * link</a>.
+     * 
+     * @param x1
+     *            The first segment delimiter.
+     * @param x2
+     *            The second segment delimiter.
+     * @param x0
+     *            The point.
      * @return The euclidean distance between the segment (x1, x2)
      */
     public static double distancePointSegment(double x1, double y1, double z1, double x2, double y2, double z2, double x0, double y0, double z0) {
@@ -538,6 +633,60 @@ public final class MathUtilsd {
             return p.dst(w); // Beyond the 'w' end of the segment
         Vector3d projection = v.add(aux4.scl(t)); // Projection falls on the segment
         return p.dst(projection);
+    }
+
+    /**
+     * Gets the closest point on the line p1-p2 from p0.<br/>
+     * Check <a href=
+     * "http://stackoverflow.com/questions/9368436/3d-perpendicular-point-on-line-from-3d-point">
+     * this link</a>.
+     * 
+     * @param x1
+     *            The first segment delimiter.
+     * @param x2
+     *            The second segment delimiter.
+     * @param x0
+     *            The point.
+     * @return The vector with the closest point on the line to p0
+     */
+    public static Vector3d getClosestPoint(double x1, double y1, double z1, double x2, double y2, double z2, double x0, double y0, double z0) {
+        //        Vector3 p1 = new Vector3(x1, y1, z1);
+        //        Vector3 p2 = new Vector3(x2, y2, z2);
+        //        Vector3 q = new Vector3(x3, y3, z3);
+        //
+        //        Vector3 u = p2 - p1;
+        //        Vector3 pq = q - p1;
+        //        Vector3 w2 = pq - Vector3.Multiply(u, Vector3.Dot(pq, u) / u.LengthSquared);
+        //
+        //        Vector3 point = q - w2;
+        Vector3d p1 = aux0.set(x1, y1, z1);
+        Vector3d p2 = aux1.set(x2, y2, z2);
+        Vector3d q = aux2.set(x0, y0, z0);
+
+        Vector3d u = aux3.set(p2).sub(p1);
+        Vector3d pq = aux4.set(q).sub(p1);
+        double scale = pq.dot(u) / u.len2();
+        Vector3d w2 = aux5.set(pq).sub(u.scl(scale));
+
+        Vector3d result = new Vector3d(q);
+        return result.sub(w2);
+    }
+
+    public static Vector3d getClosestPoint2(double x1, double y1, double z1, double x2, double y2, double z2, double x0, double y0, double z0) {
+        //           (P2-P1)dot(v)
+        //Pr = P1 +  ------------- * v.
+        //           (v)dot(v)
+
+        Vector3d p1 = aux0.set(x1, y1, z1);
+        Vector3d p2 = aux1.set(x0, y0, z0);
+        Vector3d v = aux2.set(x2 - x1, y2 - y1, z2 - z1);
+
+        double nomin = aux3.set(p2).sub(p1).dot(v);
+        double denom = v.dot(v);
+        Vector3d frac = aux4.set(v).scl(nomin / denom);
+
+        Vector3d result = new Vector3d(p1).add(frac);
+        return result;
     }
 
 }

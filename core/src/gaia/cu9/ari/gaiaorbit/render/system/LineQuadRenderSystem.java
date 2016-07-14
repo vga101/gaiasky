@@ -14,15 +14,12 @@ import gaia.cu9.ari.gaiaorbit.render.IRenderable;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
-import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
 public class LineQuadRenderSystem extends LineRenderSystem {
-    /** 100 pc of bin **/
-    private static double bin = 100 * Constants.PC_TO_U;
 
     private static final int shortLimit = (int) Math.pow(2, 2 * 8);
     private MeshDataExt currext;
@@ -39,7 +36,7 @@ public class LineQuadRenderSystem extends LineRenderSystem {
         }
     }
 
-    Vector3d line, camdir, point, vec, aux, aux2;
+    Vector3d line, camdir0, camdir1, camdir15, point, vec, aux, aux2;
     final static double widthAngle = Math.toRadians(0.07);
     final static double widthAngleTan = Math.tan(widthAngle);
 
@@ -47,7 +44,9 @@ public class LineQuadRenderSystem extends LineRenderSystem {
         super(rg, priority, alphas);
         glType = GL20.GL_TRIANGLES;
         line = new Vector3d();
-        camdir = new Vector3d();
+        camdir0 = new Vector3d();
+        camdir1 = new Vector3d();
+        camdir15 = new Vector3d();
         point = new Vector3d();
         vec = new Vector3d();
         aux = new Vector3d();
@@ -110,42 +109,23 @@ public class LineQuadRenderSystem extends LineRenderSystem {
     }
 
     public void addLine(double x0, double y0, double z0, double x1, double y1, double z1, float r, float g, float b, float a) {
-        // We bin long lines
-        vec.set(x1 - x0, y1 - y0, z1 - z0);
-        double realLength = vec.len();
-        double currLength = 0;
-        aux.set(x0, y0, z0);
-        if (realLength > bin) {
-            while (currLength < realLength) {
-                double vecLength = bin;
-                if (currLength + vecLength > realLength) {
-                    vecLength = realLength - currLength;
-                }
-                vec.setLength(vecLength);
-                aux2.set(aux).add(vec);
-                addLineInternal(aux.x, aux.y, aux.z, aux2.x, aux2.y, aux2.z, r, g, b, a);
-                aux.set(aux2);
-                currLength += bin;
-            }
-        } else {
-            addLineInternal(x0, y0, z0, x1, y1, z1, r, g, b, a);
-        }
-
+        addLineInternal(x0, y0, z0, x1, y1, z1, r, g, b, a);
     }
 
     public void addLineInternal(double x0, double y0, double z0, double x1, double y1, double z1, float r, float g, float b, float a) {
+        addLineInternal(x0, y0, z0, x1, y1, z1, r, g, b, a, true);
+    }
 
-        // Check if 6 more indices fit
-        if (currext.numVertices + 3 >= shortLimit) {
-            // We need to open a new MeshDataExt!
-            initVertices(meshIdx++);
-        }
+    public void addLineInternal(double x0, double y0, double z0, double x1, double y1, double z1, float r, float g, float b, float a, boolean rec) {
 
-        camdir.set(camera.getDirection());
         line.set(x1 - x0, y1 - y0, z1 - z0);
 
-        // Camdir will contain the perpendicular to camdir and line
-        camdir.crs(line);
+        camdir0.set(x0, y0, z0);
+        camdir1.set(x1, y1, z1);
+
+        // Camdir0 and 1 will contain the perpendicular to camdir and line
+        camdir0.crs(line);
+        camdir1.crs(line);
 
         double distToSegment = MathUtilsd.distancePointSegment(x0, y0, z0, x1, y1, z1, 0, 0, 0);
 
@@ -153,40 +133,50 @@ public class LineQuadRenderSystem extends LineRenderSystem {
         double dist0 = Math.sqrt(x0 * x0 + y0 * y0 + z0 * z0);
         double dist1 = Math.sqrt(x1 * x1 + y1 * y1 + z1 * z1);
 
-        if (distToSegment < dist0 && distToSegment < dist1) {
-            // Projection falls in line
-            double widthInProj = widthAngleTan * distToSegment * camera.getFovFactor();
-            width0 = widthInProj;
-            width1 = widthInProj;
-        } else {
-            // Projection falls outside line
-            width0 = widthAngleTan * dist0 * camera.getFovFactor();
-            width1 = widthAngleTan * dist1 * camera.getFovFactor();
+        Vector3d p15 = null;
+
+        if (rec && distToSegment < dist0 && distToSegment < dist1) {
+            // Projection falls in line, split line
+            p15 = MathUtilsd.getClosestPoint2(x0, y0, z0, x1, y1, z1, 0, 0, 0);
+
+            addLineInternal(x0, y0, z0, p15.x, p15.y, p15.z, r, g, b, a, false);
+            addLineInternal(p15.x, p15.y, p15.z, x1, y1, z1, r, g, b, a, false);
+
+            return;
         }
 
-        camdir.setLength(width0);
+        // Check if 6 more indices fit
+        if (currext.numVertices + 3 >= shortLimit) {
+            // We need to open a new MeshDataExt!
+            initVertices(meshIdx++);
+        }
+
+        // Projection falls outside line
+        width0 = widthAngleTan * dist0 * camera.getFovFactor();
+        width1 = widthAngleTan * dist1 * camera.getFovFactor();
+
+        camdir0.setLength(width0);
         // P1
-        point.set(x0, y0, z0).add(camdir);
+        point.set(x0, y0, z0).add(camdir0);
         color(r, g, b, a);
         uv(0, 0);
         vertex((float) point.x, (float) point.y, (float) point.z);
 
         // P2
-        point.set(x0, y0, z0).sub(camdir);
+        point.set(x0, y0, z0).sub(camdir0);
         color(r, g, b, a);
         uv(0, 1);
         vertex((float) point.x, (float) point.y, (float) point.z);
 
-        camdir.setLength(width1);
-
+        camdir1.setLength(width1);
         // P3
-        point.set(x1, y1, z1).add(camdir);
+        point.set(x1, y1, z1).add(camdir1);
         color(r, g, b, a);
         uv(1, 0);
         vertex((float) point.x, (float) point.y, (float) point.z);
 
         // P4
-        point.set(x1, y1, z1).sub(camdir);
+        point.set(x1, y1, z1).sub(camdir1);
         color(r, g, b, a);
         uv(1, 1);
         vertex((float) point.x, (float) point.y, (float) point.z);
@@ -199,6 +189,7 @@ public class LineQuadRenderSystem extends LineRenderSystem {
         index((short) (currext.numVertices - 2));
         index((short) (currext.numVertices - 1));
         index((short) (currext.numVertices - 3));
+
     }
 
     private void index(short idx) {
@@ -227,7 +218,7 @@ public class LineQuadRenderSystem extends LineRenderSystem {
             MeshDataExt md = (MeshDataExt) meshes[i];
             md.mesh.setVertices(md.vertices, 0, md.vertexIdx);
             md.mesh.setIndices(md.indices, 0, md.indexIdx);
-            md.mesh.render(shaderProgram, GL20.GL_TRIANGLES);
+            md.mesh.render(shaderProgram, glType);
 
             md.clear();
         }
