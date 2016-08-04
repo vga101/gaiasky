@@ -5,10 +5,8 @@ deployment:
   production:
       branch: master
       commands:
-        - gradle desktop:createTar
-general:
-  artifacts:
-    - "releases/*.tgz"
+        - gradle desktop:gaiaskyJar
+
 
 dependencies:
   override:
