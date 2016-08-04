@@ -5,7 +5,8 @@ deployment:
   production:
       branch: master
       commands:
-        - gradle desktop:gaiaskyJar
+        - chmod u+x gradlew
+        - ./gradlew desktop:gaiaskyJar
 
 
 dependencies:
