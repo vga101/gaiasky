@@ -45,16 +45,17 @@ public class PixelRenderSystem extends ImmediateRenderSystem implements IObserve
     private float lastResolution = -1;
 
     protected void updatePointSize(int width, int height, boolean initialize) {
-        if (initialize)
-            GlobalConf.runtime.STAR_POINT_SIZE = GlobalConf.runtime.STRIPPED_FOV_MODE ? 2 : 6;
+        if (initialize && GlobalConf.scene.STAR_POINT_SIZE < 0)
+            GlobalConf.scene.STAR_POINT_SIZE = GlobalConf.runtime.STRIPPED_FOV_MODE ? 3 : 7;
 
         // Factor POINT_SIZE with resolution
         float baseResolution = lastResolution < 0 ? 720f : lastResolution;
         float currentResolution = (float) Math.min(width, height);
-        float factor = currentResolution / baseResolution;
-        GlobalConf.runtime.STAR_POINT_SIZE = Constants.webgl ? Math.min(300, Math.max(3, GlobalConf.runtime.STAR_POINT_SIZE * factor)) : Math.min(300, Math.max(3, GlobalConf.runtime.STAR_POINT_SIZE * factor));
 
-        GlobalConf.runtime.STAR_POINT_SIZE_BAK = GlobalConf.runtime.STAR_POINT_SIZE;
+        float factor = currentResolution / baseResolution;
+        GlobalConf.scene.STAR_POINT_SIZE = Constants.webgl ? Math.min(300, Math.max(3, GlobalConf.scene.STAR_POINT_SIZE * factor)) : Math.min(300, Math.max(3, GlobalConf.scene.STAR_POINT_SIZE * factor));
+
+        GlobalConf.scene.STAR_POINT_SIZE_BAK = GlobalConf.scene.STAR_POINT_SIZE;
         lastResolution = currentResolution;
     }
 
@@ -145,7 +146,7 @@ public class PixelRenderSystem extends ImmediateRenderSystem implements IObserve
         shaderProgram.setUniformf("u_fovFactor", camera.getFovFactor());
         shaderProgram.setUniformf("u_alpha", alphas[0]);
         shaderProgram.setUniformf("u_starBrightness", GlobalConf.scene.STAR_BRIGHTNESS * BRIGHTNESS_FACTOR);
-        shaderProgram.setUniformf("u_pointSize", camera.getNCameras() == 1 ? GlobalConf.runtime.STAR_POINT_SIZE : GlobalConf.runtime.STAR_POINT_SIZE * 10);
+        shaderProgram.setUniformf("u_pointSize", camera.getNCameras() == 1 ? GlobalConf.scene.STAR_POINT_SIZE : GlobalConf.scene.STAR_POINT_SIZE * 10);
         shaderProgram.setUniformf("u_t", (float) AstroUtils.getMsSinceJ2000(GaiaSky.instance.time.getTime()));
         shaderProgram.setUniformf("u_ar", GlobalConf.program.STEREOSCOPIC_MODE && (GlobalConf.program.STEREO_PROFILE != StereoProfile.HD_3DTV && GlobalConf.program.STEREO_PROFILE != StereoProfile.ANAGLYPHIC) ? 0.5f : 1f);
         curr.mesh.setVertices(curr.vertices, 0, curr.vertexIdx);

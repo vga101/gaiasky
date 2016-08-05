@@ -158,13 +158,9 @@ public class GlobalConf {
         public boolean STRIPPED_FOV_MODE = false;
         /** Whether octree drawing is active or not **/
         public boolean DRAW_OCTREE;
-        /** Size of stars rendered as point primitives **/
-        public float STAR_POINT_SIZE;
-        /** Fallback value **/
-        public float STAR_POINT_SIZE_BAK;
 
         public RuntimeConf() {
-            EventManager.instance.subscribe(this, Events.LIMIT_MAG_CMD, Events.INPUT_ENABLED_CMD, Events.DISPLAY_GUI_CMD, Events.TOGGLE_UPDATEPAUSE, Events.TOGGLE_TIME_CMD, Events.RECORD_CAMERA_CMD, Events.STAR_POINT_SIZE_INCREASE_CMD, Events.STAR_POINT_SIZE_DECREASE_CMD, Events.STAR_POINT_SIZE_RESET_CMD);
+            EventManager.instance.subscribe(this, Events.LIMIT_MAG_CMD, Events.INPUT_ENABLED_CMD, Events.DISPLAY_GUI_CMD, Events.TOGGLE_UPDATEPAUSE, Events.TOGGLE_TIME_CMD, Events.RECORD_CAMERA_CMD);
         }
 
         public void initialize(boolean dISPLAY_GUI, boolean uPDATE_PAUSE, boolean sTRIPPED_FOV_MODE, boolean tIME_ON, boolean iNPUT_ENABLED, boolean rECORD_CAMERA, float lIMIT_MAG_RUNTIME, boolean rEAL_TIME, boolean dRAW_OCTREE) {
@@ -211,15 +207,7 @@ public class GlobalConf {
             case RECORD_CAMERA_CMD:
                 toggleRecord((Boolean) data[0]);
                 break;
-            case STAR_POINT_SIZE_INCREASE_CMD:
-                STAR_POINT_SIZE = Math.min(STAR_POINT_SIZE + 1f, 300f);
-                break;
-            case STAR_POINT_SIZE_DECREASE_CMD:
-                STAR_POINT_SIZE = Math.max(STAR_POINT_SIZE - 1f, 0.5f);
-                break;
-            case STAR_POINT_SIZE_RESET_CMD:
-                STAR_POINT_SIZE = STAR_POINT_SIZE_BAK;
-                break;
+
             }
 
         }
@@ -579,6 +567,11 @@ public class GlobalConf {
         public float POINT_ALPHA_MIN;
         public float POINT_ALPHA_MAX;
 
+        /** Size of stars rendered as point primitives **/
+        public float STAR_POINT_SIZE;
+        /** Fallback value **/
+        public float STAR_POINT_SIZE_BAK;
+
         /**
          * Particle fade in/out flag for octree-backed catalogs. WARNING: This
          * implies particles are sent to GPU at each cycle
@@ -597,11 +590,11 @@ public class GlobalConf {
         public float OCTANT_THRESHOLD_1;
 
         public SceneConf() {
-            EventManager.instance.subscribe(this, Events.FOCUS_LOCK_CMD, Events.PROPER_MOTIONS_CMD, Events.STAR_BRIGHTNESS_CMD, Events.PM_LEN_FACTOR_CMD, Events.PM_NUM_FACTOR_CMD, Events.FOV_CHANGED_CMD, Events.CAMERA_SPEED_CMD, Events.ROTATION_SPEED_CMD, Events.TURNING_SPEED_CMD, Events.SPEED_LIMIT_CMD, Events.TRANSIT_COLOUR_CMD, Events.ONLY_OBSERVED_STARS_CMD, Events.COMPUTE_GAIA_SCAN_CMD, Events.PIXEL_RENDERER_CMD, Events.OCTREE_PARTICLE_FADE_CMD);
+            EventManager.instance.subscribe(this, Events.FOCUS_LOCK_CMD, Events.PROPER_MOTIONS_CMD, Events.STAR_BRIGHTNESS_CMD, Events.PM_LEN_FACTOR_CMD, Events.PM_NUM_FACTOR_CMD, Events.FOV_CHANGED_CMD, Events.CAMERA_SPEED_CMD, Events.ROTATION_SPEED_CMD, Events.TURNING_SPEED_CMD, Events.SPEED_LIMIT_CMD, Events.TRANSIT_COLOUR_CMD, Events.ONLY_OBSERVED_STARS_CMD, Events.COMPUTE_GAIA_SCAN_CMD, Events.PIXEL_RENDERER_CMD, Events.OCTREE_PARTICLE_FADE_CMD, Events.STAR_POINT_SIZE_INCREASE_CMD, Events.STAR_POINT_SIZE_DECREASE_CMD, Events.STAR_POINT_SIZE_RESET_CMD);
         }
 
         public void initialize(int gRAPHICS_QUALITY, long oBJECT_FADE_MS, float sTAR_BRIGHTNESS, float aMBIENT_LIGHT, int cAMERA_FOV, float cAMERA_SPEED, float tURNING_SPEED, float rOTATION_SPEED, int cAMERA_SPEED_LIMIT_IDX, boolean fOCUS_LOCK, float lABEL_NUMBER_FACTOR, boolean[] vISIBILITY, int pIXEL_RENDERER, int lINE_RENDERER, double sTAR_TH_ANGLE_NONE, double sTAR_TH_ANGLE_POINT, double sTAR_TH_ANGLE_QUAD, float pOINT_ALPHA_MIN, float pOINT_ALPHA_MAX, boolean oCTREE_PARTICLE_FADE,
-                float oCTANT_TH_ANGLE_0, float oCTANT_TH_ANGLE_1, boolean pROPER_MOTION_VECTORS, float pM_NUM_FACTOR, float pM_LEN_FACTOR) {
+                float oCTANT_TH_ANGLE_0, float oCTANT_TH_ANGLE_1, boolean pROPER_MOTION_VECTORS, float pM_NUM_FACTOR, float pM_LEN_FACTOR, float sTAR_POINT_SIZE) {
             GRAPHICS_QUALITY = gRAPHICS_QUALITY;
             OBJECT_FADE_MS = oBJECT_FADE_MS;
             STAR_BRIGHTNESS = sTAR_BRIGHTNESS;
@@ -628,6 +621,8 @@ public class GlobalConf {
             PROPER_MOTION_VECTORS = pROPER_MOTION_VECTORS;
             PM_NUM_FACTOR = pM_NUM_FACTOR;
             PM_LEN_FACTOR = pM_LEN_FACTOR;
+            STAR_POINT_SIZE = sTAR_POINT_SIZE;
+            STAR_POINT_SIZE_BAK = STAR_POINT_SIZE;
         }
 
         public void updateSpeedLimit() {
@@ -678,6 +673,7 @@ public class GlobalConf {
                 // No limit
                 CAMERA_SPEED_LIMIT = -1;
                 break;
+
             }
         }
 
@@ -726,13 +722,21 @@ public class GlobalConf {
             case PIXEL_RENDERER_CMD:
                 PIXEL_RENDERER = (Integer) data[0];
                 break;
-
             case OCTREE_PARTICLE_FADE_CMD:
                 OCTREE_PARTICLE_FADE = (boolean) data[1];
                 break;
-
             case PROPER_MOTIONS_CMD:
                 PROPER_MOTION_VECTORS = (boolean) data[1];
+                break;
+            case STAR_POINT_SIZE_INCREASE_CMD:
+                STAR_POINT_SIZE = Math.min(STAR_POINT_SIZE + 1f, 300f);
+                break;
+            case STAR_POINT_SIZE_DECREASE_CMD:
+                STAR_POINT_SIZE = Math.max(STAR_POINT_SIZE - 1f, 0.5f);
+                break;
+            case STAR_POINT_SIZE_RESET_CMD:
+                STAR_POINT_SIZE = STAR_POINT_SIZE_BAK;
+                break;
             }
 
         }
@@ -794,7 +798,7 @@ public class GlobalConf {
     }
 
     /**
-     * Initializes the properties
+     * Initialises the properties
      */
     public static void initialize(VersionConf vc, ProgramConf pc, SceneConf sc, DataConf dc, RuntimeConf rc, PostprocessConf ppc, PerformanceConf pfc, FrameConf fc, ScreenConf scrc, ScreenshotConf shc) throws Exception {
         if (!initialized) {
