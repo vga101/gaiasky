@@ -37,7 +37,7 @@ public class PixelRenderSystem extends ImmediateRenderSystem implements IObserve
     public PixelRenderSystem(RenderGroup rg, int priority, float[] alphas) {
         super(rg, priority, alphas);
         EventManager.instance.subscribe(this, Events.TRANSIT_COLOUR_CMD, Events.ONLY_OBSERVED_STARS_CMD);
-        BRIGHTNESS_FACTOR = Constants.webgl ? 15f : 4f;
+        BRIGHTNESS_FACTOR = Constants.webgl ? 15f : 10f;
         updatePointSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
 
     }
