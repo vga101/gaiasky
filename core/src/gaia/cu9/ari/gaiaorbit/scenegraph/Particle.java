@@ -25,6 +25,7 @@ import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
 
 /**
  * A point particle which may represent a star, a galaxy, etc.
+ * 
  * @author Toni Sagrista
  *
  */
@@ -55,15 +56,12 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
 
     /**
      * Source of this star:
-     * <ul><li>
-     * -1: Unknown 
-     * </li><li>
-     * 1: Gaia
-     * </li><li>
-     * 2: Hipparcos (HYG)
-     * </li><li>
-     * 3: Tycho
-     * </li></ul>
+     * <ul>
+     * <li>-1: Unknown</li>
+     * <li>1: Gaia</li>
+     * <li>2: Hipparcos (HYG)</li>
+     * <li>3: Tycho</li>
+     * </ul>
      */
     public byte catalogSource = -1;
 
@@ -82,9 +80,8 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
     /** Its page **/
     public OctreeNode<? extends SceneGraphNode> octant;
 
-    /** Particle type
-     * 90 - real star
-     * 92 - virtual particle
+    /**
+     * Particle type 90 - real star 92 - virtual particle
      */
     public int type = 90;
     public int nparticles = 1;
@@ -95,12 +92,20 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
 
     /**
      * Creates a new star.
-     * @param pos Cartesian position, in equatorial coordinates and in internal units.
-     * @param appmag Apparent magnitude.
-     * @param absmag Absolute magnitude.
-     * @param colorbv The B-V color index.
-     * @param name The label or name.
-     * @param starid The star unique id.
+     * 
+     * @param pos
+     *            Cartesian position, in equatorial coordinates and in internal
+     *            units.
+     * @param appmag
+     *            Apparent magnitude.
+     * @param absmag
+     *            Absolute magnitude.
+     * @param colorbv
+     *            The B-V color index.
+     * @param name
+     *            The label or name.
+     * @param starid
+     *            The star unique id.
      */
     public Particle(Vector3d pos, float appmag, float absmag, float colorbv, String name, long starid) {
         this();
@@ -157,7 +162,8 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
     }
 
     /**
-     * Re-implementation of update method of {@link CelestialBody} and {@link SceneGraphNode}.
+     * Re-implementation of update method of {@link CelestialBody} and
+     * {@link SceneGraphNode}.
      */
     @Override
     public void update(ITimeFrameProvider time, final Transform parentTransform, ICamera camera, float opacity) {
@@ -239,7 +245,9 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
 
     /**
      * Sets the color
-     * @param bv B-V color index
+     * 
+     * @param bv
+     *            B-V color index
      */
     private void setRGB(float bv) {
         cc = ColourUtils.BVtoRGB(bv);
@@ -248,7 +256,7 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
 
     @Override
     public float getInnerRad() {
-        return 0.03f * DISC_FACTOR;
+        return 0.03f * DISC_FACTOR + GlobalConf.scene.STAR_POINT_SIZE * 0.005f;
     }
 
     @Override
@@ -322,6 +330,7 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
 
     /**
      * Line renderer. Renders proper motion
+     * 
      * @param renderer
      * @param camera
      * @param alpha
