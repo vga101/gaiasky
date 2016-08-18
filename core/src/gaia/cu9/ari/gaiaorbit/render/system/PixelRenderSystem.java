@@ -45,8 +45,9 @@ public class PixelRenderSystem extends ImmediateRenderSystem implements IObserve
     private float lastResolution = -1;
 
     protected void updatePointSize(int width, int height, boolean initialize) {
+        float defaultPointSize = GlobalConf.runtime.STRIPPED_FOV_MODE ? 3 : 7;
         if (initialize && GlobalConf.scene.STAR_POINT_SIZE < 0)
-            GlobalConf.scene.STAR_POINT_SIZE = GlobalConf.runtime.STRIPPED_FOV_MODE ? 3 : 7;
+            GlobalConf.scene.STAR_POINT_SIZE = defaultPointSize;
 
         // Factor POINT_SIZE with resolution
         float baseResolution = lastResolution < 0 ? 720f : lastResolution;
@@ -55,7 +56,7 @@ public class PixelRenderSystem extends ImmediateRenderSystem implements IObserve
         float factor = currentResolution / baseResolution;
         GlobalConf.scene.STAR_POINT_SIZE = Constants.webgl ? Math.min(300, Math.max(3, GlobalConf.scene.STAR_POINT_SIZE * factor)) : Math.min(300, Math.max(3, GlobalConf.scene.STAR_POINT_SIZE * factor));
 
-        GlobalConf.scene.STAR_POINT_SIZE_BAK = GlobalConf.scene.STAR_POINT_SIZE;
+        GlobalConf.scene.STAR_POINT_SIZE_BAK = Constants.webgl ? Math.min(300, Math.max(3, defaultPointSize * factor)) : Math.min(300, Math.max(3, defaultPointSize * factor));
         lastResolution = currentResolution;
     }
 
