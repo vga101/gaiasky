@@ -101,8 +101,8 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
         int nsamples;
         float density;
         if (GlobalConf.scene.isHighQuality()) {
-            nsamples = 150;
-            density = 1.4f;
+            nsamples = 200;
+            density = 1.6f;
         } else if (GlobalConf.scene.isNormalQuality()) {
             nsamples = 80;
             density = 0.96f;
@@ -111,12 +111,12 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
             density = .9f;
         }
         ppb.lscatter = new LightScattering((int) (width * scatteringFboScale), (int) (height * scatteringFboScale));
-        ppb.lscatter.setScatteringIntesity(1f);
+        ppb.lscatter.setScatteringIntesity(0.9f);
         ppb.lscatter.setScatteringSaturation(1f);
         ppb.lscatter.setBaseIntesity(1f);
         ppb.lscatter.setBias(-0.999f);
-        ppb.lscatter.setBlurAmount(4f);
-        ppb.lscatter.setBlurPasses(2);
+        ppb.lscatter.setBlurAmount(6f);
+        ppb.lscatter.setBlurPasses(4);
         ppb.lscatter.setDensity(density);
         ppb.lscatter.setNumSamples(nsamples);
         ppb.lscatter.setEnabled(GlobalConf.postprocess.POSTPROCESS_LIGHT_SCATTERING);
