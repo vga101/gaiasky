@@ -37,7 +37,6 @@ public class FocusInfoInterface extends Table implements IObserver {
     protected OwnLabel camName, camVel, camPos, lonLatLabel, RADECLabel;
 
     private Table focusInfo, pointerInfo, cameraInfo, moreInfo;
-    private Skin skin;
     Vector3d pos;
 
     INumberFormat nf, sf;
@@ -49,7 +48,6 @@ public class FocusInfoInterface extends Table implements IObserver {
     public FocusInfoInterface(Skin skin) {
         super(skin);
         this.setBackground("table-bg");
-        this.skin = skin;
 
         nf = NumberFormatFactory.getFormatter("##0.###");
         sf = NumberFormatFactory.getFormatter("##0.###E0");

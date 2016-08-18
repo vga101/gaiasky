@@ -22,6 +22,7 @@ import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf.ProgramConf.StereoProfile;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
+import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 
 public class DesktopPostProcessor implements IPostProcessor, IObserver {
 
@@ -30,6 +31,9 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
     float bloomFboScale = 0.5f;
     float lensFboScale = 0.3f;
     float scatteringFboScale = 1.0f;
+
+    long lastMotionBlurUpdate = 0;
+    float lastMotionBlurOpacity = 0;
 
     public DesktopPostProcessor() {
         ShaderLoader.BasePath = "shaders/";
@@ -49,7 +53,7 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
             Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.selected", "NFAA"));
         }
 
-        EventManager.instance.subscribe(this, Events.PROPERTIES_WRITTEN, Events.BLOOM_CMD, Events.LENS_FLARE_CMD, Events.MOTION_BLUR_CMD, Events.LIGHT_POS_2D_UPDATED, Events.LIGHT_SCATTERING_CMD, Events.TOGGLE_STEREOSCOPIC_CMD, Events.TOGGLE_STEREO_PROFILE_CMD, Events.FISHEYE_CMD);
+        EventManager.instance.subscribe(this, Events.PROPERTIES_WRITTEN, Events.BLOOM_CMD, Events.LENS_FLARE_CMD, Events.MOTION_BLUR_CMD, Events.LIGHT_POS_2D_UPDATED, Events.LIGHT_SCATTERING_CMD, Events.TOGGLE_STEREOSCOPIC_CMD, Events.TOGGLE_STEREO_PROFILE_CMD, Events.FISHEYE_CMD, Events.CAMERA_MOTION_UPDATED);
 
     }
 
@@ -84,8 +88,6 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
 
         // MOTION BLUR
         ppb.motionblur = new MotionBlur();
-        ppb.motionblur.setBlurOpacity(GlobalConf.postprocess.POSTPROCESS_MOTION_BLUR);
-        ppb.motionblur.setEnabled(GlobalConf.postprocess.POSTPROCESS_MOTION_BLUR > 0);
         ppb.pp.addEffect(ppb.motionblur);
 
         // BLOOM
@@ -253,27 +255,48 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
             }
             break;
         case CAMERA_MOTION_UPDATED:
-            // rts = RenderType.values();
-            // float strength = (float) MathUtilsd.lint(((double) data[1] *
-            // Constants.KM_TO_U * Constants.U_TO_PC), 0, 100, 0, 0.05);
-            // for (int i = 0; i < rts.length; i++) {
-            // pps[i].zoomer.setBlurStrength(strength);
-            // }
-            break;
-        case MOTION_BLUR_CMD:
             Gdx.app.postRunnable(new Runnable() {
                 @Override
                 public void run() {
-                    float opacity = (float) data[0];
+                    double vel = (double) data[1];
+                    float opacity = (float) MathUtilsd.lint(vel, 0, 1e18, 0, GlobalConf.postprocess.POSTPROCESS_MOTION_BLUR);
+                    long t = System.currentTimeMillis();
+                    boolean enabled = opacity > 0 || (t - lastMotionBlurUpdate) < 5000;
                     for (int i = 0; i < RenderType.values().length; i++) {
                         if (pps[i] != null) {
                             PostProcessBean ppb = pps[i];
-                            ppb.motionblur.setBlurOpacity(opacity);
-                            ppb.motionblur.setEnabled(opacity > 0);
+
+                            ppb.motionblur.setEnabled(enabled);
+
+                            if (opacity == 0)
+                                ppb.motionblur.setBlurOpacity(lastMotionBlurOpacity);
+                            else
+                                ppb.motionblur.setBlurOpacity(opacity);
+
                         }
+                    }
+                    if (opacity > 0) {
+                        lastMotionBlurUpdate = t;
+                        lastMotionBlurOpacity = opacity;
                     }
                 }
             });
+            break;
+        case MOTION_BLUR_CMD:
+            //            Gdx.app.postRunnable(new Runnable() {
+            //                @Override
+            //                public void run() {
+            //                    float opacity = (float) data[0];
+            //                    System.out.println(opacity);
+            //                    for (int i = 0; i < RenderType.values().length; i++) {
+            //                        if (pps[i] != null) {
+            //                            PostProcessBean ppb = pps[i];
+            //                            ppb.motionblur.setBlurOpacity(opacity);
+            //                            ppb.motionblur.setEnabled(opacity > 0);
+            //                        }
+            //                    }
+            //                }
+            //            });
             break;
 
         case LIGHT_POS_2D_UPDATED:
