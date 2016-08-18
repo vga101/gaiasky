@@ -5,19 +5,18 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.PixmapIO;
-import com.badlogic.gdx.utils.ScreenUtils;
 
 import gaia.cu9.ari.gaiaorbit.util.format.INumberFormat;
 import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
 
 /**
  * Utility class to render the current frame buffer to images.
+ * 
  * @author Toni Sagrista
  *
  */
@@ -28,21 +27,24 @@ public class ImageRenderer {
         PNG, JPG;
     }
 
-    private static ImageType imageType = ImageType.JPG;
+    public static String renderToImageGl20(String absoluteLocation, String baseFileName, int w, int h) {
+        return renderToImageGl20(absoluteLocation, baseFileName, w, h, ImageType.JPG);
+    }
 
     /**
-     * Saves the current screen as an image to the given directory using the given file name. 
-     * The sequence number is added automatically to the file name.
-     * This method works with OpenGL 2.0
+     * Saves the current screen as an image to the given directory using the
+     * given file name. The sequence number is added automatically to the file
+     * name. This method works with OpenGL 2.0
+     * 
      * @param absoluteLocation
      * @param baseFileName
      * @param w
      * @param h
      */
-    public static String renderToImageGl20(String absoluteLocation, String baseFileName, int w, int h) {
+    public static String renderToImageGl20(String absoluteLocation, String baseFileName, int w, int h, ImageType type) {
         Pixmap pixmap = getScreenshot(0, 0, w, h, true);
 
-        String file = writePixmapToImage(absoluteLocation, baseFileName, pixmap);
+        String file = writePixmapToImage(absoluteLocation, baseFileName, pixmap, type);
         pixmap.dispose();
         return file;
     }
@@ -51,14 +53,14 @@ public class ImageRenderer {
         return getScreenshot(0, 0, w, h, true);
     }
 
-    public static String writePixmapToImage(String absoluteLocation, String baseFileName, Pixmap pixmap) {
+    public static String writePixmapToImage(String absoluteLocation, String baseFileName, Pixmap pixmap, ImageType type) {
         /** Make sure the directory exists **/
         FileHandle dir = Gdx.files.absolute(absoluteLocation);
         dir.mkdirs();
 
         /** Save to file **/
-        FileHandle fh = getTarget(absoluteLocation, baseFileName);
-        switch (imageType) {
+        FileHandle fh = getTarget(absoluteLocation, baseFileName, type);
+        switch (type) {
         case PNG:
             PixmapIO.writePNG(fh, pixmap);
             break;
@@ -67,34 +69,6 @@ public class ImageRenderer {
             break;
         }
         return fh.path();
-    }
-
-    /**
-     * Saves the current screen as an image to the given directory using the given file name. 
-     * The sequence number is added automatically to the file name.
-     * This method works with OpenGL 1.0
-     * @param absoluteLocation The absolute path to the folder where the images are to be stored
-     * @param baseFileName The base image name
-     * @param g
-     */
-    public static void renderToImageGl10(String absoluteLocation, String baseFileName, final Graphics g) {
-
-        final Pixmap pixmap = ScreenUtils.getFrameBufferPixmap(0, 0, g.getWidth(), g.getHeight());
-        ByteBuffer pixels = pixmap.getPixels();
-        int w = g.getWidth();
-        int h = g.getHeight();
-        final int numBytes = w * h * 4;
-        byte[] lines = new byte[numBytes];
-        final int numBytesPerLine = w * 4;
-        for (int i = 0; i < h; i++) {
-            pixels.position((h - i - 1) * numBytesPerLine);
-            pixels.get(lines, i * numBytesPerLine, numBytesPerLine);
-        }
-        pixels.clear();
-        pixels.put(lines);
-
-        writePixmapToImage(absoluteLocation, baseFileName, pixmap);
-        pixmap.dispose();
     }
 
     private static Pixmap getScreenshot(int x, int y, int w, int h, boolean flipY) {
@@ -126,10 +100,10 @@ public class ImageRenderer {
         return pixmap;
     }
 
-    private static FileHandle getTarget(String absoluteLocation, String baseFileName) {
-        FileHandle fh = Gdx.files.absolute(absoluteLocation + File.separator + baseFileName + getNextSeqNumSuffix() + "." + imageType.toString().toLowerCase());
+    private static FileHandle getTarget(String absoluteLocation, String baseFileName, ImageType type) {
+        FileHandle fh = Gdx.files.absolute(absoluteLocation + File.separator + baseFileName + getNextSeqNumSuffix() + "." + type.toString().toLowerCase());
         while (fh.exists()) {
-            fh = Gdx.files.absolute(absoluteLocation + File.separator + baseFileName + getNextSeqNumSuffix() + "." + imageType.toString().toLowerCase());
+            fh = Gdx.files.absolute(absoluteLocation + File.separator + baseFileName + getNextSeqNumSuffix() + "." + type.toString().toLowerCase());
         }
         return fh;
     }

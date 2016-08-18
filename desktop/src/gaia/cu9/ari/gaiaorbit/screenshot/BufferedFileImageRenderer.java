@@ -1,9 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.screenshot;
 
-import gaia.cu9.ari.gaiaorbit.render.BufferedFrame;
-import gaia.cu9.ari.gaiaorbit.util.I18n;
-import gaia.cu9.ari.gaiaorbit.util.Logger;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
@@ -12,8 +8,14 @@ import java.util.TimerTask;
 import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.Pools;
 
+import gaia.cu9.ari.gaiaorbit.render.BufferedFrame;
+import gaia.cu9.ari.gaiaorbit.screenshot.ImageRenderer.ImageType;
+import gaia.cu9.ari.gaiaorbit.util.I18n;
+import gaia.cu9.ari.gaiaorbit.util.Logger;
+
 /**
  * Buffers the writing of images to disk.
+ * 
  * @author Toni Sagrista
  *
  */
@@ -35,7 +37,7 @@ public class BufferedFileImageRenderer implements IFileImageRenderer {
     }
 
     @Override
-    public String saveScreenshot(String folder, String fileprefix, int w, int h, boolean immediate) {
+    public String saveScreenshot(String folder, String fileprefix, int w, int h, boolean immediate, ImageType type) {
         String res = null;
         if (!immediate) {
             if (outputFrameBuffer.size() >= bufferSize) {
@@ -53,7 +55,7 @@ public class BufferedFileImageRenderer implements IFileImageRenderer {
             res = "buffer";
         } else {
             // Screenshot while the frame buffer is on
-            res = ImageRenderer.renderToImageGl20(folder, fileprefix, w, h);
+            res = ImageRenderer.renderToImageGl20(folder, fileprefix, w, h, type);
         }
         return res;
     }
@@ -75,7 +77,7 @@ public class BufferedFileImageRenderer implements IFileImageRenderer {
                         String folder = null;
                         for (int i = 0; i < size; i++) {
                             BufferedFrame bf = outputFrameBufferCopy.get(i);
-                            ImageRenderer.writePixmapToImage(bf.folder, bf.filename, bf.pixmap);
+                            ImageRenderer.writePixmapToImage(bf.folder, bf.filename, bf.pixmap, ImageType.JPG);
                             folder = bf.folder;
                             bfPool.free(bf);
                         }

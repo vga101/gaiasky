@@ -13,6 +13,7 @@ import gaia.cu9.ari.gaiaorbit.render.IMainRenderer;
 import gaia.cu9.ari.gaiaorbit.render.IPostProcessor.PostProcessBean;
 import gaia.cu9.ari.gaiaorbit.render.IPostProcessor.RenderType;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
+import gaia.cu9.ari.gaiaorbit.screenshot.ImageRenderer.ImageType;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 
 public class ScreenshotsManager implements IObserver {
@@ -61,11 +62,11 @@ public class ScreenshotsManager implements IObserver {
 
             switch (GlobalConf.frame.FRAME_MODE) {
             case simple:
-                frameRenderer.saveScreenshot(GlobalConf.frame.RENDER_FOLDER, GlobalConf.frame.RENDER_FILE_NAME, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
+                frameRenderer.saveScreenshot(GlobalConf.frame.RENDER_FOLDER, GlobalConf.frame.RENDER_FILE_NAME, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true, ImageType.JPG);
                 break;
             case redraw:
                 GaiaSky.instance.resizeImmediate(GlobalConf.frame.RENDER_WIDTH, GlobalConf.frame.RENDER_HEIGHT);
-                renderToImage(mr, mr.getCameraManager(), mr.getPostProcessor().getPostProcessBean(RenderType.frame), GlobalConf.frame.RENDER_WIDTH, GlobalConf.frame.RENDER_HEIGHT, GlobalConf.frame.RENDER_FOLDER, GlobalConf.frame.RENDER_FILE_NAME, frameRenderer);
+                renderToImage(mr, mr.getCameraManager(), mr.getPostProcessor().getPostProcessBean(RenderType.frame), GlobalConf.frame.RENDER_WIDTH, GlobalConf.frame.RENDER_HEIGHT, GlobalConf.frame.RENDER_FOLDER, GlobalConf.frame.RENDER_FILE_NAME, frameRenderer, ImageType.JPG);
                 GaiaSky.instance.resizeImmediate(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
                 break;
             }
@@ -77,11 +78,11 @@ public class ScreenshotsManager implements IObserver {
             String file = null;
             switch (GlobalConf.screenshot.SCREENSHOT_MODE) {
             case simple:
-                file = ImageRenderer.renderToImageGl20(screenshot.folder, ScreenshotCmd.FILENAME, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+                file = ImageRenderer.renderToImageGl20(screenshot.folder, ScreenshotCmd.FILENAME, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), ImageType.PNG);
                 break;
             case redraw:
                 GaiaSky.instance.resizeImmediate(screenshot.width, screenshot.height);
-                file = renderToImage(mr, mr.getCameraManager(), mr.getPostProcessor().getPostProcessBean(RenderType.screenshot), screenshot.width, screenshot.height, screenshot.folder, ScreenshotCmd.FILENAME, screenshotRenderer);
+                file = renderToImage(mr, mr.getCameraManager(), mr.getPostProcessor().getPostProcessBean(RenderType.screenshot), screenshot.width, screenshot.height, screenshot.folder, ScreenshotCmd.FILENAME, screenshotRenderer, ImageType.PNG);
                 GaiaSky.instance.resizeImmediate(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
                 break;
             }
@@ -110,7 +111,7 @@ public class ScreenshotsManager implements IObserver {
      *            the {@link IFileImageRenderer} to use.
      * @return
      */
-    public String renderToImage(IMainRenderer mr, ICamera camera, PostProcessBean ppb, int width, int height, String folder, String filename, IFileImageRenderer renderer) {
+    public String renderToImage(IMainRenderer mr, ICamera camera, PostProcessBean ppb, int width, int height, String folder, String filename, IFileImageRenderer renderer, ImageType type) {
         FrameBuffer frameBuffer = mr.getFrameBuffer(width, height);
         // TODO That's a dirty trick, we should find a better way (i.e. making
         // buildEnabledEffectsList() method public)
@@ -140,7 +141,7 @@ public class ScreenshotsManager implements IObserver {
             renderGui().render();
         }
 
-        String res = renderer.saveScreenshot(folder, filename, width, height, false);
+        String res = renderer.saveScreenshot(folder, filename, width, height, false, type);
 
         frameBuffer.end();
         return res;
