@@ -144,7 +144,7 @@ public class GalaxyRenderSystem extends ImmediateRenderSystem implements IObserv
                     col[2] = MathUtilsd.clamp(col[2], 0f, 1f);
 
                     // COLOR
-                    curr.vertices[curr.vertexIdx + curr.colorOffset] = Color.toFloatBits(col[0], col[1], col[2], col[3]);
+                    curr.vertices[curr.vertexIdx + curr.colorOffset] = Color.toFloatBits(col[0], col[1], col[2], col[3] * 0.8f);
 
                     // SIZE
                     float starSize = 0;

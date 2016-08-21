@@ -11,7 +11,6 @@ import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.bitfire.postprocessing.PostProcessor;
 
 import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
@@ -28,6 +27,7 @@ import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
 /**
  * Represents any celestial body.
+ * 
  * @author Toni Sagrista
  *
  */
@@ -35,17 +35,20 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
     private static float[] labelColour = new float[] { 1, 1, 1, 1 };
 
     /**
-     * radius/distance limit for rendering at all. If angle is smaller than this quantity, no rendering happens.
+     * radius/distance limit for rendering at all. If angle is smaller than this
+     * quantity, no rendering happens.
      */
     public abstract double THRESHOLD_NONE();
 
     /**
-     * radius/distance limit for rendering as shader. If angle is any bigger, we render as a model.
+     * radius/distance limit for rendering as shader. If angle is any bigger, we
+     * render as a model.
      */
     public abstract double THRESHOLD_QUAD();
 
     /**
-     * radius/distance limit for rendering as point. If angle is any bigger, we render with shader.
+     * radius/distance limit for rendering as point. If angle is any bigger, we
+     * render with shader.
      */
     public abstract double THRESHOLD_POINT();
 
@@ -59,7 +62,10 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
     public float[] ccPale;
     /** Colour for stars that have been observed by Gaia **/
     public float[] ccTransit;
-    /** The B-V color index, calculated as the magnitude in B minus the magnitude in V **/
+    /**
+     * The B-V color index, calculated as the magnitude in B minus the magnitude
+     * in V
+     **/
     public float colorbv;
     /** The one-dimensional flux **/
     public float flux;
@@ -179,7 +185,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
     }
 
     protected void setColor2Data() {
-        final float plus = .1f;
+        final float plus = .2f;
         ccPale = new float[] { Math.min(1, cc[0] + plus), Math.min(1, cc[1] + plus), Math.min(1, cc[2] + plus) };
         ccTransit = new float[] { ccPale[0], ccPale[1], ccPale[2], cc[3] };
     }
@@ -205,6 +211,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
 
     /**
      * Adds all the children that are focusable objects to the list.
+     * 
      * @param list
      */
     public void addFocusableObjects(List<CelestialBody> list) {
@@ -218,6 +225,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
 
     /**
      * Sets the size of this entity in kilometers
+     * 
      * @param size
      */
     public void setSize(Double size) {
@@ -252,8 +260,9 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
     }
 
     /**
-     * Updates the transit number of this body if visible is true and it is a new transit.
-     * It also updates the colour if needed.
+     * Updates the transit number of this body if visible is true and it is a
+     * new transit. It also updates the colour if needed.
+     * 
      * @param visible
      * @param time
      */
