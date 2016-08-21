@@ -2,6 +2,7 @@ package gaia.cu9.ari.gaiaorbit.render;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
@@ -251,9 +252,33 @@ public class SGRStereoscopic extends SGRAbstract implements ISGR, IObserver {
         extendViewport.update(w, h);
         stretchViewport.update(w, h);
 
-        int key = getKey(w / 2, h);
-        if (!fb3D.containsKey(key)) {
-            fb3D.put(key, new FrameBuffer(Format.RGB888, w / 2, h, true));
+        int keyHalf = getKey(w / 2, h);
+        int keyFull = getKey(w, h);
+
+        Set<Integer> keySet = fb3D.keySet();
+        for (Integer key : keySet) {
+            if (key != keyHalf && key != keyFull) {
+                FrameBuffer fb = fb3D.get(key);
+                fb.dispose();
+                fb3D.remove(key);
+            }
+        }
+
+        if (!fb3D.containsKey(keyHalf)) {
+            fb3D.put(keyHalf, new FrameBuffer(Format.RGB888, w / 2, h, true));
+        }
+
+        if (!fb3D.containsKey(keyFull)) {
+            fb3D.put(keyFull, new FrameBuffer(Format.RGB888, w, h, true));
+        }
+
+    }
+
+    public void dispose() {
+        Set<Integer> keySet = fb3D.keySet();
+        for (Integer key : keySet) {
+            FrameBuffer fb = fb3D.get(key);
+            fb.dispose();
         }
     }
 

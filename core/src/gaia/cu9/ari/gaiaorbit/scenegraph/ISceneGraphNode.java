@@ -1,6 +1,8 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph;
 
-public interface ISceneGraphNode {
+import com.badlogic.gdx.utils.Disposable;
+
+public interface ISceneGraphNode extends Disposable {
 
     public int getStarCount();
 

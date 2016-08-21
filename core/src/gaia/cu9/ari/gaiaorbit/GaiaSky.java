@@ -356,6 +356,14 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         }
         ModelCache.cache.dispose();
 
+        // Renderer
+        if (sgr != null)
+            sgr.dispose();
+
+        // Post processor
+        if (pp != null)
+            pp.dispose();
+
         // Dispose music manager
         MusicManager.dispose();
     }

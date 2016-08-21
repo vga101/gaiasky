@@ -39,4 +39,7 @@ public class SGRFov extends SGRAbstract implements ISGR {
 
     }
 
+    @Override
+    public void dispose() {
+    }
 }

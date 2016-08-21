@@ -26,7 +26,9 @@ float len(vec2 vect, float ar){
 
 void main()
 {
+	 float exposure = 0.4;
 	 float ar = u_viewport.x / u_viewport.y;
+	 gl_FragColor = vec4(0.0);
 
 	 vec4 col = vec4(0.0);
 	 for (int clpos = 0; clpos < u_nLights; clpos++){
@@ -38,21 +40,19 @@ void main()
 		 deltaTexCoord *= 1.0 / float(u_numSamples) * u_density;
 		 float illuminationDecay = 1.0;
 		 
-		 vec4 color = texture2D(u_texture0, tc) * 0.4;
+		 vec4 color = texture2D(u_texture0, tc);
 		 
 		 for(int i = 0; i < u_numSamples; i++){
 		    tc -= deltaTexCoord;
-		    vec4 sample = texture2D(u_texture0, tc) * 0.4;
+		    vec4 sample = texture2D(u_texture0, tc);
 		    if(len(tc - u_lightPositions[clpos], ar) > 0.035){
 		    	sample = vec4(0.0, 0.0, 0.0, 0.0);
-		    }else{
-		    	sample = texture2D(u_texture0, tc) * 0.4;
 		    }
+		   
 		    sample *= illuminationDecay * u_weight;
 		    color += sample;
 		    illuminationDecay *= u_decay;
 		 }
-		 col += clamp(color, 0.0, 1.0);
+		 gl_FragColor += clamp(color * exposure, 0.0, 1.0);
 	 }
-	 gl_FragColor = col;
 }

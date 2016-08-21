@@ -404,6 +404,12 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         }
     }
 
+    public void dispose() {
+        for (ISGR sgr : sgrs) {
+            sgr.dispose();
+        }
+    }
+
     private AbstractRenderSystem getLineRenderSystem() {
         AbstractRenderSystem sys = null;
         if (GlobalConf.scene.isNormalLineRenderer()) {

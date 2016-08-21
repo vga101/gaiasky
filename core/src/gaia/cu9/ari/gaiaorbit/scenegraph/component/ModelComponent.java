@@ -1,10 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph.component;
 
-import gaia.cu9.ari.gaiaorbit.data.AssetBean;
-import gaia.cu9.ari.gaiaorbit.util.Logger;
-import gaia.cu9.ari.gaiaorbit.util.ModelCache;
-import gaia.cu9.ari.gaiaorbit.util.Pair;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,8 +15,14 @@ import com.badlogic.gdx.graphics.g3d.attributes.BlendingAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.utils.Disposable;
 
-public class ModelComponent {
+import gaia.cu9.ari.gaiaorbit.data.AssetBean;
+import gaia.cu9.ari.gaiaorbit.util.Logger;
+import gaia.cu9.ari.gaiaorbit.util.ModelCache;
+import gaia.cu9.ari.gaiaorbit.util.Pair;
+
+public class ModelComponent implements Disposable {
     private static ColorAttribute ambient;
 
     static {
@@ -38,7 +39,9 @@ public class ModelComponent {
 
     /**
      * Sets the ambient light
-     * @param level Ambient light level between 0 and 1
+     * 
+     * @param level
+     *            Ambient light level between 0 and 1
      */
     public static void setAmbientLight(float level) {
         ambient.color.set(level, level, level, 1f);
@@ -155,7 +158,10 @@ public class ModelComponent {
 
     /**
      * Sets the type of the model to construct.
-     * @param type The type. Currently supported types are sphere|cylinder|ring|disc.
+     * 
+     * @param type
+     *            The type. Currently supported types are
+     *            sphere|cylinder|ring|disc.
      */
     public void setType(String type) {
         this.type = type;
@@ -167,6 +173,7 @@ public class ModelComponent {
 
     /**
      * Sets the model file path (this must be a .g3db, .g3dj or .obj).
+     * 
      * @param model
      */
     public void setModel(String model) {

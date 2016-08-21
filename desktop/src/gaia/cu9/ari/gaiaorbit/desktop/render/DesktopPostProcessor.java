@@ -29,7 +29,7 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
     private PostProcessBean[] pps;
 
     float bloomFboScale = 0.5f;
-    float lensFboScale = 0.3f;
+
     float scatteringFboScale = 1.0f;
 
     long lastMotionBlurUpdate = 0;
@@ -104,7 +104,7 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
             nsamples = 200;
             density = 1.5f;
         } else if (GlobalConf.scene.isNormalQuality()) {
-            nsamples = 80;
+            nsamples = 90;
             density = 0.96f;
         } else {
             nsamples = 40;
@@ -114,9 +114,9 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
         ppb.lscatter.setScatteringIntesity(0.9f);
         ppb.lscatter.setScatteringSaturation(1f);
         ppb.lscatter.setBaseIntesity(1f);
-        ppb.lscatter.setBias(-0.999f);
-        ppb.lscatter.setBlurAmount(3f);
-        ppb.lscatter.setBlurPasses(2);
+        ppb.lscatter.setBias(-0.95f);
+        ppb.lscatter.setBlurAmount(5f);
+        ppb.lscatter.setBlurPasses(10);
         ppb.lscatter.setDensity(density);
         ppb.lscatter.setNumSamples(nsamples);
         ppb.lscatter.setEnabled(GlobalConf.postprocess.POSTPROCESS_LIGHT_SCATTERING);
@@ -124,12 +124,16 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
 
         // LENS FLARE
         int nghosts;
+        float lensFboScale;
         if (GlobalConf.scene.isHighQuality()) {
             nghosts = 10;
+            lensFboScale = 0.5f;
         } else if (GlobalConf.scene.isNormalQuality()) {
             nghosts = 8;
+            lensFboScale = 0.3f;
         } else {
             nghosts = 6;
+            lensFboScale = 0.2f;
         }
         ppb.lens = new LensFlare2((int) (width * lensFboScale), (int) (height * lensFboScale));
         ppb.lens.setGhosts(nghosts);
@@ -138,9 +142,9 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
         ppb.lens.setFlareIntesity(0.6f);
         ppb.lens.setFlareSaturation(0.7f);
         ppb.lens.setBaseIntesity(1f);
-        ppb.lens.setBias(-0.996f);
-        ppb.lens.setBlurAmount(0.9f);
-        ppb.lens.setBlurPasses(5);
+        ppb.lens.setBias(-0.999f);
+        ppb.lens.setBlurAmount(5f);
+        ppb.lens.setBlurPasses(10);
         ppb.lens.setEnabled(GlobalConf.postprocess.POSTPROCESS_LENS_FLARE);
         ppb.pp.addEffect(ppb.lens);
 
@@ -187,6 +191,16 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
             });
         }
 
+    }
+
+    @Override
+    public void dispose() {
+        for (int i = 0; i < RenderType.values().length; i++) {
+            if (pps[i] != null) {
+                PostProcessBean ppb = pps[i];
+                ppb.dispose();
+            }
+        }
     }
 
     @Override

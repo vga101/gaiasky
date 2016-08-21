@@ -31,4 +31,8 @@ public class SGR extends SGRAbstract implements ISGR {
 
     }
 
+    @Override
+    public void dispose() {
+    }
+
 }

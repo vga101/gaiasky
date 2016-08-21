@@ -1,6 +1,7 @@
 package gaia.cu9.ari.gaiaorbit.render;
 
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
+import com.badlogic.gdx.utils.Disposable;
 import com.bitfire.postprocessing.PostProcessor;
 import com.bitfire.postprocessing.effects.Antialiasing;
 import com.bitfire.postprocessing.effects.Bloom;
@@ -10,7 +11,7 @@ import com.bitfire.postprocessing.effects.LensFlare2;
 import com.bitfire.postprocessing.effects.LightScattering;
 import com.bitfire.postprocessing.effects.MotionBlur;
 
-public interface IPostProcessor {
+public interface IPostProcessor extends Disposable {
     public class PostProcessBean {
         public PostProcessor pp;
         public Bloom bloom;
@@ -39,6 +40,11 @@ public interface IPostProcessor {
 
         public void render(FrameBuffer dest) {
             pp.render(dest);
+        }
+
+        public void dispose() {
+            if (pp != null)
+                pp.dispose();
         }
 
     }

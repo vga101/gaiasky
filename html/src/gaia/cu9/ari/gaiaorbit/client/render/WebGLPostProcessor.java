@@ -1,11 +1,11 @@
 package gaia.cu9.ari.gaiaorbit.client.render;
 
-import gaia.cu9.ari.gaiaorbit.render.IPostProcessor;
-import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
-
 import com.badlogic.gdx.Gdx;
 import com.bitfire.postprocessing.PostProcessor;
 import com.bitfire.utils.ShaderLoader;
+
+import gaia.cu9.ari.gaiaorbit.render.IPostProcessor;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 
 public class WebGLPostProcessor implements IPostProcessor {
 
@@ -60,8 +60,15 @@ public class WebGLPostProcessor implements IPostProcessor {
 
     }
 
+    @Override
+    public void dispose() {
+        pps.dispose();
+    }
+
     /**
-     * Reloads the postprocessor at the given index with the given width and height.
+     * Reloads the postprocessor at the given index with the given width and
+     * height.
+     * 
      * @param index
      * @param width
      * @param height
@@ -75,9 +82,9 @@ public class WebGLPostProcessor implements IPostProcessor {
         return postProcess.getCombinedBuffer().width != width || postProcess.getCombinedBuffer().height != height;
     }
 
-	@Override
-	public boolean isLightScatterEnabled() {
-		return false;
-	}
+    @Override
+    public boolean isLightScatterEnabled() {
+        return false;
+    }
 
 }
