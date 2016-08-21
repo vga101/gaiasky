@@ -321,6 +321,11 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
             EventManager.instance.post(Events.TOGGLE_TIME_CMD, true, false);
         }
 
+        // Hide interface if stereoscopic is on
+        if (GlobalConf.program.STEREOSCOPIC_MODE) {
+            EventManager.instance.post(Events.DISPLAY_GUI_CMD, I18n.bundle.get("notif.cleanmode"), false);
+        }
+
         // Initialize frames
         frames = 0;
 
