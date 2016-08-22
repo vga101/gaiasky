@@ -56,7 +56,7 @@ public class SGRStereoscopic extends SGRAbstract implements ISGR, IObserver {
     @Override
     public void render(SceneGraphRenderer sgr, ICamera camera, int rw, int rh, FrameBuffer fb, PostProcessBean ppb) {
         boolean movecam = camera.getMode() == CameraMode.Free_Camera || camera.getMode() == CameraMode.Focus;
-        //        movecam = false;
+        //movecam = false;
 
         PerspectiveCamera cam = camera.getCamera();
         Pool<Vector3> vectorPool = MyPools.get(Vector3.class);

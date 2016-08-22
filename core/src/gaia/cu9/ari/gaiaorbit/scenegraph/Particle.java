@@ -256,7 +256,7 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
 
     @Override
     public float getInnerRad() {
-        return 0.03f * DISC_FACTOR + GlobalConf.scene.STAR_POINT_SIZE * 0.005f;
+        return 0.03f * DISC_FACTOR + GlobalConf.scene.STAR_POINT_SIZE * 0.0025f;
     }
 
     @Override
@@ -343,7 +343,7 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
         Vector3 p2 = v3fpool.obtain().set(p1).add(ppm);
         camera.getPos().setVector3(campos);
 
-        renderer.addLine(p1.x, p1.y, p1.z, p2.x, p2.y, p2.z, 1.0f, 0.0f, 0.0f, alpha);
+        renderer.addLine(p1.x, p1.y, p1.z, p2.x, p2.y, p2.z, 0.65f, 0.65f, 0.0f, alpha);
 
         v3fpool.free(campos);
         v3fpool.free(p1);
