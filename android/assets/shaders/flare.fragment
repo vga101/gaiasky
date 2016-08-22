@@ -6,8 +6,11 @@ precision mediump float;
 precision mediump int;
 #endif
 
+// Scene
 uniform sampler2D u_texture0;
+// Lens color
 uniform sampler2D u_texture1;
+
 
 varying vec2 v_texCoords;
 
@@ -43,14 +46,12 @@ void main() {
     	
     vec3 distortion = vec3(-texelSize.x * u_distortion, 0.0, texelSize.x * u_distortion);
     
-    // sample ghosts:  
-    vec2 g = vec2(u_ghosts);
     vec4 result = vec4(0.0);
-    for (float i = 0.0; i < g.x; i = i + 1.0) { 
+    for (float i = 0.0; i < u_ghosts; i = i + 1.0) { 
 		vec2 offset = fract(texcoord + ghostVec * float(i));
 		
 		float weight = length(vec2(0.5) - offset) / length(vec2(0.5));
-		weight = pow(1.0 - weight, 2.0);
+		weight = pow(1.0 - weight, 6.0);
 		
 		result += textureDistorted(
 					u_texture0,
@@ -73,5 +74,5 @@ void main() {
     
     //gl_FragColor = result;
     // Hack to prevent too strong halo
-    gl_FragColor = min(vec4(0.2), result);
+    gl_FragColor = min(vec4(0.25), result);
 }

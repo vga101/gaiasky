@@ -32,6 +32,9 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
 
     float scatteringFboScale = 1.0f;
 
+    // Number of flares
+    int nghosts;
+
     long lastMotionBlurUpdate = 0;
     float lastMotionBlurOpacity = 0;
 
@@ -115,18 +118,18 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
         ppb.lscatter.setScatteringSaturation(1f);
         ppb.lscatter.setBaseIntesity(1f);
         ppb.lscatter.setBias(-0.95f);
-        ppb.lscatter.setBlurAmount(5f);
-        ppb.lscatter.setBlurPasses(10);
+        ppb.lscatter.setBlurAmount(1f);
+        ppb.lscatter.setBlurPasses(5);
         ppb.lscatter.setDensity(density);
         ppb.lscatter.setNumSamples(nsamples);
         ppb.lscatter.setEnabled(GlobalConf.postprocess.POSTPROCESS_LIGHT_SCATTERING);
         ppb.pp.addEffect(ppb.lscatter);
 
         // LENS FLARE
-        int nghosts;
+
         float lensFboScale;
         if (GlobalConf.scene.isHighQuality()) {
-            nghosts = 10;
+            nghosts = 8;
             lensFboScale = 0.5f;
         } else if (GlobalConf.scene.isNormalQuality()) {
             nghosts = 8;
@@ -137,13 +140,15 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
         }
         ppb.lens = new LensFlare2((int) (width * lensFboScale), (int) (height * lensFboScale));
         ppb.lens.setGhosts(nghosts);
-        ppb.lens.setHaloWidth(0.8f);
+        ppb.lens.setHaloWidth(0.6f);
         ppb.lens.setLensColorTexture(new Texture(Gdx.files.internal("img/lenscolor.png")));
-        ppb.lens.setFlareIntesity(0.6f);
-        ppb.lens.setFlareSaturation(0.7f);
+        ppb.lens.setLensDirtTexture(new Texture(Gdx.files.internal(GlobalConf.scene.isHighQuality() ? "img/lensdirt.jpg" : "img/lensdirt_s.jpg")));
+        ppb.lens.setLensStarburstTexture(new Texture(Gdx.files.internal("img/lensstarburst.jpg")));
+        ppb.lens.setFlareIntesity(1f);
+        ppb.lens.setFlareSaturation(0.4f);
         ppb.lens.setBaseIntesity(1f);
         ppb.lens.setBias(-0.999f);
-        ppb.lens.setBlurAmount(5f);
+        ppb.lens.setBlurAmount(1f);
         ppb.lens.setBlurPasses(10);
         ppb.lens.setEnabled(true);
         ppb.pp.addEffect(ppb.lens);
@@ -243,10 +248,12 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
             break;
         case LENS_FLARE_CMD:
             boolean active = (Boolean) data[0];
-            float flareIntensity = active ? 0.6f : 0.0f;
+            int nnghosts = active ? nghosts : 0;
+            float flareIntensity = active ? 0.6f : 0;
             for (int i = 0; i < RenderType.values().length; i++) {
                 if (pps[i] != null) {
                     PostProcessBean ppb = pps[i];
+                    ppb.lens.setGhosts(nnghosts);
                     ppb.lens.setFlareIntesity(flareIntensity);
                 }
             }

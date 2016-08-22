@@ -1,0 +1,30 @@
+// Lens flare implementation by Toni Sagrista
+// From John Chapman's article http://john-chapman-graphics.blogspot.co.uk/2013/02/pseudo-lens-flare.html
+
+#ifdef GL_ES
+precision mediump float;
+precision mediump int;
+#endif
+
+// Scene
+uniform sampler2D u_texture0;
+// Lens dirt
+uniform sampler2D u_texture1;
+// Lens starburst
+uniform sampler2D u_texture2;
+
+
+varying vec2 v_texCoords;
+
+
+
+/*----------------------------------------------------------------------------*/
+void main() {
+    vec2 texcoord = -v_texCoords + vec2(1.0);
+    
+    vec4 lensflare = texture2D(u_texture0, texcoord);
+    vec4 dirt = texture2D(u_texture1, texcoord);
+    vec4 starburst = texture2D(u_texture2, texcoord);
+    
+    gl_FragColor = lensflare * dirt * starburst;
+}
