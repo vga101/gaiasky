@@ -145,7 +145,7 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
         ppb.lens.setBias(-0.999f);
         ppb.lens.setBlurAmount(5f);
         ppb.lens.setBlurPasses(10);
-        ppb.lens.setEnabled(GlobalConf.postprocess.POSTPROCESS_LENS_FLARE);
+        ppb.lens.setEnabled(true);
         ppb.pp.addEffect(ppb.lens);
 
         // DISTORTION (STEREOSCOPIC MODE)
@@ -243,10 +243,11 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
             break;
         case LENS_FLARE_CMD:
             boolean active = (Boolean) data[0];
+            float flareIntensity = active ? 0.6f : 0.0f;
             for (int i = 0; i < RenderType.values().length; i++) {
                 if (pps[i] != null) {
                     PostProcessBean ppb = pps[i];
-                    ppb.lens.setEnabled(active);
+                    ppb.lens.setFlareIntesity(flareIntensity);
                 }
             }
             break;
