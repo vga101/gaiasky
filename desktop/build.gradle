@@ -132,19 +132,16 @@ task dist (dependsOn: gaiaskyJar, description: "Compiles the project, creates th
         from "../android/assets/data"
         into "$distDir/data"
         exclude "**/android"
-		exclude "**/octree"
+		// exclude "**/octree"
 		exclude "**/tgas_201507"
+		exclude "**/tgas_final"
 
         exclude "**/earth-8k.jpg"
         exclude "**/earth-night-2k.jpg"
 
 		exclude "**/catalog.txt"
-        exclude "**/hyg_metadata.bin"
-        exclude "**/hyg_particles.bin"
         exclude "**/*-wgl.json"
-        
-        exclude "**/galaxy_bar*.txt"
-        exclude "**/galaxy_nobar*.txt"
+
     }
 
     // Add icons to data
