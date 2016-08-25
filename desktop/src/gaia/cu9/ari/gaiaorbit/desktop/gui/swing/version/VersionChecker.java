@@ -1,13 +1,13 @@
 package gaia.cu9.ari.gaiaorbit.desktop.gui.swing.version;
 
-import gaia.cu9.ari.gaiaorbit.desktop.gui.swing.callback.Runnable;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 
 import com.badlogic.gdx.utils.JsonReader;
+
+import gaia.cu9.ari.gaiaorbit.desktop.gui.swing.callback.Runnable;
 
 public class VersionChecker implements Runnable {
     private String stringUrl;

@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Locale;
@@ -78,10 +79,13 @@ import gaia.cu9.ari.gaiaorbit.interfce.KeyBindings;
 import gaia.cu9.ari.gaiaorbit.interfce.KeyBindings.ProgramAction;
 import gaia.cu9.ari.gaiaorbit.interfce.TextUtils;
 import gaia.cu9.ari.gaiaorbit.util.ConfInit;
+import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
+import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import net.miginfocom.swing.MigLayout;
+import slider.RangeSlider;
 
 /**
  * The configuration dialog to set the resolution, the screen mode, etc.
@@ -106,10 +110,14 @@ public class ConfigDialog extends I18nJFrame {
     String vislistdata;
     JTree visualisationsTree;
 
+    private DecimalFormat nf3;
+
     public ConfigDialog(final GaiaSkyDesktop gsd, boolean startup) {
         super(startup ? GlobalConf.getFullApplicationName() : txt("gui.settings"));
 
         FontUtilities.setFontScale(GlobalConf.SCALE_FACTOR);
+
+        nf3 = new DecimalFormat("#.000");
 
         thick = scale(thick);
 
@@ -433,8 +441,41 @@ public class ConfigDialog extends I18nJFrame {
         multithread.add(new JLabel(txt("gui.thread.number") + ":"));
         multithread.add(numThreads);
 
+        /** LEVELS OF DETAIL **/
+        JPanel lod = new JPanel(new MigLayout("", "[grow,fill][grow,fill]", ""));
+        lod.setBorder(new TitledBorder(new MatteBorder(new Insets(thick, 0, 0, 0), bcol), txt("gui.lod"), just, pos));
+
+        // LOD fade
+        final JCheckBox lodFadeCb = new JCheckBox(txt("gui.lod.fade"), GlobalConf.scene.OCTREE_PARTICLE_FADE);
+
+        final JLabel lod0 = new JLabel(nf3.format(GlobalConf.scene.OCTANT_THRESHOLD_0));
+        final JLabel lod1 = new JLabel(nf3.format(GlobalConf.scene.OCTANT_THRESHOLD_1));
+        JPanel lodInfo = new JPanel();
+        lodInfo.add(new JLabel("Min: "));
+        lodInfo.add(lod0);
+        lodInfo.add(new JLabel("    Max: "));
+        lodInfo.add(lod1);
+
+        // LOD transitions
+        final RangeSlider lodTransitions = new RangeSlider((int) Constants.MIN_SLIDER, (int) Constants.MAX_SLIDER);
+        lodTransitions.setValue(Math.round(MathUtilsd.lint(GlobalConf.scene.OCTANT_THRESHOLD_0, Constants.MIN_LOD_TRANS_ANGLE, Constants.MAX_LOD_TRANS_ANGLE, Constants.MIN_SLIDER, Constants.MAX_SLIDER)));
+        lodTransitions.setUpperValue(Math.round(MathUtilsd.lint(GlobalConf.scene.OCTANT_THRESHOLD_1, Constants.MIN_LOD_TRANS_ANGLE, Constants.MAX_LOD_TRANS_ANGLE, Constants.MIN_SLIDER, Constants.MAX_SLIDER)));
+        lodTransitions.addChangeListener(new ChangeListener() {
+            public void stateChanged(ChangeEvent e) {
+                RangeSlider slider = (RangeSlider) e.getSource();
+                lod0.setText(nf3.format(MathUtilsd.lint(slider.getValue(), Constants.MIN_SLIDER, Constants.MAX_SLIDER, Constants.MIN_LOD_TRANS_ANGLE, Constants.MAX_LOD_TRANS_ANGLE)));
+                lod1.setText(nf3.format(MathUtilsd.lint(slider.getUpperValue(), Constants.MIN_SLIDER, Constants.MAX_SLIDER, Constants.MIN_LOD_TRANS_ANGLE, Constants.MAX_LOD_TRANS_ANGLE)));
+            }
+        });
+
+        lod.add(lodFadeCb, "span");
+        lod.add(new JLabel(txt("gui.lod.thresholds") + ":"));
+        lod.add(lodTransitions, "wrap");
+        lod.add(lodInfo, "span");
+
         JPanel performancePanel = new JPanel(new MigLayout("", "[grow,fill]", ""));
         performancePanel.add(multithread, "wrap");
+        performancePanel.add(lod, "wrap");
 
         tabbedPane.addTab(txt("gui.performance"), IconManager.get("config/performance"), performancePanel);
         tabbedPane.setMnemonicAt(2, KeyEvent.VK_3);
@@ -877,6 +918,10 @@ public class ConfigDialog extends I18nJFrame {
                     bean = (ComboBoxBean) numThreads.getSelectedItem();
                     GlobalConf.performance.NUMBER_THREADS = bean.value;
                     GlobalConf.performance.MULTITHREADING = multithreadCb.isSelected();
+
+                    GlobalConf.scene.OCTREE_PARTICLE_FADE = lodFadeCb.isSelected();
+                    GlobalConf.scene.OCTANT_THRESHOLD_0 = MathUtilsd.lint(lodTransitions.getValue(), Constants.MIN_SLIDER, Constants.MAX_SLIDER, Constants.MIN_LOD_TRANS_ANGLE, Constants.MAX_LOD_TRANS_ANGLE);
+                    GlobalConf.scene.OCTANT_THRESHOLD_1 = MathUtilsd.lint(lodTransitions.getUpperValue(), Constants.MIN_SLIDER, Constants.MAX_SLIDER, Constants.MIN_LOD_TRANS_ANGLE, Constants.MAX_LOD_TRANS_ANGLE);
 
                     // Data
                     if (hyg.isSelected())

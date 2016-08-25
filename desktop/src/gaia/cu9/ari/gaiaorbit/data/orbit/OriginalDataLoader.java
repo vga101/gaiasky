@@ -1,10 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.data.orbit;
 
-import gaia.cu9.ari.gaiaorbit.util.Constants;
-import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
-import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
-import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -15,6 +10,11 @@ import java.io.InputStreamReader;
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Date;
+
+import gaia.cu9.ari.gaiaorbit.util.Constants;
+import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
+import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
+import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
 public class OriginalDataLoader {
     int count = 0;

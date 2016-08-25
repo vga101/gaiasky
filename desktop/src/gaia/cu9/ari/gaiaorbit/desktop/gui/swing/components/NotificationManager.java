@@ -1,7 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.desktop.gui.swing.components;
 
-import gaia.cu9.ari.gaiaorbit.desktop.gui.swing.IconManager;
-
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsDevice.WindowTranslucency;
 import java.awt.GraphicsEnvironment;
@@ -11,6 +9,8 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 import javax.swing.JFrame;
+
+import gaia.cu9.ari.gaiaorbit.desktop.gui.swing.IconManager;
 
 public class NotificationManager implements Runnable {
     private static JFrame parent;

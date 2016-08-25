@@ -1,10 +1,10 @@
 package gaia.cu9.ari.gaiaorbit.desktop.util;
 
+import java.util.Date;
+
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
-
-import java.util.Date;
 
 public class LogWriter implements IObserver {
     private static final String TAG_SEPARATOR = " - ";

@@ -1,25 +1,30 @@
 package gaia.cu9.ari.gaiaorbit.desktop.gui.swing;
 
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
+
+import org.python.core.PyCode;
+import org.python.core.PySyntaxError;
+
 import gaia.cu9.ari.gaiaorbit.desktop.gui.swing.jsplash.GuiUtility;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.script.JythonFactory;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
-
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
-import java.util.List;
-
-import javax.swing.*;
-import javax.swing.filechooser.FileFilter;
-import javax.swing.filechooser.FileNameExtensionFilter;
-
 import net.miginfocom.swing.MigLayout;
-
-import org.python.core.PyCode;
-import org.python.core.PySyntaxError;
 
 
 public class ScriptDialog extends I18nJFrame {

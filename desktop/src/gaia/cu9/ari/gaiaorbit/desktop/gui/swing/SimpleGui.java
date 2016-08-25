@@ -1,14 +1,13 @@
 package gaia.cu9.ari.gaiaorbit.desktop.gui.swing;
 
-import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
-
 import java.awt.Dimension;
 
 import javax.swing.JFrame;
 
-import net.miginfocom.swing.MigLayout;
-
 import com.badlogic.gdx.backends.lwjgl.LwjglCanvas;
+
+import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
+import net.miginfocom.swing.MigLayout;
 
 public class SimpleGui {
     LwjglCanvas canvas;

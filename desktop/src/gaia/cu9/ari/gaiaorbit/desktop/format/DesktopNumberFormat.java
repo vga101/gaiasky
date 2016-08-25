@@ -1,8 +1,8 @@
 package gaia.cu9.ari.gaiaorbit.desktop.format;
 
-import gaia.cu9.ari.gaiaorbit.util.format.INumberFormat;
-
 import java.text.DecimalFormat;
+
+import gaia.cu9.ari.gaiaorbit.util.format.INumberFormat;
 
 public class DesktopNumberFormat implements INumberFormat {
     private final DecimalFormat df;

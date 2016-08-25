@@ -1,16 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.desktop.gui.swing;
 
-import gaia.cu9.ari.gaiaorbit.desktop.gui.swing.components.IconTreeNode;
-import gaia.cu9.ari.gaiaorbit.desktop.gui.swing.components.OwnDateField;
-import gaia.cu9.ari.gaiaorbit.event.EventManager;
-import gaia.cu9.ari.gaiaorbit.event.Events;
-import gaia.cu9.ari.gaiaorbit.event.IObserver;
-import gaia.cu9.ari.gaiaorbit.render.ComponentType;
-import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
-import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
-import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
-import gaia.cu9.ari.gaiaorbit.util.TwoWayHashmap;
-
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
@@ -49,9 +38,19 @@ import javax.swing.tree.DefaultTreeSelectionModel;
 import javax.swing.tree.TreeCellRenderer;
 import javax.swing.tree.TreePath;
 
-import net.miginfocom.swing.MigLayout;
-
 import com.badlogic.gdx.backends.lwjgl.LwjglCanvas;
+
+import gaia.cu9.ari.gaiaorbit.desktop.gui.swing.components.IconTreeNode;
+import gaia.cu9.ari.gaiaorbit.desktop.gui.swing.components.OwnDateField;
+import gaia.cu9.ari.gaiaorbit.event.EventManager;
+import gaia.cu9.ari.gaiaorbit.event.Events;
+import gaia.cu9.ari.gaiaorbit.event.IObserver;
+import gaia.cu9.ari.gaiaorbit.render.ComponentType;
+import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
+import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
+import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
+import gaia.cu9.ari.gaiaorbit.util.TwoWayHashmap;
+import net.miginfocom.swing.MigLayout;
 
 public class Gui implements IObserver {
 

@@ -1,5 +1,8 @@
 package gaia.cu9.ari.gaiaorbit.data.orbit;
 
+import java.io.IOException;
+import java.util.Date;
+
 import gaia.cu9.ari.gaiaorbit.data.orbit.OrbitDataLoader.OrbitDataLoaderParameter;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
@@ -10,9 +13,6 @@ import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
 import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
-
-import java.io.IOException;
-import java.util.Date;
 
 /**
  * Samples an orbit for a particular Body.

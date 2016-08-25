@@ -1,12 +1,12 @@
 package gaia.cu9.ari.gaiaorbit.desktop.format;
 
-import gaia.cu9.ari.gaiaorbit.util.format.IDateFormat;
-
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+
+import gaia.cu9.ari.gaiaorbit.util.format.IDateFormat;
 
 public class DesktopDateFormat implements IDateFormat {
     private DateFormat df;

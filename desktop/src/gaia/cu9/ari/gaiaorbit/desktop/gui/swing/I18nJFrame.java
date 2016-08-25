@@ -1,8 +1,8 @@
 package gaia.cu9.ari.gaiaorbit.desktop.gui.swing;
 
-import gaia.cu9.ari.gaiaorbit.util.I18n;
-
 import javax.swing.JFrame;
+
+import gaia.cu9.ari.gaiaorbit.util.I18n;
 
 /**
  * Provides a couple of functions to retrieve internationalised messages.

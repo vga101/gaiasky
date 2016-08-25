@@ -119,7 +119,8 @@ project(":desktop") {
         compile "com.github.arnabk:pgslookandfeel:$pgsVersion"
 		compile files('../core/lib/postprocessing.jar',
 					'../android/assets',
-                                        'lib/stil.jar')
+                    'lib/stil.jar',
+                    'lib/swing-range-slider.jar')
     }
 
     jar {
