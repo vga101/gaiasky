@@ -1,17 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.interfce;
 
-import gaia.cu9.ari.gaiaorbit.event.EventManager;
-import gaia.cu9.ari.gaiaorbit.event.Events;
-import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
-import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
-import gaia.cu9.ari.gaiaorbit.util.I18n;
-import gaia.cu9.ari.gaiaorbit.util.scene2d.CollapsibleWindow;
-import gaia.cu9.ari.gaiaorbit.util.scene2d.Link;
-import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnLabel;
-import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnScrollPane;
-import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextArea;
-import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextButton;
-
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -47,8 +35,21 @@ import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.BufferUtils;
 
+import gaia.cu9.ari.gaiaorbit.event.EventManager;
+import gaia.cu9.ari.gaiaorbit.event.Events;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
+import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
+import gaia.cu9.ari.gaiaorbit.util.I18n;
+import gaia.cu9.ari.gaiaorbit.util.scene2d.CollapsibleWindow;
+import gaia.cu9.ari.gaiaorbit.util.scene2d.Link;
+import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnLabel;
+import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnScrollPane;
+import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextArea;
+import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextButton;
+
 /**
  * The help window with About, Help and System sections.
+ * 
  * @author tsagrista
  *
  */
@@ -61,7 +62,6 @@ public class AboutWindow extends CollapsibleWindow {
 
     private LabelStyle linkStyle;
 
-
     private List<OwnScrollPane> scrolls;
     private List<Actor> textareas;
 
@@ -72,8 +72,6 @@ public class AboutWindow extends CollapsibleWindow {
         this.skin = sk;
         this.me = this;
         this.linkStyle = skin.get("link", LabelStyle.class);
-
-        
 
         float tawidth = 440 * GlobalConf.SCALE_FACTOR;
         float taheight = 250 * GlobalConf.SCALE_FACTOR;
@@ -231,10 +229,12 @@ public class AboutWindow extends CollapsibleWindow {
         Image zah = new Image(getSpriteDrawable(Gdx.files.internal("img/zah.png")));
         Image dlr = new Image(getSpriteDrawable(Gdx.files.internal("img/dlr.png")));
         Image bwt = new Image(getSpriteDrawable(Gdx.files.internal("img/bwt.png")));
+        Image dpac = new Image(getSpriteDrawable(Gdx.files.internal("img/dpac.png")));
 
         thanks.addActor(zah);
         thanks.addActor(dlr);
         thanks.addActor(bwt);
+        thanks.addActor(dpac);
 
         content2.add(intro).colspan(2).align(Align.left).padTop(pad * 2);
         content2.row();
@@ -302,7 +302,7 @@ public class AboutWindow extends CollapsibleWindow {
             @Override
             public boolean handle(Event event) {
                 if (event instanceof ChangeEvent) {
-                	EventManager.instance.post(Events.DISPLAY_MEM_INFO_WINDOW, stage, skin);
+                    EventManager.instance.post(Events.DISPLAY_MEM_INFO_WINDOW, stage, skin);
                     return true;
                 }
 

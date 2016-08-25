@@ -23,7 +23,7 @@ import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
  */
 public class GlobalConf {
     public static final String APPLICATION_NAME = "Gaia Sky";
-    public static final String WEBPAGE = "http://www.zah.uni-heidelberg.de/gaia/outreach/gaiasandbox/";
+    public static final String WEBPAGE = "http://www.zah.uni-heidelberg.de/gaia/outreach/gaiasky/";
     public static final String WIKI = "https://github.com/ari-zah/gaiasky/wiki";
     public static final String ICON_URL = "http://www.zah.uni-heidelberg.de/uploads/pics/gaiasandboxlogo_02.png";
 
