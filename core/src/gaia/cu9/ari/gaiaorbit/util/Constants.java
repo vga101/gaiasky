@@ -146,7 +146,7 @@ public class Constants {
     /** Minimum angle where the LOD transitions start **/
     public static final float MIN_LOD_TRANS_ANGLE = 0.0f;
     /** Maximum angle where the LOD transitions end **/
-    public static final float MAX_LOD_TRANS_ANGLE = 2.2f;
+    public static final float MAX_LOD_TRANS_ANGLE = 1.6f;
 
     /**
      * 

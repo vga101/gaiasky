@@ -31,9 +31,11 @@ import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 /**
  * Octree node implementation which contains a list of {@link IPosition} objects
  * and possibly 8 subnodes.
+ * 
  * @author Toni Sagrista
  *
- * @param <T> The type of object that the octree holds.
+ * @param <T>
+ *            The type of object that the octree holds.
  */
 public class OctreeNode<T extends IPosition> implements ILineRenderable {
     /** Max depth of the structure this node belongs to **/
@@ -41,7 +43,10 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
     /** Is dynamic loading active? **/
     public static boolean LOAD_ACTIVE;
 
-    /** Since OctreeNode is not to be parallelised, these can be static. Otherwise, use ThreadLocal **/
+    /**
+     * Since OctreeNode is not to be parallelised, these can be static.
+     * Otherwise, use ThreadLocal
+     **/
     private static BoundingBoxd boxcopy = new BoundingBoxd(new Vector3d(), new Vector3d());
     private static Matrix4d boxtransf = new Matrix4d();
     private static Vector3d auxD1 = new Vector3d(), auxD2 = new Vector3d(), auxD3 = new Vector3d(), auxD4 = new Vector3d();
@@ -92,6 +97,7 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
 
     /**
      * Constructs an octree node
+     * 
      * @param pageId
      * @param x
      * @param y
@@ -117,6 +123,7 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
 
     /**
      * Constructs an octree node
+     * 
      * @param pageId
      * @param x
      * @param y
@@ -125,8 +132,10 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
      * @param hsy
      * @param hsz
      * @param depth
-     * @param parent The parent of this octant
-     * @param i The index in the parent's children
+     * @param parent
+     *            The parent of this octant
+     * @param i
+     *            The index in the parent's children
      */
     public OctreeNode(long pageId, double x, double y, double z, double hsx, double hsy, double hsz, int depth, OctreeNode<T> parent, int i) {
         this(pageId, x, y, z, hsx, hsy, hsz, depth);
@@ -136,16 +145,29 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
 
     /**
      * Constructs an octree node.
-     * @param pageId The page id.
-     * @param x The x coordinate of the center.
-     * @param y The y coordinate of the center.
-     * @param z The z coordinate of the center.
-     * @param hsx The half-size in x.
-     * @param hsy The half-size in y.
-     * @param hsz The half-size in z.
-     * @param childrenCount Number of children nodes. Same as non null positions in children vector.
-     * @param nObjects Number of objects contained in this node and its descendants.
-     * @param ownObjects Number of objects contained in this node. Same as objects.size().
+     * 
+     * @param pageId
+     *            The page id.
+     * @param x
+     *            The x coordinate of the center.
+     * @param y
+     *            The y coordinate of the center.
+     * @param z
+     *            The z coordinate of the center.
+     * @param hsx
+     *            The half-size in x.
+     * @param hsy
+     *            The half-size in y.
+     * @param hsz
+     *            The half-size in z.
+     * @param childrenCount
+     *            Number of children nodes. Same as non null positions in
+     *            children vector.
+     * @param nObjects
+     *            Number of objects contained in this node and its descendants.
+     * @param ownObjects
+     *            Number of objects contained in this node. Same as
+     *            objects.size().
      */
     public OctreeNode(long pageId, double x, double y, double z, double hsx, double hsy, double hsz, int childrenCount, int nObjects, int ownObjects, int depth) {
         this(pageId, x, y, z, hsx, hsy, hsz, depth);
@@ -155,8 +177,9 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
     }
 
     /**
-     * Resolves and adds the children of this node using the map. It runs recursively
-     * once the children have been added.
+     * Resolves and adds the children of this node using the map. It runs
+     * recursively once the children have been added.
+     * 
      * @param map
      */
     public void resolveChildren(Map<Long, Pair<OctreeNode<T>, long[]>> map) {
@@ -237,6 +260,7 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
 
     /**
      * Adds all the children of this node and its descendants to the given list.
+     * 
      * @param tree
      */
     public void addChildrenToList(ArrayList<OctreeNode<T>> tree) {
@@ -251,7 +275,9 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
     }
 
     /**
-     * Adds all the particles of this node and its descendants to the given list.
+     * Adds all the particles of this node and its descendants to the given
+     * list.
+     * 
      * @param particles
      */
     public void addParticlesTo(Collection<T> particles) {
@@ -317,6 +343,7 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
 
     /**
      * Counts the number of nodes recursively.
+     * 
      * @return
      */
     public int numNodes() {
@@ -346,6 +373,7 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
 
     /**
      * Returns the deepest octant that contains the position.
+     * 
      * @param position
      * @return
      */
@@ -370,10 +398,15 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
 
     /**
      * Computes the observed value and the transform of each observed node.
-     * @param parentTransform The parent transform.
-     * @param cam The current camera.
-     * @param roulette List where the nodes to be processed are to be added.
-     * @param opacity The opacity to set.
+     * 
+     * @param parentTransform
+     *            The parent transform.
+     * @param cam
+     *            The current camera.
+     * @param roulette
+     *            List where the nodes to be processed are to be added.
+     * @param opacity
+     *            The opacity to set.
      * @return Whether new objects have been added since last frame
      */
     public void update(Transform parentTransform, ICamera cam, List<T> roulette, float opacity) {
@@ -395,7 +428,9 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
                 setChildrenObserved(false);
             } else {
                 // Break down tree, fade in until th2
-                double alpha = MathUtilsd.clamp(MathUtilsd.lint(viewAngle, GlobalConf.scene.OCTANT_THRESHOLD_0 / cam.getFovFactor(), GlobalConf.scene.OCTANT_THRESHOLD_1 / cam.getFovFactor(), 0d, 1d), 0f, 1f);
+                double alpha = 1;
+                if (GlobalConf.scene.OCTREE_PARTICLE_FADE)
+                    alpha = MathUtilsd.clamp(MathUtilsd.lint(viewAngle, GlobalConf.scene.OCTANT_THRESHOLD_0 / cam.getFovFactor(), GlobalConf.scene.OCTANT_THRESHOLD_1 / cam.getFovFactor(), 0d, 1d), 0f, 1f);
 
                 // Add objects
                 addObjectsTo(roulette);
@@ -432,6 +467,7 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
 
     /**
      * Uses the camera frustum element to check the octant.
+     * 
      * @param parentTransform
      * @param cam
      */
@@ -445,8 +481,9 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
     }
 
     /**
-     * The octant is observed if at least one of its vertices is in the view or the
-     * camera itself is in the view.
+     * The octant is observed if at least one of its vertices is in the view or
+     * the camera itself is in the view.
+     * 
      * @param parentTransform
      * @param cam
      */
@@ -489,10 +526,13 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
     }
 
     /**
-     * Sets the status to this node and its descendants recursively
-     * to the given depth level.
-     * @param status The new status.
-     * @param depth The depth.
+     * Sets the status to this node and its descendants recursively to the given
+     * depth level.
+     * 
+     * @param status
+     *            The new status.
+     * @param depth
+     *            The depth.
      */
     public void setStatus(LoadStatus status, int depth) {
         if (depth >= this.depth) {
@@ -553,61 +593,31 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
         loc.set(this.blf).add(transform);
 
         /*
-         *       .·------·
-         *     .' |    .'|
-         *    +---+--·'  |
-         *    |   |  |   |
-         *    |  ,+--+---·
-         *    |.'    | .'
-         *    +------+'
+         * .·------· .' | .'| +---+--·' | | | | | | ,+--+---· |.' | .' +------+'
          */
         line(sr, loc.x, loc.y, loc.z, loc.x + size.x, loc.y, loc.z, this.col);
         line(sr, loc.x, loc.y, loc.z, loc.x, loc.y + size.y, loc.z, this.col);
         line(sr, loc.x, loc.y, loc.z, loc.x, loc.y, loc.z + size.z, this.col);
 
         /*
-         *       .·------·
-         *     .' |    .'|
-         *    ·---+--+'  |
-         *    |   |  |   |
-         *    |  ,·--+---+
-         *    |.'    | .'
-         *    ·------+'
+         * .·------· .' | .'| ·---+--+' | | | | | | ,·--+---+ |.' | .' ·------+'
          */
         line(sr, loc.x + size.x, loc.y, loc.z, loc.x + size.x, loc.y + size.y, loc.z, this.col);
         line(sr, loc.x + size.x, loc.y, loc.z, loc.x + size.x, loc.y, loc.z + size.z, this.col);
 
         /*
-         *       .·------+
-         *     .' |    .'|
-         *    ·---+--·'  |
-         *    |   |  |   |
-         *    |  ,+--+---+
-         *    |.'    | .'
-         *    ·------·'
+         * .·------+ .' | .'| ·---+--·' | | | | | | ,+--+---+ |.' | .' ·------·'
          */
         line(sr, loc.x + size.x, loc.y, loc.z + size.z, loc.x, loc.y, loc.z + size.z, this.col);
         line(sr, loc.x + size.x, loc.y, loc.z + size.z, loc.x + size.x, loc.y + size.y, loc.z + size.z, this.col);
 
         /*
-         *       .+------·
-         *     .' |    .'|
-         *    ·---+--·'  |
-         *    |   |  |   |
-         *    |  ,+--+---·
-         *    |.'    | .'
-         *    ·------·'
+         * .+------· .' | .'| ·---+--·' | | | | | | ,+--+---· |.' | .' ·------·'
          */
         line(sr, loc.x, loc.y, loc.z + size.z, loc.x, loc.y + size.y, loc.z + size.z, this.col);
 
         /*
-         *       .+------+
-         *     .' |    .'|
-         *    +---+--+'  |
-         *    |   |  |   |
-         *    |  ,·--+---·
-         *    |.'    | .'
-         *    ·------·'
+         * .+------+ .' | .'| +---+--+' | | | | | | ,·--+---· |.' | .' ·------·'
          */
         line(sr, loc.x, loc.y + size.y, loc.z, loc.x + size.x, loc.y + size.y, loc.z, this.col);
         line(sr, loc.x, loc.y + size.y, loc.z, loc.x, loc.y + size.y, loc.z + size.z, this.col);
