@@ -114,17 +114,17 @@ public class Constants {
     public static final float MAX_SLIDER = 100;
 
     /** Maximum fov value, in degrees **/
-    public static final int MAX_FOV = 175;
+    public static final int MAX_FOV = 170;
     /** Minimum fov value, in degrees **/
     public static final int MIN_FOV = 20;
 
     /** Maximum rotation speed **/
-    public static final float MAX_ROT_SPEED = 3e4f;
+    public static final float MAX_ROT_SPEED = 0.5e4f;
     /** Minimum rotation speed **/
     public static final float MIN_ROT_SPEED = 2e2f;
 
     /** Maximum turning speed **/
-    public static final float MAX_TURN_SPEED = 10e3f;
+    public static final float MAX_TURN_SPEED = 3e3f;
     /** Minimum turning speed **/
     public static final float MIN_TURN_SPEED = 2e2f;
 
@@ -147,6 +147,18 @@ public class Constants {
     public static final float MIN_LOD_TRANS_ANGLE = 0.0f;
     /** Maximum angle where the LOD transitions end **/
     public static final float MAX_LOD_TRANS_ANGLE = 1.6f;
+
+    /** Minimum star pixel size **/
+    public static final float MIN_STAR_POINT_SIZE = 0.5f;
+    /** Maximum star pixel size **/
+    public static final float MAX_STAR_POINT_SIZE = 100;
+    /** Step to increase/decrease **/
+    public static final float STEP_STAR_POINT_SIZE = 1f;
+
+    /** Minimum star minimum opacity **/
+    public static final float MIN_STAR_MIN_OPACITY = 0.0f;
+    /** Maximum star minimum opacity **/
+    public static final float MAX_STAR_MIN_OPACITY = 0.6f;
 
     /**
      * 

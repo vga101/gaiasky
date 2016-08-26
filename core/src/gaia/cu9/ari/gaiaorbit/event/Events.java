@@ -226,12 +226,25 @@ public enum Events {
      **/
     VIEWPORT_RESIZE,
 
-    /** Increase star point size by 0.5 **/
+    /** Set a new value for the star point size **/
+    STAR_POINT_SIZE_CMD,
+    /** Contains the newly set star point size **/
+    STAR_POINT_SIZE_INFO,
+    /**
+     * Increase star point size by
+     * {@link gaia.cu9.ari.gaiaorbit.util.Constants#STEP_STAR_POINT_SIZE}
+     **/
     STAR_POINT_SIZE_INCREASE_CMD,
-    /** Decrease star point size by 0.5 **/
+    /**
+     * Decrease star point size by
+     * {@link gaia.cu9.ari.gaiaorbit.util.Constants#STEP_STAR_POINT_SIZE}
+     **/
     STAR_POINT_SIZE_DECREASE_CMD,
     /** Reset star point size to original value **/
     STAR_POINT_SIZE_RESET_CMD,
+
+    /** Minimum star opacity **/
+    STAR_MIN_OPACITY_CMD,
 
     /**
      * Stereoscopic vision, side by side rendering. Contains the localised name.

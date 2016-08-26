@@ -36,7 +36,7 @@ public class PixelRenderSystem extends ImmediateRenderSystem implements IObserve
 
     public PixelRenderSystem(RenderGroup rg, int priority, float[] alphas) {
         super(rg, priority, alphas);
-        EventManager.instance.subscribe(this, Events.TRANSIT_COLOUR_CMD, Events.ONLY_OBSERVED_STARS_CMD);
+        EventManager.instance.subscribe(this, Events.TRANSIT_COLOUR_CMD, Events.ONLY_OBSERVED_STARS_CMD, Events.STAR_MIN_OPACITY_CMD);
         BRIGHTNESS_FACTOR = Constants.webgl ? 15f : 10f;
         updatePointSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
 
@@ -171,11 +171,28 @@ public class PixelRenderSystem extends ImmediateRenderSystem implements IObserve
 
     @Override
     public void notify(Events event, Object... data) {
-        if (event == Events.TRANSIT_COLOUR_CMD) {
+        switch (event) {
+        case TRANSIT_COLOUR_CMD:
             starColorTransit = (boolean) data[1];
             POINT_UPDATE_FLAG = true;
-        } else if (event == Events.ONLY_OBSERVED_STARS_CMD) {
+            break;
+        case ONLY_OBSERVED_STARS_CMD:
             POINT_UPDATE_FLAG = true;
+            break;
+        case STAR_MIN_OPACITY_CMD:
+            if (shaderProgram != null && shaderProgram.isCompiled()) {
+                final float newAlphaMin = (float) data[0];
+                Gdx.app.postRunnable(new Runnable() {
+                    @Override
+                    public void run() {
+                        shaderProgram.begin();
+                        shaderProgram.setUniformf("u_pointAlphaMin", newAlphaMin);
+                        shaderProgram.end();
+                    }
+
+                });
+            }
+            break;
         }
     }
 

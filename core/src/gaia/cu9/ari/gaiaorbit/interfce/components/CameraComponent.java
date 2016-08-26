@@ -119,9 +119,9 @@ public class CameraComponent extends GuiComponent implements IObserver {
         cameraSpeedLimit.setSelectedIndex(GlobalConf.scene.CAMERA_SPEED_LIMIT_IDX);
 
         /** CAMERA SPEED **/
-        cameraSpeed = new Slider(Constants.MIN_SLIDER, Constants.MAX_SLIDER, 1, false, skin);
+        cameraSpeed = new Slider(Constants.MIN_SLIDER, Constants.MAX_SLIDER / 2, 1, false, skin);
         cameraSpeed.setName("camera speed");
-        cameraSpeed.setValue(GlobalConf.scene.CAMERA_SPEED * 10);
+        cameraSpeed.setValue(GlobalConf.scene.CAMERA_SPEED * 5);
         cameraSpeed.addListener(new EventListener() {
             @Override
             public boolean handle(Event event) {
@@ -192,8 +192,8 @@ public class CameraComponent extends GuiComponent implements IObserver {
         cameraGroup.addActor(cameraMode);
         cameraGroup.addActor(fovLabel);
 
-       float space3 = 3 * GlobalConf.SCALE_FACTOR;
-        
+        float space3 = 3 * GlobalConf.SCALE_FACTOR;
+
         HorizontalGroup fovGroup = new HorizontalGroup();
         fovGroup.space(space3);
         fovGroup.addActor(fieldOfView);
@@ -250,7 +250,7 @@ public class CameraComponent extends GuiComponent implements IObserver {
             interf = (Boolean) data[1];
             if (!interf) {
                 float value = (Float) data[0];
-                value *= 10;
+                value *= 5;
                 cameraSpeed.setValue(value);
                 speed.setText(Integer.toString((int) value));
             }
