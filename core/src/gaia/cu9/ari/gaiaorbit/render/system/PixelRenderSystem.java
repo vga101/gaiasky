@@ -34,30 +34,42 @@ public class PixelRenderSystem extends ImmediateRenderSystem implements IObserve
     Vector3 aux;
     int additionalOffset, pmOffset;
 
+    boolean initializing = false;
+
+    private float lastResolution = -1;
+
     public PixelRenderSystem(RenderGroup rg, int priority, float[] alphas) {
         super(rg, priority, alphas);
         EventManager.instance.subscribe(this, Events.TRANSIT_COLOUR_CMD, Events.ONLY_OBSERVED_STARS_CMD, Events.STAR_MIN_OPACITY_CMD);
         BRIGHTNESS_FACTOR = Constants.webgl ? 15f : 10f;
-        updatePointSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
-
+        lastResolution = (float) Math.min(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        initializePointSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        initializing = true;
     }
 
-    private float lastResolution = -1;
-
-    protected void updatePointSize(int width, int height, boolean initialize) {
+    protected void initializePointSize(int width, int height) {
         float defaultPointSize = GlobalConf.runtime.STRIPPED_FOV_MODE ? 3 : 7;
-        if (initialize && GlobalConf.scene.STAR_POINT_SIZE < 0)
+        if (GlobalConf.scene.STAR_POINT_SIZE < 0) {
             GlobalConf.scene.STAR_POINT_SIZE = defaultPointSize;
+        }
+    }
 
-        // Factor POINT_SIZE with resolution
-        float baseResolution = lastResolution < 0 ? 720f : lastResolution;
-        float currentResolution = (float) Math.min(width, height);
+    private void recomputePointSize(int width, int height) {
+        if (!initializing) {
+            float defaultPointSize = GlobalConf.runtime.STRIPPED_FOV_MODE ? 3 : 7;
+            // Factor POINT_SIZE with resolution
+            float baseResolution = lastResolution < 0 ? 720f : lastResolution;
+            float currentResolution = (float) Math.min(width, height);
+            float factor = currentResolution / baseResolution;
 
-        float factor = currentResolution / baseResolution;
-        GlobalConf.scene.STAR_POINT_SIZE = Constants.webgl ? Math.min(300, Math.max(3, GlobalConf.scene.STAR_POINT_SIZE * factor)) : Math.min(300, Math.max(3, GlobalConf.scene.STAR_POINT_SIZE * factor));
+            GlobalConf.scene.STAR_POINT_SIZE = Math.min(Constants.MAX_STAR_POINT_SIZE, Math.max(Constants.MIN_STAR_POINT_SIZE, GlobalConf.scene.STAR_POINT_SIZE * factor));
 
-        GlobalConf.scene.STAR_POINT_SIZE_BAK = Constants.webgl ? Math.min(300, Math.max(3, defaultPointSize * factor)) : Math.min(300, Math.max(3, defaultPointSize * factor));
-        lastResolution = currentResolution;
+            GlobalConf.scene.STAR_POINT_SIZE_BAK = Math.min(Constants.MAX_STAR_POINT_SIZE, Math.max(Constants.MIN_STAR_POINT_SIZE, defaultPointSize * factor));
+
+            lastResolution = currentResolution;
+        } else {
+            initializing = false;
+        }
     }
 
     @Override
@@ -198,6 +210,6 @@ public class PixelRenderSystem extends ImmediateRenderSystem implements IObserve
 
     @Override
     public void resize(int w, int h) {
-        updatePointSize(w, h, false);
+        recomputePointSize(w, h);
     }
 }

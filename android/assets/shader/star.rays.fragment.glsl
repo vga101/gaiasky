@@ -56,7 +56,7 @@ vec4 draw_star_rays(vec2 uv, vec2 pos, float distanceCenter) {
 vec4 draw_simple_star(float distanceCenter, float inner_rad, float decay) {
     // Distance from the center of the image to the border, in [0, 1]
     float fac = 1.0 - pow(distanceCenter, decay);
-    float core = step(ang_th, u_apparent_angle) * smoothstep(inner_rad, 0.0, distanceCenter);
+    float core = step(ang_th, u_apparent_angle) * pow(smoothstep(inner_rad, 0.0, distanceCenter), 2.0);
 
     vec4 col = vec4 (v_color.rgb + core, v_color.a * (fac + core));
 	return col;
@@ -72,12 +72,11 @@ draw_star() {
     float dist = distance (vec2 (0.5), v_texCoords.xy) * 2.0;
     vec2 uv = v_texCoords - 0.5;
     if (u_distance < u_th_dist_up * 10000.0) {
-        // Level is 0 when dist <= dist_down and 1 when dist >= dist_up
-        float level = min((u_distance) / (u_th_dist_up * 10000.0), 1.0);
-		
 		if(u_strayLight < 0){
 			return  draw_simple_star(dist, u_inner_rad, 0.15);
 		}else{
+			// Level is 0 when dist <= dist_down and 1 when dist >= dist_up
+       		float level = min((u_distance) / (u_th_dist_up * 10000.0), 1.0);
 	        vec4 c = draw_star_rays(uv, vec2(0.5), dist);
 	        vec4 s = draw_simple_star(dist, u_inner_rad, 0.15);
 	

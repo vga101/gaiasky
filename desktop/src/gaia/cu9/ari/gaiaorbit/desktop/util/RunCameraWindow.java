@@ -2,6 +2,8 @@ package gaia.cu9.ari.gaiaorbit.desktop.util;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import com.badlogic.gdx.Gdx;
@@ -35,7 +37,9 @@ import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnScrollPane;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextButton;
 
 /**
- * The run camera path file window, which allows the user to choose a script to run.
+ * The run camera path file window, which allows the user to choose a script to
+ * run.
+ * 
  * @author tsagrista
  *
  */
@@ -143,6 +147,8 @@ public class RunCameraWindow extends CollapsibleWindow {
         if (scriptFolder.exists())
             scripts = GlobalResources.listRec(scriptFolder, scripts, ".dat");
 
+        Collections.sort(scripts, new FileHandleComparator());
+
         HorizontalGroup titlegroup = new HorizontalGroup();
         titlegroup.space(pad);
         ImageButton tooltip = new OwnImageButton(skin, "tooltip");
@@ -239,4 +245,13 @@ public class RunCameraWindow extends CollapsibleWindow {
         return I18n.bundle.format(key, args);
     }
 
+    private class FileHandleComparator implements Comparator<FileHandle> {
+
+        @Override
+        public int compare(FileHandle fh0, FileHandle fh1) {
+            return fh0.name().compareTo(fh1.name());
+
+        }
+
+    }
 }
