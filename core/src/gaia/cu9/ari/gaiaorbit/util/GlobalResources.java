@@ -16,6 +16,7 @@ import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
 /**
  * Holds and initializes resources utilized globally.
+ * 
  * @author Toni Sagrista
  *
  */
@@ -52,10 +53,12 @@ public class GlobalResources {
     }
 
     /**
-     * Converts from property name to method name by removing the 
-     * separator dots and capitalising each chunk.
-     * Example: model.texture.bump -> ModelTextureBump
-     * @param property The property name.
+     * Converts from property name to method name by removing the separator dots
+     * and capitalising each chunk. Example: model.texture.bump ->
+     * ModelTextureBump
+     * 
+     * @param property
+     *            The property name.
      * @return
      */
     public static String propertyToMethodName(String property) {
@@ -69,6 +72,7 @@ public class GlobalResources {
 
     /**
      * Returns the given string with the first letter capitalised
+     * 
      * @param line
      * @return
      */
@@ -77,7 +81,9 @@ public class GlobalResources {
     }
 
     /**
-     * Returns the given string with the first letter capitalised and all the others in lower case.
+     * Returns the given string with the first letter capitalised and all the
+     * others in lower case.
+     * 
      * @param line
      * @return
      */
@@ -86,18 +92,24 @@ public class GlobalResources {
     }
 
     /**
-     * Converts this float to the string representation of a distance.
+     * Converts this double to the string representation of a distance.
+     * 
      * @param d
+     *            In internal units
      * @return An array containing the float number and the string units.
      */
-    public static Object[] floatToDistanceString(float d) {
-        d = d * (float) Constants.U_TO_KM;
-        if (d >= 1f && d < AstroUtils.PC_TO_KM) {
-            // km
-            return new Object[] { d, "km" };
-        } else if (d < 1f) {
+    public static Object[] doubleToDistanceString(double d) {
+        d = d * Constants.U_TO_KM;
+        if (Math.abs(d) < 1f) {
             // m
             return new Object[] { (d * 1000), "m" };
+        }
+        if (Math.abs(d) < AstroUtils.AU_TO_KM) {
+            // km
+            return new Object[] { d, "km" };
+        } else if (Math.abs(d) < AstroUtils.PC_TO_KM) {
+            // AU
+            return new Object[] { d * AstroUtils.KM_TO_AU, "AU" };
         } else {
             // pc
             return new Object[] { (d * AstroUtils.KM_TO_PC), "pc" };
@@ -105,8 +117,21 @@ public class GlobalResources {
     }
 
     /**
-     * Transforms the given double array into a float array by casting
-     * each of its numbers.
+     * Converts this float to the string representation of a distance.
+     * 
+     * @param f
+     *            In internal units
+     * @return An array containing the float number and the string units.
+     */
+    public static Object[] floatToDistanceString(float f) {
+        Object[] result = GlobalResources.doubleToDistanceString((double) f);
+        return new Object[] { (double) result[0], result[1] };
+    }
+
+    /**
+     * Transforms the given double array into a float array by casting each of
+     * its numbers.
+     * 
      * @param array
      * @return
      */
@@ -118,11 +143,17 @@ public class GlobalResources {
     }
 
     /**
-     * Computes whether a body with the given position is visible by a camera with the given direction
-     * and angle. Coordinates are assumed to be in the camera-origin system.
-     * @param point The position of the body in the reference system of the camera (i.e. camera is at origin).
-     * @param coneAngle The cone angle of the camera.
-     * @param dir The direction.
+     * Computes whether a body with the given position is visible by a camera
+     * with the given direction and angle. Coordinates are assumed to be in the
+     * camera-origin system.
+     * 
+     * @param point
+     *            The position of the body in the reference system of the camera
+     *            (i.e. camera is at origin).
+     * @param coneAngle
+     *            The cone angle of the camera.
+     * @param dir
+     *            The direction.
      * @return True if the body is visible.
      */
     public static boolean isInView(Vector3d point, double pointDistance, float coneAngle, Vector3d dir) {
@@ -130,11 +161,16 @@ public class GlobalResources {
     }
 
     /**
-     * Computes whether any of the given points is visible by a camera with the given direction
-     * and the given cone angle. Coordinates are assumed to be in the camera-origin system.
-     * @param points The array of points to check.
-     * @param coneAngle The cone angle of the camera (field of view).
-     * @param dir The direction.
+     * Computes whether any of the given points is visible by a camera with the
+     * given direction and the given cone angle. Coordinates are assumed to be
+     * in the camera-origin system.
+     * 
+     * @param points
+     *            The array of points to check.
+     * @param coneAngle
+     *            The cone angle of the camera (field of view).
+     * @param dir
+     *            The direction.
      * @return True if any of the points is in the camera view cone.
      */
     public static boolean isAnyInView(Vector3d[] points, float coneAngle, Vector3d dir) {
@@ -148,8 +184,12 @@ public class GlobalResources {
 
     /**
      * Compares a given buffer with another buffer.
-     * @param buf Buffer to compare against
-     * @param compareTo Buffer to compare to (content should be ASCII lowercase if possible)
+     * 
+     * @param buf
+     *            Buffer to compare against
+     * @param compareTo
+     *            Buffer to compare to (content should be ASCII lowercase if
+     *            possible)
      * @return True if the buffers compare favourably, false otherwise
      */
     public static boolean equal(String buf, char[] compareTo, boolean ignoreCase) {
@@ -189,9 +229,13 @@ public class GlobalResources {
 
     /**
      * Gets all the files with the given extension in the given file handle f.
-     * @param f The directory to get all the files
-     * @param l The list with re results
-     * @param extension The extension of the files
+     * 
+     * @param f
+     *            The directory to get all the files
+     * @param l
+     *            The list with re results
+     * @param extension
+     *            The extension of the files
      * @return The list l
      */
     public static List<FileHandle> listRec(FileHandle f, List<FileHandle> l, String extension) {

@@ -50,7 +50,7 @@ public class FocusInfoInterface extends Table implements IObserver {
         this.setBackground("table-bg");
 
         nf = NumberFormatFactory.getFormatter("##0.###");
-        sf = NumberFormatFactory.getFormatter("##0.###E0");
+        sf = NumberFormatFactory.getFormatter("#0.###E0");
 
         pad10 = 10 * GlobalConf.SCALE_FACTOR;
         pad5 = 5 * GlobalConf.SCALE_FACTOR;
@@ -254,12 +254,15 @@ public class FocusInfoInterface extends Table implements IObserver {
             break;
         case FOCUS_INFO_UPDATED:
             focusAngle.setText(sf.format(Math.toDegrees((float) data[1]) % 360) + "°");
-            Object[] dist = GlobalResources.floatToDistanceString((float) data[0]);
-            focusDist.setText(sf.format(Math.max(0d, (float) dist[0])) + " " + dist[1]);
+            Object[] dist = GlobalResources.doubleToDistanceString((float) data[0]);
+            focusDist.setText(sf.format(Math.max(0d, (double) dist[0])) + " " + dist[1]);
             break;
         case CAMERA_MOTION_UPDATED:
             Vector3d campos = (Vector3d) data[0];
-            camPos.setText("X: " + nf.format(campos.x * Constants.U_TO_PC) + " pc\nY: " + nf.format(campos.y * Constants.U_TO_PC) + " pc\nZ: " + nf.format(campos.z * Constants.U_TO_PC) + " pc");
+            Object[] x = GlobalResources.doubleToDistanceString(campos.x);
+            Object[] y = GlobalResources.doubleToDistanceString(campos.y);
+            Object[] z = GlobalResources.doubleToDistanceString(campos.z);
+            camPos.setText("X: " + sf.format((double) x[0]) + " " + x[1] + "\nY: " + sf.format((double) y[0]) + " " + y[1] + "\nZ: " + sf.format((double) z[0]) + " " + z[1]);
             camVel.setText(sf.format((double) data[1]) + " km/h");
             break;
         case CAMERA_MODE_CMD:
