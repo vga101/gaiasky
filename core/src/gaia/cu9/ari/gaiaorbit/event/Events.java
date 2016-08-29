@@ -50,6 +50,9 @@ public enum Events {
     /** Stops the camera motion **/
     CAMERA_STOP,
 
+    /** Informs that the camera has started or stopped playing. Contains a boolean (true - start, false - stop) **/
+    CAMERA_PLAY_INFO,
+
     CAMERA_PAN,
     /** Contains the roll value between 0 and 1 **/
     CAMERA_ROLL,

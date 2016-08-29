@@ -92,6 +92,12 @@ public class CamRecorder implements IObserver {
                         EventManager.instance.post(Events.CAMERA_STOP);
                         // Post notification
                         Logger.info(I18n.bundle.get("notif.cameraplay.done"));
+
+                        // Issue message informing playing has stopped
+                        EventManager.instance.post(Events.CAMERA_PLAY_INFO, false);
+
+                        // Stop frame output if it is on!
+                        EventManager.instance.post(Events.FRAME_OUTPUT_CMD, false);
                     }
                 } catch (IOException e) {
                     Logger.error(e);
@@ -172,6 +178,9 @@ public class CamRecorder implements IObserver {
 
             Logger.info(I18n.bundle.format("notif.cameraplay.start", file.path()));
             mode = RecorderMode.PLAYING;
+
+            // Issue message informing playing has started
+            EventManager.instance.post(Events.CAMERA_PLAY_INFO, true);
 
             break;
         case UPDATE_CAM_RECORDER:

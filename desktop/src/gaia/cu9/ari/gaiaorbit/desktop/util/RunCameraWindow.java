@@ -175,33 +175,13 @@ public class RunCameraWindow extends CollapsibleWindow {
                     ChangeEvent ce = (ChangeEvent) event;
                     Actor actor = ce.getTarget();
                     final String name = ((com.badlogic.gdx.scenes.scene2d.ui.List<String>) actor).getSelected();
-                    if (name != null) {
-                        for (FileHandle fh : scripts) {
-                            if (fh.name().equals(name)) {
-                                selectedScript = fh;
-                                break;
-                            }
-                        }
-                        if (selectedScript != null) {
-                            File choice = selectedScript.file();
-                            try {
-                                outConsole.setText(txt("gui.camera.ready"));
-                                outConsole.setColor(0, 1, 0, 1);
-                                run.setDisabled(false);
-                                me.pack();
-                            } catch (Exception e) {
-                                outConsole.setText(txt("gui.camera.error2", e.getMessage()));
-                                outConsole.setColor(1, 0, 0, 1);
-                                run.setDisabled(true);
-                                me.pack();
-                            }
-                        }
-                    }
+                    select(name);
                     return true;
                 }
                 return false;
             }
         });
+
         ScrollPane scriptsScroll = new OwnScrollPane(scriptsList, skin, "minimalist");
         scriptsScroll.setName("camera path files list scroll");
         scriptsScroll.setFadeScrollBars(false);
@@ -220,6 +200,43 @@ public class RunCameraWindow extends CollapsibleWindow {
         table.row();
 
         pack();
+
+        // Select first
+        Gdx.app.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                if (scripts.size() > 0) {
+                    scriptsList.setSelectedIndex(0);
+                    select(scripts.get(0).name());
+                }
+            }
+        });
+
+    }
+
+    private void select(String name) {
+        if (name != null) {
+            for (FileHandle fh : scripts) {
+                if (fh.name().equals(name)) {
+                    selectedScript = fh;
+                    break;
+                }
+            }
+            if (selectedScript != null) {
+                File choice = selectedScript.file();
+                try {
+                    outConsole.setText(txt("gui.camera.ready"));
+                    outConsole.setColor(0, 1, 0, 1);
+                    run.setDisabled(false);
+                    me.pack();
+                } catch (Exception e) {
+                    outConsole.setText(txt("gui.camera.error2", e.getMessage()));
+                    outConsole.setColor(1, 0, 0, 1);
+                    run.setDisabled(true);
+                    me.pack();
+                }
+            }
+        }
     }
 
     public void hide() {

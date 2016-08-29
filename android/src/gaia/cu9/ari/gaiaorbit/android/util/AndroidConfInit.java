@@ -6,7 +6,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.channels.FileChannel;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Properties;
 
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
@@ -82,11 +84,14 @@ public class AndroidConfInit extends ConfInit {
     @Override
     public void initGlobalConf() throws Exception {
 
+        // Scale factor
+        GlobalConf.updateScaleFactor(1f);
+
         /** VERSION CONF **/
         VersionConf vc = new VersionConf();
         String versionStr = vp.getProperty("version");
         int[] majmin = getMajorMinorFromString(versionStr);
-        vc.initialize(versionStr, vp.getProperty("buildtime"), vp.getProperty("builder"), vp.getProperty("build"), vp.getProperty("system"), majmin[0], majmin[1]);
+        vc.initialize(versionStr, vp.getProperty("buildtime"), vp.getProperty("builder"), vp.getProperty("system"), vp.getProperty("build"), majmin[0], majmin[1]);
 
         /** PERFORMANCE CONF **/
         PerformanceConf pc = new PerformanceConf();
@@ -111,11 +116,26 @@ public class AndroidConfInit extends ConfInit {
 
         /** DATA CONF **/
         DataConf dc = new DataConf();
-        boolean DATA_SOURCE_LOCAL = Boolean.parseBoolean(p.getProperty("data.source.local"));
-        String DATA_JSON_FILE = p.getProperty("data.json.file");
+        boolean DATA_SOURCE_LOCAL = Boolean.parseBoolean(p.getProperty("data.source.objectserver"));
+
+        String CATALOG_JSON_FILE = p.getProperty("data.json.catalog");
+        String HYG_JSON_FILE = p.getProperty("data.json.catalog.hyg");
+        String TGAS_JSON_FILE = p.getProperty("data.json.catalog.tgas");
+
+        String OBJECTS_JSON_FILE = p.getProperty("data.json.objects");
+        List<String> files = new ArrayList<String>();
+        int i = 0;
+        String gqualityFile;
+        while ((gqualityFile = p.getProperty("data.json.objects.gq." + i)) != null) {
+            files.add(gqualityFile);
+            i++;
+        }
+        String[] OBJECTS_JSON_FILE_GQ = new String[files.size()];
+        OBJECTS_JSON_FILE_GQ = files.toArray(OBJECTS_JSON_FILE_GQ);
         String OBJECT_SERVER_HOSTNAME = p.getProperty("data.source.hostname");
         int OBJECT_SERVER_PORT = Integer.parseInt(p.getProperty("data.source.port"));
         String VISUALIZATION_ID = p.getProperty("data.source.visid");
+        boolean REAL_GAIA_ATTITUDE = Boolean.parseBoolean(p.getProperty("data.attitude.real"));
 
         float LIMIT_MAG_LOAD;
         if (p.getProperty("data.limit.mag") != null && !p.getProperty("data.limit.mag").isEmpty()) {
@@ -123,7 +143,7 @@ public class AndroidConfInit extends ConfInit {
         } else {
             LIMIT_MAG_LOAD = Float.MAX_VALUE;
         }
-        dc.initialize(DATA_SOURCE_LOCAL, DATA_JSON_FILE, null, OBJECT_SERVER_HOSTNAME, OBJECT_SERVER_PORT, VISUALIZATION_ID, LIMIT_MAG_LOAD, false);
+        dc.initialize(DATA_SOURCE_LOCAL, CATALOG_JSON_FILE, HYG_JSON_FILE, TGAS_JSON_FILE, OBJECTS_JSON_FILE, OBJECTS_JSON_FILE_GQ, OBJECT_SERVER_HOSTNAME, OBJECT_SERVER_PORT, VISUALIZATION_ID, LIMIT_MAG_LOAD, REAL_GAIA_ATTITUDE);
 
         /** PROGRAM CONF **/
         ProgramConf prc = new ProgramConf();
@@ -133,7 +153,12 @@ public class AndroidConfInit extends ConfInit {
         String TUTORIAL_SCRIPT_LOCATION = p.getProperty("program.tutorial.script");
         boolean SHOW_CONFIG_DIALOG = Boolean.parseBoolean(p.getProperty("program.configdialog"));
         boolean SHOW_DEBUG_INFO = Boolean.parseBoolean(p.getProperty("program.debuginfo"));
-        Date LAST_CHECKED = p.getProperty("program.lastchecked").isEmpty() ? null : df.parse(p.getProperty("program.lastchecked"));
+        Date LAST_CHECKED;
+        try {
+            LAST_CHECKED = df.parse(p.getProperty("program.lastchecked"));
+        } catch (Exception e) {
+            LAST_CHECKED = null;
+        }
         String LAST_VERSION = p.getProperty("program.lastversion");
         String VERSION_CHECK_URL = p.getProperty("program.versioncheckurl");
         String UI_THEME = p.getProperty("program.ui.theme");
@@ -144,6 +169,7 @@ public class AndroidConfInit extends ConfInit {
         prc.initialize(DISPLAY_TUTORIAL, TUTORIAL_SCRIPT_LOCATION, SHOW_CONFIG_DIALOG, SHOW_DEBUG_INFO, LAST_CHECKED, LAST_VERSION, VERSION_CHECK_URL, UI_THEME, SCRIPT_LOCATION, LOCALE, STEREOSCOPIC_MODE, STEREO_PROFILE);
 
         /** SCENE CONF **/
+        int GRAPHICS_QUALITY = Integer.parseInt(p.getProperty("scene.graphics.quality"));
         long OBJECT_FADE_MS = Long.parseLong(p.getProperty("scene.object.fadems"));
         float STAR_BRIGHTNESS = Float.parseFloat(p.getProperty("scene.star.brightness"));
         float AMBIENT_LIGHT = Float.parseFloat(p.getProperty("scene.ambient"));
@@ -154,20 +180,19 @@ public class AndroidConfInit extends ConfInit {
         float TURNING_SPEED = Float.parseFloat(p.getProperty("scene.camera.turn.vel"));
         float ROTATION_SPEED = Float.parseFloat(p.getProperty("scene.camera.rotate.vel"));
         float LABEL_NUMBER_FACTOR = Float.parseFloat(p.getProperty("scene.labelfactor"));
-        double STAR_TH_ANGLE_QUAD = Double.parseDouble(p.getProperty("scene.star.thresholdangle.quad"));
-        double STAR_TH_ANGLE_POINT = Double.parseDouble(p.getProperty("scene.star.thresholdangle.point"));
-        double STAR_TH_ANGLE_NONE = Double.parseDouble(p.getProperty("scene.star.thresholdangle.none"));
+        double STAR_TH_ANGLE_QUAD = Double.parseDouble(p.getProperty("scene.star.threshold.quad"));
+        double STAR_TH_ANGLE_POINT = Double.parseDouble(p.getProperty("scene.star.threshold.point"));
+        double STAR_TH_ANGLE_NONE = Double.parseDouble(p.getProperty("scene.star.threshold.none"));
         float POINT_ALPHA_MIN = Float.parseFloat(p.getProperty("scene.point.alpha.min"));
         float POINT_ALPHA_MAX = Float.parseFloat(p.getProperty("scene.point.alpha.max"));
         int PIXEL_RENDERER = Integer.parseInt(p.getProperty("scene.renderer.star"));
         int LINE_RENDERER = Integer.parseInt(p.getProperty("scene.renderer.line"));
         boolean OCTREE_PARTICLE_FADE = Boolean.parseBoolean(p.getProperty("scene.octree.particle.fade"));
-        float OCTANT_TH_ANGLE_0 = Float.parseFloat(p.getProperty("scene.octant.threshold.0"));
-        float OCTANT_TH_ANGLE_1 = Float.parseFloat(p.getProperty("scene.octant.threshold.1"));
+        float OCTANT_THRESHOLD_0 = Float.parseFloat(p.getProperty("scene.octant.threshold.0"));
+        float OCTANT_THRESHOLD_1 = Float.parseFloat(p.getProperty("scene.octant.threshold.1"));
         boolean PROPER_MOTION_VECTORS = Boolean.parseBoolean(p.getProperty("scene.propermotion.vectors", "true"));
         float PM_NUM_FACTOR = Float.parseFloat(p.getProperty("scene.propermotion.numfactor", "20f"));
         float PM_LEN_FACTOR = Float.parseFloat(p.getProperty("scene.propermotion.lenfactor", "1E1f"));
-
         //Visibility of components
         ComponentType[] cts = ComponentType.values();
         boolean[] VISIBILITY = new boolean[cts.length];
@@ -177,8 +202,10 @@ public class AndroidConfInit extends ConfInit {
                 VISIBILITY[ct.ordinal()] = Boolean.parseBoolean(p.getProperty(key));
             }
         }
+        float STAR_POINT_SIZE = Float.parseFloat(p.getProperty("scene.star.point.size", "-1"));
         SceneConf sc = new SceneConf();
-        sc.initialize(1, OBJECT_FADE_MS, STAR_BRIGHTNESS, AMBIENT_LIGHT, CAMERA_FOV, CAMERA_SPEED, TURNING_SPEED, ROTATION_SPEED, CAMERA_SPEED_LIMIT_IDX, FOCUS_LOCK, LABEL_NUMBER_FACTOR, VISIBILITY, PIXEL_RENDERER, LINE_RENDERER, STAR_TH_ANGLE_NONE, STAR_TH_ANGLE_POINT, STAR_TH_ANGLE_QUAD, POINT_ALPHA_MIN, POINT_ALPHA_MAX, OCTREE_PARTICLE_FADE, OCTANT_TH_ANGLE_0, OCTANT_TH_ANGLE_1, PROPER_MOTION_VECTORS, PM_NUM_FACTOR, PM_LEN_FACTOR);
+        sc.initialize(GRAPHICS_QUALITY, OBJECT_FADE_MS, STAR_BRIGHTNESS, AMBIENT_LIGHT, CAMERA_FOV, CAMERA_SPEED, TURNING_SPEED, ROTATION_SPEED, CAMERA_SPEED_LIMIT_IDX, FOCUS_LOCK, LABEL_NUMBER_FACTOR, VISIBILITY, PIXEL_RENDERER, LINE_RENDERER, STAR_TH_ANGLE_NONE, STAR_TH_ANGLE_POINT, STAR_TH_ANGLE_QUAD, POINT_ALPHA_MIN, POINT_ALPHA_MAX, OCTREE_PARTICLE_FADE, OCTANT_THRESHOLD_0, OCTANT_THRESHOLD_1, PROPER_MOTION_VECTORS, PM_NUM_FACTOR, PM_LEN_FACTOR, STAR_POINT_SIZE);
+
         /** FRAME CONF **/
         String renderFolder = null;
         if (p.getProperty("graphics.render.folder") == null || p.getProperty("graphics.render.folder").isEmpty()) {
@@ -249,6 +276,7 @@ public class AndroidConfInit extends ConfInit {
         p.setProperty("postprocess.bloom.intensity", Float.toString(GlobalConf.postprocess.POSTPROCESS_BLOOM_INTENSITY));
         p.setProperty("postprocess.motionblur", Float.toString(GlobalConf.postprocess.POSTPROCESS_MOTION_BLUR));
         p.setProperty("postprocess.lensflare", Boolean.toString(GlobalConf.postprocess.POSTPROCESS_LENS_FLARE));
+        p.setProperty("postprocess.lightscattering", Boolean.toString(GlobalConf.postprocess.POSTPROCESS_LIGHT_SCATTERING));
 
         /** FRAME CONF **/
         p.setProperty("graphics.render.folder", GlobalConf.frame.RENDER_FOLDER);
@@ -260,12 +288,14 @@ public class AndroidConfInit extends ConfInit {
         p.setProperty("graphics.render.mode", GlobalConf.frame.FRAME_MODE.toString());
 
         /** DATA **/
-        p.setProperty("data.source.local", Boolean.toString(GlobalConf.data.DATA_SOURCE_LOCAL));
-        p.setProperty("data.json.file", GlobalConf.data.DATA_JSON_FILE);
+        p.setProperty("data.json.catalog", GlobalConf.data.CATALOG_JSON_FILE);
+        p.setProperty("data.json.objects", GlobalConf.data.OBJECTS_JSON_FILE);
+        p.setProperty("data.source.objectserver", Boolean.toString(GlobalConf.data.OBJECT_SERVER_CONNECTION));
         p.setProperty("data.source.hostname", GlobalConf.data.OBJECT_SERVER_HOSTNAME);
         p.setProperty("data.source.port", Integer.toString(GlobalConf.data.OBJECT_SERVER_PORT));
         p.setProperty("data.source.visid", GlobalConf.data.VISUALIZATION_ID);
         p.setProperty("data.limit.mag", Float.toString(GlobalConf.data.LIMIT_MAG_LOAD));
+        p.setProperty("data.attitude.real", Boolean.toString(GlobalConf.data.REAL_GAIA_ATTITUDE));
 
         /** SCREEN **/
         p.setProperty("graphics.screen.width", Integer.toString(GlobalConf.screen.SCREEN_WIDTH));
@@ -292,6 +322,7 @@ public class AndroidConfInit extends ConfInit {
         p.setProperty("program.stereoscopic.profile", Integer.toString(GlobalConf.program.STEREO_PROFILE.ordinal()));
 
         /** SCENE **/
+        p.setProperty("scene.graphics.quality", Integer.toString(GlobalConf.scene.GRAPHICS_QUALITY));
         p.setProperty("scene.object.fadems", Long.toString(GlobalConf.scene.OBJECT_FADE_MS));
         p.setProperty("scene.star.brightness", Float.toString(GlobalConf.scene.STAR_BRIGHTNESS));
         p.setProperty("scene.ambient", Float.toString(GlobalConf.scene.AMBIENT_LIGHT));
@@ -305,6 +336,7 @@ public class AndroidConfInit extends ConfInit {
         p.setProperty("scene.star.threshold.quad", Double.toString(GlobalConf.scene.STAR_THRESHOLD_QUAD));
         p.setProperty("scene.star.threshold.point", Double.toString(GlobalConf.scene.STAR_THRESHOLD_POINT));
         p.setProperty("scene.star.threshold.none", Double.toString(GlobalConf.scene.STAR_THRESHOLD_NONE));
+        p.setProperty("scene.star.point.size", Float.toString(GlobalConf.scene.STAR_POINT_SIZE));
         p.setProperty("scene.point.alpha.min", Float.toString(GlobalConf.scene.POINT_ALPHA_MIN));
         p.setProperty("scene.point.alpha.max", Float.toString(GlobalConf.scene.POINT_ALPHA_MAX));
         p.setProperty("scene.renderer.star", Integer.toString(GlobalConf.scene.PIXEL_RENDERER));
@@ -312,6 +344,10 @@ public class AndroidConfInit extends ConfInit {
         p.setProperty("scene.octree.particle.fade", Boolean.toString(GlobalConf.scene.OCTREE_PARTICLE_FADE));
         p.setProperty("scene.octant.threshold.0", Float.toString(GlobalConf.scene.OCTANT_THRESHOLD_0));
         p.setProperty("scene.octant.threshold.1", Float.toString(GlobalConf.scene.OCTANT_THRESHOLD_1));
+        p.setProperty("scene.propermotion.vectors", Boolean.toString(GlobalConf.scene.PROPER_MOTION_VECTORS));
+        p.setProperty("scene.propermotion.numfactor", Float.toString(GlobalConf.scene.PM_NUM_FACTOR));
+        p.setProperty("scene.propermotion.lenfactor", Float.toString(GlobalConf.scene.PM_LEN_FACTOR));
+
         // Visibility of components
         int idx = 0;
         ComponentType[] cts = ComponentType.values();

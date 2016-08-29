@@ -187,24 +187,7 @@ public class RunScriptWindow extends CollapsibleWindow {
                             }
                         }
                         if (selectedScript != null) {
-                            File choice = selectedScript.file();
-                            try {
-                                code = JythonFactory.getInstance().compileJythonScript(choice);
-                                outConsole.setText(txt("gui.script.ready"));
-                                outConsole.setColor(0, 1, 0, 1);
-                                run.setDisabled(false);
-                                me.pack();
-                            } catch (PySyntaxError e1) {
-                                outConsole.setText(txt("gui.script.error", e1.type, e1.value));
-                                outConsole.setColor(1, 0, 0, 1);
-                                run.setDisabled(true);
-                                me.pack();
-                            } catch (Exception e2) {
-                                outConsole.setText(txt("gui.script.error2", e2.getMessage()));
-                                outConsole.setColor(1, 0, 0, 1);
-                                run.setDisabled(true);
-                                me.pack();
-                            }
+                            select(selectedScript);
                         }
                     }
                     return true;
@@ -230,6 +213,39 @@ public class RunScriptWindow extends CollapsibleWindow {
         table.row();
 
         pack();
+
+        // Select first
+        Gdx.app.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                if (scripts.size() > 0) {
+                    scriptsList.setSelectedIndex(0);
+                    select(scripts.get(0));
+                }
+            }
+        });
+
+    }
+
+    private void select(FileHandle selectedScript) {
+        File choice = selectedScript.file();
+        try {
+            code = JythonFactory.getInstance().compileJythonScript(choice);
+            outConsole.setText(txt("gui.script.ready"));
+            outConsole.setColor(0, 1, 0, 1);
+            run.setDisabled(false);
+            me.pack();
+        } catch (PySyntaxError e1) {
+            outConsole.setText(txt("gui.script.error", e1.type, e1.value));
+            outConsole.setColor(1, 0, 0, 1);
+            run.setDisabled(true);
+            me.pack();
+        } catch (Exception e2) {
+            outConsole.setText(txt("gui.script.error2", e2.getMessage()));
+            outConsole.setColor(1, 0, 0, 1);
+            run.setDisabled(true);
+            me.pack();
+        }
     }
 
     public void hide() {
