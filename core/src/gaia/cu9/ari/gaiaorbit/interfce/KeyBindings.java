@@ -348,6 +348,14 @@ public class KeyBindings {
             }
         }), SPECIAL1, Keys.G);
 
+        // CTRL + SHIFT + G -> Galaxy 2D - 3D
+        addMapping(new ProgramAction(txt("action.toggle", txt("element.galaxy3d")), new Runnable() {
+            @Override
+            public void run() {
+                EventManager.instance.post(Events.GALAXY_3D_CMD, !GlobalConf.scene.GALAXY_3D);
+            }
+        }), SPECIAL1, SPECIAL2, Keys.G);
+
     }
 
     /**

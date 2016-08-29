@@ -434,6 +434,9 @@ public enum Events {
     /** Forces recalculation of main GUI window size **/
     RECALCULATE_OPTIONS_SIZE,
 
+    /** Issues command to chagne the galaxy appearance. Contains boolean, if true gaiaxy will be 3D, if false galaxy will be 2D **/
+    GALAXY_3D_CMD,
+
     /** Contains the x and the y in pixels of the position of the mass **/
     GRAVITATIONAL_LENSING_PARAMS,
 

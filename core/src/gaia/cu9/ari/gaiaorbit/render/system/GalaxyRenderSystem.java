@@ -149,8 +149,7 @@ public class GalaxyRenderSystem extends ImmediateRenderSystem implements IObserv
                     // SIZE
                     float starSize = 0;
                     if (star.length > 3) {
-                        starSize = (star[3] * 10f
-                                + 1f) /** (Constants.webgl ? 0.08f : 1f) */
+                        starSize = (star[3] * 10f + 1f) /** (Constants.webgl ? 0.08f : 1f) */
                         ;
                     } else {
                         starSize = (float) Math.abs(rand.nextGaussian()) * 8f + 1.0f;
@@ -274,51 +273,53 @@ public class GalaxyRenderSystem extends ImmediateRenderSystem implements IObserv
                 UPDATE_POINTS = false;
             }
 
-            /**
-             * NEBULA RENDERER
-             */
+            if (GlobalConf.scene.GALAXY_3D) {
+                /**
+                 * NEBULA RENDERER
+                 */
 
-            quadProgram.begin();
+                quadProgram.begin();
 
-            // General uniforms
-            quadProgram.setUniformMatrix("u_projModelView", camera.getCamera().combined);
-            quadProgram.setUniformf("u_camPos", camera.getCurrent().getPos().setVector3(aux));
-            quadProgram.setUniformf("u_alpha", 0.05f * mw.opacity * alphas[mw.ct.ordinal()]);
+                // General uniforms
+                quadProgram.setUniformMatrix("u_projModelView", camera.getCamera().combined);
+                quadProgram.setUniformf("u_camPos", camera.getCurrent().getPos().setVector3(aux));
+                quadProgram.setUniformf("u_alpha", 0.03f * mw.opacity * alphas[mw.ct.ordinal()]);
 
-            for (int i = 0; i < 4; i++) {
-                nebulatextures[i].bind(i);
-                quadProgram.setUniformi("u_nebulaTexture" + i, i);
+                for (int i = 0; i < 4; i++) {
+                    nebulatextures[i].bind(i);
+                    quadProgram.setUniformi("u_nebulaTexture" + i, i);
+                }
+
+                quad.mesh.setVertices(quad.vertices, 0, quad.vertexIdx);
+                quad.mesh.setIndices(quad.indices, 0, quad.indexIdx);
+                quad.mesh.render(quadProgram, GL20.GL_TRIANGLES, 0, quad.indexIdx);
+
+                quadProgram.end();
+
+                /**
+                 * STAR RENDERER
+                 */
+                if (Gdx.app.getType() == ApplicationType.Desktop) {
+                    // Enable gl_PointCoord
+                    Gdx.gl20.glEnable(34913);
+                    // Enable point sizes
+                    Gdx.gl20.glEnable(0x8642);
+                }
+                shaderProgram.begin();
+                shaderProgram.setUniformMatrix("u_projModelView", camera.getCamera().combined);
+                shaderProgram.setUniformf("u_camPos", camera.getCurrent().getPos().setVector3(aux));
+                shaderProgram.setUniformf("u_fovFactor", camera.getFovFactor());
+                shaderProgram.setUniformf("u_alpha", mw.opacity * alphas[mw.ct.ordinal()] * 0.8f);
+                shaderProgram.setUniformf("u_ar", GlobalConf.program.STEREOSCOPIC_MODE && GlobalConf.program.STEREO_PROFILE != StereoProfile.HD_3DTV ? 0.5f : 1f);
+                curr.mesh.setVertices(curr.vertices, 0, curr.vertexIdx);
+                curr.mesh.render(shaderProgram, ShapeType.Point.getGlType());
+                shaderProgram.end();
             }
-
-            quad.mesh.setVertices(quad.vertices, 0, quad.vertexIdx);
-            quad.mesh.setIndices(quad.indices, 0, quad.indexIdx);
-            quad.mesh.render(quadProgram, GL20.GL_TRIANGLES, 0, quad.indexIdx);
-
-            quadProgram.end();
-
-            /**
-             * STAR RENDERER
-             */
-            if (Gdx.app.getType() == ApplicationType.Desktop) {
-                // Enable gl_PointCoord
-                Gdx.gl20.glEnable(34913);
-                // Enable point sizes
-                Gdx.gl20.glEnable(0x8642);
-            }
-            shaderProgram.begin();
-            shaderProgram.setUniformMatrix("u_projModelView", camera.getCamera().combined);
-            shaderProgram.setUniformf("u_camPos", camera.getCurrent().getPos().setVector3(aux));
-            shaderProgram.setUniformf("u_fovFactor", camera.getFovFactor());
-            shaderProgram.setUniformf("u_alpha", mw.opacity * alphas[mw.ct.ordinal()]);
-            shaderProgram.setUniformf("u_ar", GlobalConf.program.STEREOSCOPIC_MODE && GlobalConf.program.STEREO_PROFILE != StereoProfile.HD_3DTV ? 0.5f : 1f);
-            curr.mesh.setVertices(curr.vertices, 0, curr.vertexIdx);
-            curr.mesh.render(shaderProgram, ShapeType.Point.getGlType());
-            shaderProgram.end();
 
             /**
              * IMAGE RENDERER
              */
-            mw.mc.setTransparency(mw.opacity * alphas[mw.ct.ordinal()] * 0.4f);
+            mw.mc.setTransparency(mw.opacity * alphas[mw.ct.ordinal()] * (GlobalConf.scene.GALAXY_3D ? 0.6f : 0.8f));
             modelBatch.begin(camera.getCamera());
             modelBatch.render(mw.mc.instance, mw.mc.env);
             modelBatch.end();

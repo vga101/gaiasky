@@ -61,7 +61,7 @@
 				"args" : [true],	
 				"type" : "disc",
 				"params" : {
-							"diameter" : 7.0
+							"diameter" : 4.5
 							},
 				"texture" : {
 							"base" : "data/tex/milky_way.png"

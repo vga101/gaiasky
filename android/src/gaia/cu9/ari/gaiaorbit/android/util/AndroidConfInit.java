@@ -193,6 +193,7 @@ public class AndroidConfInit extends ConfInit {
         boolean PROPER_MOTION_VECTORS = Boolean.parseBoolean(p.getProperty("scene.propermotion.vectors", "true"));
         float PM_NUM_FACTOR = Float.parseFloat(p.getProperty("scene.propermotion.numfactor", "20f"));
         float PM_LEN_FACTOR = Float.parseFloat(p.getProperty("scene.propermotion.lenfactor", "1E1f"));
+        boolean GALAXY_3D = Boolean.parseBoolean(p.getProperty("scene.galaxy.3d", "true"));
         //Visibility of components
         ComponentType[] cts = ComponentType.values();
         boolean[] VISIBILITY = new boolean[cts.length];
@@ -204,7 +205,7 @@ public class AndroidConfInit extends ConfInit {
         }
         float STAR_POINT_SIZE = Float.parseFloat(p.getProperty("scene.star.point.size", "-1"));
         SceneConf sc = new SceneConf();
-        sc.initialize(GRAPHICS_QUALITY, OBJECT_FADE_MS, STAR_BRIGHTNESS, AMBIENT_LIGHT, CAMERA_FOV, CAMERA_SPEED, TURNING_SPEED, ROTATION_SPEED, CAMERA_SPEED_LIMIT_IDX, FOCUS_LOCK, LABEL_NUMBER_FACTOR, VISIBILITY, PIXEL_RENDERER, LINE_RENDERER, STAR_TH_ANGLE_NONE, STAR_TH_ANGLE_POINT, STAR_TH_ANGLE_QUAD, POINT_ALPHA_MIN, POINT_ALPHA_MAX, OCTREE_PARTICLE_FADE, OCTANT_THRESHOLD_0, OCTANT_THRESHOLD_1, PROPER_MOTION_VECTORS, PM_NUM_FACTOR, PM_LEN_FACTOR, STAR_POINT_SIZE);
+        sc.initialize(GRAPHICS_QUALITY, OBJECT_FADE_MS, STAR_BRIGHTNESS, AMBIENT_LIGHT, CAMERA_FOV, CAMERA_SPEED, TURNING_SPEED, ROTATION_SPEED, CAMERA_SPEED_LIMIT_IDX, FOCUS_LOCK, LABEL_NUMBER_FACTOR, VISIBILITY, PIXEL_RENDERER, LINE_RENDERER, STAR_TH_ANGLE_NONE, STAR_TH_ANGLE_POINT, STAR_TH_ANGLE_QUAD, POINT_ALPHA_MIN, POINT_ALPHA_MAX, OCTREE_PARTICLE_FADE, OCTANT_THRESHOLD_0, OCTANT_THRESHOLD_1, PROPER_MOTION_VECTORS, PM_NUM_FACTOR, PM_LEN_FACTOR, STAR_POINT_SIZE, GALAXY_3D);
 
         /** FRAME CONF **/
         String renderFolder = null;
@@ -347,6 +348,7 @@ public class AndroidConfInit extends ConfInit {
         p.setProperty("scene.propermotion.vectors", Boolean.toString(GlobalConf.scene.PROPER_MOTION_VECTORS));
         p.setProperty("scene.propermotion.numfactor", Float.toString(GlobalConf.scene.PM_NUM_FACTOR));
         p.setProperty("scene.propermotion.lenfactor", Float.toString(GlobalConf.scene.PM_LEN_FACTOR));
+        p.setProperty("scene.galaxy.3d", Boolean.toString(GlobalConf.scene.GALAXY_3D));
 
         // Visibility of components
         int idx = 0;
