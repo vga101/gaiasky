@@ -256,7 +256,7 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
 
     @Override
     public float getInnerRad() {
-        return 0.015f * DISC_FACTOR + GlobalConf.scene.STAR_POINT_SIZE * 0.002f;
+        return 0.015f * DISC_FACTOR + GlobalConf.scene.STAR_POINT_SIZE * 0.004f;
     }
 
     @Override

@@ -121,12 +121,12 @@ public class CameraComponent extends GuiComponent implements IObserver {
         /** CAMERA SPEED **/
         cameraSpeed = new Slider(Constants.MIN_SLIDER, Constants.MAX_SLIDER / 2, 1, false, skin);
         cameraSpeed.setName("camera speed");
-        cameraSpeed.setValue(GlobalConf.scene.CAMERA_SPEED * 5);
+        cameraSpeed.setValue(GlobalConf.scene.CAMERA_SPEED * Constants.CAMERA_SPEED_FACTOR);
         cameraSpeed.addListener(new EventListener() {
             @Override
             public boolean handle(Event event) {
                 if (event instanceof ChangeEvent) {
-                    EventManager.instance.post(Events.CAMERA_SPEED_CMD, cameraSpeed.getValue() / 10f, true);
+                    EventManager.instance.post(Events.CAMERA_SPEED_CMD, cameraSpeed.getValue() / Constants.CAMERA_SPEED_FACTOR, true);
                     speed.setText(Integer.toString((int) cameraSpeed.getValue()));
                     return true;
                 }
@@ -134,7 +134,7 @@ public class CameraComponent extends GuiComponent implements IObserver {
             }
 
         });
-        speed = new OwnLabel(Integer.toString((int) (GlobalConf.scene.CAMERA_SPEED * 10)), skin, "default");
+        speed = new OwnLabel(Integer.toString((int) (GlobalConf.scene.CAMERA_SPEED * Constants.CAMERA_SPEED_FACTOR)), skin, "default");
 
         /** ROTATION SPEED **/
         rotateSpeed = new Slider(Constants.MIN_SLIDER, Constants.MAX_SLIDER, 1, false, skin);
@@ -250,7 +250,7 @@ public class CameraComponent extends GuiComponent implements IObserver {
             interf = (Boolean) data[1];
             if (!interf) {
                 float value = (Float) data[0];
-                value *= 5;
+                value *= Constants.CAMERA_SPEED_FACTOR;
                 cameraSpeed.setValue(value);
                 speed.setText(Integer.toString((int) value));
             }

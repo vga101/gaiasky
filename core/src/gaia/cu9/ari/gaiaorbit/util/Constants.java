@@ -116,7 +116,7 @@ public class Constants {
     /** Maximum fov value, in degrees **/
     public static final int MAX_FOV = 170;
     /** Minimum fov value, in degrees **/
-    public static final int MIN_FOV = 20;
+    public static final int MIN_FOV = 2;
 
     /** Maximum rotation speed **/
     public static final float MAX_ROT_SPEED = 0.5e4f;
@@ -159,6 +159,9 @@ public class Constants {
     public static final float MIN_STAR_MIN_OPACITY = 0.0f;
     /** Maximum star minimum opacity **/
     public static final float MAX_STAR_MIN_OPACITY = 0.6f;
+
+    /** Camera speed factor **/
+    public static final float CAMERA_SPEED_FACTOR = 10f;
 
     /**
      * 

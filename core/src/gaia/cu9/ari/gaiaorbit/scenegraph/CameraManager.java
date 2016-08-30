@@ -289,8 +289,8 @@ public class CameraManager implements ICamera, IObserver {
         CameraMode prevMode = this.mode;
         boolean modeChange = mode != this.mode;
         // Save state of current if mode is different
-        if (modeChange)
-            saveState();
+        //        if (modeChange)
+        //            saveState();
 
         // Save state of old camera
         this.mode = mode;
@@ -299,8 +299,8 @@ public class CameraManager implements ICamera, IObserver {
         fovCamera.updateMode(mode, postEvent);
 
         // Restore state of new camera
-        if (modeChange)
-            restoreState();
+        //        if (modeChange && this.mode == CameraMode.Focus)
+        //            restoreState();
 
         if (postEvent) {
             EventManager.instance.post(Events.FOV_CHANGE_NOTIFICATION, this.getCamera().fieldOfView);
@@ -438,29 +438,29 @@ public class CameraManager implements ICamera, IObserver {
         return current.getDistance();
     }
 
-	@Override
-	public void setCamera(PerspectiveCamera cam) {
-		current.setCamera(cam);
-	}
+    @Override
+    public void setCamera(PerspectiveCamera cam) {
+        current.setCamera(cam);
+    }
 
-	@Override
-	public void setCameraStereoLeft(PerspectiveCamera cam) {
-		current.setCameraStereoLeft(cam);
-	}
+    @Override
+    public void setCameraStereoLeft(PerspectiveCamera cam) {
+        current.setCameraStereoLeft(cam);
+    }
 
-	@Override
-	public void setCameraStereoRight(PerspectiveCamera cam) {
-		current.setCameraStereoRight(cam);
-	}
+    @Override
+    public void setCameraStereoRight(PerspectiveCamera cam) {
+        current.setCameraStereoRight(cam);
+    }
 
-	@Override
-	public PerspectiveCamera getCameraStereoLeft() {
-		return current.getCameraStereoLeft();
-	}
+    @Override
+    public PerspectiveCamera getCameraStereoLeft() {
+        return current.getCameraStereoLeft();
+    }
 
-	@Override
-	public PerspectiveCamera getCameraStereoRight() {
-		return current.getCameraStereoRight();
-	}
+    @Override
+    public PerspectiveCamera getCameraStereoRight() {
+        return current.getCameraStereoRight();
+    }
 
 }

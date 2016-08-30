@@ -458,8 +458,11 @@ public class ConfigDialog extends I18nJFrame {
 
         // LOD transitions
         final RangeSlider lodTransitions = new RangeSlider((int) Constants.MIN_SLIDER, (int) Constants.MAX_SLIDER);
+
+        lodTransitions.setUpperValue(Math.round(MathUtilsd.lint(GlobalConf.scene.OCTANT_THRESHOLD_1, Constants.MIN_LOD_TRANS_ANGLE, Constants.MAX_LOD_TRANS_ANGLE, Constants.MIN_SLIDER, Constants.MAX_SLIDER)));
         lodTransitions.setValue(Math.round(MathUtilsd.lint(GlobalConf.scene.OCTANT_THRESHOLD_0, Constants.MIN_LOD_TRANS_ANGLE, Constants.MAX_LOD_TRANS_ANGLE, Constants.MIN_SLIDER, Constants.MAX_SLIDER)));
         lodTransitions.setUpperValue(Math.round(MathUtilsd.lint(GlobalConf.scene.OCTANT_THRESHOLD_1, Constants.MIN_LOD_TRANS_ANGLE, Constants.MAX_LOD_TRANS_ANGLE, Constants.MIN_SLIDER, Constants.MAX_SLIDER)));
+
         lodTransitions.addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent e) {
                 RangeSlider slider = (RangeSlider) e.getSource();
