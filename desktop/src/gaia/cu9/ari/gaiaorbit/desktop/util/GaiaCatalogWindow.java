@@ -40,9 +40,15 @@ import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnScrollPane;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextButton;
 
 public class GaiaCatalogWindow extends CollapsibleWindow {
-    private static String URL_WEB = "http://gaia.esac.esa.int/archive/";
-    private static String URL_GAIA_CSV_SOURCE = "http://gaia.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+gaia_source+WHERE+source_id=";
-    private static String URL_GAIA_JSON_SOURCE = "http://gaia.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+*+FROM+gaia_source+WHERE+source_id=";
+    private static String URL_WEB_ESAC = "http://gaia.esac.esa.int/archive/";
+    private static String URL_WEB = "http://gaia.ari.uni-heidelberg.de/index.html";
+
+    private static String URL_GAIA_CSV_SOURCE_ESAC = "http://gaia.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+gaia_source+WHERE+source_id=";
+    private static String URL_GAIA_CSV_SOURCE = "http://gaia.ari.uni-heidelberg.de/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+gaia_source+WHERE+source_id=";
+
+    private static String URL_GAIA_JSON_SOURCE_ESAC = "http://gaia.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+*+FROM+gaia_source+WHERE+source_id=";
+    private static String URL_GAIA_JSON_SOURCE = "http://gaia.ari.uni-heidelberg.de/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+*+FROM+gaia_source+WHERE+source_id=";
+
     private static String URL_GAIA_HIP = "http://gaia.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+gaia_hip_tycho2_match+WHERE+ext_cat_solution_type='5'+AND+hyp_tyc_oid=";
     private static final String separator = "\n";
 
