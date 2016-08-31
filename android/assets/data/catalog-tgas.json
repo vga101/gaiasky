@@ -1,6 +1,10 @@
 { "data" : [
 	{
+		"loader": gaia.cu9.ari.gaiaorbit.data.stars.SunLoader
+		,"files": [ ""]
+	},
+	{
 		"loader": gaia.cu9.ari.gaiaorbit.data.stars.TGASLoader
-		,"files": [ "data/tgas_201507/Solution1507280011.txt"]
+		,"files": [ "data/tgas_final/tgas.csv"]
 	}
 ]}

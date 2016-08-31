@@ -931,7 +931,7 @@ public class ConfigDialog extends I18nJFrame {
                         GlobalConf.data.CATALOG_JSON_FILE = GlobalConf.data.HYG_JSON_FILE;
                     else if (tgas.isSelected())
                         GlobalConf.data.CATALOG_JSON_FILE = GlobalConf.data.TGAS_JSON_FILE;
-                    else
+                    else if (GlobalConf.data.CATALOG_JSON_FILE == null || GlobalConf.data.CATALOG_JSON_FILE.length() == 0)
                         Logger.error(this.getClass().getSimpleName(), "No catalog file selected!");
 
                     // Screenshots
