@@ -1,26 +1,37 @@
 package gaia.cu9.ari.gaiaorbit.interfce.components;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
 import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider;
+import com.badlogic.gdx.scenes.scene2d.ui.TextTooltip;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
 import com.badlogic.gdx.utils.Align;
 
+import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
+import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnLabel;
+import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextIconButton;
 
 public class CameraComponent extends GuiComponent implements IObserver {
 
@@ -28,10 +39,13 @@ public class CameraComponent extends GuiComponent implements IObserver {
     protected SelectBox<String> cameraMode, cameraSpeedLimit;
     protected Slider fieldOfView, cameraSpeed, turnSpeed, rotateSpeed;
     protected CheckBox focusLock;
+    protected OwnTextIconButton button3d, buttonDome, buttonAnaglyph, button3dtv, buttonVR, buttonCrosseye;
+    private float fovBackup;
+    protected boolean fovFlag = true;
 
     public CameraComponent(Skin skin, Stage stage) {
         super(skin, stage);
-        EventManager.instance.subscribe(this, Events.CAMERA_MODE_CMD, Events.ROTATION_SPEED_CMD, Events.TURNING_SPEED_CMD, Events.CAMERA_SPEED_CMD, Events.SPEED_LIMIT_CMD);
+        EventManager.instance.subscribe(this, Events.CAMERA_MODE_CMD, Events.ROTATION_SPEED_CMD, Events.TURNING_SPEED_CMD, Events.CAMERA_SPEED_CMD, Events.SPEED_LIMIT_CMD, Events.TOGGLE_STEREOSCOPIC_INFO, Events.FOV_CHANGE_NOTIFICATION);
     }
 
     @Override
@@ -66,6 +80,59 @@ public class CameraComponent extends GuiComponent implements IObserver {
             }
         });
 
+        List<Button> buttonList = new ArrayList<Button>();
+        Image img3d = new Image(new Texture(Gdx.files.internal("img/3d.png")));
+        Image imgDome = new Image(new Texture(Gdx.files.internal("img/dome.png")));
+        Image imgAnaglyph = new Image(new Texture(Gdx.files.internal("img/anaglyph.png")));
+        Image img3dtv = new Image(new Texture(Gdx.files.internal("img/3dtv.png")));
+        Image imgCrosseye = new Image(new Texture(Gdx.files.internal("img/crosseye.png")));
+        Image imgVR = new Image(new Texture(Gdx.files.internal("img/vr.png")));
+
+        button3d = new OwnTextIconButton("", img3d, skin, "toggle");
+        button3d.addListener(new TextTooltip(GlobalResources.capitalise(txt("element.stereomode")), skin));
+        button3d.setName("3d");
+        button3d.addListener(new EventListener() {
+            @Override
+            public boolean handle(Event event) {
+                if (event instanceof ChangeEvent) {
+                    EventManager.instance.post(Events.TOGGLE_STEREOSCOPIC_CMD, txt("notif.stereoscopic"), button3d.isChecked());
+                    EventManager.instance.post(Events.POST_NOTIFICATION, "You have entered 3D mode. Go back to normal mode using <CTRL+S>");
+                    EventManager.instance.post(Events.POST_NOTIFICATION, "Switch between stereoscopic modes using <CTRL+SHIFT+S>");
+                    return true;
+                }
+                return false;
+            }
+        });
+
+        buttonDome = new OwnTextIconButton("", imgDome, skin, "toggle");
+        buttonDome.addListener(new TextTooltip(GlobalResources.capitalise(txt("element.planetarium")), skin));
+        buttonDome.setName("dome");
+        buttonDome.addListener(new EventListener() {
+            @Override
+            public boolean handle(Event event) {
+                if (event instanceof ChangeEvent) {
+
+                    EventManager.instance.post(Events.FISHEYE_CMD, buttonDome.isChecked());
+                    if (buttonDome.isChecked()) {
+                        fovBackup = GaiaSky.instance.cam.getCamera().fieldOfView;
+                        EventManager.instance.post(Events.FOV_CHANGED_CMD, 110f);
+                        EventManager.instance.post(Events.PLANETARIUM_FOCUS_ANGLE_CMD, 30f);
+                    } else {
+                        EventManager.instance.post(Events.FOV_CHANGED_CMD, fovBackup);
+                        EventManager.instance.post(Events.PLANETARIUM_FOCUS_ANGLE_CMD, 0f);
+                    }
+                    return true;
+                }
+                return false;
+            }
+        });
+
+        buttonList.add(button3d);
+        buttonList.add(buttonDome);
+
+        for (Button b : buttonList)
+            b.setSize(Math.round(35 * GlobalConf.SCALE_FACTOR), Math.round(32 * GlobalConf.SCALE_FACTOR));
+
         Label fovLabel = new Label(txt("gui.camera.fov"), skin, "default");
         fieldOfView = new Slider(Constants.MIN_FOV, Constants.MAX_FOV, 1, false, skin);
         fieldOfView.setName("field of view");
@@ -73,7 +140,7 @@ public class CameraComponent extends GuiComponent implements IObserver {
         fieldOfView.addListener(new EventListener() {
             @Override
             public boolean handle(Event event) {
-                if (event instanceof ChangeEvent) {
+                if (fovFlag && event instanceof ChangeEvent) {
                     float value = MathUtilsd.clamp(fieldOfView.getValue(), Constants.MIN_FOV, Constants.MAX_FOV);
                     EventManager.instance.post(Events.FOV_CHANGED_CMD, value);
                     fov.setText(Integer.toString((int) value) + "°");
@@ -188,11 +255,13 @@ public class CameraComponent extends GuiComponent implements IObserver {
         });
 
         VerticalGroup cameraGroup = new VerticalGroup().align(Align.left);
-        cameraGroup.addActor(modeLabel);
-        cameraGroup.addActor(cameraMode);
-        cameraGroup.addActor(fovLabel);
 
         float space3 = 3 * GlobalConf.SCALE_FACTOR;
+
+        HorizontalGroup buttonGroup = new HorizontalGroup();
+        buttonGroup.space(space3);
+        buttonGroup.addActor(button3d);
+        buttonGroup.addActor(buttonDome);
 
         HorizontalGroup fovGroup = new HorizontalGroup();
         fovGroup.space(space3);
@@ -214,6 +283,9 @@ public class CameraComponent extends GuiComponent implements IObserver {
         turnGroup.addActor(turnSpeed);
         turnGroup.addActor(turn);
 
+        cameraGroup.addActor(modeLabel);
+        cameraGroup.addActor(cameraMode);
+        cameraGroup.addActor(fovLabel);
         cameraGroup.addActor(fovGroup);
         cameraGroup.addActor(new Label(txt("gui.camera.speedlimit"), skin, "default"));
         cameraGroup.addActor(cameraSpeedLimit);
@@ -224,9 +296,12 @@ public class CameraComponent extends GuiComponent implements IObserver {
         cameraGroup.addActor(new Label(txt("gui.turn.speed"), skin, "default"));
         cameraGroup.addActor(turnGroup);
         cameraGroup.addActor(focusLock);
+        cameraGroup.space(5);
+        cameraGroup.addActor(buttonGroup);
 
         component = cameraGroup;
 
+        cameraGroup.pack();
     }
 
     @Override
@@ -271,6 +346,18 @@ public class CameraComponent extends GuiComponent implements IObserver {
                 int value = (Integer) data[0];
                 cameraSpeedLimit.setSelectedIndex(value);
             }
+            break;
+        case TOGGLE_STEREOSCOPIC_INFO:
+            boolean stereo = (boolean) data[0];
+            button3d.setProgrammaticChangeEvents(false);
+            button3d.setChecked(stereo);
+            button3d.setProgrammaticChangeEvents(true);
+            break;
+        case FOV_CHANGE_NOTIFICATION:
+            fovFlag = false;
+            fieldOfView.setValue(GlobalConf.scene.CAMERA_FOV);
+            fov.setText(Integer.toString((int) GlobalConf.scene.CAMERA_FOV) + "°");
+            fovFlag = true;
             break;
         }
 

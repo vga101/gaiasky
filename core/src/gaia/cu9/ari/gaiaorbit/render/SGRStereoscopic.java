@@ -84,7 +84,7 @@ public class SGRStereoscopic extends SGRAbstract implements ISGR, IObserver {
             extendViewport.apply();
 
             /** LEFT EYE **/
-            FrameBuffer fb1 = getFrameBuffer(rw, rh);
+            FrameBuffer fb1 = getFrameBuffer(rw, rh, 1);
             boolean postproc = postprocessCapture(ppb, fb1, rw, rh);
 
             // Camera to the left
@@ -98,7 +98,7 @@ public class SGRStereoscopic extends SGRAbstract implements ISGR, IObserver {
             Texture texLeft = fb1.getColorBufferTexture();
 
             /** RIGHT EYE **/
-            FrameBuffer fb2 = getFrameBuffer(rw, rh, 1);
+            FrameBuffer fb2 = getFrameBuffer(rw, rh, 2);
             postproc = postprocessCapture(ppb, fb2, rw, rh);
 
             // Camera to the right

@@ -1,5 +1,8 @@
 package gaia.cu9.ari.gaiaorbit.interfce;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -69,6 +72,8 @@ public class FullGui implements IGui, IObserver {
     protected ISceneGraph sg;
     private ComponentType[] visibilityEntities;
     private boolean[] visible;
+
+    private List<Actor> invisibleInStereoMode;
 
     /** Lock object for synchronisation **/
     private Object lock;
@@ -161,6 +166,17 @@ public class FullGui implements IGui, IObserver {
         /** ADD TO UI **/
         rebuildGui();
         //controls.collapse();
+
+        // INVISIBLE IN STEREOSCOPIC MODE
+        invisibleInStereoMode = new ArrayList<Actor>();
+        invisibleInStereoMode.add(controlsWindow);
+        invisibleInStereoMode.add(fi);
+        invisibleInStereoMode.add(debugInterface);
+        invisibleInStereoMode.add(messagesInterface);
+        invisibleInStereoMode.add(inputInterface);
+        //invisibleInStereoMode.add(customInterface);
+        invisibleInStereoMode.add(mouseXCoord);
+        invisibleInStereoMode.add(mouseYCoord);
     }
 
     public void recalculateOptionsSize() {
@@ -280,7 +296,6 @@ public class FullGui implements IGui, IObserver {
     @Override
     public void notify(Events event, Object... data) {
         switch (event) {
-
         case SHOW_TUTORIAL_ACTION:
             EventManager.instance.post(Events.RUN_SCRIPT_PATH, GlobalConf.program.TUTORIAL_SCRIPT_LOCATION);
             break;

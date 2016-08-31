@@ -475,7 +475,11 @@ public class GlobalConf {
             switch (event) {
             case TOGGLE_STEREOSCOPIC_CMD:
                 if (!GaiaSky.instance.cam.mode.isGaiaFov()) {
-                    STEREOSCOPIC_MODE = !STEREOSCOPIC_MODE;
+                    boolean stereomode = !STEREOSCOPIC_MODE;
+                    if (data.length > 1)
+                        stereomode = (boolean) data[1];
+
+                    STEREOSCOPIC_MODE = stereomode;
                     // Enable/disable gui
                     EventManager.instance.post(Events.DISPLAY_GUI_CMD, I18n.bundle.get("notif.cleanmode"), !STEREOSCOPIC_MODE);
                     EventManager.instance.post(Events.TOGGLE_STEREOSCOPIC_INFO, STEREOSCOPIC_MODE);

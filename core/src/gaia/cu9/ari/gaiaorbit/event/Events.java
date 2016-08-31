@@ -251,6 +251,7 @@ public enum Events {
 
     /**
      * Stereoscopic vision, side by side rendering. Contains the localised name.
+     * Contains the name and optionally contains a boolean with the new state.
      **/
     TOGGLE_STEREOSCOPIC_CMD,
     /**
@@ -436,6 +437,9 @@ public enum Events {
 
     /** Issues command to chagne the galaxy appearance. Contains boolean, if true gaiaxy will be 3D, if false galaxy will be 2D **/
     GALAXY_3D_CMD,
+
+    /** Contains the angle to use in the directionToTarget() function. Defaults to 0 **/
+    PLANETARIUM_FOCUS_ANGLE_CMD,
 
     /** Contains the x and the y in pixels of the position of the mass **/
     GRAVITATIONAL_LENSING_PARAMS,
