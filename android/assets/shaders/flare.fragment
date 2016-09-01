@@ -64,7 +64,7 @@ void main() {
   
     //	sample halo:
     float weight = length(vec2(0.5) - fract(texcoord + haloVec)) / length(vec2(0.5));
-    weight = pow(1.0 - weight, 2.0);
+    weight = pow(1.0 - weight, 5.0);
     result += textureDistorted(
 	    u_texture0,
 	    fract(texcoord + haloVec),
@@ -74,5 +74,5 @@ void main() {
     
     //gl_FragColor = result;
     // Hack to prevent too strong halo
-    gl_FragColor = min(vec4(0.25), result);
+    gl_FragColor = min(vec4(0.4), result);
 }

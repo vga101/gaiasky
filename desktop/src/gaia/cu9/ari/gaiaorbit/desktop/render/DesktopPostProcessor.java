@@ -129,10 +129,10 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
 
         float lensFboScale;
         if (GlobalConf.scene.isHighQuality()) {
-            nghosts = 8;
+            nghosts = 12;
             lensFboScale = 0.5f;
         } else if (GlobalConf.scene.isNormalQuality()) {
-            nghosts = 8;
+            nghosts = 10;
             lensFboScale = 0.3f;
         } else {
             nghosts = 6;
@@ -140,12 +140,12 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
         }
         ppb.lens = new LensFlare2((int) (width * lensFboScale), (int) (height * lensFboScale));
         ppb.lens.setGhosts(nghosts);
-        ppb.lens.setHaloWidth(0.6f);
+        ppb.lens.setHaloWidth(0.4f);
         ppb.lens.setLensColorTexture(new Texture(Gdx.files.internal("img/lenscolor.png")));
         ppb.lens.setLensDirtTexture(new Texture(Gdx.files.internal(GlobalConf.scene.isHighQuality() ? "img/lensdirt.jpg" : "img/lensdirt_s.jpg")));
         ppb.lens.setLensStarburstTexture(new Texture(Gdx.files.internal("img/lensstarburst.jpg")));
         ppb.lens.setFlareIntesity(1f);
-        ppb.lens.setFlareSaturation(0.4f);
+        ppb.lens.setFlareSaturation(0.5f);
         ppb.lens.setBaseIntesity(1f);
         ppb.lens.setBias(-0.999f);
         ppb.lens.setBlurAmount(1f);
