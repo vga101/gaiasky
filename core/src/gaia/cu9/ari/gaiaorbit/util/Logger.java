@@ -46,7 +46,7 @@ public class Logger {
     public static void error(String... messages) {
         if (inLevel(LoggerLevel.ERROR))
             if (EventManager.instance.hasSubscriptors(Events.JAVA_EXCEPTION)) {
-                EventManager.instance.post(Events.POST_NOTIFICATION, "Error", messages);
+                EventManager.instance.post(Events.POST_NOTIFICATION, messages);
             }
     }
 

@@ -1,0 +1,10 @@
+{ "data" : [
+	{
+		"loader": gaia.cu9.ari.gaiaorbit.data.stars.SunLoader
+		,"files": [ ""]
+	},
+	{
+		"loader": gaia.cu9.ari.gaiaorbit.data.stars.HipparcosLoader
+		,"files": [ "data/hipparcos.csv" ]
+	}
+]}
