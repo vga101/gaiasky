@@ -15,7 +15,7 @@ import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 public class Planet extends ModelBody implements IAtmosphereRenderable {
 
     private static final double TH_ANGLE_NONE = ModelBody.TH_ANGLE_POINT / 1e6;
-    private static final double TH_ANGLE_POINT = ModelBody.TH_ANGLE_POINT / .5e5;
+    private static final double TH_ANGLE_POINT = ModelBody.TH_ANGLE_POINT / 5e5;
     private static final double TH_ANGLE_QUAD = ModelBody.TH_ANGLE_POINT * 2;
 
     @Override
