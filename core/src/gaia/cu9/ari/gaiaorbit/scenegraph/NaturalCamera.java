@@ -475,13 +475,13 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 
         // Half a second after we have stopped zooming, real friction kicks in
         if (fullStop)
-            friction.set(force).nor().scl(-forceLen * dt * (lastFwdTime > 0.5 ? (lastFwdTime - 0.5) * 1000 : 1));
+            friction.set(force).nor().scl(-forceLen * dt * (lastFwdTime > 1 ? (lastFwdTime - 1) * 1000 : 1));
         else
             friction.set(force).nor().scl(-forceLen * dt);
 
         force.add(friction);
 
-        if (lastFwdTime > 1.2 && velocityGamepad == 0 && fullStop || lastFwdAmount > 0 && transUnits == 0) {
+        if (lastFwdTime > 3 && velocityGamepad == 0 && fullStop || lastFwdAmount > 0 && transUnits == 0) {
             stopForwardMovement();
         }
 
