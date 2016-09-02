@@ -1,5 +1,8 @@
 package gaia.cu9.ari.gaiaorbit.screenshot;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 
@@ -76,13 +79,14 @@ public class ScreenshotsManager implements IObserver {
     public void renderScreenshot(IMainRenderer mr) {
         if (screenshot.active) {
             String file = null;
+            String filename = getCurrentTimeStamp() + "_" + ScreenshotCmd.FILENAME;
             switch (GlobalConf.screenshot.SCREENSHOT_MODE) {
             case simple:
-                file = ImageRenderer.renderToImageGl20(screenshot.folder, ScreenshotCmd.FILENAME, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), ImageType.PNG);
+                file = ImageRenderer.renderToImageGl20(screenshot.folder, filename, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), ImageType.PNG);
                 break;
             case redraw:
                 GaiaSky.instance.resizeImmediate(screenshot.width, screenshot.height);
-                file = renderToImage(mr, mr.getCameraManager(), mr.getPostProcessor().getPostProcessBean(RenderType.screenshot), screenshot.width, screenshot.height, screenshot.folder, ScreenshotCmd.FILENAME, screenshotRenderer, ImageType.PNG);
+                file = renderToImage(mr, mr.getCameraManager(), mr.getPostProcessor().getPostProcessBean(RenderType.screenshot), screenshot.width, screenshot.height, screenshot.folder, filename, screenshotRenderer, ImageType.PNG);
                 GaiaSky.instance.resizeImmediate(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
                 break;
             }
@@ -182,5 +186,12 @@ public class ScreenshotsManager implements IObserver {
             renderGui.doneLoading(null);
         }
         return renderGui;
+    }
+
+    private static String getCurrentTimeStamp() {
+        SimpleDateFormat sdfDate = new SimpleDateFormat("yyyyMMdd");//dd/MM/yyyy
+        Date now = new Date();
+        String strDate = sdfDate.format(now);
+        return strDate;
     }
 }

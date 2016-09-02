@@ -42,7 +42,6 @@ import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
  *
  */
 public class GaiaInputController extends GestureDetector {
-    public static final float WASD_MOVEMENT_SENSITIVITY = .5f;
     protected static Pool<Vector3d> v3dpool = MyPools.get(Vector3d.class);
     protected static Pool<Vector3> v3pool = MyPools.get(Vector3.class);
 
@@ -53,17 +52,8 @@ public class GaiaInputController extends GestureDetector {
     	 * focus.
     	 */
     public int leftMouseButton = Buttons.LEFT;
-    /**
-    	 * The angle to rotate when moved the full width or height of the screen.
-    	 */
-    public float rotateAngle = 360f;
     /** The button for panning the camera along the up/right plane */
     public int rightMouseButton = Buttons.RIGHT;
-    /**
-    	 * The units to translate the camera when moved the full width or height of
-    	 * the screen.
-    	 */
-    public final float translateUnits = 1000f;
     /** The button for moving the camera along the direction axis */
     public int middleMouseButton = Buttons.MIDDLE;
     /**
@@ -73,17 +63,8 @@ public class GaiaInputController extends GestureDetector {
     public boolean alwaysScroll = true;
     /** The weight for each scrolled amount. */
     public float scrollFactor = -0.1f;
-    /** Whether to update the camera after it has been changed. */
-    public boolean autoUpdate = true;
     /** The key for rolling the camera **/
     public int rollKey = Keys.SHIFT_LEFT;
-    /** The key for looking around in focus mode **/
-    public int lookFocusKey = Keys.CONTROL_LEFT;
-    /** Whether to update the target on forward */
-    public boolean forwardTarget = true;
-    /** Whether to update the target on scroll */
-    public boolean scrollTarget = false;
-    protected boolean rotateLeftPressed;
     /** The Gaia camera */
     public CameraManager cam;
     private IGui gui;
