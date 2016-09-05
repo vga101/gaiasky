@@ -39,9 +39,6 @@ public class HipparcosLoader extends AbstractCatalogLoader implements ISceneGrap
     // Version to load; 0 - old, 1 - new
     public static int VERSION = 1;
 
-    private static final String separator_old = "\\s+";
-    private static final String separator_new = ",";
-
     private static final String comma = ",";
     private static final String comment = "#";
 
@@ -114,7 +111,7 @@ public class HipparcosLoader extends AbstractCatalogLoader implements ISceneGrap
 
                 double dist = (1000d / pllx) * Constants.PC_TO_U;
                 // Keep only stars with relevant parallaxes
-                if (dist >= 0 && pllx / pllxerr > 8 && pllxerr <= 1.5) {
+                if (dist >= 0 && pllx / pllxerr > 8 && pllxerr <= 0.6) {
 
                     Vector3d pos = Coordinates.sphericalToCartesian(Math.toRadians(ra), Math.toRadians(dec), dist, new Vector3d());
 

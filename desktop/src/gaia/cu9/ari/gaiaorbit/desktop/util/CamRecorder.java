@@ -15,8 +15,6 @@ import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
-import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
-import gaia.cu9.ari.gaiaorbit.util.format.IDateFormat;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.parse.Parser;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
@@ -44,7 +42,6 @@ public class CamRecorder implements IObserver {
     private File f;
     private long startMs;
     float time;
-    private IDateFormat df;
 
     public static void initialize() {
         instance = new CamRecorder();
@@ -53,7 +50,6 @@ public class CamRecorder implements IObserver {
 
     public CamRecorder() {
         this.mode = RecorderMode.IDLE;
-        df = DateFormatFactory.getFormatter("yyyy-MM-dd_HH:mm:ss");
         EventManager.instance.subscribe(this, Events.RECORD_CAMERA_CMD, Events.PLAY_CAMERA_CMD, Events.UPDATE_CAM_RECORDER);
     }
 
@@ -104,6 +100,8 @@ public class CamRecorder implements IObserver {
                 }
             }
             break;
+        case IDLE:
+            break;
         }
 
     }
@@ -116,11 +114,13 @@ public class CamRecorder implements IObserver {
             if (data[0] != null) {
                 if ((Boolean) data[0]) {
                     m = RecorderMode.RECORDING;
+
                 } else {
                     m = RecorderMode.IDLE;
                 }
             } else {
                 m = (mode == RecorderMode.RECORDING) ? RecorderMode.IDLE : RecorderMode.RECORDING;
+
             }
 
             if (m == RecorderMode.RECORDING) {
