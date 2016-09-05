@@ -220,11 +220,12 @@ public class AndroidConfInit extends ConfInit {
         String RENDER_FILE_NAME = p.getProperty("graphics.render.filename");
         int RENDER_WIDTH = Integer.parseInt(p.getProperty("graphics.render.width"));
         int RENDER_HEIGHT = Integer.parseInt(p.getProperty("graphics.render.height"));
-        int RENDER_TARGET_FPS = Integer.parseInt(p.getProperty("graphics.render.targetfps"));
+        int RENDER_TARGET_FPS = Integer.parseInt(p.getProperty("graphics.render.targetfps", "60"));
+        int CAMERA_REC_TARGET_FPS = Integer.parseInt(p.getProperty("graphics.camera.recording.targetfps", "60"));
         boolean RENDER_SCREENSHOT_TIME = Boolean.parseBoolean(p.getProperty("graphics.render.time"));
         ScreenshotMode FRAME_MODE = ScreenshotMode.valueOf(p.getProperty("graphics.render.mode"));
         FrameConf fc = new FrameConf();
-        fc.initialize(RENDER_WIDTH, RENDER_HEIGHT, RENDER_TARGET_FPS, RENDER_FOLDER, RENDER_FILE_NAME, RENDER_SCREENSHOT_TIME, RENDER_SCREENSHOT_TIME, FRAME_MODE);
+        fc.initialize(RENDER_WIDTH, RENDER_HEIGHT, RENDER_TARGET_FPS, CAMERA_REC_TARGET_FPS, RENDER_FOLDER, RENDER_FILE_NAME, RENDER_SCREENSHOT_TIME, RENDER_SCREENSHOT_TIME, FRAME_MODE);
 
         /** SCREEN CONF **/
         int SCREEN_WIDTH = Integer.parseInt(p.getProperty("graphics.screen.width"));
@@ -285,6 +286,7 @@ public class AndroidConfInit extends ConfInit {
         p.setProperty("graphics.render.width", Integer.toString(GlobalConf.frame.RENDER_WIDTH));
         p.setProperty("graphics.render.height", Integer.toString(GlobalConf.frame.RENDER_HEIGHT));
         p.setProperty("graphics.render.targetfps", Integer.toString(GlobalConf.frame.RENDER_TARGET_FPS));
+        p.setProperty("graphics.camera.recording.targetfps", Integer.toString(GlobalConf.frame.CAMERA_REC_TARGET_FPS));
         p.setProperty("graphics.render.time", Boolean.toString(GlobalConf.frame.RENDER_SCREENSHOT_TIME));
         p.setProperty("graphics.render.mode", GlobalConf.frame.FRAME_MODE.toString());
 

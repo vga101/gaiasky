@@ -111,7 +111,7 @@ public class HipparcosLoader extends AbstractCatalogLoader implements ISceneGrap
 
                 double dist = (1000d / pllx) * Constants.PC_TO_U;
                 // Keep only stars with relevant parallaxes
-                if (dist >= 0 && pllx / pllxerr > 8 && pllxerr <= 0.6) {
+                if (dist >= 0 && pllx / pllxerr > 8 && pllxerr <= 1) {
 
                     Vector3d pos = Coordinates.sphericalToCartesian(Math.toRadians(ra), Math.toRadians(dec), dist, new Vector3d());
 

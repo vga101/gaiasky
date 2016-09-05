@@ -438,10 +438,14 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
      *            Delta time in seconds.
      */
     public void update(float dt) {
-        if (GlobalConf.frame.RENDER_OUTPUT || camRecording) {
+        if (GlobalConf.frame.RENDER_OUTPUT) {
             // If RENDER_OUTPUT is active, we need to set our dt according to
             // the fps
             dt = 1f / GlobalConf.frame.RENDER_TARGET_FPS;
+        } else if (camRecording) {
+            // If Camera is recording, we need to set our dt according to
+            // the fps
+            dt = 1f / GlobalConf.frame.CAMERA_REC_TARGET_FPS;
         } else {
             // Max time step is 0.1 seconds. Not in RENDER_OUTPUT MODE.
             dt = Math.min(dt, 0.1f);
