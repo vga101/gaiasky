@@ -36,7 +36,7 @@ import gaia.cu9.ari.gaiaorbit.util.comp.ViewAngleComparator;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
 /**
- * Ripoff of libgdx's CameraInputController, for now.
+ * Adaptation of libgdx's CameraInputController.
  * 
  * @author Toni Sagrista
  *

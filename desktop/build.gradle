@@ -28,7 +28,7 @@ task run(dependsOn: jar, type: JavaExec, description: "Runs the desktop project"
     // Parallel GC
     //jvmArgs = ['-Xms2g', '-Xmx4g', '-XX:+UseParallelGC']
     // CMS GC
-    jvmArgs = ['-Xms2g', '-Xmx3g', '-XX:+UseConcMarkSweepGC']
+    jvmArgs = ['-Xms3g', '-Xmx4g', '-XX:+UseConcMarkSweepGC']
     // G1 GC
     //jvmArgs = ['-Xms2g', '-Xmx4g', '-XX:+UseG1GC']
     classpath = sourceSets.main.runtimeClasspath
