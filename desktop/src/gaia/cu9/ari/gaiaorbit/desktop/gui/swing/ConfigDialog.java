@@ -790,6 +790,26 @@ public class ConfigDialog extends I18nJFrame {
         tabbedPane.setMnemonicAt(5, KeyEvent.VK_6);
 
         /**
+         * ====== CAMERA RECORDING TAB =======
+         */
+
+        /** IMAGE OUTPUT CONFIG **/
+        JPanel cameraRec = new JPanel(new MigLayout("", "[grow,fill][grow,fill]", ""));
+        cameraRec.setBorder(new TitledBorder(new MatteBorder(new Insets(thick, 0, 0, 0), bcol), txt("gui.camerarec"), just, pos));
+
+        // TARGET FPS
+        final JSpinner targetFPScamera = new JSpinner(new SpinnerNumberModel(GlobalConf.frame.CAMERA_REC_TARGET_FPS, 1, 60, 1));
+
+        cameraRec.add(new JLabel(txt("gui.camerarec.fps") + ":"));
+        cameraRec.add(targetFPScamera, "span");
+
+        JPanel cameraRecPanel = new JPanel(new MigLayout("", "[grow,fill]", ""));
+        cameraRecPanel.add(cameraRec, "wrap");
+
+        tabbedPane.addTab(txt("gui.camerarec.title"), IconManager.get("config/camera"), cameraRecPanel);
+        tabbedPane.setMnemonicAt(6, KeyEvent.VK_7);
+
+        /**
          * ====== DATA TAB =======
          */
         JPanel datasource = new JPanel(new MigLayout("", "[][grow,fill][]", ""));
@@ -814,7 +834,7 @@ public class ConfigDialog extends I18nJFrame {
         dataPanel.add(datasource, "wrap");
 
         tabbedPane.addTab(txt("gui.data"), IconManager.get("config/data"), dataPanel);
-        tabbedPane.setMnemonicAt(6, KeyEvent.VK_7);
+        tabbedPane.setMnemonicAt(7, KeyEvent.VK_8);
 
         /**
          * ====== GAIA TAB =======
@@ -852,7 +872,7 @@ public class ConfigDialog extends I18nJFrame {
         gaiaPanel.add(gaia, "wrap");
 
         tabbedPane.addTab(txt("gui.gaia"), IconManager.get("config/gaia"), gaiaPanel);
-        tabbedPane.setMnemonicAt(7, KeyEvent.VK_8);
+        tabbedPane.setMnemonicAt(8, KeyEvent.VK_9);
 
         /** SHOW AGAIN? **/
 
@@ -956,6 +976,9 @@ public class ConfigDialog extends I18nJFrame {
                     GlobalConf.frame.RENDER_HEIGHT = ((Integer) frameHeightField.getValue());
                     GlobalConf.frame.RENDER_TARGET_FPS = ((Integer) targetFPS.getValue());
                     EventManager.instance.post(Events.FRAME_SIZE_UDPATE, GlobalConf.frame.RENDER_WIDTH, GlobalConf.frame.RENDER_HEIGHT);
+
+                    // Camera recording
+                    GlobalConf.frame.CAMERA_REC_TARGET_FPS = (Integer) targetFPScamera.getValue();
 
                     // Save configuration
                     ConfInit.instance.persistGlobalConf(new File(System.getProperty("properties.file")));

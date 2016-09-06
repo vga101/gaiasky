@@ -237,7 +237,7 @@ public class GlobalConf {
     }
 
     /**
-     * Holds the configuration for the output frame subsystem.
+     * Holds the configuration for the output frame subsystem and the camera recording.
      * 
      * @author Toni Sagrista
      *
@@ -249,6 +249,8 @@ public class GlobalConf {
         public int RENDER_HEIGHT;
         /** The number of images per second to produce **/
         public int RENDER_TARGET_FPS;
+        /** The target FPS when recording the camera **/
+        public int CAMERA_REC_TARGET_FPS;
         /** The output folder **/
         public String RENDER_FOLDER;
         /** The prefix for the image files **/
@@ -264,10 +266,11 @@ public class GlobalConf {
             EventManager.instance.subscribe(this, Events.CONFIG_PIXEL_RENDERER, Events.FRAME_OUTPUT_CMD);
         }
 
-        public void initialize(int rENDER_WIDTH, int rENDER_HEIGHT, int rENDER_TARGET_FPS, String rENDER_FOLDER, String rENDER_FILE_NAME, boolean rENDER_SCREENSHOT_TIME, boolean rENDER_OUTPUT, ScreenshotMode fRAME_MODE) {
+        public void initialize(int rENDER_WIDTH, int rENDER_HEIGHT, int rENDER_TARGET_FPS, int cAMERA_REC_TARGET_FPS, String rENDER_FOLDER, String rENDER_FILE_NAME, boolean rENDER_SCREENSHOT_TIME, boolean rENDER_OUTPUT, ScreenshotMode fRAME_MODE) {
             RENDER_WIDTH = rENDER_WIDTH;
             RENDER_HEIGHT = rENDER_HEIGHT;
             RENDER_TARGET_FPS = rENDER_TARGET_FPS;
+            CAMERA_REC_TARGET_FPS = cAMERA_REC_TARGET_FPS;
             RENDER_FOLDER = rENDER_FOLDER;
             RENDER_FILE_NAME = rENDER_FILE_NAME;
             RENDER_SCREENSHOT_TIME = rENDER_SCREENSHOT_TIME;

@@ -122,6 +122,11 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
      */
     public Music music;
 
+    /**
+     * Camera recording or not?
+     */
+    private boolean camRecording = false;
+
     private boolean initialized = false;
 
     /**
@@ -307,7 +312,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         EventManager.instance.post(Events.TIME_CHANGE_INFO, time.getTime());
 
         // Subscribe to events
-        EventManager.instance.subscribe(this, Events.TOGGLE_AMBIENT_LIGHT, Events.AMBIENT_LIGHT_CMD);
+        EventManager.instance.subscribe(this, Events.TOGGLE_AMBIENT_LIGHT, Events.AMBIENT_LIGHT_CMD, Events.RECORD_CAMERA_CMD);
 
         // Re-enable input
         if (!GlobalConf.runtime.STRIPPED_FOV_MODE)
@@ -437,6 +442,10 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
             // If RENDER_OUTPUT is active, we need to set our dt according to
             // the fps
             dt = 1f / GlobalConf.frame.RENDER_TARGET_FPS;
+        } else if (camRecording) {
+            // If Camera is recording, we need to set our dt according to
+            // the fps
+            dt = 1f / GlobalConf.frame.CAMERA_REC_TARGET_FPS;
         } else {
             // Max time step is 0.1 seconds. Not in RENDER_OUTPUT MODE.
             dt = Math.min(dt, 0.1f);
@@ -568,6 +577,13 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
             break;
         case AMBIENT_LIGHT_CMD:
             ModelComponent.setAmbientLight((float) data[0]);
+            break;
+        case RECORD_CAMERA_CMD:
+            if (data != null) {
+                camRecording = (Boolean) data[0];
+            } else {
+                camRecording = !camRecording;
+            }
             break;
         default:
             break;
