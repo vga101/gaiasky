@@ -547,6 +547,7 @@ public class GlobalConf {
         public int CAMERA_SPEED_LIMIT_IDX;
         public double CAMERA_SPEED_LIMIT;
         public boolean FOCUS_LOCK;
+        public boolean FOCUS_LOCK_ORIENTATION;
         public float LABEL_NUMBER_FACTOR;
         public boolean[] VISIBILITY;
 
@@ -600,11 +601,11 @@ public class GlobalConf {
         public float OCTANT_THRESHOLD_1;
 
         public SceneConf() {
-            EventManager.instance.subscribe(this, Events.FOCUS_LOCK_CMD, Events.PROPER_MOTIONS_CMD, Events.STAR_BRIGHTNESS_CMD, Events.PM_LEN_FACTOR_CMD, Events.PM_NUM_FACTOR_CMD, Events.FOV_CHANGED_CMD, Events.CAMERA_SPEED_CMD, Events.ROTATION_SPEED_CMD, Events.TURNING_SPEED_CMD, Events.SPEED_LIMIT_CMD, Events.TRANSIT_COLOUR_CMD, Events.ONLY_OBSERVED_STARS_CMD, Events.COMPUTE_GAIA_SCAN_CMD, Events.PIXEL_RENDERER_CMD, Events.OCTREE_PARTICLE_FADE_CMD, Events.STAR_POINT_SIZE_CMD, Events.STAR_POINT_SIZE_INCREASE_CMD, Events.STAR_POINT_SIZE_DECREASE_CMD, Events.STAR_POINT_SIZE_RESET_CMD, Events.STAR_MIN_OPACITY_CMD, Events.AMBIENT_LIGHT_CMD, Events.GALAXY_3D_CMD);
+            EventManager.instance.subscribe(this, Events.FOCUS_LOCK_CMD, Events.ORIENTATION_LOCK_CMD, Events.PROPER_MOTIONS_CMD, Events.STAR_BRIGHTNESS_CMD, Events.PM_LEN_FACTOR_CMD, Events.PM_NUM_FACTOR_CMD, Events.FOV_CHANGED_CMD, Events.CAMERA_SPEED_CMD, Events.ROTATION_SPEED_CMD, Events.TURNING_SPEED_CMD, Events.SPEED_LIMIT_CMD, Events.TRANSIT_COLOUR_CMD, Events.ONLY_OBSERVED_STARS_CMD, Events.COMPUTE_GAIA_SCAN_CMD, Events.PIXEL_RENDERER_CMD, Events.OCTREE_PARTICLE_FADE_CMD, Events.STAR_POINT_SIZE_CMD, Events.STAR_POINT_SIZE_INCREASE_CMD, Events.STAR_POINT_SIZE_DECREASE_CMD, Events.STAR_POINT_SIZE_RESET_CMD, Events.STAR_MIN_OPACITY_CMD, Events.AMBIENT_LIGHT_CMD, Events.GALAXY_3D_CMD);
         }
 
-        public void initialize(int gRAPHICS_QUALITY, long oBJECT_FADE_MS, float sTAR_BRIGHTNESS, float aMBIENT_LIGHT, int cAMERA_FOV, float cAMERA_SPEED, float tURNING_SPEED, float rOTATION_SPEED, int cAMERA_SPEED_LIMIT_IDX, boolean fOCUS_LOCK, float lABEL_NUMBER_FACTOR, boolean[] vISIBILITY, int pIXEL_RENDERER, int lINE_RENDERER, double sTAR_TH_ANGLE_NONE, double sTAR_TH_ANGLE_POINT, double sTAR_TH_ANGLE_QUAD, float pOINT_ALPHA_MIN, float pOINT_ALPHA_MAX, boolean oCTREE_PARTICLE_FADE,
-                float oCTANT_TH_ANGLE_0, float oCTANT_TH_ANGLE_1, boolean pROPER_MOTION_VECTORS, float pM_NUM_FACTOR, float pM_LEN_FACTOR, float sTAR_POINT_SIZE, boolean gALAXY_3D) {
+        public void initialize(int gRAPHICS_QUALITY, long oBJECT_FADE_MS, float sTAR_BRIGHTNESS, float aMBIENT_LIGHT, int cAMERA_FOV, float cAMERA_SPEED, float tURNING_SPEED, float rOTATION_SPEED, int cAMERA_SPEED_LIMIT_IDX, boolean fOCUS_LOCK, boolean fOCUS_LOCK_ORIENTATION, float lABEL_NUMBER_FACTOR, boolean[] vISIBILITY, int pIXEL_RENDERER, int lINE_RENDERER, double sTAR_TH_ANGLE_NONE, double sTAR_TH_ANGLE_POINT, double sTAR_TH_ANGLE_QUAD, float pOINT_ALPHA_MIN, float pOINT_ALPHA_MAX,
+                boolean oCTREE_PARTICLE_FADE, float oCTANT_TH_ANGLE_0, float oCTANT_TH_ANGLE_1, boolean pROPER_MOTION_VECTORS, float pM_NUM_FACTOR, float pM_LEN_FACTOR, float sTAR_POINT_SIZE, boolean gALAXY_3D) {
             GRAPHICS_QUALITY = gRAPHICS_QUALITY;
             OBJECT_FADE_MS = oBJECT_FADE_MS;
             STAR_BRIGHTNESS = sTAR_BRIGHTNESS;
@@ -616,6 +617,7 @@ public class GlobalConf {
             CAMERA_SPEED_LIMIT_IDX = cAMERA_SPEED_LIMIT_IDX;
             this.updateSpeedLimit();
             FOCUS_LOCK = fOCUS_LOCK;
+            FOCUS_LOCK_ORIENTATION = fOCUS_LOCK_ORIENTATION;
             LABEL_NUMBER_FACTOR = lABEL_NUMBER_FACTOR;
             VISIBILITY = vISIBILITY;
             PIXEL_RENDERER = pIXEL_RENDERER;
@@ -703,7 +705,9 @@ public class GlobalConf {
             case FOCUS_LOCK_CMD:
                 FOCUS_LOCK = (boolean) data[1];
                 break;
-
+            case ORIENTATION_LOCK_CMD:
+                FOCUS_LOCK_ORIENTATION = (boolean) data[1];
+                break;
             case AMBIENT_LIGHT_CMD:
                 AMBIENT_LIGHT = (float) data[0];
                 break;

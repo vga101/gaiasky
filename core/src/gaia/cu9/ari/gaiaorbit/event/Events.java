@@ -104,6 +104,10 @@ public enum Events {
      **/
     FOCUS_LOCK_CMD,
     /**
+     * Contains the name and the boolean value.
+     */
+    ORIENTATION_LOCK_CMD,
+    /**
      * Contains the name, the boolean value and a boolean indicating if this
      * comes from the interface
      **/

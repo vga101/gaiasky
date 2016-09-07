@@ -617,4 +617,9 @@ public class Vector3d implements Serializable {
         return this;
     }
 
+    /** Gets the angle in degrees between the two vectors **/
+    public double angle(Vector3d v) {
+        return MathUtilsd.radiansToDegrees * MathUtilsd.acos(this.dot(v) / (this.len() * v.len()));
+    }
+
 }

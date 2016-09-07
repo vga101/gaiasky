@@ -78,8 +78,7 @@ public abstract class ModelBody extends CelestialBody {
         if (sizeFactor != 1 || forceUpdate) {
             float[] trnsltn = transform.getTranslationf();
             localTransform.idt().translate(trnsltn[0], trnsltn[1], trnsltn[2]).scl(size * sizeFactor).rotate(0, 1, 0, (float) rc.ascendingNode).rotate(0, 0, 1, (float) (rc.inclination + rc.axialTilt)).rotate(0, 1, 0, (float) rc.angle);
-            if (children != null)
-                orientation.idt().rotate(0, 1, 0, (float) rc.ascendingNode).rotate(0, 0, 1, (float) (rc.inclination + rc.axialTilt));
+            orientation.idt().rotate(0, 1, 0, (float) rc.ascendingNode).rotate(0, 0, 1, (float) (rc.inclination + rc.axialTilt));
         } else {
             localTransform.set(this.localTransform);
         }
@@ -141,7 +140,7 @@ public abstract class ModelBody extends CelestialBody {
         double size = 0f;
         if (viewAngle >= THRESHOLD_POINT() * camera.getFovFactor()) {
             float tanThShaderOverlapDist = (float) Math.tan(thAngleQuad) * distToCamera;
-            size = tanThShaderOverlapDist;
+            size = tanThShaderOverlapDist * 2f;
         }
         return (float) size / camera.getFovFactor();
     }

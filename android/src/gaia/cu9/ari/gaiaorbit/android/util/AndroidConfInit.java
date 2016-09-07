@@ -177,6 +177,7 @@ public class AndroidConfInit extends ConfInit {
         int CAMERA_SPEED_LIMIT_IDX = Integer.parseInt(p.getProperty("scene.camera.speedlimit"));
         float CAMERA_SPEED = Float.parseFloat(p.getProperty("scene.camera.focus.vel"));
         boolean FOCUS_LOCK = Boolean.parseBoolean(p.getProperty("scene.focuslock"));
+        boolean FOCUS_LOCK_ORIENTATION = Boolean.parseBoolean(p.getProperty("scene.focuslock.orientation", "false"));
         float TURNING_SPEED = Float.parseFloat(p.getProperty("scene.camera.turn.vel"));
         float ROTATION_SPEED = Float.parseFloat(p.getProperty("scene.camera.rotate.vel"));
         float LABEL_NUMBER_FACTOR = Float.parseFloat(p.getProperty("scene.labelfactor"));
@@ -205,7 +206,7 @@ public class AndroidConfInit extends ConfInit {
         }
         float STAR_POINT_SIZE = Float.parseFloat(p.getProperty("scene.star.point.size", "-1"));
         SceneConf sc = new SceneConf();
-        sc.initialize(GRAPHICS_QUALITY, OBJECT_FADE_MS, STAR_BRIGHTNESS, AMBIENT_LIGHT, CAMERA_FOV, CAMERA_SPEED, TURNING_SPEED, ROTATION_SPEED, CAMERA_SPEED_LIMIT_IDX, FOCUS_LOCK, LABEL_NUMBER_FACTOR, VISIBILITY, PIXEL_RENDERER, LINE_RENDERER, STAR_TH_ANGLE_NONE, STAR_TH_ANGLE_POINT, STAR_TH_ANGLE_QUAD, POINT_ALPHA_MIN, POINT_ALPHA_MAX, OCTREE_PARTICLE_FADE, OCTANT_THRESHOLD_0, OCTANT_THRESHOLD_1, PROPER_MOTION_VECTORS, PM_NUM_FACTOR, PM_LEN_FACTOR, STAR_POINT_SIZE, GALAXY_3D);
+        sc.initialize(GRAPHICS_QUALITY, OBJECT_FADE_MS, STAR_BRIGHTNESS, AMBIENT_LIGHT, CAMERA_FOV, CAMERA_SPEED, TURNING_SPEED, ROTATION_SPEED, CAMERA_SPEED_LIMIT_IDX, FOCUS_LOCK, FOCUS_LOCK_ORIENTATION, LABEL_NUMBER_FACTOR, VISIBILITY, PIXEL_RENDERER, LINE_RENDERER, STAR_TH_ANGLE_NONE, STAR_TH_ANGLE_POINT, STAR_TH_ANGLE_QUAD, POINT_ALPHA_MIN, POINT_ALPHA_MAX, OCTREE_PARTICLE_FADE, OCTANT_THRESHOLD_0, OCTANT_THRESHOLD_1, PROPER_MOTION_VECTORS, PM_NUM_FACTOR, PM_LEN_FACTOR, STAR_POINT_SIZE, GALAXY_3D);
 
         /** FRAME CONF **/
         String renderFolder = null;
@@ -335,6 +336,7 @@ public class AndroidConfInit extends ConfInit {
         p.setProperty("scene.camera.turn.vel", Float.toString(GlobalConf.scene.TURNING_SPEED));
         p.setProperty("scene.camera.rotate.vel", Float.toString(GlobalConf.scene.ROTATION_SPEED));
         p.setProperty("scene.focuslock", Boolean.toString(GlobalConf.scene.FOCUS_LOCK));
+        p.setProperty("scene.focuslock.orientation", Boolean.toString(GlobalConf.scene.FOCUS_LOCK_ORIENTATION));
         p.setProperty("scene.labelfactor", Float.toString(GlobalConf.scene.LABEL_NUMBER_FACTOR));
         p.setProperty("scene.star.threshold.quad", Double.toString(GlobalConf.scene.STAR_THRESHOLD_QUAD));
         p.setProperty("scene.star.threshold.point", Double.toString(GlobalConf.scene.STAR_THRESHOLD_POINT));

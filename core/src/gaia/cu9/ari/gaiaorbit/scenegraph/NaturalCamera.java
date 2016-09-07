@@ -14,6 +14,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
+import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
@@ -46,7 +47,9 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
     public boolean facingFocus;
 
     /** Auxiliary vectors **/
-    private Vector3d aux1, aux2, aux3, dx, state;
+    private Vector3d aux1, aux2, aux3, aux4, aux5, dx, state;
+    /** Aux matrix **/
+    private Matrix4d auxmat1;
     /** Acceleration, velocity and position for pitch, yaw and roll **/
     private Vector3d pitch, yaw, roll;
     /**
@@ -58,6 +61,8 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
     private double lastFwdTime = 0d;
     /** The last forward amount, positive forward, negative backward **/
     private double lastFwdAmount = 0;
+    /** Previous angle in orientation lock **/
+    double previousOrientationAngle = 0;
 
     /** Info about whether the previous state is saved **/
     protected boolean stateSaved = false;
@@ -138,6 +143,11 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
         aux1 = new Vector3d();
         aux2 = new Vector3d();
         aux3 = new Vector3d();
+        aux4 = new Vector3d();
+        aux5 = new Vector3d();
+
+        auxmat1 = new Matrix4d();
+
         dx = new Vector3d();
         state = new Vector3d();
 
@@ -146,7 +156,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
         accelerometer = Gdx.input.isPeripheralAvailable(Peripheral.Accelerometer);
 
         // Focus is changed from GUI
-        EventManager.instance.subscribe(this, Events.FOCUS_CHANGE_CMD, Events.FOV_CHANGED_CMD, Events.FOCUS_LOCK_CMD, Events.CAMERA_POS_CMD, Events.CAMERA_DIR_CMD, Events.CAMERA_UP_CMD, Events.CAMERA_FWD, Events.CAMERA_ROTATE, Events.CAMERA_PAN, Events.CAMERA_ROLL, Events.CAMERA_TURN, Events.CAMERA_STOP, Events.CAMERA_CENTER, Events.GO_TO_OBJECT_CMD, Events.PLANETARIUM_FOCUS_ANGLE_CMD);
+        EventManager.instance.subscribe(this, Events.FOCUS_CHANGE_CMD, Events.FOV_CHANGED_CMD, Events.ORIENTATION_LOCK_CMD, Events.CAMERA_POS_CMD, Events.CAMERA_DIR_CMD, Events.CAMERA_UP_CMD, Events.CAMERA_FWD, Events.CAMERA_ROTATE, Events.CAMERA_PAN, Events.CAMERA_ROLL, Events.CAMERA_TURN, Events.CAMERA_STOP, Events.CAMERA_CENTER, Events.GO_TO_OBJECT_CMD, Events.PLANETARIUM_FOCUS_ANGLE_CMD);
     }
 
     // Set up direction and lookAtSensor if accelerometer is enabled
@@ -177,12 +187,32 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
                 focus.getPosition(focusPos);
 
                 dx.set(0, 0, 0);
+
                 if (GlobalConf.scene.FOCUS_LOCK) {
+
                     focus.getPredictedPosition(aux1, time, this, false);
-                    // Get dx
+                    // Get focus dx
                     dx.set(aux1).sub(focusPos);
+
+                    // Lock orientation - FOR NOW THIS ONLY WORKS WITH EARTH
+                    if (GlobalConf.scene.FOCUS_LOCK_ORIENTATION && time.getDt() > 0 && focus.rc != null && focus.orientation != null) {
+                        double angle = previousOrientationAngle != 0 ? (focus.rc.angle - previousOrientationAngle) : 0;
+
+                        focus.getAbsolutePosition(aux5);
+                        aux3.set(pos).sub(aux5);
+                        aux2.set(0, 1, 0).mul(focus.orientation);
+                        aux3.rotate(aux2, angle);
+                        aux3.add(aux5);
+                        pos.set(aux3);
+                        direction.rotate(aux2, angle);
+                        up.rotate(aux2, angle);
+
+                        previousOrientationAngle = focus.rc.angle;
+                    }
+
                     // Add dx to camera position
                     pos.add(dx);
+
                 }
 
                 // Update direction to follow focus and activate custom input
@@ -611,14 +641,14 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
     	 * @param dt The current time step
     	 * @param target The position of the target
     	 * @param turnVelocity The velocity at which to turn
-    	 * @param planetariaAngle In degrees. In the case of planetaria, the target must be a few degrees lower (skewed domes) so that we need to target a point which
+    	 * @param planetariumAngle In degrees. In the case of planetaria, the target must be a few degrees lower (skewed domes) so that we need to target a point which
     	 * is a few degrees above the focus.
     	 */
-    private void directionToTarget(double dt, final Vector3d target, double turnVelocity, double planetariaAngle) {
+    private void directionToTarget(double dt, final Vector3d target, double turnVelocity, double planetariumAngle) {
         desired.set(target).sub(pos);
-        if (planetariaAngle != 0) {
+        if (planetariumAngle != 0) {
             // Use up to target area above focus with given angle
-            double uplen = Math.tan(MathUtilsd.degRad * planetariaAngle) * desired.len();
+            double uplen = Math.tan(MathUtilsd.degRad * planetariumAngle) * desired.len();
             aux3.set(desired).crs(up);
             aux3.crs(desired);
             aux2.set(aux3).nor().scl(uplen);
@@ -777,6 +807,9 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
                 planetariumFocusAngle = 0;
             else
                 planetariumFocusAngle = (float) data[0];
+            break;
+        case ORIENTATION_LOCK_CMD:
+            previousOrientationAngle = 0;
             break;
         default:
             break;

@@ -38,7 +38,7 @@ public class CameraComponent extends GuiComponent implements IObserver {
     protected OwnLabel fov, speed, turn, rotate, date;
     protected SelectBox<String> cameraMode, cameraSpeedLimit;
     protected Slider fieldOfView, cameraSpeed, turnSpeed, rotateSpeed;
-    protected CheckBox focusLock;
+    protected CheckBox focusLock, orientationLock;
     protected OwnTextIconButton button3d, buttonDome, buttonAnaglyph, button3dtv, buttonVR, buttonCrosseye;
     private float fovBackup;
     protected boolean fovFlag = true;
@@ -247,7 +247,24 @@ public class CameraComponent extends GuiComponent implements IObserver {
             @Override
             public boolean handle(Event event) {
                 if (event instanceof ChangeEvent) {
-                    EventManager.instance.post(Events.FOCUS_LOCK_CMD, "Focus lock", focusLock.isChecked());
+                    EventManager.instance.post(Events.FOCUS_LOCK_CMD, txt("gui.camera.lock"), focusLock.isChecked());
+                    orientationLock.setVisible(focusLock.isChecked());
+                    return true;
+                }
+                return false;
+            }
+        });
+
+        /** Focus orientation lock **/
+        orientationLock = new CheckBox(" " + txt("gui.camera.lock.orientation"), skin);
+        orientationLock.setName("orientation lock");
+        orientationLock.setChecked(GlobalConf.scene.FOCUS_LOCK_ORIENTATION);
+        orientationLock.setVisible(GlobalConf.scene.FOCUS_LOCK);
+        orientationLock.addListener(new EventListener() {
+            @Override
+            public boolean handle(Event event) {
+                if (event instanceof ChangeEvent) {
+                    EventManager.instance.post(Events.ORIENTATION_LOCK_CMD, txt("gui.camera.lock.orientation"), orientationLock.isChecked());
                     return true;
                 }
                 return false;
@@ -296,6 +313,7 @@ public class CameraComponent extends GuiComponent implements IObserver {
         cameraGroup.addActor(new Label(txt("gui.turn.speed"), skin, "default"));
         cameraGroup.addActor(turnGroup);
         cameraGroup.addActor(focusLock);
+        cameraGroup.addActor(orientationLock);
         cameraGroup.space(5);
         cameraGroup.addActor(buttonGroup);
 

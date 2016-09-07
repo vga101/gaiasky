@@ -14,6 +14,7 @@ import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.MyPools;
 import gaia.cu9.ari.gaiaorbit.util.coord.IBodyCoordinates;
+import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
@@ -148,6 +149,17 @@ public abstract class AbstractPositionEntity extends SceneGraphNode {
         while (entity.parent != null && entity.parent instanceof AbstractPositionEntity) {
             entity = (AbstractPositionEntity) entity.parent;
             aux.add(entity.pos);
+        }
+        return aux;
+    }
+
+    public Matrix4d getAbsoluteOrientation(Matrix4d aux) {
+        aux.set(orientation);
+        AbstractPositionEntity entity = this;
+        while (entity.parent != null && entity.parent instanceof AbstractPositionEntity) {
+            entity = (AbstractPositionEntity) entity.parent;
+            if (entity.orientation != null)
+                aux.mul(entity.orientation);
         }
         return aux;
     }

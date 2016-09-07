@@ -9,8 +9,8 @@ import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 public abstract class Satellite extends ModelBody {
 
     protected static final double TH_ANGLE_NONE = ModelBody.TH_ANGLE_POINT / 1e18;
-    protected static final double TH_ANGLE_POINT = ModelBody.TH_ANGLE_POINT / 1e17;
-    protected static final double TH_ANGLE_QUAD = ModelBody.TH_ANGLE_POINT / 4d;
+    protected static final double TH_ANGLE_POINT = ModelBody.TH_ANGLE_POINT / 1e9;
+    protected static final double TH_ANGLE_QUAD = ModelBody.TH_ANGLE_POINT / 8;
 
     @Override
     public double THRESHOLD_NONE() {
@@ -72,12 +72,22 @@ public abstract class Satellite extends ModelBody {
 
     @Override
     protected float labelMax() {
-        return super.labelMax() * 4;
+        return super.labelMax() * 2;
     }
 
     @Override
     public boolean renderText() {
         return name != null && GaiaSky.instance.isOn(ComponentType.Labels) && viewAngle > TH_OVER_FACTOR * 1e12f;
+    }
+
+    public float getFuzzyRenderSize(ICamera camera) {
+        float thAngleQuad = (float) THRESHOLD_QUAD() * camera.getFovFactor();
+        double size = 0f;
+        if (viewAngle >= THRESHOLD_POINT() * camera.getFovFactor()) {
+            float tanThShaderOverlapDist = (float) Math.tan(thAngleQuad) * distToCamera;
+            size = tanThShaderOverlapDist * 10f;
+        }
+        return (float) size / camera.getFovFactor();
     }
 
 }

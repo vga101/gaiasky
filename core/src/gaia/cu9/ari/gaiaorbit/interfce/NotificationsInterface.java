@@ -194,6 +194,7 @@ public class NotificationsInterface extends Table implements IObserver {
                     addMessage(I18n.bundle.format("notif.visibility.toggle", (String) data[0]));
                 break;
             case FOCUS_LOCK_CMD:
+            case ORIENTATION_LOCK_CMD:
             case TOGGLE_AMBIENT_LIGHT:
             case COMPUTE_GAIA_SCAN_CMD:
             case ONLY_OBSERVED_STARS_CMD:
