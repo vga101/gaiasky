@@ -408,27 +408,27 @@ public class FovCamera extends AbstractCamera implements IObserver {
         }
     }
 
-	@Override
-	public void setCamera(PerspectiveCamera cam) {
-		// Nothing to do
-	}
+    @Override
+    public void setCamera(PerspectiveCamera cam) {
+        // Nothing to do
+    }
 
-	@Override
-	public void setCameraStereoLeft(PerspectiveCamera cam) {
-	}
+    @Override
+    public void setCameraStereoLeft(PerspectiveCamera cam) {
+    }
 
-	@Override
-	public void setCameraStereoRight(PerspectiveCamera cam) {
-	}
+    @Override
+    public void setCameraStereoRight(PerspectiveCamera cam) {
+    }
 
-	@Override
-	public PerspectiveCamera getCameraStereoLeft() {
-		return null;
-	}
+    @Override
+    public PerspectiveCamera getCameraStereoLeft() {
+        return null;
+    }
 
-	@Override
-	public PerspectiveCamera getCameraStereoRight() {
-		return null;
-	}
+    @Override
+    public PerspectiveCamera getCameraStereoRight() {
+        return null;
+    }
 
 }

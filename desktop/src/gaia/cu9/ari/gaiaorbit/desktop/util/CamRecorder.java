@@ -32,6 +32,8 @@ public class CamRecorder implements IObserver {
     public static CamRecorder instance;
     private static final String sep = " ";
 
+    Vector3d dir, upp, aux1, aux2;
+
     public enum RecorderMode {
         RECORDING, PLAYING, IDLE
     }
@@ -45,12 +47,16 @@ public class CamRecorder implements IObserver {
 
     public static void initialize() {
         instance = new CamRecorder();
-
     }
 
     public CamRecorder() {
         this.mode = RecorderMode.IDLE;
         EventManager.instance.subscribe(this, Events.RECORD_CAMERA_CMD, Events.PLAY_CAMERA_CMD, Events.UPDATE_CAM_RECORDER);
+
+        dir = new Vector3d();
+        upp = new Vector3d();
+        aux1 = new Vector3d();
+        aux2 = new Vector3d();
     }
 
     public void update(ITimeFrameProvider time, Vector3d position, Vector3d direction, Vector3d up) {
@@ -75,9 +81,23 @@ public class CamRecorder implements IObserver {
                     if ((line = is.readLine()) != null) {
                         String[] tokens = line.split("\\s+");
                         EventManager.instance.post(Events.TIME_CHANGE_CMD, new Date(Parser.parseLong(tokens[0])));
+
+                        dir.set(Parser.parseDouble(tokens[4]), Parser.parseDouble(tokens[5]), Parser.parseDouble(tokens[6]));
+                        upp.set(Parser.parseDouble(tokens[7]), Parser.parseDouble(tokens[8]), Parser.parseDouble(tokens[9]));
+
+                        //                        float degrees = -30;
+                        //
+                        //                        aux1.set(dir).crs(up);
+                        //                        dir.rotate(aux1, degrees);
+                        //                        upp.rotate(aux1, degrees);
+
                         position.set(Parser.parseDouble(tokens[1]), Parser.parseDouble(tokens[2]), Parser.parseDouble(tokens[3]));
-                        direction.set(Parser.parseDouble(tokens[4]), Parser.parseDouble(tokens[5]), Parser.parseDouble(tokens[6]));
-                        up.set(Parser.parseDouble(tokens[7]), Parser.parseDouble(tokens[8]), Parser.parseDouble(tokens[9]));
+                        direction.set(dir);
+                        up.set(upp);
+
+                        //                        position.set(Parser.parseDouble(tokens[1]), Parser.parseDouble(tokens[2]), Parser.parseDouble(tokens[3]));
+                        //                        direction.set(Parser.parseDouble(tokens[4]), Parser.parseDouble(tokens[5]), Parser.parseDouble(tokens[6]));
+                        //                        up.set(Parser.parseDouble(tokens[7]), Parser.parseDouble(tokens[8]), Parser.parseDouble(tokens[9]));
 
                     } else {
                         // Finish off

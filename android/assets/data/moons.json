@@ -79,8 +79,8 @@
 							"args" : [true],
 							"model" : "data/models/phobos.g3db",
 							"texture" : {
-										"base" : "data/tex/phobos.jpg",
-										"normal" : "data/tex/phobos-normal.jpg"
+										"base" : "data/tex/phobos-2k.jpg",
+										"normal" : "data/tex/phobos-normal-2k.jpg"
 										}
 							}
 	},
