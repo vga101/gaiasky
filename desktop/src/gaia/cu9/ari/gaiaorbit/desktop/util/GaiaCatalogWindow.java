@@ -32,7 +32,6 @@ import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.Pair;
-import gaia.cu9.ari.gaiaorbit.util.parse.Parser;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.CollapsibleWindow;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.Link;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnLabel;
@@ -46,9 +45,11 @@ public class GaiaCatalogWindow extends CollapsibleWindow {
 
     private static String URL_GAIA_JSON_SOURCE = "http://gaia.ari.uni-heidelberg.de/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+*+FROM+gaia_source+WHERE+source_id=";
 
+    private static String URL_HIP_JSON_SOURCE = "http://gaia.ari.uni-heidelberg.de/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+*+FROM+extcat.hipparcos+WHERE+hip=";
+
     private static String URL_GAIA_WEB_SOURCE = "http://gaia.ari.uni-heidelberg.de/singlesource.html#id=";
 
-    private static String URL_GAIA_HIP = "http://archives.esac.esa.int/gaia/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+gaia_hip_tycho2_match+WHERE+ext_cat_solution_type='5'+AND+hyp_tyc_oid=";
+    private static String URL_GAIA_HIP = "http://gaia.ari.uni-heidelberg.de/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+extcat.hipparcos+WHERE+hip=";
     private static final String separator = "\n";
 
     private final Stage stage;
@@ -149,9 +150,13 @@ public class GaiaCatalogWindow extends CollapsibleWindow {
                 links.pad(5, 5, 5, 5);
                 links.space(10);
 
-                links.addActor(new Link(txt("gui.data.json"), linkStyle, URL_GAIA_JSON_SOURCE + st.id));
-                links.addActor(new OwnLabel("|", skin));
-                links.addActor(new Link(txt("gui.data.archive"), linkStyle, URL_GAIA_WEB_SOURCE + st.id));
+                if (st.catalogSource == 1) {
+                    links.addActor(new Link(txt("gui.data.json"), linkStyle, URL_GAIA_JSON_SOURCE + st.id));
+                    links.addActor(new OwnLabel("|", skin));
+                    links.addActor(new Link(txt("gui.data.archive"), linkStyle, URL_GAIA_WEB_SOURCE + st.id));
+                } else if (st.catalogSource == 2) {
+                    links.addActor(new Link(txt("gui.data.json"), linkStyle, URL_HIP_JSON_SOURCE + st.hip));
+                }
 
                 table.add(links).colspan(2).padTop(pad * 2).padBottom(pad * 2);
                 table.row();
@@ -253,24 +258,9 @@ public class GaiaCatalogWindow extends CollapsibleWindow {
     }
 
     private String[][] getDataByHipId(int hip) throws MalformedURLException, IOException {
-        String[][] xmatch = getTAPData(URL_GAIA_HIP + Integer.toString(hip), "csv");
+        String[][] result = getTAPData(URL_GAIA_HIP + Integer.toString(hip), "csv");
 
-        if (xmatch != null) {
-            long sourceid = -1;
-            for (int col = 0; col < xmatch[0].length; col++) {
-                if (xmatch[0][col].equalsIgnoreCase("source_id")) {
-                    sourceid = Parser.parseLong(xmatch[1][col]);
-                    break;
-                }
-            }
-
-            if (sourceid > 0) {
-                Logger.info("Hip Id: " + hip + ", Gaia Source Id: " + sourceid);
-                st.id = sourceid;
-                return getDataBySourceId(sourceid);
-            }
-        }
-        return null;
+        return result;
 
     }
 
