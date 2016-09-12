@@ -256,6 +256,7 @@ people behind the following technologies/resources:
 - Nick Risinger for the artist's conception of the Milky Way
 - Tom Patterson ([www.shadedrelief.com]()) for some textures
 - Phil Stooke and Grant Hutchison ([http://www.classe.cornell.edu/~seb/celestia/hutchison/index-125.html]) for some of the textures.
+- Machuca+Arias+Caballero for the music track "Gaia-DR1".
 - [Install4j](http://www.ej-technologies.com/products/install4j/overview.html) (multi-platform installer builder), for providing a free open source license
 - Bitrock's [InstallBuilder](http://installbuilder.bitrock.com/) for providing a free open source license.
 - And several online resources without which this would have not been possible
