@@ -91,7 +91,7 @@ public class AndroidConfInit extends ConfInit {
         VersionConf vc = new VersionConf();
         String versionStr = vp.getProperty("version");
         int[] majmin = getMajorMinorFromString(versionStr);
-        vc.initialize(versionStr, vp.getProperty("buildtime"), vp.getProperty("builder"), vp.getProperty("system"), vp.getProperty("build"), majmin[0], majmin[1]);
+        vc.initialize(versionStr, vp.getProperty("buildtime"), vp.getProperty("builder"), vp.getProperty("system"), vp.getProperty("build"), majmin[0], majmin[1], majmin[2]);
 
         /** PERFORMANCE CONF **/
         PerformanceConf pc = new PerformanceConf();

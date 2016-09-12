@@ -29,7 +29,7 @@ public class WebGLConfInitLite extends ConfInit {
         Constants.webgl = true;
 
         VersionConf vc = new VersionConf();
-        vc.initialize("0.706b", null, null, null, null, 0, 706);
+        vc.initialize("0.706b", null, null, null, null, 0, 706, 0);
 
         PerformanceConf pc = new PerformanceConf();
         pc.initialize(false, 1);
