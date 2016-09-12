@@ -27,20 +27,20 @@ This file contains the following sections:
 
 ###1.1 Requirements
 
-- **Operating System** -
-The Gaia Sky runs on Windows, MacOS and
-Linux.
+- **Minimum System Requirements** -
+
+|:-:|---|
+| Operating system  | Windows 7+ / MacOS X / Linux  |
+| CPU  | Intel Core i3 3rd Generation or similar  |
+| GPU  | OpenGL 3.0 support / Intel HD 4000 / Nvidia GeForce 8400 GS |
+| Memory  | 4 GB RAM  |
+| Hard drive  | 90 MB of free space  |
 
 - **Java** -
 In order to run this software you will need the Java
 Runtime Environment (JRE) 7+ installed in your system.
 
-- **OpenGL** -
-Also, you will need an operating system/graphics card that supports
-OpenGL 3.0.
 
-- **Hardware** -
-Specific system requirements are yet to be determined.
 
 ###1.2 Installation and uninstallation
 
@@ -257,6 +257,7 @@ people behind the following technologies/resources:
 - [ernieyu](https://github.com/ernieyu/) for the Java Swing [range slider](https://github.com/ernieyu/Swing-range-slider)
 - Nick Risinger for the artist's conception of the Milky Way
 - Tom Patterson ([www.shadedrelief.com]()) for some textures
+- Phil Stooke and Grant Hutchison ([http://www.classe.cornell.edu/~seb/celestia/hutchison/index-125.html]) for some of the textures.
 - [Install4j](http://www.ej-technologies.com/products/install4j/overview.html) (multi-platform installer builder), for providing a free open source license
 - Bitrock's [InstallBuilder](http://installbuilder.bitrock.com/) for providing a free open source license.
 - And several online resources without which this would have not been possible

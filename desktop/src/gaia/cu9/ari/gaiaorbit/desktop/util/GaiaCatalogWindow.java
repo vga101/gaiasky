@@ -40,16 +40,15 @@ import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnScrollPane;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextButton;
 
 public class GaiaCatalogWindow extends CollapsibleWindow {
-    private static String URL_WEB_ESAC = "http://gaia.esac.esa.int/archive/";
     private static String URL_WEB = "http://gaia.ari.uni-heidelberg.de/singlesource.html";
 
-    private static String URL_GAIA_CSV_SOURCE_ESAC = "http://gaia.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+gaia_source+WHERE+source_id=";
     private static String URL_GAIA_CSV_SOURCE = "http://gaia.ari.uni-heidelberg.de/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+gaia_source+WHERE+source_id=";
 
-    private static String URL_GAIA_JSON_SOURCE_ESAC = "http://gaia.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+*+FROM+gaia_source+WHERE+source_id=";
     private static String URL_GAIA_JSON_SOURCE = "http://gaia.ari.uni-heidelberg.de/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+*+FROM+gaia_source+WHERE+source_id=";
 
-    private static String URL_GAIA_HIP = "http://gaia.esac.esa.int/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+gaia_hip_tycho2_match+WHERE+ext_cat_solution_type='5'+AND+hyp_tyc_oid=";
+    private static String URL_GAIA_WEB_SOURCE = "http://gaia.ari.uni-heidelberg.de/singlesource.html#id=";
+
+    private static String URL_GAIA_HIP = "http://archives.esac.esa.int/gaia/tap-server/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+gaia_hip_tycho2_match+WHERE+ext_cat_solution_type='5'+AND+hyp_tyc_oid=";
     private static final String separator = "\n";
 
     private final Stage stage;
@@ -152,7 +151,7 @@ public class GaiaCatalogWindow extends CollapsibleWindow {
 
                 links.addActor(new Link(txt("gui.data.json"), linkStyle, URL_GAIA_JSON_SOURCE + st.id));
                 links.addActor(new OwnLabel("|", skin));
-                links.addActor(new Link(txt("gui.data.archive"), linkStyle, URL_WEB));
+                links.addActor(new Link(txt("gui.data.archive"), linkStyle, URL_GAIA_WEB_SOURCE + st.id));
 
                 table.add(links).colspan(2).padTop(pad * 2).padBottom(pad * 2);
                 table.row();
