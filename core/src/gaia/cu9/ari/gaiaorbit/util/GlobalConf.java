@@ -505,10 +505,14 @@ public class GlobalConf {
         public String builder;
         public String system;
         public String build;
+
+        // Version: major.minor.rev
+
         public int major;
         public int minor;
+        public int rev;
 
-        public void initialize(String version, String buildtime, String builder, String system, String build, int major, int minor) {
+        public void initialize(String version, String buildtime, String builder, String system, String build, int major, int minor, int rev) {
             this.version = version;
             this.buildtime = buildtime;
             this.builder = builder;
@@ -516,18 +520,34 @@ public class GlobalConf {
             this.build = build;
             this.major = major;
             this.minor = minor;
+            this.rev = rev;
         }
 
-        public static int[] getMajorMinorFromString(String version) {
+        public static int[] getMajorMinorRevFromString(String version) {
             String majorS = version.substring(0, version.indexOf("."));
-            String minorS = version.substring(version.indexOf(".") + 1, version.length());
+            String minorS, revS;
+            int dots = GlobalResources.countOccurrences(version, '.');
+            int idx0 = GlobalResources.nthIndexOf(version, '.', 1);
+            if (dots == 1) {
+                minorS = version.substring(version.indexOf(".", idx0) + 1, version.length());
+                revS = null;
+            } else if (dots > 1) {
+                int idx1 = GlobalResources.nthIndexOf(version, '.', 2);
+                minorS = version.substring(version.indexOf(".", idx0) + 1, version.indexOf(".", idx1));
+                revS = version.substring(version.indexOf(".", idx1) + 1, version.length());
+            } else {
+                return null;
+            }
             if (majorS.matches("^\\D{1}\\d+$")) {
                 majorS = majorS.substring(1, majorS.length());
             }
             if (minorS.matches("^\\d+\\D{1}$")) {
                 minorS = minorS.substring(0, minorS.length() - 1);
             }
-            return new int[] { Integer.parseInt(majorS), Integer.parseInt(minorS) };
+            if (revS != null && revS.matches("^\\d+\\D{1}$")) {
+                revS = revS.substring(0, revS.length() - 1);
+            }
+            return new int[] { Integer.parseInt(majorS), Integer.parseInt(minorS), revS != null ? Integer.parseInt(revS) : 0 };
         }
 
         @Override

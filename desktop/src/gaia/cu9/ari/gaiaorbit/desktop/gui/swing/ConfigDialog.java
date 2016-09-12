@@ -1139,9 +1139,9 @@ public class ConfigDialog extends I18nJFrame {
      *            The version to check.
      */
     private void newVersionCheck(String version) {
-        int[] majmin = GlobalConf.VersionConf.getMajorMinorFromString(version);
+        int[] majmin = GlobalConf.VersionConf.getMajorMinorRevFromString(version);
 
-        if (majmin[0] > GlobalConf.version.major || (majmin[0] == GlobalConf.version.major && majmin[1] > GlobalConf.version.minor)) {
+        if (majmin[0] > GlobalConf.version.major || (majmin[0] == GlobalConf.version.major && majmin[1] > GlobalConf.version.minor) || (majmin[0] == GlobalConf.version.major && majmin[1] == GlobalConf.version.minor) && majmin[2] > GlobalConf.version.rev) {
             // There's a new version!
             checkLabel.setText(txt("gui.newversion.available", GlobalConf.version, version));
             try {

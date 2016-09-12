@@ -98,8 +98,8 @@ public class DesktopConfInit extends ConfInit {
         /** VERSION CONF **/
         VersionConf vc = new VersionConf();
         String versionStr = vp.getProperty("version");
-        int[] majmin = getMajorMinorFromString(versionStr);
-        vc.initialize(versionStr, vp.getProperty("buildtime"), vp.getProperty("builder"), vp.getProperty("system"), vp.getProperty("build"), majmin[0], majmin[1]);
+        int[] majminrev = GlobalConf.version.getMajorMinorRevFromString(versionStr);
+        vc.initialize(versionStr, vp.getProperty("buildtime"), vp.getProperty("builder"), vp.getProperty("system"), vp.getProperty("build"), majminrev[0], majminrev[1], majminrev[2]);
 
         /** PERFORMANCE CONF **/
         PerformanceConf pc = new PerformanceConf();
@@ -423,18 +423,6 @@ public class DesktopConfInit extends ConfInit {
                 destination.close();
             }
         }
-    }
-
-    public int[] getMajorMinorFromString(String version) {
-        String majorS = version.substring(0, version.indexOf("."));
-        String minorS = version.substring(version.indexOf(".") + 1, version.length());
-        if (majorS.matches("^\\D{1}\\d+$")) {
-            majorS = majorS.substring(1, majorS.length());
-        }
-        if (minorS.matches("^\\d+\\D{1}$")) {
-            minorS = minorS.substring(0, minorS.length() - 1);
-        }
-        return new int[] { Integer.parseInt(majorS), Integer.parseInt(minorS) };
     }
 
 }
