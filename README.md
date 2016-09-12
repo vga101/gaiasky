@@ -29,12 +29,12 @@ This file contains the following sections:
 
 - **Minimum System Requirements** -
 
-|:-:|---|
-| Operating system  | Windows 7+ / MacOS X / Linux  |
-| CPU  | Intel Core i3 3rd Generation or similar  |
-| GPU  | OpenGL 3.0 support / Intel HD 4000 / Nvidia GeForce 8400 GS |
-| Memory  | 4 GB RAM  |
-| Hard drive  | 90 MB of free space  |
+| **Operating system**  | Windows 7+ / MacOS X / Linux |
+| :---: | :--- |
+| **CPU** | Intel Core i3 3rd Generation or similar  |
+| **GPU** | OpenGL 3.0 support / Intel HD 4000 / Nvidia GeForce 8400 GS |
+| **Memory** | 4 GB RAM |
+| **Hard drive**  | 90 MB of free space  |
 
 - **Java** -
 In order to run this software you will need the Java
