@@ -1,8 +1,8 @@
 # Dummy version file
 # It is used for running the app during development
 
-buildtime=12/12/2014 10:35 AM
+buildtime=12/12/2016 10:35 AM
 build=c7dcfc4
 builder=tsagrista
-version=0.706b
+version=1.000
 system=Linux linteum 3.8.0-33-generic Ubuntu Oct 23 09:16:58 UTC 2013 x86_64 GNU/Linux
