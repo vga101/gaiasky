@@ -4,7 +4,7 @@
 [![Circle CI](https://circleci.com/gh/ari-zah/gaiasky/tree/master.svg?style=svg)](https://circleci.com/gh/ari-zah/gaiasky/tree/master)
 
 
-The **Gaia Sky** (former Gaia Sandbox) is a real-time, 3D, astronomy visualisation software that
+The [**Gaia Sky**](https://zah.uni-heidelberg.de/gaia/outreach/gaiasky) is a real-time, 3D, astronomy visualisation software that
 runs on Windows, Linux and MacOS. It is developed in the framework of
 [ESA](http://www.esa.int/ESA)'s [Gaia mission](http://sci.esa.int/gaia) to chart about 1 billion stars of our Galaxy.
 To get the latest up-to-date and most complete information,
@@ -34,14 +34,10 @@ Linux.
 - **Java** -
 In order to run this software you will need the Java
 Runtime Environment (JRE) 7+ installed in your system.
-We recommend using the Oracle HotSpot JVM
-(http://www.oracle.com/technetwork/java/javase/downloads/index.html).
-Please mind the architecture, download the x86_64 version if your
-operating system is 64-bit.
 
 - **OpenGL** -
 Also, you will need an operating system/graphics card that supports
-at least OpenGL 2.0.
+OpenGL 3.0.
 
 - **Hardware** -
 Specific system requirements are yet to be determined.
@@ -70,7 +66,8 @@ you can use the provided uninstaller in the Gaia Sky folder.
 
 ####1.2.2 Linux
 
-We provide 3 packages for linux systems. `deb`, `rpm` and a linux installer. You can get them [here](https://zah.uni-heidelberg.de/gaia/outreach/gaiasandbox/downloads/).
+We provide 4 packages for linux systems. `deb`, `rpm`, an `aur` package and a linux installer. You can get them [here](https://zah.uni-heidelberg.de/gaia/outreach/gaiasandbox/downloads/).
+The `aur` package can be installed using any `AUR` helper.
 
 #####1.2.2.1 DEB
 
@@ -152,7 +149,7 @@ In **Windows**, use an archiver software (7zip, iZArc, etc.) to unpack it.
 
 In **Linux** and **OS X**, you can use:
 ```
-tar zxvf gaiasky-<version>.tgz
+tar -zxvf gaiasky-<version>.tgz
 ```
 
 
@@ -169,7 +166,7 @@ provided in your operating system.
 
 ###2.2 Running from code
 
-In order to run from code you will need [gradle](https://gradle.org/) 2.6+
+In order to run from code you will need [gradle](https://gradle.org/) 2.10+
 installed on your system. You can either follow the instructions on the
 [gradle installation](https://docs.gradle.org/current/userguide/installation.html)
 section or you can automatically install gradle in your linux
@@ -257,6 +254,8 @@ people behind the following technologies/resources:
 - [PgsLookAndFeel](http://www.pagosoft.com/projects/pgslookandfeel/)
 - Mark Taylor's [STIL](http://www.star.bristol.ac.uk/~mbt/stil/) library
 - The [Jython Project](http://www.jython.org/)
+- [ernieyu](https://github.com/ernieyu/) for the Java Swing [range slider](https://github.com/ernieyu/Swing-range-slider)
+- Nick Risinger for the artist's conception of the Milky Way
 - Tom Patterson ([www.shadedrelief.com]()) for some textures
 - [Install4j](http://www.ej-technologies.com/products/install4j/overview.html) (multi-platform installer builder), for providing a free open source license
 - Bitrock's [InstallBuilder](http://installbuilder.bitrock.com/) for providing a free open source license.
