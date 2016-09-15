@@ -265,6 +265,8 @@ public enum Events {
     TOGGLE_STEREOSCOPIC_INFO,
     /** Switches stereoscopic mode images, left to right and right to left **/
     TOGGLE_STEREO_PROFILE_CMD,
+    /** Sets the 360 mode. Contains a boolean with the new state **/
+    CUBEMAP360_CMD,
     /**
      * Toggles whole GUI display. Contains the localised name and an optional
      * boolean with the state (display/no display)

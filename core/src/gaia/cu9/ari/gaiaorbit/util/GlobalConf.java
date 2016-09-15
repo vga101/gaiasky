@@ -432,6 +432,7 @@ public class GlobalConf {
         public String UI_THEME;
         public String SCRIPT_LOCATION;
         public String LOCALE;
+        public boolean CUBEMAP360_MODE;
         public boolean STEREOSCOPIC_MODE;
         /** Eye separation in stereoscopic mode in meters **/
         public float STEREOSCOPIC_EYE_SEPARATION_M = 1;
@@ -444,7 +445,7 @@ public class GlobalConf {
             EventManager.instance.subscribe(this, Events.TOGGLE_STEREOSCOPIC_CMD, Events.TOGGLE_STEREO_PROFILE_CMD);
         }
 
-        public void initialize(boolean dISPLAY_TUTORIAL, String tUTORIAL_SCRIPT_LOCATION, boolean sHOW_CONFIG_DIALOG, boolean sHOW_DEBUG_INFO, Date lAST_CHECKED, String lAST_VERSION, String vERSION_CHECK_URL, String uI_THEME, String sCRIPT_LOCATION, String lOCALE, boolean sTEREOSCOPIC_MODE, StereoProfile sTEREO_PROFILE) {
+        public void initialize(boolean dISPLAY_TUTORIAL, String tUTORIAL_SCRIPT_LOCATION, boolean sHOW_CONFIG_DIALOG, boolean sHOW_DEBUG_INFO, Date lAST_CHECKED, String lAST_VERSION, String vERSION_CHECK_URL, String uI_THEME, String sCRIPT_LOCATION, String lOCALE, boolean sTEREOSCOPIC_MODE, StereoProfile sTEREO_PROFILE, boolean cUBEMAP360_MODE) {
             DISPLAY_TUTORIAL = dISPLAY_TUTORIAL;
             TUTORIAL_SCRIPT_LOCATION = tUTORIAL_SCRIPT_LOCATION;
             SHOW_CONFIG_DIALOG = sHOW_CONFIG_DIALOG;
@@ -457,6 +458,7 @@ public class GlobalConf {
             LOCALE = lOCALE;
             STEREOSCOPIC_MODE = sTEREOSCOPIC_MODE;
             STEREO_PROFILE = sTEREO_PROFILE;
+            CUBEMAP360_MODE = cUBEMAP360_MODE;
         }
 
         public void initialize(boolean dISPLAY_TUTORIAL, boolean sHOW_DEBUG_INFO, String uI_THEME, String lOCALE, boolean sTEREOSCOPIC_MODE, StereoProfile sTEREO_PROFILE) {

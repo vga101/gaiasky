@@ -244,6 +244,14 @@ public class KeyBindings {
             }
         }), Keys.U);
 
+        // CTRL+C -> toggle 360 mode
+        addMapping(new ProgramAction(txt("action.toggle", txt("element.360")), new Runnable() {
+            @Override
+            public void run() {
+                EventManager.instance.post(Events.CUBEMAP360_CMD, !GlobalConf.program.CUBEMAP360_MODE);
+            }
+        }), Keys.U);
+
         // CTRL + SHIFT + UP -> increase star point size by 0.5
         addMapping(new ProgramAction(txt("action.starpointsize.inc"), new Runnable() {
             @Override

@@ -153,10 +153,11 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         /**
          * INITIALIZE SGRs
          */
-        sgrs = new ISGR[3];
+        sgrs = new ISGR[4];
         sgrs[0] = new SGR();
         sgrs[1] = new SGRStereoscopic();
         sgrs[2] = new SGRFov();
+        sgrs[3] = new SGRCubemap();
         sgr = null;
 
         /**
@@ -267,16 +268,22 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         renderProcesses.add(labelsProc);
         renderProcesses.add(modelAtmProc);
 
-        EventManager.instance.subscribe(this, Events.TOGGLE_VISIBILITY_CMD, Events.PIXEL_RENDERER_UPDATE, Events.TOGGLE_STEREOSCOPIC_INFO, Events.CAMERA_MODE_CMD);
+        EventManager.instance.subscribe(this, Events.TOGGLE_VISIBILITY_CMD, Events.PIXEL_RENDERER_UPDATE, Events.TOGGLE_STEREOSCOPIC_INFO, Events.CAMERA_MODE_CMD, Events.CUBEMAP360_CMD);
 
     }
 
     private void initSGR(ICamera camera) {
         if (camera.getNCameras() > 1) {
+            // FOV mode
             sgr = sgrs[2];
         } else if (GlobalConf.program.STEREOSCOPIC_MODE) {
+            // Stereoscopic mode
             sgr = sgrs[1];
+        } else if (GlobalConf.program.CUBEMAP360_MODE) {
+            // 360 mode: cube map -> equirectangular map
+            sgr = sgrs[3];
         } else {
+            // Default mode
             sgr = sgrs[0];
         }
     }
@@ -367,6 +374,13 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
             else {
                 sgr = sgrs[0];
             }
+            break;
+        case CUBEMAP360_CMD:
+            boolean cubemap = (Boolean) data[0];
+            if (cubemap)
+                sgr = sgrs[3];
+            else
+                sgr = sgrs[0];
             break;
         case CAMERA_MODE_CMD:
             CameraMode cm = (CameraMode) data[0];
