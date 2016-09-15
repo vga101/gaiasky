@@ -32,7 +32,7 @@ public class SGRCubemap extends SGRAbstract implements ISGR {
         dirbak.set(cam.direction);
         upbak.set(cam.up);
 
-        EventManager.instance.post(Events.FOV_CHANGED_CMD, 90);
+        EventManager.instance.post(Events.FOV_CHANGED_CMD, 90f);
 
         int sizew = rw / 4;
         int sizeh = rh / 3;
