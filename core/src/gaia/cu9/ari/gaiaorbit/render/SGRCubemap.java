@@ -39,14 +39,12 @@ public class SGRCubemap extends SGRAbstract implements ISGR {
         camera.setViewport(extendViewport);
         extendViewport.setCamera(cam);
         extendViewport.setWorldSize(sizew, sizeh);
-
-        // UP
         extendViewport.setScreenBounds(sizew, sizeh, sizew, sizeh);
         extendViewport.apply();
 
         sgr.renderScene(camera, rc);
 
-        // BOTTOM
+        // UP
         extendViewport.setScreenBounds(sizew, sizeh * 2, sizew, sizeh);
         extendViewport.apply();
 
@@ -59,11 +57,48 @@ public class SGRCubemap extends SGRAbstract implements ISGR {
 
         sgr.renderScene(camera, rc);
 
+        // BOTTOM
+        extendViewport.setScreenBounds(sizew, 0, sizew, sizeh);
+        extendViewport.apply();
+
+        aux1.set(dirbak);
+        aux2.set(upbak);
+        aux1.crs(aux2);
+        cam.direction.set(dirbak).rotate(aux1, -90);
+        cam.up.set(upbak).rotate(aux1, -90);
+        cam.update();
+
+        sgr.renderScene(camera, rc);
+
         // LEFT
+        extendViewport.setScreenBounds(0, sizeh, sizew, sizeh);
+        extendViewport.apply();
+
+        cam.up.set(upbak);
+        cam.direction.set(dirbak).rotate(upbak, 90);
+        cam.update();
+
+        sgr.renderScene(camera, rc);
 
         // RIGHT
+        extendViewport.setScreenBounds(sizew * 2, sizeh, sizew, sizeh);
+        extendViewport.apply();
+
+        cam.up.set(upbak);
+        cam.direction.set(dirbak).rotate(upbak, -90);
+        cam.update();
+
+        sgr.renderScene(camera, rc);
 
         // BACK
+        extendViewport.setScreenBounds(sizew * 3, sizeh, sizew, sizeh);
+        extendViewport.apply();
+
+        cam.up.set(upbak);
+        cam.direction.set(dirbak).rotate(upbak, -180);
+        cam.update();
+
+        sgr.renderScene(camera, rc);
 
         postprocessRender(ppb, fb, postproc, camera);
 
