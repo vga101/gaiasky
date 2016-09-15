@@ -4,6 +4,8 @@ import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.math.Vector3;
 
+import gaia.cu9.ari.gaiaorbit.event.EventManager;
+import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.render.IPostProcessor.PostProcessBean;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 
@@ -25,11 +27,12 @@ public class SGRCubemap extends SGRAbstract implements ISGR {
         boolean postproc = postprocessCapture(ppb, fb, rw, rh);
 
         PerspectiveCamera cam = camera.getCamera();
+
         float fovbak = cam.fieldOfView;
         dirbak.set(cam.direction);
         upbak.set(cam.up);
 
-        cam.fieldOfView = 90;
+        EventManager.instance.post(Events.FOV_CHANGED_CMD, 90);
 
         int sizew = rw / 4;
         int sizeh = rh / 3;
@@ -101,6 +104,12 @@ public class SGRCubemap extends SGRAbstract implements ISGR {
         sgr.renderScene(camera, rc);
 
         postprocessRender(ppb, fb, postproc, camera);
+
+        // Restore camera parameters
+        cam.direction.set(dirbak);
+        cam.up.set(upbak);
+
+        EventManager.instance.post(Events.FOV_CHANGED_CMD, fovbak);
 
     }
 

@@ -81,8 +81,10 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
     /** The particular current scene graph renderer **/
     private ISGR sgr;
-    /** Renderer vector, with 0 = normal, 1 = stereoscopic, 2 = FOV **/
+    /** Renderer vector, with 0 = normal, 1 = stereoscopic, 2 = FOV, 3 = cubemap **/
     private ISGR[] sgrs;
+
+    final int SGR_DEFAULT_IDX = 0, SGR_STEREO_IDX = 1, SGR_FOV_IDX = 2, SGR_CUBEMAP_IDX = 3;
 
     public SceneGraphRenderer() {
         super();
@@ -154,10 +156,10 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
          * INITIALIZE SGRs
          */
         sgrs = new ISGR[4];
-        sgrs[0] = new SGR();
-        sgrs[1] = new SGRStereoscopic();
-        sgrs[2] = new SGRFov();
-        sgrs[3] = new SGRCubemap();
+        sgrs[SGR_DEFAULT_IDX] = new SGR();
+        sgrs[SGR_STEREO_IDX] = new SGRStereoscopic();
+        sgrs[SGR_FOV_IDX] = new SGRFov();
+        sgrs[SGR_CUBEMAP_IDX] = new SGRCubemap();
         sgr = null;
 
         /**
@@ -275,16 +277,16 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
     private void initSGR(ICamera camera) {
         if (camera.getNCameras() > 1) {
             // FOV mode
-            sgr = sgrs[2];
+            sgr = sgrs[SGR_FOV_IDX];
         } else if (GlobalConf.program.STEREOSCOPIC_MODE) {
             // Stereoscopic mode
-            sgr = sgrs[1];
+            sgr = sgrs[SGR_STEREO_IDX];
         } else if (GlobalConf.program.CUBEMAP360_MODE) {
             // 360 mode: cube map -> equirectangular map
-            sgr = sgrs[3];
+            sgr = sgrs[SGR_CUBEMAP_IDX];
         } else {
             // Default mode
-            sgr = sgrs[0];
+            sgr = sgrs[SGR_DEFAULT_IDX];
         }
     }
 
@@ -370,27 +372,29 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         case TOGGLE_STEREOSCOPIC_INFO:
             boolean stereo = (Boolean) data[0];
             if (stereo)
-                sgr = sgrs[1];
+                sgr = sgrs[SGR_STEREO_IDX];
             else {
-                sgr = sgrs[0];
+                sgr = sgrs[SGR_DEFAULT_IDX];
             }
             break;
         case CUBEMAP360_CMD:
             boolean cubemap = (Boolean) data[0];
             if (cubemap)
-                sgr = sgrs[3];
+                sgr = sgrs[SGR_CUBEMAP_IDX];
             else
-                sgr = sgrs[0];
+                sgr = sgrs[SGR_DEFAULT_IDX];
             break;
         case CAMERA_MODE_CMD:
             CameraMode cm = (CameraMode) data[0];
             if (cm.isGaiaFov())
-                sgr = sgrs[2];
+                sgr = sgrs[SGR_FOV_IDX];
             else {
                 if (GlobalConf.program.STEREOSCOPIC_MODE)
-                    sgr = sgrs[1];
+                    sgr = sgrs[SGR_STEREO_IDX];
+                else if (GlobalConf.program.CUBEMAP360_MODE)
+                    sgr = sgrs[SGR_CUBEMAP_IDX];
                 else
-                    sgr = sgrs[0];
+                    sgr = sgrs[SGR_DEFAULT_IDX];
 
             }
             break;
