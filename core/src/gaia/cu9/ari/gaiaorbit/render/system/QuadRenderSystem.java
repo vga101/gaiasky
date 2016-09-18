@@ -44,11 +44,17 @@ public class QuadRenderSystem extends AbstractRenderSystem implements IObserver 
 
     /**
      * Creates a new shader quad render component.
-     * @param rg The render group.
-     * @param priority The priority of the component.
-     * @param alphas The alphas list.
-     * @param shaderProgram The shader program to render the quad with.
-     * @param useStarColorTransit Whether to use the star color transit or not.
+     * 
+     * @param rg
+     *            The render group.
+     * @param priority
+     *            The priority of the component.
+     * @param alphas
+     *            The alphas list.
+     * @param shaderProgram
+     *            The shader program to render the quad with.
+     * @param useStarColorTransit
+     *            Whether to use the star color transit or not.
      */
     public QuadRenderSystem(RenderGroup rg, int priority, float[] alphas, ShaderProgram shaderProgram, boolean useStarColorTransit) {
         super(rg, priority, alphas);
@@ -165,8 +171,8 @@ public class QuadRenderSystem extends AbstractRenderSystem implements IObserver 
             // Global uniforms
             shaderProgram.setUniformf("u_time", TimeUtils.getRunningTimeSecs());
             // Bind
-            noise.bind(0);
-            shaderProgram.setUniformi("u_nebulaTexture", 0);
+            noise.bind(4);
+            shaderProgram.setUniformi("u_noiseTexture", 4);
         }
 
         int size = renderables.size();
