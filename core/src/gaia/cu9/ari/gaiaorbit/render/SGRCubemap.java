@@ -1,8 +1,11 @@
 package gaia.cu9.ari.gaiaorbit.render;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.viewport.StretchViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
@@ -13,6 +16,8 @@ public class SGRCubemap extends SGRAbstract implements ISGR {
 
     Vector3 aux1, aux2, aux3, dirbak, upbak;
 
+    StretchViewport stretchViewport;
+
     public SGRCubemap() {
         super();
         aux1 = new Vector3();
@@ -20,6 +25,7 @@ public class SGRCubemap extends SGRAbstract implements ISGR {
         aux2 = new Vector3();
         dirbak = new Vector3();
         upbak = new Vector3();
+        stretchViewport = new StretchViewport(Gdx.graphics.getHeight(), Gdx.graphics.getHeight());
     }
 
     @Override
@@ -38,18 +44,18 @@ public class SGRCubemap extends SGRAbstract implements ISGR {
         int sizeh = rh / 3;
 
         // FRONT
-
-        camera.setViewport(extendViewport);
-        extendViewport.setCamera(cam);
-        extendViewport.setWorldSize(sizew, sizeh);
-        extendViewport.setScreenBounds(sizew, sizeh, sizew, sizeh);
-        extendViewport.apply();
+        Viewport viewport = stretchViewport;
+        camera.setViewport(viewport);
+        viewport.setCamera(cam);
+        viewport.setWorldSize(sizeh, sizeh);
+        viewport.setScreenBounds(sizew, sizeh, sizew, sizeh);
+        viewport.apply();
 
         sgr.renderScene(camera, rc);
 
         // UP
-        extendViewport.setScreenBounds(sizew, sizeh * 2, sizew, sizeh);
-        extendViewport.apply();
+        viewport.setScreenBounds(sizew, sizeh * 2, sizew, sizeh);
+        viewport.apply();
 
         aux1.set(cam.direction);
         aux2.set(cam.up);
@@ -61,8 +67,8 @@ public class SGRCubemap extends SGRAbstract implements ISGR {
         sgr.renderScene(camera, rc);
 
         // BOTTOM
-        extendViewport.setScreenBounds(sizew, 0, sizew, sizeh);
-        extendViewport.apply();
+        viewport.setScreenBounds(sizew, 0, sizew, sizeh);
+        viewport.apply();
 
         aux1.set(dirbak);
         aux2.set(upbak);
@@ -74,8 +80,8 @@ public class SGRCubemap extends SGRAbstract implements ISGR {
         sgr.renderScene(camera, rc);
 
         // LEFT
-        extendViewport.setScreenBounds(0, sizeh, sizew, sizeh);
-        extendViewport.apply();
+        viewport.setScreenBounds(0, sizeh, sizew, sizeh);
+        viewport.apply();
 
         cam.up.set(upbak);
         cam.direction.set(dirbak).rotate(upbak, 90);
@@ -84,8 +90,8 @@ public class SGRCubemap extends SGRAbstract implements ISGR {
         sgr.renderScene(camera, rc);
 
         // RIGHT
-        extendViewport.setScreenBounds(sizew * 2, sizeh, sizew, sizeh);
-        extendViewport.apply();
+        viewport.setScreenBounds(sizew * 2, sizeh, sizew, sizeh);
+        viewport.apply();
 
         cam.up.set(upbak);
         cam.direction.set(dirbak).rotate(upbak, -90);
@@ -94,8 +100,8 @@ public class SGRCubemap extends SGRAbstract implements ISGR {
         sgr.renderScene(camera, rc);
 
         // BACK
-        extendViewport.setScreenBounds(sizew * 3, sizeh, sizew, sizeh);
-        extendViewport.apply();
+        viewport.setScreenBounds(sizew * 3, sizeh, sizew, sizeh);
+        viewport.apply();
 
         cam.up.set(upbak);
         cam.direction.set(dirbak).rotate(upbak, -180);

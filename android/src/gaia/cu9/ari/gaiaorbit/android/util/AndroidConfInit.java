@@ -90,8 +90,8 @@ public class AndroidConfInit extends ConfInit {
         /** VERSION CONF **/
         VersionConf vc = new VersionConf();
         String versionStr = vp.getProperty("version");
-        int[] majmin = getMajorMinorFromString(versionStr);
-        vc.initialize(versionStr, vp.getProperty("buildtime"), vp.getProperty("builder"), vp.getProperty("system"), vp.getProperty("build"), majmin[0], majmin[1], majmin[2]);
+        int[] majminrev = GlobalConf.version.getMajorMinorRevFromString(versionStr);
+        vc.initialize(versionStr, vp.getProperty("buildtime"), vp.getProperty("builder"), vp.getProperty("system"), vp.getProperty("build"), majminrev[0], majminrev[1], majminrev[2]);
 
         /** PERFORMANCE CONF **/
         PerformanceConf pc = new PerformanceConf();
@@ -166,7 +166,7 @@ public class AndroidConfInit extends ConfInit {
 
         boolean STEREOSCOPIC_MODE = Boolean.parseBoolean(p.getProperty("program.stereoscopic"));
         StereoProfile STEREO_PROFILE = StereoProfile.values()[Integer.parseInt(p.getProperty("program.stereoscopic.profile"))];
-        prc.initialize(DISPLAY_TUTORIAL, TUTORIAL_SCRIPT_LOCATION, SHOW_CONFIG_DIALOG, SHOW_DEBUG_INFO, LAST_CHECKED, LAST_VERSION, VERSION_CHECK_URL, UI_THEME, SCRIPT_LOCATION, LOCALE, STEREOSCOPIC_MODE, STEREO_PROFILE);
+        prc.initialize(DISPLAY_TUTORIAL, TUTORIAL_SCRIPT_LOCATION, SHOW_CONFIG_DIALOG, SHOW_DEBUG_INFO, LAST_CHECKED, LAST_VERSION, VERSION_CHECK_URL, UI_THEME, SCRIPT_LOCATION, LOCALE, STEREOSCOPIC_MODE, STEREO_PROFILE, false);
 
         /** SCENE CONF **/
         int GRAPHICS_QUALITY = Integer.parseInt(p.getProperty("scene.graphics.quality"));
@@ -316,7 +316,7 @@ public class AndroidConfInit extends ConfInit {
         p.setProperty("program.tutorial.script", GlobalConf.program.TUTORIAL_SCRIPT_LOCATION);
         p.setProperty("program.configdialog", Boolean.toString(GlobalConf.program.SHOW_CONFIG_DIALOG));
         p.setProperty("program.debuginfo", Boolean.toString(GlobalConf.program.SHOW_DEBUG_INFO));
-        p.setProperty("program.lastchecked", df.format(GlobalConf.program.LAST_CHECKED));
+        p.setProperty("program.lastchecked", GlobalConf.program.LAST_CHECKED != null ? df.format(GlobalConf.program.LAST_CHECKED) : "");
         p.setProperty("program.lastversion", GlobalConf.program.LAST_VERSION);
         p.setProperty("program.versioncheckurl", GlobalConf.program.VERSION_CHECK_URL);
         p.setProperty("program.ui.theme", GlobalConf.program.UI_THEME);
@@ -415,18 +415,6 @@ public class AndroidConfInit extends ConfInit {
                 destination.close();
             }
         }
-    }
-
-    public int[] getMajorMinorFromString(String version) {
-        String majorS = version.substring(0, version.indexOf("."));
-        String minorS = version.substring(version.indexOf(".") + 1, version.length());
-        if (majorS.matches("^\\D{1}\\d+$")) {
-            majorS = majorS.substring(1, majorS.length());
-        }
-        if (minorS.matches("^\\d+\\D{1}$")) {
-            minorS = minorS.substring(0, minorS.length() - 1);
-        }
-        return new int[] { Integer.parseInt(majorS), Integer.parseInt(minorS) };
     }
 
 }

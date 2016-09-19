@@ -324,7 +324,7 @@ public class DesktopConfInit extends ConfInit {
         p.setProperty("program.tutorial.script", GlobalConf.program.TUTORIAL_SCRIPT_LOCATION);
         p.setProperty("program.configdialog", Boolean.toString(GlobalConf.program.SHOW_CONFIG_DIALOG));
         p.setProperty("program.debuginfo", Boolean.toString(GlobalConf.program.SHOW_DEBUG_INFO));
-        p.setProperty("program.lastchecked", df.format(GlobalConf.program.LAST_CHECKED));
+        p.setProperty("program.lastchecked", GlobalConf.program.LAST_CHECKED != null ? df.format(GlobalConf.program.LAST_CHECKED) : "");
         p.setProperty("program.lastversion", GlobalConf.program.LAST_VERSION);
         p.setProperty("program.versioncheckurl", GlobalConf.program.VERSION_CHECK_URL);
         p.setProperty("program.ui.theme", GlobalConf.program.UI_THEME);
