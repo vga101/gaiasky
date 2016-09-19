@@ -167,7 +167,7 @@ public class DesktopConfInit extends ConfInit {
         } catch (Exception e) {
             LAST_CHECKED = null;
         }
-        String LAST_VERSION = p.getProperty("program.lastversion");
+        String LAST_VERSION = p.getProperty("program.lastversion", "0.0.0");
         String VERSION_CHECK_URL = p.getProperty("program.versioncheckurl");
         String UI_THEME = p.getProperty("program.ui.theme");
         String SCRIPT_LOCATION = p.getProperty("program.scriptlocation").isEmpty() ? System.getProperty("user.dir") : p.getProperty("program.scriptlocation");
@@ -325,7 +325,7 @@ public class DesktopConfInit extends ConfInit {
         p.setProperty("program.configdialog", Boolean.toString(GlobalConf.program.SHOW_CONFIG_DIALOG));
         p.setProperty("program.debuginfo", Boolean.toString(GlobalConf.program.SHOW_DEBUG_INFO));
         p.setProperty("program.lastchecked", GlobalConf.program.LAST_CHECKED != null ? df.format(GlobalConf.program.LAST_CHECKED) : "");
-        p.setProperty("program.lastversion", GlobalConf.program.LAST_VERSION);
+        p.setProperty("program.lastversion", GlobalConf.program.LAST_VERSION != null ? GlobalConf.program.LAST_VERSION : "");
         p.setProperty("program.versioncheckurl", GlobalConf.program.VERSION_CHECK_URL);
         p.setProperty("program.ui.theme", GlobalConf.program.UI_THEME);
         p.setProperty("program.scriptlocation", GlobalConf.program.SCRIPT_LOCATION);
