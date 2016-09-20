@@ -7,8 +7,6 @@ precision mediump int;
 varying vec2 v_texCoords;
 varying vec4 v_color;
 
-uniform sampler2D u_noiseTexture;
-
 uniform float u_th_dist_up;
 uniform float u_apparent_angle;
 uniform float u_inner_rad;
@@ -18,77 +16,204 @@ uniform float u_distance;
 // Whether to draw stray light or not
 uniform int u_strayLight;
 
-#define time u_time * 0.001
-// Angle threshold. If angle is smaller, we don't draw core. To avoid flickering
-#define ang_th 0.00000001
+#define time u_time * 0.05
 
-float noise(float t){
-    return texture2D(u_noiseTexture, vec2(t, .0)).x;
+
+vec4 mod289(vec4 x) {
+  return x - floor(x * (1.0 / 289.0)) * 289.0; }
+
+float mod289(float x) {
+  return x - floor(x * (1.0 / 289.0)) * 289.0; }
+
+vec4 permute(vec4 x) {
+     return mod289(((x*34.0)+1.0)*x);
 }
 
-vec3 cc(vec3 color, float factor,float factor2) // color modifier
+float permute(float x) {
+     return mod289(((x*34.0)+1.0)*x);
+}
+
+vec4 taylorInvSqrt(vec4 r)
 {
-    float w = color.x+color.y+color.z;
-    return mix(color,vec3(w)*factor,w*factor2);
+  return 1.79284291400159 - 0.85373472095314 * r;
 }
 
-vec4 draw_star_rays(vec2 uv, vec2 pos, float distanceCenter) {
-    float ang = atan (uv.x, uv.y);
-
-    float dist = length(uv);
-    dist = pow(dist,.1);
-
-    float f0 = 1.0 / (length (uv) * 16.0 + 1.0);
-
-    float idx = mod((ang/3.1415 + 2.0)/4.0 + time * 0.2, 0.5) ;
-    f0 = f0 + f0 * (sin(noise(idx) * 16.0) * 0.1 + dist * 0.1 + 0.4);
-
-    vec3 c = vec3 (0.0);
-    c = c * 1.3 - vec3 (length (uv) * 0.05);
-    c += vec3 (f0);
-
-    vec3 color = v_color.rgb * c / 2.0;
-    color -= 0.015;
-    color = cc (color, .2, .1);
-    return vec4 (color, ((1.0 + sin(time * 80.0)) * 0.08 + 0.6) * v_color.a * (1.0 - distanceCenter) * (color.r + color.g + color.b) / 3.0);
+float taylorInvSqrt(float r)
+{
+  return 1.79284291400159 - 0.85373472095314 * r;
 }
 
-vec4 draw_simple_star(float distanceCenter, float inner_rad, float decay) {
-    // Distance from the center of the image to the border, in [0, 1]
-    float fac = 1.0 - pow(distanceCenter, decay);
-    float core = step(ang_th, u_apparent_angle) * pow(smoothstep(inner_rad, 0.0, distanceCenter), 2.0);
+vec4 grad4(float j, vec4 ip)
+  {
+  const vec4 ones = vec4(1.0, 1.0, 1.0, -1.0);
+  vec4 p,s;
 
-    vec4 col = vec4 (v_color.rgb + core, v_color.a * (fac + core));
-	return col;
+  p.xyz = floor( fract (vec3(j) * ip.xyz) * 7.0) * ip.z - 1.0;
+  p.w = 1.5 - dot(abs(p.xyz), ones.xyz);
+  s = vec4(lessThan(p, vec4(0.0)));
+  p.xyz = p.xyz + (s.xyz*2.0 - 1.0) * s.www; 
+
+  return p;
+  }
+						
+// (sqrt(5) - 1)/4 = F4, used once below
+#define F4 0.309016994374947451
+
+float snoise(vec4 v)
+  {
+  const vec4  C = vec4( 0.138196601125011,  // (5 - sqrt(5))/20  G4
+                        0.276393202250021,  // 2 * G4
+                        0.414589803375032,  // 3 * G4
+                       -0.447213595499958); // -1 + 4 * G4
+
+// First corner
+  vec4 i  = floor(v + dot(v, vec4(F4)) );
+  vec4 x0 = v -   i + dot(i, C.xxxx);
+
+// Other corners
+
+// Rank sorting originally contributed by Bill Licea-Kane, AMD (formerly ATI)
+  vec4 i0;
+  vec3 isX = step( x0.yzw, x0.xxx );
+  vec3 isYZ = step( x0.zww, x0.yyz );
+//  i0.x = dot( isX, vec3( 1.0 ) );
+  i0.x = isX.x + isX.y + isX.z;
+  i0.yzw = 1.0 - isX;
+//  i0.y += dot( isYZ.xy, vec2( 1.0 ) );
+  i0.y += isYZ.x + isYZ.y;
+  i0.zw += 1.0 - isYZ.xy;
+  i0.z += isYZ.z;
+  i0.w += 1.0 - isYZ.z;
+
+  // i0 now contains the unique values 0,1,2,3 in each channel
+  vec4 i3 = clamp( i0, 0.0, 1.0 );
+  vec4 i2 = clamp( i0-1.0, 0.0, 1.0 );
+  vec4 i1 = clamp( i0-2.0, 0.0, 1.0 );
+
+  //  x0 = x0 - 0.0 + 0.0 * C.xxxx
+  //  x1 = x0 - i1  + 1.0 * C.xxxx
+  //  x2 = x0 - i2  + 2.0 * C.xxxx
+  //  x3 = x0 - i3  + 3.0 * C.xxxx
+  //  x4 = x0 - 1.0 + 4.0 * C.xxxx
+  vec4 x1 = x0 - i1 + C.xxxx;
+  vec4 x2 = x0 - i2 + C.yyyy;
+  vec4 x3 = x0 - i3 + C.zzzz;
+  vec4 x4 = x0 + C.wwww;
+
+// Permutations
+  i = mod289(i); 
+  float j0 = permute( permute( permute( permute(i.w) + i.z) + i.y) + i.x);
+  vec4 j1 = permute( permute( permute( permute (
+             i.w + vec4(i1.w, i2.w, i3.w, 1.0 ))
+           + i.z + vec4(i1.z, i2.z, i3.z, 1.0 ))
+           + i.y + vec4(i1.y, i2.y, i3.y, 1.0 ))
+           + i.x + vec4(i1.x, i2.x, i3.x, 1.0 ));
+
+// Gradients: 7x7x6 points over a cube, mapped onto a 4-cross polytope
+// 7*7*6 = 294, which is close to the ring size 17*17 = 289.
+  vec4 ip = vec4(1.0/294.0, 1.0/49.0, 1.0/7.0, 0.0) ;
+
+  vec4 p0 = grad4(j0,   ip);
+  vec4 p1 = grad4(j1.x, ip);
+  vec4 p2 = grad4(j1.y, ip);
+  vec4 p3 = grad4(j1.z, ip);
+  vec4 p4 = grad4(j1.w, ip);
+
+// Normalise gradients
+  vec4 norm = taylorInvSqrt(vec4(dot(p0,p0), dot(p1,p1), dot(p2, p2), dot(p3,p3)));
+  p0 *= norm.x;
+  p1 *= norm.y;
+  p2 *= norm.z;
+  p3 *= norm.w;
+  p4 *= taylorInvSqrt(dot(p4,p4));
+
+// Mix contributions from the five corners
+  vec3 m0 = max(0.6 - vec3(dot(x0,x0), dot(x1,x1), dot(x2,x2)), 0.0);
+  vec2 m1 = max(0.6 - vec2(dot(x3,x3), dot(x4,x4)            ), 0.0);
+  m0 = m0 * m0;
+  m1 = m1 * m1;
+  return 49.0 * ( dot(m0*m0, vec3( dot( p0, x0 ), dot( p1, x1 ), dot( p2, x2 )))
+               + dot(m1*m1, vec2( dot( p3, x3 ), dot( p4, x4 ) ) ) ) ;
+
+  }
+
+  float noise(vec4 position, int octaves, float frequency, float persistence) {
+      float total = 0.0; // Total value so far
+      float maxAmplitude = 0.0; // Accumulates highest theoretical amplitude
+      float amplitude = 1.0;
+      for (int i = 0; i < octaves; i++) {
+          // Get the noise sample
+          total += snoise(position * frequency) * amplitude;
+          // Make the wavelength twice as small
+          frequency *= 2.0;
+          // Add to our maximum possible amplitude
+          maxAmplitude += amplitude;
+          // Reduce amplitude according to persistence for the next octave
+          amplitude *= persistence;
+      }
+      // Scale the result by the maximum amplitude
+      return total / maxAmplitude;
+  }
+
+vec4 draw_star(float distanceCenter, float inner_rad, float decay, int draw_corona, int draw_core) {
+    // Draw core
+    float core = 0.0;
+    if(draw_core == 1){
+    	core = pow(smoothstep(inner_rad, 0.0, distanceCenter), 4.0);
+    }
+    
+    float corona = 0.0;
+    if(draw_corona == 1){
+        // Corona
+        vec3 fPosition = vec3(v_texCoords - vec2(0.5), 0.0);
+
+        // Move outward
+        float t = time - length(fPosition);
+        // Offset normal with noise
+        float frequency = 1.5;
+        float ox = snoise(vec4(fPosition * frequency, t));
+        float oy = snoise(vec4((fPosition + 2000.0) * frequency, t));
+        float oz = snoise(vec4((fPosition + 4000.0) * frequency, t));
+        // Store offsetVec since we want to use it twice.
+        vec3 offsetVec = vec3(ox, oy, oz) * 0.005;
+
+        // Get the distance vector from the center
+        vec3 nDistVec = normalize(fPosition + offsetVec);
+
+        // Get noise with normalized position to offset the original position
+        vec3 position = fPosition + noise(vec4(nDistVec, t), 5, 2.0, 0.7) * 0.4;    
+        float dist = length(position + offsetVec);
+ 
+        // Calculate brightness based on distance
+        corona =  dist * (1.0 - pow(distanceCenter, decay));
+    }else{
+    	corona = 1.0 - pow(distanceCenter, decay);
+    }
+    
+    return vec4 (v_color.rgb + core, v_color.a * (corona + core));
 }
 
-vec4 draw_circle(float distanceCenter){
-	float core = step(distanceCenter, u_inner_rad);
-	return vec4 (v_color.rgb + core, v_color.a * core);
-}
-
-vec4
-draw_star() {
+vec4 draw() {
     float dist = distance (vec2 (0.5), v_texCoords.xy) * 2.0;
     vec2 uv = v_texCoords - 0.5;
     if (u_distance < u_th_dist_up * 10000.0) {
-		if(u_strayLight < 0){
-			return  draw_simple_star(dist, u_inner_rad, 0.15);
-		}else{
-			// Level is 0 when dist <= dist_down and 1 when dist >= dist_up
-       		float level = min((u_distance) / (u_th_dist_up * 10000.0), 1.0);
-	        vec4 c = draw_star_rays(uv, vec2(0.5), dist);
-	        vec4 s = draw_simple_star(dist, u_inner_rad, 0.15);
-	
-	        return c  * (1.0 - level) + s;
-	    }
+        if(u_strayLight < 0){
+           return  draw_star(dist, u_inner_rad, 0.12, 0, 1);
+        }else{
+            // Level is 0 when dist <= dist_down and 1 when dist >= dist_up
+            float level = min((u_distance) / (u_th_dist_up * 10000.0), 1.0);
+            vec4 c = draw_star(dist, u_inner_rad, 0.08, 1, 0);
+            vec4 s = draw_star(dist, u_inner_rad, 0.12, 0, 1);
+
+            return c  * (1.0 - level) + s;
+        }
     } else {
-        return draw_simple_star(dist, u_inner_rad, 0.15);
+        return draw_star(dist, u_inner_rad, 0.12, 0, 1);
     }
 }
 
 
 void
 main() {
-    gl_FragColor = draw_star();
+    gl_FragColor = draw();
 }

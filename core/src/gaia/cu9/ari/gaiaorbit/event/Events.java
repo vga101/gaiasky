@@ -198,7 +198,7 @@ public enum Events {
     CLEAR_MESSAGES,
     /** Contains the new time frame object **/
     EVENT_TIME_FRAME_CMD,
-    /** Notifies a fov update in the camera **/
+    /** Notifies a fov update in the camera. Contains the new fov value (float) and the new fovFactor (float) **/
     FOV_CHANGE_NOTIFICATION,
     /**
      * Contains a Vector3d with the position and a double with the velocity

@@ -751,10 +751,10 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
             for (PerspectiveCamera cam : cameras) {
                 cam.fieldOfView = fov;
             }
-            if (parent.current == this) {
-                EventManager.instance.post(Events.FOV_CHANGE_NOTIFICATION, fov);
-            }
             fovFactor = camera.fieldOfView / 40f;
+            if (parent.current == this) {
+                EventManager.instance.post(Events.FOV_CHANGE_NOTIFICATION, fov, fovFactor);
+            }
             break;
         case CAMERA_POS_CMD:
             pos.set((double[]) data[0]);

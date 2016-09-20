@@ -254,6 +254,7 @@ people behind the following technologies/resources:
 - The [Jython Project](http://www.jython.org/)
 - [ernieyu](https://github.com/ernieyu/) for the Java Swing [range slider](https://github.com/ernieyu/Swing-range-slider)
 - Nick Risinger for the artist's conception of the Milky Way
+- Andreas Ressl and Georg Hammershmid for the star glow texture.
 - Tom Patterson ([www.shadedrelief.com]()) for some textures
 - Phil Stooke and Grant Hutchison ([http://www.classe.cornell.edu/~seb/celestia/hutchison/index-125.html]()) for some of the textures.
 - Machuca+Arias+Caballero for the music track "Gaia-DR1".

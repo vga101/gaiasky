@@ -97,7 +97,7 @@ public class Constants {
 
     /** Threshold radius/distance where star size remains constant. **/
     public static final double THRESHOLD_DOWN = 1e-7;
-    public static final double THRESHOLD_UP = 1e-1;
+    public static final double THRESHOLD_UP = 1e-2;
 
     /**
      * 

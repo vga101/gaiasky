@@ -7,8 +7,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.Mesh.VertexDataType;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
@@ -26,7 +24,6 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.DecalUtils;
-import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.comp.DistToCameraComparator;
 import gaia.cu9.ari.gaiaorbit.util.time.TimeUtils;
 
@@ -36,7 +33,6 @@ public class QuadRenderSystem extends AbstractRenderSystem implements IObserver 
     private Mesh mesh;
     private boolean useStarColorTransit;
     private boolean starColorTransit = false;
-    private Texture noise;
     private Quaternion quaternion;
 
     private float[] aux;
@@ -71,9 +67,6 @@ public class QuadRenderSystem extends AbstractRenderSystem implements IObserver 
         // Init vertices
         float[] vertices = new float[20];
         fillVertices(vertices);
-
-        noise = new Texture(Gdx.files.internal(GlobalConf.TEXTURES_FOLDER + "static.jpg"));
-        noise.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 
         // We wont need indices if we use GL_TRIANGLE_FAN to draw our quad
         // TRIANGLE_FAN will draw the verts in this order: 0, 1, 2; 0, 2, 3
@@ -170,9 +163,6 @@ public class QuadRenderSystem extends AbstractRenderSystem implements IObserver 
         if (!Constants.mobile) {
             // Global uniforms
             shaderProgram.setUniformf("u_time", TimeUtils.getRunningTimeSecs());
-            // Bind
-            noise.bind(4);
-            shaderProgram.setUniformi("u_noiseTexture", 4);
         }
 
         int size = renderables.size();

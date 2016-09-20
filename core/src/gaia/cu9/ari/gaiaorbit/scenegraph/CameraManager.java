@@ -303,7 +303,7 @@ public class CameraManager implements ICamera, IObserver {
         //            restoreState();
 
         if (postEvent) {
-            EventManager.instance.post(Events.FOV_CHANGE_NOTIFICATION, this.getCamera().fieldOfView);
+            EventManager.instance.post(Events.FOV_CHANGE_NOTIFICATION, this.getCamera().fieldOfView, getFovFactor());
 
             // In fov1and2 mode we can only use the normal pixel renderer
             //            if (mode.isGaiaFov() && !prevMode.isGaiaFov() && GlobalConf.scene.PIXEL_RENDERER != 0) {

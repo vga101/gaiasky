@@ -9,6 +9,9 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
 import gaia.cu9.ari.gaiaorbit.GaiaSky;
+import gaia.cu9.ari.gaiaorbit.event.EventManager;
+import gaia.cu9.ari.gaiaorbit.event.Events;
+import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.render.ILineRenderable;
 import gaia.cu9.ari.gaiaorbit.render.IPointRenderable;
@@ -35,6 +38,37 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
     private static final float LABEL_FACTOR = Constants.webgl ? 3f : 1f;
 
     private static Random rnd = new Random();
+
+    protected static float thpointTimesFovfactor;
+    protected static float thupOverFovfactor;
+    protected static float thdownOverFovfactor;
+    protected static ThPointUpdater thpointUpdater;
+
+    protected static class ThPointUpdater implements IObserver {
+        public ThPointUpdater() {
+            super();
+            EventManager.instance.subscribe(this, Events.FOV_CHANGE_NOTIFICATION);
+        }
+
+        @Override
+        public void notify(Events event, Object... data) {
+            switch (event) {
+            case FOV_CHANGE_NOTIFICATION:
+                float fovFactor = (Float) data[1];
+                thpointTimesFovfactor = (float) GlobalConf.scene.STAR_THRESHOLD_POINT * fovFactor;
+                thupOverFovfactor = (float) Constants.THRESHOLD_UP / fovFactor;
+                thdownOverFovfactor = (float) Constants.THRESHOLD_DOWN / fovFactor;
+                break;
+            }
+        }
+    }
+
+    static {
+        thpointTimesFovfactor = (float) GlobalConf.scene.STAR_THRESHOLD_POINT;
+        thupOverFovfactor = (float) Constants.THRESHOLD_UP;
+        thdownOverFovfactor = (float) Constants.THRESHOLD_DOWN;
+        thpointUpdater = new ThPointUpdater();
+    }
 
     @Override
     public double THRESHOLD_NONE() {
@@ -204,10 +238,10 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
             // Render as point, do nothing
         } else {
 
-            if (viewAngleApparent >= THRESHOLD_POINT() * camera.getFovFactor()) {
+            if (viewAngleApparent >= thpointTimesFovfactor) {
                 addToRender(this, RenderGroup.SHADER);
             }
-            if (viewAngleApparent >= THRESHOLD_POINT() * camera.getFovFactor() / GlobalConf.scene.PM_NUM_FACTOR && this.hasPm) {
+            if (viewAngleApparent >= thpointTimesFovfactor / GlobalConf.scene.PM_NUM_FACTOR && this.hasPm) {
                 addToRender(this, RenderGroup.LINE);
             }
         }
@@ -256,7 +290,7 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
 
     @Override
     public float getInnerRad() {
-        return 0.015f * DISC_FACTOR + GlobalConf.scene.STAR_POINT_SIZE * 0.004f;
+        return 0.015f * DISC_FACTOR + GlobalConf.scene.STAR_POINT_SIZE * 0.009f;
     }
 
     @Override
@@ -290,9 +324,9 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
 
     public float getFuzzyRenderSize(ICamera camera) {
         computedSize = this.size;
-        if (viewAngle > Constants.THRESHOLD_DOWN / camera.getFovFactor()) {
+        if (viewAngle > thdownOverFovfactor) {
             double dist = distToCamera;
-            if (viewAngle > Constants.THRESHOLD_UP / camera.getFovFactor()) {
+            if (viewAngle > thupOverFovfactor) {
                 dist = (float) radius / Constants.THRESHOLD_UP;
             }
             computedSize = this.size * (dist / this.radius) * Constants.THRESHOLD_DOWN;
