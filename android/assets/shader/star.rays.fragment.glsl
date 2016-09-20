@@ -7,17 +7,20 @@ precision mediump int;
 varying vec2 v_texCoords;
 varying vec4 v_color;
 
-uniform float u_th_dist_up;
+uniform float u_radius;
 uniform float u_apparent_angle;
 uniform float u_inner_rad;
 uniform float u_time;
-// Distance in km to the star
+// Distance in u to the star
 uniform float u_distance;
-// Whether to draw stray light or not
-uniform int u_strayLight;
+// Whether light scattering is enabled or not
+uniform int u_lightScattering;
 
-#define time u_time * 0.05
 
+#define time u_time * 0.02
+#define model_const 172.4643429
+#define corona_decay 0.25
+#define light_decay 0.15
 
 vec4 mod289(vec4 x) {
   return x - floor(x * (1.0 / 289.0)) * 289.0; }
@@ -155,17 +158,19 @@ float snoise(vec4 v)
       return total / maxAmplitude;
   }
 
-vec4 draw_star(float distanceCenter, float inner_rad, float decay, int draw_corona, int draw_core) {
-    // Draw core
-    float core = 0.0;
-    if(draw_core == 1){
-    	core = pow(smoothstep(inner_rad, 0.0, distanceCenter), 4.0);
-    }
-    
-    float corona = 0.0;
-    if(draw_corona == 1){
-        // Corona
-        vec3 fPosition = vec3(v_texCoords - vec2(0.5), 0.0);
+float core(float distance_center, float inner_rad){
+	float core = 1.0 - step(inner_rad / 5.0, distance_center);
+	float core_glow = smoothstep(inner_rad / 2.0, inner_rad / 5.0, distance_center);
+	return core_glow + core;
+}
+
+float light(float distance_center, float inner_rad, float decay) {
+    float light = 1.0 - pow(distance_center, decay);
+    return clamp(light, 0.0, 0.97);
+}
+
+float corona(float distance_center, float decay){
+        vec3 fPosition = vec3(v_texCoords - vec2(0.5), 0.0) * 2.0;
 
         // Move outward
         float t = time - length(fPosition);
@@ -175,7 +180,7 @@ vec4 draw_star(float distanceCenter, float inner_rad, float decay, int draw_coro
         float oy = snoise(vec4((fPosition + 2000.0) * frequency, t));
         float oz = snoise(vec4((fPosition + 4000.0) * frequency, t));
         // Store offsetVec since we want to use it twice.
-        vec3 offsetVec = vec3(ox, oy, oz) * 0.005;
+        vec3 offsetVec = vec3(ox, oy, oz) * 0.0004;
 
         // Get the distance vector from the center
         vec3 nDistVec = normalize(fPosition + offsetVec);
@@ -185,35 +190,32 @@ vec4 draw_star(float distanceCenter, float inner_rad, float decay, int draw_coro
         float dist = length(position + offsetVec);
  
         // Calculate brightness based on distance
-        corona =  dist * (1.0 - pow(distanceCenter, decay));
-    }else{
-    	corona = 1.0 - pow(distanceCenter, decay);
-    }
-    
-    return vec4 (v_color.rgb + core, v_color.a * (corona + core));
+        return dist * (1.0 - pow(distance_center, decay));
 }
 
 vec4 draw() {
     float dist = distance (vec2 (0.5), v_texCoords.xy) * 2.0;
     vec2 uv = v_texCoords - 0.5;
-    if (u_distance < u_th_dist_up * 10000.0) {
-        if(u_strayLight < 0){
-           return  draw_star(dist, u_inner_rad, 0.12, 0, 1);
-        }else{
-            // Level is 0 when dist <= dist_down and 1 when dist >= dist_up
-            float level = min((u_distance) / (u_th_dist_up * 10000.0), 1.0);
-            vec4 c = draw_star(dist, u_inner_rad, 0.08, 1, 0);
-            vec4 s = draw_star(dist, u_inner_rad, 0.12, 0, 1);
 
-            return c  * (1.0 - level) + s;
-        }
-    } else {
-        return draw_star(dist, u_inner_rad, 0.12, 0, 1);
-    }
+	float level = (u_distance - u_radius) / ((u_radius * model_const) - u_radius);
+
+	if(level >= 1.0){
+		if(u_lightScattering == 1){
+			return vec4(v_color.rgb, v_color.a * core(dist, u_inner_rad) * level);
+		} else {
+			return vec4(v_color.rgb, v_color.a * (light(dist, u_inner_rad, light_decay) + core(dist, u_inner_rad)));
+		}
+	} else {
+		level = min(level, 1.0);
+        
+        float corona = corona(dist, corona_decay);
+        float light = light(dist, u_inner_rad, light_decay);
+        float core = core(dist, u_inner_rad);
+
+		return vec4(v_color.rgb, v_color.a * (corona * (1.0 - level) + light + level * core));
+	}
 }
 
-
-void
-main() {
-    gl_FragColor = draw();
+void main() {
+    gl_FragColor = clamp(draw(), 0.0, 1.0);
 }

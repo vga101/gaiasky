@@ -42,12 +42,13 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
     protected static float thpointTimesFovfactor;
     protected static float thupOverFovfactor;
     protected static float thdownOverFovfactor;
-    protected static ThPointUpdater thpointUpdater;
+    protected static float innerRad;
+    protected static ParamUpdater paramUpdater;
 
-    protected static class ThPointUpdater implements IObserver {
-        public ThPointUpdater() {
+    protected static class ParamUpdater implements IObserver {
+        public ParamUpdater() {
             super();
-            EventManager.instance.subscribe(this, Events.FOV_CHANGE_NOTIFICATION);
+            EventManager.instance.subscribe(this, Events.FOV_CHANGE_NOTIFICATION, Events.STAR_POINT_SIZE_CMD);
         }
 
         @Override
@@ -59,6 +60,9 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
                 thupOverFovfactor = (float) Constants.THRESHOLD_UP / fovFactor;
                 thdownOverFovfactor = (float) Constants.THRESHOLD_DOWN / fovFactor;
                 break;
+            case STAR_POINT_SIZE_CMD:
+                innerRad = 0.008f * DISC_FACTOR + (Float) data[0] * 0.009f;
+                break;
             }
         }
     }
@@ -67,7 +71,8 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
         thpointTimesFovfactor = (float) GlobalConf.scene.STAR_THRESHOLD_POINT;
         thupOverFovfactor = (float) Constants.THRESHOLD_UP;
         thdownOverFovfactor = (float) Constants.THRESHOLD_DOWN;
-        thpointUpdater = new ThPointUpdater();
+        innerRad = 0.008f * DISC_FACTOR + GlobalConf.scene.STAR_POINT_SIZE * 0.009f;
+        paramUpdater = new ParamUpdater();
     }
 
     @Override
@@ -99,7 +104,7 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
      */
     public byte catalogSource = -1;
 
-    double computedSize;
+    public double computedSize;
     double radius;
     boolean randomName = false;
     boolean hasPm = false;
@@ -179,6 +184,10 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
         ct = ComponentType.Galaxies;
         // Relation between our star size and actual star size (normalized for the Sun, 1391600 Km of diameter
         radius = size * Constants.STAR_SIZE_FACTOR;
+    }
+
+    public float getActualRadius() {
+        return (float) radius;
     }
 
     private void setDerivedAttributes() {
@@ -290,7 +299,7 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
 
     @Override
     public float getInnerRad() {
-        return 0.015f * DISC_FACTOR + GlobalConf.scene.STAR_POINT_SIZE * 0.009f;
+        return innerRad;
     }
 
     @Override

@@ -8,7 +8,7 @@ import com.bitfire.postprocessing.effects.Curvature;
 import com.bitfire.postprocessing.effects.Fisheye;
 import com.bitfire.postprocessing.effects.Fxaa;
 import com.bitfire.postprocessing.effects.LensFlare2;
-import com.bitfire.postprocessing.effects.LightScattering;
+import com.bitfire.postprocessing.effects.LightGlow;
 import com.bitfire.postprocessing.effects.MotionBlur;
 import com.bitfire.postprocessing.effects.Nfaa;
 import com.bitfire.utils.ShaderLoader;
@@ -109,21 +109,29 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
             nsamples = 200;
             density = 1.5f;
         } else if (GlobalConf.scene.isNormalQuality()) {
-            nsamples = 90;
-            density = 0.96f;
+            nsamples = 100;
+            density = 1.2f;
         } else {
             nsamples = 40;
-            density = .9f;
+            density = 0.8f;
         }
-        ppb.lscatter = new LightScattering((int) (width * scatteringFboScale), (int) (height * scatteringFboScale));
-        ppb.lscatter.setScatteringIntesity(0.9f);
+        //        ppb.lscatter = new LightScattering((int) (width * scatteringFboScale), (int) (height * scatteringFboScale));
+        //        ppb.lscatter.setScatteringIntesity(1f);
+        //        ppb.lscatter.setScatteringSaturation(1f);
+        //        ppb.lscatter.setBaseIntesity(1f);
+        //        ppb.lscatter.setBias(-0.96f);
+        //        ppb.lscatter.setBlurAmount(0.5f);
+        //        ppb.lscatter.setBlurPasses(3);
+        //        ppb.lscatter.setDensity(density);
+        //        ppb.lscatter.setNumSamples(nsamples);
+        //        ppb.lscatter.setEnabled(GlobalConf.postprocess.POSTPROCESS_LIGHT_SCATTERING);
+        //        ppb.pp.addEffect(ppb.lscatter);
+        ppb.lscatter = new LightGlow((int) (width * scatteringFboScale), (int) (height * scatteringFboScale));
+        ppb.lscatter.setScatteringIntesity(1f);
         ppb.lscatter.setScatteringSaturation(1f);
         ppb.lscatter.setBaseIntesity(1f);
-        ppb.lscatter.setBias(-0.95f);
-        ppb.lscatter.setBlurAmount(1f);
-        ppb.lscatter.setBlurPasses(5);
-        ppb.lscatter.setDensity(density);
-        ppb.lscatter.setNumSamples(nsamples);
+        ppb.lscatter.setBias(-0.99f);
+        ppb.lscatter.setLightGlowTexture(new Texture(Gdx.files.internal("img/star_glow.png")));
         ppb.lscatter.setEnabled(GlobalConf.postprocess.POSTPROCESS_LIGHT_SCATTERING);
         ppb.pp.addEffect(ppb.lscatter);
 
@@ -326,11 +334,13 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
         case LIGHT_POS_2D_UPDATED:
             Integer nLights = (Integer) data[0];
             float[] lightpos = (float[]) data[1];
+            float[] angles = (float[]) data[2];
 
             for (int i = 0; i < RenderType.values().length; i++) {
                 if (pps[i] != null) {
                     PostProcessBean ppb = pps[i];
                     ppb.lscatter.setLightPositions(nLights, lightpos);
+                    ppb.lscatter.setLightViewAngles(angles);
                 }
             }
             break;

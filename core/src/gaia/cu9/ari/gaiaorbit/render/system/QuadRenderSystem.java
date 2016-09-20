@@ -35,7 +35,8 @@ public class QuadRenderSystem extends AbstractRenderSystem implements IObserver 
     private boolean starColorTransit = false;
     private Quaternion quaternion;
 
-    private float[] aux;
+    private float[] positions;
+    private float[] viewAngles;
     private Vector3 auxv;
 
     /**
@@ -81,7 +82,8 @@ public class QuadRenderSystem extends AbstractRenderSystem implements IObserver 
 
         quaternion = new Quaternion();
 
-        aux = new float[Scattering.N * 2];
+        positions = new float[Scattering.N * 2];
+        viewAngles = new float[Scattering.N];
         auxv = new Vector3();
     }
 
@@ -142,12 +144,13 @@ public class QuadRenderSystem extends AbstractRenderSystem implements IObserver 
             if (!Constants.webgl && p.name.equalsIgnoreCase("Sol") && PostProcessorFactory.instance.getPostProcessor().isLightScatterEnabled()) {
                 camera.getCamera().project(p.transform.getTranslationf(auxv));
                 if (auxv.x >= 0 && auxv.y >= 0 && auxv.x <= w && auxv.y <= h) {
-                    aux[0] = auxv.x / w;
-                    aux[1] = auxv.y / h;
+                    positions[0] = auxv.x / w;
+                    positions[1] = auxv.y / h;
+                    viewAngles[0] = 0.015f;
                 }
-                EventManager.instance.post(Events.LIGHT_POS_2D_UPDATED, 1, aux);
+                EventManager.instance.post(Events.LIGHT_POS_2D_UPDATED, 1, positions, viewAngles);
             } else {
-                EventManager.instance.post(Events.LIGHT_POS_2D_UPDATED, 0, aux);
+                EventManager.instance.post(Events.LIGHT_POS_2D_UPDATED, 0, positions, viewAngles);
             }
         }
 

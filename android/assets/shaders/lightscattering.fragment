@@ -13,6 +13,7 @@ uniform vec2 u_viewport;
 varying vec2 v_texCoords;
 
 uniform vec2 u_lightPositions[10];
+uniform float u_lightViewAngles[10];
 
 uniform float u_decay;
 uniform float u_density;
@@ -32,6 +33,7 @@ void main()
 
 	 vec4 col = vec4(0.0);
 	 for (int clpos = 0; clpos < u_nLights; clpos++){
+	 	 float viewAngle = u_lightViewAngles[clpos];
 		 vec2 deltaTexCoord = (v_texCoords - u_lightPositions[clpos]);
 		 float d1 = length(deltaTexCoord);
 		 
@@ -45,10 +47,10 @@ void main()
 		 for(int i = 0; i < u_numSamples; i++){
 		    tc -= deltaTexCoord;
 		    vec4 sample = texture2D(u_texture0, tc);
-		    if(len(tc - u_lightPositions[clpos], ar) > 0.013){
+		    if(len(tc - u_lightPositions[clpos], ar) > viewAngle){
 		    	sample = vec4(0.0, 0.0, 0.0, 0.0);
 		    }
-		   
+		    
 		    sample *= illuminationDecay * u_weight;
 		    color += sample;
 		    illuminationDecay *= u_decay;

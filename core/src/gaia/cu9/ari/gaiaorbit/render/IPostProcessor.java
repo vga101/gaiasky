@@ -8,7 +8,7 @@ import com.bitfire.postprocessing.effects.Bloom;
 import com.bitfire.postprocessing.effects.Curvature;
 import com.bitfire.postprocessing.effects.Fisheye;
 import com.bitfire.postprocessing.effects.LensFlare2;
-import com.bitfire.postprocessing.effects.LightScattering;
+import com.bitfire.postprocessing.effects.LightGlow;
 import com.bitfire.postprocessing.effects.MotionBlur;
 
 public interface IPostProcessor extends Disposable {
@@ -19,7 +19,7 @@ public interface IPostProcessor extends Disposable {
         public LensFlare2 lens;
         public Curvature curvature;
         public Fisheye fisheye;
-        public LightScattering lscatter;
+        public LightGlow lscatter;
         public MotionBlur motionblur;
 
         public boolean capture() {

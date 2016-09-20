@@ -109,8 +109,6 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
         }
     }
 
-    float precomp = -1;
-
     /**
      * Shader render, for planets and stars.
      */
@@ -127,24 +125,15 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
 
         float[] col = colorTransit ? ccTransit : ccPale;
         shader.setUniformf("u_color", col[0], col[1], col[2], alpha * opacity);
-        if (!Constants.mobile) {
-            shader.setUniformf("u_inner_rad", getInnerRad());
-            shader.setUniformf("u_distance", (float) (distToCamera * Constants.U_TO_KM));
-            shader.setUniformf("u_apparent_angle", viewAngleApparent);
-            shader.setUniformf("u_th_angle_point", (float) THRESHOLD_POINT() * camera.getFovFactor());
+        shader.setUniformf("u_inner_rad", getInnerRad());
+        shader.setUniformf("u_distance", distToCamera);
+        shader.setUniformf("u_apparent_angle", viewAngleApparent);
+        shader.setUniformf("u_th_angle_point", (float) THRESHOLD_POINT() * camera.getFovFactor());
 
-            // Stars with children do not have stray light, for we use volumetric light scattering
-            if (GlobalConf.scene.isLowQuality()) {
-                shader.setUniformi("u_strayLight", -1);
-            } else {
-                shader.setUniformi("u_strayLight", !Constants.webgl && !PostProcessorFactory.instance.getPostProcessor().isLightScatterEnabled() ? 1 : -1);
-            }
+        // Whether light scattering is enabled or not
+        shader.setUniformi("u_lightScattering", (this instanceof Star && PostProcessorFactory.instance.getPostProcessor().isLightScatterEnabled()) ? 1 : 0);
 
-            if (precomp < 0) {
-                precomp = (float) (getRadius() * Constants.U_TO_KM * 172.4643429);
-            }
-            shader.setUniformf("u_th_dist_up", precomp);
-        }
+        shader.setUniformf("u_radius", getRadius());
 
         // Sprite.render
         mesh.render(shader, GL20.GL_TRIANGLES, 0, 6);
