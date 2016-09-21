@@ -2,8 +2,6 @@ package gaia.cu9.ari.gaiaorbit.scenegraph;
 
 import com.badlogic.gdx.math.Matrix4;
 
-import gaia.cu9.ari.gaiaorbit.GaiaSky;
-import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
 public abstract class Satellite extends ModelBody {
@@ -75,9 +73,12 @@ public abstract class Satellite extends ModelBody {
         return super.labelMax() * 2;
     }
 
-    @Override
-    public boolean renderText() {
-        return name != null && GaiaSky.instance.isOn(ComponentType.Labels) && viewAngle > TH_OVER_FACTOR * 1e12f;
+    protected float getViewAnglePow() {
+        return 1f;
+    }
+
+    protected float getThOverFactorScl() {
+        return 5e3f;
     }
 
     public float getFuzzyRenderSize(ICamera camera) {

@@ -4,7 +4,6 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.math.Matrix4;
 
-import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
@@ -145,6 +144,14 @@ public abstract class ModelBody extends CelestialBody {
         return (float) size / camera.getFovFactor();
     }
 
+    protected float getViewAnglePow() {
+        return 1.14f;
+    }
+
+    protected float getThOverFactorScl() {
+        return ct == ComponentType.Moons ? 2000f : 100f;
+    }
+
     @Override
     public float textScale() {
         return Math.max(1f, labelSizeConcrete());
@@ -152,11 +159,6 @@ public abstract class ModelBody extends CelestialBody {
 
     protected float labelSizeConcrete() {
         return (float) Math.pow(this.size * .6e1f, .001f);
-    }
-
-    @Override
-    public boolean renderText() {
-        return name != null && GaiaSky.instance.isOn(ComponentType.Labels) && Math.pow(viewAngle, 1.14) > TH_OVER_FACTOR * 500;
     }
 
     public String getWikiname() {

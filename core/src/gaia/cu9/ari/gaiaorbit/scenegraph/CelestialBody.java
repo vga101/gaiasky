@@ -165,12 +165,22 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
             // 3D distance font
             Vector3d pos = v3dpool.obtain();
             textPosition(camera, pos);
-            shader.setUniformf("a_viewAngle", viewAngle);
+            shader.setUniformf("a_viewAngle", (float) viewAngle);
+            shader.setUniformf("a_viewAnglePow", getViewAnglePow());
             shader.setUniformf("a_thOverFactor", TH_OVER_FACTOR);
+            shader.setUniformf("a_thOverFactorScl", getThOverFactorScl());
             render3DLabel(batch, shader, font3d, camera, text(), pos, textScale(), textSize(), textColour());
             v3dpool.free(pos);
         }
 
+    }
+
+    protected float getViewAnglePow() {
+        return 1f;
+    }
+
+    protected float getThOverFactorScl() {
+        return 1f;
     }
 
     protected void setColor2Data() {
@@ -280,7 +290,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
 
     @Override
     public boolean renderText() {
-        return name != null && GaiaSky.instance.isOn(ComponentType.Labels) && viewAngle > TH_OVER_FACTOR;
+        return name != null && GaiaSky.instance.isOn(ComponentType.Labels) && Math.pow(viewAngle, getViewAnglePow()) > TH_OVER_FACTOR * getThOverFactorScl();
     }
 
     @Override
