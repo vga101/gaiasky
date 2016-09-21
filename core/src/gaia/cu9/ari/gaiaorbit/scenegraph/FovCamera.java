@@ -79,7 +79,6 @@ public class FovCamera extends AbstractCamera implements IObserver {
     @SuppressWarnings("unchecked")
     public FovCamera(AssetManager assetManager, CameraManager parent) {
         super(parent);
-        System.out.println("FOV: " + FOV);
         initialize(assetManager);
         directions = new Vector3d[] { new Vector3d(), new Vector3d() };
         interpolatedDirections = new ArrayList<Vector3d[]>();

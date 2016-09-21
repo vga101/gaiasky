@@ -131,8 +131,6 @@ public class SGRStereoscopic extends SGRAbstract implements ISGR, IObserver {
                 anaglyphic.render(fb2, null);
 
         } else {
-            // Update rc
-            rc.w = rw / 2;
 
             boolean stretch = GlobalConf.program.STEREO_PROFILE == StereoProfile.HD_3DTV;
             boolean crosseye = GlobalConf.program.STEREO_PROFILE == StereoProfile.CROSSEYE;
@@ -210,7 +208,7 @@ public class SGRStereoscopic extends SGRAbstract implements ISGR, IObserver {
             if (fb != null)
                 fb.end();
 
-            // Restore viewport
+            /* Restore viewport */
             viewport.setScreenBounds(0, 0, rw, rh);
 
         }

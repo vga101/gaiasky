@@ -19,7 +19,7 @@ public interface IPostProcessor extends Disposable {
         public LensFlare2 lens;
         public Curvature curvature;
         public Fisheye fisheye;
-        public LightGlow lscatter;
+        public LightGlow lglow;
         public MotionBlur motionblur;
 
         public boolean capture() {

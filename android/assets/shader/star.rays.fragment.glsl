@@ -200,11 +200,8 @@ vec4 draw() {
 	float level = (u_distance - u_radius) / ((u_radius * model_const) - u_radius);
 
 	if(level >= 1.0){
-		if(u_lightScattering == 1){
-			return vec4(v_color.rgb, v_color.a * core(dist, u_inner_rad) * level);
-		} else {
-			return vec4(v_color.rgb, v_color.a * (light(dist, u_inner_rad, light_decay) + core(dist, u_inner_rad)));
-		}
+		float core = core(dist, u_inner_rad);
+		return vec4(v_color.rgb + core, v_color.a * (light(dist, u_inner_rad, light_decay / 2.0) + core));
 	} else {
 		level = min(level, 1.0);
         
@@ -212,7 +209,7 @@ vec4 draw() {
         float light = light(dist, u_inner_rad, light_decay);
         float core = core(dist, u_inner_rad);
 
-		return vec4(v_color.rgb, v_color.a * (corona * (1.0 - level) + light + level * core));
+		return vec4(v_color.rgb + core, v_color.a * (corona * (1.0 - level) + light + level * core));
 	}
 }
 

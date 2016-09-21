@@ -11,6 +11,7 @@ import com.bitfire.postprocessing.effects.LensFlare2;
 import com.bitfire.postprocessing.effects.LightGlow;
 import com.bitfire.postprocessing.effects.MotionBlur;
 import com.bitfire.postprocessing.effects.Nfaa;
+import com.bitfire.postprocessing.filters.Glow;
 import com.bitfire.utils.ShaderLoader;
 
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
@@ -115,25 +116,16 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
             nsamples = 40;
             density = 0.8f;
         }
-        //        ppb.lscatter = new LightScattering((int) (width * scatteringFboScale), (int) (height * scatteringFboScale));
-        //        ppb.lscatter.setScatteringIntesity(1f);
-        //        ppb.lscatter.setScatteringSaturation(1f);
-        //        ppb.lscatter.setBaseIntesity(1f);
-        //        ppb.lscatter.setBias(-0.96f);
-        //        ppb.lscatter.setBlurAmount(0.5f);
-        //        ppb.lscatter.setBlurPasses(3);
-        //        ppb.lscatter.setDensity(density);
-        //        ppb.lscatter.setNumSamples(nsamples);
-        //        ppb.lscatter.setEnabled(GlobalConf.postprocess.POSTPROCESS_LIGHT_SCATTERING);
-        //        ppb.pp.addEffect(ppb.lscatter);
-        ppb.lscatter = new LightGlow((int) (width * scatteringFboScale), (int) (height * scatteringFboScale));
-        ppb.lscatter.setScatteringIntesity(1f);
-        ppb.lscatter.setScatteringSaturation(1f);
-        ppb.lscatter.setBaseIntesity(1f);
-        ppb.lscatter.setBias(-0.99f);
-        ppb.lscatter.setLightGlowTexture(new Texture(Gdx.files.internal("img/star_glow.png")));
-        ppb.lscatter.setEnabled(GlobalConf.postprocess.POSTPROCESS_LIGHT_SCATTERING);
-        ppb.pp.addEffect(ppb.lscatter);
+
+        Glow.N = 30;
+        ppb.lglow = new LightGlow((int) (width * scatteringFboScale), (int) (height * scatteringFboScale));
+        ppb.lglow.setScatteringIntesity(1f);
+        ppb.lglow.setScatteringSaturation(1f);
+        ppb.lglow.setBaseIntesity(1f);
+        ppb.lglow.setBias(-0.95f);
+        ppb.lglow.setLightGlowTexture(new Texture(Gdx.files.internal("img/star_glow.png")));
+        ppb.lglow.setEnabled(GlobalConf.postprocess.POSTPROCESS_LIGHT_SCATTERING);
+        ppb.pp.addEffect(ppb.lglow);
 
         // LENS FLARE
 
@@ -157,7 +149,7 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
         ppb.lens.setFlareIntesity(GlobalConf.postprocess.POSTPROCESS_LENS_FLARE ? flareIntensity : 0f);
         ppb.lens.setFlareSaturation(0.5f);
         ppb.lens.setBaseIntesity(1f);
-        ppb.lens.setBias(-0.999f);
+        ppb.lens.setBias(-0.95f);
         ppb.lens.setBlurAmount(1f);
         ppb.lens.setBlurPasses(10);
         ppb.lens.setEnabled(true);
@@ -273,7 +265,7 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
             for (int i = 0; i < RenderType.values().length; i++) {
                 if (pps[i] != null) {
                     PostProcessBean ppb = pps[i];
-                    ppb.lscatter.setEnabled(active);
+                    ppb.lglow.setEnabled(active);
                 }
             }
             break;
@@ -335,12 +327,14 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
             Integer nLights = (Integer) data[0];
             float[] lightpos = (float[]) data[1];
             float[] angles = (float[]) data[2];
+            float[] colors = (float[]) data[3];
 
             for (int i = 0; i < RenderType.values().length; i++) {
                 if (pps[i] != null) {
                     PostProcessBean ppb = pps[i];
-                    ppb.lscatter.setLightPositions(nLights, lightpos);
-                    ppb.lscatter.setLightViewAngles(angles);
+                    ppb.lglow.setLightPositions(nLights, lightpos);
+                    ppb.lglow.setLightViewAngles(angles);
+                    ppb.lglow.setLightColors(colors);
                 }
             }
             break;
@@ -378,7 +372,7 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
 
     @Override
     public boolean isLightScatterEnabled() {
-        return pps[RenderType.screen.index].lscatter.isEnabled();
+        return pps[RenderType.screen.index].lglow.isEnabled();
     }
 
 }

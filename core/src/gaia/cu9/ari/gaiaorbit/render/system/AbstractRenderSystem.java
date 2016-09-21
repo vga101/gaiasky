@@ -17,9 +17,9 @@ public abstract class AbstractRenderSystem implements IRenderSystem {
     protected float[] alphas;
     /** Comparator of renderables, in case of need **/
     protected Comparator<IRenderable> comp;
-    protected RenderContext rc;
+    public RenderContext rc;
 
-    private Runnable preRunnables, postRunnables;
+    private RenderSystemRunnable preRunnable, postRunnable;
 
     protected AbstractRenderSystem(RenderGroup rg, int priority, float[] alphas) {
         super();
@@ -42,25 +42,25 @@ public abstract class AbstractRenderSystem implements IRenderSystem {
     public void render(List<IRenderable> renderables, ICamera camera, RenderContext rc) {
         if (!renderables.isEmpty()) {
             this.rc = rc;
-            run(preRunnables);
+            run(preRunnable, renderables, camera);
             renderStud(renderables, camera);
-            run(postRunnables);
+            run(postRunnable, renderables, camera);
         }
     }
 
     public abstract void renderStud(List<IRenderable> renderables, ICamera camera);
 
-    public void setPreRunnable(Runnable r) {
-        preRunnables = r;
+    public void setPreRunnable(RenderSystemRunnable r) {
+        preRunnable = r;
     }
 
-    public void setPostRunnable(Runnable r) {
-        postRunnables = r;
+    public void setPostRunnable(RenderSystemRunnable r) {
+        postRunnable = r;
     }
 
-    private void run(Runnable runnable) {
+    private void run(RenderSystemRunnable runnable, List<IRenderable> renderables, ICamera camera) {
         if (runnable != null) {
-            runnable.run();
+            runnable.run(this, renderables, camera);
         }
     }
 
@@ -72,6 +72,10 @@ public abstract class AbstractRenderSystem implements IRenderSystem {
     @Override
     public void resize(int w, int h) {
         // Empty, to override in subclasses if needed
+    }
+
+    public interface RenderSystemRunnable {
+        public abstract void run(AbstractRenderSystem renderSystem, List<IRenderable> renderables, ICamera camera);
     }
 
 }

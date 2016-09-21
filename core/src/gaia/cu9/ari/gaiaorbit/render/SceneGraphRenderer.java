@@ -19,15 +19,20 @@ import com.badlogic.gdx.graphics.g3d.utils.RenderableSorter;
 import com.badlogic.gdx.graphics.g3d.utils.ShaderProvider;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.BufferUtils;
+import com.bitfire.postprocessing.filters.Glow;
 import com.bitfire.utils.ShaderLoader;
 
+import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.render.IPostProcessor.PostProcessBean;
 import gaia.cu9.ari.gaiaorbit.render.system.AbstractRenderSystem;
+import gaia.cu9.ari.gaiaorbit.render.system.AbstractRenderSystem.RenderSystemRunnable;
 import gaia.cu9.ari.gaiaorbit.render.system.FontRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.GalaxyRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.IRenderSystem;
@@ -38,6 +43,7 @@ import gaia.cu9.ari.gaiaorbit.render.system.PixelRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.QuadRenderSystem;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
+import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
@@ -77,7 +83,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
     private List<IRenderSystem> renderProcesses;
 
-    Runnable blendNoDepthRunnable, blendDepthRunnable;
+    RenderSystemRunnable blendNoDepthRunnable, blendDepthRunnable;
 
     /** The particular current scene graph renderer **/
     private ISGR sgr;
@@ -171,17 +177,17 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
         renderProcesses = new ArrayList<IRenderSystem>();
 
-        blendNoDepthRunnable = new Runnable() {
+        blendNoDepthRunnable = new RenderSystemRunnable() {
             @Override
-            public void run() {
+            public void run(AbstractRenderSystem renderSystem, List<IRenderable> renderables, ICamera camera) {
                 Gdx.gl.glEnable(GL20.GL_BLEND);
                 Gdx.gl.glDisable(GL20.GL_DEPTH_TEST);
                 Gdx.gl.glDepthMask(false);
             }
         };
-        blendDepthRunnable = new Runnable() {
+        blendDepthRunnable = new RenderSystemRunnable() {
             @Override
-            public void run() {
+            public void run(AbstractRenderSystem renderSystem, List<IRenderable> renderables, ICamera camera) {
                 Gdx.gl.glEnable(GL20.GL_BLEND);
                 Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
                 Gdx.gl.glDepthMask(true);
@@ -197,9 +203,9 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         // MODEL BACK
         AbstractRenderSystem modelBackProc = new ModelBatchRenderSystem(RenderGroup.MODEL_B, priority++, alphas, modelBatchB, false);
         modelBackProc.setPreRunnable(blendNoDepthRunnable);
-        modelBackProc.setPostRunnable(new Runnable() {
+        modelBackProc.setPostRunnable(new RenderSystemRunnable() {
             @Override
-            public void run() {
+            public void run(AbstractRenderSystem renderSystem, List<IRenderable> renderables, ICamera camera) {
                 // This always goes at the back, clear depth buffer
                 Gdx.gl.glClear(GL20.GL_DEPTH_BUFFER_BIT);
             }
@@ -208,9 +214,9 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         // ANNOTATIONS
         AbstractRenderSystem annotationsProc = new FontRenderSystem(RenderGroup.MODEL_B_ANNOT, priority++, alphas, spriteBatch);
         annotationsProc.setPreRunnable(blendNoDepthRunnable);
-        annotationsProc.setPostRunnable(new Runnable() {
+        annotationsProc.setPostRunnable(new RenderSystemRunnable() {
             @Override
-            public void run() {
+            public void run(AbstractRenderSystem renderSystem, List<IRenderable> renderables, ICamera camera) {
                 // This always goes at the back, clear depth buffer
                 Gdx.gl.glClear(GL20.GL_DEPTH_BUFFER_BIT);
             }
@@ -219,6 +225,44 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         // SHADER STARS
         AbstractRenderSystem shaderBackProc = new QuadRenderSystem(RenderGroup.SHADER, priority++, alphas, starShader, true);
         shaderBackProc.setPreRunnable(blendNoDepthRunnable);
+        shaderBackProc.setPostRunnable(new RenderSystemRunnable() {
+
+            private float[] positions = new float[Glow.N * 2];
+            private float[] viewAngles = new float[Glow.N];
+            private float[] colors = new float[Glow.N * 3];
+            private Vector3 auxv = new Vector3();
+
+            @Override
+            public void run(AbstractRenderSystem renderSystem, List<IRenderable> renderables, ICamera camera) {
+                int size = renderables.size();
+                if (PostProcessorFactory.instance.getPostProcessor().isLightScatterEnabled()) {
+                    // Compute light positions for light scattering or light glow
+                    int lightIndex = 0;
+                    float angleEdgeDeg = camera.getAngleEdge() * MathUtils.radDeg;
+                    for (int i = size - 1; i >= 0; i--) {
+                        IRenderable s = renderables.get(i);
+                        if (s instanceof Particle) {
+                            Particle p = (Particle) s;
+                            if (!Constants.webgl && lightIndex < Glow.N && GaiaSky.instance.cam.getDirection().angle(p.transform.position) < angleEdgeDeg) {
+                                camera.getCamera().project(p.transform.getTranslationf(auxv));
+                                // Here we **need** to use Gdx.graphics.getWidth/Height() because we use camera.project() which uses screen coordinates only
+                                positions[lightIndex * 2] = auxv.x / Gdx.graphics.getWidth();
+                                positions[lightIndex * 2 + 1] = auxv.y / Gdx.graphics.getHeight();
+                                viewAngles[lightIndex] = p.viewAngleApparent;
+                                colors[lightIndex * 3] = p.cc[0];
+                                colors[lightIndex * 3 + 1] = p.cc[1];
+                                colors[lightIndex * 3 + 2] = p.cc[2];
+                                lightIndex++;
+                            }
+                        }
+                    }
+                    EventManager.instance.post(Events.LIGHT_POS_2D_UPDATED, lightIndex, positions, viewAngles, colors);
+                } else {
+                    EventManager.instance.post(Events.LIGHT_POS_2D_UPDATED, 0, positions, viewAngles, colors);
+                }
+            }
+
+        });
 
         // LINES
         AbstractRenderSystem lineProc = getLineRenderSystem();

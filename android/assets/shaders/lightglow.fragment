@@ -7,6 +7,9 @@ precision mediump float;
 precision mediump int;
 #endif
 
+#define n_samples 40
+#define N 30
+
 uniform sampler2D u_texture0;
 // Glow texture
 uniform sampler2D u_texture1;
@@ -14,20 +17,23 @@ uniform vec2 u_viewport;
 
 varying vec2 v_texCoords;
 
-uniform vec2 u_lightPositions[10];
-uniform float u_lightViewAngles[10];
+uniform vec2 u_lightPositions[N];
+uniform float u_lightViewAngles[N];
+uniform vec3 u_lightColors[N];
 
 uniform int u_nLights;
-
-#define n_samples 20
 
 float len(vec2 vect, float ar){
 	return sqrt(vect.x * vect.x * ar * ar + vect.y * vect.y);
 }
 
 // Computes luminance of rgba color
-float lum(vec4 color){
+float luminance(vec4 color){
 	return (0.299 * color.r + 0.587 * color.g + 0.114 * color.b) * color.a;
+}
+
+float average(vec4 color){
+	return (color.r + color.g + color.b) / 3.0;
 }
 
 float fx(float t){
@@ -40,30 +46,35 @@ float fy(float t){
 
 void main()
 {
-	 float exposure = 0.4;
 	 float ar = u_viewport.x / u_viewport.y;
 	 gl_FragColor = vec4(0.0);
 
-	 for (int clpos = 0; clpos < u_nLights; clpos++){
-	 	 float viewAngle = u_lightViewAngles[clpos];
+	 for (int li = 0; li < u_nLights; li++){
+	 	 float viewAngle = min(0.0007, u_lightViewAngles[li]);
+	 	 vec3 lightColor = u_lightColors[li];
+		 float dt = viewAngle / 5.0;
+		 float current_dt = 0;
 		 
 		 float lum = 0.0;
-		 for(int idx = 0; idx < n_samples; idx++){
-		 	lum += (texture2D(u_texture0, u_lightPositions[clpos] + vec2(fx(idx * 0.0005), fy(idx * 0.0005)))).r;
+		 for(int idx = 1; idx < n_samples; idx++){
+		 	lum += (texture2D(u_texture0, u_lightPositions[li] + vec2(fx(current_dt), fy(current_dt)))).r;
+		 	current_dt += dt * idx;
 		 }
+		 vec4 star_color = texture2D(u_texture0, u_lightPositions[li] + vec2(fx(current_dt), fy(current_dt)));
+		 lum += star_color.r;
 		 lum /= n_samples;
 
-		 float size = 1.6 * lum;
+		 float size = min(2.5, viewAngle * 1000000) * lum;
 		 
-		 vec2 glow_tc = (v_texCoords - u_lightPositions[clpos]);
+		 vec2 glow_tc = (v_texCoords - u_lightPositions[li]);
 		 glow_tc.x *= ar;
+		 float dist_center = length(glow_tc);
 		 glow_tc /= size;
-		 
 		 glow_tc += 0.5;
 		 
-		 vec4 color_glow = texture2D(u_texture1, glow_tc);
-		
+		 float color_glow = clamp(average(texture2D(u_texture1, glow_tc)), 0.0, 1.0);
+		 float core_inc = (0.1 - min(0.1, dist_center)) * 2.0 * color_glow;
 		 
-		 gl_FragColor = color_glow + viewAngle * 0.0000001;
+		 gl_FragColor += vec4(color_glow * lightColor.r + core_inc, color_glow * lightColor.g + core_inc, color_glow * lightColor.b + core_inc, 1.0);
 	 }
 }
