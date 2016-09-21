@@ -7,13 +7,13 @@ precision mediump float;
 precision mediump int;
 #endif
 
-#define n_samples 40
 #define N 30
 
 uniform sampler2D u_texture0;
 // Glow texture
 uniform sampler2D u_texture1;
 uniform vec2 u_viewport;
+uniform int u_nSamples;
 
 varying vec2 v_texCoords;
 
@@ -36,12 +36,12 @@ float average(vec4 color){
 	return (color.r + color.g + color.b) / 3.0;
 }
 
-float fx(float t){
-	return t * cos(t);
+float fx(float t, float a){
+	return a * t * cos(t);
 }
 
-float fy(float t){
-	return t * sin(t);
+float fy(float t, float a){
+	return a * t * sin(t);
 }
 
 void main()
@@ -52,17 +52,20 @@ void main()
 	 for (int li = 0; li < u_nLights; li++){
 	 	 float viewAngle = min(0.0007, u_lightViewAngles[li]);
 	 	 vec3 lightColor = u_lightColors[li];
-		 float dt = viewAngle / 5.0;
-		 float current_dt = 0;
+		 float a = viewAngle * 2.0;
+		 
+		 // Archimedes's spiral (fx = a*t*cos(t), fy = a*t*sin(t)) sampling from 0 to 6*Pi
+		 float t = 0;
+		 float dt = 6 * 3.14159 / u_nSamples;
 		 
 		 float lum = 0.0;
-		 for(int idx = 1; idx < n_samples; idx++){
-		 	lum += (texture2D(u_texture0, u_lightPositions[li] + vec2(fx(current_dt), fy(current_dt)))).r;
-		 	current_dt += dt * idx;
+		 for(int idx = 1; idx < u_nSamples; idx++){
+		 	lum += (texture2D(u_texture0, u_lightPositions[li] + vec2(fx(t, a), fy(t, a)))).r;
+		 	t += dt;
 		 }
-		 vec4 star_color = texture2D(u_texture0, u_lightPositions[li] + vec2(fx(current_dt), fy(current_dt)));
+		 vec4 star_color = texture2D(u_texture0, u_lightPositions[li] + vec2(fx(t, a), fy(t, a)));
 		 lum += star_color.r;
-		 lum /= n_samples;
+		 lum /= u_nSamples;
 
 		 float size = min(2.5, viewAngle * 1000000) * lum;
 		 

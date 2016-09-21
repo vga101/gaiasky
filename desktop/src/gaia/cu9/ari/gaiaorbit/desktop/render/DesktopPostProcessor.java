@@ -31,8 +31,6 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
 
     float bloomFboScale = 0.5f;
 
-    float scatteringFboScale = 1.0f;
-
     float flareIntensity = 0.6f;
 
     // Number of flares
@@ -106,15 +104,16 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
         // LIGHT SCATTERING
         int nsamples;
         float density;
+        float scatteringFboScale;
         if (GlobalConf.scene.isHighQuality()) {
-            nsamples = 200;
-            density = 1.5f;
+            nsamples = 30;
+            scatteringFboScale = 2.0f;
         } else if (GlobalConf.scene.isNormalQuality()) {
-            nsamples = 100;
-            density = 1.2f;
+            nsamples = 15;
+            scatteringFboScale = 1.0f;
         } else {
-            nsamples = 40;
-            density = 0.8f;
+            nsamples = 10;
+            scatteringFboScale = 0.6f;
         }
 
         Glow.N = 30;
@@ -124,6 +123,7 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
         ppb.lglow.setBaseIntesity(1f);
         ppb.lglow.setBias(-0.95f);
         ppb.lglow.setLightGlowTexture(new Texture(Gdx.files.internal("img/star_glow.png")));
+        ppb.lglow.setNSamples(nsamples);
         ppb.lglow.setEnabled(GlobalConf.postprocess.POSTPROCESS_LIGHT_SCATTERING);
         ppb.pp.addEffect(ppb.lglow);
 
