@@ -19,6 +19,7 @@ uniform int u_lightScattering;
 
 #define time u_time * 0.02
 #define model_const 172.4643429
+#define rays_const 15000.0
 #define corona_decay 0.25
 #define light_decay 0.15
 
@@ -169,28 +170,28 @@ float light(float distance_center, float inner_rad, float decay) {
     return clamp(light, 0.0, 0.97);
 }
 
-float corona(float distance_center, float decay){
+float corona(float distance_center, float cor_decay, float cor_noise){
         vec3 fPosition = vec3(v_texCoords - vec2(0.5), 0.0) * 2.0;
 
         // Move outward
-        float t = time - length(fPosition);
+        float t = time - length(fPosition) * cor_noise;
         // Offset normal with noise
         float frequency = 1.5;
         float ox = snoise(vec4(fPosition * frequency, t));
         float oy = snoise(vec4((fPosition + 2000.0) * frequency, t));
         float oz = snoise(vec4((fPosition + 4000.0) * frequency, t));
         // Store offsetVec since we want to use it twice.
-        vec3 offsetVec = vec3(ox, oy, oz) * 0.0004;
+        vec3 offsetVec = vec3(ox, oy, oz) * 0.0003;
 
-        // Get the distance vector from the center
+        // Get the distance vector from the centre
         vec3 nDistVec = normalize(fPosition + offsetVec);
 
         // Get noise with normalized position to offset the original position
-        vec3 position = fPosition + noise(vec4(nDistVec, t), 5, 2.0, 0.7) * 0.4;    
+        vec3 position = fPosition + noise(vec4(nDistVec, t), 5, 2.0, 0.7) * 0.3;    
         float dist = length(position + offsetVec);
  
         // Calculate brightness based on distance
-        return dist * (1.0 - pow(distance_center, decay));
+        return dist * (1.0 - pow(distance_center, cor_decay));
 }
 
 vec4 draw() {
@@ -200,16 +201,33 @@ vec4 draw() {
 	float level = (u_distance - u_radius) / ((u_radius * model_const) - u_radius);
 
 	if(level >= 1.0){
-		float core = core(dist, u_inner_rad);
-		return vec4(v_color.rgb + core, v_color.a * (light(dist, u_inner_rad, light_decay / 2.0) + core));
+		// We are far away from the star
+		level = u_distance / (u_radius * rays_const);
+				
+		if(u_lightScattering == 1){
+			// Light scattering, simple star
+			float core = core(dist, u_inner_rad);
+			return vec4(v_color.rgb + core, v_color.a * (light(dist, u_inner_rad, light_decay / 2.0) + core));
+		} else {
+			// No light scattering, star rays
+			level = min(level, 1.0);
+			float corona = corona(dist, corona_decay, 0.0);
+	        float light = light(dist, u_inner_rad, light_decay);
+	        float core = core(dist, u_inner_rad);
+	
+			return vec4(v_color.rgb + core, v_color.a * (corona * (1.0 - level) + light + core));
+		}
 	} else {
+		// We are close to the star
+		
 		level = min(level, 1.0);
+		float level_corona = u_lightScattering * level;
         
-        float corona = corona(dist, corona_decay);
+        float corona = corona(dist, corona_decay, 0.5 - level / 2.0);
         float light = light(dist, u_inner_rad, light_decay);
         float core = core(dist, u_inner_rad);
 
-		return vec4(v_color.rgb + core, v_color.a * (corona * (1.0 - level) + light + level * core));
+		return vec4(v_color.rgb + core, v_color.a * (corona * (1.0 - level_corona) + light + level * core));
 	}
 }
 
