@@ -127,7 +127,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
         shader.setUniformf("u_color", col[0], col[1], col[2], alpha * opacity);
         shader.setUniformf("u_inner_rad", getInnerRad());
         shader.setUniformf("u_distance", distToCamera);
-        shader.setUniformf("u_apparent_angle", viewAngleApparent);
+        shader.setUniformf("u_apparent_angle", viewAngle);
         shader.setUniformf("u_th_angle_point", (float) THRESHOLD_POINT() * camera.getFovFactor());
 
         // Whether light scattering is enabled or not
@@ -165,7 +165,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
             // 3D distance font
             Vector3d pos = v3dpool.obtain();
             textPosition(camera, pos);
-            shader.setUniformf("a_viewAngle", (float) viewAngle);
+            shader.setUniformf("a_viewAngle", (float) viewAngleApparent);
             shader.setUniformf("a_viewAnglePow", getViewAnglePow());
             shader.setUniformf("a_thOverFactor", TH_OVER_FACTOR);
             shader.setUniformf("a_thOverFactorScl", getThOverFactorScl());
@@ -290,7 +290,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
 
     @Override
     public boolean renderText() {
-        return name != null && GaiaSky.instance.isOn(ComponentType.Labels) && Math.pow(viewAngle, getViewAnglePow()) > TH_OVER_FACTOR * getThOverFactorScl();
+        return name != null && GaiaSky.instance.isOn(ComponentType.Labels) && Math.pow(viewAngle, getViewAnglePow()) >= (TH_OVER_FACTOR * getThOverFactorScl());
     }
 
     @Override

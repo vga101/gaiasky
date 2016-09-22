@@ -29,6 +29,13 @@ import gaia.cu9.ari.gaiaorbit.util.GlobalConf.ProgramConf.StereoProfile;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.MyPools;
 
+/**
+ * Renders all the 3D/stereoscopic modes. Renders basically two scenes, one for each eye,
+ * and then blends them together on screen with the necessary processing depending on
+ * the 3D regime (anaglyphic, 3dtv, crosseye, vr).
+ * @author tsagrista
+ *
+ */
 public class SGRStereoscopic extends SGRAbstract implements ISGR, IObserver {
 
     /** Viewport to use in steoeroscopic mode **/
@@ -55,7 +62,7 @@ public class SGRStereoscopic extends SGRAbstract implements ISGR, IObserver {
     }
 
     @Override
-    public void render(SceneGraphRenderer sgr, ICamera camera, int rw, int rh, FrameBuffer fb, PostProcessBean ppb) {
+    public void render(SceneGraphRenderer sgr, ICamera camera, float t, int rw, int rh, FrameBuffer fb, PostProcessBean ppb) {
         boolean movecam = camera.getMode() == CameraMode.Free_Camera || camera.getMode() == CameraMode.Focus;
         //movecam = false;
 
@@ -99,7 +106,7 @@ public class SGRStereoscopic extends SGRAbstract implements ISGR, IObserver {
                 moveCamera(cam, side, dirangleDeg, false);
             }
             camera.setCameraStereoLeft(cam);
-            sgr.renderScene(camera, rc);
+            sgr.renderScene(camera, t, rc);
 
             postprocessRender(ppb, fb1, postproc, camera);
             Texture texLeft = fb1.getColorBufferTexture();
@@ -115,7 +122,7 @@ public class SGRStereoscopic extends SGRAbstract implements ISGR, IObserver {
                 moveCamera(cam, side, dirangleDeg, true);
             }
             camera.setCameraStereoRight(cam);
-            sgr.renderScene(camera, rc);
+            sgr.renderScene(camera, t, rc);
 
             postprocessRender(ppb, fb2, postproc, camera);
             Texture texRight = fb2.getColorBufferTexture();
@@ -156,7 +163,7 @@ public class SGRStereoscopic extends SGRAbstract implements ISGR, IObserver {
                 moveCamera(cam, side, dirangleDeg, crosseye);
             }
             camera.setCameraStereoLeft(cam);
-            sgr.renderScene(camera, rc);
+            sgr.renderScene(camera, t, rc);
 
             Texture tex = null;
             postprocessRender(ppb, fb3d, postproc, camera);
@@ -192,7 +199,7 @@ public class SGRStereoscopic extends SGRAbstract implements ISGR, IObserver {
                 moveCamera(cam, side, dirangleDeg, !crosseye);
             }
             camera.setCameraStereoRight(cam);
-            sgr.renderScene(camera, rc);
+            sgr.renderScene(camera, t, rc);
 
             postprocessRender(ppb, fb3d, postproc, camera);
             tex = fb3d.getColorBufferTexture();

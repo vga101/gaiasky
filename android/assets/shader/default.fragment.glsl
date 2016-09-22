@@ -200,7 +200,6 @@ void main() {
 	gl_FragColor.rgb += (vec3(1.0) - exp(v_atmosphereColor.rgb * -exposure));
 	
 	// Prevent saturation
-    gl_FragColor = clamp(gl_FragColor, 0.0, 1.0);
-    gl_FragColor.rgb *= 0.95;
+    gl_FragColor.rgb = clamp(gl_FragColor.rgb, 0.0, 0.88);
 
 }

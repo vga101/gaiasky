@@ -100,6 +100,11 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
     private SceneGraphRenderer sgr;
     private IPostProcessor pp;
 
+    // The current actual dt in seconds
+    private float dt;
+    // Time since the start in seconds
+    private float t;
+
     // The frame number
     public long frames;
 
@@ -159,6 +164,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         clock = new GlobalClock(1, new Date());
         real = new RealTimeClock();
         time = GlobalConf.runtime.REAL_TIME ? real : clock;
+        t = 0;
 
         // Precompute some math functions
         MathUtilsd.initialize();
@@ -411,7 +417,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
                 if (GlobalConf.screen.SCREEN_OUTPUT) {
                     /** RENDER THE SCENE **/
                     preRenderScene();
-                    renderSgr(cam, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), null, pp.getPostProcessBean(RenderType.screen));
+                    renderSgr(cam, t, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), null, pp.getPostProcessBean(RenderType.screen));
 
                     if (GlobalConf.runtime.DISPLAY_GUI) {
                         // Render the GUI, setting the viewport
@@ -434,27 +440,29 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
     /**
      * Update method.
      * 
-     * @param dt
+     * @param deltat
      *            Delta time in seconds.
      */
-    public void update(float dt) {
+    public void update(float deltat) {
         if (GlobalConf.frame.RENDER_OUTPUT) {
             // If RENDER_OUTPUT is active, we need to set our dt according to
             // the fps
-            dt = 1f / GlobalConf.frame.RENDER_TARGET_FPS;
+            this.dt = 1f / GlobalConf.frame.RENDER_TARGET_FPS;
         } else if (camRecording) {
             // If Camera is recording, we need to set our dt according to
             // the fps
-            dt = 1f / GlobalConf.frame.CAMERA_REC_TARGET_FPS;
+            this.dt = 1f / GlobalConf.frame.CAMERA_REC_TARGET_FPS;
         } else {
             // Max time step is 0.1 seconds. Not in RENDER_OUTPUT MODE.
-            dt = Math.min(dt, 0.1f);
+            this.dt = Math.min(deltat, 0.1f);
         }
 
-        gui.update(dt);
-        EventManager.instance.post(Events.UPDATE_GUI, dt);
+        this.t += this.dt;
 
-        float dtScene = dt;
+        gui.update(this.dt);
+        EventManager.instance.post(Events.UPDATE_GUI, this.dt);
+
+        float dtScene = this.dt;
         if (!GlobalConf.runtime.TIME_ON) {
             dtScene = 0;
         }
@@ -465,7 +473,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         EventManager.instance.dispatchDelayedMessages();
 
         // Update cameras
-        cam.update(dt, time);
+        cam.update(this.dt, time);
 
         // Update scene graph
         sg.update(time, cam);
@@ -477,8 +485,8 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
     }
 
-    public void renderSgr(ICamera camera, int width, int height, FrameBuffer frameBuffer, PostProcessBean ppb) {
-        sgr.render(camera, width, height, frameBuffer, ppb);
+    public void renderSgr(ICamera camera, float t, int width, int height, FrameBuffer frameBuffer, PostProcessBean ppb) {
+        sgr.render(camera, t, width, height, frameBuffer, ppb);
     }
 
     @Override
@@ -554,6 +562,10 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
 
     public ICamera getICamera() {
         return cam.current;
+    }
+
+    public float getT() {
+        return t;
     }
 
     public CameraManager getCameraManager() {

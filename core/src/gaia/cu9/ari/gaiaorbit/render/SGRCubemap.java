@@ -19,6 +19,13 @@ import gaia.cu9.ari.gaiaorbit.render.IPostProcessor.PostProcessBean;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 
+/**
+ * Renders the cube map 360 degree mode. Basically, it renders the six sides of the cube map 
+ * (front, back, up, down, right, left) with a 90 degree fov each and applies the cube map to 
+ * equirectangular transformation.
+ * @author tsagrista
+ *
+ */
 public class SGRCubemap extends SGRAbstract implements ISGR {
 
     Vector3 aux1, aux2, aux3, dirbak, upbak;
@@ -41,7 +48,7 @@ public class SGRCubemap extends SGRAbstract implements ISGR {
     }
 
     @Override
-    public void render(SceneGraphRenderer sgr, ICamera camera, int rw, int rh, FrameBuffer fb, PostProcessBean ppb) {
+    public void render(SceneGraphRenderer sgr, ICamera camera, float t, int rw, int rh, FrameBuffer fb, PostProcessBean ppb) {
 
         PerspectiveCamera cam = camera.getCamera();
 
@@ -65,7 +72,7 @@ public class SGRCubemap extends SGRAbstract implements ISGR {
         viewport.apply();
 
         boolean postproc = postprocessCapture(ppb, fb3d, sizew, sizeh);
-        sgr.renderScene(camera, rc);
+        sgr.renderScene(camera, t, rc);
         postprocessRender(ppb, fb3d, postproc, camera);
 
         Texture tex = fb3d.getColorBufferTexture();
@@ -98,7 +105,7 @@ public class SGRCubemap extends SGRAbstract implements ISGR {
         cam.update();
 
         postproc = postprocessCapture(ppb, fb3d, sizew, sizeh);
-        sgr.renderScene(camera, rc);
+        sgr.renderScene(camera, t, rc);
         postprocessRender(ppb, fb3d, postproc, camera);
 
         tex = fb3d.getColorBufferTexture();
@@ -131,7 +138,7 @@ public class SGRCubemap extends SGRAbstract implements ISGR {
         cam.update();
 
         postproc = postprocessCapture(ppb, fb3d, sizew, sizeh);
-        sgr.renderScene(camera, rc);
+        sgr.renderScene(camera, t, rc);
         postprocessRender(ppb, fb3d, postproc, camera);
 
         tex = fb3d.getColorBufferTexture();
@@ -161,7 +168,7 @@ public class SGRCubemap extends SGRAbstract implements ISGR {
         cam.update();
 
         postproc = postprocessCapture(ppb, fb3d, sizew, sizeh);
-        sgr.renderScene(camera, rc);
+        sgr.renderScene(camera, t, rc);
         postprocessRender(ppb, fb3d, postproc, camera);
 
         tex = fb3d.getColorBufferTexture();
@@ -191,7 +198,7 @@ public class SGRCubemap extends SGRAbstract implements ISGR {
         cam.update();
 
         postproc = postprocessCapture(ppb, fb3d, sizew, sizeh);
-        sgr.renderScene(camera, rc);
+        sgr.renderScene(camera, t, rc);
         postprocessRender(ppb, fb3d, postproc, camera);
 
         tex = fb3d.getColorBufferTexture();
@@ -221,7 +228,7 @@ public class SGRCubemap extends SGRAbstract implements ISGR {
         cam.update();
 
         postproc = postprocessCapture(ppb, fb3d, sizew, sizeh);
-        sgr.renderScene(camera, rc);
+        sgr.renderScene(camera, t, rc);
         postprocessRender(ppb, fb3d, postproc, camera);
 
         tex = fb3d.getColorBufferTexture();

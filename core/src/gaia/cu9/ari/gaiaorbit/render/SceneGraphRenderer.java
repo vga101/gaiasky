@@ -2,7 +2,6 @@ package gaia.cu9.ari.gaiaorbit.render;
 
 import java.nio.IntBuffer;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -155,6 +154,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         times = new long[comps.length];
         alphas = new float[comps.length];
         for (int i = 0; i < comps.length; i++) {
+            times[i] = -20000l;
             alphas[i] = 1f;
         }
 
@@ -335,20 +335,25 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
     }
 
     @Override
-    public void render(ICamera camera, int rw, int rh, FrameBuffer fb, PostProcessBean ppb) {
+    public void render(ICamera camera, float t, int rw, int rh, FrameBuffer fb, PostProcessBean ppb) {
 
         if (sgr == null)
             initSGR(camera);
 
-        sgr.render(this, camera, rw, rh, fb, ppb);
+        sgr.render(this, camera, t, rw, rh, fb, ppb);
 
     }
 
-    public void renderScene(ICamera camera, RenderContext rc) {
+    /**
+     * Renders the scene
+     * @param camera The camera to use.
+     * @param t The time in seconds since the start.
+     * @param rc The render context.
+     */
+    public void renderScene(ICamera camera, float t, RenderContext rc) {
         // Update time difference since last update
-        long now = new Date().getTime();
         for (ComponentType ct : ComponentType.values()) {
-            alphas[ct.ordinal()] = calculateAlpha(ct, now);
+            alphas[ct.ordinal()] = calculateAlpha(ct, t);
         }
 
         EventManager.instance.post(Events.DEBUG1, "quads: " + (render_lists.get(RenderGroup.SHADER).size() + render_lists.get(RenderGroup.SHADER_F).size()) + ", points: " + render_lists.get(RenderGroup.POINT).size() + ", labels: " + render_lists.get(RenderGroup.LABEL).size());
@@ -394,11 +399,11 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
             if (data.length == 3) {
                 // We have the boolean
                 visible[idx] = (boolean) data[2];
-                times[idx] = new Date().getTime();
+                times[idx] = (long) (GaiaSky.instance.getT() * 1000f);
             } else {
                 // Only toggle
                 visible[idx] = !visible[idx];
-                times[idx] = new Date().getTime();
+                times[idx] = (long) (GaiaSky.instance.getT() * 1000f);
             }
             break;
 
@@ -445,8 +450,14 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         }
     }
 
-    private float calculateAlpha(ComponentType type, long now) {
-        long diff = now - times[type.ordinal()];
+    /**
+     * Computes the alpha for the given component type.
+     * @param type The component type.
+     * @param now The current time in seconds.
+     * @return The alpha value.
+     */
+    private float calculateAlpha(ComponentType type, float t) {
+        long diff = (long) (t * 1000f) - times[type.ordinal()];
         if (diff > GlobalConf.scene.OBJECT_FADE_MS) {
             if (visible[type.ordinal()]) {
                 alphas[type.ordinal()] = 1;

@@ -22,7 +22,7 @@ varying float v_opacity;
 void main()
 {
    float thOverFac = a_thOverFactor * a_thOverFactorScl;
-   v_opacity = max(0.0, min(0.95, (pow(a_viewAngle, a_viewAnglePow) - thOverFac)/thOverFac)) * a_componentAlpha * a_labelAlpha;
+   v_opacity = clamp((pow(a_viewAngle, a_viewAnglePow) - thOverFac)/thOverFac, 0.0, 0.95) * a_componentAlpha * a_labelAlpha;
    v_color = a_color;
    v_texCoords = a_texCoord0;
    gl_Position =  u_projTrans * a_position;

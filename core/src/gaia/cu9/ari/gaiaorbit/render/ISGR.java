@@ -6,9 +6,29 @@ import com.badlogic.gdx.utils.Disposable;
 import gaia.cu9.ari.gaiaorbit.render.IPostProcessor.PostProcessBean;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 
+/**
+ * Interface that must be extended by all types of scene graph renderers
+ * @author tsagrista
+ *
+ */
 public interface ISGR extends Disposable {
-    public void render(SceneGraphRenderer sgr, ICamera camera, int rw, int rh, FrameBuffer fb, PostProcessBean ppb);
+    /**
+     * Renders the scene
+     * @param sgr The scene graph renderer object
+     * @param camera The camera.
+     * @param t The time in seconds since the start
+     * @param rw The width
+     * @param rh The height
+     * @param fb The frame buffer, if any
+     * @param ppb The post processing bean
+     */
+    public void render(SceneGraphRenderer sgr, ICamera camera, float t, int rw, int rh, FrameBuffer fb, PostProcessBean ppb);
 
+    /**
+     * Resizes the assets of this renderer to the given new size
+     * @param w New width
+     * @param h New height
+     */
     public void resize(final int w, final int h);
 
 }

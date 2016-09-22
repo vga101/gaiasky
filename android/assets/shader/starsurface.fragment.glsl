@@ -162,5 +162,5 @@ void main() {
 	
 	
 	vec3 color = vec3(total, total, total);
-    gl_FragColor = vec4(min(vec3(0.95), color * 6.0 * v_lightDiffuse * percolor), v_opacity);
+    gl_FragColor = vec4(min(vec3(0.9), color * 6.0 * v_lightDiffuse * percolor), v_opacity);
 }

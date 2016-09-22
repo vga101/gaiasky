@@ -52,7 +52,7 @@ void main()
 	 for (int li = 0; li < u_nLights; li++){
 	 	 float viewAngle = min(0.0001, u_lightViewAngles[li]);
 	 	 vec3 lightColor = u_lightColors[li];
-		 float a = viewAngle;
+		 float a = viewAngle * 1.5;
 		 
 		 // Archimedes's spiral (fx = a*t*cos(t), fy = a*t*sin(t)) sampling from 0 to 6*Pi
 		 float t = 0;
@@ -60,10 +60,11 @@ void main()
 		 
 		 float lum = 0.0;
 		 for(int idx = 1; idx < u_nSamples; idx++){
-		 	lum += (texture2D(u_texture0, u_lightPositions[li] + vec2(fx(t, a), fy(t, a)))).r;
+		 	lum += (texture2D(u_texture0, u_lightPositions[li] + vec2(fx(t, a) / ar, fy(t, a)))).r;
 		 	t += dt;
 		 }
-		 vec4 star_color = texture2D(u_texture0, u_lightPositions[li] + vec2(fx(t, a), fy(t, a)));
+		 
+		 vec4 star_color = texture2D(u_texture0, u_lightPositions[li] + vec2(fx(t, a) / ar, fy(t, a) * ar));
 		 lum += star_color.r;
 		 lum /= u_nSamples;
 
@@ -77,7 +78,6 @@ void main()
 		 
 		 float color_glow = clamp(average(texture2D(u_texture1, glow_tc)), 0.0, 1.0);
 		 float core_inc = (0.1 - min(0.1, dist_center)) * 2.0 * color_glow;
-		 
 		 gl_FragColor += vec4(color_glow * lightColor.r + core_inc, color_glow * lightColor.g + core_inc, color_glow * lightColor.b + core_inc, 1.0);
 	 }
 }

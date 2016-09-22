@@ -7,6 +7,11 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import gaia.cu9.ari.gaiaorbit.render.IPostProcessor.PostProcessBean;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 
+/**
+ * Abstract implementation with some useful methods for all SGRs.
+ * @author tsagrista
+ *
+ */
 public class SGRAbstract {
 
     protected RenderContext rc;

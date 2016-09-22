@@ -69,7 +69,7 @@ public class ScreenshotsManager implements IObserver {
                 break;
             case redraw:
                 GaiaSky.instance.resizeImmediate(GlobalConf.frame.RENDER_WIDTH, GlobalConf.frame.RENDER_HEIGHT);
-                renderToImage(mr, mr.getCameraManager(), mr.getPostProcessor().getPostProcessBean(RenderType.frame), GlobalConf.frame.RENDER_WIDTH, GlobalConf.frame.RENDER_HEIGHT, GlobalConf.frame.RENDER_FOLDER, GlobalConf.frame.RENDER_FILE_NAME, frameRenderer, ImageType.JPG);
+                renderToImage(mr, mr.getCameraManager(), mr.getT(), mr.getPostProcessor().getPostProcessBean(RenderType.frame), GlobalConf.frame.RENDER_WIDTH, GlobalConf.frame.RENDER_HEIGHT, GlobalConf.frame.RENDER_FOLDER, GlobalConf.frame.RENDER_FILE_NAME, frameRenderer, ImageType.JPG);
                 GaiaSky.instance.resizeImmediate(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
                 break;
             }
@@ -86,7 +86,7 @@ public class ScreenshotsManager implements IObserver {
                 break;
             case redraw:
                 GaiaSky.instance.resizeImmediate(screenshot.width, screenshot.height);
-                file = renderToImage(mr, mr.getCameraManager(), mr.getPostProcessor().getPostProcessBean(RenderType.screenshot), screenshot.width, screenshot.height, screenshot.folder, filename, screenshotRenderer, ImageType.PNG);
+                file = renderToImage(mr, mr.getCameraManager(), mr.getT(), mr.getPostProcessor().getPostProcessBean(RenderType.screenshot), screenshot.width, screenshot.height, screenshot.folder, filename, screenshotRenderer, ImageType.PNG);
                 GaiaSky.instance.resizeImmediate(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
                 break;
             }
@@ -115,7 +115,7 @@ public class ScreenshotsManager implements IObserver {
      *            the {@link IFileImageRenderer} to use.
      * @return
      */
-    public String renderToImage(IMainRenderer mr, ICamera camera, PostProcessBean ppb, int width, int height, String folder, String filename, IFileImageRenderer renderer, ImageType type) {
+    public String renderToImage(IMainRenderer mr, ICamera camera, float dt, PostProcessBean ppb, int width, int height, String folder, String filename, IFileImageRenderer renderer, ImageType type) {
         FrameBuffer frameBuffer = mr.getFrameBuffer(width, height);
         // TODO That's a dirty trick, we should find a better way (i.e. making
         // buildEnabledEffectsList() method public)
@@ -132,7 +132,7 @@ public class ScreenshotsManager implements IObserver {
         mr.preRenderScene();
         // sgr.render(camera, width, height, postprocessing ? m_fbo : null,
         // ppb);
-        mr.renderSgr(camera, width, height, frameBuffer, ppb);
+        mr.renderSgr(camera, dt, width, height, frameBuffer, ppb);
 
         if (postprocessing) {
             // If post processing is active, we have to start now again because

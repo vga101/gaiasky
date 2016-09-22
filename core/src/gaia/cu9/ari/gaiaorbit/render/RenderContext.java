@@ -1,9 +1,14 @@
 package gaia.cu9.ari.gaiaorbit.render;
 
-import gaia.cu9.ari.gaiaorbit.render.IPostProcessor.PostProcessBean;
-
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 
+import gaia.cu9.ari.gaiaorbit.render.IPostProcessor.PostProcessBean;
+
+/**
+ * Holds some context information useful when rendering.
+ * @author tsagrista
+ *
+ */
 public class RenderContext {
 
     /** The post process bean. It may have no effects enabled. **/

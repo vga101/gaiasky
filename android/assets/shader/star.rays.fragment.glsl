@@ -206,8 +206,8 @@ vec4 draw() {
 				
 		if(u_lightScattering == 1){
 			// Light scattering, simple star
-			float core = core(dist, u_inner_rad / 1.5);
-			return vec4(v_color.rgb + core, v_color.a * (light(dist, u_inner_rad, light_decay / 3.7) + core));
+			float core = core(dist, u_inner_rad);
+			return vec4(v_color.rgb + vec3(core * 10.0), (light(dist, u_inner_rad, light_decay / 3.7) + core));
 		} else {
 			// No light scattering, star rays
 			level = min(level, 1.0);
@@ -215,7 +215,7 @@ vec4 draw() {
 	        float light = light(dist, u_inner_rad, light_decay);
 	        float core = core(dist, u_inner_rad);
 	
-			return vec4(v_color.rgb + core, v_color.a * (corona * (1.0 - level) + light + core));
+			return vec4(v_color.rgb + core, (corona * (1.0 - level) + light + core));
 		}
 	} else {
 		// We are close to the star
@@ -227,7 +227,7 @@ vec4 draw() {
         float light = light(dist, u_inner_rad, light_decay);
         float core = core(dist, u_inner_rad);
 
-		return vec4(v_color.rgb + core, v_color.a * (corona * (1.0 - level_corona) + light + level * core));
+		return vec4(v_color.rgb + core, (corona * (1.0 - level_corona) + light + level * core));
 	}
 }
 

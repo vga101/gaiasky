@@ -106,7 +106,7 @@ public class Orbit extends LineObject {
     @Override
     protected void addToRenderLists(ICamera camera) {
         float angleLimit = ANGLE_LIMIT * camera.getFovFactor();
-        if (viewAngle > angleLimit) {
+        if (viewAngle > angleLimit && !name.contains("Gaia")) {
             if (viewAngle < angleLimit * SHADER_MODEL_OVERLAP_FACTOR) {
                 float alpha = MathUtilsd.lint(viewAngle, angleLimit, angleLimit * SHADER_MODEL_OVERLAP_FACTOR, 0, cc[3]);
                 this.alpha = alpha;
