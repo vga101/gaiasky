@@ -6,8 +6,12 @@ precision mediump int;
 #endif
 
 uniform float u_ar;
-
 varying vec4 v_col;
+
+float light(float distance_center, float decay) {
+    return 1.0 - pow(distance_center, decay);
+}
+
 void main() {
 	vec2 uv = vec2(gl_PointCoord.s, gl_PointCoord.t);
 	uv.y = uv.y / u_ar;

@@ -11,17 +11,23 @@ uniform float u_radius;
 uniform float u_apparent_angle;
 uniform float u_inner_rad;
 uniform float u_time;
+uniform float u_thpoint;
 // Distance in u to the star
 uniform float u_distance;
 // Whether light scattering is enabled or not
 uniform int u_lightScattering;
 
 
+// Time multiplier
 #define time u_time * 0.02
+
+// Constants as a factor of the radius
 #define model_const 172.4643429
-#define rays_const 15000.0
-#define corona_decay 0.25
-#define light_decay 0.15
+#define rays_const 30000.0
+
+// Decays
+#define corona_decay 0.2
+#define light_decay 0.08
 
 vec4 mod289(vec4 x) {
   return x - floor(x * (1.0 / 289.0)) * 289.0; }
@@ -165,7 +171,7 @@ float core(float distance_center, float inner_rad){
 	return core_glow + core;
 }
 
-float light(float distance_center, float inner_rad, float decay) {
+float light(float distance_center, float decay) {
     float light = 1.0 - pow(distance_center, decay);
     return clamp(light, 0.0, 0.97);
 }
@@ -203,16 +209,18 @@ vec4 draw() {
 	if(level >= 1.0){
 		// We are far away from the star
 		level = u_distance / (u_radius * rays_const);
+		float light_level = smoothstep(u_thpoint, u_thpoint * 1.4, u_apparent_angle);
 				
 		if(u_lightScattering == 1){
 			// Light scattering, simple star
 			float core = core(dist, u_inner_rad);
-			return vec4(v_color.rgb + vec3(core * 10.0), (light(dist, u_inner_rad, light_decay / 3.7) + core));
+			float light = light(dist, light_decay / 3.0) * light_level;
+			return vec4(v_color.rgb + vec3(core * 10.0), light + core);
 		} else {
 			// No light scattering, star rays
 			level = min(level, 1.0);
 			float corona = corona(dist, corona_decay, 0.0);
-	        float light = light(dist, u_inner_rad, light_decay);
+	        float light = light(dist, light_decay) * light_level;
 	        float core = core(dist, u_inner_rad);
 	
 			return vec4(v_color.rgb + core, (corona * (1.0 - level) + light + core));
@@ -224,7 +232,7 @@ vec4 draw() {
 		float level_corona = u_lightScattering * level;
         
         float corona = corona(dist, corona_decay, 0.5 - level / 2.0);
-        float light = light(dist, u_inner_rad, light_decay);
+        float light = light(dist, light_decay);
         float core = core(dist, u_inner_rad);
 
 		return vec4(v_color.rgb + core, (corona * (1.0 - level_corona) + light + level * core));

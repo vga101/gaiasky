@@ -127,8 +127,8 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
         shader.setUniformf("u_color", col[0], col[1], col[2], alpha * opacity);
         shader.setUniformf("u_inner_rad", getInnerRad());
         shader.setUniformf("u_distance", distToCamera);
-        shader.setUniformf("u_apparent_angle", viewAngle);
-        shader.setUniformf("u_th_angle_point", (float) THRESHOLD_POINT() * camera.getFovFactor());
+        shader.setUniformf("u_apparent_angle", viewAngleApparent);
+        shader.setUniformf("u_thpoint", (float) THRESHOLD_POINT() * camera.getFovFactor());
 
         // Whether light scattering is enabled or not
         shader.setUniformi("u_lightScattering", (this instanceof Star && PostProcessorFactory.instance.getPostProcessor().isLightScatterEnabled()) ? 1 : 0);
