@@ -206,8 +206,8 @@ vec4 draw() {
 				
 		if(u_lightScattering == 1){
 			// Light scattering, simple star
-			float core = core(dist, u_inner_rad);
-			return vec4(v_color.rgb + core, v_color.a * (light(dist, u_inner_rad, light_decay / 2.0) + core));
+			float core = core(dist, u_inner_rad / 1.5);
+			return vec4(v_color.rgb + core, v_color.a * (light(dist, u_inner_rad, light_decay / 3.7) + core));
 		} else {
 			// No light scattering, star rays
 			level = min(level, 1.0);
