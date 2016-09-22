@@ -1,7 +1,13 @@
 package gaia.cu9.ari.gaiaorbit.render;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
+import com.badlogic.gdx.graphics.Pixmap.Format;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
@@ -11,12 +17,16 @@ import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.render.IPostProcessor.PostProcessBean;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
+import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 
 public class SGRCubemap extends SGRAbstract implements ISGR {
 
     Vector3 aux1, aux2, aux3, dirbak, upbak;
 
     StretchViewport stretchViewport;
+
+    /** Frame buffers for 3D mode (screen, screenshot, frame output) **/
+    Map<Integer, FrameBuffer> fb3D;
 
     public SGRCubemap() {
         super();
@@ -26,11 +36,12 @@ public class SGRCubemap extends SGRAbstract implements ISGR {
         dirbak = new Vector3();
         upbak = new Vector3();
         stretchViewport = new StretchViewport(Gdx.graphics.getHeight(), Gdx.graphics.getHeight());
+
+        fb3D = new HashMap<Integer, FrameBuffer>();
     }
 
     @Override
     public void render(SceneGraphRenderer sgr, ICamera camera, int rw, int rh, FrameBuffer fb, PostProcessBean ppb) {
-        boolean postproc = postprocessCapture(ppb, fb, rw, rh);
 
         PerspectiveCamera cam = camera.getCamera();
 
@@ -43,6 +54,8 @@ public class SGRCubemap extends SGRAbstract implements ISGR {
         int sizew = rw / 4;
         int sizeh = rh / 3;
 
+        FrameBuffer fb3d = getFrameBuffer(sizew, sizeh);
+
         // FRONT
         Viewport viewport = stretchViewport;
         camera.setViewport(viewport);
@@ -51,7 +64,27 @@ public class SGRCubemap extends SGRAbstract implements ISGR {
         viewport.setScreenBounds(sizew, sizeh, sizew, sizeh);
         viewport.apply();
 
+        boolean postproc = postprocessCapture(ppb, fb3d, sizew, sizeh);
         sgr.renderScene(camera, rc);
+        postprocessRender(ppb, fb3d, postproc, camera);
+
+        Texture tex = fb3d.getColorBufferTexture();
+
+        float scaleX = 1f;
+        float scaleY = 1f;
+        if (fb != null) {
+            scaleX = (float) Gdx.graphics.getWidth() / (float) fb.getWidth();
+            scaleY = (float) Gdx.graphics.getHeight() / (float) fb.getHeight();
+            fb.begin();
+        }
+
+        GlobalResources.spriteBatch.begin();
+        GlobalResources.spriteBatch.setColor(1f, 1f, 1f, 1f);
+        GlobalResources.spriteBatch.draw(tex, sizew, sizeh, 0, 0, sizew, sizeh, scaleX, scaleY, 0, 0, 0, sizew, sizeh, false, true);
+        GlobalResources.spriteBatch.end();
+
+        if (fb != null)
+            fb.end();
 
         // UP
         viewport.setScreenBounds(sizew, sizeh * 2, sizew, sizeh);
@@ -64,7 +97,27 @@ public class SGRCubemap extends SGRAbstract implements ISGR {
         cam.up.rotate(aux1, 90);
         cam.update();
 
+        postproc = postprocessCapture(ppb, fb3d, sizew, sizeh);
         sgr.renderScene(camera, rc);
+        postprocessRender(ppb, fb3d, postproc, camera);
+
+        tex = fb3d.getColorBufferTexture();
+
+        scaleX = 1f;
+        scaleY = 1f;
+        if (fb != null) {
+            scaleX = (float) Gdx.graphics.getWidth() / (float) fb.getWidth();
+            scaleY = (float) Gdx.graphics.getHeight() / (float) fb.getHeight();
+            fb.begin();
+        }
+
+        GlobalResources.spriteBatch.begin();
+        GlobalResources.spriteBatch.setColor(1f, 1f, 1f, 1f);
+        GlobalResources.spriteBatch.draw(tex, sizew, sizeh * 2, 0, 0, sizew, sizeh, scaleX, scaleY, 0, 0, 0, sizew, sizeh, false, true);
+        GlobalResources.spriteBatch.end();
+
+        if (fb != null)
+            fb.end();
 
         // BOTTOM
         viewport.setScreenBounds(sizew, 0, sizew, sizeh);
@@ -77,7 +130,27 @@ public class SGRCubemap extends SGRAbstract implements ISGR {
         cam.up.set(upbak).rotate(aux1, -90);
         cam.update();
 
+        postproc = postprocessCapture(ppb, fb3d, sizew, sizeh);
         sgr.renderScene(camera, rc);
+        postprocessRender(ppb, fb3d, postproc, camera);
+
+        tex = fb3d.getColorBufferTexture();
+
+        scaleX = 1f;
+        scaleY = 1f;
+        if (fb != null) {
+            scaleX = (float) Gdx.graphics.getWidth() / (float) fb.getWidth();
+            scaleY = (float) Gdx.graphics.getHeight() / (float) fb.getHeight();
+            fb.begin();
+        }
+
+        GlobalResources.spriteBatch.begin();
+        GlobalResources.spriteBatch.setColor(1f, 1f, 1f, 1f);
+        GlobalResources.spriteBatch.draw(tex, sizew, 0, 0, 0, sizew, sizeh, scaleX, scaleY, 0, 0, 0, sizew, sizeh, false, true);
+        GlobalResources.spriteBatch.end();
+
+        if (fb != null)
+            fb.end();
 
         // LEFT
         viewport.setScreenBounds(0, sizeh, sizew, sizeh);
@@ -87,7 +160,27 @@ public class SGRCubemap extends SGRAbstract implements ISGR {
         cam.direction.set(dirbak).rotate(upbak, 90);
         cam.update();
 
+        postproc = postprocessCapture(ppb, fb3d, sizew, sizeh);
         sgr.renderScene(camera, rc);
+        postprocessRender(ppb, fb3d, postproc, camera);
+
+        tex = fb3d.getColorBufferTexture();
+
+        scaleX = 1f;
+        scaleY = 1f;
+        if (fb != null) {
+            scaleX = (float) Gdx.graphics.getWidth() / (float) fb.getWidth();
+            scaleY = (float) Gdx.graphics.getHeight() / (float) fb.getHeight();
+            fb.begin();
+        }
+
+        GlobalResources.spriteBatch.begin();
+        GlobalResources.spriteBatch.setColor(1f, 1f, 1f, 1f);
+        GlobalResources.spriteBatch.draw(tex, 0, sizeh, 0, 0, sizew, sizeh, scaleX, scaleY, 0, 0, 0, sizew, sizeh, false, true);
+        GlobalResources.spriteBatch.end();
+
+        if (fb != null)
+            fb.end();
 
         // RIGHT
         viewport.setScreenBounds(sizew * 2, sizeh, sizew, sizeh);
@@ -97,7 +190,27 @@ public class SGRCubemap extends SGRAbstract implements ISGR {
         cam.direction.set(dirbak).rotate(upbak, -90);
         cam.update();
 
+        postproc = postprocessCapture(ppb, fb3d, sizew, sizeh);
         sgr.renderScene(camera, rc);
+        postprocessRender(ppb, fb3d, postproc, camera);
+
+        tex = fb3d.getColorBufferTexture();
+
+        scaleX = 1f;
+        scaleY = 1f;
+        if (fb != null) {
+            scaleX = (float) Gdx.graphics.getWidth() / (float) fb.getWidth();
+            scaleY = (float) Gdx.graphics.getHeight() / (float) fb.getHeight();
+            fb.begin();
+        }
+
+        GlobalResources.spriteBatch.begin();
+        GlobalResources.spriteBatch.setColor(1f, 1f, 1f, 1f);
+        GlobalResources.spriteBatch.draw(tex, sizew * 2, sizeh, 0, 0, sizew, sizeh, scaleX, scaleY, 0, 0, 0, sizew, sizeh, false, true);
+        GlobalResources.spriteBatch.end();
+
+        if (fb != null)
+            fb.end();
 
         // BACK
         viewport.setScreenBounds(sizew * 3, sizeh, sizew, sizeh);
@@ -107,9 +220,27 @@ public class SGRCubemap extends SGRAbstract implements ISGR {
         cam.direction.set(dirbak).rotate(upbak, -180);
         cam.update();
 
+        postproc = postprocessCapture(ppb, fb3d, sizew, sizeh);
         sgr.renderScene(camera, rc);
+        postprocessRender(ppb, fb3d, postproc, camera);
 
-        postprocessRender(ppb, fb, postproc, camera);
+        tex = fb3d.getColorBufferTexture();
+
+        scaleX = 1f;
+        scaleY = 1f;
+        if (fb != null) {
+            scaleX = (float) Gdx.graphics.getWidth() / (float) fb.getWidth();
+            scaleY = (float) Gdx.graphics.getHeight() / (float) fb.getHeight();
+            fb.begin();
+        }
+
+        GlobalResources.spriteBatch.begin();
+        GlobalResources.spriteBatch.setColor(1f, 1f, 1f, 1f);
+        GlobalResources.spriteBatch.draw(tex, sizew * 3, sizeh, 0, 0, sizew, sizeh, scaleX, scaleY, 0, 0, 0, sizew, sizeh, false, true);
+        GlobalResources.spriteBatch.end();
+
+        if (fb != null)
+            fb.end();
 
         // Restore camera parameters
         cam.direction.set(dirbak);
@@ -119,6 +250,22 @@ public class SGRCubemap extends SGRAbstract implements ISGR {
 
     }
 
+    private int getKey(int w, int h, int extra) {
+        return w * 100 + h * 10 + extra;
+    }
+
+    private FrameBuffer getFrameBuffer(int w, int h) {
+        return getFrameBuffer(w, h, 0);
+    }
+
+    private FrameBuffer getFrameBuffer(int w, int h, int extra) {
+        int key = getKey(w, h, extra);
+        if (!fb3D.containsKey(key)) {
+            fb3D.put(key, new FrameBuffer(Format.RGB888, w, h, true));
+        }
+        return fb3D.get(key);
+    }
+
     @Override
     public void resize(int w, int h) {
 
@@ -126,6 +273,11 @@ public class SGRCubemap extends SGRAbstract implements ISGR {
 
     @Override
     public void dispose() {
+        Set<Integer> keySet = fb3D.keySet();
+        for (Integer key : keySet) {
+            FrameBuffer fb = fb3D.get(key);
+            fb.dispose();
+        }
     }
 
 }

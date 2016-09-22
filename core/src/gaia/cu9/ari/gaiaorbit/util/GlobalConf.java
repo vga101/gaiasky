@@ -442,7 +442,7 @@ public class GlobalConf {
         private IDateFormat df = DateFormatFactory.getFormatter("dd/MM/yyyy HH:mm:ss");
 
         public ProgramConf() {
-            EventManager.instance.subscribe(this, Events.TOGGLE_STEREOSCOPIC_CMD, Events.TOGGLE_STEREO_PROFILE_CMD);
+            EventManager.instance.subscribe(this, Events.TOGGLE_STEREOSCOPIC_CMD, Events.TOGGLE_STEREO_PROFILE_CMD, Events.CUBEMAP360_CMD);
         }
 
         public void initialize(boolean dISPLAY_TUTORIAL, String tUTORIAL_SCRIPT_LOCATION, boolean sHOW_CONFIG_DIALOG, boolean sHOW_DEBUG_INFO, Date lAST_CHECKED, String lAST_VERSION, String vERSION_CHECK_URL, String uI_THEME, String sCRIPT_LOCATION, String lOCALE, boolean sTEREOSCOPIC_MODE, StereoProfile sTEREO_PROFILE, boolean cUBEMAP360_MODE) {
@@ -495,6 +495,9 @@ public class GlobalConf {
                 StereoProfile[] vals = StereoProfile.values();
                 idx = (idx + 1) % vals.length;
                 STEREO_PROFILE = vals[idx];
+                break;
+            case CUBEMAP360_CMD:
+                CUBEMAP360_MODE = (Boolean) data[0];
                 break;
             }
         }
