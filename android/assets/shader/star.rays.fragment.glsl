@@ -1,3 +1,5 @@
+#version 120
+
 #ifdef GL_ES
 precision mediump float;
 precision mediump int;
@@ -231,9 +233,9 @@ vec4 draw() {
 		level = min(level, 1.0);
 		float level_corona = u_lightScattering * level;
         
-        float corona = corona(dist, corona_decay, 0.5 - level / 2.0);
-        float light = light(dist, light_decay);
-        float core = core(dist, u_inner_rad);
+        	float corona = corona(dist, corona_decay, 0.5 - level / 2.0);
+        	float light = light(dist, light_decay);
+        	float core = core(dist, u_inner_rad);
 
 		return vec4(v_color.rgb + core, (corona * (1.0 - level_corona) + light + level * core));
 	}
