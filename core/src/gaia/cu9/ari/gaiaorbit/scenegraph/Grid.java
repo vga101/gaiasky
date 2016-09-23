@@ -102,7 +102,7 @@ public class Grid extends AbstractPositionEntity implements IModelRenderable, IA
     @Override
     public void render(Object... params) {
         if (params[0] instanceof ModelBatch) {
-            render((ModelBatch) params[0], (Float) params[1]);
+            render((ModelBatch) params[0], (Float) params[1], (Float) params[2]);
         } else if (params[0] instanceof SpriteBatch) {
             render((SpriteBatch) params[0], (ICamera) params[1], (Float) params[2]);
         }
@@ -112,7 +112,7 @@ public class Grid extends AbstractPositionEntity implements IModelRenderable, IA
      * Model rendering.
      */
     @Override
-    public void render(ModelBatch modelBatch, float alpha) {
+    public void render(ModelBatch modelBatch, float alpha, float t) {
         Gdx.gl.glLineWidth(1f);
         mc.setTransparencyColor(alpha * cc[3] * opacity);
         modelBatch.render(mc.instance, mc.env);

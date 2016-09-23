@@ -51,7 +51,7 @@ public class FontRenderSystem extends AbstractRenderSystem {
     }
 
     @Override
-    public void renderStud(List<IRenderable> renderables, ICamera camera) {
+    public void renderStud(List<IRenderable> renderables, ICamera camera, float t) {
         Collections.sort(renderables, comp);
         batch.begin();
         int size = renderables.size();

@@ -105,7 +105,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
             render((SpriteBatch) first, (ShaderProgram) params[1], (BitmapFont) params[2], (BitmapFont) params[3], (ICamera) params[4]);
         } else if (first instanceof ModelBatch) {
             // Normal model
-            render((ModelBatch) first, (Float) params[1]);
+            render((ModelBatch) first, (Float) params[1], (Float) params[2]);
         }
     }
 

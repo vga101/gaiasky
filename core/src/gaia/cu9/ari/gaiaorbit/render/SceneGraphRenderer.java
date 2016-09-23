@@ -362,7 +362,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         for (int i = 0; i < size; i++) {
             IRenderSystem process = renderProcesses.get(i);
             List<IRenderable> l = render_lists.get(process.getRenderGroup()).toList();
-            process.render(l, camera, rc);
+            process.render(l, camera, t, rc);
         }
 
     }

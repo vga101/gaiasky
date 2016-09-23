@@ -13,7 +13,8 @@ public interface IAtmosphereRenderable extends IRenderable {
      * Renders the atmosphere.
      * @param modelBatch The model batch to use.
      * @param alpha The opacity.
+     * @param t The time in seconds since the start.
      * @param b Dummy parameter to differentiate this method from the IModelRenderable one.
      */
-    public void render(ModelBatch modelBatch, float alpha, byte b);
+    public void render(ModelBatch modelBatch, float alpha, float t, byte b);
 }

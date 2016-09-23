@@ -1,14 +1,14 @@
 package gaia.cu9.ari.gaiaorbit.render.system;
 
-import gaia.cu9.ari.gaiaorbit.render.IRenderable;
-import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
-import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
-import gaia.cu9.ari.gaiaorbit.util.comp.ModelComparator;
-
 import java.util.Collections;
 import java.util.List;
 
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
+
+import gaia.cu9.ari.gaiaorbit.render.IRenderable;
+import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
+import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
+import gaia.cu9.ari.gaiaorbit.util.comp.ModelComparator;
 
 /**
  * Renders with a given model batch.
@@ -35,7 +35,7 @@ public class ModelBatchRenderSystem extends AbstractRenderSystem {
     }
 
     @Override
-    public void renderStud(List<IRenderable> renderables, ICamera camera) {
+    public void renderStud(List<IRenderable> renderables, ICamera camera, float t) {
         Collections.sort(renderables, comp);
         if (mustRender()) {
             batch.begin(camera.getCamera());
@@ -43,9 +43,9 @@ public class ModelBatchRenderSystem extends AbstractRenderSystem {
             for (int i = 0; i < size; i++) {
                 IRenderable s = renderables.get(i);
                 if (!addByte) {
-                    s.render(batch, getAlpha(s));
+                    s.render(batch, getAlpha(s), t);
                 } else {
-                    s.render(batch, getAlpha(s), (byte) 1);
+                    s.render(batch, getAlpha(s), t, (byte) 1);
                 }
             }
             batch.end();

@@ -29,7 +29,6 @@ import gaia.cu9.ari.gaiaorbit.util.ModelCache;
 import gaia.cu9.ari.gaiaorbit.util.Pair;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
-import gaia.cu9.ari.gaiaorbit.util.time.TimeUtils;
 
 /**
  * Represents a star. The Gaia sourceid is put in the id attribute. Otherwise,
@@ -270,11 +269,11 @@ public class Star extends Particle {
     }
 
     @Override
-    public void render(ModelBatch modelBatch, float alpha) {
+    public void render(ModelBatch modelBatch, float alpha, float t) {
         mc.setTransparency(alpha * (float) MathUtilsd.lint(distToCamera, modelDistance / 50f, modelDistance, 1f, 0f));
         float[] col = GlobalConf.scene.STAR_COLOR_TRANSIT ? ccTransit : cc;
         ((ColorAttribute) mc.env.get(ColorAttribute.AmbientLight)).color.set(col[0], col[1], col[2], 1f);
-        ((FloatAttribute) mc.env.get(FloatAttribute.Shininess)).value = TimeUtils.getRunningTimeSecs();
+        ((FloatAttribute) mc.env.get(FloatAttribute.Shininess)).value = t;
         // Local transform
         mc.instance.transform.set(transform.getMatrix().valuesf()).scl(getRadius() * 2);
         modelBatch.render(mc.instance, mc.env);

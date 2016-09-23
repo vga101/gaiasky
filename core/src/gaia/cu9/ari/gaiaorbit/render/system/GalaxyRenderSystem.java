@@ -110,7 +110,7 @@ public class GalaxyRenderSystem extends ImmediateRenderSystem implements IObserv
     }
 
     @Override
-    public void renderStud(List<IRenderable> renderables, ICamera camera) {
+    public void renderStud(List<IRenderable> renderables, ICamera camera, float t) {
         int size = renderables.size();
         if (size > 0) {
             MilkyWayReal mw = (MilkyWayReal) renderables.get(0);

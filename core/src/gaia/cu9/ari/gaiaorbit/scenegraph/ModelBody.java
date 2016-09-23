@@ -116,7 +116,7 @@ public abstract class ModelBody extends CelestialBody {
     }
 
     @Override
-    public void render(ModelBatch modelBatch, float alpha) {
+    public void render(ModelBatch modelBatch, float alpha, float t) {
         mc.setTransparency(alpha * opacity);
         modelBatch.render(mc.instance, mc.env);
     }

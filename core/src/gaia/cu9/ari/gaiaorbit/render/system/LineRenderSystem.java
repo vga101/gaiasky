@@ -78,7 +78,7 @@ public class LineRenderSystem extends ImmediateRenderSystem {
     }
 
     @Override
-    public void renderStud(List<IRenderable> renderables, ICamera camera) {
+    public void renderStud(List<IRenderable> renderables, ICamera camera, float t) {
         this.camera = camera;
         int size = renderables.size();
         for (int i = 0; i < size; i++) {

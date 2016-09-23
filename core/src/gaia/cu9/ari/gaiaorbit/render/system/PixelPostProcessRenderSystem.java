@@ -22,6 +22,11 @@ import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf.ProgramConf.StereoProfile;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 
+/**
+ * @Deprecated Using only {@link PixelRenderSystem}
+ * @author tsagrista
+ *
+ */
 public abstract class PixelPostProcessRenderSystem extends PixelRenderSystem implements IObserver {
 
     Map<Integer, PostProcessor> ppmap;
@@ -51,7 +56,7 @@ public abstract class PixelPostProcessRenderSystem extends PixelRenderSystem imp
     }
 
     @Override
-    public void renderStud(List<IRenderable> renderables, ICamera camera) {
+    public void renderStud(List<IRenderable> renderables, ICamera camera, float t) {
         /** Render to image or render to screen? **/
         if (rc.fb == null) {
             /** Render to screen, use bloom **/
@@ -68,7 +73,7 @@ public abstract class PixelPostProcessRenderSystem extends PixelRenderSystem imp
             // Capture bloom
             pp.capture();
 
-            super.renderStud(renderables, camera);
+            super.renderStud(renderables, camera, t);
 
             // Render bloom to our frame buffer
             pp.render(our_fb);
@@ -115,7 +120,7 @@ public abstract class PixelPostProcessRenderSystem extends PixelRenderSystem imp
                 vp.apply();
         } else {
             /** Render to image, use regular render method **/
-            super.renderStud(renderables, camera);
+            super.renderStud(renderables, camera, t);
         }
 
     }

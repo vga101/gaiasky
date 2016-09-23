@@ -9,7 +9,7 @@ import com.badlogic.gdx.graphics.g3d.ModelBatch;
  */
 public interface IModelRenderable extends IRenderable {
 
-    public void render(ModelBatch modelBatch, float alpha);
+    public void render(ModelBatch modelBatch, float alpha, float t);
 
     public boolean hasAtmosphere();
 

@@ -20,7 +20,6 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.DecalUtils;
 import gaia.cu9.ari.gaiaorbit.util.comp.DistToCameraComparator;
-import gaia.cu9.ari.gaiaorbit.util.time.TimeUtils;
 
 public class QuadRenderSystem extends AbstractRenderSystem implements IObserver {
 
@@ -116,7 +115,7 @@ public class QuadRenderSystem extends AbstractRenderSystem implements IObserver 
     }
 
     @Override
-    public void renderStud(List<IRenderable> renderables, ICamera camera) {
+    public void renderStud(List<IRenderable> renderables, ICamera camera, float t) {
         Collections.sort(renderables, comp);
 
         // Calculate billobard rotation quaternion ONCE
@@ -130,7 +129,7 @@ public class QuadRenderSystem extends AbstractRenderSystem implements IObserver 
 
         if (!Constants.mobile) {
             // Global uniforms
-            shaderProgram.setUniformf("u_time", TimeUtils.getRunningTimeSecs());
+            shaderProgram.setUniformf("u_time", t);
         }
 
         int size = renderables.size();

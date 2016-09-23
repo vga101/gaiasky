@@ -282,7 +282,7 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
     }
 
     @Override
-    public void render(ModelBatch modelBatch, float alpha) {
+    public void render(ModelBatch modelBatch, float alpha, float t) {
         // Void
     }
 

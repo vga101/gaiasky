@@ -39,16 +39,16 @@ public abstract class AbstractRenderSystem implements IRenderSystem {
     }
 
     @Override
-    public void render(List<IRenderable> renderables, ICamera camera, RenderContext rc) {
+    public void render(List<IRenderable> renderables, ICamera camera, float t, RenderContext rc) {
         if (!renderables.isEmpty()) {
             this.rc = rc;
             run(preRunnable, renderables, camera);
-            renderStud(renderables, camera);
+            renderStud(renderables, camera, t);
             run(postRunnable, renderables, camera);
         }
     }
 
-    public abstract void renderStud(List<IRenderable> renderables, ICamera camera);
+    public abstract void renderStud(List<IRenderable> renderables, ICamera camera, float t);
 
     public void setPreRunnable(RenderSystemRunnable r) {
         preRunnable = r;
