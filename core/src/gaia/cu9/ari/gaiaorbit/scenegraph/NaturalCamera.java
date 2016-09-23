@@ -64,6 +64,10 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
     /** Previous angle in orientation lock **/
     double previousOrientationAngle = 0;
 
+    /** Thrust which keeps the camera going. Mainly for gamepads **/
+    private double thrust = 0;
+    private int thrustDirection = 0;
+
     /** Info about whether the previous state is saved **/
     protected boolean stateSaved = false;
 
@@ -515,6 +519,8 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
             stopForwardMovement();
         }
 
+        if (thrust != 0)
+            force.add(thrust).scl(thrustDirection);
         applyForce(force);
 
         if (!(force.isZero() && velocity == 0 && accel.isZero())) {
@@ -1045,6 +1051,11 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
     @Override
     public PerspectiveCamera getCameraStereoRight() {
         return camRight;
+    }
+
+    public void setThrust(double thrust, int direction) {
+        this.thrust = thrust;
+        this.thrustDirection = direction;
     }
 
 }
