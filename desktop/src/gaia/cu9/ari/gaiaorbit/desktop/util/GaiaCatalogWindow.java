@@ -63,7 +63,7 @@ public class GaiaCatalogWindow extends CollapsibleWindow {
     private Star st;
 
     public GaiaCatalogWindow(Stage stg, Skin skin) {
-        super(I18n.bundle.get("gui.data.catalog"), skin);
+        super(I18n.bundle.format("gui.data.catalog", "Gaia"), skin);
 
         this.stage = stg;
         this.linkStyle = skin.get("link", LabelStyle.class);
@@ -241,10 +241,12 @@ public class GaiaCatalogWindow extends CollapsibleWindow {
 
             if (st.catalogSource == 1) {
                 // GAIA
+                this.getTitleLabel().setText(I18n.bundle.format("gui.data.catalog", "Gaia"));
                 return new Pair<String[][], Integer>(getDataBySourceId(st.id), 1);
             } else if (st.catalogSource == 2 && st.hip > 0) {
                 // HIPPARCOS
                 // Get sourceId corresponding to HIP number
+                this.getTitleLabel().setText(I18n.bundle.format("gui.data.catalog", "Hipparcos"));
                 return new Pair<String[][], Integer>(getDataByHipId(st.hip), 1);
 
             }
