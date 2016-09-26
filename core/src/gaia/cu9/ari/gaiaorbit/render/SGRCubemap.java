@@ -8,7 +8,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.Pixmap.Format;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
@@ -83,64 +82,7 @@ public class SGRCubemap extends SGRAbstract implements ISGR {
 
         boolean postproc;
 
-        // FRONT +Z
-        cam.direction.set(dirbak);
-        cam.up.set(upbak);
-        cam.update();
-        postproc = postprocessCapture(ppb, zposfb, wh, wh);
-        sgr.renderScene(camera, t, rc);
-        postprocessRender(ppb, zposfb, postproc, camera);
-
-        Texture zpos = zposfb.getColorBufferTexture();
-
-        // UP +Y
-        cam.direction.set(dirbak);
-        cam.up.set(upbak);
-        aux1.set(cam.direction);
-        aux2.set(cam.up);
-        aux1.crs(aux2);
-        cam.direction.rotate(aux1, 90);
-        cam.up.rotate(aux1, 90);
-        cam.update();
-
-        postproc = postprocessCapture(ppb, yposfb, wh, wh);
-        sgr.renderScene(camera, t, rc);
-        postprocessRender(ppb, yposfb, postproc, camera);
-
-        Texture ypos = yposfb.getColorBufferTexture();
-
-        // BOTTOM -Y
-        cam.direction.set(dirbak);
-        cam.up.set(upbak);
-        aux1.set(dirbak);
-        aux2.set(upbak);
-        aux1.crs(aux2);
-        cam.direction.set(dirbak).rotate(aux1, -90);
-        cam.up.set(upbak).rotate(aux1, -90);
-        cam.update();
-
-        postproc = postprocessCapture(ppb, ynegfb, wh, wh);
-        sgr.renderScene(camera, t, rc);
-        postprocessRender(ppb, ynegfb, postproc, camera);
-
-        Texture yneg = ynegfb.getColorBufferTexture();
-
-        // LEFT -X
-        cam.direction.set(dirbak);
-        cam.up.set(upbak);
-        cam.up.set(upbak);
-        cam.direction.set(dirbak).rotate(upbak, 90);
-        cam.update();
-
-        postproc = postprocessCapture(ppb, xnegfb, wh, wh);
-        sgr.renderScene(camera, t, rc);
-        postprocessRender(ppb, xnegfb, postproc, camera);
-
-        Texture xneg = xnegfb.getColorBufferTexture();
-
         // RIGHT +X
-        cam.direction.set(dirbak);
-        cam.up.set(upbak);
         cam.up.set(upbak);
         cam.direction.set(dirbak).rotate(upbak, -90);
         cam.update();
@@ -149,11 +91,49 @@ public class SGRCubemap extends SGRAbstract implements ISGR {
         sgr.renderScene(camera, t, rc);
         postprocessRender(ppb, xposfb, postproc, camera);
 
-        Texture xpos = xposfb.getColorBufferTexture();
+        // LEFT -X
+        cam.up.set(upbak);
+        cam.direction.set(dirbak).rotate(upbak, 90);
+        cam.update();
 
-        // BACK -Z
+        postproc = postprocessCapture(ppb, xnegfb, wh, wh);
+        sgr.renderScene(camera, t, rc);
+        postprocessRender(ppb, xnegfb, postproc, camera);
+
+        // TOP +Y
+        aux1.set(dirbak);
+        aux2.set(upbak);
+        aux1.crs(aux2).scl(-1);
+        cam.direction.set(dirbak).rotate(aux1, 90);
+        cam.up.set(upbak).rotate(aux1, 90);
+        cam.update();
+
+        postproc = postprocessCapture(ppb, yposfb, wh, wh);
+        sgr.renderScene(camera, t, rc);
+        postprocessRender(ppb, yposfb, postproc, camera);
+
+        // BOTTOM -Y
+        aux1.set(dirbak);
+        aux2.set(upbak);
+        aux1.crs(aux2).scl(-1);
+        cam.direction.set(dirbak).rotate(aux1, -90);
+        cam.up.set(upbak).rotate(aux1, -90);
+        cam.update();
+
+        postproc = postprocessCapture(ppb, ynegfb, wh, wh);
+        sgr.renderScene(camera, t, rc);
+        postprocessRender(ppb, ynegfb, postproc, camera);
+
+        // FRONT +Z
         cam.direction.set(dirbak);
         cam.up.set(upbak);
+        cam.update();
+
+        postproc = postprocessCapture(ppb, zposfb, wh, wh);
+        sgr.renderScene(camera, t, rc);
+        postprocessRender(ppb, zposfb, postproc, camera);
+
+        // BACK -Z
         cam.up.set(upbak);
         cam.direction.set(dirbak).rotate(upbak, -180);
         cam.update();
@@ -162,15 +142,13 @@ public class SGRCubemap extends SGRAbstract implements ISGR {
         sgr.renderScene(camera, t, rc);
         postprocessRender(ppb, znegfb, postproc, camera);
 
-        Texture zneg = znegfb.getColorBufferTexture();
-
         // Restore camera parameters
         cam.direction.set(dirbak);
         cam.up.set(upbak);
 
         // Effect
-        cubemapEffect.setSides(xpos.getTextureData(), xneg.getTextureData(), ypos.getTextureData(), yneg.getTextureData(), zpos.getTextureData(), zneg.getTextureData());
-        cubemapEffect.render(znegfb, fb);
+        cubemapEffect.setSides(xposfb, xnegfb, yposfb, ynegfb, zposfb, znegfb);
+        cubemapEffect.render(mainfb, fb);
 
         if (fb != null)
             fb.end();
