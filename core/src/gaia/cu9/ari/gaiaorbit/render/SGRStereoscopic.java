@@ -143,7 +143,6 @@ public class SGRStereoscopic extends SGRAbstract implements ISGR, IObserver {
 
             // ensure default texture unit #0 is active
             Gdx.gl.glActiveTexture(GL20.GL_TEXTURE0);
-            Gdx.gl.glActiveTexture(GL20.GL_TEXTURE_CUBE_MAP);
         } else {
 
             boolean stretch = GlobalConf.program.STEREO_PROFILE == StereoProfile.HD_3DTV;

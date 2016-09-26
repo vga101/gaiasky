@@ -25,5 +25,5 @@ vec4 cubeToLatLon(samplerCube cubemap, vec2 inUV)
 void main( void ) 
 {
 	gl_FragColor = cubeToLatLon(u_cubemap, v_texCoords); 
-	gl_FragColor = texture2D(u_texture0, v_texCoords);
+	//gl_FragColor = texture2D(u_texture0, v_texCoords);
 }

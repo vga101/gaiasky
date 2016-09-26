@@ -177,7 +177,6 @@ public class SGRCubemap extends SGRAbstract implements ISGR {
 
         // ensure default texture unit #0 is active
         Gdx.gl.glActiveTexture(GL20.GL_TEXTURE0);
-        Gdx.gl.glActiveTexture(GL20.GL_TEXTURE_CUBE_MAP);
 
         EventManager.instance.post(Events.FOV_CHANGED_CMD, fovbak);
 
