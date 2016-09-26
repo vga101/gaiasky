@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Set;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
@@ -97,6 +98,8 @@ public class SGRStereoscopic extends SGRAbstract implements ISGR, IObserver {
             extendViewport.setScreenBounds(0, 0, rw, rh);
             extendViewport.apply();
 
+            FrameBuffer fbmain = getFrameBuffer(rw, rh, 0);
+
             /** LEFT EYE **/
             FrameBuffer fb1 = getFrameBuffer(rw, rh, 1);
             boolean postproc = postprocessCapture(ppb, fb1, rw, rh);
@@ -132,11 +135,14 @@ public class SGRStereoscopic extends SGRAbstract implements ISGR, IObserver {
             anaglyphic.setTextureLeft(texLeft);
             anaglyphic.setTextureRight(texRight);
 
-            if (fb != null)
-                anaglyphic.render(fb2, fb);
-            else
-                anaglyphic.render(fb2, null);
+            // Render 
+            anaglyphic.render(fbmain, fb);
 
+            if (fb != null)
+                fb.end();
+
+            // ensure default texture unit #0 is active
+            Gdx.gl.glActiveTexture(GL20.GL_TEXTURE0);
         } else {
 
             boolean stretch = GlobalConf.program.STEREO_PROFILE == StereoProfile.HD_3DTV;
