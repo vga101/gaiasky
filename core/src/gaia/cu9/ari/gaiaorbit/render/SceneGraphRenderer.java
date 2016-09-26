@@ -161,11 +161,11 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         /**
          * INITIALIZE SGRs
          */
-        sgrs = new ISGR[4];
+        sgrs = new ISGR[3];
         sgrs[SGR_DEFAULT_IDX] = new SGR();
         sgrs[SGR_STEREO_IDX] = new SGRStereoscopic();
         sgrs[SGR_FOV_IDX] = new SGRFov();
-        sgrs[SGR_CUBEMAP_IDX] = new SGRCubemap();
+        //sgrs[SGR_CUBEMAP_IDX] = new SGRCubemap();
         sgr = null;
 
         /**
@@ -479,7 +479,8 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
     public void dispose() {
         for (ISGR sgr : sgrs) {
-            sgr.dispose();
+            if (sgr != null)
+                sgr.dispose();
         }
     }
 

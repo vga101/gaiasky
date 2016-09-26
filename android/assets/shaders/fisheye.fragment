@@ -24,7 +24,8 @@
 
 uniform sampler2D u_texture0;
 varying vec2 v_texCoords;
-const float PI = 3.1415926535;
+
+#define PI 3.1415926535
  
 void main()
 {
