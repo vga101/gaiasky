@@ -39,7 +39,7 @@ public class CameraComponent extends GuiComponent implements IObserver {
     protected SelectBox<String> cameraMode, cameraSpeedLimit;
     protected Slider fieldOfView, cameraSpeed, turnSpeed, rotateSpeed;
     protected CheckBox focusLock, orientationLock;
-    protected OwnTextIconButton button3d, buttonDome, buttonAnaglyph, button3dtv, buttonVR, buttonCrosseye;
+    protected OwnTextIconButton button3d, buttonDome, buttonCubemap, buttonAnaglyph, button3dtv, buttonVR, buttonCrosseye;
     private float fovBackup;
     protected boolean fovFlag = true;
 
@@ -83,6 +83,7 @@ public class CameraComponent extends GuiComponent implements IObserver {
         List<Button> buttonList = new ArrayList<Button>();
         Image img3d = new Image(new Texture(Gdx.files.internal("img/3d.png")));
         Image imgDome = new Image(new Texture(Gdx.files.internal("img/dome.png")));
+        Image imgCubemap = new Image(new Texture(Gdx.files.internal("img/cubemap.png")));
         Image imgAnaglyph = new Image(new Texture(Gdx.files.internal("img/anaglyph.png")));
         Image img3dtv = new Image(new Texture(Gdx.files.internal("img/3dtv.png")));
         Image imgCrosseye = new Image(new Texture(Gdx.files.internal("img/crosseye.png")));
@@ -96,8 +97,6 @@ public class CameraComponent extends GuiComponent implements IObserver {
             public boolean handle(Event event) {
                 if (event instanceof ChangeEvent) {
                     EventManager.instance.post(Events.TOGGLE_STEREOSCOPIC_CMD, txt("notif.stereoscopic"), button3d.isChecked());
-                    EventManager.instance.post(Events.POST_NOTIFICATION, "You have entered 3D mode. Go back to normal mode using <CTRL+S>");
-                    EventManager.instance.post(Events.POST_NOTIFICATION, "Switch between stereoscopic modes using <CTRL+SHIFT+S>");
                     return true;
                 }
                 return false;
@@ -127,8 +126,23 @@ public class CameraComponent extends GuiComponent implements IObserver {
             }
         });
 
+        buttonCubemap = new OwnTextIconButton("", imgCubemap, skin, "toggle");
+        buttonCubemap.addListener(new TextTooltip(GlobalResources.capitalise(txt("element.360")), skin));
+        buttonCubemap.setName("cubemap");
+        buttonCubemap.addListener(new EventListener() {
+            @Override
+            public boolean handle(Event event) {
+                if (event instanceof ChangeEvent) {
+                    EventManager.instance.post(Events.CUBEMAP360_CMD, buttonCubemap.isChecked());
+                    return true;
+                }
+                return false;
+            }
+        });
+
         buttonList.add(button3d);
         buttonList.add(buttonDome);
+        buttonList.add(buttonCubemap);
 
         for (Button b : buttonList)
             b.setSize(Math.round(35 * GlobalConf.SCALE_FACTOR), Math.round(32 * GlobalConf.SCALE_FACTOR));
@@ -279,6 +293,7 @@ public class CameraComponent extends GuiComponent implements IObserver {
         buttonGroup.space(space3);
         buttonGroup.addActor(button3d);
         buttonGroup.addActor(buttonDome);
+        buttonGroup.addActor(buttonCubemap);
 
         HorizontalGroup fovGroup = new HorizontalGroup();
         fovGroup.space(space3);

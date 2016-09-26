@@ -18,6 +18,7 @@ import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.render.IPostProcessor.PostProcessBean;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 
 /**
  * Renders the cube map 360 degree mode. Basically, it renders the six sides of the cube map 
@@ -65,7 +66,7 @@ public class SGRCubemap extends SGRAbstract implements ISGR {
         FrameBuffer mainfb = getFrameBuffer(rw, rh);
 
         // The sides of the cubemap must be square. We use the max of our resolution
-        int wh = 400;
+        int wh = GlobalConf.scene.CUBEMAP_FACE_RESOLUTION;
         FrameBuffer zposfb = getFrameBuffer(wh, wh, 0);
         FrameBuffer znegfb = getFrameBuffer(wh, wh, 1);
         FrameBuffer xposfb = getFrameBuffer(wh, wh, 2);

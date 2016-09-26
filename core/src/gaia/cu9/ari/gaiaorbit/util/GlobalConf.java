@@ -439,6 +439,8 @@ public class GlobalConf {
         /** This controls the side of the images in the stereoscopic mode **/
         public StereoProfile STEREO_PROFILE = StereoProfile.VR_HEADSET;
 
+        private Boolean lensglowBackup = null;
+
         private IDateFormat df = DateFormatFactory.getFormatter("dd/MM/yyyy HH:mm:ss");
 
         public ProgramConf() {
@@ -488,6 +490,9 @@ public class GlobalConf {
                     // Enable/disable gui
                     EventManager.instance.post(Events.DISPLAY_GUI_CMD, I18n.bundle.get("notif.cleanmode"), !STEREOSCOPIC_MODE);
                     EventManager.instance.post(Events.TOGGLE_STEREOSCOPIC_INFO, STEREOSCOPIC_MODE);
+
+                    EventManager.instance.post(Events.POST_NOTIFICATION, "You have entered 3D mode. Go back to normal mode using <CTRL+S>");
+                    EventManager.instance.post(Events.POST_NOTIFICATION, "Switch between stereoscopic modes using <CTRL+SHIFT+S>");
                 }
                 break;
             case TOGGLE_STEREO_PROFILE_CMD:
@@ -498,6 +503,18 @@ public class GlobalConf {
                 break;
             case CUBEMAP360_CMD:
                 CUBEMAP360_MODE = (Boolean) data[0];
+                EventManager.instance.post(Events.DISPLAY_GUI_CMD, I18n.bundle.get("notif.cleanmode"), !CUBEMAP360_MODE);
+
+                if (CUBEMAP360_MODE) {
+                    // Entering 360 mode
+                    lensglowBackup = GlobalConf.postprocess.POSTPROCESS_LIGHT_SCATTERING;
+                    EventManager.instance.post(Events.LIGHT_SCATTERING_CMD, false);
+                } else {
+                    // Exiting 360 mode
+                    if (lensglowBackup != null)
+                        EventManager.instance.post(Events.LIGHT_SCATTERING_CMD, lensglowBackup);
+                }
+                EventManager.instance.post(Events.POST_NOTIFICATION, "You have entered the 360 mode.  Go back to normal mode using <CTRL+3>");
                 break;
             }
         }
@@ -596,6 +613,11 @@ public class GlobalConf {
         /** The graphics quality mode: 0 - high, 1 - normal, 2 - low **/
         public int GRAPHICS_QUALITY;
 
+        /** Resolution of each of the faces in the cubemap which will be mapped to a equirectangular projection for 
+         * the 360 mode.
+         */
+        public int CUBEMAP_FACE_RESOLUTION;
+
         public double STAR_THRESHOLD_NONE;
         public double STAR_THRESHOLD_POINT;
         public double STAR_THRESHOLD_QUAD;
@@ -630,7 +652,7 @@ public class GlobalConf {
         }
 
         public void initialize(int gRAPHICS_QUALITY, long oBJECT_FADE_MS, float sTAR_BRIGHTNESS, float aMBIENT_LIGHT, int cAMERA_FOV, float cAMERA_SPEED, float tURNING_SPEED, float rOTATION_SPEED, int cAMERA_SPEED_LIMIT_IDX, boolean fOCUS_LOCK, boolean fOCUS_LOCK_ORIENTATION, float lABEL_NUMBER_FACTOR, boolean[] vISIBILITY, int pIXEL_RENDERER, int lINE_RENDERER, double sTAR_TH_ANGLE_NONE, double sTAR_TH_ANGLE_POINT, double sTAR_TH_ANGLE_QUAD, float pOINT_ALPHA_MIN, float pOINT_ALPHA_MAX,
-                boolean oCTREE_PARTICLE_FADE, float oCTANT_TH_ANGLE_0, float oCTANT_TH_ANGLE_1, boolean pROPER_MOTION_VECTORS, float pM_NUM_FACTOR, float pM_LEN_FACTOR, float sTAR_POINT_SIZE, boolean gALAXY_3D) {
+                boolean oCTREE_PARTICLE_FADE, float oCTANT_TH_ANGLE_0, float oCTANT_TH_ANGLE_1, boolean pROPER_MOTION_VECTORS, float pM_NUM_FACTOR, float pM_LEN_FACTOR, float sTAR_POINT_SIZE, boolean gALAXY_3D, int cUBEMAP_FACE_RESOLUTION) {
             GRAPHICS_QUALITY = gRAPHICS_QUALITY;
             OBJECT_FADE_MS = oBJECT_FADE_MS;
             STAR_BRIGHTNESS = sTAR_BRIGHTNESS;
@@ -661,6 +683,7 @@ public class GlobalConf {
             STAR_POINT_SIZE = sTAR_POINT_SIZE;
             STAR_POINT_SIZE_BAK = STAR_POINT_SIZE;
             GALAXY_3D = gALAXY_3D;
+            CUBEMAP_FACE_RESOLUTION = cUBEMAP_FACE_RESOLUTION;
         }
 
         public void updateSpeedLimit() {

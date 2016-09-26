@@ -793,7 +793,6 @@ public class ConfigDialog extends I18nJFrame {
          * ====== CAMERA RECORDING TAB =======
          */
 
-        /** IMAGE OUTPUT CONFIG **/
         JPanel cameraRec = new JPanel(new MigLayout("", "[grow,fill][grow,fill]", ""));
         cameraRec.setBorder(new TitledBorder(new MatteBorder(new Insets(thick, 0, 0, 0), bcol), txt("gui.camerarec"), just, pos));
 
@@ -808,6 +807,36 @@ public class ConfigDialog extends I18nJFrame {
 
         tabbedPane.addTab(txt("gui.camerarec.title"), IconManager.get("config/camera"), cameraRecPanel);
         tabbedPane.setMnemonicAt(6, KeyEvent.VK_7);
+
+        /**
+         * ====== 360 MODE =======
+         */
+
+        JTextArea mode360Info = new JTextArea(txt("gui.360.info")) {
+            @Override
+            public void setBorder(Border border) {
+                // No!
+            }
+        };
+        mode360Info.setEditable(false);
+        mode360Info.setBackground(transparent);
+        mode360Info.setForeground(darkgreen);
+
+        JPanel mode360 = new JPanel(new MigLayout("", "[grow,fill][grow,fill]", ""));
+        mode360.setBorder(new TitledBorder(new MatteBorder(new Insets(thick, 0, 0, 0), bcol), txt("gui.360"), just, pos));
+
+        // CUBEMAP RESOLUTION
+        final JSpinner cubemapResolution = new JSpinner(new SpinnerNumberModel(GlobalConf.scene.CUBEMAP_FACE_RESOLUTION, 20, 15000, 1));
+
+        mode360.add(mode360Info, "span");
+        mode360.add(new JLabel(txt("gui.360.resolution") + ":"));
+        mode360.add(cubemapResolution, "span");
+
+        JPanel mode360Panel = new JPanel(new MigLayout("", "[grow,fill]", ""));
+        mode360Panel.add(mode360, "wrap");
+
+        tabbedPane.addTab(txt("gui.360.title"), IconManager.get("config/360"), mode360Panel);
+        tabbedPane.setMnemonicAt(7, KeyEvent.VK_8);
 
         /**
          * ====== DATA TAB =======
@@ -834,7 +863,7 @@ public class ConfigDialog extends I18nJFrame {
         dataPanel.add(datasource, "wrap");
 
         tabbedPane.addTab(txt("gui.data"), IconManager.get("config/data"), dataPanel);
-        tabbedPane.setMnemonicAt(7, KeyEvent.VK_8);
+        tabbedPane.setMnemonicAt(8, KeyEvent.VK_9);
 
         /**
          * ====== GAIA TAB =======
@@ -872,7 +901,6 @@ public class ConfigDialog extends I18nJFrame {
         gaiaPanel.add(gaia, "wrap");
 
         tabbedPane.addTab(txt("gui.gaia"), IconManager.get("config/gaia"), gaiaPanel);
-        tabbedPane.setMnemonicAt(8, KeyEvent.VK_9);
 
         /** SHOW AGAIN? **/
 
@@ -979,6 +1007,9 @@ public class ConfigDialog extends I18nJFrame {
 
                     // Camera recording
                     GlobalConf.frame.CAMERA_REC_TARGET_FPS = (Integer) targetFPScamera.getValue();
+
+                    // Cube map resolution
+                    GlobalConf.scene.CUBEMAP_FACE_RESOLUTION = (Integer) cubemapResolution.getValue();
 
                     // Save configuration
                     ConfInit.instance.persistGlobalConf(new File(System.getProperty("properties.file")));
