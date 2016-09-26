@@ -479,7 +479,8 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
     public void dispose() {
         for (ISGR sgr : sgrs) {
-            sgr.dispose();
+            if (sgr != null)
+                sgr.dispose();
         }
     }
 

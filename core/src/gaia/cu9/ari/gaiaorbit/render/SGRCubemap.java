@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Set;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
@@ -12,12 +13,12 @@ import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.bitfire.postprocessing.effects.CubemapEquirectangular;
 
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.render.IPostProcessor.PostProcessBean;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
-import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 
 /**
  * Renders the cube map 360 degree mode. Basically, it renders the six sides of the cube map 
@@ -32,6 +33,8 @@ public class SGRCubemap extends SGRAbstract implements ISGR {
 
     StretchViewport stretchViewport;
 
+    CubemapEquirectangular cubemapEffect;
+
     /** Frame buffers for 3D mode (screen, screenshot, frame output) **/
     Map<Integer, FrameBuffer> fb3D;
 
@@ -45,6 +48,8 @@ public class SGRCubemap extends SGRAbstract implements ISGR {
         stretchViewport = new StretchViewport(Gdx.graphics.getHeight(), Gdx.graphics.getHeight());
 
         fb3D = new HashMap<Integer, FrameBuffer>();
+
+        cubemapEffect = new CubemapEquirectangular();
     }
 
     @Override
@@ -58,45 +63,39 @@ public class SGRCubemap extends SGRAbstract implements ISGR {
 
         EventManager.instance.post(Events.FOV_CHANGED_CMD, 90f);
 
-        int sizew = rw / 4;
-        int sizeh = rh / 3;
+        FrameBuffer mainfb = getFrameBuffer(rw, rh);
 
-        FrameBuffer fb3d = getFrameBuffer(sizew, sizeh);
+        // The sides of the cubemap must be square. We use the max of our resolution
+        int wh = 400;
+        FrameBuffer zposfb = getFrameBuffer(wh, wh, 0);
+        FrameBuffer znegfb = getFrameBuffer(wh, wh, 1);
+        FrameBuffer xposfb = getFrameBuffer(wh, wh, 2);
+        FrameBuffer xnegfb = getFrameBuffer(wh, wh, 3);
+        FrameBuffer yposfb = getFrameBuffer(wh, wh, 4);
+        FrameBuffer ynegfb = getFrameBuffer(wh, wh, 5);
 
-        // FRONT
         Viewport viewport = stretchViewport;
         camera.setViewport(viewport);
         viewport.setCamera(cam);
-        viewport.setWorldSize(sizeh, sizeh);
-        viewport.setScreenBounds(sizew, sizeh, sizew, sizeh);
+        viewport.setWorldSize(wh, wh);
+        viewport.setScreenBounds(0, 0, wh, wh);
         viewport.apply();
 
-        boolean postproc = postprocessCapture(ppb, fb3d, sizew, sizeh);
+        boolean postproc;
+
+        // FRONT +Z
+        cam.direction.set(dirbak);
+        cam.up.set(upbak);
+        cam.update();
+        postproc = postprocessCapture(ppb, zposfb, wh, wh);
         sgr.renderScene(camera, t, rc);
-        postprocessRender(ppb, fb3d, postproc, camera);
+        postprocessRender(ppb, zposfb, postproc, camera);
 
-        Texture tex = fb3d.getColorBufferTexture();
+        Texture zpos = zposfb.getColorBufferTexture();
 
-        float scaleX = 1f;
-        float scaleY = 1f;
-        if (fb != null) {
-            scaleX = (float) Gdx.graphics.getWidth() / (float) fb.getWidth();
-            scaleY = (float) Gdx.graphics.getHeight() / (float) fb.getHeight();
-            fb.begin();
-        }
-
-        GlobalResources.spriteBatch.begin();
-        GlobalResources.spriteBatch.setColor(1f, 1f, 1f, 1f);
-        GlobalResources.spriteBatch.draw(tex, sizew, sizeh, 0, 0, sizew, sizeh, scaleX, scaleY, 0, 0, 0, sizew, sizeh, false, true);
-        GlobalResources.spriteBatch.end();
-
-        if (fb != null)
-            fb.end();
-
-        // UP
-        viewport.setScreenBounds(sizew, sizeh * 2, sizew, sizeh);
-        viewport.apply();
-
+        // UP +Y
+        cam.direction.set(dirbak);
+        cam.up.set(upbak);
         aux1.set(cam.direction);
         aux2.set(cam.up);
         aux1.crs(aux2);
@@ -104,32 +103,15 @@ public class SGRCubemap extends SGRAbstract implements ISGR {
         cam.up.rotate(aux1, 90);
         cam.update();
 
-        postproc = postprocessCapture(ppb, fb3d, sizew, sizeh);
+        postproc = postprocessCapture(ppb, yposfb, wh, wh);
         sgr.renderScene(camera, t, rc);
-        postprocessRender(ppb, fb3d, postproc, camera);
+        postprocessRender(ppb, yposfb, postproc, camera);
 
-        tex = fb3d.getColorBufferTexture();
+        Texture ypos = yposfb.getColorBufferTexture();
 
-        scaleX = 1f;
-        scaleY = 1f;
-        if (fb != null) {
-            scaleX = (float) Gdx.graphics.getWidth() / (float) fb.getWidth();
-            scaleY = (float) Gdx.graphics.getHeight() / (float) fb.getHeight();
-            fb.begin();
-        }
-
-        GlobalResources.spriteBatch.begin();
-        GlobalResources.spriteBatch.setColor(1f, 1f, 1f, 1f);
-        GlobalResources.spriteBatch.draw(tex, sizew, sizeh * 2, 0, 0, sizew, sizeh, scaleX, scaleY, 0, 0, 0, sizew, sizeh, false, true);
-        GlobalResources.spriteBatch.end();
-
-        if (fb != null)
-            fb.end();
-
-        // BOTTOM
-        viewport.setScreenBounds(sizew, 0, sizew, sizeh);
-        viewport.apply();
-
+        // BOTTOM -Y
+        cam.direction.set(dirbak);
+        cam.up.set(upbak);
         aux1.set(dirbak);
         aux2.set(upbak);
         aux1.crs(aux2);
@@ -137,121 +119,64 @@ public class SGRCubemap extends SGRAbstract implements ISGR {
         cam.up.set(upbak).rotate(aux1, -90);
         cam.update();
 
-        postproc = postprocessCapture(ppb, fb3d, sizew, sizeh);
+        postproc = postprocessCapture(ppb, ynegfb, wh, wh);
         sgr.renderScene(camera, t, rc);
-        postprocessRender(ppb, fb3d, postproc, camera);
+        postprocessRender(ppb, ynegfb, postproc, camera);
 
-        tex = fb3d.getColorBufferTexture();
+        Texture yneg = ynegfb.getColorBufferTexture();
 
-        scaleX = 1f;
-        scaleY = 1f;
-        if (fb != null) {
-            scaleX = (float) Gdx.graphics.getWidth() / (float) fb.getWidth();
-            scaleY = (float) Gdx.graphics.getHeight() / (float) fb.getHeight();
-            fb.begin();
-        }
-
-        GlobalResources.spriteBatch.begin();
-        GlobalResources.spriteBatch.setColor(1f, 1f, 1f, 1f);
-        GlobalResources.spriteBatch.draw(tex, sizew, 0, 0, 0, sizew, sizeh, scaleX, scaleY, 0, 0, 0, sizew, sizeh, false, true);
-        GlobalResources.spriteBatch.end();
-
-        if (fb != null)
-            fb.end();
-
-        // LEFT
-        viewport.setScreenBounds(0, sizeh, sizew, sizeh);
-        viewport.apply();
-
+        // LEFT -X
+        cam.direction.set(dirbak);
+        cam.up.set(upbak);
         cam.up.set(upbak);
         cam.direction.set(dirbak).rotate(upbak, 90);
         cam.update();
 
-        postproc = postprocessCapture(ppb, fb3d, sizew, sizeh);
+        postproc = postprocessCapture(ppb, xnegfb, wh, wh);
         sgr.renderScene(camera, t, rc);
-        postprocessRender(ppb, fb3d, postproc, camera);
+        postprocessRender(ppb, xnegfb, postproc, camera);
 
-        tex = fb3d.getColorBufferTexture();
+        Texture xneg = xnegfb.getColorBufferTexture();
 
-        scaleX = 1f;
-        scaleY = 1f;
-        if (fb != null) {
-            scaleX = (float) Gdx.graphics.getWidth() / (float) fb.getWidth();
-            scaleY = (float) Gdx.graphics.getHeight() / (float) fb.getHeight();
-            fb.begin();
-        }
-
-        GlobalResources.spriteBatch.begin();
-        GlobalResources.spriteBatch.setColor(1f, 1f, 1f, 1f);
-        GlobalResources.spriteBatch.draw(tex, 0, sizeh, 0, 0, sizew, sizeh, scaleX, scaleY, 0, 0, 0, sizew, sizeh, false, true);
-        GlobalResources.spriteBatch.end();
-
-        if (fb != null)
-            fb.end();
-
-        // RIGHT
-        viewport.setScreenBounds(sizew * 2, sizeh, sizew, sizeh);
-        viewport.apply();
-
+        // RIGHT +X
+        cam.direction.set(dirbak);
+        cam.up.set(upbak);
         cam.up.set(upbak);
         cam.direction.set(dirbak).rotate(upbak, -90);
         cam.update();
 
-        postproc = postprocessCapture(ppb, fb3d, sizew, sizeh);
+        postproc = postprocessCapture(ppb, xposfb, wh, wh);
         sgr.renderScene(camera, t, rc);
-        postprocessRender(ppb, fb3d, postproc, camera);
+        postprocessRender(ppb, xposfb, postproc, camera);
 
-        tex = fb3d.getColorBufferTexture();
+        Texture xpos = xposfb.getColorBufferTexture();
 
-        scaleX = 1f;
-        scaleY = 1f;
-        if (fb != null) {
-            scaleX = (float) Gdx.graphics.getWidth() / (float) fb.getWidth();
-            scaleY = (float) Gdx.graphics.getHeight() / (float) fb.getHeight();
-            fb.begin();
-        }
-
-        GlobalResources.spriteBatch.begin();
-        GlobalResources.spriteBatch.setColor(1f, 1f, 1f, 1f);
-        GlobalResources.spriteBatch.draw(tex, sizew * 2, sizeh, 0, 0, sizew, sizeh, scaleX, scaleY, 0, 0, 0, sizew, sizeh, false, true);
-        GlobalResources.spriteBatch.end();
-
-        if (fb != null)
-            fb.end();
-
-        // BACK
-        viewport.setScreenBounds(sizew * 3, sizeh, sizew, sizeh);
-        viewport.apply();
-
+        // BACK -Z
+        cam.direction.set(dirbak);
+        cam.up.set(upbak);
         cam.up.set(upbak);
         cam.direction.set(dirbak).rotate(upbak, -180);
         cam.update();
 
-        postproc = postprocessCapture(ppb, fb3d, sizew, sizeh);
+        postproc = postprocessCapture(ppb, znegfb, wh, wh);
         sgr.renderScene(camera, t, rc);
-        postprocessRender(ppb, fb3d, postproc, camera);
+        postprocessRender(ppb, znegfb, postproc, camera);
 
-        tex = fb3d.getColorBufferTexture();
-
-        scaleX = 1f;
-        scaleY = 1f;
-        if (fb != null) {
-            scaleX = (float) Gdx.graphics.getWidth() / (float) fb.getWidth();
-            scaleY = (float) Gdx.graphics.getHeight() / (float) fb.getHeight();
-            fb.begin();
-        }
-
-        GlobalResources.spriteBatch.begin();
-        GlobalResources.spriteBatch.setColor(1f, 1f, 1f, 1f);
-        GlobalResources.spriteBatch.draw(tex, sizew * 3, sizeh, 0, 0, sizew, sizeh, scaleX, scaleY, 0, 0, 0, sizew, sizeh, false, true);
-        GlobalResources.spriteBatch.end();
-
-        if (fb != null)
-            fb.end();
+        Texture zneg = znegfb.getColorBufferTexture();
 
         // Restore camera parameters
         cam.direction.set(dirbak);
         cam.up.set(upbak);
+
+        // Effect
+        cubemapEffect.setSides(xpos.getTextureData(), xneg.getTextureData(), ypos.getTextureData(), yneg.getTextureData(), zpos.getTextureData(), zneg.getTextureData());
+        cubemapEffect.render(znegfb, fb);
+
+        if (fb != null)
+            fb.end();
+
+        // ensure default texture unit #0 is active
+        Gdx.gl.glActiveTexture(GL20.GL_TEXTURE0);
 
         EventManager.instance.post(Events.FOV_CHANGED_CMD, fovbak);
 
