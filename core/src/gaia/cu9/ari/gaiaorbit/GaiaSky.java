@@ -333,7 +333,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         }
 
         // Hide interface if stereoscopic is on
-        if (GlobalConf.program.STEREOSCOPIC_MODE) {
+        if (GlobalConf.program.STEREOSCOPIC_MODE || GlobalConf.program.CUBEMAP360_MODE) {
             EventManager.instance.post(Events.DISPLAY_GUI_CMD, I18n.bundle.get("notif.cleanmode"), false);
         }
 
