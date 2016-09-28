@@ -75,6 +75,9 @@ public class ModelComponent implements Disposable {
             dlight = new DirectionalLight();
             dlight.color.set(1f, 1f, 1f, 0f);
             env.add(dlight);
+
+            // Control amount of specularity
+            env.set(new ColorAttribute(ColorAttribute.Specular, 0.5f, 0.5f, 0.5f, 1f));
         }
     }
 

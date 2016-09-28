@@ -242,24 +242,25 @@ https://github.com/ari-zah/gaiasky
 The author would like to acknowledge the following people, or the
 people behind the following technologies/resources:
 
-- The [DLR](http://www.dlr.de/) for financing this project
-- The [BWT](http://www.bmwi.de/), Bundesministerium für Wirtschaft und Technologie, also supporting this project
-- My institution, [ARI](http://www.ari.uni-heidelberg.de)/[ZAH](http://www.zah.uni-heidelberg.de/)
-- Dr. Martin Altmann for providing the Gaia orbit data
-- [Libgdx](http://libgdx.badlogicgames.com)
-- [libgdx-contribs-postprocessing](https://github.com/manuelbua/libgdx-contribs/tree/master/postprocessing)
-- [HYG catalog](http://www.astronexus.com/hyg)
-- [PgsLookAndFeel](http://www.pagosoft.com/projects/pgslookandfeel/)
-- Mark Taylor's [STIL](http://www.star.bristol.ac.uk/~mbt/stil/) library
-- The [Jython Project](http://www.jython.org/)
-- [ernieyu](https://github.com/ernieyu/) for the Java Swing [range slider](https://github.com/ernieyu/Swing-range-slider)
-- Nick Risinger for the artist's conception of the Milky Way
+- The [DLR](http://www.dlr.de/) for financing this project.
+- The [BWT](http://www.bmwi.de/), Bundesministerium für Wirtschaft und Technologie, also supporting this project.
+- My institution, [ARI](http://www.ari.uni-heidelberg.de)/[ZAH](http://www.zah.uni-heidelberg.de/).
+- Dr. Martin Altmann for providing the Gaia orbit data.
+- [Libgdx](http://libgdx.badlogicgames.com).
+- [libgdx-contribs-postprocessing](https://github.com/manuelbua/libgdx-contribs/tree/master/postprocessing).
+- [HYG catalog](http://www.astronexus.com/hyg).
+- [PgsLookAndFeel](http://www.pagosoft.com/projects/pgslookandfeel/).
+- Mark Taylor's [STIL](http://www.star.bristol.ac.uk/~mbt/stil/) library.
+- The [Jython Project](http://www.jython.org/).
+- [ernieyu](https://github.com/ernieyu/) for the Java Swing [range slider](https://github.com/ernieyu/Swing-range-slider).
+- Nick Risinger for the artist's conception of the Milky Way.
 - Andreas Ressl and Georg Hammershmid for the star glow texture.
-- Tom Patterson ([www.shadedrelief.com]()) for some textures
+- Tom Patterson ([www.shadedrelief.com]()) for some textures.
+- [Solar System Scope](http://www.solarsystemscope.com/) for some textures (Mercury, Venus, Earth, Moon).
 - Phil Stooke and Grant Hutchison ([http://www.classe.cornell.edu/~seb/celestia/hutchison/index-125.html]()) for some of the textures.
 - Machuca+Arias+Caballero for the music track "Gaia-DR1".
-- [Install4j](http://www.ej-technologies.com/products/install4j/overview.html) (multi-platform installer builder), for providing a free open source license
+- [Install4j](http://www.ej-technologies.com/products/install4j/overview.html) (multi-platform installer builder), for providing a free open source license.
 - Bitrock's [InstallBuilder](http://installbuilder.bitrock.com/) for providing a free open source license.
-- And several online resources without which this would have not been possible
+- And several online resources without which this would have not been possible.
 
 If you think I missed someone, please let me know.
