@@ -81,6 +81,8 @@ public class TextureComponent {
         if (specular != null) {
             Texture tex = manager.get(specular, Texture.class);
             material.set(new TextureAttribute(TextureAttribute.Specular, tex));
+            // Control amount of specularity
+            material.set(new ColorAttribute(ColorAttribute.Specular, 0.5f, 0.5f, 0.5f, 1f));
         }
         if (night != null) {
             Texture tex = manager.get(night, Texture.class);

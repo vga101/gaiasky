@@ -366,6 +366,7 @@ public class DesktopConfInit extends ConfInit {
         p.setProperty("scene.propermotion.lenfactor", Float.toString(GlobalConf.scene.PM_LEN_FACTOR));
         p.setProperty("scene.galaxy.3d", Boolean.toString(GlobalConf.scene.GALAXY_3D));
         p.setProperty("scene.cubemapface.resolution", Integer.toString(GlobalConf.scene.CUBEMAP_FACE_RESOLUTION));
+        p.setProperty("scene.crosshair", Boolean.toString(GlobalConf.scene.CROSSHAIR));
 
         // Visibility of components
         int idx = 0;
