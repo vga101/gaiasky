@@ -41,6 +41,13 @@ public abstract class AbstractCamera implements ICamera {
         angleEdgeRad = (float) (Math.toRadians(Math.sqrt(h * h + w * w))) / 2f;
     }
 
+    public float getAngleEdge(int width, int height, float angle) {
+        float ar = (float) width / (float) height;
+        float h = angle;
+        float w = h * ar;
+        return (float) (Math.toRadians(Math.sqrt(h * h + w * w))) / 2f;
+    }
+
     @Override
     public float getFovFactor() {
         return fovFactor;

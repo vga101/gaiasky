@@ -205,6 +205,9 @@ public enum Events {
      * [km/h]
      **/
     CAMERA_MOTION_UPDATED,
+
+    /** Activates/deactivates the crosshair in focus mode. Contains a boolean **/
+    CROSSHAIR_CMD,
     /**
      * Contains an int with the number of lights and a float[] with [x, y] of
      * the 10 closest stars in screen coordinates in [0..1]
