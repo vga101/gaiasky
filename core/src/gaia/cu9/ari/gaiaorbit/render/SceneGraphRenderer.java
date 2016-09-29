@@ -86,7 +86,9 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
     /** The particular current scene graph renderer **/
     private ISGR sgr;
-    /** Renderer vector, with 0 = normal, 1 = stereoscopic, 2 = FOV, 3 = cubemap **/
+    /**
+     * Renderer vector, with 0 = normal, 1 = stereoscopic, 2 = FOV, 3 = cubemap
+     **/
     private ISGR[] sgrs;
 
     final int SGR_DEFAULT_IDX = 0, SGR_STEREO_IDX = 1, SGR_FOV_IDX = 2, SGR_CUBEMAP_IDX = 3;
@@ -198,11 +200,11 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
         // POINTS
         AbstractRenderSystem pixelProc = new PixelRenderSystem(RenderGroup.POINT, 0, alphas);
-        pixelProc.setPreRunnable(blendNoDepthRunnable);
+        pixelProc.setPreRunnable(blendDepthRunnable);
 
         // MODEL BACK
         AbstractRenderSystem modelBackProc = new ModelBatchRenderSystem(RenderGroup.MODEL_B, priority++, alphas, modelBatchB, false);
-        modelBackProc.setPreRunnable(blendNoDepthRunnable);
+        modelBackProc.setPreRunnable(blendDepthRunnable);
         modelBackProc.setPostRunnable(new RenderSystemRunnable() {
             @Override
             public void run(AbstractRenderSystem renderSystem, List<IRenderable> renderables, ICamera camera) {
@@ -273,7 +275,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
         // GALAXY
         AbstractRenderSystem galaxyProc = new GalaxyRenderSystem(RenderGroup.GALAXY, priority++, alphas, modelBatchF);
-        galaxyProc.setPreRunnable(blendNoDepthRunnable);
+        galaxyProc.setPreRunnable(blendDepthRunnable);
 
         // MODEL FRONT
         AbstractRenderSystem modelFrontProc = new ModelBatchRenderSystem(RenderGroup.MODEL_F, priority++, alphas, modelBatchF, false);
@@ -346,9 +348,13 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
     /**
      * Renders the scene
-     * @param camera The camera to use.
-     * @param t The time in seconds since the start.
-     * @param rc The render context.
+     * 
+     * @param camera
+     *            The camera to use.
+     * @param t
+     *            The time in seconds since the start.
+     * @param rc
+     *            The render context.
      */
     public void renderScene(ICamera camera, float t, RenderContext rc) {
         // Update time difference since last update
@@ -452,8 +458,11 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
     /**
      * Computes the alpha for the given component type.
-     * @param type The component type.
-     * @param now The current time in seconds.
+     * 
+     * @param type
+     *            The component type.
+     * @param now
+     *            The current time in seconds.
      * @return The alpha value.
      */
     private float calculateAlpha(ComponentType type, float t) {
