@@ -390,7 +390,9 @@ public class CameraComponent extends GuiComponent implements IObserver {
             }
             break;
         case SPEED_LIMIT_CMD:
-            interf = (Boolean) data[1];
+            interf = false;
+            if (data.length > 1)
+                interf = (Boolean) data[1];
             if (!interf) {
                 int value = (Integer) data[0];
                 cameraSpeedLimit.setSelectedIndex(value);

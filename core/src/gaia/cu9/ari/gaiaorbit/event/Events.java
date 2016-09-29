@@ -41,6 +41,7 @@ public enum Events {
      * Contains the speed limit index as in: 0 - 100 km/h 1 - c (3e8 m/s) 2 -
      * 2*c 3 - 10*c 4 - 1000*c 5 - 1 pc/s 6 - 2 pc/s 7 - 10 pc/s 8 - 1000 pc/s 9
      * - No limit
+     * It also contains a boolean indicating whether this comes from the interface.
      **/
     SPEED_LIMIT_CMD,
     /** Contains the value between 0 and 1 **/
