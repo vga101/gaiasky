@@ -74,6 +74,8 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
     private int maxTexSize;
 
+    FrameBuffer depthfb;
+
     /** Render lists for all render groups **/
     public static Map<RenderGroup, Multilist<IRenderable>> render_lists;
 
@@ -344,6 +346,19 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
         sgr.render(this, camera, t, rw, rh, fb, ppb);
 
+        //        fb.getColorBufferTexture()
+        //        if (fb != null) {
+        //            int depthId = fb.getDepthBufferHandle();
+        //            Gdx.gl.glBindFramebuffer(GL20.GL_FRAMEBUFFER, depthId);
+        //            int texid = Gdx.gl.glGenTexture();
+        //            Gdx.gl.glBindTexture(GL20.GL_TEXTURE_2D, texid);
+        //            Gdx.gl.glTexImage2D(GL20.GL_TEXTURE_2D, 0, GL20.GL_RGB, rw, rh, 0, GL20.GL_RGB, GL20.GL_UNSIGNED_BYTE, null);
+        //
+        //            // Poor filtering. Needed !
+        //            Gdx.gl.glTexParameteri(GL20.GL_TEXTURE_2D, GL20.GL_TEXTURE_MAG_FILTER, GL20.GL_NEAREST);
+        //            Gdx.gl.glTexParameteri(GL20.GL_TEXTURE_2D, GL20.GL_TEXTURE_MIN_FILTER, GL20.GL_NEAREST);
+        //
+        //        }
     }
 
     /**
