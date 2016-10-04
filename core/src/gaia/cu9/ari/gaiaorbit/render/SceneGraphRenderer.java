@@ -208,10 +208,6 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
         int priority = 1;
 
-        // POINTS
-        AbstractRenderSystem pixelProc = new PixelRenderSystem(RenderGroup.POINT, 0, alphas);
-        pixelProc.setPreRunnable(blendNoDepthRunnable);
-
         // MODEL BACK
         AbstractRenderSystem modelBackProc = new ModelBatchRenderSystem(RenderGroup.MODEL_B, priority++, alphas, modelBatchB, false);
         modelBackProc.setPreRunnable(blendNoDepthRunnable);
@@ -222,6 +218,10 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
                 Gdx.gl.glClear(GL20.GL_DEPTH_BUFFER_BIT);
             }
         });
+
+        // POINTS
+        AbstractRenderSystem pixelProc = new PixelRenderSystem(RenderGroup.POINT, 0, alphas);
+        pixelProc.setPreRunnable(blendNoDepthRunnable);
 
         // ANNOTATIONS
         AbstractRenderSystem annotationsProc = new FontRenderSystem(RenderGroup.MODEL_B_ANNOT, priority++, alphas, spriteBatch);

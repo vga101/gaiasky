@@ -18,7 +18,6 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
-import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
@@ -51,11 +50,9 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
     public boolean facingFocus;
 
     /** Auxiliary double vectors **/
-    private Vector3d aux1, aux2, aux3, aux4, aux5, dx, state;
+    private Vector3d aux1, aux2, aux3, aux5, dx, state;
     /** Auxiliary float vector **/
     private Vector3 auxf1;
-    /** Aux matrix **/
-    private Matrix4d auxmat1;
     /** Acceleration, velocity and position for pitch, yaw and roll **/
     private Vector3d pitch, yaw, roll;
     /**
@@ -158,11 +155,8 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
         aux1 = new Vector3d();
         aux2 = new Vector3d();
         aux3 = new Vector3d();
-        aux4 = new Vector3d();
         aux5 = new Vector3d();
         auxf1 = new Vector3();
-
-        auxmat1 = new Matrix4d();
 
         dx = new Vector3d();
         state = new Vector3d();
@@ -216,7 +210,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
                     // Get focus dx
                     dx.set(aux1).sub(focusPos);
 
-                    // Lock orientation - FOR NOW THIS ONLY WORKS WITH EARTH
+                    // Lock orientation - FOR NOW THIS ONLY WORKS WITH PLANETS/MOONS
                     if (GlobalConf.scene.FOCUS_LOCK_ORIENTATION && time.getDt() > 0 && focus.rc != null && focus.orientation != null) {
                         double angle = previousOrientationAngle != 0 ? (focus.rc.angle - previousOrientationAngle) : 0;
 
