@@ -189,7 +189,6 @@ public class GaiaSkyDesktop implements IObserver {
         cfg.vSyncEnabled = GlobalConf.screen.VSYNC;
         cfg.foregroundFPS = 0;
         cfg.backgroundFPS = 0;
-        cfg.depth = 32;
         cfg.addIcon("icon/ic_launcher.png", Files.FileType.Internal);
 
         System.out.println("Display mode set to " + cfg.width + "x" + cfg.height + ", fullscreen: " + cfg.fullscreen);

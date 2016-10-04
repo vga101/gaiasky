@@ -225,8 +225,6 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
      * to their classes and removes the Loading message
      */
     private void doneLoading() {
-        loadingGui.dispose();
-        loadingGui = null;
 
         // Get attitude
         if (manager.isLoaded(ATTITUDE_FOLDER)) {
@@ -285,6 +283,10 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         Gdx.input.setInputProcessor(inputMultiplexer);
 
         EventManager.instance.post(Events.SCENE_GRAPH_LOADED, sg);
+
+        // Stop messages
+        loadingGui.dispose();
+        loadingGui = null;
 
         AbstractPositionEntity focus = null;
         Vector3d newCameraPos = null;

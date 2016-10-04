@@ -104,7 +104,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         IntBuffer intBuffer = BufferUtils.newIntBuffer(16);
         Gdx.gl20.glGetIntegerv(GL20.GL_MAX_TEXTURE_SIZE, intBuffer);
         maxTexSize = intBuffer.get();
-        Logger.debug(this.getClass().getSimpleName(), "Max texture size: " + maxTexSize);
+        Logger.info(this.getClass().getSimpleName(), "Max texture size: " + maxTexSize + "^2 pixels");
 
         ShaderLoader.Pedantic = false;
         ShaderProgram.pedantic = false;
@@ -163,6 +163,14 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         }
 
         /**
+         * DEPTH BUFFER BITS
+         */
+
+        intBuffer.rewind();
+        Gdx.gl.glGetIntegerv(GL20.GL_DEPTH_BITS, intBuffer);
+        Logger.info(this.getClass().getSimpleName(), "Depth buffer size: " + intBuffer.get() + " bits");
+
+        /**
          * INITIALIZE SGRs
          */
         sgrs = new ISGR[4];
@@ -202,7 +210,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
         // POINTS
         AbstractRenderSystem pixelProc = new PixelRenderSystem(RenderGroup.POINT, 0, alphas);
-        pixelProc.setPreRunnable(blendNoDepthRunnable);
+        pixelProc.setPreRunnable(blendDepthRunnable);
 
         // MODEL BACK
         AbstractRenderSystem modelBackProc = new ModelBatchRenderSystem(RenderGroup.MODEL_B, priority++, alphas, modelBatchB, false);
