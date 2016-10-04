@@ -108,15 +108,15 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
         float density;
         int lgw, lgh;
         if (GlobalConf.scene.isHighQuality()) {
-            nsamples = 20;
+            nsamples = 30;
             lgw = 1920;
             lgh = Math.round(lgw / ar);
         } else if (GlobalConf.scene.isNormalQuality()) {
-            nsamples = 10;
+            nsamples = 20;
             lgw = 1280;
             lgh = Math.round(lgw / ar);
         } else {
-            nsamples = 5;
+            nsamples = 15;
             lgw = 900;
             lgh = Math.round(lgw / ar);
         }
