@@ -108,7 +108,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
         ShaderLoader.Pedantic = false;
         ShaderProgram.pedantic = false;
-        starShader = new ShaderProgram(Gdx.files.internal("shader/star.vertex.glsl"), Gdx.files.internal("shader/star.rays.fragment.glsl"));
+        starShader = new ShaderProgram(Gdx.files.internal("shader/star.vertex.glsl"), Gdx.files.internal("shader/star.fragment.glsl"));
         if (!starShader.isCompiled()) {
             Logger.error(new RuntimeException(), this.getClass().getName() + " - Star shader compilation failed:\n" + starShader.getLog());
         }
@@ -210,7 +210,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
         // POINTS
         AbstractRenderSystem pixelProc = new PixelRenderSystem(RenderGroup.POINT, 0, alphas);
-        pixelProc.setPreRunnable(blendDepthRunnable);
+        pixelProc.setPreRunnable(blendNoDepthRunnable);
 
         // MODEL BACK
         AbstractRenderSystem modelBackProc = new ModelBatchRenderSystem(RenderGroup.MODEL_B, priority++, alphas, modelBatchB, false);

@@ -304,7 +304,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
             EventManager.instance.post(Events.CAMERA_MODE_CMD, CameraMode.Gaia_FOV1and2);
         }
 
-        // Update whole tree to reinitialize positions with the new camera
+        // Update whole tree to reinitialise positions with the new camera
         // position
         time.update(0.0000000001f);
         sg.update(time, cam);

@@ -123,7 +123,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
         shader.setUniformf("u_size", size);
         v3fpool.free(aux);
 
-        float[] col = colorTransit ? ccTransit : ccPale;
+        float[] col = colorTransit ? ccTransit : cc;
         shader.setUniformf("u_color", col[0], col[1], col[2], alpha * opacity);
         shader.setUniformf("u_inner_rad", getInnerRad());
         shader.setUniformf("u_distance", distToCamera);

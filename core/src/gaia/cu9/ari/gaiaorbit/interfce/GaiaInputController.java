@@ -85,6 +85,11 @@ public class GaiaInputController extends GestureDetector {
     private Vector2 gesture = new Vector2();
     private Vector3d aux;
 
+    /** Save time of last click, in ms */
+    private long lastClickTime = -1;
+    /** Maximum double click time, in ms **/
+    private static final long doubleClickTime = 400;
+
     protected static class GaiaGestureListener extends GestureAdapter {
         public GaiaInputController controller;
         private float previousZoom;
@@ -181,7 +186,9 @@ public class GaiaInputController extends GestureDetector {
                 final NaturalCamera camera = cam.naturalCamera;
                 multiTouch = !MathUtils.isPowerOfTwo(touched);
                 if (button == this.button && button == Input.Buttons.LEFT) {
-                    // Ensure Octants observed property is computed
+                    final long currentTime = System.currentTimeMillis();
+                    final long lastTime = lastClickTime;
+
                     Gdx.app.postRunnable(new Runnable() {
                         @Override
                         public void run() {
@@ -189,9 +196,10 @@ public class GaiaInputController extends GestureDetector {
                             if (gesture.dst(screenX, screenY) < MOVE_PX_DIST) {
                                 boolean stopped = camera.stopMovement();
                                 boolean focusRemoved = gui != null && gui.cancelTouchFocus();
+                                boolean doubleClick = currentTime - lastTime < doubleClickTime;
                                 gesture.set(0, 0);
 
-                                if (!stopped && !focusRemoved) {
+                                if (doubleClick && !stopped && !focusRemoved) {
                                     // Select star, if any
                                     List<CelestialBody> l = GaiaSky.instance.getFocusableEntities();
 
@@ -256,6 +264,7 @@ public class GaiaInputController extends GestureDetector {
                             }
                         }
                     });
+                    lastClickTime = currentTime;
                 } else if (button == this.button && button == Input.Buttons.RIGHT) {
                     // Ensure Octants observed property is computed
                     Gdx.app.postRunnable(new Runnable() {

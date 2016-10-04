@@ -227,10 +227,8 @@ public class FullGui implements IGui, IObserver {
                         InputEvent ie = (InputEvent) event;
 
                         if (ie.getType() == Type.mouseMoved) {
-                            if (controlsWindow != null) {
-                                Actor scrollPanelAncestor = getScrollPanelAncestor(ie.getTarget());
-                                ui.setScrollFocus(scrollPanelAncestor);
-                            }
+                            Actor scrollPanelAncestor = getScrollPanelAncestor(ie.getTarget());
+                            ui.setScrollFocus(scrollPanelAncestor);
                         } else if (ie.getType() == Type.touchDown) {
                             if (ie.getTarget() instanceof TextField)
                                 ui.setKeyboardFocus(ie.getTarget());

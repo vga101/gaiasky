@@ -28,8 +28,8 @@ uniform int u_lightScattering;
 #define rays_const 30000.0
 
 // Decays
-#define corona_decay 0.2
-#define light_decay 0.08
+#define corona_decay 0.1
+#define light_decay 0.04
 
 vec4 mod289(vec4 x) {
   return x - floor(x * (1.0 / 289.0)) * 289.0; }
@@ -202,6 +202,25 @@ float corona(float distance_center, float cor_decay, float cor_noise){
         return dist * (1.0 - pow(distance_center, cor_decay));
 }
 
+/*
+#define SCALE 70.
+vec4 draw_star(vec2 pos, vec3 star_col) {
+	pos -= v_texCoords;
+	float d = length(pos)*SCALE*2.;
+	
+	vec3 col, spectrum = star_col;
+	col = spectrum/(d*d*d);
+	
+	// 2ndary mirror handles signature (assuming handles are long ellipses)
+	d = length(pos*vec2(30.,.2))*SCALE/2.;
+	col += spectrum/(d*d*d);
+	d = length(pos*vec2(.2,30.))*SCALE/2.;
+	col += spectrum/(d*d*d);
+
+	return vec4(col, (col.r + col.g + col.b) / 3.0);
+}
+*/
+
 vec4 draw() {
     float dist = distance (vec2 (0.5), v_texCoords.xy) * 2.0;
     vec2 uv = v_texCoords - 0.5;
@@ -216,16 +235,18 @@ vec4 draw() {
 		if(u_lightScattering == 1){
 			// Light scattering, simple star
 			float core = core(dist, u_inner_rad);
-			float light = light(dist, light_decay / 3.0) * light_level;
+			float light = light(dist, light_decay / 2.0) * light_level;
 			return vec4(v_color.rgb + vec3(core * 10.0), light + core);
 		} else {
 			// No light scattering, star rays
 			level = min(level, 1.0);
 			float corona = corona(dist, corona_decay, 0.0);
-	        float light = light(dist, light_decay) * light_level;
+	        float light = light(dist, light_decay * 2.0) * light_level;
 	        float core = core(dist, u_inner_rad);
 	
 			return vec4(v_color.rgb + core, (corona * (1.0 - level) + light + core));
+			
+			//return draw_star(vec2(0.5, 0.5), v_color.rgb * 1e1);
 		}
 	} else {
 		// We are close to the star

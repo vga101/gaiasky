@@ -117,7 +117,7 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
             lgh = Math.round(lgw / ar);
         } else {
             nsamples = 15;
-            lgw = 900;
+            lgw = 1280;
             lgh = Math.round(lgw / ar);
         }
 
