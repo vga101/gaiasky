@@ -88,6 +88,8 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
     private PostProcessBean newPostProcessor(int width, int height) {
         PostProcessBean ppb = new PostProcessBean();
 
+        float ar = width / height;
+
         ppb.pp = new PostProcessor(width, height, true, false, true);
 
         // MOTION BLUR
@@ -101,23 +103,26 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
         ppb.bloom.setEnabled(GlobalConf.postprocess.POSTPROCESS_BLOOM_INTENSITY > 0);
         ppb.pp.addEffect(ppb.bloom);
 
-        // LIGHT SCATTERING
+        // LIGHT GLOW
         int nsamples;
         float density;
-        float scatteringFboScale;
+        int lgw, lgh;
         if (GlobalConf.scene.isHighQuality()) {
             nsamples = 40;
-            scatteringFboScale = 2.0f;
+            lgw = 1920;
+            lgh = Math.round(lgw / ar);
         } else if (GlobalConf.scene.isNormalQuality()) {
             nsamples = 20;
-            scatteringFboScale = 1.0f;
+            lgw = width;
+            lgh = height;
         } else {
             nsamples = 10;
-            scatteringFboScale = 0.6f;
+            lgw = 1280;
+            lgh = Math.round(lgw / ar);
         }
 
         Glow.N = 30;
-        ppb.lglow = new LightGlow((int) (width * scatteringFboScale), (int) (height * scatteringFboScale));
+        ppb.lglow = new LightGlow(lgw, lgh);
         ppb.lglow.setScatteringIntesity(1f);
         ppb.lglow.setScatteringSaturation(1f);
         ppb.lglow.setBaseIntesity(1f);
