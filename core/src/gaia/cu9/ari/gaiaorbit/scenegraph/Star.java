@@ -285,7 +285,7 @@ public class Star extends Particle {
     }
 
     public String toString() {
-        return "Star{" + " name=" + name + " id=" + id + " sph=" + posSph + " pos=" + pos + " absmag=" + absmag + '}';
+        return "Star{" + " name=" + name + " id=" + id + " sph=" + posSph + " pos=" + pos + " appmag=" + appmag + '}';
     }
 
     @Override

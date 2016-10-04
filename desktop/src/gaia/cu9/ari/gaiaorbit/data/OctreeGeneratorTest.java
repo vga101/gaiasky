@@ -6,9 +6,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl.LwjglFiles;
@@ -117,29 +117,41 @@ public class OctreeGeneratorTest implements IObserver {
         tgas.initialize(new String[] { "data/tgas_final/tgas.csv" });
 
         /** LOAD HYG **/
-        List<Particle> list = (List<Particle>) hyg.loadData();
-        Set<Integer> hips = new HashSet<Integer>();
-        for (Particle p : list) {
+        List<Particle> listHYG = (List<Particle>) hyg.loadData();
+        Map<Integer, Particle> hips = new HashMap<Integer, Particle>();
+        for (Particle p : listHYG) {
             if (p instanceof Star && ((Star) p).hip > 0) {
-                hips.add(((Star) p).hip);
+                hips.put(((Star) p).hip, p);
             }
         }
 
         /** LOAD TGAS **/
-        List<Particle> list2 = tgas.loadData();
-        for (Particle p : list2) {
-            if (!(p instanceof Star) || (p instanceof Star && !hips.contains(((Star) p).hip))) {
-                list.add(p);
+        List<Particle> listGaia = tgas.loadData();
+        for (Particle p : listGaia) {
+            if (p instanceof Star && hips.containsKey(((Star) p).hip)) {
+                // modify
+                Star gaiastar = (Star) p;
+                Star hipstar = (Star) hips.get(((Star) p).hip);
+
+                gaiastar.name = hipstar.name;
+                gaiastar.hip = hipstar.hip;
+
+                // Remove from hipparcos list
+                listHYG.remove(hipstar);
+                hips.remove(hipstar.hip);
+
             }
+            // Add to gaia list
+            listHYG.add(p);
         }
 
-        Logger.info("Generating octree with " + list.size() + " actual stars");
+        Logger.info("Generating octree with " + listHYG.size() + " actual stars");
 
-        OctreeNode<Particle> octree = og.generateOctree(list);
+        OctreeNode<Particle> octree = og.generateOctree(listHYG);
 
         // Put all new particles in list
-        list.clear();
-        octree.addParticlesTo(list);
+        listHYG.clear();
+        octree.addParticlesTo(listHYG);
 
         System.out.println(octree.toString(true));
 
@@ -148,7 +160,7 @@ public class OctreeGeneratorTest implements IObserver {
         long tstamp = System.currentTimeMillis();
 
         /** NUMBERS **/
-        System.out.println("Octree generated with " + octree.numNodes() + " octants and " + list.size() + " particles");
+        System.out.println("Octree generated with " + octree.numNodes() + " octants and " + listHYG.size() + " particles");
         System.out.println(aggr.getDiscarded() + " particles have been discarded due to density");
 
         /** WRITE METADATA **/
@@ -170,10 +182,10 @@ public class OctreeGeneratorTest implements IObserver {
         }
         particles.createNewFile();
 
-        System.out.println("Writing particles (" + list.size() + " particles): " + particles.getAbsolutePath());
+        System.out.println("Writing particles (" + listHYG.size() + " particles): " + particles.getAbsolutePath());
 
         ParticleDataBinaryIO particleWriter = new ParticleDataBinaryIO();
-        particleWriter.writeParticles(list, new BufferedOutputStream(new FileOutputStream(particles)));
+        particleWriter.writeParticles(listHYG, new BufferedOutputStream(new FileOutputStream(particles)));
     }
 
     private static void loadOctree() throws FileNotFoundException {

@@ -111,7 +111,7 @@ public class HYGCSVLoader extends AbstractCatalogLoader implements ISceneGraphLo
     private void addStar(String line, List<Particle> stars, Map<Integer, float[]> pmMap) {
         String[] st = line.split(separator);
 
-        long starid = Parser.parseLong(st[0].trim());
+        long starid = -1l;
         int hip = Parser.parseInt(st[1].trim());
         if (hip == 0) {
             hip = -1;

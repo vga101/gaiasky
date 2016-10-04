@@ -178,14 +178,15 @@ public class FocusInfoInterface extends Table implements IObserver {
             String id = "";
             if (cb instanceof Star) {
                 Star s = (Star) cb;
-                if (s.hip > 0) {
+                if (s.id > 0) {
+                    id = String.valueOf(s.id);
+                } else if (s.hip > 0) {
                     id = "HIP " + s.hip;
                 } else if (s.tycho != null && s.tycho.length() > 0) {
                     id = "TYC " + s.tycho;
-                } else {
-                    id = "" + s.id;
                 }
-            } else {
+            }
+            if (id.length() == 0) {
                 id = "-";
             }
 

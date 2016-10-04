@@ -202,11 +202,11 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
         // POINTS
         AbstractRenderSystem pixelProc = new PixelRenderSystem(RenderGroup.POINT, 0, alphas);
-        pixelProc.setPreRunnable(blendDepthRunnable);
+        pixelProc.setPreRunnable(blendNoDepthRunnable);
 
         // MODEL BACK
         AbstractRenderSystem modelBackProc = new ModelBatchRenderSystem(RenderGroup.MODEL_B, priority++, alphas, modelBatchB, false);
-        modelBackProc.setPreRunnable(blendDepthRunnable);
+        modelBackProc.setPreRunnable(blendNoDepthRunnable);
         modelBackProc.setPostRunnable(new RenderSystemRunnable() {
             @Override
             public void run(AbstractRenderSystem renderSystem, List<IRenderable> renderables, ICamera camera) {
@@ -277,7 +277,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
         // GALAXY
         AbstractRenderSystem galaxyProc = new GalaxyRenderSystem(RenderGroup.GALAXY, priority++, alphas, modelBatchF);
-        galaxyProc.setPreRunnable(blendDepthRunnable);
+        galaxyProc.setPreRunnable(blendNoDepthRunnable);
 
         // MODEL FRONT
         AbstractRenderSystem modelFrontProc = new ModelBatchRenderSystem(RenderGroup.MODEL_F, priority++, alphas, modelBatchF, false);

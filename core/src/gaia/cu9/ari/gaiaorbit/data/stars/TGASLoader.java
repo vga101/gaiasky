@@ -45,7 +45,6 @@ public class TGASLoader extends AbstractCatalogLoader implements ISceneGraphLoad
     // Version to load; 0 - old, 1 - new
     public static int VERSION = 1;
 
-    private static final String separator_old = "\\s+";
     private static final String separator_new = ",";
 
     private static final String comma = ",";
@@ -53,10 +52,8 @@ public class TGASLoader extends AbstractCatalogLoader implements ISceneGraphLoad
 
     /** Whether to load the sourceId->HIP correspondences file **/
     public boolean useHIP = false;
-    /** Gaia sourceId to HIP numbers csv file **/
-    private static final String idCorrespondencesFile = "data/tgas_201507/hip-sourceid-correspondences.csv";
     /** Map of Gaia sourceId to HIP id **/
-    private Map<Long, Integer> sidHIPMap;
+    public Map<Long, Integer> sidHIPMap;
 
     /** Colors BT, VT for all Tycho2 stars file **/
     private static final String btvtColorsFile = "data/tgas_final/bt-vt-tycho.csv";
@@ -85,7 +82,6 @@ public class TGASLoader extends AbstractCatalogLoader implements ISceneGraphLoad
     private static final int TYCHO2 = 13;
     private static final int REF_EPOCH = 14;
 
-    private static final int[] indices_old = new int[] { 1, 2, 4, 6, 7, 8, 10, -1, -1, 15, 17, -1, -1, -1, -1 };
     private static final int[] indices_new = new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14 };
 
     private int sidhipfound = 0;
@@ -94,23 +90,13 @@ public class TGASLoader extends AbstractCatalogLoader implements ISceneGraphLoad
     public List<Particle> loadData() throws FileNotFoundException {
         String separator = null;
         int[] indices = null;
-        if (VERSION == 0) {
-            // OLD
-            useHIP = true;
-            separator = separator_old;
-            indices = indices_old;
-        } else if (VERSION == 1) {
+        if (VERSION == 1) {
             // NEW
-            useHIP = false;
             separator = separator_new;
             indices = indices_new;
         } else {
             Logger.error("VERSION number not recognized");
             return null;
-        }
-
-        if (useHIP) {
-            sidHIPMap = loadSourceidHipCorrespondences(idCorrespondencesFile);
         }
 
         tycBV = loadTYCBVColours(btvtColorsFile);
@@ -152,10 +138,7 @@ public class TGASLoader extends AbstractCatalogLoader implements ISceneGraphLoad
         int hip = -1;
         long sourceid = Parser.parseLong(st[indices[SOURCE_ID]]);
 
-        if (sidHIPMap != null && sidHIPMap.containsKey(sourceid)) {
-            hip = sidHIPMap.get(sourceid);
-            sidhipfound++;
-        } else if (indices[HIP] >= 0) {
+        if (indices[HIP] >= 0) {
             hip = Parser.parseInt(st[indices[HIP]].trim());
         }
 
@@ -167,9 +150,9 @@ public class TGASLoader extends AbstractCatalogLoader implements ISceneGraphLoad
         float appmag = new Double(Parser.parseDouble(st[indices[G_MAG]].trim())).floatValue();
 
         if (appmag < GlobalConf.data.LIMIT_MAG_LOAD) {
-            double todeg = VERSION == 0 ? AstroUtils.TO_DEG : 1d;
-            double ra = todeg * Parser.parseDouble(st[indices[RA]].trim());
-            double dec = todeg * Parser.parseDouble(st[indices[DEC]].trim());
+
+            double ra = Parser.parseDouble(st[indices[RA]].trim());
+            double dec = Parser.parseDouble(st[indices[DEC]].trim());
             double pllx = Parser.parseDouble(st[indices[PLLX]].trim());
             double pllxerr = Parser.parseDouble(st[indices[PLLX_ERR]].trim());
 
@@ -216,7 +199,8 @@ public class TGASLoader extends AbstractCatalogLoader implements ISceneGraphLoad
                     }
                 }
 
-                float absmag = appmag;
+                double distpc = 1000d / pllx;
+                float absmag = (float) (appmag - 2.5 * Math.log10(Math.pow(distpc / 10d, 2d)));
                 String name = Long.toString(sourceid);
 
                 Star star = new Star(pos, pmfloat, pmSph, appmag, absmag, colorbv, name, (float) ra, (float) dec, sourceid, hip, tycho2, (byte) 1);

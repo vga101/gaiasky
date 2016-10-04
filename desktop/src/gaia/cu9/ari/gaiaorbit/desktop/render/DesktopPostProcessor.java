@@ -88,7 +88,7 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
     private PostProcessBean newPostProcessor(int width, int height) {
         PostProcessBean ppb = new PostProcessBean();
 
-        float ar = width / height;
+        float ar = (float) width / (float) height;
 
         ppb.pp = new PostProcessor(width, height, true, false, true);
 
@@ -108,16 +108,16 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
         float density;
         int lgw, lgh;
         if (GlobalConf.scene.isHighQuality()) {
-            nsamples = 40;
+            nsamples = 20;
             lgw = 1920;
             lgh = Math.round(lgw / ar);
         } else if (GlobalConf.scene.isNormalQuality()) {
-            nsamples = 20;
-            lgw = width;
-            lgh = height;
-        } else {
             nsamples = 10;
             lgw = 1280;
+            lgh = Math.round(lgw / ar);
+        } else {
+            nsamples = 5;
+            lgw = 900;
             lgh = Math.round(lgw / ar);
         }
 
