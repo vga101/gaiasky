@@ -234,8 +234,6 @@ public class FullGui implements IGui, IObserver {
                         } else if (ie.getType() == Type.touchDown) {
                             if (ie.getTarget() instanceof TextField)
                                 ui.setKeyboardFocus(ie.getTarget());
-                        } else if (ie.getType() == Type.scrolled) {
-                            System.out.println("Scrolled " + ui.getScrollFocus().getName());
                         }
                     }
                     return false;
