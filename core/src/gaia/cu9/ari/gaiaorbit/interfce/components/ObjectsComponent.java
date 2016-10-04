@@ -1,5 +1,7 @@
 package gaia.cu9.ari.gaiaorbit.interfce.components;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import com.badlogic.gdx.Gdx;
@@ -29,8 +31,10 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
+import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.TwoWayHashmap;
+import gaia.cu9.ari.gaiaorbit.util.comp.CelestialBodyComparator;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnScrollPane;
 
 public class ObjectsComponent extends GuiComponent implements IObserver {
@@ -131,19 +135,24 @@ public class ObjectsComponent extends GuiComponent implements IObserver {
             focusList.setName("objects list");
             List<CelestialBody> focusableObjects = sg.getFocusableObjects();
             Array<String> names = new Array<String>(focusableObjects.size());
-            int maxentries = 500;
-            int entries = 0;
-            for (CelestialBody cb : focusableObjects) {
-                if (entries >= maxentries) {
-                    break;
-                }
-                // Omit stars with no proper names
-                if (!cb.name.startsWith("star_") && !cb.name.startsWith("Hip ") && !cb.name.startsWith("dummy")) {
-                    names.add(cb.name);
-                    entries++;
 
+            for (CelestialBody cb : focusableObjects) {
+                // Omit stars with no proper names
+                if (!GlobalResources.isNumeric(cb.name)) {
+                    names.add(cb.name);
                 }
             }
+            names.sort();
+
+            SceneGraphNode sol = sg.getNode("Sol");
+            if (sol != null) {
+                List<CelestialBody> solChildren = new ArrayList<CelestialBody>();
+                sol.addFocusableObjects(solChildren);
+                Collections.sort(solChildren, new CelestialBodyComparator());
+                for (CelestialBody cb : solChildren)
+                    names.insert(0, cb.name);
+            }
+
             focusList.setItems(names);
             focusList.pack();//
             focusList.addListener(new EventListener() {
@@ -179,7 +188,7 @@ public class ObjectsComponent extends GuiComponent implements IObserver {
             focusListScrollPane.setFadeScrollBars(false);
             focusListScrollPane.setScrollingDisabled(true, false);
 
-            focusListScrollPane.setHeight(tree ? 200  * GlobalConf.SCALE_FACTOR : 100 * GlobalConf.SCALE_FACTOR);
+            focusListScrollPane.setHeight(tree ? 200 * GlobalConf.SCALE_FACTOR : 100 * GlobalConf.SCALE_FACTOR);
             focusListScrollPane.setWidth(160);
         }
 
