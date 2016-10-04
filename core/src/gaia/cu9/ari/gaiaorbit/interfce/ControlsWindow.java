@@ -67,6 +67,7 @@ public class ControlsWindow extends CollapsibleWindow implements IObserver {
 
     public ControlsWindow(String title, Skin skin, Stage ui) {
         super(title, skin);
+        this.setName(title);
         this.skin = skin;
         this.ui = ui;
 
