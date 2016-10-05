@@ -71,8 +71,8 @@
 	
 	{
 	"name" : "MW",
-	"color" : [1.0, 1.0, 1.0, 0.3],
-	"size" : 1.6e12,
+	"color" : [1.0, 1.0, 1.0, 0.5],
+	"size" : 1.6e20,
 	"ct" : MilkyWay,
 	"transformName" : equatorialToGalactic,
 

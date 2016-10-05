@@ -50,7 +50,7 @@ public class MilkyWayReal extends AbstractPositionEntity implements I3DTextRende
         super();
         localTransform = new Matrix4();
         lowDist = (float) (1e3 * Constants.PC_TO_U);
-        highDist = (float) (8e3 * Constants.PC_TO_U);
+        highDist = (float) (5e3 * Constants.PC_TO_U);
     }
 
     public void initialize() {
@@ -135,7 +135,7 @@ public class MilkyWayReal extends AbstractPositionEntity implements I3DTextRende
 
     @Override
     public void update(ITimeFrameProvider time, Transform parentTransform, ICamera camera) {
-
+        update(time, parentTransform, camera, 1f);
     }
 
     @Override
@@ -149,12 +149,11 @@ public class MilkyWayReal extends AbstractPositionEntity implements I3DTextRende
         updateLocalTransform();
 
         if (mc != null) {
-            Vector3 d = v3fpool.obtain();
+            Vector3 d = aux3f1.get();
             d.set(0, 1, 0);
             d.mul(coordinateSystem);
 
             mc.dlight.direction.set(d);
-            v3fpool.free(d);
         }
 
     }
@@ -194,12 +193,11 @@ public class MilkyWayReal extends AbstractPositionEntity implements I3DTextRende
      */
     @Override
     public void render(SpriteBatch batch, ShaderProgram shader, BitmapFont font3d, BitmapFont font2d, ICamera camera) {
-        Vector3d pos = v3dpool.obtain();
+        Vector3d pos = aux3d1.get();
         textPosition(camera, pos);
         shader.setUniformf("a_viewAngle", 90f);
         shader.setUniformf("a_thOverFactor", 1f);
         render3DLabel(batch, shader, font3d, camera, text(), pos, textScale(), textSize(), textColour());
-        v3dpool.free(pos);
     }
 
     public void setTransformName(String transformName) {

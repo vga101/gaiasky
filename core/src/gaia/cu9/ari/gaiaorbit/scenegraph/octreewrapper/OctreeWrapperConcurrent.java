@@ -1,14 +1,13 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph.octreewrapper;
 
+import java.util.List;
+
 import gaia.cu9.ari.gaiaorbit.render.system.AbstractRenderSystem;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Transform;
-import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
-
-import java.util.List;
 
 /**
  * Static Octree wrapper that can be inserted into the scene graph. 
@@ -45,14 +44,10 @@ public class OctreeWrapperConcurrent extends AbstractOctreeWrapper {
             // Compute observed octants and fill roulette list
             root.update(transform, camera, roulette, 1f);
 
-            if (!GlobalConf.scene.OCTREE_PARTICLE_FADE) {
-                if (roulette.size() != lastNumberObjects) {
-                    // Need to update the points in renderer
-                    AbstractRenderSystem.POINT_UPDATE_FLAG = true;
-                    lastNumberObjects = roulette.size();
-                }
-            } else {
+            if (roulette.size() != lastNumberObjects) {
+                // Need to update the points in renderer
                 AbstractRenderSystem.POINT_UPDATE_FLAG = true;
+                lastNumberObjects = roulette.size();
             }
 
             updateLocal(time, camera);

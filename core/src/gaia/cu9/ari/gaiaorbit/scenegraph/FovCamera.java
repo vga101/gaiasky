@@ -15,7 +15,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
-import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScalingViewport;
@@ -30,7 +29,6 @@ import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
-import gaia.cu9.ari.gaiaorbit.util.MyPools;
 import gaia.cu9.ari.gaiaorbit.util.gaia.GaiaAttitudeServer;
 import gaia.cu9.ari.gaiaorbit.util.gaia.Satellite;
 import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
@@ -68,8 +66,9 @@ public class FovCamera extends AbstractCamera implements IObserver {
     private Matrix4d trf;
 
     public long currentTime, lastTime;
-    private Pool<Vector3d> vectorPool;
-    private Pool<Matrix4d> matrixPool;
+
+    private Vector3d dir1, dir2;
+    private Matrix4d matrix;
 
     Viewport viewport, viewport2;
 
@@ -87,8 +86,9 @@ public class FovCamera extends AbstractCamera implements IObserver {
 
         currentTime = 0l;
         lastTime = 0l;
-        vectorPool = MyPools.get(Vector3d.class);
-        matrixPool = MyPools.get(Matrix4d.class);
+        dir1 = new Vector3d();
+        dir2 = new Vector3d();
+        matrix = new Matrix4d();
     }
 
     public void initialize(AssetManager assetManager) {
@@ -160,7 +160,7 @@ public class FovCamera extends AbstractCamera implements IObserver {
 
         /** ORIENTATION - directions and up **/
         updateDirections(time);
-        trf = matrixPool.obtain();
+        trf = matrix;
         up.mul(trf).nor();
 
         // Update cameras
@@ -169,7 +169,6 @@ public class FovCamera extends AbstractCamera implements IObserver {
         updateCamera(directions[1], up, camera2);
 
         dirMiddle.set(0, 0, 1).mul(trf);
-        matrixPool.free(trf);
 
         // Return to pool
         SceneGraphNode ape = fccopy;
@@ -187,19 +186,14 @@ public class FovCamera extends AbstractCamera implements IObserver {
     public void updateDirections(ITimeFrameProvider time) {
         lastTime = currentTime;
         currentTime = time.getTime().getTime();
-        trf = matrixPool.obtain();
+        trf = matrix;
         trf.idt();
         Quaterniond quat = GaiaAttitudeServer.instance.getAttitude(time.getTime()).getQuaternion();
         trf.rotate(quat).rotate(0, 0, 1, 180);
         directions[0].set(0, 0, 1).rotate(BAM_2, 0, 1, 0).mul(trf).nor();
         directions[1].set(0, 0, 1).rotate(-BAM_2, 0, 1, 0).mul(trf).nor();
-        matrixPool.free(trf);
 
         /** WORK OUT INTERPOLATED DIRECTIONS IN THE CASE OF FAST SCANNING **/
-        for (Vector3d[] directions : interpolatedDirections) {
-            vectorPool.free(directions[0]);
-            vectorPool.free(directions[1]);
-        }
         interpolatedDirections.clear();
         if (GlobalConf.scene.COMPUTE_GAIA_SCAN) {
             if (lastTime != 0 && currentTime - lastTime > MAX_OVERLAP_TIME) {
@@ -220,13 +214,12 @@ public class FovCamera extends AbstractCamera implements IObserver {
     }
 
     public Vector3d[] getDirections(Date d) {
-        trf = matrixPool.obtain();
+        trf = matrix;
         trf.idt();
         Quaterniond quat = GaiaAttitudeServer.instance.getAttitude(d).getQuaternion();
         trf.rotate(quat).rotate(0, 0, 1, 180);
-        Vector3d dir1 = vectorPool.obtain().set(0, 0, 1).rotate(BAM_2, 0, 1, 0).mul(trf).nor();
-        Vector3d dir2 = vectorPool.obtain().set(0, 0, 1).rotate(-BAM_2, 0, 1, 0).mul(trf).nor();
-        matrixPool.free(trf);
+        dir1.set(0, 0, 1).rotate(BAM_2, 0, 1, 0).mul(trf).nor();
+        dir2.set(0, 0, 1).rotate(-BAM_2, 0, 1, 0).mul(trf).nor();
         return new Vector3d[] { dir1, dir2 };
     }
 

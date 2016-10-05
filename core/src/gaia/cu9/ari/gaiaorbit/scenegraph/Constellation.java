@@ -106,9 +106,9 @@ public class Constellation extends LineObject implements I3DTextRenderable {
         constalpha = alpha;
         alpha *= this.alpha;
 
-        Vector3 campos = v3fpool.obtain();
-        Vector3 p1 = v3fpool.obtain();
-        Vector3 p2 = v3fpool.obtain();
+        Vector3 campos = aux3f1.get();
+        Vector3 p1 = aux3f2.get();
+        Vector3 p2 = aux3f3.get();
         camera.getPos().setVector3(campos);
         // Fix, using positions directly
         for (Vector3[] pair : positions) {
@@ -118,9 +118,6 @@ public class Constellation extends LineObject implements I3DTextRenderable {
             renderer.addLine(p1.x, p1.y, p1.z, p2.x, p2.y, p2.z, cc[0], cc[1], cc[2], alpha);
 
         }
-        v3fpool.free(campos);
-        v3fpool.free(p1);
-        v3fpool.free(p2);
 
     }
 
@@ -129,12 +126,11 @@ public class Constellation extends LineObject implements I3DTextRenderable {
      */
     @Override
     public void render(SpriteBatch batch, ShaderProgram shader, BitmapFont font3d, BitmapFont font2d, ICamera camera) {
-        Vector3d pos = v3dpool.obtain();
+        Vector3d pos = aux3d1.get();
         textPosition(camera, pos);
         shader.setUniformf("a_viewAngle", 90f);
         shader.setUniformf("a_thOverFactor", 1f);
         render3DLabel(batch, shader, font3d, camera, text(), pos, textScale(), textSize(), textColour());
-        v3dpool.free(pos);
     }
 
     @Override

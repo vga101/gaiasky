@@ -15,7 +15,9 @@ import gaia.cu9.ari.gaiaorbit.render.IRenderable;
 import gaia.cu9.ari.gaiaorbit.render.SceneGraphRenderer;
 import gaia.cu9.ari.gaiaorbit.scenegraph.octreewrapper.AbstractOctreeWrapper;
 import gaia.cu9.ari.gaiaorbit.util.MyPools;
+import gaia.cu9.ari.gaiaorbit.util.concurrent.IThreadLocal;
 import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadIndexer;
+import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadLocalFactory;
 import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector2d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
@@ -30,9 +32,12 @@ import gaia.cu9.ari.gaiaorbit.util.tree.IPosition;
 public class SceneGraphNode implements ISceneGraphNode, IPosition {
     public static final String ROOT_NAME = "Universe";
 
-    protected static Pool<Vector3d> v3dpool = MyPools.get(Vector3d.class);
-    protected static Pool<Vector3> v3fpool = MyPools.get(Vector3.class);
-    protected static Pool<Vector2d> v2dpool = MyPools.get(Vector2d.class);
+    @SuppressWarnings("unchecked")
+    protected static IThreadLocal<Vector3d> aux3d1 = ThreadLocalFactory.instance.get(Vector3d.class), aux3d2 = ThreadLocalFactory.instance.get(Vector3d.class), aux3d3 = ThreadLocalFactory.instance.get(Vector3d.class);
+    @SuppressWarnings("unchecked")
+    protected static IThreadLocal<Vector3> aux3f1 = ThreadLocalFactory.instance.get(Vector3.class), aux3f2 = ThreadLocalFactory.instance.get(Vector3.class), aux3f3 = ThreadLocalFactory.instance.get(Vector3.class), aux3f4 = ThreadLocalFactory.instance.get(Vector3.class);
+    @SuppressWarnings("unchecked")
+    protected static IThreadLocal<Vector2d> aux2d1 = ThreadLocalFactory.instance.get(Vector2d.class), aux2d2 = ThreadLocalFactory.instance.get(Vector2d.class), aux2d3 = ThreadLocalFactory.instance.get(Vector2d.class);
 
     /**
      * Describes to which render group this node belongs at a particular time step.

@@ -16,8 +16,6 @@
 
 package gaia.cu9.ari.gaiaorbit.util.scene2d;
 
-import gaia.cu9.ari.gaiaorbit.util.MyPools;
-
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -229,10 +227,9 @@ public class TabbedPane extends Table {
     /** Sends a ChangeEvent, with this TabbedPane as the target, to each registered listener. This method is called each time there
      * is a change to the selected index. */
     protected void fireStateChanged() {
-        ChangeEvent changeEvent = MyPools.obtain(ChangeEvent.class);
+        ChangeEvent changeEvent = new ChangeEvent();
         changeEvent.setBubbles(false);
         fire(changeEvent);
-        MyPools.free(changeEvent);
     }
 
     private static class TabTitleButton extends TextButton {

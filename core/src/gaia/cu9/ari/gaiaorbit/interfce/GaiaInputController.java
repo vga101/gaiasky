@@ -17,7 +17,6 @@ import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.Pool;
 
 import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
@@ -31,7 +30,6 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
-import gaia.cu9.ari.gaiaorbit.util.MyPools;
 import gaia.cu9.ari.gaiaorbit.util.comp.ViewAngleComparator;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
@@ -42,8 +40,6 @@ import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
  *
  */
 public class GaiaInputController extends GestureDetector {
-    protected static Pool<Vector3d> v3dpool = MyPools.get(Vector3d.class);
-    protected static Pool<Vector3> v3pool = MyPools.get(Vector3.class);
 
     public KeyBindings mappings;
 

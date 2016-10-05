@@ -7,7 +7,6 @@ import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.Ray;
-import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
@@ -16,7 +15,6 @@ import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
-import gaia.cu9.ari.gaiaorbit.util.MyPools;
 import gaia.cu9.ari.gaiaorbit.util.TwoWayHashmap;
 import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
 import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
@@ -24,9 +22,6 @@ import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
 public class CameraManager implements ICamera, IObserver {
-    protected static Pool<Vector3d> v3dpool = MyPools.get(Vector3d.class);
-    protected static Pool<Vector3> v3pool = MyPools.get(Vector3.class);
-
     /**
      * Convenience enum to describe the camera mode
      * @author Toni Sagrista
@@ -96,7 +91,8 @@ public class CameraManager implements ICamera, IObserver {
     public FovCamera fovCamera;
 
     /** Last position, for working out velocity **/
-    private Vector3d lastPos;
+    private Vector3d lastPos, out, in;
+    private Vector3 vec, v0, v1;
 
     /** Are we moving at high speeds? **/
     private boolean supervelocity;
@@ -113,6 +109,11 @@ public class CameraManager implements ICamera, IObserver {
         fovCamera = new FovCamera(manager, this);
         this.mode = mode;
         lastPos = new Vector3d();
+        in = new Vector3d();
+        out = new Vector3d();
+        vec = new Vector3();
+        v0 = new Vector3();
+        v1 = new Vector3();
         velocity = new Vector3d();
         supervelocity = true;
 
@@ -214,24 +215,19 @@ public class CameraManager implements ICamera, IObserver {
     }
 
     private void updatePointerRADEC(int screenX, int screenY) {
-        Vector3 vec = v3pool.obtain().set(screenX, screenY, 0.5f);
+        vec.set(screenX, screenY, 0.5f);
         ICamera camera = current;
         camera.getCamera().unproject(vec);
 
-        Vector3d vecd = v3dpool.obtain().set(vec);
-        Vector3d out = v3dpool.obtain();
+        in.set(vec);
 
-        Coordinates.cartesianToSpherical(vecd, out);
+        Coordinates.cartesianToSpherical(in, out);
 
         double alpha = out.x * AstroUtils.TO_DEG;
         double delta = out.y * AstroUtils.TO_DEG;
 
         Logger.debug("Alpha/delta: " + alpha + "/" + delta);
         EventManager.instance.post(Events.RA_DEC_UPDATED, alpha, delta, screenX, screenY);
-
-        v3dpool.free(out);
-        v3dpool.free(vecd);
-        v3pool.free(vec);
     }
 
     private void updateFocusLatLon(int screenX, int screenY) {
@@ -239,18 +235,17 @@ public class CameraManager implements ICamera, IObserver {
             // Hover over planets gets us lat/lon
             if (current.getFocus() != null && current.getFocus() instanceof Planet) {
                 Planet p = (Planet) current.getFocus();
-                Vector3 pcenter = v3pool.obtain();
-                p.transform.getTranslationf(pcenter);
+                p.transform.getTranslationf(vec);
                 //pcenter.set((float) p.pos.x, (float) p.pos.y, (float) p.pos.z);
                 ICamera camera = current;
-                Vector3 v0 = v3pool.obtain().set(screenX, screenY, 0f);
-                Vector3 v1 = v3pool.obtain().set(screenX, screenY, 0.5f);
+                v0.set(screenX, screenY, 0f);
+                v1.set(screenX, screenY, 0.5f);
                 camera.getCamera().unproject(v0);
                 camera.getCamera().unproject(v1);
 
                 Ray ray = new Ray(v0, v1.sub(v0));
                 Vector3 intersection = new Vector3();
-                boolean inter = Intersector.intersectRaySphere(ray, pcenter, p.getRadius(), intersection);
+                boolean inter = Intersector.intersectRaySphere(ray, vec, p.getRadius(), intersection);
 
                 if (inter) {
                     // We found an intersection point
@@ -259,10 +254,8 @@ public class CameraManager implements ICamera, IObserver {
                     localTransformInv.inv();
                     intersection.mul(localTransformInv);
 
-                    Vector3d vec = v3dpool.obtain();
-                    vec.set(intersection);
-                    Vector3d out = v3dpool.obtain();
-                    Coordinates.cartesianToSpherical(vec, out);
+                    in.set(intersection);
+                    Coordinates.cartesianToSpherical(in, out);
 
                     double lon = (Math.toDegrees(out.x) + 90) % 360;
                     double lat = Math.toDegrees(out.y);
@@ -270,13 +263,7 @@ public class CameraManager implements ICamera, IObserver {
                     Logger.debug("Lon/lat: " + lon + "/" + lat);
                     EventManager.instance.post(Events.LON_LAT_UPDATED, lon, lat, screenX, screenY);
 
-                    v3dpool.free(vec);
-                    v3dpool.free(out);
                 }
-
-                v3pool.free(pcenter);
-                v3pool.free(v0);
-                v3pool.free(v1);
 
             }
 

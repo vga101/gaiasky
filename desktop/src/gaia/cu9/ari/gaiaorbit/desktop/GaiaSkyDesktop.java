@@ -23,6 +23,7 @@ import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.data.DesktopSceneGraphImplementationProvider;
 import gaia.cu9.ari.gaiaorbit.data.SceneGraphImplementationProvider;
 import gaia.cu9.ari.gaiaorbit.desktop.concurrent.MultiThreadIndexer;
+import gaia.cu9.ari.gaiaorbit.desktop.concurrent.MultiThreadLocalFactory;
 import gaia.cu9.ari.gaiaorbit.desktop.concurrent.ThreadPoolManager;
 import gaia.cu9.ari.gaiaorbit.desktop.format.DesktopDateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.desktop.format.DesktopNumberFormatFactory;
@@ -54,7 +55,9 @@ import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.MusicManager;
 import gaia.cu9.ari.gaiaorbit.util.concurrent.SingleThreadIndexer;
+import gaia.cu9.ari.gaiaorbit.util.concurrent.SingleThreadLocalFactory;
 import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadIndexer;
+import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadLocalFactory;
 import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
@@ -198,9 +201,13 @@ public class GaiaSkyDesktop implements IObserver {
         if (GlobalConf.performance.MULTITHREADING) {
             ThreadIndexer.initialize(new MultiThreadIndexer());
             ThreadPoolManager.initialize(GlobalConf.performance.NUMBER_THREADS());
+            ThreadLocalFactory.initialize(new MultiThreadLocalFactory());
         } else {
             ThreadIndexer.initialize(new SingleThreadIndexer());
+            ThreadLocalFactory.initialize(new SingleThreadLocalFactory());
         }
+
+        // Thread local factory
 
         // Launch app
         new LwjglApplication(new GaiaSky(), cfg);

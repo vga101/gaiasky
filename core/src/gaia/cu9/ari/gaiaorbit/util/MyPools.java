@@ -14,17 +14,16 @@ public class MyPools {
     static public <T> Pool<T> get(Class<T> type, int max) {
         Pool pool = typePools.get(type.getName());
         if (pool == null) {
-            pool = new SimplePool(type, 10, max);
+            pool = new SimplePool(type, 1000, max);
             set(type, pool);
         }
 
         return pool;
     }
 
-    /** Returns a new or existing pool for the specified type, stored in a Class to {@link Pool} map. The max size of the pool used
-     * is 100. */
+    /** Returns a new or existing pool for the specified type, stored in a Class to {@link Pool} map. */
     static public <T> Pool<T> get(Class<T> type) {
-        return get(type, 1000);
+        return get(type, Integer.MAX_VALUE);
     }
 
     /** Sets an existing pool for the specified type, stored in a Class to {@link Pool} map. */

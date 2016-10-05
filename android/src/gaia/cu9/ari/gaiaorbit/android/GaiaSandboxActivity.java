@@ -1,13 +1,10 @@
 package gaia.cu9.ari.gaiaorbit.android;
 
-import gaia.cu9.ari.gaiaorbit.GaiaSky;
-import gaia.cu9.ari.gaiaorbit.android.util.AndroidConfInit;
-import gaia.cu9.ari.gaiaorbit.scenegraph.NaturalCamera;
-import gaia.cu9.ari.gaiaorbit.util.ConfInit;
-import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
-import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
-
 import java.io.InputStream;
+
+import com.badlogic.gdx.backends.android.AndroidApplication;
+import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
+import com.badlogic.gdx.math.Matrix4;
 
 import android.app.Activity;
 import android.content.Context;
@@ -21,10 +18,16 @@ import android.os.PowerManager.WakeLock;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-
-import com.badlogic.gdx.backends.android.AndroidApplication;
-import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
-import com.badlogic.gdx.math.Matrix4;
+import gaia.cu9.ari.gaiaorbit.GaiaSky;
+import gaia.cu9.ari.gaiaorbit.android.util.AndroidConfInit;
+import gaia.cu9.ari.gaiaorbit.scenegraph.NaturalCamera;
+import gaia.cu9.ari.gaiaorbit.util.ConfInit;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
+import gaia.cu9.ari.gaiaorbit.util.concurrent.SingleThreadIndexer;
+import gaia.cu9.ari.gaiaorbit.util.concurrent.SingleThreadLocalFactory;
+import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadIndexer;
+import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadLocalFactory;
+import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 
 public class GaiaSandboxActivity extends AndroidApplication {
     WakeLock mWakeLock;
@@ -59,6 +62,9 @@ public class GaiaSandboxActivity extends AndroidApplication {
         sensorMan = (SensorManager) getContext().getSystemService(Context.SENSOR_SERVICE);
         sensorAcce = sensorMan.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         sensorMagn = sensorMan.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+
+        ThreadIndexer.initialize(new SingleThreadIndexer());
+        ThreadLocalFactory.initialize(new SingleThreadLocalFactory());
 
         initialize(new GaiaSky(), cfg);
     }

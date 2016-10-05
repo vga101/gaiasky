@@ -18,7 +18,6 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Transform;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
-import gaia.cu9.ari.gaiaorbit.util.MyPools;
 import gaia.cu9.ari.gaiaorbit.util.Pair;
 import gaia.cu9.ari.gaiaorbit.util.color.ColourUtils;
 import gaia.cu9.ari.gaiaorbit.util.math.BoundingBoxd;
@@ -45,13 +44,14 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
 
     /**
      * Since OctreeNode is not to be parallelised, these can be static.
-     * Otherwise, use ThreadLocal
      **/
     private static BoundingBoxd boxcopy = new BoundingBoxd(new Vector3d(), new Vector3d());
     private static Matrix4d boxtransf = new Matrix4d();
     private static Vector3d auxD1 = new Vector3d(), auxD2 = new Vector3d(), auxD3 = new Vector3d(), auxD4 = new Vector3d();
     private static Vector3 auxF1 = new Vector3(), auxF2 = new Vector3();
     private static Rayd ray = new Rayd(new Vector3d(), new Vector3d());
+
+    private Vector3d aux3d1;
 
     /** The load status of this node **/
     private LoadStatus status;
@@ -114,6 +114,7 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
         this.centre = new Vector3d(x, y, z);
         this.size = new Vector3d(hsx * 2, hsy * 2, hsz * 2);
         this.box = new BoundingBoxd(blf, trb);
+        this.aux3d1 = new Vector3d();
         this.depth = depth;
         this.transform = new Vector3d();
         this.observed = false;
@@ -422,7 +423,7 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
             distToCamera = auxD1.set(centre).add(cam.getInversePos()).len();
             viewAngle = (radius / distToCamera) / cam.getFovFactor();
 
-            if (viewAngle < GlobalConf.scene.OCTANT_THRESHOLD_0) {
+            if (viewAngle < GlobalConf.scene.OCTANT_THRESHOLD_0 / cam.getFovFactor()) {
                 // Stay in current level
                 addObjectsTo(roulette);
                 setChildrenObserved(false);
@@ -589,7 +590,7 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
         }
 
         // Camera correction
-        Vector3d loc = MyPools.get(Vector3d.class).obtain();
+        Vector3d loc = aux3d1;
         loc.set(this.blf).add(transform);
 
         /*
@@ -624,7 +625,6 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
         line(sr, loc.x, loc.y + size.y, loc.z + size.z, loc.x + size.x, loc.y + size.y, loc.z + size.z, this.col);
         line(sr, loc.x + size.x, loc.y + size.y, loc.z, loc.x + size.x, loc.y + size.y, loc.z + size.z, this.col);
 
-        MyPools.get(Vector3d.class).free(loc);
     }
 
     /** Draws a line **/

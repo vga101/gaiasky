@@ -380,18 +380,13 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
      */
     @Override
     public void render(LineRenderSystem renderer, ICamera camera, float alpha) {
-        Vector3 campos = v3fpool.obtain();
-        Vector3 p1 = transform.position.setVector3(v3fpool.obtain());
-        Vector3 ppm = v3fpool.obtain().set(pm).scl(GlobalConf.scene.PM_LEN_FACTOR);
-        Vector3 p2 = v3fpool.obtain().set(p1).add(ppm);
+        Vector3 campos = aux3f1.get();
+        Vector3 p1 = transform.position.setVector3(aux3f2.get());
+        Vector3 ppm = aux3f3.get().set(pm).scl(GlobalConf.scene.PM_LEN_FACTOR);
+        Vector3 p2 = aux3f4.get().set(p1).add(ppm);
         camera.getPos().setVector3(campos);
 
         renderer.addLine(p1.x, p1.y, p1.z, p2.x, p2.y, p2.z, 0.65f, 0.65f, 0.0f, alpha);
-
-        v3fpool.free(campos);
-        v3fpool.free(p1);
-        v3fpool.free(p2);
-        v3fpool.free(ppm);
     }
 
 }

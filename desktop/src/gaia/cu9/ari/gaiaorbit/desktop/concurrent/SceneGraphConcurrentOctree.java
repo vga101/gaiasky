@@ -49,7 +49,7 @@ public class SceneGraphConcurrentOctree extends AbstractSceneGraph {
 
         pool = ThreadPoolManager.pool;
         tasks = new ArrayList<UpdaterTask<SceneGraphNode>>(pool.getCorePoolSize());
-        roulette = new ArrayList<SceneGraphNode>(150000);
+        roulette = new ArrayList<SceneGraphNode>(1000000);
 
         Iterator<SceneGraphNode> it = nodes.iterator();
         while (it.hasNext()) {

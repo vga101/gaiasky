@@ -11,7 +11,6 @@ import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.bitfire.postprocessing.effects.Anaglyphic;
@@ -28,7 +27,6 @@ import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf.ProgramConf.StereoProfile;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
-import gaia.cu9.ari.gaiaorbit.util.MyPools;
 
 /**
  * Renders all the 3D/stereoscopic modes. Renders basically two scenes, one for each eye,
@@ -47,6 +45,8 @@ public class SGRStereoscopic extends SGRAbstract implements ISGR, IObserver {
 
     private Anaglyphic anaglyphic;
 
+    private Vector3 aux1, aux2, aux3;
+
     public SGRStereoscopic() {
         super();
         // INIT VIEWPORT
@@ -59,6 +59,11 @@ public class SGRStereoscopic extends SGRAbstract implements ISGR, IObserver {
         // Init anaglyphic effect
         anaglyphic = new Anaglyphic();
 
+        // Aux vectors
+        aux1 = new Vector3();
+        aux2 = new Vector3();
+        aux3 = new Vector3();
+
         EventManager.instance.subscribe(this, Events.FRAME_SIZE_UDPATE, Events.SCREENSHOT_SIZE_UDPATE);
     }
 
@@ -68,9 +73,8 @@ public class SGRStereoscopic extends SGRAbstract implements ISGR, IObserver {
         //movecam = false;
 
         PerspectiveCamera cam = camera.getCamera();
-        Pool<Vector3> vectorPool = MyPools.get(Vector3.class);
         // Vector of 1 meter length pointing to the side of the camera
-        Vector3 side = vectorPool.obtain().set(cam.direction);
+        Vector3 side = aux1.set(cam.direction);
         float separation = (float) Constants.M_TO_U * GlobalConf.program.STEREOSCOPIC_EYE_SEPARATION_M;
         float dirangleDeg = 0;
 
@@ -88,8 +92,8 @@ public class SGRStereoscopic extends SGRAbstract implements ISGR, IObserver {
         }
 
         side.crs(cam.up).nor().scl(separation);
-        Vector3 backupPos = vectorPool.obtain().set(cam.position);
-        Vector3 backupDir = vectorPool.obtain().set(cam.direction);
+        Vector3 backupPos = aux2.set(cam.position);
+        Vector3 backupDir = aux3.set(cam.direction);
 
         if (GlobalConf.program.STEREO_PROFILE == StereoProfile.ANAGLYPHIC) {
             camera.setViewport(extendViewport);
@@ -229,9 +233,6 @@ public class SGRStereoscopic extends SGRAbstract implements ISGR, IObserver {
         /** RESTORE **/
         cam.position.set(backupPos);
         cam.direction.set(backupDir);
-        vectorPool.free(side);
-        vectorPool.free(backupPos);
-        vectorPool.free(backupDir);
 
     }
 

@@ -24,7 +24,9 @@ import gaia.cu9.ari.gaiaorbit.script.ScriptingFactory;
 import gaia.cu9.ari.gaiaorbit.util.ConfInit;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.concurrent.SingleThreadIndexer;
+import gaia.cu9.ari.gaiaorbit.util.concurrent.SingleThreadLocalFactory;
 import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadIndexer;
+import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadLocalFactory;
 import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
 
@@ -38,6 +40,7 @@ public class GaiaSkyWebGL extends GwtApplication implements IObserver {
         DateFormatFactory.initialize(new GwtDateFormatFactory());
         ScriptingFactory.initialize(new DummyFactory());
         ThreadIndexer.initialize(new SingleThreadIndexer());
+        ThreadLocalFactory.initialize(new SingleThreadLocalFactory());
         SceneGraphImplementationProvider.initialize(new WebGLSceneGraphImplementationProvider());
         NetworkCheckerManager.initialize(new WebGLNetworkChecker());
 
@@ -82,8 +85,8 @@ public class GaiaSkyWebGL extends GwtApplication implements IObserver {
     }
 
     protected native void reloadIFrame(Element iframeEl) /*-{
-		iframeEl.contentWindow.location.reload(false);
-    }-*/;
+                                                         iframeEl.contentWindow.location.reload(false);
+                                                         }-*/;
 
     @Override
     public ApplicationListener createApplicationListener() {

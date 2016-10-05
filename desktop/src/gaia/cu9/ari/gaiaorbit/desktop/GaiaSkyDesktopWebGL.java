@@ -19,7 +19,9 @@ import gaia.cu9.ari.gaiaorbit.script.ScriptingFactory;
 import gaia.cu9.ari.gaiaorbit.util.ConfInit;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.concurrent.SingleThreadIndexer;
+import gaia.cu9.ari.gaiaorbit.util.concurrent.SingleThreadLocalFactory;
 import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadIndexer;
+import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadLocalFactory;
 import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
@@ -33,6 +35,7 @@ public class GaiaSkyDesktopWebGL {
         ConfInit.initialize(new WebGLConfInitLite());
         PostProcessorFactory.initialize(new WebGLPostProcessorFactory());
         ThreadIndexer.initialize(new SingleThreadIndexer());
+        ThreadLocalFactory.initialize(new SingleThreadLocalFactory());
         SceneGraphImplementationProvider.initialize(new WebGLSceneGraphImplementationProvider());
         NetworkCheckerManager.initialize(new DesktopNetworkChecker());
 

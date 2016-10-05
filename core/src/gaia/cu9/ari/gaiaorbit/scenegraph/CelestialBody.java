@@ -118,10 +118,9 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
 
         float size = getFuzzyRenderSize(camera);
 
-        Vector3 aux = v3fpool.obtain();
+        Vector3 aux = aux3f1.get();
         shader.setUniformf("u_pos", transform.getTranslationf(aux));
         shader.setUniformf("u_size", size);
-        v3fpool.free(aux);
 
         float[] col = colorTransit ? ccTransit : cc;
         shader.setUniformf("u_color", col[0], col[1], col[2], alpha * opacity);
@@ -163,14 +162,13 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
         } else {
             //render2DLabel(batch, shader, font, camera, text(), transform.position);
             // 3D distance font
-            Vector3d pos = v3dpool.obtain();
+            Vector3d pos = aux3d1.get();
             textPosition(camera, pos);
             shader.setUniformf("a_viewAngle", (float) viewAngle);
             shader.setUniformf("a_viewAnglePow", getViewAnglePow());
             shader.setUniformf("a_thOverFactor", TH_OVER_FACTOR);
             shader.setUniformf("a_thOverFactorScl", getThOverFactorScl());
             render3DLabel(batch, shader, font3d, camera, text(), pos, textScale(), textSize(), textColour());
-            v3dpool.free(pos);
         }
 
     }
@@ -322,7 +320,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
         double len = out.len();
         out.clamp(0, len - getRadius()).scl(0.8f);
 
-        Vector3d aux = v3dpool.obtain();
+        Vector3d aux = aux3d2.get();
         aux.set(cam.getUp());
 
         aux.crs(out).nor();
@@ -332,8 +330,6 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
         aux.add(cam.getUp()).nor().scl(dist);
 
         out.add(aux);
-
-        v3dpool.free(aux);
 
     }
 

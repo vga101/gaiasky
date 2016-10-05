@@ -29,7 +29,7 @@ public class UpdaterTask<T extends SceneGraphNode> implements Callable<Void> {
         int size = nodes.size();
         for (int i = start; i < size; i += step) {
             SceneGraphNode node = nodes.get(i);
-            node.update(time, node.parent.transform, camera);
+            node.update(time, node.parent.transform, camera, 1f);
         }
         return null;
     }
