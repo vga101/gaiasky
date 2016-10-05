@@ -17,6 +17,7 @@ import gaia.cu9.ari.gaiaorbit.util.Constants;
 
 /**
  * A basic component that contains the info on the textures.
+ * 
  * @author Toni Sagrista
  *
  */
@@ -29,10 +30,6 @@ public class TextureComponent {
         textureParams.magFilter = TextureFilter.Linear;
         textureParams.minFilter = Constants.webgl ? TextureFilter.Linear : TextureFilter.MipMapLinearNearest;
     }
-    /**
-     * Above this angle the hi-resolution texture is loaded and applied (if any)
-     */
-    private static final float HIRES_ANGLE_THRESHOLD = (float) Math.toRadians(20);
 
     public String base, hires, specular, normal, night, ring;
     public Texture baseTex;
@@ -61,9 +58,13 @@ public class TextureComponent {
 
     /**
      * Initializes the materials by binding the necessary textures to them.
-     * @param manager The asset manager.
-     * @param materials A map with at least one material under the key "base".
-     * @param cc Plain color used if there is no texture.
+     * 
+     * @param manager
+     *            The asset manager.
+     * @param materials
+     *            A map with at least one material under the key "base".
+     * @param cc
+     *            Plain color used if there is no texture.
      */
     public void initMaterial(AssetManager manager, Map<String, Material> materials, float[] cc) {
         Material material = materials.get("base");

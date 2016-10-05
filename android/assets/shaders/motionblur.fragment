@@ -52,7 +52,6 @@ vec4 blur(vec2 dir, sampler2D tex, vec2 tc, float radius, float resolution){
 }
 
 void main() {
-	float u_blur = u_blurRadius / u_resolution;
 	// Horizontal blur
 	vec4 sample = blur(vec2(1.0, 0.0), u_texture1, v_texCoords, u_blurRadius, u_resolution.x) * 0.5;
 	// Vertical blur

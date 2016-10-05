@@ -40,7 +40,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 
     private PerspectiveCamera[] cameras;
 
-    /** Acceleration, velocity and position of the entity **/
+    /** Acceleration and velocity **/
     public Vector3d accel, vel;
     /** The force acting on the entity and the friction **/
     private Vector3d force, friction;
@@ -56,9 +56,9 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
     /** Acceleration, velocity and position for pitch, yaw and roll **/
     private Vector3d pitch, yaw, roll;
     /**
-    	 * Acceleration, velocity and position for the horizontal and vertical
-    	 * rotation around the focus
-    	 **/
+     * Acceleration, velocity and position for the horizontal and vertical
+     * rotation around the focus
+     **/
     private Vector3d hor, vert;
     /** Time since last forward control issued, in seconds **/
     private double lastFwdTime = 0d;
@@ -83,13 +83,13 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
     private CameraMode lastMode;
 
     /**
-    	 * The focus entity
-    	 */
+     * The focus entity
+     */
     public CelestialBody focus, focusBak, closest;
 
     /**
-    	 * The direction point to seek
-    	 */
+     * The direction point to seek
+     */
     private Vector3d lastvel;
     /** Focus position **/
     private Vector3d focusPos;
@@ -324,11 +324,11 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
     }
 
     /**
-    	 * Adds a forward movement by the given amount.
-    	 * 
-    	 * @param amount
-    	 *            Positive for forward force, negative for backward force.
-    	 */
+     * Adds a forward movement by the given amount.
+     * 
+     * @param amount
+     *            Positive for forward force, negative for backward force.
+     */
     public void addForwardForce(double amount) {
         double tu = getTranslateUnits();
         if (amount <= 0) {
@@ -349,23 +349,23 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
     }
 
     /**
-    	 * Sets the gamepad velocity as it comes from the joystick sensor.
-    	 * 
-    	 * @param amount
-    	 *            The amount in [-1, 1].
-    	 */
+     * Sets the gamepad velocity as it comes from the joystick sensor.
+     * 
+     * @param amount
+     *            The amount in [-1, 1].
+     */
     public void setVelocity(double amount) {
         velocityGamepad = amount;
     }
 
     /**
-    	 * Adds a pan movement to the camera.
-    	 * 
-    	 * @param deltaX
-    	 *            Amount of horizontal movement.
-    	 * @param deltaY
-    	 *            Amount of vertical movement.
-    	 */
+     * Adds a pan movement to the camera.
+     * 
+     * @param deltaX
+     *            Amount of horizontal movement.
+     * @param deltaY
+     *            Amount of vertical movement.
+     */
     public void addPanMovement(double deltaX, double deltaY) {
         double tu = getTranslateUnits();
         desired.set(direction).crs(up).nor().scl(-deltaX * tu);
@@ -374,16 +374,16 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
     }
 
     /**
-    	 * Adds a rotation force to the camera. DeltaX corresponds to yaw
-    	 * (right/left) and deltaY corresponds to pitch (up/down).
-    	 * 
-    	 * @param deltaX
-    	 *            The yaw amount.
-    	 * @param deltaY
-    	 *            The pitch amount.
-    	 * @param focusLookKeyPressed
-    	 *            The key to look around when on focus mode is pressed.
-    	 */
+     * Adds a rotation force to the camera. DeltaX corresponds to yaw
+     * (right/left) and deltaY corresponds to pitch (up/down).
+     * 
+     * @param deltaX
+     *            The yaw amount.
+     * @param deltaY
+     *            The pitch amount.
+     * @param focusLookKeyPressed
+     *            The key to look around when on focus mode is pressed.
+     */
     public void addRotateMovement(double deltaX, double deltaY, boolean focusLookKeyPressed) {
         // Just update yaw with X and pitch with Y
         if (parent.mode.equals(CameraMode.Free_Camera)) {
@@ -440,9 +440,9 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
     }
 
     /**
-    	 * Adds the given amount to camera horizontal rotation around the focus
-    	 * acceleration
-    	 **/
+     * Adds the given amount to camera horizontal rotation around the focus
+     * acceleration
+     **/
     public void addHorizontalRotation(double amount) {
         addAmountX(hor, amount);
     }
@@ -453,9 +453,9 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
     }
 
     /**
-    	 * Adds the given amount to camera vertical rotation around the focus
-    	 * acceleration
-    	 **/
+     * Adds the given amount to camera vertical rotation around the focus
+     * acceleration
+     **/
     public void addVerticalRotation(double amount) {
         addAmountX(vert, amount);
     }
@@ -466,11 +466,11 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
     }
 
     /**
-    	 * Stops the camera movement.
-    	 * 
-    	 * @return True if the camera had any movement at all and it has been
-    	 *         stopped. False if camera was already still.
-    	 */
+     * Stops the camera movement.
+     * 
+     * @return True if the camera had any movement at all and it has been
+     *         stopped. False if camera was already still.
+     */
     public boolean stopMovement() {
         boolean stopped = (vel.len2() != 0 || yaw.y != 0 || pitch.y != 0 || roll.y != 0 || vert.y != 0 || hor.y != 0);
         force.scl(0f);
@@ -484,11 +484,11 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
     }
 
     /**
-    	 * Stops the camera movement.
-    	 * 
-    	 * @return True if the camera had any movement at all and it has been
-    	 *         stopped. False if camera was already still.
-    	 */
+     * Stops the camera movement.
+     * 
+     * @return True if the camera had any movement at all and it has been
+     *         stopped. False if camera was already still.
+     */
     public boolean stopTotalMovement() {
         boolean stopped = (vel.len2() != 0 || yaw.y != 0 || pitch.y != 0 || roll.y != 0 || vert.y != 0 || hor.y != 0);
         force.scl(0f);
@@ -502,11 +502,11 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
     }
 
     /**
-    	 * Stops the camera movement.
-    	 * 
-    	 * @return True if the camera had any movement at all and it has been
-    	 *         stopped. False if camera was already still.
-    	 */
+     * Stops the camera movement.
+     * 
+     * @return True if the camera had any movement at all and it has been
+     *         stopped. False if camera was already still.
+     */
     public boolean stopForwardMovement() {
         boolean stopped = (vel.len2() != 0);
         force.scl(0f);
@@ -515,11 +515,11 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
     }
 
     /**
-    	 * Updates the position of this entity using the current force
-    	 * 
-    	 * @param dt
-    	 * @param multiplier
-    	 */
+     * Updates the position of this entity using the current force
+     * 
+     * @param dt
+     * @param multiplier
+     */
     protected void updatePosition(double dt, double multiplier, double transUnits) {
         // Calculate velocity if coming from gamepad
         if (velocityGamepad != 0) {
@@ -583,10 +583,10 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
     }
 
     /**
-    	 * Updates the rotation for the free camera.
-    	 * 
-    	 * @param dt
-    	 */
+     * Updates the rotation for the free camera.
+     * 
+     * @param dt
+     */
     private void updateRotationFree(float dt, float rotateSpeed) {
         // Add position to compensate for coordinates centered on camera
         if (updatePosition(pitch, dt)) {
@@ -613,10 +613,10 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
     }
 
     /**
-    	 * Updates the direction vector using the pitch, yaw and roll forces.
-    	 * 
-    	 * @param dt
-    	 */
+     * Updates the direction vector using the pitch, yaw and roll forces.
+     * 
+     * @param dt
+     */
     private void updateRotation(float dt, final Vector3d rotationCenter) {
         // Add position to compensate for coordinates centered on camera
         rotationCenter.add(pos);
@@ -644,12 +644,12 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
     }
 
     /**
-    	 * Updates the given accel/vel/pos of the angle using dt.
-    	 * 
-    	 * @param angle
-    	 * @param dt
-    	 * @return
-    	 */
+     * Updates the given accel/vel/pos of the angle using dt.
+     * 
+     * @param angle
+     * @param dt
+     * @return
+     */
     private boolean updatePosition(Vector3d angle, float dt) {
         if (angle.x != 0 || angle.y != 0) {
             // Calculate velocity from acceleration
@@ -665,13 +665,20 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
     }
 
     /**
-    	 * Updates the camera direction and up vectors with a gentle turn towards the given target.
-    	 * @param dt The current time step
-    	 * @param target The position of the target
-    	 * @param turnVelocity The velocity at which to turn
-    	 * @param planetariumAngle In degrees. In the case of planetaria, the target must be a few degrees lower (skewed domes) so that we need to target a point which
-    	 * is a few degrees above the focus.
-    	 */
+     * Updates the camera direction and up vectors with a gentle turn towards
+     * the given target.
+     * 
+     * @param dt
+     *            The current time step
+     * @param target
+     *            The position of the target
+     * @param turnVelocity
+     *            The velocity at which to turn
+     * @param planetariumAngle
+     *            In degrees. In the case of planetaria, the target must be a
+     *            few degrees lower (skewed domes) so that we need to target a
+     *            point which is a few degrees above the focus.
+     */
     private void directionToTarget(double dt, final Vector3d target, double turnVelocity, double planetariumAngle) {
         desired.set(target).sub(pos);
         if (planetariumAngle != 0) {
@@ -700,8 +707,8 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
     }
 
     /**
-    	 * Updates the camera mode
-    	 */
+     * Updates the camera mode
+     */
     @Override
     public void updateMode(CameraMode mode, boolean postEvent) {
         if (mode.equals(CameraMode.Focus)) {
@@ -719,10 +726,10 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
     }
 
     /**
-    	 * This depends on the distance from the focus.
-    	 * 
-    	 * @return
-    	 */
+     * This depends on the distance from the focus.
+     * 
+     * @return
+     */
     public double getTranslateUnits() {
         double dist;
         if (parent.mode == CameraMode.Focus && focus != null) {
@@ -735,10 +742,10 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
     }
 
     /**
-    	 * Depends on the distance to the focus
-    	 * 
-    	 * @return
-    	 */
+     * Depends on the distance to the focus
+     * 
+     * @return
+     */
     public double getRotationUnits() {
         double dist;
         if (parent.mode == CameraMode.Focus) {
@@ -846,17 +853,17 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
     }
 
     /**
-    	 * Rotates the direction and up vector of this camera by the given angle
-    	 * around the given axis, with the axis attached to given point. The
-    	 * direction and up vector will not be orthogonalized.
-    	 *
-    	 * @param point
-    	 *            the point to attach the axis to
-    	 * @param axis
-    	 *            the axis to rotate around
-    	 * @param angle
-    	 *            the angle
-    	 */
+     * Rotates the direction and up vector of this camera by the given angle
+     * around the given axis, with the axis attached to given point. The
+     * direction and up vector will not be orthogonalized.
+     *
+     * @param point
+     *            the point to attach the axis to
+     * @param axis
+     *            the axis to rotate around
+     * @param angle
+     *            the angle
+     */
     public void rotateAround(final Vector3d point, Vector3d axis, double angle) {
         aux3.set(point);
         aux3.sub(pos);
@@ -872,25 +879,25 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
     }
 
     /**
-    	 * Moves the camera by the given amount on each axis.
-    	 * 
-    	 * @param x
-    	 *            the displacement on the x-axis
-    	 * @param y
-    	 *            the displacement on the y-axis
-    	 * @param z
-    	 *            the displacement on the z-axis
-    	 */
+     * Moves the camera by the given amount on each axis.
+     * 
+     * @param x
+     *            the displacement on the x-axis
+     * @param y
+     *            the displacement on the y-axis
+     * @param z
+     *            the displacement on the z-axis
+     */
     public void translate(double x, double y, double z) {
         pos.add(x, y, z);
     }
 
     /**
-    	 * Moves the camera by the given vector.
-    	 * 
-    	 * @param vec
-    	 *            the displacement vector
-    	 */
+     * Moves the camera by the given vector.
+     * 
+     * @param vec
+     *            the displacement vector
+     */
     public void translate(Vector3d vec) {
         pos.add(vec);
     }
@@ -917,10 +924,10 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
     }
 
     /**
-    	 * Applies the given force to this entity's acceleration
-    	 * 
-    	 * @param force
-    	 */
+     * Applies the given force to this entity's acceleration
+     * 
+     * @param force
+     */
     protected void applyForce(Vector3d force) {
         if (force != null)
             accel.add(force);
@@ -1008,8 +1015,8 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
     }
 
     /**
-    	 * Checks the position of the camera does not collide with the focus object.
-    	 */
+     * Checks the position of the camera does not collide with the focus object.
+     */
     public void checkFocus() {
         if (focus != null && !(focus instanceof Star)) {
             // Move camera if too close to focus
