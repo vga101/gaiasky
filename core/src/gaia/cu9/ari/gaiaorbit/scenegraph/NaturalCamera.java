@@ -91,6 +91,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
     	 * The direction point to seek
     	 */
     private Vector3d lastvel;
+    /** Focus position **/
     private Vector3d focusPos;
 
     private Vector3d desired;

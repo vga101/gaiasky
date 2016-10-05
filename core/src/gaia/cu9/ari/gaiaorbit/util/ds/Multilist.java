@@ -26,7 +26,7 @@ public class Multilist<T> implements List<T> {
      * @param numLists The number of lists.
      */
     public Multilist(int numLists) {
-        this(numLists, 10);
+        this(numLists, 10000);
     }
 
     /**

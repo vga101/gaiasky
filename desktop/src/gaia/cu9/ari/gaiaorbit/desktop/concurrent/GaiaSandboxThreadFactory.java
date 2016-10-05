@@ -14,15 +14,12 @@ public class GaiaSandboxThreadFactory implements ThreadFactory {
 
     public GaiaSandboxThreadFactory() {
         SecurityManager s = System.getSecurityManager();
-        group = (s != null) ? s.getThreadGroup() :
-                Thread.currentThread().getThreadGroup();
-        namePrefix = "pool-" +
-                poolNumber.getAndIncrement() + "-thread-";
+        group = (s != null) ? s.getThreadGroup() : Thread.currentThread().getThreadGroup();
+        namePrefix = "pool-" + poolNumber.getAndIncrement() + "-thread-";
     }
 
     public Thread newThread(Runnable r) {
-        Thread t = new GSThread(group, r,
-                namePrefix + threadNumber.get(), threadNumber.getAndIncrement());
+        Thread t = new GSThread(group, r, namePrefix + threadNumber.get(), threadNumber.getAndIncrement());
         if (t.isDaemon())
             t.setDaemon(false);
         if (t.getPriority() != Thread.MAX_PRIORITY)

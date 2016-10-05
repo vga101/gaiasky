@@ -102,7 +102,9 @@ public class CameraManager implements ICamera, IObserver {
     private boolean supervelocity;
 
     /** Current velocity in km/h **/
-    private double velocity;
+    private double speed;
+    /** Velocity vector **/
+    private Vector3d velocity;
 
     public CameraManager(AssetManager manager, CameraMode mode) {
         // Initialize
@@ -111,6 +113,7 @@ public class CameraManager implements ICamera, IObserver {
         fovCamera = new FovCamera(manager, this);
         this.mode = mode;
         lastPos = new Vector3d();
+        velocity = new Vector3d();
         supervelocity = true;
 
         updateCurrentCamera();
@@ -191,11 +194,12 @@ public class CameraManager implements ICamera, IObserver {
             fovCamera.updateDirections(time);
         }
 
-        // Velocity = dx/dt
-        velocity = (lastPos.sub(current.getPos()).len() * Constants.U_TO_KM) / (dt * Constants.S_TO_H);
+        // Speed = dx/dt
+        velocity.set(lastPos).sub(current.getPos());
+        speed = (velocity.len() * Constants.U_TO_KM) / (dt * Constants.S_TO_H);
 
         // Post event with camera motion parameters
-        EventManager.instance.post(Events.CAMERA_MOTION_UPDATED, current.getPos(), velocity);
+        EventManager.instance.post(Events.CAMERA_MOTION_UPDATED, current.getPos(), speed, velocity, current.getDirection());
 
         // Update last pos
         lastPos.set(current.getPos());
@@ -304,19 +308,6 @@ public class CameraManager implements ICamera, IObserver {
 
         if (postEvent) {
             EventManager.instance.post(Events.FOV_CHANGE_NOTIFICATION, this.getCamera().fieldOfView, getFovFactor());
-
-            // In fov1and2 mode we can only use the normal pixel renderer
-            //            if (mode.isGaiaFov() && !prevMode.isGaiaFov() && GlobalConf.scene.PIXEL_RENDERER != 0) {
-            //                // We change to FOV1and2 and the current renderer is not normal
-            //                pxRendererBackup = GlobalConf.scene.PIXEL_RENDERER;
-            //                EventManager.instance.post(Events.PIXEL_RENDERER_CMD, 0);
-            //                EventManager.instance.post(Events.PIXEL_RENDERER_UPDATE);
-            //            } else if (!mode.isGaiaFov() && prevMode.isGaiaFov() && pxRendererBackup >= 0) {
-            //                // We get out of Fov1and2
-            //                EventManager.instance.post(Events.PIXEL_RENDERER_CMD, pxRendererBackup);
-            //                EventManager.instance.post(Events.PIXEL_RENDERER_UPDATE);
-            //                pxRendererBackup = -1;
-            //            }
         }
     }
 
@@ -401,7 +392,7 @@ public class CameraManager implements ICamera, IObserver {
 
     @Override
     public double getVelocity() {
-        return velocity;
+        return speed;
     }
 
     @Override

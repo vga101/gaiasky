@@ -122,7 +122,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         RenderGroup[] renderGroups = RenderGroup.values();
         render_lists = new HashMap<RenderGroup, Multilist<IRenderable>>(renderGroups.length);
         for (RenderGroup rg : renderGroups) {
-            render_lists.put(rg, new Multilist<IRenderable>(numLists, 100));
+            render_lists.put(rg, new Multilist<IRenderable>(numLists, 40000));
         }
 
         ShaderProvider sp = new AtmosphereGroundShaderProvider(Gdx.files.internal("shader/default.vertex.glsl"), Gdx.files.internal("shader/default.fragment.glsl"));
