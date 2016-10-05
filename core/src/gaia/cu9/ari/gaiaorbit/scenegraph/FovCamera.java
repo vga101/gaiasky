@@ -171,6 +171,13 @@ public class FovCamera extends AbstractCamera implements IObserver {
         dirMiddle.set(0, 0, 1).mul(trf);
         matrixPool.free(trf);
 
+        // Return to pool
+        SceneGraphNode ape = fccopy;
+        do {
+            ape.returnToPool();
+            ape = ape.parent;
+        } while (ape != null);
+
     }
 
     /**

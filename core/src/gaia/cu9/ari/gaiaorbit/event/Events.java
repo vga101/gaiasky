@@ -202,8 +202,18 @@ public enum Events {
     /** Notifies a fov update in the camera. Contains the new fov value (float) and the new fovFactor (float) **/
     FOV_CHANGE_NOTIFICATION,
     /**
-     * Contains a Vector3d with the position and a double with the velocity
-     * [km/h]
+     * Informs of a new camera state. Contains:
+     * <ul>
+     * <li>
+     * Vector3d with the current position of the camera
+     * </li><li>
+     * Double with the speed of the camera in km/s
+     * </li><li>
+     * Vector3d with the velocity vector of the camera
+     * </li><li>
+     * The PerspectiveCamera
+     * </li>
+     * </ul>
      **/
     CAMERA_MOTION_UPDATED,
 

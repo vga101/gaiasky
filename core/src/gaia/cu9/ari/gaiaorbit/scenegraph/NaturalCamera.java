@@ -280,11 +280,20 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
             fccopy.getRoot().transform.position.set(0f, 0f, 0f);
             fccopy.getRoot().update(time, null, this);
             this.pos.set(fccopy.transform.getTranslation());
+
             this.pos.add(0, 0, entity1.getRadius() * 5);
             this.posinv.set(this.pos).scl(-1);
             this.direction.set(0, 0, -1);
             this.up.set(0, 1, 0);
             closest = entity1;
+
+            // Return to pool
+            SceneGraphNode ape = fccopy;
+            do {
+                ape.returnToPool();
+                ape = ape.parent;
+            } while (ape != null);
+
             break;
         default:
             break;
@@ -1081,7 +1090,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
             // Unproject focus
             focus.getPosition(aux1);
 
-            auxf1.set((float) aux1.x, (float) aux1.y, (float) aux1.z);
+            aux1.put(auxf1);
             camera.project(auxf1);
 
             if (direction.angle(aux1) > 90) {

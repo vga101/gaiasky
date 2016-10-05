@@ -488,8 +488,11 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
     }
 
     public void returnToPool() {
-        if (this.children != null)
+        if (this.children != null) {
+            for (SceneGraphNode child : children)
+                child.returnToPool();
             this.children.clear();
+        }
         Class clazz = this.getClass();
         MyPools.get(clazz).free(this);
     }

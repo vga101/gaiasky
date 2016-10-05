@@ -10,7 +10,6 @@ import com.bitfire.postprocessing.effects.Fisheye;
 import com.bitfire.postprocessing.effects.LensFlare2;
 import com.bitfire.postprocessing.effects.LightGlow;
 import com.bitfire.postprocessing.effects.MotionBlur;
-import com.bitfire.postprocessing.effects.Zoomer;
 
 public interface IPostProcessor extends Disposable {
     public class PostProcessBean {
@@ -22,7 +21,6 @@ public interface IPostProcessor extends Disposable {
         public Fisheye fisheye;
         public LightGlow lglow;
         public MotionBlur motionblur;
-        public Zoomer zoomer;
 
         public boolean capture() {
             return pp.capture();

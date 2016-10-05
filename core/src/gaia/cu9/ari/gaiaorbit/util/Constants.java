@@ -113,6 +113,9 @@ public class Constants {
     /** Maximum generic slider value **/
     public static final float MAX_SLIDER = 100;
 
+    /** Max motion blur value **/
+    public static final int MAX_MOTION_BLUR = 85;
+
     /** Maximum fov value, in degrees **/
     public static final int MAX_FOV = 170;
     /** Minimum fov value, in degrees **/

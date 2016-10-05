@@ -1,7 +1,12 @@
 package gaia.cu9.ari.gaiaorbit.desktop.render;
 
+import java.util.Arrays;
+
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Vector3;
 import com.bitfire.postprocessing.PostProcessor;
 import com.bitfire.postprocessing.effects.Bloom;
 import com.bitfire.postprocessing.effects.Curvature;
@@ -23,7 +28,7 @@ import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf.ProgramConf.StereoProfile;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
-import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
+import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
 public class DesktopPostProcessor implements IPostProcessor, IObserver {
 
@@ -36,11 +41,18 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
     // Number of flares
     int nghosts;
 
-    long lastMotionBlurUpdate = 0;
-    float lastMotionBlurOpacity = 0;
+    Vector3d auxd, prevCampos;
+    Vector3 auxf;
+    Matrix4 prevViewProj, prevCombined;
 
     public DesktopPostProcessor() {
         ShaderLoader.BasePath = "shaders/";
+
+        auxd = new Vector3d();
+        auxf = new Vector3();
+        prevCampos = new Vector3d();
+        prevViewProj = new Matrix4();
+        prevCombined = new Matrix4();
 
         pps = new PostProcessBean[RenderType.values().length];
 
@@ -92,10 +104,6 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
 
         ppb.pp = new PostProcessor(width, height, true, false, true);
 
-        // MOTION BLUR
-        ppb.motionblur = new MotionBlur();
-        ppb.pp.addEffect(ppb.motionblur);
-
         // BLOOM
         ppb.bloom = new Bloom((int) (width * bloomFboScale), (int) (height * bloomFboScale));
         ppb.bloom.setBloomIntesity(GlobalConf.postprocess.POSTPROCESS_BLOOM_INTENSITY);
@@ -105,7 +113,6 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
 
         // LIGHT GLOW
         int nsamples;
-        float density;
         int lgw, lgh;
         if (GlobalConf.scene.isHighQuality()) {
             nsamples = 30;
@@ -133,7 +140,6 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
         ppb.pp.addEffect(ppb.lglow);
 
         // LENS FLARE
-
         float lensFboScale;
         if (GlobalConf.scene.isHighQuality()) {
             nghosts = 12;
@@ -159,6 +165,11 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
         ppb.lens.setBlurPasses(10);
         ppb.lens.setEnabled(true);
         ppb.pp.addEffect(ppb.lens);
+
+        // MOTION BLUR
+        ppb.motionblur = new MotionBlur(width, height);
+        ppb.motionblur.setBlurRadius(0.6f);
+        ppb.pp.addEffect(ppb.motionblur);
 
         // DISTORTION (STEREOSCOPIC MODE)
         ppb.curvature = new Curvature();
@@ -287,45 +298,38 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
             Gdx.app.postRunnable(new Runnable() {
                 @Override
                 public void run() {
-                    double vel = (double) data[1];
-                    float opacity = (float) MathUtilsd.lint(vel, 0, 1e18, 0, GlobalConf.postprocess.POSTPROCESS_MOTION_BLUR);
-                    long t = System.currentTimeMillis();
-                    boolean enabled = opacity > 0 || (t - lastMotionBlurUpdate) < 5000;
+                    Vector3d campos = (Vector3d) data[0];
+                    PerspectiveCamera cam = (PerspectiveCamera) data[3];
+
+                    boolean cameraChanged = !Arrays.equals(cam.combined.val, prevCombined.val) || !campos.equals(prevCampos);
+
                     for (int i = 0; i < RenderType.values().length; i++) {
                         if (pps[i] != null) {
                             PostProcessBean ppb = pps[i];
 
-                            ppb.motionblur.setEnabled(enabled);
-
-                            if (opacity == 0)
-                                ppb.motionblur.setBlurOpacity(lastMotionBlurOpacity);
-                            else
-                                ppb.motionblur.setBlurOpacity(opacity);
-
+                            // Motion blur
+                            ppb.motionblur.setEnabled(GlobalConf.postprocess.POSTPROCESS_MOTION_BLUR != 0 && cameraChanged);
                         }
                     }
-                    if (opacity > 0) {
-                        lastMotionBlurUpdate = t;
-                        lastMotionBlurOpacity = opacity;
-                    }
+                    prevCombined.set(cam.combined);
+                    prevCampos.set(campos);
                 }
             });
             break;
         case MOTION_BLUR_CMD:
-            //            Gdx.app.postRunnable(new Runnable() {
-            //                @Override
-            //                public void run() {
-            //                    float opacity = (float) data[0];
-            //                    System.out.println(opacity);
-            //                    for (int i = 0; i < RenderType.values().length; i++) {
-            //                        if (pps[i] != null) {
-            //                            PostProcessBean ppb = pps[i];
-            //                            ppb.motionblur.setBlurOpacity(opacity);
-            //                            ppb.motionblur.setEnabled(opacity > 0);
-            //                        }
-            //                    }
-            //                }
-            //            });
+            Gdx.app.postRunnable(new Runnable() {
+                @Override
+                public void run() {
+                    float opacity = (float) data[0];
+                    for (int i = 0; i < RenderType.values().length; i++) {
+                        if (pps[i] != null) {
+                            PostProcessBean ppb = pps[i];
+                            ppb.motionblur.setBlurOpacity(opacity);
+                            ppb.motionblur.setEnabled(opacity > 0);
+                        }
+                    }
+                }
+            });
             break;
 
         case LIGHT_POS_2D_UPDATED:

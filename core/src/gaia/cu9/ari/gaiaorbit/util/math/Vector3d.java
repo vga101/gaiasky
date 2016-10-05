@@ -85,6 +85,10 @@ public class Vector3d implements Serializable {
         return this.set(vector.x, vector.y, vector.z);
     }
 
+    public Vector3 put(final Vector3 vector) {
+        return vector.set((float) this.x, (float) this.y, (float) this.z);
+    }
+
     public Vector3d setZero() {
         return this.set(0, 0, 0);
     }
@@ -620,6 +624,24 @@ public class Vector3d implements Serializable {
     /** Gets the angle in degrees between the two vectors **/
     public double angle(Vector3d v) {
         return MathUtilsd.radiansToDegrees * MathUtilsd.acos(this.dot(v) / (this.len() * v.len()));
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Vector3d other = (Vector3d) obj;
+        if (Double.doubleToLongBits(x) != Double.doubleToLongBits(other.x))
+            return false;
+        if (Double.doubleToLongBits(y) != Double.doubleToLongBits(other.y))
+            return false;
+        if (Double.doubleToLongBits(z) != Double.doubleToLongBits(other.z))
+            return false;
+        return true;
     }
 
 }

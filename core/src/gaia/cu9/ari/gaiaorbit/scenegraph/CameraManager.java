@@ -199,7 +199,7 @@ public class CameraManager implements ICamera, IObserver {
         speed = (velocity.len() * Constants.U_TO_KM) / (dt * Constants.S_TO_H);
 
         // Post event with camera motion parameters
-        EventManager.instance.post(Events.CAMERA_MOTION_UPDATED, current.getPos(), speed, velocity, current.getDirection());
+        EventManager.instance.post(Events.CAMERA_MOTION_UPDATED, current.getPos(), speed, velocity.nor(), current.getCamera());
 
         // Update last pos
         lastPos.set(current.getPos());

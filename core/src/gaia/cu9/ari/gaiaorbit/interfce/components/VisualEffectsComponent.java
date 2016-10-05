@@ -22,10 +22,10 @@ import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnLabel;
 
 public class VisualEffectsComponent extends GuiComponent implements IObserver {
 
-    protected Slider starBrightness, starSize, starOpacity, bloomEffect, ambientLight, motionBlur;
-    protected OwnLabel brightness, size, opacity, bloom, ambient, motion, bloomLabel, motionBlurLabel;
-    protected CheckBox lensFlare, lightScattering;
-    private HorizontalGroup motionGroup, bloomGroup;
+    protected Slider starBrightness, starSize, starOpacity, bloomEffect, ambientLight;
+    protected OwnLabel brightness, size, opacity, bloom, ambient, bloomLabel, motionBlurLabel;
+    protected CheckBox lensFlare, lightScattering, motionBlur;
+    private HorizontalGroup bloomGroup;
 
     boolean flag = true;
 
@@ -149,27 +149,19 @@ public class VisualEffectsComponent extends GuiComponent implements IObserver {
             bloomGroup.addActor(bloom);
 
             /** Motion blur **/
-            motionBlurLabel = new OwnLabel(txt("gui.motionblur"), skin, "default");
-            motion = new OwnLabel(Integer.toString((int) (GlobalConf.postprocess.POSTPROCESS_MOTION_BLUR * 100)), skin);
-            motionBlur = new Slider(Constants.MIN_SLIDER, Constants.MAX_SLIDER, 1, false, skin);
+            motionBlur = new CheckBox(" " + txt("gui.motionblur"), skin);
             motionBlur.setName("motion blur");
-            motionBlur.setValue(GlobalConf.postprocess.POSTPROCESS_MOTION_BLUR * 100f);
+            motionBlur.setChecked(GlobalConf.postprocess.POSTPROCESS_MOTION_BLUR != 0);
             motionBlur.addListener(new EventListener() {
                 @Override
                 public boolean handle(Event event) {
                     if (event instanceof ChangeEvent) {
-                        EventManager.instance.post(Events.MOTION_BLUR_CMD, motionBlur.getValue() / 100f);
-                        motion.setText(Integer.toString((int) motionBlur.getValue()));
+                        EventManager.instance.post(Events.MOTION_BLUR_CMD, motionBlur.isChecked() ? 0.8f : 0.0f);
                         return true;
                     }
                     return false;
                 }
             });
-
-            motionGroup = new HorizontalGroup();
-            motionGroup.space(space3);
-            motionGroup.addActor(motionBlur);
-            motionGroup.addActor(motion);
 
             /** Lens flare **/
             lensFlare = new CheckBox(" " + txt("gui.lensflare"), skin);
@@ -215,8 +207,7 @@ public class VisualEffectsComponent extends GuiComponent implements IObserver {
         if (Constants.desktop) {
             lightingGroup.addActor(bloomLabel);
             lightingGroup.addActor(bloomGroup);
-            lightingGroup.addActor(motionBlurLabel);
-            lightingGroup.addActor(motionGroup);
+            lightingGroup.addActor(motionBlur);
             lightingGroup.addActor(lensFlare);
             lightingGroup.addActor(lightScattering);
         }
