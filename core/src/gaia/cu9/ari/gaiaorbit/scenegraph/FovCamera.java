@@ -39,6 +39,7 @@ import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
 /**
  * The field of view cameras.
+ * 
  * @author Toni Sagrista
  *
  */
@@ -50,7 +51,8 @@ public class FovCamera extends AbstractCamera implements IObserver {
     private static final float BAM_2 = (float) Satellite.BASICANGLE_DEGREE / 2f;
     private static final double GAIA_ASPECT_RATIO = (Satellite.FOV_AL + FOV_CORR) / FOV;
 
-    /** time that has to pass with the current scan rate so that we scan to the
+    /**
+     * time that has to pass with the current scan rate so that we scan to the
      * edge of the current field of view.
      **/
     public long MAX_OVERLAP_TIME = 0l;
@@ -103,9 +105,10 @@ public class FovCamera extends AbstractCamera implements IObserver {
         fovFactor = FOV / 5f;
 
         /**
-         * Fit viewport ensures a fixed aspect ratio. We set the camera field of view equal to the
-         * satelltie's AC FOV and calculate the satellite aspect ratio as FOV_AL/FOV_AC. With it we
-         * set the width of the viewport to ensure we have the same vision as Gaia.
+         * Fit viewport ensures a fixed aspect ratio. We set the camera field of
+         * view equal to the satelltie's AC FOV and calculate the satellite
+         * aspect ratio as FOV_AL/FOV_AC. With it we set the width of the
+         * viewport to ensure we have the same vision as Gaia.
          */
         viewport = new FitViewport((float) (Gdx.graphics.getHeight() * GAIA_ASPECT_RATIO), Gdx.graphics.getHeight(), camera);
         viewport2 = new FitViewport((float) (Gdx.graphics.getHeight() * GAIA_ASPECT_RATIO), Gdx.graphics.getHeight(), camera2);
@@ -181,6 +184,7 @@ public class FovCamera extends AbstractCamera implements IObserver {
 
     /**
      * Updates both FOVs' directions applying the right transformation.
+     * 
      * @param time
      */
     public void updateDirections(ITimeFrameProvider time) {
@@ -224,8 +228,9 @@ public class FovCamera extends AbstractCamera implements IObserver {
     }
 
     /**
-     * Updates the given camera using the given direction and up vectors. Sets the
-     * position to zero.
+     * Updates the given camera using the given direction and up vectors. Sets
+     * the position to zero.
+     * 
      * @param dir
      * @param up
      * @param cam
@@ -266,19 +271,6 @@ public class FovCamera extends AbstractCamera implements IObserver {
     @Override
     public float getFovFactor() {
         return this.fovFactor;
-    }
-
-    @Override
-    public Viewport getViewport() {
-        if (parent.mode.equals(CameraMode.Gaia_FOV2)) {
-            return viewport2;
-        }
-        return viewport;
-    }
-
-    @Override
-    public void setViewport(Viewport viewport) {
-        // Viewports are managed by the camera!
     }
 
     @Override
@@ -353,35 +345,13 @@ public class FovCamera extends AbstractCamera implements IObserver {
     }
 
     @Override
-    public float getMotionMagnitude() {
-        return 0;
-    }
-
-    @Override
-    public void saveState() {
-    }
-
-    @Override
-    public void restoreState() {
-    }
-
-    @Override
     public double getVelocity() {
         return parent.getVelocity();
     }
 
     @Override
-    public boolean superVelocity() {
-        return parent.superVelocity();
-    }
-
-    @Override
     public boolean isFocus(CelestialBody cb) {
         return false;
-    }
-
-    @Override
-    public void checkClosest(CelestialBody cb) {
     }
 
     @Override

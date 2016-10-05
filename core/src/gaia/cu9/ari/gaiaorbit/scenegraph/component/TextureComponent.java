@@ -57,7 +57,7 @@ public class TextureComponent {
     }
 
     /**
-     * Initializes the materials by binding the necessary textures to them.
+     * Initialises the materials by binding the necessary textures to them.
      * 
      * @param manager
      *            The asset manager.

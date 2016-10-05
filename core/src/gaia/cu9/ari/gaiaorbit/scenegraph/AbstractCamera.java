@@ -11,7 +11,10 @@ import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 public abstract class AbstractCamera implements ICamera {
 
     public Vector3d pos, posinv;
-    /** Angle from the center to the corner of the screen in scene coordinates, in radians **/
+    /**
+     * Angle from the center to the corner of the screen in scene coordinates,
+     * in radians
+     **/
     protected float angleEdgeRad;
     /** Aspect ratio **/
     protected float ar;
@@ -21,6 +24,9 @@ public abstract class AbstractCamera implements ICamera {
 
     /** The parent **/
     protected CameraManager parent;
+
+    /** Closest entity to camera **/
+    protected CelestialBody closest;
 
     /** The main camera **/
     public PerspectiveCamera camera;
@@ -98,10 +104,15 @@ public abstract class AbstractCamera implements ICamera {
     }
 
     /**
-     * Returns true if a body with the given position is observed in any of the given directions using the given cone angle
-     * @param pos The position of the body.
-     * @param fcamera The FovCamera.
-     * @param poslen Length of position vector.
+     * Returns true if a body with the given position is observed in any of the
+     * given directions using the given cone angle
+     * 
+     * @param pos
+     *            The position of the body.
+     * @param fcamera
+     *            The FovCamera.
+     * @param poslen
+     *            Length of position vector.
      * @return True if the body is observed. False otherwise.
      */
     protected boolean computeVisibleFovs(Vector3d pos, FovCamera fcamera, double poslen) {
@@ -123,6 +134,22 @@ public abstract class AbstractCamera implements ICamera {
 
     public double getDistance() {
         return distance;
+    }
+
+    @Override
+    public void checkClosest(CelestialBody cb) {
+        if (closest == null) {
+            closest = cb;
+        } else {
+            if (closest.distToCamera - closest.getRadius() > cb.distToCamera - cb.getRadius()) {
+                closest = cb;
+            }
+        }
+    }
+
+    @Override
+    public CelestialBody getClosest() {
+        return closest;
     }
 
 }

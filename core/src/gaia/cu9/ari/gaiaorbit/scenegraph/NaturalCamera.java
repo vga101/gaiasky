@@ -8,7 +8,6 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.viewport.Viewport;
 
 import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
@@ -50,7 +49,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
     public boolean facingFocus;
 
     /** Auxiliary double vectors **/
-    private Vector3d aux1, aux2, aux3, aux5, dx, state;
+    private Vector3d aux1, aux2, aux3, aux5, dx;
     /** Auxiliary float vector **/
     private Vector3 auxf1;
     /** Acceleration, velocity and position for pitch, yaw and roll **/
@@ -85,7 +84,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
     /**
      * The focus entity
      */
-    public CelestialBody focus, focusBak, closest;
+    public CelestialBody focus, focusBak;
 
     /**
      * The direction point to seek
@@ -100,7 +99,6 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
     private double velocityGamepad = 0;
     private double gamepadMultiplier = 1;
 
-    Viewport viewport;
     boolean diverted = false;
 
     boolean accelerometer = false;
@@ -160,7 +158,6 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
         auxf1 = new Vector3();
 
         dx = new Vector3d();
-        state = new Vector3d();
 
         // viewport = new ExtendViewport(200, 200, camera);
 
@@ -902,27 +899,6 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
         pos.add(vec);
     }
 
-    @Override
-    public void saveState() {
-        stateSaved = parent.mode == CameraMode.Focus;
-        if (state != null && stateSaved && focus != null) {
-            // Relative position to focus
-            state.set(pos).sub(focus.pos);
-            // Stop motion
-            stopMovement();
-        }
-    }
-
-    @Override
-    public void restoreState() {
-        if (state != null && stateSaved && focus != null) {
-            pos.set(focus.pos).add(state);
-            posinv.set(pos).scl(-1);
-            direction.set(focus.pos).sub(pos).nor();
-            stateSaved = false;
-        }
-    }
-
     /**
      * Applies the given force to this entity's acceleration
      * 
@@ -941,16 +917,6 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
     @Override
     public PerspectiveCamera getCamera() {
         return camera;
-    }
-
-    @Override
-    public Viewport getViewport() {
-        return viewport;
-    }
-
-    @Override
-    public void setViewport(Viewport viewport) {
-        this.viewport = viewport;
     }
 
     @Override
@@ -979,34 +945,13 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
     }
 
     @Override
-    public float getMotionMagnitude() {
-        return (float) vel.len();
-    }
-
-    @Override
     public double getVelocity() {
         return parent.getVelocity();
     }
 
     @Override
-    public boolean superVelocity() {
-        return parent.superVelocity();
-    }
-
-    @Override
     public boolean isFocus(CelestialBody cb) {
         return focus != null && cb == focus;
-    }
-
-    @Override
-    public void checkClosest(CelestialBody cb) {
-        if (closest == null) {
-            closest = cb;
-        } else {
-            if (closest.distToCamera - closest.getRadius() > cb.distToCamera - cb.getRadius()) {
-                closest = cb;
-            }
-        }
     }
 
     @Override

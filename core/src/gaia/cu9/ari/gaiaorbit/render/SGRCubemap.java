@@ -21,9 +21,10 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 
 /**
- * Renders the cube map 360 degree mode. Basically, it renders the six sides of the cube map 
- * (front, back, up, down, right, left) with a 90 degree fov each and applies the cube map to 
- * equirectangular transformation.
+ * Renders the cube map 360 degree mode. Basically, it renders the six sides of
+ * the cube map (front, back, up, down, right, left) with a 90 degree fov each
+ * and applies the cube map to equirectangular transformation.
+ * 
  * @author tsagrista
  *
  */
@@ -75,7 +76,6 @@ public class SGRCubemap extends SGRAbstract implements ISGR {
         FrameBuffer ynegfb = getFrameBuffer(wh, wh, 5);
 
         Viewport viewport = stretchViewport;
-        camera.setViewport(viewport);
         viewport.setCamera(cam);
         viewport.setWorldSize(wh, wh);
         viewport.setScreenBounds(0, 0, wh, wh);

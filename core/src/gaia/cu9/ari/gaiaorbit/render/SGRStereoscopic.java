@@ -29,9 +29,10 @@ import gaia.cu9.ari.gaiaorbit.util.GlobalConf.ProgramConf.StereoProfile;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 
 /**
- * Renders all the 3D/stereoscopic modes. Renders basically two scenes, one for each eye,
- * and then blends them together on screen with the necessary processing depending on
- * the 3D regime (anaglyphic, 3dtv, crosseye, vr).
+ * Renders all the 3D/stereoscopic modes. Renders basically two scenes, one for
+ * each eye, and then blends them together on screen with the necessary
+ * processing depending on the 3D regime (anaglyphic, 3dtv, crosseye, vr).
+ * 
  * @author tsagrista
  *
  */
@@ -81,8 +82,8 @@ public class SGRStereoscopic extends SGRAbstract implements ISGR, IObserver {
         CelestialBody currentFocus = null;
         if (camera.getMode() == CameraMode.Focus) {
             currentFocus = ((NaturalCamera) camera.getCurrent()).focus;
-        } else if (((NaturalCamera) camera.getCurrent()).closest != null) {
-            currentFocus = ((NaturalCamera) camera.getCurrent()).closest;
+        } else if (camera.getCurrent().getClosest() != null) {
+            currentFocus = camera.getCurrent().getClosest();
         }
         if (currentFocus != null) {
             // If we have focus, we adapt the eye separation
@@ -96,7 +97,6 @@ public class SGRStereoscopic extends SGRAbstract implements ISGR, IObserver {
         Vector3 backupDir = aux3.set(cam.direction);
 
         if (GlobalConf.program.STEREO_PROFILE == StereoProfile.ANAGLYPHIC) {
-            camera.setViewport(extendViewport);
             extendViewport.setCamera(camera.getCamera());
             extendViewport.setWorldSize(rw, rh);
             extendViewport.setScreenBounds(0, 0, rw, rh);
@@ -155,7 +155,6 @@ public class SGRStereoscopic extends SGRAbstract implements ISGR, IObserver {
             // Side by side rendering
             Viewport viewport = stretch ? stretchViewport : extendViewport;
 
-            camera.setViewport(viewport);
             viewport.setCamera(camera.getCamera());
             viewport.setWorldSize(stretch ? rw : rw / 2, rh);
 

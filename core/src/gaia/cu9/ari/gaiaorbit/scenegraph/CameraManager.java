@@ -7,7 +7,6 @@ import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.Ray;
-import com.badlogic.gdx.utils.viewport.Viewport;
 
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
@@ -24,6 +23,7 @@ import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 public class CameraManager implements ICamera, IObserver {
     /**
      * Convenience enum to describe the camera mode
+     * 
      * @author Toni Sagrista
      *
      */
@@ -94,9 +94,6 @@ public class CameraManager implements ICamera, IObserver {
     private Vector3d lastPos, out, in;
     private Vector3 vec, v0, v1;
 
-    /** Are we moving at high speeds? **/
-    private boolean supervelocity;
-
     /** Current velocity in km/h **/
     private double speed;
     /** Velocity vector **/
@@ -115,7 +112,6 @@ public class CameraManager implements ICamera, IObserver {
         v0 = new Vector3();
         v1 = new Vector3();
         velocity = new Vector3d();
-        supervelocity = true;
 
         updateCurrentCamera();
 
@@ -155,16 +151,6 @@ public class CameraManager implements ICamera, IObserver {
     }
 
     @Override
-    public Viewport getViewport() {
-        return current.getViewport();
-    }
-
-    @Override
-    public void setViewport(Viewport viewport) {
-        current.setViewport(viewport);
-    }
-
-    @Override
     public Vector3d getPos() {
         return current.getPos();
     }
@@ -186,8 +172,11 @@ public class CameraManager implements ICamera, IObserver {
 
     /**
      * Update method.
-     * @param dt Delta time in seconds.
-     * @param time The time frame provider.
+     * 
+     * @param dt
+     *            Delta time in seconds.
+     * @param time
+     *            The time frame provider.
      */
     public void update(float dt, ITimeFrameProvider time) {
         current.update(dt, time);
@@ -274,6 +263,7 @@ public class CameraManager implements ICamera, IObserver {
 
     /**
      * Sets the new camera mode and updates the frustum
+     * 
      * @param mode
      */
     public void updateMode(CameraMode mode, boolean postEvent) {
@@ -356,35 +346,13 @@ public class CameraManager implements ICamera, IObserver {
     }
 
     @Override
-    public float getMotionMagnitude() {
-        return current.getMotionMagnitude();
-    }
-
-    @Override
     public ICamera getCurrent() {
         return current;
     }
 
     @Override
-    public void saveState() {
-        if (current != null)
-            current.saveState();
-    }
-
-    @Override
-    public void restoreState() {
-        if (current != null)
-            current.restoreState();
-    }
-
-    @Override
     public double getVelocity() {
         return speed;
-    }
-
-    @Override
-    public boolean superVelocity() {
-        return supervelocity;
     }
 
     @Override
@@ -439,6 +407,11 @@ public class CameraManager implements ICamera, IObserver {
     @Override
     public PerspectiveCamera getCameraStereoRight() {
         return current.getCameraStereoRight();
+    }
+
+    @Override
+    public CelestialBody getClosest() {
+        return current.getClosest();
     }
 
 }
