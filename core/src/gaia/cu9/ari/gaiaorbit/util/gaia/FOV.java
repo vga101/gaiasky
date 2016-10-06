@@ -27,10 +27,7 @@ package gaia.cu9.ari.gaiaorbit.util.gaia;
  */
 public enum FOV {
 
-    FOV1 /* FoV identifier for observations from Preceding telescope with AC motion */,
-    FOV2 /* FoV identifier for observations from Following telescope with AC motion */,
-    FOV3 /* FoV identifier for observations from Preceding telescope without AC motion */,
-    FOV4 /* FoV identifier for observations from Following telescope without AC motion */, ;
+    FOV1 /* FoV identifier for observations from Preceding telescope with AC motion */, FOV2 /* FoV identifier for observations from Following telescope with AC motion */, FOV3 /* FoV identifier for observations from Preceding telescope without AC motion */, FOV4 /* FoV identifier for observations from Following telescope without AC motion */,;
 
     /**
      * Mapping/Alias of the FOVs (with AC motion applied) to the "Following/Preceding" telescope nomenclature (mainly
@@ -173,13 +170,9 @@ public enum FOV {
     /**
      * Determine whether a given field of view corresponds to the following telescope
      * 
-     * @param fov
-     *            the field of view to check
-     * 
      * @return true if field of view corresponds to the following telescope, false otherwise
      */
     public boolean isFollowingTelescope() {
-
         return !isPrecedingTelescope();
     }
 

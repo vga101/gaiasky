@@ -345,30 +345,32 @@ public interface IScriptingInterface {
     public void setFrameOutput(boolean active);
 
     /**
-     * Runs a seamless trip to the object with the given name, until it
-     * fills the viewport. <strong>Warning> This will only work in asynchronous mode.</strong>
+     * Runs a seamless trip to the object with the given name. The camera will stop by default
+     * at a distance of <code>target.radius * 5</code>.
+     * <strong>Warning> This will only work in asynchronous mode.</strong>
      * @param name The name of the object.
      */
     public void goToObject(String name);
 
     /**
      * Runs a seamless trip to the object with the given name until the camera is at the given distance.
-     * If distance is negative, the default distance is six times the radius of the object.
+     * If distance is negative, the default distance <code>target.radius * 5</code>.
      * <strong>Warning> This will only work in asynchronous mode.</strong>
      * @param name The name of the object.
-     * @param distance The distance in km.
+     * @param distance The distance from the object at which the camera stops, in km.
      */
     public void goToObject(String name, double distance);
 
     /**
      * Runs a seamless trip to the object with the given name until the camera is at the given distance.
-     * If distance is negative, the default distance is six times the radius of the object. If focusWait is
-     * positive, it indicates the number of seconds to wait for the focus to be centred before starting
-     * the forward movement.
+     * If distance is negative, the default distance is <code>target.radius * 5</code>t. If focusWait is
+     * positive, it indicates the number of seconds to wait for the target object to be centred before starting
+     * the forward movement. This very much depends on the <code>turn velocity</code> of the camera. See {@link #setTurningCameraSpeed(float)}.
      * <strong>Warning> This will only work in asynchronous mode.</strong>
      * @param name The name of the object.
-     * @param distance The distance in Km.
-     * @param focusWait The seconds to wait for focus. Negative to wait till fully focused.
+     * @param distance The distance from the object at which the camera stops, in Km.
+     * @param focusWait The seconds to wait for the camera direction vector and the vector from the camera
+     * position to the target object to be aligned.
      */
     public void goToObject(String name, double distance, float focusWait);
 

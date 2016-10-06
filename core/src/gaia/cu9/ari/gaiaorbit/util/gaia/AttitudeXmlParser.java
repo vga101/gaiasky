@@ -1,17 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.util.gaia;
 
-import gaia.cu9.ari.gaiaorbit.util.BinarySearchTree;
-import gaia.cu9.ari.gaiaorbit.util.Constants;
-import gaia.cu9.ari.gaiaorbit.util.I18n;
-import gaia.cu9.ari.gaiaorbit.util.Logger;
-import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
-import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
-import gaia.cu9.ari.gaiaorbit.util.format.IDateFormat;
-import gaia.cu9.ari.gaiaorbit.util.gaia.time.Duration;
-import gaia.cu9.ari.gaiaorbit.util.gaia.time.Hours;
-import gaia.cu9.ari.gaiaorbit.util.gaia.time.Secs;
-import gaia.cu9.ari.gaiaorbit.util.units.Quantity;
-
 import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
@@ -24,10 +12,21 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.XmlReader;
 
+import gaia.cu9.ari.gaiaorbit.util.BinarySearchTree;
+import gaia.cu9.ari.gaiaorbit.util.Constants;
+import gaia.cu9.ari.gaiaorbit.util.I18n;
+import gaia.cu9.ari.gaiaorbit.util.Logger;
+import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
+import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
+import gaia.cu9.ari.gaiaorbit.util.format.IDateFormat;
+import gaia.cu9.ari.gaiaorbit.util.gaia.time.Duration;
+import gaia.cu9.ari.gaiaorbit.util.gaia.time.Hours;
+import gaia.cu9.ari.gaiaorbit.util.gaia.time.Secs;
+import gaia.cu9.ari.gaiaorbit.util.units.Quantity;
+
 /**
  * Parses the XML files with the attitudes and their activaton times into a binary search tree.
  * @author Toni Sagrista
- * @date 01/06/15.
  */
 public class AttitudeXmlParser {
 
