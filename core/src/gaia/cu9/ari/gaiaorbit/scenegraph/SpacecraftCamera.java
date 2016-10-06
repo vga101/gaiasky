@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.assets.loaders.ModelLoader;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -15,12 +16,13 @@ import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
-import com.badlogic.gdx.graphics.g3d.loader.ObjLoader;
+import com.badlogic.gdx.graphics.g3d.loader.G3dModelLoader;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.input.GestureDetector.GestureAdapter;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.UBJsonReader;
 
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
@@ -35,9 +37,9 @@ import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
 /**
- * Implements a spacecraft-like movement. The spacecraft is modeled as
- * a rigid solid and it has a mass and an engine model. The rest is
- * physics.
+ * Implements a spacecraft-like movement. The spacecraft is modeled as a rigid
+ * solid and it has a mass and an engine model. The rest is physics.
+ * 
  * @author tsagrista
  *
  */
@@ -143,11 +145,13 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
 
         // Init model
         environment = new Environment();
-        environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.4f, 0.4f, 0.4f, 1f));
+        float amb = GlobalConf.scene.AMBIENT_LIGHT;
+        environment.set(new ColorAttribute(ColorAttribute.AmbientLight, amb, amb, amb, 1f));
         environment.add(new DirectionalLight().set(0.8f, 0.8f, 0.8f, -1f, -0.8f, -0.2f));
         modelBatch = new ModelBatch();
-        ObjLoader ml = new ObjLoader(new InternalFileHandleResolver());
-        Model cockpitModel = ml.loadModel(Gdx.files.internal("data/models/cockpit/spaceship/ship.obj"));
+        //        ModelLoader ml = new ObjModelLoader(new InternalFileHandleResolver());
+        ModelLoader ml = new G3dModelLoader(new UBJsonReader(), new InternalFileHandleResolver());
+        Model cockpitModel = ml.loadModel(Gdx.files.internal("data/models/spaceship/spaceship.g3db"));
         cockpitInstance = new ModelInstance(cockpitModel);
         transform = cockpitInstance.transform;
         instances.add(cockpitInstance);
@@ -270,6 +274,9 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
         pitch += pitchdiff;
         roll += rolldiff;
 
+        // apply roll
+        up.rotate(direction, -rolldiff);
+
         // apply yaw
         direction.rotate(up, yawdiff);
 
@@ -277,9 +284,6 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
         auxd1.set(direction).crs(up);
         direction.rotate(auxd1, pitchdiff);
         up.rotate(auxd1, pitchdiff);
-
-        // apply roll
-        up.rotate(direction, rolldiff);
 
         // Update camera
         updatePerspectiveCamera();
@@ -313,33 +317,41 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
 
     }
 
-    /** 
+    /**
      * Sets the current engine power
-     * @param power The power in [-1..1]
+     * 
+     * @param power
+     *            The power in [-1..1]
      */
     public void setEnginePower(double enginePower) {
         this.enginePower = MathUtilsd.clamp(enginePower, -1, 1);
     }
 
-    /** 
+    /**
      * Sets the current yaw power
-     * @param yawp The yaw power in [-1..1]
+     * 
+     * @param yawp
+     *            The yaw power in [-1..1]
      */
     public void setYawPower(double yawp) {
         this.yawp = MathUtilsd.clamp(yawp, -1, 1);
     }
 
-    /** 
+    /**
      * Sets the current pitch power
-     * @param pitchp The pitch power in [-1..1]
+     * 
+     * @param pitchp
+     *            The pitch power in [-1..1]
      */
     public void setPitchPower(double pitchp) {
         this.pitchp = MathUtilsd.clamp(pitchp, -1, 1);
     }
 
-    /** 
+    /**
      * Sets the current roll power
-     * @param rollp The roll power in [-1..1]
+     * 
+     * @param rollp
+     *            The roll power in [-1..1]
      */
     public void setRollPower(double rollp) {
         this.rollp = MathUtilsd.clamp(rollp, -1, 1);
@@ -492,25 +504,23 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
             float w = Gdx.graphics.getWidth();
             float h = Gdx.graphics.getHeight();
 
-            float scalex = w / cockpit.getWidth();
-            float scaley = h / cockpit.getHeight();
-            cockpit.setScale(scalex, scaley);
-            cockpit.setOrigin(0, 0);
+            //            float scalex = w / cockpit.getWidth();
+            //            float scaley = h / cockpit.getHeight();
+            //            cockpit.setScale(scalex, scaley);
+            //            cockpit.setOrigin(0, 0);
 
             spriteBatch.begin();
             spriteBatch.draw(crosshairTex, w / 2f - chw2, h / 2f - chh2);
-            cockpit.draw(spriteBatch);
+            //            cockpit.draw(spriteBatch);
             spriteBatch.end();
 
-            //            transform.idt();
-            //
-            //            transform.rotate(camera.up, (float) yaw);
-            //            transform.rotate(camera.direction, (float) roll);
-            //            transform.translate(0f, -1f, 2f);
-            //
-            //            modelBatch.begin(this.camera);
-            //            modelBatch.render(instances, environment);
-            //            modelBatch.end();
+            transform.idt();
+            transform.rotate(camera.up, (float) roll);
+            transform.translate(0f, -10f, -15f);
+
+            modelBatch.begin(this.camera);
+            modelBatch.render(instances, environment);
+            modelBatch.end();
 
         }
     }
