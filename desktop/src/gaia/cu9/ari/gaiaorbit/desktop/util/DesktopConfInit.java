@@ -100,6 +100,7 @@ public class DesktopConfInit extends ConfInit {
         String versionStr = vp.getProperty("version");
         int[] majminrev = GlobalConf.version.getMajorMinorRevFromString(versionStr);
         vc.initialize(versionStr, vp.getProperty("buildtime"), vp.getProperty("builder"), vp.getProperty("system"), vp.getProperty("build"), majminrev[0], majminrev[1], majminrev[2]);
+        Logger.info("Gaia Sky version " + vc.version + " - build " + vc.build);
 
         /** PERFORMANCE CONF **/
         PerformanceConf pc = new PerformanceConf();

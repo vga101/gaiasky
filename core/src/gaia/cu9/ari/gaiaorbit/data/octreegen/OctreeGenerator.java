@@ -18,7 +18,7 @@ import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
 public class OctreeGenerator {
 
     /** Is the octree centred at the sun? **/
-    private static final boolean SUN_CENTRE = true;
+    private static final boolean SUN_CENTRE = false;
     /** Maximum distance in parsecs **/
     private static final double MAX_DISTANCE_CAP = 3e6;
 

@@ -34,6 +34,8 @@ public class CameraManager implements ICamera, IObserver {
         Focus,
         /** Gaia Scene **/
         Gaia_Scene,
+        /** Spacecraft **/
+        Spacecraft,
         /** FOV1 **/
         Gaia_FOV1,
         /** FOV2 **/
@@ -47,6 +49,7 @@ public class CameraManager implements ICamera, IObserver {
             String fc = "Free camera";
             String foc = "Focus object";
             String gs = "Gaia scene";
+            String sc = "Spacecraft";
             String f1 = "Gaia FoV 1";
             String f2 = "Gaia FoV 2";
             String f12 = "Gaia FoV1 and FoV2";
@@ -55,6 +58,7 @@ public class CameraManager implements ICamera, IObserver {
             equivalences.add(fc, Free_Camera);
             equivalences.add(foc, Focus);
             equivalences.add(gs, Gaia_Scene);
+            equivalences.add(sc, Spacecraft);
             equivalences.add(f1, Gaia_FOV1);
             equivalences.add(f2, Gaia_FOV2);
             equivalences.add(f12, Gaia_FOV1and2);
@@ -89,6 +93,9 @@ public class CameraManager implements ICamera, IObserver {
 
     public NaturalCamera naturalCamera;
     public FovCamera fovCamera;
+    public SpacecraftCamera spacecraftCamera;
+
+    private ICamera[] cameras;
 
     /** Last position, for working out velocity **/
     private Vector3d lastPos, out, in;
@@ -102,8 +109,13 @@ public class CameraManager implements ICamera, IObserver {
     public CameraManager(AssetManager manager, CameraMode mode) {
         // Initialize
         // Initialize Cameras
+        CameraMode previousMode = this.mode;
         naturalCamera = new NaturalCamera(manager, this);
         fovCamera = new FovCamera(manager, this);
+        spacecraftCamera = new SpacecraftCamera(manager, this);
+
+        cameras = new ICamera[] { naturalCamera, fovCamera, spacecraftCamera };
+
         this.mode = mode;
         lastPos = new Vector3d();
         in = new Vector3d();
@@ -113,12 +125,12 @@ public class CameraManager implements ICamera, IObserver {
         v1 = new Vector3();
         velocity = new Vector3d();
 
-        updateCurrentCamera();
+        updateCurrentCamera(previousMode);
 
         EventManager.instance.subscribe(this, Events.CAMERA_MODE_CMD, Events.FOV_CHANGE_NOTIFICATION);
     }
 
-    public void updateCurrentCamera() {
+    public void updateCurrentCamera(CameraMode previousMode) {
 
         // Update
         switch (mode) {
@@ -126,6 +138,15 @@ public class CameraManager implements ICamera, IObserver {
         case Focus:
         case Gaia_Scene:
             current = naturalCamera;
+            // Copy
+            if (previousMode == CameraMode.Spacecraft)
+                naturalCamera.copyParamsFrom(spacecraftCamera);
+            break;
+        case Spacecraft:
+            current = spacecraftCamera;
+            // Copy
+            if (previousMode == CameraMode.Free_Camera || previousMode == CameraMode.Focus || previousMode == CameraMode.Gaia_Scene)
+                spacecraftCamera.copyParamsFrom(naturalCamera);
             break;
         case Gaia_FOV1:
         case Gaia_FOV2:
@@ -267,21 +288,12 @@ public class CameraManager implements ICamera, IObserver {
      * @param mode
      */
     public void updateMode(CameraMode mode, boolean postEvent) {
-        CameraMode prevMode = this.mode;
-        boolean modeChange = mode != this.mode;
-        // Save state of current if mode is different
-        //        if (modeChange)
-        //            saveState();
-
-        // Save state of old camera
+        CameraMode previousMode = this.mode;
         this.mode = mode;
-        updateCurrentCamera();
-        naturalCamera.updateMode(mode, postEvent);
-        fovCamera.updateMode(mode, postEvent);
-
-        // Restore state of new camera
-        //        if (modeChange && this.mode == CameraMode.Focus)
-        //            restoreState();
+        updateCurrentCamera(previousMode);
+        for (ICamera cam : cameras) {
+            cam.updateMode(mode, postEvent);
+        }
 
         if (postEvent) {
             EventManager.instance.post(Events.FOV_CHANGE_NOTIFICATION, this.getCamera().fieldOfView, getFovFactor());
@@ -326,8 +338,8 @@ public class CameraManager implements ICamera, IObserver {
 
     @Override
     public void updateAngleEdge(int width, int height) {
-        naturalCamera.updateAngleEdge(width, height);
-        fovCamera.updateAngleEdge(width, height);
+        for (ICamera cam : cameras)
+            cam.updateAngleEdge(width, height);
     }
 
     @Override

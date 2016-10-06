@@ -414,6 +414,10 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
         parentTransform.getTranslation(transform);
         this.opacity = opacity;
 
+        if (pageId == 1056 || pageId == 448 || pageId == 336 || pageId == 272 || pageId == 208 || pageId == 144 || pageId == 80 || pageId == 16 || pageId == 1) {
+            int a = 2;
+        }
+
         // Is this octant observed??
         computeObserved2(parentTransform, cam);
 

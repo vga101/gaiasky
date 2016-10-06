@@ -33,7 +33,7 @@ public class GlobalConf {
 
     public static void updateScaleFactor(float sf) {
         SCALE_FACTOR = sf;
-        Logger.info(GlobalConf.class.getSimpleName(), "GUI scale factor set to " + GlobalConf.SCALE_FACTOR);
+        Logger.debug(GlobalConf.class.getSimpleName(), "GUI scale factor set to " + GlobalConf.SCALE_FACTOR);
     }
 
     public static interface IConf {

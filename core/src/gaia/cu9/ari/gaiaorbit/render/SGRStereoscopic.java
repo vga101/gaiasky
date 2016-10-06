@@ -22,7 +22,6 @@ import gaia.cu9.ari.gaiaorbit.render.IPostProcessor.PostProcessBean;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
-import gaia.cu9.ari.gaiaorbit.scenegraph.NaturalCamera;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf.ProgramConf.StereoProfile;
@@ -81,7 +80,7 @@ public class SGRStereoscopic extends SGRAbstract implements ISGR, IObserver {
 
         CelestialBody currentFocus = null;
         if (camera.getMode() == CameraMode.Focus) {
-            currentFocus = ((NaturalCamera) camera.getCurrent()).focus;
+            currentFocus = camera.getFocus();
         } else if (camera.getCurrent().getClosest() != null) {
             currentFocus = camera.getCurrent().getClosest();
         }

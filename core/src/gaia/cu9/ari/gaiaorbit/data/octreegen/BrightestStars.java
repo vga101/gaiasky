@@ -12,7 +12,7 @@ import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
 public class BrightestStars implements IAggregationAlgorithm<Particle> {
     private static final int MAX_DEPTH = 20;
     // Maximum number of objects in the densest node of this level
-    private static final int MAX_PART = 2000;
+    private static final int MAX_PART = 4000;
     // Minimum number of objects under which we do not need to break the octree further
     private static final int MIN_PART = 200;
 

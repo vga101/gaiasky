@@ -1,13 +1,13 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph.octreewrapper;
 
+import java.util.ArrayList;
+
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Transform;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
-
-import java.util.ArrayList;
 
 /**
  * Static Octree wrapper that can be inserted into the scene graph.

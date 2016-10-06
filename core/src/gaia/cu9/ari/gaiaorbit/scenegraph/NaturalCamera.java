@@ -306,7 +306,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
         updatePerspectiveCamera();
     }
 
-    private void updatePerspectiveCamera() {
+    protected void updatePerspectiveCamera() {
 
         if (closest != null) {
             camera.near = (float) Math.min(CAM_NEAR, (closest.distToCamera - closest.getRadius()) / 2.5f);
