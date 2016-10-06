@@ -4,11 +4,23 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g3d.Environment;
+import com.badlogic.gdx.graphics.g3d.Model;
+import com.badlogic.gdx.graphics.g3d.ModelBatch;
+import com.badlogic.gdx.graphics.g3d.ModelInstance;
+import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
+import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
+import com.badlogic.gdx.graphics.g3d.loader.ObjLoader;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.input.GestureDetector.GestureAdapter;
+import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Quaternion;
+import com.badlogic.gdx.utils.Array;
 
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
@@ -73,7 +85,15 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
     public double mass;
 
     private SpriteBatch spriteBatch;
-    private Texture crosshair;
+    private Texture crosshairTex, cockpitTex;
+    private ModelInstance cockpitInstance;
+    private ModelBatch modelBatch;
+    private Environment environment;
+    private Array<ModelInstance> instances = new Array<ModelInstance>(1);
+    private Quaternion q;
+    private Matrix4 transform;
+
+    private Sprite cockpit;
     private float chw2, chh2;
 
     public SpacecraftCamera(AssetManager assetManager, CameraManager parent) {
@@ -101,6 +121,7 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
         auxd2 = new Vector3d();
         auxd3 = new Vector3d();
         auxd4 = new Vector3d();
+        q = new Quaternion();
 
         // init camera
         camera = new PerspectiveCamera(GlobalConf.scene.CAMERA_FOV, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -112,11 +133,24 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
 
         inputController = new SpacecraftInputController(new GestureAdapter(), this);
 
-        // Init sprite batch for crosshair
+        // Init sprite batch for crosshair and cockpit
         spriteBatch = new SpriteBatch();
-        crosshair = new Texture(Gdx.files.internal("img/crosshair-yellow.png"));
-        chw2 = crosshair.getWidth() / 2f;
-        chh2 = crosshair.getHeight() / 2f;
+        crosshairTex = new Texture(Gdx.files.internal("img/crosshair-yellow.png"));
+        chw2 = crosshairTex.getWidth() / 2f;
+        chh2 = crosshairTex.getHeight() / 2f;
+        cockpitTex = new Texture(Gdx.files.internal("img/cockpit.png"));
+        cockpit = new Sprite(cockpitTex);
+
+        // Init model
+        environment = new Environment();
+        environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.4f, 0.4f, 0.4f, 1f));
+        environment.add(new DirectionalLight().set(0.8f, 0.8f, 0.8f, -1f, -0.8f, -0.2f));
+        modelBatch = new ModelBatch();
+        ObjLoader ml = new ObjLoader(new InternalFileHandleResolver());
+        Model cockpitModel = ml.loadModel(Gdx.files.internal("data/models/cockpit/spaceship/ship.obj"));
+        cockpitInstance = new ModelInstance(cockpitModel);
+        transform = cockpitInstance.transform;
+        instances.add(cockpitInstance);
 
         // Focus is changed from GUI
         EventManager.instance.subscribe(this, Events.FOV_CHANGED_CMD);
@@ -234,7 +268,7 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
         double rolldiff = rollv * dt;
         yaw += yawdiff;
         pitch += pitchdiff;
-        roll = rolldiff;
+        roll += rolldiff;
 
         // apply yaw
         direction.rotate(up, yawdiff);
@@ -382,11 +416,11 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
                     // power -1
                     camera.setEnginePower(-1);
                     break;
-                case Keys.D:
+                case Keys.A:
                     // roll 1
                     camera.setRollPower(1);
                     break;
-                case Keys.A:
+                case Keys.D:
                     // roll -1
                     camera.setRollPower(-1);
                     break;
@@ -458,9 +492,25 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
             float w = Gdx.graphics.getWidth();
             float h = Gdx.graphics.getHeight();
 
+            float scalex = w / cockpit.getWidth();
+            float scaley = h / cockpit.getHeight();
+            cockpit.setScale(scalex, scaley);
+            cockpit.setOrigin(0, 0);
+
             spriteBatch.begin();
-            spriteBatch.draw(crosshair, w / 2f - chw2, h / 2f - chh2);
+            spriteBatch.draw(crosshairTex, w / 2f - chw2, h / 2f - chh2);
+            cockpit.draw(spriteBatch);
             spriteBatch.end();
+
+            //            transform.idt();
+            //
+            //            transform.rotate(camera.up, (float) yaw);
+            //            transform.rotate(camera.direction, (float) roll);
+            //            transform.translate(0f, -1f, 2f);
+            //
+            //            modelBatch.begin(this.camera);
+            //            modelBatch.render(instances, environment);
+            //            modelBatch.end();
 
         }
     }
