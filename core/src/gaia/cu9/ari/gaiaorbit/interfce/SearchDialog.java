@@ -48,7 +48,8 @@ public class SearchDialog extends Window {
                                 if (node instanceof CelestialBody) {
                                     EventManager.instance.post(Events.CAMERA_MODE_CMD, CameraMode.Focus, true);
                                     EventManager.instance.post(Events.FOCUS_CHANGE_CMD, node, true);
-                                    searchInput.selectAll();
+                                    // This prevents further search
+                                    //searchInput.selectAll();
                                 }
                             }
                         }

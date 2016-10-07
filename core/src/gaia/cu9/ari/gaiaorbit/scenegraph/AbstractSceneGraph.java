@@ -47,19 +47,13 @@ public abstract class AbstractSceneGraph implements ISceneGraph {
         stringToNode.put(root.name, root);
         starMap = new IntMap<Star>();
         for (SceneGraphNode node : nodes) {
-            if (node.name != null && !node.name.isEmpty()) {
-                stringToNode.put(node.name, node);
-                stringToNode.put(node.name.toLowerCase(), node);
+            addToIndex(node, stringToNode);
 
-                // Unwrap octree objects
-                if (node instanceof AbstractOctreeWrapper) {
-                    AbstractOctreeWrapper ow = (AbstractOctreeWrapper) node;
-                    for (SceneGraphNode ownode : ow.children) {
-                        if (ownode.name != null && !ownode.name.isEmpty()) {
-                            stringToNode.put(ownode.name, ownode);
-                            stringToNode.put(ownode.name.toLowerCase(), ownode);
-                        }
-                    }
+            // Unwrap octree objects
+            if (node instanceof AbstractOctreeWrapper) {
+                AbstractOctreeWrapper ow = (AbstractOctreeWrapper) node;
+                for (SceneGraphNode ownode : ow.children) {
+                    addToIndex(ownode, stringToNode);
                 }
             }
 
@@ -99,6 +93,33 @@ public abstract class AbstractSceneGraph implements ISceneGraph {
         }
 
         Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.sg.init", root.numChildren));
+    }
+
+    private void addToIndex(SceneGraphNode node, HashMap<String, SceneGraphNode> map) {
+        if (node.name != null && !node.name.isEmpty()) {
+            map.put(node.name, node);
+            map.put(node.name.toLowerCase(), node);
+
+            // Id
+            if (node.id > 0) {
+                String id = String.valueOf(node.id);
+                map.put(id, node);
+            }
+
+            if (node instanceof Star) {
+                // Hip
+                if (((Star) node).hip > 0) {
+                    String hipid = "hip " + ((Star) node).hip;
+                    map.put(hipid, node);
+                }
+                // Tycho
+                if (((Star) node).tycho != null && !((Star) node).tycho.isEmpty()) {
+                    map.put(((Star) node).tycho, node);
+                }
+
+            }
+
+        }
     }
 
     @Override
