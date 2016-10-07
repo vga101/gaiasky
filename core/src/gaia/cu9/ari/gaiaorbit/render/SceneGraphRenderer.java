@@ -297,7 +297,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
         // LABELS
         AbstractRenderSystem labelsProc = new FontRenderSystem(RenderGroup.LABEL, priority++, alphas, fontBatch, fontShader);
-        labelsProc.setPreRunnable(blendDepthRunnable);
+        labelsProc.setPreRunnable(blendNoDepthRunnable);
 
         // MODEL ATMOSPHERE
         AbstractRenderSystem modelAtmProc = new ModelBatchRenderSystem(RenderGroup.MODEL_F_ATM, priority++, alphas, modelBatchAtm, true) {

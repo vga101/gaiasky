@@ -258,6 +258,7 @@ people behind the following technologies/resources:
 - Tom Patterson ([www.shadedrelief.com]()) for some textures.
 - [Solar System Scope](http://www.solarsystemscope.com/) for some textures (Mercury, Venus, Earth, Moon).
 - Phil Stooke and Grant Hutchison ([http://www.classe.cornell.edu/~seb/celestia/hutchison/index-125.html]()) for some of the textures.
+- [David Navas](http://www.blendswap.com/user/DeNapes) for the `simple spaceship` model. Cool stuff!
 - Machuca+Arias+Caballero for the music track "Gaia-DR1".
 - [Install4j](http://www.ej-technologies.com/products/install4j/overview.html) (multi-platform installer builder), for providing a free open source license.
 - Bitrock's [InstallBuilder](http://installbuilder.bitrock.com/) for providing a free open source license.

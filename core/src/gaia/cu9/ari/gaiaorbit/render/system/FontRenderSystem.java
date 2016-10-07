@@ -64,6 +64,7 @@ public class FontRenderSystem extends AbstractRenderSystem {
         } else {
             for (int i = 0; i < size; i++) {
                 IRenderable s = renderables.get(i);
+
                 // Regular mode, we use 3D distance field font
                 I3DTextRenderable lr = (I3DTextRenderable) s;
                 shaderProgram.setUniformf("a_labelAlpha", (lr.isLabel() || camera.getCurrent() instanceof FovCamera ? alphas[ComponentType.Labels.ordinal()] : 1f));

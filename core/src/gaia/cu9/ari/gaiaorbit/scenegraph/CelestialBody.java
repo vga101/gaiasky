@@ -168,6 +168,11 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
             shader.setUniformf("a_viewAnglePow", getViewAnglePow());
             shader.setUniformf("a_thOverFactor", TH_OVER_FACTOR);
             shader.setUniformf("a_thOverFactorScl", getThOverFactorScl());
+
+            if (camera.isFocus((CelestialBody) this)) {
+                //System.out.println(labelSizeConcrete());
+            }
+
             render3DLabel(batch, shader, font3d, camera, text(), pos, textScale(), textSize(), textColour());
         }
 
@@ -288,7 +293,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
 
     @Override
     public boolean renderText() {
-        return name != null && GaiaSky.instance.isOn(ComponentType.Labels) && Math.pow(viewAngle, getViewAnglePow()) >= (TH_OVER_FACTOR * getThOverFactorScl());
+        return name != null && GaiaSky.instance.isOn(ComponentType.Labels) && Math.pow(viewAngleApparent, getViewAnglePow()) >= (TH_OVER_FACTOR * getThOverFactorScl());
     }
 
     @Override
@@ -303,7 +308,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
 
     @Override
     public float textSize() {
-        return (float) (Math.min(labelSizeConcrete() / Math.pow(distToCamera, 1.05f), labelMax()) * Math.pow(distToCamera, 1.01f) * labelFactor());
+        return (float) (Math.min(labelSizeConcrete() / Math.pow(distToCamera, 1.05f), labelMax()) * distToCamera * labelFactor());
     }
 
     protected float labelSizeConcrete() {

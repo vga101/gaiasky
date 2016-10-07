@@ -32,7 +32,7 @@ public class KeyBindings {
         }
     }
 
-    private int SPECIAL1, SPECIAL2;
+    public static int SPECIAL1, SPECIAL2;
 
     /**
      * Creates a key mappings instance.

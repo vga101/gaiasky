@@ -43,6 +43,7 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
     protected static float thupOverFovfactor;
     protected static float thdownOverFovfactor;
     protected static float innerRad;
+    protected static float fovFactor;
     protected static ParamUpdater paramUpdater;
 
     protected static class ParamUpdater implements IObserver {
@@ -55,7 +56,7 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
         public void notify(Events event, Object... data) {
             switch (event) {
             case FOV_CHANGE_NOTIFICATION:
-                float fovFactor = (Float) data[1];
+                fovFactor = (Float) data[1];
                 thpointTimesFovfactor = (float) GlobalConf.scene.STAR_THRESHOLD_POINT * fovFactor;
                 thupOverFovfactor = (float) Constants.THRESHOLD_UP / fovFactor;
                 thdownOverFovfactor = (float) Constants.THRESHOLD_DOWN / fovFactor;
@@ -68,9 +69,10 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
     }
 
     static {
-        thpointTimesFovfactor = (float) GlobalConf.scene.STAR_THRESHOLD_POINT;
-        thupOverFovfactor = (float) Constants.THRESHOLD_UP;
-        thdownOverFovfactor = (float) Constants.THRESHOLD_DOWN;
+        fovFactor = GaiaSky.instance.getCameraManager().getFovFactor();
+        thpointTimesFovfactor = (float) GlobalConf.scene.STAR_THRESHOLD_POINT * fovFactor;
+        thupOverFovfactor = (float) Constants.THRESHOLD_UP / fovFactor;
+        thdownOverFovfactor = (float) Constants.THRESHOLD_DOWN / fovFactor;
         innerRad = 0.004f * DISC_FACTOR + GlobalConf.scene.STAR_POINT_SIZE * 0.009f;
         paramUpdater = new ParamUpdater();
     }
@@ -196,7 +198,7 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
 
         // Calculate size - This contains arbitrary boundary values to make things nice on the render side
         size = (float) Math.max(Math.min((Math.pow(flux, 0.5f) * Constants.PC_TO_U * 0.16f), 1e8f), 0.6e6f) / DISC_FACTOR;
-        computedSize = size;
+        computedSize = 0;
     }
 
     @Override
@@ -218,6 +220,10 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
             //                transform.position.add(pmv);
             //            }
             distToCamera = (float) transform.position.len();
+
+            // TODO Very ugly!
+            if (ModelBody.closestCamStar == null || ModelBody.closestCamStar.distToCamera > distToCamera)
+                ModelBody.closestCamStar = this;
 
             if (!copy) {
                 visiblect = SceneGraphRenderer.visible[ct.ordinal()];
@@ -312,6 +318,11 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
     }
 
     @Override
+    public boolean renderText() {
+        return computedSize > 0 && GaiaSky.instance.isOn(ComponentType.Labels) && viewAngleApparent >= thpointTimesFovfactor;
+    }
+
+    @Override
     public float labelSizeConcrete() {
         return (float) computedSize * LABEL_FACTOR;
     }
@@ -387,6 +398,10 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
         camera.getPos().setVector3(campos);
 
         renderer.addLine(p1.x, p1.y, p1.z, p2.x, p2.y, p2.z, 0.65f, 0.65f, 0.0f, alpha);
+    }
+
+    protected float getThOverFactorScl() {
+        return fovFactor;
     }
 
 }

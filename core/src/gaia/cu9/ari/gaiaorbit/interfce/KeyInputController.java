@@ -32,6 +32,10 @@ public class KeyInputController extends InputAdapter {
 
     @Override
     public boolean keyDown(int keycode) {
+        // Fix leftovers
+        if (!Gdx.input.isKeyPressed(KeyBindings.SPECIAL1))
+            pressedKeys.remove(KeyBindings.SPECIAL1);
+
         if (GlobalConf.runtime.INPUT_ENABLED) {
             pressedKeys.add(keycode);
         }
@@ -42,6 +46,11 @@ public class KeyInputController extends InputAdapter {
     @Override
     public boolean keyUp(int keycode) {
         EventManager.instance.post(Events.INPUT_EVENT, keycode);
+
+        // Fix leftovers
+        if (!Gdx.input.isKeyPressed(KeyBindings.SPECIAL1))
+            pressedKeys.remove(KeyBindings.SPECIAL1);
+
         if (GlobalConf.runtime.INPUT_ENABLED) {
             // Use key mappings
             ProgramAction action = mappings.mappings.get(pressedKeys);

@@ -8,13 +8,11 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Bits;
-import com.badlogic.gdx.utils.Pool;
 
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.render.IRenderable;
 import gaia.cu9.ari.gaiaorbit.render.SceneGraphRenderer;
 import gaia.cu9.ari.gaiaorbit.scenegraph.octreewrapper.AbstractOctreeWrapper;
-import gaia.cu9.ari.gaiaorbit.util.MyPools;
 import gaia.cu9.ari.gaiaorbit.util.concurrent.IThreadLocal;
 import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadIndexer;
 import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadLocalFactory;
@@ -470,8 +468,12 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
      * @return
      */
     public <T extends SceneGraphNode> T getSimpleCopy() {
-        Pool<? extends SceneGraphNode> pool = MyPools.get(this.getClass());
-        T copy = (T) pool.obtain();
+        T copy = null;
+        try {
+            copy = (T) this.getClass().newInstance();
+        } catch (InstantiationException e) {
+        } catch (IllegalAccessException e) {
+        }
         copy.name = this.name;
         copy.parentName = this.parentName;
         return copy;
@@ -493,13 +495,13 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
     }
 
     public void returnToPool() {
-        if (this.children != null) {
-            for (SceneGraphNode child : children)
-                child.returnToPool();
-            this.children.clear();
-        }
-        Class clazz = this.getClass();
-        MyPools.get(clazz).free(this);
+        //        if (this.children != null) {
+        //            for (SceneGraphNode child : children)
+        //                child.returnToPool();
+        //            this.children.clear();
+        //        }
+        //        Class clazz = this.getClass();
+        //        MyPools.get(clazz).free(this);
     }
 
     /**

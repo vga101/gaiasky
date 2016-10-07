@@ -19,6 +19,9 @@ import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 public abstract class ModelBody extends CelestialBody {
     protected static final double TH_ANGLE_POINT = Math.toRadians(0.30);
 
+    /** The star closest to the camera at each moment **/
+    public static CelestialBody closestCamStar = null;
+
     /**
      * Angle limit for rendering as point. If angle is any bigger, we render with shader.
      */
@@ -60,7 +63,13 @@ public abstract class ModelBody extends CelestialBody {
         // Update light with global position
         if (mc != null) {
             mc.dlight.direction.set(transform.getTranslationf());
-            mc.dlight.direction.add((float) camera.getPos().x, (float) camera.getPos().y, (float) camera.getPos().z);
+            if (closestCamStar != null) {
+                mc.dlight.direction.sub(closestCamStar.transform.getTranslationf(aux3f1.get()));
+                mc.dlight.color.set(closestCamStar.cc[0], closestCamStar.cc[1], closestCamStar.cc[2], 1.0f);
+            } else {
+                mc.dlight.direction.add((float) camera.getPos().x, (float) camera.getPos().y, (float) camera.getPos().z);
+                mc.dlight.color.set(1f, 1f, 1f, 0f);
+            }
         }
         updateLocalTransform();
     }

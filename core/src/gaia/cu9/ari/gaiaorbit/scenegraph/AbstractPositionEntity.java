@@ -6,13 +6,11 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.Pool;
 
 import gaia.cu9.ari.gaiaorbit.render.I3DTextRenderable;
 import gaia.cu9.ari.gaiaorbit.util.DecalUtils;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
-import gaia.cu9.ari.gaiaorbit.util.MyPools;
 import gaia.cu9.ari.gaiaorbit.util.coord.IBodyCoordinates;
 import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
@@ -228,9 +226,8 @@ public abstract class AbstractPositionEntity extends SceneGraphNode {
     @Override
     public <T extends SceneGraphNode> T getSimpleCopy() {
         Class<? extends AbstractPositionEntity> clazz = this.getClass();
-        Pool<? extends AbstractPositionEntity> pool = MyPools.get(clazz);
         try {
-            AbstractPositionEntity instance = pool.obtain();
+            AbstractPositionEntity instance = clazz.newInstance();
             instance.copy = true;
             instance.name = this.name;
             instance.pos.set(this.pos);
