@@ -166,6 +166,9 @@ public class Constants {
     /** Camera speed factor **/
     public static final float CAMERA_SPEED_FACTOR = 10f;
 
+    /** Motion blur value **/
+    public static final float MOTION_BLUR_VALUE = 0.76f;
+
     /**
      * 
      * SYSTEM DEPENDANT STUFF

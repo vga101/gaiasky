@@ -156,7 +156,7 @@ public class VisualEffectsComponent extends GuiComponent implements IObserver {
                 @Override
                 public boolean handle(Event event) {
                     if (event instanceof ChangeEvent) {
-                        EventManager.instance.post(Events.MOTION_BLUR_CMD, motionBlur.isChecked() ? 0.85f : 0.0f);
+                        EventManager.instance.post(Events.MOTION_BLUR_CMD, motionBlur.isChecked() ? Constants.MOTION_BLUR_VALUE : 0.0f);
                         return true;
                     }
                     return false;
