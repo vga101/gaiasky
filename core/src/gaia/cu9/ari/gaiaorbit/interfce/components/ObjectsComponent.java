@@ -25,7 +25,7 @@ import com.badlogic.gdx.utils.Array;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
-import gaia.cu9.ari.gaiaorbit.interfce.GaiaInputController;
+import gaia.cu9.ari.gaiaorbit.interfce.NaturalInputController;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
@@ -81,7 +81,7 @@ public class ObjectsComponent extends GuiComponent implements IObserver {
 
                             }
                         }
-                        GaiaInputController.pressedKeys.remove(ie.getKeyCode());
+                        NaturalInputController.pressedKeys.remove(ie.getKeyCode());
                     }
                     return true;
                 }

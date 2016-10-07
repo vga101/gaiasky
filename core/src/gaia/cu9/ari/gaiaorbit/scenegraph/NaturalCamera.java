@@ -2,6 +2,7 @@ package gaia.cu9.ari.gaiaorbit.scenegraph;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Peripheral;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -13,6 +14,7 @@ import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
+import gaia.cu9.ari.gaiaorbit.interfce.NaturalInputController;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
@@ -107,6 +109,9 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 
     public static float[] upSensor, lookAtSensor;
 
+    /** The input controller attached to this camera **/
+    private NaturalInputController inputController;
+
     private SpriteBatch spriteBatch;
     private Texture crosshair;
     private float chw2, chh2;
@@ -159,9 +164,9 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 
         dx = new Vector3d();
 
-        // viewport = new ExtendViewport(200, 200, camera);
-
         accelerometer = Gdx.input.isPeripheralAvailable(Peripheral.Accelerometer);
+
+        inputController = new NaturalInputController(this);
 
         // Init sprite batch for crosshair
         spriteBatch = new SpriteBatch();
@@ -708,9 +713,20 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
      */
     @Override
     public void updateMode(CameraMode mode, boolean postEvent) {
-        if (mode.equals(CameraMode.Focus)) {
+        InputMultiplexer im = (InputMultiplexer) Gdx.input.getInputProcessor();
+        switch (mode) {
+        case Focus:
             diverted = false;
             checkFocus();
+        case Free_Camera:
+        case Gaia_Scene:
+            // Register input controller
+            im.addProcessor(inputController);
+            break;
+        default:
+            // Unregister input controller
+            im.removeProcessor(inputController);
+            break;
         }
     }
 

@@ -361,8 +361,8 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
     public void updateMode(CameraMode mode, boolean postEvent) {
         InputMultiplexer im = (InputMultiplexer) Gdx.input.getInputProcessor();
         if (mode == CameraMode.Spacecraft) {
-            // Register input controller, max priority
-            im.addProcessor(0, inputController);
+            // Register input controller
+            im.addProcessor(inputController);
             stopAllMovement();
         } else {
             // Unregister input controller
@@ -408,6 +408,11 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
 
     }
 
+    /**
+     * Input controller for the spacecraft camera
+     * @author tsagrista
+     *
+     */
     private class SpacecraftInputController extends GestureDetector {
         SpacecraftCamera camera;
 
@@ -452,12 +457,7 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
                     // yaw -1
                     camera.setYawPower(-1);
                     break;
-                case Keys.ESCAPE:
-                    // exit
-                    Gdx.app.exit();
-                    break;
                 }
-                return true;
             }
             return false;
 
@@ -465,7 +465,6 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
 
         @Override
         public boolean keyUp(int keycode) {
-            EventManager.instance.post(Events.INPUT_EVENT, keycode);
             if (GlobalConf.runtime.INPUT_ENABLED) {
                 switch (keycode) {
                 case Keys.W:
@@ -489,7 +488,6 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
                     camera.setYawPower(0);
                     break;
                 }
-                return true;
             }
             return false;
 

@@ -54,7 +54,7 @@ public class SearchDialog extends Window {
                             }
                         }
 
-                        GaiaInputController.pressedKeys.remove(ie.getKeyCode());
+                        NaturalInputController.pressedKeys.remove(ie.getKeyCode());
                     }
                 }
                 return false;

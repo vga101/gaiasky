@@ -32,10 +32,11 @@ import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.interfce.FullGui;
 import gaia.cu9.ari.gaiaorbit.interfce.GaiaControllerListener;
-import gaia.cu9.ari.gaiaorbit.interfce.GaiaInputController;
 import gaia.cu9.ari.gaiaorbit.interfce.IGui;
+import gaia.cu9.ari.gaiaorbit.interfce.KeyInputController;
 import gaia.cu9.ari.gaiaorbit.interfce.LoadingGui;
 import gaia.cu9.ari.gaiaorbit.interfce.MobileGui;
+import gaia.cu9.ari.gaiaorbit.interfce.NaturalInputController;
 import gaia.cu9.ari.gaiaorbit.render.AbstractRenderer;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.render.IMainRenderer;
@@ -88,7 +89,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
     public AssetManager manager;
 
     /** This handles the input events **/
-    private GaiaInputController inputController;
+    private NaturalInputController inputController;
 
     // Camera
     public CameraManager cam;
@@ -276,9 +277,10 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         // Publish visibility
         EventManager.instance.post(Events.VISIBILITY_OF_COMPONENTS, new Object[] { SceneGraphRenderer.visible });
 
-        inputController = new GaiaInputController(cam, gui);
+        // Key bindings controller
+        inputMultiplexer.addProcessor(new KeyInputController());
+
         Controllers.addListener(new GaiaControllerListener(cam, gui));
-        inputMultiplexer.addProcessor(inputController);
 
         Gdx.input.setInputProcessor(inputMultiplexer);
 

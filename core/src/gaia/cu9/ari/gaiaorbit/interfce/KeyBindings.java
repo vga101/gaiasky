@@ -68,93 +68,93 @@ public class KeyBindings {
             }
         }), Keys.ESCAPE);
 
-        // O -> Toggle orbits
+        // SHIFT+O -> Toggle orbits
         addMapping(new ProgramAction(txt("action.toggle", txt("element.orbits")), new Runnable() {
             @Override
             public void run() {
                 EventManager.instance.post(Events.TOGGLE_VISIBILITY_CMD, txt("element.orbits"), false);
             }
-        }), Keys.O);
+        }), SPECIAL2, Keys.O);
 
-        // P -> Toggle planets
+        // SHIFT+P -> Toggle planets
         addMapping(new ProgramAction(txt("action.toggle", txt("element.planets")), new Runnable() {
             @Override
             public void run() {
                 EventManager.instance.post(Events.TOGGLE_VISIBILITY_CMD, txt("element.planets"), false);
             }
-        }), Keys.P);
+        }), SPECIAL2, Keys.P);
 
-        // M -> Toggle moons
+        // SHIFT+M -> Toggle moons
         addMapping(new ProgramAction(txt("action.toggle", txt("element.moons")), new Runnable() {
             @Override
             public void run() {
                 EventManager.instance.post(Events.TOGGLE_VISIBILITY_CMD, txt("element.moons"), false);
             }
-        }), Keys.M);
+        }), SPECIAL2, Keys.M);
 
-        // S -> Toggle stars
+        // SHIFT+S -> Toggle stars
         addMapping(new ProgramAction(txt("action.toggle", txt("element.stars")), new Runnable() {
             @Override
             public void run() {
                 EventManager.instance.post(Events.TOGGLE_VISIBILITY_CMD, txt("element.stars"), false);
             }
-        }), Keys.S);
+        }), SPECIAL2, Keys.S);
 
-        // T -> Toggle satellites
+        // SHIFT+T -> Toggle satellites
         addMapping(new ProgramAction(txt("action.toggle", txt("element.satellites")), new Runnable() {
             @Override
             public void run() {
                 EventManager.instance.post(Events.TOGGLE_VISIBILITY_CMD, txt("element.satellites"), false);
             }
-        }), Keys.T);
+        }), SPECIAL2, Keys.T);
 
-        // L -> Toggle labels
+        // SHIFT+L -> Toggle labels
         addMapping(new ProgramAction(txt("action.toggle", txt("element.labels")), new Runnable() {
             @Override
             public void run() {
                 EventManager.instance.post(Events.TOGGLE_VISIBILITY_CMD, txt("element.labels"), false);
             }
-        }), Keys.L);
+        }), SPECIAL2, Keys.L);
 
-        // C -> Toggle constellations
+        // SHIFT+C -> Toggle constellations
         addMapping(new ProgramAction(txt("action.toggle", txt("element.constellations")), new Runnable() {
             @Override
             public void run() {
                 EventManager.instance.post(Events.TOGGLE_VISIBILITY_CMD, txt("element.constellations"), false);
             }
-        }), Keys.C);
+        }), SPECIAL2, Keys.C);
 
-        // B -> Toggle boundaries
+        // SHIFT+B -> Toggle boundaries
         addMapping(new ProgramAction(txt("action.toggle", txt("element.boundaries")), new Runnable() {
             @Override
             public void run() {
                 EventManager.instance.post(Events.TOGGLE_VISIBILITY_CMD, txt("element.boundaries"), false);
             }
-        }), Keys.B);
+        }), SPECIAL2, Keys.B);
 
-        // Q -> Toggle equatorial
+        // SHIFT+Q -> Toggle equatorial
         addMapping(new ProgramAction(txt("action.toggle", txt("element.equatorial")), new Runnable() {
             @Override
             public void run() {
                 EventManager.instance.post(Events.TOGGLE_VISIBILITY_CMD, txt("element.equatorial"), false);
             }
-        }), Keys.Q);
+        }), SPECIAL2, Keys.Q);
 
-        // E -> Toggle ecliptic
+        // SHIFT+E -> Toggle ecliptic
         addMapping(new ProgramAction(txt("action.toggle", txt("element.ecliptic")), new Runnable() {
             @Override
             public void run() {
                 EventManager.instance.post(Events.TOGGLE_VISIBILITY_CMD, txt("element.ecliptic"), false);
             }
-        }), Keys.E);
+        }), SPECIAL2, Keys.E);
 
-        // G -> Toggle galactic
+        // SHIFT+G -> Toggle galactic
         addMapping(new ProgramAction(txt("action.toggle", txt("element.galactic")), new Runnable() {
             @Override
             public void run() {
                 EventManager.instance.post(Events.TOGGLE_VISIBILITY_CMD, txt("element.galactic"), false);
             }
-        }), Keys.G);
+        }), SPECIAL2, Keys.G);
 
         // Left bracket -> divide speed
         addMapping(new ProgramAction(txt("action.dividetime"), new Runnable() {
