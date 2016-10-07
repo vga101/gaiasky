@@ -1,7 +1,9 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 
+import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
@@ -9,6 +11,11 @@ import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
 public abstract class AbstractCamera implements ICamera {
+
+    /** Camera far value **/
+    public static final double CAM_FAR = 1e6 * Constants.PC_TO_U;
+    /** Camera near values **/
+    public static final double CAM_NEAR = 1e5 * Constants.KM_TO_U;
 
     public Vector3d pos, posinv;
     /**
@@ -31,12 +38,26 @@ public abstract class AbstractCamera implements ICamera {
     /** The main camera **/
     public PerspectiveCamera camera;
 
+    /** Stereoscopic mode cameras **/
+    protected PerspectiveCamera camLeft, camRight;
+
+    /** Vector with all perspective cameras **/
+    protected PerspectiveCamera[] cameras;
+
     public float fovFactor;
 
     public AbstractCamera(CameraManager parent) {
         this.parent = parent;
         pos = new Vector3d();
         posinv = new Vector3d();
+
+        camLeft = new PerspectiveCamera(GlobalConf.scene.CAMERA_FOV, Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight());
+        camLeft.near = (float) CAM_NEAR;
+        camLeft.far = (float) CAM_FAR;
+
+        camRight = new PerspectiveCamera(GlobalConf.scene.CAMERA_FOV, Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight());
+        camRight.near = (float) CAM_NEAR;
+        camRight.far = (float) CAM_FAR;
     }
 
     @Override
@@ -158,6 +179,37 @@ public abstract class AbstractCamera implements ICamera {
         this.getDirection().set(other.getDirection());
         this.getUp().set(other.getUp());
         this.closest = other.closest;
+    }
+
+    private void copyCamera(PerspectiveCamera source, PerspectiveCamera target) {
+        target.far = source.far;
+        target.near = source.near;
+        target.direction.set(source.direction);
+        target.up.set(source.up);
+        target.position.set(source.position);
+        target.fieldOfView = source.fieldOfView;
+        target.viewportHeight = source.viewportHeight;
+        target.viewportWidth = source.viewportWidth;
+    }
+
+    @Override
+    public PerspectiveCamera getCameraStereoLeft() {
+        return camLeft;
+    }
+
+    @Override
+    public PerspectiveCamera getCameraStereoRight() {
+        return camRight;
+    }
+
+    @Override
+    public void setCameraStereoLeft(PerspectiveCamera cam) {
+        copyCamera(cam, camLeft);
+    }
+
+    @Override
+    public void setCameraStereoRight(PerspectiveCamera cam) {
+        copyCamera(cam, camRight);
     }
 
 }

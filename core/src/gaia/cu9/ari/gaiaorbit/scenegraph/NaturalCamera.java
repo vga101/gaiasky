@@ -29,17 +29,8 @@ import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
  *
  */
 public class NaturalCamera extends AbstractCamera implements IObserver {
-    /** Camera far value **/
-    public static final double CAM_FAR = 1e6 * Constants.PC_TO_U;
-    /** Camera near values **/
-    public static final double CAM_NEAR = 1e5 * Constants.KM_TO_U;
 
     private static final double MIN_DIST = 5 * Constants.M_TO_U;
-
-    /** Stereoscopic mode cameras **/
-    private PerspectiveCamera camLeft, camRight;
-
-    private PerspectiveCamera[] cameras;
 
     /** Acceleration and velocity **/
     public Vector3d accel, vel;
@@ -130,14 +121,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
         camera.near = (float) CAM_NEAR;
         camera.far = (float) CAM_FAR;
 
-        camLeft = new PerspectiveCamera(GlobalConf.scene.CAMERA_FOV, Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight());
-        camLeft.near = (float) CAM_NEAR;
-        camLeft.far = (float) CAM_FAR;
-
-        camRight = new PerspectiveCamera(GlobalConf.scene.CAMERA_FOV, Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight());
-        camRight.near = (float) CAM_NEAR;
-        camRight.far = (float) CAM_FAR;
-
+        // init cameras vector
         cameras = new PerspectiveCamera[] { camera, camLeft, camRight };
 
         fovFactor = camera.fieldOfView / 40f;
@@ -1010,37 +994,6 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
     @Override
     public void setCamera(PerspectiveCamera cam) {
         this.camera = cam;
-    }
-
-    @Override
-    public void setCameraStereoLeft(PerspectiveCamera cam) {
-        copyCamera(cam, camLeft);
-    }
-
-    @Override
-    public void setCameraStereoRight(PerspectiveCamera cam) {
-        copyCamera(cam, camRight);
-    }
-
-    private void copyCamera(PerspectiveCamera source, PerspectiveCamera target) {
-        target.far = source.far;
-        target.near = source.near;
-        target.direction.set(source.direction);
-        target.up.set(source.up);
-        target.position.set(source.position);
-        target.fieldOfView = source.fieldOfView;
-        target.viewportHeight = source.viewportHeight;
-        target.viewportWidth = source.viewportWidth;
-    }
-
-    @Override
-    public PerspectiveCamera getCameraStereoLeft() {
-        return camLeft;
-    }
-
-    @Override
-    public PerspectiveCamera getCameraStereoRight() {
-        return camRight;
     }
 
     public void setThrust(double thrust, int direction) {

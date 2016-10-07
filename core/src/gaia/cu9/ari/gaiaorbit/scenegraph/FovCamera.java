@@ -24,7 +24,6 @@ import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
-import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
@@ -44,8 +43,6 @@ import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
  *
  */
 public class FovCamera extends AbstractCamera implements IObserver {
-    private static final double CAM_NEAR = 1e6 * Constants.KM_TO_U;
-    private static final double CAM_FAR = 1e22 * Constants.KM_TO_U;
     private static final float FOV_CORR = 0.2f;
     private static final float FOV = (float) Satellite.FOV_AC + FOV_CORR;
     private static final float BAM_2 = (float) Satellite.BASICANGLE_DEGREE / 2f;
@@ -380,24 +377,6 @@ public class FovCamera extends AbstractCamera implements IObserver {
     @Override
     public void setCamera(PerspectiveCamera cam) {
         // Nothing to do
-    }
-
-    @Override
-    public void setCameraStereoLeft(PerspectiveCamera cam) {
-    }
-
-    @Override
-    public void setCameraStereoRight(PerspectiveCamera cam) {
-    }
-
-    @Override
-    public PerspectiveCamera getCameraStereoLeft() {
-        return null;
-    }
-
-    @Override
-    public PerspectiveCamera getCameraStereoRight() {
-        return null;
     }
 
 }

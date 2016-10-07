@@ -45,11 +45,6 @@ import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
  */
 public class SpacecraftCamera extends AbstractCamera implements IObserver {
 
-    /** Camera far value **/
-    public static final double CAM_FAR = 1e6 * Constants.PC_TO_U;
-    /** Camera near values **/
-    public static final double CAM_NEAR = 1e5 * Constants.KM_TO_U;
-
     /** Force, acceleration and velocity **/
     public Vector3d force, accel, vel;
     /** Direction and up vectors **/
@@ -130,6 +125,9 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
         camera.near = (float) CAM_NEAR;
         camera.far = (float) CAM_FAR;
 
+        // init cameras vector
+        cameras = new PerspectiveCamera[] { camera, camLeft, camRight };
+
         // fov factor
         fovFactor = camera.fieldOfView / 40f;
 
@@ -168,24 +166,6 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
     @Override
     public void setCamera(PerspectiveCamera cam) {
         this.camera = cam;
-    }
-
-    @Override
-    public PerspectiveCamera getCameraStereoLeft() {
-        return null;
-    }
-
-    @Override
-    public PerspectiveCamera getCameraStereoRight() {
-        return null;
-    }
-
-    @Override
-    public void setCameraStereoLeft(PerspectiveCamera cam) {
-    }
-
-    @Override
-    public void setCameraStereoRight(PerspectiveCamera cam) {
     }
 
     @Override
@@ -397,7 +377,9 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
         case FOV_CHANGED_CMD:
             float fov = MathUtilsd.clamp((float) data[0], Constants.MIN_FOV, Constants.MAX_FOV);
 
-            camera.fieldOfView = fov;
+            for (PerspectiveCamera cam : cameras) {
+                cam.fieldOfView = fov;
+            }
 
             fovFactor = camera.fieldOfView / 40f;
             if (parent.current == this) {
