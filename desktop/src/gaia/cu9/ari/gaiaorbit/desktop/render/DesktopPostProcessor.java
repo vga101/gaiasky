@@ -168,7 +168,7 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
 
         // MOTION BLUR
         ppb.motionblur = new MotionBlur(width, height);
-        ppb.motionblur.setBlurRadius(1.0f);
+        ppb.motionblur.setBlurRadius(0.7f);
         ppb.motionblur.setBlurOpacity(GlobalConf.postprocess.POSTPROCESS_MOTION_BLUR);
         ppb.motionblur.setEnabled(GlobalConf.postprocess.POSTPROCESS_MOTION_BLUR > 0);
         ppb.pp.addEffect(ppb.motionblur);

@@ -4,24 +4,12 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.assets.loaders.ModelLoader;
-import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g3d.Environment;
-import com.badlogic.gdx.graphics.g3d.Model;
-import com.badlogic.gdx.graphics.g3d.ModelBatch;
-import com.badlogic.gdx.graphics.g3d.ModelInstance;
-import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
-import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
-import com.badlogic.gdx.graphics.g3d.loader.G3dModelLoader;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.input.GestureDetector.GestureAdapter;
-import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.UBJsonReader;
 
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
@@ -86,15 +74,6 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
     private Texture crosshairTex;
     private float chw2, chh2;
 
-    /** Spaceship model **/
-    private ModelInstance cockpitInstance;
-    private ModelBatch modelBatch;
-    private ColorAttribute ambient;
-    private DirectionalLight dlight;
-    private Environment environment;
-    private Array<ModelInstance> instances = new Array<ModelInstance>(1);
-    private Matrix4 transform;
-
     public SpacecraftCamera(AssetManager assetManager, CameraManager parent) {
         super(parent);
 
@@ -141,24 +120,8 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
         chw2 = crosshairTex.getWidth() / 2f;
         chh2 = crosshairTex.getHeight() / 2f;
 
-        // Init model
-        environment = new Environment();
-        float amb = GlobalConf.scene.AMBIENT_LIGHT;
-        ambient = new ColorAttribute(ColorAttribute.AmbientLight, amb, amb, amb, 1f);
-        dlight = new DirectionalLight().set(0.8f, 0.8f, 0.8f, -1f, -0.8f, -0.2f);
-        environment.set(ambient);
-        environment.add(dlight);
-        modelBatch = new ModelBatch();
-
-        //        ModelLoader ml = new ObjModelLoader(new InternalFileHandleResolver());
-        ModelLoader ml = new G3dModelLoader(new UBJsonReader(), new InternalFileHandleResolver());
-        Model cockpitModel = ml.loadModel(Gdx.files.internal("data/models/spaceship/spaceship.g3db"));
-        cockpitInstance = new ModelInstance(cockpitModel);
-        transform = cockpitInstance.transform;
-        instances.add(cockpitInstance);
-
         // Focus is changed from GUI
-        EventManager.instance.subscribe(this, Events.FOV_CHANGED_CMD, Events.AMBIENT_LIGHT_CMD);
+        EventManager.instance.subscribe(this, Events.FOV_CHANGED_CMD);
     }
 
     @Override
@@ -220,7 +183,7 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
             if (closest.getRadius() > d1) {
                 Logger.info("Crashed against " + closest.name + "!");
 
-                Vector3d[] intersections = Intersectord.lineSphereIntersections(pos, auxd3, closest.pos, closest.getRadius() + 50 * Constants.M_TO_U);
+                Vector3d[] intersections = Intersectord.lineSphereIntersections(pos, auxd3, closest.pos, closest.getRadius() + 150 * Constants.M_TO_U);
 
                 if (intersections.length >= 1) {
                     pos.set(intersections[0]);
@@ -271,22 +234,12 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
         // Update camera
         updatePerspectiveCamera();
 
-        // Update directional light
-        dlight.direction.set(0f, 0f, 0f);
-        if (ModelBody.closestCamStar != null) {
-            float intensity = (float) MathUtilsd.lint(ModelBody.closestCamStar.distToCamera / MathUtilsd.lint(ModelBody.closestCamStar.size, 0.6e6, 1e8, 1, 0.05), 0, 2 * Constants.PC_TO_U, 1f, 0f);
-            dlight.direction.sub(ModelBody.closestCamStar.transform.getTranslationf(auxf1));
-            dlight.color.set(ModelBody.closestCamStar.cc[0] * intensity, ModelBody.closestCamStar.cc[1] * intensity, ModelBody.closestCamStar.cc[2] * intensity, 1.0f);
-        } else {
-            dlight.direction.add((float) pos.x, (float) pos.y, (float) pos.z);
-            dlight.color.set(1f, 1f, 1f, 0f);
-        }
     }
 
     protected void updatePerspectiveCamera() {
 
         if (closest != null) {
-            camera.near = (float) MathUtilsd.clamp((closest.distToCamera - closest.getRadius()) / 2.5f, 50 * Constants.M_TO_U, CAM_NEAR / 10f);
+            camera.near = 0.0000001f;
         }
         camera.position.set(0, 0, 0);
         camera.direction.set(direction.valuesf());
@@ -401,10 +354,6 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
                 EventManager.instance.post(Events.FOV_CHANGE_NOTIFICATION, fov, fovFactor);
             }
             break;
-        case AMBIENT_LIGHT_CMD:
-            float level = (float) data[0];
-            ambient.color.set(level, level, level, 1f);
-            break;
         }
 
     }
@@ -503,23 +452,9 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
             float w = Gdx.graphics.getWidth();
             float h = Gdx.graphics.getHeight();
 
-            //            float scalex = w / cockpit.getWidth();
-            //            float scaley = h / cockpit.getHeight();
-            //            cockpit.setScale(scalex, scaley);
-            //            cockpit.setOrigin(0, 0);
-
             spriteBatch.begin();
             spriteBatch.draw(crosshairTex, w / 2f - chw2, h / 2f - chh2);
-            //            cockpit.draw(spriteBatch);
             spriteBatch.end();
-
-            transform.setToLookAt(camera.position, camera.direction, camera.up).inv();
-            transform.translate(0, -0.004f, -.015f);
-            transform.scale(0.001f, 0.001f, 0.001f);
-
-            modelBatch.begin(this.camera);
-            modelBatch.render(instances, environment);
-            modelBatch.end();
 
         }
     }

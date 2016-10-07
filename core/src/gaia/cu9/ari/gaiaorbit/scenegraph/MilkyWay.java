@@ -109,7 +109,7 @@ public class MilkyWay extends Blob implements IModelRenderable, I3DTextRenderabl
     public void render(Object... params) {
         if (params[0] instanceof ModelBatch) {
             // Render model
-            render((ModelBatch) params[0], (Float) params[1]);
+            render((ModelBatch) params[0], (Float) params[1], (Float) params[2]);
             // Render label?
         } else if (params[0] instanceof SpriteBatch) {
             render((SpriteBatch) params[0], (ShaderProgram) params[1], (BitmapFont) params[2], (BitmapFont) params[3], (ICamera) params[4]);

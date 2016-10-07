@@ -30,5 +30,21 @@
 						"args" : [true],
 						"model" : "data/models/gaia/gaia.g3db"
 						}
+	},
+	
+	{
+	"name" : "Spacecraft",
+	// 10 metres, 0.01 Km
+	"size" : 0.01,
+	"ct" : Satellites,
+	
+	"parent" : "Universe",
+	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Spacecraft",
+	
+	"model"			: {
+						"args" : [true],
+						"model" : "data/models/spaceship/spaceship.g3db"
+						}
+	
 	}
 ]}

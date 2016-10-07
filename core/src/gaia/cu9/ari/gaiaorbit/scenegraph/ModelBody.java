@@ -121,6 +121,7 @@ public abstract class ModelBody extends CelestialBody {
     }
 
     public void dispose() {
+        super.dispose();
         mc.dispose();
     }
 
