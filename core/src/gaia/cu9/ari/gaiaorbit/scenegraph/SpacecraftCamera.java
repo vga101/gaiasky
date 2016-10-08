@@ -17,7 +17,6 @@ import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
-import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.math.Intersectord;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
@@ -181,7 +180,7 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
             // d1 is the new distance to the centre of the object
             double d1 = auxd4.set(closest.pos).sub(auxd3).len();
             if (closest.getRadius() > d1) {
-                Logger.info("Crashed against " + closest.name + "!");
+                EventManager.instance.post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), "Crashed against " + closest.name + "!");
 
                 Vector3d[] intersections = Intersectord.lineSphereIntersections(pos, auxd3, closest.pos, closest.getRadius() + 150 * Constants.M_TO_U);
 
