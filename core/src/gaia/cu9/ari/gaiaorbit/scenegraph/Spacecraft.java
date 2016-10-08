@@ -33,9 +33,9 @@ public class Spacecraft extends AbstractPositionEntity implements IModelRenderab
         EventManager.instance.subscribe(this, Events.CAMERA_MODE_CMD);
 
         // m front
-        frontDist = -1500000f * (float) Constants.M_TO_U;
+        frontDist = -150000f * (float) Constants.M_TO_U;
         // m down
-        downDist = -400000 * (float) Constants.M_TO_U;
+        downDist = -40000 * (float) Constants.M_TO_U;
     }
 
     public void initialize() {

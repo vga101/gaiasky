@@ -31,6 +31,8 @@ import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
  */
 public class SpacecraftCamera extends AbstractCamera implements IObserver {
 
+    private static final double stopAt = 50000 * Constants.M_TO_U;
+
     /** Force, acceleration and velocity **/
     public Vector3d force, accel, vel;
     /** Direction and up vectors **/
@@ -179,10 +181,10 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
         if (closest != null) {
             // d1 is the new distance to the centre of the object
             double d1 = auxd4.set(closest.pos).sub(auxd3).len();
-            if (closest.getRadius() > d1) {
+            if (closest.getRadius() > d1 + stopAt) {
                 EventManager.instance.post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), "Crashed against " + closest.name + "!");
 
-                Vector3d[] intersections = Intersectord.lineSphereIntersections(pos, auxd3, closest.pos, closest.getRadius() + 15000 * Constants.M_TO_U);
+                Vector3d[] intersections = Intersectord.lineSphereIntersections(pos, auxd3, closest.pos, closest.getRadius() + stopAt);
 
                 if (intersections.length >= 1) {
                     pos.set(intersections[0]);
@@ -237,7 +239,7 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
 
     protected void updatePerspectiveCamera() {
 
-        camera.near = (float) (1000000d * Constants.M_TO_U);
+        camera.near = (float) (100000d * Constants.M_TO_U);
         if (closest != null) {
             camera.near = Math.min(camera.near, (closest.distToCamera - closest.getRadius()) / 2.5f);
         }
