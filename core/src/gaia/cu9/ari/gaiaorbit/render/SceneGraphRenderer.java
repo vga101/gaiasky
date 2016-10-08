@@ -141,6 +141,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         ModelBatch modelBatchF = Constants.webgl ? modelBatchB : new ModelBatch(spnormal, noSorter);
         ModelBatch modelBatchAtm = new ModelBatch(spatm, noSorter);
         ModelBatch modelBatchS = new ModelBatch(spsurface, noSorter);
+        ModelBatch modelBatchCloseUp = new ModelBatch(spnormal, noSorter);
 
         // Sprites
         spriteBatch = GlobalResources.spriteBatch;
@@ -312,6 +313,17 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
             }
         };
         modelAtmProc.setPreRunnable(blendDepthRunnable);
+        modelAtmProc.setPostRunnable(new RenderSystemRunnable() {
+            @Override
+            public void run(AbstractRenderSystem renderSystem, List<IRenderable> renderables, ICamera camera) {
+                // Clear depth buffer before rendering things up close
+                Gdx.gl.glClear(GL20.GL_DEPTH_BUFFER_BIT);
+            }
+        });
+
+        // MODEL CLOSE UP
+        AbstractRenderSystem modelCloseUpProc = new ModelBatchRenderSystem(RenderGroup.MODEL_CLOSEUP, priority++, alphas, modelBatchCloseUp, false);
+        modelFrontProc.setPreRunnable(blendDepthRunnable);
 
         // Add components to set
         renderProcesses.add(pixelProc);
@@ -325,6 +337,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         renderProcesses.add(modelStarsProc);
         renderProcesses.add(labelsProc);
         renderProcesses.add(modelAtmProc);
+        renderProcesses.add(modelCloseUpProc);
 
         EventManager.instance.subscribe(this, Events.TOGGLE_VISIBILITY_CMD, Events.PIXEL_RENDERER_UPDATE, Events.TOGGLE_STEREOSCOPIC_INFO, Events.CAMERA_MODE_CMD, Events.CUBEMAP360_CMD);
 

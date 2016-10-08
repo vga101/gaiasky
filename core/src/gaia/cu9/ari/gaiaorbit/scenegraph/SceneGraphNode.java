@@ -63,6 +63,8 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
         MODEL_S(9),
         /** Galaxy as a whole **/
         GALAXY(10),
+        /** Model close up **/
+        MODEL_CLOSEUP(11),
 
         /** None **/
         NONE(-1);

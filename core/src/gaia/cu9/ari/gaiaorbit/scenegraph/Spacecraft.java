@@ -103,7 +103,7 @@ public class Spacecraft extends AbstractPositionEntity implements IModelRenderab
      * distance to the camera and the view angle have been determined.
      */
     protected void addToRenderLists(ICamera camera) {
-        addToRender(this, RenderGroup.MODEL_F);
+        addToRender(this, RenderGroup.MODEL_CLOSEUP);
     }
 
     public void setModel(ModelComponent mc) {
