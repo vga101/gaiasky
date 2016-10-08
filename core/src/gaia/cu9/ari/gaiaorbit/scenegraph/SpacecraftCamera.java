@@ -182,7 +182,7 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
             if (closest.getRadius() > d1) {
                 EventManager.instance.post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), "Crashed against " + closest.name + "!");
 
-                Vector3d[] intersections = Intersectord.lineSphereIntersections(pos, auxd3, closest.pos, closest.getRadius() + 150 * Constants.M_TO_U);
+                Vector3d[] intersections = Intersectord.lineSphereIntersections(pos, auxd3, closest.pos, closest.getRadius() + 15000 * Constants.M_TO_U);
 
                 if (intersections.length >= 1) {
                     pos.set(intersections[0]);
@@ -237,8 +237,9 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
 
     protected void updatePerspectiveCamera() {
 
+        camera.near = (float) (1000000d * Constants.M_TO_U);
         if (closest != null) {
-            camera.near = 0.0000001f;
+            camera.near = Math.min(camera.near, (closest.distToCamera - closest.getRadius()) / 2.5f);
         }
         camera.position.set(0, 0, 0);
         camera.direction.set(direction.valuesf());

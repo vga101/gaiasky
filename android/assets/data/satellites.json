@@ -34,8 +34,8 @@
 	
 	{
 	"name" : "Spacecraft",
-	// 10 metres, 0.01 Km
-	"size" : 0.01,
+	// in Km
+	"size" : 100,
 	"ct" : Satellites,
 	
 	"parent" : "Universe",
