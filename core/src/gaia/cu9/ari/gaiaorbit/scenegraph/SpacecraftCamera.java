@@ -6,10 +6,24 @@ import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Texture.TextureFilter;
+import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g3d.Environment;
+import com.badlogic.gdx.graphics.g3d.Material;
+import com.badlogic.gdx.graphics.g3d.Model;
+import com.badlogic.gdx.graphics.g3d.ModelBatch;
+import com.badlogic.gdx.graphics.g3d.ModelInstance;
+import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
+import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
+import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.input.GestureDetector.GestureAdapter;
+import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.viewport.ExtendViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
@@ -17,6 +31,7 @@ import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
+import gaia.cu9.ari.gaiaorbit.util.g3d.ModelBuilder2;
 import gaia.cu9.ari.gaiaorbit.util.math.Intersectord;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
@@ -32,6 +47,9 @@ import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 public class SpacecraftCamera extends AbstractCamera implements IObserver {
 
     private static final double stopAt = 50000 * Constants.M_TO_U;
+
+    /** Camera to render the attitude indicator system **/
+    private PerspectiveCamera guiCam;
 
     /** Force, acceleration and velocity **/
     public Vector3d force, accel, vel;
@@ -75,6 +93,18 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
     private Texture crosshairTex;
     private float chw2, chh2;
 
+    /** Attitude indicator **/
+    private ModelBatch mb;
+    private Model aiModel;
+    private ModelInstance aiModelInstance;
+    private Texture aiTexture;
+    private Environment env;
+    private Matrix4 aiTransform;
+    private Viewport aiViewport;
+    private Quaternion q;
+    private DirectionalLight dlight;
+    private float ar;
+
     public SpacecraftCamera(AssetManager assetManager, CameraManager parent) {
         super(parent);
 
@@ -101,14 +131,20 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
         auxd3 = new Vector3d();
         auxd4 = new Vector3d();
         auxf1 = new Vector3();
+        q = new Quaternion();
 
         // init camera
         camera = new PerspectiveCamera(GlobalConf.scene.CAMERA_FOV, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        camera.near = (float) CAM_NEAR;
+        camera.near = (float) (100000d * Constants.M_TO_U);
         camera.far = (float) CAM_FAR;
 
         // init cameras vector
         cameras = new PerspectiveCamera[] { camera, camLeft, camRight };
+
+        // init gui camera
+        guiCam = new PerspectiveCamera(30, 300, 300);
+        guiCam.near = (float) CAM_NEAR;
+        guiCam.far = (float) CAM_FAR;
 
         // fov factor
         fovFactor = camera.fieldOfView / 40f;
@@ -120,6 +156,24 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
         crosshairTex = new Texture(Gdx.files.internal("img/crosshair-yellow.png"));
         chw2 = crosshairTex.getWidth() / 2f;
         chh2 = crosshairTex.getHeight() / 2f;
+
+        // Init AI
+        dlight = new DirectionalLight();
+        dlight.color.set(1f, 1f, 1f, 1f);
+        dlight.setDirection(-1f, .05f, .5f);
+        env = new Environment();
+        env.set(new ColorAttribute(ColorAttribute.AmbientLight, 1f, 1f, 1f, 1f), new ColorAttribute(ColorAttribute.Specular, .5f, .5f, .5f, 1f));
+        env.add(dlight);
+        mb = new ModelBatch();
+        ModelBuilder2 builder = new ModelBuilder2();
+        aiTexture = new Texture(Gdx.files.internal("data/tex/attitudeindicator.png"));
+        aiTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+        Material mat = new Material(new TextureAttribute(TextureAttribute.Diffuse, aiTexture), new ColorAttribute(ColorAttribute.Specular, 0.3f, 0.3f, 0.3f, 1f));
+        aiModel = builder.createSphere(1, 30, 30, mat, Usage.Position | Usage.Normal | Usage.TextureCoordinates);
+        aiTransform = new Matrix4();
+        aiModelInstance = new ModelInstance(aiModel, aiTransform);
+        ar = (float) Gdx.graphics.getWidth() / (float) Gdx.graphics.getHeight();
+        aiViewport = new ExtendViewport(300, 300 / ar, guiCam);
 
         // Focus is changed from GUI
         EventManager.instance.subscribe(this, Events.FOV_CHANGED_CMD);
@@ -250,6 +304,14 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
         camera.update();
 
         posinv.set(pos).scl(-1);
+
+        camera.view.getRotation(q);
+
+        // Gui cam
+        guiCam.fieldOfView = 30;
+        guiCam.up.set(0, 1, 0);
+        guiCam.direction.set(0, 0, 1);
+        guiCam.position.set(0, 0, 0);
 
     }
 
@@ -459,6 +521,24 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
             spriteBatch.end();
 
         }
+
+        // Render attitude indicator
+        aiViewport.setCamera(guiCam);
+        aiViewport.setWorldSize(300, 300);
+        aiViewport.setScreenBounds(0, 0, 300, Math.round(300));
+        aiViewport.apply();
+
+        mb.begin(guiCam);
+
+        aiTransform.idt();
+
+        aiTransform.translate(0, 0, 4);
+        aiTransform.rotate(q);
+        aiTransform.rotate(0, 1, 0, 90);
+
+        mb.render(aiModelInstance, env);
+
+        mb.end();
     }
 
 }

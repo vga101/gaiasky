@@ -33,11 +33,6 @@ public class TextureComponent {
 
     public String base, hires, specular, normal, night, ring;
     public Texture baseTex;
-    @Deprecated
-    public Texture hi_resTex;
-
-    @Deprecated
-    public boolean hiresTexFlag = false;
 
     public TextureComponent() {
 
