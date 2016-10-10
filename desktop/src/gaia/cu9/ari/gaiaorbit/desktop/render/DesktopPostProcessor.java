@@ -120,7 +120,7 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
             lgh = Math.round(lgw / ar);
         } else if (GlobalConf.scene.isNormalQuality()) {
             nsamples = 20;
-            lgw = 1280;
+            lgw = 1920;
             lgh = Math.round(lgw / ar);
         } else {
             nsamples = 15;

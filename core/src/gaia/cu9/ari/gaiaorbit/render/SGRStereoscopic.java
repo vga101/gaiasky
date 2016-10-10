@@ -114,7 +114,7 @@ public class SGRStereoscopic extends SGRAbstract implements ISGR, IObserver {
             camera.setCameraStereoLeft(cam);
             sgr.renderScene(camera, t, rc);
 
-            postprocessRender(ppb, fb1, postproc, camera);
+            postprocessRender(ppb, fb1, postproc, camera, rw, rh);
             Texture texLeft = fb1.getColorBufferTexture();
 
             /** RIGHT EYE **/
@@ -130,7 +130,7 @@ public class SGRStereoscopic extends SGRAbstract implements ISGR, IObserver {
             camera.setCameraStereoRight(cam);
             sgr.renderScene(camera, t, rc);
 
-            postprocessRender(ppb, fb2, postproc, camera);
+            postprocessRender(ppb, fb2, postproc, camera, rw, rh);
             Texture texRight = fb2.getColorBufferTexture();
 
             // We have left and right images to texLeft and texRight
@@ -174,7 +174,7 @@ public class SGRStereoscopic extends SGRAbstract implements ISGR, IObserver {
             sgr.renderScene(camera, t, rc);
 
             Texture tex = null;
-            postprocessRender(ppb, fb3d, postproc, camera);
+            postprocessRender(ppb, fb3d, postproc, camera, rw / 2, rh);
             tex = fb3d.getColorBufferTexture();
 
             float scaleX = 1;
@@ -209,7 +209,7 @@ public class SGRStereoscopic extends SGRAbstract implements ISGR, IObserver {
             camera.setCameraStereoRight(cam);
             sgr.renderScene(camera, t, rc);
 
-            postprocessRender(ppb, fb3d, postproc, camera);
+            postprocessRender(ppb, fb3d, postproc, camera, rw / 2, rh);
             tex = fb3d.getColorBufferTexture();
 
             if (fb != null)

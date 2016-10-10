@@ -353,8 +353,8 @@ public class CameraManager implements ICamera, IObserver {
     }
 
     @Override
-    public void render() {
-        current.render();
+    public void render(int rw, int rh) {
+        current.render(rw, rh);
     }
 
     @Override

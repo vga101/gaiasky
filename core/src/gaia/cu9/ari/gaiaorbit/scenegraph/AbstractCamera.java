@@ -101,7 +101,7 @@ public abstract class AbstractCamera implements ICamera {
     }
 
     @Override
-    public void render() {
+    public void render(int rw, int rh) {
 
     }
 

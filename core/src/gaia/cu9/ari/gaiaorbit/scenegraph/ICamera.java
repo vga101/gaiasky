@@ -76,7 +76,7 @@ public interface ICamera {
 
     public CameraManager getManager();
 
-    public void render();
+    public void render(int rw, int rh);
 
     /**
      * Gets the current velocity of the camera in km/h.

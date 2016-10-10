@@ -37,7 +37,7 @@ public class SGRFov extends SGRAbstract implements ISGR {
 
         camera.updateMode(aux, false);
 
-        postprocessRender(ppb, fb, postproc, camera);
+        postprocessRender(ppb, fb, postproc, camera, rw, rh);
 
     }
 

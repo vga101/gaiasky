@@ -4,6 +4,10 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.controllers.Controller;
+import com.badlogic.gdx.controllers.ControllerListener;
+import com.badlogic.gdx.controllers.Controllers;
+import com.badlogic.gdx.controllers.PovDirection;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
@@ -28,6 +32,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
+import gaia.cu9.ari.gaiaorbit.interfce.XBox360Mappings;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
@@ -60,7 +65,12 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
     public Vector3d thrust;
 
     /** This is the power **/
-    public static double thrustLength = 1e12d;
+    public static final double thrustLength = 1e12d;
+
+    /** Factor (adapt to be able to navigate small and large scale structures **/
+    public static final double[] thrustFactor = new double[] { 0.1, 1.0, 1e1, 1e2, 1e3, 1e4, 1e5, 1e6, 1e7, 1e8, 1e9, 1e10, 1e11 };
+    public int thrustFactorIndex = 1;
+
     /** Instantaneous engine power, this is in [0..1] **/
     public double enginePower;
 
@@ -85,6 +95,9 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
     /** The input controller attached to this camera **/
     private SpacecraftInputController inputController;
 
+    /** Controller listener **/
+    private SpacecraftControllerListener controllerListener;
+
     /** Mass in kg **/
     public double mass;
 
@@ -97,13 +110,12 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
     private ModelBatch mb;
     private Model aiModel;
     private ModelInstance aiModelInstance;
-    private Texture aiTexture;
+    private Texture aiTexture, aiPointerTexture, controlPadTexture;
     private Environment env;
     private Matrix4 aiTransform;
     private Viewport aiViewport;
     private Quaternion q;
     private DirectionalLight dlight;
-    private float ar;
 
     public SpacecraftCamera(AssetManager assetManager, CameraManager parent) {
         super(parent);
@@ -150,6 +162,7 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
         fovFactor = camera.fieldOfView / 40f;
 
         inputController = new SpacecraftInputController(new GestureAdapter(), this);
+        controllerListener = new SpacecraftControllerListener(this);
 
         // Init sprite batch for crosshair and cockpit
         spriteBatch = new SpriteBatch();
@@ -166,14 +179,20 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
         env.add(dlight);
         mb = new ModelBatch();
         ModelBuilder2 builder = new ModelBuilder2();
-        aiTexture = new Texture(Gdx.files.internal("data/tex/attitudeindicator.png"));
+
+        aiTexture = new Texture(Gdx.files.internal("data/tex/attitudeindicator-2.png"));
         aiTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+        aiPointerTexture = new Texture(Gdx.files.internal("img/ai-pointer.png"));
+        aiPointerTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+        controlPadTexture = new Texture(Gdx.files.internal("img/controlpad.png"));
+        controlPadTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+
         Material mat = new Material(new TextureAttribute(TextureAttribute.Diffuse, aiTexture), new ColorAttribute(ColorAttribute.Specular, 0.3f, 0.3f, 0.3f, 1f));
         aiModel = builder.createSphere(1, 30, 30, mat, Usage.Position | Usage.Normal | Usage.TextureCoordinates);
         aiTransform = new Matrix4();
         aiModelInstance = new ModelInstance(aiModel, aiTransform);
         ar = (float) Gdx.graphics.getWidth() / (float) Gdx.graphics.getHeight();
-        aiViewport = new ExtendViewport(300, 300 / ar, guiCam);
+        aiViewport = new ExtendViewport(300, 300, guiCam);
 
         // Focus is changed from GUI
         EventManager.instance.subscribe(this, Events.FOV_CHANGED_CMD);
@@ -218,7 +237,7 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
     public void update(float dt, ITimeFrameProvider time) {
         /** POSITION **/
         // Compute force from thrust
-        thrust.set(direction).scl(thrustLength * enginePower);
+        thrust.set(direction).scl(thrustLength * thrustFactor[thrustFactorIndex] * enginePower);
         force.set(thrust);
 
         // Compute new acceleration in m/s^2
@@ -369,16 +388,33 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
         this.rollp = MathUtilsd.clamp(rollp, -1, 1);
     }
 
+    public void increaseThrustFactorIndex() {
+        thrustFactorIndex = (thrustFactorIndex + 1) % thrustFactor.length;
+        EventManager.instance.post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), "Thrust factor: " + thrustFactor[thrustFactorIndex]);
+    }
+
+    public void decreaseThrustFactorIndex() {
+        thrustFactorIndex = thrustFactorIndex - 1;
+        if (thrustFactorIndex < 0)
+            thrustFactorIndex = thrustFactor.length - 1;
+        EventManager.instance.post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), "Thrust factor: " + thrustFactor[thrustFactorIndex]);
+    }
+
     @Override
     public void updateMode(CameraMode mode, boolean postEvent) {
         InputMultiplexer im = (InputMultiplexer) Gdx.input.getInputProcessor();
         if (mode == CameraMode.Spacecraft) {
             // Register input controller
             im.addProcessor(inputController);
+            // Register controller listener
+            Controllers.clearListeners();
+            Controllers.addListener(controllerListener);
             stopAllMovement();
         } else {
             // Unregister input controller
             im.removeProcessor(inputController);
+            // Unregister controller listener
+            Controllers.removeListener(controllerListener);
             stopAllMovement();
         }
     }
@@ -419,6 +455,48 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
             }
             break;
         }
+
+    }
+
+    @Override
+    public void render(int rw, int rh) {
+
+        // Render attitude indicator
+        int aix = -58;
+        int aiy = -31;
+        aiViewport.setCamera(guiCam);
+        aiViewport.setWorldSize(300, 300);
+        aiViewport.setScreenBounds(aix, aiy, 300, 300);
+        aiViewport.apply();
+
+        mb.begin(guiCam);
+
+        aiTransform.idt();
+
+        aiTransform.translate(0, 0, 4);
+        aiTransform.rotate(q);
+        aiTransform.rotate(0, 1, 0, 90);
+
+        mb.render(aiModelInstance, env);
+
+        mb.end();
+
+        aiViewport.setWorldSize(rw, rh);
+        aiViewport.setScreenBounds(0, 0, rw, rh);
+        aiViewport.apply();
+
+        // Renders crosshair if focus mode, and ai pointer
+        spriteBatch.begin();
+        if (GlobalConf.scene.CROSSHAIR) {
+            float w = Gdx.graphics.getWidth();
+            float h = Gdx.graphics.getHeight();
+
+            spriteBatch.draw(crosshairTex, w / 2f - chw2, h / 2f - chh2);
+
+        }
+        spriteBatch.draw(controlPadTexture, 0, 0);
+        spriteBatch.draw(aiPointerTexture, aix + 150 - 16, aiy + 150 - 16);
+        spriteBatch.end();
 
     }
 
@@ -471,6 +549,14 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
                     // yaw -1
                     camera.setYawPower(-1);
                     break;
+                case Keys.PLUS:
+                    // Increase thrust factor
+                    camera.increaseThrustFactorIndex();
+                    break;
+                case Keys.MINUS:
+                    // Decrease thrust length
+                    camera.decreaseThrustFactorIndex();
+                    break;
                 }
             }
             return false;
@@ -509,36 +595,99 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
 
     }
 
-    @Override
-    public void render() {
-        // Renders crosshair if focus mode
-        if (GlobalConf.scene.CROSSHAIR) {
-            float w = Gdx.graphics.getWidth();
-            float h = Gdx.graphics.getHeight();
+    private class SpacecraftControllerListener implements ControllerListener {
 
-            spriteBatch.begin();
-            spriteBatch.draw(crosshairTex, w / 2f - chw2, h / 2f - chh2);
-            spriteBatch.end();
+        private SpacecraftCamera cam;
 
+        public SpacecraftControllerListener(SpacecraftCamera cam) {
+            super();
+            this.cam = cam;
         }
 
-        // Render attitude indicator
-        aiViewport.setCamera(guiCam);
-        aiViewport.setWorldSize(300, 300);
-        aiViewport.setScreenBounds(0, 0, 300, Math.round(300));
-        aiViewport.apply();
+        @Override
+        public void connected(Controller controller) {
+            EventManager.instance.post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), "Controller connected: " + controller.getName());
+        }
 
-        mb.begin(guiCam);
+        @Override
+        public void disconnected(Controller controller) {
+            EventManager.instance.post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), "Controller disconnected: " + controller.getName());
+        }
 
-        aiTransform.idt();
+        @Override
+        public boolean buttonDown(Controller controller, int buttonCode) {
+            switch (buttonCode) {
+            case XBox360Mappings.BUTTON_A:
+                cam.increaseThrustFactorIndex();
+                break;
+            case XBox360Mappings.BUTTON_X:
+                cam.decreaseThrustFactorIndex();
+                break;
 
-        aiTransform.translate(0, 0, 4);
-        aiTransform.rotate(q);
-        aiTransform.rotate(0, 1, 0, 90);
+            }
+            return true;
+        }
 
-        mb.render(aiModelInstance, env);
+        @Override
+        public boolean buttonUp(Controller controller, int buttonCode) {
+            return false;
+        }
 
-        mb.end();
+        @Override
+        public boolean axisMoved(Controller controller, int axisCode, float value) {
+            boolean treated = false;
+            // y = x^4
+            // http://www.wolframalpha.com/input/?i=y+%3D+sign%28x%29+*+x%5E2+%28x+from+-1+to+1%29}
+            value = Math.signum(value) * value * value * value * value;
+
+            switch (axisCode) {
+            case XBox360Mappings.AXIS_JOY2HOR:
+                cam.setRollPower(-value);
+                treated = true;
+                break;
+            case XBox360Mappings.AXIS_JOY1VERT:
+                cam.setPitchPower(value);
+                treated = true;
+                break;
+            case XBox360Mappings.AXIS_JOY1HOR:
+                cam.setYawPower(-value);
+                treated = true;
+                break;
+            case XBox360Mappings.AXIS_JOY2VERT:
+                treated = true;
+                break;
+            case XBox360Mappings.AXIS_RT:
+                cam.setEnginePower((value + 1) / 2);
+                treated = true;
+                break;
+            case XBox360Mappings.AXIS_LT:
+                cam.setEnginePower(-(value + 1) / 2);
+                treated = true;
+                break;
+            }
+            return treated;
+        }
+
+        @Override
+        public boolean povMoved(Controller controller, int povCode, PovDirection value) {
+            return false;
+        }
+
+        @Override
+        public boolean xSliderMoved(Controller controller, int sliderCode, boolean value) {
+            return false;
+        }
+
+        @Override
+        public boolean ySliderMoved(Controller controller, int sliderCode, boolean value) {
+            return false;
+        }
+
+        @Override
+        public boolean accelerometerMoved(Controller controller, int accelerometerCode, Vector3 value) {
+            return false;
+        }
+
     }
 
 }

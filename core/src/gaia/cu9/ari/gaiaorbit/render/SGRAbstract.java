@@ -38,14 +38,14 @@ public class SGRAbstract {
         return postproc;
     }
 
-    protected void postprocessRender(PostProcessBean ppb, FrameBuffer fb, boolean postproc, ICamera camera) {
+    protected void postprocessRender(PostProcessBean ppb, FrameBuffer fb, boolean postproc, ICamera camera, int rw, int rh) {
         ppb.render(fb);
 
         // Render camera
         if (fb != null && postproc) {
             fb.begin();
         }
-        camera.render();
+        camera.render(rw, rh);
         if (fb != null && postproc) {
             fb.end();
         }

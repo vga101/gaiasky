@@ -90,7 +90,7 @@ public class SGRCubemap extends SGRAbstract implements ISGR {
 
         postproc = postprocessCapture(ppb, xposfb, wh, wh);
         sgr.renderScene(camera, t, rc);
-        postprocessRender(ppb, xposfb, postproc, camera);
+        postprocessRender(ppb, xposfb, postproc, camera, rw, rh);
 
         // LEFT -X
         cam.up.set(upbak);
@@ -99,7 +99,7 @@ public class SGRCubemap extends SGRAbstract implements ISGR {
 
         postproc = postprocessCapture(ppb, xnegfb, wh, wh);
         sgr.renderScene(camera, t, rc);
-        postprocessRender(ppb, xnegfb, postproc, camera);
+        postprocessRender(ppb, xnegfb, postproc, camera, rw, rh);
 
         // TOP +Y
         aux1.set(dirbak);
@@ -111,7 +111,7 @@ public class SGRCubemap extends SGRAbstract implements ISGR {
 
         postproc = postprocessCapture(ppb, yposfb, wh, wh);
         sgr.renderScene(camera, t, rc);
-        postprocessRender(ppb, yposfb, postproc, camera);
+        postprocessRender(ppb, yposfb, postproc, camera, rw, rh);
 
         // BOTTOM -Y
         aux1.set(dirbak);
@@ -123,7 +123,7 @@ public class SGRCubemap extends SGRAbstract implements ISGR {
 
         postproc = postprocessCapture(ppb, ynegfb, wh, wh);
         sgr.renderScene(camera, t, rc);
-        postprocessRender(ppb, ynegfb, postproc, camera);
+        postprocessRender(ppb, ynegfb, postproc, camera, rw, rh);
 
         // FRONT +Z
         cam.direction.set(dirbak);
@@ -132,7 +132,7 @@ public class SGRCubemap extends SGRAbstract implements ISGR {
 
         postproc = postprocessCapture(ppb, zposfb, wh, wh);
         sgr.renderScene(camera, t, rc);
-        postprocessRender(ppb, zposfb, postproc, camera);
+        postprocessRender(ppb, zposfb, postproc, camera, rw, rh);
 
         // BACK -Z
         cam.up.set(upbak);
@@ -141,7 +141,7 @@ public class SGRCubemap extends SGRAbstract implements ISGR {
 
         postproc = postprocessCapture(ppb, znegfb, wh, wh);
         sgr.renderScene(camera, t, rc);
-        postprocessRender(ppb, znegfb, postproc, camera);
+        postprocessRender(ppb, znegfb, postproc, camera, rw, rh);
 
         // Restore camera parameters
         cam.direction.set(dirbak);

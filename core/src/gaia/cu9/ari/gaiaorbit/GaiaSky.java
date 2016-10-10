@@ -15,7 +15,6 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.FileHandleResolver;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.controllers.Controllers;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
@@ -31,7 +30,6 @@ import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.interfce.FullGui;
-import gaia.cu9.ari.gaiaorbit.interfce.GaiaControllerListener;
 import gaia.cu9.ari.gaiaorbit.interfce.IGui;
 import gaia.cu9.ari.gaiaorbit.interfce.KeyInputController;
 import gaia.cu9.ari.gaiaorbit.interfce.LoadingGui;
@@ -279,8 +277,6 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
 
         // Key bindings controller
         inputMultiplexer.addProcessor(new KeyInputController());
-
-        Controllers.addListener(new GaiaControllerListener(cam, gui));
 
         Gdx.input.setInputProcessor(inputMultiplexer);
 

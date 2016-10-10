@@ -28,7 +28,7 @@ public class SGR extends SGRAbstract implements ISGR {
         extendViewport.apply();
         sgr.renderScene(camera, t, rc);
 
-        postprocessRender(ppb, fb, postproc, camera);
+        postprocessRender(ppb, fb, postproc, camera, rw, rh);
 
     }
 

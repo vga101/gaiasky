@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Peripheral;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.controllers.Controllers;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -14,6 +15,7 @@ import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
+import gaia.cu9.ari.gaiaorbit.interfce.NaturalControllerListener;
 import gaia.cu9.ari.gaiaorbit.interfce.NaturalInputController;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
@@ -103,6 +105,9 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
     /** The input controller attached to this camera **/
     private NaturalInputController inputController;
 
+    /** Controller listener **/
+    private NaturalControllerListener controllerListener;
+
     private SpriteBatch spriteBatch;
     private Texture crosshair;
     private float chw2, chh2;
@@ -151,6 +156,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
         accelerometer = Gdx.input.isPeripheralAvailable(Peripheral.Accelerometer);
 
         inputController = new NaturalInputController(this);
+        controllerListener = new NaturalControllerListener(this);
 
         // Init sprite batch for crosshair
         spriteBatch = new SpriteBatch();
@@ -706,10 +712,15 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
         case Gaia_Scene:
             // Register input controller
             im.addProcessor(inputController);
+            // Register controller listener
+            Controllers.clearListeners();
+            Controllers.addListener(controllerListener);
             break;
         default:
             // Unregister input controller
             im.removeProcessor(inputController);
+            // Unregister controller listener
+            Controllers.removeListener(controllerListener);
             break;
         }
     }
@@ -1002,7 +1013,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
     }
 
     @Override
-    public void render() {
+    public void render(int rw, int rh) {
         // Renders crosshair if focus mode
         if (GlobalConf.scene.CROSSHAIR && getMode().equals(CameraMode.Focus)) {
             float w = Gdx.graphics.getWidth();
