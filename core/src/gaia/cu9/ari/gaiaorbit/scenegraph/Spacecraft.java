@@ -80,7 +80,7 @@ public class Spacecraft extends AbstractPositionEntity implements IModelRenderab
                 // Update directional light
                 mc.dlight.direction.set(0f, 0f, 0f);
                 if (ModelBody.closestCamStar != null) {
-                    float intensity = (float) MathUtilsd.lint(ModelBody.closestCamStar.distToCamera / MathUtilsd.lint(ModelBody.closestCamStar.size, 0.6e6, 1e8, 1, 0.05), 0, 2 * Constants.PC_TO_U, 1f, 0f);
+                    float intensity = (float) MathUtilsd.lint(ModelBody.closestCamStar.distToCamera / MathUtilsd.lint(ModelBody.closestCamStar.size, 0.6e6, 1e8, 1, 0.05), 0.5 * Constants.AU_TO_U, 10 * Constants.AU_TO_U, 1f, 0f);
                     mc.dlight.direction.sub(ModelBody.closestCamStar.transform.getTranslationf(aux3f1.get()));
                     mc.dlight.color.set(ModelBody.closestCamStar.cc[0] * intensity, ModelBody.closestCamStar.cc[1] * intensity, ModelBody.closestCamStar.cc[2] * intensity, 1.0f);
                 } else {

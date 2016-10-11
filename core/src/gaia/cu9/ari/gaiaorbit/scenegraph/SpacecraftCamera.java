@@ -8,11 +8,13 @@ import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.ControllerListener;
 import com.badlogic.gdx.controllers.Controllers;
 import com.badlogic.gdx.controllers.PovDirection;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.Model;
@@ -20,6 +22,9 @@ import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
+import com.badlogic.gdx.graphics.g3d.decals.CameraGroupStrategy;
+import com.badlogic.gdx.graphics.g3d.decals.Decal;
+import com.badlogic.gdx.graphics.g3d.decals.DecalBatch;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.input.GestureDetector.GestureAdapter;
@@ -88,9 +93,12 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
     // angles in radians
     public double yaw, pitch, roll;
 
+    // Are we in the process of stabilising the spaceship?
+    public boolean leveling;
+
     /** Aux vectors **/
     public Vector3d auxd1, auxd2, auxd3, auxd4;
-    public Vector3 auxf1;
+    public Vector3 auxf1, auxf2;
 
     /** The input controller attached to this camera **/
     private SpacecraftInputController inputController;
@@ -103,11 +111,13 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
 
     /** Crosshair **/
     private SpriteBatch spriteBatch;
-    private Texture crosshairTex;
+    private Texture crosshairTex, aiVelTex, aiAntivelTex;
+    private Decal aiVelDec, aiAntivelDec;
     private float chw2, chh2;
 
     /** Attitude indicator **/
     private ModelBatch mb;
+    private DecalBatch db;
     private Model aiModel;
     private ModelInstance aiModelInstance;
     private Texture aiTexture, aiPointerTexture, controlPadTexture;
@@ -137,12 +147,16 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
         // spacecraft
         mass = .5e5;
 
+        // not stabilising
+        leveling = false;
+
         // aux vectors
         auxd1 = new Vector3d();
         auxd2 = new Vector3d();
         auxd3 = new Vector3d();
         auxd4 = new Vector3d();
         auxf1 = new Vector3();
+        auxf2 = new Vector3();
         q = new Quaternion();
 
         // init camera
@@ -166,7 +180,7 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
 
         // Init sprite batch for crosshair and cockpit
         spriteBatch = new SpriteBatch();
-        crosshairTex = new Texture(Gdx.files.internal("img/crosshair-yellow.png"));
+        crosshairTex = new Texture(Gdx.files.internal("img/crosshair-sc-yellow.png"));
         chw2 = crosshairTex.getWidth() / 2f;
         chh2 = crosshairTex.getHeight() / 2f;
 
@@ -177,6 +191,7 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
         env = new Environment();
         env.set(new ColorAttribute(ColorAttribute.AmbientLight, 1f, 1f, 1f, 1f), new ColorAttribute(ColorAttribute.Specular, .5f, .5f, .5f, 1f));
         env.add(dlight);
+        db = new DecalBatch(new CameraGroupStrategy(guiCam));
         mb = new ModelBatch();
         ModelBuilder2 builder = new ModelBuilder2();
 
@@ -186,6 +201,14 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
         aiPointerTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
         controlPadTexture = new Texture(Gdx.files.internal("img/controlpad.png"));
         controlPadTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+
+        aiVelTex = new Texture(Gdx.files.internal("img/ai-vel.png"));
+        aiVelTex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+        aiAntivelTex = new Texture(Gdx.files.internal("img/ai-antivel.png"));
+        aiAntivelTex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+
+        aiVelDec = Decal.newDecal(new TextureRegion(aiVelTex));
+        aiAntivelDec = Decal.newDecal(new TextureRegion(aiAntivelTex));
 
         Material mat = new Material(new TextureAttribute(TextureAttribute.Diffuse, aiTexture), new ColorAttribute(ColorAttribute.Specular, 0.3f, 0.3f, 0.3f, 1f));
         aiModel = builder.createSphere(1, 30, 30, mat, Usage.Position | Usage.Normal | Usage.TextureCoordinates);
@@ -233,6 +256,8 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
         return 1;
     }
 
+    double lastangle = 0;
+
     @Override
     public void update(float dt, ITimeFrameProvider time) {
         /** POSITION **/
@@ -269,6 +294,31 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
             }
         } else {
             pos.set(auxd3);
+        }
+
+        if (leveling) {
+
+            // No velocity, we just stop euler angle motions
+            if (yawv != 0) {
+                yawp = -Math.signum(yawv) * MathUtilsd.clamp(Math.abs(yawv), 0, 1);
+            }
+            if (pitchv != 0) {
+                pitchp = -Math.signum(pitchv) * MathUtilsd.clamp(Math.abs(pitchv), 0, 1);
+            }
+            if (rollv != 0) {
+                rollp = -Math.signum(rollv) * MathUtilsd.clamp(Math.abs(rollv), 0, 1);
+            }
+            if (Math.abs(yawv) < 1e-3 && Math.abs(pitchv) < 1e-3 && Math.abs(rollv) < 1e-3) {
+                setYawPower(0);
+                setPitchPower(0);
+                setRollPower(0);
+
+                yawv = 0;
+                pitchv = 0;
+                rollv = 0;
+                leveling = false;
+            }
+
         }
 
         // Yaw, pitch and roll
@@ -345,6 +395,8 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
         yawv = 0;
         pitchv = 0;
         rollv = 0;
+
+        leveling = false;
 
     }
 
@@ -461,12 +513,15 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
     @Override
     public void render(int rw, int rh) {
 
+        int indicatorw = 300;
+        int indicatorh = 300;
+
         // Render attitude indicator
         int aix = -58;
         int aiy = -31;
         aiViewport.setCamera(guiCam);
-        aiViewport.setWorldSize(300, 300);
-        aiViewport.setScreenBounds(aix, aiy, 300, 300);
+        aiViewport.setWorldSize(indicatorw, indicatorh);
+        aiViewport.setScreenBounds(aix, aiy, indicatorw, indicatorh);
         aiViewport.apply();
 
         mb.begin(guiCam);
@@ -481,6 +536,30 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
 
         mb.end();
 
+        // VELOCITY INDICATORS IN NAVBALL
+        // velocity
+        auxf1.set(vel.valuesf()).nor().scl(0.54f);
+        auxf1.mul(q);
+        auxf1.add(0, 0, 4);
+
+        // antivelocity
+        auxf2.set(vel.valuesf()).nor().scl(-0.54f);
+        auxf2.mul(q);
+        auxf2.add(0, 0, 4);
+
+        aiVelDec.setPosition(auxf1);
+        aiVelDec.setScale(0.003f);
+        aiVelDec.lookAt(guiCam.position, guiCam.up);
+
+        aiAntivelDec.setPosition(auxf2);
+        aiAntivelDec.setScale(0.003f);
+        aiAntivelDec.lookAt(guiCam.position, guiCam.up);
+
+        Gdx.gl.glEnable(GL20.GL_BLEND);
+        db.add(aiVelDec);
+        db.add(aiAntivelDec);
+        db.flush();
+
         aiViewport.setWorldSize(rw, rh);
         aiViewport.setScreenBounds(0, 0, rw, rh);
         aiViewport.apply();
@@ -491,11 +570,14 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
             float w = Gdx.graphics.getWidth();
             float h = Gdx.graphics.getHeight();
 
+            // Direction crosshair
             spriteBatch.draw(crosshairTex, w / 2f - chw2, h / 2f - chh2);
 
         }
+
         spriteBatch.draw(controlPadTexture, 0, 0);
-        spriteBatch.draw(aiPointerTexture, aix + 150 - 16, aiy + 150 - 16);
+        spriteBatch.draw(aiPointerTexture, aix + indicatorw / 2 - 16, aiy + indicatorh / 2 - 16);
+
         spriteBatch.end();
 
     }
@@ -528,26 +610,32 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
                 case Keys.A:
                     // roll 1
                     camera.setRollPower(1);
+                    leveling = false;
                     break;
                 case Keys.D:
                     // roll -1
                     camera.setRollPower(-1);
+                    leveling = false;
                     break;
                 case Keys.DOWN:
                     // pitch 1
                     camera.setPitchPower(1);
+                    leveling = false;
                     break;
                 case Keys.UP:
                     // pitch -1
                     camera.setPitchPower(-1);
+                    leveling = false;
                     break;
                 case Keys.LEFT:
                     // yaw 1
                     camera.setYawPower(1);
+                    leveling = false;
                     break;
                 case Keys.RIGHT:
                     // yaw -1
                     camera.setYawPower(-1);
+                    leveling = false;
                     break;
                 case Keys.PLUS:
                     // Increase thrust factor
@@ -586,6 +674,10 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
                 case Keys.LEFT:
                     // yaw 0
                     camera.setYawPower(0);
+                    break;
+                case Keys.L:
+                    // level spaceship
+                    leveling = true;
                     break;
                 }
             }
@@ -643,14 +735,17 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
             switch (axisCode) {
             case XBox360Mappings.AXIS_JOY2HOR:
                 cam.setRollPower(-value);
+                leveling = false;
                 treated = true;
                 break;
             case XBox360Mappings.AXIS_JOY1VERT:
                 cam.setPitchPower(value);
+                leveling = false;
                 treated = true;
                 break;
             case XBox360Mappings.AXIS_JOY1HOR:
                 cam.setYawPower(-value);
+                leveling = false;
                 treated = true;
                 break;
             case XBox360Mappings.AXIS_JOY2VERT:
