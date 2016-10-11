@@ -44,6 +44,7 @@ import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.g3d.ModelBuilder2;
 import gaia.cu9.ari.gaiaorbit.util.math.Intersectord;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
+import gaia.cu9.ari.gaiaorbit.util.math.Vector2d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
@@ -93,12 +94,13 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
     // angles in radians
     public double yaw, pitch, roll;
 
-    // Are we in the process of stabilising the spaceship?
-    public boolean leveling;
+    // Are we in the process of stabilising or stopping the spaceship?
+    public boolean leveling, stopping;
 
     /** Aux vectors **/
-    public Vector3d auxd1, auxd2, auxd3, auxd4;
-    public Vector3 auxf1, auxf2;
+    private Vector3d aux3d1, aux3d2, aux3d3, aux3d4;
+    private Vector3 aux3f1, aux3f2;
+    private Quaternion qf;
 
     /** The input controller attached to this camera **/
     private SpacecraftInputController inputController;
@@ -124,7 +126,7 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
     private Environment env;
     private Matrix4 aiTransform;
     private Viewport aiViewport;
-    private Quaternion q;
+
     private DirectionalLight dlight;
 
     public SpacecraftCamera(AssetManager assetManager, CameraManager parent) {
@@ -137,7 +139,7 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
 
         // camera
         direction = new Vector3d(1, 0, 0);
-        up = new Vector3d(0, 0, 1);
+        up = new Vector3d(0, 1, 0);
 
         // engine thrust direction
         // our spacecraft is a rigid solid so thrust is always the camera direction vector
@@ -151,13 +153,13 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
         leveling = false;
 
         // aux vectors
-        auxd1 = new Vector3d();
-        auxd2 = new Vector3d();
-        auxd3 = new Vector3d();
-        auxd4 = new Vector3d();
-        auxf1 = new Vector3();
-        auxf2 = new Vector3();
-        q = new Quaternion();
+        aux3d1 = new Vector3d();
+        aux3d2 = new Vector3d();
+        aux3d3 = new Vector3d();
+        aux3d4 = new Vector3d();
+        aux3f1 = new Vector3();
+        aux3f2 = new Vector3();
+        qf = new Quaternion();
 
         // init camera
         camera = new PerspectiveCamera(GlobalConf.scene.CAMERA_FOV, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -265,24 +267,41 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
         thrust.set(direction).scl(thrustLength * thrustFactor[thrustFactorIndex] * enginePower);
         force.set(thrust);
 
+        if (stopping) {
+            double speed = vel.len();
+            if (speed != 0) {
+                thrust.set(vel).nor().scl(-thrustLength * thrustFactor[thrustFactorIndex]);
+                force.set(thrust);
+            }
+
+            Vector3d nextvel = aux3d3.set(force).scl(1d / mass).scl(Constants.M_TO_U).scl(dt).add(vel);
+
+            if (vel.angle(nextvel) > 90) {
+                setEnginePower(0);
+                force.scl(0);
+                vel.scl(0);
+                stopping = false;
+            }
+        }
+
         // Compute new acceleration in m/s^2
         accel.set(force).scl(1d / mass);
 
         // Integrate other quantities
         // convert metres to internal units so we have the velocity in u/s
-        auxd1.set(accel).scl(Constants.M_TO_U);
-        vel.add(auxd1.scl(dt));
-        auxd2.set(vel);
+        aux3d1.set(accel).scl(Constants.M_TO_U);
+        vel.add(aux3d1.scl(dt));
+        aux3d2.set(vel);
         // New position in auxd3
-        auxd3.set(pos).add(auxd2.scl(dt));
+        aux3d3.set(pos).add(aux3d2.scl(dt));
         // Check collision!
         if (closest != null) {
             // d1 is the new distance to the centre of the object
-            double d1 = auxd4.set(closest.pos).sub(auxd3).len();
+            double d1 = aux3d4.set(closest.pos).sub(aux3d3).len();
             if (closest.getRadius() > d1 + stopAt) {
                 EventManager.instance.post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), "Crashed against " + closest.name + "!");
 
-                Vector3d[] intersections = Intersectord.lineSphereIntersections(pos, auxd3, closest.pos, closest.getRadius() + stopAt);
+                Vector3d[] intersections = Intersectord.lineSphereIntersections(pos, aux3d3, closest.pos, closest.getRadius() + stopAt);
 
                 if (intersections.length >= 1) {
                     pos.set(intersections[0]);
@@ -290,14 +309,13 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
 
                 stopAllMovement();
             } else {
-                pos.set(auxd3);
+                pos.set(aux3d3);
             }
         } else {
-            pos.set(auxd3);
+            pos.set(aux3d3);
         }
 
         if (leveling) {
-
             // No velocity, we just stop euler angle motions
             if (yawv != 0) {
                 yawp = -Math.signum(yawv) * MathUtilsd.clamp(Math.abs(yawv), 0, 1);
@@ -318,7 +336,6 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
                 rollv = 0;
                 leveling = false;
             }
-
         }
 
         // Yaw, pitch and roll
@@ -351,13 +368,45 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
         direction.rotate(up, yawdiff);
 
         // apply pitch
-        auxd1.set(direction).crs(up);
-        direction.rotate(auxd1, pitchdiff);
-        up.rotate(auxd1, pitchdiff);
+        aux3d1.set(direction).crs(up);
+        direction.rotate(aux3d1, pitchdiff);
+        up.rotate(aux3d1, pitchdiff);
 
         // Update camera
         updatePerspectiveCamera();
 
+    }
+
+    /**
+    (pitch, yaw)  -> (x, y, z)
+    (0,     0)    -> (1, 0, 0)
+    (pi/2,  0)    -> (0, 1, 0)
+    (0,    -pi/2) -> (0, 0, 1)
+    
+    xzLen = cos(pitch)
+    x = xzLen * cos(yaw)
+    y = sin(pitch)
+    z = xzLen * sin(-yaw)
+    
+    
+    pitch = acos(xzLen)
+    yaw = acos(x/xzLen)
+    -yaw = asin(z/xzLen)
+    */
+    public Vector2d getPitchYaw(Vector3d vec, Vector2d out) {
+        double xzlen = Math.sqrt(direction.x * direction.x + direction.z * direction.z);
+        double derivedPitch = -Math.toDegrees(Math.acos(xzlen));
+        double derivedYaw = -Math.toDegrees(Math.acos(direction.x / xzlen)) + 90;
+        //double derivedYaw2 = -Math.toDegrees(Math.asin(direction.z / xzlen)) + 90;
+        out.set(derivedPitch, derivedYaw);
+        return out;
+    }
+
+    public double convertAngle(double angle) {
+        if (angle <= 180)
+            return angle;
+        else
+            return angle - 360;
     }
 
     protected void updatePerspectiveCamera() {
@@ -374,7 +423,7 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
 
         posinv.set(pos).scl(-1);
 
-        camera.view.getRotation(q);
+        camera.view.getRotation(qf);
 
         // Gui cam
         guiCam.fieldOfView = 30;
@@ -397,6 +446,7 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
         rollv = 0;
 
         leveling = false;
+        stopping = false;
 
     }
 
@@ -457,7 +507,8 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
         InputMultiplexer im = (InputMultiplexer) Gdx.input.getInputProcessor();
         if (mode == CameraMode.Spacecraft) {
             // Register input controller
-            im.addProcessor(inputController);
+            if (!im.getProcessors().contains(inputController, true))
+                im.addProcessor(inputController);
             // Register controller listener
             Controllers.clearListeners();
             Controllers.addListener(controllerListener);
@@ -529,7 +580,7 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
         aiTransform.idt();
 
         aiTransform.translate(0, 0, 4);
-        aiTransform.rotate(q);
+        aiTransform.rotate(qf);
         aiTransform.rotate(0, 1, 0, 90);
 
         mb.render(aiModelInstance, env);
@@ -538,20 +589,20 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
 
         // VELOCITY INDICATORS IN NAVBALL
         // velocity
-        auxf1.set(vel.valuesf()).nor().scl(0.54f);
-        auxf1.mul(q);
-        auxf1.add(0, 0, 4);
+        aux3f1.set(vel.valuesf()).nor().scl(0.54f);
+        aux3f1.mul(qf);
+        aux3f1.add(0, 0, 4);
 
         // antivelocity
-        auxf2.set(vel.valuesf()).nor().scl(-0.54f);
-        auxf2.mul(q);
-        auxf2.add(0, 0, 4);
+        aux3f2.set(vel.valuesf()).nor().scl(-0.54f);
+        aux3f2.mul(qf);
+        aux3f2.add(0, 0, 4);
 
-        aiVelDec.setPosition(auxf1);
+        aiVelDec.setPosition(aux3f1);
         aiVelDec.setScale(0.003f);
         aiVelDec.lookAt(guiCam.position, guiCam.up);
 
-        aiAntivelDec.setPosition(auxf2);
+        aiAntivelDec.setPosition(aux3f2);
         aiAntivelDec.setScale(0.003f);
         aiAntivelDec.lookAt(guiCam.position, guiCam.up);
 
@@ -575,7 +626,7 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
 
         }
 
-        spriteBatch.draw(controlPadTexture, 0, 0);
+        //spriteBatch.draw(controlPadTexture, 0, 0);
         spriteBatch.draw(aiPointerTexture, aix + indicatorw / 2 - 16, aiy + indicatorh / 2 - 16);
 
         spriteBatch.end();
@@ -602,10 +653,12 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
                 case Keys.W:
                     // power 1
                     camera.setEnginePower(1);
+                    stopping = false;
                     break;
                 case Keys.S:
                     // power -1
                     camera.setEnginePower(-1);
+                    stopping = false;
                     break;
                 case Keys.A:
                     // roll 1
@@ -637,11 +690,11 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
                     camera.setYawPower(-1);
                     leveling = false;
                     break;
-                case Keys.PLUS:
+                case Keys.PAGE_UP:
                     // Increase thrust factor
                     camera.increaseThrustFactorIndex();
                     break;
-                case Keys.MINUS:
+                case Keys.PAGE_DOWN:
                     // Decrease thrust length
                     camera.decreaseThrustFactorIndex();
                     break;
@@ -678,6 +731,10 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
                 case Keys.L:
                     // level spaceship
                     leveling = true;
+                    break;
+                case Keys.P:
+                    // stop spaceship
+                    stopping = true;
                     break;
                 }
             }
@@ -753,10 +810,12 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
                 break;
             case XBox360Mappings.AXIS_RT:
                 cam.setEnginePower((value + 1) / 2);
+                stopping = false;
                 treated = true;
                 break;
             case XBox360Mappings.AXIS_LT:
                 cam.setEnginePower(-(value + 1) / 2);
+                stopping = false;
                 treated = true;
                 break;
             }

@@ -711,7 +711,8 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
         case Free_Camera:
         case Gaia_Scene:
             // Register input controller
-            im.addProcessor(inputController);
+            if (!im.getProcessors().contains(inputController, true))
+                im.addProcessor(inputController);
             // Register controller listener
             Controllers.clearListeners();
             Controllers.addListener(controllerListener);
