@@ -133,7 +133,7 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
         ppb.lglow.setScatteringIntesity(1f);
         ppb.lglow.setScatteringSaturation(1f);
         ppb.lglow.setBaseIntesity(1f);
-        ppb.lglow.setBias(-0.9f);
+        ppb.lglow.setBias(-0.95f);
         ppb.lglow.setLightGlowTexture(new Texture(Gdx.files.internal("img/star_glow.png")));
         ppb.lglow.setNSamples(nsamples);
         ppb.lglow.setEnabled(GlobalConf.postprocess.POSTPROCESS_LIGHT_SCATTERING);
