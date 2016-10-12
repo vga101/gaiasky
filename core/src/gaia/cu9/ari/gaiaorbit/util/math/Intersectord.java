@@ -90,4 +90,45 @@ public class Intersectord {
         return new Vector3d[] { solution2, solution1 };
     }
 
+    /**
+     * Returns the shortest distance between the line defined by x1 and x2 and the
+     * point x0. See <a href="http://mathworld.wolfram.com/Point-LineDistance3-Dimensional.html">here</a>.
+     * @param x1 Segment first point
+     * @param x2 Segment second point
+     * @param x0 Point to test
+     * @return The minimum distance between the line and the point
+     */
+    public static double distanceLinePoint(Vector3d x1, Vector3d x2, Vector3d x0) {
+        Vector3d crs = new Vector3d();
+        Vector3d aux1 = new Vector3d(x0).sub(x2);
+        double nominador = crs.set(x0).sub(x1).crs(aux1).len();
+        double denominador = aux1.set(x2).sub(x1).len();
+        return nominador / denominador;
+    }
+
+    /**
+     * Calculates the euclidean distance from a point to a line segment.
+     * @param v     the point
+     * @param a     start of line segment
+     * @param b     end of line segment 
+     * @return      distance from v to line segment [a,b]
+     */
+    public static double distanceSegmentPoint(final Vector3d a, final Vector3d b, final Vector3d v) {
+        final Vector3d ab = new Vector3d(b).sub(a);
+        double ablen = ab.len();
+        final Vector3d av = new Vector3d(v).sub(a);
+        double avlen = av.len();
+
+        if (av.dot(ab) <= 0.0) // Point is lagging behind start of the segment, so perpendicular distance is not viable.
+            return avlen; // Use distance to start of segment instead.
+
+        final Vector3d bv = new Vector3d(v).sub(b);
+        double bvlen = bv.len();
+
+        if (bv.dot(ab) >= 0.0) // Point is advanced past the end of the segment, so perpendicular distance is not viable.
+            return bvlen; // Use distance to end of the segment instead.
+
+        return (ab.crs(av)).len() / ablen; // Perpendicular distance of point to segment.
+    }
+
 }

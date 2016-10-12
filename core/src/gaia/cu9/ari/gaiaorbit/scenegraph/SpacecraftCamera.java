@@ -57,7 +57,7 @@ import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
  */
 public class SpacecraftCamera extends AbstractCamera implements IObserver {
 
-    private static final double stopAt = 50000 * Constants.M_TO_U;
+    private static final double stopAt = 10000 * Constants.M_TO_U;
 
     /** Camera to render the attitude indicator system **/
     private PerspectiveCamera guiCam;
@@ -297,8 +297,7 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
         // Check collision!
         if (closest != null) {
             // d1 is the new distance to the centre of the object
-            double d1 = aux3d4.set(closest.pos).sub(aux3d3).len();
-            if (closest.getRadius() > d1 + stopAt) {
+            if (!vel.isZero() && Intersectord.distanceSegmentPoint(pos, aux3d3, closest.pos) < closest.getRadius() + stopAt) {
                 EventManager.instance.post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), "Crashed against " + closest.name + "!");
 
                 Vector3d[] intersections = Intersectord.lineSphereIntersections(pos, aux3d3, closest.pos, closest.getRadius() + stopAt);
@@ -413,7 +412,7 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
 
         camera.near = (float) (100000d * Constants.M_TO_U);
         if (closest != null) {
-            camera.near = Math.min(camera.near, (closest.distToCamera - closest.getRadius()) / 2.5f);
+            camera.near = Math.min(camera.near, ((float) closest.pos.dst(pos) - closest.getRadius()) / 2.5f);
         }
         camera.position.set(0, 0, 0);
         camera.direction.set(direction.valuesf());
