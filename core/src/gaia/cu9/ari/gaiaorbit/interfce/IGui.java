@@ -16,7 +16,7 @@ public interface IGui extends Disposable {
 
     public void update(float dt);
 
-    public void render();
+    public void render(int rw, int rh);
 
     public void resize(int width, int height);
 

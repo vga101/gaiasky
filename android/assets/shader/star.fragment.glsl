@@ -28,8 +28,8 @@ uniform int u_lightScattering;
 #define rays_const 30000.0
 
 // Decays
-#define corona_decay 0.1
-#define light_decay 0.04
+#define corona_decay 0.2
+#define light_decay 0.05
 
 vec4 mod289(vec4 x) {
   return x - floor(x * (1.0 / 289.0)) * 289.0; }
@@ -225,6 +225,9 @@ vec4 draw() {
     float dist = distance (vec2 (0.5), v_texCoords.xy) * 2.0;
     vec2 uv = v_texCoords - 0.5;
 
+	// level = 1 if distance == u_radius * model_const
+	// level = 0 if distance == radius
+	// level > 1 if distance > u_radius * model_const
 	float level = (u_distance - u_radius) / ((u_radius * model_const) - u_radius);
 
 	if(level >= 1.0){
@@ -254,9 +257,9 @@ vec4 draw() {
 		level = min(level, 1.0);
 		float level_corona = u_lightScattering * level;
         
-        	float corona = corona(dist, corona_decay, 0.5 - level / 2.0);
-        	float light = light(dist, light_decay);
-        	float core = core(dist, u_inner_rad);
+    	float corona = corona(dist, corona_decay, 1.0 - level);
+    	float light = light(dist, light_decay * 2.0);
+    	float core = core(dist, u_inner_rad);
 
 		return vec4(v_color.rgb + core, (corona * (1.0 - level_corona) + light + level * core));
 	}

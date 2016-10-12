@@ -1,15 +1,15 @@
 package gaia.cu9.ari.gaiaorbit.interfce;
 
-import gaia.cu9.ari.gaiaorbit.render.ComponentType;
-import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
-import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+
+import gaia.cu9.ari.gaiaorbit.render.ComponentType;
+import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
+import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 
 /**
  * GUI for mobile devices which displays information and has some controls.
@@ -116,7 +116,7 @@ public class MobileGui implements IGui {
     }
 
     @Override
-    public void render() {
+    public void render(int rw, int rh) {
         synchronized (lock) {
             ui.draw();
         }

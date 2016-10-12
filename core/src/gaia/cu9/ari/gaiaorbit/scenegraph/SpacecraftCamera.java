@@ -8,31 +8,13 @@ import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.ControllerListener;
 import com.badlogic.gdx.controllers.Controllers;
 import com.badlogic.gdx.controllers.PovDirection;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.Texture.TextureFilter;
-import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.g3d.Environment;
-import com.badlogic.gdx.graphics.g3d.Material;
-import com.badlogic.gdx.graphics.g3d.Model;
-import com.badlogic.gdx.graphics.g3d.ModelBatch;
-import com.badlogic.gdx.graphics.g3d.ModelInstance;
-import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
-import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
-import com.badlogic.gdx.graphics.g3d.decals.CameraGroupStrategy;
-import com.badlogic.gdx.graphics.g3d.decals.Decal;
-import com.badlogic.gdx.graphics.g3d.decals.DecalBatch;
-import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.input.GestureDetector.GestureAdapter;
-import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.viewport.ExtendViewport;
-import com.badlogic.gdx.utils.viewport.Viewport;
 
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
@@ -41,7 +23,6 @@ import gaia.cu9.ari.gaiaorbit.interfce.XBox360Mappings;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
-import gaia.cu9.ari.gaiaorbit.util.g3d.ModelBuilder2;
 import gaia.cu9.ari.gaiaorbit.util.math.Intersectord;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector2d;
@@ -98,7 +79,7 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
     public boolean leveling, stopping;
 
     /** Aux vectors **/
-    private Vector3d aux3d1, aux3d2, aux3d3, aux3d4;
+    private Vector3d aux3d1, aux3d2, aux3d3;
     private Vector3 aux3f1, aux3f2;
     private Quaternion qf;
 
@@ -113,21 +94,8 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
 
     /** Crosshair **/
     private SpriteBatch spriteBatch;
-    private Texture crosshairTex, aiVelTex, aiAntivelTex;
-    private Decal aiVelDec, aiAntivelDec;
+    private Texture crosshairTex;
     private float chw2, chh2;
-
-    /** Attitude indicator **/
-    private ModelBatch mb;
-    private DecalBatch db;
-    private Model aiModel;
-    private ModelInstance aiModelInstance;
-    private Texture aiTexture, aiPointerTexture, controlPadTexture;
-    private Environment env;
-    private Matrix4 aiTransform;
-    private Viewport aiViewport;
-
-    private DirectionalLight dlight;
 
     public SpacecraftCamera(AssetManager assetManager, CameraManager parent) {
         super(parent);
@@ -156,7 +124,6 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
         aux3d1 = new Vector3d();
         aux3d2 = new Vector3d();
         aux3d3 = new Vector3d();
-        aux3d4 = new Vector3d();
         aux3f1 = new Vector3();
         aux3f2 = new Vector3();
         qf = new Quaternion();
@@ -174,6 +141,9 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
         guiCam.near = (float) CAM_NEAR;
         guiCam.far = (float) CAM_FAR;
 
+        // aspect ratio
+        ar = (float) Gdx.graphics.getWidth() / (float) Gdx.graphics.getHeight();
+
         // fov factor
         fovFactor = camera.fieldOfView / 40f;
 
@@ -186,41 +156,12 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
         chw2 = crosshairTex.getWidth() / 2f;
         chh2 = crosshairTex.getHeight() / 2f;
 
-        // Init AI
-        dlight = new DirectionalLight();
-        dlight.color.set(1f, 1f, 1f, 1f);
-        dlight.setDirection(-1f, .05f, .5f);
-        env = new Environment();
-        env.set(new ColorAttribute(ColorAttribute.AmbientLight, 1f, 1f, 1f, 1f), new ColorAttribute(ColorAttribute.Specular, .5f, .5f, .5f, 1f));
-        env.add(dlight);
-        db = new DecalBatch(new CameraGroupStrategy(guiCam));
-        mb = new ModelBatch();
-        ModelBuilder2 builder = new ModelBuilder2();
-
-        aiTexture = new Texture(Gdx.files.internal("data/tex/attitudeindicator-2.png"));
-        aiTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-        aiPointerTexture = new Texture(Gdx.files.internal("img/ai-pointer.png"));
-        aiPointerTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-        controlPadTexture = new Texture(Gdx.files.internal("img/controlpad.png"));
-        controlPadTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-
-        aiVelTex = new Texture(Gdx.files.internal("img/ai-vel.png"));
-        aiVelTex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-        aiAntivelTex = new Texture(Gdx.files.internal("img/ai-antivel.png"));
-        aiAntivelTex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-
-        aiVelDec = Decal.newDecal(new TextureRegion(aiVelTex));
-        aiAntivelDec = Decal.newDecal(new TextureRegion(aiAntivelTex));
-
-        Material mat = new Material(new TextureAttribute(TextureAttribute.Diffuse, aiTexture), new ColorAttribute(ColorAttribute.Specular, 0.3f, 0.3f, 0.3f, 1f));
-        aiModel = builder.createSphere(1, 30, 30, mat, Usage.Position | Usage.Normal | Usage.TextureCoordinates);
-        aiTransform = new Matrix4();
-        aiModelInstance = new ModelInstance(aiModel, aiTransform);
-        ar = (float) Gdx.graphics.getWidth() / (float) Gdx.graphics.getHeight();
-        aiViewport = new ExtendViewport(300, 300, guiCam);
-
         // Focus is changed from GUI
         EventManager.instance.subscribe(this, Events.FOV_CHANGED_CMD);
+    }
+
+    public Quaternion getRotationQuaternion() {
+        return qf;
     }
 
     @Override
@@ -424,12 +365,6 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
 
         camera.view.getRotation(qf);
 
-        // Gui cam
-        guiCam.fieldOfView = 30;
-        guiCam.up.set(0, 1, 0);
-        guiCam.direction.set(0, 0, 1);
-        guiCam.position.set(0, 0, 0);
-
     }
 
     protected void stopAllMovement() {
@@ -560,76 +495,22 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
 
     }
 
+    public boolean isStopping() {
+        return stopping;
+    }
+
+    public boolean isStabilising() {
+        return leveling;
+    }
+
     @Override
     public void render(int rw, int rh) {
-
-        int indicatorw = 300;
-        int indicatorh = 300;
-
-        // Render attitude indicator
-        int aix = -58;
-        int aiy = -31;
-        aiViewport.setCamera(guiCam);
-        aiViewport.setWorldSize(indicatorw, indicatorh);
-        aiViewport.setScreenBounds(aix, aiy, indicatorw, indicatorh);
-        aiViewport.apply();
-
-        mb.begin(guiCam);
-
-        aiTransform.idt();
-
-        aiTransform.translate(0, 0, 4);
-        aiTransform.rotate(qf);
-        aiTransform.rotate(0, 1, 0, 90);
-
-        mb.render(aiModelInstance, env);
-
-        mb.end();
-
-        // VELOCITY INDICATORS IN NAVBALL
-        // velocity
-        aux3f1.set(vel.valuesf()).nor().scl(0.54f);
-        aux3f1.mul(qf);
-        aux3f1.add(0, 0, 4);
-
-        // antivelocity
-        aux3f2.set(vel.valuesf()).nor().scl(-0.54f);
-        aux3f2.mul(qf);
-        aux3f2.add(0, 0, 4);
-
-        aiVelDec.setPosition(aux3f1);
-        aiVelDec.setScale(0.003f);
-        aiVelDec.lookAt(guiCam.position, guiCam.up);
-
-        aiAntivelDec.setPosition(aux3f2);
-        aiAntivelDec.setScale(0.003f);
-        aiAntivelDec.lookAt(guiCam.position, guiCam.up);
-
-        Gdx.gl.glEnable(GL20.GL_BLEND);
-        db.add(aiVelDec);
-        db.add(aiAntivelDec);
-        db.flush();
-
-        aiViewport.setWorldSize(rw, rh);
-        aiViewport.setScreenBounds(0, 0, rw, rh);
-        aiViewport.apply();
-
-        // Renders crosshair if focus mode, and ai pointer
-        spriteBatch.begin();
+        // Renders crosshair if focus mode
         if (GlobalConf.scene.CROSSHAIR) {
-            float w = Gdx.graphics.getWidth();
-            float h = Gdx.graphics.getHeight();
-
-            // Direction crosshair
-            spriteBatch.draw(crosshairTex, w / 2f - chw2, h / 2f - chh2);
-
+            spriteBatch.begin();
+            spriteBatch.draw(crosshairTex, rw / 2f - chw2, rh / 2f - chh2);
+            spriteBatch.end();
         }
-
-        //spriteBatch.draw(controlPadTexture, 0, 0);
-        spriteBatch.draw(aiPointerTexture, aix + indicatorw / 2 - 16, aiy + indicatorh / 2 - 16);
-
-        spriteBatch.end();
-
     }
 
     /**

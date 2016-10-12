@@ -49,7 +49,7 @@ public class HYGBinaryLoader extends AbstractCatalogLoader implements ISceneGrap
             InputStream data = file.read();
             DataInputStream data_in = new DataInputStream(data);
 
-            Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.limitmag", GlobalConf.data.LIMIT_MAG_LOAD));
+            //Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.limitmag", GlobalConf.data.LIMIT_MAG_LOAD));
             Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.catalog.loading", file.name()));
 
             try {

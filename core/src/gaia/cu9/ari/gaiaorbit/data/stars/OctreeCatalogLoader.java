@@ -27,12 +27,15 @@ public class OctreeCatalogLoader implements ISceneGraphLoader {
 
     @Override
     public List<? extends SceneGraphNode> loadData() throws FileNotFoundException {
-        Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.limitmag", GlobalConf.data.LIMIT_MAG_LOAD));
+        //Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.limitmag", GlobalConf.data.LIMIT_MAG_LOAD));
+
+        Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.loading", metadata));
 
         MetadataBinaryIO metadataReader = new MetadataBinaryIO();
         OctreeNode<SceneGraphNode> root = (OctreeNode<SceneGraphNode>) metadataReader.readMetadata(Gdx.files.internal(metadata).read());
 
         Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.nodeloader", root.numNodes(), metadata));
+        Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.loading", particles));
 
         ParticleDataBinaryIO particleReader = new ParticleDataBinaryIO();
         List<CelestialBody> particleList = particleReader.readParticles(Gdx.files.internal(particles).read());

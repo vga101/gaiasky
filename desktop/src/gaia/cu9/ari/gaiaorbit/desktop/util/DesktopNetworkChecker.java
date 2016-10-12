@@ -118,7 +118,7 @@ public class DesktopNetworkChecker extends Thread implements INetworkChecker {
                     public boolean handle(Event event) {
                         if (event instanceof ChangeEvent) {
                             if (gaiaWindow == null) {
-                                gaiaWindow = new GaiaCatalogWindow(GaiaSky.instance.gui.getGuiStage(), skin);
+                                gaiaWindow = new GaiaCatalogWindow(GaiaSky.instance.mainGui.getGuiStage(), skin);
                             }
                             gaiaWindow.initialize((Star) focus);
                             gaiaWindow.display();

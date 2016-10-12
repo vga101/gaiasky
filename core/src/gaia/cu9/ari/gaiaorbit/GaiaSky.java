@@ -29,12 +29,14 @@ import gaia.cu9.ari.gaiaorbit.data.orbit.OrbitDataLoader;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
+import gaia.cu9.ari.gaiaorbit.interfce.DebugGui;
 import gaia.cu9.ari.gaiaorbit.interfce.FullGui;
+import gaia.cu9.ari.gaiaorbit.interfce.GuiRegistry;
 import gaia.cu9.ari.gaiaorbit.interfce.IGui;
 import gaia.cu9.ari.gaiaorbit.interfce.KeyInputController;
 import gaia.cu9.ari.gaiaorbit.interfce.LoadingGui;
 import gaia.cu9.ari.gaiaorbit.interfce.MobileGui;
-import gaia.cu9.ari.gaiaorbit.interfce.NaturalInputController;
+import gaia.cu9.ari.gaiaorbit.interfce.SpacecraftGui;
 import gaia.cu9.ari.gaiaorbit.render.AbstractRenderer;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.render.IMainRenderer;
@@ -86,9 +88,6 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
     // Asset manager
     public AssetManager manager;
 
-    /** This handles the input events **/
-    private NaturalInputController inputController;
-
     // Camera
     public CameraManager cam;
 
@@ -111,9 +110,9 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
     private Map<String, FrameBuffer> fbmap;
 
     /**
-     * The user interface
+     * The user interfaces
      */
-    public IGui gui, loadingGui;
+    public IGui loadingGui, mainGui, spacecraftGui, debugGui;
 
     /**
      * Time
@@ -196,15 +195,21 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
             manager.load(dataLoadString, ISceneGraph.class, new SGLoaderParameter(time, GlobalConf.performance.MULTITHREADING, GlobalConf.performance.NUMBER_THREADS()));
         }
 
-        // Load scene graph
+        // GUI
         if (Constants.desktop || Constants.webgl) {
             // Full GUI for desktop
-            gui = new FullGui();
+            mainGui = new FullGui();
         } else if (Constants.mobile) {
             // Reduced GUI for android/iOS/...
-            gui = new MobileGui();
+            mainGui = new MobileGui();
         }
-        gui.initialize(manager);
+        mainGui.initialize(manager);
+
+        debugGui = new DebugGui();
+        debugGui.initialize(manager);
+
+        spacecraftGui = new SpacecraftGui(cam.spacecraftCamera);
+        spacecraftGui.initialize(manager);
 
         // Tell the asset manager to load all the assets
         Set<AssetBean> assets = AssetBean.getAssets();
@@ -265,12 +270,17 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         InputMultiplexer inputMultiplexer = new InputMultiplexer();
 
         // Only for the Full GUI
-        gui.setSceneGraph(sg);
-        gui.setVisibilityToggles(ComponentType.values(), SceneGraphRenderer.visible);
-        inputMultiplexer.addProcessor(gui.getGuiStage());
+        mainGui.setSceneGraph(sg);
+        mainGui.setVisibilityToggles(ComponentType.values(), SceneGraphRenderer.visible);
+        inputMultiplexer.addProcessor(mainGui.getGuiStage());
 
         // Initialize the GUI
-        gui.doneLoading(manager);
+        mainGui.doneLoading(manager);
+        spacecraftGui.doneLoading(manager);
+        debugGui.doneLoading(manager);
+
+        GuiRegistry.registerGui(mainGui);
+        GuiRegistry.registerGui(debugGui);
 
         // Publish visibility
         EventManager.instance.post(Events.VISIBILITY_OF_COMPONENTS, new Object[] { SceneGraphRenderer.visible });
@@ -318,7 +328,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         EventManager.instance.post(Events.TIME_CHANGE_INFO, time.getTime());
 
         // Subscribe to events
-        EventManager.instance.subscribe(this, Events.TOGGLE_AMBIENT_LIGHT, Events.AMBIENT_LIGHT_CMD, Events.RECORD_CAMERA_CMD);
+        EventManager.instance.subscribe(this, Events.TOGGLE_AMBIENT_LIGHT, Events.AMBIENT_LIGHT_CMD, Events.RECORD_CAMERA_CMD, Events.CAMERA_MODE_CMD);
 
         // Re-enable input
         if (!GlobalConf.runtime.STRIPPED_FOV_MODE)
@@ -360,7 +370,9 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         EventManager.instance.post(Events.FLUSH_FRAMES);
 
         // Dispose all
-        gui.dispose();
+        mainGui.dispose();
+        spacecraftGui.dispose();
+
         EventManager.instance.post(Events.DISPOSE);
         if (sg != null) {
             sg.dispose();
@@ -421,8 +433,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
 
                     if (GlobalConf.runtime.DISPLAY_GUI) {
                         // Render the GUI, setting the viewport
-                        gui.getGuiStage().getViewport().apply();
-                        gui.render();
+                        GuiRegistry.render(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
                     }
 
                 }
@@ -459,7 +470,8 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
 
         this.t += this.dt;
 
-        gui.update(this.dt);
+        GuiRegistry.update(this.dt);
+
         EventManager.instance.post(Events.UPDATE_GUI, this.dt);
 
         float dtScene = this.dt;
@@ -505,7 +517,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
             loadingGui.resize(width, height);
         } else {
             pp.resize(width, height);
-            gui.resize(width, height);
+            mainGui.resize(width, height);
             sgr.resize(width, height);
         }
 
@@ -522,7 +534,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
         Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
-        loadingGui.render();
+        loadingGui.render(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
     }
 
     @Override
@@ -595,6 +607,28 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
                 camRecording = (Boolean) data[0];
             } else {
                 camRecording = !camRecording;
+            }
+            break;
+        case CAMERA_MODE_CMD:
+            InputMultiplexer im = (InputMultiplexer) Gdx.input.getInputProcessor();
+            // Register/unregister gui
+            CameraMode mode = (CameraMode) data[0];
+            if (mode == CameraMode.Spacecraft) {
+                // Remove main gui
+                GuiRegistry.unregisterGui(mainGui);
+                im.removeProcessor(mainGui.getGuiStage());
+
+                // Add spacecraft gui
+                GuiRegistry.registerGui(spacecraftGui);
+                im.addProcessor(spacecraftGui.getGuiStage());
+            } else {
+                // Remove spacecraft gui
+                GuiRegistry.unregisterGui(spacecraftGui);
+                im.removeProcessor(spacecraftGui.getGuiStage());
+
+                // Add main gui
+                GuiRegistry.registerGui(mainGui);
+                im.addProcessor(mainGui.getGuiStage());
             }
             break;
         default:

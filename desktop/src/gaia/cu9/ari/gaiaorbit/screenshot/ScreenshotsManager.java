@@ -142,7 +142,7 @@ public class ScreenshotsManager implements IObserver {
         if (GlobalConf.frame.RENDER_SCREENSHOT_TIME) {
             // Timestamp
             renderGui().resize(width, height);
-            renderGui().render();
+            renderGui().render(width, height);
         }
 
         String res = renderer.saveScreenshot(folder, filename, width, height, false, type);

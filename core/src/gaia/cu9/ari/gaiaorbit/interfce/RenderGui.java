@@ -1,16 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.interfce;
 
-import gaia.cu9.ari.gaiaorbit.event.EventManager;
-import gaia.cu9.ari.gaiaorbit.event.Events;
-import gaia.cu9.ari.gaiaorbit.event.IObserver;
-import gaia.cu9.ari.gaiaorbit.render.ComponentType;
-import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
-import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
-import gaia.cu9.ari.gaiaorbit.util.Logger;
-import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
-import gaia.cu9.ari.gaiaorbit.util.format.IDateFormat;
-import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnLabel;
-
 import java.util.Date;
 
 import com.badlogic.gdx.Gdx;
@@ -21,6 +10,17 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+
+import gaia.cu9.ari.gaiaorbit.event.EventManager;
+import gaia.cu9.ari.gaiaorbit.event.Events;
+import gaia.cu9.ari.gaiaorbit.event.IObserver;
+import gaia.cu9.ari.gaiaorbit.render.ComponentType;
+import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
+import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
+import gaia.cu9.ari.gaiaorbit.util.Logger;
+import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
+import gaia.cu9.ari.gaiaorbit.util.format.IDateFormat;
+import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnLabel;
 
 /**
  * Only for frame output mode, it displays the current time.
@@ -91,7 +91,7 @@ public class RenderGui implements IGui, IObserver {
     }
 
     @Override
-    public void render() {
+    public void render(int rw, int rh) {
         synchronized (lock) {
             try {
                 ui.draw();

@@ -696,7 +696,7 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
 
     @Override
     public float[] getPositionAndSizeGui(String name) {
-        IGui gui = GaiaSky.instance.gui;
+        IGui gui = GaiaSky.instance.mainGui;
         Actor actor = gui.getGuiStage().getRoot().findActor(name);
         if (actor != null) {
             float x = actor.getX();

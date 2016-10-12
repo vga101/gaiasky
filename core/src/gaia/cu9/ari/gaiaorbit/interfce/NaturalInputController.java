@@ -182,7 +182,7 @@ public class NaturalInputController extends GestureDetector {
                         // 5% of width pixels distance
                         if (gesture.dst(screenX, screenY) < MOVE_PX_DIST) {
                             boolean stopped = camera.stopMovement();
-                            boolean focusRemoved = GaiaSky.instance.gui != null && GaiaSky.instance.gui.cancelTouchFocus();
+                            boolean focusRemoved = GaiaSky.instance.mainGui != null && GaiaSky.instance.mainGui.cancelTouchFocus();
                             boolean doubleClick = currentTime - lastTime < doubleClickTime;
                             gesture.set(0, 0);
 

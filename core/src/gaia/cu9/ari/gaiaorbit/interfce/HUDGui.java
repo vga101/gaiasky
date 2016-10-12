@@ -129,7 +129,7 @@ public class HUDGui implements IGui {
     }
 
     @Override
-    public void render() {
+    public void render(int rw, int rh) {
         synchronized (lock) {
             ui.draw();
         }

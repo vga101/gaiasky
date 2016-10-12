@@ -7,6 +7,7 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.controllers.Controllers;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
@@ -161,6 +162,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
         // Init sprite batch for crosshair
         spriteBatch = new SpriteBatch();
         crosshair = new Texture(Gdx.files.internal("img/crosshair-green.png"));
+        crosshair.setFilter(TextureFilter.Linear, TextureFilter.Linear);
         chw2 = crosshair.getWidth() / 2f;
         chh2 = crosshair.getHeight() / 2f;
 
@@ -1017,9 +1019,6 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
     public void render(int rw, int rh) {
         // Renders crosshair if focus mode
         if (GlobalConf.scene.CROSSHAIR && getMode().equals(CameraMode.Focus)) {
-            float w = Gdx.graphics.getWidth();
-            float h = Gdx.graphics.getHeight();
-
             // Unproject focus
             focus.getPosition(aux1);
 
@@ -1027,11 +1026,11 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
             camera.project(auxf1);
 
             if (direction.angle(aux1) > 90) {
-                auxf1.x = w - auxf1.x;
-                auxf1.y = h - auxf1.y;
+                auxf1.x = rw - auxf1.x;
+                auxf1.y = rh - auxf1.y;
 
-                float w2 = w / 2f;
-                float h2 = h / 2f;
+                float w2 = rw / 2f;
+                float h2 = rh / 2f;
 
                 // Q1 | Q2
                 // -------
@@ -1040,26 +1039,26 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
                 if (auxf1.x <= w2 && auxf1.y >= h2) {
                     // Q1
                     auxf1.x = chw2;
-                    auxf1.y = h - chh2;
+                    auxf1.y = rh - chh2;
 
                 } else if (auxf1.x > w2 && auxf1.y >= h2) {
                     // Q2
-                    auxf1.x = w - chw2;
-                    auxf1.y = h - chh2;
+                    auxf1.x = rw - chw2;
+                    auxf1.y = rh - chh2;
                 } else if (auxf1.x <= w2 && auxf1.y < h2) {
                     // Q3
                     auxf1.x = chw2;
                     auxf1.y = chh2;
                 } else if (auxf1.x > w2 && auxf1.y < h2) {
                     // Q4
-                    auxf1.x = w - chw2;
+                    auxf1.x = rw - chw2;
                     auxf1.y = chh2;
                 }
 
             }
 
-            auxf1.x = MathUtils.clamp(auxf1.x, chw2, w - chw2);
-            auxf1.y = MathUtils.clamp(auxf1.y, chh2, h - chh2);
+            auxf1.x = MathUtils.clamp(auxf1.x, chw2, rw - chw2);
+            auxf1.y = MathUtils.clamp(auxf1.y, chh2, rh - chh2);
 
             spriteBatch.begin();
             spriteBatch.draw(crosshair, auxf1.x - chw2, auxf1.y - chh2);

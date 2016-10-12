@@ -2,83 +2,55 @@ package gaia.cu9.ari.gaiaorbit.interfce;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
-import gaia.cu9.ari.gaiaorbit.util.I18n;
-import gaia.cu9.ari.gaiaorbit.util.Logger;
 
-/**
- * Displays the loading screen.
- * @author Toni Sagrista
- *
- */
-public class LoadingGui implements IGui {
+public class DebugGui implements IGui {
     private Skin skin;
-    /**
-     * The user interface stage
-     */
+    protected DebugInterface debugInterface;
     protected Stage ui;
-    protected Table center;
 
-    protected NotificationsInterface notificationsInterface;
-    /** Lock object for synchronization **/
+    /** Lock object for synchronisation **/
     private Object lock;
 
-    public LoadingGui() {
+    public void initialize(AssetManager assetManager) {
+        // User interface
+        ui = new Stage(new ScreenViewport(), GlobalResources.spriteBatch);
         lock = new Object();
     }
 
-    @Override
-    public void initialize(AssetManager assetManager) {
+    /**
+     * Constructs the interface
+     */
+    public void doneLoading(AssetManager assetManager) {
 
-        // User interface
-        ui = new Stage(new ScreenViewport(), GlobalResources.spriteBatch);
         skin = GlobalResources.skin;
 
-        center = new Table();
-        center.setFillParent(true);
-        center.center();
-
-        Image logo = new Image(new Texture(Gdx.files.internal("img/gaiaskylogo.png")));
-
-        center.add(logo).center();
-        center.row().padBottom(30);
-        center.add(new Label(I18n.bundle.get("notif.loading.wait"), skin, "header"));
-        center.row();
-
-        // MESSAGE INTERFACE - BOTTOM
-        notificationsInterface = new NotificationsInterface(skin, lock, false, false);
-        center.add(notificationsInterface);
+        // DEBUG INFO - TOP RIGHT
+        debugInterface = new DebugInterface(skin, lock);
+        debugInterface.setFillParent(true);
+        debugInterface.right().top();
+        debugInterface.pad(5, 0, 0, 5);
 
         rebuildGui();
-
     }
 
-    @Override
-    public void doneLoading(AssetManager assetManager) {
-    }
-
-    public void rebuildGui() {
+    private void rebuildGui() {
         if (ui != null) {
             ui.clear();
-            ui.addActor(center);
-
+            if (debugInterface != null)
+                ui.addActor(debugInterface);
         }
     }
 
     @Override
     public void dispose() {
-        notificationsInterface.dispose();
         ui.dispose();
     }
 
@@ -89,13 +61,7 @@ public class LoadingGui implements IGui {
 
     @Override
     public void render(int rw, int rh) {
-        synchronized (lock) {
-            try {
-                ui.draw();
-            } catch (Exception e) {
-                Logger.error(e);
-            }
-        }
+        ui.draw();
     }
 
     @Override
@@ -111,11 +77,6 @@ public class LoadingGui implements IGui {
 
     @Override
     public boolean cancelTouchFocus() {
-        if (ui.getKeyboardFocus() != null || ui.getScrollFocus() != null) {
-            ui.setScrollFocus(null);
-            ui.setKeyboardFocus(null);
-            return true;
-        }
         return false;
     }
 

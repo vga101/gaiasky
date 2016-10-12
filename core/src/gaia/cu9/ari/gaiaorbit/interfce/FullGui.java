@@ -56,7 +56,6 @@ public class FullGui implements IGui, IObserver {
     protected FocusInfoInterface focusInterface;
     protected NotificationsInterface notificationsInterface;
     protected MessagesInterface messagesInterface;
-    protected DebugInterface debugInterface;
     protected CustomInterface customInterface;
     protected ScriptStateInterface inputInterface;
     protected Container<WebGLInterface> wgl;
@@ -132,12 +131,6 @@ public class FullGui implements IGui, IObserver {
         fi.bottom().right();
         fi.pad(0, 0, 10, 10);
 
-        // DEBUG INFO - TOP RIGHT
-        debugInterface = new DebugInterface(skin, lock);
-        debugInterface.setFillParent(true);
-        debugInterface.right().top();
-        debugInterface.pad(5, 0, 0, 5);
-
         // NOTIFICATIONS INTERFACE - BOTTOM LEFT
         notificationsInterface = new NotificationsInterface(skin, lock, true);
         notificationsInterface.setFillParent(true);
@@ -171,7 +164,6 @@ public class FullGui implements IGui, IObserver {
         invisibleInStereoMode = new ArrayList<Actor>();
         invisibleInStereoMode.add(controlsWindow);
         invisibleInStereoMode.add(fi);
-        invisibleInStereoMode.add(debugInterface);
         invisibleInStereoMode.add(messagesInterface);
         invisibleInStereoMode.add(inputInterface);
         //invisibleInStereoMode.add(customInterface);
@@ -198,8 +190,6 @@ public class FullGui implements IGui, IObserver {
             }
             if (webglInterface != null)
                 ui.addActor(wgl);
-            if (debugInterface != null)
-                ui.addActor(debugInterface);
             if (notificationsInterface != null)
                 ui.addActor(notificationsInterface);
             if (messagesInterface != null)
@@ -264,20 +254,24 @@ public class FullGui implements IGui, IObserver {
         return false;
     }
 
+    @Override
     public Stage getGuiStage() {
         return ui;
     }
 
+    @Override
     public void dispose() {
         ui.dispose();
     }
 
+    @Override
     public void update(float dt) {
         ui.act(dt);
         notificationsInterface.update();
     }
 
-    public void render() {
+    @Override
+    public void render(int rw, int rh) {
         synchronized (lock) {
             ui.draw();
         }
