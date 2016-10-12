@@ -207,15 +207,12 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
 
     @Override
     public void resize(final int width, final int height) {
-        if (pps[RenderType.screen.index].antialiasing != null) {
-            Gdx.app.postRunnable(new Runnable() {
-                @Override
-                public void run() {
-                    replace(RenderType.screen.index, width, height);
-                }
-            });
-        }
-
+        Gdx.app.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                replace(RenderType.screen.index, width, height);
+            }
+        });
     }
 
     @Override
@@ -275,6 +272,7 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
                     PostProcessBean ppb = pps[i];
                     ppb.lens.setGhosts(nnghosts);
                     ppb.lens.setFlareIntesity(intensity);
+                    //ppb.lens.setEnabled(active);
                 }
             }
             break;

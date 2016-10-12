@@ -506,6 +506,10 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         for (IRenderSystem rendSys : renderProcesses) {
             rendSys.resize(w, h);
         }
+
+        for (ISGR sgr : sgrs) {
+            sgr.resize(w, h);
+        }
     }
 
     public void dispose() {

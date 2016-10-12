@@ -1,6 +1,7 @@
 package gaia.cu9.ari.gaiaorbit.render;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -272,12 +273,11 @@ public class SGRStereoscopic extends SGRAbstract implements ISGR, IObserver {
         int keyHalf = getKey(w / 2, h);
         int keyFull = getKey(w, h);
 
-        Set<Integer> keySet = fb3D.keySet();
-        for (Integer key : keySet) {
-            if (key != keyHalf && key != keyFull) {
-                FrameBuffer fb = fb3D.get(key);
-                fb.dispose();
-                fb3D.remove(key);
+        Iterator<Map.Entry<Integer, FrameBuffer>> iter = fb3D.entrySet().iterator();
+        while (iter.hasNext()) {
+            Map.Entry<Integer, FrameBuffer> entry = iter.next();
+            if (entry.getKey() != keyHalf && entry.getKey() != keyFull) {
+                iter.remove();
             }
         }
 
