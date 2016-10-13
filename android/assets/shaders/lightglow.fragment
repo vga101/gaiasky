@@ -52,11 +52,12 @@ void main()
 	 for (int li = 0; li < u_nLights; li++){
 	 	 float viewAngle = min(0.0001, u_lightViewAngles[li]);
 	 	 vec3 lightColor = u_lightColors[li];
-		 float a = viewAngle * 1.5;
+	 	 // Size of sampling spiral
+		 float a = viewAngle * 2.2;
 		 
 		 // Archimedes's spiral (fx = a*t*cos(t), fy = a*t*sin(t)) sampling from 0 to 6*Pi
 		 float t = 0;
-		 float dt = 6 * 3.14159 / u_nSamples;
+		 float dt = 6.0 * 3.14159 / u_nSamples;
 		 
 		 float lum = 0.0;
 		 for(int idx = 1; idx < u_nSamples; idx++){
