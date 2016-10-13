@@ -175,21 +175,25 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
         initAntiAliasing(GlobalConf.postprocess.POSTPROCESS_ANTIALIAS, width, height, ppb);
 
         // MOTION BLUR
+        initMotionBlur(width, height, ppb);
+
+        return ppb;
+    }
+
+    private void initMotionBlur(int width, int height, PostProcessBean ppb) {
         ppb.motionblur = new MotionBlur(width, height);
         ppb.motionblur.setBlurRadius(0.7f);
         ppb.motionblur.setBlurOpacity(GlobalConf.postprocess.POSTPROCESS_MOTION_BLUR);
         ppb.motionblur.setEnabled(GlobalConf.postprocess.POSTPROCESS_MOTION_BLUR > 0);
         ppb.pp.addEffect(ppb.motionblur);
-
-        return ppb;
     }
 
     private void initAntiAliasing(int aavalue, int width, int height, PostProcessBean ppb) {
         if (aavalue == -1) {
             ppb.antialiasing = new Fxaa(width, height);
             ((Fxaa) ppb.antialiasing).setSpanMax(8f);
-            ((Fxaa) ppb.antialiasing).setReduceMin(1f / 128f);
-            ((Fxaa) ppb.antialiasing).setReduceMul(0f);
+            ((Fxaa) ppb.antialiasing).setReduceMin(1f / 8f);
+            ((Fxaa) ppb.antialiasing).setReduceMul(1f / 8f);
             Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.selected", "FXAA"));
         } else if (aavalue == -2) {
             ppb.antialiasing = new Nfaa(width, height);
@@ -376,6 +380,9 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
                                 }
                                 // update
                                 initAntiAliasing(aavalue, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), ppb);
+                                // ensure motion blur is last
+                                ppb.pp.removeEffect(ppb.motionblur);
+                                initMotionBlur(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), ppb);
                             } else {
                                 // remove
                                 if (ppb.antialiasing != null) {
