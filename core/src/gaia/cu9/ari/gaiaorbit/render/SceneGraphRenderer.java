@@ -284,13 +284,13 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         AbstractRenderSystem shaderFrontProc = new QuadRenderSystem(RenderGroup.SHADER_F, priority++, alphas, starShader, false);
         shaderFrontProc.setPreRunnable(blendNoDepthRunnable);
 
-        // GALAXY
-        AbstractRenderSystem galaxyProc = new GalaxyRenderSystem(RenderGroup.GALAXY, priority++, alphas, modelBatchF);
-        galaxyProc.setPreRunnable(blendNoDepthRunnable);
-
         // MODEL FRONT
         AbstractRenderSystem modelFrontProc = new ModelBatchRenderSystem(RenderGroup.MODEL_F, priority++, alphas, modelBatchF, false);
         modelFrontProc.setPreRunnable(blendDepthRunnable);
+
+        // GALAXY
+        AbstractRenderSystem galaxyProc = new GalaxyRenderSystem(RenderGroup.GALAXY, priority++, alphas, modelBatchF);
+        galaxyProc.setPreRunnable(blendNoDepthRunnable);
 
         // MODEL STARS
         AbstractRenderSystem modelStarsProc = new ModelBatchRenderSystem(RenderGroup.MODEL_S, priority++, alphas, modelBatchS, false);
