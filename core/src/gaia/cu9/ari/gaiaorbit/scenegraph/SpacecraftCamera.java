@@ -203,6 +203,7 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
 
     @Override
     public void update(float dt, ITimeFrameProvider time) {
+        distance = pos.len();
         /** POSITION **/
         // Compute force from thrust
         thrust.set(direction).scl(thrustLength * thrustFactor[thrustFactorIndex] * enginePower);
