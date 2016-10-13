@@ -62,14 +62,7 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
             pps[RenderType.frame.index] = newPostProcessor(getWidth(RenderType.frame), getHeight(RenderType.frame));
         }
 
-        // Output AA info.
-        if (GlobalConf.postprocess.POSTPROCESS_ANTIALIAS == -1) {
-            Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.selected", "FXAA"));
-        } else if (GlobalConf.postprocess.POSTPROCESS_ANTIALIAS == -2) {
-            Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.selected", "NFAA"));
-        }
-
-        EventManager.instance.subscribe(this, Events.PROPERTIES_WRITTEN, Events.BLOOM_CMD, Events.LENS_FLARE_CMD, Events.MOTION_BLUR_CMD, Events.LIGHT_POS_2D_UPDATED, Events.LIGHT_SCATTERING_CMD, Events.TOGGLE_STEREOSCOPIC_CMD, Events.TOGGLE_STEREO_PROFILE_CMD, Events.FISHEYE_CMD, Events.CAMERA_MOTION_UPDATED, Events.CUBEMAP360_CMD);
+        EventManager.instance.subscribe(this, Events.PROPERTIES_WRITTEN, Events.BLOOM_CMD, Events.LENS_FLARE_CMD, Events.MOTION_BLUR_CMD, Events.LIGHT_POS_2D_UPDATED, Events.LIGHT_SCATTERING_CMD, Events.TOGGLE_STEREOSCOPIC_CMD, Events.TOGGLE_STEREO_PROFILE_CMD, Events.FISHEYE_CMD, Events.CAMERA_MOTION_UPDATED, Events.CUBEMAP360_CMD, Events.ANTIALIASING_CMD);
 
     }
 
@@ -166,13 +159,6 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
         ppb.lens.setEnabled(true);
         ppb.pp.addEffect(ppb.lens);
 
-        // MOTION BLUR
-        ppb.motionblur = new MotionBlur(width, height);
-        ppb.motionblur.setBlurRadius(0.7f);
-        ppb.motionblur.setBlurOpacity(GlobalConf.postprocess.POSTPROCESS_MOTION_BLUR);
-        ppb.motionblur.setEnabled(GlobalConf.postprocess.POSTPROCESS_MOTION_BLUR > 0);
-        ppb.pp.addEffect(ppb.motionblur);
-
         // DISTORTION (STEREOSCOPIC MODE)
         ppb.curvature = new Curvature();
         ppb.curvature.setDistortion(0.8f);
@@ -186,18 +172,33 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
         ppb.pp.addEffect(ppb.fisheye);
 
         // ANTIALIAS
-        if (GlobalConf.postprocess.POSTPROCESS_ANTIALIAS == -1) {
+        initAntiAliasing(GlobalConf.postprocess.POSTPROCESS_ANTIALIAS, width, height, ppb);
+
+        // MOTION BLUR
+        ppb.motionblur = new MotionBlur(width, height);
+        ppb.motionblur.setBlurRadius(0.7f);
+        ppb.motionblur.setBlurOpacity(GlobalConf.postprocess.POSTPROCESS_MOTION_BLUR);
+        ppb.motionblur.setEnabled(GlobalConf.postprocess.POSTPROCESS_MOTION_BLUR > 0);
+        ppb.pp.addEffect(ppb.motionblur);
+
+        return ppb;
+    }
+
+    private void initAntiAliasing(int aavalue, int width, int height, PostProcessBean ppb) {
+        if (aavalue == -1) {
             ppb.antialiasing = new Fxaa(width, height);
-            ((Fxaa) ppb.antialiasing).setSpanMax(4f);
-        } else if (GlobalConf.postprocess.POSTPROCESS_ANTIALIAS == -2) {
+            ((Fxaa) ppb.antialiasing).setSpanMax(8f);
+            ((Fxaa) ppb.antialiasing).setReduceMin(1f / 128f);
+            ((Fxaa) ppb.antialiasing).setReduceMul(0f);
+            Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.selected", "FXAA"));
+        } else if (aavalue == -2) {
             ppb.antialiasing = new Nfaa(width, height);
+            Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.selected", "NFAA"));
         }
         if (ppb.antialiasing != null) {
             ppb.antialiasing.setEnabled(GlobalConf.postprocess.POSTPROCESS_ANTIALIAS < 0);
             ppb.pp.addEffect(ppb.antialiasing);
         }
-
-        return ppb;
     }
 
     @Override
@@ -241,6 +242,7 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
             if (pps != null)
                 if (changed(pps[RenderType.frame.index].pp, GlobalConf.frame.RENDER_WIDTH, GlobalConf.frame.RENDER_HEIGHT)) {
                     Gdx.app.postRunnable(new Runnable() {
+
                         @Override
                         public void run() {
                             replace(RenderType.frame.index, GlobalConf.frame.RENDER_WIDTH, GlobalConf.frame.RENDER_HEIGHT);
@@ -356,6 +358,37 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
                     ppb.curvature.setEnabled(curvatureEnabled);
                 }
             }
+            break;
+        case ANTIALIASING_CMD:
+            final int aavalue = (Integer) data[0];
+            Gdx.app.postRunnable(new Runnable() {
+                @Override
+                public void run() {
+                    for (int i = 0; i < RenderType.values().length; i++) {
+                        if (pps[i] != null) {
+                            PostProcessBean ppb = pps[i];
+                            if (aavalue < 0) {
+                                // clean
+                                if (ppb.antialiasing != null) {
+                                    ppb.antialiasing.setEnabled(false);
+                                    ppb.pp.removeEffect(ppb.antialiasing);
+                                    ppb.antialiasing = null;
+                                }
+                                // update
+                                initAntiAliasing(aavalue, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), ppb);
+                            } else {
+                                // remove
+                                if (ppb.antialiasing != null) {
+                                    ppb.antialiasing.setEnabled(false);
+                                    ppb.pp.removeEffect(ppb.antialiasing);
+                                    ppb.antialiasing = null;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
             break;
         }
 

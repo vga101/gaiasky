@@ -950,6 +950,7 @@ public class ConfigDialog extends I18nJFrame {
 
                     bean = (ComboBoxBean) msaa.getSelectedItem();
                     GlobalConf.postprocess.POSTPROCESS_ANTIALIAS = bean.value;
+                    EventManager.instance.post(Events.ANTIALIASING_CMD, bean.value);
                     GlobalConf.screen.VSYNC = vsync.isSelected();
 
                     // Line renderer

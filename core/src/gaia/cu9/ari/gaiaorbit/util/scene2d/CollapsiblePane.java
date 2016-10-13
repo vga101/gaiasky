@@ -182,6 +182,7 @@ public class CollapsiblePane extends VerticalGroup {
 
         window.add(closeContainer).pad(5, 0, 0, 0).bottom().right();
         window.getTitleTable().align(Align.left);
+        window.align(Align.left);
         window.pack();
 
         x = x < 0 ? stage.getWidth() / 2f - window.getWidth() / 2f : x;

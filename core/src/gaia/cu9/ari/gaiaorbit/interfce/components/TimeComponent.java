@@ -132,7 +132,6 @@ public class TimeComponent extends GuiComponent implements IObserver {
         paceGroup.addActor(plus);
 
         timeGroup.addActor(paceGroup);
-
         timeGroup.pack();
 
         component = timeGroup;
@@ -146,6 +145,7 @@ public class TimeComponent extends GuiComponent implements IObserver {
             // Update input time
             Date time = (Date) data[0];
             date.setText(df.format(time));
+
             break;
         case PACE_CHANGED_INFO:
             if (data.length == 1)

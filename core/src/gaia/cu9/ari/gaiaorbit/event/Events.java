@@ -281,6 +281,8 @@ public enum Events {
     TOGGLE_STEREO_PROFILE_CMD,
     /** Sets the 360 mode. Contains a boolean with the new state **/
     CUBEMAP360_CMD,
+    /** Anti aliasing changed, contains the new value for aa **/
+    ANTIALIASING_CMD,
     /**
      * Toggles whole GUI display. Contains the localised name and an optional
      * boolean with the state (display/no display)
