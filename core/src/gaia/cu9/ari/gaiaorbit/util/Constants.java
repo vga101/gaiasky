@@ -163,6 +163,12 @@ public class Constants {
     /** Maximum star minimum opacity **/
     public static final float MAX_STAR_MIN_OPACITY = 0.6f;
 
+    public static final float MIN_BRIGHTNESS = -1.0f;
+    public static final float MAX_BRIGHTNESS = 1.0f;
+
+    public static final float MIN_CONTRAST = 0.0f;
+    public static final float MAX_CONTRAST = 2.0f;
+
     /** Camera speed factor **/
     public static final float CAMERA_SPEED_FACTOR = 10f;
 

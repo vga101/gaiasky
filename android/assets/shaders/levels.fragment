@@ -1,0 +1,29 @@
+#version 120
+
+#ifdef GL_ES
+precision mediump float;
+precision mediump int;
+#endif
+
+uniform sampler2D u_texture0;
+
+uniform float u_brightness = 0.0;
+uniform float u_contrast = 1.0;
+
+varying vec2 v_texCoords;
+
+void main() {
+   vec4 pixelColor = texture2D(u_texture0, v_texCoords);
+   pixelColor.rgb /= pixelColor.a;
+
+  // Apply contrast.
+  pixelColor.rgb = ((pixelColor.rgb - 0.5) * max(u_contrast, 0.0)) + 0.5;
+
+  // Apply brightness.
+  pixelColor.rgb += u_brightness;
+
+  // Return final pixel color
+  pixelColor.rgb *= pixelColor.a;
+
+  gl_FragColor = pixelColor;
+}

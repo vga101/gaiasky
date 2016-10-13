@@ -144,6 +144,13 @@ public enum Events {
     BLOOM_CMD,
     /** Contains the opacity of motion blur between 0 and 1 **/
     MOTION_BLUR_CMD,
+
+    /** Contains the brightness level in [-1..1] **/
+    BRIGHTNESS_CMD,
+
+    /** Contains the contrast level in [0..2] **/
+    CONTRAST_CMD,
+
     /** Contains a float with the pace **/
     PACE_CHANGE_CMD,
     /** Double the pace **/

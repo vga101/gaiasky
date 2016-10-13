@@ -22,10 +22,10 @@ import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnLabel;
 
 public class VisualEffectsComponent extends GuiComponent implements IObserver {
 
-    protected Slider starBrightness, starSize, starOpacity, bloomEffect, ambientLight;
-    protected OwnLabel brightness, size, opacity, bloom, ambient, bloomLabel, motionBlurLabel;
+    protected Slider starBrightness, starSize, starOpacity, bloomEffect, ambientLight, brightness, contrast;
+    protected OwnLabel starbrightnessl, size, opacity, bloom, ambient, brightnessl, contrastl, bloomLabel, motionBlurLabel, brightnessLabel, contrastLabel;
     protected CheckBox lensFlare, lightScattering, motionBlur;
-    private HorizontalGroup bloomGroup;
+    private HorizontalGroup bloomGroup, brightnessGroup, contrastGroup;
 
     boolean flag = true;
 
@@ -36,8 +36,8 @@ public class VisualEffectsComponent extends GuiComponent implements IObserver {
     public void initialize() {
         float space3 = 3 * GlobalConf.SCALE_FACTOR;
         /** Star brightness **/
-        Label brightnessLabel = new Label(txt("gui.starbrightness"), skin, "default");
-        brightness = new OwnLabel(Integer.toString((int) (MathUtilsd.lint(GlobalConf.scene.STAR_BRIGHTNESS, Constants.MIN_STAR_BRIGHT, Constants.MAX_STAR_BRIGHT, Constants.MIN_SLIDER, Constants.MAX_SLIDER))), skin);
+        Label sbrightnessLabel = new Label(txt("gui.starbrightness"), skin, "default");
+        starbrightnessl = new OwnLabel(Integer.toString((int) (MathUtilsd.lint(GlobalConf.scene.STAR_BRIGHTNESS, Constants.MIN_STAR_BRIGHT, Constants.MAX_STAR_BRIGHT, Constants.MIN_SLIDER, Constants.MAX_SLIDER))), skin);
         starBrightness = new Slider(Constants.MIN_SLIDER, Constants.MAX_SLIDER, 1, false, skin);
         starBrightness.setName("star brightness");
         starBrightness.setValue(MathUtilsd.lint(GlobalConf.scene.STAR_BRIGHTNESS, Constants.MIN_STAR_BRIGHT, Constants.MAX_STAR_BRIGHT, Constants.MIN_SLIDER, Constants.MAX_SLIDER));
@@ -46,16 +46,16 @@ public class VisualEffectsComponent extends GuiComponent implements IObserver {
             public boolean handle(Event event) {
                 if (event instanceof ChangeEvent) {
                     EventManager.instance.post(Events.STAR_BRIGHTNESS_CMD, MathUtilsd.lint(starBrightness.getValue(), Constants.MIN_SLIDER, Constants.MAX_SLIDER, Constants.MIN_STAR_BRIGHT, Constants.MAX_STAR_BRIGHT));
-                    brightness.setText(Integer.toString((int) starBrightness.getValue()));
+                    starbrightnessl.setText(Integer.toString((int) starBrightness.getValue()));
                     return true;
                 }
                 return false;
             }
         });
-        HorizontalGroup brightnessGroup = new HorizontalGroup();
-        brightnessGroup.space(space3);
-        brightnessGroup.addActor(starBrightness);
-        brightnessGroup.addActor(brightness);
+        HorizontalGroup sbrightnessGroup = new HorizontalGroup();
+        sbrightnessGroup.space(space3);
+        sbrightnessGroup.addActor(starBrightness);
+        sbrightnessGroup.addActor(starbrightnessl);
 
         /** Star size **/
         Label sizeLabel = new Label(txt("gui.star.size"), skin, "default");
@@ -148,6 +148,52 @@ public class VisualEffectsComponent extends GuiComponent implements IObserver {
             bloomGroup.addActor(bloomEffect);
             bloomGroup.addActor(bloom);
 
+            /** Brightness **/
+            brightnessl = new OwnLabel(txt("gui.brightness"), skin, "default");
+            brightnessLabel = new OwnLabel(Integer.toString((int) MathUtilsd.lint(GlobalConf.postprocess.POSTPROCESS_BRIGHTNESS, Constants.MIN_BRIGHTNESS, Constants.MAX_BRIGHTNESS, Constants.MIN_SLIDER, Constants.MAX_SLIDER)), skin);
+            brightness = new Slider(Constants.MIN_SLIDER, Constants.MAX_SLIDER, 1, false, skin);
+            brightness.setName("brightness");
+            brightness.setValue(MathUtilsd.lint(GlobalConf.postprocess.POSTPROCESS_BRIGHTNESS, Constants.MIN_BRIGHTNESS, Constants.MAX_BRIGHTNESS, Constants.MIN_SLIDER, Constants.MAX_SLIDER));
+            brightness.addListener(new EventListener() {
+                @Override
+                public boolean handle(Event event) {
+                    if (event instanceof ChangeEvent) {
+                        EventManager.instance.post(Events.BRIGHTNESS_CMD, MathUtilsd.lint(brightness.getValue(), Constants.MIN_SLIDER, Constants.MAX_SLIDER, Constants.MIN_BRIGHTNESS, Constants.MAX_BRIGHTNESS));
+                        brightnessLabel.setText(Integer.toString((int) brightness.getValue()));
+                        return true;
+                    }
+                    return false;
+                }
+            });
+
+            brightnessGroup = new HorizontalGroup();
+            brightnessGroup.space(space3);
+            brightnessGroup.addActor(brightness);
+            brightnessGroup.addActor(brightnessLabel);
+
+            /** Contrast **/
+            contrastl = new OwnLabel(txt("gui.contrast"), skin, "default");
+            contrastLabel = new OwnLabel(Integer.toString((int) MathUtilsd.lint(GlobalConf.postprocess.POSTPROCESS_CONTRAST, Constants.MIN_CONTRAST, Constants.MAX_CONTRAST, Constants.MIN_SLIDER, Constants.MAX_SLIDER)), skin);
+            contrast = new Slider(Constants.MIN_SLIDER, Constants.MAX_SLIDER, 1, false, skin);
+            contrast.setName("contrast");
+            contrast.setValue(MathUtilsd.lint(GlobalConf.postprocess.POSTPROCESS_CONTRAST, Constants.MIN_CONTRAST, Constants.MAX_CONTRAST, Constants.MIN_SLIDER, Constants.MAX_SLIDER));
+            contrast.addListener(new EventListener() {
+                @Override
+                public boolean handle(Event event) {
+                    if (event instanceof ChangeEvent) {
+                        EventManager.instance.post(Events.CONTRAST_CMD, MathUtilsd.lint(contrast.getValue(), Constants.MIN_SLIDER, Constants.MAX_SLIDER, Constants.MIN_CONTRAST, Constants.MAX_CONTRAST));
+                        contrastLabel.setText(Integer.toString((int) contrast.getValue()));
+                        return true;
+                    }
+                    return false;
+                }
+            });
+
+            contrastGroup = new HorizontalGroup();
+            contrastGroup.space(space3);
+            contrastGroup.addActor(contrast);
+            contrastGroup.addActor(contrastLabel);
+
             /** Motion blur **/
             motionBlur = new CheckBox(" " + txt("gui.motionblur"), skin);
             motionBlur.setName("motion blur");
@@ -196,8 +242,8 @@ public class VisualEffectsComponent extends GuiComponent implements IObserver {
         }
 
         VerticalGroup lightingGroup = new VerticalGroup().align(Align.left);
-        lightingGroup.addActor(brightnessLabel);
-        lightingGroup.addActor(brightnessGroup);
+        lightingGroup.addActor(sbrightnessLabel);
+        lightingGroup.addActor(sbrightnessGroup);
         lightingGroup.addActor(sizeLabel);
         lightingGroup.addActor(sizeGroup);
         lightingGroup.addActor(opacityLabel);
@@ -207,6 +253,10 @@ public class VisualEffectsComponent extends GuiComponent implements IObserver {
         if (Constants.desktop) {
             lightingGroup.addActor(bloomLabel);
             lightingGroup.addActor(bloomGroup);
+            lightingGroup.addActor(brightnessl);
+            lightingGroup.addActor(brightnessGroup);
+            lightingGroup.addActor(contrastl);
+            lightingGroup.addActor(contrastGroup);
             lightingGroup.addActor(motionBlur);
             lightingGroup.addActor(lensFlare);
             lightingGroup.addActor(lightScattering);

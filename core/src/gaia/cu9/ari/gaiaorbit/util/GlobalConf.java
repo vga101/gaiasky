@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.badlogic.gdx.math.MathUtils;
+
 import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
@@ -101,18 +103,24 @@ public class GlobalConf {
         public boolean POSTPROCESS_LENS_FLARE;
         public boolean POSTPROCESS_LIGHT_SCATTERING;
         public boolean POSTPROCESS_FISHEYE;
+        /** Brightness level in [-1..1]. Default is 0. **/
+        public float POSTPROCESS_BRIGHTNESS;
+        /** Contrast level in [0..2]. Default is 1. **/
+        public float POSTPROCESS_CONTRAST;
 
         public PostprocessConf() {
-            EventManager.instance.subscribe(this, Events.BLOOM_CMD, Events.LENS_FLARE_CMD, Events.MOTION_BLUR_CMD, Events.LIGHT_SCATTERING_CMD, Events.FISHEYE_CMD);
+            EventManager.instance.subscribe(this, Events.BLOOM_CMD, Events.LENS_FLARE_CMD, Events.MOTION_BLUR_CMD, Events.LIGHT_SCATTERING_CMD, Events.FISHEYE_CMD, Events.BRIGHTNESS_CMD, Events.CONTRAST_CMD);
         }
 
-        public void initialize(int POSTPROCESS_ANTIALIAS, float POSTPROCESS_BLOOM_INTENSITY, float POSTPROCESS_MOTION_BLUR, boolean POSTPROCESS_LENS_FLARE, boolean POSTPROCESS_LIGHT_SCATTERING, boolean POSTPROCESS_FISHEYE) {
+        public void initialize(int POSTPROCESS_ANTIALIAS, float POSTPROCESS_BLOOM_INTENSITY, float POSTPROCESS_MOTION_BLUR, boolean POSTPROCESS_LENS_FLARE, boolean POSTPROCESS_LIGHT_SCATTERING, boolean POSTPROCESS_FISHEYE, float POSTPROCESS_BRIGHTNESS, float POSTPROCESS_CONTRAST) {
             this.POSTPROCESS_ANTIALIAS = POSTPROCESS_ANTIALIAS;
             this.POSTPROCESS_BLOOM_INTENSITY = POSTPROCESS_BLOOM_INTENSITY;
             this.POSTPROCESS_MOTION_BLUR = POSTPROCESS_MOTION_BLUR;
             this.POSTPROCESS_LENS_FLARE = POSTPROCESS_LENS_FLARE;
             this.POSTPROCESS_LIGHT_SCATTERING = POSTPROCESS_LIGHT_SCATTERING;
             this.POSTPROCESS_FISHEYE = POSTPROCESS_FISHEYE;
+            this.POSTPROCESS_BRIGHTNESS = POSTPROCESS_BRIGHTNESS;
+            this.POSTPROCESS_CONTRAST = POSTPROCESS_CONTRAST;
         }
 
         @Override
@@ -132,6 +140,12 @@ public class GlobalConf {
                 break;
             case FISHEYE_CMD:
                 POSTPROCESS_FISHEYE = (Boolean) data[0];
+                break;
+            case BRIGHTNESS_CMD:
+                POSTPROCESS_BRIGHTNESS = MathUtils.clamp((float) data[0], Constants.MIN_BRIGHTNESS, Constants.MAX_BRIGHTNESS);
+                break;
+            case CONTRAST_CMD:
+                POSTPROCESS_CONTRAST = MathUtils.clamp((float) data[0], Constants.MIN_CONTRAST, Constants.MAX_CONTRAST);
                 break;
             }
         }

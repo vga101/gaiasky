@@ -8,6 +8,7 @@ import com.bitfire.postprocessing.effects.Bloom;
 import com.bitfire.postprocessing.effects.Curvature;
 import com.bitfire.postprocessing.effects.Fisheye;
 import com.bitfire.postprocessing.effects.LensFlare2;
+import com.bitfire.postprocessing.effects.Levels;
 import com.bitfire.postprocessing.effects.LightGlow;
 import com.bitfire.postprocessing.effects.MotionBlur;
 
@@ -21,6 +22,7 @@ public interface IPostProcessor extends Disposable {
         public Fisheye fisheye;
         public LightGlow lglow;
         public MotionBlur motionblur;
+        public Levels levels;
 
         public boolean capture() {
             return pp.capture();

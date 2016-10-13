@@ -13,6 +13,7 @@ import com.bitfire.postprocessing.effects.Curvature;
 import com.bitfire.postprocessing.effects.Fisheye;
 import com.bitfire.postprocessing.effects.Fxaa;
 import com.bitfire.postprocessing.effects.LensFlare2;
+import com.bitfire.postprocessing.effects.Levels;
 import com.bitfire.postprocessing.effects.LightGlow;
 import com.bitfire.postprocessing.effects.MotionBlur;
 import com.bitfire.postprocessing.effects.Nfaa;
@@ -62,7 +63,7 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
             pps[RenderType.frame.index] = newPostProcessor(getWidth(RenderType.frame), getHeight(RenderType.frame));
         }
 
-        EventManager.instance.subscribe(this, Events.PROPERTIES_WRITTEN, Events.BLOOM_CMD, Events.LENS_FLARE_CMD, Events.MOTION_BLUR_CMD, Events.LIGHT_POS_2D_UPDATED, Events.LIGHT_SCATTERING_CMD, Events.TOGGLE_STEREOSCOPIC_CMD, Events.TOGGLE_STEREO_PROFILE_CMD, Events.FISHEYE_CMD, Events.CAMERA_MOTION_UPDATED, Events.CUBEMAP360_CMD, Events.ANTIALIASING_CMD);
+        EventManager.instance.subscribe(this, Events.PROPERTIES_WRITTEN, Events.BLOOM_CMD, Events.LENS_FLARE_CMD, Events.MOTION_BLUR_CMD, Events.LIGHT_POS_2D_UPDATED, Events.LIGHT_SCATTERING_CMD, Events.TOGGLE_STEREOSCOPIC_CMD, Events.TOGGLE_STEREO_PROFILE_CMD, Events.FISHEYE_CMD, Events.CAMERA_MOTION_UPDATED, Events.CUBEMAP360_CMD, Events.ANTIALIASING_CMD, Events.BRIGHTNESS_CMD, Events.CONTRAST_CMD);
 
     }
 
@@ -174,10 +175,20 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
         // ANTIALIAS
         initAntiAliasing(GlobalConf.postprocess.POSTPROCESS_ANTIALIAS, width, height, ppb);
 
+        // LEVELS - BRIGHTNESS & CONTRAST
+        initLevels(ppb);
+
         // MOTION BLUR
         initMotionBlur(width, height, ppb);
 
         return ppb;
+    }
+
+    private void initLevels(PostProcessBean ppb) {
+        ppb.levels = new Levels();
+        ppb.levels.setBrightness(GlobalConf.postprocess.POSTPROCESS_BRIGHTNESS);
+        ppb.levels.setContrast(GlobalConf.postprocess.POSTPROCESS_CONTRAST);
+        ppb.pp.addEffect(ppb.levels);
     }
 
     private void initMotionBlur(int width, int height, PostProcessBean ppb) {
@@ -380,9 +391,12 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
                                 }
                                 // update
                                 initAntiAliasing(aavalue, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), ppb);
-                                // ensure motion blur is last
+                                // ensure motion blur and levels go after
+                                ppb.pp.removeEffect(ppb.levels);
+                                initLevels(ppb);
                                 ppb.pp.removeEffect(ppb.motionblur);
                                 initMotionBlur(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), ppb);
+
                             } else {
                                 // remove
                                 if (ppb.antialiasing != null) {
@@ -395,7 +409,24 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
                     }
                 }
             });
-
+            break;
+        case BRIGHTNESS_CMD:
+            float br = (Float) data[0];
+            for (int i = 0; i < RenderType.values().length; i++) {
+                if (pps[i] != null) {
+                    PostProcessBean ppb = pps[i];
+                    ppb.levels.setBrightness(br);
+                }
+            }
+            break;
+        case CONTRAST_CMD:
+            float cn = (Float) data[0];
+            for (int i = 0; i < RenderType.values().length; i++) {
+                if (pps[i] != null) {
+                    PostProcessBean ppb = pps[i];
+                    ppb.levels.setContrast(cn);
+                }
+            }
             break;
         }
 
