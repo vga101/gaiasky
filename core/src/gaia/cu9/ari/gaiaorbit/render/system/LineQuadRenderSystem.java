@@ -183,8 +183,8 @@ public class LineQuadRenderSystem extends LineRenderSystem {
 
         // Add indexes
         index((short) (currext.numVertices - 4));
-        index((short) (currext.numVertices - 3));
         index((short) (currext.numVertices - 2));
+        index((short) (currext.numVertices - 3));
 
         index((short) (currext.numVertices - 2));
         index((short) (currext.numVertices - 1));

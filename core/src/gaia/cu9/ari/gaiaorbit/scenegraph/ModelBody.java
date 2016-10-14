@@ -96,9 +96,9 @@ public abstract class ModelBody extends CelestialBody {
     protected void addToRenderLists(ICamera camera) {
         camera.checkClosest(this);
         float thPoint = (float) (THRESHOLD_POINT() * camera.getFovFactor());
-        if (viewAngle >= thPoint) {
-            opacity = MathUtilsd.lint(viewAngle, thPoint, thPoint * 4, 0, 1);
-            if (viewAngle < THRESHOLD_QUAD() * camera.getFovFactor()) {
+        if (viewAngleApparent >= thPoint) {
+            opacity = MathUtilsd.lint(viewAngleApparent, thPoint, thPoint * 4, 0, 1);
+            if (viewAngleApparent < THRESHOLD_QUAD() * camera.getFovFactor()) {
                 addToRender(this, RenderGroup.SHADER_F);
             } else {
                 addToRender(this, RenderGroup.MODEL_F);

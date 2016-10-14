@@ -49,6 +49,7 @@ public class ModelBatchRenderSystem extends AbstractRenderSystem {
                 }
             }
             batch.end();
+
         }
     }
 

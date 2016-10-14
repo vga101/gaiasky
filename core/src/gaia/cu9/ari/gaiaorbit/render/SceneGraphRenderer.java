@@ -285,10 +285,6 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         // LINES
         AbstractRenderSystem lineProc = getLineRenderSystem();
 
-        // SHADER SSO
-        AbstractRenderSystem shaderFrontProc = new QuadRenderSystem(RenderGroup.SHADER_F, priority++, alphas, starShader, false);
-        shaderFrontProc.setPreRunnable(blendNoDepthRunnable);
-
         // MODEL FRONT
         AbstractRenderSystem modelFrontProc = new ModelBatchRenderSystem(RenderGroup.MODEL_F, priority++, alphas, modelBatchF, false);
         modelFrontProc.setPreRunnable(blendDepthRunnable);
@@ -304,6 +300,10 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         // LABELS
         AbstractRenderSystem labelsProc = new FontRenderSystem(RenderGroup.LABEL, priority++, alphas, fontBatch, fontShader);
         labelsProc.setPreRunnable(blendNoDepthRunnable);
+
+        // SHADER SSO
+        AbstractRenderSystem shaderFrontProc = new QuadRenderSystem(RenderGroup.SHADER_F, priority++, alphas, starShader, false);
+        shaderFrontProc.setPreRunnable(blendNoDepthRunnable);
 
         // MODEL ATMOSPHERE
         AbstractRenderSystem modelAtmProc = new ModelBatchRenderSystem(RenderGroup.MODEL_F_ATM, priority++, alphas, modelBatchAtm, true) {
@@ -328,7 +328,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
         // MODEL CLOSE UP
         AbstractRenderSystem modelCloseUpProc = new ModelBatchRenderSystem(RenderGroup.MODEL_CLOSEUP, priority++, alphas, modelBatchCloseUp, false);
-        modelFrontProc.setPreRunnable(blendDepthRunnable);
+        modelCloseUpProc.setPreRunnable(blendDepthRunnable);
 
         // Add components to set
         renderProcesses.add(pixelProc);

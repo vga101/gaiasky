@@ -15,7 +15,7 @@ public abstract class AbstractCamera implements ICamera {
     /** Camera far value **/
     public static final double CAM_FAR = 1e6 * Constants.PC_TO_U;
     /** Camera near values **/
-    public static final double CAM_NEAR = 1e5 * Constants.KM_TO_U;
+    public static final double CAM_NEAR = 1e11 * Constants.KM_TO_U;
 
     public Vector3d pos, posinv;
     /**
