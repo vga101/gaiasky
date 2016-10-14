@@ -79,6 +79,24 @@
 				handleMouseUp, false);
 	</script>
 	<script type="text/javascript">
+	
+		function updateSize() {
+		  var embed = document.getElementById('embed-html');
+		  var canvas = embed.getElementsByTagName('canvas')[0];
+		  if (canvas) {
+		    // do stuff
+			var w = document.documentElement.clientWidth;
+			var h = document.documentElement.clientHeight;
+			canvas.setAttribute("width", w + "px");
+			canvas.setAttribute("height", h + "px");
+		  } else {
+		    setTimeout(updateSize, 100);
+		  }
+		}
+	
+		updateSize();
+		
+		
 		setTimeout(function(){ 
 			var divtest = document.getElementById('embed-html');
 			var children = divtest.children;
@@ -86,7 +104,7 @@
 			for(i = 0; i < n - 1; i++){
 				divtest.removeChild(children[0]);
 			}
-		}, 9000);
+		}, 7000);
 	</script>
 </body>
 </html>

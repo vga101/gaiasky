@@ -19,7 +19,7 @@ public abstract class AbstractRenderSystem implements IRenderSystem {
     protected Comparator<IRenderable> comp;
     public RenderContext rc;
 
-    private RenderSystemRunnable preRunnable, postRunnable;
+    protected RenderSystemRunnable preRunnable, postRunnable;
 
     protected AbstractRenderSystem(RenderGroup rg, int priority, float[] alphas) {
         super();
@@ -40,7 +40,7 @@ public abstract class AbstractRenderSystem implements IRenderSystem {
 
     @Override
     public void render(List<IRenderable> renderables, ICamera camera, float t, RenderContext rc) {
-        if (!renderables.isEmpty()) {
+        if (renderables != null && !renderables.isEmpty()) {
             this.rc = rc;
             run(preRunnable, renderables, camera);
             renderStud(renderables, camera, t);
@@ -58,7 +58,7 @@ public abstract class AbstractRenderSystem implements IRenderSystem {
         postRunnable = r;
     }
 
-    private void run(RenderSystemRunnable runnable, List<IRenderable> renderables, ICamera camera) {
+    protected void run(RenderSystemRunnable runnable, List<IRenderable> renderables, ICamera camera) {
         if (runnable != null) {
             runnable.run(this, renderables, camera);
         }

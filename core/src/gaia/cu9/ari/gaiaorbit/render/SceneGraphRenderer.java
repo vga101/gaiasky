@@ -40,6 +40,7 @@ import gaia.cu9.ari.gaiaorbit.render.system.LineRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.ModelBatchRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.PixelRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.QuadRenderSystem;
+import gaia.cu9.ari.gaiaorbit.render.system.VolumeCloudsRenderSystem;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
@@ -207,7 +208,11 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
             }
         };
 
-        int priority = 1;
+        int priority = 0;
+
+        // POINTS
+        AbstractRenderSystem pixelProc = new PixelRenderSystem(RenderGroup.POINT, priority++, alphas);
+        pixelProc.setPreRunnable(blendNoDepthRunnable);
 
         // MODEL BACK
         AbstractRenderSystem modelBackProc = new ModelBatchRenderSystem(RenderGroup.MODEL_B, priority++, alphas, modelBatchB, false);
@@ -220,9 +225,9 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
             }
         });
 
-        // POINTS
-        AbstractRenderSystem pixelProc = new PixelRenderSystem(RenderGroup.POINT, 0, alphas);
-        pixelProc.setPreRunnable(blendNoDepthRunnable);
+        // VOLUMETRIC CLOUDS
+        AbstractRenderSystem cloudsProc = new VolumeCloudsRenderSystem(priority++, alphas);
+        cloudsProc.setPreRunnable(blendNoDepthRunnable);
 
         // ANNOTATIONS
         AbstractRenderSystem annotationsProc = new FontRenderSystem(RenderGroup.MODEL_B_ANNOT, priority++, alphas, spriteBatch);
@@ -328,6 +333,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         // Add components to set
         renderProcesses.add(pixelProc);
         renderProcesses.add(modelBackProc);
+        //renderProcesses.add(cloudsProc);
         renderProcesses.add(annotationsProc);
         renderProcesses.add(shaderBackProc);
         renderProcesses.add(shaderFrontProc);
@@ -389,8 +395,13 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         int size = renderProcesses.size();
         for (int i = 0; i < size; i++) {
             IRenderSystem process = renderProcesses.get(i);
-            List<IRenderable> l = render_lists.get(process.getRenderGroup()).toList();
-            process.render(l, camera, t, rc);
+            // If we have no render group, this means all the info is already in the render system. No lists needed
+            if (process.getRenderGroup() != null) {
+                List<IRenderable> l = render_lists.get(process.getRenderGroup()).toList();
+                process.render(l, camera, t, rc);
+            } else {
+                process.render(null, camera, t, rc);
+            }
         }
 
     }

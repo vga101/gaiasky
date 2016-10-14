@@ -8,6 +8,8 @@ precision mediump int;
 uniform float u_ar;
 varying vec4 v_col;
 
+
+
 float light(float distance_center, float decay) {
     return 1.0 - pow(distance_center, decay);
 }
