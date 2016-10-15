@@ -89,11 +89,13 @@ public class SGRStereoscopic extends SGRAbstract implements ISGR, IObserver {
         } else if (camera.getCurrent().getClosest() != null) {
             currentFocus = camera.getCurrent().getClosest();
         }
+        boolean closeup = false;
         if (currentFocus != null) {
             // If we have focus, we adapt the eye separation
             double distToFocus = currentFocus.distToCamera - currentFocus.getRadius();
-            separation = (float) Math.min((Math.tan(Math.toRadians(1.5)) * distToFocus), 1e3 * Constants.AU_TO_U);
-            //separation = Math.tan(Math.toRadians(1.5)) * distToFocus;
+            //separation = (float) Math.min((Math.tan(Math.toRadians(1.5)) * distToFocus), .5e3 * Constants.AU_TO_U);
+            separation = Math.tan(Math.toRadians(1.5)) * distToFocus;
+            closeup = separation < .5e3 * Constants.AU_TO_U;
             dirangleDeg = 1.5;
         }
 
@@ -116,7 +118,7 @@ public class SGRStereoscopic extends SGRAbstract implements ISGR, IObserver {
 
             // Camera to the left
             if (movecam) {
-                moveCamera(camera, side, dirangleDeg, false);
+                moveCamera(camera, side, dirangleDeg, false, closeup);
             }
             camera.setCameraStereoLeft(cam);
             sgr.renderScene(camera, t, rc);
@@ -133,7 +135,7 @@ public class SGRStereoscopic extends SGRAbstract implements ISGR, IObserver {
                 camera.setPos(backupPosd);
                 cam.position.set(backupPos);
                 cam.direction.set(backupDir);
-                moveCamera(camera, side, dirangleDeg, true);
+                moveCamera(camera, side, dirangleDeg, true, closeup);
             }
             camera.setCameraStereoRight(cam);
             sgr.renderScene(camera, t, rc);
@@ -176,7 +178,7 @@ public class SGRStereoscopic extends SGRAbstract implements ISGR, IObserver {
 
             // Camera to left
             if (movecam) {
-                moveCamera(camera, side, dirangleDeg, crosseye);
+                moveCamera(camera, side, dirangleDeg, crosseye, closeup);
             }
             camera.setCameraStereoLeft(cam);
             sgr.renderScene(camera, t, rc);
@@ -213,7 +215,7 @@ public class SGRStereoscopic extends SGRAbstract implements ISGR, IObserver {
                 camera.setPos(backupPosd);
                 cam.position.set(backupPos);
                 cam.direction.set(backupDir);
-                moveCamera(camera, side, dirangleDeg, !crosseye);
+                moveCamera(camera, side, dirangleDeg, !crosseye, closeup);
             }
             camera.setCameraStereoRight(cam);
             sgr.renderScene(camera, t, rc);
@@ -244,16 +246,20 @@ public class SGRStereoscopic extends SGRAbstract implements ISGR, IObserver {
 
     }
 
-    private void moveCamera(ICamera camera, Vector3d side, double angle, boolean switchSides) {
+    private void moveCamera(ICamera camera, Vector3d side, double angle, boolean switchSides, boolean closeup) {
         PerspectiveCamera cam = camera.getCamera();
         Vector3 sidef = side.put(aux1);
         if (switchSides) {
-            camera.getPos().add(side);
-            cam.position.add(sidef);
+            if (closeup)
+                cam.position.add(sidef);
+            else
+                camera.getPos().add(side);
             cam.direction.rotate(cam.up, (float) angle);
         } else {
-            camera.getPos().sub(side);
-            cam.position.sub(sidef);
+            if (closeup)
+                cam.position.sub(sidef);
+            else
+                camera.getPos().sub(side);
             cam.direction.rotate(cam.up, (float) -angle);
         }
         cam.update();
