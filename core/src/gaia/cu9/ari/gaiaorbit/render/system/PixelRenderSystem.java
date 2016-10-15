@@ -155,7 +155,7 @@ public class PixelRenderSystem extends ImmediateRenderSystem implements IObserve
         }
         shaderProgram.begin();
         shaderProgram.setUniformMatrix("u_projModelView", camera.getCamera().combined);
-        shaderProgram.setUniformf("u_camPos", camera.getCurrent().getPos().setVector3(aux));
+        shaderProgram.setUniformf("u_camPos", camera.getCurrent().getPos().put(aux));
         shaderProgram.setUniformf("u_fovFactor", camera.getFovFactor());
         shaderProgram.setUniformf("u_alpha", alphas[0]);
         shaderProgram.setUniformf("u_starBrightness", GlobalConf.scene.STAR_BRIGHTNESS * BRIGHTNESS_FACTOR);

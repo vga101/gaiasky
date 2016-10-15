@@ -38,6 +38,8 @@ public interface ICamera {
 
     public Vector3d getPos();
 
+    public void setPos(Vector3d pos);
+
     public Vector3d getInversePos();
 
     public Vector3d getDirection();

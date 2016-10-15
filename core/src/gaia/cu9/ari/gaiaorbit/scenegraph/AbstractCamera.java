@@ -86,6 +86,11 @@ public abstract class AbstractCamera implements ICamera {
     }
 
     @Override
+    public void setPos(Vector3d pos) {
+        this.pos.set(pos);
+    }
+
+    @Override
     public Vector3d getInversePos() {
         return posinv;
     }
