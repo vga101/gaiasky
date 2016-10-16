@@ -48,7 +48,7 @@ public class SGRStereoscopic extends SGRAbstract implements ISGR, IObserver {
     private Anaglyphic anaglyphic;
 
     private Vector3 aux1, aux2, aux3;
-    private Vector3d aux1d, aux2d;
+    private Vector3d aux1d, aux2d, aux3d;
 
     public SGRStereoscopic() {
         super();
@@ -68,6 +68,7 @@ public class SGRStereoscopic extends SGRAbstract implements ISGR, IObserver {
         aux3 = new Vector3();
         aux1d = new Vector3d();
         aux2d = new Vector3d();
+        aux3d = new Vector3d();
 
         EventManager.instance.subscribe(this, Events.FRAME_SIZE_UDPATE, Events.SCREENSHOT_SIZE_UDPATE);
     }
@@ -81,6 +82,7 @@ public class SGRStereoscopic extends SGRAbstract implements ISGR, IObserver {
         // Vector of 1 meter length pointing to the side of the camera
         Vector3d side = aux2d.set(camera.getDirection());
         double separation = Constants.M_TO_U * GlobalConf.program.STEREOSCOPIC_EYE_SEPARATION_M;
+        double separationCloseup = separation;
         double dirangleDeg = 0;
 
         CelestialBody currentFocus = null;
@@ -89,17 +91,17 @@ public class SGRStereoscopic extends SGRAbstract implements ISGR, IObserver {
         } else if (camera.getCurrent().getClosest() != null) {
             currentFocus = camera.getCurrent().getClosest();
         }
-        boolean closeup = false;
         if (currentFocus != null) {
             // If we have focus, we adapt the eye separation
             double distToFocus = currentFocus.distToCamera - currentFocus.getRadius();
             //separation = (float) Math.min((Math.tan(Math.toRadians(1.5)) * distToFocus), .5e3 * Constants.AU_TO_U);
             separation = Math.tan(Math.toRadians(1.5)) * distToFocus;
-            closeup = separation < .5e3 * Constants.AU_TO_U;
+            separationCloseup = Math.min(separation, 1e2 * Constants.AU_TO_U);
             dirangleDeg = 1.5;
         }
 
         side.crs(camera.getUp()).nor().scl(separation);
+        Vector3d sideCloseup = aux3d.set(side).nor().scl(separationCloseup);
         Vector3 backupPos = aux2.set(cam.position);
         Vector3 backupDir = aux3.set(cam.direction);
         Vector3d backupPosd = aux1d.set(camera.getPos());
@@ -118,7 +120,7 @@ public class SGRStereoscopic extends SGRAbstract implements ISGR, IObserver {
 
             // Camera to the left
             if (movecam) {
-                moveCamera(camera, side, dirangleDeg, false, closeup);
+                moveCamera(camera, side, sideCloseup, dirangleDeg, false);
             }
             camera.setCameraStereoLeft(cam);
             sgr.renderScene(camera, t, rc);
@@ -135,7 +137,7 @@ public class SGRStereoscopic extends SGRAbstract implements ISGR, IObserver {
                 camera.setPos(backupPosd);
                 cam.position.set(backupPos);
                 cam.direction.set(backupDir);
-                moveCamera(camera, side, dirangleDeg, true, closeup);
+                moveCamera(camera, side, sideCloseup, dirangleDeg, true);
             }
             camera.setCameraStereoRight(cam);
             sgr.renderScene(camera, t, rc);
@@ -178,7 +180,7 @@ public class SGRStereoscopic extends SGRAbstract implements ISGR, IObserver {
 
             // Camera to left
             if (movecam) {
-                moveCamera(camera, side, dirangleDeg, crosseye, closeup);
+                moveCamera(camera, side, sideCloseup, dirangleDeg, crosseye);
             }
             camera.setCameraStereoLeft(cam);
             sgr.renderScene(camera, t, rc);
@@ -215,7 +217,7 @@ public class SGRStereoscopic extends SGRAbstract implements ISGR, IObserver {
                 camera.setPos(backupPosd);
                 cam.position.set(backupPos);
                 cam.direction.set(backupDir);
-                moveCamera(camera, side, dirangleDeg, !crosseye, closeup);
+                moveCamera(camera, side, sideCloseup, dirangleDeg, !crosseye);
             }
             camera.setCameraStereoRight(cam);
             sgr.renderScene(camera, t, rc);
@@ -246,20 +248,17 @@ public class SGRStereoscopic extends SGRAbstract implements ISGR, IObserver {
 
     }
 
-    private void moveCamera(ICamera camera, Vector3d side, double angle, boolean switchSides, boolean closeup) {
+    private void moveCamera(ICamera camera, Vector3d side, Vector3d sideCloseup, double angle, boolean switchSides) {
         PerspectiveCamera cam = camera.getCamera();
-        Vector3 sidef = side.put(aux1);
+        Vector3 sidef = sideCloseup.put(aux1);
+
         if (switchSides) {
-            if (closeup)
-                cam.position.add(sidef);
-            else
-                camera.getPos().add(side);
+            cam.position.add(sidef);
+            camera.getPos().add(side);
             cam.direction.rotate(cam.up, (float) angle);
         } else {
-            if (closeup)
-                cam.position.sub(sidef);
-            else
-                camera.getPos().sub(side);
+            cam.position.sub(sidef);
+            camera.getPos().sub(side);
             cam.direction.rotate(cam.up, (float) -angle);
         }
         cam.update();
