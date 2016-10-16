@@ -10,6 +10,7 @@ import java.util.TreeSet;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Frustum;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.math.collision.BoundingBox;
 
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.render.ILineRenderable;
@@ -46,6 +47,7 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
      * Since OctreeNode is not to be parallelised, these can be static.
      **/
     private static BoundingBoxd boxcopy = new BoundingBoxd(new Vector3d(), new Vector3d());
+    private static BoundingBox boxcopyf = new BoundingBox(new Vector3(), new Vector3());
     private static Matrix4d boxtransf = new Matrix4d();
     private static Vector3d auxD1 = new Vector3d(), auxD2 = new Vector3d(), auxD3 = new Vector3d(), auxD4 = new Vector3d();
     private static Vector3 auxF1 = new Vector3(), auxF2 = new Vector3();
@@ -499,6 +501,7 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
 
         boxcopy.set(box);
         boxcopy.mul(boxtransf.idt().translate(parentTransform.getTranslation()));
+
         observed = GlobalConf.program.CUBEMAP360_MODE || GlobalResources.isInView(boxcopy.getCenter(auxD1), auxD1.len(), angle, dir) || GlobalResources.isInView(boxcopy.getCorner000(auxD1), auxD1.len(), angle, dir) || GlobalResources.isInView(boxcopy.getCorner001(auxD1), auxD1.len(), angle, dir) || GlobalResources.isInView(boxcopy.getCorner010(auxD1), auxD1.len(), angle, dir) || GlobalResources.isInView(boxcopy.getCorner011(auxD1), auxD1.len(), angle, dir)
                 || GlobalResources.isInView(boxcopy.getCorner100(auxD1), auxD1.len(), angle, dir) || GlobalResources.isInView(boxcopy.getCorner101(auxD1), auxD1.len(), angle, dir) || GlobalResources.isInView(boxcopy.getCorner110(auxD1), auxD1.len(), angle, dir) || GlobalResources.isInView(boxcopy.getCorner111(auxD1), auxD1.len(), angle, dir) || box.contains(cam.getPos());
 

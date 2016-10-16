@@ -19,6 +19,9 @@ package gaia.cu9.ari.gaiaorbit.util.math;
 import java.io.Serializable;
 import java.util.List;
 
+import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.math.collision.BoundingBox;
+
 /** Encapsulates an axis aligned bounding box represented by a minimum and a maximum Vector. Additionally you can query for the
  * bounding box's center, dimensions and corner points.
  * 
@@ -201,16 +204,18 @@ public class BoundingBoxd implements Serializable {
         return this.set(bounds.min, bounds.max);
     }
 
+    public BoundingBox put(BoundingBox bounds) {
+        return bounds.set(bounds.min.set(new Vector3()), bounds.max.set(new Vector3()));
+    }
+
     /** Sets the given minimum and maximum vector.
      * 
      * @param minimum The minimum vector
      * @param maximum The maximum vector
      * @return This bounding box for chaining. */
     public BoundingBoxd set(Vector3d minimum, Vector3d maximum) {
-        min.set(minimum.x < maximum.x ? minimum.x : maximum.x, minimum.y < maximum.y ? minimum.y : maximum.y,
-                minimum.z < maximum.z ? minimum.z : maximum.z);
-        max.set(minimum.x > maximum.x ? minimum.x : maximum.x, minimum.y > maximum.y ? minimum.y : maximum.y,
-                minimum.z > maximum.z ? minimum.z : maximum.z);
+        min.set(minimum.x < maximum.x ? minimum.x : maximum.x, minimum.y < maximum.y ? minimum.y : maximum.y, minimum.z < maximum.z ? minimum.z : maximum.z);
+        max.set(minimum.x > maximum.x ? minimum.x : maximum.x, minimum.y > maximum.y ? minimum.y : maximum.y, minimum.z > maximum.z ? minimum.z : maximum.z);
         cnt.set(min).add(max).scl(0.5f);
         dim.set(max).sub(min);
         return this;
@@ -253,8 +258,7 @@ public class BoundingBoxd implements Serializable {
      * @param point The vector
      * @return This bounding box for chaining. */
     public BoundingBoxd ext(Vector3d point) {
-        return this.set(min.set(min(min.x, point.x), min(min.y, point.y), min(min.z, point.z)),
-                max.set(Math.max(max.x, point.x), Math.max(max.y, point.y), Math.max(max.z, point.z)));
+        return this.set(min.set(min(min.x, point.x), min(min.y, point.y), min(min.z, point.z)), max.set(Math.max(max.x, point.x), Math.max(max.y, point.y), Math.max(max.z, point.z)));
     }
 
     /** Sets the minimum and maximum vector to zeros.
@@ -274,8 +278,7 @@ public class BoundingBoxd implements Serializable {
      * @param a_bounds The bounding box
      * @return This bounding box for chaining. */
     public BoundingBoxd ext(BoundingBoxd a_bounds) {
-        return this.set(min.set(min(min.x, a_bounds.min.x), min(min.y, a_bounds.min.y), min(min.z, a_bounds.min.z)),
-                max.set(max(max.x, a_bounds.max.x), max(max.y, a_bounds.max.y), max(max.z, a_bounds.max.z)));
+        return this.set(min.set(min(min.x, a_bounds.min.x), min(min.y, a_bounds.min.y), min(min.z, a_bounds.min.z)), max.set(max(max.x, a_bounds.max.x), max(max.y, a_bounds.max.y), max(max.z, a_bounds.max.z)));
     }
 
     /** Extends this bounding box by the given transformed bounding box.
@@ -318,8 +321,7 @@ public class BoundingBoxd implements Serializable {
      * @param b The bounding box
      * @return Whether the given bounding box is contained */
     public boolean contains(BoundingBoxd b) {
-        return !isValid()
-                || (min.x <= b.min.x && min.y <= b.min.y && min.z <= b.min.z && max.x >= b.max.x && max.y >= b.max.y && max.z >= b.max.z);
+        return !isValid() || (min.x <= b.min.x && min.y <= b.min.y && min.z <= b.min.z && max.x >= b.max.x && max.y >= b.max.y && max.z >= b.max.z);
     }
 
     /** Returns whether the given bounding box is intersecting this bounding box (at least one point in).
