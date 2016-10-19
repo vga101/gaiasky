@@ -44,9 +44,9 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
-import gaia.cu9.ari.gaiaorbit.scenegraph.AbstractCamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SpacecraftCamera;
+import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.g3d.ModelBuilder2;
@@ -108,8 +108,8 @@ public class SpacecraftGui implements IGui {
 
         // init gui camera
         aiCam = new PerspectiveCamera(30, indicatorw, indicatorh);
-        aiCam.near = (float) AbstractCamera.CAM_NEAR;
-        aiCam.far = (float) AbstractCamera.CAM_FAR;
+        aiCam.near = (float) (1e5 * Constants.KM_TO_U);
+        aiCam.far = (float) (1e8 * Constants.KM_TO_U);
         aiCam.up.set(0, 1, 0);
         aiCam.direction.set(0, 0, 1);
         aiCam.position.set(0, 0, 0);
