@@ -4,7 +4,7 @@
 [![Circle CI](https://circleci.com/gh/ari-zah/gaiasky/tree/master.svg?style=svg)](https://circleci.com/gh/ari-zah/gaiasky/tree/master)
 
 
-The [**Gaia Sky**](https://zah.uni-heidelberg.de/gaia/outreach/gaiasky) is a real-time, 3D, astronomy visualisation software that
+[**Gaia Sky**](https://zah.uni-heidelberg.de/gaia/outreach/gaiasky) is a real-time, 3D, astronomy visualisation software that
 runs on Windows, Linux and MacOS. It is developed in the framework of
 [ESA](http://www.esa.int/ESA)'s [Gaia mission](http://sci.esa.int/gaia) to chart about 1 billion stars of our Galaxy.
 To get the latest up-to-date and most complete information,
@@ -157,7 +157,7 @@ tar -zxvf gaiasky-<version>.tgz
 ##  2. Running instructions                          #
 ######################################################
 
-###2.1 Running the Gaia Sky
+###2.1 Running Gaia Sky
 
 In order to run the program just click on the shortcut
 provided in your operating system.
@@ -181,7 +181,7 @@ git clone https://github.com/ari-zah/gaiasky.git
 cd gaiasky
 gradle desktop:run
 ```
-Et voilà! The Gaia Sky is running on your machine.
+Et voilà! Gaia Sky is running on your machine.
 
 
 ######################################################
