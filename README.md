@@ -55,7 +55,7 @@ Two windows installers are available for 32 and 64-bit systems [here](https://za
 
 Both versions will automatically install the JRE if it is not present
 in the system.
-To install the Gaia Sky, just double click on the installer and
+To install Gaia Sky, just double click on the installer and
 then follow the on-screen instructions. You will need to choose the
 directory where the application is to be installed.
 
@@ -193,7 +193,7 @@ pages in GitHub:
 
 [https://github.com/ari-zah/gaiasky/wiki](https://github.com/ari-zah/gaiasky/wiki)
 
-There you will find a thorough documentation of all the features of the
+There you will find a thorough documentation of all the features of
 Gaia Sky. If you need to load your data into the sandbox or just
 find out how to enable the 3D mode to experience it on your 3DTV, think no further,
 the [Gaia Sky wiki](https://github.com/ari-zah/gaiasky/wiki) is the way to go.
@@ -217,7 +217,7 @@ or visiting https://www.gnu.org/licenses/lgpl-3.0-standalone.html
 
 The main webpage of the project is
 http://www.zah.uni-heidelberg.de/gaia2/outreach/gaiasky. There you can find
-the latest versions and the latest information on the Gaia Sky. You can also
+the latest versions and the latest information on Gaia Sky. You can also
 visit our Github account to inspect the code, check the wiki or report bugs:
 https://github.com/ari-zah/gaiasky
 
