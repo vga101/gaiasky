@@ -164,9 +164,9 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
             // 3D distance font
             Vector3d pos = aux3d1.get();
             textPosition(camera, pos);
-            shader.setUniformf("a_viewAngle", (float) viewAngle);
+            shader.setUniformf("a_viewAngle", (float) viewAngleApparent);
             shader.setUniformf("a_viewAnglePow", getViewAnglePow());
-            shader.setUniformf("a_thOverFactor", TH_OVER_FACTOR);
+            shader.setUniformf("a_thOverFactor", TH_OVER_FACTOR / camera.getFovFactor());
             shader.setUniformf("a_thOverFactorScl", getThOverFactorScl());
 
             if (camera.isFocus((CelestialBody) this)) {

@@ -319,7 +319,7 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
 
     @Override
     public boolean renderText() {
-        return computedSize > 0 && GaiaSky.instance.isOn(ComponentType.Labels) && viewAngleApparent >= thpointTimesFovfactor;
+        return computedSize > 0 && GaiaSky.instance.isOn(ComponentType.Labels) && viewAngleApparent >= (TH_OVER_FACTOR / GaiaSky.instance.cam.getFovFactor());
     }
 
     @Override
@@ -329,7 +329,7 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
 
     @Override
     public float textScale() {
-        return (float) Math.atan(labelMax()) * labelFactor() * 1e3f;
+        return (float) Math.atan(labelMax()) * labelFactor() * 4e2f;
     }
 
     @Override
