@@ -116,6 +116,17 @@ public class GlobalResources {
         }
     }
 
+    /** Converts the double to the string representation of a velocity (always in seconds)
+     * 
+     * @param d In internal units
+     * @return Array containing the number and the units
+     */
+    public static Object[] doubleToVelocityString(double d) {
+        Object[] res = doubleToDistanceString(d);
+        res[res.length - 1] = res[res.length - 1] + "/s";
+        return res;
+    }
+
     /**
      * Converts this float to the string representation of a distance.
      * 
@@ -124,7 +135,7 @@ public class GlobalResources {
      * @return An array containing the float number and the string units.
      */
     public static Object[] floatToDistanceString(float f) {
-        Object[] result = GlobalResources.doubleToDistanceString((double) f);
+        Object[] result = doubleToDistanceString((double) f);
         return new Object[] { (double) result[0], result[1] };
     }
 

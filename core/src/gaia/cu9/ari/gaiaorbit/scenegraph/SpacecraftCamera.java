@@ -157,7 +157,7 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
         chh2 = crosshairTex.getHeight() / 2f;
 
         // Focus is changed from GUI
-        EventManager.instance.subscribe(this, Events.FOV_CHANGED_CMD);
+        EventManager.instance.subscribe(this, Events.FOV_CHANGED_CMD, Events.SPACECRAFT_STABILISE_CMD, Events.SPACECRAFT_STOP_CMD);
     }
 
     public Quaternion getRotationQuaternion() {
@@ -222,7 +222,7 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
                 setEnginePower(0);
                 force.scl(0);
                 vel.scl(0);
-                stopping = false;
+                EventManager.instance.post(Events.SPACECRAFT_STOP_CMD, false);
             }
         }
 
@@ -275,7 +275,7 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
                 yawv = 0;
                 pitchv = 0;
                 rollv = 0;
-                leveling = false;
+                EventManager.instance.post(Events.SPACECRAFT_STABILISE_CMD, false);
             }
         }
 
@@ -315,6 +315,23 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
 
         // Update camera
         updatePerspectiveCamera();
+
+        String clname = null;
+        float cldist = -1f;
+        if (closest != null && ModelBody.closestCamStar != null) {
+            if (closest.distToCamera < ModelBody.closestCamStar.distToCamera) {
+                clname = closest.name;
+                cldist = closest.distToCamera;
+            } else {
+                clname = ModelBody.closestCamStar.name;
+                cldist = ModelBody.closestCamStar.distToCamera;
+            }
+        } else if (closest == null) {
+            clname = ModelBody.closestCamStar.name;
+            cldist = ModelBody.closestCamStar.distToCamera;
+        }
+
+        EventManager.instance.post(Events.SPACECRAFT_INFO, yaw % 360, pitch % 360, roll % 360, vel.len(), clname, cldist);
 
     }
 
@@ -492,6 +509,12 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
                 EventManager.instance.post(Events.FOV_CHANGE_NOTIFICATION, fov, fovFactor);
             }
             break;
+        case SPACECRAFT_STABILISE_CMD:
+            leveling = (Boolean) data[0];
+            break;
+        case SPACECRAFT_STOP_CMD:
+            stopping = (Boolean) data[0];
+            break;
         }
 
     }
@@ -534,42 +557,42 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
                 case Keys.W:
                     // power 1
                     camera.setEnginePower(1);
-                    stopping = false;
+                    EventManager.instance.post(Events.SPACECRAFT_STOP_CMD, false);
                     break;
                 case Keys.S:
                     // power -1
                     camera.setEnginePower(-1);
-                    stopping = false;
+                    EventManager.instance.post(Events.SPACECRAFT_STOP_CMD, false);
                     break;
                 case Keys.A:
                     // roll 1
                     camera.setRollPower(1);
-                    leveling = false;
+                    EventManager.instance.post(Events.SPACECRAFT_STOP_CMD, false);
                     break;
                 case Keys.D:
                     // roll -1
                     camera.setRollPower(-1);
-                    leveling = false;
+                    EventManager.instance.post(Events.SPACECRAFT_STABILISE_CMD, false);
                     break;
                 case Keys.DOWN:
                     // pitch 1
                     camera.setPitchPower(1);
-                    leveling = false;
+                    EventManager.instance.post(Events.SPACECRAFT_STABILISE_CMD, false);
                     break;
                 case Keys.UP:
                     // pitch -1
                     camera.setPitchPower(-1);
-                    leveling = false;
+                    EventManager.instance.post(Events.SPACECRAFT_STABILISE_CMD, false);
                     break;
                 case Keys.LEFT:
                     // yaw 1
                     camera.setYawPower(1);
-                    leveling = false;
+                    EventManager.instance.post(Events.SPACECRAFT_STABILISE_CMD, false);
                     break;
                 case Keys.RIGHT:
                     // yaw -1
                     camera.setYawPower(-1);
-                    leveling = false;
+                    EventManager.instance.post(Events.SPACECRAFT_STABILISE_CMD, false);
                     break;
                 case Keys.PAGE_UP:
                     // Increase thrust factor
@@ -611,11 +634,11 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
                     break;
                 case Keys.L:
                     // level spaceship
-                    leveling = true;
+                    EventManager.instance.post(Events.SPACECRAFT_STABILISE_CMD, true);
                     break;
                 case Keys.P:
                     // stop spaceship
-                    stopping = true;
+                    EventManager.instance.post(Events.SPACECRAFT_STOP_CMD, true);
                     break;
                 }
             }
@@ -673,17 +696,17 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
             switch (axisCode) {
             case XBox360Mappings.AXIS_JOY2HOR:
                 cam.setRollPower(-value);
-                leveling = false;
+                EventManager.instance.post(Events.SPACECRAFT_STABILISE_CMD, false);
                 treated = true;
                 break;
             case XBox360Mappings.AXIS_JOY1VERT:
                 cam.setPitchPower(value);
-                leveling = false;
+                EventManager.instance.post(Events.SPACECRAFT_STABILISE_CMD, false);
                 treated = true;
                 break;
             case XBox360Mappings.AXIS_JOY1HOR:
                 cam.setYawPower(-value);
-                leveling = false;
+                EventManager.instance.post(Events.SPACECRAFT_STABILISE_CMD, false);
                 treated = true;
                 break;
             case XBox360Mappings.AXIS_JOY2VERT:
@@ -691,12 +714,12 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
                 break;
             case XBox360Mappings.AXIS_RT:
                 cam.setEnginePower((value + 1) / 2);
-                stopping = false;
+                EventManager.instance.post(Events.SPACECRAFT_STOP_CMD, false);
                 treated = true;
                 break;
             case XBox360Mappings.AXIS_LT:
                 cam.setEnginePower(-(value + 1) / 2);
-                stopping = false;
+                EventManager.instance.post(Events.SPACECRAFT_STOP_CMD, false);
                 treated = true;
                 break;
             }

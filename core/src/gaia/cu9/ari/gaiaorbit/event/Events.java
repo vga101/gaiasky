@@ -500,6 +500,14 @@ public enum Events {
     /** Reload music files **/
     MUSIC_RELOAD_CMD,
 
+    /** Level spacecraft command, contains boolean with state **/
+    SPACECRAFT_STABILISE_CMD,
+    /** Stop spacecraft, contains boolean with state **/
+    SPACECRAFT_STOP_CMD,
+
+    /** Contains info such as current speed, yaw, pitch and roll angular velocities, nearest object and distance to it **/
+    SPACECRAFT_INFO,
+
     /**
      * Toggles the fading of particles in the octree. Contains a boolean with
      * the state of the flag.

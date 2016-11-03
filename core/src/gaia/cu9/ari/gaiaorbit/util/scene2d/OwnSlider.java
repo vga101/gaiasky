@@ -10,6 +10,10 @@ public class OwnSlider extends Slider {
         super(min, max, stepSize, vertical, skin);
     }
 
+    public OwnSlider(float min, float max, float stepSize, boolean vertical, Skin skin, String styleName) {
+        super(min, max, stepSize, vertical, skin, styleName);
+    }
+
     @Override
     public void setWidth(float width) {
         ownwidth = width;

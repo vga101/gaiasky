@@ -58,8 +58,8 @@ com.badlogic.gdx.scenes.scene2d.ui.ImageButton$ImageButtonStyle: {
 	minus: {imageUp: tree-minus},
 	sc-stabilise: { imageUp: sc-stabilise, imageChecked: sc-stabilise-checked },
 	sc-stop: { imageUp: sc-stop, imageChecked: sc-stop-checked },
-	sc-engine-power-up: { imageUp: sc-engine-power-up, imageChecked: sc-engine-power-up-checked },
-	sc-engine-power-down: { imageUp: sc-engine-power-down, imageChecked: sc-engine-power-down-checked }
+	sc-engine-power-up: { imageUp: sc-engine-power-up, imageDown: sc-engine-power-up-checked },
+	sc-engine-power-down: { imageUp: sc-engine-power-down, imageDown: sc-engine-power-down-checked }
 },
 com.badlogic.gdx.scenes.scene2d.ui.ScrollPane$ScrollPaneStyle: {
 	default: { vScroll: default-round-down, hScrollKnob: default-round, background: default-rect, hScroll: default-round-down, vScrollKnob: default-round },

@@ -26,16 +26,21 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
+import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputEvent.Type;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Container;
 import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.ui.TextTooltip;
+import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
@@ -44,27 +49,37 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
+import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SpacecraftCamera;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
+import gaia.cu9.ari.gaiaorbit.util.format.INumberFormat;
+import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.g3d.ModelBuilder2;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnImageButton;
+import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnLabel;
+import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnSlider;
 
-public class SpacecraftGui implements IGui {
+public class SpacecraftGui implements IGui, IObserver {
     private Skin skin;
     protected Stage ui;
 
     private Container<HorizontalGroup> buttonContainer;
     private HorizontalGroup buttonRow, engineGroup;
+    private VerticalGroup motionGroup, nearestGroup;
     private OwnImageButton stabilise, stop, enginePlus, engineMinus;
     private Slider enginePower;
+    private OwnLabel mainvel, yawvel, pitchvel, rollvel, closestname, closestdist;
 
     /** The spacecraft camera **/
     private SpacecraftCamera camera;
+
+    /** Number format **/
+    private INumberFormat nf, sf;
 
     /** Camera to render the attitude indicator system **/
     private PerspectiveCamera aiCam;
@@ -86,7 +101,7 @@ public class SpacecraftGui implements IGui {
     /** Reference to spacecraft camera velocity vector **/
     private Vector3d vel;
 
-    private int indicatorw, indicatorh;
+    private float indicatorw, indicatorh, indicatorx, indicatory;
 
     /** Aux vectors **/
     private Vector3 aux3f1, aux3f2;
@@ -98,6 +113,9 @@ public class SpacecraftGui implements IGui {
         this.vel = camera.vel;
         aux3f1 = new Vector3();
         aux3f2 = new Vector3();
+
+        nf = NumberFormatFactory.getFormatter("##0.##");
+        sf = NumberFormatFactory.getFormatter("#0.###E0");
     }
 
     public void initialize(AssetManager assetManager) {
@@ -107,6 +125,8 @@ public class SpacecraftGui implements IGui {
 
         indicatorw = 300;
         indicatorh = 300;
+        indicatorx = -20;
+        indicatory = -25;
 
         // init gui camera
         aiCam = new PerspectiveCamera(30, indicatorw, indicatorh);
@@ -163,25 +183,28 @@ public class SpacecraftGui implements IGui {
 
         buildGui();
 
+        EventManager.instance.subscribe(this, Events.SPACECRAFT_STABILISE_CMD, Events.SPACECRAFT_STOP_CMD, Events.SPACECRAFT_INFO);
+
     }
 
     private void buildGui() {
         /** BUTTONS **/
         buttonContainer = new Container<HorizontalGroup>();
         buttonRow = new HorizontalGroup();
-        buttonRow.pad(0, 50, 10, 0);
+        buttonRow.pad(0, 70, 5, 0);
         buttonRow.space(3);
         buttonRow.setFillParent(true);
         buttonRow.align(Align.bottomLeft);
 
         stabilise = new OwnImageButton(skin, "sc-stabilise");
+        stabilise.setProgrammaticChangeEvents(false);
         stabilise.setName("stabilise");
         stabilise.setChecked(camera.isStabilising());
         stabilise.addListener(new EventListener() {
             @Override
             public boolean handle(Event event) {
                 if (event instanceof ChangeEvent) {
-                    EventManager.instance.post(Events.POST_NOTIFICATION, "Stabilise!");
+                    EventManager.instance.post(Events.SPACECRAFT_STABILISE_CMD, stabilise.isChecked());
                     return true;
                 }
                 return false;
@@ -190,13 +213,14 @@ public class SpacecraftGui implements IGui {
         stabilise.addListener(new TextTooltip("Stabilise the camera yaw, pitch and roll movements", skin));
 
         stop = new OwnImageButton(skin, "sc-stop");
+        stop.setProgrammaticChangeEvents(false);
         stop.setName("stop");
         stop.setChecked(camera.isStopping());
         stop.addListener(new EventListener() {
             @Override
             public boolean handle(Event event) {
                 if (event instanceof ChangeEvent) {
-                    EventManager.instance.post(Events.POST_NOTIFICATION, "Stop!");
+                    EventManager.instance.post(Events.SPACECRAFT_STOP_CMD, stop.isChecked());
                     return true;
                 }
                 return false;
@@ -213,16 +237,79 @@ public class SpacecraftGui implements IGui {
 
         /** ENGINE GROUP **/
         engineGroup = new HorizontalGroup();
-        engineGroup.pad(0, 10, 15, 0);
-        engineGroup.space(1);
-        engineGroup.setFillParent(true);
+        engineGroup.pad(0, 10, 5, 0);
+        engineGroup.space(0.5f);
         engineGroup.align(Align.bottomLeft);
 
-        /** Power slider - The value of the slider is the index of the thrustFactor array **/
-        enginePower = new Slider(0, SpacecraftCamera.thrustFactor.length - 1, 1, true, skin, "sc-engine");
+        // Engine controls
+        float enginePowerH = indicatory + indicatorh / 1.14f;
+        Table engineControls = new Table();
+        engineControls.pad(0f);
+
+        enginePlus = new OwnImageButton(skin, "sc-engine-power-up");
+        engineMinus = new OwnImageButton(skin, "sc-engine-power-down");
+
+        Group engineLabelRotated = new Group();
+        Label engineLabel = new OwnLabel("ENGINE POWER", skin);
+        engineLabelRotated.addActor(engineLabel);
+        float engineLabelH = enginePowerH - enginePlus.getHeight() - engineMinus.getHeight() - 2;
+        engineLabelRotated.addAction(Actions.rotateBy(-90));
+        engineLabelRotated.addAction(Actions.moveBy(-5, ((engineLabelH - enginePlus.getHeight()) - engineLabel.getWidth()) / 2f + engineLabel.getWidth()));
+        engineLabelRotated.setHeight(engineLabelH);
+
+        engineControls.add(enginePlus);
+        engineControls.row();
+        engineControls.add(engineLabelRotated);
+        engineControls.row();
+        engineControls.add(engineMinus);
+
+        // Power slider - The value of the slider is the index of the thrustFactor array 
+        enginePower = new OwnSlider(0, SpacecraftCamera.thrustFactor.length - 1, 1, true, skin, "sc-engine");
         enginePower.setName("engine power slider");
+        enginePower.setHeight(enginePowerH);
 
         engineGroup.addActor(enginePower);
+        engineGroup.addActor(engineControls);
+
+        engineGroup.pack();
+
+        /** INFORMATION **/
+        mainvel = new OwnLabel("", skin);
+        yawvel = new OwnLabel("", skin);
+        pitchvel = new OwnLabel("", skin);
+        rollvel = new OwnLabel("", skin);
+        closestname = new OwnLabel("Nearest", skin);
+        closestdist = new OwnLabel("Dist.", skin);
+
+        motionGroup = new VerticalGroup();
+        motionGroup.pad(0, 80, 200, 0);
+        motionGroup.space(1);
+        motionGroup.align(Align.topLeft);
+
+        HorizontalGroup ypGroup = new HorizontalGroup();
+        ypGroup.space(4);
+        ypGroup.addActor(yawvel);
+        ypGroup.addActor(pitchvel);
+
+        motionGroup.addActor(mainvel);
+        motionGroup.addActor(ypGroup);
+        motionGroup.addActor(rollvel);
+
+        motionGroup.pack();
+
+        /** NEAREST **/
+        nearestGroup = new VerticalGroup();
+        nearestGroup.pad(0, 160, 5, 0);
+        nearestGroup.space(1);
+        nearestGroup.align(Align.topLeft);
+
+        closestdist = new OwnLabel("", skin);
+        closestname = new OwnLabel("", skin);
+
+        nearestGroup.addActor(closestname);
+        nearestGroup.addActor(closestdist);
+
+        nearestGroup.pack();
 
         rebuildGui();
     }
@@ -231,6 +318,8 @@ public class SpacecraftGui implements IGui {
         if (ui != null) {
             ui.addActor(buttonContainer);
             ui.addActor(engineGroup);
+            ui.addActor(motionGroup);
+            ui.addActor(nearestGroup);
         }
 
         /** CAPTURE SCROLL FOCUS **/
@@ -280,7 +369,7 @@ public class SpacecraftGui implements IGui {
         /** ATTITUDE INDICATOR **/
         aiViewport.setCamera(aiCam);
         aiViewport.setWorldSize(indicatorw, indicatorh);
-        aiViewport.setScreenBounds(0, 0, indicatorw, indicatorh);
+        aiViewport.setScreenBounds((int) indicatorx, (int) indicatory, (int) indicatorw, (int) indicatorh);
         aiViewport.apply();
 
         mb.begin(aiCam);
@@ -327,8 +416,7 @@ public class SpacecraftGui implements IGui {
 
         // ai pointer
         sb.begin();
-        //spriteBatch.draw(controlPadTexture, 0, 0);
-        sb.draw(aiPointerTexture, indicatorw / 2 - 16, indicatorh / 2 - 16);
+        sb.draw(aiPointerTexture, indicatorx + indicatorw / 2 - 16, indicatory + indicatorh / 2 - 16);
         sb.end();
 
         /** REST OF GUI **/
@@ -384,5 +472,43 @@ public class SpacecraftGui implements IGui {
 
     private String txt(String key, Object... params) {
         return I18n.bundle.format(key, params);
+    }
+
+    @Override
+    public void notify(Events event, Object... data) {
+        switch (event) {
+        case SPACECRAFT_STABILISE_CMD:
+            Boolean state = (Boolean) data[0];
+            stabilise.setChecked(state);
+            break;
+        case SPACECRAFT_STOP_CMD:
+            state = (Boolean) data[0];
+            stop.setChecked(state);
+            break;
+        case SPACECRAFT_INFO:
+            Double y = -(Double) data[0];
+            Double p = -(Double) data[1];
+            Double r = (Double) data[2];
+            Double v = (Double) data[3];
+
+            yawvel.setText("y: " + nf.format(y) + "°");
+            pitchvel.setText("p: " + nf.format(p) + "°");
+            rollvel.setText("r: " + nf.format(r) + "°");
+
+            Object[] velstr = GlobalResources.doubleToVelocityString(v);
+            mainvel.setText("Speed: " + sf.format((Double) velstr[0]) + " " + (String) velstr[1]);
+
+            if (data[4] != null) {
+                closestname.setText("Nearest: " + (String) data[4]);
+                Object[] cldist = GlobalResources.floatToDistanceString((Float) data[5]);
+                closestdist.setText("Dist: " + sf.format((Double) cldist[0]) + " " + (String) cldist[1]);
+            } else {
+                closestname.setText("");
+                closestdist.setText("");
+            }
+
+            break;
+        }
+
     }
 }
