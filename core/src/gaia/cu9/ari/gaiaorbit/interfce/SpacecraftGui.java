@@ -33,6 +33,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Container;
 import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.ui.TextTooltip;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
@@ -58,8 +59,9 @@ public class SpacecraftGui implements IGui {
     protected Stage ui;
 
     private Container<HorizontalGroup> buttonContainer;
-    private HorizontalGroup buttonRow;
-    private OwnImageButton stabilise, stop;
+    private HorizontalGroup buttonRow, engineGroup;
+    private OwnImageButton stabilise, stop, enginePlus, engineMinus;
+    private Slider enginePower;
 
     /** The spacecraft camera **/
     private SpacecraftCamera camera;
@@ -164,6 +166,7 @@ public class SpacecraftGui implements IGui {
     }
 
     private void buildGui() {
+        /** BUTTONS **/
         buttonContainer = new Container<HorizontalGroup>();
         buttonRow = new HorizontalGroup();
         buttonRow.pad(0, 50, 10, 0);
@@ -171,7 +174,7 @@ public class SpacecraftGui implements IGui {
         buttonRow.setFillParent(true);
         buttonRow.align(Align.bottomLeft);
 
-        stabilise = new OwnImageButton(skin, "rec");
+        stabilise = new OwnImageButton(skin, "sc-stabilise");
         stabilise.setName("stabilise");
         stabilise.setChecked(camera.isStabilising());
         stabilise.addListener(new EventListener() {
@@ -186,7 +189,7 @@ public class SpacecraftGui implements IGui {
         });
         stabilise.addListener(new TextTooltip("Stabilise the camera yaw, pitch and roll movements", skin));
 
-        stop = new OwnImageButton(skin, "rec");
+        stop = new OwnImageButton(skin, "sc-stop");
         stop.setName("stop");
         stop.setChecked(camera.isStopping());
         stop.addListener(new EventListener() {
@@ -208,12 +211,26 @@ public class SpacecraftGui implements IGui {
 
         buttonContainer.pack();
 
+        /** ENGINE GROUP **/
+        engineGroup = new HorizontalGroup();
+        engineGroup.pad(0, 10, 15, 0);
+        engineGroup.space(1);
+        engineGroup.setFillParent(true);
+        engineGroup.align(Align.bottomLeft);
+
+        /** Power slider - The value of the slider is the index of the thrustFactor array **/
+        enginePower = new Slider(0, SpacecraftCamera.thrustFactor.length - 1, 1, true, skin, "sc-engine");
+        enginePower.setName("engine power slider");
+
+        engineGroup.addActor(enginePower);
+
         rebuildGui();
     }
 
     private void rebuildGui() {
         if (ui != null) {
             ui.addActor(buttonContainer);
+            ui.addActor(engineGroup);
         }
 
         /** CAPTURE SCROLL FOCUS **/
