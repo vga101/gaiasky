@@ -86,7 +86,9 @@ com.badlogic.gdx.scenes.scene2d.ui.Window$WindowStyle: {
 },
 com.badlogic.gdx.scenes.scene2d.ui.Slider$SliderStyle: {
 	default-horizontal: { background: default-slider, knob: default-slider-knob, knobBefore: default-slider-knob-before },
-	sc-engine: { background: sc-engine-power-bg, knob: sc-engine-power-knob, knobBefore: sc-engine-power-knob-before }
+	sc-engine: { background: sc-engine-power-bg, knob: sc-engine-power-knob, knobBefore: sc-engine-power-knob-before },
+	sc-thrust: { background: sc-thrust-bg, knobBefore: sc-thrust-knob-before },
+	sc-thrust-minus: { background: sc-thrust-bg, knobAfter: sc-thrust-knob-before }
 },
 com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
 	header:  { font: ui-14, fontColor: orange },

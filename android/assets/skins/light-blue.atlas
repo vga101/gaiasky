@@ -538,3 +538,18 @@ sc-exit-checked
   orig: 24, 24
   offset: 0, 0
   index: -1 
+sc-thrust-bg
+  rotate: false
+  xy: 0, 157
+  size: 5, 1
+  split: 0, 0, 0, 0
+  orig: 5, 1
+  offset: 0, 0
+  index: -1
+sc-thrust-knob-before
+  rotate: false
+  xy: 0, 155
+  size: 5, 1
+  orig: 5, 1
+  offset: 0, 0
+  index: -1
