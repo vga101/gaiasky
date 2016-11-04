@@ -69,11 +69,12 @@ public class SpacecraftGui implements IGui, IObserver {
     protected Stage ui;
 
     private Container<HorizontalGroup> buttonContainer;
+    private Container<Label> thrustContainer;
     private HorizontalGroup buttonRow, engineGroup;
     private VerticalGroup motionGroup, nearestGroup;
     private OwnImageButton stabilise, stop, enginePlus, engineMinus;
     private Slider enginePower;
-    private OwnLabel mainvel, yawvel, pitchvel, rollvel, closestname, closestdist;
+    private OwnLabel mainvel, yawvel, pitchvel, rollvel, closestname, closestdist, thrustfactor;
 
     /** The spacecraft camera **/
     private SpacecraftCamera camera;
@@ -105,6 +106,8 @@ public class SpacecraftGui implements IGui, IObserver {
 
     /** Aux vectors **/
     private Vector3 aux3f1, aux3f2;
+
+    private boolean thrustEvents = true;
 
     public SpacecraftGui(SpacecraftCamera camera) {
         super();
@@ -183,7 +186,7 @@ public class SpacecraftGui implements IGui, IObserver {
 
         buildGui();
 
-        EventManager.instance.subscribe(this, Events.SPACECRAFT_STABILISE_CMD, Events.SPACECRAFT_STOP_CMD, Events.SPACECRAFT_INFO);
+        EventManager.instance.subscribe(this, Events.SPACECRAFT_STABILISE_CMD, Events.SPACECRAFT_STOP_CMD, Events.SPACECRAFT_INFO, Events.SPACECRAFT_THRUST_INFO);
 
     }
 
@@ -247,7 +250,29 @@ public class SpacecraftGui implements IGui, IObserver {
         engineControls.pad(0f);
 
         enginePlus = new OwnImageButton(skin, "sc-engine-power-up");
+        enginePlus.addListener(new EventListener() {
+            @Override
+            public boolean handle(Event event) {
+                if (event instanceof ChangeEvent) {
+                    EventManager.instance.post(Events.SPACECRAFT_THRUST_INCREASE_CMD);
+                    return true;
+                }
+                return false;
+            }
+
+        });
         engineMinus = new OwnImageButton(skin, "sc-engine-power-down");
+        engineMinus.addListener(new EventListener() {
+            @Override
+            public boolean handle(Event event) {
+                if (event instanceof ChangeEvent) {
+                    EventManager.instance.post(Events.SPACECRAFT_THRUST_DECREASE_CMD);
+                    return true;
+                }
+                return false;
+            }
+
+        });
 
         Group engineLabelRotated = new Group();
         Label engineLabel = new OwnLabel("ENGINE POWER", skin);
@@ -266,7 +291,19 @@ public class SpacecraftGui implements IGui, IObserver {
         // Power slider - The value of the slider is the index of the thrustFactor array 
         enginePower = new OwnSlider(0, SpacecraftCamera.thrustFactor.length - 1, 1, true, skin, "sc-engine");
         enginePower.setName("engine power slider");
+        enginePower.setValue(1);
         enginePower.setHeight(enginePowerH);
+        enginePower.addListener(new EventListener() {
+            @Override
+            public boolean handle(Event event) {
+                if (thrustEvents)
+                    if (event instanceof ChangeEvent) {
+                        EventManager.instance.post(Events.SPACECRAFT_THRUST_SET_CMD, Math.round(enginePower.getValue()));
+                        return true;
+                    }
+                return false;
+            }
+        });
 
         engineGroup.addActor(enginePower);
         engineGroup.addActor(engineControls);
@@ -274,6 +311,11 @@ public class SpacecraftGui implements IGui, IObserver {
         engineGroup.pack();
 
         /** INFORMATION **/
+
+        thrustfactor = new OwnLabel("", skin);
+        thrustContainer = new Container<Label>(thrustfactor);
+        thrustContainer.pad(0, 40, enginePowerH * 2 + 25, 0);
+
         mainvel = new OwnLabel("", skin);
         yawvel = new OwnLabel("", skin);
         pitchvel = new OwnLabel("", skin);
@@ -320,6 +362,7 @@ public class SpacecraftGui implements IGui, IObserver {
             ui.addActor(engineGroup);
             ui.addActor(motionGroup);
             ui.addActor(nearestGroup);
+            ui.addActor(thrustContainer);
         }
 
         /** CAPTURE SCROLL FOCUS **/
@@ -490,6 +533,7 @@ public class SpacecraftGui implements IGui, IObserver {
             Double p = -(Double) data[1];
             Double r = (Double) data[2];
             Double v = (Double) data[3];
+            Double thf = (Double) data[6];
 
             yawvel.setText("y: " + nf.format(y) + "°");
             pitchvel.setText("p: " + nf.format(p) + "°");
@@ -507,6 +551,15 @@ public class SpacecraftGui implements IGui, IObserver {
                 closestdist.setText("");
             }
 
+            thrustfactor.setText("x" + (thf > 1000 ? sf.format(thf) : nf.format(thf)));
+
+            break;
+        case SPACECRAFT_THRUST_INFO:
+            thrustEvents = false;
+
+            enginePower.setValue((Integer) data[0]);
+
+            thrustEvents = true;
             break;
         }
 

@@ -505,7 +505,16 @@ public enum Events {
     /** Stop spacecraft, contains boolean with state **/
     SPACECRAFT_STOP_CMD,
 
-    /** Contains info such as current speed, yaw, pitch and roll angular velocities, nearest object and distance to it **/
+    /** Increases thrust **/
+    SPACECRAFT_THRUST_INCREASE_CMD,
+    /** Decreases thrust **/
+    SPACECRAFT_THRUST_DECREASE_CMD,
+    /** Contains the integer index of the new thrust **/
+    SPACECRAFT_THRUST_SET_CMD,
+    /** Broadcasts the new thrust index **/
+    SPACECRAFT_THRUST_INFO,
+
+    /** Contains info such as current speed, yaw, pitch and roll angular velocities, nearest object, distance to it and thrust factor **/
     SPACECRAFT_INFO,
 
     /**

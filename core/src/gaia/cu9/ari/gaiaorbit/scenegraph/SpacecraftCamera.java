@@ -157,7 +157,7 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
         chh2 = crosshairTex.getHeight() / 2f;
 
         // Focus is changed from GUI
-        EventManager.instance.subscribe(this, Events.FOV_CHANGED_CMD, Events.SPACECRAFT_STABILISE_CMD, Events.SPACECRAFT_STOP_CMD);
+        EventManager.instance.subscribe(this, Events.FOV_CHANGED_CMD, Events.SPACECRAFT_STABILISE_CMD, Events.SPACECRAFT_STOP_CMD, Events.SPACECRAFT_THRUST_DECREASE_CMD, Events.SPACECRAFT_THRUST_INCREASE_CMD, Events.SPACECRAFT_THRUST_SET_CMD);
     }
 
     public Quaternion getRotationQuaternion() {
@@ -331,7 +331,7 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
             cldist = ModelBody.closestCamStar.distToCamera;
         }
 
-        EventManager.instance.post(Events.SPACECRAFT_INFO, yaw % 360, pitch % 360, roll % 360, vel.len(), clname, cldist);
+        EventManager.instance.post(Events.SPACECRAFT_INFO, yaw % 360, pitch % 360, roll % 360, vel.len(), clname, cldist, thrustFactor[thrustFactorIndex]);
 
     }
 
@@ -442,16 +442,28 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
         this.rollp = MathUtilsd.clamp(rollp, -1, 1);
     }
 
-    public void increaseThrustFactorIndex() {
+    public void increaseThrustFactorIndex(boolean broadcast) {
         thrustFactorIndex = (thrustFactorIndex + 1) % thrustFactor.length;
         EventManager.instance.post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), "Thrust factor: " + thrustFactor[thrustFactorIndex]);
+        if (broadcast)
+            EventManager.instance.post(Events.SPACECRAFT_THRUST_INFO, thrustFactorIndex);
     }
 
-    public void decreaseThrustFactorIndex() {
+    public void decreaseThrustFactorIndex(boolean broadcast) {
         thrustFactorIndex = thrustFactorIndex - 1;
         if (thrustFactorIndex < 0)
             thrustFactorIndex = thrustFactor.length - 1;
         EventManager.instance.post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), "Thrust factor: " + thrustFactor[thrustFactorIndex]);
+        if (broadcast)
+            EventManager.instance.post(Events.SPACECRAFT_THRUST_INFO, thrustFactorIndex);
+    }
+
+    public void setThrustFactorIndex(int i, boolean broadcast) {
+        assert i >= 0 && i < thrustFactor.length : "Index " + i + " out of range of thrustFactor vector: [0.." + (thrustFactor.length - 1);
+        thrustFactorIndex = i;
+        EventManager.instance.post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), "Thrust factor: " + thrustFactor[thrustFactorIndex]);
+        if (broadcast)
+            EventManager.instance.post(Events.SPACECRAFT_THRUST_INFO, thrustFactorIndex);
     }
 
     @Override
@@ -515,6 +527,16 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
         case SPACECRAFT_STOP_CMD:
             stopping = (Boolean) data[0];
             break;
+        case SPACECRAFT_THRUST_DECREASE_CMD:
+            decreaseThrustFactorIndex(true);
+            break;
+        case SPACECRAFT_THRUST_INCREASE_CMD:
+            increaseThrustFactorIndex(true);
+            break;
+        case SPACECRAFT_THRUST_SET_CMD:
+            setThrustFactorIndex((Integer) data[0], false);
+            break;
+
         }
 
     }
@@ -596,11 +618,11 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
                     break;
                 case Keys.PAGE_UP:
                     // Increase thrust factor
-                    camera.increaseThrustFactorIndex();
+                    camera.increaseThrustFactorIndex(true);
                     break;
                 case Keys.PAGE_DOWN:
                     // Decrease thrust length
-                    camera.decreaseThrustFactorIndex();
+                    camera.decreaseThrustFactorIndex(true);
                     break;
                 }
             }
@@ -671,10 +693,10 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
         public boolean buttonDown(Controller controller, int buttonCode) {
             switch (buttonCode) {
             case XBox360Mappings.BUTTON_A:
-                cam.increaseThrustFactorIndex();
+                cam.increaseThrustFactorIndex(true);
                 break;
             case XBox360Mappings.BUTTON_X:
-                cam.decreaseThrustFactorIndex();
+                cam.decreaseThrustFactorIndex(true);
                 break;
 
             }
