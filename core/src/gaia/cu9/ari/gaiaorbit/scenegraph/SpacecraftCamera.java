@@ -40,6 +40,9 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
 
     private static final double stopAt = 10000 * Constants.M_TO_U;
 
+    /** Seconds to reach full power **/
+    private static final double fullPowerTime = 0.5;
+
     /** Camera to render the attitude indicator system **/
     private PerspectiveCamera guiCam;
 
@@ -80,7 +83,6 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
 
     /** Aux vectors **/
     private Vector3d aux3d1, aux3d2, aux3d3;
-    private Vector3 aux3f1, aux3f2;
     private Quaternion qf;
 
     /** The input controller attached to this camera **/
@@ -124,8 +126,6 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
         aux3d1 = new Vector3d();
         aux3d2 = new Vector3d();
         aux3d3 = new Vector3d();
-        aux3f1 = new Vector3();
-        aux3f2 = new Vector3();
         qf = new Quaternion();
 
         // init camera
@@ -203,6 +203,9 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
 
     @Override
     public void update(float dt, ITimeFrameProvider time) {
+        // Poll keys
+        pollKeys(dt);
+
         distance = pos.len();
         /** POSITION **/
         // Compute force from thrust
@@ -331,7 +334,7 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
             cldist = ModelBody.closestCamStar.distToCamera;
         }
 
-        EventManager.instance.post(Events.SPACECRAFT_INFO, yaw % 360, pitch % 360, roll % 360, vel.len(), clname, cldist, thrustFactor[thrustFactorIndex]);
+        EventManager.instance.post(Events.SPACECRAFT_INFO, yaw % 360, pitch % 360, roll % 360, vel.len(), clname, cldist, thrustFactor[thrustFactorIndex], enginePower, yawp, pitchp, rollp);
 
     }
 
@@ -559,6 +562,29 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
         }
     }
 
+    private void pollKeys(float dt) {
+        double powerStep = dt / fullPowerTime;
+        if (Gdx.input.isKeyPressed(Keys.W))
+            setEnginePower(enginePower + powerStep);
+        if (Gdx.input.isKeyPressed(Keys.S))
+            setEnginePower(enginePower - powerStep);
+
+        if (Gdx.input.isKeyPressed(Keys.A))
+            setRollPower(rollp + powerStep);
+        if (Gdx.input.isKeyPressed(Keys.D))
+            setRollPower(rollp - powerStep);
+
+        if (Gdx.input.isKeyPressed(Keys.DOWN))
+            setPitchPower(pitchp + powerStep);
+        if (Gdx.input.isKeyPressed(Keys.UP))
+            setPitchPower(pitchp - powerStep);
+
+        if (Gdx.input.isKeyPressed(Keys.LEFT))
+            setYawPower(yawp + powerStep);
+        if (Gdx.input.isKeyPressed(Keys.RIGHT))
+            setYawPower(yawp - powerStep);
+    }
+
     /**
      * Input controller for the spacecraft camera
      * @author tsagrista
@@ -575,45 +601,46 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
         @Override
         public boolean keyDown(int keycode) {
             if (GlobalConf.runtime.INPUT_ENABLED) {
+                double step = 0.01;
                 switch (keycode) {
                 case Keys.W:
                     // power 1
-                    camera.setEnginePower(1);
+                    camera.setEnginePower(enginePower + step);
                     EventManager.instance.post(Events.SPACECRAFT_STOP_CMD, false);
                     break;
                 case Keys.S:
                     // power -1
-                    camera.setEnginePower(-1);
+                    camera.setEnginePower(enginePower - step);
                     EventManager.instance.post(Events.SPACECRAFT_STOP_CMD, false);
                     break;
                 case Keys.A:
                     // roll 1
-                    camera.setRollPower(1);
+                    camera.setRollPower(rollp + step);
                     EventManager.instance.post(Events.SPACECRAFT_STOP_CMD, false);
                     break;
                 case Keys.D:
                     // roll -1
-                    camera.setRollPower(-1);
+                    camera.setRollPower(rollp - step);
                     EventManager.instance.post(Events.SPACECRAFT_STABILISE_CMD, false);
                     break;
                 case Keys.DOWN:
                     // pitch 1
-                    camera.setPitchPower(1);
+                    camera.setPitchPower(pitchp + step);
                     EventManager.instance.post(Events.SPACECRAFT_STABILISE_CMD, false);
                     break;
                 case Keys.UP:
                     // pitch -1
-                    camera.setPitchPower(-1);
+                    camera.setPitchPower(pitchp - step);
                     EventManager.instance.post(Events.SPACECRAFT_STABILISE_CMD, false);
                     break;
                 case Keys.LEFT:
                     // yaw 1
-                    camera.setYawPower(1);
+                    camera.setYawPower(yawp + step);
                     EventManager.instance.post(Events.SPACECRAFT_STABILISE_CMD, false);
                     break;
                 case Keys.RIGHT:
                     // yaw -1
-                    camera.setYawPower(-1);
+                    camera.setYawPower(yawp - step);
                     EventManager.instance.post(Events.SPACECRAFT_STABILISE_CMD, false);
                     break;
                 case Keys.PAGE_UP:
@@ -693,12 +720,18 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
         public boolean buttonDown(Controller controller, int buttonCode) {
             switch (buttonCode) {
             case XBox360Mappings.BUTTON_A:
-                cam.increaseThrustFactorIndex(true);
-                break;
-            case XBox360Mappings.BUTTON_X:
                 cam.decreaseThrustFactorIndex(true);
                 break;
-
+            case XBox360Mappings.BUTTON_X:
+                cam.increaseThrustFactorIndex(true);
+                break;
+            case XBox360Mappings.BUTTON_LB:
+                System.out.println("LB");
+                EventManager.instance.post(Events.SPACECRAFT_STABILISE_CMD, true);
+                break;
+            case XBox360Mappings.BUTTON_RB:
+                EventManager.instance.post(Events.SPACECRAFT_STOP_CMD, true);
+                break;
             }
             return true;
         }
@@ -718,17 +751,20 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
             switch (axisCode) {
             case XBox360Mappings.AXIS_JOY2HOR:
                 cam.setRollPower(-value);
-                EventManager.instance.post(Events.SPACECRAFT_STABILISE_CMD, false);
+                if (Math.abs(value) > 0.3)
+                    EventManager.instance.post(Events.SPACECRAFT_STABILISE_CMD, false);
                 treated = true;
                 break;
             case XBox360Mappings.AXIS_JOY1VERT:
                 cam.setPitchPower(value);
-                EventManager.instance.post(Events.SPACECRAFT_STABILISE_CMD, false);
+                if (Math.abs(value) > 0.3)
+                    EventManager.instance.post(Events.SPACECRAFT_STABILISE_CMD, false);
                 treated = true;
                 break;
             case XBox360Mappings.AXIS_JOY1HOR:
                 cam.setYawPower(-value);
-                EventManager.instance.post(Events.SPACECRAFT_STABILISE_CMD, false);
+                if (Math.abs(value) > 0.3)
+                    EventManager.instance.post(Events.SPACECRAFT_STABILISE_CMD, false);
                 treated = true;
                 break;
             case XBox360Mappings.AXIS_JOY2VERT:
@@ -736,14 +772,17 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
                 break;
             case XBox360Mappings.AXIS_RT:
                 cam.setEnginePower((value + 1) / 2);
-                EventManager.instance.post(Events.SPACECRAFT_STOP_CMD, false);
+                if (Math.abs(value) > 0.3)
+                    EventManager.instance.post(Events.SPACECRAFT_STOP_CMD, false);
                 treated = true;
                 break;
             case XBox360Mappings.AXIS_LT:
                 cam.setEnginePower(-(value + 1) / 2);
-                EventManager.instance.post(Events.SPACECRAFT_STOP_CMD, false);
+                if (Math.abs(value) > 0.3)
+                    EventManager.instance.post(Events.SPACECRAFT_STOP_CMD, false);
                 treated = true;
                 break;
+
             }
             return treated;
         }

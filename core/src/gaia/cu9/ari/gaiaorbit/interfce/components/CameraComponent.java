@@ -45,7 +45,7 @@ public class CameraComponent extends GuiComponent implements IObserver {
 
     public CameraComponent(Skin skin, Stage stage) {
         super(skin, stage);
-        EventManager.instance.subscribe(this, Events.CAMERA_MODE_CMD, Events.ROTATION_SPEED_CMD, Events.TURNING_SPEED_CMD, Events.CAMERA_SPEED_CMD, Events.SPEED_LIMIT_CMD, Events.TOGGLE_STEREOSCOPIC_INFO, Events.FOV_CHANGE_NOTIFICATION);
+        EventManager.instance.subscribe(this, Events.CAMERA_MODE_CMD, Events.ROTATION_SPEED_CMD, Events.TURNING_SPEED_CMD, Events.CAMERA_SPEED_CMD, Events.SPEED_LIMIT_CMD, Events.TOGGLE_STEREOSCOPIC_INFO, Events.FOV_CHANGE_NOTIFICATION, Events.CUBEMAP360_CMD);
     }
 
     @Override
@@ -127,13 +127,14 @@ public class CameraComponent extends GuiComponent implements IObserver {
         });
 
         buttonCubemap = new OwnTextIconButton("", imgCubemap, skin, "toggle");
+        buttonCubemap.setProgrammaticChangeEvents(false);
         buttonCubemap.addListener(new TextTooltip(GlobalResources.capitalise(txt("element.360")), skin));
         buttonCubemap.setName("cubemap");
         buttonCubemap.addListener(new EventListener() {
             @Override
             public boolean handle(Event event) {
                 if (event instanceof ChangeEvent) {
-                    EventManager.instance.post(Events.CUBEMAP360_CMD, buttonCubemap.isChecked());
+                    EventManager.instance.post(Events.CUBEMAP360_CMD, buttonCubemap.isChecked(), true);
                     return true;
                 }
                 return false;
@@ -409,6 +410,17 @@ public class CameraComponent extends GuiComponent implements IObserver {
             fieldOfView.setValue(GlobalConf.scene.CAMERA_FOV);
             fov.setText(Integer.toString((int) GlobalConf.scene.CAMERA_FOV) + "°");
             fovFlag = true;
+            break;
+        case CUBEMAP360_CMD:
+            if (data.length > 1) {
+                if (!(Boolean) data[1]) {
+                    // Not coming from interface
+                    buttonCubemap.setChecked((Boolean) data[0]);
+                }
+            } else {
+                // Not coming from interface
+                buttonCubemap.setChecked((Boolean) data[0]);
+            }
             break;
         }
 

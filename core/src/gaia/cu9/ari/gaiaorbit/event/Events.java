@@ -286,7 +286,7 @@ public enum Events {
     TOGGLE_STEREOSCOPIC_INFO,
     /** Switches stereoscopic mode images, left to right and right to left **/
     TOGGLE_STEREO_PROFILE_CMD,
-    /** Sets the 360 mode. Contains a boolean with the new state **/
+    /** Sets the 360 mode. Contains a boolean with the new state and an optional boolean indicating whether this comes from the interface **/
     CUBEMAP360_CMD,
     /** Anti aliasing changed, contains the new value for aa **/
     ANTIALIASING_CMD,
@@ -514,7 +514,31 @@ public enum Events {
     /** Broadcasts the new thrust index **/
     SPACECRAFT_THRUST_INFO,
 
-    /** Contains info such as current speed, yaw, pitch and roll angular velocities, nearest object, distance to it and thrust factor **/
+    /** Contains following info:
+     * <ul><li>
+     * current speed [u/s]
+     * </li><li>
+     * current yaw angle [deg]
+     * </li><li>
+     * current pitch angle [deg]
+     * </li><li>
+     * current roll angle [deg]
+     * </li><li>
+     * nearest object name
+     * </li><li>
+     * distance to nearest object [u]
+     * </li><li>
+     * thrust factor
+     * </li><li>
+     * engine power [-1..1]
+     * </li><li>
+     * yaw power  [-1..1]
+     * </li><li>
+     * pitch power [-1..1]
+     * </li><li>
+     * roll power [-1..1]
+     * </li></ul>
+     **/
     SPACECRAFT_INFO,
 
     /**

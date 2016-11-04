@@ -524,3 +524,17 @@ sc-stop-checked
   orig: 24, 24
   offset: 0, 0
   index: -1 
+sc-exit
+  rotate: false
+  xy: 90, 131
+  size: 24, 24
+  orig: 24, 24
+  offset: 0, 0
+  index: -1  
+sc-exit-checked
+  rotate: false
+  xy: 90, 156
+  size: 24, 24
+  orig: 24, 24
+  offset: 0, 0
+  index: -1 

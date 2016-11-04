@@ -51,6 +51,7 @@ import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
+import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SpacecraftCamera;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
@@ -71,9 +72,11 @@ public class SpacecraftGui implements IGui, IObserver {
     private Container<HorizontalGroup> buttonContainer;
     private Container<Label> thrustContainer;
     private HorizontalGroup buttonRow, engineGroup;
-    private VerticalGroup motionGroup, nearestGroup;
-    private OwnImageButton stabilise, stop, enginePlus, engineMinus;
+    private VerticalGroup motionGroup, nearestGroup, thrustGroup;
+    private OwnImageButton stabilise, stop, exit, enginePlus, engineMinus;
     private Slider enginePower;
+    private Slider thrustv, thrusty, thrustp, thrustr;
+    private Slider thrustvm, thrustym, thrustpm, thrustrm;
     private OwnLabel mainvel, yawvel, pitchvel, rollvel, closestname, closestdist, thrustfactor;
 
     /** The spacecraft camera **/
@@ -213,11 +216,11 @@ public class SpacecraftGui implements IGui, IObserver {
                 return false;
             }
         });
-        stabilise.addListener(new TextTooltip("Stabilise the camera yaw, pitch and roll movements", skin));
+        stabilise.addListener(new TextTooltip(txt("gui.tooltip.sc.stabilise"), skin));
 
         stop = new OwnImageButton(skin, "sc-stop");
         stop.setProgrammaticChangeEvents(false);
-        stop.setName("stop");
+        stop.setName("stop spacecraft");
         stop.setChecked(camera.isStopping());
         stop.addListener(new EventListener() {
             @Override
@@ -229,10 +232,26 @@ public class SpacecraftGui implements IGui, IObserver {
                 return false;
             }
         });
-        stop.addListener(new TextTooltip("Stop the camera forward movement", skin));
+        stop.addListener(new TextTooltip(txt("gui.tooltip.sc.stop"), skin));
+
+        exit = new OwnImageButton(skin, "sc-exit");
+        exit.setProgrammaticChangeEvents(false);
+        exit.setName("exit spacecraft");
+        exit.addListener(new EventListener() {
+            @Override
+            public boolean handle(Event event) {
+                if (event instanceof ChangeEvent) {
+                    EventManager.instance.post(Events.CAMERA_MODE_CMD, CameraMode.Focus);
+                    return true;
+                }
+                return false;
+            }
+        });
+        exit.addListener(new TextTooltip(txt("gui.tooltip.sc.exit"), skin));
 
         buttonRow.addActor(stabilise);
         buttonRow.addActor(stop);
+        buttonRow.addActor(exit);
 
         buttonContainer.setActor(buttonRow);
 
@@ -250,6 +269,7 @@ public class SpacecraftGui implements IGui, IObserver {
         engineControls.pad(0f);
 
         enginePlus = new OwnImageButton(skin, "sc-engine-power-up");
+        enginePlus.addListener(new TextTooltip(txt("gui.tooltip.sc.powerup"), skin));
         enginePlus.addListener(new EventListener() {
             @Override
             public boolean handle(Event event) {
@@ -262,6 +282,7 @@ public class SpacecraftGui implements IGui, IObserver {
 
         });
         engineMinus = new OwnImageButton(skin, "sc-engine-power-down");
+        enginePlus.addListener(new TextTooltip(txt("gui.tooltip.sc.powerdown"), skin));
         engineMinus.addListener(new EventListener() {
             @Override
             public boolean handle(Event event) {
@@ -311,17 +332,31 @@ public class SpacecraftGui implements IGui, IObserver {
         engineGroup.pack();
 
         /** INFORMATION **/
-
+        int groupspacing = 2;
         thrustfactor = new OwnLabel("", skin);
         thrustContainer = new Container<Label>(thrustfactor);
         thrustContainer.pad(0, 40, enginePowerH * 2 + 25, 0);
 
         mainvel = new OwnLabel("", skin);
+        HorizontalGroup mvg = new HorizontalGroup();
+        mvg.space(groupspacing);
+        mvg.addActor(new OwnLabel(txt("gui.sc.velocity") + ":", skin, "sc-header"));
+        mvg.addActor(mainvel);
         yawvel = new OwnLabel("", skin);
+        HorizontalGroup yvg = new HorizontalGroup();
+        yvg.space(groupspacing);
+        yvg.addActor(new OwnLabel(txt("gui.sc.yaw") + ":", skin, "sc-header"));
+        yvg.addActor(yawvel);
         pitchvel = new OwnLabel("", skin);
+        HorizontalGroup pvg = new HorizontalGroup();
+        pvg.space(groupspacing);
+        pvg.addActor(new OwnLabel(txt("gui.sc.pitch") + ":", skin, "sc-header"));
+        pvg.addActor(pitchvel);
         rollvel = new OwnLabel("", skin);
-        closestname = new OwnLabel("Nearest", skin);
-        closestdist = new OwnLabel("Dist.", skin);
+        HorizontalGroup rvg = new HorizontalGroup();
+        rvg.space(groupspacing);
+        rvg.addActor(new OwnLabel(txt("gui.sc.roll") + ":", skin, "sc-header"));
+        rvg.addActor(rollvel);
 
         motionGroup = new VerticalGroup();
         motionGroup.pad(0, 80, 200, 0);
@@ -330,12 +365,12 @@ public class SpacecraftGui implements IGui, IObserver {
 
         HorizontalGroup ypGroup = new HorizontalGroup();
         ypGroup.space(4);
-        ypGroup.addActor(yawvel);
-        ypGroup.addActor(pitchvel);
+        ypGroup.addActor(yvg);
+        ypGroup.addActor(pvg);
 
-        motionGroup.addActor(mainvel);
+        motionGroup.addActor(mvg);
         motionGroup.addActor(ypGroup);
-        motionGroup.addActor(rollvel);
+        motionGroup.addActor(rvg);
 
         motionGroup.pack();
 
@@ -345,13 +380,76 @@ public class SpacecraftGui implements IGui, IObserver {
         nearestGroup.space(1);
         nearestGroup.align(Align.topLeft);
 
-        closestdist = new OwnLabel("", skin);
         closestname = new OwnLabel("", skin);
+        closestdist = new OwnLabel("", skin);
+        HorizontalGroup cng = new HorizontalGroup();
+        cng.space(groupspacing);
+        cng.addActor(new OwnLabel(txt("gui.sc.nearest") + ":", skin, "sc-header"));
+        cng.addActor(closestname);
 
-        nearestGroup.addActor(closestname);
-        nearestGroup.addActor(closestdist);
+        HorizontalGroup cdg = new HorizontalGroup();
+        cdg.space(groupspacing);
+        cdg.addActor(new OwnLabel(txt("gui.sc.distance") + ":", skin, "sc-header"));
+        cdg.addActor(closestdist);
+
+        nearestGroup.addActor(cng);
+        nearestGroup.addActor(cdg);
 
         nearestGroup.pack();
+
+        /** THRUST INDICATORS for VEL, YAW, PITCH, ROLL **/
+        int thrustHeight = 40;
+        thrustGroup = new VerticalGroup();
+        thrustGroup.space(1f);
+        thrustGroup.pad(0, 215, 85, 0);
+
+        HorizontalGroup thrustPlus = new HorizontalGroup().space(1f);
+        HorizontalGroup thrustMinus = new HorizontalGroup().space(1f);
+
+        thrustv = new OwnSlider(0, 1, 0.05f, true, skin, "sc-thrust");
+        thrustv.setHeight(thrustHeight);
+        thrustv.setDisabled(true);
+        thrustvm = new OwnSlider(0, 1, 0.05f, true, skin, "sc-thrust-minus");
+        thrustvm.setHeight(thrustHeight);
+        thrustvm.setDisabled(true);
+
+        thrusty = new OwnSlider(0, 1, 0.05f, true, skin, "sc-thrust");
+        thrusty.setHeight(thrustHeight);
+        thrusty.setDisabled(true);
+        thrustym = new OwnSlider(0, 1, 0.05f, true, skin, "sc-thrust-minus");
+        thrustym.setHeight(thrustHeight);
+        thrustym.setDisabled(true);
+
+        thrustp = new OwnSlider(0, 1, 0.05f, true, skin, "sc-thrust");
+        thrustp.setHeight(thrustHeight);
+        thrustp.setDisabled(true);
+        thrustpm = new OwnSlider(0, 1, 0.05f, true, skin, "sc-thrust-minus");
+        thrustpm.setHeight(thrustHeight);
+        thrustpm.setDisabled(true);
+
+        thrustr = new OwnSlider(0, 1, 0.05f, true, skin, "sc-thrust");
+        thrustr.setHeight(thrustHeight);
+        thrustr.setDisabled(true);
+        thrustrm = new OwnSlider(0, 1, 0.05f, true, skin, "sc-thrust-minus");
+        thrustrm.setHeight(thrustHeight);
+        thrustrm.setDisabled(true);
+
+        thrustPlus.addActor(thrustv);
+        thrustMinus.addActor(thrustvm);
+
+        thrustPlus.addActor(thrusty);
+        thrustMinus.addActor(thrustym);
+
+        thrustPlus.addActor(thrustp);
+        thrustMinus.addActor(thrustpm);
+
+        thrustPlus.addActor(thrustr);
+        thrustMinus.addActor(thrustrm);
+
+        thrustGroup.addActor(thrustPlus);
+        thrustGroup.addActor(thrustMinus);
+
+        thrustGroup.pack();
 
         rebuildGui();
     }
@@ -363,6 +461,7 @@ public class SpacecraftGui implements IGui, IObserver {
             ui.addActor(motionGroup);
             ui.addActor(nearestGroup);
             ui.addActor(thrustContainer);
+            ui.addActor(thrustGroup);
         }
 
         /** CAPTURE SCROLL FOCUS **/
@@ -529,29 +628,38 @@ public class SpacecraftGui implements IGui, IObserver {
             stop.setChecked(state);
             break;
         case SPACECRAFT_INFO:
-            Double y = -(Double) data[0];
-            Double p = -(Double) data[1];
-            Double r = (Double) data[2];
-            Double v = (Double) data[3];
-            Double thf = (Double) data[6];
+            double y = -(Double) data[0];
+            double p = -(Double) data[1];
+            double r = (Double) data[2];
+            double v = (Double) data[3];
+            double thf = (Double) data[6];
+            double epow = (Double) data[7];
+            double ypow = (Double) data[8];
+            double ppow = (Double) data[9];
+            double rpow = (Double) data[10];
 
-            yawvel.setText("y: " + nf.format(y) + "°");
-            pitchvel.setText("p: " + nf.format(p) + "°");
-            rollvel.setText("r: " + nf.format(r) + "°");
+            yawvel.setText(nf.format(y) + "°");
+            pitchvel.setText(nf.format(p) + "°");
+            rollvel.setText(nf.format(r) + "°");
 
             Object[] velstr = GlobalResources.doubleToVelocityString(v);
-            mainvel.setText("Speed: " + sf.format((Double) velstr[0]) + " " + (String) velstr[1]);
+            mainvel.setText(sf.format((Double) velstr[0]) + " " + (String) velstr[1]);
 
             if (data[4] != null) {
-                closestname.setText("Nearest: " + (String) data[4]);
+                closestname.setText((String) data[4]);
                 Object[] cldist = GlobalResources.floatToDistanceString((Float) data[5]);
-                closestdist.setText("Dist: " + sf.format((Double) cldist[0]) + " " + (String) cldist[1]);
+                closestdist.setText(sf.format((Double) cldist[0]) + " " + (String) cldist[1]);
             } else {
                 closestname.setText("");
                 closestdist.setText("");
             }
 
             thrustfactor.setText("x" + (thf > 1000 ? sf.format(thf) : nf.format(thf)));
+
+            setPowerValuesSlider(thrustv, thrustvm, epow);
+            setPowerValuesSlider(thrusty, thrustym, ypow);
+            setPowerValuesSlider(thrustp, thrustpm, ppow);
+            setPowerValuesSlider(thrustr, thrustrm, rpow);
 
             break;
         case SPACECRAFT_THRUST_INFO:
@@ -563,5 +671,17 @@ public class SpacecraftGui implements IGui, IObserver {
             break;
         }
 
+    }
+
+    private void setPowerValuesSlider(Slider plus, Slider minus, double value) {
+        plus.setValue((float) value);
+        minus.setValue(1f + (float) value);
+        //        if (value >= 0) {
+        //            plus.setValue((float) value);
+        //            minus.setValue(1);
+        //        } else {
+        //            plus.setValue(0);
+        //            minus.setValue(1 - (float) value);
+        //        }
     }
 }

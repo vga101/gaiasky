@@ -24,6 +24,7 @@ com.badlogic.gdx.graphics.Color: {
 	red: { a: 1, b: 0, g: 0, r: 1 },
 	black: { a: 1, b: 0, g: 0, r: 0 },
 	blue: { a: 1, b: .8, g: 0.1, r: 0.1 },
+	sc-blue: {a: 1, b: 0.756, g: 0.603, r: 0.34 },
 	orange: { a: 1, b: 0, g: 0.7, r: 1 }
 },
 com.badlogic.gdx.scenes.scene2d.ui.Skin$TintedDrawable: {
@@ -58,7 +59,8 @@ com.badlogic.gdx.scenes.scene2d.ui.ImageButton$ImageButtonStyle: {
 	sc-stabilise: { imageUp: sc-stabilise, imageChecked: sc-stabilise-checked },
 	sc-stop: { imageUp: sc-stop, imageChecked: sc-stop-checked },
 	sc-engine-power-up: { imageUp: sc-engine-power-up, imageDown: sc-engine-power-up-checked },
-	sc-engine-power-down: { imageUp: sc-engine-power-down, imageDown: sc-engine-power-down-checked }
+	sc-engine-power-down: { imageUp: sc-engine-power-down, imageDown: sc-engine-power-down-checked },
+	sc-exit: {imageUp: sc-exit, imageDown: sc-exit-checked}
 },
 com.badlogic.gdx.scenes.scene2d.ui.ScrollPane$ScrollPaneStyle: {
 	default: { vScroll: default-round-down, hScrollKnob: default-round, background: default-rect, hScroll: default-round-down, vScrollKnob: default-round },
@@ -121,6 +123,8 @@ com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
 	
 	link: { font: ui-11, fontColor: blue},
 	help-title: {font: ui-13, fontColor: blue},
+	
+	sc-header: { font: ui-11, fontColor: sc-blue },
 	
 	tooltip: { font: ui-11, fontColor: black, background: tooltip-bg }
 },
