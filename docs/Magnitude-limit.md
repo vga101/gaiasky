@@ -1,0 +1,2 @@
+You can modify the magnitude limit by setting the property `data.limit.mag` in the configuration file. This will prevent the loading of stars whose magnitude is higher (they are fainter) than the specified magnitude, thus relieving the CPU of some processing.
+Also, take a look at the [[data configuration|Configuration-files#data-properties]] section.
