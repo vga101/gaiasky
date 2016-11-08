@@ -12,10 +12,6 @@ Contents:
    :maxdepth: 2
 
    home
-   Requirements-and-installation
-    System-requirements
-    Installation-and-uninstallation
-    Running-from-source
    Configuration
 
 
