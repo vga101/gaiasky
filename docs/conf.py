@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Gaia Sky documentation build configuration file, created by
-# sphinx-quickstart on Tue Nov  8 15:08:45 2016.
+# sphinx-quickstart on Tue Nov  8 15:27:03 2016.
 #
 # This file is execfile()d with the current directory set to its
 # containing dir.
@@ -38,14 +38,14 @@ templates_path = ['_templates']
 # You can specify multiple suffix as a list of string:
 #
 # source_suffix = ['.rst', '.md']
-source_suffix = '.rst'
+source_suffix = '.md'
 
 # The encoding of source files.
 #
 # source_encoding = 'utf-8-sig'
 
 # The master toctree document.
-master_doc = 'Home.md'
+master_doc = 'index'
 
 # General information about the project.
 project = u'Gaia Sky'
@@ -336,11 +336,3 @@ texinfo_documents = [
 # If true, do not generate a @detailmenu in the "Top" node's menu.
 #
 # texinfo_no_detailmenu = False
-
-from recommonmark.parser import CommonMarkParser
-
-source_parsers = {
-    '.md': CommonMarkParser,
-}
-
-source_suffix = ['.rst', '.md']

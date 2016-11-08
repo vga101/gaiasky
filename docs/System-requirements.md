@@ -1,3 +1,6 @@
+System requirements
+*******************
+
 Here are the minimum requirements to run this software:
 
 | **Operating system**  | Windows 7+ / MacOS X / Linux |

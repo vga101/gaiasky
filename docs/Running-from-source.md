@@ -1,3 +1,6 @@
+Running from source
+*******************
+
 ### Requirements
 If you want to compile the source code, you will need the following:
 

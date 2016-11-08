@@ -1,3 +1,6 @@
+Installation and uninstallation
+*******************************
+
 Depending on your system and your personal preferences the installation
 procedure may vary. Below is a description of the various installation methods
 available.
