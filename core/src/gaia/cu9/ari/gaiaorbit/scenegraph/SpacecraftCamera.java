@@ -215,7 +215,8 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
         if (stopping) {
             double speed = vel.len();
             if (speed != 0) {
-                thrust.set(vel).nor().scl(-thrustLength * thrustFactor[thrustFactorIndex]);
+                enginePower = -1;
+                thrust.set(vel).nor().scl(thrustLength * thrustFactor[thrustFactorIndex] * enginePower);
                 force.set(thrust);
             }
 
@@ -260,7 +261,7 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
         }
 
         if (leveling) {
-            // No velocity, we just stop euler angle motions
+            // No velocity, we just stop Euler angle motions
             if (yawv != 0) {
                 yawp = -Math.signum(yawv) * MathUtilsd.clamp(Math.abs(yawv), 0, 1);
             }
@@ -305,9 +306,6 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
         pitch += pitchdiff;
         roll += rolldiff;
 
-        // apply roll
-        up.rotate(direction, -rolldiff);
-
         // apply yaw
         direction.rotate(up, yawdiff);
 
@@ -315,6 +313,9 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
         aux3d1.set(direction).crs(up);
         direction.rotate(aux3d1, pitchdiff);
         up.rotate(aux3d1, pitchdiff);
+
+        // apply roll
+        up.rotate(direction, -rolldiff);
 
         // Update camera
         updatePerspectiveCamera();
