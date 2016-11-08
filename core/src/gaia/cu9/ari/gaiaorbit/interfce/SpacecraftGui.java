@@ -676,12 +676,5 @@ public class SpacecraftGui implements IGui, IObserver {
     private void setPowerValuesSlider(Slider plus, Slider minus, double value) {
         plus.setValue((float) value);
         minus.setValue(1f + (float) value);
-        //        if (value >= 0) {
-        //            plus.setValue((float) value);
-        //            minus.setValue(1);
-        //        } else {
-        //            plus.setValue(0);
-        //            minus.setValue(1 - (float) value);
-        //        }
     }
 }

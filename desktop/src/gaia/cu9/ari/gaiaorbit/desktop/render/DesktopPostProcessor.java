@@ -20,6 +20,7 @@ import com.bitfire.postprocessing.effects.Nfaa;
 import com.bitfire.postprocessing.filters.Glow;
 import com.bitfire.utils.ShaderLoader;
 
+import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
@@ -130,6 +131,7 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
         ppb.lglow.setBias(-0.95f);
         ppb.lglow.setLightGlowTexture(new Texture(Gdx.files.internal("img/star_glow.png")));
         ppb.lglow.setNSamples(nsamples);
+        ppb.lglow.setTextureScale(1f / GaiaSky.instance.cam.getFovFactor());
         ppb.lglow.setEnabled(GlobalConf.postprocess.POSTPROCESS_LIGHT_SCATTERING);
         ppb.pp.addEffect(ppb.lglow);
 
@@ -361,6 +363,7 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
                     ppb.lglow.setLightPositions(nLights, lightpos);
                     ppb.lglow.setLightViewAngles(angles);
                     ppb.lglow.setLightColors(colors);
+                    ppb.lglow.setTextureScale(1f / GaiaSky.instance.cam.getFovFactor());
                 }
             }
             break;
