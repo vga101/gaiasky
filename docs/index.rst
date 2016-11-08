@@ -9,12 +9,16 @@ Welcome to Gaia Sky's documentation!
 Contents:
 
 .. toctree::
-   :maxdepth: 4
+   :maxdepth: 3
 
    Home
    Requirements
    Configuration
    Running-the-software
+   User-interface
+   Controls
+   Stereoscopic-mode
+   Recording-camera
 
 
 Indices and tables
