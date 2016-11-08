@@ -31,7 +31,7 @@ public class NaturalControllerListener implements ControllerListener {
     @Override
     public boolean buttonDown(Controller controller, int buttonCode) {
         switch (buttonCode) {
-        case XBox360Mappings.AXIS_JOY1VERT:
+        case XBox360Mappings.BUTTON_LB:
             cam.setGamepadMultiplier(0.5);
             break;
         case XBox360Mappings.BUTTON_RB:
@@ -43,7 +43,6 @@ public class NaturalControllerListener implements ControllerListener {
 
     @Override
     public boolean buttonUp(Controller controller, int buttonCode) {
-        System.out.println(buttonCode);
         switch (buttonCode) {
         case XBox360Mappings.BUTTON_LB:
         case XBox360Mappings.BUTTON_RB:
