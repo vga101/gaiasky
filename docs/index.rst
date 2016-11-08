@@ -9,10 +9,12 @@ Welcome to Gaia Sky's documentation!
 Contents:
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 4
 
-   home
+   Home
+   Requirements
    Configuration
+   Running-the-software
 
 
 Indices and tables
