@@ -203,7 +203,7 @@ or visiting https://www.gnu.org/licenses/lgpl-3.0-standalone.html
 The main webpage of the project is
 http://www.zah.uni-heidelberg.de/gaia2/outreach/gaiasky. There you can find
 the latest versions and the latest information on Gaia Sky. You can also
-visit our Github account to inspect the code, check the [documentation](gaia-sky.readthedocs.io) or report bugs:
+visit our Github account to inspect the code, check the [documentation](http://gaia-sky.readthedocs.io) or report bugs:
 https://github.com/ari-zah/gaiasky
 
 ###5.1 Main designer and developer
