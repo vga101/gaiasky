@@ -7,9 +7,9 @@ with nodes**. The objects that are displayed in a scene are all nodes in
 this scene graph and are organized in a hierarchical manner depending on
 their geometrical and spatial relations.
 
-The data nodes in the scene graph are of multiple natures and are
-*loaded differently depending on their type*. Here we can make the first
-big distinction in the data nodes depending on where they come from:
+.. hint:: The data nodes in the scene graph are of multiple natures and are *loaded differently depending on their type*. Here we can make the first big distinction in the data nodes depending on where they come from.
+
+The different types of data are:
 
 - **Particle data**: usually stars which come from a star catalogue.
 - **Rest of data**: planets, orbits, constellations, grids and everything else qualifies for this category.
@@ -27,11 +27,10 @@ configuration file in ``$HOME/.gaiasky/``. The two main files are the
 catalog file (usually ``data/catalog-*.json``) and the objects file
 (``data/data-low.json``, ``data/data-normal.json`` and
 ``data/data-high.json`` are the default options, which provide the low,
-normal and high graphics quality settings). See the [[Configuration
-files]] section for more information on this.
+normal and high graphics quality settings). See the :ref:`properties file <properties-file>` section for more information on this.
 
-catalog-\*.json example file
-----------------------------
+catalog-\*.json example files
+-----------------------------
 
 .. code:: json
 
@@ -41,6 +40,16 @@ catalog-\*.json example file
             "files": [ "data/hygxyz.bin" ]
         }
     ]}
+
+.. code:: json
+
+    { "data" : [
+    	{
+    		"loader": "gaia.cu9.ari.gaiaorbit.data.stars.OctreeCatalogLoader",
+    		"files": [ "data/octree/tgas_final_particles.bin", "data/octree/tgas_final_metadata.bin" ]
+    	}
+    ]}
+
 
 data-\*.json example file
 -------------------------

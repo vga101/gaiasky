@@ -1,6 +1,6 @@
 { "data" : [
 	{
-		"loader": gaia.cu9.ari.gaiaorbit.data.stars.HYGBinaryLoader,
+		"loader": "gaia.cu9.ari.gaiaorbit.data.stars.HYGBinaryLoader",
 		"files": [ "/home/tsagrista/Gaia/data/Tycho/tycho-days/tycho-20160426.bin" ]
 	}
 ]}
