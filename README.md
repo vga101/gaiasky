@@ -182,16 +182,9 @@ Et voilà! Gaia Sky is running on your machine.
 ##  3. Documentation and help                        #
 ######################################################
 
-In order to get the full up-to-date documentation, visit our Wiki
-pages in GitHub:
+The most up-to-date documentation of Gaia Sky is always in `readthedocs`:
 
-[https://github.com/ari-zah/gaiasky/wiki](https://github.com/ari-zah/gaiasky/wiki)
-
-There you will find a thorough documentation of all the features of
-Gaia Sky. If you need to load your data into the sandbox or just
-find out how to enable the 3D mode to experience it on your 3DTV, think no further,
-the [Gaia Sky wiki](https://github.com/ari-zah/gaiasky/wiki) is the way to go.
-
+[gaia-sky.readthedocs.io](http://gaia-sky.readthedocs.io)
 
 
 ######################################################
