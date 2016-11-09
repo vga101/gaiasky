@@ -1,27 +1,29 @@
-Scripting Gaia Sky with Python
-******************************
+Scripting
+*********
 
 Gaia Sky offers the possibility to run ``Python`` scripts in the same
-``JVM`` using ```Jython`` <http://www.jython.org/>`__.
+``JVM`` using `Jython <http://www.jython.org/>`__.
 
 You can find some example scripts in the
-```scripts`` </ari-zah/gaiasandbox/tree/master/android/assets/scripts>`__
+`scripts <http://github.com/ari-zah/gaiasky/tree/master/android/assets/scripts>`__
 folder of the project.
+
+.. hint:: Add your own scripts to the folder ``$HOME/.gaiasky/scripts`` so that Gaia Sky can run them.
 
 An interface is provided in order to encapsulate some complex-behaviour
 functions and to make scripting easier. This scripting interface is
-described in the following section:
+described in the following section.
 
 The scripting interface
 =======================
 
-The scripting interface is located in the package ``sandbox.script``.
+The scripting interface is located in the package ``gaia.cu9.ari.gaiaorbit.script`` (see `here <http://ari-zah.github.io/gaiasky/javadoc/gaia/cu9/ari/gaiaorbit/script/package-summary.html>`__).
 
 Description of the functions
 ----------------------------
 
-Before starting, have a look at the ```javadoc``
-documentation <http://ari-zah.github.io/gaiasky/javadoc/sandbox/script/IScriptingInterface.html>`__,
+Before starting, have a look at the
+`documentation of the scripting interface <http://ari-zah.github.io/gaiasky/javadoc/gaia/cu9/ari/gaiaorbit/script/IScriptingInterface.html>`__,
 which provides extensive descriptions of each function.
 
 Using the scripting interface
@@ -29,7 +31,7 @@ Using the scripting interface
 
 In order to import the scripting interface package in your script, you
 just need to import the default implementation
-``EventScriptingInterface`` from the package ``sandbox.script``:
+``EventScriptingInterface`` from the package ``gaia.cu9.ari.gaiaorbit.script``:
 
 .. code:: python
 
@@ -59,14 +61,13 @@ Now, we can start executing functions.
 More examples
 -------------
 
-You can find more examples by looking at the ```scripts``
-folder </ari-zah/gaiasky/tree/master/android/assets/scripts>`__ in the
+You can find more examples by looking at the ``scripts``
+`folder <http://github.com/ari-zah/gaiasky/tree/master/android/assets/scripts>`__ in the
 Gaia Sky package.
 
 How to run scripts
 ------------------
 
 Each script is executed in its own thread in the virtual machine, and
-runs alongside the Gaia Sky. In order to run a script, follow the
-procedure described in the [[User interface > running
-scripts\|User-interface#running-scripts]] section.
+runs alongside Gaia Sky. In order to run a script, follow the
+procedure described in the :ref:`running-scripts` section.

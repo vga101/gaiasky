@@ -12,15 +12,25 @@ preferences window. Here are the default keyboard controls.
 +------------------------------------+---------------------------------------------------+
 | Key(s)                             | Action                                            |
 +====================================+===================================================+
-| ``NUMPAD 0``                       | Free camera                                       |
+| ``NUMPAD_0``                       | Free camera                                       |
 +------------------------------------+---------------------------------------------------+
-| ``NUMPAD 1``                       | Focus camera                                      |
+| ``NUMPAD_1``                       | Focus camera                                      |
 +------------------------------------+---------------------------------------------------+
-| ``NUMPAD 2``                       | Gaia FoV 1 camera                                 |
+| ``NUMPAD_2``                       | Gaia scene camera                                 |
 +------------------------------------+---------------------------------------------------+
-| ``NUMPAD 3``                       | Gaia FoV 2 camera                                 |
+| ``NUMPAD_3``                       | Spacecraft mode                                   |
 +------------------------------------+---------------------------------------------------+
-| ``NUMPAD 4``                       | Gaia FoV 1 and 2 camera                           |
+| ``NUMPAD_4``                       | Gaia FoV 1 camera                                 |
++------------------------------------+---------------------------------------------------+
+| ``NUMPAD_5``                       | Gaia FoV 2 camera                                 |
++------------------------------------+---------------------------------------------------+
+| ``NUMPAD_6``                       | Gaia FoV 1 and 2 camera                           |
++------------------------------------+---------------------------------------------------+
+| ``L-CTRL`` + ``3``                 | 360 mode                                          |
++------------------------------------+---------------------------------------------------+
+| ``L-CTRL`` + ``L-SHIFT`` + ``UP``  | Increase star point size                          |
++------------------------------------+---------------------------------------------------+
+| ``L-CTRL`` + ``L-SHIFT`` + ``DOWN``| Decrease star point size                          |
 +------------------------------------+---------------------------------------------------+
 | ``SPACE``                          | Toggle simulation play/pause                      |
 +------------------------------------+---------------------------------------------------+
@@ -44,29 +54,29 @@ preferences window. Here are the default keyboard controls.
 +------------------------------------+---------------------------------------------------+
 | ``*``                              | Reset limiting magnitude                          |
 +------------------------------------+---------------------------------------------------+
-| ``B``                              | Toggle constellation boundaries                   |
+| ``L-SHIFT`` + ``B``                | Toggle constellation boundaries                   |
 +------------------------------------+---------------------------------------------------+
-| ``C``                              | Toggle constellation lines                        |
+| ``L-SHIFT`` + ``C``                | Toggle constellation lines                        |
 +------------------------------------+---------------------------------------------------+
-| ``E``                              | Toggle ecliptic grid                              |
+| ``L-SHIFT`` + ``E``                | Toggle ecliptic grid                              |
 +------------------------------------+---------------------------------------------------+
-| ``G``                              | Toggle galactic grid                              |
+| ``L-SHIFT`` + ``G``                | Toggle galactic grid                              |
 +------------------------------------+---------------------------------------------------+
-| ``L``                              | Toggle labels                                     |
+| ``L-SHIFT`` + ``L``                | Toggle labels                                     |
 +------------------------------------+---------------------------------------------------+
-| ``M``                              | Toggle moons                                      |
+| ``L-SHIFT`` + ``M``                | Toggle moons                                      |
 +------------------------------------+---------------------------------------------------+
-| ``O``                              | Toggle orbits                                     |
+| ``L-SHIFT`` + ``O``                | Toggle orbits                                     |
 +------------------------------------+---------------------------------------------------+
-| ``P``                              | Toggle planets                                    |
+| ``L-SHIFT`` + ``P``                | Toggle planets                                    |
 +------------------------------------+---------------------------------------------------+
-| ``Q``                              | Toggle equatorial grid                            |
+| ``L-SHIFT`` + ``Q``                | Toggle equatorial grid                            |
 +------------------------------------+---------------------------------------------------+
-| ``S``                              | Toggle stars                                      |
+| ``L-SHIFT`` + ``S``                | Toggle stars                                      |
 +------------------------------------+---------------------------------------------------+
-| ``T``                              | Toggle satellites                                 |
+| ``L-SHIFT`` + ``T``                | Toggle satellites                                 |
 +------------------------------------+---------------------------------------------------+
-| ``U``                              | Expand/collapse controls window                   |
+| ``L-SHIFT`` + ``U``                | Expand/collapse controls window                   |
 +------------------------------------+---------------------------------------------------+
 | ``L-CTRL`` + ``U``                 | Toggle UI completely (hide/show user interface)   |
 +------------------------------------+---------------------------------------------------+
@@ -77,37 +87,65 @@ preferences window. Here are the default keyboard controls.
 | ``L-CTRL`` + ``L-SHIFT`` + ``S``   | Switch between stereoscopic profiles              |
 +------------------------------------+---------------------------------------------------+
 
+.. _mouse-controls:
+
 Mouse controls
 ==============
 
-Here are the default mouse controls.
+Here are the default mouse controls for the focus and free :ref:`camera-modes`. The other modes do not have mouse controls.
+
+.. _mouse-focus-mode:
+
+Focus mode
+----------
 
 +----------------------------------------+-----------------------------------------------------------------+
 | Mouse + keys                           | Action                                                          |
 +========================================+=================================================================+
-| ``L-MOUSE DOUBLE CLICK``               | Select object as focus                                          |
+| ``L-MOUSE DOUBLE CLICK``               | Select focus object                                             |
 +----------------------------------------+-----------------------------------------------------------------+
-| ``L-MOUSE`` + ``DRAG``                 | Pitch and yaw (FREE mode) or rotate around foucs (FOCUS mode)   |
+| ``L-MOUSE SINGLE CLICK``               | Stop all rotation and translation movement                      |
 +----------------------------------------+-----------------------------------------------------------------+
-| ``L-SHIFT`` + ``L-MOUSE`` + ``DRAG``   | Camera roll                                                     |
+| ``L-MOUSE`` + ``DRAG``                 | Apply rotation around focus                                     |
 +----------------------------------------+-----------------------------------------------------------------+
-| ``R-MOUSE`` + ``DRAG``                 | Deviate camera line of sight from focus                         |
+| ``L-MOUSE`` + ``L-SHIFT`` + ``DRAG``   | Camera roll                                                     |
++----------------------------------------+-----------------------------------------------------------------+
+| ``R-MOUSE`` + ``DRAG``                 | Pan view freely from focus                                      |
++----------------------------------------+-----------------------------------------------------------------+
+| ``M-MOUSE`` + ``DRAG`` or ``WHEEL``    | Move towards/away from focus                                    |
++----------------------------------------+-----------------------------------------------------------------+
+
+.. _mouse-free-mode:
+
+Free mode
+---------
+
++----------------------------------------+-----------------------------------------------------------------+
+| Mouse + keys                           | Action                                                          |
++========================================+=================================================================+
+| ``L-MOUSE DOUBLE CLICK``               | Select object as focus (changes to focus mode)                  |
++----------------------------------------+-----------------------------------------------------------------+
+| ``L-MOUSE SINGLE CLICK``               | Stop all rotation and translation movement                      |
++----------------------------------------+-----------------------------------------------------------------+
+| ``L-MOUSE`` + ``DRAG``                 | Pan view                                                        |
++----------------------------------------+-----------------------------------------------------------------+
+| ``L-MOUSE`` + ``L-SHIFT`` + ``DRAG``   | Camera roll                                                     |
 +----------------------------------------+-----------------------------------------------------------------+
 | ``M-MOUSE`` + ``DRAG`` or ``WHEEL``    | Forward/backward movement                                       |
 +----------------------------------------+-----------------------------------------------------------------+
 
 Gamepad controls
-----------------
+================
 
 As of version ``0.704b`` the Gaia Sandbox supports basic
 gamepad/controller input. By default, only the **Xbox 360 controller**
 is supported, so you may want to map your gamepad differently using
 software like
-```jstest-gtk`` <http://pingus.seul.org/~grumbel/jstest-gtk/>`__ on
+``jstest-gtk`` --`here <http://pingus.seul.org/~grumbel/jstest-gtk/>`__-- on
 Linux or the
-```Universal Joystick Remapper`` <https://github.com/evilC/AHK-Universal-Joystick-Remapper>`__
+`Universal Joystick Remapper <https://github.com/evilC/AHK-Universal-Joystick-Remapper>`__
 for Windows. You can also opt for a Joystick-to-keyboard solution such
-as ```xpadder`` <http://www.xpadder.com/>`__, even though this has not
+as ``xpadder``  --`here <http://www.xpadder.com/>`__--, even though this has not
 been tested with Gaia Sky.
 
 .. figure:: img/360controller.jpg
@@ -116,6 +154,8 @@ been tested with Gaia Sky.
    Xbox 360 controller button configuration
 The actions mapped to each button or axis depend on the current camera
 mode (focus, free, spacecraft):
+
+.. _gamepad-focus-mode:
 
 Focus mode
 ----------
@@ -150,6 +190,8 @@ Focus mode
 | ``Y``                        | None                                    |
 +------------------------------+-----------------------------------------+
 
+.. _gamepad-free-mode:
+
 Free camera mode
 ----------------
 
@@ -182,6 +224,8 @@ Free camera mode
 +------------------------------+-----------------------------------------+
 | ``Y``                        | None                                    |
 +------------------------------+-----------------------------------------+
+
+.. _gamepad-spacecraft-mode:
 
 Spacecraft mode
 ---------------

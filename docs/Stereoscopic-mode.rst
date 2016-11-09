@@ -1,7 +1,7 @@
 Stereoscopic (3D) mode
 **********************
 
-The Gaia Sandbox includes a `stereoscopic
+The Gaia Sky includes a `stereoscopic
 mode <http://en.wikipedia.org/wiki/Stereoscopy>`__ or 3D mode which
 outputs two images each intended for each eye, creating the illusion of
 depth.

@@ -18,7 +18,10 @@ Contents
    Graphics-performance
    User-interface
    Controls
+   Camera-modes
    Stereoscopic-mode
+   Planetarium-mode
+   360-mode
    Recording-camera
    Performance
    Internal-reference-system

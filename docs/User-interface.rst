@@ -25,13 +25,15 @@ Camera
 In the camera options pane on the left you can select the type of
 camera. This can also be done by using the ``NUMPAD 0-4`` keys.
 
-There are four camera modes: \* ``Free mode``, where the camera is not
-linked to any object and its velocity is exponential with respect to the
-distance to the origin (Sun). \* ``Focus mode``, where the camera is
-linked to a focus object and it rotates and rolls with respect to it. \*
-``Gaia FOV``, where the camera simulates either of the fields of view of
-Gaia, or both. \* ``Spacecraft``, where you take control of a spacecraft
-and navigate around at will.
+There are five camera modes:
+
+* ``Free mode`` -- The camera is not linked to any object and its velocity is exponential with respect to the distance to the origin (Sun).
+* ``Focus mode`` -- The camera is linked to a focus object and it rotates and rolls with respect to it.
+* ``Gaia scene`` -- Provides an outside view of the Gaia satellite. The camera can not be rotated or translated in this mode.
+* ``Spacecraft``-- Take control of a spacecraft and navigate around at will.
+* ``Gaia FOV`` -- The camera simulates either of the fields of view of Gaia, or both.
+
+For more information on the camera modes, see the :ref:`camera-modes` section.
 
 Additionally, there are a number of sliders for you to control different
 parameters of the camera:
@@ -47,8 +49,12 @@ You can **lock the camera** to the focus when in focus mode. Doing so
 links the reference system of the camera to that of the object and thus
 it moves with it.
 
+.. hint:: **Lock the camera** so that it stays at the same relative position to the focus object.
+
 Finally, we can also **lock the orientation** of the camera to that of
 the focus so that the same transformation matrix is applied to both.
+
+.. hint:: **Lock the orientation** so that the camera also rotates with the focus.
 
 Additionally, we can also enable the **crosshair**, which will mark the
 currently focused object.
@@ -128,11 +134,13 @@ so, tick the ``Show only observed stars`` checkbox.
 Music
 -----
 
-Since version 0.800b Gaia Sky also offers a music player in its
-interface. By default it ships with two suitable 'spacey' songs, but you
-can add your own. In order to add your own songs, drop the ``mp3``,
-``ogg`` or ``wav`` files to the folder ``$HOME/.gaiasky/music`` and
-these will be available during your Gaia Sky sessions to play.
+Since version ``0.800b`` Gaia Sky also offers a music player in its
+interface. By default it ships with only one *spacey* melody, but you
+can add your own by dropping them in the folder ``$HOME/.gaiasky/music``.
+
+.. hint:: Drop your ``mp3``, ``ogg`` or ``wav`` files in the folder ``$HOME/.gaiasky/music`` and these will be available during your Gaia Sky sessions to play.
+
+.. _running-scripts:
 
 Running scripts
 ===============
@@ -145,6 +153,8 @@ notified in the box below and you'll be able to run the script right
 away by clicking on the ``Run`` button. If the script contains errors,
 you will be notified in the box below and you will not be able to run
 the script until these errors are dealt with.
+
+.. hint:: Add your own scripts to the folder ``$HOME/.gaiasky/scripts`` so that Gaia Sky can find them.
 
 Preferences window
 ==================
