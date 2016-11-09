@@ -152,5 +152,5 @@ Preferences window
 You can launch the preferences window any time during the execution of
 the program. To do so, click on the ``Preferences`` button at the bottom
 of the GUI window. For a detailed description of the configuration
-options refer to the `Configuration
-Instructions <Configuration>`__.
+options refer to the :ref:`Configuration
+Instructions <configuration>`.

@@ -6,7 +6,9 @@ mode <http://en.wikipedia.org/wiki/Stereoscopy>`__ or 3D mode which
 outputs two images each intended for each eye, creating the illusion of
 depth.
 
-In order to activate the stereoscopic mode press ``LEFT_CTRL`` + ``S``.
+.. hint:: ``LEFT_CTRL`` + ``S`` - activate the stereoscopic mode
+
+          ``LEFT_CTRL`` + ``LEFT_SHIFT`` + ``S`` - switch between 3D profiles
 
 Stereoscopic profiles
 =====================
@@ -29,25 +31,36 @@ some distance before the actual image so that each eye receives the
 correct image. In this case the right images goes to the left eye and
 the left image goes to the right eye.
 
-In order to manage all these parameters, we have created 3 stereoscopic
+In order to manage all these parameters, we have created 4 stereoscopic
 profiles which can be selected by the user and are described below.
 
--  **``VR_HEADSET``** - The **left** image goes to the **left** eye. No
+-  ``VR_HEADSET`` - The **left** image goes to the **left** eye. No
    distortion is applied.
--  **``Crosseye``** - The **left** image goes to the **right** eye. No
+-  ``Crosseye`` - The **left** image goes to the **right** eye. No
    distortion is applied.
--  **``3DTV``** - The **left** image goes to the **left** eye.
+-  ``3DTV`` - The **left** image goes to the **left** eye.
    Distortion is applied.
+-  ``Anaglyph 3D`` - To use with red-cyan glasses. Displays both the left and right images at full resolution. Left image contains the **red** channel, right image contains the **green** and **blue** channels.
 
-In order to switch between the three modes, use ``LEFT_CTRL`` +
-``LEFT_SHIFT`` + ``S``.
+.. hint:: ``LEFT_CTRL`` + ``LEFT_SHIFT`` + ``S`` - switch between 3D profiles
 
-+---------------+--------------------------------------------------------------------------------------------------------------------------------+
-| Profile       | Image                                                                                                                          |
-+===============+================================================================================================================================+
-| VR\_HEADSET   | [[http://www.zah.uni-heidelberg.de/fileadmin/user\_upload/gaia/gaiasandbox/img/stereo/stereo\_VR.png \| height=360px]]         |
-+---------------+--------------------------------------------------------------------------------------------------------------------------------+
-| Crosseye      | [[http://www.zah.uni-heidelberg.de/fileadmin/user\_upload/gaia/gaiasandbox/img/stereo/stereo\_CROSSEYE.png \| height=360px]]   |
-+---------------+--------------------------------------------------------------------------------------------------------------------------------+
-| 3DTV          | [[http://www.zah.uni-heidelberg.de/fileadmin/user\_upload/gaia/gaiasandbox/img/stereo/stereo\_3DTV.png \| height=360px]]       |
-+---------------+--------------------------------------------------------------------------------------------------------------------------------+
++-------------------+----------+
+| Profile           | Image    |
++===================+==========+
+| **VR_HEADSET**    | |VR|     |
++-------------------+----------+
+| **Crosseye**      | |XEYE|   |
++-------------------+----------+
+| **3DTV**          | |3DTV|   |
++-------------------+----------+
+| **Anaglyph**      | |ANAG|   |
++-------------------+----------+
+
+.. |VR| image:: img/3d/3d-vr.jpg
+          :width: 100%
+.. |XEYE| image:: img/3d/3d-crosseye.jpg
+          :width: 100%
+.. |3DTV| image:: img/3d/3d-3dtv.jpg
+          :width: 100%
+.. |ANAG| image:: img/3d/3d-anaglyph.jpg
+          :width: 100%

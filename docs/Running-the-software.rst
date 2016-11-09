@@ -1,5 +1,5 @@
 Running the software
-*******************
+********************
 
 If you installed the software using an installer or a package manager
 system (``rpm``, ``deb``), you just need to use the standard running

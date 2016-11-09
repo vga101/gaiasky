@@ -110,7 +110,7 @@ for Windows. You can also opt for a Joystick-to-keyboard solution such
 as ```xpadder`` <http://www.xpadder.com/>`__, even though this has not
 been tested with Gaia Sky.
 
-.. figure:: img/360controller.png
+.. figure:: img/360controller.jpg
    :alt: Xbox 360 controller button configuration
 
    Xbox 360 controller button configuration

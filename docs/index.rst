@@ -3,10 +3,8 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to Gaia Sky's documentation!
-====================================
-
-Contents:
+Contents
+========
 
 .. toctree::
    :maxdepth: 3
@@ -14,16 +12,20 @@ Contents:
    Home
    Requirements
    Configuration
+   Configuration-file
    Running-the-software
+   Graphics-settings
+   Graphics-performance
    User-interface
    Controls
    Stereoscopic-mode
    Recording-camera
-
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+   Performance
+   Internal-reference-system
+   Data-catalogs-formats
+   Scripting-with-python
+   Capturing-videos
+   Taking-screenshots
+   Javadoc
+   Contact-information
+   Screenshots
