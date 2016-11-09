@@ -164,22 +164,16 @@ provided in your operating system.
 
 ###2.2 Running from code
 
-In order to run from code you will need [gradle](https://gradle.org/) 2.10+
-installed on your system. You can either follow the instructions on the
-[gradle installation](https://docs.gradle.org/current/userguide/installation.html)
-section or you can automatically install gradle in your linux
-distro:
-```
-# debian/ubuntu
-sudo apt-get install gradle
-# arch/manjaro
-sudo pacman -S gradle
-```
 First, clone the [GitHub](https://github.com/ari-zah/gaiasky) repository:
+
 ```
 git clone https://github.com/ari-zah/gaiasky.git
+```
+Make sure you have at least `JDK7` installed.
+And then, you are ready to rumble:
+```
 cd gaiasky
-gradle desktop:run
+gradlew desktop:run
 ```
 Et voilà! Gaia Sky is running on your machine.
 
