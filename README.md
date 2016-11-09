@@ -182,9 +182,7 @@ Et voilà! Gaia Sky is running on your machine.
 ##  3. Documentation and help                        #
 ######################################################
 
-The most up-to-date documentation of Gaia Sky is always in `readthedocs`:
-
-[gaia-sky.readthedocs.io](http://gaia-sky.readthedocs.io)
+The most up-to-date documentation of Gaia Sky is always in [gaia-sky.readthedocs.io](http://gaia-sky.readthedocs.io).
 
 
 ######################################################

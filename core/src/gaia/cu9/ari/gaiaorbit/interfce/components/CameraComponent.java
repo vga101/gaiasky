@@ -114,7 +114,7 @@ public class CameraComponent extends GuiComponent implements IObserver {
                     EventManager.instance.post(Events.FISHEYE_CMD, buttonDome.isChecked());
                     if (buttonDome.isChecked()) {
                         fovBackup = GaiaSky.instance.cam.getCamera().fieldOfView;
-                        EventManager.instance.post(Events.FOV_CHANGED_CMD, 110f);
+                        EventManager.instance.post(Events.FOV_CHANGED_CMD, 130f);
                         EventManager.instance.post(Events.PLANETARIUM_FOCUS_ANGLE_CMD, 30f);
                     } else {
                         EventManager.instance.post(Events.FOV_CHANGED_CMD, fovBackup);
