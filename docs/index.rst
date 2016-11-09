@@ -1,7 +1,31 @@
-.. Gaia Sky documentation master file, created by
-   sphinx-quickstart on Tue Nov  8 15:27:03 2016.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+Gaia Sky
+********
+
+.. figure:: img/GaiaSkySplash-s.jpg
+   :alt: Gaia Sky logo
+
+|Build status|
+
+.. note:: Gaia Sky just hit version 1.0.0!
+
+What is Gaia Sky
+================
+
+**Gaia Sky** is a real-time, 3D, astronomy visualisation software that
+runs on Windows, Linux and MacOS. It lives in the framework of
+`ESA <http://www.esa.int/ESA>`__'s `Gaia
+mission <http://sci.esa.int/gaia>`__ to chart about 1 billion stars of
+our Milky Way Galaxy. It is developed in the Gaia group of the
+`Astronomisches Rechen-Institut <www.ari.uni-heidelberg.de>`__
+(`ZAH <www.zah.uni-heidelberg.de>`__, `Universität
+Heidelberg <www.uni-heidelberg.de>`__).
+
+*  Official site: `GaiaSky@ARI <http://www.zah.uni-heidelberg.de/gaia2/outreach/gaiasky/>`__
+*  Product page: `Gaia Sky <http://ari-zah.github.io/gaiasky>`__
+*  Documentation: `You are in it! <https://gaia-sky.readthedocs.io>`__
+
+.. |Build status| image:: https://circleci.com/gh/ari-zah/gaiasky/tree/master.svg?style=svg
+   :target: https://circleci.com/gh/ari-zah/gaiasky/tree/master
 
 Contents
 ========
@@ -9,7 +33,6 @@ Contents
 .. toctree::
    :maxdepth: 3
 
-   Home
    Requirements
    Configuration
    Configuration-file
