@@ -8,7 +8,7 @@
 runs on Windows, Linux and MacOS. It is developed in the framework of
 [ESA](http://www.esa.int/ESA)'s [Gaia mission](http://sci.esa.int/gaia) to chart about 1 billion stars of our Galaxy.
 To get the latest up-to-date and most complete information,
-visit our **documentation** pages in <http://gaia-sky.readthedocs.io>.
+visit our [**documentation** pages](http://gaia-sky.readthedocs.io).
 
 This file contains the following sections:
 
