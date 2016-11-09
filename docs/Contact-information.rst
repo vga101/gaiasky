@@ -40,11 +40,11 @@ people behind the following technologies/resources:
 -  `ernieyu`_ for the Java Swing `range slider`_.
 -  Nick Risinger for the artist’s conception of the Milky Way.
 -  Andreas Ressl and Georg Hammershmid for the star glow texture.
--  Tom Patterson (`www.shadedrelief.com`_) for some textures.
+-  Tom Patterson (`shadedrelief <http://www.shadedrelief.com>`_) for some textures.
 -  `Solar System Scope`_ for some textures (Mercury, Venus, Earth,
    Moon).
 -  Phil Stooke and Grant Hutchison
-   (`http://www.classe.cornell.edu/~seb/celestia/hutchison/index-125.html`_)
+   (`site <http://www.classe.cornell.edu/~seb/celestia/hutchison/index-125.html>`_)
    for some of the textures.
 -  `David Navas`_ for the ``simple spaceship`` model. Cool stuff!
 -  Machuca+Arias+Caballero for the music track “Gaia-DR1”.
@@ -67,7 +67,6 @@ people behind the following technologies/resources:
 .. _Jython Project: http://www.jython.org/
 .. _ernieyu: https://github.com/ernieyu/
 .. _range slider: https://github.com/ernieyu/Swing-range-slider
-.. _www.shadedrelief.com:
 .. _Solar System Scope: http://www.solarsystemscope.com/
 .. _`http://www.classe.cornell.edu/~seb/celestia/hutchison/index-125.html`:
 .. _David Navas: http://www.blendswap.com/user/DeNapes
