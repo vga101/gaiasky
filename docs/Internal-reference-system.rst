@@ -11,6 +11,7 @@ pole. :math:`X` is perpendicular to both :math:`Z` and :math:`Y`.
    :alt: Gaia Sky reference system
 
    Gaia Sky reference system
+
 All the positions and orientations of the entities in the scene are at
 some point converted to this reference system for representation. The
 same happens with the orientation sensor data in mobile devices.

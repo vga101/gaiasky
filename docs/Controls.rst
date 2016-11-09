@@ -152,6 +152,7 @@ been tested with Gaia Sky.
    :alt: Xbox 360 controller button configuration
 
    Xbox 360 controller button configuration
+   
 The actions mapped to each button or axis depend on the current camera
 mode (focus, free, spacecraft):
 

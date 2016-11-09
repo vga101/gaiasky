@@ -125,6 +125,7 @@ categories:
    :alt: Particle data loading system
 
    Particle data loading system
+
 Local data
 ----------
 
@@ -149,6 +150,7 @@ file in the same format. The ``csv`` and ``bin`` formats are described
 below.
 
 - **CSV format**: This is the ``csv`` format as downloaded
+
 from the `HYG Database site <http://www.astronexus.com/hyg>`__. The
 first line contains the headers and is skipped. Then, each following row
 contains a particle (star) with the following columns:
@@ -375,6 +377,7 @@ bunch of implementations that can be of use:
       }
 
 - ``AbstractVSOP87`` -- Used for the major planets, these coordinates
+
 implement the ``VSOP87`` algorithms. Only the implementation is needed.
 For instance, the Earth uses these coordinates.
 

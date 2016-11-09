@@ -84,6 +84,8 @@ frame rate, the application will slow down while recording so that
 enough frames are captured. Same behaviour will be uploading during
 camera playback.
 
+.. _360-mode-config:
+
 360 mode
 ========
 

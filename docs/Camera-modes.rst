@@ -39,9 +39,11 @@ In this mode you take control of a spacecraft. In the spacecraft mode, the ``GUI
 a new user interface is shown in its place at the bottm left of the screen.
 
 *  **Attitude indicator** -- It is shown as a ball with the horizon and other marks. It represents the current orientation of the spacecraft with respect to the equatorial system.
+
   *  |pointer| -- Indicates the direction the spacecraft is currently headed to.
   *  |greencross| -- Indicates direction of the current velocity vector, if any.
   *  |redcross| -- Indicates inverse direction of the current velocity vector, if any.
+
 *  **Engine Power** -- Current power of the engine. It is a multiplier in steps of powers of ten. Low engine power levels allow for Solar System or planetary travel, whereas high engine power levels are suitable for galactic and intergalactic exploration.
 *  |stabilise| -- Stabilises the yaw, pitch and roll angles. If rotation is applied during the stabilisation, the stabilisation is cancelled.
 *  |stop| -- Stops the spacecraft until its velocity with respect to the Sun is 0. If thrust is applied during the stopping, the stopping is cancelled.

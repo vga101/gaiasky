@@ -17,8 +17,7 @@ our Milky Way Galaxy. It is developed in the Gaia group of the
 (`ZAH <www.zah.uni-heidelberg.de>`__, `Universität
 Heidelberg <www.uni-heidelberg.de>`__).
 
-*  Official site:
-   `GaiaSky@ARI <http://www.zah.uni-heidelberg.de/gaia2/outreach/gaiasky/>`__
+*  Official site: `GaiaSky@ARI <http://www.zah.uni-heidelberg.de/gaia2/outreach/gaiasky/>`__
 *  Product page: `Gaia Sky <http://ari-zah.github.io/gaiasky>`__
 *  Documentation: `You are in it! <https://gaia-sky.readthedocs.io>`__
 
