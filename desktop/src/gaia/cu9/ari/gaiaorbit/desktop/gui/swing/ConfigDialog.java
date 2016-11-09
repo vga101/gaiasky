@@ -490,7 +490,7 @@ public class ConfigDialog extends I18nJFrame {
         JPanel controls = new JPanel(new MigLayout("", "[grow,fill][]", ""));
         controls.setBorder(new TitledBorder(new MatteBorder(new Insets(thick, 0, 0, 0), bcol), txt("gui.keymappings"), just, pos));
 
-        Map<TreeSet<Integer>, ProgramAction> maps = KeyBindings.instance.mappings;
+        Map<TreeSet<Integer>, ProgramAction> maps = KeyBindings.instance.getSortedMappings();
         Set<TreeSet<Integer>> keymaps = maps.keySet();
 
         String[] headers = new String[] { txt("gui.keymappings.action"), txt("gui.keymappings.keys") };

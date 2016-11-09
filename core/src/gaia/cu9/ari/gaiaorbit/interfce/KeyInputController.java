@@ -53,7 +53,7 @@ public class KeyInputController extends InputAdapter {
 
         if (GlobalConf.runtime.INPUT_ENABLED) {
             // Use key mappings
-            ProgramAction action = mappings.mappings.get(pressedKeys);
+            ProgramAction action = mappings.getMappings().get(pressedKeys);
             if (action != null) {
                 action.run();
             }

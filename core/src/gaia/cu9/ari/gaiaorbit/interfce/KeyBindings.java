@@ -12,6 +12,7 @@ import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
+import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 
 /**
@@ -22,7 +23,7 @@ import gaia.cu9.ari.gaiaorbit.util.I18n;
  *
  */
 public class KeyBindings {
-    public Map<TreeSet<Integer>, ProgramAction> mappings;
+    private Map<TreeSet<Integer>, ProgramAction> mappings;
 
     public static KeyBindings instance;
 
@@ -44,6 +45,14 @@ public class KeyBindings {
         SPECIAL2 = Constants.webgl ? Keys.SHIFT_RIGHT : Keys.SHIFT_LEFT;
         // For now this will do
         initDefault();
+    }
+
+    public Map<TreeSet<Integer>, ProgramAction> getMappings() {
+        return mappings;
+    }
+
+    public Map<TreeSet<Integer>, ProgramAction> getSortedMappings() {
+        return GlobalResources.sortByValue(mappings);
     }
 
     public void addMapping(ProgramAction action, int... keyCodes) {
