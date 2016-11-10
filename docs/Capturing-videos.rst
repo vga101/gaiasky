@@ -10,7 +10,7 @@ Frame output system + ``ffmpeg``
 This method consists on outputting an image to a file every frame using
 the [[frame output system\|Configuration-interface#frame-output]] of
 Gaia Sky to later gather them to create a video using a video encoder
-software such as ``ffmpeg`` --`here <https://ffmpeg.org/>`__--, which works on
+software such as `ffmpeg <https://ffmpeg.org/>`__, which works on
 Windows, Linux and OS X.
 
 Once you have recorded the images using the [[frame output
@@ -36,7 +36,7 @@ screen and are limited to its resolution.
 Linux
 -----
 
--  ```glc`` <https://github.com/nullkey/glc>`__/```glcs`` <https://github.com/lano1106/glcs>`__
+-  `glc <https://github.com/nullkey/glc>`__/`glcs <https://github.com/lano1106/glcs>`__
    - Command-line interface applications. The documentation and user
    guides can be found in this
    `wiki <https://github.com/nullkey/glc/wiki>`__.
