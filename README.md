@@ -8,7 +8,11 @@
 runs on Windows, Linux and MacOS. It is developed in the framework of
 [ESA](http://www.esa.int/ESA)'s [Gaia mission](http://sci.esa.int/gaia) to chart about 1 billion stars of our Galaxy.
 To get the latest up-to-date and most complete information,
-visit our [**documentation** pages](http://gaia-sky.readthedocs.io).
+
+
+*  Visit our [**home page**](https://zah.uni-heidelberg.de/gaia/outreach/gaiasky).
+*  Read the [**Documentation**](http://gaia-sky.readthedocs.io).
+*  Submit a [**bug** or a **feature request**](https://github.com/ari-zah/gaiasky/issues).
 
 This file contains the following sections:
 
