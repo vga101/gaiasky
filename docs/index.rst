@@ -32,9 +32,13 @@ Heidelberg <www.uni-heidelberg.de>`__).
 .. image:: img/screenshots/screenshot_00028.jpg
   :width: 24%
 
-*  Official site: `GaiaSky@ARI <http://www.zah.uni-heidelberg.de/gaia2/outreach/gaiasky/>`__
-*  Product page: `Gaia Sky <http://ari-zah.github.io/gaiasky>`__
-*  Documentation: `You are in it! <https://gaia-sky.readthedocs.io>`__
+*  Visit our `home page <http://www.zah.uni-heidelberg.de/gaia2/outreach/gaiasky/>`__
+*  Read the `documentation <http://ari-zah.github.io/gaiasky>`__
+*  Submit a `bug or a feature request <https://gaia-sky.readthedocs.io>`__
+
+Visit our home page.
+Read the Documentation.
+Submit a bug or a feature request.
 
 Main features
 -------------
