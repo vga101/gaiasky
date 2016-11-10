@@ -60,6 +60,8 @@ pressing ``F5``. There are two screenshot modes available: \*
 the same resolution. \* ``Advanced``, where you can define the
 resolution of the screenshots.
 
+.. _frame-output-config:
+
 Frame output
 ============
 

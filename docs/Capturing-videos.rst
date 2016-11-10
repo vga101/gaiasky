@@ -8,7 +8,7 @@ Frame output system + ``ffmpeg``
 ================================
 
 This method consists on outputting an image to a file every frame using
-the [[frame output system\|Configuration-interface#frame-output]] of
+the :ref:`frame-output-config` of
 Gaia Sky to later gather them to create a video using a video encoder
 software such as `ffmpeg <https://ffmpeg.org/>`__, which works on
 Windows, Linux and OS X.
