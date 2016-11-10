@@ -39,8 +39,8 @@ Windows
 
 Two windows installers are available for 32 and 64-bit systems.
 
--  ``gaiasky_windows_<version>.exe`` - 32 bit installer.
--  ``gaiasky_windows-x64_<version>.exe`` - 64 bit installer.
+-  ``gaiasky_windows_<version>.exe`` -- 32 bit installer.
+-  ``gaiasky_windows-x64_<version>.exe`` -- 64 bit installer.
 
 To install the Gaia Sky, just double click on the installer and then
 follow the on-screen instructions. You will need to choose the directory

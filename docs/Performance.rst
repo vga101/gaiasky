@@ -4,7 +4,7 @@ Performance
 The performance of the application may vary significantly depending on
 the characteristics of your system. This chapter describes what are the
 factors that have an impact in a greater or lesser degree in the
-performance of the Gaia Sandbox and explains how to tweak them. It is
+performance of the Gaia Sky and explains how to tweak them. It is
 organised in two parts, namely GPU performance (graphics performance)
 and CPU performance.
 

@@ -61,8 +61,9 @@ Contents
 .. toctree::
    :maxdepth: 3
 
+   Downloads
    Requirements
-   Running-the-software
+   Running-gaia-sky
    Documentation
    Javadoc
    Changelog

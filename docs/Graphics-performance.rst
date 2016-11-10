@@ -3,7 +3,7 @@
 Graphics performance
 ********************
 
-The Gaia Sandbox uses `OpenGL <https://www.opengl.org/>`__ to render
+The Gaia Sky uses `OpenGL <https://www.opengl.org/>`__ to render
 advanced graphics and thus its performance may be affected
 significatively by your graphics card. Below you can find some tips to
 improve the performance of the application by tewaking or deactivating
@@ -24,7 +24,7 @@ smoother. The result are generally better looking images, even though
 this depends on the resolution display device.
 
 There are several groups of antialiasing techniques, some of them
-implemented in the Gaia Sandbox and available for you to choose from the
+implemented in the Gaia Sky and available for you to choose from the
 [[preferences dialog\|Configuration-interface]]. They all come at a
 cost, which may vary depending on your system.
 
@@ -79,7 +79,7 @@ Here are some sample images.
 
 Some graphics drivers allow you to override the anti-aliasing settings
 of applications with some default configuration (usually MSAA or FXAA).
-You can also use this feature with the Gaia Sandbox.
+You can also use this feature with the Gaia Sky.
 
 Star brightness
 ===============
@@ -92,7 +92,7 @@ is applied (in this case their appearance is controlled by a shader).
 
 The star brightness can be increased or decreased from the
 ``Star brightness`` slider in the ``Lighting`` section of the `interface
-window </ari-zah/gaiasandbox/wiki/User-interface#lighting>`__.
+window <http://github.com/ari-zah/gaiasky/wiki/User-interface#lighting>`__.
 
 .. hint:: ``CTRL + D`` - activate the **debug mode** to get some information on how many stars are currently being rendered as points and quads as well as the frames per second.
 
@@ -100,7 +100,7 @@ Model detail
 ============
 
 Some models (mainly spherical planets, planetoids, moons and asteroids)
-are automatically generated when the Gaia Sandbox is initialising and
+are automatically generated when the Gaia Sky is initialising and
 accept parameters which tell the loader how many vertices the model
 should have. These parameters are set in the ``json`` data files and can
 have an impact on devices with low-end graphics processors. Let's see an
@@ -123,7 +123,7 @@ example:
 
 The ``quality`` parameter specifies here the number of both vertical and
 horizontal divisions that the sphere will have. This number is reduced
-in the ``Android`` port of the Gaia Sandbox to something between 30 and
+in the ``Android`` port of the Gaia Sky to something between 30 and
 50 depending on the object.
 
 Additionally, some other models, such as that of the Gaia spacecraft,
@@ -164,7 +164,7 @@ section of the [[User interface]] chapter.
 Labels
 ======
 
-Object labels or names in the Gaia Sandbox are rendered using a special
+Object labels or names in the Gaia Sky are rendered using a special
 ``shader`` which implements `distance field
 fonts </libgdx/libgdx/wiki/Distance-field-fonts>`__. This means that
 labels look great at all distances but it is costlier than the regular

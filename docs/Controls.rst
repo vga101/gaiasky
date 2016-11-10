@@ -137,7 +137,7 @@ Free mode
 Gamepad controls
 ================
 
-As of version ``0.704b`` the Gaia Sandbox supports basic
+As of version ``0.704b`` the Gaia Sky supports basic
 gamepad/controller input. By default, only the **Xbox 360 controller**
 is supported, so you may want to map your gamepad differently using
 software like
@@ -152,7 +152,7 @@ been tested with Gaia Sky.
    :alt: Xbox 360 controller button configuration
 
    Xbox 360 controller button configuration
-   
+
 The actions mapped to each button or axis depend on the current camera
 mode (focus, free, spacecraft):
 

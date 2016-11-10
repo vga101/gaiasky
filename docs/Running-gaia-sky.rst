@@ -1,24 +1,28 @@
-Running the software
-********************
+Running Gaia Sky
+****************
 
 If you installed the software using an installer or a package manager
 system (``rpm``, ``deb``), you just need to use the standard running
 procedures of your Operating System to run the application.
 
 **Windows**
+
 In windows, this means clicking on ``Start`` and then browsing the start
-menu folder ``Gaia Sandbox``. You can run the executable from there.
+menu folder ``Gaia Sky``. You can run the executable from there.
 
 **Linux**
-Just type ``gaiasandbox`` in a terminal or use your favourite desktop
-environment search engine to run the Gaia Sandbox launcher.
+
+Just type ``gaiasky`` in a terminal or use your favourite desktop
+environment search engine to run the Gaia Sky launcher.
 
 **OS X**
+
 Locate the launcher using the main search.
 
 **Code and pakcage**
+
 However, if you are a maverick and do not like installers, you can also
-run the Gaia Sandbox directly from the source code in ``GitHub`` or
+run the Gaia Sky directly from the source code in ``GitHub`` or
 using the ``tgz`` package.
 
 Running from source
@@ -47,35 +51,35 @@ it has not been tested.
 
 First, clone the repository:
 
-::
+.. code-block:: bash
 
-    git clone https://github.com/ari-zah/gaiasky.git
-    cd gaiasky
+    $ git clone https://github.com/ari-zah/gaiasky.git
+    $ cd gaiasky
 
 Compile and run
 ---------------
 
 To compile the code and run the desktop version of the application:
 
-::
+.. code-block:: bash
 
-    gradlew desktop:run
+    $ gradlew desktop:run
 
-Package the Gaia Sky
---------------------
+Package Gaia Sky
+----------------
 
-To pack the application into a ``tar`` file:
+To pack the application into a ``tar.gz`` file:
 
-::
+.. code-block:: bash
 
-    gradlew desktop:createTar
+    $ gradlew desktop:createTar
 
 In order to produce the desktop installers for the various systems you
 need a licensed version of ``Install4j``.
 
-::
+.. code-block:: bash
 
-    gradlew desktop:pack
+    $ gradlew desktop:pack
 
 These commands will compile and package the application into a
 ``gaiasky-[version]`` folder under the ``gaiasky/releases`` folder.
@@ -83,8 +87,7 @@ These commands will compile and package the application into a
 Running from downloaded package
 ===============================
 
-In order to run the program follow the instructions of your operating
-system.
+If you prefer to run the application from the ``tar.gz`` package, follow the instructions below.
 
 Linux
 -----
@@ -93,18 +96,11 @@ In order to run the application on Linux, open the terminal, uncompress
 the archive, give execution permissions to the ``run.sh`` file and then
 run it.
 
-::
+.. code-block:: bash
 
-    tar zxvf gaiasandbox-[version].tgz
-    cd gaiasandbox-[version]/
-    gaiasandbox
-
-Alternatively you can run the jar file directly, specifying the
-configuration file.
-
-::
-
-    java -Dproperties.file=conf/global.properties -jar gaiasandbox.jar
+    $ tar zxvf gaiasky-[version].tar.gz
+    $ cd gaiasky-[version]/
+    $ gaiasky
 
 Windows
 -------
@@ -112,17 +108,10 @@ Windows
 In order to run the application on Windows, open a terminal window (type
 ``cmd`` in the start menu search box) and run the ``run.bat`` file.
 
-::
+.. code-block:: bash
 
-    cd path_to_gaiasandbox_folder
-    gaiasandbox.bat
-
-Alternatively you can run the jar file directly, specifying the
-configuration file.
-
-::
-
-    java -Dproperties.file=conf/global.properties -jar gaiasandbox.jar
+    cd path_to_gaiasky_folder
+    gaiasky.bat
 
 OS X
 ----
