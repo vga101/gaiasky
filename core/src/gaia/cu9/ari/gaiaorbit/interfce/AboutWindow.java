@@ -49,7 +49,7 @@ import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextButton;
 
 /**
  * The help window with About, Help and System sections.
- * 
+ *
  * @author tsagrista
  *
  */
@@ -119,9 +119,9 @@ public class AboutWindow extends CollapsibleWindow {
         Link usermanlink = new Link(GlobalConf.WEBPAGE, linkStyle, GlobalConf.WEBPAGE);
 
         // Wiki
-        Label wikititle = new OwnLabel("Wiki", skin, "ui-12");
+        Label wikititle = new OwnLabel("Docs", skin, "ui-12");
         Label wikitxt = new OwnLabel(txt("gui.help.help2"), skin, "ui-11");
-        Link wikilink = new Link(GlobalConf.WIKI, linkStyle, GlobalConf.WIKI);
+        Link wikilink = new Link(GlobalConf.DOCUMENTATION, linkStyle, GlobalConf.DOCUMENTATION);
 
         // Readme
         Label readmetitle = new OwnLabel(txt("gui.help.readme"), skin, "ui-12");

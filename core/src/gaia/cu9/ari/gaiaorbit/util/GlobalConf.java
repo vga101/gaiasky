@@ -19,14 +19,14 @@ import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 
 /**
  * Holds the global configuration options
- * 
+ *
  * @author Toni Sagrista
  *
  */
 public class GlobalConf {
     public static final String APPLICATION_NAME = "Gaia Sky";
     public static final String WEBPAGE = "http://www.zah.uni-heidelberg.de/gaia/outreach/gaiasky/";
-    public static final String WIKI = "https://github.com/ari-zah/gaiasky/wiki";
+    public static final String DOCUMENTATION = "http://gaia-sky.rtfd.io";
     public static final String ICON_URL = "http://www.zah.uni-heidelberg.de/uploads/pics/gaiasandboxlogo_02.png";
 
     public static final String TEXTURES_FOLDER = "data/tex/";
@@ -83,7 +83,7 @@ public class GlobalConf {
          * Returns the actual number of threads. It accounts for the number of
          * threads being 0 or less, "let the program decide" option, in which
          * case the number of processors is returned.
-         * 
+         *
          * @return
          */
         public int NUMBER_THREADS() {
@@ -154,7 +154,7 @@ public class GlobalConf {
 
     /**
      * Runtime configuration values, which are never persisted.
-     * 
+     *
      * @author Toni Sagrista
      *
      */
@@ -252,7 +252,7 @@ public class GlobalConf {
 
     /**
      * Holds the configuration for the output frame subsystem and the camera recording.
-     * 
+     *
      * @author Toni Sagrista
      *
      */
@@ -318,7 +318,7 @@ public class GlobalConf {
 
     /**
      * Holds all configuration values related to data.
-     * 
+     *
      * @author Toni Sagrista
      *
      */
@@ -630,7 +630,7 @@ public class GlobalConf {
         /** Whether to show crosshair in focus mode **/
         public boolean CROSSHAIR;
 
-        /** Resolution of each of the faces in the cubemap which will be mapped to a equirectangular projection for 
+        /** Resolution of each of the faces in the cubemap which will be mapped to a equirectangular projection for
          * the 360 mode.
          */
         public int CUBEMAP_FACE_RESOLUTION;
