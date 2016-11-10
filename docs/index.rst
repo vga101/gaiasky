@@ -11,24 +11,9 @@ Contents
 
    Home
    Requirements
-   Configuration
-   Configuration-file
    Running-the-software
-   Graphics-settings
-   Graphics-performance
-   User-interface
-   Controls
-   Camera-modes
-   Stereoscopic-mode
-   Planetarium-mode
-   360-mode
-   Recording-camera
-   Performance
-   Internal-reference-system
-   Data-catalogs-formats
-   Scripting-with-python
-   Capturing-videos
-   Taking-screenshots
+   Documentation
    Javadoc
-   Contact-information
+   Changelog
    Screenshots
+   Contact-information

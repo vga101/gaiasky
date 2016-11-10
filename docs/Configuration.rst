@@ -1,7 +1,7 @@
 .. _configuration:
 
-Configuration
-*************
+Settings and configuration
+**************************
 
 Gaia Sky can be configured using the provided ``GUI`` (**G**\ raphical **U**\ ser **I**\ nterface).
 However, some functions are not represented in the GUI, so you may need

@@ -1,7 +1,7 @@
 .. _properties-file:
 
-Editing the properties file
-***************************
+The properties file
+*******************
 
 There is a configuration file which stores most of the properties
 explained in the previous section and some more. This section is devoted
