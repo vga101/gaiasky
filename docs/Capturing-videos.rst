@@ -13,8 +13,7 @@ Gaia Sky to later gather them to create a video using a video encoder
 software such as `ffmpeg <https://ffmpeg.org/>`__, which works on
 Windows, Linux and OS X.
 
-Once you have recorded the images using the [[frame output
-interface\|Configuration-interface#frame-output]], you can convert them
+Once you have recorded the images using the :ref:`frame-output-config`, you can convert them
 into a video using the following command:
 
 .. code:: bash
