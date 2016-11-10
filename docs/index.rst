@@ -36,10 +36,6 @@ Heidelberg <www.uni-heidelberg.de>`__).
 *  Read the `documentation <http://ari-zah.github.io/gaiasky>`__
 *  Submit a `bug or a feature request <https://gaia-sky.readthedocs.io>`__
 
-Visit our home page.
-Read the Documentation.
-Submit a bug or a feature request.
-
 Main features
 -------------
 
