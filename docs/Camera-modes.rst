@@ -8,12 +8,12 @@ Gaia Sky offers five basic camera modes.
 Focus mode
 ==========
 
-This is the default mode. In this mode the camera movement is locked to a focus object, which can be selected by double clicking or by using the find dialog (``CTRL_LEFT`` + ``F``).
+This is the default mode. In this mode the camera movement is locked to a focus object, which can be selected by double clicking or by using the find dialog (:kbd:`Ctrl+F`).
 
 *  :ref:`Mouse controls in focus mode <mouse-focus-mode>`
 *  :ref:`Gamepad controls in focus mode <gamepad-focus-mode>`
 
-.. hint:: ``NUMPAD_0`` -- Enter the Focus mode
+.. hint:: :kbd:`NUMPAD_0` -- Enter the Focus mode
 
 Free mode
 =========
@@ -23,14 +23,14 @@ This mode does not lock the camera to a focus object but it lets it roam free in
 *  :ref:`Mouse controls in free mode <mouse-free-mode>`
 *  :ref:`Gamepad controls in free mode <gamepad-free-mode>`
 
-.. hint:: ``NUMPAD_1`` -- Enter the Free mode
+.. hint:: :kbd:`NUMPAD_1` -- Enter the Free mode
 
 Gaia scene mode
 ===============
 
 In this mode the camera can not be controlled. It provides a view of the Gaia satellite from the outside.
 
-.. hint:: ``NUMPAD_2`` -- Enter the Gaia scene mode
+.. hint:: :kbd:`NUMPAD_2` -- Enter the Gaia scene mode
 
 Spacecraft mode
 ===============
@@ -59,7 +59,7 @@ a new user interface is shown in its place at the bottm left of the screen.
 
 *  :ref:`Gamepad controls in spacecraft mode <gamepad-focus-mode>`
 
-.. hint:: ```NUMPAD_3`` -- Enter the Spacecraft mode
+.. hint:: :kbd:`NUMPAD_3` -- Enter the Spacecraft mode
 
 .. figure:: img/sc/sc-mode.jpg
   :alt: Spacecraft mode, with the various controls at the bottom left.
@@ -73,8 +73,8 @@ Field of View mode
 
 This mode simulates the Gaia fields of view. You can select FoV1, FoV2 or both.
 
-.. hint:: ``NUMPAD_4`` -- Enter Field of View 1 mode
+.. hint:: :kbd:`NUMPAD_4` -- Enter Field of View 1 mode
 
-          ``NUMPAD_5`` -- Enter Field of View 2 mode
+          :kbd:`NUMPAD_5` -- Enter Field of View 2 mode
 
-          ``NUMPAD_6`` -- Enter Field of View 1 and 2 mode
+          :kbd:`NUMPAD_6` -- Enter Field of View 1 and 2 mode

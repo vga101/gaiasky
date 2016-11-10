@@ -6,9 +6,9 @@ mode <http://en.wikipedia.org/wiki/Stereoscopy>`__ or 3D mode which
 outputs two images each intended for each eye, creating the illusion of
 depth.
 
-.. hint:: ``LEFT_CTRL`` + ``S`` - activate the stereoscopic mode
+.. hint:: ``LEFT_CTRL`` + ``S`` -- Activate the stereoscopic mode
 
-          ``LEFT_CTRL`` + ``LEFT_SHIFT`` + ``S`` - switch between 3D profiles
+          ``LEFT_CTRL`` + ``LEFT_SHIFT`` + ``S`` -- Switch between 3D profiles
 
 Stereoscopic profiles
 =====================
@@ -34,15 +34,15 @@ the left image goes to the right eye.
 In order to manage all these parameters, we have created 4 stereoscopic
 profiles which can be selected by the user and are described below.
 
--  ``VR_HEADSET`` - The **left** image goes to the **left** eye. No
+-  ``VR_HEADSET`` -- The **left** image goes to the **left** eye. No
    distortion is applied.
--  ``Crosseye`` - The **left** image goes to the **right** eye. No
+-  ``Crosseye`` -- The **left** image goes to the **right** eye. No
    distortion is applied.
--  ``3DTV`` - The **left** image goes to the **left** eye.
+-  ``3DTV`` -- The **left** image goes to the **left** eye.
    Distortion is applied.
--  ``Anaglyph 3D`` - To use with red-cyan glasses. Displays both the left and right images at full resolution. Left image contains the **red** channel, right image contains the **green** and **blue** channels.
+-  ``Anaglyph 3D`` -- To use with red-cyan glasses. Displays both the left and right images at full resolution. Left image contains the **red** channel, right image contains the **green** and **blue** channels.
 
-.. hint:: ``LEFT_CTRL`` + ``LEFT_SHIFT`` + ``S`` - switch between 3D profiles
+.. hint:: ``L-CTRL`` + ``L-SHIFT`` + ``S`` -- Switch between 3D profiles
 
 +-------------------+----------+
 | Profile           | Image    |

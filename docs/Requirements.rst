@@ -115,8 +115,8 @@ to install AUR software. For example:
 
     $ yauort -S gaiasky
 
-This will download the package and install it in your system. Fast and
-easy.
+This will download the package and install it in the ``/opt/gaiasky/`` folder. It also
+creates the necessary shortcuts.
 
 **Unix/Linux installer**
 

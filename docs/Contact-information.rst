@@ -17,7 +17,7 @@ page <http://ari-zah.github.io/gaiasky>`__.
 Author
 ======
 
-**Toni Sagristà Sellés** -- `tonisagrista.com <http://tonisagrista.com`__
+**Toni Sagristà Sellés** -- `tonisagrista.com <http://tonisagrista.com>`__
 
 Acknowledgements
 ================
@@ -68,7 +68,6 @@ people behind the following technologies/resources:
 .. _ernieyu: https://github.com/ernieyu/
 .. _range slider: https://github.com/ernieyu/Swing-range-slider
 .. _Solar System Scope: http://www.solarsystemscope.com/
-.. _`http://www.classe.cornell.edu/~seb/celestia/hutchison/index-125.html`:
 .. _David Navas: http://www.blendswap.com/user/DeNapes
 .. _Install4j: http://www.ej-technologies.com/products/install4j/overview.html
 .. _InstallBuilder: http://installbuilder.bitrock.com/
