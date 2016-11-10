@@ -17,6 +17,8 @@ Graphics properties
    (``true``\ \|\ ``false``) and indicates whether a timestamp is to be
    added to screenshots and frames.
 
+.. _data-properties:
+
 Data properties
 ---------------
 

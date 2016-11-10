@@ -14,6 +14,8 @@ Graphics quality setting
 
 Please see the :ref:`graphics-quality-setting` section.
 
+.. _performance-antialiasing:
+
 Antialiasing
 ============
 
@@ -80,6 +82,8 @@ Here are some sample images.
 Some graphics drivers allow you to override the anti-aliasing settings
 of applications with some default configuration (usually MSAA or FXAA).
 You can also use this feature with the Gaia Sky.
+
+Find more information on antialiasing in the :ref:`graphics-antialiasing` seciton.
 
 Star brightness
 ===============

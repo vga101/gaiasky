@@ -27,11 +27,11 @@ cause a major impact in CPU performance and explains how to tune them.
 Limiting magnitude
 ------------------
 
-You can modify the magnitude limit by setting the property `data.limit.mag`
+You can modify the magnitude limit by setting the property ``data.limit.mag``
 in the configuration file. This will prevent the loading of stars whose magnitude
 is higher (they are fainter) than the specified magnitude, thus relieving the
 CPU of some processing. Also, take a look at the
-[data configuration](Configuration-files#data-properties) section.
+:ref:`data-properties` section.
 
 .. _levels-of-detail:
 
@@ -43,6 +43,11 @@ like ``TGAS``. We can configure whether we want smooth transitions between
 the levels (fade-outs and fade-ins) and also the draw distance, which is
 represented by a range slider. The left knob represents the view angle
 above which octants are rendered.
+
+.. figure:: img/lodslider.jpg
+  :alt: Levels of Detail slider
+
+  Levels of detail slider in preferences dialog
 
 The right knob only matters if ``Smooth LOD transitions`` is checked and sets a higher boundary for the
 angle for the fade-out and fade-in of octant particles.

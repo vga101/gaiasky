@@ -33,6 +33,10 @@ button next to the Camera section title in the GUI Controls window. The
 ``REC`` button will turn red, which indicates the camera is being
 recorded.
 
+.. figure:: img/camera-rec-play.jpg
+
+  Camera path ``REC`` and ``PLAY`` buttons
+
 In order to **stop the recording** and write the file, click again on
 the red ``REC`` button. The button will turn grey and a notification
 will pop up indicating the location of the camera file. Camera files are

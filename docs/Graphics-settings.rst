@@ -31,6 +31,8 @@ models and also the quality of the graphical effects (``light glow``,
 *  ``Normal`` contains lower resolution textures (2K when available) and some specular and normal maps are deactivated. The graphical effects use a reasonable amount of quality for nice visuals without compromising the performance too much.
 *  ``Low`` Offers a noticeable performance gain on less powerful systems. Same textures and model quality as in the ``Normal`` setting. The ``volumetric light`` effect is turned off completely and the ``lens flare`` effect uses a low number of ghosts.
 
+.. _graphics-antialiasing:
+
 Antialiasing
 ============
 
@@ -39,6 +41,8 @@ configuration. Applying antialiasing removes the jagged edges of the
 scene and makes it look better. However, it does not come free of cost,
 and usually has a penalty on the frames per second (FPS). There are four
 main options, described below.
+
+Find more information on antialiasing in the :ref:`performance-antialiasing` section.
 
 **No Antialiasing**
 
