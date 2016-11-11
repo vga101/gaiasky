@@ -6,7 +6,7 @@ Gaia Sky
 
 |Build status|
 
-.. note:: Gaia Sky just hit version 1.0.0!
+.. note:: 11/11/2016 -- Version 1.0.1 is out!
 
 What is Gaia Sky
 ================
