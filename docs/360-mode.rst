@@ -35,7 +35,7 @@ To do so, we can use `ExifTool <http://owl.phy.queensu.ca/~phil/exiftool/>`__. W
 Now we can enjoy our image in any 360 panorama viewer like Google Street View app or the Cardboard Camera!
 Find some examples in this `album <https://goo.gl/photos/kn2MvugZHYcr5Fty8>`__.
 
-.. figure:: img/360.png
+.. figure:: img/screenshots/360/20161111_screenshot_00003.jpg
   :width: 100%
 
   Panorama image captured with Gaia Sky
