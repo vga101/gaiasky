@@ -109,18 +109,22 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
         // LIGHT GLOW
         int nsamples;
         int lgw, lgh;
+        Texture glow;
         if (GlobalConf.scene.isHighQuality()) {
             nsamples = 30;
             lgw = 1920;
             lgh = Math.round(lgw / ar);
+            glow = new Texture(Gdx.files.internal("img/star_glow.png"));
         } else if (GlobalConf.scene.isNormalQuality()) {
             nsamples = 20;
             lgw = 1920;
             lgh = Math.round(lgw / ar);
+            glow = new Texture(Gdx.files.internal("img/star_glow_s.png"));
         } else {
             nsamples = 15;
             lgw = 1280;
             lgh = Math.round(lgw / ar);
+            glow = new Texture(Gdx.files.internal("img/star_glow_s.png"));
         }
 
         Glow.N = 30;
@@ -129,7 +133,7 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
         ppb.lglow.setScatteringSaturation(1f);
         ppb.lglow.setBaseIntesity(1f);
         ppb.lglow.setBias(-0.95f);
-        ppb.lglow.setLightGlowTexture(new Texture(Gdx.files.internal("img/star_glow.png")));
+        ppb.lglow.setLightGlowTexture(glow);
         ppb.lglow.setNSamples(nsamples);
         ppb.lglow.setTextureScale(1f / GaiaSky.instance.cam.getFovFactor());
         ppb.lglow.setEnabled(GlobalConf.postprocess.POSTPROCESS_LIGHT_SCATTERING);
