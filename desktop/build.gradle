@@ -139,7 +139,7 @@ task dist (dependsOn: gaiaskyJar, description: "Compiles the project, creates th
         exclude "**/earth-8k.jpg"
         exclude "**/*.tif"
         
-        exclude "**/attitudeindicator-2.png"
+        exclude "**/attitudeindicator.png"
 
 		exclude "**/catalog.txt"
         exclude "**/*-wgl.json"
