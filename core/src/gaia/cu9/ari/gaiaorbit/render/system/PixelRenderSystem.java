@@ -48,7 +48,7 @@ public class PixelRenderSystem extends ImmediateRenderSystem implements IObserve
     }
 
     protected void initializePointSize(int width, int height) {
-        float defaultPointSize = GlobalConf.runtime.STRIPPED_FOV_MODE ? 3 : 9;
+        float defaultPointSize = GlobalConf.runtime.STRIPPED_FOV_MODE ? 3 : 8;
         if (GlobalConf.scene.STAR_POINT_SIZE < 0) {
             GlobalConf.scene.STAR_POINT_SIZE = defaultPointSize;
         }

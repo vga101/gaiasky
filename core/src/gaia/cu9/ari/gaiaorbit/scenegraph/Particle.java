@@ -73,7 +73,8 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
         thpointTimesFovfactor = (float) GlobalConf.scene.STAR_THRESHOLD_POINT * fovFactor;
         thupOverFovfactor = (float) Constants.THRESHOLD_UP / fovFactor;
         thdownOverFovfactor = (float) Constants.THRESHOLD_DOWN / fovFactor;
-        innerRad = 0.004f * DISC_FACTOR + GlobalConf.scene.STAR_POINT_SIZE * 0.009f;
+        float psize = GlobalConf.scene.STAR_POINT_SIZE < 0 ? 8 : GlobalConf.scene.STAR_POINT_SIZE;
+        innerRad = 0.004f * DISC_FACTOR + psize * 0.009f;
         paramUpdater = new ParamUpdater();
     }
 
