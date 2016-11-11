@@ -14,9 +14,30 @@ Configuration
 
 Please, see the :ref:`360-mode-config` section.
 
-.. figure:: img/360.jpg
+Creating panorama images
+========================
+
+In order to create panorama images that can be viewed with a VR device or simply a 360 viewer, we need to take into consideration a few points.
+
+*  Panoramas work best if their **aspect ratio is 2:1**, so a resolution of ``5300x2650`` or similar should work. (Refer to the :ref:`screenshots-configuration` section to learn how to take screenshots with an arbitrary resolution).
+*  Some services (like Google) have strong constraints on image properties. For instance, they must be at least 14 megapixels and in `jpeg` format. Learn more `here <https://support.google.com/maps/answer/7012050?hl=en&ref_topic=6275604>`__.
+*  Some **metadata** needs to be injected into the image file.
+
+Injecting panorama metadata to 360 images
+-----------------------------------------
+
+To do so, we can use `ExifTool <http://owl.phy.queensu.ca/~phil/exiftool/>`__. We will inject the metadata with the following command:
+
+.. code:: bash
+
+  exiftool -ProjectionType="equirectangular" -UsePanoramaViewer="True" -"PoseHeadingDegrees<$exif:GPSImgDirection" -"CroppedAreaImageWidthPixels<$ImageWidth" -"CroppedAreaImageHeightPixels<$ImageHeight" -"FullPanoWidthPixels<$ImageWidth" -"FullPanoHeightPixels<$ImageHeight" -CroppedAreaLeftPixels="0" -CroppedAreaTopPixels="0" image_name.jpg
+
+Now we can enjoy our image in any 360 panorama viewer like Google Street View app or the Cardboard Camera!
+Find some examples in this `album <https://goo.gl/photos/kn2MvugZHYcr5Fty8>`__.
+
+.. figure:: img/360.png
   :width: 100%
 
-  360 mode
+  Panorama image captured with Gaia Sky
 
 .. |360| image:: img/cubemap.jpg

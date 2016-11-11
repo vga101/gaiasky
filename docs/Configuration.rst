@@ -51,6 +51,8 @@ You can see the key associations in the ``Controls`` tab. Controls are
 not editable. Check out the `Controls <Controls.rst>`_\  documentation
 to know more.
 
+.. _screenshots-configuration:
+
 Screenshot configuration
 ========================
 

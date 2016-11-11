@@ -519,15 +519,15 @@ public class GlobalConf {
                 CUBEMAP360_MODE = (Boolean) data[0];
                 EventManager.instance.post(Events.DISPLAY_GUI_CMD, I18n.bundle.get("notif.cleanmode"), !CUBEMAP360_MODE);
 
-                if (CUBEMAP360_MODE) {
-                    // Entering 360 mode
-                    lensglowBackup = GlobalConf.postprocess.POSTPROCESS_LIGHT_SCATTERING;
-                    EventManager.instance.post(Events.LIGHT_SCATTERING_CMD, false);
-                } else {
-                    // Exiting 360 mode
-                    if (lensglowBackup != null)
-                        EventManager.instance.post(Events.LIGHT_SCATTERING_CMD, lensglowBackup);
-                }
+                //                if (CUBEMAP360_MODE) {
+                //                    // Entering 360 mode
+                //                    lensglowBackup = GlobalConf.postprocess.POSTPROCESS_LIGHT_SCATTERING;
+                //                    EventManager.instance.post(Events.LIGHT_SCATTERING_CMD, false);
+                //                } else {
+                //                    // Exiting 360 mode
+                //                    if (lensglowBackup != null)
+                //                        EventManager.instance.post(Events.LIGHT_SCATTERING_CMD, lensglowBackup);
+                //                }
                 EventManager.instance.post(Events.POST_NOTIFICATION, "You have entered the 360 mode.  Go back to normal mode using <CTRL+3>");
                 break;
             }
