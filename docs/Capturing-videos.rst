@@ -8,18 +8,17 @@ Frame output system + ``ffmpeg``
 ================================
 
 This method consists on outputting an image to a file every frame using
-the [[frame output system\|Configuration-interface#frame-output]] of
+the :ref:`frame-output-config` of
 Gaia Sky to later gather them to create a video using a video encoder
-software such as ```ffmpeg`` <https://ffmpeg.org/>`__, which works on
+software such as `ffmpeg <https://ffmpeg.org/>`__, which works on
 Windows, Linux and OS X.
 
-Once you have recorded the images using the [[frame output
-interface\|Configuration-interface#frame-output]], you can convert them
+Once you have recorded the images using the :ref:`frame-output-config`, you can convert them
 into a video using the following command:
 
 .. code:: bash
 
-    ffmpeg -start_number [start_img_num] -i [prefix]%05d.png -vframes [num_images] -s 1280x720 -c:v libx264 -r 25 -preset [slower|veryslow|placebo] -pix_fmt + [out_video_filename].mp4
+    $ ffmpeg -start_number [start_img_num] -i [prefix]%05d.png -vframes [num_images] -s 1280x720 -c:v libx264 -r 25 -preset [slower|veryslow|placebo] -pix_fmt + [out_video_filename].mp4
 
 You need to obviously change the prefix and start number, choose the
 right resolution, frame rate and preset and modify the output format if
@@ -36,7 +35,7 @@ screen and are limited to its resolution.
 Linux
 -----
 
--  ```glc`` <https://github.com/nullkey/glc>`__/```glcs`` <https://github.com/lano1106/glcs>`__
+-  `glc <https://github.com/nullkey/glc>`__/`glcs <https://github.com/lano1106/glcs>`__
    - Command-line interface applications. The documentation and user
    guides can be found in this
    `wiki <https://github.com/nullkey/glc/wiki>`__.
