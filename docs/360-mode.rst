@@ -7,7 +7,7 @@ to create 360 videos with head tracking (see `here <https://www.youtube.com/watc
 
 .. hint:: To activate the 360 mode, click on the |360| icon in the camera section of the controls window. Exit by clicking |360| again.
 
-.. hint:: ``L-CTRL``+``3`` -- Can also be used to toggle the 360 mode.
+.. hint:: ``L-CTRL`` + ``3`` -- Can also be used to toggle the 360 mode.
 
 Configuration
 =============
