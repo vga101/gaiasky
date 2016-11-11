@@ -173,7 +173,7 @@ public class DesktopConfInit extends ConfInit {
         String LAST_VERSION = p.getProperty("program.lastversion", "0.0.0");
         String VERSION_CHECK_URL = p.getProperty("program.versioncheckurl");
         String UI_THEME = p.getProperty("program.ui.theme");
-        String SCRIPT_LOCATION = p.getProperty("program.scriptlocation").isEmpty() ? System.getProperty("user.dir") : p.getProperty("program.scriptlocation");
+        String SCRIPT_LOCATION = p.getProperty("program.scriptlocation").isEmpty() ? SysUtils.getDefaultScriptDir().getAbsolutePath() : p.getProperty("program.scriptlocation");
 
         boolean STEREOSCOPIC_MODE = Boolean.parseBoolean(p.getProperty("program.stereoscopic"));
         StereoProfile STEREO_PROFILE = StereoProfile.values()[Integer.parseInt(p.getProperty("program.stereoscopic.profile"))];
