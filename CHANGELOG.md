@@ -1,8 +1,7 @@
 # Change Log
 
-## [Unreleased](https://github.com/ari-zah/gaiasky/tree/HEAD)
-
-[Full Changelog](https://github.com/ari-zah/gaiasky/compare/1.0.0...HEAD)
+## [1.0.1](https://github.com/ari-zah/gaiasky/tree/1.0.1) (2016-11-11)
+[Full Changelog](https://github.com/ari-zah/gaiasky/compare/1.0.0...1.0.1)
 
 **Implemented enhancements:**
 
