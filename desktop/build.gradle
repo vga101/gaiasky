@@ -132,9 +132,14 @@ task dist (dependsOn: gaiaskyJar, description: "Compiles the project, creates th
         from "../android/assets/data"
         into "$distDir/data"
         exclude "**/android"
-		//exclude "**/octree"
+
 		exclude "**/tgas_201507"
 		exclude "**/tgas_final"
+		
+		exclude "**/hipparcos.csv"
+		exclude "**/hip_pm.csv"
+		
+		exclude "**/models/iss"
 
         exclude "**/earth-8k.jpg"
         exclude "**/*.tif"
