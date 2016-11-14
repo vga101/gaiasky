@@ -3,7 +3,7 @@
 	{
 	"name" : "Gaia",
 	"wikiname" : "Gaia (spacecraft)",
-	"color" : [.7, .8, .1, 1.0],
+	"color" : [0.7, 0.8, 0.1, 1.0],
 	// 5m of radius, 0.005 Km
 	"size" : 0.005,
 	"ct" : Satellites,
@@ -30,6 +30,54 @@
 						"args" : [true],
 						"model" : "data/models/gaia/gaia.g3db"
 						}
+	},
+	
+    {
+	"name" : "Cassini",
+	"wikiname" : "Cassini–Huygens",
+	"color" : [1.0, .8, .0, 1.0],
+	// 3.5m of radius, 0.0035 Km
+	"size" : 0.0035,
+	"ct" : Satellites,
+
+	"mag" : 3.78,
+	
+	"parent" : "Sol", 
+	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.GenericSpacecraft",
+
+	"coordinates" : {
+				// This must implement gaia.cu9.ari.gaiaorbit.util.coord.IBodyCoordinates				
+				"impl" : "gaia.cu9.ari.gaiaorbit.util.coord.EclipticCoordinates",
+                "orbitname" : "Cassini orbit"
+				},
+	"model"	: {
+                    "args" : [true],
+                    "model" : "data/models/cassini/cassini.g3db"
+              }
+	},
+    
+    {
+	"name" : "Rosetta",
+	"wikiname" : "Rosetta (spacecraft)",
+	"color" : [1.0, .8, .0, 1.0],
+	// 3.4m of radius, 0.0034 Km
+	"size" : 0.0034,
+	"ct" : Satellites,
+
+	"mag" : 3.78,
+	
+	"parent" : "Sol", 
+	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.GenericSpacecraft",
+
+	"coordinates" : {
+				// This must implement gaia.cu9.ari.gaiaorbit.util.coord.IBodyCoordinates				
+				"impl" : "gaia.cu9.ari.gaiaorbit.util.coord.EclipticCoordinates",
+                                "orbitname" : "Rosetta orbit"
+				},
+	"model"	: {
+                    "args" : [true],
+                    "model" : "data/models/rosetta/rosetta.g3db"
+                  }
 	},
 	
 	{

@@ -57,6 +57,8 @@ public class ModelComponent implements Disposable {
 
     public String type, modelFile;
 
+    public double scale = 1d;
+
     /**
      * COMPONENTS
      */
@@ -183,6 +185,14 @@ public class ModelComponent implements Disposable {
 
     public void setParams(Map<String, Object> params) {
         this.params = params;
+    }
+
+    public void setScale(Double scale) {
+        this.scale = scale;
+    }
+
+    public void setScale(Long scale) {
+        this.scale = scale;
     }
 
 }

@@ -1,0 +1,1121 @@
+# File produced by 
+
+newmtl extrude101
+  Ns 1.0
+  d 1.0
+  illum 2
+  Kd 0.4 0.4 0.4
+  Ka 0 0 0
+  Ks 0 0 0
+
+newmtl extrude102
+  Ns 1.0
+  d 1.0
+  illum 2
+  Kd 0.4 0.4 0.4
+  Ka 0 0 0
+  Ks 0 0 0
+
+newmtl extrude107
+  Ns 35.29
+  d 1.0
+  illum 2
+  Kd 0.8 0.8 0.8
+  Ka 0 0 0
+  Ks 0.498 0.498 0.498
+
+newmtl extrude108
+  Ns 35.29
+  d 1.0
+  illum 2
+  Kd 0.8 0.8 0.8
+  Ka 0 0 0
+  Ks 0.498 0.498 0.498
+
+newmtl extrude110
+  Ns 25.13
+  d 1.0
+  illum 2
+  Kd 0.3647 0.4 0.3765
+  Ka 0 0 0
+  Ks 0.3255 0.3255 0.3255
+
+newmtl extrude127
+  Ns 35.29
+  d 1.0
+  illum 2
+  Kd 0.8 0.8 0.8
+  Ka 0 0 0
+  Ks 0.498 0.498 0.498
+
+newmtl extrude128
+  Ns 35.29
+  d 1.0
+  illum 2
+  Kd 0.8 0.8 0.8
+  Ka 0 0 0
+  Ks 0.498 0.498 0.498
+
+newmtl extrude129
+  Ns 1.0
+  d 1.0
+  illum 2
+  Kd 0.4 0.4 0.4
+  Ka 0 0 0
+  Ks 0 0 0
+
+newmtl extrude130
+  Ns 35.29
+  d 1.0
+  illum 2
+  Kd 0.8 0.8 0.8
+  Ka 0 0 0
+  Ks 0.498 0.498 0.498
+
+newmtl extrude132
+  Ns 35.29
+  d 1.0
+  illum 2
+  Kd 0.8 0.8 0.8
+  Ka 0 0 0
+  Ks 0.498 0.498 0.498
+
+newmtl extrude133
+  Ns 35.29
+  d 1.0
+  illum 2
+  Kd 0.8 0.8 0.8
+  Ka 0 0 0
+  Ks 0.498 0.498 0.498
+
+newmtl extruded43
+  Ns 35.29
+  d 1.0
+  illum 2
+  Kd 0.8 0.8 0.8
+  Ka 0 0 0
+  Ks 0.498 0.498 0.498
+
+newmtl extruded48
+  Ns 35.29
+  d 1.0
+  illum 2
+  Kd 0.8 0.8 0.8
+  Ka 0 0 0
+  Ks 0.498 0.498 0.498
+
+newmtl extruded49
+  Ns 35.29
+  d 1.0
+  illum 2
+  Kd 0.8 0.8 0.8
+  Ka 0 0 0
+  Ks 0.498 0.498 0.498
+
+newmtl extruded50
+  Ns 35.29
+  d 1.0
+  illum 2
+  Kd 0.8 0.8 0.8
+  Ka 0 0 0
+  Ks 0.498 0.498 0.498
+
+newmtl extruded70
+  Ns 35.29
+  d 1.0
+  illum 2
+  Kd 0.8 0.8 0.8
+  Ka 0 0 0
+  Ks 0.498 0.498 0.498
+
+newmtl extruded71
+  Ns 1.0
+  d 1.0
+  illum 2
+  Kd 0.4 0.4 0.4
+  Ka 0 0 0
+  Ks 0 0 0
+
+newmtl extruded72
+  Ns 1.0
+  d 1.0
+  illum 2
+  Kd 0.4 0.4 0.4
+  Ka 0 0 0
+  Ks 0 0 0
+
+newmtl extruded77
+  Ns 35.29
+  d 1.0
+  illum 2
+  Kd 0.8 0.8 0.8
+  Ka 0 0 0
+  Ks 0.498 0.498 0.498
+
+newmtl extruded78
+  Ns 35.29
+  d 1.0
+  illum 2
+  Kd 0.8 0.8 0.8
+  Ka 0 0 0
+  Ks 0.498 0.498 0.498
+
+newmtl extruded79
+  Ns 35.29
+  d 1.0
+  illum 2
+  Kd 0.8 0.8 0.8
+  Ka 0 0 0
+  Ks 0.498 0.498 0.498
+
+newmtl extruded83
+  Ns 35.29
+  d 1.0
+  illum 2
+  Kd 0.8 0.8 0.8
+  Ka 0 0 0
+  Ks 0.498 0.498 0.498
+
+newmtl extrudedSu
+  Ns 35.29
+  d 1.0
+  illum 2
+  Kd 0.8 0.8 0.8
+  Ka 0 0 0
+  Ks 0.498 0.498 0.498
+
+newmtl pCube1
+  Ns 35.29
+  d 1.0
+  illum 2
+  Kd 0.8 0.8 0.8
+  Ka 0 0 0
+  Ks 0.498 0.498 0.498
+
+newmtl pCube10
+  Ns 35.29
+  d 1.0
+  illum 2
+  Kd 0.4196 0.3333 0.1647
+  Ka 0 0 0
+  Ks 0.4 0.4 0.4
+
+newmtl pCube10_1
+  Ns 35.29
+  d 1.0
+  illum 2
+  Kd 0 0 0
+  Ka 0 0 0
+  Ks 0.498 0.498 0.498
+
+newmtl pCube11
+  Ns 35.29
+  d 1.0
+  illum 2
+  Kd 0.4196 0.3333 0.1647
+  Ka 0 0 0
+  Ks 0.4 0.4 0.4
+
+newmtl pCube12
+  Ns 1.0
+  d 1.0
+  illum 2
+  Kd 0.4 0.4 0.4
+  Ka 0 0 0
+  Ks 0 0 0
+
+newmtl pCube14
+  Ns 35.29
+  d 1.0
+  illum 2
+  Kd 0.4196 0.3333 0.1647
+  Ka 0 0 0
+  Ks 0.4 0.4 0.4
+
+newmtl pCube15
+  Ns 25.13
+  d 1.0
+  illum 2
+  Kd 0.3647 0.4 0.3765
+  Ka 0 0 0
+  Ks 0.3255 0.3255 0.3255
+
+newmtl pCube16
+  Ns 35.29
+  d 1.0
+  illum 2
+  Kd 0.8 0.8 0.8
+  Ka 0 0 0
+  Ks 0.498 0.498 0.498
+
+newmtl pCube17
+  Ns 35.29
+  d 1.0
+  illum 2
+  Kd 0.4196 0.3333 0.1647
+  Ka 0 0 0
+  Ks 0.4 0.4 0.4
+
+newmtl pCube17_1
+  Ns 35.29
+  d 1.0
+  illum 2
+  Kd 0 0 0
+  Ka 0 0 0
+  Ks 0.498 0.498 0.498
+
+newmtl pCube18
+  Ns 42.91
+  d 1.0
+  illum 2
+  Kd 0.1216 0.1294 0.3882
+  Ka 0 0 0
+  Ks 0.498 0.498 0.498
+
+newmtl pCube19
+  Ns 42.91
+  d 1.0
+  illum 2
+  Kd 0.1216 0.1294 0.3882
+  Ka 0 0 0
+  Ks 0.498 0.498 0.498
+
+newmtl pCube2
+  Ns 35.29
+  d 1.0
+  illum 2
+  Kd 0.8 0.8 0.8
+  Ka 0 0 0
+  Ks 0.498 0.498 0.498
+
+newmtl pCube20
+  Ns 42.91
+  d 1.0
+  illum 2
+  Kd 0.1216 0.1294 0.3882
+  Ka 0 0 0
+  Ks 0.498 0.498 0.498
+
+newmtl pCube21
+  Ns 42.91
+  d 1.0
+  illum 2
+  Kd 0.1216 0.1294 0.3882
+  Ka 0 0 0
+  Ks 0.498 0.498 0.498
+
+newmtl pCube22
+  Ns 35.29
+  d 1.0
+  illum 2
+  Kd 0.4196 0.3333 0.1647
+  Ka 0 0 0
+  Ks 0.4 0.4 0.4
+
+newmtl pCube25
+  Ns 42.91
+  d 1.0
+  illum 2
+  Kd 0.1216 0.1294 0.3882
+  Ka 0 0 0
+  Ks 0.498 0.498 0.498
+
+newmtl pCube26
+  Ns 42.91
+  d 1.0
+  illum 2
+  Kd 0.5569 0.4471 0.2235
+  Ka 0 0 0
+  Ks 0.498 0.498 0.498
+
+newmtl pCube27
+  Ns 42.91
+  d 1.0
+  illum 2
+  Kd 0 0 0
+  Ka 0 0 0
+  Ks 0.498 0.498 0.498
+
+newmtl pCube28
+  Ns 42.91
+  d 1.0
+  illum 2
+  Kd 0.5569 0.4471 0.2235
+  Ka 0 0 0
+  Ks 0.498 0.498 0.498
+
+newmtl pCube29
+  Ns 25.13
+  d 1.0
+  illum 2
+  Kd 0.3647 0.4 0.3765
+  Ka 0 0 0
+  Ks 0.3255 0.3255 0.3255
+
+newmtl pCube3
+  Ns 35.29
+  d 1.0
+  illum 2
+  Kd 0.8 0.8 0.8
+  Ka 0 0 0
+  Ks 0.498 0.498 0.498
+
+newmtl pCube30
+  Ns 25.13
+  d 1.0
+  illum 2
+  Kd 0.3647 0.4 0.3765
+  Ka 0 0 0
+  Ks 0.3255 0.3255 0.3255
+
+newmtl pCube31
+  Ns 25.13
+  d 1.0
+  illum 2
+  Kd 0.3647 0.4 0.3765
+  Ka 0 0 0
+  Ks 0.3255 0.3255 0.3255
+
+newmtl pCube32
+  Ns 25.13
+  d 1.0
+  illum 2
+  Kd 0.3647 0.4 0.3765
+  Ka 0 0 0
+  Ks 0.3255 0.3255 0.3255
+
+newmtl pCube33
+  Ns 35.29
+  d 1.0
+  illum 2
+  Kd 0.8 0.8 0.8
+  Ka 0 0 0
+  Ks 0.498 0.498 0.498
+
+newmtl pCube34
+  Ns 35.29
+  d 1.0
+  illum 2
+  Kd 0.8 0.8 0.8
+  Ka 0 0 0
+  Ks 0.498 0.498 0.498
+
+newmtl pCube35
+  Ns 35.29
+  d 1.0
+  illum 2
+  Kd 0.8 0.8 0.8
+  Ka 0 0 0
+  Ks 0.498 0.498 0.498
+
+newmtl pCube36
+  Ns 35.29
+  d 1.0
+  illum 2
+  Kd 0.8 0.8 0.8
+  Ka 0 0 0
+  Ks 0.498 0.498 0.498
+
+newmtl pCube4
+  Ns 42.91
+  d 1.0
+  illum 2
+  Kd 0.5569 0.4471 0.2235
+  Ka 0 0 0
+  Ks 0.498 0.498 0.498
+
+newmtl pCube43
+  Ns 35.29
+  d 1.0
+  illum 2
+  Kd 0.4196 0.3333 0.1647
+  Ka 0 0 0
+  Ks 0.4 0.4 0.4
+
+newmtl pCube45
+  Ns 42.91
+  d 1.0
+  illum 2
+  Kd 0.5569 0.4471 0.2235
+  Ka 0 0 0
+  Ks 0.498 0.498 0.498
+
+newmtl pCube46
+  Ns 42.91
+  d 1.0
+  illum 2
+  Kd 0.1216 0.1294 0.3882
+  Ka 0 0 0
+  Ks 0.498 0.498 0.498
+
+newmtl pCube47
+  Ns 35.29
+  d 1.0
+  illum 2
+  Kd 0.4196 0.3333 0.1647
+  Ka 0 0 0
+  Ks 0.4 0.4 0.4
+
+newmtl pCube5
+  Ns 35.29
+  d 1.0
+  illum 2
+  Kd 0.8 0.8 0.8
+  Ka 0 0 0
+  Ks 0.498 0.498 0.498
+
+newmtl pCube9
+  Ns 35.29
+  d 1.0
+  illum 2
+  Kd 0.8 0.8 0.8
+  Ka 0 0 0
+  Ks 0.498 0.498 0.498
+
+newmtl pCylind103
+  Ns 35.29
+  d 1.0
+  illum 2
+  Kd 0.8 0.8 0.8
+  Ka 0 0 0
+  Ks 0.498 0.498 0.498
+
+newmtl pCylind104
+  Ns 35.29
+  d 1.0
+  illum 2
+  Kd 0.8 0.8 0.8
+  Ka 0 0 0
+  Ks 0.498 0.498 0.498
+
+newmtl pCylind111
+  Ns 25.13
+  d 1.0
+  illum 2
+  Kd 0.3647 0.4 0.3765
+  Ka 0 0 0
+  Ks 0.3255 0.3255 0.3255
+
+newmtl pCylind116
+  Ns 42.91
+  d 1.0
+  illum 2
+  Kd 0.8 0 0
+  Ka 0 0 0
+  Ks 0.498 0.498 0.498
+
+newmtl pCylind117
+  Ns 25.13
+  d 1.0
+  illum 2
+  Kd 0.3647 0.4 0.3765
+  Ka 0 0 0
+  Ks 0.3255 0.3255 0.3255
+
+newmtl pCylind118
+  Ns 42.91
+  d 1.0
+  illum 2
+  Kd 0.1216 0.1294 0.3882
+  Ka 0 0 0
+  Ks 0.498 0.498 0.498
+
+newmtl pCylind120
+  Ns 35.29
+  d 1.0
+  illum 2
+  Kd 0.4196 0.3333 0.1647
+  Ka 0 0 0
+  Ks 0.4 0.4 0.4
+
+newmtl pCylind121
+  Ns 42.91
+  d 1.0
+  illum 2
+  Kd 0.1216 0.1294 0.3882
+  Ka 0 0 0
+  Ks 0.498 0.498 0.498
+
+newmtl pCylind122
+  Ns 1.0
+  d 1.0
+  illum 2
+  Kd 0.4 0.4 0.4
+  Ka 0 0 0
+  Ks 0 0 0
+
+newmtl pCylind124
+  Ns 25.13
+  d 1.0
+  illum 2
+  Kd 0.3647 0.4 0.3765
+  Ka 0 0 0
+  Ks 0.3255 0.3255 0.3255
+
+newmtl pCylind125
+  Ns 25.13
+  d 1.0
+  illum 2
+  Kd 0.3647 0.4 0.3765
+  Ka 0 0 0
+  Ks 0.3255 0.3255 0.3255
+
+newmtl pCylind126
+  Ns 1.0
+  d 1.0
+  illum 2
+  Kd 0.4 0.4 0.4
+  Ka 0 0 0
+  Ks 0 0 0
+
+newmtl pCylind134
+  Ns 35.29
+  d 1.0
+  illum 2
+  Kd 0.8 0.8 0.8
+  Ka 0 0 0
+  Ks 0.498 0.498 0.498
+
+newmtl pCylind135
+  Ns 35.29
+  d 1.0
+  illum 2
+  Kd 0.8 0.8 0.8
+  Ka 0 0 0
+  Ks 0.498 0.498 0.498
+
+newmtl pCylinde19
+  Ns 35.29
+  d 1.0
+  illum 2
+  Kd 0.8 0.8 0.8
+  Ka 0 0 0
+  Ks 0.498 0.498 0.498
+
+newmtl pCylinde21
+  Ns 35.29
+  d 1.0
+  illum 2
+  Kd 0.8 0.8 0.8
+  Ka 0 0 0
+  Ks 0.498 0.498 0.498
+
+newmtl pCylinde22
+  Ns 35.29
+  d 1.0
+  illum 2
+  Kd 0.8 0.8 0.8
+  Ka 0 0 0
+  Ks 0.498 0.498 0.498
+
+newmtl pCylinde23
+  Ns 35.29
+  d 1.0
+  illum 2
+  Kd 0.8 0.8 0.8
+  Ka 0 0 0
+  Ks 0.498 0.498 0.498
+
+newmtl pCylinde30
+  Ns 35.29
+  d 1.0
+  illum 2
+  Kd 0.8 0.8 0.8
+  Ka 0 0 0
+  Ks 0.498 0.498 0.498
+
+newmtl pCylinde32
+  Ns 35.29
+  d 1.0
+  illum 2
+  Kd 0.8 0.8 0.8
+  Ka 0 0 0
+  Ks 0.498 0.498 0.498
+
+newmtl pCylinde37
+  Ns 35.29
+  d 1.0
+  illum 2
+  Kd 0.4196 0.3333 0.1647
+  Ka 0 0 0
+  Ks 0.4 0.4 0.4
+
+newmtl pCylinde38
+  Ns 1.0
+  d 1.0
+  illum 2
+  Kd 0.4 0.4 0.4
+  Ka 0 0 0
+  Ks 0 0 0
+
+newmtl pCylinde39
+  Ns 1.0
+  d 1.0
+  illum 2
+  Kd 0.4 0.4 0.4
+  Ka 0 0 0
+  Ks 0 0 0
+
+newmtl pCylinde44
+  Ns 35.29
+  d 1.0
+  illum 2
+  Kd 0.8 0.8 0.8
+  Ka 0 0 0
+  Ks 0.498 0.498 0.498
+
+newmtl pCylinde45
+  Ns 35.29
+  d 1.0
+  illum 2
+  Kd 0.8 0.8 0.8
+  Ka 0 0 0
+  Ks 0.498 0.498 0.498
+
+newmtl pCylinde56
+  Ns 35.29
+  d 1.0
+  illum 2
+  Kd 0.4196 0.3333 0.1647
+  Ka 0 0 0
+  Ks 0.4 0.4 0.4
+
+newmtl pCylinde58
+  Ns 42.91
+  d 1.0
+  illum 2
+  Kd 0.8 0 0
+  Ka 0 0 0
+  Ks 0.498 0.498 0.498
+
+newmtl pCylinde61
+  Ns 25.13
+  d 1.0
+  illum 2
+  Kd 0.3647 0.4 0.3765
+  Ka 0 0 0
+  Ks 0.3255 0.3255 0.3255
+
+newmtl pCylinde62
+  Ns 35.29
+  d 1.0
+  illum 2
+  Kd 0.4196 0.3333 0.1647
+  Ka 0 0 0
+  Ks 0.4 0.4 0.4
+
+newmtl pCylinde63
+  Ns 42.91
+  d 1.0
+  illum 2
+  Kd 0.1216 0.1294 0.3882
+  Ka 0 0 0
+  Ks 0.498 0.498 0.498
+
+newmtl pCylinde64
+  Ns 1.0
+  d 1.0
+  illum 2
+  Kd 0.4 0.4 0.4
+  Ka 0 0 0
+  Ks 0 0 0
+
+newmtl pCylinde66
+  Ns 42.91
+  d 1.0
+  illum 2
+  Kd 0.1216 0.1294 0.3882
+  Ka 0 0 0
+  Ks 0.498 0.498 0.498
+
+newmtl pCylinde67
+  Ns 1.0
+  d 1.0
+  illum 2
+  Kd 0.4 0.4 0.4
+  Ka 0 0 0
+  Ks 0 0 0
+
+newmtl pCylinde68
+  Ns 25.13
+  d 1.0
+  illum 2
+  Kd 0.3647 0.4 0.3765
+  Ka 0 0 0
+  Ks 0.3255 0.3255 0.3255
+
+newmtl pCylinde80
+  Ns 35.29
+  d 1.0
+  illum 2
+  Kd 0.8 0.8 0.8
+  Ka 0 0 0
+  Ks 0.498 0.498 0.498
+
+newmtl pCylinde81
+  Ns 35.29
+  d 1.0
+  illum 2
+  Kd 0.8 0.8 0.8
+  Ka 0 0 0
+  Ks 0.498 0.498 0.498
+
+newmtl pCylinde82
+  Ns 35.29
+  d 1.0
+  illum 2
+  Kd 0.8 0.8 0.8
+  Ka 0 0 0
+  Ks 0.498 0.498 0.498
+
+newmtl pCylinde85
+  Ns 42.91
+  d 1.0
+  illum 2
+  Kd 0 0 0
+  Ka 0 0 0
+  Ks 0.498 0.498 0.498
+
+newmtl pCylinde88
+  Ns 25.13
+  d 1.0
+  illum 2
+  Kd 0.3647 0.4 0.3765
+  Ka 0 0 0
+  Ks 0.3255 0.3255 0.3255
+
+newmtl pCylinde89
+  Ns 25.13
+  d 1.0
+  illum 2
+  Kd 0.3647 0.4 0.3765
+  Ka 0 0 0
+  Ks 0.3255 0.3255 0.3255
+
+newmtl pCylinde95
+  Ns 1.0
+  d 1.0
+  illum 2
+  Kd 0.4 0.4 0.4
+  Ka 0 0 0
+  Ks 0 0 0
+
+newmtl pCylinde97
+  Ns 1.0
+  d 1.0
+  illum 2
+  Kd 0.4 0.4 0.4
+  Ka 0 0 0
+  Ks 0 0 0
+
+newmtl pCylinde98
+  Ns 25.13
+  d 1.0
+  illum 2
+  Kd 0.3647 0.4 0.3765
+  Ka 0 0 0
+  Ks 0.3255 0.3255 0.3255
+
+newmtl pCylinder1
+  Ns 25.13
+  d 1.0
+  illum 2
+  Kd 0.3647 0.4 0.3765
+  Ka 0 0 0
+  Ks 0.3255 0.3255 0.3255
+
+newmtl pCylinder2
+  Ns 35.29
+  d 1.0
+  illum 2
+  Kd 0.8 0.8 0.8
+  Ka 0 0 0
+  Ks 0.498 0.498 0.498
+
+newmtl pCylinder3
+  Ns 35.29
+  d 1.0
+  illum 2
+  Kd 0.8 0.8 0.8
+  Ka 0 0 0
+  Ks 0.498 0.498 0.498
+
+newmtl pCylinder4
+  Ns 35.29
+  d 1.0
+  illum 2
+  Kd 0.8 0.8 0.8
+  Ka 0 0 0
+  Ks 0.498 0.498 0.498
+
+newmtl pCylinder5
+  Ns 35.29
+  d 1.0
+  illum 2
+  Kd 0.8 0.8 0.8
+  Ka 0 0 0
+  Ks 0.498 0.498 0.498
+
+newmtl pCylinder6
+  Ns 35.29
+  d 1.0
+  illum 2
+  Kd 0.8 0.8 0.8
+  Ka 0 0 0
+  Ks 0.498 0.498 0.498
+
+newmtl pCylinder7
+  Ns 35.29
+  d 1.0
+  illum 2
+  Kd 0.8 0.8 0.8
+  Ka 0 0 0
+  Ks 0.498 0.498 0.498
+
+newmtl pCylinder8
+  Ns 35.29
+  d 1.0
+  illum 2
+  Kd 0.8 0.8 0.8
+  Ka 0 0 0
+  Ks 0.498 0.498 0.498
+
+newmtl pCylinder9
+  Ns 35.29
+  d 1.0
+  illum 2
+  Kd 0.8 0.8 0.8
+  Ka 0 0 0
+  Ks 0.498 0.498 0.498
+
+newmtl polySur100
+  Ns 1.0
+  d 1.0
+  illum 2
+  Kd 0.4 0.4 0.4
+  Ka 0 0 0
+  Ks 0 0 0
+
+newmtl polySur106
+  Ns 35.29
+  d 1.0
+  illum 2
+  Kd 0.8 0.8 0.8
+  Ka 0 0 0
+  Ks 0.498 0.498 0.498
+
+newmtl polySur113
+  Ns 1.0
+  d 1.0
+  illum 2
+  Kd 0.2627 0.2627 0.2627
+  Ka 0 0 0
+  Ks 0 0 0
+
+newmtl polySurf10
+  Ns 35.29
+  d 1.0
+  illum 2
+  Kd 0.8 0.8 0.8
+  Ka 0 0 0
+  Ks 0.498 0.498 0.498
+
+newmtl polySurf11
+  Ns 42.91
+  d 1.0
+  illum 2
+  Kd 0.1216 0.1294 0.3882
+  Ka 0 0 0
+  Ks 0.498 0.498 0.498
+
+newmtl polySurf12
+  Ns 25.13
+  d 1.0
+  illum 2
+  Kd 0.3647 0.4 0.3765
+  Ka 0 0 0
+  Ks 0.3255 0.3255 0.3255
+
+newmtl polySurf13
+  Ns 25.13
+  d 1.0
+  illum 2
+  Kd 0.3647 0.4 0.3765
+  Ka 0 0 0
+  Ks 0.3255 0.3255 0.3255
+
+newmtl polySurf14
+  Ns 25.13
+  d 1.0
+  illum 2
+  Kd 0.3647 0.4 0.3765
+  Ka 0 0 0
+  Ks 0.3255 0.3255 0.3255
+
+newmtl polySurf17
+  Ns 35.29
+  d 1.0
+  illum 2
+  Kd 0.8 0.8 0.8
+  Ka 0 0 0
+  Ks 0.498 0.498 0.498
+
+newmtl polySurf17_1
+  Ns 42.91
+  d 1.0
+  illum 2
+  Kd 0.1216 0.1294 0.3882
+  Ka 0 0 0
+  Ks 0.498 0.498 0.498
+
+newmtl polySurf26
+  Ns 42.91
+  d 1.0
+  illum 2
+  Kd 0.1216 0.1294 0.3882
+  Ka 0 0 0
+  Ks 0.498 0.498 0.498
+
+newmtl polySurf28
+  Ns 42.91
+  d 1.0
+  illum 2
+  Kd 0.5569 0.4471 0.2235
+  Ka 0 0 0
+  Ks 0.498 0.498 0.498
+
+newmtl polySurf29
+  Ns 25.13
+  d 1.0
+  illum 2
+  Kd 0.3647 0.4 0.3765
+  Ka 0 0 0
+  Ks 0.3255 0.3255 0.3255
+
+newmtl polySurf34
+  Ns 42.91
+  d 1.0
+  illum 2
+  Kd 0.1216 0.1294 0.3882
+  Ka 0 0 0
+  Ks 0.498 0.498 0.498
+
+newmtl polySurf41
+  Ns 35.29
+  d 1.0
+  illum 2
+  Kd 0.8 0.8 0.8
+  Ka 0 0 0
+  Ks 0.498 0.498 0.498
+
+newmtl polySurf47
+  Ns 35.29
+  d 1.0
+  illum 2
+  Kd 0.8 0.8 0.8
+  Ka 0 0 0
+  Ks 0.498 0.498 0.498
+
+newmtl polySurf52
+  Ns 42.91
+  d 1.0
+  illum 2
+  Kd 0.5569 0.4471 0.2235
+  Ka 0 0 0
+  Ks 0.498 0.498 0.498
+
+newmtl polySurf69
+  Ns 35.29
+  d 1.0
+  illum 2
+  Kd 0.4196 0.3333 0.1647
+  Ka 0 0 0
+  Ks 0.4 0.4 0.4
+
+newmtl polySurf84
+  Ns 35.29
+  d 1.0
+  illum 2
+  Kd 0.8 0.8 0.8
+  Ka 0 0 0
+  Ks 0.498 0.498 0.498
+
+newmtl polySurf87
+  Ns 25.13
+  d 1.0
+  illum 2
+  Kd 0.3647 0.4 0.3765
+  Ka 0 0 0
+  Ks 0.3255 0.3255 0.3255
+
+newmtl polySurf94
+  Ns 1.0
+  d 1.0
+  illum 2
+  Kd 0.4 0.2353 0.1922
+  Ka 0 0 0
+  Ks 0 0 0
+
+newmtl polySurfac
+  Ns 35.29
+  d 1.0
+  illum 2
+  Kd 0.4196 0.3333 0.1647
+  Ka 0 0 0
+  Ks 0.4 0.4 0.4
+
+newmtl polySurfac_1
+  Ns 35.29
+  d 1.0
+  illum 2
+  Kd 0 0 0
+  Ka 0 0 0
+  Ks 0.498 0.498 0.498
+
+newmtl pSphere1
+  Ns 35.29
+  d 1.0
+  illum 2
+  Kd 0.4196 0.3333 0.1647
+  Ka 0 0 0
+  Ks 0.4 0.4 0.4
+
+newmtl pSphere2
+  Ns 35.29
+  d 1.0
+  illum 2
+  Kd 0.8 0.8 0.8
+  Ka 0 0 0
+  Ks 0.498 0.498 0.498
+
+newmtl pSphere3
+  Ns 42.91
+  d 1.0
+  illum 2
+  Kd 0.1216 0.1294 0.3882
+  Ka 0 0 0
+  Ks 0.498 0.498 0.498
+
+newmtl revolve115
+  Ns 42.91
+  d 1.0
+  illum 2
+  Kd 0.8 0 0
+  Ka 0 0 0
+  Ks 0.498 0.498 0.498
+
+newmtl revolvedSu
+  Ns 42.91
+  d 1.0
+  illum 2
+  Kd 0.8 0 0
+  Ka 0 0 0
+  Ks 0.498 0.498 0.498
+
+newmtl w
+  Ns 25.13
+  d 1.0
+  illum 2
+  Kd 0.3647 0.4 0.3765
+  Ka 0 0 0
+  Ks 0.3255 0.3255 0.3255
