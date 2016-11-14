@@ -1,5 +1,8 @@
 # Change Log
 
+## [1.0.2](https://github.com/ari-zah/gaiasky/tree/1.0.2) (2016-11-14)
+[Full Changelog](https://github.com/ari-zah/gaiasky/compare/1.0.1...1.0.2)
+
 ## [1.0.1](https://github.com/ari-zah/gaiasky/tree/1.0.1) (2016-11-11)
 [Full Changelog](https://github.com/ari-zah/gaiasky/compare/1.0.0...1.0.1)
 
