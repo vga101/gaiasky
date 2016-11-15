@@ -489,4 +489,16 @@ public interface IScriptingInterface {
      */
     public void sleepFrames(int frames);
 
+    /**
+     * Expands the component with the given name.
+     * @param name The name, as in `CameraComponent` or `ObjectsComponent`
+     */
+    public void expandGuiComponent(String name);
+
+    /**
+     * Collapses the component with the given name.
+     * @param name The name, as in `CameraComponent` or `ObjectsComponent`
+     */
+    public void collapseGuiComponent(String name);
+
 }

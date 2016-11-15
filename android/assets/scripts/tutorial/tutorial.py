@@ -11,7 +11,7 @@ from gaia.cu9.ari.gaiaorbit.script import EventScriptingInterface
 
 headerSize = 25
 textSize = 13
-twdelay = 0.007
+twdelay = 0.01
 arrowH = 7
 
 gs = EventScriptingInterface()
@@ -85,7 +85,7 @@ def typewriter(id, text, x, y, width, height, r, g, b, a, twdelay):
         gs.displayTextObject(id, buffer, x, y, width, height, r, g, b, a, textSize)
         sleep(twdelay)
 
-gs.preloadTextures("scripts/tutorial/arrow-left-s.png", "scripts/tutorial/gaia.png", "scripts/tutorial/clock.png", "scripts/tutorial/camera.png", "scripts/tutorial/visibility.png", "scripts/tutorial/light.png", "scripts/tutorial/preferences.png")
+gs.preloadTextures("scripts/tutorial/arrow-left-s.png", "scripts/tutorial/gaia.png", "scripts/tutorial/clock.png", "scripts/tutorial/camera.png", "scripts/tutorial/visibility.png", "scripts/tutorial/light.png", "scripts/tutorial/preferences.png", "scripts/tutorial/globe.png")
 
 # Disable input and prepare
 gs.disableInput()
@@ -95,6 +95,7 @@ gs.setFov(50.0)
 gs.minimizeInterfaceWindow()
 gs.setGuiPosition(0, 1)
 gs.goToObject("Earth")
+
 
 #
 # WELCOME
@@ -113,7 +114,7 @@ gs.displayImageObject(0, "scripts/tutorial/gaia.png", 0.25, 0.88)
 gs.displayMessageObject(1, "General navigation", 0.33, 0.9, 1.0, 0.7, 0.0, 1.0, headerSize)
 sleep(1.0)
 
-typewriter(2, 'The Gaia Sky (' + version + ') is an interactive 3D visualisation application that permits the real time exploration of the galaxy in space and time.', 0.3, 0.75, 0.6, 0.1, 1.0, 1.0, 1.0, 1.0, twdelay)
+typewriter(2, 'Gaia Sky (' + version + ') is an interactive 3D visualisation application to explore the Galaxy in space and time.', 0.3, 0.75, 0.6, 0.1, 1.0, 1.0, 1.0, 1.0, twdelay)
 wait_input(0.75, [])
 typewriter(3, 'You can move around using the mouse and keyboard (or touch screen if applicable), clicking and dragging the LEFT MOUSE button to rotate the scene and using the SCROLL WHEEL to zoom in and out.', 0.3, 0.7, 0.6, 0.08, 1.0, 1.0, 1.0, 1.0, twdelay)
 wait_input(0.65, [2, 3])
@@ -146,7 +147,7 @@ sleep(1.0)
 gs.removeObjects([2, 3, 4, 5])
 
 gs.setCameraSpeed(20.0)
-typewriter(2, 'We can also move away from the Earth...', 0.3, 0.75, 0.6, 0.08, 1.0, 1.0, 1.0, 1.0, twdelay)
+typewriter(2, 'Using the MOUSE WHEEL, we can also move away from Earth...', 0.3, 0.75, 0.6, 0.08, 1.0, 1.0, 1.0, 1.0, twdelay)
 gs.goToObject("Earth", 800000)
 gs.cameraStop()
 sleep(1.0)
@@ -171,33 +172,29 @@ gs.cameraStop()
 
 wait_input(0.69, [2, 3])
 
-gs.setTurningCameraSpeed(20)
-typewriter(2, 'We can also look away from the focus by holding LEFT CONTROL and dragging the LEFT MOUSE button', 0.3, 0.75, 0.6, 0.08, 1.0, 1.0, 1.0, 1.0, twdelay)
+gs.setTurningCameraSpeed(2)
+typewriter(2, 'We can also look away from the focus by dragging the RIGHT MOUSE button', 0.3, 0.75, 0.6, 0.08, 1.0, 1.0, 1.0, 1.0, twdelay)
 sleep(1.0)
 typewriter(3, 'Like this', 0.3, 0.69, 0.6, 0.08, 1.0, 1.0, 1.0, 1.0, twdelay)
-gs.cameraTurn(5.0, 0)
+gs.cameraTurn(1.0, 0)
 sleep(2.5)
-gs.cameraStop()
-gs.goToObject("Earth", 100)
-sleep(3.0)
+gs.setTurningCameraSpeed(40)
 gs.cameraCenter()
 gs.goToObject("Earth")
 gs.cameraStop()
-
-wait_input(0.69, [2, 3])
 
 typewriter(2, 'Finally, to select a different focus, just DOUBLE CLICK on it', 0.3, 0.75, 0.6, 0.08, 1.0, 1.0, 1.0, 1.0, twdelay)
 sleep(1.0)
 typewriter(3, 'Let\'s change the focus a couple of times...', 0.3, 0.69, 0.6, 0.08, 1.0, 1.0, 1.0, 1.0, twdelay)
 sleep(2.5)
 gs.setCameraFocus("Betelgeuse")
-sleep(2.5)
+sleep(4.5)
 gs.setCameraFocus("Mars")
-sleep(2.5)
+sleep(4.5)
 gs.setCameraFocus("Sol")
-sleep(2.5)
+sleep(4.5)
 gs.setCameraFocus("Earth")
-sleep(2.5)
+sleep(4.5)
 gs.cameraStop()
 gs.cameraCenter()
 
@@ -229,7 +226,7 @@ sleep(1.0)
 # Pace
 posize = gs.getPositionAndSizeGui("plus")
 arrow_small(100, posize[0] + posize[2], posize[1] + posize[3] / 2 - arrowH)
-typewriter(2, "The speed of the simulation time is governed by the pace (shown in the text field 'pace'). You can modify the pace either entering a number in the field or by using the + and - buttons. You can also use the shortcuts '[' and ']'.", 0.3, 0.7, 0.6, 0.15, 1.0, 1.0, 1.0, 1.0, twdelay)
+typewriter(2, "The speed of the simulation time is governed by the warp (shown in the text field 'pace'). You can modify the warp by using the + and - buttons. You can also use the shortcuts ',' and '.'.", 0.3, 0.7, 0.6, 0.15, 1.0, 1.0, 1.0, 1.0, twdelay)
 sleep(1.0)
 wait_input(0.7, [100, 2])
 
@@ -255,7 +252,7 @@ gs.removeObject(2)
 typewriter(2, "Time stopped!", 0.3, 0.75, 0.6, 0.1, 1.0, 1.0, 1.0, 1.0, twdelay)
 sleep(1.0)
 typewriter(3, "We can also run the time backwards. Let's set a negative pace", 0.3, 0.73, 0.6, 0.1, 1.0, 1.0, 1.0, 1.0, twdelay)
-posize = gs.getPositionAndSizeGui("input pace")
+posize = gs.getPositionAndSizeGui("time warp")
 typewriter(4, "Check the pace value as we set it to -1 and start the simulation again", 0.3, 0.71, 0.6, 0.1, 1.0, 1.0, 1.0, 1.0, twdelay)
 arrow_small(101, posize[0] + posize[2], posize[1] + posize[3] / 2 - arrowH)
 sleep(1.0)
@@ -274,12 +271,15 @@ typewriter(2, "Let's now find out about the camera modes", 0.3, 0.75, 0.6, 0.08,
 wait_input(0.75, [0, 1, 2])
 
 
+
 #
 # CAMERA
 #
 gs.maximizeInterfaceWindow()
 gs.setGuiPosition(0, 1)
 gs.setGuiScrollPosition(0)
+
+gs.expandGuiComponent("CameraComponent")
 
 gs.displayImageObject(0, "scripts/tutorial/camera.png", 0.25, 0.88)
 gs.displayMessageObject(1, "Camera", 0.33, 0.9, 1.0, 0.7, 0.0, 1.0, headerSize)
@@ -288,10 +288,10 @@ sleep(1.0)
 # Modes
 posize = gs.getPositionAndSizeGui("camera mode")
 arrow_small(100, posize[0] + posize[2], posize[1] + posize[3] / 2 - arrowH)
-typewriter(2, 'There are 3 camera modes:\n -Focus camera\n -Free camera\n -Field of view', 0.3, 0.75, 0.6, 0.1, 1.0, 1.0, 1.0, 1.0, twdelay)
-typewriter(3, 'You can select the camera mode using the select box or with the keys 0-4 in the numeric keypad', 0.3, 0.65, 0.6, 0.1, 1.0, 1.0, 1.0, 1.0, twdelay)
+typewriter(2, 'There are 5 camera modes:\n -Free camera\n -Focus camera\n -Gaia scene\n -Spacecraft\n -Field of view', 0.3, 0.60, 0.6, 0.25, 1.0, 1.0, 1.0, 1.0, twdelay)
+typewriter(3, 'You can select the camera mode using the select box or with the keys 0-4 in the numeric keypad', 0.3, 0.55, 0.6, 0.1, 1.0, 1.0, 1.0, 1.0, twdelay)
 sleep(1.0)
-wait_input(0.65, [100, 2, 3])
+wait_input(0.45, [100, 2, 3])
 
 typewriter(2, 'You can use the sliders to change the camera field of view', 0.3, 0.75, 0.6, 0.1, 1.0, 1.0, 1.0, 1.0, twdelay)
 posize = gs.getPositionAndSizeGui("field of view")
@@ -334,6 +334,9 @@ wait_input(0.75, [0, 1, 2])
 gs.maximizeInterfaceWindow()
 gs.setGuiPosition(0, 1)
 gs.setGuiScrollPosition(500)
+
+gs.expandGuiComponent("ObjectsComponent")
+
 sleep(1.0)
 
 gs.displayImageObject(0, "scripts/tutorial/globe.png", 0.25, 0.88)
@@ -377,6 +380,9 @@ gs.removeAllObjects()
 gs.maximizeInterfaceWindow()
 gs.setGuiPosition(0, 1)
 gs.setGuiScrollPosition(500)
+
+gs.expandGuiComponent("VisibilityComponent")
+
 sleep(1.0)
 
 gs.displayImageObject(0, "scripts/tutorial/visibility.png", 0.25, 0.88)
@@ -403,7 +409,7 @@ gs.setVisibility("Stars", True)
 sleep(1.0)
 wait_input(0.65, [2, 3])
 sleep(1.0)
-typewriter(2, 'The visibility of elements can also be toggled using keyboard shortcuts. For exmaple\nP - Planets\nO - Orbits\nC - Constellations\nS - Stars\netc.', 0.3, 0.71, 0.6, 0.15, 1.0, 1.0, 1.0, 1.0, twdelay)
+typewriter(2, 'The visibility of elements can also be toggled using keyboard shortcuts. For exmaple\nL-SHIFT+P - Planets\nL-SHIFT+O - Orbits\nL-SHIFT+C - Constellations\nL-SHIFT+S - Stars\netc.', 0.3, 0.71, 0.6, 0.15, 1.0, 1.0, 1.0, 1.0, twdelay)
 wait_input(0.65, [100, 0, 1, 2])
 
 gs.removeAllObjects()
@@ -414,6 +420,9 @@ gs.removeAllObjects()
 gs.maximizeInterfaceWindow()
 gs.setGuiPosition(0, 1)
 gs.setGuiScrollPosition(500)
+
+gs.expandGuiComponent("VisualEffectsComponent")
+
 sleep(1.0)
 
 gs.displayImageObject(0, "scripts/tutorial/light.png", 0.25, 0.88)
@@ -457,6 +466,9 @@ gs.removeAllObjects()
 gs.maximizeInterfaceWindow()
 gs.setGuiPosition(0, 1)
 gs.setGuiScrollPosition(500)
+
+gs.expandGuiComponent("GaiaComponent")
+
 sleep(1.0)
 
 gs.displayImageObject(0, "scripts/tutorial/gaia.png", 0.25, 0.88)
@@ -500,7 +512,7 @@ gs.displayImageObject(0, "scripts/tutorial/preferences.png", 0.25, 0.88)
 gs.displayMessageObject(1, "Just one more thing...", 0.33, 0.9, 1.0, 0.7, 0.0, 1.0, headerSize)
 sleep(1.0)
 
-typewriter(2, 'If you need more detailed information on this software and/or how to perform advanced tasks (such scripting, image outputting, etc.) you can read the online documentation in our GitHub account. Also, feel free to send us any bug reports or suggestions. We are always happy to recieve them.\nNow, finally, enjoy the application!', 0.3, 0.69, 0.6, 0.15, 1.0, 1.0, 1.0, 1.0, twdelay)
+typewriter(2, 'If you need more detailed information on this software and/or how to perform advanced tasks (such scripting, image outputting, etc.) you can read the online documentation in http://gaia-sky.rtfd.io. Also, feel free to send us any bug reports or suggestions. We are always happy to recieve them.\nNow, finally, enjoy the application!', 0.3, 0.69, 0.6, 0.15, 1.0, 1.0, 1.0, 1.0, twdelay)
 sleep(1.0)
 gs.displayMessageObject(90, "Press any key to finish", 0.6, 0.65, 0.9, 0.9, 0.0, 1.0, 15)
 gs.waitForInput()

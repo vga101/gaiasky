@@ -147,24 +147,26 @@ public class PixelRenderSystem extends ImmediateRenderSystem implements IObserve
             // Put flag down
             POINT_UPDATE_FLAG = false;
         }
-        if (Gdx.app.getType() == ApplicationType.Desktop) {
-            // Enable gl_PointCoord
-            Gdx.gl20.glEnable(34913);
-            // Enable point sizes
-            Gdx.gl20.glEnable(0x8642);
+        if (!camera.getMode().isGaiaFov()) {
+            if (Gdx.app.getType() == ApplicationType.Desktop) {
+                // Enable gl_PointCoord
+                Gdx.gl20.glEnable(34913);
+                // Enable point sizes
+                Gdx.gl20.glEnable(0x8642);
+            }
+            shaderProgram.begin();
+            shaderProgram.setUniformMatrix("u_projModelView", camera.getCamera().combined);
+            shaderProgram.setUniformf("u_camPos", camera.getCurrent().getPos().put(aux));
+            shaderProgram.setUniformf("u_fovFactor", camera.getFovFactor());
+            shaderProgram.setUniformf("u_alpha", alphas[0]);
+            shaderProgram.setUniformf("u_starBrightness", GlobalConf.scene.STAR_BRIGHTNESS * BRIGHTNESS_FACTOR);
+            shaderProgram.setUniformf("u_pointSize", camera.getNCameras() == 1 ? GlobalConf.scene.STAR_POINT_SIZE : GlobalConf.scene.STAR_POINT_SIZE * 10);
+            shaderProgram.setUniformf("u_t", (float) AstroUtils.getMsSinceJ2000(GaiaSky.instance.time.getTime()));
+            shaderProgram.setUniformf("u_ar", GlobalConf.program.STEREOSCOPIC_MODE && (GlobalConf.program.STEREO_PROFILE != StereoProfile.HD_3DTV && GlobalConf.program.STEREO_PROFILE != StereoProfile.ANAGLYPHIC) ? 0.5f : 1f);
+            curr.mesh.setVertices(curr.vertices, 0, curr.vertexIdx);
+            curr.mesh.render(shaderProgram, ShapeType.Point.getGlType());
+            shaderProgram.end();
         }
-        shaderProgram.begin();
-        shaderProgram.setUniformMatrix("u_projModelView", camera.getCamera().combined);
-        shaderProgram.setUniformf("u_camPos", camera.getCurrent().getPos().put(aux));
-        shaderProgram.setUniformf("u_fovFactor", camera.getFovFactor());
-        shaderProgram.setUniformf("u_alpha", alphas[0]);
-        shaderProgram.setUniformf("u_starBrightness", GlobalConf.scene.STAR_BRIGHTNESS * BRIGHTNESS_FACTOR);
-        shaderProgram.setUniformf("u_pointSize", camera.getNCameras() == 1 ? GlobalConf.scene.STAR_POINT_SIZE : GlobalConf.scene.STAR_POINT_SIZE * 10);
-        shaderProgram.setUniformf("u_t", (float) AstroUtils.getMsSinceJ2000(GaiaSky.instance.time.getTime()));
-        shaderProgram.setUniformf("u_ar", GlobalConf.program.STEREOSCOPIC_MODE && (GlobalConf.program.STEREO_PROFILE != StereoProfile.HD_3DTV && GlobalConf.program.STEREO_PROFILE != StereoProfile.ANAGLYPHIC) ? 0.5f : 1f);
-        curr.mesh.setVertices(curr.vertices, 0, curr.vertexIdx);
-        curr.mesh.render(shaderProgram, ShapeType.Point.getGlType());
-        shaderProgram.end();
 
     }
 

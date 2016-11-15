@@ -197,7 +197,7 @@ public class JythonFactory extends ScriptingFactory implements IObserver {
                 // TODO Figure a better way than this to stop the script
                 sr.stop();
             } catch (Exception e) {
-
+                EventManager.instance.post(Events.JAVA_EXCEPTION, e);
             }
             sr.interpreter.cleanup();
             sr.cleanup();
@@ -232,7 +232,11 @@ public class JythonFactory extends ScriptingFactory implements IObserver {
                     interpreter.exec(code);
                     cleanup();
                 } catch (Exception e) {
-                    EventManager.instance.post(Events.JAVA_EXCEPTION, e);
+                    if (e.getCause() instanceof ThreadDeath) {
+                        EventManager.instance.post(Events.POST_NOTIFICATION, "Script stopped");
+                    } else {
+                        EventManager.instance.post(Events.JAVA_EXCEPTION, e);
+                    }
                 }
             }
         }

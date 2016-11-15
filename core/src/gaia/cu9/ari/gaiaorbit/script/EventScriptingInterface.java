@@ -14,6 +14,7 @@ import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.EventManager.TimeFrame;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
+import gaia.cu9.ari.gaiaorbit.interfce.ControlsWindow;
 import gaia.cu9.ari.gaiaorbit.interfce.IGui;
 import gaia.cu9.ari.gaiaorbit.scenegraph.AbstractPositionEntity;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
@@ -23,6 +24,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.NaturalCamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
+import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.LruCache;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 
@@ -713,6 +715,20 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
             return null;
         }
 
+    }
+
+    @Override
+    public void expandGuiComponent(String name) {
+        IGui gui = GaiaSky.instance.mainGui;
+        ControlsWindow controls = (ControlsWindow) gui.getGuiStage().getRoot().findActor(I18n.bundle.get("gui.controls"));
+        controls.getCollapsiblePane(name).expand();
+    }
+
+    @Override
+    public void collapseGuiComponent(String name) {
+        IGui gui = GaiaSky.instance.mainGui;
+        ControlsWindow controls = (ControlsWindow) gui.getGuiStage().getRoot().findActor(I18n.bundle.get("gui.controls"));
+        controls.getCollapsiblePane(name).collapse();
     }
 
     @Override

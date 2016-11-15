@@ -354,7 +354,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
 
         // Run tutorial
         if (GlobalConf.program.DISPLAY_TUTORIAL) {
-            EventManager.instance.post(Events.RUN_SCRIPT_PATH, "scripts/tutorial/tutorial-pointer.py");
+            EventManager.instance.post(Events.RUN_SCRIPT_PATH, GlobalConf.program.TUTORIAL_POINTER_SCRIPT_LOCATION);
             GlobalConf.program.DISPLAY_TUTORIAL = false;
         }
 

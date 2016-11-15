@@ -272,7 +272,7 @@ public class FovCamera extends AbstractCamera implements IObserver {
 
     @Override
     public Vector3d getDirection() {
-        int idx = parent.mode.ordinal() - 3;
+        int idx = parent.mode.ordinal() - CameraMode.Gaia_FOV1.ordinal();
         idx = Math.min(idx, 1);
         return directions[idx];
     }
@@ -338,7 +338,7 @@ public class FovCamera extends AbstractCamera implements IObserver {
     @Override
     public void render(int rw, int rh) {
         // Renders the focal plane CCDs
-        fpstages[parent.mode.ordinal() - 3].draw();
+        fpstages[parent.mode.ordinal() - CameraMode.Gaia_FOV1.ordinal()].draw();
     }
 
     @Override
@@ -357,7 +357,7 @@ public class FovCamera extends AbstractCamera implements IObserver {
     }
 
     public void computeGaiaScan(ITimeFrameProvider time, CelestialBody cb) {
-        boolean visible = computeVisibleFovs(cb.pos, this, cb.pos.len());
+        boolean visible = computeVisibleFovs(cb, this);
         cb.updateTransitNumber(visible && time.getDt() != 0, time, this);
     }
 
@@ -368,7 +368,7 @@ public class FovCamera extends AbstractCamera implements IObserver {
         case Gaia_FOV2:
             return super.isVisible(time, cb);
         case Gaia_FOV1and2:
-            return computeVisibleFovs(cb.pos, this, cb.pos.len());
+            return computeVisibleFovs(cb, this);
         default:
             return false;
         }

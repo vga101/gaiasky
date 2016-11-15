@@ -416,12 +416,16 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
         parentTransform.getTranslation(transform);
         this.opacity = opacity;
 
-        if (pageId == 1056 || pageId == 448 || pageId == 336 || pageId == 272 || pageId == 208 || pageId == 144 || pageId == 80 || pageId == 16 || pageId == 1) {
-            int a = 2;
-        }
-
         // Is this octant observed??
-        computeObserved2(parentTransform, cam);
+        if (!cam.getMode().isGaiaFov())
+            // Only one view direction
+            computeObserved2(parentTransform, cam.getAngleEdge(), cam.getPos(), cam.getDirection(), cam.getUp());
+        else {
+            // FOV, we have two view directions
+            computeObserved2(parentTransform, cam.getAngleEdge(), cam.getPos(), cam.getDirections()[0], cam.getUp());
+            if (!observed)
+                computeObserved2(parentTransform, cam.getAngleEdge(), cam.getPos(), cam.getDirections()[1], cam.getUp());
+        }
 
         if (observed) {
 
@@ -492,18 +496,17 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
      * the camera itself is in the view.
      * 
      * @param parentTransform
-     * @param cam
+     * @param angle Angle edge of camera
+     * @param pos Position of camera
+     * @param dir Direction of camera
+     * @param up Up vector of camera
      */
-    private boolean computeObserved2(Transform parentTransform, ICamera cam) {
-        float angle = cam.getAngleEdge();
-        Vector3d dir = cam.getDirection();
-        Vector3d up = cam.getUp();
-
+    private boolean computeObserved2(Transform parentTransform, float angle, Vector3d pos, Vector3d dir, Vector3d up) {
         boxcopy.set(box);
         boxcopy.mul(boxtransf.idt().translate(parentTransform.getTranslation()));
 
         observed = GlobalConf.program.CUBEMAP360_MODE || GlobalResources.isInView(boxcopy.getCenter(auxD1), auxD1.len(), angle, dir) || GlobalResources.isInView(boxcopy.getCorner000(auxD1), auxD1.len(), angle, dir) || GlobalResources.isInView(boxcopy.getCorner001(auxD1), auxD1.len(), angle, dir) || GlobalResources.isInView(boxcopy.getCorner010(auxD1), auxD1.len(), angle, dir) || GlobalResources.isInView(boxcopy.getCorner011(auxD1), auxD1.len(), angle, dir)
-                || GlobalResources.isInView(boxcopy.getCorner100(auxD1), auxD1.len(), angle, dir) || GlobalResources.isInView(boxcopy.getCorner101(auxD1), auxD1.len(), angle, dir) || GlobalResources.isInView(boxcopy.getCorner110(auxD1), auxD1.len(), angle, dir) || GlobalResources.isInView(boxcopy.getCorner111(auxD1), auxD1.len(), angle, dir) || box.contains(cam.getPos());
+                || GlobalResources.isInView(boxcopy.getCorner100(auxD1), auxD1.len(), angle, dir) || GlobalResources.isInView(boxcopy.getCorner101(auxD1), auxD1.len(), angle, dir) || GlobalResources.isInView(boxcopy.getCorner110(auxD1), auxD1.len(), angle, dir) || GlobalResources.isInView(boxcopy.getCorner111(auxD1), auxD1.len(), angle, dir) || box.contains(pos);
 
         // Rays
         if (!observed && !GlobalConf.program.CUBEMAP360_MODE) {

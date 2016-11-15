@@ -223,7 +223,8 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
             distToCamera = (float) transform.position.len();
 
             // TODO Very ugly!
-            if (ModelBody.closestCamStar == null || ModelBody.closestCamStar.distToCamera > distToCamera)
+            if (!this.copy && (ModelBody.closestCamStar == null || ModelBody.closestCamStar.distToCamera > distToCamera))
+            //if (ModelBody.closestCamStar == null || ModelBody.closestCamStar.distToCamera > distToCamera) 
                 ModelBody.closestCamStar = this;
 
             if (!copy) {
@@ -244,7 +245,8 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
                     child.update(time, parentTransform, camera, opacity);
                 }
             }
-            camera.computeGaiaScan(time, this);
+            if (GlobalConf.scene.COMPUTE_GAIA_SCAN)
+                camera.computeGaiaScan(time, this);
         }
     }
 

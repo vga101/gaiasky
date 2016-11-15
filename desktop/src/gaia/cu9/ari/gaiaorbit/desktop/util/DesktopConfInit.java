@@ -161,7 +161,8 @@ public class DesktopConfInit extends ConfInit {
         String LOCALE = p.getProperty("program.locale");
 
         boolean DISPLAY_TUTORIAL = Boolean.parseBoolean(p.getProperty("program.tutorial"));
-        String TUTORIAL_SCRIPT_LOCATION = p.getProperty("program.tutorial.script");
+        String TUTORIAL_POINTER_SCRIPT_LOCATION = p.getProperty("program.tutorial.pointer.script", "scripts/tutorial/tutorial-pointer.py");
+        String TUTORIAL_SCRIPT_LOCATION = p.getProperty("program.tutorial.script", "scripts/tutorial/tutorial.py");
         boolean SHOW_CONFIG_DIALOG = Boolean.parseBoolean(p.getProperty("program.configdialog"));
         boolean SHOW_DEBUG_INFO = Boolean.parseBoolean(p.getProperty("program.debuginfo"));
         Date LAST_CHECKED;
@@ -173,12 +174,12 @@ public class DesktopConfInit extends ConfInit {
         String LAST_VERSION = p.getProperty("program.lastversion", "0.0.0");
         String VERSION_CHECK_URL = p.getProperty("program.versioncheckurl");
         String UI_THEME = p.getProperty("program.ui.theme");
-        String SCRIPT_LOCATION = p.getProperty("program.scriptlocation").isEmpty() ? SysUtils.getDefaultScriptDir().getAbsolutePath() : p.getProperty("program.scriptlocation");
+        String SCRIPT_LOCATION = p.getProperty("program.scriptlocation").isEmpty() ? System.getProperty("user.dir") + File.separatorChar + "scripts" : p.getProperty("program.scriptlocation");
 
         boolean STEREOSCOPIC_MODE = Boolean.parseBoolean(p.getProperty("program.stereoscopic"));
         StereoProfile STEREO_PROFILE = StereoProfile.values()[Integer.parseInt(p.getProperty("program.stereoscopic.profile"))];
         boolean CUBEMAPE360_MODE = Boolean.parseBoolean(p.getProperty("program.cubemap360", "False"));
-        prc.initialize(DISPLAY_TUTORIAL, TUTORIAL_SCRIPT_LOCATION, SHOW_CONFIG_DIALOG, SHOW_DEBUG_INFO, LAST_CHECKED, LAST_VERSION, VERSION_CHECK_URL, UI_THEME, SCRIPT_LOCATION, LOCALE, STEREOSCOPIC_MODE, STEREO_PROFILE, CUBEMAPE360_MODE);
+        prc.initialize(DISPLAY_TUTORIAL, TUTORIAL_POINTER_SCRIPT_LOCATION, TUTORIAL_SCRIPT_LOCATION, SHOW_CONFIG_DIALOG, SHOW_DEBUG_INFO, LAST_CHECKED, LAST_VERSION, VERSION_CHECK_URL, UI_THEME, SCRIPT_LOCATION, LOCALE, STEREOSCOPIC_MODE, STEREO_PROFILE, CUBEMAPE360_MODE);
 
         /** SCENE CONF **/
         int GRAPHICS_QUALITY = Integer.parseInt(p.getProperty("scene.graphics.quality"));
@@ -329,6 +330,7 @@ public class DesktopConfInit extends ConfInit {
 
         /** PROGRAM **/
         p.setProperty("program.tutorial", Boolean.toString(GlobalConf.program.DISPLAY_TUTORIAL));
+        p.setProperty("program.tutorial.pointer.script", GlobalConf.program.TUTORIAL_POINTER_SCRIPT_LOCATION);
         p.setProperty("program.tutorial.script", GlobalConf.program.TUTORIAL_SCRIPT_LOCATION);
         p.setProperty("program.configdialog", Boolean.toString(GlobalConf.program.SHOW_CONFIG_DIALOG));
         p.setProperty("program.debuginfo", Boolean.toString(GlobalConf.program.SHOW_DEBUG_INFO));

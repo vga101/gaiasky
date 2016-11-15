@@ -437,6 +437,7 @@ public class GlobalConf {
         }
 
         public boolean DISPLAY_TUTORIAL;
+        public String TUTORIAL_POINTER_SCRIPT_LOCATION;
         public String TUTORIAL_SCRIPT_LOCATION;
         public boolean SHOW_CONFIG_DIALOG;
         public boolean SHOW_DEBUG_INFO;
@@ -461,8 +462,9 @@ public class GlobalConf {
             EventManager.instance.subscribe(this, Events.TOGGLE_STEREOSCOPIC_CMD, Events.TOGGLE_STEREO_PROFILE_CMD, Events.CUBEMAP360_CMD);
         }
 
-        public void initialize(boolean dISPLAY_TUTORIAL, String tUTORIAL_SCRIPT_LOCATION, boolean sHOW_CONFIG_DIALOG, boolean sHOW_DEBUG_INFO, Date lAST_CHECKED, String lAST_VERSION, String vERSION_CHECK_URL, String uI_THEME, String sCRIPT_LOCATION, String lOCALE, boolean sTEREOSCOPIC_MODE, StereoProfile sTEREO_PROFILE, boolean cUBEMAP360_MODE) {
+        public void initialize(boolean dISPLAY_TUTORIAL, String tUTORIAL_POINTER_SCRIPT_LOCATION, String tUTORIAL_SCRIPT_LOCATION, boolean sHOW_CONFIG_DIALOG, boolean sHOW_DEBUG_INFO, Date lAST_CHECKED, String lAST_VERSION, String vERSION_CHECK_URL, String uI_THEME, String sCRIPT_LOCATION, String lOCALE, boolean sTEREOSCOPIC_MODE, StereoProfile sTEREO_PROFILE, boolean cUBEMAP360_MODE) {
             DISPLAY_TUTORIAL = dISPLAY_TUTORIAL;
+            TUTORIAL_POINTER_SCRIPT_LOCATION = tUTORIAL_POINTER_SCRIPT_LOCATION;
             TUTORIAL_SCRIPT_LOCATION = tUTORIAL_SCRIPT_LOCATION;
             SHOW_CONFIG_DIALOG = sHOW_CONFIG_DIALOG;
             SHOW_DEBUG_INFO = sHOW_DEBUG_INFO;

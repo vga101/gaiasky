@@ -111,7 +111,7 @@ public class TimeComponent extends GuiComponent implements IObserver {
         minus.addListener(new TextTooltip(txt("gui.tooltip.timewarpminus"), skin));
 
         timeWarp = new OwnLabel(getFormattedTimeWrap(), skin, "warp");
-        timeWarp.setName("time wrap");
+        timeWarp.setName("time warp");
         Container wrapWrapper = new Container(timeWarp);
         wrapWrapper.width(60f * GlobalConf.SCALE_FACTOR);
         wrapWrapper.align(Align.center);

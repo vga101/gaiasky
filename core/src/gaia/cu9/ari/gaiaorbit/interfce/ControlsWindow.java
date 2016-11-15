@@ -1,7 +1,9 @@
 package gaia.cu9.ari.gaiaorbit.interfce;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture.TextureWrap;
@@ -65,6 +67,9 @@ public class ControlsWindow extends CollapsibleWindow implements IObserver {
     private ComponentType[] visibilityEntities;
     private boolean[] visible;
 
+    /** Access panes **/
+    private Map<String, CollapsiblePane> panes;
+
     public ControlsWindow(String title, Skin skin, Stage ui) {
         super(title, skin);
         this.setName(title);
@@ -85,6 +90,7 @@ public class ControlsWindow extends CollapsibleWindow implements IObserver {
         guiLayout.align(Align.left);
 
         List<Actor> mainActors = new ArrayList<Actor>();
+        panes = new HashMap<String, CollapsiblePane>();
 
         /** ----TIME GROUP---- **/
         playstop = new OwnImageButton(skin, "playstop");
@@ -108,6 +114,7 @@ public class ControlsWindow extends CollapsibleWindow implements IObserver {
         CollapsiblePane time = new CollapsiblePane(ui, txt("gui.time"), timeComponent.getActor(), skin, true, playstop);
         time.align(Align.left);
         mainActors.add(time);
+        panes.put(timeComponent.getClass().getSimpleName(), time);
 
         /** ----CAMERA---- **/
         if (Constants.desktop) {
@@ -151,6 +158,7 @@ public class ControlsWindow extends CollapsibleWindow implements IObserver {
         CollapsiblePane camera = new CollapsiblePane(ui, txt("gui.camera"), cameraComponent.getActor(), skin, false, recCamera, playCamera);
         camera.align(Align.left);
         mainActors.add(camera);
+        panes.put(cameraComponent.getClass().getSimpleName(), camera);
 
         /** ----OBJECT TOGGLES GROUP---- **/
         VisibilityComponent visibilityComponent = new VisibilityComponent(skin, ui, this);
@@ -160,6 +168,7 @@ public class ControlsWindow extends CollapsibleWindow implements IObserver {
         CollapsiblePane visibility = new CollapsiblePane(ui, txt("gui.visibility"), visibilityComponent.getActor(), skin, true);
         visibility.align(Align.left);
         mainActors.add(visibility);
+        panes.put(visibilityComponent.getClass().getSimpleName(), visibility);
 
         /** ----LIGHTING GROUP---- **/
         VisualEffectsComponent visualEffectsComponent = new VisualEffectsComponent(skin, ui);
@@ -168,6 +177,7 @@ public class ControlsWindow extends CollapsibleWindow implements IObserver {
         CollapsiblePane visualEffects = new CollapsiblePane(ui, txt("gui.lighting"), visualEffectsComponent.getActor(), skin, false);
         visualEffects.align(Align.left);
         mainActors.add(visualEffects);
+        panes.put(visualEffectsComponent.getClass().getSimpleName(), visualEffects);
 
         /** ----OBJECTS TREE---- **/
         ObjectsComponent objectsComponent = new ObjectsComponent(skin, ui);
@@ -177,6 +187,7 @@ public class ControlsWindow extends CollapsibleWindow implements IObserver {
         CollapsiblePane objects = new CollapsiblePane(ui, txt("gui.objects"), objectsComponent.getActor(), skin, false);
         objects.align(Align.left);
         mainActors.add(objects);
+        panes.put(objectsComponent.getClass().getSimpleName(), objects);
 
         /** ----GAIA SCAN GROUP---- **/
         GaiaComponent gaiaComponent = new GaiaComponent(skin, ui);
@@ -185,6 +196,7 @@ public class ControlsWindow extends CollapsibleWindow implements IObserver {
         CollapsiblePane gaia = new CollapsiblePane(ui, txt("gui.gaiascan"), gaiaComponent.getActor(), skin, true);
         gaia.align(Align.left);
         mainActors.add(gaia);
+        panes.put(gaiaComponent.getClass().getSimpleName(), gaia);
 
         /** ----MUSIC GROUP---- **/
         if (Constants.desktop) {
@@ -196,6 +208,7 @@ public class ControlsWindow extends CollapsibleWindow implements IObserver {
             CollapsiblePane music = new CollapsiblePane(ui, txt("gui.music"), musicComponent.getActor(), skin, true, musicActors);
             music.align(Align.left);
             mainActors.add(music);
+            panes.put(musicComponent.getClass().getSimpleName(), music);
         }
 
         /** ----BACK TO WEBGL LINK---- **/
@@ -411,6 +424,14 @@ public class ControlsWindow extends CollapsibleWindow implements IObserver {
             break;
         }
 
+    }
+
+    public CollapsiblePane getCollapsiblePane(String name) {
+        if (panes.containsKey(name)) {
+            return panes.get(name);
+        } else {
+            return null;
+        }
     }
 
 }

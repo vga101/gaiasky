@@ -119,42 +119,39 @@ public abstract class AbstractCamera implements ICamera {
 
     public void computeGaiaScan(ITimeFrameProvider time, CelestialBody cb) {
         if (GlobalConf.scene.COMPUTE_GAIA_SCAN && time.getDt() != 0) {
-            boolean visibleByGaia = computeVisibleFovs(cb.pos, parent.fovCamera, cb.pos.len());
+            boolean visibleByGaia = computeVisibleFovs(cb, parent.fovCamera);
             cb.updateTransitNumber(visibleByGaia, time, parent.fovCamera);
         }
     }
 
     @Override
     public boolean isVisible(ITimeFrameProvider time, CelestialBody cb) {
-        return cb.viewAngle > VIEW_ANGLE || GlobalResources.isInView(cb.transform.position, cb.distToCamera, angleEdgeRad, getDirection());
+        return (!(this instanceof FovCamera) && cb.viewAngle > VIEW_ANGLE) || GlobalResources.isInView(cb.transform.position, cb.distToCamera, angleEdgeRad, getDirection());
     }
 
     /**
      * Returns true if a body with the given position is observed in any of the
      * given directions using the given cone angle
      * 
-     * @param pos
-     *            The position of the body.
+     * @param cb
+     *            The body.
      * @param fcamera
      *            The FovCamera.
-     * @param poslen
-     *            Length of position vector.
      * @return True if the body is observed. False otherwise.
      */
-    protected boolean computeVisibleFovs(Vector3d pos, FovCamera fcamera, double poslen) {
+    protected boolean computeVisibleFovs(CelestialBody cb, FovCamera fcamera) {
         boolean visible = false;
-        float coneAngle = fcamera.angleEdgeRad;
         Vector3d[] dirs = null;
         if (GlobalConf.scene.COMPUTE_GAIA_SCAN && !fcamera.interpolatedDirections.isEmpty()) {
             // We need to interpolate...
             for (Vector3d[] interpolatedDirection : fcamera.interpolatedDirections) {
-                visible = visible || MathUtilsd.acos(pos.dot(interpolatedDirection[0]) / poslen) < coneAngle || MathUtilsd.acos(pos.dot(interpolatedDirection[1]) / poslen) < coneAngle;
+                visible = visible || MathUtilsd.acos(pos.dot(interpolatedDirection[0]) / cb.distToCamera) < angleEdgeRad || MathUtilsd.acos(pos.dot(interpolatedDirection[1]) / cb.distToCamera) < angleEdgeRad;
                 if (visible)
                     return true;
             }
         }
         dirs = fcamera.directions;
-        visible = visible || MathUtilsd.acos(pos.dot(dirs[0]) / poslen) < coneAngle || MathUtilsd.acos(pos.dot(dirs[1]) / poslen) < coneAngle;
+        visible = visible || GlobalResources.isInView(cb.transform.position, cb.distToCamera, angleEdgeRad, dirs[0]) || GlobalResources.isInView(cb.transform.position, cb.distToCamera, angleEdgeRad, dirs[1]);
         return visible;
     }
 
