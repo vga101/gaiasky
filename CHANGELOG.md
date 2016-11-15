@@ -1,5 +1,13 @@
 # Change Log
 
+## [v1.0.3](https://github.com/ari-zah/gaiasky/tree/v1.0.3) (2016-11-15)
+[Full Changelog](https://github.com/ari-zah/gaiasky/compare/v1.0.2...v1.0.3)
+
+**Fixed bugs:**
+
+- Fix FoV modes [\#92](https://github.com/ari-zah/gaiasky/issues/92)
+- Run tutorial runs pointer [\#91](https://github.com/ari-zah/gaiasky/issues/91)
+
 ## [v1.0.2](https://github.com/ari-zah/gaiasky/tree/v1.0.2) (2016-11-14)
 [Full Changelog](https://github.com/ari-zah/gaiasky/compare/v1.0.1...v1.0.2)
 
