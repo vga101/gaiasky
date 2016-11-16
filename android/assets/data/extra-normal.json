@@ -85,14 +85,12 @@
 				"position" : [-2.1696166830918058e+17, -1.2574136144478805e+17, -1.8981686396725044e+16]
 				},
 	
-	"model" : {
-				"args" : [true],	
-				"type" : "cylinder",
+ 	"model" : {
+				"args" : [true],
+				"type" : "sphere",
 				"params" : {
-							"width" : 1.0,
-							"height" : 1.0,
-							"depth" : 1.0,
-							"divisions" : 15,
+							"quality" : 90,
+							"diameter" : 1.0,
 							"flip" : true
 							},
 				"texture" : {
