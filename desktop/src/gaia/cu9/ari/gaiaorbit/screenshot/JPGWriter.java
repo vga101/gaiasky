@@ -3,18 +3,57 @@ package gaia.cu9.ari.gaiaorbit.screenshot;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
+import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
+import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
+import javax.imageio.stream.FileImageOutputStream;
 
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Pixmap;
 
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 
-public class JPGWriter  {
+/**
+ * Writes JPG images
+ * @author tsagrista
+ *
+ */
+public class JPGWriter {
 
-    public static void write(FileHandle file, Pixmap pix)  {
+    /**
+     * Quality setting, from 0 to 1
+     */
+    private static float QUALITY = 0.93f;
+
+    /**
+     * JPEG parameters
+     */
+    private static JPEGImageWriteParam jpegParams;
+
+    static {
+        // Initialise
+        updateJPEGParams();
+    }
+
+    public static void updateJPEGParams() {
+        jpegParams = new JPEGImageWriteParam(null);
+        jpegParams.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+        jpegParams.setCompressionQuality(JPGWriter.QUALITY);
+    }
+
+    public static void setQuality(float quality) {
+        JPGWriter.QUALITY = quality;
+        updateJPEGParams();
+    }
+
+    public static void write(FileHandle file, Pixmap pix) {
         try {
-            ImageIO.write(pixmapToBufferedImage(pix), "JPG", file.file());
+            final ImageWriter writer = ImageIO.getImageWritersByFormatName("jpg").next();
+
+            writer.setOutput(new FileImageOutputStream(file.file()));
+            writer.write(null, new IIOImage(pixmapToBufferedImage(pix), null, null), jpegParams);
         } catch (IOException e) {
             Logger.error(e, JPGWriter.class.getSimpleName());
         }
@@ -26,8 +65,8 @@ public class JPGWriter  {
         BufferedImage img = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
 
         int[] pixels = new int[w * h];
-        for (int y=0; y<h; y++) {
-            for (int x=0; x<w; x++) {
+        for (int y = 0; y < h; y++) {
+            for (int x = 0; x < w; x++) {
                 //convert RGBA to RGB
                 int value = p.getPixel(x, y);
                 int R = ((value & 0xff000000) >>> 24);
@@ -35,7 +74,7 @@ public class JPGWriter  {
                 int B = ((value & 0x0000ff00) >>> 8);
 
                 int i = x + (y * w);
-                pixels[ i ] = (R << 16) | (G << 8) | B;
+                pixels[i] = (R << 16) | (G << 8) | B;
             }
         }
         img.setRGB(0, 0, w, h, pixels, 0, w);
