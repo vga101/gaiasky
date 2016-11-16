@@ -518,6 +518,8 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         } else {
             pp.resize(width, height);
             mainGui.resize(width, height);
+            debugGui.resize(width, height);
+            spacecraftGui.resize(width, height);
             sgr.resize(width, height);
         }
 
