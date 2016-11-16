@@ -1,6 +1,7 @@
 package gaia.cu9.ari.gaiaorbit;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -115,6 +116,11 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
     public IGui loadingGui, mainGui, spacecraftGui, debugGui;
 
     /**
+     * List of guis
+     */
+    private List<IGui> guis;
+
+    /**
      * Time
      */
     public ITimeFrameProvider time;
@@ -196,6 +202,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         }
 
         // GUI
+        guis = new ArrayList<IGui>(3);
         if (Constants.desktop || Constants.webgl) {
             // Full GUI for desktop
             mainGui = new FullGui();
@@ -210,6 +217,10 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
 
         spacecraftGui = new SpacecraftGui(cam.spacecraftCamera);
         spacecraftGui.initialize(manager);
+
+        guis.add(mainGui);
+        guis.add(debugGui);
+        guis.add(spacecraftGui);
 
         // Tell the asset manager to load all the assets
         Set<AssetBean> assets = AssetBean.getAssets();
@@ -275,9 +286,8 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         inputMultiplexer.addProcessor(mainGui.getGuiStage());
 
         // Initialize the GUI
-        mainGui.doneLoading(manager);
-        spacecraftGui.doneLoading(manager);
-        debugGui.doneLoading(manager);
+        for (IGui gui : guis)
+            gui.doneLoading(manager);
 
         GuiRegistry.registerGui(mainGui);
         GuiRegistry.registerGui(debugGui);
@@ -347,6 +357,10 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
             EventManager.instance.post(Events.DISPLAY_GUI_CMD, I18n.bundle.get("notif.cleanmode"), false);
         }
 
+        // Resize guis to current size
+        for (IGui gui : guis)
+            gui.resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+
         // Initialize frames
         frames = 0;
 
@@ -370,8 +384,8 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         EventManager.instance.post(Events.FLUSH_FRAMES);
 
         // Dispose all
-        mainGui.dispose();
-        spacecraftGui.dispose();
+        for (IGui gui : guis)
+            gui.dispose();
 
         EventManager.instance.post(Events.DISPOSE);
         if (sg != null) {
@@ -517,9 +531,10 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
             loadingGui.resize(width, height);
         } else {
             pp.resize(width, height);
-            mainGui.resize(width, height);
-            debugGui.resize(width, height);
-            spacecraftGui.resize(width, height);
+
+            for (IGui gui : guis)
+                gui.resize(width, height);
+
             sgr.resize(width, height);
         }
 
