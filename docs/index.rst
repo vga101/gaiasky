@@ -33,8 +33,8 @@ Heidelberg <www.uni-heidelberg.de>`__).
   :width: 24%
 
 *  Visit our `home page <http://www.zah.uni-heidelberg.de/gaia2/outreach/gaiasky/>`__
-*  Read the `documentation <http://ari-zah.github.io/gaiasky>`__
-*  Submit a `bug or a feature request <https://gaia-sky.readthedocs.io>`__
+*  Read the `documentation <http://gaia-sky.rtfd.io>`__
+*  Submit a `bug or a feature request <https://github.com/ari-zah/gaiasky/issues>`__
 
 Main features
 -------------
