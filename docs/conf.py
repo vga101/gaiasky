@@ -1,5 +1,4 @@
-#
--*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 #
 # Gaia Sky documentation build configuration file, created by
 # sphinx-quickstart on Tue Nov  8 15:27:03 2016.
