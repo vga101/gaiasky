@@ -1,18 +1,32 @@
 # Change Log
 
-## [v1.0.3](https://github.com/ari-zah/gaiasky/tree/v1.0.3) (2016-11-15)
-[Full Changelog](https://github.com/ari-zah/gaiasky/compare/v1.0.2...v1.0.3)
+## [Unreleased](https://github.com/ari-zah/gaiasky/tree/HEAD)
+
+[Full Changelog](https://github.com/ari-zah/gaiasky/compare/1.0.3...HEAD)
+
+**Implemented enhancements:**
+
+- Map and calibrate Milky Way panorama [\#94](https://github.com/ari-zah/gaiasky/issues/94)
+
+**Fixed bugs:**
+
+- Light glow sampling spiral should adapt to fov angle [\#95](https://github.com/ari-zah/gaiasky/issues/95)
+- Debug and spacecraft GUIs do not resize correctly [\#93](https://github.com/ari-zah/gaiasky/issues/93)
+- Resizing during loading screen causes buffer size problems [\#40](https://github.com/ari-zah/gaiasky/issues/40)
+
+## [1.0.3](https://github.com/ari-zah/gaiasky/tree/1.0.3) (2016-11-15)
+[Full Changelog](https://github.com/ari-zah/gaiasky/compare/1.0.2...1.0.3)
 
 **Fixed bugs:**
 
 - Fix FoV modes [\#92](https://github.com/ari-zah/gaiasky/issues/92)
 - Run tutorial runs pointer [\#91](https://github.com/ari-zah/gaiasky/issues/91)
 
-## [v1.0.2](https://github.com/ari-zah/gaiasky/tree/v1.0.2) (2016-11-14)
-[Full Changelog](https://github.com/ari-zah/gaiasky/compare/v1.0.1...v1.0.2)
+## [1.0.2](https://github.com/ari-zah/gaiasky/tree/1.0.2) (2016-11-14)
+[Full Changelog](https://github.com/ari-zah/gaiasky/compare/1.0.1...1.0.2)
 
-## [v1.0.1](https://github.com/ari-zah/gaiasky/tree/v1.0.1) (2016-11-11)
-[Full Changelog](https://github.com/ari-zah/gaiasky/compare/v1.0.0...v1.0.1)
+## [1.0.1](https://github.com/ari-zah/gaiasky/tree/1.0.1) (2016-11-11)
+[Full Changelog](https://github.com/ari-zah/gaiasky/compare/1.0.0...1.0.1)
 
 **Implemented enhancements:**
 
@@ -38,8 +52,8 @@
 - Gaia Sky crashes on Windows 10, Java 1.8.0\_101 [\#79](https://github.com/ari-zah/gaiasky/issues/79)
 - Please consider uploading gaiasandbox to Debian [\#39](https://github.com/ari-zah/gaiasky/issues/39)
 
-## [v1.0.0](https://github.com/ari-zah/gaiasky/tree/v1.0.0) (2016-09-13)
-[Full Changelog](https://github.com/ari-zah/gaiasky/compare/0.800b...v1.0.0)
+## [1.0.0](https://github.com/ari-zah/gaiasky/tree/1.0.0) (2016-09-13)
+[Full Changelog](https://github.com/ari-zah/gaiasky/compare/0.800b...1.0.0)
 
 **Implemented enhancements:**
 
