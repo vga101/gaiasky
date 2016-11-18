@@ -285,26 +285,29 @@ public class SGRStereoscopic extends SGRAbstract implements ISGR, IObserver {
     }
 
     public void resize(final int w, final int h) {
-        extendViewport.update(w, h);
-        stretchViewport.update(w, h);
+        if (GlobalConf.program.STEREOSCOPIC_MODE) {
+            extendViewport.update(w, h);
+            stretchViewport.update(w, h);
 
-        int keyHalf = getKey(w / 2, h);
-        int keyFull = getKey(w, h);
+            int keyHalf = getKey(w / 2, h);
+            int keyFull = getKey(w, h);
 
-        Iterator<Map.Entry<Integer, FrameBuffer>> iter = fb3D.entrySet().iterator();
-        while (iter.hasNext()) {
-            Map.Entry<Integer, FrameBuffer> entry = iter.next();
-            if (entry.getKey() != keyHalf && entry.getKey() != keyFull) {
-                iter.remove();
+            if (!fb3D.containsKey(keyHalf)) {
+                fb3D.put(keyHalf, new FrameBuffer(Format.RGB888, w / 2, h, true));
             }
-        }
 
-        if (!fb3D.containsKey(keyHalf)) {
-            fb3D.put(keyHalf, new FrameBuffer(Format.RGB888, w / 2, h, true));
-        }
+            if (!fb3D.containsKey(keyFull)) {
+                fb3D.put(keyFull, new FrameBuffer(Format.RGB888, w, h, true));
+            }
 
-        if (!fb3D.containsKey(keyFull)) {
-            fb3D.put(keyFull, new FrameBuffer(Format.RGB888, w, h, true));
+            Iterator<Map.Entry<Integer, FrameBuffer>> iter = fb3D.entrySet().iterator();
+            while (iter.hasNext()) {
+                Map.Entry<Integer, FrameBuffer> entry = iter.next();
+                if (entry.getKey() != keyHalf && entry.getKey() != keyFull) {
+                    entry.getValue().dispose();
+                    iter.remove();
+                }
+            }
         }
 
     }

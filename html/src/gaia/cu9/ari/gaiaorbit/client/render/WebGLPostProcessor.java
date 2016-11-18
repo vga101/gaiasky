@@ -57,6 +57,11 @@ public class WebGLPostProcessor implements IPostProcessor {
 
     @Override
     public void resize(final int width, final int height) {
+        resizeImmediate(width, height);
+    }
+
+    @Override
+    public void resizeImmediate(final int width, final int height) {
 
     }
 

@@ -20,6 +20,8 @@ public interface IGui extends Disposable {
 
     public void resize(int width, int height);
 
+    public void resizeImmediate(int width, int height);
+
     public boolean cancelTouchFocus();
 
     public Stage getGuiStage();

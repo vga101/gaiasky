@@ -49,13 +49,22 @@ public class JPGWriter {
     }
 
     public static void write(FileHandle file, Pixmap pix) {
+        FileImageOutputStream fios = null;
         try {
             final ImageWriter writer = ImageIO.getImageWritersByFormatName("jpg").next();
-
-            writer.setOutput(new FileImageOutputStream(file.file()));
+            fios = new FileImageOutputStream(file.file());
+            writer.setOutput(fios);
             writer.write(null, new IIOImage(pixmapToBufferedImage(pix), null, null), jpegParams);
+
         } catch (IOException e) {
             Logger.error(e, JPGWriter.class.getSimpleName());
+        } finally {
+            try {
+                fios.close();
+            } catch (IOException e) {
+                Logger.error(e, JPGWriter.class.getSimpleName());
+            }
+
         }
     }
 

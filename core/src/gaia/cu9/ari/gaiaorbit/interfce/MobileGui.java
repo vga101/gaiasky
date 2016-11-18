@@ -127,10 +127,15 @@ public class MobileGui implements IGui {
         Gdx.app.postRunnable(new Runnable() {
             @Override
             public void run() {
-                ui.getViewport().update(width, height, true);
-                rebuildGui();
+                resizeImmediate(width, height);
             }
         });
+    }
+
+    @Override
+    public void resizeImmediate(final int width, final int height) {
+        ui.getViewport().update(width, height, true);
+        rebuildGui();
     }
 
     @Override

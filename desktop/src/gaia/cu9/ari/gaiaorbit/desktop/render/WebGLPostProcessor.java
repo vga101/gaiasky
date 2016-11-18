@@ -61,6 +61,11 @@ public class WebGLPostProcessor implements IPostProcessor {
     }
 
     @Override
+    public void resizeImmediate(final int width, final int height) {
+
+    }
+
+    @Override
     public void dispose() {
         pps.dispose();
     }

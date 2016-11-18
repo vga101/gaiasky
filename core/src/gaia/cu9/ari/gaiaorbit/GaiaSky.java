@@ -520,20 +520,21 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         Gdx.app.postRunnable(new Runnable() {
             @Override
             public void run() {
-                resizeImmediate(width, height);
+                resizeImmediate(width, height, true);
             }
         });
 
     }
 
-    public void resizeImmediate(final int width, final int height) {
+    public void resizeImmediate(final int width, final int height, boolean resizepp) {
         if (!initialized) {
-            loadingGui.resize(width, height);
+            loadingGui.resizeImmediate(width, height);
         } else {
-            pp.resize(width, height);
+            if (resizepp)
+                pp.resizeImmediate(width, height);
 
             for (IGui gui : guis)
-                gui.resize(width, height);
+                gui.resizeImmediate(width, height);
 
             sgr.resize(width, height);
         }

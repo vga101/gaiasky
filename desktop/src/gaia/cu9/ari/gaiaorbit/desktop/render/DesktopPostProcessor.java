@@ -117,7 +117,7 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
             glow = new Texture(Gdx.files.internal("img/star_glow.png"));
         } else if (GlobalConf.scene.isNormalQuality()) {
             nsamples = 20;
-            lgw = 1920;
+            lgw = 1280;
             lgh = Math.round(lgw / ar);
             glow = new Texture(Gdx.files.internal("img/star_glow_s.png"));
         } else {
@@ -235,6 +235,11 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
                 replace(RenderType.screen.index, width, height);
             }
         });
+    }
+
+    @Override
+    public void resizeImmediate(final int width, final int height) {
+        replace(RenderType.screen.index, width, height);
     }
 
     @Override
@@ -448,7 +453,6 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
      * @param height
      */
     private void replace(int index, final int width, final int height) {
-        // pps[index].pp.dispose(false);
         pps[index] = newPostProcessor(width, height);
 
     }
