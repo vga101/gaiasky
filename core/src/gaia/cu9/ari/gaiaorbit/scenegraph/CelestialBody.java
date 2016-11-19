@@ -22,6 +22,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.component.RotationComponent;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.color.ColourUtils;
+import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
@@ -107,6 +108,26 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
             // Normal model
             render((ModelBatch) first, (Float) params[1], (Float) params[2]);
         }
+    }
+
+    float smoothstep(float edge0, float edge1, float x) {
+        // Scale, bias and saturate x to 0..1 range
+        x = MathUtilsd.clamp((x - edge0) / (edge1 - edge0), 0.0f, 1.0f);
+        // Evaluate polynomial
+        return x * x * (3f - 2f * x);
+    }
+
+    float step(float edge, float x) {
+        if (x < edge)
+            return 0f;
+        else
+            return 1f;
+    }
+
+    float core(float distance_center, float inner_rad) {
+        float core = 1.0f - step(inner_rad / 5.0f, distance_center);
+        float core_glow = smoothstep(inner_rad / 2.0f, inner_rad / 5.0f, distance_center);
+        return core_glow + core;
     }
 
     /**

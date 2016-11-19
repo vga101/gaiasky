@@ -248,8 +248,6 @@ vec4 draw() {
 	        float core = core(dist, u_inner_rad);
 	
 			return vec4(v_color.rgb + core, (corona * (1.0 - level) + light + core));
-			
-			//return draw_star(vec2(0.5, 0.5), v_color.rgb * 1e1);
 		}
 	} else {
 		// We are close to the star
