@@ -224,7 +224,7 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
 
             // TODO Very ugly!
             if (!this.copy && (ModelBody.closestCamStar == null || ModelBody.closestCamStar.distToCamera > distToCamera))
-            //if (ModelBody.closestCamStar == null || ModelBody.closestCamStar.distToCamera > distToCamera) 
+                //if (ModelBody.closestCamStar == null || ModelBody.closestCamStar.distToCamera > distToCamera) 
                 ModelBody.closestCamStar = this;
 
             if (!copy) {
@@ -337,7 +337,7 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
 
     @Override
     protected float labelFactor() {
-        return .5e-1f;
+        return 1.3e-1f;
     }
 
     @Override
