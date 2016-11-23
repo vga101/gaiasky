@@ -19,11 +19,13 @@ public class Gaia extends Satellite {
     public Vector3d unrotatedPos;
     boolean display = true;
     Attitude attitude;
-    Quaterniond quat;
+    Quaterniond quaterniond;
+    Quaternion quaternion;
 
     public Gaia() {
         super();
         unrotatedPos = new Vector3d();
+        quaternion = new Quaternion();
     }
 
     @Override
@@ -59,16 +61,25 @@ public class Gaia extends Satellite {
         if (sizeFactor != 1 || forceUpdate) {
             localTransform.set(transform.getMatrix().valuesf()).scl(size * sizeFactor);
             if (attitude != null) {
-                quat = attitude.getQuaternion();
+                quaterniond = attitude.getQuaternion();
+                quaternion.set((float) quaterniond.x, (float) quaterniond.y, (float) quaterniond.z, (float) quaterniond.w);
+
                 // QuatRotation * Flip (upside down)
-                localTransform.rotate(new Quaternion((float) quat.x, (float) quat.y, (float) quat.z, (float) quat.w));
+                localTransform.rotate(quaternion);
                 // Flip satellite along field of view axis (Z)
                 localTransform.rotate(0, 0, 1, 180);
+
+                // Update orientation
+                orientation.idt().rotate(quaterniond).rotate(0, 0, 1, 180);
             }
         } else {
             localTransform.set(this.localTransform);
         }
 
+    }
+
+    public Quaterniond getOrientationQuaternion() {
+        return attitude.getQuaternion();
     }
 
 }

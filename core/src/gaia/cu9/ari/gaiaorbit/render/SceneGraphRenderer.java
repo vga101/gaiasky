@@ -130,6 +130,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         ShaderProvider spnormal = Constants.webgl ? sp : new AtmosphereGroundShaderProvider(Gdx.files.internal("shader/normal.vertex.glsl"), Gdx.files.internal("shader/normal.fragment.glsl"));
         ShaderProvider spatm = new AtmosphereShaderProvider(Gdx.files.internal("shader/atm.vertex.glsl"), Gdx.files.internal("shader/atm.fragment.glsl"));
         ShaderProvider spsurface = new DefaultShaderProvider(Gdx.files.internal("shader/default.vertex.glsl"), Gdx.files.internal("shader/starsurface.fragment.glsl"));
+        ShaderProvider spbeam = new DefaultShaderProvider(Gdx.files.internal("shader/default.vertex.glsl"), Gdx.files.internal("shader/beam.fragment.glsl"));
 
         RenderableSorter noSorter = new RenderableSorter() {
             @Override
@@ -142,6 +143,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         ModelBatch modelBatchF = Constants.webgl ? modelBatchB : new ModelBatch(spnormal, noSorter);
         ModelBatch modelBatchAtm = new ModelBatch(spatm, noSorter);
         ModelBatch modelBatchS = new ModelBatch(spsurface, noSorter);
+        ModelBatch modelBatchBeam = new ModelBatch(spbeam, noSorter);
         ModelBatch modelBatchCloseUp = new ModelBatch(spnormal, noSorter);
 
         // Sprites
@@ -289,6 +291,10 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         AbstractRenderSystem modelFrontProc = new ModelBatchRenderSystem(RenderGroup.MODEL_F, priority++, alphas, modelBatchF, false);
         modelFrontProc.setPreRunnable(blendDepthRunnable);
 
+        // MODEL BEAM
+        AbstractRenderSystem modelBeamProc = new ModelBatchRenderSystem(RenderGroup.MODEL_BEAM, priority++, alphas, modelBatchBeam, false);
+        modelBeamProc.setPreRunnable(blendDepthRunnable);
+
         // GALAXY
         AbstractRenderSystem galaxyProc = new GalaxyRenderSystem(RenderGroup.GALAXY, priority++, alphas, modelBatchF);
         galaxyProc.setPreRunnable(blendNoDepthRunnable);
@@ -338,6 +344,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         renderProcesses.add(shaderBackProc);
         renderProcesses.add(shaderFrontProc);
         renderProcesses.add(modelFrontProc);
+        renderProcesses.add(modelBeamProc);
         renderProcesses.add(lineProc);
         renderProcesses.add(galaxyProc);
         renderProcesses.add(modelStarsProc);

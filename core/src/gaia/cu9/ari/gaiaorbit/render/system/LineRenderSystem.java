@@ -41,7 +41,7 @@ public class LineRenderSystem extends ImmediateRenderSystem {
     @Override
     protected void initVertices() {
         meshes = new MeshData[2];
-        maxVertices = 400000;
+        maxVertices = 4000000;
 
         // ORIGINAL LINES
         curr = new MeshData();

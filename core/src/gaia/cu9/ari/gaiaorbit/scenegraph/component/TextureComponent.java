@@ -66,10 +66,12 @@ public class TextureComponent {
         if (base != null) {
             baseTex = manager.get(base, Texture.class);
             material.set(new TextureAttribute(TextureAttribute.Diffuse, baseTex));
-        } else {
+        }
+        if (cc != null) {
             // If there is no diffuse texture, we add a colour
             material.set(new ColorAttribute(ColorAttribute.Diffuse, cc[0], cc[1], cc[2], cc[3]));
         }
+
         if (normal != null) {
             Texture tex = manager.get(normal, Texture.class);
             material.set(new TextureAttribute(TextureAttribute.Normal, tex));

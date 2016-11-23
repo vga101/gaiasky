@@ -1,5 +1,7 @@
 package gaia.cu9.ari.gaiaorbit.data.orbit;
 
+import java.util.Date;
+
 import gaia.cu9.ari.gaiaorbit.data.orbit.OrbitDataLoader.OrbitDataLoaderParameter;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
@@ -8,8 +10,6 @@ import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
-
-import java.util.Date;
 
 /**
  * Reads an orbit file into an OrbitData object.
@@ -28,7 +28,7 @@ public class OrbitalParametersProvider implements IOrbitDataProvider {
             double f = params.e * params.semimajoraxis;
             double b = Math.sqrt(Math.pow(a, 2) - Math.pow(f, 2));
 
-            int nsamples = Math.min(Math.max(180, (int) (a * 0.01)), 500);
+            int nsamples = Math.min(Math.max(100, (int) (a * 0.01)), 200);
             double step = 360d / nsamples;
             Vector3d[] samples = new Vector3d[nsamples + 1];
             int i = 0;

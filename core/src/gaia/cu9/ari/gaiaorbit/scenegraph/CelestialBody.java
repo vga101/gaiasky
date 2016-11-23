@@ -23,6 +23,7 @@ import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.color.ColourUtils;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
+import gaia.cu9.ari.gaiaorbit.util.math.Quaterniond;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
@@ -390,6 +391,10 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
 
     public double getPmZ() {
         return 0;
+    }
+
+    public Quaterniond getOrientationQuaternion() {
+        return null;
     }
 
 }

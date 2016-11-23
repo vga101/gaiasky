@@ -65,6 +65,8 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
         GALAXY(10),
         /** Model close up **/
         MODEL_CLOSEUP(11),
+        /** Beams **/
+        MODEL_BEAM(12),
 
         /** None **/
         NONE(-1);

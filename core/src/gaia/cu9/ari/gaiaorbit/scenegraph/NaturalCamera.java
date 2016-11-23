@@ -206,19 +206,28 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
                     dx.set(aux1).sub(focusPos);
 
                     // Lock orientation - FOR NOW THIS ONLY WORKS WITH PLANETS/MOONS
-                    if (GlobalConf.scene.FOCUS_LOCK_ORIENTATION && time.getDt() > 0 && focus.rc != null && focus.orientation != null) {
-                        double angle = previousOrientationAngle != 0 ? (focus.rc.angle - previousOrientationAngle) : 0;
+                    if (GlobalConf.scene.FOCUS_LOCK_ORIENTATION && time.getDt() > 0 && focus.orientation != null) {
+                        Double anglebak = null;
+                        if (focus.rc != null) {
+                            // Rotation component present - planets, etc
+                            anglebak = focus.rc.angle;
+                        } else if (focus.getOrientationQuaternion() != null) {
+                            anglebak = focus.getOrientationQuaternion().getPitch();
+                        }
+                        if (anglebak != null) {
+                            Double angle = previousOrientationAngle != 0 ? (anglebak - previousOrientationAngle) : 0;
+                            focus.getAbsolutePosition(aux5);
+                            aux3.set(pos).sub(aux5);
+                            aux2.set(0, 1, 0).mul(focus.orientation);
+                            aux3.rotate(aux2, angle);
+                            aux3.add(aux5);
+                            pos.set(aux3);
+                            direction.rotate(aux2, angle);
+                            up.rotate(aux2, angle);
 
-                        focus.getAbsolutePosition(aux5);
-                        aux3.set(pos).sub(aux5);
-                        aux2.set(0, 1, 0).mul(focus.orientation);
-                        aux3.rotate(aux2, angle);
-                        aux3.add(aux5);
-                        pos.set(aux3);
-                        direction.rotate(aux2, angle);
-                        up.rotate(aux2, angle);
+                            previousOrientationAngle = anglebak;
+                        }
 
-                        previousOrientationAngle = focus.rc.angle;
                     }
 
                     // Add dx to camera position
