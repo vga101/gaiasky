@@ -46,11 +46,11 @@ This file contains the following sections:
 
 Depending on your system and your personal preferences the installation
 procedure may vary. Below is a description of the various installation methods
-available. You can download the packages [here](https://zah.uni-heidelberg.de/gaia/outreach/gaiasandbox/downloads/).
+available. You can download the packages [here](https://zah.uni-heidelberg.de/?id=660).
 
 ####1.2.1 Windows
 
-Two windows installers are available for 32 and 64-bit systems [here](https://zah.uni-heidelberg.de/gaia/outreach/gaiasandbox/downloads/).
+Two windows installers are available for 32 and 64-bit systems [here](https://zah.uni-heidelberg.de/?id=660).
 
 - `gaiasky_windows_<version>.exe` - 32 bit installer.
 - `gaiasky_windows-x64_<version>.exe` - 64 bit installer.
@@ -66,7 +66,7 @@ you can use the provided uninstaller in the Gaia Sky folder.
 
 ####1.2.2 Linux
 
-We provide 4 packages for linux systems. `deb`, `rpm`, an `aur` package and a linux installer. You can get them [here](https://zah.uni-heidelberg.de/gaia/outreach/gaiasandbox/downloads/).
+We provide 4 packages for linux systems. `deb`, `rpm`, an `aur` package and a linux installer. You can get them [here](https://zah.uni-heidelberg.de/?id=660).
 The `aur` package can be installed using any `AUR` helper.
 
 #####1.2.2.1 DEB
@@ -120,7 +120,7 @@ sudo yum remove gaiasky-x86
 
 #####1.2.2.4 Linux installer
 
-We also provide a Linux installer ([here](https://zah.uni-heidelberg.de/gaia/outreach/gaiasandbox/downloads/)) which will trigger a graphical interface
+We also provide a Linux installer ([here](https://zah.uni-heidelberg.de/?id=660)) which will trigger a graphical interface
 where you can choose the installation location and some other settings.
 Download the file `gaiasandbox_unix_<version>.sh` to your disk.
 Then run the following to start the installation.
@@ -137,8 +137,7 @@ installation folder.
 ####1.2.3 OS X - Mac
 
 For OS X we provide a `gaiasky_macos_<version>.dmg` file
-which is installed by unpacking into the Applications folder. Get it [here](https://zah.uni-heidelberg.de/gaia/outreach/gaiasandbox/downloads/). Once unpacked, the
-installer will come up, just follow its instructions.
+which is installed by unpacking into the Applications folder. Get it [here](https://zah.uni-heidelberg.de/?id=660). Once unpacked, the installer will come up, just follow its instructions.
 
 ####1.2.4 Compressed (TGZ) package
 
