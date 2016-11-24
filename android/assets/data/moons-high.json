@@ -13,6 +13,8 @@
 	"parent" : "Earth", 
 	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Planet",
 
+	"locvamultiplier" : 7.0,
+
 	"coordinates" : {
 				// This must implement gaia.cu9.ari.gaiaorbit.util.coord.IBodyCoordinates				
 				"impl" : "gaia.cu9.ari.gaiaorbit.util.coord.MoonAACoordinates"

@@ -6,19 +6,16 @@ import com.badlogic.gdx.math.Vector3;
 
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
-public class LightBeam extends ModelBody {
+public class LightCone extends ModelBody {
 
     protected static final double TH_ANGLE_NONE = ModelBody.TH_ANGLE_POINT / 1e18;
     protected static final double TH_ANGLE_POINT = ModelBody.TH_ANGLE_POINT / 1e9;
     protected static final double TH_ANGLE_QUAD = ModelBody.TH_ANGLE_POINT / 8;
 
     Matrix4 orientationf;
-
-    Vector3 rotationaxis;
-    float angle;
     Vector3 translation;
 
-    public LightBeam() {
+    public LightCone() {
         orientationf = new Matrix4();
     }
 
@@ -68,7 +65,7 @@ public class LightBeam extends ModelBody {
             localTransform.rotate(1, 0, 0, 90);
 
             // First beam
-            localTransform.rotate(rotationaxis, angle).translate(translation).rotate(0, 0, 1, 180);
+            localTransform.rotate(0, 0, 1, 180 - 44).rotate(1, 0, 0, -15).translate(0.0f, -49f, -1.25f);
         } else {
             localTransform.set(this.localTransform);
         }
@@ -108,16 +105,8 @@ public class LightBeam extends ModelBody {
         return 0;
     }
 
-    public void setRotationaxis(double[] rotationaxis) {
-        this.rotationaxis = new Vector3((float) rotationaxis[0], (float) rotationaxis[1], (float) rotationaxis[2]);
-    }
-
     public void setTranslation(double[] translation) {
         this.translation = new Vector3((float) translation[0], (float) translation[1], (float) translation[2]);
-    }
-
-    public void setAngle(Double angle) {
-        this.angle = angle.floatValue();
     }
 
 }

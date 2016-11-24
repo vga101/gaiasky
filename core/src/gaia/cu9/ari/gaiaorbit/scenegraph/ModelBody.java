@@ -35,6 +35,11 @@ public abstract class ModelBody extends CelestialBody {
     /** NAME FOR WIKIPEDIA **/
     public String wikiname;
 
+    /** Multiplier for Loc view angle **/
+    public float locVaMultiplier = 1f;
+    /** ThOverFactor for Locs **/
+    public float locThOverFactor = 1f;
+
     public ModelBody() {
         super();
         localTransform = new Matrix4();
@@ -179,4 +184,11 @@ public abstract class ModelBody extends CelestialBody {
         this.wikiname = wikiname;
     }
 
+    public void setLocvamultiplier(Double val) {
+        this.locVaMultiplier = val.floatValue();
+    }
+
+    public void setLocthoverfactor(Double val) {
+        this.locThOverFactor = val.floatValue();
+    }
 }

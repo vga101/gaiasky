@@ -1,7 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.util;
 
-import gaia.cu9.ari.gaiaorbit.util.g3d.ModelBuilder2;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -11,6 +9,8 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.Model;
+
+import gaia.cu9.ari.gaiaorbit.util.g3d.ModelBuilder2;
 
 public class ModelCache {
     final Map<String, Model> modelCache;
@@ -73,6 +73,15 @@ public class ModelCache {
                 Float outerRad = ((Double) params.get("outerradius")).floatValue();
 
                 model = ModelCache.cache.mb.createSphereRing(1, quality, quality, innerRad, outerRad, divisions, mat, ringMat, Usage.Position | Usage.Normal | Usage.TextureCoordinates);
+                break;
+            case "cone":
+                width = ((Double) params.get("width")).floatValue();
+                height = ((Double) params.get("height")).floatValue();
+                depth = ((Double) params.get("depth")).floatValue();
+                divisions = ((Long) params.get("divisions")).intValue();
+
+                model = mb.createCone(width, height, depth, divisions, mat, attributes);
+
                 break;
             }
         }

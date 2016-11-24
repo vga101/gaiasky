@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.attributes.BlendingAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
+import com.badlogic.gdx.graphics.g3d.attributes.IntAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 
 import gaia.cu9.ari.gaiaorbit.data.AssetBean;
@@ -33,6 +34,8 @@ public class TextureComponent {
 
     public String base, hires, specular, normal, night, ring;
     public Texture baseTex;
+    /** Add also color even if texture is present **/
+    public boolean coloriftex = false;
 
     public TextureComponent() {
 
@@ -61,14 +64,14 @@ public class TextureComponent {
      * @param cc
      *            Plain color used if there is no texture.
      */
-    public void initMaterial(AssetManager manager, Map<String, Material> materials, float[] cc) {
+    public void initMaterial(AssetManager manager, Map<String, Material> materials, float[] cc, boolean culling) {
         Material material = materials.get("base");
         if (base != null) {
             baseTex = manager.get(base, Texture.class);
             material.set(new TextureAttribute(TextureAttribute.Diffuse, baseTex));
         }
-        if (cc != null) {
-            // If there is no diffuse texture, we add a colour
+        if (cc != null && (coloriftex || base == null)) {
+            // Add diffuse colour
             material.set(new ColorAttribute(ColorAttribute.Diffuse, cc[0], cc[1], cc[2], cc[3]));
         }
 
@@ -92,19 +95,16 @@ public class TextureComponent {
             Texture tex = manager.get(ring, Texture.class);
             ringMat.set(new TextureAttribute(TextureAttribute.Diffuse, tex));
             ringMat.set(new BlendingAttribute(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA));
+            if (!culling)
+                ringMat.set(new IntAttribute(IntAttribute.CullFace, GL20.GL_NONE));
+        }
+        if (!culling) {
+            material.set(new IntAttribute(IntAttribute.CullFace, GL20.GL_NONE));
         }
     }
 
     public void setBase(String base) {
         this.base = base;
-    }
-
-    /**
-     * @deprecated Hires textures no longer supported. Using mipmapping.
-     * @param hires
-     */
-    public void setHires(String hires) {
-        this.hires = hires;
     }
 
     public void setSpecular(String specular) {
@@ -121,6 +121,10 @@ public class TextureComponent {
 
     public void setRing(String ring) {
         this.ring = ring;
+    }
+
+    public void setColoriftex(Boolean coloriftex) {
+        this.coloriftex = coloriftex;
     }
 
 }

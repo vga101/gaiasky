@@ -58,7 +58,7 @@ public class ModelComponent implements Disposable {
     public String type, modelFile;
 
     public double scale = 1d;
-
+    public boolean culling = true;
     /**
      * COMPONENTS
      */
@@ -119,7 +119,7 @@ public class ModelComponent implements Disposable {
 
         // INITIALIZE MATERIAL
         if (tc != null) {
-            tc.initMaterial(manager, materials, cc);
+            tc.initMaterial(manager, materials, cc, culling);
         }
 
         // CREATE MAIN MODEL INSTANCE
@@ -193,6 +193,10 @@ public class ModelComponent implements Disposable {
 
     public void setScale(Long scale) {
         this.scale = scale;
+    }
+
+    public void setCulling(Boolean culling) {
+        this.culling = culling;
     }
 
 }

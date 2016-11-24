@@ -36,8 +36,6 @@ varying vec4 v_color;
 
 
 void main() {
-    // Perimeter is 1 when normal faces camera, 0 when normal is 90 degrees from view.
-    float perimeter = dot(normalize(v_normal), vec3(v_viewVec));
-    
-    gl_FragColor = vec4(u_diffuseColor.rgb, u_diffuseColor.a * v_texCoords0.y);
+    //float softedge = pow(dot(normalize(v_normal), normalize(vec3(v_viewVec))), 8.0) * 4.0;
+    gl_FragColor = vec4(u_diffuseColor.rgb, u_diffuseColor.a * (1.0 - v_texCoords0.y));
 }

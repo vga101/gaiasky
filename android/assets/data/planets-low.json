@@ -113,6 +113,9 @@
 	"parent" : "Sol", 
 	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Planet",
 	
+	"locvamultiplier" : 3.0,
+	"locthoverfactor" : 8.0,
+	
 	"coordinates" : {
 					// This must implement gaia.cu9.ari.gaiaorbit.util.coord.IBodyCoordinates				
 					"impl" : "gaia.cu9.ari.gaiaorbit.util.coord.vsop87.EarthVSOP87"

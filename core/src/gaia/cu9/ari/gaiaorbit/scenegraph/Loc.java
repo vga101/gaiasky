@@ -92,7 +92,7 @@ public class Loc extends AbstractPositionEntity implements I3DTextRenderable {
         transform.getTranslation(aux).scl(-1);
 
         double cosalpha = aux.add(location3d.x, location3d.y, location3d.z).nor().dot(GaiaSky.instance.cam.getDirection().nor());
-        return cosalpha < -0.2f;
+        return cosalpha < -0.3f;
     }
 
     /**
@@ -100,10 +100,13 @@ public class Loc extends AbstractPositionEntity implements I3DTextRenderable {
      */
     @Override
     public void render(SpriteBatch batch, ShaderProgram shader, BitmapFont font3d, BitmapFont font2d, ICamera camera) {
+
         Vector3d pos = aux3d1.get();
         textPosition(camera, pos);
-        shader.setUniformf("a_viewAngle", viewAngle * (float) Constants.U_TO_KM);
-        shader.setUniformf("a_thOverFactor", 1f);
+        shader.setUniformf("a_viewAngle", viewAngle * ((ModelBody) parent).locVaMultiplier * (float) Constants.U_TO_KM);
+        shader.setUniformf("a_viewAnglePow", 1f);
+        shader.setUniformf("a_thOverFactor", ((ModelBody) parent).locThOverFactor);
+        shader.setUniformf("a_viewAnglePow", 1f);
         render3DLabel(batch, shader, font3d, camera, text(), pos, textScale(), textSize(), textColour());
     }
 
