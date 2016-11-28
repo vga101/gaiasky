@@ -1,24 +1,26 @@
 {"objects" : [
 
 	{
-	"name" : "Mercury orbit",
-	"color" : [1.0, 1.0, 1.0, 0.7],
-	"ct" : Orbits,
-	
-	"parent" : "Sol", 
-	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Orbit",
-	"provider" : "gaia.cu9.ari.gaiaorbit.data.orbit.OrbitFileDataProvider",
+		"name" : "Mercury orbit",
+		"color" : [1.0, 1.0, 1.0, 0.7],
+		"ct" : "Orbits",
+		"subct": "Planets",
 		
-	"orbit" 		: {
-						"source" : "data/orb.MERCURY.dat",
-						}
-	},
+		"parent" : "Sol", 
+		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Orbit",
+		"provider" : "gaia.cu9.ari.gaiaorbit.data.orbit.OrbitFileDataProvider",
+			
+		"orbit" 		: {
+							"source" : "data/orb.MERCURY.dat",
+							}
+		},
 	
 	
 	{
 		"name" : "Venus orbit",
 		"color" : [1.0, 1.0, 1.0, 0.7],
-		"ct" : Orbits,
+		"ct" : "Orbits",
+		"subct": "Planets",
 		
 		"parent" : "Sol", 
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Orbit",
@@ -33,7 +35,8 @@
 	{
 		"name" : "Earth orbit",
 		"color" : [1.0, 1.0, 1.0, 0.7],
-		"ct" : Orbits,
+		"ct" : "Orbits",
+		"subct": "Planets",
 		
 		"parent" : "Sol", 
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Orbit",
@@ -48,7 +51,8 @@
 	{
 		"name" : "Mars orbit",
 		"color" : [1.0, 1.0, 1.0, 0.7],
-		"ct" : Orbits,
+		"ct" : "Orbits",
+		"subct": "Planets",
 		
 		"parent" : "Sol", 
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Orbit",
@@ -63,7 +67,8 @@
 	{
 		"name" : "Jupiter orbit",
 		"color" : [1.0, 1.0, 1.0, 0.7],
-		"ct" : Orbits,
+		"ct" : "Orbits",
+		"subct": "Planets",
 		
 		"parent" : "Sol", 
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Orbit",
@@ -78,7 +83,8 @@
 	{
 		"name" : "Saturn orbit",
 		"color" : [1.0, 1.0, 1.0, 0.7],
-		"ct" : Orbits,
+		"ct" : "Orbits",
+		"subct": "Planets",
 		
 		"parent" : "Sol", 
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Orbit",
@@ -93,7 +99,8 @@
 	{
 		"name" : "Uranus orbit",
 		"color" : [1.0, 1.0, 1.0, 0.7],
-		"ct" : Orbits,
+		"ct" : "Orbits",
+		"subct": "Planets",
 		
 		"parent" : "Sol", 
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Orbit",
@@ -108,7 +115,8 @@
 	{
 		"name" : "Neptune orbit",
 		"color" : [1.0, 1.0, 1.0, 0.7],
-		"ct" : Orbits,
+		"ct" : "Orbits",
+		"subct": "Planets",
 		
 		"parent" : "Sol", 
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Orbit",

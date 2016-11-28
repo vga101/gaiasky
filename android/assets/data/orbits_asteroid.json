@@ -3,7 +3,8 @@
 	{
 		"name" : "Vesta orbit",
 		"color" : [1.0, 0.7, 0.7, 0.3],
-		"ct" : Orbits,
+		"ct": "Orbits",
+		"subct": "Asteroids",
 		
 		"parent" : "Sol", 
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Orbit",
@@ -31,7 +32,8 @@
 	{
 		"name" : "Ceres orbit",
 		"color" : [1.0, 0.7, 0.7, 0.3],
-		"ct" : Orbits,
+		"ct": "Orbits",
+		"subct": "Asteroids",
 		
 		"parent" : "Sol", 
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Orbit",
@@ -60,7 +62,8 @@
 	{
 		"name" : "Pallas orbit",
 		"color" : [1.0, 0.7, 0.7, 0.3],
-		"ct" : Orbits,
+		"ct": "Orbits",
+		"subct": "Asteroids",
 		
 		"parent" : "Sol", 
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Orbit",
@@ -89,7 +92,8 @@
 	{
 		"name" : "Hygieia orbit",
 		"color" : [1.0, 0.7, 0.7, 0.3],
-		"ct" : Orbits,
+		"ct": "Orbits",
+		"subct": "Asteroids",
 		
 		"parent" : "Sol", 
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Orbit",

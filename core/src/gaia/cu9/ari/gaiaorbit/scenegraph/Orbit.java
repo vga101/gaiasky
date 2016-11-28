@@ -7,9 +7,11 @@ import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.badlogic.gdx.utils.reflect.Method;
 import com.badlogic.gdx.utils.reflect.ReflectionException;
 
+import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.data.orbit.IOrbitDataProvider;
 import gaia.cu9.ari.gaiaorbit.data.orbit.OrbitData;
 import gaia.cu9.ari.gaiaorbit.data.orbit.OrbitDataLoader;
+import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.render.system.LineRenderSystem;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.OrbitComponent;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
@@ -78,24 +80,15 @@ public class Orbit extends LineObject {
     }
 
     protected void updateLocalTransform(Date date) {
-        if (oc.source != null || parent.orientation == null) {
-            // Orbit is sampled, only get position
-            localTransformD.set(transform.getMatrix());
-            if (transformFunction != null)
-                localTransformD.mul(transformFunction);
+        localTransformD.set(transform.getMatrix());
+        if (parent.orientation != null)
+            localTransformD.mul(parent.orientation);
+        if (transformFunction != null)
+            localTransformD.mul(transformFunction);
 
-            localTransformD.rotate(0, 1, 0, oc.argofpericenter);
-            localTransformD.rotate(0, 0, 1, oc.i);
-            localTransformD.rotate(0, 1, 0, oc.ascendingnode);
-        } else {
-            // Orbit is defined by its parameters and not sampled
-            // Set to parent orientation
-            localTransformD.set(transform.getMatrix()).mul(parent.orientation);
-
-            localTransformD.rotate(0, 1, 0, oc.argofpericenter);
-            localTransformD.rotate(0, 0, 1, oc.i);
-            localTransformD.rotate(0, 1, 0, oc.ascendingnode);
-        }
+        localTransformD.rotate(0, 1, 0, oc.argofpericenter);
+        localTransformD.rotate(0, 0, 1, oc.i);
+        localTransformD.rotate(0, 1, 0, oc.ascendingnode);
 
     }
 
@@ -105,16 +98,18 @@ public class Orbit extends LineObject {
 
     @Override
     protected void addToRenderLists(ICamera camera) {
-        float angleLimit = ANGLE_LIMIT * camera.getFovFactor();
-        if (viewAngle > angleLimit) {
-            if (viewAngle < angleLimit * SHADER_MODEL_OVERLAP_FACTOR) {
-                float alpha = MathUtilsd.lint(viewAngle, angleLimit, angleLimit * SHADER_MODEL_OVERLAP_FACTOR, 0, cc[3]);
-                this.alpha = alpha;
-            } else {
-                this.alpha = cc[3];
-            }
+        if (GaiaSky.instance.isOn(ct) && (subct != null ? GaiaSky.instance.isOn(subct) : true)) {
+            float angleLimit = ANGLE_LIMIT * camera.getFovFactor();
+            if (viewAngle > angleLimit) {
+                if (viewAngle < angleLimit * SHADER_MODEL_OVERLAP_FACTOR) {
+                    float alpha = MathUtilsd.lint(viewAngle, angleLimit, angleLimit * SHADER_MODEL_OVERLAP_FACTOR, 0, cc[3]);
+                    this.alpha = alpha;
+                } else {
+                    this.alpha = cc[3];
+                }
 
-            addToRender(this, RenderGroup.LINE);
+                addToRender(this, RenderGroup.LINE);
+            }
         }
 
     }

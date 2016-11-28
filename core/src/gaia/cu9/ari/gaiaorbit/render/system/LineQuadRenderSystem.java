@@ -202,12 +202,12 @@ public class LineQuadRenderSystem extends LineRenderSystem {
         this.camera = camera;
         int size = renderables.size();
         for (int i = 0; i < size; i++) {
-            IRenderable l = renderables.get(i);
+            IRenderable renderable = renderables.get(i);
             boolean rend = true;
-            if (l instanceof Particle && !GlobalConf.scene.PROPER_MOTION_VECTORS)
+            if (renderable instanceof Particle && !GlobalConf.scene.PROPER_MOTION_VECTORS)
                 rend = false;
             if (rend)
-                l.render(this, camera, alphas[l.getComponentType().ordinal()]);
+                renderable.render(this, camera, alphas[renderable.getComponentType().ordinal()] * (renderable.getSubcomponentType() != null ? alphas[renderable.getSubcomponentType().ordinal()] : 1));
 
         }
 

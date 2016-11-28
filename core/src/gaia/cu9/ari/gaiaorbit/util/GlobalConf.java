@@ -607,6 +607,7 @@ public class GlobalConf {
         public boolean FOCUS_LOCK;
         public boolean FOCUS_LOCK_ORIENTATION;
         public float LABEL_NUMBER_FACTOR;
+        /** Visibility of component types **/
         public boolean[] VISIBILITY;
 
         /** Display galaxy as 3D object or as a 2D texture **/

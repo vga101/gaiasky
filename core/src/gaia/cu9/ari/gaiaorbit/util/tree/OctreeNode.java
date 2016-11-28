@@ -368,6 +368,11 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
     public ComponentType getComponentType() {
         return ComponentType.Others;
     }
+    
+    @Override
+    public ComponentType getSubcomponentType() {
+        return null;
+    }
 
     @Override
     public float getDistToCamera() {

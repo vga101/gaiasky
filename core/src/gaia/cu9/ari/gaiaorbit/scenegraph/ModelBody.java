@@ -4,6 +4,7 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.math.Matrix4;
 
+import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
@@ -100,17 +101,19 @@ public abstract class ModelBody extends CelestialBody {
     @Override
     protected void addToRenderLists(ICamera camera) {
         camera.checkClosest(this);
-        float thPoint = (float) (THRESHOLD_POINT() * camera.getFovFactor());
-        if (viewAngleApparent >= thPoint) {
-            opacity = MathUtilsd.lint(viewAngleApparent, thPoint, thPoint * 4, 0, 1);
-            if (viewAngleApparent < THRESHOLD_QUAD() * camera.getFovFactor()) {
-                addToRender(this, RenderGroup.SHADER_F);
-            } else {
-                addToRender(this, RenderGroup.MODEL_F);
-            }
+        if (GaiaSky.instance.isOn(ct) && (subct != null ? GaiaSky.instance.isOn(subct) : true)) {
+            float thPoint = (float) (THRESHOLD_POINT() * camera.getFovFactor());
+            if (viewAngleApparent >= thPoint) {
+                opacity = MathUtilsd.lint(viewAngleApparent, thPoint, thPoint * 4, 0, 1);
+                if (viewAngleApparent < THRESHOLD_QUAD() * camera.getFovFactor()) {
+                    addToRender(this, RenderGroup.SHADER_F);
+                } else {
+                    addToRender(this, RenderGroup.MODEL_F);
+                }
 
-            if (renderText()) {
-                addToRender(this, RenderGroup.LABEL);
+                if (renderText()) {
+                    addToRender(this, RenderGroup.LABEL);
+                }
             }
         }
     }

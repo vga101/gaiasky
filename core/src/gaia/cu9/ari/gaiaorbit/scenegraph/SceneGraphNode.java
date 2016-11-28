@@ -166,9 +166,14 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
     public float opacity = 1f;
 
     /**
-     * For visibility toggles
+     * Component type, for managing visibility
      */
     public ComponentType ct;
+    
+    /**
+     * Sub component type, derived components such as orbits
+     */
+    public ComponentType subct;
 
     public SceneGraphNode() {
         // Identity
@@ -386,6 +391,7 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
 
     public void initialize() {
         ct = ComponentType.Others;
+        subct = null;
     }
 
     public void doneLoading(AssetManager manager) {
@@ -445,6 +451,14 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
 
     public ComponentType getComponentType() {
         return ct;
+    }
+    
+    public void setSubct(String subct) {
+        this.subct = ComponentType.valueOf(subct);
+    }
+    
+    public ComponentType getSubcomponentType(){
+        return subct;
     }
 
     /** 
