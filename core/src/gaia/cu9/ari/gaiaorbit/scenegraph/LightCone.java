@@ -64,8 +64,8 @@ public class LightCone extends ModelBody {
 
             localTransform.rotate(1, 0, 0, 90);
 
-            // First beam
-            localTransform.rotate(0, 0, 1, 180 - 44).rotate(1, 0, 0, -15).translate(0.0f, -49f, -1.25f);
+            // Beam
+            localTransform.rotate(0, 0, 1, 180 + 18).rotate(1, 0, 0, 7).translate(0f, -50f, 0f);
         } else {
             localTransform.set(this.localTransform);
         }
