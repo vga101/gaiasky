@@ -57,8 +57,5 @@ public class ModelBatchRenderSystem extends AbstractRenderSystem {
         return true;
     }
 
-    protected float getAlpha(IRenderable s) {
-        return alphas[s.getComponentType().ordinal()];
-    }
 
 }

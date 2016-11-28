@@ -314,8 +314,8 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         // MODEL ATMOSPHERE
         AbstractRenderSystem modelAtmProc = new ModelBatchRenderSystem(RenderGroup.MODEL_F_ATM, priority++, alphas, modelBatchAtm, true) {
             @Override
-            protected float getAlpha(IRenderable s) {
-                return alphas[ComponentType.Atmospheres.ordinal()] * (float) Math.pow(alphas[s.getComponentType().ordinal()], 2);
+            public float getAlpha(IRenderable s) {
+                return alphas[ComponentType.Atmospheres.ordinal()] * (float) Math.pow(alphas[s.getComponentType()[0].ordinal()], 2);
             }
 
             @Override

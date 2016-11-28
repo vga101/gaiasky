@@ -9,6 +9,7 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Bits;
 
+import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.render.IRenderable;
 import gaia.cu9.ari.gaiaorbit.render.SceneGraphRenderer;
@@ -166,14 +167,10 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
     public float opacity = 1f;
 
     /**
-     * Component type, for managing visibility
+     * Component types, for managing visibility
      */
-    public ComponentType ct;
+    public ComponentType[] ct;
     
-    /**
-     * Sub component type, derived components such as orbits
-     */
-    public ComponentType subct;
 
     public SceneGraphNode() {
         // Identity
@@ -188,7 +185,7 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
 
     public SceneGraphNode(ComponentType ct) {
         super();
-        this.ct = ct;
+        this.ct = new ComponentType[]{ct};
     }
 
     public SceneGraphNode(String name, SceneGraphNode parent) {
@@ -390,8 +387,7 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
     }
 
     public void initialize() {
-        ct = ComponentType.Others;
-        subct = null;
+        ct = new ComponentType[]{ComponentType.Others};
     }
 
     public void doneLoading(AssetManager manager) {
@@ -446,19 +442,20 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
     }
 
     public void setCt(String ct) {
-        this.ct = ComponentType.valueOf(ct);
+        this.ct = new ComponentType[]{ComponentType.valueOf(ct)};
     }
-
-    public ComponentType getComponentType() {
+    
+    public void setCt(String[] cts) {
+        this.ct = new ComponentType[cts.length];
+        int i = 0;
+        for(String ctstr : cts){
+            this.ct[i] = ComponentType.valueOf(ctstr);
+            i++;
+        }
+    }
+    
+    public ComponentType[] getComponentType(){
         return ct;
-    }
-    
-    public void setSubct(String subct) {
-        this.subct = ComponentType.valueOf(subct);
-    }
-    
-    public ComponentType getSubcomponentType(){
-        return subct;
     }
 
     /** 
@@ -539,8 +536,8 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
     }
 
     protected boolean addToRender(IRenderable renderable, RenderGroup rg) {
-        boolean vis = SceneGraphRenderer.visible[ct.ordinal()];
-        if (vis || (!vis && SceneGraphRenderer.alphas[ct.ordinal()] > 0)) {
+        boolean vis = SceneGraphRenderer.visible[ct[0].ordinal()];
+        if (vis || (!vis && SceneGraphRenderer.alphas[ct[0].ordinal()] > 0)) {
             SceneGraphRenderer.render_lists.get(rg).add(renderable, ThreadIndexer.i());
             return true;
         }
@@ -574,5 +571,13 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
     @Override
     public Vector3d getPosition() {
         return null;
+    }
+    
+    public boolean isVisibilityOn(){
+        boolean visible = true;
+        for(ComponentType comp : ct){
+            visible = visible && GaiaSky.instance.isOn(comp);
+        }
+        return visible;
     }
 }

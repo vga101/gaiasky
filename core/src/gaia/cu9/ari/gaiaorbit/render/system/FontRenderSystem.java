@@ -59,7 +59,7 @@ public class FontRenderSystem extends AbstractRenderSystem {
             for (int i = 0; i < size; i++) {
                 IRenderable s = renderables.get(i);
                 // Render sprite
-                s.render(batch, camera, alphas[s.getComponentType().ordinal()]);
+                s.render(batch, camera, getAlpha(s));
             }
         } else {
             for (int i = 0; i < size; i++) {
@@ -68,7 +68,7 @@ public class FontRenderSystem extends AbstractRenderSystem {
                 // Regular mode, we use 3D distance field font
                 I3DTextRenderable lr = (I3DTextRenderable) s;
                 shaderProgram.setUniformf("a_labelAlpha", (lr.isLabel() || camera.getCurrent() instanceof FovCamera ? alphas[ComponentType.Labels.ordinal()] : 1f));
-                shaderProgram.setUniformf("a_componentAlpha", alphas[s.getComponentType().ordinal()]);
+                shaderProgram.setUniformf("a_componentAlpha", getAlpha(s));
                 // Font opacity multiplier
                 shaderProgram.setUniformf("u_opacity", 0.65f);
 

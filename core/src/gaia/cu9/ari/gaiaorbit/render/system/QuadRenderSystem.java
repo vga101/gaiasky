@@ -135,7 +135,7 @@ public class QuadRenderSystem extends AbstractRenderSystem implements IObserver 
         int size = renderables.size();
         for (int i = 0; i < size; i++) {
             IRenderable s = renderables.get(i);
-            s.render(shaderProgram, alphas[s.getComponentType().ordinal()], starColorTransit, mesh, camera);
+            s.render(shaderProgram, getAlpha(s), starColorTransit, mesh, camera);
         }
         shaderProgram.end();
 

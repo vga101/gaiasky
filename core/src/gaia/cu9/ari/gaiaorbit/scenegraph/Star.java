@@ -241,7 +241,7 @@ public class Star extends Particle {
     public void initialize() {
         super.initialize();
         modelDistance = 172.4643429 * radius;
-        ct = ComponentType.Stars;
+        ct = new ComponentType[]{ComponentType.Stars};
     }
 
     @Override

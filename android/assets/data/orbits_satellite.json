@@ -3,8 +3,7 @@
 	{
 		"name" : "Gaia orbit",
 		"color" : [1.0, 1.0, 0.7, 0.5],
-		"ct" : "Orbits",
-		"subct" : "Satellites",
+		"ct" : [ "Orbits", "Satellites" ],
 		
 		"parent" : "Gaia", 
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.HeliotropicOrbit",

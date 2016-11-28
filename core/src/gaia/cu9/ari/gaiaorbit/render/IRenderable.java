@@ -16,16 +16,10 @@ public interface IRenderable {
     public void render(Object... params);
 
     /**
-     * Gets the component type of this entity.
-     * @return The component type
+     * Gets the component types of this entity.
+     * @return The component types
      */
-    public ComponentType getComponentType();
-    
-    /**
-     * Gets the sub component type of this entity.
-     * @return The sub component type
-     */
-    public ComponentType getSubcomponentType();
+    public ComponentType[] getComponentType();
 
     /**
      * Gets the last distance to the camera calculated for this entity.

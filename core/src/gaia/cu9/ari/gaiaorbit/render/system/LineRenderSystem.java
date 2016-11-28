@@ -89,7 +89,7 @@ public class LineRenderSystem extends ImmediateRenderSystem {
                 rend = false;
             if (rend)
                 // Orbits depend on sub component type
-                renderable.render(this, camera, alphas[renderable.getComponentType().ordinal()] * (renderable.getSubcomponentType() != null ? alphas[renderable.getSubcomponentType().ordinal()] : 1));
+                renderable.render(this, camera, getAlpha(renderable));
         }
 
         shaderProgram.begin();
@@ -143,5 +143,6 @@ public class LineRenderSystem extends ImmediateRenderSystem {
         curr_outline.vertexIdx += curr_outline.vertexSize;
         curr_outline.numVertices++;
     }
+    
 
 }

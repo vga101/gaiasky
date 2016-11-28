@@ -2,8 +2,7 @@
 	{
 		"parent" : "Gaia", 
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "FoV2",				
 		"location" : [141.0, 62.0],
 		"size" : 0.00003,
@@ -12,8 +11,7 @@
 	{
 		"parent" : "Gaia", 
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "FoV1",				
 		"location" : [35.0, 62.0],
 		"size" : 0.00003,
@@ -22,8 +20,7 @@
 	{
 		"parent" : "Gaia", 
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Sunshield",				
 		"location" : [0.0, -90.0],
 		"size" : 0.00003,

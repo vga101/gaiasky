@@ -3,6 +3,7 @@ package gaia.cu9.ari.gaiaorbit.render.system;
 import java.util.Comparator;
 import java.util.List;
 
+import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.render.IRenderable;
 import gaia.cu9.ari.gaiaorbit.render.RenderContext;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
@@ -63,6 +64,19 @@ public abstract class AbstractRenderSystem implements IRenderSystem {
             runnable.run(this, renderables, camera);
         }
     }
+    
+    /**
+     * Computes the alpha opacity value of a given renderable using its component types
+     * @param renderable The renderable
+     * @return The alpha value as the product of all the alphas of its component types.
+     */
+    public float getAlpha(IRenderable renderable){
+        ComponentType[] cts = renderable.getComponentType();
+        float alpha = alphas[cts[0].ordinal()];
+        for(int i =1; i < cts.length; i++)
+            alpha *= alphas[cts[i].ordinal()];
+        return alpha;
+    }
 
     @Override
     public int compareTo(IRenderSystem o) {
@@ -77,5 +91,7 @@ public abstract class AbstractRenderSystem implements IRenderSystem {
     public interface RenderSystemRunnable {
         public abstract void run(AbstractRenderSystem renderSystem, List<IRenderable> renderables, ICamera camera);
     }
+    
+
 
 }

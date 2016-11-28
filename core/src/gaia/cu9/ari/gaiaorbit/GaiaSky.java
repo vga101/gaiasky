@@ -609,6 +609,13 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
     public boolean isOn(ComponentType comp) {
         return sgr.isOn(comp);
     }
+    
+    public boolean isOn(ComponentType[] cts) {
+        boolean on = true;
+        for(ComponentType ct : cts)
+            on = on && sgr.isOn(ct);
+        return on;
+    }
 
     @Override
     public void notify(Events event, Object... data) {

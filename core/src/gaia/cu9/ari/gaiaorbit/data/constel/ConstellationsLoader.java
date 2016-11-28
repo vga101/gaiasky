@@ -42,6 +42,8 @@ public class ConstellationsLoader<T extends SceneGraphNode> implements ISceneGra
                     int lastid = -1;
                     String line;
                     String name = null;
+                    ComponentType[] ct = new ComponentType[]{ComponentType.Constellations};
+                    
                     while ((line = br.readLine()) != null) {
                         if (!line.startsWith("#")) {
                             String[] tokens = line.split(separator);
@@ -50,7 +52,7 @@ public class ConstellationsLoader<T extends SceneGraphNode> implements ISceneGra
                             if (!lastName.isEmpty() && !name.equals("JUMP") && !name.equals(lastName)) {
                                 // We finished a constellation object
                                 Constellation cons = new Constellation(lastName, SceneGraphNode.ROOT_NAME);
-                                cons.ct = ComponentType.Constellations;
+                                cons.ct = ct;
                                 cons.ids = partial;
                                 constellations.add(cons);
                                 partial = null;
@@ -80,7 +82,7 @@ public class ConstellationsLoader<T extends SceneGraphNode> implements ISceneGra
                     if (!lastName.isEmpty() && !name.equals("JUMP")) {
                         // We finished a constellation object
                         Constellation cons = new Constellation(lastName, SceneGraphNode.ROOT_NAME);
-                        cons.ct = ComponentType.Constellations;
+                        cons.ct = ct;
                         cons.ids = partial;
                         constellations.add(cons);
                         partial = null;

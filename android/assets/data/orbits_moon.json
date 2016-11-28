@@ -4,8 +4,7 @@
 	{
 		"name" : "Moon orbit",
 		"color" : [.7, .7, 1.0, 0.4],
-		"ct" : "Orbits",
-		"subct": "Moons",
+		"ct": [ "Orbits", "Moons" ],
 		
 		"parent" : "Earth", 
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Orbit",
@@ -20,8 +19,7 @@
 	{
 	"name" : "Phobos orbit",
 	"color" : [.7, .7, 1.0, 0.4],
-	"ct" : "Orbits",
-		"subct": "Moons",
+	"ct": [ "Orbits", "Moons" ],
 	
 	"parent" : "Mars", 
 	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Orbit",
@@ -47,8 +45,7 @@
 	{
 		"name" : "Deimos orbit",
 		"color" : [.7, .7, 1.0, 0.4],
-		"ct" : "Orbits",
-		"subct": "Moons",
+		"ct": [ "Orbits", "Moons" ],
 		
 		"parent" : "Mars", 
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Orbit",
@@ -74,8 +71,7 @@
 	{
 		"name" : "Amalthea orbit",
 		"color" : [.7, .7, 1.0, 0.4],
-		"ct" : "Orbits",
-		"subct": "Moons",
+		"ct": [ "Orbits", "Moons" ],
 		
 		"parent" : "Jupiter", 
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Orbit",
@@ -101,8 +97,7 @@
 	{
 		"name" : "Io orbit",
 		"color" : [.7, .7, 1.0, 0.4],
-		"ct" : "Orbits",
-		"subct": "Moons",
+		"ct": [ "Orbits", "Moons" ],
 		
 		"parent" : "Jupiter", 
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Orbit",
@@ -127,8 +122,7 @@
 	{
 		"name" : "Europa orbit",
 		"color" : [.7, .7, 1.0, 0.4],
-		"ct" : "Orbits",
-		"subct": "Moons",
+		"ct": [ "Orbits", "Moons" ],
 		
 		"parent" : "Jupiter", 
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Orbit",
@@ -153,8 +147,7 @@
 	{
 		"name" : "Ganymede orbit",
 		"color" : [.7, .7, 1.0, 0.4],
-		"ct" : "Orbits",
-		"subct": "Moons",
+		"ct": [ "Orbits", "Moons" ],
 		
 		"parent" : "Jupiter", 
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Orbit",
@@ -179,8 +172,7 @@
 	{
 		"name" : "Callisto orbit",
 		"color" : [.7, .7, 1.0, 0.4],
-		"ct" : "Orbits",
-		"subct": "Moons",
+		"ct": [ "Orbits", "Moons" ],
 		
 		"parent" : "Jupiter", 
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Orbit",
@@ -205,8 +197,7 @@
 	{
 		"name" : "Prometheus orbit",
 		"color" : [.7, .7, 1.0, 0.4],
-		"ct" : "Orbits",
-		"subct": "Moons",
+		"ct": [ "Orbits", "Moons" ],
 		
 		"parent" : "Saturn", 
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Orbit",

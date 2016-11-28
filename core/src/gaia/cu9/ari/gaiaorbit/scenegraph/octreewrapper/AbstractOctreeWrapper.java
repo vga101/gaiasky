@@ -46,7 +46,7 @@ public abstract class AbstractOctreeWrapper extends SceneGraphNode implements It
 
     protected AbstractOctreeWrapper(String parentName, OctreeNode<SceneGraphNode> root) {
         this();
-        this.ct = ComponentType.Others;
+        this.ct = new ComponentType[]{ComponentType.Others};
         this.root = root;
         this.parentName = parentName;
         this.parenthood = new HashMap<SceneGraphNode, OctreeNode<SceneGraphNode>>();

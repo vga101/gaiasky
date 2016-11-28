@@ -3,8 +3,7 @@
 	{
 		"parent" : "Earth", 
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",		
+		"ct": [ "Others", "Labels" ],
 		"name" : "North America",	
 		"location" : [-105.0, 40.0],
 		"size" : 40
@@ -12,8 +11,7 @@
 	{
 		"parent" : "Earth", 
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",			
+		"ct": [ "Others", "Labels" ],			
 		"name" : "South America",				
 		"location" : [-60.0, -10.0],
 		"size" : 40
@@ -21,8 +19,7 @@
 	{
 		"parent" : "Earth", 
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Europe",				
 		"location" : [0.0, 50.0],
 		"size" : 40
@@ -30,8 +27,7 @@
 	{
 		"parent" : "Earth", 
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Asia",				
 		"location" : [70.0, 40.0],
 		"size" : 50
@@ -39,8 +35,7 @@
 	{
 		"parent" : "Earth", 
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Africa",				
 		"location" : [20.0, 5.0],
 		"size" : 50
@@ -48,8 +43,7 @@
 	{
 		"parent" : "Earth", 
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Oceania",				
 		"location" : [135.0, -25.0],
 		"size" : 25
@@ -57,8 +51,7 @@
 	{
 		"parent" : "Earth", 
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Antartica",				
 		"location" : [0.0, -90.0],
 		"size" : 30
@@ -66,8 +59,7 @@
 	{
 		"parent" : "Earth", 
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "North Atlantic Ocean",				
 		"location" : [-45.0, 40.0],
 		"size" : 20
@@ -75,8 +67,7 @@
 	{
 		"parent" : "Earth", 
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "South Atlantic Ocean",				
 		"location" : [-15.0, -15.0],
 		"size" : 20
@@ -84,8 +75,7 @@
 	{
 		"parent" : "Earth", 
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "North Pacific Ocean",				
 		"location" : [180.0, 30.0],
 		"size" : 20
@@ -93,8 +83,7 @@
 	{
 		"parent" : "Earth", 
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "South Pacific Ocean",				
 		"location" : [-160.0, -10.0],
 		"size" : 20
@@ -102,8 +91,7 @@
 	{
 		"parent" : "Earth", 
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Indian Ocean",				
 		"location" : [75.0, -15.0],
 		"size" : 20
@@ -111,8 +99,7 @@
 	{
 		"parent" : "Earth", 
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Arctic Ocean",				
 		"location" : [0.0, 90.0],
 		"size" : 20
@@ -120,8 +107,7 @@
 	{
 		"parent" : "Earth", 
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Kourou (Gaia launch site)",				
 		"location" : [-52.6509798, 5.1628814],
 		"size" : 6
@@ -129,8 +115,7 @@
 	{
 		"parent" : "Earth", 
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "ESOC (European Space Operations Center)",				
 		"location" : [8.5898778, 49.8256097],
 		"size" : 6
@@ -138,8 +123,7 @@
 	{
 		"parent" : "Earth", 
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "ESAC (European Space Astronomy Center)",				
 		"location" : [-3.952696, 40.444211],
 		"size" : 6
@@ -147,8 +131,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Barcelona",
 		"location" : [2.14, 41.39],
 		"size" : 5.3
@@ -156,8 +139,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Heidelberg",
 		"location" : [8.68, 49.4],
 		"size" : 5.3
@@ -165,8 +147,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Glasgow",
 		"location" : [-4.23, 55.85],
 		"size" : 5.3
@@ -174,8 +155,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Abu Dhabi",
 		"location" : [54.37, 24.47],
 		"size" : 5.3
@@ -183,8 +163,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Abuja",
 		"location" : [7.18, 9.20],
 		"size" : 5.3
@@ -192,8 +171,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Accra",
 		"location" : [-0.22, 5.55],
 		"size" : 5.3
@@ -201,8 +179,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Adamstown",
 		"location" : [-130.08, -25.07],
 		"size" : 5.3
@@ -210,8 +187,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Addis Ababa",
 		"location" : [38.70, 9.03],
 		"size" : 5.3
@@ -219,8 +195,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Algiers",
 		"location" : [3.05, 36.75],
 		"size" : 5.3
@@ -228,8 +203,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Alofi",
 		"location" : [-169.92, -19.02],
 		"size" : 5.3
@@ -237,8 +211,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Amman",
 		"location" : [35.93, 31.95],
 		"size" : 5.3
@@ -246,8 +219,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Amsterdam",
 		"location" : [4.90, 52.38],
 		"size" : 5.3
@@ -255,8 +227,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Andorra La Vella",
 		"location" : [1.50, 42.50],
 		"size" : 5.3
@@ -264,8 +235,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Ankara",
 		"location" : [32.87, 39.93],
 		"size" : 5.3
@@ -273,8 +243,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Antananarivo",
 		"location" : [47.50, -18.87],
 		"size" : 5.3
@@ -282,8 +251,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Apia",
 		"location" : [-171.77, -13.83],
 		"size" : 5.3
@@ -291,8 +259,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Ashgabat",
 		"location" : [58.38, 37.95],
 		"size" : 5.3
@@ -300,8 +267,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Asmara",
 		"location" : [38.88, 15.33],
 		"size" : 5.3
@@ -309,8 +275,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Astana",
 		"location" : [71.50, 51.17],
 		"size" : 5.3
@@ -318,8 +283,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Asuncion",
 		"location" : [-57.67, -25.27],
 		"size" : 5.3
@@ -327,8 +291,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Athens",
 		"location" : [23.73, 37.98],
 		"size" : 5.3
@@ -336,8 +299,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Avarua",
 		"location" : [-159.77, -21.20],
 		"size" : 5.3
@@ -345,8 +307,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Baghdad",
 		"location" : [44.42, 33.35],
 		"size" : 5.3
@@ -354,8 +315,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Baku",
 		"location" : [49.85, 40.38],
 		"size" : 5.3
@@ -363,8 +323,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Bamako",
 		"location" : [-8.00, 12.65],
 		"size" : 5.3
@@ -372,8 +331,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Bandar Seri Begawan",
 		"location" : [114.93, 4.88],
 		"size" : 5.3
@@ -381,8 +339,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Bangkok",
 		"location" : [100.52, 13.75],
 		"size" : 5.3
@@ -390,8 +347,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Bangui",
 		"location" : [18.58, 4.37],
 		"size" : 5.3
@@ -399,8 +355,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Banjul",
 		"location" : [-16.65, 13.47],
 		"size" : 5.3
@@ -408,8 +363,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Basse-Terre",
 		"location" : [-61.73, 16.00],
 		"size" : 5.3
@@ -417,8 +371,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Basseterre",
 		"location" : [-62.72, 17.30],
 		"size" : 5.3
@@ -426,8 +379,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Beijing",
 		"location" : [116.40, 39.93],
 		"size" : 5.3
@@ -435,8 +387,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Beirut",
 		"location" : [35.50, 33.88],
 		"size" : 5.3
@@ -444,8 +395,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Belgrade",
 		"location" : [20.50, 44.83],
 		"size" : 5.3
@@ -453,8 +403,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Belmopan",
 		"location" : [-88.77, 17.25],
 		"size" : 5.3
@@ -462,8 +411,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Berlin",
 		"location" : [13.40, 52.52],
 		"size" : 5.3
@@ -471,8 +419,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Bern",
 		"location" : [7.43, 46.95],
 		"size" : 5.3
@@ -480,8 +427,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Bishkek",
 		"location" : [74.60, 42.90],
 		"size" : 5.3
@@ -489,8 +435,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Bissau",
 		"location" : [-15.58, 11.85],
 		"size" : 5.3
@@ -498,8 +443,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Bloemfontein",
 		"location" : [26.12, -29.20],
 		"size" : 5.3
@@ -507,8 +451,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Bogota",
 		"location" : [-74.08, 4.60],
 		"size" : 5.3
@@ -516,8 +459,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Brasilia",
 		"location" : [-47.92, -15.78],
 		"size" : 5.3
@@ -525,8 +467,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Bratislava",
 		"location" : [17.12, 48.15],
 		"size" : 5.3
@@ -534,8 +475,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Brazzaville",
 		"location" : [15.28, -4.27],
 		"size" : 5.3
@@ -543,8 +483,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Bridgetown",
 		"location" : [-59.62, 13.10],
 		"size" : 5.3
@@ -552,8 +491,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Brussels",
 		"location" : [4.33, 50.83],
 		"size" : 5.3
@@ -561,8 +499,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Bucharest",
 		"location" : [26.10, 44.43],
 		"size" : 5.3
@@ -570,8 +507,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Budapest",
 		"location" : [19.08, 47.50],
 		"size" : 5.3
@@ -579,8 +515,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Buenos Aires",
 		"location" : [-58.45, -34.60],
 		"size" : 5.3
@@ -588,8 +523,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Bujumbura",
 		"location" : [29.37, -3.38],
 		"size" : 5.3
@@ -597,8 +531,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Cairo",
 		"location" : [31.25, 30.05],
 		"size" : 5.3
@@ -606,8 +539,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Canberra",
 		"location" : [149.13, -35.28],
 		"size" : 5.3
@@ -615,8 +547,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Cape Town",
 		"location" : [18.47, -33.93],
 		"size" : 5.3
@@ -624,8 +555,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Caracas",
 		"location" : [-66.93, 10.50],
 		"size" : 5.3
@@ -633,8 +563,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Castries",
 		"location" : [-61.00, 14.02],
 		"size" : 5.3
@@ -642,8 +571,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Cayenne",
 		"location" : [-52.33, 4.93],
 		"size" : 5.3
@@ -651,8 +579,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Charlotte Amalie",
 		"location" : [-64.93, 18.35],
 		"size" : 5.3
@@ -660,8 +587,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Chisinau",
 		"location" : [28.83, 47.00],
 		"size" : 5.3
@@ -669,8 +595,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Colombo",
 		"location" : [79.85, 6.93],
 		"size" : 5.3
@@ -678,8 +603,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Conakry",
 		"location" : [-13.72, 9.52],
 		"size" : 5.3
@@ -687,8 +611,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Copenhagen",
 		"location" : [12.58, 55.67],
 		"size" : 5.3
@@ -696,8 +619,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Cotonou",
 		"location" : [2.43, 6.35],
 		"size" : 5.3
@@ -705,8 +627,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Dakar",
 		"location" : [-17.43, 14.67],
 		"size" : 5.3
@@ -714,8 +635,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Damascus",
 		"location" : [36.30, 33.50],
 		"size" : 5.3
@@ -723,8 +643,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Dar Es Salaam",
 		"location" : [39.28, -6.80],
 		"size" : 5.3
@@ -732,8 +651,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Dhaka",
 		"location" : [90.42, 23.72],
 		"size" : 5.3
@@ -741,8 +659,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Dili",
 		"location" : [125.60, -8.58],
 		"size" : 5.3
@@ -750,8 +667,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Djibouti",
 		"location" : [43.25, 11.50],
 		"size" : 5.3
@@ -759,8 +675,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Doha",
 		"location" : [51.53, 25.28],
 		"size" : 5.3
@@ -768,8 +683,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Douglas",
 		"location" : [-4.47, 54.15],
 		"size" : 5.3
@@ -777,8 +691,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Dublin",
 		"location" : [-6.25, 53.33],
 		"size" : 5.3
@@ -786,8 +699,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Dushanbe",
 		"location" : [68.80, 38.58],
 		"size" : 5.3
@@ -795,8 +707,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Fongafale",
 		"location" : [179.20, -8.50],
 		"size" : 5.3
@@ -804,8 +715,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Fort-De-France",
 		"location" : [-61.08, 14.60],
 		"size" : 5.3
@@ -813,8 +723,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Freetown",
 		"location" : [-13.25, 8.50],
 		"size" : 5.3
@@ -822,8 +731,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Gaborone",
 		"location" : [25.92, -24.75],
 		"size" : 5.3
@@ -831,8 +739,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "George Town",
 		"location" : [-81.38, 19.33],
 		"size" : 5.3
@@ -840,8 +747,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Georgetown",
 		"location" : [-58.17, 6.80],
 		"size" : 5.3
@@ -849,8 +755,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Gibraltar",
 		"location" : [-5.37, 36.18],
 		"size" : 5.3
@@ -858,8 +763,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Grand Turk",
 		"location" : [-71.13, 21.47],
 		"size" : 5.3
@@ -867,8 +771,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Guatemala",
 		"location" : [-90.52, 14.63],
 		"size" : 5.3
@@ -876,8 +779,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Hagatna",
 		"location" : [144.75, 13.47],
 		"size" : 5.3
@@ -885,8 +787,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "The Hague",
 		"location" : [4.30, 52.08],
 		"size" : 5.3
@@ -894,8 +795,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Hamilton",
 		"location" : [-64.77, 32.28],
 		"size" : 5.3
@@ -903,8 +803,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Hanoi",
 		"location" : [105.85, 21.03],
 		"size" : 5.3
@@ -912,8 +811,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Harare",
 		"location" : [31.05, -17.83],
 		"size" : 5.3
@@ -921,8 +819,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Havana",
 		"location" : [-82.37, 23.13],
 		"size" : 5.3
@@ -930,8 +827,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Helsinki",
 		"location" : [24.97, 60.17],
 		"size" : 5.3
@@ -939,8 +835,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Honiara",
 		"location" : [159.95, -9.43],
 		"size" : 5.3
@@ -948,8 +843,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Islamabad",
 		"location" : [73.17, 33.70],
 		"size" : 5.3
@@ -957,8 +851,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Jakarta",
 		"location" : [106.80, -6.17],
 		"size" : 5.3
@@ -966,8 +859,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Jamestown",
 		"location" : [-5.73, -15.93],
 		"size" : 5.3
@@ -975,8 +867,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Jerusalem",
 		"location" : [35.23, 31.78],
 		"size" : 5.3
@@ -984,8 +875,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Kabul",
 		"location" : [69.18, 34.52],
 		"size" : 5.3
@@ -993,8 +883,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Kampala",
 		"location" : [32.42, 0.32],
 		"size" : 5.3
@@ -1002,8 +891,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Kathmandu",
 		"location" : [85.32, 27.72],
 		"size" : 5.3
@@ -1011,8 +899,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Khartoum",
 		"location" : [32.53, 15.60],
 		"size" : 5.3
@@ -1020,8 +907,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Kiev",
 		"location" : [30.52, 50.43],
 		"size" : 5.3
@@ -1029,8 +915,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Kigali",
 		"location" : [30.07, -1.95],
 		"size" : 5.3
@@ -1038,8 +923,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Kingston",
 		"location" : [-76.80, 18.00],
 		"size" : 5.3
@@ -1047,8 +931,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Kingston",
 		"location" : [168.08, -29.05],
 		"size" : 5.3
@@ -1056,8 +939,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Kingstown",
 		"location" : [-61.23, 13.15],
 		"size" : 5.3
@@ -1065,8 +947,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Kinshasa",
 		"location" : [15.30, -4.30],
 		"size" : 5.3
@@ -1074,8 +955,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Koror",
 		"location" : [134.48, 7.33],
 		"size" : 5.3
@@ -1083,8 +963,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Kuala Lumpur",
 		"location" : [101.70, 3.17],
 		"size" : 5.3
@@ -1092,8 +971,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Kuwait",
 		"location" : [47.98, 29.33],
 		"size" : 5.3
@@ -1101,8 +979,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "La'Youn",
 		"location" : [-13.20, 27.15],
 		"size" : 5.3
@@ -1110,8 +987,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "La Paz",
 		"location" : [-68.15, -16.50],
 		"size" : 5.3
@@ -1119,8 +995,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Leiden",
 		"location" : [4.4833, 52.1667],
 		"size" : 5.3
@@ -1128,8 +1003,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Libreville",
 		"location" : [9.45, 0.38],
 		"size" : 5.3
@@ -1137,8 +1011,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Lilongwe",
 		"location" : [33.73, -13.98],
 		"size" : 5.3
@@ -1146,8 +1019,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Lima",
 		"location" : [-77.05, -12.05],
 		"size" : 5.3
@@ -1155,8 +1027,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Lisbon",
 		"location" : [-9.13, 38.72],
 		"size" : 5.3
@@ -1164,8 +1035,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Ljubljana",
 		"location" : [14.52, 46.05],
 		"size" : 5.3
@@ -1173,8 +1043,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Lobamba",
 		"location" : [31.20, -26.45],
 		"size" : 5.3
@@ -1182,8 +1051,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Lome",
 		"location" : [1.22, 6.13],
 		"size" : 5.3
@@ -1191,8 +1059,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "London",
 		"location" : [-0.17, 51.50],
 		"size" : 5.3
@@ -1200,8 +1067,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Longyearbyen",
 		"location" : [15.83, 78.20],
 		"size" : 5.3
@@ -1209,8 +1075,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Luanda",
 		"location" : [13.23, -8.80],
 		"size" : 5.3
@@ -1218,8 +1083,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Lusaka",
 		"location" : [28.28, -15.42],
 		"size" : 5.3
@@ -1227,8 +1091,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Luxembourg",
 		"location" : [6.15, 49.62],
 		"size" : 5.3
@@ -1236,8 +1099,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Madrid",
 		"location" : [-3.68, 40.40],
 		"size" : 5.3
@@ -1245,8 +1107,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Majuro",
 		"location" : [171.13, 7.08],
 		"size" : 5.3
@@ -1254,8 +1115,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Malabo",
 		"location" : [8.78, 3.75],
 		"size" : 5.3
@@ -1263,8 +1123,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Male",
 		"location" : [73.52, 4.17],
 		"size" : 5.3
@@ -1272,8 +1131,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Mamoutzou",
 		"location" : [45.23, -12.78],
 		"size" : 5.3
@@ -1281,8 +1139,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Managua",
 		"location" : [-86.28, 12.15],
 		"size" : 5.3
@@ -1290,8 +1147,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Manama",
 		"location" : [50.58, 26.22],
 		"size" : 5.3
@@ -1299,8 +1155,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Manila",
 		"location" : [121.00, 14.58],
 		"size" : 5.3
@@ -1308,8 +1163,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Maputo",
 		"location" : [32.58, -25.97],
 		"size" : 5.3
@@ -1317,8 +1171,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Maseru",
 		"location" : [27.50, -29.47],
 		"size" : 5.3
@@ -1326,8 +1179,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Mata-Utu",
 		"location" : [-176.20, -13.37],
 		"size" : 5.3
@@ -1335,8 +1187,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Mbabane",
 		"location" : [31.10, -26.30],
 		"size" : 5.3
@@ -1344,8 +1195,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Mexico City",
 		"location" : [-99.15, 19.40],
 		"size" : 5.3
@@ -1353,8 +1203,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Minsk",
 		"location" : [27.57, 53.90],
 		"size" : 5.3
@@ -1362,8 +1211,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Mogadishu",
 		"location" : [45.37, 2.07],
 		"size" : 5.3
@@ -1371,8 +1219,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Monaco",
 		"location" : [7.42, 43.73],
 		"size" : 5.3
@@ -1380,8 +1227,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Monrovia",
 		"location" : [-10.78, 6.30],
 		"size" : 5.3
@@ -1389,8 +1235,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Montevideo",
 		"location" : [-56.18, -34.88],
 		"size" : 5.3
@@ -1398,8 +1243,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Moroni",
 		"location" : [43.27, -11.68],
 		"size" : 5.3
@@ -1407,8 +1251,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Moscow",
 		"location" : [37.58, 55.75],
 		"size" : 5.3
@@ -1416,8 +1259,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Muscat",
 		"location" : [58.58, 23.62],
 		"size" : 5.3
@@ -1425,8 +1267,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Nairobi",
 		"location" : [36.82, -1.28],
 		"size" : 5.3
@@ -1434,8 +1275,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Nassau",
 		"location" : [-77.35, 25.08],
 		"size" : 5.3
@@ -1443,8 +1283,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "N'Djamena",
 		"location" : [15.05, 12.12],
 		"size" : 5.3
@@ -1452,8 +1291,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "New Delhi",
 		"location" : [77.20, 28.60],
 		"size" : 5.3
@@ -1461,8 +1299,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Niamey",
 		"location" : [2.12, 13.52],
 		"size" : 5.3
@@ -1470,8 +1307,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Nicosia",
 		"location" : [33.37, 35.17],
 		"size" : 5.3
@@ -1479,8 +1315,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Nouakchott",
 		"location" : [-15.95, 18.10],
 		"size" : 5.3
@@ -1488,8 +1323,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Noumea",
 		"location" : [166.45, -22.27],
 		"size" : 5.3
@@ -1497,8 +1331,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Nuku'Alofa",
 		"location" : [-175.20, -21.13],
 		"size" : 5.3
@@ -1506,8 +1339,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Nuuk",
 		"location" : [-51.73, 64.18],
 		"size" : 5.3
@@ -1515,8 +1347,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Oranjestad",
 		"location" : [-70.10, 12.55],
 		"size" : 5.3
@@ -1524,8 +1355,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Oslo",
 		"location" : [10.75, 59.92],
 		"size" : 5.3
@@ -1533,8 +1363,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Ottawa",
 		"location" : [-75.67, 45.42],
 		"size" : 5.3
@@ -1542,8 +1371,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Ouagadougou",
 		"location" : [-1.52, 12.37],
 		"size" : 5.3
@@ -1551,8 +1379,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Pago Pago",
 		"location" : [-170.70, -14.27],
 		"size" : 5.3
@@ -1560,8 +1387,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Palikir",
 		"location" : [158.13, 6.92],
 		"size" : 5.3
@@ -1569,8 +1395,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Panama",
 		"location" : [-79.53, 8.97],
 		"size" : 5.3
@@ -1578,8 +1403,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Papeete",
 		"location" : [-149.57, -17.53],
 		"size" : 5.3
@@ -1587,8 +1411,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Paramaribo",
 		"location" : [-55.17, 5.83],
 		"size" : 5.3
@@ -1596,8 +1419,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Paris",
 		"location" : [2.33, 48.87],
 		"size" : 5.3
@@ -1605,8 +1427,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Phnom Penh",
 		"location" : [104.92, 11.55],
 		"size" : 5.3
@@ -1614,8 +1435,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Plymouth",
 		"location" : [-62.23, 16.73],
 		"size" : 5.3
@@ -1623,8 +1443,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Port Louis",
 		"location" : [57.50, -20.17],
 		"size" : 5.3
@@ -1632,8 +1451,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Port Moresby",
 		"location" : [147.17, -9.50],
 		"size" : 5.3
@@ -1641,8 +1459,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Port-Au-Prince",
 		"location" : [-72.33, 18.53],
 		"size" : 5.3
@@ -1650,8 +1467,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Port-Of-Spain",
 		"location" : [-61.52, 10.65],
 		"size" : 5.3
@@ -1659,8 +1475,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Porto-Novo",
 		"location" : [2.62, 6.48],
 		"size" : 5.3
@@ -1668,8 +1483,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Port-Vila",
 		"location" : [168.32, -17.73],
 		"size" : 5.3
@@ -1677,8 +1491,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Prague",
 		"location" : [14.43, 50.10],
 		"size" : 5.3
@@ -1686,8 +1499,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Praia",
 		"location" : [-23.52, 14.92],
 		"size" : 5.3
@@ -1695,8 +1507,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Pretoria",
 		"location" : [28.17, -25.75],
 		"size" : 5.3
@@ -1704,8 +1515,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "P'Yongyang",
 		"location" : [125.75, 39.02],
 		"size" : 5.3
@@ -1713,8 +1523,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Quito",
 		"location" : [-78.50, -0.22],
 		"size" : 5.3
@@ -1722,8 +1531,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Rabat",
 		"location" : [-6.85, 34.03],
 		"size" : 5.3
@@ -1731,8 +1539,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Rangoon",
 		"location" : [96.17, 16.78],
 		"size" : 5.3
@@ -1740,8 +1547,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Reykjavik",
 		"location" : [-21.93, 64.13],
 		"size" : 5.3
@@ -1749,8 +1555,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Riga",
 		"location" : [24.10, 56.95],
 		"size" : 5.3
@@ -1758,8 +1563,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Riyadh",
 		"location" : [46.72, 24.63],
 		"size" : 5.3
@@ -1767,8 +1571,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Road Town",
 		"location" : [-64.62, 18.45],
 		"size" : 5.3
@@ -1776,8 +1579,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Rome",
 		"location" : [12.48, 41.87],
 		"size" : 5.3
@@ -1785,8 +1587,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Roseau",
 		"location" : [-61.40, 15.30],
 		"size" : 5.3
@@ -1794,8 +1595,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Saint George'S",
 		"location" : [-61.75, 12.05],
 		"size" : 5.3
@@ -1803,8 +1603,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Saint Helier",
 		"location" : [-2.12, 49.20],
 		"size" : 5.3
@@ -1812,8 +1611,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Saint John'S",
 		"location" : [-61.85, 17.10],
 		"size" : 5.3
@@ -1821,8 +1619,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Saint Peter Port",
 		"location" : [-2.53, 49.45],
 		"size" : 5.3
@@ -1830,8 +1627,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Saint-Denis",
 		"location" : [55.47, -20.87],
 		"size" : 5.3
@@ -1839,8 +1635,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Saint-Pierre",
 		"location" : [-56.18, 46.77],
 		"size" : 5.3
@@ -1848,8 +1643,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Saipan",
 		"location" : [145.75, 15.20],
 		"size" : 5.3
@@ -1857,8 +1651,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "San Jose",
 		"location" : [-84.08, 9.93],
 		"size" : 5.3
@@ -1866,8 +1659,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "San Juan",
 		"location" : [-66.12, 18.47],
 		"size" : 5.3
@@ -1875,8 +1667,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "San Marino",
 		"location" : [12.42, 43.93],
 		"size" : 5.3
@@ -1884,8 +1675,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "San Salvador",
 		"location" : [-89.20, 13.70],
 		"size" : 5.3
@@ -1893,8 +1683,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Sanaa",
 		"location" : [44.20, 15.35],
 		"size" : 5.3
@@ -1902,8 +1691,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Santiago",
 		"location" : [-70.67, -33.45],
 		"size" : 5.3
@@ -1911,8 +1699,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Santo Domingo",
 		"location" : [-69.90, 18.47],
 		"size" : 5.3
@@ -1920,8 +1707,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Sao Tome",
 		"location" : [6.73, 0.33],
 		"size" : 5.3
@@ -1929,8 +1715,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Sarajevo",
 		"location" : [18.42, 43.87],
 		"size" : 5.3
@@ -1938,8 +1723,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Seoul",
 		"location" : [127.00, 37.57],
 		"size" : 5.3
@@ -1947,8 +1731,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "The Settlement",
 		"location" : [105.72, -10.42],
 		"size" : 5.3
@@ -1956,8 +1739,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Singapore",
 		"location" : [103.85, 1.28],
 		"size" : 5.3
@@ -1965,8 +1747,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Skopje",
 		"location" : [21.43, 41.98],
 		"size" : 5.3
@@ -1974,8 +1755,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Sofia",
 		"location" : [23.32, 42.68],
 		"size" : 5.3
@@ -1983,8 +1763,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Sri Jayewardenepura Kotte",
 		"location" : [79.86, 6.90],
 		"size" : 5.3
@@ -1992,8 +1771,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Stanley",
 		"location" : [-57.68, -51.70],
 		"size" : 5.3
@@ -2001,8 +1779,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Stockholm",
 		"location" : [18.05, 59.33],
 		"size" : 5.3
@@ -2010,8 +1787,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Sucre",
 		"location" : [-65.28, -19.03],
 		"size" : 5.3
@@ -2019,8 +1795,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Suva",
 		"location" : [178.42, -18.13],
 		"size" : 5.3
@@ -2028,8 +1803,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Taipei",
 		"location" : [121.50, 25.05],
 		"size" : 5.3
@@ -2037,8 +1811,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Tallinn",
 		"location" : [24.75, 59.42],
 		"size" : 5.3
@@ -2046,8 +1819,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Tarawa",
 		"location" : [172.97, 1.32],
 		"size" : 5.3
@@ -2055,8 +1827,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Tashkent",
 		"location" : [69.30, 41.33],
 		"size" : 5.3
@@ -2064,8 +1835,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "T'Bilisi",
 		"location" : [44.82, 41.72],
 		"size" : 5.3
@@ -2073,8 +1843,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Tegucigalpa",
 		"location" : [-87.22, 14.10],
 		"size" : 5.3
@@ -2082,8 +1851,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Tehran",
 		"location" : [51.43, 35.67],
 		"size" : 5.3
@@ -2091,8 +1859,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Tel Aviv",
 		"location" : [34.80, 32.08],
 		"size" : 5.3
@@ -2100,8 +1867,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Thimphu",
 		"location" : [89.65, 27.48],
 		"size" : 5.3
@@ -2109,8 +1875,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Tirana",
 		"location" : [19.83, 41.33],
 		"size" : 5.3
@@ -2118,8 +1883,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Tokyo",
 		"location" : [139.77, 35.70],
 		"size" : 5.3
@@ -2127,8 +1891,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Torshavn",
 		"location" : [-6.77, 62.02],
 		"size" : 5.3
@@ -2136,8 +1899,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Tripoli",
 		"location" : [13.18, 32.90],
 		"size" : 5.3
@@ -2145,8 +1907,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Tunis",
 		"location" : [10.18, 36.80],
 		"size" : 5.3
@@ -2154,8 +1915,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Ulaanbaatar",
 		"location" : [106.88, 47.92],
 		"size" : 5.3
@@ -2163,8 +1923,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Vaduz",
 		"location" : [9.52, 47.15],
 		"size" : 5.3
@@ -2172,8 +1931,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Valletta",
 		"location" : [14.52, 35.90],
 		"size" : 5.3
@@ -2181,8 +1939,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "The Valley",
 		"location" : [-63.07, 18.22],
 		"size" : 5.3
@@ -2190,8 +1947,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Vatican City",
 		"location" : [12.45, 41.90],
 		"size" : 5.3
@@ -2199,8 +1955,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Victoria",
 		"location" : [55.45, -4.63],
 		"size" : 5.3
@@ -2208,8 +1963,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Victoria",
 		"location" : [114.15, 22.28],
 		"size" : 5.3
@@ -2217,8 +1971,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Vienna",
 		"location" : [16.37, 48.20],
 		"size" : 5.3
@@ -2226,8 +1979,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Vientiane",
 		"location" : [102.60, 17.97],
 		"size" : 5.3
@@ -2235,8 +1987,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Vilnius",
 		"location" : [25.32, 54.68],
 		"size" : 5.3
@@ -2244,8 +1995,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Warsaw",
 		"location" : [21.00, 52.25],
 		"size" : 5.3
@@ -2253,8 +2003,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Washington D.C.",
 		"location" : [-77.03, 38.88],
 		"size" : 5.3
@@ -2262,8 +2011,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Wellington",
 		"location" : [174.85, -41.47],
 		"size" : 5.3
@@ -2271,8 +2019,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "West Island",
 		"location" : [96.92, -12.17],
 		"size" : 5.3
@@ -2280,8 +2027,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Willemstad",
 		"location" : [-68.93, 12.10],
 		"size" : 5.3
@@ -2289,8 +2035,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Windhoek",
 		"location" : [17.10, -22.57],
 		"size" : 5.3
@@ -2298,8 +2043,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Yamoussoukro",
 		"location" : [-5.28, 6.82],
 		"size" : 5.3
@@ -2307,8 +2051,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Yaounde",
 		"location" : [11.52, 3.87],
 		"size" : 5.3
@@ -2316,8 +2059,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Yaren District",
 		"location" : [166.92, -0.55],
 		"size" : 5.3
@@ -2325,8 +2067,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Yerevan",
 		"location" : [44.50, 40.18],
 		"size" : 5.3
@@ -2334,8 +2075,7 @@
 	{
 		"parent" : "Earth",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
-		"ct": "Others",
-		"subct": "Labels",
+		"ct": [ "Others", "Labels" ],
 		"name" : "Zagreb",
 		"location" : [15.97, 45.80],
 		"size" : 5.3

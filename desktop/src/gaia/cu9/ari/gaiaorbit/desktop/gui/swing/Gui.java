@@ -541,7 +541,7 @@ public class Gui implements IObserver {
                 boolean children = child.children != null;
 
                 DefaultMutableTreeNode childNode = null;
-                childNode = new IconTreeNode(child.name, children, IconManager.get(child.ct));
+                childNode = new IconTreeNode(child.name, children, IconManager.get(child.ct[0]));
                 treeToModel.add(child, childNode);
                 if (child.name != null)
                     stringNode.put(child.name.toLowerCase(), child);

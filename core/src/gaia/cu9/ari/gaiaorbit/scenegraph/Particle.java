@@ -111,7 +111,6 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
     double radius;
     boolean randomName = false;
     boolean hasPm = false;
-    boolean visiblect = false;
 
     /**
      * Object server properties
@@ -184,7 +183,7 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
     @Override
     public void initialize() {
         setDerivedAttributes();
-        ct = ComponentType.Galaxies;
+        ct = new ComponentType[]{ComponentType.Galaxies};
         // Relation between our star size and actual star size (normalized for the Sun, 1391600 Km of diameter
         radius = size * Constants.STAR_SIZE_FACTOR;
     }
@@ -228,7 +227,6 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
                 ModelBody.closestCamStar = this;
 
             if (!copy) {
-                visiblect = SceneGraphRenderer.visible[ct.ordinal()];
                 addToRender(this, RenderGroup.POINT);
 
                 viewAngle = ((float) radius / distToCamera) / camera.getFovFactor();
@@ -270,7 +268,7 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
     }
 
     protected boolean addToRender(IRenderable renderable, RenderGroup rg) {
-        if (visiblect || SceneGraphRenderer.alphas[ct.ordinal()] > 0) {
+        if (GaiaSky.instance.isOn(ct)) {
             SceneGraphRenderer.render_lists.get(rg).add(renderable, ThreadIndexer.i());
             return true;
         }

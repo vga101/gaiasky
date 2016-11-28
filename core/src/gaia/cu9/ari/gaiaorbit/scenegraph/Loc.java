@@ -35,10 +35,8 @@ public class Loc extends AbstractPositionEntity implements I3DTextRenderable {
 
     @Override
     protected void addToRenderLists(ICamera camera) {
-        if (GaiaSky.instance.isOn(ct) && (subct != null ? GaiaSky.instance.isOn(subct) : true)) {
-            if (renderText()) {
-                addToRender(this, RenderGroup.LABEL);
-            }
+        if (renderText() && isVisibilityOn()) {
+            addToRender(this, RenderGroup.LABEL);
         }
     }
 

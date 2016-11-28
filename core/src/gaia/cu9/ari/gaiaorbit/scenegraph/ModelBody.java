@@ -101,7 +101,7 @@ public abstract class ModelBody extends CelestialBody {
     @Override
     protected void addToRenderLists(ICamera camera) {
         camera.checkClosest(this);
-        if (GaiaSky.instance.isOn(ct) && (subct != null ? GaiaSky.instance.isOn(subct) : true)) {
+        if (GaiaSky.instance.isOn(ct)) {
             float thPoint = (float) (THRESHOLD_POINT() * camera.getFovFactor());
             if (viewAngleApparent >= thPoint) {
                 opacity = MathUtilsd.lint(viewAngleApparent, thPoint, thPoint * 4, 0, 1);
@@ -167,7 +167,7 @@ public abstract class ModelBody extends CelestialBody {
     }
 
     protected float getThOverFactorScl() {
-        return ct == ComponentType.Moons ? 2000f : 100f;
+        return ct[0] == ComponentType.Moons ? 2000f : 100f;
     }
 
     @Override
