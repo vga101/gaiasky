@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.Matrix4;
 
 import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
+import gaia.cu9.ari.gaiaorbit.scenegraph.component.ITransform;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
@@ -35,6 +36,9 @@ public abstract class ModelBody extends CelestialBody {
 
     /** NAME FOR WIKIPEDIA **/
     public String wikiname;
+
+    /** TRANSFORMATIONS - are applied each cycle **/
+    public ITransform[] transformations;
 
     /** Multiplier for Loc view angle **/
     public float locVaMultiplier = 1f;
@@ -96,6 +100,11 @@ public abstract class ModelBody extends CelestialBody {
         } else {
             localTransform.set(this.localTransform);
         }
+
+        // Apply transformations
+        if (transformations != null)
+            for (ITransform tc : transformations)
+                tc.apply(localTransform);
     }
 
     @Override
@@ -193,5 +202,11 @@ public abstract class ModelBody extends CelestialBody {
 
     public void setLocthoverfactor(Double val) {
         this.locThOverFactor = val.floatValue();
+    }
+
+    public void setTransformations(Object[] transformations) {
+        this.transformations = new ITransform[transformations.length];
+        for (int i = 0; i < transformations.length; i++)
+            this.transformations[i] = (ITransform) transformations[i];
     }
 }

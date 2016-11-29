@@ -33,10 +33,8 @@ varying vec4 v_color;
 #define time v_time * 0.003
 
 
-
-
 void main() {
-    float softedge = pow(dot(normalize(v_normal), normalize(vec3(v_viewVec))), 4.0) * 4.0;
-    softedge = 1.0;
+    float softedge = pow(dot(normalize(v_normal), normalize(vec3(v_viewVec))), 1.0) * 1.0;
+    //softedge = clamp(softedge, 0.0, 1.0);
     gl_FragColor = vec4(u_diffuseColor.rgb, u_diffuseColor.a * (1.0 - v_texCoords0.y * 4.0) * softedge);
 }

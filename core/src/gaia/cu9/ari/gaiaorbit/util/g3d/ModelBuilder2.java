@@ -275,6 +275,14 @@ public class ModelBuilder2 {
      * are not managed, use {@link Model#manageDisposable(Disposable)} to add those to the model.
      * @param attributes bitwise mask of the {@link com.badlogic.gdx.graphics.VertexAttributes.Usage}, only Position, Color, Normal
      *           and TextureCoordinates is supported. */
+    public Model createCone(float width, float height, float depth, int divisions, int hdivisions, int primitiveType, final Material material, final long attributes) {
+        return createCone(width, height, depth, divisions, hdivisions, primitiveType, material, attributes, 0, 360);
+    }
+
+    /** Convenience method to create a model with a single node containing a cone shape. The resources the Material might contain
+     * are not managed, use {@link Model#manageDisposable(Disposable)} to add those to the model.
+     * @param attributes bitwise mask of the {@link com.badlogic.gdx.graphics.VertexAttributes.Usage}, only Position, Color, Normal
+     *           and TextureCoordinates is supported. */
     public Model createCone(float width, float height, float depth, int divisions, final Material material, final long attributes, float angleFrom, float angleTo) {
         return createCone(width, height, depth, divisions, GL20.GL_TRIANGLES, material, attributes, angleFrom, angleTo);
     }
@@ -286,6 +294,16 @@ public class ModelBuilder2 {
     public Model createCone(float width, float height, float depth, int divisions, int primitiveType, final Material material, final long attributes, float angleFrom, float angleTo) {
         begin();
         part("cone", primitiveType, attributes, material).cone(width, height, depth, divisions, angleFrom, angleTo);
+        return end();
+    }
+
+    /** Convenience method to create a model with a single node containing a cone shape. The resources the Material might contain
+     * are not managed, use {@link Model#manageDisposable(Disposable)} to add those to the model.
+     * @param attributes bitwise mask of the {@link com.badlogic.gdx.graphics.VertexAttributes.Usage}, only Position, Color, Normal
+     *           and TextureCoordinates is supported. */
+    public Model createCone(float width, float height, float depth, int divisions, int hdivisions, int primitiveType, final Material material, final long attributes, float angleFrom, float angleTo) {
+        begin();
+        part("cone", primitiveType, attributes, material).cone(width, height, depth, divisions, hdivisions, angleFrom, angleTo);
         return end();
     }
 

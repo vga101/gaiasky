@@ -212,6 +212,9 @@ public interface MeshPartBuilder2 {
     /** Add a cone */
     public void cone(float width, float height, float depth, int divisions, float angleFrom, float angleTo);
 
+    /** Add a cone */
+    public void cone(float width, float height, float depth, int divisions, int hdivisions, float angleFrom, float angleTo);
+
     /** Add a sphere */
     public void sphere(float width, float height, float depth, int divisionsU, int divisionsV);
 

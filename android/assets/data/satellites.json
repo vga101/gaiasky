@@ -28,13 +28,13 @@
 	
 	{
 	"name" : "TelescopeBeam1",
-	"color" : [0.5, 0.85, 0.5, 0.3],
+	"color" : [0.5, 0.85, 0.5, 0.5],
 	// in Km
 	"size" : 0.001,
 	"ct" : Satellites,
 	
 	"parent" : "Gaia",
-	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.LightBeam",
+	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.ShapeObject",
 	
 	"model"			: {
 					"args" : [true],
@@ -55,20 +55,38 @@
 								"coloriftex" : true
 								}
 					},
-	"rotationaxis" : [0.0, 0.0, 1.0],
-	"angle" : 53.25,
-	"translation" : [0.0, 50.0, -1.2]
+	"transformations" : [
+								{
+								"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.component.RotateTransform",
+								"axis" : [ 1.0, 0.0, 0.0 ],
+								"angle" : 90.0
+								},
+								{
+								"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.component.RotateTransform",
+								"axis" : [ 0.0, 0.0, 1.0 ],
+								"angle" : 53.25
+								},
+								{
+								"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.component.TranslateTransform",
+								"vector" : [0.0, 50.0, -1.2]
+								},
+								{
+								"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.component.RotateTransform",
+								"axis" : [ 0.0, 0.0, 1.0 ],
+								"angle" : 180.0
+								},	
+	]
 	},
 	
 	{
 	"name" : "TelescopeBeam2",
-	"color" : [0.85, 0.5, 0.5, 0.3],
+	"color" : [0.85, 0.5, 0.5, 0.5],
 	// in Km
 	"size" : 0.001,
 	"ct" : Satellites,
 	
 	"parent" : "Gaia",
-	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.LightBeam",
+	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.ShapeObject",
 	
 	"model"			: {
 					"args" : [true],
@@ -89,9 +107,27 @@
 								"coloriftex" : true
 								}
 					},
-	"rotationaxis" : [0.0, 0.0, 1.0],
-	"angle" : -53.25,
-	"translation" : [0.0, 50.0, -1.2]
+	"transformations" : [
+								{
+								"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.component.RotateTransform",
+								"axis" : [ 1.0, 0.0, 0.0 ],
+								"angle" : 90.0
+								},
+								{
+								"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.component.RotateTransform",
+								"axis" : [ 0.0, 0.0, 1.0 ],
+								"angle" : -53.25
+								},
+								{
+								"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.component.TranslateTransform",
+								"vector" : [0.0, 50.0, -1.2]
+								},
+								{
+								"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.component.RotateTransform",
+								"axis" : [ 0.0, 0.0, 1.0 ],
+								"angle" : 180.0
+								},	
+	]
 	},
 	
 	{
@@ -102,17 +138,11 @@
 	"ct" : Satellites,
 	
 	"parent" : "Gaia",
-	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.LightCone",
+	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.ShapeObject",
 	
 	"model"			: {
 					"args" : [true],
-					"type" : "cone",
-					"params" : {
-								"divisions" : 90,
-								"width" : 13.985368402,
-								"height" : 100.0,
-								"depth" : 13.985368402,
-								},
+					"model" : "data/models/geom/cone.obj",
 					"texture" : {
 								"base" : "data/tex/telescopebeam.png",
 								// This is to get the viewVec in the shader
@@ -121,7 +151,27 @@
 								"coloriftex" : true
 								}
 					},
-	"translation" : [0.0, -50, 0.0]
+	"transformations" : [
+								{
+								"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.component.RotateTransform",
+								"axis" : [ 1.0, 0.0, 0.0 ],
+								"angle" : 90.0
+								},
+								{
+								"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.component.RotateTransform",
+								"axis" : [ 0.0, 0.0, 1.0 ],
+								"angle" : 162.0
+								},
+								{
+								"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.component.RotateTransform",
+								"axis" : [ 1.0, 0.0, 0.0 ],
+								"angle" : 7.0
+								},			
+								{
+								"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.component.TranslateTransform",
+								"vector" : [0.0, -50.0, -1.1]
+								}
+	]
 	},
 	
 	{

@@ -79,8 +79,15 @@ public class ModelCache {
                 height = ((Double) params.get("height")).floatValue();
                 depth = ((Double) params.get("depth")).floatValue();
                 divisions = ((Long) params.get("divisions")).intValue();
+                Integer hdivisions = 0;
+                if (params.containsKey("hdivisions")) {
+                    hdivisions = ((Long) params.get("hdivisions")).intValue();
+                }
 
-                model = mb.createCone(width, height, depth, divisions, mat, attributes);
+                if (hdivisions == 0)
+                    model = mb.createCone(width, height, depth, divisions, mat, attributes);
+                else
+                    model = mb.createCone(width, height, depth, divisions, hdivisions, GL20.GL_TRIANGLES, mat, attributes);
 
                 break;
             }

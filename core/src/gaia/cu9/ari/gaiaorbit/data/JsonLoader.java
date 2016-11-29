@@ -18,6 +18,7 @@ import com.badlogic.gdx.utils.reflect.ReflectionException;
 
 import gaia.cu9.ari.gaiaorbit.interfce.TextUtils;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
+import gaia.cu9.ari.gaiaorbit.scenegraph.component.ITransform;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
@@ -140,6 +141,20 @@ public class JsonLoader<T extends SceneGraphNode> implements ISceneGraphLoader {
                         valueClass = int[].class;
                         value = attribute.asIntArray();
                         break;
+                    case object:
+                        // TransformComponent
+                        valueClass = Object[].class;
+                        value = new Object[attribute.size];
+                        JsonValue vectorattrib = attribute.child;
+                        int i = 0;
+                        while(vectorattrib != null){
+                            String clazzName = vectorattrib.getString("impl");
+                            Class<Object> childclazz = (Class<Object>) ClassReflection.forName(clazzName);
+                            ((Object[])value)[i] = convertJsonToObject(vectorattrib, childclazz);
+                            i++;
+                            vectorattrib = vectorattrib.next;
+                        }
+                        break;
                     }
 
                 } else if (attribute.isObject()) {
@@ -160,7 +175,7 @@ public class JsonLoader<T extends SceneGraphNode> implements ISceneGraphLoader {
                 if (m != null)
                     m.invoke(instance, value);
                 else
-                    throw new ReflectionException("No method " + methodName + " in class " + valueClass.toString() + " or its interfaces or superclass.");
+                    throw new ReflectionException("No method " + methodName + "(" + valueClass.getName() + ") in class " + clazz + " or its superclass/interfaces.");
             }
             attribute = attribute.next;
         }

@@ -2,20 +2,19 @@ package gaia.cu9.ari.gaiaorbit.scenegraph;
 
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.math.Matrix4;
-import com.badlogic.gdx.math.Vector3;
 
+import gaia.cu9.ari.gaiaorbit.scenegraph.component.ITransform;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
-public class LightCone extends ModelBody {
+public class ShapeObject extends ModelBody {
 
     protected static final double TH_ANGLE_NONE = ModelBody.TH_ANGLE_POINT / 1e18;
     protected static final double TH_ANGLE_POINT = ModelBody.TH_ANGLE_POINT / 1e9;
     protected static final double TH_ANGLE_QUAD = ModelBody.TH_ANGLE_POINT / 8;
 
     Matrix4 orientationf;
-    Vector3 translation;
 
-    public LightCone() {
+    public ShapeObject() {
         orientationf = new Matrix4();
     }
 
@@ -52,24 +51,17 @@ public class LightCone extends ModelBody {
      * Sets the local transform of this satellite
      */
     public void setToLocalTransform(float sizeFactor, Matrix4 localTransform, boolean forceUpdate) {
-        if (sizeFactor != 1 || forceUpdate) {
+        float[] translate = transform.getMatrix().valuesf();
 
-            float[] translate = transform.getMatrix().valuesf();
-            //translate[14] += 1f * (float) Constants.M_TO_U;
+        localTransform.set(translate).scl(size * sizeFactor);
 
-            localTransform.set(translate).scl(size * sizeFactor);
+        orientationf.set(parent.orientation.valuesf());
+        localTransform.mul(orientationf);
 
-            orientationf.set(parent.orientation.valuesf());
-            localTransform.mul(orientationf);
-
-            localTransform.rotate(1, 0, 0, 90);
-
-            // Beam
-            localTransform.rotate(0, 0, 1, 180 + 18).rotate(1, 0, 0, 7).translate(0f, -50f, 0f);
-        } else {
-            localTransform.set(this.localTransform);
-        }
-
+        // Apply transformations
+        if (transformations != null)
+            for (ITransform tc : transformations)
+                tc.apply(localTransform);
     }
 
     @Override
@@ -103,10 +95,6 @@ public class LightCone extends ModelBody {
 
     public float getFuzzyRenderSize(ICamera camera) {
         return 0;
-    }
-
-    public void setTranslation(double[] translation) {
-        this.translation = new Vector3((float) translation[0], (float) translation[1], (float) translation[2]);
     }
 
 }
