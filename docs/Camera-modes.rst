@@ -16,20 +16,22 @@ There are two extra options available. These can be activated using the checkbox
 
 The description of the controls in focus mode can be found here:
 
+*  :ref:`Keyboard controls in focus mode <keyboard-focus-free-mode>`
 *  :ref:`Mouse controls in focus mode <mouse-focus-mode>`
 *  :ref:`Gamepad controls in focus mode <gamepad-focus-mode>`
 
-.. hint:: :kbd:`NUMPAD_0` -- Enter the Focus mode
+.. hint:: :kbd:`NUMPAD_1` -- Enter the Focus mode
 
 Free mode
 =========
 
 This mode does not lock the camera to a focus object but it lets it roam free in space.
 
+*  :ref:`Keyboard controls in free mode <keyboard-focus-free-mode>`
 *  :ref:`Mouse controls in free mode <mouse-free-mode>`
 *  :ref:`Gamepad controls in free mode <gamepad-free-mode>`
 
-.. hint:: :kbd:`NUMPAD_1` -- Enter the Free mode
+.. hint:: :kbd:`NUMPAD_0` -- Enter the Free mode
 
 Gaia scene mode
 ===============
@@ -63,7 +65,8 @@ a new user interface is shown in its place at the bottm left of the screen.
 .. |stop| image:: img/sc/icon_stop.jpg
 .. |exit| image:: img/sc/icon_exit.jpg
 
-*  :ref:`Gamepad controls in spacecraft mode <gamepad-focus-mode>`
+*  :ref:`Keyboard controls in spacecraft mode <keyboard-spacecraft-mode>`
+*  :ref:`Gamepad controls in spacecraft mode <gamepad-spacecraft-mode>`
 
 .. hint:: :kbd:`NUMPAD_3` -- Enter the Spacecraft mode
 

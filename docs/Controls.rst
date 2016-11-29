@@ -7,7 +7,15 @@ Keyboard controls
 =================
 
 To check the most up-to-date controls go to the ``Controls`` tab in the
-preferences window. Here are the default keyboard controls.
+preferences window. Here are the default keyboard controls depending on the
+current camera mode. Learn more about camera modes in the :ref:`camera-modes` section.
+
+.. _keyboard-focus-free-mode:
+
+Focus and free camera modes
+---------------------------
+
+These keyboard controls apply to the focus mode and also to the free mode.
 
 +------------------------------------+---------------------------------------------------+
 | Key(s)                             | Action                                            |
@@ -85,6 +93,37 @@ preferences window. Here are the default keyboard controls.
 | ``L-CTRL`` + ``S``                 | Toggle stereoscopic mode                          |
 +------------------------------------+---------------------------------------------------+
 | ``L-CTRL`` + ``L-SHIFT`` + ``S``   | Switch between stereoscopic profiles              |
++------------------------------------+---------------------------------------------------+
+
+.. _keyboard-spacecraft-mode:
+
+Spacecraft mode
+---------------
+
+These controls apply only to the spacecraft mode.
+
++------------------------------------+---------------------------------------------------+
+| Key(s)                             | Action                                            |
++====================================+===================================================+
+| ``W``                              | Apply forward thrust                              |
++------------------------------------+---------------------------------------------------+
+| ``S``                              | Apply backward thrust                             |
++------------------------------------+---------------------------------------------------+
+| ``A``                              | Roll to the left                                  |
++------------------------------------+---------------------------------------------------+
+| ``D``                              | Roll to the right                                 |
++------------------------------------+---------------------------------------------------+
+| ``ARROW_UP``                       | Decrease pitch angle                              |
++------------------------------------+---------------------------------------------------+
+| ``ARROW_DOWN``                     | Increase pitch angle                              |
++------------------------------------+---------------------------------------------------+
+| ``ARROW_LEFT``                     | Increase yaw angle                                |
++------------------------------------+---------------------------------------------------+
+| ``ARROW_RIGHT``                    | Decrease yaw angle                                |
++------------------------------------+---------------------------------------------------+
+| ``PAGE_UP``                        | Increase engine power by a factor of 10           |
++------------------------------------+---------------------------------------------------+
+| ``PAGE_DOWN``                      | Decrease engine power by a factor of 10           |
 +------------------------------------+---------------------------------------------------+
 
 .. _mouse-controls:
