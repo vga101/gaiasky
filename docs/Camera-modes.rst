@@ -9,6 +9,12 @@ Focus mode
 ==========
 
 This is the default mode. In this mode the camera movement is locked to a focus object, which can be selected by double clicking or by using the find dialog (:kbd:`Ctrl+F`).
+There are two extra options available. These can be activated using the checkboxes at the bottom of the `Camera` panel in the GUI Controls window:
+
+*  **Lock camera to object** -- If this is activated, the relative position of the camera with respect to the focus object is maintained. Otherwise, the camera position does not change.
+*  **Lock orientation** -- If this is activated, the camera will rotate with the object to keep the same perspective of it at all times.
+
+The description of the controls in focus mode can be found here:
 
 *  :ref:`Mouse controls in focus mode <mouse-focus-mode>`
 *  :ref:`Gamepad controls in focus mode <gamepad-focus-mode>`
