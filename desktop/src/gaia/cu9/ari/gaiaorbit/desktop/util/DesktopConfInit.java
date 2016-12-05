@@ -93,7 +93,6 @@ public class DesktopConfInit extends ConfInit {
         GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
         AffineTransform at = gd.getDefaultConfiguration().getNormalizingTransform();
         float scalefactor = (float) (at.getScaleX() / 1.33333f);
-        scalefactor = 1.4f;
 
         // Update scale factor - for HiDPI screens
         GlobalConf.updateScaleFactor(scalefactor);
