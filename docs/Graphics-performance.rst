@@ -83,7 +83,7 @@ Some graphics drivers allow you to override the anti-aliasing settings
 of applications with some default configuration (usually MSAA or FXAA).
 You can also use this feature with the Gaia Sky.
 
-Find more information on antialiasing in the :ref:`graphics-antialiasing` seciton.
+Find more information on antialiasing in the :ref:`graphics-antialiasing` section.
 
 Star brightness
 ===============
@@ -95,8 +95,7 @@ to send to the GPU. Quads are basically flat polygons to which a texture
 is applied (in this case their appearance is controlled by a shader).
 
 The star brightness can be increased or decreased from the
-``Star brightness`` slider in the ``Lighting`` section of the `interface
-window <http://github.com/ari-zah/gaiasky/wiki/User-interface#lighting>`__.
+``Star brightness`` slider in the :ref:`interface-lighting` section.
 
 .. hint:: ``CTRL + D`` - activate the **debug mode** to get some information on how many stars are currently being rendered as points and quads as well as the frames per second.
 

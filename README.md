@@ -1,7 +1,7 @@
 ![Gaia Sky](https://zah.uni-heidelberg.de/fileadmin/user_upload/gaia/gaiasky/img/GaiaSkyBanner.jpg)
 -------------------------
 --------------------------
-[![Circle CI](https://circleci.com/gh/ari-zah/gaiasky/tree/master.svg?style=svg)](https://circleci.com/gh/ari-zah/gaiasky/tree/master)
+[![Circle CI](https://circleci.com/gh/langurmonkey/gaiasky/tree/master.svg?style=svg)](https://circleci.com/gh/langurmonkey/gaiasky/tree/master)
 
 
 [**Gaia Sky**](https://zah.uni-heidelberg.de/gaia/outreach/gaiasky) is a real-time, 3D, astronomy visualisation software that
@@ -12,7 +12,7 @@ To get the latest up-to-date and most complete information,
 
 *  Visit our [**home page**](https://zah.uni-heidelberg.de/gaia/outreach/gaiasky)
 *  Read the [**Documentation**](http://gaia-sky.readthedocs.io)
-*  Submit a [**bug** or a **feature request**](https://github.com/ari-zah/gaiasky/issues)
+*  Submit a [**bug** or a **feature request**](https://github.com/langurmonkey/gaiasky/issues)
 
 This file contains the following sections:
 
@@ -165,10 +165,10 @@ provided in your operating system.
 
 ###2.2 Running from code
 
-First, clone the [GitHub](https://github.com/ari-zah/gaiasky) repository:
+First, clone the [GitHub](https://github.com/langurmonkey/gaiasky) repository:
 
 ```
-git clone https://github.com/ari-zah/gaiasky.git
+git clone https://github.com/langurmonkey/gaiasky.git
 ```
 Make sure you have at least `JDK7` installed.
 And then, you are ready to rumble:
@@ -192,7 +192,7 @@ The most up-to-date documentation of Gaia Sky is always in [gaia-sky.readthedocs
 
 This software is published and distributed under the LGPL
 (Lesser General Public License) license. You can find the full license
-text here https://github.com/ari-zah/gaiasky/blob/master/LICENSE
+text here https://github.com/langurmonkey/gaiasky/blob/master/LICENSE
 or visiting https://www.gnu.org/licenses/lgpl-3.0-standalone.html
 
 
@@ -205,7 +205,7 @@ The main webpage of the project is
 http://www.zah.uni-heidelberg.de/gaia2/outreach/gaiasky. There you can find
 the latest versions and the latest information on Gaia Sky. You can also
 visit our Github account to inspect the code, check the [documentation](http://gaia-sky.readthedocs.io) or report bugs:
-https://github.com/ari-zah/gaiasky
+https://github.com/langurmonkey/gaiasky
 
 ###5.1 Main designer and developer
 - **Toni Sagrista Selles**

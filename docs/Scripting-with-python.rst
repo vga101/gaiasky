@@ -5,7 +5,7 @@ Gaia Sky offers the possibility to run ``Python`` scripts in the same
 ``JVM`` using `Jython <http://www.jython.org/>`__.
 
 You can find some example scripts in the
-`scripts <http://github.com/ari-zah/gaiasky/tree/master/android/assets/scripts>`__
+`scripts <http://github.com/langurmonkey/gaiasky/tree/master/android/assets/scripts>`__
 folder of the project.
 
 .. hint:: Add your own scripts to the folder ``$HOME/.gaiasky/scripts`` so that Gaia Sky can run them.
@@ -17,7 +17,7 @@ described in the following section.
 The scripting interface
 =======================
 
-The scripting interface is located in the package ``gaia.cu9.ari.gaiaorbit.script`` (see `here <http://ari-zah.github.io/gaiasky/javadoc/gaia/cu9/ari/gaiaorbit/script/package-summary.html>`__).
+The scripting interface is located in the package ``gaia.cu9.ari.gaiaorbit.script`` (see `here <http://jumpinglangur.github.io/gaiasky/javadoc/gaia/cu9/ari/gaiaorbit/script/package-summary.html>`__).
 
 Description of the functions
 ----------------------------
@@ -62,7 +62,7 @@ More examples
 -------------
 
 You can find more examples by looking at the ``scripts``
-`folder <http://github.com/ari-zah/gaiasky/tree/master/android/assets/scripts>`__ in the
+`folder <http://github.com/langurmonkey/gaiasky/tree/master/android/assets/scripts>`__ in the
 Gaia Sky package.
 
 How to run scripts

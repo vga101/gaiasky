@@ -173,7 +173,7 @@ If you want to compile the source code, you will need the following:
    (JDK8 recommended)
 
 Please, be aware that only ``tags`` are guaranteed to work
-(`here <https://github.com/ari-zah/gaiasky/tags>`__). The ``master``
+(`here <https://github.com/langurmonkey/gaiasky/tags>`__). The ``master``
 branch holds the development version and the configuration files are
 possibly messed up and not ready to work out-of-the-box. So remember to
 use a ``tag`` version if you want to run it right away from source.
@@ -188,7 +188,7 @@ First, clone the repository:
 
 .. code-block:: bash
 
-    $ git clone https://github.com/ari-zah/gaiasky.git
+    $ git clone https://github.com/langurmonkey/gaiasky.git
     $ cd gaiasky
 
 Compile and run

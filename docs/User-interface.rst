@@ -98,6 +98,8 @@ provides them. Once proper motions are activated, we can control the
 number of displayed proper motions and their length by using the two
 sliders that appear.
 
+.. _interface-lighting:
+
 Lighting
 --------
 

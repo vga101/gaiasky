@@ -94,16 +94,16 @@ here are some rules:
 
 -  The **"data"** property contains a list of ``Java`` classes that
    implement the
-   ``ISceneGraphLoader`` --`here <https://github.com/ari-zah/gaiasky/blob/master/core/src/gaia/cu9/ari/gaiaorbit/data/ISceneGraphLoader.java>`__--
+   ``ISceneGraphLoader`` --`here <https://github.com/langurmonkey/gaiasky/blob/master/core/src/gaia/cu9/ari/gaiaorbit/data/ISceneGraphLoader.java>`__--
    interface. Each one of these will load a different kind of data; the
-   ``JSONLoader`` --`here <https://github.com/ari-zah/gaiasky/blob/master/core/src/gaia/cu9/ari/gaiaorbit/data/JsonLoader.java>`__--
+   ``JSONLoader`` --`here <https://github.com/langurmonkey/gaiasky/blob/master/core/src/gaia/cu9/ari/gaiaorbit/data/JsonLoader.java>`__--
    loads non-catalog data (planets, satellites, orbits, etc.), the
-   ``STILCatalogLoader`` --`here <https://github.com/ari-zah/gaiasky/blob/master/desktop/src/gaia/cu9/ari/gaiaorbit/data/stars/STILCatalogLoader.java>`__--
+   ``STILCatalogLoader`` --`here <https://github.com/langurmonkey/gaiasky/blob/master/desktop/src/gaia/cu9/ari/gaiaorbit/data/stars/STILCatalogLoader.java>`__--
    loads ``VOTables``, ``FITS``, ``CSV`` and other files through the
    `STIL <http://www.star.bristol.ac.uk/~mbt/stil/>`__ library,
-   ``ConstellationsLoader`` --`here <https://github.com/ari-zah/gaiasky/blob/master/core/src/gaia/cu9/ari/gaiaorbit/data/constel/ConstellationsLoader.java>`__--
+   ``ConstellationsLoader`` --`here <https://github.com/langurmonkey/gaiasky/blob/master/core/src/gaia/cu9/ari/gaiaorbit/data/constel/ConstellationsLoader.java>`__--
    and
-   ``ConstellationsBoundariesLoader`` --`here <https://github.com/ari-zah/gaiasky/blob/master/core/src/gaia/cu9/ari/gaiaorbit/data/constel/ConstelBoundariesLoader.java>`__--
+   ``ConstellationsBoundariesLoader`` --`here <https://github.com/langurmonkey/gaiasky/blob/master/core/src/gaia/cu9/ari/gaiaorbit/data/constel/ConstelBoundariesLoader.java>`__--
    load constellation data and constellation boundary data respectively
    and so on.
 -  Then, for each one of these data loaders a **list of files** is
@@ -140,9 +140,9 @@ HYG catalog loaders
 ~~~~~~~~~~~~~~~~~~~
 
 These loaders
-(``HYGBinaryLoader`` --`here <https://github.com/ari-zah/gaiasky/blob/master/core/src/gaia/cu9/ari/gaiaorbit/data/stars/HYGBinaryLoader.java>`__--
+(``HYGBinaryLoader`` --`here <https://github.com/langurmonkey/gaiasky/blob/master/core/src/gaia/cu9/ari/gaiaorbit/data/stars/HYGBinaryLoader.java>`__--
 and
-``HYGCSVLoader`` --`here <https://github.com/ari-zah/gaiasky/blob/master/core/src/gaia/cu9/ari/gaiaorbit/data/stars/HYGCSVLoader.java>`__--)
+``HYGCSVLoader`` --`here <https://github.com/langurmonkey/gaiasky/blob/master/core/src/gaia/cu9/ari/gaiaorbit/data/stars/HYGCSVLoader.java>`__--)
 load the HYG catalog that comes bundled with the Gaia Sky, which may
 be in ``csv`` format or in an arbitrary (not standard) binary --``bin``--
 format. Even though they have the ``HYG-`` prefix, these can load any
@@ -187,7 +187,7 @@ contains a particle (star) with the following columns:
 | Color index                     | ``float``         | no         | no        |
 +---------------------------------+-------------------+------------+-----------+
 
--  **BIN format**: The binary format is described in the class comment of ``HYGBinaryLoader`` --`here <https://github.com/ari-zah/gaiasky/blob/master/core/src/gaia/cu9/ari/gaiaorbit/data/stars/HYGBinaryLoader.java>`__--. The meaning of each single bit in this format is described below:
+-  **BIN format**: The binary format is described in the class comment of ``HYGBinaryLoader`` --`here <https://github.com/langurmonkey/gaiasky/blob/master/core/src/gaia/cu9/ari/gaiaorbit/data/stars/HYGBinaryLoader.java>`__--. The meaning of each single bit in this format is described below:
 
    -  **32 bits (int)** -- The number of stars in the file, ``starNum`` repeat the following ``starNum`` times (for each star)
    -  **32 bits (int)** -- The the length of the name, or ``nameLength``
@@ -201,7 +201,7 @@ contains a particle (star) with the following columns:
    -  **64 bits (long)** -- Star identifier
 
 
-   There is a utility to convert the ``csv`` catalog to the ``bin`` format. It is called ``HYGToBinary`` --`here <https://github.com/ari-zah/gaiasky/blob/master/desktop/src/gaia/cu9/ari/gaiaorbit/data/HYGToBinary.java>`__-- and it can easily be adapted to convert any supported format to this binary format.
+   There is a utility to convert the ``csv`` catalog to the ``bin`` format. It is called ``HYGToBinary`` --`here <https://github.com/langurmonkey/gaiasky/blob/master/desktop/src/gaia/cu9/ari/gaiaorbit/data/HYGToBinary.java>`__-- and it can easily be adapted to convert any supported format to this binary format.
 
 Octree catalog loader
 ~~~~~~~~~~~~~~~~~~~~~
@@ -215,7 +215,7 @@ viewport. This loader needs two files, the **particles file** and the
 **metadata** file. Both files are binary files and their description is
 below.
 
-- **Particles file**: The actual reading and writing of the particles file is done in the ``ParticleDataBinaryIO`` --`here <https://github.com/ari-zah/gaiasky/blob/master/core/src/gaia/cu9/ari/gaiaorbit/data/octreegen/ParticleDataBinaryIO.java>`__--. The format is exactly the same as in the HYG ``bin`` format but adding two extra attributes to each star which indicate the ``pageId`` (the identifier of the octant) and the ``particleType``, an integer code indicating whether it is a real star or a virtual particle created for a higher LoD (level of detail).
+- **Particles file**: The actual reading and writing of the particles file is done in the ``ParticleDataBinaryIO`` --`here <https://github.com/langurmonkey/gaiasky/blob/master/core/src/gaia/cu9/ari/gaiaorbit/data/octreegen/ParticleDataBinaryIO.java>`__--. The format is exactly the same as in the HYG ``bin`` format but adding two extra attributes to each star which indicate the ``pageId`` (the identifier of the octant) and the ``particleType``, an integer code indicating whether it is a real star or a virtual particle created for a higher LoD (level of detail).
 
     - **32 bits (int)** -- The number of stars in the file, `starNum` repeat the following `starNum` times (for each star)
     - **32 bits (int)** -- The the length of the name, or `nameLength`
@@ -233,7 +233,7 @@ below.
 -  **Metadata file**: This file contains the information of the Octree,
    its nodes -octants- and the particles each node contains. The reading
    and writing is handled by the
-   ``MetadataBinaryIO`` --`here <https://github.com/ari-zah/gaiasky/blob/master/core/src/gaia/cu9/ari/gaiaorbit/data/octreegen/MetadataBinaryIO.java>`__--.
+   ``MetadataBinaryIO`` --`here <https://github.com/langurmonkey/gaiasky/blob/master/core/src/gaia/cu9/ari/gaiaorbit/data/octreegen/MetadataBinaryIO.java>`__--.
    The format is as follows:
 
    -  **32 bits (int)** with the number of nodes, ``nNodes`` repeat the following ``nNodes`` times (for each node)
@@ -255,10 +255,10 @@ below.
    -  **32 bits (int)** -- ``childCount`` - The number of children nodes
 
 In order to produce these files from a catalog, one needs to
-``OctreeGenerator`` --`here <https://github.com/ari-zah/gaiasky/blob/master/core/src/gaia/cu9/ari/gaiaorbit/data/octreegen/OctreeGenerator.java>`__--.
+``OctreeGenerator`` --`here <https://github.com/langurmonkey/gaiasky/blob/master/core/src/gaia/cu9/ari/gaiaorbit/data/octreegen/OctreeGenerator.java>`__--.
 This class will get a list of stars and will produce the Octree
 according to certain parameters. The class
-``OctreeGeneratorTest`` --`here <https://github.com/ari-zah/gaiasky/blob/master/desktop/src/gaia/cu9/ari/gaiaorbit/data/OctreeGeneratorTest.java>`__--
+``OctreeGeneratorTest`` --`here <https://github.com/langurmonkey/gaiasky/blob/master/desktop/src/gaia/cu9/ari/gaiaorbit/data/OctreeGeneratorTest.java>`__--
 may be used to read a catalog from a file, generate the octree and write
 both the particles and the metadata files back to a file.
 
@@ -297,7 +297,7 @@ Non-particle data: Planets, Moons, Asteroids, etc.
 Most of the entities and celestial bodies that are not stars in the Gaia
 Sky scene are defined in a series of ``json`` files and are loaded
 using the
-``JsonLoader`` --`here <https://github.com/ari-zah/gaiasky/blob/master/core/src/gaia/cu9/ari/gaiaorbit/data/JsonLoader.java>`__--.
+``JsonLoader`` --`here <https://github.com/langurmonkey/gaiasky/blob/master/core/src/gaia/cu9/ari/gaiaorbit/data/JsonLoader.java>`__--.
 The format is very flexible and loosely matches the underneath data
 model, which is a scene graph tree.
 
@@ -310,7 +310,7 @@ of the object. This will translate to the line colour in orbits, to the
 colour of the point for planets when they are far away and to the colour
 of the grid in grids.
 
-- ``ct`` -- The ``ComponentType`` --`here <https://github.com/ari-zah/gaiasky/blob/master/core/src/gaia/cu9/ari/gaiaorbit/render/SceneGraphRenderer.java#L59>`__--. This is basically a ``string`` that will be matched to the entity type in ``ComponentType`` enum. Valid component types are ``Stars``, ``Planets``, ``Moons``, ``Satellites``, ``Atmospheres``, ``Constellations``, etc.
+- ``ct`` -- The ``ComponentType`` --`here <https://github.com/langurmonkey/gaiasky/blob/master/core/src/gaia/cu9/ari/gaiaorbit/render/SceneGraphRenderer.java#L59>`__--. This is basically a ``string`` that will be matched to the entity type in ``ComponentType`` enum. Valid component types are ``Stars``, ``Planets``, ``Moons``, ``Satellites``, ``Atmospheres``, ``Constellations``, etc.
 - ``impl`` -- The package and class name of the implementing class. - ``parent``: The name of the parent entity.
 
 Additionally, different types of entities accept different additional
@@ -339,7 +339,7 @@ Planets, moons, asteroids and all rigid bodies
 ----------------------------------------------
 
 Planets, moons and asteroids all use the model object
-``Planet`` -`here <https://github.com/ari-zah/gaiasky/blob/master/core/src/gaia/cu9/ari/gaiaorbit/scenegraph/Planet.java>`__-.
+``Planet`` -`here <https://github.com/langurmonkey/gaiasky/blob/master/core/src/gaia/cu9/ari/gaiaorbit/scenegraph/Planet.java>`__-.
 This provides a series of utilities that make their ``json``
 specifications look similar.
 
@@ -349,7 +349,7 @@ Coordinates
 Within the ``coordinates`` object one specifies how to get the
 positional data of the entity given a time. This object contains a
 reference to the implementation class (which must implement
-``IBodyCoordinates`` -`here <https://github.com/ari-zah/gaiasky/blob/master/core/src/gaia/cu9/ari/gaiaorbit/util/coord/IBodyCoordinates.java>`__-)
+``IBodyCoordinates`` -`here <https://github.com/langurmonkey/gaiasky/blob/master/core/src/gaia/cu9/ari/gaiaorbit/util/coord/IBodyCoordinates.java>`__-)
 and the necessary parameters to initialize it. There are currently a
 bunch of implementations that can be of use:
 
@@ -489,7 +489,7 @@ Orbits
 When we talk about orbits in this context we talk about orbit lines. In
 the Gaia Sky orbit lines may be created from two different sources.
 The sources are used by a class implementing the
-``IOrbitDataProvider`` --`here <https://github.com/ari-zah/gaiasky/blob/master/core/src/gaia/cu9/ari/gaiaorbit/data/orbit/IOrbitDataProvider.java>`__--
+``IOrbitDataProvider`` --`here <https://github.com/langurmonkey/gaiasky/blob/master/core/src/gaia/cu9/ari/gaiaorbit/data/orbit/IOrbitDataProvider.java>`__--
 interface, which is also specified in ther ``orbit`` object.
 
 - An **orbit data file**. In this case, the orbit data provider is ``OrbitFileDataProvider``.
@@ -578,7 +578,7 @@ Creating your own catalogue loaders
 
 In order to create a loader for your catalogue, one only needs to
 provide an implementation to the
-``ISceneGraphLoader`` --`here <https://github.com/ari-zah/gaiasky/blob/master/core/src/gaia/cu9/ari/gaiaorbit/data/ISceneGraphLoader.java>`__--
+``ISceneGraphLoader`` --`here <https://github.com/langurmonkey/gaiasky/blob/master/core/src/gaia/cu9/ari/gaiaorbit/data/ISceneGraphLoader.java>`__--
 interface.
 
 .. code:: java
@@ -589,7 +589,7 @@ interface.
     }
 
 The main method to implement is
-``List<? extends SceneGraphNode> loadData()`` --`here <https://github.com/ari-zah/gaiasky/blob/master/core/src/gaia/cu9/ari/gaiaorbit/data/ISceneGraphLoader.java#L10>`__--,
+``List<? extends SceneGraphNode> loadData()`` --`here <https://github.com/langurmonkey/gaiasky/blob/master/core/src/gaia/cu9/ari/gaiaorbit/data/ISceneGraphLoader.java#L10>`__--,
 which must return a list of elements that extend ``SceneGraphNode``,
 usually ``Star``\ s.
 
@@ -597,7 +597,7 @@ But how do we know which file to load? You need to create a
 ``catalog-*.json`` file, add your loader there and create the properties
 you desire. Usually, there is a property called ``files`` which contains
 a list of files to load. Once you've done that, implement the
-``initialize(String[])`` --`here <https://github.com/ari-zah/gaiasky/blob/master/core/src/gaia/cu9/ari/gaiaorbit/data/ISceneGraphLoader.java#L12>`__--
+``initialize(String[])`` --`here <https://github.com/langurmonkey/gaiasky/blob/master/core/src/gaia/cu9/ari/gaiaorbit/data/ISceneGraphLoader.java#L12>`__--
 method knowing that all the properties defined in the ``catalog-*.json``
 file with your catalogue loader as a prefix will be passed in the
 ``Properties p`` object without prefix.
@@ -611,7 +611,7 @@ Add your implementing ``jar`` file to the ``classpath`` and you are good
 to go.
 
 Take a look at already implemented catalogue loaders such as the
-``OctreeCatalogLoader`` --`here <https://github.com/ari-zah/gaiasky/blob/master/core/src/gaia/cu9/ari/gaiaorbit/data/stars/OctreeCatalogLoader.java>`__--
+``OctreeCatalogLoader`` --`here <https://github.com/langurmonkey/gaiasky/blob/master/core/src/gaia/cu9/ari/gaiaorbit/data/stars/OctreeCatalogLoader.java>`__--
 to see how it works.
 
 Loading data using scripts

@@ -34,7 +34,7 @@ Heidelberg <www.uni-heidelberg.de>`__).
 
 *  Visit our `home page <http://www.zah.uni-heidelberg.de/gaia2/outreach/gaiasky/>`__
 *  Read the `documentation <http://gaia-sky.rtfd.io>`__
-*  Submit a `bug or a feature request <https://github.com/ari-zah/gaiasky/issues>`__
+*  Submit a `bug or a feature request <https://github.com/langurmonkey/gaiasky/issues>`__
 
 Main features
 -------------
@@ -52,8 +52,8 @@ Main features
 - **Scriptable and extensible** -- Use Python to script and extend the capabilities of Gaia Sky.
 - **Internationalised** -- Translated so far to English, German, Spanish and Catalan.
 
-.. |Build status| image:: https://circleci.com/gh/ari-zah/gaiasky/tree/master.svg?style=svg
-   :target: https://circleci.com/gh/ari-zah/gaiasky/tree/master
+.. |Build status| image:: https://circleci.com/gh/langurmonkey/gaiasky/tree/master.svg?style=svg
+   :target: https://circleci.com/gh/langurmonkey/gaiasky/tree/master
 
 Contents
 ========
