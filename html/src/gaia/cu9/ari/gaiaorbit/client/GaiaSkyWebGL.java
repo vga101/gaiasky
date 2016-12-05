@@ -48,7 +48,6 @@ public class GaiaSkyWebGL extends GwtApplication implements IObserver {
 
         try {
             ConfInit.initialize(new WebGLConfInit());
-            ConfInit.instance.initGlobalConf();
             config.antialiasing = GlobalConf.postprocess.POSTPROCESS_ANTIALIAS != 0 ? true : false;
         } catch (Exception e) {
             System.err.println("Error initializing GlobalConf");
@@ -85,8 +84,8 @@ public class GaiaSkyWebGL extends GwtApplication implements IObserver {
     }
 
     protected native void reloadIFrame(Element iframeEl) /*-{
-                                                         iframeEl.contentWindow.location.reload(false);
-                                                         }-*/;
+		iframeEl.contentWindow.location.reload(false);
+    }-*/;
 
     @Override
     public ApplicationListener createApplicationListener() {

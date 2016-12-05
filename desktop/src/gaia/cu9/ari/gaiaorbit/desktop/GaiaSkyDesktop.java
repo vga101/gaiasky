@@ -88,10 +88,6 @@ public class GaiaSkyDesktop implements IObserver {
             // Initialize date format
             DateFormatFactory.initialize(new DesktopDateFormatFactory());
 
-            UIManager.setLookAndFeel("com.pagosoft.plaf.PgsLookAndFeel");
-
-            setUIFont(new javax.swing.plaf.FontUIResource("SansSerif", Font.PLAIN, 10));
-
             // Init .gaiasky folder in user's home folder
             initUserDirectory();
 
@@ -100,6 +96,10 @@ public class GaiaSkyDesktop implements IObserver {
             if (props == null || props.isEmpty()) {
                 props = initConfigFile(false);
             }
+
+            // Swing look and feel
+            UIManager.setLookAndFeel("com.pagosoft.plaf.PgsLookAndFeel");
+            setUIFont(new javax.swing.plaf.FontUIResource("SansSerif", Font.PLAIN, 10));
 
             // Init global configuration
             ConfInit.initialize(new DesktopConfInit());

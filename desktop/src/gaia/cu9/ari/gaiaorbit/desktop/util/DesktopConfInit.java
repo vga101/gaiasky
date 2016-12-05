@@ -89,11 +89,14 @@ public class DesktopConfInit extends ConfInit {
     @Override
     public void initGlobalConf() throws Exception {
 
-        // Scale factor
-        // Calculate scale factor
+        // HiDPI
         GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
         AffineTransform at = gd.getDefaultConfiguration().getNormalizingTransform();
-        GlobalConf.updateScaleFactor((float) (at.getScaleX() / 1.33333f));
+        float scalefactor = (float) (at.getScaleX() / 1.33333f);
+        scalefactor = 1.4f;
+
+        // Update scale factor - for HiDPI screens
+        GlobalConf.updateScaleFactor(scalefactor);
 
         /** VERSION CONF **/
         VersionConf vc = new VersionConf();

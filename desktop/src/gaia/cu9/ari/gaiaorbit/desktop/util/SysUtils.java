@@ -10,6 +10,8 @@ import java.io.File;
  */
 public class SysUtils {
 
+    private static String OS = System.getProperty("os.name").toLowerCase();
+
     public static boolean checkLinuxDesktop(String desktop) {
         try {
             String value = System.getenv("DESKTOP_SESSION");
@@ -33,11 +35,33 @@ public class SysUtils {
     }
 
     public static boolean isLinux() {
-        return getOSName().equalsIgnoreCase("linux");
+
+        return (OS.indexOf("linux") >= 0);
+
     }
 
-    public static String getOSName() {
-        return System.getProperty("os.name");
+    public static boolean isWindows() {
+
+        return (OS.indexOf("win") >= 0);
+
+    }
+
+    public static boolean isMac() {
+
+        return (OS.indexOf("mac") >= 0);
+
+    }
+
+    public static boolean isUnix() {
+
+        return (OS.indexOf("unix") >= 0);
+
+    }
+
+    public static boolean isSolaris() {
+
+        return (OS.indexOf("sunos") >= 0);
+
     }
 
     public static String getOSArchitecture() {
@@ -49,7 +73,7 @@ public class SysUtils {
     }
 
     public static void main(String[] args) {
-        System.out.println(getOSName());
+        System.out.println(OS);
         System.out.println("Unity: " + checkUnity());
         System.out.println("KDE: " + checkKDE());
         System.out.println("Gnome: " + checkGnome());
