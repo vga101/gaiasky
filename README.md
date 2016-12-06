@@ -171,7 +171,8 @@ First, clone the [GitHub](https://github.com/langurmonkey/gaiasky) repository:
 git clone https://github.com/langurmonkey/gaiasky.git
 ```
 Make sure you have at least `JDK7` installed.
-**IMPORTANT** -- The TGAS catalog files (Gaia data) are not in the repository, so you either need to choose `HYG` in the Data tab of the configuration dialog or download the `tar` file [here](http://wwwstaff.ari.uni-heidelberg.de/gaiasandbox/files/20161206_tgas_gaiasky_1.0.3.tar.gz) and extract it into the folder `gaiasky/android/assets/octree`.
+
+The TGAS catalog files (Gaia data) are **not** in the repository, so if you want to use TGAS when running from source you either need to choose `HYG` in the Data tab of the configuration dialog or download the `tar` file [here](http://wwwstaff.ari.uni-heidelberg.de/gaiasandbox/files/20161206_tgas_gaiasky_1.0.3.tar.gz) and extract it into the folder `gaiasky/android/assets/octree`.
 
 And then, you are ready to rumble:
 ```
