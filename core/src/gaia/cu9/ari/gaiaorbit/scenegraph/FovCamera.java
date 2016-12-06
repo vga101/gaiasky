@@ -379,4 +379,11 @@ public class FovCamera extends AbstractCamera implements IObserver {
         // Nothing to do
     }
 
+    @Override
+    public void resize(int width, int height) {
+        for (Stage stage : fpstages)
+            stage.getViewport().update(width, height, true);
+
+    }
+
 }

@@ -21,6 +21,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
 import gaia.cu9.ari.gaiaorbit.util.comp.DistToCameraComparator;
 
 public class FontRenderSystem extends AbstractRenderSystem {
+
     private SpriteBatch batch;
     private ShaderProgram shaderProgram;
     private BitmapFont font3d, font2d;
@@ -77,6 +78,12 @@ public class FontRenderSystem extends AbstractRenderSystem {
         }
         batch.end();
 
+    }
+
+    @Override
+    public void resize(int w, int h) {
+        super.resize(w, h);
+        batch.getProjectionMatrix().setToOrtho2D(0, 0, w, h);
     }
 
 }

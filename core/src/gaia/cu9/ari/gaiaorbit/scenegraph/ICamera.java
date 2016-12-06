@@ -124,4 +124,6 @@ public interface ICamera {
     public boolean isVisible(ITimeFrameProvider time, CelestialBody cb);
 
     public void computeGaiaScan(ITimeFrameProvider time, CelestialBody cb);
+
+    public void resize(int width, int height);
 }

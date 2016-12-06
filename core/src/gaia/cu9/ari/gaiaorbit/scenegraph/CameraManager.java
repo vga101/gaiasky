@@ -431,4 +431,10 @@ public class CameraManager implements ICamera, IObserver {
         return current.getClosest();
     }
 
+    @Override
+    public void resize(int width, int height) {
+        for (ICamera cam : cameras)
+            cam.resize(width, height);
+    }
+
 }

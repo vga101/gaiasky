@@ -540,6 +540,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         }
 
         cam.updateAngleEdge(width, height);
+        cam.resize(width, height);
 
         EventManager.instance.post(Events.SCREEN_RESIZE, width, height);
     }
@@ -609,10 +610,10 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
     public boolean isOn(ComponentType comp) {
         return sgr.isOn(comp);
     }
-    
+
     public boolean isOn(ComponentType[] cts) {
         boolean on = true;
-        for(ComponentType ct : cts)
+        for (ComponentType ct : cts)
             on = on && sgr.isOn(ct);
         return on;
     }

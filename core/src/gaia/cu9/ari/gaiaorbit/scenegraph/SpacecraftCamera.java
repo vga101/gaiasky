@@ -810,4 +810,10 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
 
     }
 
+    @Override
+    public void resize(int width, int height) {
+        // TODO Auto-generated method stub
+
+    }
+
 }

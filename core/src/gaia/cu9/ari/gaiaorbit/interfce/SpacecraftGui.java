@@ -580,6 +580,7 @@ public class SpacecraftGui implements IGui, IObserver {
     @Override
     public void resizeImmediate(final int width, final int height) {
         ui.getViewport().update(width, height, true);
+        sb.getProjectionMatrix().setToOrtho2D(0, 0, width, height);
         rebuildGui();
     }
 

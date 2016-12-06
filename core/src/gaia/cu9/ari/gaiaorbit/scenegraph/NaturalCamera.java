@@ -1077,4 +1077,9 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
         }
     }
 
+    @Override
+    public void resize(int width, int height) {
+        spriteBatch.getProjectionMatrix().setToOrtho2D(0, 0, width, height);
+    }
+
 }
