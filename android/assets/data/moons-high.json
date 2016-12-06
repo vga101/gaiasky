@@ -40,8 +40,8 @@
 									"flip" : false
 									},
 						"texture" : {
-									"base" : "data/tex/moon-8k.jpg",
-									"normal" : "data/tex/moon-normal-2k.jpg"
+									"base" : "data/tex/moon-4k.jpg",
+									"normal" : "data/tex/moon-normal-4k.jpg"
 									}
 						}
 	},

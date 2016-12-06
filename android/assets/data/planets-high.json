@@ -38,7 +38,7 @@
 									"flip" : false
 									},
 						"texture" : {
-									"base" : "data/tex/mercury-8k.jpg"
+									"base" : "data/tex/mercury-4k.jpg"
 									}
 						}
 	},
@@ -81,7 +81,7 @@
 									"flip" : false
 									},
 						"texture" : {
-									"base" : "data/tex/venus-2k.jpg"
+									"base" : "data/tex/venus-4k.jpg"
 									}
 						},
 	"atmosphere" 	: {
@@ -140,10 +140,10 @@
 									"flip" : false
 									},
 						"texture" : {
-									"base" : "data/tex/earth-day-8k.jpg",
-									"specular" : "data/tex/earth-specular-8k.jpg",
-									"normal" : "data/tex/earth-normal-8k.jpg",
-									"night" : "data/tex/earth-night-8k.jpg"
+									"base" : "data/tex/earth-day-4k.jpg",
+									"specular" : "data/tex/earth-specular-4k.jpg",
+									"normal" : "data/tex/earth-normal-4k.jpg",
+									"night" : "data/tex/earth-night-4k.jpg"
 									}
 						},
 									
