@@ -113,7 +113,6 @@ public class TGASLoader extends AbstractCatalogLoader implements ISceneGraphLoad
                     if (!line.startsWith(comment))
                         //Add star
                         addStar(line, stars, indices, separator);
-                    // addStar(line, stars, indices_old, separator_old);
                 }
             } catch (IOException e) {
                 e.printStackTrace();

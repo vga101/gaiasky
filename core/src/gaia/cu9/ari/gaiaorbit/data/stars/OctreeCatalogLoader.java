@@ -60,6 +60,7 @@ public class OctreeCatalogLoader implements ISceneGraphLoader {
         // Update model
         for (SceneGraphNode sgn : particleList) {
             Star s = (Star) sgn;
+
             OctreeNode<SceneGraphNode> octant = metadataReader.nodesMap.get(s.octantId).getFirst();
             octant.add(s);
             s.octant = octant;

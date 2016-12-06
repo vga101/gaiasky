@@ -121,9 +121,9 @@ public class OctreeGeneratorTest implements IObserver {
         tgas.initialize(new String[] { "data/tgas_final/tgas.csv" });
 
         /** LOAD HYG **/
-        List<Particle> listHYG = (List<Particle>) hyg.loadData();
+        List<Particle> listStars = (List<Particle>) hyg.loadData();
         Map<Integer, Particle> hips = new HashMap<Integer, Particle>();
-        for (Particle p : listHYG) {
+        for (Particle p : listStars) {
             if (p instanceof Star && ((Star) p).hip > 0) {
                 hips.put(((Star) p).hip, p);
             }
@@ -141,21 +141,25 @@ public class OctreeGeneratorTest implements IObserver {
                 gaiastar.hip = hipstar.hip;
 
                 // Remove from hipparcos list
-                listHYG.remove(hipstar);
+                listStars.remove(hipstar);
                 hips.remove(hipstar.hip);
 
             }
-            // Add to gaia list
-            listHYG.add(p);
+            // Add to main list
+            listStars.add(p);
         }
 
-        Logger.info("Generating octree with " + listHYG.size() + " actual stars");
+        // Initialise rgba color array
+        for (Particle p : listStars)
+            p.initialize();
 
-        OctreeNode<Particle> octree = og.generateOctree(listHYG);
+        Logger.info("Generating octree with " + listStars.size() + " actual stars");
+
+        OctreeNode<Particle> octree = og.generateOctree(listStars);
 
         // Put all new particles in list
-        listHYG.clear();
-        octree.addParticlesTo(listHYG);
+        listStars.clear();
+        octree.addParticlesTo(listStars);
 
         System.out.println(octree.toString(true));
 
@@ -164,7 +168,7 @@ public class OctreeGeneratorTest implements IObserver {
         long tstamp = System.currentTimeMillis();
 
         /** NUMBERS **/
-        System.out.println("Octree generated with " + octree.numNodes() + " octants and " + listHYG.size() + " particles");
+        System.out.println("Octree generated with " + octree.numNodes() + " octants and " + listStars.size() + " particles");
         System.out.println(aggr.getDiscarded() + " particles have been discarded due to density");
 
         /** WRITE METADATA **/
@@ -186,10 +190,10 @@ public class OctreeGeneratorTest implements IObserver {
         }
         particles.createNewFile();
 
-        System.out.println("Writing particles (" + listHYG.size() + " particles): " + particles.getAbsolutePath());
+        System.out.println("Writing particles (" + listStars.size() + " particles): " + particles.getAbsolutePath());
 
         ParticleDataBinaryIO particleWriter = new ParticleDataBinaryIO();
-        particleWriter.writeParticles(listHYG, new BufferedOutputStream(new FileOutputStream(particles)));
+        particleWriter.writeParticles(listStars, new BufferedOutputStream(new FileOutputStream(particles)));
     }
 
     private static void loadOctree() throws FileNotFoundException {

@@ -69,7 +69,11 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
     }
 
     static {
-        fovFactor = GaiaSky.instance.getCameraManager().getFovFactor();
+        if (GaiaSky.instance != null) {
+            fovFactor = GaiaSky.instance.getCameraManager().getFovFactor();
+        } else {
+            fovFactor = 1f;
+        }
         thpointTimesFovfactor = (float) GlobalConf.scene.STAR_THRESHOLD_POINT * fovFactor;
         thupOverFovfactor = (float) Constants.THRESHOLD_UP / fovFactor;
         thdownOverFovfactor = (float) Constants.THRESHOLD_DOWN / fovFactor;
@@ -183,7 +187,7 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
     @Override
     public void initialize() {
         setDerivedAttributes();
-        ct = new ComponentType[]{ComponentType.Galaxies};
+        ct = new ComponentType[] { ComponentType.Galaxies };
         // Relation between our star size and actual star size (normalized for the Sun, 1391600 Km of diameter
         radius = size * Constants.STAR_SIZE_FACTOR;
     }
@@ -300,7 +304,8 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
      *            B-V color index
      */
     private void setRGB(float bv) {
-        cc = ColourUtils.BVtoRGB(bv);
+        if (cc == null)
+            cc = ColourUtils.BVtoRGB(bv);
         setColor2Data();
     }
 
