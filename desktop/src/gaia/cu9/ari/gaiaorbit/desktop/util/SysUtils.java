@@ -14,7 +14,7 @@ public class SysUtils {
 
     public static boolean checkLinuxDesktop(String desktop) {
         try {
-            String value = System.getenv("DESKTOP_SESSION");
+            String value = System.getenv("XDG_CURRENT_DESKTOP");
             return value != null && !value.isEmpty() && value.equalsIgnoreCase(desktop);
         } catch (Exception e) {
             e.printStackTrace(System.err);
@@ -32,6 +32,10 @@ public class SysUtils {
 
     public static boolean checkKDE() {
         return isLinux() && checkLinuxDesktop("kde");
+    }
+
+    public static boolean checkXfce() {
+        return isLinux() && checkLinuxDesktop("xfce");
     }
 
     public static boolean isLinux() {
@@ -77,6 +81,7 @@ public class SysUtils {
         System.out.println("Unity: " + checkUnity());
         System.out.println("KDE: " + checkKDE());
         System.out.println("Gnome: " + checkGnome());
+        System.out.println("Xfce: " + checkXfce());
     }
 
     /**
