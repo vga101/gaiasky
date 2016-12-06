@@ -18,7 +18,7 @@ public class IconManager {
 
     public static Map<String, Icon> icons;
 
-    public static void initialise(FileHandle folder) {
+    public static void initialize(FileHandle folder) {
         if (folder.exists() && folder.isDirectory()) {
             icons = new HashMap<String, Icon>();
             // Logger.info(I18n.bundle.get("notif.icon.initialising"));

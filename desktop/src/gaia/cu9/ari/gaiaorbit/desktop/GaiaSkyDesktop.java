@@ -7,7 +7,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
 
-import javax.swing.JFrame;
 import javax.swing.UIManager;
 import javax.swing.plaf.FontUIResource;
 
@@ -111,7 +110,7 @@ public class GaiaSkyDesktop implements IObserver {
             I18n.initialize(Gdx.files.absolute(ASSETS_LOC + "i18n/gsbundle"));
 
             // Initialize icons
-            IconManager.initialise(Gdx.files.internal("data/ui/"));
+            IconManager.initialize(Gdx.files.internal("data/ui/"));
 
             // Jython
             ScriptingFactory.initialize(JythonFactory.getInstance());
@@ -170,7 +169,7 @@ public class GaiaSkyDesktop implements IObserver {
     private void init() {
         // Show configuration
         if (GlobalConf.program.SHOW_CONFIG_DIALOG) {
-            new ConfigDialog(this, true);
+            ConfigDialog.initialise(this, true);
         } else {
             launchMainApp();
         }
@@ -249,8 +248,7 @@ public class GaiaSkyDesktop implements IObserver {
 
                 @Override
                 public void run() {
-                    JFrame frame = new ConfigDialog(gsd, false);
-                    frame.toFront();
+                    ConfigDialog.initialise(gsd, false);
                 }
 
             });

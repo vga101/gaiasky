@@ -13,6 +13,9 @@ import java.awt.Label;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -102,6 +105,17 @@ public class ConfigDialog extends I18nJFrame {
     private static final int pos = TitledBorder.ABOVE_TOP;
     private static int thick = 2;
 
+    private static ConfigDialog singleton = null;
+
+    public static void initialise(GaiaSkyDesktop gsd, boolean startup) {
+        if (singleton == null) {
+            singleton = new ConfigDialog(gsd, startup);
+        } else {
+            singleton.setVisible(true);
+            singleton.toFront();
+        }
+    }
+
     JFrame frame;
     JLabel checkLabel;
     JPanel checkPanel;
@@ -154,6 +168,15 @@ public class ConfigDialog extends I18nJFrame {
                 cancelButton.doClick();
             }
         });
+
+        // Window close hook
+        WindowListener exitListener = new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                singleton = null;
+            }
+        };
+        frame.addWindowListener(exitListener);
 
         // Request focus
         frame.getRootPane().setDefaultButton(okButton);
@@ -1022,6 +1045,7 @@ public class ConfigDialog extends I18nJFrame {
                         gsd.launchMainApp();
                     }
                     frame.dispose();
+                    singleton = null;
                 }
             }
 
@@ -1033,6 +1057,7 @@ public class ConfigDialog extends I18nJFrame {
             public void actionPerformed(ActionEvent e) {
                 if (frame.isDisplayable()) {
                     frame.dispose();
+                    singleton = null;
                     if (startup) {
                         gsd.terminate();
                     }
