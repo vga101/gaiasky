@@ -13,6 +13,7 @@ import com.badlogic.gdx.files.FileHandle;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
@@ -201,6 +202,12 @@ public class CamRecorder implements IObserver {
 
             // Issue message informing playing has started
             EventManager.instance.post(Events.CAMERA_PLAY_INFO, true);
+
+            // Enable frame output if option is on
+            if (GlobalConf.frame.AUTO_FRAME_OUTPUT_CAMERA_PLAY) {
+                // Stop frame output if it is on!
+                EventManager.instance.post(Events.FRAME_OUTPUT_CMD, true);
+            }
 
             break;
         case UPDATE_CAM_RECORDER:

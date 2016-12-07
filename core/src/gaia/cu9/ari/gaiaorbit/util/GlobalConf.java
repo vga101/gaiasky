@@ -265,6 +265,8 @@ public class GlobalConf {
         public int RENDER_TARGET_FPS;
         /** The target FPS when recording the camera **/
         public int CAMERA_REC_TARGET_FPS;
+        /** Automatically activate frame output system when playing camera file **/
+        public boolean AUTO_FRAME_OUTPUT_CAMERA_PLAY;
         /** The output folder **/
         public String RENDER_FOLDER;
         /** The prefix for the image files **/
@@ -280,11 +282,12 @@ public class GlobalConf {
             EventManager.instance.subscribe(this, Events.CONFIG_PIXEL_RENDERER, Events.FRAME_OUTPUT_CMD);
         }
 
-        public void initialize(int rENDER_WIDTH, int rENDER_HEIGHT, int rENDER_TARGET_FPS, int cAMERA_REC_TARGET_FPS, String rENDER_FOLDER, String rENDER_FILE_NAME, boolean rENDER_SCREENSHOT_TIME, boolean rENDER_OUTPUT, ScreenshotMode fRAME_MODE) {
+        public void initialize(int rENDER_WIDTH, int rENDER_HEIGHT, int rENDER_TARGET_FPS, int cAMERA_REC_TARGET_FPS, boolean aUTO_FRAME_OUTPUT_CAMERA_PLAY, String rENDER_FOLDER, String rENDER_FILE_NAME, boolean rENDER_SCREENSHOT_TIME, boolean rENDER_OUTPUT, ScreenshotMode fRAME_MODE) {
             RENDER_WIDTH = rENDER_WIDTH;
             RENDER_HEIGHT = rENDER_HEIGHT;
             RENDER_TARGET_FPS = rENDER_TARGET_FPS;
             CAMERA_REC_TARGET_FPS = cAMERA_REC_TARGET_FPS;
+            AUTO_FRAME_OUTPUT_CAMERA_PLAY = aUTO_FRAME_OUTPUT_CAMERA_PLAY;
             RENDER_FOLDER = rENDER_FOLDER;
             RENDER_FILE_NAME = rENDER_FILE_NAME;
             RENDER_SCREENSHOT_TIME = rENDER_SCREENSHOT_TIME;

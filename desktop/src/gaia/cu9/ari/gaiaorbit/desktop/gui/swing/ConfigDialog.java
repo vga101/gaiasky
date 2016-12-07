@@ -294,7 +294,7 @@ public class ConfigDialog extends I18nJFrame {
         graphics.setBorder(new TitledBorder(new MatteBorder(new Insets(thick, 0, 0, 0), bcol), txt("gui.graphicssettings"), just, pos));
 
         // Quality
-        JLabel gqTooltip = new JLabel(IconManager.get("gui/info-tooltip"));
+        JLabel gqTooltip = new JLabel(IconManager.get("config/info-tooltip"));
         gqTooltip.setToolTipText(txt("gui.gquality.info"));
 
         ComboBoxBean[] gqs = new ComboBoxBean[] { new ComboBoxBean(txt("gui.gquality.high"), 0), new ComboBoxBean(txt("gui.gquality.normal"), 1), new ComboBoxBean(txt("gui.gquality.low"), 2) };
@@ -310,7 +310,7 @@ public class ConfigDialog extends I18nJFrame {
         gquality.setSelectedItem(gqs[gqidx]);
 
         // AA
-        JLabel aaTooltip = new JLabel(IconManager.get("gui/info-tooltip"));
+        JLabel aaTooltip = new JLabel(IconManager.get("config/info-tooltip"));
         aaTooltip.setToolTipText(txt("gui.aa.info"));
 
         //ComboBoxBean[] aas = new ComboBoxBean[] { new ComboBoxBean(txt("gui.aa.no"), 0), new ComboBoxBean(txt("gui.aa.fxaa"), -1), new ComboBoxBean(txt("gui.aa.nfaa"), -2), new ComboBoxBean(txt("gui.aa.msaa", 2), 2), new ComboBoxBean(txt("gui.aa.msaa", 4), 4), new ComboBoxBean(txt("gui.aa.msaa", 8), 8), new ComboBoxBean(txt("gui.aa.msaa", 16), 16) };
@@ -640,7 +640,7 @@ public class ConfigDialog extends I18nJFrame {
         });
         screenshotsMode.setSelectedItem(screenshotModes[GlobalConf.screenshot.SCREENSHOT_MODE.ordinal()]);
 
-        JLabel screenshotsModeTooltip = new JLabel(IconManager.get("gui/info-tooltip"));
+        JLabel screenshotsModeTooltip = new JLabel(IconManager.get("config/info-tooltip"));
         screenshotsModeTooltip.setToolTipText(txt("gui.tooltip.screenshotmode"));
 
         JPanel screenshotsModePanel = new JPanel(new MigLayout("", "[grow,fill][]", ""));
@@ -785,7 +785,7 @@ public class ConfigDialog extends I18nJFrame {
         });
         frameMode.setSelectedItem(frameModesBean[GlobalConf.frame.FRAME_MODE.ordinal()]);
 
-        JLabel frameModeTooltip = new JLabel(IconManager.get("gui/info-tooltip"));
+        JLabel frameModeTooltip = new JLabel(IconManager.get("config/info-tooltip"));
         frameModeTooltip.setToolTipText(txt("gui.tooltip.screenshotmode"));
 
         JPanel frameModePanel = new JPanel(new MigLayout("", "[grow,fill][]", ""));
@@ -823,8 +823,16 @@ public class ConfigDialog extends I18nJFrame {
         // TARGET FPS
         final JSpinner targetFPScamera = new JSpinner(new SpinnerNumberModel(GlobalConf.frame.CAMERA_REC_TARGET_FPS, 1, 60, 1));
 
+        // AUTOMATICALLY ENABLE FRAME OUTPUT WHEN PLAYING CAMERA
+        final JCheckBox autoFrameOutput = new JCheckBox(txt("gui.camerarec.frameoutput"), GlobalConf.frame.AUTO_FRAME_OUTPUT_CAMERA_PLAY);
+        autoFrameOutput.setToolTipText(txt("gui.tooltip.playcamera.frameoutput"));
+        JLabel afoTooltip = new JLabel(IconManager.get("config/info-tooltip"));
+        afoTooltip.setToolTipText(txt("gui.tooltip.playcamera.frameoutput"));
+
         cameraRec.add(new JLabel(txt("gui.camerarec.fps") + ":"));
-        cameraRec.add(targetFPScamera, "span");
+        cameraRec.add(targetFPScamera, "span,wrap");
+        cameraRec.add(autoFrameOutput);
+        cameraRec.add(afoTooltip);
 
         JPanel cameraRecPanel = new JPanel(new MigLayout("", "[grow,fill]", ""));
         cameraRecPanel.add(cameraRec, "wrap");
@@ -1032,6 +1040,7 @@ public class ConfigDialog extends I18nJFrame {
 
                     // Camera recording
                     GlobalConf.frame.CAMERA_REC_TARGET_FPS = (Integer) targetFPScamera.getValue();
+                    GlobalConf.frame.AUTO_FRAME_OUTPUT_CAMERA_PLAY = (Boolean) autoFrameOutput.isSelected();
 
                     // Cube map resolution
                     GlobalConf.scene.CUBEMAP_FACE_RESOLUTION = (Integer) cubemapResolution.getValue();
