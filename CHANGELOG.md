@@ -6,11 +6,15 @@
 
 **Implemented enhancements:**
 
+- Improve loading times [\#102](https://github.com/langurmonkey/gaiasky/issues/102)
+- Config window HiDPI mode [\#101](https://github.com/langurmonkey/gaiasky/issues/101)
 - Dependent visibility for orbits [\#100](https://github.com/langurmonkey/gaiasky/issues/100)
 - Map and calibrate Milky Way panorama [\#94](https://github.com/langurmonkey/gaiasky/issues/94)
+- Add option to capture frames while camera path is playing [\#71](https://github.com/langurmonkey/gaiasky/issues/71)
 
 **Fixed bugs:**
 
+- Fix crosshair issues when resizing [\#104](https://github.com/langurmonkey/gaiasky/issues/104)
 - Dependent visibility for orbits [\#100](https://github.com/langurmonkey/gaiasky/issues/100)
 - Stars disappear for a while when camera approaches [\#97](https://github.com/langurmonkey/gaiasky/issues/97)
 - Version `1.0.3` fills memory with frame output [\#96](https://github.com/langurmonkey/gaiasky/issues/96)
