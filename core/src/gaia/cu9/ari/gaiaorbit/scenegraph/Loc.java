@@ -10,7 +10,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
 import gaia.cu9.ari.gaiaorbit.GaiaSky;
-import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.render.I3DTextRenderable;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
@@ -31,6 +30,10 @@ public class Loc extends AbstractPositionEntity implements I3DTextRenderable {
         cc = new float[] { 1f, 1f, 1f, 1f };
         localTransform = new Matrix4();
         location3d = new Vector3();
+    }
+
+    public void initialize() {
+
     }
 
     @Override
@@ -85,7 +88,7 @@ public class Loc extends AbstractPositionEntity implements I3DTextRenderable {
 
     @Override
     public boolean renderText() {
-        if (viewAngle < LOWER_LIMIT || viewAngle > UPPER_LIMIT || !GaiaSky.instance.isOn(ComponentType.Labels)) {
+        if (viewAngle < LOWER_LIMIT || viewAngle > UPPER_LIMIT || !GaiaSky.instance.isOn(ct[0])) {
             return false;
         }
         Vector3d aux = aux3d1.get();

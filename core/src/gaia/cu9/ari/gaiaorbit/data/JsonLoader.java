@@ -18,7 +18,6 @@ import com.badlogic.gdx.utils.reflect.ReflectionException;
 
 import gaia.cu9.ari.gaiaorbit.interfce.TextUtils;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
-import gaia.cu9.ari.gaiaorbit.scenegraph.component.ITransform;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
@@ -123,7 +122,7 @@ public class JsonLoader<T extends SceneGraphNode> implements ISceneGraphLoader {
                     valueClass = getValueClass(attribute);
                     value = getValue(attribute);
                 } else if (attribute.isArray()) {
-                    // We suppose are childs are of the same type
+                    // We suppose our children are of the same type
                     switch (attribute.child.type()) {
                     case stringValue:
                         valueClass = String[].class;
@@ -147,14 +146,21 @@ public class JsonLoader<T extends SceneGraphNode> implements ISceneGraphLoader {
                         value = new Object[attribute.size];
                         JsonValue vectorattrib = attribute.child;
                         int i = 0;
-                        while(vectorattrib != null){
+                        while (vectorattrib != null) {
                             String clazzName = vectorattrib.getString("impl");
                             Class<Object> childclazz = (Class<Object>) ClassReflection.forName(clazzName);
-                            ((Object[])value)[i] = convertJsonToObject(vectorattrib, childclazz);
+                            ((Object[]) value)[i] = convertJsonToObject(vectorattrib, childclazz);
                             i++;
                             vectorattrib = vectorattrib.next;
                         }
                         break;
+                    case array:
+                        // Multidim array! Only 3D double supported so far
+                        valueClass = double[][][].class;
+
+                        JsonValue child = attribute.child;
+
+                        value = convertToDoubleArray(child, attribute.size);
                     }
 
                 } else if (attribute.isObject()) {
@@ -180,6 +186,32 @@ public class JsonLoader<T extends SceneGraphNode> implements ISceneGraphLoader {
             attribute = attribute.next;
         }
         return instance;
+    }
+
+    public double[][][] convertToDoubleArray(JsonValue json, int size) {
+        double[][][] result = new double[size][][];
+        int i = 0;
+        do {
+            double[][] l1 = new double[json.size][];
+            // Fill in last level
+
+            JsonValue child = json.child;
+            int j = 0;
+            do {
+                double[] l2 = child.asDoubleArray();
+                l1[j] = l2;
+
+                child = child.next();
+                j++;
+            } while (child != null);
+
+            result[i] = l1;
+
+            json = json.next();
+            i++;
+        } while (json != null);
+
+        return result;
     }
 
     public Map<String, Object> convertJsonToMap(JsonValue json) {

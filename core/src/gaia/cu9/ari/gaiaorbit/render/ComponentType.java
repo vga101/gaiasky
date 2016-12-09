@@ -1,12 +1,12 @@
 package gaia.cu9.ari.gaiaorbit.render;
 
-import gaia.cu9.ari.gaiaorbit.util.I18n;
-
 import java.util.HashMap;
 import java.util.Map;
 
+import gaia.cu9.ari.gaiaorbit.util.I18n;
+
 public enum ComponentType {
-    Stars("Stars"), Planets("Planets"), Moons("Moons"), Satellites("Satellites"), Asteroids("Asteroids"), Labels("Labels"), Equatorial("Equatorial grid", "grid-icon"), Ecliptic("Ecliptic grid", "grid-icon"), Galactic("Galactic grid", "grid-icon"), Orbits("Orbits"), Atmospheres("Atmospheres"), Constellations("Constellations"), Boundaries("Boundaries"), MilkyWay("Milky way"), Galaxies("Galaxies"), Others("Others");
+    Stars("Stars"), Planets("Planets"), Moons("Moons"), Satellites("Satellites"), Asteroids("Asteroids"), Labels("Labels"), Equatorial("Equatorial grid", "grid-icon"), Ecliptic("Ecliptic grid", "grid-icon"), Galactic("Galactic grid", "grid-icon"), Orbits("Orbits"), Atmospheres("Atmospheres"), Constellations("Constellations"), Boundaries("Boundaries"), MilkyWay("Milky way"), Galaxies("Galaxies"), Countries("Countries"), Locations("Locations"), Others("Others");
 
     private static Map<String, ComponentType> namesMap = new HashMap<String, ComponentType>();
 
