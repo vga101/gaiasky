@@ -95,7 +95,7 @@ public class Area extends AbstractPositionEntity implements ILineRenderable {
             transform.getTranslation(auxi).scl(-1);
             double cosalpha = auxi.add(cart0.x, cart0.y, cart0.z).nor().dot(GaiaSky.instance.cam.getDirection().nor());
 
-            if (cosalpha < -0.7) {
+            if (cosalpha < -0.1) {
 
                 updateLocalValues(time, camera);
                 this.transform.translate(pos);
@@ -136,7 +136,7 @@ public class Area extends AbstractPositionEntity implements ILineRenderable {
     }
 
     private Vector3 toCartesian(float lon, float lat, Vector3 res, Matrix4 localTransform) {
-        res.set(0, 0, -0.5f);
+        res.set(0, 0, -0.501f);
         // Latitude [-90..90]
         res.rotate(lat, 1, 0, 0);
         // Longitude [0..360]
