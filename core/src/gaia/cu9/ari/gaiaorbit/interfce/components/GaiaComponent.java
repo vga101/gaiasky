@@ -65,7 +65,7 @@ public class GaiaComponent extends GuiComponent {
         //        });
         //        onlyObservedStars.setChecked(GlobalConf.scene.ONLY_OBSERVED_STARS);
 
-        VerticalGroup gaiaGroup = new VerticalGroup().align(Align.left);
+        VerticalGroup gaiaGroup = new VerticalGroup().align(Align.left).columnAlign(Align.left);
         gaiaGroup.addActor(computeGaiaScan);
         gaiaGroup.addActor(transitColor);
         //gaiaGroup.addActor(onlyObservedStars);

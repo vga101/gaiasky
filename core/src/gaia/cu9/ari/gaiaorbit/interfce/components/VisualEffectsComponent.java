@@ -241,7 +241,7 @@ public class VisualEffectsComponent extends GuiComponent implements IObserver {
 
         }
 
-        VerticalGroup lightingGroup = new VerticalGroup().align(Align.left);
+        VerticalGroup lightingGroup = new VerticalGroup().align(Align.left).columnAlign(Align.left);
         lightingGroup.addActor(sbrightnessLabel);
         lightingGroup.addActor(sbrightnessGroup);
         lightingGroup.addActor(sizeLabel);

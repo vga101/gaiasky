@@ -105,13 +105,13 @@ public class CollapsiblePane extends VerticalGroup {
 
     }
 
-    public void expand() {
+    public void expandPane() {
         if (!expandIcon.isChecked()) {
             expandIcon.setChecked(true);
         }
     }
 
-    public void collapse() {
+    public void collapsePane() {
         if (expandIcon.isChecked()) {
             expandIcon.setChecked(false);
         }

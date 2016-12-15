@@ -23,7 +23,6 @@ import com.badlogic.gdx.utils.Align;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
-import gaia.cu9.ari.gaiaorbit.interfce.ControlsWindow;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
@@ -44,11 +43,9 @@ public class VisibilityComponent extends GuiComponent implements IObserver {
     private Label pmNumFactor, pmLenFactor, pmNumFactorLabel, pmLenFactorLabel;
     private VerticalGroup pmNumFactorGroup, pmLenFactorGroup;
     private VerticalGroup visGroup;
-    private ControlsWindow window;
 
-    public VisibilityComponent(Skin skin, Stage stage, ControlsWindow window) {
+    public VisibilityComponent(Skin skin, Stage stage) {
         super(skin, stage);
-        this.window = window;
         EventManager.instance.subscribe(this, Events.TOGGLE_VISIBILITY_CMD);
     }
 
@@ -124,7 +121,7 @@ public class VisibilityComponent extends GuiComponent implements IObserver {
         });
 
         pmNumFactorGroup = new VerticalGroup();
-        pmNumFactorGroup.align(Align.left);
+        pmNumFactorGroup.align(Align.left).columnAlign(Align.left);
         HorizontalGroup pnfg = new HorizontalGroup();
         pnfg.space(space3);
         pnfg.addActor(pmNumFactorSlider);
@@ -151,7 +148,7 @@ public class VisibilityComponent extends GuiComponent implements IObserver {
             }
         });
         pmLenFactorGroup = new VerticalGroup();
-        pmLenFactorGroup.align(Align.left);
+        pmLenFactorGroup.align(Align.left).columnAlign(Align.left);
         HorizontalGroup plfg = new HorizontalGroup();
         plfg.space(space3);
         plfg.addActor(pmLenFactorSlider);
@@ -195,7 +192,7 @@ public class VisibilityComponent extends GuiComponent implements IObserver {
         }
         visibilityTable.pack();
 
-        visGroup = new VerticalGroup().align(Align.left);
+        visGroup = new VerticalGroup().align(Align.left).columnAlign(Align.left);
         visGroup.addActor(visibilityTable);
         visGroup.addActor(properMotions);
 

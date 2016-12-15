@@ -116,7 +116,7 @@ public class TimeComponent extends GuiComponent implements IObserver {
         wrapWrapper.width(60f * GlobalConf.SCALE_FACTOR);
         wrapWrapper.align(Align.center);
 
-        VerticalGroup timeGroup = new VerticalGroup().align(Align.left).space(3 * GlobalConf.SCALE_FACTOR).padTop(3 * GlobalConf.SCALE_FACTOR);
+        VerticalGroup timeGroup = new VerticalGroup().align(Align.left).columnAlign(Align.left).space(3 * GlobalConf.SCALE_FACTOR).padTop(3 * GlobalConf.SCALE_FACTOR);
 
         HorizontalGroup dateGroup = new HorizontalGroup();
         dateGroup.space(4 * GlobalConf.SCALE_FACTOR);

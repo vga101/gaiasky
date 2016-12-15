@@ -98,7 +98,7 @@ public class MusicComponent extends GuiComponent implements IObserver {
         vol = new OwnLabel(nf.format(volume.getValue()), skin, "default");
 
         float space3 = 3 * GlobalConf.SCALE_FACTOR;
-        VerticalGroup musicGroup = new VerticalGroup().align(Align.center).space(space3);
+        VerticalGroup musicGroup = new VerticalGroup().align(Align.center).columnAlign(Align.left).space(space3);
 
         HorizontalGroup playGroup = new HorizontalGroup();
         playGroup.space(space3 * 5);

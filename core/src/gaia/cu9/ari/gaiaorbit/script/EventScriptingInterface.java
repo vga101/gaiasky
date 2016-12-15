@@ -721,14 +721,14 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
     public void expandGuiComponent(String name) {
         IGui gui = GaiaSky.instance.mainGui;
         ControlsWindow controls = (ControlsWindow) gui.getGuiStage().getRoot().findActor(I18n.bundle.get("gui.controls"));
-        controls.getCollapsiblePane(name).expand();
+        controls.getCollapsiblePane(name).expandPane();
     }
 
     @Override
     public void collapseGuiComponent(String name) {
         IGui gui = GaiaSky.instance.mainGui;
         ControlsWindow controls = (ControlsWindow) gui.getGuiStage().getRoot().findActor(I18n.bundle.get("gui.controls"));
-        controls.getCollapsiblePane(name).collapse();
+        controls.getCollapsiblePane(name).collapsePane();
     }
 
     @Override

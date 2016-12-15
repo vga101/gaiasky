@@ -301,7 +301,7 @@ public class CameraComponent extends GuiComponent implements IObserver {
             }
         });
 
-        VerticalGroup cameraGroup = new VerticalGroup().align(Align.left);
+        VerticalGroup cameraGroup = new VerticalGroup().align(Align.left).columnAlign(Align.left);
 
         float space3 = 3 * GlobalConf.SCALE_FACTOR;
 

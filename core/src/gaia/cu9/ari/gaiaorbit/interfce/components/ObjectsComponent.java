@@ -192,7 +192,7 @@ public class ObjectsComponent extends GuiComponent implements IObserver {
             focusListScrollPane.setWidth(160);
         }
 
-        VerticalGroup objectsGroup = new VerticalGroup().align(Align.left).space(3 * GlobalConf.SCALE_FACTOR);
+        VerticalGroup objectsGroup = new VerticalGroup().align(Align.left).columnAlign(Align.left).space(3 * GlobalConf.SCALE_FACTOR);
         objectsGroup.addActor(searchBox);
         if (focusListScrollPane != null) {
             objectsGroup.addActor(focusListScrollPane);
