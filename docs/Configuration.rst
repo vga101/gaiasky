@@ -99,7 +99,7 @@ direction ``+X``, ``-X``, ``+Y``, ``-Y``, ``+Z``, ``-Z``) and then
 it will be transformed into a flat image using an equirectangular
 projection. This allows for the creation of 360 (VR) videos.
 
-.. figure:: img/360.jpg
+.. figure:: img/screenshots/360/20161111_screenshot_00000.jpg
    :width: 90%
    :alt: 360 mode in Gaia Sky
 
