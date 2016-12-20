@@ -13,7 +13,12 @@ Gaia Sky to later gather them to create a video using a video encoder
 software such as `ffmpeg <https://ffmpeg.org/>`__, which works on
 Windows, Linux and OS X.
 
-Once you have recorded the images using the :ref:`frame-output-config`, you can convert them
+.. note:: Use ``F6`` to activate the frame output mode and start saving each frame as an image. Use ``F6`` again to deactivate it.
+
+When the frame output system is active, each frame is saved as a ``JPEG`` image to disk. Refer to the
+:ref:`frame-output-config` section to learn how to configure the frame output system.
+
+Once you have the image frames you can convert them
 into a video using the following command:
 
 .. code:: bash

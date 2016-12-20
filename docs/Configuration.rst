@@ -67,12 +67,16 @@ resolution of the screenshots.
 Frame output
 ============
 
-There is a feature in the Gaia Sky that enables the output of every
-frame as an image. This is useful to produce videos. In order to
+There is a feature in Gaia Sky that enables the output of every
+frame as a ``JPEG` image. This is useful to produce videos. In order to
 configure the frame output system, use the ``Frame output`` tab. There
 you can select the output folder, the image prefix name, the output
 image resolution (in case of ``Advanced`` mode) and the target frames
-per second. When the program is in frame output mode, it does not run in
+per second.
+
+.. note:: Use ``F6`` to activate the frame output mode and start saving each frame as an image. Use ``F6`` again to deactivate it.
+
+When the program is in frame output mode, it does not run in
 real time but it adjusts the internal clock to produce as many frames
 per second as specified here. You have to take it into account when you
 later use your favourite video encoder
