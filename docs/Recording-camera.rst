@@ -48,3 +48,7 @@ Playing camera paths
 In order to play a camera file, click on the folder icon next to the
 ``REC`` icon. This will prompt a list of available camera files in the
 ``$HOME/.gaiasky/camera`` folder.
+
+You can also combine the camera file playback with the frame output system to
+save each frame to a ``JPEG`` image during playback. To do so, enable the **Activate frame output automatically**
+checkbox in the preferences dialog as described in the :ref:`camera-recording-config` section.

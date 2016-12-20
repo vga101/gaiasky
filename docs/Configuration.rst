@@ -68,7 +68,7 @@ Frame output
 ============
 
 There is a feature in Gaia Sky that enables the output of every
-frame as a ``JPEG` image. This is useful to produce videos. In order to
+frame as a ``JPEG`` image. This is useful to produce videos. In order to
 configure the frame output system, use the ``Frame output`` tab. There
 you can select the output folder, the image prefix name, the output
 image resolution (in case of ``Advanced`` mode) and the target frames
@@ -82,6 +82,8 @@ per second as specified here. You have to take it into account when you
 later use your favourite video encoder
 (`ffmpeg <https://www.ffmpeg.org/>`__) to convert the frame images into
 a video.
+
+.. _camera-recording-config:
 
 Camera recording
 ================
