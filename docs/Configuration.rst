@@ -86,11 +86,15 @@ a video.
 Camera recording
 ================
 
-Here you can set the desired frames per second to capture the camera
+Here you can set the desired **frames per second** to capture the camera
 paths. If your device is not fast enough in producing the specified
 frame rate, the application will slow down while recording so that
 enough frames are captured. Same behaviour will be uploading during
 camera playback.
+
+You can also enable **automatic frame recording** during playback. This will
+automatically activate the frame output system (see :ref:`frame-output-config`)
+during a camera file playback.
 
 .. _360-mode-config:
 
