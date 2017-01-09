@@ -113,7 +113,7 @@ public class GeoJsonLoader<T extends SceneGraphNode> implements ISceneGraphLoade
             result[i] = l1;
 
             if (d == 1) {
-                current = json.next();
+                current = current.next();
             } else {
                 current = json.next() != null ? json.next().child : null;
                 json = json.next();
