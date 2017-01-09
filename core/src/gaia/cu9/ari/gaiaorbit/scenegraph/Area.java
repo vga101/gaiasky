@@ -4,7 +4,6 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
-import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.render.ILineRenderable;
 import gaia.cu9.ari.gaiaorbit.render.system.LineRenderSystem;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
@@ -91,25 +90,25 @@ public class Area extends AbstractPositionEntity implements ILineRenderable {
             localTransform.idt();
             toCartesian(loc2d[0][0][0], loc2d[0][0][1], cart0, localTransform);
 
-            Vector3d auxi = aux3d1.get();
-            transform.getTranslation(auxi).scl(-1);
-            double cosalpha = auxi.add(cart0.x, cart0.y, cart0.z).nor().dot(GaiaSky.instance.cam.getDirection().nor());
+            //            Vector3d auxi = aux3d1.get();
+            //            transform.getTranslation(auxi).scl(-1);
+            //            double cosalpha = auxi.add(cart0.x, cart0.y, cart0.z).nor().dot(GaiaSky.instance.cam.getDirection().nor());
+            //
+            //            if (cosalpha < -0.1) {
 
-            if (cosalpha < -0.1) {
+            updateLocalValues(time, camera);
+            this.transform.translate(pos);
 
-                updateLocalValues(time, camera);
-                this.transform.translate(pos);
+            this.opacity = MathUtilsd.lint(((ModelBody) parent).viewAngleApparent, angleLow, angleHigh, 0, 1);
 
-                this.opacity = MathUtilsd.lint(((ModelBody) parent).viewAngleApparent, angleLow, angleHigh, 0, 1);
-
-                Vector3d aux = aux3d1.get();
-                this.distToCamera = (float) transform.getTranslation(aux).len();
-                this.viewAngle = (float) Math.atan(size / distToCamera) / camera.getFovFactor();
-                this.viewAngleApparent = this.viewAngle;
-                if (!copy) {
-                    addToRenderLists(camera);
-                }
+            Vector3d aux = aux3d1.get();
+            this.distToCamera = (float) transform.getTranslation(aux).len();
+            this.viewAngle = (float) Math.atan(size / distToCamera) / camera.getFovFactor();
+            this.viewAngleApparent = this.viewAngle;
+            if (!copy) {
+                addToRenderLists(camera);
             }
+            //            }
         }
     }
 
