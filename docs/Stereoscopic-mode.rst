@@ -49,6 +49,8 @@ profiles which can be selected by the user and are described below.
 +-------------------+----------+
 | **Crosseye**      | |XEYE|   |
 +-------------------+----------+
+| **Parallel view** | |PARA|   |
++-------------------+----------+
 | **3DTV**          | |3DTV|   |
 +-------------------+----------+
 | **Anaglyph**      | |ANAG|   |
@@ -58,6 +60,8 @@ profiles which can be selected by the user and are described below.
           :width: 100%
 .. |XEYE| image:: img/3d/3d-crosseye.jpg
           :width: 100%
+.. |PARA| image:: img/3d/3d-parallelview.jpg
+	  :width: 100%
 .. |3DTV| image:: img/3d/3d-3dtv.jpg
           :width: 100%
 .. |ANAG| image:: img/3d/3d-anaglyph.jpg
