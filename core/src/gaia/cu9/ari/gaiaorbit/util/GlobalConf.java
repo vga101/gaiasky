@@ -429,12 +429,14 @@ public class GlobalConf {
     public static class ProgramConf implements IConf, IObserver {
 
         public static enum StereoProfile {
-            /** Left image -> left eye, no distortion **/
+            /** Left image -> left eye, distortion **/
             VR_HEADSET,
             /** Left image -> left eye, distortion **/
             HD_3DTV,
             /** Left image -> right eye, no distortion **/
             CROSSEYE,
+            /** Left image -> left eye, no distortion **/
+            PARALLEL_VIEW,
             /** Red-cyan anaglyphic 3D mode **/
             ANAGLYPHIC
         }

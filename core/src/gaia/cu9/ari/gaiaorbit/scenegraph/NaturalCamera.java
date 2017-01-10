@@ -1029,51 +1029,58 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
     public void render(int rw, int rh) {
         // Renders crosshair if focus mode
         if (GlobalConf.scene.CROSSHAIR && getMode().equals(CameraMode.Focus)) {
-            // Unproject focus
-            focus.getPosition(aux1);
 
-            aux1.put(auxf1);
-            camera.project(auxf1);
+            float cw = crosshair.getWidth();
+            float ch = crosshair.getHeight();
 
-            if (direction.angle(aux1) > 90) {
-                auxf1.x = rw - auxf1.x;
-                auxf1.y = rh - auxf1.y;
+            boolean draw = !GlobalConf.program.CUBEMAP360_MODE && !GlobalConf.program.STEREOSCOPIC_MODE;
 
-                float w2 = rw / 2f;
-                float h2 = rh / 2f;
+            if (draw) {
+                // Unproject focus
+                focus.getPosition(aux1);
 
-                // Q1 | Q2
-                // -------
-                // Q3 | Q4
+                aux1.put(auxf1);
+                camera.project(auxf1);
 
-                if (auxf1.x <= w2 && auxf1.y >= h2) {
-                    // Q1
-                    auxf1.x = chw2;
-                    auxf1.y = rh - chh2;
+                if (direction.angle(aux1) > 90) {
+                    auxf1.x = rw - auxf1.x;
+                    auxf1.y = rh - auxf1.y;
 
-                } else if (auxf1.x > w2 && auxf1.y >= h2) {
-                    // Q2
-                    auxf1.x = rw - chw2;
-                    auxf1.y = rh - chh2;
-                } else if (auxf1.x <= w2 && auxf1.y < h2) {
-                    // Q3
-                    auxf1.x = chw2;
-                    auxf1.y = chh2;
-                } else if (auxf1.x > w2 && auxf1.y < h2) {
-                    // Q4
-                    auxf1.x = rw - chw2;
-                    auxf1.y = chh2;
+                    float w2 = rw / 2f;
+                    float h2 = rh / 2f;
+
+                    // Q1 | Q2
+                    // -------
+                    // Q3 | Q4
+
+                    if (auxf1.x <= w2 && auxf1.y >= h2) {
+                        // Q1
+                        auxf1.x = chw2;
+                        auxf1.y = rh - chh2;
+
+                    } else if (auxf1.x > w2 && auxf1.y >= h2) {
+                        // Q2
+                        auxf1.x = rw - chw2;
+                        auxf1.y = rh - chh2;
+                    } else if (auxf1.x <= w2 && auxf1.y < h2) {
+                        // Q3
+                        auxf1.x = chw2;
+                        auxf1.y = chh2;
+                    } else if (auxf1.x > w2 && auxf1.y < h2) {
+                        // Q4
+                        auxf1.x = rw - chw2;
+                        auxf1.y = chh2;
+                    }
+
                 }
 
+                auxf1.x = MathUtils.clamp(auxf1.x, chw2, rw - chw2);
+                auxf1.y = MathUtils.clamp(auxf1.y, chh2, rh - chh2);
+
+                spriteBatch.begin();
+                spriteBatch.draw(crosshair, auxf1.x - chw2, auxf1.y - chh2, cw, ch);
+                spriteBatch.end();
             }
-
-            auxf1.x = MathUtils.clamp(auxf1.x, chw2, rw - chw2);
-            auxf1.y = MathUtils.clamp(auxf1.y, chh2, rh - chh2);
-
-            spriteBatch.begin();
-            spriteBatch.draw(crosshair, auxf1.x - chw2, auxf1.y - chh2);
-            spriteBatch.end();
-
         }
     }
 
