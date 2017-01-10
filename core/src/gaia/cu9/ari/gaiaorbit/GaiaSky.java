@@ -662,7 +662,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
                 // Update state
                 previousGui = currentGui;
                 currentGui = spacecraftGui;
-            } else if (mode != CameraMode.Spacecraft && previousGui != spacecraftGui) {
+            } else if (mode != CameraMode.Spacecraft && previousGui != spacecraftGui && previousGui != null) {
                 // Remove current gui
                 GuiRegistry.unregisterGui(currentGui);
                 im.removeProcessor(currentGui.getGuiStage());
