@@ -509,7 +509,7 @@ public class GlobalConf {
 
                     STEREOSCOPIC_MODE = stereomode;
                     // Enable/disable gui
-                    EventManager.instance.post(Events.DISPLAY_GUI_CMD, I18n.bundle.get("notif.cleanmode"), !STEREOSCOPIC_MODE);
+                    //EventManager.instance.post(Events.DISPLAY_GUI_CMD, I18n.bundle.get("notif.cleanmode"), !STEREOSCOPIC_MODE);
                     EventManager.instance.post(Events.TOGGLE_STEREOSCOPIC_INFO, STEREOSCOPIC_MODE);
 
                     EventManager.instance.post(Events.POST_NOTIFICATION, "You have entered 3D mode. Go back to normal mode using <CTRL+S>");
@@ -521,6 +521,8 @@ public class GlobalConf {
                 StereoProfile[] vals = StereoProfile.values();
                 idx = (idx + 1) % vals.length;
                 STEREO_PROFILE = vals[idx];
+
+                EventManager.instance.post(Events.TOGGLE_STEREO_PROFILE_INFO, STEREO_PROFILE);
                 break;
             case CUBEMAP360_CMD:
                 CUBEMAP360_MODE = (Boolean) data[0];

@@ -57,6 +57,26 @@ public class NotificationsInterface extends Table implements IObserver {
      *            Allow multiple messages?
      * @param writeDates
      *            Write dates with messages?
+     * @param consoleLog
+     *            Log to console
+     */
+    public NotificationsInterface(Skin skin, Object lock, boolean multiple, boolean writeDates, boolean consoleLog) {
+        this(skin, lock, multiple);
+        this.writeDates = writeDates;
+        this.consoleLog = consoleLog;
+    }
+
+    /**
+     * Initializes the notifications interface.
+     * 
+     * @param skin
+     *            The skin.
+     * @param lock
+     *            The lock object.
+     * @param multiple
+     *            Allow multiple messages?
+     * @param writeDates
+     *            Write dates with messages?
      */
     public NotificationsInterface(Skin skin, Object lock, boolean multiple, boolean writeDates) {
         this(skin, lock, multiple);
@@ -282,6 +302,18 @@ public class NotificationsInterface extends Table implements IObserver {
 
     public void dispose() {
         this.unsubscribe();
+    }
+
+    public float getMessage1Width() {
+        return message1 != null ? message1.getWidth() : 0;
+    }
+
+    public float getMessage2Width() {
+        return message2 != null ? message2.getWidth() : 0;
+    }
+
+    public float getMessagesWidth() {
+        return Math.max(getMessage1Width(), getMessage2Width());
     }
 
 }

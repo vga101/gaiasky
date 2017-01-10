@@ -284,8 +284,10 @@ public enum Events {
      * (true/false)
      **/
     TOGGLE_STEREOSCOPIC_INFO,
-    /** Switches stereoscopic mode images, left to right and right to left **/
+    /** Switches stereoscopic profile **/
     TOGGLE_STEREO_PROFILE_CMD,
+    /** Broadcasts the new stereo profile. Contains the StereoProfile object **/
+    TOGGLE_STEREO_PROFILE_INFO,
     /** Sets the 360 mode. Contains a boolean with the new state and an optional boolean indicating whether this comes from the interface **/
     CUBEMAP360_CMD,
     /** Anti aliasing changed, contains the new value for aa **/

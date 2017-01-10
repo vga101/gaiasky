@@ -38,6 +38,7 @@ import gaia.cu9.ari.gaiaorbit.interfce.KeyInputController;
 import gaia.cu9.ari.gaiaorbit.interfce.LoadingGui;
 import gaia.cu9.ari.gaiaorbit.interfce.MobileGui;
 import gaia.cu9.ari.gaiaorbit.interfce.SpacecraftGui;
+import gaia.cu9.ari.gaiaorbit.interfce.StereoGui;
 import gaia.cu9.ari.gaiaorbit.render.AbstractRenderer;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.render.IMainRenderer;
@@ -113,7 +114,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
     /**
      * The user interfaces
      */
-    public IGui loadingGui, mainGui, spacecraftGui, debugGui;
+    public IGui loadingGui, mainGui, spacecraftGui, stereoGui, debugGui, currentGui, previousGui;
 
     /**
      * List of guis
@@ -164,7 +165,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
             return;
         }
 
-        // Initialize times
+        // Initialise times
         clock = new GlobalClock(1, new Date());
         real = new RealTimeClock();
         time = GlobalConf.runtime.REAL_TIME ? real : clock;
@@ -173,10 +174,10 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         // Precompute some math functions
         MathUtilsd.initialize();
 
-        // Initialize i18n
+        // Initialise i18n
         I18n.initialize();
 
-        // Initialize asset manager
+        // Initialise asset manager
         FileHandleResolver resolver = new InternalFileHandleResolver();
         manager = new AssetManager(resolver);
         manager.setLoader(ISceneGraph.class, new SGLoader(resolver));
@@ -186,13 +187,13 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         // Init global resources
         GlobalResources.initialize(manager);
 
-        // Initialize Cameras
+        // Initialise Cameras
         cam = new CameraManager(manager, CameraMode.Focus);
 
         // Set asset manager to asset bean
         AssetBean.setAssetManager(manager);
 
-        // Initialize Gaia attitudes
+        // Initialise Gaia attitudes
         manager.load(ATTITUDE_FOLDER, GaiaAttitudeServer.class, new GaiaAttitudeLoaderParameter(GlobalConf.runtime.STRIPPED_FOV_MODE ? new String[] { "OPS_RSLS_0022916_rsls_nsl_gareq1_afterFirstSpinPhaseOptimization.2.xml" } : new String[] {}));
 
         /** LOAD SCENE GRAPH **/
@@ -218,9 +219,13 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         spacecraftGui = new SpacecraftGui(cam.spacecraftCamera);
         spacecraftGui.initialize(manager);
 
+        stereoGui = new StereoGui();
+        stereoGui.initialize(manager);
+
         guis.add(mainGui);
         guis.add(debugGui);
         guis.add(spacecraftGui);
+        guis.add(stereoGui);
 
         // Tell the asset manager to load all the assets
         Set<AssetBean> assets = AssetBean.getAssets();
@@ -228,7 +233,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
             ab.load(manager);
         }
 
-        // Initialize loading screen
+        // Initialise loading screen
         loadingGui = new LoadingGui();
         loadingGui.initialize(manager);
 
@@ -277,7 +282,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         time.update(0);
         OctreeNode.LOAD_ACTIVE = true;
 
-        // Initialize input handlers
+        // Initialise input handlers
         InputMultiplexer inputMultiplexer = new InputMultiplexer();
 
         // Only for the Full GUI
@@ -285,12 +290,16 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         mainGui.setVisibilityToggles(ComponentType.values(), SceneGraphRenderer.visible);
         inputMultiplexer.addProcessor(mainGui.getGuiStage());
 
-        // Initialize the GUI
+        // Initialise the GUI
         for (IGui gui : guis)
             gui.doneLoading(manager);
 
         GuiRegistry.registerGui(mainGui);
         GuiRegistry.registerGui(debugGui);
+
+        // Initialise current and previous
+        currentGui = mainGui;
+        previousGui = null;
 
         // Publish visibility
         EventManager.instance.post(Events.VISIBILITY_OF_COMPONENTS, new Object[] { SceneGraphRenderer.visible });
@@ -334,11 +343,11 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
             EventManager.instance.post(Events.CAMERA_DIR_CMD, newCameraDir.values());
         }
 
-        // Initialize time in GUI
+        // Initialise time in GUI
         EventManager.instance.post(Events.TIME_CHANGE_INFO, time.getTime());
 
         // Subscribe to events
-        EventManager.instance.subscribe(this, Events.TOGGLE_AMBIENT_LIGHT, Events.AMBIENT_LIGHT_CMD, Events.RECORD_CAMERA_CMD, Events.CAMERA_MODE_CMD);
+        EventManager.instance.subscribe(this, Events.TOGGLE_AMBIENT_LIGHT, Events.AMBIENT_LIGHT_CMD, Events.RECORD_CAMERA_CMD, Events.CAMERA_MODE_CMD, Events.TOGGLE_STEREOSCOPIC_INFO);
 
         // Re-enable input
         if (!GlobalConf.runtime.STRIPPED_FOV_MODE)
@@ -361,7 +370,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         for (IGui gui : guis)
             gui.resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
-        // Initialize frames
+        // Initialise frames
         frames = 0;
 
         initialized = true;
@@ -639,23 +648,65 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
             InputMultiplexer im = (InputMultiplexer) Gdx.input.getInputProcessor();
             // Register/unregister gui
             CameraMode mode = (CameraMode) data[0];
-            if (mode == CameraMode.Spacecraft) {
-                // Remove main gui
-                GuiRegistry.unregisterGui(mainGui);
-                im.removeProcessor(mainGui.getGuiStage());
+            if (mode == CameraMode.Spacecraft && currentGui != spacecraftGui) {
+                // Remove current gui
+                GuiRegistry.unregisterGui(currentGui);
+                im.removeProcessor(currentGui.getGuiStage());
 
                 // Add spacecraft gui
                 GuiRegistry.registerGui(spacecraftGui);
                 im.addProcessor(spacecraftGui.getGuiStage());
-            } else {
-                // Remove spacecraft gui
-                GuiRegistry.unregisterGui(spacecraftGui);
-                im.removeProcessor(spacecraftGui.getGuiStage());
+
+                // Update state
+                previousGui = currentGui;
+                currentGui = spacecraftGui;
+            } else if (mode != CameraMode.Spacecraft && previousGui != spacecraftGui) {
+                // Remove current gui
+                GuiRegistry.unregisterGui(currentGui);
+                im.removeProcessor(currentGui.getGuiStage());
 
                 // Add main gui
-                GuiRegistry.registerGui(mainGui);
-                im.addProcessor(mainGui.getGuiStage());
+                GuiRegistry.registerGui(previousGui);
+                im.addProcessor(previousGui.getGuiStage());
+
+                // Update state
+                IGui aux = previousGui;
+                previousGui = currentGui;
+                currentGui = aux;
             }
+            break;
+        case TOGGLE_STEREOSCOPIC_INFO:
+            boolean stereomode = (Boolean) data[0];
+            im = (InputMultiplexer) Gdx.input.getInputProcessor();
+            if (stereomode && currentGui != stereoGui) {
+                // Remove current gui
+                GuiRegistry.unregisterGui(currentGui);
+                im.removeProcessor(currentGui.getGuiStage());
+
+                // Add stereo gui
+                GuiRegistry.registerGui(stereoGui);
+                im.addProcessor(stereoGui.getGuiStage());
+
+                // Update state
+                previousGui = currentGui;
+                currentGui = stereoGui;
+            } else if (!stereomode && previousGui != stereoGui) {
+                // Remove current gui
+                GuiRegistry.unregisterGui(currentGui);
+                im.removeProcessor(currentGui.getGuiStage());
+
+                // Add backed up gui
+                if (previousGui == null)
+                    previousGui = mainGui;
+                GuiRegistry.registerGui(previousGui);
+                im.addProcessor(previousGui.getGuiStage());
+
+                // Update state
+                IGui aux = previousGui;
+                previousGui = currentGui;
+                currentGui = aux;
+            }
+
             break;
         default:
             break;
