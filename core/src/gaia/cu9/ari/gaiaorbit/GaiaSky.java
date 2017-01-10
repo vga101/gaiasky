@@ -288,18 +288,25 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         // Only for the Full GUI
         mainGui.setSceneGraph(sg);
         mainGui.setVisibilityToggles(ComponentType.values(), SceneGraphRenderer.visible);
-        inputMultiplexer.addProcessor(mainGui.getGuiStage());
 
         // Initialise the GUI
         for (IGui gui : guis)
             gui.doneLoading(manager);
 
-        GuiRegistry.registerGui(mainGui);
+        if (GlobalConf.program.STEREOSCOPIC_MODE) {
+            GuiRegistry.registerGui(stereoGui);
+            inputMultiplexer.addProcessor(stereoGui.getGuiStage());
+            // Initialise current and previous
+            currentGui = stereoGui;
+            previousGui = mainGui;
+        } else {
+            GuiRegistry.registerGui(mainGui);
+            inputMultiplexer.addProcessor(mainGui.getGuiStage());
+            // Initialise current and previous
+            currentGui = mainGui;
+            previousGui = null;
+        }
         GuiRegistry.registerGui(debugGui);
-
-        // Initialise current and previous
-        currentGui = mainGui;
-        previousGui = null;
 
         // Publish visibility
         EventManager.instance.post(Events.VISIBILITY_OF_COMPONENTS, new Object[] { SceneGraphRenderer.visible });
@@ -359,11 +366,6 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         if (Constants.focalplane) {
             // Activate time
             EventManager.instance.post(Events.TOGGLE_TIME_CMD, true, false);
-        }
-
-        // Hide interface if stereoscopic is on
-        if (GlobalConf.program.STEREOSCOPIC_MODE || GlobalConf.program.CUBEMAP360_MODE) {
-            EventManager.instance.post(Events.DISPLAY_GUI_CMD, I18n.bundle.get("notif.cleanmode"), false);
         }
 
         // Resize guis to current size
