@@ -45,7 +45,7 @@ by default saved in the ``$HOME/.gaiasky/camera`` directory.
 Playing camera paths
 ====================
 
-In order to play a camera file, click on the folder icon next to the
+In order to play a camera file, click on the ``PLAY``  icon next to the
 ``REC`` icon. This will prompt a list of available camera files in the
 ``$HOME/.gaiasky/camera`` folder.
 
