@@ -34,12 +34,10 @@ the left image goes to the right eye.
 In order to manage all these parameters, we have created 4 stereoscopic
 profiles which can be selected by the user and are described below.
 
--  ``VR_HEADSET`` -- The **left** image goes to the **left** eye. No
-   distortion is applied.
--  ``Crosseye`` -- The **left** image goes to the **right** eye. No
-   distortion is applied.
--  ``3DTV`` -- The **left** image goes to the **left** eye.
-   Distortion is applied.
+-  ``VR_HEADSET`` -- The **left** image goes to the **left** eye. Lens distortion is applied to be viewed with VR glasses.
+-  ``Crosseye`` -- The **left** image goes to the **right** eye. No distortion is applied.
+-  ``Parallel view`` -- The **left** image goes to the **left** eye. No distortion is applied.
+-  ``3DTV`` -- The **left** image goes to the **left** eye. The left and right images are strecthed to fit in a half of the screen.
 -  ``Anaglyph 3D`` -- To use with red-cyan glasses. Displays both the left and right images at full resolution. Left image contains the **red** channel, right image contains the **green** and **blue** channels.
 
 .. hint:: ``L-CTRL`` + ``L-SHIFT`` + ``S`` -- Switch between 3D profiles
