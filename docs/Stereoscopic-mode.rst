@@ -21,17 +21,17 @@ and VR head sets (such as the `Oculus Rift <https://www.oculus.com/>`__,
 3DTVs, however, the image is distorted because each half of the TV will
 be stretched back to the whole TV area when the 3D mode is on.
 
-Additionally, there is a technique called cross-eye 3D (you can find
+Additionally, there are a couple of techniques called cross-eye 3D (you can find
 some examples
 `here <http://digital-photography-school.com/9-crazy-cross-eye-3d-photography-images-and-how-to-make-them/>`__,
 and `here <https://www.youtube.com/watch?v=zBa-bCxsZDk>`__ is a very
-nice video teaching the concept and how to achieve it) which works
-without any extra equipment and consists on trying to focus your eyes
-some distance before the actual image so that each eye receives the
-correct image. In this case the right images goes to the left eye and
-the left image goes to the right eye.
+nice video teaching the concept and how to achieve it) and parallel view. These work
+without any extra equipment and consist on trying to focus your eyes
+some distance before or after the actual image so that each eye receives the
+correct image. In cross-eye this case the right images goes to the left eye and
+the left image goes to the right eye. The opposite is true for parallel view images.
 
-In order to manage all these parameters, we have created 4 stereoscopic
+In order to manage all these parameters, we have created 5 stereoscopic
 profiles which can be selected by the user and are described below.
 
 -  ``VR_HEADSET`` -- The **left** image goes to the **left** eye. Lens distortion is applied to be viewed with VR glasses.
