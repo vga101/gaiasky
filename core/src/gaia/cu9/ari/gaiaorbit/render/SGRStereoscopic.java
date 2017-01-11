@@ -189,17 +189,13 @@ public class SGRStereoscopic extends SGRAbstract implements ISGR, IObserver {
             postprocessRender(ppb, fb3d, postproc, camera, rw / 2, rh);
             tex = fb3d.getColorBufferTexture();
 
-            float scaleX = 1;
-            float scaleY = 1;
             if (fb != null) {
-                scaleX = (float) Gdx.graphics.getWidth() / (float) fb.getWidth();
-                scaleY = (float) Gdx.graphics.getHeight() / (float) fb.getHeight();
                 fb.begin();
             }
 
             GlobalResources.spriteBatch.begin();
             GlobalResources.spriteBatch.setColor(1f, 1f, 1f, 1f);
-            GlobalResources.spriteBatch.draw(tex, 0, 0, 0, 0, rw / 2, rh, scaleX, scaleY, 0, 0, 0, rw / 2, rh, false, true);
+            GlobalResources.spriteBatch.draw(tex, 0, 0, 0, 0, rw / 2, rh, 1, 1, 0, 0, 0, rw / 2, rh, false, true);
             GlobalResources.spriteBatch.end();
 
             if (fb != null)
@@ -230,7 +226,7 @@ public class SGRStereoscopic extends SGRAbstract implements ISGR, IObserver {
 
             GlobalResources.spriteBatch.begin();
             GlobalResources.spriteBatch.setColor(1f, 1f, 1f, 1f);
-            GlobalResources.spriteBatch.draw(tex, scaleX * rw / 2, 0, 0, 0, rw / 2, rh, scaleX, scaleY, 0, 0, 0, rw / 2, rh, false, true);
+            GlobalResources.spriteBatch.draw(tex, rw / 2, 0, 0, 0, rw / 2, rh, 1, 1, 0, 0, 0, rw / 2, rh, false, true);
             GlobalResources.spriteBatch.end();
 
             if (fb != null)

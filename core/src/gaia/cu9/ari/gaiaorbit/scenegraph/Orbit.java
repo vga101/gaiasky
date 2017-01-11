@@ -11,7 +11,6 @@ import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.data.orbit.IOrbitDataProvider;
 import gaia.cu9.ari.gaiaorbit.data.orbit.OrbitData;
 import gaia.cu9.ari.gaiaorbit.data.orbit.OrbitDataLoader;
-import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.render.system.LineRenderSystem;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.OrbitComponent;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
@@ -98,7 +97,7 @@ public class Orbit extends LineObject {
 
     @Override
     protected void addToRenderLists(ICamera camera) {
-        if (GaiaSky.instance.isOn(ct)) {
+        if (GaiaSky.instance.isOn(ct) && !name.equalsIgnoreCase("gaia orbit")) {
             float angleLimit = ANGLE_LIMIT * camera.getFovFactor();
             if (viewAngle > angleLimit) {
                 if (viewAngle < angleLimit * SHADER_MODEL_OVERLAP_FACTOR) {

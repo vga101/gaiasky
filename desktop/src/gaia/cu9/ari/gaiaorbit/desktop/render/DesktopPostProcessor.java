@@ -64,7 +64,7 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
             pps[RenderType.frame.index] = newPostProcessor(getWidth(RenderType.frame), getHeight(RenderType.frame));
         }
 
-        EventManager.instance.subscribe(this, Events.PROPERTIES_WRITTEN, Events.BLOOM_CMD, Events.LENS_FLARE_CMD, Events.MOTION_BLUR_CMD, Events.LIGHT_POS_2D_UPDATED, Events.LIGHT_SCATTERING_CMD, Events.TOGGLE_STEREOSCOPIC_CMD, Events.TOGGLE_STEREO_PROFILE_CMD, Events.FISHEYE_CMD, Events.CAMERA_MOTION_UPDATED, Events.CUBEMAP360_CMD, Events.ANTIALIASING_CMD, Events.BRIGHTNESS_CMD, Events.CONTRAST_CMD);
+        EventManager.instance.subscribe(this, Events.PROPERTIES_WRITTEN, Events.BLOOM_CMD, Events.LENS_FLARE_CMD, Events.MOTION_BLUR_CMD, Events.LIGHT_POS_2D_UPDATED, Events.LIGHT_SCATTERING_CMD, Events.FISHEYE_CMD, Events.CAMERA_MOTION_UPDATED, Events.CUBEMAP360_CMD, Events.ANTIALIASING_CMD, Events.BRIGHTNESS_CMD, Events.CONTRAST_CMD, Events.TOGGLE_STEREO_PROFILE_CMD, Events.TOGGLE_STEREOSCOPIC_CMD);
 
     }
 
@@ -168,8 +168,8 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
 
         // DISTORTION (STEREOSCOPIC MODE)
         ppb.curvature = new Curvature();
-        ppb.curvature.setDistortion(0.8f);
-        ppb.curvature.setZoom(0.8f);
+        ppb.curvature.setDistortion(1.2f);
+        ppb.curvature.setZoom(0.75f);
         ppb.curvature.setEnabled(GlobalConf.program.STEREOSCOPIC_MODE && GlobalConf.program.STEREO_PROFILE == StereoProfile.VR_HEADSET);
         ppb.pp.addEffect(ppb.curvature);
 
@@ -379,12 +379,18 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
         case TOGGLE_STEREOSCOPIC_CMD:
         case TOGGLE_STEREO_PROFILE_CMD:
             boolean curvatureEnabled = GlobalConf.program.STEREOSCOPIC_MODE && GlobalConf.program.STEREO_PROFILE == StereoProfile.VR_HEADSET;
+            boolean viewportHalved = GlobalConf.program.STEREOSCOPIC_MODE && GlobalConf.program.STEREO_PROFILE != StereoProfile.ANAGLYPHIC && GlobalConf.program.STEREO_PROFILE != StereoProfile.HD_3DTV;
+
             for (int i = 0; i < RenderType.values().length; i++) {
                 if (pps[i] != null) {
                     PostProcessBean ppb = pps[i];
                     ppb.curvature.setEnabled(curvatureEnabled);
+
+                    RenderType currentRenderType = RenderType.values()[i];
+                    ppb.lglow.setViewportSize(getWidth(currentRenderType) / (viewportHalved ? 2 : 1), getHeight(currentRenderType));
                 }
             }
+
             break;
         case ANTIALIASING_CMD:
             final int aavalue = (Integer) data[0];
