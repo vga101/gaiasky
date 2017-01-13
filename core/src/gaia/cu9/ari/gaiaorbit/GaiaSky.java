@@ -657,7 +657,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
 
                 // Add spacecraft gui
                 GuiRegistry.registerGui(spacecraftGui);
-                im.addProcessor(spacecraftGui.getGuiStage());
+                im.addProcessor(0, spacecraftGui.getGuiStage());
 
                 // Update state
                 previousGui = currentGui;
@@ -669,7 +669,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
 
                 // Add main gui
                 GuiRegistry.registerGui(previousGui);
-                im.addProcessor(previousGui.getGuiStage());
+                im.addProcessor(0, previousGui.getGuiStage());
 
                 // Update state
                 IGui aux = previousGui;
@@ -687,7 +687,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
 
                 // Add stereo gui
                 GuiRegistry.registerGui(stereoGui);
-                im.addProcessor(stereoGui.getGuiStage());
+                im.addProcessor(0, stereoGui.getGuiStage());
 
                 // Update state
                 previousGui = currentGui;
@@ -701,7 +701,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
                 if (previousGui == null)
                     previousGui = mainGui;
                 GuiRegistry.registerGui(previousGui);
-                im.addProcessor(previousGui.getGuiStage());
+                im.addProcessor(0, previousGui.getGuiStage());
 
                 // Update state
                 currentGui = previousGui;

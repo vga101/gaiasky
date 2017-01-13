@@ -481,7 +481,7 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
         if (mode == CameraMode.Spacecraft) {
             // Register input controller
             if (!im.getProcessors().contains(inputController, true))
-                im.addProcessor(inputController);
+                im.addProcessor(im.size(), inputController);
             // Register controller listener
             Controllers.clearListeners();
             Controllers.addListener(controllerListener);

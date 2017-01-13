@@ -41,6 +41,7 @@ public class SearchDialog extends Window {
                     if (ie.getType() == Type.keyUp) {
                         if (ie.getKeyCode() == Keys.ESCAPE || ie.getKeyCode() == Keys.ENTER) {
                             me.remove();
+                            return true;
                         } else {
                             String text = searchInput.getText();
                             if (sg.containsNode(text.toLowerCase())) {
