@@ -94,6 +94,8 @@ These keyboard controls apply to the focus mode and also to the free mode.
 +------------------------------------+---------------------------------------------------+
 | ``L-CTRL`` + ``L-SHIFT`` + ``S``   | Switch between stereoscopic profiles              |
 +------------------------------------+---------------------------------------------------+
+| ``L-CTRL`` + ``L-SHIFT`` + ``G``   | Toggle galaxy renderer                            |
++------------------------------------+---------------------------------------------------+
 
 .. _keyboard-spacecraft-mode:
 

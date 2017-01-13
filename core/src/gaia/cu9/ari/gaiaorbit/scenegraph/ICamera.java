@@ -40,6 +40,8 @@ public interface ICamera {
 
     public void setPos(Vector3d pos);
 
+    public void setDirection(Vector3d dir);
+
     public Vector3d getInversePos();
 
     public Vector3d getDirection();
@@ -49,6 +51,10 @@ public interface ICamera {
     public Vector3d[] getDirections();
 
     public int getNCameras();
+
+    public void setShift(Vector3d shift);
+
+    public Vector3d getShift();
 
     /**
      * Updates the camera.

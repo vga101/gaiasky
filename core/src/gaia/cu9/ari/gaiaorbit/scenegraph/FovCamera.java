@@ -278,6 +278,13 @@ public class FovCamera extends AbstractCamera implements IObserver {
     }
 
     @Override
+    public void setDirection(Vector3d dir) {
+        int idx = parent.mode.ordinal() - CameraMode.Gaia_FOV1.ordinal();
+        idx = Math.min(idx, 1);
+        directions[idx].set(dir);
+    }
+
+    @Override
     public Vector3d getUp() {
         return up;
     }

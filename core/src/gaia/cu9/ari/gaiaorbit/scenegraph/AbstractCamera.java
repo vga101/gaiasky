@@ -17,7 +17,7 @@ public abstract class AbstractCamera implements ICamera {
     /** Camera near values **/
     public static final double CAM_NEAR = 1e11 * Constants.KM_TO_U;
 
-    public Vector3d pos, posinv;
+    public Vector3d pos, posinv, shift;
     /**
      * Angle from the center to the corner of the screen in scene coordinates,
      * in radians
@@ -50,6 +50,7 @@ public abstract class AbstractCamera implements ICamera {
         this.parent = parent;
         pos = new Vector3d();
         posinv = new Vector3d();
+        shift = new Vector3d();
 
         camLeft = new PerspectiveCamera(GlobalConf.scene.CAMERA_FOV, Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight());
         camLeft.near = (float) CAM_NEAR;
@@ -212,6 +213,16 @@ public abstract class AbstractCamera implements ICamera {
     @Override
     public void setCameraStereoRight(PerspectiveCamera cam) {
         copyCamera(cam, camRight);
+    }
+
+    @Override
+    public void setShift(Vector3d shift) {
+        this.shift.set(shift);
+    }
+
+    @Override
+    public Vector3d getShift() {
+        return this.shift;
     }
 
 }

@@ -192,6 +192,11 @@ public class CameraManager implements ICamera, IObserver {
     }
 
     @Override
+    public void setDirection(Vector3d dir) {
+        current.setDirection(dir);
+    }
+
+    @Override
     public Vector3d getUp() {
         return current.getUp();
     }
@@ -435,6 +440,16 @@ public class CameraManager implements ICamera, IObserver {
     public void resize(int width, int height) {
         for (ICamera cam : cameras)
             cam.resize(width, height);
+    }
+
+    @Override
+    public void setShift(Vector3d shift) {
+        current.setShift(shift);
+    }
+
+    @Override
+    public Vector3d getShift() {
+        return current.getShift();
     }
 
 }

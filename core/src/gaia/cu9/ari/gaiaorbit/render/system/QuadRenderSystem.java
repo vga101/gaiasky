@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Quaternion;
+import com.badlogic.gdx.math.Vector3;
 
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
@@ -28,6 +29,7 @@ public class QuadRenderSystem extends AbstractRenderSystem implements IObserver 
     private boolean useStarColorTransit;
     private boolean starColorTransit = false;
     private Quaternion quaternion;
+    private Vector3 aux;
 
     /**
      * Creates a new shader quad render component.
@@ -71,6 +73,7 @@ public class QuadRenderSystem extends AbstractRenderSystem implements IObserver 
         mesh.setIndices(indices);
 
         quaternion = new Quaternion();
+        aux = new Vector3();
 
     }
 
@@ -126,6 +129,7 @@ public class QuadRenderSystem extends AbstractRenderSystem implements IObserver 
         // General uniforms
         shaderProgram.setUniformMatrix("u_projTrans", camera.getCamera().combined);
         shaderProgram.setUniformf("u_quaternion", quaternion.x, quaternion.y, quaternion.z, quaternion.w);
+        shaderProgram.setUniformf("u_camShift", camera.getCurrent().getShift().put(aux));
 
         if (!Constants.mobile) {
             // Global uniforms

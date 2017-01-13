@@ -949,6 +949,11 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
     }
 
     @Override
+    public void setDirection(Vector3d dir) {
+        this.direction.set(dir);
+    }
+
+    @Override
     public Vector3d getUp() {
         return up;
     }

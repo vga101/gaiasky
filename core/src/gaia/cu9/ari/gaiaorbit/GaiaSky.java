@@ -704,9 +704,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
                 im.addProcessor(previousGui.getGuiStage());
 
                 // Update state
-                IGui aux = previousGui;
-                previousGui = currentGui;
-                currentGui = aux;
+                currentGui = previousGui;
             }
 
             break;

@@ -13,6 +13,7 @@ uniform vec3 u_pos;
 uniform float u_size;
 uniform float u_apparent_angle;
 uniform float u_th_angle_point;
+uniform vec3 u_camShift;
 
 varying vec4 v_color;
 varying vec2 v_texCoords;
@@ -33,9 +34,9 @@ void main()
    // Translate
    mat4 translate = mat4(1.0);
    
-   translate[3][0] = u_pos.x;
-   translate[3][1] = u_pos.y;
-   translate[3][2] = u_pos.z;
+   translate[3][0] = u_pos.x - u_camShift.x;
+   translate[3][1] = u_pos.y - u_camShift.y;
+   translate[3][2] = u_pos.z - u_camShift.z;
    translate[3][3] = 1.0;
    transform *= translate;
    

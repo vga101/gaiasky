@@ -282,7 +282,7 @@ public class GalaxyRenderSystem extends ImmediateRenderSystem implements IObserv
 
                 // General uniforms
                 quadProgram.setUniformMatrix("u_projModelView", camera.getCamera().combined);
-                quadProgram.setUniformf("u_camPos", camera.getCurrent().getPos().setVector3(aux));
+                quadProgram.setUniformf("u_camPos", camera.getCurrent().getPos().put(aux));
                 quadProgram.setUniformf("u_alpha", 0.015f * mw.opacity * alphas[mw.ct[0].ordinal()]);
 
                 for (int i = 0; i < 4; i++) {
@@ -307,10 +307,10 @@ public class GalaxyRenderSystem extends ImmediateRenderSystem implements IObserv
                 }
                 shaderProgram.begin();
                 shaderProgram.setUniformMatrix("u_projModelView", camera.getCamera().combined);
-                shaderProgram.setUniformf("u_camPos", camera.getCurrent().getPos().setVector3(aux));
+                shaderProgram.setUniformf("u_camPos", camera.getCurrent().getPos().put(aux));
                 shaderProgram.setUniformf("u_fovFactor", camera.getFovFactor());
                 shaderProgram.setUniformf("u_alpha", mw.opacity * alphas[mw.ct[0].ordinal()] * 0.3f);
-                shaderProgram.setUniformf("u_ar", GlobalConf.program.STEREOSCOPIC_MODE && GlobalConf.program.STEREO_PROFILE != StereoProfile.HD_3DTV ? 0.5f : 1f);
+                shaderProgram.setUniformf("u_ar", GlobalConf.program.STEREOSCOPIC_MODE && (GlobalConf.program.STEREO_PROFILE != StereoProfile.HD_3DTV && GlobalConf.program.STEREO_PROFILE != StereoProfile.ANAGLYPHIC) ? 0.5f : 1f);
                 curr.mesh.setVertices(curr.vertices, 0, curr.vertexIdx);
                 curr.mesh.render(shaderProgram, ShapeType.Point.getGlType());
                 shaderProgram.end();
