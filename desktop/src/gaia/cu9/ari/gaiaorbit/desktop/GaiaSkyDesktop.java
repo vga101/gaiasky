@@ -97,6 +97,8 @@ public class GaiaSkyDesktop implements IObserver {
             }
 
             // Swing look and feel
+            // This fixes HiDPI in linux
+            // UIManager.setLookAndFeel("com.sun.java.swing.plaf.gtk.GTKLookAndFeel");
             UIManager.setLookAndFeel("com.pagosoft.plaf.PgsLookAndFeel");
             setUIFont(new javax.swing.plaf.FontUIResource("SansSerif", Font.PLAIN, 10));
 

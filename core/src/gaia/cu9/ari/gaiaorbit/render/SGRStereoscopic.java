@@ -254,16 +254,18 @@ public class SGRStereoscopic extends SGRAbstract implements ISGR, IObserver {
             cam.position.add(sidef);
             cam.direction.rotate(cam.up, (float) -angle);
 
-            camera.getPos().add(side2);
-            camera.setShift(side);
+            // Uncomment to enable 3D in points
+            //camera.getPos().add(side2);
+            //camera.setShift(side);
 
         } else {
             cam.position.sub(sidef);
             cam.direction.rotate(cam.up, (float) angle);
 
-            camera.getPos().sub(side2);
-            camera.setShift(side);
-            camera.getShift().scl(-1d);
+            // Uncomment to enable 3D in points
+            //camera.getPos().sub(side2);
+            //camera.setShift(side);
+            //camera.getShift().scl(-1d);
         }
         cam.update();
     }
