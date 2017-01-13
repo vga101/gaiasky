@@ -39,6 +39,8 @@ import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
  */
 public class SGRStereoscopic extends SGRAbstract implements ISGR, IObserver {
 
+	private static final double EYE_ANGLE_DEG = 1.5;
+	
     /** Viewport to use in steoeroscopic mode **/
     private Viewport stretchViewport;
 
@@ -48,7 +50,7 @@ public class SGRStereoscopic extends SGRAbstract implements ISGR, IObserver {
     private Anaglyphic anaglyphic;
 
     private Vector3 aux1, aux2, aux3;
-    private Vector3d aux1d, aux2d, aux3d, aux4d;
+    private Vector3d aux1d, aux2d, aux3d, aux4d, aux5d;
 
     public SGRStereoscopic() {
         super();
@@ -70,6 +72,7 @@ public class SGRStereoscopic extends SGRAbstract implements ISGR, IObserver {
         aux2d = new Vector3d();
         aux3d = new Vector3d();
         aux4d = new Vector3d();
+        aux5d = new Vector3d();
 
         EventManager.instance.subscribe(this, Events.FRAME_SIZE_UDPATE, Events.SCREENSHOT_SIZE_UDPATE);
     }
@@ -82,7 +85,7 @@ public class SGRStereoscopic extends SGRAbstract implements ISGR, IObserver {
         PerspectiveCamera cam = camera.getCamera();
         // Vector of 1 meter length pointing to the side of the camera
         double separation = Constants.M_TO_U * GlobalConf.program.STEREOSCOPIC_EYE_SEPARATION_M;
-        double separationCloseup = separation;
+        double separationCapped = separation;
         double dirangleDeg = 0;
 
         CelestialBody currentFocus = null;
@@ -94,15 +97,19 @@ public class SGRStereoscopic extends SGRAbstract implements ISGR, IObserver {
         if (currentFocus != null) {
             // If we have focus, we adapt the eye separation
             double distToFocus = currentFocus.distToCamera - currentFocus.getRadius();
-            //separation = (float) Math.min((Math.tan(Math.toRadians(1.5)) * distToFocus), .5e3 * Constants.AU_TO_U);
-            separation = Math.tan(Math.toRadians(1.5)) * distToFocus;
-            separationCloseup = Math.min(separation, 1e2 * Constants.AU_TO_U);
-            dirangleDeg = 1.5;
+            // Lets calculate the separation
+            separation = Math.tan(Math.toRadians(EYE_ANGLE_DEG)) * distToFocus;
+            // Lets cap it to 100 AU
+            separationCapped = Math.min(separation, 1e2 * Constants.AU_TO_U);
+            dirangleDeg = EYE_ANGLE_DEG; 
         }
 
-        Vector3d side = aux2d.set(camera.getDirection()).crs(camera.getUp()).nor().scl(separation - separationCloseup);
-        Vector3d side2 = aux4d.set(camera.getDirection()).crs(camera.getUp()).nor().scl(separation);
-        Vector3d sideCloseup = aux3d.set(camera.getDirection()).crs(camera.getUp()).nor().scl(separationCloseup);
+        // Aux5d contains the direction to the side of the camera, normalised
+        aux5d.set(camera.getDirection()).crs(camera.getUp()).nor();
+        
+        Vector3d side = aux4d.set(aux5d).nor().scl(separation);
+        Vector3d sideRemainder = aux2d.set(aux5d).scl(separation - separationCapped);
+        Vector3d sideCapped = aux3d.set(aux5d).nor().scl(separationCapped);
         Vector3 backupPos = aux2.set(cam.position);
         Vector3 backupDir = aux3.set(cam.direction);
         Vector3d backupPosd = aux1d.set(camera.getPos());
@@ -121,7 +128,7 @@ public class SGRStereoscopic extends SGRAbstract implements ISGR, IObserver {
 
             // Camera to the left
             if (movecam) {
-                moveCamera(camera, side, side2, sideCloseup, dirangleDeg, false);
+                moveCamera(camera, sideRemainder, side, sideCapped, dirangleDeg, false);
             }
             camera.setCameraStereoLeft(cam);
             sgr.renderScene(camera, t, rc);
@@ -136,7 +143,7 @@ public class SGRStereoscopic extends SGRAbstract implements ISGR, IObserver {
             // Camera to the right
             if (movecam) {
                 restoreCameras(camera, cam, backupPosd, backupPos, backupDir);
-                moveCamera(camera, side, side2, sideCloseup, dirangleDeg, true);
+                moveCamera(camera, sideRemainder, side, sideCapped, dirangleDeg, true);
             }
             camera.setCameraStereoRight(cam);
             sgr.renderScene(camera, t, rc);
@@ -179,7 +186,7 @@ public class SGRStereoscopic extends SGRAbstract implements ISGR, IObserver {
 
             // Camera to left
             if (movecam) {
-                moveCamera(camera, side, side2, sideCloseup, dirangleDeg, changesides);
+                moveCamera(camera, sideRemainder, side, sideCapped, dirangleDeg, changesides);
             }
             camera.setCameraStereoLeft(cam);
             sgr.renderScene(camera, t, rc);
@@ -210,7 +217,7 @@ public class SGRStereoscopic extends SGRAbstract implements ISGR, IObserver {
             // Camera to right
             if (movecam) {
                 restoreCameras(camera, cam, backupPosd, backupPos, backupDir);
-                moveCamera(camera, side, side2, sideCloseup, dirangleDeg, !changesides);
+                moveCamera(camera, sideRemainder, side, sideCapped, dirangleDeg, !changesides);
             }
             camera.setCameraStereoRight(cam);
             sgr.renderScene(camera, t, rc);
@@ -246,26 +253,26 @@ public class SGRStereoscopic extends SGRAbstract implements ISGR, IObserver {
         camera.getShift().scl(0d);
     }
 
-    private void moveCamera(ICamera camera, Vector3d side, Vector3d side2, Vector3d sideCloseup, double angle, boolean switchSides) {
+    private void moveCamera(ICamera camera, Vector3d sideRemainder, Vector3d side, Vector3d sideCapped, double angle, boolean switchSides) {
         PerspectiveCamera cam = camera.getCamera();
-        Vector3 sidef = sideCloseup.put(aux1);
+        Vector3 sidef = sideCapped.put(aux1);
 
         if (switchSides) {
             cam.position.add(sidef);
             cam.direction.rotate(cam.up, (float) -angle);
 
             // Uncomment to enable 3D in points
-            //camera.getPos().add(side2);
-            //camera.setShift(side);
+            camera.getPos().add(sideRemainder);
+            camera.setShift(sideRemainder);
 
         } else {
             cam.position.sub(sidef);
             cam.direction.rotate(cam.up, (float) angle);
 
             // Uncomment to enable 3D in points
-            //camera.getPos().sub(side2);
-            //camera.setShift(side);
-            //camera.getShift().scl(-1d);
+            camera.getPos().sub(sideRemainder);
+            camera.setShift(sideRemainder);
+            camera.getShift().scl(-1d);
         }
         cam.update();
     }

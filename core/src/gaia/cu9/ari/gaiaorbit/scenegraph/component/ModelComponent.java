@@ -15,6 +15,7 @@ import com.badlogic.gdx.graphics.g3d.attributes.BlendingAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Disposable;
 
 import gaia.cu9.ari.gaiaorbit.data.AssetBean;
@@ -22,6 +23,7 @@ import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.ModelCache;
 import gaia.cu9.ari.gaiaorbit.util.Pair;
+import gaia.cu9.ari.gaiaorbit.util.override.Vector3Attribute;
 
 public class ModelComponent implements Disposable {
     private static ColorAttribute ambient;
@@ -136,7 +138,7 @@ public class ModelComponent implements Disposable {
         if (instance != null && instance.model != null)
             instance.model.dispose();
     }
-
+    
     public void setTransparency(float alpha) {
         if (instance != null) {
             for (int i = 0; i < instance.materials.size; i++) {

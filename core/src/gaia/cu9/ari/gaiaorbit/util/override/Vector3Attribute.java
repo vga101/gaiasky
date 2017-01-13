@@ -28,6 +28,9 @@ public class Vector3Attribute extends Attribute {
     public static final String InvWavelengthAlias = "invWavelength";
     public static final long InvWavelength = register(InvWavelengthAlias);
 
+    public static final String CameraUpAlias = "cameraUp";
+    public static final long CameraUp = register(CameraUpAlias);
+    
     @Override
     public Attribute copy() {
         return new Vector3Attribute(type, value);

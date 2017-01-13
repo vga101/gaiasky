@@ -99,13 +99,33 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
 
         ppb.pp = new PostProcessor(width, height, true, false, true);
 
-        // BLOOM
-        ppb.bloom = new Bloom((int) (width * bloomFboScale), (int) (height * bloomFboScale));
-        ppb.bloom.setBloomIntesity(GlobalConf.postprocess.POSTPROCESS_BLOOM_INTENSITY);
-        ppb.bloom.setThreshold(0f);
-        ppb.bloom.setEnabled(GlobalConf.postprocess.POSTPROCESS_BLOOM_INTENSITY > 0);
-        ppb.pp.addEffect(ppb.bloom);
-
+        // LENS FLARE
+        float lensFboScale;
+        if (GlobalConf.scene.isHighQuality()) {
+            nghosts = 12;
+            lensFboScale = 0.5f;
+        } else if (GlobalConf.scene.isNormalQuality()) {
+            nghosts = 10;
+            lensFboScale = 0.3f;
+        } else {
+            nghosts = 6;
+            lensFboScale = 0.2f;
+        }
+        ppb.lens = new LensFlare2((int) (width * lensFboScale), (int) (height * lensFboScale));
+        ppb.lens.setGhosts(nghosts);
+        ppb.lens.setHaloWidth(0.4f);
+        ppb.lens.setLensColorTexture(new Texture(Gdx.files.internal("img/lenscolor.png")));
+        ppb.lens.setLensDirtTexture(new Texture(Gdx.files.internal(GlobalConf.scene.isHighQuality() ? "img/lensdirt.jpg" : "img/lensdirt_s.jpg")));
+        ppb.lens.setLensStarburstTexture(new Texture(Gdx.files.internal("img/lensstarburst.jpg")));
+        ppb.lens.setFlareIntesity(GlobalConf.postprocess.POSTPROCESS_LENS_FLARE ? flareIntensity : 0f);
+        ppb.lens.setFlareSaturation(0.5f);
+        ppb.lens.setBaseIntesity(1f);
+        ppb.lens.setBias(-0.95f);
+        ppb.lens.setBlurAmount(1f);
+        ppb.lens.setBlurPasses(10);
+        ppb.lens.setEnabled(true);
+        ppb.pp.addEffect(ppb.lens);
+        
         // LIGHT GLOW
         int nsamples;
         int lgw, lgh;
@@ -138,33 +158,13 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
         ppb.lglow.setTextureScale(1f / GaiaSky.instance.cam.getFovFactor());
         ppb.lglow.setEnabled(GlobalConf.postprocess.POSTPROCESS_LIGHT_SCATTERING);
         ppb.pp.addEffect(ppb.lglow);
-
-        // LENS FLARE
-        float lensFboScale;
-        if (GlobalConf.scene.isHighQuality()) {
-            nghosts = 12;
-            lensFboScale = 0.5f;
-        } else if (GlobalConf.scene.isNormalQuality()) {
-            nghosts = 10;
-            lensFboScale = 0.3f;
-        } else {
-            nghosts = 6;
-            lensFboScale = 0.2f;
-        }
-        ppb.lens = new LensFlare2((int) (width * lensFboScale), (int) (height * lensFboScale));
-        ppb.lens.setGhosts(nghosts);
-        ppb.lens.setHaloWidth(0.4f);
-        ppb.lens.setLensColorTexture(new Texture(Gdx.files.internal("img/lenscolor.png")));
-        ppb.lens.setLensDirtTexture(new Texture(Gdx.files.internal(GlobalConf.scene.isHighQuality() ? "img/lensdirt.jpg" : "img/lensdirt_s.jpg")));
-        ppb.lens.setLensStarburstTexture(new Texture(Gdx.files.internal("img/lensstarburst.jpg")));
-        ppb.lens.setFlareIntesity(GlobalConf.postprocess.POSTPROCESS_LENS_FLARE ? flareIntensity : 0f);
-        ppb.lens.setFlareSaturation(0.5f);
-        ppb.lens.setBaseIntesity(1f);
-        ppb.lens.setBias(-0.95f);
-        ppb.lens.setBlurAmount(1f);
-        ppb.lens.setBlurPasses(10);
-        ppb.lens.setEnabled(true);
-        ppb.pp.addEffect(ppb.lens);
+        
+        // BLOOM
+        ppb.bloom = new Bloom((int) (width * bloomFboScale), (int) (height * bloomFboScale));
+        ppb.bloom.setBloomIntesity(GlobalConf.postprocess.POSTPROCESS_BLOOM_INTENSITY);
+        ppb.bloom.setThreshold(0f);
+        ppb.bloom.setEnabled(GlobalConf.postprocess.POSTPROCESS_BLOOM_INTENSITY > 0);
+        ppb.pp.addEffect(ppb.bloom);
 
         // DISTORTION (STEREOSCOPIC MODE)
         ppb.curvature = new Curvature();

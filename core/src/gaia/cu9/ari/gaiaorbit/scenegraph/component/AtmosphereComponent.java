@@ -118,6 +118,7 @@ public class AtmosphereComponent {
         mat.set(new Vector3Attribute(Vector3Attribute.LightPos, new Vector3()));
         mat.set(new Vector3Attribute(Vector3Attribute.InvWavelength, new Vector3(1.0f / m_fWavelength4[0],
                 1.0f / m_fWavelength4[1], 1.0f / m_fWavelength4[2])));
+        
     }
 
     public void removeAtmosphericScattering(Material mat) {

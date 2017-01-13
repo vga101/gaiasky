@@ -15,6 +15,7 @@ import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 
@@ -32,7 +33,7 @@ import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 public class GalaxyRenderSystem extends ImmediateRenderSystem implements IObserver {
     private boolean UPDATE_POINTS = true;
 
-    Vector3 aux;
+    Vector3 aux1;
     int additionalOffset, pmOffset;
 
     private ShaderProgram quadProgram;
@@ -82,7 +83,7 @@ public class GalaxyRenderSystem extends ImmediateRenderSystem implements IObserv
         curr = new MeshData();
         meshes[0] = curr;
 
-        aux = new Vector3();
+        aux1 = new Vector3();
 
         maxVertices = 3000000;
 
@@ -127,8 +128,8 @@ public class GalaxyRenderSystem extends ImmediateRenderSystem implements IObserv
                 float density = GlobalConf.SCALE_FACTOR;
                 for (float[] star : mw.pointData) {
                     // VERTEX
-                    aux.set(star[0], star[1], star[2]);
-                    float distanceCenter = aux.sub(center).len() / (mw.getRadius() * 2f);
+                    aux1.set(star[0], star[1], star[2]);
+                    float distanceCenter = aux1.sub(center).len() / (mw.getRadius() * 2f);
 
                     float[] col = new float[] { (float) (rand.nextGaussian() * 0.02f) + 0.93f, (float) (rand.nextGaussian() * 0.02) + 0.8f, (float) (rand.nextGaussian() * 0.02) + 0.97f, rand.nextFloat() * 0.5f + 0.4f };
 
@@ -159,11 +160,11 @@ public class GalaxyRenderSystem extends ImmediateRenderSystem implements IObserv
 
                     //cb.transform.getTranslationf(aux);
                     // POSITION
-                    aux.set(star[0], star[1], star[2]);
+                    aux1.set(star[0], star[1], star[2]);
                     final int idx = curr.vertexIdx;
-                    curr.vertices[idx] = aux.x;
-                    curr.vertices[idx + 1] = aux.y;
-                    curr.vertices[idx + 2] = aux.z;
+                    curr.vertices[idx] = aux1.x;
+                    curr.vertices[idx + 1] = aux1.y;
+                    curr.vertices[idx + 2] = aux1.z;
 
                     curr.vertexIdx += curr.vertexSize;
 
@@ -282,7 +283,7 @@ public class GalaxyRenderSystem extends ImmediateRenderSystem implements IObserv
 
                 // General uniforms
                 quadProgram.setUniformMatrix("u_projModelView", camera.getCamera().combined);
-                quadProgram.setUniformf("u_camPos", camera.getCurrent().getPos().put(aux));
+                quadProgram.setUniformf("u_camPos", camera.getCurrent().getPos().put(aux1));
                 quadProgram.setUniformf("u_alpha", 0.015f * mw.opacity * alphas[mw.ct[0].ordinal()]);
 
                 for (int i = 0; i < 4; i++) {
@@ -307,7 +308,7 @@ public class GalaxyRenderSystem extends ImmediateRenderSystem implements IObserv
                 }
                 shaderProgram.begin();
                 shaderProgram.setUniformMatrix("u_projModelView", camera.getCamera().combined);
-                shaderProgram.setUniformf("u_camPos", camera.getCurrent().getPos().put(aux));
+                shaderProgram.setUniformf("u_camPos", camera.getCurrent().getPos().put(aux1));
                 shaderProgram.setUniformf("u_fovFactor", camera.getFovFactor());
                 shaderProgram.setUniformf("u_alpha", mw.opacity * alphas[mw.ct[0].ordinal()] * 0.3f);
                 shaderProgram.setUniformf("u_ar", GlobalConf.program.STEREOSCOPIC_MODE && (GlobalConf.program.STEREO_PROFILE != StereoProfile.HD_3DTV && GlobalConf.program.STEREO_PROFILE != StereoProfile.ANAGLYPHIC) ? 0.5f : 1f);
@@ -319,7 +320,8 @@ public class GalaxyRenderSystem extends ImmediateRenderSystem implements IObserv
             /**
              * IMAGE RENDERER
              */
-            mw.mc.setTransparency(mw.opacity * alphas[mw.ct[0].ordinal()] * (GlobalConf.scene.GALAXY_3D ? 0.7f : 0.8f));
+            mw.mc.setTransparency(mw.opacity * alphas[mw.ct[0].ordinal()] * (GlobalConf.scene.GALAXY_3D ? 0.4f : 0.8f));
+            
             modelBatch.begin(camera.getCamera());
             modelBatch.render(mw.mc.instance, mw.mc.env);
             modelBatch.end();
@@ -343,4 +345,5 @@ public class GalaxyRenderSystem extends ImmediateRenderSystem implements IObserv
     @Override
     public void notify(Events event, Object... data) {
     }
+    
 }
