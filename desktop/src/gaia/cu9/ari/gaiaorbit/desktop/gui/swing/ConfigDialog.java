@@ -56,7 +56,6 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
-import javax.swing.border.MatteBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -99,12 +98,6 @@ import slider.RangeSlider;
 public class ConfigDialog extends I18nJFrame {
     private static long fiveDaysMs = 5 * 24 * 60 * 60 * 1000;
 
-    /** Border params **/
-    private static final Color bcol = new Color(0.0f, 0.0f, 0.0f);
-    private static final int just = TitledBorder.LEADING;
-    private static final int pos = TitledBorder.ABOVE_TOP;
-    private static int thick = 2;
-
     private static ConfigDialog singleton = null;
 
     public static void initialise(GaiaSkyDesktop gsd, boolean startup) {
@@ -132,8 +125,6 @@ public class ConfigDialog extends I18nJFrame {
         FontUtilities.setFontScale(GlobalConf.SCALE_FACTOR);
 
         nf3 = new DecimalFormat("#.000");
-
-        thick = scale(thick);
 
         // Initialize
         initialize(gsd, startup);
@@ -215,9 +206,6 @@ public class ConfigDialog extends I18nJFrame {
         /** TABBED PANEL **/
 
         final JXTabbedPane tabbedPane = new JXTabbedPane(JTabbedPane.LEFT);
-        AbstractTabRenderer renderer = (AbstractTabRenderer) tabbedPane.getTabRenderer();
-        renderer.setPrototypeText("123456789012345678");
-        renderer.setHorizontalTextAlignment(SwingConstants.LEADING);
 
         /**
          * ====== GRAPHICS TAB =======
@@ -225,7 +213,7 @@ public class ConfigDialog extends I18nJFrame {
 
         /** RESOLUTION **/
         JPanel mode = new JPanel(new MigLayout("fillx", "[grow,fill][grow,fill]", ""));
-        mode.setBorder(new TitledBorder(new MatteBorder(new Insets(thick, 0, 0, 0), bcol), txt("gui.resolutionmode"), just, pos));
+        mode.setBorder(new TitledBorder(txt("gui.resolutionmode")));
 
         // Full screen mode resolutions
         DisplayMode[] modes = LwjglApplicationConfiguration.getDisplayModes();
@@ -291,7 +279,7 @@ public class ConfigDialog extends I18nJFrame {
 
         /** GRAPHICS **/
         JPanel graphics = new JPanel(new MigLayout("", "[grow,fill][grow,fill][]", ""));
-        graphics.setBorder(new TitledBorder(new MatteBorder(new Insets(thick, 0, 0, 0), bcol), txt("gui.graphicssettings"), just, pos));
+        graphics.setBorder(new TitledBorder(txt("gui.graphicssettings")));
 
         // Quality
         JLabel gqTooltip = new JLabel(IconManager.get("config/info-tooltip"));
@@ -368,7 +356,7 @@ public class ConfigDialog extends I18nJFrame {
          * ====== USER INTERFACE TAB =======
          **/
         JPanel ui = new JPanel(new MigLayout("", "[grow,fill][grow,fill]", ""));
-        ui.setBorder(new TitledBorder(new MatteBorder(new Insets(thick, 0, 0, 0), bcol), txt("gui.ui.interfacesettings"), just, pos));
+        ui.setBorder(new TitledBorder(txt("gui.ui.interfacesettings")));
 
         File i18nfolder = new File(GaiaSkyDesktop.ASSETS_LOC + "i18n/");
 
@@ -440,7 +428,7 @@ public class ConfigDialog extends I18nJFrame {
 
         /** MULTITHREAD **/
         JPanel multithread = new JPanel(new MigLayout("", "[grow,fill][grow,fill]", ""));
-        multithread.setBorder(new TitledBorder(new MatteBorder(new Insets(thick, 0, 0, 0), bcol), txt("gui.multithreading"), just, pos));
+        multithread.setBorder(new TitledBorder(txt("gui.multithreading")));
 
         int maxthreads = Runtime.getRuntime().availableProcessors();
         ComboBoxBean[] cbs = new ComboBoxBean[maxthreads + 1];
@@ -467,7 +455,7 @@ public class ConfigDialog extends I18nJFrame {
 
         /** LEVELS OF DETAIL **/
         JPanel lod = new JPanel(new MigLayout("", "[grow,fill][grow,fill]", ""));
-        lod.setBorder(new TitledBorder(new MatteBorder(new Insets(thick, 0, 0, 0), bcol), txt("gui.lod"), just, pos));
+        lod.setBorder(new TitledBorder(txt("gui.lod")));
 
         // LOD fade
         final JCheckBox lodFadeCb = new JCheckBox(txt("gui.lod.fade"), GlobalConf.scene.OCTREE_PARTICLE_FADE);
@@ -511,7 +499,7 @@ public class ConfigDialog extends I18nJFrame {
          * ====== CONTROLS TAB =======
          */
         JPanel controls = new JPanel(new MigLayout("", "[grow,fill][]", ""));
-        controls.setBorder(new TitledBorder(new MatteBorder(new Insets(thick, 0, 0, 0), bcol), txt("gui.keymappings"), just, pos));
+        controls.setBorder(new TitledBorder(txt("gui.keymappings")));
 
         Map<TreeSet<Integer>, ProgramAction> maps = KeyBindings.instance.getSortedMappings();
         Set<TreeSet<Integer>> keymaps = maps.keySet();
@@ -553,7 +541,7 @@ public class ConfigDialog extends I18nJFrame {
 
         /** SCREENSHOTS CONFIG **/
         JPanel screenshots = new JPanel(new MigLayout("", "[grow,fill][grow,fill]", ""));
-        screenshots.setBorder(new TitledBorder(new MatteBorder(new Insets(thick, 0, 0, 0), bcol), txt("gui.screencapture"), just, pos));
+        screenshots.setBorder(new TitledBorder(txt("gui.screencapture")));
 
         JTextArea screenshotsInfo = new JTextArea(txt("gui.screencapture.info")) {
             @Override
@@ -669,7 +657,7 @@ public class ConfigDialog extends I18nJFrame {
 
         /** IMAGE OUTPUT CONFIG **/
         JPanel imageOutput = new JPanel(new MigLayout("", "[grow,fill][grow,fill]", ""));
-        imageOutput.setBorder(new TitledBorder(new MatteBorder(new Insets(thick, 0, 0, 0), bcol), txt("gui.frameoutput"), just, pos));
+        imageOutput.setBorder(new TitledBorder(txt("gui.frameoutput")));
 
         JTextArea frameInfo = new JTextArea(txt("gui.frameoutput.info")) {
             @Override
@@ -818,7 +806,7 @@ public class ConfigDialog extends I18nJFrame {
          */
 
         JPanel cameraRec = new JPanel(new MigLayout("", "[grow,fill][grow,fill]", ""));
-        cameraRec.setBorder(new TitledBorder(new MatteBorder(new Insets(thick, 0, 0, 0), bcol), txt("gui.camerarec"), just, pos));
+        cameraRec.setBorder(new TitledBorder(txt("gui.camerarec")));
 
         // TARGET FPS
         final JSpinner targetFPScamera = new JSpinner(new SpinnerNumberModel(GlobalConf.frame.CAMERA_REC_TARGET_FPS, 1, 60, 1));
@@ -855,7 +843,7 @@ public class ConfigDialog extends I18nJFrame {
         mode360Info.setForeground(darkgreen);
 
         JPanel mode360 = new JPanel(new MigLayout("", "[grow,fill][grow,fill]", ""));
-        mode360.setBorder(new TitledBorder(new MatteBorder(new Insets(thick, 0, 0, 0), bcol), txt("gui.360"), just, pos));
+        mode360.setBorder(new TitledBorder(txt("gui.360")));
 
         // CUBEMAP RESOLUTION
         final JSpinner cubemapResolution = new JSpinner(new SpinnerNumberModel(GlobalConf.scene.CUBEMAP_FACE_RESOLUTION, 20, 15000, 1));
@@ -874,7 +862,7 @@ public class ConfigDialog extends I18nJFrame {
          * ====== DATA TAB =======
          */
         JPanel datasource = new JPanel(new MigLayout("", "[][grow,fill][]", ""));
-        datasource.setBorder(new TitledBorder(new MatteBorder(new Insets(thick, 0, 0, 0), bcol), txt("gui.data.source"), just, pos));
+        datasource.setBorder(new TitledBorder(txt("gui.data.source")));
 
         // HYG 
         final JRadioButton hyg = new JRadioButton(txt("gui.data.hyg"));
@@ -901,7 +889,7 @@ public class ConfigDialog extends I18nJFrame {
          * ====== GAIA TAB =======
          */
         JPanel gaia = new JPanel(new MigLayout("", "[][grow,fill][]", ""));
-        gaia.setBorder(new TitledBorder(new MatteBorder(new Insets(thick, 0, 0, 0), bcol), txt("gui.gaia.attitude"), just, pos));
+        gaia.setBorder(new TitledBorder(txt("gui.gaia.attitude")));
 
         // REAL OR NSL attitude
         final JRadioButton real = new JRadioButton(txt("gui.gaia.real"));
@@ -948,7 +936,7 @@ public class ConfigDialog extends I18nJFrame {
         body.add(tabbedPane, "wrap");
         body.add(checkPanel, "wrap");
         if (startup) {
-            body.add(showAgain);
+            body.add(showAgain, "wrap");
         }
 
         /** BUTTONS **/

@@ -1,6 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.desktop;
 
-import java.awt.Font;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -98,9 +97,13 @@ public class GaiaSkyDesktop implements IObserver {
 
             // Swing look and feel
             // This fixes HiDPI in linux
-            // UIManager.setLookAndFeel("com.sun.java.swing.plaf.gtk.GTKLookAndFeel");
-            UIManager.setLookAndFeel("com.pagosoft.plaf.PgsLookAndFeel");
-            setUIFont(new javax.swing.plaf.FontUIResource("SansSerif", Font.PLAIN, 10));
+            if (SysUtils.isLinux()) {
+                UIManager.setLookAndFeel("com.sun.java.swing.plaf.gtk.GTKLookAndFeel");
+            } else if (SysUtils.isWindows()) {
+                UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+            } else {
+                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            }
 
             // Init global configuration
             ConfInit.initialize(new DesktopConfInit());
