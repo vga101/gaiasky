@@ -97,7 +97,7 @@ public class Orbit extends LineObject {
 
     @Override
     protected void addToRenderLists(ICamera camera) {
-        if (GaiaSky.instance.isOn(ct) && !name.equalsIgnoreCase("gaia orbit")) {
+        if (GaiaSky.instance.isOn(ct)) {
             float angleLimit = ANGLE_LIMIT * camera.getFovFactor();
             if (viewAngle > angleLimit) {
                 if (viewAngle < angleLimit * SHADER_MODEL_OVERLAP_FACTOR) {
