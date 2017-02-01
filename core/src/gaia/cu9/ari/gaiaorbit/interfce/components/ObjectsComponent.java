@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Event;
@@ -21,6 +22,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Timer;
 
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
@@ -47,6 +49,8 @@ public class ObjectsComponent extends GuiComponent implements IObserver {
     protected TextField searchBox;
     protected OwnScrollPane focusListScrollPane;
 
+    private Timer focusTimer;
+
     /**
      * Tree to model equivalences
      */
@@ -55,10 +59,12 @@ public class ObjectsComponent extends GuiComponent implements IObserver {
     public ObjectsComponent(Skin skin, Stage stage) {
         super(skin, stage);
         EventManager.instance.subscribe(this, Events.FOCUS_CHANGED);
+        focusTimer = new Timer();
     }
 
     @Override
     public void initialize() {
+
         searchBox = new TextField("", skin);
         searchBox.setName("search box");
         searchBox.setMessageText(txt("gui.objects.search"));
@@ -82,6 +88,16 @@ public class ObjectsComponent extends GuiComponent implements IObserver {
                             }
                         }
                         NaturalInputController.pressedKeys.remove(ie.getKeyCode());
+
+                        if (ie.getKeyCode() == Keys.ESCAPE) {
+                            // Lose focus
+                            stage.setKeyboardFocus(null);
+                        }
+                    } else if (ie.getType() == Type.keyDown) {
+                        if (ie.getKeyCode() == Keys.CONTROL_LEFT || ie.getKeyCode() == Keys.CONTROL_RIGHT || ie.getKeyCode() == Keys.SHIFT_LEFT || ie.getKeyCode() == Keys.SHIFT_RIGHT) {
+                            // Lose focus
+                            stage.setKeyboardFocus(null);
+                        }
                     }
                     return true;
                 }
@@ -105,6 +121,7 @@ public class ObjectsComponent extends GuiComponent implements IObserver {
             }
             objectsTree.expandAll();
             objectsTree.addListener(new EventListener() {
+
                 @Override
                 public boolean handle(Event event) {
                     if (event instanceof ChangeEvent) {
@@ -156,6 +173,7 @@ public class ObjectsComponent extends GuiComponent implements IObserver {
             focusList.setItems(names);
             focusList.pack();//
             focusList.addListener(new EventListener() {
+
                 @Override
                 public boolean handle(Event event) {
                     if (event instanceof ChangeEvent) {

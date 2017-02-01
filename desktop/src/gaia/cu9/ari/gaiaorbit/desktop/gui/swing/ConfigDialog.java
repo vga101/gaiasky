@@ -56,6 +56,7 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
+import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -136,6 +137,14 @@ public class ConfigDialog extends I18nJFrame {
             JSplashLabel label = new JSplashLabel(url, txt("gui.build", GlobalConf.version.build) + " - " + txt("gui.version", GlobalConf.version.version), null, Color.lightGray);
             JPanel imagePanel = new JPanel(new GridLayout(1, 1, 0, 0));
             imagePanel.add(label);
+            imagePanel.setBackground(Color.black);
+            frame.add(imagePanel, BorderLayout.NORTH);
+        } else {
+            JPanel imagePanel = new JPanel(new GridLayout(1, 1, 0, 0));
+            imagePanel.setBorder(new EmptyBorder(5, 5, 5, 5));
+            JLabel buildtext = new JLabel(txt("gui.build", GlobalConf.version.build) + " - " + txt("gui.version", GlobalConf.version.version));
+            buildtext.setHorizontalAlignment(JLabel.CENTER);
+            imagePanel.add(buildtext);
             imagePanel.setBackground(Color.black);
             frame.add(imagePanel, BorderLayout.NORTH);
         }
