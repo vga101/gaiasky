@@ -91,7 +91,7 @@ com.badlogic.gdx.scenes.scene2d.ui.Slider$SliderStyle: {
 	sc-thrust-minus: { background: sc-thrust-bg, knobAfter: sc-thrust-knob-before }
 },
 com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
-	header:  { font: ui-12, fontColor: green },
+	header:  { font: ui-13, fontColor: green },
 	default: { font: ui-11, fontColor: white },
 	default-blue: { font: ui-11, fontColor: blue },
 	default-inv: { font: ui-11, fontColor: black },
