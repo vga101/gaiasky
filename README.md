@@ -255,6 +255,7 @@ people behind the following technologies/resources:
 - Machuca+Arias+Caballero for the music track "Gaia-DR1".
 - [Install4j](http://www.ej-technologies.com/products/install4j/overview.html) (multi-platform installer builder), for providing a free open source license.
 - Bitrock's [InstallBuilder](http://installbuilder.bitrock.com/) for providing a free open source license.
+- [Klemen Čotar](mailto:klemen.cotar@fmf.uni-lj.si) for the Slovene translation.
 - And several online resources without which this would have not been possible.
 
 If you think I missed someone, please let me know.

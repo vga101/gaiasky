@@ -51,6 +51,7 @@ people behind the following technologies/resources:
 -  `Install4j`_ (multi-platform installer builder), for providing a free
    open source license.
 -  Bitrock’s `InstallBuilder`_ for providing a free open source license.
+-  `Klemen Čotar <mailto:klemen.cotar@fmf.uni-lj.si>`_ for the Slovelen translation.
 -  And several online resources without which this would have not been
    possible.
 
