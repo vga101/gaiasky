@@ -1413,6 +1413,8 @@ public class ConfigDialog extends I18nJFrame {
             Component rendererComponent = generateRendererComponent(text, icon, getHorizontalTextAlignment());
             int prototypeWidth = prototypeComponent.getPreferredSize().width;
             int prototypeHeight = prototypeComponent.getPreferredSize().height;
+            int fontsize = new JLabel().getFont().getSize();
+            System.out.println("Default font size: " + fontsize);
             prototypeWidth = scale(150);
             prototypeHeight = scale(20);
             rendererComponent.setPreferredSize(new Dimension(prototypeWidth, prototypeHeight));
