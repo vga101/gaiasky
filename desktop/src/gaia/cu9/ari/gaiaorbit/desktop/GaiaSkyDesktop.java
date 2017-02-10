@@ -97,7 +97,7 @@ public class GaiaSkyDesktop implements IObserver {
 
             // Swing look and feel
             UIManager.setLookAndFeel("com.pagosoft.plaf.PgsLookAndFeel");
-            
+            //            setUIFont(new javax.swing.plaf.FontUIResource("SansSerif", Font.PLAIN, 12));
 
             // Init global configuration
             ConfInit.initialize(new DesktopConfInit());
@@ -310,17 +310,17 @@ public class GaiaSkyDesktop implements IObserver {
 
         if (ow || !userFolderConfFile.exists()) {
             // Copy file
-        	File confFolder = new File("conf" + File.separator);
-        	if(confFolder.exists() && confFolder.isDirectory()){
-        		// Running released package
-        		copyFile(new File("conf" + File.separator + "global.properties"), userFolderConfFile, ow);
-        	}else{
-        		// Running from code?
-        		if(!new File("../android/assets/conf" + File.separator).exists()){
-        			throw new IOException("File ../android/assets/conf does not exist!");
-        		}
-        		copyFile(new File("../android/assets/conf" + File.separator + "global.properties"), userFolderConfFile, ow);
-        	}
+            File confFolder = new File("conf" + File.separator);
+            if (confFolder.exists() && confFolder.isDirectory()) {
+                // Running released package
+                copyFile(new File("conf" + File.separator + "global.properties"), userFolderConfFile, ow);
+            } else {
+                // Running from code?
+                if (!new File("../android/assets/conf" + File.separator).exists()) {
+                    throw new IOException("File ../android/assets/conf does not exist!");
+                }
+                copyFile(new File("../android/assets/conf" + File.separator + "global.properties"), userFolderConfFile, ow);
+            }
         }
         String props = userFolderConfFile.getAbsolutePath();
         System.setProperty("properties.file", props);

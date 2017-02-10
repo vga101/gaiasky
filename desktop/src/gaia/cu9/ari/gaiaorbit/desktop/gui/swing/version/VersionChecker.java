@@ -4,12 +4,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
 
 import com.badlogic.gdx.utils.JsonReader;
 
 import gaia.cu9.ari.gaiaorbit.desktop.gui.swing.callback.Runnable;
 
 public class VersionChecker implements Runnable {
+    private static final int VERSIONCHECK_TIMEOUT_MS = 5000;
     private String stringUrl;
 
     public VersionChecker(String stringUrl) {
@@ -21,7 +23,10 @@ public class VersionChecker implements Runnable {
         Object result = null;
         try {
             URL url = new URL(stringUrl);
-            InputStream is = url.openStream();
+            URLConnection con = url.openConnection();
+            con.setConnectTimeout(VERSIONCHECK_TIMEOUT_MS);
+            con.setReadTimeout(VERSIONCHECK_TIMEOUT_MS);
+            InputStream is = con.getInputStream();
             /* Now read the retrieved document from the stream. */
             JsonReader reader = new JsonReader();
             result = reader.parse(is);

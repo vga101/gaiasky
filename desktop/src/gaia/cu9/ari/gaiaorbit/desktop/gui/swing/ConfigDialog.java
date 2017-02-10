@@ -143,7 +143,7 @@ public class ConfigDialog extends I18nJFrame {
             JPanel imagePanel = new JPanel(new GridLayout(1, 1, 0, 0));
             imagePanel.setBorder(new EmptyBorder(5, 5, 5, 5));
             JLabel buildtext = new JLabel("<html><font color='white'>" + txt("gui.build", GlobalConf.version.build) + " - " + txt("gui.version", GlobalConf.version.version) + "</font></html>");
-            
+
             buildtext.setHorizontalAlignment(JLabel.CENTER);
             imagePanel.add(buildtext);
             imagePanel.setBackground(Color.black);
@@ -1413,7 +1413,7 @@ public class ConfigDialog extends I18nJFrame {
             Component rendererComponent = generateRendererComponent(text, icon, getHorizontalTextAlignment());
             int prototypeWidth = prototypeComponent.getPreferredSize().width;
             int prototypeHeight = prototypeComponent.getPreferredSize().height;
-            prototypeWidth = scale(110);
+            prototypeWidth = scale(150);
             prototypeHeight = scale(20);
             rendererComponent.setPreferredSize(new Dimension(prototypeWidth, prototypeHeight));
             return rendererComponent;
