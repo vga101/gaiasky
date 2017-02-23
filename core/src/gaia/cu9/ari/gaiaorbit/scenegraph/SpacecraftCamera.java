@@ -347,25 +347,6 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
 
     }
 
-    public void copyParamsFrom(AbstractCamera other) {
-        super.copyParamsFrom(other);
-
-        // Update pitch and yaw with new direction
-        double len = direction.len();
-        pitch = Math.asin(direction.y / len);
-        yaw = Math.atan2(direction.z, direction.x);
-
-        pitch = Math.toDegrees(pitch);
-        yaw = Math.toDegrees(yaw);
-
-        double xzlen = Math.sqrt(direction.x * direction.x + direction.z * direction.z);
-        double derivedPitch = -Math.toDegrees(Math.acos(xzlen));
-        double derivedYaw = -Math.toDegrees(Math.acos(direction.x / xzlen)) + 90;
-        //double derivedYaw2 = -Math.toDegrees(Math.asin(direction.z / xzlen)) + 90;
-        pitch = derivedPitch;
-        yaw = derivedYaw;
-    }
-
     public double convertAngle(double angle) {
         if (angle <= 180)
             return angle;
