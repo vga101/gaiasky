@@ -25,7 +25,6 @@ import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.math.Intersectord;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
-import gaia.cu9.ari.gaiaorbit.util.math.Vector2d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
@@ -307,9 +306,6 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
         double yawdiff = yawv * dt;
         double pitchdiff = pitchv * dt;
         double rolldiff = rollv * dt;
-        yaw += yawdiff;
-        pitch += pitchdiff;
-        roll += rolldiff;
 
         // apply yaw
         direction.rotate(up, yawdiff);
@@ -321,6 +317,13 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
 
         // apply roll
         up.rotate(direction, -rolldiff);
+
+        double len = direction.len();
+        pitch = Math.asin(direction.y / len);
+        yaw = Math.atan2(direction.z, direction.x);
+
+        pitch = Math.toDegrees(pitch);
+        yaw = Math.toDegrees(yaw);
 
         // Update camera
         updatePerspectiveCamera();
@@ -344,29 +347,23 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
 
     }
 
-    /**
-    (pitch, yaw)  -> (x, y, z)
-    (0,     0)    -> (1, 0, 0)
-    (pi/2,  0)    -> (0, 1, 0)
-    (0,    -pi/2) -> (0, 0, 1)
-    
-    xzLen = cos(pitch)
-    x = xzLen * cos(yaw)
-    y = sin(pitch)
-    z = xzLen * sin(-yaw)
-    
-    
-    pitch = acos(xzLen)
-    yaw = acos(x/xzLen)
-    -yaw = asin(z/xzLen)
-    */
-    public Vector2d getPitchYaw(Vector3d vec, Vector2d out) {
+    public void copyParamsFrom(AbstractCamera other) {
+        super.copyParamsFrom(other);
+
+        // Update pitch and yaw with new direction
+        double len = direction.len();
+        pitch = Math.asin(direction.y / len);
+        yaw = Math.atan2(direction.z, direction.x);
+
+        pitch = Math.toDegrees(pitch);
+        yaw = Math.toDegrees(yaw);
+
         double xzlen = Math.sqrt(direction.x * direction.x + direction.z * direction.z);
         double derivedPitch = -Math.toDegrees(Math.acos(xzlen));
         double derivedYaw = -Math.toDegrees(Math.acos(direction.x / xzlen)) + 90;
         //double derivedYaw2 = -Math.toDegrees(Math.asin(direction.z / xzlen)) + 90;
-        out.set(derivedPitch, derivedYaw);
-        return out;
+        pitch = derivedPitch;
+        yaw = derivedYaw;
     }
 
     public double convertAngle(double angle) {

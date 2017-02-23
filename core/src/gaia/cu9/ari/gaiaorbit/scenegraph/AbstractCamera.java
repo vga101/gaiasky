@@ -181,6 +181,7 @@ public abstract class AbstractCamera implements ICamera {
         this.getDirection().set(other.getDirection());
         this.getUp().set(other.getUp());
         this.closest = other.closest;
+
     }
 
     private void copyCamera(PerspectiveCamera source, PerspectiveCamera target) {
