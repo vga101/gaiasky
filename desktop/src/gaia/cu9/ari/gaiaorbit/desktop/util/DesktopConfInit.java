@@ -196,6 +196,7 @@ public class DesktopConfInit extends ConfInit {
         // Update scale factor according to theme - for HiDPI screens
         GlobalConf.updateScaleFactor(UI_THEME.endsWith("x2") ? 2f : 1f);
         String SCRIPT_LOCATION = p.getProperty("program.scriptlocation").isEmpty() ? System.getProperty("user.dir") + File.separatorChar + "scripts" : p.getProperty("program.scriptlocation");
+        int REST_PORT = Integer.parseInt(p.getProperty("program.restport", "-1"));
 
         boolean STEREOSCOPIC_MODE = Boolean.parseBoolean(p.getProperty("program.stereoscopic"));
         StereoProfile STEREO_PROFILE = StereoProfile.values()[Integer.parseInt(p.getProperty("program.stereoscopic.profile"))];
@@ -204,7 +205,7 @@ public class DesktopConfInit extends ConfInit {
         boolean DISPLAY_HUD = Boolean.parseBoolean(p.getProperty("program.displayhud", "false"));
         boolean DISPLAY_POINTER_COORDS = Boolean.parseBoolean(p.getProperty("program.displaypointercoords", "true"));
 
-        prc.initialize(DISPLAY_TUTORIAL, TUTORIAL_POINTER_SCRIPT_LOCATION, TUTORIAL_SCRIPT_LOCATION, SHOW_DEBUG_INFO, LAST_CHECKED, LAST_VERSION, VERSION_CHECK_URL, UI_THEME, SCRIPT_LOCATION, LOCALE, STEREOSCOPIC_MODE, STEREO_PROFILE, CUBEMAPE360_MODE, ANALYTICS_ENABLED, DISPLAY_HUD, DISPLAY_POINTER_COORDS);
+        prc.initialize(DISPLAY_TUTORIAL, TUTORIAL_POINTER_SCRIPT_LOCATION, TUTORIAL_SCRIPT_LOCATION, SHOW_DEBUG_INFO, LAST_CHECKED, LAST_VERSION, VERSION_CHECK_URL, UI_THEME, SCRIPT_LOCATION, REST_PORT, LOCALE, STEREOSCOPIC_MODE, STEREO_PROFILE, CUBEMAPE360_MODE, ANALYTICS_ENABLED, DISPLAY_HUD, DISPLAY_POINTER_COORDS);
 
         /** SCENE CONF **/
         int GRAPHICS_QUALITY = Integer.parseInt(p.getProperty("scene.graphics.quality"));
@@ -388,6 +389,7 @@ public class DesktopConfInit extends ConfInit {
         p.setProperty("program.versioncheckurl", GlobalConf.program.VERSION_CHECK_URL);
         p.setProperty("program.ui.theme", GlobalConf.program.UI_THEME);
         p.setProperty("program.scriptlocation", GlobalConf.program.SCRIPT_LOCATION);
+        p.setProperty("program.restport", Integer.toString(GlobalConf.program.REST_PORT));
         p.setProperty("program.locale", GlobalConf.program.LOCALE);
         p.setProperty("program.stereoscopic", Boolean.toString(GlobalConf.program.STEREOSCOPIC_MODE));
         p.setProperty("program.stereoscopic.profile", Integer.toString(GlobalConf.program.STEREO_PROFILE.ordinal()));
