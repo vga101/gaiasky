@@ -44,6 +44,7 @@ import gaia.cu9.ari.gaiaorbit.interfce.KeyBindings;
 import gaia.cu9.ari.gaiaorbit.interfce.MusicActorsManager;
 import gaia.cu9.ari.gaiaorbit.interfce.NetworkCheckerManager;
 import gaia.cu9.ari.gaiaorbit.render.PostProcessorFactory;
+import gaia.cu9.ari.gaiaorbit.rest.RESTServer;
 import gaia.cu9.ari.gaiaorbit.screenshot.ScreenshotsManager;
 import gaia.cu9.ari.gaiaorbit.script.JythonFactory;
 import gaia.cu9.ari.gaiaorbit.script.ScriptingFactory;
@@ -113,6 +114,12 @@ public class GaiaSkyDesktop implements IObserver {
 
             // Jython
             ScriptingFactory.initialize(JythonFactory.getInstance());
+
+            // Spark for REST API
+            Integer restport = 8080;  // @TSS: could make the TCP port a global config setting. Values below 1 disable REST API.
+            if (restport > 0) {
+                RESTServer.initialize(restport);
+            }
 
             // Fullscreen command
             FullscreenCmd.initialize();
