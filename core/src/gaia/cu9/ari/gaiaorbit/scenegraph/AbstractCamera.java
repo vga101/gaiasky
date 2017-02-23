@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.PerspectiveCamera;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
-import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
@@ -146,13 +145,13 @@ public abstract class AbstractCamera implements ICamera {
         if (GlobalConf.scene.COMPUTE_GAIA_SCAN && !fcamera.interpolatedDirections.isEmpty()) {
             // We need to interpolate...
             for (Vector3d[] interpolatedDirection : fcamera.interpolatedDirections) {
-                visible = visible || MathUtilsd.acos(pos.dot(interpolatedDirection[0]) / cb.distToCamera) < angleEdgeRad || MathUtilsd.acos(pos.dot(interpolatedDirection[1]) / cb.distToCamera) < angleEdgeRad;
+                visible = visible || GlobalResources.isInView(cb.transform.position, cb.distToCamera, fcamera.angleEdgeRad, interpolatedDirection[0]) || GlobalResources.isInView(cb.transform.position, cb.distToCamera, fcamera.angleEdgeRad, interpolatedDirection[1]);
                 if (visible)
                     return true;
             }
         }
         dirs = fcamera.directions;
-        visible = visible || GlobalResources.isInView(cb.transform.position, cb.distToCamera, angleEdgeRad, dirs[0]) || GlobalResources.isInView(cb.transform.position, cb.distToCamera, angleEdgeRad, dirs[1]);
+        visible = visible || GlobalResources.isInView(cb.transform.position, cb.distToCamera, fcamera.angleEdgeRad, dirs[0]) || GlobalResources.isInView(cb.transform.position, cb.distToCamera, fcamera.angleEdgeRad, dirs[1]);
         return visible;
     }
 

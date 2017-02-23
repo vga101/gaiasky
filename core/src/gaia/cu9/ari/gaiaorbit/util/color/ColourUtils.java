@@ -78,6 +78,8 @@ public class ColourUtils {
      * @return
      */
     public static void long_rainbow(float value, float[] rgba) {
+        if (rgba == null)
+            return;
         /*plot long rainbow RGB*/
         float a = (1 - value) / 0.2f; //invert and group
         final int X = (int) Math.floor(a); //this is the integer part
