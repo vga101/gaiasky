@@ -205,7 +205,6 @@ public class FovCamera extends AbstractCamera implements IObserver {
                 for (long t = lastTime + MAX_OVERLAP_TIME; t < currentTime; t += MAX_OVERLAP_TIME) {
                     interpolatedDirections.add(getDirections(new Date(t)));
                 }
-                System.out.println(interpolatedDirections.size());
             } else {
                 if (((GlobalClock) time).fps > 0) {
                     ((GlobalClock) time).fps = -1;
