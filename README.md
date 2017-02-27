@@ -197,10 +197,10 @@ The most up-to-date documentation of Gaia Sky is always in [gaia-sky.readthedocs
 ##  4. Copyright and licensing information           #
 ######################################################
 
-This software is published and distributed under the LGPL
-(Lesser General Public License) license. You can find the full license
-text here https://github.com/langurmonkey/gaiasky/blob/master/LICENSE
-or visiting https://www.gnu.org/licenses/lgpl-3.0-standalone.html
+This software is published and distributed under the GPLv3
+(GNU General Public License v3) license. You can find the full license
+text here https://github.com/langurmonkey/gaiasky/blob/master/LICENSE.md
+or visiting https://www.gnu.org/licenses/gpl.html
 
 
 
