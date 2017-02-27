@@ -211,7 +211,7 @@ public class AboutWindow extends CollapsibleWindow {
         licensetext.setDisabled(true);
         licensetext.setPrefRows(3);
         licensetext.setWidth(tawidth / 2f);
-        Link licenselink = new Link("https://www.gnu.org/licenses/lgpl.html", linkStyle, "https://www.gnu.org/licenses/lgpl.html");
+        Link licenselink = new Link("https://www.gnu.org/licenses/gpl.html", linkStyle, "https://www.gnu.org/licenses/gpl.html");
 
         licensev.addActor(licensetext);
         licensev.addActor(licenselink);
