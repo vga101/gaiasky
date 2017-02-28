@@ -935,19 +935,18 @@ public class ConfigDialog extends I18nJFrame {
         /** SHOW AGAIN? **/
 
         // Do not show again
-        final JCheckBox showAgain = new JCheckBox(txt("gui.notagain"));
+        final JCheckBox showAgain = new JCheckBox(txt("gui.showatstartup"));
+        showAgain.setSelected(GlobalConf.program.SHOW_CONFIG_DIALOG);
         showAgain.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
-                GlobalConf.program.SHOW_CONFIG_DIALOG = !showAgain.isSelected();
+                GlobalConf.program.SHOW_CONFIG_DIALOG = showAgain.isSelected();
             }
         });
 
         body.add(tabbedPane, "wrap");
         body.add(checkPanel, "wrap");
-        if (startup) {
-            body.add(showAgain, "wrap");
-        }
+        body.add(showAgain, "wrap");
 
         /** BUTTONS **/
         JPanel buttons = new JPanel(new MigLayout("", "push[][]", ""));
