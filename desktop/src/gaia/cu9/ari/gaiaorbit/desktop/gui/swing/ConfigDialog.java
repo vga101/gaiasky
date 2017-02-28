@@ -142,7 +142,7 @@ public class ConfigDialog extends I18nJFrame {
         } else {
             JPanel imagePanel = new JPanel(new GridLayout(1, 1, 0, 0));
             imagePanel.setBorder(new EmptyBorder(5, 5, 5, 5));
-            JLabel buildtext = new JLabel("<html><font color='white'>" + txt("gui.build", GlobalConf.version.build) + " - " + txt("gui.version", GlobalConf.version.version) + "</font></html>");
+            JLabel buildtext = new JLabel("<html><font color='white'>" + GlobalConf.APPLICATION_NAME + " - " + txt("gui.build", GlobalConf.version.build) + " - " + txt("gui.version", GlobalConf.version.version) + "</font></html>");
 
             buildtext.setHorizontalAlignment(JLabel.CENTER);
             imagePanel.add(buildtext);
