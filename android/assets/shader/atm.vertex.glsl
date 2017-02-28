@@ -63,19 +63,21 @@ void main(void) {
     vec3 v3Start;
     float fStartAngle;
     float fStartDepth;
+
     if (fCameraHeight < fOuterRadius) {
-	v3Start = v3CameraPos;
-	float fHeight = length (v3Start);
-	fStartAngle = dot (v3Ray, v3Start) / fHeight;
-	fStartDepth = exp (fScaleOverScaleDepth * (fInnerRadius - fCameraHeight));
+    	v3Start = v3CameraPos;
+		float fHeight = length (v3Start);
+		fStartAngle = dot (v3Ray, v3Start) / fHeight;
+		fStartDepth = exp (fScaleOverScaleDepth * (fInnerRadius - fCameraHeight));
     }
     else {
-	v3Start = v3CameraPos + v3Ray * fNear;
-	fFar -= fNear;
-	fStartAngle = dot (v3Ray, v3Start) / fOuterRadius;
-	fStartDepth = exp (-1.0 / fScaleDepth);
+		v3Start = v3CameraPos + v3Ray * fNear;
+		fFar -= fNear;
+		fStartAngle = dot (v3Ray, v3Start) / fOuterRadius;
+		fStartDepth = exp (-1.0 / fScaleDepth);
     }
-    float fStartOffset = fStartDepth * scale (fStartAngle);
+
+    float fStartOffset = fStartDepth * scale(fStartAngle);
 
     /* Initialize the scattering loop variables*/
     float fSampleLength = fFar / fSamples;
@@ -84,25 +86,24 @@ void main(void) {
     vec3 v3SamplePoint = v3Start + v3SampleRay * 0.5;
 
     // Now loop through the sample rays
-    vec3 v3FrontColor = vec3 (0.0);
-    for (int i = 0; i < 11; i++) {
-	float fHeight = length (v3SamplePoint);
-	float fDepth = exp (fScaleOverScaleDepth * (fInnerRadius - fHeight));
-	float fLightAngle = dot (v3LightPos, v3SamplePoint) / fHeight;
-	float fCameraAngle = dot (v3Ray, v3SamplePoint) / fHeight;
-	float fScatter = (fStartOffset + fDepth * (scale (fLightAngle) - scale (fCameraAngle)));
+    vec3 v3FrontColor = vec3 (0.0, 0.0, 0.0);
+    for (int i = 0; i < nSamples; i++) {
+		float fHeight = length (v3SamplePoint);
+		float fDepth = exp (fScaleOverScaleDepth * (fInnerRadius - fHeight));
+		float fLightAngle = dot (v3LightPos, v3SamplePoint) / fHeight;
+		float fCameraAngle = dot (v3Ray, v3SamplePoint) / fHeight;
+		float fScatter = (fStartOffset + fDepth * (scale(fLightAngle) - scale(fCameraAngle)));
+		vec3 v3Attenuate = exp(-fScatter * (v3InvWavelength * fKr4PI + fKm4PI));
 
-	vec3 v3Attenuate = exp (-fScatter * (v3InvWavelength * fKr4PI + fKm4PI));
-
-	v3FrontColor += v3Attenuate * (fDepth * fScaledLength);
-	v3SamplePoint += v3SampleRay;
+		v3FrontColor += v3Attenuate * (fDepth * fScaledLength);
+		v3SamplePoint += v3SampleRay;
     }
 
     // Finally, scale the Mie and Rayleigh colors and set up the varying variables for the pixel shader
-    frontColor.rgb = vec3 (v3FrontColor * (v3InvWavelength * fKrESun));
-    frontSecondaryColor.rgb = vec3 (v3FrontColor * fKmESun);
+    frontColor.rgb = v3FrontColor * (v3InvWavelength * fKrESun);
+    frontSecondaryColor.rgb = v3FrontColor * fKmESun;
 
-    gl_Position = u_projViewTrans * u_worldTrans * vec4 (a_position, 1.0);
+    gl_Position = u_projViewTrans * u_worldTrans * vec4(a_position, 1.0);
     // Direction from the vertex to the camera 
     v3Direction = v3CameraPos - v3Pos;
 

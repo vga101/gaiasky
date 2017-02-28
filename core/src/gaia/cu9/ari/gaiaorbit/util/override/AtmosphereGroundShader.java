@@ -10,7 +10,6 @@ public class AtmosphereGroundShader extends DefaultShader {
 
     public static class Inputs extends DefaultShader.Inputs {
         public final static Uniform alpha = new Uniform("fAlpha");
-        public final static Uniform colorOpacity = new Uniform("fColorOpacity");
         public final static Uniform cameraHeight = new Uniform("fCameraHeight");
         public final static Uniform cameraHeight2 = new Uniform("fCameraHeight2");
         public final static Uniform outerRadius = new Uniform("fOuterRadius");
@@ -46,19 +45,6 @@ public class AtmosphereGroundShader extends DefaultShader {
             public void set(BaseShader shader, int inputID, Renderable renderable, Attributes combinedAttributes) {
                 if (combinedAttributes.has(AtmosphereAttribute.Alpha))
                     shader.set(inputID, ((AtmosphereAttribute) (combinedAttributes.get(AtmosphereAttribute.Alpha))).value);
-            }
-        };
-
-        public final static Setter colorOpacity = new Setter() {
-            @Override
-            public boolean isGlobal(BaseShader shader, int inputID) {
-                return false;
-            }
-
-            @Override
-            public void set(BaseShader shader, int inputID, Renderable renderable, Attributes combinedAttributes) {
-                if (combinedAttributes.has(AtmosphereAttribute.ColorOpacity))
-                    shader.set(inputID, ((AtmosphereAttribute) (combinedAttributes.get(AtmosphereAttribute.ColorOpacity))).value);
             }
         };
 
@@ -334,7 +320,6 @@ public class AtmosphereGroundShader extends DefaultShader {
 
     // Material uniforms
     public final int fAlpha;
-    public final int fColorOpacity;
     public final int fCameraHeight;
     public final int fCameraHeight2;
     public final int fOuterRadius;
@@ -380,7 +365,6 @@ public class AtmosphereGroundShader extends DefaultShader {
         super(renderable, config, shaderProgram);
 
         fAlpha = register(Inputs.alpha, Setters.alpha);
-        fColorOpacity = register(Inputs.colorOpacity, Setters.colorOpacity);
         fCameraHeight = register(Inputs.cameraHeight, Setters.cameraHeight);
         fCameraHeight2 = register(Inputs.cameraHeight2, Setters.cameraHeight2);
         fOuterRadius = register(Inputs.outerRadius, Setters.outerRadius);

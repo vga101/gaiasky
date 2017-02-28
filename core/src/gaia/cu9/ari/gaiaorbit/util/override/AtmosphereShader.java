@@ -73,7 +73,6 @@ public class AtmosphereShader extends BaseShader {
         public final static Uniform normalMatrix = new Uniform("u_normalMatrix");
 
         public final static Uniform alpha = new Uniform("fAlpha");
-        public final static Uniform colorOpacity = new Uniform("fColorOpacity");
         public final static Uniform cameraHeight = new Uniform("fCameraHeight");
         public final static Uniform cameraHeight2 = new Uniform("fCameraHeight2");
         public final static Uniform outerRadius = new Uniform("fOuterRadius");
@@ -141,8 +140,7 @@ public class AtmosphereShader extends BaseShader {
 
             @Override
             public void set(BaseShader shader, int inputID, Renderable renderable, Attributes combinedAttributes) {
-                shader.set(inputID, shader.camera.position.x, shader.camera.position.y, shader.camera.position.z,
-                        1.1881f / (shader.camera.far * shader.camera.far));
+                shader.set(inputID, shader.camera.position.x, shader.camera.position.y, shader.camera.position.z, 1.1881f / (shader.camera.far * shader.camera.far));
             }
         };
         public final static Setter cameraDirection = new Setter() {
@@ -227,18 +225,6 @@ public class AtmosphereShader extends BaseShader {
             @Override
             public void set(BaseShader shader, int inputID, Renderable renderable, Attributes combinedAttributes) {
                 shader.set(inputID, ((AtmosphereAttribute) (combinedAttributes.get(AtmosphereAttribute.Alpha))).value);
-            }
-        };
-
-        public final static Setter colorOpacity = new Setter() {
-            @Override
-            public boolean isGlobal(BaseShader shader, int inputID) {
-                return false;
-            }
-
-            @Override
-            public void set(BaseShader shader, int inputID, Renderable renderable, Attributes combinedAttributes) {
-                shader.set(inputID, ((AtmosphereAttribute) (combinedAttributes.get(AtmosphereAttribute.ColorOpacity))).value);
             }
         };
 
@@ -508,8 +494,7 @@ public class AtmosphereShader extends BaseShader {
         return defaultFragmentShader;
     }
 
-    protected static long implementedFlags = BlendingAttribute.Type | TextureAttribute.Diffuse | ColorAttribute.Diffuse
-            | ColorAttribute.Specular | FloatAttribute.Shininess;
+    protected static long implementedFlags = BlendingAttribute.Type | TextureAttribute.Diffuse | ColorAttribute.Diffuse | ColorAttribute.Specular | FloatAttribute.Shininess;
 
     /** @deprecated Replaced by {@link Config#defaultCullFace} Set to 0 to disable culling */
     @Deprecated
@@ -532,7 +517,6 @@ public class AtmosphereShader extends BaseShader {
     public final int u_normalMatrix;
     // Material uniforms
     public final int fAlpha;
-    public final int fColorOpacity;
     public final int fCameraHeight;
     public final int fCameraHeight2;
     public final int fOuterRadius;
@@ -574,12 +558,10 @@ public class AtmosphereShader extends BaseShader {
     }
 
     public AtmosphereShader(final Renderable renderable, final Config config, final String prefix) {
-        this(renderable, config, prefix, config.vertexShader != null ? config.vertexShader : getDefaultVertexShader(),
-                config.fragmentShader != null ? config.fragmentShader : getDefaultFragmentShader());
+        this(renderable, config, prefix, config.vertexShader != null ? config.vertexShader : getDefaultVertexShader(), config.fragmentShader != null ? config.fragmentShader : getDefaultFragmentShader());
     }
 
-    public AtmosphereShader(final Renderable renderable, final Config config, final String prefix, final String vertexShader,
-            final String fragmentShader) {
+    public AtmosphereShader(final Renderable renderable, final Config config, final String prefix, final String vertexShader, final String fragmentShader) {
         this(renderable, config, new ShaderProgram(prefix + vertexShader, prefix + fragmentShader));
     }
 
@@ -607,7 +589,6 @@ public class AtmosphereShader extends BaseShader {
         u_normalMatrix = register(Inputs.normalMatrix, Setters.normalMatrix);
 
         fAlpha = register(Inputs.alpha, Setters.alpha);
-        fColorOpacity = register(Inputs.colorOpacity, Setters.colorOpacity);
         fCameraHeight = register(Inputs.cameraHeight, Setters.cameraHeight);
         fCameraHeight2 = register(Inputs.cameraHeight2, Setters.cameraHeight2);
         fOuterRadius = register(Inputs.outerRadius, Setters.outerRadius);
