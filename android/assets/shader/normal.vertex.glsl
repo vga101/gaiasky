@@ -201,11 +201,11 @@ varying vec3 v_atmosphereColor;
 			v3FrontColor += v3Attenuate * (fDepth * fScaledLength);
 			v3SamplePoint += v3SampleRay;
 		}
-		v_atmosphereColor = vec3(v3FrontColor * (v3InvWavelength * fKrESun + fKmESun)) * 0.4;
+		v_atmosphereColor = vec3(v3FrontColor * (v3InvWavelength * fKrESun + fKmESun));
     }
 #else
     void calculateAtmosphereGroundColor() {
-	v_atmosphereColor = vec3(0.0);
+	v_atmosphereColor = vec3(0.0, 0.0, 0.0);
     }
 #endif // atmosphereGround
 
