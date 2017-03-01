@@ -2,11 +2,11 @@ package gaia.cu9.ari.gaiaorbit.scenegraph;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
 
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Bits;
 
 import gaia.cu9.ari.gaiaorbit.GaiaSky;
@@ -126,7 +126,7 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
     /**
      * List of children entities.
      */
-    public List<SceneGraphNode> children;
+    public Array<SceneGraphNode> children;
 
     /**
      * Transform object. Contains the transformations that will be applied to the children.
@@ -170,7 +170,6 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
      * Component types, for managing visibility
      */
     public ComponentType[] ct;
-    
 
     public SceneGraphNode() {
         // Identity
@@ -185,7 +184,7 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
 
     public SceneGraphNode(ComponentType ct) {
         super();
-        this.ct = new ComponentType[]{ct};
+        this.ct = new ComponentType[] { ct };
     }
 
     public SceneGraphNode(String name, SceneGraphNode parent) {
@@ -248,8 +247,8 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
      * @param updateAncestorCount
      */
     public final void removeChild(SceneGraphNode child, boolean updateAncestorCount) {
-        if (this.children.contains(child)) {
-            this.children.remove(child);
+        if (this.children.contains(child, true)) {
+            this.children.removeValue(child, true);
             child.parent = null;
             numChildren--;
             if (updateAncestorCount) {
@@ -324,14 +323,14 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
     }
 
     private void initChildren(int size, int grow) {
-        children = new Vector<SceneGraphNode>(size, grow);
+        children = new Array<SceneGraphNode>(false, size);
     }
 
     public SceneGraphNode getNode(String name) {
         if (this.name != null && this.name.equals(name)) {
             return this;
         } else if (children != null) {
-            int size = children.size();
+            int size = children.size;
             for (int i = 0; i < size; i++) {
                 SceneGraphNode child = children.get(i);
                 SceneGraphNode n = child.getNode(name);
@@ -347,7 +346,7 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
         if (this.id >= 0 && this.id == id) {
             return this;
         } else if (children != null) {
-            int size = children.size();
+            int size = children.size;
             for (int i = 0; i < size; i++) {
                 SceneGraphNode child = children.get(i);
                 SceneGraphNode n = child.getNode(id);
@@ -371,7 +370,7 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
         updateLocal(time, camera);
 
         if (children != null) {
-            int size = children.size();
+            int size = children.size;
             for (int i = 0; i < size; i++) {
                 children.get(i).update(time, transform, camera, opacity);
             }
@@ -387,7 +386,7 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
     }
 
     public void initialize() {
-        ct = new ComponentType[]{ComponentType.Others};
+        ct = new ComponentType[] { ComponentType.Others };
     }
 
     public void doneLoading(AssetManager manager) {
@@ -416,9 +415,9 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
      * Adds all the children that are focusable objects to the list.
      * @param list
      */
-    public void addFocusableObjects(List<CelestialBody> list) {
+    public void addFocusableObjects(Array<CelestialBody> list) {
         if (children != null) {
-            int size = children.size();
+            int size = children.size;
             for (int i = 0; i < size; i++) {
                 SceneGraphNode child = children.get(i);
                 child.addFocusableObjects(list);
@@ -426,10 +425,10 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
         }
     }
 
-    public void addNodes(List<SceneGraphNode> nodes) {
+    public void addNodes(Array<SceneGraphNode> nodes) {
         nodes.add(this);
         if (children != null) {
-            int size = children.size();
+            int size = children.size;
             for (int i = 0; i < size; i++) {
                 SceneGraphNode child = children.get(i);
                 child.addNodes(nodes);
@@ -442,19 +441,19 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
     }
 
     public void setCt(String ct) {
-        this.ct = new ComponentType[]{ComponentType.valueOf(ct)};
+        this.ct = new ComponentType[] { ComponentType.valueOf(ct) };
     }
-    
+
     public void setCt(String[] cts) {
         this.ct = new ComponentType[cts.length];
         int i = 0;
-        for(String ctstr : cts){
+        for (String ctstr : cts) {
             this.ct[i] = ComponentType.valueOf(ctstr);
             i++;
         }
     }
-    
-    public ComponentType[] getComponentType(){
+
+    public ComponentType[] getComponentType() {
         return ct;
     }
 
@@ -524,9 +523,9 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
      * @param nodes List of nodes to set the flag to. May be null.
      * @param computed The computed value.
      */
-    public void setComputedFlag(List<SceneGraphNode> nodes, boolean computed) {
+    public void setComputedFlag(Array<SceneGraphNode> nodes, boolean computed) {
         if (nodes != null) {
-            int size = nodes.size();
+            int size = nodes.size;
             for (int i = 0; i < size; i++) {
                 SceneGraphNode node = nodes.get(i);
                 node.computed = computed;
@@ -572,10 +571,10 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
     public Vector3d getPosition() {
         return null;
     }
-    
-    public boolean isVisibilityOn(){
+
+    public boolean isVisibilityOn() {
         boolean visible = true;
-        for(ComponentType comp : ct){
+        for (ComponentType comp : ct) {
             visible = visible && GaiaSky.instance.isOn(comp);
         }
         return visible;

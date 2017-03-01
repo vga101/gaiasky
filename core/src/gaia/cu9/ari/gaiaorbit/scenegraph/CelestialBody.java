@@ -1,7 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph;
 
-import java.util.List;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Mesh;
@@ -11,6 +9,7 @@ import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Array;
 
 import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
@@ -238,7 +237,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
      * 
      * @param list
      */
-    public void addFocusableObjects(List<CelestialBody> list) {
+    public void addFocusableObjects(Array<CelestialBody> list) {
         list.add(this);
         super.addFocusableObjects(list);
     }

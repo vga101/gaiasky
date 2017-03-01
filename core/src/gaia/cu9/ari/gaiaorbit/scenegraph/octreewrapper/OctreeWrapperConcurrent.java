@@ -1,6 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph.octreewrapper;
 
-import java.util.List;
+import com.badlogic.gdx.utils.Array;
 
 import gaia.cu9.ari.gaiaorbit.render.system.AbstractRenderSystem;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
@@ -26,7 +26,7 @@ public class OctreeWrapperConcurrent extends AbstractOctreeWrapper {
         super(parentName, root);
     }
 
-    public void setRoulette(List<SceneGraphNode> roulette) {
+    public void setRoulette(Array<SceneGraphNode> roulette) {
         this.roulette = roulette;
     }
 
@@ -44,10 +44,10 @@ public class OctreeWrapperConcurrent extends AbstractOctreeWrapper {
             // Compute observed octants and fill roulette list
             root.update(transform, camera, roulette, 1f);
 
-            if (roulette.size() != lastNumberObjects) {
+            if (roulette.size != lastNumberObjects) {
                 // Need to update the points in renderer
                 AbstractRenderSystem.POINT_UPDATE_FLAG = true;
-                lastNumberObjects = roulette.size();
+                lastNumberObjects = roulette.size;
             }
 
             updateLocal(time, camera);

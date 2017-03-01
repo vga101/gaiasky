@@ -29,7 +29,7 @@ public abstract class Blob extends AbstractPositionEntity {
         updateLocal(time, camera);
 
         if (children != null && viewAngle / camera.getFovFactor() > lowAngle) {
-            for (int i = 0; i < children.size(); i++) {
+            for (int i = 0; i < children.size; i++) {
                 float childOpacity = 1 - this.opacity;
                 SceneGraphNode child = children.get(i);
                 child.update(time, transform, camera, childOpacity);

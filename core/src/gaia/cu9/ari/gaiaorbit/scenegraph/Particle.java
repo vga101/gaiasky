@@ -225,12 +225,12 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
             //            }
             distToCamera = (float) transform.position.len();
 
-            // TODO Very ugly!
-            if (!this.copy && (ModelBody.closestCamStar == null || ModelBody.closestCamStar.distToCamera > distToCamera))
-                //if (ModelBody.closestCamStar == null || ModelBody.closestCamStar.distToCamera > distToCamera) 
-                ModelBody.closestCamStar = this;
-
             if (!copy) {
+                // TODO Very ugly!
+                if (ModelBody.closestCamStar == null || ModelBody.closestCamStar.distToCamera > distToCamera)
+                    //if (ModelBody.closestCamStar == null || ModelBody.closestCamStar.distToCamera > distToCamera) 
+                    ModelBody.closestCamStar = this;
+
                 addToRender(this, RenderGroup.POINT);
 
                 viewAngle = ((float) radius / distToCamera) / camera.getFovFactor();
@@ -241,8 +241,7 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
 
             // Compute nested
             if (children != null) {
-                int size = children.size();
-                for (int i = 0; i < size; i++) {
+                for (int i = 0; i < children.size; i++) {
                     SceneGraphNode child = children.get(i);
                     child.update(time, parentTransform, camera, opacity);
                 }

@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
 
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
@@ -31,7 +32,7 @@ public abstract class AbstractOctreeWrapper extends SceneGraphNode implements It
 
     public OctreeNode<SceneGraphNode> root;
     /** Roulette list with the objects to process **/
-    protected List<SceneGraphNode> roulette;
+    protected Array<SceneGraphNode> roulette;
     public Map<SceneGraphNode, OctreeNode<SceneGraphNode>> parenthood;
     /** The number of objects added to render in the last frame **/
     protected int lastNumberObjects = 0;
@@ -46,7 +47,7 @@ public abstract class AbstractOctreeWrapper extends SceneGraphNode implements It
 
     protected AbstractOctreeWrapper(String parentName, OctreeNode<SceneGraphNode> root) {
         this();
-        this.ct = new ComponentType[]{ComponentType.Others};
+        this.ct = new ComponentType[] { ComponentType.Others };
         this.root = root;
         this.parentName = parentName;
         this.parenthood = new HashMap<SceneGraphNode, OctreeNode<SceneGraphNode>>();
@@ -69,7 +70,7 @@ public abstract class AbstractOctreeWrapper extends SceneGraphNode implements It
      */
     private void addObjectsDeep(OctreeNode<SceneGraphNode> octant, SceneGraphNode root) {
         if (octant.objects != null) {
-            root.add(octant.objects);
+            root.add(octant.objects.items);
             for (SceneGraphNode sgn : octant.objects) {
                 parenthood.put(sgn, octant);
             }
@@ -109,10 +110,10 @@ public abstract class AbstractOctreeWrapper extends SceneGraphNode implements It
             root.update(transform, camera, roulette, 1f);
 
             if (!GlobalConf.scene.OCTREE_PARTICLE_FADE) {
-                if (roulette.size() != lastNumberObjects) {
+                if (roulette.size != lastNumberObjects) {
                     // Need to update the points in renderer
                     AbstractRenderSystem.POINT_UPDATE_FLAG = true;
-                    lastNumberObjects = roulette.size();
+                    lastNumberObjects = roulette.size;
                 }
             } else {
                 AbstractRenderSystem.POINT_UPDATE_FLAG = true;

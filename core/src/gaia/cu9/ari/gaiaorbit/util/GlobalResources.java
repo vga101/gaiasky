@@ -14,6 +14,7 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.utils.Array;
 
 import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
@@ -266,7 +267,7 @@ public class GlobalResources {
      *            The extension of the files
      * @return The list l
      */
-    public static List<FileHandle> listRec(FileHandle f, List<FileHandle> l, String extension) {
+    public static Array<FileHandle> listRec(FileHandle f, Array<FileHandle> l, String extension) {
         if (f.exists()) {
             if (f.isDirectory()) {
                 FileHandle[] partial = f.list();
@@ -284,7 +285,7 @@ public class GlobalResources {
         return l;
     }
 
-    public static List<FileHandle> listRec(FileHandle f, List<FileHandle> l, FilenameFilter filter) {
+    public static Array<FileHandle> listRec(FileHandle f, Array<FileHandle> l, FilenameFilter filter) {
         if (f.exists()) {
             if (f.isDirectory()) {
                 FileHandle[] partial = f.list();

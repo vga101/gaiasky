@@ -2,7 +2,6 @@ package gaia.cu9.ari.gaiaorbit.util.tree;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
@@ -11,6 +10,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Frustum;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
+import com.badlogic.gdx.utils.Array;
 
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.render.ILineRenderable;
@@ -83,7 +83,7 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
     @SuppressWarnings("unchecked")
     public OctreeNode<T>[] children = new OctreeNode[8];
     /** List of objects **/
-    public List<T> objects;
+    public Array<T> objects;
 
     private double radius;
     /** If observed, the view angle in radians of this octant **/
@@ -216,23 +216,23 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
 
     public boolean add(T e) {
         if (objects == null)
-            objects = new ArrayList<T>(100);
+            objects = new Array<T>(false, 100);
         objects.add(e);
-        ownObjects = objects.size();
+        ownObjects = objects.size;
         return true;
     }
 
-    public boolean addAll(Collection<T> l) {
+    public boolean addAll(Array<T> l) {
         if (objects == null)
-            objects = new ArrayList<T>(l.size());
+            objects = new Array<T>(false, l.size);
         objects.addAll(l);
-        ownObjects = objects.size();
+        ownObjects = objects.size;
         return true;
     }
 
-    public void setObjects(List<T> l) {
+    public void setObjects(Array<T> l) {
         this.objects = l;
-        ownObjects = objects.size();
+        ownObjects = objects.size;
     }
 
     public boolean insert(T e, int level) {
@@ -283,9 +283,11 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
      * 
      * @param particles
      */
-    public void addParticlesTo(Collection<T> particles) {
-        if (this.objects != null)
-            particles.addAll(this.objects);
+    public void addParticlesTo(List<T> particles) {
+        if (this.objects != null) {
+            for (T elem : this.objects)
+                particles.add(elem);
+        }
         for (int i = 0; i < 8; i++) {
             if (children[i] != null) {
                 children[i].addParticlesTo(particles);
@@ -310,7 +312,7 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
         } else {
             str.append("[ownobj: ");
         }
-        str.append(objects != null ? objects.size() : "0").append("/").append(ownObjects).append(", recobj: ").append(nObjects).append(", nchld: ").append(childrenCount).append("] ").append(status).append("\n");
+        str.append(objects != null ? objects.size : "0").append("/").append(ownObjects).append(", recobj: ").append(nObjects).append(", nchld: ").append(childrenCount).append("] ").append(status).append("\n");
 
         if (childrenCount > 0 && rec) {
             for (OctreeNode<T> child : children) {
@@ -333,7 +335,7 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
         } else {
             str.append("[ownobj: ");
         }
-        str.append(objects != null ? objects.size() : "0").append("/").append(ownObjects).append(", recobj: ").append(nObjects).append(", nchld: ").append(childrenCount).append("] ").append(status).append("\n");
+        str.append(objects != null ? objects.size : "0").append("/").append(ownObjects).append(", recobj: ").append(nObjects).append(", nchld: ").append(childrenCount).append("] ").append(status).append("\n");
         if (childrenCount > 0) {
             for (OctreeNode<T> child : children) {
                 if (child != null) {
@@ -364,8 +366,8 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
         render((LineRenderSystem) params[0], (ICamera) params[1], (Float) params[2]);
     }
 
-    ComponentType[] ct = new ComponentType[]{ComponentType.Others};
-    
+    ComponentType[] ct = new ComponentType[] { ComponentType.Others };
+
     @Override
     public ComponentType[] getComponentType() {
         return ct;
@@ -414,7 +416,7 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
      *            The opacity to set.
      * @return Whether new objects have been added since last frame
      */
-    public void update(Transform parentTransform, ICamera cam, List<T> roulette, float opacity) {
+    public void update(Transform parentTransform, ICamera cam, Array<T> roulette, float opacity) {
         parentTransform.getTranslation(transform);
         this.opacity = opacity;
 
@@ -459,7 +461,7 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
         }
     }
 
-    private void addObjectsTo(List<T> roulette) {
+    private void addObjectsTo(Array<T> roulette) {
         if (objects != null) {
             roulette.addAll(objects);
         }
@@ -565,7 +567,7 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
      */
     public void updateNumbers() {
         // Number of own objects
-        this.ownObjects = objects != null ? objects.size() : 0;
+        this.ownObjects = objects != null ? objects.size : 0;
 
         // Number of recursive objects
         this.nObjects = this.ownObjects;

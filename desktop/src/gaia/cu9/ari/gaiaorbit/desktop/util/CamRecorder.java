@@ -6,6 +6,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import com.badlogic.gdx.files.FileHandle;
@@ -43,6 +45,8 @@ public class CamRecorder implements IObserver {
     private BufferedWriter os;
     private BufferedReader is;
     private File f;
+    private DateFormat df;
+
     private long startMs;
     float time;
 
@@ -53,6 +57,8 @@ public class CamRecorder implements IObserver {
     public CamRecorder() {
         this.mode = RecorderMode.IDLE;
         EventManager.instance.subscribe(this, Events.RECORD_CAMERA_CMD, Events.PLAY_CAMERA_CMD, Events.UPDATE_CAM_RECORDER);
+
+        df = new SimpleDateFormat("dd-MM-yyyy_HH-mm-ss-SSS");
 
         dir = new Vector3d();
         upp = new Vector3d();
@@ -86,19 +92,9 @@ public class CamRecorder implements IObserver {
                         dir.set(Parser.parseDouble(tokens[4]), Parser.parseDouble(tokens[5]), Parser.parseDouble(tokens[6]));
                         upp.set(Parser.parseDouble(tokens[7]), Parser.parseDouble(tokens[8]), Parser.parseDouble(tokens[9]));
 
-                        //                        float degrees = -30;
-                        //
-                        //                        aux1.set(dir).crs(up);
-                        //                        dir.rotate(aux1, degrees);
-                        //                        upp.rotate(aux1, degrees);
-
                         position.set(Parser.parseDouble(tokens[1]), Parser.parseDouble(tokens[2]), Parser.parseDouble(tokens[3]));
                         direction.set(dir);
                         up.set(upp);
-
-                        //                        position.set(Parser.parseDouble(tokens[1]), Parser.parseDouble(tokens[2]), Parser.parseDouble(tokens[3]));
-                        //                        direction.set(Parser.parseDouble(tokens[4]), Parser.parseDouble(tokens[5]), Parser.parseDouble(tokens[6]));
-                        //                        up.set(Parser.parseDouble(tokens[7]), Parser.parseDouble(tokens[8]), Parser.parseDouble(tokens[9]));
 
                     } else {
                         // Finish off
@@ -150,7 +146,8 @@ public class CamRecorder implements IObserver {
                     Logger.info(I18n.bundle.get("error.camerarecord.already"));
                     return;
                 }
-                f = new File(SysUtils.getDefaultCameraDir(), System.currentTimeMillis() + "_gscamera.dat");
+                // Annotate by date
+                f = new File(SysUtils.getDefaultCameraDir(), df.format(new Date()) + "_gscamera.dat");
                 if (f.exists()) {
                     f.delete();
                 }

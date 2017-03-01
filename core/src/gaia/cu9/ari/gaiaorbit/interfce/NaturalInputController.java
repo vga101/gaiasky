@@ -1,11 +1,8 @@
 package gaia.cu9.ari.gaiaorbit.interfce;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 
 import com.badlogic.gdx.Gdx;
@@ -17,6 +14,7 @@ import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Array;
 
 import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
@@ -188,9 +186,9 @@ public class NaturalInputController extends GestureDetector {
 
                             if (doubleClick && !stopped && !focusRemoved) {
                                 // Select star, if any
-                                List<CelestialBody> l = GaiaSky.instance.getFocusableEntities();
+                                Array<CelestialBody> l = GaiaSky.instance.getFocusableEntities();
 
-                                List<CelestialBody> hits = new ArrayList<CelestialBody>();
+                                Array<CelestialBody> hits = new Array<CelestialBody>();
 
                                 Iterator<CelestialBody> it = l.iterator();
                                 Vector3 pos = new Vector3();
@@ -237,11 +235,11 @@ public class NaturalInputController extends GestureDetector {
                                         }
                                     }
                                 }
-                                if (!hits.isEmpty()) {
+                                if (hits.size != 0) {
                                     // Sort using distance
-                                    Collections.sort(hits, comp);
+                                    hits.sort(comp);
                                     // Get closest
-                                    CelestialBody hit = hits.get(hits.size() - 1);
+                                    CelestialBody hit = hits.get(hits.size - 1);
 
                                     EventManager.instance.post(Events.FOCUS_CHANGE_CMD, hit);
                                     EventManager.instance.post(Events.CAMERA_MODE_CMD, CameraMode.Focus);

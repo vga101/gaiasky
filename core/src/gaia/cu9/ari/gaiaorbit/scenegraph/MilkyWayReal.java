@@ -125,7 +125,7 @@ public class MilkyWayReal extends AbstractPositionEntity implements I3DTextRende
         updateLocal(time, camera);
 
         if (children != null && camera.getDistance() * camera.getFovFactor() < highDist) {
-            for (int i = 0; i < children.size(); i++) {
+            for (int i = 0; i < children.size; i++) {
                 float childOpacity = 1 - this.opacity;
                 SceneGraphNode child = children.get(i);
                 child.update(time, transform, camera, childOpacity);

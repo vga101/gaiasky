@@ -1,9 +1,8 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.IntMap;
 
 import gaia.cu9.ari.gaiaorbit.render.system.PixelRenderSystem;
@@ -36,14 +35,14 @@ public abstract class AbstractSceneGraph implements ISceneGraph {
     }
 
     @Override
-    public void initialize(List<SceneGraphNode> nodes, ITimeFrameProvider time) {
-        Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.sg.insert", nodes.size()));
+    public void initialize(Array<SceneGraphNode> nodes, ITimeFrameProvider time) {
+        Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.sg.insert", nodes.size));
 
         // Set the reference
         SceneGraphNode.sg = this;
 
         // Initialize stringToNode and starMap maps
-        stringToNode = new HashMap<String, SceneGraphNode>(nodes.size() * 2);
+        stringToNode = new HashMap<String, SceneGraphNode>(nodes.size * 2);
         stringToNode.put(root.name, root);
         starMap = new IntMap<Star>();
         for (SceneGraphNode node : nodes) {
@@ -68,7 +67,7 @@ public abstract class AbstractSceneGraph implements ISceneGraph {
                     }
                 }
             } else if (node.getStarCount() > 1) {
-                List<AbstractPositionEntity> stars = (List<AbstractPositionEntity>) node.getStars();
+                Array<AbstractPositionEntity> stars = (Array<AbstractPositionEntity>) node.getStars();
                 for (AbstractPositionEntity s : stars) {
                     if (s instanceof Star && ((Star) s).hip >= 0) {
                         if (starMap.containsKey(((Star) s).hip)) {
@@ -143,20 +142,20 @@ public abstract class AbstractSceneGraph implements ISceneGraph {
         return stringToNode.get(name);
     }
 
-    public List<SceneGraphNode> getNodes() {
-        List<SceneGraphNode> objects = new ArrayList<SceneGraphNode>();
+    public Array<SceneGraphNode> getNodes() {
+        Array<SceneGraphNode> objects = new Array<SceneGraphNode>();
         root.addNodes(objects);
         return objects;
     }
 
-    public List<CelestialBody> getFocusableObjects() {
-        List<CelestialBody> objects = new ArrayList<CelestialBody>();
+    public Array<CelestialBody> getFocusableObjects() {
+        Array<CelestialBody> objects = new Array<CelestialBody>();
         root.addFocusableObjects(objects);
         return objects;
     }
 
     public CelestialBody findFocus(String name) {
-        List<CelestialBody> objects = new ArrayList<CelestialBody>();
+        Array<CelestialBody> objects = new Array<CelestialBody>();
         root.addFocusableObjects(objects);
         for (CelestialBody fo : objects) {
             if (fo.getName().equals(name)) {

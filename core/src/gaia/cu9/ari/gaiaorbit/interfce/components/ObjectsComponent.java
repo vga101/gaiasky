@@ -1,9 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.interfce.components;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
@@ -150,8 +146,8 @@ public class ObjectsComponent extends GuiComponent implements IObserver {
         } else if (list) {
             final com.badlogic.gdx.scenes.scene2d.ui.List<String> focusList = new com.badlogic.gdx.scenes.scene2d.ui.List<String>(skin, "light");
             focusList.setName("objects list");
-            List<CelestialBody> focusableObjects = sg.getFocusableObjects();
-            Array<String> names = new Array<String>(focusableObjects.size());
+            Array<CelestialBody> focusableObjects = sg.getFocusableObjects();
+            Array<String> names = new Array<String>(focusableObjects.size);
 
             for (CelestialBody cb : focusableObjects) {
                 // Omit stars with no proper names
@@ -163,9 +159,9 @@ public class ObjectsComponent extends GuiComponent implements IObserver {
 
             SceneGraphNode sol = sg.getNode("Sol");
             if (sol != null) {
-                List<CelestialBody> solChildren = new ArrayList<CelestialBody>();
+                Array<CelestialBody> solChildren = new Array<CelestialBody>();
                 sol.addFocusableObjects(solChildren);
-                Collections.sort(solChildren, new CelestialBodyComparator());
+                solChildren.sort(new CelestialBodyComparator());
                 for (CelestialBody cb : solChildren)
                     names.insert(0, cb.name);
             }
@@ -220,14 +216,14 @@ public class ObjectsComponent extends GuiComponent implements IObserver {
 
     }
 
-    private Array<Node> createTree(List<SceneGraphNode> nodes) {
-        Array<Node> treeNodes = new Array<Node>(nodes.size());
+    private Array<Node> createTree(Array<SceneGraphNode> nodes) {
+        Array<Node> treeNodes = new Array<Node>(nodes.size);
         for (SceneGraphNode node : nodes) {
             Label l = new Label(node.name, skin, "ui-10");
             l.setColor(Color.BLACK);
             Node treeNode = new Node(l);
 
-            if (node.children != null && !node.children.isEmpty()) {
+            if (node.children != null && node.children.size != 0) {
                 treeNode.addAll(createTree(node.children));
             }
 

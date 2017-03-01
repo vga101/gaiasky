@@ -1,6 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph.octreewrapper;
 
-import java.util.ArrayList;
+import com.badlogic.gdx.utils.Array;
 
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
@@ -23,12 +23,12 @@ public class OctreeWrapper extends AbstractOctreeWrapper {
 
     public OctreeWrapper(String parentName, OctreeNode<SceneGraphNode> root) {
         super(parentName, root);
-        roulette = new ArrayList<SceneGraphNode>(root.nObjects);
+        roulette = new Array<SceneGraphNode>(false, root.nObjects);
     }
 
     @Override
     protected void updateOctreeObjects(ITimeFrameProvider time, Transform parentTransform, ICamera camera) {
-        int size = roulette.size();
+        int size = roulette.size;
         for (int i = 0; i < size; i++) {
             SceneGraphNode sgn = roulette.get(i);
             float opacity = sgn instanceof Particle ? ((Particle) sgn).octant.opacity : sgn.opacity;
@@ -38,7 +38,7 @@ public class OctreeWrapper extends AbstractOctreeWrapper {
 
     @Override
     protected String getRouletteDebug() {
-        return "[" + roulette.size() + "]";
+        return "[" + roulette.size + "]";
     }
 
 }

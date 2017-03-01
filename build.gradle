@@ -182,7 +182,7 @@ project(":core") {
     dependencies {
         compile "com.badlogicgames.gdx:gdx:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-controllers:$gdxVersion"
-		compile 'junit:junit:4.12'
+		compile "junit:junit:4.12"
 		compile files('lib/postprocessing.jar')
     }
 

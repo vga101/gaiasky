@@ -19,6 +19,7 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
+import com.badlogic.gdx.utils.Array;
 
 import gaia.cu9.ari.gaiaorbit.data.AssetBean;
 import gaia.cu9.ari.gaiaorbit.data.GaiaAttitudeLoader;
@@ -576,7 +577,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
     public void resume() {
     }
 
-    public List<CelestialBody> getFocusableEntities() {
+    public Array<CelestialBody> getFocusableEntities() {
 
         return sg.getFocusableObjects();
     }

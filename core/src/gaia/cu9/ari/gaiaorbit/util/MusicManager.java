@@ -2,13 +2,12 @@ package gaia.cu9.ari.gaiaorbit.util;
 
 import java.io.File;
 import java.io.FilenameFilter;
-import java.util.ArrayList;
-import java.util.List;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Music.OnCompletionListener;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.utils.Array;
 
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
@@ -28,7 +27,7 @@ public class MusicManager implements IObserver {
         return instance != null;
     }
 
-    private List<FileHandle> musicFiles;
+    private Array<FileHandle> musicFiles;
     private int i = 0;
     private Music currentMusic;
     private float volume = 0.05f;
@@ -42,31 +41,31 @@ public class MusicManager implements IObserver {
 
     private void initFiles(FileHandle[] folders) {
         if (folders != null) {
-            musicFiles = new ArrayList<FileHandle>();
+            musicFiles = new Array<FileHandle>();
 
             for (FileHandle folder : folders) {
                 GlobalResources.listRec(folder, musicFiles, new MusicFileFilter());
             }
-            Logger.info(I18n.bundle.format("gui.music.load", musicFiles.size()));
+            Logger.info(I18n.bundle.format("gui.music.load", musicFiles.size));
         } else {
-            musicFiles = new ArrayList<FileHandle>();
+            musicFiles = new Array<FileHandle>();
         }
         i = 0;
     }
 
     public void start() {
-        if (musicFiles.size() > 0) {
+        if (musicFiles.size > 0) {
             playNextMusic();
         }
     }
 
     private void playNextMusic() {
-        i = (i + 1) % musicFiles.size();
+        i = (i + 1) % musicFiles.size;
         playIndex(i);
     }
 
     private void playPreviousMusic() {
-        i = (((i - 1) % musicFiles.size()) + musicFiles.size()) % musicFiles.size();
+        i = (((i - 1) % musicFiles.size) + musicFiles.size) % musicFiles.size;
         playIndex(i);
     }
 

@@ -1,7 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.render;
 
 import java.nio.IntBuffer;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -83,7 +82,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
     // Two model batches, for front (models), back and atmospheres
     private SpriteBatch spriteBatch, fontBatch;
 
-    private List<IRenderSystem> renderProcesses;
+    private Array<IRenderSystem> renderProcesses;
 
     RenderSystemRunnable blendNoDepthRunnable, blendDepthRunnable;
 
@@ -191,7 +190,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
          **/
         pixelRenderSystems = new AbstractRenderSystem[3];
 
-        renderProcesses = new ArrayList<IRenderSystem>();
+        renderProcesses = new Array<IRenderSystem>();
 
         blendNoDepthRunnable = new RenderSystemRunnable() {
             @Override
@@ -400,7 +399,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
         EventManager.instance.post(Events.DEBUG1, "quads: " + (render_lists.get(RenderGroup.SHADER).size() + render_lists.get(RenderGroup.SHADER_F).size()) + ", points: " + render_lists.get(RenderGroup.POINT).size() + ", labels: " + render_lists.get(RenderGroup.LABEL).size());
 
-        int size = renderProcesses.size();
+        int size = renderProcesses.size;
         for (int i = 0; i < size; i++) {
             IRenderSystem process = renderProcesses.get(i);
             // If we have no render group, this means all the info is already in the render system. No lists needed
