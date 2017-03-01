@@ -109,14 +109,10 @@ public abstract class AbstractOctreeWrapper extends SceneGraphNode implements It
             // Compute observed octants and fill roulette list
             root.update(transform, camera, roulette, 1f);
 
-            if (!GlobalConf.scene.OCTREE_PARTICLE_FADE) {
-                if (roulette.size != lastNumberObjects) {
-                    // Need to update the points in renderer
-                    AbstractRenderSystem.POINT_UPDATE_FLAG = true;
-                    lastNumberObjects = roulette.size;
-                }
-            } else {
+            if (roulette.size != lastNumberObjects) {
+                // Need to update the points in renderer
                 AbstractRenderSystem.POINT_UPDATE_FLAG = true;
+                lastNumberObjects = roulette.size;
             }
 
             updateLocal(time, camera);

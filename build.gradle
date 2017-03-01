@@ -118,6 +118,7 @@ project(":desktop") {
 		compile "com.miglayout:miglayout-swing:$miglayoutVersion"
         compile "com.github.arnabk:pgslookandfeel:$pgsVersion"
 		compile files('../core/lib/postprocessing.jar',
+					'../core/lib/jafama.jar',
 					'../android/assets',
                     'lib/stil.jar',
                     'lib/swing-range-slider.jar')
@@ -183,7 +184,8 @@ project(":core") {
         compile "com.badlogicgames.gdx:gdx:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-controllers:$gdxVersion"
 		compile "junit:junit:4.12"
-		compile files('lib/postprocessing.jar')
+		compile files('lib/postprocessing.jar',
+					'lib/jafama.jar')
     }
 
     jar {
@@ -219,7 +221,7 @@ tasks.eclipse.doLast {
 
 
 
-task versionFile << {
+tasks.create('versionFile').doLast {
     File versionFile = file('core/build/classes/main/version')
     delete versionFile
     def writer = new FileWriter(versionFile)

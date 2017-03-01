@@ -17,8 +17,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Array;
 
 import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
-import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
+import net.jafama.FastMath;
 
 /**
  * Holds and initializes resources utilized globally.
@@ -174,7 +174,7 @@ public class GlobalResources {
      * @return True if the body is visible.
      */
     public static boolean isInView(Vector3d point, double pointDistance, float coneAngle, Vector3d dir) {
-        return MathUtilsd.acos(point.dot(dir) / pointDistance) < coneAngle;
+        return FastMath.acos(point.dot(dir) / pointDistance) < coneAngle;
     }
 
     /**
@@ -194,7 +194,7 @@ public class GlobalResources {
         boolean inview = false;
         int size = points.length;
         for (int i = 0; i < size; i++) {
-            inview = inview || MathUtilsd.acos(points[i].dot(dir) / points[i].len()) < coneAngle;
+            inview = inview || FastMath.acos(points[i].dot(dir) / points[i].len()) < coneAngle;
         }
         return inview;
     }

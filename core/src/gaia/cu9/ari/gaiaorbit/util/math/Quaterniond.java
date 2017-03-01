@@ -21,6 +21,8 @@ import java.io.Serializable;
 import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.utils.NumberUtils;
 
+import net.jafama.FastMath;
+
 /** A simple quaternion class.
  * @see <a href="http://en.wikipedia.org/wiki/Quaternion">http://en.wikipedia.org/wiki/Quaternion</a>
  * @author badlogicgames@gmail.com
@@ -135,8 +137,7 @@ public class Quaterniond implements Serializable {
      * @param roll the rotation around the z axis degrees
      * @return this quaternion */
     public Quaterniond setEulerAngles(double yaw, double pitch, double roll) {
-        return setEulerAnglesRad(yaw * MathUtilsd.degreesToRadians, pitch * MathUtilsd.degreesToRadians, roll
-                * MathUtilsd.degreesToRadians);
+        return setEulerAnglesRad(yaw * MathUtilsd.degreesToRadians, pitch * MathUtilsd.degreesToRadians, roll * MathUtilsd.degreesToRadians);
     }
 
     /** Sets the quaternion to the given euler angles in radians.
@@ -177,7 +178,7 @@ public class Quaterniond implements Serializable {
      * @return the rotation around the z axis in radians (between -PI and +PI) */
     public double getRollRad() {
         final int pole = getGimbalPole();
-        return pole == 0 ? MathUtilsd.atan2(2f * (w * z + y * x), 1f - 2f * (x * x + z * z)) : pole * 2f * MathUtilsd.atan2(y, w);
+        return pole == 0 ? FastMath.atan2(2f * (w * z + y * x), 1f - 2f * (x * x + z * z)) : pole * 2f * FastMath.atan2(y, w);
     }
 
     /** Get the roll euler angle in degrees, which is the rotation around the z axis. Requires that this quaternion is normalized. 
@@ -202,7 +203,7 @@ public class Quaterniond implements Serializable {
     /** Get the yaw euler angle in radians, which is the rotation around the y axis. Requires that this quaternion is normalized. 
      * @return the rotation around the y axis in radians (between -PI and +PI) */
     public double getYawRad() {
-        return getGimbalPole() == 0 ? MathUtilsd.atan2(2f * (y * w + x * z), 1f - 2f * (y * y + x * x)) : 0f;
+        return getGimbalPole() == 0 ? FastMath.atan2(2f * (y * w + x * z), 1f - 2f * (y * y + x * x)) : 0f;
     }
 
     /** Get the yaw euler angle in degrees, which is the rotation around the y axis. Requires that this quaternion is normalized. 
@@ -270,8 +271,7 @@ public class Quaterniond implements Serializable {
     public Quaterniond inverse() {
         double invNormSqu;
 
-        invNormSqu = 1.0 / ((this.w * this.w) + (this.x * this.x)
-                + (this.y * this.y) + (this.z * this.z));
+        invNormSqu = 1.0 / ((this.w * this.w) + (this.x * this.x) + (this.y * this.y) + (this.z * this.z));
         this.w *= invNormSqu;
         this.x *= -invNormSqu;
         this.y *= -invNormSqu;
@@ -434,8 +434,7 @@ public class Quaterniond implements Serializable {
 
     /** @return If this quaternion is an identity Quaterniond */
     public boolean isIdentity(final double tolerance) {
-        return MathUtilsd.isZero(x, tolerance) && MathUtilsd.isZero(y, tolerance) && MathUtilsd.isZero(z, tolerance)
-                && MathUtilsd.isEqual(w, 1f, tolerance);
+        return MathUtilsd.isZero(x, tolerance) && MathUtilsd.isZero(y, tolerance) && MathUtilsd.isZero(z, tolerance) && MathUtilsd.isEqual(w, 1f, tolerance);
     }
 
     // todo : the setFromAxis(v3,double) method should replace the set(v3,double) method
@@ -486,9 +485,7 @@ public class Quaterniond implements Serializable {
 
     /** Sets the Quaterniond from the given matrix, optionally removing any scaling. */
     public Quaterniond setFromMatrix(boolean normalizeAxes, Matrix4d matrix) {
-        return setFromAxes(normalizeAxes, matrix.val[Matrix4d.M00], matrix.val[Matrix4d.M01], matrix.val[Matrix4d.M02],
-                matrix.val[Matrix4d.M10], matrix.val[Matrix4d.M11], matrix.val[Matrix4d.M12], matrix.val[Matrix4d.M20],
-                matrix.val[Matrix4d.M21], matrix.val[Matrix4d.M22]);
+        return setFromAxes(normalizeAxes, matrix.val[Matrix4d.M00], matrix.val[Matrix4d.M01], matrix.val[Matrix4d.M02], matrix.val[Matrix4d.M10], matrix.val[Matrix4d.M11], matrix.val[Matrix4d.M12], matrix.val[Matrix4d.M20], matrix.val[Matrix4d.M21], matrix.val[Matrix4d.M22]);
     }
 
     /** Sets the Quaterniond from the given rotation matrix, which must not contain scaling. */
@@ -549,8 +546,7 @@ public class Quaterniond implements Serializable {
      * @param zx z-axis x-coordinate
      * @param zy z-axis y-coordinate
      * @param zz z-axis z-coordinate */
-    public Quaterniond setFromAxes(boolean normalizeAxes, double xx, double xy, double xz, double yx, double yy, double yz, double zx,
-            double zy, double zz) {
+    public Quaterniond setFromAxes(boolean normalizeAxes, double xx, double xy, double xz, double yx, double yy, double yz, double zx, double zy, double zz) {
         if (normalizeAxes) {
             final double lx = 1f / Vector3d.len(xx, xy, xz);
             final double ly = 1f / Vector3d.len(yx, yy, yz);
@@ -690,10 +686,7 @@ public class Quaterniond implements Serializable {
             return false;
         }
         Quaterniond other = (Quaterniond) obj;
-        return (NumberUtils.floatToRawIntBits((float) w) == NumberUtils.floatToRawIntBits((float) other.w))
-                && (NumberUtils.floatToRawIntBits((float) x) == NumberUtils.floatToRawIntBits((float) other.x))
-                && (NumberUtils.floatToRawIntBits((float) y) == NumberUtils.floatToRawIntBits((float) other.y))
-                && (NumberUtils.floatToRawIntBits((float) z) == NumberUtils.floatToRawIntBits((float) other.z));
+        return (NumberUtils.floatToRawIntBits((float) w) == NumberUtils.floatToRawIntBits((float) other.w)) && (NumberUtils.floatToRawIntBits((float) x) == NumberUtils.floatToRawIntBits((float) other.x)) && (NumberUtils.floatToRawIntBits((float) y) == NumberUtils.floatToRawIntBits((float) other.y)) && (NumberUtils.floatToRawIntBits((float) z) == NumberUtils.floatToRawIntBits((float) other.z));
     }
 
     /** Get the dot product between the two quaternions (commutative).
@@ -706,8 +699,7 @@ public class Quaterniond implements Serializable {
      * @param z2 the z component of the second quaternion
      * @param w2 the w component of the second quaternion
      * @return the dot product between the first and second quaternion. */
-    public final static double dot(final double x1, final double y1, final double z1, final double w1, final double x2, final double y2,
-            final double z2, final double w2) {
+    public final static double dot(final double x1, final double y1, final double z1, final double w1, final double x2, final double y2, final double z2, final double w2) {
         return x1 * x2 + y1 * y2 + z1 * z2 + w1 * w2;
     }
 
@@ -821,8 +813,7 @@ public class Quaterniond implements Serializable {
      * @param swing will receive the swing rotation: the rotation around an axis perpendicular to the specified axis
      * @param twist will receive the twist rotation: the rotation around the specified axis
      * @see <a href="http://www.euclideanspace.com/maths/geometry/rotations/for/decomposition">calculation</a> */
-    public void getSwingTwist(final double axisX, final double axisY, final double axisZ, final Quaterniond swing,
-            final Quaterniond twist) {
+    public void getSwingTwist(final double axisX, final double axisY, final double axisZ, final Quaterniond swing, final Quaterniond twist) {
         final double d = Vector3d.dot(this.x, this.y, this.z, axisX, axisY, axisZ);
         twist.set(axisX * d, axisY * d, axisZ * d, this.w).nor();
         swing.set(twist).conjugate().mulLeft(this);

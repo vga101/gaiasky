@@ -25,6 +25,7 @@ import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Quaterniond;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
+import net.jafama.FastMath;
 
 /**
  * Represents any celestial body.
@@ -324,7 +325,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
 
     @Override
     public float textScale() {
-        return (float) Math.atan(labelMax()) * labelFactor() * 4e2f;
+        return (float) FastMath.atan(labelMax()) * labelFactor() * 4e2f;
     }
 
     @Override

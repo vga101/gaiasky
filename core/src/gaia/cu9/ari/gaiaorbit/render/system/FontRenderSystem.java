@@ -1,8 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.render.system;
 
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.List;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
@@ -11,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.badlogic.gdx.utils.Array;
 
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.render.I3DTextRenderable;
@@ -52,10 +51,10 @@ public class FontRenderSystem extends AbstractRenderSystem {
     }
 
     @Override
-    public void renderStud(List<IRenderable> renderables, ICamera camera, float t) {
-        Collections.sort(renderables, comp);
+    public void renderStud(Array<IRenderable> renderables, ICamera camera, float t) {
+        renderables.sort(comp);
         batch.begin();
-        int size = renderables.size();
+        int size = renderables.size;
         if (shaderProgram == null) {
             for (int i = 0; i < size; i++) {
                 IRenderable s = renderables.get(i);

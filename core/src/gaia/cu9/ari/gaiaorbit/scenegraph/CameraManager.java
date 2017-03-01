@@ -13,7 +13,6 @@ import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
-import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.TwoWayHashmap;
 import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
 import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
@@ -246,7 +245,6 @@ public class CameraManager implements ICamera, IObserver {
         double alpha = out.x * AstroUtils.TO_DEG;
         double delta = out.y * AstroUtils.TO_DEG;
 
-        Logger.debug("Alpha/delta: " + alpha + "/" + delta);
         EventManager.instance.post(Events.RA_DEC_UPDATED, alpha, delta, screenX, screenY);
     }
 
@@ -280,7 +278,6 @@ public class CameraManager implements ICamera, IObserver {
                     double lon = (Math.toDegrees(out.x) + 90) % 360;
                     double lat = Math.toDegrees(out.y);
 
-                    Logger.debug("Lon/lat: " + lon + "/" + lat);
                     EventManager.instance.post(Events.LON_LAT_UPDATED, lon, lat, screenX, screenY);
 
                 }

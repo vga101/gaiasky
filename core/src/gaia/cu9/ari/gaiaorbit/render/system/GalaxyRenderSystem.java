@@ -1,6 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.render.system;
 
-import java.util.List;
 import java.util.Random;
 
 import com.badlogic.gdx.Application.ApplicationType;
@@ -15,7 +14,6 @@ import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
-import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 
@@ -111,9 +109,8 @@ public class GalaxyRenderSystem extends ImmediateRenderSystem implements IObserv
     }
 
     @Override
-    public void renderStud(List<IRenderable> renderables, ICamera camera, float t) {
-        int size = renderables.size();
-        if (size > 0) {
+    public void renderStud(Array<IRenderable> renderables, ICamera camera, float t) {
+        if (renderables.size > 0) {
             MilkyWayReal mw = (MilkyWayReal) renderables.get(0);
             Random rand = new Random(24601);
 
@@ -321,7 +318,7 @@ public class GalaxyRenderSystem extends ImmediateRenderSystem implements IObserv
              * IMAGE RENDERER
              */
             mw.mc.setTransparency(mw.opacity * alphas[mw.ct[0].ordinal()] * (GlobalConf.scene.GALAXY_3D ? 0.4f : 0.8f));
-            
+
             modelBatch.begin(camera.getCamera());
             modelBatch.render(mw.mc.instance, mw.mc.env);
             modelBatch.end();
@@ -345,5 +342,5 @@ public class GalaxyRenderSystem extends ImmediateRenderSystem implements IObserv
     @Override
     public void notify(Events event, Object... data) {
     }
-    
+
 }

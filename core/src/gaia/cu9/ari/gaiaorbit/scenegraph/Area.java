@@ -9,6 +9,7 @@ import gaia.cu9.ari.gaiaorbit.render.system.LineRenderSystem;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
+import net.jafama.FastMath;
 
 /**
  * Represents the outline of a country
@@ -103,7 +104,7 @@ public class Area extends AbstractPositionEntity implements ILineRenderable {
 
             Vector3d aux = aux3d1.get();
             this.distToCamera = (float) transform.getTranslation(aux).len();
-            this.viewAngle = (float) Math.atan(size / distToCamera) / camera.getFovFactor();
+            this.viewAngle = (float) FastMath.atan(size / distToCamera) / camera.getFovFactor();
             this.viewAngleApparent = this.viewAngle;
             if (!copy) {
                 addToRenderLists(camera);

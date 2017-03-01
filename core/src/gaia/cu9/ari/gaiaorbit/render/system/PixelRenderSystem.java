@@ -1,7 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.render.system;
 
-import java.util.List;
-
 import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -23,7 +21,6 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
-import gaia.cu9.ari.gaiaorbit.util.GlobalConf.ProgramConf.StereoProfile;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
 
@@ -111,12 +108,12 @@ public class PixelRenderSystem extends ImmediateRenderSystem implements IObserve
     }
 
     @Override
-    public void renderStud(List<IRenderable> renderables, ICamera camera, float t) {
+    public void renderStud(Array<IRenderable> renderables, ICamera camera, float t) {
         if (POINT_UPDATE_FLAG) {
             // Reset variables
             curr.clear();
 
-            int size = renderables.size();
+            int size = renderables.size;
             for (int i = 0; i < size; i++) {
                 // 2 FPS gain
                 CelestialBody cb = (CelestialBody) renderables.get(i);

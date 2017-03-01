@@ -25,6 +25,7 @@ import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadIndexer;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
+import net.jafama.FastMath;
 
 /**
  * A point particle which may represent a star, a galaxy, etc.
@@ -334,7 +335,7 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
 
     @Override
     public float textScale() {
-        return (float) Math.atan(labelMax()) * labelFactor() * 4e2f;
+        return (float) FastMath.atan(labelMax()) * labelFactor() * 4e2f;
     }
 
     @Override

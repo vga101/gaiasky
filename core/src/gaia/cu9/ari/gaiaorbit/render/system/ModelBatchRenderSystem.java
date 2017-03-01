@@ -1,9 +1,7 @@
 package gaia.cu9.ari.gaiaorbit.render.system;
 
-import java.util.Collections;
-import java.util.List;
-
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
+import com.badlogic.gdx.utils.Array;
 
 import gaia.cu9.ari.gaiaorbit.render.IRenderable;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
@@ -35,11 +33,11 @@ public class ModelBatchRenderSystem extends AbstractRenderSystem {
     }
 
     @Override
-    public void renderStud(List<IRenderable> renderables, ICamera camera, float t) {
-        Collections.sort(renderables, comp);
+    public void renderStud(Array<IRenderable> renderables, ICamera camera, float t) {
+        renderables.sort(comp);
         if (mustRender()) {
             batch.begin(camera.getCamera());
-            int size = renderables.size();
+            int size = renderables.size;
             for (int i = 0; i < size; i++) {
                 IRenderable s = renderables.get(i);
                 if (!addByte) {
@@ -56,6 +54,5 @@ public class ModelBatchRenderSystem extends AbstractRenderSystem {
     protected boolean mustRender() {
         return true;
     }
-
 
 }

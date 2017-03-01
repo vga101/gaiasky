@@ -65,7 +65,6 @@ import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.ModelCache;
 import gaia.cu9.ari.gaiaorbit.util.MusicManager;
 import gaia.cu9.ari.gaiaorbit.util.gaia.GaiaAttitudeServer;
-import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.GlobalClock;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
@@ -171,9 +170,6 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         real = new RealTimeClock();
         time = GlobalConf.runtime.REAL_TIME ? real : clock;
         t = 0;
-
-        // Precompute some math functions
-        MathUtilsd.initialize();
 
         // Initialise i18n
         I18n.initialize();

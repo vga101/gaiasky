@@ -1,7 +1,8 @@
 package gaia.cu9.ari.gaiaorbit.render.system;
 
 import java.util.Comparator;
-import java.util.List;
+
+import com.badlogic.gdx.utils.Array;
 
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.render.IRenderable;
@@ -40,8 +41,8 @@ public abstract class AbstractRenderSystem implements IRenderSystem {
     }
 
     @Override
-    public void render(List<IRenderable> renderables, ICamera camera, float t, RenderContext rc) {
-        if (renderables != null && !renderables.isEmpty()) {
+    public void render(Array<IRenderable> renderables, ICamera camera, float t, RenderContext rc) {
+        if (renderables != null && renderables.size != 0) {
             this.rc = rc;
             run(preRunnable, renderables, camera);
             renderStud(renderables, camera, t);
@@ -49,7 +50,7 @@ public abstract class AbstractRenderSystem implements IRenderSystem {
         }
     }
 
-    public abstract void renderStud(List<IRenderable> renderables, ICamera camera, float t);
+    public abstract void renderStud(Array<IRenderable> renderables, ICamera camera, float t);
 
     public void setPreRunnable(RenderSystemRunnable r) {
         preRunnable = r;
@@ -59,21 +60,21 @@ public abstract class AbstractRenderSystem implements IRenderSystem {
         postRunnable = r;
     }
 
-    protected void run(RenderSystemRunnable runnable, List<IRenderable> renderables, ICamera camera) {
+    protected void run(RenderSystemRunnable runnable, Array<IRenderable> renderables, ICamera camera) {
         if (runnable != null) {
             runnable.run(this, renderables, camera);
         }
     }
-    
+
     /**
      * Computes the alpha opacity value of a given renderable using its component types
      * @param renderable The renderable
      * @return The alpha value as the product of all the alphas of its component types.
      */
-    public float getAlpha(IRenderable renderable){
+    public float getAlpha(IRenderable renderable) {
         ComponentType[] cts = renderable.getComponentType();
         float alpha = alphas[cts[0].ordinal()];
-        for(int i =1; i < cts.length; i++)
+        for (int i = 1; i < cts.length; i++)
             alpha *= alphas[cts[i].ordinal()];
         return alpha;
     }
@@ -89,9 +90,7 @@ public abstract class AbstractRenderSystem implements IRenderSystem {
     }
 
     public interface RenderSystemRunnable {
-        public abstract void run(AbstractRenderSystem renderSystem, List<IRenderable> renderables, ICamera camera);
+        public abstract void run(AbstractRenderSystem renderSystem, Array<IRenderable> renderables, ICamera camera);
     }
-    
-
 
 }

@@ -5,6 +5,8 @@ import java.io.Serializable;
 import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
 
+import net.jafama.FastMath;
+
 /**
  * Copy of libgdx's Vector3d class using doubles for some precision calculations.
  * @author Toni Sagrista
@@ -623,7 +625,7 @@ public class Vector3d implements Serializable {
 
     /** Gets the angle in degrees between the two vectors **/
     public double angle(Vector3d v) {
-        return MathUtilsd.radiansToDegrees * MathUtilsd.acos(this.dot(v) / (this.len() * v.len()));
+        return MathUtilsd.radiansToDegrees * FastMath.acos(this.dot(v) / (this.len() * v.len()));
     }
 
     @Override

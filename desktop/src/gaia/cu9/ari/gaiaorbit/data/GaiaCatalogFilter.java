@@ -29,10 +29,10 @@ import gaia.cu9.ari.gaiaorbit.util.Pair;
 import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.gaia.GaiaAttitudeServer;
 import gaia.cu9.ari.gaiaorbit.util.gaia.Satellite;
-import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
 import gaia.cu9.ari.gaiaorbit.util.math.Quaterniond;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
+import net.jafama.FastMath;
 
 /**
  * Loads a catalog and selects the stars that are observed during a certain period of time.
@@ -71,9 +71,6 @@ public class GaiaCatalogFilter {
         // Init global conf
         WebGLConfInit confInit = new WebGLConfInit();
         confInit.initGlobalConf();
-
-        // Precompute some math functions
-        MathUtilsd.initialize();
 
         // Initialize i18n
         I18n.initialize();
@@ -146,7 +143,7 @@ public class GaiaCatalogFilter {
 
                 for (CelestialBody p : catalog) {
                     double poslen = p.pos.len();
-                    boolean observed = MathUtilsd.acos(p.pos.dot(dirs.getFirst()) / poslen) < angleEdgeRad || MathUtilsd.acos(p.pos.dot(dirs.getSecond()) / poslen) < angleEdgeRad;
+                    boolean observed = FastMath.acos(p.pos.dot(dirs.getFirst()) / poslen) < angleEdgeRad || FastMath.acos(p.pos.dot(dirs.getSecond()) / poslen) < angleEdgeRad;
                     // Sun should always be there because of the scene graph
                     observed = observed || p.name.equalsIgnoreCase("sol") || p.name.equalsIgnoreCase("sun");
                     if (observed) {

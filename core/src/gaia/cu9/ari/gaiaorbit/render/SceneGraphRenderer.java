@@ -2,7 +2,6 @@ package gaia.cu9.ari.gaiaorbit.render;
 
 import java.nio.IntBuffer;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import com.badlogic.gdx.Gdx;
@@ -194,7 +193,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
         blendNoDepthRunnable = new RenderSystemRunnable() {
             @Override
-            public void run(AbstractRenderSystem renderSystem, List<IRenderable> renderables, ICamera camera) {
+            public void run(AbstractRenderSystem renderSystem, Array<IRenderable> renderables, ICamera camera) {
                 Gdx.gl.glEnable(GL20.GL_BLEND);
                 Gdx.gl.glDisable(GL20.GL_DEPTH_TEST);
                 Gdx.gl.glDepthMask(false);
@@ -202,7 +201,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         };
         blendDepthRunnable = new RenderSystemRunnable() {
             @Override
-            public void run(AbstractRenderSystem renderSystem, List<IRenderable> renderables, ICamera camera) {
+            public void run(AbstractRenderSystem renderSystem, Array<IRenderable> renderables, ICamera camera) {
                 Gdx.gl.glEnable(GL20.GL_BLEND);
                 Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
                 Gdx.gl.glDepthMask(true);
@@ -220,7 +219,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         modelBackProc.setPreRunnable(blendNoDepthRunnable);
         modelBackProc.setPostRunnable(new RenderSystemRunnable() {
             @Override
-            public void run(AbstractRenderSystem renderSystem, List<IRenderable> renderables, ICamera camera) {
+            public void run(AbstractRenderSystem renderSystem, Array<IRenderable> renderables, ICamera camera) {
                 // This always goes at the back, clear depth buffer
                 Gdx.gl.glClear(GL20.GL_DEPTH_BUFFER_BIT);
             }
@@ -235,7 +234,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         annotationsProc.setPreRunnable(blendNoDepthRunnable);
         annotationsProc.setPostRunnable(new RenderSystemRunnable() {
             @Override
-            public void run(AbstractRenderSystem renderSystem, List<IRenderable> renderables, ICamera camera) {
+            public void run(AbstractRenderSystem renderSystem, Array<IRenderable> renderables, ICamera camera) {
                 // This always goes at the back, clear depth buffer
                 Gdx.gl.glClear(GL20.GL_DEPTH_BUFFER_BIT);
             }
@@ -252,8 +251,8 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
             private Vector3 auxv = new Vector3();
 
             @Override
-            public void run(AbstractRenderSystem renderSystem, List<IRenderable> renderables, ICamera camera) {
-                int size = renderables.size();
+            public void run(AbstractRenderSystem renderSystem, Array<IRenderable> renderables, ICamera camera) {
+                int size = renderables.size;
                 if (PostProcessorFactory.instance.getPostProcessor().isLightScatterEnabled()) {
                     // Compute light positions for light scattering or light glow
                     int lightIndex = 0;
@@ -327,7 +326,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         modelAtmProc.setPreRunnable(blendDepthRunnable);
         modelAtmProc.setPostRunnable(new RenderSystemRunnable() {
             @Override
-            public void run(AbstractRenderSystem renderSystem, List<IRenderable> renderables, ICamera camera) {
+            public void run(AbstractRenderSystem renderSystem, Array<IRenderable> renderables, ICamera camera) {
                 // Clear depth buffer before rendering things up close
                 Gdx.gl.glClear(GL20.GL_DEPTH_BUFFER_BIT);
             }
@@ -404,7 +403,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
             IRenderSystem process = renderProcesses.get(i);
             // If we have no render group, this means all the info is already in the render system. No lists needed
             if (process.getRenderGroup() != null) {
-                List<IRenderable> l = render_lists.get(process.getRenderGroup()).toList();
+                Array<IRenderable> l = render_lists.get(process.getRenderGroup()).toList();
                 process.render(l, camera, t, rc);
             } else {
                 process.render(null, camera, t, rc);
