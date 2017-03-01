@@ -1,7 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.util.ds;
 
 import java.util.Iterator;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import com.badlogic.gdx.utils.Array;
 
@@ -15,7 +14,6 @@ import com.badlogic.gdx.utils.Array;
 public class Multilist<T> {
 
     private final Array<T>[] lists;
-    private AtomicInteger size;
     private Array<T> tolist;
 
     /**
@@ -39,7 +37,6 @@ public class Multilist<T> {
         for (int i = 0; i < lists.length; i++) {
             lists[i] = new Array<T>(false, initialCapacity);
         }
-        this.size = new AtomicInteger(0);
         tolist = new Array<T>(false, initialCapacity * numLists);
     }
 
@@ -60,7 +57,10 @@ public class Multilist<T> {
     }
 
     public int size() {
-        return size.get();
+        int size = 0;
+        for (int i = 0; i < lists.length; i++)
+            size += lists[i].size;
+        return size;
     }
 
     public boolean isEmpty() {
@@ -68,8 +68,7 @@ public class Multilist<T> {
     }
 
     public boolean contains(Object o) {
-        int size = lists.length;
-        for (int i = 0; i < size; i++) {
+        for (int i = 0; i < lists.length; i++) {
             if (lists[i].contains((T) o, true))
                 return true;
         }
@@ -95,7 +94,6 @@ public class Multilist<T> {
     }
 
     public boolean add(T e) {
-        incrementSize();
         lists[0].add(e);
         return true;
     }
@@ -108,7 +106,6 @@ public class Multilist<T> {
      * @return <tt>true</tt> if this collection changed as a result of the call
      */
     public boolean add(T e, int index) {
-        incrementSize();
         lists[index].add(e);
         return true;
     }
@@ -116,7 +113,6 @@ public class Multilist<T> {
     public boolean remove(T o) {
         for (int i = 0; i < lists.length; i++) {
             if (lists[i].removeValue(o, true)) {
-                decrementSize();
                 return true;
             }
         }
@@ -133,7 +129,6 @@ public class Multilist<T> {
      */
     public boolean remove(T o, int index) {
         if (lists[index].removeValue(o, true)) {
-            decrementSize();
             return true;
         }
         return false;
@@ -141,7 +136,6 @@ public class Multilist<T> {
 
     public boolean addAll(Array<? extends T> c) {
         lists[0].addAll(c);
-        incrementSize(c.size);
         return true;
     }
 
@@ -150,7 +144,6 @@ public class Multilist<T> {
         for (T o : c) {
             boolean r = remove(o);
             if (r) {
-                decrementSize();
                 result = true;
             }
         }
@@ -161,7 +154,6 @@ public class Multilist<T> {
         for (int i = 0; i < lists.length; i++)
             lists[i].clear();
         tolist.clear();
-        resetSize();
     }
 
     public T get(int index) {
@@ -195,7 +187,6 @@ public class Multilist<T> {
 
     public T remove(int index) {
         T t = lists[0].removeIndex(index);
-        decrementSize();
         return t;
     }
 
@@ -207,7 +198,6 @@ public class Multilist<T> {
      */
     public T remove(int index, int listIndex) {
         T t = lists[listIndex].removeIndex(index);
-        decrementSize();
         return t;
     }
 
@@ -217,30 +207,6 @@ public class Multilist<T> {
 
     public int lastIndexOf(T o) {
         return lists[0].lastIndexOf(o, true);
-    }
-
-    private void incrementSize(int incr) {
-        size.addAndGet(incr);
-    }
-
-    private void incrementSize() {
-        size.incrementAndGet();
-    }
-
-    private void decrementSize(int decr) {
-        size.addAndGet(-decr);
-    }
-
-    private void decrementSize() {
-        size.decrementAndGet();
-    }
-
-    private void setSize(int newsize) {
-        size.set(newsize);
-    }
-
-    private void resetSize() {
-        size.set(0);
     }
 
     private class MultilistIterator<T> implements Iterator<T> {

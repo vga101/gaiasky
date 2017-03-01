@@ -253,7 +253,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
             @Override
             public void run(AbstractRenderSystem renderSystem, Array<IRenderable> renderables, ICamera camera) {
                 int size = renderables.size;
-                if (PostProcessorFactory.instance.getPostProcessor().isLightScatterEnabled()) {
+                if (PostProcessorFactory.instance.getPostProcessor().isLightScatterEnabled() && Particle.renderOn) {
                     // Compute light positions for light scattering or light glow
                     int lightIndex = 0;
                     float angleEdgeDeg = camera.getAngleEdge() * MathUtils.radDeg;
@@ -434,6 +434,10 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
     public boolean isOn(ComponentType comp) {
         return visible[comp.ordinal()] || alphas[comp.ordinal()] > 0;
+    }
+
+    public boolean isOn(int ordinal) {
+        return visible[ordinal] || alphas[ordinal] > 0;
     }
 
     @Override

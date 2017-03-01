@@ -98,6 +98,9 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
         return (float) GlobalConf.scene.STAR_THRESHOLD_QUAD;
     }
 
+    /** Must be updated every cycle **/
+    public static boolean renderOn = false;
+
     /** Proper motion in cartesian coordinates [U/yr] **/
     public Vector3 pm, pmSph;
 
@@ -272,7 +275,7 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
     }
 
     protected boolean addToRender(IRenderable renderable, RenderGroup rg) {
-        if (GaiaSky.instance.isOn(ct)) {
+        if (renderOn) {
             SceneGraphRenderer.render_lists.get(rg).add(renderable, ThreadIndexer.i());
             return true;
         }
