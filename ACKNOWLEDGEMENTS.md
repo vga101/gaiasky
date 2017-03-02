@@ -1,3 +1,9 @@
+## Main acknowledgements
+
+-  [ZAH](http://www.zah.uni-heidelberg.de/ari/)
+-  [DLR](http://www.dlr.de/)
+-  [BMWi](http://www.bmwi.de)
+
 ## Data
 
 -  Dr. Martin Altmann for providing the Gaia orbit data
