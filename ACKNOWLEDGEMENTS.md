@@ -3,7 +3,7 @@
 -  Dr. Martin Altmann for providing the Gaia orbit data
 -  [HYG catalog](https://github.com/astronexus/HYG-Database)
 
-## Framework/code
+## Libraries and code
 
 -  [Libgdx](libgdx.badlogicgames.com)
 -  [libgdx-contribs-postprocessing](https://github.com/manuelbua/libgdx-contribs/tree/master/postprocessing)
@@ -21,6 +21,8 @@
 -  Phil Stooke and Grant Hutchison (http://www.classe.cornell.edu/~seb/celestia/hutchison/index-125.html) for some of the textures
 -  David Navas for the [simple spaceship](http://www.blendswap.com/user/DeNapes) model
 -  Machuca+Arias+Caballero for the music track “Gaia-DR1”
+-  [xnoybis](http://sampleswap.org/artist/xnoybis#contact) for 'The Firing Squad' track
+-  [DJ Masque](http://sampleswap.org/artist/djmasque) for the 'Oceanic Dawn' track
 
 ## Translations
 
