@@ -57,6 +57,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.SpacecraftCamera;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
+import gaia.cu9.ari.gaiaorbit.util.Pair;
 import gaia.cu9.ari.gaiaorbit.util.format.INumberFormat;
 import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.g3d.ModelBuilder2;
@@ -649,13 +650,13 @@ public class SpacecraftGui implements IGui, IObserver {
             pitchvel.setText(nf.format(p) + "°");
             rollvel.setText(nf.format(r) + "°");
 
-            Object[] velstr = GlobalResources.doubleToVelocityString(v);
-            mainvel.setText(sf.format((Double) velstr[0]) + " " + (String) velstr[1]);
+            Pair<Double, String> velstr = GlobalResources.doubleToVelocityString(v);
+            mainvel.setText(sf.format(velstr.getFirst()) + " " + velstr.getSecond());
 
             if (data[4] != null) {
                 closestname.setText((String) data[4]);
-                Object[] cldist = GlobalResources.floatToDistanceString((Float) data[5]);
-                closestdist.setText(sf.format((Double) cldist[0]) + " " + (String) cldist[1]);
+                Pair<Float, String> cldist = GlobalResources.floatToDistanceString((Float) data[5]);
+                closestdist.setText(sf.format(cldist.getFirst()) + " " + cldist.getSecond());
             } else {
                 closestname.setText("");
                 closestdist.setText("");

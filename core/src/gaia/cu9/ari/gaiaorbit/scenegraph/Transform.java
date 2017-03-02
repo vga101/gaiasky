@@ -1,5 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph;
 
+import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 
 import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
@@ -64,11 +65,25 @@ public class Transform {
         translate(localPosition);
     }
 
-    public Matrix4d getMatrix() {
+    /**
+     * Sets the given matrix to this transform
+     * @param mat
+     * @return
+     */
+    public Matrix4d getMatrix(Matrix4d aux) {
         if (transform != null) {
-            return transform;
+            return aux.set(transform);
         } else if (position != null) {
-            return new Matrix4d().translate(position);
+            return aux.idt().translate(position);
+        }
+        return null;
+    }
+
+    public Matrix4 getMatrix(Matrix4 aux) {
+        if (transform != null) {
+            return transform.putIn(aux);
+        } else if (position != null) {
+            return aux.idt().translate((float) position.x, (float) position.y, (float) position.z);
         }
         return null;
     }
@@ -78,9 +93,9 @@ public class Transform {
             return aux.set(position);
         } else if (transform != null) {
             return transform.getTranslation(aux);
-        } else {
-            return aux;
         }
+        return null;
+
     }
 
     public Vector3 getTranslationf(Vector3 aux) {

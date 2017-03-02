@@ -83,11 +83,6 @@ public class Loc extends AbstractPositionEntity implements I3DTextRenderable {
     }
 
     @Override
-    public void render(Object... params) {
-        render((SpriteBatch) params[0], (ShaderProgram) params[1], (BitmapFont) params[2], (BitmapFont) params[3], (ICamera) params[4]);
-    }
-
-    @Override
     public boolean renderText() {
         if (viewAngle < LOWER_LIMIT || viewAngle > UPPER_LIMIT || !GaiaSky.instance.isOn(ct[0])) {
             return false;

@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.utils.Array;
 
+import gaia.cu9.ari.gaiaorbit.render.ILineRenderable;
 import gaia.cu9.ari.gaiaorbit.render.IRenderable;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
@@ -200,7 +201,7 @@ public class LineQuadRenderSystem extends LineRenderSystem {
         this.camera = camera;
         int size = renderables.size;
         for (int i = 0; i < size; i++) {
-            IRenderable renderable = renderables.get(i);
+            ILineRenderable renderable = (ILineRenderable) renderables.get(i);
             boolean rend = true;
             if (renderable instanceof Particle && !GlobalConf.scene.PROPER_MOTION_VECTORS)
                 rend = false;

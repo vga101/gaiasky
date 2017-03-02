@@ -332,9 +332,9 @@ public class FullGui implements IGui, IObserver {
             Integer x = (Integer) data[2];
             Integer y = (Integer) data[3];
 
-            mouseXCoord.setText("RA/" + nf.format(ra) + "°");
+            mouseXCoord.setText("RA/".concat(nf.format(ra)).concat("°"));
             mouseXCoord.setPosition(x, 10);
-            mouseYCoord.setText("DEC/" + nf.format(dec) + "°");
+            mouseYCoord.setText("DEC/".concat(nf.format(dec)).concat("°"));
             mouseYCoord.setPosition(Gdx.graphics.getWidth() - 65, Gdx.graphics.getHeight() - y);
             break;
         case LON_LAT_UPDATED:

@@ -249,6 +249,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
             private float[] viewAngles = new float[Glow.N];
             private float[] colors = new float[Glow.N * 3];
             private Vector3 auxv = new Vector3();
+            private Vector3 auxv2 = new Vector3();
 
             @Override
             public void run(AbstractRenderSystem renderSystem, Array<IRenderable> renderables, ICamera camera) {
@@ -263,7 +264,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
                             Particle p = (Particle) s;
                             if (!Constants.webgl && lightIndex < Glow.N && (GlobalConf.program.CUBEMAP360_MODE || GaiaSky.instance.cam.getDirection().angle(p.transform.position) < angleEdgeDeg)) {
                                 Vector3 pos3 = p.transform.getTranslationf(auxv);
-                                pos3.sub(camera.getShift().toVector3());
+                                pos3.sub(camera.getShift().put(auxv2));
                                 camera.getCamera().project(pos3);
                                 // Here we **need** to use Gdx.graphics.getWidth/Height() because we use camera.project() which uses screen coordinates only
                                 positions[lightIndex * 2] = auxv.x / Gdx.graphics.getWidth();

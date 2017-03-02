@@ -17,6 +17,7 @@ import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
+import gaia.cu9.ari.gaiaorbit.util.Pair;
 import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
 import gaia.cu9.ari.gaiaorbit.util.format.INumberFormat;
 import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
@@ -255,15 +256,15 @@ public class FocusInfoInterface extends Table implements IObserver {
             break;
         case FOCUS_INFO_UPDATED:
             focusAngle.setText(sf.format(Math.toDegrees((float) data[1]) % 360) + "°");
-            Object[] dist = GlobalResources.doubleToDistanceString((float) data[0]);
-            focusDist.setText(sf.format(Math.max(0d, (double) dist[0])) + " " + dist[1]);
+            Pair<Double, String> dist = GlobalResources.doubleToDistanceString((float) data[0]);
+            focusDist.setText(sf.format(Math.max(0d, dist.getFirst())) + " " + dist.getSecond());
             break;
         case CAMERA_MOTION_UPDATED:
             Vector3d campos = (Vector3d) data[0];
-            Object[] x = GlobalResources.doubleToDistanceString(campos.x);
-            Object[] y = GlobalResources.doubleToDistanceString(campos.y);
-            Object[] z = GlobalResources.doubleToDistanceString(campos.z);
-            camPos.setText("X: " + sf.format((double) x[0]) + " " + x[1] + "\nY: " + sf.format((double) y[0]) + " " + y[1] + "\nZ: " + sf.format((double) z[0]) + " " + z[1]);
+            Pair<Double, String> x = GlobalResources.doubleToDistanceString(campos.x);
+            Pair<Double, String> y = GlobalResources.doubleToDistanceString(campos.y);
+            Pair<Double, String> z = GlobalResources.doubleToDistanceString(campos.z);
+            camPos.setText("X: " + sf.format(x.getFirst()) + " " + x.getSecond() + "\nY: " + sf.format(y.getFirst()) + " " + y.getSecond() + "\nZ: " + sf.format(z.getFirst()) + " " + z.getSecond());
             camVel.setText(sf.format((double) data[1]) + " km/h");
             break;
         case CAMERA_MODE_CMD:

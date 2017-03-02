@@ -4,7 +4,6 @@ import java.util.Random;
 
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
-import com.badlogic.gdx.graphics.glutils.ImmediateModeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
@@ -280,19 +279,6 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
             return true;
         }
         return false;
-    }
-
-    public void render(Object... params) {
-        Object first = params[0];
-        if (first instanceof ImmediateModeRenderer) {
-            // POINT
-            render((ImmediateModeRenderer) first, (Float) params[1], (Boolean) params[2]);
-        } else if (first instanceof LineRenderSystem) {
-            // LINE (proper motion)
-            render((LineRenderSystem) first, (ICamera) params[1], (Float) params[2]);
-        } else {
-            super.render(params);
-        }
     }
 
     @Override

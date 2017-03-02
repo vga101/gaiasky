@@ -8,6 +8,7 @@ import java.util.List;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.utils.Array;
 
 import gaia.cu9.ari.gaiaorbit.data.ISceneGraphLoader;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
@@ -38,12 +39,12 @@ public class ConstellationsLoader<T extends SceneGraphNode> implements ISceneGra
                 try {
                     //Skip first line
                     String lastName = "";
-                    List<int[]> partial = null;
+                    Array<int[]> partial = null;
                     int lastid = -1;
                     String line;
                     String name = null;
-                    ComponentType[] ct = new ComponentType[]{ComponentType.Constellations};
-                    
+                    ComponentType[] ct = new ComponentType[] { ComponentType.Constellations };
+
                     while ((line = br.readLine()) != null) {
                         if (!line.startsWith("#")) {
                             String[] tokens = line.split(separator);
@@ -60,7 +61,7 @@ public class ConstellationsLoader<T extends SceneGraphNode> implements ISceneGra
                             }
 
                             if (partial == null) {
-                                partial = new ArrayList<int[]>();
+                                partial = new Array<int[]>();
                             }
 
                             // Break point sequence

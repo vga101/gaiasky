@@ -38,7 +38,7 @@ public class OctreeWrapper extends AbstractOctreeWrapper {
 
     @Override
     protected String getRouletteDebug() {
-        return "[" + roulette.size + "]";
+        return Integer.toString(roulette.size);
     }
 
 }

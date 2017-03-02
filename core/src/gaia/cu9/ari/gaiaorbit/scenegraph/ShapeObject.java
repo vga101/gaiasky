@@ -51,11 +51,10 @@ public class ShapeObject extends ModelBody {
      * Sets the local transform of this satellite
      */
     public void setToLocalTransform(float sizeFactor, Matrix4 localTransform, boolean forceUpdate) {
-        float[] translate = transform.getMatrix().valuesf();
 
-        localTransform.set(translate).scl(size * sizeFactor);
+        transform.getMatrix(localTransform).scl(size * sizeFactor);
 
-        orientationf.set(parent.orientation.valuesf());
+        parent.orientation.putIn(orientationf);
         localTransform.mul(orientationf);
 
         // Apply transformations

@@ -58,7 +58,7 @@ public class AtmosphereComponent {
     }
 
     public void update(Transform transform) {
-        localTransform.set(transform.getMatrix().valuesf()).scl(size);
+        transform.getMatrix(localTransform).scl(size);
     }
 
     /**

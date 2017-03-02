@@ -123,12 +123,6 @@ public class Spacecraft extends AbstractPositionEntity implements IModelRenderab
     }
 
     @Override
-    public void render(Object... params) {
-        if (params[0] instanceof ModelBatch)
-            render((ModelBatch) params[0], (Float) params[1], (Float) params[2]);
-    }
-
-    @Override
     public float getDistToCamera() {
         return 0;
     }

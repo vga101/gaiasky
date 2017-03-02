@@ -57,12 +57,9 @@ public class LightBeam extends ModelBody {
     public void setToLocalTransform(float sizeFactor, Matrix4 localTransform, boolean forceUpdate) {
         if (sizeFactor != 1 || forceUpdate) {
 
-            float[] translate = transform.getMatrix().valuesf();
-            //translate[14] += 1f * (float) Constants.M_TO_U;
+            transform.getMatrix(localTransform).scl(size * sizeFactor);
 
-            localTransform.set(translate).scl(size * sizeFactor);
-
-            orientationf.set(parent.orientation.valuesf());
+            parent.orientation.putIn(orientationf);
             localTransform.mul(orientationf);
 
             localTransform.rotate(1, 0, 0, 90);

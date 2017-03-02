@@ -13,6 +13,7 @@ import com.badlogic.gdx.utils.Array;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
+import gaia.cu9.ari.gaiaorbit.render.IQuadRenderable;
 import gaia.cu9.ari.gaiaorbit.render.IRenderable;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
@@ -136,7 +137,7 @@ public class QuadRenderSystem extends AbstractRenderSystem implements IObserver 
 
         int size = renderables.size;
         for (int i = 0; i < size; i++) {
-            IRenderable s = renderables.get(i);
+            IQuadRenderable s = (IQuadRenderable) renderables.get(i);
             s.render(shaderProgram, getAlpha(s), starColorTransit, mesh, camera);
         }
         shaderProgram.end();

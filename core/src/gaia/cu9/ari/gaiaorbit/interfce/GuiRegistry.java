@@ -1,29 +1,28 @@
 package gaia.cu9.ari.gaiaorbit.interfce;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.badlogic.gdx.utils.Array;
 
 public class GuiRegistry {
 
-    private static List<IGui> guis;
+    private static Array<IGui> guis;
 
     static {
-        guis = new ArrayList<IGui>(2);
+        guis = new Array<IGui>(true, 2);
     }
 
     public static void registerGui(IGui gui) {
-        if (!guis.contains(gui))
+        if (!guis.contains(gui, true))
             guis.add(gui);
     }
 
     public static boolean unregisterGui(IGui gui) {
-        return guis.remove(gui);
+        return guis.removeValue(gui, true);
     }
 
     public static void render(int rw, int rh) {
-        for (IGui gui : guis) {
-            gui.getGuiStage().getViewport().apply();
-            gui.render(rw, rh);
+        for (int i = 0; i < guis.size; i++) {
+            guis.get(i).getGuiStage().getViewport().apply();
+            guis.get(i).render(rw, rh);
         }
     }
 

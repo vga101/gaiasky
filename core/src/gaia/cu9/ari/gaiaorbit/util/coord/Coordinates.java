@@ -41,27 +41,27 @@ public class Coordinates {
 
         // EQ -> ECL
         equatorialToEcliptic = getRotationMatrix(0, OBLIQUITY_DEG_J2000, 0);
-        equatorialToEclipticF = new Matrix4(equatorialToEcliptic.valuesf());
+        equatorialToEclipticF = equatorialToEcliptic.putIn(new Matrix4());
 
         // ECL -> EQ
         eclipticToEquatorial = getRotationMatrix(0, -OBLIQUITY_DEG_J2000, 0);
-        eclipticToEquatorialF = new Matrix4(equatorialToEcliptic.valuesf());
+        eclipticToEquatorialF = eclipticToEquatorial.putIn(new Matrix4());
 
         // EQ -> GAL
         equatorialToGalactic = getRotationMatrix(nodes_l, incl_gal_cel, nodes_ra);
-        equatorialToGalacticF = new Matrix4(equatorialToGalactic.valuesf());
+        equatorialToGalacticF = equatorialToGalactic.putIn(new Matrix4());
 
         // GAL -> EQ
         galacticToEquatorial = getRotationMatrix(-nodes_ra, -incl_gal_cel, -nodes_l);
-        galacticToEquatorialF = new Matrix4(galacticToEquatorial.valuesf());
+        galacticToEquatorialF = galacticToEquatorial.putIn(new Matrix4());
 
         // ECL -> GAL
         eclipticToGalactic = new Matrix4d(eclipticToEquatorial).mul(equatorialToGalactic);
-        eclipticToGalacticF = new Matrix4(eclipticToGalactic.valuesf());
+        eclipticToGalacticF = eclipticToGalactic.putIn(new Matrix4());
 
         // GAL -> ECL
         galacticToEcliptic = new Matrix4d(galacticToEquatorial).mul(equatorialToEcliptic);
-        galacticToEclipticF = new Matrix4(galacticToEcliptic.valuesf());
+        galacticToEclipticF = galacticToEcliptic.putIn(new Matrix4());
 
     }
 

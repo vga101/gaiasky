@@ -73,7 +73,8 @@ public class Grid extends AbstractPositionEntity implements IModelRenderable, IA
             try {
                 Method m = ClassReflection.getMethod(c, transformName);
                 Matrix4d trf = (Matrix4d) m.invoke(null);
-                Matrix4 aux = new Matrix4(trf.valuesf());
+                Matrix4 aux = new Matrix4();
+                trf.putIn(aux);
                 localTransform.mul(aux);
             } catch (ReflectionException e) {
                 Logger.error(Grid.class.getName(), "Error getting/invoking method Coordinates." + transformName + "()");
@@ -97,15 +98,6 @@ public class Grid extends AbstractPositionEntity implements IModelRenderable, IA
 
     @Override
     public void updateLocalValues(ITimeFrameProvider time, ICamera camera) {
-    }
-
-    @Override
-    public void render(Object... params) {
-        if (params[0] instanceof ModelBatch) {
-            render((ModelBatch) params[0], (Float) params[1], (Float) params[2]);
-        } else if (params[0] instanceof SpriteBatch) {
-            render((SpriteBatch) params[0], (ICamera) params[1], (Float) params[2]);
-        }
     }
 
     /**

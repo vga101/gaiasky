@@ -81,7 +81,7 @@ public class MilkyWayReal extends AbstractPositionEntity implements I3DTextRende
                 Method m = ClassReflection.getMethod(c, transformName);
                 Matrix4d trf = (Matrix4d) m.invoke(null);
 
-                coordinateSystem = new Matrix4(trf.valuesf());
+                coordinateSystem = trf.putIn(new Matrix4());
 
             } catch (ReflectionException e) {
                 Logger.error(this.getClass().getName(), "Error getting/invoking method Coordinates." + transformName + "()");
@@ -176,16 +176,8 @@ public class MilkyWayReal extends AbstractPositionEntity implements I3DTextRende
      */
     protected void updateLocalTransform() {
         // Scale + Rotate + Tilt + Translate 
-        float[] trans = transform.getMatrix().getTranslationf();
-        localTransform.idt().translate(trans[0], trans[1], trans[2]).scl(size);
+        transform.getMatrix(localTransform).scl(size);
         localTransform.mul(coordinateSystem);
-    }
-
-    @Override
-    public void render(Object... params) {
-        if (params[0] instanceof SpriteBatch) {
-            render((SpriteBatch) params[0], (ShaderProgram) params[1], (BitmapFont) params[2], (BitmapFont) params[3], (ICamera) params[4]);
-        }
     }
 
     /**

@@ -52,12 +52,6 @@ public class Area extends AbstractPositionEntity implements ILineRenderable {
     }
 
     @Override
-    public void render(Object... params) {
-        render((LineRenderSystem) params[0], (ICamera) params[1], (Float) params[2]);
-
-    }
-
-    @Override
     public void render(LineRenderSystem renderer, ICamera camera, float alpha) {
         int n = loc3d.length;
         for (int lineidx = 0; lineidx < n; lineidx++) {
