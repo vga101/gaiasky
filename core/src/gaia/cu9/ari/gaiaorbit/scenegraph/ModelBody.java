@@ -176,7 +176,7 @@ public abstract class ModelBody extends CelestialBody {
     }
 
     protected float getThOverFactorScl() {
-        return ct[0] == ComponentType.Moons ? 2000f : 100f;
+        return ct.contains(ComponentType.Moons) ? 2000f : 100f;
     }
 
     @Override

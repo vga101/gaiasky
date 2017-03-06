@@ -1,16 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.data.constel;
 
-import gaia.cu9.ari.gaiaorbit.data.ISceneGraphLoader;
-import gaia.cu9.ari.gaiaorbit.render.ComponentType;
-import gaia.cu9.ari.gaiaorbit.scenegraph.ConstellationBoundaries;
-import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
-import gaia.cu9.ari.gaiaorbit.util.Constants;
-import gaia.cu9.ari.gaiaorbit.util.I18n;
-import gaia.cu9.ari.gaiaorbit.util.Logger;
-import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
-import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
-import gaia.cu9.ari.gaiaorbit.util.parse.Parser;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -19,6 +8,18 @@ import java.util.List;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
+
+import gaia.cu9.ari.gaiaorbit.data.ISceneGraphLoader;
+import gaia.cu9.ari.gaiaorbit.render.ComponentType;
+import gaia.cu9.ari.gaiaorbit.scenegraph.ConstellationBoundaries;
+import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
+import gaia.cu9.ari.gaiaorbit.util.Constants;
+import gaia.cu9.ari.gaiaorbit.util.GSEnumSet;
+import gaia.cu9.ari.gaiaorbit.util.I18n;
+import gaia.cu9.ari.gaiaorbit.util.Logger;
+import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
+import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
+import gaia.cu9.ari.gaiaorbit.util.parse.Parser;
 
 public class ConstelBoundariesLoader<T extends SceneGraphNode> implements ISceneGraphLoader {
     private static final String separator = "\\t";
@@ -44,7 +45,7 @@ public class ConstelBoundariesLoader<T extends SceneGraphNode> implements IScene
                     //Skip first line
                     String line;
                     ConstellationBoundaries boundary = new ConstellationBoundaries();
-                    boundary.ct = new ComponentType[]{ComponentType.Boundaries};
+                    boundary.ct = GSEnumSet.of(ComponentType.Boundaries);
                     List<List<Vector3d>> list = new ArrayList<List<Vector3d>>();
                     List<Vector3d> buffer = new ArrayList<Vector3d>(4);
                     String lastName = new String();

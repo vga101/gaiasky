@@ -13,6 +13,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
+import gaia.cu9.ari.gaiaorbit.util.GSEnumSet;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
@@ -134,7 +135,7 @@ public class LoadingGui implements IGui {
     }
 
     @Override
-    public void setVisibilityToggles(ComponentType[] entities, boolean[] visible) {
+    public void setVisibilityToggles(ComponentType[] entities, GSEnumSet<ComponentType> visible) {
     }
 
     @Override

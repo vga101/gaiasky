@@ -30,6 +30,7 @@ import gaia.cu9.ari.gaiaorbit.interfce.components.VisualEffectsComponent;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
+import gaia.cu9.ari.gaiaorbit.util.GSEnumSet;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
@@ -81,9 +82,12 @@ public class FullGui implements IGui, IObserver {
         this.sg = sg;
     }
 
-    public void setVisibilityToggles(ComponentType[] entities, boolean[] visible) {
+    public void setVisibilityToggles(ComponentType[] entities, GSEnumSet<ComponentType> visible) {
         this.visibilityEntities = entities;
-        this.visible = visible;
+        ComponentType[] vals = ComponentType.values();
+        this.visible = new boolean[vals.length];
+        for(int i = 0; i < vals.length; i++)
+        	this.visible[i] = visible.contains(vals[i]);
     }
 
     public void initialize(AssetManager assetManager) {

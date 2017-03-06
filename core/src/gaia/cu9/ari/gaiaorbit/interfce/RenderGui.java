@@ -16,6 +16,7 @@ import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
+import gaia.cu9.ari.gaiaorbit.util.GSEnumSet;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
@@ -138,7 +139,7 @@ public class RenderGui implements IGui, IObserver {
     }
 
     @Override
-    public void setVisibilityToggles(ComponentType[] entities, boolean[] visible) {
+    public void setVisibilityToggles(ComponentType[] entities, GSEnumSet<ComponentType> visible) {
     }
 
     @Override

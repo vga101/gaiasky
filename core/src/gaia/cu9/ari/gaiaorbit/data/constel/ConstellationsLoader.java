@@ -14,6 +14,7 @@ import gaia.cu9.ari.gaiaorbit.data.ISceneGraphLoader;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Constellation;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
+import gaia.cu9.ari.gaiaorbit.util.GSEnumSet;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.parse.Parser;
@@ -43,7 +44,7 @@ public class ConstellationsLoader<T extends SceneGraphNode> implements ISceneGra
                     int lastid = -1;
                     String line;
                     String name = null;
-                    ComponentType[] ct = new ComponentType[] { ComponentType.Constellations };
+                    GSEnumSet<ComponentType> ct = GSEnumSet.of(ComponentType.Constellations);
 
                     while ((line = br.readLine()) != null) {
                         if (!line.startsWith("#")) {

@@ -22,6 +22,7 @@ import gaia.cu9.ari.gaiaorbit.util.math.Vector2d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 import gaia.cu9.ari.gaiaorbit.util.tree.IPosition;
+import gaia.cu9.ari.gaiaorbit.util.GSEnumSet;
 
 /**
  * A scene graph entity.
@@ -169,7 +170,7 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
     /**
      * Component types, for managing visibility
      */
-    public ComponentType[] ct;
+    public GSEnumSet<ComponentType> ct;
 
     public SceneGraphNode() {
         // Identity
@@ -184,7 +185,7 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
 
     public SceneGraphNode(ComponentType ct) {
         super();
-        this.ct = new ComponentType[] { ct };
+        this.ct = GSEnumSet.of(ct);
     }
 
     public SceneGraphNode(String name, SceneGraphNode parent) {
@@ -386,7 +387,7 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
     }
 
     public void initialize() {
-        ct = new ComponentType[] { ComponentType.Others };
+        ct = GSEnumSet.of(ComponentType.Others);
     }
 
     public void doneLoading(AssetManager manager) {
@@ -441,19 +442,17 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
     }
 
     public void setCt(String ct) {
-        this.ct = new ComponentType[] { ComponentType.valueOf(ct) };
+        this.ct = GSEnumSet.of(ComponentType.valueOf(ct));
     }
 
     public void setCt(String[] cts) {
-        this.ct = new ComponentType[cts.length];
-        int i = 0;
-        for (String ctstr : cts) {
-            this.ct[i] = ComponentType.valueOf(ctstr);
-            i++;
+    	this.ct = GSEnumSet.noneOf(ComponentType.class);
+        for(int i = 0; i < cts.length; i++){
+        	this.ct.add(ComponentType.valueOf(cts[i]));
         }
     }
 
-    public ComponentType[] getComponentType() {
+    public GSEnumSet<ComponentType> getComponentType() {
         return ct;
     }
 
@@ -535,8 +534,8 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
     }
 
     protected boolean addToRender(IRenderable renderable, RenderGroup rg) {
-        boolean vis = SceneGraphRenderer.visible[ct[0].ordinal()];
-        if (vis || (!vis && SceneGraphRenderer.alphas[ct[0].ordinal()] > 0)) {
+        boolean vis = SceneGraphRenderer.visible.contains(ct.getFirst());
+        if (vis || (!vis && SceneGraphRenderer.alphas[ct.getFirstOrdinal()] > 0)) {
             SceneGraphRenderer.render_lists.get(rg).add(renderable, ThreadIndexer.i());
             return true;
         }
@@ -573,10 +572,6 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
     }
 
     public boolean isVisibilityOn() {
-        boolean visible = true;
-        for (ComponentType comp : ct) {
-            visible = visible && GaiaSky.instance.isOn(comp);
-        }
-        return visible;
+    	return GaiaSky.instance.isOn(ct);
     }
 }

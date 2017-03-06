@@ -17,6 +17,7 @@ import gaia.cu9.ari.gaiaorbit.render.ILineRenderable;
 import gaia.cu9.ari.gaiaorbit.render.system.LineRenderSystem;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Transform;
+import gaia.cu9.ari.gaiaorbit.util.GSEnumSet;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.Pair;
@@ -361,10 +362,10 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
         return numNodes;
     }
 
-    ComponentType[] ct = new ComponentType[] { ComponentType.Others };
+    GSEnumSet<ComponentType> ct = GSEnumSet.of(ComponentType.Others);
 
     @Override
-    public ComponentType[] getComponentType() {
+    public GSEnumSet<ComponentType> getComponentType() {
         return ct;
     }
 

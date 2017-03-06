@@ -1,7 +1,9 @@
 package gaia.cu9.ari.gaiaorbit.render;
 
 import java.nio.IntBuffer;
+import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import com.badlogic.gdx.Gdx;
@@ -44,6 +46,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
+import gaia.cu9.ari.gaiaorbit.util.GSEnumSet;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
@@ -61,7 +64,7 @@ import gaia.cu9.ari.gaiaorbit.util.override.AtmosphereShaderProvider;
 public class SceneGraphRenderer extends AbstractRenderer implements IProcessRenderer, IObserver {
 
     /** Contains the flags representing each type's visibility **/
-    public static boolean[] visible;
+    public static GSEnumSet<ComponentType> visible;
     /** Contains the last update time of each of the flags **/
     public static long[] times;
     /** Alpha values for each type **/
@@ -155,7 +158,13 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         ComponentType[] comps = ComponentType.values();
 
         // Set reference
-        visible = GlobalConf.scene.VISIBILITY;
+        visible = GSEnumSet.noneOf(ComponentType.class);
+        for(int i = 0; i < GlobalConf.scene.VISIBILITY.length; i++){
+        	if(GlobalConf.scene.VISIBILITY[i]){
+        		visible.add(ComponentType.values()[i]);
+        	}
+        	
+        }
 
         times = new long[comps.length];
         alphas = new float[comps.length];
@@ -316,7 +325,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         AbstractRenderSystem modelAtmProc = new ModelBatchRenderSystem(RenderGroup.MODEL_F_ATM, priority++, alphas, modelBatchAtm, true) {
             @Override
             public float getAlpha(IRenderable s) {
-                return alphas[ComponentType.Atmospheres.ordinal()] * (float) Math.pow(alphas[s.getComponentType()[0].ordinal()], 2);
+                return alphas[ComponentType.Atmospheres.ordinal()] * (float) Math.pow(alphas[s.getComponentType().getFirstOrdinal()], 2);
             }
 
             @Override
@@ -434,25 +443,46 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
     }
 
     public boolean isOn(ComponentType comp) {
-        return visible[comp.ordinal()] || alphas[comp.ordinal()] > 0;
+        return visible.contains(comp) || alphas[comp.ordinal()] > 0;
+    }
+    
+    /**
+     * TODO Make this faster!
+     * @param comp
+     * @return
+     */
+    public boolean isOn(GSEnumSet comp){
+    	if(!visible.containsAll(comp)){
+    		Iterator<ComponentType> it = comp.iterator();
+            while(it.hasNext())
+            	if(alphas[it.next().ordinal()] > 0)
+            		return true;
+            return false;
+    	}else{
+    		return true;
+    	}
     }
 
     public boolean isOn(int ordinal) {
-        return visible[ordinal] || alphas[ordinal] > 0;
+        return visible.contains(ordinal) || alphas[ordinal] > 0;
     }
 
     @Override
     public void notify(Events event, final Object... data) {
         switch (event) {
         case TOGGLE_VISIBILITY_CMD:
-            int idx = ComponentType.getFromName((String) data[0]).ordinal();
+        	ComponentType ct = ComponentType.getFromName((String) data[0]);
+            int idx = ct.ordinal();
             if (data.length == 3) {
                 // We have the boolean
-                visible[idx] = (boolean) data[2];
+            	if((boolean) data[2])
+            		visible.add(ct);
+            	else
+            		visible.remove(ct);
                 times[idx] = (long) (GaiaSky.instance.getT() * 1000f);
             } else {
                 // Only toggle
-                visible[idx] = !visible[idx];
+            	visible.toggle(ct);
                 times[idx] = (long) (GaiaSky.instance.getT() * 1000f);
             }
             break;
@@ -510,16 +540,17 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
      * @return The alpha value.
      */
     private float calculateAlpha(ComponentType type, float t) {
-        long diff = (long) (t * 1000f) - times[type.ordinal()];
+    	int ordinal = type.ordinal();
+        long diff = (long) (t * 1000f) - times[ordinal];
         if (diff > GlobalConf.scene.OBJECT_FADE_MS) {
-            if (visible[type.ordinal()]) {
-                alphas[type.ordinal()] = 1;
+            if (visible.contains(ordinal)) {
+                alphas[ordinal] = 1;
             } else {
-                alphas[type.ordinal()] = 0;
+                alphas[ordinal] = 0;
             }
-            return alphas[type.ordinal()];
+            return alphas[ordinal];
         } else {
-            return visible[type.ordinal()] ? MathUtilsd.lint(diff, 0, GlobalConf.scene.OBJECT_FADE_MS, 0, 1) : MathUtilsd.lint(diff, 0, GlobalConf.scene.OBJECT_FADE_MS, 1, 0);
+            return visible.contains(ordinal) ? MathUtilsd.lint(diff, 0, GlobalConf.scene.OBJECT_FADE_MS, 0, 1) : MathUtilsd.lint(diff, 0, GlobalConf.scene.OBJECT_FADE_MS, 1, 0);
         }
     }
 

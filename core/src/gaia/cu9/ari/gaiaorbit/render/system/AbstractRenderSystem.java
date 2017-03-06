@@ -1,6 +1,7 @@
 package gaia.cu9.ari.gaiaorbit.render.system;
 
 import java.util.Comparator;
+import java.util.Iterator;
 
 import com.badlogic.gdx.utils.Array;
 
@@ -9,6 +10,7 @@ import gaia.cu9.ari.gaiaorbit.render.IRenderable;
 import gaia.cu9.ari.gaiaorbit.render.RenderContext;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
+import gaia.cu9.ari.gaiaorbit.util.GSEnumSet;
 
 public abstract class AbstractRenderSystem implements IRenderSystem {
     /** When this is true, new point information is available, so new data is streamed to the GPU **/
@@ -72,10 +74,10 @@ public abstract class AbstractRenderSystem implements IRenderSystem {
      * @return The alpha value as the product of all the alphas of its component types.
      */
     public float getAlpha(IRenderable renderable) {
-        ComponentType[] cts = renderable.getComponentType();
-        float alpha = alphas[cts[0].ordinal()];
-        for (int i = 1; i < cts.length; i++)
-            alpha *= alphas[cts[i].ordinal()];
+        Iterator<ComponentType> it = renderable.getComponentType().iterator();
+        float alpha = 1f;
+        while(it.hasNext())
+        	alpha *= alphas[it.next().ordinal()];
         return alpha;
     }
 

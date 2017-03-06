@@ -59,6 +59,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
 import gaia.cu9.ari.gaiaorbit.util.ConfInit;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
+import gaia.cu9.ari.gaiaorbit.util.GSEnumSet;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
@@ -625,11 +626,8 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         return sgr.isOn(comp);
     }
 
-    public boolean isOn(ComponentType[] cts) {
-        boolean on = true;
-        for (ComponentType ct : cts)
-            on = on && sgr.isOn(ct.ordinal());
-        return on;
+    public boolean isOn(GSEnumSet<ComponentType> cts) {
+        return sgr.isOn(cts);
     }
 
     @Override

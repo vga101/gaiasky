@@ -18,6 +18,7 @@ import gaia.cu9.ari.gaiaorbit.render.IRenderable;
 import gaia.cu9.ari.gaiaorbit.render.SceneGraphRenderer;
 import gaia.cu9.ari.gaiaorbit.render.system.LineRenderSystem;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
+import gaia.cu9.ari.gaiaorbit.util.GSEnumSet;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.color.ColourUtils;
 import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadIndexer;
@@ -190,7 +191,7 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
     @Override
     public void initialize() {
         setDerivedAttributes();
-        ct = new ComponentType[] { ComponentType.Galaxies };
+        ct = GSEnumSet.of(ComponentType.Galaxies);
         // Relation between our star size and actual star size (normalized for the Sun, 1391600 Km of diameter
         radius = size * Constants.STAR_SIZE_FACTOR;
     }

@@ -16,6 +16,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Transform;
+import gaia.cu9.ari.gaiaorbit.util.GSEnumSet;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.MyPools;
@@ -47,7 +48,7 @@ public abstract class AbstractOctreeWrapper extends SceneGraphNode implements It
 
     protected AbstractOctreeWrapper(String parentName, OctreeNode<SceneGraphNode> root) {
         this();
-        this.ct = new ComponentType[] { ComponentType.Others };
+        this.ct = GSEnumSet.of(ComponentType.Others);
         this.root = root;
         this.parentName = parentName;
         this.parenthood = new HashMap<SceneGraphNode, OctreeNode<SceneGraphNode>>();
