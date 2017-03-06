@@ -55,7 +55,7 @@ public class Loc extends AbstractPositionEntity implements I3DTextRenderable {
             Vector3d aux = aux3d1.get();
             this.distToCamera = (float) transform.getTranslation(aux).len();
             this.viewAngle = (float) FastMath.atan(size / distToCamera) / camera.getFovFactor();
-            this.viewAngleApparent = this.viewAngle;
+            this.viewAngleApparent = this.viewAngle * camera.getFovFactor();
             if (!copy) {
                 addToRenderLists(camera);
             }
@@ -102,7 +102,7 @@ public class Loc extends AbstractPositionEntity implements I3DTextRenderable {
 
         Vector3d pos = aux3d1.get();
         textPosition(camera, pos);
-        shader.setUniformf("a_viewAngle", viewAngle * ((ModelBody) parent).locVaMultiplier * (float) Constants.U_TO_KM);
+        shader.setUniformf("a_viewAngle", viewAngleApparent * ((ModelBody) parent).locVaMultiplier * (float) Constants.U_TO_KM);
         shader.setUniformf("a_viewAnglePow", 1f);
         shader.setUniformf("a_thOverFactor", ((ModelBody) parent).locThOverFactor);
         shader.setUniformf("a_viewAnglePow", 1f);
