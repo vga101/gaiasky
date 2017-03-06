@@ -209,5 +209,5 @@ or visiting https://www.gnu.org/licenses/lgpl-3.0-standalone.html
 ######################################################
 
 The main webpage of the project is
-http://www.zah.uni-heidelberg.de/gaia2/outreach/gaiasky. There you can find
+http://www.zah.uni-heidelberg.de/gaia/outreach/gaiasky. There you can find
 the latest versions and the latest information on Gaia Sky.
