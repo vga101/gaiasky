@@ -1,8 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.render.system;
 
-import java.util.Collections;
-import java.util.List;
-
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.Mesh.VertexDataType;
@@ -11,10 +8,12 @@ import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Array;
 
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
+import gaia.cu9.ari.gaiaorbit.render.IQuadRenderable;
 import gaia.cu9.ari.gaiaorbit.render.IRenderable;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
@@ -118,8 +117,8 @@ public class QuadRenderSystem extends AbstractRenderSystem implements IObserver 
     }
 
     @Override
-    public void renderStud(List<IRenderable> renderables, ICamera camera, float t) {
-        Collections.sort(renderables, comp);
+    public void renderStud(Array<IRenderable> renderables, ICamera camera, float t) {
+        renderables.sort(comp);
 
         // Calculate billobard rotation quaternion ONCE
         DecalUtils.setBillboardRotation(quaternion, camera.getCamera().direction, camera.getCamera().up);
@@ -136,9 +135,9 @@ public class QuadRenderSystem extends AbstractRenderSystem implements IObserver 
             shaderProgram.setUniformf("u_time", t);
         }
 
-        int size = renderables.size();
+        int size = renderables.size;
         for (int i = 0; i < size; i++) {
-            IRenderable s = renderables.get(i);
+            IQuadRenderable s = (IQuadRenderable) renderables.get(i);
             s.render(shaderProgram, getAlpha(s), starColorTransit, mesh, camera);
         }
         shaderProgram.end();

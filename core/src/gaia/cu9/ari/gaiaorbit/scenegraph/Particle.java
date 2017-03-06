@@ -4,7 +4,6 @@ import java.util.Random;
 
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
-import com.badlogic.gdx.graphics.glutils.ImmediateModeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
@@ -25,6 +24,7 @@ import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadIndexer;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
+import net.jafama.FastMath;
 
 /**
  * A point particle which may represent a star, a galaxy, etc.
@@ -96,6 +96,9 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
     public double THRESHOLD_QUAD() {
         return (float) GlobalConf.scene.STAR_THRESHOLD_QUAD;
     }
+
+    /** Must be updated every cycle **/
+    public static boolean renderOn = false;
 
     /** Proper motion in cartesian coordinates [U/yr] **/
     public Vector3 pm, pmSph;
@@ -225,12 +228,12 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
             //            }
             distToCamera = (float) transform.position.len();
 
-            // TODO Very ugly!
-            if (!this.copy && (ModelBody.closestCamStar == null || ModelBody.closestCamStar.distToCamera > distToCamera))
-                //if (ModelBody.closestCamStar == null || ModelBody.closestCamStar.distToCamera > distToCamera) 
-                ModelBody.closestCamStar = this;
-
             if (!copy) {
+                // TODO Very ugly!
+                if (ModelBody.closestCamStar == null || ModelBody.closestCamStar.distToCamera > distToCamera)
+                    //if (ModelBody.closestCamStar == null || ModelBody.closestCamStar.distToCamera > distToCamera) 
+                    ModelBody.closestCamStar = this;
+
                 addToRender(this, RenderGroup.POINT);
 
                 viewAngle = ((float) radius / distToCamera) / camera.getFovFactor();
@@ -241,8 +244,7 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
 
             // Compute nested
             if (children != null) {
-                int size = children.size();
-                for (int i = 0; i < size; i++) {
+                for (int i = 0; i < children.size; i++) {
                     SceneGraphNode child = children.get(i);
                     child.update(time, parentTransform, camera, opacity);
                 }
@@ -272,24 +274,11 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
     }
 
     protected boolean addToRender(IRenderable renderable, RenderGroup rg) {
-        if (GaiaSky.instance.isOn(ct)) {
+        if (renderOn) {
             SceneGraphRenderer.render_lists.get(rg).add(renderable, ThreadIndexer.i());
             return true;
         }
         return false;
-    }
-
-    public void render(Object... params) {
-        Object first = params[0];
-        if (first instanceof ImmediateModeRenderer) {
-            // POINT
-            render((ImmediateModeRenderer) first, (Float) params[1], (Boolean) params[2]);
-        } else if (first instanceof LineRenderSystem) {
-            // LINE (proper motion)
-            render((LineRenderSystem) first, (ICamera) params[1], (Float) params[2]);
-        } else {
-            super.render(params);
-        }
     }
 
     @Override
@@ -335,7 +324,7 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
 
     @Override
     public float textScale() {
-        return (float) Math.atan(labelMax()) * labelFactor() * 4e2f;
+        return (float) FastMath.atan(labelMax()) * labelFactor() * 4e2f;
     }
 
     @Override

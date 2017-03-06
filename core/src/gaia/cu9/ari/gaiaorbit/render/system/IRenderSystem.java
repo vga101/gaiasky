@@ -1,6 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.render.system;
 
-import java.util.List;
+import com.badlogic.gdx.utils.Array;
 
 import gaia.cu9.ari.gaiaorbit.render.IRenderable;
 import gaia.cu9.ari.gaiaorbit.render.RenderContext;
@@ -18,7 +18,7 @@ public interface IRenderSystem extends Comparable<IRenderSystem> {
 
     public int getPriority();
 
-    public void render(List<IRenderable> renderables, ICamera camera, float t, RenderContext rc);
+    public void render(Array<IRenderable> renderables, ICamera camera, float t, RenderContext rc);
 
     public void resize(int w, int h);
 

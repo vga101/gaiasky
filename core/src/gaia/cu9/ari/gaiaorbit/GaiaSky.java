@@ -19,6 +19,7 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
+import com.badlogic.gdx.utils.Array;
 
 import gaia.cu9.ari.gaiaorbit.data.AssetBean;
 import gaia.cu9.ari.gaiaorbit.data.GaiaAttitudeLoader;
@@ -53,6 +54,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
+import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
 import gaia.cu9.ari.gaiaorbit.util.ConfInit;
@@ -64,7 +66,6 @@ import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.ModelCache;
 import gaia.cu9.ari.gaiaorbit.util.MusicManager;
 import gaia.cu9.ari.gaiaorbit.util.gaia.GaiaAttitudeServer;
-import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.GlobalClock;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
@@ -171,9 +172,6 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         time = GlobalConf.runtime.REAL_TIME ? real : clock;
         t = 0;
 
-        // Precompute some math functions
-        MathUtilsd.initialize();
-
         // Initialise i18n
         I18n.initialize();
 
@@ -278,6 +276,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         // Update whole tree to initialize positions
         OctreeNode.LOAD_ACTIVE = false;
         time.update(0.000000001f);
+        // Update whole scene graph
         sg.update(time, cam);
         time.update(0);
         OctreeNode.LOAD_ACTIVE = true;
@@ -386,6 +385,15 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
     }
 
     @Override
+    public void pause() {
+        EventManager.instance.post(Events.FLUSH_FRAMES);
+    }
+
+    @Override
+    public void resume() {
+    }
+
+    @Override
     public void dispose() {
 
         if (Constants.desktop)
@@ -414,6 +422,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
 
         // Dispose music manager
         MusicManager.dispose();
+
     }
 
     @Override
@@ -512,6 +521,9 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         // Update cameras
         cam.update(this.dt, time);
 
+        // Precompute isOn for all stars
+        Particle.renderOn = isOn(ComponentType.Stars);
+
         // Update scene graph
         sg.update(time, cam);
 
@@ -567,16 +579,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         loadingGui.render(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
     }
 
-    @Override
-    public void pause() {
-        EventManager.instance.post(Events.FLUSH_FRAMES);
-    }
-
-    @Override
-    public void resume() {
-    }
-
-    public List<CelestialBody> getFocusableEntities() {
+    public Array<CelestialBody> getFocusableEntities() {
 
         return sg.getFocusableObjects();
     }
@@ -625,7 +628,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
     public boolean isOn(ComponentType[] cts) {
         boolean on = true;
         for (ComponentType ct : cts)
-            on = on && sgr.isOn(ct);
+            on = on && sgr.isOn(ct.ordinal());
         return on;
     }
 

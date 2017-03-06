@@ -3,12 +3,11 @@ precision mediump float;
 precision mediump int;
 #endif
 
-#define exposure 1.0
+#define exposure 0.5
 
 uniform vec3 v3LightPos;
 uniform float g;
 uniform float g2;
-uniform float fColorOpacity;
 uniform float fAlpha;
 
 // Direction from the vertex to the camera
@@ -24,10 +23,10 @@ void main(void) {
     float fMiePhase = 1.5 * ((1.0 - g2) / (2.0 + g2)) * (1.0 + fCos2) / pow (1.0 + g2 - 2.0 * g * fCos, 1.5);
 
     gl_FragColor.rgb = (fRayleighPhase * frontColor.rgb + fMiePhase * frontSecondaryColor.rgb);
-    gl_FragColor.rgb = vec3(1.0) - exp(gl_FragColor.rgb * -exposure);
+    gl_FragColor.rgb = vec3(1.0) - exp(-exposure * gl_FragColor.rgb);
     
-    gl_FragColor.a = fAlpha * (gl_FragColor.b + fColorOpacity * length (gl_FragColor));
+    gl_FragColor.a = fAlpha * length(gl_FragColor.rgb);
     
     // Prevent saturation
-    gl_FragColor.rgb = clamp(gl_FragColor.rgb, 0.0, 0.88);
+    gl_FragColor.rgb = clamp(gl_FragColor.rgb, 0.0, 0.95);
 }

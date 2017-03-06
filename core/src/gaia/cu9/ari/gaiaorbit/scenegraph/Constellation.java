@@ -1,19 +1,16 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Array;
 
 import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.render.I3DTextRenderable;
-import gaia.cu9.ari.gaiaorbit.render.system.ImmediateRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.LineRenderSystem;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
@@ -30,11 +27,11 @@ public class Constellation extends LineObject implements I3DTextRenderable {
     float constalpha;
 
     /** List of pairs of identifiers **/
-    public List<int[]> ids;
+    public Array<int[]> ids;
     /** List of pairs of stars between which there are lines **/
-    public List<AbstractPositionEntity[]> stars;
+    public Array<AbstractPositionEntity[]> stars;
     /** The positions themselves, in case the stars are not there (i.e. octrees) **/
-    public List<Vector3[]> positions;
+    public Array<Vector3[]> positions;
 
     public Constellation() {
         super();
@@ -58,18 +55,18 @@ public class Constellation extends LineObject implements I3DTextRenderable {
 
     public void update(ITimeFrameProvider time, final Transform parentTransform, ICamera camera, float opacity) {
         pos.scl(0);
-        for (AbstractPositionEntity[] pair : stars) {
-            pos.add(pair[0].transform.getTranslation());
+        for (int i = 0; i < stars.size; i++) {
+            pos.add(stars.get(i)[0].transform.getTranslation());
         }
-        pos.scl((1d / stars.size()));
+        pos.scl((1d / stars.size));
         pos.nor().scl(100 * Constants.PC_TO_U);
         addToRenderLists(camera);
     }
 
     @Override
     public void setUp() {
-        stars = new ArrayList<AbstractPositionEntity[]>();
-        positions = new ArrayList<Vector3[]>();
+        stars = new Array<AbstractPositionEntity[]>();
+        positions = new Array<Vector3[]>();
         for (int[] pair : ids) {
             AbstractPositionEntity s1, s2;
             s1 = sg.getStarMap().get(pair[0]);
@@ -86,15 +83,6 @@ public class Constellation extends LineObject implements I3DTextRenderable {
                     wtf += (wtf.length() > 0 ? ", " : "") + pair[1];
                 Logger.info(this.getClass().getSimpleName(), "Constellations stars not found (HIP): " + wtf);
             }
-        }
-    }
-
-    @Override
-    public void render(Object... params) {
-        if (params[0] instanceof ImmediateRenderSystem) {
-            super.render(params);
-        } else if (params[0] instanceof SpriteBatch) {
-            render((SpriteBatch) params[0], (ShaderProgram) params[1], (BitmapFont) params[2], (BitmapFont) params[3], (ICamera) params[4]);
         }
     }
 

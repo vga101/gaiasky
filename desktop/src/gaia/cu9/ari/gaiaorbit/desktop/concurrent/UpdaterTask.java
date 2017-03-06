@@ -1,7 +1,8 @@
 package gaia.cu9.ari.gaiaorbit.desktop.concurrent;
 
-import java.util.List;
 import java.util.concurrent.Callable;
+
+import com.badlogic.gdx.utils.Array;
 
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
@@ -10,23 +11,23 @@ import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 public class UpdaterTask<T extends SceneGraphNode> implements Callable<Void> {
 
     ICamera camera;
-    List<T> nodes;
+    Array<T> nodes;
     ITimeFrameProvider time;
     int start, step;
 
-    public UpdaterTask(List<T> nodes, int start, int step) {
+    public UpdaterTask(Array<T> nodes, int start, int step) {
         this.nodes = nodes;
         this.start = start;
         this.step = step;
     }
 
-    public UpdaterTask(List<T> nodes) {
+    public UpdaterTask(Array<T> nodes) {
         this(nodes, 0, 1);
     }
 
     @Override
     public Void call() throws Exception {
-        int size = nodes.size();
+        int size = nodes.size;
         for (int i = start; i < size; i += step) {
             SceneGraphNode node = nodes.get(i);
             node.update(time, node.parent.transform, camera, 1f);
@@ -34,11 +35,11 @@ public class UpdaterTask<T extends SceneGraphNode> implements Callable<Void> {
         return null;
     }
 
-    public void setNodesToProcess(List<T> nodes) {
+    public void setNodesToProcess(Array<T> nodes) {
         this.nodes = nodes;
     }
 
-    public void addAll(List<T> list) {
+    public void addAll(Array<T> list) {
         this.nodes.addAll(list);
     }
 

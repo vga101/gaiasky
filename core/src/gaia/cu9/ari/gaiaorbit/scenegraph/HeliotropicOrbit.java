@@ -1,9 +1,9 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph;
 
+import java.util.Date;
+
 import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
 import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
-
-import java.util.Date;
 
 /**
  * Heliotropic orbits must be corrected using the Sun longitude. They are by default
@@ -24,6 +24,6 @@ public class HeliotropicOrbit extends Orbit {
      */
     protected void updateLocalTransform(Date date) {
         angle = AstroUtils.getSunLongitude(date);
-        localTransformD.set(transform.getMatrix()).mul(Coordinates.equatorialToEcliptic()).rotate(0, 1, 0, angle + 180);
+        transform.getMatrix(localTransformD).mul(Coordinates.equatorialToEcliptic()).rotate(0, 1, 0, angle + 180);
     }
 }

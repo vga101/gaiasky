@@ -79,7 +79,7 @@ public class Orbit extends LineObject {
     }
 
     protected void updateLocalTransform(Date date) {
-        localTransformD.set(transform.getMatrix());
+        transform.getMatrix(localTransformD);
         if (parent.orientation != null)
             localTransformD.mul(parent.orientation);
         if (transformFunction != null)

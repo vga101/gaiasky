@@ -59,7 +59,7 @@ public class Gaia extends Satellite {
 
     public void setToLocalTransform(float sizeFactor, Matrix4 localTransform, boolean forceUpdate) {
         if (sizeFactor != 1 || forceUpdate) {
-            localTransform.set(transform.getMatrix().valuesf()).scl(size * sizeFactor);
+            transform.getMatrix(localTransform).scl(size * sizeFactor);
             if (attitude != null) {
                 quaterniond = attitude.getQuaternion();
                 quaternion.set((float) quaterniond.x, (float) quaterniond.y, (float) quaterniond.z, (float) quaterniond.w);

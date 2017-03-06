@@ -1,16 +1,14 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph;
 
-import java.util.List;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Array;
 
 import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
@@ -26,6 +24,7 @@ import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Quaterniond;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
+import net.jafama.FastMath;
 
 /**
  * Represents any celestial body.
@@ -93,21 +92,6 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
     public void update(ITimeFrameProvider time, final Transform parentTransform, ICamera camera) {
         if (appmag <= GlobalConf.runtime.LIMIT_MAG_RUNTIME) {
             super.update(time, parentTransform, camera);
-        }
-    }
-
-    @Override
-    public void render(Object... params) {
-        Object first = params[0];
-        if (first instanceof ShaderProgram) {
-            // QUAD - SHADER
-            render((ShaderProgram) first, (Float) params[1], (Boolean) params[2], (Mesh) params[3], (ICamera) params[4]);
-        } else if (first instanceof SpriteBatch) {
-            // LABEL
-            render((SpriteBatch) first, (ShaderProgram) params[1], (BitmapFont) params[2], (BitmapFont) params[3], (ICamera) params[4]);
-        } else if (first instanceof ModelBatch) {
-            // Normal model
-            render((ModelBatch) first, (Float) params[1], (Float) params[2]);
         }
     }
 
@@ -238,7 +222,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
      * 
      * @param list
      */
-    public void addFocusableObjects(List<CelestialBody> list) {
+    public void addFocusableObjects(Array<CelestialBody> list) {
         list.add(this);
         super.addFocusableObjects(list);
     }
@@ -325,7 +309,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
 
     @Override
     public float textScale() {
-        return (float) Math.atan(labelMax()) * labelFactor() * 4e2f;
+        return (float) FastMath.atan(labelMax()) * labelFactor() * 4e2f;
     }
 
     @Override

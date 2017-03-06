@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import com.badlogic.gdx.utils.Array;
+
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.scenegraph.AbstractSceneGraph;
@@ -37,7 +39,7 @@ public class SceneGraphConcurrent extends AbstractSceneGraph {
      * Builds the scene graph using the given nodes.
      * @param nodes
      */
-    public void initialize(List<SceneGraphNode> nodes, ITimeFrameProvider time) {
+    public void initialize(Array<SceneGraphNode> nodes, ITimeFrameProvider time) {
         super.initialize(nodes, time);
 
         pool = ThreadPoolManager.pool;
@@ -49,7 +51,7 @@ public class SceneGraphConcurrent extends AbstractSceneGraph {
         int nodesPerThread = root.numChildren / numThreads;
 
         for (int i = 0; i < numThreads; i++) {
-            List<SceneGraphNode> partialList = new ArrayList<SceneGraphNode>(nodesPerThread);
+            Array<SceneGraphNode> partialList = new Array<SceneGraphNode>(false, nodesPerThread);
             int currentNumber = 0;
             while (toUpdate.hasNext() && currentNumber <= nodesPerThread) {
                 SceneGraphNode node = toUpdate.next();

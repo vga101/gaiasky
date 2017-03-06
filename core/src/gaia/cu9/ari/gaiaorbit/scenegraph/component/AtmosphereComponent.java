@@ -1,14 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph.component;
 
-import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
-import gaia.cu9.ari.gaiaorbit.scenegraph.Transform;
-import gaia.cu9.ari.gaiaorbit.util.Constants;
-import gaia.cu9.ari.gaiaorbit.util.ModelCache;
-import gaia.cu9.ari.gaiaorbit.util.Pair;
-import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
-import gaia.cu9.ari.gaiaorbit.util.override.AtmosphereAttribute;
-import gaia.cu9.ari.gaiaorbit.util.override.Vector3Attribute;
-
 import java.util.Map;
 
 import com.badlogic.gdx.graphics.GL20;
@@ -19,6 +10,15 @@ import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.BlendingAttribute;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
+
+import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
+import gaia.cu9.ari.gaiaorbit.scenegraph.Transform;
+import gaia.cu9.ari.gaiaorbit.util.Constants;
+import gaia.cu9.ari.gaiaorbit.util.ModelCache;
+import gaia.cu9.ari.gaiaorbit.util.Pair;
+import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
+import gaia.cu9.ari.gaiaorbit.util.override.AtmosphereAttribute;
+import gaia.cu9.ari.gaiaorbit.util.override.Vector3Attribute;
 
 public class AtmosphereComponent {
 
@@ -58,7 +58,7 @@ public class AtmosphereComponent {
     }
 
     public void update(Transform transform) {
-        localTransform.set(transform.getMatrix().valuesf()).scl(size);
+        transform.getMatrix(localTransform).scl(size);
     }
 
     /**
@@ -85,8 +85,8 @@ public class AtmosphereComponent {
         m_fWavelength4[1] = (float) Math.pow(m_fWavelength[1], 4.0);
         m_fWavelength4[2] = (float) Math.pow(m_fWavelength[2], 4.0);
 
-        mat.set(new AtmosphereAttribute(AtmosphereAttribute.Alpha, 1));
-        mat.set(new AtmosphereAttribute(AtmosphereAttribute.ColorOpacity, 0));
+        mat.set(new AtmosphereAttribute(AtmosphereAttribute.Alpha, 1f));
+        mat.set(new AtmosphereAttribute(AtmosphereAttribute.ColorOpacity, 1f));
 
         mat.set(new AtmosphereAttribute(AtmosphereAttribute.CameraHeight, camHeight));
         mat.set(new AtmosphereAttribute(AtmosphereAttribute.CameraHeight2, camHeight * camHeight));
@@ -116,9 +116,8 @@ public class AtmosphereComponent {
         mat.set(new Vector3Attribute(Vector3Attribute.PlanetPos, new Vector3()));
         mat.set(new Vector3Attribute(Vector3Attribute.CameraPos, new Vector3()));
         mat.set(new Vector3Attribute(Vector3Attribute.LightPos, new Vector3()));
-        mat.set(new Vector3Attribute(Vector3Attribute.InvWavelength, new Vector3(1.0f / m_fWavelength4[0],
-                1.0f / m_fWavelength4[1], 1.0f / m_fWavelength4[2])));
-        
+        mat.set(new Vector3Attribute(Vector3Attribute.InvWavelength, new Vector3(1.0f / m_fWavelength4[0], 1.0f / m_fWavelength4[1], 1.0f / m_fWavelength4[2])));
+
     }
 
     public void removeAtmosphericScattering(Material mat) {
@@ -141,17 +140,12 @@ public class AtmosphereComponent {
 
         if (!ground && camHeightGr < m_fAtmosphereHeight) {
             // Camera inside atmosphere
-            m_ESun = Math.max(15f, atmFactor * 35f);
+            m_ESun += atmFactor * 100f;
         }
-
-        float colorOpacity = Math.min(1.5f, Math.max(0f, atmFactor * 3));
 
         // These are here to get the desired effect inside the atmosphere
         mat.set(new AtmosphereAttribute(AtmosphereAttribute.KrESun, m_Kr * m_ESun));
         mat.set(new AtmosphereAttribute(AtmosphereAttribute.KmESun, m_Km * m_ESun));
-
-        // Color opacity
-        ((AtmosphereAttribute) mat.get(AtmosphereAttribute.ColorOpacity)).value = colorOpacity;
 
         // Camera height
         if (mat.has(AtmosphereAttribute.CameraHeight))

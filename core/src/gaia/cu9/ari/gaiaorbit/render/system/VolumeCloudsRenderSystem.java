@@ -1,13 +1,12 @@
 package gaia.cu9.ari.gaiaorbit.render.system;
 
-import java.util.List;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.Texture.TextureWrap;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Array;
 import com.bitfire.postprocessing.utils.FullscreenQuad;
 import com.bitfire.utils.ShaderLoader;
 
@@ -63,7 +62,7 @@ public class VolumeCloudsRenderSystem extends AbstractRenderSystem {
     }
 
     @Override
-    public void render(List<IRenderable> renderables, ICamera camera, float t, RenderContext rc) {
+    public void render(Array<IRenderable> renderables, ICamera camera, float t, RenderContext rc) {
         this.rc = rc;
         run(preRunnable, renderables, camera);
 
@@ -84,7 +83,7 @@ public class VolumeCloudsRenderSystem extends AbstractRenderSystem {
         run(postRunnable, renderables, camera);
     }
 
-    public void renderStud(List<IRenderable> renderables, ICamera camera, float t) {
+    public void renderStud(Array<IRenderable> renderables, ICamera camera, float t) {
         // empty
     }
 

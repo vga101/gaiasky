@@ -105,44 +105,37 @@ public class Planet extends ModelBody implements IAtmosphereRenderable {
         }
     }
 
-    @Override
-    public void render(Object... params) {
-        Object first = params[0];
-        if (!(first instanceof ModelBatch) || params.length == 3) {
-            super.render(params);
-        } else {
-            // TODO fix this hack of byte parameter
-            if (params.length > 3)
-                // Atmosphere rendering
-                render((ModelBatch) first, (Float) params[1], (Float) params[2], (Byte) params[3]);
-        }
-    }
-
     /**
      * Renders model
      */
     @Override
     public void render(ModelBatch modelBatch, float alpha, float t) {
-        compalpha = alpha;
-        if (ac != null) {
-            if (GlobalConf.scene.VISIBILITY[ComponentType.Atmospheres.ordinal()]) {
-                ac.updateAtmosphericScatteringParams(mc.instance.materials.first(), alpha, true, transform, parent, rc);
-            } else {
-                ac.removeAtmosphericScattering(mc.instance.materials.first());
-            }
-        }
-        mc.setTransparency(alpha * opacity);
-        modelBatch.render(mc.instance, mc.env);
+        render(modelBatch, alpha, t, false);
     }
 
     /**
      *  Renders atmosphere
      */
     @Override
-    public void render(ModelBatch modelBatch, float alpha, float t, byte b) {
-        ac.updateAtmosphericScatteringParams(ac.mc.instance.materials.first(), alpha, false, transform, parent, rc);
-        // Render atmosphere?
-        modelBatch.render(ac.mc.instance, mc.env);
+    public void render(ModelBatch modelBatch, float alpha, float t, boolean atm) {
+        if (!atm) {
+            // Normal rendering
+            compalpha = alpha;
+            if (ac != null) {
+                if (GlobalConf.scene.VISIBILITY[ComponentType.Atmospheres.ordinal()]) {
+                    ac.updateAtmosphericScatteringParams(mc.instance.materials.first(), alpha, true, transform, parent, rc);
+                } else {
+                    ac.removeAtmosphericScattering(mc.instance.materials.first());
+                }
+            }
+            mc.setTransparency(alpha * opacity);
+            modelBatch.render(mc.instance, mc.env);
+        } else {
+            // Atmosphere
+            ac.updateAtmosphericScatteringParams(ac.mc.instance.materials.first(), alpha, false, transform, parent, rc);
+            // Render atmosphere
+            modelBatch.render(ac.mc.instance, mc.env);
+        }
     }
 
     @Override

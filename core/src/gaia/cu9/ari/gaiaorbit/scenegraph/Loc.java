@@ -14,6 +14,7 @@ import gaia.cu9.ari.gaiaorbit.render.I3DTextRenderable;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
+import net.jafama.FastMath;
 
 public class Loc extends AbstractPositionEntity implements I3DTextRenderable {
     private static final float LOWER_LIMIT = 3e-4f;
@@ -53,7 +54,7 @@ public class Loc extends AbstractPositionEntity implements I3DTextRenderable {
 
             Vector3d aux = aux3d1.get();
             this.distToCamera = (float) transform.getTranslation(aux).len();
-            this.viewAngle = (float) Math.atan(size / distToCamera) / camera.getFovFactor();
+            this.viewAngle = (float) FastMath.atan(size / distToCamera) / camera.getFovFactor();
             this.viewAngleApparent = this.viewAngle;
             if (!copy) {
                 addToRenderLists(camera);
@@ -79,11 +80,6 @@ public class Loc extends AbstractPositionEntity implements I3DTextRenderable {
 
     public void setLocation(double[] pos) {
         this.location = new Vector2((float) pos[0], (float) pos[1]);
-    }
-
-    @Override
-    public void render(Object... params) {
-        render((SpriteBatch) params[0], (ShaderProgram) params[1], (BitmapFont) params[2], (BitmapFont) params[3], (ICamera) params[4]);
     }
 
     @Override

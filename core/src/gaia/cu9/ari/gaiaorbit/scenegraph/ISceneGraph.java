@@ -2,15 +2,15 @@ package gaia.cu9.ari.gaiaorbit.scenegraph;
 
 import java.io.Serializable;
 import java.util.HashMap;
-import java.util.List;
 
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.IntMap;
 
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
 public interface ISceneGraph extends Serializable, Disposable {
-    public void initialize(List<SceneGraphNode> nodes, ITimeFrameProvider time);
+    public void initialize(Array<SceneGraphNode> nodes, ITimeFrameProvider time);
 
     public void update(ITimeFrameProvider time, ICamera camera);
 
@@ -35,11 +35,11 @@ public interface ISceneGraph extends Serializable, Disposable {
      */
     public IntMap<Star> getStarMap();
 
-    public List<SceneGraphNode> getNodes();
+    public Array<SceneGraphNode> getNodes();
 
     public SceneGraphNode getRoot();
 
-    public List<CelestialBody> getFocusableObjects();
+    public Array<CelestialBody> getFocusableObjects();
 
     public CelestialBody findFocus(String name);
 

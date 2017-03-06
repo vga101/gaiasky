@@ -1,10 +1,7 @@
 package gaia.cu9.ari.gaiaorbit.desktop.util;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.List;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
@@ -54,7 +51,7 @@ public class RunCameraWindow extends CollapsibleWindow {
     private Label outConsole;
     private Color originalColor;
 
-    private List<FileHandle> scripts = null;
+    private Array<FileHandle> scripts = null;
     private FileHandle selectedScript = null;
 
     private float pad;
@@ -142,12 +139,12 @@ public class RunCameraWindow extends CollapsibleWindow {
         // Choose script
         FileHandle scriptFolder = Gdx.files.absolute(SysUtils.getDefaultCameraDir().getPath());
 
-        scripts = new ArrayList<FileHandle>();
+        scripts = new Array<FileHandle>();
 
         if (scriptFolder.exists())
             scripts = GlobalResources.listRec(scriptFolder, scripts, ".dat");
 
-        Collections.sort(scripts, new FileHandleComparator());
+        scripts.sort(new FileHandleComparator());
 
         HorizontalGroup titlegroup = new HorizontalGroup();
         titlegroup.space(pad);
@@ -205,7 +202,7 @@ public class RunCameraWindow extends CollapsibleWindow {
         Gdx.app.postRunnable(new Runnable() {
             @Override
             public void run() {
-                if (scripts.size() > 0) {
+                if (scripts.size > 0) {
                     scriptsList.setSelectedIndex(0);
                     select(scripts.get(0).name());
                 }

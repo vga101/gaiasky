@@ -275,7 +275,7 @@ public class Star extends Particle {
         ((ColorAttribute) mc.env.get(ColorAttribute.AmbientLight)).color.set(col[0], col[1], col[2], 1f);
         ((FloatAttribute) mc.env.get(FloatAttribute.Shininess)).value = t;
         // Local transform
-        mc.instance.transform.set(transform.getMatrix().valuesf()).scl(getRadius() * 2);
+        transform.getMatrix(mc.instance.transform).scl(getRadius() * 2);
         modelBatch.render(mc.instance, mc.env);
     }
 

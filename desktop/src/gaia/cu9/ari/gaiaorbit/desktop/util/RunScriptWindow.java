@@ -1,8 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.desktop.util;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.python.core.PyCode;
 import org.python.core.PySyntaxError;
@@ -56,7 +54,7 @@ public class RunScriptWindow extends CollapsibleWindow {
     private Label outConsole;
     private Color originalColor;
 
-    private List<FileHandle> scripts = null;
+    private Array<FileHandle> scripts = null;
     private FileHandle selectedScript = null;
 
     private float pad;
@@ -145,7 +143,7 @@ public class RunScriptWindow extends CollapsibleWindow {
         FileHandle scriptFolder1 = Gdx.files.internal(GlobalConf.program.SCRIPT_LOCATION);
         FileHandle scriptFolder2 = Gdx.files.absolute(SysUtils.getDefaultScriptDir().getPath());
 
-        scripts = new ArrayList<FileHandle>();
+        scripts = new Array<FileHandle>();
 
         if (scriptFolder1.exists())
             scripts = GlobalResources.listRec(scriptFolder1, scripts, ".py");
@@ -218,7 +216,7 @@ public class RunScriptWindow extends CollapsibleWindow {
         Gdx.app.postRunnable(new Runnable() {
             @Override
             public void run() {
-                if (scripts.size() > 0) {
+                if (scripts.size > 0) {
                     scriptsList.setSelectedIndex(0);
                     select(scripts.get(0));
                 }

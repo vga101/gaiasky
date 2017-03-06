@@ -14,10 +14,11 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.utils.Array;
 
 import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
-import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
+import net.jafama.FastMath;
 
 /**
  * Holds and initializes resources utilized globally.
@@ -103,21 +104,21 @@ public class GlobalResources {
      *            In internal units
      * @return An array containing the float number and the string units.
      */
-    public static Object[] doubleToDistanceString(double d) {
+    public static Pair<Double, String> doubleToDistanceString(double d) {
         d = d * Constants.U_TO_KM;
         if (Math.abs(d) < 1f) {
             // m
-            return new Object[] { (d * 1000), "m" };
+            return new Pair<Double, String>((d * 1000), "m");
         }
         if (Math.abs(d) < AstroUtils.AU_TO_KM) {
             // km
-            return new Object[] { d, "km" };
+            return new Pair<Double, String>(d, "km");
         } else if (Math.abs(d) < AstroUtils.PC_TO_KM) {
             // AU
-            return new Object[] { d * AstroUtils.KM_TO_AU, "AU" };
+            return new Pair<Double, String>(d * AstroUtils.KM_TO_AU, "AU");
         } else {
             // pc
-            return new Object[] { (d * AstroUtils.KM_TO_PC), "pc" };
+            return new Pair<Double, String>((d * AstroUtils.KM_TO_PC), "pc");
         }
     }
 
@@ -126,9 +127,9 @@ public class GlobalResources {
      * @param d In internal units
      * @return Array containing the number and the units
      */
-    public static Object[] doubleToVelocityString(double d) {
-        Object[] res = doubleToDistanceString(d);
-        res[res.length - 1] = res[res.length - 1] + "/s";
+    public static Pair<Double, String> doubleToVelocityString(double d) {
+        Pair<Double, String> res = doubleToDistanceString(d);
+        res.setSecond(res.getSecond().concat("/s"));
         return res;
     }
 
@@ -139,9 +140,9 @@ public class GlobalResources {
      *            In internal units
      * @return An array containing the float number and the string units.
      */
-    public static Object[] floatToDistanceString(float f) {
-        Object[] result = doubleToDistanceString((double) f);
-        return new Object[] { (double) result[0], result[1] };
+    public static Pair<Float, String> floatToDistanceString(float f) {
+        Pair<Double, String> result = doubleToDistanceString((double) f);
+        return new Pair<Float, String>(result.getFirst().floatValue(), result.getSecond());
     }
 
     /**
@@ -173,7 +174,7 @@ public class GlobalResources {
      * @return True if the body is visible.
      */
     public static boolean isInView(Vector3d point, double pointDistance, float coneAngle, Vector3d dir) {
-        return MathUtilsd.acos(point.dot(dir) / pointDistance) < coneAngle;
+        return FastMath.acos(point.dot(dir) / pointDistance) < coneAngle;
     }
 
     /**
@@ -193,7 +194,7 @@ public class GlobalResources {
         boolean inview = false;
         int size = points.length;
         for (int i = 0; i < size; i++) {
-            inview = inview || MathUtilsd.acos(points[i].dot(dir) / points[i].len()) < coneAngle;
+            inview = inview || FastMath.acos(points[i].dot(dir) / points[i].len()) < coneAngle;
         }
         return inview;
     }
@@ -266,7 +267,7 @@ public class GlobalResources {
      *            The extension of the files
      * @return The list l
      */
-    public static List<FileHandle> listRec(FileHandle f, List<FileHandle> l, String extension) {
+    public static Array<FileHandle> listRec(FileHandle f, Array<FileHandle> l, String extension) {
         if (f.exists()) {
             if (f.isDirectory()) {
                 FileHandle[] partial = f.list();
@@ -284,7 +285,7 @@ public class GlobalResources {
         return l;
     }
 
-    public static List<FileHandle> listRec(FileHandle f, List<FileHandle> l, FilenameFilter filter) {
+    public static Array<FileHandle> listRec(FileHandle f, Array<FileHandle> l, FilenameFilter filter) {
         if (f.exists()) {
             if (f.isDirectory()) {
                 FileHandle[] partial = f.list();

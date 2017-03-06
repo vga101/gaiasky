@@ -1,10 +1,10 @@
 package gaia.cu9.ari.gaiaorbit.data;
 
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.List;
 
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
@@ -21,7 +21,7 @@ public class SceneGraphJsonLoader {
     public static ISceneGraph loadSceneGraph(FileHandle[] jsonFiles, ITimeFrameProvider time, boolean multithreading, int maxThreads) {
         ISceneGraph sg = null;
         try {
-            List<SceneGraphNode> nodes = new ArrayList<SceneGraphNode>(5000);
+            Array<SceneGraphNode> nodes = new Array<SceneGraphNode>(false, 5000);
 
             for (FileHandle jsonFile : jsonFiles) {
                 JsonReader jsonReader = new JsonReader();
@@ -45,7 +45,10 @@ public class SceneGraphJsonLoader {
                         loader.initialize(files);
 
                         // Load data
-                        nodes.addAll(loader.loadData());
+                        List<? extends SceneGraphNode> data = loader.loadData();
+                        for (SceneGraphNode elem : data) {
+                            nodes.add(elem);
+                        }
                     }
 
                     child = child.next;

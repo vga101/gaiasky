@@ -14,6 +14,7 @@ import java.util.Map;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl.LwjglFiles;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.badlogic.gdx.utils.reflect.ReflectionException;
 
@@ -97,8 +98,8 @@ public class ConstellationHIPUpdater implements IObserver {
 
         for (Constellation constellation : cons) {
 
-            List<int[]> oldids = constellation.ids;
-            List<int[]> newids = new ArrayList<int[]>(oldids.size());
+            Array<int[]> oldids = constellation.ids;
+            Array<int[]> newids = new Array<int[]>(oldids.size);
 
             for (int[] oids : oldids) {
                 int[] nids = new int[oids.length];
@@ -141,7 +142,7 @@ public class ConstellationHIPUpdater implements IObserver {
 
         for (Constellation constellation : cons) {
 
-            List<int[]> ids = constellation.ids;
+            Array<int[]> ids = constellation.ids;
             for (int[] idlist : ids) {
                 if (lastend >= 0 && lastend != idlist[0]) {
                     bw.write("JUMP,JUMP");

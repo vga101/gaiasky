@@ -6,9 +6,9 @@ import java.util.Date;
 import gaia.cu9.ari.gaiaorbit.util.LruCache;
 import gaia.cu9.ari.gaiaorbit.util.coord.vsop87.VSOP87;
 import gaia.cu9.ari.gaiaorbit.util.coord.vsop87.iVSOP87;
-import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector2d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
+import net.jafama.FastMath;
 
 /**
  * Some astronomical algorithms to get the position of the Sun, Moon, work out
@@ -273,12 +273,12 @@ public class AstroUtils {
             } else if (curr[2] == 2 || curr[2] == -2) {
                 mul = E * E;
             }
-            suml += curr[4] * MathUtilsd.sin(Math.toRadians(curr[0] * D + curr[1] * M + curr[2] * Mp + curr[3] * F)) * mul;
-            sumr += curr[5] * MathUtilsd.cos(Math.toRadians(curr[0] * D + curr[1] * M + curr[2] * Mp + curr[3] * F)) * mul;
+            suml += curr[4] * FastMath.sin(Math.toRadians(curr[0] * D + curr[1] * M + curr[2] * Mp + curr[3] * F)) * mul;
+            sumr += curr[5] * FastMath.cos(Math.toRadians(curr[0] * D + curr[1] * M + curr[2] * Mp + curr[3] * F)) * mul;
         }
         // Addition to Suml. The terms involving A1 are due to the action of Venus. The term involving A2 is due to Jupiter
         // while those involing L' are due to the flattening of the Earth.
-        double sumladd = 3958 * MathUtilsd.sin(Math.toRadians(A1)) + 1962 * MathUtilsd.sin(Math.toRadians(Lp - F)) + 318 * MathUtilsd.sin(Math.toRadians(A2));
+        double sumladd = 3958 * FastMath.sin(Math.toRadians(A1)) + 1962 * FastMath.sin(Math.toRadians(Lp - F)) + 318 * FastMath.sin(Math.toRadians(A2));
         suml += sumladd;
 
         return new double[] { suml, sumr };
@@ -297,11 +297,11 @@ public class AstroUtils {
             } else if (curr[2] == 2 || curr[2] == -2) {
                 mul *= E * E;
             }
-            sumb += curr[4] * MathUtilsd.sin(Math.toRadians(curr[0] * D + curr[1] * M + curr[2] * Mp + curr[3] * F)) * mul;
+            sumb += curr[4] * FastMath.sin(Math.toRadians(curr[0] * D + curr[1] * M + curr[2] * Mp + curr[3] * F)) * mul;
         }
         // Addition to Sumb. The terms involving A1 are due to the action of Venus. The term involving A2 is due to Jupiter
         // while those involing L' are due to the flattening of the Earth.
-        double sumbadd = -2235 * MathUtilsd.sin(Math.toRadians(Lp)) + 382 * MathUtilsd.sin(Math.toRadians(A3)) + 175 * MathUtilsd.sin(Math.toRadians(A1 - F)) + 175 * MathUtilsd.sin(Math.toRadians(A1 + F)) + 127 * MathUtilsd.sin(Math.toRadians(Lp - Mp)) - 115 * MathUtilsd.sin(Math.toRadians(Lp + Mp));
+        double sumbadd = -2235 * FastMath.sin(Math.toRadians(Lp)) + 382 * FastMath.sin(Math.toRadians(A3)) + 175 * FastMath.sin(Math.toRadians(A1 - F)) + 175 * FastMath.sin(Math.toRadians(A1 + F)) + 127 * FastMath.sin(Math.toRadians(Lp - Mp)) - 115 * FastMath.sin(Math.toRadians(Lp + Mp));
         sumb += sumbadd;
 
         return sumb;

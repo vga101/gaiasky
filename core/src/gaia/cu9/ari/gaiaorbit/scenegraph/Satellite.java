@@ -56,7 +56,7 @@ public abstract class Satellite extends ModelBody {
      */
     public void setToLocalTransform(float sizeFactor, Matrix4 localTransform, boolean forceUpdate) {
         if (sizeFactor != 1 || forceUpdate) {
-            localTransform.set(transform.getMatrix().valuesf()).scl(size * sizeFactor);
+            transform.getMatrix(localTransform).scl(size * sizeFactor);
         } else {
             localTransform.set(this.localTransform);
         }

@@ -15,6 +15,7 @@ import gaia.cu9.ari.gaiaorbit.util.coord.IBodyCoordinates;
 import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
+import net.jafama.FastMath;
 
 /**
  * A base abstract graphical entity with the basics.
@@ -174,7 +175,7 @@ public abstract class AbstractPositionEntity extends SceneGraphNode {
 
         Vector3d aux = aux3d1.get();
         this.distToCamera = (float) transform.getTranslation(aux).len();
-        this.viewAngle = (float) Math.atan(size / distToCamera);
+        this.viewAngle = (float) FastMath.atan(size / distToCamera);
         this.viewAngleApparent = this.viewAngle;
         if (!copy) {
             addToRenderLists(camera);

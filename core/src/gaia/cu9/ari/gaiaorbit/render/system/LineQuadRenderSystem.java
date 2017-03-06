@@ -1,7 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.render.system;
 
-import java.util.List;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Mesh;
@@ -10,6 +8,7 @@ import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.utils.Array;
 
+import gaia.cu9.ari.gaiaorbit.render.ILineRenderable;
 import gaia.cu9.ari.gaiaorbit.render.IRenderable;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
@@ -198,11 +197,11 @@ public class LineQuadRenderSystem extends LineRenderSystem {
     }
 
     @Override
-    public void renderStud(List<IRenderable> renderables, ICamera camera, float t) {
+    public void renderStud(Array<IRenderable> renderables, ICamera camera, float t) {
         this.camera = camera;
-        int size = renderables.size();
+        int size = renderables.size;
         for (int i = 0; i < size; i++) {
-            IRenderable renderable = renderables.get(i);
+            ILineRenderable renderable = (ILineRenderable) renderables.get(i);
             boolean rend = true;
             if (renderable instanceof Particle && !GlobalConf.scene.PROPER_MOTION_VECTORS)
                 rend = false;

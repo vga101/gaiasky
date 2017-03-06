@@ -1,9 +1,7 @@
 package gaia.cu9.ari.gaiaorbit.render;
 
 import java.nio.IntBuffer;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import com.badlogic.gdx.Gdx;
@@ -83,7 +81,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
     // Two model batches, for front (models), back and atmospheres
     private SpriteBatch spriteBatch, fontBatch;
 
-    private List<IRenderSystem> renderProcesses;
+    private Array<IRenderSystem> renderProcesses;
 
     RenderSystemRunnable blendNoDepthRunnable, blendDepthRunnable;
 
@@ -191,11 +189,11 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
          **/
         pixelRenderSystems = new AbstractRenderSystem[3];
 
-        renderProcesses = new ArrayList<IRenderSystem>();
+        renderProcesses = new Array<IRenderSystem>();
 
         blendNoDepthRunnable = new RenderSystemRunnable() {
             @Override
-            public void run(AbstractRenderSystem renderSystem, List<IRenderable> renderables, ICamera camera) {
+            public void run(AbstractRenderSystem renderSystem, Array<IRenderable> renderables, ICamera camera) {
                 Gdx.gl.glEnable(GL20.GL_BLEND);
                 Gdx.gl.glDisable(GL20.GL_DEPTH_TEST);
                 Gdx.gl.glDepthMask(false);
@@ -203,7 +201,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         };
         blendDepthRunnable = new RenderSystemRunnable() {
             @Override
-            public void run(AbstractRenderSystem renderSystem, List<IRenderable> renderables, ICamera camera) {
+            public void run(AbstractRenderSystem renderSystem, Array<IRenderable> renderables, ICamera camera) {
                 Gdx.gl.glEnable(GL20.GL_BLEND);
                 Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
                 Gdx.gl.glDepthMask(true);
@@ -221,7 +219,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         modelBackProc.setPreRunnable(blendNoDepthRunnable);
         modelBackProc.setPostRunnable(new RenderSystemRunnable() {
             @Override
-            public void run(AbstractRenderSystem renderSystem, List<IRenderable> renderables, ICamera camera) {
+            public void run(AbstractRenderSystem renderSystem, Array<IRenderable> renderables, ICamera camera) {
                 // This always goes at the back, clear depth buffer
                 Gdx.gl.glClear(GL20.GL_DEPTH_BUFFER_BIT);
             }
@@ -236,7 +234,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         annotationsProc.setPreRunnable(blendNoDepthRunnable);
         annotationsProc.setPostRunnable(new RenderSystemRunnable() {
             @Override
-            public void run(AbstractRenderSystem renderSystem, List<IRenderable> renderables, ICamera camera) {
+            public void run(AbstractRenderSystem renderSystem, Array<IRenderable> renderables, ICamera camera) {
                 // This always goes at the back, clear depth buffer
                 Gdx.gl.glClear(GL20.GL_DEPTH_BUFFER_BIT);
             }
@@ -251,11 +249,12 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
             private float[] viewAngles = new float[Glow.N];
             private float[] colors = new float[Glow.N * 3];
             private Vector3 auxv = new Vector3();
+            private Vector3 auxv2 = new Vector3();
 
             @Override
-            public void run(AbstractRenderSystem renderSystem, List<IRenderable> renderables, ICamera camera) {
-                int size = renderables.size();
-                if (PostProcessorFactory.instance.getPostProcessor().isLightScatterEnabled()) {
+            public void run(AbstractRenderSystem renderSystem, Array<IRenderable> renderables, ICamera camera) {
+                int size = renderables.size;
+                if (PostProcessorFactory.instance.getPostProcessor().isLightScatterEnabled() && Particle.renderOn) {
                     // Compute light positions for light scattering or light glow
                     int lightIndex = 0;
                     float angleEdgeDeg = camera.getAngleEdge() * MathUtils.radDeg;
@@ -264,9 +263,9 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
                         if (s instanceof Particle) {
                             Particle p = (Particle) s;
                             if (!Constants.webgl && lightIndex < Glow.N && (GlobalConf.program.CUBEMAP360_MODE || GaiaSky.instance.cam.getDirection().angle(p.transform.position) < angleEdgeDeg)) {
-                            	Vector3 pos3 = p.transform.getTranslationf(auxv);
-                            	pos3.sub(camera.getShift().toVector3());
-                            	camera.getCamera().project(pos3);
+                                Vector3 pos3 = p.transform.getTranslationf(auxv);
+                                pos3.sub(camera.getShift().put(auxv2));
+                                camera.getCamera().project(pos3);
                                 // Here we **need** to use Gdx.graphics.getWidth/Height() because we use camera.project() which uses screen coordinates only
                                 positions[lightIndex * 2] = auxv.x / Gdx.graphics.getWidth();
                                 positions[lightIndex * 2 + 1] = auxv.y / Gdx.graphics.getHeight();
@@ -328,7 +327,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         modelAtmProc.setPreRunnable(blendDepthRunnable);
         modelAtmProc.setPostRunnable(new RenderSystemRunnable() {
             @Override
-            public void run(AbstractRenderSystem renderSystem, List<IRenderable> renderables, ICamera camera) {
+            public void run(AbstractRenderSystem renderSystem, Array<IRenderable> renderables, ICamera camera) {
                 // Clear depth buffer before rendering things up close
                 Gdx.gl.glClear(GL20.GL_DEPTH_BUFFER_BIT);
             }
@@ -376,7 +375,6 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
     @Override
     public void render(ICamera camera, float t, int rw, int rh, FrameBuffer fb, PostProcessBean ppb) {
-
         if (sgr == null)
             initSGR(camera);
 
@@ -401,12 +399,12 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
         EventManager.instance.post(Events.DEBUG1, "quads: " + (render_lists.get(RenderGroup.SHADER).size() + render_lists.get(RenderGroup.SHADER_F).size()) + ", points: " + render_lists.get(RenderGroup.POINT).size() + ", labels: " + render_lists.get(RenderGroup.LABEL).size());
 
-        int size = renderProcesses.size();
+        int size = renderProcesses.size;
         for (int i = 0; i < size; i++) {
             IRenderSystem process = renderProcesses.get(i);
             // If we have no render group, this means all the info is already in the render system. No lists needed
             if (process.getRenderGroup() != null) {
-                List<IRenderable> l = render_lists.get(process.getRenderGroup()).toList();
+                Array<IRenderable> l = render_lists.get(process.getRenderGroup()).toList();
                 process.render(l, camera, t, rc);
             } else {
                 process.render(null, camera, t, rc);
@@ -437,6 +435,10 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
     public boolean isOn(ComponentType comp) {
         return visible[comp.ordinal()] || alphas[comp.ordinal()] > 0;
+    }
+
+    public boolean isOn(int ordinal) {
+        return visible[ordinal] || alphas[ordinal] > 0;
     }
 
     @Override

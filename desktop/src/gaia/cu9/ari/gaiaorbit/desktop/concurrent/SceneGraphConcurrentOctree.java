@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import com.badlogic.gdx.utils.Array;
+
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.scenegraph.AbstractSceneGraph;
@@ -31,7 +33,7 @@ public class SceneGraphConcurrentOctree extends AbstractSceneGraph {
     private ThreadPoolExecutor pool;
     private List<UpdaterTask<SceneGraphNode>> tasks;
     private OctreeWrapperConcurrent octree;
-    private List<SceneGraphNode> roulette;
+    private Array<SceneGraphNode> roulette;
     int numThreads;
 
     public SceneGraphConcurrentOctree(int numThreads) {
@@ -44,12 +46,12 @@ public class SceneGraphConcurrentOctree extends AbstractSceneGraph {
      * Builds the scene graph using the given nodes.
      * @param nodes
      */
-    public void initialize(List<SceneGraphNode> nodes, ITimeFrameProvider time) {
+    public void initialize(Array<SceneGraphNode> nodes, ITimeFrameProvider time) {
         super.initialize(nodes, time);
 
         pool = ThreadPoolManager.pool;
         tasks = new ArrayList<UpdaterTask<SceneGraphNode>>(pool.getCorePoolSize());
-        roulette = new ArrayList<SceneGraphNode>(1000000);
+        roulette = new Array<SceneGraphNode>(false, 1000000);
 
         Iterator<SceneGraphNode> it = nodes.iterator();
         while (it.hasNext()) {
@@ -76,7 +78,7 @@ public class SceneGraphConcurrentOctree extends AbstractSceneGraph {
 
         // Add top-level nodes to roulette
         roulette.addAll(root.children);
-        roulette.remove(octree);
+        roulette.removeValue(octree, true);
 
         // Update octree - Add nodes to process to roulette
         octree.update(time, root.transform, camera, 1f);
@@ -132,7 +134,7 @@ public class SceneGraphConcurrentOctree extends AbstractSceneGraph {
 
     protected String getRouletteDebug() {
         {
-            int size = roulette.size() / numThreads;
+            int size = roulette.size / numThreads;
             String s = "[";
             for (int i = 0; i < numThreads; i++) {
                 s += (size);

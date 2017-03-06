@@ -17,13 +17,13 @@ described in the following section.
 The scripting interface
 =======================
 
-The scripting interface is located in the package ``gaia.cu9.ari.gaiaorbit.script`` (see `here <http://jumpinglangur.github.io/gaiasky/javadoc/gaia/cu9/ari/gaiaorbit/script/package-summary.html>`__).
+The scripting interface is located in the package ``gaia.cu9.ari.gaiaorbit.script`` (see `here <http://langurmonkey.github.io/gaiasky/javadoc/gaia/cu9/ari/gaiaorbit/script/package-summary.html>`__).
 
 Description of the functions
 ----------------------------
 
 Before starting, have a look at the
-`documentation of the scripting interface <http://ari-zah.github.io/gaiasky/javadoc/gaia/cu9/ari/gaiaorbit/script/IScriptingInterface.html>`__,
+`documentation of the scripting interface <http://langurmonkey.github.io/gaiasky/javadoc/gaia/cu9/ari/gaiaorbit/script/IScriptingInterface.html>`__,
 which provides extensive descriptions of each function.
 
 Using the scripting interface

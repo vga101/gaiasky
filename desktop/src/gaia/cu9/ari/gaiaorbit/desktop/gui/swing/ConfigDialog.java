@@ -142,7 +142,7 @@ public class ConfigDialog extends I18nJFrame {
         } else {
             JPanel imagePanel = new JPanel(new GridLayout(1, 1, 0, 0));
             imagePanel.setBorder(new EmptyBorder(5, 5, 5, 5));
-            JLabel buildtext = new JLabel("<html><font color='white'>" + txt("gui.build", GlobalConf.version.build) + " - " + txt("gui.version", GlobalConf.version.version) + "</font></html>");
+            JLabel buildtext = new JLabel("<html><font color='white'>" + GlobalConf.APPLICATION_NAME + " - " + txt("gui.build", GlobalConf.version.build) + " - " + txt("gui.version", GlobalConf.version.version) + "</font></html>");
 
             buildtext.setHorizontalAlignment(JLabel.CENTER);
             imagePanel.add(buildtext);
@@ -935,19 +935,18 @@ public class ConfigDialog extends I18nJFrame {
         /** SHOW AGAIN? **/
 
         // Do not show again
-        final JCheckBox showAgain = new JCheckBox(txt("gui.notagain"));
+        final JCheckBox showAgain = new JCheckBox(txt("gui.showatstartup"));
+        showAgain.setSelected(GlobalConf.program.SHOW_CONFIG_DIALOG);
         showAgain.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
-                GlobalConf.program.SHOW_CONFIG_DIALOG = !showAgain.isSelected();
+                GlobalConf.program.SHOW_CONFIG_DIALOG = showAgain.isSelected();
             }
         });
 
         body.add(tabbedPane, "wrap");
         body.add(checkPanel, "wrap");
-        if (startup) {
-            body.add(showAgain, "wrap");
-        }
+        body.add(showAgain, "wrap");
 
         /** BUTTONS **/
         JPanel buttons = new JPanel(new MigLayout("", "push[][]", ""));
@@ -1413,10 +1412,9 @@ public class ConfigDialog extends I18nJFrame {
             Component rendererComponent = generateRendererComponent(text, icon, getHorizontalTextAlignment());
             int prototypeWidth = prototypeComponent.getPreferredSize().width;
             int prototypeHeight = prototypeComponent.getPreferredSize().height;
-            int fontsize = new JLabel().getFont().getSize();
-            System.out.println("Default font size: " + fontsize);
-            prototypeWidth = scale(150);
-            prototypeHeight = scale(20);
+            float fontsize = new JLabel().getFont().getSize();
+            prototypeWidth = scale(Math.min(250, Math.round(150 * fontsize / 12f)));
+            prototypeHeight = scale(Math.min(30, Math.round(20 * fontsize / 12f)));
             rendererComponent.setPreferredSize(new Dimension(prototypeWidth, prototypeHeight));
             return rendererComponent;
         }

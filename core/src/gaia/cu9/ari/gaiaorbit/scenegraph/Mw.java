@@ -43,7 +43,7 @@ public class Mw extends AbstractPositionEntity implements IModelRenderable {
             try {
                 Method m = ClassReflection.getMethod(c, transformName);
                 Matrix4d trf = (Matrix4d) m.invoke(null);
-                Matrix4 aux = new Matrix4(trf.valuesf());
+                Matrix4 aux = trf.putIn(new Matrix4());
                 localTransform.mul(aux);
             } catch (ReflectionException e) {
                 Logger.error(Mw.class.getName(), "Error getting/invoking method Coordinates." + transformName + "()");
@@ -69,11 +69,6 @@ public class Mw extends AbstractPositionEntity implements IModelRenderable {
 
     @Override
     public void updateLocalValues(ITimeFrameProvider time, ICamera camera) {
-    }
-
-    @Override
-    public void render(Object... params) {
-        render((ModelBatch) params[0], (Float) params[1], (Float) params[2]);
     }
 
     @Override
