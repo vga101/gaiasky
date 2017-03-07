@@ -34,9 +34,11 @@ Performance
 ===========
 
 In the ``Performance`` tab you can enable and disable multithreading.
-Multithreading is still an **experimental** feature, so use it at your
+In our tests, multithreading provides a significant boost when more
+than 4 threads are available in the CPU. Otherwise its overhead
+makes it slower than the single-threaded version, so use it at your
 own risk. This allows the program to use more than one CPUs for the
-processing.
+processing. More detailed info can be found in the :ref:`performance <performance section>`.
 
 Levels of Detail (LOD)
 ----------------------

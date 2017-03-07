@@ -1,3 +1,6 @@
+
+.. _performance:
+
 Performance
 ***********
 
@@ -23,6 +26,18 @@ executing the scripts and calling and running the rendering subsystem,
 which streams all the texturing and geometrical information to the GPU
 for rendering. This section describes what are the elements that can
 cause a major impact in CPU performance and explains how to tune them.
+
+Multithreading
+--------------
+
+When multithreading is enabled the work of the update loop will be distributed
+to a number of threads (usually this number is defined by the number of cores/threads
+of the main CPU). In our tests, multithreading starts having a positive impact
+when more than 4 threads are available. Using a CPU which supports 8 threads 
+and enabling multithreading in Gaia Sky results in a significant performance boost.
+However, in the case of 4 threads or less, our tests yield that the multithreading
+overhead penalty is larger than the gain, resulting in lower FPS. Usually, with
+newer CPUs it is a good practice to enable multithreading.
 
 Limiting magnitude
 ------------------
