@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.backends.lwjgl.LwjglFiles;
+import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Files;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.badlogic.gdx.utils.reflect.ReflectionException;
@@ -55,7 +55,7 @@ public class OctreeGeneratorTest implements IObserver {
 
     public static void main(String[] args) {
         try {
-            Gdx.files = new LwjglFiles();
+            Gdx.files = new Lwjgl3Files();
 
             // Initialize number format
             NumberFormatFactory.initialize(new DesktopNumberFormatFactory());
@@ -77,7 +77,7 @@ public class OctreeGeneratorTest implements IObserver {
                 generateOctree();
                 break;
             case LOAD_OCTREE:
-                Gdx.files = new LwjglFiles();
+                Gdx.files = new Lwjgl3Files();
                 loadOctree();
                 break;
             }

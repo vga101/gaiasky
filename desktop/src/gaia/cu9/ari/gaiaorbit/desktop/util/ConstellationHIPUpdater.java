@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.backends.lwjgl.LwjglFiles;
+import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Files;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
@@ -40,7 +40,7 @@ public class ConstellationHIPUpdater implements IObserver {
 
     public static void main(String[] args) {
         try {
-            Gdx.files = new LwjglFiles();
+            Gdx.files = new Lwjgl3Files();
 
             // Initialize number format
             NumberFormatFactory.initialize(new DesktopNumberFormatFactory());

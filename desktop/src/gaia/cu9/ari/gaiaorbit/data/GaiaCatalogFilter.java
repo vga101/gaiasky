@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.backends.lwjgl.LwjglFiles;
+import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Files;
 
 import gaia.cu9.ari.gaiaorbit.data.stars.HYGBinaryLoader;
 import gaia.cu9.ari.gaiaorbit.data.stars.STILCatalogLoader;
@@ -60,7 +60,7 @@ public class GaiaCatalogFilter {
 
     public void initialize() throws Exception {
         // Init Gdx files
-        Gdx.files = new LwjglFiles();
+        Gdx.files = new Lwjgl3Files();
 
         // Init log writer
         lw = new LogWriter();

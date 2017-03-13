@@ -42,15 +42,15 @@ public class GSEnumSet<E extends Enum<E>> {
      * presence of universe[k] in this set.
      */
     private long elements = 0L;
-    
+
     final Class<E> elementType;
     final Enum<?>[] universe;
-    
-    GSEnumSet(Class<E>elementType, Enum<?>[] universe) {
+
+    GSEnumSet(Class<E> elementType, Enum<?>[] universe) {
         this.elementType = elementType;
         this.universe = universe;
     }
-    
+
     /**
      * Creates an empty enum set with the specified element type.
      *
@@ -64,7 +64,7 @@ public class GSEnumSet<E extends Enum<E>> {
             throw new ClassCastException(elementType + " not an enum");
 
         return new GSEnumSet<E>(elementType, universe);
-        
+
     }
 
     /**
@@ -106,7 +106,7 @@ public class GSEnumSet<E extends Enum<E>> {
      */
     public static <E extends Enum<E>> GSEnumSet<E> copyOf(Collection<E> c) {
         if (c instanceof GSEnumSet) {
-            return ((GSEnumSet<E>)c).clone();
+            return ((GSEnumSet<E>) c).clone();
         } else {
             if (c.isEmpty())
                 throw new IllegalArgumentException("Collection is empty");
@@ -238,9 +238,7 @@ public class GSEnumSet<E extends Enum<E>> {
      * @throws NullPointerException if any parameters are null
      * @return an enum set initially containing the specified elements
      */
-    public static <E extends Enum<E>> GSEnumSet<E> of(E e1, E e2, E e3, E e4,
-                                                    E e5)
-    {
+    public static <E extends Enum<E>> GSEnumSet<E> of(E e1, E e2, E e3, E e4, E e5) {
         GSEnumSet<E> result = noneOf(e1.getDeclaringClass());
         result.add(e1);
         result.add(e2);
@@ -292,15 +290,13 @@ public class GSEnumSet<E extends Enum<E>> {
         return result;
     }
 
-
-
     /**
      * Returns all of the values comprising E.
      * The result is uncloned, cached, and shared by all callers.
      */
+    @SuppressWarnings("restriction")
     private static <E extends Enum<E>> E[] getUniverse(Class<E> elementType) {
-        return sun.misc.SharedSecrets.getJavaLangAccess()
-                                        .getEnumConstantsShared(elementType);
+        return sun.misc.SharedSecrets.getJavaLangAccess().getEnumConstantsShared(elementType);
     }
 
     /**
@@ -311,13 +307,13 @@ public class GSEnumSet<E extends Enum<E>> {
     public GSEnumSet<E> clone() {
         try {
             return (GSEnumSet<E>) super.clone();
-        } catch(CloneNotSupportedException e) {
+        } catch (CloneNotSupportedException e) {
             throw new AssertionError(e);
         }
     }
 
     void addRange(E from, E to) {
-        elements = (-1L >>>  (from.ordinal() - to.ordinal() - 1)) << from.ordinal();
+        elements = (-1L >>> (from.ordinal() - to.ordinal() - 1)) << from.ordinal();
     }
 
     void addAll() {
@@ -328,7 +324,7 @@ public class GSEnumSet<E extends Enum<E>> {
     void complement() {
         if (universe.length != 0) {
             elements = ~elements;
-            elements &= -1L >>> -universe.length;  // Mask unused bits
+            elements &= -1L >>> -universe.length; // Mask unused bits
         }
     }
 
@@ -415,36 +411,36 @@ public class GSEnumSet<E extends Enum<E>> {
         if (eClass != elementType && eClass.getSuperclass() != elementType)
             return false;
 
-        return (elements & (1L << ((Enum<?>)e).ordinal())) != 0;
+        return (elements & (1L << ((Enum<?>) e).ordinal())) != 0;
     }
-    
+
     /**
      * Returns <tt>true</tt> if this set contains the specified index.
      * @param ordinal
      * @return
      */
     public boolean contains(int ordinal) {
-    	return (elements & (1L << ordinal)) != 0;
+        return (elements & (1L << ordinal)) != 0;
     }
-    
-    public E getFirst(){
-    	if(elements != 0){
-    		for(int i = 0; i < universe.length; i++){
-    			if((elements & (1L << i)) != 0)
-    				return (E) universe[i];
-    		}
-    	}
-		return null;
+
+    public E getFirst() {
+        if (elements != 0) {
+            for (int i = 0; i < universe.length; i++) {
+                if ((elements & (1L << i)) != 0)
+                    return (E) universe[i];
+            }
+        }
+        return null;
     }
-    
-    public int getFirstOrdinal(){
-    	if(elements != 0){
-    		for(int i = 0; i < universe.length; i++){
-    			if((elements & (1L << i)) != 0)
-    				return i;
-    		}
-    	}
-		return -1;
+
+    public int getFirstOrdinal() {
+        if (elements != 0) {
+            for (int i = 0; i < universe.length; i++) {
+                if ((elements & (1L << i)) != 0)
+                    return i;
+            }
+        }
+        return -1;
     }
 
     // Modification Operations
@@ -461,17 +457,17 @@ public class GSEnumSet<E extends Enum<E>> {
         typeCheck(e);
 
         long oldElements = elements;
-        elements |= (1L << ((Enum<?>)e).ordinal());
+        elements |= (1L << ((Enum<?>) e).ordinal());
         return elements != oldElements;
     }
-    
-    public void toggle(E e){
-    	typeCheck(e);
-    	
-    	if(contains(e))
-    		remove(e);
-    	else
-    		add(e);
+
+    public void toggle(E e) {
+        typeCheck(e);
+
+        if (contains(e))
+            remove(e);
+        else
+            add(e);
     }
 
     /**
@@ -488,7 +484,7 @@ public class GSEnumSet<E extends Enum<E>> {
             return false;
 
         long oldElements = elements;
-        elements &= ~(1L << ((Enum<?>)e).ordinal());
+        elements &= ~(1L << ((Enum<?>) e).ordinal());
         return elements != oldElements;
     }
 
@@ -510,7 +506,6 @@ public class GSEnumSet<E extends Enum<E>> {
 
         return (es.elements & ~elements) == 0;
     }
-    
 
     /**
      * Adds all of the elements in the specified collection to this set.
@@ -522,13 +517,12 @@ public class GSEnumSet<E extends Enum<E>> {
      */
     public boolean addAll(Collection<? extends E> c) {
 
-        GSEnumSet<?> es = (GSEnumSet<?>)c;
+        GSEnumSet<?> es = (GSEnumSet<?>) c;
         if (es.elementType != elementType) {
             if (es.isEmpty())
                 return false;
             else
-                throw new ClassCastException(
-                    es.elementType + " != " + elementType);
+                throw new ClassCastException(es.elementType + " != " + elementType);
         }
 
         long oldElements = elements;
@@ -546,7 +540,7 @@ public class GSEnumSet<E extends Enum<E>> {
      */
     public boolean removeAll(Collection<?> c) {
 
-        GSEnumSet<?> es = (GSEnumSet<?>)c;
+        GSEnumSet<?> es = (GSEnumSet<?>) c;
         if (es.elementType != elementType)
             return false;
 
@@ -565,7 +559,7 @@ public class GSEnumSet<E extends Enum<E>> {
      */
     public boolean retainAll(Collection<?> c) {
 
-        GSEnumSet<?> es = (GSEnumSet<?>)c;
+        GSEnumSet<?> es = (GSEnumSet<?>) c;
         if (es.elementType != elementType) {
             boolean changed = (elements != 0);
             elements = 0;
@@ -597,12 +591,12 @@ public class GSEnumSet<E extends Enum<E>> {
         if (!(o instanceof GSEnumSet))
             return super.equals(o);
 
-        GSEnumSet<?> es = (GSEnumSet<?>)o;
+        GSEnumSet<?> es = (GSEnumSet<?>) o;
         if (es.elementType != elementType)
             return elements == 0 && es.elements == 0;
         return es.elements == elements;
     }
-    
+
     /**
      * Throws an exception if e is not of the correct type for this enum set.
      */

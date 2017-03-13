@@ -125,7 +125,7 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
         ppb.lens.setBlurPasses(10);
         ppb.lens.setEnabled(true);
         ppb.pp.addEffect(ppb.lens);
-        
+
         // LIGHT GLOW
         int nsamples;
         int lgw, lgh;
@@ -158,7 +158,7 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
         ppb.lglow.setTextureScale(1f / GaiaSky.instance.cam.getFovFactor());
         ppb.lglow.setEnabled(GlobalConf.postprocess.POSTPROCESS_LIGHT_SCATTERING);
         ppb.pp.addEffect(ppb.lglow);
-        
+
         // BLOOM
         ppb.bloom = new Bloom((int) (width * bloomFboScale), (int) (height * bloomFboScale));
         ppb.bloom.setBloomIntesity(GlobalConf.postprocess.POSTPROCESS_BLOOM_INTENSITY);
@@ -459,8 +459,10 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
      * @param height
      */
     private void replace(int index, final int width, final int height) {
+        // Dispose of old post processor
+        pps[index].dispose();
+        // Create new
         pps[index] = newPostProcessor(width, height);
-
     }
 
     private boolean changed(PostProcessor postProcess, int width, int height) {

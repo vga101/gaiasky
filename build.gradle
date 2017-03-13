@@ -36,7 +36,6 @@ allprojects {
         aiVersion = '1.5.0'
 		jythonVersion = '2.5.3'
 		miglayoutVersion = '4.2'
-        lwjglVersion = '2.9.3'
         pgsVersion = '1.1.4'
     }
 
@@ -109,11 +108,9 @@ project(":desktop") {
 
     dependencies {
         compile project(":core")
-        compile "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
-        compile "org.lwjgl.lwjgl:lwjgl:$lwjglVersion"
+        compile "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
-        compile "com.badlogicgames.gdx:gdx-controllers-desktop:$gdxVersion"
-        compile "com.badlogicgames.gdx:gdx-controllers-platform:$gdxVersion:natives-desktop"
+        compile "com.badlogicgames.gdx:gdx-controllers-lwjgl3:$gdxVersion"
 		compile "org.python:jython-standalone:$jythonVersion"
 		compile "com.miglayout:miglayout-swing:$miglayoutVersion"
         compile "com.github.arnabk:pgslookandfeel:$pgsVersion"
