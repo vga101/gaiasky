@@ -28,6 +28,7 @@ import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.interfce.components.VisualEffectsComponent;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
+import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GSEnumSet;
@@ -52,6 +53,7 @@ public class FullGui implements IGui, IObserver {
     protected Stage ui;
 
     protected ControlsWindow controlsWindow;
+    protected GaiaSkyMenu gsMenu;
 
     protected Container<FocusInfoInterface> fi;
     protected FocusInfoInterface focusInterface;
@@ -86,8 +88,8 @@ public class FullGui implements IGui, IObserver {
         this.visibilityEntities = entities;
         ComponentType[] vals = ComponentType.values();
         this.visible = new boolean[vals.length];
-        for(int i = 0; i < vals.length; i++)
-        	this.visible[i] = visible.contains(vals[i]);
+        for (int i = 0; i < vals.length; i++)
+            this.visible[i] = visible.contains(vals[i]);
     }
 
     public void initialize(AssetManager assetManager) {
@@ -107,7 +109,7 @@ public class FullGui implements IGui, IObserver {
         buildGui();
 
         // We must subscribe to the desired events
-        EventManager.instance.subscribe(this, Events.FOV_CHANGED_CMD, Events.SHOW_TUTORIAL_ACTION, Events.SHOW_SEARCH_ACTION, Events.REMOVE_KEYBOARD_FOCUS, Events.REMOVE_GUI_COMPONENT, Events.ADD_GUI_COMPONENT, Events.SHOW_ABOUT_ACTION, Events.RA_DEC_UPDATED, Events.LON_LAT_UPDATED);
+        EventManager.instance.subscribe(this, Events.FOV_CHANGED_CMD, Events.SHOW_TUTORIAL_ACTION, Events.SHOW_SEARCH_ACTION, Events.REMOVE_KEYBOARD_FOCUS, Events.REMOVE_GUI_COMPONENT, Events.ADD_GUI_COMPONENT, Events.SHOW_ABOUT_ACTION, Events.RA_DEC_UPDATED, Events.LON_LAT_UPDATED, Events.POPUP_MENU_FOCUS);
     }
 
     private void buildGui() {
@@ -120,6 +122,8 @@ public class FullGui implements IGui, IObserver {
             // WEBGL INTERFACE - TOP LEFT
             addWebglInterface();
         } else {
+            // MENU
+            //addGaiaSkyMenu();
             // CONTROLS WINDOW
             addControlsWindow();
         }
@@ -188,9 +192,12 @@ public class FullGui implements IGui, IObserver {
                 collapsed = controlsWindow.isCollapsed();
                 recalculateOptionsSize();
                 if (collapsed)
-                    controlsWindow.collapse();
+                    controlsWindow.collapseInstant();
                 controlsWindow.setPosition(0, Gdx.graphics.getHeight() - controlsWindow.getHeight());
                 ui.addActor(controlsWindow);
+            }
+            if (gsMenu != null) {
+                ui.addActor(gsMenu);
             }
             if (webglInterface != null)
                 ui.addActor(wgl);
@@ -351,6 +358,35 @@ public class FullGui implements IGui, IObserver {
             mouseXCoord.setPosition(x, 10);
             mouseYCoord.setText("Lat/" + nf.format(lat) + "°");
             mouseYCoord.setPosition(Gdx.graphics.getWidth() - 65, Gdx.graphics.getHeight() - y);
+            break;
+        case POPUP_MENU_FOCUS:
+            CelestialBody candidate = (CelestialBody) data[0];
+
+            //            Table popup = new Table();
+            //            popup.add(new Label("Select object '" + candidate.getName() + "'", skin)).row();
+            //            popup.add(new Label("Go to object '" + candidate.getName() + "'", skin)).row();
+            //            popup.pack();
+            //            int mx = Gdx.input.getX();
+            //            int my = Gdx.input.getY();
+            //            int w = Gdx.graphics.getWidth();
+            //            int h = Gdx.graphics.getHeight();
+            //            float pw = popup.getWidth();
+            //            float ph = popup.getHeight();
+            //
+            //            float px = mx + 20;
+            //            float py = h - my - ph / 2 - 20;
+            //
+            //            if (px + pw > w) {
+            //                px -= (px + pw - w);
+            //            }
+            //            if (py - ph < 0) {
+            //                py += ph;
+            //            }
+            //            popup.setPosition(px, py);
+            //            popup.setDebug(true);
+            //
+            //            ui.addActor(popup);
+            break;
         }
 
     }
@@ -439,6 +475,16 @@ public class FullGui implements IGui, IObserver {
         controlsWindow.padRight(5);
         controlsWindow.padBottom(5);
 
-        controlsWindow.collapse();
+        controlsWindow.collapseInstant();
+    }
+
+    public void addGaiaSkyMenu() {
+        gsMenu = new GaiaSkyMenu(ui, skin);
+        gsMenu.setSceneGraph(sg);
+        gsMenu.setVisibilityToggles(visibilityEntities, visible);
+        gsMenu.initialize();
+        gsMenu.setFillParent(true);
+        gsMenu.top();
+
     }
 }
