@@ -78,6 +78,8 @@ public enum Events {
     FOCUS_CHANGED,
     /** Contains the distance [0] and the viewing angle [1] **/
     FOCUS_INFO_UPDATED,
+    /** Will show a popup menu for a focus candidate **/
+    POPUP_MENU_FOCUS,
 
     /** Contains two Double values, the longitude and latitude in degrees **/
     LON_LAT_UPDATED,

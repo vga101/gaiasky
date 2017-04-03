@@ -3,10 +3,12 @@
 <module rename-to="html">
 	<inherits name='com.badlogic.gdx.backends.gdx_backends_gwt' />
 	<inherits name='com.badlogic.gdx.controllers.controllers-gwt' />
-
+	<inherits name='com.kotcrab.vis.vis-ui' />
+	
 	<inherits name='GaiaSky' />
 	<inherits name='postprocessing' />
 	<inherits name="com.google.gwt.http.HTTP" />
+	
 	<entry-point class='gaia.cu9.ari.gaiaorbit.client.GaiaSkyWebGL' />
 	
 	<set-configuration-property name="gdx.assetpath" value="../android/assets" />

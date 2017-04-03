@@ -164,6 +164,70 @@ public class NaturalInputController extends GestureDetector {
         return super.touchDown(screenX, screenY, pointer, button);
     }
 
+    private Array<CelestialBody> getHits(int screenX, int screenY) {
+        Array<CelestialBody> l = GaiaSky.instance.getFocusableEntities();
+
+        Array<CelestialBody> hits = new Array<CelestialBody>();
+
+        Iterator<CelestialBody> it = l.iterator();
+        Vector3 pos = new Vector3();
+        while (it.hasNext()) {
+            CelestialBody s = it.next();
+            if (s.withinMagLimit() && (!(s instanceof Particle) || (s instanceof Particle && ((Particle) s).octant == null) || (s instanceof Particle && ((Particle) s).octant != null && ((Particle) s).octant.observed))) {
+                Vector3d posd = s.getPosition(aux);
+                pos.set(posd.valuesf());
+
+                if (camera.direction.dot(posd) > 0) {
+                    // The star is in front of us
+                    // Diminish the size of the star
+                    // when we are close by
+                    float angle = s.viewAngle;
+                    if (s instanceof Star && s.viewAngle > Constants.THRESHOLD_DOWN / camera.getFovFactor() && s.viewAngle < Constants.THRESHOLD_UP / camera.getFovFactor()) {
+                        angle = 20f * (float) Constants.THRESHOLD_DOWN / camera.getFovFactor();
+                    }
+
+                    PerspectiveCamera pcamera;
+                    if (GlobalConf.program.STEREOSCOPIC_MODE) {
+                        if (screenX < Gdx.graphics.getWidth() / 2f) {
+                            pcamera = camera.getCameraStereoLeft();
+                            pcamera.update();
+                        } else {
+                            pcamera = camera.getCameraStereoRight();
+                            pcamera.update();
+                        }
+                    } else {
+                        pcamera = camera.camera;
+                    }
+
+                    angle = (float) Math.toDegrees(angle * camera.fovFactor) * (40f / pcamera.fieldOfView);
+                    float pixelSize = Math.max(MAX_PX_DIST, ((angle * pcamera.viewportHeight) / pcamera.fieldOfView) / 2);
+                    pcamera.project(pos);
+                    pos.y = pcamera.viewportHeight - pos.y;
+                    if (GlobalConf.program.STEREOSCOPIC_MODE) {
+                        pos.x /= 2;
+                    }
+                    // Check click distance
+                    if (pos.dst(screenX % pcamera.viewportWidth, screenY, pos.z) <= pixelSize) {
+                        // Hit
+                        hits.add(s);
+                    }
+                }
+            }
+        }
+        return hits;
+    }
+
+    private CelestialBody getBestHit(int screenX, int screenY) {
+        Array<CelestialBody> hits = getHits(screenX, screenY);
+        if (hits.size != 0) {
+            // Sort using distance
+            hits.sort(comp);
+            // Get closest
+            return hits.get(hits.size - 1);
+        }
+        return null;
+    }
+
     @Override
     public boolean touchUp(final int screenX, final int screenY, final int pointer, final int button) {
         EventManager.instance.post(Events.INPUT_EVENT, button);
@@ -172,7 +236,7 @@ public class NaturalInputController extends GestureDetector {
             multiTouch = !MathUtils.isPowerOfTwo(touched);
             if (button == this.button && button == Input.Buttons.LEFT) {
                 final long currentTime = System.currentTimeMillis();
-                final long lastTime = lastClickTime;
+                final long lastLeftTime = lastClickTime;
 
                 Gdx.app.postRunnable(new Runnable() {
                     @Override
@@ -181,69 +245,15 @@ public class NaturalInputController extends GestureDetector {
                         if (gesture.dst(screenX, screenY) < MOVE_PX_DIST) {
                             boolean stopped = camera.stopMovement();
                             boolean focusRemoved = GaiaSky.instance.mainGui != null && GaiaSky.instance.mainGui.cancelTouchFocus();
-                            boolean doubleClick = currentTime - lastTime < doubleClickTime;
+                            boolean doubleClick = currentTime - lastLeftTime < doubleClickTime;
                             gesture.set(0, 0);
 
                             if (doubleClick && !stopped && !focusRemoved) {
                                 // Select star, if any
-                                Array<CelestialBody> l = GaiaSky.instance.getFocusableEntities();
-
-                                Array<CelestialBody> hits = new Array<CelestialBody>();
-
-                                Iterator<CelestialBody> it = l.iterator();
-                                Vector3 pos = new Vector3();
-                                while (it.hasNext()) {
-                                    CelestialBody s = it.next();
-                                    if (s.withinMagLimit() && (!(s instanceof Particle) || (s instanceof Particle && ((Particle) s).octant == null) || (s instanceof Particle && ((Particle) s).octant != null && ((Particle) s).octant.observed))) {
-                                        Vector3d posd = s.getPosition(aux);
-                                        pos.set(posd.valuesf());
-
-                                        if (camera.direction.dot(posd) > 0) {
-                                            // The star is in front of us
-                                            // Diminish the size of the star
-                                            // when we are close by
-                                            float angle = s.viewAngle;
-                                            if (s instanceof Star && s.viewAngle > Constants.THRESHOLD_DOWN / camera.getFovFactor() && s.viewAngle < Constants.THRESHOLD_UP / camera.getFovFactor()) {
-                                                angle = 20f * (float) Constants.THRESHOLD_DOWN / camera.getFovFactor();
-                                            }
-
-                                            PerspectiveCamera pcamera;
-                                            if (GlobalConf.program.STEREOSCOPIC_MODE) {
-                                                if (screenX < Gdx.graphics.getWidth() / 2f) {
-                                                    pcamera = camera.getCameraStereoLeft();
-                                                    pcamera.update();
-                                                } else {
-                                                    pcamera = camera.getCameraStereoRight();
-                                                    pcamera.update();
-                                                }
-                                            } else {
-                                                pcamera = camera.camera;
-                                            }
-
-                                            angle = (float) Math.toDegrees(angle * camera.fovFactor) * (40f / pcamera.fieldOfView);
-                                            float pixelSize = Math.max(MAX_PX_DIST, ((angle * pcamera.viewportHeight) / pcamera.fieldOfView) / 2);
-                                            pcamera.project(pos);
-                                            pos.y = pcamera.viewportHeight - pos.y;
-                                            if (GlobalConf.program.STEREOSCOPIC_MODE) {
-                                                pos.x /= 2;
-                                            }
-                                            // Check click distance
-                                            if (pos.dst(screenX % pcamera.viewportWidth, screenY, pos.z) <= pixelSize) {
-                                                // Hit
-                                                hits.add(s);
-                                            }
-                                        }
-                                    }
-                                }
-                                if (hits.size != 0) {
-                                    // Sort using distance
-                                    hits.sort(comp);
-                                    // Get closest
-                                    CelestialBody hit = hits.get(hits.size - 1);
-
+                                CelestialBody hit = getBestHit(screenX, screenY);
+                                if (hit != null) {
                                     EventManager.instance.post(Events.FOCUS_CHANGE_CMD, hit);
                                     EventManager.instance.post(Events.CAMERA_MODE_CMD, CameraMode.Focus);
-
                                 }
                             }
                         }
@@ -260,6 +270,12 @@ public class NaturalInputController extends GestureDetector {
                             // Stop
                             camera.setYaw(0);
                             camera.setPitch(0);
+
+                            // Right click, context menu
+                            CelestialBody hit = getBestHit(screenX, screenY);
+                            if (hit != null) {
+                                EventManager.instance.post(Events.POPUP_MENU_FOCUS, hit);
+                            }
                         }
                     }
                 });
