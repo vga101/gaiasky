@@ -86,12 +86,12 @@ Program wide properties
    contains information such as the number of stars rendered as a quad,
    the number of stars rendered as a point or the frames per second.
    This can be activated in real time by pressing ``CTRL`` + ``D``.
-
--  **program.ui.theme** - Specifies the GUI theme. Three themes are
-   available: ``bright-blue``, ``dark-orange``, ``dark-green``,
-   ``dark-orange-large`` and ``HiDPI``. If you have a HiDPI screen
-   (retina, 4K monitor) with a large dots per inch (DPI) number, you
-   should use the ``HiDPI`` theme. Since version ``0.704b`` you can also
+   
+-  **program.ui.theme** - Specifies the GUI theme. Six themes are
+   available: ``dark-green``, ``dark-orange``, ``dark-blue`` plus versions
+   of the same themes scaled up two times, to use with HiDPI
+   screens (retina, 4K monitors, etc.). Since version ``0.704b`` you can also
    choose the theme by using the
    :ref:`User Interface tab <user-interface-config>` in the
    :ref:`Preferences dialog <configuration>`.
+  

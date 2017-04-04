@@ -23,12 +23,12 @@ theme of the user interface.
 One can select between a choice of languages using the language
 drop-down. There are currently three visual themes available:
 
--  ``dark-orange``, black and orange theme.
--  ``dark-orange-large``, same as dark-orange, but with larger fonts.
--  ``dark-green``, black and green theme. The default since v0.800b.
--  ``light-blue``, a light theme with a blue tone.
--  ``HiDPI``, a version of the dark-orange theme to be used with high
-   density (retina) screens, 4K monitors, etc.
+-  ``dark-green``, black and green theme.
+-  ``dark-green-x2``, scaled version of dark-green (for HiDPI screens).
+-  ``dark-blue``, black and blue theme.
+-  ``dark-blue-x2``, scaled version of dark-blue (for HiDPI screens).
+-  ``dark-orange``, orange and blue theme.
+-  ``dark-orange-x2``, scaled version of dark-orange (for HiDPI screens).
 
 Performance
 ===========
