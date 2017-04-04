@@ -38,7 +38,16 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
     private AssetManager manager;
     private LruCache<String, Texture> textures;
 
-    public EventScriptingInterface() {
+    private static EventScriptingInterface instance = null;
+
+    public static EventScriptingInterface instance() {
+        if (instance == null) {
+            instance = new EventScriptingInterface();
+        }
+        return instance;
+    }
+
+    private EventScriptingInterface() {
         em = EventManager.instance;
         manager = GaiaSky.instance.manager;
         em.subscribe(this, Events.INPUT_EVENT);
@@ -445,12 +454,12 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
     }
 
     @Override
-    public void goToObject(String name, double distance) {
-        goToObject(name, distance, -1);
+    public void goToObject(String name, double angle) {
+        goToObject(name, angle, -1);
     }
 
     @Override
-    public void goToObject(String name, double distance, float focusWait) {
+    public void goToObject(String name, double angle, float focusWait) {
         ISceneGraph sg = GaiaSky.instance.sg;
         if (sg.containsNode(name)) {
             CelestialBody focus = sg.findFocus(name);
@@ -479,16 +488,14 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
                 this.sleep(focusWait);
             }
 
-            double radius = focus.getRadius();
-            /* target distance from surface of object */
-            double target = radius * 5;
-            if (distance > 0) {
-                target = distance * Constants.KM_TO_U;
-            }
+            /* target angle */
+            double target = Math.toRadians(angle);
+            if (target < 0)
+                target = Math.toRadians(20d);
 
             // Add forward movement while distance > target distance
-            while (!weAreThere(focus.distToCamera - radius, target, 0.4)) {
-                em.post(Events.CAMERA_FWD, (focus.distToCamera - radius < target ? -1d : 1d) * 0.05d);
+            while (focus.viewAngleApparent < target) {
+                em.post(Events.CAMERA_FWD, 1d);
                 try {
                     Thread.sleep(50);
                 } catch (Exception e) {

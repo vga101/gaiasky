@@ -353,22 +353,22 @@ public interface IScriptingInterface {
     public void goToObject(String name);
 
     /**
-     * Runs a seamless trip to the object with the given name until the camera is at the given distance.
-     * If distance is negative, the default distance <code>target.radius * 5</code>.
+     * Runs a seamless trip to the object with the given name until the object view angle is met.
+     * If angle is negative, the default angle is <code>20 degrees</code>.
      * <strong>Warning> This will only work in asynchronous mode.</strong>
      * @param name The name of the object.
-     * @param distance The distance from the object at which the camera stops, in km.
+     * @param angle The target view angle of the object, in degrees. The angle gets larger and larger as we approach the object.
      */
-    public void goToObject(String name, double distance);
+    public void goToObject(String name, double angle);
 
     /**
-     * Runs a seamless trip to the object with the given name until the camera is at the given distance.
-     * If distance is negative, the default distance is <code>target.radius * 5</code>t. If focusWait is
+     * Runs a seamless trip to the object with the given name until the object view angle is met.
+     * If angle is negative, the default angle is <code>20 degrees</code>. If focusWait is
      * positive, it indicates the number of seconds to wait for the target object to be centred before starting
      * the forward movement. This very much depends on the <code>turn velocity</code> of the camera. See {@link #setTurningCameraSpeed(float)}.
      * <strong>Warning> This will only work in asynchronous mode.</strong>
      * @param name The name of the object.
-     * @param distance The distance from the object at which the camera stops, in Km.
+     * @param angle The target view angle of the object, in degrees. The angle gets larger and larger as we approach the object.
      * @param focusWait The seconds to wait for the camera direction vector and the vector from the camera
      * position to the target object to be aligned.
      */

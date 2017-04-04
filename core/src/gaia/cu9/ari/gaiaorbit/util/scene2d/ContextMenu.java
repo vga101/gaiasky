@@ -24,6 +24,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Cell;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -60,6 +61,12 @@ public class ContextMenu extends Table {
 
     public ContextMenu(Skin skin, String styleName) {
         super();
+        this.skin = skin;
+        this.style = skin.get(styleName, ContextMenuStyle.class);
+        setTouchable(Touchable.enabled);
+        pad(0);
+        setBackground(style.background);
+        createListeners();
     }
 
     /**

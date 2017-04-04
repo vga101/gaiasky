@@ -14,7 +14,7 @@ textSize = 13
 twdelay = 0.01
 arrowH = 7
 
-gs = EventScriptingInterface()
+gs = EventScriptingInterface.instance()
 
 version = gs.getVersionNumber()
 

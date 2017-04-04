@@ -5,7 +5,7 @@
 from time import sleep
 from gaia.cu9.ari.gaiaorbit.script import EventScriptingInterface
 
-gs = EventScriptingInterface()
+gs = EventScriptingInterface.instance()
 
 # Disable input
 gs.disableInput()

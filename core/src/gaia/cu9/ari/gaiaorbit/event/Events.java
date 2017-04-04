@@ -238,6 +238,8 @@ public enum Events {
     LIGHT_POS_2D_UPDATED,
     /** Executes the command to position the camera near the object in focus **/
     GO_TO_OBJECT_CMD,
+    /** Navigates smoothly to the given object **/
+    NAVIGATE_TO_OBJECT,
     /**
      * Contains an optional boolean indicating whether debug info should be
      * shown or not. Otherwise, it toggles its state

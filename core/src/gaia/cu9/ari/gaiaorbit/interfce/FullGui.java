@@ -16,6 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.badlogic.gdx.utils.reflect.Method;
@@ -38,6 +39,8 @@ import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.format.INumberFormat;
 import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
+import gaia.cu9.ari.gaiaorbit.util.scene2d.ContextMenu;
+import gaia.cu9.ari.gaiaorbit.util.scene2d.MenuItem;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnLabel;
 
 /**
@@ -360,32 +363,48 @@ public class FullGui implements IGui, IObserver {
             mouseYCoord.setPosition(Gdx.graphics.getWidth() - 65, Gdx.graphics.getHeight() - y);
             break;
         case POPUP_MENU_FOCUS:
-            CelestialBody candidate = (CelestialBody) data[0];
+            final CelestialBody candidate = (CelestialBody) data[0];
 
-            //            Table popup = new Table();
-            //            popup.add(new Label("Select object '" + candidate.getName() + "'", skin)).row();
-            //            popup.add(new Label("Go to object '" + candidate.getName() + "'", skin)).row();
-            //            popup.pack();
-            //            int mx = Gdx.input.getX();
-            //            int my = Gdx.input.getY();
-            //            int w = Gdx.graphics.getWidth();
-            //            int h = Gdx.graphics.getHeight();
-            //            float pw = popup.getWidth();
-            //            float ph = popup.getHeight();
-            //
-            //            float px = mx + 20;
-            //            float py = h - my - ph / 2 - 20;
-            //
-            //            if (px + pw > w) {
-            //                px -= (px + pw - w);
-            //            }
-            //            if (py - ph < 0) {
-            //                py += ph;
-            //            }
-            //            popup.setPosition(px, py);
-            //            popup.setDebug(true);
-            //
-            //            ui.addActor(popup);
+            ContextMenu popup = new ContextMenu(skin, "default");
+
+            MenuItem select = new MenuItem("Select object '" + candidate.getName() + "'", skin, "default");
+            select.addListener(new EventListener() {
+
+                @Override
+                public boolean handle(Event event) {
+                    if (event instanceof ChangeEvent)
+                        EventManager.instance.post(Events.FOCUS_CHANGE_CMD, candidate);
+                    return false;
+                }
+
+            });
+            MenuItem go = new MenuItem("Go to object '" + candidate.getName() + "'", skin, "default");
+            go.addListener(new EventListener() {
+
+                @Override
+                public boolean handle(Event event) {
+                    if (event instanceof ChangeEvent)
+                        EventManager.instance.post(Events.NAVIGATE_TO_OBJECT, candidate);
+                    return false;
+                }
+
+            });
+
+            popup.addItem(select);
+            popup.addItem(go);
+
+            int mx = Gdx.input.getX();
+            int my = Gdx.input.getY();
+            int w = Gdx.graphics.getWidth();
+            int h = Gdx.graphics.getHeight();
+            float pw = popup.getWidth();
+            float ph = popup.getHeight();
+
+            float px = mx;
+            float py = h - my - ph / 2;
+
+            popup.showMenu(ui, px, py);
+
             break;
         }
 

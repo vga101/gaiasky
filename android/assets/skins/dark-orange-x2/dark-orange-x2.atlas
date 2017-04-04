@@ -39,6 +39,41 @@ bg-clear
   orig: 2, 2
   offset: 0, 0
   index: -1
+border
+  rotate: false
+  xy: 100, 6
+  size: 6, 6
+  split: 2, 2, 2, 2
+  orig: 6, 6
+  offset: 0, 0
+  index: -1
+button
+  rotate: false
+  xy: 946, 22
+  size: 24, 40
+  split: 10, 10, 10, 8
+  pad: 8, 8, 2, 2
+  orig: 24, 40
+  offset: 0, 0
+  index: -1
+button-down
+  rotate: false
+  xy: 894, 6
+  size: 24, 40
+  split: 10, 10, 10, 8
+  pad: 8, 8, 2, 2
+  orig: 24, 40
+  offset: 0, 0
+  index: -1
+button-over
+  rotate: false
+  xy: 920, 6
+  size: 24, 40
+  split: 10, 10, 10, 8
+  pad: 8, 8, 2, 2
+  orig: 24, 40
+  offset: 0, 0
+  index: -1
 check-off
   rotate: false
   xy: 446, 4
@@ -63,7 +98,7 @@ check-on
   index: -1
 cursor
   rotate: false
-  xy: 100, 6
+  xy: 108, 6
   size: 6, 6
   split: 2, 2, 2, 2
   orig: 6, 6
@@ -109,20 +144,12 @@ default-pane-noborder
   index: -1
 default-rect
   rotate: false
-  xy: 108, 6
+  xy: 116, 6
   size: 6, 6
   orig: 6, 6
   offset: 0, 0
   index: -1
 default-rect
-  rotate: false
-  xy: 108, 6
-  size: 6, 6
-  split: 2, 2, 2, 2
-  orig: 6, 6
-  offset: 0, 0
-  index: -1
-default-rect-down
   rotate: false
   xy: 116, 6
   size: 6, 6
@@ -130,9 +157,17 @@ default-rect-down
   orig: 6, 6
   offset: 0, 0
   index: -1
-default-rect-selection
+default-rect-down
   rotate: false
   xy: 124, 6
+  size: 6, 6
+  split: 2, 2, 2, 2
+  orig: 6, 6
+  offset: 0, 0
+  index: -1
+default-rect-selection
+  rotate: false
+  xy: 132, 6
   size: 6, 6
   split: 2, 2, 2, 2
   orig: 6, 6
@@ -140,7 +175,7 @@ default-rect-selection
   index: -1
 default-select-selection
   rotate: false
-  xy: 124, 6
+  xy: 132, 6
   size: 6, 6
   split: 2, 2, 2, 2
   orig: 6, 6
@@ -148,7 +183,7 @@ default-select-selection
   index: -1
 default-round
   rotate: false
-  xy: 894, 14
+  xy: 972, 30
   size: 18, 32
   split: 4, 4, 4, 4
   orig: 18, 32
@@ -203,7 +238,7 @@ default-slider-knob
   index: -1
 default-slider-knob-before
   rotate: false
-  xy: 920, 24
+  xy: 972, 6
   size: 2, 22
   orig: 2, 22
   offset: 0, 0
@@ -218,7 +253,7 @@ default-splitpane
   index: -1
 default-splitpane-vertical
   rotate: false
-  xy: 140, 2
+  xy: 148, 2
   size: 6, 10
   split: 0, 0, 4, 4
   orig: 6, 10
@@ -326,7 +361,7 @@ progress-bg
   index: -1
 progress-knob
   rotate: false
-  xy: 914, 18
+  xy: 992, 34
   size: 4, 28
   split: 0, 0, 12, 12
   orig: 4, 28
@@ -486,7 +521,7 @@ scrollbar-knob
   index: -1
 selection
   rotate: false
-  xy: 132, 10
+  xy: 134, 2
   size: 2, 2
   orig: 2, 2
   offset: 0, 0
@@ -498,6 +533,20 @@ separator
   orig: 16, 6
   offset: 0, 0
   index: -1
+separator-context
+  rotate: false
+  xy: 138, 2
+  size: 2, 2
+  orig: 2, 2
+  offset: 0, 0
+  index: -1
+separator-menu
+  rotate: false
+  xy: 140, 10
+  size: 2, 2
+  orig: 2, 2
+  offset: 0, 0
+  index: -1
 sub-menu
   rotate: false
   xy: 916, 48
@@ -507,21 +556,21 @@ sub-menu
   index: -1
 table-bg
   rotate: false
-  xy: 132, 6
+  xy: 140, 6
   size: 2, 2
   orig: 2, 2
   offset: 0, 0
   index: -1
 table-bg-inv
   rotate: false
-  xy: 134, 2
+  xy: 142, 2
   size: 2, 2
   orig: 2, 2
   offset: 0, 0
   index: -1
 tooltip-bg
   rotate: false
-  xy: 136, 10
+  xy: 144, 10
   size: 2, 2
   orig: 2, 2
   offset: 0, 0
@@ -549,7 +598,7 @@ tree-plus
   index: -1
 white
   rotate: false
-  xy: 136, 6
+  xy: 144, 6
   size: 2, 2
   orig: 2, 2
   offset: 0, 0

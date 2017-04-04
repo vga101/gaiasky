@@ -50,15 +50,6 @@ public class JythonFactory extends ScriptingFactory implements IObserver {
     }
 
     /**
-     * Initializes the JythonFactory.
-     */
-    public synchronized static void initialize() {
-        if (instance == null) {
-            instance = new JythonFactory();
-        }
-    }
-
-    /**
      * Only initialize the executor service and the interpreter.
      */
     private JythonFactory() {

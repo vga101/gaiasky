@@ -38,11 +38,11 @@ just need to import the default implementation
     # Import scripting interface
     from gaia.cu9.ari.gaiaorbit.script import EventScriptingInterface
 
-Then, we need to create the scripting object before start using it.
+Then, we need to get the scripting interface instance before start using it.
 
 .. code:: python
 
-    gs = EventScriptingInterface()
+    gs = EventScriptingInterface.instance()
 
 Now, we can start executing functions.
 

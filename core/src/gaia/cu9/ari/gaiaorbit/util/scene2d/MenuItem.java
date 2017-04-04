@@ -396,4 +396,5 @@ public class MenuItem extends Button {
             this.subMenu = style.subMenu;
         }
     }
+
 }
