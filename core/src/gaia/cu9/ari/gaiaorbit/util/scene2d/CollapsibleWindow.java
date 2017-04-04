@@ -51,7 +51,7 @@ public class CollapsibleWindow extends Window {
     String collapseIcon = "window-collapse";
 
     public CollapsibleWindow(String title, Skin skin) {
-        this(title, skin, 1200);
+        this(title, skin, 2000);
     }
 
     public CollapsibleWindow(String title, Skin skin, float collapseSpeed) {

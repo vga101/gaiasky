@@ -56,7 +56,7 @@ public class CamRecorder implements IObserver {
 
     public CamRecorder() {
         this.mode = RecorderMode.IDLE;
-        EventManager.instance.subscribe(this, Events.RECORD_CAMERA_CMD, Events.PLAY_CAMERA_CMD, Events.UPDATE_CAM_RECORDER);
+        EventManager.instance.subscribe(this, Events.RECORD_CAMERA_CMD, Events.PLAY_CAMERA_CMD, Events.UPDATE_CAM_RECORDER, Events.STOP_CAMERA_PLAY);
 
         df = new SimpleDateFormat("dd-MM-yyyy_HH-mm-ss-SSS");
 
@@ -213,6 +213,19 @@ public class CamRecorder implements IObserver {
             Vector3d dir = (Vector3d) data[2];
             Vector3d up = (Vector3d) data[3];
             update(dt, pos, dir, up);
+            break;
+        case STOP_CAMERA_PLAY:
+            mode = RecorderMode.IDLE;
+            // Stop camera
+            EventManager.instance.post(Events.CAMERA_STOP);
+            // Post notification
+            Logger.info(I18n.bundle.get("notif.cameraplay.done"));
+
+            // Issue message informing playing has stopped
+            EventManager.instance.post(Events.CAMERA_PLAY_INFO, false);
+
+            // Stop frame output if it is on!
+            EventManager.instance.post(Events.FRAME_OUTPUT_CMD, false);
             break;
         }
 

@@ -304,6 +304,7 @@ public class ControlsWindow extends CollapsibleWindow implements IObserver {
                 guiLayout.row();
             }
         }
+        guiLayout.align(Align.top | Align.left);
         guiLayout.layout();
         guiLayout.pack();
 
@@ -340,7 +341,7 @@ public class ControlsWindow extends CollapsibleWindow implements IObserver {
         // Calculate new size
         guiLayout.pack();
         if (windowScroll != null) {
-            windowScroll.setHeight(Math.min(guiLayout.getHeight() + 50, Gdx.graphics.getHeight() - 100));
+            windowScroll.setHeight(Math.min(guiLayout.getHeight() + 30, Gdx.graphics.getHeight() - 120));
             windowScroll.pack();
 
             mainVertical.setHeight(windowScroll.getHeight() + 30);

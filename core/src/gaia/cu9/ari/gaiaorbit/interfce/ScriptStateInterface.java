@@ -21,7 +21,7 @@ import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextButton;
 public class ScriptStateInterface extends Table implements IObserver {
 
     private Image keyboardImg, cameraImg;
-    private TextButton cancelScript;
+    private TextButton cancelScript, cancelCamera;
 
     public ScriptStateInterface(Skin skin) {
         super(skin);
@@ -35,7 +35,7 @@ public class ScriptStateInterface extends Table implements IObserver {
 
         int num = ScriptingFactory.getInstance().getNumRunningScripts();
         cancelScript = new OwnTextButton(I18n.bundle.format("gui.script.stop", num), skin);
-        this.add(cancelScript).left();
+        this.add(cancelScript).left().row();
         cancelScript.setVisible(num > 0);
         cancelScript.addListener(new EventListener() {
 
@@ -46,6 +46,21 @@ public class ScriptStateInterface extends Table implements IObserver {
                 }
                 return false;
             }
+        });
+
+        cancelCamera = new OwnTextButton(I18n.bundle.get("gui.stop"), skin);
+        this.add(cancelCamera).left();
+        cancelCamera.setVisible(false);
+        cancelCamera.addListener(new EventListener() {
+
+            @Override
+            public boolean handle(Event event) {
+                if (event instanceof ChangeEvent) {
+                    EventManager.instance.post(Events.STOP_CAMERA_PLAY);
+                }
+                return false;
+            }
+
         });
 
         EventManager.instance.subscribe(this, Events.INPUT_ENABLED_CMD, Events.NUM_RUNNING_SCRIPTS, Events.CAMERA_PLAY_INFO);
@@ -60,6 +75,7 @@ public class ScriptStateInterface extends Table implements IObserver {
         case CAMERA_PLAY_INFO:
             boolean play = (boolean) data[0];
             cameraImg.setVisible(play);
+            cancelCamera.setVisible(play);
             break;
         case NUM_RUNNING_SCRIPTS:
             int num = (Integer) data[0];
