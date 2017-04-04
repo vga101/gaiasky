@@ -118,6 +118,7 @@ project(":desktop") {
 		compile "org.python:jython-standalone:$jythonVersion"
 		compile "com.miglayout:miglayout-swing:$miglayoutVersion"
         compile "com.github.arnabk:pgslookandfeel:$pgsVersion"
+        compile "com.badlogicgames.gdx:gdx-tools:$gdxVersion"
 		compile files('../core/lib/postprocessing.jar',
 					'../core/lib/jafama.jar',
 					'../android/assets',

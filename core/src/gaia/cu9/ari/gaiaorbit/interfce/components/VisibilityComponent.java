@@ -58,6 +58,7 @@ public class VisibilityComponent extends GuiComponent implements IObserver {
 
         final Table visibilityTable = new Table(skin);
         visibilityTable.setName("visibility table");
+        visibilityTable.top().left();
         buttonMap = new HashMap<String, Button>();
         Set<Button> buttons = new HashSet<Button>();
         if (visibilityEntities != null) {
@@ -90,13 +91,14 @@ public class VisibilityComponent extends GuiComponent implements IObserver {
                         return false;
                     }
                 });
-                visibilityTable.add(button).pad(1).align(Align.center);
+                visibilityTable.add(button).pad(1 * GlobalConf.SCALE_FACTOR).left();
                 if (i % 2 != 0) {
                     visibilityTable.row();
                 }
                 buttons.add(button);
             }
         }
+        visibilityTable.pack();
 
         /** Proper motions **/
         float space3 = 3 * GlobalConf.SCALE_FACTOR;

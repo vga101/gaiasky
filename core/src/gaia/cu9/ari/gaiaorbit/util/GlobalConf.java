@@ -11,7 +11,6 @@ import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.render.system.AbstractRenderSystem;
-import gaia.cu9.ari.gaiaorbit.util.GlobalConf.ProgramConf.StereoProfile;
 import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadIndexer;
 import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory.DateType;
@@ -498,19 +497,19 @@ public class GlobalConf {
             IDateFormat df = DateFormatFactory.getFormatter(I18n.locale, DateType.DATE);
             return df.format(LAST_CHECKED);
         }
-        
-        public boolean isStereoHalfWidth(){
-        	return STEREOSCOPIC_MODE && (STEREO_PROFILE != StereoProfile.HD_3DTV && STEREO_PROFILE != StereoProfile.ANAGLYPHIC);
+
+        public boolean isStereoHalfWidth() {
+            return STEREOSCOPIC_MODE && (STEREO_PROFILE != StereoProfile.HD_3DTV && STEREO_PROFILE != StereoProfile.ANAGLYPHIC);
         }
-        
-        public boolean isStereoFullWidth(){
-        	return !isStereoHalfWidth();
+
+        public boolean isStereoFullWidth() {
+            return !isStereoHalfWidth();
         }
-        
-        public boolean isStereoHalfViewport(){
-        	return STEREOSCOPIC_MODE && STEREO_PROFILE != StereoProfile.ANAGLYPHIC;
+
+        public boolean isStereoHalfViewport() {
+            return STEREOSCOPIC_MODE && STEREO_PROFILE != StereoProfile.ANAGLYPHIC;
         }
-        
+
         @Override
         public void notify(Events event, Object... data) {
             switch (event) {

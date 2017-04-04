@@ -52,6 +52,7 @@ public class CollapsiblePane extends VerticalGroup {
         this.labelText = labelText;
         this.content = content;
         this.skin = skin;
+        this.space(10f);
         Label mainLabel = new Label(labelText, skin, labelStyle);
 
         // Expand icon

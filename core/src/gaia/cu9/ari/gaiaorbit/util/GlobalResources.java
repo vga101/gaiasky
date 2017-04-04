@@ -46,7 +46,10 @@ public class GlobalResources {
         spriteBatch = new SpriteBatch();
 
         // Create skin right now, it is needed.
-        FileHandle fh = Gdx.files.internal("skins/" + GlobalConf.program.UI_THEME + ".json");
+        if (GlobalConf.program.UI_THEME.endsWith("-x2")) {
+            GlobalConf.updateScaleFactor(2.0f);
+        }
+        FileHandle fh = Gdx.files.internal("skins/" + GlobalConf.program.UI_THEME + "/" + GlobalConf.program.UI_THEME + ".json");
         skin = new Skin(fh);
 
         // Async load

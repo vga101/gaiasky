@@ -398,17 +398,8 @@ public class ConfigDialog extends I18nJFrame {
         // sampleImagePanel.add(sampleImage);
 
         // Theme chooser
-        String[] themes = new String[] { "dark-orange", "dark-orange-large", "dark-green", "light-blue", "HiDPI" };
+        String[] themes = new String[] { "dark-green", "dark-green-x2", "dark-blue", "dark-blue-x2", "dark-orange", "dark-orange-x2" };
         final JComboBox<String> theme = new JComboBox<String>(themes);
-        // theme.addActionListener(new ActionListener() {
-        // @Override
-        // public void actionPerformed(ActionEvent e) {
-        // String selected = (String) theme.getSelectedItem();
-        // ImageIcon icon = new ImageIcon(GaiaSandboxDesktop.ASSETS_LOC +
-        // "img/themes/" + selected + ".png");
-        // sampleImage.setIcon(icon);
-        // }
-        // });
         theme.setSelectedItem(GlobalConf.program.UI_THEME);
 
         ui.add(new JLabel(txt("gui.ui.language") + ":"));

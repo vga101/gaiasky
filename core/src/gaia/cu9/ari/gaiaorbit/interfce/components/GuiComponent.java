@@ -7,6 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 
 /** 
@@ -17,7 +18,7 @@ import gaia.cu9.ari.gaiaorbit.util.I18n;
 public abstract class GuiComponent {
 
     protected static List<Actor> tooltips = new ArrayList<Actor>(30);
-    protected static final int HPADDING = 10;
+    protected static final int HPADDING = 10 * Math.round(GlobalConf.SCALE_FACTOR);
     protected Actor component;
     protected Skin skin;
     protected Stage stage;
