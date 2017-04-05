@@ -44,6 +44,7 @@ import gaia.cu9.ari.gaiaorbit.util.scene2d.CollapsibleWindow;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnImageButton;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnScrollPane;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextButton;
+import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextIconButton;
 
 public class ControlsWindow extends CollapsibleWindow implements IObserver {
     /**
@@ -229,8 +230,10 @@ public class ControlsWindow extends CollapsibleWindow implements IObserver {
         Table buttonsTable = null;
         if (Constants.desktop) {
             /** BUTTONS **/
-            Button preferences = new OwnTextButton(txt("gui.preferences"), skin);
+            Image prefsImg = new Image(skin.getDrawable("prefs-icon"));
+            Button preferences = new OwnTextIconButton("", prefsImg, skin);
             preferences.setName("preferences");
+            preferences.addListener(new TextTooltip(txt("gui.preferences"), skin));
             preferences.addListener(new EventListener() {
                 @Override
                 public boolean handle(Event event) {
@@ -240,8 +243,10 @@ public class ControlsWindow extends CollapsibleWindow implements IObserver {
                     return false;
                 }
             });
-            Button tutorial = new OwnTextButton(txt("gui.tutorial"), skin);
+            Image tutImg = new Image(skin.getDrawable("tutorial-icon"));
+            Button tutorial = new OwnTextIconButton("", tutImg, skin);
             tutorial.setName("tutorial");
+            tutorial.addListener(new TextTooltip(txt("gui.tutorial"), skin));
             tutorial.addListener(new EventListener() {
                 @Override
                 public boolean handle(Event event) {
@@ -251,8 +256,10 @@ public class ControlsWindow extends CollapsibleWindow implements IObserver {
                     return false;
                 }
             });
-            Button about = new OwnTextButton(txt("gui.help"), skin);
+            Image helpImg = new Image(skin.getDrawable("help-icon"));
+            Button about = new OwnTextIconButton("", helpImg, skin);
             about.setName("about");
+            about.addListener(new TextTooltip(txt("gui.help"), skin));
             about.addListener(new EventListener() {
                 @Override
                 public boolean handle(Event event) {
@@ -262,8 +269,10 @@ public class ControlsWindow extends CollapsibleWindow implements IObserver {
                     return false;
                 }
             });
-            Button runScript = new OwnTextButton(txt("gui.script.runscript"), skin);
+            Image carImg = new Image(skin.getDrawable("car-icon"));
+            Button runScript = new OwnTextIconButton("", carImg, skin);
             runScript.setName("run script");
+            runScript.addListener(new TextTooltip(txt("gui.script.runscript"), skin));
             runScript.addListener(new EventListener() {
                 @Override
                 public boolean handle(Event event) {
@@ -276,18 +285,10 @@ public class ControlsWindow extends CollapsibleWindow implements IObserver {
 
             buttonsTable = new Table(skin);
             buttonsTable.add(runScript).pad(1).top().left();
-            buttonsTable.add(preferences).pad(1).top().left();
-            buttonsTable.row();
             buttonsTable.add(tutorial).pad(1).top().left();
+            buttonsTable.add(preferences).pad(1).top().left();
             buttonsTable.add(about).pad(1).top().left();
 
-            int buttonwidth = Math.round(85 * Math.min(1.5f, GlobalConf.SCALE_FACTOR));
-            int buttonheight = Math.round(20 * GlobalConf.SCALE_FACTOR);
-
-            runScript.setSize(buttonwidth, buttonheight);
-            preferences.setSize(buttonwidth, buttonheight);
-            tutorial.setSize(buttonwidth, buttonheight);
-            about.setSize(buttonwidth, buttonheight);
             buttonsTable.pack();
         }
 

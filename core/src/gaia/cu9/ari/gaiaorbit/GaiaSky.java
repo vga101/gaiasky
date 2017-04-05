@@ -19,6 +19,7 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
+import com.badlogic.gdx.scenes.scene2d.ui.TooltipManager;
 import com.badlogic.gdx.utils.Array;
 
 import gaia.cu9.ari.gaiaorbit.data.AssetBean;
@@ -176,6 +177,10 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
 
         // Initialise i18n
         I18n.initialize();
+
+        // Tooltips
+        TooltipManager.getInstance().initialTime = 1f;
+        TooltipManager.getInstance().hideAll();
 
         // Initialise asset manager
         FileHandleResolver resolver = new InternalFileHandleResolver();

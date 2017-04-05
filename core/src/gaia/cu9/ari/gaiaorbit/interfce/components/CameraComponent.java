@@ -3,8 +3,6 @@ package gaia.cu9.ari.gaiaorbit.interfce.components;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -82,13 +80,9 @@ public class CameraComponent extends GuiComponent implements IObserver {
         });
 
         List<Button> buttonList = new ArrayList<Button>();
-        Image img3d = new Image(new Texture(Gdx.files.internal("img/3d.png")));
-        Image imgDome = new Image(new Texture(Gdx.files.internal("img/dome.png")));
-        Image imgCubemap = new Image(new Texture(Gdx.files.internal("img/cubemap.png")));
-        Image imgAnaglyph = new Image(new Texture(Gdx.files.internal("img/anaglyph.png")));
-        Image img3dtv = new Image(new Texture(Gdx.files.internal("img/3dtv.png")));
-        Image imgCrosseye = new Image(new Texture(Gdx.files.internal("img/crosseye.png")));
-        Image imgVR = new Image(new Texture(Gdx.files.internal("img/vr.png")));
+        Image img3d = new Image(skin.getDrawable("3d-icon"));
+        Image imgDome = new Image(skin.getDrawable("dome-icon"));
+        Image imgCubemap = new Image(skin.getDrawable("cubemap-icon"));
 
         button3d = new OwnTextIconButton("", img3d, skin, "toggle");
         button3d.addListener(new TextTooltip(GlobalResources.capitalise(txt("element.stereomode")), skin));
@@ -145,9 +139,6 @@ public class CameraComponent extends GuiComponent implements IObserver {
         buttonList.add(button3d);
         buttonList.add(buttonDome);
         buttonList.add(buttonCubemap);
-
-        for (Button b : buttonList)
-            b.setSize(Math.round(35 * GlobalConf.SCALE_FACTOR), Math.round(32 * GlobalConf.SCALE_FACTOR));
 
         Label fovLabel = new Label(txt("gui.camera.fov"), skin, "default");
         fieldOfView = new Slider(Constants.MIN_FOV, Constants.MAX_FOV, 1, false, skin);
@@ -347,7 +338,7 @@ public class CameraComponent extends GuiComponent implements IObserver {
         cameraGroup.addActor(focusLock);
         cameraGroup.addActor(orientationLock);
         cameraGroup.addActor(crosshair);
-        cameraGroup.space(5);
+        cameraGroup.addActor(new Label("", skin));
         cameraGroup.addActor(buttonGroup);
 
         component = cameraGroup;
