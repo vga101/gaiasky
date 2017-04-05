@@ -29,6 +29,8 @@ drop-down. There are currently three visual themes available:
 -  ``dark-blue-x2``, scaled version of dark-blue (for HiDPI screens).
 -  ``dark-orange``, orange and blue theme.
 -  ``dark-orange-x2``, scaled version of dark-orange (for HiDPI screens).
+-  ``bright-green``, a bright theme with greenish tones.
+-  ``bright-green-x2``, scaled version of birght-green (for HiDPI screens).
 
 Performance
 ===========

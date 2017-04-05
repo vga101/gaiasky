@@ -66,6 +66,7 @@ pickled_dict
 **/.settings
 **.classpath
 **.project
+**.pydevproject
 
 # Gradle cache #
 ################

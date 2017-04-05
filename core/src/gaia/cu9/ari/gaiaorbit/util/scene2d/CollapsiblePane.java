@@ -5,19 +5,21 @@ import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.Cell;
 import com.badlogic.gdx.scenes.scene2d.ui.Container;
 import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextTooltip;
-import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
 import com.badlogic.gdx.utils.Align;
 
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 
 /** 
@@ -25,7 +27,7 @@ import gaia.cu9.ari.gaiaorbit.util.I18n;
  * @author Toni Sagrista
  *
  */
-public class CollapsiblePane extends VerticalGroup {
+public class CollapsiblePane extends Table {
 
     CollapsibleWindow dialogWindow;
     ImageButton expandIcon, detachIcon;
@@ -34,6 +36,8 @@ public class CollapsiblePane extends VerticalGroup {
     String labelText;
     Skin skin;
     Stage stage;
+    float space;
+    Cell contentCell = null;
 
     /**
      * Creates a collapsible pane.
@@ -52,7 +56,8 @@ public class CollapsiblePane extends VerticalGroup {
         this.labelText = labelText;
         this.content = content;
         this.skin = skin;
-        this.space(10f);
+        this.space = 2 * GlobalConf.SCALE_FACTOR;
+
         Label mainLabel = new Label(labelText, skin, labelStyle);
 
         // Expand icon
@@ -86,21 +91,29 @@ public class CollapsiblePane extends VerticalGroup {
         });
         detachIcon.addListener(new TextTooltip(I18n.bundle.get("gui.tooltip.detach.group"), skin));
 
-        HorizontalGroup headerGroup = new HorizontalGroup();
-        headerGroup.space(10).align(Align.center);
-        headerGroup.addActor(mainLabel);
+        Table headerTable = new Table();
+        HorizontalGroup headerGroupLeft = new HorizontalGroup();
+        headerGroupLeft.space(4).align(Align.left);
+        headerGroupLeft.addActor(mainLabel);
 
         if (topIcons != null && topIcons.length > 0) {
             for (Actor topIcon : topIcons) {
                 if (topIcon != null)
-                    headerGroup.addActor(topIcon);
+                    headerGroupLeft.addActor(topIcon);
             }
         }
 
-        headerGroup.addActor(expandIcon);
-        headerGroup.addActor(detachIcon);
+        HorizontalGroup headerGroupRight = new HorizontalGroup();
+        headerGroupRight.space(4).align(Align.right);
+        headerGroupRight.addActor(expandIcon);
+        headerGroupRight.addActor(detachIcon);
 
-        addActor(headerGroup);
+        headerTable.add(headerGroupLeft).left().space(4);
+        headerTable.add().expandX();
+        headerTable.add(headerGroupRight).right();
+
+        add(headerTable).spaceBottom(this.space).prefWidth(160 * GlobalConf.SCALE_FACTOR).row();
+        contentCell = add().prefHeight(0).prefWidth(160 * GlobalConf.SCALE_FACTOR);
 
         expandIcon.setChecked(expanded);
 
@@ -120,9 +133,9 @@ public class CollapsiblePane extends VerticalGroup {
 
     private void toggleExpandCollapse() {
         if (expandIcon.isChecked() && dialogWindow == null) {
-            addActor(content);
+            contentCell.setActor(content);
         } else {
-            removeActor(content);
+            contentCell.clearActor();
         }
         EventManager.instance.post(Events.RECALCULATE_OPTIONS_SIZE);
     }

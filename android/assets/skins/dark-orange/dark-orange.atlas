@@ -144,14 +144,7 @@ default-pane-noborder
   index: -1
 default-rect
   rotate: false
-  xy: 40, 11
-  size: 3, 3
-  orig: 3, 3
-  offset: 0, 0
-  index: -1
-default-rect
-  rotate: false
-  xy: 40, 11
+  xy: 45, 11
   size: 3, 3
   split: 1, 1, 1, 1
   orig: 3, 3
@@ -159,7 +152,7 @@ default-rect
   index: -1
 default-rect-down
   rotate: false
-  xy: 40, 6
+  xy: 40, 11
   size: 3, 3
   split: 1, 1, 1, 1
   orig: 3, 3
@@ -167,7 +160,7 @@ default-rect-down
   index: -1
 default-rect-selection
   rotate: false
-  xy: 45, 11
+  xy: 40, 6
   size: 3, 3
   split: 1, 1, 1, 1
   orig: 3, 3
@@ -175,7 +168,7 @@ default-rect-selection
   index: -1
 default-select-selection
   rotate: false
-  xy: 45, 11
+  xy: 40, 6
   size: 3, 3
   split: 1, 1, 1, 1
   orig: 3, 3

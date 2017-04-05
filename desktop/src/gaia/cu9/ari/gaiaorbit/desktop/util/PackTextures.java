@@ -25,5 +25,11 @@ public class PackTextures {
 
         // DARK-BLUE x2
         TexturePacker.process(x2settings, "/home/tsagrista/git/gaiasky/android/assets/skins/raw/dark-blue/", "/home/tsagrista/git/gaiasky/android/assets/skins/dark-blue-x2/", "dark-blue-x2");
+
+        // BRIGHT-GREEN
+        TexturePacker.process(x1settings, "/home/tsagrista/git/gaiasky/android/assets/skins/raw/bright-green/", "/home/tsagrista/git/gaiasky/android/assets/skins/bright-green/", "bright-green");
+
+        // BRIGHT-GREEN x2
+        TexturePacker.process(x2settings, "/home/tsagrista/git/gaiasky/android/assets/skins/raw/bright-green/", "/home/tsagrista/git/gaiasky/android/assets/skins/bright-green-x2/", "bright-green-x2");
     }
 }

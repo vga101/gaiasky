@@ -392,21 +392,25 @@ public class ConfigDialog extends I18nJFrame {
         final JComboBox<LangComboBoxBean> lang = new JComboBox<LangComboBoxBean>(langs);
         lang.setSelectedItem(langs[idxLang(GlobalConf.program.LOCALE, langs)]);
 
-        // Theme sample image
-        JPanel sampleImagePanel = new JPanel(new MigLayout("", "push[]", ""));
-        // final JLabel sampleImage = new JLabel();
-        // sampleImagePanel.add(sampleImage);
-
         // Theme chooser
-        String[] themes = new String[] { "dark-green", "dark-green-x2", "dark-blue", "dark-blue-x2", "dark-orange", "dark-orange-x2" };
+        String[] themes = new String[] { "dark-green", "dark-green-x2", "dark-blue", "dark-blue-x2", "dark-orange", "dark-orange-x2", "bright-green", "bright-green-x2" };
         final JComboBox<String> theme = new JComboBox<String>(themes);
+        boolean contains = false;
+        for (String themestr : themes) {
+            if (GlobalConf.program.UI_THEME.equalsIgnoreCase(themestr)) {
+                contains = true;
+                break; // No need to look further.
+            }
+        }
+        if (!contains) {
+            GlobalConf.program.UI_THEME = themes[0];
+        }
         theme.setSelectedItem(GlobalConf.program.UI_THEME);
 
         ui.add(new JLabel(txt("gui.ui.language") + ":"));
         ui.add(lang, "wrap");
         ui.add(new JLabel(txt("gui.ui.theme") + ":"));
         ui.add(theme, "wrap");
-        ui.add(sampleImagePanel, "span, wrap");
 
         /** NOTICE **/
         JPanel uiNotice = new JPanel(new MigLayout("", "[]", ""));

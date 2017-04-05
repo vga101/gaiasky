@@ -87,9 +87,9 @@ Program wide properties
    the number of stars rendered as a point or the frames per second.
    This can be activated in real time by pressing ``CTRL`` + ``D``.
    
--  **program.ui.theme** - Specifies the GUI theme. Six themes are
-   available: ``dark-green``, ``dark-orange``, ``dark-blue`` plus versions
-   of the same themes scaled up two times, to use with HiDPI
+-  **program.ui.theme** - Specifies the GUI theme. Eight themes are
+   available: ``dark-green``, ``dark-orange``, ``dark-blue``, ``bright-green`` plus versions
+   of the same themes with a scale factor of two, to use with HiDPI
    screens (retina, 4K monitors, etc.). Since version ``0.704b`` you can also
    choose the theme by using the
    :ref:`User Interface tab <user-interface-config>` in the

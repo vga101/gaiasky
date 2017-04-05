@@ -26,7 +26,8 @@ com.badlogic.gdx.graphics.Color: {
 	blue: { a: 1, b: 1, g: 0.6, r: 0.4 },
 	sc-blue: {a: 1, b: 0.756, g: 0.603, r: 0.34 },
 	orange: { a: 1, b: 0, g: 0.7, r: 1 },
-	dark-gray: { a: 1, b: 0.4, g: 0.4, r: 0.4 }
+	dark-gray: { a: 1, b: 0.4, g: 0.4, r: 0.4 },
+	grey: { a: 1, b: 0.6, g: 0.6, r: 0.6 }
 },
 com.badlogic.gdx.scenes.scene2d.ui.Skin$TintedDrawable: {
 	dialogDim: { name: white, color: { r: 0, g: 0, b: 0, a: 0.45 } },
@@ -104,7 +105,7 @@ com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
 	msg-10:   { font: ui-13, fontColor: white},
 	msg-11:   { font: ui-14, fontColor: white},
 	msg-12:   { font: ui-15, fontColor: white},
-	msg-13:   { font: ui-17, fontColor: white},
+	msg-13:   { font: ui-17-bold, fontColor: white},
 	msg-14:   { font: ui-19, fontColor: white},
 	msg-15:   { font: ui-21, fontColor: white},
 	msg-17:   { font: ui-21, fontColor: white},
@@ -113,15 +114,17 @@ com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
 	msg-21:   { font: ui-23, fontColor: white},
 	msg-23:   { font: ui-23, fontColor: white},
 	
+	menuitem-shortcut: { font: ui-18, fontColor: grey },
+	
 	warp:     {font: ui-23-bold, fontColor: blue},
 	
-	headline:   { font: ui-25-shadow, fontColor: white},
+	headline:   { font: ui-25, fontColor: white},
 	subhead:   { font: ui-18, fontColor: white},
 	
 	hud:	 { font: ui-18, fontColor: white },
 	hud-med:	 { font: ui-17-bold, fontColor: white },
 	hud-big:	 { font: ui-19, fontColor: white },
-	hud-header:	 { font: ui-25-shadow, fontColor: blue },
+	hud-header:	 { font: ui-25, fontColor: blue },
 	hud-subheader:	 { font: ui-23, fontColor: blue },
 	
 	link: { font: ui-17, fontColor: blue},
@@ -139,7 +142,7 @@ com.badlogic.gdx.scenes.scene2d.ui.TextField$TextFieldStyle: {
 	msg-13:   { font: ui-13, fontColor: white, background: null},
 	msg-14:   { font: ui-14, fontColor: white, background: null},
 	msg-15:   { font: ui-15, fontColor: white, background: null},
-	msg-17:   { font: ui-17, fontColor: white, background: null},
+	msg-17:   { font: ui-17-bold, fontColor: white, background: null},
 	msg-18:   { font: ui-18, fontColor: white, background: null},
 	msg-19:   { font: ui-19, fontColor: white, background: null},
 	msg-21:   { font: ui-21, fontColor: white, background: null},
@@ -165,5 +168,17 @@ com.badlogic.gdx.scenes.scene2d.ui.ProgressBar$ProgressBarStyle: {
 },
 com.badlogic.gdx.scenes.scene2d.ui.TextTooltip$TextTooltipStyle: {
 	default: { label: msg-18, background: default-round }
+},
+gaia.cu9.ari.gaiaorbit.util.scene2d.ContextMenu$ContextMenuStyle: {
+	noborder: {background: button },
+	default: {background: button, border: border }
+},
+gaia.cu9.ari.gaiaorbit.util.scene2d.Separator$SeparatorStyle: {
+	default: {background: separator-context, thickness: 3 },
+	menu: {background: separator-menu, thickness: 2 }
+},
+gaia.cu9.ari.gaiaorbit.util.scene2d.MenuItem$MenuItemStyle: {
+	default: {subMenu: sub-menu, down: button-down, up: button, over: button-over, disabled: button, font: ui-18, fontColor: white, disabledFontColor: grey }
+	toggle: {checked: button-down, down: button-down, up: button, font: ui-11, fontColor: white, over: button-over, disabled: button, disabledFontColor: grey, subMenu: sub-menu }
 }
 }

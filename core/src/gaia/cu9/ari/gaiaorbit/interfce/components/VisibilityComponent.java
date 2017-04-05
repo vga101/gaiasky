@@ -42,7 +42,7 @@ public class VisibilityComponent extends GuiComponent implements IObserver {
     private Slider pmNumFactorSlider, pmLenFactorSlider;
     private Label pmNumFactor, pmLenFactor, pmNumFactorLabel, pmLenFactorLabel;
     private VerticalGroup pmNumFactorGroup, pmLenFactorGroup;
-    private VerticalGroup visGroup;
+    private VerticalGroup pmGroup;
 
     public VisibilityComponent(Skin skin, Stage stage) {
         super(skin, stage);
@@ -98,7 +98,6 @@ public class VisibilityComponent extends GuiComponent implements IObserver {
                 buttons.add(button);
             }
         }
-        visibilityTable.pack();
 
         /** Proper motions **/
         float space3 = 3 * GlobalConf.SCALE_FACTOR;
@@ -159,6 +158,7 @@ public class VisibilityComponent extends GuiComponent implements IObserver {
         pmLenFactorGroup.addActor(plfg);
 
         // PM CHECKBOX
+        pmGroup = new VerticalGroup().align(Align.left).columnAlign(Align.left);
         properMotions = new CheckBox(" " + txt("gui.checkbox.propermotionvectors"), skin);
         properMotions.setName("pm vectors");
         properMotions.addListener(new EventListener() {
@@ -166,13 +166,13 @@ public class VisibilityComponent extends GuiComponent implements IObserver {
             public boolean handle(Event event) {
                 if (event instanceof ChangeEvent) {
                     EventManager.instance.post(Events.PROPER_MOTIONS_CMD, "Proper motions", properMotions.isChecked());
-                    if (visGroup != null) {
+                    if (pmGroup != null) {
                         if (properMotions.isChecked()) {
-                            visGroup.addActor(pmNumFactorGroup);
-                            visGroup.addActor(pmLenFactorGroup);
+                            pmGroup.addActor(pmNumFactorGroup);
+                            pmGroup.addActor(pmLenFactorGroup);
                         } else {
-                            visGroup.removeActor(pmNumFactorGroup);
-                            visGroup.removeActor(pmLenFactorGroup);
+                            pmGroup.removeActor(pmNumFactorGroup);
+                            pmGroup.removeActor(pmLenFactorGroup);
                         }
                     }
                     return true;
@@ -180,6 +180,8 @@ public class VisibilityComponent extends GuiComponent implements IObserver {
                 return false;
             }
         });
+
+        pmGroup.addActor(properMotions);
 
         // Set button width to max width
         visibilityTable.pack();
@@ -194,13 +196,12 @@ public class VisibilityComponent extends GuiComponent implements IObserver {
         }
         visibilityTable.pack();
 
-        visGroup = new VerticalGroup().align(Align.left).columnAlign(Align.left);
-        visGroup.addActor(visibilityTable);
-        visGroup.addActor(properMotions);
+        visibilityTable.row();
+        visibilityTable.add(pmGroup).align(Align.left).colspan(2);
 
         properMotions.setChecked(GlobalConf.scene.PROPER_MOTION_VECTORS);
 
-        component = visGroup;
+        component = visibilityTable;
     }
 
     @Override
