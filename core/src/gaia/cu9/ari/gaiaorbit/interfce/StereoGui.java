@@ -69,13 +69,13 @@ public class StereoGui implements IGui, IObserver {
         nf = NumberFormatFactory.getFormatter("##0.###");
 
         // NOTIFICATIONS ONE - BOTTOM LEFT
-        notificationsOne = new NotificationsInterface(skin, lock, false, true, false);
+        notificationsOne = new NotificationsInterface(skin, lock, true, true, false);
         notificationsOne.setFillParent(true);
         notificationsOne.left().bottom();
         notificationsOne.pad(0, 5, 5, 0);
 
         // NOTIFICATIONS TWO - BOTTOM CENTRE
-        notificationsTwo = new NotificationsInterface(skin, lock, false, true, false);
+        notificationsTwo = new NotificationsInterface(skin, lock, true, true, false);
         notificationsTwo.setFillParent(true);
         notificationsTwo.bottom();
         notificationsTwo.setX(Gdx.graphics.getWidth() / 2);

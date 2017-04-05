@@ -102,6 +102,9 @@ com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
 	ui-13:   { font: ui-17, fontColor: white},
 	ui-15:   { font: ui-19, fontColor: white},
 	ui-23:   { font: ui-23, fontColor: white},
+	
+	menuitem-shortcut: { font: ui-18, fontColor: grey },
+	
 	msg-10:   { font: ui-13, fontColor: white},
 	msg-11:   { font: ui-14, fontColor: white},
 	msg-12:   { font: ui-15, fontColor: white},
@@ -178,7 +181,7 @@ gaia.cu9.ari.gaiaorbit.util.scene2d.Separator$SeparatorStyle: {
 	menu: {background: separator-menu, thickness: 2 }
 },
 gaia.cu9.ari.gaiaorbit.util.scene2d.MenuItem$MenuItemStyle: {
-	default: {subMenu: sub-menu, down: button-down, up: button, over: button-over, disabled: button, font: ui-18, fontColor: white, disabledFontColor: grey }
+	default: {subMenu: sub-menu, down: button-down, up: button, over: button-over, disabled: button, font: ui-18, fontColor: white, disabledFontColor: grey },
 	toggle: {checked: button-down, down: button-down, up: button, font: ui-11, fontColor: white, over: button-over, disabled: button, disabledFontColor: grey, subMenu: sub-menu }
 }
 }

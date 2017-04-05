@@ -1,5 +1,7 @@
 package gaia.cu9.ari.gaiaorbit.script;
 
+import com.badlogic.gdx.utils.Array;
+
 import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
@@ -27,9 +29,12 @@ public class HiddenHelperUser implements IObserver {
         instance();
     }
 
+    private Array<Thread> currentThreads;
+
     private HiddenHelperUser() {
         super();
-        EventManager.instance.subscribe(this, Events.NAVIGATE_TO_OBJECT);
+        currentThreads = new Array<Thread>(5);
+        EventManager.instance.subscribe(this, Events.NAVIGATE_TO_OBJECT, Events.INPUT_EVENT);
     }
 
     @Override
@@ -43,15 +48,25 @@ public class HiddenHelperUser implements IObserver {
                 body = ((CelestialBody) data[0]);
 
             final String name = body.getName();
-            final double distance = body.getRadius() * 10 * Constants.U_TO_KM;
+            final double angle = body.getRadius() * 10 * Constants.U_TO_KM;
 
             Thread t = new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    EventScriptingInterface.instance().goToObject(name, distance, 1);
+                    EventScriptingInterface.instance().goToObject(name, 20, 1);
+                    currentThreads.removeValue(Thread.currentThread(), true);
                 }
             });
             t.start();
+            currentThreads.add(t);
+            break;
+        case INPUT_EVENT:
+            // Stop all current threads
+            for (Thread th : currentThreads) {
+                th.stop();
+            }
+            currentThreads.clear();
+
             break;
         }
 
