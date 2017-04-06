@@ -1,5 +1,7 @@
 package gaia.cu9.ari.gaiaorbit.script;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import com.badlogic.gdx.utils.Array;
 
 import gaia.cu9.ari.gaiaorbit.GaiaSky;
@@ -29,11 +31,11 @@ public class HiddenHelperUser implements IObserver {
         instance();
     }
 
-    private Array<Thread> currentThreads;
+    private Array<HelperTask> currentTasks;
 
     private HiddenHelperUser() {
         super();
-        currentThreads = new Array<Thread>(5);
+        currentTasks = new Array<HelperTask>(5);
         EventManager.instance.subscribe(this, Events.NAVIGATE_TO_OBJECT, Events.INPUT_EVENT);
     }
 
@@ -50,24 +52,50 @@ public class HiddenHelperUser implements IObserver {
             final String name = body.getName();
             final double angle = body.getRadius() * 10 * Constants.U_TO_KM;
 
-            Thread t = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    EventScriptingInterface.instance().goToObject(name, 20, 1);
-                    currentThreads.removeValue(Thread.currentThread(), true);
-                }
-            });
+            GoToObjectTask task = new GoToObjectTask(name, currentTasks);
+            Thread t = new Thread(task);
             t.start();
-            currentThreads.add(t);
+            currentTasks.add(task);
             break;
         case INPUT_EVENT:
             // Stop all current threads
-            for (Thread th : currentThreads) {
-                th.stop();
+            for (HelperTask tsk : currentTasks) {
+                tsk.stop();
             }
-            currentThreads.clear();
+            currentTasks.clear();
 
             break;
+        }
+
+    }
+
+    private abstract class HelperTask implements Runnable {
+        protected AtomicBoolean stop;
+        protected Array<HelperTask> currentTasks;
+
+        protected HelperTask(Array<HelperTask> currentTasks) {
+            this.stop = new AtomicBoolean(false);
+            this.currentTasks = currentTasks;
+        }
+
+        public void stop() {
+            this.stop.set(true);
+        }
+    }
+
+    private class GoToObjectTask extends HelperTask {
+        String name;
+
+        public GoToObjectTask(String name, Array<HelperTask> currentTasks) {
+            super(currentTasks);
+            this.name = name;
+
+        }
+
+        @Override
+        public void run() {
+            EventScriptingInterface.instance().goToObject(name, 20, 1, stop);
+            currentTasks.removeValue(this, true);
         }
 
     }

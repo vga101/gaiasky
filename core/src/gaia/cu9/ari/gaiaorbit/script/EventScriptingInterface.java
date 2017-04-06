@@ -1,6 +1,7 @@
 package gaia.cu9.ari.gaiaorbit.script;
 
 import java.util.Date;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
@@ -460,6 +461,10 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
 
     @Override
     public void goToObject(String name, double angle, float focusWait) {
+        goToObject(name, angle, focusWait, null);
+    }
+
+    public void goToObject(String name, double angle, float focusWait, AtomicBoolean stop) {
         ISceneGraph sg = GaiaSky.instance.sg;
         if (sg.containsNode(name)) {
             CelestialBody focus = sg.findFocus(name);
@@ -494,7 +499,7 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
                 target = Math.toRadians(20d);
 
             // Add forward movement while distance > target distance
-            while (focus.viewAngleApparent < target) {
+            while (focus.viewAngleApparent < target && (stop != null && !stop.get())) {
                 em.post(Events.CAMERA_FWD, 1d);
                 try {
                     Thread.sleep(50);
