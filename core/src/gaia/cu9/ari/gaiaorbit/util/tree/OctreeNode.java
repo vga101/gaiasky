@@ -2,7 +2,6 @@ package gaia.cu9.ari.gaiaorbit.util.tree;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 
@@ -12,6 +11,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
 import com.badlogic.gdx.utils.Array;
 
+import gaia.cu9.ari.gaiaorbit.data.stars.OctreeMultiFileLoader;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.render.ILineRenderable;
 import gaia.cu9.ari.gaiaorbit.render.system.LineRenderSystem;
@@ -284,7 +284,7 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
      * 
      * @param particles
      */
-    public void addParticlesTo(List<T> particles) {
+    public void addParticlesTo(Array<T> particles) {
         if (this.objects != null) {
             for (T elem : this.objects)
                 particles.add(elem);
@@ -428,6 +428,17 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
         }
 
         if (observed) {
+
+            /**
+             * Load lists of pages
+             */
+            if (status == LoadStatus.NOT_LOADED && LOAD_ACTIVE) {
+                if (this.parent != null)
+                    // Add to load all the level
+                    OctreeMultiFileLoader.addToQueue(this.parent.children);
+                else
+                    OctreeMultiFileLoader.addToQueue(this);
+            }
 
             // Compute distance and view angle
             distToCamera = auxD1.set(centre).add(cam.getInversePos()).len();
@@ -579,6 +590,39 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
             }
         }
 
+    }
+
+    public int countObjects() {
+        int n = 0;
+        if (objects != null) {
+            n += objects.size;
+        }
+
+        if (children != null)
+            for (OctreeNode child : children) {
+                if (child != null)
+                    n += child.countObjects();
+            }
+
+        return n;
+    }
+
+    public OctreeNode<T> findOctant(long id) {
+        if (this.pageId == id)
+            return this;
+        else {
+            if (this.children != null) {
+                OctreeNode<T> target = null;
+                for (OctreeNode<T> child : children) {
+                    if (child != null) {
+                        target = child.findOctant(id);
+                        if (target != null)
+                            return target;
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     com.badlogic.gdx.graphics.Color col = new com.badlogic.gdx.graphics.Color();

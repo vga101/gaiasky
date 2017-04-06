@@ -877,12 +877,18 @@ public class ConfigDialog extends I18nJFrame {
         final JRadioButton tgas = new JRadioButton(txt("gui.data.tgas"));
         tgas.setSelected(GlobalConf.data.CATALOG_JSON_FILE.equals(GlobalConf.data.TGAS_JSON_FILE));
 
+        // TGAS MULTIFILE
+        final JRadioButton tgasMultifile = new JRadioButton(txt("gui.data.tgas") + " multifile");
+        tgasMultifile.setSelected(GlobalConf.data.CATALOG_JSON_FILE.equals("data/catalog-tgas-octree-multifile.json"));
+
         ButtonGroup dataButtons = new ButtonGroup();
         dataButtons.add(hyg);
         dataButtons.add(tgas);
+        dataButtons.add(tgasMultifile);
 
         datasource.add(hyg, "span,wrap");
         datasource.add(tgas, "span,wrap");
+        datasource.add(tgasMultifile, "span,wrap");
 
         final JPanel dataPanel = new JPanel(new MigLayout("", "[grow,fill]", ""));
         dataPanel.add(datasource, "wrap");
@@ -1004,6 +1010,8 @@ public class ConfigDialog extends I18nJFrame {
                         GlobalConf.data.CATALOG_JSON_FILE = GlobalConf.data.HYG_JSON_FILE;
                     else if (tgas.isSelected())
                         GlobalConf.data.CATALOG_JSON_FILE = GlobalConf.data.TGAS_JSON_FILE;
+                    else if (tgasMultifile.isSelected())
+                        GlobalConf.data.CATALOG_JSON_FILE = "data/catalog-tgas-octree-multifile.json";
                     else if (GlobalConf.data.CATALOG_JSON_FILE == null || GlobalConf.data.CATALOG_JSON_FILE.length() == 0)
                         Logger.error(this.getClass().getSimpleName(), "No catalog file selected!");
 

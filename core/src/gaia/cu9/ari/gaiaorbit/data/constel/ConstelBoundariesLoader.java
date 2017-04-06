@@ -8,6 +8,7 @@ import java.util.List;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.utils.Array;
 
 import gaia.cu9.ari.gaiaorbit.data.ISceneGraphLoader;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
@@ -32,8 +33,8 @@ public class ConstelBoundariesLoader<T extends SceneGraphNode> implements IScene
     }
 
     @Override
-    public List<? extends SceneGraphNode> loadData() {
-        List<ConstellationBoundaries> boundaries = new ArrayList<ConstellationBoundaries>();
+    public Array<? extends SceneGraphNode> loadData() {
+        Array<ConstellationBoundaries> boundaries = new Array<ConstellationBoundaries>();
         int n = 0;
         for (String f : files) {
             try {

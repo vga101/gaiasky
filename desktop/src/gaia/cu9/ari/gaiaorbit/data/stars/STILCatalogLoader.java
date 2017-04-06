@@ -1,11 +1,12 @@
 package gaia.cu9.ari.gaiaorbit.data.stars;
 
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
+import com.badlogic.gdx.utils.Array;
 
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
@@ -28,10 +29,10 @@ import uk.ac.starlink.util.FileDataSource;
 public class STILCatalogLoader extends AbstractCatalogLoader {
 
     @Override
-    public List<? extends CelestialBody> loadData() throws FileNotFoundException {
+    public Array<? extends CelestialBody> loadData() throws FileNotFoundException {
         long starid = 1000000;
 
-        List<CelestialBody> result = new ArrayList<CelestialBody>();
+        Array<CelestialBody> result = new Array<CelestialBody>();
         StarTableFactory factory = new StarTableFactory();
         Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.limitmag", GlobalConf.data.LIMIT_MAG_LOAD));
 
@@ -246,7 +247,7 @@ public class STILCatalogLoader extends AbstractCatalogLoader {
             }
         }
 
-        Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.catalog.init", result.size()));
+        Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.catalog.init", result.size));
         return result;
     }
 

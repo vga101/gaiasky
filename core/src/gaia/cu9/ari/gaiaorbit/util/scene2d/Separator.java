@@ -15,12 +15,13 @@
  */
 package gaia.cu9.ari.gaiaorbit.util.scene2d;
 
+import java.awt.PopupMenu;
+
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Widget;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
-import com.kotcrab.vis.ui.widget.VisTable;
 
 /**
  * A separator widget (horizontal or vertical bar) that can be used in menus, tables or other widgets, typically added

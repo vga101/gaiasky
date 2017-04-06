@@ -1,6 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.data.octreegen;
 
-import java.util.List;
+import com.badlogic.gdx.utils.Array;
 
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
@@ -21,7 +21,7 @@ public interface IAggregationAlgorithm<T extends SceneGraphNode> {
      * @param percentage The percentage of objects to be included in the octant.
      * @return True if we are in a leaf.
      */
-    public boolean sample(List<T> inputStars, OctreeNode<T> octant, float percentage);
+    public boolean sample(Array<T> inputStars, OctreeNode<T> octant, float percentage);
 
     /**
      * Gets the maximum number of particles in a single node

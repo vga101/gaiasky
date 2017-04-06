@@ -7,14 +7,16 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl.LwjglFiles;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.badlogic.gdx.utils.reflect.ReflectionException;
+import com.beust.jcommander.JCommander;
+import com.beust.jcommander.Parameter;
 
 import gaia.cu9.ari.gaiaorbit.data.octreegen.BrightestStars;
 import gaia.cu9.ari.gaiaorbit.data.octreegen.IAggregationAlgorithm;
@@ -23,7 +25,7 @@ import gaia.cu9.ari.gaiaorbit.data.octreegen.OctreeGenerator;
 import gaia.cu9.ari.gaiaorbit.data.octreegen.ParticleDataBinaryIO;
 import gaia.cu9.ari.gaiaorbit.data.stars.CatalogFilter;
 import gaia.cu9.ari.gaiaorbit.data.stars.HYGBinaryLoader;
-import gaia.cu9.ari.gaiaorbit.data.stars.OctreeCatalogLoader;
+import gaia.cu9.ari.gaiaorbit.data.stars.OctreeSingleFileLoader;
 import gaia.cu9.ari.gaiaorbit.data.stars.TGASLoader;
 import gaia.cu9.ari.gaiaorbit.desktop.format.DesktopDateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.desktop.format.DesktopNumberFormatFactory;
@@ -54,7 +56,35 @@ public class OctreeGeneratorTest implements IObserver {
     public static Operation operation = Operation.GENERATE_OCTREE;
 
     public static void main(String[] args) {
+        OctreeGeneratorTest ogt = new OctreeGeneratorTest();
+        new JCommander(ogt, args);
+
+        ogt.run();
+    }
+
+    @Parameter(names = { "-o", "--out" }, description = "Output folder. Defaults to system temp")
+    private String outFolder;
+
+    @Parameter(names = { "-m", "--multifile" }, description = "Use multiple file mode, outputs each octree node data to its own file")
+    private boolean multifile = false;
+
+    public OctreeGeneratorTest() {
+        super();
+    }
+
+    public void run() {
         try {
+
+            if (outFolder == null) {
+                outFolder = System.getProperty("java.io.tmpdir");
+            } else {
+                if (!outFolder.endsWith("/"))
+                    outFolder += "/";
+
+                File outfolderFile = new File(outFolder);
+                outfolderFile.mkdirs();
+            }
+
             Gdx.files = new LwjglFiles();
 
             // Initialize number format
@@ -70,7 +100,7 @@ public class OctreeGeneratorTest implements IObserver {
             ThreadLocalFactory.initialize(new SingleThreadLocalFactory());
 
             // Add notif watch
-            EventManager.instance.subscribe(new OctreeGeneratorTest(), Events.POST_NOTIFICATION, Events.JAVA_EXCEPTION);
+            EventManager.instance.subscribe(this, Events.POST_NOTIFICATION, Events.JAVA_EXCEPTION);
 
             switch (operation) {
             case GENERATE_OCTREE:
@@ -91,7 +121,7 @@ public class OctreeGeneratorTest implements IObserver {
         }
     }
 
-    private static void generateOctree() throws IOException {
+    private void generateOctree() throws IOException {
         IAggregationAlgorithm<Particle> aggr;
         try {
             aggr = ClassReflection.newInstance(BrightestStars.class);
@@ -112,16 +142,12 @@ public class OctreeGeneratorTest implements IObserver {
             }
         });
 
-        /** TYCHO **/
-        //        STILCatalogLoader tycho = new STILCatalogLoader();
-        //        tycho.initialize(new String[] { "/home/tsagrista/Workspaces/objectserver/data/tycho.vot.gz" });
-
         /** TGAS **/
         TGASLoader tgas = new TGASLoader();
         tgas.initialize(new String[] { "data/tgas_final/tgas.csv" });
 
         /** LOAD HYG **/
-        List<Particle> listStars = (List<Particle>) hyg.loadData();
+        Array<Particle> listStars = hyg.loadData();
         Map<Integer, Particle> hips = new HashMap<Integer, Particle>();
         for (Particle p : listStars) {
             if (p instanceof Star && ((Star) p).hip > 0) {
@@ -130,7 +156,7 @@ public class OctreeGeneratorTest implements IObserver {
         }
 
         /** LOAD TGAS **/
-        List<Particle> listGaia = tgas.loadData();
+        Array<Particle> listGaia = tgas.loadData();
         for (Particle p : listGaia) {
             if (p instanceof Star && hips.containsKey(((Star) p).hip)) {
                 // modify
@@ -141,7 +167,7 @@ public class OctreeGeneratorTest implements IObserver {
                 gaiastar.hip = hipstar.hip;
 
                 // Remove from hipparcos list
-                listStars.remove(hipstar);
+                listStars.removeValue(hipstar, true);
                 hips.remove(hipstar.hip);
 
             }
@@ -153,7 +179,7 @@ public class OctreeGeneratorTest implements IObserver {
         for (Particle p : listStars)
             p.initialize();
 
-        Logger.info("Generating octree with " + listStars.size() + " actual stars");
+        Logger.info("Generating octree with " + listStars.size + " actual stars");
 
         OctreeNode<Particle> octree = og.generateOctree(listStars);
 
@@ -163,16 +189,12 @@ public class OctreeGeneratorTest implements IObserver {
 
         System.out.println(octree.toString(true));
 
-        String temp = System.getProperty("java.io.tmpdir");
-
-        long tstamp = System.currentTimeMillis();
-
         /** NUMBERS **/
-        System.out.println("Octree generated with " + octree.numNodes() + " octants and " + listStars.size() + " particles");
+        System.out.println("Octree generated with " + octree.numNodes() + " octants and " + listStars.size + " particles");
         System.out.println(aggr.getDiscarded() + " particles have been discarded due to density");
 
         /** WRITE METADATA **/
-        File metadata = new File(temp, "metadata_" + tstamp + ".bin");
+        File metadata = new File(outFolder, "metadata.bin");
         if (metadata.exists()) {
             metadata.delete();
         }
@@ -184,23 +206,53 @@ public class OctreeGeneratorTest implements IObserver {
         metadataWriter.writeMetadata(octree, new FileOutputStream(metadata));
 
         /** WRITE PARTICLES **/
-        File particles = new File(temp, "particles_" + tstamp + ".bin");
-        if (particles.exists()) {
-            particles.delete();
-        }
-        particles.createNewFile();
-
-        System.out.println("Writing particles (" + listStars.size() + " particles): " + particles.getAbsolutePath());
-
         ParticleDataBinaryIO particleWriter = new ParticleDataBinaryIO();
-        particleWriter.writeParticles(listStars, new BufferedOutputStream(new FileOutputStream(particles)));
+        if (!multifile) {
+            File particles = new File(outFolder, "particles.bin");
+            if (particles.exists()) {
+                particles.delete();
+            }
+            particles.createNewFile();
+
+            System.out.println("Writing " + listStars.size + " particles to " + particles.getAbsolutePath());
+
+            particleWriter.writeParticles(listStars, new BufferedOutputStream(new FileOutputStream(particles)));
+        } else {
+            // Walk each node of the octree and write the particles for each in a different file
+            File particlesFolder = new File(outFolder + "/particles/");
+            particlesFolder.mkdirs();
+
+            writeParticlesToFiles(particleWriter, octree);
+        }
+
+        for (Particle p : listStars) {
+            if (p.getName().equalsIgnoreCase("Sol")) {
+                System.out.println("Octant of Sol: " + p.octantId);
+            }
+        }
     }
 
-    private static void loadOctree() throws FileNotFoundException {
+    private void writeParticlesToFiles(ParticleDataBinaryIO particleWriter, OctreeNode<Particle> current) throws IOException {
+        // Write current
+        if (current.childrenCount > 0) {
+            File particles = new File(outFolder + "/particles/", "particles_" + String.format("%06d", current.pageId) + ".bin");
+            System.out.println("Writing " + current.childrenCount + " particles of node " + current.pageId + " to " + particles.getAbsolutePath());
+            particleWriter.writeParticles(current.objects, new BufferedOutputStream(new FileOutputStream(particles)));
+        }
+
+        // Write each child
+        if (current.children != null)
+            for (OctreeNode<Particle> child : current.children) {
+                if (child != null)
+                    writeParticlesToFiles(particleWriter, child);
+            }
+    }
+
+    private void loadOctree() throws FileNotFoundException {
         String[] files = new String[] { "data/hyg_particles.bin", "data/hyg_metadata.bin" };
-        ISceneGraphLoader loader = new OctreeCatalogLoader();
+        ISceneGraphLoader loader = new OctreeSingleFileLoader();
         loader.initialize(files);
-        List<? extends SceneGraphNode> l = loader.loadData();
+        Array<? extends SceneGraphNode> l = loader.loadData();
         AbstractOctreeWrapper ow = null;
         for (SceneGraphNode n : l) {
             if (n instanceof AbstractOctreeWrapper) {

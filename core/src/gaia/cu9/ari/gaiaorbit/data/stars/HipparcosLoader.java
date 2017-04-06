@@ -6,12 +6,11 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Array;
 
 import gaia.cu9.ari.gaiaorbit.data.ISceneGraphLoader;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
@@ -58,10 +57,10 @@ public class HipparcosLoader extends AbstractCatalogLoader implements ISceneGrap
     private int sidhipfound = 0;
 
     @Override
-    public List<Particle> loadData() throws FileNotFoundException {
+    public Array<Particle> loadData() throws FileNotFoundException {
         String separator = comma;
 
-        List<Particle> stars = new ArrayList<Particle>();
+        Array<Particle> stars = new Array<Particle>();
         for (String file : files) {
             FileHandle f = Gdx.files.internal(file);
             InputStream data = f.read();
@@ -90,11 +89,11 @@ public class HipparcosLoader extends AbstractCatalogLoader implements ISceneGrap
         }
 
         Logger.info(this.getClass().getSimpleName(), "SourceId matched to HIP in " + sidhipfound + " stars");
-        Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.catalog.init", stars.size()));
+        Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.catalog.init", stars.size));
         return stars;
     }
 
-    private void addStar(String line, List<Particle> stars, String separator) {
+    private void addStar(String line, Array<Particle> stars, String separator) {
         String[] st = line.split(separator);
 
         try {

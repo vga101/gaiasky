@@ -1,10 +1,8 @@
 package gaia.cu9.ari.gaiaorbit.data;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.reflect.ReflectionException;
@@ -31,8 +29,8 @@ public class GeoJsonLoader<T extends SceneGraphNode> implements ISceneGraphLoade
     }
 
     @Override
-    public List<? extends SceneGraphNode> loadData() {
-        List<T> bodies = new ArrayList<T>();
+    public Array<? extends SceneGraphNode> loadData() {
+        Array<T> bodies = new Array<T>();
 
         try {
             JsonReader json = new JsonReader();

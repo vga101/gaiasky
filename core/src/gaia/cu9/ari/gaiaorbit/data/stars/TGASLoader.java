@@ -5,14 +5,13 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Array;
 
 import gaia.cu9.ari.gaiaorbit.data.ISceneGraphLoader;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
@@ -87,7 +86,7 @@ public class TGASLoader extends AbstractCatalogLoader implements ISceneGraphLoad
     private int sidhipfound = 0;
 
     @Override
-    public List<Particle> loadData() throws FileNotFoundException {
+    public Array<Particle> loadData() throws FileNotFoundException {
         String separator = null;
         int[] indices = null;
         if (VERSION == 1) {
@@ -101,7 +100,7 @@ public class TGASLoader extends AbstractCatalogLoader implements ISceneGraphLoad
 
         tycBV = loadTYCBVColours(btvtColorsFile);
 
-        List<Particle> stars = new ArrayList<Particle>();
+        Array<Particle> stars = new Array<Particle>();
         for (String file : files) {
             FileHandle f = Gdx.files.internal(file);
             InputStream data = f.read();
@@ -127,11 +126,11 @@ public class TGASLoader extends AbstractCatalogLoader implements ISceneGraphLoad
         }
 
         Logger.info(this.getClass().getSimpleName(), "SourceId matched to HIP in " + sidhipfound + " stars");
-        Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.catalog.init", stars.size()));
+        Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.catalog.init", stars.size));
         return stars;
     }
 
-    private void addStar(String line, List<Particle> stars, int[] indices, String separator) {
+    private void addStar(String line, Array<Particle> stars, int[] indices, String separator) {
         String[] st = line.split(separator);
 
         int hip = -1;

@@ -5,14 +5,13 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Array;
 
 import gaia.cu9.ari.gaiaorbit.data.ISceneGraphLoader;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
@@ -40,7 +39,7 @@ public class HYGCSVLoader extends AbstractCatalogLoader implements ISceneGraphLo
     public String pmFile;
 
     @Override
-    public List<Particle> loadData() throws FileNotFoundException {
+    public Array<Particle> loadData() throws FileNotFoundException {
         // Proper motions
 
         Map<Integer, float[]> pmMap = null;
@@ -74,7 +73,7 @@ public class HYGCSVLoader extends AbstractCatalogLoader implements ISceneGraphLo
             }
         }
 
-        List<Particle> stars = new ArrayList<Particle>();
+        Array<Particle> stars = new Array<Particle>();
         for (String file : files) {
             FileHandle f = Gdx.files.internal(file);
             InputStream data = f.read();
@@ -104,11 +103,11 @@ public class HYGCSVLoader extends AbstractCatalogLoader implements ISceneGraphLo
             }
         }
 
-        Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.catalog.init", stars.size()));
+        Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.catalog.init", stars.size));
         return stars;
     }
 
-    private void addStar(String line, List<Particle> stars, Map<Integer, float[]> pmMap) {
+    private void addStar(String line, Array<Particle> stars, Map<Integer, float[]> pmMap) {
         String[] st = line.split(separator);
 
         long starid = -1l;

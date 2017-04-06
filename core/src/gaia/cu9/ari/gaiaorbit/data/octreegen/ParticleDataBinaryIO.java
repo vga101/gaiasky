@@ -7,13 +7,12 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.List;
 
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Array;
 
-import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
+import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
@@ -89,14 +88,14 @@ import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
  */
 public class ParticleDataBinaryIO {
 
-    public void writeParticles(List<Particle> particles, OutputStream out) {
+    public void writeParticles(Array<Particle> particles, OutputStream out) {
 
         try {
             // Wrap the FileOutputStream with a DataOutputStream
             DataOutputStream data_out = new DataOutputStream(out);
 
             // Size of stars
-            data_out.writeInt(particles.size());
+            data_out.writeInt(particles.size);
             for (Particle s : particles) {
                 // name_length, name, appmag, absmag, colorbv, r, g, b, a, ra[deg], dec[deg], dist[u], (double) x[u], (double) y[u], (double) z[u], mualpha[mas/yr], mudelta[mas/yr], radvel[km/s], pmx[u/yr], pmy[u/yr], pmz[u/yr], id, hip, tychoLength, tycho, sourceCatalog, pageid, type
                 data_out.writeInt(s.name.length());
@@ -139,13 +138,14 @@ public class ParticleDataBinaryIO {
         }
     }
 
-    public List<CelestialBody> readParticles(InputStream in) throws FileNotFoundException {
-        List<CelestialBody> stars = new ArrayList<CelestialBody>();
+    public Array<SceneGraphNode> readParticles(InputStream in) throws FileNotFoundException {
+        Array<SceneGraphNode> stars = null;
         DataInputStream data_in = new DataInputStream(in);
 
         try {
             // Read size of stars
             int size = data_in.readInt();
+            stars = new Array<SceneGraphNode>(size);
 
             for (int idx = 0; idx < size; idx++) {
                 try {
@@ -207,6 +207,12 @@ public class ParticleDataBinaryIO {
 
         } catch (IOException e) {
             Logger.error(e);
+        } finally {
+            try {
+                data_in.close();
+            } catch (IOException e) {
+                Logger.error(e);
+            }
         }
 
         return stars;

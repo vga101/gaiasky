@@ -5,12 +5,11 @@ import java.io.EOFException;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Array;
 
 import gaia.cu9.ari.gaiaorbit.data.ISceneGraphLoader;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
@@ -42,8 +41,8 @@ import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 public class HYGBinaryLoader extends AbstractCatalogLoader implements ISceneGraphLoader {
 
     @Override
-    public List<Particle> loadData() throws FileNotFoundException {
-        List<Particle> stars = new ArrayList<Particle>();
+    public Array<Particle> loadData() throws FileNotFoundException {
+        Array<Particle> stars = new Array<Particle>();
         for (String f : files) {
             FileHandle file = Gdx.files.internal(f);
             InputStream data = file.read();
@@ -105,7 +104,7 @@ public class HYGBinaryLoader extends AbstractCatalogLoader implements ISceneGrap
             }
         }
 
-        Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.catalog.init", stars.size()));
+        Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.catalog.init", stars.size));
         return stars;
     }
 

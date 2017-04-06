@@ -13,6 +13,7 @@
 
 -  [Libgdx](libgdx.badlogicgames.com)
 -  [libgdx-contribs-postprocessing](https://github.com/manuelbua/libgdx-contribs/tree/master/postprocessing)
+-  [VisUI](https://github.com/kotcrab/vis-editor/wiki/VisUI) for some widgets (licensed under the Apache license)
 -  [PgsLookAndFeel](http://www.pagosoft.com/projects/pgslookandfeel/)
 -  Mark Taylor's [STIL](http://www.star.bristol.ac.uk/~mbt/stil/) library
 -  The [Jython Project](http://www.jython.org/)

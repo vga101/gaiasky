@@ -1,8 +1,8 @@
 package gaia.cu9.ari.gaiaorbit.data.stars;
 
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.List;
+
+import com.badlogic.gdx.utils.Array;
 
 import gaia.cu9.ari.gaiaorbit.data.ISceneGraphLoader;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
@@ -17,10 +17,10 @@ import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 public class SunLoader extends AbstractCatalogLoader implements ISceneGraphLoader {
 
     @Override
-    public List<? extends CelestialBody> loadData() throws FileNotFoundException {
-        List<Star> result = new ArrayList<Star>(1);
+    public Array<? extends CelestialBody> loadData() throws FileNotFoundException {
+        Array<Star> result = new Array<Star>(1);
         /** ADD SUN MANUALLY **/
-        Star sun = new Star(new Vector3d(0, 0, 0), 4.83f, 4.83f, 0.656f, "Sol", (int) System.currentTimeMillis());
+        Star sun = new Star(new Vector3d(0, 0, 0), 4.83f, 4.83f, 0.656f, "Sol", System.currentTimeMillis());
         if (runFiltersAnd(sun)) {
             sun.initialize();
             result.add(sun);

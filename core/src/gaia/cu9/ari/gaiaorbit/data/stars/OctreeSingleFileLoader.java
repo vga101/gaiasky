@@ -1,15 +1,13 @@
 package gaia.cu9.ari.gaiaorbit.data.stars;
 
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.List;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.utils.Array;
 
 import gaia.cu9.ari.gaiaorbit.data.ISceneGraphLoader;
 import gaia.cu9.ari.gaiaorbit.data.octreegen.MetadataBinaryIO;
 import gaia.cu9.ari.gaiaorbit.data.octreegen.ParticleDataBinaryIO;
-import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
 import gaia.cu9.ari.gaiaorbit.scenegraph.octreewrapper.AbstractOctreeWrapper;
@@ -21,26 +19,26 @@ import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.tree.LoadStatus;
 import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
 
-public class OctreeCatalogLoader implements ISceneGraphLoader {
+public class OctreeSingleFileLoader implements ISceneGraphLoader {
 
     String metadata, particles;
 
     @Override
-    public List<? extends SceneGraphNode> loadData() throws FileNotFoundException {
+    public Array<? extends SceneGraphNode> loadData() throws FileNotFoundException {
         //Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.limitmag", GlobalConf.data.LIMIT_MAG_LOAD));
 
         Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.loading", metadata));
 
         MetadataBinaryIO metadataReader = new MetadataBinaryIO();
-        OctreeNode<SceneGraphNode> root = (OctreeNode<SceneGraphNode>) metadataReader.readMetadata(Gdx.files.internal(metadata).read());
+        OctreeNode<SceneGraphNode> root = (OctreeNode<SceneGraphNode>) metadataReader.readMetadata(Gdx.files.internal(metadata).read(), LoadStatus.LOADED);
 
         Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.nodeloader", root.numNodes(), metadata));
         Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.loading", particles));
 
         ParticleDataBinaryIO particleReader = new ParticleDataBinaryIO();
-        List<CelestialBody> particleList = particleReader.readParticles(Gdx.files.internal(particles).read());
+        Array<SceneGraphNode> particleList = particleReader.readParticles(Gdx.files.internal(particles).read());
 
-        Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.nodeloader", particleList.size(), particles));
+        Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.nodeloader", particleList.size, particles));
 
         /**
         * CREATE OCTREE WRAPPER WITH ROOT NODE
@@ -51,7 +49,7 @@ public class OctreeCatalogLoader implements ISceneGraphLoader {
         } else {
             octreeWrapper = new OctreeWrapper("Universe", root);
         }
-        List<SceneGraphNode> result = new ArrayList<SceneGraphNode>(1);
+        Array<SceneGraphNode> result = new Array<SceneGraphNode>(1);
         result.add(octreeWrapper);
 
         /** 
@@ -64,14 +62,12 @@ public class OctreeCatalogLoader implements ISceneGraphLoader {
             OctreeNode<SceneGraphNode> octant = metadataReader.nodesMap.get(s.octantId).getFirst();
             octant.add(s);
             s.octant = octant;
-            // Update status
-            octant.setStatus(LoadStatus.LOADED);
 
             // Add objects to octree wrapper node
             octreeWrapper.add(s, octant);
         }
 
-        Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.catalog.init", particleList.size()));
+        Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.catalog.init", particleList.size));
 
         return result;
     }

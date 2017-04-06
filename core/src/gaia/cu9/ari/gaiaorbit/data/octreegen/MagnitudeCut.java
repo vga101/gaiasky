@@ -1,11 +1,13 @@
 package gaia.cu9.ari.gaiaorbit.data.octreegen;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.badlogic.gdx.utils.Array;
+
 import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class MagnitudeCut implements IAggregationAlgorithm<Particle> {
 
@@ -17,7 +19,7 @@ public class MagnitudeCut implements IAggregationAlgorithm<Particle> {
     }
 
     @Override
-    public boolean sample(List<Particle> inputStars, OctreeNode<Particle> octant, float percentage) {
+    public boolean sample(Array<Particle> inputStars, OctreeNode<Particle> octant, float percentage) {
         float limitMag = START_MAG + octant.depth * 2;
         List<Particle> candidates = new ArrayList<Particle>(10000);
         for (Particle s : inputStars) {
@@ -25,7 +27,7 @@ public class MagnitudeCut implements IAggregationAlgorithm<Particle> {
                 candidates.add(s);
             }
         }
-        boolean leaf = candidates.size() == inputStars.size();
+        boolean leaf = candidates.size() == inputStars.size;
 
         for (Particle s : candidates) {
             if (leaf) {
@@ -36,7 +38,7 @@ public class MagnitudeCut implements IAggregationAlgorithm<Particle> {
                 // New virtual star
                 Particle virtual = getVirtualCopy(s);
                 virtual.type = 92;
-                virtual.nparticles = inputStars.size() / candidates.size();
+                virtual.nparticles = inputStars.size / candidates.size();
 
                 // Add virtual to octant
                 octant.add(virtual);

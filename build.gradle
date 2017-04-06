@@ -37,7 +37,7 @@ allprojects {
 		miglayoutVersion = '4.2'
         lwjglVersion = '2.9.3'
         pgsVersion = '1.1.4'
-        visuiVersion = '1.3.0'
+        jcommanderVersion = '1.64'
     }
 
     repositories {
@@ -118,6 +118,7 @@ project(":desktop") {
 		compile "org.python:jython-standalone:$jythonVersion"
 		compile "com.miglayout:miglayout-swing:$miglayoutVersion"
         compile "com.github.arnabk:pgslookandfeel:$pgsVersion"
+        compile "com.beust:jcommander:$jcommanderVersion"
         compile "com.badlogicgames.gdx:gdx-tools:$gdxVersion"
 		compile files('../core/lib/postprocessing.jar',
 					'../core/lib/jafama.jar',
@@ -176,7 +177,6 @@ project(":html") {
         compile "com.badlogicgames.gdx:gdx-controllers:$gdxVersion:sources"
         compile "com.badlogicgames.gdx:gdx-controllers-gwt:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-controllers-gwt:$gdxVersion:sources"
-        compile "com.kotcrab.vis:vis-ui:$visuiVersion:sources"
     }
 }
 
@@ -186,7 +186,6 @@ project(":core") {
     dependencies {
         compile "com.badlogicgames.gdx:gdx:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-controllers:$gdxVersion"
-        compile "com.kotcrab.vis:vis-ui:$visuiVersion"
 		compile "junit:junit:4.12"
 		compile files('lib/postprocessing.jar',
 					'lib/jafama.jar')

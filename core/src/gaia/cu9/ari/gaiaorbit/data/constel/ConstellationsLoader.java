@@ -3,8 +3,6 @@ package gaia.cu9.ari.gaiaorbit.data.constel;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
@@ -28,8 +26,8 @@ public class ConstellationsLoader<T extends SceneGraphNode> implements ISceneGra
     }
 
     @Override
-    public List<? extends SceneGraphNode> loadData() {
-        List<Constellation> constellations = new ArrayList<Constellation>();
+    public Array<? extends SceneGraphNode> loadData() {
+        Array<Constellation> constellations = new Array<Constellation>();
 
         for (String f : files) {
             try {
@@ -100,7 +98,7 @@ public class ConstellationsLoader<T extends SceneGraphNode> implements ISceneGra
             }
         }
 
-        Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.constellations.init", constellations.size()));
+        Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.constellations.init", constellations.size));
         return constellations;
     }
 }

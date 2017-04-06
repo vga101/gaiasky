@@ -1,10 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.data.octreegen;
 
-import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
-import gaia.cu9.ari.gaiaorbit.util.Logger;
-import gaia.cu9.ari.gaiaorbit.util.Pair;
-import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
-
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.EOFException;
@@ -15,6 +10,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
+import gaia.cu9.ari.gaiaorbit.util.Logger;
+import gaia.cu9.ari.gaiaorbit.util.Pair;
+import gaia.cu9.ari.gaiaorbit.util.tree.LoadStatus;
+import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
 
 /**
  * Writes and reats the metadata to/from binary. The format is as follows:
@@ -45,6 +46,15 @@ public class MetadataBinaryIO {
      * @return
      */
     public OctreeNode<? extends SceneGraphNode> readMetadata(InputStream in) {
+        return readMetadata(in, null);
+    }
+
+    /**
+     * Reads the metadata into an octree node.
+     * @param in Input stream
+     * @return
+     */
+    public OctreeNode<? extends SceneGraphNode> readMetadata(InputStream in, LoadStatus status) {
         nodesMap = new HashMap<Long, Pair<OctreeNode<SceneGraphNode>, long[]>>();
 
         DataInputStream data_in = new DataInputStream(in);
@@ -77,6 +87,8 @@ public class MetadataBinaryIO {
 
                     OctreeNode<SceneGraphNode> node = new OctreeNode<SceneGraphNode>(pageId, x, y, z, hsx, hsy, hsz, childrenCount, nObjects, ownObjects, depth);
                     nodesMap.put(pageId, new Pair<OctreeNode<SceneGraphNode>, long[]>(node, childrenIds));
+                    if (status != null)
+                        node.setStatus(status);
 
                     if (depth == 0) {
                         root = node;

@@ -1,7 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.data;
 
 import java.io.InputStream;
-import java.util.List;
 
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Array;
@@ -45,7 +44,7 @@ public class SceneGraphJsonLoader {
                         loader.initialize(files);
 
                         // Load data
-                        List<? extends SceneGraphNode> data = loader.loadData();
+                        Array<? extends SceneGraphNode> data = loader.loadData();
                         for (SceneGraphNode elem : data) {
                             nodes.add(elem);
                         }

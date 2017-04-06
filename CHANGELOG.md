@@ -1,5 +1,40 @@
 # Change Log
 
+## [Unreleased](https://github.com/langurmonkey/gaiasky/tree/HEAD)
+
+[Full Changelog](https://github.com/langurmonkey/gaiasky/compare/1.0.4...HEAD)
+
+**Implemented enhancements:**
+
+- Fix layout of controls window [\#121](https://github.com/langurmonkey/gaiasky/issues/121)
+- Add context menu with some options [\#120](https://github.com/langurmonkey/gaiasky/issues/120)
+- Rearrange UI, fix HiDPI themes [\#119](https://github.com/langurmonkey/gaiasky/issues/119)
+- Add button to stop current camera play session [\#117](https://github.com/langurmonkey/gaiasky/issues/117)
+- UI animations [\#116](https://github.com/langurmonkey/gaiasky/issues/116)
+- Add Slovene language [\#109](https://github.com/langurmonkey/gaiasky/issues/109)
+- Add new Parallel View stereoscopic profile [\#105](https://github.com/langurmonkey/gaiasky/issues/105)
+
+**Fixed bugs:**
+
+- Fix main controls window alignments [\#118](https://github.com/langurmonkey/gaiasky/issues/118)
+- Fix gaia scan mode [\#114](https://github.com/langurmonkey/gaiasky/issues/114)
+- Add timeout to version check [\#112](https://github.com/langurmonkey/gaiasky/issues/112)
+- Fix config file lookup crash when running from source [\#111](https://github.com/langurmonkey/gaiasky/issues/111)
+- Fix focus issue with objects text field [\#106](https://github.com/langurmonkey/gaiasky/issues/106)
+- Fix stereoscopic mode for large distances/eye separations [\#89](https://github.com/langurmonkey/gaiasky/issues/89)
+- Gaia Sky crashes on Windows 10 32bit - JRE 8u102 [\#77](https://github.com/langurmonkey/gaiasky/issues/77)
+
+**Closed issues:**
+
+- Translation [\#107](https://github.com/langurmonkey/gaiasky/issues/107)
+
+**Merged pull requests:**
+
+- Fix README rendering [\#115](https://github.com/langurmonkey/gaiasky/pull/115) ([rogersachan](https://github.com/rogersachan))
+- Fix links to scripting documentation [\#113](https://github.com/langurmonkey/gaiasky/pull/113) ([vga101](https://github.com/vga101))
+- Fix TGAS extraction path in running instructions [\#110](https://github.com/langurmonkey/gaiasky/pull/110) ([vga101](https://github.com/vga101))
+- Slovene translation [\#108](https://github.com/langurmonkey/gaiasky/pull/108) ([kcotar](https://github.com/kcotar))
+
 ## [1.0.4](https://github.com/langurmonkey/gaiasky/tree/1.0.4) (2016-12-07)
 [Full Changelog](https://github.com/langurmonkey/gaiasky/compare/1.0.3...1.0.4)
 
@@ -51,7 +86,6 @@
 **Fixed bugs:**
 
 - Configuration dialog should appear at the center of focused screen [\#90](https://github.com/langurmonkey/gaiasky/issues/90)
-- Fix stereoscopic mode for large distances/eye separations [\#89](https://github.com/langurmonkey/gaiasky/issues/89)
 - Fix resizing and fullscreen toggle [\#86](https://github.com/langurmonkey/gaiasky/issues/86)
 - Crash - Vector pool null pointer when multithreading is on [\#83](https://github.com/langurmonkey/gaiasky/issues/83)
 - Fix connection to archive for DR1 sources [\#78](https://github.com/langurmonkey/gaiasky/issues/78)
@@ -61,7 +95,6 @@
 **Closed issues:**
 
 - Gaia Sky crashes on Windows 10, Java 1.8.0\_101 [\#79](https://github.com/langurmonkey/gaiasky/issues/79)
-- Please consider uploading gaiasandbox to Debian [\#39](https://github.com/langurmonkey/gaiasky/issues/39)
 
 ## [1.0.0](https://github.com/langurmonkey/gaiasky/tree/1.0.0) (2016-09-13)
 [Full Changelog](https://github.com/langurmonkey/gaiasky/compare/0.800b...1.0.0)

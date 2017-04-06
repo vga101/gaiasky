@@ -6,7 +6,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -83,8 +82,8 @@ public class ConstellationHIPUpdater implements IObserver {
         HYGBinaryLoader hyg = new HYGBinaryLoader();
         hyg.initialize(new String[] { "data/hygxyz.bin" });
 
-        List<Particle> catalog = hyg.loadData();
-        List<Star> stars = new ArrayList<Star>(catalog.size());
+        Array<Particle> catalog = hyg.loadData();
+        Array<Star> stars = new Array<Star>(catalog.size);
         for (Particle p : catalog)
             if (p instanceof Star)
                 stars.add((Star) p);

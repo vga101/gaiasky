@@ -1,10 +1,9 @@
 package gaia.cu9.ari.gaiaorbit.data.octreegen;
 
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.List;
 
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.utils.Array;
 
 import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
 import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
@@ -30,9 +29,9 @@ public class BrightestStars implements IAggregationAlgorithm<Particle> {
     }
 
     @Override
-    public boolean sample(List<Particle> inputStars, OctreeNode<Particle> octant, float percentage) {
+    public boolean sample(Array<Particle> inputStars, OctreeNode<Particle> octant, float percentage) {
         // Calculate nObjects for this octant based on maxObjs and the MAX_PART
-        int nInput = inputStars.size();
+        int nInput = inputStars.size;
         int nObjects = MathUtils.clamp(Math.round(nInput * percentage), 1, Integer.MAX_VALUE);
 
         if (nInput <= MIN_PART || octant.depth >= MAX_DEPTH) {
@@ -57,7 +56,7 @@ public class BrightestStars implements IAggregationAlgorithm<Particle> {
                     }
                 } else {
                     // Select sample, discard the rest
-                    Collections.sort(inputStars, comp);
+                    inputStars.sort(comp);
                     for (int i = 0; i < nObjects; i++) {
                         Particle s = inputStars.get(i);
                         if (s.octant == null) {
@@ -65,7 +64,7 @@ public class BrightestStars implements IAggregationAlgorithm<Particle> {
                             octant.add(s);
                             s.octant = octant;
                             s.octantId = octant.pageId;
-                            s.nparticles = inputStars.size() / nObjects;
+                            s.nparticles = inputStars.size / nObjects;
                         }
                     }
 
@@ -75,17 +74,17 @@ public class BrightestStars implements IAggregationAlgorithm<Particle> {
             return true;
         } else {
             // Extract sample
-            Collections.sort(inputStars, comp);
+            inputStars.sort(comp);
             int added = 0;
             int i = 0;
-            while (added < nObjects && i < inputStars.size()) {
+            while (added < nObjects && i < inputStars.size) {
                 Particle s = inputStars.get(i);
                 if (s.octant == null) {
                     // Add star
                     octant.add(s);
                     s.octant = octant;
                     s.octantId = octant.pageId;
-                    s.nparticles = inputStars.size() / nObjects;
+                    s.nparticles = inputStars.size / nObjects;
                     added++;
                 }
                 i++;

@@ -56,7 +56,6 @@ public class FullGui implements IGui, IObserver {
     protected Stage ui;
 
     protected ControlsWindow controlsWindow;
-    protected GaiaSkyMenu gsMenu;
 
     protected Container<FocusInfoInterface> fi;
     protected FocusInfoInterface focusInterface;
@@ -125,8 +124,6 @@ public class FullGui implements IGui, IObserver {
             // WEBGL INTERFACE - TOP LEFT
             addWebglInterface();
         } else {
-            // MENU
-            //addGaiaSkyMenu();
             // CONTROLS WINDOW
             addControlsWindow();
         }
@@ -198,9 +195,6 @@ public class FullGui implements IGui, IObserver {
                     controlsWindow.collapseInstant();
                 controlsWindow.setPosition(0, Gdx.graphics.getHeight() - controlsWindow.getHeight());
                 ui.addActor(controlsWindow);
-            }
-            if (gsMenu != null) {
-                ui.addActor(gsMenu);
             }
             if (webglInterface != null)
                 ui.addActor(wgl);
@@ -497,13 +491,4 @@ public class FullGui implements IGui, IObserver {
         controlsWindow.collapseInstant();
     }
 
-    public void addGaiaSkyMenu() {
-        gsMenu = new GaiaSkyMenu(ui, skin);
-        gsMenu.setSceneGraph(sg);
-        gsMenu.setVisibilityToggles(visibilityEntities, visible);
-        gsMenu.initialize();
-        gsMenu.setFillParent(true);
-        gsMenu.top();
-
-    }
 }

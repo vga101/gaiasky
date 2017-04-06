@@ -51,9 +51,10 @@ public abstract class AbstractSceneGraph implements ISceneGraph {
             // Unwrap octree objects
             if (node instanceof AbstractOctreeWrapper) {
                 AbstractOctreeWrapper ow = (AbstractOctreeWrapper) node;
-                for (SceneGraphNode ownode : ow.children) {
-                    addToIndex(ownode, stringToNode);
-                }
+                if (ow.children != null)
+                    for (SceneGraphNode ownode : ow.children) {
+                        addToIndex(ownode, stringToNode);
+                    }
             }
 
             // Star map            

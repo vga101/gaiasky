@@ -31,7 +31,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.SnapshotArray;
-import com.kotcrab.vis.ui.util.ActorUtils;
 
 /**
  * @author Kotcrab

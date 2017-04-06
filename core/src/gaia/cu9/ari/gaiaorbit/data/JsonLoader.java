@@ -1,6 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.data;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -8,6 +7,7 @@ import java.util.TreeMap;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.JsonValue.ValueType;
@@ -44,8 +44,8 @@ public class JsonLoader<T extends SceneGraphNode> implements ISceneGraphLoader {
     }
 
     @Override
-    public List<? extends SceneGraphNode> loadData() {
-        List<T> bodies = new ArrayList<T>();
+    public Array<? extends SceneGraphNode> loadData() {
+        Array<T> bodies = new Array<T>();
 
         try {
             JsonReader json = new JsonReader();

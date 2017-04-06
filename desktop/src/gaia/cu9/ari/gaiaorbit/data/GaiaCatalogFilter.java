@@ -15,6 +15,7 @@ import java.util.Set;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl.LwjglFiles;
+import com.badlogic.gdx.utils.Array;
 
 import gaia.cu9.ari.gaiaorbit.data.stars.HYGBinaryLoader;
 import gaia.cu9.ari.gaiaorbit.data.stars.STILCatalogLoader;
@@ -41,7 +42,7 @@ import net.jafama.FastMath;
  */
 public class GaiaCatalogFilter {
 
-    List<? extends CelestialBody> catalog;
+    Array<? extends CelestialBody> catalog;
     long MAX_OVERLAP_TIME;
     double BAM_2;
     double angleEdgeRad;

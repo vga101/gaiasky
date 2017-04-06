@@ -4,6 +4,8 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.badlogic.gdx.utils.Array;
+
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
 
 /**
@@ -21,7 +23,7 @@ public abstract class AbstractCatalogLoader {
         this.filters = new ArrayList<CatalogFilter>(0);
     }
 
-    public abstract List<? extends CelestialBody> loadData() throws FileNotFoundException;
+    public abstract Array<? extends CelestialBody> loadData() throws FileNotFoundException;
 
     public void addFilter(CatalogFilter cf) {
         filters.add(cf);
