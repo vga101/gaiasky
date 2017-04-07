@@ -19,6 +19,6 @@ public interface IRenderable {
      * Gets the last distance to the camera calculated for this entity.
      * @return The distance.
      */
-    public float getDistToCamera();
+    public double getDistToCamera();
 
 }

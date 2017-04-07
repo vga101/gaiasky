@@ -216,7 +216,7 @@ public class MilkyWayReal extends AbstractPositionEntity implements I3DTextRende
 
     @Override
     public float textSize() {
-        return distToCamera * 3e-3f;
+        return (float) distToCamera * 3e-3f;
     }
 
     @Override

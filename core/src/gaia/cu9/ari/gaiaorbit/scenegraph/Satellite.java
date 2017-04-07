@@ -85,8 +85,7 @@ public abstract class Satellite extends ModelBody {
         float thAngleQuad = (float) THRESHOLD_QUAD() * camera.getFovFactor();
         double size = 0f;
         if (viewAngle >= THRESHOLD_POINT() * camera.getFovFactor()) {
-            float tanThShaderOverlapDist = (float) Math.tan(thAngleQuad) * distToCamera;
-            size = tanThShaderOverlapDist * 10f;
+            size = Math.tan(thAngleQuad) * distToCamera * 10f;
         }
         return (float) size / camera.getFovFactor();
     }

@@ -51,7 +51,7 @@ public abstract class AbstractPositionEntity extends SceneGraphNode {
     /**
      * The distance to the camera from the focus center.
      */
-    public float distToCamera;
+    public double distToCamera;
 
     /**
      * This is not actually an angle. It's the relation radius/distance, to check how big it appears on screen.
@@ -256,7 +256,7 @@ public abstract class AbstractPositionEntity extends SceneGraphNode {
         }
     }
 
-    public float getDistToCamera() {
+    public double getDistToCamera() {
         return distToCamera;
     }
 

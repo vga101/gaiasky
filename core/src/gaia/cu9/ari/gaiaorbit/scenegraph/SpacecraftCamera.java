@@ -329,7 +329,7 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
         updatePerspectiveCamera();
 
         String clname = null;
-        float cldist = -1f;
+        double cldist = -1d;
         if (closest != null && ModelBody.closestCamStar != null) {
             if (closest.distToCamera < ModelBody.closestCamStar.distToCamera) {
                 clname = closest.name;

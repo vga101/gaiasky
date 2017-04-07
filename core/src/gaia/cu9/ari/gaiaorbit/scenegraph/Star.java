@@ -247,9 +247,10 @@ public class Star extends Particle {
 
     @Override
     protected void addToRenderLists(ICamera camera) {
+        boolean visByCam = camera.isVisible(GaiaSky.instance.time, this);
         if (camera.getCurrent() instanceof FovCamera) {
             // Render as point, do nothing
-            if (camera.isVisible(GaiaSky.instance.time, this))
+            if (visByCam)
                 addToRender(this, RenderGroup.SHADER);
         } else {
             if (viewAngleApparent >= thpointTimesFovfactor) {
@@ -263,7 +264,8 @@ public class Star extends Particle {
                 addToRender(this, RenderGroup.LINE);
             }
         }
-        if ((renderText() || camera.getCurrent() instanceof FovCamera) && camera.isVisible(GaiaSky.instance.time, this)) {
+
+        if ((renderText() || camera.getCurrent() instanceof FovCamera) && visByCam) {
             addToRender(this, RenderGroup.LABEL);
         }
 

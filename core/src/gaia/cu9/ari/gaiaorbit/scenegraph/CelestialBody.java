@@ -131,7 +131,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
         float[] col = colorTransit ? ccTransit : ccPale;
         shader.setUniformf("u_color", col[0], col[1], col[2], alpha * opacity);
         shader.setUniformf("u_inner_rad", getInnerRad());
-        shader.setUniformf("u_distance", distToCamera);
+        shader.setUniformf("u_distance", (float) distToCamera);
         shader.setUniformf("u_apparent_angle", viewAngleApparent);
         shader.setUniformf("u_thpoint", (float) THRESHOLD_POINT() * camera.getFovFactor());
 
@@ -149,8 +149,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
         double size = 0f;
         if (viewAngle >= THRESHOLD_POINT() * camera.getFovFactor()) {
             if (viewAngle < thAngleQuad) {
-                float tanThShaderOverlapDist = (float) Math.tan(thAngleQuad) * distToCamera;
-                size = tanThShaderOverlapDist;
+                size = FastMath.tan(thAngleQuad) * distToCamera;
             } else {
                 size = this.size;
             }
@@ -314,7 +313,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
 
     @Override
     public float textSize() {
-        return (float) (Math.min(labelSizeConcrete() / Math.pow(distToCamera, 1.05f), labelMax()) * distToCamera * labelFactor());
+        return (float) (Math.min(labelSizeConcrete() / FastMath.powQuick(distToCamera, 1.05f), labelMax()) * distToCamera * labelFactor());
     }
 
     protected float labelSizeConcrete() {
@@ -329,14 +328,14 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
     public void textPosition(ICamera cam, Vector3d out) {
         transform.getTranslation(out);
         double len = out.len();
-        out.clamp(0, len - getRadius()).scl(0.8f);
+        out.clamp(0, len - getRadius()).scl(0.9f);
 
         Vector3d aux = aux3d2.get();
         aux.set(cam.getUp());
 
         aux.crs(out).nor();
 
-        float dist = (float) Math.min(-0.03f * out.len(), getRadius());
+        float dist = -0.045f * (float) out.len();
 
         aux.add(cam.getUp()).nor().scl(dist);
 

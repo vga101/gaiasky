@@ -123,7 +123,7 @@ public class Spacecraft extends AbstractPositionEntity implements IModelRenderab
     }
 
     @Override
-    public float getDistToCamera() {
+    public double getDistToCamera() {
         return 0;
     }
 

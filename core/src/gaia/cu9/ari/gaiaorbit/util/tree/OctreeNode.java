@@ -370,7 +370,7 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
     }
 
     @Override
-    public float getDistToCamera() {
+    public double getDistToCamera() {
         return 0;
     }
 
@@ -516,8 +516,8 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
         boxcopy.set(box);
         boxcopy.mul(boxtransf.idt().translate(parentTransform.getTranslation()));
 
-        observed = GlobalConf.program.CUBEMAP360_MODE || GlobalResources.isInView(boxcopy.getCenter(auxD1), auxD1.len(), angle, dir) || GlobalResources.isInView(boxcopy.getCorner000(auxD1), auxD1.len(), angle, dir) || GlobalResources.isInView(boxcopy.getCorner001(auxD1), auxD1.len(), angle, dir) || GlobalResources.isInView(boxcopy.getCorner010(auxD1), auxD1.len(), angle, dir) || GlobalResources.isInView(boxcopy.getCorner011(auxD1), auxD1.len(), angle, dir)
-                || GlobalResources.isInView(boxcopy.getCorner100(auxD1), auxD1.len(), angle, dir) || GlobalResources.isInView(boxcopy.getCorner101(auxD1), auxD1.len(), angle, dir) || GlobalResources.isInView(boxcopy.getCorner110(auxD1), auxD1.len(), angle, dir) || GlobalResources.isInView(boxcopy.getCorner111(auxD1), auxD1.len(), angle, dir) || box.contains(pos);
+        observed = GlobalConf.program.CUBEMAP360_MODE || GlobalResources.isInView(boxcopy.getCenter(auxD1), angle, dir) || GlobalResources.isInView(boxcopy.getCorner000(auxD1), angle, dir) || GlobalResources.isInView(boxcopy.getCorner001(auxD1), angle, dir) || GlobalResources.isInView(boxcopy.getCorner010(auxD1), angle, dir) || GlobalResources.isInView(boxcopy.getCorner011(auxD1), angle, dir) || GlobalResources.isInView(boxcopy.getCorner100(auxD1), angle, dir)
+                || GlobalResources.isInView(boxcopy.getCorner101(auxD1), angle, dir) || GlobalResources.isInView(boxcopy.getCorner110(auxD1), angle, dir) || GlobalResources.isInView(boxcopy.getCorner111(auxD1), angle, dir) || box.contains(pos);
 
         // Rays
         if (!observed && !GlobalConf.program.CUBEMAP360_MODE) {

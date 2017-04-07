@@ -227,7 +227,7 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
             //                Vector3 pmv = new Vector3(pm).scl((float) Constants.S_TO_Y).scl((float) AstroUtils.getMsSinceJ2015(time.getTime()) / 1000f);
             //                transform.position.add(pmv);
             //            }
-            distToCamera = (float) transform.position.len();
+            distToCamera = transform.position.len();
 
             if (!copy) {
                 // TODO Very ugly!
@@ -237,7 +237,7 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
 
                 addToRender(this, RenderGroup.POINT);
 
-                viewAngle = ((float) radius / distToCamera) / camera.getFovFactor();
+                viewAngle = (float) (radius / distToCamera) / camera.getFovFactor();
                 viewAngleApparent = viewAngle * GlobalConf.scene.STAR_BRIGHTNESS;
 
                 addToRenderLists(camera);

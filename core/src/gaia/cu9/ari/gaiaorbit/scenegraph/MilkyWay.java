@@ -159,7 +159,7 @@ public class MilkyWay extends Blob implements IModelRenderable, I3DTextRenderabl
 
     @Override
     public float textSize() {
-        return distToCamera * 3e-3f;
+        return (float) distToCamera * 3e-3f;
     }
 
     @Override

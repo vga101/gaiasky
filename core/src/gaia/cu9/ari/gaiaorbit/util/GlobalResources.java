@@ -176,8 +176,28 @@ public class GlobalResources {
      *            The direction.
      * @return True if the body is visible.
      */
-    public static boolean isInView(Vector3d point, double pointDistance, float coneAngle, Vector3d dir) {
-        return FastMath.acos(point.dot(dir) / pointDistance) < coneAngle;
+    public static boolean isInView(Vector3d point, float coneAngle, Vector3d dir) {
+        return FastMath.acos(point.dot(dir) / point.len()) < coneAngle;
+    }
+
+    /**
+     * Computes whether a body with the given position is visible by a camera
+     * with the given direction and angle. Coordinates are assumed to be in the
+     * camera-origin system.
+     * 
+     * @param point
+     *            The position of the body in the reference system of the camera
+     *            (i.e. camera is at origin).
+     * @param len
+     *            The point length
+     * @param coneAngle
+     *            The cone angle of the camera.
+     * @param dir
+     *            The direction.
+     * @return True if the body is visible.
+     */
+    public static boolean isInView(Vector3d point, double len, float coneAngle, Vector3d dir) {
+        return FastMath.acos(point.dot(dir) / len) < coneAngle;
     }
 
     /**
