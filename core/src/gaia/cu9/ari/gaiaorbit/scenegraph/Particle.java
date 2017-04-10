@@ -393,7 +393,14 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
         Vector3 p2 = aux3f4.get().set(p1).add(ppm);
         camera.getPos().setVector3(campos);
 
-        renderer.addLine(p1.x, p1.y, p1.z, p2.x, p2.y, p2.z, 0.65f, 0.65f, 0.0f, alpha);
+        // Mualpha -> red channel
+        // Mudelta -> green channel
+        // Radvel  -> blue channel
+        // Min value per channel = 0.2
+        final double mumin = -80;
+        final double mumax = 80;
+        final double maxmin = mumax - mumin;
+        renderer.addLine(p1.x, p1.y, p1.z, p2.x, p2.y, p2.z, (float) ((pmSph.x - mumin) / maxmin) * 0.8f + 0.2f, (float) ((pmSph.y - mumin) / maxmin) * 0.8f + 0.2f, (float) pmSph.z * 0.8f + 0.2f, alpha);
     }
 
     protected float getThOverFactorScl() {
