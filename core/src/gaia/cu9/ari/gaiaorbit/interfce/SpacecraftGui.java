@@ -502,6 +502,7 @@ public class SpacecraftGui implements IGui, IObserver {
     @Override
     public void dispose() {
         ui.dispose();
+        EventManager.instance.removeAllSubscriptions(this);
     }
 
     @Override

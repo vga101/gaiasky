@@ -49,11 +49,15 @@ public class GlobalResources {
         if (GlobalConf.program.UI_THEME.endsWith("-x2")) {
             GlobalConf.updateScaleFactor(2.0f);
         }
-        FileHandle fh = Gdx.files.internal("skins/" + GlobalConf.program.UI_THEME + "/" + GlobalConf.program.UI_THEME + ".json");
-        skin = new Skin(fh);
+        updateSkin();
 
         // Async load
         manager.load("img/cursor-link.png", Pixmap.class);
+    }
+
+    public static void updateSkin() {
+        FileHandle fh = Gdx.files.internal("skins/" + GlobalConf.program.UI_THEME + "/" + GlobalConf.program.UI_THEME + ".json");
+        skin = new Skin(fh);
     }
 
     public static void doneLoading(AssetManager manager) {

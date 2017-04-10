@@ -115,6 +115,9 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
     // Frame buffer map
     private Map<String, FrameBuffer> fbmap;
 
+    // The input multiplexer
+    private InputMultiplexer inputMultiplexer;
+
     /**
      * The user interfaces
      */
@@ -212,28 +215,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
 
         // GUI
         guis = new ArrayList<IGui>(3);
-        if (Constants.desktop || Constants.webgl) {
-            // Full GUI for desktop
-            mainGui = new FullGui();
-        } else if (Constants.mobile) {
-            // Reduced GUI for android/iOS/...
-            mainGui = new MobileGui();
-        }
-        mainGui.initialize(manager);
-
-        debugGui = new DebugGui();
-        debugGui.initialize(manager);
-
-        spacecraftGui = new SpacecraftGui(cam.spacecraftCamera);
-        spacecraftGui.initialize(manager);
-
-        stereoGui = new StereoGui();
-        stereoGui.initialize(manager);
-
-        guis.add(mainGui);
-        guis.add(debugGui);
-        guis.add(spacecraftGui);
-        guis.add(stereoGui);
+        reinitialiseGUI1();
 
         // Tell the asset manager to load all the assets
         Set<AssetBean> assets = AssetBean.getAssets();
@@ -292,30 +274,10 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         OctreeNode.LOAD_ACTIVE = true;
 
         // Initialise input handlers
-        InputMultiplexer inputMultiplexer = new InputMultiplexer();
+        inputMultiplexer = new InputMultiplexer();
 
-        // Only for the Full GUI
-        mainGui.setSceneGraph(sg);
-        mainGui.setVisibilityToggles(ComponentType.values(), SceneGraphRenderer.visible);
-
-        // Initialise the GUI
-        for (IGui gui : guis)
-            gui.doneLoading(manager);
-
-        if (GlobalConf.program.STEREOSCOPIC_MODE) {
-            GuiRegistry.registerGui(stereoGui);
-            inputMultiplexer.addProcessor(stereoGui.getGuiStage());
-            // Initialise current and previous
-            currentGui = stereoGui;
-            previousGui = mainGui;
-        } else {
-            GuiRegistry.registerGui(mainGui);
-            inputMultiplexer.addProcessor(mainGui.getGuiStage());
-            // Initialise current and previous
-            currentGui = mainGui;
-            previousGui = null;
-        }
-        GuiRegistry.registerGui(debugGui);
+        // Init GUIs, step 2
+        reinitialiseGUI2();
 
         // Publish visibility
         EventManager.instance.post(Events.VISIBILITY_OF_COMPONENTS, new Object[] { SceneGraphRenderer.visible });
@@ -392,6 +354,70 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
             GlobalConf.program.DISPLAY_TUTORIAL = false;
         }
 
+    }
+
+    /**
+     * Reinitialises all the GUI (step 1)
+     */
+    public void reinitialiseGUI1() {
+        if (guis != null && !guis.isEmpty()) {
+            for (IGui gui : guis)
+                gui.dispose();
+            guis.clear();
+        }
+
+        if (Constants.desktop || Constants.webgl) {
+            // Full GUI for desktop
+            mainGui = new FullGui();
+        } else if (Constants.mobile) {
+            // Reduced GUI for android/iOS/...
+            mainGui = new MobileGui();
+        }
+        mainGui.initialize(manager);
+
+        debugGui = new DebugGui();
+        debugGui.initialize(manager);
+
+        spacecraftGui = new SpacecraftGui(cam.spacecraftCamera);
+        spacecraftGui.initialize(manager);
+
+        stereoGui = new StereoGui();
+        stereoGui.initialize(manager);
+
+        guis.add(mainGui);
+        guis.add(debugGui);
+        guis.add(spacecraftGui);
+        guis.add(stereoGui);
+    }
+
+    /**
+     * Second step in GUI initialisation.
+     */
+    public void reinitialiseGUI2() {
+        // Unregister all current GUIs
+        GuiRegistry.unregisterAll();
+
+        // Only for the Full GUI
+        mainGui.setSceneGraph(sg);
+        mainGui.setVisibilityToggles(ComponentType.values(), SceneGraphRenderer.visible);
+
+        for (IGui gui : guis)
+            gui.doneLoading(manager);
+
+        if (GlobalConf.program.STEREOSCOPIC_MODE) {
+            GuiRegistry.registerGui(stereoGui);
+            inputMultiplexer.addProcessor(stereoGui.getGuiStage());
+            // Initialise current and previous
+            currentGui = stereoGui;
+            previousGui = mainGui;
+        } else {
+            GuiRegistry.registerGui(mainGui);
+            inputMultiplexer.addProcessor(mainGui.getGuiStage());
+            // Initialise current and previous
+            currentGui = mainGui;
+            previousGui = null;
+        }
+        GuiRegistry.registerGui(debugGui);
     }
 
     @Override

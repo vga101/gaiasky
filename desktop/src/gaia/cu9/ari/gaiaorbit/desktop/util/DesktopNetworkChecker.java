@@ -23,6 +23,8 @@ public class DesktopNetworkChecker extends Thread implements INetworkChecker {
     private static String URL_SIMBAD = "http://simbad.u-strasbg.fr/simbad/sim-id?Ident=";
     private static String URL_WIKIPEDIA = "https://en.wikipedia.org/wiki/";
 
+    private boolean running = true;
+
     private Skin skin;
     private CelestialBody focus;
     public Object monitor;
@@ -73,11 +75,18 @@ public class DesktopNetworkChecker extends Thread implements INetworkChecker {
         }
     }
 
+    public void stopExecution() {
+        running = false;
+        doNotify();
+    }
+
     public void run() {
         try {
-            while (true) {
+            while (running) {
                 executing = false;
                 doWait();
+                if (!running)
+                    break;
                 executing = true;
                 if (focus != null) {
                     Logger.debug(this.getClass().getSimpleName(), "Looking up network resources for '" + focus.name + "'");

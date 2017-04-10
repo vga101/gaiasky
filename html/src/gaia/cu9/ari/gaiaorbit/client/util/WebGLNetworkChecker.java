@@ -29,4 +29,8 @@ public class WebGLNetworkChecker implements INetworkChecker {
     public void setParameters(Table table, Skin skin, float pad) {
     }
 
+    @Override
+    public void stopExecution() {
+    }
+
 }

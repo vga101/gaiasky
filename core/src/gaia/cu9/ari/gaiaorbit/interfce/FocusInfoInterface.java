@@ -32,6 +32,7 @@ import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnLabel;
  *
  */
 public class FocusInfoInterface extends Table implements IObserver {
+    static private INetworkChecker daemon;
 
     protected OwnLabel focusName, focusId, focusRA, focusDEC, focusMuAlpha, focusMuDelta, focusAngle, focusDist, focusAppMag, focusAbsMag, focusRadius;
     protected OwnLabel pointerName, pointerLonLat, pointerRADEC;
@@ -41,8 +42,6 @@ public class FocusInfoInterface extends Table implements IObserver {
     Vector3d pos;
 
     INumberFormat nf, sf;
-
-    private INetworkChecker daemon;
 
     float pad5, pad10;
 
@@ -157,9 +156,11 @@ public class FocusInfoInterface extends Table implements IObserver {
         add(cameraInfo).align(Align.left);
         pack();
 
-        daemon = NetworkCheckerManager.getNewtorkChecker();
-        daemon.setParameters(moreInfo, skin, pad10);
-        daemon.start();
+        if (daemon == null) {
+            daemon = NetworkCheckerManager.getNewtorkChecker();
+            daemon.setParameters(moreInfo, skin, pad10);
+            daemon.start();
+        }
 
         pos = new Vector3d();
         EventManager.instance.subscribe(this, Events.FOCUS_CHANGED, Events.FOCUS_INFO_UPDATED, Events.CAMERA_MOTION_UPDATED, Events.CAMERA_MODE_CMD, Events.LON_LAT_UPDATED, Events.RA_DEC_UPDATED);

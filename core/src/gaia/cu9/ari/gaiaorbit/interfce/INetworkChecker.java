@@ -20,5 +20,7 @@ public interface INetworkChecker {
 
     public void doNotify();
 
+    public void stopExecution();
+
     public void setParameters(Table table, Skin skin, float pad);
 }

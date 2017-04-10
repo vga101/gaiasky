@@ -19,6 +19,11 @@ public class GuiRegistry {
         return guis.removeValue(gui, true);
     }
 
+    public static boolean unregisterAll() {
+        guis.clear();
+        return true;
+    }
+
     public static void render(int rw, int rh) {
         for (int i = 0; i < guis.size; i++) {
             guis.get(i).getGuiStage().getViewport().apply();

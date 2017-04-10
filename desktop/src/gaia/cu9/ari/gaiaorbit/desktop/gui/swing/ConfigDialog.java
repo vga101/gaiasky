@@ -70,6 +70,7 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.JsonValue;
 
+import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.desktop.GaiaSkyDesktop;
 import gaia.cu9.ari.gaiaorbit.desktop.gui.swing.callback.Callback;
 import gaia.cu9.ari.gaiaorbit.desktop.gui.swing.callback.CallbackTask;
@@ -84,6 +85,7 @@ import gaia.cu9.ari.gaiaorbit.interfce.TextUtils;
 import gaia.cu9.ari.gaiaorbit.util.ConfInit;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
+import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
@@ -991,6 +993,7 @@ public class ConfigDialog extends I18nJFrame {
                     LangComboBoxBean lbean = (LangComboBoxBean) lang.getSelectedItem();
                     GlobalConf.program.LOCALE = lbean.locale.toLanguageTag();
                     I18n.forceinit(Gdx.files.internal("i18n/gsbundle"));
+                    boolean uithemeChanged = GlobalConf.program.UI_THEME != (String) theme.getSelectedItem();
                     GlobalConf.program.UI_THEME = (String) theme.getSelectedItem();
                     if (GlobalConf.program.UI_THEME.equalsIgnoreCase("hidpi")) {
                         GlobalConf.updateScaleFactor(Math.max(GlobalConf.SCALE_FACTOR, 1.6f));
@@ -1055,6 +1058,17 @@ public class ConfigDialog extends I18nJFrame {
                     }
                     frame.dispose();
                     singleton = null;
+
+                    if (uithemeChanged && !startup) {
+                        Gdx.app.postRunnable(new Runnable() {
+                            public void run() {
+                                // Reinitialise GUI system
+                                GlobalResources.updateSkin();
+                                GaiaSky.instance.reinitialiseGUI1();
+                                GaiaSky.instance.reinitialiseGUI2();
+                            }
+                        });
+                    }
                 }
             }
 
