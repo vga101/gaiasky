@@ -211,7 +211,10 @@ This is practically the same format as the binary in the
 `octree <http://en.wikipedia.org/wiki/Octree>`__ in order to cull
 portions of the catalog that are not visible and to implement a
 level-of-detail system to reduce the amount of particles in the
-viewport. This loader needs two files, the **particles file** and the
+viewport. 
+This loader is called ``OctreeSingleFileLoader`` and is implemented ``here <https://github.com/langurmonkey/gaiasky/blob/master/core/src/gaia/cu9/ari/gaiaorbit/data/stars/OctreeSingleFileLoader.java>`__. 
+
+This loader needs two files, the **particles file** and the
 **metadata** file. Both files are binary files and their description is
 below.
 
@@ -261,6 +264,17 @@ according to certain parameters. The class
 ``OctreeGeneratorTest`` --`here <https://github.com/langurmonkey/gaiasky/blob/master/desktop/src/gaia/cu9/ari/gaiaorbit/data/OctreeGeneratorTest.java>`__--
 may be used to read a catalog from a file, generate the octree and write
 both the particles and the metadata files back to a file.
+
+Octree catalog loader (multifile)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+There is a version of the Octree catalog loader specially designed for very large datasets. This version
+does not load everything at startup. It needs the catalog to be organised into several files, each one corresponding to 
+a particluar octree node. This is an option in the `OctreeGeneratorTest <https://github.com/langurmonkey/gaiasky/blob/master/desktop/src/gaia/cu9/ari/gaiaorbit/data/OctreeGeneratorTest.java>`__.
+Back to the loader, it can pre-load files down to a certain depth level; the rest of the
+files will be loaded when needed and unloaded if necessary. This way the data is being streamed from disk
+to the main memory as the user explores the dataset.
+This loader is called ``OctreeMultiFileLoader`` and is implemented ``here <https://github.com/langurmonkey/gaiasky/blob/master/core/src/gaia/cu9/ari/gaiaorbit/data/stars/OctreeMultiFileLoader.java>`__. 
 
 STIL catalog loader
 ~~~~~~~~~~~~~~~~~~~

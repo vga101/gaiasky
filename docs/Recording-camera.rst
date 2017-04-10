@@ -28,14 +28,13 @@ The format of each row is as follows:
 Recording camera paths
 ======================
 
-In order to **start recording** the camera path, click on the ``REC``
+In order to **start recording** the camera path, click on the |rec-icon-gray| ``REC``
 button next to the Camera section title in the GUI Controls window. The
-``REC`` button will turn red, which indicates the camera is being
+``REC`` button will turn red |rec-icon-red|, which indicates the camera is being
 recorded.
 
-.. figure:: img/camera-rec-play.jpg
-
-  Camera path ``REC`` and ``PLAY`` buttons
+.. |rec-icon-gray| image:: img/ui/rec-icon-gray.png
+.. |rec-icon-red| image:: img/ui/rec-icon-red.png
 
 In order to **stop the recording** and write the file, click again on
 the red ``REC`` button. The button will turn grey and a notification
@@ -45,9 +44,11 @@ by default saved in the ``$HOME/.gaiasky/camera`` directory.
 Playing camera paths
 ====================
 
-In order to play a camera file, click on the ``PLAY``  icon next to the
+In order to play a camera file, click on the |play-icon| ``PLAY``  icon next to the
 ``REC`` icon. This will prompt a list of available camera files in the
 ``$HOME/.gaiasky/camera`` folder.
+
+.. |play-icon| image:: img/ui/play-icon.png
 
 You can also combine the camera file playback with the frame output system to
 save each frame to a ``JPEG`` image during playback. To do so, enable the **Activate frame output automatically**

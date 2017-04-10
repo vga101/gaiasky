@@ -9,11 +9,11 @@ In the planetarium mode a few things happen:
 *  **Field of view** -- The field of view is increased to about 180 degrees.
 *  **View skew** -- In focus mode, the view is skewed about 50 degrees downwards.
 
-.. hint:: To activate the planetarium mode, click on the |dome| icon in the camera section of the controls window. Exit by clicking |dome| again.
+.. hint:: To activate the planetarium mode, click on the |dome-icon| icon in the camera section of the controls window. Exit by clicking |dome-icon| again.
 
 .. figure:: img/planetarium-mode.jpg
   :width: 100%
 
   Planetarium mode
 
-.. |dome| image:: img/dome.jpg
+.. |dome-icon| image:: img/ui/dome-icon.png

@@ -6,7 +6,8 @@ mode <http://en.wikipedia.org/wiki/Stereoscopy>`__ or 3D mode which
 outputs two images each intended for each eye, creating the illusion of
 depth.
 
-.. hint:: ``LEFT_CTRL`` + ``S`` -- Activate the stereoscopic mode
+.. hint:: 
+		  |3d-icon| or ``LEFT_CTRL`` + ``S`` -- Activate the stereoscopic mode
 
           ``LEFT_CTRL`` + ``LEFT_SHIFT`` + ``S`` -- Switch between 3D profiles
 
@@ -66,3 +67,5 @@ profiles which can be selected by the user and are described below.
           :width: 100%
 .. |ANAG| image:: img/3d/3d-anaglyph.jpg
           :width: 100%
+          
+.. |3d-icon| image:: img/ui/3d-icon.png

@@ -4,20 +4,22 @@ User Interface
 GUI window
 ==========
 
-The Gaia Sky application has an on-screen user interface designed to be
-easy to use. It is divided into five sections, `Time <#time>`__,
+The Gaia Sky GUI is divided into six sections, `Time <#time>`__,
 `Camera <#camera>`__, `Objects <#objects>`__, `Type
-visibility <#type-visibility>`__, `Lighting <#lighting>`__ and `Gaia
-scan <#gaia-scan>`__.
+visibility <#type-visibility>`__, `Lighting <#lighting>`__, `Gaia
+scan <#gaia-scan>`__ and `Music <#music>`__.
 
 Time
 ----
 
-You can play and pause the simulation using the ``PLAY/PAUSE`` button in
+You can play and pause the simulation using the |play-icon|/|pause-icon| ``Play/Pause`` buttons in
 the ``Controls`` window to the left. You can also use ``SPACE`` to play
 and pause the time. You can also change time warp, which is expressed as
 a factor. Use ``,`` and ``.`` to divide by 2 and double the value of the
 time warp.
+
+.. |play-icon| image:: img/ui/play-icon.png
+.. |pause-icon| image:: img/ui/pause-icon.png
 
 Camera
 ------
@@ -136,18 +138,28 @@ so, tick the ``Show only observed stars`` checkbox.
 Music
 -----
 
-Since version ``0.800b`` Gaia Sky also offers a music player in its
-interface. By default it ships with only one *spacey* melody, but you
+Since version ``0.800b``, Gaia Sky also offers a music player in its
+interface. By default it ships with only a few *spacey* melody, but you
 can add your own by dropping them in the folder ``$HOME/.gaiasky/music``.
 
 .. hint:: Drop your ``mp3``, ``ogg`` or ``wav`` files in the folder ``$HOME/.gaiasky/music`` and these will be available during your Gaia Sky sessions to play.
+
+In order to start playing, click on the |audio-play| ``Play`` button. To pause the track, click on the |audio-pause| ``Pause`` icon. To skip to the next track,
+click on the |audio-fwd| ``Forward`` icon. To go to the previous track, click on the |audio-bwd| ``Backward`` icon.
+The volume can be controlled using the slider at the bottom of the pane.
+
+.. |audio-play| image:: img/ui/audio-play.png
+.. |audio-pause| image:: img/ui/audio-pause.png
+.. |audio-fwd| image:: img/ui/audio-fwd.png
+.. |audio-bwd| image:: img/ui/audio-bwd.png
+
 
 .. _running-scripts:
 
 Running scripts
 ===============
 
-In order to run python scripts, click on the ``Run script...`` button at
+In order to run Python scripts, click on the |scriptrun| ``Run script`` button at
 the bottom of the GUI window. A new window will pop up allowing you to
 select the script you want to run. Once you have selected it, the script
 will be checked for errors. If no errors were found, you will be
@@ -158,11 +170,15 @@ the script until these errors are dealt with.
 
 .. hint:: Add your own scripts to the folder ``$HOME/.gaiasky/scripts`` so that Gaia Sky can find them.
 
+.. |scriptrun| image:: img/ui/car-icon.png
+
 Preferences window
 ==================
 
 You can launch the preferences window any time during the execution of
-the program. To do so, click on the ``Preferences`` button at the bottom
+the program. To do so, click on the |prefsicon| ``Preferences`` button at the bottom
 of the GUI window. For a detailed description of the configuration
 options refer to the :ref:`Configuration
 Instructions <configuration>`.
+
+.. |prefsicon| image:: img/ui/prefs-icon.png
