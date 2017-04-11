@@ -418,17 +418,18 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
         this.opacity = opacity;
 
         // Is this octant observed??
-        if (!cam.getMode().isGaiaFov())
+        if (!cam.getMode().isGaiaFov()) {
             // Only one view direction
             computeObserved2(parentTransform, cam.getAngleEdge(), cam.getPos(), cam.getDirection(), cam.getUp());
-        //computeObserved1(parentTransform, cam.getCamera());
-        else {
+            //computeObserved1(parentTransform, cam.getCamera());
+        } else {
             // FOV, we have two view directions
             computeObserved2(parentTransform, cam.getAngleEdge(), cam.getPos(), cam.getDirections()[0], cam.getUp());
             //computeObserved1(parentTransform, cam.getCameraStereoLeft());
-            if (!observed)
+            if (!observed) {
                 computeObserved2(parentTransform, cam.getAngleEdge(), cam.getPos(), cam.getDirections()[1], cam.getUp());
-            //computeObserved1(parentTransform, cam.getCameraStereoRight());
+                //computeObserved1(parentTransform, cam.getCameraStereoRight());
+            }
         }
 
         if (observed) {
