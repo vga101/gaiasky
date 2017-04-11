@@ -16,6 +16,7 @@ import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.TwoWayHashmap;
 import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
 import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
+import gaia.cu9.ari.gaiaorbit.util.math.Frustumd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
@@ -447,6 +448,11 @@ public class CameraManager implements ICamera, IObserver {
     @Override
     public Vector3d getShift() {
         return current.getShift();
+    }
+
+    @Override
+    public Frustumd getFrustum() {
+        return current.getFrustum();
     }
 
 }

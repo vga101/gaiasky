@@ -30,6 +30,7 @@ import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.gaia.GaiaAttitudeServer;
 import gaia.cu9.ari.gaiaorbit.util.gaia.Satellite;
+import gaia.cu9.ari.gaiaorbit.util.math.Frustumd;
 import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
 import gaia.cu9.ari.gaiaorbit.util.math.Quaterniond;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
@@ -56,6 +57,7 @@ public class FovCamera extends AbstractCamera implements IObserver {
     public float MAX_OVERLAP_ANGLE = 0;
 
     private PerspectiveCamera camera2;
+    private Frustumd frustum2;
 
     public Gaia gaia;
 
@@ -98,6 +100,8 @@ public class FovCamera extends AbstractCamera implements IObserver {
         camera2 = new PerspectiveCamera(FOV, (float) (Gdx.graphics.getHeight() * GAIA_ASPECT_RATIO), Gdx.graphics.getHeight());
         camera2.near = (float) CAM_NEAR;
         camera2.far = (float) CAM_FAR;
+
+        frustum2 = new Frustumd();
 
         fovFactor = FOV / 5f;
 
@@ -168,6 +172,12 @@ public class FovCamera extends AbstractCamera implements IObserver {
 
         updateCamera(directions[1], up, camera2);
 
+        // Update frustums
+        updateFrustum(frustum, camera, pos, directions[0], up);
+
+        updateFrustum(frustum2, camera2, pos, directions[1], up);
+
+        // Dir middle
         dirMiddle.set(0, 0, 1).mul(trf);
 
         // Return to pool
@@ -391,6 +401,10 @@ public class FovCamera extends AbstractCamera implements IObserver {
         for (Stage stage : fpstages)
             stage.getViewport().update(width, height, true);
 
+    }
+
+    public Frustumd getFrustum2() {
+        return frustum2;
     }
 
 }

@@ -327,6 +327,7 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
 
         // Update camera
         updatePerspectiveCamera();
+        updateFrustum(frustum, camera, pos, direction, up);
 
         String clname = null;
         double cldist = -1d;

@@ -329,7 +329,7 @@ public class Matrix4d implements Serializable {
      * @param matrix The other matrix to multiply by.
      * @return This matrix for the purpose of chaining operations together. */
     public Matrix4d mul(Matrix4d matrix) {
-        mul(val, matrix.val);
+        matrix4_mul(val, matrix.val);
         return this;
     }
 
@@ -394,50 +394,17 @@ public class Matrix4d implements Serializable {
         return this;
     }
 
-    /** Inverts the matrix. Stores the result in this matrix.
-     * 
-     * @return This matrix for the purpose of chaining methods together.
-     * @throws RuntimeException if the matrix is singular (not invertible) */
     public Matrix4d inv() {
-        double l_det = val[M30] * val[M21] * val[M12] * val[M03] - val[M20] * val[M31] * val[M12] * val[M03] - val[M30] * val[M11] * val[M22] * val[M03] + val[M10] * val[M31] * val[M22] * val[M03] + val[M20] * val[M11] * val[M32] * val[M03] - val[M10] * val[M21] * val[M32] * val[M03] - val[M30] * val[M21] * val[M02] * val[M13] + val[M20] * val[M31] * val[M02] * val[M13] + val[M30] * val[M01] * val[M22] * val[M13] - val[M00] * val[M31] * val[M22] * val[M13]
-                - val[M20] * val[M01] * val[M32] * val[M13] + val[M00] * val[M21] * val[M32] * val[M13] + val[M30] * val[M11] * val[M02] * val[M23] - val[M10] * val[M31] * val[M02] * val[M23] - val[M30] * val[M01] * val[M12] * val[M23] + val[M00] * val[M31] * val[M12] * val[M23] + val[M10] * val[M01] * val[M32] * val[M23] - val[M00] * val[M11] * val[M32] * val[M23] - val[M20] * val[M11] * val[M02] * val[M33] + val[M10] * val[M21] * val[M02] * val[M33] + val[M20] * val[M01] * val[M12] * val[M33]
-                - val[M00] * val[M21] * val[M12] * val[M33] - val[M10] * val[M01] * val[M22] * val[M33] + val[M00] * val[M11] * val[M22] * val[M33];
-        if (l_det == 0f)
-            throw new RuntimeException("non-invertible matrix");
-        double inv_det = 1.0f / l_det;
-        tmp[M00] = val[M12] * val[M23] * val[M31] - val[M13] * val[M22] * val[M31] + val[M13] * val[M21] * val[M32] - val[M11] * val[M23] * val[M32] - val[M12] * val[M21] * val[M33] + val[M11] * val[M22] * val[M33];
-        tmp[M01] = val[M03] * val[M22] * val[M31] - val[M02] * val[M23] * val[M31] - val[M03] * val[M21] * val[M32] + val[M01] * val[M23] * val[M32] + val[M02] * val[M21] * val[M33] - val[M01] * val[M22] * val[M33];
-        tmp[M02] = val[M02] * val[M13] * val[M31] - val[M03] * val[M12] * val[M31] + val[M03] * val[M11] * val[M32] - val[M01] * val[M13] * val[M32] - val[M02] * val[M11] * val[M33] + val[M01] * val[M12] * val[M33];
-        tmp[M03] = val[M03] * val[M12] * val[M21] - val[M02] * val[M13] * val[M21] - val[M03] * val[M11] * val[M22] + val[M01] * val[M13] * val[M22] + val[M02] * val[M11] * val[M23] - val[M01] * val[M12] * val[M23];
-        tmp[M10] = val[M13] * val[M22] * val[M30] - val[M12] * val[M23] * val[M30] - val[M13] * val[M20] * val[M32] + val[M10] * val[M23] * val[M32] + val[M12] * val[M20] * val[M33] - val[M10] * val[M22] * val[M33];
-        tmp[M11] = val[M02] * val[M23] * val[M30] - val[M03] * val[M22] * val[M30] + val[M03] * val[M20] * val[M32] - val[M00] * val[M23] * val[M32] - val[M02] * val[M20] * val[M33] + val[M00] * val[M22] * val[M33];
-        tmp[M12] = val[M03] * val[M12] * val[M30] - val[M02] * val[M13] * val[M30] - val[M03] * val[M10] * val[M32] + val[M00] * val[M13] * val[M32] + val[M02] * val[M10] * val[M33] - val[M00] * val[M12] * val[M33];
-        tmp[M13] = val[M02] * val[M13] * val[M20] - val[M03] * val[M12] * val[M20] + val[M03] * val[M10] * val[M22] - val[M00] * val[M13] * val[M22] - val[M02] * val[M10] * val[M23] + val[M00] * val[M12] * val[M23];
-        tmp[M20] = val[M11] * val[M23] * val[M30] - val[M13] * val[M21] * val[M30] + val[M13] * val[M20] * val[M31] - val[M10] * val[M23] * val[M31] - val[M11] * val[M20] * val[M33] + val[M10] * val[M21] * val[M33];
-        tmp[M21] = val[M03] * val[M21] * val[M30] - val[M01] * val[M23] * val[M30] - val[M03] * val[M20] * val[M31] + val[M00] * val[M23] * val[M31] + val[M01] * val[M20] * val[M33] - val[M00] * val[M21] * val[M33];
-        tmp[M22] = val[M01] * val[M13] * val[M30] - val[M03] * val[M11] * val[M30] + val[M03] * val[M10] * val[M31] - val[M00] * val[M13] * val[M31] - val[M01] * val[M10] * val[M33] + val[M00] * val[M11] * val[M33];
-        tmp[M23] = val[M03] * val[M11] * val[M20] - val[M01] * val[M13] * val[M20] - val[M03] * val[M10] * val[M21] + val[M00] * val[M13] * val[M21] + val[M01] * val[M10] * val[M23] - val[M00] * val[M11] * val[M23];
-        tmp[M30] = val[M12] * val[M21] * val[M30] - val[M11] * val[M22] * val[M30] - val[M12] * val[M20] * val[M31] + val[M10] * val[M22] * val[M31] + val[M11] * val[M20] * val[M32] - val[M10] * val[M21] * val[M32];
-        tmp[M31] = val[M01] * val[M22] * val[M30] - val[M02] * val[M21] * val[M30] + val[M02] * val[M20] * val[M31] - val[M00] * val[M22] * val[M31] - val[M01] * val[M20] * val[M32] + val[M00] * val[M21] * val[M32];
-        tmp[M32] = val[M02] * val[M11] * val[M30] - val[M01] * val[M12] * val[M30] - val[M02] * val[M10] * val[M31] + val[M00] * val[M12] * val[M31] + val[M01] * val[M10] * val[M32] - val[M00] * val[M11] * val[M32];
-        tmp[M33] = val[M01] * val[M12] * val[M20] - val[M02] * val[M11] * val[M20] + val[M02] * val[M10] * val[M21] - val[M00] * val[M12] * val[M21] - val[M01] * val[M10] * val[M22] + val[M00] * val[M11] * val[M22];
-        val[M00] = tmp[M00] * inv_det;
-        val[M01] = tmp[M01] * inv_det;
-        val[M02] = tmp[M02] * inv_det;
-        val[M03] = tmp[M03] * inv_det;
-        val[M10] = tmp[M10] * inv_det;
-        val[M11] = tmp[M11] * inv_det;
-        val[M12] = tmp[M12] * inv_det;
-        val[M13] = tmp[M13] * inv_det;
-        val[M20] = tmp[M20] * inv_det;
-        val[M21] = tmp[M21] * inv_det;
-        val[M22] = tmp[M22] * inv_det;
-        val[M23] = tmp[M23] * inv_det;
-        val[M30] = tmp[M30] * inv_det;
-        val[M31] = tmp[M31] * inv_det;
-        val[M32] = tmp[M32] * inv_det;
-        val[M33] = tmp[M33] * inv_det;
+        matrix4_inv(val);
         return this;
+    }
+
+    /** Computes the inverse of the given matrix. The matrix array is assumed to hold a 4x4 column major matrix as you can get from
+     * {@link Matrix4#val}.
+     * @param values the matrix values.
+     * @return false in case the inverse could not be calculated, true otherwise. */
+    public static boolean inv(double[] values) {
+        return matrix4_inv(values);
     }
 
     /** @return The determinant of this matrix */
@@ -950,12 +917,35 @@ public class Matrix4d implements Serializable {
         return inv().tra();
     }
 
-    /** Multiplies the matrix mata with matrix matb, storing the result in mata. The arrays are assumed to hold 4x4 column major
-     * matrices as you can get from {@link Matrix4d#val}. This is the same as {@link Matrix4d#mul(Matrix4d)}.
-     *
-     * @param mata the first matrix.
-     * @param matb the second matrix. */
-    public static void mul(double[] mata, double[] matb) {
+    /** Multiplies the vector with the given matrix, performing a division by w. The matrix array is assumed to hold a 4x4 column
+     * major matrix as you can get from {@link Matrix4d#val}. The vector array is assumed to hold a 3-component vector, with x being
+     * the first element, y being the second and z being the last component. The result is stored in the vector array. This is the
+     * same as {@link Vector3d#prj(Matrix4d)}.
+     * @param mat the matrix
+     * @param vec the vector. */
+    public static void prj(double[] mat, double[] vec) {
+        matrix4_proj(mat, vec, 0);
+    }
+
+    /** Multiplies the vectors with the given matrix, , performing a division by w. The matrix array is assumed to hold a 4x4 column
+     * major matrix as you can get from {@link Matrix4#val}. The vectors array is assumed to hold 3-component vectors. Offset
+     * specifies the offset into the array where the x-component of the first vector is located. The numVecs parameter specifies
+     * the number of vectors stored in the vectors array. The stride parameter specifies the number of floats between subsequent
+     * vectors and must be >= 3. This is the same as {@link Vector3#prj(Matrix4)} applied to multiple vectors.
+     * 
+     * @param mat the matrix
+     * @param vecs the vectors
+     * @param offset the offset into the vectors array
+     * @param numVecs the number of vectors
+     * @param stride the stride between vectors in floats */
+    public static void prj(double[] mat, double[] vecs, int offset, int numVecs, int stride) {
+        for (int i = 0; i < numVecs; i++) {
+            matrix4_proj(mat, vecs, offset);
+            offset += stride;
+        }
+    }
+
+    static void matrix4_mul(double[] mata, double[] matb) {
         double tmp[] = new double[16];
         tmp[M00] = mata[M00] * matb[M00] + mata[M01] * matb[M10] + mata[M02] * matb[M20] + mata[M03] * matb[M30];
         tmp[M01] = mata[M00] * matb[M01] + mata[M01] * matb[M11] + mata[M02] * matb[M21] + mata[M03] * matb[M31];
@@ -973,110 +963,83 @@ public class Matrix4d implements Serializable {
         tmp[M31] = mata[M30] * matb[M01] + mata[M31] * matb[M11] + mata[M32] * matb[M21] + mata[M33] * matb[M31];
         tmp[M32] = mata[M30] * matb[M02] + mata[M31] * matb[M12] + mata[M32] * matb[M22] + mata[M33] * matb[M32];
         tmp[M33] = mata[M30] * matb[M03] + mata[M31] * matb[M13] + mata[M32] * matb[M23] + mata[M33] * matb[M33];
-
-        System.arraycopy(tmp, 0, mata, 0, tmp.length);
+        System.arraycopy(tmp, 0, mata, 0, 16);
     }
 
-    /** Multiplies the vector with the given matrix. The matrix array is assumed to hold a 4x4 column major matrix as you can get
-     * from {@link Matrix4d#val}. The vector array is assumed to hold a 3-component vector, with x being the first element, y being
-     * the second and z being the last component. The result is stored in the vector array. This is the same as
-     * {@link Vector3d#mul(Matrix4d)}.
-     * @param mat the matrix
-     * @param vec the vector. */
-    public static void mulVec(double[] mat, double[] vec) {
-        double x = vec[0] * mat[M00] + vec[1] * mat[M01] + vec[2] * mat[M02] + mat[M03];
-        double y = vec[0] * mat[M10] + vec[1] * mat[M11] + vec[2] * mat[M12] + mat[M13];
-        double z = vec[0] * mat[M20] + vec[1] * mat[M21] + vec[2] * mat[M22] + mat[M23];
-        vec[0] = x;
-        vec[1] = y;
-        vec[2] = z;
+    static double matrix4_det(double[] val) {
+        return val[M30] * val[M21] * val[M12] * val[M03] - val[M20] * val[M31] * val[M12] * val[M03] - val[M30] * val[M11] * val[M22] * val[M03] + val[M10] * val[M31] * val[M22] * val[M03] + val[M20] * val[M11] * val[M32] * val[M03] - val[M10] * val[M21] * val[M32] * val[M03] - val[M30] * val[M21] * val[M02] * val[M13] + val[M20] * val[M31] * val[M02] * val[M13] + val[M30] * val[M01] * val[M22] * val[M13] - val[M00] * val[M31] * val[M22] * val[M13] - val[M20] * val[M01] * val[M32] * val[M13]
+                + val[M00] * val[M21] * val[M32] * val[M13] + val[M30] * val[M11] * val[M02] * val[M23] - val[M10] * val[M31] * val[M02] * val[M23] - val[M30] * val[M01] * val[M12] * val[M23] + val[M00] * val[M31] * val[M12] * val[M23] + val[M10] * val[M01] * val[M32] * val[M23] - val[M00] * val[M11] * val[M32] * val[M23] - val[M20] * val[M11] * val[M02] * val[M33] + val[M10] * val[M21] * val[M02] * val[M33] + val[M20] * val[M01] * val[M12] * val[M33] - val[M00] * val[M21] * val[M12] * val[M33]
+                - val[M10] * val[M01] * val[M22] * val[M33] + val[M00] * val[M11] * val[M22] * val[M33];
     }
 
-    /** Multiplies the vector with the given matrix, performing a division by w. The matrix array is assumed to hold a 4x4 column
-     * major matrix as you can get from {@link Matrix4d#val}. The vector array is assumed to hold a 3-component vector, with x being
-     * the first element, y being the second and z being the last component. The result is stored in the vector array. This is the
-     * same as {@link Vector3d#prj(Matrix4d)}.
-     * @param mat the matrix
-     * @param vec the vector. */
-    public static void prj(double[] mat, double[] vec) {
-        double inv_w = 1.0f / (vec[0] * mat[M30] + vec[1] * mat[M31] + vec[2] * mat[M32] + mat[M33]);
-        double x = (vec[0] * mat[M00] + vec[1] * mat[M01] + vec[2] * mat[M02] + mat[M03]) * inv_w;
-        double y = (vec[0] * mat[M10] + vec[1] * mat[M11] + vec[2] * mat[M12] + mat[M13]) * inv_w;
-        double z = (vec[0] * mat[M20] + vec[1] * mat[M21] + vec[2] * mat[M22] + mat[M23]) * inv_w;
-        vec[0] = x;
-        vec[1] = y;
-        vec[2] = z;
-    }
-
-    /** Multiplies the vector with the top most 3x3 sub-matrix of the given matrix. The matrix array is assumed to hold a 4x4 column
-     * major matrix as you can get from {@link Matrix4d#val}. The vector array is assumed to hold a 3-component vector, with x being
-     * the first element, y being the second and z being the last component. The result is stored in the vector array. This is the
-     * same as {@link Vector3d#rot(Matrix4d)}.
-     * @param mat the matrix
-     * @param vec the vector. */
-    public static void rot(double[] mat, double[] vec) {
-        double x = vec[0] * mat[M00] + vec[1] * mat[M01] + vec[2] * mat[M02];
-        double y = vec[0] * mat[M10] + vec[1] * mat[M11] + vec[2] * mat[M12];
-        double z = vec[0] * mat[M20] + vec[1] * mat[M21] + vec[2] * mat[M22];
-        vec[0] = x;
-        vec[1] = y;
-        vec[2] = z;
-    }
-
-    /** Computes the inverse of the given matrix. The matrix array is assumed to hold a 4x4 column major matrix as you can get from
-     * {@link Matrix4d#val}.
-     * @param values the matrix values.
-     * @return false in case the inverse could not be calculated, true otherwise. */
-    public static boolean inv(double[] values) {
+    static boolean matrix4_inv(double[] val) {
         double tmp[] = new double[16];
-        double l_det = det(values);
+        double l_det = matrix4_det(val);
         if (l_det == 0)
             return false;
-        tmp[M00] = values[M12] * values[M23] * values[M31] - values[M13] * values[M22] * values[M31] + values[M13] * values[M21] * values[M32] - values[M11] * values[M23] * values[M32] - values[M12] * values[M21] * values[M33] + values[M11] * values[M22] * values[M33];
-        tmp[M01] = values[M03] * values[M22] * values[M31] - values[M02] * values[M23] * values[M31] - values[M03] * values[M21] * values[M32] + values[M01] * values[M23] * values[M32] + values[M02] * values[M21] * values[M33] - values[M01] * values[M22] * values[M33];
-        tmp[M02] = values[M02] * values[M13] * values[M31] - values[M03] * values[M12] * values[M31] + values[M03] * values[M11] * values[M32] - values[M01] * values[M13] * values[M32] - values[M02] * values[M11] * values[M33] + values[M01] * values[M12] * values[M33];
-        tmp[M03] = values[M03] * values[M12] * values[M21] - values[M02] * values[M13] * values[M21] - values[M03] * values[M11] * values[M22] + values[M01] * values[M13] * values[M22] + values[M02] * values[M11] * values[M23] - values[M01] * values[M12] * values[M23];
-        tmp[M10] = values[M13] * values[M22] * values[M30] - values[M12] * values[M23] * values[M30] - values[M13] * values[M20] * values[M32] + values[M10] * values[M23] * values[M32] + values[M12] * values[M20] * values[M33] - values[M10] * values[M22] * values[M33];
-        tmp[M11] = values[M02] * values[M23] * values[M30] - values[M03] * values[M22] * values[M30] + values[M03] * values[M20] * values[M32] - values[M00] * values[M23] * values[M32] - values[M02] * values[M20] * values[M33] + values[M00] * values[M22] * values[M33];
-        tmp[M12] = values[M03] * values[M12] * values[M30] - values[M02] * values[M13] * values[M30] - values[M03] * values[M10] * values[M32] + values[M00] * values[M13] * values[M32] + values[M02] * values[M10] * values[M33] - values[M00] * values[M12] * values[M33];
-        tmp[M13] = values[M02] * values[M13] * values[M20] - values[M03] * values[M12] * values[M20] + values[M03] * values[M10] * values[M22] - values[M00] * values[M13] * values[M22] - values[M02] * values[M10] * values[M23] + values[M00] * values[M12] * values[M23];
-        tmp[M20] = values[M11] * values[M23] * values[M30] - values[M13] * values[M21] * values[M30] + values[M13] * values[M20] * values[M31] - values[M10] * values[M23] * values[M31] - values[M11] * values[M20] * values[M33] + values[M10] * values[M21] * values[M33];
-        tmp[M21] = values[M03] * values[M21] * values[M30] - values[M01] * values[M23] * values[M30] - values[M03] * values[M20] * values[M31] + values[M00] * values[M23] * values[M31] + values[M01] * values[M20] * values[M33] - values[M00] * values[M21] * values[M33];
-        tmp[M22] = values[M01] * values[M13] * values[M30] - values[M03] * values[M11] * values[M30] + values[M03] * values[M10] * values[M31] - values[M00] * values[M13] * values[M31] - values[M01] * values[M10] * values[M33] + values[M00] * values[M11] * values[M33];
-        tmp[M23] = values[M03] * values[M11] * values[M20] - values[M01] * values[M13] * values[M20] - values[M03] * values[M10] * values[M21] + values[M00] * values[M13] * values[M21] + values[M01] * values[M10] * values[M23] - values[M00] * values[M11] * values[M23];
-        tmp[M30] = values[M12] * values[M21] * values[M30] - values[M11] * values[M22] * values[M30] - values[M12] * values[M20] * values[M31] + values[M10] * values[M22] * values[M31] + values[M11] * values[M20] * values[M32] - values[M10] * values[M21] * values[M32];
-        tmp[M31] = values[M01] * values[M22] * values[M30] - values[M02] * values[M21] * values[M30] + values[M02] * values[M20] * values[M31] - values[M00] * values[M22] * values[M31] - values[M01] * values[M20] * values[M32] + values[M00] * values[M21] * values[M32];
-        tmp[M32] = values[M02] * values[M11] * values[M30] - values[M01] * values[M12] * values[M30] - values[M02] * values[M10] * values[M31] + values[M00] * values[M12] * values[M31] + values[M01] * values[M10] * values[M32] - values[M00] * values[M11] * values[M32];
-        tmp[M33] = values[M01] * values[M12] * values[M20] - values[M02] * values[M11] * values[M20] + values[M02] * values[M10] * values[M21] - values[M00] * values[M12] * values[M21] - values[M01] * values[M10] * values[M22] + values[M00] * values[M11] * values[M22];
+        tmp[M00] = val[M12] * val[M23] * val[M31] - val[M13] * val[M22] * val[M31] + val[M13] * val[M21] * val[M32] - val[M11] * val[M23] * val[M32] - val[M12] * val[M21] * val[M33] + val[M11] * val[M22] * val[M33];
+        tmp[M01] = val[M03] * val[M22] * val[M31] - val[M02] * val[M23] * val[M31] - val[M03] * val[M21] * val[M32] + val[M01] * val[M23] * val[M32] + val[M02] * val[M21] * val[M33] - val[M01] * val[M22] * val[M33];
+        tmp[M02] = val[M02] * val[M13] * val[M31] - val[M03] * val[M12] * val[M31] + val[M03] * val[M11] * val[M32] - val[M01] * val[M13] * val[M32] - val[M02] * val[M11] * val[M33] + val[M01] * val[M12] * val[M33];
+        tmp[M03] = val[M03] * val[M12] * val[M21] - val[M02] * val[M13] * val[M21] - val[M03] * val[M11] * val[M22] + val[M01] * val[M13] * val[M22] + val[M02] * val[M11] * val[M23] - val[M01] * val[M12] * val[M23];
+        tmp[M10] = val[M13] * val[M22] * val[M30] - val[M12] * val[M23] * val[M30] - val[M13] * val[M20] * val[M32] + val[M10] * val[M23] * val[M32] + val[M12] * val[M20] * val[M33] - val[M10] * val[M22] * val[M33];
+        tmp[M11] = val[M02] * val[M23] * val[M30] - val[M03] * val[M22] * val[M30] + val[M03] * val[M20] * val[M32] - val[M00] * val[M23] * val[M32] - val[M02] * val[M20] * val[M33] + val[M00] * val[M22] * val[M33];
+        tmp[M12] = val[M03] * val[M12] * val[M30] - val[M02] * val[M13] * val[M30] - val[M03] * val[M10] * val[M32] + val[M00] * val[M13] * val[M32] + val[M02] * val[M10] * val[M33] - val[M00] * val[M12] * val[M33];
+        tmp[M13] = val[M02] * val[M13] * val[M20] - val[M03] * val[M12] * val[M20] + val[M03] * val[M10] * val[M22] - val[M00] * val[M13] * val[M22] - val[M02] * val[M10] * val[M23] + val[M00] * val[M12] * val[M23];
+        tmp[M20] = val[M11] * val[M23] * val[M30] - val[M13] * val[M21] * val[M30] + val[M13] * val[M20] * val[M31] - val[M10] * val[M23] * val[M31] - val[M11] * val[M20] * val[M33] + val[M10] * val[M21] * val[M33];
+        tmp[M21] = val[M03] * val[M21] * val[M30] - val[M01] * val[M23] * val[M30] - val[M03] * val[M20] * val[M31] + val[M00] * val[M23] * val[M31] + val[M01] * val[M20] * val[M33] - val[M00] * val[M21] * val[M33];
+        tmp[M22] = val[M01] * val[M13] * val[M30] - val[M03] * val[M11] * val[M30] + val[M03] * val[M10] * val[M31] - val[M00] * val[M13] * val[M31] - val[M01] * val[M10] * val[M33] + val[M00] * val[M11] * val[M33];
+        tmp[M23] = val[M03] * val[M11] * val[M20] - val[M01] * val[M13] * val[M20] - val[M03] * val[M10] * val[M21] + val[M00] * val[M13] * val[M21] + val[M01] * val[M10] * val[M23] - val[M00] * val[M11] * val[M23];
+        tmp[M30] = val[M12] * val[M21] * val[M30] - val[M11] * val[M22] * val[M30] - val[M12] * val[M20] * val[M31] + val[M10] * val[M22] * val[M31] + val[M11] * val[M20] * val[M32] - val[M10] * val[M21] * val[M32];
+        tmp[M31] = val[M01] * val[M22] * val[M30] - val[M02] * val[M21] * val[M30] + val[M02] * val[M20] * val[M31] - val[M00] * val[M22] * val[M31] - val[M01] * val[M20] * val[M32] + val[M00] * val[M21] * val[M32];
+        tmp[M32] = val[M02] * val[M11] * val[M30] - val[M01] * val[M12] * val[M30] - val[M02] * val[M10] * val[M31] + val[M00] * val[M12] * val[M31] + val[M01] * val[M10] * val[M32] - val[M00] * val[M11] * val[M32];
+        tmp[M33] = val[M01] * val[M12] * val[M20] - val[M02] * val[M11] * val[M20] + val[M02] * val[M10] * val[M21] - val[M00] * val[M12] * val[M21] - val[M01] * val[M10] * val[M22] + val[M00] * val[M11] * val[M22];
 
-        double inv_det = 1.0f / l_det;
-        values[M00] = tmp[M00] * inv_det;
-        values[M01] = tmp[M01] * inv_det;
-        values[M02] = tmp[M02] * inv_det;
-        values[M03] = tmp[M03] * inv_det;
-        values[M10] = tmp[M10] * inv_det;
-        values[M11] = tmp[M11] * inv_det;
-        values[M12] = tmp[M12] * inv_det;
-        values[M13] = tmp[M13] * inv_det;
-        values[M20] = tmp[M20] * inv_det;
-        values[M21] = tmp[M21] * inv_det;
-        values[M22] = tmp[M22] * inv_det;
-        values[M23] = tmp[M23] * inv_det;
-        values[M30] = tmp[M30] * inv_det;
-        values[M31] = tmp[M31] * inv_det;
-        values[M32] = tmp[M32] * inv_det;
-        values[M33] = tmp[M33] * inv_det;
+        double inv_det = 1.0 / l_det;
+        val[M00] = tmp[M00] * inv_det;
+        val[M01] = tmp[M01] * inv_det;
+        val[M02] = tmp[M02] * inv_det;
+        val[M03] = tmp[M03] * inv_det;
+        val[M10] = tmp[M10] * inv_det;
+        val[M11] = tmp[M11] * inv_det;
+        val[M12] = tmp[M12] * inv_det;
+        val[M13] = tmp[M13] * inv_det;
+        val[M20] = tmp[M20] * inv_det;
+        val[M21] = tmp[M21] * inv_det;
+        val[M22] = tmp[M22] * inv_det;
+        val[M23] = tmp[M23] * inv_det;
+        val[M30] = tmp[M30] * inv_det;
+        val[M31] = tmp[M31] * inv_det;
+        val[M32] = tmp[M32] * inv_det;
+        val[M33] = tmp[M33] * inv_det;
         return true;
     }
 
-    /** Computes the determinante of the given matrix. The matrix array is assumed to hold a 4x4 column major matrix as you can get
-     * from {@link Matrix4d#val}.
-     * @param values the matrix values.
-     * @return the determinante. */
-    public static double det(double[] values) {
-        return values[M30] * values[M21] * values[M12] * values[M03] - values[M20] * values[M31] * values[M12] * values[M03] - values[M30] * values[M11] * values[M22] * values[M03] + values[M10] * values[M31] * values[M22] * values[M03] + values[M20] * values[M11] * values[M32] * values[M03] - values[M10] * values[M21] * values[M32] * values[M03] - values[M30] * values[M21] * values[M02] * values[M13] + values[M20] * values[M31] * values[M02] * values[M13]
-                + values[M30] * values[M01] * values[M22] * values[M13] - values[M00] * values[M31] * values[M22] * values[M13] - values[M20] * values[M01] * values[M32] * values[M13] + values[M00] * values[M21] * values[M32] * values[M13] + values[M30] * values[M11] * values[M02] * values[M23] - values[M10] * values[M31] * values[M02] * values[M23] - values[M30] * values[M01] * values[M12] * values[M23] + values[M00] * values[M31] * values[M12] * values[M23]
-                + values[M10] * values[M01] * values[M32] * values[M23] - values[M00] * values[M11] * values[M32] * values[M23] - values[M20] * values[M11] * values[M02] * values[M33] + values[M10] * values[M21] * values[M02] * values[M33] + values[M20] * values[M01] * values[M12] * values[M33] - values[M00] * values[M21] * values[M12] * values[M33] - values[M10] * values[M01] * values[M22] * values[M33] + values[M00] * values[M11] * values[M22] * values[M33];
+    static void matrix4_mulVec(double[] mat, double[] vec, int offset) {
+        double x = vec[offset + 0] * mat[M00] + vec[offset + 1] * mat[M01] + vec[offset + 2] * mat[M02] + mat[M03];
+        double y = vec[offset + 0] * mat[M10] + vec[offset + 1] * mat[M11] + vec[offset + 2] * mat[M12] + mat[M13];
+        double z = vec[offset + 0] * mat[M20] + vec[offset + 1] * mat[M21] + vec[offset + 2] * mat[M22] + mat[M23];
+        vec[offset + 0] = x;
+        vec[offset + 1] = y;
+        vec[offset + 2] = z;
+    }
+
+    static void matrix4_proj(double[] mat, double[] vec, int offset) {
+        double inv_w = 1.0 / (vec[offset + 0] * mat[M30] + vec[offset + 1] * mat[M31] + vec[offset + 2] * mat[M32] + mat[M33]);
+        double x = (vec[offset + 0] * mat[M00] + vec[offset + 1] * mat[M01] + vec[offset + 2] * mat[M02] + mat[M03]) * inv_w;
+        double y = (vec[offset + 0] * mat[M10] + vec[offset + 1] * mat[M11] + vec[offset + 2] * mat[M12] + mat[M13]) * inv_w;
+        double z = (vec[offset + 0] * mat[M20] + vec[offset + 1] * mat[M21] + vec[offset + 2] * mat[M22] + mat[M23]) * inv_w;
+        vec[offset + 0] = x;
+        vec[offset + 1] = y;
+        vec[offset + 2] = z;
+    }
+
+    static void matrix4_rot(double[] mat, double[] vec, int offset) {
+        double x = vec[offset + 0] * mat[M00] + vec[offset + 1] * mat[M01] + vec[offset + 2] * mat[M02];
+        double y = vec[offset + 0] * mat[M10] + vec[offset + 1] * mat[M11] + vec[offset + 2] * mat[M12];
+        double z = vec[offset + 0] * mat[M20] + vec[offset + 1] * mat[M21] + vec[offset + 2] * mat[M22];
+        vec[offset + 0] = x;
+        vec[offset + 1] = y;
+        vec[offset + 2] = z;
     }
 
     // @on
@@ -1121,8 +1084,17 @@ public class Matrix4d implements Serializable {
         tmp[M32] = 0;
         tmp[M33] = 1;
 
-        mul(val, tmp);
+        matrix4_mul(val, tmp);
         return this;
+    }
+
+    /** Multiplies the matrix mata with matrix matb, storing the result in mata. The arrays are assumed to hold 4x4 column major
+     * matrices as you can get from {@link Matrix4d#val}. This is the same as {@link Matrix4d#mul(Matrix4d)}.
+     * 
+     * @param mata the first matrix.
+     * @param matb the second matrix. */
+    public static void mul(double[] mata, double[] matb) {
+        matrix4_mul(mata, matb);
     }
 
     /** Postmultiplies this matrix with a (counter-clockwise) rotation matrix. Postmultiplication is also used by OpenGL ES' 1.x
@@ -1186,7 +1158,7 @@ public class Matrix4d implements Serializable {
      * @return This matrix for the purpose of chaining methods together. */
     public Matrix4d rotate(Quaterniond rotation) {
         rotation.toMatrix(tmp);
-        mul(val, tmp);
+        matrix4_mul(val, tmp);
         return this;
     }
 
@@ -1222,7 +1194,7 @@ public class Matrix4d implements Serializable {
         tmp[M32] = 0;
         tmp[M33] = 1;
 
-        mul(val, tmp);
+        matrix4_mul(val, tmp);
         return this;
     }
 

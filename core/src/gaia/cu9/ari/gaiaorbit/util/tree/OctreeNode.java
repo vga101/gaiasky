@@ -6,8 +6,6 @@ import java.util.Map;
 import java.util.TreeSet;
 
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.PerspectiveCamera;
-import com.badlogic.gdx.math.Frustum;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
 import com.badlogic.gdx.utils.Array;
@@ -16,6 +14,7 @@ import gaia.cu9.ari.gaiaorbit.data.stars.OctreeMultiFileLoader;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.render.ILineRenderable;
 import gaia.cu9.ari.gaiaorbit.render.system.LineRenderSystem;
+import gaia.cu9.ari.gaiaorbit.scenegraph.FovCamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Transform;
 import gaia.cu9.ari.gaiaorbit.util.GSEnumSet;
@@ -24,6 +23,7 @@ import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.Pair;
 import gaia.cu9.ari.gaiaorbit.util.color.ColourUtils;
 import gaia.cu9.ari.gaiaorbit.util.math.BoundingBoxd;
+import gaia.cu9.ari.gaiaorbit.util.math.Frustumd;
 import gaia.cu9.ari.gaiaorbit.util.math.Intersectord;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
@@ -420,15 +420,15 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
         // Is this octant observed??
         if (!cam.getMode().isGaiaFov()) {
             // Only one view direction
-            computeObserved2(parentTransform, cam.getAngleEdge(), cam.getPos(), cam.getDirection(), cam.getUp());
-            //computeObserved1(parentTransform, cam.getCamera());
+            //computeObserved2(parentTransform, cam.getAngleEdge(), cam.getPos(), cam.getDirection(), cam.getUp());
+            computeObserved1(parentTransform, cam.getFrustum());
         } else {
             // FOV, we have two view directions
-            computeObserved2(parentTransform, cam.getAngleEdge(), cam.getPos(), cam.getDirections()[0], cam.getUp());
-            //computeObserved1(parentTransform, cam.getCameraStereoLeft());
+            //computeObserved2(parentTransform, cam.getAngleEdge(), cam.getPos(), cam.getDirections()[0], cam.getUp());
+            computeObserved1(parentTransform, cam.getFrustum());
             if (!observed) {
-                computeObserved2(parentTransform, cam.getAngleEdge(), cam.getPos(), cam.getDirections()[1], cam.getUp());
-                //computeObserved1(parentTransform, cam.getCameraStereoRight());
+                //computeObserved2(parentTransform, cam.getAngleEdge(), cam.getPos(), cam.getDirections()[1], cam.getUp());
+                computeObserved1(parentTransform, ((FovCamera) (cam.getCurrent())).getFrustum2());
             }
         }
 
@@ -493,18 +493,33 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
     }
 
     /**
-     * Uses the camera frustum element to check the octant.
+     * Checks whether the given frustum intersects with the current octant.
      * 
      * @param parentTransform
      * @param cam
      */
-    private boolean computeObserved1(Transform parentTransform, PerspectiveCamera cam) {
-        // Is this octant observed??
-        Frustum frustum = cam.frustum;
+    private boolean computeObserved1(Transform parentTransform, Frustumd frustum) {
         boxcopy.set(box);
-        boxcopy.mul(boxtransf.idt().translate(parentTransform.getTranslation()));
-        boxcopy.put(boxcopyf);
-        observed = frustum.boundsInFrustum(boxcopyf);
+        //boxcopy.mul(boxtransf.idt().translate(parentTransform.getTranslation()));
+
+        observed = GlobalConf.program.CUBEMAP360_MODE || frustum.pointInFrustum(boxcopy.getCenter(auxD1)) || frustum.pointInFrustum(boxcopy.getCorner000(auxD1)) || frustum.pointInFrustum(boxcopy.getCorner001(auxD1)) || frustum.pointInFrustum(boxcopy.getCorner010(auxD1)) || frustum.pointInFrustum(boxcopy.getCorner011(auxD1)) || frustum.pointInFrustum(boxcopy.getCorner100(auxD1)) || frustum.pointInFrustum(boxcopy.getCorner101(auxD1)) || frustum.pointInFrustum(boxcopy.getCorner110(auxD1))
+                || frustum.pointInFrustum(boxcopy.getCorner111(auxD1));
+
+        if (!observed) {
+            observed = frustum.boundsInFrustum(boxcopy);
+        }
+
+        for (int i = 0; i < 4; i++) {
+            if (!observed) {
+                // 0-4
+                ray.origin.set(frustum.planePoints[i]);
+                ray.direction.set(frustum.planePoints[i + 4]).sub(ray.origin);
+                observed = Intersectord.intersectRayBoundsFast(ray, boxcopy.getCenter(auxD3), boxcopy.getDimensions(auxD4));
+            } else {
+                break;
+            }
+        }
+
         return observed;
     }
 
@@ -526,9 +541,10 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
                 || GlobalResources.isInView(boxcopy.getCorner101(auxD1), angle, dir) || GlobalResources.isInView(boxcopy.getCorner110(auxD1), angle, dir) || GlobalResources.isInView(boxcopy.getCorner111(auxD1), angle, dir) || box.contains(pos);
 
         // Rays
-        if (!observed && !GlobalConf.program.CUBEMAP360_MODE) {
-            // Rays in direction-up plane (vertical plane)
+        if (!observed) {
             auxD2.set(dir).crs(up);
+
+            // Rays in direction-up plane (vertical plane)
             ray.direction.set(auxD1.set(dir).rotate(auxD2, angle));
             observed = observed || Intersectord.intersectRayBoundsFast(ray, boxcopy.getCenter(auxD3), boxcopy.getDimensions(auxD4));
             ray.direction.set(auxD1.set(dir).rotate(auxD2, -angle));

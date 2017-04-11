@@ -310,6 +310,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
         lastMode = m;
 
         updatePerspectiveCamera();
+        updateFrustum(frustum, camera, pos, direction, up);
     }
 
     protected void updatePerspectiveCamera() {

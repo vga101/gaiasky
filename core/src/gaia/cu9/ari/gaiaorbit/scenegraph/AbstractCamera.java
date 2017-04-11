@@ -6,6 +6,8 @@ import com.badlogic.gdx.graphics.PerspectiveCamera;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
+import gaia.cu9.ari.gaiaorbit.util.math.Frustumd;
+import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
@@ -16,7 +18,9 @@ public abstract class AbstractCamera implements ICamera {
     /** Camera near values **/
     public static final double CAM_NEAR = 1e11 * Constants.KM_TO_U;
 
-    public Vector3d pos, posinv, shift;
+    private static Matrix4d invProjectionView = new Matrix4d();
+
+    public Vector3d pos, posinv, shift, tmp;
     /**
      * Angle from the center to the corner of the screen in scene coordinates,
      * in radians
@@ -37,11 +41,16 @@ public abstract class AbstractCamera implements ICamera {
     /** The main camera **/
     public PerspectiveCamera camera;
 
+    /** The frustum, uses double precision **/
+    protected Frustumd frustum;
+
     /** Stereoscopic mode cameras **/
     protected PerspectiveCamera camLeft, camRight;
 
     /** Vector with all perspective cameras **/
     protected PerspectiveCamera[] cameras;
+
+    protected Matrix4d projection, view, combined;
 
     public float fovFactor;
 
@@ -50,6 +59,9 @@ public abstract class AbstractCamera implements ICamera {
         pos = new Vector3d();
         posinv = new Vector3d();
         shift = new Vector3d();
+        tmp = new Vector3d();
+
+        frustum = new Frustumd();
 
         camLeft = new PerspectiveCamera(GlobalConf.scene.CAMERA_FOV, Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight());
         camLeft.near = (float) CAM_NEAR;
@@ -58,6 +70,10 @@ public abstract class AbstractCamera implements ICamera {
         camRight = new PerspectiveCamera(GlobalConf.scene.CAMERA_FOV, Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight());
         camRight.near = (float) CAM_NEAR;
         camRight.far = (float) CAM_FAR;
+
+        projection = new Matrix4d();
+        view = new Matrix4d();
+        combined = new Matrix4d();
     }
 
     @Override
@@ -223,6 +239,23 @@ public abstract class AbstractCamera implements ICamera {
     @Override
     public Vector3d getShift() {
         return this.shift;
+    }
+
+    @Override
+    public Frustumd getFrustum() {
+        return frustum;
+    }
+
+    public void updateFrustum(Frustumd frustum, PerspectiveCamera cam, Vector3d position, Vector3d direction, Vector3d up) {
+        double aspect = cam.viewportWidth / cam.viewportHeight;
+        projection.setToProjection(Math.abs(cam.near), Math.abs(cam.far), cam.fieldOfView, aspect);
+        view.setToLookAt(position, tmp.set(position).add(direction), up);
+        combined.set(projection);
+        Matrix4d.mul(combined.val, view.val);
+
+        invProjectionView.set(combined);
+        Matrix4d.inv(invProjectionView.val);
+        frustum.update(invProjectionView);
     }
 
 }
