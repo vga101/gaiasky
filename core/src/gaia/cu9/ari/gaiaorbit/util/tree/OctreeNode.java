@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.TreeSet;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.math.Frustum;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
@@ -420,11 +421,14 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
         if (!cam.getMode().isGaiaFov())
             // Only one view direction
             computeObserved2(parentTransform, cam.getAngleEdge(), cam.getPos(), cam.getDirection(), cam.getUp());
+        //computeObserved1(parentTransform, cam.getCamera());
         else {
             // FOV, we have two view directions
             computeObserved2(parentTransform, cam.getAngleEdge(), cam.getPos(), cam.getDirections()[0], cam.getUp());
+            //computeObserved1(parentTransform, cam.getCameraStereoLeft());
             if (!observed)
                 computeObserved2(parentTransform, cam.getAngleEdge(), cam.getPos(), cam.getDirections()[1], cam.getUp());
+            //computeObserved1(parentTransform, cam.getCameraStereoRight());
         }
 
         if (observed) {
@@ -493,12 +497,13 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
      * @param parentTransform
      * @param cam
      */
-    private boolean computeObserved1(Transform parentTransform, ICamera cam) {
+    private boolean computeObserved1(Transform parentTransform, PerspectiveCamera cam) {
         // Is this octant observed??
-        Frustum frustum = cam.getCamera().frustum;
+        Frustum frustum = cam.frustum;
         boxcopy.set(box);
         boxcopy.mul(boxtransf.idt().translate(parentTransform.getTranslation()));
-        observed = frustum.boundsInFrustum(boxcopy.getCenter(auxD1).setVector3(auxF1), size.setVector3(auxF2));
+        boxcopy.put(boxcopyf);
+        observed = frustum.boundsInFrustum(boxcopyf);
         return observed;
     }
 

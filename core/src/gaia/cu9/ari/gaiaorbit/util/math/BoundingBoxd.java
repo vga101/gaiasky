@@ -19,7 +19,6 @@ package gaia.cu9.ari.gaiaorbit.util.math;
 import java.io.Serializable;
 import java.util.List;
 
-import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
 
 /** Encapsulates an axis aligned bounding box represented by a minimum and a maximum Vector. Additionally you can query for the
@@ -205,7 +204,7 @@ public class BoundingBoxd implements Serializable {
     }
 
     public BoundingBox put(BoundingBox bounds) {
-        return bounds.set(bounds.min.set(new Vector3()), bounds.max.set(new Vector3()));
+        return bounds.set(this.min.toVector3(), this.max.toVector3());
     }
 
     /** Sets the given minimum and maximum vector.

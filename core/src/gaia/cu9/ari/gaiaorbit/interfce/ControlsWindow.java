@@ -293,6 +293,7 @@ public class ControlsWindow extends CollapsibleWindow implements IObserver {
         }
 
         /** ADD GROUPS TO VERTICAL LAYOUT **/
+        guiLayout.padTop(5);
         int pad = Math.round(10 * GlobalConf.SCALE_FACTOR);
         int padSeparator = Math.round(2 * GlobalConf.SCALE_FACTOR);
         int size = mainActors.size();

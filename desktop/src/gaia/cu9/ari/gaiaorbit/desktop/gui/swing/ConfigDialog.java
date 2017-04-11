@@ -415,16 +415,9 @@ public class ConfigDialog extends I18nJFrame {
         ui.add(theme, "wrap");
 
         /** NOTICE **/
-        JPanel uiNotice = new JPanel(new MigLayout("", "[]", ""));
-        JLabel uinoticeText = new JLabel(txt("gui.ui.info"));
-        uinoticeText.setForeground(darkgreen);
-        uiNotice.add(uinoticeText);
 
         JPanel uiPanel = new JPanel(new MigLayout("", "[grow,fill][]", ""));
         uiPanel.add(ui, "wrap");
-        if (!startup) {
-            uiPanel.add(uiNotice, "wrap");
-        }
 
         tabbedPane.addTab(txt("gui.ui.interface"), IconManager.get("config/interface"), uiPanel);
         tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
@@ -1066,6 +1059,8 @@ public class ConfigDialog extends I18nJFrame {
                                 GlobalResources.updateSkin();
                                 GaiaSky.instance.reinitialiseGUI1();
                                 GaiaSky.instance.reinitialiseGUI2();
+                                // Time init
+                                EventManager.instance.post(Events.TIME_CHANGE_INFO, GaiaSky.instance.time.getTime());
                             }
                         });
                     }
