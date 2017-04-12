@@ -30,7 +30,6 @@ import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
 /**
  * Implements the loading and streaming of octree nodes from files.
  * @author tsagrista
- *
  */
 public class OctreeMultiFileLoader implements ISceneGraphLoader {
     /**
@@ -45,7 +44,7 @@ public class OctreeMultiFileLoader implements ISceneGraphLoader {
     public static void addToQueue(OctreeNode octant) {
         if (instance != null && octant != null) {
             instance.toLoadQueue.add(octant);
-            ((OctreeNode<Particle>) octant).setStatus(LoadStatus.QUEUED);
+            octant.setStatus(LoadStatus.QUEUED);
         }
     }
 
