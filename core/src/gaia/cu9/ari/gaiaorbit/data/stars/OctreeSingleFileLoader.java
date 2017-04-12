@@ -8,6 +8,7 @@ import com.badlogic.gdx.utils.Array;
 import gaia.cu9.ari.gaiaorbit.data.ISceneGraphLoader;
 import gaia.cu9.ari.gaiaorbit.data.octreegen.MetadataBinaryIO;
 import gaia.cu9.ari.gaiaorbit.data.octreegen.ParticleDataBinaryIO;
+import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
 import gaia.cu9.ari.gaiaorbit.scenegraph.octreewrapper.AbstractOctreeWrapper;
@@ -29,8 +30,8 @@ public class OctreeSingleFileLoader implements ISceneGraphLoader {
 
         Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.loading", metadata));
 
-        MetadataBinaryIO metadataReader = new MetadataBinaryIO();
-        OctreeNode<SceneGraphNode> root = (OctreeNode<SceneGraphNode>) metadataReader.readMetadata(Gdx.files.internal(metadata).read(), LoadStatus.LOADED);
+        MetadataBinaryIO<Particle> metadataReader = new MetadataBinaryIO<Particle>();
+        OctreeNode<Particle> root = metadataReader.readMetadata(Gdx.files.internal(metadata).read(), LoadStatus.LOADED);
 
         Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.nodeloader", root.numNodes(), metadata));
         Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.loading", particles));
@@ -59,7 +60,7 @@ public class OctreeSingleFileLoader implements ISceneGraphLoader {
         for (SceneGraphNode sgn : particleList) {
             Star s = (Star) sgn;
 
-            OctreeNode<SceneGraphNode> octant = metadataReader.nodesMap.get(s.octantId).getFirst();
+            OctreeNode octant = metadataReader.nodesMap.get(s.octantId).getFirst();
             octant.add(s);
             s.octant = octant;
 

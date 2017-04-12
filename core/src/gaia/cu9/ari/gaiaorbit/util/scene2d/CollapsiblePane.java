@@ -37,7 +37,13 @@ public class CollapsiblePane extends Table {
     Skin skin;
     Stage stage;
     float space;
-    Cell contentCell = null;
+    Cell<?> contentCell = null;
+
+    /** Collapse speed in pixels per second **/
+    protected float collapseSpeed;
+    float targetHeight;
+    boolean expanding = false;
+    boolean collapsing = false;
 
     /**
      * Creates a collapsible pane.
@@ -57,6 +63,7 @@ public class CollapsiblePane extends Table {
         this.content = content;
         this.skin = skin;
         this.space = 2 * GlobalConf.SCALE_FACTOR;
+        this.collapseSpeed = 1000;
 
         Label mainLabel = new Label(labelText, skin, labelStyle);
 
@@ -115,29 +122,51 @@ public class CollapsiblePane extends Table {
         add(headerTable).spaceBottom(this.space).prefWidth(160 * GlobalConf.SCALE_FACTOR).row();
         contentCell = add().prefHeight(0).prefWidth(160 * GlobalConf.SCALE_FACTOR);
 
-        expandIcon.setChecked(expanded);
+        if (expanded)
+            contentCell.setActor(content);
+
+        layout();
+        targetHeight = getHeight();
 
     }
 
     public void expandPane() {
         if (!expandIcon.isChecked()) {
             expandIcon.setChecked(true);
+            expanding = true;
+            collapsing = false;
         }
     }
 
     public void collapsePane() {
         if (expandIcon.isChecked()) {
             expandIcon.setChecked(false);
+            expanding = false;
+            collapsing = true;
         }
     }
 
     private void toggleExpandCollapse() {
         if (expandIcon.isChecked() && dialogWindow == null) {
             contentCell.setActor(content);
+            expanding = true;
+            collapsing = false;
         } else {
             contentCell.clearActor();
+            expanding = false;
+            collapsing = true;
         }
         EventManager.instance.post(Events.RECALCULATE_OPTIONS_SIZE);
+    }
+
+    public void act(float dt) {
+        super.act(dt);
+
+        if (expanding) {
+
+        } else if (collapsing) {
+
+        }
     }
 
     public void detach() {

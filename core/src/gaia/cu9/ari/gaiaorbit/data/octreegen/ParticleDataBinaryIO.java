@@ -12,7 +12,6 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 
 import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
-import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
@@ -86,9 +85,9 @@ import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
  * @author Toni Sagrista
  *
  */
-public class ParticleDataBinaryIO {
+public class ParticleDataBinaryIO<T extends Particle> {
 
-    public void writeParticles(Array<Particle> particles, OutputStream out) {
+    public void writeParticles(Array<T> particles, OutputStream out) {
 
         try {
             // Wrap the FileOutputStream with a DataOutputStream
@@ -138,14 +137,14 @@ public class ParticleDataBinaryIO {
         }
     }
 
-    public Array<SceneGraphNode> readParticles(InputStream in) throws FileNotFoundException {
-        Array<SceneGraphNode> stars = null;
+    public Array<T> readParticles(InputStream in) throws FileNotFoundException {
+        Array<T> stars = null;
         DataInputStream data_in = new DataInputStream(in);
 
         try {
             // Read size of stars
             int size = data_in.readInt();
-            stars = new Array<SceneGraphNode>(size);
+            stars = new Array<T>(size);
 
             for (int idx = 0; idx < size; idx++) {
                 try {
@@ -198,7 +197,7 @@ public class ParticleDataBinaryIO {
                         s.octantId = pageId;
                         s.type = type;
                         s.initialize();
-                        stars.add(s);
+                        stars.add((T) s);
                     }
                 } catch (EOFException eof) {
                     Logger.error(eof);

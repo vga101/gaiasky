@@ -16,6 +16,7 @@ import gaia.cu9.ari.gaiaorbit.render.ILineRenderable;
 import gaia.cu9.ari.gaiaorbit.render.system.LineRenderSystem;
 import gaia.cu9.ari.gaiaorbit.scenegraph.FovCamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
+import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Transform;
 import gaia.cu9.ari.gaiaorbit.util.GSEnumSet;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
@@ -39,7 +40,7 @@ import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
  * @param <T>
  *            The type of object that the octree holds.
  */
-public class OctreeNode<T extends IPosition> implements ILineRenderable {
+public class OctreeNode<T extends SceneGraphNode> implements ILineRenderable {
     /** Max depth of the structure this node belongs to **/
     public static int maxDepth;
     /** Is dynamic loading active? **/
@@ -413,7 +414,7 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
      *            The opacity to set.
      * @return Whether new objects have been added since last frame
      */
-    public void update(Transform parentTransform, ICamera cam, Array<T> roulette, float opacity) {
+    public void update(Transform parentTransform, ICamera cam, Array<SceneGraphNode> roulette, float opacity) {
         parentTransform.getTranslation(transform);
         this.opacity = opacity;
 
@@ -438,11 +439,9 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
              * Load lists of pages
              */
             if (status == LoadStatus.NOT_LOADED && LOAD_ACTIVE) {
-                if (this.parent != null)
-                    // Add to load all the level
-                    OctreeMultiFileLoader.addToQueue(this.parent.children);
-                else
-                    OctreeMultiFileLoader.addToQueue(this);
+                OctreeMultiFileLoader.addToQueue(this);
+            } else if (status == LoadStatus.LOADED) {
+                OctreeMultiFileLoader.touch(this);
             }
 
             // Compute distance and view angle
@@ -473,7 +472,7 @@ public class OctreeNode<T extends IPosition> implements ILineRenderable {
         }
     }
 
-    private void addObjectsTo(Array<T> roulette) {
+    private void addObjectsTo(Array<SceneGraphNode> roulette) {
         if (objects != null) {
             roulette.addAll(objects);
         }

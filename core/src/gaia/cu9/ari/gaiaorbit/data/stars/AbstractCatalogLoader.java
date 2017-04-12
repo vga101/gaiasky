@@ -7,6 +7,7 @@ import java.util.List;
 import com.badlogic.gdx.utils.Array;
 
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
+import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 
 /**
  * Abstract catalog loader with the transformation from spherical to cartesian coordinates
@@ -23,7 +24,7 @@ public abstract class AbstractCatalogLoader {
         this.filters = new ArrayList<CatalogFilter>(0);
     }
 
-    public abstract Array<? extends CelestialBody> loadData() throws FileNotFoundException;
+    public abstract Array<? extends SceneGraphNode> loadData() throws FileNotFoundException;
 
     public void addFilter(CatalogFilter cf) {
         filters.add(cf);

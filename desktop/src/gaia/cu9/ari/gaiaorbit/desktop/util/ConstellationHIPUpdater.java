@@ -14,12 +14,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl.LwjglFiles;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.reflect.ClassReflection;
-import com.badlogic.gdx.utils.reflect.ReflectionException;
 
 import gaia.cu9.ari.gaiaorbit.data.constel.ConstellationsLoader;
-import gaia.cu9.ari.gaiaorbit.data.octreegen.BrightestStars;
-import gaia.cu9.ari.gaiaorbit.data.octreegen.IAggregationAlgorithm;
 import gaia.cu9.ari.gaiaorbit.data.stars.HYGBinaryLoader;
 import gaia.cu9.ari.gaiaorbit.desktop.format.DesktopDateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.desktop.format.DesktopNumberFormatFactory;
@@ -66,13 +62,6 @@ public class ConstellationHIPUpdater implements IObserver {
     }
 
     private static void updateConstellations() throws IOException {
-        IAggregationAlgorithm<Particle> aggr;
-        try {
-            aggr = ClassReflection.newInstance(BrightestStars.class);
-        } catch (ReflectionException e) {
-            e.printStackTrace(System.err);
-            return;
-        }
 
         /** LOAD CONSTEL **/
         ConstellationsLoader<Constellation> constel = new ConstellationsLoader<Constellation>();
@@ -170,11 +159,8 @@ public class ConstellationHIPUpdater implements IObserver {
         switch (event) {
         case POST_NOTIFICATION:
             String message = "";
-            boolean perm = false;
             for (int i = 0; i < data.length; i++) {
-                if (i == data.length - 1 && data[i] instanceof Boolean) {
-                    perm = (Boolean) data[i];
-                } else {
+                if (!(i == data.length - 1 && data[i] instanceof Boolean)) {
                     message += (String) data[i];
                     if (i < data.length - 1 && !(i == data.length - 2 && data[data.length - 1] instanceof Boolean)) {
                         message += " - ";
@@ -186,6 +172,8 @@ public class ConstellationHIPUpdater implements IObserver {
         case JAVA_EXCEPTION:
             Exception e = (Exception) data[0];
             e.printStackTrace(System.err);
+            break;
+        default:
             break;
         }
 

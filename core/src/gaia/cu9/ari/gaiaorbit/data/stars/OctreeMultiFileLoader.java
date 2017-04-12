@@ -37,32 +37,35 @@ public class OctreeMultiFileLoader implements ISceneGraphLoader {
      * Data will be pre-loaded at startup down to this octree depth.
      */
     private static final int PRELOAD_DEPTH = 4;
-    /**
-     * Max number of pages to retrieve at once
-     */
-    private static final int MAX_PAGES_AT_ONCE = 500;
 
-    /** The octant loading queue **/
-    private static Queue<OctreeNode<?>> octantQueue = new ArrayBlockingQueue<OctreeNode<?>>(40000);
-    /** Load status of the different levels of detail **/
-    public static LoadStatus[] lodStatus = new LoadStatus[50];
-
-    /** Daemon thread that gets the data loading requests and serves them **/
-    private static DaemonLoader daemon;
+    /** Singleton instance **/
+    private static OctreeMultiFileLoader instance;
 
     /** Adds an octant to the queue to be loaded **/
-    public static void addToQueue(OctreeNode<?> object) {
-        octantQueue.add(object);
-        ((OctreeNode<?>) object).setStatus(LoadStatus.QUEUED);
+    public static void addToQueue(OctreeNode octant) {
+        if (instance != null && octant != null) {
+            instance.toLoadQueue.add(octant);
+            ((OctreeNode<Particle>) octant).setStatus(LoadStatus.QUEUED);
+        }
     }
 
     /** Adds a list of octants to the queue to be loaded **/
-    public static void addToQueue(OctreeNode<?>... octants) {
-        for (OctreeNode<?> octant : octants) {
-            if (octant != null && octant.getStatus() == LoadStatus.NOT_LOADED) {
-                octantQueue.add(octant);
+    public static void addToQueue(OctreeNode... octants) {
+        if (instance != null)
+            for (OctreeNode<Particle> octant : octants) {
+                instance.toLoadQueue.add(octant);
                 octant.setStatus(LoadStatus.QUEUED);
             }
+
+    }
+
+    /** Puts it at the end of the toUnloadQueue **/
+    public static void touch(OctreeNode octant) {
+        if (instance != null) {
+            if (instance.toUnloadQueue.contains(octant)) {
+                instance.toUnloadQueue.remove(octant);
+            }
+            instance.toUnloadQueue.offer(octant);
         }
     }
 
@@ -70,15 +73,40 @@ public class OctreeMultiFileLoader implements ISceneGraphLoader {
      * Tells the loader to start loading the octants in the queue.
      */
     public static void flushLoadQueue() {
-        if (!daemon.awake && !octantQueue.isEmpty()) {
-            daemon.interrupt();
+        if (instance != null && !instance.daemon.awake && !instance.toLoadQueue.isEmpty()) {
+            instance.daemon.interrupt();
         }
     }
 
     /** Binary particle reader **/
-    private ParticleDataBinaryIO particleReader;
+    private ParticleDataBinaryIO<Particle> particleReader;
 
     String metadata, particles;
+
+    /** The octant loading queue **/
+    private Queue<OctreeNode<Particle>> toLoadQueue = null;
+    /** Load status of the different levels of detail **/
+    public LoadStatus[] lodStatus = new LoadStatus[50];
+
+    /** Daemon thread that gets the data loading requests and serves them **/
+    private DaemonLoader daemon;
+
+    /** Current number of stars that are loaded **/
+    int nLoadedStars = 0;
+    /** Max number of stars loaded at once **/
+    final int maxLoadedStars;
+    /** This queue is sorted ascending by access date, so that we know which element to release if needed (oldest) **/
+    private Queue<OctreeNode<Particle>> toUnloadQueue;
+
+    public OctreeMultiFileLoader() {
+        instance = this;
+        toLoadQueue = new ArrayBlockingQueue<OctreeNode<Particle>>(4000);
+
+        toUnloadQueue = new ArrayBlockingQueue<OctreeNode<Particle>>(4000);
+        particleReader = new ParticleDataBinaryIO();
+
+        maxLoadedStars = 300000;
+    }
 
     @Override
     public Array<? extends SceneGraphNode> loadData() throws FileNotFoundException {
@@ -89,8 +117,8 @@ public class OctreeMultiFileLoader implements ISceneGraphLoader {
 
         Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.loading", metadata));
 
-        MetadataBinaryIO metadataReader = new MetadataBinaryIO();
-        OctreeNode<SceneGraphNode> root = (OctreeNode<SceneGraphNode>) metadataReader.readMetadata(Gdx.files.internal(metadata).read());
+        MetadataBinaryIO<Particle> metadataReader = new MetadataBinaryIO<Particle>();
+        OctreeNode<Particle> root = metadataReader.readMetadata(Gdx.files.internal(metadata).read());
 
         Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.nodeloader", root.numNodes(), metadata));
         Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.loading", particles));
@@ -108,13 +136,13 @@ public class OctreeMultiFileLoader implements ISceneGraphLoader {
         /**
          * LOAD LOD LEVELS - LOAD PARTICLE DATA
          */
-        particleReader = new ParticleDataBinaryIO();
+
         try {
             int depthLevel = Math.min(OctreeNode.maxDepth, PRELOAD_DEPTH);
             loadLod(depthLevel, octreeWrapper);
 
             // Load octant with Sol - 608
-            OctreeNode<SceneGraphNode> solOctant = root.findOctant(608l);
+            OctreeNode<Particle> solOctant = root.findOctant(608l);
             if (solOctant != null) {
                 loadOctant(solOctant, octreeWrapper);
             }
@@ -168,7 +196,7 @@ public class OctreeMultiFileLoader implements ISceneGraphLoader {
      * @param octreeWrapper The octree wrapper.
      * @throws IOException 
      */
-    public synchronized void loadLod(final Integer lod, final AbstractOctreeWrapper octreeWrapper) throws IOException {
+    public void loadLod(final Integer lod, final AbstractOctreeWrapper octreeWrapper) throws IOException {
         loadOctant(octreeWrapper.root, octreeWrapper, lod);
 
     }
@@ -179,11 +207,11 @@ public class OctreeMultiFileLoader implements ISceneGraphLoader {
      * @param octreeWrapper The octree wrapper.
      * @throws IOException
      */
-    public synchronized void loadOctant(final OctreeNode<SceneGraphNode> octant, final AbstractOctreeWrapper octreeWrapper, Integer level) throws IOException {
+    public void loadOctant(final OctreeNode<Particle> octant, final AbstractOctreeWrapper octreeWrapper, Integer level) throws IOException {
         if (level >= 0) {
             loadOctant(octant, octreeWrapper);
             if (octant.children != null) {
-                for (OctreeNode<SceneGraphNode> child : octant.children) {
+                for (OctreeNode<Particle> child : octant.children) {
                     if (child != null && child.nObjects > 0)
                         loadOctant(child, octreeWrapper, level - 1);
                 }
@@ -197,36 +225,56 @@ public class OctreeMultiFileLoader implements ISceneGraphLoader {
      * @param octreeWrapper The octree wrapper.
      * @throws IOException
      */
-    public synchronized void loadOctant(final OctreeNode<SceneGraphNode> octant, final AbstractOctreeWrapper octreeWrapper) throws IOException {
+    public void loadOctant(final OctreeNode<Particle> octant, final AbstractOctreeWrapper octreeWrapper) throws IOException {
         FileHandle octantFile = Gdx.files.internal(particles + "particles_" + String.format("%06d", octant.pageId) + ".bin");
         if (!octantFile.exists() || octantFile.isDirectory()) {
             return;
         }
         Logger.info(I18n.bundle.format("notif.loadingoctant", octant.pageId));
 
-        Array<SceneGraphNode> data = particleReader.readParticles(octantFile.read());
+        Array<Particle> data = particleReader.readParticles(octantFile.read());
         synchronized (octant) {
-            for (SceneGraphNode star : data) {
-                ((Particle) star).octant = octant;
+            for (Particle star : data) {
+                star.octant = octant;
                 // Add objects to octree wrapper node
                 octreeWrapper.add(star, octant);
             }
-
+            nLoadedStars += data.size;
             octant.objects = data;
+
+            // Put it at the end of the queue
+            touch(octant);
+
             octant.setStatus(LoadStatus.LOADED);
         }
     }
 
     /**
-     * Loads the objects of the given octants using the given list from the visualization identified by <tt>visid</tt>
+     * Loads the objects of the given octants
      * @param octants The list holding the octants to load.
      * @param octreeWrapper The octree wrapper.
      * @throws IOException
      */
-    public synchronized void loadOctants(final Array<OctreeNode<SceneGraphNode>> octants, final AbstractOctreeWrapper octreeWrapper) throws IOException {
-        for (OctreeNode<SceneGraphNode> octant : octants)
+    public void loadOctants(final Array<OctreeNode> octants, final AbstractOctreeWrapper octreeWrapper) throws IOException {
+        for (OctreeNode octant : octants)
             loadOctant(octant, octreeWrapper);
 
+    }
+
+    public void unloadOctant(OctreeNode octant, final AbstractOctreeWrapper octreeWrapper) {
+        synchronized (octant) {
+            Array<SceneGraphNode> objects = octant.objects;
+            if (objects != null) {
+                for (SceneGraphNode star : objects) {
+                    ((Particle) star).octant = null;
+                    octreeWrapper.removeParenthood(star);
+                }
+            }
+            nLoadedStars -= objects.size;
+            objects.clear();
+            octant.setStatus(LoadStatus.NOT_LOADED);
+
+        }
     }
 
     /**
@@ -239,23 +287,23 @@ public class OctreeMultiFileLoader implements ISceneGraphLoader {
 
         private OctreeMultiFileLoader loader;
         private AbstractOctreeWrapper octreeWrapper;
-        private Array<OctreeNode<SceneGraphNode>> toLoad;
+        private Array<OctreeNode> toLoad;
 
         public DaemonLoader(AbstractOctreeWrapper aow, OctreeMultiFileLoader loader) {
             this.loader = loader;
             this.octreeWrapper = aow;
-            this.toLoad = new Array<OctreeNode<SceneGraphNode>>();
+            this.toLoad = new Array<OctreeNode>();
         }
 
         @Override
         public void run() {
             while (true) {
                 /** ----------- PROCESS OCTANTS ----------- **/
-                while (!octantQueue.isEmpty()) {
+                while (!instance.toLoadQueue.isEmpty()) {
                     toLoad.clear();
                     int n = 0;
-                    while (octantQueue.peek() != null && n < MAX_PAGES_AT_ONCE) {
-                        OctreeNode<SceneGraphNode> octant = (OctreeNode<SceneGraphNode>) octantQueue.poll();
+                    while (instance.toLoadQueue.peek() != null) {
+                        OctreeNode octant = (OctreeNode) instance.toLoadQueue.poll();
                         toLoad.add(octant);
                         n++;
                     }
@@ -271,6 +319,17 @@ public class OctreeMultiFileLoader implements ISceneGraphLoader {
                             EventManager.instance.post(Events.POST_NOTIFICATION, I18n.bundle.get("notif.loadingoctants.fail"));
                         }
                     }
+
+                    // Release resources if needed
+                    System.out.println("Loaded stars (before): " + loader.nLoadedStars);
+                    while (loader.nLoadedStars >= loader.maxLoadedStars) {
+                        // Get first in queue (unaccessed for the longest time) and release it
+                        OctreeNode octant = loader.toUnloadQueue.poll();
+                        if (octant.getStatus() == LoadStatus.LOADED) {
+                            loader.unloadOctant(octant, octreeWrapper);
+                        }
+                    }
+                    System.out.println("Loaded stars (after): " + loader.nLoadedStars);
                 }
 
                 /** ----------- SLEEP UNTIL INTERRUPTED ----------- **/
@@ -284,5 +343,4 @@ public class OctreeMultiFileLoader implements ISceneGraphLoader {
             }
         }
     }
-
 }

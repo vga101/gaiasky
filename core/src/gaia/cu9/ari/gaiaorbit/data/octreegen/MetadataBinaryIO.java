@@ -37,15 +37,15 @@ import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
  * @author Toni Sagrista
  *
  */
-public class MetadataBinaryIO {
-    public Map<Long, Pair<OctreeNode<SceneGraphNode>, long[]>> nodesMap;
+public class MetadataBinaryIO<T extends SceneGraphNode> {
+    public Map<Long, Pair<OctreeNode<T>, long[]>> nodesMap;
 
     /**
      * Reads the metadata into an octree node.
      * @param in
      * @return
      */
-    public OctreeNode<? extends SceneGraphNode> readMetadata(InputStream in) {
+    public OctreeNode<T> readMetadata(InputStream in) {
         return readMetadata(in, null);
     }
 
@@ -54,12 +54,12 @@ public class MetadataBinaryIO {
      * @param in Input stream
      * @return
      */
-    public OctreeNode<? extends SceneGraphNode> readMetadata(InputStream in, LoadStatus status) {
-        nodesMap = new HashMap<Long, Pair<OctreeNode<SceneGraphNode>, long[]>>();
+    public OctreeNode<T> readMetadata(InputStream in, LoadStatus status) {
+        nodesMap = new HashMap<Long, Pair<OctreeNode<T>, long[]>>();
 
         DataInputStream data_in = new DataInputStream(in);
         try {
-            OctreeNode<SceneGraphNode> root = null;
+            OctreeNode<T> root = null;
             // Read size of stars
             int size = data_in.readInt();
             int maxDepth = 0;
@@ -85,8 +85,8 @@ public class MetadataBinaryIO {
 
                     maxDepth = Math.max(maxDepth, depth);
 
-                    OctreeNode<SceneGraphNode> node = new OctreeNode<SceneGraphNode>(pageId, x, y, z, hsx, hsy, hsz, childrenCount, nObjects, ownObjects, depth);
-                    nodesMap.put(pageId, new Pair<OctreeNode<SceneGraphNode>, long[]>(node, childrenIds));
+                    OctreeNode<T> node = new OctreeNode<T>(pageId, x, y, z, hsx, hsy, hsz, childrenCount, nObjects, ownObjects, depth);
+                    nodesMap.put(pageId, new Pair<OctreeNode<T>, long[]>(node, childrenIds));
                     if (status != null)
                         node.setStatus(status);
 
@@ -121,8 +121,8 @@ public class MetadataBinaryIO {
      * @param root
      * @param out
      */
-    public void writeMetadata(OctreeNode<?> root, OutputStream out) {
-        List<OctreeNode<?>> nodes = new ArrayList<OctreeNode<?>>();
+    public void writeMetadata(OctreeNode<? extends SceneGraphNode> root, OutputStream out) {
+        List<OctreeNode<? extends SceneGraphNode>> nodes = new ArrayList<OctreeNode<? extends SceneGraphNode>>();
         toList(root, nodes);
 
         // Wrap the FileOutputStream with a DataOutputStream
@@ -132,7 +132,7 @@ public class MetadataBinaryIO {
             // Number of nodes
             data_out.writeInt(nodes.size());
 
-            for (OctreeNode<?> node : nodes) {
+            for (OctreeNode<? extends SceneGraphNode> node : nodes) {
                 data_out.writeInt((int) node.pageId);
                 data_out.writeFloat((float) node.centre.x);
                 data_out.writeFloat((float) node.centre.y);
@@ -158,9 +158,9 @@ public class MetadataBinaryIO {
 
     }
 
-    public void toList(OctreeNode<?> node, List<OctreeNode<?>> nodes) {
+    public void toList(OctreeNode<? extends SceneGraphNode> node, List<OctreeNode<? extends SceneGraphNode>> nodes) {
         nodes.add(node);
-        for (OctreeNode<?> child : node.children) {
+        for (OctreeNode<? extends SceneGraphNode> child : node.children) {
             if (child != null) {
                 toList(child, nodes);
             }
