@@ -6,8 +6,6 @@ import java.util.Map;
 import java.util.TreeSet;
 
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.math.collision.BoundingBox;
 import com.badlogic.gdx.utils.Array;
 
 import gaia.cu9.ari.gaiaorbit.data.stars.OctreeMultiFileLoader;
@@ -20,7 +18,6 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Transform;
 import gaia.cu9.ari.gaiaorbit.util.GSEnumSet;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
-import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.Pair;
 import gaia.cu9.ari.gaiaorbit.util.color.ColourUtils;
 import gaia.cu9.ari.gaiaorbit.util.math.BoundingBoxd;
@@ -50,10 +47,8 @@ public class OctreeNode<T extends SceneGraphNode> implements ILineRenderable {
      * Since OctreeNode is not to be parallelised, these can be static.
      **/
     private static BoundingBoxd boxcopy = new BoundingBoxd(new Vector3d(), new Vector3d());
-    private static BoundingBox boxcopyf = new BoundingBox(new Vector3(), new Vector3());
     private static Matrix4d boxtransf = new Matrix4d();
     private static Vector3d auxD1 = new Vector3d(), auxD2 = new Vector3d(), auxD3 = new Vector3d(), auxD4 = new Vector3d();
-    private static Vector3 auxF1 = new Vector3(), auxF2 = new Vector3();
     private static Rayd ray = new Rayd(new Vector3d(), new Vector3d());
 
     private Vector3d aux3d1;
@@ -532,31 +527,31 @@ public class OctreeNode<T extends SceneGraphNode> implements ILineRenderable {
      * @param dir Direction of camera
      * @param up Up vector of camera
      */
-    private boolean computeObserved2(Transform parentTransform, float angle, Vector3d pos, Vector3d dir, Vector3d up) {
-        boxcopy.set(box);
-        boxcopy.mul(boxtransf.idt().translate(parentTransform.getTranslation()));
-
-        observed = GlobalConf.program.CUBEMAP360_MODE || GlobalResources.isInView(boxcopy.getCenter(auxD1), angle, dir) || GlobalResources.isInView(boxcopy.getCorner000(auxD1), angle, dir) || GlobalResources.isInView(boxcopy.getCorner001(auxD1), angle, dir) || GlobalResources.isInView(boxcopy.getCorner010(auxD1), angle, dir) || GlobalResources.isInView(boxcopy.getCorner011(auxD1), angle, dir) || GlobalResources.isInView(boxcopy.getCorner100(auxD1), angle, dir)
-                || GlobalResources.isInView(boxcopy.getCorner101(auxD1), angle, dir) || GlobalResources.isInView(boxcopy.getCorner110(auxD1), angle, dir) || GlobalResources.isInView(boxcopy.getCorner111(auxD1), angle, dir) || box.contains(pos);
-
-        // Rays
-        if (!observed) {
-            auxD2.set(dir).crs(up);
-
-            // Rays in direction-up plane (vertical plane)
-            ray.direction.set(auxD1.set(dir).rotate(auxD2, angle));
-            observed = observed || Intersectord.intersectRayBoundsFast(ray, boxcopy.getCenter(auxD3), boxcopy.getDimensions(auxD4));
-            ray.direction.set(auxD1.set(dir).rotate(auxD2, -angle));
-            observed = observed || Intersectord.intersectRayBoundsFast(ray, boxcopy.getCenter(auxD3), boxcopy.getDimensions(auxD4));
-
-            // Rays in direction-crs(direction,up) plane (horizontal plane)
-            ray.direction.set(auxD1.set(dir).rotate(up, angle));
-            observed = observed || Intersectord.intersectRayBoundsFast(ray, boxcopy.getCenter(auxD3), boxcopy.getDimensions(auxD4));
-            ray.direction.set(auxD1.set(dir).rotate(up, -angle));
-            observed = observed || Intersectord.intersectRayBoundsFast(ray, boxcopy.getCenter(auxD3), boxcopy.getDimensions(auxD4));
-        }
-        return observed;
-    }
+    //    private boolean computeObserved2(Transform parentTransform, float angle, Vector3d pos, Vector3d dir, Vector3d up) {
+    //        boxcopy.set(box);
+    //        boxcopy.mul(boxtransf.idt().translate(parentTransform.getTranslation()));
+    //
+    //        observed = GlobalConf.program.CUBEMAP360_MODE || GlobalResources.isInView(boxcopy.getCenter(auxD1), angle, dir) || GlobalResources.isInView(boxcopy.getCorner000(auxD1), angle, dir) || GlobalResources.isInView(boxcopy.getCorner001(auxD1), angle, dir) || GlobalResources.isInView(boxcopy.getCorner010(auxD1), angle, dir) || GlobalResources.isInView(boxcopy.getCorner011(auxD1), angle, dir) || GlobalResources.isInView(boxcopy.getCorner100(auxD1), angle, dir)
+    //                || GlobalResources.isInView(boxcopy.getCorner101(auxD1), angle, dir) || GlobalResources.isInView(boxcopy.getCorner110(auxD1), angle, dir) || GlobalResources.isInView(boxcopy.getCorner111(auxD1), angle, dir) || box.contains(pos);
+    //
+    //        // Rays
+    //        if (!observed) {
+    //            auxD2.set(dir).crs(up);
+    //
+    //            // Rays in direction-up plane (vertical plane)
+    //            ray.direction.set(auxD1.set(dir).rotate(auxD2, angle));
+    //            observed = observed || Intersectord.intersectRayBoundsFast(ray, boxcopy.getCenter(auxD3), boxcopy.getDimensions(auxD4));
+    //            ray.direction.set(auxD1.set(dir).rotate(auxD2, -angle));
+    //            observed = observed || Intersectord.intersectRayBoundsFast(ray, boxcopy.getCenter(auxD3), boxcopy.getDimensions(auxD4));
+    //
+    //            // Rays in direction-crs(direction,up) plane (horizontal plane)
+    //            ray.direction.set(auxD1.set(dir).rotate(up, angle));
+    //            observed = observed || Intersectord.intersectRayBoundsFast(ray, boxcopy.getCenter(auxD3), boxcopy.getDimensions(auxD4));
+    //            ray.direction.set(auxD1.set(dir).rotate(up, -angle));
+    //            observed = observed || Intersectord.intersectRayBoundsFast(ray, boxcopy.getCenter(auxD3), boxcopy.getDimensions(auxD4));
+    //        }
+    //        return observed;
+    //    }
 
     public LoadStatus getStatus() {
         return status;
@@ -620,7 +615,7 @@ public class OctreeNode<T extends SceneGraphNode> implements ILineRenderable {
         }
 
         if (children != null)
-            for (OctreeNode child : children) {
+            for (OctreeNode<T> child : children) {
                 if (child != null)
                     n += child.countObjects();
             }

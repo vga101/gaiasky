@@ -3,6 +3,7 @@ package gaia.cu9.ari.gaiaorbit.script;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.TimeUtils;
 
 import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
@@ -33,9 +34,12 @@ public class HiddenHelperUser implements IObserver {
 
     private Array<HelperTask> currentTasks;
 
+    private long lastCommandTime;
+
     private HiddenHelperUser() {
         super();
         currentTasks = new Array<HelperTask>(5);
+        lastCommandTime = -1;
         EventManager.instance.subscribe(this, Events.NAVIGATE_TO_OBJECT, Events.INPUT_EVENT);
     }
 
@@ -56,14 +60,18 @@ public class HiddenHelperUser implements IObserver {
             Thread t = new Thread(task);
             t.start();
             currentTasks.add(task);
+            lastCommandTime = TimeUtils.millis();
             break;
         case INPUT_EVENT:
-            // Stop all current threads
-            for (HelperTask tsk : currentTasks) {
-                tsk.stop();
-            }
-            currentTasks.clear();
+            // More than one second after the command is given to be able to stop
+            if (TimeUtils.millis() - lastCommandTime > 1000) {
 
+                // Stop all current threads
+                for (HelperTask tsk : currentTasks) {
+                    tsk.stop();
+                }
+                currentTasks.clear();
+            }
             break;
         }
 

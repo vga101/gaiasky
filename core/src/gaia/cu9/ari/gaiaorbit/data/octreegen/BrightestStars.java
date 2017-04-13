@@ -19,13 +19,11 @@ public class BrightestStars implements IAggregationAlgorithm<Particle> {
     private static final boolean DISCARD = false;
 
     Comparator<Particle> comp;
-    int starId;
 
     int discarded = 0;
 
     public BrightestStars() {
         comp = new StarBrightnessComparator();
-        starId = (int) System.currentTimeMillis();
     }
 
     @Override

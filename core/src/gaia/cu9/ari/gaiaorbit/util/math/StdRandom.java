@@ -49,6 +49,8 @@ package gaia.cu9.ari.gaiaorbit.util.math;
 
 import java.util.Random;
 
+import com.badlogic.gdx.utils.TimeUtils;
+
 /**
  *  The {@code StdRandom} class provides static methods for generating
  *  random number from various discrete and continuous distributions, 
@@ -72,7 +74,7 @@ public final class StdRandom {
     // static initializer
     static {
         // this is how the seed was set in Java 1.4
-        seed = System.currentTimeMillis();
+        seed = TimeUtils.millis();
         random = new Random(seed);
     }
 

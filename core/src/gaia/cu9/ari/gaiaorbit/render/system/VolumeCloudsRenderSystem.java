@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.Texture.TextureWrap;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.TimeUtils;
 import com.bitfire.postprocessing.utils.FullscreenQuad;
 import com.bitfire.utils.ShaderLoader;
 
@@ -47,7 +48,7 @@ public class VolumeCloudsRenderSystem extends AbstractRenderSystem {
         camDir = new Vector3();
         camUp = new Vector3();
 
-        initime = System.currentTimeMillis();
+        initime = TimeUtils.millis();
         opacity = 1.0f;
 
         // Init uniforms
@@ -69,7 +70,7 @@ public class VolumeCloudsRenderSystem extends AbstractRenderSystem {
         shaderProgram.begin();
         staticTex.bind(0);
         // Set uniforms - camera and viewport basically
-        shaderProgram.setUniformf("u_time", (float) ((System.currentTimeMillis() - initime) / 1000d));
+        shaderProgram.setUniformf("u_time", (float) ((TimeUtils.millis() - initime) / 1000d));
         shaderProgram.setUniformf("u_opacity", opacity);
         shaderProgram.setUniformf("u_viewport", rc.w, rc.h);
         shaderProgram.setUniformf("u_camPos", camera.getPos().setVector3(camPos).scl((float) Constants.U_TO_PC));

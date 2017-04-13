@@ -1,7 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.event;
 
-import gaia.cu9.ari.gaiaorbit.GaiaSky;
-
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -9,6 +7,9 @@ import com.badlogic.gdx.utils.IntMap;
 import com.badlogic.gdx.utils.IntMap.Keys;
 import com.badlogic.gdx.utils.ObjectMap;
 import com.badlogic.gdx.utils.Pool;
+import com.badlogic.gdx.utils.TimeUtils;
+
+import gaia.cu9.ari.gaiaorbit.GaiaSky;
 
 /**
  * Event manager that allows for subscription of observers to events (identified by strings), and also for the creation
@@ -27,7 +28,7 @@ public class EventManager implements IObserver {
 
         public long getCurrentTimeMs() {
             if (this.equals(REAL_TIME)) {
-                return System.currentTimeMillis();
+                return TimeUtils.millis();
             } else if (this.equals(SIMULATION_TIME)) {
                 return GaiaSky.instance.time.getTime().getTime();
             }
@@ -38,7 +39,7 @@ public class EventManager implements IObserver {
     /** Singleton pattern **/
     public static final EventManager instance = new EventManager();
 
-    private static final long START = System.currentTimeMillis();
+    private static final long START = TimeUtils.millis();
 
     /** Holds a priority queue for each time frame **/
     private ObjectMap<TimeFrame, PriorityQueue<Telegram>> queues;
@@ -194,7 +195,7 @@ public class EventManager implements IObserver {
      * Returns the current time in milliseconds.
      * */
     public static long getCurrentTime() {
-        return System.currentTimeMillis() - START;
+        return TimeUtils.millis() - START;
     }
 
     /**

@@ -29,6 +29,7 @@ import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.interfce.components.VisualEffectsComponent;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
+import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
@@ -367,8 +368,10 @@ public class FullGui implements IGui, IObserver {
 
                 @Override
                 public boolean handle(Event event) {
-                    if (event instanceof ChangeEvent)
+                    if (event instanceof ChangeEvent) {
+                        EventManager.instance.post(Events.CAMERA_MODE_CMD, CameraMode.Focus);
                         EventManager.instance.post(Events.FOCUS_CHANGE_CMD, candidate);
+                    }
                     return false;
                 }
 

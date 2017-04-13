@@ -2,6 +2,8 @@ package gaia.cu9.ari.gaiaorbit.util.time;
 
 import java.util.Date;
 
+import com.badlogic.gdx.utils.TimeUtils;
+
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 
@@ -32,7 +34,7 @@ public class RealTimeClock implements ITimeFrameProvider {
     @Override
     public void update(double dt) {
         dtHours = dt * SEC_TO_HOUR;
-        time.setTime(System.currentTimeMillis());
+        time.setTime(TimeUtils.millis());
 
         // Post event each 1/2 second
         lastUpdate += dt;

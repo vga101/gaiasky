@@ -125,7 +125,7 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
         ppb.lens.setBlurPasses(10);
         ppb.lens.setEnabled(true);
         ppb.pp.addEffect(ppb.lens);
-        
+
         // LIGHT GLOW
         int nsamples;
         int lgw, lgh;
@@ -147,7 +147,7 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
             glow = new Texture(Gdx.files.internal("img/star_glow_s.png"));
         }
 
-        Glow.N = 30;
+        Glow.N = 50;
         ppb.lglow = new LightGlow(lgw, lgh);
         ppb.lglow.setScatteringIntesity(1f);
         ppb.lglow.setScatteringSaturation(1f);
@@ -158,7 +158,7 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
         ppb.lglow.setTextureScale(1f / GaiaSky.instance.cam.getFovFactor());
         ppb.lglow.setEnabled(GlobalConf.postprocess.POSTPROCESS_LIGHT_SCATTERING);
         ppb.pp.addEffect(ppb.lglow);
-        
+
         // BLOOM
         ppb.bloom = new Bloom((int) (width * bloomFboScale), (int) (height * bloomFboScale));
         ppb.bloom.setBloomIntesity(GlobalConf.postprocess.POSTPROCESS_BLOOM_INTENSITY);

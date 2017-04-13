@@ -9,6 +9,7 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
+import com.badlogic.gdx.utils.TimeUtils;
 
 import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
@@ -750,7 +751,7 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
 
     @Override
     public boolean waitFocus(String name, long timeoutMs) {
-        long iniTime = System.currentTimeMillis();
+        long iniTime = TimeUtils.millis();
         NaturalCamera cam = GaiaSky.instance.cam.naturalCamera;
         while (cam.focus == null || !cam.focus.name.equalsIgnoreCase(name)) {
             try {
@@ -758,7 +759,7 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
             } catch (InterruptedException e) {
                 em.post(Events.JAVA_EXCEPTION, e);
             }
-            long spent = System.currentTimeMillis() - iniTime;
+            long spent = TimeUtils.millis() - iniTime;
             if (timeoutMs > 0 && spent > timeoutMs) {
                 // Timeout!
                 return true;

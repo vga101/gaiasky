@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.TimeUtils;
 
 import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
@@ -15,7 +16,7 @@ public class MagnitudeCut implements IAggregationAlgorithm<Particle> {
     int starId;
 
     public MagnitudeCut() {
-        starId = (int) System.currentTimeMillis();
+        starId = (int) TimeUtils.millis();
     }
 
     @Override
