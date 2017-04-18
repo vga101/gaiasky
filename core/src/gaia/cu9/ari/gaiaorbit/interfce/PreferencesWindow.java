@@ -26,6 +26,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.TextTooltip;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
@@ -36,6 +37,7 @@ import com.badlogic.gdx.utils.Array;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.interfce.beans.ComboBoxBean;
+import gaia.cu9.ari.gaiaorbit.interfce.beans.LangComboBoxBean;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.CollapsibleWindow;
@@ -264,15 +266,19 @@ public class PreferencesWindow extends CollapsibleWindow implements IObserver {
 
         // Add to content
         contentGraphics.add(titleResolution).left().padBottom(pad * 2).row();
-        contentGraphics.add(mode);
+        contentGraphics.add(mode).left().padBottom(pad * 4).row();
 
         // GRAPHICS SETTINGS
         Label titleGraphics = new OwnLabel(txt("gui.graphicssettings"), skin, "help-title");
         Table graphics = new Table();
 
+        OwnLabel gqualityLabel = new OwnLabel(txt("gui.gquality"), skin);
+        gqualityLabel.addListener(new TextTooltip(txt("gui.gquality.info"), skin));
+
         ComboBoxBean[] gqs = new ComboBoxBean[] { new ComboBoxBean(txt("gui.gquality.high"), 0), new ComboBoxBean(txt("gui.gquality.normal"), 1), new ComboBoxBean(txt("gui.gquality.low"), 2) };
         OwnSelectBox<ComboBoxBean> gquality = new OwnSelectBox<ComboBoxBean>(skin);
         gquality.setItems(gqs);
+        gquality.setWidth(textwidth * 3f);
         int index = -1;
         for (int i = 0; i < GlobalConf.data.OBJECTS_JSON_FILE_GQ.length; i++) {
             if (GlobalConf.data.OBJECTS_JSON_FILE_GQ[i].equals(GlobalConf.data.OBJECTS_JSON_FILE)) {
@@ -284,6 +290,37 @@ public class PreferencesWindow extends CollapsibleWindow implements IObserver {
         gquality.setSelected(gqs[gqidx]);
 
         // AA
+        OwnLabel aaLabel = new OwnLabel(txt("gui.aa"), skin);
+        aaLabel.addListener(new TextTooltip(txt("gui.aa.info"), skin));
+
+        ComboBoxBean[] aas = new ComboBoxBean[] { new ComboBoxBean(txt("gui.aa.no"), 0), new ComboBoxBean(txt("gui.aa.fxaa"), -1), new ComboBoxBean(txt("gui.aa.nfaa"), -2) };
+        OwnSelectBox<ComboBoxBean> msaa = new OwnSelectBox<ComboBoxBean>(skin);
+        msaa.setItems(aas);
+        msaa.setWidth(textwidth * 3f);
+        msaa.setSelected(aas[idxAa(2, GlobalConf.postprocess.POSTPROCESS_ANTIALIAS)]);
+
+        // LINE RENDERER
+        ComboBoxBean[] lineRenderers = new ComboBoxBean[] { new ComboBoxBean(txt("gui.linerenderer.normal"), 0), new ComboBoxBean(txt("gui.linerenderer.quad"), 1) };
+        OwnSelectBox<ComboBoxBean> lineRenderer = new OwnSelectBox<ComboBoxBean>(skin);
+        lineRenderer.setItems(lineRenderers);
+        lineRenderer.setWidth(textwidth * 3f);
+        lineRenderer.setSelected(lineRenderers[GlobalConf.scene.LINE_RENDERER]);
+
+        // VSYNC
+        OwnCheckBox vsync = new OwnCheckBox(txt("gui.vsync"), skin, "default", pad);
+        vsync.setChecked(GlobalConf.screen.VSYNC);
+
+        graphics.add(gqualityLabel).left().padRight(pad * 4).padBottom(pad);
+        graphics.add(gquality).left().padBottom(pad).row();
+        graphics.add(aaLabel).left().padRight(pad * 4).padBottom(pad);
+        graphics.add(msaa).left().padBottom(pad).row();
+        graphics.add(new OwnLabel(txt("gui.linerenderer"), skin)).left().padRight(pad * 4).padBottom(pad);
+        graphics.add(lineRenderer).left().padBottom(pad).row();
+        graphics.add(vsync).left().colspan(2);
+
+        // Add to content
+        contentGraphics.add(titleGraphics).left().padBottom(pad * 2).row();
+        contentGraphics.add(graphics).left();
 
         /**
          *  ==== UI ====
@@ -492,6 +529,28 @@ public class PreferencesWindow extends CollapsibleWindow implements IObserver {
 
         enableComponents(!fullscreen, widthField, heightField, resizable, widthLabel, heightLabel);
         enableComponents(fullscreen, fullScreenResolutions);
+    }
+
+    private int idxAa(int base, int x) {
+        if (x == -1)
+            return 1;
+        if (x == -2)
+            return 2;
+        if (x == 0)
+            return 0;
+        return (int) (Math.log(x) / Math.log(2) + 1e-10) + 2;
+    }
+
+    private int idxLang(String code, LangComboBoxBean[] langs) {
+        if (code.isEmpty()) {
+            code = I18n.bundle.getLocale().toLanguageTag();
+        }
+        for (int i = 0; i < langs.length; i++) {
+            if (langs[i].locale.toLanguageTag().equals(code)) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     @Override
