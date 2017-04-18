@@ -79,7 +79,8 @@ public interface IScriptingInterface {
      *            A unique identifier, used to identify this message when you
      *            want to remove it.
      * @param message
-     *            The string message, to be displayed in one line.
+     *            The string message, to be displayed in one line. But explicit
+     *            newline breaks the line.
      * @param x
      *            The x coordinate of the bottom-left corner, in [0..1] from
      *            left to right. This is not resolution-dependant.
@@ -110,7 +111,9 @@ public interface IScriptingInterface {
      *            A unique identifier, used to identify this message when you
      *            want to remove it.
      * @param text
-     *            The string message, to be displayed in one line.
+     *            The string message, to be displayed line-wrapped in the box
+     *            defined by maxWidth and maxHeight. Explicit newline still
+     *            breaks the line.
      * @param x
      *            The x coordinate of the bottom-left corner, in [0..1] from
      *            left to right. This is not resolution-dependant.
