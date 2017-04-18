@@ -1,6 +1,7 @@
 package gaia.cu9.ari.gaiaorbit.interfce;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import com.badlogic.gdx.Gdx;
@@ -34,6 +35,7 @@ import com.badlogic.gdx.utils.Array;
 
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
+import gaia.cu9.ari.gaiaorbit.interfce.beans.ComboBoxBean;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.CollapsibleWindow;
@@ -150,6 +152,13 @@ public class PreferencesWindow extends CollapsibleWindow implements IObserver {
 
         // Full screen mode resolutions
         Array<DisplayMode> modes = new Array<DisplayMode>(Gdx.graphics.getDisplayModes());
+        modes.sort(new Comparator<DisplayMode>() {
+
+            @Override
+            public int compare(DisplayMode o1, DisplayMode o2) {
+                return Integer.compare(o2.height * o2.width, o1.height * o1.width);
+            }
+        });
         final OwnSelectBox<DisplayMode> fullscreenResolutions = new OwnSelectBox<DisplayMode>(skin);
         fullscreenResolutions.setWidth(textwidth * 3.3f);
         fullscreenResolutions.setItems(modes);
@@ -246,7 +255,7 @@ public class PreferencesWindow extends CollapsibleWindow implements IObserver {
         windowed.setChecked(!GlobalConf.screen.FULLSCREEN);
         selectFullscreen(GlobalConf.screen.FULLSCREEN, widthField, heightField, fullscreenResolutions, resizable, widthLabel, heightLabel);
 
-        ButtonGroup<CheckBox> modeButtons = new ButtonGroup<CheckBox>(fullscreen, windowed);
+        new ButtonGroup<CheckBox>(fullscreen, windowed);
 
         mode.add(fullscreen).left().padRight(pad * 2);
         mode.add(fullscreenResolutions).left().row();
@@ -258,7 +267,23 @@ public class PreferencesWindow extends CollapsibleWindow implements IObserver {
         contentGraphics.add(mode);
 
         // GRAPHICS SETTINGS
-        Label titleGraphics = new OwnLabel(txt("gui.graphicssettings"), skin, "ui-12");
+        Label titleGraphics = new OwnLabel(txt("gui.graphicssettings"), skin, "help-title");
+        Table graphics = new Table();
+
+        ComboBoxBean[] gqs = new ComboBoxBean[] { new ComboBoxBean(txt("gui.gquality.high"), 0), new ComboBoxBean(txt("gui.gquality.normal"), 1), new ComboBoxBean(txt("gui.gquality.low"), 2) };
+        OwnSelectBox<ComboBoxBean> gquality = new OwnSelectBox<ComboBoxBean>(skin);
+        gquality.setItems(gqs);
+        int index = -1;
+        for (int i = 0; i < GlobalConf.data.OBJECTS_JSON_FILE_GQ.length; i++) {
+            if (GlobalConf.data.OBJECTS_JSON_FILE_GQ[i].equals(GlobalConf.data.OBJECTS_JSON_FILE)) {
+                index = i;
+                break;
+            }
+        }
+        int gqidx = index;
+        gquality.setSelected(gqs[gqidx]);
+
+        // AA
 
         /**
          *  ==== UI ====
