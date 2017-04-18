@@ -72,7 +72,7 @@ com.badlogic.gdx.scenes.scene2d.ui.ScrollPane$ScrollPaneStyle: {
 },
 com.badlogic.gdx.scenes.scene2d.ui.SelectBox$SelectBoxStyle: {
 	default: {
-		font: ui-11, fontColor: black, background: default-select,
+		font: ui-11, fontColor: black, disabledFontColor: grey, background: default-select, backgroundDisabled: default-select-disabled,
 		scrollStyle: default,
 		listStyle: { font: ui-11, fontColorSelected: black, fontColorUnselected: grey, selection: default-select-selection }
 	}
@@ -134,7 +134,7 @@ com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
 	tooltip: { font: ui-11, fontColor: black, background: tooltip-bg }
 },
 com.badlogic.gdx.scenes.scene2d.ui.TextField$TextFieldStyle: {
-	default: { selection: selection, background: textfield, font: ui-11, fontColor: black, messageFontColor: dark-gray, cursor: cursor },
+	default: { selection: selection, background: textfield, disabledBackground: textfield-disabled, font: ui-11, fontColor: black, disabledFontColor: grey, messageFontColor: dark-gray, cursor: cursor },
 	msg-10:   { font: ui-10, fontColor: black, background: null},
 	msg-11:   { font: ui-11, fontColor: black, background: null},
 	msg-12:   { font: ui-12, fontColor: black, background: null},
@@ -147,7 +147,8 @@ com.badlogic.gdx.scenes.scene2d.ui.TextField$TextFieldStyle: {
 	msg-23:   { font: ui-23, fontColor: black, background: null}
 },
 com.badlogic.gdx.scenes.scene2d.ui.CheckBox$CheckBoxStyle: {
-	default: { checkboxOn: check-on, checkboxOff: check-off, font: ui-11, fontColor: black }
+	default: { checkboxOn: check-on, checkboxOnDisabled: check-on-disabled, checkboxOff: check-off, checkboxOffDisabled: check-off-disabled,font: ui-11, fontColor: white },
+	radio: { checkboxOn: radio-on, checkboxOnDisabled: radio-on-disabled,checkboxOff: radio-off, checkboxOffDisabled: radio-off-disabled, font: ui-11, fontColor: white }
 },
 com.badlogic.gdx.scenes.scene2d.ui.List$ListStyle: {
 	default: { fontColorUnselected: white, selection: selection, fontColorSelected: black, font: ui-11 },

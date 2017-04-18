@@ -58,7 +58,6 @@ public class AboutWindow extends CollapsibleWindow {
     final private Skin skin;
     private AboutWindow me;
     private Table table;
-    private OwnScrollPane scroll;
 
     private LabelStyle linkStyle;
 
@@ -66,7 +65,7 @@ public class AboutWindow extends CollapsibleWindow {
     private List<Actor> textareas;
 
     public AboutWindow(Stage stg, Skin sk) {
-        super(txt("gui.help.help") + " - " + GlobalConf.APPLICATION_NAME + " v" + GlobalConf.version.version, sk);
+        super(txt("gui.help.help") + " - v" + GlobalConf.version.version + " - " + txt("gui.build", GlobalConf.version.build), sk);
 
         this.stage = stg;
         this.skin = sk;
@@ -223,7 +222,7 @@ public class AboutWindow extends CollapsibleWindow {
 
         HorizontalGroup thanks = new HorizontalGroup();
         thanks.space(pad * 2);
-        Container thanksc = new Container(thanks);
+        Container<Actor> thanksc = new Container<Actor>(thanks);
         thanksc.setBackground(skin.getDrawable("bg-clear"));
 
         Image zah = new Image(getSpriteDrawable(Gdx.files.internal("img/zah.png")));
@@ -324,7 +323,7 @@ public class AboutWindow extends CollapsibleWindow {
         String glextensionsstr = Gdx.gl.glGetString(GL20.GL_EXTENSIONS).replace(' ', '\r');
         lines = GlobalResources.countOccurrences(glextensionsstr, '\r') + 1;
         IntBuffer buf = BufferUtils.newIntBuffer(16);
-        Gdx.gl.glGetIntegerv(Gdx.graphics.getGL20().GL_MAX_TEXTURE_SIZE, buf);
+        Gdx.gl.glGetIntegerv(GL20.GL_MAX_TEXTURE_SIZE, buf);
         int maxSize = buf.get(0);
         TextArea glextensions = new TextArea("Max texture size: " + maxSize + "\r" + glextensionsstr, skin);
         glextensions.setDisabled(true);
@@ -410,7 +409,7 @@ public class AboutWindow extends CollapsibleWindow {
         tab3.addListener(tab_listener);
 
         // Let only one tab button be checked at a time
-        ButtonGroup tabs = new ButtonGroup();
+        ButtonGroup<Button> tabs = new ButtonGroup<Button>();
         tabs.setMinCheckCount(1);
         tabs.setMaxCheckCount(1);
         tabs.add(tab1);

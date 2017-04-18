@@ -33,7 +33,7 @@ public class OwnTextIconButton extends OwnTextButton {
         this.icon = icon;
         clearChildren();
         this.align(Align.left);
-        add(this.icon).left().padLeft(2).padRight(2);
+        add(this.icon).left().padLeft(2).padRight(getLabel().getText().length > 0 ? 10 : 2);
         add(getLabel()).left();
     }
 

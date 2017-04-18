@@ -69,6 +69,7 @@ public class FullGui implements IGui, IObserver {
 
     protected SearchDialog searchDialog;
     protected AboutWindow aboutWindow;
+    protected PreferencesWindow preferencesWindow;
     protected VisualEffectsComponent visualEffectsComponent;
 
     protected INumberFormat nf;
@@ -112,7 +113,7 @@ public class FullGui implements IGui, IObserver {
         buildGui();
 
         // We must subscribe to the desired events
-        EventManager.instance.subscribe(this, Events.FOV_CHANGED_CMD, Events.SHOW_TUTORIAL_ACTION, Events.SHOW_SEARCH_ACTION, Events.REMOVE_KEYBOARD_FOCUS, Events.REMOVE_GUI_COMPONENT, Events.ADD_GUI_COMPONENT, Events.SHOW_ABOUT_ACTION, Events.RA_DEC_UPDATED, Events.LON_LAT_UPDATED, Events.POPUP_MENU_FOCUS);
+        EventManager.instance.subscribe(this, Events.FOV_CHANGED_CMD, Events.SHOW_TUTORIAL_ACTION, Events.SHOW_SEARCH_ACTION, Events.REMOVE_KEYBOARD_FOCUS, Events.REMOVE_GUI_COMPONENT, Events.ADD_GUI_COMPONENT, Events.SHOW_ABOUT_ACTION, Events.RA_DEC_UPDATED, Events.LON_LAT_UPDATED, Events.POPUP_MENU_FOCUS, Events.SHOW_PREFERENCES_ACTION);
     }
 
     private void buildGui() {
@@ -311,6 +312,10 @@ public class FullGui implements IGui, IObserver {
             }
             aboutWindow.display();
             break;
+        case SHOW_PREFERENCES_ACTION:
+            //            preferencesWindow = new PreferencesWindow(ui, skin);
+            //            preferencesWindow.display();
+            break;
         case REMOVE_KEYBOARD_FOCUS:
             ui.setKeyboardFocus(null);
             break;
@@ -482,7 +487,7 @@ public class FullGui implements IGui, IObserver {
     }
 
     public void addControlsWindow() {
-        controlsWindow = new ControlsWindow(txt("gui.controls"), skin, ui);
+        controlsWindow = new ControlsWindow(txt("gui.controlpanel"), skin, ui);
         controlsWindow.setSceneGraph(sg);
         controlsWindow.setVisibilityToggles(visibilityEntities, visible);
         controlsWindow.initialize();
