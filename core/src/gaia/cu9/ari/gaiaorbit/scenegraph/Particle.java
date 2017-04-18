@@ -65,6 +65,8 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
             case STAR_POINT_SIZE_CMD:
                 innerRad = 0.004f * DISC_FACTOR + (Float) data[0] * 0.009f;
                 break;
+            default:
+                break;
             }
         }
     }

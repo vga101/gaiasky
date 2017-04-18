@@ -191,6 +191,8 @@ public class MusicManager implements IObserver {
         case MUSIC_RELOAD_CMD:
             reload();
             break;
+        default:
+            break;
         }
 
     }

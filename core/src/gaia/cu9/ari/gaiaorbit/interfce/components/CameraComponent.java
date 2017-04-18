@@ -17,7 +17,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.ui.TextTooltip;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
-import com.badlogic.gdx.scenes.scene2d.utils.Selection;
 import com.badlogic.gdx.utils.Align;
 
 import gaia.cu9.ari.gaiaorbit.GaiaSky;
@@ -352,9 +351,9 @@ public class CameraComponent extends GuiComponent implements IObserver {
         case CAMERA_MODE_CMD:
             // Update camera mode selection
             CameraMode mode = (CameraMode) data[0];
-            ((Selection) cameraMode.getSelection()).setProgrammaticChangeEvents(false);
+            cameraMode.getSelection().setProgrammaticChangeEvents(false);
             cameraMode.setSelected(mode.toString());
-            ((Selection) cameraMode.getSelection()).setProgrammaticChangeEvents(true);
+            cameraMode.getSelection().setProgrammaticChangeEvents(true);
             break;
         case ROTATION_SPEED_CMD:
             Boolean interf = (Boolean) data[1];
@@ -415,6 +414,8 @@ public class CameraComponent extends GuiComponent implements IObserver {
                 // Not coming from interface
                 buttonCubemap.setChecked((Boolean) data[0]);
             }
+            break;
+        default:
             break;
         }
 

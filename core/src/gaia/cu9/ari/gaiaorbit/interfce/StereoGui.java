@@ -150,6 +150,8 @@ public class StereoGui implements IGui, IObserver {
                 notificationsTwo.setVisible(true);
             }
             break;
+        default:
+            break;
         }
     }
 

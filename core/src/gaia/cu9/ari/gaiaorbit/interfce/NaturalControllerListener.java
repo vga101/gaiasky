@@ -37,6 +37,8 @@ public class NaturalControllerListener implements ControllerListener {
         case XBox360Mappings.BUTTON_RB:
             cam.setGamepadMultiplier(0.1);
             break;
+        default:
+            break;
         }
         return true;
     }
@@ -47,6 +49,8 @@ public class NaturalControllerListener implements ControllerListener {
         case XBox360Mappings.BUTTON_LB:
         case XBox360Mappings.BUTTON_RB:
             cam.setGamepadMultiplier(1);
+            break;
+        default:
             break;
         }
         return true;
@@ -101,6 +105,8 @@ public class NaturalControllerListener implements ControllerListener {
 
             cam.setVelocity(-(value + 1f) / 2.0f);
             treated = true;
+            break;
+        default:
             break;
         }
         return treated;

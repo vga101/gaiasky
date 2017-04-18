@@ -268,6 +268,8 @@ public class NotificationsInterface extends Table implements IObserver {
                     }
                 }
                 break;
+            default:
+                break;
             }
         }
     }

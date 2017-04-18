@@ -427,6 +427,8 @@ public class ControlsWindow extends CollapsibleWindow implements IObserver {
         case RECALCULATE_OPTIONS_SIZE:
             recalculateSize();
             break;
+        default:
+            break;
         }
 
     }

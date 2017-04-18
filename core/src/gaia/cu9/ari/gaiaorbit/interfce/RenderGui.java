@@ -150,6 +150,8 @@ public class RenderGui implements IGui, IObserver {
             case TIME_CHANGE_INFO:
                 time.setText(df.format((Date) data[0]));
                 break;
+            default:
+                break;
             }
         }
     }

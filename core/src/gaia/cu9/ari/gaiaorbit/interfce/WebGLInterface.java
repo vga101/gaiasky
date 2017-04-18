@@ -79,6 +79,8 @@ public class WebGLInterface extends Table implements IObserver {
                         });
 
                         break;
+                    default:
+                        break;
                     }
                 }
                 prevVal = (int) slider.getValue();
@@ -162,6 +164,8 @@ public class WebGLInterface extends Table implements IObserver {
             // Update input time
             Date time = (Date) data[0];
             date.setText(df.format(time));
+            break;
+        default:
             break;
         }
 

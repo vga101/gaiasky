@@ -695,6 +695,8 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
         case INPUT_EVENT:
             inputCode = (Integer) data[0];
             break;
+        default:
+            break;
         }
 
     }

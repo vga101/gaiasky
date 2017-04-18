@@ -274,6 +274,9 @@ public class VisualEffectsComponent extends GuiComponent implements IObserver {
             starSize.setValue(newsize);
             size.setText(Integer.toString((int) starSize.getValue()));
             flag = true;
+            break;
+        default:
+            break;
         }
 
     }

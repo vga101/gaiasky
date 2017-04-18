@@ -224,6 +224,8 @@ public class VisibilityComponent extends GuiComponent implements IObserver {
                 b.setProgrammaticChangeEvents(true);
             }
             break;
+        default:
+            break;
         }
 
     }

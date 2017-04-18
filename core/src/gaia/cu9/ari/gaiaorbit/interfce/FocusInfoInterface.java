@@ -287,6 +287,8 @@ public class FocusInfoInterface extends Table implements IObserver {
             Double dec = (Double) data[1];
             pointerRADEC.setText(nf.format(ra) + "°/" + nf.format(dec) + "°");
             break;
+        default:
+            break;
         }
     }
 

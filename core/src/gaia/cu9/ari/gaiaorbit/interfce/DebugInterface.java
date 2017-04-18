@@ -68,6 +68,8 @@ public class DebugInterface extends Table implements IObserver {
                 GlobalConf.program.SHOW_DEBUG_INFO = shw;
                 this.setVisible(GlobalConf.program.SHOW_DEBUG_INFO);
                 break;
+            default:
+                break;
             }
         }
     }

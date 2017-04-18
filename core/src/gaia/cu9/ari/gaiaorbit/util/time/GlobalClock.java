@@ -121,6 +121,8 @@ public class GlobalClock implements IObserver, ITimeFrameProvider {
             long newt = ((Date) data[0]).getTime();
             this.time.setTime(newt);
             break;
+        default:
+            break;
         }
 
     }

@@ -404,6 +404,8 @@ public class FullGui implements IGui, IObserver {
             popup.showMenu(ui, px, py);
 
             break;
+        default:
+            break;
         }
 
     }

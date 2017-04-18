@@ -203,6 +203,8 @@ public class PixelRenderSystem extends ImmediateRenderSystem implements IObserve
                 });
             }
             break;
+        default:
+            break;
         }
     }
 

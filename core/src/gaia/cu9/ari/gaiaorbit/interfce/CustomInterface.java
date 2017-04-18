@@ -229,6 +229,8 @@ public class CustomInterface implements IObserver {
                 }
                 customElements.clear();
                 break;
+            default:
+                break;
             }
         }
     }

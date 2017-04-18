@@ -279,6 +279,8 @@ public class ObjectsComponent extends GuiComponent implements IObserver {
                 }
             }
             break;
+        default:
+            break;
         }
 
     }

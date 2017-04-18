@@ -147,6 +147,8 @@ public class GlobalConf {
             case CONTRAST_CMD:
                 POSTPROCESS_CONTRAST = MathUtils.clamp((float) data[0], Constants.MIN_CONTRAST, Constants.MAX_CONTRAST);
                 break;
+            default:
+                break;
             }
         }
 
@@ -220,6 +222,8 @@ public class GlobalConf {
                 break;
             case RECORD_CAMERA_CMD:
                 toggleRecord((Boolean) data[0]);
+                break;
+            default:
                 break;
 
             }
@@ -315,6 +319,9 @@ public class GlobalConf {
                 if (!RENDER_OUTPUT && GaiaSky.instance != null) {
                     EventManager.instance.post(Events.FLUSH_FRAMES);
                 }
+                break;
+            default:
+                break;
             }
         }
     }
@@ -550,6 +557,8 @@ public class GlobalConf {
                 //                        EventManager.instance.post(Events.LIGHT_SCATTERING_CMD, lensglowBackup);
                 //                }
                 EventManager.instance.post(Events.POST_NOTIFICATION, "You have entered the 360 mode.  Go back to normal mode using <CTRL+3>");
+                break;
+            default:
                 break;
             }
         }
@@ -857,6 +866,8 @@ public class GlobalConf {
                 break;
             case CROSSHAIR_CMD:
                 CROSSHAIR = (boolean) data[0];
+                break;
+            default:
                 break;
             }
 

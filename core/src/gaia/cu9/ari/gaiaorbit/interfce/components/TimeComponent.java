@@ -151,6 +151,8 @@ public class TimeComponent extends GuiComponent implements IObserver {
             if (data.length == 1)
                 this.timeWarp.setText(getFormattedTimeWarp((double) data[0]));
             break;
+        default:
+            break;
         }
 
     }

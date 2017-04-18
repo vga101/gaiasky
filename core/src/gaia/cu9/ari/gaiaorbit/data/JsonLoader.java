@@ -10,7 +10,6 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
-import com.badlogic.gdx.utils.JsonValue.ValueType;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.badlogic.gdx.utils.reflect.Constructor;
 import com.badlogic.gdx.utils.reflect.Method;
@@ -96,7 +95,7 @@ public class JsonLoader<T extends SceneGraphNode> implements ISceneGraphLoader {
             if (json.has("args")) {
                 //Creator arguments
                 JsonValue args = json.get("args");
-                Class[] argumentTypes = new Class[args.size];
+                Class<?>[] argumentTypes = new Class[args.size];
                 Object[] arguments = new Object[args.size];
                 for (int i = 0; i < args.size; i++) {
                     JsonValue arg = args.get(i);
@@ -115,7 +114,6 @@ public class JsonLoader<T extends SceneGraphNode> implements ISceneGraphLoader {
         while (attribute != null) {
             // We skip some param names
             if (!PARAM_SKIP.contains(attribute.name)) {
-                ValueType type = attribute.type();
                 Class<?> valueClass = null;
                 Object value = null;
                 if (attribute.isValue()) {
@@ -161,6 +159,9 @@ public class JsonLoader<T extends SceneGraphNode> implements ISceneGraphLoader {
                         JsonValue child = attribute.child;
 
                         value = convertToDoubleArray(child, attribute.size);
+                        break;
+                    default:
+                        break;
                     }
 
                 } else if (attribute.isObject()) {
@@ -268,6 +269,8 @@ public class JsonLoader<T extends SceneGraphNode> implements ISceneGraphLoader {
         case longValue:
             value = val.asLong();
             break;
+        default:
+            break;
         }
         return value;
     }
@@ -286,6 +289,8 @@ public class JsonLoader<T extends SceneGraphNode> implements ISceneGraphLoader {
             break;
         case longValue:
             valueClass = Long.class;
+            break;
+        default:
             break;
         }
         return valueClass;

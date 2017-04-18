@@ -73,6 +73,8 @@ public class HiddenHelperUser implements IObserver {
                 currentTasks.clear();
             }
             break;
+        default:
+            break;
         }
 
     }

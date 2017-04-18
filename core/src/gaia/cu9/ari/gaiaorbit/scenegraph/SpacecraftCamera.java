@@ -524,7 +524,8 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
         case SPACECRAFT_THRUST_SET_CMD:
             setThrustFactorIndex((Integer) data[0], false);
             break;
-
+        default:
+            break;
         }
 
     }

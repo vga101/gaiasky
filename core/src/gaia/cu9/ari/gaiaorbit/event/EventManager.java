@@ -245,6 +245,8 @@ public class EventManager implements IObserver {
         case EVENT_TIME_FRAME_CMD:
             defaultTimeFrame = (TimeFrame) data[0];
             break;
+        default:
+            break;
         }
 
     }

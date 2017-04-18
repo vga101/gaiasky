@@ -153,6 +153,8 @@ public class CameraManager implements ICamera, IObserver {
         case Gaia_FOV1and2:
             current = fovCamera;
             break;
+        default:
+            break;
         }
 
     }

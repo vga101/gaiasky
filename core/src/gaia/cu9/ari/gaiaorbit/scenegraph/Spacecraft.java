@@ -66,6 +66,8 @@ public class Spacecraft extends AbstractPositionEntity implements IModelRenderab
                 render = false;
             }
             break;
+        default:
+            break;
         }
 
     }

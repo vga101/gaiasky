@@ -39,8 +39,8 @@ import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
  */
 public class SGRStereoscopic extends SGRAbstract implements ISGR, IObserver {
 
-	private static final double EYE_ANGLE_DEG = 1.5;
-	
+    private static final double EYE_ANGLE_DEG = 1.5;
+
     /** Viewport to use in steoeroscopic mode **/
     private Viewport stretchViewport;
 
@@ -101,12 +101,12 @@ public class SGRStereoscopic extends SGRAbstract implements ISGR, IObserver {
             separation = Math.tan(Math.toRadians(EYE_ANGLE_DEG)) * distToFocus;
             // Lets cap it to 100 AU
             separationCapped = Math.min(separation, 1e2 * Constants.AU_TO_U);
-            dirangleDeg = EYE_ANGLE_DEG; 
+            dirangleDeg = EYE_ANGLE_DEG;
         }
 
         // Aux5d contains the direction to the side of the camera, normalised
         aux5d.set(camera.getDirection()).crs(camera.getUp()).nor();
-        
+
         Vector3d side = aux4d.set(aux5d).nor().scl(separation);
         Vector3d sideRemainder = aux2d.set(aux5d).scl(separation - separationCapped);
         Vector3d sideCapped = aux3d.set(aux5d).nor().scl(separationCapped);
@@ -349,6 +349,8 @@ public class SGRStereoscopic extends SGRAbstract implements ISGR, IObserver {
                     }
                 });
             }
+            break;
+        default:
             break;
         }
 

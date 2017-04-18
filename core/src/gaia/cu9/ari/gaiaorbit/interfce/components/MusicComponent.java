@@ -121,7 +121,8 @@ public class MusicComponent extends GuiComponent implements IObserver {
     @Override
     public void notify(Events event, Object... data) {
         switch (event) {
-
+        default:
+            break;
         }
 
     }

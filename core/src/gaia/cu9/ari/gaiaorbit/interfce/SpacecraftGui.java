@@ -679,6 +679,8 @@ public class SpacecraftGui implements IGui, IObserver {
 
             thrustEvents = true;
             break;
+        default:
+            break;
         }
 
     }

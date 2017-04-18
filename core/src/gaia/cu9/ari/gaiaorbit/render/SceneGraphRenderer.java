@@ -526,6 +526,8 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
             }
             break;
+        default:
+            break;
         }
     }
 

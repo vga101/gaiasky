@@ -314,6 +314,8 @@ public class FovCamera extends AbstractCamera implements IObserver {
             lastTime = 0;
             currentTime = 0;
             break;
+        default:
+            break;
         }
 
     }
