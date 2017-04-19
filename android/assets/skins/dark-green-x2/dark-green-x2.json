@@ -139,6 +139,8 @@ com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
 },
 com.badlogic.gdx.scenes.scene2d.ui.TextField$TextFieldStyle: {
 	default: { selection: selection, background: textfield, disabledBackground: textfield-disabled, font: ui-18, fontColor: black, disabledFontColor: grey, messageFontColor: dark-gray, cursor: cursor },
+	no-disabled: { selection: selection, background: textfield, font: ui-11, fontColor: black, messageFontColor: dark-gray, cursor: cursor },
+	info:     { font: ui-11, fontColor: sc-blue, background: null },  
 	msg-10:   { font: ui-10, fontColor: white, background: null},
 	msg-11:   { font: ui-11, fontColor: white, background: null},
 	msg-12:   { font: ui-12, fontColor: white, background: null},
@@ -152,11 +154,11 @@ com.badlogic.gdx.scenes.scene2d.ui.TextField$TextFieldStyle: {
 	msg-23:   { font: ui-23, fontColor: white, background: null}
 },
 com.badlogic.gdx.scenes.scene2d.ui.CheckBox$CheckBoxStyle: {
-		default: { checkboxOn: check-on, checkboxOnDisabled: check-on-disabled, checkboxOff: check-off, checkboxOffDisabled: check-off-disabled,font: ui-18, fontColor: white },
+	default: { checkboxOn: check-on, checkboxOnDisabled: check-on-disabled, checkboxOff: check-off, checkboxOffDisabled: check-off-disabled,font: ui-18, fontColor: white },
 	radio: { checkboxOn: radio-on, checkboxOnDisabled: radio-on-disabled,checkboxOff: radio-off, checkboxOffDisabled: radio-off-disabled, font: ui-18, fontColor: white }
 },
 com.badlogic.gdx.scenes.scene2d.ui.List$ListStyle: {
-	default: { fontColorUnselected: white, selection: selection, fontColorSelected: white, font: ui-18 },
+	default: { fontColorUnselected: black, selection: selection, fontColorSelected: black, font: ui-18 },
 	light: { fontColorUnselected: black, selection: selection, fontColorSelected: black, font: ui-18, background: light-grey },
 	normal: { fontColorUnselected: black, selection: selection, fontColorSelected: black, font: ui-21, background: light-grey }
 },

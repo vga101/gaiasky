@@ -1,11 +1,18 @@
 package gaia.cu9.ari.gaiaorbit.interfce;
 
-import java.util.ArrayList;
+import java.io.File;
+import java.io.FileFilter;
+import java.util.Arrays;
 import java.util.Comparator;
-import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Graphics.DisplayMode;
+import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -25,6 +32,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextArea;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextTooltip;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
@@ -36,15 +44,26 @@ import com.badlogic.gdx.utils.Array;
 
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
+import gaia.cu9.ari.gaiaorbit.interfce.KeyBindings.ProgramAction;
 import gaia.cu9.ari.gaiaorbit.interfce.beans.ComboBoxBean;
 import gaia.cu9.ari.gaiaorbit.interfce.beans.LangComboBoxBean;
+import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
+import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
+import gaia.cu9.ari.gaiaorbit.util.format.INumberFormat;
+import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
+import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.CollapsibleWindow;
+import gaia.cu9.ari.gaiaorbit.util.scene2d.FileChooser;
+import gaia.cu9.ari.gaiaorbit.util.scene2d.FileChooser.ResultListener;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnCheckBox;
+import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnImageButton;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnLabel;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnScrollPane;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnSelectBox;
+import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnSlider;
+import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextArea;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextButton;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextField;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextIconButton;
@@ -59,10 +78,12 @@ public class PreferencesWindow extends CollapsibleWindow implements IObserver {
 
     private LabelStyle linkStyle;
 
-    private List<OwnScrollPane> scrolls;
-    private List<Actor> textareas;
+    private Array<OwnScrollPane> scrolls;
+    private Array<Table> contents;
 
     private IntValidator widthValidator, heightValidator;
+
+    private INumberFormat nf3;
 
     public PreferencesWindow(Stage stage, Skin skin) {
         super(txt("gui.settings") + " - v" + GlobalConf.version.version + " - " + txt("gui.build", GlobalConf.version.build), skin);
@@ -71,8 +92,10 @@ public class PreferencesWindow extends CollapsibleWindow implements IObserver {
         this.me = this;
         this.linkStyle = skin.get("link", LabelStyle.class);
 
-        this.scrolls = new ArrayList<OwnScrollPane>(5);
-        this.textareas = new ArrayList<Actor>();
+        this.scrolls = new Array<OwnScrollPane>(5);
+        this.contents = new Array<Table>();
+
+        this.nf3 = NumberFormatFactory.getFormatter("0.000");
 
         // Build UI
         build();
@@ -84,16 +107,19 @@ public class PreferencesWindow extends CollapsibleWindow implements IObserver {
     public void build() {
         float contentw = 700 * GlobalConf.SCALE_FACTOR;
         float contenth = 700 * GlobalConf.SCALE_FACTOR;
+        float tawidth = 400 * GlobalConf.SCALE_FACTOR;
         float tabwidth = 180 * GlobalConf.SCALE_FACTOR;
         float textwidth = 65 * GlobalConf.SCALE_FACTOR;
         float pad = 5 * GlobalConf.SCALE_FACTOR;
+        float scrollw = 400 * GlobalConf.SCALE_FACTOR;
+        float scrollh = 250 * GlobalConf.SCALE_FACTOR;
 
         /** TABLE and SCROLL **/
         table = new Table(skin);
 
         // Create the tab buttons
         VerticalGroup group = new VerticalGroup();
-        group.align(Align.left);
+        group.align(Align.left | Align.top);
 
         final Button tabGraphics = new OwnTextIconButton(txt("gui.graphicssettings"), new Image(skin.getDrawable("icon-p-graphics")), skin, "toggle-big");
         tabGraphics.pad(pad);
@@ -136,7 +162,7 @@ public class PreferencesWindow extends CollapsibleWindow implements IObserver {
         group.addActor(tab360);
         group.addActor(tabData);
         group.addActor(tabGaia);
-        table.add(group).align(Align.left).padLeft(pad);
+        table.add(group).align(Align.left | Align.top).padLeft(pad);
 
         // Create the tab content. Just using images here for simplicity.
         Stack content = new Stack();
@@ -146,7 +172,8 @@ public class PreferencesWindow extends CollapsibleWindow implements IObserver {
          *  ==== GRAPHICS ====
          **/
         final Table contentGraphics = new Table(skin);
-        contentGraphics.align(Align.top);
+        contents.add(contentGraphics);
+        contentGraphics.align(Align.top | Align.left);
 
         // RESOLUTION/MODE
         Label titleResolution = new OwnLabel(txt("gui.resolutionmode"), skin, "help-title");
@@ -289,15 +316,21 @@ public class PreferencesWindow extends CollapsibleWindow implements IObserver {
         int gqidx = index;
         gquality.setSelected(gqs[gqidx]);
 
+        OwnImageButton gqualityTooltip = new OwnImageButton(skin, "tooltip");
+        gqualityTooltip.addListener(new TextTooltip(txt("gui.gquality.info"), skin));
+
         // AA
         OwnLabel aaLabel = new OwnLabel(txt("gui.aa"), skin);
         aaLabel.addListener(new TextTooltip(txt("gui.aa.info"), skin));
 
         ComboBoxBean[] aas = new ComboBoxBean[] { new ComboBoxBean(txt("gui.aa.no"), 0), new ComboBoxBean(txt("gui.aa.fxaa"), -1), new ComboBoxBean(txt("gui.aa.nfaa"), -2) };
-        OwnSelectBox<ComboBoxBean> msaa = new OwnSelectBox<ComboBoxBean>(skin);
-        msaa.setItems(aas);
-        msaa.setWidth(textwidth * 3f);
-        msaa.setSelected(aas[idxAa(2, GlobalConf.postprocess.POSTPROCESS_ANTIALIAS)]);
+        OwnSelectBox<ComboBoxBean> aa = new OwnSelectBox<ComboBoxBean>(skin);
+        aa.setItems(aas);
+        aa.setWidth(textwidth * 3f);
+        aa.setSelected(aas[idxAa(2, GlobalConf.postprocess.POSTPROCESS_ANTIALIAS)]);
+
+        OwnImageButton aaTooltip = new OwnImageButton(skin, "tooltip");
+        aaTooltip.addListener(new TextTooltip(txt("gui.aa.info"), skin));
 
         // LINE RENDERER
         ComboBoxBean[] lineRenderers = new ComboBoxBean[] { new ComboBoxBean(txt("gui.linerenderer.normal"), 0), new ComboBoxBean(txt("gui.linerenderer.quad"), 1) };
@@ -311,12 +344,14 @@ public class PreferencesWindow extends CollapsibleWindow implements IObserver {
         vsync.setChecked(GlobalConf.screen.VSYNC);
 
         graphics.add(gqualityLabel).left().padRight(pad * 4).padBottom(pad);
-        graphics.add(gquality).left().padBottom(pad).row();
+        graphics.add(gquality).left().padRight(pad * 2).padBottom(pad);
+        graphics.add(gqualityTooltip).left().padBottom(pad).row();
         graphics.add(aaLabel).left().padRight(pad * 4).padBottom(pad);
-        graphics.add(msaa).left().padBottom(pad).row();
+        graphics.add(aa).left().padRight(pad * 2).padBottom(pad);
+        graphics.add(aaTooltip).left().padBottom(pad).row();
         graphics.add(new OwnLabel(txt("gui.linerenderer"), skin)).left().padRight(pad * 4).padBottom(pad);
-        graphics.add(lineRenderer).left().padBottom(pad).row();
-        graphics.add(vsync).left().colspan(2);
+        graphics.add(lineRenderer).colspan(2).left().padBottom(pad).row();
+        graphics.add(vsync).left().colspan(3);
 
         // Add to content
         contentGraphics.add(titleGraphics).left().padBottom(pad * 2).row();
@@ -326,63 +361,286 @@ public class PreferencesWindow extends CollapsibleWindow implements IObserver {
          *  ==== UI ====
          **/
         final Table contentUI = new Table(skin);
-        contentUI.align(Align.top);
-        contentUI.add(new Label("UI here", skin));
+        contents.add(contentUI);
+        contentUI.align(Align.top | Align.left);
+
+        OwnLabel titleUI = new OwnLabel(txt("gui.ui.interfacesettings"), skin, "help-title");
+
+        Table ui = new Table();
+
+        // LANGUAGE
+        File i18nfolder = new File(System.getProperty("assets.location") + "i18n/");
+        String i18nname = "gsbundle";
+        String[] files = i18nfolder.list();
+        LangComboBoxBean[] langs = new LangComboBoxBean[files.length];
+        int i = 0;
+        for (String file : files) {
+            if (file.startsWith("gsbundle") && file.endsWith(".properties")) {
+                String locale = file.substring(i18nname.length(), file.length() - ".properties".length());
+                if (locale.length() != 0) {
+                    // Remove underscore _
+                    locale = locale.substring(1).replace("_", "-");
+                    Locale loc = Locale.forLanguageTag(locale);
+                    langs[i] = new LangComboBoxBean(loc);
+                } else {
+                    langs[i] = new LangComboBoxBean(I18n.bundle.getLocale());
+                }
+            }
+            i++;
+        }
+        Arrays.sort(langs);
+
+        OwnSelectBox<LangComboBoxBean> lang = new OwnSelectBox<LangComboBoxBean>(skin);
+        lang.setItems(langs);
+        lang.setSelected(langs[idxLang(GlobalConf.program.LOCALE, langs)]);
+
+        // THEME
+        String[] themes = new String[] { "dark-green", "dark-green-x2", "dark-blue", "dark-blue-x2", "dark-orange", "dark-orange-x2", "bright-green", "bright-green-x2" };
+        OwnSelectBox<String> theme = new OwnSelectBox<String>(skin);
+        theme.setItems(themes);
+        theme.setSelected(GlobalConf.program.UI_THEME);
+
+        // Add to table
+        ui.add(new OwnLabel(txt("gui.ui.language"), skin)).left().padRight(pad * 4).padBottom(pad);
+        ui.add(lang).left().padBottom(pad).row();
+        ui.add(new OwnLabel(txt("gui.ui.theme"), skin)).left().padRight(pad * 4).padBottom(pad);
+        ui.add(theme).left().padBottom(pad).row();
+
+        // Add to content
+        contentUI.add(titleUI).left().padBottom(pad * 2).row();
+        contentUI.add(ui).left();
 
         /**
          *  ==== PERFORMANCE ====
          **/
         final Table contentPerformance = new Table(skin);
-        contentPerformance.align(Align.top);
-        contentPerformance.add(new Label("performance here", skin));
+        contents.add(contentPerformance);
+        contentPerformance.align(Align.top | Align.left);
+
+        // MULTITHREADING
+        OwnLabel titleMultithread = new OwnLabel(txt("gui.multithreading"), skin, "help-title");
+
+        Table multithread = new Table(skin);
+
+        int maxthreads = Runtime.getRuntime().availableProcessors();
+        ComboBoxBean[] cbs = new ComboBoxBean[maxthreads + 1];
+        cbs[0] = new ComboBoxBean(txt("gui.letdecide"), 0);
+        for (i = 1; i <= maxthreads; i++) {
+            cbs[i] = new ComboBoxBean(txt("gui.thread", i), i);
+        }
+        final OwnSelectBox<ComboBoxBean> numThreads = new OwnSelectBox<ComboBoxBean>(skin);
+        numThreads.setItems(cbs);
+        numThreads.setSelectedIndex(GlobalConf.performance.NUMBER_THREADS);
+
+        final OwnCheckBox multithreadCb = new OwnCheckBox(txt("gui.thread.enable"), skin, "default", pad);
+        multithreadCb.addListener(new EventListener() {
+            @Override
+            public boolean handle(Event event) {
+                if (event instanceof ChangeEvent) {
+                    numThreads.setDisabled(!multithreadCb.isChecked());
+                    return true;
+                }
+                return false;
+            }
+        });
+        multithreadCb.setChecked(GlobalConf.performance.MULTITHREADING);
+        numThreads.setDisabled(!multithreadCb.isChecked());
+
+        // Add to table
+        multithread.add(multithreadCb).colspan(2).left().padBottom(pad).row();
+        multithread.add(new OwnLabel(txt("gui.thread.number"), skin)).left().padRight(pad * 4).padBottom(pad);
+        multithread.add(numThreads).left().padBottom(pad).row();
+
+        // Add to content
+        contentPerformance.add(titleMultithread).left().padBottom(pad * 2).row();
+        contentPerformance.add(multithread).left().padBottom(pad * 4).row();
+
+        // DRAW DISTANCE
+        OwnLabel titleLod = new OwnLabel(txt("gui.lod"), skin, "help-title");
+
+        Table lod = new Table(skin);
+
+        // Smooth transitions
+        final OwnCheckBox lodFadeCb = new OwnCheckBox(txt("gui.lod.fade"), skin, "default", pad);
+        lodFadeCb.setChecked(GlobalConf.scene.OCTREE_PARTICLE_FADE);
+
+        // Draw distance
+        final OwnSlider lodTransitions = new OwnSlider(Constants.MIN_SLIDER, Constants.MAX_SLIDER, 0.1f, false, skin);
+        lodTransitions.setValue(Math.round(MathUtilsd.lint(GlobalConf.scene.OCTANT_THRESHOLD_0, Constants.MIN_LOD_TRANS_ANGLE, Constants.MAX_LOD_TRANS_ANGLE, Constants.MIN_SLIDER, Constants.MAX_SLIDER)));
+
+        final OwnLabel lodValueLabel = new OwnLabel(nf3.format(GlobalConf.scene.OCTANT_THRESHOLD_0), skin);
+
+        lodTransitions.addListener(new EventListener() {
+            @Override
+            public boolean handle(Event event) {
+                if (event instanceof ChangeEvent) {
+                    OwnSlider slider = (OwnSlider) event.getListenerActor();
+                    lodValueLabel.setText(nf3.format(MathUtilsd.lint(slider.getValue(), Constants.MIN_SLIDER, Constants.MAX_SLIDER, Constants.MIN_LOD_TRANS_ANGLE, Constants.MAX_LOD_TRANS_ANGLE)));
+                    return true;
+                }
+                return false;
+            }
+        });
+
+        OwnImageButton lodTooltip = new OwnImageButton(skin, "tooltip");
+        lodTooltip.addListener(new TextTooltip(txt("gui.lod.thresholds.info"), skin));
+
+        // Add to table
+        lod.add(lodFadeCb).colspan(4).left().padBottom(pad).row();
+        lod.add(new OwnLabel(txt("gui.lod.thresholds"), skin)).left().padRight(pad * 4).padBottom(pad);
+        lod.add(lodTransitions).left().padRight(pad * 4).padBottom(pad);
+        lod.add(lodValueLabel).left().padRight(pad * 4).padBottom(pad);
+        lod.add(lodTooltip).left().padBottom(pad);
+
+        // Add to content
+        contentPerformance.add(titleLod).left().padBottom(pad * 2).row();
+        contentPerformance.add(lod).left();
 
         /**
          *  ==== CONTROLS ====
          **/
         final Table contentControls = new Table(skin);
-        contentControls.align(Align.top);
-        contentControls.add(new Label("controls here", skin));
+        contents.add(contentControls);
+        contentControls.align(Align.top | Align.left);
+
+        // KEY BINDINGS
+        OwnLabel titleKeybindings = new OwnLabel(txt("gui.keymappings"), skin, "help-title");
+
+        Map<TreeSet<Integer>, ProgramAction> maps = KeyBindings.instance.getSortedMappings();
+        Set<TreeSet<Integer>> keymaps = maps.keySet();
+        String[][] data = new String[maps.size()][2];
+
+        i = 0;
+        for (TreeSet<Integer> keys : keymaps) {
+            ProgramAction action = maps.get(keys);
+            data[i][0] = action.actionName;
+            data[i][1] = keysToString(keys);
+            i++;
+        }
+
+        Table controls = new Table(skin);
+        // Header
+        controls.add(new OwnLabel(txt("gui.keymappings.action"), skin, "header")).left();
+        controls.add(new OwnLabel(txt("gui.keymappings.keys"), skin, "header")).left().row();
+
+        // Controls
+        for (String[] pair : data) {
+            controls.add(new OwnLabel(pair[0], skin)).left();
+            controls.add(new OwnLabel(pair[1], skin)).left().row();
+        }
+
+        OwnScrollPane controlsScroll = new OwnScrollPane(controls, skin, "default-nobg");
+        controlsScroll.setWidth(scrollw);
+        controlsScroll.setHeight(scrollh);
+        controlsScroll.setForceScroll(false, true);
+        controlsScroll.setSmoothScrolling(true);
+        controlsScroll.setFadeScrollBars(false);
+        scrolls.add(controlsScroll);
+
+        // Add to content
+        contentControls.add(titleKeybindings).left().padBottom(pad * 2).row();
+        contentControls.add(controlsScroll).left();
 
         /**
          *  ==== SCREENSHOTS ====
          **/
         final Table contentScreenshots = new Table(skin);
-        contentScreenshots.align(Align.top);
-        contentScreenshots.add(new Label("screenshots here", skin));
+        contents.add(contentScreenshots);
+        contentScreenshots.align(Align.top | Align.left);
+
+        // SCREEN CAPTURE
+        OwnLabel titleScreenshots = new OwnLabel(txt("gui.screencapture"), skin, "help-title");
+
+        Table screenshots = new Table(skin);
+
+        String ssinfostr = txt("gui.screencapture.info") + '\n';
+        int lines = GlobalResources.countOccurrences(ssinfostr, '\n');
+        TextArea screenshotsInfo = new OwnTextArea(ssinfostr, skin, "info");
+        screenshotsInfo.setDisabled(true);
+        screenshotsInfo.setPrefRows(lines + 1);
+        screenshotsInfo.setWidth(tawidth);
+        screenshotsInfo.clearListeners();
+
+        OwnLabel screenshotsLocationTitle = new OwnLabel(txt("gui.screenshots.save"), skin);
+        final OwnTextButton screenshotsLocation = new OwnTextButton(GlobalConf.screenshot.SCREENSHOT_FOLDER, skin);
+        screenshotsLocation.addListener(new EventListener() {
+            @Override
+            public boolean handle(Event event) {
+                if (event instanceof ChangeEvent) {
+                    FileChooser fc = FileChooser.createPickDialog(txt("gui.screenshots.directory.choose"), skin, Gdx.files.absolute(GlobalConf.screenshot.SCREENSHOT_FOLDER));
+                    fc.setResultListener(new ResultListener() {
+                        @Override
+                        public boolean result(boolean success, FileHandle result) {
+                            if (success) {
+                                // do stuff with result
+                                screenshotsLocation.setText(result.path());
+                            }
+                            return true;
+                        }
+                    });
+                    fc.setOkButtonText(txt("gui.ok"));
+                    fc.setCancelButtonText(txt("gui.cancel"));
+                    fc.setFilter(new FileFilter() {
+                        @Override
+                        public boolean accept(File pathname) {
+                            return pathname.isDirectory();
+                        }
+                    });
+                    fc.show(stage);
+
+                    return true;
+                }
+                return false;
+            }
+        });
+
+        // Add to table
+        screenshots.add(screenshotsInfo).colspan(2).left().padBottom(pad).row();
+        screenshots.add(screenshotsLocationTitle).left().padRight(pad * 4).padBottom(pad);
+        screenshots.add(screenshotsLocation).left().padBottom(pad).row();
+
+        // Add to content
+        contentScreenshots.add(titleScreenshots).left().padBottom(pad * 2).row();
+        contentScreenshots.add(screenshots).left();
 
         /**
          *  ==== FRAME OUTPUT ====
          **/
         final Table contentFrames = new Table(skin);
-        contentFrames.align(Align.top);
+        contents.add(contentFrames);
+        contentFrames.align(Align.top | Align.left);
         contentFrames.add(new Label("frames here", skin));
 
         /**
          *  ==== CAMERA ====
          **/
         final Table contentCamera = new Table(skin);
-        contentCamera.align(Align.top);
+        contents.add(contentCamera);
+        contentCamera.align(Align.top | Align.left);
         contentCamera.add(new Label("camera here", skin));
 
         /**
          *  ==== 360 ====
          **/
         final Table content360 = new Table(skin);
-        content360.align(Align.top);
+        contents.add(content360);
+        content360.align(Align.top | Align.left);
         content360.add(new Label("360 here", skin));
 
         /**
          *  ==== DATA ====
          **/
         final Table contentData = new Table(skin);
-        contentData.align(Align.top);
+        contents.add(contentData);
+        contentData.align(Align.top | Align.left);
         contentData.add(new Label("data here", skin));
 
         /**
          *  ==== GAIA ====
          **/
         final Table contentGaia = new Table(skin);
-        contentGaia.align(Align.top);
+        contents.add(contentGaia);
+        contentGaia.align(Align.top | Align.left);
         contentGaia.add(new Label("gaia here", skin));
 
         /** ADD ALL CONTENT **/
@@ -397,7 +655,8 @@ public class PreferencesWindow extends CollapsibleWindow implements IObserver {
         content.addActor(contentData);
         content.addActor(contentGaia);
 
-        table.add(content).padLeft(10).expand().fill();
+        /** ADD TO MAIN TABLE **/
+        table.add(content).left().padLeft(10).expand().fill();
 
         // Listen to changes in the tab button checked states
         // Set visibility of the tab content to match the checked state
@@ -551,6 +810,23 @@ public class PreferencesWindow extends CollapsibleWindow implements IObserver {
             }
         }
         return -1;
+    }
+
+    private String keysToString(TreeSet<Integer> keys) {
+        String s = "";
+
+        int i = 0;
+        int n = keys.size();
+        for (Integer key : keys) {
+            s += Keys.toString(key).toUpperCase();
+            if (i < n - 1) {
+                s += " + ";
+            }
+
+            i++;
+        }
+
+        return s;
     }
 
     @Override

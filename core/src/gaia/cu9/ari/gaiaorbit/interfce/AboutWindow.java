@@ -1,8 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.interfce;
 
 import java.nio.IntBuffer;
-import java.util.ArrayList;
-import java.util.List;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
@@ -33,6 +31,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.BufferUtils;
 
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
@@ -61,8 +60,7 @@ public class AboutWindow extends CollapsibleWindow {
 
     private LabelStyle linkStyle;
 
-    private List<OwnScrollPane> scrolls;
-    private List<Actor> textareas;
+    private Array<OwnScrollPane> scrolls;
 
     public AboutWindow(Stage stg, Skin sk) {
         super(txt("gui.help.help") + " - v" + GlobalConf.version.version + " - " + txt("gui.build", GlobalConf.version.build), sk);
@@ -78,8 +76,7 @@ public class AboutWindow extends CollapsibleWindow {
         float tabwidth = 60 * GlobalConf.SCALE_FACTOR;
         float pad = 5 * GlobalConf.SCALE_FACTOR;
 
-        scrolls = new ArrayList<OwnScrollPane>(5);
-        textareas = new ArrayList<Actor>();
+        scrolls = new Array<OwnScrollPane>(5);
 
         /** TABLE and SCROLL **/
         table = new Table(skin);
@@ -130,12 +127,12 @@ public class AboutWindow extends CollapsibleWindow {
         }
         String readmestr = readmefile.readString();
         int lines = GlobalResources.countOccurrences(readmestr, '\n');
-        TextArea readme = new TextArea(readmestr, skin);
+        TextArea readme = new TextArea(readmestr, skin, "no-disabled");
         readme.setDisabled(true);
         readme.setPrefRows(lines);
-        textareas.add(readme);
+        readme.clearListeners();
 
-        OwnScrollPane readmescroll = new OwnScrollPane(readme, skin, "default-nobg");
+        OwnScrollPane readmescroll = new OwnScrollPane(readme, skin, "minimalist-nobg");
         readmescroll.setWidth(tawidth);
         readmescroll.setHeight(taheight);
         readmescroll.setForceScroll(false, true);
@@ -172,7 +169,6 @@ public class AboutWindow extends CollapsibleWindow {
         intro.setDisabled(true);
         intro.setPrefRows(3);
         intro.setWidth(tawidth);
-        textareas.add(intro);
 
         // Home page
         Label homepagetitle = new OwnLabel(txt("gui.help.homepage"), skin, "ui-12");
@@ -271,7 +267,6 @@ public class AboutWindow extends CollapsibleWindow {
         system.setDisabled(true);
         system.setPrefRows(3);
         system.setWidth(tawidth * 2f / 3f);
-        textareas.add(system);
 
         Label buildertitle = new OwnLabel(txt("gui.help.builder"), skin, "ui-12");
         Label builder = new OwnLabel(GlobalConf.version.builder, skin, "ui-11");
@@ -325,13 +320,12 @@ public class AboutWindow extends CollapsibleWindow {
         IntBuffer buf = BufferUtils.newIntBuffer(16);
         Gdx.gl.glGetIntegerv(GL20.GL_MAX_TEXTURE_SIZE, buf);
         int maxSize = buf.get(0);
-        TextArea glextensions = new TextArea("Max texture size: " + maxSize + "\r" + glextensionsstr, skin);
+        TextArea glextensions = new TextArea("Max texture size: " + maxSize + "\r" + glextensionsstr, skin, "no-disabled");
         glextensions.setDisabled(true);
         glextensions.setPrefRows(lines);
+        glextensions.clearListeners();
 
-        textareas.add(glextensions);
-
-        OwnScrollPane glextensionsscroll = new OwnScrollPane(glextensions, skin, "default-nobg");
+        OwnScrollPane glextensionsscroll = new OwnScrollPane(glextensions, skin, "minimalist-nobg");
         glextensionsscroll.setWidth(tawidth / 1.7f);
         glextensionsscroll.setHeight(taheight_s);
         glextensionsscroll.setForceScroll(false, true);

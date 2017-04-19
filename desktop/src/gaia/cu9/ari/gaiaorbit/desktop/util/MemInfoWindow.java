@@ -42,12 +42,13 @@ public class MemInfoWindow extends CollapsibleWindow {
             meminfostr += txt("gui.help.name") + ": " + mpBean.getName() + ": " + mpBean.getUsage() + "\n";
         }
 
-        TextArea meminfo = new OwnTextArea(meminfostr, skin);
+        TextArea meminfo = new OwnTextArea(meminfostr, skin, "no-disabled");
         meminfo.setDisabled(true);
         meminfo.setPrefRows(10);
         meminfo.setWidth(tawidth);
+        meminfo.clearListeners();
 
-        meminfoscroll = new OwnScrollPane(meminfo, skin, "default-nobg");
+        meminfoscroll = new OwnScrollPane(meminfo, skin, "minimalist-nobg");
         meminfoscroll.setWidth(tawidth);
         meminfoscroll.setForceScroll(false, true);
         meminfoscroll.setSmoothScrolling(true);

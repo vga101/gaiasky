@@ -313,8 +313,8 @@ public class FullGui implements IGui, IObserver {
             aboutWindow.display();
             break;
         case SHOW_PREFERENCES_ACTION:
-            //            preferencesWindow = new PreferencesWindow(ui, skin);
-            //            preferencesWindow.display();
+            preferencesWindow = new PreferencesWindow(ui, skin);
+            preferencesWindow.display();
             break;
         case REMOVE_KEYBOARD_FOCUS:
             ui.setKeyboardFocus(null);

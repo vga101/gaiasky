@@ -18,7 +18,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.Timer;
 
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
@@ -45,8 +44,6 @@ public class ObjectsComponent extends GuiComponent implements IObserver {
     protected TextField searchBox;
     protected OwnScrollPane focusListScrollPane;
 
-    private Timer focusTimer;
-
     /**
      * Tree to model equivalences
      */
@@ -55,7 +52,6 @@ public class ObjectsComponent extends GuiComponent implements IObserver {
     public ObjectsComponent(Skin skin, Stage stage) {
         super(skin, stage);
         EventManager.instance.subscribe(this, Events.FOCUS_CHANGED);
-        focusTimer = new Timer();
     }
 
     @Override

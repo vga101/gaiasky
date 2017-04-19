@@ -745,6 +745,13 @@ tooltip-icon
   orig: 14, 14
   offset: 0, 0
   index: -1
+transparent
+  rotate: false
+  xy: 480, 25
+  size: 1, 1
+  orig: 1, 1
+  offset: 0, 0
+  index: -1
 tree-minus
   rotate: false
   xy: 368, 14
@@ -768,7 +775,7 @@ tutorial-icon
   index: -1
 white
   rotate: false
-  xy: 480, 25
+  xy: 436, 15
   size: 1, 1
   orig: 1, 1
   offset: 0, 0
