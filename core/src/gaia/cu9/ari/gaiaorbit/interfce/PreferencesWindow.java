@@ -809,7 +809,36 @@ public class PreferencesWindow extends GenericDialog implements IObserver {
         final Table content360 = new Table(skin);
         contents.add(content360);
         content360.align(Align.top | Align.left);
-        content360.add(new Label("360 here", skin));
+
+        // CUBEMAP
+        OwnLabel titleCubemap = new OwnLabel(txt("gui.360"), skin, "help-title");
+        Table cubemap = new Table(skin);
+
+        // Info
+        String cminfostr = txt("gui.360.info") + '\n';
+        lines = GlobalResources.countOccurrences(cminfostr, '\n');
+        TextArea cmInfo = new OwnTextArea(cminfostr, skin, "info");
+        cmInfo.setDisabled(true);
+        cmInfo.setPrefRows(lines + 1);
+        cmInfo.setWidth(tawidth);
+        cmInfo.clearListeners();
+
+        // Resolution
+        OwnLabel cmResolutionLabel = new OwnLabel(txt("gui.360.resolution"), skin);
+        OwnTextField cmResolution = new OwnTextField(Integer.toString(GlobalConf.scene.CUBEMAP_FACE_RESOLUTION), skin, new IntValidator(20, 15000));
+        cmResolution.setWidth(textwidth * 3f);
+
+        // LABELS
+        labels.add(cmResolutionLabel);
+
+        // Add to table
+        cubemap.add(cmInfo).colspan(2).left().padBottom(pad).row();
+        cubemap.add(cmResolutionLabel).left().padRight(pad * 4).padBottom(pad);
+        cubemap.add(cmResolution).left().expandX().padBottom(pad).row();
+
+        // Add to content
+        content360.add(titleCubemap).left().padBottom(pad * 2).row();
+        content360.add(cubemap).left();
 
         /**
          *  ==== DATA ====
@@ -817,7 +846,28 @@ public class PreferencesWindow extends GenericDialog implements IObserver {
         final Table contentData = new Table(skin);
         contents.add(contentData);
         contentData.align(Align.top | Align.left);
-        contentData.add(new Label("data here", skin));
+
+        // DATA SOURCE
+        OwnLabel titleData = new OwnLabel(txt("gui.data.source"), skin, "help-title");
+        Table datasource = new Table(skin);
+
+        CheckBox hyg = new OwnCheckBox(txt("gui.data.hyg"), skin, "radio", pad);
+        hyg.setChecked(GlobalConf.data.CATALOG_JSON_FILE.equals(GlobalConf.data.HYG_JSON_FILE));
+        CheckBox tgas = new OwnCheckBox(txt("gui.data.tgas"), skin, "radio", pad);
+        tgas.setChecked(GlobalConf.data.CATALOG_JSON_FILE.equals(GlobalConf.data.TGAS_JSON_FILE));
+        CheckBox tgasMultifile = new OwnCheckBox(txt("gui.data.tgas") + " multifile", skin, "radio", pad);
+        tgasMultifile.setChecked(GlobalConf.data.CATALOG_JSON_FILE.equals("data/catalog-tgas-octree-multifile.json"));
+
+        new ButtonGroup<CheckBox>(hyg, tgas, tgasMultifile);
+
+        // Add to table
+        datasource.add(hyg).left().padBottom(pad).row();
+        datasource.add(tgas).left().padBottom(pad).row();
+        datasource.add(tgasMultifile).left().padBottom(pad);
+
+        // Add to content
+        contentData.add(titleData).left().padBottom(pad * 2).row();
+        contentData.add(datasource).left();
 
         /**
          *  ==== GAIA ====
@@ -825,7 +875,25 @@ public class PreferencesWindow extends GenericDialog implements IObserver {
         final Table contentGaia = new Table(skin);
         contents.add(contentGaia);
         contentGaia.align(Align.top | Align.left);
-        contentGaia.add(new Label("gaia here", skin));
+
+        // ATTITUDE
+        OwnLabel titleAttitude = new OwnLabel(txt("gui.gaia.attitude"), skin, "help-title");
+        Table attitude = new Table(skin);
+
+        CheckBox real = new OwnCheckBox(txt("gui.gaia.real"), skin, "radio", pad);
+        real.setChecked(GlobalConf.data.REAL_GAIA_ATTITUDE);
+        CheckBox nsl = new OwnCheckBox(txt("gui.gaia.nsl"), skin, "radio", pad);
+        nsl.setChecked(!GlobalConf.data.REAL_GAIA_ATTITUDE);
+
+        new ButtonGroup<CheckBox>(real, nsl);
+
+        // Add to table
+        attitude.add(nsl).left().padBottom(pad).row();
+        attitude.add(real).left().padBottom(pad);
+
+        // Add to content
+        contentGaia.add(titleAttitude).left().padBottom(pad * 2).row();
+        contentGaia.add(attitude).left();
 
         /** COMPUTE LABEL WIDTH **/
         float maxLabelWidth = 0;
