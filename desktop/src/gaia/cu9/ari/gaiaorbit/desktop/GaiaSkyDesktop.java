@@ -256,7 +256,7 @@ public class GaiaSkyDesktop implements IObserver {
             if (memInfoWindow == null) {
                 memInfoWindow = new MemInfoWindow((Stage) data[0], (Skin) data[1]);
             }
-            memInfoWindow.display();
+            memInfoWindow.show((Stage) data[0]);
             break;
         case SHOW_ABOUT_ACTION:
             // Exit fullscreen
