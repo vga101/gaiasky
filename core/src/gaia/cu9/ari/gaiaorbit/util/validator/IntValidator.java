@@ -1,6 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.util.validator;
 
-public class IntValidator {
+public class IntValidator implements IValidator {
 
     private int min;
     private int max;

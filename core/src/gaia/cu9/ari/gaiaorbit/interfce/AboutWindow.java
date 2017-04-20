@@ -10,8 +10,6 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.InputEvent.Type;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.ButtonGroup;
@@ -31,15 +29,12 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.utils.Align;
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.BufferUtils;
 
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
-import gaia.cu9.ari.gaiaorbit.util.I18n;
-import gaia.cu9.ari.gaiaorbit.util.scene2d.CollapsibleWindow;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.Link;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnLabel;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnScrollPane;
@@ -52,34 +47,27 @@ import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextButton;
  * @author tsagrista
  *
  */
-public class AboutWindow extends CollapsibleWindow {
-    final private Stage stage;
-    final private Skin skin;
-    private AboutWindow me;
-    private Table table;
+public class AboutWindow extends GenericDialog {
 
     private LabelStyle linkStyle;
 
-    private Array<OwnScrollPane> scrolls;
-
-    public AboutWindow(Stage stg, Skin sk) {
-        super(txt("gui.help.help") + " - v" + GlobalConf.version.version + " - " + txt("gui.build", GlobalConf.version.build), sk);
-
-        this.stage = stg;
-        this.skin = sk;
-        this.me = this;
+    public AboutWindow(Stage stage, Skin skin) {
+        super(txt("gui.help.help") + " - v" + GlobalConf.version.version + " - " + txt("gui.build", GlobalConf.version.build), skin, stage);
         this.linkStyle = skin.get("link", LabelStyle.class);
 
+        setCancelText(txt("gui.close"));
+
+        // Build
+        buildSuper();
+
+    }
+
+    @Override
+    protected void build() {
         float tawidth = 440 * GlobalConf.SCALE_FACTOR;
         float taheight = 250 * GlobalConf.SCALE_FACTOR;
         float taheight_s = 60 * GlobalConf.SCALE_FACTOR;
         float tabwidth = 60 * GlobalConf.SCALE_FACTOR;
-        float pad = 5 * GlobalConf.SCALE_FACTOR;
-
-        scrolls = new Array<OwnScrollPane>(5);
-
-        /** TABLE and SCROLL **/
-        table = new Table(skin);
 
         // Create the tab buttons
         HorizontalGroup group = new HorizontalGroup();
@@ -98,15 +86,15 @@ public class AboutWindow extends CollapsibleWindow {
         group.addActor(tab1);
         group.addActor(tab2);
         group.addActor(tab3);
-        table.add(group).align(Align.left).padLeft(pad);
-        table.row();
+        content.add(group).align(Align.left).padLeft(pad);
+        content.row();
 
         // Create the tab content. Just using images here for simplicity.
-        Stack content = new Stack();
+        Stack tabContent = new Stack();
 
         /** CONTENT 1 - HELP **/
-        final Table content1 = new Table(skin);
-        content1.align(Align.top);
+        final Table contentHelp = new Table(skin);
+        contentHelp.align(Align.top);
         Image gaiasky = new Image(getSpriteDrawable(Gdx.files.internal("img/gaiaskylogo.png")));
 
         // User manual
@@ -142,27 +130,27 @@ public class AboutWindow extends CollapsibleWindow {
         scrolls.add(readmescroll);
 
         // Add all to content
-        content1.add(gaiasky).colspan(2);
-        content1.row();
-        content1.add(usermantitle).align(Align.left).padRight(pad * 2);
-        content1.add(usermantxt).align(Align.left);
-        content1.row();
-        content1.add(new OwnLabel("", skin, "ui-11"));
-        content1.add(usermanlink).align(Align.left);
-        content1.row();
-        content1.add(wikititle).align(Align.left).padRight(pad * 2);
-        content1.add(wikitxt).align(Align.left);
-        content1.row();
-        content1.add(new OwnLabel("", skin, "ui-11"));
-        content1.add(wikilink).align(Align.left);
-        content1.row();
-        content1.add(readmetitle).colspan(2).align(Align.left);
-        content1.row();
-        content1.add(readmescroll).colspan(2).expand().pad(pad * 2, 0, pad * 2, 0).align(Align.center);
+        contentHelp.add(gaiasky).colspan(2);
+        contentHelp.row();
+        contentHelp.add(usermantitle).align(Align.left).padRight(pad * 2);
+        contentHelp.add(usermantxt).align(Align.left);
+        contentHelp.row();
+        contentHelp.add(new OwnLabel("", skin, "ui-11"));
+        contentHelp.add(usermanlink).align(Align.left);
+        contentHelp.row();
+        contentHelp.add(wikititle).align(Align.left).padRight(pad * 2);
+        contentHelp.add(wikitxt).align(Align.left);
+        contentHelp.row();
+        contentHelp.add(new OwnLabel("", skin, "ui-11"));
+        contentHelp.add(wikilink).align(Align.left);
+        contentHelp.row();
+        contentHelp.add(readmetitle).colspan(2).align(Align.left);
+        contentHelp.row();
+        contentHelp.add(readmescroll).colspan(2).expand().pad(pad * 2, 0, pad * 2, 0).align(Align.center);
 
         /** CONTENT 2 - ABOUT **/
-        final Table content2 = new Table(skin);
-        content2.align(Align.top);
+        final Table contentAbout = new Table(skin);
+        contentAbout.align(Align.top);
 
         // Intro
         TextArea intro = new OwnTextArea(txt("gui.help.gscredits", GlobalConf.version.version), skin.get("msg-11", TextFieldStyle.class));
@@ -231,24 +219,24 @@ public class AboutWindow extends CollapsibleWindow {
         thanks.addActor(bwt);
         thanks.addActor(dpac);
 
-        content2.add(intro).colspan(2).align(Align.left).padTop(pad * 2);
-        content2.row();
-        content2.add(homepagetitle).align(Align.topLeft).padRight(pad * 2);
-        content2.add(homepage).align(Align.left);
-        content2.row();
-        content2.add(authortitle).align(Align.topLeft).padRight(pad * 2).padTop(pad);
-        content2.add(author).align(Align.left).padTop(pad);
-        content2.row();
-        content2.add(contribtitle).align(Align.topLeft).padRight(pad * 2).padTop(pad);
-        content2.add(contrib).align(Align.left).padTop(pad);
-        content2.row();
-        content2.add(licenseh).colspan(2).align(Align.center).padTop(pad * 4);
-        content2.row();
-        content2.add(thanksc).colspan(2).align(Align.center).padTop(pad * 8);
+        contentAbout.add(intro).colspan(2).align(Align.left).padTop(pad * 2);
+        contentAbout.row();
+        contentAbout.add(homepagetitle).align(Align.topLeft).padRight(pad * 2);
+        contentAbout.add(homepage).align(Align.left);
+        contentAbout.row();
+        contentAbout.add(authortitle).align(Align.topLeft).padRight(pad * 2).padTop(pad);
+        contentAbout.add(author).align(Align.left).padTop(pad);
+        contentAbout.row();
+        contentAbout.add(contribtitle).align(Align.topLeft).padRight(pad * 2).padTop(pad);
+        contentAbout.add(contrib).align(Align.left).padTop(pad);
+        contentAbout.row();
+        contentAbout.add(licenseh).colspan(2).align(Align.center).padTop(pad * 4);
+        contentAbout.row();
+        contentAbout.add(thanksc).colspan(2).align(Align.center).padTop(pad * 8);
 
         /** CONTENT 3 - SYSTEM **/
-        final Table content3 = new Table(skin);
-        content3.align(Align.top);
+        final Table contentSystem = new Table(skin);
+        contentSystem.align(Align.top);
 
         // Build info
         Label buildinfo = new OwnLabel(txt("gui.help.buildinfo"), skin, "help-title");
@@ -333,69 +321,69 @@ public class AboutWindow extends CollapsibleWindow {
         glextensionsscroll.setFadeScrollBars(false);
         scrolls.add(glextensionsscroll);
 
-        content3.add(buildinfo).colspan(2).align(Align.left).padTop(pad * 3);
-        content3.row();
-        content3.add(versiontitle).align(Align.topLeft).padRight(pad * 2);
-        content3.add(version).align(Align.left);
-        content3.row();
-        content3.add(revisiontitle).align(Align.topLeft).padRight(pad * 2);
-        content3.add(revision).align(Align.left);
-        content3.row();
-        content3.add(timetitle).align(Align.topLeft).padRight(pad * 2);
-        content3.add(time).align(Align.left);
-        content3.row();
-        content3.add(buildertitle).align(Align.topLeft).padRight(pad * 2);
-        content3.add(builder).align(Align.left).padBottom(pad * 3);
-        content3.row();
-        content3.add(systemtitle).align(Align.topLeft).padRight(pad * 2);
-        content3.add(system).align(Align.left);
-        content3.row();
+        contentSystem.add(buildinfo).colspan(2).align(Align.left).padTop(pad * 3);
+        contentSystem.row();
+        contentSystem.add(versiontitle).align(Align.topLeft).padRight(pad * 2);
+        contentSystem.add(version).align(Align.left);
+        contentSystem.row();
+        contentSystem.add(revisiontitle).align(Align.topLeft).padRight(pad * 2);
+        contentSystem.add(revision).align(Align.left);
+        contentSystem.row();
+        contentSystem.add(timetitle).align(Align.topLeft).padRight(pad * 2);
+        contentSystem.add(time).align(Align.left);
+        contentSystem.row();
+        contentSystem.add(buildertitle).align(Align.topLeft).padRight(pad * 2);
+        contentSystem.add(builder).align(Align.left).padBottom(pad * 3);
+        contentSystem.row();
+        contentSystem.add(systemtitle).align(Align.topLeft).padRight(pad * 2);
+        contentSystem.add(system).align(Align.left);
+        contentSystem.row();
 
-        content3.add(javainfo).colspan(2).align(Align.left).padTop(pad * 2);
-        content3.row();
-        content3.add(javaversiontitle).align(Align.topLeft).padRight(pad * 2);
-        content3.add(javaversion).align(Align.left);
-        content3.row();
-        content3.add(javaruntimetitle).align(Align.topLeft).padRight(pad * 2);
-        content3.add(javaruntime).align(Align.left);
-        content3.row();
-        content3.add(javavmnametitle).align(Align.topLeft).padRight(pad * 2);
-        content3.add(javavmname).align(Align.left);
-        content3.row();
-        content3.add(javavmversiontitle).align(Align.topLeft).padRight(pad * 2);
-        content3.add(javavmversion).align(Align.left);
-        content3.row();
-        content3.add(javavmvendortitle).align(Align.topLeft).padRight(pad * 2);
-        content3.add(javavmvendor).align(Align.left).padBottom(pad * 2);
-        content3.row();
-        content3.add(memoryinfobutton).colspan(2).align(Align.left).padBottom(pad * 3);
-        content3.row();
-        content3.add(glinfo).colspan(2).align(Align.left).padTop(pad * 2);
-        content3.row();
-        content3.add(glversiontitle).align(Align.topLeft).padRight(pad * 2);
-        content3.add(glversion).align(Align.left);
-        content3.row();
-        content3.add(glslversiontitle).align(Align.topLeft).padRight(pad * 2);
-        content3.add(glslversion).align(Align.left);
-        content3.row();
-        content3.add(glextensionstitle).align(Align.topLeft).padRight(pad * 2);
-        content3.add(glextensionsscroll).align(Align.left);
+        contentSystem.add(javainfo).colspan(2).align(Align.left).padTop(pad * 2);
+        contentSystem.row();
+        contentSystem.add(javaversiontitle).align(Align.topLeft).padRight(pad * 2);
+        contentSystem.add(javaversion).align(Align.left);
+        contentSystem.row();
+        contentSystem.add(javaruntimetitle).align(Align.topLeft).padRight(pad * 2);
+        contentSystem.add(javaruntime).align(Align.left);
+        contentSystem.row();
+        contentSystem.add(javavmnametitle).align(Align.topLeft).padRight(pad * 2);
+        contentSystem.add(javavmname).align(Align.left);
+        contentSystem.row();
+        contentSystem.add(javavmversiontitle).align(Align.topLeft).padRight(pad * 2);
+        contentSystem.add(javavmversion).align(Align.left);
+        contentSystem.row();
+        contentSystem.add(javavmvendortitle).align(Align.topLeft).padRight(pad * 2);
+        contentSystem.add(javavmvendor).align(Align.left).padBottom(pad * 2);
+        contentSystem.row();
+        contentSystem.add(memoryinfobutton).colspan(2).align(Align.left).padBottom(pad * 3);
+        contentSystem.row();
+        contentSystem.add(glinfo).colspan(2).align(Align.left).padTop(pad * 2);
+        contentSystem.row();
+        contentSystem.add(glversiontitle).align(Align.topLeft).padRight(pad * 2);
+        contentSystem.add(glversion).align(Align.left);
+        contentSystem.row();
+        contentSystem.add(glslversiontitle).align(Align.topLeft).padRight(pad * 2);
+        contentSystem.add(glslversion).align(Align.left);
+        contentSystem.row();
+        contentSystem.add(glextensionstitle).align(Align.topLeft).padRight(pad * 2);
+        contentSystem.add(glextensionsscroll).align(Align.left);
 
         /** ADD ALL CONTENT **/
-        content.addActor(content1);
-        content.addActor(content2);
-        content.addActor(content3);
+        tabContent.addActor(contentHelp);
+        tabContent.addActor(contentAbout);
+        tabContent.addActor(contentSystem);
 
-        table.add(content).expand().fill();
+        content.add(tabContent).expand().fill();
 
         // Listen to changes in the tab button checked states
         // Set visibility of the tab content to match the checked state
         ChangeListener tab_listener = new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                content1.setVisible(tab1.isChecked());
-                content2.setVisible(tab2.isChecked());
-                content3.setVisible(tab3.isChecked());
+                contentHelp.setVisible(tab1.isChecked());
+                contentAbout.setVisible(tab2.isChecked());
+                contentSystem.setVisible(tab3.isChecked());
             }
         };
         tab1.addListener(tab_listener);
@@ -410,73 +398,14 @@ public class AboutWindow extends CollapsibleWindow {
         tabs.add(tab2);
         tabs.add(tab3);
 
-        /** BUTTONS **/
-        HorizontalGroup buttonGroup = new HorizontalGroup();
-        TextButton close = new OwnTextButton(txt("gui.close"), skin, "default");
-        close.setName("close");
-        close.setSize(70 * GlobalConf.SCALE_FACTOR, 20 * GlobalConf.SCALE_FACTOR);
-        close.addListener(new EventListener() {
-            @Override
-            public boolean handle(Event event) {
-                if (event instanceof ChangeEvent) {
-                    me.hide();
-                    return true;
-                }
-
-                return false;
-            }
-
-        });
-        buttonGroup.addActor(close);
-
-        add(table).pad(pad);
-        row();
-        add(buttonGroup).pad(pad).bottom().right();
-        getTitleTable().align(Align.left);
-
-        pack();
-
-        this.setPosition(Math.round(stage.getWidth() / 2f - this.getWidth() / 2f), Math.round(stage.getHeight() / 2f - this.getHeight() / 2f));
-
-        /** CAPTURE SCROLL FOCUS **/
-        stage.addListener(new EventListener() {
-
-            @Override
-            public boolean handle(Event event) {
-                if (event instanceof InputEvent) {
-                    InputEvent ie = (InputEvent) event;
-
-                    if (ie.getType() == Type.mouseMoved) {
-                        for (OwnScrollPane scroll : scrolls) {
-                            if (ie.getTarget().isDescendantOf(scroll)) {
-                                stage.setScrollFocus(scroll);
-                            }
-                        }
-                        return true;
-                    }
-                }
-                return false;
-            }
-        });
-
     }
 
-    public void hide() {
-        if (stage.getActors().contains(me, true))
-            me.remove();
+    @Override
+    protected void accept() {
     }
 
-    public void display() {
-        if (!stage.getActors().contains(me, true))
-            stage.addActor(this);
-    }
-
-    protected static String txt(String key) {
-        return I18n.bundle.get(key);
-    }
-
-    protected static String txt(String key, Object... args) {
-        return I18n.bundle.format(key, args);
+    @Override
+    protected void cancel() {
     }
 
     private SpriteDrawable getSpriteDrawable(FileHandle fh) {

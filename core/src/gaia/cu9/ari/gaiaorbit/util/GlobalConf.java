@@ -47,6 +47,9 @@ public class GlobalConf {
 
     public static class ScreenshotConf implements IConf {
 
+        public static final int MIN_SCREENSHOT_SIZE = 50;
+        public static final int MAX_SCREENSHOT_SIZE = 25000;
+
         public int SCREENSHOT_WIDTH;
         public int SCREENSHOT_HEIGHT;
         public String SCREENSHOT_FOLDER;
@@ -261,6 +264,9 @@ public class GlobalConf {
      *
      */
     public static class FrameConf implements IConf, IObserver {
+        public static final int MIN_FRAME_SIZE = 50;
+        public static final int MAX_FRAME_SIZE = 25000;
+
         /** The width of the image frames **/
         public int RENDER_WIDTH;
         /** The height of the image frames **/

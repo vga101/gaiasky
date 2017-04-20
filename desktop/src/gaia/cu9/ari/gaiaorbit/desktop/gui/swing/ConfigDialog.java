@@ -671,7 +671,6 @@ public class ConfigDialog extends I18nJFrame {
 
         // FRAME SAVE LOCATION
         final File currentFrameLocation = new File(GlobalConf.frame.RENDER_FOLDER);
-        String dirFrameText = txt("gui.frameoutput.directory.choose");
         final Label frameTextContainer = new Label(currentFrameLocation.getAbsolutePath());
         if (currentFrameLocation.exists() && currentFrameLocation.isDirectory()) {
             dirText = currentFrameLocation.getName();
