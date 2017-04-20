@@ -13,6 +13,7 @@ import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.scenegraph.AbstractSceneGraph;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
+import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.octreewrapper.OctreeWrapperConcurrent;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
@@ -23,8 +24,9 @@ import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
 /**
  * Implementation of a 3D scene graph where the node updates takes place
  * concurrently in threads (as many as processors). This implementation takes
- * into account that one of the top-level nodes is an Octree whose contents also 
+ * into account that one of the top-level nodes is an Octree whose contents also
  * need to be parallelized at the top level.
+ * 
  * @author Toni Sagrista
  *
  */
@@ -42,8 +44,9 @@ public class SceneGraphConcurrentOctree extends AbstractSceneGraph {
 
     }
 
-    /** 
+    /**
      * Builds the scene graph using the given nodes.
+     * 
      * @param nodes
      */
     public void initialize(Array<SceneGraphNode> nodes, ITimeFrameProvider time) {
@@ -100,7 +103,7 @@ public class SceneGraphConcurrentOctree extends AbstractSceneGraph {
         CelestialBody focus = camera.getFocus();
         if (focus != null) {
             SceneGraphNode star = focus.getFirstStarAncestor();
-            OctreeNode parent = octree.parenthood.get(star);
+            OctreeNode<Particle> parent = octree.parenthood.get(star);
             if (parent != null && !parent.isObserved()) {
                 star.update(time, star.parent.transform, camera);
             }
