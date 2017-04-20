@@ -162,16 +162,11 @@ public class GaiaSkyDesktop implements IObserver {
 
     public GaiaSkyDesktop() {
         super();
-        EventManager.instance.subscribe(this, Events.SHOW_PREFERENCES_ACTION, Events.SHOW_ABOUT_ACTION, Events.SHOW_RUNSCRIPT_ACTION, Events.JAVA_EXCEPTION, Events.SHOW_PLAYCAMERA_ACTION, Events.DISPLAY_MEM_INFO_WINDOW, Events.POST_NOTIFICATION);
+        EventManager.instance.subscribe(this, Events.SHOW_ABOUT_ACTION, Events.SHOW_RUNSCRIPT_ACTION, Events.JAVA_EXCEPTION, Events.SHOW_PLAYCAMERA_ACTION, Events.DISPLAY_MEM_INFO_WINDOW, Events.POST_NOTIFICATION);
     }
 
     private void init() {
-        // Show configuration
-        if (GlobalConf.program.SHOW_CONFIG_DIALOG) {
-            ConfigDialog.initialise(this, true);
-        } else {
-            launchMainApp();
-        }
+        launchMainApp();
     }
 
     public void terminate() {
