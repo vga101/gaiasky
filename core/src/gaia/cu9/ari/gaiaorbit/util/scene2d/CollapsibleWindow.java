@@ -90,6 +90,8 @@ public class CollapsibleWindow extends Window {
 
         });
 
+        // Pad title cell
+        getTitleTable().getCells().get(0).padLeft(5 * GlobalConf.SCALE_FACTOR);
         // Mouse pointer on title
         getTitleTable().addListener(new EventListener() {
             @Override

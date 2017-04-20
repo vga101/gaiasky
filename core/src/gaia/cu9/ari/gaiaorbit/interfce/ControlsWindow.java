@@ -293,22 +293,26 @@ public class ControlsWindow extends CollapsibleWindow implements IObserver {
         }
 
         /** ADD GROUPS TO VERTICAL LAYOUT **/
-        guiLayout.padTop(5);
-        int pad = Math.round(10 * GlobalConf.SCALE_FACTOR);
+
+        int padBottom = Math.round(10 * GlobalConf.SCALE_FACTOR);
+        int padSides = Math.round(5 * GlobalConf.SCALE_FACTOR);
         int padSeparator = Math.round(2 * GlobalConf.SCALE_FACTOR);
+
+        guiLayout.padTop(padSides);
+
         int size = mainActors.size();
         for (int i = 0; i < size; i++) {
             Actor actor = mainActors.get(i);
-            guiLayout.add(actor).prefWidth(160 * GlobalConf.SCALE_FACTOR).left().padBottom(pad);
+            guiLayout.add(actor).prefWidth(175 * GlobalConf.SCALE_FACTOR).left().padBottom(padBottom).padLeft(padSides);
             if (i < size - 1) {
                 // Not last
                 guiLayout.row();
-                guiLayout.add(new Image(separator)).left().fill(true, false).padBottom(padSeparator);
+                guiLayout.add(new Image(separator)).left().fill(true, false).padBottom(padSeparator).padLeft(padSides);
                 guiLayout.row();
             }
         }
         guiLayout.align(Align.top | Align.left);
-        guiLayout.setWidth(200);
+        guiLayout.setWidth(200 * GlobalConf.SCALE_FACTOR);
         guiLayout.layout();
         guiLayout.pack();
 
@@ -321,7 +325,7 @@ public class ControlsWindow extends CollapsibleWindow implements IObserver {
         windowScroll.setWidth(guiLayout.getWidth() + windowScroll.getStyle().vScroll.getMinWidth());
 
         mainVertical = new VerticalGroup();
-        mainVertical.space(5 * GlobalConf.SCALE_FACTOR);
+        mainVertical.space(padSides);
         mainVertical.align(Align.right).align(Align.top);
         mainVertical.addActor(windowScroll);
         // Add buttons only in desktop version

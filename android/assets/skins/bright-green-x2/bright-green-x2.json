@@ -82,8 +82,8 @@ com.badlogic.gdx.scenes.scene2d.ui.SplitPane$SplitPaneStyle: {
 	default-horizontal: { handle: default-splitpane }
 },
 com.badlogic.gdx.scenes.scene2d.ui.Window$WindowStyle: {
-	default: { titleFont: ui-18, background: default-window, titleFontColor: black },
-	dialog: { titleFont: ui-18, background: default-window, titleFontColor: black, stageBackground: dialogDim }
+	default: { titleFont: ui-23-bold, background: default-window, titleFontColor: black },
+	dialog: { titleFont: ui-23-bold, background: default-window, titleFontColor: black, stageBackground: dialogDim }
 },
 com.badlogic.gdx.scenes.scene2d.ui.Slider$SliderStyle: {
 	default-horizontal: { background: default-slider, knob: default-slider-knob, knobBefore: default-slider-knob-before },
