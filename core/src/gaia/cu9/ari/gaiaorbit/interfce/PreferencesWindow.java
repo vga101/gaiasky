@@ -24,7 +24,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
 import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Stack;
@@ -37,15 +36,18 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 
+import gaia.cu9.ari.gaiaorbit.GaiaSky;
+import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
-import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.interfce.KeyBindings.ProgramAction;
 import gaia.cu9.ari.gaiaorbit.interfce.beans.ComboBoxBean;
 import gaia.cu9.ari.gaiaorbit.interfce.beans.LangComboBoxBean;
+import gaia.cu9.ari.gaiaorbit.util.ConfInit;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
+import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.format.INumberFormat;
 import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
@@ -65,9 +67,7 @@ import gaia.cu9.ari.gaiaorbit.util.validator.IValidator;
 import gaia.cu9.ari.gaiaorbit.util.validator.IntValidator;
 import gaia.cu9.ari.gaiaorbit.util.validator.RegexpValidator;
 
-public class PreferencesWindow extends GenericDialog implements IObserver {
-
-    private LabelStyle linkStyle;
+public class PreferencesWindow extends GenericDialog {
 
     private Array<Table> contents;
     private Array<OwnLabel> labels;
@@ -76,9 +76,17 @@ public class PreferencesWindow extends GenericDialog implements IObserver {
 
     private INumberFormat nf3;
 
+    private CheckBox fullscreen, resizable, windowed, vsync, multithreadCb, lodFadeCb, cbAutoCamrec, hyg, tgas, tgasMultifile, real, nsl;
+    private OwnSelectBox<DisplayMode> fullscreenResolutions;
+    private OwnSelectBox<ComboBoxBean> gquality, aa, lineRenderer, numThreads, screenshotMode, frameoutputMode;
+    private OwnSelectBox<LangComboBoxBean> lang;
+    private OwnSelectBox<String> theme;
+    private OwnTextField widthField, heightField, sswidthField, ssheightField, frameoutputPrefix, frameoutputFps, fowidthField, foheightField, camrecFps, cmResolution;
+    private OwnSlider lodTransitions;
+    private OwnTextButton screenshotsLocation, frameoutputLocation;
+
     public PreferencesWindow(Stage stage, Skin skin) {
         super(txt("gui.settings") + " - v" + GlobalConf.version.version + " - " + txt("gui.build", GlobalConf.version.build), skin, stage);
-        this.linkStyle = skin.get("link", LabelStyle.class);
 
         this.contents = new Array<Table>();
         this.labels = new Array<OwnLabel>();
@@ -173,7 +181,7 @@ public class PreferencesWindow extends GenericDialog implements IObserver {
                 return Integer.compare(o2.height * o2.width, o1.height * o1.width);
             }
         });
-        final OwnSelectBox<DisplayMode> fullscreenResolutions = new OwnSelectBox<DisplayMode>(skin);
+        fullscreenResolutions = new OwnSelectBox<DisplayMode>(skin);
         fullscreenResolutions.setWidth(textwidth * 3.3f);
         fullscreenResolutions.setItems(modes);
 
@@ -191,12 +199,12 @@ public class PreferencesWindow extends GenericDialog implements IObserver {
         Table windowedResolutions = new Table(skin);
         DisplayMode nativeMode = Gdx.graphics.getDisplayMode();
         widthValidator = new IntValidator(100, nativeMode.width);
-        final OwnTextField widthField = new OwnTextField(Integer.toString(MathUtils.clamp(GlobalConf.screen.SCREEN_WIDTH, 100, nativeMode.width)), skin, widthValidator);
+        widthField = new OwnTextField(Integer.toString(MathUtils.clamp(GlobalConf.screen.SCREEN_WIDTH, 100, nativeMode.width)), skin, widthValidator);
         widthField.setWidth(textwidth);
         heightValidator = new IntValidator(100, nativeMode.height);
-        final OwnTextField heightField = new OwnTextField(Integer.toString(MathUtils.clamp(GlobalConf.screen.SCREEN_HEIGHT, 100, nativeMode.height)), skin, heightValidator);
+        heightField = new OwnTextField(Integer.toString(MathUtils.clamp(GlobalConf.screen.SCREEN_HEIGHT, 100, nativeMode.height)), skin, heightValidator);
         heightField.setWidth(textwidth);
-        final OwnCheckBox resizable = new OwnCheckBox(txt("gui.resizable"), skin, "default", pad);
+        resizable = new OwnCheckBox(txt("gui.resizable"), skin, "default", pad);
         resizable.setChecked(GlobalConf.screen.RESIZABLE);
         final OwnLabel widthLabel = new OwnLabel(txt("gui.width") + ":", skin);
         final OwnLabel heightLabel = new OwnLabel(txt("gui.height") + ":", skin);
@@ -208,7 +216,7 @@ public class PreferencesWindow extends GenericDialog implements IObserver {
         windowedResolutions.add(resizable).left().colspan(4);
 
         // Radio buttons
-        final OwnCheckBox fullscreen = new OwnCheckBox(txt("gui.fullscreen"), skin, "radio", pad);
+        fullscreen = new OwnCheckBox(txt("gui.fullscreen"), skin, "radio", pad);
         fullscreen.addListener(new EventListener() {
             @Override
             public boolean handle(Event event) {
@@ -222,7 +230,7 @@ public class PreferencesWindow extends GenericDialog implements IObserver {
         });
         fullscreen.setChecked(GlobalConf.screen.FULLSCREEN);
 
-        final OwnCheckBox windowed = new OwnCheckBox(txt("gui.windowed"), skin, "radio", pad);
+        windowed = new OwnCheckBox(txt("gui.windowed"), skin, "radio", pad);
         windowed.addListener(new EventListener() {
             @Override
             public boolean handle(Event event) {
@@ -256,7 +264,7 @@ public class PreferencesWindow extends GenericDialog implements IObserver {
         gqualityLabel.addListener(new TextTooltip(txt("gui.gquality.info"), skin));
 
         ComboBoxBean[] gqs = new ComboBoxBean[] { new ComboBoxBean(txt("gui.gquality.high"), 0), new ComboBoxBean(txt("gui.gquality.normal"), 1), new ComboBoxBean(txt("gui.gquality.low"), 2) };
-        OwnSelectBox<ComboBoxBean> gquality = new OwnSelectBox<ComboBoxBean>(skin);
+        gquality = new OwnSelectBox<ComboBoxBean>(skin);
         gquality.setItems(gqs);
         gquality.setWidth(textwidth * 3f);
         int index = -1;
@@ -277,7 +285,7 @@ public class PreferencesWindow extends GenericDialog implements IObserver {
         aaLabel.addListener(new TextTooltip(txt("gui.aa.info"), skin));
 
         ComboBoxBean[] aas = new ComboBoxBean[] { new ComboBoxBean(txt("gui.aa.no"), 0), new ComboBoxBean(txt("gui.aa.fxaa"), -1), new ComboBoxBean(txt("gui.aa.nfaa"), -2) };
-        OwnSelectBox<ComboBoxBean> aa = new OwnSelectBox<ComboBoxBean>(skin);
+        aa = new OwnSelectBox<ComboBoxBean>(skin);
         aa.setItems(aas);
         aa.setWidth(textwidth * 3f);
         aa.setSelected(aas[idxAa(2, GlobalConf.postprocess.POSTPROCESS_ANTIALIAS)]);
@@ -288,13 +296,13 @@ public class PreferencesWindow extends GenericDialog implements IObserver {
         // LINE RENDERER
         OwnLabel lrLabel = new OwnLabel(txt("gui.linerenderer"), skin);
         ComboBoxBean[] lineRenderers = new ComboBoxBean[] { new ComboBoxBean(txt("gui.linerenderer.normal"), 0), new ComboBoxBean(txt("gui.linerenderer.quad"), 1) };
-        OwnSelectBox<ComboBoxBean> lineRenderer = new OwnSelectBox<ComboBoxBean>(skin);
+        lineRenderer = new OwnSelectBox<ComboBoxBean>(skin);
         lineRenderer.setItems(lineRenderers);
         lineRenderer.setWidth(textwidth * 3f);
         lineRenderer.setSelected(lineRenderers[GlobalConf.scene.LINE_RENDERER]);
 
         // VSYNC
-        OwnCheckBox vsync = new OwnCheckBox(txt("gui.vsync"), skin, "default", pad);
+        vsync = new OwnCheckBox(txt("gui.vsync"), skin, "default", pad);
         vsync.setChecked(GlobalConf.screen.VSYNC);
 
         // LABELS
@@ -348,7 +356,7 @@ public class PreferencesWindow extends GenericDialog implements IObserver {
         }
         Arrays.sort(langs);
 
-        OwnSelectBox<LangComboBoxBean> lang = new OwnSelectBox<LangComboBoxBean>(skin);
+        lang = new OwnSelectBox<LangComboBoxBean>(skin);
         lang.setWidth(textwidth * 3f);
         lang.setItems(langs);
         lang.setSelected(langs[idxLang(GlobalConf.program.LOCALE, langs)]);
@@ -356,7 +364,7 @@ public class PreferencesWindow extends GenericDialog implements IObserver {
         // THEME
         OwnLabel themeLabel = new OwnLabel(txt("gui.ui.theme"), skin);
         String[] themes = new String[] { "dark-green", "dark-green-x2", "dark-blue", "dark-blue-x2", "dark-orange", "dark-orange-x2", "bright-green", "bright-green-x2" };
-        OwnSelectBox<String> theme = new OwnSelectBox<String>(skin);
+        theme = new OwnSelectBox<String>(skin);
         theme.setWidth(textwidth * 3f);
         theme.setItems(themes);
         theme.setSelected(GlobalConf.program.UI_THEME);
@@ -393,12 +401,12 @@ public class PreferencesWindow extends GenericDialog implements IObserver {
         for (i = 1; i <= maxthreads; i++) {
             cbs[i] = new ComboBoxBean(txt("gui.thread", i), i);
         }
-        final OwnSelectBox<ComboBoxBean> numThreads = new OwnSelectBox<ComboBoxBean>(skin);
+        numThreads = new OwnSelectBox<ComboBoxBean>(skin);
         numThreads.setWidth(textwidth * 3f);
         numThreads.setItems(cbs);
         numThreads.setSelectedIndex(GlobalConf.performance.NUMBER_THREADS);
 
-        final OwnCheckBox multithreadCb = new OwnCheckBox(txt("gui.thread.enable"), skin, "default", pad);
+        multithreadCb = new OwnCheckBox(txt("gui.thread.enable"), skin, "default", pad);
         multithreadCb.addListener(new EventListener() {
             @Override
             public boolean handle(Event event) {
@@ -427,12 +435,12 @@ public class PreferencesWindow extends GenericDialog implements IObserver {
         Table lod = new Table(skin);
 
         // Smooth transitions
-        final OwnCheckBox lodFadeCb = new OwnCheckBox(txt("gui.lod.fade"), skin, "default", pad);
+        lodFadeCb = new OwnCheckBox(txt("gui.lod.fade"), skin, "default", pad);
         lodFadeCb.setChecked(GlobalConf.scene.OCTREE_PARTICLE_FADE);
 
         // Draw distance
         OwnLabel ddLabel = new OwnLabel(txt("gui.lod.thresholds"), skin);
-        final OwnSlider lodTransitions = new OwnSlider(Constants.MIN_SLIDER, Constants.MAX_SLIDER, 0.1f, false, skin);
+        lodTransitions = new OwnSlider(Constants.MIN_SLIDER, Constants.MAX_SLIDER, 0.1f, false, skin);
         lodTransitions.setValue(Math.round(MathUtilsd.lint(GlobalConf.scene.OCTANT_THRESHOLD_0, Constants.MIN_LOD_TRANS_ANGLE, Constants.MAX_LOD_TRANS_ANGLE, Constants.MIN_SLIDER, Constants.MAX_SLIDER)));
 
         final OwnLabel lodValueLabel = new OwnLabel(nf3.format(GlobalConf.scene.OCTANT_THRESHOLD_0), skin);
@@ -536,7 +544,7 @@ public class PreferencesWindow extends GenericDialog implements IObserver {
         // Save location
         OwnLabel screenshotsLocationLabel = new OwnLabel(txt("gui.screenshots.save"), skin);
         screenshotsLocationLabel.pack();
-        final OwnTextButton screenshotsLocation = new OwnTextButton(GlobalConf.screenshot.SCREENSHOT_FOLDER, skin);
+        screenshotsLocation = new OwnTextButton(GlobalConf.screenshot.SCREENSHOT_FOLDER, skin);
         screenshotsLocation.pad(pad);
         screenshotsLocation.addListener(new EventListener() {
             @Override
@@ -573,9 +581,9 @@ public class PreferencesWindow extends GenericDialog implements IObserver {
         final OwnLabel screenshotsSizeLabel = new OwnLabel(txt("gui.screenshots.size"), skin);
         final OwnLabel xLabel = new OwnLabel("x", skin);
         screenshotsSizeValidator = new IntValidator(GlobalConf.ScreenshotConf.MIN_SCREENSHOT_SIZE, GlobalConf.ScreenshotConf.MAX_SCREENSHOT_SIZE);
-        final OwnTextField sswidthField = new OwnTextField(Integer.toString(MathUtils.clamp(GlobalConf.screenshot.SCREENSHOT_WIDTH, GlobalConf.ScreenshotConf.MIN_SCREENSHOT_SIZE, GlobalConf.ScreenshotConf.MAX_SCREENSHOT_SIZE)), skin, screenshotsSizeValidator);
+        sswidthField = new OwnTextField(Integer.toString(MathUtils.clamp(GlobalConf.screenshot.SCREENSHOT_WIDTH, GlobalConf.ScreenshotConf.MIN_SCREENSHOT_SIZE, GlobalConf.ScreenshotConf.MAX_SCREENSHOT_SIZE)), skin, screenshotsSizeValidator);
         sswidthField.setWidth(textwidth);
-        final OwnTextField ssheightField = new OwnTextField(Integer.toString(MathUtils.clamp(GlobalConf.screenshot.SCREENSHOT_HEIGHT, GlobalConf.ScreenshotConf.MIN_SCREENSHOT_SIZE, GlobalConf.ScreenshotConf.MAX_SCREENSHOT_SIZE)), skin, screenshotsSizeValidator);
+        ssheightField = new OwnTextField(Integer.toString(MathUtils.clamp(GlobalConf.screenshot.SCREENSHOT_HEIGHT, GlobalConf.ScreenshotConf.MIN_SCREENSHOT_SIZE, GlobalConf.ScreenshotConf.MAX_SCREENSHOT_SIZE)), skin, screenshotsSizeValidator);
         ssheightField.setWidth(textwidth);
         HorizontalGroup ssSizeGroup = new HorizontalGroup();
         ssSizeGroup.space(pad * 2);
@@ -586,7 +594,7 @@ public class PreferencesWindow extends GenericDialog implements IObserver {
         // Mode
         OwnLabel ssModeLabel = new OwnLabel(txt("gui.screenshots.mode"), skin);
         ComboBoxBean[] screenshotModes = new ComboBoxBean[] { new ComboBoxBean(txt("gui.screenshots.mode.simple"), 0), new ComboBoxBean(txt("gui.screenshots.mode.redraw"), 1) };
-        final OwnSelectBox<ComboBoxBean> screenshotMode = new OwnSelectBox<ComboBoxBean>(skin);
+        screenshotMode = new OwnSelectBox<ComboBoxBean>(skin);
         screenshotMode.setItems(screenshotModes);
         screenshotMode.setWidth(textwidth * 3f);
         screenshotMode.addListener(new EventListener() {
@@ -654,7 +662,7 @@ public class PreferencesWindow extends GenericDialog implements IObserver {
 
         // Save location
         OwnLabel frameoutputLocationLabel = new OwnLabel(txt("gui.frameoutput.location"), skin);
-        final OwnTextButton frameoutputLocation = new OwnTextButton(GlobalConf.frame.RENDER_FOLDER, skin);
+        frameoutputLocation = new OwnTextButton(GlobalConf.frame.RENDER_FOLDER, skin);
         frameoutputLocation.pad(pad);
         frameoutputLocation.addListener(new EventListener() {
             @Override
@@ -689,21 +697,21 @@ public class PreferencesWindow extends GenericDialog implements IObserver {
 
         // Prefix
         OwnLabel prefixLabel = new OwnLabel(txt("gui.frameoutput.prefix"), skin);
-        OwnTextField frameoutputPrefix = new OwnTextField(GlobalConf.frame.RENDER_FILE_NAME, skin, new RegexpValidator("^\\w+$"));
+        frameoutputPrefix = new OwnTextField(GlobalConf.frame.RENDER_FILE_NAME, skin, new RegexpValidator("^\\w+$"));
         frameoutputPrefix.setWidth(textwidth * 3f);
 
         // FPS
         OwnLabel fpsLabel = new OwnLabel(txt("gui.frameoutput.fps"), skin);
-        OwnTextField frameoutputFps = new OwnTextField(Integer.toString(GlobalConf.frame.RENDER_TARGET_FPS), skin, new IntValidator(1, 200));
+        frameoutputFps = new OwnTextField(Integer.toString(GlobalConf.frame.RENDER_TARGET_FPS), skin, new IntValidator(1, 200));
         frameoutputFps.setWidth(textwidth * 3f);
 
         // Size
         final OwnLabel frameoutputSizeLabel = new OwnLabel(txt("gui.frameoutput.size"), skin);
         final OwnLabel xLabelfo = new OwnLabel("x", skin);
         frameoutputSizeValidator = new IntValidator(GlobalConf.FrameConf.MIN_FRAME_SIZE, GlobalConf.FrameConf.MAX_FRAME_SIZE);
-        final OwnTextField fowidthField = new OwnTextField(Integer.toString(MathUtils.clamp(GlobalConf.frame.RENDER_WIDTH, GlobalConf.FrameConf.MIN_FRAME_SIZE, GlobalConf.FrameConf.MAX_FRAME_SIZE)), skin, frameoutputSizeValidator);
+        fowidthField = new OwnTextField(Integer.toString(MathUtils.clamp(GlobalConf.frame.RENDER_WIDTH, GlobalConf.FrameConf.MIN_FRAME_SIZE, GlobalConf.FrameConf.MAX_FRAME_SIZE)), skin, frameoutputSizeValidator);
         fowidthField.setWidth(textwidth);
-        final OwnTextField foheightField = new OwnTextField(Integer.toString(MathUtils.clamp(GlobalConf.frame.RENDER_HEIGHT, GlobalConf.FrameConf.MIN_FRAME_SIZE, GlobalConf.FrameConf.MAX_FRAME_SIZE)), skin, frameoutputSizeValidator);
+        foheightField = new OwnTextField(Integer.toString(MathUtils.clamp(GlobalConf.frame.RENDER_HEIGHT, GlobalConf.FrameConf.MIN_FRAME_SIZE, GlobalConf.FrameConf.MAX_FRAME_SIZE)), skin, frameoutputSizeValidator);
         foheightField.setWidth(textwidth);
         HorizontalGroup foSizeGroup = new HorizontalGroup();
         foSizeGroup.space(pad * 2);
@@ -714,7 +722,7 @@ public class PreferencesWindow extends GenericDialog implements IObserver {
         // Mode
         OwnLabel fomodeLabel = new OwnLabel(txt("gui.screenshots.mode"), skin);
         ComboBoxBean[] frameoutputModes = new ComboBoxBean[] { new ComboBoxBean(txt("gui.screenshots.mode.simple"), 0), new ComboBoxBean(txt("gui.screenshots.mode.redraw"), 1) };
-        final OwnSelectBox<ComboBoxBean> frameoutputMode = new OwnSelectBox<ComboBoxBean>(skin);
+        frameoutputMode = new OwnSelectBox<ComboBoxBean>(skin);
         frameoutputMode.setItems(frameoutputModes);
         frameoutputMode.setWidth(textwidth * 3f);
         frameoutputMode.addListener(new EventListener() {
@@ -777,11 +785,11 @@ public class PreferencesWindow extends GenericDialog implements IObserver {
 
         // fps
         OwnLabel camfpsLabel = new OwnLabel(txt("gui.camerarec.fps"), skin);
-        OwnTextField camrecFps = new OwnTextField(Integer.toString(GlobalConf.frame.CAMERA_REC_TARGET_FPS), skin, new IntValidator(1, 200));
+        camrecFps = new OwnTextField(Integer.toString(GlobalConf.frame.CAMERA_REC_TARGET_FPS), skin, new IntValidator(1, 200));
         camrecFps.setWidth(textwidth * 3f);
 
         // Activate automatically
-        CheckBox cbAutoCamrec = new OwnCheckBox(txt("gui.camerarec.frameoutput"), skin, "default", pad);
+        cbAutoCamrec = new OwnCheckBox(txt("gui.camerarec.frameoutput"), skin, "default", pad);
         cbAutoCamrec.setChecked(GlobalConf.frame.AUTO_FRAME_OUTPUT_CAMERA_PLAY);
         OwnImageButton camrecTooltip = new OwnImageButton(skin, "tooltip");
         camrecTooltip.addListener(new TextTooltip(txt("gui.tooltip.playcamera.frameoutput"), skin));
@@ -825,7 +833,7 @@ public class PreferencesWindow extends GenericDialog implements IObserver {
 
         // Resolution
         OwnLabel cmResolutionLabel = new OwnLabel(txt("gui.360.resolution"), skin);
-        OwnTextField cmResolution = new OwnTextField(Integer.toString(GlobalConf.scene.CUBEMAP_FACE_RESOLUTION), skin, new IntValidator(20, 15000));
+        cmResolution = new OwnTextField(Integer.toString(GlobalConf.scene.CUBEMAP_FACE_RESOLUTION), skin, new IntValidator(20, 15000));
         cmResolution.setWidth(textwidth * 3f);
 
         // LABELS
@@ -851,11 +859,11 @@ public class PreferencesWindow extends GenericDialog implements IObserver {
         OwnLabel titleData = new OwnLabel(txt("gui.data.source"), skin, "help-title");
         Table datasource = new Table(skin);
 
-        CheckBox hyg = new OwnCheckBox(txt("gui.data.hyg"), skin, "radio", pad);
+        hyg = new OwnCheckBox(txt("gui.data.hyg"), skin, "radio", pad);
         hyg.setChecked(GlobalConf.data.CATALOG_JSON_FILE.equals(GlobalConf.data.HYG_JSON_FILE));
-        CheckBox tgas = new OwnCheckBox(txt("gui.data.tgas"), skin, "radio", pad);
+        tgas = new OwnCheckBox(txt("gui.data.tgas"), skin, "radio", pad);
         tgas.setChecked(GlobalConf.data.CATALOG_JSON_FILE.equals(GlobalConf.data.TGAS_JSON_FILE));
-        CheckBox tgasMultifile = new OwnCheckBox(txt("gui.data.tgas") + " multifile", skin, "radio", pad);
+        tgasMultifile = new OwnCheckBox(txt("gui.data.tgas") + " multifile", skin, "radio", pad);
         tgasMultifile.setChecked(GlobalConf.data.CATALOG_JSON_FILE.equals("data/catalog-tgas-octree-multifile.json"));
 
         new ButtonGroup<CheckBox>(hyg, tgas, tgasMultifile);
@@ -880,9 +888,9 @@ public class PreferencesWindow extends GenericDialog implements IObserver {
         OwnLabel titleAttitude = new OwnLabel(txt("gui.gaia.attitude"), skin, "help-title");
         Table attitude = new Table(skin);
 
-        CheckBox real = new OwnCheckBox(txt("gui.gaia.real"), skin, "radio", pad);
+        real = new OwnCheckBox(txt("gui.gaia.real"), skin, "radio", pad);
         real.setChecked(GlobalConf.data.REAL_GAIA_ATTITUDE);
-        CheckBox nsl = new OwnCheckBox(txt("gui.gaia.nsl"), skin, "radio", pad);
+        nsl = new OwnCheckBox(txt("gui.gaia.nsl"), skin, "radio", pad);
         nsl.setChecked(!GlobalConf.data.REAL_GAIA_ATTITUDE);
 
         new ButtonGroup<CheckBox>(real, nsl);
@@ -976,7 +984,109 @@ public class PreferencesWindow extends GenericDialog implements IObserver {
     }
 
     private void saveCurrentPreferences() {
+        // Add all properties to GlobalConf.instance
+        GlobalConf.screen.FULLSCREEN = fullscreen.isChecked();
 
+        // Fullscreen options
+        GlobalConf.screen.FULLSCREEN_WIDTH = ((DisplayMode) fullscreenResolutions.getSelected()).width;
+        GlobalConf.screen.FULLSCREEN_HEIGHT = ((DisplayMode) fullscreenResolutions.getSelected()).height;
+
+        // Windowed options
+        GlobalConf.screen.SCREEN_WIDTH = Integer.parseInt(widthField.getText());
+        GlobalConf.screen.SCREEN_HEIGHT = Integer.parseInt(heightField.getText());
+        GlobalConf.screen.RESIZABLE = resizable.isChecked();
+
+        // Graphics
+        ComboBoxBean bean = (ComboBoxBean) gquality.getSelected();
+        GlobalConf.data.OBJECTS_JSON_FILE = GlobalConf.data.OBJECTS_JSON_FILE_GQ[bean.value];
+        GlobalConf.scene.GRAPHICS_QUALITY = bean.value;
+
+        bean = (ComboBoxBean) aa.getSelected();
+        GlobalConf.postprocess.POSTPROCESS_ANTIALIAS = bean.value;
+        EventManager.instance.post(Events.ANTIALIASING_CMD, bean.value);
+        GlobalConf.screen.VSYNC = vsync.isChecked();
+
+        // Line renderer
+        bean = (ComboBoxBean) lineRenderer.getSelected();
+        GlobalConf.scene.LINE_RENDERER = bean.value;
+
+        // Interface
+        LangComboBoxBean lbean = (LangComboBoxBean) lang.getSelected();
+        GlobalConf.program.LOCALE = lbean.locale.toLanguageTag();
+        I18n.forceinit(Gdx.files.internal("i18n/gsbundle"));
+        boolean uithemeChanged = GlobalConf.program.UI_THEME != (String) theme.getSelected();
+        GlobalConf.program.UI_THEME = (String) theme.getSelected();
+        if (GlobalConf.program.UI_THEME.equalsIgnoreCase("hidpi")) {
+            GlobalConf.updateScaleFactor(Math.max(GlobalConf.SCALE_FACTOR, 1.6f));
+        }
+
+        // Performance
+        bean = (ComboBoxBean) numThreads.getSelected();
+        GlobalConf.performance.NUMBER_THREADS = bean.value;
+        GlobalConf.performance.MULTITHREADING = multithreadCb.isChecked();
+
+        GlobalConf.scene.OCTREE_PARTICLE_FADE = lodFadeCb.isChecked();
+        GlobalConf.scene.OCTANT_THRESHOLD_0 = MathUtilsd.lint(lodTransitions.getValue(), Constants.MIN_SLIDER, Constants.MAX_SLIDER, Constants.MIN_LOD_TRANS_ANGLE, Constants.MAX_LOD_TRANS_ANGLE);
+        // Here we use a 0.4 rad between the thresholds
+        GlobalConf.scene.OCTANT_THRESHOLD_1 = GlobalConf.scene.OCTREE_PARTICLE_FADE ? GlobalConf.scene.OCTANT_THRESHOLD_0 + 0.4f : GlobalConf.scene.OCTANT_THRESHOLD_0;
+
+        // Data
+        if (hyg.isChecked())
+            GlobalConf.data.CATALOG_JSON_FILE = GlobalConf.data.HYG_JSON_FILE;
+        else if (tgas.isChecked())
+            GlobalConf.data.CATALOG_JSON_FILE = GlobalConf.data.TGAS_JSON_FILE;
+        else if (tgasMultifile.isChecked())
+            GlobalConf.data.CATALOG_JSON_FILE = "data/catalog-tgas-octree-multifile.json";
+        else if (GlobalConf.data.CATALOG_JSON_FILE == null || GlobalConf.data.CATALOG_JSON_FILE.length() == 0)
+            Logger.error(this.getClass().getSimpleName(), "No catalog file selected!");
+
+        // Screenshots
+        File ssfile = new File(screenshotsLocation.getText().toString());
+        if (ssfile.exists() && ssfile.isDirectory())
+            GlobalConf.screenshot.SCREENSHOT_FOLDER = ssfile.getAbsolutePath();
+        GlobalConf.screenshot.SCREENSHOT_MODE = GlobalConf.ScreenshotMode.values()[screenshotMode.getSelectedIndex()];
+        GlobalConf.screenshot.SCREENSHOT_WIDTH = Integer.parseInt(sswidthField.getText());
+        GlobalConf.screenshot.SCREENSHOT_HEIGHT = Integer.parseInt(ssheightField.getText());
+        EventManager.instance.post(Events.SCREENSHOT_SIZE_UDPATE, GlobalConf.screenshot.SCREENSHOT_WIDTH, GlobalConf.screenshot.SCREENSHOT_HEIGHT);
+
+        // Frame output
+        File fofile = new File(frameoutputLocation.getText().toString());
+        if (fofile.exists() && fofile.isDirectory())
+            GlobalConf.frame.RENDER_FOLDER = fofile.getAbsolutePath();
+        String text = frameoutputPrefix.getText();
+        if (text.matches("^\\w+$")) {
+            GlobalConf.frame.RENDER_FILE_NAME = text;
+        }
+        GlobalConf.frame.FRAME_MODE = GlobalConf.ScreenshotMode.values()[frameoutputMode.getSelectedIndex()];
+        GlobalConf.frame.RENDER_WIDTH = Integer.parseInt(fowidthField.getText());
+        GlobalConf.frame.RENDER_HEIGHT = Integer.parseInt(foheightField.getText());
+        GlobalConf.frame.RENDER_TARGET_FPS = Integer.parseInt(frameoutputFps.getText());
+        EventManager.instance.post(Events.FRAME_SIZE_UDPATE, GlobalConf.frame.RENDER_WIDTH, GlobalConf.frame.RENDER_HEIGHT);
+
+        // Camera recording
+        GlobalConf.frame.CAMERA_REC_TARGET_FPS = Integer.parseInt(camrecFps.getText());
+        GlobalConf.frame.AUTO_FRAME_OUTPUT_CAMERA_PLAY = (Boolean) cbAutoCamrec.isChecked();
+
+        // Cube map resolution
+        GlobalConf.scene.CUBEMAP_FACE_RESOLUTION = Integer.parseInt(cmResolution.getText());
+
+        // Save configuration
+        ConfInit.instance.persistGlobalConf(new File(System.getProperty("properties.file")));
+
+        EventManager.instance.post(Events.PROPERTIES_WRITTEN);
+
+        if (uithemeChanged) {
+            Gdx.app.postRunnable(new Runnable() {
+                public void run() {
+                    // Reinitialise GUI system
+                    GlobalResources.updateSkin();
+                    GaiaSky.instance.reinitialiseGUI1();
+                    GaiaSky.instance.reinitialiseGUI2();
+                    // Time init
+                    EventManager.instance.post(Events.TIME_CHANGE_INFO, GaiaSky.instance.time.getTime());
+                }
+            });
+        }
     }
 
     private void selectFullscreen(boolean fullscreen, OwnTextField widthField, OwnTextField heightField, SelectBox<DisplayMode> fullScreenResolutions, CheckBox resizable, OwnLabel widthLabel, OwnLabel heightLabel) {
@@ -1029,12 +1139,6 @@ public class PreferencesWindow extends GenericDialog implements IObserver {
         }
 
         return s;
-    }
-
-    @Override
-    public void notify(Events event, Object... data) {
-        // TODO Auto-generated method stub
-
     }
 
 }
