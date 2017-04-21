@@ -20,6 +20,7 @@ import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.ButtonGroup;
+import com.badlogic.gdx.scenes.scene2d.ui.Cell;
 import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
 import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -104,7 +105,7 @@ public class PreferencesWindow extends GenericDialog {
     protected void build() {
         float contentw = 700 * GlobalConf.SCALE_FACTOR;
         float contenth = 700 * GlobalConf.SCALE_FACTOR;
-        float tawidth = 400 * GlobalConf.SCALE_FACTOR;
+        final float tawidth = 400 * GlobalConf.SCALE_FACTOR;
         float tabwidth = 180 * GlobalConf.SCALE_FACTOR;
         float textwidth = 65 * GlobalConf.SCALE_FACTOR;
         float scrollw = 400 * GlobalConf.SCALE_FACTOR;
@@ -412,6 +413,7 @@ public class PreferencesWindow extends GenericDialog {
             public boolean handle(Event event) {
                 if (event instanceof ChangeEvent) {
                     numThreads.setDisabled(!multithreadCb.isChecked());
+                    // Add notice
                     return true;
                 }
                 return false;
@@ -424,6 +426,28 @@ public class PreferencesWindow extends GenericDialog {
         multithread.add(multithreadCb).colspan(2).left().padBottom(pad).row();
         multithread.add(numThreadsLabel).left().padRight(pad * 4).padBottom(pad);
         multithread.add(numThreads).left().padBottom(pad).row();
+        final Cell<Actor> noticeMulithreadCell = multithread.add();
+        noticeMulithreadCell.colspan(2).left();
+
+        multithreadCb.addListener(new EventListener() {
+            @Override
+            public boolean handle(Event event) {
+                if (event instanceof ChangeEvent) {
+                    if (noticeMulithreadCell.getActor() == null) {
+                        String nextinfostr = txt("gui.ui.info") + '\n';
+                        int lines = GlobalResources.countOccurrences(nextinfostr, '\n');
+                        TextArea nextTimeInfo = new OwnTextArea(nextinfostr, skin, "info");
+                        nextTimeInfo.setDisabled(true);
+                        nextTimeInfo.setPrefRows(lines + 1);
+                        nextTimeInfo.setWidth(tawidth);
+                        nextTimeInfo.clearListeners();
+                        noticeMulithreadCell.setActor(nextTimeInfo);
+                    }
+                    return true;
+                }
+                return false;
+            }
+        });
 
         // Add to content
         contentPerformance.add(titleMultithread).left().padBottom(pad * 2).row();
@@ -871,7 +895,32 @@ public class PreferencesWindow extends GenericDialog {
         // Add to table
         datasource.add(hyg).left().padBottom(pad).row();
         datasource.add(tgas).left().padBottom(pad).row();
-        datasource.add(tgasMultifile).left().padBottom(pad);
+        datasource.add(tgasMultifile).left().padBottom(pad).row();
+        final Cell<Actor> noticeDataCell = datasource.add();
+        noticeDataCell.colspan(2).left();
+
+        EventListener dataNoticeListener = new EventListener() {
+            @Override
+            public boolean handle(Event event) {
+                if (event instanceof ChangeEvent) {
+                    if (noticeDataCell.getActor() == null) {
+                        String nextinfostr = txt("gui.ui.info") + '\n';
+                        int lines = GlobalResources.countOccurrences(nextinfostr, '\n');
+                        TextArea nextTimeInfo = new OwnTextArea(nextinfostr, skin, "info");
+                        nextTimeInfo.setDisabled(true);
+                        nextTimeInfo.setPrefRows(lines + 1);
+                        nextTimeInfo.setWidth(tawidth);
+                        nextTimeInfo.clearListeners();
+                        noticeDataCell.setActor(nextTimeInfo);
+                    }
+                    return true;
+                }
+                return false;
+            }
+        };
+        hyg.addListener(dataNoticeListener);
+        tgas.addListener(dataNoticeListener);
+        tgasMultifile.addListener(dataNoticeListener);
 
         // Add to content
         contentData.add(titleData).left().padBottom(pad * 2).row();
@@ -897,7 +946,31 @@ public class PreferencesWindow extends GenericDialog {
 
         // Add to table
         attitude.add(nsl).left().padBottom(pad).row();
-        attitude.add(real).left().padBottom(pad);
+        attitude.add(real).left().padBottom(pad).row();
+        final Cell<Actor> noticeAttCell = attitude.add();
+        noticeAttCell.colspan(2).left();
+
+        EventListener attNoticeListener = new EventListener() {
+            @Override
+            public boolean handle(Event event) {
+                if (event instanceof ChangeEvent) {
+                    if (noticeAttCell.getActor() == null) {
+                        String nextinfostr = txt("gui.ui.info") + '\n';
+                        int lines = GlobalResources.countOccurrences(nextinfostr, '\n');
+                        TextArea nextTimeInfo = new OwnTextArea(nextinfostr, skin, "info");
+                        nextTimeInfo.setDisabled(true);
+                        nextTimeInfo.setPrefRows(lines + 1);
+                        nextTimeInfo.setWidth(tawidth);
+                        nextTimeInfo.clearListeners();
+                        noticeAttCell.setActor(nextTimeInfo);
+                    }
+                    return true;
+                }
+                return false;
+            }
+        };
+        real.addListener(attNoticeListener);
+        nsl.addListener(attNoticeListener);
 
         // Add to content
         contentGaia.add(titleAttitude).left().padBottom(pad * 2).row();
@@ -988,8 +1061,8 @@ public class PreferencesWindow extends GenericDialog {
         GlobalConf.screen.FULLSCREEN = fullscreen.isChecked();
 
         // Fullscreen options
-        GlobalConf.screen.FULLSCREEN_WIDTH = ((DisplayMode) fullscreenResolutions.getSelected()).width;
-        GlobalConf.screen.FULLSCREEN_HEIGHT = ((DisplayMode) fullscreenResolutions.getSelected()).height;
+        GlobalConf.screen.FULLSCREEN_WIDTH = fullscreenResolutions.getSelected().width;
+        GlobalConf.screen.FULLSCREEN_HEIGHT = fullscreenResolutions.getSelected().height;
 
         // Windowed options
         GlobalConf.screen.SCREEN_WIDTH = Integer.parseInt(widthField.getText());
@@ -997,31 +1070,31 @@ public class PreferencesWindow extends GenericDialog {
         GlobalConf.screen.RESIZABLE = resizable.isChecked();
 
         // Graphics
-        ComboBoxBean bean = (ComboBoxBean) gquality.getSelected();
+        ComboBoxBean bean = gquality.getSelected();
         GlobalConf.data.OBJECTS_JSON_FILE = GlobalConf.data.OBJECTS_JSON_FILE_GQ[bean.value];
         GlobalConf.scene.GRAPHICS_QUALITY = bean.value;
 
-        bean = (ComboBoxBean) aa.getSelected();
+        bean = aa.getSelected();
         GlobalConf.postprocess.POSTPROCESS_ANTIALIAS = bean.value;
         EventManager.instance.post(Events.ANTIALIASING_CMD, bean.value);
         GlobalConf.screen.VSYNC = vsync.isChecked();
 
         // Line renderer
-        bean = (ComboBoxBean) lineRenderer.getSelected();
+        bean = lineRenderer.getSelected();
         GlobalConf.scene.LINE_RENDERER = bean.value;
 
         // Interface
-        LangComboBoxBean lbean = (LangComboBoxBean) lang.getSelected();
+        LangComboBoxBean lbean = lang.getSelected();
+        boolean reloadUI = GlobalConf.program.UI_THEME != theme.getSelected() || lbean.locale.toLanguageTag() != GlobalConf.program.LOCALE;
         GlobalConf.program.LOCALE = lbean.locale.toLanguageTag();
         I18n.forceinit(Gdx.files.internal("i18n/gsbundle"));
-        boolean uithemeChanged = GlobalConf.program.UI_THEME != (String) theme.getSelected();
-        GlobalConf.program.UI_THEME = (String) theme.getSelected();
+        GlobalConf.program.UI_THEME = theme.getSelected();
         if (GlobalConf.program.UI_THEME.equalsIgnoreCase("hidpi")) {
             GlobalConf.updateScaleFactor(Math.max(GlobalConf.SCALE_FACTOR, 1.6f));
         }
 
         // Performance
-        bean = (ComboBoxBean) numThreads.getSelected();
+        bean = numThreads.getSelected();
         GlobalConf.performance.NUMBER_THREADS = bean.value;
         GlobalConf.performance.MULTITHREADING = multithreadCb.isChecked();
 
@@ -1075,7 +1148,7 @@ public class PreferencesWindow extends GenericDialog {
 
         EventManager.instance.post(Events.PROPERTIES_WRITTEN);
 
-        if (uithemeChanged) {
+        if (reloadUI) {
             Gdx.app.postRunnable(new Runnable() {
                 public void run() {
                     // Reinitialise GUI system
@@ -1091,8 +1164,8 @@ public class PreferencesWindow extends GenericDialog {
 
     private void selectFullscreen(boolean fullscreen, OwnTextField widthField, OwnTextField heightField, SelectBox<DisplayMode> fullScreenResolutions, CheckBox resizable, OwnLabel widthLabel, OwnLabel heightLabel) {
         if (fullscreen) {
-            GlobalConf.screen.SCREEN_WIDTH = ((DisplayMode) fullScreenResolutions.getSelected()).width;
-            GlobalConf.screen.SCREEN_HEIGHT = ((DisplayMode) fullScreenResolutions.getSelected()).height;
+            GlobalConf.screen.SCREEN_WIDTH = fullScreenResolutions.getSelected().width;
+            GlobalConf.screen.SCREEN_HEIGHT = fullScreenResolutions.getSelected().height;
         } else {
             GlobalConf.screen.SCREEN_WIDTH = Integer.parseInt(widthField.getText());
             GlobalConf.screen.SCREEN_HEIGHT = Integer.parseInt(heightField.getText());
