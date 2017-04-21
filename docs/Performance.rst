@@ -48,10 +48,10 @@ is higher (they are fainter) than the specified magnitude, thus relieving the
 CPU of some processing. Also, take a look at the
 :ref:`data-properties` section.
 
-.. _levels-of-detail:
+.. _draw-distance:
 
-Levels of Detail (LOD)
-----------------------
+Draw distance (levels of detail)
+--------------------------------
 
 These settings apply only when using a catalog with levels of detail
 like ``TGAS``. We can configure whether we want smooth transitions between
@@ -62,13 +62,14 @@ above which octants are rendered.
 .. figure:: img/lodslider.jpg
   :alt: Levels of Detail slider
 
-  Levels of detail slider in preferences dialog
+  Draw distance slider in preferences dialog
 
-The right knob only matters if ``Smooth LOD transitions`` is checked and sets a higher boundary for the
-angle for the fade-out and fade-in of octant particles.
+Basically, the slider sets the view angle above which a particular octree node (axis aligned cubic volume) 
+is marked as observed and thus its stars are processed and drawn. If smooth transitions is checked, there
+is a fade-in between the angle + 0.4rad and the angle.
 
-*  Set the knobs to the **right** to lower the draw distance and increase performance.
-*  Set the knobs to the **left** to higher the draw distance at the expense of performance.
+*  Set the knob to the **right** to lower the draw distance and increase performance.
+*  Set the knob to the **left** to higher the draw distance at the expense of performance.
 
 .. figure:: img/lodoctree.png
   :alt: Octree and levels of detail

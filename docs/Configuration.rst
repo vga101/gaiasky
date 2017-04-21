@@ -7,6 +7,8 @@ Gaia Sky can be configured using the provided ``GUI`` (**G**\ raphical **U**\ se
 However, some functions are not represented in the GUI, so you may need
 to dive deep into the :ref:`properties file <properties-file>`.
 
+.. hint:: As of version ``1.0.5`` the old swing-based preferences dialog has been deprecated in favour of an OpenGL-based one, so it does not pop up at startup anymore.
+
 Graphics settings
 =================
 
@@ -42,11 +44,11 @@ makes it slower than the single-threaded version, so use it at your
 own risk. This allows the program to use more than one CPUs for the
 processing. More detailed info can be found in the :ref:`performance section <performance>`.
 
-Levels of Detail (LOD)
-----------------------
+Draw distance
+-------------
 
 Certain big datasets use levels of detail to prevent data clutter.
-Refer to the :ref:`levels-of-detail` section for more info.
+Refer to the :ref:`draw-distance` section for more info.
 
 Controls
 ========
@@ -139,17 +141,3 @@ points to where it should) and the ``NSL``, which is an analytical
 implementation of the nominal attitude of the satellite. It behaves the
 same as the real thing, but the observation direction is not ensured.
 
-Check for new version
-=====================
-
-You can always check for a new version by clicking on this button. By
-default, the application checks for a new version if more than five days
-have passed since the last check. If a new version is found, you will
-see the notice here together with a link to the download.
-
-Do not show that again!
-=======================
-
-If you do not want this configuration dialogue to be displayed again
-when you launch the Gaia Sky, tick this check box and you are good to
-go.

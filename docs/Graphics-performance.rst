@@ -152,6 +152,8 @@ All post-processing algorithms (those algorithms that are applied to the
 image after it has been rendered) take a toll on the graphics card and
 can be disabled.
 
+.. hint:: Disable the **light glow** effect for a significant performance boost in low-end graphics cards
+
 -  The **bloom** is not very taxing on the GPU.
 -  The **lens flare** effect is a bit harder on the GPU, but most modern
    cards should be able to handle it with no problems.

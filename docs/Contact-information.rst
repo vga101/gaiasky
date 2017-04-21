@@ -27,58 +27,82 @@ The most up to date list of acknowledgements is always in the
 The author would like to acknowledge the following people, or the
 people behind the following technologies/resources:
 
--  Prof. Stefan Jordan (`stefan-jordan.de`_) for some suggestions and ideas.
--  The `DLR`_ for financing this project.
--  The `BWT`_, Bundesministerium für Wirtschaft und Technologie, also
-   supporting this project.
--  My institution, `ARI`_/`ZAH`_.
--  Dr. Martin Altmann for providing the Gaia orbit data.
--  `Libgdx`_.
--  `libgdx-contribs-postprocessing`_.
--  `HYG catalog`_.
--  `PgsLookAndFeel`_.
--  Mark Taylor’s `STIL`_ library.
--  The `Jython Project`_.
--  `ernieyu`_ for the Java Swing `range slider`_.
--  Nick Risinger for the artist’s conception of the Milky Way.
--  Andreas Ressl and Georg Hammershmid for the star glow texture.
--  Tom Patterson (`shadedrelief <http://www.shadedrelief.com>`_) for some textures.
--  `Solar System Scope`_ for some textures (Mercury, Venus, Earth,
-   Moon).
--  Phil Stooke and Grant Hutchison
-   (`site <http://www.classe.cornell.edu/~seb/celestia/hutchison/index-125.html>`_)
-   for some of the textures.
--  `David Navas`_ for the ``simple spaceship`` model. Cool stuff!
--  Machuca+Arias+Caballero for the music track “Gaia-DR1”.
--  `Install4j`_ (multi-platform installer builder), for providing a free
-   open source license.
--  Bitrock’s `InstallBuilder`_ for providing a free open source license.
--  `Klemen Čotar <mailto:klemen.cotar@fmf.uni-lj.si>`_ for the Slovelen translation.
--  And several online resources without which this would have not been
-   possible.
+Main acknowledgements
+---------------------
 
-.. _stefan-jordan.de: http://stefan-jordan.de
+-  `ZAH`_
+-  `DLR`_
+-  `BMWi`_
+
+Data
+----
+
+-  Dr. Martin Altmann for providing the Gaia orbit data
+-  `HYG catalog`_
+-  `DPAC` and the Gaia Collaboration
+
+Libraries and code
+------------------
+
+-  `Libgdx`_
+-  `libgdx-contribs-postprocessing`_
+-  `VisUI`_ for some widgets (licensed under the Apache license)
+-  `PgsLookAndFeel`_
+-  Mark Taylor’s `STIL`_ library
+-  The `Jython Project`_
+-  `ernieyu`_ for the Java Swing `range slider`_
+
+Textures, models, music and other assets
+----------------------------------------
+
+-  Nick Risinger for the artist’s conception of the Milky Way
+-  Andreas Ressl and Georg Hammershmid for the star glow texture
+-  Tom Patterson (www.shadedrelief.com) for some textures
+-  `Solar System Scope`_ for some textures (Mercury, Venus, Earth, Moon)
+-  Phil Stooke and Grant Hutchison
+   (http://www.classe.cornell.edu/~seb/celestia/hutchison/index-125.html)
+   for some of the textures
+-  David Navas for the `simple spaceship`_ model
+-  Machuca+Arias+Caballero for the music track “Gaia-DR1”
+-  `xnoybis`_ for ‘The Firing Squad’ track
+-  `DJ Masque`_ for the ‘Oceanic Dawn’ track
+
+Translations
+------------
+
+-  `Stefan Jordan`_ for the German translation
+-  `Klemen Čotar`_ for the Slovene translation
+
+Open source licenses
+--------------------
+
+-  `Install4j (multi-platform installer builder)`_, for providing an
+   open source license
+-  `JProfiler (Java profiler)`_, for providing an open source license
+-  Bitrock’s `InstallBuilder`_ for providing a free open source license
+
+.. _ZAH: http://www.zah.uni-heidelberg.de/ari/
 .. _DLR: http://www.dlr.de/
-.. _BWT: http://www.bmwi.de/
-.. _ARI: http://www.ari.uni-heidelberg.de
-.. _ZAH: http://www.zah.uni-heidelberg.de/
-.. _Libgdx: http://libgdx.badlogicgames.com
+.. _BMWi: http://www.bmwi.de
+.. _HYG catalog: https://github.com/astronexus/HYG-Database
+.. _Libgdx: libgdx.badlogicgames.com
 .. _libgdx-contribs-postprocessing: https://github.com/manuelbua/libgdx-contribs/tree/master/postprocessing
-.. _HYG catalog: http://www.astronexus.com/hyg
+.. _VisUI: https://github.com/kotcrab/vis-editor/wiki/VisUI
 .. _PgsLookAndFeel: http://www.pagosoft.com/projects/pgslookandfeel/
 .. _STIL: http://www.star.bristol.ac.uk/~mbt/stil/
 .. _Jython Project: http://www.jython.org/
 .. _ernieyu: https://github.com/ernieyu/
 .. _range slider: https://github.com/ernieyu/Swing-range-slider
 .. _Solar System Scope: http://www.solarsystemscope.com/
-.. _David Navas: http://www.blendswap.com/user/DeNapes
-.. _Install4j: http://www.ej-technologies.com/products/install4j/overview.html
+.. _simple spaceship: http://www.blendswap.com/user/DeNapes
+.. _xnoybis: http://sampleswap.org/artist/xnoybis#contact
+.. _DJ Masque: http://sampleswap.org/artist/djmasque
+.. _Stefan Jordan: mailto:jordan@ari.uni-heidelberg.de
+.. _Klemen Čotar: mailto:klemen.cotar@fmf.uni-lj.si
+.. _Install4j (multi-platform installer builder): http://www.ej-technologies.com/products/install4j/overview.html
+.. _JProfiler (Java profiler): http://www.ej-technologies.com/products/jprofiler/overview.html
 .. _InstallBuilder: http://installbuilder.bitrock.com/
+.. _DPAC: https://www.cosmos.esa.int/web/gaia/dpac/consortium
 
 If you think I missed someone, please let me know.
-
-
-.. raw:: html
-
-    <iframe src="https://raw.githubusercontent.com/langurmonkey/gaiasky/master/ACKNOWLEDGEMENTS.md" width="100%"></iframe>
 

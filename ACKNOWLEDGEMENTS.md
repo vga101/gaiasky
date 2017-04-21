@@ -8,6 +8,7 @@
 
 -  Dr. Martin Altmann for providing the Gaia orbit data
 -  [HYG catalog](https://github.com/astronexus/HYG-Database)
+-  [DPAC](https://www.cosmos.esa.int/web/gaia/dpac/consortium) and the Gaia Collaboration
 
 ## Libraries and code
 
