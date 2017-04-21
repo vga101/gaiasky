@@ -25,7 +25,8 @@ import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
  */
 public class GlobalConf {
     public static final String APPLICATION_NAME = "Gaia Sky";
-    public static final String WEBPAGE = "http://www.zah.uni-heidelberg.de/gaia/outreach/gaiasky/";
+    public static final String WEBPAGE = "https://www.zah.uni-heidelberg.de/gaia/outreach/gaiasky";
+    public static final String WEBPAGE_DOWNLOADS = "https://www.zah.uni-heidelberg.de/gaia/outreach/gaiasky/downloads";
     public static final String DOCUMENTATION = "http://gaia-sky.rtfd.io";
     public static final String ICON_URL = "http://www.zah.uni-heidelberg.de/uploads/pics/gaiasandboxlogo_02.png";
 
@@ -457,6 +458,7 @@ public class GlobalConf {
         public boolean DISPLAY_TUTORIAL;
         public String TUTORIAL_POINTER_SCRIPT_LOCATION;
         public String TUTORIAL_SCRIPT_LOCATION;
+        @Deprecated
         public boolean SHOW_CONFIG_DIALOG;
         public boolean SHOW_DEBUG_INFO;
         public Date LAST_CHECKED;
@@ -471,10 +473,6 @@ public class GlobalConf {
         public float STEREOSCOPIC_EYE_SEPARATION_M = 1;
         /** This controls the side of the images in the stereoscopic mode **/
         public StereoProfile STEREO_PROFILE = StereoProfile.VR_HEADSET;
-
-        private Boolean lensglowBackup = null;
-
-        private IDateFormat df = DateFormatFactory.getFormatter("dd/MM/yyyy HH:mm:ss");
 
         public ProgramConf() {
             EventManager.instance.subscribe(this, Events.TOGGLE_STEREOSCOPIC_CMD, Events.TOGGLE_STEREO_PROFILE_CMD, Events.CUBEMAP360_CMD);

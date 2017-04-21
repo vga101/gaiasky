@@ -1,5 +1,9 @@
 package gaia.cu9.ari.gaiaorbit.util.scene2d;
 
+import java.awt.Desktop;
+import java.io.IOException;
+import java.net.URI;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.graphics.Color;

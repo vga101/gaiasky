@@ -1,9 +1,11 @@
 package gaia.cu9.ari.gaiaorbit.interfce;
 
 import java.nio.IntBuffer;
+import java.util.Date;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -30,6 +32,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.BufferUtils;
+import com.badlogic.gdx.utils.JsonValue;
 
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
@@ -40,6 +43,8 @@ import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnLabel;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnScrollPane;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextArea;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextButton;
+import gaia.cu9.ari.gaiaorbit.util.update.VersionCheckEvent;
+import gaia.cu9.ari.gaiaorbit.util.update.VersionChecker;
 
 /**
  * The help window with About, Help and System sections.
@@ -48,8 +53,11 @@ import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextButton;
  *
  */
 public class AboutWindow extends GenericDialog {
+    private static long fiveDaysMs = 5 * 24 * 60 * 60 * 1000;
 
     private LabelStyle linkStyle;
+    private Table checkTable;
+    private OwnLabel checkLabel;
 
     public AboutWindow(Stage stage, Skin skin) {
         super(txt("gui.help.help") + " - v" + GlobalConf.version.version + " - " + txt("gui.build", GlobalConf.version.build), skin, stage);
@@ -67,25 +75,29 @@ public class AboutWindow extends GenericDialog {
         float tawidth = 440 * GlobalConf.SCALE_FACTOR;
         float taheight = 250 * GlobalConf.SCALE_FACTOR;
         float taheight_s = 60 * GlobalConf.SCALE_FACTOR;
-        float tabwidth = 60 * GlobalConf.SCALE_FACTOR;
+        float tabwidth = 110 * GlobalConf.SCALE_FACTOR;
 
         // Create the tab buttons
         HorizontalGroup group = new HorizontalGroup();
         group.align(Align.left);
 
-        final Button tab1 = new OwnTextButton(txt("gui.help.help"), skin, "toggle-big");
-        tab1.pad(pad);
-        tab1.setWidth(tabwidth);
-        final Button tab2 = new OwnTextButton(txt("gui.help.about"), skin, "toggle-big");
-        tab2.pad(pad);
-        tab2.setWidth(tabwidth);
-        final Button tab3 = new OwnTextButton(txt("gui.help.system"), skin, "toggle-big");
-        tab3.pad(pad);
-        tab3.setWidth(tabwidth);
+        final Button tabHelp = new OwnTextButton(txt("gui.help.help"), skin, "toggle-big");
+        tabHelp.pad(pad);
+        tabHelp.setWidth(tabwidth);
+        final Button tabAbout = new OwnTextButton(txt("gui.help.about"), skin, "toggle-big");
+        tabAbout.pad(pad);
+        tabAbout.setWidth(tabwidth);
+        final Button tabSystem = new OwnTextButton(txt("gui.help.system"), skin, "toggle-big");
+        tabSystem.pad(pad);
+        tabSystem.setWidth(tabwidth);
+        final Button tabUpdates = new OwnTextButton(txt("gui.newversion"), skin, "toggle-big");
+        tabUpdates.pad(pad);
+        tabUpdates.setWidth(tabwidth);
 
-        group.addActor(tab1);
-        group.addActor(tab2);
-        group.addActor(tab3);
+        group.addActor(tabHelp);
+        group.addActor(tabAbout);
+        group.addActor(tabSystem);
+        group.addActor(tabUpdates);
         content.add(group).align(Align.left).padLeft(pad);
         content.row();
 
@@ -369,34 +381,59 @@ public class AboutWindow extends GenericDialog {
         contentSystem.add(glextensionstitle).align(Align.topLeft).padRight(pad * 2);
         contentSystem.add(glextensionsscroll).align(Align.left);
 
+        /** CONTENT 4 - UPDATES **/
+        final Table contentUpdates = new Table(skin);
+        contentUpdates.align(Align.top);
+
+        // This is the table that displays it all
+        checkTable = new Table(skin);
+        checkLabel = new OwnLabel("", skin);
+
+        checkTable.add(checkLabel).top().left().padBottom(pad).row();
+        if (GlobalConf.program.LAST_CHECKED == null || GlobalConf.program.LAST_VERSION.isEmpty() || new Date().getTime() - GlobalConf.program.LAST_CHECKED.getTime() > fiveDaysMs) {
+            // Check!
+            checkLabel.setText(txt("gui.newversion.checking"));
+            getCheckVersionThread().start();
+        } else {
+            // Inform latest
+            newVersionCheck(GlobalConf.program.LAST_VERSION);
+
+        }
+
+        contentUpdates.add(checkTable).left().top().padTop(pad * 3);
+
         /** ADD ALL CONTENT **/
         tabContent.addActor(contentHelp);
         tabContent.addActor(contentAbout);
         tabContent.addActor(contentSystem);
+        tabContent.addActor(contentUpdates);
 
         content.add(tabContent).expand().fill();
 
         // Listen to changes in the tab button checked states
         // Set visibility of the tab content to match the checked state
-        ChangeListener tab_listener = new ChangeListener() {
+        ChangeListener tabListener = new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                contentHelp.setVisible(tab1.isChecked());
-                contentAbout.setVisible(tab2.isChecked());
-                contentSystem.setVisible(tab3.isChecked());
+                contentHelp.setVisible(tabHelp.isChecked());
+                contentAbout.setVisible(tabAbout.isChecked());
+                contentSystem.setVisible(tabSystem.isChecked());
+                contentUpdates.setVisible(tabUpdates.isChecked());
             }
         };
-        tab1.addListener(tab_listener);
-        tab2.addListener(tab_listener);
-        tab3.addListener(tab_listener);
+        tabHelp.addListener(tabListener);
+        tabAbout.addListener(tabListener);
+        tabSystem.addListener(tabListener);
+        tabUpdates.addListener(tabListener);
 
         // Let only one tab button be checked at a time
         ButtonGroup<Button> tabs = new ButtonGroup<Button>();
         tabs.setMinCheckCount(1);
         tabs.setMaxCheckCount(1);
-        tabs.add(tab1);
-        tabs.add(tab2);
-        tabs.add(tab3);
+        tabs.add(tabHelp);
+        tabs.add(tabAbout);
+        tabs.add(tabSystem);
+        tabs.add(tabUpdates);
 
     }
 
@@ -411,6 +448,99 @@ public class AboutWindow extends GenericDialog {
     private SpriteDrawable getSpriteDrawable(FileHandle fh) {
         Texture tex = new Texture(fh);
         return new SpriteDrawable(new Sprite(tex));
+    }
+
+    /**
+     * Checks the given version against the current version and:
+     * <ul>
+     * <li>Displays a "new version available" message if the given version is
+     * newer than the current.</li>
+     * <li>Display a "you have the latest version" message and a "check now"
+     * button if the given version is older.</li>
+     * </ul>
+     * 
+     * @param version
+     *            The version to check.
+     */
+    private void newVersionCheck(String version) {
+        int[] majmin = GlobalConf.VersionConf.getMajorMinorRevFromString(version);
+
+        if (majmin[0] > GlobalConf.version.major || (majmin[0] == GlobalConf.version.major && majmin[1] > GlobalConf.version.minor) || (majmin[0] == GlobalConf.version.major && majmin[1] == GlobalConf.version.minor) && majmin[2] > GlobalConf.version.rev) {
+            // There's a new version!
+            checkLabel.setText(txt("gui.newversion.available", GlobalConf.version, version));
+            final String uri = GlobalConf.WEBPAGE_DOWNLOADS;
+
+            OwnTextButton button = new OwnTextButton(txt("gui.newversion.getit"), skin);
+            button.pad(pad);
+            button.addListener(new EventListener() {
+
+                @Override
+                public boolean handle(Event event) {
+                    if (event instanceof ChangeEvent) {
+                        Gdx.net.openURI(GlobalConf.WEBPAGE_DOWNLOADS);
+                        return true;
+                    }
+                    return false;
+                }
+
+            });
+            checkTable.add(button).center().padBottom(pad).row();
+
+            Link link = new Link(uri, linkStyle, uri);
+            checkTable.add(link).center();
+
+        } else {
+            checkLabel.setText(txt("gui.newversion.nonew", GlobalConf.program.getLastCheckedString()));
+            // Add check now button
+            OwnTextButton button = new OwnTextButton(txt("gui.newversion.checknow"), skin);
+            button.addListener(new EventListener() {
+
+                @Override
+                public boolean handle(Event event) {
+                    if (event instanceof ChangeEvent) {
+                        getCheckVersionThread().start();
+                        return true;
+                    }
+                    return false;
+                }
+
+            });
+            checkTable.add(button).center();
+        }
+    }
+
+    private Thread getCheckVersionThread() {
+        // Start version check
+        VersionChecker vc = new VersionChecker(GlobalConf.program.VERSION_CHECK_URL);
+        vc.setListener(new EventListener() {
+            @Override
+            public boolean handle(Event event) {
+                if (event instanceof VersionCheckEvent) {
+                    VersionCheckEvent vce = (VersionCheckEvent) event;
+                    if (!vce.isFailed()) {
+                        checkTable.clear();
+                        checkTable.add(checkLabel).top().left().padBottom(pad).row();
+                        // All is fine
+                        Object result = vce.getResult();
+                        JsonValue json = (JsonValue) result;
+
+                        JsonValue last = json.get(0);
+                        String version = last.getString("name");
+                        if (version.matches("^(\\D{1})?\\d+.\\d+(\\D{1})?(.\\d+)?$")) {
+                            GlobalConf.program.LAST_VERSION = new String(version);
+                            GlobalConf.program.LAST_CHECKED = new Date();
+                            newVersionCheck(version);
+                        }
+                    } else {
+                        // Handle failed case
+                        checkLabel.setText(txt("notif.error", (String) vce.getResult()));
+                        checkLabel.setColor(Color.RED);
+                    }
+                }
+                return false;
+            }
+        });
+        return new Thread(vc);
     }
 
 }

@@ -69,6 +69,14 @@ public class KeyBindings {
      */
     public void initDefault() {
 
+        // F1 -> Help dialog
+        addMapping(new ProgramAction(txt("action.help"), new Runnable() {
+            @Override
+            public void run() {
+                EventManager.instance.post(Events.SHOW_ABOUT_ACTION);
+            }
+        }), Keys.F1);
+
         // ESCAPE -> Exit
         addMapping(new ProgramAction(txt("action.exit"), new Runnable() {
             @Override

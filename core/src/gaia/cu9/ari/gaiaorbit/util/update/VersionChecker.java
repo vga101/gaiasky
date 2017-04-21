@@ -1,26 +1,24 @@
-package gaia.cu9.ari.gaiaorbit.desktop.gui.swing.version;
+package gaia.cu9.ari.gaiaorbit.util.update;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Net.HttpMethods;
 import com.badlogic.gdx.Net.HttpRequest;
 import com.badlogic.gdx.Net.HttpResponse;
 import com.badlogic.gdx.Net.HttpResponseListener;
+import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.utils.JsonReader;
-
-import gaia.cu9.ari.gaiaorbit.desktop.gui.swing.callback.Runnable;
 
 public class VersionChecker implements Runnable {
     private static final int VERSIONCHECK_TIMEOUT_MS = 5000;
     private String stringUrl;
-    private Object result = null;
-    private boolean error = false;
+    private EventListener listener;
 
     public VersionChecker(String stringUrl) {
         this.stringUrl = stringUrl;
     }
 
     @Override
-    public Object run() {
+    public void run() {
 
         HttpRequest request = new HttpRequest(HttpMethods.GET);
         request.setUrl(stringUrl);
@@ -29,25 +27,24 @@ public class VersionChecker implements Runnable {
         Gdx.net.sendHttpRequest(request, new HttpResponseListener() {
             public void handleHttpResponse(HttpResponse httpResponse) {
                 JsonReader reader = new JsonReader();
-                result = reader.parse(httpResponse.getResultAsStream());
+                Object result = reader.parse(httpResponse.getResultAsStream());
+                listener.handle(new VersionCheckEvent(result));
             }
 
             public void failed(Throwable t) {
-                error = true;
+                listener.handle(new VersionCheckEvent(true));
             }
 
             @Override
             public void cancelled() {
-                error = true;
-
+                listener.handle(new VersionCheckEvent(true));
             }
         });
 
-        return result;
     }
 
-    public boolean isError() {
-        return error;
+    public void setListener(EventListener listener) {
+        this.listener = listener;
     }
 
 }

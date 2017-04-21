@@ -68,6 +68,11 @@ import gaia.cu9.ari.gaiaorbit.util.validator.IValidator;
 import gaia.cu9.ari.gaiaorbit.util.validator.IntValidator;
 import gaia.cu9.ari.gaiaorbit.util.validator.RegexpValidator;
 
+/**
+ * The default preferences window.
+ * @author tsagrista
+ *
+ */
 public class PreferencesWindow extends GenericDialog {
 
     private Array<Table> contents;

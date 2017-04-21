@@ -96,9 +96,10 @@ import slider.RangeSlider;
  * The configuration dialog to set the resolution, the screen mode, etc.
  * 
  * @author Toni Sagrista
- *
+ * @deprecated From version 1.5.0, this is deprecated in favour of {@link gaia.cu9.ari.gaiaorbit.interfce.PreferencesWindow}
  */
 public class ConfigDialog extends I18nJFrame {
+    private static final long serialVersionUID = 1L;
     private static long fiveDaysMs = 5 * 24 * 60 * 60 * 1000;
 
     private static ConfigDialog singleton = null;
@@ -1181,7 +1182,7 @@ public class ConfigDialog extends I18nJFrame {
                 checkPanel.add(checkLabel);
                 if (result instanceof String) {
                     // Error
-                    checkLabel.setText("Error checking version: " + (String) result);
+                    checkLabel.setText(txt("notif.error", (String) result));
                     checkLabel.setForeground(Color.RED);
                 } else if (result instanceof JsonValue) {
                     // Ok!

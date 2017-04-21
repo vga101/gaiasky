@@ -11,6 +11,8 @@ import gaia.cu9.ari.gaiaorbit.util.I18n;
  */
 public abstract class I18nJFrame extends JFrame {
 
+    private static final long serialVersionUID = 1L;
+
     public I18nJFrame(String name) {
         super(name);
     }
