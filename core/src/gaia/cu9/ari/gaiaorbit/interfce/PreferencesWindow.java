@@ -120,7 +120,7 @@ public class PreferencesWindow extends GenericDialog {
         final Button tabUI = new OwnTextIconButton(txt("gui.ui.interfacesettings"), new Image(skin.getDrawable("icon-p-interface")), skin, "toggle-big");
         tabUI.pad(pad);
         tabUI.setWidth(tabwidth);
-        final Button tabPerformance = new OwnTextIconButton(txt("gui.multithreading"), new Image(skin.getDrawable("icon-p-performance")), skin, "toggle-big");
+        final Button tabPerformance = new OwnTextIconButton(txt("gui.performance"), new Image(skin.getDrawable("icon-p-performance")), skin, "toggle-big");
         tabPerformance.pad(pad);
         tabPerformance.setWidth(tabwidth);
         final Button tabControls = new OwnTextIconButton(txt("gui.controls"), new Image(skin.getDrawable("icon-p-controls")), skin, "toggle-big");
