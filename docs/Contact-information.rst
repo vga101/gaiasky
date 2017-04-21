@@ -76,5 +76,8 @@ people behind the following technologies/resources:
 .. _InstallBuilder: http://installbuilder.bitrock.com/
 
 If you think I missed someone, please let me know.
+
 .. raw:: html
+
 	<iframe src="https://github.com/langurmonkey/gaiasky/blob/master/ACKNOWLEDGEMENTS.md"></iframe>
+
