@@ -80,5 +80,5 @@ If you think I missed someone, please let me know.
 
 .. raw:: html
 
-    <iframe src="https://github.com/langurmonkey/gaiasky/blob/master/ACKNOWLEDGEMENTS.md"></iframe>
+    <iframe src="https://raw.githubusercontent.com/langurmonkey/gaiasky/master/ACKNOWLEDGEMENTS.md" width="100%"></iframe>
 
