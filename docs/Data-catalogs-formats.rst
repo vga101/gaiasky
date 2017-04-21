@@ -268,7 +268,7 @@ both the particles and the metadata files back to a file.
 Octree catalog loader (multifile)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-As of version ``1.0.5``, a new on-demand catalog loader exists, called Octree multifile loader. 
+As of version ``1.5.0``, a new on-demand catalog loader exists, called Octree multifile loader. 
 This is a version of the Octree catalog loader specially designed for very large datasets. This version
 does not load everything at startup. It needs the catalog to be organised into several files, each one corresponding to 
 a particluar octree node. This is an option in the `OctreeGeneratorTest <https://github.com/langurmonkey/gaiasky/blob/master/desktop/src/gaia/cu9/ari/gaiaorbit/data/OctreeGeneratorTest.java>`__.
