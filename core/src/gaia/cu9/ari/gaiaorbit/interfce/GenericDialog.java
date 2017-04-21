@@ -24,6 +24,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.FocusListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 
+import gaia.cu9.ari.gaiaorbit.event.EventManager;
+import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.CollapsibleWindow;
@@ -239,6 +241,9 @@ public abstract class GenericDialog extends CollapsibleWindow {
         if (action != null)
             addAction(action);
 
+        // Disable input
+        EventManager.instance.post(Events.INPUT_ENABLED_CMD, false);
+
         return this;
     }
 
@@ -271,6 +276,9 @@ public abstract class GenericDialog extends CollapsibleWindow {
             addAction(sequence(action, Actions.removeListener(ignoreTouchDown, true), Actions.removeActor()));
         } else
             remove();
+
+        // Enable input
+        EventManager.instance.post(Events.INPUT_ENABLED_CMD, true);
     }
 
     /** Hides the dialog. Called automatically when a button is clicked. The default implementation fades out the dialog over 400
