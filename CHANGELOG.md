@@ -6,6 +6,9 @@
 
 **Implemented enhancements:**
 
+- Deprecate current swing-based preferences [\#125](https://github.com/langurmonkey/gaiasky/issues/125)
+- Apply skin change without restarting [\#124](https://github.com/langurmonkey/gaiasky/issues/124)
+- Colour code proper motion vectors with direction/magnitude [\#123](https://github.com/langurmonkey/gaiasky/issues/123)
 - Fix layout of controls window [\#121](https://github.com/langurmonkey/gaiasky/issues/121)
 - Add context menu with some options [\#120](https://github.com/langurmonkey/gaiasky/issues/120)
 - Rearrange UI, fix HiDPI themes [\#119](https://github.com/langurmonkey/gaiasky/issues/119)
@@ -13,9 +16,12 @@
 - UI animations [\#116](https://github.com/langurmonkey/gaiasky/issues/116)
 - Add Slovene language [\#109](https://github.com/langurmonkey/gaiasky/issues/109)
 - Add new Parallel View stereoscopic profile [\#105](https://github.com/langurmonkey/gaiasky/issues/105)
+- Upgrade to Lwjgl 3 [\#103](https://github.com/langurmonkey/gaiasky/issues/103)
 
 **Fixed bugs:**
 
+- Fix cast error when multithreading is on [\#126](https://github.com/langurmonkey/gaiasky/issues/126)
+- Label flickering when star is perfectly aligned with camera direction [\#122](https://github.com/langurmonkey/gaiasky/issues/122)
 - Fix main controls window alignments [\#118](https://github.com/langurmonkey/gaiasky/issues/118)
 - Fix gaia scan mode [\#114](https://github.com/langurmonkey/gaiasky/issues/114)
 - Add timeout to version check [\#112](https://github.com/langurmonkey/gaiasky/issues/112)
@@ -23,6 +29,7 @@
 - Fix focus issue with objects text field [\#106](https://github.com/langurmonkey/gaiasky/issues/106)
 - Fix stereoscopic mode for large distances/eye separations [\#89](https://github.com/langurmonkey/gaiasky/issues/89)
 - Gaia Sky crashes on Windows 10 32bit - JRE 8u102 [\#77](https://github.com/langurmonkey/gaiasky/issues/77)
+- Fix octant detection in very low fov angles [\#70](https://github.com/langurmonkey/gaiasky/issues/70)
 
 **Closed issues:**
 
