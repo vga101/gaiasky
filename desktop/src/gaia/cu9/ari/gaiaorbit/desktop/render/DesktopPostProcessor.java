@@ -459,8 +459,10 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
      * @param height
      */
     private void replace(int index, final int width, final int height) {
+        // Dispose of old post processor
+        pps[index].dispose();
+        // Create new
         pps[index] = newPostProcessor(width, height);
-
     }
 
     private boolean changed(PostProcessor postProcess, int width, int height) {

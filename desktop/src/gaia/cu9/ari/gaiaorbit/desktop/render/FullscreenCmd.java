@@ -24,29 +24,41 @@ public class FullscreenCmd implements IObserver {
     public void notify(Events event, Object... data) {
         switch (event) {
         case FULLSCREEN_CMD:
-        	boolean toFullscreen = data.length >= 1 ? (Boolean) data[0]
-					: !Gdx.graphics.isFullscreen();
-			int width;
-			int height;
-			// get the current display mode of the monitor the window is on
-			DisplayMode mode = Gdx.graphics.getDisplayMode();
-			if (toFullscreen) {
-				width = GlobalConf.screen.FULLSCREEN_WIDTH;
-				height = GlobalConf.screen.FULLSCREEN_HEIGHT;
-				GlobalConf.screen.SCREEN_WIDTH = Gdx.graphics.getWidth();
-				GlobalConf.screen.SCREEN_HEIGHT = Gdx.graphics.getHeight();
+            boolean toFullscreen = data.length >= 1 ? (Boolean) data[0] : !Gdx.graphics.isFullscreen();
+            int width;
+            int height;
+            if (toFullscreen) {
+                // Get mode
+                DisplayMode[] modes = Gdx.graphics.getDisplayModes(Gdx.graphics.getMonitor());
+                DisplayMode mymode = null;
+                for (DisplayMode mode : modes) {
+                    if (mode.height == GlobalConf.screen.FULLSCREEN_HEIGHT && mode.width == GlobalConf.screen.FULLSCREEN_WIDTH) {
+                        mymode = mode;
+                        break;
+                    }
+                }
+                if (mymode == null) {
+                    mymode = Gdx.graphics.getDisplayMode(Gdx.graphics.getMonitor());
+                    GlobalConf.screen.FULLSCREEN_WIDTH = mymode.width;
+                    GlobalConf.screen.FULLSCREEN_HEIGHT = mymode.height;
+                }
 
-				// set the window to fullscreen mode
-				Gdx.graphics.setFullscreenMode(mode);
+                width = GlobalConf.screen.FULLSCREEN_WIDTH;
+                height = GlobalConf.screen.FULLSCREEN_HEIGHT;
+                GlobalConf.screen.SCREEN_WIDTH = Gdx.graphics.getWidth();
+                GlobalConf.screen.SCREEN_HEIGHT = Gdx.graphics.getHeight();
 
-			} else {
-				width = GlobalConf.screen.SCREEN_WIDTH;
-				height = GlobalConf.screen.SCREEN_HEIGHT;
+                // set the window to fullscreen mode
+                Gdx.graphics.setFullscreenMode(mymode);
 
-				// set the window to fullscreen mode
-				Gdx.graphics.setWindowedMode(width, height);
-			}
-			break;
+            } else {
+                width = GlobalConf.screen.SCREEN_WIDTH;
+                height = GlobalConf.screen.SCREEN_HEIGHT;
+
+                // set the window to fullscreen mode
+                Gdx.graphics.setWindowedMode(width, height);
+            }
+            break;
 
         }
     }

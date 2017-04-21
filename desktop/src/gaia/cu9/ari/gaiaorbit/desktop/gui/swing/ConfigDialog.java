@@ -66,7 +66,7 @@ import javax.swing.event.DocumentListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Graphics.DisplayMode;
 import com.badlogic.gdx.Input.Keys;
-import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
+import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.JsonValue;
 
@@ -229,7 +229,7 @@ public class ConfigDialog extends I18nJFrame {
         mode.setBorder(new TitledBorder(txt("gui.resolutionmode")));
 
         // Full screen mode resolutions
-        DisplayMode[] modes = LwjglApplicationConfiguration.getDisplayModes();
+        DisplayMode[] modes = Lwjgl3ApplicationConfiguration.getDisplayModes();
         final JComboBox<DisplayMode> fullScreenResolutions = new JComboBox<DisplayMode>(modes);
 
         DisplayMode selectedMode = null;
@@ -243,7 +243,7 @@ public class ConfigDialog extends I18nJFrame {
             fullScreenResolutions.setSelectedItem(selectedMode);
 
         // Get current resolution
-        DisplayMode nativeMode = LwjglApplicationConfiguration.getDesktopDisplayMode();
+        DisplayMode nativeMode = Lwjgl3ApplicationConfiguration.getDisplayMode();
 
         // Windowed mode resolutions
         JPanel windowedResolutions = new JPanel(new MigLayout("", "[][grow,fill][][grow,fill]", "[][]4[][]"));
