@@ -22,6 +22,8 @@ Author
 Acknowledgements
 ================
 
+The most up to date list of acknowledgements is always in the
+`ACKNOWLEDGEMENTS.md <https://github.com/langurmonkey/gaiasky/blob/master/ACKNOWLEDGEMENTS.md>`__ file.
 The author would like to acknowledge the following people, or the
 people behind the following technologies/resources:
 
@@ -74,3 +76,5 @@ people behind the following technologies/resources:
 .. _InstallBuilder: http://installbuilder.bitrock.com/
 
 If you think I missed someone, please let me know.
+.. raw:: html
+	<iframe src="https://github.com/langurmonkey/gaiasky/blob/master/ACKNOWLEDGEMENTS.md"></iframe>
