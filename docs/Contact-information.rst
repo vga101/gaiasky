@@ -79,5 +79,5 @@ If you think I missed someone, please let me know.
 
 .. raw:: html
 
-	<iframe src="https://github.com/langurmonkey/gaiasky/blob/master/ACKNOWLEDGEMENTS.md"></iframe>
+    <iframe src="https://github.com/langurmonkey/gaiasky/blob/master/ACKNOWLEDGEMENTS.md"></iframe>
 
