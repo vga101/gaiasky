@@ -26,8 +26,6 @@ import gaia.cu9.ari.gaiaorbit.desktop.concurrent.MultiThreadLocalFactory;
 import gaia.cu9.ari.gaiaorbit.desktop.concurrent.ThreadPoolManager;
 import gaia.cu9.ari.gaiaorbit.desktop.format.DesktopDateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.desktop.format.DesktopNumberFormatFactory;
-import gaia.cu9.ari.gaiaorbit.desktop.gui.swing.ConfigDialog;
-import gaia.cu9.ari.gaiaorbit.desktop.gui.swing.IconManager;
 import gaia.cu9.ari.gaiaorbit.desktop.render.DesktopPostProcessorFactory;
 import gaia.cu9.ari.gaiaorbit.desktop.render.FullscreenCmd;
 import gaia.cu9.ari.gaiaorbit.desktop.util.CamRecorder;
@@ -96,10 +94,6 @@ public class GaiaSkyDesktop implements IObserver {
                 props = initConfigFile(false);
             }
 
-            // Swing look and feel
-            UIManager.setLookAndFeel("com.pagosoft.plaf.PgsLookAndFeel");
-            //            setUIFont(new javax.swing.plaf.FontUIResource("SansSerif", Font.PLAIN, 12));
-
             // Init global configuration
             ConfInit.initialize(new DesktopConfInit());
 
@@ -108,9 +102,6 @@ public class GaiaSkyDesktop implements IObserver {
 
             // Dev mode
             I18n.initialize(Gdx.files.absolute(ASSETS_LOC + "i18n/gsbundle"));
-
-            // Initialize icons
-            IconManager.initialize(Gdx.files.internal("data/ui/"));
 
             // Jython
             ScriptingFactory.initialize(JythonFactory.getInstance());
@@ -243,18 +234,6 @@ public class GaiaSkyDesktop implements IObserver {
                 }
             });
 
-            break;
-        case SHOW_PREFERENCES_ACTION:
-            // Exit fullscreen
-            EventManager.instance.post(Events.FULLSCREEN_CMD, false);
-            Gdx.app.postRunnable(new Runnable() {
-
-                @Override
-                public void run() {
-                    ConfigDialog.initialise(gsd, false);
-                }
-
-            });
             break;
         case DISPLAY_MEM_INFO_WINDOW:
             if (memInfoWindow == null) {

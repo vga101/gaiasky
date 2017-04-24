@@ -34,9 +34,9 @@ allprojects {
         ashleyVersion = '1.4.0'
         aiVersion = '1.5.0'
 		jythonVersion = '2.5.3'
-		miglayoutVersion = '4.2'
-        pgsVersion = '1.1.4'
         jcommanderVersion = '1.64'
+        googleanalyticsjavaVersion = '1.1.2'
+        slf4jVersion = '1.7.25'
     }
 
     repositories {
@@ -112,11 +112,11 @@ project(":desktop") {
         compile "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
         compile "com.badlogicgames.gdx:gdx-controllers-lwjgl3:$gdxVersion"
-		compile "org.python:jython-standalone:$jythonVersion"
-		compile "com.miglayout:miglayout-swing:$miglayoutVersion"
-        compile "com.github.arnabk:pgslookandfeel:$pgsVersion"
-        compile "com.beust:jcommander:$jcommanderVersion"
         compile "com.badlogicgames.gdx:gdx-tools:$gdxVersion"
+		compile "org.python:jython-standalone:$jythonVersion"
+        compile "com.beust:jcommander:$jcommanderVersion"
+        compile "com.brsanthu:google-analytics-java:$googleanalyticsjavaVersion"
+        compile "org.slf4j:slf4j-nop:$slf4jVersion"
 		compile files('../core/lib/postprocessing.jar',
 					'../core/lib/jafama.jar',
 					'../android/assets',
