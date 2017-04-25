@@ -421,7 +421,7 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
         Gdx.app.postRunnable(new Runnable() {
             @Override
             public void run() {
-                em.post(Events.AMBIENT_LIGHT_CMD, MathUtilsd.lint(brightness, Constants.MIN_SLIDER, Constants.MAX_SLIDER, Constants.MIN_STAR_BRIGHT, Constants.MAX_STAR_BRIGHT));
+                em.post(Events.STAR_BRIGHTNESS_CMD, MathUtilsd.lint(brightness, Constants.MIN_SLIDER, Constants.MAX_SLIDER, Constants.MIN_STAR_BRIGHT, Constants.MAX_STAR_BRIGHT), false);
             }
         });
     }

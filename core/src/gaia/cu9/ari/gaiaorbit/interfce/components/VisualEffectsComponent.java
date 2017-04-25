@@ -29,6 +29,8 @@ public class VisualEffectsComponent extends GuiComponent implements IObserver {
 
     boolean flag = true;
 
+    boolean hackProgrammaticChangeEvents = true;
+
     public VisualEffectsComponent(Skin skin, Stage stage) {
         super(skin, stage);
     }
@@ -44,8 +46,8 @@ public class VisualEffectsComponent extends GuiComponent implements IObserver {
         starBrightness.addListener(new EventListener() {
             @Override
             public boolean handle(Event event) {
-                if (event instanceof ChangeEvent) {
-                    EventManager.instance.post(Events.STAR_BRIGHTNESS_CMD, MathUtilsd.lint(starBrightness.getValue(), Constants.MIN_SLIDER, Constants.MAX_SLIDER, Constants.MIN_STAR_BRIGHT, Constants.MAX_STAR_BRIGHT));
+                if (event instanceof ChangeEvent && hackProgrammaticChangeEvents) {
+                    EventManager.instance.post(Events.STAR_BRIGHTNESS_CMD, MathUtilsd.lint(starBrightness.getValue(), Constants.MIN_SLIDER, Constants.MAX_SLIDER, Constants.MIN_STAR_BRIGHT, Constants.MAX_STAR_BRIGHT), true);
                     starbrightnessl.setText(Integer.toString((int) starBrightness.getValue()));
                     return true;
                 }
@@ -78,7 +80,6 @@ public class VisualEffectsComponent extends GuiComponent implements IObserver {
         sizeGroup.space(space3);
         sizeGroup.addActor(starSize);
         sizeGroup.addActor(size);
-        EventManager.instance.subscribe(this, Events.STAR_POINT_SIZE_INFO);
 
         /** Star opacity **/
         Label opacityLabel = new Label(txt("gui.star.opacity"), skin, "default");
@@ -263,6 +264,8 @@ public class VisualEffectsComponent extends GuiComponent implements IObserver {
         }
 
         component = lightingGroup;
+
+        EventManager.instance.subscribe(this, Events.STAR_POINT_SIZE_INFO, Events.STAR_BRIGHTNESS_CMD);
     }
 
     @Override
@@ -274,6 +277,16 @@ public class VisualEffectsComponent extends GuiComponent implements IObserver {
             starSize.setValue(newsize);
             size.setText(Integer.toString((int) starSize.getValue()));
             flag = true;
+            break;
+        case STAR_BRIGHTNESS_CMD:
+            if (data.length == 1 || data.length > 1 && !(Boolean) data[1]) {
+                Float brightness = (Float) data[0];
+                float sliderValue = MathUtilsd.lint(brightness, Constants.MIN_STAR_BRIGHT, Constants.MAX_STAR_BRIGHT, Constants.MIN_SLIDER, Constants.MAX_SLIDER);
+                hackProgrammaticChangeEvents = false;
+                starBrightness.setValue(sliderValue);
+                starbrightnessl.setText(Integer.toString((int) sliderValue));
+                hackProgrammaticChangeEvents = true;
+            }
             break;
         default:
             break;

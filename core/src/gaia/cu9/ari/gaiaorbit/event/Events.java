@@ -387,8 +387,10 @@ public enum Events {
     REMOVE_OBJECTS,
     /** Removes all the custom objects **/
     REMOVE_ALL_OBJECTS,
-    /** Contains the star brightness multiplier **/
-    STAR_BRIGHTNESS_CMD, FPS_INFO,
+    /** Contains the star brightness multiplier and an optional boolean saying if it comes from the interface **/
+    STAR_BRIGHTNESS_CMD,
+    /** Frames per second info **/
+    FPS_INFO,
     /** Contains the number factor for pm vectors **/
     PM_NUM_FACTOR_CMD,
     /** Contains the length factor for pm vectors **/
