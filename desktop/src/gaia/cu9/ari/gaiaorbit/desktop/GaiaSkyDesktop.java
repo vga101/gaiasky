@@ -1,5 +1,7 @@
 package gaia.cu9.ari.gaiaorbit.desktop;
 
+import java.awt.MouseInfo;
+import java.awt.PointerInfo;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -12,6 +14,7 @@ import javax.swing.plaf.FontUIResource;
 import com.badlogic.gdx.Files;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Graphics.DisplayMode;
+import com.badlogic.gdx.Graphics.Monitor;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Files;
@@ -27,7 +30,7 @@ import gaia.cu9.ari.gaiaorbit.desktop.concurrent.ThreadPoolManager;
 import gaia.cu9.ari.gaiaorbit.desktop.format.DesktopDateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.desktop.format.DesktopNumberFormatFactory;
 import gaia.cu9.ari.gaiaorbit.desktop.render.DesktopPostProcessorFactory;
-import gaia.cu9.ari.gaiaorbit.desktop.render.FullscreenCmd;
+import gaia.cu9.ari.gaiaorbit.desktop.render.ScreenModeCmd;
 import gaia.cu9.ari.gaiaorbit.desktop.util.CamRecorder;
 import gaia.cu9.ari.gaiaorbit.desktop.util.DesktopConfInit;
 import gaia.cu9.ari.gaiaorbit.desktop.util.DesktopMusicActors;
@@ -107,7 +110,7 @@ public class GaiaSkyDesktop implements IObserver {
             ScriptingFactory.initialize(JythonFactory.getInstance());
 
             // Fullscreen command
-            FullscreenCmd.initialize();
+            ScreenModeCmd.initialize();
 
             // Init cam recorder
             CamRecorder.initialize();
@@ -168,9 +171,23 @@ public class GaiaSkyDesktop implements IObserver {
     public void launchMainApp() {
         Lwjgl3ApplicationConfiguration cfg = new Lwjgl3ApplicationConfiguration();
         cfg.setTitle(GlobalConf.getFullApplicationName());
+
+        // Find out current monitor
+        Monitor[] monitors = Lwjgl3ApplicationConfiguration.getMonitors();
+        PointerInfo pi = MouseInfo.getPointerInfo();
+        int pix = pi.getDevice().getDefaultConfiguration().getBounds().x;
+        int piy = pi.getDevice().getDefaultConfiguration().getBounds().y;
+        Monitor chosen = null;
+        for (Monitor monitor : monitors) {
+            if (monitor.virtualX == pix && monitor.virtualY == piy) {
+                chosen = monitor;
+                break;
+            }
+        }
+
         if (GlobalConf.screen.FULLSCREEN) {
             // Get mode
-            DisplayMode[] modes = Lwjgl3ApplicationConfiguration.getDisplayModes();
+            DisplayMode[] modes = Lwjgl3ApplicationConfiguration.getDisplayModes(chosen);
             DisplayMode mymode = null;
             for (DisplayMode mode : modes) {
                 if (mode.height == GlobalConf.screen.FULLSCREEN_HEIGHT && mode.width == GlobalConf.screen.FULLSCREEN_WIDTH) {
@@ -182,8 +199,13 @@ public class GaiaSkyDesktop implements IObserver {
                 mymode = Lwjgl3ApplicationConfiguration.getDisplayMode(Gdx.graphics.getPrimaryMonitor());
             cfg.setFullscreenMode(mymode);
         } else {
+            // Find out position
+            DisplayMode dm = Lwjgl3ApplicationConfiguration.getDisplayMode(chosen);
+            int posx = chosen.virtualX + dm.width / 2 - GlobalConf.screen.getScreenWidth() / 2;
+            int posy = chosen.virtualY + dm.height / 2 - GlobalConf.screen.getScreenHeight() / 2;
             cfg.setWindowedMode(GlobalConf.screen.getScreenWidth(), GlobalConf.screen.getScreenHeight());
             cfg.setResizable(GlobalConf.screen.RESIZABLE);
+            cfg.setWindowPosition(posx, posy);
         }
         cfg.setBackBufferConfig(8, 8, 8, 8, 24, 0, MathUtilsd.clamp(GlobalConf.postprocess.POSTPROCESS_ANTIALIAS, 0, 16));
         cfg.setIdleFPS(0);

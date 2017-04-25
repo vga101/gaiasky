@@ -394,11 +394,11 @@ public enum Events {
     /** Contains the length factor for pm vectors **/
     PM_LEN_FACTOR_CMD,
     /**
-     * Contains an optional boolean indicating whether full screen must be
-     * activated (true) or deactivated (false). If no boolean is attached, it
-     * functions as a toggle.
+     * Updates the screen mode according to whats in the {@link gaia.cu9.ari.gaiaorbit.util.GlobalConf#screen} bean.
      **/
-    FULLSCREEN_CMD, SCENE_GRAPH_LOADED,
+    SCREEN_MODE_CMD,
+    /** Informs the scene graph has been loaded. Program can start **/
+    SCENE_GRAPH_LOADED,
     /**
      * Contains the width, height (integers) and the folder name and filename
      * (strings)
@@ -489,6 +489,11 @@ public enum Events {
      * parameters.
      **/
     PIXEL_RENDERER_UPDATE,
+    /**
+     * Issues the command to update the line render system. Contains no
+     * parameters.
+     **/
+    LINE_RENDERER_UPDATE,
     /** Removes the keyboard focus in the GUI **/
     REMOVE_KEYBOARD_FOCUS,
     /** Removes the gui component identified by the given name **/

@@ -227,7 +227,6 @@ public class PreferencesWindow extends GenericDialog {
             @Override
             public boolean handle(Event event) {
                 if (event instanceof ChangeEvent) {
-                    GlobalConf.screen.FULLSCREEN = fullscreen.isChecked();
                     selectFullscreen(fullscreen.isChecked(), widthField, heightField, fullscreenResolutions, resizable, widthLabel, heightLabel);
                     return true;
                 }
@@ -241,7 +240,6 @@ public class PreferencesWindow extends GenericDialog {
             @Override
             public boolean handle(Event event) {
                 if (event instanceof ChangeEvent) {
-                    GlobalConf.screen.FULLSCREEN = !windowed.isChecked();
                     selectFullscreen(!windowed.isChecked(), widthField, heightField, fullscreenResolutions, resizable, widthLabel, heightLabel);
                     return true;
                 }
@@ -253,10 +251,15 @@ public class PreferencesWindow extends GenericDialog {
 
         new ButtonGroup<CheckBox>(fullscreen, windowed);
 
+        // VSYNC
+        vsync = new OwnCheckBox(txt("gui.vsync"), skin, "default", pad);
+        vsync.setChecked(GlobalConf.screen.VSYNC);
+
         mode.add(fullscreen).left().padRight(pad * 2);
         mode.add(fullscreenResolutions).left().row();
         mode.add(windowed).left().padRight(pad * 2).padTop(pad * 2);
         mode.add(windowedResolutions).left().padTop(pad * 2);
+        mode.add(vsync).left().colspan(2);
 
         // Add to content
         contentGraphics.add(titleResolution).left().padBottom(pad * 2).row();
@@ -307,22 +310,40 @@ public class PreferencesWindow extends GenericDialog {
         lineRenderer.setWidth(textwidth * 3f);
         lineRenderer.setSelected(lineRenderers[GlobalConf.scene.LINE_RENDERER]);
 
-        // VSYNC
-        vsync = new OwnCheckBox(txt("gui.vsync"), skin, "default", pad);
-        vsync.setChecked(GlobalConf.screen.VSYNC);
-
         // LABELS
         labels.addAll(gqualityLabel, aaLabel, lrLabel);
 
         graphics.add(gqualityLabel).left().padRight(pad * 4).padBottom(pad);
         graphics.add(gquality).left().padRight(pad * 2).padBottom(pad);
         graphics.add(gqualityTooltip).left().padBottom(pad).row();
+        final Cell<Actor> noticeGraphicsCell = graphics.add();
+        noticeGraphicsCell.colspan(3).left().row();
         graphics.add(aaLabel).left().padRight(pad * 4).padBottom(pad);
         graphics.add(aa).left().padRight(pad * 2).padBottom(pad);
         graphics.add(aaTooltip).left().padBottom(pad).row();
         graphics.add(lrLabel).left().padRight(pad * 4).padBottom(pad);
         graphics.add(lineRenderer).colspan(2).left().padBottom(pad).row();
-        graphics.add(vsync).left().colspan(3);
+
+        EventListener graphicsChangeListener = new EventListener() {
+            @Override
+            public boolean handle(Event event) {
+                if (event instanceof ChangeEvent) {
+                    if (noticeGraphicsCell.getActor() == null) {
+                        String nextinfostr = txt("gui.ui.info") + '\n';
+                        int lines = GlobalResources.countOccurrences(nextinfostr, '\n');
+                        TextArea nextTimeInfo = new OwnTextArea(nextinfostr, skin, "info");
+                        nextTimeInfo.setDisabled(true);
+                        nextTimeInfo.setPrefRows(lines + 1);
+                        nextTimeInfo.setWidth(tawidth);
+                        nextTimeInfo.clearListeners();
+                        noticeGraphicsCell.setActor(nextTimeInfo);
+                    }
+                    return true;
+                }
+                return false;
+            }
+        };
+        gquality.addListener(graphicsChangeListener);
 
         // Add to content
         contentGraphics.add(titleGraphics).left().padBottom(pad * 2).row();
@@ -1063,6 +1084,10 @@ public class PreferencesWindow extends GenericDialog {
 
     private void saveCurrentPreferences() {
         // Add all properties to GlobalConf.instance
+
+        final boolean reloadFullscreenMode = fullscreen.isChecked() != GlobalConf.screen.FULLSCREEN;
+        final boolean reloadScreenMode = reloadFullscreenMode || (GlobalConf.screen.FULLSCREEN && (GlobalConf.screen.FULLSCREEN_WIDTH != fullscreenResolutions.getSelected().width || GlobalConf.screen.FULLSCREEN_HEIGHT != fullscreenResolutions.getSelected().height)) || (!GlobalConf.screen.FULLSCREEN && (GlobalConf.screen.SCREEN_WIDTH != Integer.parseInt(widthField.getText())) || GlobalConf.screen.SCREEN_HEIGHT != Integer.parseInt(heightField.getText()));
+
         GlobalConf.screen.FULLSCREEN = fullscreen.isChecked();
 
         // Fullscreen options
@@ -1085,12 +1110,13 @@ public class PreferencesWindow extends GenericDialog {
         GlobalConf.screen.VSYNC = vsync.isChecked();
 
         // Line renderer
+        boolean reloadLineRenderer = GlobalConf.scene.LINE_RENDERER != lineRenderer.getSelected().value;
         bean = lineRenderer.getSelected();
         GlobalConf.scene.LINE_RENDERER = bean.value;
 
         // Interface
         LangComboBoxBean lbean = lang.getSelected();
-        boolean reloadUI = GlobalConf.program.UI_THEME != theme.getSelected() || lbean.locale.toLanguageTag() != GlobalConf.program.LOCALE;
+        final boolean reloadUI = GlobalConf.program.UI_THEME != theme.getSelected() || lbean.locale.toLanguageTag() != GlobalConf.program.LOCALE;
         GlobalConf.program.LOCALE = lbean.locale.toLanguageTag();
         I18n.forceinit(Gdx.files.internal("i18n/gsbundle"));
         GlobalConf.program.UI_THEME = theme.getSelected();
@@ -1153,7 +1179,21 @@ public class PreferencesWindow extends GenericDialog {
 
         EventManager.instance.post(Events.PROPERTIES_WRITTEN);
 
+        if (reloadScreenMode) {
+            Gdx.app.postRunnable(new Runnable() {
+                @Override
+                public void run() {
+                    EventManager.instance.post(Events.SCREEN_MODE_CMD);
+                }
+            });
+        }
+
+        if (reloadLineRenderer) {
+            EventManager.instance.post(Events.LINE_RENDERER_UPDATE);
+        }
+
         if (reloadUI) {
+            // Reinitialise user interface
             Gdx.app.postRunnable(new Runnable() {
                 public void run() {
                     // Reinitialise GUI system

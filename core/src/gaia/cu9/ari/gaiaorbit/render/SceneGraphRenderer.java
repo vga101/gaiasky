@@ -361,7 +361,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         renderProcesses.add(modelAtmProc);
         renderProcesses.add(modelCloseUpProc);
 
-        EventManager.instance.subscribe(this, Events.TOGGLE_VISIBILITY_CMD, Events.PIXEL_RENDERER_UPDATE, Events.TOGGLE_STEREOSCOPIC_INFO, Events.CAMERA_MODE_CMD, Events.CUBEMAP360_CMD);
+        EventManager.instance.subscribe(this, Events.TOGGLE_VISIBILITY_CMD, Events.PIXEL_RENDERER_UPDATE, Events.LINE_RENDERER_UPDATE, Events.TOGGLE_STEREOSCOPIC_INFO, Events.CAMERA_MODE_CMD, Events.CUBEMAP360_CMD);
 
     }
 
@@ -497,6 +497,16 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
             });
             break;
+        case LINE_RENDERER_UPDATE:
+            Gdx.app.postRunnable(new Runnable() {
+
+                @Override
+                public void run() {
+                    updateLineRenderSystem();
+                }
+
+            });
+            break;
         case TOGGLE_STEREOSCOPIC_INFO:
             boolean stereo = (Boolean) data[0];
             if (stereo)
@@ -570,6 +580,21 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         for (ISGR sgr : sgrs) {
             if (sgr != null)
                 sgr.dispose();
+        }
+    }
+
+    public void updateLineRenderSystem() {
+        LineRenderSystem current = null;
+        for (IRenderSystem proc : renderProcesses) {
+            if (proc instanceof LineRenderSystem) {
+                current = (LineRenderSystem) proc;
+            }
+        }
+        final int idx = renderProcesses.indexOf(current, true);
+        if ((current instanceof LineQuadRenderSystem && GlobalConf.scene.isNormalLineRenderer()) || (!(current instanceof LineQuadRenderSystem) && !GlobalConf.scene.isNormalLineRenderer())) {
+            renderProcesses.removeIndex(idx);
+            AbstractRenderSystem lineSys = getLineRenderSystem();
+            renderProcesses.insert(idx, lineSys);
         }
     }
 

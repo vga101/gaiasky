@@ -478,6 +478,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
             manager.update();
 
             if (!GlobalConf.runtime.UPDATE_PAUSE) {
+
                 /**
                  * UPDATE
                  */

@@ -225,7 +225,8 @@ public class KeyBindings {
         addMapping(new ProgramAction(txt("action.togglefs"), new Runnable() {
             @Override
             public void run() {
-                EventManager.instance.post(Events.FULLSCREEN_CMD);
+                GlobalConf.screen.FULLSCREEN = !GlobalConf.screen.FULLSCREEN;
+                EventManager.instance.post(Events.SCREEN_MODE_CMD);
             }
         }), Keys.F11);
 
