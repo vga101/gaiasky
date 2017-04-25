@@ -129,7 +129,7 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
     /** The id of the octant it belongs to, if any **/
     public long octantId;
     /** Its page **/
-    public OctreeNode octant;
+    public OctreeNode<Particle> octant;
 
     /**
      * Particle type 90 - real star 92 - virtual particle

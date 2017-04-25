@@ -1,8 +1,11 @@
 package gaia.cu9.ari.gaiaorbit.render.system;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.Mesh.VertexDataType;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
@@ -19,6 +22,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.DecalUtils;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.comp.DistToCameraComparator;
 
 public class QuadRenderSystem extends AbstractRenderSystem implements IObserver {
@@ -29,6 +33,7 @@ public class QuadRenderSystem extends AbstractRenderSystem implements IObserver 
     private boolean starColorTransit = false;
     private Quaternion quaternion;
     private Vector3 aux;
+    private Texture starTexture;
 
     /**
      * Creates a new shader quad render component.
@@ -54,6 +59,15 @@ public class QuadRenderSystem extends AbstractRenderSystem implements IObserver 
     }
 
     private void init() {
+        if (GlobalConf.scene.isHighQuality()) {
+            starTexture = new Texture(Gdx.files.internal("img/star_glow.png"), true);
+        } else if (GlobalConf.scene.isNormalQuality()) {
+            starTexture = new Texture(Gdx.files.internal("img/star_glow_s.png"), true);
+        } else {
+            starTexture = new Texture(Gdx.files.internal("img/star_glow_s.png"), true);
+        }
+        starTexture.setFilter(TextureFilter.MipMapLinearLinear, TextureFilter.Linear);
+
         // Init comparator
         comp = new DistToCameraComparator<IRenderable>();
         // Init vertices
@@ -124,6 +138,9 @@ public class QuadRenderSystem extends AbstractRenderSystem implements IObserver 
         DecalUtils.setBillboardRotation(quaternion, camera.getCamera().direction, camera.getCamera().up);
 
         shaderProgram.begin();
+
+        starTexture.bind(0);
+        shaderProgram.setUniformi("u_starTexture", 0);
 
         // General uniforms
         shaderProgram.setUniformMatrix("u_projTrans", camera.getCamera().combined);

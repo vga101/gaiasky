@@ -5,6 +5,7 @@ import java.util.Arrays;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import com.bitfire.postprocessing.PostProcessor;
@@ -111,12 +112,18 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
             nghosts = 6;
             lensFboScale = 0.2f;
         }
+        Texture lcol = new Texture(Gdx.files.internal("img/lenscolor.png"));
+        lcol.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+        Texture ldirt = new Texture(Gdx.files.internal(GlobalConf.scene.isHighQuality() ? "img/lensdirt.jpg" : "img/lensdirt_s.jpg"));
+        ldirt.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+        Texture lburst = new Texture(Gdx.files.internal("img/lensstarburst.jpg"));
+        lburst.setFilter(TextureFilter.Linear, TextureFilter.Linear);
         ppb.lens = new LensFlare2((int) (width * lensFboScale), (int) (height * lensFboScale));
         ppb.lens.setGhosts(nghosts);
         ppb.lens.setHaloWidth(0.4f);
-        ppb.lens.setLensColorTexture(new Texture(Gdx.files.internal("img/lenscolor.png")));
-        ppb.lens.setLensDirtTexture(new Texture(Gdx.files.internal(GlobalConf.scene.isHighQuality() ? "img/lensdirt.jpg" : "img/lensdirt_s.jpg")));
-        ppb.lens.setLensStarburstTexture(new Texture(Gdx.files.internal("img/lensstarburst.jpg")));
+        ppb.lens.setLensColorTexture(lcol);
+        ppb.lens.setLensDirtTexture(ldirt);
+        ppb.lens.setLensStarburstTexture(lburst);
         ppb.lens.setFlareIntesity(GlobalConf.postprocess.POSTPROCESS_LENS_FLARE ? flareIntensity : 0f);
         ppb.lens.setFlareSaturation(0.5f);
         ppb.lens.setBaseIntesity(1f);
@@ -134,20 +141,23 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
             nsamples = 30;
             lgw = 1920;
             lgh = Math.round(lgw / ar);
-            glow = new Texture(Gdx.files.internal("img/star_glow.png"));
+            glow = new Texture(Gdx.files.internal("img/star_glow.png"), true);
+            Glow.N = 50;
         } else if (GlobalConf.scene.isNormalQuality()) {
-            nsamples = 20;
-            lgw = 1280;
-            lgh = Math.round(lgw / ar);
-            glow = new Texture(Gdx.files.internal("img/star_glow_s.png"));
-        } else {
             nsamples = 15;
             lgw = 1280;
             lgh = Math.round(lgw / ar);
-            glow = new Texture(Gdx.files.internal("img/star_glow_s.png"));
+            glow = new Texture(Gdx.files.internal("img/star_glow_s.png"), true);
+            Glow.N = 30;
+        } else {
+            nsamples = 10;
+            lgw = 1000;
+            lgh = Math.round(lgw / ar);
+            glow = new Texture(Gdx.files.internal("img/star_glow_s.png"), true);
+            Glow.N = 10;
         }
+        glow.setFilter(TextureFilter.MipMapLinearLinear, TextureFilter.Linear);
 
-        Glow.N = 50;
         ppb.lglow = new LightGlow(lgw, lgh);
         ppb.lglow.setScatteringIntesity(1f);
         ppb.lglow.setScatteringSaturation(1f);

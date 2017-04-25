@@ -6,6 +6,8 @@
 
 **Implemented enhancements:**
 
+- Apply screen mode without restart [\#128](https://github.com/langurmonkey/gaiasky/issues/128)
+- Make network checker \(simbad, wiki\) asynchronous [\#127](https://github.com/langurmonkey/gaiasky/issues/127)
 - Deprecate current swing-based preferences [\#125](https://github.com/langurmonkey/gaiasky/issues/125)
 - Apply skin change without restarting [\#124](https://github.com/langurmonkey/gaiasky/issues/124)
 - Colour code proper motion vectors with direction/magnitude [\#123](https://github.com/langurmonkey/gaiasky/issues/123)
@@ -20,6 +22,7 @@
 
 **Fixed bugs:**
 
+- Make network checker \\(simbad, wiki\\) asynchronous [\#127](https://github.com/langurmonkey/gaiasky/issues/127)
 - Fix cast error when multithreading is on [\#126](https://github.com/langurmonkey/gaiasky/issues/126)
 - Label flickering when star is perfectly aligned with camera direction [\#122](https://github.com/langurmonkey/gaiasky/issues/122)
 - Fix main controls window alignments [\#118](https://github.com/langurmonkey/gaiasky/issues/118)
@@ -33,6 +36,11 @@
 
 **Closed issues:**
 
+- Scripting interface: asynchronous mode? [\#133](https://github.com/langurmonkey/gaiasky/issues/133)
+- Scripting interface: issues with setCameraPostion method [\#132](https://github.com/langurmonkey/gaiasky/issues/132)
+- Scripting interface: calling setStarBrightness\(\) seems to change the ambient light [\#131](https://github.com/langurmonkey/gaiasky/issues/131)
+- Scripting interface: calling setVisibility toggles independent of parameter [\#130](https://github.com/langurmonkey/gaiasky/issues/130)
+- Scripting interface: calling setCameraLock\(\) causes Exception in thread "LWJGL Application" [\#129](https://github.com/langurmonkey/gaiasky/issues/129)
 - Translation [\#107](https://github.com/langurmonkey/gaiasky/issues/107)
 
 **Merged pull requests:**
