@@ -191,8 +191,15 @@ public interface IScriptingInterface {
     /**
      * Sets the camera position to the given coordinates, in Km, equatorial system.
      * @param vec Vector of three components in equatorial coordinates and km.
+     * @deprecated Use {@link #setCameraPosition(double[])} instead.
      */
     public void setCameraPostion(double[] vec);
+
+    /**
+     * Sets the camera position to the given coordinates, in Km, equatorial system.
+     * @param vec Vector of three components in equatorial coordinates and km.
+     */
+    public void setCameraPosition(double[] vec);
 
     /**
      * Sets the camera direction vector to the given vector, equatorial system.

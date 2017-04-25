@@ -213,9 +213,21 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
 
     @Override
     public void setCameraPostion(final double[] vec) {
+        setCameraPosition(vec);
+    }
+
+    @Override
+    public void setCameraPosition(final double[] vec) {
+        if (vec.length != 3)
+            throw new RuntimeException("vec parameter must have three components");
         Gdx.app.postRunnable(new Runnable() {
             @Override
             public void run() {
+                // Convert to km
+                vec[0] = vec[0] * Constants.KM_TO_U;
+                vec[1] = vec[1] * Constants.KM_TO_U;
+                vec[2] = vec[2] * Constants.KM_TO_U;
+                // Send event
                 em.post(Events.CAMERA_POS_CMD, vec);
             }
         });
