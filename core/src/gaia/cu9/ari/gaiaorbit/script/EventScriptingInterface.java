@@ -166,7 +166,7 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
         Gdx.app.postRunnable(new Runnable() {
             @Override
             public void run() {
-                em.post(Events.FOCUS_LOCK_CMD, lock);
+                em.post(Events.FOCUS_LOCK_CMD, I18n.bundle.get("gui.camera.lock"), lock);
             }
         });
     }

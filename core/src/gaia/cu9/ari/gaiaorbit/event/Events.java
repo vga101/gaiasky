@@ -102,7 +102,7 @@ public enum Events {
      **/
     TOGGLE_VISIBILITY_CMD,
     /**
-     * Contains the name, the boolean value, and a boolean indicating if this
+     * Contains the name, the boolean value, and an optional boolean indicating if this
      * comes from the interface
      **/
     FOCUS_LOCK_CMD,
