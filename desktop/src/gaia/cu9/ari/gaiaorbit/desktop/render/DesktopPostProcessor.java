@@ -141,22 +141,22 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
             nsamples = 30;
             lgw = 1920;
             lgh = Math.round(lgw / ar);
-            glow = new Texture(Gdx.files.internal("img/star_glow.png"), true);
+            glow = new Texture(Gdx.files.internal("img/star_glow.png"));
             Glow.N = 50;
         } else if (GlobalConf.scene.isNormalQuality()) {
             nsamples = 15;
             lgw = 1280;
             lgh = Math.round(lgw / ar);
-            glow = new Texture(Gdx.files.internal("img/star_glow_s.png"), true);
+            glow = new Texture(Gdx.files.internal("img/star_glow_s.png"));
             Glow.N = 30;
         } else {
             nsamples = 10;
             lgw = 1000;
             lgh = Math.round(lgw / ar);
-            glow = new Texture(Gdx.files.internal("img/star_glow_s.png"), true);
+            glow = new Texture(Gdx.files.internal("img/star_glow_s.png"));
             Glow.N = 10;
         }
-        glow.setFilter(TextureFilter.MipMapLinearLinear, TextureFilter.Linear);
+        glow.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 
         ppb.lglow = new LightGlow(lgw, lgh);
         ppb.lglow.setScatteringIntesity(1f);
