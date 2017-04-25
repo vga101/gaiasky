@@ -1,16 +1,23 @@
 package gaia.cu9.ari.gaiaorbit.desktop.util;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Net.HttpMethods;
+import com.badlogic.gdx.Net.HttpRequest;
+import com.badlogic.gdx.Net.HttpResponse;
+import com.badlogic.gdx.Net.HttpResponseListener;
+import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Net;
+import com.badlogic.gdx.net.HttpStatus;
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.Cell;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
+import com.badlogic.gdx.utils.Align;
 
 import gaia.cu9.ari.gaiaorbit.GaiaSky;
-import gaia.cu9.ari.gaiaorbit.desktop.network.HttpQuery;
 import gaia.cu9.ari.gaiaorbit.interfce.INetworkChecker;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ModelBody;
@@ -21,7 +28,10 @@ import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextButton;
 
 public class DesktopNetworkChecker extends Thread implements INetworkChecker {
     private static String URL_SIMBAD = "http://simbad.u-strasbg.fr/simbad/sim-id?Ident=";
+    // TODO Use Wikipedia API to get localized content to the current language
     private static String URL_WIKIPEDIA = "https://en.wikipedia.org/wiki/";
+
+    private static int TIMEOUT_MS = 5000;
 
     private boolean running = true;
 
@@ -31,6 +41,8 @@ public class DesktopNetworkChecker extends Thread implements INetworkChecker {
     public boolean executing = false;
     private LabelStyle linkStyle;
     private GaiaCatalogWindow gaiaWindow = null;
+
+    private Cell<Link> wikiCell, simbadCell;
 
     // The table to modify
     private Table table;
@@ -80,9 +92,32 @@ public class DesktopNetworkChecker extends Thread implements INetworkChecker {
         doNotify();
     }
 
+    private class GaiaButtonListener implements EventListener {
+        private final CelestialBody focus;
+
+        public GaiaButtonListener(CelestialBody focus) {
+            super();
+            this.focus = focus;
+        }
+
+        @Override
+        public boolean handle(Event event) {
+            if (event instanceof ChangeEvent) {
+                if (gaiaWindow == null) {
+                    gaiaWindow = new GaiaCatalogWindow(GaiaSky.instance.mainGui.getGuiStage(), skin);
+                }
+                gaiaWindow.initialize((Star) focus);
+                gaiaWindow.display();
+                return true;
+            }
+            return false;
+        }
+    }
+
     public void run() {
         try {
             while (running) {
+                table.align(Align.top | Align.left);
                 executing = false;
                 doWait();
                 if (!running)
@@ -91,14 +126,43 @@ public class DesktopNetworkChecker extends Thread implements INetworkChecker {
                 if (focus != null) {
                     Logger.debug(this.getClass().getSimpleName(), "Looking up network resources for '" + focus.name + "'");
 
+                    // Add table
+                    if (focus instanceof Star) {
+                        Button gaiaButton = new OwnTextButton("Gaia", skin, "link");
+                        gaiaButton.addListener(new GaiaButtonListener(focus));
+                        table.add(gaiaButton).center();
+                    }
+
+                    simbadCell = table.add().center();
+                    wikiCell = table.add().center();
+
                     String wikiname = focus.name.replace(' ', '_');
 
-                    final String wikilink = getWikiLink(wikiname, focus);
-                    final String simbadlink = getSimbadLink(focus);
+                    setWikiLink(wikiname, focus, new LinkListener() {
+                        @Override
+                        public void ok(String link) {
+                            wikiCell.setActor(new Link("Wikipedia ", linkStyle, link));
+                            wikiCell.padLeft(pad);
+                        }
 
-                    Gdx.app.postRunnable(new FocusRunnable(focus, simbadlink, wikilink));
+                        @Override
+                        public void ko(String link) {
+                        }
+                    });
+                    setSimbadLink(focus, new LinkListener() {
 
-                    //                    pack();
+                        @Override
+                        public void ok(String link) {
+                            simbadCell.setActor(new Link("Simbad", linkStyle, link));
+                            simbadCell.padLeft(pad);
+                        }
+
+                        @Override
+                        public void ko(String link) {
+                        }
+
+                    });
+
                     focus = null;
                 }
             }
@@ -108,82 +172,110 @@ public class DesktopNetworkChecker extends Thread implements INetworkChecker {
         }
     }
 
-    private class FocusRunnable implements Runnable {
-        String simbadlink, wikilink;
-        CelestialBody focus;
-
-        public FocusRunnable(CelestialBody focus, String simbadlink, String wikilink) {
-            this.focus = focus;
-            this.simbadlink = simbadlink;
-            this.wikilink = wikilink;
-        }
-
-        @Override
-        public void run() {
-            if (focus instanceof Star) {
-                Button gaiaButton = new OwnTextButton("Gaia", skin, "link");
-                gaiaButton.addListener(new EventListener() {
-                    @Override
-                    public boolean handle(Event event) {
-                        if (event instanceof ChangeEvent) {
-                            if (gaiaWindow == null) {
-                                gaiaWindow = new GaiaCatalogWindow(GaiaSky.instance.mainGui.getGuiStage(), skin);
-                            }
-                            gaiaWindow.initialize((Star) focus);
-                            gaiaWindow.display();
-                            return true;
-                        }
-                        return false;
-                    }
-                });
-                table.add(gaiaButton);
-            }
-            if (simbadlink != null)
-                table.add(new Link("Simbad", linkStyle, simbadlink)).padLeft(pad);
-            if (wikilink != null)
-                table.add(new Link("Wikipedia ", linkStyle, wikilink)).padLeft(pad);
-        }
-
-    }
-
-    private String getSimbadLink(CelestialBody focus) {
+    private void setSimbadLink(CelestialBody focus, LinkListener listener) {
         if (focus instanceof Star) {
             String url = URL_SIMBAD;
             Star st = (Star) focus;
             if (st.hip > 0) {
-                return url + "HIP+" + st.hip;
+                listener.ok(url + "HIP+" + st.hip);
             } else if (st.tycho != null) {
-                return url + "TYC+" + st.tycho;
+                listener.ok(url + "TYC+" + st.tycho);
+            } else {
+                listener.ko(null);
             }
+        } else {
+            listener.ko(null);
         }
-        return null;
     }
 
     private String[] suffixes = { "_(planet)", "_(moon)", "_(asteroid)", "_(dwarf_planet)", "_(spacecraft)" };
 
-    private String getWikiLink(String wikiname, CelestialBody focus) {
+    private void setWikiLink(String wikiname, CelestialBody focus, LinkListener listener) {
         try {
             String url = URL_WIKIPEDIA;
             if (focus instanceof ModelBody) {
                 ModelBody f = (ModelBody) focus;
                 if (f.wikiname != null) {
-                    return url + f.wikiname.replace(' ', '_');
+                    listener.ok(url + f.wikiname.replace(' ', '_'));
                 } else {
                     for (int i = 0; i < suffixes.length; i++) {
                         String suffix = suffixes[i];
-                        if (HttpQuery.getResponseCode(url + wikiname + suffix) == 200)
-                            return url + wikiname + suffix;
-
+                        urlCheck(url + wikiname + suffix, listener);
                     }
                 }
             }
-            if (HttpQuery.getResponseCode(url + wikiname) == 200)
-                return url + wikiname;
+            urlCheck(url + wikiname, listener);
 
         } catch (Exception e) {
             Logger.error(e);
         }
-        return null;
+        listener.ko(null);
     }
 
+    private void urlCheck(final String url, final LinkListener listener) {
+        HttpRequest request = new HttpRequest(HttpMethods.GET);
+        request.setUrl(url);
+        request.setTimeOut(TIMEOUT_MS);
+        Gdx.net.sendHttpRequest(request, new HttpResponseListener() {
+            @Override
+            public void handleHttpResponse(HttpResponse httpResponse) {
+                if (httpResponse.getStatus().getStatusCode() == HttpStatus.SC_OK) {
+                    listener.ok(url);
+                } else {
+                    listener.ko(url);
+                }
+            }
+
+            @Override
+            public void failed(Throwable t) {
+                listener.ko(url);
+            }
+
+            @Override
+            public void cancelled() {
+                listener.ko(url);
+            }
+        });
+
+    }
+
+    public static void main(String[] args) {
+        Gdx.net = new Lwjgl3Net();
+        DesktopNetworkChecker dnc = new DesktopNetworkChecker();
+        dnc.urlCheck("https://ca.ba.de.si.com", new LinkListener() {
+            @Override
+            public void ok(String link) {
+                System.out.println("ok : " + link);
+            }
+
+            @Override
+            public void ko(String link) {
+                System.out.println("ko : " + link);
+            }
+        });
+        dnc.urlCheck("https://www.google.com", new LinkListener() {
+            @Override
+            public void ok(String link) {
+                System.out.println("ok : " + link);
+            }
+
+            @Override
+            public void ko(String link) {
+                System.out.println("ko : " + link);
+            }
+        });
+
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private interface LinkListener {
+        public void ok(String link);
+
+        public void ko(String link);
+    }
 }

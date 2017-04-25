@@ -5,9 +5,13 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Net.HttpMethods;
+import com.badlogic.gdx.Net.HttpRequest;
+import com.badlogic.gdx.Net.HttpResponse;
+import com.badlogic.gdx.Net.HttpResponseListener;
+import com.badlogic.gdx.net.HttpStatus;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
@@ -26,12 +30,10 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 
-import gaia.cu9.ari.gaiaorbit.desktop.network.HttpQuery;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
-import gaia.cu9.ari.gaiaorbit.util.Pair;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.CollapsibleWindow;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.Link;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnLabel;
@@ -52,6 +54,8 @@ public class GaiaCatalogWindow extends CollapsibleWindow {
     private static String URL_GAIA_HIP = "http://gaia.ari.uni-heidelberg.de/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+extcat.hipparcos+WHERE+hip=";
     private static final String separator = "\n";
 
+    private final GaiaCatalogWindow me;
+
     private final Stage stage;
     private HorizontalGroup buttonGroup;
     private Table table;
@@ -64,6 +68,7 @@ public class GaiaCatalogWindow extends CollapsibleWindow {
 
     public GaiaCatalogWindow(Stage stg, Skin skin) {
         super(I18n.bundle.format("gui.data.catalog", "Gaia"), skin);
+        this.me = this;
 
         this.stage = stg;
         this.linkStyle = skin.get("link", LabelStyle.class);
@@ -132,94 +137,12 @@ public class GaiaCatalogWindow extends CollapsibleWindow {
 
         table.clear();
 
-        // Make request
-        try {
-            Pair<String[][], Integer> pair = getData();
-            String[][] data = pair.getFirst();
-            Integer code = pair.getSecond();
-            if (code == -1) {
-                // No ID
-                String msg = I18n.bundle.format("error.gaiacatalog.noid", st.name);
-                table.add(new OwnLabel(msg, skin, "ui-15"));
-                table.pack();
-                scroll.setHeight(table.getHeight() + pad);
-            } else if (data != null) {
+        requestData(new GaiaDataListener(st));
 
-                HorizontalGroup links = new HorizontalGroup();
-                links.align(Align.center);
-                links.pad(5, 5, 5, 5);
-                links.space(10);
-
-                if (st.catalogSource == 1) {
-                    links.addActor(new Link(txt("gui.data.json"), linkStyle, URL_GAIA_JSON_SOURCE + st.id));
-                    links.addActor(new OwnLabel("|", skin));
-                    links.addActor(new Link(txt("gui.data.archive"), linkStyle, URL_GAIA_WEB_SOURCE + st.id));
-                } else if (st.catalogSource == 2) {
-                    links.addActor(new Link(txt("gui.data.json"), linkStyle, URL_HIP_JSON_SOURCE + st.hip));
-                }
-
-                table.add(links).colspan(2).padTop(pad * 2).padBottom(pad * 2);
-                table.row();
-
-                table.add(new OwnLabel(txt("gui.data.name"), skin, "msg-17")).padLeft(pad * 2).left();
-                table.add(new OwnLabel(st.name, skin, "msg-17")).padLeft(pad * 2).padRight(pad * 2).left();
-                table.row();
-                for (int col = 0; col < data[0].length; col++) {
-                    Actor first = null;
-
-                    if (data.length <= 2) {
-                        first = new OwnLabel(data[0][col], skin, "ui-13");
-                    } else {
-                        HorizontalGroup hg = new HorizontalGroup();
-                        hg.space(5);
-                        ImageButton tooltip = new ImageButton(skin, "tooltip");
-                        tooltip.addListener(new TextTooltip(data[2][col], skin));
-                        hg.addActor(tooltip);
-                        hg.addActor(new OwnLabel(data[0][col], skin, "ui-13"));
-
-                        first = hg;
-
-                    }
-
-                    table.add(first).padLeft(10).left();
-                    table.add(new OwnLabel(data[1][col], skin, "ui-12")).padLeft(10).padRight(10).left();
-                    left();
-                    table.row();
-                }
-                scroll.setHeight(Gdx.graphics.getHeight() * 0.7f);
-            } else {
-                // Not found
-                String msg = I18n.bundle.format("error.gaiacatalog.notfound", st.name);
-                table.add(new OwnLabel(msg, skin, "ui-15"));
-                table.pack();
-                scroll.setHeight(table.getHeight() + pad);
-            }
-        } catch (Exception e) {
-            String msg = e.getLocalizedMessage();
-
-            StringBuilder sb = new StringBuilder(msg);
-            int charsperline = 50;
-            int i = charsperline;
-            while (i < sb.length()) {
-                if (sb.substring(i - charsperline, i).lastIndexOf(" ") > 0) {
-                    int spaceidx = sb.substring(i - charsperline, i).lastIndexOf(" ");
-                    sb.setCharAt(spaceidx, '\n');
-                    i = spaceidx + charsperline;
-                } else {
-                    sb.insert(i, '\n');
-                    i += charsperline;
-                }
-            }
-            table.add(new OwnLabel(sb.toString(), skin, "ui-15"));
-            table.pack();
-            scroll.setHeight(table.getHeight() + pad);
-        }
         table.pack();
-
         scroll.setWidth(table.getWidth() + scroll.getStyle().vScroll.getMinWidth());
-
         pack();
-        this.setPosition(Math.round(stage.getWidth() / 2f - this.getWidth() / 2f), Math.round(stage.getHeight() / 2f - this.getHeight() / 2f));
+        me.setPosition(Math.round(stage.getWidth() / 2f - me.getWidth() / 2f), Math.round(stage.getHeight() / 2f - me.getHeight() / 2f));
 
     }
 
@@ -228,106 +151,62 @@ public class GaiaCatalogWindow extends CollapsibleWindow {
             stage.addActor(me);
     }
 
-    /**
-     * Codes: 
-     *  1 - ok
-     * -1 - no id
-     * @return
-     * @throws MalformedURLException
-     * @throws IOException
-     */
-    private Pair<String[][], Integer> getData() throws MalformedURLException, IOException {
+    private void requestData(GaiaDataListener listener) {
         if (st.catalogSource > 0) {
 
             if (st.catalogSource == 1) {
-                // GAIA
                 this.getTitleLabel().setText(I18n.bundle.format("gui.data.catalog", "Gaia"));
-                return new Pair<String[][], Integer>(getDataBySourceId(st.id), 1);
+                // Sourceid
+                getDataBySourceId(st.id, listener);
+                return;
             } else if (st.catalogSource == 2 && st.hip > 0) {
-                // HIPPARCOS
-                // Get sourceId corresponding to HIP number
                 this.getTitleLabel().setText(I18n.bundle.format("gui.data.catalog", "Hipparcos"));
-                return new Pair<String[][], Integer>(getDataByHipId(st.hip), 1);
-
+                // HIP
+                getDataByHipId(st.hip, listener);
+                return;
             }
-
         }
-        return new Pair<String[][], Integer>(null, -1);
+        listener.notFound();
     }
 
-    private String[][] getDataBySourceId(long sourceid) throws MalformedURLException, IOException {
-        return getTAPData(URL_GAIA_JSON_SOURCE + Long.toString(sourceid), "json");
+    private void getDataBySourceId(long sourceid, GaiaDataListener listener) {
+        getTAPData(URL_GAIA_JSON_SOURCE + Long.toString(sourceid), "json", listener);
     }
 
-    private String[][] getDataByHipId(int hip) throws MalformedURLException, IOException {
-        String[][] result = getTAPData(URL_GAIA_HIP + Integer.toString(hip), "csv");
-
-        return result;
-
+    private void getDataByHipId(int hip, GaiaDataListener listener) {
+        getTAPData(URL_GAIA_HIP + Integer.toString(hip), "csv", listener);
     }
 
-    private String[][] getTAPData(String url, String format) throws MalformedURLException, IOException {
-        InputStream is = HttpQuery.httpRequest(url);
-        String data = slurp(is, 2046);
+    private String[][] getTAPData(String url, final String format, final GaiaDataListener listener) {
+        HttpRequest request = new HttpRequest(HttpMethods.GET);
+        request.setUrl(url);
+        request.setTimeOut(5000);
 
-        if (format.equalsIgnoreCase("csv")) {
-            /** PARSE CSV **/
-            String[] rows = data.split(separator);
-            if (rows.length <= 1) {
-                return null;
-            }
-
-            String[][] matrix = new String[rows.length][];
-
-            int r = 0;
-            for (String row : rows) {
-                String[] tokens = row.split(",");
-                int i = 0;
-                for (String token : tokens) {
-                    token = token.trim();
-                    tokens[i] = trim(token, "\"");
-                    i++;
+        Gdx.net.sendHttpRequest(request, new HttpResponseListener() {
+            @Override
+            public void handleHttpResponse(HttpResponse httpResponse) {
+                if (httpResponse.getStatus().getStatusCode() == HttpStatus.SC_OK) {
+                    // Ok
+                    listener.ok(httpResponse.getResultAsStream(), format);
+                } else {
+                    // Ko with code
+                    listener.ko(httpResponse.getStatus().toString());
                 }
 
-                matrix[r] = tokens;
-                r++;
             }
 
-            return matrix;
-        } else if (format.equalsIgnoreCase("json")) {
-            /** PARSE JSON **/
-            JsonReader json = new JsonReader();
-            JsonValue root = json.parse(data);
+            @Override
+            public void failed(Throwable t) {
+                // Failed
+                listener.ko();
+            }
 
-            JsonValue metadata = root.child;
-            int size = metadata.size;
-            JsonValue column = metadata.child;
-            String[] colnames = new String[size];
-            String[] descriptions = new String[size];
-            String[] values = new String[size];
-
-            int i = 0;
-            do {
-                colnames[i] = column.getString("name");
-                descriptions[i] = column.getString("description");
-                i++;
-                column = column.next;
-            } while (column != null);
-
-            JsonValue datacol = metadata.next.child.child;
-            i = 0;
-            do {
-                values[i] = datacol.asString();
-                i++;
-                datacol = datacol.next;
-            } while (datacol != null);
-
-            String[][] matrix = new String[3][];
-            matrix[0] = colnames;
-            matrix[1] = values;
-            matrix[2] = descriptions;
-            return matrix;
-        }
+            @Override
+            public void cancelled() {
+                // Cancelled
+                listener.ko();
+            }
+        });
 
         return null;
     }
@@ -346,30 +225,185 @@ public class GaiaCatalogWindow extends CollapsibleWindow {
         return answer;
     }
 
-    public static String slurp(final InputStream is, final int bufferSize) {
-        final char[] buffer = new char[bufferSize];
-        final StringBuilder out = new StringBuilder();
-        try (Reader in = new InputStreamReader(is, "UTF-8")) {
-            for (;;) {
-                int rsz = in.read(buffer, 0, buffer.length);
-                if (rsz < 0)
-                    break;
-                out.append(buffer, 0, rsz);
-            }
-        } catch (UnsupportedEncodingException ex) {
-            Logger.error(ex);
-        } catch (IOException ex) {
-            Logger.error(ex);
-        }
-        return out.toString();
-    }
-
     protected String txt(String key) {
         return I18n.bundle.get(key);
     }
 
     protected String txt(String key, Object... params) {
         return I18n.bundle.format(key, params);
+    }
+
+    private class GaiaDataListener {
+        private Star st;
+
+        public GaiaDataListener(Star st) {
+            this.st = st;
+        }
+
+        public void ok(InputStream is, String format) {
+            String[][] data = isToArray(is, format);
+            HorizontalGroup links = new HorizontalGroup();
+            links.align(Align.center);
+            links.pad(5, 5, 5, 5);
+            links.space(10);
+
+            if (st.catalogSource == 1) {
+                links.addActor(new Link(txt("gui.data.json"), linkStyle, URL_GAIA_JSON_SOURCE + st.id));
+                links.addActor(new OwnLabel("|", skin));
+                links.addActor(new Link(txt("gui.data.archive"), linkStyle, URL_GAIA_WEB_SOURCE + st.id));
+            } else if (st.catalogSource == 2) {
+                links.addActor(new Link(txt("gui.data.json"), linkStyle, URL_HIP_JSON_SOURCE + st.hip));
+            }
+
+            table.add(links).colspan(2).padTop(pad * 2).padBottom(pad * 2);
+            table.row();
+
+            table.add(new OwnLabel(txt("gui.data.name"), skin, "msg-17")).padLeft(pad * 2).left();
+            table.add(new OwnLabel(st.name, skin, "msg-17")).padLeft(pad * 2).padRight(pad * 2).left();
+            table.row();
+            for (int col = 0; col < data[0].length; col++) {
+                Actor first = null;
+
+                if (data.length <= 2) {
+                    first = new OwnLabel(data[0][col], skin, "ui-13");
+                } else {
+                    HorizontalGroup hg = new HorizontalGroup();
+                    hg.space(5);
+                    ImageButton tooltip = new ImageButton(skin, "tooltip");
+                    tooltip.addListener(new TextTooltip(data[2][col], skin));
+                    hg.addActor(tooltip);
+                    hg.addActor(new OwnLabel(data[0][col], skin, "ui-13"));
+
+                    first = hg;
+
+                }
+
+                table.add(first).padLeft(10).left();
+                table.add(new OwnLabel(data[1][col], skin, "ui-12")).padLeft(10).padRight(10).left();
+                left();
+                table.row();
+            }
+            scroll.setHeight(Gdx.graphics.getHeight() * 0.7f);
+            finish();
+        }
+
+        public void ko() {
+            // No ID
+            String msg = I18n.bundle.format("error.gaiacatalog.noid", st.name);
+            table.add(new OwnLabel(msg, skin, "ui-15"));
+            table.pack();
+            scroll.setHeight(table.getHeight() + pad);
+            finish();
+        }
+
+        public void ko(String error) {
+            // Error
+            String msg = error;
+            table.add(new OwnLabel(msg, skin, "ui-15"));
+            table.pack();
+            scroll.setHeight(table.getHeight() + pad);
+            finish();
+        }
+
+        public void notFound() {
+            // Not found
+            String msg = I18n.bundle.format("error.gaiacatalog.notfound", st.name);
+            table.add(new OwnLabel(msg, skin, "ui-15"));
+            table.pack();
+            scroll.setHeight(table.getHeight() + pad);
+            finish();
+        }
+
+        private void finish() {
+            table.pack();
+
+            scroll.setWidth(table.getWidth() + scroll.getStyle().vScroll.getMinWidth());
+
+            pack();
+            me.setPosition(Math.round(stage.getWidth() / 2f - me.getWidth() / 2f), Math.round(stage.getHeight() / 2f - me.getHeight() / 2f));
+        }
+
+        private String slurp(final InputStream is, final int bufferSize) {
+            final char[] buffer = new char[bufferSize];
+            final StringBuilder out = new StringBuilder();
+            try (Reader in = new InputStreamReader(is, "UTF-8")) {
+                for (;;) {
+                    int rsz = in.read(buffer, 0, buffer.length);
+                    if (rsz < 0)
+                        break;
+                    out.append(buffer, 0, rsz);
+                }
+            } catch (UnsupportedEncodingException ex) {
+                Logger.error(ex);
+            } catch (IOException ex) {
+                Logger.error(ex);
+            }
+            return out.toString();
+        }
+
+        private String[][] isToArray(InputStream is, String format) {
+            String data = slurp(is, 2046);
+
+            if (format.equalsIgnoreCase("csv")) {
+                /** PARSE CSV **/
+                String[] rows = data.split(separator);
+                if (rows.length <= 1) {
+                    return null;
+                }
+
+                String[][] matrix = new String[rows.length][];
+
+                int r = 0;
+                for (String row : rows) {
+                    String[] tokens = row.split(",");
+                    int i = 0;
+                    for (String token : tokens) {
+                        token = token.trim();
+                        tokens[i] = trim(token, "\"");
+                        i++;
+                    }
+
+                    matrix[r] = tokens;
+                    r++;
+                }
+
+                return matrix;
+            } else if (format.equalsIgnoreCase("json")) {
+                /** PARSE JSON **/
+                JsonReader json = new JsonReader();
+                JsonValue root = json.parse(data);
+
+                JsonValue metadata = root.child;
+                int size = metadata.size;
+                JsonValue column = metadata.child;
+                String[] colnames = new String[size];
+                String[] descriptions = new String[size];
+                String[] values = new String[size];
+
+                int i = 0;
+                do {
+                    colnames[i] = column.getString("name");
+                    descriptions[i] = column.getString("description");
+                    i++;
+                    column = column.next;
+                } while (column != null);
+
+                JsonValue datacol = metadata.next.child.child;
+                i = 0;
+                do {
+                    values[i] = datacol.asString();
+                    i++;
+                    datacol = datacol.next;
+                } while (datacol != null);
+
+                String[][] matrix = new String[3][];
+                matrix[0] = colnames;
+                matrix[1] = values;
+                matrix[2] = descriptions;
+                return matrix;
+            }
+            return null;
+        }
     }
 
 }
