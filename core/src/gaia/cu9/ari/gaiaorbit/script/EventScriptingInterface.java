@@ -358,7 +358,7 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
         Gdx.app.postRunnable(new Runnable() {
             @Override
             public void run() {
-                em.post(Events.TOGGLE_VISIBILITY_CMD, name, visible);
+                em.post(Events.TOGGLE_VISIBILITY_CMD, name, false, visible);
             }
         });
     }
