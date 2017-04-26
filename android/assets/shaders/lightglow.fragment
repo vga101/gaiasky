@@ -56,9 +56,9 @@ void main()
 	 	 // Size of sampling spiral
 		 float a = u_textureScale * viewAngle;
 		 
-		 // Archimedes's spiral (fx = a*t*cos(t), fy = a*t*sin(t)) sampling from 0 to 6*Pi
+		 // Archimedes' spiral (fx = a*t*cos(t), fy = a*t*sin(t)) sampling from 0 to 3*Pi (extends to a radius of roughly 10)
 		 float t = 0;
-		 float dt = 6.0 * 3.14159 / u_nSamples;
+		 float dt = 3.0 * 3.14159 / u_nSamples;
 		 
 		 float lum = 0.0;
 		 for(int idx = 1; idx < u_nSamples; idx++){
