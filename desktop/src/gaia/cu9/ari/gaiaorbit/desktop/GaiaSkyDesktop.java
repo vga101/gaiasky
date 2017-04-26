@@ -22,6 +22,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
 import gaia.cu9.ari.gaiaorbit.GaiaSky;
+import gaia.cu9.ari.gaiaorbit.analytics.AnalyticsReporting;
 import gaia.cu9.ari.gaiaorbit.data.DesktopSceneGraphImplementationProvider;
 import gaia.cu9.ari.gaiaorbit.data.SceneGraphImplementationProvider;
 import gaia.cu9.ari.gaiaorbit.desktop.concurrent.MultiThreadIndexer;
@@ -64,6 +65,7 @@ import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 
 /**
  * Main class for the desktop launcher
+ * 
  * @author Toni Sagrista
  *
  */
@@ -136,6 +138,9 @@ public class GaiaSkyDesktop implements IObserver {
 
             // Network checker
             NetworkCheckerManager.initialize(new DesktopNetworkChecker());
+
+            // Analytics
+            AnalyticsReporting.report();
 
             gsd.init();
         } catch (Exception e) {
