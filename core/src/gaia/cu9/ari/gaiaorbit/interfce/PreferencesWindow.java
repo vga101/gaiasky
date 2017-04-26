@@ -258,7 +258,7 @@ public class PreferencesWindow extends GenericDialog {
         mode.add(fullscreen).left().padRight(pad * 2);
         mode.add(fullscreenResolutions).left().row();
         mode.add(windowed).left().padRight(pad * 2).padTop(pad * 2);
-        mode.add(windowedResolutions).left().padTop(pad * 2);
+        mode.add(windowedResolutions).left().padTop(pad * 2).row();
         mode.add(vsync).left().colspan(2);
 
         // Add to content
@@ -1116,7 +1116,7 @@ public class PreferencesWindow extends GenericDialog {
 
         // Interface
         LangComboBoxBean lbean = lang.getSelected();
-        final boolean reloadUI = GlobalConf.program.UI_THEME != theme.getSelected() || lbean.locale.toLanguageTag() != GlobalConf.program.LOCALE;
+        boolean reloadUI = GlobalConf.program.UI_THEME != theme.getSelected() || !lbean.locale.toLanguageTag().equals(GlobalConf.program.LOCALE);
         GlobalConf.program.LOCALE = lbean.locale.toLanguageTag();
         I18n.forceinit(Gdx.files.internal("i18n/gsbundle"));
         GlobalConf.program.UI_THEME = theme.getSelected();
