@@ -22,7 +22,7 @@ public class Logger {
 
     public static LoggerLevel level = LoggerLevel.INFO;
 
-    com.badlogic.gdx.utils.Logger gdxlogger = new com.badlogic.gdx.utils.Logger("GaiaSandbox");
+    com.badlogic.gdx.utils.Logger gdxlogger = new com.badlogic.gdx.utils.Logger("GaiaSky");
 
     public static void error(Throwable t, String tag) {
         if (inLevel(LoggerLevel.ERROR))
