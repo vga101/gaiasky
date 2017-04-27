@@ -51,7 +51,7 @@ public class CameraComponent extends GuiComponent implements IObserver {
     public void initialize() {
         float pad = 5 * GlobalConf.SCALE_FACTOR;
 
-        cinematic = new OwnCheckBox("Cinematic camera", skin, pad);
+        cinematic = new OwnCheckBox(txt("gui.camera.cinematic"), skin, pad);
         cinematic.setName("cinematic camera");
         cinematic.setChecked(GlobalConf.scene.CINEMATIC_CAMERA);
         cinematic.addListener(new EventListener() {

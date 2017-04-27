@@ -395,13 +395,17 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
             addYaw(deltaX, acceleration);
             addPitch(deltaY, acceleration);
         } else if (parent.mode.equals(CameraMode.Focus)) {
+            double th = 30;
+            double vadeg = Math.toDegrees(focus.getViewAngle());
+            // This factor slows the rotation as the focus gets closer and closer
+            double factor = vadeg > th ? Math.pow(th / vadeg, 3) : 1.0;
             if (focusLookKeyPressed) {
                 diverted = true;
-                addYaw(deltaX, acceleration);
-                addPitch(deltaY, acceleration);
+                addYaw(deltaX * factor, acceleration);
+                addPitch(deltaY * factor, acceleration);
             } else {
-                addHorizontalRotation(deltaX, acceleration);
-                addVerticalRotation(deltaY, acceleration);
+                addHorizontalRotation(deltaX * factor, acceleration);
+                addVerticalRotation(deltaY * factor, acceleration);
             }
         }
     }
