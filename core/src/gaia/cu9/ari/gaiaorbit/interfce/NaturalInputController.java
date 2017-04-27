@@ -39,18 +39,18 @@ import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 public class NaturalInputController extends GestureDetector {
 
     /**
-    	 * The button for rotating the camera either around its center or around the
-    	 * focus.
-    	 */
+     * The button for rotating the camera either around its center or around the
+     * focus.
+     */
     public int leftMouseButton = Buttons.LEFT;
     /** The button for panning the camera along the up/right plane */
     public int rightMouseButton = Buttons.RIGHT;
     /** The button for moving the camera along the direction axis */
     public int middleMouseButton = Buttons.MIDDLE;
     /**
-    	 * Whether scrolling requires the activeKey to be pressed (false) or always
-    	 * allow scrolling (true).
-    	 */
+     * Whether scrolling requires the activeKey to be pressed (false) or always
+     * allow scrolling (true).
+     */
     public boolean alwaysScroll = true;
     /** The weight for each scrolled amount. */
     public float scrollFactor = -0.1f;
@@ -174,8 +174,7 @@ public class NaturalInputController extends GestureDetector {
         Vector3 pos = new Vector3();
         while (it.hasNext()) {
             CelestialBody s = it.next();
-            if (s.withinMagLimit() && (!(s instanceof Particle) || (s instanceof Particle && ((Particle) s).octant == null)
-                    || (s instanceof Particle && ((Particle) s).octant != null && ((Particle) s).octant.observed))) {
+            if (s.withinMagLimit() && (!(s instanceof Particle) || (s instanceof Particle && ((Particle) s).octant == null) || (s instanceof Particle && ((Particle) s).octant != null && ((Particle) s).octant.observed))) {
                 Vector3d posd = s.getPosition(aux);
                 pos.set(posd.valuesf());
 
@@ -183,9 +182,9 @@ public class NaturalInputController extends GestureDetector {
                     // The star is in front of us
                     // Diminish the size of the star
                     // when we are close by
-                    float angle = s.viewAngle;
+                    double angle = s.viewAngle;
                     if (s instanceof Star && s.viewAngle > Constants.THRESHOLD_DOWN / camera.getFovFactor() && s.viewAngle < Constants.THRESHOLD_UP / camera.getFovFactor()) {
-                        angle = 20f * (float) Constants.THRESHOLD_DOWN / camera.getFovFactor();
+                        angle = 20f * Constants.THRESHOLD_DOWN / camera.getFovFactor();
                     }
 
                     PerspectiveCamera pcamera;
@@ -202,7 +201,7 @@ public class NaturalInputController extends GestureDetector {
                     }
 
                     angle = (float) Math.toDegrees(angle * camera.fovFactor) * (40f / pcamera.fieldOfView);
-                    float pixelSize = Math.max(MAX_PX_DIST, ((angle * pcamera.viewportHeight) / pcamera.fieldOfView) / 2);
+                    double pixelSize = Math.max(MAX_PX_DIST, ((angle * pcamera.viewportHeight) / pcamera.fieldOfView) / 2);
                     pcamera.project(pos);
                     pos.y = pcamera.viewportHeight - pos.y;
                     if (GlobalConf.program.STEREOSCOPIC_MODE) {
@@ -291,26 +290,28 @@ public class NaturalInputController extends GestureDetector {
         return super.touchUp(screenX, screenY, pointer, button);
     }
 
-    protected boolean processDrag(float deltaX, float deltaY, int button) {
+    protected boolean processDrag(double deltaX, double deltaY, int button) {
         boolean accel = GlobalConf.scene.CINEMATIC_CAMERA;
         double factor = accel ? 1.0 : 10.0;
-        deltaX *= factor;
-        deltaY *= factor;
+        double dx = deltaX * factor;
+        double dy = deltaY * factor;
+
+        System.out.println(deltaX + ", " + deltaY + " / " + dx + ", " + dy);
 
         if (button == leftMouseButton) {
             if (isKeyPressed(rollKey)) {
                 // camera.rotate(camera.direction, deltaX * rotateAngle);
-                if (deltaX != 0)
-                    camera.addRoll(deltaX, accel);
+                if (dx != 0)
+                    camera.addRoll(dx, accel);
             } else {
-                camera.addRotateMovement(deltaX, deltaY, false, accel);
+                camera.addRotateMovement(dx, dy, false, accel);
             }
         } else if (button == rightMouseButton) {
             // cam.naturalCamera.addPanMovement(deltaX, deltaY);
-            camera.addRotateMovement(deltaX, deltaY, true, accel);
+            camera.addRotateMovement(dx, dy, true, accel);
         } else if (button == middleMouseButton) {
-            if (deltaX != 0)
-                camera.addForwardForce(deltaX);
+            if (dx != 0)
+                camera.addForwardForce(dx);
         }
         return false;
     }
@@ -321,8 +322,8 @@ public class NaturalInputController extends GestureDetector {
             boolean result = super.touchDragged(screenX, screenY, pointer);
             if (result || this.button < 0)
                 return result;
-            final float deltaX = (screenX - startX) / Gdx.graphics.getWidth();
-            final float deltaY = (startY - screenY) / Gdx.graphics.getHeight();
+            final double deltaX = (screenX - startX) / Gdx.graphics.getWidth();
+            final double deltaY = (startY - screenY) / Gdx.graphics.getHeight();
             startX = screenX;
             startY = screenY;
             return processDrag(deltaX, deltaY, button);

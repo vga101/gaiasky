@@ -277,7 +277,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
                                 // Here we **need** to use Gdx.graphics.getWidth/Height() because we use camera.project() which uses screen coordinates only
                                 positions[lightIndex * 2] = auxv.x / Gdx.graphics.getWidth();
                                 positions[lightIndex * 2 + 1] = auxv.y / Gdx.graphics.getHeight();
-                                viewAngles[lightIndex] = p.viewAngleApparent;
+                                viewAngles[lightIndex] = (float) p.viewAngleApparent;
                                 colors[lightIndex * 3] = p.cc[0];
                                 colors[lightIndex * 3 + 1] = p.cc[1];
                                 colors[lightIndex * 3 + 2] = p.cc[2];
@@ -447,6 +447,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
     /**
      * TODO Make this faster!
+     * 
      * @param comp
      * @return
      */

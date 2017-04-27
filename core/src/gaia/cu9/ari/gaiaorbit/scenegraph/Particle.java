@@ -239,7 +239,7 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
 
                 addToRender(this, RenderGroup.POINT);
 
-                viewAngle = (float) (radius / distToCamera) / camera.getFovFactor();
+                viewAngle = (radius / distToCamera) / camera.getFovFactor();
                 viewAngleApparent = viewAngle * GlobalConf.scene.STAR_BRIGHTNESS;
 
                 addToRenderLists(camera);

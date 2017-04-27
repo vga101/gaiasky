@@ -25,7 +25,7 @@ import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
 
 public class PixelRenderSystem extends ImmediateRenderSystem implements IObserver {
-    private final float BRIGHTNESS_FACTOR;
+    private final double BRIGHTNESS_FACTOR;
 
     boolean starColorTransit = false;
     Vector3 aux;
@@ -38,7 +38,7 @@ public class PixelRenderSystem extends ImmediateRenderSystem implements IObserve
     public PixelRenderSystem(RenderGroup rg, int priority, float[] alphas) {
         super(rg, priority, alphas);
         EventManager.instance.subscribe(this, Events.TRANSIT_COLOUR_CMD, Events.ONLY_OBSERVED_STARS_CMD, Events.STAR_MIN_OPACITY_CMD);
-        BRIGHTNESS_FACTOR = Constants.webgl ? 15f : 10f;
+        BRIGHTNESS_FACTOR = Constants.webgl ? 15 : 10;
         lastResolution = (float) Math.min(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         initializePointSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         initializing = true;
@@ -155,7 +155,7 @@ public class PixelRenderSystem extends ImmediateRenderSystem implements IObserve
             shaderProgram.setUniformf("u_camPos", camera.getCurrent().getPos().put(aux));
             shaderProgram.setUniformf("u_fovFactor", camera.getFovFactor());
             shaderProgram.setUniformf("u_alpha", alphas[0]);
-            shaderProgram.setUniformf("u_starBrightness", GlobalConf.scene.STAR_BRIGHTNESS * BRIGHTNESS_FACTOR);
+            shaderProgram.setUniformf("u_starBrightness", (float) (GlobalConf.scene.STAR_BRIGHTNESS * BRIGHTNESS_FACTOR));
             shaderProgram.setUniformf("u_pointSize", camera.getNCameras() == 1 ? GlobalConf.scene.STAR_POINT_SIZE * (GlobalConf.program.isStereoFullWidth() ? 1 : 2) : GlobalConf.scene.STAR_POINT_SIZE * 10);
             shaderProgram.setUniformf("u_t", (float) AstroUtils.getMsSinceJ2000(GaiaSky.instance.time.getTime()));
             shaderProgram.setUniformf("u_ar", GlobalConf.program.isStereoHalfWidth() ? 0.5f : 1f);

@@ -19,22 +19,24 @@ import net.jafama.FastMath;
 
 /**
  * A base abstract graphical entity with the basics.
+ * 
  * @author Toni Sagrista
  *
  */
 public abstract class AbstractPositionEntity extends SceneGraphNode {
     /**
-     * Overlap factor applied to angle to get the upper boundary when rendering with shader and model. 
+     * Overlap factor applied to angle to get the upper boundary when rendering
+     * with shader and model.
      */
     public static final float SHADER_MODEL_OVERLAP_FACTOR = 5;
     /**
-     * Position of this entity in the local reference system.
-     * The units are {@link gaia.cu9.ari.gaiaorbit.util.Constants#U_TO_KM} by default. 
+     * Position of this entity in the local reference system. The units are
+     * {@link gaia.cu9.ari.gaiaorbit.util.Constants#U_TO_KM} by default.
      */
     public Vector3d pos;
 
-    /** 
-     * Coordinates provider. Helps updating the position at each time step. 
+    /**
+     * Coordinates provider. Helps updating the position at each time step.
      **/
     protected IBodyCoordinates coordinates;
 
@@ -54,9 +56,10 @@ public abstract class AbstractPositionEntity extends SceneGraphNode {
     public double distToCamera;
 
     /**
-     * This is not actually an angle. It's the relation radius/distance, to check how big it appears on screen.
+     * This is not actually an angle. It's the relation radius/distance, to
+     * check how big it appears on screen.
      */
-    public float viewAngle, viewAngleApparent;
+    public double viewAngle, viewAngleApparent;
 
     /**
      * Base color
@@ -95,8 +98,10 @@ public abstract class AbstractPositionEntity extends SceneGraphNode {
     }
 
     /**
-     * Returns the position of this entity in the camera reference system (i.e. to get the total position
-     * you need to add the camera position) into the aux vector.
+     * Returns the position of this entity in the camera reference system (i.e.
+     * to get the total position you need to add the camera position) into the
+     * aux vector.
+     * 
      * @param aux
      * @return
      */
@@ -105,12 +110,16 @@ public abstract class AbstractPositionEntity extends SceneGraphNode {
     }
 
     /**
-     * Gets the predicted position of this entity in the next time step
-     * in the camera reference system (i.e. to get the total position
-     * you need to add the camera position) using the given time provider and the given camera.
-     * @param aux The out vector where the result will be stored.
-     * @param time The time frame provider.
-     * @param camera The camera.
+     * Gets the predicted position of this entity in the next time step in the
+     * camera reference system (i.e. to get the total position you need to add
+     * the camera position) using the given time provider and the given camera.
+     * 
+     * @param aux
+     *            The out vector where the result will be stored.
+     * @param time
+     *            The time frame provider.
+     * @param camera
+     *            The camera.
      * @return The aux vector for chaining.
      */
     public Vector3d getPredictedPosition(Vector3d aux, ITimeFrameProvider time, ICamera camera, boolean force) {
@@ -137,8 +146,9 @@ public abstract class AbstractPositionEntity extends SceneGraphNode {
     }
 
     /**
-     * Returns the absolute position of this entity in the sandbox native coordinates 
-     * (equatorial system).
+     * Returns the absolute position of this entity in the sandbox native
+     * coordinates (equatorial system).
+     * 
      * @param aux
      * @return
      */
@@ -165,6 +175,7 @@ public abstract class AbstractPositionEntity extends SceneGraphNode {
 
     /**
      * Updates the local transform matrix.
+     * 
      * @param time
      */
     @Override
@@ -183,14 +194,15 @@ public abstract class AbstractPositionEntity extends SceneGraphNode {
     }
 
     /**
-     * Adds this entity to the necessary render lists after the
-     * distance to the camera and the view angle have been determined.
+     * Adds this entity to the necessary render lists after the distance to the
+     * camera and the view angle have been determined.
      */
     protected abstract void addToRenderLists(ICamera camera);
 
     /**
      * This function updates all the local values before the localTransform is
      * updated. Position, rotations and scale must be updated in here.
+     * 
      * @param time
      * @param camera
      */
@@ -202,6 +214,7 @@ public abstract class AbstractPositionEntity extends SceneGraphNode {
 
     /**
      * Sets the absolute size of this entity
+     * 
      * @param size
      */
     public void setSize(Double size) {
@@ -222,6 +235,7 @@ public abstract class AbstractPositionEntity extends SceneGraphNode {
 
     /**
      * Gets a copy of this object but does not copy its parent or children.
+     * 
      * @return
      */
     @Override

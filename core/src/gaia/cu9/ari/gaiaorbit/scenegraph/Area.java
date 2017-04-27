@@ -13,6 +13,7 @@ import net.jafama.FastMath;
 
 /**
  * Represents the outline of a country
+ * 
  * @author tsagrista
  *
  */
@@ -94,7 +95,7 @@ public class Area extends AbstractPositionEntity implements ILineRenderable {
             updateLocalValues(time, camera);
             this.transform.translate(pos);
 
-            this.opacity = MathUtilsd.lint(((ModelBody) parent).viewAngleApparent, angleLow, angleHigh, 0, 1);
+            this.opacity = (float) MathUtilsd.lint(((ModelBody) parent).viewAngleApparent, angleLow, angleHigh, 0, 1);
 
             Vector3d aux = aux3d1.get();
             this.distToCamera = (float) transform.getTranslation(aux).len();

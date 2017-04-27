@@ -42,7 +42,7 @@ public class VisualEffectsComponent extends GuiComponent implements IObserver {
         starbrightnessl = new OwnLabel(Integer.toString((int) (MathUtilsd.lint(GlobalConf.scene.STAR_BRIGHTNESS, Constants.MIN_STAR_BRIGHT, Constants.MAX_STAR_BRIGHT, Constants.MIN_SLIDER, Constants.MAX_SLIDER))), skin);
         starBrightness = new Slider(Constants.MIN_SLIDER, Constants.MAX_SLIDER, 1, false, skin);
         starBrightness.setName("star brightness");
-        starBrightness.setValue(MathUtilsd.lint(GlobalConf.scene.STAR_BRIGHTNESS, Constants.MIN_STAR_BRIGHT, Constants.MAX_STAR_BRIGHT, Constants.MIN_SLIDER, Constants.MAX_SLIDER));
+        starBrightness.setValue((float) MathUtilsd.lint(GlobalConf.scene.STAR_BRIGHTNESS, Constants.MIN_STAR_BRIGHT, Constants.MAX_STAR_BRIGHT, Constants.MIN_SLIDER, Constants.MAX_SLIDER));
         starBrightness.addListener(new EventListener() {
             @Override
             public boolean handle(Event event) {
@@ -108,7 +108,7 @@ public class VisualEffectsComponent extends GuiComponent implements IObserver {
         ambient = new OwnLabel(Integer.toString((int) (GlobalConf.scene.AMBIENT_LIGHT * 100)), skin);
         ambientLight = new Slider(Constants.MIN_SLIDER, Constants.MAX_SLIDER, 1, false, skin);
         ambientLight.setName("ambient light");
-        ambientLight.setValue(GlobalConf.scene.AMBIENT_LIGHT * 100);
+        ambientLight.setValue((float) GlobalConf.scene.AMBIENT_LIGHT * 100);
         ambientLight.addListener(new EventListener() {
             @Override
             public boolean handle(Event event) {

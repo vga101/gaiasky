@@ -256,7 +256,7 @@ public class FocusInfoInterface extends Table implements IObserver {
 
             break;
         case FOCUS_INFO_UPDATED:
-            focusAngle.setText(sf.format(Math.toDegrees((float) data[1]) % 360) + "°");
+            focusAngle.setText(sf.format(Math.toDegrees((double) data[1]) % 360) + "°");
             Pair<Double, String> dist = GlobalResources.doubleToDistanceString((double) data[0]);
             focusDist.setText(sf.format(Math.max(0d, dist.getFirst())) + " " + dist.getSecond());
             break;

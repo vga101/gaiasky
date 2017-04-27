@@ -211,7 +211,7 @@ public class CameraComponent extends GuiComponent implements IObserver {
         /** CAMERA SPEED **/
         cameraSpeed = new Slider(Constants.MIN_SLIDER, Constants.MAX_SLIDER / 2, 1, false, skin);
         cameraSpeed.setName("camera speed");
-        cameraSpeed.setValue(GlobalConf.scene.CAMERA_SPEED * Constants.CAMERA_SPEED_FACTOR);
+        cameraSpeed.setValue((float) (GlobalConf.scene.CAMERA_SPEED * Constants.CAMERA_SPEED_FACTOR));
         cameraSpeed.addListener(new EventListener() {
             @Override
             public boolean handle(Event event) {
@@ -229,12 +229,12 @@ public class CameraComponent extends GuiComponent implements IObserver {
         /** ROTATION SPEED **/
         rotateSpeed = new Slider(Constants.MIN_SLIDER, Constants.MAX_SLIDER, 1, false, skin);
         rotateSpeed.setName("rotate speed");
-        rotateSpeed.setValue(MathUtilsd.lint(GlobalConf.scene.ROTATION_SPEED, Constants.MIN_ROT_SPEED, Constants.MAX_ROT_SPEED, Constants.MIN_SLIDER, Constants.MAX_SLIDER));
+        rotateSpeed.setValue((float) MathUtilsd.lint(GlobalConf.scene.ROTATION_SPEED, Constants.MIN_ROT_SPEED, Constants.MAX_ROT_SPEED, Constants.MIN_SLIDER, Constants.MAX_SLIDER));
         rotateSpeed.addListener(new EventListener() {
             @Override
             public boolean handle(Event event) {
                 if (event instanceof ChangeEvent) {
-                    EventManager.instance.post(Events.ROTATION_SPEED_CMD, MathUtilsd.lint(rotateSpeed.getValue(), Constants.MIN_SLIDER, Constants.MAX_SLIDER, Constants.MIN_ROT_SPEED, Constants.MAX_ROT_SPEED), true);
+                    EventManager.instance.post(Events.ROTATION_SPEED_CMD, (float) MathUtilsd.lint(rotateSpeed.getValue(), Constants.MIN_SLIDER, Constants.MAX_SLIDER, Constants.MIN_ROT_SPEED, Constants.MAX_ROT_SPEED), true);
                     rotate.setText(Integer.toString((int) rotateSpeed.getValue()));
                     return true;
                 }
@@ -247,7 +247,7 @@ public class CameraComponent extends GuiComponent implements IObserver {
         /** TURNING SPEED **/
         turnSpeed = new Slider(Constants.MIN_SLIDER, Constants.MAX_SLIDER, 1, false, skin);
         turnSpeed.setName("turn speed");
-        turnSpeed.setValue(MathUtilsd.lint(GlobalConf.scene.TURNING_SPEED, Constants.MIN_TURN_SPEED, Constants.MAX_TURN_SPEED, Constants.MIN_SLIDER, Constants.MAX_SLIDER));
+        turnSpeed.setValue((float) MathUtilsd.lint(GlobalConf.scene.TURNING_SPEED, Constants.MIN_TURN_SPEED, Constants.MAX_TURN_SPEED, Constants.MIN_SLIDER, Constants.MAX_SLIDER));
         turnSpeed.addListener(new EventListener() {
             @Override
             public boolean handle(Event event) {

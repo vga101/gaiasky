@@ -32,7 +32,7 @@ public class Orbit extends LineObject {
 
     public OrbitData orbitData;
     protected Vector3d prev, curr;
-    protected float alpha;
+    protected double alpha;
     public Matrix4d localTransformD, transformFunction;
     protected String provider;
     protected Double multiplier = 1.0d;
@@ -101,7 +101,7 @@ public class Orbit extends LineObject {
             float angleLimit = ANGLE_LIMIT * camera.getFovFactor();
             if (viewAngle > angleLimit) {
                 if (viewAngle < angleLimit * SHADER_MODEL_OVERLAP_FACTOR) {
-                    float alpha = MathUtilsd.lint(viewAngle, angleLimit, angleLimit * SHADER_MODEL_OVERLAP_FACTOR, 0, cc[3]);
+                    double alpha = MathUtilsd.lint(viewAngle, angleLimit, angleLimit * SHADER_MODEL_OVERLAP_FACTOR, 0, cc[3]);
                     this.alpha = alpha;
                 } else {
                     this.alpha = cc[3];
@@ -143,6 +143,7 @@ public class Orbit extends LineObject {
 
     /**
      * Sets the absolute size of this entity
+     * 
      * @param size
      */
     public void setSize(Float size) {

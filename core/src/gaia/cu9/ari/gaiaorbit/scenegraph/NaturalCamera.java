@@ -599,7 +599,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
      * 
      * @param dt
      */
-    private void updateRotationFree(float dt, float rotateSpeed) {
+    private void updateRotationFree(float dt, double rotateSpeed) {
         // Add position to compensate for coordinates centered on camera
         if (updatePosition(pitch, dt)) {
             // Pitch
@@ -615,7 +615,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
         defaultState(yaw, !GlobalConf.scene.CINEMATIC_CAMERA);
     }
 
-    private void updateRoll(float dt, float rotateSpeed) {
+    private void updateRoll(float dt, double rotateSpeed) {
         if (updatePosition(roll, dt)) {
             // Roll
             rotate(direction, -roll.z * rotateSpeed);

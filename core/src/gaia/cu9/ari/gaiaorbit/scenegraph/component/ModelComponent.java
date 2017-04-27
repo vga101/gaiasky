@@ -15,7 +15,6 @@ import com.badlogic.gdx.graphics.g3d.attributes.BlendingAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.math.Matrix4;
-import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Disposable;
 
 import gaia.cu9.ari.gaiaorbit.data.AssetBean;
@@ -23,20 +22,19 @@ import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.ModelCache;
 import gaia.cu9.ari.gaiaorbit.util.Pair;
-import gaia.cu9.ari.gaiaorbit.util.override.Vector3Attribute;
 
 public class ModelComponent implements Disposable {
     private static ColorAttribute ambient;
 
     static {
-        ambient = new ColorAttribute(ColorAttribute.AmbientLight, GlobalConf.scene.AMBIENT_LIGHT, GlobalConf.scene.AMBIENT_LIGHT, GlobalConf.scene.AMBIENT_LIGHT, 1f);
+        ambient = new ColorAttribute(ColorAttribute.AmbientLight, (float) GlobalConf.scene.AMBIENT_LIGHT, (float) GlobalConf.scene.AMBIENT_LIGHT, (float) GlobalConf.scene.AMBIENT_LIGHT, 1f);
     }
 
     public static void toggleAmbientLight(boolean on) {
         if (on) {
             ambient.color.set(.7f, .7f, .7f, 1f);
         } else {
-            ambient.color.set(GlobalConf.scene.AMBIENT_LIGHT, GlobalConf.scene.AMBIENT_LIGHT, GlobalConf.scene.AMBIENT_LIGHT, 1f);
+            ambient.color.set((float) GlobalConf.scene.AMBIENT_LIGHT, (float) GlobalConf.scene.AMBIENT_LIGHT, (float) GlobalConf.scene.AMBIENT_LIGHT, 1f);
         }
     }
 
@@ -138,7 +136,7 @@ public class ModelComponent implements Disposable {
         if (instance != null && instance.model != null)
             instance.model.dispose();
     }
-    
+
     public void setTransparency(float alpha) {
         if (instance != null) {
             for (int i = 0; i < instance.materials.size; i++) {

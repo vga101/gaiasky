@@ -14,7 +14,9 @@ import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
 /**
- * Abstract class with the basic functionality of bodies represented by a 3D model.
+ * Abstract class with the basic functionality of bodies represented by a 3D
+ * model.
+ * 
  * @author Toni Sagrista
  *
  */
@@ -25,7 +27,8 @@ public abstract class ModelBody extends CelestialBody {
     public static CelestialBody closestCamStar = null;
 
     /**
-     * Angle limit for rendering as point. If angle is any bigger, we render with shader.
+     * Angle limit for rendering as point. If angle is any bigger, we render
+     * with shader.
      */
     public double THRESHOLD_POINT() {
         return TH_ANGLE_POINT;
@@ -85,8 +88,9 @@ public abstract class ModelBody extends CelestialBody {
     }
 
     /**
-     * Update the local transform with the transform and the rotations/scales necessary.
-     * Override if your model contains more than just the position and size.
+     * Update the local transform with the transform and the rotations/scales
+     * necessary. Override if your model contains more than just the position
+     * and size.
      */
     protected void updateLocalTransform() {
         setToLocalTransform(1, localTransform, true);
@@ -111,9 +115,9 @@ public abstract class ModelBody extends CelestialBody {
     protected void addToRenderLists(ICamera camera) {
         camera.checkClosest(this);
         if (GaiaSky.instance.isOn(ct)) {
-            float thPoint = (float) (THRESHOLD_POINT() * camera.getFovFactor());
+            double thPoint = (THRESHOLD_POINT() * camera.getFovFactor());
             if (viewAngleApparent >= thPoint) {
-                opacity = MathUtilsd.lint(viewAngleApparent, thPoint, thPoint * 4, 0, 1);
+                opacity = (float) MathUtilsd.lint(viewAngleApparent, thPoint, thPoint * 4, 0, 1);
                 if (viewAngleApparent < THRESHOLD_QUAD() * camera.getFovFactor()) {
                     addToRender(this, RenderGroup.SHADER_F);
                 } else {

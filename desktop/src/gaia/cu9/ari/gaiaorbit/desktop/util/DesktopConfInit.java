@@ -354,13 +354,13 @@ public class DesktopConfInit extends ConfInit {
         /** SCENE **/
         p.setProperty("scene.graphics.quality", Integer.toString(GlobalConf.scene.GRAPHICS_QUALITY));
         p.setProperty("scene.object.fadems", Long.toString(GlobalConf.scene.OBJECT_FADE_MS));
-        p.setProperty("scene.star.brightness", Float.toString(GlobalConf.scene.STAR_BRIGHTNESS));
-        p.setProperty("scene.ambient", Float.toString(GlobalConf.scene.AMBIENT_LIGHT));
+        p.setProperty("scene.star.brightness", Double.toString(GlobalConf.scene.STAR_BRIGHTNESS));
+        p.setProperty("scene.ambient", Double.toString(GlobalConf.scene.AMBIENT_LIGHT));
         p.setProperty("scene.camera.fov", Integer.toString(GlobalConf.scene.CAMERA_FOV));
         p.setProperty("scene.camera.speedlimit", Integer.toString(GlobalConf.scene.CAMERA_SPEED_LIMIT_IDX));
-        p.setProperty("scene.camera.focus.vel", Float.toString(GlobalConf.scene.CAMERA_SPEED));
-        p.setProperty("scene.camera.turn.vel", Float.toString(GlobalConf.scene.TURNING_SPEED));
-        p.setProperty("scene.camera.rotate.vel", Float.toString(GlobalConf.scene.ROTATION_SPEED));
+        p.setProperty("scene.camera.focus.vel", Double.toString(GlobalConf.scene.CAMERA_SPEED));
+        p.setProperty("scene.camera.turn.vel", Double.toString(GlobalConf.scene.TURNING_SPEED));
+        p.setProperty("scene.camera.rotate.vel", Double.toString(GlobalConf.scene.ROTATION_SPEED));
         p.setProperty("scene.focuslock", Boolean.toString(GlobalConf.scene.FOCUS_LOCK));
         p.setProperty("scene.focuslock.orientation", Boolean.toString(GlobalConf.scene.FOCUS_LOCK_ORIENTATION));
         p.setProperty("scene.labelfactor", Float.toString(GlobalConf.scene.LABEL_NUMBER_FACTOR));

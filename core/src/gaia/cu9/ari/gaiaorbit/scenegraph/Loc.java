@@ -23,7 +23,10 @@ public class Loc extends AbstractPositionEntity implements I3DTextRenderable {
     /** Longitude and latitude **/
     Vector2 location;
     Vector3 location3d;
-    /** This controls the distance from the center in case of non-spherical objects **/
+    /**
+     * This controls the distance from the center in case of non-spherical
+     * objects
+     **/
     float distFactor = 1f;
     float threshold;
 
@@ -102,7 +105,7 @@ public class Loc extends AbstractPositionEntity implements I3DTextRenderable {
 
         Vector3d pos = aux3d1.get();
         textPosition(camera, pos);
-        shader.setUniformf("a_viewAngle", viewAngleApparent * ((ModelBody) parent).locVaMultiplier * (float) Constants.U_TO_KM);
+        shader.setUniformf("a_viewAngle", (float) (viewAngleApparent * ((ModelBody) parent).locVaMultiplier * Constants.U_TO_KM));
         shader.setUniformf("a_viewAnglePow", 1f);
         shader.setUniformf("a_thOverFactor", ((ModelBody) parent).locThOverFactor);
         shader.setUniformf("a_viewAnglePow", 1f);
@@ -147,6 +150,7 @@ public class Loc extends AbstractPositionEntity implements I3DTextRenderable {
 
     /**
      * Sets the absolute size of this entity
+     * 
      * @param size
      */
     public void setSize(Double size) {

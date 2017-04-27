@@ -132,7 +132,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
         shader.setUniformf("u_color", col[0], col[1], col[2], alpha * opacity);
         shader.setUniformf("u_inner_rad", getInnerRad());
         shader.setUniformf("u_distance", (float) distToCamera);
-        shader.setUniformf("u_apparent_angle", viewAngleApparent);
+        shader.setUniformf("u_apparent_angle", (float) viewAngleApparent);
         shader.setUniformf("u_thpoint", (float) THRESHOLD_POINT() * camera.getFovFactor());
 
         // Whether light scattering is enabled or not
@@ -226,7 +226,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
         super.addFocusableObjects(list);
     }
 
-    public float getViewAngle() {
+    public double getViewAngle() {
         return viewAngle;
     }
 
