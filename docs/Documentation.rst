@@ -11,6 +11,7 @@ Documentation
    User-interface
    Controls
    Camera-modes
+   Cinematic-camera
    Stereoscopic-mode
    Planetarium-mode
    360-mode
