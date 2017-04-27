@@ -7,6 +7,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.UIManager;
 import javax.swing.plaf.FontUIResource;
@@ -18,10 +20,13 @@ import com.badlogic.gdx.Graphics.Monitor;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Files;
+import com.badlogic.gdx.backends.lwjgl3.Lwjgl3WindowListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.brsanthu.googleanalytics.GoogleAnalyticsResponse;
 
 import gaia.cu9.ari.gaiaorbit.GaiaSky;
+import gaia.cu9.ari.gaiaorbit.analytics.AnalyticsPermission;
 import gaia.cu9.ari.gaiaorbit.analytics.AnalyticsReporting;
 import gaia.cu9.ari.gaiaorbit.data.DesktopSceneGraphImplementationProvider;
 import gaia.cu9.ari.gaiaorbit.data.SceneGraphImplementationProvider;
@@ -54,6 +59,7 @@ import gaia.cu9.ari.gaiaorbit.util.ConfInit;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
+import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.MusicManager;
 import gaia.cu9.ari.gaiaorbit.util.concurrent.SingleThreadIndexer;
 import gaia.cu9.ari.gaiaorbit.util.concurrent.SingleThreadLocalFactory;
@@ -100,7 +106,7 @@ public class GaiaSkyDesktop implements IObserver {
             }
 
             // Init global configuration
-            ConfInit.initialize(new DesktopConfInit());
+            ConfInit.initialize(new DesktopConfInit(ASSETS_LOC));
 
             // Initialize i18n
             I18n.initialize(Gdx.files.internal("i18n/gsbundle"));
@@ -140,7 +146,8 @@ public class GaiaSkyDesktop implements IObserver {
             NetworkCheckerManager.initialize(new DesktopNetworkChecker());
 
             // Analytics
-            AnalyticsReporting.report();
+            AnalyticsReporting.initialise(new AnalyticsPermission());
+            AnalyticsReporting.getInstance().sendStartAppReport();
 
             gsd.init();
         } catch (Exception e) {
@@ -216,8 +223,10 @@ public class GaiaSkyDesktop implements IObserver {
         cfg.setIdleFPS(0);
         cfg.useVsync(GlobalConf.screen.VSYNC);
         cfg.setWindowIcon(Files.FileType.Internal, "icon/ic_launcher.png");
+        cfg.setWindowListener(new GaiaSkyWindowListener());
 
-        System.out.println("Display mode set to " + cfg.getDisplayMode().width + "x" + cfg.getDisplayMode().height + ", fullscreen: " + GlobalConf.screen.FULLSCREEN);
+        Logger.info("Display mode set to " + Lwjgl3ApplicationConfiguration.getDisplayMode().width + "x" + Lwjgl3ApplicationConfiguration.getDisplayMode().height + ", fullscreen: "
+                + GlobalConf.screen.FULLSCREEN);
 
         // Thread pool manager
         if (GlobalConf.performance.MULTITHREADING) {
@@ -299,6 +308,8 @@ public class GaiaSkyDesktop implements IObserver {
             }
             System.out.println(message);
             break;
+        default:
+            break;
         }
 
     }
@@ -362,6 +373,49 @@ public class GaiaSkyDesktop implements IObserver {
             if (destination != null) {
                 destination.close();
             }
+        }
+    }
+
+    private class GaiaSkyWindowListener implements Lwjgl3WindowListener {
+
+        @Override
+        public void iconified(boolean isIconified) {
+        }
+
+        @Override
+        public void maximized(boolean isMaximized) {
+        }
+
+        @Override
+        public void focusLost() {
+        }
+
+        @Override
+        public void focusGained() {
+        }
+
+        @Override
+        public boolean closeRequested() {
+            // Terminate here
+
+            // Analytics stop event
+            Future<GoogleAnalyticsResponse> f1 = AnalyticsReporting.getInstance().sendTimingAppReport();
+
+            try {
+                f1.get(2000, TimeUnit.MILLISECONDS);
+            } catch (Exception e) {
+                Logger.error(e);
+            }
+
+            return true;
+        }
+
+        @Override
+        public void filesDropped(String[] files) {
+        }
+
+        @Override
+        public void refreshRequested() {
         }
     }
 }

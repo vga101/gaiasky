@@ -47,7 +47,7 @@ public class DesktopConfInit extends ConfInit {
 
     IDateFormat df = DateFormatFactory.getFormatter("dd/MM/yyyy HH:mm:ss");
 
-    public DesktopConfInit() {
+    public DesktopConfInit(String assetsLocation) {
         super();
         try {
             String propsFileProperty = System.getProperty("properties.file");
@@ -61,7 +61,7 @@ public class DesktopConfInit extends ConfInit {
             InputStream vis = GaiaSkyDesktop.class.getResourceAsStream("/version");
             if (vis == null) {
                 // In case of running in 'developer' mode
-                vis = new FileInputStream(GaiaSkyDesktop.ASSETS_LOC + "data/dummyversion");
+                vis = new FileInputStream(assetsLocation + "data/dummyversion");
             }
             vp = new Properties();
             vp.load(vis);
@@ -165,7 +165,6 @@ public class DesktopConfInit extends ConfInit {
         boolean DISPLAY_TUTORIAL = Boolean.parseBoolean(p.getProperty("program.tutorial"));
         String TUTORIAL_POINTER_SCRIPT_LOCATION = p.getProperty("program.tutorial.pointer.script", "scripts/tutorial/tutorial-pointer.py");
         String TUTORIAL_SCRIPT_LOCATION = p.getProperty("program.tutorial.script", "scripts/tutorial/tutorial.py");
-        boolean SHOW_CONFIG_DIALOG = Boolean.parseBoolean(p.getProperty("program.configdialog"));
         boolean SHOW_DEBUG_INFO = Boolean.parseBoolean(p.getProperty("program.debuginfo"));
         Date LAST_CHECKED;
         try {
@@ -181,7 +180,9 @@ public class DesktopConfInit extends ConfInit {
         boolean STEREOSCOPIC_MODE = Boolean.parseBoolean(p.getProperty("program.stereoscopic"));
         StereoProfile STEREO_PROFILE = StereoProfile.values()[Integer.parseInt(p.getProperty("program.stereoscopic.profile"))];
         boolean CUBEMAPE360_MODE = Boolean.parseBoolean(p.getProperty("program.cubemap360", "False"));
-        prc.initialize(DISPLAY_TUTORIAL, TUTORIAL_POINTER_SCRIPT_LOCATION, TUTORIAL_SCRIPT_LOCATION, SHOW_CONFIG_DIALOG, SHOW_DEBUG_INFO, LAST_CHECKED, LAST_VERSION, VERSION_CHECK_URL, UI_THEME, SCRIPT_LOCATION, LOCALE, STEREOSCOPIC_MODE, STEREO_PROFILE, CUBEMAPE360_MODE);
+        boolean ANALYTICS_ENABLED = Boolean.parseBoolean(p.getProperty("program.analytics", "True"));
+
+        prc.initialize(DISPLAY_TUTORIAL, TUTORIAL_POINTER_SCRIPT_LOCATION, TUTORIAL_SCRIPT_LOCATION, SHOW_DEBUG_INFO, LAST_CHECKED, LAST_VERSION, VERSION_CHECK_URL, UI_THEME, SCRIPT_LOCATION, LOCALE, STEREOSCOPIC_MODE, STEREO_PROFILE, CUBEMAPE360_MODE, ANALYTICS_ENABLED);
 
         /** SCENE CONF **/
         int GRAPHICS_QUALITY = Integer.parseInt(p.getProperty("scene.graphics.quality"));
@@ -337,7 +338,7 @@ public class DesktopConfInit extends ConfInit {
         p.setProperty("program.tutorial", Boolean.toString(GlobalConf.program.DISPLAY_TUTORIAL));
         p.setProperty("program.tutorial.pointer.script", GlobalConf.program.TUTORIAL_POINTER_SCRIPT_LOCATION);
         p.setProperty("program.tutorial.script", GlobalConf.program.TUTORIAL_SCRIPT_LOCATION);
-        p.setProperty("program.configdialog", Boolean.toString(GlobalConf.program.SHOW_CONFIG_DIALOG));
+        p.setProperty("program.analytics", Boolean.toString(GlobalConf.program.ANALYTICS_ENABLED));
         p.setProperty("program.debuginfo", Boolean.toString(GlobalConf.program.SHOW_DEBUG_INFO));
         p.setProperty("program.lastchecked", GlobalConf.program.LAST_CHECKED != null ? df.format(GlobalConf.program.LAST_CHECKED) : "");
         p.setProperty("program.lastversion", GlobalConf.program.LAST_VERSION != null ? GlobalConf.program.LAST_VERSION : "");
