@@ -1,8 +1,8 @@
 package gaia.cu9.ari.gaiaorbit.analytics;
 
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.http.NameValuePair;
 
@@ -20,7 +20,7 @@ public class AnalyticsReporting {
     public static void main(String[] args) {
         Future<GoogleAnalyticsResponse> f = report();
         try {
-            GoogleAnalyticsResponse gar = f.get();
+            GoogleAnalyticsResponse gar = f.get(15, TimeUnit.SECONDS);
 
             System.out.println("Response status code: " + gar.getStatusCode());
             List<NameValuePair> result = gar.getPostedParms();
@@ -30,12 +30,8 @@ public class AnalyticsReporting {
                 }
             else
                 System.out.println("No params");
-        } catch (InterruptedException e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
-        } catch (ExecutionException e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
     }
