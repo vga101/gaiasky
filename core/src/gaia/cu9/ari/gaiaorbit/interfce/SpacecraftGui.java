@@ -657,7 +657,7 @@ public class SpacecraftGui implements IGui, IObserver {
 
             if (data[4] != null) {
                 closestname.setText((String) data[4]);
-                Pair<Float, String> cldist = GlobalResources.floatToDistanceString((Float) data[5]);
+                Pair<Double, String> cldist = GlobalResources.doubleToDistanceString((Double) data[5]);
                 closestdist.setText(sf.format(cldist.getFirst()) + " " + cldist.getSecond());
             } else {
                 closestname.setText("");

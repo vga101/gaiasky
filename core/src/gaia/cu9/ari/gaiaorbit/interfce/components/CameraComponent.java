@@ -28,6 +28,7 @@ import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
+import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnCheckBox;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnLabel;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextIconButton;
 
@@ -36,7 +37,7 @@ public class CameraComponent extends GuiComponent implements IObserver {
     protected OwnLabel fov, speed, turn, rotate, date;
     protected SelectBox<String> cameraMode, cameraSpeedLimit;
     protected Slider fieldOfView, cameraSpeed, turnSpeed, rotateSpeed;
-    protected CheckBox focusLock, orientationLock, crosshair;
+    protected CheckBox focusLock, orientationLock, crosshair, cinematic;
     protected OwnTextIconButton button3d, buttonDome, buttonCubemap, buttonAnaglyph, button3dtv, buttonVR, buttonCrosseye;
     private float fovBackup;
     protected boolean fovFlag = true;
@@ -48,6 +49,22 @@ public class CameraComponent extends GuiComponent implements IObserver {
 
     @Override
     public void initialize() {
+        float pad = 5 * GlobalConf.SCALE_FACTOR;
+
+        cinematic = new OwnCheckBox("Cinematic camera", skin, pad);
+        cinematic.setName("cinematic camera");
+        cinematic.setChecked(GlobalConf.scene.CINEMATIC_CAMERA);
+        cinematic.addListener(new EventListener() {
+            @Override
+            public boolean handle(Event event) {
+                if (event instanceof ChangeEvent) {
+                    GlobalConf.scene.CINEMATIC_CAMERA = cinematic.isChecked();
+                    return true;
+                }
+                return false;
+            }
+        });
+
         Label modeLabel = new Label(txt("gui.camera.mode"), skin, "default");
         int cameraModes = CameraMode.values().length;
         String[] cameraOptions = new String[cameraModes];
@@ -278,7 +295,7 @@ public class CameraComponent extends GuiComponent implements IObserver {
         });
 
         /** Crosshair **/
-        crosshair = new CheckBox(" " + txt("gui.camera.crosshair"), skin);
+        crosshair = new OwnCheckBox(" " + txt("gui.camera.crosshair"), skin, pad);
         crosshair.setName("orientation lock");
         crosshair.setChecked(GlobalConf.scene.CROSSHAIR);
         crosshair.addListener(new EventListener() {
@@ -322,6 +339,7 @@ public class CameraComponent extends GuiComponent implements IObserver {
         turnGroup.addActor(turnSpeed);
         turnGroup.addActor(turn);
 
+        cameraGroup.addActor(cinematic);
         cameraGroup.addActor(modeLabel);
         cameraGroup.addActor(cameraMode);
         cameraGroup.addActor(fovLabel);

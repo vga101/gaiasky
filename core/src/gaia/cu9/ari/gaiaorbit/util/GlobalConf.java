@@ -643,6 +643,7 @@ public class GlobalConf {
         public double CAMERA_SPEED_LIMIT;
         public boolean FOCUS_LOCK;
         public boolean FOCUS_LOCK_ORIENTATION;
+        public boolean CINEMATIC_CAMERA;
         public float LABEL_NUMBER_FACTOR;
         /** Visibility of component types **/
         public boolean[] VISIBILITY;
@@ -712,7 +713,7 @@ public class GlobalConf {
                 int cAMERA_SPEED_LIMIT_IDX, boolean fOCUS_LOCK, boolean fOCUS_LOCK_ORIENTATION, float lABEL_NUMBER_FACTOR, boolean[] vISIBILITY, int pIXEL_RENDERER, int lINE_RENDERER,
                 double sTAR_TH_ANGLE_NONE, double sTAR_TH_ANGLE_POINT, double sTAR_TH_ANGLE_QUAD, float pOINT_ALPHA_MIN, float pOINT_ALPHA_MAX,
                 boolean oCTREE_PARTICLE_FADE, float oCTANT_TH_ANGLE_0, float oCTANT_TH_ANGLE_1, boolean pROPER_MOTION_VECTORS, float pM_NUM_FACTOR, float pM_LEN_FACTOR, float sTAR_POINT_SIZE,
-                boolean gALAXY_3D, int cUBEMAP_FACE_RESOLUTION, boolean cROSSHAIR) {
+                boolean gALAXY_3D, int cUBEMAP_FACE_RESOLUTION, boolean cROSSHAIR, boolean cINEMATIC_CAMERA) {
             GRAPHICS_QUALITY = gRAPHICS_QUALITY;
             OBJECT_FADE_MS = oBJECT_FADE_MS;
             STAR_BRIGHTNESS = sTAR_BRIGHTNESS;
@@ -745,6 +746,7 @@ public class GlobalConf {
             GALAXY_3D = gALAXY_3D;
             CUBEMAP_FACE_RESOLUTION = cUBEMAP_FACE_RESOLUTION;
             CROSSHAIR = cROSSHAIR;
+            CINEMATIC_CAMERA = cINEMATIC_CAMERA;
         }
 
         public void updateSpeedLimit() {

@@ -174,7 +174,8 @@ public class NaturalInputController extends GestureDetector {
         Vector3 pos = new Vector3();
         while (it.hasNext()) {
             CelestialBody s = it.next();
-            if (s.withinMagLimit() && (!(s instanceof Particle) || (s instanceof Particle && ((Particle) s).octant == null) || (s instanceof Particle && ((Particle) s).octant != null && ((Particle) s).octant.observed))) {
+            if (s.withinMagLimit() && (!(s instanceof Particle) || (s instanceof Particle && ((Particle) s).octant == null)
+                    || (s instanceof Particle && ((Particle) s).octant != null && ((Particle) s).octant.observed))) {
                 Vector3d posd = s.getPosition(aux);
                 pos.set(posd.valuesf());
 
@@ -243,7 +244,7 @@ public class NaturalInputController extends GestureDetector {
                     @Override
                     public void run() {
                         // 5% of width pixels distance
-                        if (gesture.dst(screenX, screenY) < MOVE_PX_DIST) {
+                        if (!GlobalConf.scene.CINEMATIC_CAMERA || (GlobalConf.scene.CINEMATIC_CAMERA && gesture.dst(screenX, screenY) < MOVE_PX_DIST)) {
                             boolean stopped = camera.stopMovement();
                             boolean focusRemoved = GaiaSky.instance.mainGui != null && GaiaSky.instance.mainGui.cancelTouchFocus();
                             boolean doubleClick = currentTime - lastLeftTime < doubleClickTime;
@@ -291,17 +292,22 @@ public class NaturalInputController extends GestureDetector {
     }
 
     protected boolean processDrag(float deltaX, float deltaY, int button) {
+        boolean accel = GlobalConf.scene.CINEMATIC_CAMERA;
+        double factor = accel ? 1.0 : 10.0;
+        deltaX *= factor;
+        deltaY *= factor;
+
         if (button == leftMouseButton) {
             if (isKeyPressed(rollKey)) {
                 // camera.rotate(camera.direction, deltaX * rotateAngle);
                 if (deltaX != 0)
-                    camera.addRoll(deltaX);
+                    camera.addRoll(deltaX, accel);
             } else {
-                camera.addRotateMovement(deltaX, deltaY, false);
+                camera.addRotateMovement(deltaX, deltaY, false, accel);
             }
         } else if (button == rightMouseButton) {
             // cam.naturalCamera.addPanMovement(deltaX, deltaY);
-            camera.addRotateMovement(deltaX, deltaY, true);
+            camera.addRotateMovement(deltaX, deltaY, true, accel);
         } else if (button == middleMouseButton) {
             if (deltaX != 0)
                 camera.addForwardForce(deltaX);

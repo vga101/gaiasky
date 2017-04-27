@@ -54,7 +54,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
      * Acceleration, velocity and position for the horizontal and vertical
      * rotation around the focus
      **/
-    private Vector3d hor, vert;
+    private Vector3d horizontal, vertical;
     /** Time since last forward control issued, in seconds **/
     private double lastFwdTime = 0d;
     /** The last forward amount, positive forward, negative backward **/
@@ -62,7 +62,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
     /** Previous angle in orientation lock **/
     double previousOrientationAngle = 0;
 
-    /** Thrust which keeps the camera going. Mainly for gamepads **/
+    /** Thrust which keeps the camera going. Mainly for game pads **/
     private double thrust = 0;
     private int thrustDirection = 0;
 
@@ -139,8 +139,8 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
         pitch = new Vector3d(0.0f, 0.0f, -3.0291599E-6f);
         yaw = new Vector3d(0.0f, 0.0f, -7.9807205E-6f);
         roll = new Vector3d(0.0f, 0.0f, -1.4423944E-4f);
-        hor = new Vector3d();
-        vert = new Vector3d();
+        horizontal = new Vector3d();
+        vertical = new Vector3d();
 
         friction = new Vector3d();
         lastvel = new Vector3d();
@@ -241,7 +241,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
                 updateRotation(dt, focusPos);
 
                 if (!diverted) {
-                    directionToTarget(dt, focusPos, GlobalConf.scene.TURNING_SPEED / 1e3f, planetariumFocusAngle);
+                    directionToTarget(dt, focusPos, GlobalConf.scene.TURNING_SPEED / (GlobalConf.scene.CINEMATIC_CAMERA ? 1e3f : 1e2f), planetariumFocusAngle);
                 } else {
                     updateRotationFree(dt, GlobalConf.scene.TURNING_SPEED);
                 }
@@ -389,19 +389,19 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
      * @param focusLookKeyPressed
      *            The key to look around when on focus mode is pressed.
      */
-    public void addRotateMovement(double deltaX, double deltaY, boolean focusLookKeyPressed) {
+    public void addRotateMovement(double deltaX, double deltaY, boolean focusLookKeyPressed, boolean acceleration) {
         // Just update yaw with X and pitch with Y
         if (parent.mode.equals(CameraMode.Free_Camera)) {
-            addYaw(deltaX);
-            addPitch(deltaY);
+            addYaw(deltaX, acceleration);
+            addPitch(deltaY, acceleration);
         } else if (parent.mode.equals(CameraMode.Focus)) {
             if (focusLookKeyPressed) {
                 diverted = true;
-                addYaw(deltaX);
-                addPitch(deltaY);
+                addYaw(deltaX, acceleration);
+                addPitch(deltaY, acceleration);
             } else {
-                addHorizontalRotation(deltaX);
-                addVerticalRotation(deltaY);
+                addHorizontalRotation(deltaX, acceleration);
+                addVerticalRotation(deltaY, acceleration);
             }
         }
     }
@@ -410,13 +410,16 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
         gamepadMultiplier = amount;
     }
 
-    public void addAmountX(Vector3d vec, double amount) {
-        vec.x += amount;
+    public void addAmount(Vector3d vec, double amount, boolean x) {
+        if (x)
+            vec.x += amount;
+        else
+            vec.y = amount;
     }
 
     /** Adds the given amount to the camera yaw acceleration **/
-    public void addYaw(double amount) {
-        addAmountX(yaw, amount);
+    public void addYaw(double amount, boolean acceleration) {
+        addAmount(yaw, amount, acceleration);
     }
 
     public void setYaw(double amount) {
@@ -425,8 +428,8 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
     }
 
     /** Adds the given amount to the camera pitch acceleration **/
-    public void addPitch(double amount) {
-        addAmountX(pitch, amount);
+    public void addPitch(double amount, boolean acceleration) {
+        addAmount(pitch, amount, acceleration);
     }
 
     public void setPitch(double amount) {
@@ -435,8 +438,8 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
     }
 
     /** Adds the given amount to the camera roll acceleration **/
-    public void addRoll(double amount) {
-        addAmountX(roll, amount);
+    public void addRoll(double amount, boolean acceleration) {
+        addAmount(roll, amount, acceleration);
     }
 
     public void setRoll(double amount) {
@@ -448,26 +451,26 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
      * Adds the given amount to camera horizontal rotation around the focus
      * acceleration
      **/
-    public void addHorizontalRotation(double amount) {
-        addAmountX(hor, amount);
+    public void addHorizontalRotation(double amount, boolean acceleration) {
+        addAmount(horizontal, amount, acceleration);
     }
 
     public void setHorizontalRotation(double amount) {
-        hor.x = 0;
-        hor.y = amount;
+        horizontal.x = 0;
+        horizontal.y = amount;
     }
 
     /**
      * Adds the given amount to camera vertical rotation around the focus
      * acceleration
      **/
-    public void addVerticalRotation(double amount) {
-        addAmountX(vert, amount);
+    public void addVerticalRotation(double amount, boolean acceleration) {
+        addAmount(vertical, amount, acceleration);
     }
 
     public void setVerticalRotation(double amount) {
-        vert.x = 0;
-        vert.y = amount;
+        vertical.x = 0;
+        vertical.y = amount;
     }
 
     /**
@@ -477,14 +480,14 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
      *         stopped. False if camera was already still.
      */
     public boolean stopMovement() {
-        boolean stopped = (vel.len2() != 0 || yaw.y != 0 || pitch.y != 0 || roll.y != 0 || vert.y != 0 || hor.y != 0);
+        boolean stopped = (vel.len2() != 0 || yaw.y != 0 || pitch.y != 0 || roll.y != 0 || vertical.y != 0 || horizontal.y != 0);
         force.scl(0f);
         vel.scl(0f);
         yaw.y = 0;
         pitch.y = 0;
         roll.y = 0;
-        hor.y = 0;
-        vert.y = 0;
+        horizontal.y = 0;
+        vertical.y = 0;
         return stopped;
     }
 
@@ -495,14 +498,14 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
      *         stopped. False if camera was already still.
      */
     public boolean stopTotalMovement() {
-        boolean stopped = (vel.len2() != 0 || yaw.y != 0 || pitch.y != 0 || roll.y != 0 || vert.y != 0 || hor.y != 0);
+        boolean stopped = (vel.len2() != 0 || yaw.y != 0 || pitch.y != 0 || roll.y != 0 || vertical.y != 0 || horizontal.y != 0);
         force.scl(0f);
         vel.scl(0f);
         yaw.scl(0f);
         pitch.scl(0f);
         roll.scl(0f);
-        hor.scl(0f);
-        vert.scl(0f);
+        horizontal.scl(0f);
+        vertical.scl(0f);
         return stopped;
     }
 
@@ -542,7 +545,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 
         force.add(friction);
 
-        if (lastFwdTime > 3 && velocityGamepad == 0 && fullStop || lastFwdAmount > 0 && transUnits == 0) {
+        if (lastFwdTime > (GlobalConf.scene.CINEMATIC_CAMERA ? 1.5 : 0.25) && velocityGamepad == 0 && fullStop || lastFwdAmount > 0 && transUnits == 0) {
             stopForwardMovement();
         }
 
@@ -604,9 +607,8 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
             rotate(up, -yaw.z * rotateSpeed);
         }
 
-        // Set acceleration to 0
-        pitch.x = 0f;
-        yaw.x = 0f;
+        defaultState(pitch, !GlobalConf.scene.CINEMATIC_CAMERA);
+        defaultState(yaw, !GlobalConf.scene.CINEMATIC_CAMERA);
     }
 
     private void updateRoll(float dt, float rotateSpeed) {
@@ -614,7 +616,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
             // Roll
             rotate(direction, -roll.z * rotateSpeed);
         }
-        roll.x = 0f;
+        defaultState(roll, !GlobalConf.scene.CINEMATIC_CAMERA);
     }
 
     /**
@@ -625,25 +627,34 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
     private void updateRotation(float dt, final Vector3d rotationCenter) {
         // Add position to compensate for coordinates centered on camera
         rotationCenter.add(pos);
-        if (updatePosition(vert, dt)) {
+        if (updatePosition(vertical, dt)) {
             // Pitch
             aux1.set(direction).crs(up).nor();
-            rotateAround(rotationCenter, aux1, vert.z * GlobalConf.scene.ROTATION_SPEED);
+            rotateAround(rotationCenter, aux1, vertical.z * GlobalConf.scene.ROTATION_SPEED);
         }
-        if (updatePosition(hor, dt)) {
+        if (updatePosition(horizontal, dt)) {
             // Yaw
-            rotateAround(rotationCenter, up, -hor.z * GlobalConf.scene.ROTATION_SPEED);
+            rotateAround(rotationCenter, up, -horizontal.z * GlobalConf.scene.ROTATION_SPEED);
         }
 
-        // Set acceleration to 0
-        vert.x = 0f;
-        hor.x = 0f;
+        defaultState(vertical, !GlobalConf.scene.CINEMATIC_CAMERA);
+        defaultState(horizontal, !GlobalConf.scene.CINEMATIC_CAMERA);
+
+    }
+
+    private void defaultState(Vector3d vec, boolean resetVelocity) {
+        // Always reset acceleration
+        vec.x = 0;
+
+        // Reset velocity if needed
+        if (resetVelocity)
+            vec.y = 0;
     }
 
     private void updateLateral(float dt, double translateUnits) {
         // Pan with hor
         aux1.set(direction).crs(up).nor();
-        aux1.scl(hor.y * dt * translateUnits);
+        aux1.scl(horizontal.y * dt * translateUnits);
         translate(aux1);
 
     }
@@ -827,16 +838,16 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
             addForwardForce((double) data[0]);
             break;
         case CAMERA_ROTATE:
-            addRotateMovement((double) data[0], (double) data[1], false);
+            addRotateMovement((double) data[0], (double) data[1], false, true);
             break;
         case CAMERA_TURN:
-            addRotateMovement((double) data[0], (double) data[1], true);
+            addRotateMovement((double) data[0], (double) data[1], true, true);
             break;
         case CAMERA_PAN:
 
             break;
         case CAMERA_ROLL:
-            addRoll((double) data[0]);
+            addRoll((double) data[0], GlobalConf.scene.CINEMATIC_CAMERA);
             break;
         case CAMERA_STOP:
             stopTotalMovement();
