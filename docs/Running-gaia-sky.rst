@@ -59,9 +59,17 @@ First, clone the repository:
 Compile and run
 ---------------
 
-.. note:: The ``TGAS`` catalog files (Gaia data) are **not** in the repository, so if you want to use ``TGAS`` when running from source you either need to choose ``HYG`` in the Data tab of the configuration dialog or download the ``tar`` file `here (version 1.0.3 or older) <http://wwwstaff.ari.uni-heidelberg.de/gaiasandbox/files/20161206_tgas_gaiasky_1.0.3.tar.gz>`__ or `here (version 1.0.4 or newer) <http://wwwstaff.ari.uni-heidelberg.de/gaiasandbox/files/20161206_tgas_gaiasky_1.0.4.tar.gz>`__ and extract it into the folder ``gaiasky/android/assets/data/octree``.
+The ``TGAS`` catalog files (Gaia data) are **not** in the repository, so if you want to use TGAS when running
+from source you either need to choose ``HYG`` in the Data tab of the configuration dialog or download
+the ``tar`` file corresponding to your version:
 
-Please make sure to get the TGAS data files if you want to use them before running. To compile the code and run the desktop version of the application:
+-  `TGAS data, single file (version 1.0.3 or older) <http://wwwstaff.ari.uni-heidelberg.de/gaiasandbox/files/20161206_tgas_gaiasky_1.0.3.tar.gz>`__
+-  `TGAS data, single file (version 1.0.4) <http://wwwstaff.ari.uni-heidelberg.de/gaiasandbox/files/20161206_tgas_gaiasky_1.0.4.tar.gz>`__
+-  `TGAS data, multifile (version 1.0.5) <http://wwwstaff.ari.uni-heidelberg.de/gaiasandbox/files/20170427_tgas_gaiasky_1.0.5.tar.gz>`__
+
+You must extract the contents tarball into the folder ``gaiasky/android/assets/data/octree``. In the case of the multifile package, you need to keep the directory structure.
+
+Please make sure to get the TGAS data files if you want to use them before running from source. To compile the code and run the desktop version of the application:
 
 .. code-block:: bash
 
