@@ -149,7 +149,7 @@ tar -zxvf gaiasky-<version>.tgz
 In order to run the program just click on the shortcut
 provided in your operating system.
 
-### 2.2 Running from code
+### 2.2 Running from source
 
 First, clone the [GitHub](https://github.com/langurmonkey/gaiasky) repository:
 
@@ -161,9 +161,13 @@ Make sure you have at least `JDK7` installed.
 
 The TGAS catalog files (Gaia data) are **not** in the repository, so if you want to use TGAS when running
 from source you either need to choose `HYG` in the Data tab of the configuration dialog or download
-the `tar` file [here (version 1.0.3 or older)](http://wwwstaff.ari.uni-heidelberg.de/gaiasandbox/files/20161206_tgas_gaiasky_1.0.3.tar.gz) 
-or [here (version 1.0.4 or newer)](http://wwwstaff.ari.uni-heidelberg.de/gaiasandbox/files/20161206_tgas_gaiasky_1.0.4.tar.gz) and
-extract it into the folder `gaiasky/android/assets/data/octree`.
+the `tar` file corresponding to your version:
+
+-  [tgas single file (version 1.0.3 or older)](http://wwwstaff.ari.uni-heidelberg.de/gaiasandbox/files/20161206_tgas_gaiasky_1.0.3.tar.gz) 
+-  [tags single file (version 1.0.4)](http://wwwstaff.ari.uni-heidelberg.de/gaiasandbox/files/20161206_tgas_gaiasky_1.0.4.tar.gz)
+-  [tags multifile (version 1.5.0 or newer)](http://wwwstaff.ari.uni-heidelberg.de/gaiasandbox/files/20170427_tgas_gaiasky_1.5.0.tar.gz)
+
+You must extract the contents tarball into the folder `gaiasky/android/assets/data/octree`. In the case of the multifile package, you need to keep the directory structure.
 
 And then, you are ready to rumble:
 

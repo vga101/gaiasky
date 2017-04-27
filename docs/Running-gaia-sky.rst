@@ -65,7 +65,7 @@ the ``tar`` file corresponding to your version:
 
 -  `TGAS data, single file (version 1.0.3 or older) <http://wwwstaff.ari.uni-heidelberg.de/gaiasandbox/files/20161206_tgas_gaiasky_1.0.3.tar.gz>`__
 -  `TGAS data, single file (version 1.0.4) <http://wwwstaff.ari.uni-heidelberg.de/gaiasandbox/files/20161206_tgas_gaiasky_1.0.4.tar.gz>`__
--  `TGAS data, multifile (version 1.0.5) <http://wwwstaff.ari.uni-heidelberg.de/gaiasandbox/files/20170427_tgas_gaiasky_1.0.5.tar.gz>`__
+-  `TGAS data, multifile (version 1.5.0) <http://wwwstaff.ari.uni-heidelberg.de/gaiasandbox/files/20170427_tgas_gaiasky_1.5.0.tar.gz>`__
 
 You must extract the contents tarball into the folder ``gaiasky/android/assets/data/octree``. In the case of the multifile package, you need to keep the directory structure.
 
