@@ -165,7 +165,7 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
         ppb.lglow.setBias(-0.95f);
         ppb.lglow.setLightGlowTexture(glow);
         ppb.lglow.setNSamples(nsamples);
-        ppb.lglow.setTextureScale(1f / GaiaSky.instance.cam.getFovFactor());
+        ppb.lglow.setTextureScale(1.5f / GaiaSky.instance.cam.getFovFactor());
         ppb.lglow.setEnabled(GlobalConf.postprocess.POSTPROCESS_LIGHT_SCATTERING);
         ppb.pp.addEffect(ppb.lglow);
 
@@ -382,14 +382,15 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
                     ppb.lglow.setLightPositions(nLights, lightpos);
                     ppb.lglow.setLightViewAngles(angles);
                     ppb.lglow.setLightColors(colors);
-                    ppb.lglow.setTextureScale(1f / GaiaSky.instance.cam.getFovFactor());
+                    ppb.lglow.setTextureScale(1.5f / GaiaSky.instance.cam.getFovFactor());
                 }
             }
             break;
         case TOGGLE_STEREOSCOPIC_CMD:
         case TOGGLE_STEREO_PROFILE_CMD:
             boolean curvatureEnabled = GlobalConf.program.STEREOSCOPIC_MODE && GlobalConf.program.STEREO_PROFILE == StereoProfile.VR_HEADSET;
-            boolean viewportHalved = GlobalConf.program.STEREOSCOPIC_MODE && GlobalConf.program.STEREO_PROFILE != StereoProfile.ANAGLYPHIC && GlobalConf.program.STEREO_PROFILE != StereoProfile.HD_3DTV;
+            boolean viewportHalved = GlobalConf.program.STEREOSCOPIC_MODE && GlobalConf.program.STEREO_PROFILE != StereoProfile.ANAGLYPHIC
+                    && GlobalConf.program.STEREO_PROFILE != StereoProfile.HD_3DTV;
 
             for (int i = 0; i < RenderType.values().length; i++) {
                 if (pps[i] != null) {

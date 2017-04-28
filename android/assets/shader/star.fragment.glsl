@@ -26,7 +26,7 @@ uniform int u_lightScattering;
 
 // Constants as a factor of the radius
 #define model_const 172.4643429
-#define rays_const 100000000.0
+#define rays_const 50000000.0
 
 // Decays
 #define corona_decay 0.2
@@ -72,8 +72,8 @@ vec4 draw() {
 		if(u_lightScattering == 1){
 			// Light scattering, simple star
 			float core = core(dist, u_inner_rad);
-			float light = light(dist, light_decay / 2.0) * light_level;
-			return vec4(v_color.rgb + vec3(core * 10.0), light + core);
+			float light = light(dist, light_decay) * light_level;
+			return vec4(v_color.rgb + vec3(core * 5.0), light + core);
 		} else {
 			// No light scattering, star rays
 			level = min(level, 1.0);
