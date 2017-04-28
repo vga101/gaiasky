@@ -2,10 +2,8 @@ package gaia.cu9.ari.gaiaorbit.interfce;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
@@ -17,7 +15,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
-import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
@@ -44,7 +41,6 @@ public class LoadingGui implements IGui {
     protected Stage ui;
     protected Table center, bottom;
     protected Container<Button> screenMode;
-    protected Container<Actor> thanks;
 
     protected NotificationsInterface notificationsInterface;
     /** Lock object for synchronisation **/
@@ -102,11 +98,6 @@ public class LoadingGui implements IGui {
 
     }
 
-    private SpriteDrawable getSpriteDrawable(FileHandle fh) {
-        Texture tex = new Texture(fh);
-        return new SpriteDrawable(new Sprite(tex));
-    }
-
     @Override
     public void doneLoading(AssetManager assetManager) {
     }
@@ -116,7 +107,6 @@ public class LoadingGui implements IGui {
             ui.clear();
             ui.addActor(screenMode);
             ui.addActor(center);
-            ui.addActor(thanks);
         }
     }
 
