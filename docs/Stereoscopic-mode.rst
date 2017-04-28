@@ -22,6 +22,8 @@ and VR head sets (such as the `Oculus Rift <https://www.oculus.com/>`__,
 3DTVs, however, the image is distorted because each half of the TV will
 be stretched back to the whole TV area when the 3D mode is on.
 
+.. note:: As of version ``1.5.0``, the head tracking is not yet implemented, so you won't be able to use Gaia Sky interactively with a VR headset. The integration with OpenVR will come soon enough.
+
 Additionally, there are a couple of techniques called cross-eye 3D (you can find
 some examples
 `here <http://digital-photography-school.com/9-crazy-cross-eye-3d-photography-images-and-how-to-make-them/>`__,
