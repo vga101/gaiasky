@@ -202,7 +202,8 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         AssetBean.setAssetManager(manager);
 
         // Initialise Gaia attitudes
-        manager.load(ATTITUDE_FOLDER, GaiaAttitudeServer.class, new GaiaAttitudeLoaderParameter(GlobalConf.runtime.STRIPPED_FOV_MODE ? new String[] { "OPS_RSLS_0022916_rsls_nsl_gareq1_afterFirstSpinPhaseOptimization.2.xml" } : new String[] {}));
+        manager.load(ATTITUDE_FOLDER, GaiaAttitudeServer.class, new GaiaAttitudeLoaderParameter(GlobalConf.runtime.STRIPPED_FOV_MODE
+                ? new String[] { "OPS_RSLS_0022916_rsls_nsl_gareq1_afterFirstSpinPhaseOptimization.2.xml" } : new String[] {}));
 
         // Initialise hidden helper user
         HiddenHelperUser.initialise();
@@ -226,6 +227,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         // Initialise loading screen
         loadingGui = new LoadingGui();
         loadingGui.initialize(manager);
+        Gdx.input.setInputProcessor(loadingGui.getGuiStage());
 
         Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.glslversion", Gdx.gl.glGetString(GL20.GL_SHADING_LANGUAGE_VERSION)));
     }

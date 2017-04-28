@@ -2,21 +2,31 @@ package gaia.cu9.ari.gaiaorbit.interfce;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Event;
+import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.Container;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
+import gaia.cu9.ari.gaiaorbit.event.EventManager;
+import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
 import gaia.cu9.ari.gaiaorbit.util.GSEnumSet;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
+import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextIconButton;
 
 /**
  * Displays the loading screen.
@@ -30,9 +40,10 @@ public class LoadingGui implements IGui {
      */
     protected Stage ui;
     protected Table center;
+    protected Container<Button> screenMode;
 
     protected NotificationsInterface notificationsInterface;
-    /** Lock object for synchronization **/
+    /** Lock object for synchronisation **/
     private Object lock;
 
     public LoadingGui() {
@@ -41,7 +52,8 @@ public class LoadingGui implements IGui {
 
     @Override
     public void initialize(AssetManager assetManager) {
-
+        float pad30 = 30 * GlobalConf.SCALE_FACTOR;
+        float pad10 = 10 * GlobalConf.SCALE_FACTOR;
         // User interface
         ui = new Stage(new ScreenViewport(), GlobalResources.spriteBatch);
         skin = GlobalResources.skin;
@@ -53,9 +65,30 @@ public class LoadingGui implements IGui {
         Image logo = new Image(new Texture(Gdx.files.internal("img/gaiaskylogo.png")));
 
         center.add(logo).center();
-        center.row().padBottom(30);
+        center.row().padBottom(pad30);
         center.add(new Label(I18n.bundle.get("notif.loading.wait"), skin, "header"));
         center.row();
+
+        // SCREEN MODE BUTTON - TOP RIGHT
+        screenMode = new Container<Button>();
+        screenMode.setFillParent(true);
+        screenMode.top().right();
+        screenMode.pad(pad10);
+        Image smImg = new Image(skin.getDrawable("screen-mode"));
+        OwnTextIconButton screenModeButton = new OwnTextIconButton("", smImg, skin);
+        screenModeButton.setCursor(new Pixmap(Gdx.files.internal("img/cursor-link.png")));
+        screenModeButton.addListener(new EventListener() {
+            @Override
+            public boolean handle(Event event) {
+                if (event instanceof ChangeEvent) {
+                    GlobalConf.screen.FULLSCREEN = !GlobalConf.screen.FULLSCREEN;
+                    EventManager.instance.post(Events.SCREEN_MODE_CMD);
+                    return true;
+                }
+                return false;
+            }
+        });
+        screenMode.setActor(screenModeButton);
 
         // MESSAGE INTERFACE - BOTTOM
         notificationsInterface = new NotificationsInterface(skin, lock, false, false);
@@ -72,8 +105,8 @@ public class LoadingGui implements IGui {
     public void rebuildGui() {
         if (ui != null) {
             ui.clear();
+            ui.addActor(screenMode);
             ui.addActor(center);
-
         }
     }
 

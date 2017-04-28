@@ -184,22 +184,11 @@ public class GaiaSkyDesktop implements IObserver {
         Lwjgl3ApplicationConfiguration cfg = new Lwjgl3ApplicationConfiguration();
         cfg.setTitle(GlobalConf.getFullApplicationName());
 
-        // Find out current monitor
-        Monitor[] monitors = Lwjgl3ApplicationConfiguration.getMonitors();
-        PointerInfo pi = MouseInfo.getPointerInfo();
-        int pix = pi.getDevice().getDefaultConfiguration().getBounds().x;
-        int piy = pi.getDevice().getDefaultConfiguration().getBounds().y;
-        Monitor chosen = null;
-        for (Monitor monitor : monitors) {
-            if (monitor.virtualX == pix && monitor.virtualY == piy) {
-                chosen = monitor;
-                break;
-            }
-        }
-
         if (GlobalConf.screen.FULLSCREEN) {
+            Monitor m = Lwjgl3ApplicationConfiguration.getPrimaryMonitor();
+
             // Get mode
-            DisplayMode[] modes = Lwjgl3ApplicationConfiguration.getDisplayModes(chosen);
+            DisplayMode[] modes = Lwjgl3ApplicationConfiguration.getDisplayModes(m);
             DisplayMode mymode = null;
             for (DisplayMode mode : modes) {
                 if (mode.height == GlobalConf.screen.FULLSCREEN_HEIGHT && mode.width == GlobalConf.screen.FULLSCREEN_WIDTH) {
@@ -211,10 +200,22 @@ public class GaiaSkyDesktop implements IObserver {
                 mymode = Lwjgl3ApplicationConfiguration.getDisplayMode(Gdx.graphics.getPrimaryMonitor());
             cfg.setFullscreenMode(mymode);
         } else {
+            // Find out current monitor
+            Monitor[] monitors = Lwjgl3ApplicationConfiguration.getMonitors();
+            PointerInfo pi = MouseInfo.getPointerInfo();
+            int pix = pi.getDevice().getDefaultConfiguration().getBounds().x;
+            int piy = pi.getDevice().getDefaultConfiguration().getBounds().y;
+            Monitor m = null;
+            for (Monitor monitor : monitors) {
+                if (monitor.virtualX == pix && monitor.virtualY == piy) {
+                    m = monitor;
+                    break;
+                }
+            }
             // Find out position
-            DisplayMode dm = Lwjgl3ApplicationConfiguration.getDisplayMode(chosen);
-            int posx = chosen.virtualX + dm.width / 2 - GlobalConf.screen.getScreenWidth() / 2;
-            int posy = chosen.virtualY + dm.height / 2 - GlobalConf.screen.getScreenHeight() / 2;
+            DisplayMode dm = Lwjgl3ApplicationConfiguration.getDisplayMode(m);
+            int posx = m.virtualX + dm.width / 2 - GlobalConf.screen.getScreenWidth() / 2;
+            int posy = m.virtualY + dm.height / 2 - GlobalConf.screen.getScreenHeight() / 2;
             cfg.setWindowedMode(GlobalConf.screen.getScreenWidth(), GlobalConf.screen.getScreenHeight());
             cfg.setResizable(GlobalConf.screen.RESIZABLE);
             cfg.setWindowPosition(posx, posy);

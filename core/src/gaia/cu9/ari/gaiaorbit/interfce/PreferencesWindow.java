@@ -82,7 +82,7 @@ public class PreferencesWindow extends GenericDialog {
 
     private INumberFormat nf3;
 
-    private CheckBox fullscreen, resizable, windowed, vsync, multithreadCb, lodFadeCb, cbAutoCamrec, hyg, tgas, tgasMultifile, real, nsl;
+    private CheckBox fullscreen, windowed, vsync, multithreadCb, lodFadeCb, cbAutoCamrec, hyg, tgas, tgasMultifile, real, nsl;
     private OwnSelectBox<DisplayMode> fullscreenResolutions;
     private OwnSelectBox<ComboBoxBean> gquality, aa, lineRenderer, numThreads, screenshotMode, frameoutputMode;
     private OwnSelectBox<LangComboBoxBean> lang;
@@ -210,8 +210,6 @@ public class PreferencesWindow extends GenericDialog {
         heightValidator = new IntValidator(100, nativeMode.height);
         heightField = new OwnTextField(Integer.toString(MathUtils.clamp(GlobalConf.screen.SCREEN_HEIGHT, 100, nativeMode.height)), skin, heightValidator);
         heightField.setWidth(textwidth);
-        resizable = new OwnCheckBox(txt("gui.resizable"), skin, "default", pad);
-        resizable.setChecked(GlobalConf.screen.RESIZABLE);
         final OwnLabel widthLabel = new OwnLabel(txt("gui.width") + ":", skin);
         final OwnLabel heightLabel = new OwnLabel(txt("gui.height") + ":", skin);
 
@@ -219,7 +217,6 @@ public class PreferencesWindow extends GenericDialog {
         windowedResolutions.add(widthField).left().padRight(pad);
         windowedResolutions.add(heightLabel).left().padRight(pad);
         windowedResolutions.add(heightField).left().row();
-        windowedResolutions.add(resizable).left().colspan(4);
 
         // Radio buttons
         fullscreen = new OwnCheckBox(txt("gui.fullscreen"), skin, "radio", pad);
@@ -227,7 +224,7 @@ public class PreferencesWindow extends GenericDialog {
             @Override
             public boolean handle(Event event) {
                 if (event instanceof ChangeEvent) {
-                    selectFullscreen(fullscreen.isChecked(), widthField, heightField, fullscreenResolutions, resizable, widthLabel, heightLabel);
+                    selectFullscreen(fullscreen.isChecked(), widthField, heightField, fullscreenResolutions, widthLabel, heightLabel);
                     return true;
                 }
                 return false;
@@ -240,14 +237,14 @@ public class PreferencesWindow extends GenericDialog {
             @Override
             public boolean handle(Event event) {
                 if (event instanceof ChangeEvent) {
-                    selectFullscreen(!windowed.isChecked(), widthField, heightField, fullscreenResolutions, resizable, widthLabel, heightLabel);
+                    selectFullscreen(!windowed.isChecked(), widthField, heightField, fullscreenResolutions, widthLabel, heightLabel);
                     return true;
                 }
                 return false;
             }
         });
         windowed.setChecked(!GlobalConf.screen.FULLSCREEN);
-        selectFullscreen(GlobalConf.screen.FULLSCREEN, widthField, heightField, fullscreenResolutions, resizable, widthLabel, heightLabel);
+        selectFullscreen(GlobalConf.screen.FULLSCREEN, widthField, heightField, fullscreenResolutions, widthLabel, heightLabel);
 
         new ButtonGroup<CheckBox>(fullscreen, windowed);
 
@@ -1086,7 +1083,11 @@ public class PreferencesWindow extends GenericDialog {
         // Add all properties to GlobalConf.instance
 
         final boolean reloadFullscreenMode = fullscreen.isChecked() != GlobalConf.screen.FULLSCREEN;
-        final boolean reloadScreenMode = reloadFullscreenMode || (GlobalConf.screen.FULLSCREEN && (GlobalConf.screen.FULLSCREEN_WIDTH != fullscreenResolutions.getSelected().width || GlobalConf.screen.FULLSCREEN_HEIGHT != fullscreenResolutions.getSelected().height)) || (!GlobalConf.screen.FULLSCREEN && (GlobalConf.screen.SCREEN_WIDTH != Integer.parseInt(widthField.getText())) || GlobalConf.screen.SCREEN_HEIGHT != Integer.parseInt(heightField.getText()));
+        final boolean reloadScreenMode = reloadFullscreenMode
+                || (GlobalConf.screen.FULLSCREEN
+                        && (GlobalConf.screen.FULLSCREEN_WIDTH != fullscreenResolutions.getSelected().width || GlobalConf.screen.FULLSCREEN_HEIGHT != fullscreenResolutions.getSelected().height))
+                || (!GlobalConf.screen.FULLSCREEN && (GlobalConf.screen.SCREEN_WIDTH != Integer.parseInt(widthField.getText()))
+                        || GlobalConf.screen.SCREEN_HEIGHT != Integer.parseInt(heightField.getText()));
 
         GlobalConf.screen.FULLSCREEN = fullscreen.isChecked();
 
@@ -1097,7 +1098,6 @@ public class PreferencesWindow extends GenericDialog {
         // Windowed options
         GlobalConf.screen.SCREEN_WIDTH = Integer.parseInt(widthField.getText());
         GlobalConf.screen.SCREEN_HEIGHT = Integer.parseInt(heightField.getText());
-        GlobalConf.screen.RESIZABLE = resizable.isChecked();
 
         // Graphics
         ComboBoxBean bean = gquality.getSelected();
@@ -1207,7 +1207,8 @@ public class PreferencesWindow extends GenericDialog {
         }
     }
 
-    private void selectFullscreen(boolean fullscreen, OwnTextField widthField, OwnTextField heightField, SelectBox<DisplayMode> fullScreenResolutions, CheckBox resizable, OwnLabel widthLabel, OwnLabel heightLabel) {
+    private void selectFullscreen(boolean fullscreen, OwnTextField widthField, OwnTextField heightField, SelectBox<DisplayMode> fullScreenResolutions, OwnLabel widthLabel,
+            OwnLabel heightLabel) {
         if (fullscreen) {
             GlobalConf.screen.SCREEN_WIDTH = fullScreenResolutions.getSelected().width;
             GlobalConf.screen.SCREEN_HEIGHT = fullScreenResolutions.getSelected().height;
@@ -1216,7 +1217,7 @@ public class PreferencesWindow extends GenericDialog {
             GlobalConf.screen.SCREEN_HEIGHT = Integer.parseInt(heightField.getText());
         }
 
-        enableComponents(!fullscreen, widthField, heightField, resizable, widthLabel, heightLabel);
+        enableComponents(!fullscreen, widthField, heightField, widthLabel, heightLabel);
         enableComponents(fullscreen, fullScreenResolutions);
     }
 
