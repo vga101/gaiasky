@@ -26,7 +26,7 @@ uniform int u_lightScattering;
 
 // Constants as a factor of the radius
 #define model_const 172.4643429
-#define rays_const 10000000.0
+#define rays_const 100000000.0
 
 // Decays
 #define corona_decay 0.2
