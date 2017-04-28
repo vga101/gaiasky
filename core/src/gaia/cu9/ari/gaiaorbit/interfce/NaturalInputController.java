@@ -75,6 +75,17 @@ public class NaturalInputController extends GestureDetector {
     private Vector2 gesture = new Vector2();
     private Vector3d aux;
 
+    /** dx(mouse pointer) since last time **/
+    private double dragDx;
+    /** dy(mouse pointer) since last time **/
+    private double dragDy;
+    /** Smoothing factor applied in the non-cinematic mode **/
+    private double noAccelSmoothing;
+    /** Scaling factor applied in the non-cinematic mode **/
+    private double noAccelFactor;
+    /** Drag vectors **/
+    private Vector2 currentDrag, lastDrag;
+
     /** Save time of last click, in ms */
     private long lastClickTime = -1;
     /** Maximum double click time, in ms **/
@@ -138,6 +149,14 @@ public class NaturalInputController extends GestureDetector {
         this.MOVE_PX_DIST = !Constants.mobile ? (float) Math.max(5, Gdx.graphics.getWidth() * 0.01) : (float) Math.max(80, Gdx.graphics.getWidth() * 0.05);
         this.MAX_PX_DIST = !Constants.mobile ? 5 : 150;
 
+        this.dragDx = 0;
+        this.dragDy = 0;
+        this.noAccelSmoothing = 16.0;
+        this.noAccelFactor = 10.0;
+
+        this.currentDrag = new Vector2();
+        this.lastDrag = new Vector2();
+
         pressedKeys = new HashSet<Integer>();
     }
 
@@ -174,7 +193,8 @@ public class NaturalInputController extends GestureDetector {
         Vector3 pos = new Vector3();
         while (it.hasNext()) {
             CelestialBody s = it.next();
-            if (s.withinMagLimit() && (!(s instanceof Particle) || (s instanceof Particle && ((Particle) s).octant == null) || (s instanceof Particle && ((Particle) s).octant != null && ((Particle) s).octant.observed))) {
+            if (s.withinMagLimit() && (!(s instanceof Particle) || (s instanceof Particle && ((Particle) s).octant == null)
+                    || (s instanceof Particle && ((Particle) s).octant != null && ((Particle) s).octant.observed))) {
                 Vector3d posd = s.getPosition(aux);
                 pos.set(posd.valuesf());
 
@@ -260,10 +280,13 @@ public class NaturalInputController extends GestureDetector {
                         }
                     }
                 });
+                dragDx = 0;
+                dragDy = 0;
                 lastClickTime = currentTime;
             } else if (button == this.button && button == Input.Buttons.RIGHT) {
                 // Ensure Octants observed property is computed
                 Gdx.app.postRunnable(new Runnable() {
+
                     @Override
                     public void run() {
                         // 5% of width pixels distance
@@ -279,6 +302,7 @@ public class NaturalInputController extends GestureDetector {
                             }
                         }
                     }
+
                 });
             }
 
@@ -292,28 +316,45 @@ public class NaturalInputController extends GestureDetector {
 
     protected boolean processDrag(double deltaX, double deltaY, int button) {
         boolean accel = GlobalConf.scene.CINEMATIC_CAMERA;
-        double factor = accel ? 1.0 : 10.0;
-        double dx = deltaX * factor;
-        double dy = deltaY * factor;
+        if (accel) {
+            dragDx = deltaX;
+            dragDy = deltaY;
+        } else {
+            currentDrag.set((float) deltaX, (float) deltaY);
+            // Check orientation of last vs current
+            if (Math.abs(currentDrag.angle(lastDrag)) > 90) {
+                // Reset
+                dragDx = 0;
+                dragDy = 0;
+            }
 
-        System.out.println(deltaX + ", " + deltaY + " / " + dx + ", " + dy);
+            dragDx = lowPass(dragDx, deltaX * noAccelFactor, noAccelSmoothing);
+            dragDy = lowPass(dragDy, deltaY * noAccelFactor, noAccelSmoothing);
+            // Update last drag
+            lastDrag.set(currentDrag);
+        }
 
         if (button == leftMouseButton) {
             if (isKeyPressed(rollKey)) {
                 // camera.rotate(camera.direction, deltaX * rotateAngle);
-                if (dx != 0)
-                    camera.addRoll(dx, accel);
+                if (dragDx != 0)
+                    camera.addRoll(dragDx, accel);
             } else {
-                camera.addRotateMovement(dx, dy, false, accel);
+                camera.addRotateMovement(dragDx, dragDy, false, accel);
             }
         } else if (button == rightMouseButton) {
             // cam.naturalCamera.addPanMovement(deltaX, deltaY);
-            camera.addRotateMovement(dx, dy, true, accel);
+            camera.addRotateMovement(dragDx, dragDy, true, accel);
         } else if (button == middleMouseButton) {
-            if (dx != 0)
-                camera.addForwardForce(dx);
+            if (dragDx != 0)
+                camera.addForwardForce(dragDx);
         }
+
         return false;
+    }
+
+    private double lowPass(double smoothedValue, double newValue, double smoothing) {
+        return smoothedValue + (newValue - smoothedValue) / smoothing;
     }
 
     @Override
