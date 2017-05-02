@@ -116,57 +116,52 @@ public class OctahedronSphereCreator extends ModelCreator {
         this.hardEdges = hardEdges;
         this.middlePointIndexCache = new HashMap<Long, Integer>();
 
-        // Add four top points (0, 1, 2, 3)
+        // Add four top points (0,1,2,3)
         for (int i = 0; i < 4; i++)
             addVertex(new Vector3(0, 1, 0), radius);
 
-        // Add five middle vertices, +x, +z, -x, -z, +x (4, 5, 6, 7, 8)
-        addVertex(new Vector3(1, 0, 0), radius);
+        // Add five middle vertices, +z +x -z -x +z (4,5,6,7,8)
         addVertex(new Vector3(0, 0, 1), radius);
-        addVertex(new Vector3(-1, 0, 0), radius);
-        addVertex(new Vector3(0, 0, -1), radius);
         addVertex(new Vector3(1, 0, 0), radius);
+        addVertex(new Vector3(0, 0, -1), radius);
+        addVertex(new Vector3(-1, 0, 0), radius);
+        addVertex(new Vector3(0, 0, 1), radius);
 
-        // Add four bottom points (9, 10, 11, 12)
+        // Add four bottom points  (9,10,11,12)
         for (int i = 0; i < 4; i++)
             addVertex(new Vector3(0, -1, 0), radius);
 
         /**
          *  Now the 8 faces are:
          *  
-         *  TOP
-         *  0-5-4
-         *  1-8-7
-         *  2-7-6
-         *  3-6-5
+         *  TOP HALF
+         *  1-4-5
+         *  2-5-6
+         *  3-6-7
+         *  0-7-8
          *  
-         *  
-         *  BOTTOM
-         *  12-4-5
-         *  11-7-8
-         *  10-6-7
-         *  9-5-6
+         *  BOTTOM HALF
+         *  ?
          */
 
         // SEAM (+1): 1-5-13
         Set<Integer> seam = new HashSet<Integer>();
-        seam.add(2);
-        seam.add(8);
-        seam.add(12);
+        seam.add(1);
+        seam.add(9);
 
         List<IFace> faces = new ArrayList<IFace>();
 
         // 4 top faces
-        addFace(faces, flipNormals, 1, 6, 5);
-        addFace(faces, flipNormals, 2, 9, 8);
-        addFace(faces, flipNormals, 3, 8, 7);
-        addFace(faces, flipNormals, 4, 7, 6);
+        addFace(faces, flipNormals, 2,5,6);
+        addFace(faces, flipNormals, 3,6,7);
+        addFace(faces, flipNormals, 4,7,8);
+        addFace(faces, flipNormals, 1,8,9);
 
         // 4 bottom faces
-        addFace(faces, flipNormals, 13, 5, 6);
-        addFace(faces, flipNormals, 12, 8, 9);
-        addFace(faces, flipNormals, 11, 7, 8);
-        addFace(faces, flipNormals, 10, 6, 7);
+        //        addFace(faces, flipNormals, 13, 5, 6);
+        //        addFace(faces, flipNormals, 12, 8, 9);
+        //        addFace(faces, flipNormals, 11, 7, 8);
+        //        addFace(faces, flipNormals, 10, 6, 7);
 
         // refine triangles
         for (int i = 0; i < divisions; i++) {

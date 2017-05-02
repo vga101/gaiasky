@@ -207,34 +207,35 @@ void main() {
     vec3 atmosphere = v_atmosphereColor;
 
     #ifdef normalTextureFlag
-	vec4 N = vec4(normalize(texture2D(u_normalTexture, g_texCoord0, TEXTURE_LOD_BIAS).xyz * 2.0 - 1.0), 1.0);
-	#ifdef environmentCubemapFlag
-	    vec3 reflectDir = normalize(v_reflect + (vec3(0.0, 0.0, 1.0) - N.xyz));
-	#endif // environmentCubemapFlag
+		vec3 N = normalize(vec3(texture2D(u_normalTexture, g_texCoord0, TEXTURE_LOD_BIAS).xyz * 2.0 - 1.0));
+		#ifdef environmentCubemapFlag
+			vec3 reflectDir = normalize(v_reflect + (vec3(0.0, 0.0, 1.0) - N.xyz));
+		#endif // environmentCubemapFlag
     #else
-	vec4 N = vec4(0.0, 0.0, 1.0, 1.0);
-	#ifdef environmentCubemapFlag
-	    vec3 reflectDir = normalize(v_reflect);
-	#endif // environmentCubemapFlag
+	    // Normal in pixel space
+	    vec3 N = vec3(0.0, 0.0, 1.0);
+		#ifdef environmentCubemapFlag
+			vec3 reflectDir = normalize(v_reflect);
+		#endif // environmentCubemapFlag
     #endif // normalTextureFlag
 
     // see http://http.developer.nvidia.com/CgTutorial/cg_tutorial_chapter05.html
     vec3 L = normalize(v_lightDir);
     vec3 V = normalize(v_viewDir);
     vec3 H = normalize(L + V);
-    float NL = dot(N.xyz, L);
-    float NH = max(0.0, dot(N.xyz, H));
+    float NL = clamp(dot(N, L), 0.0, 1.0);
+    float NH = max(0.0, dot(N, H));
 
     float specOpacity = 1.0; //(1.0 - diffuse.w);
     float spec = min(1.0, pow(NH, 40.0) * specOpacity);
     float selfShadow = saturate(4.0 * NL);
 
     #ifdef environmentCubemapFlag
-	vec3 environment = textureCube(u_environmentCubemap, reflectDir).rgb;
-	specular *= environment;
-	#ifdef reflectionColorFlag
-	    diffuse.rgb = saturate(vec3(1.0) - u_reflectionColor.rgb) * diffuse.rgb + environment * u_reflectionColor.rgb;
-	#endif // reflectionColorFlag
+		vec3 environment = textureCube(u_environmentCubemap, reflectDir).rgb;
+		specular *= environment;
+		#ifdef reflectionColorFlag
+			diffuse.rgb = saturate(vec3(1.0) - u_reflectionColor.rgb) * diffuse.rgb + environment * u_reflectionColor.rgb;
+		#endif // reflectionColorFlag
     #endif // environmentCubemapFlag
 
     #ifdef shadowMapFlag
