@@ -611,7 +611,8 @@ public class MeshBuilder2 implements MeshPartBuilder2 {
         patch(vertTmp1.set(corner00, normal, null, null).setUV(uMin, vMax), vertTmp2.set(corner10, normal, null, null).setUV(uMax, vMax), vertTmp3.set(corner11, normal, null, null).setUV(uMax, vMin), vertTmp4.set(corner01, normal, null, null).setUV(uMin, vMin), divisionsU, divisionsV);
     }
 
-    public void patch(float x00, float y00, float z00, float x10, float y10, float z10, float x11, float y11, float z11, float x01, float y01, float z01, float normalX, float normalY, float normalZ, int divisionsU, int divisionsV) {
+    public void patch(float x00, float y00, float z00, float x10, float y10, float z10, float x11, float y11, float z11, float x01, float y01, float z01, float normalX, float normalY, float normalZ,
+            int divisionsU, int divisionsV) {
         patch(vertTmp1.set(null).setPos(x00, y00, z00).setNor(normalX, normalY, normalZ).setUV(uMin, vMax), vertTmp2.set(null).setPos(x10, y10, z10).setNor(normalX, normalY, normalZ).setUV(uMax, vMax), vertTmp3.set(null).setPos(x11, y11, z11).setNor(normalX, normalY, normalZ).setUV(uMax, vMin), vertTmp4.set(null).setPos(x01, y01, z01).setNor(normalX, normalY, normalZ).setUV(uMin, vMin), divisionsU, divisionsV);
     }
 
@@ -697,7 +698,8 @@ public class MeshBuilder2 implements MeshPartBuilder2 {
     }
 
     @Override
-    public void circle(float radius, int divisions, float centerX, float centerY, float centerZ, float normalX, float normalY, float normalZ, float tangentX, float tangentY, float tangentZ, float binormalX, float binormalY, float binormalZ) {
+    public void circle(float radius, int divisions, float centerX, float centerY, float centerZ, float normalX, float normalY, float normalZ, float tangentX, float tangentY, float tangentZ,
+            float binormalX, float binormalY, float binormalZ) {
         circle(radius, divisions, centerX, centerY, centerZ, normalX, normalY, normalZ, tangentX, tangentY, tangentZ, binormalX, binormalY, binormalZ, 0f, 360f);
     }
 
@@ -717,7 +719,8 @@ public class MeshBuilder2 implements MeshPartBuilder2 {
     }
 
     @Override
-    public void circle(float radius, int divisions, float centerX, float centerY, float centerZ, float normalX, float normalY, float normalZ, float tangentX, float tangentY, float tangentZ, float binormalX, float binormalY, float binormalZ, float angleFrom, float angleTo) {
+    public void circle(float radius, int divisions, float centerX, float centerY, float centerZ, float normalX, float normalY, float normalZ, float tangentX, float tangentY, float tangentZ,
+            float binormalX, float binormalY, float binormalZ, float angleFrom, float angleTo) {
         ellipse(radius * 2, radius * 2, 0, 0, divisions, centerX, centerY, centerZ, normalX, normalY, normalZ, tangentX, tangentY, tangentZ, binormalX, binormalY, binormalZ, angleFrom, angleTo);
     }
 
@@ -737,7 +740,8 @@ public class MeshBuilder2 implements MeshPartBuilder2 {
     }
 
     @Override
-    public void ellipse(float width, float height, int divisions, float centerX, float centerY, float centerZ, float normalX, float normalY, float normalZ, float tangentX, float tangentY, float tangentZ, float binormalX, float binormalY, float binormalZ) {
+    public void ellipse(float width, float height, int divisions, float centerX, float centerY, float centerZ, float normalX, float normalY, float normalZ, float tangentX, float tangentY,
+            float tangentZ, float binormalX, float binormalY, float binormalZ) {
         ellipse(width, height, divisions, centerX, centerY, centerZ, normalX, normalY, normalZ, tangentX, tangentY, tangentZ, binormalX, binormalY, binormalZ, 0f, 360f);
     }
 
@@ -757,7 +761,8 @@ public class MeshBuilder2 implements MeshPartBuilder2 {
     }
 
     @Override
-    public void ellipse(float width, float height, int divisions, float centerX, float centerY, float centerZ, float normalX, float normalY, float normalZ, float tangentX, float tangentY, float tangentZ, float binormalX, float binormalY, float binormalZ, float angleFrom, float angleTo) {
+    public void ellipse(float width, float height, int divisions, float centerX, float centerY, float centerZ, float normalX, float normalY, float normalZ, float tangentX, float tangentY,
+            float tangentZ, float binormalX, float binormalY, float binormalZ, float angleFrom, float angleTo) {
         ellipse(width, height, 0f, 0f, divisions, centerX, centerY, centerZ, normalX, normalY, normalZ, tangentX, tangentY, tangentZ, binormalX, binormalY, binormalZ, angleFrom, angleTo);
     }
 
@@ -772,7 +777,8 @@ public class MeshBuilder2 implements MeshPartBuilder2 {
     }
 
     @Override
-    public void ellipse(float width, float height, float innerWidth, float innerHeight, int divisions, float centerX, float centerY, float centerZ, float normalX, float normalY, float normalZ, float angleFrom, float angleTo) {
+    public void ellipse(float width, float height, float innerWidth, float innerHeight, int divisions, float centerX, float centerY, float centerZ, float normalX, float normalY, float normalZ,
+            float angleFrom, float angleTo) {
         tempV1.set(normalX, normalY, normalZ).crs(0, 0, 1);
         tempV2.set(normalX, normalY, normalZ).crs(0, 1, 0);
         if (tempV2.len2() > tempV1.len2())
@@ -782,7 +788,8 @@ public class MeshBuilder2 implements MeshPartBuilder2 {
     }
 
     @Override
-    public void ellipse(float width, float height, float innerWidth, float innerHeight, int divisions, float centerX, float centerY, float centerZ, float normalX, float normalY, float normalZ, float tangentX, float tangentY, float tangentZ, float binormalX, float binormalY, float binormalZ, float angleFrom, float angleTo) {
+    public void ellipse(float width, float height, float innerWidth, float innerHeight, int divisions, float centerX, float centerY, float centerZ, float normalX, float normalY, float normalZ,
+            float tangentX, float tangentY, float tangentZ, float binormalX, float binormalY, float binormalZ, float angleFrom, float angleTo) {
         if (innerWidth <= 0 || innerHeight <= 0) {
             ensureTriangles(divisions + 2, divisions);
         } else if (innerWidth == width && innerHeight == height) {
@@ -1115,12 +1122,62 @@ public class MeshBuilder2 implements MeshPartBuilder2 {
     }
 
     @Override
+    public void icosphere(float radius, int divisions, boolean flipNormals, boolean hardEdges) {
+        icosphere(radius, divisions, flipNormals, hardEdges, 0, Short.MAX_VALUE);
+    }
+
+    @Override
+    public void icosphere(float radius, int divisions, boolean flipNormals, boolean hardEdges, int startFace, int nfaces) {
+        ensureTriangles(10 * (int) Math.pow(2, 2 * divisions - 1));
+        IcoSphereCreator isc = new IcoSphereCreator();
+        isc.create(radius, divisions, flipNormals, hardEdges);
+
+        for (int j = startFace; j < startFace + nfaces && j < isc.faces.size(); j++) {
+            IFace face = isc.faces.get(j);
+
+            short[] tri = new short[3];
+            for (int i = 0; i < 3; i++) {
+                VertexInfo v = vertTmp1.set(isc.vertices.get(face.v()[i] - 1), isc.normals.get(face.n()[i] - 1), null, isc.uv.get(face.v()[i] - 1));
+                short idx = vertex(v);
+                tri[i] = idx;
+            }
+            triangle(tri[0], tri[1], tri[2]);
+        }
+    }
+
+    @Override
+    public void octahedronsphere(float radius, int divisions, boolean flipNormals, boolean hardEdges) {
+        octahedronsphere(radius, divisions, flipNormals, hardEdges, 0, Short.MAX_VALUE);
+    }
+
+    @Override
+    public void octahedronsphere(float radius, int divisions, boolean flipNormals, boolean hardEdges, int startFace, int nfaces) {
+        ensureTriangles((int) Math.pow(2, 2 * divisions + 3));
+        OctahedronSphereCreator osc = new OctahedronSphereCreator();
+        osc.create(radius, divisions, flipNormals, hardEdges);
+
+        for (int j = startFace; j < startFace + nfaces && j < osc.faces.size(); j++) {
+            IFace face = osc.faces.get(j);
+
+            short[] tri = new short[3];
+            for (int i = 0; i < 3; i++) {
+                VertexInfo v = vertTmp1.set(osc.vertices.get(face.v()[i] - 1), osc.normals.get(face.n()[i] - 1), null, osc.uv.get(face.v()[i] - 1));
+                short idx = vertex(v);
+                tri[i] = idx;
+            }
+            triangle(tri[0], tri[1], tri[2]);
+        }
+
+    }
+
+    @Override
     public void sphere(float width, float height, float depth, int divisionsU, int divisionsV, boolean flipNormals, float angleUFrom, float angleUTo, float angleVFrom, float angleVTo) {
         sphere(matTmp1.idt(), width, height, depth, divisionsU, divisionsV, flipNormals, angleUFrom, angleUTo, angleVFrom, angleVTo);
     }
 
     @Override
-    public void sphere(final Matrix4 transform, float width, float height, float depth, int divisionsU, int divisionsV, boolean flipNormals, float angleUFrom, float angleUTo, float angleVFrom, float angleVTo) {
+    public void sphere(final Matrix4 transform, float width, float height, float depth, int divisionsU, int divisionsV, boolean flipNormals, float angleUFrom, float angleUTo, float angleVFrom,
+            float angleVTo) {
         // FIXME create better sphere method (- only one vertex for each pole, - position)
         final float hw = width * 0.5f;
         final float hh = height * 0.5f;

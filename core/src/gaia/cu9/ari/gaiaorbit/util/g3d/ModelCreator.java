@@ -1,8 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.util.g3d;
 
-import gaia.cu9.ari.gaiaorbit.util.format.INumberFormat;
-import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
-
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -11,6 +8,9 @@ import java.util.List;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+
+import gaia.cu9.ari.gaiaorbit.util.format.INumberFormat;
+import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
 
 public abstract class ModelCreator {
     public interface IFace {
@@ -30,7 +30,7 @@ public abstract class ModelCreator {
         /** This stores the indices for both the vertices and the UV coordinates **/
         public int[] v;
 
-        /** This stores the indeces for the normals **/
+        /** This stores the indices for the normals **/
         public int[] n;
 
         /**
@@ -68,7 +68,7 @@ public abstract class ModelCreator {
         }
     }
 
-    private int[] flip(int[] v, int startIndex) {
+    protected int[] flip(int[] v, int startIndex) {
         for (int i = startIndex; i < v.length / 2; i++) {
             int temp = v[i];
             v[i] = v[v.length - i + startIndex - 1];

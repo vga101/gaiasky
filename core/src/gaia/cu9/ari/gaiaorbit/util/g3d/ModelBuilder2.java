@@ -207,7 +207,8 @@ public class ModelBuilder2 {
      * contain are not managed, use {@link Model#manageDisposable(Disposable)} to add those to the model.
      * @param attributes bitwise mask of the {@link com.badlogic.gdx.graphics.VertexAttributes.Usage}, only Position, Color, Normal
      *           and TextureCoordinates is supported. */
-    public Model createRect(float x00, float y00, float z00, float x10, float y10, float z10, float x11, float y11, float z11, float x01, float y01, float z01, float normalX, float normalY, float normalZ, final Material material, final long attributes) {
+    public Model createRect(float x00, float y00, float z00, float x10, float y10, float z10, float x11, float y11, float z11, float x01, float y01, float z01, float normalX, float normalY,
+            float normalZ, final Material material, final long attributes) {
         return createRect(x00, y00, z00, x10, y10, z10, x11, y11, z11, x01, y01, z01, normalX, normalY, normalZ, GL20.GL_TRIANGLES, material, attributes);
     }
 
@@ -215,7 +216,8 @@ public class ModelBuilder2 {
      * contain are not managed, use {@link Model#manageDisposable(Disposable)} to add those to the model.
      * @param attributes bitwise mask of the {@link com.badlogic.gdx.graphics.VertexAttributes.Usage}, only Position, Color, Normal
      *           and TextureCoordinates is supported. */
-    public Model createRect(float x00, float y00, float z00, float x10, float y10, float z10, float x11, float y11, float z11, float x01, float y01, float z01, float normalX, float normalY, float normalZ, int primitiveType, final Material material, final long attributes) {
+    public Model createRect(float x00, float y00, float z00, float x10, float y10, float z10, float x11, float y11, float z11, float x01, float y01, float z01, float normalX, float normalY,
+            float normalZ, int primitiveType, final Material material, final long attributes) {
         begin();
         part("rect", primitiveType, attributes, material).rect(x00, y00, z00, x10, y10, z10, x11, y11, z11, x01, y01, z01, normalX, normalY, normalZ);
         return end();
@@ -327,7 +329,8 @@ public class ModelBuilder2 {
      * are not managed, use {@link Model#manageDisposable(Disposable)} to add those to the model.
      * @param attributes bitwise mask of the {@link com.badlogic.gdx.graphics.VertexAttributes.Usage}, only Position, Color, Normal
      *           and TextureCoordinates is supported. */
-    public Model createSphere(float width, float height, float depth, int divisionsU, int divisionsV, final Material material, final long attributes, float angleUFrom, float angleUTo, float angleVFrom, float angleVTo) {
+    public Model createSphere(float width, float height, float depth, int divisionsU, int divisionsV, final Material material, final long attributes, float angleUFrom, float angleUTo,
+            float angleVFrom, float angleVTo) {
         return createSphere(width, height, depth, divisionsU, divisionsV, GL20.GL_TRIANGLES, material, attributes, angleUFrom, angleUTo, angleVFrom, angleVTo);
     }
 
@@ -335,7 +338,8 @@ public class ModelBuilder2 {
      * are not managed, use {@link Model#manageDisposable(Disposable)} to add those to the model.
      * @param attributes bitwise mask of the {@link com.badlogic.gdx.graphics.VertexAttributes.Usage}, only Position, Color, Normal
      *           and TextureCoordinates is supported. */
-    public Model createSphere(float width, float height, float depth, int divisionsU, int divisionsV, int primitiveType, final Material material, final long attributes, float angleUFrom, float angleUTo, float angleVFrom, float angleVTo) {
+    public Model createSphere(float width, float height, float depth, int divisionsU, int divisionsV, int primitiveType, final Material material, final long attributes, float angleUFrom,
+            float angleUTo, float angleVFrom, float angleVTo) {
         begin();
         part("cylinder", primitiveType, attributes, material).sphere(width, height, depth, divisionsU, divisionsV, angleUFrom, angleUTo, angleVFrom, angleVTo);
         return end();
@@ -517,11 +521,71 @@ public class ModelBuilder2 {
         return end();
     }
 
+    /** Convenience method to create a model with a single node containing an ico-sphere shape. The resources the Material might contain
+     * are not managed, use {@link Model#manageDisposable(Disposable)} to add those to the model.
+     * @param attributes bitwise mask of the {@link com.badlogic.gdx.graphics.VertexAttributes.Usage}, only Position, Color, Normal
+     *           and TextureCoordinates is supported. */
+    public Model createIcoSphere(float radius, int recursion, boolean flipNormals, boolean hardEdges, final Material material,
+            final long attributes) {
+        return createIcoSphere(radius, recursion, flipNormals, hardEdges, GL20.GL_TRIANGLES, material, attributes);
+    }
+
+    public Model createIcoSphere(float radius, int recursion, boolean flipNormals, boolean hardEdges, int primitiveType, final Material material,
+            final long attributes) {
+        begin();
+        int nfaces = (int) (10 * Math.pow(2, 2 * recursion - 1));
+        if (nfaces * 3 <= Short.MAX_VALUE) {
+            // All in one part
+            part("icosphere", primitiveType, attributes, material).icosphere(radius, recursion, flipNormals, hardEdges);
+        } else {
+            // Separate in more than one part
+            int maxfaces = Short.MAX_VALUE / 3;
+            int chunks = nfaces / maxfaces + 1;
+            for (int i = 0; i < chunks; i++) {
+                // Chunk i
+                int startFace = i * maxfaces;
+                part("icosphere", primitiveType, attributes, material).icosphere(radius, recursion, flipNormals, hardEdges, startFace, maxfaces);
+            }
+
+        }
+        return end();
+    }
+
+    /** Convenience method to create a model with a single node containing an octahedron-sphere shape. The resources the Material might contain
+     * are not managed, use {@link Model#manageDisposable(Disposable)} to add those to the model.
+     * @param attributes bitwise mask of the {@link com.badlogic.gdx.graphics.VertexAttributes.Usage}, only Position, Color, Normal
+     *           and TextureCoordinates is supported. */
+    public Model createOctahedronSphere(float radius, int divisions, boolean flipNormals, boolean hardEdges, final Material material,
+            final long attributes) {
+        return createOctahedronSphere(radius, divisions, flipNormals, hardEdges, GL20.GL_TRIANGLES, material, attributes);
+    }
+
+    /**
+     * Creates an octahedron-sphere
+     * 
+     * @param radius
+     * @param divisions
+     * @param flipNormals
+     * @param hardEdges
+     * @param primitiveType
+     * @param material
+     * @param attributes
+     * @return
+     */
+    public Model createOctahedronSphere(float radius, int divisions, boolean flipNormals, boolean hardEdges, int primitiveType, final Material material,
+            final long attributes) {
+        begin();
+        // All in one part
+        part("octahedronsphere", primitiveType, attributes, material).octahedronsphere(radius, divisions, flipNormals, hardEdges);
+        return end();
+    }
+
     /** Convenience method to create a sphere with a ring. Useful for ringed planets such as Saturn. The resources the Materials might contain
      * are not managed, use {@link Model#manageDisposable(Disposable)} to add those to the model.
      * @param attributes bitwise mask of the {@link com.badlogic.gdx.graphics.VertexAttributes.Usage}, only Position, Color, Normal
      *           and TextureCoordinates is supported. */
-    public Model createSphereRing(float sphereDiameter, int divisionsU, int divisionsV, float innerRingRadius, float outerRingRadius, int ringDivisions, final Material materialShpere, final Material materialRing, final long attributes) {
+    public Model createSphereRing(float sphereDiameter, int divisionsU, int divisionsV, float innerRingRadius, float outerRingRadius, int ringDivisions, final Material materialShpere,
+            final Material materialRing, final long attributes) {
         begin();
         part("sphere", GL20.GL_TRIANGLES, attributes, materialShpere).sphere(sphereDiameter, sphereDiameter, sphereDiameter, divisionsU, divisionsV, false, 0, 360, 0, 180);
         part("ring", GL20.GL_TRIANGLES, attributes, materialRing).ring(innerRingRadius, outerRingRadius, ringDivisions, false);
@@ -565,7 +629,8 @@ public class ModelBuilder2 {
      * are not managed, use {@link Model#manageDisposable(Disposable)} to add those to the model.
      * @param attributes bitwise mask of the {@link com.badlogic.gdx.graphics.VertexAttributes.Usage}, only Position, Color, Normal
      *           and TextureCoordinates is supported. */
-    public Model createSphere(float width, float height, float depth, int divisionsU, int divisionsV, boolean flipNormals, final Material material, final long attributes, float angleUFrom, float angleUTo, float angleVFrom, float angleVTo) {
+    public Model createSphere(float width, float height, float depth, int divisionsU, int divisionsV, boolean flipNormals, final Material material, final long attributes, float angleUFrom,
+            float angleUTo, float angleVFrom, float angleVTo) {
         return createSphere(width, height, depth, divisionsU, divisionsV, flipNormals, GL20.GL_TRIANGLES, material, attributes, angleUFrom, angleUTo, angleVFrom, angleVTo);
     }
 
@@ -573,7 +638,8 @@ public class ModelBuilder2 {
      * are not managed, use {@link Model#manageDisposable(Disposable)} to add those to the model.
      * @param attributes bitwise mask of the {@link com.badlogic.gdx.graphics.VertexAttributes.Usage}, only Position, Color, Normal
      *           and TextureCoordinates is supported. */
-    public Model createSphere(float width, float height, float depth, int divisionsU, int divisionsV, boolean flipNormals, int primitiveType, final Material material, final long attributes, float angleUFrom, float angleUTo, float angleVFrom, float angleVTo) {
+    public Model createSphere(float width, float height, float depth, int divisionsU, int divisionsV, boolean flipNormals, int primitiveType, final Material material, final long attributes,
+            float angleUFrom, float angleUTo, float angleVFrom, float angleVTo) {
         begin();
         part("sphere", primitiveType, attributes, material).sphere(width, height, depth, divisionsU, divisionsV, flipNormals, angleUFrom, angleUTo, angleVFrom, angleVTo);
         return end();

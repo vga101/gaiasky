@@ -42,6 +42,20 @@ public class ModelCache {
                 model = mb.createSphere(diameter, quality, quality, flip, mat, attributes);
                 modelCache.put(key, model);
                 break;
+            case "icosphere":
+                Integer recursion = ((Long) params.get("recursion")).intValue();
+                diameter = ((Double) params.get("diameter")).floatValue();
+                flip = (Boolean) params.get("flip");
+                model = mb.createIcoSphere(diameter / 2, recursion, flip, false, mat, attributes);
+                modelCache.put(key, model);
+                break;
+            case "octahedronsphere":
+                Integer divisions = ((Long) params.get("divisions")).intValue();
+                diameter = ((Double) params.get("diameter")).floatValue();
+                flip = (Boolean) params.get("flip");
+                model = mb.createOctahedronSphere(diameter / 2, divisions, flip, false, mat, attributes);
+                modelCache.put(key, model);
+                break;
             case "disc":
                 // Prepare model
                 float diameter2 = ((Double) params.get("diameter")).floatValue() / 2f;
@@ -56,7 +70,7 @@ public class ModelCache {
                 Float width = ((Double) params.get("width")).floatValue();
                 Float height = ((Double) params.get("height")).floatValue();
                 Float depth = ((Double) params.get("depth")).floatValue();
-                Integer divisions = ((Long) params.get("divisions")).intValue();
+                divisions = ((Long) params.get("divisions")).intValue();
                 flip = (Boolean) params.get("flip");
 
                 model = mb.createCylinder(width, height, depth, divisions, flip, mat, attributes);
