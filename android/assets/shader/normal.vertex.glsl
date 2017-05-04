@@ -397,23 +397,20 @@ varying float v_alphaTest;
 #if defined(normalFlag)
     void calculateTangentVectors()
     {
-	g_binormal = vec3(0, g_normal.z, -g_normal.y);
-	//g_binormal = (cross(g_normal, biggestAngle(g_normal, vec3(1.0, 0.0, 0.0), vec3(0.0, 0.0, 1.0))));
-	g_tangent = cross(g_normal, g_binormal);
+		g_binormal = vec3(0, g_normal.z, -g_normal.y);
+		g_tangent = normalize(cross(g_normal, g_binormal));
     }
 #elif defined(binormalFlag)
     void calculateTangentVectors()
     {
-	g_tangent = vec3(-g_binormal.z, 0, g_binormal.x);
-	//g_tangent = (cross(g_binormal, biggestAngle(g_binormal, vec3(0.0, 1.0, 0.0), vec3(0.0, 0.0, 1.0))));
-	g_normal = cross(g_binormal, g_tangent);
+		g_tangent = vec3(-g_binormal.z, 0, g_binormal.x);
+		g_normal = normalize(cross(g_binormal, g_tangent));
     }
 #elif defined(tangentFlag)
     void calculateTangentVectors()
     {
-	g_binormal = vec3(-g_tangent.z, 0, g_tangent.x);
-	//g_binormal = (cross(g_tangent, biggestAngle(g_binormal, vec3(1.0, 0.0, 0.0), vec3(0.0, 0.0, 1.0))));
-	g_normal = cross(g_tangent, g_binormal);
+		g_binormal = vec3(-g_tangent.z, 0, g_tangent.x);
+		g_normal = normalize(cross(g_tangent, g_binormal));
     }
 #endif
 #endif
@@ -519,10 +516,10 @@ void main() {
 	squaredNormal.z * mix(u_ambientCubemap[4], u_ambientCubemap[5], isPositive.z);
     #endif // ambientCubemapFlag
 
-    v_lightDir = -u_dirLights[0].direction * worldToTangent;
+    v_lightDir = normalize(-u_dirLights[0].direction * worldToTangent);
     v_lightCol = u_dirLights[0].color;
     vec3 viewDir = (u_cameraPosition.xyz - g_position.xyz);
-    v_viewDir = viewDir * worldToTangent;
+    v_viewDir = normalize(viewDir * worldToTangent);
     #ifdef environmentCubemapFlag
 	v_reflect = reflect(-viewDir, g_normal);
     #endif // environmentCubemapFlag
