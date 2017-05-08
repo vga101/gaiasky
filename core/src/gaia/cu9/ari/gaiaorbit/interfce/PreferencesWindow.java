@@ -82,7 +82,7 @@ public class PreferencesWindow extends GenericDialog {
 
     private INumberFormat nf3;
 
-    private CheckBox fullscreen, windowed, vsync, multithreadCb, lodFadeCb, cbAutoCamrec, hyg, tgas, tgasMultifile, real, nsl;
+    private CheckBox fullscreen, windowed, vsync, multithreadCb, lodFadeCb, cbAutoCamrec, hyg, tgas, real, nsl;
     private OwnSelectBox<DisplayMode> fullscreenResolutions;
     private OwnSelectBox<ComboBoxBean> gquality, aa, lineRenderer, numThreads, screenshotMode, frameoutputMode;
     private OwnSelectBox<LangComboBoxBean> lang;
@@ -910,15 +910,12 @@ public class PreferencesWindow extends GenericDialog {
         hyg.setChecked(GlobalConf.data.CATALOG_JSON_FILE.equals(GlobalConf.data.HYG_JSON_FILE));
         tgas = new OwnCheckBox(txt("gui.data.tgas"), skin, "radio", pad);
         tgas.setChecked(GlobalConf.data.CATALOG_JSON_FILE.equals(GlobalConf.data.TGAS_JSON_FILE));
-        tgasMultifile = new OwnCheckBox(txt("gui.data.tgas") + " multifile", skin, "radio", pad);
-        tgasMultifile.setChecked(GlobalConf.data.CATALOG_JSON_FILE.equals("data/catalog-tgas-octree-multifile.json"));
 
-        new ButtonGroup<CheckBox>(hyg, tgas, tgasMultifile);
+        new ButtonGroup<CheckBox>(hyg, tgas);
 
         // Add to table
         datasource.add(hyg).left().padBottom(pad).row();
         datasource.add(tgas).left().padBottom(pad).row();
-        datasource.add(tgasMultifile).left().padBottom(pad).row();
         final Cell<Actor> noticeDataCell = datasource.add();
         noticeDataCell.colspan(2).left();
 
@@ -943,7 +940,6 @@ public class PreferencesWindow extends GenericDialog {
         };
         hyg.addListener(dataNoticeListener);
         tgas.addListener(dataNoticeListener);
-        tgasMultifile.addListener(dataNoticeListener);
 
         // Add to content
         contentData.add(titleData).left().padBottom(pad * 2).row();
@@ -1083,11 +1079,7 @@ public class PreferencesWindow extends GenericDialog {
         // Add all properties to GlobalConf.instance
 
         final boolean reloadFullscreenMode = fullscreen.isChecked() != GlobalConf.screen.FULLSCREEN;
-        final boolean reloadScreenMode = reloadFullscreenMode
-                || (GlobalConf.screen.FULLSCREEN
-                        && (GlobalConf.screen.FULLSCREEN_WIDTH != fullscreenResolutions.getSelected().width || GlobalConf.screen.FULLSCREEN_HEIGHT != fullscreenResolutions.getSelected().height))
-                || (!GlobalConf.screen.FULLSCREEN && (GlobalConf.screen.SCREEN_WIDTH != Integer.parseInt(widthField.getText()))
-                        || GlobalConf.screen.SCREEN_HEIGHT != Integer.parseInt(heightField.getText()));
+        final boolean reloadScreenMode = reloadFullscreenMode || (GlobalConf.screen.FULLSCREEN && (GlobalConf.screen.FULLSCREEN_WIDTH != fullscreenResolutions.getSelected().width || GlobalConf.screen.FULLSCREEN_HEIGHT != fullscreenResolutions.getSelected().height)) || (!GlobalConf.screen.FULLSCREEN && (GlobalConf.screen.SCREEN_WIDTH != Integer.parseInt(widthField.getText())) || GlobalConf.screen.SCREEN_HEIGHT != Integer.parseInt(heightField.getText()));
 
         GlobalConf.screen.FULLSCREEN = fullscreen.isChecked();
 
@@ -1139,8 +1131,6 @@ public class PreferencesWindow extends GenericDialog {
             GlobalConf.data.CATALOG_JSON_FILE = GlobalConf.data.HYG_JSON_FILE;
         else if (tgas.isChecked())
             GlobalConf.data.CATALOG_JSON_FILE = GlobalConf.data.TGAS_JSON_FILE;
-        else if (tgasMultifile.isChecked())
-            GlobalConf.data.CATALOG_JSON_FILE = "data/catalog-tgas-octree-multifile.json";
         else if (GlobalConf.data.CATALOG_JSON_FILE == null || GlobalConf.data.CATALOG_JSON_FILE.length() == 0)
             Logger.error(this.getClass().getSimpleName(), "No catalog file selected!");
 
@@ -1207,8 +1197,7 @@ public class PreferencesWindow extends GenericDialog {
         }
     }
 
-    private void selectFullscreen(boolean fullscreen, OwnTextField widthField, OwnTextField heightField, SelectBox<DisplayMode> fullScreenResolutions, OwnLabel widthLabel,
-            OwnLabel heightLabel) {
+    private void selectFullscreen(boolean fullscreen, OwnTextField widthField, OwnTextField heightField, SelectBox<DisplayMode> fullScreenResolutions, OwnLabel widthLabel, OwnLabel heightLabel) {
         if (fullscreen) {
             GlobalConf.screen.SCREEN_WIDTH = fullScreenResolutions.getSelected().width;
             GlobalConf.screen.SCREEN_HEIGHT = fullScreenResolutions.getSelected().height;
