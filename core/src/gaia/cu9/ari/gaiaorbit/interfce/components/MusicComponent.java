@@ -23,6 +23,7 @@ import gaia.cu9.ari.gaiaorbit.util.format.INumberFormat;
 import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnImageButton;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnLabel;
+import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnSlider;
 
 public class MusicComponent extends GuiComponent implements IObserver {
 
@@ -38,6 +39,7 @@ public class MusicComponent extends GuiComponent implements IObserver {
 
     @Override
     public void initialize() {
+        float componentWidth = 140 * GlobalConf.SCALE_FACTOR;
         nf = NumberFormatFactory.getFormatter("000");
         prev = new OwnImageButton(skin, "audio-bwd");
         prev.addListener(new EventListener() {
@@ -79,8 +81,9 @@ public class MusicComponent extends GuiComponent implements IObserver {
         });
         next.addListener(new TextTooltip(txt("gui.music.next"), skin));
 
-        volume = new Slider(Constants.MIN_SLIDER, Constants.MAX_SLIDER, 1, false, skin);
+        volume = new OwnSlider(Constants.MIN_SLIDER, Constants.MAX_SLIDER, 1, false, skin);
         volume.setName("volume");
+        volume.setWidth(componentWidth);
         volume.setValue(MusicManager.instance.getVolume() * Constants.MAX_SLIDER);
         volume.addListener(new EventListener() {
             @Override
@@ -101,7 +104,11 @@ public class MusicComponent extends GuiComponent implements IObserver {
         VerticalGroup musicGroup = new VerticalGroup().align(Align.center).columnAlign(Align.left).space(space3);
 
         HorizontalGroup playGroup = new HorizontalGroup();
-        playGroup.space(space3 * 5);
+        playGroup.setWidth(componentWidth);
+        playGroup.space(45 * GlobalConf.SCALE_FACTOR);
+        prev.align(Align.center);
+        play.align(Align.center);
+        next.align(Align.center);
         playGroup.addActor(prev);
         playGroup.addActor(play);
         playGroup.addActor(next);
