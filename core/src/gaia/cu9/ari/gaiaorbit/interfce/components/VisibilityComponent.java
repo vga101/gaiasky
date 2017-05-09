@@ -197,7 +197,7 @@ public class VisibilityComponent extends GuiComponent implements IObserver {
         visibilityTable.pack();
 
         visibilityTable.row();
-        visibilityTable.add(pmGroup).align(Align.left).colspan(2);
+        visibilityTable.add(pmGroup).padTop(3 * GlobalConf.SCALE_FACTOR).align(Align.left).colspan(2);
 
         properMotions.setChecked(GlobalConf.scene.PROPER_MOTION_VECTORS);
 

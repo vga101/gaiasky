@@ -19,6 +19,8 @@ import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnLabel;
+import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnSlider;
+import gaia.cu9.ari.gaiaorbit.util.scene2d.Separator;
 
 public class VisualEffectsComponent extends GuiComponent implements IObserver {
 
@@ -37,11 +39,14 @@ public class VisualEffectsComponent extends GuiComponent implements IObserver {
 
     public void initialize() {
         float space3 = 3 * GlobalConf.SCALE_FACTOR;
+        float space2 = 2 * GlobalConf.SCALE_FACTOR;
+        float sliderWidth = 140 * GlobalConf.SCALE_FACTOR;
         /** Star brightness **/
         Label sbrightnessLabel = new Label(txt("gui.starbrightness"), skin, "default");
         starbrightnessl = new OwnLabel(Integer.toString((int) (MathUtilsd.lint(GlobalConf.scene.STAR_BRIGHTNESS, Constants.MIN_STAR_BRIGHT, Constants.MAX_STAR_BRIGHT, Constants.MIN_SLIDER, Constants.MAX_SLIDER))), skin);
-        starBrightness = new Slider(Constants.MIN_SLIDER, Constants.MAX_SLIDER, 1, false, skin);
+        starBrightness = new OwnSlider(Constants.MIN_SLIDER, Constants.MAX_SLIDER, 1, false, skin);
         starBrightness.setName("star brightness");
+        starBrightness.setWidth(sliderWidth);
         starBrightness.setValue((float) MathUtilsd.lint(GlobalConf.scene.STAR_BRIGHTNESS, Constants.MIN_STAR_BRIGHT, Constants.MAX_STAR_BRIGHT, Constants.MIN_SLIDER, Constants.MAX_SLIDER));
         starBrightness.addListener(new EventListener() {
             @Override
@@ -62,8 +67,9 @@ public class VisualEffectsComponent extends GuiComponent implements IObserver {
         /** Star size **/
         Label sizeLabel = new Label(txt("gui.star.size"), skin, "default");
         size = new OwnLabel(Integer.toString((int) (MathUtilsd.lint(GlobalConf.scene.STAR_POINT_SIZE, Constants.MIN_STAR_POINT_SIZE, Constants.MAX_STAR_POINT_SIZE, Constants.MIN_SLIDER, Constants.MAX_SLIDER))), skin);
-        starSize = new Slider(Constants.MIN_SLIDER, Constants.MAX_SLIDER, 1, false, skin);
+        starSize = new OwnSlider(Constants.MIN_SLIDER, Constants.MAX_SLIDER, 1, false, skin);
         starSize.setName("star size");
+        starSize.setWidth(sliderWidth);
         starSize.setValue(MathUtilsd.lint(GlobalConf.scene.STAR_POINT_SIZE, Constants.MIN_STAR_POINT_SIZE, Constants.MAX_STAR_POINT_SIZE, Constants.MIN_SLIDER, Constants.MAX_SLIDER));
         starSize.addListener(new EventListener() {
             @Override
@@ -84,8 +90,9 @@ public class VisualEffectsComponent extends GuiComponent implements IObserver {
         /** Star opacity **/
         Label opacityLabel = new Label(txt("gui.star.opacity"), skin, "default");
         opacity = new OwnLabel(Integer.toString((int) (MathUtilsd.lint(GlobalConf.scene.POINT_ALPHA_MIN, Constants.MIN_STAR_MIN_OPACITY, Constants.MAX_STAR_MIN_OPACITY, Constants.MIN_SLIDER, Constants.MAX_SLIDER))), skin);
-        starOpacity = new Slider(Constants.MIN_SLIDER, Constants.MAX_SLIDER, 1, false, skin);
+        starOpacity = new OwnSlider(Constants.MIN_SLIDER, Constants.MAX_SLIDER, 1, false, skin);
         starOpacity.setName("star opacity");
+        starOpacity.setWidth(sliderWidth);
         starOpacity.setValue(MathUtilsd.lint(GlobalConf.scene.POINT_ALPHA_MIN, Constants.MIN_STAR_MIN_OPACITY, Constants.MAX_STAR_MIN_OPACITY, Constants.MIN_SLIDER, Constants.MAX_SLIDER));
         starOpacity.addListener(new EventListener() {
             @Override
@@ -106,8 +113,9 @@ public class VisualEffectsComponent extends GuiComponent implements IObserver {
         /** Ambient light **/
         Label ambientLightLabel = new Label(txt("gui.light.ambient"), skin, "default");
         ambient = new OwnLabel(Integer.toString((int) (GlobalConf.scene.AMBIENT_LIGHT * 100)), skin);
-        ambientLight = new Slider(Constants.MIN_SLIDER, Constants.MAX_SLIDER, 1, false, skin);
+        ambientLight = new OwnSlider(Constants.MIN_SLIDER, Constants.MAX_SLIDER, 1, false, skin);
         ambientLight.setName("ambient light");
+        ambientLight.setWidth(sliderWidth);
         ambientLight.setValue((float) GlobalConf.scene.AMBIENT_LIGHT * 100);
         ambientLight.addListener(new EventListener() {
             @Override
@@ -129,8 +137,9 @@ public class VisualEffectsComponent extends GuiComponent implements IObserver {
             /** Bloom **/
             bloomLabel = new OwnLabel(txt("gui.bloom"), skin, "default");
             bloom = new OwnLabel(Integer.toString((int) (GlobalConf.postprocess.POSTPROCESS_BLOOM_INTENSITY * 10)), skin);
-            bloomEffect = new Slider(Constants.MIN_SLIDER, Constants.MAX_SLIDER, 1, false, skin);
+            bloomEffect = new OwnSlider(Constants.MIN_SLIDER, Constants.MAX_SLIDER, 1, false, skin);
             bloomEffect.setName("bloom effect");
+            bloomEffect.setWidth(sliderWidth);
             bloomEffect.setValue(GlobalConf.postprocess.POSTPROCESS_BLOOM_INTENSITY * 10f);
             bloomEffect.addListener(new EventListener() {
                 @Override
@@ -152,8 +161,9 @@ public class VisualEffectsComponent extends GuiComponent implements IObserver {
             /** Brightness **/
             brightnessl = new OwnLabel(txt("gui.brightness"), skin, "default");
             brightnessLabel = new OwnLabel(Integer.toString((int) MathUtilsd.lint(GlobalConf.postprocess.POSTPROCESS_BRIGHTNESS, Constants.MIN_BRIGHTNESS, Constants.MAX_BRIGHTNESS, Constants.MIN_SLIDER, Constants.MAX_SLIDER)), skin);
-            brightness = new Slider(Constants.MIN_SLIDER, Constants.MAX_SLIDER, 1, false, skin);
+            brightness = new OwnSlider(Constants.MIN_SLIDER, Constants.MAX_SLIDER, 1, false, skin);
             brightness.setName("brightness");
+            brightness.setWidth(sliderWidth);
             brightness.setValue(MathUtilsd.lint(GlobalConf.postprocess.POSTPROCESS_BRIGHTNESS, Constants.MIN_BRIGHTNESS, Constants.MAX_BRIGHTNESS, Constants.MIN_SLIDER, Constants.MAX_SLIDER));
             brightness.addListener(new EventListener() {
                 @Override
@@ -175,8 +185,9 @@ public class VisualEffectsComponent extends GuiComponent implements IObserver {
             /** Contrast **/
             contrastl = new OwnLabel(txt("gui.contrast"), skin, "default");
             contrastLabel = new OwnLabel(Integer.toString((int) MathUtilsd.lint(GlobalConf.postprocess.POSTPROCESS_CONTRAST, Constants.MIN_CONTRAST, Constants.MAX_CONTRAST, Constants.MIN_SLIDER, Constants.MAX_SLIDER)), skin);
-            contrast = new Slider(Constants.MIN_SLIDER, Constants.MAX_SLIDER, 1, false, skin);
+            contrast = new OwnSlider(Constants.MIN_SLIDER, Constants.MAX_SLIDER, 1, false, skin);
             contrast.setName("contrast");
+            contrast.setWidth(sliderWidth);
             contrast.setValue(MathUtilsd.lint(GlobalConf.postprocess.POSTPROCESS_CONTRAST, Constants.MIN_CONTRAST, Constants.MAX_CONTRAST, Constants.MIN_SLIDER, Constants.MAX_SLIDER));
             contrast.addListener(new EventListener() {
                 @Override
@@ -243,21 +254,29 @@ public class VisualEffectsComponent extends GuiComponent implements IObserver {
         }
 
         VerticalGroup lightingGroup = new VerticalGroup().align(Align.left).columnAlign(Align.left);
+        lightingGroup.space(space2);
         lightingGroup.addActor(sbrightnessLabel);
         lightingGroup.addActor(sbrightnessGroup);
+        lightingGroup.addActor(new Separator(skin));
         lightingGroup.addActor(sizeLabel);
         lightingGroup.addActor(sizeGroup);
+        lightingGroup.addActor(new Separator(skin));
         lightingGroup.addActor(opacityLabel);
         lightingGroup.addActor(opacityGroup);
+        lightingGroup.addActor(new Separator(skin));
         lightingGroup.addActor(ambientLightLabel);
         lightingGroup.addActor(ambientGroup);
+        lightingGroup.addActor(new Separator(skin));
         if (Constants.desktop) {
             lightingGroup.addActor(bloomLabel);
             lightingGroup.addActor(bloomGroup);
+            lightingGroup.addActor(new Separator(skin));
             lightingGroup.addActor(brightnessl);
             lightingGroup.addActor(brightnessGroup);
+            lightingGroup.addActor(new Separator(skin));
             lightingGroup.addActor(contrastl);
             lightingGroup.addActor(contrastGroup);
+            lightingGroup.addActor(new Separator(skin));
             lightingGroup.addActor(motionBlur);
             lightingGroup.addActor(lensFlare);
             lightingGroup.addActor(lightScattering);

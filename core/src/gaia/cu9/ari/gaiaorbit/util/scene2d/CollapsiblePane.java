@@ -56,13 +56,14 @@ public class CollapsiblePane extends Table {
      * @param detachButtonStyle The style of the detach icon.
      * @param topIcons List of top icons that will be added between the label and the expand/detach icons.
      */
-    public CollapsiblePane(final Stage stage, final String labelText, final Actor content, final Skin skin, String labelStyle, String expandButtonStyle, String detachButtonStyle, boolean expanded, Actor... topIcons) {
+    public CollapsiblePane(final Stage stage, final String labelText, final Actor content, final Skin skin, String labelStyle, String expandButtonStyle, String detachButtonStyle, boolean expanded,
+            Actor... topIcons) {
         super();
         this.stage = stage;
         this.labelText = labelText;
         this.content = content;
         this.skin = skin;
-        this.space = 2 * GlobalConf.SCALE_FACTOR;
+        this.space = 4 * GlobalConf.SCALE_FACTOR;
         this.collapseSpeed = 1000;
 
         Label mainLabel = new Label(labelText, skin, labelStyle);
@@ -100,7 +101,7 @@ public class CollapsiblePane extends Table {
 
         Table headerTable = new Table();
         HorizontalGroup headerGroupLeft = new HorizontalGroup();
-        headerGroupLeft.space(4).align(Align.left);
+        headerGroupLeft.space(space).align(Align.left);
         headerGroupLeft.addActor(mainLabel);
 
         if (topIcons != null && topIcons.length > 0) {
@@ -111,7 +112,7 @@ public class CollapsiblePane extends Table {
         }
 
         HorizontalGroup headerGroupRight = new HorizontalGroup();
-        headerGroupRight.space(4).align(Align.right);
+        headerGroupRight.space(space).align(Align.right);
         headerGroupRight.addActor(expandIcon);
         headerGroupRight.addActor(detachIcon);
 

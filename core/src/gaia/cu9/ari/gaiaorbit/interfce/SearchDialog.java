@@ -19,8 +19,10 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextButton;
+import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextField;
 
 public class SearchDialog extends Window {
     private final Window me;
@@ -31,7 +33,8 @@ public class SearchDialog extends Window {
         super(I18n.bundle.get("gui.objects.search"), skin);
         this.me = this;
         this.gui = gui;
-        searchInput = new TextField("", skin);
+        searchInput = new OwnTextField("", skin);
+        searchInput.setWidth(150 * GlobalConf.SCALE_FACTOR);
         searchInput.setMessageText(I18n.bundle.get("gui.objects.search"));
         searchInput.addListener(new EventListener() {
             @Override
@@ -78,11 +81,11 @@ public class SearchDialog extends Window {
 
         });
         buttonGroup.addActor(cls);
-        cls.setSize(70, 20);
-        buttonGroup.align(Align.right).space(10);
+        cls.setSize(70 * GlobalConf.SCALE_FACTOR, 20 * GlobalConf.SCALE_FACTOR);
+        buttonGroup.align(Align.right).space(10 * GlobalConf.SCALE_FACTOR);
 
         add(searchInput).top().left().expand().row();
-        add(buttonGroup).pad(5, 0, 0, 0).bottom().right().expand();
+        add(buttonGroup).pad(5 * GlobalConf.SCALE_FACTOR, 0, 0, 0).bottom().right().expand();
         getTitleTable().align(Align.left);
         setModal(false);
         pack();

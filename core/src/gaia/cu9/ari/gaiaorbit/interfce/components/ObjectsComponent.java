@@ -33,6 +33,7 @@ import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.TwoWayHashmap;
 import gaia.cu9.ari.gaiaorbit.util.comp.CelestialBodyComparator;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnScrollPane;
+import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextField;
 
 public class ObjectsComponent extends GuiComponent implements IObserver {
     boolean tree = false;
@@ -56,9 +57,10 @@ public class ObjectsComponent extends GuiComponent implements IObserver {
 
     @Override
     public void initialize() {
-
-        searchBox = new TextField("", skin);
+        float componentWidth = 160 * GlobalConf.SCALE_FACTOR;
+        searchBox = new OwnTextField("", skin);
         searchBox.setName("search box");
+        searchBox.setWidth(componentWidth);
         searchBox.setMessageText(txt("gui.objects.search"));
         searchBox.addListener(new EventListener() {
             @Override
@@ -195,11 +197,12 @@ public class ObjectsComponent extends GuiComponent implements IObserver {
         if (tree || list) {
             focusListScrollPane = new OwnScrollPane(objectsList, skin, "minimalist");
             focusListScrollPane.setName("objects list scroll");
+
             focusListScrollPane.setFadeScrollBars(false);
             focusListScrollPane.setScrollingDisabled(true, false);
 
             focusListScrollPane.setHeight(tree ? 200 * GlobalConf.SCALE_FACTOR : 100 * GlobalConf.SCALE_FACTOR);
-            focusListScrollPane.setWidth(160);
+            focusListScrollPane.setWidth(componentWidth);
         }
 
         VerticalGroup objectsGroup = new VerticalGroup().align(Align.left).columnAlign(Align.left).space(3 * GlobalConf.SCALE_FACTOR);
