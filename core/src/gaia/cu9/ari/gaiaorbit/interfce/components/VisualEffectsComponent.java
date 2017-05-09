@@ -20,6 +20,7 @@ import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnLabel;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnSlider;
+import gaia.cu9.ari.gaiaorbit.util.scene2d.Separator;
 
 public class VisualEffectsComponent extends GuiComponent implements IObserver {
 
@@ -38,6 +39,7 @@ public class VisualEffectsComponent extends GuiComponent implements IObserver {
 
     public void initialize() {
         float space3 = 3 * GlobalConf.SCALE_FACTOR;
+        float space2 = 2 * GlobalConf.SCALE_FACTOR;
         float sliderWidth = 140 * GlobalConf.SCALE_FACTOR;
         /** Star brightness **/
         Label sbrightnessLabel = new Label(txt("gui.starbrightness"), skin, "default");
@@ -252,21 +254,29 @@ public class VisualEffectsComponent extends GuiComponent implements IObserver {
         }
 
         VerticalGroup lightingGroup = new VerticalGroup().align(Align.left).columnAlign(Align.left);
+        lightingGroup.space(space2);
         lightingGroup.addActor(sbrightnessLabel);
         lightingGroup.addActor(sbrightnessGroup);
+        lightingGroup.addActor(new Separator(skin));
         lightingGroup.addActor(sizeLabel);
         lightingGroup.addActor(sizeGroup);
+        lightingGroup.addActor(new Separator(skin));
         lightingGroup.addActor(opacityLabel);
         lightingGroup.addActor(opacityGroup);
+        lightingGroup.addActor(new Separator(skin));
         lightingGroup.addActor(ambientLightLabel);
         lightingGroup.addActor(ambientGroup);
+        lightingGroup.addActor(new Separator(skin));
         if (Constants.desktop) {
             lightingGroup.addActor(bloomLabel);
             lightingGroup.addActor(bloomGroup);
+            lightingGroup.addActor(new Separator(skin));
             lightingGroup.addActor(brightnessl);
             lightingGroup.addActor(brightnessGroup);
+            lightingGroup.addActor(new Separator(skin));
             lightingGroup.addActor(contrastl);
             lightingGroup.addActor(contrastGroup);
+            lightingGroup.addActor(new Separator(skin));
             lightingGroup.addActor(motionBlur);
             lightingGroup.addActor(lensFlare);
             lightingGroup.addActor(lightScattering);
