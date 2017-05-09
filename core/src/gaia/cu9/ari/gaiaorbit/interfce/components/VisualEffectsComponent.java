@@ -86,6 +86,7 @@ public class VisualEffectsComponent extends GuiComponent implements IObserver {
         opacity = new OwnLabel(Integer.toString((int) (MathUtilsd.lint(GlobalConf.scene.POINT_ALPHA_MIN, Constants.MIN_STAR_MIN_OPACITY, Constants.MAX_STAR_MIN_OPACITY, Constants.MIN_SLIDER, Constants.MAX_SLIDER))), skin);
         starOpacity = new Slider(Constants.MIN_SLIDER, Constants.MAX_SLIDER, 1, false, skin);
         starOpacity.setName("star opacity");
+        starOpacity.setWidth(starOpacity.getWidth() * GlobalConf.SCALE_FACTOR);
         starOpacity.setValue(MathUtilsd.lint(GlobalConf.scene.POINT_ALPHA_MIN, Constants.MIN_STAR_MIN_OPACITY, Constants.MAX_STAR_MIN_OPACITY, Constants.MIN_SLIDER, Constants.MAX_SLIDER));
         starOpacity.addListener(new EventListener() {
             @Override
