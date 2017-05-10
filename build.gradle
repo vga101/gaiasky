@@ -53,7 +53,6 @@ allprojects {
     }
 }
 
-
 project(":desktop") {
     apply plugin: "java"
 
@@ -118,15 +117,16 @@ project(":desktop") {
         compile "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
         compile "com.badlogicgames.gdx:gdx-controllers-desktop:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-controllers-platform:$gdxVersion:natives-desktop"
-	compile "org.python:jython-standalone:$jythonVersion"
-	compile "com.miglayout:miglayout-swing:$miglayoutVersion"
+        compile "org.python:jython-standalone:$jythonVersion"
+        compile "com.miglayout:miglayout-swing:$miglayoutVersion"
         compile "com.github.arnabk:pgslookandfeel:$pgsVersion"
         compile "com.sparkjava:spark-core:2.5.5"  // for REST API
-        compile "org.slf4j:slf4j-simple:1.7.21" // for logging
-	compile files('../core/lib/postprocessing.jar',
-            '../android/assets',
-            'lib/stil.jar',
-            'lib/swing-range-slider.jar')
+        compile "org.slf4j:slf4j-simple:1.7.21"   // for logging
+        compile "com.google.code.gson:gson:2.8.0" // json lib
+        compile files('../core/lib/postprocessing.jar',
+                    '../android/assets',
+                    'lib/stil.jar',
+                    'lib/swing-range-slider.jar')
     }
 
     jar {

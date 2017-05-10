@@ -3,19 +3,22 @@ package gaia.cu9.ari.gaiaorbit.rest;
 import gaia.cu9.ari.gaiaorbit.script.EventScriptingInterface;
 import gaia.cu9.ari.gaiaorbit.script.IScriptingInterface;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-//import static spark.Spark.*;
 import static spark.Spark.get;
 import static spark.Spark.put;
 import static spark.Spark.post;
 import static spark.Spark.before;
 import static spark.Spark.setPort;
 import static spark.Spark.path;
-//import spark.Request;
-//import spark.Response;
-//import spark.Route;
-//import spark.QueryParamsMap;
 
+import java.util.HashMap;
+import java.util.Map;
+
+// JSON output
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 /**
  * REST API for remote procedure calls
@@ -37,12 +40,13 @@ import static spark.Spark.path;
  * List/vector elements are separated by commas, except for strings where they
  * are given as multiple query parameters with the same name.
  *
- * Return values are .... tbd.
- *
+ * Return values can be retrieved either as JSON objects (default) or text
+ * strings (use the query parameter "returnFormat=text").
+ * JSON objects contain more information in form of key-value pairs:
+ * "success" indicates whether the API call was executed successful or not
+ * "text" can give additional text information
+ * "value" contains the return value
  */
-
-
-
 
 /* NOTES & TODO:
 
@@ -102,6 +106,7 @@ For variables on command line (with newline actually added (not \n)), works for 
  * @author Volker Gaibler
  *
  * Implemented with Spark, which launches an embedded jetty.
+ * Spark recommends static context.
  *
  *
  * - initialized in desktop/src/gaia/cu9/ari/gaiaorbit/desktop/GaiaSkyDesktop.java
@@ -111,30 +116,31 @@ For variables on command line (with newline actually added (not \n)), works for 
  */
 public class RESTServer {
 
-    // reference for lazy initialization
+    /* Class variables: */
+
+    /**
+     * Reference for lazy initialization.
+     */
     private static EventScriptingInterface esi = null;
 
-    /** 
-     * Prints message to console and as response. 
-     * This is a development method, which may disappear later.
+    /**
+     * Reference to Logger
      */
-    private static String message(String s) {
-        /* returns its argument (for response), but also prints on terminal */
-        System.out.println("[REST] " + s);
-        return s;
-    }
+    private static final Logger logger = LoggerFactory.getLogger("[RESTServer]");
+
+
+    /* Methods: */
 
     /** 
      * Returns an instance of the EventScriptingInterface for the lazy initialization.
      */
     private static IScriptingInterface gs() {
         if (esi == null) {
-            message("Lazy initialization of EventScriptingInterface...");
+            logger.info("Lazy initialization of EventScriptingInterface...");
             esi = new EventScriptingInterface();
         }
         return esi;
     }
-
 
     /**
      * Helper functions that get query parameters and convert to specific type.
@@ -235,31 +241,71 @@ public class RESTServer {
 //         }
 //         String[] ret = s.split(",");
         String[] ret = request.queryParamsValues(param);
-
-        // debug output
-        if (ret != null) {
-            String msg = "StringValues returns: " + ret.length + " elements.";
-            for (int i = 0; i < ret.length; i++) {
-                msg += "\n[" + i + "] = " + ret[i];
-            }
-            message(msg);
-        }
-
         return ret;
     }
 
+    /**
+     * Return the return value (data).
+     * Can return ASCII string or JSON format through the HTTP response, depending on user wish.
+     * Return values are returned under the "value" key.
+     */
+    private static String retData(spark.Request request, Map<String, Object> ret, boolean success) {
+
+        String format = request.queryParams("returnFormat");
+        String retstring;
+
+        // default return format
+        if (format == null) {
+            format = "json";
+        }
+
+        // return value is null for void methods
+        ret.putIfAbsent("value", null);
+
+        // set success key
+        ret.put("success", success);
+
+        // add text value if not yet present
+        if (success == true) {
+            ret.putIfAbsent("text", "OK");
+        } else {
+            ret.putIfAbsent("text", "Failed");
+        }
+
+        // format of return value: JSON by default
+        if (format.equals("text")) {
+            /* plain text */
+            Object v = ret.get("value");
+            //if (v != null && v.getClass().isArray())
+            if (v instanceof float[]) {
+                float[] f = (float[]) v;  // explicit cast from Object to primitive array
+                retstring = java.util.Arrays.toString(f);
+                logger.info("v = " + retstring);
+            } else {
+                retstring = String.valueOf(v);
+                logger.info("v = " + retstring);
+            }
+        } else {
+            /* JSON */
+            Gson gson = new GsonBuilder().serializeNulls().create();
+            retstring = gson.toJson(ret);
+        }
+        logger.debug("Returning for {} format: {}.", format, retstring);
+        return retstring;
+    }
 
     /**
      * Handles the API call.
-     * TODO: rename to handleApiCall
      */
-    private static String handleApiCall(spark.Request request, spark.Response response) {
-        message("Handling API call:");
-        message("path param cmd = " + request.params(":cmd") + ", query params q = " + request.queryParams());
-        message("Query string: " + request.queryString());
+    private static String handleApiCall(spark.Request request, spark.Response response, String httpmethod) {
+        logger.info("Handling API call via HTTP " + httpmethod + ":");
+        logger.info("path param cmd = " + request.params(":cmd") + ", query params q = " + request.queryParams());
+        logger.info("Query string: " + request.queryString());
 
         String cmd = request.params(":cmd");
-        //spark.QueryParamsMap qm = request.queryMap();  // see http://spark.screenisland.com/spark/QueryParamsMap.html
+
+        // information for return object
+        Map<String, Object> ret = new HashMap<String, Object>();
 
         try {
 
@@ -267,14 +313,10 @@ public class RESTServer {
             --> Methods from IScriptingInterface (core/src/gaia/cu9/ari/gaiaorbit/script/IScriptingInterface.java).
             Listed in that order, consult that for the meaning of parameters.
             Some are omitted currently. 
-
-            TODO: 
-            - Return values: json? text?
-            - For functions with parameters: 
-              need to check that all necessary params are there, but no more (to catch errors!)
             */
 
-            message("### API command: " + cmd);
+            logger.info("=== Processing API command: {} ===", cmd);
+            logger.debug(" debug output ****************");
 
             /** 
              * preloadTextures.
@@ -286,7 +328,7 @@ public class RESTServer {
                 gs().preloadTextures(
                     StringValues(request, "paths")
                 );
-                return message("OK");
+                return retData(request, ret, true);
             }
 
             /** 
@@ -296,7 +338,7 @@ public class RESTServer {
              */
             if (cmd.equals("activateRealTimeFrame")) {
                 gs().activateRealTimeFrame();
-                return message("OK");
+                return retData(request, ret, true);
             }
 
             /** 
@@ -306,7 +348,7 @@ public class RESTServer {
              */
             if (cmd.equals("activateSimulationTimeFrame")) {
                 gs().activateSimulationTimeFrame();
-                return message("OK");
+                return retData(request, ret, true);
             }
 
             /**
@@ -319,7 +361,7 @@ public class RESTServer {
                 gs().setHeadlineMessage(
                     StringValues(request, "headline")[0]
                 );
-                return message("OK");
+                return retData(request, ret, true);
             }
 
             /**
@@ -331,7 +373,7 @@ public class RESTServer {
                 gs().setSubheadMessage(
                     StringValues(request, "subhead")[0]
                 );
-                return message("OK");
+                return retData(request, ret, true);
             }
 
             /**
@@ -341,7 +383,7 @@ public class RESTServer {
              */
             if (cmd.equals("clearHeadlineMessage")) {
                 gs().clearHeadlineMessage();
-                return message("OK");
+                return retData(request, ret, true);
             }
 
             /**
@@ -351,7 +393,7 @@ public class RESTServer {
              */
             if (cmd.equals("clearSubheadMessage")) {
                 gs().clearSubheadMessage();
-                return message("OK");
+                return retData(request, ret, true);
             }
 
             /**
@@ -361,7 +403,7 @@ public class RESTServer {
              */
             if (cmd.equals("clearAllMessages")) {
                 gs().clearAllMessages();
-                return message("OK");
+                return retData(request, ret, true);
             }
 
             /**
@@ -383,7 +425,7 @@ public class RESTServer {
                     floatValues(request, "a")[0],
                     floatValues(request, "fontSize")[0]
                 );
-                return message("OK");
+                return retData(request, ret, true);
             }
 
             /**
@@ -405,8 +447,8 @@ public class RESTServer {
                     floatValues(request, "a")[0],
                     floatValues(request, "fontSize")[0]
                 );
-                message("text=\"" + request.queryParams("text") + "\".");
-                return message("OK");
+                logger.info("text=\"" + request.queryParams("text") + "\".");
+                return retData(request, ret, true);
             }
 
             /** displayImageObject. 
@@ -432,7 +474,7 @@ public class RESTServer {
                         floatValues(request, "b")[0],
                         floatValues(request, "a")[0]
                     );
-                    return message("OK");
+                    return retData(request, ret, true);
                 } else {
                     // without color specification
                     gs().displayImageObject(
@@ -441,7 +483,7 @@ public class RESTServer {
                         floatValues(request, "x")[0],
                         floatValues(request, "y")[0]
                     );
-                    return message("OK");
+                    return retData(request, ret, true);
                 }
             }
  
@@ -452,7 +494,7 @@ public class RESTServer {
              */
             if (cmd.equals("removeAllObjects")) {
                 gs().removeAllObjects();
-                return message("OK");
+                return retData(request, ret, true);
             }
 
             /**
@@ -464,7 +506,7 @@ public class RESTServer {
                 gs().removeObject(
                     intValues(request, "id")[0]
                 );
-                return message("OK");
+                return retData(request, ret, true);
             }
 
             /**
@@ -476,7 +518,7 @@ public class RESTServer {
                 gs().removeObjects(
                     intValues(request, "ids")
                 );
-                return message("OK");
+                return retData(request, ret, true);
             }
 
             /**
@@ -486,7 +528,7 @@ public class RESTServer {
              */
             if (cmd.equals("disableInput")) {
                 gs().disableInput();
-                return message("OK");
+                return retData(request, ret, true);
             }
 
             /**
@@ -496,7 +538,7 @@ public class RESTServer {
              */
             if (cmd.equals("enableInput")) {
                 gs().enableInput();
-                return message("OK");
+                return retData(request, ret, true);
             }
 
             /**
@@ -508,7 +550,7 @@ public class RESTServer {
                 gs().setCameraFocus(
                     StringValues(request, "focusName")[0]
                 );
-                return message("OK");
+                return retData(request, ret, true);
             }
 
             /**
@@ -521,7 +563,7 @@ public class RESTServer {
                 gs().setCameraLock(
                     booleanValues(request, "lock")[0]
                 );
-                return message("OK");
+                return retData(request, ret, true);
             }
 
             /**
@@ -531,7 +573,7 @@ public class RESTServer {
              */
             if (cmd.equals("setCameraFree")) {
                 gs().setCameraFree();
-                return message("OK");
+                return retData(request, ret, true);
             }
 
             /**
@@ -541,7 +583,7 @@ public class RESTServer {
              */
             if (cmd.equals("setCameraFov1")) {
                 gs().setCameraFov1();
-                return message("OK");
+                return retData(request, ret, true);
             }
 
             /**
@@ -551,7 +593,7 @@ public class RESTServer {
              */
             if (cmd.equals("setCameraFov2")) {
                 gs().setCameraFov2();
-                return message("OK");
+                return retData(request, ret, true);
             }
 
             /**
@@ -561,7 +603,7 @@ public class RESTServer {
              */
             if (cmd.equals("setCameraFov1and2")) {
                 gs().setCameraFov1and2();
-                return message("OK");
+                return retData(request, ret, true);
             }
 
             /**
@@ -574,7 +616,7 @@ public class RESTServer {
                 gs().setCameraPostion( // sic!
                     doubleValues(request, "vec")
                 );
-                return message("OK");
+                return retData(request, ret, true);
             }
 
             /**
@@ -586,7 +628,7 @@ public class RESTServer {
                 gs().setCameraDirection(
                     doubleValues(request, "dir")
                 );
-                return message("OK");
+                return retData(request, ret, true);
             }
 
             /**
@@ -598,7 +640,7 @@ public class RESTServer {
                 gs().setCameraUp(
                     doubleValues(request, "up")
                 );
-                return message("OK");
+                return retData(request, ret, true);
             }
 
             /**
@@ -610,7 +652,7 @@ public class RESTServer {
                 gs().setCameraSpeed(
                     floatValues(request, "speed")[0]
                 );
-                return message("OK");
+                return retData(request, ret, true);
             }
 
             /**
@@ -622,7 +664,7 @@ public class RESTServer {
                 gs().setRotationCameraSpeed(
                     floatValues(request, "speed")[0]
                 );
-                return message("OK");
+                return retData(request, ret, true);
             }
 
             /**
@@ -634,7 +676,7 @@ public class RESTServer {
                 gs().setTurningCameraSpeed(
                     floatValues(request, "speed")[0]
                 );
-                return message("OK");
+                return retData(request, ret, true);
             }
 
             /**
@@ -646,7 +688,7 @@ public class RESTServer {
                 gs().cameraForward(
                     doubleValues(request, "value")[0]
                 );
-                return message("OK");
+                return retData(request, ret, true);
             }
 
             /**
@@ -659,7 +701,7 @@ public class RESTServer {
                     doubleValues(request, "deltaX")[0],
                     doubleValues(request, "deltaY")[0]
                 );
-                return message("OK");
+                return retData(request, ret, true);
             }
 
             /**
@@ -671,7 +713,7 @@ public class RESTServer {
                 gs().cameraRoll(
                     doubleValues(request, "roll")[0]
                 );
-                return message("OK");
+                return retData(request, ret, true);
             }
 
             /**
@@ -684,7 +726,7 @@ public class RESTServer {
                     doubleValues(request, "deltaX")[0],
                     doubleValues(request, "deltaY")[0]
                 );
-                return message("OK");
+                return retData(request, ret, true);
             }
 
             /**
@@ -694,7 +736,7 @@ public class RESTServer {
              */
             if (cmd.equals("cameraStop")) {
                 gs().cameraStop();
-                return message("OK");
+                return retData(request, ret, true);
             }
 
             /**
@@ -704,7 +746,7 @@ public class RESTServer {
              */
             if (cmd.equals("cameraCenter")) {
                 gs().cameraCenter();
-                return message("OK");
+                return retData(request, ret, true);
             }
 
             /**
@@ -716,7 +758,7 @@ public class RESTServer {
                 gs().setFov(
                     floatValues(request, "newFov")[0]
                 );
-                return message("OK");
+                return retData(request, ret, true);
             }
 
             /**
@@ -729,7 +771,7 @@ public class RESTServer {
                     StringValues(request, "name")[0],
                     booleanValues(request, "visible")[0]
                 );
-                return message("OK");
+                return retData(request, ret, true);
             }
 
             /**
@@ -741,7 +783,7 @@ public class RESTServer {
                 gs().setAmbientLight(
                     floatValues(request, "value")[0]
                 );
-                return message("OK");
+                return retData(request, ret, true);
             }
 
             /**
@@ -753,7 +795,7 @@ public class RESTServer {
                 gs().setSimulationTime(
                     longValues(request, "time")[0]
                 );
-                return message("OK");
+                return retData(request, ret, true);
             }
 
             /**
@@ -763,7 +805,7 @@ public class RESTServer {
              */
             if (cmd.equals("startSimulationTime")) {
                 gs().startSimulationTime();
-                return message("OK");
+                return retData(request, ret, true);
             }
 
             /**
@@ -773,7 +815,7 @@ public class RESTServer {
              */
             if (cmd.equals("stopSimulationTime")) {
                gs().stopSimulationTime();
-               return message("OK");
+               return retData(request, ret, true);
             }
 
             /**
@@ -785,7 +827,7 @@ public class RESTServer {
                 gs().setSimulationPace(
                     doubleValues(request, "pace")[0]
                 );
-                return message("OK");
+                return retData(request, ret, true);
             }
 
             /**
@@ -797,7 +839,7 @@ public class RESTServer {
                 gs().setStarBrightness(
                     floatValues(request, "brightness")[0]
                 );
-                return message("OK");
+                return retData(request, ret, true);
             }
 
             /**
@@ -813,7 +855,7 @@ public class RESTServer {
                     StringValues(request, "folder")[0],
                     StringValues(request, "namePrefix")[0]
                 );
-                return message("OK");
+                return retData(request, ret, true);
             }
 
             /**
@@ -822,12 +864,9 @@ public class RESTServer {
              * curl -w "\n[curl: HTTP-Code=%{http_code}, time=%{time_total}]\n"   "http://localhost:8080/api/isRenderOutputActive"
              */
             if (cmd.equals("isRenderOutputActive")) {
-                boolean ret = gs().isRenderOutputActive();
-                if (ret) {
-                    return message("True");
-                } else {
-                    return message("False");
-                }
+                boolean active = gs().isRenderOutputActive();
+                ret.put("value", active);
+                return retData(request, ret, true);
             }
 
             /**
@@ -837,7 +876,8 @@ public class RESTServer {
              */
             if (cmd.equals("getRenderOutputFps")) {
                 int fps = gs().getRenderOutputFps();
-                return message("" + fps);
+                ret.put("value", fps);
+                return retData(request, ret, true);
             }
 
             /**
@@ -849,7 +889,7 @@ public class RESTServer {
                 gs().setFrameOutput(
                     booleanValues(request, "active")[0]
                 );
-                return message("OK");
+                return retData(request, ret, true);
             }
 
             /**
@@ -883,7 +923,7 @@ public class RESTServer {
                             StringValues(request, "name")[0]
                     );
                 }
-                return message("OK");
+                return retData(request, ret, true);
             }
 
             /**
@@ -895,7 +935,8 @@ public class RESTServer {
                 double dist = gs().getDistanceTo(
                     StringValues(request, "objectName")[0]
                 );
-                return message("" + dist);
+                ret.put("value", dist);
+                return retData(request, ret, true);
             }
 
             /**
@@ -907,7 +948,7 @@ public class RESTServer {
                 gs().setGuiScrollPosition(
                     floatValues(request, "pixelY")[0]
                 );
-                return message("OK");
+                return retData(request, ret, true);
             }
 
             /**
@@ -917,7 +958,7 @@ public class RESTServer {
              */
             if (cmd.equals("maximizeInterfaceWindow")) {
                 gs().maximizeInterfaceWindow();
-                return message("OK");
+                return retData(request, ret, true);
             }
 
             /**
@@ -927,7 +968,7 @@ public class RESTServer {
              */
             if (cmd.equals("minimizeInterfaceWindow")) {
                 gs().minimizeInterfaceWindow();
-                return message("OK");
+                return retData(request, ret, true);
             }
 
             /**
@@ -940,7 +981,7 @@ public class RESTServer {
                     floatValues(request, "x")[0],
                     floatValues(request, "y")[0]
                 );
-                return message("OK");
+                return retData(request, ret, true);
             }
 
             /**
@@ -950,7 +991,7 @@ public class RESTServer {
              */
             if (cmd.equals("waitForInput")) {
                 gs().waitForInput();
-                return message("OK");
+                return retData(request, ret, true);
             }
 
             /**
@@ -960,7 +1001,7 @@ public class RESTServer {
              */
             if (cmd.equals("waitForEnter")) {
                 gs().waitForEnter();
-                return message("OK");
+                return retData(request, ret, true);
             }
 
             /**
@@ -970,7 +1011,8 @@ public class RESTServer {
              */
             if (cmd.equals("getScreenWidth")) {
                 int width = gs().getScreenWidth();
-                return message("" + width);
+                ret.put("value", width);
+                return retData(request, ret, true);
             }
 
             /**
@@ -979,8 +1021,9 @@ public class RESTServer {
              * curl -w "\n[curl: HTTP-Code=%{http_code}, time=%{time_total}]\n"   "http://localhost:8080/api/getScreenHeight"
              */
             if (cmd.equals("getScreenHeight")) {
-                int width = gs().getScreenHeight();
-                return message("" + width);
+                int height = gs().getScreenHeight();
+                ret.put("value", height);
+                return retData(request, ret, true);
             }
 
             /**
@@ -994,17 +1037,8 @@ public class RESTServer {
                 float[] pas = gs().getPositionAndSizeGui(
                     StringValues(request, "name")[0]
                 );
-
-                // return value:
-                String msg = "";
-                if (pas != null) {
-                    for (int i = 0; i < 4; i++) {
-                        msg += pas[i] + " ";
-                    }
-                } else {
-                    msg += pas;
-                }
-                return message(msg);
+                ret.put("value", pas);
+                return retData(request, ret, true);
             }
 
             /**
@@ -1014,11 +1048,14 @@ public class RESTServer {
              */
             if (cmd.equals("getVersionNumber")) {
                 String version = gs().getVersionNumber();
-                return message("" + version);
+                ret.put("value", version);
+                return retData(request, ret, true);
             }
 
             /**
-             * waitFocus. Returns whether timeout ran out (boolean).
+             * waitFocus. Blocks until the focus is the object indicated by the name
+             * (e.g. by parallel running requests or user input).
+             * There is an optional time out to return earlier.
              * Test:
              * curl -w "\n[curl: HTTP-Code=%{http_code}, time=%{time_total}]\n"   "http://localhost:8080/api/waitFocus?name=Uranus&timeoutMs=-1"
              */
@@ -1028,7 +1065,8 @@ public class RESTServer {
                     StringValues(request, "name")[0],
                     longValues(request, "timeoutMs")[0]
                 );
-                return message("" + wf);
+                ret.put("value", wf);
+                return retData(request, ret, true);
             }
 
             /**
@@ -1038,7 +1076,7 @@ public class RESTServer {
              */
             if (cmd.equals("startRecordingCameraPath")) {
                 gs().startRecordingCameraPath();
-                return message("OK");
+                return retData(request, ret, true);
             }
 
             /**
@@ -1048,7 +1086,7 @@ public class RESTServer {
              */
             if (cmd.equals("stopRecordingCameraPath")) {
                 gs().stopRecordingCameraPath();
-                return message("OK");
+                return retData(request, ret, true);
             }
 
             /**
@@ -1060,7 +1098,7 @@ public class RESTServer {
                 gs().runCameraRecording(
                     StringValues(request, "path")[0]
                 );
-                return message("OK");
+                return retData(request, ret, true);
             }
 
             /**
@@ -1072,7 +1110,7 @@ public class RESTServer {
                 gs().sleep(
                     floatValues(request, "seconds")[0]
                 );
-                return message("OK");
+                return retData(request, ret, true);
             }
 
             /**
@@ -1084,7 +1122,7 @@ public class RESTServer {
                 gs().sleepFrames(
                     intValues(request, "frames")[0]
                 );
-                return message("OK");
+                return retData(request, ret, true);
             }
 
             /**
@@ -1096,7 +1134,7 @@ public class RESTServer {
                 gs().expandGuiComponent(
                     StringValues(request, "name")[0]
                 );
-                return message("OK");
+                return retData(request, ret, true);
             }
 
             /**
@@ -1109,21 +1147,24 @@ public class RESTServer {
                 gs().collapseGuiComponent(
                     StringValues(request, "name")[0]
                 );
-                return message("OK");
+                return retData(request, ret, true);
             }
 
 
             /* 
-             * ----------------------------------------------
-             * if nothing matched so far, API call is invalid
-             * ----------------------------------------------
+             * -------------------------------------------------
+             * if nothing matched so far, API command is invalid
+             * -------------------------------------------------
              */
-            return message("ERROR. API call not recognized: '" + cmd + "'");
+            logger.info("API command unknown: '" + cmd + "'");
+            ret.put("text", "API command unknown.");
+            return retData(request, ret, false);
 
         } catch (Exception e) {
-            message("Caught an exception: could not process request.");
+            logger.error("Caught an exception: could not process request.");
             e.printStackTrace(System.err);
-            return message("ERROR");
+            ret.put("text", "Exception during API call. Bad syntax?");
+            return retData(request, ret, false);
         }
 
     }
@@ -1136,18 +1177,17 @@ public class RESTServer {
      */
     public static void initialize(Integer port) {
 
-        // check for valid TCP port (otherwise disabled)
+        // check for valid TCP port (otherwise considered as "disabled")
         if (port < 1) {
             return;
         }
 
         try {
-
-            message("Initializing REST API server on TCP port " + 1);
-            message("WARNING: remote code execution! Only use this functionality in a trusted environment!");
+            logger.info("Starting REST API server on port {}", port);
+            logger.info("Warning: remote code execution! Only use this functionality in a trusted environment!");
             setPort(port);  // note: deprecated in newer Spark versions in favor of port()
-            message("Lazy initialization of EventScriptingInterface.");
-            message("Now setting routes...");
+            logger.info("Lazy initialization of EventScriptingInterface.");
+            logger.info("Setting routes");
 
             // now preferred for Spark 2 (with lambda expressions, so only Java 8+):
             // get("/", (request, response) -> {
@@ -1168,21 +1208,21 @@ public class RESTServer {
             get("/api/:cmd", new spark.Route() {
                 @Override
                 public Object handle(spark.Request request, spark.Response response) {
-                    return handleApiCall(request, response);
+                    return handleApiCall(request, response, "get");
                 }
             });
 
             post("/api/:cmd", new spark.Route() {
                 @Override
                 public Object handle(spark.Request request, spark.Response response) {
-                    return handleApiCall(request, response);
+                    return handleApiCall(request, response, "post");
                 }
             });
 
-            message("Route setup done.");
+            logger.info("Startup finished.");
 
         } catch (Exception e) {
-           message("Caught an exception:");
+           logger.error("Caught an exception:");
            e.printStackTrace(System.err);
         }
     }
@@ -1192,13 +1232,13 @@ public class RESTServer {
      */
     public static void stop() {
         try {
-            System.out.println("*************************** Now stopping the REST Server gracefully... ******************");
+            logger.info("*************************** Now stopping the REST Server gracefully... ******************");
             stop();
-            System.out.println("Done.");
+            logger.info("REST server now stopped.");
         } catch (Exception e) {
             e.printStackTrace(System.err);
         }
 
     }
-    
+
 }
