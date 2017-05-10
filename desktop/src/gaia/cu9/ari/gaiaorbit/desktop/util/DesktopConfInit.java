@@ -2,7 +2,6 @@ package gaia.cu9.ari.gaiaorbit.desktop.util;
 
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
-import java.awt.geom.AffineTransform;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -91,8 +90,7 @@ public class DesktopConfInit extends ConfInit {
 
         // HiDPI
         GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
-        AffineTransform at = gd.getDefaultConfiguration().getNormalizingTransform();
-        float scalefactor = (float) (at.getScaleX() / 1.33333f);
+        float scalefactor = gd.getDisplayMode().getWidth() > 2300 ? 2 : 1;
 
         // Update scale factor - for HiDPI screens
         GlobalConf.updateScaleFactor(scalefactor);

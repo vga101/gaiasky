@@ -256,7 +256,7 @@ public class PreferencesWindow extends GenericDialog {
         mode.add(fullscreenResolutions).left().row();
         mode.add(windowed).left().padRight(pad * 2).padTop(pad * 2);
         mode.add(windowedResolutions).left().padTop(pad * 2).row();
-        mode.add(vsync).left().colspan(2);
+        mode.add(vsync).left().padTop(pad * 2).colspan(2);
 
         // Add to content
         contentGraphics.add(titleResolution).left().padBottom(pad * 2).row();
@@ -1079,7 +1079,11 @@ public class PreferencesWindow extends GenericDialog {
         // Add all properties to GlobalConf.instance
 
         final boolean reloadFullscreenMode = fullscreen.isChecked() != GlobalConf.screen.FULLSCREEN;
-        final boolean reloadScreenMode = reloadFullscreenMode || (GlobalConf.screen.FULLSCREEN && (GlobalConf.screen.FULLSCREEN_WIDTH != fullscreenResolutions.getSelected().width || GlobalConf.screen.FULLSCREEN_HEIGHT != fullscreenResolutions.getSelected().height)) || (!GlobalConf.screen.FULLSCREEN && (GlobalConf.screen.SCREEN_WIDTH != Integer.parseInt(widthField.getText())) || GlobalConf.screen.SCREEN_HEIGHT != Integer.parseInt(heightField.getText()));
+        final boolean reloadScreenMode = reloadFullscreenMode
+                || (GlobalConf.screen.FULLSCREEN
+                        && (GlobalConf.screen.FULLSCREEN_WIDTH != fullscreenResolutions.getSelected().width || GlobalConf.screen.FULLSCREEN_HEIGHT != fullscreenResolutions.getSelected().height))
+                || (!GlobalConf.screen.FULLSCREEN && (GlobalConf.screen.SCREEN_WIDTH != Integer.parseInt(widthField.getText()))
+                        || GlobalConf.screen.SCREEN_HEIGHT != Integer.parseInt(heightField.getText()));
 
         GlobalConf.screen.FULLSCREEN = fullscreen.isChecked();
 
