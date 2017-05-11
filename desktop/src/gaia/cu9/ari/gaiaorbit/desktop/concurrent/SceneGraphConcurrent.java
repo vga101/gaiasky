@@ -84,8 +84,8 @@ public class SceneGraphConcurrent extends AbstractSceneGraph {
             Logger.error(e);
         }
 
-        // Debug thread number
-        EventManager.instance.post(Events.DEBUG2, "SG threads: " + Arrays.toString(objectsPerThread));
+        // Debug info
+        EventManager.instance.post(Events.DEBUG3, "Objects/thread: " + Arrays.toString(objectsPerThread));
     }
 
     public void dispose() {

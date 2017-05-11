@@ -426,7 +426,9 @@ public enum Events {
      **/
     VISIBILITY_OF_COMPONENTS,
     /** Sets the limit magnitude. Contains a double with the new magnitude **/
-    LIMIT_MAG_CMD, DEBUG1, DEBUG2, DEBUG3,
+    LIMIT_MAG_CMD,
+    /** Debug info **/
+    DEBUG1, DEBUG2, DEBUG3,
     /**
      * Notifies from a java exception, it sends the Throwable and an optional
      * tag.

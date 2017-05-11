@@ -109,8 +109,8 @@ public class SceneGraphConcurrentOctree extends AbstractSceneGraph {
             }
         }
 
-        // Debug thread number
-        EventManager.instance.post(Events.DEBUG2, "SG threads: " + getRouletteDebug());
+        // Debug info
+        EventManager.instance.post(Events.DEBUG3, "Objects/thread (threads): " + getRouletteDebug());
 
         // Clear roulette
         roulette.clear();
@@ -145,7 +145,7 @@ public class SceneGraphConcurrentOctree extends AbstractSceneGraph {
                     s += ", ";
             }
             s += "]";
-            return s;
+            return s + " (" + numThreads + ")";
         }
     }
 

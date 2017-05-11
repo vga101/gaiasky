@@ -21,6 +21,9 @@ import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.scenes.scene2d.ui.TooltipManager;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.TimeUtils;
+import com.badlogic.gdx.utils.Timer;
+import com.badlogic.gdx.utils.Timer.Task;
 
 import gaia.cu9.ari.gaiaorbit.data.AssetBean;
 import gaia.cu9.ari.gaiaorbit.data.GaiaAttitudeLoader;
@@ -66,6 +69,7 @@ import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
+import gaia.cu9.ari.gaiaorbit.util.MemInfo;
 import gaia.cu9.ari.gaiaorbit.util.ModelCache;
 import gaia.cu9.ari.gaiaorbit.util.MusicManager;
 import gaia.cu9.ari.gaiaorbit.util.gaia.GaiaAttitudeServer;
@@ -103,6 +107,9 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
     public ISceneGraph sg;
     private SceneGraphRenderer sgr;
     private IPostProcessor pp;
+
+    // Start time
+    private long startTime;
 
     // The current actual dt in seconds
     private float dt;
@@ -160,6 +167,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
 
     @Override
     public void create() {
+        startTime = TimeUtils.millis();
         Gdx.app.setLogLevel(Application.LOG_INFO);
 
         fbmap = new HashMap<String, FrameBuffer>();
@@ -237,6 +245,17 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
      * to their classes and removes the Loading message
      */
     private void doneLoading() {
+
+        // Schedule debug
+        Timer.schedule(new Task() {
+            @Override
+            public void run() {
+                EventManager.instance.post(Events.FPS_INFO, 1f / Gdx.graphics.getDeltaTime());
+                EventManager.instance.post(Events.DEBUG1, TimeUtils.timeSinceMillis(startTime) / 1000d);
+                EventManager.instance.post(Events.DEBUG2, MemInfo.getUsedMemory(), MemInfo.getFreeMemory(), MemInfo.getTotalMemory(), MemInfo.getMaxMemory());
+            }
+
+        }, 2, 1);
 
         // Get attitude
         if (manager.isLoaded(ATTITUDE_FOLDER)) {
@@ -517,8 +536,6 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
             }
 
         }
-
-        EventManager.instance.post(Events.FPS_INFO, Gdx.graphics.getFramesPerSecond());
     }
 
     /**

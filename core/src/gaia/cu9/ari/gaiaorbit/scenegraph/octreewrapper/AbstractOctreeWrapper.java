@@ -124,7 +124,7 @@ public abstract class AbstractOctreeWrapper extends SceneGraphNode implements It
             updateLocal(time, camera);
 
             // Call the update method of all entities in the roulette list. This is implemented in the subclass.
-            EventManager.instance.post(Events.DEBUG3, "Octree threads: " + getRouletteDebug());
+            EventManager.instance.post(Events.DEBUG3, "Objects: " + getRouletteDebug());
             updateOctreeObjects(time, transform, camera);
 
             // Reset mask
