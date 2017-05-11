@@ -6,6 +6,8 @@
 
 **Implemented enhancements:**
 
+- Add non cinematic camera mode [\#135](https://github.com/langurmonkey/gaiasky/issues/135)
+- Discard current star shader based on noise and use texture instead [\#134](https://github.com/langurmonkey/gaiasky/issues/134)
 - Apply screen mode without restart [\#128](https://github.com/langurmonkey/gaiasky/issues/128)
 - Make network checker \(simbad, wiki\) asynchronous [\#127](https://github.com/langurmonkey/gaiasky/issues/127)
 - Deprecate current swing-based preferences [\#125](https://github.com/langurmonkey/gaiasky/issues/125)
@@ -22,6 +24,7 @@
 
 **Fixed bugs:**
 
+- Fixe Quad line renderer artifacts [\#137](https://github.com/langurmonkey/gaiasky/issues/137)
 - Make network checker \\(simbad, wiki\\) asynchronous [\#127](https://github.com/langurmonkey/gaiasky/issues/127)
 - Fix cast error when multithreading is on [\#126](https://github.com/langurmonkey/gaiasky/issues/126)
 - Label flickering when star is perfectly aligned with camera direction [\#122](https://github.com/langurmonkey/gaiasky/issues/122)
@@ -36,6 +39,7 @@
 
 **Closed issues:**
 
+- Running Gaia Sky in Oculus Rift [\#136](https://github.com/langurmonkey/gaiasky/issues/136)
 - Scripting interface: asynchronous mode? [\#133](https://github.com/langurmonkey/gaiasky/issues/133)
 - Scripting interface: issues with setCameraPostion method [\#132](https://github.com/langurmonkey/gaiasky/issues/132)
 - Scripting interface: calling setStarBrightness\(\) seems to change the ambient light [\#131](https://github.com/langurmonkey/gaiasky/issues/131)

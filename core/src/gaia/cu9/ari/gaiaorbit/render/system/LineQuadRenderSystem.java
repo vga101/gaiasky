@@ -118,7 +118,7 @@ public class LineQuadRenderSystem extends LineRenderSystem {
     }
 
     public void addLineInternal(double x0, double y0, double z0, double x1, double y1, double z1, float r, float g, float b, float a) {
-        addLineInternal(x0, y0, z0, x1, y1, z1, r, g, b, a, false);
+        addLineInternal(x0, y0, z0, x1, y1, z1, r, g, b, a, true);
     }
 
     public void addLineInternal(double x0, double y0, double z0, double x1, double y1, double z1, float r, float g, float b, float a, boolean rec) {
@@ -209,6 +209,7 @@ public class LineQuadRenderSystem extends LineRenderSystem {
     @Override
     public void renderStud(Array<IRenderable> renderables, ICamera camera, float t) {
         this.camera = camera;
+
         int size = renderables.size;
         for (int i = 0; i < size; i++) {
             ILineRenderable renderable = (ILineRenderable) renderables.get(i);
