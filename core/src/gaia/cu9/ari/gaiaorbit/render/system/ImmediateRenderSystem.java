@@ -58,6 +58,10 @@ public abstract class ImmediateRenderSystem extends AbstractRenderSystem {
         curr.vertices[curr.vertexIdx + curr.colorOffset] = Color.toFloatBits(r, g, b, a);
     }
 
+    public void color(double r, double g, double b, double a) {
+        curr.vertices[curr.vertexIdx + curr.colorOffset] = Color.toFloatBits((float) r, (float) g, (float) b, (float) a);
+    }
+
     public void color(float colorBits) {
         curr.vertices[curr.vertexIdx + curr.colorOffset] = colorBits;
     }

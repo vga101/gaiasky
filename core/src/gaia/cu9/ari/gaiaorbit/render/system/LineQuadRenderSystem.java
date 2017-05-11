@@ -1,5 +1,7 @@
 package gaia.cu9.ari.gaiaorbit.render.system;
 
+import java.util.Comparator;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Mesh;
@@ -22,6 +24,8 @@ public class LineQuadRenderSystem extends LineRenderSystem {
 
     private static final int shortLimit = (int) Math.pow(2, 2 * 8);
     private MeshDataExt currext;
+    private Array<double[]> provisionalLines;
+    private LineArraySorter sorter;
 
     private class MeshDataExt extends MeshData {
         int uvOffset;
@@ -36,11 +40,13 @@ public class LineQuadRenderSystem extends LineRenderSystem {
     }
 
     Vector3d line, camdir0, camdir1, camdir15, point, vec, aux, aux2;
-    final static double widthAngle = Math.toRadians(0.07);
+    final static double widthAngle = Math.toRadians(0.06);
     final static double widthAngleTan = Math.tan(widthAngle);
 
     public LineQuadRenderSystem(RenderGroup rg, int priority, float[] alphas) {
         super(rg, priority, alphas);
+        provisionalLines = new Array<double[]>();
+        sorter = new LineArraySorter();
         glType = GL20.GL_TRIANGLES;
         line = new Vector3d();
         camdir0 = new Vector3d();
@@ -112,23 +118,12 @@ public class LineQuadRenderSystem extends LineRenderSystem {
     }
 
     public void addLineInternal(double x0, double y0, double z0, double x1, double y1, double z1, float r, float g, float b, float a) {
-        addLineInternal(x0, y0, z0, x1, y1, z1, r, g, b, a, true);
+        addLineInternal(x0, y0, z0, x1, y1, z1, r, g, b, a, false);
     }
 
     public void addLineInternal(double x0, double y0, double z0, double x1, double y1, double z1, float r, float g, float b, float a, boolean rec) {
-
-        line.set(x1 - x0, y1 - y0, z1 - z0);
-
-        camdir0.set(x0, y0, z0);
-        camdir1.set(x1, y1, z1);
-
-        // Camdir0 and 1 will contain the perpendicular to camdir and line
-        camdir0.crs(line);
-        camdir1.crs(line);
-
         double distToSegment = MathUtilsd.distancePointSegment(x0, y0, z0, x1, y1, z1, 0, 0, 0);
 
-        double width0, width1;
         double dist0 = Math.sqrt(x0 * x0 + y0 * y0 + z0 * z0);
         double dist1 = Math.sqrt(x1 * x1 + y1 * y1 + z1 * z1);
 
@@ -140,9 +135,15 @@ public class LineQuadRenderSystem extends LineRenderSystem {
 
             addLineInternal(x0, y0, z0, p15.x, p15.y, p15.z, r, g, b, a, false);
             addLineInternal(p15.x, p15.y, p15.z, x1, y1, z1, r, g, b, a, false);
-
-            return;
+        } else {
+            // Add line to list
+            // x0 y0 z0 x1 y1 z1 r g b a dist0 dist1 distMean
+            double[] l = new double[] { x0, y0, z0, x1, y1, z1, r, g, b, a, dist0, dist1, (dist0 + dist1) / 2d };
+            provisionalLines.add(l);
         }
+    }
+
+    public void addLinePostproc(double x0, double y0, double z0, double x1, double y1, double z1, double r, double g, double b, double a, double dist0, double dist1) {
 
         // Check if 6 more indices fit
         if (currext.numVertices + 3 >= shortLimit) {
@@ -151,9 +152,18 @@ public class LineQuadRenderSystem extends LineRenderSystem {
         }
 
         // Projection falls outside line
-        width0 = widthAngleTan * dist0 * camera.getFovFactor();
-        width1 = widthAngleTan * dist1 * camera.getFovFactor();
+        double width0 = widthAngleTan * dist0 * camera.getFovFactor();
+        double width1 = widthAngleTan * dist1 * camera.getFovFactor();
 
+        line.set(x1 - x0, y1 - y0, z1 - z0);
+
+        camdir0.set(x0, y0, z0);
+        camdir1.set(x1, y1, z1);
+
+        // Camdir0 and 1 will contain the perpendicular to camdir and line
+        camdir0.crs(line);
+        camdir1.crs(line);
+        
         camdir0.setLength(width0);
         // P1
         point.set(x0, y0, z0).add(camdir0);
@@ -207,8 +217,12 @@ public class LineQuadRenderSystem extends LineRenderSystem {
                 rend = false;
             if (rend)
                 renderable.render(this, camera, getAlpha(renderable));
-
         }
+
+        // Sort phase
+        provisionalLines.sort(sorter);
+        for (double[] l : provisionalLines)
+            addLinePostproc(l[0], l[1], l[2], l[3], l[4], l[5], l[6], l[7], l[8], l[9], l[10], l[11]);
 
         shaderProgram.begin();
         shaderProgram.setUniformMatrix("u_projModelView", camera.getCamera().combined);
@@ -228,6 +242,22 @@ public class LineQuadRenderSystem extends LineRenderSystem {
         meshIdx = 1;
         currext = (MeshDataExt) meshes[0];
         curr = currext;
+        provisionalLines.clear();
+    }
+
+    private class LineArraySorter implements Comparator<double[]> {
+
+        @Override
+        public int compare(double[] o1, double[] o2) {
+            double f = o1[12] - o2[12];
+            if (f == 0)
+                return 0;
+            else if (f < 0)
+                return 1;
+            else
+                return -1;
+        }
+
     }
 
 }
