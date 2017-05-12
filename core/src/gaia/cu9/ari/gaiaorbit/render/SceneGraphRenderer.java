@@ -250,8 +250,53 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
         // SHADER STARS
         AbstractRenderSystem shaderBackProc = new QuadRenderSystem(RenderGroup.SHADER, priority++, alphas, starShader, true);
-        shaderBackProc.setPreRunnable(blendDepthRunnable);
+        shaderBackProc.setPreRunnable(blendNoDepthRunnable);
         shaderBackProc.setPostRunnable(new RenderSystemRunnable() {
+
+            private float[] positions = new float[Glow.N * 2];
+            private float[] viewAngles = new float[Glow.N];
+            private float[] colors = new float[Glow.N * 3];
+            private Vector3 auxv = new Vector3();
+            private Vector3 auxv2 = new Vector3();
+
+            @Override
+            public void run(AbstractRenderSystem renderSystem, Array<IRenderable> renderables, ICamera camera) {
+                int size = renderables.size;
+                if (PostProcessorFactory.instance.getPostProcessor().isLightScatterEnabled() && Particle.renderOn) {
+                    // Compute light positions for light scattering or light glow
+                    int lightIndex = 0;
+                    float angleEdgeDeg = camera.getAngleEdge() * MathUtils.radDeg;
+                    for (int i = size - 1; i >= 0; i--) {
+                        IRenderable s = renderables.get(i);
+                        if (s instanceof Particle) {
+                            Particle p = (Particle) s;
+                            if (!Constants.webgl && lightIndex < Glow.N && (GlobalConf.program.CUBEMAP360_MODE || GaiaSky.instance.cam.getDirection().angle(p.transform.position) < angleEdgeDeg)) {
+                                Vector3 pos3 = p.transform.getTranslationf(auxv);
+                                pos3.sub(camera.getShift().put(auxv2));
+                                camera.getCamera().project(pos3);
+                                // Here we **need** to use Gdx.graphics.getWidth/Height() because we use camera.project() which uses screen coordinates only
+                                positions[lightIndex * 2] = auxv.x / Gdx.graphics.getWidth();
+                                positions[lightIndex * 2 + 1] = auxv.y / Gdx.graphics.getHeight();
+                                viewAngles[lightIndex] = (float) p.viewAngleApparent;
+                                colors[lightIndex * 3] = p.cc[0];
+                                colors[lightIndex * 3 + 1] = p.cc[1];
+                                colors[lightIndex * 3 + 2] = p.cc[2];
+                                lightIndex++;
+                            }
+                        }
+                    }
+                    EventManager.instance.post(Events.LIGHT_POS_2D_UPDATED, lightIndex, positions, viewAngles, colors);
+                } else {
+                    EventManager.instance.post(Events.LIGHT_POS_2D_UPDATED, 0, positions, viewAngles, colors);
+                }
+            }
+
+        });
+
+        // SHADER CLOSEST STAR
+        AbstractRenderSystem shaderSunProc = new QuadRenderSystem(RenderGroup.SHADER_C, priority++, alphas, starShader, true);
+        shaderSunProc.setPreRunnable(blendDepthRunnable);
+        shaderSunProc.setPostRunnable(new RenderSystemRunnable() {
 
             private float[] positions = new float[Glow.N * 2];
             private float[] viewAngles = new float[Glow.N];
@@ -351,12 +396,15 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         //renderProcesses.add(cloudsProc);
         renderProcesses.add(annotationsProc);
         
+        // Stars shader
+        renderProcesses.add(shaderBackProc);
+
         renderProcesses.add(shaderFrontProc);
         renderProcesses.add(modelFrontProc);
         renderProcesses.add(modelBeamProc);
         renderProcesses.add(lineProc);
         renderProcesses.add(labelsProc);
-        renderProcesses.add(shaderBackProc);
+
         renderProcesses.add(galaxyProc);
         renderProcesses.add(modelStarsProc);
         renderProcesses.add(modelAtmProc);

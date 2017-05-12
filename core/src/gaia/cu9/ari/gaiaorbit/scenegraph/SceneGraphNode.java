@@ -14,6 +14,7 @@ import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.render.IRenderable;
 import gaia.cu9.ari.gaiaorbit.render.SceneGraphRenderer;
 import gaia.cu9.ari.gaiaorbit.scenegraph.octreewrapper.AbstractOctreeWrapper;
+import gaia.cu9.ari.gaiaorbit.util.GSEnumSet;
 import gaia.cu9.ari.gaiaorbit.util.concurrent.IThreadLocal;
 import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadIndexer;
 import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadLocalFactory;
@@ -22,7 +23,6 @@ import gaia.cu9.ari.gaiaorbit.util.math.Vector2d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 import gaia.cu9.ari.gaiaorbit.util.tree.IPosition;
-import gaia.cu9.ari.gaiaorbit.util.GSEnumSet;
 
 /**
  * A scene graph entity.
@@ -49,26 +49,28 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
         MODEL_B(1),
         /** Shader - back (stars) **/
         SHADER(2),
+        /** Shader - closest (usually sun) **/
+        SHADER_C(3),
         /** Shader - front (planets, satellites...) **/
-        SHADER_F(3),
+        SHADER_F(4),
         /** Single pixel **/
-        POINT(4),
+        POINT(5),
         /** Line **/
-        LINE(5),
+        LINE(6),
         /** Annotations of background models (grids) **/
-        MODEL_B_ANNOT(6),
+        MODEL_B_ANNOT(7),
         /** Atmospheres of foreground models (planets) **/
-        MODEL_F_ATM(7),
+        MODEL_F_ATM(8),
         /** Label **/
-        LABEL(8),
+        LABEL(9),
         /** Model star **/
-        MODEL_S(9),
+        MODEL_S(10),
         /** Galaxy as a whole **/
-        GALAXY(10),
+        GALAXY(11),
         /** Model close up **/
-        MODEL_CLOSEUP(11),
+        MODEL_CLOSEUP(12),
         /** Beams **/
-        MODEL_BEAM(12),
+        MODEL_BEAM(13),
 
         /** None **/
         NONE(-1);
