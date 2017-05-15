@@ -217,5 +217,180 @@
 							"meananomaly" : 266.2144
 							}
 							
+	},
+	
+	{
+		"name" : "Titan orbit",
+		"color" : [.7, .7, 1.0, 0.4],
+		"ct": [ "Orbits", "Moons" ],
+		
+		"parent" : "Saturn", 
+		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Orbit",
+		"provider" : "gaia.cu9.ari.gaiaorbit.data.orbit.OrbitalParametersProvider",
+			
+		"orbit" 		: {
+							// In days
+							"period" : 15.94542,
+							// 2004 Jan 1 00:00UT
+							"epoch" : 2453005.5,
+							"semimajoraxis" : 1221850.0,
+							"eccentricity" : 0.0292,
+							// Inclination of orbit with respect to the planet's Equator
+							"inclination" : 0.33,
+							"ascendingnode" : 0.0,
+							"argofpericenter" : 0.0,
+							"meananomaly" : 120.2144
+							}
+							
+	},
+	
+	{
+		"name" : "Rhea orbit",
+		"color" : [.7, .7, 1.0, 0.4],
+		"ct": [ "Orbits", "Moons" ],
+		
+		"parent" : "Saturn", 
+		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Orbit",
+		"provider" : "gaia.cu9.ari.gaiaorbit.data.orbit.OrbitalParametersProvider",
+			
+		"orbit" 		: {
+							// In days
+							"period" : 4.5175,
+							// 2004 Jan 1 00:00UT
+							"epoch" : 2453005.5,
+							"semimajoraxis" : 527040.0,
+							"eccentricity" : 0.001,
+							// Inclination of orbit with respect to the planet's Equator
+							"inclination" : 0.35,
+							"ascendingnode" : 0.0,
+							"argofpericenter" : 0.0,
+							"meananomaly" : 190.0
+							}
+							
+	},
+	
+	{
+		"name" : "Dione orbit",
+		"color" : [.7, .7, 1.0, 0.4],
+		"ct": [ "Orbits", "Moons" ],
+		
+		"parent" : "Saturn", 
+		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Orbit",
+		"provider" : "gaia.cu9.ari.gaiaorbit.data.orbit.OrbitalParametersProvider",
+			
+		"orbit" 		: {
+							// In days
+							"period" : 2.736915,
+							// 2004 Jan 1 00:00UT
+							"epoch" : 2453005.5,
+							"semimajoraxis" : 377400.0,
+							"eccentricity" : 0.0022,
+							// Inclination of orbit with respect to the planet's Equator
+							"inclination" : 0.02,
+							"ascendingnode" : 0.0,
+							"argofpericenter" : 0.0,
+							"meananomaly" : 310.0
+							}
+							
+	},
+	
+	{
+		"name" : "Tethys orbit",
+		"color" : [.7, .7, 1.0, 0.4],
+		"ct": [ "Orbits", "Moons" ],
+		
+		"parent" : "Saturn", 
+		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Orbit",
+		"provider" : "gaia.cu9.ari.gaiaorbit.data.orbit.OrbitalParametersProvider",
+			
+		"orbit" 		: {
+							// In days
+							"period" : 1.887802,
+							// 2004 Jan 1 00:00UT
+							"epoch" : 2453005.5,
+							"semimajoraxis" : 294619.0,
+							"eccentricity" : 0.0001,
+							// Inclination of orbit with respect to the planet's Equator
+							"inclination" : 1.12,
+							"ascendingnode" : 0.0,
+							"argofpericenter" : 0.0,
+							"meananomaly" : 98.0
+							}
+							
+	},
+	
+	{
+		"name" : "Enceladus orbit",
+		"color" : [.7, .7, 1.0, 0.4],
+		"ct": [ "Orbits", "Moons" ],
+		
+		"parent" : "Saturn", 
+		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Orbit",
+		"provider" : "gaia.cu9.ari.gaiaorbit.data.orbit.OrbitalParametersProvider",
+			
+		"orbit" 		: {
+							// In days
+							"period" : 1.370218,
+							// 2004 Jan 1 00:00UT
+							"epoch" : 2453005.5,
+							"semimajoraxis" : 238020.0,
+							"eccentricity" : 0.0045,
+							// Inclination of orbit with respect to the planet's Equator
+							"inclination" : 0.02,
+							"ascendingnode" : 0.0,
+							"argofpericenter" : 0.0,
+							"meananomaly" : 215.0
+							}
+							
+	},
+	
+	{
+		"name" : "Mimas orbit",
+		"color" : [.7, .7, 1.0, 0.4],
+		"ct": [ "Orbits", "Moons" ],
+		
+		"parent" : "Saturn", 
+		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Orbit",
+		"provider" : "gaia.cu9.ari.gaiaorbit.data.orbit.OrbitalParametersProvider",
+			
+		"orbit" 		: {
+							// In days
+							"period" : 0.9424218,
+							// 2004 Jan 1 00:00UT
+							"epoch" : 2453005.5,
+							"semimajoraxis" : 185520.0,
+							"eccentricity" : 0.0202,
+							// Inclination of orbit with respect to the planet's Equator
+							"inclination" : 1.53,
+							"ascendingnode" : 0.0,
+							"argofpericenter" : 0.0,
+							"meananomaly" : 23.0
+							}
+							
+	},
+	
+	{
+		"name" : "Janus orbit",
+		"color" : [.7, .7, 1.0, 0.4],
+		"ct": [ "Orbits", "Moons" ],
+		
+		"parent" : "Saturn", 
+		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Orbit",
+		"provider" : "gaia.cu9.ari.gaiaorbit.data.orbit.OrbitalParametersProvider",
+			
+		"orbit" 		: {
+							// In days
+							"period" : 0.6945,
+							// 2004 Jan 1 00:00UT
+							"epoch" : 2453005.5,
+							"semimajoraxis" : 151460.0,
+							"eccentricity" : 0.0067,
+							// Inclination of orbit with respect to the planet's Equator
+							"inclination" : 0.1649,
+							"ascendingnode" : 8.1758,
+							"argofpericenter" : 248.2856,
+							"meananomaly" : 131.51
+							}
+							
 	}
 ]}

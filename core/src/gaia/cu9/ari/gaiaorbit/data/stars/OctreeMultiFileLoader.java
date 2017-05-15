@@ -99,11 +99,11 @@ public class OctreeMultiFileLoader implements ISceneGraphLoader {
 
     public OctreeMultiFileLoader() {
         instance = this;
-        toLoadQueue = new ArrayBlockingQueue<OctreeNode<Particle>>(4000);
-        toUnloadQueue = new ArrayBlockingQueue<OctreeNode<Particle>>(4000);
+        toLoadQueue = new ArrayBlockingQueue<OctreeNode<Particle>>(30000);
+        toUnloadQueue = new ArrayBlockingQueue<OctreeNode<Particle>>(30000);
         particleReader = new ParticleDataBinaryIO<Particle>();
 
-        maxLoadedStars = 200000;
+        maxLoadedStars = 800000;
     }
 
     @Override
@@ -317,7 +317,6 @@ public class OctreeMultiFileLoader implements ISceneGraphLoader {
                     }
 
                     // Release resources if needed
-                    System.out.println("Loaded stars (before): " + loader.nLoadedStars);
                     while (loader.nLoadedStars >= loader.maxLoadedStars) {
                         // Get first in queue (unaccessed for the longest time) and release it
                         OctreeNode<Particle> octant = loader.toUnloadQueue.poll();
@@ -325,7 +324,6 @@ public class OctreeMultiFileLoader implements ISceneGraphLoader {
                             loader.unloadOctant(octant, octreeWrapper);
                         }
                     }
-                    System.out.println("Loaded stars (after): " + loader.nLoadedStars);
                 }
 
                 /** ----------- SLEEP UNTIL INTERRUPTED ----------- **/
