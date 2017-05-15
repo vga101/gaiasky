@@ -74,11 +74,11 @@ public class OctreeGenerator {
 
         //treatOctant(root, catalog, MathUtils.clamp((float) aggregation.getMaxPart() / (float) catalog.size(), 0f, 1f));
 
-        List<OctreeNode>[] octantsPerLevel = new List[25];
-        octantsPerLevel[0] = new ArrayList<OctreeNode>(1);
+        List<OctreeNode<Particle>>[] octantsPerLevel = new List[25];
+        octantsPerLevel[0] = new ArrayList<OctreeNode<Particle>>(1);
         octantsPerLevel[0].add(root);
 
-        Map<OctreeNode, Array<Particle>> inputLists = new HashMap<OctreeNode, Array<Particle>>();
+        Map<OctreeNode<Particle>, Array<Particle>> inputLists = new HashMap<OctreeNode<Particle>, Array<Particle>>();
         inputLists.put(root, catalog);
 
         treatLevel(inputLists, 0, octantsPerLevel, MathUtils.clamp((float) aggregation.getMaxPart() / (float) catalog.size, 0f, 1f));
@@ -95,14 +95,14 @@ public class OctreeGenerator {
      * @param octantsPerLevel
      * @param percentage
      */
-    private void treatLevel(Map<OctreeNode, Array<Particle>> inputLists, int level, List<OctreeNode>[] octantsPerLevel, float percentage) {
+    private void treatLevel(Map<OctreeNode<Particle>, Array<Particle>> inputLists, int level, List<OctreeNode<Particle>>[] octantsPerLevel, float percentage) {
         Logger.info(this.getClass().getSimpleName(), "Generating level " + level);
-        List<OctreeNode> levelOctants = octantsPerLevel[level];
+        List<OctreeNode<Particle>> levelOctants = octantsPerLevel[level];
 
-        octantsPerLevel[level + 1] = new ArrayList<OctreeNode>(levelOctants.size() * 8);
+        octantsPerLevel[level + 1] = new ArrayList<OctreeNode<Particle>>(levelOctants.size() * 8);
 
         /** CREATE OCTANTS FOR LEVEL+1 **/
-        for (OctreeNode octant : levelOctants) {
+        for (OctreeNode<Particle> octant : levelOctants) {
             Array<Particle> list = inputLists.get(octant);
             boolean leaf = aggregation.sample(list, octant, percentage);
 
@@ -138,9 +138,9 @@ public class OctreeGenerator {
             /** INTERSECT CATALOG WITH OCTANTS, COMPUTE PERCENTAGE **/
             int maxSublevelObjs = 0;
             int minSubLevelObjs = Integer.MAX_VALUE;
-            Map<OctreeNode, Array<Particle>> lists = new HashMap<OctreeNode, Array<Particle>>();
+            Map<OctreeNode<Particle>, Array<Particle>> lists = new HashMap<OctreeNode<Particle>, Array<Particle>>();
 
-            for (OctreeNode octant : octantsPerLevel[level + 1]) {
+            for (OctreeNode<Particle> octant : octantsPerLevel[level + 1]) {
                 Array<Particle> list = intersect(inputLists.get(octant.parent), octant);
                 lists.put(octant, list);
                 if (list.size > maxSublevelObjs) {
