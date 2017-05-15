@@ -110,6 +110,7 @@ public class MilkyWay extends Blob implements IModelRenderable, I3DTextRenderabl
      */
     @Override
     public void render(ModelBatch modelBatch, float alpha, float t) {
+        mc.touch();
         mc.setTransparency(alpha * cc[3] * opacity);
         modelBatch.render(mc.instance, mc.env);
     }

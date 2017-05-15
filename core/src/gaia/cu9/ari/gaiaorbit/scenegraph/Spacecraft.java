@@ -131,6 +131,7 @@ public class Spacecraft extends AbstractPositionEntity implements IModelRenderab
 
     @Override
     public void render(ModelBatch modelBatch, float alpha, float t) {
+        mc.touch();
         mc.setTransparency(alpha * opacity);
         modelBatch.render(mc.instance, mc.env);
     }

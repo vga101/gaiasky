@@ -273,6 +273,7 @@ public class Star extends Particle {
 
     @Override
     public void render(ModelBatch modelBatch, float alpha, float t) {
+        mc.touch();
         mc.setTransparency(alpha * (float) MathUtilsd.lint(distToCamera, modelDistance / 50f, modelDistance, 1f, 0f));
         float[] col = GlobalConf.scene.STAR_COLOR_TRANSIT ? ccTransit : cc;
         ((ColorAttribute) mc.env.get(ColorAttribute.AmbientLight)).color.set(col[0], col[1], col[2], 1f);

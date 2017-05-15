@@ -40,8 +40,8 @@
 									"flip" : false
 									},
 						"texture" : {
-									"base" : "data/tex/moon-4k.jpg",
-									"normal" : "data/tex/moon-normal-4k.jpg"
+									"base" : "data/tex/moon*.jpg",
+									"normal" : "data/tex/moon-normal*.jpg"
 									}
 						}
 	},
@@ -81,8 +81,8 @@
 							"args" : [true],
 							"model" : "data/models/phobos.g3db",
 							"texture" : {
-										"base" : "data/tex/phobos-2k.jpg",
-										"normal" : "data/tex/phobos-normal-2k.jpg"
+										"base" : "data/tex/phobos*.jpg",
+										"normal" : "data/tex/phobos-normal*.jpg"
 										}
 							}
 	},
@@ -422,7 +422,7 @@
 							"flip" : false
 							},
 					"texture" : {
-								"base" : "data/tex/titan-4k.jpg"
+								"base" : "data/tex/titan*.jpg"
 								}
 					}
 	},
@@ -554,7 +554,7 @@
 							"flip" : false
 							},
 					"texture" : {
-								"base" : "data/tex/tethys-4k.jpg"
+								"base" : "data/tex/tethys*.jpg"
 								}
 					}
 	},
@@ -642,7 +642,7 @@
 							"flip" : false
 							},
 					"texture" : {
-								"base" : "data/tex/mimas-2k.jpg"
+								"base" : "data/tex/mimas*.jpg"
 								}
 					}
 	},

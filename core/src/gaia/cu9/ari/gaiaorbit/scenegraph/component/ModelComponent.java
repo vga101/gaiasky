@@ -19,12 +19,15 @@ import com.badlogic.gdx.utils.Disposable;
 
 import gaia.cu9.ari.gaiaorbit.data.AssetBean;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
+import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.ModelCache;
 import gaia.cu9.ari.gaiaorbit.util.Pair;
 
 public class ModelComponent implements Disposable {
+
     private static ColorAttribute ambient;
+
 
     static {
         ambient = new ColorAttribute(ColorAttribute.AmbientLight, (float) GlobalConf.scene.AMBIENT_LIGHT, (float) GlobalConf.scene.AMBIENT_LIGHT, (float) GlobalConf.scene.AMBIENT_LIGHT, 1f);
@@ -59,6 +62,11 @@ public class ModelComponent implements Disposable {
 
     public double scale = 1d;
     public boolean culling = true;
+    private boolean initialised;
+
+    private AssetManager manager;
+    private float[] cc;
+
     /**
      * COMPONENTS
      */
@@ -85,12 +93,15 @@ public class ModelComponent implements Disposable {
             AssetBean.addAsset(modelFile, Model.class);
         }
 
-        if (tc != null) {
+        if (!GlobalConf.scene.LAZY_TEXTURE_INIT && tc != null) {
             tc.initialize();
         }
     }
 
     public void doneLoading(AssetManager manager, Matrix4 localTransform, float[] cc) {
+        this.manager = manager;
+        this.cc = cc;
+
         Model model = null;
         Map<String, Material> materials = null;
 
@@ -118,12 +129,33 @@ public class ModelComponent implements Disposable {
         materials.get("base").clear();
 
         // INITIALIZE MATERIAL
-        if (tc != null) {
+        if (!GlobalConf.scene.LAZY_TEXTURE_INIT && tc != null) {
             tc.initMaterial(manager, materials, cc, culling);
         }
 
         // CREATE MAIN MODEL INSTANCE
         instance = new ModelInstance(model, localTransform);
+
+        // Initialised
+        initialised = !GlobalConf.scene.LAZY_TEXTURE_INIT;
+    }
+
+    /**
+     * Initialises the texture if it is not initialised yet
+     */
+    public void touch() {
+        if (GlobalConf.scene.LAZY_TEXTURE_INIT && !initialised) {
+
+            if (tc != null) {
+                Logger.info(I18n.bundle.format("notif.loading", tc.base));
+                tc.initialize(manager);
+                manager.finishLoading();
+                tc.initMaterial(manager, instance, cc, culling);
+            }
+
+            initialised = true;
+        }
+
     }
 
     public void addDirectionalLight(float r, float g, float b, float x, float y, float z) {

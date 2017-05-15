@@ -169,7 +169,7 @@ public class GaiaSkyDesktop implements IObserver {
 
     public GaiaSkyDesktop() {
         super();
-        EventManager.instance.subscribe(this, Events.SHOW_ABOUT_ACTION, Events.SHOW_RUNSCRIPT_ACTION, Events.JAVA_EXCEPTION, Events.SHOW_PLAYCAMERA_ACTION, Events.DISPLAY_MEM_INFO_WINDOW, Events.POST_NOTIFICATION);
+        EventManager.instance.subscribe(this, Events.SHOW_ABOUT_ACTION, Events.SHOW_RUNSCRIPT_ACTION, Events.JAVA_EXCEPTION, Events.SHOW_PLAYCAMERA_ACTION, Events.DISPLAY_MEM_INFO_WINDOW);
     }
 
     private void init() {
@@ -293,21 +293,6 @@ public class GaiaSkyDesktop implements IObserver {
             break;
         case JAVA_EXCEPTION:
             ((Throwable) data[0]).printStackTrace(System.err);
-            break;
-        case POST_NOTIFICATION:
-            String message = "";
-            boolean perm = false;
-            for (int i = 0; i < data.length; i++) {
-                if (i == data.length - 1 && data[i] instanceof Boolean) {
-                    perm = (Boolean) data[i];
-                } else {
-                    message += (String) data[i];
-                    if (i < data.length - 1 && !(i == data.length - 2 && data[data.length - 1] instanceof Boolean)) {
-                        message += " - ";
-                    }
-                }
-            }
-            System.out.println(message);
             break;
         default:
             break;

@@ -110,6 +110,7 @@ public class Planet extends ModelBody implements IAtmosphereRenderable {
      */
     @Override
     public void render(ModelBatch modelBatch, float alpha, float t) {
+        mc.touch();
         render(modelBatch, alpha, t, false);
     }
 

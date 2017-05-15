@@ -1,8 +1,8 @@
 { "data" : [
 	{
 		"loader": gaia.cu9.ari.gaiaorbit.data.JsonLoader,
-		"files": [ "data/planets-low.json",
-					"data/moons-low.json",
+		"files": [ "data/planets.json",
+					"data/moons.json",
 					"data/satellites.json",
 					"data/asteroids.json",
 					"data/orbits_planet.json",

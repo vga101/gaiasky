@@ -666,6 +666,9 @@ public class GlobalConf {
         /** The graphics quality mode: 0 - high, 1 - normal, 2 - low **/
         public int GRAPHICS_QUALITY;
 
+        /** Lazy texture initialisation - textures are loaded only if needed **/
+        public boolean LAZY_TEXTURE_INIT;
+
         /** Whether to show crosshair in focus mode **/
         public boolean CROSSHAIR;
 
@@ -709,7 +712,7 @@ public class GlobalConf {
         }
 
         public void initialize(int gRAPHICS_QUALITY, long oBJECT_FADE_MS, float sTAR_BRIGHTNESS, float aMBIENT_LIGHT, int cAMERA_FOV, float cAMERA_SPEED, float tURNING_SPEED, float rOTATION_SPEED, int cAMERA_SPEED_LIMIT_IDX, boolean fOCUS_LOCK, boolean fOCUS_LOCK_ORIENTATION, float lABEL_NUMBER_FACTOR, boolean[] vISIBILITY, int pIXEL_RENDERER, int lINE_RENDERER, double sTAR_TH_ANGLE_NONE, double sTAR_TH_ANGLE_POINT, double sTAR_TH_ANGLE_QUAD, float pOINT_ALPHA_MIN, float pOINT_ALPHA_MAX,
-                boolean oCTREE_PARTICLE_FADE, float oCTANT_TH_ANGLE_0, float oCTANT_TH_ANGLE_1, boolean pROPER_MOTION_VECTORS, float pM_NUM_FACTOR, float pM_LEN_FACTOR, float sTAR_POINT_SIZE, boolean gALAXY_3D, int cUBEMAP_FACE_RESOLUTION, boolean cROSSHAIR, boolean cINEMATIC_CAMERA) {
+                boolean oCTREE_PARTICLE_FADE, float oCTANT_TH_ANGLE_0, float oCTANT_TH_ANGLE_1, boolean pROPER_MOTION_VECTORS, float pM_NUM_FACTOR, float pM_LEN_FACTOR, float sTAR_POINT_SIZE, boolean gALAXY_3D, int cUBEMAP_FACE_RESOLUTION, boolean cROSSHAIR, boolean cINEMATIC_CAMERA, boolean lAZY_TEXTURE_INIT) {
             GRAPHICS_QUALITY = gRAPHICS_QUALITY;
             OBJECT_FADE_MS = oBJECT_FADE_MS;
             STAR_BRIGHTNESS = sTAR_BRIGHTNESS;
@@ -743,6 +746,7 @@ public class GlobalConf {
             CUBEMAP_FACE_RESOLUTION = cUBEMAP_FACE_RESOLUTION;
             CROSSHAIR = cROSSHAIR;
             CINEMATIC_CAMERA = cINEMATIC_CAMERA;
+            LAZY_TEXTURE_INIT = lAZY_TEXTURE_INIT;
         }
 
         public void updateSpeedLimit() {
