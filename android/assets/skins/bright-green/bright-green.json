@@ -138,6 +138,7 @@ com.badlogic.gdx.scenes.scene2d.ui.TextField$TextFieldStyle: {
 	default: { selection: selection, background: textfield, disabledBackground: textfield-disabled, font: ui-11, fontColor: black, disabledFontColor: grey, messageFontColor: dark-gray, cursor: cursor },
 	no-disabled: { selection: selection, background: textfield, font: ui-11, fontColor: black, messageFontColor: dark-gray, cursor: cursor },
 	info:     { font: ui-11, fontColor: sc-blue, background: null },  
+	regular:     { font: ui-11, fontColor: black, background: null }, 
 	msg-10:   { font: ui-10, fontColor: black, background: null},
 	msg-11:   { font: ui-11, fontColor: black, background: null},
 	msg-12:   { font: ui-12, fontColor: black, background: null},

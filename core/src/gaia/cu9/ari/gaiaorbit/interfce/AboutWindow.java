@@ -110,17 +110,17 @@ public class AboutWindow extends GenericDialog {
         Image gaiasky = new Image(getSpriteDrawable(Gdx.files.internal("img/gaiaskylogo.png")));
 
         // User manual
-        Label usermantitle = new OwnLabel(txt("gui.help.usermanual"), skin, "ui-12");
-        Label usermantxt = new OwnLabel(txt("gui.help.help1"), skin, "ui-11");
+        Label usermantitle = new OwnLabel(txt("gui.help.usermanual"), skin);
+        Label usermantxt = new OwnLabel(txt("gui.help.help1"), skin);
         Link usermanlink = new Link(GlobalConf.WEBPAGE, linkStyle, GlobalConf.WEBPAGE);
 
         // Wiki
-        Label wikititle = new OwnLabel("Docs", skin, "ui-12");
-        Label wikitxt = new OwnLabel(txt("gui.help.help2"), skin, "ui-11");
+        Label wikititle = new OwnLabel("Docs", skin);
+        Label wikitxt = new OwnLabel(txt("gui.help.help2"), skin);
         Link wikilink = new Link(GlobalConf.DOCUMENTATION, linkStyle, GlobalConf.DOCUMENTATION);
 
         // Readme
-        Label readmetitle = new OwnLabel(txt("gui.help.readme"), skin, "ui-12");
+        Label readmetitle = new OwnLabel(txt("gui.help.readme"), skin);
         FileHandle readmefile = Gdx.files.internal("README.md");
         if (!readmefile.exists()) {
             readmefile = Gdx.files.internal("../README.md");
@@ -147,13 +147,13 @@ public class AboutWindow extends GenericDialog {
         contentHelp.add(usermantitle).align(Align.left).padRight(pad * 2);
         contentHelp.add(usermantxt).align(Align.left);
         contentHelp.row();
-        contentHelp.add(new OwnLabel("", skin, "ui-11"));
+        contentHelp.add(new OwnLabel("", skin));
         contentHelp.add(usermanlink).align(Align.left);
         contentHelp.row();
         contentHelp.add(wikititle).align(Align.left).padRight(pad * 2);
         contentHelp.add(wikitxt).align(Align.left);
         contentHelp.row();
-        contentHelp.add(new OwnLabel("", skin, "ui-11"));
+        contentHelp.add(new OwnLabel("", skin));
         contentHelp.add(wikilink).align(Align.left);
         contentHelp.row();
         contentHelp.add(readmetitle).colspan(2).align(Align.left);
@@ -165,21 +165,21 @@ public class AboutWindow extends GenericDialog {
         contentAbout.align(Align.top);
 
         // Intro
-        TextArea intro = new OwnTextArea(txt("gui.help.gscredits", GlobalConf.version.version), skin.get("msg-11", TextFieldStyle.class));
+        TextArea intro = new OwnTextArea(txt("gui.help.gscredits", GlobalConf.version.version), skin.get("regular", TextFieldStyle.class));
         intro.setDisabled(true);
         intro.setPrefRows(3);
         intro.setWidth(tawidth);
 
         // Home page
-        Label homepagetitle = new OwnLabel(txt("gui.help.homepage"), skin, "ui-12");
+        Label homepagetitle = new OwnLabel(txt("gui.help.homepage"), skin);
         Link homepage = new Link(GlobalConf.WEBPAGE, linkStyle, GlobalConf.WEBPAGE);
 
         // Author
-        Label authortitle = new OwnLabel(txt("gui.help.author"), skin, "ui-12");
+        Label authortitle = new OwnLabel(txt("gui.help.author"), skin);
 
         VerticalGroup author = new VerticalGroup();
         author.align(Align.left);
-        Label authorname = new OwnLabel("Toni Sagristà Sellés", skin, "ui-11");
+        Label authorname = new OwnLabel("Toni Sagristà Sellés", skin);
         Link authormail = new Link("tsagrista@ari.uni-heidelberg.de", linkStyle, "mailto:tsagrista@ari.uni-heidelberg.de");
         Link authorpage = new Link("www.tonisagrista.com", linkStyle, "http://tonisagrista.com");
         author.addActor(authorname);
@@ -187,11 +187,11 @@ public class AboutWindow extends GenericDialog {
         author.addActor(authorpage);
 
         // Contributor
-        Label contribtitle = new OwnLabel(txt("gui.help.contributors"), skin, "ui-12");
+        Label contribtitle = new OwnLabel(txt("gui.help.contributors"), skin);
 
         VerticalGroup contrib = new VerticalGroup();
         contrib.align(Align.left);
-        Label contribname = new OwnLabel("Apl. Prof. Dr. Stefan Jordan", skin, "ui-11");
+        Label contribname = new OwnLabel("Apl. Prof. Dr. Stefan Jordan", skin);
         Link contribmail = new Link("jordan@ari.uni-heidelberg.de", linkStyle, "mailto:jordan@ari.uni-heidelberg.de");
         contrib.addActor(contribname);
         contrib.addActor(contribmail);
@@ -202,7 +202,7 @@ public class AboutWindow extends GenericDialog {
         Image license = new Image(getSpriteDrawable(Gdx.files.internal("img/license.png")));
 
         VerticalGroup licensev = new VerticalGroup();
-        TextArea licensetext = new OwnTextArea(txt("gui.help.license"), skin.get("msg-11", TextFieldStyle.class));
+        TextArea licensetext = new OwnTextArea(txt("gui.help.license"), skin.get("regular", TextFieldStyle.class));
         licensetext.setDisabled(true);
         licensetext.setPrefRows(3);
         licensetext.setWidth(tawidth / 2f);
@@ -253,41 +253,41 @@ public class AboutWindow extends GenericDialog {
         // Build info
         Label buildinfo = new OwnLabel(txt("gui.help.buildinfo"), skin, "help-title");
 
-        Label versiontitle = new OwnLabel(txt("gui.help.version", GlobalConf.APPLICATION_NAME), skin, "ui-12");
-        Label version = new OwnLabel(GlobalConf.version.version, skin, "ui-11");
+        Label versiontitle = new OwnLabel(txt("gui.help.version", GlobalConf.APPLICATION_NAME), skin);
+        Label version = new OwnLabel(GlobalConf.version.version, skin);
 
-        Label revisiontitle = new OwnLabel(txt("gui.help.buildnumber"), skin, "ui-12");
-        Label revision = new OwnLabel(GlobalConf.version.build, skin, "ui-11");
+        Label revisiontitle = new OwnLabel(txt("gui.help.buildnumber"), skin);
+        Label revision = new OwnLabel(GlobalConf.version.build, skin);
 
-        Label timetitle = new OwnLabel(txt("gui.help.buildtime"), skin, "ui-12");
-        Label time = new OwnLabel(GlobalConf.version.buildtime, skin, "ui-11");
+        Label timetitle = new OwnLabel(txt("gui.help.buildtime"), skin);
+        Label time = new OwnLabel(GlobalConf.version.buildtime, skin);
 
-        Label systemtitle = new OwnLabel(txt("gui.help.buildsys"), skin, "ui-12");
-        TextArea system = new OwnTextArea(GlobalConf.version.system, skin.get("msg-11", TextFieldStyle.class));
+        Label systemtitle = new OwnLabel(txt("gui.help.buildsys"), skin);
+        TextArea system = new OwnTextArea(GlobalConf.version.system, skin.get("regular", TextFieldStyle.class));
         system.setDisabled(true);
         system.setPrefRows(3);
         system.setWidth(tawidth * 2f / 3f);
 
-        Label buildertitle = new OwnLabel(txt("gui.help.builder"), skin, "ui-12");
-        Label builder = new OwnLabel(GlobalConf.version.builder, skin, "ui-11");
+        Label buildertitle = new OwnLabel(txt("gui.help.builder"), skin);
+        Label builder = new OwnLabel(GlobalConf.version.builder, skin);
 
         // Java info
         Label javainfo = new OwnLabel(txt("gui.help.javainfo"), skin, "help-title");
 
-        Label javaversiontitle = new OwnLabel(txt("gui.help.javaversion"), skin, "ui-12");
-        Label javaversion = new OwnLabel(System.getProperty("java.version"), skin, "ui-11");
+        Label javaversiontitle = new OwnLabel(txt("gui.help.javaversion"), skin);
+        Label javaversion = new OwnLabel(System.getProperty("java.version"), skin);
 
-        Label javaruntimetitle = new OwnLabel(txt("gui.help.javaname"), skin, "ui-12");
-        Label javaruntime = new OwnLabel(System.getProperty("java.runtime.name"), skin, "ui-11");
+        Label javaruntimetitle = new OwnLabel(txt("gui.help.javaname"), skin);
+        Label javaruntime = new OwnLabel(System.getProperty("java.runtime.name"), skin);
 
-        Label javavmnametitle = new OwnLabel(txt("gui.help.javavmname"), skin, "ui-12");
-        Label javavmname = new OwnLabel(System.getProperty("java.vm.name"), skin, "ui-11");
+        Label javavmnametitle = new OwnLabel(txt("gui.help.javavmname"), skin);
+        Label javavmname = new OwnLabel(System.getProperty("java.vm.name"), skin);
 
-        Label javavmversiontitle = new OwnLabel(txt("gui.help.javavmversion"), skin, "ui-12");
-        Label javavmversion = new OwnLabel(System.getProperty("java.vm.version"), skin, "ui-11");
+        Label javavmversiontitle = new OwnLabel(txt("gui.help.javavmversion"), skin);
+        Label javavmversion = new OwnLabel(System.getProperty("java.vm.version"), skin);
 
-        Label javavmvendortitle = new OwnLabel(txt("gui.help.javavmvendor"), skin, "ui-12");
-        Label javavmvendor = new OwnLabel(System.getProperty("java.vm.vendor"), skin, "ui-11");
+        Label javavmvendortitle = new OwnLabel(txt("gui.help.javavmvendor"), skin);
+        Label javavmvendor = new OwnLabel(System.getProperty("java.vm.vendor"), skin);
 
         TextButton memoryinfobutton = new OwnTextButton(txt("gui.help.meminfo"), skin, "default");
         memoryinfobutton.setName("memoryinfo");
@@ -308,13 +308,13 @@ public class AboutWindow extends GenericDialog {
         // OpenGL info
         Label glinfo = new OwnLabel(txt("gui.help.openglinfo"), skin, "help-title");
 
-        Label glversiontitle = new OwnLabel(txt("gui.help.openglversion"), skin, "ui-12");
-        Label glversion = new OwnLabel(Gdx.gl.glGetString(GL20.GL_VERSION), skin, "ui-11");
+        Label glversiontitle = new OwnLabel(txt("gui.help.openglversion"), skin);
+        Label glversion = new OwnLabel(Gdx.gl.glGetString(GL20.GL_VERSION), skin);
 
-        Label glslversiontitle = new OwnLabel(txt("gui.help.glslversion"), skin, "ui-12");
-        Label glslversion = new OwnLabel(Gdx.gl.glGetString(GL20.GL_SHADING_LANGUAGE_VERSION), skin, "ui-11");
+        Label glslversiontitle = new OwnLabel(txt("gui.help.glslversion"), skin);
+        Label glslversion = new OwnLabel(Gdx.gl.glGetString(GL20.GL_SHADING_LANGUAGE_VERSION), skin);
 
-        Label glextensionstitle = new OwnLabel(txt("gui.help.glextensions"), skin, "ui-12");
+        Label glextensionstitle = new OwnLabel(txt("gui.help.glextensions"), skin);
         String glextensionsstr = Gdx.gl.glGetString(GL20.GL_EXTENSIONS).replace(' ', '\r');
         lines = GlobalResources.countOccurrences(glextensionsstr, '\r') + 1;
         IntBuffer buf = BufferUtils.newIntBuffer(16);
