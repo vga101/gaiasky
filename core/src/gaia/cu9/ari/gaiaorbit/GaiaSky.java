@@ -19,6 +19,7 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
+import com.badlogic.gdx.graphics.glutils.GLFrameBuffer;
 import com.badlogic.gdx.scenes.scene2d.ui.TooltipManager;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.TimeUtils;
@@ -253,6 +254,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
                 EventManager.instance.post(Events.FPS_INFO, 1f / Gdx.graphics.getDeltaTime());
                 EventManager.instance.post(Events.DEBUG1, TimeUtils.timeSinceMillis(startTime) / 1000d);
                 EventManager.instance.post(Events.DEBUG2, MemInfo.getUsedMemory(), MemInfo.getFreeMemory(), MemInfo.getTotalMemory(), MemInfo.getMaxMemory());
+                EventManager.instance.post(Events.DEBUG4, GLFrameBuffer.getManagedStatus());
             }
 
         }, 2, 1);

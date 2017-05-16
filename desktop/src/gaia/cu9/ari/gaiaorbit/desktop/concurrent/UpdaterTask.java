@@ -5,6 +5,7 @@ import java.util.concurrent.Callable;
 import com.badlogic.gdx.utils.Array;
 
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
+import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
@@ -30,7 +31,8 @@ public class UpdaterTask<T extends SceneGraphNode> implements Callable<Void> {
         int size = nodes.size;
         for (int i = start; i < size; i += step) {
             SceneGraphNode node = nodes.get(i);
-            node.update(time, node.parent.transform, camera, 1f);
+            float opacity = node instanceof Particle && ((Particle) node).octant != null ? ((Particle) node).octant.opacity : node.opacity;
+            node.update(time, node.parent.transform, camera, opacity);
         }
         return null;
     }
@@ -45,6 +47,7 @@ public class UpdaterTask<T extends SceneGraphNode> implements Callable<Void> {
 
     /**
      * This must be called to prepare the updater task for execution
+     * 
      * @param camera
      * @param time
      */

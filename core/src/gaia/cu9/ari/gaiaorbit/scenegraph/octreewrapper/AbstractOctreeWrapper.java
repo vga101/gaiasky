@@ -25,8 +25,9 @@ import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
 
 /**
- * Abstract Octree wrapper with the common parts of the regular Octree wrapper and
- * the concurrent one.
+ * Abstract Octree wrapper with the common parts of the regular Octree wrapper
+ * and the concurrent one.
+ * 
  * @author Toni Sagrista
  *
  */
@@ -56,9 +57,10 @@ public abstract class AbstractOctreeWrapper extends SceneGraphNode implements It
 
     }
 
-    /** 
-     * An octree wrapper has as 'scene graph children' all the elements contained in the
-     * octree, even though it acts as a hub that decides which are processed and which are not.
+    /**
+     * An octree wrapper has as 'scene graph children' all the elements
+     * contained in the octree, even though it acts as a hub that decides which
+     * are processed and which are not.
      */
     @Override
     public void initialize() {
@@ -67,6 +69,7 @@ public abstract class AbstractOctreeWrapper extends SceneGraphNode implements It
 
     /**
      * Adds all the objects of the octree (recursively) to the root list.
+     * 
      * @param octant
      * @param root
      */
@@ -150,6 +153,7 @@ public abstract class AbstractOctreeWrapper extends SceneGraphNode implements It
 
     /**
      * Runs the update on all the observed and selected octree objects.
+     * 
      * @param time
      * @param parentTransform
      * @param camera
@@ -158,6 +162,7 @@ public abstract class AbstractOctreeWrapper extends SceneGraphNode implements It
 
     /**
      * Adds the octants to the render lists.
+     * 
      * @param time
      */
     @Override
@@ -196,6 +201,7 @@ public abstract class AbstractOctreeWrapper extends SceneGraphNode implements It
 
     /**
      * Gets a copy of this object but does not copy its parent or children.
+     * 
      * @return
      */
     @Override

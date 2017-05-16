@@ -11,6 +11,7 @@ import com.badlogic.gdx.utils.Array;
 import gaia.cu9.ari.gaiaorbit.data.stars.OctreeMultiFileLoader;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.render.ILineRenderable;
+import gaia.cu9.ari.gaiaorbit.render.system.AbstractRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.LineRenderSystem;
 import gaia.cu9.ari.gaiaorbit.scenegraph.FovCamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
@@ -24,7 +25,6 @@ import gaia.cu9.ari.gaiaorbit.util.math.BoundingBoxd;
 import gaia.cu9.ari.gaiaorbit.util.math.Frustumd;
 import gaia.cu9.ari.gaiaorbit.util.math.Intersectord;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
-import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
 import gaia.cu9.ari.gaiaorbit.util.math.Rayd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
@@ -47,8 +47,7 @@ public class OctreeNode<T extends SceneGraphNode> implements ILineRenderable {
      * Since OctreeNode is not to be parallelised, these can be static.
      **/
     private static BoundingBoxd boxcopy = new BoundingBoxd(new Vector3d(), new Vector3d());
-    private static Matrix4d boxtransf = new Matrix4d();
-    private static Vector3d auxD1 = new Vector3d(), auxD2 = new Vector3d(), auxD3 = new Vector3d(), auxD4 = new Vector3d();
+    private static Vector3d auxD1 = new Vector3d(), auxD3 = new Vector3d(), auxD4 = new Vector3d();
     private static Rayd ray = new Rayd(new Vector3d(), new Vector3d());
 
     private Vector3d aux3d1;
@@ -450,8 +449,10 @@ public class OctreeNode<T extends SceneGraphNode> implements ILineRenderable {
             } else {
                 // Break down tree, fade in until th2
                 double alpha = 1;
-                if (GlobalConf.scene.OCTREE_PARTICLE_FADE)
+                if (GlobalConf.scene.OCTREE_PARTICLE_FADE) {
+                    AbstractRenderSystem.POINT_UPDATE_FLAG = true;
                     alpha = MathUtilsd.clamp(MathUtilsd.lint(viewAngle, GlobalConf.scene.OCTANT_THRESHOLD_0 / cam.getFovFactor(), GlobalConf.scene.OCTANT_THRESHOLD_1 / cam.getFovFactor(), 0d, 1d), 0f, 1f);
+                }
 
                 // Add objects
                 addObjectsTo(roulette);
@@ -522,10 +523,14 @@ public class OctreeNode<T extends SceneGraphNode> implements ILineRenderable {
      * the camera itself is in the view.
      * 
      * @param parentTransform
-     * @param angle Angle edge of camera
-     * @param pos Position of camera
-     * @param dir Direction of camera
-     * @param up Up vector of camera
+     * @param angle
+     *            Angle edge of camera
+     * @param pos
+     *            Position of camera
+     * @param dir
+     *            Direction of camera
+     * @param up
+     *            Up vector of camera
      */
     //    private boolean computeObserved2(Transform parentTransform, float angle, Vector3d pos, Vector3d dir, Vector3d up) {
     //        boxcopy.set(box);

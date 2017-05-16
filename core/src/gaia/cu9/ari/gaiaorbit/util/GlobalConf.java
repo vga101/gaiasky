@@ -297,6 +297,14 @@ public class GlobalConf {
             EventManager.instance.subscribe(this, Events.CONFIG_PIXEL_RENDERER, Events.FRAME_OUTPUT_CMD);
         }
 
+        public boolean isSimpleMode() {
+            return FRAME_MODE.equals(ScreenshotMode.simple);
+        }
+
+        public boolean isRedrawMode() {
+            return FRAME_MODE.equals(ScreenshotMode.redraw);
+        }
+
         public void initialize(int rENDER_WIDTH, int rENDER_HEIGHT, int rENDER_TARGET_FPS, int cAMERA_REC_TARGET_FPS, boolean aUTO_FRAME_OUTPUT_CAMERA_PLAY, String rENDER_FOLDER, String rENDER_FILE_NAME, boolean rENDER_SCREENSHOT_TIME, boolean rENDER_OUTPUT, ScreenshotMode fRAME_MODE) {
             RENDER_WIDTH = rENDER_WIDTH;
             RENDER_HEIGHT = rENDER_HEIGHT;

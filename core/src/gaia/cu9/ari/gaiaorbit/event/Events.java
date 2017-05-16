@@ -428,7 +428,7 @@ public enum Events {
     /** Sets the limit magnitude. Contains a double with the new magnitude **/
     LIMIT_MAG_CMD,
     /** Debug info **/
-    DEBUG1, DEBUG2, DEBUG3,
+    DEBUG1, DEBUG2, DEBUG3, DEBUG4,
     /**
      * Notifies from a java exception, it sends the Throwable and an optional
      * tag.

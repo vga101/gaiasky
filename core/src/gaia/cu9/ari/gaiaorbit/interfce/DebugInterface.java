@@ -12,7 +12,7 @@ import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnLabel;
 
 public class DebugInterface extends Table implements IObserver {
-    private OwnLabel debug1, debug2, debug3, fps;
+    private OwnLabel debug1, debug2, debug3, debug4, fps;
     /** Lock object for synchronization **/
     private Object lock;
 
@@ -41,10 +41,14 @@ public class DebugInterface extends Table implements IObserver {
         add(debug3).right();
         row();
 
+        debug4 = new OwnLabel("", skin, "hud-med");
+        add(debug4).right();
+        row();
+
 
         this.setVisible(GlobalConf.program.SHOW_DEBUG_INFO);
         this.lock = lock;
-        EventManager.instance.subscribe(this, Events.DEBUG1, Events.DEBUG2, Events.DEBUG3, Events.FPS_INFO, Events.SHOW_DEBUG_CMD);
+        EventManager.instance.subscribe(this, Events.DEBUG1, Events.DEBUG2, Events.DEBUG3, Events.DEBUG4, Events.FPS_INFO, Events.SHOW_DEBUG_CMD);
     }
 
     @Override
@@ -52,7 +56,7 @@ public class DebugInterface extends Table implements IObserver {
         synchronized (lock) {
             switch (event) {
             case DEBUG1:
-                if (data.length > 0 && data[0] != null) {
+                if (GlobalConf.program.SHOW_DEBUG_INFO && data.length > 0 && data[0] != null) {
                     // Double with run time
                     Double runTime = (Double) data[0];
                     debug1.setText("Run time: " + getRunTimeString(runTime));
@@ -60,7 +64,7 @@ public class DebugInterface extends Table implements IObserver {
                 break;
 
             case DEBUG2:
-                if (data.length > 0 && data[0] != null) {
+                if (GlobalConf.program.SHOW_DEBUG_INFO && data.length > 0 && data[0] != null) {
                     // Doubles (MB):
                     // used/free/total/max
                     Double used = (Double) data[0];
@@ -73,11 +77,15 @@ public class DebugInterface extends Table implements IObserver {
                 break;
 
             case DEBUG3:
-                if (data.length > 0 && data[0] != null)
+                if (GlobalConf.program.SHOW_DEBUG_INFO && data.length > 0 && data[0] != null)
                     debug3.setText((String) data[0]);
                 break;
+            case DEBUG4:
+                if (GlobalConf.program.SHOW_DEBUG_INFO && data.length > 0 && data[0] != null)
+                    debug4.setText((String) data[0]);
+                break;
             case FPS_INFO:
-                if (data.length > 0 && data[0] != null)
+                if (GlobalConf.program.SHOW_DEBUG_INFO && data.length > 0 && data[0] != null)
                     fps.setText(fpsFormatter.format((Float) data[0]).concat(" FPS"));
                 break;
             case SHOW_DEBUG_CMD:

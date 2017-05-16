@@ -26,7 +26,6 @@ import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.render.IPostProcessor;
-import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf.ProgramConf.StereoProfile;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
@@ -60,12 +59,12 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
         pps = new PostProcessBean[RenderType.values().length];
 
         pps[RenderType.screen.index] = newPostProcessor(getWidth(RenderType.screen), getHeight(RenderType.screen));
-        if (Constants.desktop) {
+        if (GlobalConf.screenshot.isRedrawMode())
             pps[RenderType.screenshot.index] = newPostProcessor(getWidth(RenderType.screenshot), getHeight(RenderType.screenshot));
+        if (GlobalConf.frame.isRedrawMode())
             pps[RenderType.frame.index] = newPostProcessor(getWidth(RenderType.frame), getHeight(RenderType.frame));
-        }
 
-        EventManager.instance.subscribe(this, Events.PROPERTIES_WRITTEN, Events.BLOOM_CMD, Events.LENS_FLARE_CMD, Events.MOTION_BLUR_CMD, Events.LIGHT_POS_2D_UPDATED, Events.LIGHT_SCATTERING_CMD, Events.FISHEYE_CMD, Events.CAMERA_MOTION_UPDATED, Events.CUBEMAP360_CMD, Events.ANTIALIASING_CMD, Events.BRIGHTNESS_CMD, Events.CONTRAST_CMD, Events.TOGGLE_STEREO_PROFILE_CMD, Events.TOGGLE_STEREOSCOPIC_CMD);
+        EventManager.instance.subscribe(this, Events.SCREENSHOT_SIZE_UDPATE, Events.FRAME_SIZE_UDPATE, Events.BLOOM_CMD, Events.LENS_FLARE_CMD, Events.MOTION_BLUR_CMD, Events.LIGHT_POS_2D_UPDATED, Events.LIGHT_SCATTERING_CMD, Events.FISHEYE_CMD, Events.CAMERA_MOTION_UPDATED, Events.CUBEMAP360_CMD, Events.ANTIALIASING_CMD, Events.BRIGHTNESS_CMD, Events.CONTRAST_CMD, Events.TOGGLE_STEREO_PROFILE_CMD, Events.TOGGLE_STEREOSCOPIC_CMD);
 
     }
 
@@ -265,25 +264,35 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
     @Override
     public void notify(Events event, final Object... data) {
         switch (event) {
-        case PROPERTIES_WRITTEN:
-            if (pps != null)
-                if (changed(pps[RenderType.screenshot.index].pp, GlobalConf.screenshot.SCREENSHOT_WIDTH, GlobalConf.screenshot.SCREENSHOT_HEIGHT)) {
-                    Gdx.app.postRunnable(new Runnable() {
-                        @Override
-                        public void run() {
-                            replace(RenderType.screenshot.index, GlobalConf.screenshot.SCREENSHOT_WIDTH, GlobalConf.screenshot.SCREENSHOT_HEIGHT);
-                        }
-                    });
+        case SCREENSHOT_SIZE_UDPATE:
+            if (pps != null && GlobalConf.screenshot.isRedrawMode())
+                if (pps[RenderType.screenshot.index] != null) {
+                    if (changed(pps[RenderType.screenshot.index].pp, GlobalConf.screenshot.SCREENSHOT_WIDTH, GlobalConf.screenshot.SCREENSHOT_HEIGHT)) {
+                        Gdx.app.postRunnable(new Runnable() {
+                            @Override
+                            public void run() {
+                                replace(RenderType.screenshot.index, GlobalConf.screenshot.SCREENSHOT_WIDTH, GlobalConf.screenshot.SCREENSHOT_HEIGHT);
+                            }
+                        });
+                    }
+                } else {
+                    pps[RenderType.screenshot.index] = newPostProcessor(getWidth(RenderType.screenshot), getHeight(RenderType.screenshot));
                 }
-            if (pps != null)
-                if (changed(pps[RenderType.frame.index].pp, GlobalConf.frame.RENDER_WIDTH, GlobalConf.frame.RENDER_HEIGHT)) {
-                    Gdx.app.postRunnable(new Runnable() {
+            break;
+        case FRAME_SIZE_UDPATE:
+            if (pps != null && GlobalConf.frame.isRedrawMode())
+                if (pps[RenderType.frame.index] != null) {
+                    if (changed(pps[RenderType.frame.index].pp, GlobalConf.frame.RENDER_WIDTH, GlobalConf.frame.RENDER_HEIGHT)) {
+                        Gdx.app.postRunnable(new Runnable() {
 
-                        @Override
-                        public void run() {
-                            replace(RenderType.frame.index, GlobalConf.frame.RENDER_WIDTH, GlobalConf.frame.RENDER_HEIGHT);
-                        }
-                    });
+                            @Override
+                            public void run() {
+                                replace(RenderType.frame.index, GlobalConf.frame.RENDER_WIDTH, GlobalConf.frame.RENDER_HEIGHT);
+                            }
+                        });
+                    }
+                } else {
+                    pps[RenderType.frame.index] = newPostProcessor(getWidth(RenderType.frame), getHeight(RenderType.frame));
                 }
             break;
         case BLOOM_CMD:
@@ -389,8 +398,7 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
         case TOGGLE_STEREOSCOPIC_CMD:
         case TOGGLE_STEREO_PROFILE_CMD:
             boolean curvatureEnabled = GlobalConf.program.STEREOSCOPIC_MODE && GlobalConf.program.STEREO_PROFILE == StereoProfile.VR_HEADSET;
-            boolean viewportHalved = GlobalConf.program.STEREOSCOPIC_MODE && GlobalConf.program.STEREO_PROFILE != StereoProfile.ANAGLYPHIC
-                    && GlobalConf.program.STEREO_PROFILE != StereoProfile.HD_3DTV;
+            boolean viewportHalved = GlobalConf.program.STEREOSCOPIC_MODE && GlobalConf.program.STEREO_PROFILE != StereoProfile.ANAGLYPHIC && GlobalConf.program.STEREO_PROFILE != StereoProfile.HD_3DTV;
 
             for (int i = 0; i < RenderType.values().length; i++) {
                 if (pps[i] != null) {
@@ -457,6 +465,8 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
                 }
             }
             break;
+        default:
+            break;
         }
 
     }
@@ -477,7 +487,7 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
     }
 
     private boolean changed(PostProcessor postProcess, int width, int height) {
-        return postProcess.getCombinedBuffer().width != width || postProcess.getCombinedBuffer().height != height;
+        return (postProcess.getCombinedBuffer().width != width || postProcess.getCombinedBuffer().height != height);
     }
 
     @Override

@@ -70,6 +70,7 @@ import gaia.cu9.ari.gaiaorbit.util.validator.RegexpValidator;
 
 /**
  * The default preferences window.
+ * 
  * @author tsagrista
  *
  */
@@ -168,7 +169,7 @@ public class PreferencesWindow extends GenericDialog {
         tabContent.setSize(contentw, contenth);
 
         /**
-         *  ==== GRAPHICS ====
+         * ==== GRAPHICS ====
          **/
         final Table contentGraphics = new Table(skin);
         contents.add(contentGraphics);
@@ -347,7 +348,7 @@ public class PreferencesWindow extends GenericDialog {
         contentGraphics.add(graphics).left();
 
         /**
-         *  ==== UI ====
+         * ==== UI ====
          **/
         final Table contentUI = new Table(skin);
         contents.add(contentUI);
@@ -407,7 +408,7 @@ public class PreferencesWindow extends GenericDialog {
         contentUI.add(ui).left();
 
         /**
-         *  ==== PERFORMANCE ====
+         * ==== PERFORMANCE ====
          **/
         final Table contentPerformance = new Table(skin);
         contents.add(contentPerformance);
@@ -522,7 +523,7 @@ public class PreferencesWindow extends GenericDialog {
         contentPerformance.add(lod).left();
 
         /**
-         *  ==== CONTROLS ====
+         * ==== CONTROLS ====
          **/
         final Table contentControls = new Table(skin);
         contents.add(contentControls);
@@ -568,7 +569,7 @@ public class PreferencesWindow extends GenericDialog {
         contentControls.add(controlsScroll).left();
 
         /**
-         *  ==== SCREENSHOTS ====
+         * ==== SCREENSHOTS ====
          **/
         final Table contentScreenshots = new Table(skin);
         contents.add(contentScreenshots);
@@ -687,7 +688,7 @@ public class PreferencesWindow extends GenericDialog {
         contentScreenshots.add(screenshots).left();
 
         /**
-         *  ==== FRAME OUTPUT ====
+         * ==== FRAME OUTPUT ====
          **/
         final Table contentFrames = new Table(skin);
         contents.add(contentFrames);
@@ -819,7 +820,7 @@ public class PreferencesWindow extends GenericDialog {
         contentFrames.add(frameoutput).left();
 
         /**
-         *  ==== CAMERA ====
+         * ==== CAMERA ====
          **/
         final Table contentCamera = new Table(skin);
         contents.add(contentCamera);
@@ -859,7 +860,7 @@ public class PreferencesWindow extends GenericDialog {
         contentCamera.add(camrec).left();
 
         /**
-         *  ==== 360 ====
+         * ==== 360 ====
          **/
         final Table content360 = new Table(skin);
         contents.add(content360);
@@ -896,7 +897,7 @@ public class PreferencesWindow extends GenericDialog {
         content360.add(cubemap).left();
 
         /**
-         *  ==== DATA ====
+         * ==== DATA ====
          **/
         final Table contentData = new Table(skin);
         contents.add(contentData);
@@ -946,7 +947,7 @@ public class PreferencesWindow extends GenericDialog {
         contentData.add(datasource).left();
 
         /**
-         *  ==== GAIA ====
+         * ==== GAIA ====
          **/
         final Table contentGaia = new Table(skin);
         contents.add(contentGaia);
@@ -1079,11 +1080,7 @@ public class PreferencesWindow extends GenericDialog {
         // Add all properties to GlobalConf.instance
 
         final boolean reloadFullscreenMode = fullscreen.isChecked() != GlobalConf.screen.FULLSCREEN;
-        final boolean reloadScreenMode = reloadFullscreenMode
-                || (GlobalConf.screen.FULLSCREEN
-                        && (GlobalConf.screen.FULLSCREEN_WIDTH != fullscreenResolutions.getSelected().width || GlobalConf.screen.FULLSCREEN_HEIGHT != fullscreenResolutions.getSelected().height))
-                || (!GlobalConf.screen.FULLSCREEN && (GlobalConf.screen.SCREEN_WIDTH != Integer.parseInt(widthField.getText()))
-                        || GlobalConf.screen.SCREEN_HEIGHT != Integer.parseInt(heightField.getText()));
+        final boolean reloadScreenMode = reloadFullscreenMode || (GlobalConf.screen.FULLSCREEN && (GlobalConf.screen.FULLSCREEN_WIDTH != fullscreenResolutions.getSelected().width || GlobalConf.screen.FULLSCREEN_HEIGHT != fullscreenResolutions.getSelected().height)) || (!GlobalConf.screen.FULLSCREEN && (GlobalConf.screen.SCREEN_WIDTH != Integer.parseInt(widthField.getText())) || GlobalConf.screen.SCREEN_HEIGHT != Integer.parseInt(heightField.getText()));
 
         GlobalConf.screen.FULLSCREEN = fullscreen.isChecked();
 

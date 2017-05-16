@@ -110,7 +110,7 @@ public class SceneGraphConcurrentOctree extends AbstractSceneGraph {
         }
 
         // Debug info
-        EventManager.instance.post(Events.DEBUG3, "Objects/thread (threads): " + getRouletteDebug());
+        EventManager.instance.post(Events.DEBUG3, "Objs/thd, Total objs, threads: " + getRouletteDebug());
 
         // Clear roulette
         roulette.clear();
@@ -121,11 +121,11 @@ public class SceneGraphConcurrentOctree extends AbstractSceneGraph {
         pool.shutdown(); // Disable new tasks from being submitted
         try {
             // Wait a while for existing tasks to terminate
-            if (!pool.awaitTermination(60, TimeUnit.SECONDS)) {
+            if (!pool.awaitTermination(3, TimeUnit.SECONDS)) {
                 pool.shutdownNow(); // Cancel currently executing tasks
                 // Wait a while for tasks to respond to being cancelled
-                if (!pool.awaitTermination(60, TimeUnit.SECONDS))
-                    System.err.println("Pool did not terminate");
+                if (!pool.awaitTermination(3, TimeUnit.SECONDS))
+                    Logger.error("Pool did not terminate");
             }
         } catch (InterruptedException ie) {
             // (Re-)Cancel if current thread also interrupted
@@ -138,14 +138,7 @@ public class SceneGraphConcurrentOctree extends AbstractSceneGraph {
     protected String getRouletteDebug() {
         {
             int size = roulette.size / numThreads;
-            String s = "[";
-            for (int i = 0; i < numThreads; i++) {
-                s += (size);
-                if (i < numThreads - 1)
-                    s += ", ";
-            }
-            s += "]";
-            return s + " (" + numThreads + ")";
+            return size + ", " + roulette.size + "," + numThreads;
         }
     }
 

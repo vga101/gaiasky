@@ -84,4 +84,4 @@ Smooth transitions
 This setting controls whether particles fade in and out depending on the octree view angle. This will prevent
 pop-ins when using a catalog backed by an octree but it **will have a hit on peformance due to the opacity information
 being sent to the GPU continuously**. If smooth transitions are enabled, there
-is a fade-in between the draw distance angle angle and the draw distance angle + 0.4rad.
+is a fade-in between the draw distance angle angle and the draw distance angle + 0.4 rad.
