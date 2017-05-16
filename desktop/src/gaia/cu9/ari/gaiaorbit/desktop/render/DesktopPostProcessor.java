@@ -38,7 +38,7 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
 
     float bloomFboScale = 0.5f;
 
-    float flareIntensity = 0.6f;
+    float flareIntensity = 0.3f;
 
     // Number of flares
     int nghosts;

@@ -30,6 +30,8 @@ public class GlobalResources {
 
     /** Global all-purpose sprite batch **/
     public static SpriteBatch spriteBatch;
+    /** Cursor file **/
+    public static String cursorFile;
     /** Link cursor **/
     public static Pixmap linkCursor;
     /** The global skin **/
@@ -52,7 +54,9 @@ public class GlobalResources {
         updateSkin();
 
         // Async load
-        manager.load("img/cursor-link.png", Pixmap.class);
+        boolean hidpi = GlobalConf.SCALE_FACTOR > 1.5f;
+        cursorFile = hidpi ? "img/cursor-link-x2.png" : "img/cursor-link.png";
+        manager.load(cursorFile, Pixmap.class);
     }
 
     public static void updateSkin() {
@@ -62,7 +66,7 @@ public class GlobalResources {
 
     public static void doneLoading(AssetManager manager) {
         // Cursor for links
-        linkCursor = manager.get("img/cursor-link.png", Pixmap.class);
+        linkCursor = manager.get(cursorFile, Pixmap.class);
     }
 
     /**
@@ -129,9 +133,12 @@ public class GlobalResources {
         }
     }
 
-    /** Converts the double to the string representation of a velocity (always in seconds)
+    /**
+     * Converts the double to the string representation of a velocity (always in
+     * seconds)
      * 
-     * @param d In internal units
+     * @param d
+     *            In internal units
      * @return Array containing the number and the units
      */
     public static Pair<Double, String> doubleToVelocityString(double d) {
