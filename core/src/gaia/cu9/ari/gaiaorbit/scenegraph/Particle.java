@@ -345,11 +345,11 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
         if (viewAngle > thdownOverFovfactor) {
             double dist = distToCamera;
             if (viewAngle > thupOverFovfactor) {
-                dist = (float) radius / Constants.THRESHOLD_UP / camera.getFovFactor();
+                dist = (float) radius / Constants.THRESHOLD_UP;
             }
             computedSize = this.size * (dist / this.radius) * Constants.THRESHOLD_DOWN;
         }
-        computedSize *= GlobalConf.scene.STAR_BRIGHTNESS;
+        computedSize *= GlobalConf.scene.STAR_BRIGHTNESS * 0.6;
 
         return (float) computedSize;
     }
