@@ -395,7 +395,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         renderProcesses.add(modelBackProc);
         //renderProcesses.add(cloudsProc);
         renderProcesses.add(annotationsProc);
-        
+
         // Stars shader
         renderProcesses.add(shaderBackProc);
 
@@ -614,10 +614,14 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
     }
 
     public void resize(final int w, final int h) {
+        resize(w, h, false);
+    }
 
-        for (IRenderSystem rendSys : renderProcesses) {
-            rendSys.resize(w, h);
-        }
+    public void resize(final int w, final int h, boolean resizeRenderSys) {
+        if (resizeRenderSys)
+            for (IRenderSystem rendSys : renderProcesses) {
+                rendSys.resize(w, h);
+            }
 
         for (ISGR sgr : sgrs) {
             sgr.resize(w, h);

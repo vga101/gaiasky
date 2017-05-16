@@ -211,8 +211,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         AssetBean.setAssetManager(manager);
 
         // Initialise Gaia attitudes
-        manager.load(ATTITUDE_FOLDER, GaiaAttitudeServer.class, new GaiaAttitudeLoaderParameter(GlobalConf.runtime.STRIPPED_FOV_MODE
-                ? new String[] { "OPS_RSLS_0022916_rsls_nsl_gareq1_afterFirstSpinPhaseOptimization.2.xml" } : new String[] {}));
+        manager.load(ATTITUDE_FOLDER, GaiaAttitudeServer.class, new GaiaAttitudeLoaderParameter(GlobalConf.runtime.STRIPPED_FOV_MODE ? new String[] { "OPS_RSLS_0022916_rsls_nsl_gareq1_afterFirstSpinPhaseOptimization.2.xml" } : new String[] {}));
 
         // Initialise hidden helper user
         HiddenHelperUser.initialise();
@@ -601,23 +600,23 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         Gdx.app.postRunnable(new Runnable() {
             @Override
             public void run() {
-                resizeImmediate(width, height, true);
+                resizeImmediate(width, height, true, false);
             }
         });
 
     }
 
-    public void resizeImmediate(final int width, final int height, boolean resizepp) {
+    public void resizeImmediate(final int width, final int height, boolean resizePostProcessors, boolean resizeRenderSys) {
         if (!initialized) {
             loadingGui.resizeImmediate(width, height);
         } else {
-            if (resizepp)
+            if (resizePostProcessors)
                 pp.resizeImmediate(width, height);
 
             for (IGui gui : guis)
                 gui.resizeImmediate(width, height);
 
-            sgr.resize(width, height);
+            sgr.resize(width, height, resizeRenderSys);
         }
 
         cam.updateAngleEdge(width, height);
