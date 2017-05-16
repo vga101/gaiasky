@@ -25,6 +25,20 @@ public interface ISceneGraph extends Serializable, Disposable {
      */
     public SceneGraphNode getNode(String name);
 
+    /**
+     * Updates the string to node map and the star map if necessary.
+     * 
+     * @param node
+     */
+    public void addNodeAuxiliaryInfo(SceneGraphNode node);
+
+    /**
+     * Removes the info of the node from the aux lists.
+     * 
+     * @param node
+     */
+    public void removeNodeAuxiliaryInfo(SceneGraphNode node);
+
     public HashMap<String, SceneGraphNode> getStringToNodeMap();
 
     /**

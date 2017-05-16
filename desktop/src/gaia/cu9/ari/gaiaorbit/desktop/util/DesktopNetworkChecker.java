@@ -43,6 +43,7 @@ public class DesktopNetworkChecker extends Thread implements INetworkChecker {
     private GaiaCatalogWindow gaiaWindow = null;
 
     private Cell<Link> wikiCell, simbadCell;
+    private Link wikiLink, simbadLink;
 
     // The table to modify
     private Table table;
@@ -133,6 +134,9 @@ public class DesktopNetworkChecker extends Thread implements INetworkChecker {
                         table.add(gaiaButton).center();
                     }
 
+                    simbadLink = new Link("Simbad", linkStyle, "");
+                    wikiLink = new Link("Wikipedia ", linkStyle, "");
+
                     simbadCell = table.add().center();
                     wikiCell = table.add().center();
 
@@ -141,7 +145,8 @@ public class DesktopNetworkChecker extends Thread implements INetworkChecker {
                     setWikiLink(wikiname, focus, new LinkListener() {
                         @Override
                         public void ok(String link) {
-                            wikiCell.setActor(new Link("Wikipedia ", linkStyle, link));
+                            wikiLink.setLinkURL(link);
+                            wikiCell.setActor(wikiLink);
                             wikiCell.padLeft(pad);
                         }
 
@@ -153,7 +158,8 @@ public class DesktopNetworkChecker extends Thread implements INetworkChecker {
 
                         @Override
                         public void ok(String link) {
-                            simbadCell.setActor(new Link("Simbad", linkStyle, link));
+                            simbadLink.setLinkURL(link);
+                            simbadCell.setActor(simbadLink);
                             simbadCell.padLeft(pad);
                         }
 

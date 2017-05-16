@@ -58,27 +58,7 @@ public abstract class AbstractSceneGraph implements ISceneGraph {
             }
 
             // Star map            
-            if (node.getStarCount() == 1) {
-                CelestialBody s = (CelestialBody) node.getStars();
-                if (s instanceof Star && ((Star) s).hip >= 0) {
-                    if (starMap.containsKey(((Star) s).hip)) {
-                        Logger.debug(this.getClass().getSimpleName(), "Duplicated HIP id: " + ((Star) s).hip);
-                    } else {
-                        starMap.put(((Star) s).hip, (Star) s);
-                    }
-                }
-            } else if (node.getStarCount() > 1) {
-                Array<AbstractPositionEntity> stars = (Array<AbstractPositionEntity>) node.getStars();
-                for (AbstractPositionEntity s : stars) {
-                    if (s instanceof Star && ((Star) s).hip >= 0) {
-                        if (starMap.containsKey(((Star) s).hip)) {
-                            Logger.debug(this.getClass().getSimpleName(), "Duplicated HIP id: " + ((Star) s).hip);
-                        } else {
-                            starMap.put(((Star) s).hip, (Star) s);
-                        }
-                    }
-                }
-            }
+            addToStarMap(node);
         }
 
         // Insert all the nodes
@@ -93,6 +73,46 @@ public abstract class AbstractSceneGraph implements ISceneGraph {
         }
 
         Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.sg.init", root.numChildren));
+    }
+
+    private void addToStarMap(SceneGraphNode node) {
+        if (node.getStarCount() == 1) {
+            CelestialBody s = (CelestialBody) node.getStars();
+            if (s instanceof Star && ((Star) s).hip >= 0) {
+                if (starMap.containsKey(((Star) s).hip)) {
+                    Logger.debug(this.getClass().getSimpleName(), "Duplicated HIP id: " + ((Star) s).hip);
+                } else {
+                    starMap.put(((Star) s).hip, (Star) s);
+                }
+            }
+        } else if (node.getStarCount() > 1) {
+            Array<AbstractPositionEntity> stars = (Array<AbstractPositionEntity>) node.getStars();
+            for (AbstractPositionEntity s : stars) {
+                if (s instanceof Star && ((Star) s).hip >= 0) {
+                    if (starMap.containsKey(((Star) s).hip)) {
+                        Logger.debug(this.getClass().getSimpleName(), "Duplicated HIP id: " + ((Star) s).hip);
+                    } else {
+                        starMap.put(((Star) s).hip, (Star) s);
+                    }
+                }
+            }
+        }
+    }
+
+    private void removeFromStarMap(SceneGraphNode node) {
+        if (node.getStarCount() == 1) {
+            CelestialBody s = (CelestialBody) node.getStars();
+            if (s instanceof Star && ((Star) s).hip >= 0) {
+                starMap.remove(((Star) s).hip);
+            }
+        } else if (node.getStarCount() > 1) {
+            Array<AbstractPositionEntity> stars = (Array<AbstractPositionEntity>) node.getStars();
+            for (AbstractPositionEntity s : stars) {
+                if (s instanceof Star && ((Star) s).hip >= 0) {
+                    starMap.remove(((Star) s).hip);
+                }
+            }
+        }
     }
 
     private void addToIndex(SceneGraphNode node, HashMap<String, SceneGraphNode> map) {
@@ -122,6 +142,32 @@ public abstract class AbstractSceneGraph implements ISceneGraph {
         }
     }
 
+    private void removeFromIndex(SceneGraphNode node, HashMap<String, SceneGraphNode> map) {
+        if (node.name != null && !node.name.isEmpty()) {
+            map.remove(node.name);
+            map.remove(node.name.toLowerCase());
+
+            // Id
+            if (node.id > 0) {
+                String id = String.valueOf(node.id);
+                map.remove(id);
+            }
+
+            if (node instanceof Star) {
+                // Hip
+                if (((Star) node).hip > 0) {
+                    String hipid = "hip " + ((Star) node).hip;
+                    map.remove(hipid);
+                }
+
+                // Tycho
+                if (((Star) node).tycho != null && !((Star) node).tycho.isEmpty()) {
+                    map.remove(((Star) node).tycho);
+                }
+            }
+        }
+    }
+
     @Override
     public void update(ITimeFrameProvider time, ICamera camera) {
         // Check if we need to update the points
@@ -132,6 +178,20 @@ public abstract class AbstractSceneGraph implements ISceneGraph {
 
     public HashMap<String, SceneGraphNode> getStringToNodeMap() {
         return stringToNode;
+    }
+
+    public void addNodeAuxiliaryInfo(SceneGraphNode node) {
+        // Name index
+        addToIndex(node, stringToNode);
+        // Star map
+        addToStarMap(node);
+    }
+
+    public void removeNodeAuxiliaryInfo(SceneGraphNode node) {
+        // Name index
+        removeFromIndex(node, stringToNode);
+        // Star map
+        removeFromStarMap(node);
     }
 
     public boolean containsNode(String name) {

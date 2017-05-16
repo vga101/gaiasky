@@ -11,11 +11,13 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Array;
 
+import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.data.ISceneGraphLoader;
 import gaia.cu9.ari.gaiaorbit.data.octreegen.MetadataBinaryIO;
 import gaia.cu9.ari.gaiaorbit.data.octreegen.ParticleDataBinaryIO;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
+import gaia.cu9.ari.gaiaorbit.scenegraph.Constellation;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.octreewrapper.AbstractOctreeWrapper;
@@ -29,6 +31,7 @@ import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
 
 /**
  * Implements the loading and streaming of octree nodes from files.
+ * 
  * @author tsagrista
  */
 public class OctreeMultiFileLoader implements ISceneGraphLoader {
@@ -94,7 +97,10 @@ public class OctreeMultiFileLoader implements ISceneGraphLoader {
     int nLoadedStars = 0;
     /** Max number of stars loaded at once **/
     final int maxLoadedStars;
-    /** This queue is sorted ascending by access date, so that we know which element to release if needed (oldest) **/
+    /**
+     * This queue is sorted ascending by access date, so that we know which
+     * element to release if needed (oldest)
+     **/
     private Queue<OctreeNode<Particle>> toUnloadQueue;
 
     public OctreeMultiFileLoader() {
@@ -190,9 +196,12 @@ public class OctreeMultiFileLoader implements ISceneGraphLoader {
 
     /**
      * Loads all the levels of detail until the given one.
-     * @param lod The level of detail to load.
-     * @param octreeWrapper The octree wrapper.
-     * @throws IOException 
+     * 
+     * @param lod
+     *            The level of detail to load.
+     * @param octreeWrapper
+     *            The octree wrapper.
+     * @throws IOException
      */
     public void loadLod(final Integer lod, final AbstractOctreeWrapper octreeWrapper) throws IOException {
         loadOctant(octreeWrapper.root, octreeWrapper, lod);
@@ -201,8 +210,11 @@ public class OctreeMultiFileLoader implements ISceneGraphLoader {
 
     /**
      * Loads the data of the given octant
-     * @param octant The octant to load.
-     * @param octreeWrapper The octree wrapper.
+     * 
+     * @param octant
+     *            The octant to load.
+     * @param octreeWrapper
+     *            The octree wrapper.
      * @throws IOException
      */
     public void loadOctant(final OctreeNode<Particle> octant, final AbstractOctreeWrapper octreeWrapper, Integer level) throws IOException {
@@ -219,8 +231,11 @@ public class OctreeMultiFileLoader implements ISceneGraphLoader {
 
     /**
      * Loads the data of the given octant
-     * @param octant The octant to load.
-     * @param octreeWrapper The octree wrapper.
+     * 
+     * @param octant
+     *            The octant to load.
+     * @param octreeWrapper
+     *            The octree wrapper.
      * @throws IOException
      */
     public void loadOctant(final OctreeNode<Particle> octant, final AbstractOctreeWrapper octreeWrapper) throws IOException {
@@ -236,6 +251,9 @@ public class OctreeMultiFileLoader implements ISceneGraphLoader {
                 star.octant = octant;
                 // Add objects to octree wrapper node
                 octreeWrapper.add(star, octant);
+                // Aux info
+                if (GaiaSky.instance != null && GaiaSky.instance.sg != null)
+                    GaiaSky.instance.sg.addNodeAuxiliaryInfo(star);
             }
             nLoadedStars += data.size;
             octant.objects = data;
@@ -249,8 +267,11 @@ public class OctreeMultiFileLoader implements ISceneGraphLoader {
 
     /**
      * Loads the objects of the given octants
-     * @param octants The list holding the octants to load.
-     * @param octreeWrapper The octree wrapper.
+     * 
+     * @param octants
+     *            The list holding the octants to load.
+     * @param octreeWrapper
+     *            The octree wrapper.
      * @throws IOException
      */
     public void loadOctants(final Array<OctreeNode<Particle>> octants, final AbstractOctreeWrapper octreeWrapper) throws IOException {
@@ -266,6 +287,9 @@ public class OctreeMultiFileLoader implements ISceneGraphLoader {
                 for (Particle star : objects) {
                     star.octant = null;
                     octreeWrapper.removeParenthood(star);
+                    // Aux info
+                    if (GaiaSky.instance != null && GaiaSky.instance.sg != null)
+                        GaiaSky.instance.sg.removeNodeAuxiliaryInfo(star);
                 }
             }
             nLoadedStars -= objects.size;
@@ -277,6 +301,7 @@ public class OctreeMultiFileLoader implements ISceneGraphLoader {
 
     /**
      * The daemon loader thread.
+     * 
      * @author Toni Sagrista
      *
      */
@@ -324,6 +349,9 @@ public class OctreeMultiFileLoader implements ISceneGraphLoader {
                             loader.unloadOctant(octant, octreeWrapper);
                         }
                     }
+
+                    // Update constellations :S
+                    Constellation.updateConstellations();
                 }
 
                 /** ----------- SLEEP UNTIL INTERRUPTED ----------- **/

@@ -19,18 +19,30 @@ import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
 /**
  * Represents a constellation object.
+ * 
  * @author Toni Sagrista
  *
  */
 public class Constellation extends LineObject implements I3DTextRenderable {
+    private static Array<Constellation> allConstellations = new Array<Constellation>(30);
+
+    public static void updateConstellations() {
+        for (Constellation c : allConstellations) {
+            c.setUp();
+        }
+    }
+
     float alpha = .8f;
     float constalpha;
+    boolean allLoaded = false;
 
     /** List of pairs of identifiers **/
     public Array<int[]> ids;
     /** List of pairs of stars between which there are lines **/
     public Array<AbstractPositionEntity[]> stars;
-    /** The positions themselves, in case the stars are not there (i.e. octrees) **/
+    /**
+     * The positions themselves, in case the stars are not there (i.e. octrees)
+     **/
     public Array<Vector3[]> positions;
 
     public Constellation() {
@@ -46,7 +58,7 @@ public class Constellation extends LineObject implements I3DTextRenderable {
 
     @Override
     public void initialize() {
-
+        allConstellations.add(this);
     }
 
     public void update(ITimeFrameProvider time, final Transform parentTransform, ICamera camera) {
@@ -65,23 +77,27 @@ public class Constellation extends LineObject implements I3DTextRenderable {
 
     @Override
     public void setUp() {
-        stars = new Array<AbstractPositionEntity[]>();
-        positions = new Array<Vector3[]>();
-        for (int[] pair : ids) {
-            AbstractPositionEntity s1, s2;
-            s1 = sg.getStarMap().get(pair[0]);
-            s2 = sg.getStarMap().get(pair[1]);
-            if (s1 != null && s2 != null) {
-                stars.add(new AbstractPositionEntity[] { s1, s2 });
-                positions.add(new Vector3[] { s1.pos.toVector3(), s2.pos.toVector3() });
-            } else {
-                String wtf = "";
-                if (s1 == null)
-                    wtf += pair[0];
+        if (!allLoaded) {
+            stars = new Array<AbstractPositionEntity[]>();
+            positions = new Array<Vector3[]>();
+            allLoaded = true;
+            for (int[] pair : ids) {
+                AbstractPositionEntity s1, s2;
+                s1 = sg.getStarMap().get(pair[0]);
+                s2 = sg.getStarMap().get(pair[1]);
+                if (s1 != null && s2 != null) {
+                    stars.add(new AbstractPositionEntity[] { s1, s2 });
+                    positions.add(new Vector3[] { s1.pos.toVector3(), s2.pos.toVector3() });
+                } else {
+                    String wtf = "";
+                    if (s1 == null)
+                        wtf += pair[0];
 
-                if (s2 == null)
-                    wtf += (wtf.length() > 0 ? ", " : "") + pair[1];
-                Logger.info(this.getClass().getSimpleName(), "Constellations stars not found (HIP): " + wtf);
+                    if (s2 == null)
+                        wtf += (wtf.length() > 0 ? ", " : "") + pair[1];
+                    Logger.info(this.getClass().getSimpleName(), "Constellations stars not found (HIP): " + wtf);
+                    allLoaded = false;
+                }
             }
         }
     }

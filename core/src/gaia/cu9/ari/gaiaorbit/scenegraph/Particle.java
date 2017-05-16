@@ -345,7 +345,7 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
         if (viewAngle > thdownOverFovfactor) {
             double dist = distToCamera;
             if (viewAngle > thupOverFovfactor) {
-                dist = (float) radius / Constants.THRESHOLD_UP;
+                dist = (float) radius / Constants.THRESHOLD_UP / camera.getFovFactor();
             }
             computedSize = this.size * (dist / this.radius) * Constants.THRESHOLD_DOWN;
         }
@@ -402,8 +402,7 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
         final double mumin = -80;
         final double mumax = 80;
         final double maxmin = mumax - mumin;
-        renderer.addLine(p1.x, p1.y, p1.z, p2.x, p2.y, p2.z, (float) ((pmSph.x - mumin) / maxmin) * 0.8f + 0.2f, (float) ((pmSph.y - mumin) / maxmin) * 0.8f + 0.2f, (float) pmSph.z * 0.8f
-                + 0.2f, alpha);
+        renderer.addLine(p1.x, p1.y, p1.z, p2.x, p2.y, p2.z, (float) ((pmSph.x - mumin) / maxmin) * 0.8f + 0.2f, (float) ((pmSph.y - mumin) / maxmin) * 0.8f + 0.2f, (float) pmSph.z * 0.8f + 0.2f, alpha);
     }
 
     protected float getThOverFactorScl() {
