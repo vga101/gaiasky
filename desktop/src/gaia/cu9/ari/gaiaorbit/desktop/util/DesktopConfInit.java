@@ -90,7 +90,7 @@ public class DesktopConfInit extends ConfInit {
 
         // HiDPI
         GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
-        float scalefactor = gd.getDisplayMode().getWidth() > 2300 ? 2 : 1;
+        float scalefactor = gd.getDisplayMode().getWidth() > 2500 && gd.getDisplayMode().getHeight() > 2000 ? 2 : 1;
 
         // Update scale factor - for HiDPI screens
         GlobalConf.updateScaleFactor(scalefactor);
