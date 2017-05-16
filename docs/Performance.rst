@@ -23,7 +23,7 @@ CPU performance
 The CPU also plays an obvious role in updating the scene state
 (positions, orientations, etc.), managing the input and events,
 executing the scripts and calling and running the rendering subsystem,
-which streams all the texturing and geometrical information to the GPU
+which streams all the texturing and geometric information to the GPU
 for rendering. This section describes what are the elements that can
 cause a major impact in CPU performance and explains how to tune them.
 
@@ -54,7 +54,7 @@ Draw distance (levels of detail)
 --------------------------------
 
 These settings apply only when using a catalog with levels of detail
-like ``TGAS``. We can configure whether we want smooth transitions between
+like ``TGAS``. We can configure whether we want :ref:`smooth-transitions` between
 the levels (fade-outs and fade-ins) and also the draw distance, which is
 represented by a range slider. The left knob represents the view angle
 above which octants are rendered.
@@ -65,8 +65,7 @@ above which octants are rendered.
   Draw distance slider in preferences dialog
 
 Basically, the slider sets the view angle above which a particular octree node (axis aligned cubic volume) 
-is marked as observed and thus its stars are processed and drawn. If smooth transitions is checked, there
-is a fade-in between the angle + 0.4rad and the angle.
+is marked as observed and thus its stars are processed and drawn.
 
 *  Set the knob to the **right** to lower the draw distance and increase performance.
 *  Set the knob to the **left** to higher the draw distance at the expense of performance.
@@ -75,3 +74,14 @@ is a fade-in between the angle + 0.4rad and the angle.
   :alt: Octree and levels of detail
 
   Octree and levels of detail. Image: `Wikipedia <https://en.wikipedia.org/wiki/Octree>`__.
+  
+
+.. _smooth-transitions:  
+
+Smooth transitions
+------------------
+
+This setting controls whether particles fade in and out depending on the octree view angle. This will prevent
+pop-ins when using a catalog backed by an octree but it **will have a hit on peformance due to the opacity information
+being sent to the GPU continuously**. If smooth transitions are enabled, there
+is a fade-in between the draw distance angle angle and the draw distance angle + 0.4rad.
