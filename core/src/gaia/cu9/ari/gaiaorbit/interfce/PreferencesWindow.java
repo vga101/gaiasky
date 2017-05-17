@@ -83,7 +83,7 @@ public class PreferencesWindow extends GenericDialog {
 
     private INumberFormat nf3;
 
-    private CheckBox fullscreen, windowed, vsync, multithreadCb, lodFadeCb, cbAutoCamrec, hyg, tgas, real, nsl;
+    private CheckBox fullscreen, windowed, vsync, multithreadCb, lodFadeCb, cbAutoCamrec, hyg, tgas, real, nsl, report;
     private OwnSelectBox<DisplayMode> fullscreenResolutions;
     private OwnSelectBox<ComboBoxBean> gquality, aa, lineRenderer, numThreads, screenshotMode, frameoutputMode;
     private OwnSelectBox<LangComboBoxBean> lang;
@@ -151,6 +151,9 @@ public class PreferencesWindow extends GenericDialog {
         final Button tabGaia = new OwnTextIconButton(txt("gui.gaia"), new Image(skin.getDrawable("icon-p-gaia")), skin, "toggle-big");
         tabGaia.pad(pad);
         tabGaia.setWidth(tabwidth);
+        final Button tabSystem = new OwnTextIconButton(txt("gui.system"), new Image(skin.getDrawable("icon-p-system")), skin, "toggle-big");
+        tabSystem.pad(pad);
+        tabSystem.setWidth(tabwidth);
 
         group.addActor(tabGraphics);
         group.addActor(tabUI);
@@ -162,6 +165,7 @@ public class PreferencesWindow extends GenericDialog {
         group.addActor(tab360);
         group.addActor(tabData);
         group.addActor(tabGaia);
+        group.addActor(tabSystem);
         content.add(group).align(Align.left | Align.top).padLeft(pad);
 
         // Create the tab content. Just using images here for simplicity.
@@ -996,6 +1000,27 @@ public class PreferencesWindow extends GenericDialog {
         contentGaia.add(titleAttitude).left().padBottom(pad * 2).row();
         contentGaia.add(attitude).left();
 
+        /**
+         * ==== SYSTEM ====
+         **/
+        final Table contentSystem = new Table(skin);
+        contents.add(contentSystem);
+        contentSystem.align(Align.top | Align.left);
+
+        // STATS
+        OwnLabel titleStats = new OwnLabel(txt("gui.system.reporting"), skin, "help-title");
+        Table stats = new Table(skin);
+
+        report = new OwnCheckBox(txt("gui.system.allowreporting"), skin, pad);
+        report.setChecked(GlobalConf.program.ANALYTICS_ENABLED);
+
+        // Add to table
+        stats.add(report).left().padBottom(pad).row();
+
+        // Add to content
+        contentSystem.add(titleStats).left().padBottom(pad * 2).row();
+        contentSystem.add(stats).left();
+
         /** COMPUTE LABEL WIDTH **/
         float maxLabelWidth = 0;
         for (OwnLabel l : labels) {
@@ -1018,6 +1043,7 @@ public class PreferencesWindow extends GenericDialog {
         tabContent.addActor(content360);
         tabContent.addActor(contentData);
         tabContent.addActor(contentGaia);
+        tabContent.addActor(contentSystem);
 
         /** ADD TO MAIN TABLE **/
         content.add(tabContent).left().padLeft(10).expand().fill();
@@ -1037,6 +1063,7 @@ public class PreferencesWindow extends GenericDialog {
                 content360.setVisible(tab360.isChecked());
                 contentData.setVisible(tabData.isChecked());
                 contentGaia.setVisible(tabGaia.isChecked());
+                contentSystem.setVisible(tabSystem.isChecked());
             }
         };
         tabGraphics.addListener(tab_listener);
@@ -1049,6 +1076,7 @@ public class PreferencesWindow extends GenericDialog {
         tab360.addListener(tab_listener);
         tabData.addListener(tab_listener);
         tabGaia.addListener(tab_listener);
+        tabSystem.addListener(tab_listener);
 
         // Let only one tab button be checked at a time
         ButtonGroup<Button> tabs = new ButtonGroup<Button>();
@@ -1064,6 +1092,7 @@ public class PreferencesWindow extends GenericDialog {
         tabs.add(tab360);
         tabs.add(tabData);
         tabs.add(tabGaia);
+        tabs.add(tabSystem);
 
     }
 
@@ -1164,6 +1193,12 @@ public class PreferencesWindow extends GenericDialog {
 
         // Cube map resolution
         GlobalConf.scene.CUBEMAP_FACE_RESOLUTION = Integer.parseInt(cmResolution.getText());
+
+        // Gaia attitude
+        GlobalConf.data.REAL_GAIA_ATTITUDE = real.isChecked();
+
+        // System
+        GlobalConf.program.ANALYTICS_ENABLED = report.isChecked();
 
         // Save configuration
         ConfInit.instance.persistGlobalConf(new File(System.getProperty("properties.file")));
