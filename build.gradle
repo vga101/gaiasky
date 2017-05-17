@@ -12,7 +12,7 @@ buildscript {
     dependencies {
         classpath 'de.richsource.gradle.plugins:gwt-gradle-plugin:0.6'
         classpath "gradle.plugin.install4j.install4j:gradle_plugin:6.1.2"
-        classpath "com.android.tools.build:gradle:2.3.1"
+        //classpath "com.android.tools.build:gradle:2.3.1"
     }
 
 }
@@ -113,15 +113,14 @@ project(":desktop") {
         compile "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
         compile "com.badlogicgames.gdx:gdx-controllers-lwjgl3:$gdxVersion"
-		compile "org.python:jython-standalone:$jythonVersion"
+	compile "org.python:jython-standalone:$jythonVersion"
         compile "com.beust:jcommander:$jcommanderVersion"
         compile "com.brsanthu:google-analytics-java:$googleanalyticsjavaVersion"
         compile "org.slf4j:slf4j-nop:$slf4jVersion"
-		compile files('../core/lib/postprocessing.jar',
-					'../core/lib/jafama.jar',
-					'../android/assets',
-                    'lib/stil.jar',
-                    'lib/swing-range-slider.jar')
+	compile files('../core/lib/postprocessing.jar',
+			'../core/lib/jafama.jar',
+			'../android/assets',
+                        'lib/stil.jar')
     }
 
     jar {
@@ -136,9 +135,11 @@ project(":desktop") {
             include 'font/font2d.png'
             include 'icon/ic_launcher.png'
             include 'img/**'
+            exclude 'img/splash'
             include 'shader/**'
             include 'shaders/**'
             include 'skins/**'
+            exclude 'skins/raw'
         }
         from('build/classes/main') {
             include '**'
@@ -183,9 +184,9 @@ project(":core") {
     dependencies {
         compile "com.badlogicgames.gdx:gdx:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-controllers:$gdxVersion"
-		compile "junit:junit:4.12"
-		compile files('lib/postprocessing.jar',
-					'lib/jafama.jar')
+	compile "junit:junit:4.12"
+	compile files('lib/postprocessing.jar',
+			'lib/jafama.jar')
     }
 
     jar {
@@ -197,7 +198,7 @@ project(":core") {
     }
 }
 
-//project(":android") {
+project(":android") {
 //    apply plugin: "android"
 //
 //    configurations { natives }
@@ -209,11 +210,11 @@ project(":core") {
 //        natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi-v7a"
 //        natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86"
 //        compile "com.badlogicgames.gdx:gdx-controllers:$gdxVersion"
-//		compile "org.python:jython-standalone:$jythonVersion"
+//		  compile "org.python:jython-standalone:$jythonVersion"
 //        compile "com.badlogicgames.gdx:gdx-controllers-android:$gdxVersion"
-//		compile files('../core/lib/postprocessing.jar')
+//		  compile files('../core/lib/postprocessing.jar')
 //    }
-//}
+}
 
 tasks.eclipse.doLast {
     delete ".project"

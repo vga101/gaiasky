@@ -364,7 +364,7 @@ public class PreferencesWindow extends GenericDialog {
 
         // LANGUAGE
         OwnLabel langLabel = new OwnLabel(txt("gui.ui.language"), skin);
-        File i18nfolder = new File(System.getProperty("assets.location") + "i18n/");
+        File i18nfolder = new File((System.getProperty("assets.location") != null ? System.getProperty("assets.location") : "") + "i18n/");
         String i18nname = "gsbundle";
         String[] files = i18nfolder.list();
         LangComboBoxBean[] langs = new LangComboBoxBean[files.length];

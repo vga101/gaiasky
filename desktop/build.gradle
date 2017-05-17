@@ -135,7 +135,7 @@ task dist (dependsOn: gaiaskyJar, description: "Compiles the project, creates th
 	    copy {
 	        from "../android/assets/data"
 	        into "$distDir/data"
-	        exclude "**/android"
+	                exclude "**/android"
 	
 			exclude "**/tgas_201507"
 			exclude "**/tgas_final"
@@ -143,35 +143,27 @@ task dist (dependsOn: gaiaskyJar, description: "Compiles the project, creates th
 			exclude "**/hipparcos.csv"
 			exclude "**/hip_pm.csv"
 			
+			exclude "**/tgas_final_metadata.bin"
+			exclude "**/tgas_final_particles.bin"
+			
 			exclude "**/models/cassini"
 			exclude "**/models/rosetta"
 			exclude "**/models/iss"
 			
-			exclude "**/orbits_asteroid_extra*.json"
-			exclude "**/kepler-exoplanets.csv"
+			exclude "**/orbits_asteroid_extra.json"
 			exclude "**/cassini.xyz"
 			exclude "**/rosetta.xyz"
 	
-	        exclude "**/earth*-8k.jpg"
-	        exclude "**/mercury-8k.jpg"
-	        exclude "**/moon-8k.jpg"
-	        exclude "**/venus-8k.jpg"
-	        exclude "**/*.tif"
+
+	                exclude "**/*.tif"
 	        
-	        exclude "**/attitudeindicator.png"
+	                exclude "**/attitudeindicator.png"
 	
 			exclude "**/catalog.txt"
-	        exclude "**/*-wgl.json"
+	                exclude "**/*-wgl.json"
 	
 	    }
-	
-	    // Add icons to data
-	    copy {
-	        from "data"
-	        into "$distDir/data"
-	        include "**/config/**"
-	    }
-	
+
 	    // Copy i18n files
 	    mkdir "$distDir/i18n"
 	    copy {

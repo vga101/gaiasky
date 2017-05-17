@@ -226,8 +226,7 @@ public class GaiaSkyDesktop implements IObserver {
         cfg.setWindowIcon(Files.FileType.Internal, "icon/ic_launcher.png");
         cfg.setWindowListener(new GaiaSkyWindowListener());
 
-        Logger.info("Display mode set to " + Lwjgl3ApplicationConfiguration.getDisplayMode().width + "x" + Lwjgl3ApplicationConfiguration.getDisplayMode().height + ", fullscreen: "
-                + GlobalConf.screen.FULLSCREEN);
+        Logger.info("Display mode set to " + Lwjgl3ApplicationConfiguration.getDisplayMode().width + "x" + Lwjgl3ApplicationConfiguration.getDisplayMode().height + ", fullscreen: " + GlobalConf.screen.FULLSCREEN);
 
         // Thread pool manager
         if (GlobalConf.performance.MULTITHREADING) {
