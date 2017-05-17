@@ -136,10 +136,8 @@ public class SceneGraphConcurrentOctree extends AbstractSceneGraph {
     }
 
     protected String getRouletteDebug() {
-        {
-            int size = roulette.size / numThreads;
-            return size + ", " + roulette.size + "," + numThreads;
-        }
+        int size = roulette.size / numThreads;
+        return size + ", " + roulette.size + ", " + numThreads;
     }
 
 }

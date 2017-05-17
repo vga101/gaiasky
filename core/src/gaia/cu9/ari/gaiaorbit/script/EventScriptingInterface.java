@@ -32,6 +32,7 @@ import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 
 /**
  * Implementation of the scripting interface using the event system.
+ * 
  * @author Toni Sagrista
  *
  */
@@ -747,14 +748,14 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
     @Override
     public void expandGuiComponent(String name) {
         IGui gui = GaiaSky.instance.mainGui;
-        ControlsWindow controls = (ControlsWindow) gui.getGuiStage().getRoot().findActor(I18n.bundle.get("gui.controls"));
+        ControlsWindow controls = (ControlsWindow) gui.getGuiStage().getRoot().findActor(I18n.bundle.get("gui.controlpanel"));
         controls.getCollapsiblePane(name).expandPane();
     }
 
     @Override
     public void collapseGuiComponent(String name) {
         IGui gui = GaiaSky.instance.mainGui;
-        ControlsWindow controls = (ControlsWindow) gui.getGuiStage().getRoot().findActor(I18n.bundle.get("gui.controls"));
+        ControlsWindow controls = (ControlsWindow) gui.getGuiStage().getRoot().findActor(I18n.bundle.get("gui.controlpanel"));
         controls.getCollapsiblePane(name).collapsePane();
     }
 
