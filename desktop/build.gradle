@@ -154,6 +154,7 @@ task dist (dependsOn: gaiaskyJar, description: "Compiles the project, creates th
 			exclude "**/cassini.xyz"
 			exclude "**/rosetta.xyz"
 	
+			exclude "**/uvdebug.png"
 
 	                exclude "**/*.tif"
 	        
