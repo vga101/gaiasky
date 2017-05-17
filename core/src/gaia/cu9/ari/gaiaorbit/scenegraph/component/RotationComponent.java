@@ -7,6 +7,7 @@ import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
 /**
  * Provides the information for the rotation of this body.
+ * 
  * @author Toni Sagrista
  *
  */
@@ -34,7 +35,9 @@ public class RotationComponent {
 
     /**
      * Sets the rotation period.
-     * @param rotationPeriod The period in hours.
+     * 
+     * @param rotationPeriod
+     *            The period in hours.
      */
     public void setPeriod(Double rotationPeriod) {
         this.period = rotationPeriod;
@@ -49,8 +52,11 @@ public class RotationComponent {
     }
 
     /**
-     * Sets the axial tilt, the angle between the equatorial plane and the orbital plane.
-     * @param f Angle in deg.
+     * Sets the axial tilt, the angle between the equatorial plane and the
+     * orbital plane.
+     * 
+     * @param f
+     *            Angle in deg.
      */
     public void setAxialtilt(Double f) {
         this.axialTilt = f;
@@ -61,16 +67,22 @@ public class RotationComponent {
     }
 
     /**
-     * Sets the inclination, the angle between the orbital plane and the ecliptic
-     * @param i Inclination in deg.
+     * Sets the inclination, the angle between the orbital plane and the
+     * ecliptic
+     * 
+     * @param i
+     *            Inclination in deg.
      */
     public void setInclination(Double i) {
         inclination = i + Coordinates.OBLIQUITY_DEG_J2000;
     }
 
     /**
-     * Sets the inclination, the angle between the orbital plane and the ecliptic
-     * @param i Inclination in deg.
+     * Sets the inclination, the angle between the orbital plane and the
+     * ecliptic
+     * 
+     * @param i
+     *            Inclination in deg.
      */
     public void setInclination(Long i) {
         inclination = i + Coordinates.OBLIQUITY_DEG_J2000;
@@ -78,15 +90,19 @@ public class RotationComponent {
 
     /**
      * Sets the ascending node.
-     * @param an Angle in deg.
+     * 
+     * @param an
+     *            Angle in deg.
      */
     public void setAscendingnode(Double an) {
         this.ascendingNode = an;
     }
 
     /**
-     *  Sets the meridian angle.
-     * @param ma Angle in deg.
+     * Sets the meridian angle.
+     * 
+     * @param ma
+     *            Angle in deg.
      */
     public void setMeridianangle(Double ma) {
         this.meridianAngle = ma;

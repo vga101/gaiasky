@@ -115,7 +115,7 @@ public class Planet extends ModelBody implements IAtmosphereRenderable {
     }
 
     /**
-     *  Renders atmosphere
+     * Renders atmosphere
      */
     @Override
     public void render(ModelBatch modelBatch, float alpha, float t, boolean atm) {

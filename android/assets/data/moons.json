@@ -24,11 +24,11 @@
 						// In hours
 						"period" : 655.718,
 						// Angle between equatorial plane and orbital plane
-						"axialtilt" : 1.542,
+						"axialtilt" : -1.542,
 						// Inclination of orbital plane with respect to ecliptic 
 						"inclination" : 5.145,
 						"ascendingnode" : 359.9949,
-						"meridianangle" : 98.3213
+						"meridianangle" : 20.015
 						},
 						
 	"model"			: {
