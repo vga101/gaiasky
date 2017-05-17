@@ -465,8 +465,6 @@
       <exclude>
         <entry location="ic_launcher.png" fileType="regular" />
         <entry location="gaiasky" fileType="regular" />
-        <entry location="data/hyg_particles.bin" fileType="regular" />
-        <entry location="data/hyg_metadata.bin" fileType="regular" />
         <entry location="data/dummyversion" fileType="regular" />
         <entry location="gaiasky.bat" fileType="regular" />
         <entry location="ic_launcher.svg" fileType="regular" />
@@ -489,8 +487,6 @@
       <exclude>
         <entry location="ic_launcher.png" fileType="regular" />
         <entry location="gaiasky" fileType="regular" />
-        <entry location="data/hyg_particles.bin" fileType="regular" />
-        <entry location="data/hyg_metadata.bin" fileType="regular" />
         <entry location="data/dummyversion" fileType="regular" />
         <entry location="gaiasky.bat" fileType="regular" />
         <entry location="ic_launcher.svg" fileType="regular" />
@@ -510,8 +506,6 @@
       <exclude>
         <entry location="ic_launcher.ico" fileType="regular" />
         <entry location="gaiasky.bat" fileType="regular" />
-        <entry location="data/hyg_particles.bin" fileType="regular" />
-        <entry location="data/hyg_metadata.bin" fileType="regular" />
         <entry location="data/dummyversion" fileType="regular" />
         <entry location="gaiasky.desktop" fileType="regular" />
       </exclude>
@@ -531,8 +525,6 @@
       <exclude>
         <entry location="ic_launcher.ico" fileType="regular" />
         <entry location="gaiasky.bat" fileType="regular" />
-        <entry location="data/hyg_particles.bin" fileType="regular" />
-        <entry location="data/hyg_metadata.bin" fileType="regular" />
         <entry location="data/dummyversion" fileType="regular" />
       </exclude>
       <variables />
@@ -555,8 +547,6 @@
       <exclude>
         <entry location="ic_launcher.ico" fileType="regular" />
         <entry location="gaiasky.bat" fileType="regular" />
-        <entry location="data/hyg_particles.bin" fileType="regular" />
-        <entry location="data/hyg_metadata.bin" fileType="regular" />
         <entry location="data/dummyversion" fileType="regular" />
       </exclude>
       <variables />
@@ -577,7 +567,7 @@
         <content />
       </postUninstallScript>
     </linuxDeb>
-    <linuxRPM name="Linux RPM" id="77" customizedId="" mediaFileName="" installDir="/opt/${compiler:sys.shortName}" overridePrincipalLanguage="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="" manualJREEntry="false" os="linux" arch="i386">
+    <linuxRPM name="Linux RPM" id="77" customizedId="" mediaFileName="" installDir="/opt/${compiler:sys.shortName}" overridePrincipalLanguage="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" includedJRE="" manualJREEntry="false" os="linux" arch="">
       <excludedLaunchers>
         <launcher id="83" />
       </excludedLaunchers>
@@ -586,8 +576,6 @@
       <exclude>
         <entry location="ic_launcher.ico" fileType="regular" />
         <entry location="gaiasky.bat" fileType="regular" />
-        <entry location="data/hyg_particles.bin" fileType="regular" />
-        <entry location="data/hyg_metadata.bin" fileType="regular" />
         <entry location="data/dummyversion" fileType="regular" />
       </exclude>
       <variables />

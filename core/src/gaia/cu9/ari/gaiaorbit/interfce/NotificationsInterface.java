@@ -29,7 +29,7 @@ import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnLabel;
  * @author Toni Sagrista
  *
  */
-public class NotificationsInterface extends Table implements IObserver {
+public class NotificationsInterface extends Table implements IObserver, IGuiInterface {
     private static final long DEFAULT_TIMEOUT = 5000;
     private static final String TAG_SEPARATOR = " - ";
     IDateFormat df;
@@ -303,7 +303,7 @@ public class NotificationsInterface extends Table implements IObserver {
     }
 
     public void dispose() {
-        this.unsubscribe();
+        unsubscribe();
     }
 
     public float getMessage1Width() {

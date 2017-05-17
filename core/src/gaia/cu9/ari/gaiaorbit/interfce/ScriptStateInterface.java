@@ -18,7 +18,7 @@ import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextButton;
 
-public class ScriptStateInterface extends Table implements IObserver {
+public class ScriptStateInterface extends Table implements IObserver, IGuiInterface {
 
     private Image keyboardImg, cameraImg;
     private TextButton cancelScript, cancelCamera;
@@ -66,6 +66,10 @@ public class ScriptStateInterface extends Table implements IObserver {
         EventManager.instance.subscribe(this, Events.INPUT_ENABLED_CMD, Events.NUM_RUNNING_SCRIPTS, Events.CAMERA_PLAY_INFO);
     }
 
+    private void unsubscribe() {
+        EventManager.instance.unsubscribe(this, Events.INPUT_ENABLED_CMD, Events.NUM_RUNNING_SCRIPTS, Events.CAMERA_PLAY_INFO);
+    }
+
     @Override
     public void notify(Events event, Object... data) {
         switch (event) {
@@ -85,6 +89,11 @@ public class ScriptStateInterface extends Table implements IObserver {
         default:
             break;
         }
+    }
+
+    @Override
+    public void dispose() {
+        unsubscribe();
     }
 
 }

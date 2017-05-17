@@ -26,7 +26,7 @@ import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnSlider;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextButton;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
-public class WebGLInterface extends Table implements IObserver {
+public class WebGLInterface extends Table implements IObserver, IGuiInterface {
 
     protected OwnLabel date;
     protected OwnLabel gaiaObsLabel, sceneModeLabel;
@@ -156,6 +156,10 @@ public class WebGLInterface extends Table implements IObserver {
         EventManager.instance.subscribe(this, Events.TIME_CHANGE_INFO, Events.TIME_CHANGE_CMD);
     }
 
+    private void unsubscribe() {
+        EventManager.instance.unsubscribe(this, Events.TIME_CHANGE_INFO, Events.TIME_CHANGE_CMD);
+    }
+
     @Override
     public void notify(Events event, Object... data) {
         switch (event) {
@@ -177,6 +181,11 @@ public class WebGLInterface extends Table implements IObserver {
 
     private String txt(String key, Object... args) {
         return I18n.bundle.format(key, args);
+    }
+
+    @Override
+    public void dispose() {
+        unsubscribe();
     }
 
 }

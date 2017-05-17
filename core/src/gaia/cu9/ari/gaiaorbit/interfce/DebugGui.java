@@ -5,6 +5,7 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
@@ -15,6 +16,7 @@ import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 public class DebugGui implements IGui {
     private Skin skin;
     protected DebugInterface debugInterface;
+    protected Array<IGuiInterface> interfaces;
     protected Stage ui;
 
     /** Lock object for synchronisation **/
@@ -30,7 +32,7 @@ public class DebugGui implements IGui {
      * Constructs the interface
      */
     public void doneLoading(AssetManager assetManager) {
-
+        interfaces = new Array<IGuiInterface>();
         skin = GlobalResources.skin;
 
         // DEBUG INFO - TOP RIGHT
@@ -38,6 +40,7 @@ public class DebugGui implements IGui {
         debugInterface.setFillParent(true);
         debugInterface.right().top();
         debugInterface.pad(5, 0, 0, 5);
+        interfaces.add(debugInterface);
 
         rebuildGui();
     }
@@ -52,6 +55,9 @@ public class DebugGui implements IGui {
 
     @Override
     public void dispose() {
+        for (IGuiInterface iface : interfaces)
+            iface.dispose();
+
         ui.dispose();
     }
 

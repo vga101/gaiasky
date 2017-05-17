@@ -15,6 +15,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
@@ -30,6 +31,7 @@ import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextIconButton;
 
 /**
  * Displays the loading screen.
+ * 
  * @author Toni Sagrista
  *
  */
@@ -43,6 +45,9 @@ public class LoadingGui implements IGui {
     protected Container<Button> screenMode;
 
     protected NotificationsInterface notificationsInterface;
+
+    protected Array<IGuiInterface> interfaces;
+
     /** Lock object for synchronisation **/
     private Object lock;
 
@@ -52,6 +57,7 @@ public class LoadingGui implements IGui {
 
     @Override
     public void initialize(AssetManager assetManager) {
+        interfaces = new Array<IGuiInterface>();
         float pad30 = 30 * GlobalConf.SCALE_FACTOR;
         float pad10 = 10 * GlobalConf.SCALE_FACTOR;
         // User interface
@@ -93,6 +99,7 @@ public class LoadingGui implements IGui {
         // MESSAGE INTERFACE - BOTTOM
         notificationsInterface = new NotificationsInterface(skin, lock, false, false);
         center.add(notificationsInterface);
+        interfaces.add(notificationsInterface);
 
         rebuildGui();
 
@@ -112,7 +119,9 @@ public class LoadingGui implements IGui {
 
     @Override
     public void dispose() {
-        notificationsInterface.dispose();
+        for (IGuiInterface iface : interfaces)
+            iface.dispose();
+
         ui.dispose();
     }
 

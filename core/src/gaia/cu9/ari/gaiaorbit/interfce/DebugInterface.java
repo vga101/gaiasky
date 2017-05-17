@@ -11,7 +11,7 @@ import gaia.cu9.ari.gaiaorbit.util.format.INumberFormat;
 import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnLabel;
 
-public class DebugInterface extends Table implements IObserver {
+public class DebugInterface extends Table implements IObserver, IGuiInterface {
     private OwnLabel debug1, debug2, debug3, debug4, fps;
     /** Lock object for synchronization **/
     private Object lock;
@@ -45,10 +45,13 @@ public class DebugInterface extends Table implements IObserver {
         add(debug4).right();
         row();
 
-
         this.setVisible(GlobalConf.program.SHOW_DEBUG_INFO);
         this.lock = lock;
         EventManager.instance.subscribe(this, Events.DEBUG1, Events.DEBUG2, Events.DEBUG3, Events.DEBUG4, Events.FPS_INFO, Events.SHOW_DEBUG_CMD);
+    }
+
+    private void unsubscribe() {
+        EventManager.instance.unsubscribe(this, Events.DEBUG1, Events.DEBUG2, Events.DEBUG3, Events.DEBUG4, Events.FPS_INFO, Events.SHOW_DEBUG_CMD);
     }
 
     @Override
@@ -110,6 +113,11 @@ public class DebugInterface extends Table implements IObserver {
         double secs = seconds % 60d;
 
         return timeFormatter.format(hours) + ":" + timeFormatter.format(minutes) + ":" + timeFormatter.format(secs);
+    }
+
+    @Override
+    public void dispose() {
+        unsubscribe();
     }
 
 }

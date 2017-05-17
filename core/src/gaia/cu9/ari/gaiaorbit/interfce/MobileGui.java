@@ -5,6 +5,7 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
@@ -14,13 +15,14 @@ import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 
 /**
  * GUI for mobile devices which displays information and has some controls.
+ * 
  * @author Toni Sagrista
  *
  */
 public class MobileGui implements IGui {
     private Skin skin;
     /**
-     * The user interface stage	    
+     * The user interface stage
      */
     protected Stage ui;
 
@@ -29,6 +31,8 @@ public class MobileGui implements IGui {
     protected MessagesInterface messagesInterface;
     protected DebugInterface debugInterface;
     protected ScriptStateInterface inputInterface;
+
+    protected Array<IGuiInterface> interfaces;
 
     /** Lock object for synchronization **/
     private Object lock;
@@ -43,7 +47,7 @@ public class MobileGui implements IGui {
     @Override
     public void doneLoading(AssetManager assetManager) {
         skin = GlobalResources.skin;
-
+        interfaces = new Array<IGuiInterface>();
         initialize();
     }
 
@@ -53,23 +57,27 @@ public class MobileGui implements IGui {
         focusInterface.setFillParent(true);
         focusInterface.right().bottom();
         focusInterface.pad(0, 0, 5, 5);
+        interfaces.add(focusInterface);
 
         // DEBUG INFO - TOP RIGHT
         debugInterface = new DebugInterface(skin, lock);
         debugInterface.setFillParent(true);
         debugInterface.right().top();
+        interfaces.add(debugInterface);
 
         // NOTIFICATIONS INTERFACE - BOTTOM LEFT
         notificationsInterface = new NotificationsInterface(skin, lock, true);
         notificationsInterface.setFillParent(true);
         notificationsInterface.left().bottom();
         notificationsInterface.pad(0, 5, 5, 0);
+        interfaces.add(notificationsInterface);
 
         // MESSAGES INTERFACE - LOW CENTER
         messagesInterface = new MessagesInterface(skin, lock);
         messagesInterface.setFillParent(true);
         messagesInterface.left().bottom();
         messagesInterface.pad(0, 300, 150, 0);
+        interfaces.add(messagesInterface);
 
         // INPUT STATE
         //	inputInterface = new ScriptStateInterface(skin);
@@ -105,6 +113,9 @@ public class MobileGui implements IGui {
 
     @Override
     public void dispose() {
+        for (IGuiInterface iface : interfaces)
+            iface.dispose();
+
         ui.dispose();
     }
 

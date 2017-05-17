@@ -1,7 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.desktop.util;
 
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -88,13 +86,6 @@ public class DesktopConfInit extends ConfInit {
     @Override
     public void initGlobalConf() throws Exception {
 
-        // HiDPI
-        GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
-        float scalefactor = gd.getDisplayMode().getWidth() > 2500 && gd.getDisplayMode().getHeight() > 2000 ? 2 : 1;
-
-        // Update scale factor - for HiDPI screens
-        GlobalConf.updateScaleFactor(scalefactor);
-
         /** VERSION CONF **/
         VersionConf vc = new VersionConf();
         String versionStr = vp.getProperty("version");
@@ -173,6 +164,8 @@ public class DesktopConfInit extends ConfInit {
         String LAST_VERSION = p.getProperty("program.lastversion", "0.0.0");
         String VERSION_CHECK_URL = p.getProperty("program.versioncheckurl");
         String UI_THEME = p.getProperty("program.ui.theme");
+        // Update scale factor according to theme - for HiDPI screens
+        GlobalConf.updateScaleFactor(UI_THEME.endsWith("x2") ? 2f : 1f);
         String SCRIPT_LOCATION = p.getProperty("program.scriptlocation").isEmpty() ? System.getProperty("user.dir") + File.separatorChar + "scripts" : p.getProperty("program.scriptlocation");
 
         boolean STEREOSCOPIC_MODE = Boolean.parseBoolean(p.getProperty("program.stereoscopic"));

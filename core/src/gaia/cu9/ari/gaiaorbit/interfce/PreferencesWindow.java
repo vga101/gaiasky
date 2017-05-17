@@ -43,6 +43,7 @@ import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.interfce.KeyBindings.ProgramAction;
 import gaia.cu9.ari.gaiaorbit.interfce.beans.ComboBoxBean;
 import gaia.cu9.ari.gaiaorbit.interfce.beans.LangComboBoxBean;
+import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager;
 import gaia.cu9.ari.gaiaorbit.util.ConfInit;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
@@ -1142,9 +1143,8 @@ public class PreferencesWindow extends GenericDialog {
         GlobalConf.program.LOCALE = lbean.locale.toLanguageTag();
         I18n.forceinit(Gdx.files.internal("i18n/gsbundle"));
         GlobalConf.program.UI_THEME = theme.getSelected();
-        if (GlobalConf.program.UI_THEME.equalsIgnoreCase("hidpi")) {
-            GlobalConf.updateScaleFactor(Math.max(GlobalConf.SCALE_FACTOR, 1.6f));
-        }
+        // Update scale factor according to theme - for HiDPI screens
+        GlobalConf.updateScaleFactor(GlobalConf.program.UI_THEME.endsWith("x2") ? 2f : 1f);
 
         // Performance
         bean = numThreads.getSelected();
@@ -1228,6 +1228,9 @@ public class PreferencesWindow extends GenericDialog {
                     GaiaSky.instance.reinitialiseGUI2();
                     // Time init
                     EventManager.instance.post(Events.TIME_CHANGE_INFO, GaiaSky.instance.time.getTime());
+                    if (GaiaSky.instance.cam.mode == CameraManager.CameraMode.Focus)
+                        // Refocus
+                        EventManager.instance.post(Events.FOCUS_CHANGE_CMD, GaiaSky.instance.cam.getFocus());
                 }
             });
         }

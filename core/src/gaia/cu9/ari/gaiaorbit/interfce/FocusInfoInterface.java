@@ -31,7 +31,7 @@ import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnLabel;
  * @author tsagrista
  *
  */
-public class FocusInfoInterface extends Table implements IObserver {
+public class FocusInfoInterface extends Table implements IObserver, IGuiInterface {
     static private INetworkChecker daemon;
 
     protected OwnLabel focusName, focusId, focusRA, focusDEC, focusMuAlpha, focusMuDelta, focusAngle, focusDist, focusAppMag, focusAbsMag, focusRadius;
@@ -164,6 +164,10 @@ public class FocusInfoInterface extends Table implements IObserver {
 
         pos = new Vector3d();
         EventManager.instance.subscribe(this, Events.FOCUS_CHANGED, Events.FOCUS_INFO_UPDATED, Events.CAMERA_MOTION_UPDATED, Events.CAMERA_MODE_CMD, Events.LON_LAT_UPDATED, Events.RA_DEC_UPDATED);
+    }
+
+    private void unsubscribe() {
+        EventManager.instance.unsubscribe(this, Events.FOCUS_CHANGED, Events.FOCUS_INFO_UPDATED, Events.CAMERA_MOTION_UPDATED, Events.CAMERA_MODE_CMD, Events.LON_LAT_UPDATED, Events.RA_DEC_UPDATED);
     }
 
     @Override
@@ -312,6 +316,10 @@ public class FocusInfoInterface extends Table implements IObserver {
         row();
         add(cameraInfo).align(Align.left);
         pack();
+    }
+
+    public void dispose() {
+        unsubscribe();
     }
 
 }

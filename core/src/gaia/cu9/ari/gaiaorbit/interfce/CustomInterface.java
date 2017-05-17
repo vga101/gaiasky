@@ -28,10 +28,11 @@ import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnLabel;
 
 /**
  * Widget that displays custom objects on screen. Basically used for scripting.
+ * 
  * @author Toni Sagrista
  *
  */
-public class CustomInterface implements IObserver {
+public class CustomInterface implements IObserver, IGuiInterface {
     boolean displaying = false;
     /** Lock object for synchronization **/
     private Object lock;
@@ -50,6 +51,10 @@ public class CustomInterface implements IObserver {
 
         this.lock = lock;
         EventManager.instance.subscribe(this, Events.ADD_CUSTOM_IMAGE, Events.ADD_CUSTOM_MESSAGE, Events.REMOVE_OBJECTS, Events.REMOVE_ALL_OBJECTS, Events.ADD_CUSTOM_TEXT);
+    }
+
+    private void unsubscribe() {
+        EventManager.instance.unsubscribe(this, Events.ADD_CUSTOM_IMAGE, Events.ADD_CUSTOM_MESSAGE, Events.REMOVE_OBJECTS, Events.REMOVE_ALL_OBJECTS, Events.ADD_CUSTOM_TEXT);
     }
 
     private void initSizes(Skin skin) {
@@ -251,6 +256,11 @@ public class CustomInterface implements IObserver {
             }
         }
         return sizes.get(sizes.size() - 1);
+    }
+
+    @Override
+    public void dispose() {
+        unsubscribe();
     }
 
 }

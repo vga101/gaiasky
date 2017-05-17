@@ -5,6 +5,7 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
@@ -13,18 +14,18 @@ import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GSEnumSet;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
-import gaia.cu9.ari.gaiaorbit.util.format.INumberFormat;
-import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
 
 /**
- * Head-up display GUI which only displays information and has no options window.
+ * Head-up display GUI which only displays information and has no options
+ * window.
+ * 
  * @author Toni Sagrista
  *
  */
 public class HUDGui implements IGui {
     private Skin skin;
     /**
-     * The user interface stage	    
+     * The user interface stage
      */
     protected Stage ui;
 
@@ -34,10 +35,7 @@ public class HUDGui implements IGui {
     protected DebugInterface debugInterface;
     protected ScriptStateInterface inputInterface;
 
-    /**
-     * Number formats
-     */
-    private INumberFormat format, sformat;
+    protected Array<IGuiInterface> interfaces;
 
     /** Lock object for synchronization **/
     private Object lock;
@@ -52,13 +50,11 @@ public class HUDGui implements IGui {
     @Override
     public void doneLoading(AssetManager assetManager) {
         skin = GlobalResources.skin;
-        format = NumberFormatFactory.getFormatter("0.0###");
-        sformat = NumberFormatFactory.getFormatter("0.###E0");
-
-        initialize();
+        interfaces = new Array<IGuiInterface>();
+        buildGui();
     }
 
-    private void initialize() {
+    private void buildGui() {
         float pad = 5 * GlobalConf.SCALE_FACTOR;
 
         // FOCUS INFORMATION - BOTTOM RIGHT
@@ -66,23 +62,27 @@ public class HUDGui implements IGui {
         focusInterface.setFillParent(true);
         focusInterface.right().bottom();
         focusInterface.pad(0, 0, pad, pad);
+        interfaces.add(focusInterface);
 
         // DEBUG INFO - TOP RIGHT
         debugInterface = new DebugInterface(skin, lock);
         debugInterface.setFillParent(true);
         debugInterface.right().top();
+        interfaces.add(debugInterface);
 
         // NOTIFICATIONS INTERFACE - BOTTOM LEFT
         notificationsInterface = new NotificationsInterface(skin, lock, true);
         notificationsInterface.setFillParent(true);
         notificationsInterface.left().bottom();
         notificationsInterface.pad(0, pad, pad, 0);
+        interfaces.add(notificationsInterface);
 
         // MESSAGES INTERFACE - LOW CENTER
         messagesInterface = new MessagesInterface(skin, lock);
         messagesInterface.setFillParent(true);
         messagesInterface.left().bottom();
         messagesInterface.pad(0, 300 * GlobalConf.SCALE_FACTOR, 150 * GlobalConf.SCALE_FACTOR, 0);
+        interfaces.add(messagesInterface);
 
         if (Constants.desktop) {
             // INPUT STATE
@@ -90,6 +90,7 @@ public class HUDGui implements IGui {
             inputInterface.setFillParent(true);
             inputInterface.right().top();
             inputInterface.pad(50 * GlobalConf.SCALE_FACTOR, 0, 0, pad);
+            interfaces.add(inputInterface);
         }
 
         // Add to GUI
@@ -120,6 +121,9 @@ public class HUDGui implements IGui {
 
     @Override
     public void dispose() {
+        for (IGuiInterface iface : interfaces)
+            iface.dispose();
+
         ui.dispose();
     }
 

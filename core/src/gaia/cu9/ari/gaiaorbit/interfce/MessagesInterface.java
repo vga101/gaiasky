@@ -15,10 +15,11 @@ import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnLabel;
 
 /**
  * Widget that displays big messages on screen.
+ * 
  * @author Toni Sagrista
  *
  */
-public class MessagesInterface extends Table implements IObserver {
+public class MessagesInterface extends Table implements IObserver, IGuiInterface {
     Label headline, subhead;
     boolean displaying = false;
     /** Lock object for synchronization **/
@@ -38,6 +39,10 @@ public class MessagesInterface extends Table implements IObserver {
         this.add(subhead).left();
         this.lock = lock;
         EventManager.instance.subscribe(this, Events.POST_HEADLINE_MESSAGE, Events.CLEAR_HEADLINE_MESSAGE, Events.POST_SUBHEAD_MESSAGE, Events.CLEAR_SUBHEAD_MESSAGE, Events.CLEAR_MESSAGES);
+    }
+
+    private void unsubscribe() {
+        EventManager.instance.unsubscribe(this, Events.POST_HEADLINE_MESSAGE, Events.CLEAR_HEADLINE_MESSAGE, Events.POST_SUBHEAD_MESSAGE, Events.CLEAR_SUBHEAD_MESSAGE, Events.CLEAR_MESSAGES);
     }
 
     @Override
@@ -64,6 +69,11 @@ public class MessagesInterface extends Table implements IObserver {
                 break;
             }
         }
+    }
+
+    @Override
+    public void dispose() {
+        unsubscribe();
     }
 
 }

@@ -18,6 +18,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.badlogic.gdx.utils.reflect.Method;
 import com.badlogic.gdx.utils.reflect.ReflectionException;
@@ -46,6 +47,7 @@ import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnLabel;
 
 /**
  * Full OpenGL GUI with all the controls and whistles.
+ * 
  * @author Toni Sagrista
  *
  */
@@ -66,6 +68,8 @@ public class FullGui implements IGui, IObserver {
     protected ScriptStateInterface inputInterface;
     protected Container<WebGLInterface> wgl;
     protected WebGLInterface webglInterface;
+
+    protected Array<IGuiInterface> interfaces;
 
     protected SearchDialog searchDialog;
     protected AboutWindow aboutWindow;
@@ -109,6 +113,7 @@ public class FullGui implements IGui, IObserver {
         Logger.info(txt("notif.gui.init"));
 
         skin = GlobalResources.skin;
+        interfaces = new Array<IGuiInterface>();
 
         buildGui();
 
@@ -146,21 +151,25 @@ public class FullGui implements IGui, IObserver {
         notificationsInterface.setFillParent(true);
         notificationsInterface.left().bottom();
         notificationsInterface.pad(0, 5, 5, 0);
+        interfaces.add(notificationsInterface);
 
         // MESSAGES INTERFACE - LOW CENTER
         messagesInterface = new MessagesInterface(skin, lock);
         messagesInterface.setFillParent(true);
         messagesInterface.left().bottom();
         messagesInterface.pad(0, 300, 150, 0);
+        interfaces.add(messagesInterface);
 
         // INPUT STATE
         inputInterface = new ScriptStateInterface(skin);
         inputInterface.setFillParent(true);
         inputInterface.right().top();
         inputInterface.pad(100, 0, 0, 5);
+        interfaces.add(inputInterface);
 
         // CUSTOM OBJECTS INTERFACE
         customInterface = new CustomInterface(ui, skin, lock);
+        interfaces.add(customInterface);
 
         // MOUSE X/Y COORDINATES
         mouseXCoord = new OwnLabel("", skin, "default");
@@ -252,7 +261,9 @@ public class FullGui implements IGui, IObserver {
     }
 
     /**
-     * Removes the focus from this Gui and returns true if the focus was in the GUI, false otherwise.
+     * Removes the focus from this Gui and returns true if the focus was in the
+     * GUI, false otherwise.
+     * 
      * @return true if the focus was in the GUI, false otherwise.
      */
     public boolean cancelTouchFocus() {
@@ -271,6 +282,9 @@ public class FullGui implements IGui, IObserver {
 
     @Override
     public void dispose() {
+        for (IGuiInterface iface : interfaces)
+            iface.dispose();
+
         ui.dispose();
         EventManager.instance.removeAllSubscriptions(this);
     }
@@ -433,6 +447,7 @@ public class FullGui implements IGui, IObserver {
 
     /**
      * Small override that returns the user set width as preferred width.
+     * 
      * @author Toni Sagrista
      *
      */
