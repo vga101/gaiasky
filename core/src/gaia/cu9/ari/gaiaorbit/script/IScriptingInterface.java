@@ -1,5 +1,7 @@
 package gaia.cu9.ari.gaiaorbit.script;
 
+import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
+
 /**
  * Scripting interface. Provides an interface to the Gaia Sandbox core and
  * exposes all the methods that are callable from a script in order to interact
@@ -479,12 +481,24 @@ public interface IScriptingInterface {
     public void setFrameOutput(boolean active);
 
     /**
-     * Gets the size of this object, in Km.
+     * Gets an object by name or id (HIP, TYC, sourceId).
      * 
      * @param name
-     *            The name or id of the object.
+     *            The name or id (HIP, TYC, sourceId) of the object.
+     * @return The object as a
+     *         {@link gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody}, or null
+     *         if it does not exist.
+     */
+    public CelestialBody getObject(String name);
+
+    /**
+     * Gets the size of an object, in Km, by name or id (HIP, TYC, sourceId).
+     * 
+     * @param name
+     *            The name or id (HIP, TYC, sourceId) of the object.
      * @return The radius of the object in Km. If the object identifed by name
-     *         does not exist, it returns a negative value.
+     *         or id (HIP, TYC, sourceId). does not exist, it returns a negative
+     *         value.
      */
     public double getObjectRadius(String name);
 
@@ -494,7 +508,7 @@ public interface IScriptingInterface {
      * <strong>Warning> This will only work in asynchronous mode.</strong>
      * 
      * @param name
-     *            The name of the object.
+     *            The name or id (HIP, TYC, sourceId) of the object.
      */
     public void goToObject(String name);
 
@@ -505,7 +519,7 @@ public interface IScriptingInterface {
      * asynchronous mode.</strong>
      * 
      * @param name
-     *            The name of the object.
+     *            The name or id (HIP, TYC, sourceId) of the object.
      * @param angle
      *            The target view angle of the object, in degrees. The angle
      *            gets larger and larger as we approach the object.
@@ -523,7 +537,7 @@ public interface IScriptingInterface {
      * work in asynchronous mode.</strong>
      * 
      * @param name
-     *            The name of the object.
+     *            The name or id (HIP, TYC, sourceId) of the object.
      * @param angle
      *            The target view angle of the object, in degrees. The angle
      *            gets larger and larger as we approach the object.
@@ -539,12 +553,12 @@ public interface IScriptingInterface {
      * given name. If the object is an abstract node or does not exist, it
      * returns a negative distance.
      * 
-     * @param objectName
-     *            The name of the object.
+     * @param name
+     *            The name or id (HIP, TYC, sourceId) of the object.
      * @return The distance to the object in km if it exists, a negative value
      *         otherwise.
      */
-    public double getDistanceTo(String objectName);
+    public double getDistanceTo(String name);
 
     /**
      * Sets the vertical scroll position in the GUI.

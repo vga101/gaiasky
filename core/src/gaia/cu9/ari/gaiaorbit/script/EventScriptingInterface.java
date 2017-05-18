@@ -464,6 +464,12 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
     }
 
     @Override
+    public CelestialBody getObject(String name) {
+        ISceneGraph sg = GaiaSky.instance.sg;
+        return sg.findFocus(name);
+    }
+
+    @Override
     public double getObjectRadius(String name) {
         ISceneGraph sg = GaiaSky.instance.sg;
         CelestialBody obj = sg.findFocus(name);
@@ -526,7 +532,7 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
             while (focus.viewAngleApparent < target && (stop == null || (stop != null && !stop.get()))) {
                 em.post(Events.CAMERA_FWD, 1d);
                 try {
-                    Thread.sleep(50);
+                    Thread.sleep(5);
                 } catch (Exception e) {
                 }
             }
@@ -538,10 +544,10 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
     }
 
     @Override
-    public double getDistanceTo(String objectName) {
+    public double getDistanceTo(String name) {
         ISceneGraph sg = GaiaSky.instance.sg;
-        if (sg.containsNode(objectName)) {
-            SceneGraphNode object = sg.getNode(objectName);
+        if (sg.containsNode(name)) {
+            SceneGraphNode object = sg.getNode(name);
             if (object instanceof AbstractPositionEntity) {
                 AbstractPositionEntity ape = (AbstractPositionEntity) object;
                 return (ape.distToCamera - ape.getRadius()) * Constants.U_TO_KM;
