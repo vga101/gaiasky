@@ -159,6 +159,18 @@ public class GlobalConf {
 
     }
 
+    public static class ControlsConf implements IConf {
+        public boolean INVERT_LOOK_Y_AXIS;
+
+        public ControlsConf() {
+
+        }
+
+        public void initialize(boolean iNVERT_LOOK_Y_AXIS) {
+            INVERT_LOOK_Y_AXIS = iNVERT_LOOK_Y_AXIS;
+        }
+    }
+
     /**
      * Runtime configuration values, which are never persisted.
      *
@@ -948,6 +960,7 @@ public class GlobalConf {
     public static ScreenshotConf screenshot;
     public static PerformanceConf performance;
     public static PostprocessConf postprocess;
+    public static ControlsConf controls;
     public static VersionConf version;
 
     static boolean initialized = false;
@@ -963,7 +976,7 @@ public class GlobalConf {
     /**
      * Initialises the properties
      */
-    public static void initialize(VersionConf vc, ProgramConf pc, SceneConf sc, DataConf dc, RuntimeConf rc, PostprocessConf ppc, PerformanceConf pfc, FrameConf fc, ScreenConf scrc, ScreenshotConf shc) throws Exception {
+    public static void initialize(VersionConf vc, ProgramConf pc, SceneConf sc, DataConf dc, RuntimeConf rc, PostprocessConf ppc, PerformanceConf pfc, FrameConf fc, ScreenConf scrc, ScreenshotConf shc, ControlsConf cc) throws Exception {
         if (!initialized) {
             if (configurations == null) {
                 configurations = new ArrayList<IConf>();
@@ -979,6 +992,7 @@ public class GlobalConf {
             frame = fc;
             screenshot = shc;
             screen = scrc;
+            controls = cc;
 
             configurations.add(program);
             configurations.add(scene);
@@ -989,6 +1003,7 @@ public class GlobalConf {
             configurations.add(frame);
             configurations.add(screenshot);
             configurations.add(screen);
+            configurations.add(controls);
 
             initialized = true;
         }

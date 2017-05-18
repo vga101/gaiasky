@@ -95,7 +95,7 @@ public class Constellation extends LineObject implements I3DTextRenderable {
 
                     if (s2 == null)
                         wtf += (wtf.length() > 0 ? ", " : "") + pair[1];
-                    Logger.info(this.getClass().getSimpleName(), "Constellations stars not found (HIP): " + wtf);
+                    Logger.debug(this.getClass().getSimpleName(), "Constellations stars not found (HIP): " + wtf);
                     allLoaded = false;
                 }
             }

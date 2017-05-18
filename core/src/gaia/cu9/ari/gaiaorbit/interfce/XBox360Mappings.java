@@ -2,15 +2,18 @@ package gaia.cu9.ari.gaiaorbit.interfce;
 
 /**
  * XBox 360 controller mappings
+ * 
  * @author tsagrista
  *
  */
 public class XBox360Mappings {
 
     public static final int AXIS_JOY1VERT = 1;
+    public static final int AXIS_JOY2VERT = 4;
+
     public static final int AXIS_JOY1HOR = 0;
     public static final int AXIS_JOY2HOR = 3;
-    public static final int AXIS_JOY2VERT = 4;
+
     public static final int AXIS_LT = 2;
     public static final int AXIS_RT = 5;
 

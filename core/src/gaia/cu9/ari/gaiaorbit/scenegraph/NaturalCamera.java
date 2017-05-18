@@ -95,6 +95,12 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
     private double velocityGamepad = 0;
     private double gamepadMultiplier = 1;
 
+    /**
+     * Holds whether the last input was issued by a controller. Useful to keep
+     * things rolling even if controller sticks do not move
+     **/
+    boolean inputByController = false;
+
     boolean diverted = false;
 
     boolean accelerometer = false;
@@ -611,8 +617,8 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
             rotate(up, -yaw.z * rotateSpeed);
         }
 
-        defaultState(pitch, !GlobalConf.scene.CINEMATIC_CAMERA);
-        defaultState(yaw, !GlobalConf.scene.CINEMATIC_CAMERA);
+        defaultState(pitch, !GlobalConf.scene.CINEMATIC_CAMERA && !inputByController);
+        defaultState(yaw, !GlobalConf.scene.CINEMATIC_CAMERA && !inputByController);
     }
 
     private void updateRoll(float dt, double rotateSpeed) {
@@ -620,7 +626,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
             // Roll
             rotate(direction, -roll.z * rotateSpeed);
         }
-        defaultState(roll, !GlobalConf.scene.CINEMATIC_CAMERA);
+        defaultState(roll, !GlobalConf.scene.CINEMATIC_CAMERA && !inputByController);
     }
 
     /**
@@ -641,8 +647,8 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
             rotateAround(rotationCenter, up, -horizontal.z * GlobalConf.scene.ROTATION_SPEED);
         }
 
-        defaultState(vertical, !GlobalConf.scene.CINEMATIC_CAMERA);
-        defaultState(horizontal, !GlobalConf.scene.CINEMATIC_CAMERA);
+        defaultState(vertical, !GlobalConf.scene.CINEMATIC_CAMERA && !inputByController);
+        defaultState(horizontal, !GlobalConf.scene.CINEMATIC_CAMERA && !inputByController);
 
     }
 
@@ -1034,6 +1040,10 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
             cam.direction.set(0, 0, -1);
             cam.update();
         }
+    }
+
+    public void setInputByController(boolean controller) {
+        this.inputByController = controller;
     }
 
     @Override

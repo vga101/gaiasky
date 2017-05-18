@@ -5,6 +5,7 @@ import java.io.File;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.util.ConfInit;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf.ControlsConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf.DataConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf.FrameConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf.PerformanceConf;
@@ -65,7 +66,10 @@ public class WebGLConfInit extends ConfInit {
 
         ScreenshotConf shc = new ScreenshotConf();
 
-        GlobalConf.initialize(vc, prc, sc, dc, rc, ppc, pc, fc, scrc, shc);
+        ControlsConf cc = new ControlsConf();
+        cc.initialize(true);
+
+        GlobalConf.initialize(vc, prc, sc, dc, rc, ppc, pc, fc, scrc, shc, cc);
 
     }
 

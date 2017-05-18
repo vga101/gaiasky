@@ -9,6 +9,7 @@ import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.NaturalCamera;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 
 public class NaturalControllerListener implements ControllerListener {
 
@@ -40,6 +41,7 @@ public class NaturalControllerListener implements ControllerListener {
         default:
             break;
         }
+        cam.setInputByController(true);
         return true;
     }
 
@@ -53,6 +55,7 @@ public class NaturalControllerListener implements ControllerListener {
         default:
             break;
         }
+        cam.setInputByController(true);
         return true;
     }
 
@@ -70,16 +73,14 @@ public class NaturalControllerListener implements ControllerListener {
                 // Use this for lateral movement
                 cam.setHorizontalRotation(value);
             }
-
             treated = true;
             break;
         case XBox360Mappings.AXIS_JOY1VERT:
             if (cam.getMode().equals(CameraMode.Focus)) {
                 cam.setVerticalRotation(value * 0.1);
             } else {
-                cam.setPitch(value * 1.5e-2f);
+                cam.setPitch((GlobalConf.controls.INVERT_LOOK_Y_AXIS ? 1 : -1) * value * 1.5e-2f);
             }
-
             treated = true;
             break;
         case XBox360Mappings.AXIS_JOY1HOR:
@@ -88,7 +89,6 @@ public class NaturalControllerListener implements ControllerListener {
             } else {
                 cam.setYaw(value * 1.5e-2f);
             }
-
             treated = true;
             break;
         case XBox360Mappings.AXIS_JOY2VERT:
@@ -109,6 +109,9 @@ public class NaturalControllerListener implements ControllerListener {
         default:
             break;
         }
+        if (treated)
+            cam.setInputByController(true);
+
         return treated;
     }
 

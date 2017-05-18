@@ -14,6 +14,7 @@ import java.util.Properties;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.util.ConfInit;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf.ControlsConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf.DataConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf.FrameConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf.PerformanceConf;
@@ -268,8 +269,14 @@ public class AndroidConfInit extends ConfInit {
         ScreenshotConf shc = new ScreenshotConf();
         shc.initialize(SCREENSHOT_WIDTH, SCREENSHOT_HEIGHT, SCREENSHOT_FOLDER, SCREENSHOT_MODE);
 
+        /** CONTROLS CONF **/
+        ControlsConf cc = new ControlsConf();
+        boolean INVERT_LOOK_Y_AXIS = Boolean.parseBoolean(p.getProperty("controls.invert.y", "true"));
+
+        cc.initialize(INVERT_LOOK_Y_AXIS);
+
         /** INIT GLOBAL CONF **/
-        GlobalConf.initialize(vc, prc, sc, dc, rc, ppc, pc, fc, scrc, shc);
+        GlobalConf.initialize(vc, prc, sc, dc, rc, ppc, pc, fc, scrc, shc, cc);
 
     }
 
@@ -391,6 +398,9 @@ public class AndroidConfInit extends ConfInit {
         } catch (Exception e) {
             Logger.error(e);
         }
+        
+        /** CONTROLS **/
+        p.setProperty("controls.invert.y", Boolean.toString(GlobalConf.controls.INVERT_LOOK_Y_AXIS));
 
     }
 

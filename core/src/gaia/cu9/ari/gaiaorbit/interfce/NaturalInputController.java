@@ -181,6 +181,7 @@ public class NaturalInputController extends GestureDetector {
                 this.button = button;
             }
         }
+        camera.setInputByController(false);
         return super.touchDown(screenX, screenY, pointer, button);
     }
 
@@ -193,8 +194,7 @@ public class NaturalInputController extends GestureDetector {
         Vector3 pos = new Vector3();
         while (it.hasNext()) {
             CelestialBody s = it.next();
-            if (s.withinMagLimit() && (!(s instanceof Particle) || (s instanceof Particle && ((Particle) s).octant == null)
-                    || (s instanceof Particle && ((Particle) s).octant != null && ((Particle) s).octant.observed))) {
+            if (s.withinMagLimit() && (!(s instanceof Particle) || (s instanceof Particle && ((Particle) s).octant == null) || (s instanceof Particle && ((Particle) s).octant != null && ((Particle) s).octant.observed))) {
                 Vector3d posd = s.getPosition(aux);
                 pos.set(posd.valuesf());
 
@@ -311,6 +311,7 @@ public class NaturalInputController extends GestureDetector {
 
             this.button = -1;
         }
+        camera.setInputByController(false);
         return super.touchUp(screenX, screenY, pointer, button);
     }
 
@@ -349,7 +350,7 @@ public class NaturalInputController extends GestureDetector {
             if (dragDx != 0)
                 camera.addForwardForce(dragDx);
         }
-
+        camera.setInputByController(false);
         return false;
     }
 
@@ -383,6 +384,7 @@ public class NaturalInputController extends GestureDetector {
     public boolean zoom(float amount) {
         if (alwaysScroll)
             camera.addForwardForce(amount);
+        camera.setInputByController(false);
         return false;
     }
 
@@ -390,6 +392,7 @@ public class NaturalInputController extends GestureDetector {
     public boolean keyDown(int keycode) {
         if (GlobalConf.runtime.INPUT_ENABLED) {
             pressedKeys.add(keycode);
+            camera.setInputByController(false);
         }
         return false;
 
@@ -398,6 +401,7 @@ public class NaturalInputController extends GestureDetector {
     @Override
     public boolean keyUp(int keycode) {
         pressedKeys.remove(keycode);
+        camera.setInputByController(false);
         return false;
 
     }
