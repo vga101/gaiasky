@@ -513,7 +513,7 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
                 target = Math.toRadians(20d);
 
             // Add forward movement while distance > target distance
-            while (focus.viewAngleApparent < target && (stop != null && !stop.get())) {
+            while (focus.viewAngleApparent < target && (stop == null || (stop != null && !stop.get()))) {
                 em.post(Events.CAMERA_FWD, 1d);
                 try {
                     Thread.sleep(50);
