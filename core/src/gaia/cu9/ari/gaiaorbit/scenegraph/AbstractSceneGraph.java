@@ -216,14 +216,11 @@ public abstract class AbstractSceneGraph implements ISceneGraph {
     }
 
     public CelestialBody findFocus(String name) {
-        Array<CelestialBody> objects = new Array<CelestialBody>();
-        root.addFocusableObjects(objects);
-        for (CelestialBody fo : objects) {
-            if (fo.getName().equals(name)) {
-                return fo;
-            }
-        }
-        return null;
+        SceneGraphNode node = getNode(name);
+        if (node == null || !(node instanceof CelestialBody))
+            return null;
+        else
+            return (CelestialBody) node;
     }
 
     public int getSize() {

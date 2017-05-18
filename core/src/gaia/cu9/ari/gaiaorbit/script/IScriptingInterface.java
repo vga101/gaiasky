@@ -479,6 +479,16 @@ public interface IScriptingInterface {
     public void setFrameOutput(boolean active);
 
     /**
+     * Gets the size of this object, in Km.
+     * 
+     * @param name
+     *            The name or id of the object.
+     * @return The radius of the object in Km. If the object identifed by name
+     *         does not exist, it returns a negative value.
+     */
+    public double getObjectRadius(String name);
+
+    /**
      * Runs a seamless trip to the object with the given name. The camera will
      * stop by default at a distance of <code>target.radius * 5</code>.
      * <strong>Warning> This will only work in asynchronous mode.</strong>

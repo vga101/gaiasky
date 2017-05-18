@@ -464,6 +464,16 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
     }
 
     @Override
+    public double getObjectRadius(String name) {
+        ISceneGraph sg = GaiaSky.instance.sg;
+        CelestialBody obj = sg.findFocus(name);
+        if (obj == null)
+            return -1;
+        else
+            return obj.getRadius() * Constants.U_TO_KM;
+    }
+
+    @Override
     public void goToObject(String name) {
         goToObject(name, -1);
     }
