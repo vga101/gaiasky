@@ -527,12 +527,6 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
         }
     }
 
-    private boolean weAreThere(double distance, double target, double accuracyPercent) {
-        double down = target - target * accuracyPercent / 2d;
-        double up = target + target * accuracyPercent / 2d;
-        return distance >= down && distance <= up;
-    }
-
     @Override
     public double getDistanceTo(String objectName) {
         ISceneGraph sg = GaiaSky.instance.sg;
