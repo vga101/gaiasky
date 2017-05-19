@@ -26,7 +26,7 @@ public class OctreeWrapperConcurrent extends AbstractOctreeWrapper {
         super();
     }
 
-    public OctreeWrapperConcurrent(String parentName, OctreeNode<Particle> root) {
+    public OctreeWrapperConcurrent(String parentName, OctreeNode root) {
         super(parentName, root);
     }
 

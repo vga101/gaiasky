@@ -45,48 +45,48 @@ public class OctreeMultiFileLoader implements ISceneGraphLoader {
 
     /** Adds an octant to the queue to be loaded **/
     public static void addToQueue(OctreeNode octant) {
-        if (instance != null && octant != null) {
-            instance.toLoadQueue.add(octant);
-            octant.setStatus(LoadStatus.QUEUED);
-        }
+	if (instance != null && octant != null) {
+	    instance.toLoadQueue.add(octant);
+	    octant.setStatus(LoadStatus.QUEUED);
+	}
     }
 
     /** Adds a list of octants to the queue to be loaded **/
     public static void addToQueue(OctreeNode... octants) {
-        if (instance != null)
-            for (OctreeNode<Particle> octant : octants) {
-                instance.toLoadQueue.add(octant);
-                octant.setStatus(LoadStatus.QUEUED);
-            }
+	if (instance != null)
+	    for (OctreeNode octant : octants) {
+		instance.toLoadQueue.add(octant);
+		octant.setStatus(LoadStatus.QUEUED);
+	    }
 
     }
 
     /** Puts it at the end of the toUnloadQueue **/
     public static void touch(OctreeNode octant) {
-        if (instance != null) {
-            if (instance.toUnloadQueue.contains(octant)) {
-                instance.toUnloadQueue.remove(octant);
-            }
-            instance.toUnloadQueue.offer(octant);
-        }
+	if (instance != null) {
+	    if (instance.toUnloadQueue.contains(octant)) {
+		instance.toUnloadQueue.remove(octant);
+	    }
+	    instance.toUnloadQueue.offer(octant);
+	}
     }
 
     /**
      * Tells the loader to start loading the octants in the queue.
      */
     public static void flushLoadQueue() {
-        if (instance != null && !instance.daemon.awake && !instance.toLoadQueue.isEmpty()) {
-            instance.daemon.interrupt();
-        }
+	if (instance != null && !instance.daemon.awake && !instance.toLoadQueue.isEmpty()) {
+	    instance.daemon.interrupt();
+	}
     }
 
     /** Binary particle reader **/
-    private ParticleDataBinaryIO<Particle> particleReader;
+    private ParticleDataBinaryIO particleReader;
 
     String metadata, particles;
 
     /** The octant loading queue **/
-    private Queue<OctreeNode<Particle>> toLoadQueue = null;
+    private Queue<OctreeNode> toLoadQueue = null;
     /** Load status of the different levels of detail **/
     public LoadStatus[] lodStatus = new LoadStatus[50];
 
@@ -101,97 +101,97 @@ public class OctreeMultiFileLoader implements ISceneGraphLoader {
      * This queue is sorted ascending by access date, so that we know which
      * element to release if needed (oldest)
      **/
-    private Queue<OctreeNode<Particle>> toUnloadQueue;
+    private Queue<OctreeNode> toUnloadQueue;
 
     public OctreeMultiFileLoader() {
-        instance = this;
-        toLoadQueue = new ArrayBlockingQueue<OctreeNode<Particle>>(30000);
-        toUnloadQueue = new ArrayBlockingQueue<OctreeNode<Particle>>(30000);
-        particleReader = new ParticleDataBinaryIO<Particle>();
+	instance = this;
+	toLoadQueue = new ArrayBlockingQueue<OctreeNode>(30000);
+	toUnloadQueue = new ArrayBlockingQueue<OctreeNode>(30000);
+	particleReader = new ParticleDataBinaryIO();
 
-        maxLoadedStars = 800000;
+	maxLoadedStars = 800000;
     }
 
     @Override
     public Array<? extends SceneGraphNode> loadData() throws FileNotFoundException {
 
-        /**
-         * LOAD METADATA
-         */
+	/**
+	 * LOAD METADATA
+	 */
 
-        Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.loading", metadata));
+	Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.loading", metadata));
 
-        MetadataBinaryIO<Particle> metadataReader = new MetadataBinaryIO<Particle>();
-        OctreeNode<Particle> root = metadataReader.readMetadata(Gdx.files.internal(metadata).read());
+	MetadataBinaryIO metadataReader = new MetadataBinaryIO();
+	OctreeNode root = metadataReader.readMetadata(Gdx.files.internal(metadata).read());
 
-        Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.nodeloader", root.numNodes(), metadata));
-        Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.loading", particles));
+	Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.nodeloader", root.numNodes(), metadata));
+	Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.loading", particles));
 
-        /**
-         * CREATE OCTREE WRAPPER WITH ROOT NODE
-         */
-        AbstractOctreeWrapper octreeWrapper = null;
-        if (GlobalConf.performance.MULTITHREADING) {
-            octreeWrapper = new OctreeWrapperConcurrent("Universe", root);
-        } else {
-            octreeWrapper = new OctreeWrapper("Universe", root);
-        }
+	/**
+	 * CREATE OCTREE WRAPPER WITH ROOT NODE
+	 */
+	AbstractOctreeWrapper octreeWrapper = null;
+	if (GlobalConf.performance.MULTITHREADING) {
+	    octreeWrapper = new OctreeWrapperConcurrent("Universe", root);
+	} else {
+	    octreeWrapper = new OctreeWrapper("Universe", root);
+	}
 
-        /**
-         * LOAD LOD LEVELS - LOAD PARTICLE DATA
-         */
+	/**
+	 * LOAD LOD LEVELS - LOAD PARTICLE DATA
+	 */
 
-        try {
-            int depthLevel = Math.min(OctreeNode.maxDepth, PRELOAD_DEPTH);
-            loadLod(depthLevel, octreeWrapper);
+	try {
+	    int depthLevel = Math.min(OctreeNode.maxDepth, PRELOAD_DEPTH);
+	    loadLod(depthLevel, octreeWrapper);
 
-            // Load octant with Sol - 608
-            OctreeNode<Particle> solOctant = root.findOctant(608l);
-            if (solOctant != null) {
-                loadOctant(solOctant, octreeWrapper);
-            }
+	    // Load octant with Sol - 608
+	    OctreeNode solOctant = root.findOctant(608l);
+	    if (solOctant != null) {
+		loadOctant(solOctant, octreeWrapper);
+	    }
 
-        } catch (IOException e) {
-            Logger.error(e);
-        }
+	} catch (IOException e) {
+	    Logger.error(e);
+	}
 
-        /**
-         * INITIALIZE DAEMON LOADER THREAD
-         */
-        daemon = new DaemonLoader(octreeWrapper, this);
-        daemon.setDaemon(true);
-        daemon.setName("daemon-octree-loader");
-        daemon.setPriority(Thread.MIN_PRIORITY);
-        daemon.start();
+	/**
+	 * INITIALIZE DAEMON LOADER THREAD
+	 */
+	daemon = new DaemonLoader(octreeWrapper, this);
+	daemon.setDaemon(true);
+	daemon.setName("daemon-octree-loader");
+	daemon.setPriority(Thread.MIN_PRIORITY);
+	daemon.start();
 
-        /**
-         * INITIALIZE TIMER TO FLUSH THE QUEUE AT REGULAR INTERVALS
-         */
-        Timer timer = new Timer();
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                flushLoadQueue();
-            }
+	/**
+	 * INITIALIZE TIMER TO FLUSH THE QUEUE AT REGULAR INTERVALS
+	 */
+	Timer timer = new Timer();
+	timer.schedule(new TimerTask() {
+	    @Override
+	    public void run() {
+		flushLoadQueue();
+	    }
 
-        }, 1000, 2000);
+	}, 1000, 2000);
 
-        // Add octreeWrapper to result list and return
-        Array<SceneGraphNode> result = new Array<SceneGraphNode>(1);
-        result.add(octreeWrapper);
+	// Add octreeWrapper to result list and return
+	Array<SceneGraphNode> result = new Array<SceneGraphNode>(1);
+	result.add(octreeWrapper);
 
-        Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.catalog.init", root.countObjects()));
+	Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.catalog.init", root.countObjects()));
 
-        return result;
+	return result;
     }
 
     @Override
     public void initialize(String[] files) throws RuntimeException {
-        if (files == null || files.length < 2) {
-            throw new RuntimeException("Error loading octree files: " + files.length);
-        }
-        particles = files[0];
-        metadata = files[1];
+	if (files == null || files.length < 2) {
+	    throw new RuntimeException("Error loading octree files: " + files.length);
+	}
+	particles = files[0];
+	metadata = files[1];
     }
 
     /**
@@ -204,7 +204,7 @@ public class OctreeMultiFileLoader implements ISceneGraphLoader {
      * @throws IOException
      */
     public void loadLod(final Integer lod, final AbstractOctreeWrapper octreeWrapper) throws IOException {
-        loadOctant(octreeWrapper.root, octreeWrapper, lod);
+	loadOctant(octreeWrapper.root, octreeWrapper, lod);
 
     }
 
@@ -217,16 +217,17 @@ public class OctreeMultiFileLoader implements ISceneGraphLoader {
      *            The octree wrapper.
      * @throws IOException
      */
-    public void loadOctant(final OctreeNode<Particle> octant, final AbstractOctreeWrapper octreeWrapper, Integer level) throws IOException {
-        if (level >= 0) {
-            loadOctant(octant, octreeWrapper);
-            if (octant.children != null) {
-                for (OctreeNode<Particle> child : octant.children) {
-                    if (child != null && child.nObjects > 0)
-                        loadOctant(child, octreeWrapper, level - 1);
-                }
-            }
-        }
+    public void loadOctant(final OctreeNode octant, final AbstractOctreeWrapper octreeWrapper, Integer level)
+	    throws IOException {
+	if (level >= 0) {
+	    loadOctant(octant, octreeWrapper);
+	    if (octant.children != null) {
+		for (OctreeNode child : octant.children) {
+		    if (child != null && child.nObjects > 0)
+			loadOctant(child, octreeWrapper, level - 1);
+		}
+	    }
+	}
     }
 
     /**
@@ -238,31 +239,32 @@ public class OctreeMultiFileLoader implements ISceneGraphLoader {
      *            The octree wrapper.
      * @throws IOException
      */
-    public void loadOctant(final OctreeNode<Particle> octant, final AbstractOctreeWrapper octreeWrapper) throws IOException {
-        FileHandle octantFile = Gdx.files.internal(particles + "particles_" + String.format("%06d", octant.pageId) + ".bin");
-        if (!octantFile.exists() || octantFile.isDirectory()) {
-            return;
-        }
-        Logger.info(I18n.bundle.format("notif.loadingoctant", octant.pageId));
+    public void loadOctant(final OctreeNode octant, final AbstractOctreeWrapper octreeWrapper) throws IOException {
+	FileHandle octantFile = Gdx.files
+		.internal(particles + "particles_" + String.format("%06d", octant.pageId) + ".bin");
+	if (!octantFile.exists() || octantFile.isDirectory()) {
+	    return;
+	}
+	Logger.info(I18n.bundle.format("notif.loadingoctant", octant.pageId));
 
-        Array<Particle> data = particleReader.readParticles(octantFile.read());
-        synchronized (octant) {
-            for (Particle star : data) {
-                star.octant = octant;
-                // Add objects to octree wrapper node
-                octreeWrapper.add(star, octant);
-                // Aux info
-                if (GaiaSky.instance != null && GaiaSky.instance.sg != null)
-                    GaiaSky.instance.sg.addNodeAuxiliaryInfo(star);
-            }
-            nLoadedStars += data.size;
-            octant.objects = data;
+	Array<Particle> data = particleReader.readParticles(octantFile.read());
+	synchronized (octant) {
+	    for (Particle star : data) {
+		star.octant = octant;
+		// Add objects to octree wrapper node
+		octreeWrapper.add(star, octant);
+		// Aux info
+		if (GaiaSky.instance != null && GaiaSky.instance.sg != null)
+		    GaiaSky.instance.sg.addNodeAuxiliaryInfo(star);
+	    }
+	    nLoadedStars += data.size;
+	    octant.objects = data;
 
-            // Put it at the end of the queue
-            touch(octant);
+	    // Put it at the end of the queue
+	    touch(octant);
 
-            octant.setStatus(LoadStatus.LOADED);
-        }
+	    octant.setStatus(LoadStatus.LOADED);
+	}
     }
 
     /**
@@ -274,29 +276,30 @@ public class OctreeMultiFileLoader implements ISceneGraphLoader {
      *            The octree wrapper.
      * @throws IOException
      */
-    public void loadOctants(final Array<OctreeNode<Particle>> octants, final AbstractOctreeWrapper octreeWrapper) throws IOException {
-        for (OctreeNode<Particle> octant : octants)
-            loadOctant(octant, octreeWrapper);
+    public void loadOctants(final Array<OctreeNode> octants, final AbstractOctreeWrapper octreeWrapper)
+	    throws IOException {
+	for (OctreeNode octant : octants)
+	    loadOctant(octant, octreeWrapper);
 
     }
 
-    public void unloadOctant(OctreeNode<Particle> octant, final AbstractOctreeWrapper octreeWrapper) {
-        synchronized (octant) {
-            Array<Particle> objects = octant.objects;
-            if (objects != null) {
-                for (Particle star : objects) {
-                    star.octant = null;
-                    octreeWrapper.removeParenthood(star);
-                    // Aux info
-                    if (GaiaSky.instance != null && GaiaSky.instance.sg != null)
-                        GaiaSky.instance.sg.removeNodeAuxiliaryInfo(star);
-                }
-            }
-            nLoadedStars -= objects.size;
-            objects.clear();
-            octant.setStatus(LoadStatus.NOT_LOADED);
+    public void unloadOctant(OctreeNode octant, final AbstractOctreeWrapper octreeWrapper) {
+	synchronized (octant) {
+	    Array<Particle> objects = octant.objects;
+	    if (objects != null) {
+		for (Particle star : objects) {
+		    star.octant = null;
+		    octreeWrapper.removeParenthood(star);
+		    // Aux info
+		    if (GaiaSky.instance != null && GaiaSky.instance.sg != null)
+			GaiaSky.instance.sg.removeNodeAuxiliaryInfo(star);
+		}
+	    }
+	    nLoadedStars -= objects.size;
+	    objects.clear();
+	    octant.setStatus(LoadStatus.NOT_LOADED);
 
-        }
+	}
     }
 
     /**
@@ -306,63 +309,67 @@ public class OctreeMultiFileLoader implements ISceneGraphLoader {
      *
      */
     private static class DaemonLoader extends Thread {
-        public boolean awake = false;
+	public boolean awake = false;
 
-        private OctreeMultiFileLoader loader;
-        private AbstractOctreeWrapper octreeWrapper;
-        private Array<OctreeNode<Particle>> toLoad;
+	private OctreeMultiFileLoader loader;
+	private AbstractOctreeWrapper octreeWrapper;
+	private Array<OctreeNode> toLoad;
 
-        public DaemonLoader(AbstractOctreeWrapper aow, OctreeMultiFileLoader loader) {
-            this.loader = loader;
-            this.octreeWrapper = aow;
-            this.toLoad = new Array<OctreeNode<Particle>>();
-        }
+	public DaemonLoader(AbstractOctreeWrapper aow, OctreeMultiFileLoader loader) {
+	    this.loader = loader;
+	    this.octreeWrapper = aow;
+	    this.toLoad = new Array<OctreeNode>();
+	}
 
-        @Override
-        public void run() {
-            while (true) {
-                /** ----------- PROCESS OCTANTS ----------- **/
-                while (!instance.toLoadQueue.isEmpty()) {
-                    toLoad.clear();
-                    while (instance.toLoadQueue.peek() != null) {
-                        OctreeNode<Particle> octant = (OctreeNode<Particle>) instance.toLoadQueue.poll();
-                        toLoad.add(octant);
-                    }
+	@Override
+	public void run() {
+	    while (true) {
+		/** ----------- PROCESS OCTANTS ----------- **/
+		while (!instance.toLoadQueue.isEmpty()) {
+		    toLoad.clear();
+		    while (instance.toLoadQueue.peek() != null) {
+			OctreeNode octant = (OctreeNode) instance.toLoadQueue.poll();
+			toLoad.add(octant);
+		    }
 
-                    // Load octants if any
-                    if (toLoad.size > 0) {
-                        EventManager.instance.post(Events.POST_NOTIFICATION, I18n.bundle.format("notif.loadingoctants", toLoad.size), true);
-                        try {
-                            loader.loadOctants(toLoad, octreeWrapper);
-                            EventManager.instance.post(Events.POST_NOTIFICATION, I18n.bundle.format("notif.loadingoctants.finished", toLoad.size));
-                        } catch (Exception e) {
-                            EventManager.instance.post(Events.JAVA_EXCEPTION, e);
-                            EventManager.instance.post(Events.POST_NOTIFICATION, I18n.bundle.get("notif.loadingoctants.fail"));
-                        }
-                    }
+		    // Load octants if any
+		    if (toLoad.size > 0) {
+			EventManager.instance.post(Events.POST_NOTIFICATION,
+				I18n.bundle.format("notif.loadingoctants", toLoad.size), true);
+			try {
+			    loader.loadOctants(toLoad, octreeWrapper);
+			    EventManager.instance.post(Events.POST_NOTIFICATION,
+				    I18n.bundle.format("notif.loadingoctants.finished", toLoad.size));
+			} catch (Exception e) {
+			    EventManager.instance.post(Events.JAVA_EXCEPTION, e);
+			    EventManager.instance.post(Events.POST_NOTIFICATION,
+				    I18n.bundle.get("notif.loadingoctants.fail"));
+			}
+		    }
 
-                    // Release resources if needed
-                    while (loader.nLoadedStars >= loader.maxLoadedStars) {
-                        // Get first in queue (unaccessed for the longest time) and release it
-                        OctreeNode<Particle> octant = loader.toUnloadQueue.poll();
-                        if (octant.getStatus() == LoadStatus.LOADED) {
-                            loader.unloadOctant(octant, octreeWrapper);
-                        }
-                    }
+		    // Release resources if needed
+		    while (loader.nLoadedStars >= loader.maxLoadedStars) {
+			// Get first in queue (unaccessed for the longest time)
+			// and release it
+			OctreeNode octant = loader.toUnloadQueue.poll();
+			if (octant.getStatus() == LoadStatus.LOADED) {
+			    loader.unloadOctant(octant, octreeWrapper);
+			}
+		    }
 
-                    // Update constellations :S
-                    Constellation.updateConstellations();
-                }
+		    // Update constellations :S
+		    Constellation.updateConstellations();
+		}
 
-                /** ----------- SLEEP UNTIL INTERRUPTED ----------- **/
-                try {
-                    awake = false;
-                    Thread.sleep(Long.MAX_VALUE - 8);
-                } catch (InterruptedException e) {
-                    // New data!
-                    awake = true;
-                }
-            }
-        }
+		/** ----------- SLEEP UNTIL INTERRUPTED ----------- **/
+		try {
+		    awake = false;
+		    Thread.sleep(Long.MAX_VALUE - 8);
+		} catch (InterruptedException e) {
+		    // New data!
+		    awake = true;
+		}
+	    }
+	}
     }
 }

@@ -26,11 +26,7 @@ import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.parse.Parser;
 
 /**
- * Loads TGAS stars in the original ASCII format:
- * 
- * # 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 # cat sourceId alpha
- * alphaStarError delta deltaError varpi varpiError muAlphaStar muAlphaStarError
- * muDelta muDeltaError nObsAl nOut excessNoise gMag nuEff C M
+ * Loads the DR2 catalog in CSV format
  * 
  * Source position and corresponding errors are in radians, parallax in mas and
  * propermotion in mas/yr. The colors we get from the BT and VT magnitudes in
@@ -39,25 +35,17 @@ import gaia.cu9.ari.gaiaorbit.util.parse.Parser;
  * @author Toni Sagrista
  *
  */
-public class TGASLoader extends AbstractCatalogLoader implements ISceneGraphLoader {
-
-    // Version to load; 0 - old, 1 - new
-    public static int VERSION = 1;
-
-    private static final String separator_new = ",";
+public class DR2Loader extends AbstractCatalogLoader implements ISceneGraphLoader {
 
     private static final String comma = ",";
     private static final String comment = "#";
+
+    private static final String separator = comma;
 
     /** Whether to load the sourceId->HIP correspondences file **/
     public boolean useHIP = false;
     /** Map of Gaia sourceId to HIP id **/
     public Map<Long, Integer> sidHIPMap;
-
-    /** Colors BT, VT for all Tycho2 stars file **/
-    private static final String btvtColorsFile = "data/tgas_final/bt-vt-tycho.csv";
-    /** TYC identifier to B-V colours **/
-    private Map<String, Float> tycBV;
 
     /**
      * INDICES: source_id ra[deg] dec[deg] parallax[mas] parallax_error[mas]
@@ -69,52 +57,63 @@ public class TGASLoader extends AbstractCatalogLoader implements ISceneGraphLoad
     private static final int RA = 1;
     private static final int DEC = 2;
     private static final int PLLX = 3;
-    private static final int PLLX_ERR = 4;
-    private static final int MUALPHA = 5;
-    private static final int MUDELTA = 6;
-    private static final int RADVEL = 7;
-    private static final int RADVEL_ERR = 8;
-    private static final int G_MAG = 9;
-    private static final int BP_MAG = 10;
-    private static final int RP_MAG = 11;
-    private static final int HIP = 12;
-    private static final int TYCHO2 = 13;
-    private static final int REF_EPOCH = 14;
+    private static final int RA_ERR = 4;
+    private static final int DEC_ERR = 5;
+    private static final int PLLX_ERR = 6;
+    private static final int MUALPHA = 7;
+    private static final int MUDELTA = 8;
+    private static final int RADVEL = 9;
+    private static final int MUALPHA_ERR = 10;
+    private static final int MUDELTA_ERR = 11;
+    private static final int RADVEL_ERR = 12;
+    private static final int G_MAG = 13;
+    private static final int BP_MAG = 14;
+    private static final int RP_MAG = 15;
+    private static final int REF_EPOCH = 16;
 
-    private static final int[] indices_new = new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14 };
+    private static final int[] indices = new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 };
 
     private int sidhipfound = 0;
 
     @Override
     public Array<Particle> loadData() throws FileNotFoundException {
-	String separator = null;
-	int[] indices = null;
-	if (VERSION == 1) {
-	    // NEW
-	    separator = separator_new;
-	    indices = indices_new;
-	} else {
-	    Logger.error("VERSION number not recognized");
-	    return null;
-	}
-
-	tycBV = loadTYCBVColours(btvtColorsFile);
 
 	Array<Particle> stars = new Array<Particle>();
 	for (String file : files) {
-	    FileHandle f = Gdx.files.internal(file);
+
+	    FileHandle fh = Gdx.files.absolute(file);
+	    loadFile(fh, stars);
+
+	}
+
+	Logger.info(this.getClass().getSimpleName(), "SourceId matched to HIP in " + sidhipfound + " stars");
+	Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.catalog.init", stars.size));
+	return stars;
+    }
+
+    public void loadFile(FileHandle f, Array<Particle> stars) {
+	if (f.isDirectory()) {
+	    // Recursive
+	    FileHandle[] files = f.list();
+	    for (FileHandle fh : files)
+		loadFile(fh, stars);
+	} else if (f.name().endsWith(".csv")) {
+	    // Simple case
 	    InputStream data = f.read();
 	    BufferedReader br = new BufferedReader(new InputStreamReader(data));
 
+	    long i = 0;
 	    try {
 		String line;
 		while ((line = br.readLine()) != null) {
-		    if (!line.startsWith(comment))
+		    if (!line.startsWith(comment)) {
 			// Add star
-			addStar(line, stars, indices, separator);
+			addStar(line, stars);
+			i++;
+		    }
 		}
 	    } catch (IOException e) {
-		e.printStackTrace();
+		Logger.error(e);
 	    } finally {
 		try {
 		    br.close();
@@ -123,27 +122,16 @@ public class TGASLoader extends AbstractCatalogLoader implements ISceneGraphLoad
 		}
 
 	    }
+	    Logger.warn(this.getClass().getSimpleName(), "File loaded: " + f.path() + " - Objects: " + i);
+	} else {
+	    Logger.warn(this.getClass().getSimpleName(), "File skipped: " + f.path());
 	}
-
-	Logger.info(this.getClass().getSimpleName(), "SourceId matched to HIP in " + sidhipfound + " stars");
-	Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.catalog.init", stars.size));
-	return stars;
     }
 
-    private void addStar(String line, Array<Particle> stars, int[] indices, String separator) {
+    private void addStar(String line, Array<Particle> stars) {
 	String[] st = line.split(separator);
 
-	int hip = -1;
 	long sourceid = Parser.parseLong(st[indices[SOURCE_ID]]);
-
-	if (indices[HIP] >= 0) {
-	    hip = Parser.parseInt(st[indices[HIP]].trim());
-	}
-
-	String tycho2 = null;
-	if (indices[TYCHO2] >= 0) {
-	    tycho2 = st[indices[TYCHO2]].trim();
-	}
 
 	float appmag = new Double(Parser.parseDouble(st[indices[G_MAG]].trim())).floatValue();
 
@@ -185,20 +173,14 @@ public class TGASLoader extends AbstractCatalogLoader implements ISceneGraphLoad
 
 		/** COLOR, we use the tycBV map if present **/
 		float colorbv = 0;
-		if (tycBV != null) {
-		    if (tycBV.containsKey(tycho2)) {
-			colorbv = tycBV.get(tycho2);
-		    }
+		if (indices[BP_MAG] >= 0 && indices[RP_MAG] >= 0) {
+		    // Real TGAS
+		    float bp = new Double(Parser.parseDouble(st[indices[BP_MAG]].trim())).floatValue();
+		    float rp = new Double(Parser.parseDouble(st[indices[RP_MAG]].trim())).floatValue();
+		    colorbv = bp - rp;
 		} else {
-		    if (indices[BP_MAG] >= 0 && indices[RP_MAG] >= 0) {
-			// Real TGAS
-			float bp = new Double(Parser.parseDouble(st[indices[BP_MAG]].trim())).floatValue();
-			float rp = new Double(Parser.parseDouble(st[indices[RP_MAG]].trim())).floatValue();
-			colorbv = bp - rp;
-		    } else {
-			// Use color value in BP
-			colorbv = new Double(Parser.parseDouble(st[indices[BP_MAG]].trim())).floatValue();
-		    }
+		    // Use color value in BP
+		    colorbv = new Double(Parser.parseDouble(st[indices[BP_MAG]].trim())).floatValue();
 		}
 
 		double distpc = 1000d / pllx;
@@ -206,7 +188,7 @@ public class TGASLoader extends AbstractCatalogLoader implements ISceneGraphLoad
 		String name = Long.toString(sourceid);
 
 		Star star = new Star(pos, pmfloat, pmSph, appmag, absmag, colorbv, name, (float) ra, (float) dec,
-			sourceid, hip, tycho2, (byte) 1);
+			sourceid, -1, null, (byte) 1);
 		if (runFiltersAnd(star))
 		    stars.add(star);
 	    }

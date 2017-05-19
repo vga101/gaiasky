@@ -51,6 +51,8 @@ task runCatalogFilter(dependsOn: jar, type: JavaExec, description: "Runs the cat
 task runOctreeGenerator(dependsOn: jar, type: JavaExec, description: "Runs the octree generator to create the octree structure from a base catalog") {
     main = 'gaia.cu9.ari.gaiaorbit.data.OctreeGeneratorTest'
     systemProperties['properties.file'] = '../android/assets/conf/global.properties'
+    args = ["--input", "/media/tsagrista/Daten/Gaia/GDR2/earlydr2/data/", "--output", "/media/tsagrista/Daten/Gaia/GDR2/earlydr2/out/"]
+    jvmArgs = ['-server', '-Xms10g', '-Xmx20g']
     classpath = sourceSets.main.runtimeClasspath
     classpath += files(project.assetsDir)
     standardInput = System.in
@@ -192,6 +194,7 @@ task dist (dependsOn: gaiaskyJar, description: "Compiles the project, creates th
 	        from "exe"
 	        into "$distDir"
 	        exclude "*.sh"
+	        exclude "octreegen"
 	    }
 	    copy {
 	        from "$baseDir/"
