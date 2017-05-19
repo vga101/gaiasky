@@ -76,9 +76,10 @@ public class VisibilityComponent extends GuiComponent implements IObserver {
                 button.setName(name);
 
                 buttonMap.put(name, button);
-                if (!ct.toString().equals(name)) {
+                if (!ct.toString().equals(name))
                     buttonMap.put(ct.toString(), button);
-                }
+                if (!ct.id.equals(name))
+                    buttonMap.put(ct.id, button);
 
                 button.setChecked(visible[i]);
                 button.addListener(new EventListener() {
@@ -211,7 +212,7 @@ public class VisibilityComponent extends GuiComponent implements IObserver {
             boolean interf = (Boolean) data[1];
             if (!interf) {
                 String name = (String) data[0];
-                Button b = buttonMap.get(name.toLowerCase());
+                Button b = buttonMap.get(name);
 
                 b.setProgrammaticChangeEvents(false);
                 if (b != null) {

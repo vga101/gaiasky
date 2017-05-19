@@ -1,4 +1,4 @@
-# Test script. Tests GUI scroll movement commands.
+# Test script. Tests getObject() and getObjectRadius()
 # Created by Toni Sagrista
 
 import math
