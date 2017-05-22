@@ -170,7 +170,14 @@ public class ParticleDataBinaryIO {
 			Vector3d pos = new Vector3d(x, y, z);
 			Vector3 pmSph = new Vector3(mualpha, mudelta, radvel);
 			Vector3 pm = new Vector3(pmx, pmy, pmz);
-			float[] cc = new float[] { r, g, b, a };
+			float[] cc;
+
+			if (Float.isNaN(colorbv)) {
+			    colorbv = 0.62f;
+			    cc = new float[] { 1.0f, 0.95f, 0.91f, 1.0f };
+			} else {
+			    cc = new float[] { r, g, b, a };
+			}
 
 			Star s = new Star(pos, pm, pmSph, appmag, absmag, colorbv, name, ra, dec, id, hip, tycho,
 				source);
