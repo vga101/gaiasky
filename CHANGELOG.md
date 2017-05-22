@@ -6,6 +6,7 @@
 
 **Implemented enhancements:**
 
+- Allow for controller look y-axis to be inverted [\#143](https://github.com/langurmonkey/gaiasky/issues/143)
 - Support lazy texture initialisation for faster startup [\#140](https://github.com/langurmonkey/gaiasky/issues/140)
 - Add Saturn moons [\#139](https://github.com/langurmonkey/gaiasky/issues/139)
 - Revamp debug info [\#138](https://github.com/langurmonkey/gaiasky/issues/138)
@@ -27,6 +28,7 @@
 
 **Fixed bugs:**
 
+- Fix controller input in non-cinematic mode [\#142](https://github.com/langurmonkey/gaiasky/issues/142)
 - Fix smooth transitions in multithread mode [\#141](https://github.com/langurmonkey/gaiasky/issues/141)
 - Fixe Quad line renderer artifacts [\#137](https://github.com/langurmonkey/gaiasky/issues/137)
 - Make network checker \\(simbad, wiki\\) asynchronous [\#127](https://github.com/langurmonkey/gaiasky/issues/127)
