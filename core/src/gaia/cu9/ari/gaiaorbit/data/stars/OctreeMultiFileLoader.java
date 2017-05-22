@@ -27,6 +27,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.octreewrapper.OctreeWrapperConcurrent;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
+import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.tree.LoadStatus;
 import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
 
@@ -167,10 +168,16 @@ public class OctreeMultiFileLoader implements ISceneGraphLoader, IObserver {
 	    int depthLevel = Math.min(OctreeNode.maxDepth, PRELOAD_DEPTH);
 	    loadLod(depthLevel, octreeWrapper);
 
-	    // Load octant with Sol - 54160
-	    OctreeNode solOctant = root.findOctant(54160l);
-	    if (solOctant != null) {
+	    OctreeNode solOctant = root.getBestOctant(new Vector3d());
+	    boolean found = false;
+	    while (!found) {
 		loadOctant(solOctant, octreeWrapper);
+		SceneGraphNode sol = octreeWrapper.getNode("Sol");
+		if (sol == null) {
+		    solOctant = solOctant.parent;
+		} else {
+		    found = true;
+		}
 	    }
 
 	} catch (IOException e) {
