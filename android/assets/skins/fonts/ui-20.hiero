@@ -1,4 +1,4 @@
-font.name=Open Sans
+font.name=Tahoma
 font.size=20
 font.bold=false
 font.italic=false
@@ -18,7 +18,7 @@ pad.advance.y=0
 glyph.native.rendering=false
 glyph.page.width=512
 glyph.page.height=128
-glyph.text=AÀÁÄBCDEÈÉËFGHIÌÍÏJKLMNOÒÓÔPQRSTUÙÚÜVWXYZ\naàáäbcdeèéêëfghiìíîïjklmnoòóôöpqrstuùúûüvwxyz\n1234567890\n"!`?'.,;:()[]{}<>|/@\^$-%+=#_&~*\nθωερτψυιοπασδφγηςκλζχξωβνμ\nΘΩΕΡΤΨΥΙΟΠΑΣΔΦΓΗςΚΛΖΧΞΩΒΝΜ\n±∓×·÷√∑∫∮¬∝∞≠≈⇔↔≪≫≤≥\n°ℏÅ⊙ ☉ ☼ ☀¶ß©®£€¼½¾²³\nčžšČŽŠ
+glyph.text=AÀÁÄÂBCDEÈÉËÊFGHIÌÍÏÎJKLMNOÒÓÔPQRSTUÙÚÜÛVWXYZÑÇ\naàáäâbcdeèéêëfghiìíîïjklmnoòóôöpqrstuùúûüvwxyzñç\n1234567890\n"!`?'.,;:()[]{}<>|/@\^$-%+=#_&~*\nθωερτψυιοπασδφγηςκλζχξωβνμ\nΘΩΕΡΤΨΥΙΟΠΑΣΔΦΓΗςΚΛΖΧΞΩΒΝΜ\n±∓×·÷√∑∫∮¬∝∞≠≈⇔↔≪≫≤≥\n°ℏÅ⊙ ☉ ☼ ☀¶ß©®£€¼½¾²³\nčžšČŽŠ
 
 render_type=0
 

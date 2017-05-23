@@ -70,6 +70,7 @@ Translations
 
 -  `Stefan Jordan`_ for the German translation
 -  `Klemen Čotar`_ for the Slovene translation
+-  `Catherine Turon`_, Nicolas Leclerc and Guillaume Plum for the French translation
 
 Open source licenses
 --------------------
@@ -97,6 +98,7 @@ Open source licenses
 .. _DJ Masque: http://sampleswap.org/artist/djmasque
 .. _Stefan Jordan: mailto:jordan@ari.uni-heidelberg.de
 .. _Klemen Čotar: mailto:klemen.cotar@fmf.uni-lj.si
+.. _Catherine Turon: mailto:catherine.turon@obspm.fr
 .. _Install4j (multi-platform installer builder): http://www.ej-technologies.com/products/install4j/overview.html
 .. _JProfiler (Java profiler): http://www.ej-technologies.com/products/jprofiler/overview.html
 .. _InstallBuilder: http://installbuilder.bitrock.com/
