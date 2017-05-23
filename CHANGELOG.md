@@ -6,6 +6,7 @@
 
 **Implemented enhancements:**
 
+- French translation [\#145](https://github.com/langurmonkey/gaiasky/issues/145)
 - Allow for controller look y-axis to be inverted [\#143](https://github.com/langurmonkey/gaiasky/issues/143)
 - Support lazy texture initialisation for faster startup [\#140](https://github.com/langurmonkey/gaiasky/issues/140)
 - Add Saturn moons [\#139](https://github.com/langurmonkey/gaiasky/issues/139)
