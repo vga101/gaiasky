@@ -4,7 +4,6 @@ import com.badlogic.gdx.utils.Array;
 
 import gaia.cu9.ari.gaiaorbit.render.system.AbstractRenderSystem;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
-import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Transform;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
@@ -23,45 +22,46 @@ import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
 public class OctreeWrapperConcurrent extends AbstractOctreeWrapper {
 
     public OctreeWrapperConcurrent() {
-        super();
+	super();
     }
 
     public OctreeWrapperConcurrent(String parentName, OctreeNode root) {
-        super(parentName, root);
+	super(parentName, root);
     }
 
     public void setRoulette(Array<SceneGraphNode> roulette) {
-        this.roulette = roulette;
+	this.roulette = roulette;
     }
 
     @Override
     public void initialize() {
-        super.initialize();
+	super.initialize();
     }
 
     public void update(ITimeFrameProvider time, final Transform parentTransform, ICamera camera, float opacity) {
-        this.opacity = opacity;
-        transform.set(parentTransform);
+	this.opacity = opacity;
+	transform.set(parentTransform);
 
-        // Update octants
-        if (!copy) {
-            // Compute observed octants and fill roulette list
-            root.update(transform, camera, roulette, 1f);
+	// Update octants
+	if (!copy) {
+	    // Compute observed octants and fill roulette list
+	    OctreeNode.nObserved = 0;
+	    root.update(transform, camera, roulette, 1f);
 
-            if (roulette.size != lastNumberObjects) {
-                // Need to update the points in renderer
-                AbstractRenderSystem.POINT_UPDATE_FLAG = true;
-                lastNumberObjects = roulette.size;
-            }
+	    if (roulette.size != lastNumberObjects) {
+		// Need to update the points in renderer
+		AbstractRenderSystem.POINT_UPDATE_FLAG = true;
+		lastNumberObjects = roulette.size;
+	    }
 
-            updateLocal(time, camera);
+	    updateLocal(time, camera);
 
-        } else {
-            // Just update children
-            for (SceneGraphNode node : children) {
-                node.update(time, transform, camera);
-            }
-        }
+	} else {
+	    // Just update children
+	    for (SceneGraphNode node : children) {
+		node.update(time, transform, camera);
+	    }
+	}
 
     }
 
@@ -71,7 +71,7 @@ public class OctreeWrapperConcurrent extends AbstractOctreeWrapper {
 
     @Override
     protected String getRouletteDebug() {
-        return null;
+	return null;
     }
 
 }

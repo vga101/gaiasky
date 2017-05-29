@@ -36,6 +36,7 @@ import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
  * @author Toni Sagrista
  */
 public class OctreeNode implements ILineRenderable {
+    public static int nObserved = 0;
     /** Max depth of the structure this node belongs to **/
     public static int maxDepth;
     /** Is dynamic loading active? **/
@@ -433,7 +434,7 @@ public class OctreeNode implements ILineRenderable {
 	}
 
 	if (observed) {
-
+	    nObserved++;
 	    /**
 	     * Load lists of pages
 	     */
