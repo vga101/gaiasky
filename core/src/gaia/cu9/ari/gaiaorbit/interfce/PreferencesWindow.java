@@ -1222,6 +1222,8 @@ public class PreferencesWindow extends GenericDialog {
 	    GlobalConf.data.CATALOG_JSON_FILE = GlobalConf.data.HYG_JSON_FILE;
 	else if (tgas.isChecked())
 	    GlobalConf.data.CATALOG_JSON_FILE = GlobalConf.data.TGAS_JSON_FILE;
+	else if (dr2.isChecked())
+	    GlobalConf.data.CATALOG_JSON_FILE = GlobalConf.data.DR2_JSON_FILE;
 	else if (GlobalConf.data.CATALOG_JSON_FILE == null || GlobalConf.data.CATALOG_JSON_FILE.length() == 0)
 	    Logger.error(this.getClass().getSimpleName(), "No catalog file selected!");
 
