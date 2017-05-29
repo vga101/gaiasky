@@ -13,8 +13,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Files;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.reflect.ClassReflection;
-import com.badlogic.gdx.utils.reflect.ReflectionException;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 
@@ -71,6 +69,19 @@ public class OctreeGeneratorTest implements IObserver {
     @Parameter(names = { "-m",
 	    "--multifile" }, description = "Use multiple file mode, outputs each octree node data to its own file")
     private boolean multifile = false;
+
+    @Parameter(names = { "--maxdepth" }, description = "Maximum tree depth in levels")
+    private int maxDepth = 15;
+
+    @Parameter(names = { "--maxpart" }, description = "Maximum number of objects in the densest node of a level")
+    private int maxPart = 4000;
+
+    @Parameter(names = {
+	    "--minpart" }, description = "Minimum number of objects in a node under which we do not further break the octree")
+    private int minPart = 200;
+
+    @Parameter(names = { "--discard" }, description = "Whether to discard stars due to density")
+    private boolean discard = false;
 
     public OctreeGeneratorTest() {
 	super();
@@ -132,13 +143,7 @@ public class OctreeGeneratorTest implements IObserver {
     }
 
     private void generateOctree() throws IOException {
-	IAggregationAlgorithm aggr;
-	try {
-	    aggr = ClassReflection.newInstance(BrightestStars.class);
-	} catch (ReflectionException e) {
-	    e.printStackTrace(System.err);
-	    return;
-	}
+	IAggregationAlgorithm aggr = new BrightestStars(maxDepth, maxPart, minPart, discard);
 
 	OctreeGenerator og = new OctreeGenerator(aggr);
 

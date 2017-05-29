@@ -254,9 +254,13 @@ public class OctreeGenerator {
 	    /** TREAT OCTANTS **/
 	    for (int i = 0; i < 8; i++) {
 		if (lists[i].size > 0) {
+		    // Octant has particles, add
 		    treatOctant(nodes[i], lists[i], sublevelPercentage);
 		    octant.children[i] = nodes[i];
 		    nodes[i].parent = octant;
+		} else {
+		    // Octant has no particles, remove it!
+		    nodes[i] = null;
 		}
 	    }
 

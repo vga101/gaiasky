@@ -9,22 +9,41 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
 import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
 
 public class BrightestStars implements IAggregationAlgorithm {
-    private static final int MAX_DEPTH = 20;
-    // Maximum number of objects in the densest node of this level
-    private static final int MAX_PART = 4000;
-    // Minimum number of objects under which we do not need to break the octree
-    // further
-    private static final int MIN_PART = 200;
+    /** Maximum depth of the octree **/
+    private int MAX_DEPTH;
+    /** Maximum number of objects in the densest node of a level **/
+    private int MAX_PART;
+    /**
+     * Minimum number of objects under which we do not further break the octree
+     **/
+    private int MIN_PART;
 
-    // Whether to discard stars due to density or not
-    private static final boolean DISCARD = false;
+    /** Whether to discard stars due to density or not **/
+    private boolean DISCARD = false;
 
     Comparator<Particle> comp;
 
     int discarded = 0;
 
-    public BrightestStars() {
+    /**
+     * Constructor using fields
+     * 
+     * @param maxDepth
+     *            Maximum depth of the octree
+     * @param maxPart
+     *            Maximum number of objects in the densest node of this level
+     * @param minPart
+     *            Minimum number of objects under which we do not further break
+     *            the octree
+     * @param discard
+     *            Whether to discard stars due to density or not
+     */
+    public BrightestStars(int maxDepth, int maxPart, int minPart, boolean discard) {
 	comp = new StarBrightnessComparator();
+	this.MAX_DEPTH = maxDepth;
+	this.MAX_PART = maxPart;
+	this.MIN_PART = minPart;
+	this.DISCARD = discard;
     }
 
     @Override

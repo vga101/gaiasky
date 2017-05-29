@@ -2,7 +2,6 @@ package gaia.cu9.ari.gaiaorbit.data.stars;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Queue;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -233,12 +232,7 @@ public class OctreeMultiFileLoader implements ISceneGraphLoader, IObserver {
 
     private void flushLoadedIds() {
 	if (idxLoadedIds > 0) {
-	    String str;
-	    if (idxLoadedIds <= 3) {
-		str = Arrays.toString(loadedIds);
-	    } else {
-		str = "[" + loadedIds[0] + ", ..., " + loadedIds[idxLoadedIds - 1] + "]";
-	    }
+	    String str = "[" + loadedIds[0] + ", ..., " + loadedIds[idxLoadedIds - 1] + "]";
 	    Logger.info(I18n.bundle.format("notif.octantsloaded", idxLoadedIds, str));
 
 	    idxLoadedIds = 0;
