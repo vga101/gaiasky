@@ -2,6 +2,7 @@ package gaia.cu9.ari.gaiaorbit.data.stars;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Queue;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -110,6 +111,10 @@ public class OctreeMultiFileLoader implements ISceneGraphLoader, IObserver {
      **/
     private Queue<OctreeNode> toUnloadQueue;
 
+    /** Loaded octant ids, for logging **/
+    private long[] loadedIds;
+    private int maxLoadedIds, idxLoadedIds;
+
     public OctreeMultiFileLoader() {
 	instance = this;
 	toLoadQueue = new ArrayBlockingQueue<OctreeNode>(LOAD_QUEUE_MAX_SIZE);
@@ -117,6 +122,10 @@ public class OctreeMultiFileLoader implements ISceneGraphLoader, IObserver {
 	particleReader = new ParticleDataBinaryIO();
 
 	maxLoadedStars = 3000000;
+
+	maxLoadedIds = 50;
+	idxLoadedIds = 0;
+	loadedIds = new long[maxLoadedIds];
 
 	EventManager.instance.subscribe(this, Events.DISPOSE);
     }
@@ -167,6 +176,7 @@ public class OctreeMultiFileLoader implements ISceneGraphLoader, IObserver {
 	try {
 	    int depthLevel = Math.min(OctreeNode.maxDepth, PRELOAD_DEPTH);
 	    loadLod(depthLevel, octreeWrapper);
+	    flushLoadedIds();
 
 	    OctreeNode solOctant = root.getBestOctant(new Vector3d());
 	    boolean found = false;
@@ -212,6 +222,28 @@ public class OctreeMultiFileLoader implements ISceneGraphLoader, IObserver {
 	Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.catalog.init", root.countObjects()));
 
 	return result;
+    }
+
+    private void addLoadedId(long id) {
+	if (idxLoadedIds >= maxLoadedIds) {
+	    flushLoadedIds();
+	}
+	loadedIds[idxLoadedIds++] = id;
+    }
+
+    private void flushLoadedIds() {
+	if (idxLoadedIds > 0) {
+	    String str;
+	    if (idxLoadedIds <= 3) {
+		str = Arrays.toString(loadedIds);
+	    } else {
+		str = "[" + loadedIds[0] + ", ..., " + loadedIds[idxLoadedIds - 1] + "]";
+	    }
+	    Logger.info(I18n.bundle.format("notif.octantsloaded", idxLoadedIds, str));
+
+	    idxLoadedIds = 0;
+	}
+
     }
 
     @Override
@@ -266,16 +298,15 @@ public class OctreeMultiFileLoader implements ISceneGraphLoader, IObserver {
      *            The octant to load.
      * @param octreeWrapper
      *            The octree wrapper.
+     * @return True if the octant was loaded, false otherwise
      * @throws IOException
      */
-    public void loadOctant(final OctreeNode octant, final AbstractOctreeWrapper octreeWrapper) throws IOException {
+    public boolean loadOctant(final OctreeNode octant, final AbstractOctreeWrapper octreeWrapper) throws IOException {
 	FileHandle octantFile = Gdx.files
 		.internal(particles + "particles_" + String.format("%06d", octant.pageId) + ".bin");
 	if (!octantFile.exists() || octantFile.isDirectory()) {
-	    return;
+	    return false;
 	}
-	Logger.info(I18n.bundle.format("notif.loadingoctant", octant.pageId));
-
 	Array<Particle> data = particleReader.readParticles(octantFile.read());
 	synchronized (octant) {
 	    for (Particle star : data) {
@@ -293,7 +324,11 @@ public class OctreeMultiFileLoader implements ISceneGraphLoader, IObserver {
 	    touch(octant);
 
 	    octant.setStatus(LoadStatus.LOADED);
+
+	    addLoadedId(octant.pageId);
 	}
+	return true;
+
     }
 
     /**
@@ -303,13 +338,17 @@ public class OctreeMultiFileLoader implements ISceneGraphLoader, IObserver {
      *            The list holding the octants to load.
      * @param octreeWrapper
      *            The octree wrapper.
+     * @return The actual number of loaded octants
      * @throws IOException
      */
-    public void loadOctants(final Array<OctreeNode> octants, final AbstractOctreeWrapper octreeWrapper)
+    public int loadOctants(final Array<OctreeNode> octants, final AbstractOctreeWrapper octreeWrapper)
 	    throws IOException {
+	int loaded = 0;
 	for (OctreeNode octant : octants)
-	    loadOctant(octant, octreeWrapper);
-
+	    if (loadOctant(octant, octreeWrapper))
+		loaded++;
+	flushLoadedIds();
+	return loaded;
     }
 
     public void unloadOctant(OctreeNode octant, final AbstractOctreeWrapper octreeWrapper) {
@@ -370,16 +409,12 @@ public class OctreeMultiFileLoader implements ISceneGraphLoader, IObserver {
 
 		    // Load octants if any
 		    if (toLoad.size > 0) {
-			EventManager.instance.post(Events.POST_NOTIFICATION,
-				I18n.bundle.format("notif.loadingoctants", toLoad.size), true);
+			Logger.debug(I18n.bundle.format("notif.loadingoctants", toLoad.size));
 			try {
-			    loader.loadOctants(toLoad, octreeWrapper);
-			    EventManager.instance.post(Events.POST_NOTIFICATION,
-				    I18n.bundle.format("notif.loadingoctants.finished", toLoad.size));
+			    int loaded = loader.loadOctants(toLoad, octreeWrapper);
+			    Logger.debug(I18n.bundle.format("notif.loadingoctants.finished", loaded));
 			} catch (Exception e) {
-			    EventManager.instance.post(Events.JAVA_EXCEPTION, e);
-			    EventManager.instance.post(Events.POST_NOTIFICATION,
-				    I18n.bundle.get("notif.loadingoctants.fail"));
+			    Logger.error(I18n.bundle.get("notif.loadingoctants.fail"));
 			}
 		    }
 
