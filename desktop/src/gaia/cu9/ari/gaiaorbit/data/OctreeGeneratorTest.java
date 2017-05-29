@@ -55,9 +55,13 @@ public class OctreeGeneratorTest implements IObserver {
 
     public static void main(String[] args) {
 	OctreeGeneratorTest ogt = new OctreeGeneratorTest();
-	new JCommander(ogt, args);
-
-	ogt.run();
+	JCommander jc = new JCommander(ogt, args);
+	jc.setProgramName("OctreeGeneratorTest");
+	if (ogt.help) {
+	    jc.usage();
+	} else {
+	    ogt.run();
+	}
     }
 
     @Parameter(names = { "-i", "--input" }, description = "Location of the input catalog")
@@ -70,18 +74,20 @@ public class OctreeGeneratorTest implements IObserver {
 	    "--multifile" }, description = "Use multiple file mode, outputs each octree node data to its own file")
     private boolean multifile = false;
 
-    @Parameter(names = { "--maxdepth" }, description = "Maximum tree depth in levels")
+    @Parameter(names = "--maxdepth", description = "Maximum tree depth in levels")
     private int maxDepth = 15;
 
-    @Parameter(names = { "--maxpart" }, description = "Maximum number of objects in the densest node of a level")
+    @Parameter(names = "--maxpart", description = "Maximum number of objects in the densest node of a level")
     private int maxPart = 4000;
 
-    @Parameter(names = {
-	    "--minpart" }, description = "Minimum number of objects in a node under which we do not further break the octree")
+    @Parameter(names = "--minpart", description = "Minimum number of objects in a node under which we do not further break the octree")
     private int minPart = 200;
 
-    @Parameter(names = { "--discard" }, description = "Whether to discard stars due to density")
+    @Parameter(names = "--discard", description = "Whether to discard stars due to density")
     private boolean discard = false;
+
+    @Parameter(names = { "-h", "--help" }, help = true)
+    private boolean help = false;
 
     public OctreeGeneratorTest() {
 	super();
