@@ -206,13 +206,12 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
     }
 
     private void setDerivedAttributes() {
-	this.flux = (float) Math.pow(10, -absmag / 2.5f);
+	double flux = Math.pow(10, -absmag / 2.5f);
 	setRGB(colorbv);
 
 	// Calculate size - This contains arbitrary boundary values to make
 	// things nice on the render side
-	size = (float) Math.max(Math.min((Math.pow(flux, 0.5f) * Constants.PC_TO_U * 0.16f), 1e8f), 0.6e6f)
-		/ DISC_FACTOR;
+	size = (float) Math.min((Math.pow(flux, 0.5f) * Constants.PC_TO_U * 0.16f), 1e9f) / DISC_FACTOR;
 	computedSize = 0;
     }
 

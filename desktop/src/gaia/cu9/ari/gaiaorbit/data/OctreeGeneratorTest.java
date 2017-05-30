@@ -21,8 +21,8 @@ import gaia.cu9.ari.gaiaorbit.data.octreegen.IAggregationAlgorithm;
 import gaia.cu9.ari.gaiaorbit.data.octreegen.MetadataBinaryIO;
 import gaia.cu9.ari.gaiaorbit.data.octreegen.OctreeGenerator;
 import gaia.cu9.ari.gaiaorbit.data.octreegen.ParticleDataBinaryIO;
+import gaia.cu9.ari.gaiaorbit.data.stars.AbstractCatalogLoader;
 import gaia.cu9.ari.gaiaorbit.data.stars.CatalogFilter;
-import gaia.cu9.ari.gaiaorbit.data.stars.DR2Loader;
 import gaia.cu9.ari.gaiaorbit.data.stars.HYGBinaryLoader;
 import gaia.cu9.ari.gaiaorbit.data.stars.OctreeSingleFileLoader;
 import gaia.cu9.ari.gaiaorbit.desktop.format.DesktopDateFormatFactory;
@@ -64,15 +64,18 @@ public class OctreeGeneratorTest implements IObserver {
 	}
     }
 
-    @Parameter(names = { "-i", "--input" }, description = "Location of the input catalog")
-    private String inFolder;
+    @Parameter(names = { "-l", "--loader" }, description = "Name of the star loader class", required = true)
+    private String loaderClass;
+
+    @Parameter(names = { "-i", "--input" }, description = "Location of the input catalog", required = true)
+    private String input;
 
     @Parameter(names = { "-o", "--output" }, description = "Output folder. Defaults to system temp")
     private String outFolder;
 
     @Parameter(names = { "-m",
 	    "--multifile" }, description = "Use multiple file mode, outputs each octree node data to its own file")
-    private boolean multifile = false;
+    private boolean multifile = true;
 
     @Parameter(names = "--maxdepth", description = "Maximum tree depth in levels")
     private int maxDepth = 15;
@@ -148,7 +151,8 @@ public class OctreeGeneratorTest implements IObserver {
 	}
     }
 
-    private void generateOctree() throws IOException {
+    private void generateOctree()
+	    throws IOException, InstantiationException, IllegalAccessException, ClassNotFoundException {
 	IAggregationAlgorithm aggr = new BrightestStars(maxDepth, maxPart, minPart, discard);
 
 	OctreeGenerator og = new OctreeGenerator(aggr);
@@ -163,9 +167,10 @@ public class OctreeGeneratorTest implements IObserver {
 	    }
 	});
 
-	/** DR2 **/
-	DR2Loader dr2 = new DR2Loader();
-	dr2.initialize(new String[] { inFolder });
+	/** CATALOG **/
+	String fullLoaderClass = "gaia.cu9.ari.gaiaorbit.data.stars." + loaderClass;
+	AbstractCatalogLoader loader = (AbstractCatalogLoader) Class.forName(fullLoaderClass).newInstance();
+	loader.initialize(new String[] { input });
 
 	/** LOAD HYG **/
 	Array<Particle> listStars = hyg.loadData();
@@ -176,9 +181,10 @@ public class OctreeGeneratorTest implements IObserver {
 	    }
 	}
 
-	/** LOAD DR2 **/
-	Array<Particle> listGaia = dr2.loadData();
-	for (Particle p : listGaia) {
+	/** LOAD CATALOG **/
+	Array<? extends SceneGraphNode> listGaia = loader.loadData();
+	for (SceneGraphNode sgn : listGaia) {
+	    Particle p = (Particle) sgn;
 	    if (p instanceof Star && hips.containsKey(((Star) p).hip)) {
 		// modify
 		Star gaiastar = (Star) p;
@@ -196,9 +202,10 @@ public class OctreeGeneratorTest implements IObserver {
 	    listStars.add(p);
 	}
 
-	// Initialise rgba color array
-	for (Particle p : listStars)
+	// Initialise rgba color array and size
+	for (Particle p : listStars) {
 	    p.initialize();
+	}
 
 	Logger.info("Generating octree with " + listStars.size + " actual stars");
 
@@ -247,11 +254,6 @@ public class OctreeGeneratorTest implements IObserver {
 	    writeParticlesToFiles(particleWriter, octree);
 	}
 
-	for (Particle p : listStars) {
-	    if (p.getName().equalsIgnoreCase("Sol")) {
-		Logger.info("Octant of Sol: " + p.octantId);
-	    }
-	}
     }
 
     private void writeParticlesToFiles(ParticleDataBinaryIO particleWriter, OctreeNode current) throws IOException {
