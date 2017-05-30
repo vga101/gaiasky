@@ -41,143 +41,151 @@ public class MilkyWayReal extends AbstractPositionEntity implements I3DTextRende
     protected String provider;
     public GalaxydataComponent gc;
 
-    /** Distance from origin at which this entity is fully visible with an alpha of 1f **/
+    /**
+     * Distance from origin at which this entity is fully visible with an alpha
+     * of 1f
+     **/
     private float lowDist;
-    /** Distance from origin at which this entity is first rendered, but its alpha value is 0f **/
+    /**
+     * Distance from origin at which this entity is first rendered, but its
+     * alpha value is 0f
+     **/
     private float highDist;
 
     public MilkyWayReal() {
-        super();
-        localTransform = new Matrix4();
-        lowDist = (float) (1e3 * Constants.PC_TO_U);
-        highDist = (float) (5e3 * Constants.PC_TO_U);
+	super();
+	localTransform = new Matrix4();
+	lowDist = (float) (5e3 * Constants.PC_TO_U);
+	highDist = (float) (3e4 * Constants.PC_TO_U);
     }
 
     public void initialize() {
-        /** Load data **/
-        PointDataProvider provider = new PointDataProvider();
-        try {
-            pointData = provider.loadData(gc.pointsource);
-            nebulaData = provider.loadData(gc.nebulasource);
-        } catch (Exception e) {
-            Logger.error(e, getClass().getSimpleName());
-        }
-        mc.initialize();
-        mc.env.set(new ColorAttribute(ColorAttribute.AmbientLight, cc[0], cc[1], cc[2], 1));
+	/** Load data **/
+	PointDataProvider provider = new PointDataProvider();
+	try {
+	    pointData = provider.loadData(gc.pointsource);
+	    nebulaData = provider.loadData(gc.nebulasource);
+	} catch (Exception e) {
+	    Logger.error(e, getClass().getSimpleName());
+	}
+	mc.initialize();
+	mc.env.set(new ColorAttribute(ColorAttribute.AmbientLight, cc[0], cc[1], cc[2], 1));
 
     }
 
     @Override
     public void doneLoading(AssetManager manager) {
-        super.doneLoading(manager);
+	super.doneLoading(manager);
 
-        // Set static coordinates to position
-        coordinates.getEquatorialCartesianCoordinates(null, pos);
+	// Set static coordinates to position
+	coordinates.getEquatorialCartesianCoordinates(null, pos);
 
-        // Initialise transform
-        if (transformName != null) {
-            Class<Coordinates> c = Coordinates.class;
-            try {
-                Method m = ClassReflection.getMethod(c, transformName);
-                Matrix4d trf = (Matrix4d) m.invoke(null);
+	// Initialise transform
+	if (transformName != null) {
+	    Class<Coordinates> c = Coordinates.class;
+	    try {
+		Method m = ClassReflection.getMethod(c, transformName);
+		Matrix4d trf = (Matrix4d) m.invoke(null);
 
-                coordinateSystem = trf.putIn(new Matrix4());
+		coordinateSystem = trf.putIn(new Matrix4());
 
-            } catch (ReflectionException e) {
-                Logger.error(this.getClass().getName(), "Error getting/invoking method Coordinates." + transformName + "()");
-            }
-        } else {
-            // Equatorial, nothing
-        }
+	    } catch (ReflectionException e) {
+		Logger.error(this.getClass().getName(),
+			"Error getting/invoking method Coordinates." + transformName + "()");
+	    }
+	} else {
+	    // Equatorial, nothing
+	}
 
-        // Model
-        mc.doneLoading(manager, localTransform, null);
-        Vector3 aux = new Vector3();
-        Vector3 pos3 = pos.toVector3();
+	// Model
+	mc.doneLoading(manager, localTransform, null);
+	Vector3 aux = new Vector3();
+	Vector3 pos3 = pos.toVector3();
 
-        // Transform all
-        for (int i = 0; i < pointData.size(); i++) {
-            float[] pointf = pointData.get(i);
+	// Transform all
+	for (int i = 0; i < pointData.size(); i++) {
+	    float[] pointf = pointData.get(i);
 
-            aux.set(pointf[0], pointf[2], pointf[1]);
-            aux.scl(size).mul(coordinateSystem).add(pos3);
-            pointf[0] = aux.x;
-            pointf[1] = aux.y;
-            pointf[2] = aux.z;
-        }
+	    aux.set(pointf[0], pointf[2], pointf[1]);
+	    aux.scl(size).mul(coordinateSystem).add(pos3);
+	    pointf[0] = aux.x;
+	    pointf[1] = aux.y;
+	    pointf[2] = aux.z;
+	}
 
-        for (int i = 0; i < nebulaData.size(); i++) {
-            float[] pointf = nebulaData.get(i);
-            aux.set(pointf[0], pointf[2], pointf[1]);
-            aux.scl(size).mul(coordinateSystem).add(pos3);
-            pointf[0] = aux.x;
-            pointf[1] = aux.y;
-            pointf[2] = aux.z;
-        }
+	for (int i = 0; i < nebulaData.size(); i++) {
+	    float[] pointf = nebulaData.get(i);
+	    aux.set(pointf[0], pointf[2], pointf[1]);
+	    aux.scl(size).mul(coordinateSystem).add(pos3);
+	    pointf[0] = aux.x;
+	    pointf[1] = aux.y;
+	    pointf[2] = aux.z;
+	}
 
     }
 
     public void update(ITimeFrameProvider time, final Transform parentTransform, ICamera camera, float opacity) {
-        this.opacity = opacity * this.opacity;
-        transform.set(parentTransform);
+	this.opacity = opacity * this.opacity;
+	transform.set(parentTransform);
 
-        // Update with translation/rotation/etc
-        updateLocal(time, camera);
+	// Update with translation/rotation/etc
+	updateLocal(time, camera);
 
-        if (children != null && camera.getDistance() * camera.getFovFactor() < highDist) {
-            for (int i = 0; i < children.size; i++) {
-                float childOpacity = 1 - this.opacity;
-                SceneGraphNode child = children.get(i);
-                child.update(time, transform, camera, childOpacity);
-            }
-        }
+	if (children != null && camera.getDistance() * camera.getFovFactor() < highDist) {
+	    for (int i = 0; i < children.size; i++) {
+		float childOpacity = 1 - this.opacity;
+		SceneGraphNode child = children.get(i);
+		child.update(time, transform, camera, childOpacity);
+	    }
+	}
     }
 
     @Override
     public void update(ITimeFrameProvider time, Transform parentTransform, ICamera camera) {
-        update(time, parentTransform, camera, 1f);
+	update(time, parentTransform, camera, 1f);
     }
 
     @Override
     public void updateLocal(ITimeFrameProvider time, ICamera camera) {
-        super.updateLocal(time, camera);
+	super.updateLocal(time, camera);
 
-        // Update alpha
-        this.opacity = MathUtilsd.lint((float) camera.getDistance() * camera.getFovFactor(), lowDist, highDist, 0, 1);
+	// Update alpha
+	this.opacity = MathUtilsd.lint((float) camera.getDistance() * camera.getFovFactor(), lowDist, highDist, 0, 1);
 
-        // Directional light comes from up
-        updateLocalTransform();
+	// Directional light comes from up
+	updateLocalTransform();
 
-        if (mc != null) {
-            Vector3 d = aux3f1.get();
-            d.set(0, 1, 0);
-            d.mul(coordinateSystem);
+	if (mc != null) {
+	    Vector3 d = aux3f1.get();
+	    d.set(0, 1, 0);
+	    d.mul(coordinateSystem);
 
-            mc.dlight.direction.set(d);
-        }
+	    mc.dlight.direction.set(d);
+	}
 
     }
 
     @Override
     protected void addToRenderLists(ICamera camera) {
-        if ((float) camera.getDistance() * camera.getFovFactor() >= lowDist) {
+	if ((float) camera.getDistance() * camera.getFovFactor() >= lowDist) {
 
-            if (renderText()) {
-                addToRender(this, RenderGroup.LABEL);
-            }
-            addToRender(this, RenderGroup.GALAXY);
-        }
+	    if (renderText()) {
+		addToRender(this, RenderGroup.LABEL);
+	    }
+	    addToRender(this, RenderGroup.GALAXY);
+	}
 
     }
 
     /**
-     * Update the local transform with the transform and the rotations/scales necessary.
-     * Override if your model contains more than just the position and size.
+     * Update the local transform with the transform and the rotations/scales
+     * necessary. Override if your model contains more than just the position
+     * and size.
      */
     protected void updateLocalTransform() {
-        // Scale + Rotate + Tilt + Translate 
-        transform.getMatrix(localTransform).scl(size);
-        localTransform.mul(coordinateSystem);
+	// Scale + Rotate + Tilt + Translate
+	transform.getMatrix(localTransform).scl(size);
+	localTransform.mul(coordinateSystem);
     }
 
     /**
@@ -185,89 +193,92 @@ public class MilkyWayReal extends AbstractPositionEntity implements I3DTextRende
      */
     @Override
     public void render(SpriteBatch batch, ShaderProgram shader, BitmapFont font3d, BitmapFont font2d, ICamera camera) {
-        Vector3d pos = aux3d1.get();
-        textPosition(camera, pos);
-        shader.setUniformf("a_viewAngle", 90f);
-        shader.setUniformf("a_thOverFactor", 1f);
-        render3DLabel(batch, shader, font3d, camera, text(), pos, textScale(), textSize(), textColour());
+	Vector3d pos = aux3d1.get();
+	textPosition(camera, pos);
+	shader.setUniformf("a_viewAngle", 90f);
+	shader.setUniformf("a_thOverFactor", 1f);
+	render3DLabel(batch, shader, font3d, camera, text(), pos, textScale(), textSize(), textColour());
     }
 
     public void setTransformName(String transformName) {
-        this.transformName = transformName;
+	this.transformName = transformName;
     }
 
     @Override
     public boolean renderText() {
-        return GaiaSky.instance.isOn(ComponentType.Labels);
+	return GaiaSky.instance.isOn(ComponentType.Labels);
     }
 
     /**
      * Sets the absolute size of this entity
+     * 
      * @param size
      */
     public void setSize(Double size) {
-        this.size = (float) (size * Constants.KM_TO_U);
+	this.size = (float) (size * Constants.KM_TO_U);
     }
 
     @Override
     public float[] textColour() {
-        return labelColour;
+	return labelColour;
     }
 
     @Override
     public float textSize() {
-        return (float) distToCamera * 3e-3f;
+	return (float) distToCamera * 3e-3f;
     }
 
     @Override
     public float textScale() {
-        return 3f;
+	return 3f;
     }
 
     @Override
     public void textPosition(ICamera cam, Vector3d out) {
-        transform.getTranslation(out);
+	transform.getTranslation(out);
     }
 
     @Override
     public String text() {
-        return name;
+	return name;
     }
 
     @Override
     public void textDepthBuffer() {
-        Gdx.gl.glDisable(GL20.GL_DEPTH_TEST);
-        Gdx.gl.glDepthMask(false);
+	Gdx.gl.glDisable(GL20.GL_DEPTH_TEST);
+	Gdx.gl.glDepthMask(false);
     }
 
     public void setLabelcolor(double[] labelcolor) {
-        this.labelColour = GlobalResources.toFloatArray(labelcolor);
+	this.labelColour = GlobalResources.toFloatArray(labelcolor);
 
     }
 
     @Override
     public boolean isLabel() {
-        return true;
+	return true;
     }
 
     public String getProvider() {
-        return provider;
+	return provider;
     }
 
     public void setProvider(String provider) {
-        this.provider = provider;
+	this.provider = provider;
     }
 
     public void setGalaxydata(GalaxydataComponent gc) {
-        this.gc = gc;
+	this.gc = gc;
     }
 
     /**
      * Sets the size of this entity in kilometres
-     * @param size The diameter of the entity
+     * 
+     * @param size
+     *            The diameter of the entity
      */
     public void setSize(Float size) {
-        this.size = (float) (size * Constants.KM_TO_U);
+	this.size = (float) (size * Constants.KM_TO_U);
     }
 
     @Override
@@ -275,10 +286,10 @@ public class MilkyWayReal extends AbstractPositionEntity implements I3DTextRende
     }
 
     public void setModel(String model) {
-        this.model = model;
+	this.model = model;
     }
 
     public void setModel(ModelComponent mc) {
-        this.mc = mc;
+	this.mc = mc;
     }
 }
