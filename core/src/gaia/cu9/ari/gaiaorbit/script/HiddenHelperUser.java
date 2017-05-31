@@ -141,7 +141,7 @@ public class HiddenHelperUser implements IObserver {
 
 	@Override
 	public void run() {
-	    EventScriptingInterface.instance().landOnObject(name);
+	    EventScriptingInterface.instance().landOnObject(name, stop);
 	    currentTasks.removeValue(this, true);
 	}
 

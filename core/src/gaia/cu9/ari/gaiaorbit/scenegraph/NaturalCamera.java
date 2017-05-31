@@ -412,14 +412,15 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 	} else if (parent.mode.equals(CameraMode.Focus)) {
 	    double th = 30;
 	    double vadeg = Math.toDegrees(focus.getViewAngle());
-	    // This factor slows the rotation as the focus gets closer and
-	    // closer
-	    double factor = vadeg > th ? Math.pow(th / vadeg, 3) : 1.0;
+
 	    if (focusLookKeyPressed) {
 		diverted = true;
-		addYaw(deltaX * factor, acceleration);
-		addPitch(deltaY * factor, acceleration);
+		addYaw(deltaX, acceleration);
+		addPitch(deltaY, acceleration);
 	    } else {
+		// This factor slows the rotation as the focus gets closer and
+		// closer
+		double factor = vadeg > th ? Math.pow(th / vadeg, 3) : 1.0;
 		addHorizontalRotation(deltaX * factor, acceleration);
 		addVerticalRotation(deltaY * factor, acceleration);
 	    }
@@ -523,6 +524,16 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 		|| horizontal.y != 0);
 	force.scl(0f);
 	vel.scl(0f);
+	yaw.scl(0f);
+	pitch.scl(0f);
+	roll.scl(0f);
+	horizontal.scl(0f);
+	vertical.scl(0f);
+	return stopped;
+    }
+
+    public boolean stopTurnMovement() {
+	boolean stopped = (yaw.y != 0 || pitch.y != 0 || roll.y != 0 || vertical.y != 0 || horizontal.y != 0);
 	yaw.scl(0f);
 	pitch.scl(0f);
 	roll.scl(0f);

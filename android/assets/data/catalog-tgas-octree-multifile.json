@@ -1,6 +1,6 @@
 { "data" : [
 	{
 		"loader": "gaia.cu9.ari.gaiaorbit.data.stars.OctreeMultiFileLoader",
-		"files": [ "data/octree/tgas_multifile/particles/", "data/octree/tgas_multifile/metadata.bin" ]
+		"files": [ "data/octree/tgas/particles/", "data/octree/tgas/metadata.bin" ]
 	}
 ]}

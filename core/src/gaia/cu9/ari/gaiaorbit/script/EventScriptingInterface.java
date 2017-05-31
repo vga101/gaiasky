@@ -30,6 +30,7 @@ import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.LruCache;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
+import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
 /**
  * Implementation of the scripting interface using the event system.
@@ -556,15 +557,92 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
 
     @Override
     public void landOnObject(String name) {
+	landOnObject(name, null);
+    }
+
+    public void landOnObject(String name, AtomicBoolean stop) {
 
 	ISceneGraph sg = GaiaSky.instance.sg;
 	if (sg.containsNode(name)) {
 	    CelestialBody focus = sg.findFocus(name);
 	    if (focus instanceof Planet) {
-		// Distance at which to stop
-		double angle = 63.42;
-		// Go
-		goToObject(name, angle);
+		NaturalCamera cam = GaiaSky.instance.cam.naturalCamera;
+		// Focus wait - 2 seconds
+		float focusWait = -1;
+
+		// Post focus change
+		if (!cam.isFocus(focus)) {
+		    em.post(Events.FOCUS_CHANGE_CMD, name);
+
+		    try {
+			Thread.sleep(100);
+		    } catch (Exception e) {
+		    }
+		}
+
+		// Wait til camera is facing focus
+		if (focusWait < 0) {
+		    while (!cam.facingFocus) {
+			// Wait
+			try {
+			    Thread.sleep(100);
+			} catch (Exception e) {
+			}
+		    }
+		} else {
+		    this.sleep(focusWait);
+		}
+
+		/* target distance */
+		double target = 100 * Constants.M_TO_U;
+
+		Vector3d aux = new Vector3d();
+		aux.set(focus.pos).sub(cam.pos).nor();
+		Vector3d dir = cam.direction;
+
+		// Save speed, set it to 50
+		double speed = GlobalConf.scene.CAMERA_SPEED;
+		em.post(Events.CAMERA_SPEED_CMD, 25f / 10f, false);
+
+		// Save turn speed, set it to 50
+		double turnSpeedBak = GlobalConf.scene.TURNING_SPEED;
+		em.post(Events.TURNING_SPEED_CMD, (float) MathUtilsd.lint(50d, Constants.MIN_SLIDER,
+			Constants.MAX_SLIDER, Constants.MIN_TURN_SPEED, Constants.MAX_TURN_SPEED), false);
+
+		// Add forward movement while distance > target distance
+		boolean distanceNotMet = (focus.distToCamera - focus.getRadius()) > target;
+		boolean viewNotMet = Math.abs(dir.angle(aux)) < 90;
+		while ((distanceNotMet || viewNotMet) && (stop == null || (stop != null && !stop.get()))) {
+		    if (distanceNotMet)
+			em.post(Events.CAMERA_FWD, 1d);
+		    else
+			cam.stopForwardMovement();
+
+		    if (viewNotMet) {
+			if (focus.distToCamera - focus.getRadius() < focus.getRadius() * 5)
+			    // Start turning where we are at n times the radius
+			    em.post(Events.CAMERA_TURN, 0d, GlobalConf.scene.CINEMATIC_CAMERA ? 1d / 20d : 1d);
+		    } else
+			cam.stopTurnMovement();
+
+		    try {
+			Thread.sleep(5);
+		    } catch (Exception e) {
+		    }
+
+		    focus.transform.getTranslation(aux);
+		    viewNotMet = Math.abs(dir.angle(aux)) < 90;
+		    distanceNotMet = (focus.distToCamera - focus.getRadius()) > target;
+		}
+
+		// Restore speed
+		em.post(Events.CAMERA_SPEED_CMD, (float) speed, false);
+
+		// Restore turning speed
+		em.post(Events.TURNING_SPEED_CMD, (float) turnSpeedBak, false);
+
+		// We can stop now
+		em.post(Events.CAMERA_STOP);
 	    }
 	}
 
