@@ -33,6 +33,7 @@ import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
+import gaia.cu9.ari.gaiaorbit.scenegraph.Planet;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GSEnumSet;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
@@ -414,6 +415,17 @@ public class FullGui implements IGui, IObserver {
 
 	    popup.addItem(select);
 	    popup.addItem(go);
+
+	    if (candidate instanceof Planet) {
+		MenuItem landOn = new MenuItem("Land on '" + candidate.getName() + "'", skin, "default");
+
+		MenuItem landOnCoord = new MenuItem("Land at lat/lon of '" + candidate.getName() + "'", skin,
+			"default");
+
+		popup.addSeparator();
+		popup.addItem(landOn);
+		popup.addItem(landOnCoord);
+	    }
 
 	    int mx = Gdx.input.getX();
 	    int my = Gdx.input.getY();

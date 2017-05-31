@@ -6,6 +6,7 @@
 
 **Implemented enhancements:**
 
+- On-demand catalog loading from disk [\#146](https://github.com/langurmonkey/gaiasky/issues/146)
 - French translation [\#145](https://github.com/langurmonkey/gaiasky/issues/145)
 - Allow for controller look y-axis to be inverted [\#143](https://github.com/langurmonkey/gaiasky/issues/143)
 - Support lazy texture initialisation for faster startup [\#140](https://github.com/langurmonkey/gaiasky/issues/140)
@@ -46,6 +47,7 @@
 
 **Closed issues:**
 
+- Cinematic camera setting not saved [\#144](https://github.com/langurmonkey/gaiasky/issues/144)
 - Running Gaia Sky in Oculus Rift [\#136](https://github.com/langurmonkey/gaiasky/issues/136)
 - Scripting interface: asynchronous mode? [\#133](https://github.com/langurmonkey/gaiasky/issues/133)
 - Scripting interface: issues with setCameraPostion method [\#132](https://github.com/langurmonkey/gaiasky/issues/132)
