@@ -388,7 +388,7 @@ public class FullGui implements IGui, IObserver {
 
 	    ContextMenu popup = new ContextMenu(skin, "default");
 
-	    MenuItem select = new MenuItem("Select object '" + candidate.getName() + "'", skin, "default");
+	    MenuItem select = new MenuItem(txt("context.select", candidate.getName()), skin, "default");
 	    select.addListener(new EventListener() {
 
 		@Override
@@ -401,7 +401,7 @@ public class FullGui implements IGui, IObserver {
 		}
 
 	    });
-	    MenuItem go = new MenuItem("Go to object '" + candidate.getName() + "'", skin, "default");
+	    MenuItem go = new MenuItem(txt("context.goto", candidate.getName()), skin, "default");
 	    go.addListener(new EventListener() {
 
 		@Override
@@ -417,10 +417,33 @@ public class FullGui implements IGui, IObserver {
 	    popup.addItem(go);
 
 	    if (candidate instanceof Planet) {
-		MenuItem landOn = new MenuItem("Land on '" + candidate.getName() + "'", skin, "default");
+		MenuItem landOn = new MenuItem(txt("context.landon", candidate.getName()), skin, "default");
+		landOn.addListener(new EventListener() {
 
-		MenuItem landOnCoord = new MenuItem("Land at lat/lon of '" + candidate.getName() + "'", skin,
-			"default");
+		    @Override
+		    public boolean handle(Event event) {
+			if (event instanceof ChangeEvent) {
+			    EventManager.instance.post(Events.LAND_ON_OBJECT, candidate);
+			    return true;
+			}
+			return false;
+		    }
+
+		});
+
+		MenuItem landOnCoord = new MenuItem(txt("context.landatcoord", candidate.getName()), skin, "default");
+		landOnCoord.addListener(new EventListener() {
+
+		    @Override
+		    public boolean handle(Event event) {
+			if (event instanceof ChangeEvent) {
+			    // Launch location selection
+			    return true;
+			}
+			return false;
+		    }
+
+		});
 
 		popup.addSeparator();
 		popup.addItem(landOn);

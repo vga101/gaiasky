@@ -97,7 +97,8 @@ public interface IScriptingInterface {
      *            The size of the font. The system will use the existing font
      *            closest to the chosen size.
      */
-    public void displayMessageObject(int id, String message, float x, float y, float r, float g, float b, float a, float fontSize);
+    public void displayMessageObject(int id, String message, float x, float y, float r, float g, float b, float a,
+	    float fontSize);
 
     /**
      * Adds a new multi-line text in the screen with the given id, coordinates
@@ -134,7 +135,8 @@ public interface IScriptingInterface {
      *            The size of the font. The system will use the existing font
      *            closest to the chosen size.
      */
-    public void displayTextObject(int id, String text, float x, float y, float maxWidth, float maxHeight, float r, float g, float b, float a, float fontSize);
+    public void displayTextObject(int id, String text, float x, float y, float maxWidth, float maxHeight, float r,
+	    float g, float b, float a, float fontSize);
 
     /**
      * Adds a new image object at the given coordinates. If an object already
@@ -547,6 +549,17 @@ public interface IScriptingInterface {
      *            aligned.
      */
     public void goToObject(String name, double angle, float focusWait);
+
+    /**
+     * Lands on the object with the given name, if it is an instance of
+     * {@link gaia.cu9.ari.gaiaorbit.scenegraph.Planet}. The land location is
+     * determined by the line of sight from the current position of the camera
+     * to the object.
+     * 
+     * @param name
+     *            The proper name of the object.
+     */
+    public void landOnObject(String name);
 
     /**
      * Returns the distance to the surface of the object identified with the

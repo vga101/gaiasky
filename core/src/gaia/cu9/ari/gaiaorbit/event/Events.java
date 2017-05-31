@@ -40,8 +40,8 @@ public enum Events {
     /**
      * Contains the speed limit index as in: 0 - 100 km/h 1 - c (3e8 m/s) 2 -
      * 2*c 3 - 10*c 4 - 1000*c 5 - 1 pc/s 6 - 2 pc/s 7 - 10 pc/s 8 - 1000 pc/s 9
-     * - No limit
-     * It also contains a boolean indicating whether this comes from the interface.
+     * - No limit It also contains a boolean indicating whether this comes from
+     * the interface.
      **/
     SPEED_LIMIT_CMD,
     /** Contains the value between 0 and 1 **/
@@ -51,7 +51,10 @@ public enum Events {
     /** Stops the camera motion **/
     CAMERA_STOP,
 
-    /** Informs that the camera has started or stopped playing. Contains a boolean (true - start, false - stop) **/
+    /**
+     * Informs that the camera has started or stopped playing. Contains a
+     * boolean (true - start, false - stop)
+     **/
     CAMERA_PLAY_INFO,
 
     CAMERA_PAN,
@@ -102,8 +105,8 @@ public enum Events {
      **/
     TOGGLE_VISIBILITY_CMD,
     /**
-     * Contains the name, the boolean value, and an optional boolean indicating if this
-     * comes from the interface
+     * Contains the name, the boolean value, and an optional boolean indicating
+     * if this comes from the interface
      **/
     FOCUS_LOCK_CMD,
     /**
@@ -211,25 +214,25 @@ public enum Events {
     CLEAR_MESSAGES,
     /** Contains the new time frame object **/
     EVENT_TIME_FRAME_CMD,
-    /** Notifies a fov update in the camera. Contains the new fov value (float) and the new fovFactor (float) **/
+    /**
+     * Notifies a fov update in the camera. Contains the new fov value (float)
+     * and the new fovFactor (float)
+     **/
     FOV_CHANGE_NOTIFICATION,
     /**
      * Informs of a new camera state. Contains:
      * <ul>
-     * <li>
-     * Vector3d with the current position of the camera
-     * </li><li>
-     * Double with the speed of the camera in km/s
-     * </li><li>
-     * Vector3d with the velocity vector of the camera
-     * </li><li>
-     * The PerspectiveCamera
-     * </li>
+     * <li>Vector3d with the current position of the camera</li>
+     * <li>Double with the speed of the camera in km/s</li>
+     * <li>Vector3d with the velocity vector of the camera</li>
+     * <li>The PerspectiveCamera</li>
      * </ul>
      **/
     CAMERA_MOTION_UPDATED,
 
-    /** Activates/deactivates the crosshair in focus mode. Contains a boolean **/
+    /**
+     * Activates/deactivates the crosshair in focus mode. Contains a boolean
+     **/
     CROSSHAIR_CMD,
     /**
      * Contains an int with the number of lights and a float[] with [x, y] of
@@ -240,6 +243,10 @@ public enum Events {
     GO_TO_OBJECT_CMD,
     /** Navigates smoothly to the given object **/
     NAVIGATE_TO_OBJECT,
+    /** Lands on a planet object **/
+    LAND_ON_OBJECT,
+    /** Lands at a certain location on a planet object **/
+    LAND_AT_LOCATION_OF_OBJECT,
     /**
      * Contains an optional boolean indicating whether debug info should be
      * shown or not. Otherwise, it toggles its state
@@ -295,7 +302,10 @@ public enum Events {
     TOGGLE_STEREO_PROFILE_CMD,
     /** Broadcasts the new stereo profile. Contains the StereoProfile object **/
     TOGGLE_STEREO_PROFILE_INFO,
-    /** Sets the 360 mode. Contains a boolean with the new state and an optional boolean indicating whether this comes from the interface **/
+    /**
+     * Sets the 360 mode. Contains a boolean with the new state and an optional
+     * boolean indicating whether this comes from the interface
+     **/
     CUBEMAP360_CMD,
     /** Anti aliasing changed, contains the new value for aa **/
     ANTIALIASING_CMD,
@@ -387,7 +397,10 @@ public enum Events {
     REMOVE_OBJECTS,
     /** Removes all the custom objects **/
     REMOVE_ALL_OBJECTS,
-    /** Contains the star brightness multiplier and an optional boolean saying if it comes from the interface **/
+    /**
+     * Contains the star brightness multiplier and an optional boolean saying if
+     * it comes from the interface
+     **/
     STAR_BRIGHTNESS_CMD,
     /** Frames per second info **/
     FPS_INFO,
@@ -396,7 +409,8 @@ public enum Events {
     /** Contains the length factor for pm vectors **/
     PM_LEN_FACTOR_CMD,
     /**
-     * Updates the screen mode according to whats in the {@link gaia.cu9.ari.gaiaorbit.util.GlobalConf#screen} bean.
+     * Updates the screen mode according to whats in the
+     * {@link gaia.cu9.ari.gaiaorbit.util.GlobalConf#screen} bean.
      **/
     SCREEN_MODE_CMD,
     /** Informs the scene graph has been loaded. Program can start **/
@@ -477,10 +491,16 @@ public enum Events {
     /** Forces recalculation of main GUI window size **/
     RECALCULATE_OPTIONS_SIZE,
 
-    /** Issues command to chagne the galaxy appearance. Contains boolean, if true gaiaxy will be 3D, if false galaxy will be 2D **/
+    /**
+     * Issues command to chagne the galaxy appearance. Contains boolean, if true
+     * gaiaxy will be 3D, if false galaxy will be 2D
+     **/
     GALAXY_3D_CMD,
 
-    /** Contains the angle to use in the directionToTarget() function. Defaults to 0 **/
+    /**
+     * Contains the angle to use in the directionToTarget() function. Defaults
+     * to 0
+     **/
     PLANETARIUM_FOCUS_ANGLE_CMD,
 
     /** Contains the x and the y in pixels of the position of the mass **/
@@ -532,30 +552,21 @@ public enum Events {
     /** Broadcasts the new thrust index **/
     SPACECRAFT_THRUST_INFO,
 
-    /** Contains following info:
-     * <ul><li>
-     * current speed [u/s]
-     * </li><li>
-     * current yaw angle [deg]
-     * </li><li>
-     * current pitch angle [deg]
-     * </li><li>
-     * current roll angle [deg]
-     * </li><li>
-     * nearest object name
-     * </li><li>
-     * distance to nearest object [u]
-     * </li><li>
-     * thrust factor
-     * </li><li>
-     * engine power [-1..1]
-     * </li><li>
-     * yaw power  [-1..1]
-     * </li><li>
-     * pitch power [-1..1]
-     * </li><li>
-     * roll power [-1..1]
-     * </li></ul>
+    /**
+     * Contains following info:
+     * <ul>
+     * <li>current speed [u/s]</li>
+     * <li>current yaw angle [deg]</li>
+     * <li>current pitch angle [deg]</li>
+     * <li>current roll angle [deg]</li>
+     * <li>nearest object name</li>
+     * <li>distance to nearest object [u]</li>
+     * <li>thrust factor</li>
+     * <li>engine power [-1..1]</li>
+     * <li>yaw power [-1..1]</li>
+     * <li>pitch power [-1..1]</li>
+     * <li>roll power [-1..1]</li>
+     * </ul>
      **/
     SPACECRAFT_INFO,
 
