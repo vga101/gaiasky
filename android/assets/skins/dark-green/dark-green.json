@@ -18,6 +18,7 @@ com.badlogic.gdx.graphics.g2d.BitmapFont: { ui-23: { file: skins/fonts/ui-23.fnt
 com.badlogic.gdx.graphics.g2d.BitmapFont: { ui-23-bold: { file: skins/fonts/ui-23-bold.fnt } },
 com.badlogic.gdx.graphics.g2d.BitmapFont: { ui-25: { file: skins/fonts/ui-25.fnt } },
 com.badlogic.gdx.graphics.g2d.BitmapFont: { ui-25-shadow: { file: skins/fonts/ui-25-shadow.fnt } },
+com.badlogic.gdx.graphics.g2d.BitmapFont: { grid-annotation: { file: skins/fonts/ui-11.fnt } },
 com.badlogic.gdx.graphics.Color: {
 	green: { a: 1, b: 0, g: 0.701, r: 0.18 },
 	white: { a: 1, b: 1, g: 1, r: 1 },

@@ -89,175 +89,178 @@ public class FullGui implements IGui, IObserver {
     private Object lock;
 
     public void setSceneGraph(ISceneGraph sg) {
-        this.sg = sg;
+	this.sg = sg;
     }
 
     public void setVisibilityToggles(ComponentType[] entities, GSEnumSet<ComponentType> visible) {
-        this.visibilityEntities = entities;
-        ComponentType[] vals = ComponentType.values();
-        this.visible = new boolean[vals.length];
-        for (int i = 0; i < vals.length; i++)
-            this.visible[i] = visible.contains(vals[i]);
+	this.visibilityEntities = entities;
+	ComponentType[] vals = ComponentType.values();
+	this.visible = new boolean[vals.length];
+	for (int i = 0; i < vals.length; i++)
+	    this.visible[i] = visible.contains(vals[i]);
     }
 
     public void initialize(AssetManager assetManager) {
-        // User interface
-        ui = new Stage(new ScreenViewport(), GlobalResources.spriteBatch);
-        lock = new Object();
+	// User interface
+	ui = new Stage(new ScreenViewport(), GlobalResources.spriteBatch);
+	lock = new Object();
     }
 
     /**
      * Constructs the interface
      */
     public void doneLoading(AssetManager assetManager) {
-        Logger.info(txt("notif.gui.init"));
+	Logger.info(txt("notif.gui.init"));
 
-        skin = GlobalResources.skin;
-        interfaces = new Array<IGuiInterface>();
+	skin = GlobalResources.skin;
+	interfaces = new Array<IGuiInterface>();
 
-        buildGui();
+	buildGui();
 
-        // We must subscribe to the desired events
-        EventManager.instance.subscribe(this, Events.FOV_CHANGED_CMD, Events.SHOW_TUTORIAL_ACTION, Events.SHOW_SEARCH_ACTION, Events.REMOVE_KEYBOARD_FOCUS, Events.REMOVE_GUI_COMPONENT, Events.ADD_GUI_COMPONENT, Events.SHOW_ABOUT_ACTION, Events.RA_DEC_UPDATED, Events.LON_LAT_UPDATED, Events.POPUP_MENU_FOCUS, Events.SHOW_PREFERENCES_ACTION);
+	// We must subscribe to the desired events
+	EventManager.instance.subscribe(this, Events.FOV_CHANGED_CMD, Events.SHOW_TUTORIAL_ACTION,
+		Events.SHOW_SEARCH_ACTION, Events.REMOVE_KEYBOARD_FOCUS, Events.REMOVE_GUI_COMPONENT,
+		Events.ADD_GUI_COMPONENT, Events.SHOW_ABOUT_ACTION, Events.RA_DEC_UPDATED, Events.LON_LAT_UPDATED,
+		Events.POPUP_MENU_FOCUS, Events.SHOW_PREFERENCES_ACTION);
     }
 
     private void buildGui() {
-        // Component types name init
-        for (ComponentType ct : ComponentType.values()) {
-            ct.getName();
-        }
+	// Component types name init
+	for (ComponentType ct : ComponentType.values()) {
+	    ct.getName();
+	}
 
-        if (Constants.focalplane) {
-            // WEBGL INTERFACE - TOP LEFT
-            addWebglInterface();
-        } else {
-            // CONTROLS WINDOW
-            addControlsWindow();
-        }
+	if (Constants.focalplane) {
+	    // WEBGL INTERFACE - TOP LEFT
+	    addWebglInterface();
+	} else {
+	    // CONTROLS WINDOW
+	    addControlsWindow();
+	}
 
-        nf = NumberFormatFactory.getFormatter("##0.###");
+	nf = NumberFormatFactory.getFormatter("##0.###");
 
-        // FOCUS INFORMATION - BOTTOM RIGHT
-        focusInterface = new FocusInfoInterface(skin);
-        //focusInterface.setFillParent(true);
-        focusInterface.left().top();
-        fi = new Container<FocusInfoInterface>(focusInterface);
-        fi.setFillParent(true);
-        fi.bottom().right();
-        fi.pad(0, 0, 10, 10);
+	// FOCUS INFORMATION - BOTTOM RIGHT
+	focusInterface = new FocusInfoInterface(skin);
+	// focusInterface.setFillParent(true);
+	focusInterface.left().top();
+	fi = new Container<FocusInfoInterface>(focusInterface);
+	fi.setFillParent(true);
+	fi.bottom().right();
+	fi.pad(0, 0, 10, 10);
 
-        // NOTIFICATIONS INTERFACE - BOTTOM LEFT
-        notificationsInterface = new NotificationsInterface(skin, lock, true);
-        notificationsInterface.setFillParent(true);
-        notificationsInterface.left().bottom();
-        notificationsInterface.pad(0, 5, 5, 0);
-        interfaces.add(notificationsInterface);
+	// NOTIFICATIONS INTERFACE - BOTTOM LEFT
+	notificationsInterface = new NotificationsInterface(skin, lock, true);
+	notificationsInterface.setFillParent(true);
+	notificationsInterface.left().bottom();
+	notificationsInterface.pad(0, 5, 5, 0);
+	interfaces.add(notificationsInterface);
 
-        // MESSAGES INTERFACE - LOW CENTER
-        messagesInterface = new MessagesInterface(skin, lock);
-        messagesInterface.setFillParent(true);
-        messagesInterface.left().bottom();
-        messagesInterface.pad(0, 300, 150, 0);
-        interfaces.add(messagesInterface);
+	// MESSAGES INTERFACE - LOW CENTER
+	messagesInterface = new MessagesInterface(skin, lock);
+	messagesInterface.setFillParent(true);
+	messagesInterface.left().bottom();
+	messagesInterface.pad(0, 300, 150, 0);
+	interfaces.add(messagesInterface);
 
-        // INPUT STATE
-        inputInterface = new ScriptStateInterface(skin);
-        inputInterface.setFillParent(true);
-        inputInterface.right().top();
-        inputInterface.pad(100, 0, 0, 5);
-        interfaces.add(inputInterface);
+	// INPUT STATE
+	inputInterface = new ScriptStateInterface(skin);
+	inputInterface.setFillParent(true);
+	inputInterface.right().top();
+	inputInterface.pad(100, 0, 0, 5);
+	interfaces.add(inputInterface);
 
-        // CUSTOM OBJECTS INTERFACE
-        customInterface = new CustomInterface(ui, skin, lock);
-        interfaces.add(customInterface);
+	// CUSTOM OBJECTS INTERFACE
+	customInterface = new CustomInterface(ui, skin, lock);
+	interfaces.add(customInterface);
 
-        // MOUSE X/Y COORDINATES
-        mouseXCoord = new OwnLabel("", skin, "default");
-        mouseYCoord = new OwnLabel("", skin, "default");
+	// MOUSE X/Y COORDINATES
+	mouseXCoord = new OwnLabel("", skin, "default");
+	mouseYCoord = new OwnLabel("", skin, "default");
 
-        /** ADD TO UI **/
-        rebuildGui();
-        //controls.collapse();
+	/** ADD TO UI **/
+	rebuildGui();
+	// controls.collapse();
 
-        // INVISIBLE IN STEREOSCOPIC MODE
-        invisibleInStereoMode = new ArrayList<Actor>();
-        invisibleInStereoMode.add(controlsWindow);
-        invisibleInStereoMode.add(fi);
-        invisibleInStereoMode.add(messagesInterface);
-        invisibleInStereoMode.add(inputInterface);
-        //invisibleInStereoMode.add(customInterface);
-        invisibleInStereoMode.add(mouseXCoord);
-        invisibleInStereoMode.add(mouseYCoord);
+	// INVISIBLE IN STEREOSCOPIC MODE
+	invisibleInStereoMode = new ArrayList<Actor>();
+	invisibleInStereoMode.add(controlsWindow);
+	invisibleInStereoMode.add(fi);
+	invisibleInStereoMode.add(messagesInterface);
+	invisibleInStereoMode.add(inputInterface);
+	// invisibleInStereoMode.add(customInterface);
+	invisibleInStereoMode.add(mouseXCoord);
+	invisibleInStereoMode.add(mouseYCoord);
     }
 
     public void recalculateOptionsSize() {
-        controlsWindow.recalculateSize();
+	controlsWindow.recalculateSize();
     }
 
     private void rebuildGui() {
 
-        if (ui != null) {
-            ui.clear();
-            boolean collapsed = false;
-            if (controlsWindow != null) {
-                collapsed = controlsWindow.isCollapsed();
-                recalculateOptionsSize();
-                if (collapsed)
-                    controlsWindow.collapseInstant();
-                controlsWindow.setPosition(0, Gdx.graphics.getHeight() - controlsWindow.getHeight());
-                ui.addActor(controlsWindow);
-            }
-            if (webglInterface != null)
-                ui.addActor(wgl);
-            if (notificationsInterface != null)
-                ui.addActor(notificationsInterface);
-            if (messagesInterface != null)
-                ui.addActor(messagesInterface);
-            if (focusInterface != null && !GlobalConf.runtime.STRIPPED_FOV_MODE)
-                ui.addActor(fi);
-            if (inputInterface != null && Constants.desktop) {
-                ui.addActor(inputInterface);
-            }
-            if (mouseXCoord != null && mouseYCoord != null) {
-                ui.addActor(mouseXCoord);
-                ui.addActor(mouseYCoord);
-            }
+	if (ui != null) {
+	    ui.clear();
+	    boolean collapsed = false;
+	    if (controlsWindow != null) {
+		collapsed = controlsWindow.isCollapsed();
+		recalculateOptionsSize();
+		if (collapsed)
+		    controlsWindow.collapseInstant();
+		controlsWindow.setPosition(0, Gdx.graphics.getHeight() - controlsWindow.getHeight());
+		ui.addActor(controlsWindow);
+	    }
+	    if (webglInterface != null)
+		ui.addActor(wgl);
+	    if (notificationsInterface != null)
+		ui.addActor(notificationsInterface);
+	    if (messagesInterface != null)
+		ui.addActor(messagesInterface);
+	    if (focusInterface != null && !GlobalConf.runtime.STRIPPED_FOV_MODE)
+		ui.addActor(fi);
+	    if (inputInterface != null && Constants.desktop) {
+		ui.addActor(inputInterface);
+	    }
+	    if (mouseXCoord != null && mouseYCoord != null) {
+		ui.addActor(mouseXCoord);
+		ui.addActor(mouseYCoord);
+	    }
 
-            if (customInterface != null) {
-                customInterface.reAddObjects();
-            }
+	    if (customInterface != null) {
+		customInterface.reAddObjects();
+	    }
 
-            /** CAPTURE SCROLL FOCUS **/
-            ui.addListener(new EventListener() {
+	    /** CAPTURE SCROLL FOCUS **/
+	    ui.addListener(new EventListener() {
 
-                @Override
-                public boolean handle(Event event) {
-                    if (event instanceof InputEvent) {
-                        InputEvent ie = (InputEvent) event;
+		@Override
+		public boolean handle(Event event) {
+		    if (event instanceof InputEvent) {
+			InputEvent ie = (InputEvent) event;
 
-                        if (ie.getType() == Type.mouseMoved) {
-                            Actor scrollPanelAncestor = getScrollPanelAncestor(ie.getTarget());
-                            ui.setScrollFocus(scrollPanelAncestor);
-                        } else if (ie.getType() == Type.touchDown) {
-                            if (ie.getTarget() instanceof TextField)
-                                ui.setKeyboardFocus(ie.getTarget());
-                        }
-                    }
-                    return false;
-                }
+			if (ie.getType() == Type.mouseMoved) {
+			    Actor scrollPanelAncestor = getScrollPanelAncestor(ie.getTarget());
+			    ui.setScrollFocus(scrollPanelAncestor);
+			} else if (ie.getType() == Type.touchDown) {
+			    if (ie.getTarget() instanceof TextField)
+				ui.setKeyboardFocus(ie.getTarget());
+			}
+		    }
+		    return false;
+		}
 
-                private Actor getScrollPanelAncestor(Actor actor) {
-                    if (actor == null) {
-                        return null;
-                    } else if (actor instanceof ScrollPane) {
-                        return actor;
-                    } else {
-                        return getScrollPanelAncestor(actor.getParent());
-                    }
-                }
+		private Actor getScrollPanelAncestor(Actor actor) {
+		    if (actor == null) {
+			return null;
+		    } else if (actor instanceof ScrollPane) {
+			return actor;
+		    } else {
+			return getScrollPanelAncestor(actor.getParent());
+		    }
+		}
 
-            });
-        }
+	    });
+	}
     }
 
     /**
@@ -267,182 +270,184 @@ public class FullGui implements IGui, IObserver {
      * @return true if the focus was in the GUI, false otherwise.
      */
     public boolean cancelTouchFocus() {
-        if (ui.getScrollFocus() != null) {
-            ui.setScrollFocus(null);
-            ui.setKeyboardFocus(null);
-            return true;
-        }
-        return false;
+	if (ui.getScrollFocus() != null) {
+	    ui.setScrollFocus(null);
+	    ui.setKeyboardFocus(null);
+	    return true;
+	}
+	return false;
     }
 
     @Override
     public Stage getGuiStage() {
-        return ui;
+	return ui;
     }
 
     @Override
     public void dispose() {
-        for (IGuiInterface iface : interfaces)
-            iface.dispose();
+	for (IGuiInterface iface : interfaces)
+	    iface.dispose();
 
-        ui.dispose();
-        EventManager.instance.removeAllSubscriptions(this);
+	ui.dispose();
+	EventManager.instance.removeAllSubscriptions(this);
     }
 
     @Override
     public void update(float dt) {
-        ui.act(dt);
-        notificationsInterface.update();
+	ui.act(dt);
+	notificationsInterface.update();
     }
 
     @Override
     public void render(int rw, int rh) {
-        synchronized (lock) {
-            ui.draw();
-        }
+	synchronized (lock) {
+	    ui.draw();
+	}
     }
 
     public String getName() {
-        return "GUI";
+	return "GUI";
     }
 
     @Override
     public void notify(Events event, Object... data) {
-        switch (event) {
-        case SHOW_TUTORIAL_ACTION:
-            EventManager.instance.post(Events.RUN_SCRIPT_PATH, GlobalConf.program.TUTORIAL_SCRIPT_LOCATION);
-            break;
-        case SHOW_SEARCH_ACTION:
-            if (searchDialog == null) {
-                searchDialog = new SearchDialog(this, skin, sg);
-            } else {
-                searchDialog.clearText();
-            }
-            searchDialog.display();
-            break;
-        case SHOW_ABOUT_ACTION:
-            if (aboutWindow == null) {
-                aboutWindow = new AboutWindow(ui, skin);
-            }
-            aboutWindow.show(ui);
-            break;
-        case SHOW_PREFERENCES_ACTION:
-            preferencesWindow = new PreferencesWindow(ui, skin);
-            preferencesWindow.show(ui);
-            break;
-        case REMOVE_KEYBOARD_FOCUS:
-            ui.setKeyboardFocus(null);
-            break;
-        case REMOVE_GUI_COMPONENT:
-            String name = (String) data[0];
-            String method = "remove" + TextUtils.capitalise(name);
-            try {
-                Method m = ClassReflection.getMethod(this.getClass(), method);
-                m.invoke(this);
-            } catch (ReflectionException e) {
-                Logger.error(e);
-            }
-            rebuildGui();
-            break;
-        case ADD_GUI_COMPONENT:
-            name = (String) data[0];
-            method = "add" + TextUtils.capitalise(name);
-            try {
-                Method m = ClassReflection.getMethod(this.getClass(), method);
-                m.invoke(this);
-            } catch (ReflectionException e) {
-                Logger.error(e);
-            }
-            rebuildGui();
-            break;
-        case RA_DEC_UPDATED:
-            Double ra = (Double) data[0];
-            Double dec = (Double) data[1];
-            Integer x = (Integer) data[2];
-            Integer y = (Integer) data[3];
+	switch (event) {
+	case SHOW_TUTORIAL_ACTION:
+	    EventManager.instance.post(Events.RUN_SCRIPT_PATH, GlobalConf.program.TUTORIAL_SCRIPT_LOCATION);
+	    break;
+	case SHOW_SEARCH_ACTION:
+	    if (searchDialog == null) {
+		searchDialog = new SearchDialog(this, skin, sg);
+	    } else {
+		searchDialog.clearText();
+	    }
+	    searchDialog.display();
+	    break;
+	case SHOW_ABOUT_ACTION:
+	    if (aboutWindow == null) {
+		aboutWindow = new AboutWindow(ui, skin);
+	    }
+	    aboutWindow.show(ui);
+	    break;
+	case SHOW_PREFERENCES_ACTION:
+	    preferencesWindow = new PreferencesWindow(ui, skin);
+	    preferencesWindow.show(ui);
+	    break;
+	case REMOVE_KEYBOARD_FOCUS:
+	    ui.setKeyboardFocus(null);
+	    break;
+	case REMOVE_GUI_COMPONENT:
+	    String name = (String) data[0];
+	    String method = "remove" + TextUtils.capitalise(name);
+	    try {
+		Method m = ClassReflection.getMethod(this.getClass(), method);
+		m.invoke(this);
+	    } catch (ReflectionException e) {
+		Logger.error(e);
+	    }
+	    rebuildGui();
+	    break;
+	case ADD_GUI_COMPONENT:
+	    name = (String) data[0];
+	    method = "add" + TextUtils.capitalise(name);
+	    try {
+		Method m = ClassReflection.getMethod(this.getClass(), method);
+		m.invoke(this);
+	    } catch (ReflectionException e) {
+		Logger.error(e);
+	    }
+	    rebuildGui();
+	    break;
+	case RA_DEC_UPDATED:
+	    Double ra = (Double) data[0];
+	    Double dec = (Double) data[1];
+	    Integer x = (Integer) data[2];
+	    Integer y = (Integer) data[3];
 
-            mouseXCoord.setText("RA/".concat(nf.format(ra)).concat("°"));
-            mouseXCoord.setPosition(x, 10);
-            mouseYCoord.setText("DEC/".concat(nf.format(dec)).concat("°"));
-            mouseYCoord.setPosition(Gdx.graphics.getWidth() - 65, Gdx.graphics.getHeight() - y);
-            break;
-        case LON_LAT_UPDATED:
-            Double lon = (Double) data[0];
-            Double lat = (Double) data[1];
-            x = (Integer) data[2];
-            y = (Integer) data[3];
+	    mouseXCoord.setText("RA/".concat(nf.format(ra)).concat("°"));
+	    mouseXCoord.setPosition(x, 10f * GlobalConf.SCALE_FACTOR);
+	    mouseYCoord.setText("DEC/".concat(nf.format(dec)).concat("°"));
+	    mouseYCoord.setPosition(Gdx.graphics.getWidth() - (60f * GlobalConf.SCALE_FACTOR),
+		    Gdx.graphics.getHeight() - y);
+	    break;
+	case LON_LAT_UPDATED:
+	    Double lon = (Double) data[0];
+	    Double lat = (Double) data[1];
+	    x = (Integer) data[2];
+	    y = (Integer) data[3];
 
-            mouseXCoord.setText("Lon/" + nf.format(lon) + "°");
-            mouseXCoord.setPosition(x, 10);
-            mouseYCoord.setText("Lat/" + nf.format(lat) + "°");
-            mouseYCoord.setPosition(Gdx.graphics.getWidth() - 65, Gdx.graphics.getHeight() - y);
-            break;
-        case POPUP_MENU_FOCUS:
-            final CelestialBody candidate = (CelestialBody) data[0];
+	    mouseXCoord.setText("Lon/" + nf.format(lon) + "°");
+	    mouseXCoord.setPosition(x, 10f * GlobalConf.SCALE_FACTOR);
+	    mouseYCoord.setText("Lat/" + nf.format(lat) + "°");
+	    mouseYCoord.setPosition(Gdx.graphics.getWidth() - (60f * GlobalConf.SCALE_FACTOR),
+		    Gdx.graphics.getHeight() - y);
+	    break;
+	case POPUP_MENU_FOCUS:
+	    final CelestialBody candidate = (CelestialBody) data[0];
 
-            ContextMenu popup = new ContextMenu(skin, "default");
+	    ContextMenu popup = new ContextMenu(skin, "default");
 
-            MenuItem select = new MenuItem("Select object '" + candidate.getName() + "'", skin, "default");
-            select.addListener(new EventListener() {
+	    MenuItem select = new MenuItem("Select object '" + candidate.getName() + "'", skin, "default");
+	    select.addListener(new EventListener() {
 
-                @Override
-                public boolean handle(Event event) {
-                    if (event instanceof ChangeEvent) {
-                        EventManager.instance.post(Events.CAMERA_MODE_CMD, CameraMode.Focus);
-                        EventManager.instance.post(Events.FOCUS_CHANGE_CMD, candidate);
-                    }
-                    return false;
-                }
+		@Override
+		public boolean handle(Event event) {
+		    if (event instanceof ChangeEvent) {
+			EventManager.instance.post(Events.CAMERA_MODE_CMD, CameraMode.Focus);
+			EventManager.instance.post(Events.FOCUS_CHANGE_CMD, candidate);
+		    }
+		    return false;
+		}
 
-            });
-            MenuItem go = new MenuItem("Go to object '" + candidate.getName() + "'", skin, "default");
-            go.addListener(new EventListener() {
+	    });
+	    MenuItem go = new MenuItem("Go to object '" + candidate.getName() + "'", skin, "default");
+	    go.addListener(new EventListener() {
 
-                @Override
-                public boolean handle(Event event) {
-                    if (event instanceof ChangeEvent)
-                        EventManager.instance.post(Events.NAVIGATE_TO_OBJECT, candidate);
-                    return false;
-                }
+		@Override
+		public boolean handle(Event event) {
+		    if (event instanceof ChangeEvent)
+			EventManager.instance.post(Events.NAVIGATE_TO_OBJECT, candidate);
+		    return false;
+		}
 
-            });
+	    });
 
-            popup.addItem(select);
-            popup.addItem(go);
+	    popup.addItem(select);
+	    popup.addItem(go);
 
-            int mx = Gdx.input.getX();
-            int my = Gdx.input.getY();
-            int w = Gdx.graphics.getWidth();
-            int h = Gdx.graphics.getHeight();
-            float pw = popup.getWidth();
-            float ph = popup.getHeight();
+	    int mx = Gdx.input.getX();
+	    int my = Gdx.input.getY();
+	    int w = Gdx.graphics.getWidth();
+	    int h = Gdx.graphics.getHeight();
+	    float pw = popup.getWidth();
+	    float ph = popup.getHeight();
 
-            float px = mx;
-            float py = h - my - ph / 2;
+	    float px = mx;
+	    float py = h - my - ph / 2;
 
-            popup.showMenu(ui, px, py);
+	    popup.showMenu(ui, px, py);
 
-            break;
-        default:
-            break;
-        }
+	    break;
+	default:
+	    break;
+	}
 
     }
 
     @Override
     public void resize(final int width, final int height) {
-        Gdx.app.postRunnable(new Runnable() {
-            @Override
-            public void run() {
-                resizeImmediate(width, height);
-            }
-        });
+	Gdx.app.postRunnable(new Runnable() {
+	    @Override
+	    public void run() {
+		resizeImmediate(width, height);
+	    }
+	});
     }
 
     @Override
     public void resizeImmediate(final int width, final int height) {
-        ui.getViewport().update(width, height, true);
-        rebuildGui();
+	ui.getViewport().update(width, height, true);
+	rebuildGui();
     }
 
     /**
@@ -453,68 +458,68 @@ public class FullGui implements IGui, IObserver {
      */
     private class OwnTextField extends TextField {
 
-        public OwnTextField(String text, Skin skin) {
-            super(text, skin);
-        }
+	public OwnTextField(String text, Skin skin) {
+	    super(text, skin);
+	}
 
-        @Override
-        public float getPrefWidth() {
-            return getWidth() > 0 ? getWidth() : 150;
-        }
+	@Override
+	public float getPrefWidth() {
+	    return getWidth() > 0 ? getWidth() : 150;
+	}
 
     }
 
     @Override
     public Actor findActor(String name) {
-        return ui.getRoot().findActor(name);
+	return ui.getRoot().findActor(name);
     }
 
     private String txt(String key) {
-        return I18n.bundle.get(key);
+	return I18n.bundle.get(key);
     }
 
     private String txt(String key, Object... params) {
-        return I18n.bundle.format(key, params);
+	return I18n.bundle.format(key, params);
     }
 
     public void removeWebglInterface() {
-        if (webglInterface != null) {
-            webglInterface.remove();
-            webglInterface = null;
-            wgl.remove();
-            wgl = null;
-        }
+	if (webglInterface != null) {
+	    webglInterface.remove();
+	    webglInterface = null;
+	    wgl.remove();
+	    wgl = null;
+	}
     }
 
     public void addWebglInterface() {
-        webglInterface = new WebGLInterface(skin, GaiaSky.instance.time);
-        wgl = new Container<WebGLInterface>(webglInterface);
-        wgl.setFillParent(true);
-        wgl.left().bottom();
-        wgl.pad(0, 5, 45, 0);
+	webglInterface = new WebGLInterface(skin, GaiaSky.instance.time);
+	wgl = new Container<WebGLInterface>(webglInterface);
+	wgl.setFillParent(true);
+	wgl.left().bottom();
+	wgl.pad(0, 5, 45, 0);
     }
 
     public void removeControlsWindow() {
-        if (controlsWindow != null) {
-            controlsWindow.remove();
-            controlsWindow = null;
-        }
+	if (controlsWindow != null) {
+	    controlsWindow.remove();
+	    controlsWindow = null;
+	}
     }
 
     public void addControlsWindow() {
-        controlsWindow = new ControlsWindow(txt("gui.controlpanel"), skin, ui);
-        controlsWindow.setSceneGraph(sg);
-        controlsWindow.setVisibilityToggles(visibilityEntities, visible);
-        controlsWindow.initialize();
-        controlsWindow.left();
-        controlsWindow.getTitleTable().align(Align.left);
-        controlsWindow.setFillParent(false);
-        controlsWindow.setMovable(true);
-        controlsWindow.setResizable(false);
-        controlsWindow.padRight(5);
-        controlsWindow.padBottom(5);
+	controlsWindow = new ControlsWindow(txt("gui.controlpanel"), skin, ui);
+	controlsWindow.setSceneGraph(sg);
+	controlsWindow.setVisibilityToggles(visibilityEntities, visible);
+	controlsWindow.initialize();
+	controlsWindow.left();
+	controlsWindow.getTitleTable().align(Align.left);
+	controlsWindow.setFillParent(false);
+	controlsWindow.setMovable(true);
+	controlsWindow.setResizable(false);
+	controlsWindow.padRight(5);
+	controlsWindow.padBottom(5);
 
-        controlsWindow.collapseInstant();
+	controlsWindow.collapseInstant();
     }
 
 }

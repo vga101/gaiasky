@@ -21,6 +21,7 @@ import com.badlogic.gdx.utils.reflect.ReflectionException;
 import gaia.cu9.ari.gaiaorbit.render.IAnnotationsRenderable;
 import gaia.cu9.ari.gaiaorbit.render.IModelRenderable;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.ModelCache;
@@ -44,56 +45,57 @@ public class Grid extends AbstractPositionEntity implements IModelRenderable, IA
     private Vector3d auxd;
 
     public Grid() {
-        super();
-        localTransform = new Matrix4();
-        auxf = new Vector3();
-        auxd = new Vector3d();
+	super();
+	localTransform = new Matrix4();
+	auxf = new Vector3();
+	auxd = new Vector3d();
     }
 
     @Override
     public void initialize() {
-        mc = new ModelComponent();
+	mc = new ModelComponent();
     }
 
     @Override
     public void doneLoading(AssetManager manager) {
-        Material material = new Material(new BlendingAttribute(cc[3]), new ColorAttribute(ColorAttribute.Diffuse, cc[0], cc[1], cc[2], cc[3]));
-        // Load model
-        ModelBuilder2 modelBuilder = ModelCache.cache.mb;
-        modelBuilder.begin();
-        //create part
-        MeshPartBuilder2 bPartBuilder = modelBuilder.part("sph", GL20.GL_LINES, Usage.Position, material);
-        bPartBuilder.sphere(1, 1, 1, divisionsU, divisionsV);
+	Material material = new Material(new BlendingAttribute(cc[3]),
+		new ColorAttribute(ColorAttribute.Diffuse, cc[0], cc[1], cc[2], cc[3]));
+	// Load model
+	ModelBuilder2 modelBuilder = ModelCache.cache.mb;
+	modelBuilder.begin();
+	// create part
+	MeshPartBuilder2 bPartBuilder = modelBuilder.part("sph", GL20.GL_LINES, Usage.Position, material);
+	bPartBuilder.sphere(1, 1, 1, divisionsU, divisionsV);
 
-        Model model = (modelBuilder.end());
-        // Initialize transform
-        localTransform.scl(size);
-        if (transformName != null) {
-            Class<Coordinates> c = Coordinates.class;
-            try {
-                Method m = ClassReflection.getMethod(c, transformName);
-                Matrix4d trf = (Matrix4d) m.invoke(null);
-                Matrix4 aux = new Matrix4();
-                trf.putIn(aux);
-                localTransform.mul(aux);
-            } catch (ReflectionException e) {
-                Logger.error(Grid.class.getName(), "Error getting/invoking method Coordinates." + transformName + "()");
-            }
-        } else {
-            // Equatorial, nothing
-        }
-        mc.instance = new ModelInstance(model, this.localTransform);
+	Model model = (modelBuilder.end());
+	// Initialize transform
+	localTransform.scl(size);
+	if (transformName != null) {
+	    Class<Coordinates> c = Coordinates.class;
+	    try {
+		Method m = ClassReflection.getMethod(c, transformName);
+		Matrix4d trf = (Matrix4d) m.invoke(null);
+		Matrix4 aux = new Matrix4();
+		trf.putIn(aux);
+		localTransform.mul(aux);
+	    } catch (ReflectionException e) {
+		Logger.error(Grid.class.getName(), "Error getting/invoking method Coordinates." + transformName + "()");
+	    }
+	} else {
+	    // Equatorial, nothing
+	}
+	mc.instance = new ModelInstance(model, this.localTransform);
 
-        font = GlobalResources.skin.getFont("ui-11");
+	font = GlobalResources.skin.getFont("grid-annotation");
 
     }
 
     @Override
     protected void addToRenderLists(ICamera camera) {
-        // Render group never changes
-        // Add to toRender list
-        addToRender(this, RenderGroup.MODEL_B);
-        addToRender(this, RenderGroup.MODEL_B_ANNOT);
+	// Render group never changes
+	// Add to toRender list
+	addToRender(this, RenderGroup.MODEL_B);
+	addToRender(this, RenderGroup.MODEL_B_ANNOT);
     }
 
     @Override
@@ -105,10 +107,10 @@ public class Grid extends AbstractPositionEntity implements IModelRenderable, IA
      */
     @Override
     public void render(ModelBatch modelBatch, float alpha, float t) {
-        Gdx.gl.glLineWidth(1f);
-        mc.touch();
-        mc.setTransparencyColor(alpha * cc[3] * opacity);
-        modelBatch.render(mc.instance, mc.env);
+	Gdx.gl.glLineWidth(1f * GlobalConf.SCALE_FACTOR);
+	mc.touch();
+	mc.setTransparencyColor(alpha * cc[3] * opacity);
+	modelBatch.render(mc.instance, mc.env);
     }
 
     /**
@@ -117,52 +119,55 @@ public class Grid extends AbstractPositionEntity implements IModelRenderable, IA
     @Override
     public void render(SpriteBatch spriteBatch, ICamera camera, float alpha) {
 
-        // Horizon
-        float stepAngle = 360 / divisionsU;
-        alpha *= ANNOTATIONS_ALPHA;
-        for (int angle = 0; angle < 360; angle += stepAngle) {
-            auxf.set(Coordinates.sphericalToCartesian(Math.toRadians(angle), 0, 1f, auxd).valuesf()).mul(localTransform).nor();
-            if (auxf.dot(camera.getCamera().direction.nor()) > 0) {
-                auxf.add(camera.getCamera().position);
-                camera.getCamera().project(auxf);
-                float pl = .7f;
-                font.setColor(Math.min(1, cc[0] + pl), Math.min(1, cc[1] + pl), Math.min(1, cc[2] + pl), alpha);
-                font.draw(spriteBatch, Integer.toString(angle), auxf.x, auxf.y);
-            }
+	// Horizon
+	float stepAngle = 360 / divisionsU;
+	alpha *= ANNOTATIONS_ALPHA;
+	for (int angle = 0; angle < 360; angle += stepAngle) {
+	    auxf.set(Coordinates.sphericalToCartesian(Math.toRadians(angle), 0, 1f, auxd).valuesf()).mul(localTransform)
+		    .nor();
+	    if (auxf.dot(camera.getCamera().direction.nor()) > 0) {
+		auxf.add(camera.getCamera().position);
+		camera.getCamera().project(auxf);
+		float pl = .7f;
+		font.setColor(Math.min(1, cc[0] + pl), Math.min(1, cc[1] + pl), Math.min(1, cc[2] + pl), alpha);
+		font.draw(spriteBatch, Integer.toString(angle), auxf.x, auxf.y);
+	    }
 
-        }
-        // North-south line
-        stepAngle = 180 / divisionsV;
-        for (int angle = -90; angle <= 90; angle += stepAngle) {
-            if (angle != 0) {
-                auxf.set(Coordinates.sphericalToCartesian(0, Math.toRadians(angle), 1f, auxd).valuesf()).mul(localTransform).nor();
-                if (auxf.dot(camera.getCamera().direction.nor()) > 0) {
-                    auxf.add(camera.getCamera().position);
-                    camera.getCamera().project(auxf);
-                    float pl = .7f;
-                    font.setColor(Math.min(1, cc[0] + pl), Math.min(1, cc[1] + pl), Math.min(1, cc[2] + pl), alpha);
-                    font.draw(spriteBatch, Integer.toString(angle), auxf.x, auxf.y);
-                }
-                auxf.set(Coordinates.sphericalToCartesian(0, Math.toRadians(-angle), -1f, auxd).valuesf()).mul(localTransform).nor();
-                if (auxf.dot(camera.getCamera().direction.nor()) > 0) {
-                    auxf.add(camera.getCamera().position);
-                    camera.getCamera().project(auxf);
-                    float pl = .7f;
-                    font.setColor(Math.min(1, cc[0] + pl), Math.min(1, cc[1] + pl), Math.min(1, cc[2] + pl), alpha);
-                    font.draw(spriteBatch, Integer.toString(angle), auxf.x, auxf.y);
-                }
-            }
-        }
+	}
+	// North-south line
+	stepAngle = 180 / divisionsV;
+	for (int angle = -90; angle <= 90; angle += stepAngle) {
+	    if (angle != 0) {
+		auxf.set(Coordinates.sphericalToCartesian(0, Math.toRadians(angle), 1f, auxd).valuesf())
+			.mul(localTransform).nor();
+		if (auxf.dot(camera.getCamera().direction.nor()) > 0) {
+		    auxf.add(camera.getCamera().position);
+		    camera.getCamera().project(auxf);
+		    float pl = .7f;
+		    font.setColor(Math.min(1, cc[0] + pl), Math.min(1, cc[1] + pl), Math.min(1, cc[2] + pl), alpha);
+		    font.draw(spriteBatch, Integer.toString(angle), auxf.x, auxf.y);
+		}
+		auxf.set(Coordinates.sphericalToCartesian(0, Math.toRadians(-angle), -1f, auxd).valuesf())
+			.mul(localTransform).nor();
+		if (auxf.dot(camera.getCamera().direction.nor()) > 0) {
+		    auxf.add(camera.getCamera().position);
+		    camera.getCamera().project(auxf);
+		    float pl = .7f;
+		    font.setColor(Math.min(1, cc[0] + pl), Math.min(1, cc[1] + pl), Math.min(1, cc[2] + pl), alpha);
+		    font.draw(spriteBatch, Integer.toString(angle), auxf.x, auxf.y);
+		}
+	    }
+	}
 
     }
 
     public void setTransformName(String transformName) {
-        this.transformName = transformName;
+	this.transformName = transformName;
     }
 
     @Override
     public boolean hasAtmosphere() {
-        return false;
+	return false;
     }
 
 }
