@@ -71,15 +71,35 @@ public class HiddenHelperUser implements IObserver {
 
 	    name = body.getName();
 
-	    LandOnObjectTask landonTask = new LandOnObjectTask(name, currentTasks);
-	    Thread landonT = new Thread(landonTask);
+	    LandOnObjectTask landOnTask = new LandOnObjectTask(name, currentTasks);
+	    Thread landonT = new Thread(landOnTask);
 	    landonT.start();
-	    currentTasks.add(landonTask);
+	    currentTasks.add(landOnTask);
 	    lastCommandTime = TimeUtils.millis();
 
 	    break;
 	case LAND_AT_LOCATION_OF_OBJECT:
+	    if (data[0] instanceof String)
+		body = GaiaSky.instance.sg.findFocus((String) data[0]);
+	    else
+		body = ((CelestialBody) data[0]);
 
+	    name = body.getName();
+
+	    HelperTask landAtTask = null;
+	    if (data[1] instanceof String) {
+		String locname = (String) data[1];
+		landAtTask = new LandOnLocationTask(name, locname, currentTasks);
+	    } else {
+		Double lon = (Double) data[1];
+		Double lat = (Double) data[2];
+		landAtTask = new LandOnLocationTask(name, lon, lat, currentTasks);
+
+	    }
+	    Thread landAtLoc = new Thread(landAtTask);
+	    landAtLoc.start();
+	    currentTasks.add(landAtTask);
+	    lastCommandTime = TimeUtils.millis();
 	    break;
 	case INPUT_EVENT:
 	    // More than one second after the command is given to be able to
@@ -136,12 +156,40 @@ public class HiddenHelperUser implements IObserver {
 	public LandOnObjectTask(String name, Array<HelperTask> currentTasks) {
 	    super(currentTasks);
 	    this.name = name;
-
 	}
 
 	@Override
 	public void run() {
 	    EventScriptingInterface.instance().landOnObject(name, stop);
+	    currentTasks.removeValue(this, true);
+	}
+
+    }
+
+    private class LandOnLocationTask extends HelperTask {
+	String name;
+	String locName;
+	Double lon, lat;
+
+	public LandOnLocationTask(String name, String locName, Array<HelperTask> currentTasks) {
+	    super(currentTasks);
+	    this.name = name;
+	    this.locName = locName;
+	}
+
+	public LandOnLocationTask(String name, double lon, double lat, Array<HelperTask> currentTasks) {
+	    super(currentTasks);
+	    this.name = name;
+	    this.lon = lon;
+	    this.lat = lat;
+	}
+
+	@Override
+	public void run() {
+	    if (locName == null)
+		EventScriptingInterface.instance().landOnObjectLocation(name, lon, lat, stop);
+	    else
+		EventScriptingInterface.instance().landOnObjectLocation(name, locName, stop);
 	    currentTasks.removeValue(this, true);
 	}
 

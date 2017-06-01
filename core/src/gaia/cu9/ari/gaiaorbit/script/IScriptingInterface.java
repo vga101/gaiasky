@@ -562,6 +562,32 @@ public interface IScriptingInterface {
     public void landOnObject(String name);
 
     /**
+     * Lands on the object with the given name, if it is an instance of
+     * {@link gaia.cu9.ari.gaiaorbit.scenegraph.Planet}, at the location with
+     * the given name, if it exists.
+     * 
+     * @param name
+     *            The proper name of the object.
+     * @param locationName
+     *            The name of the location to land on
+     */
+    public void landOnObjectLocation(String name, String locationName);
+
+    /**
+     * Lands on the object with the given name, if it is an instance of
+     * {@link gaia.cu9.ari.gaiaorbit.scenegraph.Planet}, at the location
+     * specified in by [latitude, longitude], in degrees.
+     * 
+     * @param name
+     *            The proper name of the object.
+     * @param longitude
+     *            The location longitude, in degrees.
+     * @param latitude
+     *            The location latitude, in degrees.
+     */
+    public void landOnObjectLocation(String name, double longitude, double latitude);
+
+    /**
      * Returns the distance to the surface of the object identified with the
      * given name. If the object is an abstract node or does not exist, it
      * returns a negative distance.

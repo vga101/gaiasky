@@ -398,6 +398,9 @@ public class PreferencesWindow extends GenericDialog {
 	for (String file : files) {
 	    if (file.startsWith("gsbundle") && file.endsWith(".properties")) {
 		String locale = file.substring(i18nname.length(), file.length() - ".properties".length());
+		// Default locale
+		if (locale == null || locale.isEmpty())
+		    locale = "-en-GB";
 		if (locale.length() != 0) {
 		    // Remove underscore _
 		    locale = locale.substring(1).replace("_", "-");
