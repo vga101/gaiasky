@@ -509,6 +509,7 @@ public class GlobalConf {
 	public String UI_THEME;
 	public String SCRIPT_LOCATION;
 	public String LOCALE;
+	public boolean DISPLAY_HUD;
 	public boolean CUBEMAP360_MODE;
 	public boolean STEREOSCOPIC_MODE;
 	/** Eye separation in stereoscopic mode in meters **/
@@ -526,7 +527,7 @@ public class GlobalConf {
 		String tUTORIAL_SCRIPT_LOCATION, boolean sHOW_DEBUG_INFO, Date lAST_CHECKED, String lAST_VERSION,
 		String vERSION_CHECK_URL, String uI_THEME, String sCRIPT_LOCATION, String lOCALE,
 		boolean sTEREOSCOPIC_MODE, StereoProfile sTEREO_PROFILE, boolean cUBEMAP360_MODE,
-		boolean aNALYTICS_ENABLED) {
+		boolean aNALYTICS_ENABLED, boolean dISPLAY_HUD) {
 	    DISPLAY_TUTORIAL = dISPLAY_TUTORIAL;
 	    TUTORIAL_POINTER_SCRIPT_LOCATION = tUTORIAL_POINTER_SCRIPT_LOCATION;
 	    TUTORIAL_SCRIPT_LOCATION = tUTORIAL_SCRIPT_LOCATION;
@@ -541,6 +542,7 @@ public class GlobalConf {
 	    STEREO_PROFILE = sTEREO_PROFILE;
 	    CUBEMAP360_MODE = cUBEMAP360_MODE;
 	    ANALYTICS_ENABLED = aNALYTICS_ENABLED;
+	    DISPLAY_HUD = dISPLAY_HUD;
 	}
 
 	public void initialize(boolean dISPLAY_TUTORIAL, boolean sHOW_DEBUG_INFO, String uI_THEME, String lOCALE,
@@ -694,6 +696,7 @@ public class GlobalConf {
 	public double CAMERA_SPEED;
 	public double TURNING_SPEED;
 	public double ROTATION_SPEED;
+	public boolean FREE_CAMERA_TARGET_MODE_ON;
 	public int CAMERA_SPEED_LIMIT_IDX;
 	public double CAMERA_SPEED_LIMIT;
 	public boolean FOCUS_LOCK;
@@ -784,7 +787,7 @@ public class GlobalConf {
 		float pOINT_ALPHA_MAX, boolean oCTREE_PARTICLE_FADE, float oCTANT_TH_ANGLE_0, float oCTANT_TH_ANGLE_1,
 		boolean pROPER_MOTION_VECTORS, float pM_NUM_FACTOR, float pM_LEN_FACTOR, float sTAR_POINT_SIZE,
 		boolean gALAXY_3D, int cUBEMAP_FACE_RESOLUTION, boolean cROSSHAIR, boolean cINEMATIC_CAMERA,
-		boolean lAZY_TEXTURE_INIT) {
+		boolean lAZY_TEXTURE_INIT, boolean fREE_CAMERA_TARGET_MODE_ON) {
 	    GRAPHICS_QUALITY = gRAPHICS_QUALITY;
 	    OBJECT_FADE_MS = oBJECT_FADE_MS;
 	    STAR_BRIGHTNESS = sTAR_BRIGHTNESS;
@@ -793,6 +796,7 @@ public class GlobalConf {
 	    CAMERA_SPEED = cAMERA_SPEED;
 	    TURNING_SPEED = tURNING_SPEED;
 	    ROTATION_SPEED = rOTATION_SPEED;
+	    FREE_CAMERA_TARGET_MODE_ON = fREE_CAMERA_TARGET_MODE_ON;
 	    CAMERA_SPEED_LIMIT_IDX = cAMERA_SPEED_LIMIT_IDX;
 	    this.updateSpeedLimit();
 	    FOCUS_LOCK = fOCUS_LOCK;

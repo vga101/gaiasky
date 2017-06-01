@@ -513,7 +513,8 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
 	    NaturalCamera cam = GaiaSky.instance.cam.naturalCamera;
 
 	    // Post focus change
-	    if (!cam.isFocus(focus)) {
+	    if (!cam.isFocus(focus) || !cam.getMode().equals(CameraMode.Focus)) {
+		em.post(Events.CAMERA_MODE_CMD, CameraMode.Focus);
 		em.post(Events.FOCUS_CHANGE_CMD, name);
 
 		try {
@@ -571,7 +572,8 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
 		float focusWait = -1;
 
 		// Post focus change
-		if (!cam.isFocus(focus)) {
+		if (!cam.isFocus(focus) || !cam.getMode().equals(CameraMode.Focus)) {
+		    em.post(Events.CAMERA_MODE_CMD, CameraMode.Focus);
 		    em.post(Events.FOCUS_CHANGE_CMD, name);
 
 		    try {
@@ -614,23 +616,24 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
 		boolean viewNotMet = Math.abs(dir.angle(aux)) < 90;
 		while ((distanceNotMet || viewNotMet) && (stop == null || (stop != null && !stop.get()))) {
 		    if (distanceNotMet)
-			em.post(Events.CAMERA_FWD, 1d);
+			em.post(Events.CAMERA_FWD, 0.1d);
 		    else
 			cam.stopForwardMovement();
 
 		    if (viewNotMet) {
 			if (focus.distToCamera - focus.getRadius() < focus.getRadius() * 5)
 			    // Start turning where we are at n times the radius
-			    em.post(Events.CAMERA_TURN, 0d, GlobalConf.scene.CINEMATIC_CAMERA ? 1d / 20d : 1d);
-		    } else
+			    em.post(Events.CAMERA_TURN, 0d, GlobalConf.scene.CINEMATIC_CAMERA ? 1d / 20d : 0.5d);
+		    } else {
 			cam.stopTurnMovement();
+		    }
 
 		    try {
 			Thread.sleep(5);
 		    } catch (Exception e) {
 		    }
 
-		    focus.transform.getTranslation(aux);
+		    // focus.transform.getTranslation(aux);
 		    viewNotMet = Math.abs(dir.angle(aux)) < 90;
 		    distanceNotMet = (focus.distToCamera - focus.getRadius()) > target;
 		}

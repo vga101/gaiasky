@@ -279,7 +279,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 	    }
 	    break;
 	case Free_Camera:
-	    updatePosition(dt, translateUnits, 1);
+	    updatePosition(dt, translateUnits, GlobalConf.scene.FREE_CAMERA_TARGET_MODE_ON ? realTransUnits : 1);
 
 	    // Update direction with pitch, yaw, roll
 	    updateRotationFree(dt, GlobalConf.scene.TURNING_SPEED);
@@ -801,6 +801,9 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 	double dist;
 	if (parent.mode == CameraMode.Focus && focus != null) {
 	    AbstractPositionEntity ancestor = focus.getComputedAncestor();
+	    dist = ancestor.distToCamera - (ancestor.getRadius() + MIN_DIST);
+	} else if (parent.mode == CameraMode.Free_Camera && closest != null) {
+	    AbstractPositionEntity ancestor = closest.getComputedAncestor();
 	    dist = ancestor.distToCamera - (ancestor.getRadius() + MIN_DIST);
 	} else {
 	    dist = distance;

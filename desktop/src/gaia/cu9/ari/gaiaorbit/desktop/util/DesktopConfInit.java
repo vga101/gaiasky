@@ -90,7 +90,7 @@ public class DesktopConfInit extends ConfInit {
 	/** VERSION CONF **/
 	VersionConf vc = new VersionConf();
 	String versionStr = vp.getProperty("version");
-	int[] majminrev = GlobalConf.version.getMajorMinorRevFromString(versionStr);
+	int[] majminrev = VersionConf.getMajorMinorRevFromString(versionStr);
 	vc.initialize(versionStr, vp.getProperty("buildtime"), vp.getProperty("builder"), vp.getProperty("system"),
 		vp.getProperty("build"), majminrev[0], majminrev[1], majminrev[2]);
 	Logger.info("Gaia Sky version " + vc.version + " - build " + vc.build);
@@ -185,10 +185,11 @@ public class DesktopConfInit extends ConfInit {
 		.parseInt(p.getProperty("program.stereoscopic.profile"))];
 	boolean CUBEMAPE360_MODE = Boolean.parseBoolean(p.getProperty("program.cubemap360", "False"));
 	boolean ANALYTICS_ENABLED = Boolean.parseBoolean(p.getProperty("program.analytics", "True"));
+	boolean DISPLAY_HUD = Boolean.parseBoolean(p.getProperty("program.displayhud", "True"));
 
 	prc.initialize(DISPLAY_TUTORIAL, TUTORIAL_POINTER_SCRIPT_LOCATION, TUTORIAL_SCRIPT_LOCATION, SHOW_DEBUG_INFO,
 		LAST_CHECKED, LAST_VERSION, VERSION_CHECK_URL, UI_THEME, SCRIPT_LOCATION, LOCALE, STEREOSCOPIC_MODE,
-		STEREO_PROFILE, CUBEMAPE360_MODE, ANALYTICS_ENABLED);
+		STEREO_PROFILE, CUBEMAPE360_MODE, ANALYTICS_ENABLED, DISPLAY_HUD);
 
 	/** SCENE CONF **/
 	int GRAPHICS_QUALITY = Integer.parseInt(p.getProperty("scene.graphics.quality"));
@@ -219,6 +220,8 @@ public class DesktopConfInit extends ConfInit {
 	boolean GALAXY_3D = Boolean.parseBoolean(p.getProperty("scene.galaxy.3d", "true"));
 	boolean CROSSHAIR = Boolean.parseBoolean(p.getProperty("scene.crosshair", "true"));
 	boolean CINEMATIC_CAMERA = Boolean.parseBoolean(p.getProperty("scene.camera.cinematic", "false"));
+	boolean FREE_CAMERA_TARGET_MODE_ON = Boolean
+		.parseBoolean(p.getProperty("scene.camera.free.targetmode", "false"));
 	int CUBEMAP_FACE_RESOLUTION = Integer.parseInt(p.getProperty("scene.cubemapface.resolution", "1000"));
 	// Visibility of components
 	ComponentType[] cts = ComponentType.values();
@@ -237,7 +240,7 @@ public class DesktopConfInit extends ConfInit {
 		LABEL_NUMBER_FACTOR, VISIBILITY, PIXEL_RENDERER, LINE_RENDERER, STAR_TH_ANGLE_NONE, STAR_TH_ANGLE_POINT,
 		STAR_TH_ANGLE_QUAD, POINT_ALPHA_MIN, POINT_ALPHA_MAX, OCTREE_PARTICLE_FADE, OCTANT_THRESHOLD_0,
 		OCTANT_THRESHOLD_1, PROPER_MOTION_VECTORS, PM_NUM_FACTOR, PM_LEN_FACTOR, STAR_POINT_SIZE, GALAXY_3D,
-		CUBEMAP_FACE_RESOLUTION, CROSSHAIR, CINEMATIC_CAMERA, LAZY_TEXTURE_INIT);
+		CUBEMAP_FACE_RESOLUTION, CROSSHAIR, CINEMATIC_CAMERA, LAZY_TEXTURE_INIT, FREE_CAMERA_TARGET_MODE_ON);
 
 	/** FRAME CONF **/
 	String renderFolder = null;
@@ -365,6 +368,7 @@ public class DesktopConfInit extends ConfInit {
 	p.setProperty("program.tutorial.pointer.script", GlobalConf.program.TUTORIAL_POINTER_SCRIPT_LOCATION);
 	p.setProperty("program.tutorial.script", GlobalConf.program.TUTORIAL_SCRIPT_LOCATION);
 	p.setProperty("program.analytics", Boolean.toString(GlobalConf.program.ANALYTICS_ENABLED));
+	p.setProperty("program.displayhud", Boolean.toString(GlobalConf.program.DISPLAY_HUD));
 	p.setProperty("program.debuginfo", Boolean.toString(GlobalConf.program.SHOW_DEBUG_INFO));
 	p.setProperty("program.lastchecked",
 		GlobalConf.program.LAST_CHECKED != null ? df.format(GlobalConf.program.LAST_CHECKED) : "");
@@ -409,6 +413,7 @@ public class DesktopConfInit extends ConfInit {
 	p.setProperty("scene.cubemapface.resolution", Integer.toString(GlobalConf.scene.CUBEMAP_FACE_RESOLUTION));
 	p.setProperty("scene.crosshair", Boolean.toString(GlobalConf.scene.CROSSHAIR));
 	p.setProperty("scene.camera.cinematic", Boolean.toString(GlobalConf.scene.CINEMATIC_CAMERA));
+	p.setProperty("scene.camera.free.targetmode", Boolean.toString(GlobalConf.scene.FREE_CAMERA_TARGET_MODE_ON));
 
 	// Visibility of components
 	int idx = 0;
