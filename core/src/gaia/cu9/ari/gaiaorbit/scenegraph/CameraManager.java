@@ -99,7 +99,7 @@ public class CameraManager implements ICamera, IObserver {
 
     /** Last position, for working out velocity **/
     private Vector3d lastPos, out, in;
-    private Vector3 vec, v0, v1;
+    private Vector3 vec, v0, v1, isec;
     private Matrix4 localTransformInv;
 
     /** Current velocity in km/h **/
@@ -124,6 +124,7 @@ public class CameraManager implements ICamera, IObserver {
 	vec = new Vector3();
 	v0 = new Vector3();
 	v1 = new Vector3();
+	isec = new Vector3();
 	velocity = new Vector3d();
 	localTransformInv = new Matrix4();
 
@@ -261,7 +262,7 @@ public class CameraManager implements ICamera, IObserver {
 	    if (current.getFocus() != null && current.getFocus() instanceof Planet) {
 		Planet p = (Planet) current.getFocus();
 		double[] lonlat = new double[2];
-		boolean ok = CameraUtils.getLonLat(p, getCurrent(), screenX, screenY, v0, v1, vec, in, out,
+		boolean ok = CameraUtils.getLonLat(p, getCurrent(), screenX, screenY, v0, v1, vec, isec, in, out,
 			localTransformInv, lonlat);
 
 		if (ok)

@@ -251,7 +251,7 @@ public enum Events {
      * Contains an optional boolean indicating whether debug info should be
      * shown or not. Otherwise, it toggles its state
      **/
-    SHOW_DEBUG_CMD, SHOW_ABOUT_ACTION, SHOW_TUTORIAL_ACTION, SHOW_PREFERENCES_ACTION, SHOW_RUNSCRIPT_ACTION,
+    SHOW_DEBUG_CMD, SHOW_ABOUT_ACTION, SHOW_TUTORIAL_ACTION, SHOW_PREFERENCES_ACTION, SHOW_RUNSCRIPT_ACTION, SHOW_LAND_AT_LOCATION_ACTION,
     /** Shows the camera path file selector, contains the stage and the skin **/
     SHOW_PLAYCAMERA_ACTION,
     /** Informs about the number of running scripts **/

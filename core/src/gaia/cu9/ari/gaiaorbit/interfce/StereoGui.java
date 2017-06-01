@@ -5,7 +5,6 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
@@ -45,65 +44,65 @@ public class StereoGui implements IGui, IObserver {
     private Object lock;
 
     public void initialize(AssetManager assetManager) {
-        // User interface
-        ui = new Stage(new ScreenViewport(), GlobalResources.spriteBatch);
-        lock = new Object();
+	// User interface
+	ui = new Stage(new ScreenViewport(), GlobalResources.spriteBatch);
+	lock = new Object();
     }
 
     /**
      * Constructs the interface
      */
     public void doneLoading(AssetManager assetManager) {
-        Logger.info(txt("notif.gui.init"));
+	Logger.info(txt("notif.gui.init"));
 
-        interfaces = new Array<IGuiInterface>();
+	interfaces = new Array<IGuiInterface>();
 
-        skin = GlobalResources.skin;
+	skin = GlobalResources.skin;
 
-        buildGui();
+	buildGui();
 
-        // We must subscribe to the desired events
-        EventManager.instance.subscribe(this, Events.TOGGLE_STEREO_PROFILE_INFO);
+	// We must subscribe to the desired events
+	EventManager.instance.subscribe(this, Events.TOGGLE_STEREO_PROFILE_INFO);
     }
 
     private void buildGui() {
-        // Component types name init
-        for (ComponentType ct : ComponentType.values()) {
-            ct.getName();
-        }
+	// Component types name init
+	for (ComponentType ct : ComponentType.values()) {
+	    ct.getName();
+	}
 
-        nf = NumberFormatFactory.getFormatter("##0.###");
+	nf = NumberFormatFactory.getFormatter("##0.###");
 
-        // NOTIFICATIONS ONE - BOTTOM LEFT
-        notificationsOne = new NotificationsInterface(skin, lock, true, true, false);
-        notificationsOne.setFillParent(true);
-        notificationsOne.left().bottom();
-        notificationsOne.pad(0, 5, 5, 0);
-        interfaces.add(notificationsOne);
+	// NOTIFICATIONS ONE - BOTTOM LEFT
+	notificationsOne = new NotificationsInterface(skin, lock, true, true, false);
+	notificationsOne.setFillParent(true);
+	notificationsOne.left().bottom();
+	notificationsOne.pad(0, 5, 5, 0);
+	interfaces.add(notificationsOne);
 
-        // NOTIFICATIONS TWO - BOTTOM CENTRE
-        notificationsTwo = new NotificationsInterface(skin, lock, true, true, false);
-        notificationsTwo.setFillParent(true);
-        notificationsTwo.bottom();
-        notificationsTwo.setX(Gdx.graphics.getWidth() / 2);
-        notificationsTwo.pad(0, 5, 5, 0);
-        interfaces.add(notificationsTwo);
+	// NOTIFICATIONS TWO - BOTTOM CENTRE
+	notificationsTwo = new NotificationsInterface(skin, lock, true, true, false);
+	notificationsTwo.setFillParent(true);
+	notificationsTwo.bottom();
+	notificationsTwo.setX(Gdx.graphics.getWidth() / 2);
+	notificationsTwo.pad(0, 5, 5, 0);
+	interfaces.add(notificationsTwo);
 
-        /** ADD TO UI **/
-        rebuildGui();
+	/** ADD TO UI **/
+	rebuildGui();
 
     }
 
     private void rebuildGui() {
 
-        if (ui != null) {
-            ui.clear();
-            if (notificationsOne != null)
-                ui.addActor(notificationsOne);
-            if (notificationsTwo != null)
-                ui.addActor(notificationsTwo);
+	if (ui != null) {
+	    ui.clear();
+	    if (notificationsOne != null)
+		ui.addActor(notificationsOne);
+	    if (notificationsTwo != null)
+		ui.addActor(notificationsTwo);
 
-        }
+	}
     }
 
     /**
@@ -113,107 +112,88 @@ public class StereoGui implements IGui, IObserver {
      * @return true if the focus was in the GUI, false otherwise.
      */
     public boolean cancelTouchFocus() {
-        if (ui.getScrollFocus() != null) {
-            ui.setScrollFocus(null);
-            ui.setKeyboardFocus(null);
-            return true;
-        }
-        return false;
+	if (ui.getScrollFocus() != null) {
+	    ui.setScrollFocus(null);
+	    ui.setKeyboardFocus(null);
+	    return true;
+	}
+	return false;
     }
 
     @Override
     public Stage getGuiStage() {
-        return ui;
+	return ui;
     }
 
     @Override
     public void dispose() {
-        for (IGuiInterface iface : interfaces)
-            iface.dispose();
+	for (IGuiInterface iface : interfaces)
+	    iface.dispose();
 
-        ui.dispose();
-        EventManager.instance.removeAllSubscriptions(this);
+	ui.dispose();
+	EventManager.instance.removeAllSubscriptions(this);
     }
 
     @Override
     public void update(float dt) {
-        notificationsTwo.setX(notificationsTwo.getMessagesWidth() / 2);
-        ui.act(dt);
+	notificationsTwo.setX(notificationsTwo.getMessagesWidth() / 2);
+	ui.act(dt);
     }
 
     @Override
     public void render(int rw, int rh) {
-        synchronized (lock) {
-            ui.draw();
-        }
+	synchronized (lock) {
+	    ui.draw();
+	}
     }
 
     public String getName() {
-        return "GUI";
+	return "GUI";
     }
 
     @Override
     public void notify(Events event, Object... data) {
-        switch (event) {
-        case TOGGLE_STEREO_PROFILE_INFO:
-            StereoProfile profile = (StereoProfile) data[0];
-            if (profile == StereoProfile.ANAGLYPHIC) {
-                notificationsTwo.setVisible(false);
-            } else {
-                notificationsTwo.setVisible(true);
-            }
-            break;
-        default:
-            break;
-        }
+	switch (event) {
+	case TOGGLE_STEREO_PROFILE_INFO:
+	    StereoProfile profile = (StereoProfile) data[0];
+	    if (profile == StereoProfile.ANAGLYPHIC) {
+		notificationsTwo.setVisible(false);
+	    } else {
+		notificationsTwo.setVisible(true);
+	    }
+	    break;
+	default:
+	    break;
+	}
     }
 
     @Override
     public void resize(final int width, final int height) {
-        Gdx.app.postRunnable(new Runnable() {
-            @Override
-            public void run() {
-                resizeImmediate(width, height);
-            }
-        });
+	Gdx.app.postRunnable(new Runnable() {
+	    @Override
+	    public void run() {
+		resizeImmediate(width, height);
+	    }
+	});
     }
 
     @Override
     public void resizeImmediate(final int width, final int height) {
-        ui.getViewport().update(width, height, true);
-        rebuildGui();
-    }
-
-    /**
-     * Small override that returns the user set width as preferred width.
-     * 
-     * @author Toni Sagrista
-     *
-     */
-    private class OwnTextField extends TextField {
-
-        public OwnTextField(String text, Skin skin) {
-            super(text, skin);
-        }
-
-        @Override
-        public float getPrefWidth() {
-            return getWidth() > 0 ? getWidth() : 150;
-        }
-
+	ui.getViewport().update(width, height, true);
+	rebuildGui();
     }
 
     @Override
     public Actor findActor(String name) {
-        return ui.getRoot().findActor(name);
+	return ui.getRoot().findActor(name);
     }
 
     private String txt(String key) {
-        return I18n.bundle.get(key);
+	return I18n.bundle.get(key);
     }
 
     private String txt(String key, Object... params) {
-        return I18n.bundle.format(key, params);
+	return I18n.bundle.format(key, params);
     }
 
     @Override

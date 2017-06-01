@@ -520,15 +520,8 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
 	    NaturalCamera cam = GaiaSky.instance.cam.naturalCamera;
 
 	    // Post focus change
-	    if (!cam.isFocus(focus) || !cam.getMode().equals(CameraMode.Focus)) {
-		em.post(Events.CAMERA_MODE_CMD, CameraMode.Focus);
-		em.post(Events.FOCUS_CHANGE_CMD, name);
-
-		try {
-		    Thread.sleep(100);
-		} catch (Exception e) {
-		}
-	    }
+	    em.post(Events.CAMERA_MODE_CMD, CameraMode.Focus);
+	    em.post(Events.FOCUS_CHANGE_CMD, name);
 
 	    // Wait til camera is facing focus
 	    if (focusWait < 0) {
@@ -549,8 +542,13 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
 		target = Math.toRadians(20d);
 
 	    // Add forward movement while distance > target distance
+	    long prevtime = TimeUtils.millis();
 	    while (focus.viewAngleApparent < target && (stop == null || (stop != null && !stop.get()))) {
-		em.post(Events.CAMERA_FWD, 1d);
+		// dt in ms
+		long dt = TimeUtils.timeSinceMillis(prevtime);
+		prevtime = TimeUtils.millis();
+
+		em.post(Events.CAMERA_FWD, 1d * dt);
 		try {
 		    Thread.sleep(5);
 		} catch (Exception e) {
@@ -580,15 +578,8 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
 		float focusWait = -1;
 
 		// Post focus change
-		if (!cam.isFocus(focus) || !cam.getMode().equals(CameraMode.Focus)) {
-		    em.post(Events.CAMERA_MODE_CMD, CameraMode.Focus);
-		    em.post(Events.FOCUS_CHANGE_CMD, name);
-
-		    try {
-			Thread.sleep(100);
-		    } catch (Exception e) {
-		    }
-		}
+		em.post(Events.CAMERA_MODE_CMD, CameraMode.Focus);
+		em.post(Events.FOCUS_CHANGE_CMD, name);
 
 		// Wait til camera is facing focus
 		if (focusWait < 0) {
@@ -619,25 +610,34 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
 		em.post(Events.TURNING_SPEED_CMD, (float) MathUtilsd.lint(50d, Constants.MIN_SLIDER,
 			Constants.MAX_SLIDER, Constants.MIN_TURN_SPEED, Constants.MAX_TURN_SPEED), false);
 
+		// Save cinematic
+		boolean cinematic = GlobalConf.scene.CINEMATIC_CAMERA;
+		GlobalConf.scene.CINEMATIC_CAMERA = true;
+
 		// Add forward movement while distance > target distance
 		boolean distanceNotMet = (focus.distToCamera - focus.getRadius()) > target;
 		boolean viewNotMet = Math.abs(dir.angle(aux)) < 90;
+		long prevtime = TimeUtils.millis();
 		while ((distanceNotMet || viewNotMet) && (stop == null || (stop != null && !stop.get()))) {
+		    // dt in ms
+		    long dt = TimeUtils.timeSinceMillis(prevtime);
+		    prevtime = TimeUtils.millis();
+
 		    if (distanceNotMet)
-			em.post(Events.CAMERA_FWD, 0.1d);
+			em.post(Events.CAMERA_FWD, 0.1d * dt);
 		    else
 			cam.stopForwardMovement();
 
 		    if (viewNotMet) {
 			if (focus.distToCamera - focus.getRadius() < focus.getRadius() * 5)
 			    // Start turning where we are at n times the radius
-			    em.post(Events.CAMERA_TURN, 0d, GlobalConf.scene.CINEMATIC_CAMERA ? 1d / 20d : 0.5d);
+			    em.post(Events.CAMERA_TURN, 0d, dt / 500d);
 		    } else {
 			cam.stopTurnMovement();
 		    }
 
 		    try {
-			Thread.sleep(5);
+			Thread.sleep(20);
 		    } catch (Exception e) {
 		    }
 
@@ -645,6 +645,9 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
 		    viewNotMet = Math.abs(dir.angle(aux)) < 90;
 		    distanceNotMet = (focus.distToCamera - focus.getRadius()) > target;
 		}
+
+		// Restore cinematic
+		GlobalConf.scene.CINEMATIC_CAMERA = cinematic;
 
 		// Restore speed
 		em.post(Events.CAMERA_SPEED_CMD, (float) speed, false);
@@ -673,18 +676,13 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
 	    CelestialBody focus = sg.findFocus(name);
 	    if (focus instanceof Planet) {
 		Planet planet = (Planet) focus;
-		if (planet.children != null) {
-		    for (SceneGraphNode sgn : planet.children) {
-			if (sgn instanceof Loc) {
-			    Loc location = (Loc) sgn;
-			    if (location.getName().equalsIgnoreCase(locationName)) {
-				landOnObjectLocation(name, location.getLocation().x, location.getLocation().y, stop);
-				return;
-			    }
-			}
-		    }
-		    Logger.info("Location '" + locationName + "' not found on object '" + name + "'");
+		SceneGraphNode sgn = planet.getChildByNameAndType(locationName, Loc.class);
+		if (sgn != null) {
+		    Loc location = (Loc) sgn;
+		    landOnObjectLocation(name, location.getLocation().x, location.getLocation().y, stop);
+		    return;
 		}
+		Logger.info("Location '" + locationName + "' not found on object '" + name + "'");
 	    }
 	}
     }
@@ -707,12 +705,13 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
 		NaturalCamera cam = GaiaSky.instance.cam.naturalCamera;
 
 		// Go to object
-		goToObject(name, 40);
+		goToObject(name, 40, -1);
 
 		// Position camera above lon/lat
 		Vector3 v0 = new Vector3();
 		Vector3 v1 = new Vector3();
 		Vector3 vec = new Vector3();
+		Vector3 isec = new Vector3();
 		Vector3d in = new Vector3d();
 		Vector3d out = new Vector3d();
 		Matrix4 mat = new Matrix4();
@@ -723,26 +722,31 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
 		int centerx = Gdx.graphics.getWidth() / 2;
 		int centery = Gdx.graphics.getHeight() / 2;
 
-		ok = CameraUtils.getLonLat(planet, cam, centerx, centery, v0, v1, vec, in, out, mat, lonlat);
+		ok = CameraUtils.getLonLat(planet, cam, centerx, centery, v0, v1, vec, isec, in, out, mat, lonlat);
 		boolean lonNotMet = Math.abs(lonlat[0] - longitude) > .2;
 		boolean latNotMet = Math.abs(lonlat[1] - latitude) > .2;
+		long prevtime = TimeUtils.millis();
 		while (ok && (lonNotMet || latNotMet) && (stop == null || (stop != null && !stop.get()))) {
+		    // dt in ms
+		    long dt = TimeUtils.timeSinceMillis(prevtime);
+		    prevtime = TimeUtils.millis();
+
 		    // Get xy displacement
 		    CameraUtils.projectLonLat(planet, cam, longitude, latitude, v0, v1, in, out, mat, xy);
 		    xy.x = xy.x - centerx;
 		    xy.y = xy.y - centery;
-		    float len = MathUtils.clamp(xy.len(), 1f, 8f);
+		    float len = MathUtils.clamp(xy.len(), 1f, 5000f) * 0.1f;
 		    xy.setLength(len);
 
 		    // Move
-		    cameraRotate(-xy.x, -xy.y);
+		    cameraRotate(-xy.x * dt, -xy.y * dt);
 
 		    try {
 			Thread.sleep(10);
 		    } catch (Exception e) {
 		    }
 
-		    ok = CameraUtils.getLonLat(planet, cam, centerx, centery, v0, v1, vec, in, out, mat, lonlat);
+		    ok = CameraUtils.getLonLat(planet, cam, centerx, centery, v0, v1, vec, isec, in, out, mat, lonlat);
 		    lonNotMet = Math.abs(lonlat[0] - longitude) > .2;
 		    latNotMet = Math.abs(lonlat[1] - latitude) > .2;
 		}

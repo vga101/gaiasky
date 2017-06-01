@@ -356,6 +356,28 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
 	children = new Array<SceneGraphNode>(false, size);
     }
 
+    public SceneGraphNode getChildByNameAndType(String name, Class<? extends SceneGraphNode> clazz) {
+	int size = children.size;
+	for (int i = 0; i < size; i++) {
+	    SceneGraphNode child = children.get(i);
+	    if (child.getName().equalsIgnoreCase(name) && clazz.isInstance(child)) {
+		return child;
+	    }
+	}
+	return null;
+    }
+
+    public SceneGraphNode getChildByName(String name) {
+	int size = children.size;
+	for (int i = 0; i < size; i++) {
+	    SceneGraphNode child = children.get(i);
+	    if (child.getName().equalsIgnoreCase(name)) {
+		return child;
+	    }
+	}
+	return null;
+    }
+
     public SceneGraphNode getNode(String name) {
 	if (this.name != null && this.name.equals(name)) {
 	    return this;

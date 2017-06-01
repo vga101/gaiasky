@@ -126,7 +126,7 @@ public class FullGui implements IGui, IObserver {
 	EventManager.instance.subscribe(this, Events.FOV_CHANGED_CMD, Events.SHOW_TUTORIAL_ACTION,
 		Events.SHOW_SEARCH_ACTION, Events.REMOVE_KEYBOARD_FOCUS, Events.REMOVE_GUI_COMPONENT,
 		Events.ADD_GUI_COMPONENT, Events.SHOW_ABOUT_ACTION, Events.RA_DEC_UPDATED, Events.LON_LAT_UPDATED,
-		Events.POPUP_MENU_FOCUS, Events.SHOW_PREFERENCES_ACTION);
+		Events.POPUP_MENU_FOCUS, Events.SHOW_PREFERENCES_ACTION, Events.SHOW_LAND_AT_LOCATION_ACTION);
     }
 
     private void buildGui() {
@@ -328,6 +328,11 @@ public class FullGui implements IGui, IObserver {
 	    }
 	    searchDialog.display();
 	    break;
+	case SHOW_LAND_AT_LOCATION_ACTION:
+	    CelestialBody target = (CelestialBody) data[0];
+	    LandAtWindow landAtLocation = new LandAtWindow(target, ui, skin);
+	    landAtLocation.show(ui);
+	    break;
 	case SHOW_ABOUT_ACTION:
 	    if (aboutWindow == null) {
 		aboutWindow = new AboutWindow(ui, skin);
@@ -441,8 +446,8 @@ public class FullGui implements IGui, IObserver {
 
 		double[] lonlat = new double[2];
 		boolean ok = CameraUtils.getLonLat(p, GaiaSky.instance.getICamera(), Gdx.input.getX(), Gdx.input.getY(),
-			new Vector3(), new Vector3(), new Vector3(), new Vector3d(), new Vector3d(), new Matrix4(),
-			lonlat);
+			new Vector3(), new Vector3(), new Vector3(), new Vector3(), new Vector3d(), new Vector3d(),
+			new Matrix4(), lonlat);
 		if (ok) {
 		    final Double pointerLon = lonlat[0];
 		    final Double pointerLat = lonlat[1];
@@ -471,7 +476,7 @@ public class FullGui implements IGui, IObserver {
 		    @Override
 		    public boolean handle(Event event) {
 			if (event instanceof ChangeEvent) {
-			    EventManager.instance.post(Events.LAND_AT_LOCATION_OF_OBJECT, candidate, "Barcelona");
+			    EventManager.instance.post(Events.SHOW_LAND_AT_LOCATION_ACTION, candidate);
 			    return true;
 			}
 			return false;
@@ -483,13 +488,10 @@ public class FullGui implements IGui, IObserver {
 
 	    int mx = Gdx.input.getX();
 	    int my = Gdx.input.getY();
-	    int w = Gdx.graphics.getWidth();
 	    int h = Gdx.graphics.getHeight();
-	    float pw = popup.getWidth();
-	    float ph = popup.getHeight();
 
 	    float px = mx;
-	    float py = h - my - ph / 2;
+	    float py = h - my - 20 * GlobalConf.SCALE_FACTOR;
 
 	    popup.showMenu(ui, px, py);
 
@@ -514,25 +516,6 @@ public class FullGui implements IGui, IObserver {
     public void resizeImmediate(final int width, final int height) {
 	ui.getViewport().update(width, height, true);
 	rebuildGui();
-    }
-
-    /**
-     * Small override that returns the user set width as preferred width.
-     * 
-     * @author Toni Sagrista
-     *
-     */
-    private class OwnTextField extends TextField {
-
-	public OwnTextField(String text, Skin skin) {
-	    super(text, skin);
-	}
-
-	@Override
-	public float getPrefWidth() {
-	    return getWidth() > 0 ? getWidth() : 150;
-	}
-
     }
 
     @Override
