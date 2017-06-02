@@ -324,7 +324,7 @@ public class NaturalInputController extends GestureDetector {
 			    // Right click, context menu
 			    CelestialBody hit = getBestHit(screenX, screenY);
 			    if (hit != null) {
-				EventManager.instance.post(Events.POPUP_MENU_FOCUS, hit);
+				EventManager.instance.post(Events.POPUP_MENU_FOCUS, hit, screenX, screenY);
 			    }
 			}
 		    }

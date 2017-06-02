@@ -394,6 +394,8 @@ public class FullGui implements IGui, IObserver {
 	    break;
 	case POPUP_MENU_FOCUS:
 	    final CelestialBody candidate = (CelestialBody) data[0];
+	    Integer screenX = (Integer) data[1];
+	    Integer screenY = (Integer) data[2];
 
 	    ContextMenu popup = new ContextMenu(skin, "default");
 
@@ -445,9 +447,9 @@ public class FullGui implements IGui, IObserver {
 		popup.addItem(landOn);
 
 		double[] lonlat = new double[2];
-		boolean ok = CameraUtils.getLonLat(p, GaiaSky.instance.getICamera(), Gdx.input.getX(), Gdx.input.getY(),
-			new Vector3(), new Vector3(), new Vector3(), new Vector3(), new Vector3d(), new Vector3d(),
-			new Matrix4(), lonlat);
+		boolean ok = CameraUtils.getLonLat(p, GaiaSky.instance.getICamera(), screenX, screenY, new Vector3(),
+			new Vector3(), new Vector3(), new Vector3(), new Vector3d(), new Vector3d(), new Matrix4(),
+			lonlat);
 		if (ok) {
 		    final Double pointerLon = lonlat[0];
 		    final Double pointerLat = lonlat[1];
