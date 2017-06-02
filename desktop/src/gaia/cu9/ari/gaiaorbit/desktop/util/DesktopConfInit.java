@@ -298,9 +298,10 @@ public class DesktopConfInit extends ConfInit {
 
 	/** CONTROLS CONF **/
 	ControlsConf cc = new ControlsConf();
+	String cONTROLLER_MAPPINGS_FILE = p.getProperty("controls.mappings.file", "mappings/xbox360.controller");
 	boolean INVERT_LOOK_Y_AXIS = Boolean.parseBoolean(p.getProperty("controls.invert.y", "true"));
 
-	cc.initialize(INVERT_LOOK_Y_AXIS);
+	cc.initialize(cONTROLLER_MAPPINGS_FILE, INVERT_LOOK_Y_AXIS);
 
 	/** INIT GLOBAL CONF **/
 	GlobalConf.initialize(vc, prc, sc, dc, rc, ppc, pc, fc, scrc, shc, cc);

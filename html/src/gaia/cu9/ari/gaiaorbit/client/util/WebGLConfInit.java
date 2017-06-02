@@ -68,7 +68,7 @@ public class WebGLConfInit extends ConfInit {
 	ScreenshotConf shc = new ScreenshotConf();
 
 	ControlsConf cc = new ControlsConf();
-	cc.initialize(true);
+	cc.initialize("mappings/xbox360.controller", true);
 
 	GlobalConf.initialize(vc, prc, sc, dc, rc, ppc, pc, fc, scrc, shc, cc);
 

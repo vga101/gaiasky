@@ -165,13 +165,15 @@ public class GlobalConf {
     }
 
     public static class ControlsConf implements IConf {
+	public String CONTROLLER_MAPPINGS_FILE;
 	public boolean INVERT_LOOK_Y_AXIS;
 
 	public ControlsConf() {
 
 	}
 
-	public void initialize(boolean iNVERT_LOOK_Y_AXIS) {
+	public void initialize(String cONTROLLER_MAPPINGS_FILE, boolean iNVERT_LOOK_Y_AXIS) {
+	    CONTROLLER_MAPPINGS_FILE = cONTROLLER_MAPPINGS_FILE;
 	    INVERT_LOOK_Y_AXIS = iNVERT_LOOK_Y_AXIS;
 	}
     }

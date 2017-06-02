@@ -163,7 +163,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 	accelerometer = Gdx.input.isPeripheralAvailable(Peripheral.Accelerometer);
 
 	inputController = new NaturalInputController(this);
-	controllerListener = new NaturalControllerListener(this);
+	controllerListener = new NaturalControllerListener(this, GlobalConf.controls.CONTROLLER_MAPPINGS_FILE);
 
 	// Init sprite batch for crosshair
 	spriteBatch = new SpriteBatch();
