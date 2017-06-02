@@ -707,6 +707,15 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
 		// Go to object
 		goToObject(name, 40, -1);
 
+		// Save rotate speed, set it to 50
+		double rotateSpeedBak = GlobalConf.scene.ROTATION_SPEED;
+		em.post(Events.ROTATION_SPEED_CMD, (float) MathUtilsd.lint(25d, Constants.MIN_SLIDER,
+			Constants.MAX_SLIDER, Constants.MIN_ROT_SPEED, Constants.MAX_ROT_SPEED), false);
+
+		// Save cinematic
+		boolean cinematic = GlobalConf.scene.CINEMATIC_CAMERA;
+		GlobalConf.scene.CINEMATIC_CAMERA = false;
+
 		// Position camera above lon/lat
 		Vector3 v0 = new Vector3();
 		Vector3 v1 = new Vector3();
@@ -750,6 +759,12 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
 		    lonNotMet = Math.abs(lonlat[0] - longitude) > .2;
 		    latNotMet = Math.abs(lonlat[1] - latitude) > .2;
 		}
+
+		// Restore cinematic
+		GlobalConf.scene.CINEMATIC_CAMERA = cinematic;
+
+		// Restore rotation speed
+		em.post(Events.ROTATION_SPEED_CMD, (float) rotateSpeedBak, false);
 
 		// Land
 		landOnObject(name, stop);

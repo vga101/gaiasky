@@ -5,8 +5,6 @@ import java.util.List;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.math.Matrix4;
-import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
@@ -42,10 +40,8 @@ import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
-import gaia.cu9.ari.gaiaorbit.util.camera.CameraUtils;
 import gaia.cu9.ari.gaiaorbit.util.format.INumberFormat;
 import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
-import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.ContextMenu;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.MenuItem;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnLabel;
@@ -446,31 +442,37 @@ public class FullGui implements IGui, IObserver {
 		});
 		popup.addItem(landOn);
 
-		double[] lonlat = new double[2];
-		boolean ok = CameraUtils.getLonLat(p, GaiaSky.instance.getICamera(), screenX, screenY, new Vector3(),
-			new Vector3(), new Vector3(), new Vector3(), new Vector3d(), new Vector3d(), new Matrix4(),
-			lonlat);
-		if (ok) {
-		    final Double pointerLon = lonlat[0];
-		    final Double pointerLat = lonlat[1];
-		    // Add mouse pointer
-		    MenuItem landOnPointer = new MenuItem(txt("context.landatpointer", candidate.getName()), skin,
-			    "default");
-		    landOnPointer.addListener(new EventListener() {
-
-			@Override
-			public boolean handle(Event event) {
-			    if (event instanceof ChangeEvent) {
-				EventManager.instance.post(Events.LAND_AT_LOCATION_OF_OBJECT, candidate, pointerLon,
-					pointerLat);
-				return true;
-			    }
-			    return false;
-			}
-
-		    });
-		    popup.addItem(landOnPointer);
-		}
+		// double[] lonlat = new double[2];
+		// boolean ok = CameraUtils.getLonLat(p,
+		// GaiaSky.instance.getICamera(), screenX, screenY, new
+		// Vector3(),
+		// new Vector3(), new Vector3(), new Vector3(), new Vector3d(),
+		// new Vector3d(), new Matrix4(),
+		// lonlat);
+		// if (ok) {
+		// final Double pointerLon = lonlat[0];
+		// final Double pointerLat = lonlat[1];
+		// // Add mouse pointer
+		// MenuItem landOnPointer = new
+		// MenuItem(txt("context.landatpointer", candidate.getName()),
+		// skin,
+		// "default");
+		// landOnPointer.addListener(new EventListener() {
+		//
+		// @Override
+		// public boolean handle(Event event) {
+		// if (event instanceof ChangeEvent) {
+		// EventManager.instance.post(Events.LAND_AT_LOCATION_OF_OBJECT,
+		// candidate, pointerLon,
+		// pointerLat);
+		// return true;
+		// }
+		// return false;
+		// }
+		//
+		// });
+		// popup.addItem(landOnPointer);
+		// }
 
 		MenuItem landOnCoord = new MenuItem(txt("context.landatcoord", candidate.getName()), skin, "default");
 		landOnCoord.addListener(new EventListener() {

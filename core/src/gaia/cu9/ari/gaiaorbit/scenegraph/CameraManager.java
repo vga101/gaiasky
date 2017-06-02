@@ -103,9 +103,9 @@ public class CameraManager implements ICamera, IObserver {
     private Matrix4 localTransformInv;
 
     /** Current velocity in km/h **/
-    private double speed;
+    protected double speed;
     /** Velocity vector **/
-    private Vector3d velocity;
+    protected Vector3d velocity, velocitynor;
 
     public CameraManager(AssetManager manager, CameraMode mode) {
 	// Initialize
@@ -126,6 +126,7 @@ public class CameraManager implements ICamera, IObserver {
 	v1 = new Vector3();
 	isec = new Vector3();
 	velocity = new Vector3d();
+	velocitynor = new Vector3d();
 	localTransformInv = new Matrix4();
 
 	updateCurrentCamera(previousMode);
@@ -223,10 +224,11 @@ public class CameraManager implements ICamera, IObserver {
 
 	// Speed = dx/dt
 	velocity.set(lastPos).sub(current.getPos());
+	velocitynor.set(velocity).nor();
 	speed = (velocity.len() * Constants.U_TO_KM) / (dt * Constants.S_TO_H);
 
 	// Post event with camera motion parameters
-	EventManager.instance.post(Events.CAMERA_MOTION_UPDATED, current.getPos(), speed, velocity.nor(),
+	EventManager.instance.post(Events.CAMERA_MOTION_UPDATED, current.getPos(), speed, velocitynor,
 		current.getCamera());
 
 	// Update last pos

@@ -5,9 +5,11 @@ import com.badlogic.gdx.Input.Peripheral;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.controllers.Controllers;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
@@ -109,6 +111,13 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 
     public static float[] upSensor, lookAtSensor;
 
+    public double[] hudScales;
+    public Color[] hudColors;
+    public int hudColor;
+    public float hudw, hudh;
+    private static double HUD_SCALE_MIN = 0.5f;
+    private static double HUD_SCALE_MAX = 3.0f;
+
     /** The input controller attached to this camera **/
     private NaturalInputController inputController;
 
@@ -116,8 +125,8 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
     private NaturalControllerListener controllerListener;
 
     private SpriteBatch spriteBatch;
-    private Texture crosshair;
-    private float chw2, chh2;
+    private Texture focusCrosshair, velocityCrosshair, antivelocityCrosshair;
+    private Sprite[] hudSprites;
 
     public NaturalCamera(AssetManager assetManager, CameraManager parent) {
 	super(parent);
@@ -167,10 +176,35 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 
 	// Init sprite batch for crosshair
 	spriteBatch = new SpriteBatch();
-	crosshair = new Texture(Gdx.files.internal("img/crosshair-green.png"));
-	crosshair.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-	chw2 = crosshair.getWidth() / 2f;
-	chh2 = crosshair.getHeight() / 2f;
+
+	// Focus crosshair
+	focusCrosshair = new Texture(Gdx.files.internal("img/crosshair-green.png"));
+	focusCrosshair.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+
+	// Velocity vector crosshair
+	velocityCrosshair = new Texture(Gdx.files.internal("img/ai-vel.png"));
+	velocityCrosshair.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+
+	// Antivelocity vector crosshair
+	antivelocityCrosshair = new Texture(Gdx.files.internal("img/ai-antivel.png"));
+	antivelocityCrosshair.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+
+	// Speed HUD
+	Texture sHUD = new Texture(Gdx.files.internal("img/hud-corners.png"));
+	sHUD.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+	hudw = sHUD.getWidth();
+	hudh = sHUD.getHeight();
+
+	hudScales = new double[] { HUD_SCALE_MIN, HUD_SCALE_MIN + (HUD_SCALE_MAX - HUD_SCALE_MIN) / 3d,
+		HUD_SCALE_MIN + (HUD_SCALE_MAX - HUD_SCALE_MIN) * 2d / 3d };
+	hudSprites = new Sprite[hudScales.length];
+	hudColors = new Color[] { Color.WHITE, Color.GREEN, Color.GOLD, Color.LIME, Color.PINK, Color.ORANGE,
+		Color.CORAL, Color.CYAN, Color.FIREBRICK, Color.FOREST };
+
+	for (int i = 0; i < hudScales.length; i++) {
+	    hudSprites[i] = new Sprite(sHUD);
+	    hudSprites[i].setOriginCenter();
+	}
 
 	// Focus is changed from GUI
 	EventManager.instance.subscribe(this, Events.FOCUS_CHANGE_CMD, Events.FOV_CHANGED_CMD,
@@ -324,6 +358,70 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 
 	updatePerspectiveCamera();
 	updateFrustum(frustum, camera, pos, direction, up);
+	updateHUD(dt);
+    }
+
+    public void updateHUD(float dt) {
+	double angleVelDirection = vel.anglePrecise(direction);
+	if (angleVelDirection < 60 || angleVelDirection > 120) {
+	    // Current speed
+	    double speed = vel.len() * (angleVelDirection < 60 ? 1 : -1) * Constants.U_TO_KM;
+	    // Distance covered since last frame
+	    double dist = (speed * dt);
+
+	    float hud_scl_dist = 1;
+	    double sp = Math.abs(speed);
+	    if (sp < 3e4) {
+		hud_scl_dist = 1e4f;
+		hudColor = 0;
+	    } else if (sp < 3e6) {
+		hud_scl_dist = 1e6f;
+		hudColor = 1;
+	    } else if (sp < 3e8) {
+		hud_scl_dist = 1e8f;
+		hudColor = 2;
+	    } else if (sp < 3e10) {
+		hud_scl_dist = 1e10f;
+		hudColor = 3;
+	    } else if (sp < 3e12) {
+		hud_scl_dist = 1e12f;
+		hudColor = 4;
+	    } else if (sp < 3e14) {
+		hud_scl_dist = 1e14f;
+		hudColor = 5;
+	    } else if (sp < 3e20) {
+		hud_scl_dist = 1e20f;
+		hudColor = 6;
+	    }
+
+	    // Update scales
+	    for (int i = 0; i < hudScales.length; i++) {
+		hudScales[i] = hudScales[i] + ((HUD_SCALE_MAX - HUD_SCALE_MIN) * dist) / hud_scl_dist;
+		if (dist > 0 && hudScales[i] > HUD_SCALE_MAX) {
+		    hudScales[i] = HUD_SCALE_MIN;
+		}
+		if (dist < 0 && hudScales[i] < HUD_SCALE_MIN) {
+		    hudScales[i] = HUD_SCALE_MAX;
+		}
+	    }
+	} else {
+	    hudColor = 0;
+	}
+
+    }
+
+    private int countZeros(long num) {
+	char[] numArray = String.valueOf(num).toCharArray();
+	int counter = 0;
+	for (int i = 0; i < numArray.length; i++) {
+	    if (numArray[i] == '0') {
+		counter++;
+	    }
+	    if ((i == numArray.length - 1 && counter > 0) || (counter > 0 && numArray[i] != '0')) {
+		return counter;
+	    }
+	}
+	return counter;
     }
 
     protected void updatePerspectiveCamera() {
@@ -1085,61 +1183,134 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 
     @Override
     public void render(int rw, int rh) {
+	boolean draw = !GlobalConf.program.CUBEMAP360_MODE && !GlobalConf.program.STEREOSCOPIC_MODE
+		&& !GlobalConf.postprocess.POSTPROCESS_FISHEYE;
+
+	spriteBatch.begin();
+
 	// Renders crosshair if focus mode
-	if (GlobalConf.scene.CROSSHAIR && getMode().equals(CameraMode.Focus)) {
+	if (GlobalConf.scene.CROSSHAIR && draw) {
 
-	    float cw = crosshair.getWidth();
-	    float ch = crosshair.getHeight();
+	    // Focus crosshair only in focus mode
+	    if (getMode().equals(CameraMode.Focus)) {
+		float chw = focusCrosshair.getWidth();
+		float chh = focusCrosshair.getHeight();
+		float chw2 = chw / 2;
+		float chh2 = chh / 2;
 
-	    boolean draw = !GlobalConf.program.CUBEMAP360_MODE && !GlobalConf.program.STEREOSCOPIC_MODE;
-
-	    if (draw) {
-		// Unproject focus
 		focus.getPosition(aux1);
+		projectToScreen(aux1, auxf1, rw, rh, chw, chh, chw2, chh2);
 
-		aux1.put(auxf1);
-		camera.project(auxf1);
+		spriteBatch.draw(focusCrosshair, auxf1.x - chw2, auxf1.y - chh2, chw, chh);
+	    }
 
-		if (direction.angle(aux1) > 90) {
-		    auxf1.x = rw - auxf1.x;
-		    auxf1.y = rh - auxf1.y;
+	    // Velocity crosshair only if we move
+	    double speed = vel.len();
+	    if (speed > 0) {
+		float chw = velocityCrosshair.getWidth();
+		float chh = velocityCrosshair.getHeight();
+		float chw2 = chw / 2;
+		float chh2 = chh / 2;
 
-		    float w2 = rw / 2f;
-		    float h2 = rh / 2f;
+		if (vel.anglePrecise(direction) < 60) {
 
-		    // Q1 | Q2
-		    // -------
-		    // Q3 | Q4
+		    // ANTIVEL
+		    drawVelCrosshair(antivelocityCrosshair, rw, rh, chw, chh, chw2, chh2, -1);
 
-		    if (auxf1.x <= w2 && auxf1.y >= h2) {
-			// Q1
-			auxf1.x = chw2;
-			auxf1.y = rh - chh2;
+		    // VEL
+		    drawVelCrosshair(velocityCrosshair, rw, rh, chw, chh, chw2, chh2, 1);
+		} else {
+		    // VEL
+		    drawVelCrosshair(velocityCrosshair, rw, rh, chw, chh, chw2, chh2, 1);
 
-		    } else if (auxf1.x > w2 && auxf1.y >= h2) {
-			// Q2
-			auxf1.x = rw - chw2;
-			auxf1.y = rh - chh2;
-		    } else if (auxf1.x <= w2 && auxf1.y < h2) {
-			// Q3
-			auxf1.x = chw2;
-			auxf1.y = chh2;
-		    } else if (auxf1.x > w2 && auxf1.y < h2) {
-			// Q4
-			auxf1.x = rw - chw2;
-			auxf1.y = chh2;
-		    }
-
+		    // ANTIVEL
+		    drawVelCrosshair(antivelocityCrosshair, rw, rh, chw, chh, chw2, chh2, -1);
 		}
-
-		auxf1.x = MathUtils.clamp(auxf1.x, chw2, rw - chw2);
-		auxf1.y = MathUtils.clamp(auxf1.y, chh2, rh - chh2);
-
-		spriteBatch.begin();
-		spriteBatch.draw(crosshair, auxf1.x - chw2, auxf1.y - chh2, cw, ch);
-		spriteBatch.end();
 	    }
 	}
+
+	if (GlobalConf.program.DISPLAY_HUD) {
+	    // Speed HUD
+	    float dx, dy;
+	    float centerx = rw / 2;
+	    float centery = rh / 2;
+	    if (vel.len2() != 0) {
+		aux1.set(vel);
+		if (vel.anglePrecise(direction) > 90) {
+		    aux1.scl(-1);
+		}
+		projectToScreen(aux1, auxf1, rw, rh, 0, 0, 0, 0);
+		dx = auxf1.x - rw / 2;
+		dy = auxf1.y - rh / 2;
+	    } else {
+		dx = 0;
+		dy = 0;
+	    }
+
+	    for (int i = 0; i < hudScales.length; i++) {
+		float scl = (float) hudScales[i];
+
+		float dscale = (float) MathUtilsd.lint(scl, HUD_SCALE_MIN, HUD_SCALE_MAX, 1d, 0d);
+
+		Sprite s = hudSprites[i];
+		s.setColor(hudColors[hudColor]);
+		s.setOriginCenter();
+		s.setScale(scl);
+		s.setPosition(centerx + (dx * dscale) - hudw / 2, centery + (dy * dscale) - hudh / 2);
+		s.draw(spriteBatch);
+
+	    }
+	}
+
+	spriteBatch.end();
+    }
+
+    private void drawVelCrosshair(Texture tex, int rw, int rh, float chw, float chh, float chw2, float chh2,
+	    float scl) {
+	aux1.set(vel).scl(scl);
+	projectToScreen(aux1, auxf1, rw, rh, chw, chh, chw2, chh2);
+
+	spriteBatch.draw(tex, auxf1.x - chw2, auxf1.y - chh2, chw, chh);
+    }
+
+    private void projectToScreen(Vector3d vec, Vector3 out, int rw, int rh, float chw, float chh, float chw2,
+	    float chh2) {
+	vec.put(out);
+	camera.project(out);
+
+	if (direction.angle(vec) > 90) {
+	    out.x = rw - out.x;
+	    out.y = rh - out.y;
+
+	    float w2 = rw / 2f;
+	    float h2 = rh / 2f;
+
+	    // Q1 | Q2
+	    // -------
+	    // Q3 | Q4
+
+	    if (out.x <= w2 && out.y >= h2) {
+		// Q1
+		out.x = chw2;
+		out.y = rh - chh2;
+
+	    } else if (out.x > w2 && out.y > h2) {
+		// Q2
+		out.x = rw - chw2;
+		out.y = rh - chh2;
+	    } else if (out.x <= w2 && out.y <= h2) {
+		// Q3
+		out.x = chw2;
+		out.y = chh2;
+	    } else if (out.x > w2 && out.y < h2) {
+		// Q4
+		out.x = rw - chw2;
+		out.y = chh2;
+	    }
+	}
+
+	out.x = MathUtils.clamp(out.x, chw2, rw - chw2);
+	out.y = MathUtils.clamp(out.y, chh2, rh - chh2);
     }
 
     @Override

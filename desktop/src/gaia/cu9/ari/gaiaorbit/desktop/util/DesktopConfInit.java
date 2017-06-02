@@ -183,9 +183,9 @@ public class DesktopConfInit extends ConfInit {
 	boolean STEREOSCOPIC_MODE = Boolean.parseBoolean(p.getProperty("program.stereoscopic"));
 	StereoProfile STEREO_PROFILE = StereoProfile.values()[Integer
 		.parseInt(p.getProperty("program.stereoscopic.profile"))];
-	boolean CUBEMAPE360_MODE = Boolean.parseBoolean(p.getProperty("program.cubemap360", "False"));
-	boolean ANALYTICS_ENABLED = Boolean.parseBoolean(p.getProperty("program.analytics", "True"));
-	boolean DISPLAY_HUD = Boolean.parseBoolean(p.getProperty("program.displayhud", "True"));
+	boolean CUBEMAPE360_MODE = Boolean.parseBoolean(p.getProperty("program.cubemap360", "false"));
+	boolean ANALYTICS_ENABLED = Boolean.parseBoolean(p.getProperty("program.analytics", "true"));
+	boolean DISPLAY_HUD = Boolean.parseBoolean(p.getProperty("program.displayhud", "false"));
 
 	prc.initialize(DISPLAY_TUTORIAL, TUTORIAL_POINTER_SCRIPT_LOCATION, TUTORIAL_SCRIPT_LOCATION, SHOW_DEBUG_INFO,
 		LAST_CHECKED, LAST_VERSION, VERSION_CHECK_URL, UI_THEME, SCRIPT_LOCATION, LOCALE, STEREOSCOPIC_MODE,
