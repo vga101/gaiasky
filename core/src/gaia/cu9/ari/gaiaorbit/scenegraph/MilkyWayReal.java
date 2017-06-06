@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.badlogic.gdx.utils.reflect.Method;
@@ -42,21 +43,20 @@ public class MilkyWayReal extends AbstractPositionEntity implements I3DTextRende
     public GalaxydataComponent gc;
 
     /**
-     * Distance from origin at which this entity is fully visible with an alpha
-     * of 1f
-     **/
-    private float lowDist;
+     * Fade in low and high limits
+     */
+    private Vector2 fadeIn;
+
     /**
-     * Distance from origin at which this entity is first rendered, but its
-     * alpha value is 0f
-     **/
-    private float highDist;
+     * Fade out low and high limits
+     */
+    private Vector2 fadeOut;
 
     public MilkyWayReal() {
 	super();
 	localTransform = new Matrix4();
-	lowDist = (float) (5e3 * Constants.PC_TO_U);
-	highDist = (float) (3e4 * Constants.PC_TO_U);
+	fadeIn = new Vector2((float) (5e3 * Constants.PC_TO_U), (float) (3e4 * Constants.PC_TO_U));
+	fadeOut = new Vector2((float) (2e5 * Constants.PC_TO_U), (float) (5e5 * Constants.PC_TO_U));
     }
 
     public void initialize() {
@@ -131,7 +131,7 @@ public class MilkyWayReal extends AbstractPositionEntity implements I3DTextRende
 	// Update with translation/rotation/etc
 	updateLocal(time, camera);
 
-	if (children != null && camera.getDistance() * camera.getFovFactor() < highDist) {
+	if (children != null && camera.getDistance() * camera.getFovFactor() < fadeIn.y) {
 	    for (int i = 0; i < children.size; i++) {
 		float childOpacity = 1 - this.opacity;
 		SceneGraphNode child = children.get(i);
@@ -150,24 +150,27 @@ public class MilkyWayReal extends AbstractPositionEntity implements I3DTextRende
 	super.updateLocal(time, camera);
 
 	// Update alpha
-	this.opacity = MathUtilsd.lint((float) camera.getDistance() * camera.getFovFactor(), lowDist, highDist, 0, 1);
+	float d = (float) camera.getDistance() * camera.getFovFactor();
+	this.opacity = MathUtilsd.lint(d, fadeIn.x, fadeIn.y, 0, 1);
+	this.opacity *= MathUtilsd.lint(d, fadeOut.x, fadeOut.y, 1, 0);
 
 	// Directional light comes from up
 	updateLocalTransform();
 
 	if (mc != null) {
-	    Vector3 d = aux3f1.get();
-	    d.set(0, 1, 0);
-	    d.mul(coordinateSystem);
+	    Vector3 dd = aux3f1.get();
+	    dd.set(0, 1, 0);
+	    dd.mul(coordinateSystem);
 
-	    mc.dlight.direction.set(d);
+	    mc.dlight.direction.set(dd);
 	}
 
     }
 
     @Override
     protected void addToRenderLists(ICamera camera) {
-	if ((float) camera.getDistance() * camera.getFovFactor() >= lowDist) {
+	float d = (float) camera.getDistance() * camera.getFovFactor();
+	if (d >= fadeIn.x && d <= fadeOut.y) {
 
 	    if (renderText()) {
 		addToRender(this, RenderGroup.LABEL);

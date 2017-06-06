@@ -80,6 +80,8 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
 	MODEL_CLOSEUP(12),
 	/** Beams **/
 	MODEL_BEAM(13),
+	/** SDSS SURVEY **/
+	SDSS(14),
 
 	/** None **/
 	NONE(-1);

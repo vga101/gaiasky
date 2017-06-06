@@ -29,12 +29,14 @@ void main() {
     vec3 pos = a_position.xyz - u_camPos;
     float distNorm = length(pos) / 800000000000.0;
   
-    float a_size = a_additional.x;
-    float a_thAnglePoint = a_additional.y;
-    
-    float viewAngleApparent = atan(1.0 / length(pos)) / u_fovFactor;
-    float opacity = lint(viewAngleApparent, 0.0, a_thAnglePoint, u_pointAlphaMin, u_pointAlphaMax);
-    
+    float a_size;
+    if(a_additional.x > 0){
+    	a_size = a_additional.x;
+    }else{
+    	a_size = a_additional.y;
+    	distNorm = 1.0;
+    }
+
     v_col = vec4(a_color.rgb, a_color.a * u_alpha );
 
     gl_Position = u_projModelView * vec4(pos, 0.0);
