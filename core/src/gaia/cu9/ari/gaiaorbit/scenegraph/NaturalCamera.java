@@ -358,7 +358,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 
 	updatePerspectiveCamera();
 	updateFrustum(frustum, camera, pos, direction, up);
-	updateHUD(dt);
+	// updateHUD(dt);
     }
 
     public void updateHUD(float dt) {
@@ -396,7 +396,9 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 
 	    // Update scales
 	    for (int i = 0; i < hudScales.length; i++) {
-		hudScales[i] = hudScales[i] + ((HUD_SCALE_MAX - HUD_SCALE_MIN) * dist) / hud_scl_dist;
+		double distpart = dist / hud_scl_dist;
+
+		hudScales[i] = hudScales[i] + (HUD_SCALE_MAX - HUD_SCALE_MIN) * distpart;
 		if (dist > 0 && hudScales[i] > HUD_SCALE_MAX) {
 		    hudScales[i] = HUD_SCALE_MIN;
 		}
@@ -1229,7 +1231,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 	    }
 	}
 
-	if (GlobalConf.program.DISPLAY_HUD) {
+	if (false && GlobalConf.program.DISPLAY_HUD) {
 	    // Speed HUD
 	    float dx, dy;
 	    float centerx = rw / 2;
