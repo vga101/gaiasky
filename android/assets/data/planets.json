@@ -362,7 +362,7 @@
 	"size" : 24622.0,
 	"ct" : Planets,
 
-	"absmag" : -7.56,
+	"absmag" : -0.7,
 	"appmag" : 7.78,
 	
 	"parent" : "Sol", 
@@ -394,6 +394,50 @@
 									},
 						"texture" : {
 									"base" : "data/tex/neptune.jpg",
+									}
+						}
+	},
+	
+	
+	{
+	"name" : "Pluto",
+	"wikiname" : "Pluto",
+	"color" : [.36, .18, .08, 1.0],
+	"size" : 1189.9,
+	"ct" : Planets,
+
+	"absmag" : -7.56,
+	"appmag" : 15.1,
+	
+	"parent" : "Sol", 
+	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Planet",
+
+	"coordinates" : {
+				// This must implement gaia.cu9.ari.gaiaorbit.util.coord.IBodyCoordinates				
+				"impl" : "gaia.cu9.ari.gaiaorbit.util.coord.PlutoCoordinates"
+				},		
+			
+	"rotation" 		: {
+						// In hours
+						"period" : 153.36,
+						// Angle between equatorial plane and orbital plane
+						"axialtilt" : 119.61,
+						// Inclination of orbit plane with respect to ecliptic
+						"inclination" : 1.767975,
+						"ascendingnode" : 49.24,
+						"meridianangle" : 228.66
+						},
+						
+	"model"			: {
+						"args" : [true],
+						"type" : "sphere",
+						"params" : {
+									"quality" : 150,
+									"diameter" : 1.0,
+									"flip" : false
+									},
+						"texture" : {
+									"base" : "data/tex/pluto.jpg",
 									}
 						}
 	}

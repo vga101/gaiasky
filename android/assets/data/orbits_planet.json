@@ -117,5 +117,19 @@
 		"orbit" 		: {
 							"source" : "data/orb.NEPTUNE.dat",
 							}
+	},
+	
+	{
+		"name" : "Pluto orbit",
+		"color" : [1.0, 1.0, 1.0, 0.7],
+		"ct": [ "Orbits", "Planets" ],
+		
+		"parent" : "Sol", 
+		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Orbit",
+		"provider" : "gaia.cu9.ari.gaiaorbit.data.orbit.OrbitFileDataProvider",
+			
+		"orbit" 		: {
+							"source" : "data/orb.PLUTO.dat",
+							}
 	}
 ]}

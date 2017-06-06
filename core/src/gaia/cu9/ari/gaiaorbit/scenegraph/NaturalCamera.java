@@ -1207,28 +1207,32 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 	    }
 
 	    // Velocity crosshair only if we move
-	    double speed = vel.len();
-	    if (speed > 0) {
-		float chw = velocityCrosshair.getWidth();
-		float chh = velocityCrosshair.getHeight();
-		float chw2 = chw / 2;
-		float chh2 = chh / 2;
-
-		if (vel.anglePrecise(direction) < 60) {
-
-		    // ANTIVEL
-		    drawVelCrosshair(antivelocityCrosshair, rw, rh, chw, chh, chw2, chh2, -1);
-
-		    // VEL
-		    drawVelCrosshair(velocityCrosshair, rw, rh, chw, chh, chw2, chh2, 1);
-		} else {
-		    // VEL
-		    drawVelCrosshair(velocityCrosshair, rw, rh, chw, chh, chw2, chh2, 1);
-
-		    // ANTIVEL
-		    drawVelCrosshair(antivelocityCrosshair, rw, rh, chw, chh, chw2, chh2, -1);
-		}
-	    }
+	    // double speed = vel.len();
+	    // if (speed > 0) {
+	    // float chw = velocityCrosshair.getWidth();
+	    // float chh = velocityCrosshair.getHeight();
+	    // float chw2 = chw / 2;
+	    // float chh2 = chh / 2;
+	    //
+	    // if (vel.anglePrecise(direction) < 60) {
+	    //
+	    // // ANTIVEL
+	    // drawVelCrosshair(antivelocityCrosshair, rw, rh, chw, chh, chw2,
+	    // chh2, -1);
+	    //
+	    // // VEL
+	    // drawVelCrosshair(velocityCrosshair, rw, rh, chw, chh, chw2, chh2,
+	    // 1);
+	    // } else {
+	    // // VEL
+	    // drawVelCrosshair(velocityCrosshair, rw, rh, chw, chh, chw2, chh2,
+	    // 1);
+	    //
+	    // // ANTIVEL
+	    // drawVelCrosshair(antivelocityCrosshair, rw, rh, chw, chh, chw2,
+	    // chh2, -1);
+	    // }
+	    // }
 	}
 
 	if (false && GlobalConf.program.DISPLAY_HUD) {
