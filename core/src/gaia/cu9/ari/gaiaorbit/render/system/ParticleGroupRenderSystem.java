@@ -15,32 +15,26 @@ import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.render.IRenderable;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
-import gaia.cu9.ari.gaiaorbit.scenegraph.SDSS;
+import gaia.cu9.ari.gaiaorbit.scenegraph.ParticleGroup;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf.ProgramConf.StereoProfile;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 
-public class SDSSRenderSystem extends ImmediateRenderSystem implements IObserver {
+public class ParticleGroupRenderSystem extends ImmediateRenderSystem implements IObserver {
     private boolean UPDATE_POINTS = true;
 
     Vector3 aux1;
     int additionalOffset, pmOffset;
 
-    public SDSSRenderSystem(RenderGroup rg, int priority, float[] alphas) {
+    public ParticleGroupRenderSystem(RenderGroup rg, int priority, float[] alphas) {
 	super(rg, priority, alphas);
     }
 
     @Override
     protected void initShaderProgram() {
-
-	// POINT (STARS) PROGRAM
-	if (Gdx.app.getType() == ApplicationType.WebGL)
-	    shaderProgram = new ShaderProgram(Gdx.files.internal("shader/point.galaxy.vertex.glsl"),
-		    Gdx.files.internal("shader/point.galaxy.fragment.wgl.glsl"));
-	else
-	    shaderProgram = new ShaderProgram(Gdx.files.internal("shader/point.galaxy.vertex.glsl"),
-		    Gdx.files.internal("shader/point.galaxy.fragment.glsl"));
+	shaderProgram = new ShaderProgram(Gdx.files.internal("shader/point.group.vertex.glsl"),
+		Gdx.files.internal("shader/point.group.fragment.glsl"));
 	if (!shaderProgram.isCompiled()) {
 	    Logger.error(this.getClass().getName(), "Point shader compilation failed:\n" + shaderProgram.getLog());
 	}
@@ -79,7 +73,7 @@ public class SDSSRenderSystem extends ImmediateRenderSystem implements IObserver
     @Override
     public void renderStud(Array<IRenderable> renderables, ICamera camera, float t) {
 	if (renderables.size > 0) {
-	    SDSS sdss = (SDSS) renderables.get(0);
+	    ParticleGroup particleGroup = (ParticleGroup) renderables.get(0);
 
 	    /**
 	     * GALAXY RENDER
@@ -88,20 +82,21 @@ public class SDSSRenderSystem extends ImmediateRenderSystem implements IObserver
 
 		/** STARS **/
 		curr.clear();
-		for (double[] star : sdss.pointData) {
+		for (double[] p : particleGroup.pointData) {
 		    // COLOR
-		    curr.vertices[curr.vertexIdx + curr.colorOffset] = Color.toFloatBits(.9f, .9f, 1f, 0.9f);
+		    float[] c = particleGroup.cc;
+		    curr.vertices[curr.vertexIdx + curr.colorOffset] = Color.toFloatBits(c[0], c[1], c[2], c[3]);
 
 		    // SIZE
-		    curr.vertices[curr.vertexIdx + additionalOffset] = -1;
-		    curr.vertices[curr.vertexIdx + additionalOffset + 1] = 5f * GlobalConf.SCALE_FACTOR;
+		    curr.vertices[curr.vertexIdx + additionalOffset] = particleGroup.size * GlobalConf.SCALE_FACTOR;
+		    curr.vertices[curr.vertexIdx + additionalOffset + 1] = 0;
 
 		    // cb.transform.getTranslationf(aux);
 		    // POSITION
 		    final int idx = curr.vertexIdx;
-		    curr.vertices[idx] = (float) star[0];
-		    curr.vertices[idx + 1] = (float) star[1];
-		    curr.vertices[idx + 2] = (float) star[2];
+		    curr.vertices[idx] = (float) p[0];
+		    curr.vertices[idx + 1] = (float) p[1];
+		    curr.vertices[idx + 2] = (float) p[2];
 
 		    curr.vertexIdx += curr.vertexSize;
 		}
@@ -124,7 +119,7 @@ public class SDSSRenderSystem extends ImmediateRenderSystem implements IObserver
 	    shaderProgram.setUniformMatrix("u_projModelView", camera.getCamera().combined);
 	    shaderProgram.setUniformf("u_camPos", camera.getCurrent().getPos().put(aux1));
 	    shaderProgram.setUniformf("u_fovFactor", camera.getFovFactor());
-	    shaderProgram.setUniformf("u_alpha", sdss.opacity * alphas[sdss.ct.getFirstOrdinal()]);
+	    shaderProgram.setUniformf("u_alpha", particleGroup.opacity * alphas[particleGroup.ct.getFirstOrdinal()]);
 	    shaderProgram.setUniformf("u_ar",
 		    GlobalConf.program.STEREOSCOPIC_MODE && (GlobalConf.program.STEREO_PROFILE != StereoProfile.HD_3DTV
 			    && GlobalConf.program.STEREO_PROFILE != StereoProfile.ANAGLYPHIC) ? 0.5f : 1f);

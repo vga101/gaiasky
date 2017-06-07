@@ -37,9 +37,9 @@ import gaia.cu9.ari.gaiaorbit.render.system.IRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.LineQuadRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.LineRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.ModelBatchRenderSystem;
+import gaia.cu9.ari.gaiaorbit.render.system.ParticleGroupRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.PixelRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.QuadRenderSystem;
-import gaia.cu9.ari.gaiaorbit.render.system.SDSSRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.VolumeCloudsRenderSystem;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
@@ -330,9 +330,10 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 	AbstractRenderSystem galaxyProc = new GalaxyRenderSystem(RenderGroup.GALAXY, priority++, alphas, modelBatchF);
 	galaxyProc.setPreRunnable(blendNoDepthRunnable);
 
-	// SDSS
-	AbstractRenderSystem sdssProc = new SDSSRenderSystem(RenderGroup.SDSS, priority++, alphas);
-	sdssProc.setPreRunnable(blendNoDepthRunnable);
+	// PARTICLE GROUP
+	AbstractRenderSystem particleGroupProc = new ParticleGroupRenderSystem(RenderGroup.POINT_GROUP, priority++,
+		alphas);
+	particleGroupProc.setPreRunnable(blendDepthRunnable);
 
 	// MODEL STARS
 	AbstractRenderSystem modelStarsProc = new ModelBatchRenderSystem(RenderGroup.MODEL_S, priority++, alphas,
@@ -393,7 +394,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 	renderProcesses.add(labelsProc);
 
 	renderProcesses.add(galaxyProc);
-	renderProcesses.add(sdssProc);
+	renderProcesses.add(particleGroupProc);
 	renderProcesses.add(modelStarsProc);
 	renderProcesses.add(modelAtmProc);
 	renderProcesses.add(modelCloseUpProc);

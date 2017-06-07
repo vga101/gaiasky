@@ -17,7 +17,7 @@ import com.badlogic.gdx.utils.reflect.Method;
 import com.badlogic.gdx.utils.reflect.ReflectionException;
 
 import gaia.cu9.ari.gaiaorbit.GaiaSky;
-import gaia.cu9.ari.gaiaorbit.data.galaxy.PointDataProvider;
+import gaia.cu9.ari.gaiaorbit.data.group.PointDataProvider;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.render.I3DTextRenderable;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.GalaxydataComponent;
@@ -38,9 +38,11 @@ public class MilkyWayReal extends AbstractPositionEntity implements I3DTextRende
 
     public ModelComponent mc;
 
-    public List<float[]> pointData, nebulaData;
+    public List<double[]> pointData, nebulaData;
     protected String provider;
     public GalaxydataComponent gc;
+
+    private Vector3d labelPosition;
 
     /**
      * Fade in low and high limits
@@ -52,11 +54,14 @@ public class MilkyWayReal extends AbstractPositionEntity implements I3DTextRende
      */
     private Vector2 fadeOut;
 
+    /**
+     * The current distance at each cycle, in internal units
+     */
+    private double currentDistance;
+
     public MilkyWayReal() {
 	super();
 	localTransform = new Matrix4();
-	fadeIn = new Vector2((float) (5e3 * Constants.PC_TO_U), (float) (3e4 * Constants.PC_TO_U));
-	fadeOut = new Vector2((float) (2e5 * Constants.PC_TO_U), (float) (5e5 * Constants.PC_TO_U));
     }
 
     public void initialize() {
@@ -104,9 +109,9 @@ public class MilkyWayReal extends AbstractPositionEntity implements I3DTextRende
 
 	// Transform all
 	for (int i = 0; i < pointData.size(); i++) {
-	    float[] pointf = pointData.get(i);
+	    double[] pointf = pointData.get(i);
 
-	    aux.set(pointf[0], pointf[2], pointf[1]);
+	    aux.set((float) pointf[0], (float) pointf[2], (float) pointf[1]);
 	    aux.scl(size).mul(coordinateSystem).add(pos3);
 	    pointf[0] = aux.x;
 	    pointf[1] = aux.y;
@@ -114,8 +119,8 @@ public class MilkyWayReal extends AbstractPositionEntity implements I3DTextRende
 	}
 
 	for (int i = 0; i < nebulaData.size(); i++) {
-	    float[] pointf = nebulaData.get(i);
-	    aux.set(pointf[0], pointf[2], pointf[1]);
+	    double[] pointf = nebulaData.get(i);
+	    aux.set((float) pointf[0], (float) pointf[2], (float) pointf[1]);
 	    aux.scl(size).mul(coordinateSystem).add(pos3);
 	    pointf[0] = aux.x;
 	    pointf[1] = aux.y;
@@ -127,11 +132,12 @@ public class MilkyWayReal extends AbstractPositionEntity implements I3DTextRende
     public void update(ITimeFrameProvider time, final Transform parentTransform, ICamera camera, float opacity) {
 	this.opacity = opacity * this.opacity;
 	transform.set(parentTransform);
+	this.currentDistance = camera.getDistance() * camera.getFovFactor();
 
 	// Update with translation/rotation/etc
 	updateLocal(time, camera);
 
-	if (children != null && camera.getDistance() * camera.getFovFactor() < fadeIn.y) {
+	if (children != null && currentDistance < fadeIn.y) {
 	    for (int i = 0; i < children.size; i++) {
 		float childOpacity = 1 - this.opacity;
 		SceneGraphNode child = children.get(i);
@@ -150,9 +156,11 @@ public class MilkyWayReal extends AbstractPositionEntity implements I3DTextRende
 	super.updateLocal(time, camera);
 
 	// Update alpha
-	float d = (float) camera.getDistance() * camera.getFovFactor();
-	this.opacity = MathUtilsd.lint(d, fadeIn.x, fadeIn.y, 0, 1);
-	this.opacity *= MathUtilsd.lint(d, fadeOut.x, fadeOut.y, 1, 0);
+	this.opacity = 1;
+	if (fadeIn != null)
+	    this.opacity *= MathUtilsd.lint((float) this.currentDistance, fadeIn.x, fadeIn.y, 0, 1);
+	if (fadeOut != null)
+	    this.opacity *= MathUtilsd.lint((float) this.currentDistance, fadeOut.x, fadeOut.y, 1, 0);
 
 	// Directional light comes from up
 	updateLocalTransform();
@@ -169,8 +177,8 @@ public class MilkyWayReal extends AbstractPositionEntity implements I3DTextRende
 
     @Override
     protected void addToRenderLists(ICamera camera) {
-	float d = (float) camera.getDistance() * camera.getFovFactor();
-	if (d >= fadeIn.x && d <= fadeOut.y) {
+	if ((fadeIn == null || fadeIn != null && currentDistance > fadeIn.x)
+		&& (fadeOut == null || fadeOut != null && currentDistance < fadeOut.y)) {
 
 	    if (renderText()) {
 		addToRender(this, RenderGroup.LABEL);
@@ -221,6 +229,19 @@ public class MilkyWayReal extends AbstractPositionEntity implements I3DTextRende
 	this.size = (float) (size * Constants.KM_TO_U);
     }
 
+    public void setFadein(double[] fadein) {
+	fadeIn = new Vector2((float) (fadein[0] * Constants.PC_TO_U), (float) (fadein[1] * Constants.PC_TO_U));
+    }
+
+    public void setFadeout(double[] fadeout) {
+	fadeOut = new Vector2((float) (fadeout[0] * Constants.PC_TO_U), (float) (fadeout[1] * Constants.PC_TO_U));
+    }
+
+    public void setLabelposition(double[] labelposition) {
+	this.labelPosition = new Vector3d(labelposition[0] * Constants.PC_TO_U, labelposition[1] * Constants.PC_TO_U,
+		labelposition[2] * Constants.PC_TO_U);
+    }
+
     @Override
     public float[] textColour() {
 	return labelColour;
@@ -228,7 +249,7 @@ public class MilkyWayReal extends AbstractPositionEntity implements I3DTextRende
 
     @Override
     public float textSize() {
-	return (float) distToCamera * 3e-3f;
+	return (float) distToCamera * 2e-3f;
     }
 
     @Override
@@ -238,7 +259,7 @@ public class MilkyWayReal extends AbstractPositionEntity implements I3DTextRende
 
     @Override
     public void textPosition(ICamera cam, Vector3d out) {
-	transform.getTranslation(out);
+	out.set(labelPosition).add(cam.getInversePos());
     }
 
     @Override

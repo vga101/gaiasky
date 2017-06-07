@@ -1,4 +1,4 @@
-package gaia.cu9.ari.gaiaorbit.data.galaxy;
+package gaia.cu9.ari.gaiaorbit.data.group;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -15,7 +15,7 @@ import gaia.cu9.ari.gaiaorbit.util.parse.Parser;
 import gaia.cu9.ari.gaiaorbit.util.units.Position;
 import gaia.cu9.ari.gaiaorbit.util.units.Position.PositionType;
 
-public class SDSSDataProvider {
+public class SDSSDataProvider implements IParticleGroupDataProvider {
 
     public List<double[]> loadData(String file) {
 	List<double[]> pointData = new ArrayList<double[]>();
@@ -36,7 +36,8 @@ public class SDSSDataProvider {
 		    double z = Parser.parseDouble(tokens[2]);
 		    if (z >= 0) {
 			// Dist in MPC
-			//double dist = redshiftToDistance(0.272, 0.0000812, 0.728, 70.4, z);
+			// double dist = redshiftToDistance(0.272, 0.0000812,
+			// 0.728, 70.4, z);
 			double dist = ((z * 299792.46) / 71);
 			// Convert position
 			Position p = new Position(ra, "deg", dec, "deg", dist, "mpc", PositionType.RA_DEC_DIST);

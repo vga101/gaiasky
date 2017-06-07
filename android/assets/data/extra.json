@@ -39,10 +39,16 @@
 	"name" : "Milky Way",
 	"color" : [1.0, 1.0, 1.0, 1.0],
 	"labelcolor" : [1.0, 0.4, 0.7, 1.0],
+	// Position in parsecs
+	"labelposition" : [5.0e3, 5.0e4, 5.0e3]
 	"size" : 3.5e17,
 	"ct" : MilkyWay,
 	"transformName" : equatorialToGalactic,
 
+	// Fade in distances, in parsecs
+	"fadein" : [5.0e3, 3.0e4],
+	// Fade out distances, in parsecs
+	"fadeout" : [2.0e5, 5.0e5],
 
 	"parent" : "Universe", 
 	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.MilkyWayReal",
@@ -100,23 +106,25 @@
 	},
 	
 	{
-	"name" : "SDSS",
-	"color" : [1.0, 1.0, 1.0, 1.0],
-	"labelcolor" : [1.0, 0.4, 0.7, 0.0],
-	"size" : 3.5e17,
+	"name" : "SDSS galaxies",
+	// Color of particles
+	"color" : [1.0, 1.0, 1.0, 0.25],
+	// Size of particles
+	"size" : 7.0,
+	"labelcolor" : [0.3, 0.4, 0.9, 0.6],
+	// Position in parsecs
+	"labelposition" : [4.0e6, 1.0e4, 4.0e6]
 	"ct" : Galaxies,
 
+	// Fade in distances, in parsecs
+	"fadein" : [5.0e4, 5.0e5],
 
 	"parent" : "Universe", 
-	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.SDSS",
+	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.ParticleGroup",
 	
-	"coordinates" : {
-				// This must implement gaia.cu9.ari.gaiaorbit.util.coord.IBodyCoordinates				
-				"impl" : "gaia.cu9.ari.gaiaorbit.util.coord.StaticCoordinates",
-				"position" : [0.0, 0.0, 0.0]
-				},
-	
-	"file" : "data/sdss/sdss_dr12.csv"
+	// Extends IParticleGroupDataProvider
+	"provider" : "gaia.cu9.ari.gaiaorbit.data.group.SDSSDataProvider",
+	"datafile" : "data/sdss/sdss_dr12.csv"
 	
 	},
 ]}
