@@ -8,7 +8,6 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
-import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 
 import gaia.cu9.ari.gaiaorbit.GaiaSky;
@@ -33,7 +32,7 @@ import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
  *
  */
 public class ParticleGroup extends AbstractPositionEntity implements I3DTextRenderable {
-    float[] labelColour = new float[] { 1f, 1f, 1f, 1f };
+    float[] labelColour;
     Vector3d labelPosition;
 
     /**
@@ -57,9 +56,18 @@ public class ParticleGroup extends AbstractPositionEntity implements I3DTextRend
 
     protected String datafile;
 
+    private float labelAlpha;
+
+    public boolean inGpu;
+
+    /**
+     * Factor to apply to the data points, usually to normalise distances
+     */
+    protected Double factor = null;
+
     public ParticleGroup() {
 	super();
-	localTransform = new Matrix4();
+	inGpu = false;
     }
 
     public void initialize() {
@@ -68,7 +76,10 @@ public class ParticleGroup extends AbstractPositionEntity implements I3DTextRend
 	    Class clazz = Class.forName(provider);
 	    IParticleGroupDataProvider provider = (IParticleGroupDataProvider) clazz.newInstance();
 
-	    pointData = provider.loadData(datafile);
+	    if (factor == null)
+		factor = 1d;
+
+	    pointData = provider.loadData(datafile, factor);
 	} catch (Exception e) {
 	    Logger.error(e, getClass().getSimpleName());
 	    pointData = null;
@@ -116,6 +127,9 @@ public class ParticleGroup extends AbstractPositionEntity implements I3DTextRend
 	if (fadeOut != null)
 	    this.opacity *= MathUtilsd.lint((float) this.currentDistance, fadeOut.x, fadeOut.y, 1, 0);
 
+	// Label alpha
+	this.labelColour[3] = this.labelAlpha * this.opacity;
+
     }
 
     @Override
@@ -145,6 +159,7 @@ public class ParticleGroup extends AbstractPositionEntity implements I3DTextRend
 
     public void setLabelcolor(double[] labelcolor) {
 	this.labelColour = GlobalResources.toFloatArray(labelcolor);
+	this.labelAlpha = this.labelColour[3];
     }
 
     public String getProvider() {
@@ -203,8 +218,8 @@ public class ParticleGroup extends AbstractPositionEntity implements I3DTextRend
 
     @Override
     public void textDepthBuffer() {
-	Gdx.gl.glDisable(GL20.GL_DEPTH_TEST);
-	Gdx.gl.glDepthMask(false);
+	Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
+	Gdx.gl.glDepthMask(true);
     }
 
     @Override
@@ -215,5 +230,9 @@ public class ParticleGroup extends AbstractPositionEntity implements I3DTextRend
     public void setLabelposition(double[] labelposition) {
 	this.labelPosition = new Vector3d(labelposition[0] * Constants.PC_TO_U, labelposition[1] * Constants.PC_TO_U,
 		labelposition[2] * Constants.PC_TO_U);
+    }
+
+    public void setFactor(Double factor) {
+	this.factor = factor;
     }
 }

@@ -22,6 +22,10 @@ import gaia.cu9.ari.gaiaorbit.util.parse.Parser;
 public class PointDataProvider implements IParticleGroupDataProvider {
 
     public List<double[]> loadData(String file) {
+	return loadData(file, 1d);
+    }
+
+    public List<double[]> loadData(String file, double factor) {
 	List<double[]> pointData = new ArrayList<double[]>();
 	FileHandle f = Gdx.files.internal(file);
 
@@ -36,7 +40,7 @@ public class PointDataProvider implements IParticleGroupDataProvider {
 		    tokenslen = tokens.length;
 		    double[] point = new double[tokenslen];
 		    for (int j = 0; j < tokenslen; j++) {
-			point[j] = Parser.parseDouble(tokens[j]);
+			point[j] = Parser.parseDouble(tokens[j]) * factor;
 		    }
 		    pointData.add(point);
 		}

@@ -18,6 +18,10 @@ import gaia.cu9.ari.gaiaorbit.util.units.Position.PositionType;
 public class SDSSDataProvider implements IParticleGroupDataProvider {
 
     public List<double[]> loadData(String file) {
+	return loadData(file, 1d);
+    }
+
+    public List<double[]> loadData(String file, double factor) {
 	List<double[]> pointData = new ArrayList<double[]>();
 	FileHandle f = Gdx.files.internal(file);
 

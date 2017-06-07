@@ -22,7 +22,6 @@ import gaia.cu9.ari.gaiaorbit.util.GlobalConf.ProgramConf.StereoProfile;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 
 public class ParticleGroupRenderSystem extends ImmediateRenderSystem implements IObserver {
-    private boolean UPDATE_POINTS = true;
 
     Vector3 aux1;
     int additionalOffset, pmOffset;
@@ -73,59 +72,60 @@ public class ParticleGroupRenderSystem extends ImmediateRenderSystem implements 
     @Override
     public void renderStud(Array<IRenderable> renderables, ICamera camera, float t) {
 	if (renderables.size > 0) {
-	    ParticleGroup particleGroup = (ParticleGroup) renderables.get(0);
+	    for (IRenderable renderable : renderables) {
+		ParticleGroup particleGroup = (ParticleGroup) renderable;
 
-	    /**
-	     * GALAXY RENDER
-	     */
-	    if (UPDATE_POINTS) {
+		/**
+		 * GROUP RENDER
+		 */
+		if (!particleGroup.inGpu) {
 
-		/** STARS **/
-		curr.clear();
-		for (double[] p : particleGroup.pointData) {
-		    // COLOR
-		    float[] c = particleGroup.cc;
-		    curr.vertices[curr.vertexIdx + curr.colorOffset] = Color.toFloatBits(c[0], c[1], c[2], c[3]);
+		    for (double[] p : particleGroup.pointData) {
+			// COLOR
+			float[] c = particleGroup.cc;
+			curr.vertices[curr.vertexIdx + curr.colorOffset] = Color.toFloatBits(c[0], c[1], c[2], c[3]);
 
-		    // SIZE
-		    curr.vertices[curr.vertexIdx + additionalOffset] = particleGroup.size * GlobalConf.SCALE_FACTOR;
-		    curr.vertices[curr.vertexIdx + additionalOffset + 1] = 0;
+			// SIZE
+			curr.vertices[curr.vertexIdx + additionalOffset] = particleGroup.size * GlobalConf.SCALE_FACTOR;
+			curr.vertices[curr.vertexIdx + additionalOffset + 1] = 0;
 
-		    // cb.transform.getTranslationf(aux);
-		    // POSITION
-		    final int idx = curr.vertexIdx;
-		    curr.vertices[idx] = (float) p[0];
-		    curr.vertices[idx + 1] = (float) p[1];
-		    curr.vertices[idx + 2] = (float) p[2];
+			// cb.transform.getTranslationf(aux);
+			// POSITION
+			final int idx = curr.vertexIdx;
+			curr.vertices[idx] = (float) p[0];
+			curr.vertices[idx + 1] = (float) p[1];
+			curr.vertices[idx + 2] = (float) p[2];
 
-		    curr.vertexIdx += curr.vertexSize;
+			curr.vertexIdx += curr.vertexSize;
+		    }
+
+		    particleGroup.inGpu = true;
+
 		}
 
+		/**
+		 * STAR RENDERER
+		 */
+		if (Gdx.app.getType() == ApplicationType.Desktop) {
+		    // Enable gl_PointCoord
+		    Gdx.gl20.glEnable(34913);
+		    // Enable point sizes
+		    Gdx.gl20.glEnable(0x8642);
+		}
+		shaderProgram.begin();
+		shaderProgram.setUniformMatrix("u_projModelView", camera.getCamera().combined);
+		shaderProgram.setUniformf("u_camPos", camera.getCurrent().getPos().put(aux1));
+		shaderProgram.setUniformf("u_fovFactor", camera.getFovFactor());
+		shaderProgram.setUniformf("u_alpha",
+			particleGroup.opacity * alphas[particleGroup.ct.getFirstOrdinal()]);
+		shaderProgram.setUniformf("u_ar",
+			GlobalConf.program.STEREOSCOPIC_MODE
+				&& (GlobalConf.program.STEREO_PROFILE != StereoProfile.HD_3DTV
+					&& GlobalConf.program.STEREO_PROFILE != StereoProfile.ANAGLYPHIC) ? 0.5f : 1f);
+		curr.mesh.setVertices(curr.vertices, 0, curr.vertexIdx);
+		curr.mesh.render(shaderProgram, ShapeType.Point.getGlType());
+		shaderProgram.end();
 	    }
-
-	    // Put flag down
-	    UPDATE_POINTS = false;
-
-	    /**
-	     * STAR RENDERER
-	     */
-	    if (Gdx.app.getType() == ApplicationType.Desktop) {
-		// Enable gl_PointCoord
-		Gdx.gl20.glEnable(34913);
-		// Enable point sizes
-		Gdx.gl20.glEnable(0x8642);
-	    }
-	    shaderProgram.begin();
-	    shaderProgram.setUniformMatrix("u_projModelView", camera.getCamera().combined);
-	    shaderProgram.setUniformf("u_camPos", camera.getCurrent().getPos().put(aux1));
-	    shaderProgram.setUniformf("u_fovFactor", camera.getFovFactor());
-	    shaderProgram.setUniformf("u_alpha", particleGroup.opacity * alphas[particleGroup.ct.getFirstOrdinal()]);
-	    shaderProgram.setUniformf("u_ar",
-		    GlobalConf.program.STEREOSCOPIC_MODE && (GlobalConf.program.STEREO_PROFILE != StereoProfile.HD_3DTV
-			    && GlobalConf.program.STEREO_PROFILE != StereoProfile.ANAGLYPHIC) ? 0.5f : 1f);
-	    curr.mesh.setVertices(curr.vertices, 0, curr.vertexIdx);
-	    curr.mesh.render(shaderProgram, ShapeType.Point.getGlType());
-	    shaderProgram.end();
 	}
 
     }

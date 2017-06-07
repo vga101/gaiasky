@@ -40,7 +40,7 @@
 	"color" : [1.0, 1.0, 1.0, 1.0],
 	"labelcolor" : [1.0, 0.4, 0.7, 1.0],
 	// Position in parsecs
-	"labelposition" : [5.0e3, 5.0e4, 5.0e3]
+	"labelposition" : [5.0e3, 5.0e2, 5.0e3]
 	"size" : 3.5e17,
 	"ct" : MilkyWay,
 	"transformName" : equatorialToGalactic,
@@ -60,8 +60,8 @@
 				},
 	
 	"galaxydata" : {
-				"pointsource" : "data/galaxy/galaxy_40000particles.txt",
-				"nebulasource" : "data/galaxy/galaxy_80particles.txt"
+				"pointsource" : "data/galaxy/galaxy_40000particles.dat",
+				"nebulasource" : "data/galaxy/galaxy_80particles.dat"
 				},
 	"model" : {
 				"args" : [true],	
@@ -125,6 +125,32 @@
 	// Extends IParticleGroupDataProvider
 	"provider" : "gaia.cu9.ari.gaiaorbit.data.group.SDSSDataProvider",
 	"datafile" : "data/sdss/sdss_dr12.csv"
+	
+	},
+	
+	{
+	"name" : "Oort cloud",
+	// Color of particles
+	"color" : [0.9, 0.9, 1.0, 1.0],
+	// Size of particles
+	"size" : 5.0,
+	"labelcolor" : [0.6, 0.6, 1.0, 0.9],
+	// Position in parsecs
+	"labelposition" : [0.0484814, 0.0, 0.0484814]
+	"ct" : Others,
+
+	// Fade distances, in parsecs
+	"fadein" : [0.0004, 0.004],
+	"fadeout" : [0.2, 5.0],
+	
+
+	"parent" : "Universe", 
+	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.ParticleGroup",
+	
+	// Extends IParticleGroupDataProvider
+	"provider" : "gaia.cu9.ari.gaiaorbit.data.group.PointDataProvider",
+	"factor" :  149.597871,
+	"datafile" : "data/oort/oort_40000particles.dat"
 	
 	},
 ]}

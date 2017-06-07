@@ -383,6 +383,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 	renderProcesses.add(modelBackProc);
 	// renderProcesses.add(cloudsProc);
 	renderProcesses.add(annotationsProc);
+	renderProcesses.add(particleGroupProc);
 
 	// Stars shader
 	renderProcesses.add(quadStarsProc);
@@ -394,7 +395,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 	renderProcesses.add(labelsProc);
 
 	renderProcesses.add(galaxyProc);
-	renderProcesses.add(particleGroupProc);
+
 	renderProcesses.add(modelStarsProc);
 	renderProcesses.add(modelAtmProc);
 	renderProcesses.add(modelCloseUpProc);

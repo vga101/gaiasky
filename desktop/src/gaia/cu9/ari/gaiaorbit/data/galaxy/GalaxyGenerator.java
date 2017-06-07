@@ -63,265 +63,268 @@ public class GalaxyGenerator implements IObserver {
     private static boolean radialDensity = false;
 
     public static void main(String[] args) {
-        try {
-            Gdx.files = new Lwjgl3Files();
+	try {
+	    Gdx.files = new Lwjgl3Files();
 
-            // Initialize number format
-            NumberFormatFactory.initialize(new DesktopNumberFormatFactory());
+	    // Initialize number format
+	    NumberFormatFactory.initialize(new DesktopNumberFormatFactory());
 
-            // Initialize date format
-            DateFormatFactory.initialize(new DesktopDateFormatFactory());
+	    // Initialize date format
+	    DateFormatFactory.initialize(new DesktopDateFormatFactory());
 
-            ConfInit.initialize(new DesktopConfInit(new FileInputStream(new File("../android/assets/conf/global.properties")), new FileInputStream(new File("../android/assets/data/dummyversion"))));
+	    ConfInit.initialize(
+		    new DesktopConfInit(new FileInputStream(new File("../android/assets/conf/global.properties")),
+			    new FileInputStream(new File("../android/assets/data/dummyversion"))));
 
-            I18n.initialize(new FileHandle("/home/tsagrista/git/gaiasky/android/assets/i18n/gsbundle"));
+	    I18n.initialize(new FileHandle("/home/tsagrista/git/gaiasky/android/assets/i18n/gsbundle"));
 
-            // Add notif watch
-            EventManager.instance.subscribe(new OctreeGeneratorTest(), Events.POST_NOTIFICATION, Events.JAVA_EXCEPTION);
+	    // Add notif watch
+	    EventManager.instance.subscribe(new OctreeGeneratorTest(), Events.POST_NOTIFICATION, Events.JAVA_EXCEPTION);
 
-            List<float[]> gal = null;
+	    List<float[]> gal = null;
 
-            if (TYPE.equals("spiral")) {
-                gal = generateGalaxySpiral();
-            } else if (TYPE.equals("milkyway")) {
-                gal = generateMilkyWay();
-            } else {
-                gal = generateUniform();
-            }
+	    if (TYPE.equals("spiral")) {
+		gal = generateGalaxySpiral();
+	    } else if (TYPE.equals("milkyway")) {
+		gal = generateMilkyWay();
+	    } else {
+		gal = generateUniform();
+	    }
 
-            if (writeFile) {
-                writeToDisk(gal, "/home/tsagrista/Documents/");
-            }
+	    if (writeFile) {
+		writeToDisk(gal, "/home/tsagrista/Documents/");
+	    }
 
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+	} catch (FileNotFoundException e) {
+	    e.printStackTrace();
+	} catch (IOException e) {
+	    e.printStackTrace();
+	} catch (Exception e) {
+	    e.printStackTrace();
+	}
     }
 
     private static List<float[]> generateUniform() throws IOException, RuntimeException {
-        StdRandom.setSeed(100l);
+	StdRandom.setSeed(100l);
 
-        Vector3 aux = new Vector3();
-        // x, y, z, size
-        List<float[]> particles = new ArrayList<float[]>(N);
+	Vector3 aux = new Vector3();
+	// x, y, z, size
+	List<float[]> particles = new ArrayList<float[]>(N);
 
-        for (int i = 0; i < N; i++) {
-            float x = ((float) StdRandom.uniform() - 0.5f) * 4f;
-            float y = ((float) StdRandom.uniform() - 0.5f) * 4f;
-            float z = (float) StdRandom.gaussian(0, 1.0 / 24.0);
+	for (int i = 0; i < N; i++) {
+	    float x = ((float) StdRandom.uniform() - 0.5f) * 4f;
+	    float y = ((float) StdRandom.uniform() - 0.5f) * 4f;
+	    float z = (float) StdRandom.gaussian(0, 1.0 / 24.0);
 
-            addMWParticle(x, y, z, aux, particles);
-        }
-        return particles;
+	    addMWParticle(x, y, z, aux, particles);
+	}
+	return particles;
     }
 
     /**
-     * Generates the Milky Way with the following parameters:
-     * radius: 15 Kpc
-     * thin disk height: 0.3 Kpc
-     * thick disk height: 1.5 Kpc
-     * density profile: normal with sigma^2 = 0.2
-     * The normalisation factor is 1/30 units/Kpc
+     * Generates the Milky Way with the following parameters: radius: 15 Kpc
+     * thin disk height: 0.3 Kpc thick disk height: 1.5 Kpc density profile:
+     * normal with sigma^2 = 0.2 The normalisation factor is 1/30 units/Kpc
+     * 
      * @return The list of stars
      * @throws IOException
      * @throws RuntimeException
      */
     private static List<float[]> generateMilkyWay() throws IOException, RuntimeException {
-        StdRandom.setSeed(100l);
+	StdRandom.setSeed(100l);
 
-        Vector3 aux = new Vector3();
-        // x, y, z, size
-        List<float[]> particles = new ArrayList<float[]>(N);
+	Vector3 aux = new Vector3();
+	// x, y, z, size
+	List<float[]> particles = new ArrayList<float[]>(N);
 
-        int Nbar = N / 10;
-        int Nbulge = N / 6;
-        int Nrest = 7 * N / 6;
+	int Nbar = N / 10;
+	int Nbulge = N / 6;
+	int Nrest = 7 * N / 6;
 
-        // BAR
-        for (int i = 0; i < Nbar; i++) {
-            float x = (float) StdRandom.gaussian(0, 0.18f);
-            float y = (float) StdRandom.gaussian(0, 0.03f);
-            float z = (float) StdRandom.gaussian(0, 1.0 / 24.0);
+	// BAR
+	for (int i = 0; i < Nbar; i++) {
+	    float x = (float) StdRandom.gaussian(0, 0.18f);
+	    float y = (float) StdRandom.gaussian(0, 0.03f);
+	    float z = (float) StdRandom.gaussian(0, 1.0 / 24.0);
 
-            addMWParticle(x, y, z, aux, particles);
-        }
+	    addMWParticle(x, y, z, aux, particles);
+	}
 
-        // BULGE
-        for (int i = 0; i < Nbulge; i++) {
-            float x = (float) StdRandom.gaussian(0, 0.18f);
-            float y = (float) StdRandom.gaussian(0, 0.18f);
-            float z = (float) StdRandom.gaussian(0, 1.0 / 24.0);
+	// BULGE
+	for (int i = 0; i < Nbulge; i++) {
+	    float x = (float) StdRandom.gaussian(0, 0.18f);
+	    float y = (float) StdRandom.gaussian(0, 0.18f);
+	    float z = (float) StdRandom.gaussian(0, 1.0 / 24.0);
 
-            addMWParticle(x, y, z, aux, particles);
-        }
+	    addMWParticle(x, y, z, aux, particles);
+	}
 
-        // REST
-        for (int i = 0; i < Nrest; i++) {
-            float x = (float) StdRandom.gaussian();
-            float y = (float) StdRandom.gaussian();
-            // 1/30 is the relation diameter/height of the galaxy (diameter=30 Kpc, height=0.3-1 Kpc)
-            float z = (float) StdRandom.gaussian(0, 1.0 / 30.0);
+	// REST
+	for (int i = 0; i < Nrest; i++) {
+	    float x = (float) StdRandom.gaussian();
+	    float y = (float) StdRandom.gaussian();
+	    // 1/30 is the relation diameter/height of the galaxy (diameter=30
+	    // Kpc, height=0.3-1 Kpc)
+	    float z = (float) StdRandom.gaussian(0, 1.0 / 30.0);
 
-            addMWParticle(x, y, z, aux, particles);
-        }
+	    addMWParticle(x, y, z, aux, particles);
+	}
 
-        // Rotate to align bar
-        for (float[] particle : particles) {
-            aux.set(particle[0], particle[1], particle[2]);
-            aux.rotate(-45, 0, 0, 1);
-            particle[0] = aux.x;
-            particle[1] = aux.y;
-            particle[2] = aux.z;
-        }
+	// Rotate to align bar
+	for (float[] particle : particles) {
+	    aux.set(particle[0], particle[1], particle[2]);
+	    aux.rotate(-45, 0, 0, 1);
+	    particle[0] = aux.x;
+	    particle[1] = aux.y;
+	    particle[2] = aux.z;
+	}
 
-        return particles;
+	return particles;
     }
 
     private static void addMWParticle(float x, float y, float z, Vector3 aux, List<float[]> particles) {
-        aux.set(x, y, z);
-        float len = aux.len();
+	aux.set(x, y, z);
+	float len = aux.len();
 
-        float size = (float) Math.abs(StdRandom.gaussian(0, 0.4f) * (4f - len));
+	float size = (float) Math.abs(StdRandom.gaussian(0, 0.4f) * (4f - len));
 
-        particles.add(new float[] { x, y, z, size });
+	particles.add(new float[] { x, y, z, size });
     }
 
     /**
-     * Generates a galaxy (particle positions) with spiral arms and so on.
-     * The galactic plane is XZ and Y points to the galactic north pole.
+     * Generates a galaxy (particle positions) with spiral arms and so on. The
+     * galactic plane is XZ and Y points to the galactic north pole.
+     * 
      * @throws IOException
      */
     private static List<float[]> generateGalaxySpiral() throws IOException, RuntimeException {
-        StdRandom.setSeed(100l);
+	StdRandom.setSeed(100l);
 
-        if (bar && Narms % 2 == 1) {
-            throw new RuntimeException("Galaxies with bars can only have an even number of arms");
-        }
+	if (bar && Narms % 2 == 1) {
+	    throw new RuntimeException("Galaxies with bars can only have an even number of arms");
+	}
 
-        float totalLength = Narms * radius + (bar ? barLength : 0f);
-        float armOverTotal = radius / totalLength;
-        float barOverTotal = (bar ? barLength / totalLength : 0f);
+	float totalLength = Narms * radius + (bar ? barLength : 0f);
+	float armOverTotal = radius / totalLength;
+	float barOverTotal = (bar ? barLength / totalLength : 0f);
 
-        int NperArm = Math.round(N * armOverTotal);
-        int Nbar = Math.round(N * barOverTotal);
+	int NperArm = Math.round(N * armOverTotal);
+	int Nbar = Math.round(N * barOverTotal);
 
-        float armWidth = radius * armWidthRatio;
-        float armHeight = radius * armHeightRatio;
+	float armWidth = radius * armWidthRatio;
+	float armHeight = radius * armHeightRatio;
 
-        // x, y, z, size
-        List<float[]> particles = new ArrayList<float[]>(N);
+	// x, y, z, size
+	List<float[]> particles = new ArrayList<float[]>(N);
 
-        float stepAngle = bar ? 60f / Math.max(1f, ((Narms / 2f) - 1)) : 360f / Narms;
-        float angle = bar ? 10f : 0;
+	float stepAngle = bar ? 60f / Math.max(1f, ((Narms / 2f) - 1)) : 360f / Narms;
+	float angle = bar ? 10f : 0;
 
-        Vector3 rotAxis = new Vector3(0, 1, 0);
+	Vector3 rotAxis = new Vector3(0, 1, 0);
 
-        // Generate bar
-        for (int j = 0; j < Nbar; j++) {
-            float z = (float) StdRandom.uniform() * barLength - barLength / 2f;
-            float x = (float) (StdRandom.gaussian() * armWidth);
-            float y = (float) (StdRandom.gaussian() * armHeight);
+	// Generate bar
+	for (int j = 0; j < Nbar; j++) {
+	    float z = (float) StdRandom.uniform() * barLength - barLength / 2f;
+	    float x = (float) (StdRandom.gaussian() * armWidth);
+	    float y = (float) (StdRandom.gaussian() * armHeight);
 
-            particles.add(new float[] { x, y, z, (float) Math.abs(StdRandom.gaussian()) });
-        }
+	    particles.add(new float[] { x, y, z, (float) Math.abs(StdRandom.gaussian()) });
+	}
 
-        // Generate arms
-        for (int i = 0; i < Narms; i++) {
-            Logger.info("Generating arm " + (i + 1));
-            float zplus = bar ? barLength / 2f * (i < Narms / 2 ? 1f : -1f) : 0f;
+	// Generate arms
+	for (int i = 0; i < Narms; i++) {
+	    Logger.info("Generating arm " + (i + 1));
+	    float zplus = bar ? barLength / 2f * (i < Narms / 2 ? 1f : -1f) : 0f;
 
-            angle = bar && i == Narms / 2 ? 190f : angle;
+	    angle = bar && i == Narms / 2 ? 190f : angle;
 
-            for (int j = 0; j < NperArm; j++) {
-                float x, y, z;
-                if (!radialDensity) {
-                    z = (float) StdRandom.uniform() * radius;
-                } else {
-                    z = (float) Math.abs(StdRandom.gaussian()) * radius;
-                }
-                x = (float) (StdRandom.gaussian() * armWidth);
-                y = (float) (StdRandom.gaussian() * armHeight);
+	    for (int j = 0; j < NperArm; j++) {
+		float x, y, z;
+		if (!radialDensity) {
+		    z = (float) StdRandom.uniform() * radius;
+		} else {
+		    z = (float) Math.abs(StdRandom.gaussian()) * radius;
+		}
+		x = (float) (StdRandom.gaussian() * armWidth);
+		y = (float) (StdRandom.gaussian() * armHeight);
 
-                Vector3 particle = new Vector3(x, y, z);
-                particle.rotate(rotAxis, angle);
+		Vector3 particle = new Vector3(x, y, z);
+		particle.rotate(rotAxis, angle);
 
-                // Rotate according to distance
-                particle.rotate(rotAxis, maxRotation * particle.len() / radius);
+		// Rotate according to distance
+		particle.rotate(rotAxis, maxRotation * particle.len() / radius);
 
-                particle.add(0f, 0f, zplus);
+		particle.add(0f, 0f, zplus);
 
-                particles.add(new float[] { x, y, z, (float) Math.abs(StdRandom.gaussian()) });
-            }
-            angle += stepAngle;
-        }
+		particles.add(new float[] { x, y, z, (float) Math.abs(StdRandom.gaussian()) });
+	    }
+	    angle += stepAngle;
+	}
 
-        return particles;
+	return particles;
     }
 
     private static void writeToDisk(List<float[]> gal, String dir) throws IOException {
-        String filePath = dir + "galaxy_";
-        if (TYPE.equals("spiral")) {
-            filePath += (bar ? "bar" + barLength + "_" : "nobar_") + Narms + "arms_" + N + "particles_" + radius + "radius_" + armWidthRatio + "ratio_" + maxRotation + "deg.txt";
-        } else {
-            filePath += N + "particles.txt";
-        }
+	String filePath = dir + "galaxy_";
+	if (TYPE.equals("spiral")) {
+	    filePath += (bar ? "bar" + barLength + "_" : "nobar_") + Narms + "arms_" + N + "particles_" + radius
+		    + "radius_" + armWidthRatio + "ratio_" + maxRotation + "deg.txt";
+	} else {
+	    filePath += N + "particles.dat";
+	}
 
-        FileHandle fh = new FileHandle(filePath);
-        File f = fh.file();
-        if (fh.exists() && f.isFile()) {
-            fh.delete();
-        }
+	FileHandle fh = new FileHandle(filePath);
+	File f = fh.file();
+	if (fh.exists() && f.isFile()) {
+	    fh.delete();
+	}
 
-        if (fh.isDirectory()) {
-            throw new RuntimeException("File is directory: " + filePath);
-        }
-        f.createNewFile();
+	if (fh.isDirectory()) {
+	    throw new RuntimeException("File is directory: " + filePath);
+	}
+	f.createNewFile();
 
-        FileWriter fw = new FileWriter(filePath);
-        BufferedWriter bw = new BufferedWriter(fw);
-        bw.write("#X Y Z");
-        bw.newLine();
+	FileWriter fw = new FileWriter(filePath);
+	BufferedWriter bw = new BufferedWriter(fw);
+	bw.write("#X Y Z");
+	bw.newLine();
 
-        for (int i = 0; i < gal.size(); i++) {
-            float[] star = gal.get(i);
-            bw.write(star[0] + " " + star[1] + " " + star[2] + " " + star[3]);
-            bw.newLine();
-        }
+	for (int i = 0; i < gal.size(); i++) {
+	    float[] star = gal.get(i);
+	    bw.write(star[0] + " " + star[1] + " " + star[2] + " " + star[3]);
+	    bw.newLine();
+	}
 
-        bw.close();
+	bw.close();
 
-        Logger.info("File written to " + filePath);
+	Logger.info("File written to " + filePath);
     }
 
     @Override
     public void notify(Events event, Object... data) {
-        switch (event) {
-        case POST_NOTIFICATION:
-            String message = "";
-            boolean perm = false;
-            for (int i = 0; i < data.length; i++) {
-                if (i == data.length - 1 && data[i] instanceof Boolean) {
-                    perm = (Boolean) data[i];
-                } else {
-                    message += (String) data[i];
-                    if (i < data.length - 1 && !(i == data.length - 2 && data[data.length - 1] instanceof Boolean)) {
-                        message += " - ";
-                    }
-                }
-            }
-            System.out.println(message);
-            break;
-        case JAVA_EXCEPTION:
-            Exception e = (Exception) data[0];
-            e.printStackTrace(System.err);
-            break;
-        default:
-            break;
-        }
+	switch (event) {
+	case POST_NOTIFICATION:
+	    String message = "";
+	    boolean perm = false;
+	    for (int i = 0; i < data.length; i++) {
+		if (i == data.length - 1 && data[i] instanceof Boolean) {
+		    perm = (Boolean) data[i];
+		} else {
+		    message += (String) data[i];
+		    if (i < data.length - 1 && !(i == data.length - 2 && data[data.length - 1] instanceof Boolean)) {
+			message += " - ";
+		    }
+		}
+	    }
+	    System.out.println(message);
+	    break;
+	case JAVA_EXCEPTION:
+	    Exception e = (Exception) data[0];
+	    e.printStackTrace(System.err);
+	    break;
+	default:
+	    break;
+	}
 
     }
 
