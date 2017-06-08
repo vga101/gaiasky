@@ -94,7 +94,7 @@ public interface ICamera {
      * 
      * @return The velocity in km/h.
      */
-    public double getVelocity();
+    public double getSpeed();
 
     /**
      * Gets the distance from the camera to the centre of our reference frame

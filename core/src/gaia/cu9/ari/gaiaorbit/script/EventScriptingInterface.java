@@ -244,6 +244,13 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
     }
 
     @Override
+    public double[] getCameraPosition() {
+	Vector3d campos = GaiaSky.instance.cam.getPos();
+	return new double[] { campos.x * Constants.U_TO_KM, campos.y * Constants.U_TO_KM,
+		campos.z * Constants.U_TO_KM };
+    }
+
+    @Override
     public void setCameraDirection(final double[] dir) {
 	Gdx.app.postRunnable(new Runnable() {
 	    @Override
@@ -251,6 +258,12 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
 		em.post(Events.CAMERA_DIR_CMD, dir);
 	    }
 	});
+    }
+
+    @Override
+    public double[] getCameraDirection() {
+	Vector3d camdir = GaiaSky.instance.cam.getDirection();
+	return new double[] { camdir.x, camdir.y, camdir.z };
     }
 
     @Override
@@ -264,6 +277,12 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
     }
 
     @Override
+    public double[] getCameraUp() {
+	Vector3d camup = GaiaSky.instance.cam.getUp();
+	return new double[] { camup.x, camup.y, camup.z };
+    }
+
+    @Override
     public void setCameraSpeed(final float speed) {
 	assert speed >= Constants.MIN_SLIDER && speed <= Constants.MAX_SLIDER : "Speed must be between "
 		+ Constants.MIN_SLIDER + " and " + Constants.MAX_SLIDER;
@@ -273,6 +292,11 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
 		em.post(Events.CAMERA_SPEED_CMD, speed / 10f, false);
 	    }
 	});
+    }
+
+    @Override
+    public double getCameraSpeed() {
+	return GaiaSky.instance.cam.getSpeed();
     }
 
     @Override
@@ -369,6 +393,11 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
 		em.post(Events.CAMERA_CENTER);
 	    }
 	});
+    }
+
+    @Override
+    public CelestialBody getClosestObjectToCamera() {
+	return GaiaSky.instance.cam.getClosest();
     }
 
     @Override

@@ -284,12 +284,27 @@ public interface IScriptingInterface {
     public void setCameraPosition(double[] vec);
 
     /**
+     * Gets the current camera position, in km.
+     * 
+     * @return The camera position coordinates in the internal reference system,
+     *         in km.
+     */
+    public double[] getCameraPosition();
+
+    /**
      * Sets the camera direction vector to the given vector, equatorial system.
      * 
      * @param dir
      *            The direction vector in equatorial coordinates.
      */
     public void setCameraDirection(double[] dir);
+
+    /**
+     * Gets the current camera direction vector.
+     * 
+     * @return The camera direction vector in the internal reference system.
+     */
+    public double[] getCameraDirection();
 
     /**
      * Sets the camera up vector to the given vector, equatorial system.
@@ -300,12 +315,26 @@ public interface IScriptingInterface {
     public void setCameraUp(double[] up);
 
     /**
-     * Changes the speed of the camera and its acceleration.
+     * Gets the current camera up vector.
+     * 
+     * @return The camera up vector in the internal reference system.
+     */
+    public double[] getCameraUp();
+
+    /**
+     * Changes the speed multiplier of the camera and its acceleration.
      * 
      * @param speed
      *            The new speed, from 1 to 100.
      */
     public void setCameraSpeed(float speed);
+
+    /**
+     * Gets the current physical speed of the camera in km/h.
+     * 
+     * @return The current speed of the camera in km/h.
+     */
+    public double getCameraSpeed();
 
     /**
      * Changes the speed of the camera when it rotates around a focus.
@@ -376,6 +405,14 @@ public interface IScriptingInterface {
      * sight. Useful to center the focus object again after turning.
      */
     public void cameraCenter();
+
+    /**
+     * Returns the closest object to the camera in this instant as a
+     * {@link gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody}.
+     * 
+     * @return The closest object to the camera
+     */
+    public CelestialBody getClosestObjectToCamera();
 
     /**
      * Changes the field of view of the camera.

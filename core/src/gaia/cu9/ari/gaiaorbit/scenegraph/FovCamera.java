@@ -361,8 +361,8 @@ public class FovCamera extends AbstractCamera implements IObserver {
     }
 
     @Override
-    public double getVelocity() {
-        return parent.getVelocity();
+    public double getSpeed() {
+        return parent.getSpeed();
     }
 
     @Override

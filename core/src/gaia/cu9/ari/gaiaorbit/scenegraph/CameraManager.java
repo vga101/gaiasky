@@ -358,7 +358,7 @@ public class CameraManager implements ICamera, IObserver {
     }
 
     @Override
-    public double getVelocity() {
+    public double getSpeed() {
 	return speed;
     }
 
