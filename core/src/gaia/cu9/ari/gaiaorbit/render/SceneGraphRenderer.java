@@ -333,7 +333,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 	// PARTICLE GROUP
 	AbstractRenderSystem particleGroupProc = new ParticleGroupRenderSystem(RenderGroup.POINT_GROUP, priority++,
 		alphas);
-	particleGroupProc.setPreRunnable(blendDepthRunnable);
+	particleGroupProc.setPreRunnable(blendNoDepthRunnable);
 
 	// MODEL STARS
 	AbstractRenderSystem modelStarsProc = new ModelBatchRenderSystem(RenderGroup.MODEL_S, priority++, alphas,
@@ -389,9 +389,10 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 	renderProcesses.add(quadStarsProc);
 
 	renderProcesses.add(modelFrontProc);
-	renderProcesses.add(quadSSOProc);
+
 	renderProcesses.add(modelBeamProc);
 	renderProcesses.add(lineProc);
+	renderProcesses.add(quadSSOProc);
 	renderProcesses.add(labelsProc);
 
 	renderProcesses.add(galaxyProc);

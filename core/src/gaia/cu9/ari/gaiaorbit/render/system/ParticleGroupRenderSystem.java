@@ -1,5 +1,7 @@
 package gaia.cu9.ari.gaiaorbit.render.system;
 
+import java.util.Comparator;
+
 import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -20,14 +22,18 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf.ProgramConf.StereoProfile;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
+import gaia.cu9.ari.gaiaorbit.util.comp.DistToCameraComparator;
 
 public class ParticleGroupRenderSystem extends ImmediateRenderSystem implements IObserver {
 
     Vector3 aux1;
     int additionalOffset, pmOffset;
 
+    Comparator<IRenderable> comp;
+
     public ParticleGroupRenderSystem(RenderGroup rg, int priority, float[] alphas) {
 	super(rg, priority, alphas);
+	comp = new DistToCameraComparator<IRenderable>();
     }
 
     @Override
@@ -48,7 +54,7 @@ public class ParticleGroupRenderSystem extends ImmediateRenderSystem implements 
 
 	aux1 = new Vector3();
 
-	maxVertices = 3000000;
+	maxVertices = 10000000;
 
 	VertexAttribute[] attribs = buildVertexAttributes();
 	curr.mesh = new Mesh(false, maxVertices, 0, attribs);
@@ -66,6 +72,7 @@ public class ParticleGroupRenderSystem extends ImmediateRenderSystem implements 
 
     @Override
     public void renderStud(Array<IRenderable> renderables, ICamera camera, float t) {
+	renderables.sort(comp);
 	if (renderables.size > 0) {
 	    for (IRenderable renderable : renderables) {
 		ParticleGroup particleGroup = (ParticleGroup) renderable;
@@ -82,7 +89,6 @@ public class ParticleGroupRenderSystem extends ImmediateRenderSystem implements 
 
 			// SIZE
 			curr.vertices[curr.vertexIdx + additionalOffset] = particleGroup.size * GlobalConf.SCALE_FACTOR;
-			curr.vertices[curr.vertexIdx + additionalOffset + 1] = 0;
 
 			// cb.transform.getTranslationf(aux);
 			// POSITION
@@ -93,7 +99,7 @@ public class ParticleGroupRenderSystem extends ImmediateRenderSystem implements 
 
 			curr.vertexIdx += curr.vertexSize;
 		    }
-		    particleGroup.count = particleGroup.pointData.size();
+		    particleGroup.count = particleGroup.pointData.size() * curr.vertexSize;
 
 		    particleGroup.inGpu = true;
 
@@ -130,7 +136,7 @@ public class ParticleGroupRenderSystem extends ImmediateRenderSystem implements 
 	Array<VertexAttribute> attribs = new Array<VertexAttribute>();
 	attribs.add(new VertexAttribute(Usage.Position, 3, ShaderProgram.POSITION_ATTRIBUTE));
 	attribs.add(new VertexAttribute(Usage.ColorPacked, 4, ShaderProgram.COLOR_ATTRIBUTE));
-	attribs.add(new VertexAttribute(Usage.Generic, 4, "a_additional"));
+	attribs.add(new VertexAttribute(Usage.Generic, 1, "a_additional"));
 
 	VertexAttribute[] array = new VertexAttribute[attribs.size];
 	for (int i = 0; i < attribs.size; i++)

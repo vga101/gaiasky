@@ -86,6 +86,12 @@ public class ParticleGroup extends AbstractPositionEntity implements I3DTextRend
 		factor = 1d;
 
 	    pointData = provider.loadData(datafile, factor);
+
+	    // Mean position
+	    for (double[] point : pointData) {
+		pos.add(point[0], point[1], point[2]);
+	    }
+	    pos.scl(1d / pointData.size());
 	} catch (Exception e) {
 	    Logger.error(e, getClass().getSimpleName());
 	    pointData = null;
@@ -124,7 +130,7 @@ public class ParticleGroup extends AbstractPositionEntity implements I3DTextRend
 
     @Override
     public void updateLocal(ITimeFrameProvider time, ICamera camera) {
-	super.updateLocal(time, camera);
+	this.distToCamera = (float) pos.dst(camera.getPos());
 
 	// Update alpha
 	this.opacity = 1;
@@ -132,6 +138,10 @@ public class ParticleGroup extends AbstractPositionEntity implements I3DTextRend
 	    this.opacity *= MathUtilsd.lint((float) this.currentDistance, fadeIn.x, fadeIn.y, 0, 1);
 	if (fadeOut != null)
 	    this.opacity *= MathUtilsd.lint((float) this.currentDistance, fadeOut.x, fadeOut.y, 1, 0);
+
+	if (!copy && opacity > 0) {
+	    addToRenderLists(camera);
+	}
 
 	// Label alpha
 	this.labelColour[3] = this.labelAlpha * this.opacity;
