@@ -82,7 +82,6 @@ public class BrightestStars implements IAggregationAlgorithm {
 			    octant.add(s);
 			    s.octant = octant;
 			    s.octantId = octant.pageId;
-			    s.nparticles = inputStars.size / nObjects;
 			}
 		    }
 
@@ -102,7 +101,6 @@ public class BrightestStars implements IAggregationAlgorithm {
 		    octant.add(s);
 		    s.octant = octant;
 		    s.octantId = octant.pageId;
-		    s.nparticles = inputStars.size / nObjects;
 		    added++;
 		}
 		i++;

@@ -579,6 +579,11 @@ public enum Events {
      **/
     OCTREE_PARTICLE_FADE_CMD,
 
+    /**
+     * Show uncertainties for Tycho star, if available. Contains the star
+     */
+    SHOW_UNCERTAINTIES,
+
     /** Update external GUIs signal. Contains the dt in seconds. **/
     UPDATE_GUI,
 

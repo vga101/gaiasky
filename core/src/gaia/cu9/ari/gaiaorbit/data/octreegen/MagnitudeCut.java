@@ -38,8 +38,6 @@ public class MagnitudeCut implements IAggregationAlgorithm {
 	    } else {
 		// New virtual star
 		Particle virtual = getVirtualCopy(s);
-		virtual.type = 92;
-		virtual.nparticles = inputStars.size / candidates.size();
 
 		// Add virtual to octant
 		octant.add(virtual);

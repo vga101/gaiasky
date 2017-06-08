@@ -34,6 +34,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Planet;
+import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GSEnumSet;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
@@ -424,7 +425,6 @@ public class FullGui implements IGui, IObserver {
 	    popup.addItem(go);
 
 	    if (candidate instanceof Planet) {
-		Planet p = (Planet) candidate;
 		popup.addSeparator();
 
 		MenuItem landOn = new MenuItem(txt("context.landon", candidate.getName()), skin, "default");
@@ -488,6 +488,25 @@ public class FullGui implements IGui, IObserver {
 
 		});
 		popup.addItem(landOnCoord);
+	    }
+
+	    if (candidate instanceof Star && ((Star) candidate).tycho != null) {
+		popup.addSeparator();
+
+		MenuItem uncertainties = new MenuItem("Show uncertainties", skin, "default");
+		uncertainties.addListener(new EventListener() {
+
+		    @Override
+		    public boolean handle(Event event) {
+			if (event instanceof ChangeEvent) {
+			    EventManager.instance.post(Events.SHOW_UNCERTAINTIES, candidate);
+			    return true;
+			}
+			return false;
+		    }
+
+		});
+		popup.addItem(uncertainties);
 	    }
 
 	    int mx = Gdx.input.getX();

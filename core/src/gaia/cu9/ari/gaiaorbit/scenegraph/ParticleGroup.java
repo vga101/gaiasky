@@ -59,6 +59,7 @@ public class ParticleGroup extends AbstractPositionEntity implements I3DTextRend
     private float labelAlpha;
 
     public boolean inGpu;
+    public int offset, count;
 
     /**
      * Factor to apply to the data points, usually to normalise distances

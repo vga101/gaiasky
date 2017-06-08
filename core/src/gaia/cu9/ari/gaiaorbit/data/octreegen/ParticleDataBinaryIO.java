@@ -104,7 +104,8 @@ public class ParticleDataBinaryIO {
 		}
 		data_out.writeByte(s.catalogSource);
 		data_out.writeInt((int) s.octantId);
-		data_out.writeInt(s.type);
+		// TODO Legacy type, remove
+		data_out.writeInt(0);
 	    }
 	    data_out.close();
 	    out.close();
@@ -183,7 +184,6 @@ public class ParticleDataBinaryIO {
 				source);
 			s.cc = cc;
 			s.octantId = pageId;
-			s.type = type;
 			s.initialize();
 			stars.add(s);
 		    }

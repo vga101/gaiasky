@@ -79,7 +79,7 @@ public class ParticleGroupRenderSystem extends ImmediateRenderSystem implements 
 		 * GROUP RENDER
 		 */
 		if (!particleGroup.inGpu) {
-
+		    particleGroup.offset = curr.vertexIdx;
 		    for (double[] p : particleGroup.pointData) {
 			// COLOR
 			float[] c = particleGroup.cc;
@@ -98,6 +98,7 @@ public class ParticleGroupRenderSystem extends ImmediateRenderSystem implements 
 
 			curr.vertexIdx += curr.vertexSize;
 		    }
+		    particleGroup.count = particleGroup.pointData.size();
 
 		    particleGroup.inGpu = true;
 
@@ -122,7 +123,7 @@ public class ParticleGroupRenderSystem extends ImmediateRenderSystem implements 
 			GlobalConf.program.STEREOSCOPIC_MODE
 				&& (GlobalConf.program.STEREO_PROFILE != StereoProfile.HD_3DTV
 					&& GlobalConf.program.STEREO_PROFILE != StereoProfile.ANAGLYPHIC) ? 0.5f : 1f);
-		curr.mesh.setVertices(curr.vertices, 0, curr.vertexIdx);
+		curr.mesh.setVertices(curr.vertices, particleGroup.offset, particleGroup.count);
 		curr.mesh.render(shaderProgram, ShapeType.Point.getGlType());
 		shaderProgram.end();
 	    }

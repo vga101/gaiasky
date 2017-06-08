@@ -141,7 +141,7 @@
 
 	// Fade distances, in parsecs
 	"fadein" : [0.0004, 0.004],
-	"fadeout" : [0.2, 5.0],
+	"fadeout" : [0.2, 20.0],
 	
 
 	"parent" : "Universe", 
