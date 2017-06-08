@@ -60,9 +60,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
-import gaia.cu9.ari.gaiaorbit.scenegraph.ParticleGroup;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
-import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
 import gaia.cu9.ari.gaiaorbit.script.HiddenHelperUser;
 import gaia.cu9.ari.gaiaorbit.util.ConfInit;
@@ -357,8 +355,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
 
 	// Subscribe to events
 	EventManager.instance.subscribe(this, Events.TOGGLE_AMBIENT_LIGHT, Events.AMBIENT_LIGHT_CMD,
-		Events.RECORD_CAMERA_CMD, Events.CAMERA_MODE_CMD, Events.TOGGLE_STEREOSCOPIC_INFO,
-		Events.SHOW_UNCERTAINTIES);
+		Events.RECORD_CAMERA_CMD, Events.CAMERA_MODE_CMD, Events.TOGGLE_STEREOSCOPIC_INFO);
 
 	// Re-enable input
 	if (!GlobalConf.runtime.STRIPPED_FOV_MODE)
@@ -704,33 +701,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
     @Override
     public void notify(Events event, Object... data) {
 	switch (event) {
-	case SHOW_UNCERTAINTIES:
-	    if (data[0] instanceof Star) {
-		Star s = (Star) data[0];
-		Gdx.app.postRunnable(new Runnable() {
 
-		    @Override
-		    public void run() {
-			String tyc = "61-25-1";
-			ParticleGroup pg = new ParticleGroup();
-			pg.setColor(new double[] { 0, 1, 0, 1 });
-			pg.setSize(8d);
-			pg.setName("");
-			pg.setLabelcolor(new double[] { 1, 1, 1, 0 });
-			pg.setLabelposition(new double[] { 0, 0, 0 });
-			pg.setCt("Others");
-			pg.setParent("Universe");
-			pg.setProvider("gaia.cu9.ari.gaiaorbit.data.group.UncertaintiesProvider");
-			pg.setDatafile("/media/tsagrista/Daten/Gaia/Coryn-data/data/" + tyc + ".csv");
-			pg.initialize();
-
-			sg.getRoot().addChild(pg, true);
-		    }
-
-		});
-
-	    }
-	    break;
 	case TOGGLE_AMBIENT_LIGHT:
 	    // TODO No better place to put this??
 	    ModelComponent.toggleAmbientLight((Boolean) data[1]);

@@ -25,6 +25,7 @@ import com.badlogic.gdx.utils.reflect.ReflectionException;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import gaia.cu9.ari.gaiaorbit.GaiaSky;
+import gaia.cu9.ari.gaiaorbit.data.stars.UncertaintiesHandler;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
@@ -488,23 +489,48 @@ public class FullGui implements IGui, IObserver {
 		popup.addItem(landOnCoord);
 	    }
 
-	    if (candidate instanceof Star && ((Star) candidate).tycho != null) {
-		popup.addSeparator();
+	    if (candidate instanceof Star) {
+		boolean sep = false;
+		if (UncertaintiesHandler.getInstance().containsStar(candidate.id)) {
+		    popup.addSeparator();
+		    sep = true;
 
-		MenuItem uncertainties = new MenuItem("Show uncertainties", skin, "default");
-		uncertainties.addListener(new EventListener() {
+		    MenuItem showUncertainties = new MenuItem("Show uncertainties", skin, "default");
+		    showUncertainties.addListener(new EventListener() {
 
-		    @Override
-		    public boolean handle(Event event) {
-			if (event instanceof ChangeEvent) {
-			    EventManager.instance.post(Events.SHOW_UNCERTAINTIES, candidate);
-			    return true;
+			@Override
+			public boolean handle(Event event) {
+			    if (event instanceof ChangeEvent) {
+				EventManager.instance.post(Events.SHOW_UNCERTAINTIES, candidate);
+				return true;
+			    }
+			    return false;
 			}
-			return false;
-		    }
 
-		});
-		// popup.addItem(uncertainties);
+		    });
+		    popup.addItem(showUncertainties);
+		}
+
+		if (UncertaintiesHandler.getInstance().containsUncertainties()) {
+		    if (!sep)
+			popup.addSeparator();
+
+		    MenuItem hideUncertainties = new MenuItem("Hide uncertainties", skin, "default");
+		    hideUncertainties.addListener(new EventListener() {
+
+			@Override
+			public boolean handle(Event event) {
+			    if (event instanceof ChangeEvent) {
+				EventManager.instance.post(Events.HIDE_UNCERTAINTIES, candidate);
+				return true;
+			    }
+			    return false;
+			}
+
+		    });
+		    popup.addItem(hideUncertainties);
+
+		}
 	    }
 
 	    int mx = Gdx.input.getX();

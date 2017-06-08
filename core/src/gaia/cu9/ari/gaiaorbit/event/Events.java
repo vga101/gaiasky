@@ -584,6 +584,11 @@ public enum Events {
      */
     SHOW_UNCERTAINTIES,
 
+    /**
+     * Hides all uncertainties
+     */
+    HIDE_UNCERTAINTIES,
+
     /** Update external GUIs signal. Contains the dt in seconds. **/
     UPDATE_GUI,
 
