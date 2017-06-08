@@ -50,6 +50,11 @@ public class ParticleGroup extends AbstractPositionEntity implements I3DTextRend
      */
     private double currentDistance;
 
+    /**
+     * Profile decay of the particles in the shader
+     */
+    public float profileDecay = 4.0f;
+
     protected String provider;
 
     public List<double[]> pointData;
@@ -235,5 +240,9 @@ public class ParticleGroup extends AbstractPositionEntity implements I3DTextRend
 
     public void setFactor(Double factor) {
 	this.factor = factor;
+    }
+
+    public void setProfiledecay(Double profiledecay) {
+	this.profileDecay = profiledecay.floatValue();
     }
 }

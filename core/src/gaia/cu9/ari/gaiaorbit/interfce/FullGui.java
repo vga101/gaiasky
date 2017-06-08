@@ -391,8 +391,6 @@ public class FullGui implements IGui, IObserver {
 	    break;
 	case POPUP_MENU_FOCUS:
 	    final CelestialBody candidate = (CelestialBody) data[0];
-	    Integer screenX = (Integer) data[1];
-	    Integer screenY = (Integer) data[2];
 
 	    ContextMenu popup = new ContextMenu(skin, "default");
 
@@ -506,7 +504,7 @@ public class FullGui implements IGui, IObserver {
 		    }
 
 		});
-		popup.addItem(uncertainties);
+		// popup.addItem(uncertainties);
 	    }
 
 	    int mx = Gdx.input.getX();

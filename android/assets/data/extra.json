@@ -131,17 +131,19 @@
 	{
 	"name" : "Oort cloud",
 	// Color of particles
-	"color" : [0.9, 0.9, 1.0, 1.0],
+	"color" : [0.9, 0.9, 0.9, 1.0],
 	// Size of particles
-	"size" : 5.0,
-	"labelcolor" : [0.6, 0.6, 1.0, 0.9],
+	"size" : 1.5,
+	"labelcolor" : [0.3, 0.6, 1.0, 1.0],
 	// Position in parsecs
 	"labelposition" : [0.0484814, 0.0, 0.0484814]
 	"ct" : Others,
 
 	// Fade distances, in parsecs
 	"fadein" : [0.0004, 0.004],
-	"fadeout" : [0.2, 20.0],
+	"fadeout" : [0.1, 15.0],
+	
+	"profiledecay" : 0.3,
 	
 
 	"parent" : "Universe", 

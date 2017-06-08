@@ -37,11 +37,6 @@ public class ParticleGroupRenderSystem extends ImmediateRenderSystem implements 
 	if (!shaderProgram.isCompiled()) {
 	    Logger.error(this.getClass().getName(), "Point shader compilation failed:\n" + shaderProgram.getLog());
 	}
-	shaderProgram.begin();
-	shaderProgram.setUniformf("u_pointAlphaMin", 0.1f);
-	shaderProgram.setUniformf("u_pointAlphaMax", 1.0f);
-	shaderProgram.end();
-
     }
 
     @Override
@@ -116,13 +111,13 @@ public class ParticleGroupRenderSystem extends ImmediateRenderSystem implements 
 		shaderProgram.begin();
 		shaderProgram.setUniformMatrix("u_projModelView", camera.getCamera().combined);
 		shaderProgram.setUniformf("u_camPos", camera.getCurrent().getPos().put(aux1));
-		shaderProgram.setUniformf("u_fovFactor", camera.getFovFactor());
 		shaderProgram.setUniformf("u_alpha",
 			particleGroup.opacity * alphas[particleGroup.ct.getFirstOrdinal()]);
 		shaderProgram.setUniformf("u_ar",
 			GlobalConf.program.STEREOSCOPIC_MODE
 				&& (GlobalConf.program.STEREO_PROFILE != StereoProfile.HD_3DTV
 					&& GlobalConf.program.STEREO_PROFILE != StereoProfile.ANAGLYPHIC) ? 0.5f : 1f);
+		shaderProgram.setUniformf("u_profileDecay", particleGroup.profileDecay);
 		curr.mesh.setVertices(curr.vertices, particleGroup.offset, particleGroup.count);
 		curr.mesh.render(shaderProgram, ShapeType.Point.getGlType());
 		shaderProgram.end();

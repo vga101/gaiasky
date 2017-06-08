@@ -8,11 +8,6 @@ attribute vec4 a_color;
 // x - size, y - th_angle_point
 attribute vec4 a_additional;
 
-
-uniform float u_pointAlphaMin;
-uniform float u_pointAlphaMax;
-uniform float u_fovFactor;
-uniform float u_starBrightness;
 uniform float u_alpha;
 
 uniform mat4 u_projModelView;
