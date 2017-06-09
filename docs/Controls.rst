@@ -212,7 +212,7 @@ controller to the actions.
 
 
 The actions depend on the current camera
-mode (focus, free, spacecraft), and can be 
+mode (focus, free, spacecraft), and are described below:
 
 .. _gamepad-focus-mode:
 
