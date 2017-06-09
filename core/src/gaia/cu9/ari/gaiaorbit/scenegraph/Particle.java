@@ -199,7 +199,7 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
 	return (float) radius;
     }
 
-    private void setDerivedAttributes() {
+    protected void setDerivedAttributes() {
 	double flux = Math.pow(10, -absmag / 2.5f);
 	setRGB(colorbv);
 
@@ -238,7 +238,7 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
 		    // ModelBody.closestCamStar.distToCamera > distToCamera)
 		    ModelBody.closestCamStar = this;
 
-		addToRender(this, RenderGroup.POINT);
+		addToRender(this, RenderGroup.POINT_STAR);
 
 		viewAngle = (radius / distToCamera) / camera.getFovFactor();
 		viewAngleApparent = viewAngle * GlobalConf.scene.STAR_BRIGHTNESS;
@@ -265,7 +265,7 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
 	} else {
 
 	    if (viewAngleApparent >= thpointTimesFovfactor) {
-		addToRender(this, RenderGroup.SHADER);
+		addToRender(this, RenderGroup.SHADER_STAR);
 	    }
 	    if (viewAngleApparent >= thpointTimesFovfactor / GlobalConf.scene.PM_NUM_FACTOR && this.hasPm) {
 		addToRender(this, RenderGroup.LINE);
@@ -296,7 +296,7 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
      * @param bv
      *            B-V color index
      */
-    private void setRGB(float bv) {
+    protected void setRGB(float bv) {
 	if (cc == null)
 	    cc = ColourUtils.BVtoRGB(bv);
 	setColor2Data();

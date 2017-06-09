@@ -61,9 +61,15 @@ public class Constants {
     public static final double PC_TO_U = AstroUtils.PC_TO_KM * KM_TO_U;
 
     /**
-     * Kiloparsec to local unit conversion. Multiply this by all values in pc.
+     * Kiloparsec to local unit conversion. Multiply this by all values in Kpc.
      */
     public static final double KPC_TO_U = PC_TO_U * 1000;
+
+    /**
+     * Megaparsec to local unit conversion. Multiply this by all values in Mpc.
+     */
+    public static final double MPC_TO_U = PC_TO_U * 1000000;
+
     /**
      * Local unit to pc conversion.
      */

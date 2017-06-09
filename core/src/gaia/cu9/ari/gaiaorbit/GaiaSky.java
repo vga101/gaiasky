@@ -587,7 +587,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
 	// Update cameras
 	cam.update(this.dt, time);
 
-	// Precompute isOn for all stars
+	// Precompute isOn for all stars and galaxies
 	Particle.renderOn = isOn(ComponentType.Stars);
 
 	// Update scene graph

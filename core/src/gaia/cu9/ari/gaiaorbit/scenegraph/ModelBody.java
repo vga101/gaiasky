@@ -122,7 +122,7 @@ public abstract class ModelBody extends CelestialBody {
 	    if (viewAngleApparent >= thPoint) {
 		opacity = (float) MathUtilsd.lint(viewAngleApparent, thPoint, thPoint * 4, 0, 1);
 		if (viewAngleApparent < THRESHOLD_QUAD() * camera.getFovFactor()) {
-		    addToRender(this, RenderGroup.SHADER_F);
+		    addToRender(this, RenderGroup.SHADER_SSO);
 		} else {
 		    addToRender(this, RenderGroup.MODEL_F);
 		}

@@ -32,10 +32,10 @@ import gaia.cu9.ari.gaiaorbit.render.IPostProcessor.PostProcessBean;
 import gaia.cu9.ari.gaiaorbit.render.system.AbstractRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.AbstractRenderSystem.RenderSystemRunnable;
 import gaia.cu9.ari.gaiaorbit.render.system.FontRenderSystem;
-import gaia.cu9.ari.gaiaorbit.render.system.GalaxyRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.IRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.LineQuadRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.LineRenderSystem;
+import gaia.cu9.ari.gaiaorbit.render.system.MilkyWayRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.ModelBatchRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.ParticleGroupRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.PixelRenderSystem;
@@ -72,7 +72,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
     public AbstractRenderSystem[] pixelRenderSystems;
 
-    private ShaderProgram starShader, fontShader;
+    private ShaderProgram starShader, galaxyShader, fontShader;
 
     private int maxTexSize;
 
@@ -110,13 +110,29 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
 	ShaderLoader.Pedantic = false;
 	ShaderProgram.pedantic = false;
+
+	/**
+	 * STAR SHADER
+	 */
 	starShader = new ShaderProgram(Gdx.files.internal("shader/star.vertex.glsl"),
 		Gdx.files.internal("shader/star.fragment.glsl"));
 	if (!starShader.isCompiled()) {
 	    Logger.error(new RuntimeException(),
 		    this.getClass().getName() + " - Star shader compilation failed:\n" + starShader.getLog());
 	}
+	/**
+	 * GALAXY SHADER
+	 */
+	galaxyShader = new ShaderProgram(Gdx.files.internal("shader/gal.vertex.glsl"),
+		Gdx.files.internal("shader/gal.fragment.glsl"));
+	if (!galaxyShader.isCompiled()) {
+	    Logger.error(new RuntimeException(),
+		    this.getClass().getName() + " - Galaxy shader compilation failed:\n" + galaxyShader.getLog());
+	}
 
+	/**
+	 * FONT SHADER
+	 */
 	fontShader = new ShaderProgram(Gdx.files.internal("shader/font.vertex.glsl"),
 		Gdx.files.internal("shader/font.fragment.glsl"));
 	if (!fontShader.isCompiled()) {
@@ -230,8 +246,9 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 	int priority = 0;
 
 	// POINTS
-	AbstractRenderSystem pixelProc = new PixelRenderSystem(RenderGroup.POINT, priority++, alphas);
-	pixelProc.setPreRunnable(blendNoDepthRunnable);
+	AbstractRenderSystem pixelStarProc = new PixelRenderSystem(RenderGroup.POINT_STAR, priority++, alphas,
+		ComponentType.Stars);
+	pixelStarProc.setPreRunnable(blendNoDepthRunnable);
 
 	// MODEL BACK
 	AbstractRenderSystem modelBackProc = new ModelBatchRenderSystem(RenderGroup.MODEL_B, priority++, alphas,
@@ -262,8 +279,8 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 	});
 
 	// SHADER STARS
-	AbstractRenderSystem quadStarsProc = new QuadRenderSystem(RenderGroup.SHADER, priority++, alphas, starShader,
-		true);
+	AbstractRenderSystem quadStarsProc = new QuadRenderSystem(RenderGroup.SHADER_STAR, priority++, alphas,
+		starShader, true, null);
 	quadStarsProc.setPreRunnable(blendNoDepthRunnable);
 	quadStarsProc.setPostRunnable(new RenderSystemRunnable() {
 
@@ -313,6 +330,11 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
 	});
 
+	// SHADER GALAXIEWS
+	AbstractRenderSystem quadGalaxiesProc = new QuadRenderSystem(RenderGroup.SHADER_GAL, priority++, alphas,
+		galaxyShader, true, "img/galaxy.png");
+	quadGalaxiesProc.setPreRunnable(blendNoDepthRunnable);
+
 	// LINES
 	AbstractRenderSystem lineProc = getLineRenderSystem();
 
@@ -327,7 +349,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 	modelBeamProc.setPreRunnable(blendDepthRunnable);
 
 	// GALAXY
-	AbstractRenderSystem galaxyProc = new GalaxyRenderSystem(RenderGroup.GALAXY, priority++, alphas, modelBatchF);
+	AbstractRenderSystem galaxyProc = new MilkyWayRenderSystem(RenderGroup.GALAXY, priority++, alphas, modelBatchF);
 	galaxyProc.setPreRunnable(blendNoDepthRunnable);
 
 	// PARTICLE GROUP
@@ -346,8 +368,8 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 	labelsProc.setPreRunnable(blendNoDepthRunnable);
 
 	// SHADER SSO
-	AbstractRenderSystem quadSSOProc = new QuadRenderSystem(RenderGroup.SHADER_F, priority++, alphas, starShader,
-		false);
+	AbstractRenderSystem quadSSOProc = new QuadRenderSystem(RenderGroup.SHADER_SSO, priority++, alphas, starShader,
+		false, null);
 	quadSSOProc.setPreRunnable(blendDepthRunnable);
 
 	// MODEL ATMOSPHERE
@@ -379,13 +401,14 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 	modelCloseUpProc.setPreRunnable(blendDepthRunnable);
 
 	// Add components to set
-	renderProcesses.add(pixelProc);
+	renderProcesses.add(pixelStarProc);
 	renderProcesses.add(modelBackProc);
 	// renderProcesses.add(cloudsProc);
 	renderProcesses.add(annotationsProc);
 	renderProcesses.add(particleGroupProc);
 
-	// Stars shader
+	// Quads for galaxies and stars
+	renderProcesses.add(quadGalaxiesProc);
 	renderProcesses.add(quadStarsProc);
 
 	renderProcesses.add(modelFrontProc);

@@ -26,5 +26,9 @@
 	{
 		"loader": gaia.cu9.ari.gaiaorbit.data.constel.ConstelBoundariesLoader,
 		"files": [ "data/boundaries.csv" ]
+	},
+	{
+		"loader": "gaia.cu9.ari.gaiaorbit.data.stars.NBGLoader",
+		"files": [ "data/nbg/nbg.dat" ]
 	}
 ]}

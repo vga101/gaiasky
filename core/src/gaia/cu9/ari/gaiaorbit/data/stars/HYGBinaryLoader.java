@@ -26,14 +26,22 @@ import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
  * Loads the HYG catalog in binary (own) format. The format is defined as
  * follows
  *
- * - 32 bits (int) with the number of stars, starNum repeat the following
- * starNum times (for each star) - 32 bits (int) - The the length of the name,
- * or nameLength - 16 bits * nameLength (chars) - The name of the star - 32 bits
- * (float) - appmag - 32 bits (float) - absmag - 32 bits (float) - colorbv - 32
- * bits (float) - ra - 32 bits (float) - dec - 32 bits (float) - distance - 32
- * bits (float) - proper motion x (internal units) - 32 bits (float) - proper
- * motion y (internal units) - 32 bits (float) - proper motion z (internal
- * units) - 64 bits (long) - id
+ * <ul>
+ * <li>32 bits (int) with the number of stars, starNum repeat the following
+ * starNum times (for each star)</li>
+ * <li>32 bits (int) - The the length of the name, or nameLength</li>
+ * <li>16 bits * nameLength (chars) - The name of the star</li>
+ * <li>32 bits (float) - appmag</li>
+ * <li>32 bits (float) - absmag</li>
+ * <li>32 bits (float) - colorbv</li>
+ * <li>32 bits (float) - ra</li>
+ * <li>32 bits (float) - dec</li>
+ * <li>32 bits (float) - distance</li>
+ * <li>32 bits (float) - proper motion x (internal units)</li>
+ * <li>32 bits (float) - proper motion y (internal units)</li>
+ * <li>32 bits (float) - proper motion z (internal units)</li>
+ * <li>64 bits (long) - id</li>
+ * </ul>
  *
  * @author Toni Sagrista
  *
@@ -42,70 +50,78 @@ public class HYGBinaryLoader extends AbstractCatalogLoader implements ISceneGrap
 
     @Override
     public Array<Particle> loadData() throws FileNotFoundException {
-        Array<Particle> stars = new Array<Particle>();
-        for (String f : files) {
-            FileHandle file = Gdx.files.internal(f);
-            InputStream data = file.read();
-            DataInputStream data_in = new DataInputStream(data);
+	Array<Particle> stars = new Array<Particle>();
+	for (String f : files) {
+	    FileHandle file = Gdx.files.internal(f);
+	    InputStream data = file.read();
+	    DataInputStream data_in = new DataInputStream(data);
 
-            //Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.limitmag", GlobalConf.data.LIMIT_MAG_LOAD));
-            Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.catalog.loading", file.name()));
+	    // Logger.info(this.getClass().getSimpleName(),
+	    // I18n.bundle.format("notif.limitmag",
+	    // GlobalConf.data.LIMIT_MAG_LOAD));
+	    Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.catalog.loading", file.name()));
 
-            try {
-                // Read size of stars
-                int size = data_in.readInt();
+	    try {
+		// Read size of stars
+		int size = data_in.readInt();
 
-                for (int idx = 0; idx < size; idx++) {
-                    try {
-                        // name_length, name, appmag, absmag, colorbv, ra, dec, dist, mualpha, mudelta, radvel, id, hip
-                        int nameLength = data_in.readInt();
-                        StringBuilder sb = new StringBuilder();
-                        for (int i = 0; i < nameLength; i++) {
-                            sb.append(data_in.readChar());
-                        }
-                        String name = sb.toString();
-                        float appmag = data_in.readFloat();
-                        float absmag = data_in.readFloat();
-                        float colorbv = data_in.readFloat();
-                        float ra = data_in.readFloat();
-                        float dec = data_in.readFloat();
-                        float dist = data_in.readFloat();
-                        float mualpha = data_in.readFloat();
-                        float mudelta = data_in.readFloat();
-                        float radvel = data_in.readFloat();
-                        long id = data_in.readInt();
-                        id = -1l;
-                        int hip = data_in.readInt();
-                        if (appmag < GlobalConf.data.LIMIT_MAG_LOAD) {
-                            Vector3d pos = Coordinates.sphericalToCartesian(Math.toRadians(ra), Math.toRadians(dec), dist, new Vector3d());
-                            Vector3 pmSph = new Vector3(mualpha, mudelta, radvel);
-                            Vector3d pm = Coordinates.sphericalToCartesian(Math.toRadians(ra + mualpha * AstroUtils.MILLARCSEC_TO_DEG), Math.toRadians(dec + mudelta * AstroUtils.MILLARCSEC_TO_DEG), dist + radvel * Constants.KM_TO_U * Constants.S_TO_Y, new Vector3d());
-                            pm.sub(pos);
-                            Vector3 pmfloat = pm.toVector3();
+		for (int idx = 0; idx < size; idx++) {
+		    try {
+			// name_length, name, appmag, absmag, colorbv, ra, dec,
+			// dist, mualpha, mudelta, radvel, id, hip
+			int nameLength = data_in.readInt();
+			StringBuilder sb = new StringBuilder();
+			for (int i = 0; i < nameLength; i++) {
+			    sb.append(data_in.readChar());
+			}
+			String name = sb.toString();
+			float appmag = data_in.readFloat();
+			float absmag = data_in.readFloat();
+			float colorbv = data_in.readFloat();
+			float ra = data_in.readFloat();
+			float dec = data_in.readFloat();
+			float dist = data_in.readFloat();
+			float mualpha = data_in.readFloat();
+			float mudelta = data_in.readFloat();
+			float radvel = data_in.readFloat();
+			long id = data_in.readInt();
+			id = -1l;
+			int hip = data_in.readInt();
+			if (appmag < GlobalConf.data.LIMIT_MAG_LOAD) {
+			    Vector3d pos = Coordinates.sphericalToCartesian(Math.toRadians(ra), Math.toRadians(dec),
+				    dist, new Vector3d());
+			    Vector3 pmSph = new Vector3(mualpha, mudelta, radvel);
+			    Vector3d pm = Coordinates.sphericalToCartesian(
+				    Math.toRadians(ra + mualpha * AstroUtils.MILLARCSEC_TO_DEG),
+				    Math.toRadians(dec + mudelta * AstroUtils.MILLARCSEC_TO_DEG),
+				    dist + radvel * Constants.KM_TO_U * Constants.S_TO_Y, new Vector3d());
+			    pm.sub(pos);
+			    Vector3 pmfloat = pm.toVector3();
 
-                            Star s = new Star(pos, pmfloat, pmSph, appmag, absmag, colorbv, name, ra, dec, id, hip, null, (byte) 2);
-                            if (runFiltersAnd(s))
-                                stars.add(s);
-                        }
-                    } catch (EOFException eof) {
-                        Logger.error(eof, HYGBinaryLoader.class.getSimpleName());
-                    }
-                }
+			    Star s = new Star(pos, pmfloat, pmSph, appmag, absmag, colorbv, name, ra, dec, id, hip,
+				    null, (byte) 2);
+			    if (runFiltersAnd(s))
+				stars.add(s);
+			}
+		    } catch (EOFException eof) {
+			Logger.error(eof, HYGBinaryLoader.class.getSimpleName());
+		    }
+		}
 
-            } catch (IOException e) {
-                Logger.error(e, HYGBinaryLoader.class.getSimpleName());
-            } finally {
-                try {
-                    data_in.close();
-                } catch (IOException e) {
-                    Logger.error(e);
-                }
+	    } catch (IOException e) {
+		Logger.error(e, HYGBinaryLoader.class.getSimpleName());
+	    } finally {
+		try {
+		    data_in.close();
+		} catch (IOException e) {
+		    Logger.error(e);
+		}
 
-            }
-        }
+	    }
+	}
 
-        Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.catalog.init", stars.size));
-        return stars;
+	Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.catalog.init", stars.size));
+	return stars;
     }
 
 }

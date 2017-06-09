@@ -28,7 +28,7 @@ import gaia.cu9.ari.gaiaorbit.util.GlobalConf.ProgramConf.StereoProfile;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 
-public class GalaxyRenderSystem extends ImmediateRenderSystem implements IObserver {
+public class MilkyWayRenderSystem extends ImmediateRenderSystem implements IObserver {
     private boolean UPDATE_POINTS = true;
 
     Vector3 aux1;
@@ -40,7 +40,7 @@ public class GalaxyRenderSystem extends ImmediateRenderSystem implements IObserv
 
     private ModelBatch modelBatch;
 
-    public GalaxyRenderSystem(RenderGroup rg, int priority, float[] alphas, ModelBatch modelBatch) {
+    public MilkyWayRenderSystem(RenderGroup rg, int priority, float[] alphas, ModelBatch modelBatch) {
 	super(rg, priority, alphas);
 	this.modelBatch = modelBatch;
     }
@@ -293,63 +293,66 @@ public class GalaxyRenderSystem extends ImmediateRenderSystem implements IObserv
 		UPDATE_POINTS = false;
 	    }
 
-	    if (GlobalConf.scene.GALAXY_3D) {
-		/**
-		 * NEBULA RENDERER
-		 */
+	    float alpha = getAlpha(mw);
+	    if (alpha > 0) {
 
-		quadProgram.begin();
+		if (GlobalConf.scene.GALAXY_3D) {
+		    /**
+		     * NEBULA RENDERER
+		     */
 
-		// General uniforms
-		quadProgram.setUniformMatrix("u_projModelView", camera.getCamera().combined);
-		quadProgram.setUniformf("u_camPos", camera.getCurrent().getPos().put(aux1));
-		quadProgram.setUniformf("u_alpha", 0.015f * mw.opacity * alphas[mw.ct.getFirstOrdinal()]);
+		    quadProgram.begin();
 
-		for (int i = 0; i < 4; i++) {
-		    nebulatextures[i].bind(i);
-		    quadProgram.setUniformi("u_nebulaTexture" + i, i);
+		    // General uniforms
+		    quadProgram.setUniformMatrix("u_projModelView", camera.getCamera().combined);
+		    quadProgram.setUniformf("u_camPos", camera.getCurrent().getPos().put(aux1));
+		    quadProgram.setUniformf("u_alpha", 0.015f * mw.opacity * alpha);
+
+		    for (int i = 0; i < 4; i++) {
+			nebulatextures[i].bind(i);
+			quadProgram.setUniformi("u_nebulaTexture" + i, i);
+		    }
+
+		    quad.mesh.setVertices(quad.vertices, 0, quad.vertexIdx);
+		    quad.mesh.setIndices(quad.indices, 0, quad.indexIdx);
+		    quad.mesh.render(quadProgram, GL20.GL_TRIANGLES, 0, quad.indexIdx);
+
+		    quadProgram.end();
+
+		    /**
+		     * STAR RENDERER
+		     */
+		    if (Gdx.app.getType() == ApplicationType.Desktop) {
+			// Enable gl_PointCoord
+			Gdx.gl20.glEnable(34913);
+			// Enable point sizes
+			Gdx.gl20.glEnable(0x8642);
+		    }
+		    shaderProgram.begin();
+		    shaderProgram.setUniformMatrix("u_projModelView", camera.getCamera().combined);
+		    shaderProgram.setUniformf("u_camPos", camera.getCurrent().getPos().put(aux1));
+		    shaderProgram.setUniformf("u_fovFactor", camera.getFovFactor());
+		    shaderProgram.setUniformf("u_alpha", mw.opacity * alpha * 0.3f);
+		    shaderProgram.setUniformf("u_ar",
+			    GlobalConf.program.STEREOSCOPIC_MODE
+				    && (GlobalConf.program.STEREO_PROFILE != StereoProfile.HD_3DTV
+					    && GlobalConf.program.STEREO_PROFILE != StereoProfile.ANAGLYPHIC) ? 0.5f
+						    : 1f);
+		    curr.mesh.setVertices(curr.vertices, 0, curr.vertexIdx);
+		    curr.mesh.render(shaderProgram, ShapeType.Point.getGlType());
+		    shaderProgram.end();
 		}
 
-		quad.mesh.setVertices(quad.vertices, 0, quad.vertexIdx);
-		quad.mesh.setIndices(quad.indices, 0, quad.indexIdx);
-		quad.mesh.render(quadProgram, GL20.GL_TRIANGLES, 0, quad.indexIdx);
-
-		quadProgram.end();
-
 		/**
-		 * STAR RENDERER
+		 * IMAGE RENDERER
 		 */
-		if (Gdx.app.getType() == ApplicationType.Desktop) {
-		    // Enable gl_PointCoord
-		    Gdx.gl20.glEnable(34913);
-		    // Enable point sizes
-		    Gdx.gl20.glEnable(0x8642);
-		}
-		shaderProgram.begin();
-		shaderProgram.setUniformMatrix("u_projModelView", camera.getCamera().combined);
-		shaderProgram.setUniformf("u_camPos", camera.getCurrent().getPos().put(aux1));
-		shaderProgram.setUniformf("u_fovFactor", camera.getFovFactor());
-		shaderProgram.setUniformf("u_alpha", mw.opacity * alphas[mw.ct.getFirstOrdinal()] * 0.3f);
-		shaderProgram.setUniformf("u_ar",
-			GlobalConf.program.STEREOSCOPIC_MODE
-				&& (GlobalConf.program.STEREO_PROFILE != StereoProfile.HD_3DTV
-					&& GlobalConf.program.STEREO_PROFILE != StereoProfile.ANAGLYPHIC) ? 0.5f : 1f);
-		curr.mesh.setVertices(curr.vertices, 0, curr.vertexIdx);
-		curr.mesh.render(shaderProgram, ShapeType.Point.getGlType());
-		shaderProgram.end();
+		mw.mc.touch();
+		mw.mc.setTransparency(mw.opacity * alpha * (GlobalConf.scene.GALAXY_3D ? 0.4f : 0.8f));
+
+		modelBatch.begin(camera.getCamera());
+		modelBatch.render(mw.mc.instance, mw.mc.env);
+		modelBatch.end();
 	    }
-
-	    /**
-	     * IMAGE RENDERER
-	     */
-	    mw.mc.touch();
-	    mw.mc.setTransparency(
-		    mw.opacity * alphas[mw.ct.getFirstOrdinal()] * (GlobalConf.scene.GALAXY_3D ? 0.4f : 0.8f));
-
-	    modelBatch.begin(camera.getCamera());
-	    modelBatch.render(mw.mc.instance, mw.mc.env);
-	    modelBatch.end();
-
 	}
 
     }

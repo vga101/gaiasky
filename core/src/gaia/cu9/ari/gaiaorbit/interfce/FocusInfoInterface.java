@@ -34,8 +34,8 @@ import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnLabel;
 public class FocusInfoInterface extends Table implements IObserver, IGuiInterface {
     static private INetworkChecker daemon;
 
-    protected OwnLabel focusName, focusId, focusRA, focusDEC, focusMuAlpha, focusMuDelta, focusAngle, focusDist,
-	    focusAppMag, focusAbsMag, focusRadius;
+    protected OwnLabel focusName, focusType, focusId, focusRA, focusDEC, focusMuAlpha, focusMuDelta, focusAngle,
+	    focusDist, focusAppMag, focusAbsMag, focusRadius;
     protected OwnLabel pointerName, pointerLonLat, pointerRADEC;
     protected OwnLabel camName, camVel, camPos, lonLatLabel, RADECLabel;
 
@@ -65,6 +65,7 @@ public class FocusInfoInterface extends Table implements IObserver, IGuiInterfac
 	moreInfo = new Table();
 
 	focusName = new OwnLabel("", skin, "hud-header");
+	focusType = new OwnLabel("", skin, "hud-subheader");
 	focusId = new OwnLabel("", skin, "hud");
 	focusRA = new OwnLabel("", skin, "hud");
 	focusDEC = new OwnLabel("", skin, "hud");
@@ -76,13 +77,13 @@ public class FocusInfoInterface extends Table implements IObserver, IGuiInterfac
 	focusDist = new OwnLabel("", skin, "hud");
 	focusRadius = new OwnLabel("", skin, "hud");
 
-	pointerName = new OwnLabel(I18n.bundle.get("gui.pointer"), skin, "hud-subheader");
+	pointerName = new OwnLabel(I18n.bundle.get("gui.pointer"), skin, "hud-header");
 	pointerRADEC = new OwnLabel("", skin, "hud");
 	pointerLonLat = new OwnLabel("", skin, "hud");
 	lonLatLabel = new OwnLabel("Lat/Lon", skin, "hud-big");
 	RADECLabel = new OwnLabel(txt("gui.focusinfo.alpha") + "/" + txt("gui.focusinfo.delta"), skin, "hud-big");
 
-	camName = new OwnLabel(I18n.bundle.get("gui.camera"), skin, "hud-subheader");
+	camName = new OwnLabel(I18n.bundle.get("gui.camera"), skin, "hud-header");
 	camVel = new OwnLabel("", skin, "hud");
 	camPos = new OwnLabel("", skin, "hud");
 
@@ -99,6 +100,8 @@ public class FocusInfoInterface extends Table implements IObserver, IGuiInterfac
 	/** FOCUS INFO **/
 
 	focusInfo.add(focusName).left().colspan(2);
+	focusInfo.row();
+	focusInfo.add(focusType).left().padBottom(pad5).colspan(2);
 	focusInfo.row();
 	focusInfo.add(new OwnLabel("ID", skin, "hud-big")).left();
 	focusInfo.add(focusId).left().padLeft(pad10);
@@ -197,6 +200,12 @@ public class FocusInfoInterface extends Table implements IObserver, IGuiInterfac
 	    }
 	    if (id.length() == 0) {
 		id = "-";
+	    }
+
+	    try {
+		focusType.setText(txt("element." + cb.ct.getFirst().toString().toLowerCase() + ".singular"));
+	    } catch (Exception e) {
+		focusType.setText("");
 	    }
 
 	    if (cb instanceof Planet) {

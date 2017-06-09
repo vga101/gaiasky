@@ -56,14 +56,14 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
 	MODEL_F(0),
 	/** Background models **/
 	MODEL_B(1),
-	/** Shader - back (stars) **/
-	SHADER(2),
-	/** Shader - closest (usually sun) **/
-	// SHADER_C(3),
+	/** Shader - stars **/
+	SHADER_STAR(2),
+	/** Shader - galaxies **/
+	SHADER_GAL(3),
 	/** Shader - front (planets, satellites...) **/
-	SHADER_F(4),
+	SHADER_SSO(4),
 	/** Single pixel **/
-	POINT(5),
+	POINT_STAR(5),
 	/** Line **/
 	LINE(6),
 	/** Annotations of background models (grids) **/

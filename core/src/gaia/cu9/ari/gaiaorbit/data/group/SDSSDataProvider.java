@@ -43,13 +43,15 @@ public class SDSSDataProvider implements IParticleGroupDataProvider {
 			// double dist = redshiftToDistance(0.272, 0.0000812,
 			// 0.728, 70.4, z);
 			double dist = ((z * 299792.46) / 71);
-			// Convert position
-			Position p = new Position(ra, "deg", dec, "deg", dist, "mpc", PositionType.RA_DEC_DIST);
-			p.gsposition.scl(Constants.PC_TO_U);
-			point[0] = p.gsposition.x;
-			point[1] = p.gsposition.y;
-			point[2] = p.gsposition.z;
-			pointData.add(point);
+			if (dist > 16) {
+			    // Convert position
+			    Position p = new Position(ra, "deg", dec, "deg", dist, "mpc", PositionType.RA_DEC_DIST);
+			    p.gsposition.scl(Constants.PC_TO_U);
+			    point[0] = p.gsposition.x;
+			    point[1] = p.gsposition.y;
+			    point[2] = p.gsposition.z;
+			    pointData.add(point);
+			}
 		    }
 		}
 	    }
