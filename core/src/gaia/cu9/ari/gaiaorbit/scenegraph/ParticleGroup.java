@@ -33,7 +33,7 @@ import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
  */
 public class ParticleGroup extends AbstractPositionEntity implements I3DTextRenderable {
     float[] labelColour;
-    Vector3d labelPosition;
+    Vector3d labelPosition, aux;
 
     /**
      * Fade in low and high limits
@@ -79,6 +79,7 @@ public class ParticleGroup extends AbstractPositionEntity implements I3DTextRend
 
     public ParticleGroup() {
 	super();
+	aux = new Vector3d();
 	inGpu = false;
     }
 
@@ -115,7 +116,7 @@ public class ParticleGroup extends AbstractPositionEntity implements I3DTextRend
 	if (pointData != null) {
 	    this.opacity = opacity * this.opacity;
 	    transform.set(parentTransform);
-	    this.currentDistance = camera.getDistance() * camera.getFovFactor();
+	    this.currentDistance = this.aux.set(this.pos).sub(camera.getPos()).len() * camera.getFovFactor();
 
 	    // Update with translation/rotation/etc
 	    updateLocal(time, camera);
