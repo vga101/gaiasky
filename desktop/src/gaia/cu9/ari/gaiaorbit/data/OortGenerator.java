@@ -38,7 +38,7 @@ public class OortGenerator implements IObserver {
     private static float outer_radius = 15000;
 
     /** Number of particles **/
-    private static int N = 20000;
+    private static int N = 10000;
 
     public static void main(String[] args) {
 	try {
