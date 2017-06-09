@@ -1,7 +1,7 @@
 Controls
 ********
 
-This section describes the controls of the Gaia Sky.
+This section describes the controls of Gaia Sky.
 
 Keyboard controls
 =================
@@ -180,24 +180,39 @@ Free mode
 Gamepad controls
 ================
 
-As of version ``0.704b`` the Gaia Sky supports basic
-gamepad/controller input. By default, only the **Xbox 360 controller**
-is supported, so you may want to map your gamepad differently using
-software like
-``jstest-gtk`` --`here <http://pingus.seul.org/~grumbel/jstest-gtk/>`__-- on
-Linux or the
-`Universal Joystick Remapper <https://github.com/evilC/AHK-Universal-Joystick-Remapper>`__
-for Windows. You can also opt for a Joystick-to-keyboard solution such
-as ``xpadder``  --`here <http://www.xpadder.com/>`__--, even though this has not
-been tested with Gaia Sky.
+Gaia Sky supports (as of version ``1.5.0``) mappings for different controller types.
+However, so far only the mappings file for the **Xbox 360 controller** are provided.
 
 .. figure:: img/360controller.jpg
    :alt: Xbox 360 controller button configuration
 
    Xbox 360 controller button configuration
 
-The actions mapped to each button or axis depend on the current camera
-mode (focus, free, spacecraft):
+The mappings files (see `here <https://github.com/langurmonkey/gaiasky/blob/master/android/assets/mappings/xbox360.controller>__`)
+must be in the ``assets/mappings`` or in the ``$HOME/.gaiasky/mappings`` folder, and basically assign the button and axis codes for the particular
+controller to the actions.
+
+.. code:: 
+
+	# AXES
+	
+	axis.roll=3
+	axis.pitch=1
+	axis.yaw=0
+	axis.move=4
+	axis.velocityup=5
+	axis.velocitydown=2
+	
+	# BUTTONS
+	
+	button.velocityup=2
+	button.velocitydown=0
+	button.velocitytenth=5
+	button.velocityhalf=4
+
+
+The actions depend on the current camera
+mode (focus, free, spacecraft), and can be 
 
 .. _gamepad-focus-mode:
 
@@ -205,34 +220,29 @@ Focus mode
 ----------
 
 +------------------------------+-----------------------------------------+
-| Axis/button                  | Action                                  |
+| Property                     | Action                                  |
 +==============================+=========================================+
-| ``Left bumper``              | Hold to apply ``0.5`` factor to speed   |
+| ``button.velocityhalf``      | Hold to apply ``0.5`` factor to speed   |
 +------------------------------+-----------------------------------------+
-| ``Right bumper``             | Hold to apply ``0.1`` factor to speed   |
+| ``button.velocitytenth``     | Hold to apply ``0.1`` factor to speed   |
 +------------------------------+-----------------------------------------+
-| ``Left trigger``             | Move away from focus                    |
+| ``axis.velocitydown``        | Move away from focus                    |
 +------------------------------+-----------------------------------------+
-| ``Right trigger``            | Move towards focus                      |
+| ``axis.velocityup``          | Move towards focus                      |
 +------------------------------+-----------------------------------------+
-| ``Left stick horizontal``    | Horizontal rotation around focus        |
+| ``axis.yaw``                 | Horizontal rotation around focus        |
 +------------------------------+-----------------------------------------+
-| ``Left stick vertical``      | Vertical rotation around focus          |
+| ``axis.pitch``               | Vertical rotation around focus          |
 +------------------------------+-----------------------------------------+
-| ``Right stick horizontal``   | Roll right and left                     |
+| ``axis.roll``                | Roll right and left                     |
 +------------------------------+-----------------------------------------+
-| ``Right stick vertical``     | Move towards or away from focus         |
+| ``axis.move``                | Move towards or away from focus         |
 +------------------------------+-----------------------------------------+
-| ``D-pad``                    | None                                    |
+| ``button.velocityup``        | Move towards focus                      |
 +------------------------------+-----------------------------------------+
-| ``A``                        | None                                    |
+| ``button.velocitydown``      | Move away from focus                    |
 +------------------------------+-----------------------------------------+
-| ``B``                        | None                                    |
-+------------------------------+-----------------------------------------+
-| ``X``                        | None                                    |
-+------------------------------+-----------------------------------------+
-| ``Y``                        | None                                    |
-+------------------------------+-----------------------------------------+
+
 
 .. _gamepad-free-mode:
 
@@ -242,31 +252,25 @@ Free camera mode
 +------------------------------+-----------------------------------------+
 | Axis/button                  | Action                                  |
 +==============================+=========================================+
-| ``Left bumper``              | Hold to apply ``0.5`` factor to speed   |
+| ``button.velocityhalf``      | Hold to apply ``0.5`` factor to speed   |
 +------------------------------+-----------------------------------------+
-| ``Right bumper``             | Hold to apply ``0.1`` factor to speed   |
+| ``button.velocitytenth``     | Hold to apply ``0.1`` factor to speed   |
 +------------------------------+-----------------------------------------+
-| ``Left trigger``             | Move away from focus                    |
+| ``axis.velocitydown``        | Move away from focus                    |
 +------------------------------+-----------------------------------------+
-| ``Right trigger``            | Move towards focus                      |
+| ``axis.velocityup``          | Move towards focus                      |
 +------------------------------+-----------------------------------------+
-| ``Left stick horizontal``    | Yaw right and left                      |
+| ``axis.yaw``                 | Yaw right and left                      |
 +------------------------------+-----------------------------------------+
-| ``Left stick vertical``      | Pitch up and down                       |
+| ``axis.pitch``               | Pitch up and down                       |
 +------------------------------+-----------------------------------------+
-| ``Right stick horizontal``   | Move sideways                           |
+| ``axis.roll``                | Move sideways                           |
 +------------------------------+-----------------------------------------+
-| ``Right stick vertical``     | Move forward and backward               |
+| ``axis.move``                | Move forward and backward               |
 +------------------------------+-----------------------------------------+
-| ``D-pad``                    | None                                    |
+| ``button.velocityup``        | Move towards focus                      |
 +------------------------------+-----------------------------------------+
-| ``A``                        | None                                    |
-+------------------------------+-----------------------------------------+
-| ``B``                        | None                                    |
-+------------------------------+-----------------------------------------+
-| ``X``                        | None                                    |
-+------------------------------+-----------------------------------------+
-| ``Y``                        | None                                    |
+| ``button.velocitydown``      | Move away from focus                    |
 +------------------------------+-----------------------------------------+
 
 .. _gamepad-spacecraft-mode:
@@ -277,31 +281,25 @@ Spacecraft mode
 +------------------------------+----------------------------------+
 | Axis/button                  | Action                           |
 +==============================+==================================+
-| ``Left bumper``              | Stabilise spacecraft rotations   |
+| ``button.velocityhalf``      | Stabilise spacecraft rotations   |
 +------------------------------+----------------------------------+
-| ``Right bumper``             | Stop spacecraft                  |
+| ``button.velocitytenth``     | Stop spacecraft                  |
 +------------------------------+----------------------------------+
-| ``Left trigger``             | Apply backward thrust            |
+| ``axis.velocitydown``        | Apply backward thrust            |
 +------------------------------+----------------------------------+
-| ``Right trigger``            | Apply forward thrust             |
+| ``axis.velocityup``          | Apply forward thrust             |
 +------------------------------+----------------------------------+
-| ``Left stick horizontal``    | Yaw right and left               |
+| ``axis.yaw``                 | Yaw right and left               |
 +------------------------------+----------------------------------+
-| ``Left stick vertical``      | Pitch up and down                |
+| ``axis.pitch``               | Pitch up and down                |
 +------------------------------+----------------------------------+
-| ``Right stick horizontal``   | Roll right and left              |
+| ``axis.roll``                | Roll right and left              |
 +------------------------------+----------------------------------+
-| ``Right stick vertical``     | None                             |
+| ``axis.move``                | None                             |               
 +------------------------------+----------------------------------+
-| ``D-pad``                    | None                             |
+| ``button.velocityup``        | Increase engine power            |
 +------------------------------+----------------------------------+
-| ``A``                        | Decrease engine power            |
-+------------------------------+----------------------------------+
-| ``B``                        | None                             |
-+------------------------------+----------------------------------+
-| ``X``                        | Increase engine power            |
-+------------------------------+----------------------------------+
-| ``Y``                        | None                             |
+| ``button.velocitydown``      | Decrease engine power            |
 +------------------------------+----------------------------------+
 
 Touch controls

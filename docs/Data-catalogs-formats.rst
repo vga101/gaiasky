@@ -110,8 +110,11 @@ here are some rules:
    defined. This list will be passed to the loader, which will try to
    load these files and add them to the scene graph.
 
-Particle data loading
-=====================
+Particle data
+=============
+
+Particle data refers to the loading of particles (stars, galaxies, etc.) where each gets an object
+in the internal scene graph model. This allows for selection, labeling, levels of detail, etc.
 
 There are several off-the-shelf options to get data in various formats
 into ``Gaia Sky``. These options can be organized into two main
@@ -301,10 +304,67 @@ unique nature, this catalog loader makes a series of assumptions:
    used as name and identifier of the stars respectively. Otherwise, a
    random name and identifier are generated and assigned.
 
-Object server
--------------
 
-Not implemented yet.
+
+Particle groups
+===============
+
+As of version ``1.5.0``, ``Gaia Sky`` offers a new data type, the particle group. Particle groups are intended to 
+be objects defined by point particles which are themselves not focusable or selectable. Particle data
+are read from a file using a certain particle group provider implementation, and these data
+are sent to GPU memory where they reside. This approach allows for these objects to be composed of hundreds of
+thousands of particles and still have a minimal impact on performance.
+
+Let's see an example of the definition of one of such particle groups in the Oort cloud:
+
+.. code:: json
+
+	{
+		"name" : "Oort cloud",
+		"position" : [0.0, 0.0, 0.0],
+		// Color of particles
+		"color" : [0.9, 0.9, 0.9, 0.8],
+		// Size of particles
+		"size" : 2.0,
+		"labelcolor" : [0.3, 0.6, 1.0, 1.0],
+		// Position in parsecs
+		"labelposition" : [0.0484814, 0.0, 0.0484814]
+		"ct" : Others,
+	
+		// Fade distances, in parsecs
+		"fadein" : [0.0004, 0.004],
+		"fadeout" : [0.1, 15.0],
+		
+		"profiledecay" : 1.0,
+		
+	
+		"parent" : "Universe", 
+		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.ParticleGroup",
+		
+		// Extends IParticleGroupDataProvider
+		"provider" : "gaia.cu9.ari.gaiaorbit.data.group.PointDataProvider",
+		"factor" :  149.597871,
+		"datafile" : "data/oort/oort_10000particles.dat"	
+	}
+
+Let's go over the attributes:
+
+-  ``name`` -- The name of the particle group.
+-  ``position`` -- The mean cartesian position (see :ref:`internal reference system <reference-system>`) in parsecs, used for sorting purposes and also for positioning the label. If this is not provided, the mean position of all the particles is used.
+-  ``color`` -- The color of the particles as an ``rgba`` array.
+-  ``size``  -- The size of the particles. In a non HiDPI screen, this is in pixel units. In HiDPI screens, the size will be scaled up to maintain the proportions.
+-  ``labelcolor``  -- The color of the label as an ``rgba`` array.
+-  ``labelposition``  -- The cartesian position (see :ref:`internal reference system <reference-system>`) of the label, in parsecs.
+-  ``ct``  -- The ``ComponentType`` --`here <https://github.com/langurmonkey/gaiasky/blob/master/core/src/gaia/cu9/ari/gaiaorbit/render/SceneGraphRenderer.java#L59>`__--. This is basically a ``string`` that will be matched to the entity type in ``ComponentType`` enum. Valid component types are ``Stars``, ``Planets``, ``Moons``, ``Satellites``, ``Atmospheres``, ``Constellations``, etc.
+-  ``fadein``  -- The fade in inetrpolation distances, in parsecs. If this property is defined, there will be a fade-in effect applied to the particle group between the distance ``fadein[0]`` and the distance ``fadein[1]``.
+-  ``fadeout``  -- The fade out inetrpolation distances, in parsecs. If this property is defined, there will be a fade-in effect applied to the particle group between the distance ``fadein[0]`` and the distance ``fadein[1]``.
+-  ``profiledecay``  -- This attribute controls how particles are rendered. This is basically the opacity profile decay of each particle, as in ``(1.0 - dist)^profiledecay``, where dist is the distance from the center (center dist is 0, edge dist is 1).
+-  ``parent``  -- The name of the parent object in the scenegraph.
+-  ``impl``  -- The full name of the model class. This should always be ``gaia.cu9.ari.gaiaorbit.scenegraph.ParticleGroup``.
+-  ``provider``  -- The full name of the data provider class. This must extend ``gaia.cu9.ari.gaiaorbit.data.group.IParticleGroupDataProvider`` (see `here <https://github.com/langurmonkey/gaiasky/blob/master/core/src/gaia/cu9/ari/gaiaorbit/data/group/IParticleGroupDataProvider.java>`__).
+-  ``factor``  -- A factor to be applied to each coordinate of each data point. If not specified, defaults to 1.
+-  ``datafile``  -- The actual file with the data. It must be in a format that the data provider specified in ``provider`` knows how to load.
+
 
 Non-particle data: Planets, Moons, Asteroids, etc.
 ==================================================
