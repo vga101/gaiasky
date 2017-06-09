@@ -188,7 +188,7 @@ However, so far only the mappings file for the **Xbox 360 controller** are provi
 
    Xbox 360 controller button configuration
 
-The mappings files (see `here <https://github.com/langurmonkey/gaiasky/blob/master/android/assets/mappings/xbox360.controller>__`)
+The mappings files (see `here <https://github.com/langurmonkey/gaiasky/blob/master/android/assets/mappings/xbox360.controller>`__)
 must be in the ``assets/mappings`` or in the ``$HOME/.gaiasky/mappings`` folder, and basically assign the button and axis codes for the particular
 controller to the actions.
 

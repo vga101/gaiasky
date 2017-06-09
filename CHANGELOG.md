@@ -6,6 +6,11 @@
 
 **Implemented enhancements:**
 
+- Add Oort cloud [\#152](https://github.com/langurmonkey/gaiasky/issues/152)
+- Add Pluto [\#151](https://github.com/langurmonkey/gaiasky/issues/151)
+- Abstract controller mappings, use files to define them [\#150](https://github.com/langurmonkey/gaiasky/issues/150)
+- Add target mode in free camera [\#148](https://github.com/langurmonkey/gaiasky/issues/148)
+- Add 'land on object' function [\#147](https://github.com/langurmonkey/gaiasky/issues/147)
 - On-demand catalog loading from disk [\#146](https://github.com/langurmonkey/gaiasky/issues/146)
 - French translation [\#145](https://github.com/langurmonkey/gaiasky/issues/145)
 - Allow for controller look y-axis to be inverted [\#143](https://github.com/langurmonkey/gaiasky/issues/143)
@@ -47,6 +52,8 @@
 
 **Closed issues:**
 
+- Constellation "Antlia" misspelled as "Antila" [\#153](https://github.com/langurmonkey/gaiasky/issues/153)
+- Closest object and camera speed in scripting interface [\#149](https://github.com/langurmonkey/gaiasky/issues/149)
 - Cinematic camera setting not saved [\#144](https://github.com/langurmonkey/gaiasky/issues/144)
 - Running Gaia Sky in Oculus Rift [\#136](https://github.com/langurmonkey/gaiasky/issues/136)
 - Scripting interface: asynchronous mode? [\#133](https://github.com/langurmonkey/gaiasky/issues/133)
