@@ -67,6 +67,12 @@ public class ParticleGroup extends AbstractPositionEntity implements I3DTextRend
     public int offset, count;
 
     /**
+     * This flag indicates whether the mean position is already given by the
+     * JSON injector
+     */
+    private boolean fixedMeanPosition = false;
+
+    /**
      * Factor to apply to the data points, usually to normalise distances
      */
     protected Double factor = null;
@@ -87,11 +93,13 @@ public class ParticleGroup extends AbstractPositionEntity implements I3DTextRend
 
 	    pointData = provider.loadData(datafile, factor);
 
-	    // Mean position
-	    for (double[] point : pointData) {
-		pos.add(point[0], point[1], point[2]);
+	    if (!fixedMeanPosition) {
+		// Mean position
+		for (double[] point : pointData) {
+		    pos.add(point[0], point[1], point[2]);
+		}
+		pos.scl(1d / pointData.size());
 	    }
-	    pos.scl(1d / pointData.size());
 	} catch (Exception e) {
 	    Logger.error(e, getClass().getSimpleName());
 	    pointData = null;
@@ -254,5 +262,10 @@ public class ParticleGroup extends AbstractPositionEntity implements I3DTextRend
 
     public void setProfiledecay(Double profiledecay) {
 	this.profileDecay = profiledecay.floatValue();
+    }
+
+    public void setPosition(double[] pos) {
+	this.pos.set(pos[0] * Constants.PC_TO_U, pos[1] * Constants.PC_TO_U, pos[2] * Constants.PC_TO_U);
+	this.fixedMeanPosition = true;
     }
 }

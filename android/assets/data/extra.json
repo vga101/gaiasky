@@ -107,6 +107,7 @@
 	
 	{
 	"name" : "SDSS galaxies",
+	"position" : [0.0, 0.0, 0.0],
 	// Color of particles
 	"color" : [1.0, 1.0, 1.0, 0.25],
 	// Size of particles
@@ -130,6 +131,7 @@
 	
 	{
 	"name" : "Oort cloud",
+	"position" : [0.0, 0.0, 0.0],
 	// Color of particles
 	"color" : [0.9, 0.9, 0.9, 0.8],
 	// Size of particles
