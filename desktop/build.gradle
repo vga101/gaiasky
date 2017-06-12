@@ -104,6 +104,7 @@ task copyToLib (dependsOn: [compileJava, createDistDir], description: "Copies th
 	    delete project.distLib + '/icon'
 	    delete project.distLib + '/img'
 	    delete project.distLib + '/music'
+	    delete project.distLib + '/mappings'
 	    delete project.distLib + '/scripts'
 	    delete project.distLib + '/shader'
 	    delete project.distLib + '/shaders'
@@ -180,6 +181,13 @@ task dist (dependsOn: gaiaskyJar, description: "Compiles the project, creates th
 	    copy{
 	    	from "../android/assets/music"
 	    	into "$distDir/music"
+	    }
+	    
+	    // Copy mappings
+	    mkdir "$distDir/mappings"
+	    copy{
+	    	from "../android/assets/mappings"
+	    	into "$distDir/mappings"
 	    }
 	
 	    // Copy script files

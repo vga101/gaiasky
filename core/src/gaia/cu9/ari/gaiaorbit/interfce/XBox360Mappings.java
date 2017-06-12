@@ -3,7 +3,6 @@ package gaia.cu9.ari.gaiaorbit.interfce;
 /**
  * XBox 360 controller mappings
  * 
- * @deprecated
  * @author tsagrista
  *
  */

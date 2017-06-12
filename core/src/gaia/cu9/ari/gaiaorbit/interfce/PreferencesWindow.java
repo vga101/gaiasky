@@ -12,6 +12,8 @@ import java.util.TreeSet;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Graphics.DisplayMode;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.controllers.Controller;
+import com.badlogic.gdx.controllers.Controllers;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -42,6 +44,7 @@ import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.interfce.KeyBindings.ProgramAction;
 import gaia.cu9.ari.gaiaorbit.interfce.beans.ComboBoxBean;
+import gaia.cu9.ari.gaiaorbit.interfce.beans.FileComboBoxBean;
 import gaia.cu9.ari.gaiaorbit.interfce.beans.LangComboBoxBean;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager;
 import gaia.cu9.ari.gaiaorbit.util.ConfInit;
@@ -50,6 +53,7 @@ import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
+import gaia.cu9.ari.gaiaorbit.util.SysUtilsFactory;
 import gaia.cu9.ari.gaiaorbit.util.format.INumberFormat;
 import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
@@ -85,11 +89,12 @@ public class PreferencesWindow extends GenericDialog {
     private INumberFormat nf3;
 
     private CheckBox fullscreen, windowed, vsync, multithreadCb, lodFadeCb, cbAutoCamrec, hyg, tgas, dr2, real, nsl,
-	    report;
+	    report, inverty;
     private OwnSelectBox<DisplayMode> fullscreenResolutions;
     private OwnSelectBox<ComboBoxBean> gquality, aa, lineRenderer, numThreads, screenshotMode, frameoutputMode;
     private OwnSelectBox<LangComboBoxBean> lang;
     private OwnSelectBox<String> theme;
+    private OwnSelectBox<FileComboBoxBean> controllerMappings;
     private OwnTextField widthField, heightField, sswidthField, ssheightField, frameoutputPrefix, frameoutputFps,
 	    fowidthField, foheightField, camrecFps, cmResolution;
     private OwnSlider lodTransitions;
@@ -118,7 +123,7 @@ public class PreferencesWindow extends GenericDialog {
 	final float tawidth = 400 * GlobalConf.SCALE_FACTOR;
 	float tabwidth = 180 * GlobalConf.SCALE_FACTOR;
 	float textwidth = 65 * GlobalConf.SCALE_FACTOR;
-	float scrollw = 400 * GlobalConf.SCALE_FACTOR;
+	float scrollw = 410 * GlobalConf.SCALE_FACTOR;
 	float scrollh = 250 * GlobalConf.SCALE_FACTOR;
 
 	// Create the tab buttons
@@ -566,16 +571,50 @@ public class PreferencesWindow extends GenericDialog {
 	contents.add(contentControls);
 	contentControls.align(Align.top | Align.left);
 
+	OwnLabel titleController = new OwnLabel(txt("gui.controller"), skin, "help-title");
+
+	// DETECTED CONTROLLER
+	OwnLabel detectedLabel = new OwnLabel(txt("gui.controller.detected"), skin);
+	Array<Controller> controllers = Controllers.getControllers();
+	OwnLabel controllerName = new OwnLabel(
+		controllers.size == 0 ? txt("gui.controller.nocontrollers") : controllers.get(0).getName(), skin);
+
+	// CONTROLLER MAPPINGS
+	OwnLabel mappingsLabel = new OwnLabel(txt("gui.controller.mappingsfile"), skin);
+	Array<FileComboBoxBean> controllerMappingsFiles = new Array<FileComboBoxBean>();
+	FileHandle externalfolder = Gdx.files
+		.absolute(SysUtilsFactory.getSysUtils().getAssetsLocation() + "./mappings/");
+	FileHandle homefolder = Gdx.files.absolute(SysUtilsFactory.getSysUtils().getDefaultMappingsDir().getPath());
+	Array<FileHandle> mappingFiles = new Array<FileHandle>();
+	GlobalResources.listRec(externalfolder, mappingFiles, ".controller");
+	GlobalResources.listRec(homefolder, mappingFiles, ".controller");
+	FileComboBoxBean selected = null;
+	for (FileHandle fh : mappingFiles) {
+	    FileComboBoxBean fcbb = new FileComboBoxBean(fh);
+	    controllerMappingsFiles.add(fcbb);
+	    if (GlobalConf.controls.CONTROLLER_MAPPINGS_FILE.endsWith(fh.name())) {
+		selected = fcbb;
+	    }
+	}
+
+	controllerMappings = new OwnSelectBox<FileComboBoxBean>(skin);
+	controllerMappings.setItems(controllerMappingsFiles);
+	controllerMappings.setSelected(selected);
+
+	// INVERT Y
+	inverty = new OwnCheckBox("Invert look y axis", skin, "default", pad);
+	inverty.setChecked(GlobalConf.controls.INVERT_LOOK_Y_AXIS);
+
 	// KEY BINDINGS
 	OwnLabel titleKeybindings = new OwnLabel(txt("gui.keymappings"), skin, "help-title");
 
-	Map<TreeSet<Integer>, ProgramAction> maps = KeyBindings.instance.getSortedMappings();
-	Set<TreeSet<Integer>> keymaps = maps.keySet();
-	String[][] data = new String[maps.size()][2];
+	Map<TreeSet<Integer>, ProgramAction> keyboardMappings = KeyBindings.instance.getSortedMappings();
+	Set<TreeSet<Integer>> keymaps = keyboardMappings.keySet();
+	String[][] data = new String[keyboardMappings.size()][2];
 
 	i = 0;
 	for (TreeSet<Integer> keys : keymaps) {
-	    ProgramAction action = maps.get(keys);
+	    ProgramAction action = keyboardMappings.get(keys);
 	    data[i][0] = action.actionName;
 	    data[i][1] = keysToString(keys);
 	    i++;
@@ -602,8 +641,14 @@ public class PreferencesWindow extends GenericDialog {
 	scrolls.add(controlsScroll);
 
 	// Add to content
-	contentControls.add(titleKeybindings).left().padBottom(pad * 2).row();
-	contentControls.add(controlsScroll).left();
+	contentControls.add(titleController).colspan(2).left().padBottom(pad * 2).row();
+	contentControls.add(detectedLabel).left().padBottom(pad * 2);
+	contentControls.add(controllerName).left().padBottom(pad * 2).row();
+	contentControls.add(mappingsLabel).left().padBottom(pad * 2);
+	contentControls.add(controllerMappings).left().padBottom(pad * 2).row();
+	contentControls.add(inverty).left().colspan(2).padBottom(pad * 2).row();
+	contentControls.add(titleKeybindings).colspan(2).left().padBottom(pad * 2).row();
+	contentControls.add(controlsScroll).colspan(2).left();
 
 	/**
 	 * ==== SCREENSHOTS ====
@@ -1261,6 +1306,14 @@ public class PreferencesWindow extends GenericDialog {
 
 	// Cube map resolution
 	GlobalConf.scene.CUBEMAP_FACE_RESOLUTION = Integer.parseInt(cmResolution.getText());
+
+	// Controllers
+	String mappingsFile = controllerMappings.getSelected().file;
+	if (mappingsFile != GlobalConf.controls.CONTROLLER_MAPPINGS_FILE) {
+	    GlobalConf.controls.CONTROLLER_MAPPINGS_FILE = mappingsFile;
+	    EventManager.instance.post(Events.RELOAD_CONTROLLER_MAPPINGS, mappingsFile);
+	}
+	GlobalConf.controls.INVERT_LOOK_Y_AXIS = inverty.isChecked();
 
 	// Gaia attitude
 	GlobalConf.data.REAL_GAIA_ATTITUDE = real.isChecked();

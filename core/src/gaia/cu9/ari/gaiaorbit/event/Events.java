@@ -438,6 +438,12 @@ public enum Events {
     /** Issues the command to flush the frame system **/
     FLUSH_FRAMES,
     /**
+     * Reloads the controller mappings. Contains the path to the new mappings
+     * file.
+     **/
+    RELOAD_CONTROLLER_MAPPINGS,
+
+    /**
      * Contains an array of booleans with the visibility of each ComponentType,
      * in the same order returned by ComponentType.values()
      **/

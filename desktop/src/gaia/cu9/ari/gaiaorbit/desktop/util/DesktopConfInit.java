@@ -29,6 +29,7 @@ import gaia.cu9.ari.gaiaorbit.util.GlobalConf.ScreenshotConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf.ScreenshotMode;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf.VersionConf;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
+import gaia.cu9.ari.gaiaorbit.util.SysUtilsFactory;
 import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.format.IDateFormat;
 
@@ -245,7 +246,7 @@ public class DesktopConfInit extends ConfInit {
 	/** FRAME CONF **/
 	String renderFolder = null;
 	if (p.getProperty("graphics.render.folder") == null || p.getProperty("graphics.render.folder").isEmpty()) {
-	    File framesDir = SysUtils.getDefaultFramesDir();
+	    File framesDir = SysUtilsFactory.getSysUtils().getDefaultFramesDir();
 	    framesDir.mkdirs();
 	    renderFolder = framesDir.getAbsolutePath();
 	} else {
@@ -283,7 +284,7 @@ public class DesktopConfInit extends ConfInit {
 	/** SCREENSHOT CONF **/
 	String screenshotFolder = null;
 	if (p.getProperty("screenshot.folder") == null || p.getProperty("screenshot.folder").isEmpty()) {
-	    File screenshotDir = SysUtils.getDefaultScreenshotsDir();
+	    File screenshotDir = SysUtilsFactory.getSysUtils().getDefaultScreenshotsDir();
 	    screenshotDir.mkdirs();
 	    screenshotFolder = screenshotDir.getAbsolutePath();
 	} else {
@@ -435,13 +436,14 @@ public class DesktopConfInit extends ConfInit {
 	}
 
 	/** CONTROLS **/
+	p.setProperty("controls.mappings.file", GlobalConf.controls.CONTROLLER_MAPPINGS_FILE);
 	p.setProperty("controls.invert.y", Boolean.toString(GlobalConf.controls.INVERT_LOOK_Y_AXIS));
 
     }
 
     private String initConfigFile(boolean ow) throws IOException {
 	// Use user folder
-	File userFolder = SysUtils.getGSHomeDir();
+	File userFolder = SysUtilsFactory.getSysUtils().getGSHomeDir();
 	userFolder.mkdirs();
 	File userFolderConfFile = new File(userFolder, "global.properties");
 

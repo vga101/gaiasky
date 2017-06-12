@@ -8,11 +8,12 @@ import com.badlogic.gdx.math.Vector3;
 
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
+import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.NaturalCamera;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 
-public class NaturalControllerListener implements ControllerListener {
+public class NaturalControllerListener implements ControllerListener, IObserver {
 
     NaturalCamera cam;
     IControllerMappings mappings;
@@ -20,10 +21,16 @@ public class NaturalControllerListener implements ControllerListener {
     public NaturalControllerListener(NaturalCamera cam, String mappingsFile) {
 	this.cam = cam;
 	updateControllerMappings(mappingsFile);
+	EventManager.instance.subscribe(this, Events.RELOAD_CONTROLLER_MAPPINGS);
     }
 
     public boolean updateControllerMappings(String mappingsFile) {
-	mappings = new ControllerMappings(Gdx.files.internal(mappingsFile));
+	if (Gdx.files.absolute(mappingsFile).exists())
+	    mappings = new ControllerMappings(Gdx.files.absolute(mappingsFile));
+	else {
+	    // Defaults to xbox360
+	    mappings = new XBox360Mappings();
+	}
 	return false;
     }
 
@@ -72,6 +79,7 @@ public class NaturalControllerListener implements ControllerListener {
     @Override
     public boolean axisMoved(Controller controller, int axisCode, float value) {
 	boolean treated = false;
+
 	// y = x^4
 	// http://www.wolframalpha.com/input/?i=y+%3D+sign%28x%29+*+x%5E2+%28x+from+-1+to+1%29}
 	value = Math.signum(value) * value * value * value * value;
@@ -135,6 +143,18 @@ public class NaturalControllerListener implements ControllerListener {
     @Override
     public boolean accelerometerMoved(Controller controller, int accelerometerCode, Vector3 value) {
 	return false;
+    }
+
+    @Override
+    public void notify(Events event, Object... data) {
+	switch (event) {
+	case RELOAD_CONTROLLER_MAPPINGS:
+	    updateControllerMappings((String) data[0]);
+	    break;
+	default:
+	    break;
+	}
+
     }
 
 }
