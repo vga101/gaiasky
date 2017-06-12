@@ -9,7 +9,7 @@ precision mediump int;
 varying vec2 v_texCoords;
 varying vec4 v_color;
 
-uniform sampler2D u_starTexture;
+uniform sampler2D u_texture0;
 uniform float u_radius;
 uniform float u_apparent_angle;
 uniform float u_inner_rad;
@@ -54,7 +54,7 @@ float average(vec4 color){
 }
 
 float startex(vec2 tc){
-	return clamp(average(texture2D(u_starTexture, tc)), 0.0, 1.0);
+	return clamp(average(texture2D(u_texture0, tc)), 0.0, 1.0);
 }
 
 

@@ -176,11 +176,8 @@ public abstract class CelestialBody extends AbstractPositionEntity
 	    shader.setUniformf("a_thOverFactor", TH_OVER_FACTOR / camera.getFovFactor());
 	    shader.setUniformf("a_thOverFactorScl", getThOverFactorScl());
 
-	    if (camera.isFocus((CelestialBody) this)) {
-		// System.out.println(labelSizeConcrete());
-	    }
-
-	    render3DLabel(batch, shader, font3d, camera, text(), pos, textScale(), textSize(), textColour());
+	    render3DLabel(batch, shader, font3d, camera, text(), pos, textScale(), textSize(), textColour(),
+		    this.opacity);
 	}
 
     }

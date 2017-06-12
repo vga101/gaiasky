@@ -44,7 +44,7 @@ import gaia.cu9.ari.gaiaorbit.util.parse.Parser;
  *
  */
 public class NBGLoader extends AbstractCatalogLoader implements ISceneGraphLoader {
-    boolean active = false;
+    boolean active = true;
 
     @Override
     public Array<Particle> loadData() throws FileNotFoundException {
@@ -84,14 +84,15 @@ public class NBGLoader extends AbstractCatalogLoader implements ISceneGraphLoade
 				    - 2.5 * Math.log10(Math.pow(dist * Constants.U_TO_PC / 10d, 2d)));
 
 			    Galaxy gal = new Galaxy(pos, (float) kmag, absmag, colorbv, name, (float) ra, (float) dec,
-				    baseid + offset);
+				    (float) bmag, (float) a26, (float) ba, hrv, i, tt, Mcl, baseid + offset);
+			    gal.setParent("NBG");
 			    galaxies.add(gal);
 			    offset++;
 			}
 			linenum++;
 		    }
 		} catch (IOException e) {
-		    e.printStackTrace();
+		    Logger.error(e);
 		} finally {
 		    try {
 			br.close();

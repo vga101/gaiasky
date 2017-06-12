@@ -8,7 +8,6 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
-import com.badlogic.gdx.math.Vector2;
 
 import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.data.group.IParticleGroupDataProvider;
@@ -17,7 +16,6 @@ import gaia.cu9.ari.gaiaorbit.render.I3DTextRenderable;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
-import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
@@ -31,24 +29,9 @@ import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
  * @author tsagrista
  *
  */
-public class ParticleGroup extends AbstractPositionEntity implements I3DTextRenderable {
+public class ParticleGroup extends FadeNode implements I3DTextRenderable {
     float[] labelColour;
     Vector3d labelPosition, aux;
-
-    /**
-     * Fade in low and high limits
-     */
-    private Vector2 fadeIn;
-
-    /**
-     * Fade out low and high limits
-     */
-    private Vector2 fadeOut;
-
-    /**
-     * The current distance at each cycle, in internal units
-     */
-    private double currentDistance;
 
     /**
      * Profile decay of the particles in the shader
@@ -114,21 +97,7 @@ public class ParticleGroup extends AbstractPositionEntity implements I3DTextRend
 
     public void update(ITimeFrameProvider time, final Transform parentTransform, ICamera camera, float opacity) {
 	if (pointData != null) {
-	    this.opacity = opacity * this.opacity;
-	    transform.set(parentTransform);
-	    this.currentDistance = this.aux.set(this.pos).sub(camera.getPos()).len() * camera.getFovFactor();
-
-	    // Update with translation/rotation/etc
-	    updateLocal(time, camera);
-
-	    if (children != null && (fadeIn == null || fadeIn != null && currentDistance < fadeIn.y)
-		    && (fadeOut == null || fadeOut != null && currentDistance > fadeOut.x)) {
-		for (int i = 0; i < children.size; i++) {
-		    float childOpacity = 1 - this.opacity;
-		    SceneGraphNode child = children.get(i);
-		    child.update(time, transform, camera, childOpacity);
-		}
-	    }
+	    super.update(time, parentTransform, camera, opacity);
 	}
     }
 
@@ -138,36 +107,12 @@ public class ParticleGroup extends AbstractPositionEntity implements I3DTextRend
     }
 
     @Override
-    public void updateLocal(ITimeFrameProvider time, ICamera camera) {
-	this.distToCamera = (float) pos.dst(camera.getPos());
-
-	// Update alpha
-	this.opacity = 1;
-	if (fadeIn != null)
-	    this.opacity *= MathUtilsd.lint((float) this.currentDistance, fadeIn.x, fadeIn.y, 0, 1);
-	if (fadeOut != null)
-	    this.opacity *= MathUtilsd.lint((float) this.currentDistance, fadeOut.x, fadeOut.y, 1, 0);
-
-	if (!copy && opacity > 0) {
-	    addToRenderLists(camera);
-	}
-
-	// Label alpha
-	this.labelColour[3] = this.labelAlpha * this.opacity;
-
-    }
-
-    @Override
     protected void addToRenderLists(ICamera camera) {
-	if ((fadeIn == null || fadeIn != null && currentDistance > fadeIn.x)
-		&& (fadeOut == null || fadeOut != null && currentDistance < fadeOut.y)) {
-	    addToRender(this, RenderGroup.POINT_GROUP);
+	addToRender(this, RenderGroup.POINT_GROUP);
 
-	    if (renderText()) {
-		addToRender(this, RenderGroup.LABEL);
-	    }
+	if (renderText()) {
+	    addToRender(this, RenderGroup.LABEL);
 	}
-
     }
 
     /**
@@ -179,7 +124,7 @@ public class ParticleGroup extends AbstractPositionEntity implements I3DTextRend
 	textPosition(camera, pos);
 	shader.setUniformf("a_viewAngle", 90f);
 	shader.setUniformf("a_thOverFactor", 1f);
-	render3DLabel(batch, shader, font3d, camera, text(), pos, textScale(), textSize(), textColour());
+	render3DLabel(batch, shader, font3d, camera, text(), pos, textScale(), textSize(), textColour(), this.opacity);
     }
 
     public void setLabelcolor(double[] labelcolor) {
@@ -201,14 +146,6 @@ public class ParticleGroup extends AbstractPositionEntity implements I3DTextRend
 
     @Override
     public void updateLocalValues(ITimeFrameProvider time, ICamera camera) {
-    }
-
-    public void setFadein(double[] fadein) {
-	fadeIn = new Vector2((float) (fadein[0] * Constants.PC_TO_U), (float) (fadein[1] * Constants.PC_TO_U));
-    }
-
-    public void setFadeout(double[] fadeout) {
-	fadeOut = new Vector2((float) (fadeout[0] * Constants.PC_TO_U), (float) (fadeout[1] * Constants.PC_TO_U));
     }
 
     @Override
@@ -266,7 +203,7 @@ public class ParticleGroup extends AbstractPositionEntity implements I3DTextRend
     }
 
     public void setPosition(double[] pos) {
-	this.pos.set(pos[0] * Constants.PC_TO_U, pos[1] * Constants.PC_TO_U, pos[2] * Constants.PC_TO_U);
+	super.setPosition(pos);
 	this.fixedMeanPosition = true;
     }
 }

@@ -16,9 +16,42 @@ import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
 public class Galaxy extends Particle {
 
-    public Galaxy(Vector3d pos, float appmag, float absmag, float colorbv, String name, float ra, float dec,
-	    long starid) {
+    /** Bmag [-4.6/21.4] - Apparent integral B band magnitude **/
+    float bmag;
+
+    /** a26 [arcmin] - Major angular diameter **/
+    float a26;
+
+    /** b/a - Apparent axial ratio **/
+    float ba;
+
+    /** HRV [km/s] - Heliocentric radial velocity **/
+    int hrv;
+
+    /**
+     * i [deg] - [0/90] Inclination of galaxy from the face-on (i=0) position
+     **/
+    int i;
+
+    /** TT [-3/11] - Morphology T-type code **/
+    int tt;
+
+    /**
+     * Mcl [char] - Dwarf galaxy morphology (BCD, HIcld, Im, Ir, S0em, Sm, Sph,
+     * Tr, dE, dEem, or dS0em)
+     **/
+    String mcl;
+
+    public Galaxy(Vector3d pos, float appmag, float absmag, float colorbv, String name, float ra, float dec, float bmag,
+	    float a26, float ba, int hrv, int i, int tt, String mcl, long starid) {
 	super(pos, appmag, absmag, colorbv, name, ra, dec, starid);
+	this.bmag = bmag;
+	this.a26 = a26;
+	this.ba = ba;
+	this.hrv = hrv;
+	this.i = i;
+	this.tt = tt;
+	this.mcl = mcl;
     }
 
     @Override
@@ -43,7 +76,7 @@ public class Galaxy extends Particle {
 
 	// Calculate size - This contains arbitrary boundary values to make
 	// things nice on the render side
-	size = (float) (Math.min((Math.pow(flux, 0.5f) * Constants.PC_TO_U * 0.16f), 1e9f) * 2.5e0d);
+	size = (float) (Math.min((Math.pow(flux, 0.5f) * Constants.PC_TO_U), 0.5e9f) * 3.5e0d);
 	computedSize = 0;
     }
 
@@ -79,13 +112,15 @@ public class Galaxy extends Particle {
 
     @Override
     protected void addToRenderLists(ICamera camera) {
-	if (camera.getCurrent() instanceof FovCamera) {
-	    // Render as point, do nothing
-	} else {
-	    addToRender(this, RenderGroup.SHADER_GAL);
-	}
-	if (renderText() && camera.isVisible(GaiaSky.instance.time, this)) {
-	    addToRender(this, RenderGroup.LABEL);
+	if (opacity != 0) {
+	    if (camera.getCurrent() instanceof FovCamera) {
+		// Render as point, do nothing
+	    } else {
+		addToRender(this, RenderGroup.SHADER_GAL);
+	    }
+	    if (renderText() && camera.isVisible(GaiaSky.instance.time, this)) {
+		addToRender(this, RenderGroup.LABEL);
+	    }
 	}
 
     }
@@ -101,9 +136,17 @@ public class Galaxy extends Particle {
 	shader.setUniformf("u_size", size);
 
 	float[] col = colorTransit ? ccTransit : ccPale;
-	shader.setUniformf("u_color", col[0], col[1], col[2], alpha * opacity);
+	shader.setUniformf("u_color", col[0], col[1], col[2], alpha);
+	shader.setUniformf("u_alpha", alpha * opacity);
 	shader.setUniformf("u_distance", (float) distToCamera);
 	shader.setUniformf("u_apparent_angle", (float) viewAngleApparent);
+	shader.setUniformf("u_time", GaiaSky.instance.getT() / 5f);
+
+	shader.setUniformf("u_sliders", (tt + 3.4f) / 14f, 0.1f, 0f, i / 180f);
+	// Vector3d sph = aux3d1.get();
+	// Coordinates.cartesianToSpherical(camera.getDirection(), sph);
+	// shader.setUniformf("u_ro", (float) sph.x);
+	// shader.setUniformf("u_ta", (float) sph.y);
 
 	shader.setUniformf("u_radius", getRadius());
 

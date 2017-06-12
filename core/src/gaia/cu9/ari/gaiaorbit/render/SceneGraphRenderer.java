@@ -31,6 +31,7 @@ import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.render.IPostProcessor.PostProcessBean;
 import gaia.cu9.ari.gaiaorbit.render.system.AbstractRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.AbstractRenderSystem.RenderSystemRunnable;
+import gaia.cu9.ari.gaiaorbit.render.system.BillboardRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.FontRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.IRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.LineQuadRenderSystem;
@@ -39,7 +40,6 @@ import gaia.cu9.ari.gaiaorbit.render.system.MilkyWayRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.ModelBatchRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.ParticleGroupRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.PixelRenderSystem;
-import gaia.cu9.ari.gaiaorbit.render.system.QuadRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.VolumeCloudsRenderSystem;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
@@ -279,8 +279,8 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 	});
 
 	// SHADER STARS
-	AbstractRenderSystem quadStarsProc = new QuadRenderSystem(RenderGroup.SHADER_STAR, priority++, alphas,
-		starShader, true, null);
+	AbstractRenderSystem quadStarsProc = new BillboardRenderSystem(RenderGroup.SHADER_STAR, priority++, alphas,
+		starShader, true, "img/star_glow_s.png", ComponentType.Stars.ordinal());
 	quadStarsProc.setPreRunnable(blendNoDepthRunnable);
 	quadStarsProc.setPostRunnable(new RenderSystemRunnable() {
 
@@ -331,8 +331,8 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 	});
 
 	// SHADER GALAXIEWS
-	AbstractRenderSystem quadGalaxiesProc = new QuadRenderSystem(RenderGroup.SHADER_GAL, priority++, alphas,
-		galaxyShader, true, "img/galaxy.png");
+	BillboardRenderSystem quadGalaxiesProc = new BillboardRenderSystem(RenderGroup.SHADER_GAL, priority++, alphas,
+		galaxyShader, true, "img/static.jpg", ComponentType.Galaxies.ordinal());
 	quadGalaxiesProc.setPreRunnable(blendNoDepthRunnable);
 
 	// LINES
@@ -368,8 +368,8 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 	labelsProc.setPreRunnable(blendNoDepthRunnable);
 
 	// SHADER SSO
-	AbstractRenderSystem quadSSOProc = new QuadRenderSystem(RenderGroup.SHADER_SSO, priority++, alphas, starShader,
-		false, null);
+	AbstractRenderSystem quadSSOProc = new BillboardRenderSystem(RenderGroup.SHADER_SSO, priority++, alphas,
+		starShader, false, "img/sso.png", -1);
 	quadSSOProc.setPreRunnable(blendDepthRunnable);
 
 	// MODEL ATMOSPHERE

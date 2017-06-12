@@ -157,4 +157,20 @@
 	"datafile" : "data/oort/oort_10000particles.dat"
 	
 	},
+	
+	{
+	"name" : "NBG",
+	"position" : [0.0, 0.0, 0.0],
+
+	"ct" : Galaxies,
+
+	// Fade distances, in parsecs
+	"fadein" : [1e3, 8e3],
+	"fadeout" : [100e6, 200.0e6],
+	
+
+	"parent" : "Universe", 
+	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.FadeNode",
+	
+	},
 ]}

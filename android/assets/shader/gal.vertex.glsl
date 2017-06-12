@@ -20,6 +20,10 @@ uniform vec3 u_camShift;
 varying vec4 v_color;
 varying vec2 v_texCoords;
 
+
+#define distfac 3.24e-8 / 60000.0
+#define distfacinv 60000.0 / 3.23e-8
+
 float lint(float x, float x0, float x1, float y0, float y1) {
     return mix(y0, y1, (x - x0) / (x1 - x0));
 }
@@ -67,7 +71,11 @@ void main()
    transform *= rotation;
    
    // Scale
-   float size = u_size * u_distance * 3.24e-8 / 60000.0;
+   float size = u_size;
+   if(u_distance > distfacinv){
+	   size *= u_distance * distfac;
+   }
+
    transform[0][0] *= size;
    transform[1][1] *= size;
    transform[2][2] *= size;
