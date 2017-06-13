@@ -76,7 +76,7 @@ public class Galaxy extends Particle {
 
 	// Calculate size - This contains arbitrary boundary values to make
 	// things nice on the render side
-	size = (float) (Math.min((Math.pow(flux, 0.5f) * Constants.PC_TO_U), 0.5e9f) * 3.5e0d);
+	size = (float) (Math.max((Math.pow(flux, 0.5f) * Constants.PC_TO_U * 1e-3), .6e9f) * 4.5e0d);
 	computedSize = 0;
     }
 
@@ -162,11 +162,6 @@ public class Galaxy extends Particle {
     @Override
     protected float labelMax() {
 	return 0.00005f;
-    }
-
-    @Override
-    public float textSize() {
-	return super.textSize();
     }
 
 }

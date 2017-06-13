@@ -1,4 +1,4 @@
-font.name=Open Sans Semibold
+font.name=Tahoma
 font.size=30
 font.bold=false
 font.italic=false
@@ -8,17 +8,19 @@ font.mono=false
 font2.file=/home/tsagrista/ws/GaiaOrbit-android/assets/skins/default/jgfont.fnt
 font2.use=false
 
-pad.top=6
-pad.right=4
-pad.bottom=6
-pad.left=4
+pad.top=1
+pad.right=1
+pad.bottom=1
+pad.left=1
 pad.advance.x=0
 pad.advance.y=0
 
 glyph.native.rendering=false
-glyph.page.width=512
-glyph.page.height=512
+glyph.page.width=1024
+glyph.page.height=256
 glyph.text=AÀÁÄBCDEÈÉËFGHIÌÍÏJKLMNOÒÓÔPQRSTUÙÚÜVWXYZ\naàáäbcdeèéêëfghiìíîïjklmnoòóôöpqrstuùúûüvwxyz\n1234567890\n"!`?'.,;:()[]{}<>|/@\^$-%+=#_&~*\nθωερτψυιοπασδφγηςκλζχξωβνμ\nΘΩΕΡΤΨΥΙΟΠΑΣΔΦΓΗςΚΛΖΧΞΩΒΝΜ\n±∓×·÷√∑∫∮¬∝∞≠≈⇔↔≪≫≤≥\n°ℏÅ⊙ ☉ ☼ ☀¶ß©®£€¼½¾²³•□˚˙˟ˣ
+
+render_type=0
 
 effect.class=com.badlogic.gdx.tools.hiero.unicodefont.effects.DistanceFieldEffect
 effect.Color=ffffff
