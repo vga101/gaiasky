@@ -165,18 +165,18 @@ vec4 galaxy(vec2 tc) {
 
     // camera tx
     vec3 cw = normalize( ta-ro ),
-     	 cp = vec3( 0., 1., 0. ),
+     	 cp = vec3(0.0, 1.0, 0.0),
      	 cu = normalize( cross(cw,cp) ),
      	 cv = normalize( cross(cu,cw) );
-    vec2 q = tc * 1.5,
-     	 p = -2.+3.*q;
+    vec2 q = tc * 2.0,
+     	 p = -2.0 + 2.0 * q;
     p.x *= 1.0;
 
-    vec3 rd = normalize( p.x*cu + p.y*cv + 2.5*cw );
+    vec3 rd = normalize(p.x * cu + p.y * cv + 2.5 * cw );
 
 	// ld, td: local, total density
 	// w: weighting factor
-	float ld=0., td=0., w=0.;
+	float ld=0.0, td=0.0, w=0.0;
 
 	// t: length of the ray
 	// d: distance function
