@@ -6,6 +6,8 @@
 
 **Implemented enhancements:**
 
+- Front end to manage game controller mappings [\#155](https://github.com/langurmonkey/gaiasky/issues/155)
+- Add nearby galaxies, NBG [\#154](https://github.com/langurmonkey/gaiasky/issues/154)
 - Add Oort cloud [\#152](https://github.com/langurmonkey/gaiasky/issues/152)
 - Add Pluto [\#151](https://github.com/langurmonkey/gaiasky/issues/151)
 - Abstract controller mappings, use files to define them [\#150](https://github.com/langurmonkey/gaiasky/issues/150)
