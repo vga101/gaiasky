@@ -43,8 +43,8 @@ public class UncertaintiesProvider implements IParticleGroupDataProvider {
 		    }
 
 		    pos.set(point[1], point[2], (point[0] + 8));
-		    pos.scl(Constants.KPC_TO_U);
 		    pos.mul(Coordinates.equatorialToGalactic());
+		    pos.scl(Constants.KPC_TO_U);
 
 		    point[0] = pos.x;
 		    point[1] = pos.y;

@@ -18,11 +18,12 @@ uniform float a_labelAlpha;
 varying vec4 v_color;
 varying vec2 v_texCoords;
 varying float v_opacity;
+varying int v_computeOpacity;
 
 void main()
 {
    float thOverFac = a_thOverFactor * a_thOverFactorScl;
-   v_opacity = clamp((pow(a_viewAngle, a_viewAnglePow) - thOverFac)/thOverFac, 0.0, 0.95) * a_componentAlpha * a_labelAlpha;
+   v_opacity = clamp((pow(a_viewAngle, a_viewAnglePow) - thOverFac) / thOverFac, 0.0, 0.95) * a_componentAlpha * a_labelAlpha;
    v_color = a_color;
    v_texCoords = a_texCoord0;
    gl_Position =  u_projTrans * a_position;

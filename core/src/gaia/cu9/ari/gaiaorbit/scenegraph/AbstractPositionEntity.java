@@ -277,22 +277,40 @@ public abstract class AbstractPositionEntity extends SceneGraphNode {
     }
 
     protected void render2DLabel(SpriteBatch batch, ShaderProgram shader, BitmapFont font, ICamera camera, String label,
-	    Vector3d pos) {
+	    Vector3d pos3d) {
 	Vector3 p = aux3f1.get();
-	pos.setVector3(p);
+	pos3d.setVector3(p);
 
 	camera.getCamera().project(p);
 	p.x += 15;
 	p.y -= 15;
 
+	render2DLabel(batch, shader, font, camera, label, p.x, p.y);
+
 	shader.setUniformf("scale", 1f);
 	DecalUtils.drawFont2D(font, batch, label, p);
+    }
+
+    protected void render2DLabel(SpriteBatch batch, ShaderProgram shader, BitmapFont font, ICamera camera, String label,
+	    float x, float y) {
+	render2DLabel(batch, shader, font, camera, label, x, y, 1f);
+    }
+
+    protected void render2DLabel(SpriteBatch batch, ShaderProgram shader, BitmapFont font, ICamera camera, String label,
+	    float x, float y, float scale) {
+	render2DLabel(batch, shader, font, camera, label, x, y, scale, -1);
+    }
+
+    protected void render2DLabel(SpriteBatch batch, ShaderProgram shader, BitmapFont font, ICamera camera, String label,
+	    float x, float y, float scale, int align) {
+	shader.setUniformf("u_scale", scale);
+	DecalUtils.drawFont2D(font, batch, label, x, y, scale, align);
     }
 
     protected void render3DLabel(SpriteBatch batch, ShaderProgram shader, BitmapFont font, ICamera camera, String label,
 	    Vector3d pos, float scale, float size, float[] colour, float alpha) {
 	// The smoothing scale must be set according to the distance
-	shader.setUniformf("scale", scale / camera.getFovFactor());
+	shader.setUniformf("u_scale", scale / camera.getFovFactor());
 
 	double len = pos.len();
 	Vector3d p = pos.clamp(0, len - size);

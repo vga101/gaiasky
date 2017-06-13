@@ -65,6 +65,7 @@ public class FontRenderSystem extends AbstractRenderSystem {
 	    }
 	} else {
 	    float lalpha = alphas[ComponentType.Labels.ordinal()];
+	    font3d.getData().setScale(0.6f);
 	    for (int i = 0; i < size; i++) {
 		I3DTextRenderable s = (I3DTextRenderable) renderables.get(i);
 
@@ -74,7 +75,7 @@ public class FontRenderSystem extends AbstractRenderSystem {
 			? lalpha * lr.textColour()[3] : lr.textColour()[3]));
 		shaderProgram.setUniformf("a_componentAlpha", getAlpha(s));
 		// Font opacity multiplier
-		shaderProgram.setUniformf("u_opacity", 0.65f);
+		shaderProgram.setUniformf("u_opacity", 0.7f);
 
 		s.render(batch, shaderProgram, font3d, font2d, camera);
 	    }

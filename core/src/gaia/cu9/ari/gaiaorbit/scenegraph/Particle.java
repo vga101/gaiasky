@@ -329,7 +329,7 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
 
     @Override
     public float textScale() {
-	return (float) FastMath.atan(labelMax()) * labelFactor() * 4e2f;
+	return (float) FastMath.atan(labelMax()) * labelFactor() * 4e3f;
     }
 
     @Override
