@@ -16,6 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextTooltip;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
 import com.badlogic.gdx.utils.Align;
@@ -26,6 +27,7 @@ import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
+import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnLabel;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextButton;
@@ -55,7 +57,7 @@ public class VisibilityComponent extends GuiComponent implements IObserver {
     }
 
     public void initialize() {
-
+        int visTableCols = 4;
         final Table visibilityTable = new Table(skin);
         visibilityTable.setName("visibility table");
         visibilityTable.top().left();
@@ -69,32 +71,32 @@ public class VisibilityComponent extends GuiComponent implements IObserver {
                 Button button = null;
                 if (ct.style != null) {
                     Image icon = new Image(skin.getDrawable(ct.style));
-                    button = new OwnTextIconButton(name, icon, skin, "toggle");
+                    button = new OwnTextIconButton("", icon, skin, "toggle");
                 } else {
                     button = new OwnTextButton(name, skin, "toggle");
                 }
                 button.setName(name);
+                // Tooltip
+                button.addListener(new TextTooltip(GlobalResources.capitalise(name), skin));
 
                 buttonMap.put(name, button);
-                if (!ct.toString().equals(name))
-                    buttonMap.put(ct.toString(), button);
-                if (!ct.id.equals(name))
-                    buttonMap.put(ct.id, button);
+                if (!ct.key.equals(name))
+                    buttonMap.put(ct.key, button);
 
                 button.setChecked(visible[i]);
                 button.addListener(new EventListener() {
                     @Override
                     public boolean handle(Event event) {
                         if (event instanceof ChangeEvent) {
-                            EventManager.instance.post(Events.TOGGLE_VISIBILITY_CMD, name, true, ((Button) event.getListenerActor()).isChecked());
+                            EventManager.instance.post(Events.TOGGLE_VISIBILITY_CMD, ct.key, true, ((Button) event.getListenerActor()).isChecked());
                             return true;
                         }
                         return false;
                     }
                 });
-                visibilityTable.add(button).pad(1 * GlobalConf.SCALE_FACTOR).left();
-                if (i % 2 != 0) {
-                    visibilityTable.row();
+                visibilityTable.add(button).pad(GlobalConf.SCALE_FACTOR).left();
+                if ((i + 1) % visTableCols == 0) {
+                    visibilityTable.row().padBottom(2 * GlobalConf.SCALE_FACTOR);
                 }
                 buttons.add(button);
             }
@@ -186,19 +188,13 @@ public class VisibilityComponent extends GuiComponent implements IObserver {
 
         // Set button width to max width
         visibilityTable.pack();
-        float maxw = 0f;
-        for (Button b : buttons) {
-            if (b.getWidth() > maxw) {
-                maxw = b.getWidth();
-            }
-        }
-        for (Button b : buttons) {
-            b.setSize(maxw, 20 * GlobalConf.SCALE_FACTOR);
-        }
+        //        for (Button b : buttons) {
+        //            b.setSize(25 * GlobalConf.SCALE_FACTOR, 25 * GlobalConf.SCALE_FACTOR);
+        //        }
         visibilityTable.pack();
 
-        visibilityTable.row();
-        visibilityTable.add(pmGroup).padTop(3 * GlobalConf.SCALE_FACTOR).align(Align.left).colspan(2);
+        visibilityTable.row().padBottom(3 * GlobalConf.SCALE_FACTOR);
+        visibilityTable.add(pmGroup).padTop(3 * GlobalConf.SCALE_FACTOR).align(Align.left).colspan(visTableCols);
 
         properMotions.setChecked(GlobalConf.scene.PROPER_MOTION_VECTORS);
 
@@ -211,8 +207,8 @@ public class VisibilityComponent extends GuiComponent implements IObserver {
         case TOGGLE_VISIBILITY_CMD:
             boolean interf = (Boolean) data[1];
             if (!interf) {
-                String name = (String) data[0];
-                Button b = buttonMap.get(name);
+                String key = (String) data[0];
+                Button b = buttonMap.get(key);
 
                 b.setProgrammaticChangeEvents(false);
                 if (b != null) {

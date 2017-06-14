@@ -6,58 +6,51 @@ import java.util.Map;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 
 public enum ComponentType {
-    Stars("Stars"), Planets("Planets"), Moons("Moons"), Satellites("Satellites"), Asteroids("Asteroids"), Labels(
-	    "Labels"), Equatorial("Equatorial grid", "grid-icon"), Ecliptic("Ecliptic grid", "grid-icon"), Galactic(
-		    "Galactic grid", "grid-icon"), Orbits("Orbits"), Atmospheres("Atmospheres"), Constellations(
-			    "Constellations"), Boundaries("Boundaries"), MilkyWay("Milky way"), Galaxies(
-				    "Galaxies"), Countries("Countries"), Locations("Locations"), Others("Others");
+    Stars("icon-elem-stars"),
+    Planets("icon-elem-planets"),
+    Moons("icon-elem-moons"),
+    Satellites("icon-elem-satellites"),
+    Asteroids("icon-elem-asteroids"),
+    Labels("icon-elem-labels"),
+    Equatorial("icon-elem-equatorial"),
+    Ecliptic("icon-elem-ecliptic"),
+    Galactic("icon-elem-galactic"),
+    Orbits("icon-elem-orbits"),
+    Atmospheres("icon-elem-atmospheres"),
+    Constellations("icon-elem-constellations"),
+    Boundaries("icon-elem-boundaries"),
+    MilkyWay("icon-elem-milkyway"),
+    Galaxies("icon-elem-galaxies"),
+    Countries("icon-elem-countries"),
+    Locations("icon-elem-locations"),
+    Others("icon-elem-others");
 
-    private static Map<String, ComponentType> namesMap = new HashMap<String, ComponentType>();
+    private static Map<String, ComponentType> keysMap = new HashMap<String, ComponentType>();
 
     static {
-	for (ComponentType ct : ComponentType.values()) {
-	    namesMap.put(ct.id, ct);
-	}
+        for (ComponentType ct : ComponentType.values()) {
+            keysMap.put(ct.key, ct);
+        }
     }
 
-    public String id;
-    private String name;
+    public String key;
     public String style;
 
-    private ComponentType(String id) {
-	this.id = id;
-    }
-
-    private ComponentType(String id, String icon) {
-	this(id);
-	this.style = icon;
-    }
-
-    public String getId() {
-	return id;
+    private ComponentType(String icon) {
+        this.key = "element." + name().toLowerCase();
+        this.style = icon;
     }
 
     public String getName() {
-	if (name == null) {
-	    name = I18n.bundle.get("element." + name().toLowerCase());
-	    namesMap.put(name, this);
-	}
-	return name;
+        return I18n.bundle.get(key);
     }
 
     @Override
     public String toString() {
-	return getName();
+        return getName();
     }
 
-    public static ComponentType getFromName(String name) {
-	ComponentType ct = null;
-	try {
-	    ct = ComponentType.valueOf(name);
-	} catch (Exception e) {
-	    // Look for name
-	    ct = namesMap.get(name);
-	}
-	return ct;
+    public static ComponentType getFromKey(String key) {
+        return keysMap.get(key);
     }
 }

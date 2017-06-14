@@ -883,12 +883,12 @@ public class GlobalConf {
 	public void notify(Events event, Object... data) {
 	    switch (event) {
 	    case TOGGLE_VISIBILITY_CMD:
-		String name = (String) data[0];
+		String key = (String) data[0];
 		Boolean state = null;
 		if (data.length > 2) {
 		    state = (Boolean) data[2];
 		}
-		ComponentType ct = ComponentType.getFromName(name);
+		ComponentType ct = ComponentType.getFromKey(key);
 		VISIBILITY[ct.ordinal()] = (state != null ? state : !VISIBILITY[ct.ordinal()]);
 		break;
 	    case TRANSIT_COLOUR_CMD:

@@ -31,6 +31,7 @@
 -  Machuca+Arias+Caballero for the music track “Gaia-DR1”
 -  [xnoybis](http://sampleswap.org/artist/xnoybis#contact) for 'The Firing Squad' track
 -  [DJ Masque](http://sampleswap.org/artist/djmasque) for the 'Oceanic Dawn' track
+-  [icons8.com](https://icons8.com) for some icons
 
 ## Translations
 

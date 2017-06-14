@@ -40,7 +40,7 @@ com.badlogic.gdx.scenes.scene2d.ui.Button$ButtonStyle: {
 },
 com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle: {
 	default: { down: default-round-down, up: default-round, font: ui-11, fontColor: white },
-	toggle: { down: default-round-down, up: default-round, checked: default-round-down, font: ui-11, fontColor: white, downFontColor: green },
+	toggle: { down: default-round-down, up: default-round, checked: default-round-down, font: ui-10, fontColor: white, downFontColor: green },
 	toggle-big: { down: default-round-down, up: default-round, checked: default-round-down, font: ui-13, fontColor: white, downFontColor: green },
 	link: { font: ui-11, fontColor: blue, downFontColor: green }
 },
@@ -152,7 +152,7 @@ com.badlogic.gdx.scenes.scene2d.ui.TextField$TextFieldStyle: {
 	msg-23:   { font: ui-23, fontColor: white, background: null}
 },
 com.badlogic.gdx.scenes.scene2d.ui.CheckBox$CheckBoxStyle: {
-		default: { checkboxOn: check-on, checkboxOnDisabled: check-on-disabled, checkboxOff: check-off, checkboxOffDisabled: check-off-disabled,font: ui-11, fontColor: white },
+	default: { checkboxOn: check-on, checkboxOnDisabled: check-on-disabled, checkboxOff: check-off, checkboxOffDisabled: check-off-disabled,font: ui-11, fontColor: white },
 	radio: { checkboxOn: radio-on, checkboxOnDisabled: radio-on-disabled,checkboxOff: radio-off, checkboxOffDisabled: radio-off-disabled, font: ui-11, fontColor: white }
 },
 com.badlogic.gdx.scenes.scene2d.ui.List$ListStyle: {

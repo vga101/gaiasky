@@ -10,9 +10,9 @@ gs = EventScriptingInterface.instance()
 gs.disableInput()
 gs.cameraStop()
 
-gs.setVisibility("Ecliptic grid", True)
+gs.setVisibility("element.ecliptic", True)
 sleep(4)
-gs.setVisibility("Ecliptic grid", False)
+gs.setVisibility("element.ecliptic", False)
 
 
 gs.enableInput()

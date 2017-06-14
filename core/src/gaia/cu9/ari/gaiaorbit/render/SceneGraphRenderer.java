@@ -535,7 +535,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
     public void notify(Events event, final Object... data) {
 	switch (event) {
 	case TOGGLE_VISIBILITY_CMD:
-	    ComponentType ct = ComponentType.getFromName((String) data[0]);
+	    ComponentType ct = ComponentType.getFromKey((String) data[0]);
 	    int idx = ct.ordinal();
 	    if (data.length == 3) {
 		// We have the boolean

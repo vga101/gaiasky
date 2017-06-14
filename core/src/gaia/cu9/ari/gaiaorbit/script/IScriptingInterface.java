@@ -425,12 +425,14 @@ public interface IScriptingInterface {
     /**
      * Sets the component described by the given name visible or invisible.
      * 
-     * @param name
-     *            The name of the component (Stars, Planets, Moons, etc.)
+     * @param key
+     *            The key of the component, see
+     *            {@link gaia.cu9.ari.gaiaorbit.render.ComponentType}. Usually
+     *            'element.stars', 'element.moons', 'element.atmospheres', etc.
      * @param visible
      *            The visible value.
      */
-    public void setVisibility(String name, boolean visible);
+    public void setVisibility(String key, boolean visible);
 
     /**
      * Sets the ambient light to a certain value.
