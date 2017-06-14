@@ -181,7 +181,7 @@ Gamepad controls
 ================
 
 Gaia Sky supports (as of version ``1.5.0``) mappings for different controller types.
-However, so far only the mappings file for the **Xbox 360 controller** are provided.
+However, so far only the mappings file for the **Xbox 360 controller** and the **PS3 controlelr** are provided.
 
 .. figure:: img/360controller.jpg
    :alt: Xbox 360 controller button configuration
@@ -189,7 +189,7 @@ However, so far only the mappings file for the **Xbox 360 controller** are provi
    Xbox 360 controller button configuration
 
 The mappings files (see `here <https://github.com/langurmonkey/gaiasky/blob/master/android/assets/mappings/xbox360.controller>`__)
-must be in the ``assets/mappings`` or in the ``$HOME/.gaiasky/mappings`` folder, and basically assign the button and axis codes for the particular
+must be in the ``$GS_INSTALL_LOCATION/mappings`` or in the ``$HOME/.gaiasky/mappings`` folder, and basically assign the button and axis codes for the particular
 controller to the actions.
 
 .. code:: 
