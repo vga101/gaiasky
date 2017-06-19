@@ -48,56 +48,56 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
     protected static ParamUpdater paramUpdater;
 
     protected static class ParamUpdater implements IObserver {
-	public ParamUpdater() {
-	    super();
-	    EventManager.instance.subscribe(this, Events.FOV_CHANGE_NOTIFICATION, Events.STAR_POINT_SIZE_CMD);
-	}
+        public ParamUpdater() {
+            super();
+            EventManager.instance.subscribe(this, Events.FOV_CHANGE_NOTIFICATION, Events.STAR_POINT_SIZE_CMD);
+        }
 
-	@Override
-	public void notify(Events event, Object... data) {
-	    switch (event) {
-	    case FOV_CHANGE_NOTIFICATION:
-		fovFactor = (Float) data[1];
-		thpointTimesFovfactor = (float) GlobalConf.scene.STAR_THRESHOLD_POINT * fovFactor;
-		thupOverFovfactor = (float) Constants.THRESHOLD_UP / fovFactor;
-		thdownOverFovfactor = (float) Constants.THRESHOLD_DOWN / fovFactor;
-		break;
-	    case STAR_POINT_SIZE_CMD:
-		innerRad = 0.004f * DISC_FACTOR + (Float) data[0] * 0.008f;
-		break;
-	    default:
-		break;
-	    }
-	}
+        @Override
+        public void notify(Events event, Object... data) {
+            switch (event) {
+            case FOV_CHANGE_NOTIFICATION:
+                fovFactor = (Float) data[1];
+                thpointTimesFovfactor = (float) GlobalConf.scene.STAR_THRESHOLD_POINT * fovFactor;
+                thupOverFovfactor = (float) Constants.THRESHOLD_UP / fovFactor;
+                thdownOverFovfactor = (float) Constants.THRESHOLD_DOWN / fovFactor;
+                break;
+            case STAR_POINT_SIZE_CMD:
+                innerRad = 0.004f * DISC_FACTOR + (Float) data[0] * 0.008f;
+                break;
+            default:
+                break;
+            }
+        }
     }
 
     static {
-	if (GaiaSky.instance != null) {
-	    fovFactor = GaiaSky.instance.getCameraManager().getFovFactor();
-	} else {
-	    fovFactor = 1f;
-	}
-	thpointTimesFovfactor = (float) GlobalConf.scene.STAR_THRESHOLD_POINT * fovFactor;
-	thupOverFovfactor = (float) Constants.THRESHOLD_UP / fovFactor;
-	thdownOverFovfactor = (float) Constants.THRESHOLD_DOWN / fovFactor;
-	float psize = GlobalConf.scene.STAR_POINT_SIZE < 0 ? 8 : GlobalConf.scene.STAR_POINT_SIZE;
-	innerRad = 0.004f * DISC_FACTOR + psize * 0.009f;
-	paramUpdater = new ParamUpdater();
+        if (GaiaSky.instance != null) {
+            fovFactor = GaiaSky.instance.getCameraManager().getFovFactor();
+        } else {
+            fovFactor = 1f;
+        }
+        thpointTimesFovfactor = (float) GlobalConf.scene.STAR_THRESHOLD_POINT * fovFactor;
+        thupOverFovfactor = (float) Constants.THRESHOLD_UP / fovFactor;
+        thdownOverFovfactor = (float) Constants.THRESHOLD_DOWN / fovFactor;
+        float psize = GlobalConf.scene.STAR_POINT_SIZE < 0 ? 8 : GlobalConf.scene.STAR_POINT_SIZE;
+        innerRad = 0.004f * DISC_FACTOR + psize * 0.009f;
+        paramUpdater = new ParamUpdater();
     }
 
     @Override
     public double THRESHOLD_NONE() {
-	return (float) GlobalConf.scene.STAR_THRESHOLD_NONE;
+        return (float) GlobalConf.scene.STAR_THRESHOLD_NONE;
     }
 
     @Override
     public double THRESHOLD_POINT() {
-	return (float) GlobalConf.scene.STAR_THRESHOLD_POINT;
+        return (float) GlobalConf.scene.STAR_THRESHOLD_POINT;
     }
 
     @Override
     public double THRESHOLD_QUAD() {
-	return (float) GlobalConf.scene.STAR_THRESHOLD_QUAD;
+        return (float) GlobalConf.scene.STAR_THRESHOLD_QUAD;
     }
 
     /** Must be updated every cycle **/
@@ -132,7 +132,7 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
     public OctreeNode octant;
 
     public Particle() {
-	this.parentName = ROOT_NAME;
+        this.parentName = ROOT_NAME;
     }
 
     /**
@@ -153,65 +153,65 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
      *            The star unique id.
      */
     public Particle(Vector3d pos, float appmag, float absmag, float colorbv, String name, long starid) {
-	this();
-	this.pos = pos;
-	this.name = name;
-	this.appmag = appmag;
-	this.absmag = absmag;
-	this.colorbv = colorbv;
-	this.id = starid;
+        this();
+        this.pos = pos;
+        this.name = name;
+        this.appmag = appmag;
+        this.absmag = absmag;
+        this.colorbv = colorbv;
+        this.id = starid;
 
-	if (this.name == null) {
-	    randomName = true;
-	    this.name = "star_" + rnd.nextInt(10000000);
-	}
-	this.pm = new Vector3();
-	this.pmSph = new Vector3();
+        if (this.name == null) {
+            randomName = true;
+            this.name = "star_" + rnd.nextInt(10000000);
+        }
+        this.pm = new Vector3();
+        this.pmSph = new Vector3();
     }
 
     public Particle(Vector3d pos, float appmag, float absmag, float colorbv, String name, float ra, float dec,
-	    long starid) {
-	this(pos, appmag, absmag, colorbv, name, starid);
-	this.posSph = new Vector2(ra, dec);
+            long starid) {
+        this(pos, appmag, absmag, colorbv, name, starid);
+        this.posSph = new Vector2(ra, dec);
 
     }
 
     public Particle(Vector3d pos, Vector3 pm, Vector3 pmSph, float appmag, float absmag, float colorbv, String name,
-	    float ra, float dec, long starid) {
-	this(pos, appmag, absmag, colorbv, name, starid);
-	this.posSph = new Vector2(ra, dec);
-	this.pm.set(pm);
-	this.pmSph.set(pmSph);
-	this.hasPm = this.pm.len2() != 0;
+            float ra, float dec, long starid) {
+        this(pos, appmag, absmag, colorbv, name, starid);
+        this.posSph = new Vector2(ra, dec);
+        this.pm.set(pm);
+        this.pmSph.set(pmSph);
+        this.hasPm = this.pm.len2() != 0;
 
     }
 
     @Override
     public void initialize() {
-	setDerivedAttributes();
-	ct = GSEnumSet.of(ComponentType.Galaxies);
-	// Relation between our star size and actual star size (normalized for
-	// the Sun, 1391600 Km of diameter
-	radius = size * Constants.STAR_SIZE_FACTOR;
+        setDerivedAttributes();
+        ct = GSEnumSet.of(ComponentType.Galaxies);
+        // Relation between our star size and actual star size (normalized for
+        // the Sun, 1391600 Km of diameter
+        radius = size * Constants.STAR_SIZE_FACTOR;
     }
 
     public float getActualRadius() {
-	return (float) radius;
+        return (float) radius;
     }
 
     protected void setDerivedAttributes() {
-	double flux = Math.pow(10, -absmag / 2.5f);
-	setRGB(colorbv);
+        double flux = Math.pow(10, -absmag / 2.5f);
+        setRGB(colorbv);
 
-	// Calculate size - This contains arbitrary boundary values to make
-	// things nice on the render side
-	size = (float) Math.min((Math.pow(flux, 0.5f) * Constants.PC_TO_U * 0.16f), 1e9f) / DISC_FACTOR;
-	computedSize = 0;
+        // Calculate size - This contains arbitrary boundary values to make
+        // things nice on the render side
+        size = (float) Math.min((Math.pow(flux, 0.5f) * Constants.PC_TO_U * 0.16f), 1e9f) / DISC_FACTOR;
+        computedSize = 0;
     }
 
     @Override
     public void update(ITimeFrameProvider time, final Transform parentTransform, ICamera camera) {
-	update(time, parentTransform, camera, 1f);
+        update(time, parentTransform, camera, 1f);
     }
 
     /**
@@ -220,74 +220,74 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
      */
     @Override
     public void update(ITimeFrameProvider time, final Transform parentTransform, ICamera camera, float opacity) {
-	if (appmag <= GlobalConf.runtime.LIMIT_MAG_RUNTIME) {
-	    this.opacity = opacity;
-	    transform.position.set(parentTransform.position).add(pos);
-	    // if (hasPm) {
-	    // Vector3 pmv = new Vector3(pm).scl((float)
-	    // Constants.S_TO_Y).scl((float)
-	    // AstroUtils.getMsSinceJ2015(time.getTime()) / 1000f);
-	    // transform.position.add(pmv);
-	    // }
-	    distToCamera = transform.position.len();
+        if (appmag <= GlobalConf.runtime.LIMIT_MAG_RUNTIME) {
+            this.opacity = opacity;
+            transform.position.set(parentTransform.position).add(pos);
+            // if (hasPm) {
+            // Vector3 pmv = new Vector3(pm).scl((float)
+            // Constants.S_TO_Y).scl((float)
+            // AstroUtils.getMsSinceJ2015(time.getTime()) / 1000f);
+            // transform.position.add(pmv);
+            // }
+            distToCamera = transform.position.len();
 
-	    if (!copy) {
-		// TODO Very ugly!
-		if (ModelBody.closestCamStar == null || ModelBody.closestCamStar.distToCamera > distToCamera)
-		    // if (ModelBody.closestCamStar == null ||
-		    // ModelBody.closestCamStar.distToCamera > distToCamera)
-		    ModelBody.closestCamStar = this;
+            if (!copy) {
+                // TODO Very ugly!
+                if (ModelBody.closestCamStar == null || ModelBody.closestCamStar.distToCamera > distToCamera)
+                    // if (ModelBody.closestCamStar == null ||
+                    // ModelBody.closestCamStar.distToCamera > distToCamera)
+                    ModelBody.closestCamStar = this;
 
-		addToRender(this, RenderGroup.POINT_STAR);
+                addToRender(this, RenderGroup.POINT_STAR);
 
-		viewAngle = (radius / distToCamera) / camera.getFovFactor();
-		viewAngleApparent = viewAngle * GlobalConf.scene.STAR_BRIGHTNESS;
+                viewAngle = (radius / distToCamera) / camera.getFovFactor();
+                viewAngleApparent = viewAngle * GlobalConf.scene.STAR_BRIGHTNESS;
 
-		addToRenderLists(camera);
-	    }
+                addToRenderLists(camera);
+            }
 
-	    // Compute nested
-	    if (children != null) {
-		for (int i = 0; i < children.size; i++) {
-		    SceneGraphNode child = children.get(i);
-		    child.update(time, parentTransform, camera, opacity);
-		}
-	    }
-	    if (GlobalConf.scene.COMPUTE_GAIA_SCAN)
-		camera.computeGaiaScan(time, this);
-	}
+            // Compute nested
+            if (children != null) {
+                for (int i = 0; i < children.size; i++) {
+                    SceneGraphNode child = children.get(i);
+                    child.update(time, parentTransform, camera, opacity);
+                }
+            }
+            if (GlobalConf.scene.COMPUTE_GAIA_SCAN)
+                camera.computeGaiaScan(time, this);
+        }
     }
 
     @Override
     protected void addToRenderLists(ICamera camera) {
-	if (camera.getCurrent() instanceof FovCamera) {
-	    // Render as point, do nothing
-	} else {
+        if (camera.getCurrent() instanceof FovCamera) {
+            // Render as point, do nothing
+        } else {
 
-	    if (viewAngleApparent >= thpointTimesFovfactor) {
-		addToRender(this, RenderGroup.SHADER_STAR);
-	    }
-	    if (viewAngleApparent >= thpointTimesFovfactor / GlobalConf.scene.PM_NUM_FACTOR && this.hasPm) {
-		addToRender(this, RenderGroup.LINE);
-	    }
-	}
-	if (renderText() && camera.isVisible(GaiaSky.instance.time, this)) {
-	    addToRender(this, RenderGroup.LABEL);
-	}
+            if (viewAngleApparent >= thpointTimesFovfactor) {
+                addToRender(this, RenderGroup.SHADER_STAR);
+            }
+            if (viewAngleApparent >= thpointTimesFovfactor / GlobalConf.scene.PM_NUM_FACTOR && this.hasPm) {
+                addToRender(this, RenderGroup.LINE);
+            }
+        }
+        if (renderText() && camera.isVisible(GaiaSky.instance.time, this)) {
+            addToRender(this, RenderGroup.LABEL);
+        }
 
     }
 
     protected boolean addToRender(IRenderable renderable, RenderGroup rg) {
-	if (renderOn) {
-	    SceneGraphRenderer.render_lists.get(rg).add(renderable, ThreadIndexer.i());
-	    return true;
-	}
-	return false;
+        if (renderOn) {
+            SceneGraphRenderer.render_lists.get(rg).add(renderable, ThreadIndexer.i());
+            return true;
+        }
+        return false;
     }
 
     @Override
     public void render(ModelBatch modelBatch, float alpha, float t) {
-	// Void
+        // Void
     }
 
     /**
@@ -297,63 +297,63 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
      *            B-V color index
      */
     protected void setRGB(float bv) {
-	if (cc == null)
-	    cc = ColourUtils.BVtoRGB(bv);
-	setColor2Data();
+        if (cc == null)
+            cc = ColourUtils.BVtoRGB(bv);
+        setColor2Data();
     }
 
     @Override
     public float getInnerRad() {
-	return innerRad;
+        return innerRad;
     }
 
     @Override
     public float getRadius() {
-	return (float) radius;
+        return (float) radius;
     }
 
     public boolean isStar() {
-	return true;
+        return true;
     }
 
     @Override
     public boolean renderText() {
-	return computedSize > 0 && GaiaSky.instance.isOn(ComponentType.Labels)
-		&& viewAngleApparent >= (TH_OVER_FACTOR / GaiaSky.instance.cam.getFovFactor());
+        return computedSize > 0 && GaiaSky.instance.isOn(ComponentType.Labels)
+                && viewAngleApparent >= (TH_OVER_FACTOR / GaiaSky.instance.cam.getFovFactor());
     }
 
     @Override
     public float labelSizeConcrete() {
-	return (float) computedSize * LABEL_FACTOR;
+        return (float) computedSize * LABEL_FACTOR;
     }
 
     @Override
     public float textScale() {
-	return (float) FastMath.atan(labelMax()) * labelFactor() * 4e3f;
+        return (float) FastMath.atan(labelMax()) * labelFactor() * 4e3f;
     }
 
     @Override
     protected float labelFactor() {
-	return 1.3e-1f;
+        return 1.3e-1f;
     }
 
     @Override
     protected float labelMax() {
-	return 0.015f;
+        return 0.015f;
     }
 
     public float getFuzzyRenderSize(ICamera camera) {
-	computedSize = this.size;
-	if (viewAngle > thdownOverFovfactor) {
-	    double dist = distToCamera;
-	    if (viewAngle > thupOverFovfactor) {
-		dist = (float) radius / Constants.THRESHOLD_UP;
-	    }
-	    computedSize = this.size * (dist / this.radius) * Constants.THRESHOLD_DOWN;
-	}
-	computedSize *= GlobalConf.scene.STAR_BRIGHTNESS * 0.6;
+        computedSize = this.size;
+        if (viewAngle > thdownOverFovfactor) {
+            double dist = distToCamera;
+            if (viewAngle > thupOverFovfactor) {
+                dist = (float) radius / Constants.THRESHOLD_UP;
+            }
+            computedSize = this.size * (dist / this.radius) * Constants.THRESHOLD_DOWN;
+        }
+        computedSize *= GlobalConf.scene.STAR_BRIGHTNESS * 0.6;
 
-	return (float) computedSize;
+        return (float) computedSize;
     }
 
     @Override
@@ -366,20 +366,20 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
 
     @Override
     public int getStarCount() {
-	return 1;
+        return 1;
     }
 
     @Override
     public Object getStars() {
-	return this;
+        return this;
     }
 
     @Override
     public <T extends SceneGraphNode> T getSimpleCopy() {
-	Particle copy = (Particle) super.getSimpleCopy();
-	copy.pm = this.pm;
-	copy.hasPm = this.hasPm;
-	return (T) copy;
+        Particle copy = (Particle) super.getSimpleCopy();
+        copy.pm = this.pm;
+        copy.hasPm = this.hasPm;
+        return (T) copy;
     }
 
     /**
@@ -391,26 +391,25 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
      */
     @Override
     public void render(LineRenderSystem renderer, ICamera camera, float alpha) {
-	Vector3 campos = aux3f1.get();
-	Vector3 p1 = transform.position.setVector3(aux3f2.get());
-	Vector3 ppm = aux3f3.get().set(pm).scl(GlobalConf.scene.PM_LEN_FACTOR);
-	Vector3 p2 = aux3f4.get().set(p1).add(ppm);
-	camera.getPos().setVector3(campos);
+        Vector3 campos = aux3f1.get();
+        Vector3 p1 = transform.position.setVector3(aux3f2.get());
+        Vector3 ppm = aux3f3.get().set(pm).scl(GlobalConf.scene.PM_LEN_FACTOR);
+        Vector3 p2 = aux3f4.get().set(p1).add(ppm);
+        camera.getPos().setVector3(campos);
 
-	// Mualpha -> red channel
-	// Mudelta -> green channel
-	// Radvel -> blue channel
-	// Min value per channel = 0.2
-	final double mumin = -80;
-	final double mumax = 80;
-	final double maxmin = mumax - mumin;
-	renderer.addLine(p1.x, p1.y, p1.z, p2.x, p2.y, p2.z, (float) ((pmSph.x - mumin) / maxmin) * 0.8f + 0.2f,
-		(float) ((pmSph.y - mumin) / maxmin) * 0.8f + 0.2f, (float) pmSph.z * 0.8f + 0.2f,
-		alpha * this.opacity);
+        // Mualpha -> red channel
+        // Mudelta -> green channel
+        // Radvel -> blue channel
+        // Min value per channel = 0.2
+        final double mumin = -80;
+        final double mumax = 80;
+        final double maxmin = mumax - mumin;
+        renderer.addLine(p1.x, p1.y, p1.z, p2.x, p2.y, p2.z, (float) ((pmSph.x - mumin) / maxmin) * 0.8f + 0.2f, (float) ((pmSph.y - mumin) / maxmin) * 0.8f + 0.2f, (float) pmSph.z * 0.8f
+                + 0.2f, alpha * this.opacity);
     }
 
     protected float getThOverFactorScl() {
-	return fovFactor;
+        return fovFactor;
     }
 
 }

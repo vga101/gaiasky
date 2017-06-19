@@ -55,72 +55,70 @@ public abstract class AbstractCamera implements ICamera {
     public float fovFactor;
 
     public AbstractCamera(CameraManager parent) {
-	this.parent = parent;
-	pos = new Vector3d();
-	posinv = new Vector3d();
-	shift = new Vector3d();
-	tmp = new Vector3d();
+        this.parent = parent;
+        pos = new Vector3d();
+        posinv = new Vector3d();
+        shift = new Vector3d();
+        tmp = new Vector3d();
 
-	frustum = new Frustumd();
+        frustum = new Frustumd();
 
-	camLeft = new PerspectiveCamera(GlobalConf.scene.CAMERA_FOV, Gdx.graphics.getWidth() / 2,
-		Gdx.graphics.getHeight());
-	camLeft.near = (float) CAM_NEAR;
-	camLeft.far = (float) CAM_FAR;
+        camLeft = new PerspectiveCamera(GlobalConf.scene.CAMERA_FOV, Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight());
+        camLeft.near = (float) CAM_NEAR;
+        camLeft.far = (float) CAM_FAR;
 
-	camRight = new PerspectiveCamera(GlobalConf.scene.CAMERA_FOV, Gdx.graphics.getWidth() / 2,
-		Gdx.graphics.getHeight());
-	camRight.near = (float) CAM_NEAR;
-	camRight.far = (float) CAM_FAR;
+        camRight = new PerspectiveCamera(GlobalConf.scene.CAMERA_FOV, Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight());
+        camRight.near = (float) CAM_NEAR;
+        camRight.far = (float) CAM_FAR;
 
-	projection = new Matrix4d();
-	view = new Matrix4d();
-	combined = new Matrix4d();
+        projection = new Matrix4d();
+        view = new Matrix4d();
+        combined = new Matrix4d();
     }
 
     @Override
     public void updateAngleEdge(int width, int height) {
-	ar = (float) width / (float) height;
-	float h = camera.fieldOfView;
-	float w = h * ar;
-	angleEdgeRad = (float) (Math.toRadians(Math.sqrt(h * h + w * w))) / 2f;
+        ar = (float) width / (float) height;
+        float h = camera.fieldOfView;
+        float w = h * ar;
+        angleEdgeRad = (float) (Math.toRadians(Math.sqrt(h * h + w * w))) / 2f;
     }
 
     public float getAngleEdge(int width, int height, float angle) {
-	float ar = (float) width / (float) height;
-	float h = angle;
-	float w = h * ar;
-	return (float) (Math.toRadians(Math.sqrt(h * h + w * w))) / 2f;
+        float ar = (float) width / (float) height;
+        float h = angle;
+        float w = h * ar;
+        return (float) (Math.toRadians(Math.sqrt(h * h + w * w))) / 2f;
     }
 
     @Override
     public float getFovFactor() {
-	return fovFactor;
+        return fovFactor;
     }
 
     @Override
     public Vector3d getPos() {
-	return pos;
+        return pos;
     }
 
     @Override
     public void setPos(Vector3d pos) {
-	this.pos.set(pos);
+        this.pos.set(pos);
     }
 
     @Override
     public Vector3d getInversePos() {
-	return posinv;
+        return posinv;
     }
 
     @Override
     public float getAngleEdge() {
-	return angleEdgeRad;
+        return angleEdgeRad;
     }
 
     @Override
     public CameraManager getManager() {
-	return parent;
+        return parent;
     }
 
     @Override
@@ -130,22 +128,22 @@ public abstract class AbstractCamera implements ICamera {
 
     @Override
     public ICamera getCurrent() {
-	return this;
+        return this;
     }
 
     private static final double VIEW_ANGLE = Math.toRadians(0.05);
 
     public void computeGaiaScan(ITimeFrameProvider time, CelestialBody cb) {
-	if (GlobalConf.scene.COMPUTE_GAIA_SCAN && time.getDt() != 0) {
-	    boolean visibleByGaia = computeVisibleFovs(cb, parent.fovCamera);
-	    cb.updateTransitNumber(visibleByGaia, time, parent.fovCamera);
-	}
+        if (GlobalConf.scene.COMPUTE_GAIA_SCAN && time.getDt() != 0) {
+            boolean visibleByGaia = computeVisibleFovs(cb, parent.fovCamera);
+            cb.updateTransitNumber(visibleByGaia, time, parent.fovCamera);
+        }
     }
 
     @Override
     public boolean isVisible(ITimeFrameProvider time, CelestialBody cb) {
-	return (!(this instanceof FovCamera) && cb.viewAngle > VIEW_ANGLE)
-		|| GlobalResources.isInView(cb.transform.position, cb.distToCamera, angleEdgeRad, getDirection());
+        return (!(this instanceof FovCamera) && cb.viewAngle > VIEW_ANGLE)
+                || GlobalResources.isInView(cb.transform.position, cb.distToCamera, angleEdgeRad, getDirection());
     }
 
     /**
@@ -159,113 +157,111 @@ public abstract class AbstractCamera implements ICamera {
      * @return True if the body is observed. False otherwise.
      */
     protected boolean computeVisibleFovs(CelestialBody cb, FovCamera fcamera) {
-	boolean visible = false;
-	Vector3d[] dirs = null;
-	if (GlobalConf.scene.COMPUTE_GAIA_SCAN && !fcamera.interpolatedDirections.isEmpty()) {
-	    // We need to interpolate...
-	    for (Vector3d[] interpolatedDirection : fcamera.interpolatedDirections) {
-		visible = visible
-			|| GlobalResources.isInView(cb.transform.position, cb.distToCamera, fcamera.angleEdgeRad,
-				interpolatedDirection[0])
-			|| GlobalResources.isInView(cb.transform.position, cb.distToCamera, fcamera.angleEdgeRad,
-				interpolatedDirection[1]);
-		if (visible)
-		    return true;
-	    }
-	}
-	dirs = fcamera.directions;
-	visible = visible
-		|| GlobalResources.isInView(cb.transform.position, cb.distToCamera, fcamera.angleEdgeRad, dirs[0])
-		|| GlobalResources.isInView(cb.transform.position, cb.distToCamera, fcamera.angleEdgeRad, dirs[1]);
-	return visible;
+        boolean visible = false;
+        Vector3d[] dirs = null;
+        if (GlobalConf.scene.COMPUTE_GAIA_SCAN && !fcamera.interpolatedDirections.isEmpty()) {
+            // We need to interpolate...
+            for (Vector3d[] interpolatedDirection : fcamera.interpolatedDirections) {
+                visible = visible
+                        || GlobalResources.isInView(cb.transform.position, cb.distToCamera, fcamera.angleEdgeRad, interpolatedDirection[0])
+                        || GlobalResources.isInView(cb.transform.position, cb.distToCamera, fcamera.angleEdgeRad, interpolatedDirection[1]);
+                if (visible)
+                    return true;
+            }
+        }
+        dirs = fcamera.directions;
+        visible = visible
+                || GlobalResources.isInView(cb.transform.position, cb.distToCamera, fcamera.angleEdgeRad, dirs[0])
+                || GlobalResources.isInView(cb.transform.position, cb.distToCamera, fcamera.angleEdgeRad, dirs[1]);
+        return visible;
     }
 
     public double getDistance() {
-	return distance;
+        return distance;
     }
 
     @Override
     public void checkClosest(CelestialBody cb) {
-	if (closest == null) {
-	    closest = cb;
-	} else {
-	    if (closest.distToCamera - closest.getRadius() > cb.distToCamera - cb.getRadius()) {
-		closest = cb;
-	    }
-	}
+        if (closest == null) {
+            closest = cb;
+        } else {
+            if (closest.distToCamera - closest.getRadius() > cb.distToCamera - cb.getRadius()) {
+                closest = cb;
+            }
+        }
     }
 
     @Override
     public CelestialBody getClosest() {
-	return closest;
+        return closest;
     }
 
     public void copyParamsFrom(AbstractCamera other) {
-	this.pos.set(other.pos);
-	this.posinv.set(other.posinv);
-	this.getDirection().set(other.getDirection());
-	this.getUp().set(other.getUp());
-	this.closest = other.closest;
+        this.pos.set(other.pos);
+        this.posinv.set(other.posinv);
+        this.getDirection().set(other.getDirection());
+        this.getUp().set(other.getUp());
+        this.closest = other.closest;
 
     }
 
     private void copyCamera(PerspectiveCamera source, PerspectiveCamera target) {
-	target.far = source.far;
-	target.near = source.near;
-	target.direction.set(source.direction);
-	target.up.set(source.up);
-	target.position.set(source.position);
-	target.fieldOfView = source.fieldOfView;
-	target.viewportHeight = source.viewportHeight;
-	target.viewportWidth = source.viewportWidth;
+        target.far = source.far;
+        target.near = source.near;
+        target.direction.set(source.direction);
+        target.up.set(source.up);
+        target.position.set(source.position);
+        target.fieldOfView = source.fieldOfView;
+        target.viewportHeight = source.viewportHeight;
+        target.viewportWidth = source.viewportWidth;
     }
 
     @Override
     public PerspectiveCamera getCameraStereoLeft() {
-	return camLeft;
+        return camLeft;
     }
 
     @Override
     public PerspectiveCamera getCameraStereoRight() {
-	return camRight;
+        return camRight;
     }
 
     @Override
     public void setCameraStereoLeft(PerspectiveCamera cam) {
-	copyCamera(cam, camLeft);
+        copyCamera(cam, camLeft);
     }
 
     @Override
     public void setCameraStereoRight(PerspectiveCamera cam) {
-	copyCamera(cam, camRight);
+        copyCamera(cam, camRight);
     }
 
     @Override
     public void setShift(Vector3d shift) {
-	this.shift.set(shift);
+        this.shift.set(shift);
     }
 
     @Override
     public Vector3d getShift() {
-	return this.shift;
+        return this.shift;
     }
 
     @Override
     public Frustumd getFrustum() {
-	return frustum;
+        return frustum;
     }
 
     public void updateFrustum(Frustumd frustum, PerspectiveCamera cam, Vector3d position, Vector3d direction,
-	    Vector3d up) {
-	double aspect = cam.viewportWidth / cam.viewportHeight;
-	projection.setToProjection(CAM_NEAR, CAM_FAR, cam.fieldOfView, aspect);
-	view.setToLookAt(position, tmp.set(position).add(direction), up);
-	combined.set(projection);
-	Matrix4d.mul(combined.val, view.val);
+            Vector3d up) {
+        double aspect = cam.viewportWidth / cam.viewportHeight;
+        projection.setToProjection(1e2 * Constants.KM_TO_U, CAM_FAR, cam.fieldOfView, aspect);
+        view.setToLookAt(position, tmp.set(position).add(direction), up);
+        combined.set(projection);
+        Matrix4d.mul(combined.val, view.val);
 
-	invProjectionView.set(combined);
-	Matrix4d.inv(invProjectionView.val);
-	frustum.update(invProjectionView);
+        invProjectionView.set(combined);
+        Matrix4d.inv(invProjectionView.val);
+        frustum.update(invProjectionView);
     }
 
 }
