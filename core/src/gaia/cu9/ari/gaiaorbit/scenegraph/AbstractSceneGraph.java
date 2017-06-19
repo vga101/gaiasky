@@ -63,16 +63,36 @@ public abstract class AbstractSceneGraph implements ISceneGraph {
 
         // Insert all the nodes
         for (SceneGraphNode node : nodes) {
-            SceneGraphNode parent = stringToNode.get(node.parentName);
-            if (parent != null) {
-                parent.addChild(node, true);
-                node.setUp();
-            } else {
-                throw new RuntimeException("Parent of node " + node.name + " not found: " + node.parentName);
-            }
+            insert(node, false);
         }
 
         Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.sg.init", root.numChildren));
+    }
+
+    public void insert(SceneGraphNode node, boolean addToIndex) {
+        SceneGraphNode parent = stringToNode.get(node.parentName);
+        if (parent != null) {
+            parent.addChild(node, true);
+            node.setUp();
+
+            if (addToIndex) {
+                addToIndex(node, stringToNode);
+            }
+        } else {
+            throw new RuntimeException("Parent of node " + node.name + " not found: " + node.parentName);
+        }
+    }
+
+    public void remove(SceneGraphNode node, boolean removeFromIndex) {
+        if (node != null) {
+            node.parent.removeChild(node, true);
+
+            if (removeFromIndex) {
+                removeFromIndex(node, stringToNode);
+            }
+        } else {
+            throw new RuntimeException("Given node is null");
+        }
     }
 
     private void addToStarMap(SceneGraphNode node) {

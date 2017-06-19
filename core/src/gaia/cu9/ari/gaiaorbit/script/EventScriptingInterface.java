@@ -7,10 +7,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Matrix4;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.utils.TimeUtils;
@@ -26,6 +22,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.AbstractPositionEntity;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
+import gaia.cu9.ari.gaiaorbit.scenegraph.Invisible;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Loc;
 import gaia.cu9.ari.gaiaorbit.scenegraph.NaturalCamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Planet;
@@ -35,7 +32,6 @@ import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.LruCache;
-import gaia.cu9.ari.gaiaorbit.util.camera.CameraUtils;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
@@ -714,77 +710,35 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
         assert latitude >= -90 && latitude <= 90 && longitude >= 0 && longitude <= 360 : "Latitude must be in [-90..90] and longitude must be in [0..360]";
 
         ISceneGraph sg = GaiaSky.instance.sg;
+
+        if (!sg.containsNode("Invisible")) {
+            Invisible invisible = new Invisible("Focus");
+            sg.insert(invisible, true);
+        }
+        Invisible invisible = (Invisible) sg.getNode("Focus");
+
         if (sg.containsNode(name)) {
             CelestialBody focus = sg.findFocus(name);
             if (focus instanceof Planet) {
                 Planet planet = (Planet) focus;
-                NaturalCamera cam = GaiaSky.instance.cam.naturalCamera;
+
+                Vector3d target = new Vector3d();
+                planet.getPositionAboveSurface(longitude, latitude, planet.getRadius() * Constants.U_TO_KM / 2f, target);
+                invisible.pos.set(target);
 
                 // Go to object
-                goToObject(name, 40, -1);
+                goToObject("Focus", 20, 1, stop);
 
-                // Save rotate speed, set it to 50
-                double rotateSpeedBak = GlobalConf.scene.ROTATION_SPEED;
-                em.post(Events.ROTATION_SPEED_CMD, (float) MathUtilsd.lint(25d, Constants.MIN_SLIDER, Constants.MAX_SLIDER, Constants.MIN_ROT_SPEED, Constants.MAX_ROT_SPEED), false);
-
-                // Save cinematic
-                boolean cinematic = GlobalConf.scene.CINEMATIC_CAMERA;
-                GlobalConf.scene.CINEMATIC_CAMERA = false;
-
-                // Position camera above lon/lat
-                Vector3 v0 = new Vector3();
-                Vector3 v1 = new Vector3();
-                Vector3 vec = new Vector3();
-                Vector3 isec = new Vector3();
-                Vector3d in = new Vector3d();
-                Vector3d out = new Vector3d();
-                Matrix4 mat = new Matrix4();
-                double[] lonlat = new double[2];
-                Vector2 xy = new Vector2();
-                boolean ok = false;
-
-                int centerx = Gdx.graphics.getWidth() / 2;
-                int centery = Gdx.graphics.getHeight() / 2;
-
-                ok = CameraUtils.getLonLat(planet, cam, centerx, centery, v0, v1, vec, isec, in, out, mat, lonlat);
-                boolean lonNotMet = Math.abs(lonlat[0] - longitude) > .2;
-                boolean latNotMet = Math.abs(lonlat[1] - latitude) > .2;
-                long prevtime = TimeUtils.millis();
-                while (ok && (lonNotMet || latNotMet) && (stop == null || (stop != null && !stop.get()))) {
-                    // dt in ms
-                    long dt = TimeUtils.timeSinceMillis(prevtime);
-                    prevtime = TimeUtils.millis();
-
-                    // Get xy displacement
-                    CameraUtils.projectLonLat(planet, cam, longitude, latitude, v0, v1, in, out, mat, xy);
-                    xy.x = xy.x - centerx;
-                    xy.y = xy.y - centery;
-                    float len = MathUtils.clamp(xy.len(), 1f, 5000f) * 0.1f;
-                    xy.setLength(len);
-
-                    // Move
-                    cameraRotate(-xy.x * dt, -xy.y * dt);
-
-                    try {
-                        Thread.sleep(10);
-                    } catch (Exception e) {
-                    }
-
-                    ok = CameraUtils.getLonLat(planet, cam, centerx, centery, v0, v1, vec, isec, in, out, mat, lonlat);
-                    lonNotMet = Math.abs(lonlat[0] - longitude) > .2;
-                    latNotMet = Math.abs(lonlat[1] - latitude) > .2;
-                }
-
-                // Restore cinematic
-                GlobalConf.scene.CINEMATIC_CAMERA = cinematic;
-
-                // Restore rotation speed
-                em.post(Events.ROTATION_SPEED_CMD, (float) rotateSpeedBak, false);
+                // Set focus
+                setCameraFocus(name);
+                sleep(2);
 
                 // Land
                 landOnObject(name, stop);
             }
         }
+
+        sg.remove(invisible, true);
     }
 
     @Override

@@ -1,9 +1,13 @@
 package gaia.cu9.ari.gaiaorbit.interfce;
 
+import com.badlogic.gdx.scenes.scene2d.Event;
+import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ButtonGroup;
 import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
+import com.badlogic.gdx.scenes.scene2d.utils.Disableable;
 
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
@@ -22,53 +26,93 @@ public class LandAtWindow extends GenericDialog {
     private OwnTextField location, latitude, longitude;
 
     public LandAtWindow(CelestialBody target, Stage stage, Skin skin) {
-	super(txt("context.landatcoord", target.getName()), skin, stage);
-	this.target = target;
+        super(txt("context.landatcoord", target.getName()), skin, stage);
+        this.target = target;
 
-	setAcceptText(txt("gui.ok"));
-	setCancelText(txt("gui.cancel"));
+        setAcceptText(txt("gui.ok"));
+        setCancelText(txt("gui.cancel"));
 
-	// Build UI
-	buildSuper();
+        // Build UI
+        buildSuper();
     }
 
     @Override
     protected void build() {
 
-	latlonCb = new OwnCheckBox(txt("context.lonlat"), skin, "radio", pad);
-	latlonCb.setChecked(true);
-	longitude = new OwnTextField("", skin, new FloatValidator(0, 360));
-	latitude = new OwnTextField("", skin, new FloatValidator(-90, 90));
+        latlonCb = new OwnCheckBox(txt("context.lonlat"), skin, "radio", pad);
+        latlonCb.setChecked(true);
+        latlonCb.addListener(new EventListener() {
+            @Override
+            public boolean handle(Event event) {
+                if (event instanceof ChangeEvent) {
+                    if (latlonCb.isChecked()) {
+                        enableComponents(false, location);
+                        enableComponents(true, longitude, latitude);
+                    }
+                    return true;
+                }
+                return false;
+            }
 
-	locationCb = new OwnCheckBox(txt("context.location"), skin, "radio", pad);
-	location = new OwnTextField("", skin, new ExistingLocationValidator(target));
+        });
+        longitude = new OwnTextField("", skin, new FloatValidator(0, 360));
+        latitude = new OwnTextField("", skin, new FloatValidator(-90, 90));
 
-	new ButtonGroup(latlonCb, locationCb);
+        locationCb = new OwnCheckBox(txt("context.location"), skin, "radio", pad);
+        locationCb.addListener(new EventListener() {
+            @Override
+            public boolean handle(Event event) {
+                if (event instanceof ChangeEvent) {
+                    if (locationCb.isChecked()) {
+                        enableComponents(true, location);
+                        enableComponents(false, longitude, latitude);
+                    }
+                    return true;
+                }
+                return false;
+            }
 
-	content.add(latlonCb).left().top().padBottom(pad).colspan(4).row();
-	content.add(new OwnLabel(txt("context.longitude"), skin)).left().top().padRight(pad);
-	content.add(longitude).left().top().padRight(pad * 2);
-	content.add(new OwnLabel(txt("context.latitude"), skin)).left().top().padRight(pad);
-	content.add(latitude).left().top().padBottom(pad * 2).row();
+        });
+        location = new OwnTextField("", skin, new ExistingLocationValidator(target));
 
-	content.add(locationCb).left().top().padBottom(pad).colspan(4).row();
-	content.add(new OwnLabel(txt("context.location"), skin)).left().top().padRight(pad);
-	content.add(location).left().top();
+        new ButtonGroup(latlonCb, locationCb);
+
+        content.add(latlonCb).left().top().padBottom(pad).colspan(4).row();
+        content.add(new OwnLabel(txt("context.longitude"), skin)).left().top().padRight(pad);
+        content.add(longitude).left().top().padRight(pad * 2);
+        content.add(new OwnLabel(txt("context.latitude"), skin)).left().top().padRight(pad);
+        content.add(latitude).left().top().padBottom(pad * 2).row();
+
+        content.add(locationCb).left().top().padBottom(pad).colspan(4).row();
+        content.add(new OwnLabel(txt("context.location"), skin)).left().top().padRight(pad);
+        content.add(location).left().top();
 
     }
 
     @Override
     protected void accept() {
-	if (latlonCb.isChecked()) {
-	    EventManager.instance.post(Events.LAND_AT_LOCATION_OF_OBJECT, target,
-		    Double.parseDouble(longitude.getText()), Double.parseDouble(latitude.getText()));
-	} else if (locationCb.isChecked()) {
-	    EventManager.instance.post(Events.LAND_AT_LOCATION_OF_OBJECT, target, location.getText());
-	}
+        if (latlonCb.isChecked()) {
+            EventManager.instance.post(Events.LAND_AT_LOCATION_OF_OBJECT, target, Double.parseDouble(longitude.getText()), Double.parseDouble(latitude.getText()));
+        } else if (locationCb.isChecked()) {
+            EventManager.instance.post(Events.LAND_AT_LOCATION_OF_OBJECT, target, location.getText());
+        }
     }
 
     @Override
     protected void cancel() {
+    }
+
+    /**
+     * Sets the enabled property on the given components
+     * 
+     * @param enabled
+     * @param components
+     */
+    protected void enableComponents(boolean enabled, Disableable... components) {
+        for (Disableable c : components) {
+            if (c != null)
+                c.setDisabled(!enabled);
+        }
     }
 
 }

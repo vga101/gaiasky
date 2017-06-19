@@ -213,8 +213,8 @@ public abstract class ModelBody extends CelestialBody {
     }
 
     /**
-     * Returns the cartesian positoin above the surface at the given longitude
-     * and latitude and distance.
+     * Returns the cartesian position in the internal reference system above the
+     * surface at the given longitude and latitude and distance.
      * 
      * @param longitude
      *            The longitude in deg
@@ -224,7 +224,7 @@ public abstract class ModelBody extends CelestialBody {
      *            The distance in km
      * @param out
      *            The vector to store the result
-     * @return The cartesian position
+     * @return The cartesian position above the surface of this body
      */
     public Vector3d getPositionAboveSurface(double longitude, double latitude, double distance, Vector3d out) {
         Vector3d aux1 = aux3d1.get();
@@ -239,7 +239,7 @@ public abstract class ModelBody extends CelestialBody {
         aux2.set(aux1.z, aux1.y, aux1.x).scl(1, -1, -1).scl(-(getRadius() + distance * Constants.KM_TO_U));
         aux2.rotate(rc.angle, 0, 1, 0);
 
-        out.set(transform.position).add(aux2);
+        out.set(pos).add(aux2);
         return out;
     }
 }

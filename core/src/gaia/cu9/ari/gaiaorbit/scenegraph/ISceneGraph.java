@@ -12,6 +12,10 @@ import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 public interface ISceneGraph extends Serializable, Disposable {
     public void initialize(Array<SceneGraphNode> nodes, ITimeFrameProvider time);
 
+    public void insert(SceneGraphNode node, boolean addToIndex);
+
+    public void remove(SceneGraphNode node, boolean removeFromIndex);
+
     public void update(ITimeFrameProvider time, ICamera camera);
 
     public boolean containsNode(String name);
