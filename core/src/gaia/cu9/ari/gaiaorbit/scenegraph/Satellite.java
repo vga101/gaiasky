@@ -36,9 +36,13 @@ public abstract class Satellite extends ModelBody {
     }
 
     /**
-     * Default implementation, only sets the result of the coordinates call to pos
-     * @param time Time to get the coordinates
-     * @param force Whether to force the update
+     * Default implementation, only sets the result of the coordinates call to
+     * pos
+     * 
+     * @param time
+     *            Time to get the coordinates
+     * @param force
+     *            Whether to force the update
      */
     protected void forceUpdatePosition(ITimeFrameProvider time, boolean force) {
         if (time.getDt() != 0 || force) {

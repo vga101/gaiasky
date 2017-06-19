@@ -50,7 +50,7 @@ public class ShapeObject extends ModelBody {
     /**
      * Sets the local transform of this satellite
      */
-    public void setToLocalTransform(float sizeFactor, Matrix4 localTransform, boolean forceUpdate) {
+    public void setToLocalTransform(ITimeFrameProvider time, float sizeFactor, Matrix4 localTransform, boolean forceUpdate) {
 
         transform.getMatrix(localTransform).scl(size * sizeFactor);
 

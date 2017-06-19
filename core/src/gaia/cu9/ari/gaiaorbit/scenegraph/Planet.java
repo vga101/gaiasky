@@ -13,10 +13,13 @@ import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
 public class Planet extends ModelBody implements IAtmosphereRenderable {
-
     private static final double TH_ANGLE_NONE = ModelBody.TH_ANGLE_POINT / 1e6;
     private static final double TH_ANGLE_POINT = ModelBody.TH_ANGLE_POINT / 2e4;
     private static final double TH_ANGLE_QUAD = ModelBody.TH_ANGLE_POINT / 2f;
+
+    Vector3d endline = new Vector3d();
+    Vector3d dx = new Vector3d();
+    double previousOrientationAngle = 0;
 
     @Override
     public double THRESHOLD_NONE() {
@@ -84,6 +87,7 @@ public class Planet extends ModelBody implements IAtmosphereRenderable {
         if (ac != null) {
             ac.update(transform);
         }
+
     }
 
     @Override

@@ -72,47 +72,46 @@ public abstract class AbstractPositionEntity extends SceneGraphNode {
     protected boolean copy = false;
 
     protected AbstractPositionEntity() {
-	super();
-	// Positions
-	pos = new Vector3d();
-	posSph = new Vector2();
+        super();
+        // Positions
+        pos = new Vector3d();
+        posSph = new Vector2();
     }
 
     public AbstractPositionEntity(SceneGraphNode parent) {
-	super(parent);
-	// Positions
-	pos = new Vector3d();
-	posSph = new Vector2();
+        super(parent);
+        // Positions
+        pos = new Vector3d();
+        posSph = new Vector2();
     }
 
     public AbstractPositionEntity(String name) {
-	super(name);
+        super(name);
     }
 
     @Override
     public void doneLoading(AssetManager manager) {
-	super.doneLoading(manager);
+        super.doneLoading(manager);
 
-	if (coordinates != null)
-	    coordinates.doneLoading(sg);
+        if (coordinates != null)
+            coordinates.doneLoading(sg);
     }
 
     /**
-     * Returns the position of this entity in the camera reference system (i.e.
-     * to get the total position you need to add the camera position) into the
-     * aux vector.
+     * Returns the position of this entity in the internal reference system.
      * 
      * @param aux
-     * @return
+     *            The vector where the result will be put
+     * @return The aux vector with the position
      */
     public Vector3d getPosition(Vector3d aux) {
-	return transform.getTranslation(aux);
+        return aux.set(pos);
     }
 
     /**
      * Gets the predicted position of this entity in the next time step in the
-     * camera reference system (i.e. to get the total position you need to add
-     * the camera position) using the given time provider and the given camera.
+     * internal reference system using the given time provider and the given
+     * camera.
      * 
      * @param aux
      *            The out vector where the result will be stored.
@@ -123,55 +122,55 @@ public abstract class AbstractPositionEntity extends SceneGraphNode {
      * @return The aux vector for chaining.
      */
     public Vector3d getPredictedPosition(Vector3d aux, ITimeFrameProvider time, ICamera camera, boolean force) {
-	if (time.getDt() == 0 && !force) {
-	    return getPosition(aux);
-	} else {
-	    // Get copy of focus and update it to know where it will be in the
-	    // next step
-	    AbstractPositionEntity fc = (AbstractPositionEntity) this;
-	    AbstractPositionEntity fccopy = fc.getLineCopy();
-	    fccopy.getRoot().transform.position.set(camera.getInversePos());
-	    fccopy.getRoot().update(time, fccopy.getRoot().transform, camera);
+        if (time.getDt() == 0 && !force) {
+            return getPosition(aux);
+        } else {
+            // Get copy of focus and update it to know where it will be in the
+            // next step
+            AbstractPositionEntity fc = (AbstractPositionEntity) this;
+            AbstractPositionEntity fccopy = fc.getLineCopy();
+            fccopy.getRoot().transform.position.set(camera.getInversePos());
+            fccopy.getRoot().update(time, fccopy.getRoot().transform, camera);
 
-	    aux.set(fccopy.transform.getTranslation());
+            aux.set(fccopy.pos);
 
-	    // Return to poolvec
-	    SceneGraphNode ape = fccopy;
-	    do {
-		ape.returnToPool();
-		ape = ape.parent;
-	    } while (ape != null);
+            // Return to poolvec
+            SceneGraphNode ape = fccopy;
+            do {
+                ape.returnToPool();
+                ape = ape.parent;
+            } while (ape != null);
 
-	    return aux;
-	}
+            return aux;
+        }
     }
 
     /**
-     * Returns the absolute position of this entity in the sandbox native
-     * coordinates (equatorial system).
+     * Returns the absolute position of this entity in the native coordinates
+     * (equatorial system).
      * 
      * @param aux
      * @return
      */
     public Vector3d getAbsolutePosition(Vector3d aux) {
-	aux.set(pos);
-	AbstractPositionEntity entity = this;
-	while (entity.parent != null && entity.parent instanceof AbstractPositionEntity) {
-	    entity = (AbstractPositionEntity) entity.parent;
-	    aux.add(entity.pos);
-	}
-	return aux;
+        aux.set(pos);
+        AbstractPositionEntity entity = this;
+        while (entity.parent != null && entity.parent instanceof AbstractPositionEntity) {
+            entity = (AbstractPositionEntity) entity.parent;
+            aux.add(entity.pos);
+        }
+        return aux;
     }
 
     public Matrix4d getAbsoluteOrientation(Matrix4d aux) {
-	aux.set(orientation);
-	AbstractPositionEntity entity = this;
-	while (entity.parent != null && entity.parent instanceof AbstractPositionEntity) {
-	    entity = (AbstractPositionEntity) entity.parent;
-	    if (entity.orientation != null)
-		aux.mul(entity.orientation);
-	}
-	return aux;
+        aux.set(orientation);
+        AbstractPositionEntity entity = this;
+        while (entity.parent != null && entity.parent instanceof AbstractPositionEntity) {
+            entity = (AbstractPositionEntity) entity.parent;
+            if (entity.orientation != null)
+                aux.mul(entity.orientation);
+        }
+        return aux;
     }
 
     /**
@@ -181,17 +180,17 @@ public abstract class AbstractPositionEntity extends SceneGraphNode {
      */
     @Override
     public void updateLocal(ITimeFrameProvider time, ICamera camera) {
-	updateLocalValues(time, camera);
+        updateLocalValues(time, camera);
 
-	this.transform.translate(pos);
+        this.transform.translate(pos);
 
-	Vector3d aux = aux3d1.get();
-	this.distToCamera = (float) transform.getTranslation(aux).len();
-	this.viewAngle = (float) FastMath.atan(size / distToCamera);
-	this.viewAngleApparent = this.viewAngle;
-	if (!copy) {
-	    addToRenderLists(camera);
-	}
+        Vector3d aux = aux3d1.get();
+        this.distToCamera = (float) transform.getTranslation(aux).len();
+        this.viewAngle = (float) FastMath.atan(size / distToCamera);
+        this.viewAngleApparent = this.viewAngle;
+        if (!copy) {
+            addToRenderLists(camera);
+        }
     }
 
     /**
@@ -210,7 +209,7 @@ public abstract class AbstractPositionEntity extends SceneGraphNode {
     public abstract void updateLocalValues(ITimeFrameProvider time, ICamera camera);
 
     public float getRadius() {
-	return size / 2;
+        return size / 2;
     }
 
     /**
@@ -219,19 +218,19 @@ public abstract class AbstractPositionEntity extends SceneGraphNode {
      * @param size
      */
     public void setSize(Double size) {
-	this.size = size.floatValue();
+        this.size = size.floatValue();
     }
 
     public void setSize(Long size) {
-	this.size = (float) size;
+        this.size = (float) size;
     }
 
     public void setColor(double[] color) {
-	this.cc = GlobalResources.toFloatArray(color);
+        this.cc = GlobalResources.toFloatArray(color);
     }
 
     public Vector3d computeFuturePosition() {
-	return null;
+        return null;
     }
 
     /**
@@ -241,95 +240,88 @@ public abstract class AbstractPositionEntity extends SceneGraphNode {
      */
     @Override
     public <T extends SceneGraphNode> T getSimpleCopy() {
-	Class<? extends AbstractPositionEntity> clazz = this.getClass();
-	try {
-	    AbstractPositionEntity instance = clazz.newInstance();
-	    instance.copy = true;
-	    instance.name = this.name;
-	    instance.pos.set(this.pos);
-	    instance.size = this.size;
-	    instance.distToCamera = this.distToCamera;
-	    instance.viewAngle = this.viewAngle;
-	    instance.transform.set(this.transform);
-	    instance.ct = this.ct;
-	    instance.coordinates = this.coordinates;
-	    if (this.localTransform != null)
-		instance.localTransform.set(this.localTransform);
+        Class<? extends AbstractPositionEntity> clazz = this.getClass();
+        try {
+            AbstractPositionEntity instance = clazz.newInstance();
+            instance.copy = true;
+            instance.name = this.name;
+            instance.pos.set(this.pos);
+            instance.size = this.size;
+            instance.distToCamera = this.distToCamera;
+            instance.viewAngle = this.viewAngle;
+            instance.transform.set(this.transform);
+            instance.ct = this.ct;
+            instance.coordinates = this.coordinates;
+            if (this.localTransform != null)
+                instance.localTransform.set(this.localTransform);
 
-	    return (T) instance;
-	} catch (Exception e) {
-	    Logger.error(e);
-	}
-	return null;
+            return (T) instance;
+        } catch (Exception e) {
+            Logger.error(e);
+        }
+        return null;
     }
 
     protected AbstractPositionEntity getComputedAncestor() {
-	if (!this.computed) {
-	    return this.parent != null && this.parent instanceof AbstractPositionEntity
-		    ? ((AbstractPositionEntity) this.parent).getComputedAncestor() : null;
-	} else {
-	    return this;
-	}
+        if (!this.computed) {
+            return this.parent != null && this.parent instanceof AbstractPositionEntity ? ((AbstractPositionEntity) this.parent).getComputedAncestor() : null;
+        } else {
+            return this;
+        }
     }
 
     public double getDistToCamera() {
-	return distToCamera;
+        return distToCamera;
     }
 
-    protected void render2DLabel(SpriteBatch batch, ShaderProgram shader, BitmapFont font, ICamera camera, String label,
-	    Vector3d pos3d) {
-	Vector3 p = aux3f1.get();
-	pos3d.setVector3(p);
+    protected void render2DLabel(SpriteBatch batch, ShaderProgram shader, BitmapFont font, ICamera camera, String label, Vector3d pos3d) {
+        Vector3 p = aux3f1.get();
+        pos3d.setVector3(p);
 
-	camera.getCamera().project(p);
-	p.x += 15;
-	p.y -= 15;
+        camera.getCamera().project(p);
+        p.x += 15;
+        p.y -= 15;
 
-	render2DLabel(batch, shader, font, camera, label, p.x, p.y);
+        render2DLabel(batch, shader, font, camera, label, p.x, p.y);
 
-	shader.setUniformf("scale", 1f);
-	DecalUtils.drawFont2D(font, batch, label, p);
+        shader.setUniformf("scale", 1f);
+        DecalUtils.drawFont2D(font, batch, label, p);
     }
 
-    protected void render2DLabel(SpriteBatch batch, ShaderProgram shader, BitmapFont font, ICamera camera, String label,
-	    float x, float y) {
-	render2DLabel(batch, shader, font, camera, label, x, y, 1f);
+    protected void render2DLabel(SpriteBatch batch, ShaderProgram shader, BitmapFont font, ICamera camera, String label, float x, float y) {
+        render2DLabel(batch, shader, font, camera, label, x, y, 1f);
     }
 
-    protected void render2DLabel(SpriteBatch batch, ShaderProgram shader, BitmapFont font, ICamera camera, String label,
-	    float x, float y, float scale) {
-	render2DLabel(batch, shader, font, camera, label, x, y, scale, -1);
+    protected void render2DLabel(SpriteBatch batch, ShaderProgram shader, BitmapFont font, ICamera camera, String label, float x, float y, float scale) {
+        render2DLabel(batch, shader, font, camera, label, x, y, scale, -1);
     }
 
-    protected void render2DLabel(SpriteBatch batch, ShaderProgram shader, BitmapFont font, ICamera camera, String label,
-	    float x, float y, float scale, int align) {
-	shader.setUniformf("u_scale", scale);
-	DecalUtils.drawFont2D(font, batch, label, x, y, scale, align);
+    protected void render2DLabel(SpriteBatch batch, ShaderProgram shader, BitmapFont font, ICamera camera, String label, float x, float y, float scale, int align) {
+        shader.setUniformf("u_scale", scale);
+        DecalUtils.drawFont2D(font, batch, label, x, y, scale, align);
     }
 
-    protected void render3DLabel(SpriteBatch batch, ShaderProgram shader, BitmapFont font, ICamera camera, String label,
-	    Vector3d pos, float scale, float size, float[] colour, float alpha) {
-	// The smoothing scale must be set according to the distance
-	shader.setUniformf("u_scale", scale / camera.getFovFactor());
+    protected void render3DLabel(SpriteBatch batch, ShaderProgram shader, BitmapFont font, ICamera camera, String label, Vector3d pos, float scale, float size, float[] colour, float alpha) {
+        // The smoothing scale must be set according to the distance
+        shader.setUniformf("u_scale", scale / camera.getFovFactor());
 
-	double len = pos.len();
-	Vector3d p = pos.clamp(0, len - size);
+        double len = pos.len();
+        Vector3d p = pos.clamp(0, len - size);
 
-	// Enable or disable blending
-	((I3DTextRenderable) this).textDepthBuffer();
+        // Enable or disable blending
+        ((I3DTextRenderable) this).textDepthBuffer();
 
-	font.setColor(colour[0], colour[1], colour[2], colour[3] * alpha);
-	DecalUtils.drawFont3D(font, batch, label, (float) p.x, (float) p.y, (float) p.z, size, camera.getCamera(),
-		true);
+        font.setColor(colour[0], colour[1], colour[2], colour[3] * alpha);
+        DecalUtils.drawFont3D(font, batch, label, (float) p.x, (float) p.y, (float) p.z, size, camera.getCamera(), true);
     }
 
     public void setCoordinates(IBodyCoordinates coord) {
-	coordinates = coord;
+        coordinates = coord;
     }
 
     @Override
     public Vector3d getPosition() {
-	return pos;
+        return pos;
     }
 
 }

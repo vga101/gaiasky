@@ -63,7 +63,9 @@ public class AtmosphereComponent {
 
     /**
      * Sets up the atmospheric scattering parameters to the given material
-     * @param mat The material to set up.
+     * 
+     * @param mat
+     *            The material to set up.
      */
     public void setUpAtmosphericScatteringMaterial(Material mat, float planetSize) {
         float camHeight = 1f;
@@ -126,9 +128,13 @@ public class AtmosphereComponent {
 
     /**
      * Updates the atmospheric scattering shader parameters
-     * @param mat The material to update.
-     * @param alpha The opacity value.
-     * @param ground Whether it is the ground shader or the atmosphere.
+     * 
+     * @param mat
+     *            The material to update.
+     * @param alpha
+     *            The opacity value.
+     * @param ground
+     *            Whether it is the ground shader or the atmosphere.
      */
     public void updateAtmosphericScatteringParams(Material mat, float alpha, boolean ground, Transform transform, SceneGraphNode parent, RotationComponent rc) {
         transform.getTranslation(aux3);
