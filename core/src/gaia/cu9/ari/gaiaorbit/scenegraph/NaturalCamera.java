@@ -823,19 +823,14 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
         desired.nor();
         double angl = desired.angle(direction);
         if (angl > 0.5) {
-            if (dt != 0 && GlobalConf.scene.FOCUS_LOCK_ORIENTATION) {
-                direction.set(desired).nor();
-                facingFocus = true;
-            } else {
-                // Add desired to direction with given turn velocity (v*dt)
-                desired.scl(turnVelocity * dt);
-                direction.add(desired).nor();
+            // Add desired to direction with given turn velocity (v*dt)
+            desired.scl(turnVelocity * dt);
+            direction.add(desired).nor();
 
-                // Update up so that it is always perpendicular
-                aux1.set(direction).crs(up);
-                up.set(aux1).crs(direction).nor();
-                facingFocus = false;
-            }
+            // Update up so that it is always perpendicular
+            aux1.set(direction).crs(up);
+            up.set(aux1).crs(direction).nor();
+            facingFocus = false;
         } else {
 
             facingFocus = true;
