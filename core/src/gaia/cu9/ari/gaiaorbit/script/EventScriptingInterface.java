@@ -710,12 +710,13 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
         assert latitude >= -90 && latitude <= 90 && longitude >= 0 && longitude <= 360 : "Latitude must be in [-90..90] and longitude must be in [0..360]";
 
         ISceneGraph sg = GaiaSky.instance.sg;
+        String nameStub = name + " ";
 
-        if (!sg.containsNode("Invisible")) {
-            Invisible invisible = new Invisible("Focus");
+        if (!sg.containsNode(nameStub)) {
+            Invisible invisible = new Invisible(nameStub);
             sg.insert(invisible, true);
         }
-        Invisible invisible = (Invisible) sg.getNode("Focus");
+        Invisible invisible = (Invisible) sg.getNode(nameStub);
 
         if (sg.containsNode(name)) {
             CelestialBody focus = sg.findFocus(name);
@@ -724,14 +725,36 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
 
                 Vector3d target = new Vector3d();
                 planet.getPositionAboveSurface(longitude, latitude, planet.getRadius() * Constants.U_TO_KM / 2f, target);
+                invisible.ct = planet.ct;
                 invisible.pos.set(target);
 
+                // Save speed, set it to 50
+                double speed = GlobalConf.scene.CAMERA_SPEED;
+                em.post(Events.CAMERA_SPEED_CMD, 25f / 10f, false);
+
+                // Save turn speed, set it to 50
+                double turnSpeedBak = GlobalConf.scene.TURNING_SPEED;
+                em.post(Events.TURNING_SPEED_CMD, (float) MathUtilsd.lint(50d, Constants.MIN_SLIDER, Constants.MAX_SLIDER, Constants.MIN_TURN_SPEED, Constants.MAX_TURN_SPEED), false);
+
+                // Save cinematic
+                boolean cinematic = GlobalConf.scene.CINEMATIC_CAMERA;
+                GlobalConf.scene.CINEMATIC_CAMERA = true;
+
                 // Go to object
-                goToObject("Focus", 20, 1, stop);
+                goToObject(nameStub, 20, 1, stop);
 
                 // Set focus
                 setCameraFocus(name);
                 sleep(2);
+
+                // Restore cinematic
+                GlobalConf.scene.CINEMATIC_CAMERA = cinematic;
+
+                // Restore speed
+                em.post(Events.CAMERA_SPEED_CMD, (float) speed, false);
+
+                // Restore turning speed
+                em.post(Events.TURNING_SPEED_CMD, (float) turnSpeedBak, false);
 
                 // Land
                 landOnObject(name, stop);

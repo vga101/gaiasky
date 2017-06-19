@@ -123,7 +123,7 @@ public abstract class AbstractPositionEntity extends SceneGraphNode {
      */
     public Vector3d getPredictedPosition(Vector3d aux, ITimeFrameProvider time, ICamera camera, boolean force) {
         if (time.getDt() == 0 && !force) {
-            return getPosition(aux);
+            return getAbsolutePosition(aux);
         } else {
             // Get copy of focus and update it to know where it will be in the
             // next step
@@ -132,7 +132,7 @@ public abstract class AbstractPositionEntity extends SceneGraphNode {
             fccopy.getRoot().transform.position.set(camera.getInversePos());
             fccopy.getRoot().update(time, fccopy.getRoot().transform, camera);
 
-            aux.set(fccopy.pos);
+            fccopy.getAbsolutePosition(aux);
 
             // Return to poolvec
             SceneGraphNode ape = fccopy;

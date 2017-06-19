@@ -234,7 +234,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
             if (focus.withinMagLimit()) {
                 focusBak = focus;
                 focus = (CelestialBody) focus.getComputedAncestor();
-                focus.getPosition(focusPos);
+                focus.getAbsolutePosition(focusPos);
 
                 dx.set(0, 0, 0);
 
