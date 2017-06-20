@@ -135,8 +135,7 @@ public class OctreeNode implements ILineRenderable {
      * @param i
      *            The index in the parent's children
      */
-    public OctreeNode(long pageId, double x, double y, double z, double hsx, double hsy, double hsz, int depth,
-            OctreeNode parent, int i) {
+    public OctreeNode(long pageId, double x, double y, double z, double hsx, double hsy, double hsz, int depth, OctreeNode parent, int i) {
         this(pageId, x, y, z, hsx, hsy, hsz, depth);
         this.parent = parent;
         parent.children[i] = this;
@@ -168,8 +167,7 @@ public class OctreeNode implements ILineRenderable {
      *            Number of objects contained in this node. Same as
      *            objects.size().
      */
-    public OctreeNode(long pageId, double x, double y, double z, double hsx, double hsy, double hsz, int childrenCount,
-            int nObjects, int ownObjects, int depth) {
+    public OctreeNode(long pageId, double x, double y, double z, double hsx, double hsy, double hsz, int childrenCount, int nObjects, int ownObjects, int depth) {
         this(pageId, x, y, z, hsx, hsy, hsz, depth);
         this.childrenCount = childrenCount;
         this.nObjects = nObjects;
@@ -309,8 +307,7 @@ public class OctreeNode implements ILineRenderable {
         } else {
             str.append("[ownobj: ");
         }
-        str.append(objects != null ? objects.size
-                : "0").append("/").append(ownObjects).append(", recobj: ").append(nObjects).append(", nchld: ").append(childrenCount).append("] ").append(status).append("\n");
+        str.append(objects != null ? objects.size : "0").append("/").append(ownObjects).append(", recobj: ").append(nObjects).append(", nchld: ").append(childrenCount).append("] ").append(status).append("\n");
 
         if (childrenCount > 0 && rec) {
             for (OctreeNode child : children) {
@@ -333,8 +330,7 @@ public class OctreeNode implements ILineRenderable {
         } else {
             str.append("[ownobj: ");
         }
-        str.append(objects != null ? objects.size
-                : "0").append("/").append(ownObjects).append(", recobj: ").append(nObjects).append(", nchld: ").append(childrenCount).append("] ").append(status).append("\n");
+        str.append(objects != null ? objects.size : "0").append("/").append(ownObjects).append(", recobj: ").append(nObjects).append(", nchld: ").append(childrenCount).append("] ").append(status).append("\n");
         if (childrenCount > 0) {
             for (OctreeNode child : children) {
                 if (child != null) {
@@ -456,8 +452,7 @@ public class OctreeNode implements ILineRenderable {
                 double alpha = 1;
                 if (GlobalConf.scene.OCTREE_PARTICLE_FADE) {
                     AbstractRenderSystem.POINT_UPDATE_FLAG = true;
-                    alpha = MathUtilsd.clamp(MathUtilsd.lint(viewAngle, GlobalConf.scene.OCTANT_THRESHOLD_0 / cam.getFovFactor(), GlobalConf.scene.OCTANT_THRESHOLD_1
-                            / cam.getFovFactor(), 0d, 1d), 0f, 1f);
+                    alpha = MathUtilsd.clamp(MathUtilsd.lint(viewAngle, GlobalConf.scene.OCTANT_THRESHOLD_0 / cam.getFovFactor(), GlobalConf.scene.OCTANT_THRESHOLD_1 / cam.getFovFactor(), 0d, 1d), 0f, 1f);
                 }
 
                 // Add objects
@@ -503,15 +498,7 @@ public class OctreeNode implements ILineRenderable {
         boxcopy.set(box);
         // boxcopy.mul(boxtransf.idt().translate(parentTransform.getTranslation()));
 
-        observed = GlobalConf.program.CUBEMAP360_MODE
-                || frustum.pointInFrustum(boxcopy.getCenter(auxD1))
-                || frustum.pointInFrustum(boxcopy.getCorner000(auxD1))
-                || frustum.pointInFrustum(boxcopy.getCorner001(auxD1))
-                || frustum.pointInFrustum(boxcopy.getCorner010(auxD1))
-                || frustum.pointInFrustum(boxcopy.getCorner011(auxD1))
-                || frustum.pointInFrustum(boxcopy.getCorner100(auxD1))
-                || frustum.pointInFrustum(boxcopy.getCorner101(auxD1))
-                || frustum.pointInFrustum(boxcopy.getCorner110(auxD1))
+        observed = GlobalConf.program.CUBEMAP360_MODE || frustum.pointInFrustum(boxcopy.getCenter(auxD1)) || frustum.pointInFrustum(boxcopy.getCorner000(auxD1)) || frustum.pointInFrustum(boxcopy.getCorner001(auxD1)) || frustum.pointInFrustum(boxcopy.getCorner010(auxD1)) || frustum.pointInFrustum(boxcopy.getCorner011(auxD1)) || frustum.pointInFrustum(boxcopy.getCorner100(auxD1)) || frustum.pointInFrustum(boxcopy.getCorner101(auxD1)) || frustum.pointInFrustum(boxcopy.getCorner110(auxD1))
                 || frustum.pointInFrustum(boxcopy.getCorner111(auxD1));
 
         if (!observed) {
@@ -697,32 +684,32 @@ public class OctreeNode implements ILineRenderable {
         loc.set(this.blf).add(transform);
 
         /*
-        	 * .·------· .' | .'| +---+--·' | | | | | | ,+--+---· |.' | .' +------+'
-        	 */
+         * .·------· .' | .'| +---+--·' | | | | | | ,+--+---· |.' | .' +------+'
+         */
         line(sr, loc.x, loc.y, loc.z, loc.x + size.x, loc.y, loc.z, this.col);
         line(sr, loc.x, loc.y, loc.z, loc.x, loc.y + size.y, loc.z, this.col);
         line(sr, loc.x, loc.y, loc.z, loc.x, loc.y, loc.z + size.z, this.col);
 
         /*
-        	 * .·------· .' | .'| ·---+--+' | | | | | | ,·--+---+ |.' | .' ·------+'
-        	 */
+         * .·------· .' | .'| ·---+--+' | | | | | | ,·--+---+ |.' | .' ·------+'
+         */
         line(sr, loc.x + size.x, loc.y, loc.z, loc.x + size.x, loc.y + size.y, loc.z, this.col);
         line(sr, loc.x + size.x, loc.y, loc.z, loc.x + size.x, loc.y, loc.z + size.z, this.col);
 
         /*
-        	 * .·------+ .' | .'| ·---+--·' | | | | | | ,+--+---+ |.' | .' ·------·'
-        	 */
+         * .·------+ .' | .'| ·---+--·' | | | | | | ,+--+---+ |.' | .' ·------·'
+         */
         line(sr, loc.x + size.x, loc.y, loc.z + size.z, loc.x, loc.y, loc.z + size.z, this.col);
         line(sr, loc.x + size.x, loc.y, loc.z + size.z, loc.x + size.x, loc.y + size.y, loc.z + size.z, this.col);
 
         /*
-        	 * .+------· .' | .'| ·---+--·' | | | | | | ,+--+---· |.' | .' ·------·'
-        	 */
+         * .+------· .' | .'| ·---+--·' | | | | | | ,+--+---· |.' | .' ·------·'
+         */
         line(sr, loc.x, loc.y, loc.z + size.z, loc.x, loc.y + size.y, loc.z + size.z, this.col);
 
         /*
-        	 * .+------+ .' | .'| +---+--+' | | | | | | ,·--+---· |.' | .' ·------·'
-        	 */
+         * .+------+ .' | .'| +---+--+' | | | | | | ,·--+---· |.' | .' ·------·'
+         */
         line(sr, loc.x, loc.y + size.y, loc.z, loc.x + size.x, loc.y + size.y, loc.z, this.col);
         line(sr, loc.x, loc.y + size.y, loc.z, loc.x, loc.y + size.y, loc.z + size.z, this.col);
         line(sr, loc.x, loc.y + size.y, loc.z + size.z, loc.x + size.x, loc.y + size.y, loc.z + size.z, this.col);
@@ -731,8 +718,7 @@ public class OctreeNode implements ILineRenderable {
     }
 
     /** Draws a line **/
-    private void line(LineRenderSystem sr, double x1, double y1, double z1, double x2, double y2, double z2,
-            com.badlogic.gdx.graphics.Color col) {
+    private void line(LineRenderSystem sr, double x1, double y1, double z1, double x2, double y2, double z2, com.badlogic.gdx.graphics.Color col) {
         sr.addLine((float) x1, (float) y1, (float) z1, (float) x2, (float) y2, (float) z2, col);
     }
 

@@ -147,8 +147,8 @@ public class OctreeMultiFileLoader implements ISceneGraphLoader, IObserver {
     public Array<? extends SceneGraphNode> loadData() throws FileNotFoundException {
 
         /**
-        	 * LOAD METADATA
-        	 */
+         * LOAD METADATA
+         */
 
         Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.loading", metadata));
 
@@ -159,8 +159,8 @@ public class OctreeMultiFileLoader implements ISceneGraphLoader, IObserver {
         Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.loading", particles));
 
         /**
-        	 * CREATE OCTREE WRAPPER WITH ROOT NODE
-        	 */
+         * CREATE OCTREE WRAPPER WITH ROOT NODE
+         */
         AbstractOctreeWrapper octreeWrapper = null;
         if (GlobalConf.performance.MULTITHREADING) {
             octreeWrapper = new OctreeWrapperConcurrent("Universe", root);
@@ -169,8 +169,8 @@ public class OctreeMultiFileLoader implements ISceneGraphLoader, IObserver {
         }
 
         /**
-        	 * LOAD LOD LEVELS - LOAD PARTICLE DATA
-        	 */
+         * LOAD LOD LEVELS - LOAD PARTICLE DATA
+         */
 
         try {
             int depthLevel = Math.min(OctreeNode.maxDepth, PRELOAD_DEPTH);
@@ -194,8 +194,8 @@ public class OctreeMultiFileLoader implements ISceneGraphLoader, IObserver {
         }
 
         /**
-        	 * INITIALIZE DAEMON LOADER THREAD
-        	 */
+         * INITIALIZE DAEMON LOADER THREAD
+         */
         daemon = new DaemonLoader(octreeWrapper, this);
         daemon.setDaemon(true);
         daemon.setName("daemon-octree-loader");
@@ -203,8 +203,8 @@ public class OctreeMultiFileLoader implements ISceneGraphLoader, IObserver {
         daemon.start();
 
         /**
-        	 * INITIALIZE TIMER TO FLUSH THE QUEUE AT REGULAR INTERVALS
-        	 */
+         * INITIALIZE TIMER TO FLUSH THE QUEUE AT REGULAR INTERVALS
+         */
         Timer timer = new Timer();
         timer.schedule(new TimerTask() {
             @Override
@@ -272,8 +272,7 @@ public class OctreeMultiFileLoader implements ISceneGraphLoader, IObserver {
      *            The octree wrapper.
      * @throws IOException
      */
-    public void loadOctant(final OctreeNode octant, final AbstractOctreeWrapper octreeWrapper, Integer level)
-            throws IOException {
+    public void loadOctant(final OctreeNode octant, final AbstractOctreeWrapper octreeWrapper, Integer level) throws IOException {
         if (level >= 0) {
             loadOctant(octant, octreeWrapper);
             if (octant.children != null) {
@@ -334,8 +333,7 @@ public class OctreeMultiFileLoader implements ISceneGraphLoader, IObserver {
      * @return The actual number of loaded octants
      * @throws IOException
      */
-    public int loadOctants(final Array<OctreeNode> octants, final AbstractOctreeWrapper octreeWrapper)
-            throws IOException {
+    public int loadOctants(final Array<OctreeNode> octants, final AbstractOctreeWrapper octreeWrapper) throws IOException {
         int loaded = 0;
         for (OctreeNode octant : octants)
             if (loadOctant(octant, octreeWrapper))

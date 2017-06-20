@@ -158,9 +158,9 @@ public class Constants {
     public static final float MAX_PM_LEN_FACTOR = 50f;
 
     /** Minimum angle where the LOD transitions start **/
-    public static final float MIN_LOD_TRANS_ANGLE = 0.1f;
+    public static final float MIN_LOD_TRANS_ANGLE_DEG = 1f;
     /** Maximum angle where the LOD transitions end **/
-    public static final float MAX_LOD_TRANS_ANGLE = 1.62f;
+    public static final float MAX_LOD_TRANS_ANGLE_DEG = 93f;
 
     /** Minimum star pixel size **/
     public static final float MIN_STAR_POINT_SIZE = 0.5f;
@@ -188,7 +188,7 @@ public class Constants {
 
     /**
      * 
-     * SYSTEM DEPENDANT STUFF
+     * SYSTEM-DEPENDENT STUFF
      * 
      */
     public static boolean mobile = false;
@@ -198,8 +198,7 @@ public class Constants {
 
     static {
         if (Gdx.app != null) {
-            mobile = (Gdx.app.getType() == ApplicationType.Android || Gdx.app.getType() == ApplicationType.iOS)
-                    && !ConfInit.instance.webgl;
+            mobile = (Gdx.app.getType() == ApplicationType.Android || Gdx.app.getType() == ApplicationType.iOS) && !ConfInit.instance.webgl;
             desktop = Gdx.app.getType() == ApplicationType.Desktop && !ConfInit.instance.webgl;
             webgl = Gdx.app.getType() == ApplicationType.WebGL || ConfInit.instance.webgl;
         }
@@ -220,15 +219,15 @@ public class Constants {
         /** Number of days per Julian year */
         public static final double JULIANYEAR_DAY = 365.25D;
         /**
-        	 * Mean (geometric) longitude rate of the nominal Sun for use in
-        	 * simulations of the NSL (mean ecliptic orbital elements, at the
-        	 * standard epoch J2000.0). Note that a value of 1295977422.83429 /
-        	 * (1.0E3 * 365.25 * 3600.0) = 0.98560911 degrees day^-1 is given in
-        	 * Section 5.8.3 of J.L. Simon, P. Bretagnon, J. Chapront, M.
-        	 * Chapront-Touze, G. Francou, J. Laskar, 1994, \'Numerical expressions
-        	 * for precession formulae and mean elements for the Moon and the
-        	 * planets\', A\&A, 282, 663 (1994A\&A...282..663S)
-        	 */
+         * Mean (geometric) longitude rate of the nominal Sun for use in
+         * simulations of the NSL (mean ecliptic orbital elements, at the
+         * standard epoch J2000.0). Note that a value of 1295977422.83429 /
+         * (1.0E3 * 365.25 * 3600.0) = 0.98560911 degrees day^-1 is given in
+         * Section 5.8.3 of J.L. Simon, P. Bretagnon, J. Chapront, M.
+         * Chapront-Touze, G. Francou, J. Laskar, 1994, \'Numerical expressions
+         * for precession formulae and mean elements for the Moon and the
+         * planets\', A\&A, 282, 663 (1994A\&A...282..663S)
+         */
         public static final double NOMINALSUN_MEANLONGITUDERATE_J2000 = 0.98560903D;
     }
 
