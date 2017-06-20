@@ -1188,7 +1188,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
                 float chw2 = chw / 2;
                 float chh2 = chh / 2;
 
-                focus.getPosition(aux1).add(posinv);
+                focus.getAbsolutePosition(aux1).add(posinv);
                 projectToScreen(aux1, auxf1, rw, rh, chw, chh, chw2, chh2);
 
                 spriteBatch.draw(focusCrosshair, auxf1.x - chw2, auxf1.y - chh2, chw, chh);

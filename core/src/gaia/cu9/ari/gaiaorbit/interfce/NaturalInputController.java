@@ -206,7 +206,7 @@ public class NaturalInputController extends GestureDetector {
             CelestialBody s = it.next();
 
             if (s.withinMagLimit() && (!(s instanceof Particle) || (s instanceof Particle && ((Particle) s).octant == null) || (s instanceof Particle && ((Particle) s).octant != null && ((Particle) s).octant.observed))) {
-                Vector3d posd = s.getPosition(aux).add(camera.posinv);
+                Vector3d posd = s.getAbsolutePosition(aux).add(camera.posinv);
                 pos.set(posd.valuesf());
 
                 if (camera.direction.dot(posd) > 0) {
