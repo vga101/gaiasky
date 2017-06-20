@@ -97,82 +97,81 @@ public class NaturalInputController extends GestureDetector {
     private Vector3 aux1, aux2, aux3, aux4;
 
     protected static class GaiaGestureListener extends GestureAdapter {
-	public NaturalInputController controller;
-	private float previousZoom;
+        public NaturalInputController controller;
+        private float previousZoom;
 
-	@Override
-	public boolean touchDown(float x, float y, int pointer, int button) {
-	    previousZoom = 0;
-	    return false;
-	}
+        @Override
+        public boolean touchDown(float x, float y, int pointer, int button) {
+            previousZoom = 0;
+            return false;
+        }
 
-	@Override
-	public boolean tap(float x, float y, int count, int button) {
-	    return false;
-	}
+        @Override
+        public boolean tap(float x, float y, int count, int button) {
+            return false;
+        }
 
-	@Override
-	public boolean longPress(float x, float y) {
-	    return false;
-	}
+        @Override
+        public boolean longPress(float x, float y) {
+            return false;
+        }
 
-	@Override
-	public boolean fling(float velocityX, float velocityY, int button) {
-	    return false;
-	}
+        @Override
+        public boolean fling(float velocityX, float velocityY, int button) {
+            return false;
+        }
 
-	@Override
-	public boolean pan(float x, float y, float deltaX, float deltaY) {
-	    return false;
-	}
+        @Override
+        public boolean pan(float x, float y, float deltaX, float deltaY) {
+            return false;
+        }
 
-	@Override
-	public boolean zoom(float initialDistance, float distance) {
-	    float newZoom = distance - initialDistance;
-	    float amount = newZoom - previousZoom;
-	    previousZoom = newZoom;
-	    float w = Gdx.graphics.getWidth(), h = Gdx.graphics.getHeight();
-	    return controller.zoom(amount / ((w > h) ? h : w));
-	}
+        @Override
+        public boolean zoom(float initialDistance, float distance) {
+            float newZoom = distance - initialDistance;
+            float amount = newZoom - previousZoom;
+            previousZoom = newZoom;
+            float w = Gdx.graphics.getWidth(), h = Gdx.graphics.getHeight();
+            return controller.zoom(amount / ((w > h) ? h : w));
+        }
 
-	@Override
-	public boolean pinch(Vector2 initialPointer1, Vector2 initialPointer2, Vector2 pointer1, Vector2 pointer2) {
-	    return false;
-	}
+        @Override
+        public boolean pinch(Vector2 initialPointer1, Vector2 initialPointer2, Vector2 pointer1, Vector2 pointer2) {
+            return false;
+        }
     };
 
     protected final GaiaGestureListener gestureListener;
 
     protected NaturalInputController(final GaiaGestureListener gestureListener, NaturalCamera camera) {
-	super(gestureListener);
-	this.gestureListener = gestureListener;
-	this.gestureListener.controller = this;
-	this.camera = camera;
-	this.aux = new Vector3d();
-	this.comp = new ViewAngleComparator<CelestialBody>();
-	// 1% of width
-	this.MOVE_PX_DIST = !Constants.mobile ? (float) Math.max(5, Gdx.graphics.getWidth() * 0.01)
-		: (float) Math.max(80, Gdx.graphics.getWidth() * 0.05);
-	this.MAX_PX_DIST = !Constants.mobile ? 5 : 150;
+        super(gestureListener);
+        this.gestureListener = gestureListener;
+        this.gestureListener.controller = this;
+        this.camera = camera;
+        this.aux = new Vector3d();
+        this.comp = new ViewAngleComparator<CelestialBody>();
+        // 1% of width
+        this.MOVE_PX_DIST = !Constants.mobile ? (float) Math.max(5, Gdx.graphics.getWidth() * 0.01) : (float) Math.max(80, Gdx.graphics.getWidth() * 0.05);
+        this.MAX_PX_DIST = !Constants.mobile ? 5 : 150;
 
-	this.dragDx = 0;
-	this.dragDy = 0;
-	this.noAccelSmoothing = 16.0;
-	this.noAccelFactor = 10.0;
+        this.dragDx = 0;
+        this.dragDy = 0;
+        this.noAccelSmoothing = 16.0;
+        this.noAccelFactor = 10.0;
 
-	this.currentDrag = new Vector2();
-	this.lastDrag = new Vector2();
+        this.currentDrag = new Vector2();
+        this.lastDrag = new Vector2();
 
-	this.aux1 = new Vector3();
-	this.aux2 = new Vector3();
-	this.aux3 = new Vector3();
-	this.aux4 = new Vector3();
+        this.aux1 = new Vector3();
+        this.aux2 = new Vector3();
+        this.aux3 = new Vector3();
+        this.aux4 = new Vector3();
 
-	pressedKeys = new HashSet<Integer>();
+        pressedKeys = new HashSet<Integer>();
     }
 
     public NaturalInputController(final NaturalCamera camera) {
-	this(new GaiaGestureListener(), camera);
+        this(new GaiaGestureListener(), camera);
     }
 
     private int touched;
@@ -180,260 +179,253 @@ public class NaturalInputController extends GestureDetector {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-	if (GlobalConf.runtime.INPUT_ENABLED) {
-	    touched |= (1 << pointer);
-	    multiTouch = !MathUtils.isPowerOfTwo(touched);
-	    if (multiTouch)
-		this.button = -1;
-	    else if (this.button < 0) {
-		startX = screenX;
-		startY = screenY;
-		gesture.set(startX, startY);
-		this.button = button;
-	    }
-	}
-	camera.setInputByController(false);
-	return super.touchDown(screenX, screenY, pointer, button);
+        if (GlobalConf.runtime.INPUT_ENABLED) {
+            touched |= (1 << pointer);
+            multiTouch = !MathUtils.isPowerOfTwo(touched);
+            if (multiTouch)
+                this.button = -1;
+            else if (this.button < 0) {
+                startX = screenX;
+                startY = screenY;
+                gesture.set(startX, startY);
+                this.button = button;
+            }
+        }
+        camera.setInputByController(false);
+        return super.touchDown(screenX, screenY, pointer, button);
     }
 
     private Array<CelestialBody> getHits(int screenX, int screenY) {
-	Array<CelestialBody> l = GaiaSky.instance.getFocusableEntities();
+        Array<CelestialBody> l = GaiaSky.instance.getFocusableEntities();
 
-	Array<CelestialBody> hits = new Array<CelestialBody>();
+        Array<CelestialBody> hits = new Array<CelestialBody>();
 
-	Iterator<CelestialBody> it = l.iterator();
-	Vector3 pos = new Vector3();
-	while (it.hasNext()) {
-	    CelestialBody s = it.next();
+        Iterator<CelestialBody> it = l.iterator();
+        Vector3 pos = new Vector3();
+        while (it.hasNext()) {
+            CelestialBody s = it.next();
 
-	    if (s.withinMagLimit() && (!(s instanceof Particle)
-		    || (s instanceof Particle && ((Particle) s).octant == null)
-		    || (s instanceof Particle && ((Particle) s).octant != null && ((Particle) s).octant.observed))) {
-		Vector3d posd = s.getPosition(aux);
-		pos.set(posd.valuesf());
+            if (s.withinMagLimit() && (!(s instanceof Particle) || (s instanceof Particle && ((Particle) s).octant == null) || (s instanceof Particle && ((Particle) s).octant != null && ((Particle) s).octant.observed))) {
+                Vector3d posd = s.getPosition(aux).add(camera.posinv);
+                pos.set(posd.valuesf());
 
-		if (camera.direction.dot(posd) > 0) {
-		    // The star is in front of us
-		    // Diminish the size of the star
-		    // when we are close by
-		    double angle = s.viewAngle;
-		    if (s instanceof Star && s.viewAngle > Constants.THRESHOLD_DOWN / camera.getFovFactor()
-			    && s.viewAngle < Constants.THRESHOLD_UP / camera.getFovFactor()) {
-			angle = 20f * Constants.THRESHOLD_DOWN / camera.getFovFactor();
-		    }
+                if (camera.direction.dot(posd) > 0) {
+                    // The star is in front of us
+                    // Diminish the size of the star
+                    // when we are close by
+                    double angle = s.viewAngle;
+                    if (s instanceof Star && s.viewAngle > Constants.THRESHOLD_DOWN / camera.getFovFactor() && s.viewAngle < Constants.THRESHOLD_UP / camera.getFovFactor()) {
+                        angle = 20f * Constants.THRESHOLD_DOWN / camera.getFovFactor();
+                    }
 
-		    PerspectiveCamera pcamera;
-		    if (GlobalConf.program.STEREOSCOPIC_MODE) {
-			if (screenX < Gdx.graphics.getWidth() / 2f) {
-			    pcamera = camera.getCameraStereoLeft();
-			    pcamera.update();
-			} else {
-			    pcamera = camera.getCameraStereoRight();
-			    pcamera.update();
-			}
-		    } else {
-			pcamera = camera.camera;
-		    }
+                    PerspectiveCamera pcamera;
+                    if (GlobalConf.program.STEREOSCOPIC_MODE) {
+                        if (screenX < Gdx.graphics.getWidth() / 2f) {
+                            pcamera = camera.getCameraStereoLeft();
+                            pcamera.update();
+                        } else {
+                            pcamera = camera.getCameraStereoRight();
+                            pcamera.update();
+                        }
+                    } else {
+                        pcamera = camera.camera;
+                    }
 
-		    angle = (float) Math.toDegrees(angle * camera.fovFactor) * (40f / pcamera.fieldOfView);
-		    double pixelSize = Math.max(MAX_PX_DIST,
-			    ((angle * pcamera.viewportHeight) / pcamera.fieldOfView) / 2);
-		    pcamera.project(pos);
-		    pos.y = pcamera.viewportHeight - pos.y;
-		    if (GlobalConf.program.STEREOSCOPIC_MODE) {
-			pos.x /= 2;
-		    }
-		    // Check click distance
-		    if (pos.dst(screenX % pcamera.viewportWidth, screenY, pos.z) <= pixelSize) {
-			// Hit
-			hits.add(s);
-		    } else if (s instanceof Planet) {
-			// Intersect
-			Planet planet = (Planet) s;
-			if (CameraUtils.intersectScreenSphere(planet, camera, screenX, screenY, aux1, aux2, aux3,
-				aux4)) {
-			    // Hit
-			    hits.add(s);
-			}
-		    }
-		}
-	    }
-	}
-	return hits;
+                    angle = (float) Math.toDegrees(angle * camera.fovFactor) * (40f / pcamera.fieldOfView);
+                    double pixelSize = Math.max(MAX_PX_DIST, ((angle * pcamera.viewportHeight) / pcamera.fieldOfView) / 2);
+                    pcamera.project(pos);
+                    pos.y = pcamera.viewportHeight - pos.y;
+                    if (GlobalConf.program.STEREOSCOPIC_MODE) {
+                        pos.x /= 2;
+                    }
+                    // Check click distance
+                    if (pos.dst(screenX % pcamera.viewportWidth, screenY, pos.z) <= pixelSize) {
+                        // Hit
+                        hits.add(s);
+                    } else if (s instanceof Planet) {
+                        // Intersect
+                        Planet planet = (Planet) s;
+                        if (CameraUtils.intersectScreenSphere(planet, camera, screenX, screenY, aux1, aux2, aux3, aux4)) {
+                            // Hit
+                            hits.add(s);
+                        }
+                    }
+                }
+            }
+        }
+        return hits;
     }
 
     private CelestialBody getBestHit(int screenX, int screenY) {
-	Array<CelestialBody> hits = getHits(screenX, screenY);
-	if (hits.size != 0) {
-	    // Sort using distance
-	    hits.sort(comp);
-	    // Get closest
-	    return hits.get(hits.size - 1);
-	}
-	return null;
+        Array<CelestialBody> hits = getHits(screenX, screenY);
+        if (hits.size != 0) {
+            // Sort using distance
+            hits.sort(comp);
+            // Get closest
+            return hits.get(hits.size - 1);
+        }
+        return null;
     }
 
     @Override
     public boolean touchUp(final int screenX, final int screenY, final int pointer, final int button) {
-	EventManager.instance.post(Events.INPUT_EVENT, button);
-	if (GlobalConf.runtime.INPUT_ENABLED) {
-	    touched &= -1 ^ (1 << pointer);
-	    multiTouch = !MathUtils.isPowerOfTwo(touched);
-	    if (button == this.button && button == Input.Buttons.LEFT) {
-		final long currentTime = TimeUtils.millis();
-		final long lastLeftTime = lastClickTime;
+        EventManager.instance.post(Events.INPUT_EVENT, button);
+        if (GlobalConf.runtime.INPUT_ENABLED) {
+            touched &= -1 ^ (1 << pointer);
+            multiTouch = !MathUtils.isPowerOfTwo(touched);
+            if (button == this.button && button == Input.Buttons.LEFT) {
+                final long currentTime = TimeUtils.millis();
+                final long lastLeftTime = lastClickTime;
 
-		Gdx.app.postRunnable(new Runnable() {
-		    @Override
-		    public void run() {
-			// 5% of width pixels distance
-			if (!GlobalConf.scene.CINEMATIC_CAMERA || (GlobalConf.scene.CINEMATIC_CAMERA
-				&& gesture.dst(screenX, screenY) < MOVE_PX_DIST)) {
-			    boolean stopped = camera.stopMovement();
-			    boolean focusRemoved = GaiaSky.instance.mainGui != null
-				    && GaiaSky.instance.mainGui.cancelTouchFocus();
-			    boolean doubleClick = currentTime - lastLeftTime < doubleClickTime;
-			    gesture.set(0, 0);
+                Gdx.app.postRunnable(new Runnable() {
+                    @Override
+                    public void run() {
+                        // 5% of width pixels distance
+                        if (!GlobalConf.scene.CINEMATIC_CAMERA || (GlobalConf.scene.CINEMATIC_CAMERA && gesture.dst(screenX, screenY) < MOVE_PX_DIST)) {
+                            boolean stopped = camera.stopMovement();
+                            boolean focusRemoved = GaiaSky.instance.mainGui != null && GaiaSky.instance.mainGui.cancelTouchFocus();
+                            boolean doubleClick = currentTime - lastLeftTime < doubleClickTime;
+                            gesture.set(0, 0);
 
-			    if (doubleClick && !stopped && !focusRemoved) {
-				// Select star, if any
-				CelestialBody hit = getBestHit(screenX, screenY);
-				if (hit != null) {
-				    EventManager.instance.post(Events.FOCUS_CHANGE_CMD, hit);
-				    EventManager.instance.post(Events.CAMERA_MODE_CMD, CameraMode.Focus);
-				}
-			    }
-			}
-		    }
-		});
-		dragDx = 0;
-		dragDy = 0;
-		lastClickTime = currentTime;
-	    } else if (button == this.button && button == Input.Buttons.RIGHT) {
-		// Ensure Octants observed property is computed
-		Gdx.app.postRunnable(new Runnable() {
+                            if (doubleClick && !stopped && !focusRemoved) {
+                                // Select star, if any
+                                CelestialBody hit = getBestHit(screenX, screenY);
+                                if (hit != null) {
+                                    EventManager.instance.post(Events.FOCUS_CHANGE_CMD, hit);
+                                    EventManager.instance.post(Events.CAMERA_MODE_CMD, CameraMode.Focus);
+                                }
+                            }
+                        }
+                    }
+                });
+                dragDx = 0;
+                dragDy = 0;
+                lastClickTime = currentTime;
+            } else if (button == this.button && button == Input.Buttons.RIGHT) {
+                // Ensure Octants observed property is computed
+                Gdx.app.postRunnable(new Runnable() {
 
-		    @Override
-		    public void run() {
-			// 5% of width pixels distance
-			if (gesture.dst(screenX, screenY) < MOVE_PX_DIST) {
-			    // Stop
-			    camera.setYaw(0);
-			    camera.setPitch(0);
+                    @Override
+                    public void run() {
+                        // 5% of width pixels distance
+                        if (gesture.dst(screenX, screenY) < MOVE_PX_DIST) {
+                            // Stop
+                            camera.setYaw(0);
+                            camera.setPitch(0);
 
-			    // Right click, context menu
-			    CelestialBody hit = getBestHit(screenX, screenY);
-			    if (hit != null) {
-				EventManager.instance.post(Events.POPUP_MENU_FOCUS, hit, screenX, screenY);
-			    }
-			}
-		    }
+                            // Right click, context menu
+                            CelestialBody hit = getBestHit(screenX, screenY);
+                            if (hit != null) {
+                                EventManager.instance.post(Events.POPUP_MENU_FOCUS, hit, screenX, screenY);
+                            }
+                        }
+                    }
 
-		});
-	    }
+                });
+            }
 
-	    // Remove keyboard focus from GUI elements
-	    EventManager.instance.notify(Events.REMOVE_KEYBOARD_FOCUS);
+            // Remove keyboard focus from GUI elements
+            EventManager.instance.notify(Events.REMOVE_KEYBOARD_FOCUS);
 
-	    this.button = -1;
-	}
-	camera.setInputByController(false);
-	return super.touchUp(screenX, screenY, pointer, button);
+            this.button = -1;
+        }
+        camera.setInputByController(false);
+        return super.touchUp(screenX, screenY, pointer, button);
     }
 
     protected boolean processDrag(double deltaX, double deltaY, int button) {
-	boolean accel = GlobalConf.scene.CINEMATIC_CAMERA;
-	if (accel) {
-	    dragDx = deltaX;
-	    dragDy = deltaY;
-	} else {
-	    currentDrag.set((float) deltaX, (float) deltaY);
-	    // Check orientation of last vs current
-	    if (Math.abs(currentDrag.angle(lastDrag)) > 90) {
-		// Reset
-		dragDx = 0;
-		dragDy = 0;
-	    }
+        boolean accel = GlobalConf.scene.CINEMATIC_CAMERA;
+        if (accel) {
+            dragDx = deltaX;
+            dragDy = deltaY;
+        } else {
+            currentDrag.set((float) deltaX, (float) deltaY);
+            // Check orientation of last vs current
+            if (Math.abs(currentDrag.angle(lastDrag)) > 90) {
+                // Reset
+                dragDx = 0;
+                dragDy = 0;
+            }
 
-	    dragDx = lowPass(dragDx, deltaX * noAccelFactor, noAccelSmoothing);
-	    dragDy = lowPass(dragDy, deltaY * noAccelFactor, noAccelSmoothing);
-	    // Update last drag
-	    lastDrag.set(currentDrag);
-	}
+            dragDx = lowPass(dragDx, deltaX * noAccelFactor, noAccelSmoothing);
+            dragDy = lowPass(dragDy, deltaY * noAccelFactor, noAccelSmoothing);
+            // Update last drag
+            lastDrag.set(currentDrag);
+        }
 
-	if (button == leftMouseButton) {
-	    if (isKeyPressed(rollKey)) {
-		// camera.rotate(camera.direction, deltaX * rotateAngle);
-		if (dragDx != 0)
-		    camera.addRoll(dragDx, accel);
-	    } else {
-		camera.addRotateMovement(dragDx, dragDy, false, accel);
-	    }
-	} else if (button == rightMouseButton) {
-	    // cam.naturalCamera.addPanMovement(deltaX, deltaY);
-	    camera.addRotateMovement(dragDx, dragDy, true, accel);
-	} else if (button == middleMouseButton) {
-	    if (dragDx != 0)
-		camera.addForwardForce(dragDx);
-	}
-	camera.setInputByController(false);
-	return false;
+        if (button == leftMouseButton) {
+            if (isKeyPressed(rollKey)) {
+                // camera.rotate(camera.direction, deltaX * rotateAngle);
+                if (dragDx != 0)
+                    camera.addRoll(dragDx, accel);
+            } else {
+                camera.addRotateMovement(dragDx, dragDy, false, accel);
+            }
+        } else if (button == rightMouseButton) {
+            // cam.naturalCamera.addPanMovement(deltaX, deltaY);
+            camera.addRotateMovement(dragDx, dragDy, true, accel);
+        } else if (button == middleMouseButton) {
+            if (dragDx != 0)
+                camera.addForwardForce(dragDx);
+        }
+        camera.setInputByController(false);
+        return false;
     }
 
     private double lowPass(double smoothedValue, double newValue, double smoothing) {
-	return smoothedValue + (newValue - smoothedValue) / smoothing;
+        return smoothedValue + (newValue - smoothedValue) / smoothing;
     }
 
     @Override
     public boolean touchDragged(int screenX, int screenY, int pointer) {
-	if (GlobalConf.runtime.INPUT_ENABLED) {
-	    boolean result = super.touchDragged(screenX, screenY, pointer);
-	    if (result || this.button < 0)
-		return result;
-	    final double deltaX = (screenX - startX) / Gdx.graphics.getWidth();
-	    final double deltaY = (startY - screenY) / Gdx.graphics.getHeight();
-	    startX = screenX;
-	    startY = screenY;
-	    return processDrag(deltaX, deltaY, button);
-	}
-	return false;
+        if (GlobalConf.runtime.INPUT_ENABLED) {
+            boolean result = super.touchDragged(screenX, screenY, pointer);
+            if (result || this.button < 0)
+                return result;
+            final double deltaX = (screenX - startX) / Gdx.graphics.getWidth();
+            final double deltaY = (startY - screenY) / Gdx.graphics.getHeight();
+            startX = screenX;
+            startY = screenY;
+            return processDrag(deltaX, deltaY, button);
+        }
+        return false;
     }
 
     @Override
     public boolean scrolled(int amount) {
-	if (GlobalConf.runtime.INPUT_ENABLED) {
-	    return zoom(amount * scrollFactor);
-	}
-	return false;
+        if (GlobalConf.runtime.INPUT_ENABLED) {
+            return zoom(amount * scrollFactor);
+        }
+        return false;
     }
 
     public boolean zoom(float amount) {
-	if (alwaysScroll)
-	    camera.addForwardForce(amount);
-	camera.setInputByController(false);
-	return false;
+        if (alwaysScroll)
+            camera.addForwardForce(amount);
+        camera.setInputByController(false);
+        return false;
     }
 
     @Override
     public boolean keyDown(int keycode) {
-	if (GlobalConf.runtime.INPUT_ENABLED) {
-	    pressedKeys.add(keycode);
-	    camera.setInputByController(false);
-	}
-	return false;
+        if (GlobalConf.runtime.INPUT_ENABLED) {
+            pressedKeys.add(keycode);
+            camera.setInputByController(false);
+        }
+        return false;
 
     }
 
     @Override
     public boolean keyUp(int keycode) {
-	pressedKeys.remove(keycode);
-	camera.setInputByController(false);
-	return false;
+        pressedKeys.remove(keycode);
+        camera.setInputByController(false);
+        return false;
 
     }
 
     public boolean isKeyPressed(int keycode) {
-	return pressedKeys.contains(keycode);
+        return pressedKeys.contains(keycode);
     }
 
 }
