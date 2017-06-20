@@ -501,10 +501,6 @@ public class OctreeNode implements ILineRenderable {
         observed = GlobalConf.program.CUBEMAP360_MODE || frustum.pointInFrustum(boxcopy.getCenter(auxD1)) || frustum.pointInFrustum(boxcopy.getCorner000(auxD1)) || frustum.pointInFrustum(boxcopy.getCorner001(auxD1)) || frustum.pointInFrustum(boxcopy.getCorner010(auxD1)) || frustum.pointInFrustum(boxcopy.getCorner011(auxD1)) || frustum.pointInFrustum(boxcopy.getCorner100(auxD1)) || frustum.pointInFrustum(boxcopy.getCorner101(auxD1)) || frustum.pointInFrustum(boxcopy.getCorner110(auxD1))
                 || frustum.pointInFrustum(boxcopy.getCorner111(auxD1));
 
-        if (!observed) {
-            observed = frustum.boundsInFrustum(boxcopy);
-        }
-
         for (int i = 0; i < 4; i++) {
             if (!observed) {
                 // 0-4

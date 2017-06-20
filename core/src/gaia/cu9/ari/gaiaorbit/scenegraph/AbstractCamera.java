@@ -142,8 +142,7 @@ public abstract class AbstractCamera implements ICamera {
 
     @Override
     public boolean isVisible(ITimeFrameProvider time, CelestialBody cb) {
-        return (!(this instanceof FovCamera) && cb.viewAngle > VIEW_ANGLE)
-                || GlobalResources.isInView(cb.transform.position, cb.distToCamera, angleEdgeRad, getDirection());
+        return (!(this instanceof FovCamera) && cb.viewAngle > VIEW_ANGLE) || GlobalResources.isInView(cb.transform.position, cb.distToCamera, angleEdgeRad, getDirection());
     }
 
     /**
@@ -162,17 +161,13 @@ public abstract class AbstractCamera implements ICamera {
         if (GlobalConf.scene.COMPUTE_GAIA_SCAN && !fcamera.interpolatedDirections.isEmpty()) {
             // We need to interpolate...
             for (Vector3d[] interpolatedDirection : fcamera.interpolatedDirections) {
-                visible = visible
-                        || GlobalResources.isInView(cb.transform.position, cb.distToCamera, fcamera.angleEdgeRad, interpolatedDirection[0])
-                        || GlobalResources.isInView(cb.transform.position, cb.distToCamera, fcamera.angleEdgeRad, interpolatedDirection[1]);
+                visible = visible || GlobalResources.isInView(cb.transform.position, cb.distToCamera, fcamera.angleEdgeRad, interpolatedDirection[0]) || GlobalResources.isInView(cb.transform.position, cb.distToCamera, fcamera.angleEdgeRad, interpolatedDirection[1]);
                 if (visible)
                     return true;
             }
         }
         dirs = fcamera.directions;
-        visible = visible
-                || GlobalResources.isInView(cb.transform.position, cb.distToCamera, fcamera.angleEdgeRad, dirs[0])
-                || GlobalResources.isInView(cb.transform.position, cb.distToCamera, fcamera.angleEdgeRad, dirs[1]);
+        visible = visible || GlobalResources.isInView(cb.transform.position, cb.distToCamera, fcamera.angleEdgeRad, dirs[0]) || GlobalResources.isInView(cb.transform.position, cb.distToCamera, fcamera.angleEdgeRad, dirs[1]);
         return visible;
     }
 
@@ -251,10 +246,9 @@ public abstract class AbstractCamera implements ICamera {
         return frustum;
     }
 
-    public void updateFrustum(Frustumd frustum, PerspectiveCamera cam, Vector3d position, Vector3d direction,
-            Vector3d up) {
+    public void updateFrustum(Frustumd frustum, PerspectiveCamera cam, Vector3d position, Vector3d direction, Vector3d up) {
         double aspect = cam.viewportWidth / cam.viewportHeight;
-        projection.setToProjection(1e2 * Constants.KM_TO_U, CAM_FAR, cam.fieldOfView, aspect);
+        projection.setToProjection(CAM_NEAR, CAM_FAR, cam.fieldOfView, aspect);
         view.setToLookAt(position, tmp.set(position).add(direction), up);
         combined.set(projection);
         Matrix4d.mul(combined.val, view.val);
