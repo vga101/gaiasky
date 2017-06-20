@@ -170,7 +170,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
             textPosition(camera, pos);
             shader.setUniformf("a_viewAngle", (float) viewAngleApparent);
             shader.setUniformf("a_viewAnglePow", getViewAnglePow());
-            shader.setUniformf("a_thOverFactor", TH_OVER_FACTOR / camera.getFovFactor());
+            shader.setUniformf("a_thOverFactor", getThOverFactor(camera));
             shader.setUniformf("a_thOverFactorScl", getThOverFactorScl());
 
             render3DLabel(batch, shader, font3d, camera, text(), pos, textScale(), textSize(), textColour(), this.opacity);
@@ -184,6 +184,10 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
 
     protected float getThOverFactorScl() {
         return 1f;
+    }
+
+    protected float getThOverFactor(ICamera camera) {
+        return TH_OVER_FACTOR / camera.getFovFactor();
     }
 
     protected void setColor2Data() {

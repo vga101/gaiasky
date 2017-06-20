@@ -169,15 +169,13 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
         this.pmSph = new Vector3();
     }
 
-    public Particle(Vector3d pos, float appmag, float absmag, float colorbv, String name, float ra, float dec,
-            long starid) {
+    public Particle(Vector3d pos, float appmag, float absmag, float colorbv, String name, float ra, float dec, long starid) {
         this(pos, appmag, absmag, colorbv, name, starid);
         this.posSph = new Vector2(ra, dec);
 
     }
 
-    public Particle(Vector3d pos, Vector3 pm, Vector3 pmSph, float appmag, float absmag, float colorbv, String name,
-            float ra, float dec, long starid) {
+    public Particle(Vector3d pos, Vector3 pm, Vector3 pmSph, float appmag, float absmag, float colorbv, String name, float ra, float dec, long starid) {
         this(pos, appmag, absmag, colorbv, name, starid);
         this.posSph = new Vector2(ra, dec);
         this.pm.set(pm);
@@ -318,8 +316,7 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
 
     @Override
     public boolean renderText() {
-        return computedSize > 0 && GaiaSky.instance.isOn(ComponentType.Labels)
-                && viewAngleApparent >= (TH_OVER_FACTOR / GaiaSky.instance.cam.getFovFactor());
+        return computedSize > 0 && GaiaSky.instance.isOn(ComponentType.Labels) && viewAngleApparent >= (TH_OVER_FACTOR / GaiaSky.instance.cam.getFovFactor());
     }
 
     @Override
@@ -329,7 +326,7 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
 
     @Override
     public float textScale() {
-        return (float) FastMath.atan(labelMax()) * labelFactor() * 4e3f;
+        return (float) FastMath.atan(labelMax()) * labelFactor() * 2.5e2f;
     }
 
     @Override
@@ -404,8 +401,7 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
         final double mumin = -80;
         final double mumax = 80;
         final double maxmin = mumax - mumin;
-        renderer.addLine(p1.x, p1.y, p1.z, p2.x, p2.y, p2.z, (float) ((pmSph.x - mumin) / maxmin) * 0.8f + 0.2f, (float) ((pmSph.y - mumin) / maxmin) * 0.8f + 0.2f, (float) pmSph.z * 0.8f
-                + 0.2f, alpha * this.opacity);
+        renderer.addLine(p1.x, p1.y, p1.z, p2.x, p2.y, p2.z, (float) ((pmSph.x - mumin) / maxmin) * 0.8f + 0.2f, (float) ((pmSph.y - mumin) / maxmin) * 0.8f + 0.2f, (float) pmSph.z * 0.8f + 0.2f, alpha * this.opacity);
     }
 
     protected float getThOverFactorScl() {

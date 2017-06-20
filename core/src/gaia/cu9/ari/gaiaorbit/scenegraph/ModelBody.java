@@ -174,16 +174,20 @@ public abstract class ModelBody extends CelestialBody {
     }
 
     protected float getViewAnglePow() {
-        return 1.14f;
+        return 1.0f;
     }
 
     protected float getThOverFactorScl() {
-        return ct.contains(ComponentType.Moons) ? 2000f : 100f;
+        return ct.contains(ComponentType.Moons) ? 2500f : 25f;
+    }
+
+    protected float getThOverFactor(ICamera camera) {
+        return TH_OVER_FACTOR;
     }
 
     @Override
     public float textScale() {
-        return Math.max(1f, labelSizeConcrete()) * 1e1f;
+        return Math.max(1f, labelSizeConcrete()) * .4e0f;
     }
 
     protected float labelSizeConcrete() {
