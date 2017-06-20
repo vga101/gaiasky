@@ -25,10 +25,10 @@ public class UncertaintiesHandler implements IObserver {
     private static UncertaintiesHandler singleton;
 
     public static UncertaintiesHandler getInstance() {
-	if (singleton == null) {
-	    singleton = new UncertaintiesHandler();
-	}
-	return singleton;
+        if (singleton == null) {
+            singleton = new UncertaintiesHandler();
+        }
+        return singleton;
     }
 
     private String path;
@@ -38,89 +38,88 @@ public class UncertaintiesHandler implements IObserver {
     private int coloridx = 0;
 
     private UncertaintiesHandler() {
-	path = "/media/tsagrista/Daten/Gaia/Coryn-data/data/";
+        path = "/media/tsagrista/Daten/Gaia/Coryn-data/data2/";
 
-	particleGroups = new Array<ParticleGroup>();
-	colors = new double[][] { { 0, 1, 0, 1 }, { 1, 0, 0, 1 }, { 0, 0, 1, 1 }, { 1, 1, 0, 1 }, { 1, 0, 1, 1 },
-		{ 0, 1, 1, 1 }, { 0.5, 1, 1, 1 } };
+        particleGroups = new Array<ParticleGroup>();
+        colors = new double[][] { { 0, 1, 0, 1 }, { 1, 0, 0, 1 }, { 0, 0, 1, 1 }, { 1, 1, 0, 1 }, { 1, 0, 1, 1 }, { 0, 1, 1, 1 }, { 0.5, 1, 1, 1 } };
 
-	// Generate set with starids for which we have uncertainties
-	sourceIds = new HashSet<Long>();
-	Path dir = Paths.get(path);
-	try (DirectoryStream<Path> stream = Files.newDirectoryStream(dir, "*.{csv}")) {
-	    for (Path entry : stream) {
-		String fname = entry.getFileName().toString();
-		int pos = fname.lastIndexOf(".");
-		if (pos > 0) {
-		    fname = fname.substring(0, pos);
-		    Long id = Long.parseLong(fname);
-		    sourceIds.add(id);
-		}
-	    }
-	} catch (NoSuchFileException e) {
-	    Logger.error("Directory " + path + " not found");
-	} catch (IOException e) {
-	    Logger.error(e);
-	}
+        // Generate set with starids for which we have uncertainties
+        sourceIds = new HashSet<Long>();
+        Path dir = Paths.get(path);
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(dir, "*.{csv}")) {
+            for (Path entry : stream) {
+                String fname = entry.getFileName().toString();
+                int pos = fname.lastIndexOf(".");
+                if (pos > 0) {
+                    fname = fname.substring(0, pos);
+                    Long id = Long.parseLong(fname);
+                    sourceIds.add(id);
+                }
+            }
+        } catch (NoSuchFileException e) {
+            Logger.error("Directory " + path + " not found");
+        } catch (IOException e) {
+            Logger.error(e);
+        }
 
-	EventManager.instance.subscribe(this, Events.SHOW_UNCERTAINTIES, Events.HIDE_UNCERTAINTIES);
+        EventManager.instance.subscribe(this, Events.SHOW_UNCERTAINTIES, Events.HIDE_UNCERTAINTIES);
     }
 
     public boolean containsStar(Long id) {
-	return sourceIds != null && sourceIds.contains(id);
+        return sourceIds != null && sourceIds.contains(id);
     }
 
     public boolean containsUncertainties() {
-	return particleGroups.size > 0;
+        return particleGroups.size > 0;
     }
 
     @Override
     public void notify(Events event, Object... data) {
-	switch (event) {
-	case SHOW_UNCERTAINTIES:
-	    if (data[0] instanceof Star) {
-		final Star s = (Star) data[0];
-		Gdx.app.postRunnable(new Runnable() {
+        switch (event) {
+        case SHOW_UNCERTAINTIES:
+            if (data[0] instanceof Star) {
+                final Star s = (Star) data[0];
+                Gdx.app.postRunnable(new Runnable() {
 
-		    @Override
-		    public void run() {
-			String source_id = String.valueOf(s.id);
-			ParticleGroup pg = new ParticleGroup();
-			pg.setColor(colors[coloridx]);
-			coloridx = (coloridx + 1) % colors.length;
-			pg.setSize(3.5d);
-			pg.setProfiledecay(0.3);
-			pg.setName("");
-			pg.setLabelcolor(new double[] { 1, 1, 1, 0 });
-			pg.setLabelposition(new double[] { 0, 0, 0 });
-			pg.setCt("Others");
-			pg.setParent("Universe");
-			pg.setProvider("gaia.cu9.ari.gaiaorbit.data.group.UncertaintiesProvider");
-			pg.setDatafile(path + source_id + ".csv");
-			pg.initialize();
+                    @Override
+                    public void run() {
+                        String source_id = String.valueOf(s.id);
+                        ParticleGroup pg = new ParticleGroup();
+                        pg.setColor(colors[coloridx]);
+                        coloridx = (coloridx + 1) % colors.length;
+                        pg.setSize(3.5d);
+                        pg.setProfiledecay(0.3);
+                        pg.setName("");
+                        pg.setLabelcolor(new double[] { 1, 1, 1, 0 });
+                        pg.setLabelposition(new double[] { 0, 0, 0 });
+                        pg.setCt("Others");
+                        pg.setParent("Universe");
+                        pg.setProvider("gaia.cu9.ari.gaiaorbit.data.group.UncertaintiesProvider");
+                        pg.setDatafile(path + source_id + ".csv");
+                        pg.initialize();
 
-			GaiaSky.instance.sg.getRoot().addChild(pg, true);
-			particleGroups.add(pg);
-		    }
+                        GaiaSky.instance.sg.getRoot().addChild(pg, true);
+                        particleGroups.add(pg);
+                    }
 
-		});
+                });
 
-	    }
-	    break;
-	case HIDE_UNCERTAINTIES:
-	    Gdx.app.postRunnable(new Runnable() {
-		@Override
-		public void run() {
-		    for (ParticleGroup pg : particleGroups) {
-			GaiaSky.instance.sg.getRoot().removeChild(pg, true);
-		    }
-		    particleGroups.clear();
-		}
-	    });
-	    break;
-	default:
-	    break;
-	}
+            }
+            break;
+        case HIDE_UNCERTAINTIES:
+            Gdx.app.postRunnable(new Runnable() {
+                @Override
+                public void run() {
+                    for (ParticleGroup pg : particleGroups) {
+                        GaiaSky.instance.sg.getRoot().removeChild(pg, true);
+                    }
+                    particleGroups.clear();
+                }
+            });
+            break;
+        default:
+            break;
+        }
 
     }
 
