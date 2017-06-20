@@ -5,6 +5,8 @@ import com.badlogic.gdx.graphics.g3d.ModelBatch;
 
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.render.IAtmosphereRenderable;
+import gaia.cu9.ari.gaiaorbit.render.ILineRenderable;
+import gaia.cu9.ari.gaiaorbit.render.system.LineRenderSystem;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.AtmosphereComponent;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
@@ -12,7 +14,7 @@ import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
-public class Planet extends ModelBody implements IAtmosphereRenderable {
+public class Planet extends ModelBody implements IAtmosphereRenderable, ILineRenderable {
     private static final double TH_ANGLE_NONE = ModelBody.TH_ANGLE_POINT / 1e6;
     private static final double TH_ANGLE_POINT = ModelBody.TH_ANGLE_POINT / 2e4;
     private static final double TH_ANGLE_QUAD = ModelBody.TH_ANGLE_POINT / 2f;
@@ -20,6 +22,10 @@ public class Planet extends ModelBody implements IAtmosphereRenderable {
     Vector3d endline = new Vector3d();
     Vector3d dx = new Vector3d();
     double previousOrientationAngle = 0;
+
+    //    private String nameline() {
+    //        return "Moon";
+    //    }
 
     @Override
     public double THRESHOLD_NONE() {
@@ -79,6 +85,10 @@ public class Planet extends ModelBody implements IAtmosphereRenderable {
     public void updateLocal(ITimeFrameProvider time, ICamera camera) {
         super.updateLocal(time, camera);
         this.camera = camera;
+        //        if (name.equals(nameline()) && !copy) {
+        //            getPositionAboveSurface(346.9, 26.7, (getRadius() / 2) * Constants.U_TO_KM, endline);
+        //            endline.add(camera.getInversePos());
+        //        }
     }
 
     @Override
@@ -151,6 +161,8 @@ public class Planet extends ModelBody implements IAtmosphereRenderable {
             addToRender(this, RenderGroup.MODEL_F_ATM);
         }
 
+        //        if (name.equals(nameline()))
+        //            addToRender(this, RenderGroup.LINE);
     }
 
     @Override
@@ -171,4 +183,8 @@ public class Planet extends ModelBody implements IAtmosphereRenderable {
 
     }
 
+    @Override
+    public void render(LineRenderSystem renderer, ICamera camera, float alpha) {
+        renderer.addLine(transform.position.x, transform.position.y, transform.position.z, endline.x, endline.y, endline.z, 1, 0, 0, 1);
+    }
 }

@@ -237,7 +237,8 @@ public abstract class ModelBody extends CelestialBody {
         Coordinates.sphericalToCartesian(longitude, latitude, rad, aux1);
 
         aux2.set(aux1.z, aux1.y, aux1.x).scl(1, -1, -1).scl(-(getRadius() + distance * Constants.KM_TO_U));
-        aux2.rotate(rc.angle, 0, 1, 0);
+        //aux2.rotate(rc.angle, 0, 1, 0);
+        aux2.mul(orientation);
 
         getAbsolutePosition(out).add(aux2);
         return out;

@@ -612,7 +612,7 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
                 double target = 100 * Constants.M_TO_U;
 
                 Vector3d aux = new Vector3d();
-                aux.set(focus.pos).sub(cam.pos).nor();
+                focus.getAbsolutePosition(aux).add(cam.posinv).nor();
                 Vector3d dir = cam.direction;
 
                 // Save speed, set it to 50
@@ -724,7 +724,7 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
                 Planet planet = (Planet) focus;
 
                 Vector3d target = new Vector3d();
-                planet.getPositionAboveSurface(longitude, latitude, planet.getRadius() * Constants.U_TO_KM / 2f, target);
+                planet.getPositionAboveSurface(longitude, latitude, 1, target);
                 invisible.ct = planet.ct;
                 invisible.pos.set(target);
 
@@ -739,6 +739,10 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
                 // Save cinematic
                 boolean cinematic = GlobalConf.scene.CINEMATIC_CAMERA;
                 GlobalConf.scene.CINEMATIC_CAMERA = true;
+
+                // Save crosshair
+                boolean crosshair = GlobalConf.scene.CROSSHAIR;
+                GlobalConf.scene.CROSSHAIR = false;
 
                 // Go to object
                 goToObject(nameStub, 20, 1, stop);
@@ -755,6 +759,9 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
 
                 // Restore turning speed
                 em.post(Events.TURNING_SPEED_CMD, (float) turnSpeedBak, false);
+
+                // Restore crosshair
+                GlobalConf.scene.CROSSHAIR = crosshair;
 
                 // Land
                 landOnObject(name, stop);
