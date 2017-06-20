@@ -34,18 +34,11 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
     public static final String ROOT_NAME = "Universe";
 
     @SuppressWarnings("unchecked")
-    protected static IThreadLocal<Vector3d> aux3d1 = ThreadLocalFactory.instance.get(Vector3d.class),
-            aux3d2 = ThreadLocalFactory.instance.get(Vector3d.class),
-            aux3d3 = ThreadLocalFactory.instance.get(Vector3d.class);
+    protected static IThreadLocal<Vector3d> aux3d1 = ThreadLocalFactory.instance.get(Vector3d.class), aux3d2 = ThreadLocalFactory.instance.get(Vector3d.class), aux3d3 = ThreadLocalFactory.instance.get(Vector3d.class);
     @SuppressWarnings("unchecked")
-    protected static IThreadLocal<Vector3> aux3f1 = ThreadLocalFactory.instance.get(Vector3.class),
-            aux3f2 = ThreadLocalFactory.instance.get(Vector3.class),
-            aux3f3 = ThreadLocalFactory.instance.get(Vector3.class),
-            aux3f4 = ThreadLocalFactory.instance.get(Vector3.class);
+    protected static IThreadLocal<Vector3> aux3f1 = ThreadLocalFactory.instance.get(Vector3.class), aux3f2 = ThreadLocalFactory.instance.get(Vector3.class), aux3f3 = ThreadLocalFactory.instance.get(Vector3.class), aux3f4 = ThreadLocalFactory.instance.get(Vector3.class);
     @SuppressWarnings("unchecked")
-    protected static IThreadLocal<Vector2d> aux2d1 = ThreadLocalFactory.instance.get(Vector2d.class),
-            aux2d2 = ThreadLocalFactory.instance.get(Vector2d.class),
-            aux2d3 = ThreadLocalFactory.instance.get(Vector2d.class);
+    protected static IThreadLocal<Vector2d> aux2d1 = ThreadLocalFactory.instance.get(Vector2d.class), aux2d2 = ThreadLocalFactory.instance.get(Vector2d.class), aux2d3 = ThreadLocalFactory.instance.get(Vector2d.class);
 
     /**
      * Describes to which render group this node belongs at a particular time
@@ -97,12 +90,12 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
         }
 
         /**
-        	 * Adds the given render groups to the given Bits mask.
-        	 * 
-        	 * @param rgmask
-        	 * @param rgs
-        	 * @return
-        	 */
+         * Adds the given render groups to the given Bits mask.
+         * 
+         * @param rgmask
+         * @param rgs
+         * @return
+         */
         public static Bits add(Bits rgmask, RenderGroup... rgs) {
             for (RenderGroup rg : rgs) {
                 rgmask.set(rg.index);
@@ -111,12 +104,12 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
         }
 
         /**
-        	 * Sets the given Bits mask to the given render groups.
-        	 * 
-        	 * @param rgmask
-        	 * @param rgs
-        	 * @return
-        	 */
+         * Sets the given Bits mask to the given render groups.
+         * 
+         * @param rgmask
+         * @param rgs
+         * @return
+         */
         public static Bits set(Bits rgmask, RenderGroup... rgs) {
             rgmask.clear();
             return add(rgmask, rgs);
@@ -335,8 +328,7 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
         // Insert top level
         while (it.hasNext()) {
             SceneGraphNode node = it.next();
-            if ((this.name == null && node.parentName == null)
-                    || (this.name != null && this.name.equals(node.parentName))) {
+            if ((this.name == null && node.parentName == null) || (this.name != null && this.name.equals(node.parentName))) {
                 // Match, add and remove from list
                 addChild(node, false);
                 node.setUp();

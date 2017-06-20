@@ -46,7 +46,7 @@ public abstract class AbstractPositionEntity extends SceneGraphNode {
     public Vector2 posSph;
 
     /**
-     * Size factor in Kilometres.
+     * Size factor in internal units.
      */
     public float size;
 
@@ -129,8 +129,9 @@ public abstract class AbstractPositionEntity extends SceneGraphNode {
             // next step
             AbstractPositionEntity fc = (AbstractPositionEntity) this;
             AbstractPositionEntity fccopy = fc.getLineCopy();
-            fccopy.getRoot().transform.position.set(camera.getInversePos());
-            fccopy.getRoot().update(time, fccopy.getRoot().transform, camera);
+            SceneGraphNode root = fccopy.getRoot();
+            root.transform.position.set(camera.getInversePos());
+            root.update(time, root.transform, camera);
 
             fccopy.getAbsolutePosition(aux);
 
@@ -208,19 +209,31 @@ public abstract class AbstractPositionEntity extends SceneGraphNode {
      */
     public abstract void updateLocalValues(ITimeFrameProvider time, ICamera camera);
 
+    /**
+     * Returns the radius in internal units
+     * 
+     * @return The radius of the object, in internal units
+     */
     public float getRadius() {
         return size / 2;
     }
 
     /**
-     * Sets the absolute size of this entity
+     * Sets the absolute size (diameter) of this entity
      * 
      * @param size
+     *            The diameter in internal units
      */
     public void setSize(Double size) {
         this.size = size.floatValue();
     }
 
+    /**
+     * Sets the absolute size (diameter) of this entity
+     * 
+     * @param size
+     *            The diameter in internal units
+     */
     public void setSize(Long size) {
         this.size = (float) size;
     }

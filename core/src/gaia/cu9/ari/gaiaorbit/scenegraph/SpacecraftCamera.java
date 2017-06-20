@@ -15,6 +15,7 @@ import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.input.GestureDetector.GestureAdapter;
 import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Array;
 
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
@@ -56,7 +57,9 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
     /** This is the power **/
     public static final double thrustLength = 1e12d;
 
-    /** Factor (adapt to be able to navigate small and large scale structures **/
+    /**
+     * Factor (adapt to be able to navigate small and large scale structures
+     **/
     public static final double[] thrustFactor = new double[] { 0.1, 1.0, 1e1, 1e2, 1e3, 1e4, 1e5, 1e6, 1e7, 1e8, 1e9, 1e10, 1e11 };
     public int thrustFactorIndex = 1;
 
@@ -250,10 +253,10 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
             if (!vel.isZero() && Intersectord.distanceSegmentPoint(pos, aux3d3, closest.pos) < closest.getRadius() + stopAt) {
                 EventManager.instance.post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), "Crashed against " + closest.name + "!");
 
-                Vector3d[] intersections = Intersectord.lineSphereIntersections(pos, aux3d3, closest.pos, closest.getRadius() + stopAt);
+                Array<Vector3d> intersections = Intersectord.intersectRaySphere(pos, aux3d3, closest.pos, closest.getRadius() + stopAt);
 
-                if (intersections.length >= 1) {
-                    pos.set(intersections[0]);
+                if (intersections.size >= 1) {
+                    pos.set(intersections.get(0));
                 }
 
                 stopAllMovement();
@@ -573,6 +576,7 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
 
     /**
      * Input controller for the spacecraft camera
+     * 
      * @author tsagrista
      *
      */

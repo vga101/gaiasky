@@ -1,6 +1,8 @@
 package gaia.cu9.ari.gaiaorbit.script;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.badlogic.gdx.Gdx;
@@ -32,6 +34,7 @@ import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.LruCache;
+import gaia.cu9.ari.gaiaorbit.util.math.Intersectord;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
@@ -55,10 +58,22 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
         return instance;
     }
 
+    private Vector3d aux1, aux2, aux3, aux4;
+
+    private Set<AtomicBoolean> stops;
+
     private EventScriptingInterface() {
         em = EventManager.instance;
         manager = GaiaSky.instance.manager;
-        em.subscribe(this, Events.INPUT_EVENT);
+
+        stops = new HashSet<AtomicBoolean>();
+
+        aux1 = new Vector3d();
+        aux2 = new Vector3d();
+        aux3 = new Vector3d();
+        aux4 = new Vector3d();
+
+        em.subscribe(this, Events.INPUT_EVENT, Events.DISPOSE);
     }
 
     public void initializeTextures() {
@@ -528,6 +543,10 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
     }
 
     public void goToObject(String name, double angle, float focusWait, AtomicBoolean stop) {
+        assert name != null : "Name can't be null";
+        assert angle > 0 : "Angle must be larger than zero";
+
+        stops.add(stop);
         ISceneGraph sg = GaiaSky.instance.sg;
         if (sg.containsNode(name)) {
             CelestialBody focus = sg.findFocus(name);
@@ -583,6 +602,7 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
     public void landOnObject(String name, AtomicBoolean stop) {
         assert name != null : "Name can't be null";
 
+        stops.add(stop);
         ISceneGraph sg = GaiaSky.instance.sg;
         if (sg.containsNode(name)) {
             CelestialBody focus = sg.findFocus(name);
@@ -611,8 +631,7 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
                 /* target distance */
                 double target = 100 * Constants.M_TO_U;
 
-                Vector3d aux = new Vector3d();
-                focus.getAbsolutePosition(aux).add(cam.posinv).nor();
+                focus.getAbsolutePosition(aux1).add(cam.posinv).nor();
                 Vector3d dir = cam.direction;
 
                 // Save speed, set it to 50
@@ -629,7 +648,7 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
 
                 // Add forward movement while distance > target distance
                 boolean distanceNotMet = (focus.distToCamera - focus.getRadius()) > target;
-                boolean viewNotMet = Math.abs(dir.angle(aux)) < 90;
+                boolean viewNotMet = Math.abs(dir.angle(aux1)) < 90;
                 long prevtime = TimeUtils.millis();
                 while ((distanceNotMet || viewNotMet) && (stop == null || (stop != null && !stop.get()))) {
                     // dt in ms
@@ -655,7 +674,7 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
                     }
 
                     // focus.transform.getTranslation(aux);
-                    viewNotMet = Math.abs(dir.angle(aux)) < 90;
+                    viewNotMet = Math.abs(dir.angle(aux1)) < 90;
                     distanceNotMet = (focus.distToCamera - focus.getRadius()) > target;
                 }
 
@@ -684,6 +703,7 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
         assert name != null : "Name can't be null";
         assert locationName != null : "locationName can't be null";
 
+        stops.add(stop);
         ISceneGraph sg = GaiaSky.instance.sg;
         if (sg.containsNode(name)) {
             CelestialBody focus = sg.findFocus(name);
@@ -709,6 +729,7 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
         assert name != null : "Name can't be null";
         assert latitude >= -90 && latitude <= 90 && longitude >= 0 && longitude <= 360 : "Latitude must be in [-90..90] and longitude must be in [0..360]";
 
+        stops.add(stop);
         ISceneGraph sg = GaiaSky.instance.sg;
         String nameStub = name + " ";
 
@@ -722,11 +743,7 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
             CelestialBody focus = sg.findFocus(name);
             if (focus instanceof Planet) {
                 Planet planet = (Planet) focus;
-
-                Vector3d target = new Vector3d();
-                planet.getPositionAboveSurface(longitude, latitude, 1, target);
-                invisible.ct = planet.ct;
-                invisible.pos.set(target);
+                NaturalCamera cam = GaiaSky.instance.cam.naturalCamera;
 
                 // Save speed, set it to 50
                 double speed = GlobalConf.scene.CAMERA_SPEED;
@@ -736,6 +753,10 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
                 double turnSpeedBak = GlobalConf.scene.TURNING_SPEED;
                 em.post(Events.TURNING_SPEED_CMD, (float) MathUtilsd.lint(50d, Constants.MIN_SLIDER, Constants.MAX_SLIDER, Constants.MIN_TURN_SPEED, Constants.MAX_TURN_SPEED), false);
 
+                // Save rotation speed, set it to 20
+                double rotationSpeedBak = GlobalConf.scene.ROTATION_SPEED;
+                em.post(Events.ROTATION_SPEED_CMD, (float) MathUtilsd.lint(20d, Constants.MIN_SLIDER, Constants.MAX_SLIDER, Constants.MIN_ROT_SPEED, Constants.MAX_ROT_SPEED), false);
+
                 // Save cinematic
                 boolean cinematic = GlobalConf.scene.CINEMATIC_CAMERA;
                 GlobalConf.scene.CINEMATIC_CAMERA = true;
@@ -744,12 +765,34 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
                 boolean crosshair = GlobalConf.scene.CROSSHAIR;
                 GlobalConf.scene.CROSSHAIR = false;
 
-                // Go to object
-                goToObject(nameStub, 20, 1, stop);
+                // Get target position
+                Vector3d target = aux1;
+                planet.getPositionAboveSurface(longitude, latitude, 50, target);
 
-                // Set focus
-                setCameraFocus(name);
-                sleep(2);
+                // Get object position
+                Vector3d objectPosition = planet.getAbsolutePosition(aux2);
+
+                // Check intersection with object
+                boolean intersects = Intersectord.checkIntersectSegmentSphere(cam.pos, target, objectPosition, planet.getRadius());
+
+                if (intersects) {
+                    cameraRotate(5, 5);
+                }
+
+                while (intersects && (stop == null || (stop != null && !stop.get()))) {
+                    sleep(0.1f);
+
+                    objectPosition = planet.getAbsolutePosition(aux2);
+                    intersects = Intersectord.checkIntersectSegmentSphere(cam.pos, target, objectPosition, planet.getRadius());
+                }
+
+                cameraStop();
+
+                invisible.ct = planet.ct;
+                invisible.pos.set(target);
+
+                // Go to object
+                goToObject(nameStub, 20, 0, stop);
 
                 // Restore cinematic
                 GlobalConf.scene.CINEMATIC_CAMERA = cinematic;
@@ -759,6 +802,9 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
 
                 // Restore turning speed
                 em.post(Events.TURNING_SPEED_CMD, (float) turnSpeedBak, false);
+
+                // Restore rotation speed
+                em.post(Events.ROTATION_SPEED_CMD, (float) rotationSpeedBak, false);
 
                 // Restore crosshair
                 GlobalConf.scene.CROSSHAIR = crosshair;
@@ -945,6 +991,12 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
         switch (event) {
         case INPUT_EVENT:
             inputCode = (Integer) data[0];
+            break;
+        case DISPOSE:
+            // Stop all
+            for (AtomicBoolean stop : stops) {
+                stop.set(true);
+            }
             break;
         default:
             break;

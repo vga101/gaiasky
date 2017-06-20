@@ -102,7 +102,7 @@ public abstract class ModelBody extends CelestialBody {
         if (sizeFactor != 1 || forceUpdate) {
             float[] trnsltn = transform.getTranslationf();
             localTransform.idt().translate(trnsltn[0], trnsltn[1], trnsltn[2]).scl(size * sizeFactor).rotate(0, 1, 0, (float) rc.ascendingNode).rotate(0, 0, 1, (float) (rc.inclination + rc.axialTilt)).rotate(0, 1, 0, (float) rc.angle);
-            orientation.idt().rotate(0, 1, 0, (float) rc.ascendingNode).rotate(0, 0, 1, (float) (rc.inclination + rc.axialTilt)).rotate(0, 1, 0, (float) rc.angle);
+            orientation.idt().rotate(0, 1, 0, (float) rc.ascendingNode).rotate(0, 0, 1, (float) (rc.inclination + rc.axialTilt));
         } else {
             localTransform.set(this.localTransform);
         }
@@ -238,7 +238,9 @@ public abstract class ModelBody extends CelestialBody {
 
         aux2.set(aux1.z, aux1.y, aux1.x).scl(1, -1, -1).scl(-(getRadius() + distance * Constants.KM_TO_U));
         //aux2.rotate(rc.angle, 0, 1, 0);
-        aux2.mul(orientation);
+        Matrix4d ori = new Matrix4d(orientation);
+        ori.rotate(0, 1, 0, (float) rc.angle);
+        aux2.mul(ori);
 
         getAbsolutePosition(out).add(aux2);
         return out;
