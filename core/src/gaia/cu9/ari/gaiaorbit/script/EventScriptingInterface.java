@@ -696,16 +696,18 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
                 double ang2 = up.cpy().rotate(cam.direction, 1).angle(aux1);
                 double rollsign = ang1 < ang2 ? -1d : 1d;
 
-                rollAndWait(rollsign * 0.02d, 170d, 50l, cam, aux1, stop);
-                // STOP
-                cam.stopMovement();
+                if (ang1 < 170) {
 
-                rollAndWait(rollsign * 0.006d, 176d, 50l, cam, aux1, stop);
-                // STOP
-                cam.stopMovement();
+                    rollAndWait(rollsign * 0.02d, 170d, 50l, cam, aux1, stop);
+                    // STOP
+                    cam.stopMovement();
 
-                rollAndWait(rollsign * 0.003d, 178d, 50l, cam, aux1, stop);
+                    rollAndWait(rollsign * 0.006d, 176d, 50l, cam, aux1, stop);
+                    // STOP
+                    cam.stopMovement();
 
+                    rollAndWait(rollsign * 0.003d, 178d, 50l, cam, aux1, stop);
+                }
                 /**
                  * RESTORE
                  */
