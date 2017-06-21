@@ -965,12 +965,13 @@ public class PreferencesWindow extends GenericDialog {
         dr2 = new OwnCheckBox(txt("gui.data.dr2"), skin, "radio", pad);
         dr2.setChecked(GlobalConf.data.CATALOG_JSON_FILE.equals(GlobalConf.data.DR2_JSON_FILE));
 
-        new ButtonGroup<CheckBox>(hyg, tgas, dr2);
+        //new ButtonGroup<CheckBox>(hyg, tgas, dr2);
+        new ButtonGroup<CheckBox>(hyg, tgas);
 
         // Add to table
         datasource.add(hyg).left().padBottom(pad).row();
         datasource.add(tgas).left().padBottom(pad).row();
-        datasource.add(dr2).left().padBottom(pad).row();
+        //datasource.add(dr2).left().padBottom(pad).row();
         final Cell<Actor> noticeDataCell = datasource.add();
         noticeDataCell.colspan(2).left();
 
@@ -995,7 +996,7 @@ public class PreferencesWindow extends GenericDialog {
         };
         hyg.addListener(dataNoticeListener);
         tgas.addListener(dataNoticeListener);
-        dr2.addListener(dataNoticeListener);
+        //dr2.addListener(dataNoticeListener);
 
         // Add to content
         contentData.add(titleData).left().padBottom(pad * 2).row();

@@ -163,8 +163,17 @@ task dist (dependsOn: gaiaskyJar, description: "Compiles the project, creates th
 	        
 	                exclude "**/attitudeindicator.png"
 	
-			exclude "**/catalog.txt"
 	                exclude "**/*-wgl.json"
+	                exclude "**/*-wgl-fp.json"
+	                
+	                exclude "**/catalog-stil.json"
+	                exclude "**/catalog-sun.json"
+	                exclude "**/catalog-tgas.json"
+	                exclude "**/catalog-tgas-octree.json"
+	                exclude "**/catalog-dr2.json"
+	                exclude "**/catalog-hipparcos.json"
+	                
+	                exclude "**/constel_id.csv"
 	
 	    }
 
