@@ -1,6 +1,7 @@
 ![Gaia Sky](https://zah.uni-heidelberg.de/fileadmin/user_upload/gaia/gaiasky/img/GaiaSkyBanner.jpg)
 --------------------------
 
+[![Documentation Status](https://readthedocs.org/projects/gaia-sky/badge/?version=latest)](http://gaia-sky.readthedocs.io/en/latest/?badge=latest)
 [![Circle CI](https://circleci.com/gh/langurmonkey/gaiasky/tree/master.svg?style=svg)](https://circleci.com/gh/langurmonkey/gaiasky/tree/master)
 
 [**Gaia Sky**](https://zah.uni-heidelberg.de/gaia/outreach/gaiasky) is a real-time, 3D, astronomy visualisation software that
