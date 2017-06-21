@@ -870,11 +870,9 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
     private void rollAndWait(double roll, double target, long sleep, NaturalCamera cam, Vector3d camobj, AtomicBoolean stop) {
         // Apply roll and wait
         double ang = cam.up.angle(camobj);
-        System.out.println("angle: " + ang + ", target: " + target + ", roll: " + roll);
 
         while (ang < target && (stop == null || (stop != null && !stop.get()))) {
             cam.addRoll(roll, false);
-            System.out.println(ang);
 
             try {
                 Thread.sleep(sleep);
