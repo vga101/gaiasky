@@ -13,6 +13,12 @@ import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
  */
 public class Invisible extends CelestialBody {
 
+    public Invisible() {
+        super();
+        this.parentName = "Universe";
+        this.size = 500 * (float) Constants.M_TO_U;
+    }
+
     public Invisible(String name) {
         super();
         this.name = name;

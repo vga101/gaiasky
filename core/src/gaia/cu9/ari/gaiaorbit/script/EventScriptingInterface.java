@@ -609,6 +609,26 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
                 // Focus wait - 2 seconds
                 float focusWait = -1;
 
+                /**
+                 * SAVE
+                 */
+
+                // Save speed, set it to 50
+                double speed = GlobalConf.scene.CAMERA_SPEED;
+                em.post(Events.CAMERA_SPEED_CMD, 25f / 10f, false);
+
+                // Save turn speed, set it to 50
+                double turnSpeedBak = GlobalConf.scene.TURNING_SPEED;
+                em.post(Events.TURNING_SPEED_CMD, (float) MathUtilsd.lint(20d, Constants.MIN_SLIDER, Constants.MAX_SLIDER, Constants.MIN_TURN_SPEED, Constants.MAX_TURN_SPEED), false);
+
+                // Save cinematic
+                boolean cinematic = GlobalConf.scene.CINEMATIC_CAMERA;
+                GlobalConf.scene.CINEMATIC_CAMERA = true;
+
+                /**
+                 * FOCUS
+                 */
+
                 // Post focus change
                 em.post(Events.CAMERA_MODE_CMD, CameraMode.Focus);
                 em.post(Events.FOCUS_CHANGE_CMD, name);
@@ -632,21 +652,10 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
                 focus.getAbsolutePosition(aux1).add(cam.posinv).nor();
                 Vector3d dir = cam.direction;
 
-                // Save speed, set it to 50
-                double speed = GlobalConf.scene.CAMERA_SPEED;
-                em.post(Events.CAMERA_SPEED_CMD, 25f / 10f, false);
-
-                // Save turn speed, set it to 50
-                double turnSpeedBak = GlobalConf.scene.TURNING_SPEED;
-                em.post(Events.TURNING_SPEED_CMD, (float) MathUtilsd.lint(50d, Constants.MIN_SLIDER, Constants.MAX_SLIDER, Constants.MIN_TURN_SPEED, Constants.MAX_TURN_SPEED), false);
-
-                // Save cinematic
-                boolean cinematic = GlobalConf.scene.CINEMATIC_CAMERA;
-                GlobalConf.scene.CINEMATIC_CAMERA = true;
-
                 // Add forward movement while distance > target distance
                 boolean distanceNotMet = (focus.distToCamera - focus.getRadius()) > target;
                 boolean viewNotMet = Math.abs(dir.angle(aux1)) < 90;
+
                 long prevtime = TimeUtils.millis();
                 while ((distanceNotMet || viewNotMet) && (stop == null || (stop != null && !stop.get()))) {
                     // dt in ms
@@ -663,7 +672,7 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
                             // Start turning where we are at n times the radius
                             em.post(Events.CAMERA_TURN, 0d, dt / 500d);
                     } else {
-                        cam.stopTurnMovement();
+                        cam.stopRotateMovement();
                     }
 
                     try {
@@ -676,6 +685,34 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
                     distanceNotMet = (focus.distToCamera - focus.getRadius()) > target;
                 }
 
+                // STOP
+                em.post(Events.CAMERA_STOP);
+
+                // Roll till done
+                Vector3d up = cam.up;
+                // aux1 <- camera-object
+                focus.getAbsolutePosition(aux1).sub(cam.pos);
+                double ang1 = up.angle(aux1);
+                double ang2 = up.cpy().rotate(cam.direction, 1).angle(aux1);
+                double rollsign = ang1 < ang2 ? -1d : 1d;
+
+                rollAndWait(rollsign * 0.02d, 170d, 50l, cam, aux1, stop);
+                // STOP
+                cam.stopMovement();
+
+                rollAndWait(rollsign * 0.006d, 176d, 50l, cam, aux1, stop);
+                // STOP
+                cam.stopMovement();
+
+                rollAndWait(rollsign * 0.003d, 178d, 50l, cam, aux1, stop);
+
+                /**
+                 * RESTORE
+                 */
+
+                // We can stop now
+                em.post(Events.CAMERA_STOP);
+
                 // Restore cinematic
                 GlobalConf.scene.CINEMATIC_CAMERA = cinematic;
 
@@ -685,8 +722,6 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
                 // Restore turning speed
                 em.post(Events.TURNING_SPEED_CMD, (float) turnSpeedBak, false);
 
-                // We can stop now
-                em.post(Events.CAMERA_STOP);
             }
         }
 
@@ -742,6 +777,20 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
             if (focus instanceof Planet) {
                 Planet planet = (Planet) focus;
                 NaturalCamera cam = GaiaSky.instance.cam.naturalCamera;
+
+                double targetAngle = 35 * MathUtilsd.degRad;
+                if (planet.viewAngle > targetAngle) {
+                    // Zoom out
+                    while (planet.viewAngle > targetAngle && (stop == null || (stop != null && !stop.get()))) {
+                        cam.addForwardForce(-5d);
+                        sleep(0.3f);
+                    }
+                    // STOP
+                    cam.stopMovement();
+                }
+
+                // Go to object
+                goToObject(name, 20, -1, stop);
 
                 // Save speed, set it to 50
                 double speed = GlobalConf.scene.CAMERA_SPEED;
@@ -810,39 +859,28 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
                 // Land
                 landOnObject(name, stop);
 
-                // Roll till done
-
-                // Save cinematic
-                cinematic = GlobalConf.scene.CINEMATIC_CAMERA;
-                GlobalConf.scene.CINEMATIC_CAMERA = true;
-
-                // aux1 <- camera-planet
-                planet.getAbsolutePosition(aux1).sub(cam.pos);
-                double ang = cam.up.angle(aux1);
-
-                if (ang < 178)
-                    cam.addRoll(1d, true);
-
-                double angprev = -1000;
-
-                while (angprev <= ang && ang < 178 && (stop == null || (stop != null && !stop.get()))) {
-                    System.out.println(ang);
-                    sleep(0.05f);
-                    angprev = ang;
-                    ang = cam.up.angle(aux1);
-                }
-                // STOP
-                cam.stopMovement();
-
-                //cam.up.set(aux1).scl(-1).nor();
-
-                // Restore cinematic
-                GlobalConf.scene.CINEMATIC_CAMERA = cinematic;
-
             }
         }
 
         sg.remove(invisible, true);
+    }
+
+    private void rollAndWait(double roll, double target, long sleep, NaturalCamera cam, Vector3d camobj, AtomicBoolean stop) {
+        // Apply roll and wait
+        double ang = cam.up.angle(camobj);
+        System.out.println("angle: " + ang + ", target: " + target + ", roll: " + roll);
+
+        while (ang < target && (stop == null || (stop != null && !stop.get()))) {
+            cam.addRoll(roll, false);
+            System.out.println(ang);
+
+            try {
+                Thread.sleep(sleep);
+            } catch (Exception e) {
+            }
+
+            ang = cam.up.angle(aux1);
+        }
     }
 
     @Override

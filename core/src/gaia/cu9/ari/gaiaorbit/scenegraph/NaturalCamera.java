@@ -614,6 +614,21 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
         return stopped;
     }
 
+    public boolean stopRotateMovement() {
+        boolean stopped = (yaw.y != 0 || pitch.y != 0 || vertical.y != 0 || horizontal.y != 0);
+        yaw.scl(0f);
+        pitch.scl(0f);
+        horizontal.scl(0f);
+        vertical.scl(0f);
+        return stopped;
+    }
+
+    public boolean stopRollMovement() {
+        boolean stopped = (roll.y != 0);
+        roll.scl(0f);
+        return stopped;
+    }
+
     public boolean stopTurnMovement() {
         boolean stopped = (yaw.y != 0 || pitch.y != 0 || roll.y != 0 || vertical.y != 0 || horizontal.y != 0);
         yaw.scl(0f);

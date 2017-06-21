@@ -1,7 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.interfce;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -25,18 +23,20 @@ public class ScriptStateInterface extends Table implements IObserver, IGuiInterf
 
     public ScriptStateInterface(Skin skin) {
         super(skin);
-        keyboardImg = new Image(new Texture(Gdx.files.internal("img/keyboard.png")));
-        cameraImg = new Image(new Texture(Gdx.files.internal("img/camera.png")));
-        this.add(keyboardImg).left().row();
-        this.add(cameraImg).left().row();
+
+        keyboardImg = new Image(skin.getDrawable("no-input"));
+        cameraImg = new Image(skin.getDrawable("camera"));
+        this.add(keyboardImg).center().row();
+        this.add(cameraImg).center().row();
 
         keyboardImg.setVisible(!GlobalConf.runtime.INPUT_ENABLED);
         cameraImg.setVisible(false);
 
         int num = ScriptingFactory.getInstance().getNumRunningScripts();
         cancelScript = new OwnTextButton(I18n.bundle.format("gui.script.stop", num), skin);
-        this.add(cancelScript).left().row();
+        this.add(cancelScript).center().row();
         cancelScript.setVisible(num > 0);
+        cancelScript.setWidth(cancelScript.getWidth() + 4 * GlobalConf.SCALE_FACTOR);
         cancelScript.addListener(new EventListener() {
 
             @Override
@@ -49,8 +49,9 @@ public class ScriptStateInterface extends Table implements IObserver, IGuiInterf
         });
 
         cancelCamera = new OwnTextButton(I18n.bundle.get("gui.stop"), skin);
-        this.add(cancelCamera).left();
+        this.add(cancelCamera).center();
         cancelCamera.setVisible(false);
+        cancelCamera.setWidth(cancelCamera.getWidth() + 4 * GlobalConf.SCALE_FACTOR);
         cancelCamera.addListener(new EventListener() {
 
             @Override
