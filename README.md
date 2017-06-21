@@ -2,7 +2,7 @@
 --------------------------
 
 [![Documentation Status](https://readthedocs.org/projects/gaia-sky/badge/?version=latest)](http://gaia-sky.readthedocs.io/en/latest/?badge=latest)
-[![Circle CI](https://circleci.com/gh/langurmonkey/gaiasky/tree/master.svg?style=svg)](https://circleci.com/gh/langurmonkey/gaiasky/tree/master)
+[![Circle CI](https://circleci.com/gh/langurmonkey/gaiasky.svg?style=shield&circle-token=:circle-token)](https://circleci.com/gh/langurmonkey/gaiasky/tree/master)
 
 [**Gaia Sky**](https://zah.uni-heidelberg.de/gaia/outreach/gaiasky) is a real-time, 3D, astronomy visualisation software that
 runs on Windows, Linux and MacOS. It is developed in the framework of
