@@ -415,8 +415,7 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
         updateLocal(time, camera);
 
         if (children != null) {
-            int size = children.size;
-            for (int i = 0; i < size; i++) {
+            for (int i = 0; i < children.size; i++) {
                 children.get(i).update(time, transform, camera, opacity);
             }
         }

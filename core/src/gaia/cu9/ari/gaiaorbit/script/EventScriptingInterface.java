@@ -58,7 +58,7 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
         return instance;
     }
 
-    private Vector3d aux1, aux2, aux3, aux4;
+    private Vector3d aux1, aux2;
 
     private Set<AtomicBoolean> stops;
 
@@ -70,8 +70,6 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
 
         aux1 = new Vector3d();
         aux2 = new Vector3d();
-        aux3 = new Vector3d();
-        aux4 = new Vector3d();
 
         em.subscribe(this, Events.INPUT_EVENT, Events.DISPOSE);
     }
@@ -811,6 +809,36 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
 
                 // Land
                 landOnObject(name, stop);
+
+                // Roll till done
+
+                // Save cinematic
+                cinematic = GlobalConf.scene.CINEMATIC_CAMERA;
+                GlobalConf.scene.CINEMATIC_CAMERA = true;
+
+                // aux1 <- camera-planet
+                planet.getAbsolutePosition(aux1).sub(cam.pos);
+                double ang = cam.up.angle(aux1);
+
+                if (ang < 178)
+                    cam.addRoll(1d, true);
+
+                double angprev = -1000;
+
+                while (angprev <= ang && ang < 178 && (stop == null || (stop != null && !stop.get()))) {
+                    System.out.println(ang);
+                    sleep(0.05f);
+                    angprev = ang;
+                    ang = cam.up.angle(aux1);
+                }
+                // STOP
+                cam.stopMovement();
+
+                //cam.up.set(aux1).scl(-1).nor();
+
+                // Restore cinematic
+                GlobalConf.scene.CINEMATIC_CAMERA = cinematic;
+
             }
         }
 
