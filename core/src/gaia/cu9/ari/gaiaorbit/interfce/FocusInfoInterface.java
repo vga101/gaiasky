@@ -128,10 +128,11 @@ public class FocusInfoInterface extends Table implements IObserver, IGuiInterfac
         landOn.setWidth(bw);
         landAt.setWidth(bw);
 
-        HorizontalGroup linkGroup = new HorizontalGroup();
-        linkGroup.space(pad5);
-        linkGroup.addActor(landOn);
-        linkGroup.addActor(landAt);
+        HorizontalGroup focusNameGroup = new HorizontalGroup();
+        focusNameGroup.space(pad5);
+        focusNameGroup.addActor(focusName);
+        focusNameGroup.addActor(landOn);
+        focusNameGroup.addActor(landAt);
 
         float w = 120 * GlobalConf.SCALE_FACTOR;
         focusId.setWidth(w);
@@ -145,8 +146,7 @@ public class FocusInfoInterface extends Table implements IObserver, IGuiInterfac
 
         /** FOCUS INFO **/
 
-        focusInfo.add(focusName).left();
-        focusInfo.add(linkGroup).left().padLeft(pad10);
+        focusInfo.add(focusNameGroup).left().colspan(2).padBottom(pad5);
         focusInfo.row();
         focusInfo.add(focusType).left().padBottom(pad5).colspan(2);
         focusInfo.row();
