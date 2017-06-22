@@ -10,6 +10,8 @@ import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
 public abstract class AbstractVSOP87 implements iVSOP87, IBodyCoordinates {
 
+    protected boolean highAccuracy;
+
     @Override
     public void doneLoading(Object... params) {
     }
@@ -42,6 +44,11 @@ public abstract class AbstractVSOP87 implements iVSOP87, IBodyCoordinates {
         Coordinates.sphericalToCartesian(out, out);
         out.mul(Coordinates.equatorialToEcliptic());
         return out;
+    }
+
+    @Override
+    public void setHighAccuracy(boolean highAccuracy) {
+        this.highAccuracy = highAccuracy;
     }
 
 }

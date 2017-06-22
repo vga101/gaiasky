@@ -19,6 +19,7 @@ import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.util.ConfInit;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.SysUtilsFactory;
@@ -106,7 +107,7 @@ public class OrbitSamplerDataProvider implements IOrbitDataProvider, IObserver {
 
         // Load vsop orbit data
         for (int i = 0; i <= numSamples; i++) {
-            AstroUtils.getEclipticCoordinates(bodyDesc, d, ecl);
+            AstroUtils.getEclipticCoordinates(bodyDesc, d, ecl, GlobalConf.data.HIGH_ACCURACY_POSITIONS);
 
             if (last == 0) {
                 last = Math.toDegrees(ecl.x);

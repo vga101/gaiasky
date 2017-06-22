@@ -1,6 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.util.coord;
 
-import java.sql.Timestamp;
 import java.util.Date;
 
 import gaia.cu9.ari.gaiaorbit.util.Constants;
@@ -136,27 +135,6 @@ public class AstroUtils {
         double L = 280.460d + 0.9856474d * n;
         double g = 357.528d + 0.9856003d * n;
         double l = L + 1.915 * Math.sin(Math.toRadians(g)) + 0.02 * Math.sin(Math.toRadians(2 * g));
-        return l;
-    }
-
-    /**
-     * @deprecated This is no longer of use Assumes a uniform speed.
-     * @param date
-     * @return
-     */
-    @SuppressWarnings("unused")
-    public static double getFakeSunLongitude(Date date) {
-        int year = date.getYear();
-        int month = date.getMonth();
-        int day = date.getDate();
-
-        int hour = date.getHours();
-        int min = date.getMinutes();
-        int sec = date.getSeconds();
-        int nanos = ((Timestamp) date).getNanos();
-
-        double frac = (1d / 12d) * month + (1d / 365.242d) * day + (1d / 8765.81d) * hour + (1d / 525949d) * min + (1d / 31556940d) * sec + (1d / 31556940e9d) * nanos;
-        double l = year + frac * 360d;
         return l;
     }
 
@@ -375,10 +353,13 @@ public class AstroUtils {
      *            The date to get the position.
      * @param out
      *            The output vector
+     * @param highAccuracy
+     *            Whether to use the full precision algorithms or skip some
+     *            terms for speed
      * @return The output vector with L, B and R, for chaining.
      * @deprecated Should use the classes that extend IBodyCoordinates instead.
      */
-    public static Vector3d getEclipticCoordinates(String body, Date date, Vector3d out) {
+    public static Vector3d getEclipticCoordinates(String body, Date date, Vector3d out, boolean highAccuracy) {
 
         switch (body) {
         case "Moon":
@@ -389,6 +370,7 @@ public class AstroUtils {
             double tau = tau(getJulianDateCache(date));
 
             iVSOP87 coor = VSOP87.instance.getVOSP87(body);
+            coor.setHighAccuracy(highAccuracy);
             double L = (coor.L0(tau) + coor.L1(tau) + coor.L2(tau) + coor.L3(tau) + coor.L4(tau) + coor.L5(tau));
             double B = (coor.B0(tau) + coor.B1(tau) + coor.B2(tau) + coor.B3(tau) + coor.B4(tau) + coor.B5(tau));
             double R = (coor.R0(tau) + coor.R1(tau) + coor.R2(tau) + coor.R3(tau) + coor.R4(tau) + coor.R5(tau));

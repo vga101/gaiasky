@@ -37,4 +37,6 @@ public interface iVSOP87 {
     public double R4(double t);
 
     public double R5(double t);
+
+    public void setHighAccuracy(boolean highPrecision);
 }

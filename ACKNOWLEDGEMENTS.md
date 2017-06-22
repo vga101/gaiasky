@@ -16,6 +16,7 @@
 -  [libgdx-contribs-postprocessing](https://github.com/manuelbua/libgdx-contribs/tree/master/postprocessing)
 -  [VisUI](https://github.com/kotcrab/vis-editor/wiki/VisUI) for some widgets (licensed under the Apache license)
 -  [PgsLookAndFeel](http://www.pagosoft.com/projects/pgslookandfeel/)
+-  [VSOP87 code generator tool](http://neoprogrammics.com/vsop87/source_code_generator_tool/) for the base VSOP87 java code
 -  Mark Taylor's [STIL](http://www.star.bristol.ac.uk/~mbt/stil/) library
 -  The [Jython Project](http://www.jython.org/)
 -  [ernieyu](https://github.com/ernieyu/) for the Java Swing [range slider](https://github.com/ernieyu/Swing-range-slider)
