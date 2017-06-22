@@ -1283,7 +1283,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 
     private void projectToScreen(Vector3d vec, Vector3 out, int rw, int rh, float chw, float chh, float chw2, float chh2) {
         vec.put(out);
-        camera.project(out);
+        camera.project(out, 0, 0, rw, rh);
 
         if (direction.angle(vec) > 90) {
             out.x = rw - out.x;
