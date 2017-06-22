@@ -107,7 +107,7 @@ public class AboutWindow extends GenericDialog {
         /** CONTENT 1 - HELP **/
         final Table contentHelp = new Table(skin);
         contentHelp.align(Align.top);
-        Image gaiasky = new Image(getSpriteDrawable(Gdx.files.internal("img/gaiaskylogo.png")));
+        Image gaiasky = new Image(skin.getDrawable("gaiasky-logo"));
 
         // User manual
         Label usermantitle = new OwnLabel(txt("gui.help.usermanual"), skin);
