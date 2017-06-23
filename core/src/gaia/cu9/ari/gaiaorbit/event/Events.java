@@ -15,7 +15,8 @@ public enum Events {
     /**
      * Issues a change time command, contains the Date object with the new time
      **/
-    TIME_CHANGE_CMD, GAIA_POSITION,
+    TIME_CHANGE_CMD,
+    GAIA_POSITION,
 
     // CAMERA
     /** Contains the new CameraMode object **/
@@ -185,6 +186,12 @@ public enum Events {
      * direction (vector3d) and up (vector3d)
      **/
     UPDATE_CAM_RECORDER,
+
+    /**
+     * Issues the command to change the high accuracy setting. Contains a
+     * boolean with the setting
+     */
+    HIGH_ACCURACY_CMD,
 
     /**
      * Issues the frame output command. Contains an optional boolean with the

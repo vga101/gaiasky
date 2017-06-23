@@ -6,9 +6,12 @@ import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.LruCache;
 import gaia.cu9.ari.gaiaorbit.util.coord.vsop87.VSOP87;
 import gaia.cu9.ari.gaiaorbit.util.coord.vsop87.iVSOP87;
+import gaia.cu9.ari.gaiaorbit.util.math.FastTrigonometry;
+import gaia.cu9.ari.gaiaorbit.util.math.ITrigonometry;
+import gaia.cu9.ari.gaiaorbit.util.math.MathManager;
+import gaia.cu9.ari.gaiaorbit.util.math.Trigonometry;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector2d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
-import net.jafama.FastMath;
 
 /**
  * Some astronomical algorithms to get the position of the Sun, Moon, work out
@@ -70,6 +73,12 @@ public class AstroUtils {
 
     private static final Vector3d aux3 = new Vector3d();
     private static final Vector2d aux2 = new Vector2d();
+
+    /**
+     * TRIGONOMETRY FUNCTIONS
+     */
+    private static final FastTrigonometry fastTrigonometry = new FastTrigonometry();
+    private static final Trigonometry trigo = new Trigonometry();
 
     /**
      * Algorithm in "Astronomical Algorithms" book by Jean Meeus. Finds out the
@@ -190,6 +199,7 @@ public class AstroUtils {
      * @return The output vector, for chaining.
      */
     public static Vector3d moonEclipticCoordinates(double julianDate, Vector3d out) {
+
         // Time T measured in Julian centuries from the Epoch J2000.0
         double T = T(julianDate);
         double T2 = T * T;
@@ -254,14 +264,16 @@ public class AstroUtils {
      * @return
      */
     public static Vector3d plutoEclipticCoordinates(double d, Vector3d out) {
+        ITrigonometry trigo = MathManager.instance.trigo;
+
         double S = Math.toRadians(50.03 + 0.033459652 * d);
         double P = Math.toRadians(238.95 + 0.003968789 * d);
 
-        double lonecl = 238.9508 + 0.00400703 * d - 19.799 * FastMath.sin(P) + 19.848 * FastMath.cos(P) + 0.897 * FastMath.sin(2 * P) - 4.956 * FastMath.cos(2 * P) + 0.610 * FastMath.sin(3 * P) + 1.211 * FastMath.cos(3 * P) - 0.341 * FastMath.sin(4 * P) - 0.190 * FastMath.cos(4 * P) + 0.128 * FastMath.sin(5 * P) - 0.034 * FastMath.cos(5 * P) - 0.038 * FastMath.sin(6 * P) + 0.031 * FastMath.cos(6 * P) + 0.020 * FastMath.sin(S - P) - 0.010 * FastMath.cos(S - P);
+        double lonecl = 238.9508 + 0.00400703 * d - 19.799 * trigo.sin(P) + 19.848 * trigo.cos(P) + 0.897 * trigo.sin(2 * P) - 4.956 * trigo.cos(2 * P) + 0.610 * trigo.sin(3 * P) + 1.211 * trigo.cos(3 * P) - 0.341 * trigo.sin(4 * P) - 0.190 * trigo.cos(4 * P) + 0.128 * trigo.sin(5 * P) - 0.034 * trigo.cos(5 * P) - 0.038 * trigo.sin(6 * P) + 0.031 * trigo.cos(6 * P) + 0.020 * trigo.sin(S - P) - 0.010 * trigo.cos(S - P);
 
-        double latecl = -3.9082 - 5.453 * FastMath.sin(P) - 14.975 * FastMath.cos(P) + 3.527 * FastMath.sin(2 * P) + 1.673 * FastMath.cos(2 * P) - 1.051 * FastMath.sin(3 * P) + 0.328 * FastMath.cos(3 * P) + 0.179 * FastMath.sin(4 * P) - 0.292 * FastMath.cos(4 * P) + 0.019 * FastMath.sin(5 * P) + 0.100 * FastMath.cos(5 * P) - 0.031 * FastMath.sin(6 * P) - 0.026 * FastMath.cos(6 * P) + 0.011 * FastMath.cos(S - P);
+        double latecl = -3.9082 - 5.453 * trigo.sin(P) - 14.975 * trigo.cos(P) + 3.527 * trigo.sin(2 * P) + 1.673 * trigo.cos(2 * P) - 1.051 * trigo.sin(3 * P) + 0.328 * trigo.cos(3 * P) + 0.179 * trigo.sin(4 * P) - 0.292 * trigo.cos(4 * P) + 0.019 * trigo.sin(5 * P) + 0.100 * trigo.cos(5 * P) - 0.031 * trigo.sin(6 * P) - 0.026 * trigo.cos(6 * P) + 0.011 * trigo.cos(S - P);
 
-        double r = 40.72 + 6.68 * FastMath.sin(P) + 6.90 * FastMath.cos(P) - 1.18 * FastMath.sin(2 * P) - 0.03 * FastMath.cos(2 * P) + 0.15 * FastMath.sin(3 * P) - 0.14 * FastMath.cos(3 * P);
+        double r = 40.72 + 6.68 * trigo.sin(P) + 6.90 * trigo.cos(P) - 1.18 * trigo.sin(2 * P) - 0.03 * trigo.cos(2 * P) + 0.15 * trigo.sin(3 * P) - 0.14 * trigo.cos(3 * P);
 
         return out.set(Math.toRadians(lonecl), Math.toRadians(latecl), AstroUtils.AU_TO_KM * r);
     }
@@ -290,6 +302,8 @@ public class AstroUtils {
      * @return Suml and Sumr
      */
     private static double[] calculateSumlSumr(double D, double M, double Mp, double F, double E, double A1, double A2, double Lp) {
+        ITrigonometry trigo = MathManager.instance.trigo;
+
         double suml = 0, sumr = 0;
         for (int i = 0; i < table45a.length; i++) {
             int[] curr = table45a[i];
@@ -302,13 +316,13 @@ public class AstroUtils {
             } else if (curr[2] == 2 || curr[2] == -2) {
                 mul = E * E;
             }
-            suml += curr[4] * Math.sin(Math.toRadians(curr[0] * D + curr[1] * M + curr[2] * Mp + curr[3] * F)) * mul;
-            sumr += curr[5] * Math.cos(Math.toRadians(curr[0] * D + curr[1] * M + curr[2] * Mp + curr[3] * F)) * mul;
+            suml += curr[4] * trigo.sin(Math.toRadians(curr[0] * D + curr[1] * M + curr[2] * Mp + curr[3] * F)) * mul;
+            sumr += curr[5] * trigo.cos(Math.toRadians(curr[0] * D + curr[1] * M + curr[2] * Mp + curr[3] * F)) * mul;
         }
         // Addition to Suml. The terms involving A1 are due to the action of
         // Venus. The term involving A2 is due to Jupiter
         // while those involving L' are due to the flattening of the Earth.
-        double sumladd = 3958.0 * Math.sin(Math.toRadians(A1)) + 1962.0 * Math.sin(Math.toRadians(Lp - F)) + 318.0 * Math.sin(Math.toRadians(A2));
+        double sumladd = 3958.0 * trigo.sin(Math.toRadians(A1)) + 1962.0 * trigo.sin(Math.toRadians(Lp - F)) + 318.0 * trigo.sin(Math.toRadians(A2));
         suml += sumladd;
 
         return new double[] { suml, sumr };
@@ -316,6 +330,8 @@ public class AstroUtils {
     }
 
     private static double calculateSumb(double D, double M, double Mp, double F, double E, double A1, double A3, double Lp) {
+        ITrigonometry trigo = MathManager.instance.trigo;
+
         double sumb = 0;
         for (int i = 0; i < table45b.length; i++) {
             int[] curr = table45b[i];
@@ -328,12 +344,12 @@ public class AstroUtils {
             } else if (curr[2] == 2 || curr[2] == -2) {
                 mul *= E * E;
             }
-            sumb += curr[4] * Math.sin(Math.toRadians(curr[0] * D + curr[1] * M + curr[2] * Mp + curr[3] * F)) * mul;
+            sumb += curr[4] * trigo.sin(Math.toRadians(curr[0] * D + curr[1] * M + curr[2] * Mp + curr[3] * F)) * mul;
         }
         // Addition to Sumb. The terms involving A1 are due to the action of
         // Venus. The term involving A2 is due to Jupiter
         // while those involing L' are due to the flattening of the Earth.
-        double sumbadd = -2235.0 * Math.sin(Math.toRadians(Lp)) + 382.0 * Math.sin(Math.toRadians(A3)) + 175.0 * Math.sin(Math.toRadians(A1 - F)) + 175.0 * Math.sin(Math.toRadians(A1 + F)) + 127.0 * Math.sin(Math.toRadians(Lp - Mp)) - 115.0 * Math.sin(Math.toRadians(Lp + Mp));
+        double sumbadd = -2235.0 * trigo.sin(Math.toRadians(Lp)) + 382.0 * trigo.sin(Math.toRadians(A3)) + 175.0 * trigo.sin(Math.toRadians(A1 - F)) + 175.0 * trigo.sin(Math.toRadians(A1 + F)) + 127.0 * trigo.sin(Math.toRadians(Lp - Mp)) - 115.0 * trigo.sin(Math.toRadians(Lp + Mp));
         sumb += sumbadd;
 
         return sumb;

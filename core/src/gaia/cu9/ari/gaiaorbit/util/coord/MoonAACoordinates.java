@@ -8,6 +8,7 @@ import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 /**
  * Coordinates of the Moon given by the algorithm in Jean Meeus' Astronomical
  * Algorithms book.
+ * 
  * @author Toni Sagrista
  *
  */

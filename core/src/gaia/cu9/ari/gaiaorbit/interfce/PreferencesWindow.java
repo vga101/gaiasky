@@ -88,7 +88,7 @@ public class PreferencesWindow extends GenericDialog {
 
     private INumberFormat nf3;
 
-    private CheckBox fullscreen, windowed, vsync, multithreadCb, lodFadeCb, cbAutoCamrec, hyg, tgas, dr2, real, nsl, report, inverty;
+    private CheckBox fullscreen, windowed, vsync, multithreadCb, lodFadeCb, cbAutoCamrec, hyg, tgas, dr2, real, nsl, report, inverty, highAccuracyPositions;
     private OwnSelectBox<DisplayMode> fullscreenResolutions;
     private OwnSelectBox<ComboBoxBean> gquality, aa, lineRenderer, numThreads, screenshotMode, frameoutputMode;
     private OwnSelectBox<LangComboBoxBean> lang;
@@ -713,6 +713,7 @@ public class PreferencesWindow extends GenericDialog {
             }
         });
         screenshotMode.setSelected(screenshotModes[GlobalConf.screenshot.SCREENSHOT_MODE.ordinal()]);
+        screenshotMode.addListener(new TextTooltip(txt("gui.tooltip.screenshotmode"), skin));
 
         OwnImageButton screenshotsModeTooltip = new OwnImageButton(skin, "tooltip");
         screenshotsModeTooltip.addListener(new TextTooltip(txt("gui.tooltip.screenshotmode"), skin));
@@ -841,6 +842,7 @@ public class PreferencesWindow extends GenericDialog {
             }
         });
         frameoutputMode.setSelected(frameoutputModes[GlobalConf.frame.FRAME_MODE.ordinal()]);
+        frameoutputMode.addListener(new TextTooltip(txt("gui.tooltip.screenshotmode"), skin));
 
         OwnImageButton frameoutputModeTooltip = new OwnImageButton(skin, "tooltip");
         frameoutputModeTooltip.addListener(new TextTooltip(txt("gui.tooltip.screenshotmode"), skin));
@@ -890,6 +892,7 @@ public class PreferencesWindow extends GenericDialog {
         // Activate automatically
         cbAutoCamrec = new OwnCheckBox(txt("gui.camerarec.frameoutput"), skin, "default", pad);
         cbAutoCamrec.setChecked(GlobalConf.frame.AUTO_FRAME_OUTPUT_CAMERA_PLAY);
+        cbAutoCamrec.addListener(new TextTooltip(txt("gui.tooltip.playcamera.frameoutput"), skin));
         OwnImageButton camrecTooltip = new OwnImageButton(skin, "tooltip");
         camrecTooltip.addListener(new TextTooltip(txt("gui.tooltip.playcamera.frameoutput"), skin));
 
@@ -954,6 +957,19 @@ public class PreferencesWindow extends GenericDialog {
         contents.add(contentData);
         contentData.align(Align.top | Align.left);
 
+        // GENERAL OPTIONS
+        OwnLabel titleGeneralData = new OwnLabel(txt("gui.data.options"), skin, "help-title");
+        highAccuracyPositions = new OwnCheckBox(txt("gui.data.highaccuracy"), skin, pad);
+        highAccuracyPositions.setChecked(GlobalConf.data.HIGH_ACCURACY_POSITIONS);
+        highAccuracyPositions.addListener(new TextTooltip(txt("gui.data.highaccuracy.tooltip"), skin));
+        OwnImageButton highAccTooltip = new OwnImageButton(skin, "tooltip");
+        highAccTooltip.addListener(new TextTooltip(txt("gui.data.highaccuracy.tooltip"), skin));
+
+        HorizontalGroup haGroup = new HorizontalGroup();
+        haGroup.space(pad);
+        haGroup.addActor(highAccuracyPositions);
+        haGroup.addActor(highAccTooltip);
+
         // DATA SOURCE
         OwnLabel titleData = new OwnLabel(txt("gui.data.source"), skin, "help-title");
         Table datasource = new Table(skin);
@@ -999,6 +1015,8 @@ public class PreferencesWindow extends GenericDialog {
         //dr2.addListener(dataNoticeListener);
 
         // Add to content
+        contentData.add(titleGeneralData).left().padBottom(pad * 2).row();
+        contentData.add(haGroup).left().padBottom(pad * 2).row();
         contentData.add(titleData).left().padBottom(pad * 2).row();
         contentData.add(datasource).left();
 
@@ -1216,6 +1234,14 @@ public class PreferencesWindow extends GenericDialog {
             GlobalConf.data.CATALOG_JSON_FILE = GlobalConf.data.DR2_JSON_FILE;
         else if (GlobalConf.data.CATALOG_JSON_FILE == null || GlobalConf.data.CATALOG_JSON_FILE.length() == 0)
             Logger.error(this.getClass().getSimpleName(), "No catalog file selected!");
+
+        boolean hapos = GlobalConf.data.HIGH_ACCURACY_POSITIONS;
+        GlobalConf.data.HIGH_ACCURACY_POSITIONS = highAccuracyPositions.isChecked();
+
+        if (hapos != GlobalConf.data.HIGH_ACCURACY_POSITIONS) {
+            // Event
+            EventManager.instance.post(Events.HIGH_ACCURACY_CMD, GlobalConf.data.HIGH_ACCURACY_POSITIONS);
+        }
 
         // Screenshots
         File ssfile = new File(screenshotsLocation.getText().toString());

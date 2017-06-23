@@ -27,13 +27,13 @@ public class AnalyticsReporting {
 
     private static AnalyticsReporting instance;
 
-    public static void initialise(IPermission permission) {
+    public static void initialize(IPermission permission) {
         if (instance == null)
             instance = new AnalyticsReporting(permission);
     }
 
     public static AnalyticsReporting getInstance() {
-        initialise(null);
+        initialize(null);
         return instance;
     }
 
@@ -92,7 +92,7 @@ public class AnalyticsReporting {
         ConfInit.initialize(new DesktopConfInit(ASSETS_LOC));
         I18n.initialize(Gdx.files.absolute(ASSETS_LOC + "i18n/gsbundle"));
 
-        AnalyticsReporting.initialise(new IPermission() {
+        AnalyticsReporting.initialize(new IPermission() {
             @Override
             public boolean check() {
                 return true;
