@@ -179,11 +179,14 @@ public class AstroUtils {
     /**
      * Algorithm in "Astronomical Algorithms" book by Jean Meeus. Returns a
      * vector with the ecliptic longitude (&lambda;) in radians, the ecliptic
-     * latitude (&beta;) in radians and the distance in kilometers.
+     * latitude (&beta;) in radians and the distance between the centers of the
+     * Earth and the Moon in kilometers.
      * 
      * @param julianDate
      * @param out
-     *            The output vector.
+     *            The output vector with geocentric longitude (lambda) [rad],
+     *            geocentric latitude (beta) [rad], distance between the centers
+     *            of the Earth and the Moon [km]
      * @return The output vector, for chaining.
      */
     public static Vector3d moonEclipticCoordinates(double julianDate, Vector3d out) {
@@ -193,20 +196,20 @@ public class AstroUtils {
         double T3 = T2 * T;
         double T4 = T3 * T;
         // Moon's mean longitude, referred to the mean equinox of the date
-        double Lp = 218.3164591 + 481267.88134236 * T - 0.0013268 * T2 + T3 / 538841 - T4 / 65194000;
+        double Lp = 218.3164591 + 481267.88134236 * T - 0.0013268 * T2 + T3 / 538841.0 - T4 / 65194000.0;
         Lp = prettyAngle(Lp);
         // Mean elongation of the Moon
-        double D = 297.8502042 + 445267.1115168 * T - 0.00163 * T2 + T3 / 545868 - T4 / 113065000;
+        double D = 297.8502042 + 445267.1115168 * T - 0.00163 * T2 + T3 / 545868.0 - T4 / 113065000.0;
         D = prettyAngle(D);
         // Sun's mean anomaly
-        double M = 357.5291092 + 35999.0502909 * T - 0.0001536 * T2 + T3 / 24490000;
+        double M = 357.5291092 + 35999.0502909 * T - 0.0001536 * T2 + T3 / 24490000.0;
         M = prettyAngle(M);
         // Moon's mean anomaly
-        double Mp = 134.9634114 + 477198.8676313 * T + 0.008997 * T2 + T3 / 69699 - T4 / 14712000;
+        double Mp = 134.9634114 + 477198.8676313 * T + 0.008997 * T2 + T3 / 69699.0 - T4 / 14712000.0;
         Mp = prettyAngle(Mp);
         // Moon's argument of latitude (mean distance of the Moon from its
         // ascending node)
-        double F = 93.2720993 + 483202.0175273 * T - 0.0034029 * T2 - T3 / 3526000 + T4 / 863310000;
+        double F = 93.2720993 + 483202.0175273 * T - 0.0034029 * T2 - T3 / 3526000.0 + T4 / 863310000.0;
         F = prettyAngle(F);
         // Three further arguments (again, in degrees) are needed
         double A1 = 119.75 + 131.849 * T;
@@ -225,9 +228,9 @@ public class AstroUtils {
         double sumr = aux[1];
         double sumb = calculateSumb(D, sumr, Mp, F, E, A1, A3, Lp);
 
-        double lambda = prettyAngle(Lp + suml / 1000000);
-        double beta = (sumb / 1000000) % 360;
-        double dist = 385000.56 + sumr / 1000;
+        double lambda = prettyAngle(Lp + suml / 1000000.0);
+        double beta = prettyAngle((sumb / 1000000.0));
+        double dist = 385000.56 + sumr / 1000.0;
 
         return out.set(Math.toRadians(lambda), Math.toRadians(beta), dist);
     }
@@ -268,10 +271,23 @@ public class AstroUtils {
      * table.
      * 
      * @param D
+     *            Mean elongation of the Moon
      * @param M
+     *            Sun's mean anomaly
      * @param Mp
+     *            Moon's mean anomaly
      * @param F
-     * @return
+     *            Moon's argument of latitude (mean distance of the Moon from
+     *            its ascending node)
+     * @param E
+     *            Factor for eccentricity of Earth's orbit around the Sun
+     * @param A1
+     *            Term due to action of Venus
+     * @param A2
+     *            Term due to Jupiter
+     * @param Lp
+     *            Moon's mean longitude, referring to the equinox of the date
+     * @return Suml and Sumr
      */
     private static double[] calculateSumlSumr(double D, double M, double Mp, double F, double E, double A1, double A2, double Lp) {
         double suml = 0, sumr = 0;
@@ -286,13 +302,13 @@ public class AstroUtils {
             } else if (curr[2] == 2 || curr[2] == -2) {
                 mul = E * E;
             }
-            suml += curr[4] * FastMath.sin(Math.toRadians(curr[0] * D + curr[1] * M + curr[2] * Mp + curr[3] * F)) * mul;
-            sumr += curr[5] * FastMath.cos(Math.toRadians(curr[0] * D + curr[1] * M + curr[2] * Mp + curr[3] * F)) * mul;
+            suml += curr[4] * Math.sin(Math.toRadians(curr[0] * D + curr[1] * M + curr[2] * Mp + curr[3] * F)) * mul;
+            sumr += curr[5] * Math.cos(Math.toRadians(curr[0] * D + curr[1] * M + curr[2] * Mp + curr[3] * F)) * mul;
         }
         // Addition to Suml. The terms involving A1 are due to the action of
         // Venus. The term involving A2 is due to Jupiter
-        // while those involing L' are due to the flattening of the Earth.
-        double sumladd = 3958 * FastMath.sin(Math.toRadians(A1)) + 1962 * FastMath.sin(Math.toRadians(Lp - F)) + 318 * FastMath.sin(Math.toRadians(A2));
+        // while those involving L' are due to the flattening of the Earth.
+        double sumladd = 3958.0 * Math.sin(Math.toRadians(A1)) + 1962.0 * Math.sin(Math.toRadians(Lp - F)) + 318.0 * Math.sin(Math.toRadians(A2));
         suml += sumladd;
 
         return new double[] { suml, sumr };
@@ -312,12 +328,12 @@ public class AstroUtils {
             } else if (curr[2] == 2 || curr[2] == -2) {
                 mul *= E * E;
             }
-            sumb += curr[4] * FastMath.sin(Math.toRadians(curr[0] * D + curr[1] * M + curr[2] * Mp + curr[3] * F)) * mul;
+            sumb += curr[4] * Math.sin(Math.toRadians(curr[0] * D + curr[1] * M + curr[2] * Mp + curr[3] * F)) * mul;
         }
         // Addition to Sumb. The terms involving A1 are due to the action of
         // Venus. The term involving A2 is due to Jupiter
         // while those involing L' are due to the flattening of the Earth.
-        double sumbadd = -2235 * FastMath.sin(Math.toRadians(Lp)) + 382 * FastMath.sin(Math.toRadians(A3)) + 175 * FastMath.sin(Math.toRadians(A1 - F)) + 175 * FastMath.sin(Math.toRadians(A1 + F)) + 127 * FastMath.sin(Math.toRadians(Lp - Mp)) - 115 * FastMath.sin(Math.toRadians(Lp + Mp));
+        double sumbadd = -2235.0 * Math.sin(Math.toRadians(Lp)) + 382.0 * Math.sin(Math.toRadians(A3)) + 175.0 * Math.sin(Math.toRadians(A1 - F)) + 175.0 * Math.sin(Math.toRadians(A1 + F)) + 127.0 * Math.sin(Math.toRadians(Lp - Mp)) - 115.0 * Math.sin(Math.toRadians(Lp + Mp));
         sumb += sumbadd;
 
         return sumb;
@@ -379,82 +395,6 @@ public class AstroUtils {
             out.set(L, B, R);
             return out;
         }
-    }
-
-    /**
-     * Gets the orbital elements of the given celestial body, from Astronomical
-     * Algorithms (Jean Meeus). L - mean longitude of the planet a - semimajor
-     * axis of the orbit e - eccentricity of the orbit i - inclination on the
-     * plane of the ecliptic omega - longitude of the ascending node pi -
-     * longitude of the perihelion
-     * 
-     * @param body
-     *            The body
-     * @param date
-     *            The date
-     * @return A vector with the orbital elements of the given body in the above
-     *         order.
-     */
-    private static double[] getOrbitalElements(String body, Date date) {
-        return getOrbitalElements(body, getJulianDateCache(date));
-    }
-
-    /**
-     * Gets the orbital elements of the given celestial body, from Astronomical
-     * Algorithms (Jean Meeus). L - mean longitude of the planet a - semimajor
-     * axis of the orbit e - eccentricity of the orbit i - inclination on the
-     * plane of the ecliptic omega - longitude of the ascending node pi -
-     * longitude of the perihelion
-     * 
-     * @param body
-     *            The body
-     * @param julianDate
-     *            The julian date
-     * @return A vector with the orbital elements of the given body in the above
-     *         order.
-     */
-    private static double[] getOrbitalElements(String body, double julianDate) {
-        double[] el = new double[6];
-        // Time T measured in Julian centuries from the Epoch J2000.0
-        double T = T(julianDate);
-        double T2 = T * T;
-        double T3 = T2 * T;
-        switch (body) {
-        case "Mercury":
-            el[0] = 252.250960 + 149474.0722491 * T + 0.00030397 * T2 + 0.000000018 * T3;
-            el[1] = 0.387098310;
-            el[2] = 0.20563175 + 0.000020406 * T - 0.0000000284 * T2 - 0.00000000017 * T3;
-            el[3] = 7.004986 + 0.0018215 * T - 0.00001809 * T2 + 0.000000053 * T3;
-            el[4] = 48.330893 + 1.1861890 * T + 0.00017587 * T2 + 0.000000211 * T3;
-            el[5] = 77.456119 + 1.5564775 * T + 0.00029589 * T2 + 0.000000056 * T3;
-            break;
-        case "Venus":
-
-            break;
-        case "Mars":
-
-            break;
-        case "Jupiter":
-            el[0] = 34.351484 + 3036.3027889 * T + 0.00022374 * T2 - 0.000000025 * T3;
-            el[1] = 5.202603191 + 0.0000001913 * T;
-            el[2] = 0.04849485 + 0.000163244 * T - 0.0000004719 * T2 - 0.00000000197 * T3;
-            el[3] = 1.30327 - 0.0054966 * T + 0.00000465 * T2 - 0.000000004 * T3;
-            el[4] = 100.464441 + 1.020955 * T + 0.00040117 * T2 + 0.000000569 * T3;
-            el[5] = 14.331309 + 1.6126668 * T + 0.00103127 * T2 - 0.000004569 * T3;
-            break;
-        case "Saturn":
-
-            break;
-        case "Uranus":
-
-            break;
-        case "Neptune":
-
-            break;
-        default:
-            break;
-        }
-        return el;
     }
 
     private static double prettyAngle(double angle) {
@@ -639,7 +579,7 @@ public class AstroUtils {
      * @return
      */
     public static double getDayFraction(int hour, int min, int sec, int nanos) {
-        return hour / 24d + min / 1440d + (sec + nanos / 1E9d) / 86400d;
+        return hour / 24.0 + min / 1440.0 + (sec + nanos / 1.0E9) / 86400.0;
     }
 
     /**
@@ -649,10 +589,10 @@ public class AstroUtils {
      * @return [hours, minutes, seconds, nanos]
      */
     public static int[] getDayQuantities(double dayFraction) {
-        double hourf = dayFraction * 24d;
-        double minf = (hourf - (int) hourf) * 60d;
-        double secf = (minf - (int) minf) * 60d;
-        double nanosf = (secf - (int) secf) * 1E9d;
+        double hourf = dayFraction * 24.0;
+        double minf = (hourf - (int) hourf) * 60.0;
+        double secf = (minf - (int) minf) * 60.0;
+        double nanosf = (secf - (int) secf) * 1.0E9;
         return new int[] { (int) hourf, (int) minf, (int) secf, (int) nanosf };
     }
 
