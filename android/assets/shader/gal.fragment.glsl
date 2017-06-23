@@ -1,4 +1,4 @@
-#version 130
+#version 120
 
 #ifdef GL_ES
 precision mediump float;
@@ -6,8 +6,8 @@ precision mediump int;
 #endif
 
 // v_texCoords are UV coordinates in [0..1]
-in vec2 v_texCoords;
-in vec4 v_color;
+varying vec2 v_texCoords;
+varying vec4 v_color;
 
 uniform sampler2D u_texture0;
 // Distance in u to the star
@@ -64,12 +64,12 @@ vec2 min2(vec2 a, vec2 b) {
     return a.x<b.x ? a  : b;
 }
 
-float hash(const vec3 p ) {
+float hash(const vec3 p) {
 	float h = dot(p,vec3(127.1,311.7,758.5453123));
     return fract(sin(h)*43758.5453123);
 }
 
-float noise( in vec3 x )
+float noise(vec3 x)
 {
     vec3 p = floor(x);
     vec3 f = fract(x);
@@ -130,21 +130,29 @@ vec4 computeColor(vec3 p, float density, float radius, float id) {
 }
 
 // - Ray / Shapes Intersection -----------------------
-bool sBox(vec3 ro, vec3 rd, vec3 rad, out float tN, out float tF)  {
+vec3 sBox(vec3 ro, vec3 rd, vec3 rad, float tN, float tF)  {
     vec3 m = 1./rd, n = m*ro,
     	k = abs(m)*rad,
         t1 = -n - k, t2 = -n + k;
 	tN = max( max( t1.x, t1.y ), t1.z );
 	tF = min( min( t2.x, t2.y ), t2.z );
-	return !(tN > tF || tF < 0.);
+	float bol = 0.0;
+	if(!(tN > tF || tF < 0.)){
+		bol = 1.0;
+	}
+	return vec3(bol, tN, tF);
 }
 
-bool sSphere(vec3 ro, vec3 rd, float r, out float tN, out float tF) {
+vec3 sSphere(vec3 ro, vec3 rd, float r, float tN, float tF) {
 	float b = dot(rd, ro), d = b*b - dot(ro, ro) + r;
-	if (d < 0.) return false;
+	if (d < 0.) return vec3(0.0, 0.0, 0.0);
 	tN = -b - sqrt(d);
 	tF = -tN-b-b;
-	return tF > 0.;
+	float bol = 0.0;
+	if(tF > 0.){
+		bol = 1.0;
+	}
+	return vec3(bol, tN, tF);
 }
 
 vec4 sliderValuesInit(){
@@ -189,8 +197,15 @@ vec4 galaxy(vec2 tc) {
     float min_dist=0.,  max_dist=0.;
     float min_dist2=0., max_dist2=0.;
 
-    if(sSphere(ro, rd, 4., min_dist, max_dist)) {
-        if (sBox(ro, rd, vec3(4.,1.8,4.), min_dist2, max_dist2)) {
+    vec3 ssphresult = sSphere(ro, rd, 4., min_dist, max_dist);
+    min_dist = ssphresult.y;
+    max_dist = ssphresult.z;
+
+    if(ssphresult.x == 1.0) {
+    	vec3 sboxresult = sBox(ro, rd, vec3(4.,1.8,4.), min_dist2, max_dist2);
+    	min_dist2 = sboxresult.y;
+    	max_dist2 = sboxresult.z;
+        if (sboxresult.x == 1.0) {
         	min_dist = max(0.1,max(min_dist, min_dist2));
             max_dist = min(max_dist, max_dist2);
 
