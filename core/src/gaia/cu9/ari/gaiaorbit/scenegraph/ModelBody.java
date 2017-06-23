@@ -187,7 +187,7 @@ public abstract class ModelBody extends CelestialBody {
 
     @Override
     public float textScale() {
-        return Math.max(1f, labelSizeConcrete()) * .4e0f;
+        return Math.max(1f, labelSizeConcrete()) * 2e0f;
     }
 
     protected float labelSizeConcrete() {
