@@ -208,6 +208,9 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         // Set asset manager to asset bean
         AssetBean.setAssetManager(manager);
 
+        // Tooltip to 1s
+        TooltipManager.getInstance().initialTime = 1f;
+
         // Initialise Gaia attitudes
         manager.load(ATTITUDE_FOLDER, GaiaAttitudeServer.class, new GaiaAttitudeLoaderParameter(GlobalConf.runtime.STRIPPED_FOV_MODE ? new String[] { "OPS_RSLS_0022916_rsls_nsl_gareq1_afterFirstSpinPhaseOptimization.2.xml" } : new String[] {}));
 
