@@ -14,8 +14,8 @@ import gaia.cu9.ari.gaiaorbit.data.ISceneGraphLoader;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ConstellationBoundaries;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
+import gaia.cu9.ari.gaiaorbit.util.ComponentTypes;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
-import gaia.cu9.ari.gaiaorbit.util.GSEnumSet;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
@@ -46,7 +46,7 @@ public class ConstelBoundariesLoader<T extends SceneGraphNode> implements IScene
                     //Skip first line
                     String line;
                     ConstellationBoundaries boundary = new ConstellationBoundaries();
-                    boundary.ct = GSEnumSet.of(ComponentType.Boundaries);
+                    boundary.ct = new ComponentTypes(ComponentType.Boundaries);
                     List<List<Vector3d>> list = new ArrayList<List<Vector3d>>();
                     List<Vector3d> buffer = new ArrayList<Vector3d>(4);
                     String lastName = new String();

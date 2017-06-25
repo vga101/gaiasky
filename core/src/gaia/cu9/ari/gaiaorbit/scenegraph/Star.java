@@ -24,7 +24,7 @@ import com.badlogic.gdx.math.Vector3;
 import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
-import gaia.cu9.ari.gaiaorbit.util.GSEnumSet;
+import gaia.cu9.ari.gaiaorbit.util.ComponentTypes;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.ModelCache;
 import gaia.cu9.ari.gaiaorbit.util.Pair;
@@ -242,7 +242,7 @@ public class Star extends Particle {
     public void initialize() {
         super.initialize();
         modelDistance = 172.4643429 * radius;
-        ct = GSEnumSet.of(ComponentType.Stars);
+        ct = new ComponentTypes(ComponentType.Stars);
     }
 
     @Override

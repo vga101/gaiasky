@@ -62,9 +62,9 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
 import gaia.cu9.ari.gaiaorbit.script.HiddenHelperUser;
+import gaia.cu9.ari.gaiaorbit.util.ComponentTypes;
 import gaia.cu9.ari.gaiaorbit.util.ConfInit;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
-import gaia.cu9.ari.gaiaorbit.util.GSEnumSet;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
@@ -212,7 +212,8 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         TooltipManager.getInstance().initialTime = 1f;
 
         // Initialise Gaia attitudes
-        manager.load(ATTITUDE_FOLDER, GaiaAttitudeServer.class, new GaiaAttitudeLoaderParameter(GlobalConf.runtime.STRIPPED_FOV_MODE ? new String[] { "OPS_RSLS_0022916_rsls_nsl_gareq1_afterFirstSpinPhaseOptimization.2.xml" } : new String[] {}));
+        manager.load(ATTITUDE_FOLDER, GaiaAttitudeServer.class, new GaiaAttitudeLoaderParameter(GlobalConf.runtime.STRIPPED_FOV_MODE
+                ? new String[] { "OPS_RSLS_0022916_rsls_nsl_gareq1_afterFirstSpinPhaseOptimization.2.xml" } : new String[] {}));
 
         // Initialise hidden helper user
         HiddenHelperUser.initialise();
@@ -664,11 +665,15 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         return pp;
     }
 
+    public boolean isOn(int ordinal) {
+        return sgr.isOn(ordinal);
+    }
+
     public boolean isOn(ComponentType comp) {
         return sgr.isOn(comp);
     }
 
-    public boolean isOn(GSEnumSet<ComponentType> cts) {
+    public boolean isOn(ComponentTypes cts) {
         return sgr.isOn(cts);
     }
 

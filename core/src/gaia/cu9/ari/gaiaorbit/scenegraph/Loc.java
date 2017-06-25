@@ -94,7 +94,7 @@ public class Loc extends AbstractPositionEntity implements I3DTextRenderable {
 
     @Override
     public boolean renderText() {
-        if (viewAngle < LOWER_LIMIT || viewAngle > UPPER_LIMIT || !GaiaSky.instance.isOn(ct.getFirst())) {
+        if (viewAngle < LOWER_LIMIT || viewAngle > UPPER_LIMIT || !GaiaSky.instance.isOn(ct.getFirstOrdinal())) {
             return false;
         }
         Vector3d aux = aux3d1.get();

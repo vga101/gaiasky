@@ -17,8 +17,8 @@ import gaia.cu9.ari.gaiaorbit.render.IPointRenderable;
 import gaia.cu9.ari.gaiaorbit.render.IRenderable;
 import gaia.cu9.ari.gaiaorbit.render.SceneGraphRenderer;
 import gaia.cu9.ari.gaiaorbit.render.system.LineRenderSystem;
+import gaia.cu9.ari.gaiaorbit.util.ComponentTypes;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
-import gaia.cu9.ari.gaiaorbit.util.GSEnumSet;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.color.ColourUtils;
 import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadIndexer;
@@ -187,7 +187,7 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
     @Override
     public void initialize() {
         setDerivedAttributes();
-        ct = GSEnumSet.of(ComponentType.Galaxies);
+        ct = new ComponentTypes(ComponentType.Galaxies);
         // Relation between our star size and actual star size (normalized for
         // the Sun, 1391600 Km of diameter
         radius = size * Constants.STAR_SIZE_FACTOR;
@@ -401,7 +401,8 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
         final double mumin = -80;
         final double mumax = 80;
         final double maxmin = mumax - mumin;
-        renderer.addLine(p1.x, p1.y, p1.z, p2.x, p2.y, p2.z, (float) ((pmSph.x - mumin) / maxmin) * 0.8f + 0.2f, (float) ((pmSph.y - mumin) / maxmin) * 0.8f + 0.2f, (float) pmSph.z * 0.8f + 0.2f, alpha * this.opacity);
+        renderer.addLine(p1.x, p1.y, p1.z, p2.x, p2.y, p2.z, (float) ((pmSph.x - mumin) / maxmin) * 0.8f + 0.2f, (float) ((pmSph.y - mumin) / maxmin) * 0.8f + 0.2f, (float) pmSph.z * 0.8f
+                + 0.2f, alpha * this.opacity);
     }
 
     protected float getThOverFactorScl() {

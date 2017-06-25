@@ -18,7 +18,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Transform;
-import gaia.cu9.ari.gaiaorbit.util.GSEnumSet;
+import gaia.cu9.ari.gaiaorbit.util.ComponentTypes;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.Pair;
 import gaia.cu9.ari.gaiaorbit.util.color.ColourUtils;
@@ -307,7 +307,8 @@ public class OctreeNode implements ILineRenderable {
         } else {
             str.append("[ownobj: ");
         }
-        str.append(objects != null ? objects.size : "0").append("/").append(ownObjects).append(", recobj: ").append(nObjects).append(", nchld: ").append(childrenCount).append("] ").append(status).append("\n");
+        str.append(objects != null ? objects.size
+                : "0").append("/").append(ownObjects).append(", recobj: ").append(nObjects).append(", nchld: ").append(childrenCount).append("] ").append(status).append("\n");
 
         if (childrenCount > 0 && rec) {
             for (OctreeNode child : children) {
@@ -330,7 +331,8 @@ public class OctreeNode implements ILineRenderable {
         } else {
             str.append("[ownobj: ");
         }
-        str.append(objects != null ? objects.size : "0").append("/").append(ownObjects).append(", recobj: ").append(nObjects).append(", nchld: ").append(childrenCount).append("] ").append(status).append("\n");
+        str.append(objects != null ? objects.size
+                : "0").append("/").append(ownObjects).append(", recobj: ").append(nObjects).append(", nchld: ").append(childrenCount).append("] ").append(status).append("\n");
         if (childrenCount > 0) {
             for (OctreeNode child : children) {
                 if (child != null) {
@@ -356,10 +358,10 @@ public class OctreeNode implements ILineRenderable {
         return numNodes;
     }
 
-    GSEnumSet<ComponentType> ct = GSEnumSet.of(ComponentType.Others);
+    ComponentTypes ct = new ComponentTypes(ComponentType.Others);
 
     @Override
-    public GSEnumSet<ComponentType> getComponentType() {
+    public ComponentTypes getComponentType() {
         return ct;
     }
 
@@ -452,7 +454,8 @@ public class OctreeNode implements ILineRenderable {
                 double alpha = 1;
                 if (GlobalConf.scene.OCTREE_PARTICLE_FADE) {
                     AbstractRenderSystem.POINT_UPDATE_FLAG = true;
-                    alpha = MathUtilsd.clamp(MathUtilsd.lint(viewAngle, GlobalConf.scene.OCTANT_THRESHOLD_0 / cam.getFovFactor(), GlobalConf.scene.OCTANT_THRESHOLD_1 / cam.getFovFactor(), 0d, 1d), 0f, 1f);
+                    alpha = MathUtilsd.clamp(MathUtilsd.lint(viewAngle, GlobalConf.scene.OCTANT_THRESHOLD_0 / cam.getFovFactor(), GlobalConf.scene.OCTANT_THRESHOLD_1
+                            / cam.getFovFactor(), 0d, 1d), 0f, 1f);
                 }
 
                 // Add objects
@@ -498,7 +501,9 @@ public class OctreeNode implements ILineRenderable {
         boxcopy.set(box);
         // boxcopy.mul(boxtransf.idt().translate(parentTransform.getTranslation()));
 
-        observed = GlobalConf.program.CUBEMAP360_MODE || frustum.pointInFrustum(boxcopy.getCenter(auxD1)) || frustum.pointInFrustum(boxcopy.getCorner000(auxD1)) || frustum.pointInFrustum(boxcopy.getCorner001(auxD1)) || frustum.pointInFrustum(boxcopy.getCorner010(auxD1)) || frustum.pointInFrustum(boxcopy.getCorner011(auxD1)) || frustum.pointInFrustum(boxcopy.getCorner100(auxD1)) || frustum.pointInFrustum(boxcopy.getCorner101(auxD1)) || frustum.pointInFrustum(boxcopy.getCorner110(auxD1))
+        observed = GlobalConf.program.CUBEMAP360_MODE || frustum.pointInFrustum(boxcopy.getCenter(auxD1)) || frustum.pointInFrustum(boxcopy.getCorner000(auxD1))
+                || frustum.pointInFrustum(boxcopy.getCorner001(auxD1)) || frustum.pointInFrustum(boxcopy.getCorner010(auxD1)) || frustum.pointInFrustum(boxcopy.getCorner011(auxD1))
+                || frustum.pointInFrustum(boxcopy.getCorner100(auxD1)) || frustum.pointInFrustum(boxcopy.getCorner101(auxD1)) || frustum.pointInFrustum(boxcopy.getCorner110(auxD1))
                 || frustum.pointInFrustum(boxcopy.getCorner111(auxD1));
 
         for (int i = 0; i < 4; i++) {

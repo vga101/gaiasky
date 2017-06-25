@@ -13,6 +13,7 @@ import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
+import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
@@ -254,7 +255,7 @@ public class FocusInfoInterface extends Table implements IObserver, IGuiInterfac
 
             // Type
             try {
-                focusType.setText(txt("element." + cb.ct.getFirst().toString().toLowerCase() + ".singular"));
+                focusType.setText(txt("element." + ComponentType.values()[cb.ct.getFirstOrdinal()].toString().toLowerCase() + ".singular"));
             } catch (Exception e) {
                 focusType.setText("");
             }
