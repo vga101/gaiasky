@@ -35,13 +35,15 @@ import gaia.cu9.ari.gaiaorbit.render.ComponentType;
  * @author Toni Sagrista
  */
 public class ComponentTypes extends BitSet {
+    private static final long serialVersionUID = 1L;
+    public static final int CT_SIZE = 32;
 
     public ComponentTypes() {
-        super(18);
+        super(CT_SIZE);
     }
 
     public ComponentTypes(int ordinal) {
-        super(18);
+        super(CT_SIZE);
         set(ordinal);
     }
 
@@ -59,10 +61,14 @@ public class ComponentTypes extends BitSet {
         return nextSetBit(0);
     }
 
+    /**
+     * Checks if all the t bits in this bit set are also set in other.
+     * @param other The bit set to check against
+     * @return True if all the bits set to true in this bit set are also true in other. Returns false otherwise
+     */
     public boolean allSetLike(ComponentTypes other) {
-        ComponentTypes clone = ((ComponentTypes) clone());
-        clone.and(other);
-        return clone.cardinality() == cardinality();
+        long thisval = this.toLongArray()[0];
+        return (thisval & other.toLongArray()[0]) == thisval;
     }
 
     @Override
