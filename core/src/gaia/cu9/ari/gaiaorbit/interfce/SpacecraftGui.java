@@ -54,8 +54,8 @@ import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SpacecraftCamera;
+import gaia.cu9.ari.gaiaorbit.util.ComponentTypes;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
-import gaia.cu9.ari.gaiaorbit.util.GSEnumSet;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
@@ -629,7 +629,7 @@ public class SpacecraftGui implements IGui, IObserver {
     }
 
     @Override
-    public void setVisibilityToggles(ComponentType[] entities, GSEnumSet<ComponentType> visible) {
+    public void setVisibilityToggles(ComponentType[] entities, ComponentTypes visible) {
     }
 
     @Override

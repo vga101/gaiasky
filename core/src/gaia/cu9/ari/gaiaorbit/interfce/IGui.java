@@ -7,7 +7,7 @@ import com.badlogic.gdx.utils.Disposable;
 
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
-import gaia.cu9.ari.gaiaorbit.util.GSEnumSet;
+import gaia.cu9.ari.gaiaorbit.util.ComponentTypes;
 
 public interface IGui extends Disposable {
 
@@ -29,7 +29,7 @@ public interface IGui extends Disposable {
 
     public void setSceneGraph(ISceneGraph sg);
 
-    public void setVisibilityToggles(ComponentType[] entities, GSEnumSet<ComponentType> visible);
+    public void setVisibilityToggles(ComponentType[] entities, ComponentTypes visible);
 
     /**
      * Returns the first actor found with the specified name. Note this

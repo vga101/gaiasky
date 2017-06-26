@@ -14,7 +14,7 @@ import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.render.IRenderable;
 import gaia.cu9.ari.gaiaorbit.render.SceneGraphRenderer;
 import gaia.cu9.ari.gaiaorbit.scenegraph.octreewrapper.AbstractOctreeWrapper;
-import gaia.cu9.ari.gaiaorbit.util.GSEnumSet;
+import gaia.cu9.ari.gaiaorbit.util.ComponentTypes;
 import gaia.cu9.ari.gaiaorbit.util.concurrent.IThreadLocal;
 import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadIndexer;
 import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadLocalFactory;
@@ -34,11 +34,14 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
     public static final String ROOT_NAME = "Universe";
 
     @SuppressWarnings("unchecked")
-    protected static IThreadLocal<Vector3d> aux3d1 = ThreadLocalFactory.instance.get(Vector3d.class), aux3d2 = ThreadLocalFactory.instance.get(Vector3d.class), aux3d3 = ThreadLocalFactory.instance.get(Vector3d.class);
+    protected static IThreadLocal<Vector3d> aux3d1 = ThreadLocalFactory.instance.get(Vector3d.class), aux3d2 = ThreadLocalFactory.instance.get(Vector3d.class),
+            aux3d3 = ThreadLocalFactory.instance.get(Vector3d.class);
     @SuppressWarnings("unchecked")
-    protected static IThreadLocal<Vector3> aux3f1 = ThreadLocalFactory.instance.get(Vector3.class), aux3f2 = ThreadLocalFactory.instance.get(Vector3.class), aux3f3 = ThreadLocalFactory.instance.get(Vector3.class), aux3f4 = ThreadLocalFactory.instance.get(Vector3.class);
+    protected static IThreadLocal<Vector3> aux3f1 = ThreadLocalFactory.instance.get(Vector3.class), aux3f2 = ThreadLocalFactory.instance.get(Vector3.class),
+            aux3f3 = ThreadLocalFactory.instance.get(Vector3.class), aux3f4 = ThreadLocalFactory.instance.get(Vector3.class);
     @SuppressWarnings("unchecked")
-    protected static IThreadLocal<Vector2d> aux2d1 = ThreadLocalFactory.instance.get(Vector2d.class), aux2d2 = ThreadLocalFactory.instance.get(Vector2d.class), aux2d3 = ThreadLocalFactory.instance.get(Vector2d.class);
+    protected static IThreadLocal<Vector2d> aux2d1 = ThreadLocalFactory.instance.get(Vector2d.class), aux2d2 = ThreadLocalFactory.instance.get(Vector2d.class),
+            aux2d3 = ThreadLocalFactory.instance.get(Vector2d.class);
 
     /**
      * Describes to which render group this node belongs at a particular time
@@ -181,7 +184,7 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
     /**
      * Component types, for managing visibility
      */
-    public GSEnumSet<ComponentType> ct;
+    public ComponentTypes ct;
 
     public SceneGraphNode() {
         // Identity
@@ -196,7 +199,7 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
 
     public SceneGraphNode(ComponentType ct) {
         super();
-        this.ct = GSEnumSet.of(ct);
+        this.ct = new ComponentTypes(ct);
     }
 
     public SceneGraphNode(String name, SceneGraphNode parent) {
@@ -432,7 +435,7 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
     }
 
     public void initialize() {
-        ct = GSEnumSet.of(ComponentType.Others);
+        ct = new ComponentTypes(ComponentType.Others.ordinal());
     }
 
     public void doneLoading(AssetManager manager) {
@@ -488,17 +491,17 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
     }
 
     public void setCt(String ct) {
-        this.ct = GSEnumSet.of(ComponentType.valueOf(ct));
+        this.ct = new ComponentTypes(ComponentType.valueOf(ct));
     }
 
     public void setCt(String[] cts) {
-        this.ct = GSEnumSet.noneOf(ComponentType.class);
+        this.ct = new ComponentTypes();
         for (int i = 0; i < cts.length; i++) {
-            this.ct.add(ComponentType.valueOf(cts[i]));
+            this.ct.set(ComponentType.valueOf(cts[i]).ordinal());
         }
     }
 
-    public GSEnumSet<ComponentType> getComponentType() {
+    public ComponentTypes getComponentType() {
         return ct;
     }
 
@@ -586,8 +589,8 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
     }
 
     protected boolean addToRender(IRenderable renderable, RenderGroup rg) {
-        boolean vis = SceneGraphRenderer.visible.contains(ct.getFirst());
-        if (vis || (!vis && SceneGraphRenderer.alphas[ct.getFirstOrdinal()] > 0)) {
+        boolean on = ct.intersects(SceneGraphRenderer.visible);
+        if (on || (!on && SceneGraphRenderer.alphas[ct.getFirstOrdinal()] > 0)) {
             SceneGraphRenderer.render_lists.get(rg).add(renderable, ThreadIndexer.i());
             return true;
         }
