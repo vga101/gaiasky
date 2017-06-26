@@ -3,6 +3,7 @@
 
 [![Documentation Status](https://readthedocs.org/projects/gaia-sky/badge/?version=latest)](http://gaia-sky.readthedocs.io/en/latest/?badge=latest)
 [![Circle CI](https://circleci.com/gh/langurmonkey/gaiasky.svg?style=shield&circle-token=:circle-token)](https://circleci.com/gh/langurmonkey/gaiasky/tree/master)
+[![License: MPL 2.0](https://img.shields.io/badge/License-MPL%202.0-brightgreen.svg)](https://opensource.org/licenses/MPL-2.0)
 
 [**Gaia Sky**](https://zah.uni-heidelberg.de/gaia/outreach/gaiasky) is a real-time, 3D, astronomy visualisation software that
 runs on Windows, Linux and MacOS. It is developed in the framework of
@@ -184,10 +185,10 @@ The most up-to-date documentation of Gaia Sky is always in [gaia-sky.readthedocs
 
 ##  4. Copyright and licensing information
 
-This software is published and distributed under the GPLv3
-(GNU General Public License v3) license. You can find the full license
+This software is published and distributed under the MPL 2.0
+(Mozilla Public License 2.0). You can find the full license
 text here https://github.com/langurmonkey/gaiasky/blob/master/LICENSE.md
-or visiting https://www.gnu.org/licenses/gpl.html
+or visiting https://opensource.org/licenses/MPL-2.0
 
 ##  5. Contact information
 
