@@ -169,6 +169,12 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
         ppb.lglow.setEnabled(GlobalConf.postprocess.POSTPROCESS_LIGHT_SCATTERING);
         ppb.pp.addEffect(ppb.lglow);
 
+        // HDR
+        //        ppb.hdr = new HDR();
+        //        ppb.hdr.setExposure(1.0f);
+        //        ppb.hdr.setGamma(2.2f);
+        //        ppb.pp.addEffect(ppb.hdr);
+
         // BLOOM
         ppb.bloom = new Bloom((int) (width * bloomFboScale), (int) (height * bloomFboScale));
         ppb.bloom.setBloomIntesity(GlobalConf.postprocess.POSTPROCESS_BLOOM_INTENSITY);
@@ -357,6 +363,7 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
 
                             // Motion blur
                             ppb.motionblur.setEnabled(GlobalConf.postprocess.POSTPROCESS_MOTION_BLUR != 0 && cameraChanged);
+
                         }
                     }
                     prevCombined.set(cam.combined);

@@ -25,6 +25,7 @@ public interface IPostProcessor extends Disposable {
         public LightScattering lscatter;
         public MotionBlur motionblur;
         public Levels levels;
+        //public HDR hdr;
 
         public boolean capture() {
             return pp.capture();

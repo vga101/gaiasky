@@ -100,7 +100,7 @@ vec4 draw() {
 }
 
 void main() {
-    gl_FragColor = clamp(draw(), 0.0, 1.0);
+    gl_FragColor = draw();
     // Debug! - visualise depth buffer
     //gl_FragColor = vec4(vec3(gl_FragCoord.z), 1.0f);
 }
