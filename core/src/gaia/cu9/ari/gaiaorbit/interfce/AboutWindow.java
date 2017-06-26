@@ -182,7 +182,7 @@ public class AboutWindow extends GenericDialog {
         author.align(Align.left);
         Label authorname = new OwnLabel("Toni Sagristà Sellés", skin);
         Link authormail = new Link("tsagrista@ari.uni-heidelberg.de", linkStyle, "mailto:tsagrista@ari.uni-heidelberg.de");
-        Link authorpage = new Link("www.tonisagrista.com", linkStyle, "http://tonisagrista.com");
+        Link authorpage = new Link("www.tonisagrista.com", linkStyle, "https://tonisagrista.com");
         author.addActor(authorname);
         author.addActor(authormail);
         author.addActor(authorpage);
@@ -206,7 +206,7 @@ public class AboutWindow extends GenericDialog {
         licensetext.setDisabled(true);
         licensetext.setPrefRows(3);
         licensetext.setWidth(tawidth2 / 2f);
-        Link licenselink = new Link(" https://opensource.org/licenses/MPL-2.0", linkStyle, " https://opensource.org/licenses/MPL-2.0");
+        Link licenselink = new Link("https://opensource.org/licenses/MPL-2.0", linkStyle, "https://opensource.org/licenses/MPL-2.0");
 
         licensev.addActor(licensetext);
         licensev.addActor(licenselink);
@@ -464,7 +464,8 @@ public class AboutWindow extends GenericDialog {
     private void newVersionCheck(String version) {
         int[] majmin = GlobalConf.VersionConf.getMajorMinorRevFromString(version);
 
-        if (majmin[0] > GlobalConf.version.major || (majmin[0] == GlobalConf.version.major && majmin[1] > GlobalConf.version.minor) || (majmin[0] == GlobalConf.version.major && majmin[1] == GlobalConf.version.minor) && majmin[2] > GlobalConf.version.rev) {
+        if (majmin[0] > GlobalConf.version.major || (majmin[0] == GlobalConf.version.major && majmin[1] > GlobalConf.version.minor)
+                || (majmin[0] == GlobalConf.version.major && majmin[1] == GlobalConf.version.minor) && majmin[2] > GlobalConf.version.rev) {
             // There's a new version!
             checkLabel.setText(txt("gui.newversion.available", GlobalConf.version, version));
             final String uri = GlobalConf.WEBPAGE_DOWNLOADS;
