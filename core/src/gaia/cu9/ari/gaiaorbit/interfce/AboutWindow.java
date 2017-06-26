@@ -73,6 +73,7 @@ public class AboutWindow extends GenericDialog {
     @Override
     protected void build() {
         float tawidth = 440 * GlobalConf.SCALE_FACTOR;
+        float tawidth2 = 800 * GlobalConf.SCALE_FACTOR;
         float taheight = 250 * GlobalConf.SCALE_FACTOR;
         float taheight_s = 60 * GlobalConf.SCALE_FACTOR;
         float tabwidth = 110 * GlobalConf.SCALE_FACTOR;
@@ -199,19 +200,17 @@ public class AboutWindow extends GenericDialog {
         // License
         HorizontalGroup licenseh = new HorizontalGroup();
         licenseh.space(pad * 2);
-        Image license = new Image(getSpriteDrawable(Gdx.files.internal("img/license.png")));
 
         VerticalGroup licensev = new VerticalGroup();
         TextArea licensetext = new OwnTextArea(txt("gui.help.license"), skin.get("regular", TextFieldStyle.class));
         licensetext.setDisabled(true);
         licensetext.setPrefRows(3);
-        licensetext.setWidth(tawidth / 2f);
-        Link licenselink = new Link("https://www.gnu.org/licenses/gpl.html", linkStyle, "https://www.gnu.org/licenses/gpl.html");
+        licensetext.setWidth(tawidth2 / 2f);
+        Link licenselink = new Link(" https://opensource.org/licenses/MPL-2.0", linkStyle, " https://opensource.org/licenses/MPL-2.0");
 
         licensev.addActor(licensetext);
         licensev.addActor(licenselink);
 
-        licenseh.addActor(license);
         licenseh.addActor(licensev);
 
         // Thanks
