@@ -1,9 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph;
 
-import java.util.Arrays;
-
-import gaia.cu9.ari.gaiaorbit.event.EventManager;
-import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
 /**
@@ -24,8 +20,6 @@ public class SceneGraph extends AbstractSceneGraph {
         root.update(time, null, camera);
         objectsPerThread[0] = root.numChildren;
 
-        // Debug info
-        EventManager.instance.post(Events.DEBUG3, "Objects/thread: " + Arrays.toString(objectsPerThread));
     }
 
     public void dispose() {
