@@ -41,7 +41,8 @@
 									},
 						"texture" : {
 									"base" : "data/tex/moon*.jpg",
-									"normal" : "data/tex/moon-normal*.jpg"
+									"normal" : "data/tex/moon-normal*.jpg",
+									"specular" : "data/tex/all-mild-specular.jpg"
 									}
 						}
 	},
@@ -82,7 +83,8 @@
 							"model" : "data/models/phobos.g3db",
 							"texture" : {
 										"base" : "data/tex/phobos*.jpg",
-										"normal" : "data/tex/phobos-normal*.jpg"
+										"normal" : "data/tex/phobos-normal*.jpg",
+										"specular" : "data/tex/all-mild-specular.jpg"
 										}
 							}
 	},
@@ -123,7 +125,8 @@
 							"model" : "data/models/deimos.g3db",
 							"texture" : {
 										"base" : "data/tex/deimos.jpg",
-										"normal" : "data/tex/deimos-normal.jpg"
+										"normal" : "data/tex/deimos-normal.jpg",
+										"specular" : "data/tex/all-mild-specular.jpg"
 										}
 							}
 	},
@@ -206,7 +209,8 @@
 									"flip" : false
 									},
 							"texture" : {
-										"base" : "data/tex/io.jpg"
+										"base" : "data/tex/io.jpg",
+										"specular" : "data/tex/all-mild-specular.jpg"
 										}
 							}
 	},
@@ -251,7 +255,8 @@
 									"flip" : false
 									},
 							"texture" : {
-										"base" : "data/tex/europa.jpg"
+										"base" : "data/tex/europa.jpg",
+										"specular" : "data/tex/all-mild-specular.jpg"
 										}
 							}
 	},
@@ -296,7 +301,8 @@
 									"flip" : false
 									},
 							"texture" : {
-										"base" : "data/tex/ganymede.jpg"
+										"base" : "data/tex/ganymede.jpg",
+										"specular" : "data/tex/all-mild-specular.jpg"
 										}
 							}
 	},
@@ -341,7 +347,8 @@
 									"flip" : false
 									},
 							"texture" : {
-										"base" : "data/tex/callisto.jpg"
+										"base" : "data/tex/callisto.jpg",
+										"specular" : "data/tex/all-mild-specular.jpg"
 										}
 							}
 	},
@@ -422,7 +429,8 @@
 							"flip" : false
 							},
 					"texture" : {
-								"base" : "data/tex/titan*.jpg"
+								"base" : "data/tex/titan*.jpg",
+								"specular" : "data/tex/all-mild-specular.jpg"
 								}
 					}
 	},
@@ -466,7 +474,8 @@
 							"flip" : false
 							},
 					"texture" : {
-								"base" : "data/tex/rhea.jpg"
+								"base" : "data/tex/rhea.jpg",
+								"specular" : "data/tex/all-mild-specular.jpg"
 								}
 					}
 	},
