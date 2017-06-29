@@ -31,7 +31,7 @@ import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
  */
 public class ParticleGroup extends FadeNode implements I3DTextRenderable {
     float[] labelColour;
-    Vector3d labelPosition, aux;
+    Vector3d labelPosition;
 
     /**
      * Profile decay of the particles in the shader
@@ -43,8 +43,6 @@ public class ParticleGroup extends FadeNode implements I3DTextRenderable {
     public List<double[]> pointData;
 
     protected String datafile;
-
-    private float labelAlpha;
 
     public boolean inGpu;
     public int offset, count;
@@ -61,58 +59,57 @@ public class ParticleGroup extends FadeNode implements I3DTextRenderable {
     protected Double factor = null;
 
     public ParticleGroup() {
-	super();
-	aux = new Vector3d();
-	inGpu = false;
+        super();
+        inGpu = false;
     }
 
     public void initialize() {
-	/** Load data **/
-	try {
-	    Class clazz = Class.forName(provider);
-	    IParticleGroupDataProvider provider = (IParticleGroupDataProvider) clazz.newInstance();
+        /** Load data **/
+        try {
+            Class clazz = Class.forName(provider);
+            IParticleGroupDataProvider provider = (IParticleGroupDataProvider) clazz.newInstance();
 
-	    if (factor == null)
-		factor = 1d;
+            if (factor == null)
+                factor = 1d;
 
-	    pointData = provider.loadData(datafile, factor);
+            pointData = provider.loadData(datafile, factor);
 
-	    if (!fixedMeanPosition) {
-		// Mean position
-		for (double[] point : pointData) {
-		    pos.add(point[0], point[1], point[2]);
-		}
-		pos.scl(1d / pointData.size());
-	    }
-	} catch (Exception e) {
-	    Logger.error(e, getClass().getSimpleName());
-	    pointData = null;
-	}
+            if (!fixedMeanPosition) {
+                // Mean position
+                for (double[] point : pointData) {
+                    pos.add(point[0], point[1], point[2]);
+                }
+                pos.scl(1d / pointData.size());
+            }
+        } catch (Exception e) {
+            Logger.error(e, getClass().getSimpleName());
+            pointData = null;
+        }
     }
 
     @Override
     public void doneLoading(AssetManager manager) {
-	super.doneLoading(manager);
+        super.doneLoading(manager);
     }
 
     public void update(ITimeFrameProvider time, final Transform parentTransform, ICamera camera, float opacity) {
-	if (pointData != null) {
-	    super.update(time, parentTransform, camera, opacity);
-	}
+        if (pointData != null) {
+            super.update(time, parentTransform, camera, opacity);
+        }
     }
 
     @Override
     public void update(ITimeFrameProvider time, Transform parentTransform, ICamera camera) {
-	update(time, parentTransform, camera, 1f);
+        update(time, parentTransform, camera, 1f);
     }
 
     @Override
     protected void addToRenderLists(ICamera camera) {
-	addToRender(this, RenderGroup.POINT_GROUP);
+        addToRender(this, RenderGroup.PARTICLE_GROUP);
 
-	if (renderText()) {
-	    addToRender(this, RenderGroup.LABEL);
-	}
+        if (renderText()) {
+            addToRender(this, RenderGroup.LABEL);
+        }
     }
 
     /**
@@ -120,28 +117,27 @@ public class ParticleGroup extends FadeNode implements I3DTextRenderable {
      */
     @Override
     public void render(SpriteBatch batch, ShaderProgram shader, BitmapFont font3d, BitmapFont font2d, ICamera camera) {
-	Vector3d pos = aux3d1.get();
-	textPosition(camera, pos);
-	shader.setUniformf("a_viewAngle", 90f);
-	shader.setUniformf("a_thOverFactor", 1f);
-	render3DLabel(batch, shader, font3d, camera, text(), pos, textScale(), textSize(), textColour(), this.opacity);
+        Vector3d pos = aux3d1.get();
+        textPosition(camera, pos);
+        shader.setUniformf("a_viewAngle", 90f);
+        shader.setUniformf("a_thOverFactor", 1f);
+        render3DLabel(batch, shader, font3d, camera, text(), pos, textScale(), textSize(), textColour(), this.opacity);
     }
 
     public void setLabelcolor(double[] labelcolor) {
-	this.labelColour = GlobalResources.toFloatArray(labelcolor);
-	this.labelAlpha = this.labelColour[3];
+        this.labelColour = GlobalResources.toFloatArray(labelcolor);
     }
 
     public String getProvider() {
-	return provider;
+        return provider;
     }
 
     public void setProvider(String provider) {
-	this.provider = provider;
+        this.provider = provider;
     }
 
     public void setDatafile(String datafile) {
-	this.datafile = datafile;
+        this.datafile = datafile;
     }
 
     @Override
@@ -150,60 +146,59 @@ public class ParticleGroup extends FadeNode implements I3DTextRenderable {
 
     @Override
     public boolean renderText() {
-	return GaiaSky.instance.isOn(ComponentType.Labels);
+        return GaiaSky.instance.isOn(ComponentType.Labels);
     }
 
     @Override
     public float[] textColour() {
-	return labelColour;
+        return labelColour;
     }
 
     @Override
     public float textSize() {
-	return (float) distToCamera * 2e-3f;
+        return (float) distToCamera * 2e-3f;
     }
 
     @Override
     public float textScale() {
-	return 1f;
+        return 1f;
     }
 
     @Override
     public void textPosition(ICamera cam, Vector3d out) {
-	out.set(labelPosition).add(cam.getInversePos());
+        out.set(labelPosition).add(cam.getInversePos());
     }
 
     @Override
     public String text() {
-	return name;
+        return name;
     }
 
     @Override
     public void textDepthBuffer() {
-	Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
-	Gdx.gl.glDepthMask(true);
+        Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
+        Gdx.gl.glDepthMask(true);
     }
 
     @Override
     public boolean isLabel() {
-	return true;
+        return true;
     }
 
     public void setLabelposition(double[] labelposition) {
-	this.labelPosition = new Vector3d(labelposition[0] * Constants.PC_TO_U, labelposition[1] * Constants.PC_TO_U,
-		labelposition[2] * Constants.PC_TO_U);
+        this.labelPosition = new Vector3d(labelposition[0] * Constants.PC_TO_U, labelposition[1] * Constants.PC_TO_U, labelposition[2] * Constants.PC_TO_U);
     }
 
     public void setFactor(Double factor) {
-	this.factor = factor;
+        this.factor = factor;
     }
 
     public void setProfiledecay(Double profiledecay) {
-	this.profileDecay = profiledecay.floatValue();
+        this.profileDecay = profiledecay.floatValue();
     }
 
     public void setPosition(double[] pos) {
-	super.setPosition(pos);
-	this.fixedMeanPosition = true;
+        super.setPosition(pos);
+        this.fixedMeanPosition = true;
     }
 }

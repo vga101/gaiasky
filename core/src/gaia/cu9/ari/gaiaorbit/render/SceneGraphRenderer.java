@@ -39,6 +39,7 @@ import gaia.cu9.ari.gaiaorbit.render.system.MilkyWayRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.ModelBatchRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.ParticleGroupRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.PixelRenderSystem;
+import gaia.cu9.ari.gaiaorbit.render.system.StarGroupRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.VolumeCloudsRenderSystem;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
@@ -111,23 +112,23 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         ShaderProgram.pedantic = false;
 
         /**
-        	 * STAR SHADER
-        	 */
+         * STAR SHADER
+         */
         starShader = new ShaderProgram(Gdx.files.internal("shader/star.vertex.glsl"), Gdx.files.internal("shader/star.fragment.glsl"));
         if (!starShader.isCompiled()) {
             Logger.error(new RuntimeException(), this.getClass().getName() + " - Star shader compilation failed:\n" + starShader.getLog());
         }
         /**
-        	 * GALAXY SHADER
-        	 */
+         * GALAXY SHADER
+         */
         galaxyShader = new ShaderProgram(Gdx.files.internal("shader/gal.vertex.glsl"), Gdx.files.internal("shader/gal.fragment.glsl"));
         if (!galaxyShader.isCompiled()) {
             Logger.error(new RuntimeException(), this.getClass().getName() + " - Galaxy shader compilation failed:\n" + galaxyShader.getLog());
         }
 
         /**
-        	 * FONT SHADER
-        	 */
+         * FONT SHADER
+         */
         fontShader = new ShaderProgram(Gdx.files.internal("shader/font.vertex.glsl"), Gdx.files.internal("shader/font.fragment.glsl"));
         if (!fontShader.isCompiled()) {
             Logger.error(new RuntimeException(), this.getClass().getName() + " - Font shader compilation failed:\n" + fontShader.getLog());
@@ -141,8 +142,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         }
 
         ShaderProvider sp = new AtmosphereGroundShaderProvider(Gdx.files.internal("shader/default.vertex.glsl"), Gdx.files.internal("shader/default.fragment.glsl"));
-        ShaderProvider spnormal = Constants.webgl ? sp
-                : new AtmosphereGroundShaderProvider(Gdx.files.internal("shader/normal.vertex.glsl"), Gdx.files.internal("shader/normal.fragment.glsl"));
+        ShaderProvider spnormal = Constants.webgl ? sp : new AtmosphereGroundShaderProvider(Gdx.files.internal("shader/normal.vertex.glsl"), Gdx.files.internal("shader/normal.fragment.glsl"));
         ShaderProvider spatm = new AtmosphereShaderProvider(Gdx.files.internal("shader/atm.vertex.glsl"), Gdx.files.internal("shader/atm.fragment.glsl"));
         ShaderProvider spsurface = new DefaultShaderProvider(Gdx.files.internal("shader/default.vertex.glsl"), Gdx.files.internal("shader/starsurface.fragment.glsl"));
         ShaderProvider spbeam = new DefaultShaderProvider(Gdx.files.internal("shader/default.vertex.glsl"), Gdx.files.internal("shader/beam.fragment.glsl"));
@@ -188,16 +188,16 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         }
 
         /**
-        	 * DEPTH BUFFER BITS
-        	 */
+         * DEPTH BUFFER BITS
+         */
 
         intBuffer.rewind();
         Gdx.gl.glGetIntegerv(GL20.GL_DEPTH_BITS, intBuffer);
         Logger.info(this.getClass().getSimpleName(), "Depth buffer size: " + intBuffer.get() + " bits");
 
         /**
-        	 * INITIALIZE SGRs
-        	 */
+         * INITIALIZE SGRs
+         */
         sgrs = new ISGR[4];
         sgrs[SGR_DEFAULT_IDX] = new SGR();
         sgrs[SGR_STEREO_IDX] = new SGRStereoscopic();
@@ -206,10 +206,10 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         sgr = null;
 
         /**
-        	 *
-        	 * ======= INITIALIZE RENDER COMPONENTS =======
-        	 *
-        	 **/
+         *
+         * ======= INITIALIZE RENDER COMPONENTS =======
+         *
+         **/
         pixelRenderSystems = new AbstractRenderSystem[3];
 
         renderProcesses = new Array<IRenderSystem>();
@@ -286,8 +286,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
                         IRenderable s = renderables.get(i);
                         if (s instanceof Particle) {
                             Particle p = (Particle) s;
-                            if (!Constants.webgl && lightIndex < Glow.N
-                                    && (GlobalConf.program.CUBEMAP360_MODE || GaiaSky.instance.cam.getDirection().angle(p.transform.position) < angleEdgeDeg)) {
+                            if (!Constants.webgl && lightIndex < Glow.N && (GlobalConf.program.CUBEMAP360_MODE || GaiaSky.instance.cam.getDirection().angle(p.transform.position) < angleEdgeDeg)) {
                                 Vector3 pos3 = p.transform.getTranslationf(auxv);
                                 pos3.sub(camera.getShift().put(auxv2));
                                 camera.getCamera().project(pos3);
@@ -333,8 +332,12 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         galaxyProc.setPreRunnable(blendNoDepthRunnable);
 
         // PARTICLE GROUP
-        AbstractRenderSystem particleGroupProc = new ParticleGroupRenderSystem(RenderGroup.POINT_GROUP, priority++, alphas);
+        AbstractRenderSystem particleGroupProc = new ParticleGroupRenderSystem(RenderGroup.PARTICLE_GROUP, priority++, alphas);
         particleGroupProc.setPreRunnable(blendNoDepthRunnable);
+
+        // STAR GROUP
+        AbstractRenderSystem starGroupProc = new StarGroupRenderSystem(RenderGroup.STAR_GROUP, priority++, alphas);
+        starGroupProc.setPreRunnable(blendNoDepthRunnable);
 
         // MODEL STARS
         AbstractRenderSystem modelStarsProc = new ModelBatchRenderSystem(RenderGroup.MODEL_S, priority++, alphas, modelBatchS, false);
@@ -352,8 +355,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         AbstractRenderSystem modelAtmProc = new ModelBatchRenderSystem(RenderGroup.MODEL_F_ATM, priority++, alphas, modelBatchAtm, true) {
             @Override
             public float getAlpha(IRenderable s) {
-                return alphas[ComponentType.Atmospheres.ordinal()]
-                        * (float) Math.pow(alphas[s.getComponentType().getFirstOrdinal()], 2);
+                return alphas[ComponentType.Atmospheres.ordinal()] * (float) Math.pow(alphas[s.getComponentType().getFirstOrdinal()], 2);
             }
 
             @Override
@@ -376,6 +378,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
         // Add components to set
         renderProcesses.add(pixelStarProc);
+        renderProcesses.add(starGroupProc);
         renderProcesses.add(modelBackProc);
         // renderProcesses.add(cloudsProc);
         renderProcesses.add(annotationsProc);
@@ -602,8 +605,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
             }
             return alphas[ordinal];
         } else {
-            return visible.get(ordinal) ? MathUtilsd.lint(diff, 0, GlobalConf.scene.OBJECT_FADE_MS, 0, 1)
-                    : MathUtilsd.lint(diff, 0, GlobalConf.scene.OBJECT_FADE_MS, 1, 0);
+            return visible.get(ordinal) ? MathUtilsd.lint(diff, 0, GlobalConf.scene.OBJECT_FADE_MS, 0, 1) : MathUtilsd.lint(diff, 0, GlobalConf.scene.OBJECT_FADE_MS, 1, 0);
         }
     }
 
@@ -637,8 +639,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
             }
         }
         final int idx = renderProcesses.indexOf(current, true);
-        if ((current instanceof LineQuadRenderSystem && GlobalConf.scene.isNormalLineRenderer())
-                || (!(current instanceof LineQuadRenderSystem) && !GlobalConf.scene.isNormalLineRenderer())) {
+        if ((current instanceof LineQuadRenderSystem && GlobalConf.scene.isNormalLineRenderer()) || (!(current instanceof LineQuadRenderSystem) && !GlobalConf.scene.isNormalLineRenderer())) {
             renderProcesses.removeIndex(idx);
             AbstractRenderSystem lineSys = getLineRenderSystem();
             renderProcesses.insert(idx, lineSys);

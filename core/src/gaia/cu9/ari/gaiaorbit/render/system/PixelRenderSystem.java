@@ -3,6 +3,7 @@ package gaia.cu9.ari.gaiaorbit.render.system;
 import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
@@ -30,8 +31,9 @@ public class PixelRenderSystem extends ImmediateRenderSystem implements IObserve
 
     boolean starColorTransit = false;
     Vector3 aux;
-    int additionalOffset, pmOffset;
+    int sizeOffset, pmOffset;
     ComponentType ct;
+    float[] pointAlpha, alphaSizeFovBr;
 
     boolean initializing = false;
 
@@ -40,6 +42,7 @@ public class PixelRenderSystem extends ImmediateRenderSystem implements IObserve
         EventManager.instance.subscribe(this, Events.TRANSIT_COLOUR_CMD, Events.ONLY_OBSERVED_STARS_CMD, Events.STAR_MIN_OPACITY_CMD);
         BRIGHTNESS_FACTOR = Constants.webgl ? 15 : 10;
         this.ct = ct;
+        this.alphaSizeFovBr = new float[4];
         initializePointSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         initializing = true;
     }
@@ -59,11 +62,11 @@ public class PixelRenderSystem extends ImmediateRenderSystem implements IObserve
         else
             shaderProgram = new ShaderProgram(Gdx.files.internal("shader/point.vertex.glsl"), Gdx.files.internal("shader/point.fragment.glsl"));
         if (!shaderProgram.isCompiled()) {
-            Logger.error(this.getClass().getName(), "Point shader compilation failed:\n" + shaderProgram.getLog());
+            Logger.error(this.getClass().getName(), "Pixel shader compilation failed:\n" + shaderProgram.getLog());
         }
+        pointAlpha = new float[] { GlobalConf.scene.POINT_ALPHA_MIN, GlobalConf.scene.POINT_ALPHA_MAX };
         shaderProgram.begin();
-        shaderProgram.setUniformf("u_pointAlphaMin", GlobalConf.scene.POINT_ALPHA_MIN);
-        shaderProgram.setUniformf("u_pointAlphaMax", GlobalConf.scene.POINT_ALPHA_MAX);
+        shaderProgram.setUniform2fv("u_pointAlpha", pointAlpha, 0, 2);
         shaderProgram.end();
 
     }
@@ -84,12 +87,9 @@ public class PixelRenderSystem extends ImmediateRenderSystem implements IObserve
 
         curr.vertices = new float[maxVertices * (curr.mesh.getVertexAttributes().vertexSize / 4)];
         curr.vertexSize = curr.mesh.getVertexAttributes().vertexSize / 4;
-        curr.colorOffset = curr.mesh.getVertexAttribute(Usage.ColorPacked) != null
-                ? curr.mesh.getVertexAttribute(Usage.ColorPacked).offset / 4 : 0;
-        pmOffset = curr.mesh.getVertexAttribute(Usage.Tangent) != null
-                ? curr.mesh.getVertexAttribute(Usage.Tangent).offset / 4 : 0;
-        additionalOffset = curr.mesh.getVertexAttribute(Usage.Generic) != null
-                ? curr.mesh.getVertexAttribute(Usage.Generic).offset / 4 : 0;
+        curr.colorOffset = curr.mesh.getVertexAttribute(Usage.ColorPacked) != null ? curr.mesh.getVertexAttribute(Usage.ColorPacked).offset / 4 : 0;
+        pmOffset = curr.mesh.getVertexAttribute(Usage.Tangent) != null ? curr.mesh.getVertexAttribute(Usage.Tangent).offset / 4 : 0;
+        sizeOffset = curr.mesh.getVertexAttribute(Usage.Generic) != null ? curr.mesh.getVertexAttribute(Usage.Generic).offset / 4 : 0;
     }
 
     @Override
@@ -108,10 +108,9 @@ public class PixelRenderSystem extends ImmediateRenderSystem implements IObserve
                 curr.vertices[curr.vertexIdx + curr.colorOffset] = Color.toFloatBits(col[0], col[1], col[2], cb.opacity);
 
                 // SIZE
-                curr.vertices[curr.vertexIdx + additionalOffset] = cb.getRadius();
-                curr.vertices[curr.vertexIdx + additionalOffset + 1] = (float) cb.THRESHOLD_POINT();
+                curr.vertices[curr.vertexIdx + sizeOffset] = cb.getRadius();
 
-                // VERTEX
+                // POSITION
                 aux.set((float) cb.pos.x, (float) cb.pos.y, (float) cb.pos.z);
                 final int idx = curr.vertexIdx;
                 curr.vertices[idx] = aux.x;
@@ -135,21 +134,30 @@ public class PixelRenderSystem extends ImmediateRenderSystem implements IObserve
                 // Enable point sizes
                 Gdx.gl20.glEnable(0x8642);
             }
+
+            // Additive blending
+            Gdx.gl20.glBlendFunc(GL20.GL_ONE, GL20.GL_ONE);
+
             shaderProgram.begin();
             shaderProgram.setUniformMatrix("u_projModelView", camera.getCamera().combined);
             shaderProgram.setUniformf("u_camPos", camera.getCurrent().getPos().put(aux));
-            shaderProgram.setUniformf("u_fovFactor", camera.getFovFactor());
-            shaderProgram.setUniformf("u_alpha", alphas[ct.ordinal()]);
-            shaderProgram.setUniformf("u_starBrightness", (float) (GlobalConf.scene.STAR_BRIGHTNESS * BRIGHTNESS_FACTOR));
-            shaderProgram.setUniformf("u_pointSize", camera.getNCameras() == 1
-                    ? GlobalConf.scene.STAR_POINT_SIZE * GlobalConf.SCALE_FACTOR
-                            * (GlobalConf.program.isStereoFullWidth() ? 1 : 2)
-                    : GlobalConf.scene.STAR_POINT_SIZE * GlobalConf.SCALE_FACTOR * 10);
+
+            alphaSizeFovBr[0] = alphas[ct.ordinal()];
+            alphaSizeFovBr[1] = camera.getNCameras() == 1 ? GlobalConf.scene.STAR_POINT_SIZE * GlobalConf.SCALE_FACTOR * (GlobalConf.program.isStereoFullWidth() ? 1 : 2) : GlobalConf.scene.STAR_POINT_SIZE * GlobalConf.SCALE_FACTOR * 10;
+            alphaSizeFovBr[2] = camera.getFovFactor();
+            alphaSizeFovBr[3] = (float) (GlobalConf.scene.STAR_BRIGHTNESS * BRIGHTNESS_FACTOR);
+            shaderProgram.setUniform4fv("u_alphaSizeFovBr", alphaSizeFovBr, 0, 4);
+
             shaderProgram.setUniformf("u_t", (float) AstroUtils.getMsSinceJ2000(GaiaSky.instance.time.getTime()));
             shaderProgram.setUniformf("u_ar", GlobalConf.program.isStereoHalfWidth() ? 0.5f : 1f);
+            shaderProgram.setUniformf("u_thAnglePoint", (float) GlobalConf.scene.STAR_THRESHOLD_POINT);
+
             curr.mesh.setVertices(curr.vertices, 0, curr.vertexIdx);
             curr.mesh.render(shaderProgram, ShapeType.Point.getGlType());
             shaderProgram.end();
+
+            // Restore
+            Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
         }
 
     }
@@ -159,7 +167,7 @@ public class PixelRenderSystem extends ImmediateRenderSystem implements IObserve
         attribs.add(new VertexAttribute(Usage.Position, 3, ShaderProgram.POSITION_ATTRIBUTE));
         attribs.add(new VertexAttribute(Usage.Tangent, 3, "a_pm"));
         attribs.add(new VertexAttribute(Usage.ColorPacked, 4, ShaderProgram.COLOR_ATTRIBUTE));
-        attribs.add(new VertexAttribute(Usage.Generic, 4, "a_additional"));
+        attribs.add(new VertexAttribute(Usage.Generic, 1, "a_size"));
 
         VertexAttribute[] array = new VertexAttribute[attribs.size];
         for (int i = 0; i < attribs.size; i++)
@@ -179,12 +187,12 @@ public class PixelRenderSystem extends ImmediateRenderSystem implements IObserve
             break;
         case STAR_MIN_OPACITY_CMD:
             if (shaderProgram != null && shaderProgram.isCompiled()) {
-                final float newAlphaMin = (float) data[0];
+                pointAlpha[0] = (float) data[0];
                 Gdx.app.postRunnable(new Runnable() {
                     @Override
                     public void run() {
                         shaderProgram.begin();
-                        shaderProgram.setUniformf("u_pointAlphaMin", newAlphaMin);
+                        shaderProgram.setUniform2fv("u_pointAlpha", pointAlpha, 0, 2);
                         shaderProgram.end();
                     }
 

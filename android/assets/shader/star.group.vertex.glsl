@@ -22,7 +22,7 @@ uniform float u_thAnglePoint;
 // 3 - star brightness
 uniform vec4 u_alphaSizeFovBr;
 
-// VARYINGs
+// VARYINGS
 varying vec4 v_col;
 
 float lint(float x, float x0, float x1, float y0, float y1) {
@@ -33,13 +33,13 @@ void main() {
     vec3 pos = a_position.xyz - u_camPos;
 
     // Proper motion
-    vec3 pm = a_pm.xyz * u_t / 1000.0;     
-    pos = pos + pm;
-  
+//    vec3 pm = a_pm.xyz * u_t / 1000.0;
+//    pos = pos + pm;
+
     float viewAngleApparent = atan((a_size * u_alphaSizeFovBr.w) / length(pos)) / u_alphaSizeFovBr.z;
     float opacity = pow(lint(viewAngleApparent, 0.0, u_thAnglePoint, u_pointAlpha.x, u_pointAlpha.y), 1.2);
-    
-    v_col = vec4(a_color.rgb, a_color.a * opacity * u_alphaSizeFovBr.x * smoothstep(u_thAnglePoint * 60.0, u_thAnglePoint, viewAngleApparent));
+
+    v_col = vec4(a_color.rgb, opacity * u_alphaSizeFovBr.x);
 
     gl_Position = u_projModelView * vec4(pos, 0.0);
     gl_PointSize = u_alphaSizeFovBr.y;

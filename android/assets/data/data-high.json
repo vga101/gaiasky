@@ -13,7 +13,8 @@
 					"data/locations.json",
 					"data/locations_earth.json",
 					"data/locations_moon.json",
-					"data/orbits_asteroid_extra_sample.json"]
+					//"data/orbits_asteroid_extra_sample.json"
+					]
 	},
 	{
 		"loader": gaia.cu9.ari.gaiaorbit.data.GeoJsonLoader,

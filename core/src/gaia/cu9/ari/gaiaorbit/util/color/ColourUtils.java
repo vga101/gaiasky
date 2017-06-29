@@ -14,10 +14,10 @@ public class ColourUtils {
         return (value - min) / (max - min);
     }
 
-    /** 
-     * Converts a scalar value that is normalized to [0:1]
-     * into a grayscale color vector rgba.
-     * See: http://www.particleincell.com/blog/2014/colormap/
+    /**
+     * Converts a scalar value that is normalized to [0:1] into a grayscale
+     * color vector rgba. See: http://www.particleincell.com/blog/2014/colormap/
+     * 
      * @param value
      */
     public static void grayscale(float value, float rgba[]) {
@@ -28,13 +28,13 @@ public class ColourUtils {
     }
 
     /**
-     * Converts a scalar normalized to de range [0:1] into
-     * a short rainbow of rgba values. 
-     * See: http://www.particleincell.com/blog/2014/colormap/
+     * Converts a scalar normalized to de range [0:1] into a short rainbow of
+     * rgba values. See: http://www.particleincell.com/blog/2014/colormap/
+     * 
      * @param value
      */
     public static void short_rainbow(float value, float[] rgba) {
-        /*plot short rainbow RGB*/
+        /* plot short rainbow RGB */
         float a = (1 - value) / 0.25f; //invert and group
         final int X = (int) Math.floor(a); //this is the integer part
         float Y = (a - X); //fractional part from 0 to 1
@@ -71,16 +71,16 @@ public class ColourUtils {
     }
 
     /**
-     * Converts a scalar normalized to de range [0:1] into
-     * a long rainbow of rgba values. 
-     * See: http://www.particleincell.com/blog/2014/colormap/
+     * Converts a scalar normalized to de range [0:1] into a long rainbow of
+     * rgba values. See: http://www.particleincell.com/blog/2014/colormap/
+     * 
      * @param value
      * @return
      */
     public static void long_rainbow(float value, float[] rgba) {
         if (rgba == null)
             return;
-        /*plot long rainbow RGB*/
+        /* plot long rainbow RGB */
         float a = (1 - value) / 0.2f; //invert and group
         final int X = (int) Math.floor(a); //this is the integer part
         float Y = (a - X); //fractional part from 0 to 1
@@ -122,9 +122,9 @@ public class ColourUtils {
     }
 
     /**
-     * Converts a scalar normalized to de range [0:1] into
-     * a yellow to red map. 
+     * Converts a scalar normalized to de range [0:1] into a yellow to red map.
      * See: http://www.particleincell.com/blog/2014/colormap/
+     * 
      * @param value
      * @return
      */
@@ -141,12 +141,14 @@ public class ColourUtils {
     }
 
     /**
-     * Converts the color index B-V to RGB model.
-     * See http://stackoverflow.com/questions/21977786/star-b-v-color-index-to-apparent-rgb-color
-     * @param bv The B-V coor index.
+     * Converts the color index B-V to RGB model. See
+     * http://stackoverflow.com/questions/21977786/star-b-v-color-index-to-apparent-rgb-color
+     * 
+     * @param bv
+     *            The B-V coor index.
      * @return
      */
-    public static float[] BVtoRGB(float bv) {
+    public static float[] BVtoRGB(double bv) {
         double t = 4600 * ((1 / ((0.92 * bv) + 1.7)) + (1 / ((0.92 * bv) + 0.62)));
         // t to xyY
         double x = 0, y = 0;
@@ -197,10 +199,13 @@ public class ColourUtils {
         return result;
     }
 
-    /** 
+    /**
      * Returns a copy of the rgb colour brightened up by the given amount.
-     * @param rgb The RGB color.
-     * @param luminosity The new luminosity amount in [0, 1]
+     * 
+     * @param rgb
+     *            The RGB color.
+     * @param luminosity
+     *            The new luminosity amount in [0, 1]
      * @return
      */
     public static float[] brighten(float[] rgb, float luminosity) {
@@ -210,15 +215,17 @@ public class ColourUtils {
     }
 
     /**
-     * Converts an RGB color value to HSL. Conversion formula
-     * adapted from http://en.wikipedia.org/wiki/HSL_color_space.
-     * Assumes r, g, and b are contained in the set [0, 255] and
-     * returns h, s, and l in the set [0, 1].
+     * Converts an RGB color value to HSL. Conversion formula adapted from
+     * http://en.wikipedia.org/wiki/HSL_color_space. Assumes r, g, and b are
+     * contained in the set [0, 255] and returns h, s, and l in the set [0, 1].
      *
-     * @param   Number  r       The red color value
-     * @param   Number  g       The green color value
-     * @param   Number  b       The blue color value
-     * @return  Array           The HSL representation
+     * @param Number
+     *            r The red color value
+     * @param Number
+     *            g The green color value
+     * @param Number
+     *            b The blue color value
+     * @return Array The HSL representation
      */
     public static float[] rgbToHsl(float[] rgb) {
         float r, g, b;
@@ -249,15 +256,17 @@ public class ColourUtils {
     }
 
     /**
-     * Converts an HSL color value to RGB. Conversion formula
-     * adapted from http://en.wikipedia.org/wiki/HSL_color_space.
-     * Assumes h, s, and l are contained in the set [0, 1] and
-     * returns r, g, and b in the set [0, 255].
+     * Converts an HSL color value to RGB. Conversion formula adapted from
+     * http://en.wikipedia.org/wiki/HSL_color_space. Assumes h, s, and l are
+     * contained in the set [0, 1] and returns r, g, and b in the set [0, 255].
      *
-     * @param   Number  h       The hue
-     * @param   Number  s       The saturation
-     * @param   Number  l       The lightness
-     * @return  Array           The RGB representation
+     * @param Number
+     *            h The hue
+     * @param Number
+     *            s The saturation
+     * @param Number
+     *            l The lightness
+     * @return Array The RGB representation
      */
     public static float[] hslToRgb(float[] hsl) {
         float r, g, b;

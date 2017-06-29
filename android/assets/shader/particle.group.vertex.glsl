@@ -5,8 +5,8 @@ precision mediump int;
 
 attribute vec4 a_position;
 attribute vec4 a_color;
-// x - size, y - th_angle_point
-attribute float a_additional;
+// size
+attribute float a_size;
 
 uniform float u_alpha;
 
@@ -20,5 +20,5 @@ void main() {
     v_col = vec4(a_color.rgb, a_color.a * u_alpha );
 
     gl_Position = u_projModelView * vec4(pos, 0.0);
-    gl_PointSize = a_additional;
+    gl_PointSize = a_size;
 }

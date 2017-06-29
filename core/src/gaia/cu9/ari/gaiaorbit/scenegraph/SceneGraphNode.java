@@ -34,14 +34,11 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
     public static final String ROOT_NAME = "Universe";
 
     @SuppressWarnings("unchecked")
-    protected static IThreadLocal<Vector3d> aux3d1 = ThreadLocalFactory.instance.get(Vector3d.class), aux3d2 = ThreadLocalFactory.instance.get(Vector3d.class),
-            aux3d3 = ThreadLocalFactory.instance.get(Vector3d.class);
+    protected static IThreadLocal<Vector3d> aux3d1 = ThreadLocalFactory.instance.get(Vector3d.class), aux3d2 = ThreadLocalFactory.instance.get(Vector3d.class), aux3d3 = ThreadLocalFactory.instance.get(Vector3d.class);
     @SuppressWarnings("unchecked")
-    protected static IThreadLocal<Vector3> aux3f1 = ThreadLocalFactory.instance.get(Vector3.class), aux3f2 = ThreadLocalFactory.instance.get(Vector3.class),
-            aux3f3 = ThreadLocalFactory.instance.get(Vector3.class), aux3f4 = ThreadLocalFactory.instance.get(Vector3.class);
+    protected static IThreadLocal<Vector3> aux3f1 = ThreadLocalFactory.instance.get(Vector3.class), aux3f2 = ThreadLocalFactory.instance.get(Vector3.class), aux3f3 = ThreadLocalFactory.instance.get(Vector3.class), aux3f4 = ThreadLocalFactory.instance.get(Vector3.class);
     @SuppressWarnings("unchecked")
-    protected static IThreadLocal<Vector2d> aux2d1 = ThreadLocalFactory.instance.get(Vector2d.class), aux2d2 = ThreadLocalFactory.instance.get(Vector2d.class),
-            aux2d3 = ThreadLocalFactory.instance.get(Vector2d.class);
+    protected static IThreadLocal<Vector2d> aux2d1 = ThreadLocalFactory.instance.get(Vector2d.class), aux2d2 = ThreadLocalFactory.instance.get(Vector2d.class), aux2d3 = ThreadLocalFactory.instance.get(Vector2d.class);
 
     /**
      * Describes to which render group this node belongs at a particular time
@@ -76,8 +73,10 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
         MODEL_CLOSEUP(12),
         /** Beams **/
         MODEL_BEAM(13),
-        /** Point grup **/
-        POINT_GROUP(14),
+        /** Particle grup **/
+        PARTICLE_GROUP(14),
+        /** Star grup **/
+        STAR_GROUP(15),
 
         /** None **/
         NONE(-1);
