@@ -2,6 +2,7 @@ package gaia.cu9.ari.gaiaorbit.render.system;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.Mesh.VertexDataType;
 import com.badlogic.gdx.graphics.Texture;
@@ -141,6 +142,9 @@ public class BillboardRenderSystem extends AbstractRenderSystem implements IObse
             // Calculate billobard rotation quaternion ONCE
             DecalUtils.setBillboardRotation(quaternion, camera.getCamera().direction, camera.getCamera().up);
 
+            // Additive blending
+            Gdx.gl20.glBlendFunc(GL20.GL_ONE, GL20.GL_ONE);
+
             shaderProgram.begin();
 
             if (texture0 != null) {
@@ -164,6 +168,9 @@ public class BillboardRenderSystem extends AbstractRenderSystem implements IObse
                 s.render(shaderProgram, getAlpha(s), starColorTransit, mesh, camera);
             }
             shaderProgram.end();
+
+            // Restore
+            Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
         }
 
     }

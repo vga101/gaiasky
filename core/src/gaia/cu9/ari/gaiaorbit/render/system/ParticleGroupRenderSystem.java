@@ -5,6 +5,7 @@ import java.util.Comparator;
 import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
@@ -111,6 +112,9 @@ public class ParticleGroupRenderSystem extends ImmediateRenderSystem implements 
                     Gdx.gl20.glEnable(0x8642);
                 }
 
+                // Additive blending
+                Gdx.gl20.glBlendFunc(GL20.GL_ONE, GL20.GL_ONE);
+
                 shaderProgram.begin();
                 shaderProgram.setUniformMatrix("u_projModelView", camera.getCamera().combined);
                 shaderProgram.setUniformf("u_camPos", camera.getCurrent().getPos().put(aux1));
@@ -121,6 +125,8 @@ public class ParticleGroupRenderSystem extends ImmediateRenderSystem implements 
                 curr.mesh.render(shaderProgram, ShapeType.Point.getGlType());
                 shaderProgram.end();
 
+                // Restore
+                Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
             }
         }
 

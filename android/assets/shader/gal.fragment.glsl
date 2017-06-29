@@ -36,7 +36,7 @@ float light(float distance_center, float decay) {
 vec4 drawSimple(vec2 tc) {
 	float dist = distance (vec2 (0.5), tc) * 2.0;
 	float light = light(dist, light_decay);
-	return vec4(v_color.rgb, light);
+	return vec4(v_color.rgb, v_color.a) * light;
 }
 
 
