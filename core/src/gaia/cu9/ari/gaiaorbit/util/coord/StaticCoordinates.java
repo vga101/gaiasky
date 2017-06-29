@@ -2,17 +2,26 @@ package gaia.cu9.ari.gaiaorbit.util.coord;
 
 import java.util.Date;
 
+import com.badlogic.gdx.utils.reflect.ClassReflection;
+import com.badlogic.gdx.utils.reflect.Method;
+import com.badlogic.gdx.utils.reflect.ReflectionException;
+
 import gaia.cu9.ari.gaiaorbit.util.Constants;
+import gaia.cu9.ari.gaiaorbit.util.Logger;
+import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
 /**
  * A position that never changes
+ * 
  * @author Toni Sagrista
  *
  */
 public class StaticCoordinates implements IBodyCoordinates {
 
-    double[] position;
+    Vector3d position;
+    String transformName;
+    Matrix4d trf;
 
     @Override
     public void doneLoading(Object... params) {
@@ -33,11 +42,29 @@ public class StaticCoordinates implements IBodyCoordinates {
         return out.set(position);
     }
 
+    public void setTransformName(String transformName) {
+        this.transformName = transformName;
+        if (transformName != null) {
+            Class<Coordinates> c = Coordinates.class;
+            try {
+                Method m = ClassReflection.getMethod(c, transformName);
+                Matrix4d transform = (Matrix4d) m.invoke(null);
+
+                trf = new Matrix4d(transform);
+
+            } catch (ReflectionException e) {
+                Logger.error(this.getClass().getName(), "Error getting/invoking method Coordinates." + transformName + "()");
+            }
+        } else {
+            // Equatorial, nothing
+        }
+    }
+
     public void setPosition(double[] position) {
-        this.position = position;
-        this.position[0] *= Constants.KM_TO_U;
-        this.position[1] *= Constants.KM_TO_U;
-        this.position[2] *= Constants.KM_TO_U;
+        this.position = new Vector3d(position[0] * Constants.KM_TO_U, position[1] * Constants.KM_TO_U, position[2] * Constants.KM_TO_U);
+        if (trf != null) {
+            this.position.mul(trf);
+        }
     }
 
 }

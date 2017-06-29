@@ -60,131 +60,129 @@ public class MilkyWayReal extends AbstractPositionEntity implements I3DTextRende
     private double currentDistance;
 
     public MilkyWayReal() {
-	super();
-	localTransform = new Matrix4();
+        super();
+        localTransform = new Matrix4();
     }
 
     public void initialize() {
-	/** Load data **/
-	PointDataProvider provider = new PointDataProvider();
-	try {
-	    pointData = provider.loadData(gc.pointsource);
-	    nebulaData = provider.loadData(gc.nebulasource);
-	} catch (Exception e) {
-	    Logger.error(e, getClass().getSimpleName());
-	}
-	mc.initialize();
-	mc.env.set(new ColorAttribute(ColorAttribute.AmbientLight, cc[0], cc[1], cc[2], 1));
+        /** Load data **/
+        PointDataProvider provider = new PointDataProvider();
+        try {
+            pointData = provider.loadData(gc.pointsource);
+            nebulaData = provider.loadData(gc.nebulasource);
+        } catch (Exception e) {
+            Logger.error(e, getClass().getSimpleName());
+        }
+        mc.initialize();
+        mc.env.set(new ColorAttribute(ColorAttribute.AmbientLight, cc[0], cc[1], cc[2], 1));
 
     }
 
     @Override
     public void doneLoading(AssetManager manager) {
-	super.doneLoading(manager);
+        super.doneLoading(manager);
 
-	// Set static coordinates to position
-	coordinates.getEquatorialCartesianCoordinates(null, pos);
+        // Set static coordinates to position
+        coordinates.getEquatorialCartesianCoordinates(null, pos);
 
-	// Initialise transform
-	if (transformName != null) {
-	    Class<Coordinates> c = Coordinates.class;
-	    try {
-		Method m = ClassReflection.getMethod(c, transformName);
-		Matrix4d trf = (Matrix4d) m.invoke(null);
+        // Initialise transform
+        if (transformName != null) {
+            Class<Coordinates> c = Coordinates.class;
+            try {
+                Method m = ClassReflection.getMethod(c, transformName);
+                Matrix4d trf = (Matrix4d) m.invoke(null);
 
-		coordinateSystem = trf.putIn(new Matrix4());
+                coordinateSystem = trf.putIn(new Matrix4());
 
-	    } catch (ReflectionException e) {
-		Logger.error(this.getClass().getName(),
-			"Error getting/invoking method Coordinates." + transformName + "()");
-	    }
-	} else {
-	    // Equatorial, nothing
-	}
+            } catch (ReflectionException e) {
+                Logger.error(this.getClass().getName(), "Error getting/invoking method Coordinates." + transformName + "()");
+            }
+        } else {
+            // Equatorial, nothing
+        }
 
-	// Model
-	mc.doneLoading(manager, localTransform, null);
-	Vector3 aux = new Vector3();
-	Vector3 pos3 = pos.toVector3();
+        // Model
+        mc.doneLoading(manager, localTransform, null);
+        Vector3 aux = new Vector3();
+        Vector3 pos3 = pos.toVector3();
 
-	// Transform all
-	for (int i = 0; i < pointData.size(); i++) {
-	    double[] pointf = pointData.get(i);
+        // Transform all
+        for (int i = 0; i < pointData.size(); i++) {
+            double[] pointf = pointData.get(i);
 
-	    aux.set((float) pointf[0], (float) pointf[2], (float) pointf[1]);
-	    aux.scl(size).mul(coordinateSystem).add(pos3);
-	    pointf[0] = aux.x;
-	    pointf[1] = aux.y;
-	    pointf[2] = aux.z;
-	}
+            aux.set((float) pointf[0], (float) pointf[2], (float) pointf[1]);
+            aux.scl(size).mul(coordinateSystem).add(pos3);
+            pointf[0] = aux.x;
+            pointf[1] = aux.y;
+            pointf[2] = aux.z;
+        }
 
-	for (int i = 0; i < nebulaData.size(); i++) {
-	    double[] pointf = nebulaData.get(i);
-	    aux.set((float) pointf[0], (float) pointf[2], (float) pointf[1]);
-	    aux.scl(size).mul(coordinateSystem).add(pos3);
-	    pointf[0] = aux.x;
-	    pointf[1] = aux.y;
-	    pointf[2] = aux.z;
-	}
+        for (int i = 0; i < nebulaData.size(); i++) {
+            double[] pointf = nebulaData.get(i);
+            aux.set((float) pointf[0], (float) pointf[2], (float) pointf[1]);
+            aux.scl(size).mul(coordinateSystem).add(pos3);
+            pointf[0] = aux.x;
+            pointf[1] = aux.y;
+            pointf[2] = aux.z;
+        }
 
     }
 
     public void update(ITimeFrameProvider time, final Transform parentTransform, ICamera camera, float opacity) {
-	this.opacity = opacity * this.opacity;
-	transform.set(parentTransform);
-	this.currentDistance = camera.getDistance() * camera.getFovFactor();
+        this.opacity = opacity * this.opacity;
+        transform.set(parentTransform);
+        this.currentDistance = camera.getDistance() * camera.getFovFactor();
 
-	// Update with translation/rotation/etc
-	updateLocal(time, camera);
+        // Update with translation/rotation/etc
+        updateLocal(time, camera);
 
-	if (children != null && currentDistance < fadeIn.y) {
-	    for (int i = 0; i < children.size; i++) {
-		float childOpacity = 1 - this.opacity;
-		SceneGraphNode child = children.get(i);
-		child.update(time, transform, camera, childOpacity);
-	    }
-	}
+        if (children != null && currentDistance < fadeIn.y) {
+            for (int i = 0; i < children.size; i++) {
+                float childOpacity = 1 - this.opacity;
+                SceneGraphNode child = children.get(i);
+                child.update(time, transform, camera, childOpacity);
+            }
+        }
     }
 
     @Override
     public void update(ITimeFrameProvider time, Transform parentTransform, ICamera camera) {
-	update(time, parentTransform, camera, 1f);
+        update(time, parentTransform, camera, 1f);
     }
 
     @Override
     public void updateLocal(ITimeFrameProvider time, ICamera camera) {
-	super.updateLocal(time, camera);
+        super.updateLocal(time, camera);
 
-	// Update alpha
-	this.opacity = 1;
-	if (fadeIn != null)
-	    this.opacity *= MathUtilsd.lint((float) this.currentDistance, fadeIn.x, fadeIn.y, 0, 1);
-	if (fadeOut != null)
-	    this.opacity *= MathUtilsd.lint((float) this.currentDistance, fadeOut.x, fadeOut.y, 1, 0);
+        // Update alpha
+        this.opacity = 1;
+        if (fadeIn != null)
+            this.opacity *= MathUtilsd.lint((float) this.currentDistance, fadeIn.x, fadeIn.y, 0, 1);
+        if (fadeOut != null)
+            this.opacity *= MathUtilsd.lint((float) this.currentDistance, fadeOut.x, fadeOut.y, 1, 0);
 
-	// Directional light comes from up
-	updateLocalTransform();
+        // Directional light comes from up
+        updateLocalTransform();
 
-	if (mc != null) {
-	    Vector3 dd = aux3f1.get();
-	    dd.set(0, 1, 0);
-	    dd.mul(coordinateSystem);
+        if (mc != null) {
+            Vector3 dd = aux3f1.get();
+            dd.set(0, 1, 0);
+            dd.mul(coordinateSystem);
 
-	    mc.dlight.direction.set(dd);
-	}
+            mc.dlight.direction.set(dd);
+        }
 
     }
 
     @Override
     protected void addToRenderLists(ICamera camera) {
-	if ((fadeIn == null || fadeIn != null && currentDistance > fadeIn.x)
-		&& (fadeOut == null || fadeOut != null && currentDistance < fadeOut.y)) {
+        if ((fadeIn == null || fadeIn != null && currentDistance > fadeIn.x) && (fadeOut == null || fadeOut != null && currentDistance < fadeOut.y)) {
 
-	    if (renderText()) {
-		addToRender(this, RenderGroup.LABEL);
-	    }
-	    addToRender(this, RenderGroup.GALAXY);
-	}
+            if (renderText()) {
+                addToRender(this, RenderGroup.LABEL);
+            }
+            addToRender(this, RenderGroup.GALAXY);
+        }
 
     }
 
@@ -194,9 +192,9 @@ public class MilkyWayReal extends AbstractPositionEntity implements I3DTextRende
      * and size.
      */
     protected void updateLocalTransform() {
-	// Scale + Rotate + Tilt + Translate
-	transform.getMatrix(localTransform).scl(size);
-	localTransform.mul(coordinateSystem);
+        // Scale + Rotate + Tilt + Translate
+        transform.getMatrix(localTransform).scl(size);
+        localTransform.mul(coordinateSystem);
     }
 
     /**
@@ -204,20 +202,20 @@ public class MilkyWayReal extends AbstractPositionEntity implements I3DTextRende
      */
     @Override
     public void render(SpriteBatch batch, ShaderProgram shader, BitmapFont font3d, BitmapFont font2d, ICamera camera) {
-	Vector3d pos = aux3d1.get();
-	textPosition(camera, pos);
-	shader.setUniformf("a_viewAngle", 90f);
-	shader.setUniformf("a_thOverFactor", 1f);
-	render3DLabel(batch, shader, font3d, camera, text(), pos, textScale(), textSize(), textColour(), this.opacity);
+        Vector3d pos = aux3d1.get();
+        textPosition(camera, pos);
+        shader.setUniformf("a_viewAngle", 90f);
+        shader.setUniformf("a_thOverFactor", 1f);
+        render3DLabel(batch, shader, font3d, camera, text(), pos, textScale(), textSize(), textColour(), this.opacity);
     }
 
     public void setTransformName(String transformName) {
-	this.transformName = transformName;
+        this.transformName = transformName;
     }
 
     @Override
     public boolean renderText() {
-	return GaiaSky.instance.isOn(ComponentType.Labels);
+        return GaiaSky.instance.isOn(ComponentType.Labels);
     }
 
     /**
@@ -226,73 +224,72 @@ public class MilkyWayReal extends AbstractPositionEntity implements I3DTextRende
      * @param size
      */
     public void setSize(Double size) {
-	this.size = (float) (size * Constants.KM_TO_U);
+        this.size = (float) (size * Constants.KM_TO_U);
     }
 
     public void setFadein(double[] fadein) {
-	fadeIn = new Vector2((float) (fadein[0] * Constants.PC_TO_U), (float) (fadein[1] * Constants.PC_TO_U));
+        fadeIn = new Vector2((float) (fadein[0] * Constants.PC_TO_U), (float) (fadein[1] * Constants.PC_TO_U));
     }
 
     public void setFadeout(double[] fadeout) {
-	fadeOut = new Vector2((float) (fadeout[0] * Constants.PC_TO_U), (float) (fadeout[1] * Constants.PC_TO_U));
+        fadeOut = new Vector2((float) (fadeout[0] * Constants.PC_TO_U), (float) (fadeout[1] * Constants.PC_TO_U));
     }
 
     public void setLabelposition(double[] labelposition) {
-	this.labelPosition = new Vector3d(labelposition[0] * Constants.PC_TO_U, labelposition[1] * Constants.PC_TO_U,
-		labelposition[2] * Constants.PC_TO_U);
+        this.labelPosition = new Vector3d(labelposition[0] * Constants.PC_TO_U, labelposition[1] * Constants.PC_TO_U, labelposition[2] * Constants.PC_TO_U);
     }
 
     @Override
     public float[] textColour() {
-	return labelColour;
+        return labelColour;
     }
 
     @Override
     public float textSize() {
-	return (float) distToCamera * 2e-3f;
+        return (float) distToCamera * 2e-3f;
     }
 
     @Override
     public float textScale() {
-	return 3f;
+        return 3f;
     }
 
     @Override
     public void textPosition(ICamera cam, Vector3d out) {
-	out.set(labelPosition).add(cam.getInversePos());
+        out.set(labelPosition).add(cam.getInversePos());
     }
 
     @Override
     public String text() {
-	return name;
+        return name;
     }
 
     @Override
     public void textDepthBuffer() {
-	Gdx.gl.glDisable(GL20.GL_DEPTH_TEST);
-	Gdx.gl.glDepthMask(false);
+        Gdx.gl.glDisable(GL20.GL_DEPTH_TEST);
+        Gdx.gl.glDepthMask(false);
     }
 
     public void setLabelcolor(double[] labelcolor) {
-	this.labelColour = GlobalResources.toFloatArray(labelcolor);
+        this.labelColour = GlobalResources.toFloatArray(labelcolor);
 
     }
 
     @Override
     public boolean isLabel() {
-	return true;
+        return true;
     }
 
     public String getProvider() {
-	return provider;
+        return provider;
     }
 
     public void setProvider(String provider) {
-	this.provider = provider;
+        this.provider = provider;
     }
 
     public void setGalaxydata(GalaxydataComponent gc) {
-	this.gc = gc;
+        this.gc = gc;
     }
 
     /**
@@ -302,7 +299,7 @@ public class MilkyWayReal extends AbstractPositionEntity implements I3DTextRende
      *            The diameter of the entity
      */
     public void setSize(Float size) {
-	this.size = (float) (size * Constants.KM_TO_U);
+        this.size = (float) (size * Constants.KM_TO_U);
     }
 
     @Override
@@ -310,10 +307,10 @@ public class MilkyWayReal extends AbstractPositionEntity implements I3DTextRende
     }
 
     public void setModel(String model) {
-	this.model = model;
+        this.model = model;
     }
 
     public void setModel(ModelComponent mc) {
-	this.mc = mc;
+        this.mc = mc;
     }
 }

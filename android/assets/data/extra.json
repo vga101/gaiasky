@@ -41,7 +41,7 @@
 	"labelcolor" : [1.0, 0.4, 0.7, 1.0],
 	// Position in parsecs
 	"labelposition" : [5.0e3, 5.0e2, 5.0e3]
-	"size" : 3.5e17,
+	"size" : 3.0e17,
 	"ct" : [MilkyWay, Galaxies],
 	"transformName" : equatorialToGalactic,
 
@@ -56,7 +56,9 @@
 	"coordinates" : {
 				// This must implement gaia.cu9.ari.gaiaorbit.util.coord.IBodyCoordinates				
 				"impl" : "gaia.cu9.ari.gaiaorbit.util.coord.StaticCoordinates",
-				"position" : [-2.1696166830918058e+17, -1.2574136144478805e+17, -1.8981686396725044e+16]
+				"transformName" : equatorialToGalactic,
+				// In galacitc system, 8kpc from galactic center,, in km
+				"position" : [-246858341148427170.0, 0.0, 0.0]
 				},
 	
 	"galaxydata" : {
