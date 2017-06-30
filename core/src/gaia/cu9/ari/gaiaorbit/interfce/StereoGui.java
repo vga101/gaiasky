@@ -2,7 +2,6 @@ package gaia.cu9.ari.gaiaorbit.interfce;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Array;
@@ -10,13 +9,9 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
-import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
-import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
-import gaia.cu9.ari.gaiaorbit.util.ComponentTypes;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf.ProgramConf.StereoProfile;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
-import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.format.INumberFormat;
 import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
@@ -27,26 +22,20 @@ import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
  * @author Toni Sagrista
  *
  */
-public class StereoGui implements IGui, IObserver {
+public class StereoGui extends AbstractGui {
     private Skin skin;
-    /**
-     * The user interface stage
-     */
-    protected Stage ui;
 
     protected NotificationsInterface notificationsOne, notificationsTwo;
 
-    protected Array<IGuiInterface> interfaces;
-
     protected INumberFormat nf;
 
-    /** Lock object for synchronisation **/
-    private Object lock;
+    public StereoGui() {
+        super();
+    }
 
     public void initialize(AssetManager assetManager) {
         // User interface
         ui = new Stage(new ScreenViewport(), GlobalResources.spriteBatch);
-        lock = new Object();
     }
 
     /**
@@ -93,7 +82,7 @@ public class StereoGui implements IGui, IObserver {
 
     }
 
-    private void rebuildGui() {
+    protected void rebuildGui() {
 
         if (ui != null) {
             ui.clear();
@@ -121,34 +110,9 @@ public class StereoGui implements IGui, IObserver {
     }
 
     @Override
-    public Stage getGuiStage() {
-        return ui;
-    }
-
-    @Override
-    public void dispose() {
-        for (IGuiInterface iface : interfaces)
-            iface.dispose();
-
-        ui.dispose();
-        EventManager.instance.removeAllSubscriptions(this);
-    }
-
-    @Override
     public void update(float dt) {
         notificationsTwo.setX(notificationsTwo.getMessagesWidth() / 2);
         ui.act(dt);
-    }
-
-    @Override
-    public void render(int rw, int rh) {
-        synchronized (lock) {
-            ui.draw();
-        }
-    }
-
-    public String getName() {
-        return "GUI";
     }
 
     @Override
@@ -167,39 +131,4 @@ public class StereoGui implements IGui, IObserver {
         }
     }
 
-    @Override
-    public void resize(final int width, final int height) {
-        Gdx.app.postRunnable(new Runnable() {
-            @Override
-            public void run() {
-                resizeImmediate(width, height);
-            }
-        });
-    }
-
-    @Override
-    public void resizeImmediate(final int width, final int height) {
-        ui.getViewport().update(width, height, true);
-        rebuildGui();
-    }
-
-    @Override
-    public Actor findActor(String name) {
-        return ui.getRoot().findActor(name);
-    }
-
-    private String txt(String key) {
-        return I18n.bundle.get(key);
-    }
-
-    private String txt(String key, Object... params) {
-        return I18n.bundle.format(key, params);
-    }
-
-    @Override
-    public void setVisibilityToggles(ComponentType[] entities, ComponentTypes visible) {
-    }
-
-    public void setSceneGraph(ISceneGraph sg) {
-    }
 }

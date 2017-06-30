@@ -66,7 +66,7 @@ public class SceneGraphJsonLoader {
 
             sg = SceneGraphImplementationProvider.provider.getImplementation(multithreading, hasOctree, maxThreads);
 
-            sg.initialize(nodes, time);
+            sg.initialize(nodes, time, hasOctree);
 
         } catch (Exception e) {
             Logger.error(e);

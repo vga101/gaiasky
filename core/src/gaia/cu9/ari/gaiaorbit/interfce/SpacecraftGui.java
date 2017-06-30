@@ -35,7 +35,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Container;
 import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
@@ -49,16 +48,11 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
-import gaia.cu9.ari.gaiaorbit.event.IObserver;
-import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
-import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SpacecraftCamera;
-import gaia.cu9.ari.gaiaorbit.util.ComponentTypes;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
-import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Pair;
 import gaia.cu9.ari.gaiaorbit.util.format.INumberFormat;
 import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
@@ -68,9 +62,7 @@ import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnImageButton;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnLabel;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnSlider;
 
-public class SpacecraftGui implements IGui, IObserver {
-    private Skin skin;
-    protected Stage ui;
+public class SpacecraftGui extends AbstractGui {
 
     private Container<HorizontalGroup> buttonContainer;
     private Container<Label> thrustContainer;
@@ -471,7 +463,7 @@ public class SpacecraftGui implements IGui, IObserver {
         rebuildGui();
     }
 
-    private void rebuildGui() {
+    protected void rebuildGui() {
         if (ui != null) {
             ui.clear();
             ui.addActor(buttonContainer);
@@ -512,17 +504,6 @@ public class SpacecraftGui implements IGui, IObserver {
             }
 
         });
-    }
-
-    @Override
-    public void dispose() {
-        ui.dispose();
-        EventManager.instance.removeAllSubscriptions(this);
-    }
-
-    @Override
-    public void update(float dt) {
-        ui.act(dt);
     }
 
     @Override
@@ -588,61 +569,10 @@ public class SpacecraftGui implements IGui, IObserver {
     }
 
     @Override
-    public void resize(final int width, final int height) {
-        Gdx.app.postRunnable(new Runnable() {
-            @Override
-            public void run() {
-                resizeImmediate(width, height);
-            }
-        });
-    }
-
-    @Override
     public void resizeImmediate(final int width, final int height) {
         ui.getViewport().update(width, height, true);
         sb.getProjectionMatrix().setToOrtho2D(0, 0, width, height);
         rebuildGui();
-    }
-
-    /**
-     * Removes the focus from this Gui and returns true if the focus was in the
-     * GUI, false otherwise.
-     * 
-     * @return true if the focus was in the GUI, false otherwise.
-     */
-    public boolean cancelTouchFocus() {
-        if (ui.getScrollFocus() != null) {
-            ui.setScrollFocus(null);
-            ui.setKeyboardFocus(null);
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public Stage getGuiStage() {
-        return ui;
-    }
-
-    @Override
-    public void setSceneGraph(ISceneGraph sg) {
-    }
-
-    @Override
-    public void setVisibilityToggles(ComponentType[] entities, ComponentTypes visible) {
-    }
-
-    @Override
-    public Actor findActor(String name) {
-        return ui.getRoot().findActor(name);
-    }
-
-    private String txt(String key) {
-        return I18n.bundle.get(key);
-    }
-
-    private String txt(String key, Object... params) {
-        return I18n.bundle.format(key, params);
     }
 
     @Override

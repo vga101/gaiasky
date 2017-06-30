@@ -40,6 +40,7 @@ public abstract class GenericDialog extends CollapsibleWindow {
     protected Table content;
     protected float pad;
     private String acceptText = null, cancelText = null;
+    protected TextButton acceptButton, cancelButton;
 
     private Actor previousKeyboardFocus, previousScrollFocus;
     private FocusListener focusListener;
@@ -70,6 +71,14 @@ public abstract class GenericDialog extends CollapsibleWindow {
         this.cancelText = cancelText;
     }
 
+    protected void recalculateButtonSize() {
+        float w = Math.max(Math.max(acceptButton != null ? acceptButton.getWidth() : 0, cancelButton != null ? cancelButton.getWidth() : 0) + 10 * GlobalConf.SCALE_FACTOR, 80 * GlobalConf.SCALE_FACTOR);
+        if (acceptButton != null)
+            acceptButton.setWidth(w);
+        if (cancelButton != null)
+            cancelButton.setWidth(w);
+    }
+
     public void buildSuper() {
         pad = 5 * GlobalConf.SCALE_FACTOR;
 
@@ -81,10 +90,9 @@ public abstract class GenericDialog extends CollapsibleWindow {
         buttonGroup.space(pad);
 
         if (acceptText != null) {
-            TextButton accept = new OwnTextButton(acceptText, skin, "default");
-            accept.setName("accept");
-            accept.setSize(130 * GlobalConf.SCALE_FACTOR, 20 * GlobalConf.SCALE_FACTOR);
-            accept.addListener(new EventListener() {
+            acceptButton = new OwnTextButton(acceptText, skin, "default");
+            acceptButton.setName("accept");
+            acceptButton.addListener(new EventListener() {
 
                 @Override
                 public boolean handle(Event event) {
@@ -97,13 +105,12 @@ public abstract class GenericDialog extends CollapsibleWindow {
                 }
 
             });
-            buttonGroup.addActor(accept);
+            buttonGroup.addActor(acceptButton);
         }
         if (cancelText != null) {
-            TextButton close = new OwnTextButton(cancelText, skin, "default");
-            close.setName("cancel");
-            close.setSize(70 * GlobalConf.SCALE_FACTOR, 20 * GlobalConf.SCALE_FACTOR);
-            close.addListener(new EventListener() {
+            cancelButton = new OwnTextButton(cancelText, skin, "default");
+            cancelButton.setName("cancel");
+            cancelButton.addListener(new EventListener() {
                 @Override
                 public boolean handle(Event event) {
                     if (event instanceof ChangeEvent) {
@@ -116,8 +123,9 @@ public abstract class GenericDialog extends CollapsibleWindow {
                 }
 
             });
-            buttonGroup.addActor(close);
+            buttonGroup.addActor(cancelButton);
         }
+        recalculateButtonSize();
 
         add(content).pad(pad);
         row();

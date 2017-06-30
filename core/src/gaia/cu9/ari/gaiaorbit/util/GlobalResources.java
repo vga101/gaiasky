@@ -13,8 +13,12 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.FrameBuffer;
+import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.ScreenUtils;
 
 import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
@@ -52,11 +56,8 @@ public class GlobalResources {
             GlobalConf.updateScaleFactor(2.0f);
         }
         updateSkin();
-
-        // Async load
-        boolean hidpi = GlobalConf.SCALE_FACTOR > 1.5f;
-        cursorFile = hidpi ? "img/cursor-link-x2.png" : "img/cursor-link.png";
-        manager.load(cursorFile, Pixmap.class);
+        // Cursor for links
+        linkCursor = textureToPixmap(skin.getRegion("cursor-link"));
     }
 
     public static void updateSkin() {
@@ -65,8 +66,6 @@ public class GlobalResources {
     }
 
     public static void doneLoading(AssetManager manager) {
-        // Cursor for links
-        linkCursor = manager.get(cursorFile, Pixmap.class);
     }
 
     /**
@@ -358,6 +357,61 @@ public class GlobalResources {
             result.put(entry.getKey(), entry.getValue());
         }
         return result;
+    }
+
+    /**
+     * Converts a texture to a pixmap by drawing it to a frame buffer and
+     * getting the data
+     * 
+     * @param tex
+     *            The texture to convert
+     * @return The resulting pixmap
+     */
+    public static Pixmap textureToPixmap(TextureRegion tex) {
+
+        //width and height in pixels
+        int width = tex.getRegionWidth();
+        int height = tex.getRegionWidth();
+
+        //Create a SpriteBatch to handle the drawing.
+        SpriteBatch sb = new SpriteBatch();
+
+        //Set the projection matrix for the SpriteBatch.
+        Matrix4 projectionMatrix = new Matrix4();
+
+        //because Pixmap has its origin on the topleft and everything else in LibGDX has the origin left bottom
+        //we flip the projection matrix on y and move it -height. So it will end up side up in the .png
+        projectionMatrix.setToOrtho2D(0, -height, width, height).scale(1, -1, 1);
+
+        //Set the projection matrix on the SpriteBatch
+        sb.setProjectionMatrix(projectionMatrix);
+
+        //Create a frame buffer.
+        FrameBuffer fb = new FrameBuffer(Pixmap.Format.RGBA8888, width, height, false);
+
+        //Call begin(). So all next drawing will go to the new FrameBuffer.
+        fb.begin();
+
+        //Set up the SpriteBatch for drawing.
+        sb.begin();
+
+        //Draw all the tiles.
+        sb.draw(tex, 0, 0, width, height);
+
+        //End drawing on the SpriteBatch. This will flush() any sprites remaining to be drawn as well.
+        sb.end();
+
+        //Then retrieve the Pixmap from the buffer.
+        Pixmap pm = ScreenUtils.getFrameBufferPixmap(0, 0, width, height);
+
+        //Close the FrameBuffer. Rendering will resume to the normal buffer.
+        fb.end();
+
+        //Dispose of the resources.
+        fb.dispose();
+        sb.dispose();
+
+        return pm;
     }
 
 }

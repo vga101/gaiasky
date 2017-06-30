@@ -13,7 +13,6 @@ import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.scenegraph.AbstractSceneGraph;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
-import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.octreewrapper.OctreeWrapperConcurrent;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
@@ -48,9 +47,14 @@ public class SceneGraphConcurrentOctree extends AbstractSceneGraph {
      * Builds the scene graph using the given nodes.
      * 
      * @param nodes
+     *            The list of nodes
+     * @param time
+     *            The time provider
+     * @param hasOctree
+     *            Whether the list of nodes contains an octree
      */
-    public void initialize(Array<SceneGraphNode> nodes, ITimeFrameProvider time) {
-        super.initialize(nodes, time);
+    public void initialize(Array<SceneGraphNode> nodes, ITimeFrameProvider time, boolean hasOctree) {
+        super.initialize(nodes, time, hasOctree);
 
         pool = ThreadPoolManager.pool;
         tasks = new ArrayList<UpdaterTask<SceneGraphNode>>(pool.getCorePoolSize());

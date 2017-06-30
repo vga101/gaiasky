@@ -1,4 +1,6 @@
-{ "data" : [
+{ 
+	"description" : "Gaia DR1 TGAS catalog with levels of detail. About 600K stars.",
+	"data" : [
 	{
 		"loader": "gaia.cu9.ari.gaiaorbit.data.stars.OctreeSingleFileLoader",
 		"files": [ "data/octree/tgas_final_particles.bin", "data/octree/tgas_final_metadata.bin" ]

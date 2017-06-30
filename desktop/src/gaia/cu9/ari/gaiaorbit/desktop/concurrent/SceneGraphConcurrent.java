@@ -21,6 +21,7 @@ import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 /**
  * Implementation of a 3D scene graph where the node updates takes place
  * concurrently in threads (as many as processors).
+ * 
  * @author Toni Sagrista
  *
  */
@@ -37,10 +38,16 @@ public class SceneGraphConcurrent extends AbstractSceneGraph {
 
     /**
      * Builds the scene graph using the given nodes.
+     * 
      * @param nodes
+     *            The list of nodes
+     * @param time
+     *            The time provider
+     * @param hasOctree
+     *            Whether the list of nodes contains an octree
      */
-    public void initialize(Array<SceneGraphNode> nodes, ITimeFrameProvider time) {
-        super.initialize(nodes, time);
+    public void initialize(Array<SceneGraphNode> nodes, ITimeFrameProvider time, boolean hasOctree) {
+        super.initialize(nodes, time, hasOctree);
 
         pool = ThreadPoolManager.pool;
         objectsPerThread = new int[numThreads];

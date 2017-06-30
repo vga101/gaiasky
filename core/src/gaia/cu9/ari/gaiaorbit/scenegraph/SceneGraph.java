@@ -1,9 +1,12 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph;
 
+import gaia.cu9.ari.gaiaorbit.event.EventManager;
+import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
 /**
  * Implementation of a 3D scene graph.
+ * 
  * @author Toni Sagrista
  *
  */
@@ -20,6 +23,8 @@ public class SceneGraph extends AbstractSceneGraph {
         root.update(time, null, camera);
         objectsPerThread[0] = root.numChildren;
 
+        if (!hasOctree)
+            EventManager.instance.post(Events.DEBUG3, "Objects: " + root.numChildren);
     }
 
     public void dispose() {

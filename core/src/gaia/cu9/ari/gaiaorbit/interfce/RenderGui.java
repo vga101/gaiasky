@@ -2,52 +2,41 @@ package gaia.cu9.ari.gaiaorbit.interfce;
 
 import java.util.Date;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
-import gaia.cu9.ari.gaiaorbit.event.IObserver;
-import gaia.cu9.ari.gaiaorbit.render.ComponentType;
-import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
-import gaia.cu9.ari.gaiaorbit.util.ComponentTypes;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
-import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.format.IDateFormat;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnLabel;
 
 /**
  * Only for frame output mode, it displays the current time.
+ * 
  * @author Toni Sagrista
  *
  */
-public class RenderGui implements IGui, IObserver {
-    private Skin skin;
-    /**
-     * The user interface stage	    
-     */
-    protected Stage ui;
+public class RenderGui extends AbstractGui {
     protected Label time;
     protected Table mainTable;
 
     protected MessagesInterface messagesInterface;
 
     protected IDateFormat df;
-    /** Lock object for synchronization **/
-    private Object lock;
+
+    public RenderGui() {
+        super();
+    }
 
     @Override
     public void initialize(AssetManager assetManager) {
         ui = new Stage(new ScreenViewport(), GlobalResources.spriteBatch);
         df = DateFormatFactory.getFormatter("dd/MM/yyyy HH:mm:ss");
-        lock = new Object();
     }
 
     @Override
@@ -73,74 +62,12 @@ public class RenderGui implements IGui, IObserver {
         EventManager.instance.subscribe(this, Events.TIME_CHANGE_INFO);
     }
 
-    private void rebuildGui() {
+    protected void rebuildGui() {
         if (ui != null) {
             ui.clear();
             ui.addActor(mainTable);
             ui.addActor(messagesInterface);
         }
-    }
-
-    @Override
-    public void dispose() {
-        ui.dispose();
-        EventManager.instance.removeAllSubscriptions(this);
-    }
-
-    @Override
-    public void update(float dt) {
-        ui.act();
-    }
-
-    @Override
-    public void render(int rw, int rh) {
-        synchronized (lock) {
-            try {
-                ui.draw();
-            } catch (Exception e) {
-                Logger.error(e);
-            }
-        }
-    }
-
-    @Override
-    public void resize(final int width, final int height) {
-        Gdx.app.postRunnable(new Runnable() {
-            @Override
-            public void run() {
-                resizeImmediate(width, height);
-            }
-        });
-    }
-
-    @Override
-    public void resizeImmediate(final int width, final int height) {
-        ui.getViewport().update(width, height, true);
-        rebuildGui();
-    }
-
-    @Override
-    public boolean cancelTouchFocus() {
-        if (ui.getKeyboardFocus() != null || ui.getScrollFocus() != null) {
-            ui.setScrollFocus(null);
-            ui.setKeyboardFocus(null);
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public Stage getGuiStage() {
-        return ui;
-    }
-
-    @Override
-    public void setSceneGraph(ISceneGraph sg) {
-
-    }
-
-    @Override
-    public void setVisibilityToggles(ComponentType[] entities, ComponentTypes visible) {
     }
 
     @Override
@@ -154,10 +81,5 @@ public class RenderGui implements IGui, IObserver {
                 break;
             }
         }
-    }
-
-    @Override
-    public Actor findActor(String name) {
-        return ui.getRoot().findActor(name);
     }
 }

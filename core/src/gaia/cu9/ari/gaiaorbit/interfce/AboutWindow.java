@@ -464,8 +464,7 @@ public class AboutWindow extends GenericDialog {
     private void newVersionCheck(String version) {
         int[] majmin = GlobalConf.VersionConf.getMajorMinorRevFromString(version);
 
-        if (majmin[0] > GlobalConf.version.major || (majmin[0] == GlobalConf.version.major && majmin[1] > GlobalConf.version.minor)
-                || (majmin[0] == GlobalConf.version.major && majmin[1] == GlobalConf.version.minor) && majmin[2] > GlobalConf.version.rev) {
+        if (majmin[0] > GlobalConf.version.major || (majmin[0] == GlobalConf.version.major && majmin[1] > GlobalConf.version.minor) || (majmin[0] == GlobalConf.version.major && majmin[1] == GlobalConf.version.minor) && majmin[2] > GlobalConf.version.rev) {
             // There's a new version!
             checkLabel.setText(txt("gui.newversion.available", GlobalConf.version, version));
             final String uri = GlobalConf.WEBPAGE_DOWNLOADS;

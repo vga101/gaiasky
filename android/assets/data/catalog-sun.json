@@ -1,4 +1,6 @@
-{ "data" : [
+{ 
+	"description" : "Catalog with only the Sun",
+	"data" : [
 	{
 		"loader": "gaia.cu9.ari.gaiaorbit.data.stars.SunLoader",
 		"files": [ ""]

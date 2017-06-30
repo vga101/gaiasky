@@ -14,8 +14,6 @@ import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
 public abstract class AbstractSceneGraph implements ISceneGraph {
 
-    private static final long serialVersionUID = 1L;
-
     /** The root of the tree **/
     public SceneGraphNode root;
     /** Quick lookup map. Name to node. **/
@@ -24,6 +22,8 @@ public abstract class AbstractSceneGraph implements ISceneGraph {
     IntMap<Star> starMap;
     /** Number of objects per thread **/
     protected int[] objectsPerThread;
+    /** Does it contain an octree **/
+    protected boolean hasOctree;
 
     public AbstractSceneGraph() {
         // Id = -1 for root
@@ -35,11 +35,14 @@ public abstract class AbstractSceneGraph implements ISceneGraph {
     }
 
     @Override
-    public void initialize(Array<SceneGraphNode> nodes, ITimeFrameProvider time) {
+    public void initialize(Array<SceneGraphNode> nodes, ITimeFrameProvider time, boolean hasOctree) {
         Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.sg.insert", nodes.size));
 
         // Set the reference
         SceneGraphNode.sg = this;
+
+        // Octree
+        this.hasOctree = hasOctree;
 
         // Initialize stringToNode and starMap maps
         stringToNode = new HashMap<String, SceneGraphNode>(nodes.size * 2);

@@ -40,6 +40,7 @@ import gaia.cu9.ari.gaiaorbit.interfce.DebugGui;
 import gaia.cu9.ari.gaiaorbit.interfce.FullGui;
 import gaia.cu9.ari.gaiaorbit.interfce.GuiRegistry;
 import gaia.cu9.ari.gaiaorbit.interfce.IGui;
+import gaia.cu9.ari.gaiaorbit.interfce.InitialGui;
 import gaia.cu9.ari.gaiaorbit.interfce.KeyInputController;
 import gaia.cu9.ari.gaiaorbit.interfce.LoadingGui;
 import gaia.cu9.ari.gaiaorbit.interfce.MobileGui;
@@ -86,7 +87,7 @@ import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
  *
  */
 public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
-    private static boolean LOADING = true;
+    private static boolean DSCHOSEN = false, LOADING = false;
 
     /** Attitude folder **/
     private static String ATTITUDE_FOLDER = "data/attitudexml/";
@@ -127,7 +128,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
     /**
      * The user interfaces
      */
-    public IGui loadingGui, mainGui, spacecraftGui, stereoGui, debugGui, currentGui, previousGui;
+    public IGui initialGui, loadingGui, mainGui, spacecraftGui, stereoGui, debugGui, currentGui, previousGui;
 
     /**
      * List of guis
@@ -212,17 +213,10 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         TooltipManager.getInstance().initialTime = 1f;
 
         // Initialise Gaia attitudes
-        manager.load(ATTITUDE_FOLDER, GaiaAttitudeServer.class, new GaiaAttitudeLoaderParameter(GlobalConf.runtime.STRIPPED_FOV_MODE
-                ? new String[] { "OPS_RSLS_0022916_rsls_nsl_gareq1_afterFirstSpinPhaseOptimization.2.xml" } : new String[] {}));
+        manager.load(ATTITUDE_FOLDER, GaiaAttitudeServer.class, new GaiaAttitudeLoaderParameter(GlobalConf.runtime.STRIPPED_FOV_MODE ? new String[] { "OPS_RSLS_0022916_rsls_nsl_gareq1_afterFirstSpinPhaseOptimization.2.xml" } : new String[] {}));
 
         // Initialise hidden helper user
         HiddenHelperUser.initialise();
-
-        /** LOAD SCENE GRAPH **/
-        if (sg == null) {
-            dataLoadString = GlobalConf.data.CATALOG_JSON_FILE + "," + GlobalConf.data.OBJECTS_JSON_FILE;
-            manager.load(dataLoadString, ISceneGraph.class, new SGLoaderParameter(time, GlobalConf.performance.MULTITHREADING, GlobalConf.performance.NUMBER_THREADS()));
-        }
 
         // GUI
         guis = new ArrayList<IGui>(3);
@@ -234,10 +228,11 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
             ab.load(manager);
         }
 
-        // Initialise loading screen
-        loadingGui = new LoadingGui();
-        loadingGui.initialize(manager);
-        Gdx.input.setInputProcessor(loadingGui.getGuiStage());
+        initialGui = new InitialGui();
+        initialGui.initialize(manager);
+        Gdx.input.setInputProcessor(initialGui.getGuiStage());
+
+        EventManager.instance.subscribe(this, Events.LOAD_DATA_CMD);
 
         Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.glslversion", Gdx.gl.glGetString(GL20.GL_SHADING_LANGUAGE_VERSION)));
     }
@@ -314,6 +309,8 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         EventManager.instance.post(Events.SCENE_GRAPH_LOADED, sg);
 
         // Stop messages
+        initialGui.dispose();
+        initialGui = null;
         loadingGui.dispose();
         loadingGui = null;
 
@@ -471,14 +468,16 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
 
     @Override
     public void render() {
-        if (LOADING) {
+        if (!DSCHOSEN) {
+            renderGui(initialGui);
+        } else if (LOADING) {
             if (manager.update()) {
                 doneLoading();
 
                 LOADING = false;
             } else {
                 // Display loading screen
-                renderLoadingScreen();
+                renderGui(loadingGui);
             }
         } else {
 
@@ -594,7 +593,10 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
 
     public void resizeImmediate(final int width, final int height, boolean resizePostProcessors, boolean resizeRenderSys, boolean resizeGuis) {
         if (!initialized) {
-            loadingGui.resizeImmediate(width, height);
+            if (initialGui != null)
+                initialGui.resize(width, height);
+            if (loadingGui != null)
+                loadingGui.resizeImmediate(width, height);
         } else {
             if (resizePostProcessors)
                 pp.resizeImmediate(width, height);
@@ -613,14 +615,17 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
     }
 
     /**
-     * Renders the loading screen
+     * Renders a particular gui
+     * 
+     * @param gui
+     *            The gui to render
      */
-    private void renderLoadingScreen() {
-        loadingGui.update(Gdx.graphics.getDeltaTime());
+    private void renderGui(IGui gui) {
+        gui.update(Gdx.graphics.getDeltaTime());
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
         Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
-        loadingGui.render(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        gui.render(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
     }
 
     public Array<CelestialBody> getFocusableEntities() {
@@ -680,7 +685,20 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
     @Override
     public void notify(Events event, Object... data) {
         switch (event) {
+        case LOAD_DATA_CMD:
+            // Initialise loading screen
+            loadingGui = new LoadingGui();
+            loadingGui.initialize(manager);
+            Gdx.input.setInputProcessor(loadingGui.getGuiStage());
+            DSCHOSEN = true;
+            LOADING = true;
 
+            /** LOAD SCENE GRAPH **/
+            if (sg == null) {
+                dataLoadString = GlobalConf.data.CATALOG_JSON_FILE + "," + GlobalConf.data.OBJECTS_JSON_FILE;
+                manager.load(dataLoadString, ISceneGraph.class, new SGLoaderParameter(time, GlobalConf.performance.MULTITHREADING, GlobalConf.performance.NUMBER_THREADS()));
+            }
+            break;
         case TOGGLE_AMBIENT_LIGHT:
             // TODO No better place to put this??
             ModelComponent.toggleAmbientLight((Boolean) data[1]);

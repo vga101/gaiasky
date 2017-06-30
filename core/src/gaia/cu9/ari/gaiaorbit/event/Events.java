@@ -18,6 +18,9 @@ public enum Events {
     TIME_CHANGE_CMD,
     GAIA_POSITION,
 
+    /** Dataset has been choosen, loading can start **/
+    LOAD_DATA_CMD,
+
     // CAMERA
     /** Contains the new CameraMode object **/
     CAMERA_MODE_CMD,

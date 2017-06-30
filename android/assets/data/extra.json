@@ -111,16 +111,16 @@
 		"name" : "SDSS galaxies",
 		"position" : [0.0, 0.0, 0.0],
 		// Color of particles
-		"color" : [1.0, 1.0, 1.0, 0.1],
+		"color" : [0.3, 0.5, 0.8, 0.2],
 		// Size of particles
-		"size" : 7.0,
+		"size" : 8.0,
 		"labelcolor" : [0.3, 0.4, 0.9, 1.0],
 		// Position in parsecs
 		"labelposition" : [0.0, -5.0e7, -4e8]
 		"ct" : Galaxies,
 	
 		// Fade in distances, in parsecs
-		"fadein" : [5.0e6, 30.0e6],
+		"fadein" : [1.0e6, 20.0e6],
 	
 		"parent" : "Universe", 
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.ParticleGroup",
@@ -134,7 +134,7 @@
 		"name" : "Oort cloud",
 		"position" : [0.0, 0.0, 0.0],
 		// Color of particles
-		"color" : [0.9, 0.9, 0.9, 0.4],
+		"color" : [0.6, 0.8, 0.95, 0.5],
 		// Size of particles
 		"size" : 2.0,
 		"labelcolor" : [0.3, 0.6, 1.0, 1.0],
@@ -144,7 +144,7 @@
 	
 		// Fade distances, in parsecs
 		"fadein" : [0.0004, 0.004],
-		"fadeout" : [0.1, 15.0],
+		"fadeout" : [0.1, 1.8],
 		
 		"profiledecay" : 1.0,
 		

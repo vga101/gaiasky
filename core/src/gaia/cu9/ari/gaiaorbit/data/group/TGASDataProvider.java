@@ -39,14 +39,12 @@ public class TGASDataProvider implements IParticleGroupDataProvider {
         FileHandle f = Gdx.files.internal(file);
 
         try {
-            int tokenslen;
             BufferedReader br = new BufferedReader(new InputStreamReader(f.read()));
             String line;
             while ((line = br.readLine()) != null) {
                 if (!line.isEmpty() && !line.startsWith("#")) {
                     // Read line
                     String[] tokens = line.split(",");
-                    tokenslen = tokens.length;
                     double[] point = new double[5];
 
                     long sourceid = Parser.parseLong(tokens[0]);
@@ -80,7 +78,7 @@ public class TGASDataProvider implements IParticleGroupDataProvider {
                     double col = Color.toFloatBits(rgb[0], rgb[1], rgb[2], 1.0f);
 
                     // Keep only stars with relevant parallaxes
-                    if (dist >= 0 && pllx / pllxerr > 6 && pllxerr <= 1) {
+                    if (dist >= 0 && pllx / pllxerr > 1.5 && pllxerr <= 1) {
                         Position p = new Position(ra, "deg", dec, "deg", dist, "pc", PositionType.RA_DEC_DIST);
                         p.gsposition.scl(Constants.PC_TO_U);
                         point[0] = p.gsposition.x;

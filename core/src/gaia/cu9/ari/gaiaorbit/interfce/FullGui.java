@@ -16,7 +16,6 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Container;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
 import com.badlogic.gdx.utils.Align;
@@ -30,7 +29,6 @@ import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.data.stars.UncertaintiesHandler;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
-import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.interfce.components.VisualEffectsComponent;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
@@ -42,7 +40,6 @@ import gaia.cu9.ari.gaiaorbit.util.ComponentTypes;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
-import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.camera.CameraUtils;
 import gaia.cu9.ari.gaiaorbit.util.format.INumberFormat;
@@ -58,12 +55,7 @@ import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnLabel;
  * @author Toni Sagrista
  *
  */
-public class FullGui implements IGui, IObserver {
-    private Skin skin;
-    /**
-     * The user interface stage
-     */
-    protected Stage ui;
+public class FullGui extends AbstractGui {
 
     protected ControlsWindow controlsWindow;
 
@@ -75,8 +67,6 @@ public class FullGui implements IGui, IObserver {
     protected ScriptStateInterface inputInterface;
     protected Container<WebGLInterface> wgl;
     protected WebGLInterface webglInterface;
-
-    protected Array<IGuiInterface> interfaces;
 
     protected SearchDialog searchDialog;
     protected AboutWindow aboutWindow;
@@ -92,30 +82,17 @@ public class FullGui implements IGui, IObserver {
 
     private List<Actor> invisibleInStereoMode;
 
-    /** Lock object for synchronisation **/
-    private Object lock;
-
-    public void setSceneGraph(ISceneGraph sg) {
-        this.sg = sg;
+    public FullGui() {
+        super();
     }
 
-    public void setVisibilityToggles(ComponentType[] entities, ComponentTypes visible) {
-        this.visibilityEntities = entities;
-        ComponentType[] vals = ComponentType.values();
-        this.visible = new boolean[vals.length];
-        for (int i = 0; i < vals.length; i++)
-            this.visible[i] = visible.get(vals[i].ordinal());
-    }
-
+    @Override
     public void initialize(AssetManager assetManager) {
         // User interface
         ui = new Stage(new ScreenViewport(), GlobalResources.spriteBatch);
-        lock = new Object();
     }
 
-    /**
-     * Constructs the interface
-     */
+    @Override
     public void doneLoading(AssetManager assetManager) {
         Logger.info(txt("notif.gui.init"));
 
@@ -128,7 +105,7 @@ public class FullGui implements IGui, IObserver {
         EventManager.instance.subscribe(this, Events.FOV_CHANGED_CMD, Events.SHOW_TUTORIAL_ACTION, Events.SHOW_SEARCH_ACTION, Events.REMOVE_KEYBOARD_FOCUS, Events.REMOVE_GUI_COMPONENT, Events.ADD_GUI_COMPONENT, Events.SHOW_ABOUT_ACTION, Events.RA_DEC_UPDATED, Events.LON_LAT_UPDATED, Events.POPUP_MENU_FOCUS, Events.SHOW_PREFERENCES_ACTION, Events.SHOW_LAND_AT_LOCATION_ACTION);
     }
 
-    private void buildGui() {
+    protected void buildGui() {
         // Component types name init
         for (ComponentType ct : ComponentType.values()) {
             ct.getName();
@@ -201,7 +178,7 @@ public class FullGui implements IGui, IObserver {
         controlsWindow.recalculateSize();
     }
 
-    private void rebuildGui() {
+    protected void rebuildGui() {
 
         if (ui != null) {
             ui.clear();
@@ -283,34 +260,9 @@ public class FullGui implements IGui, IObserver {
     }
 
     @Override
-    public Stage getGuiStage() {
-        return ui;
-    }
-
-    @Override
-    public void dispose() {
-        for (IGuiInterface iface : interfaces)
-            iface.dispose();
-
-        ui.dispose();
-        EventManager.instance.removeAllSubscriptions(this);
-    }
-
-    @Override
     public void update(float dt) {
         ui.act(dt);
         notificationsInterface.update();
-    }
-
-    @Override
-    public void render(int rw, int rh) {
-        synchronized (lock) {
-            ui.draw();
-        }
-    }
-
-    public String getName() {
-        return "GUI";
     }
 
     @Override
@@ -541,32 +493,17 @@ public class FullGui implements IGui, IObserver {
     }
 
     @Override
-    public void resize(final int width, final int height) {
-        Gdx.app.postRunnable(new Runnable() {
-            @Override
-            public void run() {
-                resizeImmediate(width, height);
-            }
-        });
+    public void setSceneGraph(ISceneGraph sg) {
+        this.sg = sg;
     }
 
     @Override
-    public void resizeImmediate(final int width, final int height) {
-        ui.getViewport().update(width, height, true);
-        rebuildGui();
-    }
-
-    @Override
-    public Actor findActor(String name) {
-        return ui.getRoot().findActor(name);
-    }
-
-    private String txt(String key) {
-        return I18n.bundle.get(key);
-    }
-
-    private String txt(String key, Object... params) {
-        return I18n.bundle.format(key, params);
+    public void setVisibilityToggles(ComponentType[] entities, ComponentTypes visible) {
+        this.visibilityEntities = entities;
+        ComponentType[] vals = ComponentType.values();
+        this.visible = new boolean[vals.length];
+        for (int i = 0; i < vals.length; i++)
+            this.visible[i] = visible.get(vals[i].ordinal());
     }
 
     public void removeWebglInterface() {

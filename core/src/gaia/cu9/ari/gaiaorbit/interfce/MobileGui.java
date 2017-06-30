@@ -1,16 +1,10 @@
 package gaia.cu9.ari.gaiaorbit.interfce;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
-import gaia.cu9.ari.gaiaorbit.render.ComponentType;
-import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
-import gaia.cu9.ari.gaiaorbit.util.ComponentTypes;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 
 /**
@@ -19,12 +13,7 @@ import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
  * @author Toni Sagrista
  *
  */
-public class MobileGui implements IGui {
-    private Skin skin;
-    /**
-     * The user interface stage
-     */
-    protected Stage ui;
+public class MobileGui extends AbstractGui {
 
     protected FocusInfoInterface focusInterface;
     protected NotificationsInterface notificationsInterface;
@@ -32,16 +21,14 @@ public class MobileGui implements IGui {
     protected DebugInterface debugInterface;
     protected ScriptStateInterface inputInterface;
 
-    protected Array<IGuiInterface> interfaces;
-
-    /** Lock object for synchronization **/
-    private Object lock;
+    public MobileGui() {
+        super();
+    }
 
     @Override
     public void initialize(AssetManager assetManager) {
         // User interface
         ui = new Stage(new ScreenViewport(), GlobalResources.spriteBatch);
-        lock = new Object();
     }
 
     @Override
@@ -112,70 +99,11 @@ public class MobileGui implements IGui {
     }
 
     @Override
-    public void dispose() {
-        for (IGuiInterface iface : interfaces)
-            iface.dispose();
-
-        ui.dispose();
-    }
-
-    @Override
     public void update(float dt) {
         if (ui != null)
             ui.act(dt);
         if (notificationsInterface != null)
             notificationsInterface.update();
-    }
-
-    @Override
-    public void render(int rw, int rh) {
-        synchronized (lock) {
-            ui.draw();
-        }
-    }
-
-    @Override
-    public void resize(final int width, final int height) {
-        Gdx.app.postRunnable(new Runnable() {
-            @Override
-            public void run() {
-                resizeImmediate(width, height);
-            }
-        });
-    }
-
-    @Override
-    public void resizeImmediate(final int width, final int height) {
-        ui.getViewport().update(width, height, true);
-        rebuildGui();
-    }
-
-    @Override
-    public boolean cancelTouchFocus() {
-        if (ui.getKeyboardFocus() != null || ui.getScrollFocus() != null) {
-            ui.setScrollFocus(null);
-            ui.setKeyboardFocus(null);
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public Stage getGuiStage() {
-        return ui;
-    }
-
-    @Override
-    public void setSceneGraph(ISceneGraph sg) {
-    }
-
-    @Override
-    public void setVisibilityToggles(ComponentType[] entities, ComponentTypes visible) {
-    }
-
-    @Override
-    public Actor findActor(String name) {
-        return ui.getRoot().findActor(name);
     }
 
 }
