@@ -448,6 +448,10 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
         return name;
     }
 
+    public long getId() {
+        return id;
+    }
+
     public void setParent(String parentName) {
         this.parentName = parentName;
     }
@@ -464,27 +468,12 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
      * 
      * @param list
      */
-    public void addFocusableObjects(Array<CelestialBody> list) {
+    public void addFocusableObjects(Array<IFocus> list) {
         if (children != null) {
             int size = children.size;
             for (int i = 0; i < size; i++) {
                 SceneGraphNode child = children.get(i);
                 child.addFocusableObjects(list);
-            }
-        }
-    }
-
-    /**
-     * Adds all the children that are particle groups to the list.
-     * 
-     * @param list
-     */
-    public void addParticleGroups(Array<ParticleGroup> list) {
-        if (children != null) {
-            int size = children.size;
-            for (int i = 0; i < size; i++) {
-                SceneGraphNode child = children.get(i);
-                child.addParticleGroups(list);
             }
         }
     }
@@ -513,6 +502,10 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
         for (int i = 0; i < cts.length; i++) {
             this.ct.set(ComponentType.valueOf(cts[i]).ordinal());
         }
+    }
+
+    public ComponentTypes getCt() {
+        return ct;
     }
 
     public ComponentTypes getComponentType() {

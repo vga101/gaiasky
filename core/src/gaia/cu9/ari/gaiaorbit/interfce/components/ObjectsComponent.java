@@ -25,6 +25,7 @@ import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.interfce.NaturalInputController;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
+import gaia.cu9.ari.gaiaorbit.scenegraph.IFocus;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
@@ -144,24 +145,24 @@ public class ObjectsComponent extends GuiComponent implements IObserver {
         } else if (list) {
             final com.badlogic.gdx.scenes.scene2d.ui.List<String> focusList = new com.badlogic.gdx.scenes.scene2d.ui.List<String>(skin, "light");
             focusList.setName("objects list");
-            Array<CelestialBody> focusableObjects = sg.getFocusableObjects();
+            Array<IFocus> focusableObjects = sg.getFocusableObjects();
             Array<String> names = new Array<String>(focusableObjects.size);
 
-            for (CelestialBody cb : focusableObjects) {
+            for (IFocus focus : focusableObjects) {
                 // Omit stars with no proper names
-                if (!GlobalResources.isNumeric(cb.name)) {
-                    names.add(cb.name);
+                if (focus.getName() != null && !GlobalResources.isNumeric(focus.getName())) {
+                    names.add(focus.getName());
                 }
             }
             names.sort();
 
             SceneGraphNode sol = sg.getNode("Sol");
             if (sol != null) {
-                Array<CelestialBody> solChildren = new Array<CelestialBody>();
+                Array<IFocus> solChildren = new Array<IFocus>();
                 sol.addFocusableObjects(solChildren);
                 solChildren.sort(new CelestialBodyComparator());
-                for (CelestialBody cb : solChildren)
-                    names.insert(0, cb.name);
+                for (IFocus cb : solChildren)
+                    names.insert(0, cb.getName());
             }
 
             focusList.setItems(names);

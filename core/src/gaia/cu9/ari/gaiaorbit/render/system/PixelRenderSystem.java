@@ -108,7 +108,7 @@ public class PixelRenderSystem extends ImmediateRenderSystem implements IObserve
                 curr.vertices[curr.vertexIdx + curr.colorOffset] = Color.toFloatBits(col[0], col[1], col[2], cb.opacity);
 
                 // SIZE
-                curr.vertices[curr.vertexIdx + sizeOffset] = cb.getRadius();
+                curr.vertices[curr.vertexIdx + sizeOffset] = (float) cb.getRadius();
 
                 // POSITION
                 aux.set((float) cb.pos.x, (float) cb.pos.y, (float) cb.pos.z);

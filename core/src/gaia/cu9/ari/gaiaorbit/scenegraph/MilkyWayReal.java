@@ -1,7 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph;
 
-import java.util.List;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
@@ -12,6 +10,7 @@ import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.badlogic.gdx.utils.reflect.Method;
 import com.badlogic.gdx.utils.reflect.ReflectionException;
@@ -38,7 +37,7 @@ public class MilkyWayReal extends AbstractPositionEntity implements I3DTextRende
 
     public ModelComponent mc;
 
-    public List<double[]> pointData, nebulaData;
+    public Array<double[]> pointData, nebulaData;
     protected String provider;
     public GalaxydataComponent gc;
 
@@ -107,7 +106,7 @@ public class MilkyWayReal extends AbstractPositionEntity implements I3DTextRende
         Vector3 pos3 = pos.toVector3();
 
         // Transform all
-        for (int i = 0; i < pointData.size(); i++) {
+        for (int i = 0; i < pointData.size; i++) {
             double[] pointf = pointData.get(i);
 
             aux.set((float) pointf[0], (float) pointf[2], (float) pointf[1]);
@@ -117,7 +116,7 @@ public class MilkyWayReal extends AbstractPositionEntity implements I3DTextRende
             pointf[2] = aux.z;
         }
 
-        for (int i = 0; i < nebulaData.size(); i++) {
+        for (int i = 0; i < nebulaData.size; i++) {
             double[] pointf = nebulaData.get(i);
             aux.set((float) pointf[0], (float) pointf[2], (float) pointf[1]);
             aux.scl(size).mul(coordinateSystem).add(pos3);

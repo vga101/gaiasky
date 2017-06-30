@@ -1,6 +1,10 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph;
 
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
+
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.RotationComponent;
+import gaia.cu9.ari.gaiaorbit.util.ComponentTypes;
 import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
 import gaia.cu9.ari.gaiaorbit.util.math.Quaterniond;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
@@ -15,11 +19,33 @@ import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 public interface IFocus {
 
     /**
+     * Returns the unique id of this focus.
+     * 
+     * @return The id.
+     */
+    public long getId();
+
+    /**
      * Returns the name of this focus.
      * 
      * @return The name.
      */
     public String getName();
+
+    /**
+     * Returns the component types of this focus.
+     * 
+     * @return The component types
+     */
+    public ComponentTypes getCt();
+
+    /**
+     * Returns whether this focus object is active or not. Useful for particle
+     * groups.
+     * 
+     * @return The active status.
+     */
+    public boolean isActive();
 
     /**
      * Returns true if the focus is within the magnitude limit defined in
@@ -52,6 +78,13 @@ public interface IFocus {
      * @return The absolute position, same as aux
      */
     public Vector3d getAbsolutePosition(Vector3d aux);
+
+    /**
+     * Gets the position in equatorial spherical coordinates
+     * 
+     * @return The position in alpha, delta
+     */
+    public Vector2 getPosSph();
 
     /**
      * Gets the predicted position of this entity in the next time step in the
@@ -104,7 +137,21 @@ public interface IFocus {
      * 
      * @return The radius of the focus, in internal units.
      */
-    public float getRadius();
+    public double getRadius();
+
+    /**
+     * Gets the apparent magnitude
+     * 
+     * @return The apparent magnitude
+     */
+    public float getAppmag();
+
+    /**
+     * Gets the absolute magnitude
+     * 
+     * @return The absolute magnitude
+     */
+    public float getAbsmag();
 
     /**
      * Returns the orientation matrix of this focus.
@@ -126,5 +173,26 @@ public interface IFocus {
      * @return The orientation quaternion. Can be null.
      */
     public Quaterniond getOrientationQuaternion();
+
+    /**
+     * Adds this focus to the hits list if it is hit by the [screenX, screenY]
+     * position
+     * 
+     * @param screenX
+     *            The x position of the hit
+     * @param screenY
+     *            The y position of the hit
+     * @param w
+     *            The viewport width
+     * @param h
+     *            The viewport height
+     * @param pxdist
+     *            The maximum pixel distance to consider as hit
+     * @param camera
+     *            The camera
+     * @param hits
+     *            The list where to add the element
+     */
+    public void addHit(int screenX, int screenY, int w, int h, int pxdist, NaturalCamera camera, Array<IFocus> hits);
 
 }

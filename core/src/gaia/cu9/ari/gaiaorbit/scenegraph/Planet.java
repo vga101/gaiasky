@@ -1,7 +1,9 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph;
 
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
+import com.badlogic.gdx.math.Vector3;
 
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.render.IAtmosphereRenderable;
@@ -9,6 +11,7 @@ import gaia.cu9.ari.gaiaorbit.render.ILineRenderable;
 import gaia.cu9.ari.gaiaorbit.render.system.LineRenderSystem;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.AtmosphereComponent;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
+import gaia.cu9.ari.gaiaorbit.util.camera.CameraUtils;
 import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
 import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
@@ -22,10 +25,6 @@ public class Planet extends ModelBody implements IAtmosphereRenderable, ILineRen
     Vector3d endline = new Vector3d();
     Vector3d dx = new Vector3d();
     double previousOrientationAngle = 0;
-
-    //    private String nameline() {
-    //        return "Moon";
-    //    }
 
     @Override
     public double THRESHOLD_NONE() {
@@ -85,10 +84,6 @@ public class Planet extends ModelBody implements IAtmosphereRenderable, ILineRen
     public void updateLocal(ITimeFrameProvider time, ICamera camera) {
         super.updateLocal(time, camera);
         this.camera = camera;
-        //        if (name.equals(nameline()) && !copy) {
-        //            getPositionAboveSurface(346.9, 26.7, (getRadius() / 2) * Constants.U_TO_KM, endline);
-        //            endline.add(camera.getInversePos());
-        //        }
     }
 
     @Override
@@ -160,9 +155,6 @@ public class Planet extends ModelBody implements IAtmosphereRenderable, ILineRen
         if (ac != null && isInRender(this, RenderGroup.MODEL_F)) {
             addToRender(this, RenderGroup.MODEL_F_ATM);
         }
-
-        //        if (name.equals(nameline()))
-        //            addToRender(this, RenderGroup.LINE);
     }
 
     @Override
@@ -187,4 +179,14 @@ public class Planet extends ModelBody implements IAtmosphereRenderable, ILineRen
     public void render(LineRenderSystem renderer, ICamera camera, float alpha) {
         renderer.addLine(transform.position.x, transform.position.y, transform.position.z, endline.x, endline.y, endline.z, 1, 0, 0, 1);
     }
+
+    @Override
+    protected boolean checkClickDistance(int screenX, int screenY, Vector3 pos, NaturalCamera camera, PerspectiveCamera pcamera, double pixelSize) {
+        Vector3 aux1 = aux3f1.get();
+        Vector3 aux2 = aux3f2.get();
+        Vector3 aux3 = aux3f3.get();
+        Vector3 aux4 = aux3f4.get();
+        return super.checkClickDistance(screenX, screenY, pos, camera, pcamera, pixelSize) || CameraUtils.intersectScreenSphere(this, camera, screenX, screenY, aux1, aux2, aux3, aux4);
+    }
+
 }

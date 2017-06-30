@@ -1,6 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.data.group;
 
-import java.util.List;
+import com.badlogic.gdx.utils.Array;
 
 public interface IParticleGroupDataProvider {
     /**
@@ -9,7 +9,7 @@ public interface IParticleGroupDataProvider {
      * @param file
      * @return
      */
-    public List<double[]> loadData(String file);
+    public Array<double[]> loadData(String file);
 
     /**
      * Loads the data applying a factor.
@@ -18,5 +18,5 @@ public interface IParticleGroupDataProvider {
      * @param factor
      * @return
      */
-    public List<double[]> loadData(String file, double factor);
+    public Array<double[]> loadData(String file, double factor);
 }

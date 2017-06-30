@@ -2,13 +2,13 @@ package gaia.cu9.ari.gaiaorbit.util.comp;
 
 import java.util.Comparator;
 
-import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
+import gaia.cu9.ari.gaiaorbit.scenegraph.IFocus;
 
-public class CelestialBodyComparator implements Comparator<CelestialBody> {
+public class CelestialBodyComparator implements Comparator<IFocus> {
 
     @Override
-    public int compare(CelestialBody a, CelestialBody b) {
-        return b.name.compareTo(a.name);
+    public int compare(IFocus a, IFocus b) {
+        return b.getName().compareTo(a.getName());
     }
 
 }

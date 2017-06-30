@@ -58,9 +58,9 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
+import gaia.cu9.ari.gaiaorbit.scenegraph.IFocus;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
-import gaia.cu9.ari.gaiaorbit.scenegraph.ParticleGroup;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
 import gaia.cu9.ari.gaiaorbit.script.HiddenHelperUser;
@@ -629,12 +629,8 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         gui.render(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
     }
 
-    public Array<CelestialBody> getFocusableEntities() {
+    public Array<IFocus> getFocusableEntities() {
         return sg.getFocusableObjects();
-    }
-
-    public Array<ParticleGroup> getParticleGroups() {
-        return sg.getParticleGroups();
     }
 
     public SceneGraphNode findEntity(String name) {

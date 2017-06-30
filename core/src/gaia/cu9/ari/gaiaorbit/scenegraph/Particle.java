@@ -306,8 +306,8 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
     }
 
     @Override
-    public float getRadius() {
-        return (float) radius;
+    public double getRadius() {
+        return radius;
     }
 
     public boolean isStar() {
@@ -406,6 +406,11 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
 
     protected float getThOverFactorScl() {
         return fovFactor;
+    }
+
+    @Override
+    protected boolean checkHitCondition() {
+        return ((this.octant == null) || (this.octant != null && this.octant.observed));
     }
 
 }

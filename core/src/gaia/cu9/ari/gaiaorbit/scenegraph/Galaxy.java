@@ -42,42 +42,41 @@ public class Galaxy extends Particle {
      **/
     String mcl;
 
-    public Galaxy(Vector3d pos, float appmag, float absmag, float colorbv, String name, float ra, float dec, float bmag,
-	    float a26, float ba, int hrv, int i, int tt, String mcl, long starid) {
-	super(pos, appmag, absmag, colorbv, name, ra, dec, starid);
-	this.bmag = bmag;
-	this.a26 = a26;
-	this.ba = ba;
-	this.hrv = hrv;
-	this.i = i;
-	this.tt = tt;
-	this.mcl = mcl;
+    public Galaxy(Vector3d pos, float appmag, float absmag, float colorbv, String name, float ra, float dec, float bmag, float a26, float ba, int hrv, int i, int tt, String mcl, long starid) {
+        super(pos, appmag, absmag, colorbv, name, ra, dec, starid);
+        this.bmag = bmag;
+        this.a26 = a26;
+        this.ba = ba;
+        this.hrv = hrv;
+        this.i = i;
+        this.tt = tt;
+        this.mcl = mcl;
     }
 
     @Override
     public double THRESHOLD_NONE() {
-	return (float) 0;
+        return (float) 0;
     }
 
     @Override
     public double THRESHOLD_POINT() {
-	return (float) 4E-10;
+        return (float) 4E-10;
     }
 
     @Override
     public double THRESHOLD_QUAD() {
-	return (float) 1.7E-12;
+        return (float) 1.7E-12;
     }
 
     @Override
     protected void setDerivedAttributes() {
-	double flux = Math.pow(10, -absmag / 2.5f);
-	setRGB(colorbv);
+        double flux = Math.pow(10, -absmag / 2.5f);
+        setRGB(colorbv);
 
-	// Calculate size - This contains arbitrary boundary values to make
-	// things nice on the render side
-	size = (float) (Math.max((Math.pow(flux, 0.5f) * Constants.PC_TO_U * 1e-3), .6e9f) * 4.5e0d);
-	computedSize = 0;
+        // Calculate size - This contains arbitrary boundary values to make
+        // things nice on the render side
+        size = (float) (Math.max((Math.pow(flux, 0.5f) * Constants.PC_TO_U * 1e-3), .6e9f) * 4.5e0d);
+        computedSize = 0;
     }
 
     /**
@@ -86,82 +85,82 @@ public class Galaxy extends Particle {
      */
     @Override
     public void update(ITimeFrameProvider time, final Transform parentTransform, ICamera camera, float opacity) {
-	if (appmag <= GlobalConf.runtime.LIMIT_MAG_RUNTIME) {
-	    TH_OVER_FACTOR = (float) (THRESHOLD_POINT() / GlobalConf.scene.LABEL_NUMBER_FACTOR);
-	    transform.position.set(parentTransform.position).add(pos);
-	    distToCamera = transform.position.len();
+        if (appmag <= GlobalConf.runtime.LIMIT_MAG_RUNTIME) {
+            TH_OVER_FACTOR = (float) (THRESHOLD_POINT() / GlobalConf.scene.LABEL_NUMBER_FACTOR);
+            transform.position.set(parentTransform.position).add(pos);
+            distToCamera = transform.position.len();
 
-	    this.opacity = opacity;
+            this.opacity = opacity;
 
-	    if (!copy) {
-		// addToRender(this, RenderGroup.POINT_GAL);
+            if (!copy) {
+                // addToRender(this, RenderGroup.POINT_GAL);
 
-		viewAngle = (radius / distToCamera) / camera.getFovFactor();
-		viewAngleApparent = viewAngle * GlobalConf.scene.STAR_BRIGHTNESS;
+                viewAngle = (radius / distToCamera) / camera.getFovFactor();
+                viewAngleApparent = viewAngle * GlobalConf.scene.STAR_BRIGHTNESS;
 
-		addToRenderLists(camera);
-	    }
+                addToRenderLists(camera);
+            }
 
-	}
+        }
     }
 
     protected boolean addToRender(IRenderable renderable, RenderGroup rg) {
-	SceneGraphRenderer.render_lists.get(rg).add(renderable, ThreadIndexer.i());
-	return true;
+        SceneGraphRenderer.render_lists.get(rg).add(renderable, ThreadIndexer.i());
+        return true;
     }
 
     @Override
     protected void addToRenderLists(ICamera camera) {
-	if (opacity != 0) {
-	    if (camera.getCurrent() instanceof FovCamera) {
-		// Render as point, do nothing
-	    } else {
-		addToRender(this, RenderGroup.SHADER_GAL);
-	    }
-	    if (renderText() && camera.isVisible(GaiaSky.instance.time, this)) {
-		addToRender(this, RenderGroup.LABEL);
-	    }
-	}
+        if (opacity != 0) {
+            if (camera.getCurrent() instanceof FovCamera) {
+                // Render as point, do nothing
+            } else {
+                addToRender(this, RenderGroup.SHADER_GAL);
+            }
+            if (renderText() && camera.isVisible(GaiaSky.instance.time, this)) {
+                addToRender(this, RenderGroup.LABEL);
+            }
+        }
 
     }
 
     @Override
     public void render(ShaderProgram shader, float alpha, boolean colorTransit, Mesh mesh, ICamera camera) {
-	compalpha = alpha;
+        compalpha = alpha;
 
-	float size = getFuzzyRenderSize(camera);
+        float size = getFuzzyRenderSize(camera);
 
-	Vector3 aux = aux3f1.get();
-	shader.setUniformf("u_pos", transform.getTranslationf(aux));
-	shader.setUniformf("u_size", size);
+        Vector3 aux = aux3f1.get();
+        shader.setUniformf("u_pos", transform.getTranslationf(aux));
+        shader.setUniformf("u_size", size);
 
-	float[] col = colorTransit ? ccTransit : ccPale;
-	shader.setUniformf("u_color", col[0], col[1], col[2], alpha);
-	shader.setUniformf("u_alpha", alpha * opacity);
-	shader.setUniformf("u_distance", (float) distToCamera);
-	shader.setUniformf("u_apparent_angle", (float) viewAngleApparent);
-	shader.setUniformf("u_time", GaiaSky.instance.getT() / 5f);
+        float[] col = colorTransit ? ccTransit : ccPale;
+        shader.setUniformf("u_color", col[0], col[1], col[2], alpha);
+        shader.setUniformf("u_alpha", alpha * opacity);
+        shader.setUniformf("u_distance", (float) distToCamera);
+        shader.setUniformf("u_apparent_angle", (float) viewAngleApparent);
+        shader.setUniformf("u_time", GaiaSky.instance.getT() / 5f);
 
-	shader.setUniformf("u_sliders", (tt + 3.4f) / 14f, 0.1f, 0f, i / 180f);
-	// Vector3d sph = aux3d1.get();
-	// Coordinates.cartesianToSpherical(camera.getDirection(), sph);
-	// shader.setUniformf("u_ro", (float) sph.x);
-	// shader.setUniformf("u_ta", (float) sph.y);
+        shader.setUniformf("u_sliders", (tt + 3.4f) / 14f, 0.1f, 0f, i / 180f);
+        // Vector3d sph = aux3d1.get();
+        // Coordinates.cartesianToSpherical(camera.getDirection(), sph);
+        // shader.setUniformf("u_ro", (float) sph.x);
+        // shader.setUniformf("u_ta", (float) sph.y);
 
-	shader.setUniformf("u_radius", getRadius());
+        shader.setUniformf("u_radius", (float) getRadius());
 
-	// Sprite.render
-	mesh.render(shader, GL20.GL_TRIANGLES, 0, 6);
+        // Sprite.render
+        mesh.render(shader, GL20.GL_TRIANGLES, 0, 6);
     }
 
     @Override
     protected float labelFactor() {
-	return 1.2e1f;
+        return 1.2e1f;
     }
 
     @Override
     protected float labelMax() {
-	return 0.00010f;
+        return 0.00010f;
     }
 
 }

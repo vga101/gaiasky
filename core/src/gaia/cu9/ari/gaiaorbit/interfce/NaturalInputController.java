@@ -9,11 +9,9 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.Input.Keys;
-import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.TimeUtils;
 
@@ -21,15 +19,10 @@ import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
-import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
+import gaia.cu9.ari.gaiaorbit.scenegraph.IFocus;
 import gaia.cu9.ari.gaiaorbit.scenegraph.NaturalCamera;
-import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
-import gaia.cu9.ari.gaiaorbit.scenegraph.ParticleGroup;
-import gaia.cu9.ari.gaiaorbit.scenegraph.Planet;
-import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
-import gaia.cu9.ari.gaiaorbit.util.camera.CameraUtils;
 import gaia.cu9.ari.gaiaorbit.util.comp.ViewAngleComparator;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
@@ -61,8 +54,8 @@ public class NaturalInputController extends GestureDetector {
     public int rollKey = Keys.SHIFT_LEFT;
     /** The natural camera */
     public NaturalCamera camera;
-    /** Celestial body comparator **/
-    private Comparator<CelestialBody> comp;
+    /** Focus comparator **/
+    private Comparator<IFocus> comp;
 
     /** Holds the pressed keys at any moment **/
     public static Set<Integer> pressedKeys;
@@ -93,9 +86,6 @@ public class NaturalInputController extends GestureDetector {
     private long lastClickTime = -1;
     /** Maximum double click time, in ms **/
     private static final long doubleClickTime = 400;
-
-    /** Aux vectors **/
-    private Vector3 aux1, aux2, aux3, aux4;
 
     protected static class GaiaGestureListener extends GestureAdapter {
         public NaturalInputController controller;
@@ -150,7 +140,7 @@ public class NaturalInputController extends GestureDetector {
         this.gestureListener.controller = this;
         this.camera = camera;
         this.aux = new Vector3d();
-        this.comp = new ViewAngleComparator<CelestialBody>();
+        this.comp = new ViewAngleComparator<IFocus>();
         // 1% of width
         this.MOVE_PX_DIST = !Constants.mobile ? (float) Math.max(5, Gdx.graphics.getWidth() * 0.01) : (float) Math.max(80, Gdx.graphics.getWidth() * 0.05);
         this.MAX_PX_DIST = !Constants.mobile ? 5 : 150;
@@ -162,11 +152,6 @@ public class NaturalInputController extends GestureDetector {
 
         this.currentDrag = new Vector2();
         this.lastDrag = new Vector2();
-
-        this.aux1 = new Vector3();
-        this.aux2 = new Vector3();
-        this.aux3 = new Vector3();
-        this.aux4 = new Vector3();
 
         pressedKeys = new HashSet<Integer>();
     }
@@ -196,77 +181,23 @@ public class NaturalInputController extends GestureDetector {
         return super.touchDown(screenX, screenY, pointer, button);
     }
 
-    private Array<CelestialBody> getHits(int screenX, int screenY) {
-        Array<CelestialBody> l = GaiaSky.instance.getFocusableEntities();
+    private Array<IFocus> getHits(int screenX, int screenY) {
+        Array<IFocus> l = GaiaSky.instance.getFocusableEntities();
 
-        Array<CelestialBody> hits = new Array<CelestialBody>();
+        Array<IFocus> hits = new Array<IFocus>();
 
-        Iterator<CelestialBody> it = l.iterator();
-        Vector3 pos = new Vector3();
+        Iterator<IFocus> it = l.iterator();
+        // Add all hits
         while (it.hasNext()) {
-            CelestialBody s = it.next();
-
-            if (s.withinMagLimit() && (!(s instanceof Particle) || (s instanceof Particle && ((Particle) s).octant == null) || (s instanceof Particle && ((Particle) s).octant != null && ((Particle) s).octant.observed))) {
-                Vector3d posd = s.getAbsolutePosition(aux).add(camera.posinv);
-                pos.set(posd.valuesf());
-
-                if (camera.direction.dot(posd) > 0) {
-                    // The star is in front of us
-                    // Diminish the size of the star
-                    // when we are close by
-                    double angle = s.viewAngle;
-                    if (s instanceof Star && s.viewAngle > Constants.THRESHOLD_DOWN / camera.getFovFactor() && s.viewAngle < Constants.THRESHOLD_UP / camera.getFovFactor()) {
-                        angle = 20f * Constants.THRESHOLD_DOWN / camera.getFovFactor();
-                    }
-
-                    PerspectiveCamera pcamera;
-                    if (GlobalConf.program.STEREOSCOPIC_MODE) {
-                        if (screenX < Gdx.graphics.getWidth() / 2f) {
-                            pcamera = camera.getCameraStereoLeft();
-                            pcamera.update();
-                        } else {
-                            pcamera = camera.getCameraStereoRight();
-                            pcamera.update();
-                        }
-                    } else {
-                        pcamera = camera.camera;
-                    }
-
-                    angle = (float) Math.toDegrees(angle * camera.fovFactor) * (40f / pcamera.fieldOfView);
-                    double pixelSize = Math.max(MAX_PX_DIST, ((angle * pcamera.viewportHeight) / pcamera.fieldOfView) / 2);
-                    pcamera.project(pos);
-                    pos.y = pcamera.viewportHeight - pos.y;
-                    if (GlobalConf.program.STEREOSCOPIC_MODE) {
-                        pos.x /= 2;
-                    }
-                    // Check click distance
-                    if (pos.dst(screenX % pcamera.viewportWidth, screenY, pos.z) <= pixelSize) {
-                        // Hit
-                        hits.add(s);
-                    } else if (s instanceof Planet) {
-                        // Intersect
-                        Planet planet = (Planet) s;
-                        if (CameraUtils.intersectScreenSphere(planet, camera, screenX, screenY, aux1, aux2, aux3, aux4)) {
-                            // Hit
-                            hits.add(s);
-                        }
-                    }
-                }
-            }
-        }
-
-        if (hits.size == 0) {
-            Array<ParticleGroup> pgs = GaiaSky.instance.getParticleGroups();
-            for (ParticleGroup pg : pgs) {
-
-            }
+            IFocus s = it.next();
+            s.addHit(screenX, screenY, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), MAX_PX_DIST, camera, hits);
         }
 
         return hits;
     }
 
-    private CelestialBody getBestHit(int screenX, int screenY) {
-        Array<CelestialBody> hits = getHits(screenX, screenY);
+    private IFocus getBestHit(int screenX, int screenY) {
+        Array<IFocus> hits = getHits(screenX, screenY);
         if (hits.size != 0) {
             // Sort using distance
             hits.sort(comp);
@@ -298,7 +229,7 @@ public class NaturalInputController extends GestureDetector {
 
                             if (doubleClick && !stopped && !focusRemoved) {
                                 // Select star, if any
-                                CelestialBody hit = getBestHit(screenX, screenY);
+                                IFocus hit = getBestHit(screenX, screenY);
                                 if (hit != null) {
                                     EventManager.instance.post(Events.FOCUS_CHANGE_CMD, hit);
                                     EventManager.instance.post(Events.CAMERA_MODE_CMD, CameraMode.Focus);
@@ -323,7 +254,7 @@ public class NaturalInputController extends GestureDetector {
                             camera.setPitch(0);
 
                             // Right click, context menu
-                            CelestialBody hit = getBestHit(screenX, screenY);
+                            IFocus hit = getBestHit(screenX, screenY);
                             if (hit != null) {
                                 EventManager.instance.post(Events.POPUP_MENU_FOCUS, hit, screenX, screenY);
                             }

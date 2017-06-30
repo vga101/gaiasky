@@ -34,7 +34,7 @@ public class CameraUtils {
         camera.getCamera().unproject(v0);
         camera.getCamera().unproject(v1);
         Ray ray = new Ray(v0, v1.sub(v0).nor());
-        return Intersector.intersectRaySphere(ray, vec, p.getRadius(), intersection);
+        return Intersector.intersectRaySphere(ray, vec, (float) p.getRadius(), intersection);
     }
 
     public static boolean projectLonLat(Planet p, ICamera camera, double lon, double lat, Vector3 point, Vector3 pos, Vector3d in, Vector3d out, Matrix4 localTransform, Vector2 xy) {

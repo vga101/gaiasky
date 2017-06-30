@@ -25,6 +25,7 @@ import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
 import gaia.cu9.ari.gaiaorbit.util.ComponentTypes;
+import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.ModelCache;
 import gaia.cu9.ari.gaiaorbit.util.Pair;
@@ -279,7 +280,7 @@ public class Star extends Particle {
         ((ColorAttribute) mc.env.get(ColorAttribute.AmbientLight)).color.set(col[0], col[1], col[2], 1f);
         ((FloatAttribute) mc.env.get(FloatAttribute.Shininess)).value = t;
         // Local transform
-        transform.getMatrix(mc.instance.transform).scl(getRadius() * 2);
+        transform.getMatrix(mc.instance.transform).scl((float) (getRadius() * 2d));
         modelBatch.render(mc.instance, mc.env);
     }
 
@@ -305,6 +306,14 @@ public class Star extends Particle {
     @Override
     public double getPmZ() {
         return pm.z;
+    }
+
+    @Override
+    protected double computeViewAngle(float fovFactor) {
+        if (viewAngle > Constants.THRESHOLD_DOWN / fovFactor && viewAngle < Constants.THRESHOLD_UP / fovFactor) {
+            return 20f * Constants.THRESHOLD_DOWN / fovFactor;
+        }
+        return viewAngle;
     }
 
 }

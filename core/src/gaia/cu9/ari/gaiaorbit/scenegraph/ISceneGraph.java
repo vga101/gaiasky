@@ -103,9 +103,7 @@ public interface ISceneGraph extends Disposable {
 
     public SceneGraphNode getRoot();
 
-    public Array<CelestialBody> getFocusableObjects();
-
-    public Array<ParticleGroup> getParticleGroups();
+    public Array<IFocus> getFocusableObjects();
 
     public CelestialBody findFocus(String name);
 

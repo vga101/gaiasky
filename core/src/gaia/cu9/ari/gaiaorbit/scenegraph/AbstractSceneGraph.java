@@ -232,15 +232,9 @@ public abstract class AbstractSceneGraph implements ISceneGraph {
         return objects;
     }
 
-    public Array<CelestialBody> getFocusableObjects() {
-        Array<CelestialBody> objects = new Array<CelestialBody>();
+    public Array<IFocus> getFocusableObjects() {
+        Array<IFocus> objects = new Array<IFocus>();
         root.addFocusableObjects(objects);
-        return objects;
-    }
-
-    public Array<ParticleGroup> getParticleGroups() {
-        Array<ParticleGroup> objects = new Array<ParticleGroup>();
-        root.addParticleGroups(objects);
         return objects;
     }
 

@@ -4,7 +4,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 
 import gaia.cu9.ari.gaiaorbit.interfce.INetworkChecker;
-import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
+import gaia.cu9.ari.gaiaorbit.scenegraph.IFocus;
 
 public class WebGLNetworkChecker implements INetworkChecker {
 
@@ -18,7 +18,7 @@ public class WebGLNetworkChecker implements INetworkChecker {
     }
 
     @Override
-    public void setFocus(CelestialBody focus) {
+    public void setFocus(IFocus focus) {
     }
 
     @Override

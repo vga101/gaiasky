@@ -19,7 +19,7 @@ import com.badlogic.gdx.utils.Align;
 
 import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.interfce.INetworkChecker;
-import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
+import gaia.cu9.ari.gaiaorbit.scenegraph.IFocus;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ModelBody;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
@@ -36,7 +36,7 @@ public class DesktopNetworkChecker extends Thread implements INetworkChecker {
     private boolean running = true;
 
     private Skin skin;
-    private CelestialBody focus;
+    private IFocus focus;
     public Object monitor;
     public boolean executing = false;
     private LabelStyle linkStyle;
@@ -68,7 +68,7 @@ public class DesktopNetworkChecker extends Thread implements INetworkChecker {
         this.pad = pad;
     }
 
-    public void setFocus(CelestialBody focus) {
+    public void setFocus(IFocus focus) {
         this.focus = focus;
     }
 
@@ -94,9 +94,9 @@ public class DesktopNetworkChecker extends Thread implements INetworkChecker {
     }
 
     private class GaiaButtonListener implements EventListener {
-        private final CelestialBody focus;
+        private final IFocus focus;
 
-        public GaiaButtonListener(CelestialBody focus) {
+        public GaiaButtonListener(IFocus focus) {
             super();
             this.focus = focus;
         }
@@ -125,7 +125,7 @@ public class DesktopNetworkChecker extends Thread implements INetworkChecker {
                     break;
                 executing = true;
                 if (focus != null) {
-                    Logger.debug(this.getClass().getSimpleName(), "Looking up network resources for '" + focus.name + "'");
+                    Logger.debug(this.getClass().getSimpleName(), "Looking up network resources for '" + focus.getName() + "'");
 
                     // Add table
                     if (focus instanceof Star) {
@@ -140,7 +140,7 @@ public class DesktopNetworkChecker extends Thread implements INetworkChecker {
                     simbadCell = table.add().center();
                     wikiCell = table.add().center();
 
-                    String wikiname = focus.name.replace(' ', '_');
+                    String wikiname = focus.getName().replace(' ', '_');
 
                     setWikiLink(wikiname, focus, new LinkListener() {
                         @Override
@@ -178,7 +178,7 @@ public class DesktopNetworkChecker extends Thread implements INetworkChecker {
         }
     }
 
-    private void setSimbadLink(CelestialBody focus, LinkListener listener) {
+    private void setSimbadLink(IFocus focus, LinkListener listener) {
         if (focus instanceof Star) {
             String url = URL_SIMBAD;
             Star st = (Star) focus;
@@ -196,7 +196,7 @@ public class DesktopNetworkChecker extends Thread implements INetworkChecker {
 
     private String[] suffixes = { "_(planet)", "_(moon)", "_(asteroid)", "_(dwarf_planet)", "_(spacecraft)" };
 
-    private void setWikiLink(String wikiname, CelestialBody focus, LinkListener listener) {
+    private void setWikiLink(String wikiname, IFocus focus, LinkListener listener) {
         try {
             String url = URL_WIKIPEDIA;
             if (focus instanceof ModelBody) {

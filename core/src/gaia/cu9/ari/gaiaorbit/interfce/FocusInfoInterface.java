@@ -1,5 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.interfce;
 
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
@@ -15,10 +16,11 @@ import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
-import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
+import gaia.cu9.ari.gaiaorbit.scenegraph.IFocus;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Planet;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
+import gaia.cu9.ari.gaiaorbit.scenegraph.StarGroup;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
@@ -27,6 +29,7 @@ import gaia.cu9.ari.gaiaorbit.util.Pair;
 import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
 import gaia.cu9.ari.gaiaorbit.util.format.INumberFormat;
 import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
+import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnLabel;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextButton;
@@ -46,7 +49,7 @@ public class FocusInfoInterface extends Table implements IObserver, IGuiInterfac
     protected OwnLabel pointerName, pointerLonLat, pointerRADEC;
     protected OwnLabel camName, camVel, camPos, lonLatLabel, RADECLabel;
 
-    protected CelestialBody currentFocus;
+    protected IFocus currentFocus;
 
     private Table focusInfo, pointerInfo, cameraInfo, moreInfo;
     Vector3d pos;
@@ -226,23 +229,27 @@ public class FocusInfoInterface extends Table implements IObserver, IGuiInterfac
     public void notify(Events event, Object... data) {
         switch (event) {
         case FOCUS_CHANGED:
-            CelestialBody cb = null;
+            IFocus focus = null;
             if (data[0] instanceof String) {
-                cb = (CelestialBody) GaiaSky.instance.sg.getNode((String) data[0]);
+                focus = (IFocus) GaiaSky.instance.sg.getNode((String) data[0]);
             } else {
-                cb = (CelestialBody) data[0];
+                focus = (IFocus) data[0];
             }
-            currentFocus = cb;
+            currentFocus = focus;
 
             String id = "";
-            if (cb instanceof Star) {
-                Star s = (Star) cb;
-                if (s.id > 0) {
-                    id = String.valueOf(s.id);
-                } else if (s.hip > 0) {
-                    id = "HIP " + s.hip;
-                } else if (s.tycho != null && s.tycho.length() > 0) {
-                    id = "TYC " + s.tycho;
+            if (focus instanceof Star || focus instanceof StarGroup) {
+                if (focus.getId() > 0) {
+                    id = String.valueOf(focus.getId());
+                } else {
+                    if (focus instanceof Star) {
+                        Star s = (Star) focus;
+                        if (s.hip > 0) {
+                            id = "HIP " + s.hip;
+                        } else if (s.tycho != null && s.tycho.length() > 0) {
+                            id = "TYC " + s.tycho;
+                        }
+                    }
                 }
             }
             if (id.length() == 0) {
@@ -250,18 +257,18 @@ public class FocusInfoInterface extends Table implements IObserver, IGuiInterfac
             }
 
             // Link
-            landAt.setVisible(cb instanceof Planet);
-            landOn.setVisible(cb instanceof Planet);
+            landAt.setVisible(focus instanceof Planet);
+            landOn.setVisible(focus instanceof Planet);
 
             // Type
             try {
-                focusType.setText(txt("element." + ComponentType.values()[cb.ct.getFirstOrdinal()].toString().toLowerCase() + ".singular"));
+                focusType.setText(txt("element." + ComponentType.values()[focus.getCt().getFirstOrdinal()].toString().toLowerCase() + ".singular"));
             } catch (Exception e) {
                 focusType.setText("");
             }
 
             // Coords
-            if (cb instanceof Planet) {
+            if (focus instanceof Planet) {
                 lonLatLabel.setVisible(true);
                 pointerLonLat.setVisible(true);
                 pointerLonLat.setText("-/-");
@@ -273,21 +280,22 @@ public class FocusInfoInterface extends Table implements IObserver, IGuiInterfac
             focusId.setText(id);
 
             // Update focus information
-            String objectName = cb.name;
+            String objectName = focus.getName();
 
             focusName.setText(objectName);
-            if (cb.posSph != null && cb.posSph.len() > 0f) {
-                focusRA.setText(nf.format(cb.posSph.x) + "°");
-                focusDEC.setText(nf.format(cb.posSph.y) + "°");
+            Vector2 posSph = focus.getPosSph();
+            if (posSph != null && posSph.len() > 0f) {
+                focusRA.setText(nf.format(posSph.x) + "°");
+                focusDEC.setText(nf.format(posSph.y) + "°");
             } else {
-                Coordinates.cartesianToSpherical(cb.pos, pos);
+                Coordinates.cartesianToSpherical(focus.getAbsolutePosition(pos), pos);
 
-                focusRA.setText(nf.format(cb.pos.x % 360) + "°");
-                focusDEC.setText(nf.format(cb.pos.y % 360) + "°");
+                focusRA.setText(nf.format(MathUtilsd.radDeg * pos.x % 360) + "°");
+                focusDEC.setText(nf.format(MathUtilsd.radDeg * pos.y % 360) + "°");
             }
 
-            if (cb instanceof Particle) {
-                Particle part = (Particle) cb;
+            if (focus instanceof Particle) {
+                Particle part = (Particle) focus;
                 if (part.pmSph != null && part.pmSph.len2() != 0) {
                     focusMuAlpha.setText(nf.format(part.pmSph.x) + " mas/yr");
                     focusMuDelta.setText(nf.format(part.pmSph.y) + " mas/yr");
@@ -300,26 +308,26 @@ public class FocusInfoInterface extends Table implements IObserver, IGuiInterfac
                 focusMuDelta.setText("-");
             }
 
-            Float appmag = cb.appmag;
+            Float appmag = focus.getAppmag();
 
             if (appmag != null) {
                 focusAppMag.setText(nf.format(appmag));
             } else {
                 focusAppMag.setText("-");
             }
-            Float absmag = cb.absmag;
+            Float absmag = focus.getAbsmag();
 
             if (absmag != null) {
                 focusAbsMag.setText(nf.format(absmag));
             } else {
                 focusAbsMag.setText("-");
             }
-            focusRadius.setText(sf.format(cb.getRadius() * Constants.U_TO_KM) + " km");
+            focusRadius.setText(sf.format(focus.getRadius() * Constants.U_TO_KM) + " km");
 
             // Update more info table
             if (!daemon.executing()) {
                 moreInfo.clear();
-                daemon.setFocus(cb);
+                daemon.setFocus(focus);
                 daemon.doNotify();
             }
 

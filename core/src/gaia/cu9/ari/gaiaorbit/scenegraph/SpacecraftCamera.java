@@ -362,7 +362,7 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
 
         camera.near = (float) (100000d * Constants.M_TO_U);
         if (closest != null) {
-            camera.near = Math.min(camera.near, ((float) closest.pos.dst(pos) - closest.getRadius()) / 2.5f);
+            camera.near = Math.min(camera.near, ((float) closest.pos.dst(pos) - (float) closest.getRadius()) / 2.5f);
         }
         camera.position.set(0, 0, 0);
         camera.direction.set(direction.valuesf());

@@ -33,6 +33,7 @@ import gaia.cu9.ari.gaiaorbit.interfce.components.VisualEffectsComponent;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
+import gaia.cu9.ari.gaiaorbit.scenegraph.IFocus;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Planet;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
@@ -342,7 +343,7 @@ public class FullGui extends AbstractGui {
             mouseYCoord.setPosition(Gdx.graphics.getWidth() - (60f * GlobalConf.SCALE_FACTOR), Gdx.graphics.getHeight() - y);
             break;
         case POPUP_MENU_FOCUS:
-            final CelestialBody candidate = (CelestialBody) data[0];
+            final IFocus candidate = (IFocus) data[0];
             int screenX = Gdx.input.getX();
             int screenY = Gdx.input.getY();
 
@@ -434,7 +435,7 @@ public class FullGui extends AbstractGui {
 
             if (candidate instanceof Star) {
                 boolean sep = false;
-                if (UncertaintiesHandler.getInstance().containsStar(candidate.id)) {
+                if (UncertaintiesHandler.getInstance().containsStar(candidate.getId())) {
                     popup.addSeparator();
                     sep = true;
 

@@ -111,7 +111,7 @@ public class StarGroupRenderSystem extends ImmediateRenderSystem implements IObs
 
                         curr.vertexIdx += curr.vertexSize;
                     }
-                    particleGroup.count = particleGroup.pointData.size() * curr.vertexSize;
+                    particleGroup.count = particleGroup.pointData.size * curr.vertexSize;
 
                     particleGroup.inGpu = true;
 

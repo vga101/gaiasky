@@ -220,8 +220,8 @@ public abstract class AbstractPositionEntity extends SceneGraphNode {
      * 
      * @return The radius of the object, in internal units
      */
-    public float getRadius() {
-        return size / 2;
+    public double getRadius() {
+        return size / 2d;
     }
 
     /**
@@ -251,6 +251,10 @@ public abstract class AbstractPositionEntity extends SceneGraphNode {
      */
     public void setSize(Long size) {
         this.size = (float) size;
+    }
+
+    public Vector2 getPosSph() {
+        return posSph;
     }
 
     public void setColor(double[] color) {

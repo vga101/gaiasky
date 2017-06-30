@@ -4,14 +4,13 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.utils.Array;
 
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
@@ -28,14 +27,14 @@ public class TGASDataProvider implements IParticleGroupDataProvider {
     /** TYC identifier to B-V colours **/
     private Map<String, Float> tycBV;
 
-    public List<double[]> loadData(String file) {
+    public Array<double[]> loadData(String file) {
         return loadData(file, 1d);
     }
 
-    public List<double[]> loadData(String file, double factor) {
+    public Array<double[]> loadData(String file, double factor) {
         tycBV = loadTYCBVColours(btvtColorsFile);
 
-        List<double[]> pointData = new ArrayList<double[]>();
+        Array<double[]> pointData = new Array<double[]>();
         FileHandle f = Gdx.files.internal(file);
 
         try {
@@ -45,40 +44,40 @@ public class TGASDataProvider implements IParticleGroupDataProvider {
                 if (!line.isEmpty() && !line.startsWith("#")) {
                     // Read line
                     String[] tokens = line.split(",");
-                    double[] point = new double[5];
+                    double[] point = new double[8];
 
-                    long sourceid = Parser.parseLong(tokens[0]);
-                    int hip = Parser.parseInt(tokens[12]);
-                    String tycho2 = tokens[13];
-
-                    double ra = Parser.parseDouble(tokens[1]);
-                    double dec = Parser.parseDouble(tokens[2]);
                     double pllx = Parser.parseDouble(tokens[3]);
                     double pllxerr = Parser.parseDouble(tokens[4]);
 
                     double dist = (1000d / pllx);
 
-                    double appmag = Parser.parseDouble(tokens[9]);
-                    double absmag = (appmag - 2.5 * Math.log10(Math.pow(dist / 10d, 2d)));
-                    double flux = Math.pow(10, -absmag / 2.5f);
-                    double size = Math.min((Math.pow(flux, 0.5f) * Constants.PC_TO_U * 0.16f), 1e9f) / 1.5;
-
-                    /** COLOR, we use the tycBV map if present **/
-                    double colorbv = 0;
-                    if (tycBV != null) {
-                        if (tycBV.containsKey(tycho2)) {
-                            colorbv = tycBV.get(tycho2);
-                        }
-                    } else {
-                        double bp = new Double(Parser.parseDouble(tokens[10]));
-                        double rp = new Double(Parser.parseDouble(tokens[11]));
-                        colorbv = bp - rp;
-                    }
-                    float[] rgb = ColourUtils.BVtoRGB(colorbv);
-                    double col = Color.toFloatBits(rgb[0], rgb[1], rgb[2], 1.0f);
-
                     // Keep only stars with relevant parallaxes
-                    if (dist >= 0 && pllx / pllxerr > 1.5 && pllxerr <= 1) {
+                    if (dist >= 0 && pllx / pllxerr > 10 && pllxerr <= 1) {
+                        long sourceid = Parser.parseLong(tokens[0]);
+                        int hip = Parser.parseInt(tokens[12]);
+                        String tycho2 = tokens[13];
+
+                        double ra = Parser.parseDouble(tokens[1]);
+                        double dec = Parser.parseDouble(tokens[2]);
+                        double appmag = Parser.parseDouble(tokens[9]);
+                        double absmag = (appmag - 2.5 * Math.log10(Math.pow(dist / 10d, 2d)));
+                        double flux = Math.pow(10, -absmag / 2.5f);
+                        double size = Math.min((Math.pow(flux, 0.5f) * Constants.PC_TO_U * 0.16f), 1e9f) / 1.5;
+
+                        /** COLOR, we use the tycBV map if present **/
+                        double colorbv = 0;
+                        if (tycBV != null) {
+                            if (tycBV.containsKey(tycho2)) {
+                                colorbv = tycBV.get(tycho2);
+                            }
+                        } else {
+                            double bp = new Double(Parser.parseDouble(tokens[10]));
+                            double rp = new Double(Parser.parseDouble(tokens[11]));
+                            colorbv = bp - rp;
+                        }
+                        float[] rgb = ColourUtils.BVtoRGB(colorbv);
+                        double col = Color.toFloatBits(rgb[0], rgb[1], rgb[2], 1.0f);
+
                         Position p = new Position(ra, "deg", dec, "deg", dist, "pc", PositionType.RA_DEC_DIST);
                         p.gsposition.scl(Constants.PC_TO_U);
                         point[0] = p.gsposition.x;
@@ -86,6 +85,9 @@ public class TGASDataProvider implements IParticleGroupDataProvider {
                         point[2] = p.gsposition.z;
                         point[3] = col;
                         point[4] = size;
+                        point[5] = appmag;
+                        point[6] = absmag;
+                        point[7] = sourceid;
                         pointData.add(point);
                     }
                 }
@@ -93,7 +95,7 @@ public class TGASDataProvider implements IParticleGroupDataProvider {
 
             br.close();
 
-            Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.nodeloader", pointData.size(), file));
+            Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.nodeloader", pointData.size, file));
         } catch (Exception e) {
             Logger.error(e, TGASDataProvider.class.getName());
         }

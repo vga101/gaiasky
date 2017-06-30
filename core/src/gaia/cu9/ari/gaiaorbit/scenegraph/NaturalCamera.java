@@ -234,7 +234,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
         case Focus:
             if (focus.withinMagLimit()) {
                 focusBak = focus;
-                focus = (CelestialBody) focus.getComputedAncestor();
+                focus = (IFocus) focus.getComputedAncestor();
                 focus.getAbsolutePosition(focusPos);
 
                 dx.set(0, 0, 0);
@@ -882,7 +882,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
         }
     }
 
-    public void setFocus(CelestialBody focus) {
+    public void setFocus(IFocus focus) {
         if (focus != null) {
             this.focus = focus;
             // Create event to notify focus change
@@ -899,10 +899,10 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
         double dist;
         if (parent.mode == CameraMode.Focus && focus != null) {
             AbstractPositionEntity ancestor = focus.getComputedAncestor();
-            dist = ancestor.distToCamera - (ancestor.getRadius() + MIN_DIST);
+            dist = ancestor.getDistToCamera() - (ancestor.getRadius() + MIN_DIST);
         } else if (parent.mode == CameraMode.Free_Camera && closest != null) {
             AbstractPositionEntity ancestor = closest.getComputedAncestor();
-            dist = ancestor.distToCamera - (ancestor.getRadius() + MIN_DIST);
+            dist = ancestor.getDistToCamera() - (ancestor.getRadius() + MIN_DIST);
         } else {
             dist = distance;
         }
@@ -929,16 +929,16 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
     public void notify(Events event, Object... data) {
         switch (event) {
         case FOCUS_CHANGE_CMD:
-            // Check the type of the parameter: CelestialBody or String
-            CelestialBody focus = null;
+            // Check the type of the parameter: IFocus or String
+            IFocus focus = null;
             if (data[0] instanceof String) {
                 SceneGraphNode sgn = GaiaSky.instance.sg.getNode((String) data[0]);
-                if (sgn instanceof CelestialBody) {
-                    focus = (CelestialBody) sgn;
+                if (sgn instanceof IFocus) {
+                    focus = (IFocus) sgn;
                     diverted = false;
                 }
-            } else if (data[0] instanceof CelestialBody) {
-                focus = (CelestialBody) data[0];
+            } else if (data[0] instanceof IFocus) {
+                focus = (IFocus) data[0];
                 diverted = false;
             }
             if (focus != null) {
@@ -1147,7 +1147,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
      * Checks the position of the camera does not collide with the focus object.
      */
     public void checkFocus() {
-        if (focus != null && !(focus instanceof Star)) {
+        if (focus != null && !(focus instanceof Star) && !(focus instanceof ParticleGroup)) {
             // Move camera if too close to focus
             this.focus.getAbsolutePosition(aux1);
             if (pos.dst(aux1) < this.focus.getRadius()) {

@@ -96,7 +96,7 @@ public class ParticleGroupRenderSystem extends ImmediateRenderSystem implements 
 
                         curr.vertexIdx += curr.vertexSize;
                     }
-                    particleGroup.count = particleGroup.pointData.size() * curr.vertexSize;
+                    particleGroup.count = particleGroup.pointData.size * curr.vertexSize;
 
                     particleGroup.inGpu = true;
 

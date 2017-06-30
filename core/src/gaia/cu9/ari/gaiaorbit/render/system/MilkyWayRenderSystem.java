@@ -126,12 +126,12 @@ public class MilkyWayRenderSystem extends ImmediateRenderSystem implements IObse
                 for (double[] star : mw.pointData) {
                     // VERTEX
                     aux1.set((float) star[0], (float) star[1], (float) star[2]);
-                    float distanceCenter = aux1.sub(center).len() / (mw.getRadius() * 2f);
+                    double distanceCenter = aux1.sub(center).len() / (mw.getRadius() * 2f);
 
                     float[] col = new float[] { (float) (rand.nextGaussian() * 0.02f) + 0.93f, (float) (rand.nextGaussian() * 0.02) + 0.8f, (float) (rand.nextGaussian() * 0.02) + 0.97f, rand.nextFloat() * 0.5f + 0.4f };
 
                     if (distanceCenter < 1f) {
-                        float add = MathUtilsd.clamp(1f - distanceCenter, 0f, 1f) * 0.5f;
+                        float add = (float) MathUtilsd.clamp(1f - distanceCenter, 0f, 1f) * 0.5f;
                         col[0] = col[0] + add;
                         col[1] = col[1] + add;
                         col[2] = col[2] + add;

@@ -3,6 +3,7 @@ package gaia.cu9.ari.gaiaorbit.scenegraph;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Mesh;
+import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
@@ -136,7 +137,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
         // Whether light scattering is enabled or not
         shader.setUniformi("u_lightScattering", (this instanceof Star && PostProcessorFactory.instance.getPostProcessor().isLightScatterEnabled()) ? 1 : 0);
 
-        shader.setUniformf("u_radius", getRadius());
+        shader.setUniformf("u_radius", (float) getRadius());
 
         // Sprite.render
         mesh.render(shader, GL20.GL_TRIANGLES, 0, 6);
@@ -215,12 +216,24 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
         return posSph;
     }
 
+    public float getAppmag() {
+        return appmag;
+    }
+
+    public float getAbsmag() {
+        return absmag;
+    }
+
+    public boolean isActive() {
+        return true;
+    }
+
     /**
      * Adds all the children that are focusable objects to the list.
      * 
      * @param list
      */
-    public void addFocusableObjects(Array<CelestialBody> list) {
+    public void addFocusableObjects(Array<IFocus> list) {
         list.add(this);
         super.addFocusableObjects(list);
     }
@@ -383,6 +396,61 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
 
     public Quaterniond getOrientationQuaternion() {
         return null;
+    }
+
+    public void addHit(int screenX, int screenY, int w, int h, int pxdist, NaturalCamera camera, Array<IFocus> hits) {
+        if (withinMagLimit() && checkHitCondition()) {
+            Vector3 pos = aux3f1.get();
+            Vector3d aux = aux3d1.get();
+            Vector3d posd = getAbsolutePosition(aux).add(camera.posinv);
+            pos.set(posd.valuesf());
+
+            if (camera.direction.dot(posd) > 0) {
+                // The star is in front of us
+                // Diminish the size of the star
+                // when we are close by
+                double angle = computeViewAngle(camera.getFovFactor());
+
+                PerspectiveCamera pcamera;
+                if (GlobalConf.program.STEREOSCOPIC_MODE) {
+                    if (screenX < Gdx.graphics.getWidth() / 2f) {
+                        pcamera = camera.getCameraStereoLeft();
+                        pcamera.update();
+                    } else {
+                        pcamera = camera.getCameraStereoRight();
+                        pcamera.update();
+                    }
+                } else {
+                    pcamera = camera.camera;
+                }
+
+                angle = (float) Math.toDegrees(angle * camera.fovFactor) * (40f / pcamera.fieldOfView);
+                double pixelSize = Math.max(pxdist, ((angle * pcamera.viewportHeight) / pcamera.fieldOfView) / 2);
+                pcamera.project(pos);
+                pos.y = pcamera.viewportHeight - pos.y;
+                if (GlobalConf.program.STEREOSCOPIC_MODE) {
+                    pos.x /= 2;
+                }
+                // Check click distance
+                if (checkClickDistance(screenX, screenY, pos, camera, pcamera, pixelSize)) {
+                    //Hit
+                    hits.add(this);
+                }
+            }
+        }
+
+    }
+
+    protected boolean checkClickDistance(int screenX, int screenY, Vector3 pos, NaturalCamera camera, PerspectiveCamera pcamera, double pixelSize) {
+        return pos.dst(screenX % pcamera.viewportWidth, screenY, pos.z) <= pixelSize;
+    }
+
+    protected double computeViewAngle(float fovFactor) {
+        return viewAngle;
+    }
+
+    protected boolean checkHitCondition() {
+        return true;
     }
 
 }
