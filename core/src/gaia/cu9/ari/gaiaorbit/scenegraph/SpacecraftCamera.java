@@ -488,12 +488,12 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
     }
 
     @Override
-    public CelestialBody getFocus() {
+    public IFocus getFocus() {
         return null;
     }
 
     @Override
-    public boolean isFocus(CelestialBody cb) {
+    public boolean isFocus(IFocus cb) {
         return false;
     }
 

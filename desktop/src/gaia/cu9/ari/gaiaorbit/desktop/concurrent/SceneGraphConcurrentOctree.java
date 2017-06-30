@@ -11,8 +11,8 @@ import com.badlogic.gdx.utils.Array;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.scenegraph.AbstractSceneGraph;
-import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
+import gaia.cu9.ari.gaiaorbit.scenegraph.IFocus;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.octreewrapper.OctreeWrapperConcurrent;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
@@ -104,7 +104,7 @@ public class SceneGraphConcurrentOctree extends AbstractSceneGraph {
         }
 
         // Update focus, just in case
-        CelestialBody focus = camera.getFocus();
+        IFocus focus = camera.getFocus();
         if (focus != null) {
             SceneGraphNode star = focus.getFirstStarAncestor();
             OctreeNode parent = octree.parenthood.get(star);

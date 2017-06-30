@@ -1,8 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.interfce;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -68,7 +66,7 @@ public class LoadingGui extends AbstractGui {
         screenMode.pad(pad10);
         Image smImg = new Image(skin.getDrawable("screen-mode"));
         OwnTextIconButton screenModeButton = new OwnTextIconButton("", smImg, skin);
-        screenModeButton.setCursor(new Pixmap(Gdx.files.internal("img/cursor-link.png")));
+        screenModeButton.setCursor(GlobalResources.linkCursor);
         screenModeButton.addListener(new EventListener() {
             @Override
             public boolean handle(Event event) {

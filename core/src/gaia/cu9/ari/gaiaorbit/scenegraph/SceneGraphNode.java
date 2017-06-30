@@ -474,6 +474,21 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
         }
     }
 
+    /**
+     * Adds all the children that are particle groups to the list.
+     * 
+     * @param list
+     */
+    public void addParticleGroups(Array<ParticleGroup> list) {
+        if (children != null) {
+            int size = children.size;
+            for (int i = 0; i < size; i++) {
+                SceneGraphNode child = children.get(i);
+                child.addParticleGroups(list);
+            }
+        }
+    }
+
     public void addNodes(Array<SceneGraphNode> nodes) {
         nodes.add(this);
         if (children != null) {
@@ -600,6 +615,11 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
         return SceneGraphRenderer.render_lists.get(rg).contains(renderable, ThreadIndexer.i());
     }
 
+    /**
+     * Gets the first ancestor of this node that is of type {@link Star}
+     * 
+     * @return The first ancestor of type {@link Star}
+     */
     public SceneGraphNode getFirstStarAncestor() {
         if (this instanceof Star) {
             return this;
@@ -623,6 +643,10 @@ public class SceneGraphNode implements ISceneGraphNode, IPosition {
     @Override
     public Vector3d getPosition() {
         return null;
+    }
+
+    public Matrix4d getOrientation() {
+        return orientation;
     }
 
     public boolean isVisibilityOn() {

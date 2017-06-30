@@ -109,7 +109,7 @@ public interface ICamera {
      * 
      * @return The foucs object if it is in focus mode. Null otherwise.
      */
-    public CelestialBody getFocus();
+    public IFocus getFocus();
 
     /**
      * Checks if this body is the current focus.
@@ -117,7 +117,7 @@ public interface ICamera {
      * @param cb
      * @return
      */
-    public boolean isFocus(CelestialBody cb);
+    public boolean isFocus(IFocus cb);
 
     /**
      * Called after updating the body's distance to the cam, it updates the

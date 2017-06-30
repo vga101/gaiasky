@@ -32,7 +32,7 @@ import net.jafama.FastMath;
  * @author Toni Sagrista
  *
  */
-public abstract class CelestialBody extends AbstractPositionEntity implements I3DTextRenderable, IQuadRenderable, IModelRenderable {
+public abstract class CelestialBody extends AbstractPositionEntity implements I3DTextRenderable, IQuadRenderable, IModelRenderable, IFocus {
     private static float[] labelColour = new float[] { 1, 1, 1, 1 };
 
     /**
@@ -375,6 +375,10 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
 
     public double getPmZ() {
         return 0;
+    }
+
+    public RotationComponent getRotationComponent() {
+        return rc;
     }
 
     public Quaterniond getOrientationQuaternion() {

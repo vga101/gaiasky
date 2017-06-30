@@ -1125,7 +1125,7 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
     public boolean waitFocus(String name, long timeoutMs) {
         long iniTime = TimeUtils.millis();
         NaturalCamera cam = GaiaSky.instance.cam.naturalCamera;
-        while (cam.focus == null || !cam.focus.name.equalsIgnoreCase(name)) {
+        while (cam.focus == null || !cam.focus.getName().equalsIgnoreCase(name)) {
             try {
                 Thread.sleep(100);
             } catch (InterruptedException e) {

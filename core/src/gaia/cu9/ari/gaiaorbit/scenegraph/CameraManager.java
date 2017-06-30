@@ -359,7 +359,7 @@ public class CameraManager implements ICamera, IObserver {
     }
 
     @Override
-    public boolean isFocus(CelestialBody cb) {
+    public boolean isFocus(IFocus cb) {
         return current.isFocus(cb);
     }
 
@@ -369,7 +369,7 @@ public class CameraManager implements ICamera, IObserver {
     }
 
     @Override
-    public CelestialBody getFocus() {
+    public IFocus getFocus() {
         return current.getFocus();
     }
 

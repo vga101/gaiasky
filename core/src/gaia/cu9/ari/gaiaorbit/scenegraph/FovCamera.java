@@ -366,12 +366,12 @@ public class FovCamera extends AbstractCamera implements IObserver {
     }
 
     @Override
-    public boolean isFocus(CelestialBody cb) {
+    public boolean isFocus(IFocus cb) {
         return false;
     }
 
     @Override
-    public CelestialBody getFocus() {
+    public IFocus getFocus() {
         return null;
     }
 

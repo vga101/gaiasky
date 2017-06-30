@@ -21,8 +21,8 @@ import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.render.IPostProcessor.PostProcessBean;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
-import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
+import gaia.cu9.ari.gaiaorbit.scenegraph.IFocus;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf.ProgramConf.StereoProfile;
@@ -88,7 +88,7 @@ public class SGRStereoscopic extends SGRAbstract implements ISGR, IObserver {
         double separationCapped = separation;
         double dirangleDeg = 0;
 
-        CelestialBody currentFocus = null;
+        IFocus currentFocus = null;
         if (camera.getMode() == CameraMode.Focus) {
             currentFocus = camera.getFocus();
         } else if (camera.getCurrent().getClosest() != null) {
@@ -96,7 +96,7 @@ public class SGRStereoscopic extends SGRAbstract implements ISGR, IObserver {
         }
         if (currentFocus != null) {
             // If we have focus, we adapt the eye separation
-            double distToFocus = currentFocus.distToCamera - currentFocus.getRadius();
+            double distToFocus = currentFocus.getDistToCamera() - currentFocus.getRadius();
             // Lets calculate the separation
             separation = Math.tan(Math.toRadians(EYE_ANGLE_DEG)) * distToFocus;
             // Lets cap it to 100 AU

@@ -21,6 +21,7 @@ import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.interfce.NaturalControllerListener;
 import gaia.cu9.ari.gaiaorbit.interfce.NaturalInputController;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
+import gaia.cu9.ari.gaiaorbit.scenegraph.component.RotationComponent;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
@@ -82,7 +83,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
     /**
      * The focus entity
      */
-    public CelestialBody focus, focusBak;
+    public IFocus focus, focusBak;
 
     /**
      * The direction point to seek
@@ -246,11 +247,12 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 
                     // Lock orientation - FOR NOW THIS ONLY WORKS WITH
                     // PLANETS/MOONS
-                    if (GlobalConf.scene.FOCUS_LOCK_ORIENTATION && time.getDt() > 0 && focus.orientation != null) {
+                    if (GlobalConf.scene.FOCUS_LOCK_ORIENTATION && time.getDt() > 0 && focus.getOrientation() != null) {
                         Double anglebak = null;
-                        if (focus.rc != null) {
+                        RotationComponent rc = focus.getRotationComponent();
+                        if (rc != null) {
                             // Rotation component present - planets, etc
-                            anglebak = focus.rc.angle;
+                            anglebak = rc.angle;
                         } else if (focus.getOrientationQuaternion() != null) {
                             anglebak = focus.getOrientationQuaternion().getPitch();
                         }
@@ -261,7 +263,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
                             // aux3 <- focus to camera vector
                             aux3.set(pos).sub(aux5);
                             // aux2 <- spin axis
-                            aux2.set(0, 1, 0).mul(focus.orientation);
+                            aux2.set(0, 1, 0).mul(focus.getOrientation());
                             // rotate aux3 around focus spin axis
                             aux3.rotate(aux2, angle);
                             // aux3 <- camera pos after rotating
@@ -307,7 +309,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
                     pos.set(aux4).add(aux2);
                 }
 
-                EventManager.instance.post(Events.FOCUS_INFO_UPDATED, focus.distToCamera - focus.getRadius(), ((AbstractPositionEntity) focus).viewAngle);
+                EventManager.instance.post(Events.FOCUS_INFO_UPDATED, focus.getDistToCamera() - focus.getRadius(), ((AbstractPositionEntity) focus).getViewAngle());
             } else {
                 EventManager.instance.post(Events.CAMERA_MODE_CMD, CameraMode.Free_Camera);
             }
@@ -990,7 +992,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
             break;
         case GO_TO_OBJECT_CMD:
             if (this.focus != null) {
-                final CelestialBody f = this.focus;
+                final IFocus f = this.focus;
                 Gdx.app.postRunnable(new Runnable() {
                     @Override
                     public void run() {
@@ -1000,7 +1002,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
                         f.getAbsolutePosition(aux1);
                         pos.set(aux1);
 
-                        pos.add(0, 0, -f.size * 3);
+                        pos.add(0, 0, -f.getSize() * 3);
                         posinv.set(pos).scl(-1);
                         direction.set(0, 0, 1);
                         up.set(0, 1, 0);
@@ -1132,13 +1134,13 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
     }
 
     @Override
-    public boolean isFocus(CelestialBody cb) {
-        return focus != null && cb == focus;
+    public boolean isFocus(IFocus focus) {
+        return this.focus != null && this.focus == focus;
     }
 
     @Override
-    public CelestialBody getFocus() {
-        return getMode().equals(CameraMode.Focus) ? focus : null;
+    public IFocus getFocus() {
+        return getMode().equals(CameraMode.Focus) ? this.focus : null;
     }
 
     /**
@@ -1155,7 +1157,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
                 this.focus.getAbsolutePosition(aux1);
                 pos.set(aux1);
 
-                pos.add(0, 0, -this.focus.size * 6);
+                pos.add(0, 0, -this.focus.getSize() * 6);
                 posinv.set(pos).scl(-1);
                 direction.set(0, 0, 1);
             }

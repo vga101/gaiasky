@@ -238,6 +238,12 @@ public abstract class AbstractSceneGraph implements ISceneGraph {
         return objects;
     }
 
+    public Array<ParticleGroup> getParticleGroups() {
+        Array<ParticleGroup> objects = new Array<ParticleGroup>();
+        root.addParticleGroups(objects);
+        return objects;
+    }
+
     public CelestialBody findFocus(String name) {
         SceneGraphNode node = getNode(name);
         if (node == null || !(node instanceof CelestialBody))

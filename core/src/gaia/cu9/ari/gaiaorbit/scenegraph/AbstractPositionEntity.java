@@ -56,10 +56,14 @@ public abstract class AbstractPositionEntity extends SceneGraphNode {
     public double distToCamera;
 
     /**
-     * This is not actually an angle. It's the relation radius/distance, to
-     * check how big it appears on screen.
+     * The view angle, in radians.
      */
-    public double viewAngle, viewAngleApparent;
+    public double viewAngle;
+
+    /**
+     * The view angle corrected with the field of view angle, in radians.
+     */
+    public double viewAngleApparent;
 
     /**
      * Base color
@@ -119,6 +123,8 @@ public abstract class AbstractPositionEntity extends SceneGraphNode {
      *            The time frame provider.
      * @param camera
      *            The camera.
+     * @param force
+     *            Whether to force the computation if time is off.
      * @return The aux vector for chaining.
      */
     public Vector3d getPredictedPosition(Vector3d aux, ITimeFrameProvider time, ICamera camera, boolean force) {
@@ -219,6 +225,15 @@ public abstract class AbstractPositionEntity extends SceneGraphNode {
     }
 
     /**
+     * Returns the size (diameter) of this entity in internal units.
+     * 
+     * @return The size in internal units.
+     */
+    public double getSize() {
+        return size;
+    }
+
+    /**
      * Sets the absolute size (diameter) of this entity
      * 
      * @param size
@@ -275,7 +290,7 @@ public abstract class AbstractPositionEntity extends SceneGraphNode {
         return null;
     }
 
-    protected AbstractPositionEntity getComputedAncestor() {
+    public AbstractPositionEntity getComputedAncestor() {
         if (!this.computed) {
             return this.parent != null && this.parent instanceof AbstractPositionEntity ? ((AbstractPositionEntity) this.parent).getComputedAncestor() : null;
         } else {
@@ -283,8 +298,32 @@ public abstract class AbstractPositionEntity extends SceneGraphNode {
         }
     }
 
+    /**
+     * Returns the current distance to the camera in internal units.
+     * 
+     * @return The current distance to the camera, in internal units.
+     */
     public double getDistToCamera() {
         return distToCamera;
+    }
+
+    /**
+     * Returns the current view angle of this entity, in radians.
+     * 
+     * @return The view angle in radians.
+     */
+    public double getViewAngle() {
+        return viewAngle;
+    }
+
+    /**
+     * Returns the current apparent view angle (view angle corrected with the
+     * field of view) of this entity, in radians.
+     * 
+     * @return The apparent view angle in radians.
+     */
+    public double getViewAngleApparent() {
+        return viewAngleApparent;
     }
 
     protected void render2DLabel(SpriteBatch batch, ShaderProgram shader, BitmapFont font, ICamera camera, String label, Vector3d pos3d) {

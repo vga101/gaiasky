@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.badlogic.gdx.utils.Array;
 
 import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.data.group.IParticleGroupDataProvider;
@@ -200,5 +201,15 @@ public class ParticleGroup extends FadeNode implements I3DTextRenderable {
     public void setPosition(double[] pos) {
         super.setPosition(pos);
         this.fixedMeanPosition = true;
+    }
+
+    /**
+     * Adds all particle groups to the list
+     * 
+     * @param list
+     */
+    public void addParticleGroups(Array<ParticleGroup> list) {
+        list.add(this);
+        super.addParticleGroups(list);
     }
 }

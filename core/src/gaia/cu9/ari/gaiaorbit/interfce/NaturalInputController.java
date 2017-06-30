@@ -24,6 +24,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
 import gaia.cu9.ari.gaiaorbit.scenegraph.NaturalCamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
+import gaia.cu9.ari.gaiaorbit.scenegraph.ParticleGroup;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Planet;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
@@ -253,6 +254,14 @@ public class NaturalInputController extends GestureDetector {
                 }
             }
         }
+
+        if (hits.size == 0) {
+            Array<ParticleGroup> pgs = GaiaSky.instance.getParticleGroups();
+            for (ParticleGroup pg : pgs) {
+
+            }
+        }
+
         return hits;
     }
 

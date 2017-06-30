@@ -12,8 +12,8 @@ import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.render.system.AbstractRenderSystem;
-import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
+import gaia.cu9.ari.gaiaorbit.scenegraph.IFocus;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Transform;
@@ -137,7 +137,7 @@ public abstract class AbstractOctreeWrapper extends SceneGraphNode implements It
             roulette.clear();
 
             // Update focus, just in case
-            CelestialBody focus = camera.getFocus();
+            IFocus focus = camera.getFocus();
             if (focus != null) {
                 SceneGraphNode star = focus.getFirstStarAncestor();
                 OctreeNode parent = parenthood.get(star);
@@ -161,8 +161,7 @@ public abstract class AbstractOctreeWrapper extends SceneGraphNode implements It
      * @param parentTransform
      * @param camera
      */
-    protected abstract void updateOctreeObjects(ITimeFrameProvider time, final Transform parentTransform,
-            ICamera camera);
+    protected abstract void updateOctreeObjects(ITimeFrameProvider time, final Transform parentTransform, ICamera camera);
 
     /**
      * Adds the octants to the render lists.
