@@ -52,7 +52,7 @@ public class TGASDataProvider implements IParticleGroupDataProvider {
                     double dist = (1000d / pllx);
 
                     // Keep only stars with relevant parallaxes
-                    if (dist >= 0 && pllx / pllxerr > 1.5 && pllxerr <= 1) {
+                    if (dist >= 0 && pllx / pllxerr > 20 && pllxerr <= 1) {
                         long sourceid = Parser.parseLong(tokens[0]);
                         int hip = Parser.parseInt(tokens[12]);
                         String tycho2 = tokens[13];

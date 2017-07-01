@@ -165,9 +165,9 @@ public class Constants {
     /** Minimum star pixel size **/
     public static final float MIN_STAR_POINT_SIZE = 0.5f;
     /** Maximum star pixel size **/
-    public static final float MAX_STAR_POINT_SIZE = 100;
+    public static final float MAX_STAR_POINT_SIZE = 50;
     /** Step to increase/decrease **/
-    public static final float STEP_STAR_POINT_SIZE = 1f;
+    public static final float STEP_STAR_POINT_SIZE = 0.5f;
 
     /** Minimum star minimum opacity **/
     public static final float MIN_STAR_MIN_OPACITY = 0.0f;
