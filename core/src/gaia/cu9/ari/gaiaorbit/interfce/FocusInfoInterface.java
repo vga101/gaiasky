@@ -49,6 +49,8 @@ public class FocusInfoInterface extends Table implements IObserver, IGuiInterfac
     protected OwnLabel pointerName, pointerLonLat, pointerRADEC;
     protected OwnLabel camName, camVel, camPos, lonLatLabel, RADECLabel;
 
+    protected HorizontalGroup focusNameGroup;
+
     protected IFocus currentFocus;
 
     private Table focusInfo, pointerInfo, cameraInfo, moreInfo;
@@ -56,7 +58,7 @@ public class FocusInfoInterface extends Table implements IObserver, IGuiInterfac
 
     INumberFormat nf, sf;
 
-    float pad5, pad10;
+    float pad5, pad10, bw;
 
     public FocusInfoInterface(Skin skin) {
         super(skin);
@@ -126,13 +128,13 @@ public class FocusInfoInterface extends Table implements IObserver, IGuiInterfac
             }
         });
 
-        float bw = Math.max(landOn.getWidth(), landAt.getWidth());
+        bw = Math.max(landOn.getWidth(), landAt.getWidth());
         bw += 2 * GlobalConf.SCALE_FACTOR;
 
         landOn.setWidth(bw);
         landAt.setWidth(bw);
 
-        HorizontalGroup focusNameGroup = new HorizontalGroup();
+        focusNameGroup = new HorizontalGroup();
         focusNameGroup.space(pad5);
         focusNameGroup.addActor(focusName);
         focusNameGroup.addActor(landOn);
@@ -257,8 +259,14 @@ public class FocusInfoInterface extends Table implements IObserver, IGuiInterfac
             }
 
             // Link
-            landAt.setVisible(focus instanceof Planet);
-            landOn.setVisible(focus instanceof Planet);
+            boolean vis = focus instanceof Planet;
+
+            focusNameGroup.removeActor(landOn);
+            focusNameGroup.removeActor(landAt);
+            if (vis) {
+                focusNameGroup.addActor(landOn);
+                focusNameGroup.addActor(landAt);
+            }
 
             // Type
             try {
