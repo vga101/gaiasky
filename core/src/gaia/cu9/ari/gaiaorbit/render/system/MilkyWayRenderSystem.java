@@ -128,7 +128,8 @@ public class MilkyWayRenderSystem extends ImmediateRenderSystem implements IObse
                     aux1.set((float) star[0], (float) star[1], (float) star[2]);
                     double distanceCenter = aux1.sub(center).len() / (mw.getRadius() * 2f);
 
-                    float[] col = new float[] { (float) (rand.nextGaussian() * 0.02f) + 0.93f, (float) (rand.nextGaussian() * 0.02) + 0.8f, (float) (rand.nextGaussian() * 0.02) + 0.97f, rand.nextFloat() * 0.5f + 0.4f };
+                    float[] col = new float[] { (float) (rand.nextGaussian() * 0.02f) + 0.93f, (float) (rand.nextGaussian() * 0.02) + 0.8f, (float) (rand.nextGaussian() * 0.02) + 0.97f,
+                            rand.nextFloat() * 0.5f + 0.4f };
 
                     if (distanceCenter < 1f) {
                         float add = (float) MathUtilsd.clamp(1f - distanceCenter, 0f, 1f) * 0.5f;
@@ -315,15 +316,22 @@ public class MilkyWayRenderSystem extends ImmediateRenderSystem implements IObse
                         // Enable point sizes
                         Gdx.gl20.glEnable(0x8642);
                     }
+                    // Additive blending
+                    Gdx.gl20.glBlendFunc(GL20.GL_ONE, GL20.GL_ONE);
+
                     shaderProgram.begin();
                     shaderProgram.setUniformMatrix("u_projModelView", camera.getCamera().combined);
                     shaderProgram.setUniformf("u_camPos", camera.getCurrent().getPos().put(aux1));
                     shaderProgram.setUniformf("u_fovFactor", camera.getFovFactor());
-                    shaderProgram.setUniformf("u_alpha", mw.opacity * alpha * 0.15f);
-                    shaderProgram.setUniformf("u_ar", GlobalConf.program.STEREOSCOPIC_MODE && (GlobalConf.program.STEREO_PROFILE != StereoProfile.HD_3DTV && GlobalConf.program.STEREO_PROFILE != StereoProfile.ANAGLYPHIC) ? 0.5f : 1f);
+                    shaderProgram.setUniformf("u_alpha", mw.opacity * alpha * 0.2f);
+                    shaderProgram.setUniformf("u_ar", GlobalConf.program.STEREOSCOPIC_MODE
+                            && (GlobalConf.program.STEREO_PROFILE != StereoProfile.HD_3DTV && GlobalConf.program.STEREO_PROFILE != StereoProfile.ANAGLYPHIC) ? 0.5f : 1f);
                     curr.mesh.setVertices(curr.vertices, 0, curr.vertexIdx);
                     curr.mesh.render(shaderProgram, ShapeType.Point.getGlType());
                     shaderProgram.end();
+
+                    // Restore
+                    Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
                 }
 
                 /**
@@ -335,6 +343,7 @@ public class MilkyWayRenderSystem extends ImmediateRenderSystem implements IObse
                 modelBatch.begin(camera.getCamera());
                 modelBatch.render(mw.mc.instance, mw.mc.env);
                 modelBatch.end();
+
             }
         }
 

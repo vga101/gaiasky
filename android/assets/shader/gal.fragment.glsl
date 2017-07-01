@@ -43,8 +43,7 @@ vec4 drawSimple(vec2 tc) {
 void main() {
 
 	// float factor = smoothstep(distfacinv/8.0, distfacinv, u_distance);
-	gl_FragColor = drawSimple(v_texCoords);
-	gl_FragColor *= u_alpha;
+	gl_FragColor = drawSimple(v_texCoords) * u_alpha;
 
     // Debug! - visualise depth buffer
     //gl_FragColor = vec4(vec3(gl_FragCoord.z), 1.0f);

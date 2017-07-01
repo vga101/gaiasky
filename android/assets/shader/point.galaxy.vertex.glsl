@@ -13,7 +13,6 @@ uniform float u_pointAlphaMin;
 uniform float u_pointAlphaMax;
 uniform float u_fovFactor;
 uniform float u_starBrightness;
-uniform float u_alpha;
 
 uniform mat4 u_projModelView;
 uniform vec3 u_camPos;
@@ -29,7 +28,7 @@ void main() {
     vec3 pos = a_position.xyz - u_camPos;
     float distNorm = length(pos) / 800000000000.0;
 
-    v_col = vec4(a_color.rgb, a_color.a * u_alpha );
+    v_col = vec4(a_color.rgb, a_color.a);
 
     gl_Position = u_projModelView * vec4(pos, 0.0);
     gl_PointSize = a_additional.x / distNorm;
