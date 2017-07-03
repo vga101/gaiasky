@@ -44,7 +44,7 @@ public class TGASDataProvider implements IParticleGroupDataProvider {
                 if (!line.isEmpty() && !line.startsWith("#")) {
                     // Read line
                     String[] tokens = line.split(",");
-                    double[] point = new double[8];
+                    double[] point = new double[9];
 
                     double pllx = Parser.parseDouble(tokens[3]);
                     double pllxerr = Parser.parseDouble(tokens[4]);
@@ -52,7 +52,7 @@ public class TGASDataProvider implements IParticleGroupDataProvider {
                     double dist = (1000d / pllx);
 
                     // Keep only stars with relevant parallaxes
-                    if (dist >= 0 && pllx / pllxerr > 20 && pllxerr <= 1) {
+                    if (dist >= 0 && pllx / pllxerr > 2 && pllxerr <= 1) {
                         long sourceid = Parser.parseLong(tokens[0]);
                         int hip = Parser.parseInt(tokens[12]);
                         String tycho2 = tokens[13];

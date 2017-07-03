@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.TimeUtils;
 
 import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.data.group.IParticleGroupDataProvider;
@@ -104,6 +105,11 @@ public class ParticleGroup extends FadeNode implements I3DTextRenderable, IFocus
     double focusDistToCamera, focusViewAngle, focusViewAngleApparent, focusSize;
 
     /**
+     * Stores the time of the last call to sort
+     */
+    protected long lastSortTime;
+
+    /**
      * Reference to the current focus data
      */
     double[] focusData;
@@ -125,6 +131,8 @@ public class ParticleGroup extends FadeNode implements I3DTextRenderable, IFocus
             if (factor == null)
                 factor = 1d;
 
+            lastSortTime = -1;
+
             pointData = provider.loadData(datafile, factor);
 
             if (!fixedMeanPosition) {
@@ -134,6 +142,7 @@ public class ParticleGroup extends FadeNode implements I3DTextRenderable, IFocus
                 }
                 pos.scl(1d / pointData.size);
             }
+
         } catch (Exception e) {
             Logger.error(e, getClass().getSimpleName());
             pointData = null;
@@ -150,7 +159,7 @@ public class ParticleGroup extends FadeNode implements I3DTextRenderable, IFocus
             super.update(time, parentTransform, camera, opacity);
 
             if (focusIndex >= 0) {
-                updateFocus(time, parentTransform, camera);
+                updateFocus(time, camera);
             }
         }
     }
@@ -165,18 +174,21 @@ public class ParticleGroup extends FadeNode implements I3DTextRenderable, IFocus
      * 
      * @param time
      *            The time frame provider
-     * @param parentTransform
-     *            The parent transform
      * @param camera
      *            The current camera
      */
-    public void updateFocus(ITimeFrameProvider time, Transform parentTransform, ICamera camera) {
+    public void updateFocus(ITimeFrameProvider time, ICamera camera) {
 
         Vector3d aux = aux3d1.get().set(this.focusPosition);
         this.focusDistToCamera = aux.sub(camera.getPos()).len();
         this.focusSize = getFocusSize();
         this.focusViewAngle = (float) ((getRadius() / this.focusDistToCamera) / camera.getFovFactor());
         this.focusViewAngleApparent = this.viewAngle * GlobalConf.scene.STAR_BRIGHTNESS;
+    }
+
+    public void updateSorter(ITimeFrameProvider time, ICamera camera) {
+        // Simple particle group does not sort
+        lastSortTime = TimeUtils.millis();
     }
 
     @Override
