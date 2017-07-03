@@ -142,7 +142,7 @@ public class StarGroupRenderSystem extends ImmediateRenderSystem implements IObs
 
                 shaderProgram.setUniformf("u_t", (float) AstroUtils.getMsSinceJ2000(GaiaSky.instance.time.getTime()));
                 shaderProgram.setUniformf("u_ar", GlobalConf.program.STEREOSCOPIC_MODE && (GlobalConf.program.STEREO_PROFILE != StereoProfile.HD_3DTV && GlobalConf.program.STEREO_PROFILE != StereoProfile.ANAGLYPHIC) ? 0.5f : 1f);
-                shaderProgram.setUniformf("u_thAnglePoint", (float) GlobalConf.scene.STAR_THRESHOLD_POINT);
+                shaderProgram.setUniformf("u_thAnglePoint", (float) 1e-8);
 
                 curr.mesh.setVertices(curr.vertices, particleGroup.offset, particleGroup.count);
                 curr.mesh.render(shaderProgram, ShapeType.Point.getGlType());

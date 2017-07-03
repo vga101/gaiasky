@@ -15,7 +15,6 @@ import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
-import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
@@ -162,7 +161,7 @@ public class StarGroup extends ParticleGroup {
             shader.setUniformf("a_viewAnglePow", 1f);
             shader.setUniformf("a_thOverFactor", thOverFactor);
             shader.setUniformf("a_thOverFactorScl", camera.getFovFactor());
-            float textSize = MathUtilsd.clamp(viewAngle * .3e14f, .5e5f, .5e6f);
+            float textSize = Math.min(viewAngle * .3e14f, 1e6f);
 
             render3DLabel(batch, shader, font3d, camera, Integer.toString(i), lpos, textScale, textSize, textColour(), this.opacity);
         }
