@@ -13,23 +13,44 @@ import com.badlogic.gdx.utils.TimeUtils;
 import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
+import gaia.cu9.ari.gaiaorbit.render.ILineRenderable;
+import gaia.cu9.ari.gaiaorbit.render.system.LineRenderSystem;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
+import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
+import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
+import net.jafama.FastMath;
 
 /**
  * A particle group which additionally to the xyz position, supports color and
- * magnitude. x y z col size appmag absmag sourceid additional
+ * magnitude. id x y z pmx pmy pmz appmag absmag col size additional
  * 
  * @author tsagrista
  *
  */
-public class StarGroup extends ParticleGroup {
+public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFocus {
+
+    public static final int SIZE = 12;
+    /** INDICES **/
+    public static final int I_X = 0;
+    public static final int I_Y = 1;
+    public static final int I_Z = 2;
+    public static final int I_PMX = 3;
+    public static final int I_PMY = 4;
+    public static final int I_PMZ = 5;
+    public static final int I_ID = 6;
+    public static final int I_APPMAG = 7;
+    public static final int I_ABSMAG = 8;
+    public static final int I_COL = 9;
+    public static final int I_SIZE = 10;
+    public static final int I_ADDITIONAL = 11;
+
     // Camera dx threshold
     private static final double CAM_DX_TH = 100 * Constants.AU_TO_U;
     // Min update time
-    private static final double MIN_UPDATE_TIME_MS = 300;
+    private static final double MIN_UPDATE_TIME_MS = 50;
 
     // Additional values
     double[] additional;
@@ -94,8 +115,7 @@ public class StarGroup extends ParticleGroup {
 
         for (int i = 0; i < n; i++) {
             double[] d = pointData.get(i);
-            additional[i] = -(((d[4] * Constants.STAR_SIZE_FACTOR) / cpos.dst(d[0], d[1], d[2])) / camera.getFovFactor()) * GlobalConf.scene.STAR_BRIGHTNESS;
-            //additional[i] = cpos.dst(d[0], d[1], d[2]);
+            additional[i] = -(((d[I_SIZE] * Constants.STAR_SIZE_FACTOR) / cpos.dst(d[I_X], d[I_Y], d[I_Z])) / camera.getFovFactor()) * GlobalConf.scene.STAR_BRIGHTNESS;
         }
     }
 
@@ -138,53 +158,116 @@ public class StarGroup extends ParticleGroup {
     @Override
     protected void addToRenderLists(ICamera camera) {
         addToRender(this, RenderGroup.STAR_GROUP);
-
+        addToRender(this, RenderGroup.LINE);
         if (renderText()) {
             addToRender(this, RenderGroup.LABEL);
         }
     }
 
     /**
-     * Label rendering.
+     * Proper motion rendering
      */
     @Override
-    public void render(SpriteBatch batch, ShaderProgram shader, BitmapFont font3d, BitmapFont font2d, ICamera camera) {
-        float thOverFactor = (float) (GlobalConf.scene.STAR_THRESHOLD_POINT / GlobalConf.scene.LABEL_NUMBER_FACTOR / camera.getFovFactor());
-        float textScale = 0.487463442f;
+    public void render(LineRenderSystem renderer, ICamera camera, float alpha) {
+        float thpointTimesFovfactor = (float) GlobalConf.scene.STAR_THRESHOLD_POINT * camera.getFovFactor();
         for (int i = 600; i >= 0; i--) {
             double[] star = pointData.get(active[i]);
-            double radius = getSize(i) * Constants.STAR_SIZE_FACTOR;
-            Vector3d lpos = aux3d2.get().set(star[0], star[1], star[2]).sub(camera.getPos());
-            float distToCamera = (float) lpos.len();
+            float radius = (float) (getSize(active[i]) * Constants.STAR_SIZE_FACTOR);
             float viewAngle = (float) (((radius / distToCamera) / camera.getFovFactor()) * GlobalConf.scene.STAR_BRIGHTNESS);
-            shader.setUniformf("a_viewAngle", viewAngle);
-            shader.setUniformf("a_viewAnglePow", 1f);
-            shader.setUniformf("a_thOverFactor", thOverFactor);
-            shader.setUniformf("a_thOverFactorScl", camera.getFovFactor());
-            float textSize = Math.min(viewAngle * .3e14f, 1e6f);
+            if (viewAngle >= thpointTimesFovfactor / GlobalConf.scene.PM_NUM_FACTOR) {
 
-            render3DLabel(batch, shader, font3d, camera, Integer.toString(i), lpos, textScale, textSize, textColour(), this.opacity);
+                Vector3d p1 = aux3d1.get().set(star[I_X], star[I_Y], star[I_Z]).sub(camera.getPos());
+                Vector3d ppm = aux3d2.get().set(star[I_PMX], star[I_PMY], star[I_PMZ]).scl(GlobalConf.scene.PM_LEN_FACTOR);
+                Vector3d p2 = aux3d3.get().set(p1).add(ppm);
+                ppm.set(star[I_PMX], star[I_PMY], star[I_PMZ]);
+                Vector3d pmSph = Coordinates.cartesianToSpherical(ppm, ppm);
+
+                // Mualpha -> red channel
+                // Mudelta -> green channel
+                // Radvel -> blue channel
+                // Min value per channel = 0.2
+                final double mumin = -80;
+                final double mumax = 80;
+                final double maxmin = mumax - mumin;
+                renderer.addLine(p1.x, p1.y, p1.z, p2.x, p2.y, p2.z, (float) ((pmSph.x * AstroUtils.RAD_TO_MILLARCSEC - mumin) / maxmin) * 0.8f + 0.2f, (float) ((pmSph.y * AstroUtils.RAD_TO_MILLARCSEC - mumin) / maxmin) * 0.8f + 0.2f, (float) (pmSph.z * Constants.U_TO_KM * Constants.Y_TO_S) * 0.8f + 0.2f, alpha * this.opacity);
+
+            }
+
         }
 
     }
 
+    /**
+     * Label rendering
+     */
+    @Override
+    public void render(SpriteBatch batch, ShaderProgram shader, BitmapFont font3d, BitmapFont font2d, ICamera camera) {
+        float thOverFactor = (float) (GlobalConf.scene.STAR_THRESHOLD_POINT / GlobalConf.scene.LABEL_NUMBER_FACTOR / camera.getFovFactor());
+        float textScale = 2f;
+        for (int i = 600; i >= 0; i--) {
+            double[] star = pointData.get(active[i]);
+            float radius = (float) (getSize(active[i]) * Constants.STAR_SIZE_FACTOR);
+            Vector3d lpos = aux3d1.get().set(star[I_X], star[I_Y], star[I_Z]).sub(camera.getPos());
+            float distToCamera = (float) lpos.len();
+            float viewAngle = (float) (((radius / distToCamera) / camera.getFovFactor()) * GlobalConf.scene.STAR_BRIGHTNESS);
+
+            if (viewAngle >= thOverFactor) {
+
+                textPosition(camera, lpos, distToCamera, radius);
+                shader.setUniformf("a_viewAngle", viewAngle);
+                shader.setUniformf("a_viewAnglePow", 1f);
+                shader.setUniformf("a_thOverFactor", thOverFactor);
+                shader.setUniformf("a_thOverFactorScl", camera.getFovFactor());
+                float textSize = (float) FastMath.tan(viewAngle) * distToCamera * 1e5f;
+                float alpha = Math.min((float) FastMath.atan(textSize / distToCamera), 2.e-3f);
+                textSize = (float) FastMath.tan(alpha) * distToCamera;
+                render3DLabel(batch, shader, font3d, camera, String.valueOf((long) star[I_ID]), lpos, textScale, textSize, textColour(), this.opacity);
+
+            }
+        }
+
+    }
+
+    public void textPosition(ICamera cam, Vector3d out, float len, float rad) {
+        out.clamp(0, len - rad).scl(0.9f);
+
+        Vector3d aux = aux3d2.get();
+        aux.set(cam.getUp());
+
+        aux.crs(out).nor();
+
+        float dist = -0.02f * (float) out.len();
+
+        aux.add(cam.getUp()).nor().scl(dist);
+
+        out.add(aux);
+
+    }
+
     public double getFocusSize() {
-        return focusData[4];
+        return focusData[I_SIZE];
     }
 
     public float getAppmag() {
-        return (float) focusData[5];
+        return (float) focusData[I_APPMAG];
     }
 
     public float getAbsmag() {
-        return (float) focusData[6];
+        return (float) focusData[I_ABSMAG];
     }
 
     public String getName() {
         if (focusData != null)
-            return String.valueOf((long) focusData[7]);
+            return String.valueOf((long) focusData[I_ID]);
         else
             return null;
+    }
+
+    public long getId() {
+        if (focusData != null)
+            return (long) focusData[I_ID];
+        else
+            return -1;
     }
 
     /**
@@ -195,7 +278,7 @@ public class StarGroup extends ParticleGroup {
      * @return The size
      */
     public double getSize(int i) {
-        return pointData.get(i)[4];
+        return pointData.get(i)[I_SIZE];
     }
 
     /**
@@ -270,6 +353,31 @@ public class StarGroup extends ParticleGroup {
             break;
         }
 
+    }
+
+    @Override
+    public int getCatalogSource() {
+        return 1;
+    }
+
+    @Override
+    public int getHip() {
+        return -1;
+    }
+
+    @Override
+    public String getTycho() {
+        return null;
+    }
+
+    @Override
+    public long getCandidateId() {
+        return (long) pointData.get(candidateFocusIndex)[I_ID];
+    }
+
+    @Override
+    public String getCandidateName() {
+        return String.valueOf((long) pointData.get(candidateFocusIndex)[I_ID]);
     }
 
 }

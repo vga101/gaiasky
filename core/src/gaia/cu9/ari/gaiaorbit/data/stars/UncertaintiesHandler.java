@@ -16,8 +16,8 @@ import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
+import gaia.cu9.ari.gaiaorbit.scenegraph.IStarFocus;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ParticleGroup;
-import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 
 public class UncertaintiesHandler implements IObserver {
@@ -77,13 +77,13 @@ public class UncertaintiesHandler implements IObserver {
     public void notify(Events event, Object... data) {
         switch (event) {
         case SHOW_UNCERTAINTIES:
-            if (data[0] instanceof Star) {
-                final Star s = (Star) data[0];
+            if (data[0] instanceof IStarFocus) {
+                final IStarFocus s = (IStarFocus) data[0];
                 Gdx.app.postRunnable(new Runnable() {
 
                     @Override
                     public void run() {
-                        String source_id = String.valueOf(s.id);
+                        String source_id = String.valueOf(s.getCandidateId());
                         ParticleGroup pg = new ParticleGroup();
                         pg.setColor(colors[coloridx]);
                         coloridx = (coloridx + 1) % colors.length;

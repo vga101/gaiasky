@@ -14,7 +14,7 @@ import com.badlogic.gdx.utils.Pool;
 import gaia.cu9.ari.gaiaorbit.render.ILineRenderable;
 import gaia.cu9.ari.gaiaorbit.render.IRenderable;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
-import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
+import gaia.cu9.ari.gaiaorbit.scenegraph.IStarFocus;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
@@ -232,7 +232,7 @@ public class LineQuadRenderSystem extends LineRenderSystem {
         for (int i = 0; i < size; i++) {
             ILineRenderable renderable = (ILineRenderable) renderables.get(i);
             boolean rend = true;
-            if (renderable instanceof Particle && !GlobalConf.scene.PROPER_MOTION_VECTORS)
+            if (renderable instanceof IStarFocus && !GlobalConf.scene.PROPER_MOTION_VECTORS)
                 rend = false;
             if (rend)
                 renderable.render(this, camera, getAlpha(renderable));
@@ -262,7 +262,7 @@ public class LineQuadRenderSystem extends LineRenderSystem {
         currext = (MeshDataExt) meshes[0];
         curr = currext;
         int n = provisionalLines.size;
-        for(int i = 0; i < n; i++)
+        for (int i = 0; i < n; i++)
             dpool.free(provisionalLines.get(i));
         provisionalLines.clear();
     }

@@ -388,11 +388,9 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
      */
     @Override
     public void render(LineRenderSystem renderer, ICamera camera, float alpha) {
-        Vector3 campos = aux3f1.get();
-        Vector3 p1 = transform.position.setVector3(aux3f2.get());
-        Vector3 ppm = aux3f3.get().set(pm).scl(GlobalConf.scene.PM_LEN_FACTOR);
-        Vector3 p2 = aux3f4.get().set(p1).add(ppm);
-        camera.getPos().setVector3(campos);
+        Vector3 p1 = transform.position.setVector3(aux3f1.get());
+        Vector3 ppm = aux3f2.get().set(pm).scl(GlobalConf.scene.PM_LEN_FACTOR);
+        Vector3 p2 = ppm.add(p1);
 
         // Mualpha -> red channel
         // Mudelta -> green channel

@@ -17,10 +17,9 @@ import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.IFocus;
+import gaia.cu9.ari.gaiaorbit.scenegraph.IStarFocus;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Planet;
-import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
-import gaia.cu9.ari.gaiaorbit.scenegraph.StarGroup;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
@@ -240,19 +239,16 @@ public class FocusInfoInterface extends Table implements IObserver, IGuiInterfac
             currentFocus = focus;
 
             String id = "";
-            if (focus instanceof Star || focus instanceof StarGroup) {
-                if (focus.getId() > 0) {
-                    id = String.valueOf(focus.getId());
-                } else {
-                    if (focus instanceof Star) {
-                        Star s = (Star) focus;
-                        if (s.hip > 0) {
-                            id = "HIP " + s.hip;
-                        } else if (s.tycho != null && s.tycho.length() > 0) {
-                            id = "TYC " + s.tycho;
-                        }
-                    }
+            if (focus instanceof IStarFocus) {
+                IStarFocus sf = (IStarFocus) focus;
+                if (sf.getId() > 0) {
+                    id = String.valueOf(sf.getId());
+                } else if (sf.getHip() > 0) {
+                    id = "HIP " + sf.getHip();
+                } else if (sf.getTycho() != null && sf.getTycho().length() > 0) {
+                    id = "TYC " + sf.getTycho();
                 }
+
             }
             if (id.length() == 0) {
                 id = "-";
@@ -375,6 +371,7 @@ public class FocusInfoInterface extends Table implements IObserver, IGuiInterfac
         default:
             break;
         }
+
     }
 
     private String txt(String key) {

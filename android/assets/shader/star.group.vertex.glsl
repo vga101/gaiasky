@@ -42,5 +42,5 @@ void main() {
     v_col = vec4(a_color.rgb, opacity * u_alphaSizeFovBr.x);
 
     gl_Position = u_projModelView * vec4(pos, 0.0);
-    gl_PointSize = u_alphaSizeFovBr.y * lint(viewAngleApparent, 0.0, 1e-6, 1.0, 10.0);
+    gl_PointSize = u_alphaSizeFovBr.y + lint(viewAngleApparent, 0.0, 1e-6, 0.0, u_alphaSizeFovBr.y / 2.0);
 }

@@ -453,4 +453,17 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
         return true;
     }
 
+    public void makeFocus() {
+    }
+
+    @Override
+    public long getCandidateId() {
+        return getId();
+    }
+
+    @Override
+    public String getCandidateName() {
+        return getName();
+    }
+
 }

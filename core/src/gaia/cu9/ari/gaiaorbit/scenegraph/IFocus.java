@@ -26,11 +26,27 @@ public interface IFocus {
     public long getId();
 
     /**
+     * Returns the id of the focus candidate of this object. Defaults to
+     * {@link IFocus#getId()}.
+     * 
+     * @return The id of the candidate.
+     */
+    public long getCandidateId();
+
+    /**
      * Returns the name of this focus.
      * 
      * @return The name.
      */
     public String getName();
+
+    /**
+     * Returns the name of the focus candidate of this object. Defaults to
+     * {@link IFocus#getName()}.
+     * 
+     * @return The name of the candidate.
+     */
+    public String getCandidateName();
 
     /**
      * Returns the component types of this focus.
@@ -194,5 +210,10 @@ public interface IFocus {
      *            The list where to add the element
      */
     public void addHit(int screenX, int screenY, int w, int h, int pxdist, NaturalCamera camera, Array<IFocus> hits);
+
+    /**
+     * Hook that runs when the candidate is actually made focus.
+     */
+    public void makeFocus();
 
 }

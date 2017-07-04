@@ -24,6 +24,7 @@ import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
+import gaia.cu9.ari.gaiaorbit.util.Pair;
 import gaia.cu9.ari.gaiaorbit.util.math.Quaterniond;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
@@ -41,7 +42,7 @@ import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 public class ParticleGroup extends FadeNode implements I3DTextRenderable, IFocus, IObserver {
 
     /**
-     * List that contains the point data
+     * List that contains the point data. It contains only [x y z]
      */
     public Array<double[]> pointData;
 
@@ -93,6 +94,11 @@ public class ParticleGroup extends FadeNode implements I3DTextRenderable, IFocus
      * Index of the particle acting as focus. Negative if we have no focus here.
      */
     int focusIndex;
+
+    /**
+     * Candidate to focus. Will be used in {@link #makeFocus()}
+     */
+    int candidateFocusIndex;
 
     /**
      * Position of the current focus
@@ -183,7 +189,7 @@ public class ParticleGroup extends FadeNode implements I3DTextRenderable, IFocus
         this.focusDistToCamera = aux.sub(camera.getPos()).len();
         this.focusSize = getFocusSize();
         this.focusViewAngle = (float) ((getRadius() / this.focusDistToCamera) / camera.getFovFactor());
-        this.focusViewAngleApparent = this.viewAngle * GlobalConf.scene.STAR_BRIGHTNESS;
+        this.focusViewAngleApparent = this.focusViewAngle * GlobalConf.scene.STAR_BRIGHTNESS;
     }
 
     public void updateSorter(ITimeFrameProvider time, ICamera camera) {
@@ -429,7 +435,8 @@ public class ParticleGroup extends FadeNode implements I3DTextRenderable, IFocus
 
     public void addHit(int screenX, int screenY, int w, int h, int pxdist, NaturalCamera camera, Array<IFocus> hits) {
         int n = pointData.size;
-        if (this.opacity > 0)
+        if (this.opacity > 0) {
+            Array<Pair<Integer, Double>> temporalHits = new Array<Pair<Integer, Double>>();
             for (int i = 0; i < n; i++) {
                 double[] vals = pointData.get(i);
                 Vector3 pos = aux3f1.get();
@@ -468,14 +475,29 @@ public class ParticleGroup extends FadeNode implements I3DTextRenderable, IFocus
                     // Check click distance
                     if (pos.dst(screenX % pcamera.viewportWidth, screenY, pos.z) <= pixelSize) {
                         //Hit
-                        focusIndex = i;
-                        updateFocusDataPos();
-                        hits.add(this);
-                        return;
+                        temporalHits.add(new Pair<Integer, Double>(i, angle));
                     }
                 }
             }
-        focusIndex = -1;
+
+            Pair<Integer, Double> best = null;
+            for (Pair<Integer, Double> hit : temporalHits) {
+                if (best == null)
+                    best = hit;
+                else if (hit.getSecond() > best.getSecond()) {
+                    best = hit;
+                }
+            }
+            if (best != null) {
+                // We found the best hit
+                candidateFocusIndex = best.getFirst();
+                updateFocusDataPos();
+                hits.add(this);
+                return;
+            }
+
+        }
+        candidateFocusIndex = -1;
         updateFocusDataPos();
     }
 
@@ -503,5 +525,22 @@ public class ParticleGroup extends FadeNode implements I3DTextRenderable, IFocus
             focusData = pointData.get(focusIndex);
             focusPosition.set(focusData[0], focusData[1], focusData[2]);
         }
+    }
+
+    @Override
+    public void makeFocus() {
+        focusIndex = candidateFocusIndex;
+        updateFocusDataPos();
+
+    }
+
+    @Override
+    public long getCandidateId() {
+        return getId();
+    }
+
+    @Override
+    public String getCandidateName() {
+        return getName();
     }
 }

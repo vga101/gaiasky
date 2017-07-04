@@ -30,7 +30,7 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 
-import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
+import gaia.cu9.ari.gaiaorbit.scenegraph.IStarFocus;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
@@ -64,7 +64,7 @@ public class GaiaCatalogWindow extends CollapsibleWindow {
     private LabelStyle linkStyle;
     private float pad;
 
-    private Star st;
+    private IStarFocus st;
 
     public GaiaCatalogWindow(Stage stg, Skin skin) {
         super(I18n.bundle.format("gui.data.catalog", "Gaia"), skin);
@@ -132,7 +132,7 @@ public class GaiaCatalogWindow extends CollapsibleWindow {
 
     }
 
-    public void initialize(Star st) {
+    public void initialize(IStarFocus st) {
         this.st = st;
 
         table.clear();
@@ -152,17 +152,17 @@ public class GaiaCatalogWindow extends CollapsibleWindow {
     }
 
     private void requestData(GaiaDataListener listener) {
-        if (st.catalogSource > 0) {
+        if (st.getCatalogSource() > 0) {
 
-            if (st.catalogSource == 1) {
+            if (st.getCatalogSource() == 1) {
                 this.getTitleLabel().setText(I18n.bundle.format("gui.data.catalog", "Gaia"));
                 // Sourceid
-                getDataBySourceId(st.id, listener);
+                getDataBySourceId(st.getId(), listener);
                 return;
-            } else if (st.catalogSource == 2 && st.hip > 0) {
+            } else if (st.getCatalogSource() == 2 && st.getHip() > 0) {
                 this.getTitleLabel().setText(I18n.bundle.format("gui.data.catalog", "Hipparcos"));
                 // HIP
-                getDataByHipId(st.hip, listener);
+                getDataByHipId(st.getHip(), listener);
                 return;
             }
         }
@@ -234,9 +234,9 @@ public class GaiaCatalogWindow extends CollapsibleWindow {
     }
 
     private class GaiaDataListener {
-        private Star st;
+        private IStarFocus st;
 
-        public GaiaDataListener(Star st) {
+        public GaiaDataListener(IStarFocus st) {
             this.st = st;
         }
 
@@ -247,19 +247,16 @@ public class GaiaCatalogWindow extends CollapsibleWindow {
             links.pad(5, 5, 5, 5);
             links.space(10);
 
-            if (st.catalogSource == 1) {
-                links.addActor(new Link(txt("gui.data.json"), linkStyle, URL_GAIA_JSON_SOURCE + st.id));
-                links.addActor(new OwnLabel("|", skin));
-                links.addActor(new Link(txt("gui.data.archive"), linkStyle, URL_GAIA_WEB_SOURCE + st.id));
-            } else if (st.catalogSource == 2) {
-                links.addActor(new Link(txt("gui.data.json"), linkStyle, URL_HIP_JSON_SOURCE + st.hip));
-            }
+            links.addActor(new Link(txt("gui.data.json"), linkStyle, URL_GAIA_JSON_SOURCE + st.getId()));
+            links.addActor(new OwnLabel("|", skin));
+            links.addActor(new Link(txt("gui.data.archive"), linkStyle, URL_GAIA_WEB_SOURCE + st.getId()));
+            //links.addActor(new Link(txt("gui.data.json"), linkStyle, URL_HIP_JSON_SOURCE + st.hip));
 
             table.add(links).colspan(2).padTop(pad * 2).padBottom(pad * 2);
             table.row();
 
             table.add(new OwnLabel(txt("gui.data.name"), skin, "msg-17")).padLeft(pad * 2).left();
-            table.add(new OwnLabel(st.name, skin, "msg-17")).padLeft(pad * 2).padRight(pad * 2).left();
+            table.add(new OwnLabel(st.getName(), skin, "msg-17")).padLeft(pad * 2).padRight(pad * 2).left();
             table.row();
             for (int col = 0; col < data[0].length; col++) {
                 Actor first = null;
@@ -289,7 +286,7 @@ public class GaiaCatalogWindow extends CollapsibleWindow {
 
         public void ko() {
             // No ID
-            String msg = I18n.bundle.format("error.gaiacatalog.noid", st.name);
+            String msg = I18n.bundle.format("error.gaiacatalog.noid", st.getName());
             table.add(new OwnLabel(msg, skin, "ui-15"));
             table.pack();
             scroll.setHeight(table.getHeight() + pad);
@@ -307,7 +304,7 @@ public class GaiaCatalogWindow extends CollapsibleWindow {
 
         public void notFound() {
             // Not found
-            String msg = I18n.bundle.format("error.gaiacatalog.notfound", st.name);
+            String msg = I18n.bundle.format("error.gaiacatalog.notfound", st.getName());
             table.add(new OwnLabel(msg, skin, "ui-15"));
             table.pack();
             scroll.setHeight(table.getHeight() + pad);

@@ -35,8 +35,8 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
 import gaia.cu9.ari.gaiaorbit.scenegraph.IFocus;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
+import gaia.cu9.ari.gaiaorbit.scenegraph.IStarFocus;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Planet;
-import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
 import gaia.cu9.ari.gaiaorbit.util.ComponentTypes;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
@@ -349,12 +349,13 @@ public class FullGui extends AbstractGui {
 
             ContextMenu popup = new ContextMenu(skin, "default");
 
-            MenuItem select = new MenuItem(txt("context.select", candidate.getName()), skin, "default");
+            MenuItem select = new MenuItem(txt("context.select", candidate.getCandidateName()), skin, "default");
             select.addListener(new EventListener() {
 
                 @Override
                 public boolean handle(Event event) {
                     if (event instanceof ChangeEvent) {
+                        candidate.makeFocus();
                         EventManager.instance.post(Events.CAMERA_MODE_CMD, CameraMode.Focus);
                         EventManager.instance.post(Events.FOCUS_CHANGE_CMD, candidate);
                     }
@@ -364,13 +365,15 @@ public class FullGui extends AbstractGui {
             });
             popup.addItem(select);
 
-            MenuItem go = new MenuItem(txt("context.goto", candidate.getName()), skin, "default");
+            MenuItem go = new MenuItem(txt("context.goto", candidate.getCandidateName()), skin, "default");
             go.addListener(new EventListener() {
 
                 @Override
                 public boolean handle(Event event) {
-                    if (event instanceof ChangeEvent)
+                    if (event instanceof ChangeEvent) {
+                        candidate.makeFocus();
                         EventManager.instance.post(Events.NAVIGATE_TO_OBJECT, candidate);
+                    }
                     return false;
                 }
 
@@ -380,7 +383,7 @@ public class FullGui extends AbstractGui {
             if (candidate instanceof Planet) {
                 popup.addSeparator();
 
-                MenuItem landOn = new MenuItem(txt("context.landon", candidate.getName()), skin, "default");
+                MenuItem landOn = new MenuItem(txt("context.landon", candidate.getCandidateName()), skin, "default");
                 landOn.addListener(new EventListener() {
 
                     @Override
@@ -401,7 +404,7 @@ public class FullGui extends AbstractGui {
                     final Double pointerLon = lonlat[0];
                     final Double pointerLat = lonlat[1];
                     // Add mouse pointer
-                    MenuItem landOnPointer = new MenuItem(txt("context.landatpointer", candidate.getName()), skin, "default");
+                    MenuItem landOnPointer = new MenuItem(txt("context.landatpointer", candidate.getCandidateName()), skin, "default");
                     landOnPointer.addListener(new EventListener() {
 
                         @Override
@@ -417,7 +420,7 @@ public class FullGui extends AbstractGui {
                     popup.addItem(landOnPointer);
                 }
 
-                MenuItem landOnCoord = new MenuItem(txt("context.landatcoord", candidate.getName()), skin, "default");
+                MenuItem landOnCoord = new MenuItem(txt("context.landatcoord", candidate.getCandidateName()), skin, "default");
                 landOnCoord.addListener(new EventListener() {
 
                     @Override
@@ -433,9 +436,9 @@ public class FullGui extends AbstractGui {
                 popup.addItem(landOnCoord);
             }
 
-            if (candidate instanceof Star) {
+            if (candidate instanceof IStarFocus) {
                 boolean sep = false;
-                if (UncertaintiesHandler.getInstance().containsStar(candidate.getId())) {
+                if (UncertaintiesHandler.getInstance().containsStar(candidate.getCandidateId())) {
                     popup.addSeparator();
                     sep = true;
 

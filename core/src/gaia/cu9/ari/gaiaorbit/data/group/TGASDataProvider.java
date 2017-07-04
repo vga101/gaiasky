@@ -12,13 +12,15 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.utils.Array;
 
+import gaia.cu9.ari.gaiaorbit.scenegraph.StarGroup;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.color.ColourUtils;
+import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
+import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
+import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.parse.Parser;
-import gaia.cu9.ari.gaiaorbit.util.units.Position;
-import gaia.cu9.ari.gaiaorbit.util.units.Position.PositionType;
 
 public class TGASDataProvider implements IParticleGroupDataProvider {
 
@@ -44,12 +46,13 @@ public class TGASDataProvider implements IParticleGroupDataProvider {
                 if (!line.isEmpty() && !line.startsWith("#")) {
                     // Read line
                     String[] tokens = line.split(",");
-                    double[] point = new double[9];
+                    double[] point = new double[StarGroup.SIZE];
 
                     double pllx = Parser.parseDouble(tokens[3]);
                     double pllxerr = Parser.parseDouble(tokens[4]);
 
-                    double dist = (1000d / pllx);
+                    double distpc = (1000d / pllx);
+                    double dist = distpc * Constants.PC_TO_U;
 
                     // Keep only stars with relevant parallaxes
                     if (dist >= 0 && pllx / pllxerr > 2 && pllxerr <= 1) {
@@ -57,10 +60,25 @@ public class TGASDataProvider implements IParticleGroupDataProvider {
                         int hip = Parser.parseInt(tokens[12]);
                         String tycho2 = tokens[13];
 
+                        /** RA and DEC **/
                         double ra = Parser.parseDouble(tokens[1]);
                         double dec = Parser.parseDouble(tokens[2]);
+                        Vector3d pos = Coordinates.sphericalToCartesian(Math.toRadians(ra), Math.toRadians(dec), dist, new Vector3d());
+
+                        /** PROPER MOTIONS in mas/yr **/
+                        double mualpha = Parser.parseDouble(tokens[5]) * AstroUtils.MILLARCSEC_TO_DEG;
+                        double mudelta = Parser.parseDouble(tokens[6]) * AstroUtils.MILLARCSEC_TO_DEG;
+
+                        /** RADIAL VELOCITY in km/s **/
+
+                        double radvel = tokens[7] != null && !tokens[7].isEmpty() ? Parser.parseDouble(tokens[7].trim()) * Constants.KM_TO_U / Constants.S_TO_Y : 0;
+
+                        /** PROPER MOTION VECTOR = (pos+dx) - pos **/
+                        Vector3d pm = Coordinates.sphericalToCartesian(Math.toRadians(ra + mualpha), Math.toRadians(dec + mudelta), dist + radvel, new Vector3d());
+                        pm.sub(pos);
+
                         double appmag = Parser.parseDouble(tokens[9]);
-                        double absmag = (appmag - 2.5 * Math.log10(Math.pow(dist / 10d, 2d)));
+                        double absmag = (appmag - 2.5 * Math.log10(Math.pow(distpc / 10d, 2d)));
                         double flux = Math.pow(10, -absmag / 2.5f);
                         double size = Math.min((Math.pow(flux, 0.5f) * Constants.PC_TO_U * 0.16f), 1e9f) / 1.5;
 
@@ -78,16 +96,18 @@ public class TGASDataProvider implements IParticleGroupDataProvider {
                         float[] rgb = ColourUtils.BVtoRGB(colorbv);
                         double col = Color.toFloatBits(rgb[0], rgb[1], rgb[2], 1.0f);
 
-                        Position p = new Position(ra, "deg", dec, "deg", dist, "pc", PositionType.RA_DEC_DIST);
-                        p.gsposition.scl(Constants.PC_TO_U);
-                        point[0] = p.gsposition.x;
-                        point[1] = p.gsposition.y;
-                        point[2] = p.gsposition.z;
-                        point[3] = col;
-                        point[4] = size;
-                        point[5] = appmag;
-                        point[6] = absmag;
-                        point[7] = sourceid;
+                        point[StarGroup.I_ID] = sourceid;
+                        point[StarGroup.I_X] = pos.x;
+                        point[StarGroup.I_Y] = pos.y;
+                        point[StarGroup.I_Z] = pos.z;
+                        point[StarGroup.I_PMX] = pm.x;
+                        point[StarGroup.I_PMY] = pm.y;
+                        point[StarGroup.I_PMZ] = pm.z;
+                        point[StarGroup.I_COL] = col;
+                        point[StarGroup.I_SIZE] = size;
+                        point[StarGroup.I_APPMAG] = appmag;
+                        point[StarGroup.I_ABSMAG] = absmag;
+
                         pointData.add(point);
                     }
                 }

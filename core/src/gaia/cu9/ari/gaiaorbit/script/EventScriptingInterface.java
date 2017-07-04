@@ -23,6 +23,7 @@ import gaia.cu9.ari.gaiaorbit.interfce.IGui;
 import gaia.cu9.ari.gaiaorbit.scenegraph.AbstractPositionEntity;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
+import gaia.cu9.ari.gaiaorbit.scenegraph.IFocus;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Invisible;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Loc;
@@ -518,7 +519,7 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
     @Override
     public double getObjectRadius(String name) {
         ISceneGraph sg = GaiaSky.instance.sg;
-        CelestialBody obj = sg.findFocus(name);
+        IFocus obj = sg.findFocus(name);
         if (obj == null)
             return -1;
         else
@@ -542,17 +543,110 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
 
     public void goToObject(String name, double angle, float focusWait, AtomicBoolean stop) {
         assert name != null : "Name can't be null";
+
+        ISceneGraph sg = GaiaSky.instance.sg;
+        if (sg.containsNode(name)) {
+            IFocus focus = sg.findFocus(name);
+            goToObject(focus, angle, focusWait, stop);
+        }
+    }
+
+    public void goToObject(IFocus object, double angle, float focusWait, AtomicBoolean stop) {
+        assert object != null : "Object can't be null";
         assert angle > 0 : "Angle must be larger than zero";
 
         stops.add(stop);
+        NaturalCamera cam = GaiaSky.instance.cam.naturalCamera;
+
+        // Post focus change
+        em.post(Events.CAMERA_MODE_CMD, CameraMode.Focus);
+        em.post(Events.FOCUS_CHANGE_CMD, object);
+
+        // Wait til camera is facing focus
+        if (focusWait < 0) {
+            while (!cam.facingFocus) {
+                // Wait
+                try {
+                    Thread.sleep(100);
+                } catch (Exception e) {
+                }
+            }
+        } else {
+            this.sleep(focusWait);
+        }
+
+        /* target angle */
+        double target = Math.toRadians(angle);
+        if (target < 0)
+            target = Math.toRadians(20d);
+
+        // Add forward movement while distance > target distance
+        long prevtime = TimeUtils.millis();
+        while (object.getViewAngleApparent() < target && (stop == null || (stop != null && !stop.get()))) {
+            // dt in ms
+            long dt = TimeUtils.timeSinceMillis(prevtime);
+            prevtime = TimeUtils.millis();
+
+            em.post(Events.CAMERA_FWD, 1d * dt);
+            try {
+                Thread.sleep(5);
+            } catch (Exception e) {
+            }
+        }
+
+        // We can stop now
+        em.post(Events.CAMERA_STOP);
+
+    }
+
+    @Override
+    public void landOnObject(String name) {
+        landOnObject(name, null);
+    }
+
+    public void landOnObject(String name, AtomicBoolean stop) {
+        assert name != null : "Name can't be null";
+
         ISceneGraph sg = GaiaSky.instance.sg;
         if (sg.containsNode(name)) {
-            CelestialBody focus = sg.findFocus(name);
+            IFocus focus = sg.findFocus(name);
+            landOnObject(focus, stop);
+        }
+
+    }
+
+    public void landOnObject(IFocus object, AtomicBoolean stop) {
+        assert object != null : "Object can't be null";
+
+        stops.add(stop);
+        if (object instanceof Planet) {
             NaturalCamera cam = GaiaSky.instance.cam.naturalCamera;
+            // Focus wait - 2 seconds
+            float focusWait = -1;
+
+            /**
+             * SAVE
+             */
+
+            // Save speed, set it to 50
+            double speed = GlobalConf.scene.CAMERA_SPEED;
+            em.post(Events.CAMERA_SPEED_CMD, 25f / 10f, false);
+
+            // Save turn speed, set it to 50
+            double turnSpeedBak = GlobalConf.scene.TURNING_SPEED;
+            em.post(Events.TURNING_SPEED_CMD, (float) MathUtilsd.lint(20d, Constants.MIN_SLIDER, Constants.MAX_SLIDER, Constants.MIN_TURN_SPEED, Constants.MAX_TURN_SPEED), false);
+
+            // Save cinematic
+            boolean cinematic = GlobalConf.scene.CINEMATIC_CAMERA;
+            GlobalConf.scene.CINEMATIC_CAMERA = true;
+
+            /**
+             * FOCUS
+             */
 
             // Post focus change
             em.post(Events.CAMERA_MODE_CMD, CameraMode.Focus);
-            em.post(Events.FOCUS_CHANGE_CMD, name);
+            em.post(Events.FOCUS_CHANGE_CMD, object);
 
             // Wait til camera is facing focus
             if (focusWait < 0) {
@@ -567,164 +661,84 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
                 this.sleep(focusWait);
             }
 
-            /* target angle */
-            double target = Math.toRadians(angle);
-            if (target < 0)
-                target = Math.toRadians(20d);
+            /* target distance */
+            double target = 100 * Constants.M_TO_U;
+
+            object.getAbsolutePosition(aux1).add(cam.posinv).nor();
+            Vector3d dir = cam.direction;
 
             // Add forward movement while distance > target distance
+            boolean distanceNotMet = (object.getDistToCamera() - object.getRadius()) > target;
+            boolean viewNotMet = Math.abs(dir.angle(aux1)) < 90;
+
             long prevtime = TimeUtils.millis();
-            while (focus.viewAngleApparent < target && (stop == null || (stop != null && !stop.get()))) {
+            while ((distanceNotMet || viewNotMet) && (stop == null || (stop != null && !stop.get()))) {
                 // dt in ms
                 long dt = TimeUtils.timeSinceMillis(prevtime);
                 prevtime = TimeUtils.millis();
 
-                em.post(Events.CAMERA_FWD, 1d * dt);
+                if (distanceNotMet)
+                    em.post(Events.CAMERA_FWD, 0.1d * dt);
+                else
+                    cam.stopForwardMovement();
+
+                if (viewNotMet) {
+                    if (object.getDistToCamera() - object.getRadius() < object.getRadius() * 5)
+                        // Start turning where we are at n times the radius
+                        em.post(Events.CAMERA_TURN, 0d, dt / 500d);
+                } else {
+                    cam.stopRotateMovement();
+                }
+
                 try {
-                    Thread.sleep(5);
+                    Thread.sleep(20);
                 } catch (Exception e) {
                 }
+
+                // focus.transform.getTranslation(aux);
+                viewNotMet = Math.abs(dir.angle(aux1)) < 90;
+                distanceNotMet = (object.getDistToCamera() - object.getRadius()) > target;
             }
+
+            // STOP
+            em.post(Events.CAMERA_STOP);
+
+            // Roll till done
+            Vector3d up = cam.up;
+            // aux1 <- camera-object
+            object.getAbsolutePosition(aux1).sub(cam.pos);
+            double ang1 = up.angle(aux1);
+            double ang2 = up.cpy().rotate(cam.direction, 1).angle(aux1);
+            double rollsign = ang1 < ang2 ? -1d : 1d;
+
+            if (ang1 < 170) {
+
+                rollAndWait(rollsign * 0.02d, 170d, 50l, cam, aux1, stop);
+                // STOP
+                cam.stopMovement();
+
+                rollAndWait(rollsign * 0.006d, 176d, 50l, cam, aux1, stop);
+                // STOP
+                cam.stopMovement();
+
+                rollAndWait(rollsign * 0.003d, 178d, 50l, cam, aux1, stop);
+            }
+            /**
+             * RESTORE
+             */
 
             // We can stop now
             em.post(Events.CAMERA_STOP);
 
-        }
-    }
+            // Restore cinematic
+            GlobalConf.scene.CINEMATIC_CAMERA = cinematic;
 
-    @Override
-    public void landOnObject(String name) {
-        landOnObject(name, null);
-    }
+            // Restore speed
+            em.post(Events.CAMERA_SPEED_CMD, (float) speed, false);
 
-    public void landOnObject(String name, AtomicBoolean stop) {
-        assert name != null : "Name can't be null";
+            // Restore turning speed
+            em.post(Events.TURNING_SPEED_CMD, (float) turnSpeedBak, false);
 
-        stops.add(stop);
-        ISceneGraph sg = GaiaSky.instance.sg;
-        if (sg.containsNode(name)) {
-            CelestialBody focus = sg.findFocus(name);
-            if (focus instanceof Planet) {
-                NaturalCamera cam = GaiaSky.instance.cam.naturalCamera;
-                // Focus wait - 2 seconds
-                float focusWait = -1;
-
-                /**
-                 * SAVE
-                 */
-
-                // Save speed, set it to 50
-                double speed = GlobalConf.scene.CAMERA_SPEED;
-                em.post(Events.CAMERA_SPEED_CMD, 25f / 10f, false);
-
-                // Save turn speed, set it to 50
-                double turnSpeedBak = GlobalConf.scene.TURNING_SPEED;
-                em.post(Events.TURNING_SPEED_CMD, (float) MathUtilsd.lint(20d, Constants.MIN_SLIDER, Constants.MAX_SLIDER, Constants.MIN_TURN_SPEED, Constants.MAX_TURN_SPEED), false);
-
-                // Save cinematic
-                boolean cinematic = GlobalConf.scene.CINEMATIC_CAMERA;
-                GlobalConf.scene.CINEMATIC_CAMERA = true;
-
-                /**
-                 * FOCUS
-                 */
-
-                // Post focus change
-                em.post(Events.CAMERA_MODE_CMD, CameraMode.Focus);
-                em.post(Events.FOCUS_CHANGE_CMD, name);
-
-                // Wait til camera is facing focus
-                if (focusWait < 0) {
-                    while (!cam.facingFocus) {
-                        // Wait
-                        try {
-                            Thread.sleep(100);
-                        } catch (Exception e) {
-                        }
-                    }
-                } else {
-                    this.sleep(focusWait);
-                }
-
-                /* target distance */
-                double target = 100 * Constants.M_TO_U;
-
-                focus.getAbsolutePosition(aux1).add(cam.posinv).nor();
-                Vector3d dir = cam.direction;
-
-                // Add forward movement while distance > target distance
-                boolean distanceNotMet = (focus.distToCamera - focus.getRadius()) > target;
-                boolean viewNotMet = Math.abs(dir.angle(aux1)) < 90;
-
-                long prevtime = TimeUtils.millis();
-                while ((distanceNotMet || viewNotMet) && (stop == null || (stop != null && !stop.get()))) {
-                    // dt in ms
-                    long dt = TimeUtils.timeSinceMillis(prevtime);
-                    prevtime = TimeUtils.millis();
-
-                    if (distanceNotMet)
-                        em.post(Events.CAMERA_FWD, 0.1d * dt);
-                    else
-                        cam.stopForwardMovement();
-
-                    if (viewNotMet) {
-                        if (focus.distToCamera - focus.getRadius() < focus.getRadius() * 5)
-                            // Start turning where we are at n times the radius
-                            em.post(Events.CAMERA_TURN, 0d, dt / 500d);
-                    } else {
-                        cam.stopRotateMovement();
-                    }
-
-                    try {
-                        Thread.sleep(20);
-                    } catch (Exception e) {
-                    }
-
-                    // focus.transform.getTranslation(aux);
-                    viewNotMet = Math.abs(dir.angle(aux1)) < 90;
-                    distanceNotMet = (focus.distToCamera - focus.getRadius()) > target;
-                }
-
-                // STOP
-                em.post(Events.CAMERA_STOP);
-
-                // Roll till done
-                Vector3d up = cam.up;
-                // aux1 <- camera-object
-                focus.getAbsolutePosition(aux1).sub(cam.pos);
-                double ang1 = up.angle(aux1);
-                double ang2 = up.cpy().rotate(cam.direction, 1).angle(aux1);
-                double rollsign = ang1 < ang2 ? -1d : 1d;
-
-                if (ang1 < 170) {
-
-                    rollAndWait(rollsign * 0.02d, 170d, 50l, cam, aux1, stop);
-                    // STOP
-                    cam.stopMovement();
-
-                    rollAndWait(rollsign * 0.006d, 176d, 50l, cam, aux1, stop);
-                    // STOP
-                    cam.stopMovement();
-
-                    rollAndWait(rollsign * 0.003d, 178d, 50l, cam, aux1, stop);
-                }
-                /**
-                 * RESTORE
-                 */
-
-                // We can stop now
-                em.post(Events.CAMERA_STOP);
-
-                // Restore cinematic
-                GlobalConf.scene.CINEMATIC_CAMERA = cinematic;
-
-                // Restore speed
-                em.post(Events.CAMERA_SPEED_CMD, (float) speed, false);
-
-                // Restore turning speed
-                em.post(Events.TURNING_SPEED_CMD, (float) turnSpeedBak, false);
-
-            }
         }
 
     }
@@ -736,22 +750,29 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
 
     public void landOnObjectLocation(String name, String locationName, AtomicBoolean stop) {
         assert name != null : "Name can't be null";
-        assert locationName != null : "locationName can't be null";
 
         stops.add(stop);
         ISceneGraph sg = GaiaSky.instance.sg;
         if (sg.containsNode(name)) {
-            CelestialBody focus = sg.findFocus(name);
-            if (focus instanceof Planet) {
-                Planet planet = (Planet) focus;
-                SceneGraphNode sgn = planet.getChildByNameAndType(locationName, Loc.class);
-                if (sgn != null) {
-                    Loc location = (Loc) sgn;
-                    landOnObjectLocation(name, location.getLocation().x, location.getLocation().y, stop);
-                    return;
-                }
-                Logger.info("Location '" + locationName + "' not found on object '" + name + "'");
+            IFocus focus = sg.findFocus(name);
+            landOnObjectLocation(focus, locationName, stop);
+        }
+    }
+
+    public void landOnObjectLocation(IFocus object, String locationName, AtomicBoolean stop) {
+        assert object != null : "Name can't be null";
+        assert locationName != null : "locationName can't be null";
+
+        stops.add(stop);
+        if (object instanceof Planet) {
+            Planet planet = (Planet) object;
+            SceneGraphNode sgn = planet.getChildByNameAndType(locationName, Loc.class);
+            if (sgn != null) {
+                Loc location = (Loc) sgn;
+                landOnObjectLocation(object, location.getLocation().x, location.getLocation().y, stop);
+                return;
             }
+            Logger.info("Location '" + locationName + "' not found on object '" + object.getCandidateName() + "'");
         }
     }
 
@@ -762,11 +783,22 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
 
     public void landOnObjectLocation(String name, double longitude, double latitude, AtomicBoolean stop) {
         assert name != null : "Name can't be null";
+
+        ISceneGraph sg = GaiaSky.instance.sg;
+        if (sg.containsNode(name)) {
+            IFocus focus = sg.findFocus(name);
+            landOnObjectLocation(focus, longitude, latitude, stop);
+        }
+
+    }
+
+    public void landOnObjectLocation(IFocus object, double longitude, double latitude, AtomicBoolean stop) {
+        assert object != null : "Object can't be null";
         assert latitude >= -90 && latitude <= 90 && longitude >= 0 && longitude <= 360 : "Latitude must be in [-90..90] and longitude must be in [0..360]";
 
         stops.add(stop);
         ISceneGraph sg = GaiaSky.instance.sg;
-        String nameStub = name + " ";
+        String nameStub = object.getCandidateName() + " ";
 
         if (!sg.containsNode(nameStub)) {
             Invisible invisible = new Invisible(nameStub);
@@ -774,94 +806,91 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
         }
         Invisible invisible = (Invisible) sg.getNode(nameStub);
 
-        if (sg.containsNode(name)) {
-            CelestialBody focus = sg.findFocus(name);
-            if (focus instanceof Planet) {
-                Planet planet = (Planet) focus;
-                NaturalCamera cam = GaiaSky.instance.cam.naturalCamera;
+        if (object instanceof Planet) {
+            Planet planet = (Planet) object;
+            NaturalCamera cam = GaiaSky.instance.cam.naturalCamera;
 
-                double targetAngle = 35 * MathUtilsd.degRad;
-                if (planet.viewAngle > targetAngle) {
-                    // Zoom out
-                    while (planet.viewAngle > targetAngle && (stop == null || (stop != null && !stop.get()))) {
-                        cam.addForwardForce(-5d);
-                        sleep(0.3f);
-                    }
-                    // STOP
-                    cam.stopMovement();
+            double targetAngle = 35 * MathUtilsd.degRad;
+            if (planet.viewAngle > targetAngle) {
+                // Zoom out
+                while (planet.viewAngle > targetAngle && (stop == null || (stop != null && !stop.get()))) {
+                    cam.addForwardForce(-5d);
+                    sleep(0.3f);
                 }
-
-                // Go to object
-                goToObject(name, 20, -1, stop);
-
-                // Save speed, set it to 50
-                double speed = GlobalConf.scene.CAMERA_SPEED;
-                em.post(Events.CAMERA_SPEED_CMD, 25f / 10f, false);
-
-                // Save turn speed, set it to 50
-                double turnSpeedBak = GlobalConf.scene.TURNING_SPEED;
-                em.post(Events.TURNING_SPEED_CMD, (float) MathUtilsd.lint(50d, Constants.MIN_SLIDER, Constants.MAX_SLIDER, Constants.MIN_TURN_SPEED, Constants.MAX_TURN_SPEED), false);
-
-                // Save rotation speed, set it to 20
-                double rotationSpeedBak = GlobalConf.scene.ROTATION_SPEED;
-                em.post(Events.ROTATION_SPEED_CMD, (float) MathUtilsd.lint(20d, Constants.MIN_SLIDER, Constants.MAX_SLIDER, Constants.MIN_ROT_SPEED, Constants.MAX_ROT_SPEED), false);
-
-                // Save cinematic
-                boolean cinematic = GlobalConf.scene.CINEMATIC_CAMERA;
-                GlobalConf.scene.CINEMATIC_CAMERA = true;
-
-                // Save crosshair
-                boolean crosshair = GlobalConf.scene.CROSSHAIR;
-                GlobalConf.scene.CROSSHAIR = false;
-
-                // Get target position
-                Vector3d target = aux1;
-                planet.getPositionAboveSurface(longitude, latitude, 50, target);
-
-                // Get object position
-                Vector3d objectPosition = planet.getAbsolutePosition(aux2);
-
-                // Check intersection with object
-                boolean intersects = Intersectord.checkIntersectSegmentSphere(cam.pos, target, objectPosition, planet.getRadius());
-
-                if (intersects) {
-                    cameraRotate(5, 5);
-                }
-
-                while (intersects && (stop == null || (stop != null && !stop.get()))) {
-                    sleep(0.1f);
-
-                    objectPosition = planet.getAbsolutePosition(aux2);
-                    intersects = Intersectord.checkIntersectSegmentSphere(cam.pos, target, objectPosition, planet.getRadius());
-                }
-
-                cameraStop();
-
-                invisible.ct = planet.ct;
-                invisible.pos.set(target);
-
-                // Go to object
-                goToObject(nameStub, 20, 0, stop);
-
-                // Restore cinematic
-                GlobalConf.scene.CINEMATIC_CAMERA = cinematic;
-
-                // Restore speed
-                em.post(Events.CAMERA_SPEED_CMD, (float) speed, false);
-
-                // Restore turning speed
-                em.post(Events.TURNING_SPEED_CMD, (float) turnSpeedBak, false);
-
-                // Restore rotation speed
-                em.post(Events.ROTATION_SPEED_CMD, (float) rotationSpeedBak, false);
-
-                // Restore crosshair
-                GlobalConf.scene.CROSSHAIR = crosshair;
-
-                // Land
-                landOnObject(name, stop);
-
+                // STOP
+                cam.stopMovement();
             }
+
+            // Go to object
+            goToObject(object, 20, -1, stop);
+
+            // Save speed, set it to 50
+            double speed = GlobalConf.scene.CAMERA_SPEED;
+            em.post(Events.CAMERA_SPEED_CMD, 25f / 10f, false);
+
+            // Save turn speed, set it to 50
+            double turnSpeedBak = GlobalConf.scene.TURNING_SPEED;
+            em.post(Events.TURNING_SPEED_CMD, (float) MathUtilsd.lint(50d, Constants.MIN_SLIDER, Constants.MAX_SLIDER, Constants.MIN_TURN_SPEED, Constants.MAX_TURN_SPEED), false);
+
+            // Save rotation speed, set it to 20
+            double rotationSpeedBak = GlobalConf.scene.ROTATION_SPEED;
+            em.post(Events.ROTATION_SPEED_CMD, (float) MathUtilsd.lint(20d, Constants.MIN_SLIDER, Constants.MAX_SLIDER, Constants.MIN_ROT_SPEED, Constants.MAX_ROT_SPEED), false);
+
+            // Save cinematic
+            boolean cinematic = GlobalConf.scene.CINEMATIC_CAMERA;
+            GlobalConf.scene.CINEMATIC_CAMERA = true;
+
+            // Save crosshair
+            boolean crosshair = GlobalConf.scene.CROSSHAIR;
+            GlobalConf.scene.CROSSHAIR = false;
+
+            // Get target position
+            Vector3d target = aux1;
+            planet.getPositionAboveSurface(longitude, latitude, 50, target);
+
+            // Get object position
+            Vector3d objectPosition = planet.getAbsolutePosition(aux2);
+
+            // Check intersection with object
+            boolean intersects = Intersectord.checkIntersectSegmentSphere(cam.pos, target, objectPosition, planet.getRadius());
+
+            if (intersects) {
+                cameraRotate(5, 5);
+            }
+
+            while (intersects && (stop == null || (stop != null && !stop.get()))) {
+                sleep(0.1f);
+
+                objectPosition = planet.getAbsolutePosition(aux2);
+                intersects = Intersectord.checkIntersectSegmentSphere(cam.pos, target, objectPosition, planet.getRadius());
+            }
+
+            cameraStop();
+
+            invisible.ct = planet.ct;
+            invisible.pos.set(target);
+
+            // Go to object
+            goToObject(nameStub, 20, 0, stop);
+
+            // Restore cinematic
+            GlobalConf.scene.CINEMATIC_CAMERA = cinematic;
+
+            // Restore speed
+            em.post(Events.CAMERA_SPEED_CMD, (float) speed, false);
+
+            // Restore turning speed
+            em.post(Events.TURNING_SPEED_CMD, (float) turnSpeedBak, false);
+
+            // Restore rotation speed
+            em.post(Events.ROTATION_SPEED_CMD, (float) rotationSpeedBak, false);
+
+            // Restore crosshair
+            GlobalConf.scene.CROSSHAIR = crosshair;
+
+            // Land
+            landOnObject(object, stop);
+
         }
 
         sg.remove(invisible, true);

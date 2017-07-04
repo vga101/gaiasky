@@ -20,6 +20,7 @@ import com.badlogic.gdx.utils.Align;
 import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.interfce.INetworkChecker;
 import gaia.cu9.ari.gaiaorbit.scenegraph.IFocus;
+import gaia.cu9.ari.gaiaorbit.scenegraph.IStarFocus;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ModelBody;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
@@ -94,9 +95,9 @@ public class DesktopNetworkChecker extends Thread implements INetworkChecker {
     }
 
     private class GaiaButtonListener implements EventListener {
-        private final IFocus focus;
+        private final IStarFocus focus;
 
-        public GaiaButtonListener(IFocus focus) {
+        public GaiaButtonListener(IStarFocus focus) {
             super();
             this.focus = focus;
         }
@@ -107,7 +108,7 @@ public class DesktopNetworkChecker extends Thread implements INetworkChecker {
                 if (gaiaWindow == null) {
                     gaiaWindow = new GaiaCatalogWindow(GaiaSky.instance.mainGui.getGuiStage(), skin);
                 }
-                gaiaWindow.initialize((Star) focus);
+                gaiaWindow.initialize(focus);
                 gaiaWindow.display();
                 return true;
             }
@@ -128,9 +129,9 @@ public class DesktopNetworkChecker extends Thread implements INetworkChecker {
                     Logger.debug(this.getClass().getSimpleName(), "Looking up network resources for '" + focus.getName() + "'");
 
                     // Add table
-                    if (focus instanceof Star) {
+                    if (focus instanceof IStarFocus) {
                         Button gaiaButton = new OwnTextButton("Gaia", skin, "link");
-                        gaiaButton.addListener(new GaiaButtonListener(focus));
+                        gaiaButton.addListener(new GaiaButtonListener((IStarFocus) focus));
                         table.add(gaiaButton).center();
                     }
 

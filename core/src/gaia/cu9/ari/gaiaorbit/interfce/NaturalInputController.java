@@ -231,6 +231,7 @@ public class NaturalInputController extends GestureDetector {
                                 // Select star, if any
                                 IFocus hit = getBestHit(screenX, screenY);
                                 if (hit != null) {
+                                    hit.makeFocus();
                                     EventManager.instance.post(Events.FOCUS_CHANGE_CMD, hit);
                                     EventManager.instance.post(Events.CAMERA_MODE_CMD, CameraMode.Focus);
                                 }

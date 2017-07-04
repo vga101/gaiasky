@@ -87,216 +87,212 @@ public class TGASLoader extends AbstractCatalogLoader implements ISceneGraphLoad
 
     @Override
     public Array<Particle> loadData() throws FileNotFoundException {
-	String separator = null;
-	int[] indices = null;
-	if (VERSION == 1) {
-	    // NEW
-	    separator = separator_new;
-	    indices = indices_new;
-	} else {
-	    Logger.error("VERSION number not recognized");
-	    return null;
-	}
+        String separator = null;
+        int[] indices = null;
+        if (VERSION == 1) {
+            // NEW
+            separator = separator_new;
+            indices = indices_new;
+        } else {
+            Logger.error("VERSION number not recognized");
+            return null;
+        }
 
-	tycBV = loadTYCBVColours(btvtColorsFile);
+        tycBV = loadTYCBVColours(btvtColorsFile);
 
-	Array<Particle> stars = new Array<Particle>();
-	for (String file : files) {
-	    FileHandle f = Gdx.files.internal(file);
-	    InputStream data = f.read();
-	    BufferedReader br = new BufferedReader(new InputStreamReader(data));
+        Array<Particle> stars = new Array<Particle>();
+        for (String file : files) {
+            FileHandle f = Gdx.files.internal(file);
+            InputStream data = f.read();
+            BufferedReader br = new BufferedReader(new InputStreamReader(data));
 
-	    try {
-		String line;
-		while ((line = br.readLine()) != null) {
-		    if (!line.startsWith(comment))
-			// Add star
-			addStar(line, stars, indices, separator);
-		}
-	    } catch (IOException e) {
-		e.printStackTrace();
-	    } finally {
-		try {
-		    br.close();
-		} catch (IOException e) {
-		    Logger.error(e);
-		}
+            try {
+                String line;
+                while ((line = br.readLine()) != null) {
+                    if (!line.startsWith(comment))
+                        // Add star
+                        addStar(line, stars, indices, separator);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    br.close();
+                } catch (IOException e) {
+                    Logger.error(e);
+                }
 
-	    }
-	}
+            }
+        }
 
-	Logger.info(this.getClass().getSimpleName(), "SourceId matched to HIP in " + sidhipfound + " stars");
-	Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.catalog.init", stars.size));
-	return stars;
+        Logger.info(this.getClass().getSimpleName(), "SourceId matched to HIP in " + sidhipfound + " stars");
+        Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.catalog.init", stars.size));
+        return stars;
     }
 
     private void addStar(String line, Array<Particle> stars, int[] indices, String separator) {
-	String[] st = line.split(separator);
+        String[] st = line.split(separator);
 
-	int hip = -1;
-	long sourceid = Parser.parseLong(st[indices[SOURCE_ID]]);
+        int hip = -1;
+        long sourceid = Parser.parseLong(st[indices[SOURCE_ID]]);
 
-	if (indices[HIP] >= 0) {
-	    hip = Parser.parseInt(st[indices[HIP]].trim());
-	}
+        if (indices[HIP] >= 0) {
+            hip = Parser.parseInt(st[indices[HIP]].trim());
+        }
 
-	String tycho2 = null;
-	if (indices[TYCHO2] >= 0) {
-	    tycho2 = st[indices[TYCHO2]].trim();
-	}
+        String tycho2 = null;
+        if (indices[TYCHO2] >= 0) {
+            tycho2 = st[indices[TYCHO2]].trim();
+        }
 
-	float appmag = new Double(Parser.parseDouble(st[indices[G_MAG]].trim())).floatValue();
+        float appmag = new Double(Parser.parseDouble(st[indices[G_MAG]].trim())).floatValue();
 
-	if (appmag < GlobalConf.data.LIMIT_MAG_LOAD) {
+        if (appmag < GlobalConf.data.LIMIT_MAG_LOAD) {
 
-	    double ra = Parser.parseDouble(st[indices[RA]].trim());
-	    double dec = Parser.parseDouble(st[indices[DEC]].trim());
-	    double pllx = Parser.parseDouble(st[indices[PLLX]].trim());
-	    double pllxerr = Parser.parseDouble(st[indices[PLLX_ERR]].trim());
+            double ra = Parser.parseDouble(st[indices[RA]].trim());
+            double dec = Parser.parseDouble(st[indices[DEC]].trim());
+            double pllx = Parser.parseDouble(st[indices[PLLX]].trim());
+            double pllxerr = Parser.parseDouble(st[indices[PLLX_ERR]].trim());
 
-	    double dist = (1000d / pllx) * Constants.PC_TO_U;
-	    // Keep only stars with relevant parallaxes
-	    if (dist >= 0 && pllx / pllxerr > 8 && pllxerr <= 1) {
+            double dist = (1000d / pllx) * Constants.PC_TO_U;
+            // Keep only stars with relevant parallaxes
+            if (dist >= 0 && pllx / pllxerr > 8 && pllxerr <= 1) {
 
-		Vector3d pos = Coordinates.sphericalToCartesian(Math.toRadians(ra), Math.toRadians(dec), dist,
-			new Vector3d());
+                Vector3d pos = Coordinates.sphericalToCartesian(Math.toRadians(ra), Math.toRadians(dec), dist, new Vector3d());
 
-		/** PROPER MOTIONS in mas/yr **/
-		double mualpha = Parser.parseDouble(st[indices[MUALPHA]].trim()) * AstroUtils.MILLARCSEC_TO_DEG;
-		double mudelta = Parser.parseDouble(st[indices[MUDELTA]].trim()) * AstroUtils.MILLARCSEC_TO_DEG;
+                /** PROPER MOTIONS in mas/yr **/
+                double mualpha = Parser.parseDouble(st[indices[MUALPHA]].trim()) * AstroUtils.MILLARCSEC_TO_DEG;
+                double mudelta = Parser.parseDouble(st[indices[MUDELTA]].trim()) * AstroUtils.MILLARCSEC_TO_DEG;
 
-		/** RADIAL VELOCITY in km/s **/
-		double radvel = 0;
-		if (indices[RADVEL] >= 0) {
-		    radvel = Parser.parseDouble(st[indices[RADVEL]].trim());
-		}
+                /** RADIAL VELOCITY in km/s **/
+                double radvel = 0;
+                if (indices[RADVEL] >= 0) {
+                    radvel = Parser.parseDouble(st[indices[RADVEL]].trim()) * Constants.KM_TO_U / Constants.S_TO_Y;
+                }
 
-		/** PROPER MOTION VECTOR = (pos+dx) - pos **/
-		Vector3d pm = Coordinates.sphericalToCartesian(Math.toRadians(ra + mualpha),
-			Math.toRadians(dec + mudelta), dist, new Vector3d());
-		pm.sub(pos);
+                /** PROPER MOTION VECTOR = (pos+dx) - pos **/
+                Vector3d pm = Coordinates.sphericalToCartesian(Math.toRadians(ra + mualpha), Math.toRadians(dec + mudelta), dist + radvel, new Vector3d());
+                pm.sub(pos);
 
-		// TODO Use radial velocity if necessary to get a 3D proper
-		// motion
+                // TODO Use radial velocity if necessary to get a 3D proper
+                // motion
 
-		Vector3 pmfloat = pm.toVector3();
-		Vector3 pmSph = new Vector3(Parser.parseFloat(st[indices[MUALPHA]].trim()),
-			Parser.parseFloat(st[indices[MUDELTA]].trim()), 0f);
+                Vector3 pmfloat = pm.toVector3();
+                Vector3 pmSph = new Vector3(Parser.parseFloat(st[indices[MUALPHA]].trim()), Parser.parseFloat(st[indices[MUDELTA]].trim()), 0f);
 
-		/** COLOR, we use the tycBV map if present **/
-		float colorbv = 0;
-		if (tycBV != null) {
-		    if (tycBV.containsKey(tycho2)) {
-			colorbv = tycBV.get(tycho2);
-		    }
-		} else {
-		    if (indices[BP_MAG] >= 0 && indices[RP_MAG] >= 0) {
-			// Real TGAS
-			float bp = new Double(Parser.parseDouble(st[indices[BP_MAG]].trim())).floatValue();
-			float rp = new Double(Parser.parseDouble(st[indices[RP_MAG]].trim())).floatValue();
-			colorbv = bp - rp;
-		    } else {
-			// Use color value in BP
-			colorbv = new Double(Parser.parseDouble(st[indices[BP_MAG]].trim())).floatValue();
-		    }
-		}
+                /** COLOR, we use the tycBV map if present **/
+                float colorbv = 0;
+                if (tycBV != null) {
+                    if (tycBV.containsKey(tycho2)) {
+                        colorbv = tycBV.get(tycho2);
+                    }
+                } else {
+                    if (indices[BP_MAG] >= 0 && indices[RP_MAG] >= 0) {
+                        // Real TGAS
+                        float bp = new Double(Parser.parseDouble(st[indices[BP_MAG]].trim())).floatValue();
+                        float rp = new Double(Parser.parseDouble(st[indices[RP_MAG]].trim())).floatValue();
+                        colorbv = bp - rp;
+                    } else {
+                        // Use color value in BP
+                        colorbv = new Double(Parser.parseDouble(st[indices[BP_MAG]].trim())).floatValue();
+                    }
+                }
 
-		double distpc = 1000d / pllx;
-		float absmag = (float) (appmag - 2.5 * Math.log10(Math.pow(distpc / 10d, 2d)));
-		String name = Long.toString(sourceid);
+                double distpc = 1000d / pllx;
+                float absmag = (float) (appmag - 2.5 * Math.log10(Math.pow(distpc / 10d, 2d)));
+                String name = Long.toString(sourceid);
 
-		Star star = new Star(pos, pmfloat, pmSph, appmag, absmag, colorbv, name, (float) ra, (float) dec,
-			sourceid, hip, tycho2, (byte) 1);
-		if (runFiltersAnd(star))
-		    stars.add(star);
-	    }
+                Star star = new Star(pos, pmfloat, pmSph, appmag, absmag, colorbv, name, (float) ra, (float) dec, sourceid, hip, tycho2, (byte) 1);
+                if (runFiltersAnd(star))
+                    stars.add(star);
+            }
 
-	}
+        }
     }
 
     private Map<Long, Integer> loadSourceidHipCorrespondences(String file) {
-	Map<Long, Integer> result = new HashMap<Long, Integer>();
+        Map<Long, Integer> result = new HashMap<Long, Integer>();
 
-	FileHandle f = Gdx.files.internal(file);
-	InputStream data = f.read();
-	BufferedReader br = new BufferedReader(new InputStreamReader(data));
-	try {
-	    // skip first line with headers
-	    br.readLine();
+        FileHandle f = Gdx.files.internal(file);
+        InputStream data = f.read();
+        BufferedReader br = new BufferedReader(new InputStreamReader(data));
+        try {
+            // skip first line with headers
+            br.readLine();
 
-	    String line;
-	    while ((line = br.readLine()) != null) {
-		if (!line.startsWith(comment))
-		    // Add correspondence
-		    addCorrespondence(line, result);
-	    }
-	} catch (IOException e) {
-	    Logger.error(e);
-	} finally {
-	    try {
-		br.close();
-	    } catch (IOException e) {
-		Logger.error(e);
-	    }
+            String line;
+            while ((line = br.readLine()) != null) {
+                if (!line.startsWith(comment))
+                    // Add correspondence
+                    addCorrespondence(line, result);
+            }
+        } catch (IOException e) {
+            Logger.error(e);
+        } finally {
+            try {
+                br.close();
+            } catch (IOException e) {
+                Logger.error(e);
+            }
 
-	}
+        }
 
-	return result;
+        return result;
     }
 
     private void addCorrespondence(String line, Map<Long, Integer> map) {
-	String[] st = line.split(comma);
-	int hip = Parser.parseInt(st[2].trim());
-	long sourceId = Parser.parseLong(st[3].trim());
+        String[] st = line.split(comma);
+        int hip = Parser.parseInt(st[2].trim());
+        long sourceId = Parser.parseLong(st[3].trim());
 
-	map.put(sourceId, hip);
+        map.put(sourceId, hip);
     }
 
     private Map<String, Float> loadTYCBVColours(String file) {
-	Map<String, Float> result = new HashMap<String, Float>();
-	FileHandle f = Gdx.files.internal(file);
-	InputStream data = f.read();
-	BufferedReader br = new BufferedReader(new InputStreamReader(data));
-	try {
-	    // skip first line with headers
-	    br.readLine();
-	    int i = 1;
-	    String line;
-	    while ((line = br.readLine()) != null) {
+        Map<String, Float> result = new HashMap<String, Float>();
+        FileHandle f = Gdx.files.internal(file);
+        InputStream data = f.read();
+        BufferedReader br = new BufferedReader(new InputStreamReader(data));
+        try {
+            // skip first line with headers
+            br.readLine();
+            int i = 1;
+            String line;
+            while ((line = br.readLine()) != null) {
 
-		if (!line.startsWith(comment))
-		    // Add B-V colour
-		    addColour(line, result);
-		Logger.debug("Line " + i++);
-	    }
-	} catch (IOException e) {
-	    e.printStackTrace();
-	} finally {
-	    try {
-		br.close();
-	    } catch (IOException e) {
-		Logger.error(e);
-	    }
+                if (!line.startsWith(comment))
+                    // Add B-V colour
+                    addColour(line, result);
+                Logger.debug("Line " + i++);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                br.close();
+            } catch (IOException e) {
+                Logger.error(e);
+            }
 
-	}
+        }
 
-	return result;
+        return result;
     }
 
     private void addColour(String line, Map<String, Float> map) {
-	String[] st = line.split(comma);
-	int tyc1 = Parser.parseInt(st[1].trim());
-	int tyc2 = Parser.parseInt(st[2].trim());
-	int tyc3 = Parser.parseInt(st[3].trim());
+        String[] st = line.split(comma);
+        int tyc1 = Parser.parseInt(st[1].trim());
+        int tyc2 = Parser.parseInt(st[2].trim());
+        int tyc3 = Parser.parseInt(st[3].trim());
 
-	float BV = 0;
-	if (st.length >= 7) {
-	    float bt = Parser.parseFloat(st[5].trim());
-	    float vt = Parser.parseFloat(st[6].trim());
-	    BV = 0.850f * (bt - vt);
-	}
+        float BV = 0;
+        if (st.length >= 7) {
+            float bt = Parser.parseFloat(st[5].trim());
+            float vt = Parser.parseFloat(st[6].trim());
+            BV = 0.850f * (bt - vt);
+        }
 
-	map.put(String.format("%04d", tyc1) + "-" + String.format("%05d", tyc2) + "-" + tyc3, BV);
+        map.put(String.format("%04d", tyc1) + "-" + String.format("%05d", tyc2) + "-" + tyc3, BV);
     }
 
 }

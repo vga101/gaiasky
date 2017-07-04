@@ -21,6 +21,7 @@ import gaia.cu9.ari.gaiaorbit.render.IRenderable;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ParticleGroup;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
+import gaia.cu9.ari.gaiaorbit.scenegraph.StarGroup;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf.ProgramConf.StereoProfile;
@@ -93,21 +94,21 @@ public class StarGroupRenderSystem extends ImmediateRenderSystem implements IObs
                     particleGroup.offset = curr.vertexIdx;
                     for (double[] p : particleGroup.pointData) {
                         // COLOR
-                        curr.vertices[curr.vertexIdx + curr.colorOffset] = (float) p[3];
+                        curr.vertices[curr.vertexIdx + curr.colorOffset] = (float) p[StarGroup.I_COL];
 
                         // SIZE
-                        curr.vertices[curr.vertexIdx + sizeOffset] = (float) (p[4] * Constants.STAR_SIZE_FACTOR);
+                        curr.vertices[curr.vertexIdx + sizeOffset] = (float) (p[StarGroup.I_SIZE] * Constants.STAR_SIZE_FACTOR);
 
                         // POSITION
                         final int idx = curr.vertexIdx;
-                        curr.vertices[idx] = (float) p[0];
-                        curr.vertices[idx + 1] = (float) p[1];
-                        curr.vertices[idx + 2] = (float) p[2];
+                        curr.vertices[idx] = (float) p[StarGroup.I_X];
+                        curr.vertices[idx + 1] = (float) p[StarGroup.I_Y];
+                        curr.vertices[idx + 2] = (float) p[StarGroup.I_Z];
 
                         // PROPER MOTION
-                        //                        curr.vertices[curr.vertexIdx + pmOffset] = 0f;
-                        //                        curr.vertices[curr.vertexIdx + pmOffset + 1] = 0f;
-                        //                        curr.vertices[curr.vertexIdx + pmOffset + 2] = 0f;
+                        //                        curr.vertices[curr.vertexIdx + pmOffset] = (float) p[StarGroup.I_PMX];
+                        //                        curr.vertices[curr.vertexIdx + pmOffset + 1] = (float) p[StarGroup.I_PMY];
+                        //                        curr.vertices[curr.vertexIdx + pmOffset + 2] = (float) p[StarGroup.I_PMZ];
 
                         curr.vertexIdx += curr.vertexSize;
                     }
