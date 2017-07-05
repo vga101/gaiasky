@@ -16,9 +16,9 @@ runs on Windows, Linux and MacOS. It lives in the framework of
 `ESA <http://www.esa.int/ESA>`__'s `Gaia
 mission <http://sci.esa.int/gaia>`__ to chart about 1 billion stars of
 our Milky Way Galaxy. It is developed in the Gaia group of the
-`Astronomisches Rechen-Institut <www.ari.uni-heidelberg.de>`__
-(`ZAH <www.zah.uni-heidelberg.de>`__, `Universität
-Heidelberg <www.uni-heidelberg.de>`__).
+`Astronomisches Rechen-Institut <http://ari.uni-heidelberg.de>`__
+(`ZAH <http://zah.uni-heidelberg.de>`__, `Universität
+Heidelberg <http://uni-heidelberg.de>`__).
 
 .. image:: img/screenshots/20161111_screenshot_00000.jpg
   :width: 24%
