@@ -81,7 +81,7 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
         thupOverFovfactor = (float) Constants.THRESHOLD_UP / fovFactor;
         thdownOverFovfactor = (float) Constants.THRESHOLD_DOWN / fovFactor;
         float psize = GlobalConf.scene.STAR_POINT_SIZE < 0 ? 8 : GlobalConf.scene.STAR_POINT_SIZE;
-        innerRad = 0.004f * DISC_FACTOR + psize * 0.009f;
+        innerRad = 0.004f * DISC_FACTOR + psize * 0.008f;
         paramUpdater = new ParamUpdater();
     }
 
@@ -230,11 +230,9 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
             distToCamera = transform.position.len();
 
             if (!copy) {
-                // TODO Very ugly!
-                if (ModelBody.closestCamStar == null || ModelBody.closestCamStar.distToCamera > distToCamera)
-                    // if (ModelBody.closestCamStar == null ||
-                    // ModelBody.closestCamStar.distToCamera > distToCamera)
-                    ModelBody.closestCamStar = this;
+                if (camera.getClosestStarPos() == null || camera.getClosestStarDist() > distToCamera) {
+                    camera.setClosestStar(pos, name, distToCamera, size, cc);
+                }
 
                 addToRender(this, RenderGroup.POINT_STAR);
 

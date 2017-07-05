@@ -24,6 +24,7 @@ uniform vec4 u_alphaSizeFovBr;
 
 // VARYINGS
 varying vec4 v_col;
+varying float v_discard;
 
 float lint(float x, float x0, float x1, float y0, float y1) {
     return mix(y0, y1, (x - x0) / (x1 - x0));
@@ -32,6 +33,13 @@ float lint(float x, float x0, float x1, float y0, float y1) {
 void main() {
     vec3 pos = a_position.xyz - u_camPos;
 
+    float dist = length(pos);
+    if(dist < 149590.7871) {
+        v_discard = 1.0;
+    } else {
+        v_discard = -1.0;
+    }
+    
     // Proper motion
 //    vec3 pm = a_pm.xyz * u_t / 1000.0;
 //    pos = pos + pm;
@@ -42,5 +50,5 @@ void main() {
     v_col = vec4(a_color.rgb, opacity * u_alphaSizeFovBr.x);
 
     gl_Position = u_projModelView * vec4(pos, 0.0);
-    gl_PointSize = u_alphaSizeFovBr.y + lint(viewAngleApparent, 0.0, 1e-6, 0.0, u_alphaSizeFovBr.y / 2.0);
+    gl_PointSize = min(u_alphaSizeFovBr.y + lint(viewAngleApparent, 0.0, 1e-6, 0.0, u_alphaSizeFovBr.y / 2.0), 15.0);
 }

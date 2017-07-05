@@ -135,4 +135,15 @@ public interface ICamera {
     public void computeGaiaScan(ITimeFrameProvider time, CelestialBody cb);
 
     public void resize(int width, int height);
+
+    public void setClosestStar(Vector3d pos, String name, double dist, double size, float[] col);
+
+    public double getClosestStarDist();
+
+    public Vector3d getClosestStarPos();
+
+    public float[] getClosestStarCol();
+
+    public double getClosestStarSize();
+
 }

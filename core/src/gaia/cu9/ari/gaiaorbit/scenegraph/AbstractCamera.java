@@ -54,6 +54,15 @@ public abstract class AbstractCamera implements ICamera {
 
     public float fovFactor;
 
+    /**
+     * Params of the closest star
+     */
+    protected String closestStarName;
+    protected double closestStarSize = 0;
+    protected double closestStarDist = Double.MAX_VALUE;
+    protected Vector3d closestStarPos;
+    protected float[] closestStarCol;
+
     public AbstractCamera(CameraManager parent) {
         this.parent = parent;
         pos = new Vector3d();
@@ -256,6 +265,38 @@ public abstract class AbstractCamera implements ICamera {
         invProjectionView.set(combined);
         Matrix4d.inv(invProjectionView.val);
         frustum.update(invProjectionView);
+    }
+
+    public void setClosestStar(Vector3d pos, String name, double dist, double size, float[] col) {
+        if (dist > 0) {
+            initClosestStarPos();
+            this.closestStarPos.set(pos).sub(this.pos);
+            this.closestStarName = name;
+            this.closestStarDist = dist;
+            this.closestStarSize = size;
+            this.closestStarCol = col;
+        }
+    }
+
+    private void initClosestStarPos() {
+        if (closestStarPos == null)
+            closestStarPos = new Vector3d();
+    }
+
+    public double getClosestStarDist() {
+        return closestStarDist;
+    }
+
+    public Vector3d getClosestStarPos() {
+        return closestStarPos;
+    }
+
+    public float[] getClosestStarCol() {
+        return closestStarCol;
+    }
+
+    public double getClosestStarSize() {
+        return closestStarSize;
     }
 
 }

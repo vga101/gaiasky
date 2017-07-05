@@ -438,4 +438,29 @@ public class CameraManager implements ICamera, IObserver {
         return current.getFrustum();
     }
 
+    @Override
+    public void setClosestStar(Vector3d pos, String name, double dist, double size, float[] col) {
+        current.setClosestStar(pos, name, dist, size, col);
+    }
+
+    @Override
+    public double getClosestStarDist() {
+        return current.getClosestStarDist();
+    }
+
+    @Override
+    public Vector3d getClosestStarPos() {
+        return current.getClosestStarPos();
+    }
+
+    @Override
+    public float[] getClosestStarCol() {
+        return current.getClosestStarCol();
+    }
+
+    @Override
+    public double getClosestStarSize() {
+        return current.getClosestStarSize();
+    }
+
 }

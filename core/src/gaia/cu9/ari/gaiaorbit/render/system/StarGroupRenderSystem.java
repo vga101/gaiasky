@@ -34,7 +34,6 @@ public class StarGroupRenderSystem extends ImmediateRenderSystem implements IObs
 
     Vector3 aux1;
     int sizeOffset, pmOffset;
-
     Comparator<IRenderable> comp;
     float[] pointAlpha, alphaSizeFovBr;
 

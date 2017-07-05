@@ -35,12 +35,12 @@ uniform int u_lightScattering;
 
 
 float core(float distance_center, float inner_rad){
-	if(inner_rad == 0.0){
-		return 0.0;
-	}
-	float core = 1.0 - step(inner_rad / 5.0, distance_center);
-	float core_glow = smoothstep(inner_rad / 2.0, inner_rad / 5.0, distance_center);
-	return core_glow + core;
+    if(inner_rad == 0.0){
+        return 0.0;
+    }
+    float core = 1.0 - step(inner_rad / 5.0, distance_center);
+    float core_glow = smoothstep(inner_rad / 2.0, inner_rad / 5.0, distance_center);
+    return core_glow + core;
 }
 
 float light(float distance_center, float decay) {
@@ -50,53 +50,53 @@ float light(float distance_center, float decay) {
 
 
 float average(vec4 color){
-	return (color.r + color.g + color.b) / 3.0;
+    return (color.r + color.g + color.b) / 3.0;
 }
 
 float startex(vec2 tc){
-	return clamp(average(texture2D(u_texture0, tc)), 0.0, 1.0);
+    return clamp(average(texture2D(u_texture0, tc)), 0.0, 1.0);
 }
 
 
 vec4 draw() {
     float dist = distance (vec2 (0.5), v_texCoords.xy) * 2.0;
 
-	// level = 1 if distance == u_radius * model_const
-	// level = 0 if distance == radius
-	// level > 1 if distance > u_radius * model_const
-	float level = (u_distance - u_radius) / ((u_radius * model_const) - u_radius);
+    // level = 1 if distance == u_radius * model_const
+    // level = 0 if distance == radius
+    // level > 1 if distance > u_radius * model_const
+    float level = (u_distance - u_radius) / ((u_radius * model_const) - u_radius);
 
-	if(level >= 1.0){
-		// We are far away from the star
-		level = u_distance / (u_radius * rays_const);
-		float light_level = smoothstep(u_thpoint, u_thpoint * 1.4, u_apparent_angle);
+    if(level >= 1.0){
+        // We are far away from the star
+        level = u_distance / (u_radius * rays_const);
+        float light_level = smoothstep(u_thpoint, u_thpoint * 1.4, u_apparent_angle);
 
-		if(u_lightScattering == 1){
-			// Light scattering, simple star
-			float core = core(dist, u_inner_rad);
-			float light = light(dist, light_decay) * light_level;
-			return vec4(v_color.rgb + vec3(core * 5.0), v_color.a) * (light + core);
-		} else {
-			// No light scattering, star rays
-			level = min(level, 1.0);
-			float corona = startex(v_texCoords);
-	        float light = light(dist, light_decay * 2.0) * light_level;
-	        float core = core(dist, u_inner_rad);
+        if(u_lightScattering == 1){
+            // Light scattering, simple star
+            float core = core(dist, u_inner_rad);
+            float light = light(dist, light_decay) * light_level;
+            return vec4(v_color.rgb + vec3(core * 5.0), v_color.a) * (light + core);
+        } else {
+            // No light scattering, star rays
+            level = min(level, 1.0);
+            float corona = startex(v_texCoords);
+            float light = light(dist, light_decay * 2.0) * light_level;
+            float core = core(dist, u_inner_rad);
 
-			return vec4(v_color.rgb + core, v_color.a) * (corona * (1.0 - level) + light + core);
-		}
-	} else {
-		// We are close to the star
+            return vec4(v_color.rgb + core, v_color.a) * (corona * (1.0 - level) + light + core);
+        }
+    } else {
+        // We are close to the star
 
-		level = min(level, 1.0);
-		float level_corona = u_lightScattering * level;
+        level = min(level, 1.0);
+        float level_corona = u_lightScattering * level;
 
-    	float corona = startex(v_texCoords);
-    	float light = light(dist, light_decay * 2.0);
-    	float core = core(dist, u_inner_rad);
+        float corona = startex(v_texCoords);
+        float light = light(dist, light_decay * 2.0);
+        float core = core(dist, u_inner_rad);
 
-		return vec4(v_color.rgb + core, v_color.a) * (corona * (1.0 - level_corona) + light + level * core);
-	}
+        return vec4(v_color.rgb + core, v_color.a) * (corona * (1.0 - level_corona) + light + level * core);
+    }
 }
 
 void main() {

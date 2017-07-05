@@ -17,6 +17,7 @@ import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
 /**
  * The spacecraft in the spacecraft camera mode
+ * 
  * @author tsagrista
  *
  */
@@ -81,10 +82,10 @@ public class Spacecraft extends AbstractPositionEntity implements IModelRenderab
             if (mc != null) {
                 // Update directional light
                 mc.dlight.direction.set(0f, 0f, 0f);
-                if (ModelBody.closestCamStar != null) {
-                    float intensity = (float) MathUtilsd.lint(ModelBody.closestCamStar.distToCamera / MathUtilsd.lint(ModelBody.closestCamStar.size, 0.6e6, 1e8, 1, 0.05), 0.5 * Constants.AU_TO_U, 10 * Constants.AU_TO_U, 1f, 0f);
-                    mc.dlight.direction.sub(ModelBody.closestCamStar.transform.getTranslationf(aux3f1.get()));
-                    mc.dlight.color.set(ModelBody.closestCamStar.cc[0] * intensity, ModelBody.closestCamStar.cc[1] * intensity, ModelBody.closestCamStar.cc[2] * intensity, 1.0f);
+                if (camera.getClosestStarPos() != null) {
+                    float intensity = (float) MathUtilsd.lint(camera.getClosestStarDist() / MathUtilsd.lint(camera.getClosestStarSize(), 0.6e6, 1e8, 1, 0.05), 0.5 * Constants.AU_TO_U, 10 * Constants.AU_TO_U, 1f, 0f);
+                    mc.dlight.direction.sub(camera.getClosestStarPos().put(aux3f1.get()));
+                    mc.dlight.color.set(camera.getClosestStarCol()[0] * intensity, camera.getClosestStarCol()[1] * intensity, camera.getClosestStarCol()[2] * intensity, 1.0f);
                 } else {
                     mc.dlight.direction.add((float) camera.getPos().x, (float) camera.getPos().y, (float) camera.getPos().z);
                     mc.dlight.color.set(1f, 1f, 1f, 0f);
@@ -101,8 +102,8 @@ public class Spacecraft extends AbstractPositionEntity implements IModelRenderab
     }
 
     /**
-     * Adds this entity to the necessary render lists after the
-     * distance to the camera and the view angle have been determined.
+     * Adds this entity to the necessary render lists after the distance to the
+     * camera and the view angle have been determined.
      */
     protected void addToRenderLists(ICamera camera) {
         addToRender(this, RenderGroup.MODEL_CLOSEUP);
@@ -114,6 +115,7 @@ public class Spacecraft extends AbstractPositionEntity implements IModelRenderab
 
     /**
      * Sets the absolute size of this entity
+     * 
      * @param size
      */
     public void setSize(Double size) {
