@@ -10,7 +10,7 @@ precision mediump float;
 ////////////////////////////////////////////////////////////////////////////////////
 ////////// GROUND ATMOSPHERIC SCATTERING - FRAGMENT
 ////////////////////////////////////////////////////////////////////////////////////
-varying vec3 v_atmosphereColor;
+varying vec4 v_atmosphereColor;
 
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -206,7 +206,6 @@ void main() {
     vec4 night = fetchColorNight(u_emissiveTexture, g_texCoord0);
     vec3 specular = fetchColorSpecular(g_texCoord0, vec3(0.0, 0.0, 0.0));
     vec3 ambient = v_ambientLight;
-    vec3 atmosphere = v_atmosphereColor;
 
     #ifdef normalTextureFlag
 		vec3 N = normalize(vec3(texture2D(u_normalTexture, g_texCoord0, TEXTURE_LOD_BIAS).xyz * 2.0 - 1.0));
@@ -251,7 +250,7 @@ void main() {
     #endif // shadowMapFlag
 
     gl_FragColor.rgb += selfShadow * spec * specular;
-    gl_FragColor.rgb += (vec3(1.0) - exp(v_atmosphereColor * -exposure));
+    gl_FragColor.rgb += (vec3(1.0) - exp(v_atmosphereColor.rgb * -exposure)) * v_atmosphereColor.a;
     
     // Prevent saturation
     gl_FragColor = clamp(gl_FragColor, 0.0, 1.0);

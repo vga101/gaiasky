@@ -123,7 +123,7 @@ varying vec2 v_texCoord0;
 ////////////////////////////////////////////////////////////////////////////////////
 ////////// GROUND ATMOSPHERIC SCATTERING - VERTEX
 ////////////////////////////////////////////////////////////////////////////////////
-varying vec3 v_atmosphereColor;
+varying vec4 v_atmosphereColor;
 #ifdef atmosphereGround
     uniform vec3 v3PlanetPos; /* The position of the planet */
     uniform vec3 v3CameraPos; /* The camera's current position*/
@@ -142,6 +142,7 @@ varying vec3 v_atmosphereColor;
     uniform float fScale; /* 1 / (fOuterRadius - fInnerRadius)*/
     uniform float fScaleDepth; /* The scale depth (i.e. the altitude at which the atmosphere's average density is found)*/
     uniform float fScaleOverScaleDepth; /* fScale / fScaleDepth*/
+    uniform float fAlpha; /* Atmosphere effect opacity */
     
     uniform int nSamples;
     uniform float fSamples;
@@ -201,11 +202,11 @@ varying vec3 v_atmosphereColor;
 			v3FrontColor += v3Attenuate * (fDepth * fScaledLength);
 			v3SamplePoint += v3SampleRay;
 		}
-		v_atmosphereColor = vec3(v3FrontColor * (v3InvWavelength * fKrESun + fKmESun));
+		v_atmosphereColor = vec4(v3FrontColor * (v3InvWavelength * fKrESun + fKmESun), fAlpha);
     }
 #else
     void calculateAtmosphereGroundColor() {
-	v_atmosphereColor = vec3(0.0, 0.0, 0.0);
+	v_atmosphereColor = vec4(0.0, 0.0, 0.0, 0.0);
     }
 #endif // atmosphereGround
 

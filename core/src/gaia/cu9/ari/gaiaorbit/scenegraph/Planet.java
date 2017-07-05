@@ -14,6 +14,7 @@ import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.camera.CameraUtils;
 import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
 import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
+import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
@@ -38,7 +39,7 @@ public class Planet extends ModelBody implements IAtmosphereRenderable, ILineRen
 
     @Override
     public double THRESHOLD_QUAD() {
-        return TH_ANGLE_QUAD;
+        return 1e-9;
     }
 
     private static AssetManager manager;
@@ -128,12 +129,14 @@ public class Planet extends ModelBody implements IAtmosphereRenderable, ILineRen
      */
     @Override
     public void render(ModelBatch modelBatch, float alpha, float t, boolean atm) {
+        // Atmosphere fades in between 1 and 2 degrees of view angle apparent
+        float atmopacity = (float) MathUtilsd.lint(viewAngle, 0.01745329f, 0.03490659f, 0f, 1f);
         if (!atm) {
             // Normal rendering
             compalpha = alpha;
             if (ac != null) {
-                if (GlobalConf.scene.VISIBILITY[ComponentType.Atmospheres.ordinal()]) {
-                    ac.updateAtmosphericScatteringParams(mc.instance.materials.first(), alpha, true, transform, parent, rc);
+                if (GlobalConf.scene.VISIBILITY[ComponentType.Atmospheres.ordinal()] && atmopacity > 0) {
+                    ac.updateAtmosphericScatteringParams(mc.instance.materials.first(), alpha * atmopacity, true, transform, parent, rc);
                 } else {
                     ac.removeAtmosphericScattering(mc.instance.materials.first());
                 }
@@ -141,10 +144,13 @@ public class Planet extends ModelBody implements IAtmosphereRenderable, ILineRen
             mc.setTransparency(alpha * opacity);
             modelBatch.render(mc.instance, mc.env);
         } else {
-            // Atmosphere
-            ac.updateAtmosphericScatteringParams(ac.mc.instance.materials.first(), alpha, false, transform, parent, rc);
-            // Render atmosphere
-            modelBatch.render(ac.mc.instance, mc.env);
+
+            if (atmopacity > 0) {
+                // Atmosphere
+                ac.updateAtmosphericScatteringParams(ac.mc.instance.materials.first(), alpha * atmopacity, false, transform, parent, rc);
+                // Render atmosphere
+                modelBatch.render(ac.mc.instance, mc.env);
+            }
         }
     }
 
