@@ -57,7 +57,7 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
     // Min update time
     private static final double MIN_UPDATE_TIME_MS = 50;
     // Close up stars treated
-    private static final int N_CLOSEUP_STARS = 4000;
+    private static final int N_CLOSEUP_STARS = 5000;
 
     // Additional values
     double[] additional;
