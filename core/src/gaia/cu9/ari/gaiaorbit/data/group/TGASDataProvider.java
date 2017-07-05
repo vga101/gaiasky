@@ -58,7 +58,11 @@ public class TGASDataProvider implements IParticleGroupDataProvider {
                     if (dist >= 0 && pllx / pllxerr > 2 && pllxerr <= 1) {
                         long sourceid = Parser.parseLong(tokens[0]);
                         int hip = Parser.parseInt(tokens[12]);
-                        String tycho2 = tokens[13];
+                        String tyc = tokens[13];
+                        String[] tycgroups = tyc.split("-");
+                        int tyc1 = !tyc.isEmpty() ? Integer.parseInt(tycgroups[0]) : -1;
+                        int tyc2 = !tyc.isEmpty() ? Integer.parseInt(tycgroups[1]) : -1;
+                        int tyc3 = !tyc.isEmpty() ? Integer.parseInt(tycgroups[2]) : -1;
 
                         /** RA and DEC **/
                         double ra = Parser.parseDouble(tokens[1]);
@@ -66,15 +70,14 @@ public class TGASDataProvider implements IParticleGroupDataProvider {
                         Vector3d pos = Coordinates.sphericalToCartesian(Math.toRadians(ra), Math.toRadians(dec), dist, new Vector3d());
 
                         /** PROPER MOTIONS in mas/yr **/
-                        double mualpha = Parser.parseDouble(tokens[5]) * AstroUtils.MILLARCSEC_TO_DEG;
-                        double mudelta = Parser.parseDouble(tokens[6]) * AstroUtils.MILLARCSEC_TO_DEG;
+                        double mualpha = Parser.parseDouble(tokens[5]);
+                        double mudelta = Parser.parseDouble(tokens[6]);
 
                         /** RADIAL VELOCITY in km/s **/
-
-                        double radvel = tokens[7] != null && !tokens[7].isEmpty() ? Parser.parseDouble(tokens[7].trim()) * Constants.KM_TO_U / Constants.S_TO_Y : 0;
+                        double radvel = tokens[7] != null && !tokens[7].isEmpty() ? Parser.parseDouble(tokens[7].trim()) : 0;
 
                         /** PROPER MOTION VECTOR = (pos+dx) - pos **/
-                        Vector3d pm = Coordinates.sphericalToCartesian(Math.toRadians(ra + mualpha), Math.toRadians(dec + mudelta), dist + radvel, new Vector3d());
+                        Vector3d pm = Coordinates.sphericalToCartesian(Math.toRadians(ra + mualpha * AstroUtils.MILLARCSEC_TO_DEG), Math.toRadians(dec + mudelta * AstroUtils.MILLARCSEC_TO_DEG), dist + radvel * Constants.KM_TO_U / Constants.S_TO_Y, new Vector3d());
                         pm.sub(pos);
 
                         double appmag = Parser.parseDouble(tokens[9]);
@@ -85,8 +88,8 @@ public class TGASDataProvider implements IParticleGroupDataProvider {
                         /** COLOR, we use the tycBV map if present **/
                         double colorbv = 0;
                         if (tycBV != null) {
-                            if (tycBV.containsKey(tycho2)) {
-                                colorbv = tycBV.get(tycho2);
+                            if (tycBV.containsKey(tyc)) {
+                                colorbv = tycBV.get(tyc);
                             }
                         } else {
                             double bp = new Double(Parser.parseDouble(tokens[10]));
@@ -97,12 +100,19 @@ public class TGASDataProvider implements IParticleGroupDataProvider {
                         double col = Color.toFloatBits(rgb[0], rgb[1], rgb[2], 1.0f);
 
                         point[StarGroup.I_ID] = sourceid;
+                        point[StarGroup.I_HIP] = hip;
+                        point[StarGroup.I_TYC1] = tyc1;
+                        point[StarGroup.I_TYC2] = tyc2;
+                        point[StarGroup.I_TYC3] = tyc3;
                         point[StarGroup.I_X] = pos.x;
                         point[StarGroup.I_Y] = pos.y;
                         point[StarGroup.I_Z] = pos.z;
                         point[StarGroup.I_PMX] = pm.x;
                         point[StarGroup.I_PMY] = pm.y;
                         point[StarGroup.I_PMZ] = pm.z;
+                        point[StarGroup.I_MUALPHA] = mualpha;
+                        point[StarGroup.I_MUDELTA] = mudelta;
+                        point[StarGroup.I_RADVEL] = radvel;
                         point[StarGroup.I_COL] = col;
                         point[StarGroup.I_SIZE] = size;
                         point[StarGroup.I_APPMAG] = appmag;

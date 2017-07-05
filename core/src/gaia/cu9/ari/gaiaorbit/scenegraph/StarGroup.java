@@ -17,8 +17,6 @@ import gaia.cu9.ari.gaiaorbit.render.ILineRenderable;
 import gaia.cu9.ari.gaiaorbit.render.system.LineRenderSystem;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
-import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
-import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 import net.jafama.FastMath;
@@ -32,7 +30,7 @@ import net.jafama.FastMath;
  */
 public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFocus {
 
-    public static final int SIZE = 12;
+    public static final int SIZE = 19;
     /** INDICES **/
     public static final int I_X = 0;
     public static final int I_Y = 1;
@@ -45,12 +43,21 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
     public static final int I_ABSMAG = 8;
     public static final int I_COL = 9;
     public static final int I_SIZE = 10;
-    public static final int I_ADDITIONAL = 11;
+    public static final int I_HIP = 11;
+    public static final int I_TYC1 = 12;
+    public static final int I_TYC2 = 13;
+    public static final int I_TYC3 = 14;
+    public static final int I_MUALPHA = 15;
+    public static final int I_MUDELTA = 16;
+    public static final int I_RADVEL = 17;
+    public static final int I_ADDITIONAL = 18;
 
     // Camera dx threshold
     private static final double CAM_DX_TH = 100 * Constants.AU_TO_U;
     // Min update time
     private static final double MIN_UPDATE_TIME_MS = 50;
+    // Close up stars treated
+    private static final int N_CLOSEUP_STARS = 4000;
 
     // Additional values
     double[] additional;
@@ -170,17 +177,17 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
     @Override
     public void render(LineRenderSystem renderer, ICamera camera, float alpha) {
         float thpointTimesFovfactor = (float) GlobalConf.scene.STAR_THRESHOLD_POINT * camera.getFovFactor();
-        for (int i = 600; i >= 0; i--) {
+        for (int i = N_CLOSEUP_STARS; i >= 0; i--) {
             double[] star = pointData.get(active[i]);
             float radius = (float) (getSize(active[i]) * Constants.STAR_SIZE_FACTOR);
+            Vector3d lpos = aux3d1.get().set(star[I_X], star[I_Y], star[I_Z]).sub(camera.getPos());
+            float distToCamera = (float) lpos.len();
             float viewAngle = (float) (((radius / distToCamera) / camera.getFovFactor()) * GlobalConf.scene.STAR_BRIGHTNESS);
             if (viewAngle >= thpointTimesFovfactor / GlobalConf.scene.PM_NUM_FACTOR) {
 
                 Vector3d p1 = aux3d1.get().set(star[I_X], star[I_Y], star[I_Z]).sub(camera.getPos());
                 Vector3d ppm = aux3d2.get().set(star[I_PMX], star[I_PMY], star[I_PMZ]).scl(GlobalConf.scene.PM_LEN_FACTOR);
-                Vector3d p2 = aux3d3.get().set(p1).add(ppm);
-                ppm.set(star[I_PMX], star[I_PMY], star[I_PMZ]);
-                Vector3d pmSph = Coordinates.cartesianToSpherical(ppm, ppm);
+                Vector3d p2 = ppm.add(p1);
 
                 // Mualpha -> red channel
                 // Mudelta -> green channel
@@ -189,7 +196,7 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
                 final double mumin = -80;
                 final double mumax = 80;
                 final double maxmin = mumax - mumin;
-                renderer.addLine(p1.x, p1.y, p1.z, p2.x, p2.y, p2.z, (float) ((pmSph.x * AstroUtils.RAD_TO_MILLARCSEC - mumin) / maxmin) * 0.8f + 0.2f, (float) ((pmSph.y * AstroUtils.RAD_TO_MILLARCSEC - mumin) / maxmin) * 0.8f + 0.2f, (float) (pmSph.z * Constants.U_TO_KM * Constants.Y_TO_S) * 0.8f + 0.2f, alpha * this.opacity);
+                renderer.addLine(p1.x, p1.y, p1.z, p2.x, p2.y, p2.z, (float) ((star[I_MUALPHA] - mumin) / maxmin) * 0.8f + 0.2f, (float) ((star[I_MUDELTA] - mumin) / maxmin) * 0.8f + 0.2f, (float) (star[I_RADVEL]) * 0.8f + 0.2f, alpha * this.opacity);
 
             }
 
@@ -204,7 +211,7 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
     public void render(SpriteBatch batch, ShaderProgram shader, BitmapFont font3d, BitmapFont font2d, ICamera camera) {
         float thOverFactor = (float) (GlobalConf.scene.STAR_THRESHOLD_POINT / GlobalConf.scene.LABEL_NUMBER_FACTOR / camera.getFovFactor());
         float textScale = 2f;
-        for (int i = 600; i >= 0; i--) {
+        for (int i = N_CLOSEUP_STARS; i >= 0; i--) {
             double[] star = pointData.get(active[i]);
             float radius = (float) (getSize(active[i]) * Constants.STAR_SIZE_FACTOR);
             Vector3d lpos = aux3d1.get().set(star[I_X], star[I_Y], star[I_Z]).sub(camera.getPos());
