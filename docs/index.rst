@@ -32,7 +32,7 @@ Heidelberg <www.uni-heidelberg.de>`__).
 .. image:: img/screenshots/20161111_screenshot_00010.jpg
   :width: 24%
 
-*  Visit our `home page <http://www.zah.uni-heidelberg.de/gaia2/outreach/gaiasky/>`__
+*  Visit our `home page <http://www.zah.uni-heidelberg.de/gaia/outreach/gaiasky/>`__
 *  Read the `documentation <http://gaia-sky.rtfd.io>`__
 *  Submit a `bug or a feature request <https://github.com/langurmonkey/gaiasky/issues>`__
 
