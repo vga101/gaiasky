@@ -309,7 +309,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
                     pos.set(aux4).add(aux2);
                 }
 
-                EventManager.instance.post(Events.FOCUS_INFO_UPDATED, focus.getDistToCamera() - focus.getRadius(), focus.getViewAngle());
+                EventManager.instance.post(Events.FOCUS_INFO_UPDATED, focus.getDistToCamera() - focus.getRadius(), focus.getViewAngle(), focus.getAlpha(), focus.getDelta());
             } else {
                 EventManager.instance.post(Events.CAMERA_MODE_CMD, CameraMode.Free_Camera);
             }

@@ -142,6 +142,20 @@ public interface IFocus {
     public double getViewAngleApparent();
 
     /**
+     * Returns the right ascension angle of this focus object.
+     * 
+     * @return The right ascension angle in degrees.
+     */
+    public double getAlpha();
+
+    /**
+     * Returns the declination angle of this focus object.
+     * 
+     * @return The declination angle in degrees.
+     */
+    public double getDelta();
+
+    /**
      * Returns the size (diameter) of this entity in internal units.
      * 
      * @return The size in internal units.

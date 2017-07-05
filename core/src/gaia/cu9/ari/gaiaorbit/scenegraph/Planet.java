@@ -39,7 +39,7 @@ public class Planet extends ModelBody implements IAtmosphereRenderable, ILineRen
 
     @Override
     public double THRESHOLD_QUAD() {
-        return 1e-9;
+        return TH_ANGLE_QUAD;
     }
 
     private static AssetManager manager;

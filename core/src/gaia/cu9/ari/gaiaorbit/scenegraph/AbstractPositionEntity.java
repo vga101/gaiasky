@@ -257,6 +257,14 @@ public abstract class AbstractPositionEntity extends SceneGraphNode {
         return posSph;
     }
 
+    public double getAlpha() {
+        return posSph.x;
+    }
+
+    public double getDelta() {
+        return posSph.y;
+    }
+
     public void setColor(double[] color) {
         this.cc = GlobalResources.toFloatArray(color);
     }

@@ -2,6 +2,9 @@ package gaia.cu9.ari.gaiaorbit.scenegraph;
 
 import com.badlogic.gdx.math.Matrix4;
 
+import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
+import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
+import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
 public abstract class Satellite extends ModelBody {
@@ -47,6 +50,10 @@ public abstract class Satellite extends ModelBody {
     protected void forceUpdatePosition(ITimeFrameProvider time, boolean force) {
         if (time.getDt() != 0 || force) {
             coordinates.getEquatorialCartesianCoordinates(time.getTime(), pos);
+            // Convert to cartesian coordinates and put them in aux3 vector
+            Vector3d aux3 = aux3d1.get();
+            Coordinates.cartesianToSpherical(pos, aux3);
+            posSph.set((float) (AstroUtils.TO_DEG * aux3.x), (float) (AstroUtils.TO_DEG * aux3.y));
         }
     }
 

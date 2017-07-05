@@ -340,6 +340,8 @@ public class FocusInfoInterface extends Table implements IObserver, IGuiInterfac
             focusAngle.setText(sf.format(Math.toDegrees((double) data[1]) % 360) + "°");
             Pair<Double, String> dist = GlobalResources.doubleToDistanceString((double) data[0]);
             focusDist.setText(sf.format(Math.max(0d, dist.getFirst())) + " " + dist.getSecond());
+            focusRA.setText(nf.format((double) data[2] % 360) + "°");
+            focusDEC.setText(nf.format((double) data[3] % 360) + "°");
             break;
         case CAMERA_MOTION_UPDATED:
             Vector3d campos = (Vector3d) data[0];
