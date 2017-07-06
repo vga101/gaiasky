@@ -3,6 +3,7 @@ package gaia.cu9.ari.gaiaorbit.scenegraph;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import com.badlogic.gdx.Gdx;
@@ -30,6 +31,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.TimeUtils;
 
 import gaia.cu9.ari.gaiaorbit.GaiaSky;
+import gaia.cu9.ari.gaiaorbit.data.group.IStarGroupDataProvider;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.render.ILineRenderable;
@@ -39,6 +41,7 @@ import gaia.cu9.ari.gaiaorbit.render.system.LineRenderSystem;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
+import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.ModelCache;
 import gaia.cu9.ari.gaiaorbit.util.Pair;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
@@ -85,6 +88,11 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
     private static final int N_CLOSEUP_STARS = 250;
     // Fade in time to prevent pop-ins
     private static final long FADE_IN_MS = 1000;
+
+    /**
+     * The name index
+     */
+    Map<String, Integer> index;
 
     /**
      * Additional values
@@ -138,6 +146,34 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
         EventManager.instance.subscribe(this, Events.CAMERA_MOTION_UPDATED, Events.DISPOSE);
     }
 
+    public void initialize() {
+        /** Load data **/
+        try {
+            Class clazz = Class.forName(provider);
+            IStarGroupDataProvider provider = (IStarGroupDataProvider) clazz.newInstance();
+
+            if (factor == null)
+                factor = 1d;
+
+            lastSortTime = -1;
+
+            pointData = provider.loadData(datafile, factor);
+            index = provider.getIndex();
+
+            if (!fixedMeanPosition) {
+                // Mean position
+                for (double[] point : pointData) {
+                    pos.add(point[0], point[1], point[2]);
+                }
+                pos.scl(1d / pointData.size);
+            }
+
+        } catch (Exception e) {
+            Logger.error(e, getClass().getSimpleName());
+            pointData = null;
+        }
+    }
+
     @Override
     public void doneLoading(AssetManager manager) {
         super.doneLoading(manager);
@@ -154,6 +190,17 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
         }
         active = indices1;
         background = indices2;
+
+        /**
+         * Index to scene graph
+         */
+        ISceneGraph sg = GaiaSky.instance.sg;
+        Set<String> keys = index.keySet();
+        for (String key : keys) {
+            sg.addToStringToNode(key, this);
+            if (!key.toLowerCase().equals(key))
+                sg.addToStringToNode(key.toLowerCase(), this);
+        }
 
         initModel();
 
@@ -620,6 +667,13 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
     @Override
     public boolean hasAtmosphere() {
         return false;
+    }
+
+    @Override
+    public IFocus getFocus(String name) {
+        Integer idx = index.get(name);
+        candidateFocusIndex = idx;
+        return this;
     }
 
 }

@@ -83,7 +83,7 @@ public class ParticleGroup extends FadeNode implements I3DTextRenderable, IFocus
      * This flag indicates whether the mean position is already given by the
      * JSON injector
      */
-    private boolean fixedMeanPosition = false;
+    protected boolean fixedMeanPosition = false;
 
     /**
      * Factor to apply to the data points, usually to normalise distances
@@ -547,5 +547,10 @@ public class ParticleGroup extends FadeNode implements I3DTextRenderable, IFocus
     @Override
     public String getCandidateName() {
         return getName();
+    }
+
+    @Override
+    public IFocus getFocus(String name) {
+        return this;
     }
 }

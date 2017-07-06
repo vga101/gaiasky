@@ -2,6 +2,12 @@ package gaia.cu9.ari.gaiaorbit.data.group;
 
 import com.badlogic.gdx.utils.Array;
 
+/**
+ * Data provider for a particle group.
+ * 
+ * @author tsagrista
+ *
+ */
 public interface IParticleGroupDataProvider {
     /**
      * Loads the data as it is.

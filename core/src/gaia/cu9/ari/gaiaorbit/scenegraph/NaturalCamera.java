@@ -884,6 +884,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
     public void setFocus(IFocus focus) {
         if (focus != null) {
             this.focus = focus;
+            this.focus.makeFocus();
             // Create event to notify focus change
             EventManager.instance.post(Events.FOCUS_CHANGED, focus);
         }

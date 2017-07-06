@@ -355,7 +355,6 @@ public class FullGui extends AbstractGui {
                 @Override
                 public boolean handle(Event event) {
                     if (event instanceof ChangeEvent) {
-                        candidate.makeFocus();
                         EventManager.instance.post(Events.CAMERA_MODE_CMD, CameraMode.Focus);
                         EventManager.instance.post(Events.FOCUS_CHANGE_CMD, candidate);
                     }

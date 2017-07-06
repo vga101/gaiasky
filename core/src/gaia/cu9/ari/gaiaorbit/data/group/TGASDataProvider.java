@@ -26,12 +26,14 @@ import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.parse.Parser;
 
-public class TGASDataProvider implements IParticleGroupDataProvider {
+public class TGASDataProvider implements IStarGroupDataProvider {
     private static final boolean dumpToDisk = true;
     /** Colors BT, VT for all Tycho2 stars file **/
     private static final String btvtColorsFile = "data/tgas_final/bt-vt-tycho.csv";
     /** TYC identifier to B-V colours **/
     private Map<String, Float> tycBV;
+
+    private Map<String, Integer> index;
 
     public Array<double[]> loadData(String file) {
         return loadData(file, 1d);
@@ -41,11 +43,13 @@ public class TGASDataProvider implements IParticleGroupDataProvider {
         tycBV = loadTYCBVColours(btvtColorsFile);
 
         Array<double[]> pointData = new Array<double[]>();
+        Map<String, Integer> index = new HashMap<String, Integer>();
         FileHandle f = Gdx.files.internal(file);
 
         try {
             BufferedReader br = new BufferedReader(new InputStreamReader(f.read()));
             String line;
+            int i = 0;
             while ((line = br.readLine()) != null) {
                 if (!line.isEmpty() && !line.startsWith("#")) {
                     // Read line
@@ -67,6 +71,13 @@ public class TGASDataProvider implements IParticleGroupDataProvider {
                         int tyc1 = !tyc.isEmpty() ? Integer.parseInt(tycgroups[0]) : -1;
                         int tyc2 = !tyc.isEmpty() ? Integer.parseInt(tycgroups[1]) : -1;
                         int tyc3 = !tyc.isEmpty() ? Integer.parseInt(tycgroups[2]) : -1;
+
+                        index.put(String.valueOf(sourceid), i);
+                        if (hip > 0)
+                            index.put("HIP " + hip, i);
+                        if (tyc1 >= 0) {
+                            index.put("TYC " + tyc1 + "-" + tyc2 + "-" + tyc3, i);
+                        }
 
                         /** RA and DEC **/
                         double ra = Parser.parseDouble(tokens[1]);
@@ -123,6 +134,7 @@ public class TGASDataProvider implements IParticleGroupDataProvider {
                         point[StarGroup.I_ABSMAG] = absmag;
 
                         pointData.add(point);
+                        i++;
                     }
                 }
             }
@@ -130,7 +142,7 @@ public class TGASDataProvider implements IParticleGroupDataProvider {
             br.close();
 
             if (dumpToDisk) {
-                dumpToDisk(pointData);
+                dumpToDisk(pointData, index);
                 System.exit(0);
             }
 
@@ -142,7 +154,7 @@ public class TGASDataProvider implements IParticleGroupDataProvider {
         return pointData;
     }
 
-    private void dumpToDisk(Array<double[]> pointData) {
+    private void dumpToDisk(Array<double[]> pointData, Map<String, Integer> index) {
         List<double[]> l = new ArrayList<double[]>(pointData.size);
         for (double[] p : pointData)
             l.add(p);
@@ -150,6 +162,10 @@ public class TGASDataProvider implements IParticleGroupDataProvider {
         try {
             ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("/tmp/tgas.bin"));
             oos.writeObject(l);
+            oos.close();
+
+            oos = new ObjectOutputStream(new FileOutputStream("/tmp/tgas.bin.index"));
+            oos.writeObject(index);
             oos.close();
         } catch (Exception e) {
             Logger.error(e);
@@ -204,6 +220,11 @@ public class TGASDataProvider implements IParticleGroupDataProvider {
         }
 
         map.put(String.format("%04d", tyc1) + "-" + String.format("%05d", tyc2) + "-" + tyc3, BV);
+    }
+
+    @Override
+    public Map<String, Integer> getIndex() {
+        return index;
     }
 
 }

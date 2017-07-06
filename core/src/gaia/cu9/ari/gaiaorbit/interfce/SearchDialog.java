@@ -16,7 +16,7 @@ import com.badlogic.gdx.utils.Align;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
-import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
+import gaia.cu9.ari.gaiaorbit.scenegraph.IFocus;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
@@ -49,9 +49,10 @@ public class SearchDialog extends Window {
                             String text = searchInput.getText();
                             if (sg.containsNode(text.toLowerCase())) {
                                 SceneGraphNode node = sg.getNode(text.toLowerCase());
-                                if (node instanceof CelestialBody) {
+                                if (node instanceof IFocus) {
+                                    IFocus focus = ((IFocus) node).getFocus(text.toLowerCase());
                                     EventManager.instance.post(Events.CAMERA_MODE_CMD, CameraMode.Focus, true);
-                                    EventManager.instance.post(Events.FOCUS_CHANGE_CMD, node, true);
+                                    EventManager.instance.post(Events.FOCUS_CHANGE_CMD, focus, true);
                                     // This prevents further search
                                     //searchInput.selectAll();
                                 }

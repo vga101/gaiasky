@@ -230,4 +230,12 @@ public interface IFocus {
      */
     public void makeFocus();
 
+    /**
+     * Prepares the candidate with the given name
+     * 
+     * @param name
+     *            The name
+     */
+    public IFocus getFocus(String name);
+
 }

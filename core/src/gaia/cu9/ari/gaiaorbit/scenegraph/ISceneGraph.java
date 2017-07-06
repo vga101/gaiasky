@@ -109,4 +109,30 @@ public interface ISceneGraph extends Disposable {
 
     public int getSize();
 
+    /**
+     * Adds the given node to the index with the given key
+     * 
+     * @param key
+     *            The string key
+     * @param node
+     *            The node
+     */
+    public void addToStringToNode(String key, SceneGraphNode node);
+
+    /**
+     * Removes the object with the given key from the index
+     * 
+     * @param key
+     *            The key to remove
+     */
+    public void removeFromStringToNode(String key);
+
+    /**
+     * Removes the given object from the index. This operation may take a while
+     * 
+     * @param node
+     *            The node to remove
+     */
+    public void removeFromStringToNode(SceneGraphNode node);
+
 }

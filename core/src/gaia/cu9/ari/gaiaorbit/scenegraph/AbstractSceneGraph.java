@@ -1,6 +1,8 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.IntMap;
@@ -189,6 +191,25 @@ public abstract class AbstractSceneGraph implements ISceneGraph {
                 }
             }
         }
+    }
+
+    public synchronized void addToStringToNode(String key, SceneGraphNode node) {
+        stringToNode.put(key, node);
+    }
+
+    public synchronized void removeFromStringToNode(String key) {
+        stringToNode.remove(key);
+    }
+
+    public synchronized void removeFromStringToNode(SceneGraphNode node) {
+        Set<String> keys = stringToNode.keySet();
+        Set<String> hits = new HashSet<String>();
+        for (String key : keys) {
+            if (stringToNode.get(key) == node)
+                hits.add(key);
+        }
+        for (String key : hits)
+            stringToNode.remove(key);
     }
 
     @Override
