@@ -516,7 +516,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
                     }
 
                 }
-
+                // Clean lists
                 sgr.clearLists();
                 // Number of frames
                 frames++;

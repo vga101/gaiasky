@@ -334,17 +334,21 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
 
         String clname = null;
         double cldist = -1d;
-        if (closest != null && closestStarPos != null) {
-            if (closest.distToCamera < closestStarDist) {
-                clname = closest.name;
-                cldist = closest.distToCamera;
+        if (closestStar != null) {
+            double closestStarDist = closestStar.getClosestDist();
+            String closestStarName = closestStar.getClosestName();
+            if (closest != null) {
+                if (closest.distToCamera < closestStarDist) {
+                    clname = closest.name;
+                    cldist = closest.distToCamera;
+                } else {
+                    clname = closestStarName;
+                    cldist = closestStarDist;
+                }
             } else {
                 clname = closestStarName;
                 cldist = closestStarDist;
             }
-        } else if (closest == null) {
-            clname = closestStarName;
-            cldist = closestStarDist;
         }
 
         EventManager.instance.post(Events.SPACECRAFT_INFO, yaw % 360, pitch % 360, roll % 360, vel.len(), clname, cldist, thrustFactor[thrustFactorIndex], enginePower, yawp, pitchp, rollp);

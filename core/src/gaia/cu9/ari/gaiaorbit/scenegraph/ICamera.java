@@ -136,14 +136,20 @@ public interface ICamera {
 
     public void resize(int width, int height);
 
-    public void setClosestStar(Vector3d pos, String name, double dist, double size, float[] col);
+    /**
+     * Gets the current closest star to this camera
+     * 
+     * @return The closest star
+     */
+    public IStarFocus getClosestStar();
 
-    public double getClosestStarDist();
-
-    public Vector3d getClosestStarPos();
-
-    public float[] getClosestStarCol();
-
-    public double getClosestStarSize();
+    /**
+     * Sets the current closest star to this camera. This will be only set if
+     * the given star is closer than the current.
+     * 
+     * @param star
+     *            The candidate star
+     */
+    public void setClosestStar(IStarFocus star);
 
 }

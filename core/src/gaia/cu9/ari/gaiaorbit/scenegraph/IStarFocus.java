@@ -1,5 +1,7 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph;
 
+import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
+
 public interface IStarFocus extends IFocus {
 
     /**
@@ -36,5 +38,42 @@ public interface IStarFocus extends IFocus {
      * @return The TYC string
      */
     public String getTycho();
+
+    /**
+     * Returns the closest star distance to the camera
+     * 
+     * @return Distance of closest star to camera
+     */
+    public double getClosestDist();
+
+    /**
+     * Returns the size of the closest star
+     * 
+     * @return The size of the closest star
+     */
+    public double getClosestSize();
+
+    /**
+     * Name of closest star to camera
+     * 
+     * @return The name of the closest star to the camera
+     */
+    public String getClosestName();
+
+    /**
+     * Returns the position of the closest star in camera coordinates
+     * 
+     * @param out
+     *            The out vector
+     * @return The out vector with the position
+     */
+    public Vector3d getClosestPos(Vector3d out);
+
+    /**
+     * Returns the color of the closest star
+     * 
+     * @return The color in rgb
+     */
+    public float[] getClosestCol();
 
 }

@@ -1,10 +1,14 @@
 package gaia.cu9.ari.gaiaorbit.data.group;
 
 import java.io.BufferedReader;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.badlogic.gdx.Gdx;
@@ -23,7 +27,7 @@ import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.parse.Parser;
 
 public class TGASDataProvider implements IParticleGroupDataProvider {
-
+    private static final boolean dumpToDisk = true;
     /** Colors BT, VT for all Tycho2 stars file **/
     private static final String btvtColorsFile = "data/tgas_final/bt-vt-tycho.csv";
     /** TYC identifier to B-V colours **/
@@ -55,7 +59,7 @@ public class TGASDataProvider implements IParticleGroupDataProvider {
                     double dist = distpc * Constants.PC_TO_U;
 
                     // Keep only stars with relevant parallaxes
-                    if (dist >= 0 && pllx / pllxerr > 2 && pllxerr <= 1) {
+                    if (dist >= 0 && pllx / pllxerr > 7 && pllxerr <= 1) {
                         long sourceid = Parser.parseLong(tokens[0]);
                         int hip = Parser.parseInt(tokens[12]);
                         String tyc = tokens[13];
@@ -125,12 +129,31 @@ public class TGASDataProvider implements IParticleGroupDataProvider {
 
             br.close();
 
+            if (dumpToDisk) {
+                dumpToDisk(pointData);
+                System.exit(0);
+            }
+
             Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.nodeloader", pointData.size, file));
         } catch (Exception e) {
             Logger.error(e, TGASDataProvider.class.getName());
         }
 
         return pointData;
+    }
+
+    private void dumpToDisk(Array<double[]> pointData) {
+        List<double[]> l = new ArrayList<double[]>(pointData.size);
+        for (double[] p : pointData)
+            l.add(p);
+
+        try {
+            ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("/tmp/tgas.bin"));
+            oos.writeObject(l);
+            oos.close();
+        } catch (Exception e) {
+            Logger.error(e);
+        }
     }
 
     private Map<String, Float> loadTYCBVColours(String file) {

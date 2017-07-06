@@ -39,7 +39,7 @@ import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
  * @author tsagrista
  *
  */
-public class Star extends Particle implements IStarFocus {
+public class Star extends Particle {
 
     /** Has the model used to represent the star **/
     private static ModelComponent mc;
@@ -314,11 +314,6 @@ public class Star extends Particle implements IStarFocus {
             return 20f * Constants.THRESHOLD_DOWN / fovFactor;
         }
         return viewAngle;
-    }
-
-    @Override
-    public int getCatalogSource() {
-        return catalogSource;
     }
 
     @Override

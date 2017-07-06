@@ -75,9 +75,11 @@ public abstract class ModelBody extends CelestialBody {
         // Update light with global position
         if (mc != null) {
             mc.dlight.direction.set(transform.getTranslationf());
-            if (camera.getClosestStarPos() != null) {
-                mc.dlight.direction.sub(camera.getClosestStarPos().put(aux3f1.get()));
-                mc.dlight.color.set(camera.getClosestStarCol()[0], camera.getClosestStarCol()[1], camera.getClosestStarCol()[2], 1.0f);
+            IStarFocus sf = camera.getClosestStar();
+            if (sf != null) {
+                float[] col = sf.getClosestCol();
+                mc.dlight.direction.sub(sf.getClosestPos(aux3d1.get()).put(aux3f1.get()));
+                mc.dlight.color.set(col[0], col[1], col[2], 1.0f);
             } else {
                 mc.dlight.direction.add((float) camera.getPos().x, (float) camera.getPos().y, (float) camera.getPos().z);
                 mc.dlight.color.set(1f, 1f, 1f, 0f);
@@ -167,7 +169,7 @@ public abstract class ModelBody extends CelestialBody {
         if (viewAngle >= THRESHOLD_POINT() * camera.getFovFactor()) {
             size = Math.tan(thAngleQuad) * distToCamera * 2f;
         }
-        return (float) size / camera.getFovFactor();
+        return (float) size;
     }
 
     protected float getViewAnglePow() {

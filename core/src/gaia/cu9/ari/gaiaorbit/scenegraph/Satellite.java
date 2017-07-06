@@ -98,7 +98,7 @@ public abstract class Satellite extends ModelBody {
         if (viewAngle >= THRESHOLD_POINT() * camera.getFovFactor()) {
             size = Math.tan(thAngleQuad) * distToCamera * 10f;
         }
-        return (float) size / camera.getFovFactor();
+        return (float) size;
     }
 
 }

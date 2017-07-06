@@ -16,7 +16,7 @@ public abstract class AbstractCamera implements ICamera {
     /** Camera far value **/
     public static final double CAM_FAR = 1e6 * Constants.PC_TO_U;
     /** Camera near values **/
-    public static final double CAM_NEAR = 1e11 * Constants.KM_TO_U;
+    public static final double CAM_NEAR = 1e9 * Constants.KM_TO_U;
 
     private static Matrix4d invProjectionView = new Matrix4d();
 
@@ -55,13 +55,9 @@ public abstract class AbstractCamera implements ICamera {
     public float fovFactor;
 
     /**
-     * Params of the closest star
+     * The closest star to the camera
      */
-    protected String closestStarName;
-    protected double closestStarSize = 0;
-    protected double closestStarDist = Double.MAX_VALUE;
-    protected Vector3d closestStarPos;
-    protected float[] closestStarCol;
+    protected IStarFocus closestStar;
 
     public AbstractCamera(CameraManager parent) {
         this.parent = parent;
@@ -267,36 +263,15 @@ public abstract class AbstractCamera implements ICamera {
         frustum.update(invProjectionView);
     }
 
-    public void setClosestStar(Vector3d pos, String name, double dist, double size, float[] col) {
-        if (dist > 0) {
-            initClosestStarPos();
-            this.closestStarPos.set(pos).sub(this.pos);
-            this.closestStarName = name;
-            this.closestStarDist = dist;
-            this.closestStarSize = size;
-            this.closestStarCol = col;
+    public IStarFocus getClosestStar() {
+        return closestStar;
+    }
+
+    public void setClosestStar(IStarFocus star) {
+        if (closestStar == null || closestStar.getClosestDist() > star.getClosestDist()) {
+            closestStar = star;
         }
-    }
 
-    private void initClosestStarPos() {
-        if (closestStarPos == null)
-            closestStarPos = new Vector3d();
-    }
-
-    public double getClosestStarDist() {
-        return closestStarDist;
-    }
-
-    public Vector3d getClosestStarPos() {
-        return closestStarPos;
-    }
-
-    public float[] getClosestStarCol() {
-        return closestStarCol;
-    }
-
-    public double getClosestStarSize() {
-        return closestStarSize;
     }
 
 }

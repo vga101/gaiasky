@@ -82,13 +82,15 @@ public class Spacecraft extends AbstractPositionEntity implements IModelRenderab
             if (mc != null) {
                 // Update directional light
                 mc.dlight.direction.set(0f, 0f, 0f);
-                if (camera.getClosestStarPos() != null) {
-                    float intensity = (float) MathUtilsd.lint(camera.getClosestStarDist() / MathUtilsd.lint(camera.getClosestStarSize(), 0.6e6, 1e8, 1, 0.05), 0.5 * Constants.AU_TO_U, 10 * Constants.AU_TO_U, 1f, 0f);
-                    mc.dlight.direction.sub(camera.getClosestStarPos().put(aux3f1.get()));
-                    mc.dlight.color.set(camera.getClosestStarCol()[0] * intensity, camera.getClosestStarCol()[1] * intensity, camera.getClosestStarCol()[2] * intensity, 1.0f);
+                IStarFocus closestStar = camera.getClosestStar();
+                if (closestStar != null) {
+                    float intensity = (float) MathUtilsd.lint(closestStar.getClosestDist() / MathUtilsd.lint(closestStar.getClosestSize(), 0.6e6, 1e8, 1, 0.01), 0.5 * Constants.AU_TO_U, 10 * Constants.AU_TO_U, 1f, 0.2f);
+                    float[] col = closestStar.getClosestCol();
+                    mc.dlight.direction.sub(closestStar.getClosestPos(aux3d1.get()).put(aux3f1.get()));
+                    mc.dlight.color.set(col[0] * intensity, col[1] * intensity, col[2] * intensity, 1.0f);
                 } else {
-                    mc.dlight.direction.add((float) camera.getPos().x, (float) camera.getPos().y, (float) camera.getPos().z);
-                    mc.dlight.color.set(1f, 1f, 1f, 0f);
+                    mc.dlight.direction.sub((float) camera.getPos().x, (float) camera.getPos().y, (float) camera.getPos().z);
+                    mc.dlight.color.set(0.5f, 0.7f, 1f, 0f);
                 }
             }
             // Local transform

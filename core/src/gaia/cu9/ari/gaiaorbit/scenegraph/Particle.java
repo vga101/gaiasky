@@ -33,7 +33,7 @@ import net.jafama.FastMath;
  * @author Toni Sagrista
  *
  */
-public class Particle extends CelestialBody implements IPointRenderable, ILineRenderable {
+public class Particle extends CelestialBody implements IStarFocus, IPointRenderable, ILineRenderable {
 
     private static final float DISC_FACTOR = 1.5f;
     private static final float LABEL_FACTOR = Constants.webgl ? 3f : 1f;
@@ -230,9 +230,7 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
             distToCamera = transform.position.len();
 
             if (!copy) {
-                if (camera.getClosestStarPos() == null || camera.getClosestStarDist() > distToCamera) {
-                    camera.setClosestStar(pos, name, distToCamera, size, cc);
-                }
+                camera.setClosestStar(this);
 
                 addToRender(this, RenderGroup.POINT_STAR);
 
@@ -407,6 +405,46 @@ public class Particle extends CelestialBody implements IPointRenderable, ILineRe
     @Override
     protected boolean checkHitCondition() {
         return ((this.octant == null) || (this.octant != null && this.octant.observed));
+    }
+
+    @Override
+    public int getCatalogSource() {
+        return catalogSource;
+    }
+
+    @Override
+    public int getHip() {
+        return -1;
+    }
+
+    @Override
+    public String getTycho() {
+        return null;
+    }
+
+    @Override
+    public double getClosestDist() {
+        return this.distToCamera;
+    }
+
+    @Override
+    public String getClosestName() {
+        return this.name;
+    }
+
+    @Override
+    public Vector3d getClosestPos(Vector3d out) {
+        return transform.getTranslation(out);
+    }
+
+    @Override
+    public float[] getClosestCol() {
+        return cc;
+    }
+
+    @Override
+    public double getClosestSize() {
+        return this.size;
     }
 
 }

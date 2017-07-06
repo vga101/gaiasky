@@ -111,7 +111,7 @@ public class ParticleGroup extends FadeNode implements I3DTextRenderable, IFocus
     double focusDistToCamera, focusViewAngle, focusViewAngleApparent, focusSize;
 
     /**
-     * Stores the time of the last call to sort
+     * Stores the time when the last sort operation finished, in ms
      */
     protected long lastSortTime;
 
@@ -413,6 +413,11 @@ public class ParticleGroup extends FadeNode implements I3DTextRenderable, IFocus
         return getFocusSize();
     }
 
+    public double getRadius(int i) {
+        // All particles have the same radius
+        return getRadius();
+    }
+
     // Half the size
     public double getRadius() {
         return getSize() / 2d;
@@ -449,7 +454,7 @@ public class ParticleGroup extends FadeNode implements I3DTextRenderable, IFocus
                     // Diminish the size of the star
                     // when we are close by
                     double dist = posd.len();
-                    double angle = getSize(i) / 2 / dist / camera.getFovFactor();
+                    double angle = getRadius(i) / dist / camera.getFovFactor();
 
                     PerspectiveCamera pcamera;
                     if (GlobalConf.program.STEREOSCOPIC_MODE) {

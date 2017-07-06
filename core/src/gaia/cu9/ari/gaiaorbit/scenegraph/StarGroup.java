@@ -2,15 +2,30 @@ package gaia.cu9.ari.gaiaorbit.scenegraph;
 
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Map;
+import java.util.TreeMap;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Mesh;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Texture.TextureFilter;
+import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g3d.Environment;
+import com.badlogic.gdx.graphics.g3d.Material;
+import com.badlogic.gdx.graphics.g3d.Model;
+import com.badlogic.gdx.graphics.g3d.ModelBatch;
+import com.badlogic.gdx.graphics.g3d.ModelInstance;
+import com.badlogic.gdx.graphics.g3d.attributes.BlendingAttribute;
+import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
+import com.badlogic.gdx.graphics.g3d.attributes.FloatAttribute;
+import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.TimeUtils;
 
@@ -18,10 +33,15 @@ import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.render.ILineRenderable;
+import gaia.cu9.ari.gaiaorbit.render.IModelRenderable;
 import gaia.cu9.ari.gaiaorbit.render.IQuadRenderable;
 import gaia.cu9.ari.gaiaorbit.render.system.LineRenderSystem;
+import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
+import gaia.cu9.ari.gaiaorbit.util.ModelCache;
+import gaia.cu9.ari.gaiaorbit.util.Pair;
+import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 import net.jafama.FastMath;
@@ -33,7 +53,7 @@ import net.jafama.FastMath;
  * @author tsagrista
  *
  */
-public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFocus, IQuadRenderable {
+public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFocus, IQuadRenderable, IModelRenderable {
 
     public static final int SIZE = 19;
     /** INDICES **/
@@ -62,10 +82,19 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
     // Min update time
     private static final double MIN_UPDATE_TIME_MS = 50;
     // Close up stars treated
-    private static final int N_CLOSEUP_STARS = 5000;
+    private static final int N_CLOSEUP_STARS = 250;
+    // Fade in time to prevent pop-ins
+    private static final long FADE_IN_MS = 1000;
 
-    // Additional values
+    /**
+     * Additional values
+     */
     double[] additional;
+
+    /**
+     * Aux array to know whether a star has been rendered in the last cycle
+     */
+    public byte[] renderedLastCycle;
 
     // Indices list buffer 1
     Integer[] indices1;
@@ -79,8 +108,23 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
     // Sorter daemon
     private SorterThread daemon;
 
-    private Vector3d aux;
+    /** CLOSEST **/
+    private Vector3d closestPos;
+    private String closestName;
+    private double closestDist;
+    private double closestSize;
     private float[] closestCol;
+
+    /** Star model **/
+    private ModelComponent mc;
+    private Matrix4 modelTransform;
+    private double modelDist;
+
+    /**
+     * Opacity value to prevent pop-ins. Uses the last sort time and FADE_IN_MS
+     * to compute an opacity in [0..1]
+     **/
+    private float popInOpacity;
 
     private Vector3d lastSortCameraPos;
     private Comparator<Integer> comp;
@@ -89,7 +133,7 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
         super();
         comp = new StarGroupComparator();
         lastSortCameraPos = new Vector3d(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE);
-        aux = new Vector3d();
+        closestPos = new Vector3d();
         closestCol = new float[4];
         EventManager.instance.subscribe(this, Events.CAMERA_MOTION_UPDATED, Events.DISPOSE);
     }
@@ -111,6 +155,8 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
         active = indices1;
         background = indices2;
 
+        initModel();
+
         /**
          * INITIALIZE DAEMON LOADER THREAD
          */
@@ -119,6 +165,58 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
         daemon.setName("daemon-star-group-sorter");
         daemon.setPriority(Thread.MIN_PRIORITY);
         daemon.start();
+    }
+
+    public void initModel() {
+        Texture tex = new Texture(Gdx.files.internal(GlobalConf.TEXTURES_FOLDER + "star.jpg"));
+        Texture lut = new Texture(Gdx.files.internal(GlobalConf.TEXTURES_FOLDER + "lut.jpg"));
+        tex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+
+        Map<String, Object> params = new TreeMap<String, Object>();
+        params.put("quality", 120l);
+        params.put("diameter", 1d);
+        params.put("flip", false);
+
+        Pair<Model, Map<String, Material>> pair = ModelCache.cache.getModel("sphere", params, Usage.Position | Usage.Normal | Usage.TextureCoordinates);
+        Model model = pair.getFirst();
+        Material mat = pair.getSecond().get("base");
+        mat.clear();
+        mat.set(new TextureAttribute(TextureAttribute.Diffuse, tex));
+        mat.set(new TextureAttribute(TextureAttribute.Normal, lut));
+        // Only to activate view vector (camera position)
+        mat.set(new TextureAttribute(TextureAttribute.Specular, lut));
+        mat.set(new BlendingAttribute(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA));
+        modelTransform = new Matrix4();
+        mc = new ModelComponent(false);
+        mc.env = new Environment();
+        mc.env.set(new ColorAttribute(ColorAttribute.AmbientLight, 1f, 1f, 1f, 1f));
+        mc.env.set(new FloatAttribute(FloatAttribute.Shininess, 0f));
+        mc.instance = new ModelInstance(model, modelTransform);
+    }
+
+    public void update(ITimeFrameProvider time, final Transform parentTransform, ICamera camera, float opacity) {
+        super.update(time, parentTransform, camera, opacity);
+
+        // Update closest star
+        double[] closestStar = pointData.get(active[0]);
+        closestPos.set(closestStar[I_X], closestStar[I_Y], closestStar[I_Z]).sub(camera.getPos());
+        closestDist = closestPos.len() - getRadius(active[0]);
+        Color c = new Color();
+        Color.abgr8888ToColor(c, (float) closestStar[I_COL]);
+        closestCol[0] = c.r;
+        closestCol[1] = c.g;
+        closestCol[2] = c.b;
+        closestCol[3] = c.a;
+        closestSize = getSize(active[0]);
+        closestName = String.valueOf((long) closestStar[I_ID]);
+        camera.setClosestStar(this);
+
+        // Model dist
+        modelDist = 172.4643429 * getRadius(active[0]);
+
+        // Pop in opacity
+        long timeSinceLastSort = TimeUtils.millis() - lastSortTime;
+        popInOpacity = MathUtilsd.lint(timeSinceLastSort, 0, FADE_IN_MS, 0, 1);
     }
 
     /**
@@ -148,10 +246,11 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
         updateAdditional(camera);
         // Sort background list of indices
         Arrays.sort(background, comp);
-        // Update last sort call
-        super.updateSorter(time, camera);
         // Swap indices lists
         swapBuffers();
+        // Update last sort call
+        super.updateSorter(time, camera);
+
     }
 
     private void swapBuffers() {
@@ -177,6 +276,7 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
         addToRender(this, RenderGroup.STAR_GROUP);
         addToRender(this, RenderGroup.SHADER_STAR);
         addToRender(this, RenderGroup.LINE);
+        addToRender(this, RenderGroup.MODEL_S);
         if (renderText()) {
             addToRender(this, RenderGroup.LABEL);
         }
@@ -191,52 +291,52 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
         double thupOverFovfactor = Constants.THRESHOLD_UP / camera.getFovFactor();
         double thdownOverFovfactor = Constants.THRESHOLD_DOWN / camera.getFovFactor();
         double innerRad = 0.006 + GlobalConf.scene.STAR_POINT_SIZE * 0.008;
+        float alph = alpha * this.opacity;
 
+        /** GENERAL UNIFORMS **/
+        shader.setUniformf("u_thpoint", (float) GlobalConf.scene.STAR_THRESHOLD_POINT * camera.getFovFactor());
+        // Light glow always disabled with star groups
+        shader.setUniformi("u_lightScattering", 0);
+        shader.setUniformf("u_inner_rad", (float) innerRad);
+
+        /** RENDER ACTUAL STARS **/
+        boolean focusRendered = false;
         for (int i = 0; i < N_CLOSEUP_STARS; i++) {
-            double[] star = pointData.get(active[i]);
-            double size = getSize(active[i]);
-            double radius = size * Constants.STAR_SIZE_FACTOR;
-            Vector3d lpos = aux3d1.get().set(star[I_X], star[I_Y], star[I_Z]).add(camera.getInversePos());
-            double distToCamera = lpos.len();
-            double viewAngle = (radius / distToCamera) / camera.getFovFactor();
-            double viewAngleApparent = viewAngle * GlobalConf.scene.STAR_BRIGHTNESS;
-
-            if (viewAngle >= thpointTimesFovfactor) {
-                double ssize = getFuzzyRenderSize(camera, size, radius, distToCamera, viewAngle, thdownOverFovfactor, thupOverFovfactor);
-
-                Vector3 pos = lpos.put(aux3f3.get());
-                shader.setUniformf("u_pos", pos);
-                shader.setUniformf("u_size", (float) ssize);
-
-                Color c = new Color();
-                Color.abgr8888ToColor(c, (float) star[I_COL]);
-                shader.setUniformf("u_color", c.r, c.g, c.b, alpha * opacity);
-                shader.setUniformf("u_inner_rad", (float) innerRad);
-                shader.setUniformf("u_distance", (float) distToCamera);
-                shader.setUniformf("u_apparent_angle", (float) viewAngleApparent);
-                shader.setUniformf("u_thpoint", (float) GlobalConf.scene.STAR_THRESHOLD_POINT * camera.getFovFactor());
-
-                // Light glow always disabled with star groups
-                shader.setUniformi("u_lightScattering", 0);
-
-                shader.setUniformf("u_radius", (float) radius);
-
-                // Sprite.render
-                mesh.render(shader, GL20.GL_TRIANGLES, 0, 6);
-
-                if (i == 0 && camera.getClosestStarDist() > distToCamera) {
-                    // Closest
-                    aux.set(star[I_X], star[I_Y], star[I_Z]);
-                    closestCol[0] = c.r;
-                    closestCol[1] = c.g;
-                    closestCol[2] = c.b;
-                    closestCol[3] = c.a;
-                    camera.setClosestStar(aux, String.valueOf((long) star[I_ID]), distToCamera, size, closestCol);
-                }
-
-            }
+            renderCloseupStar(i, active[i], camera, shader, mesh, thpointTimesFovfactor, thupOverFovfactor, thdownOverFovfactor, alph * this.popInOpacity);
+            focusRendered = focusRendered || active[i] == focusIndex;
+        }
+        if (focusData != null && !focusRendered) {
+            renderCloseupStar(1, focusIndex, camera, shader, mesh, thpointTimesFovfactor, thupOverFovfactor, thdownOverFovfactor, alph);
         }
 
+    }
+
+    private void renderCloseupStar(int i, int idx, ICamera camera, ShaderProgram shader, Mesh mesh, double thpointTimesFovfactor, double thupOverFovfactor, double thdownOverFovfactor, float alpha) {
+        double[] star = pointData.get(idx);
+        double size = getSize(idx);
+        double radius = size * Constants.STAR_SIZE_FACTOR;
+        Vector3d lpos = aux3d1.get().set(star[I_X], star[I_Y], star[I_Z]).add(camera.getInversePos());
+        double distToCamera = lpos.len();
+        double viewAngle = (radius / distToCamera) / camera.getFovFactor();
+        double viewAngleApparent = viewAngle * GlobalConf.scene.STAR_BRIGHTNESS;
+        Color c = new Color();
+        Color.abgr8888ToColor(c, (float) star[I_COL]);
+        if (viewAngle >= thpointTimesFovfactor) {
+            double ssize = getFuzzyRenderSize(camera, size, radius, distToCamera, viewAngle, thdownOverFovfactor, thupOverFovfactor);
+
+            Vector3 pos = lpos.put(aux3f3.get());
+            shader.setUniformf("u_pos", pos);
+            shader.setUniformf("u_size", (float) ssize);
+
+            shader.setUniformf("u_color", c.r, c.g, c.b, alpha);
+            shader.setUniformf("u_distance", (float) distToCamera);
+            shader.setUniformf("u_apparent_angle", (float) viewAngleApparent);
+            shader.setUniformf("u_radius", (float) radius);
+
+            // Sprite.render
+            mesh.render(shader, GL20.GL_TRIANGLES, 0, 6);
+
+        }
     }
 
     public double getFuzzyRenderSize(ICamera camera, double size, double radius, double distToCamera, double viewAngle, double thdown, double thup) {
@@ -254,12 +354,27 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
     }
 
     /**
+     * Model rendering
+     */
+    @Override
+    public void render(ModelBatch modelBatch, float alpha, float t) {
+        mc.touch();
+        mc.setTransparency(alpha * (float) MathUtilsd.lint(closestDist, modelDist / 50f, modelDist, 1f, 0f));
+        float[] col = closestCol;
+        ((ColorAttribute) mc.env.get(ColorAttribute.AmbientLight)).color.set(col[0], col[1], col[2], 1f);
+        ((FloatAttribute) mc.env.get(FloatAttribute.Shininess)).value = t;
+        // Local transform
+        mc.instance.transform.idt().translate((float) closestPos.x, (float) closestPos.y, (float) closestPos.z).scl((float) (getRadius(active[0]) * 2d));
+        modelBatch.render(mc.instance, mc.env);
+    }
+
+    /**
      * Proper motion rendering
      */
     @Override
     public void render(LineRenderSystem renderer, ICamera camera, float alpha) {
         float thpointTimesFovfactor = (float) GlobalConf.scene.STAR_THRESHOLD_POINT * camera.getFovFactor();
-        for (int i = N_CLOSEUP_STARS; i >= 0; i--) {
+        for (int i = N_CLOSEUP_STARS * 20; i >= 0; i--) {
             double[] star = pointData.get(active[i]);
             float radius = (float) (getSize(active[i]) * Constants.STAR_SIZE_FACTOR);
             Vector3d lpos = aux3d1.get().set(star[I_X], star[I_Y], star[I_Z]).sub(camera.getPos());
@@ -279,9 +394,7 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
                 final double mumax = 80;
                 final double maxmin = mumax - mumin;
                 renderer.addLine(p1.x, p1.y, p1.z, p2.x, p2.y, p2.z, (float) ((star[I_MUALPHA] - mumin) / maxmin) * 0.8f + 0.2f, (float) ((star[I_MUDELTA] - mumin) / maxmin) * 0.8f + 0.2f, (float) (star[I_RADVEL]) * 0.8f + 0.2f, alpha * this.opacity);
-
             }
-
         }
 
     }
@@ -292,10 +405,10 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
     @Override
     public void render(SpriteBatch batch, ShaderProgram shader, BitmapFont font3d, BitmapFont font2d, ICamera camera) {
         float thOverFactor = (float) (GlobalConf.scene.STAR_THRESHOLD_POINT / GlobalConf.scene.LABEL_NUMBER_FACTOR / camera.getFovFactor());
-        float textScale = 2f;
-        for (int i = N_CLOSEUP_STARS; i >= 0; i--) {
+        float textScale = 1f;
+        for (int i = 0; i < N_CLOSEUP_STARS; i++) {
             double[] star = pointData.get(active[i]);
-            float radius = (float) (getSize(active[i]) * Constants.STAR_SIZE_FACTOR);
+            float radius = (float) getRadius(active[i]);
             Vector3d lpos = aux3d1.get().set(star[I_X], star[I_Y], star[I_Z]).sub(camera.getPos());
             float distToCamera = (float) lpos.len();
             float viewAngle = (float) (((radius / distToCamera) / camera.getFovFactor()) * GlobalConf.scene.STAR_BRIGHTNESS);
@@ -307,7 +420,7 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
                 shader.setUniformf("a_viewAnglePow", 1f);
                 shader.setUniformf("a_thOverFactor", thOverFactor);
                 shader.setUniformf("a_thOverFactorScl", camera.getFovFactor());
-                float textSize = (float) FastMath.tan(viewAngle) * distToCamera * 1e5f;
+                float textSize = (float) FastMath.tanh(viewAngle) * distToCamera * 1e5f;
                 float alpha = Math.min((float) FastMath.atan(textSize / distToCamera), 2.e-3f);
                 textSize = (float) FastMath.tan(alpha) * distToCamera;
                 render3DLabel(batch, shader, font3d, camera, String.valueOf((long) star[I_ID]), lpos, textScale, textSize, textColour(), this.opacity);
@@ -318,7 +431,7 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
     }
 
     public void textPosition(ICamera cam, Vector3d out, float len, float rad) {
-        out.clamp(0, len - rad).scl(0.9f);
+        out.clamp(0, len - rad);
 
         Vector3d aux = aux3d2.get();
         aux.set(cam.getUp());
@@ -340,6 +453,11 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
     // Radius in stars is different!
     public double getRadius() {
         return getSize() * Constants.STAR_SIZE_FACTOR;
+    }
+
+    // Radius in stars is different!
+    public double getRadius(int i) {
+        return getSize(i) * Constants.STAR_SIZE_FACTOR;
     }
 
     public float getAppmag() {
@@ -472,6 +590,36 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
     @Override
     public String getCandidateName() {
         return String.valueOf((long) pointData.get(candidateFocusIndex)[I_ID]);
+    }
+
+    @Override
+    public double getClosestDist() {
+        return this.closestDist;
+    }
+
+    @Override
+    public String getClosestName() {
+        return this.closestName;
+    }
+
+    @Override
+    public double getClosestSize() {
+        return this.closestSize;
+    }
+
+    @Override
+    public Vector3d getClosestPos(Vector3d out) {
+        return out.set(this.closestPos);
+    }
+
+    @Override
+    public float[] getClosestCol() {
+        return this.closestCol;
+    }
+
+    @Override
+    public boolean hasAtmosphere() {
+        return false;
     }
 
 }

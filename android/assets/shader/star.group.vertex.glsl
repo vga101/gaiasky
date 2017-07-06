@@ -26,6 +26,9 @@ uniform vec4 u_alphaSizeFovBr;
 varying vec4 v_col;
 varying float v_discard;
 
+#define len0 170000.0
+#define len1 len0 * 200.0
+
 float lint(float x, float x0, float x1, float y0, float y1) {
     return mix(y0, y1, (x - x0) / (x1 - x0));
 }
@@ -34,7 +37,8 @@ void main() {
     vec3 pos = a_position.xyz - u_camPos;
 
     float dist = length(pos);
-    if(dist < 149590.7871) {
+    float fadeout = smoothstep(dist, len0, len1);
+    if(dist < len0) {
         v_discard = 1.0;
     } else {
         v_discard = -1.0;
@@ -47,8 +51,8 @@ void main() {
     float viewAngleApparent = atan((a_size * u_alphaSizeFovBr.w) / length(pos)) / u_alphaSizeFovBr.z;
     float opacity = pow(lint(viewAngleApparent, 0.0, u_thAnglePoint, u_pointAlpha.x, u_pointAlpha.y), 1.2);
 
-    v_col = vec4(a_color.rgb, opacity * u_alphaSizeFovBr.x);
+    v_col = vec4(a_color.rgb, opacity * u_alphaSizeFovBr.x * fadeout);
 
     gl_Position = u_projModelView * vec4(pos, 0.0);
-    gl_PointSize = min(u_alphaSizeFovBr.y + lint(viewAngleApparent, 0.0, 1e-6, 0.0, u_alphaSizeFovBr.y / 2.0), 15.0);
+    gl_PointSize = u_alphaSizeFovBr.y ;
 }
