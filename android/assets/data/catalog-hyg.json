@@ -1,4 +1,5 @@
 { 
+	"name" : "HYG",
 	"description" : "Hipparcos + Yale bright stars + Gliese nearby stars. 120K stars.",
 	"data" : [
 	{

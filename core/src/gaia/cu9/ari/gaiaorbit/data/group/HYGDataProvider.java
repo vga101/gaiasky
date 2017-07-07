@@ -2,13 +2,7 @@ package gaia.cu9.ari.gaiaorbit.data.group;
 
 import java.io.DataInputStream;
 import java.io.EOFException;
-import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.io.ObjectOutputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
@@ -26,10 +20,12 @@ import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
 import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
-public class HYGDataProvider implements IStarGroupDataProvider {
-    private static final boolean dumpToDisk = false;
+public class HYGDataProvider extends AbstractStarGroupDataProvider {
+    private static final boolean dumpToDisk = true;
 
-    private Map<String, Integer> index;
+    public HYGDataProvider() {
+        super();
+    }
 
     public Array<double[]> loadData(String file) {
         return loadData(file, 1d);
@@ -38,7 +34,6 @@ public class HYGDataProvider implements IStarGroupDataProvider {
     public Array<double[]> loadData(String file, double factor) {
 
         Array<double[]> pointData = new Array<double[]>();
-        index = new HashMap<String, Integer>();
 
         FileHandle f = Gdx.files.internal(file);
         InputStream data = f.read();
@@ -68,11 +63,17 @@ public class HYGDataProvider implements IStarGroupDataProvider {
                     float mudelta = data_in.readFloat();
                     float radvel = data_in.readFloat();
                     long id = data_in.readInt();
+                    id = -1l;// HIP stars with no gaia id go by 0
                     int hip = data_in.readInt();
                     if (appmag < GlobalConf.data.LIMIT_MAG_LOAD && !name.equals("Sol")) {
+                        /** INDEX **/
                         index.put(name.toLowerCase(), stari);
                         index.put(name, stari);
                         index.put("HIP " + hip, stari);
+                        index.put("hip " + hip, stari);
+
+                        /** NAME **/
+                        names.add(name);
 
                         double flux = Math.pow(10, -absmag / 2.5f);
                         double starsize = Math.min((Math.pow(flux, 0.5f) * Constants.PC_TO_U * 0.16f), 1e9f) / 1.5;
@@ -115,7 +116,7 @@ public class HYGDataProvider implements IStarGroupDataProvider {
             data_in.close();
 
             if (dumpToDisk) {
-                dumpToDisk(pointData, index);
+                dumpToDisk(pointData, "/tmp/hyg.bin");
             }
 
             Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.nodeloader", pointData.size, file));
@@ -124,29 +125,6 @@ public class HYGDataProvider implements IStarGroupDataProvider {
         }
 
         return pointData;
-    }
-
-    private void dumpToDisk(Array<double[]> pointData, Map<String, Integer> index) {
-        List<double[]> l = new ArrayList<double[]>(pointData.size);
-        for (double[] p : pointData)
-            l.add(p);
-
-        try {
-            ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("/tmp/hyg.bin"));
-            oos.writeObject(l);
-            oos.close();
-
-            oos = new ObjectOutputStream(new FileOutputStream("/tmp/hyg.bin.index"));
-            oos.writeObject(index);
-            oos.close();
-        } catch (Exception e) {
-            Logger.error(e);
-        }
-    }
-
-    @Override
-    public Map<String, Integer> getIndex() {
-        return index;
     }
 
 }

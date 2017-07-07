@@ -1,4 +1,5 @@
 { 
+	"name" : "TGAS",
 	"description" : "Gaia DR1 TGAS catalog. About 600K stars.",
 	"data" : [
 	{

@@ -1,14 +1,10 @@
 package gaia.cu9.ari.gaiaorbit.data.group;
 
 import java.io.BufferedReader;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.ObjectOutputStream;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import com.badlogic.gdx.Gdx;
@@ -27,12 +23,14 @@ import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.parse.Parser;
 
-public class TGASDataProvider implements IStarGroupDataProvider {
-    private static final boolean dumpToDisk = false;
+public class TGASDataProvider extends AbstractStarGroupDataProvider {
+    private static final boolean dumpToDisk = true;
     /** Colors BT, VT for all Tycho2 stars file **/
     private static final String btvtColorsFile = "data/tgas_final/bt-vt-tycho.csv";
 
-    private Map<String, Integer> index;
+    public TGASDataProvider() {
+        super();
+    }
 
     public Array<double[]> loadData(String file) {
         return loadData(file, 1d);
@@ -42,7 +40,6 @@ public class TGASDataProvider implements IStarGroupDataProvider {
         Pair<Map<String, Float>, Map<String, Integer>> extra = loadTYCBVHIP(btvtColorsFile);
 
         Array<double[]> pointData = new Array<double[]>();
-        index = new HashMap<String, Integer>();
         FileHandle f = Gdx.files.internal(file);
 
         try {
@@ -67,13 +64,14 @@ public class TGASDataProvider implements IStarGroupDataProvider {
                     if (dist >= 0 && pllx / pllxerr > 7 && pllxerr <= 1) {
                         long sourceid = Parser.parseLong(tokens[0]);
 
+                        /** INDEX **/
                         String tyc = tokens[9].replace("\"", "");
                         String[] tycgroups = tyc.split("-");
                         int tyc1 = !tyc.isEmpty() ? Integer.parseInt(tycgroups[0]) : -1;
                         int tyc2 = !tyc.isEmpty() ? Integer.parseInt(tycgroups[1]) : -1;
                         int tyc3 = !tyc.isEmpty() ? Integer.parseInt(tycgroups[2]) : -1;
 
-                        index.put(String.valueOf(sourceid), i);
+                        index.put(String.valueOf((long) sourceid), i);
 
                         if (tyc1 >= 0) {
                             index.put("TYC " + tyc, i);
@@ -84,6 +82,15 @@ public class TGASDataProvider implements IStarGroupDataProvider {
                         }
                         if (hip > 0)
                             index.put("HIP " + hip, i);
+
+                        /** NAME **/
+                        if (tyc1 > 0) {
+                            names.add("TYC " + tyc);
+                        } else if (hip > 0) {
+                            names.add("HIP " + hip);
+                        } else {
+                            names.add(String.valueOf((long) sourceid));
+                        }
 
                         /** RA and DEC **/
                         double ra = Parser.parseDouble(tokens[1]);
@@ -142,7 +149,7 @@ public class TGASDataProvider implements IStarGroupDataProvider {
             br.close();
 
             if (dumpToDisk) {
-                dumpToDisk(pointData, index);
+                dumpToDisk(pointData, "/tmp/tgas.bin");
             }
 
             Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.nodeloader", pointData.size, file));
@@ -151,24 +158,6 @@ public class TGASDataProvider implements IStarGroupDataProvider {
         }
 
         return pointData;
-    }
-
-    private void dumpToDisk(Array<double[]> pointData, Map<String, Integer> index) {
-        List<double[]> l = new ArrayList<double[]>(pointData.size);
-        for (double[] p : pointData)
-            l.add(p);
-
-        try {
-            ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("/tmp/tgas.bin"));
-            oos.writeObject(l);
-            oos.close();
-
-            oos = new ObjectOutputStream(new FileOutputStream("/tmp/tgas.bin.index"));
-            oos.writeObject(index);
-            oos.close();
-        } catch (Exception e) {
-            Logger.error(e);
-        }
     }
 
     private Pair<Map<String, Float>, Map<String, Integer>> loadTYCBVHIP(String file) {
@@ -229,11 +218,6 @@ public class TGASDataProvider implements IStarGroupDataProvider {
         if (hip > 0)
             hips.put(id, hip);
 
-    }
-
-    @Override
-    public Map<String, Integer> getIndex() {
-        return index;
     }
 
 }

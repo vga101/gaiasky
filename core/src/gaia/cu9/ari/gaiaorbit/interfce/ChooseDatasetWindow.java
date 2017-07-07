@@ -63,17 +63,22 @@ public class ChooseDatasetWindow extends GenericDialog {
             String currentSetting = GlobalConf.data.CATALOG_JSON_FILE;
             String candidate = catalogFile.path().substring(assetsLoc.length(), catalogFile.path().length());
 
+            String name = null;
             String desc = null;
             try {
                 JsonValue val = reader.parse(catalogFile);
-                desc = val.get("description").asString();
-
+                if (val.has("description"))
+                    desc = val.get("description").asString();
+                if (val.has("name"))
+                    name = val.get("name").asString();
             } catch (Exception e) {
             }
             if (desc == null)
                 desc = candidate;
+            if (name == null)
+                name = catalogFile.nameWithoutExtension();
 
-            OwnTextButton cb = new OwnTextButton(catalogFile.nameWithoutExtension(), skin, "toggle-big");
+            OwnTextButton cb = new OwnTextButton(name, skin, "toggle-big");
 
             cb.setChecked(currentSetting.contains(catalogFile.name()));
             cb.addListener(new TextTooltip(candidate, skin));

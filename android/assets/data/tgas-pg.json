@@ -19,8 +19,8 @@
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.StarGroup",
 		
 		// Extends IParticleGroupDataProvider
-		"provider" : "gaia.cu9.ari.gaiaorbit.data.group.TGASDataProvider",
-		"datafile" : "data/tgas_final/tgas.csv"
+		"provider" : "gaia.cu9.ari.gaiaorbit.data.group.SerializedDataProvider",
+		"datafile" : "data/catalog/tgas.bin"
 	},
 	{
 		"name" : "HYG",
@@ -42,7 +42,7 @@
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.StarGroup",
 		
 		// Extends IParticleGroupDataProvider
-		"provider" : "gaia.cu9.ari.gaiaorbit.data.group.HYGDataProvider",
-		"datafile" : "data/hyg/hygxyz.bin"
+		"provider" : "gaia.cu9.ari.gaiaorbit.data.group.SerializedDataProvider",
+		"datafile" : "data/catalog/hyg.bin"
 	}
 ]}

@@ -1,4 +1,5 @@
 {
+	"name" : "TGAS+HYG (GPU)",
 	"description" : "Gaia DR1 TGAS catalog, GPU version. About 1.5 million stars.",
 	"data" : [
 	{

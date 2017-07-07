@@ -1,4 +1,5 @@
 {
+	"name" : "DR2 (lod)",
 	"description" : "Gaia DR2 catalog with levels of detail. 75 million stars.",
 	"data" : [
 	{

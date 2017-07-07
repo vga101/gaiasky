@@ -118,7 +118,7 @@
 		"ct": [ "Locations" ],
 		"name" : "ESOC (European Space Operations Center)",				
 		"location" : [8.5898778, 49.8256097],
-		"size" : 6
+		"size" : 4
 	},
 	{
 		"parent" : "Earth", 
@@ -126,7 +126,7 @@
 		"ct": [ "Locations" ],
 		"name" : "ESAC (European Space Astronomy Center)",				
 		"location" : [-3.952696, 40.444211],
-		"size" : 6
+		"size" : 4
 	},
 	{
 		"parent" : "Earth",

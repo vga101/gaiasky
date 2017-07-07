@@ -1,4 +1,5 @@
 { 
+	"name" : "TGAS (lod, old version)",
 	"description" : "Gaia DR1 TGAS catalog with levels of detail. About 600K stars.",
 	"data" : [
 	{

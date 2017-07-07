@@ -11,32 +11,32 @@ import com.badlogic.gdx.utils.Array;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 
-public class SerializedDataProvider implements IStarGroupDataProvider {
+public class SerializedDataProvider extends AbstractStarGroupDataProvider {
 
-    private Map<String, Integer> index;
+    public SerializedDataProvider() {
+    }
 
     public Array<double[]> loadData(String file) {
         return loadData(file, 1d);
     }
 
+    @SuppressWarnings("unchecked")
     public Array<double[]> loadData(String file, double factor) {
         FileHandle f = Gdx.files.internal(file);
-        FileHandle fi = Gdx.files.internal(file + ".index");
         ObjectInputStream ois;
         try {
             ois = new ObjectInputStream(f.read());
-
-            List<double[]> l = (List<double[]>) ois.readObject(); // cast is needed.
+            List<Object> main = (List<Object>) ois.readObject(); // cast is needed.
             ois.close();
+
+            // Main contains pointData, index, names
+            List<double[]> l = (List<double[]>) main.get(0);
+            index = (Map<String, Integer>) main.get(1);
+            names = (List<String>) main.get(2);
 
             Array<double[]> pointData = new Array<double[]>(l.size());
             for (double[] point : l)
                 pointData.add(point);
-
-            ois = new ObjectInputStream(fi.read());
-
-            index = (Map<String, Integer>) ois.readObject(); // cast is needed.
-            ois.close();
 
             Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.nodeloader", pointData.size, file));
             return pointData;
@@ -49,6 +49,11 @@ public class SerializedDataProvider implements IStarGroupDataProvider {
     @Override
     public Map<String, Integer> getIndex() {
         return index;
+    }
+
+    @Override
+    public List<String> getNames() {
+        return names;
     }
 
 }

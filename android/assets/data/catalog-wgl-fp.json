@@ -1,4 +1,5 @@
 { 
+	"name" : "WebGL TYC",
 	"description" : "WebGL version of Tycho-2 for the focal plane, single day.",
 	"data" : [
 	{

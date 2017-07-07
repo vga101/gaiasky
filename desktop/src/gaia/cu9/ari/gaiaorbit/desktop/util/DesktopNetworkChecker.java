@@ -22,7 +22,6 @@ import gaia.cu9.ari.gaiaorbit.interfce.INetworkChecker;
 import gaia.cu9.ari.gaiaorbit.scenegraph.IFocus;
 import gaia.cu9.ari.gaiaorbit.scenegraph.IStarFocus;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ModelBody;
-import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.Link;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextButton;
@@ -180,13 +179,13 @@ public class DesktopNetworkChecker extends Thread implements INetworkChecker {
     }
 
     private void setSimbadLink(IFocus focus, LinkListener listener) {
-        if (focus instanceof Star) {
+        if (focus instanceof IStarFocus) {
             String url = URL_SIMBAD;
-            Star st = (Star) focus;
-            if (st.hip > 0) {
-                listener.ok(url + "HIP+" + st.hip);
-            } else if (st.tycho != null) {
-                listener.ok(url + "TYC+" + st.tycho);
+            IStarFocus st = (IStarFocus) focus;
+            if (st.getHip() > 0) {
+                listener.ok(url + "HIP+" + st.getHip());
+            } else if (st.getTycho() != null) {
+                listener.ok(url + "TYC+" + st.getTycho());
             } else {
                 listener.ko(null);
             }

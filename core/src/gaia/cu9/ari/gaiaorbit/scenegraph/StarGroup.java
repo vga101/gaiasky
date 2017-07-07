@@ -2,7 +2,7 @@ package gaia.cu9.ari.gaiaorbit.scenegraph;
 
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -95,9 +95,9 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
      */
     Map<String, Integer> index;
     /**
-     * From index to name
+     * Name of each particle
      */
-    Map<Integer, String> indexinv;
+    List<String> names;
 
     /**
      * Additional values
@@ -163,12 +163,8 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
             lastSortTime = -1;
 
             pointData = provider.loadData(datafile, factor);
-
             index = provider.getIndex();
-            indexinv = new HashMap<Integer, String>();
-            for (Map.Entry<String, Integer> entry : index.entrySet()) {
-                indexinv.put(entry.getValue(), entry.getKey());
-            }
+            names = provider.getNames();
 
             if (!fixedMeanPosition) {
                 // Mean position
@@ -482,8 +478,7 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
                 float textSize = (float) FastMath.tanh(viewAngle) * distToCamera * 1e5f;
                 float alpha = Math.min((float) FastMath.atan(textSize / distToCamera), 1.e-3f);
                 textSize = (float) FastMath.tan(alpha) * distToCamera;
-                String name = indexinv.containsKey(active[i]) ? indexinv.get(active[i]) : String.valueOf((long) star[I_ID]);
-                render3DLabel(batch, shader, font3d, camera, name, lpos, textScale, textSize, textColour(), this.opacity);
+                render3DLabel(batch, shader, font3d, camera, names.get(active[i]), lpos, textScale, textSize, textColour(), this.opacity);
 
             }
         }
@@ -530,7 +525,7 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
 
     public String getName() {
         if (focusData != null)
-            return String.valueOf((long) focusData[I_ID]);
+            return names.get(focusIndex);
         else
             return null;
     }
@@ -634,11 +629,15 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
 
     @Override
     public int getHip() {
+        if (focusData != null && focusData[I_HIP] > 0)
+            return (int) focusData[I_HIP];
         return -1;
     }
 
     @Override
     public String getTycho() {
+        if (focusData != null && focusData[I_TYC1] > 0)
+            return "TYC " + focusData[I_TYC1] + "-" + focusData[I_TYC1] + "-" + focusData[I_TYC1];
         return null;
     }
 
