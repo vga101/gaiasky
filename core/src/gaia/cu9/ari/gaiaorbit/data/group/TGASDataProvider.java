@@ -42,7 +42,7 @@ public class TGASDataProvider implements IStarGroupDataProvider {
         Pair<Map<String, Float>, Map<String, Integer>> extra = loadTYCBVHIP(btvtColorsFile);
 
         Array<double[]> pointData = new Array<double[]>();
-        Map<String, Integer> index = new HashMap<String, Integer>();
+        index = new HashMap<String, Integer>();
         FileHandle f = Gdx.files.internal(file);
 
         try {
@@ -143,7 +143,6 @@ public class TGASDataProvider implements IStarGroupDataProvider {
 
             if (dumpToDisk) {
                 dumpToDisk(pointData, index);
-                System.exit(0);
             }
 
             Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.nodeloader", pointData.size, file));

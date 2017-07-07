@@ -2,6 +2,7 @@ package gaia.cu9.ari.gaiaorbit.scenegraph;
 
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -93,6 +94,10 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
      * The name index
      */
     Map<String, Integer> index;
+    /**
+     * From index to name
+     */
+    Map<Integer, String> indexinv;
 
     /**
      * Additional values
@@ -160,6 +165,10 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
             pointData = provider.loadData(datafile, factor);
 
             index = provider.getIndex();
+            indexinv = new HashMap<Integer, String>();
+            for (Map.Entry<String, Integer> entry : index.entrySet()) {
+                indexinv.put(entry.getValue(), entry.getKey());
+            }
 
             if (!fixedMeanPosition) {
                 // Mean position
@@ -473,7 +482,8 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
                 float textSize = (float) FastMath.tanh(viewAngle) * distToCamera * 1e5f;
                 float alpha = Math.min((float) FastMath.atan(textSize / distToCamera), 1.e-3f);
                 textSize = (float) FastMath.tan(alpha) * distToCamera;
-                render3DLabel(batch, shader, font3d, camera, String.valueOf((long) star[I_ID]), lpos, textScale, textSize, textColour(), this.opacity);
+                String name = indexinv.containsKey(active[i]) ? indexinv.get(active[i]) : String.valueOf((long) star[I_ID]);
+                render3DLabel(batch, shader, font3d, camera, name, lpos, textScale, textSize, textColour(), this.opacity);
 
             }
         }
@@ -556,7 +566,7 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
         }
     }
 
-    private static class SorterThread extends Thread {
+    private class SorterThread extends Thread {
         public boolean awake;
         public boolean running;
 
@@ -675,7 +685,8 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
     @Override
     public IFocus getFocus(String name) {
         Integer idx = index.get(name);
-        candidateFocusIndex = idx;
+        if (idx != null)
+            candidateFocusIndex = idx;
         return this;
     }
 

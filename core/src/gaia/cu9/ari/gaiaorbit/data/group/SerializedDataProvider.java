@@ -11,7 +11,7 @@ import com.badlogic.gdx.utils.Array;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 
-public class TGASSerializedDataProvider implements IStarGroupDataProvider {
+public class SerializedDataProvider implements IStarGroupDataProvider {
 
     private Map<String, Integer> index;
 
