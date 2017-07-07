@@ -110,7 +110,7 @@ public class MilkyWayReal extends AbstractPositionEntity implements I3DTextRende
             double[] pointf = pointData.get(i);
 
             aux.set((float) pointf[0], (float) pointf[2], (float) pointf[1]);
-            aux.scl(size).mul(coordinateSystem).add(pos3);
+            aux.scl(size).rotate(-90, 0, 1, 0).mul(coordinateSystem).add(pos3);
             pointf[0] = aux.x;
             pointf[1] = aux.y;
             pointf[2] = aux.z;
@@ -119,7 +119,7 @@ public class MilkyWayReal extends AbstractPositionEntity implements I3DTextRende
         for (int i = 0; i < nebulaData.size; i++) {
             double[] pointf = nebulaData.get(i);
             aux.set((float) pointf[0], (float) pointf[2], (float) pointf[1]);
-            aux.scl(size).mul(coordinateSystem).add(pos3);
+            aux.scl(size).rotate(-90, 0, 1, 0).mul(coordinateSystem).add(pos3);
             pointf[0] = aux.x;
             pointf[1] = aux.y;
             pointf[2] = aux.z;
