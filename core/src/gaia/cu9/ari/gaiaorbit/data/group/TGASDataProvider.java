@@ -20,6 +20,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.StarGroup;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
+import gaia.cu9.ari.gaiaorbit.util.Pair;
 import gaia.cu9.ari.gaiaorbit.util.color.ColourUtils;
 import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
 import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
@@ -27,11 +28,9 @@ import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.parse.Parser;
 
 public class TGASDataProvider implements IStarGroupDataProvider {
-    private static final boolean dumpToDisk = true;
+    private static final boolean dumpToDisk = false;
     /** Colors BT, VT for all Tycho2 stars file **/
     private static final String btvtColorsFile = "data/tgas_final/bt-vt-tycho.csv";
-    /** TYC identifier to B-V colours **/
-    private Map<String, Float> tycBV;
 
     private Map<String, Integer> index;
 
@@ -40,7 +39,7 @@ public class TGASDataProvider implements IStarGroupDataProvider {
     }
 
     public Array<double[]> loadData(String file, double factor) {
-        tycBV = loadTYCBVColours(btvtColorsFile);
+        Pair<Map<String, Float>, Map<String, Integer>> extra = loadTYCBVHIP(btvtColorsFile);
 
         Array<double[]> pointData = new Array<double[]>();
         Map<String, Integer> index = new HashMap<String, Integer>();
@@ -50,6 +49,8 @@ public class TGASDataProvider implements IStarGroupDataProvider {
             BufferedReader br = new BufferedReader(new InputStreamReader(f.read()));
             String line;
             int i = 0;
+            // Skip first line
+            br.readLine();
             while ((line = br.readLine()) != null) {
                 if (!line.isEmpty() && !line.startsWith("#")) {
                     // Read line
@@ -65,19 +66,24 @@ public class TGASDataProvider implements IStarGroupDataProvider {
                     // Keep only stars with relevant parallaxes
                     if (dist >= 0 && pllx / pllxerr > 7 && pllxerr <= 1) {
                         long sourceid = Parser.parseLong(tokens[0]);
-                        int hip = Parser.parseInt(tokens[12]);
-                        String tyc = tokens[13];
+
+                        String tyc = tokens[9].replace("\"", "");
                         String[] tycgroups = tyc.split("-");
                         int tyc1 = !tyc.isEmpty() ? Integer.parseInt(tycgroups[0]) : -1;
                         int tyc2 = !tyc.isEmpty() ? Integer.parseInt(tycgroups[1]) : -1;
                         int tyc3 = !tyc.isEmpty() ? Integer.parseInt(tycgroups[2]) : -1;
 
                         index.put(String.valueOf(sourceid), i);
+
+                        if (tyc1 >= 0) {
+                            index.put("TYC " + tyc, i);
+                        }
+                        int hip = Parser.parseInt(tokens[8]);
+                        if (hip <= 0 && extra.getSecond().containsKey(tyc)) {
+                            hip = extra.getSecond().get(tyc);
+                        }
                         if (hip > 0)
                             index.put("HIP " + hip, i);
-                        if (tyc1 >= 0) {
-                            index.put("TYC " + tyc1 + "-" + tyc2 + "-" + tyc3, i);
-                        }
 
                         /** RA and DEC **/
                         double ra = Parser.parseDouble(tokens[1]);
@@ -88,29 +94,23 @@ public class TGASDataProvider implements IStarGroupDataProvider {
                         double mualpha = Parser.parseDouble(tokens[5]);
                         double mudelta = Parser.parseDouble(tokens[6]);
 
-                        /** RADIAL VELOCITY in km/s **/
-                        double radvel = tokens[7] != null && !tokens[7].isEmpty() ? Parser.parseDouble(tokens[7].trim()) : 0;
-
                         /** PROPER MOTION VECTOR = (pos+dx) - pos **/
-                        Vector3d pm = Coordinates.sphericalToCartesian(Math.toRadians(ra + mualpha * AstroUtils.MILLARCSEC_TO_DEG), Math.toRadians(dec + mudelta * AstroUtils.MILLARCSEC_TO_DEG), dist + radvel * Constants.KM_TO_U / Constants.S_TO_Y, new Vector3d());
+                        Vector3d pm = Coordinates.sphericalToCartesian(Math.toRadians(ra + mualpha * AstroUtils.MILLARCSEC_TO_DEG), Math.toRadians(dec + mudelta * AstroUtils.MILLARCSEC_TO_DEG), dist * Constants.KM_TO_U / Constants.S_TO_Y, new Vector3d());
                         pm.sub(pos);
 
-                        double appmag = Parser.parseDouble(tokens[9]);
+                        double appmag = Parser.parseDouble(tokens[7]);
                         double absmag = (appmag - 2.5 * Math.log10(Math.pow(distpc / 10d, 2d)));
                         double flux = Math.pow(10, -absmag / 2.5f);
                         double size = Math.min((Math.pow(flux, 0.5f) * Constants.PC_TO_U * 0.16f), 1e9f) / 1.5;
 
                         /** COLOR, we use the tycBV map if present **/
                         double colorbv = 0;
-                        if (tycBV != null) {
-                            if (tycBV.containsKey(tyc)) {
-                                colorbv = tycBV.get(tyc);
+                        if (extra.getFirst() != null) {
+                            if (extra.getFirst().containsKey(tyc)) {
+                                colorbv = extra.getFirst().get(tyc);
                             }
-                        } else {
-                            double bp = new Double(Parser.parseDouble(tokens[10]));
-                            double rp = new Double(Parser.parseDouble(tokens[11]));
-                            colorbv = bp - rp;
                         }
+
                         float[] rgb = ColourUtils.BVtoRGB(colorbv);
                         double col = Color.toFloatBits(rgb[0], rgb[1], rgb[2], 1.0f);
 
@@ -127,7 +127,7 @@ public class TGASDataProvider implements IStarGroupDataProvider {
                         point[StarGroup.I_PMZ] = pm.z;
                         point[StarGroup.I_MUALPHA] = mualpha;
                         point[StarGroup.I_MUDELTA] = mudelta;
-                        point[StarGroup.I_RADVEL] = radvel;
+                        point[StarGroup.I_RADVEL] = 0;
                         point[StarGroup.I_COL] = col;
                         point[StarGroup.I_SIZE] = size;
                         point[StarGroup.I_APPMAG] = appmag;
@@ -172,11 +172,12 @@ public class TGASDataProvider implements IStarGroupDataProvider {
         }
     }
 
-    private Map<String, Float> loadTYCBVColours(String file) {
+    private Pair<Map<String, Float>, Map<String, Integer>> loadTYCBVHIP(String file) {
         final String comma = ",";
         final String comment = "#";
 
-        Map<String, Float> result = new HashMap<String, Float>();
+        Map<String, Float> colors = new HashMap<String, Float>();
+        Map<String, Integer> hips = new HashMap<String, Integer>();
         FileHandle f = Gdx.files.internal(file);
         InputStream data = f.read();
         BufferedReader br = new BufferedReader(new InputStreamReader(data));
@@ -189,7 +190,7 @@ public class TGASDataProvider implements IStarGroupDataProvider {
 
                 if (!line.startsWith(comment))
                     // Add B-V colour
-                    addColour(line, result, comma);
+                    addInfo(line, colors, hips, comma);
                 Logger.debug("Line " + i++);
             }
         } catch (IOException e) {
@@ -203,14 +204,20 @@ public class TGASDataProvider implements IStarGroupDataProvider {
 
         }
 
-        return result;
+        return new Pair<Map<String, Float>, Map<String, Integer>>(colors, hips);
     }
 
-    private void addColour(String line, Map<String, Float> map, String split) {
+    private void addInfo(String line, Map<String, Float> colors, Map<String, Integer> hips, String split) {
         String[] st = line.split(split);
         int tyc1 = Parser.parseInt(st[1].trim());
         int tyc2 = Parser.parseInt(st[2].trim());
         int tyc3 = Parser.parseInt(st[3].trim());
+
+        int hip = -1;
+        try {
+            hip = Parser.parseInt(st[4]);
+        } catch (Exception e) {
+        }
 
         float BV = 0;
         if (st.length >= 7) {
@@ -218,8 +225,11 @@ public class TGASDataProvider implements IStarGroupDataProvider {
             float vt = Parser.parseFloat(st[6].trim());
             BV = 0.850f * (bt - vt);
         }
+        String id = tyc1 + "-" + tyc2 + "-" + tyc3;
+        colors.put(id, BV);
+        if (hip > 0)
+            hips.put(id, hip);
 
-        map.put(String.format("%04d", tyc1) + "-" + String.format("%05d", tyc2) + "-" + tyc3, BV);
     }
 
     @Override

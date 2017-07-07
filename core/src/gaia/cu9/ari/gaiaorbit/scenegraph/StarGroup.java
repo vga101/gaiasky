@@ -140,8 +140,8 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
     public StarGroup() {
         super();
         comp = new StarGroupComparator();
-        lastSortCameraPos = new Vector3d(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE);
         closestPos = new Vector3d();
+        lastSortCameraPos = new Vector3d(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE);
         closestCol = new float[4];
         EventManager.instance.subscribe(this, Events.CAMERA_MOTION_UPDATED, Events.DISPOSE);
     }
@@ -158,6 +158,7 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
             lastSortTime = -1;
 
             pointData = provider.loadData(datafile, factor);
+
             index = provider.getIndex();
 
             if (!fixedMeanPosition) {
@@ -195,11 +196,13 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
          * Index to scene graph
          */
         ISceneGraph sg = GaiaSky.instance.sg;
-        Set<String> keys = index.keySet();
-        for (String key : keys) {
-            sg.addToStringToNode(key, this);
-            if (!key.toLowerCase().equals(key))
-                sg.addToStringToNode(key.toLowerCase(), this);
+        if (index != null) {
+            Set<String> keys = index.keySet();
+            for (String key : keys) {
+                sg.addToStringToNode(key, this);
+                if (!key.toLowerCase().equals(key))
+                    sg.addToStringToNode(key.toLowerCase(), this);
+            }
         }
 
         initModel();
@@ -274,7 +277,6 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
     public void updateAdditional(ICamera camera) {
         Vector3d cpos = camera.getPos();
         int n = pointData.size;
-
         for (int i = 0; i < n; i++) {
             double[] d = pointData.get(i);
             additional[i] = -(((d[I_SIZE] * Constants.STAR_SIZE_FACTOR) / cpos.dst(d[I_X], d[I_Y], d[I_Z])) / camera.getFovFactor()) * GlobalConf.scene.STAR_BRIGHTNESS;
@@ -291,6 +293,7 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
     public void updateSorter(ITimeFrameProvider time, ICamera camera) {
         // Prepare metadata to sort
         updateAdditional(camera);
+
         // Sort background list of indices
         Arrays.sort(background, comp);
         // Swap indices lists
@@ -468,7 +471,7 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
                 shader.setUniformf("a_thOverFactor", thOverFactor);
                 shader.setUniformf("a_thOverFactorScl", camera.getFovFactor());
                 float textSize = (float) FastMath.tanh(viewAngle) * distToCamera * 1e5f;
-                float alpha = Math.min((float) FastMath.atan(textSize / distToCamera), 2.e-3f);
+                float alpha = Math.min((float) FastMath.atan(textSize / distToCamera), 1.e-3f);
                 textSize = (float) FastMath.tan(alpha) * distToCamera;
                 render3DLabel(batch, shader, font3d, camera, String.valueOf((long) star[I_ID]), lpos, textScale, textSize, textColour(), this.opacity);
 
@@ -574,9 +577,6 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
         @Override
         public void run() {
             while (running) {
-                sg.updateSorter(GaiaSky.instance.time, GaiaSky.instance.getICamera());
-                sg.lastSortCameraPos.set(currentCameraPos);
-
                 /** ----------- SLEEP UNTIL INTERRUPTED ----------- **/
                 try {
                     awake = false;
@@ -585,6 +585,9 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
                     // New data!
                     awake = true;
                 }
+
+                sg.updateSorter(GaiaSky.instance.time, GaiaSky.instance.getICamera());
+                sg.lastSortCameraPos.set(currentCameraPos);
             }
         }
 
