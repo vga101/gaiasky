@@ -57,7 +57,7 @@
 				// This must implement gaia.cu9.ari.gaiaorbit.util.coord.IBodyCoordinates				
 				"impl" : "gaia.cu9.ari.gaiaorbit.util.coord.StaticCoordinates",
 				"transformName" : equatorialToGalactic,
-				// In galacitc system, 8kpc from galactic center,, in km
+				// In galacitc system, 8kpc from galactic center, in km
 				"position" : [0.0, 0.0, 246858341148427170.0]
 				},
 	
