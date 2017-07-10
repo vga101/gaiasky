@@ -7,6 +7,7 @@ import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.IntMap;
 
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
+import gaia.cu9.ari.gaiaorbit.util.tree.IPosition;
 
 /**
  * Defines the interface for any scene graph implementation
@@ -92,12 +93,12 @@ public interface ISceneGraph extends Disposable {
     public HashMap<String, SceneGraphNode> getStringToNodeMap();
 
     /**
-     * Gets a star map: HIP -&gt; Star It only contains the stars with HIP
+     * Gets a star map: HIP -&gt; IPosition It only contains the stars with HIP
      * number
      * 
      * @return The HIP star map
      */
-    public IntMap<Star> getStarMap();
+    public IntMap<IPosition> getStarMap();
 
     public Array<SceneGraphNode> getNodes();
 

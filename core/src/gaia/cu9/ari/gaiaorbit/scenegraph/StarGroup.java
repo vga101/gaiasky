@@ -693,4 +693,9 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
         return this;
     }
 
+    @Override
+    public int getStarCount() {
+        return pointData.size;
+    }
+
 }

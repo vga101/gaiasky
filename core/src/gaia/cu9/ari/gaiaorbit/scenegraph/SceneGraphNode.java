@@ -30,7 +30,7 @@ import gaia.cu9.ari.gaiaorbit.util.tree.IPosition;
  * @author Toni Sagrista
  *
  */
-public class SceneGraphNode implements ISceneGraphNode, IPosition {
+public class SceneGraphNode implements IStarContainer, IPosition {
     public static final String ROOT_NAME = "Universe";
 
     @SuppressWarnings("unchecked")

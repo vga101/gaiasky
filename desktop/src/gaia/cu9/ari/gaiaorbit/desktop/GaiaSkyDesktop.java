@@ -1,7 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.desktop;
 
-import java.awt.MouseInfo;
-import java.awt.PointerInfo;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -208,18 +206,9 @@ public class GaiaSkyDesktop implements IObserver {
                 mymode = Lwjgl3ApplicationConfiguration.getDisplayMode(Gdx.graphics.getPrimaryMonitor());
             cfg.setFullscreenMode(mymode);
         } else {
-            // Find out current monitor
+            // First monitor
             Monitor[] monitors = Lwjgl3ApplicationConfiguration.getMonitors();
-            PointerInfo pi = MouseInfo.getPointerInfo();
-            int pix = pi.getDevice().getDefaultConfiguration().getBounds().x;
-            int piy = pi.getDevice().getDefaultConfiguration().getBounds().y;
-            Monitor m = null;
-            for (Monitor monitor : monitors) {
-                if (monitor.virtualX == pix && monitor.virtualY == piy) {
-                    m = monitor;
-                    break;
-                }
-            }
+            Monitor m = monitors[0];
             // Find out position
             DisplayMode dm = Lwjgl3ApplicationConfiguration.getDisplayMode(m);
             int posx = m.virtualX + dm.width / 2 - GlobalConf.screen.getScreenWidth() / 2;
