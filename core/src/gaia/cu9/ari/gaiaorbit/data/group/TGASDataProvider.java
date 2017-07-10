@@ -24,7 +24,7 @@ import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.parse.Parser;
 
 public class TGASDataProvider extends AbstractStarGroupDataProvider {
-    private static final boolean dumpToDisk = true;
+    private static final boolean dumpToDisk = false;
     /** Colors BT, VT for all Tycho2 stars file **/
     private static final String btvtColorsFile = "data/tgas_final/bt-vt-tycho.csv";
 
@@ -64,6 +64,9 @@ public class TGASDataProvider extends AbstractStarGroupDataProvider {
                     if (dist >= 0 && pllx / pllxerr > 7 && pllxerr <= 1) {
                         long sourceid = Parser.parseLong(tokens[0]);
 
+                        /** ID **/
+                        ids.add(sourceid);
+
                         /** INDEX **/
                         String tyc = tokens[9].replace("\"", "");
                         String[] tycgroups = tyc.split("-");
@@ -74,14 +77,15 @@ public class TGASDataProvider extends AbstractStarGroupDataProvider {
                         index.put(String.valueOf((long) sourceid), i);
 
                         if (tyc1 >= 0) {
-                            index.put("TYC " + tyc, i);
+                            index.put("tyc " + tyc, i);
                         }
                         int hip = Parser.parseInt(tokens[8]);
                         if (hip <= 0 && extra.getSecond().containsKey(tyc)) {
                             hip = extra.getSecond().get(tyc);
                         }
-                        if (hip > 0)
-                            index.put("HIP " + hip, i);
+                        if (hip > 0) {
+                            index.put("hip " + hip, i);
+                        }
 
                         /** NAME **/
                         if (tyc1 > 0) {
@@ -102,7 +106,7 @@ public class TGASDataProvider extends AbstractStarGroupDataProvider {
                         double mudelta = Parser.parseDouble(tokens[6]);
 
                         /** PROPER MOTION VECTOR = (pos+dx) - pos **/
-                        Vector3d pm = Coordinates.sphericalToCartesian(Math.toRadians(ra + mualpha * AstroUtils.MILLARCSEC_TO_DEG), Math.toRadians(dec + mudelta * AstroUtils.MILLARCSEC_TO_DEG), dist * Constants.KM_TO_U / Constants.S_TO_Y, new Vector3d());
+                        Vector3d pm = Coordinates.sphericalToCartesian(Math.toRadians(ra + mualpha * AstroUtils.MILLARCSEC_TO_DEG), Math.toRadians(dec + mudelta * AstroUtils.MILLARCSEC_TO_DEG), dist, new Vector3d());
                         pm.sub(pos);
 
                         double appmag = Parser.parseDouble(tokens[7]);
@@ -121,7 +125,6 @@ public class TGASDataProvider extends AbstractStarGroupDataProvider {
                         float[] rgb = ColourUtils.BVtoRGB(colorbv);
                         double col = Color.toFloatBits(rgb[0], rgb[1], rgb[2], 1.0f);
 
-                        point[StarGroup.I_ID] = sourceid;
                         point[StarGroup.I_HIP] = hip;
                         point[StarGroup.I_TYC1] = tyc1;
                         point[StarGroup.I_TYC2] = tyc2;

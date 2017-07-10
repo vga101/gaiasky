@@ -21,7 +21,7 @@ import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
 public class HYGDataProvider extends AbstractStarGroupDataProvider {
-    private static final boolean dumpToDisk = true;
+    private static final boolean dumpToDisk = false;
 
     public HYGDataProvider() {
         super();
@@ -65,12 +65,15 @@ public class HYGDataProvider extends AbstractStarGroupDataProvider {
                     long id = data_in.readInt();
                     id = -1l;// HIP stars with no gaia id go by 0
                     int hip = data_in.readInt();
-                    if (appmag < GlobalConf.data.LIMIT_MAG_LOAD && !name.equals("Sol")) {
+                    if (appmag < GlobalConf.data.LIMIT_MAG_LOAD && !name.equals("Sol") && !index.containsKey(name.toLowerCase())) {
+                        /** ID **/
+                        ids.add(id);
+
                         /** INDEX **/
                         index.put(name.toLowerCase(), stari);
-                        index.put(name, stari);
-                        index.put("HIP " + hip, stari);
-                        index.put("hip " + hip, stari);
+                        if (hip > 0) {
+                            index.put("hip " + hip, stari);
+                        }
 
                         /** NAME **/
                         names.add(name);
@@ -86,7 +89,6 @@ public class HYGDataProvider extends AbstractStarGroupDataProvider {
                         double col = Color.toFloatBits(rgb[0], rgb[1], rgb[2], 1.0f);
 
                         double[] point = new double[StarGroup.SIZE];
-                        point[StarGroup.I_ID] = id;
                         point[StarGroup.I_HIP] = hip;
                         point[StarGroup.I_TYC1] = -1;
                         point[StarGroup.I_TYC2] = -1;

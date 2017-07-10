@@ -67,19 +67,18 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
     public static final int I_PMX = 3;
     public static final int I_PMY = 4;
     public static final int I_PMZ = 5;
-    public static final int I_ID = 6;
-    public static final int I_APPMAG = 7;
-    public static final int I_ABSMAG = 8;
-    public static final int I_COL = 9;
-    public static final int I_SIZE = 10;
-    public static final int I_HIP = 11;
-    public static final int I_TYC1 = 12;
-    public static final int I_TYC2 = 13;
-    public static final int I_TYC3 = 14;
-    public static final int I_MUALPHA = 15;
-    public static final int I_MUDELTA = 16;
-    public static final int I_RADVEL = 17;
-    public static final int I_ADDITIONAL = 18;
+    public static final int I_APPMAG = 6;
+    public static final int I_ABSMAG = 7;
+    public static final int I_COL = 8;
+    public static final int I_SIZE = 9;
+    public static final int I_HIP = 10;
+    public static final int I_TYC1 = 11;
+    public static final int I_TYC2 = 12;
+    public static final int I_TYC3 = 13;
+    public static final int I_MUALPHA = 14;
+    public static final int I_MUDELTA = 15;
+    public static final int I_RADVEL = 16;
+    public static final int I_ADDITIONAL = 17;
 
     // Camera dx threshold
     private static final double CAM_DX_TH = 100 * Constants.AU_TO_U;
@@ -90,6 +89,10 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
     // Fade in time to prevent pop-ins
     private static final long FADE_IN_MS = 1000;
 
+    /**
+     * The indentifiers
+     */
+    List<Long> ids;
     /**
      * The name index
      */
@@ -163,6 +166,7 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
             lastSortTime = -1;
 
             pointData = provider.loadData(datafile, factor);
+            ids = provider.getIds();
             index = provider.getIndex();
             names = provider.getNames();
 
@@ -263,7 +267,7 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
         closestCol[2] = c.b;
         closestCol[3] = c.a;
         closestSize = getSize(active[0]);
-        closestName = String.valueOf((long) closestStar[I_ID]);
+        closestName = String.valueOf(ids.get(active[0]));
         camera.setClosestStar(this);
 
         // Model dist
@@ -532,7 +536,7 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
 
     public long getId() {
         if (focusData != null)
-            return (long) focusData[I_ID];
+            return ids.get(focusIndex);
         else
             return -1;
     }
@@ -637,18 +641,18 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
     @Override
     public String getTycho() {
         if (focusData != null && focusData[I_TYC1] > 0)
-            return "TYC " + focusData[I_TYC1] + "-" + focusData[I_TYC1] + "-" + focusData[I_TYC1];
+            return (int) focusData[I_TYC1] + "-" + (int) focusData[I_TYC2] + "-" + (int) focusData[I_TYC3];
         return null;
     }
 
     @Override
     public long getCandidateId() {
-        return (long) pointData.get(candidateFocusIndex)[I_ID];
+        return ids.get(candidateFocusIndex);
     }
 
     @Override
     public String getCandidateName() {
-        return String.valueOf((long) pointData.get(candidateFocusIndex)[I_ID]);
+        return names.get(candidateFocusIndex);
     }
 
     @Override

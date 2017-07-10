@@ -10,6 +10,11 @@ public class GuiRegistry {
         guis = new Array<IGui>(true, 2);
     }
 
+    /**
+     * Render lock object
+     */
+    public static Object guirenderlock = new Object();
+
     public static void registerGui(IGui gui) {
         if (!guis.contains(gui, true))
             guis.add(gui);
@@ -25,9 +30,11 @@ public class GuiRegistry {
     }
 
     public static void render(int rw, int rh) {
-        for (int i = 0; i < guis.size; i++) {
-            guis.get(i).getGuiStage().getViewport().apply();
-            guis.get(i).render(rw, rh);
+        synchronized (guirenderlock) {
+            for (int i = 0; i < guis.size; i++) {
+                guis.get(i).getGuiStage().getViewport().apply();
+                guis.get(i).render(rw, rh);
+            }
         }
     }
 

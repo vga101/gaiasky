@@ -15,11 +15,13 @@ public abstract class AbstractStarGroupDataProvider implements IStarGroupDataPro
 
     protected Map<String, Integer> index;
     protected List<String> names;
+    protected List<Long> ids;
 
     public AbstractStarGroupDataProvider() {
         super();
+        ids = new ArrayList<Long>(100000);
         index = new HashMap<String, Integer>();
-        names = new ArrayList<String>();
+        names = new ArrayList<String>(100000);
     }
 
     protected void dumpToDisk(Array<double[]> pointData, String filename) {
@@ -30,6 +32,7 @@ public abstract class AbstractStarGroupDataProvider implements IStarGroupDataPro
         try {
             List<Object> main = new ArrayList<Object>(3);
             main.add(l);
+            main.add(ids);
             main.add(index);
             main.add(names);
 
@@ -50,6 +53,11 @@ public abstract class AbstractStarGroupDataProvider implements IStarGroupDataPro
     @Override
     public List<String> getNames() {
         return names;
+    }
+
+    @Override
+    public List<Long> getIds() {
+        return ids;
     }
 
 }

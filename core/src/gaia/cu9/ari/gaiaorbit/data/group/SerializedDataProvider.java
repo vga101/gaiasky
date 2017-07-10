@@ -31,8 +31,9 @@ public class SerializedDataProvider extends AbstractStarGroupDataProvider {
 
             // Main contains pointData, index, names
             List<double[]> l = (List<double[]>) main.get(0);
-            index = (Map<String, Integer>) main.get(1);
-            names = (List<String>) main.get(2);
+            ids = (List<Long>) main.get(1);
+            index = (Map<String, Integer>) main.get(2);
+            names = (List<String>) main.get(3);
 
             Array<double[]> pointData = new Array<double[]>(l.size());
             for (double[] point : l)
@@ -44,16 +45,6 @@ public class SerializedDataProvider extends AbstractStarGroupDataProvider {
             Logger.error(e, this.getClass().getSimpleName());
         }
         return null;
-    }
-
-    @Override
-    public Map<String, Integer> getIndex() {
-        return index;
-    }
-
-    @Override
-    public List<String> getNames() {
-        return names;
     }
 
 }

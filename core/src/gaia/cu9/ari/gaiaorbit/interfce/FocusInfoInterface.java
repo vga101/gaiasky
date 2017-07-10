@@ -185,7 +185,7 @@ public class FocusInfoInterface extends Table implements IObserver, IGuiInterfac
         focusInfo.add(new OwnLabel(txt("gui.focusinfo.radius"), skin, "hud-big")).left();
         focusInfo.add(focusRadius).left().padLeft(pad10);
         focusInfo.row();
-        focusInfo.add(moreInfo).center().colspan(2).padBottom(pad5).padTop(pad10);
+        focusInfo.add(moreInfo).left().colspan(2).padBottom(pad5).padTop(pad10);
 
         /** POINTER INFO **/
         pointerInfo.add(pointerName).left().colspan(2);

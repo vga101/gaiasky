@@ -1,8 +1,10 @@
 package gaia.cu9.ari.gaiaorbit.util;
 
 import java.io.FilenameFilter;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -412,6 +414,27 @@ public class GlobalResources {
         sb.dispose();
 
         return pm;
+    }
+
+    /**
+     * Inverts a map
+     * 
+     * @param map
+     *            The map to invert
+     * @return The inverted map
+     */
+    public static final <T, U> Map<U, List<T>> invertMap(Map<T, U> map) {
+        HashMap<U, List<T>> invertedMap = new HashMap<>();
+
+        for (T key : map.keySet()) {
+            U newKey = map.get(key);
+
+            invertedMap.computeIfAbsent(newKey, k -> new ArrayList<>());
+            invertedMap.get(newKey).add(key);
+
+        }
+
+        return invertedMap;
     }
 
 }

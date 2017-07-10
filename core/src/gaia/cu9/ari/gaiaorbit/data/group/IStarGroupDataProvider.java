@@ -24,4 +24,11 @@ public interface IStarGroupDataProvider extends IParticleGroupDataProvider {
      * @return The names array
      */
     public List<String> getNames();
+
+    /**
+     * Gets the identifiers, in the same order as the particle data
+     * 
+     * @return The identifiers
+     */
+    public List<Long> getIds();
 }

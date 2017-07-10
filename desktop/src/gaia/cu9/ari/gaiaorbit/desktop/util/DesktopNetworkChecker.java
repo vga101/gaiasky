@@ -40,7 +40,6 @@ public class DesktopNetworkChecker extends Thread implements INetworkChecker {
     public Object monitor;
     public boolean executing = false;
     private LabelStyle linkStyle;
-    private GaiaCatalogWindow gaiaWindow = null;
 
     private Cell<Link> wikiCell, simbadCell;
     private Link wikiLink, simbadLink;
@@ -104,9 +103,7 @@ public class DesktopNetworkChecker extends Thread implements INetworkChecker {
         @Override
         public boolean handle(Event event) {
             if (event instanceof ChangeEvent) {
-                if (gaiaWindow == null) {
-                    gaiaWindow = new GaiaCatalogWindow(GaiaSky.instance.mainGui.getGuiStage(), skin);
-                }
+                GaiaCatalogWindow gaiaWindow = new GaiaCatalogWindow(GaiaSky.instance.mainGui.getGuiStage(), skin);
                 gaiaWindow.initialize(focus);
                 gaiaWindow.display();
                 return true;
@@ -131,14 +128,14 @@ public class DesktopNetworkChecker extends Thread implements INetworkChecker {
                     if (focus instanceof IStarFocus) {
                         Button gaiaButton = new OwnTextButton("Gaia", skin, "link");
                         gaiaButton.addListener(new GaiaButtonListener((IStarFocus) focus));
-                        table.add(gaiaButton).center();
+                        table.add(gaiaButton).padRight(pad).left();
                     }
 
                     simbadLink = new Link("Simbad", linkStyle, "");
                     wikiLink = new Link("Wikipedia ", linkStyle, "");
 
-                    simbadCell = table.add().center();
-                    wikiCell = table.add().center();
+                    simbadCell = table.add().left();
+                    wikiCell = table.add().left();
 
                     String wikiname = focus.getName().replace(' ', '_');
 
@@ -147,7 +144,7 @@ public class DesktopNetworkChecker extends Thread implements INetworkChecker {
                         public void ok(String link) {
                             wikiLink.setLinkURL(link);
                             wikiCell.setActor(wikiLink);
-                            wikiCell.padLeft(pad);
+                            wikiCell.padRight(pad);
                         }
 
                         @Override
@@ -160,7 +157,7 @@ public class DesktopNetworkChecker extends Thread implements INetworkChecker {
                         public void ok(String link) {
                             simbadLink.setLinkURL(link);
                             simbadCell.setActor(simbadLink);
-                            simbadCell.padLeft(pad);
+                            simbadCell.padRight(pad);
                         }
 
                         @Override
