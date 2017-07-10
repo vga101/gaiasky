@@ -56,10 +56,14 @@ public class GlobalResources {
         // Create skin right now, it is needed.
         if (GlobalConf.program.UI_THEME.endsWith("-x2")) {
             GlobalConf.updateScaleFactor(2.0f);
+            // Cursor for links
+            linkCursor = new Pixmap(Gdx.files.internal("img/cursor-link-x2.png"));
+        } else {
+            // Cursor for links
+            linkCursor = new Pixmap(Gdx.files.internal("img/cursor-link.png"));
         }
         updateSkin();
-        // Cursor for links
-        linkCursor = textureToPixmap(skin.getRegion("cursor-link"));
+
     }
 
     public static void updateSkin() {

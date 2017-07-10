@@ -48,11 +48,11 @@ void main() {
 //    vec3 pm = a_pm.xyz * u_t / 1000.0;
 //    pos = pos + pm;
 
-    float viewAngleApparent = atan((a_size * u_alphaSizeFovBr.w) / length(pos)) / u_alphaSizeFovBr.z;
-    float opacity = pow(lint(viewAngleApparent, 0.0, u_thAnglePoint, u_pointAlpha.x, u_pointAlpha.y), 1.2);
+    float viewAngleApparent = atan((a_size * u_alphaSizeFovBr.w) / dist) / u_alphaSizeFovBr.z;
+    float opacity = clamp(pow(lint(viewAngleApparent, 0.0, u_thAnglePoint, u_pointAlpha.x, u_pointAlpha.y), 4.0), 0.0, 1.0);
 
     v_col = vec4(a_color.rgb, opacity * u_alphaSizeFovBr.x * fadeout);
 
     gl_Position = u_projModelView * vec4(pos, 0.0);
-    gl_PointSize = u_alphaSizeFovBr.y ;
+    gl_PointSize = u_alphaSizeFovBr.y;
 }
