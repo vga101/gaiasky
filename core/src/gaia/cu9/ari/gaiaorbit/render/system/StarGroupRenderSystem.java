@@ -174,6 +174,7 @@ public class StarGroupRenderSystem extends ImmediateRenderSystem implements IObs
         case STAR_MIN_OPACITY_CMD:
             if (shaderProgram != null && shaderProgram.isCompiled()) {
                 pointAlpha[0] = (float) data[0];
+                pointAlpha[1] = pointAlpha[0] + GlobalConf.scene.POINT_ALPHA_MAX;
                 Gdx.app.postRunnable(new Runnable() {
                     @Override
                     public void run() {

@@ -88,7 +88,16 @@ import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
  *
  */
 public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
-    private static boolean DSCHOSEN = false, LOADING = false;
+    /**
+     * Whether the dataset has been chosen. If this is set to false, a window
+     * will prompt at startup asking for the dataset to use.
+     */
+    private static boolean DSCHOSEN = false;
+
+    /**
+     * Private state boolean indicating whether we are still loading resources.
+     */
+    private static boolean LOADING = false;
 
     /** Attitude folder **/
     private static String ATTITUDE_FOLDER = "data/attitudexml/";
@@ -229,11 +238,15 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
             ab.load(manager);
         }
 
+        EventManager.instance.subscribe(this, Events.LOAD_DATA_CMD);
+
         initialGui = new InitialGui();
         initialGui.initialize(manager);
         Gdx.input.setInputProcessor(initialGui.getGuiStage());
 
-        EventManager.instance.subscribe(this, Events.LOAD_DATA_CMD);
+        if (DSCHOSEN) {
+            EventManager.instance.post(Events.LOAD_DATA_CMD);
+        }
 
         Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.glslversion", Gdx.gl.glGetString(GL20.GL_SHADING_LANGUAGE_VERSION)));
     }

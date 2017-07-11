@@ -20,7 +20,7 @@ sourceSets {
     }
 }
 
-task run(dependsOn: jar, type: JavaExec, description: "Runs the desktop project") {
+task run(dependsOn: jar, type: JavaExec, description: "Runs the desktop project in Linux and Windows systems") {
     main = project.mainClassName
     systemProperties['properties.file'] = ''
     systemProperties['assets.location'] = '../android/assets/'
@@ -29,6 +29,24 @@ task run(dependsOn: jar, type: JavaExec, description: "Runs the desktop project"
     //jvmArgs = ['-Xms2g', '-Xmx4g', '-XX:+UseParNewGC']
     // CMS GC
     jvmArgs = ['-server', '-Xms4g', '-Xmx8g', '-XX:+UseConcMarkSweepGC', '-XX:+UseParNewGC', '-XX:MaxGCPauseMillis=5', '-XX:+CMSParallelRemarkEnabled', '-XX:CMSInitiatingOccupancyFraction=60', '-XX:MaxTenuringThreshold=4', '-XX:MaxNewSize=384m', '-XX:NewSize=384m', '-XX:SurvivorRatio=12']
+    // G1 GC
+    //jvmArgs = ['-Xms2g', '-Xmx4g', '-XX:+UseG1GC']
+    classpath = sourceSets.main.runtimeClasspath
+    classpath += files(project.assetsDir)
+    standardInput = System.in
+    workingDir = project.workDir
+    ignoreExitValue = true
+}
+
+task runmac(dependsOn: jar, type: JavaExec, description: "Runs the desktop project in macOS systems") {
+    main = project.mainClassName
+    systemProperties['properties.file'] = ''
+    systemProperties['assets.location'] = '../android/assets/'
+    
+    // Parallel GC
+    //jvmArgs = ['-Xms2g', '-Xmx4g', '-XX:+UseParNewGC']
+    // CMS GC
+    jvmArgs = ['-server', '-Xms2g', '-Xmx4g', '-XstartOnFirstThread', '-Dorg.lwjgl.opengl.Display.enableOSXFullscreenModeAPI=true', '-XX:+UseConcMarkSweepGC', '-XX:+UseParNewGC', '-XX:MaxGCPauseMillis=5', '-XX:+CMSParallelRemarkEnabled', '-XX:CMSInitiatingOccupancyFraction=60', '-XX:MaxTenuringThreshold=4', '-XX:MaxNewSize=384m', '-XX:NewSize=384m', '-XX:SurvivorRatio=12']
     // G1 GC
     //jvmArgs = ['-Xms2g', '-Xmx4g', '-XX:+UseG1GC']
     classpath = sourceSets.main.runtimeClasspath

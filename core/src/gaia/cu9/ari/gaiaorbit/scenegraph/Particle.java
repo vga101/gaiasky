@@ -104,7 +104,9 @@ public class Particle extends CelestialBody implements IStarFocus, IPointRendera
     public static boolean renderOn = false;
 
     /** Proper motion in cartesian coordinates [U/yr] **/
-    public Vector3 pm, pmSph;
+    public Vector3 pm;
+    /** MuAlpha [mas/yr], Mudelta [mas/yr], radvel [km/s] **/
+    public Vector3 pmSph;
 
     /**
      * Source of this star:
@@ -344,7 +346,7 @@ public class Particle extends CelestialBody implements IStarFocus, IPointRendera
             }
             computedSize = this.size * (dist / this.radius) * Constants.THRESHOLD_DOWN;
         }
-        computedSize *= GlobalConf.scene.STAR_BRIGHTNESS * 0.6;
+        computedSize *= GlobalConf.scene.STAR_BRIGHTNESS * 0.4;
 
         return (float) computedSize;
     }
@@ -447,4 +449,19 @@ public class Particle extends CelestialBody implements IStarFocus, IPointRendera
         return this.size;
     }
 
+    @Override
+    public double getMuAlpha() {
+        if (this.pmSph != null)
+            return this.pmSph.x;
+        else
+            return 0;
+    }
+
+    @Override
+    public double getMuDelta() {
+        if (this.pmSph != null)
+            return this.pmSph.y;
+        else
+            return 0;
+    }
 }

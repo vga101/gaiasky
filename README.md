@@ -157,6 +157,7 @@ First, clone the [GitHub](https://github.com/langurmonkey/gaiasky) repository:
 
 ```
 git clone https://github.com/langurmonkey/gaiasky.git
+cd gaiasky
 ```
 
 Make sure you have at least `JDK7` installed.
@@ -171,12 +172,18 @@ the `tar` file corresponding to your version:
 
 You must extract the contents tarball into the folder `gaiasky/android/assets/data/octree`. In the case of the multifile package, you need to keep the directory structure.
 
-And then, you are ready to rumble:
+Finally, in **Linux** and **Windows**, run Gaia Sky with:
 
 ```
-cd gaiasky
 gradlew desktop:run
 ```
+
+In **macOS** systems, you must run it with the following command:
+
+```
+gradlew desktop:runmac
+```
+
 Et voilà! Gaia Sky is running on your machine.
 
 ##  3. Documentation and help

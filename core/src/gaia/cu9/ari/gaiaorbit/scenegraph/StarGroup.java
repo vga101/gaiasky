@@ -407,7 +407,7 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
             }
             computedSize = (size * (dist / radius) * Constants.THRESHOLD_DOWN);
         }
-        computedSize *= GlobalConf.scene.STAR_BRIGHTNESS * 0.6;
+        computedSize *= GlobalConf.scene.STAR_BRIGHTNESS * 0.4;
 
         return computedSize;
     }
@@ -539,6 +539,22 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
             return ids.get(focusIndex);
         else
             return -1;
+    }
+
+    @Override
+    public double getMuAlpha() {
+        if (focusData != null)
+            return focusData[I_MUALPHA];
+        else
+            return 0;
+    }
+
+    @Override
+    public double getMuDelta() {
+        if (focusData != null)
+            return focusData[I_MUDELTA];
+        else
+            return 0;
     }
 
     /**

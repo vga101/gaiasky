@@ -25,6 +25,8 @@ import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.Pair;
+import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
+import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Quaterniond;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
@@ -106,6 +108,11 @@ public class ParticleGroup extends FadeNode implements I3DTextRenderable, IFocus
     Vector3d focusPosition;
 
     /**
+     * Position in equatorial coordinates of the current focus
+     */
+    Vector2 focusPositionSph;
+
+    /**
      * Focus attributes
      */
     double focusDistToCamera, focusViewAngle, focusViewAngleApparent, focusSize;
@@ -125,6 +132,7 @@ public class ParticleGroup extends FadeNode implements I3DTextRenderable, IFocus
         inGpu = false;
         focusIndex = -1;
         focusPosition = new Vector3d();
+        focusPositionSph = new Vector2();
         EventManager.instance.subscribe(this, Events.FOCUS_CHANGED);
     }
 
@@ -371,7 +379,7 @@ public class ParticleGroup extends FadeNode implements I3DTextRenderable, IFocus
 
     // Spherical position for focus info, will be computed
     public Vector2 getPosSph() {
-        return null;
+        return focusPositionSph;
     }
 
     // Focus dist to camera
@@ -529,6 +537,8 @@ public class ParticleGroup extends FadeNode implements I3DTextRenderable, IFocus
         } else {
             focusData = pointData.get(focusIndex);
             focusPosition.set(focusData[0], focusData[1], focusData[2]);
+            Vector3d possph = Coordinates.cartesianToSpherical(focusPosition, aux3d1.get());
+            focusPositionSph.set((float) (MathUtilsd.radDeg * possph.x), (float) (MathUtilsd.radDeg * possph.y));
         }
     }
 
@@ -552,5 +562,15 @@ public class ParticleGroup extends FadeNode implements I3DTextRenderable, IFocus
     @Override
     public IFocus getFocus(String name) {
         return this;
+    }
+
+    @Override
+    public double getAlpha() {
+        return focusPositionSph.x;
+    }
+
+    @Override
+    public double getDelta() {
+        return focusPositionSph.y;
     }
 }

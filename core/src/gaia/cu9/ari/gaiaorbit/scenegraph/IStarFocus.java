@@ -76,4 +76,18 @@ public interface IStarFocus extends IFocus {
      */
     public float[] getClosestCol();
 
+    /**
+     * Returns the mu alpha in mas/yr
+     * 
+     * @return The mu alpha in mas/yr
+     */
+    public double getMuAlpha();
+
+    /**
+     * Returns the mu delta in mas/yr
+     * 
+     * @return The mu delta in mas/yr
+     */
+    public double getMuDelta();
+
 }

@@ -190,9 +190,8 @@ public class GaiaSkyDesktop implements IObserver {
         Lwjgl3ApplicationConfiguration cfg = new Lwjgl3ApplicationConfiguration();
         cfg.setTitle(GlobalConf.getFullApplicationName());
 
+        Monitor m = Lwjgl3ApplicationConfiguration.getPrimaryMonitor();
         if (GlobalConf.screen.FULLSCREEN) {
-            Monitor m = Lwjgl3ApplicationConfiguration.getPrimaryMonitor();
-
             // Get mode
             DisplayMode[] modes = Lwjgl3ApplicationConfiguration.getDisplayModes(m);
             DisplayMode mymode = null;
@@ -202,13 +201,11 @@ public class GaiaSkyDesktop implements IObserver {
                     break;
                 }
             }
+            // Fallback to default display mode
             if (mymode == null)
-                mymode = Lwjgl3ApplicationConfiguration.getDisplayMode(Gdx.graphics.getPrimaryMonitor());
+                mymode = Lwjgl3ApplicationConfiguration.getDisplayMode(m);
             cfg.setFullscreenMode(mymode);
         } else {
-            // First monitor
-            Monitor[] monitors = Lwjgl3ApplicationConfiguration.getMonitors();
-            Monitor m = monitors[0];
             // Find out position
             DisplayMode dm = Lwjgl3ApplicationConfiguration.getDisplayMode(m);
             int posx = m.virtualX + dm.width / 2 - GlobalConf.screen.getScreenWidth() / 2;

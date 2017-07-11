@@ -18,7 +18,6 @@ import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.IFocus;
 import gaia.cu9.ari.gaiaorbit.scenegraph.IStarFocus;
-import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Planet;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
@@ -298,15 +297,10 @@ public class FocusInfoInterface extends Table implements IObserver, IGuiInterfac
                 focusDEC.setText(nf.format(MathUtilsd.radDeg * pos.y % 360) + "°");
             }
 
-            if (focus instanceof Particle) {
-                Particle part = (Particle) focus;
-                if (part.pmSph != null && part.pmSph.len2() != 0) {
-                    focusMuAlpha.setText(nf.format(part.pmSph.x) + " mas/yr");
-                    focusMuDelta.setText(nf.format(part.pmSph.y) + " mas/yr");
-                } else {
-                    focusMuAlpha.setText("-");
-                    focusMuDelta.setText("-");
-                }
+            if (focus instanceof IStarFocus) {
+                IStarFocus part = (IStarFocus) focus;
+                focusMuAlpha.setText(nf.format(part.getMuAlpha()) + " mas/yr");
+                focusMuDelta.setText(nf.format(part.getMuDelta()) + " mas/yr");
             } else {
                 focusMuAlpha.setText("-");
                 focusMuDelta.setText("-");

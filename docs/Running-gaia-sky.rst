@@ -69,11 +69,18 @@ the ``tar`` file corresponding to your version:
 
 You must extract the contents tarball into the folder ``gaiasky/android/assets/data/octree``. In the case of the multifile package, you need to keep the directory structure.
 
-Please make sure to get the TGAS data files if you want to use them before running from source. To compile the code and run the desktop version of the application:
+Please make sure to get the TGAS data files if you want to use them before running from source. To compile the code and run the desktop version of the application in **Linux** and **Windows**:
 
 .. code-block:: bash
 
     $ gradlew desktop:run
+    
+In **macOS**, use the following command to compile and run:
+
+.. code-block:: bash
+
+    $ gradlew desktop:runmac
+
 
 Package Gaia Sky
 ----------------

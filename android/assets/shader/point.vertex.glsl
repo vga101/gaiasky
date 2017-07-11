@@ -25,8 +25,12 @@ uniform vec4 u_alphaSizeFovBr;
 // VARYINGs
 varying vec4 v_col;
 
-float lint(float x, float x0, float x1, float y0, float y1) {
+float lint2(float x, float x0, float x1, float y0, float y1) {
     return mix(y0, y1, (x - x0) / (x1 - x0));
+}
+
+float lint(float x, float x0, float x1, float y0, float y1) {
+    return y0 + (y1 - y0) * smoothstep(x, x0, x1);
 }
 
 void main() {
@@ -37,7 +41,8 @@ void main() {
     pos = pos + pm;
   
     float viewAngleApparent = atan((a_size * u_alphaSizeFovBr.w) / length(pos)) / u_alphaSizeFovBr.z;
-    float opacity = pow(lint(viewAngleApparent, 0.0, u_thAnglePoint, u_pointAlpha.x, u_pointAlpha.y), 1.2);
+    float opacity = pow(lint2(viewAngleApparent, 0.0, u_thAnglePoint, u_pointAlpha.x, u_pointAlpha.y), 1.2);
+    //float opacity = pow(lint(viewAngleApparent, 0.0, u_thAnglePoint, u_pointAlpha.x, u_pointAlpha.y), 6.0);
     
     v_col = vec4(a_color.rgb, a_color.a * opacity * u_alphaSizeFovBr.x * smoothstep(u_thAnglePoint * 50.0, u_thAnglePoint, viewAngleApparent / 2.0));
 
