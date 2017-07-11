@@ -6,6 +6,7 @@
 
 **Implemented enhancements:**
 
+- Implement GPU-based implementation for star catalogs [\#162](https://github.com/langurmonkey/gaiasky/issues/162)
 - Additive blending [\#160](https://github.com/langurmonkey/gaiasky/issues/160)
 - Enable star particle groups [\#159](https://github.com/langurmonkey/gaiasky/issues/159)
 - Expose high accuracy positons setting in the GUI [\#157](https://github.com/langurmonkey/gaiasky/issues/157)
