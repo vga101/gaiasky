@@ -25,9 +25,8 @@ import gaia.cu9.ari.gaiaorbit.util.ModelCache;
 import gaia.cu9.ari.gaiaorbit.util.Pair;
 
 public class ModelComponent implements Disposable {
-
+    public boolean forceinit = false;
     private static ColorAttribute ambient;
-
 
     static {
         ambient = new ColorAttribute(ColorAttribute.AmbientLight, (float) GlobalConf.scene.AMBIENT_LIGHT, (float) GlobalConf.scene.AMBIENT_LIGHT, (float) GlobalConf.scene.AMBIENT_LIGHT, 1f);
@@ -62,7 +61,7 @@ public class ModelComponent implements Disposable {
 
     public double scale = 1d;
     public boolean culling = true;
-    private boolean initialised;
+    private boolean initialised, loading;
 
     private AssetManager manager;
     private float[] cc;
@@ -93,7 +92,7 @@ public class ModelComponent implements Disposable {
             AssetBean.addAsset(modelFile, Model.class);
         }
 
-        if (!GlobalConf.scene.LAZY_TEXTURE_INIT && tc != null) {
+        if (forceinit || !GlobalConf.scene.LAZY_TEXTURE_INIT && tc != null) {
             tc.initialize();
         }
     }
@@ -129,7 +128,7 @@ public class ModelComponent implements Disposable {
         materials.get("base").clear();
 
         // INITIALIZE MATERIAL
-        if (!GlobalConf.scene.LAZY_TEXTURE_INIT && tc != null) {
+        if (forceinit || !GlobalConf.scene.LAZY_TEXTURE_INIT && tc != null) {
             tc.initMaterial(manager, materials, cc, culling);
         }
 
@@ -138,6 +137,8 @@ public class ModelComponent implements Disposable {
 
         // Initialised
         initialised = !GlobalConf.scene.LAZY_TEXTURE_INIT;
+        // Loading
+        loading = false;
     }
 
     /**
@@ -147,13 +148,22 @@ public class ModelComponent implements Disposable {
         if (GlobalConf.scene.LAZY_TEXTURE_INIT && !initialised) {
 
             if (tc != null) {
-                Logger.info(I18n.bundle.format("notif.loading", tc.base));
-                tc.initialize(manager);
-                manager.finishLoading();
-                tc.initMaterial(manager, instance, cc, culling);
+                if (!loading) {
+                    Logger.info(I18n.bundle.format("notif.loading", tc.base));
+                    tc.initialize(manager);
+                    // Set to loading
+                    loading = true;
+                } else if (tc.isFinishedLoading(manager)) {
+                    Gdx.app.postRunnable(() -> {
+                        tc.initMaterial(manager, instance, cc, culling);
+                    });
+
+                    // Set to initialised
+                    initialised = true;
+                    loading = false;
+                }
             }
 
-            initialised = true;
         }
 
     }

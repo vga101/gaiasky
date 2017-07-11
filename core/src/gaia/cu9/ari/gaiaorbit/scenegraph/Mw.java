@@ -27,6 +27,8 @@ public class Mw extends AbstractPositionEntity implements IModelRenderable {
 
     @Override
     public void initialize() {
+        // Force texture loading
+        mc.forceinit = true;
         mc.initialize();
         mc.env.set(new ColorAttribute(ColorAttribute.AmbientLight, cc[0], cc[1], cc[2], 1));
     }

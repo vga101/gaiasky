@@ -62,6 +62,16 @@ public class TextureComponent {
         ring = addToLoad(ring);
     }
 
+    public boolean isFinishedLoading(AssetManager manager) {
+        return isFL(base, manager) && isFL(normal, manager) && isFL(specular, manager) && isFL(night, manager) && isFL(ring, manager);
+    }
+
+    public boolean isFL(String tex, AssetManager manager) {
+        if (tex == null)
+            return true;
+        return manager.isLoaded(tex);
+    }
+
     /**
      * Adds the texture to load and unpacks any star (*) with the current
      * quality setting.
