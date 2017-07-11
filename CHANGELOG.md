@@ -6,6 +6,10 @@
 
 **Implemented enhancements:**
 
+- Additive blending [\#160](https://github.com/langurmonkey/gaiasky/issues/160)
+- Enable star particle groups [\#159](https://github.com/langurmonkey/gaiasky/issues/159)
+- Expose high accuracy positons setting in the GUI [\#157](https://github.com/langurmonkey/gaiasky/issues/157)
+- Allow high accuracy in VSOP87 model [\#156](https://github.com/langurmonkey/gaiasky/issues/156)
 - Front end to manage game controller mappings [\#155](https://github.com/langurmonkey/gaiasky/issues/155)
 - Add nearby galaxies, NBG [\#154](https://github.com/langurmonkey/gaiasky/issues/154)
 - Add Oort cloud [\#152](https://github.com/langurmonkey/gaiasky/issues/152)
@@ -37,6 +41,7 @@
 
 **Fixed bugs:**
 
+- Milky Way texture off when rotated [\#158](https://github.com/langurmonkey/gaiasky/issues/158)
 - Fix controller input in non-cinematic mode [\#142](https://github.com/langurmonkey/gaiasky/issues/142)
 - Fix smooth transitions in multithread mode [\#141](https://github.com/langurmonkey/gaiasky/issues/141)
 - Fixe Quad line renderer artifacts [\#137](https://github.com/langurmonkey/gaiasky/issues/137)
@@ -67,6 +72,7 @@
 
 **Merged pull requests:**
 
+- Fix URL to home page [\#161](https://github.com/langurmonkey/gaiasky/pull/161) ([vga101](https://github.com/vga101))
 - Fix README rendering [\#115](https://github.com/langurmonkey/gaiasky/pull/115) ([rogersachan](https://github.com/rogersachan))
 - Fix links to scripting documentation [\#113](https://github.com/langurmonkey/gaiasky/pull/113) ([vga101](https://github.com/vga101))
 - Fix TGAS extraction path in running instructions [\#110](https://github.com/langurmonkey/gaiasky/pull/110) ([vga101](https://github.com/vga101))

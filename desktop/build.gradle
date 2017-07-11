@@ -28,7 +28,7 @@ task run(dependsOn: jar, type: JavaExec, description: "Runs the desktop project 
     // Parallel GC
     //jvmArgs = ['-Xms2g', '-Xmx4g', '-XX:+UseParNewGC']
     // CMS GC
-    jvmArgs = ['-server', '-Xms4g', '-Xmx8g', '-XX:+UseConcMarkSweepGC', '-XX:+UseParNewGC', '-XX:MaxGCPauseMillis=5', '-XX:+CMSParallelRemarkEnabled', '-XX:CMSInitiatingOccupancyFraction=60', '-XX:MaxTenuringThreshold=4', '-XX:MaxNewSize=384m', '-XX:NewSize=384m', '-XX:SurvivorRatio=12']
+    jvmArgs = ['-server', '-Xms2g', '-Xmx3g', '-XX:+UseConcMarkSweepGC', '-XX:+UseParNewGC', '-XX:MaxGCPauseMillis=5', '-XX:+CMSParallelRemarkEnabled', '-XX:CMSInitiatingOccupancyFraction=60', '-XX:MaxTenuringThreshold=4', '-XX:MaxNewSize=384m', '-XX:NewSize=384m', '-XX:SurvivorRatio=12']
     // G1 GC
     //jvmArgs = ['-Xms2g', '-Xmx4g', '-XX:+UseG1GC']
     classpath = sourceSets.main.runtimeClasspath
@@ -46,7 +46,7 @@ task runmac(dependsOn: jar, type: JavaExec, description: "Runs the desktop proje
     // Parallel GC
     //jvmArgs = ['-Xms2g', '-Xmx4g', '-XX:+UseParNewGC']
     // CMS GC
-    jvmArgs = ['-server', '-Xms2g', '-Xmx4g', '-XstartOnFirstThread', '-Dorg.lwjgl.opengl.Display.enableOSXFullscreenModeAPI=true', '-XX:+UseConcMarkSweepGC', '-XX:+UseParNewGC', '-XX:MaxGCPauseMillis=5', '-XX:+CMSParallelRemarkEnabled', '-XX:CMSInitiatingOccupancyFraction=60', '-XX:MaxTenuringThreshold=4', '-XX:MaxNewSize=384m', '-XX:NewSize=384m', '-XX:SurvivorRatio=12']
+    jvmArgs = ['-server', '-Xms2g', '-Xmx3g', '-XstartOnFirstThread', '-Dorg.lwjgl.opengl.Display.enableOSXFullscreenModeAPI=true', '-XX:+UseConcMarkSweepGC', '-XX:+UseParNewGC', '-XX:MaxGCPauseMillis=5', '-XX:+CMSParallelRemarkEnabled', '-XX:CMSInitiatingOccupancyFraction=60', '-XX:MaxTenuringThreshold=4', '-XX:MaxNewSize=384m', '-XX:NewSize=384m', '-XX:SurvivorRatio=12']
     // G1 GC
     //jvmArgs = ['-Xms2g', '-Xmx4g', '-XX:+UseG1GC']
     classpath = sourceSets.main.runtimeClasspath
@@ -160,12 +160,8 @@ task dist (dependsOn: gaiaskyJar, description: "Compiles the project, creates th
 	
 			exclude "**/tgas_201507"
 			exclude "**/tgas_final"
-			
-			exclude "**/hipparcos.csv"
-			exclude "**/hip_pm.csv"
-			
-			exclude "**/tgas_final_metadata.bin"
-			exclude "**/tgas_final_particles.bin"
+			exclude "**/octree"
+			exclude "**/hyg"
 			
 			exclude "**/models/cassini"
 			exclude "**/models/rosetta"
@@ -176,20 +172,18 @@ task dist (dependsOn: gaiaskyJar, description: "Compiles the project, creates th
 			exclude "**/rosetta.xyz"
 	
 			exclude "**/uvdebug.png"
-
-	                exclude "**/*.tif"
 	        
 	                exclude "**/attitudeindicator.png"
 	
 	                exclude "**/*-wgl.json"
 	                exclude "**/*-wgl-fp.json"
 	                
-	                exclude "**/catalog-stil.json"
-	                exclude "**/catalog-sun.json"
-	                exclude "**/catalog-tgas.json"
-	                exclude "**/catalog-tgas-octree.json"
 	                exclude "**/catalog-dr2.json"
-	                exclude "**/catalog-hipparcos.json"
+	                exclude "**/catalog-hyg.json"
+	                exclude "**/catalog-sun.json"
+	                exclude "**/catalog-tgas-octree-multifile.json"
+	                exclude "**/catalog-tgas-octree.json"
+	                exclude "**/catalog-tgas.json"
 	                
 	                exclude "**/constel_id.csv"
 	
