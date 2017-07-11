@@ -22,55 +22,54 @@ public class WebGLConfInit extends ConfInit {
 
     @Override
     public void initGlobalConf() throws Exception {
-	this.webgl = true;
+        this.webgl = true;
 
-	GlobalConf.updateScaleFactor(1f);
+        GlobalConf.updateScaleFactor(1f);
 
-	VersionConf vc = new VersionConf();
-	vc.initialize("0.706b", null, null, null, null, 0, 706, 0);
+        VersionConf vc = new VersionConf();
+        vc.initialize("0.706b", null, null, null, null, 0, 706, 0);
 
-	PerformanceConf pc = new PerformanceConf();
-	pc.initialize(false, 1);
+        PerformanceConf pc = new PerformanceConf();
+        pc.initialize(false, 1);
 
-	PostprocessConf ppc = new PostprocessConf();
-	ppc.initialize(4, 0, 0, false, false, false, 0, 1);
+        PostprocessConf ppc = new PostprocessConf();
+        ppc.initialize(4, 0, 0, false, false, false, 0, 1);
 
-	RuntimeConf rc = new RuntimeConf();
-	rc.initialize(true, false, false, false, true, false, 8f, false, false);
+        RuntimeConf rc = new RuntimeConf();
+        rc.initialize(true, false, false, false, true, false, 8f, false, false);
 
-	DataConf dc = new DataConf();
-	dc.initialize("data/catalog-hyg.json", "data/data-wgl.json", true, 7.8f);
+        DataConf dc = new DataConf();
+        dc.initialize("data/catalog-hyg.json", "data/data-wgl.json", true, 7.8f);
 
-	ProgramConf prc = new ProgramConf();
-	prc.initialize(false, false, "dark-green", "en-GB", false, StereoProfile.CROSSEYE);
+        ProgramConf prc = new ProgramConf();
+        prc.initialize(false, false, "dark-green", "en-GB", false, StereoProfile.CROSSEYE);
 
-	ComponentType[] cts = ComponentType.values();
-	boolean[] VISIBILITY = new boolean[cts.length];
-	VISIBILITY[ComponentType.Stars.ordinal()] = true;
-	VISIBILITY[ComponentType.Atmospheres.ordinal()] = true;
-	VISIBILITY[ComponentType.Planets.ordinal()] = true;
-	VISIBILITY[ComponentType.Moons.ordinal()] = true;
-	VISIBILITY[ComponentType.Orbits.ordinal()] = true;
-	VISIBILITY[ComponentType.Satellites.ordinal()] = true;
-	VISIBILITY[ComponentType.MilkyWay.ordinal()] = true;
-	VISIBILITY[ComponentType.Asteroids.ordinal()] = true;
-	VISIBILITY[ComponentType.Galaxies.ordinal()] = true;
-	VISIBILITY[ComponentType.Labels.ordinal()] = false;
-	VISIBILITY[ComponentType.Others.ordinal()] = true;
-	SceneConf sc = new SceneConf();
-	sc.initialize(1, 2500, 6f, 0f, 50, 2.1f, 1866f, 2286f, 13, true, false, 50.0f, VISIBILITY, 2, 0, 0f, 1.6e-7f,
-		0f, 0.1f, 0.8f, false, 0.6f, 1.5f, false, 20f, 1e1f, 1f, true, 100, true, false, true, true);
+        ComponentType[] cts = ComponentType.values();
+        boolean[] VISIBILITY = new boolean[cts.length];
+        VISIBILITY[ComponentType.Stars.ordinal()] = true;
+        VISIBILITY[ComponentType.Atmospheres.ordinal()] = true;
+        VISIBILITY[ComponentType.Planets.ordinal()] = true;
+        VISIBILITY[ComponentType.Moons.ordinal()] = true;
+        VISIBILITY[ComponentType.Orbits.ordinal()] = true;
+        VISIBILITY[ComponentType.Satellites.ordinal()] = true;
+        VISIBILITY[ComponentType.MilkyWay.ordinal()] = true;
+        VISIBILITY[ComponentType.Asteroids.ordinal()] = true;
+        VISIBILITY[ComponentType.Galaxies.ordinal()] = true;
+        VISIBILITY[ComponentType.Labels.ordinal()] = false;
+        VISIBILITY[ComponentType.Others.ordinal()] = true;
+        SceneConf sc = new SceneConf();
+        sc.initialize(1, 2500, 6f, 0f, 50, 2.1f, 1866f, 2286f, 13, true, false, 50.0f, VISIBILITY, 0, 0f, 1.6e-7f, 0f, 0.1f, 0.8f, false, 0.6f, 1.5f, false, 20f, 1e1f, 1f, true, 100, true, false, true, true);
 
-	FrameConf fc = new FrameConf();
+        FrameConf fc = new FrameConf();
 
-	ScreenConf scrc = new ScreenConf();
+        ScreenConf scrc = new ScreenConf();
 
-	ScreenshotConf shc = new ScreenshotConf();
+        ScreenshotConf shc = new ScreenshotConf();
 
-	ControlsConf cc = new ControlsConf();
-	cc.initialize("mappings/xbox360.controller", true);
+        ControlsConf cc = new ControlsConf();
+        cc.initialize("mappings/xbox360.controller", true);
 
-	GlobalConf.initialize(vc, prc, sc, dc, rc, ppc, pc, fc, scrc, shc, cc);
+        GlobalConf.initialize(vc, prc, sc, dc, rc, ppc, pc, fc, scrc, shc, cc);
 
     }
 

@@ -52,7 +52,6 @@ import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
-import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.SysUtilsFactory;
 import gaia.cu9.ari.gaiaorbit.util.format.INumberFormat;
 import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
@@ -974,18 +973,19 @@ public class PreferencesWindow extends GenericDialog {
         OwnLabel titleData = new OwnLabel(txt("gui.data.source"), skin, "help-title");
         Table datasource = new Table(skin);
 
-        hyg = new OwnCheckBox(txt("gui.data.hyg"), skin, "radio", pad);
-        hyg.setChecked(GlobalConf.data.CATALOG_JSON_FILE.equals(GlobalConf.data.HYG_JSON_FILE));
+        //        hyg = new OwnCheckBox(txt("gui.data.hyg"), skin, "radio", pad);
+        //        hyg.setChecked(GlobalConf.data.CATALOG_JSON_FILE.equals(GlobalConf.data.HYG_JSON_FILE));
         tgas = new OwnCheckBox(txt("gui.data.tgas"), skin, "radio", pad);
-        tgas.setChecked(GlobalConf.data.CATALOG_JSON_FILE.equals(GlobalConf.data.TGAS_JSON_FILE));
-        dr2 = new OwnCheckBox(txt("gui.data.dr2"), skin, "radio", pad);
-        dr2.setChecked(GlobalConf.data.CATALOG_JSON_FILE.equals(GlobalConf.data.DR2_JSON_FILE));
+        tgas.setChecked(true);
+        //        dr2 = new OwnCheckBox(txt("gui.data.dr2"), skin, "radio", pad);
+        //        dr2.setChecked(GlobalConf.data.CATALOG_JSON_FILE.equals(GlobalConf.data.DR2_JSON_FILE));
 
         //new ButtonGroup<CheckBox>(hyg, tgas, dr2);
-        new ButtonGroup<CheckBox>(hyg, tgas);
+        //new ButtonGroup<CheckBox>(hyg, tgas);
+        new ButtonGroup<CheckBox>(tgas);
 
         // Add to table
-        datasource.add(hyg).left().padBottom(pad).row();
+        //datasource.add(hyg).left().padBottom(pad).row();
         datasource.add(tgas).left().padBottom(pad).row();
         //datasource.add(dr2).left().padBottom(pad).row();
         final Cell<Actor> noticeDataCell = datasource.add();
@@ -1010,7 +1010,7 @@ public class PreferencesWindow extends GenericDialog {
                 return false;
             }
         };
-        hyg.addListener(dataNoticeListener);
+        //hyg.addListener(dataNoticeListener);
         tgas.addListener(dataNoticeListener);
         //dr2.addListener(dataNoticeListener);
 
@@ -1226,14 +1226,14 @@ public class PreferencesWindow extends GenericDialog {
         GlobalConf.scene.OCTANT_THRESHOLD_1 = GlobalConf.scene.OCTREE_PARTICLE_FADE ? GlobalConf.scene.OCTANT_THRESHOLD_0 + 0.4f : GlobalConf.scene.OCTANT_THRESHOLD_0;
 
         // Data
-        if (hyg.isChecked())
-            GlobalConf.data.CATALOG_JSON_FILE = GlobalConf.data.HYG_JSON_FILE;
-        else if (tgas.isChecked())
-            GlobalConf.data.CATALOG_JSON_FILE = GlobalConf.data.TGAS_JSON_FILE;
-        else if (dr2.isChecked())
-            GlobalConf.data.CATALOG_JSON_FILE = GlobalConf.data.DR2_JSON_FILE;
-        else if (GlobalConf.data.CATALOG_JSON_FILE == null || GlobalConf.data.CATALOG_JSON_FILE.length() == 0)
-            Logger.error(this.getClass().getSimpleName(), "No catalog file selected!");
+        //        if (hyg.isChecked())
+        //            GlobalConf.data.CATALOG_JSON_FILE = GlobalConf.data.HYG_JSON_FILE;
+        //        else if (tgas.isChecked())
+        //            GlobalConf.data.CATALOG_JSON_FILE = GlobalConf.data.TGAS_JSON_FILE;
+        //        else if (dr2.isChecked())
+        //            GlobalConf.data.CATALOG_JSON_FILE = GlobalConf.data.DR2_JSON_FILE;
+        //        else if (GlobalConf.data.CATALOG_JSON_FILE == null || GlobalConf.data.CATALOG_JSON_FILE.length() == 0)
+        //            Logger.error(this.getClass().getSimpleName(), "No catalog file selected!");
 
         boolean hapos = GlobalConf.data.HIGH_ACCURACY_POSITIONS;
         GlobalConf.data.HIGH_ACCURACY_POSITIONS = highAccuracyPositions.isChecked();

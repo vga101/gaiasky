@@ -374,25 +374,6 @@ public class GlobalConf {
 
         /** The json file with the catalogue(s) to load **/
         public String CATALOG_JSON_FILE;
-        /** HYG JSON file **/
-        public String HYG_JSON_FILE;
-        /** TGAS JSON file **/
-        public String TGAS_JSON_FILE;
-        /** DR2 JSON file **/
-        public String DR2_JSON_FILE;
-
-        /** Whether we are connected to the Object Server in this session **/
-        public boolean OBJECT_SERVER_CONNECTION = false;
-        /** If we use the ObjectServer, this contains the visualization id **/
-        public String VISUALIZATION_ID;
-        /** Object server IP address/hostname **/
-        public String OBJECT_SERVER_HOSTNAME = "localhost";
-        /** Object server port **/
-        public int OBJECT_SERVER_PORT = 5555;
-        /** Object server user name **/
-        public String OBJECT_SERVER_USERNAME;
-        /** Object Server pass **/
-        public String OBJECT_SERVER_PASSWORD;
 
         /**
          * High accuracy positions for planets and moon - use all terms of
@@ -409,20 +390,12 @@ public class GlobalConf {
          **/
         public boolean REAL_GAIA_ATTITUDE;
 
-        public void initialize(boolean oBJECT_SERVER_CONNECTION, String cATALOG_JSON_FILE, String hYG_JSON_FILE, String tGAS_JSON_FILE, String dR2_JSON_FILE, String oBJECTS_JSON_FILE, String[] oBJECTS_JSON_FILE_GQ, String oBJECT_SERVER_HOSTNAME, int oBJECT_SERVER_PORT, String vISUALIZATION_ID, float lIMIT_MAG_LOAD, boolean rEAL_GAIA_ATTITUDE, boolean hIGH_ACCURACY_POSITIONS) {
-            OBJECT_SERVER_CONNECTION = oBJECT_SERVER_CONNECTION;
+        public void initialize(String cATALOG_JSON_FILE, String oBJECTS_JSON_FILE, String[] oBJECTS_JSON_FILE_GQ, float lIMIT_MAG_LOAD, boolean rEAL_GAIA_ATTITUDE, boolean hIGH_ACCURACY_POSITIONS) {
 
             CATALOG_JSON_FILE = cATALOG_JSON_FILE;
-            HYG_JSON_FILE = hYG_JSON_FILE;
-            TGAS_JSON_FILE = tGAS_JSON_FILE;
-            DR2_JSON_FILE = dR2_JSON_FILE;
 
             OBJECTS_JSON_FILE = oBJECTS_JSON_FILE;
             OBJECTS_JSON_FILE_GQ = oBJECTS_JSON_FILE_GQ;
-
-            OBJECT_SERVER_HOSTNAME = oBJECT_SERVER_HOSTNAME;
-            OBJECT_SERVER_PORT = oBJECT_SERVER_PORT;
-            VISUALIZATION_ID = vISUALIZATION_ID;
             LIMIT_MAG_LOAD = lIMIT_MAG_LOAD;
             REAL_GAIA_ATTITUDE = rEAL_GAIA_ATTITUDE;
             HIGH_ACCURACY_POSITIONS = hIGH_ACCURACY_POSITIONS;
@@ -431,14 +404,12 @@ public class GlobalConf {
         public void initialize(String cATALOG_JSON_FILE, String oBJECTS_JSON_FILE, boolean dATA_SOURCE_LOCAL, float lIMIT_MAG_LOAD) {
             this.CATALOG_JSON_FILE = cATALOG_JSON_FILE;
             this.OBJECTS_JSON_FILE = oBJECTS_JSON_FILE;
-            this.OBJECT_SERVER_CONNECTION = dATA_SOURCE_LOCAL;
             this.LIMIT_MAG_LOAD = lIMIT_MAG_LOAD;
         }
 
         public void initialize(String cATALOG_JSON_FILE, String dATA_JSON_FILE, boolean dATA_SOURCE_LOCAL, float lIMIT_MAG_LOAD, boolean rEAL_GAIA_ATTITUDE) {
             this.CATALOG_JSON_FILE = cATALOG_JSON_FILE;
             this.OBJECTS_JSON_FILE = dATA_JSON_FILE;
-            this.OBJECT_SERVER_CONNECTION = dATA_SOURCE_LOCAL;
             this.LIMIT_MAG_LOAD = lIMIT_MAG_LOAD;
             this.REAL_GAIA_ATTITUDE = rEAL_GAIA_ATTITUDE;
         }
@@ -698,8 +669,6 @@ public class GlobalConf {
         public boolean STAR_COLOR_TRANSIT;
         public boolean ONLY_OBSERVED_STARS;
         public boolean COMPUTE_GAIA_SCAN;
-        /** The pixel render system: 0 - normal, 1 - bloom, 2 - fuzzy **/
-        public int PIXEL_RENDERER;
         /** The line render system: 0 - normal, 1 - shader **/
         public int LINE_RENDERER;
         /** The graphics quality mode: 0 - high, 1 - normal, 2 - low **/
@@ -747,10 +716,10 @@ public class GlobalConf {
         public float OCTANT_THRESHOLD_1;
 
         public SceneConf() {
-            EventManager.instance.subscribe(this, Events.TOGGLE_VISIBILITY_CMD, Events.FOCUS_LOCK_CMD, Events.ORIENTATION_LOCK_CMD, Events.PROPER_MOTIONS_CMD, Events.STAR_BRIGHTNESS_CMD, Events.PM_LEN_FACTOR_CMD, Events.PM_NUM_FACTOR_CMD, Events.FOV_CHANGED_CMD, Events.CAMERA_SPEED_CMD, Events.ROTATION_SPEED_CMD, Events.TURNING_SPEED_CMD, Events.SPEED_LIMIT_CMD, Events.TRANSIT_COLOUR_CMD, Events.ONLY_OBSERVED_STARS_CMD, Events.COMPUTE_GAIA_SCAN_CMD, Events.PIXEL_RENDERER_CMD, Events.OCTREE_PARTICLE_FADE_CMD, Events.STAR_POINT_SIZE_CMD, Events.STAR_POINT_SIZE_INCREASE_CMD, Events.STAR_POINT_SIZE_DECREASE_CMD, Events.STAR_POINT_SIZE_RESET_CMD, Events.STAR_MIN_OPACITY_CMD, Events.AMBIENT_LIGHT_CMD, Events.GALAXY_3D_CMD, Events.CROSSHAIR_CMD);
+            EventManager.instance.subscribe(this, Events.TOGGLE_VISIBILITY_CMD, Events.FOCUS_LOCK_CMD, Events.ORIENTATION_LOCK_CMD, Events.PROPER_MOTIONS_CMD, Events.STAR_BRIGHTNESS_CMD, Events.PM_LEN_FACTOR_CMD, Events.PM_NUM_FACTOR_CMD, Events.FOV_CHANGED_CMD, Events.CAMERA_SPEED_CMD, Events.ROTATION_SPEED_CMD, Events.TURNING_SPEED_CMD, Events.SPEED_LIMIT_CMD, Events.TRANSIT_COLOUR_CMD, Events.ONLY_OBSERVED_STARS_CMD, Events.COMPUTE_GAIA_SCAN_CMD, Events.OCTREE_PARTICLE_FADE_CMD, Events.STAR_POINT_SIZE_CMD, Events.STAR_POINT_SIZE_INCREASE_CMD, Events.STAR_POINT_SIZE_DECREASE_CMD, Events.STAR_POINT_SIZE_RESET_CMD, Events.STAR_MIN_OPACITY_CMD, Events.AMBIENT_LIGHT_CMD, Events.GALAXY_3D_CMD, Events.CROSSHAIR_CMD);
         }
 
-        public void initialize(int gRAPHICS_QUALITY, long oBJECT_FADE_MS, float sTAR_BRIGHTNESS, float aMBIENT_LIGHT, int cAMERA_FOV, float cAMERA_SPEED, float tURNING_SPEED, float rOTATION_SPEED, int cAMERA_SPEED_LIMIT_IDX, boolean fOCUS_LOCK, boolean fOCUS_LOCK_ORIENTATION, float lABEL_NUMBER_FACTOR, boolean[] vISIBILITY, int pIXEL_RENDERER, int lINE_RENDERER, double sTAR_TH_ANGLE_NONE, double sTAR_TH_ANGLE_POINT, double sTAR_TH_ANGLE_QUAD, float pOINT_ALPHA_MIN, float pOINT_ALPHA_MAX,
+        public void initialize(int gRAPHICS_QUALITY, long oBJECT_FADE_MS, float sTAR_BRIGHTNESS, float aMBIENT_LIGHT, int cAMERA_FOV, float cAMERA_SPEED, float tURNING_SPEED, float rOTATION_SPEED, int cAMERA_SPEED_LIMIT_IDX, boolean fOCUS_LOCK, boolean fOCUS_LOCK_ORIENTATION, float lABEL_NUMBER_FACTOR, boolean[] vISIBILITY, int lINE_RENDERER, double sTAR_TH_ANGLE_NONE, double sTAR_TH_ANGLE_POINT, double sTAR_TH_ANGLE_QUAD, float pOINT_ALPHA_MIN, float pOINT_ALPHA_MAX,
                 boolean oCTREE_PARTICLE_FADE, float oCTANT_TH_ANGLE_0, float oCTANT_TH_ANGLE_1, boolean pROPER_MOTION_VECTORS, float pM_NUM_FACTOR, float pM_LEN_FACTOR, float sTAR_POINT_SIZE, boolean gALAXY_3D, int cUBEMAP_FACE_RESOLUTION, boolean cROSSHAIR, boolean cINEMATIC_CAMERA, boolean lAZY_TEXTURE_INIT, boolean fREE_CAMERA_TARGET_MODE_ON) {
             GRAPHICS_QUALITY = gRAPHICS_QUALITY;
             OBJECT_FADE_MS = oBJECT_FADE_MS;
@@ -767,7 +736,6 @@ public class GlobalConf {
             FOCUS_LOCK_ORIENTATION = fOCUS_LOCK_ORIENTATION;
             LABEL_NUMBER_FACTOR = lABEL_NUMBER_FACTOR;
             VISIBILITY = vISIBILITY;
-            PIXEL_RENDERER = pIXEL_RENDERER;
             LINE_RENDERER = lINE_RENDERER;
             STAR_THRESHOLD_NONE = sTAR_TH_ANGLE_NONE;
             STAR_THRESHOLD_POINT = sTAR_TH_ANGLE_POINT;
@@ -898,9 +866,6 @@ public class GlobalConf {
                 CAMERA_SPEED_LIMIT_IDX = (Integer) data[0];
                 updateSpeedLimit();
                 break;
-            case PIXEL_RENDERER_CMD:
-                PIXEL_RENDERER = (Integer) data[0];
-                break;
             case OCTREE_PARTICLE_FADE_CMD:
                 OCTREE_PARTICLE_FADE = (boolean) data[1];
                 break;
@@ -934,18 +899,6 @@ public class GlobalConf {
                 break;
             }
 
-        }
-
-        public boolean isNormalPixelRenderer() {
-            return PIXEL_RENDERER == 0;
-        }
-
-        public boolean isBloomPixelRenderer() {
-            return PIXEL_RENDERER == 1;
-        }
-
-        public boolean isFuzzyPixelRenderer() {
-            return PIXEL_RENDERER == 2;
         }
 
         public boolean isNormalLineRenderer() {

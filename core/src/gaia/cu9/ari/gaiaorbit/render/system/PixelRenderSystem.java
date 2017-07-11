@@ -43,15 +43,7 @@ public class PixelRenderSystem extends ImmediateRenderSystem implements IObserve
         BRIGHTNESS_FACTOR = Constants.webgl ? 15 : 10;
         this.ct = ct;
         this.alphaSizeFovBr = new float[4];
-        initializePointSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         initializing = true;
-    }
-
-    protected void initializePointSize(int width, int height) {
-        float defaultPointSize = GlobalConf.runtime.STRIPPED_FOV_MODE ? 3 : 8;
-        if (GlobalConf.scene.STAR_POINT_SIZE < 0) {
-            GlobalConf.scene.STAR_POINT_SIZE = defaultPointSize;
-        }
     }
 
     @Override

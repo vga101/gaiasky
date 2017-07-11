@@ -92,7 +92,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
      * Whether the dataset has been chosen. If this is set to false, a window
      * will prompt at startup asking for the dataset to use.
      */
-    private static boolean DSCHOSEN = false;
+    private static boolean DSCHOSEN = true;
 
     /**
      * Private state boolean indicating whether we are still loading resources.

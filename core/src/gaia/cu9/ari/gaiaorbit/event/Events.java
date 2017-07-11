@@ -512,8 +512,6 @@ public enum Events {
     /** Passes the OrbitData and the file name **/
     ORBIT_DATA_LOADED,
 
-    /** Contains the index of the new renderer **/
-    PIXEL_RENDERER_CMD,
     /**
      * Configures the render system. Contains width, height, FPS, folder and
      * file
