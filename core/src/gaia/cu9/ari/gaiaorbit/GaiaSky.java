@@ -257,6 +257,12 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
      */
     private void doneLoading() {
 
+        // Dispose of initial and loading GUIs
+        initialGui.dispose();
+        initialGui = null;
+        loadingGui.dispose();
+        loadingGui = null;
+
         // Schedule debug
         Timer.schedule(new Task() {
             @Override
@@ -294,17 +300,10 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         sgr.resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
         // First time, set assets
-        for (SceneGraphNode sgn : sg.getNodes()) {
+        Array<SceneGraphNode> nodes = sg.getNodes();
+        for (SceneGraphNode sgn : nodes) {
             sgn.doneLoading(manager);
         }
-
-        // Update whole tree to initialize positions
-        OctreeNode.LOAD_ACTIVE = false;
-        time.update(0.000000001f);
-        // Update whole scene graph
-        sg.update(time, cam);
-        time.update(0);
-        OctreeNode.LOAD_ACTIVE = true;
 
         // Initialise input handlers
         inputMultiplexer = new InputMultiplexer();
@@ -322,18 +321,14 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
 
         EventManager.instance.post(Events.SCENE_GRAPH_LOADED, sg);
 
-        // Stop messages
-        initialGui.dispose();
-        initialGui = null;
-        loadingGui.dispose();
-        loadingGui = null;
-
-        // Update whole tree to reinitialise positions with the new camera
-        // position
-        time.update(0.0000000001f);
+        // Update whole tree to initialize positions
+        OctreeNode.LOAD_ACTIVE = false;
+        time.update(0.000000001f);
+        // Update whole scene graph
         sg.update(time, cam);
         sgr.clearLists();
         time.update(0);
+        OctreeNode.LOAD_ACTIVE = true;
 
         // Initialise time in GUI
         EventManager.instance.post(Events.TIME_CHANGE_INFO, time.getTime());
