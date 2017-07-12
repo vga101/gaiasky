@@ -12,17 +12,17 @@ System requirements
 Here are the minimum requirements to run this software:
 
 +------------------------+----------------------------------------------------------------------------------+
-| **Operating system**   | Windows 7+ / MacOS X / Linux                                                     |
+| **Operating system**   | Windows 7+ / macOS X / Linux                                                     |
 +========================+==================================================================================+
 | **CPU**                | Intel Core i3 3rd Generation or similar                                          |
 +------------------------+----------------------------------------------------------------------------------+
-| **GPU**                | OpenGL 3.0 support / Intel HD 4000 / Nvidia GeForce 8400 GS, 500 MB GRAM         |
+| **GPU**                | OpenGL 3.0 support / Intel HD 4000 / Nvidia GeForce 8400 GS, 512 MB GRAM         |
 +------------------------+----------------------------------------------------------------------------------+
 | **Memory**             | 3 GB RAM                                                                         |
 +------------------------+----------------------------------------------------------------------------------+
-| **Hard drive**         | 230 MB of free space                                                             |
+| **Hard drive**         | 400 MB of free disk space                                                        |
 +------------------------+----------------------------------------------------------------------------------+
-| **Java**               | On Linux, you need the Java Runtime Environment 7+ installed (openJRE is fine)   |
+| **Java**               | On Linux, you need the Java Runtime Environment 8+ installed (openJRE is fine)   |
 +------------------------+----------------------------------------------------------------------------------+
 
 Installation and uninstallation
@@ -136,14 +136,13 @@ Follow the on-screen instructions to proceed with the installation.
 In order to **uninstall**, just execute the ``uninstall`` file in the
 installation folder.
 
-OS X - Mac
-----------
+macOS X
+-------
 
-For OS X we provide a ``gaiasky_macos_<version>.dmg`` file
+For macOS we provide a ``gaiasky_macos_<version>.dmg`` file
 `here <https://zah.uni-heidelberg.de/gaia/outreach/gaiasky/downloads/>`__,
 which is installed by unpacking into the Applications folder. Once
-unpacked, the installer will come up, you just need to follow its
-instructions.
+unpacked, it is ready to run by simply clicking on it.
 
 Compressed (TGZ) package
 ------------------------
@@ -191,8 +190,8 @@ First, clone the repository:
     $ git clone https://github.com/langurmonkey/gaiasky.git
     $ cd gaiasky
 
-Compile and run
----------------
+Compiling and running
+---------------------
 
 To compile the code and run the desktop version of the application:
 
@@ -200,8 +199,8 @@ To compile the code and run the desktop version of the application:
 
     $ gradlew desktop:run
 
-Package Gaia Sky
-----------------
+Packaging Gaia Sky
+------------------
 
 To pack the application into a ``tar`` file:
 

@@ -17,6 +17,7 @@ import gaia.cu9.ari.gaiaorbit.util.Logger;
 
 /**
  * Writes JPG images
+ * 
  * @author tsagrista
  *
  */

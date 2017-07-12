@@ -13,12 +13,10 @@ import javax.swing.plaf.FontUIResource;
 
 import com.badlogic.gdx.Files;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Graphics.DisplayMode;
-import com.badlogic.gdx.Graphics.Monitor;
-import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
-import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
-import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Files;
-import com.badlogic.gdx.backends.lwjgl3.Lwjgl3WindowListener;
+import com.badlogic.gdx.LifecycleListener;
+import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
+import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
+import com.badlogic.gdx.backends.lwjgl.LwjglFiles;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.brsanthu.googleanalytics.GoogleAnalyticsResponse;
@@ -88,7 +86,7 @@ public class GaiaSkyDesktop implements IObserver {
             // Assets location
             ASSETS_LOC = (System.getProperty("assets.location") != null ? System.getProperty("assets.location") : "");
 
-            Gdx.files = new Lwjgl3Files();
+            Gdx.files = new LwjglFiles();
 
             // Sys utils
             SysUtilsFactory.initialize(new DesktopSysUtilsFactory());
@@ -187,40 +185,21 @@ public class GaiaSkyDesktop implements IObserver {
     }
 
     public void launchMainApp() {
-        Lwjgl3ApplicationConfiguration cfg = new Lwjgl3ApplicationConfiguration();
-        cfg.setTitle(GlobalConf.getFullApplicationName());
+        LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
+        LwjglApplicationConfiguration.disableAudio = false;
+        cfg.title = GlobalConf.getFullApplicationName();
+        cfg.fullscreen = GlobalConf.screen.FULLSCREEN;
+        cfg.resizable = GlobalConf.screen.RESIZABLE;
+        cfg.width = GlobalConf.screen.getScreenWidth();
+        cfg.height = GlobalConf.screen.getScreenHeight();
+        cfg.samples = MathUtilsd.clamp(GlobalConf.postprocess.POSTPROCESS_ANTIALIAS, 0, 16);
+        cfg.vSyncEnabled = GlobalConf.screen.VSYNC;
+        cfg.foregroundFPS = 0;
+        cfg.backgroundFPS = 0;
+        cfg.useHDPI = true;
+        cfg.addIcon("icon/ic_launcher.png", Files.FileType.Internal);
 
-        Monitor m = Lwjgl3ApplicationConfiguration.getPrimaryMonitor();
-        if (GlobalConf.screen.FULLSCREEN) {
-            // Get mode
-            DisplayMode[] modes = Lwjgl3ApplicationConfiguration.getDisplayModes(m);
-            DisplayMode mymode = null;
-            for (DisplayMode mode : modes) {
-                if (mode.height == GlobalConf.screen.FULLSCREEN_HEIGHT && mode.width == GlobalConf.screen.FULLSCREEN_WIDTH) {
-                    mymode = mode;
-                    break;
-                }
-            }
-            // Fallback to default display mode
-            if (mymode == null)
-                mymode = Lwjgl3ApplicationConfiguration.getDisplayMode(m);
-            cfg.setFullscreenMode(mymode);
-        } else {
-            // Find out position
-            DisplayMode dm = Lwjgl3ApplicationConfiguration.getDisplayMode(m);
-            int posx = m.virtualX + dm.width / 2 - GlobalConf.screen.getScreenWidth() / 2;
-            int posy = m.virtualY + dm.height / 2 - GlobalConf.screen.getScreenHeight() / 2;
-            cfg.setWindowedMode(GlobalConf.screen.getScreenWidth(), GlobalConf.screen.getScreenHeight());
-            cfg.setResizable(GlobalConf.screen.RESIZABLE);
-            cfg.setWindowPosition(posx, posy);
-        }
-        cfg.setBackBufferConfig(8, 8, 8, 8, 24, 0, MathUtilsd.clamp(GlobalConf.postprocess.POSTPROCESS_ANTIALIAS, 0, 16));
-        cfg.setIdleFPS(0);
-        cfg.useVsync(GlobalConf.screen.VSYNC);
-        cfg.setWindowIcon(Files.FileType.Internal, "icon/ic_launcher.png");
-        cfg.setWindowListener(new GaiaSkyWindowListener());
-
-        Logger.info("Display mode set to " + Lwjgl3ApplicationConfiguration.getDisplayMode().width + "x" + Lwjgl3ApplicationConfiguration.getDisplayMode().height + ", fullscreen: " + GlobalConf.screen.FULLSCREEN);
+        System.out.println("Display mode set to " + cfg.width + "x" + cfg.height + ", fullscreen: " + cfg.fullscreen);
 
         // Thread pool manager
         if (GlobalConf.performance.MULTITHREADING) {
@@ -233,7 +212,8 @@ public class GaiaSkyDesktop implements IObserver {
         }
 
         // Launch app
-        new Lwjgl3Application(new GaiaSky(), cfg);
+        LwjglApplication app = new LwjglApplication(new GaiaSky(), cfg);
+        app.addLifecycleListener(new GaiaSkyWindowListener());
 
         EventManager.instance.unsubscribe(this, Events.POST_NOTIFICATION, Events.JAVA_EXCEPTION);
     }
@@ -270,19 +250,6 @@ public class GaiaSkyDesktop implements IObserver {
                 memInfoWindow = new MemInfoWindow((Stage) data[0], (Skin) data[1]);
             }
             memInfoWindow.show((Stage) data[0]);
-            break;
-        case SHOW_ABOUT_ACTION:
-            // Exit fullscreen
-            // EventManager.instance.post(Events.FULLSCREEN_CMD, false);
-            // Gdx.app.postRunnable(new Runnable() {
-            //
-            // @Override
-            // public void run() {
-            // JFrame frame = new HelpDialog();
-            // frame.toFront();
-            // }
-            //
-            // });
             break;
         case JAVA_EXCEPTION:
             ((Throwable) data[0]).printStackTrace(System.err);
@@ -355,26 +322,20 @@ public class GaiaSkyDesktop implements IObserver {
         }
     }
 
-    private class GaiaSkyWindowListener implements Lwjgl3WindowListener {
+    private class GaiaSkyWindowListener implements LifecycleListener {
 
         @Override
-        public void iconified(boolean isIconified) {
+        public void pause() {
+
         }
 
         @Override
-        public void maximized(boolean isMaximized) {
+        public void resume() {
+
         }
 
         @Override
-        public void focusLost() {
-        }
-
-        @Override
-        public void focusGained() {
-        }
-
-        @Override
-        public boolean closeRequested() {
+        public void dispose() {
             // Terminate here
 
             // Analytics stop event
@@ -386,15 +347,6 @@ public class GaiaSkyDesktop implements IObserver {
                 Logger.error(e);
             }
 
-            return true;
-        }
-
-        @Override
-        public void filesDropped(String[] files) {
-        }
-
-        @Override
-        public void refreshRequested() {
         }
     }
 }

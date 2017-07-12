@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.Date;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Files;
+import com.badlogic.gdx.backends.lwjgl.LwjglFiles;
 import com.badlogic.gdx.files.FileHandle;
 
 import gaia.cu9.ari.gaiaorbit.data.orbit.OrbitDataLoader.OrbitDataLoaderParameter;
@@ -47,7 +47,7 @@ public class OrbitSamplerDataProvider implements IOrbitDataProvider, IObserver {
             // Assets location
             String ASSETS_LOC = (System.getProperty("assets.location") != null ? System.getProperty("assets.location") : "");
 
-            Gdx.files = new Lwjgl3Files();
+            Gdx.files = new LwjglFiles();
 
             // Sys utils
             SysUtilsFactory.initialize(new DesktopSysUtilsFactory());

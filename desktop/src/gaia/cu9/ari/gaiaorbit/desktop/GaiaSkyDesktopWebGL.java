@@ -1,8 +1,8 @@
 package gaia.cu9.ari.gaiaorbit.desktop;
 
 import com.badlogic.gdx.Files;
-import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
-import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
+import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
+import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 
 import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.data.SceneGraphImplementationProvider;
@@ -39,16 +39,20 @@ public class GaiaSkyDesktopWebGL {
         SceneGraphImplementationProvider.initialize(new WebGLSceneGraphImplementationProvider());
         NetworkCheckerManager.initialize(new DesktopNetworkChecker());
 
-        Lwjgl3ApplicationConfiguration cfg = new Lwjgl3ApplicationConfiguration();
-        cfg.setTitle(GlobalConf.getFullApplicationName());
-        cfg.setWindowedMode(1024, 600);
-        cfg.setResizable(false);
-        cfg.setBackBufferConfig(8, 8, 8, 8, 16, 0, MathUtilsd.clamp(GlobalConf.postprocess.POSTPROCESS_ANTIALIAS, 0, 16));
-        cfg.setIdleFPS(0);
-        cfg.useVsync(true);
-        cfg.setWindowIcon(Files.FileType.Internal, "icon/ic_launcher.png");
+        LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
+        LwjglApplicationConfiguration.disableAudio = true;
+        cfg.title = GlobalConf.getFullApplicationName();
+        cfg.fullscreen = false;
+        cfg.resizable = false;
+        cfg.width = 1024;
+        cfg.height = 600;
+        cfg.samples = MathUtilsd.clamp(GlobalConf.postprocess.POSTPROCESS_ANTIALIAS, 0, 16);
+        cfg.vSyncEnabled = false;
+        cfg.foregroundFPS = 0;
+        cfg.backgroundFPS = 0;
+        cfg.addIcon("icon/ic_launcher.png", Files.FileType.Internal);
 
         // Launch app
-        new Lwjgl3Application(new GaiaSky(), cfg);
+        new LwjglApplication(new GaiaSky(), cfg);
     }
 }

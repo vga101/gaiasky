@@ -15,9 +15,9 @@ menu folder ``Gaia Sky``. You can run the executable from there.
 Just type ``gaiasky`` in a terminal or use your favourite desktop
 environment search engine to run the Gaia Sky launcher.
 
-**OS X**
+**macOS X**
 
-Locate the launcher using the main search.
+Locate the launcher in your install directory (usually ``/Applications``) and double click on it.
 
 **Code and pakcage**
 
@@ -69,17 +69,11 @@ the ``tar`` file corresponding to your version:
 
 You must extract the contents tarball into the folder ``gaiasky/android/assets/data/octree``. In the case of the multifile package, you need to keep the directory structure.
 
-Please make sure to get the TGAS data files if you want to use them before running from source. To compile the code and run the desktop version of the application in **Linux** and **Windows**:
+Please make sure to get the TGAS data files if you want to use them before running from source. To compile the code and run the desktop version of the application:
 
 .. code-block:: bash
 
     $ gradlew desktop:run
-    
-In **macOS**, use the following command to compile and run:
-
-.. code-block:: bash
-
-    $ gradlew desktop:runmac
 
 
 Package Gaia Sky
@@ -110,7 +104,7 @@ Linux
 -----
 
 In order to run the application on Linux, open the terminal, uncompress
-the archive, give execution permissions to the ``run.sh`` file and then
+the archive, give execution permissions to the ``gaiasky`` script and then
 run it.
 
 .. code-block:: bash
@@ -123,15 +117,15 @@ Windows
 -------
 
 In order to run the application on Windows, open a terminal window (type
-``cmd`` in the start menu search box) and run the ``run.bat`` file.
+``cmd`` in the start menu search box) and run the ``gaiasky.cmd`` file.
 
 .. code-block:: bash
 
     cd path_to_gaiasky_folder
-    gaiasky.bat
+    gaiasky.cmd
 
 OS X
 ----
 
-To run the application on MacOS systems, follow the instructions in the
+To run the application on macOS, follow the instructions in the
 `Linux <#linux>`__ section.

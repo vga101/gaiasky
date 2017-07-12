@@ -7,7 +7,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Files;
+import com.badlogic.gdx.backends.lwjgl.LwjglFiles;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Array;
 
@@ -30,17 +30,14 @@ import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
 
 /**
- * Small utility to convert a the HYG CSV catalog to binary in the following format:
- * - 32 bits (int) with the number of stars, starNum
- * repeat the following starNum times (for each star)
- * - 32 bits (int) - The the length of the name, or nameLength
- * - 16 bits * nameLength (chars) - The name of the star
- * - 32 bits (float) - appmag
- * - 32 bits (float) - absmag
- * - 32 bits (float) - colorbv
- * - 32 bits (float) - ra
- * - 32 bits (float) - dec
- * - 32 bits (float) - distance
+ * Small utility to convert a the HYG CSV catalog to binary in the following
+ * format: - 32 bits (int) with the number of stars, starNum repeat the
+ * following starNum times (for each star) - 32 bits (int) - The the length of
+ * the name, or nameLength - 16 bits * nameLength (chars) - The name of the star
+ * - 32 bits (float) - appmag - 32 bits (float) - absmag - 32 bits (float) -
+ * colorbv - 32 bits (float) - ra - 32 bits (float) - dec - 32 bits (float) -
+ * distance
+ * 
  * @author Toni Sagrista
  */
 public class HYGToBinary implements IObserver {
@@ -55,7 +52,7 @@ public class HYGToBinary implements IObserver {
 
         I18n.initialize(new FileHandle("/home/tsagrista/git/gaiasky/android/assets/i18n/gsbundle"));
 
-        Gdx.files = new Lwjgl3Files();
+        Gdx.files = new LwjglFiles();
         try {
             NumberFormatFactory.initialize(new DesktopNumberFormatFactory());
             DateFormatFactory.initialize(new DesktopDateFormatFactory());

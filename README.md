@@ -125,10 +125,10 @@ Follow the on-screen instructions to proceed with the installation.
 In order to **uninstall**, just run the `uninstall` file in the
 installation folder.
 
-#### 1.2.3 OS X - Mac
+#### 1.2.3 macOS X
 
-For OS X we provide a `gaiasky_macos_<version>.dmg` file
-which is installed by unpacking into the Applications folder. Get it [here](https://zah.uni-heidelberg.de/gaia/outreach/gaiasky/downloads/). Once unpacked, the installer will come up, just follow its instructions.
+For macOS we provide a `gaiasky_macos_<version>.dmg` file
+which is installed by unpacking into the Applications folder. Get it [here](https://zah.uni-heidelberg.de/gaia/outreach/gaiasky/downloads/). Once unpacked, you can run it by clicking on it.
 
 #### 1.2.4 Compressed (TGZ) package
 
@@ -138,7 +138,7 @@ shortcuts.
 
 In **Windows**, use an archiver software (7zip, iZArc, etc.) to unpack it.
 
-In **Linux** and **OS X**, you can use:
+In **Linux** and **macOS**, you can use:
 
 ```
 tar -zxvf gaiasky-<version>.tgz
@@ -172,16 +172,10 @@ the `tar` file corresponding to your version:
 
 You must extract the contents tarball into the folder `gaiasky/android/assets/data/octree`. In the case of the multifile package, you need to keep the directory structure.
 
-Finally, in **Linux** and **Windows**, run Gaia Sky with:
+Finally, run Gaia Sky with:
 
 ```
 gradlew desktop:run
-```
-
-In **macOS** systems, you must run it with the following command:
-
-```
-gradlew desktop:runmac
 ```
 
 Et voilà! Gaia Sky is running on your machine.

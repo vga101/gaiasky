@@ -14,8 +14,8 @@ import java.util.List;
 import java.util.Set;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.backends.lwjgl.LwjglFiles;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Files;
 
 import gaia.cu9.ari.gaiaorbit.data.stars.HYGBinaryLoader;
 import gaia.cu9.ari.gaiaorbit.data.stars.STILCatalogLoader;
@@ -36,7 +36,9 @@ import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import net.jafama.FastMath;
 
 /**
- * Loads a catalog and selects the stars that are observed during a certain period of time.
+ * Loads a catalog and selects the stars that are observed during a certain
+ * period of time.
+ * 
  * @author tsagrista
  *
  */
@@ -61,7 +63,7 @@ public class GaiaCatalogFilter {
 
     public void initialize() throws Exception {
         // Init Gdx files
-        Gdx.files = new Lwjgl3Files();
+        Gdx.files = new LwjglFiles();
 
         // Init log writer
         lw = new LogWriter();
@@ -113,12 +115,19 @@ public class GaiaCatalogFilter {
 
     /**
      * Produces the filtered catalogs for each day between the selected dates.
-     * @param iniY The initial year.
-     * @param iniM The initial month. Starts at 1 for January.
-     * @param iniD The initial day of the month. Starts at 1.
-     * @param endY The end year.
-     * @param endM The end month. Starts at 1 for January.
-     * @param endD The end day of the month. Starts at 1.
+     * 
+     * @param iniY
+     *            The initial year.
+     * @param iniM
+     *            The initial month. Starts at 1 for January.
+     * @param iniD
+     *            The initial day of the month. Starts at 1.
+     * @param endY
+     *            The end year.
+     * @param endM
+     *            The end month. Starts at 1 for January.
+     * @param endD
+     *            The end day of the month. Starts at 1.
      */
     public void filterCatalog(int iniY, int iniM, int iniD, int endY, int endM, int endD) {
         // Some constants
