@@ -33,7 +33,6 @@ public abstract class AbstractStarGroupDataProvider implements IStarGroupDataPro
             List<Object> main = new ArrayList<Object>(3);
             main.add(l);
             main.add(ids);
-            main.add(index);
             main.add(names);
 
             ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filename));
