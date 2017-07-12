@@ -12,6 +12,7 @@ uniform float u_alpha;
 
 uniform mat4 u_projModelView;
 uniform vec3 u_camPos;
+uniform float u_sizeFactor;
 
 varying vec4 v_col;
 
@@ -20,5 +21,5 @@ void main() {
     v_col = vec4(a_color.rgb, a_color.a * u_alpha );
 
     gl_Position = u_projModelView * vec4(pos, 0.0);
-    gl_PointSize = a_size;
+    gl_PointSize = a_size * u_sizeFactor;
 }

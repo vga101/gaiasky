@@ -124,8 +124,8 @@ In order to run the application on Windows, open a terminal window (type
     cd path_to_gaiasky_folder
     gaiasky.cmd
 
-OS X
-----
+macOS X
+-------
 
 To run the application on macOS, follow the instructions in the
 `Linux <#linux>`__ section.

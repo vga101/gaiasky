@@ -85,7 +85,7 @@ public class ParticleGroupRenderSystem extends ImmediateRenderSystem implements 
                         curr.vertices[curr.vertexIdx + curr.colorOffset] = Color.toFloatBits(c[0], c[1], c[2], c[3]);
 
                         // SIZE
-                        curr.vertices[curr.vertexIdx + additionalOffset] = particleGroup.size * GlobalConf.SCALE_FACTOR;
+                        curr.vertices[curr.vertexIdx + additionalOffset] = particleGroup.size;
 
                         // cb.transform.getTranslationf(aux);
                         // POSITION
@@ -121,6 +121,7 @@ public class ParticleGroupRenderSystem extends ImmediateRenderSystem implements 
                 shaderProgram.setUniformf("u_alpha", particleGroup.opacity * alphas[particleGroup.ct.getFirstOrdinal()]);
                 shaderProgram.setUniformf("u_ar", GlobalConf.program.STEREOSCOPIC_MODE && (GlobalConf.program.STEREO_PROFILE != StereoProfile.HD_3DTV && GlobalConf.program.STEREO_PROFILE != StereoProfile.ANAGLYPHIC) ? 0.5f : 1f);
                 shaderProgram.setUniformf("u_profileDecay", particleGroup.profileDecay);
+                shaderProgram.setUniformf("u_sizeFactor", rc.scaleFactor);
                 curr.mesh.setVertices(curr.vertices, particleGroup.offset, particleGroup.count);
                 curr.mesh.render(shaderProgram, ShapeType.Point.getGlType());
                 shaderProgram.end();

@@ -10,7 +10,10 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
 
 public abstract class AbstractRenderSystem implements IRenderSystem {
-    /** When this is true, new point information is available, so new data is streamed to the GPU **/
+    /**
+     * When this is true, new point information is available, so new data is
+     * streamed to the GPU
+     **/
     public static boolean POINT_UPDATE_FLAG = true;
 
     private RenderGroup group;
@@ -66,9 +69,13 @@ public abstract class AbstractRenderSystem implements IRenderSystem {
     }
 
     /**
-     * Computes the alpha opacity value of a given renderable using its component types
-     * @param renderable The renderable
-     * @return The alpha value as the product of all the alphas of its component types.
+     * Computes the alpha opacity value of a given renderable using its
+     * component types
+     * 
+     * @param renderable
+     *            The renderable
+     * @return The alpha value as the product of all the alphas of its component
+     *         types.
      */
     public float getAlpha(IRenderable renderable) {
         int idx = -1;

@@ -9,6 +9,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 
 /**
  * Abstract implementation with some useful methods for all SGRs.
+ * 
  * @author tsagrista
  *
  */
@@ -33,8 +34,7 @@ public class SGRAbstract {
             rc.ppb = null;
         }
         rc.fb = fb;
-        rc.w = rw;
-        rc.h = rh;
+        rc.set(rw, rh);
         return postproc;
     }
 

@@ -18,6 +18,7 @@ import gaia.cu9.ari.gaiaorbit.util.Constants;
 
 /**
  * Renders volumetric clouds in the galaxy. Just a test for now.
+ * 
  * @author tsagrista
  *
  */
@@ -72,7 +73,7 @@ public class VolumeCloudsRenderSystem extends AbstractRenderSystem {
         // Set uniforms - camera and viewport basically
         shaderProgram.setUniformf("u_time", (float) ((TimeUtils.millis() - initime) / 1000d));
         shaderProgram.setUniformf("u_opacity", opacity);
-        shaderProgram.setUniformf("u_viewport", rc.w, rc.h);
+        shaderProgram.setUniformf("u_viewport", rc.w(), rc.h());
         shaderProgram.setUniformf("u_camPos", camera.getPos().setVector3(camPos).scl((float) Constants.U_TO_PC));
         shaderProgram.setUniformf("u_camDir", camera.getDirection().setVector3(camDir).nor());
         shaderProgram.setUniformf("u_camUp", camera.getUp().setVector3(camUp).nor());
