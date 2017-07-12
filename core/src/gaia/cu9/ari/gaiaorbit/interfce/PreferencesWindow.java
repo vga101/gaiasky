@@ -87,7 +87,7 @@ public class PreferencesWindow extends GenericDialog {
 
     private INumberFormat nf3;
 
-    private CheckBox fullscreen, windowed, vsync, multithreadCb, lodFadeCb, cbAutoCamrec, hyg, tgas, dr2, real, nsl, report, inverty, highAccuracyPositions;
+    private CheckBox fullscreen, windowed, vsync, multithreadCb, lodFadeCb, cbAutoCamrec, tgas, real, nsl, report, inverty, highAccuracyPositions;
     private OwnSelectBox<DisplayMode> fullscreenResolutions;
     private OwnSelectBox<ComboBoxBean> gquality, aa, lineRenderer, numThreads, screenshotMode, frameoutputMode;
     private OwnSelectBox<LangComboBoxBean> lang;
@@ -1248,9 +1248,13 @@ public class PreferencesWindow extends GenericDialog {
         if (ssfile.exists() && ssfile.isDirectory())
             GlobalConf.screenshot.SCREENSHOT_FOLDER = ssfile.getAbsolutePath();
         GlobalConf.screenshot.SCREENSHOT_MODE = GlobalConf.ScreenshotMode.values()[screenshotMode.getSelectedIndex()];
-        GlobalConf.screenshot.SCREENSHOT_WIDTH = Integer.parseInt(sswidthField.getText());
-        GlobalConf.screenshot.SCREENSHOT_HEIGHT = Integer.parseInt(ssheightField.getText());
-        EventManager.instance.post(Events.SCREENSHOT_SIZE_UDPATE, GlobalConf.screenshot.SCREENSHOT_WIDTH, GlobalConf.screenshot.SCREENSHOT_HEIGHT);
+        int ssw = Integer.parseInt(sswidthField.getText());
+        int ssh = Integer.parseInt(ssheightField.getText());
+        boolean ssupdate = ssw != GlobalConf.screenshot.SCREENSHOT_WIDTH || ssh != GlobalConf.screenshot.SCREENSHOT_HEIGHT;
+        GlobalConf.screenshot.SCREENSHOT_WIDTH = ssw;
+        GlobalConf.screenshot.SCREENSHOT_HEIGHT = ssh;
+        if (ssupdate)
+            EventManager.instance.post(Events.SCREENSHOT_SIZE_UDPATE, GlobalConf.screenshot.SCREENSHOT_WIDTH, GlobalConf.screenshot.SCREENSHOT_HEIGHT);
 
         // Frame output
         File fofile = new File(frameoutputLocation.getText().toString());
@@ -1261,10 +1265,14 @@ public class PreferencesWindow extends GenericDialog {
             GlobalConf.frame.RENDER_FILE_NAME = text;
         }
         GlobalConf.frame.FRAME_MODE = GlobalConf.ScreenshotMode.values()[frameoutputMode.getSelectedIndex()];
-        GlobalConf.frame.RENDER_WIDTH = Integer.parseInt(fowidthField.getText());
-        GlobalConf.frame.RENDER_HEIGHT = Integer.parseInt(foheightField.getText());
+        int fow = Integer.parseInt(fowidthField.getText());
+        int foh = Integer.parseInt(foheightField.getText());
+        boolean foupdate = fow != GlobalConf.frame.RENDER_WIDTH || foh != GlobalConf.frame.RENDER_HEIGHT;
+        GlobalConf.frame.RENDER_WIDTH = fow;
+        GlobalConf.frame.RENDER_HEIGHT = foh;
         GlobalConf.frame.RENDER_TARGET_FPS = Integer.parseInt(frameoutputFps.getText());
-        EventManager.instance.post(Events.FRAME_SIZE_UDPATE, GlobalConf.frame.RENDER_WIDTH, GlobalConf.frame.RENDER_HEIGHT);
+        if (foupdate)
+            EventManager.instance.post(Events.FRAME_SIZE_UDPATE, GlobalConf.frame.RENDER_WIDTH, GlobalConf.frame.RENDER_HEIGHT);
 
         // Camera recording
         GlobalConf.frame.CAMERA_REC_TARGET_FPS = Integer.parseInt(camrecFps.getText());

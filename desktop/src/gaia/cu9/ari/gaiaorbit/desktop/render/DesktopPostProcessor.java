@@ -272,47 +272,43 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
     public void notify(Events event, final Object... data) {
         switch (event) {
         case SCREENSHOT_SIZE_UDPATE:
-            if (pps != null && GlobalConf.screenshot.isRedrawMode())
+            if (pps != null && GlobalConf.screenshot.isRedrawMode()) {
+                int neww = (Integer) data[0];
+                int newh = (Integer) data[1];
                 if (pps[RenderType.screenshot.index] != null) {
-                    if (changed(pps[RenderType.screenshot.index].pp, GlobalConf.screenshot.SCREENSHOT_WIDTH, GlobalConf.screenshot.SCREENSHOT_HEIGHT)) {
-                        Gdx.app.postRunnable(new Runnable() {
-                            @Override
-                            public void run() {
-                                replace(RenderType.screenshot.index, GlobalConf.screenshot.SCREENSHOT_WIDTH, GlobalConf.screenshot.SCREENSHOT_HEIGHT);
-                            }
+                    if (changed(pps[RenderType.screenshot.index].pp, neww, newh)) {
+                        Gdx.app.postRunnable(() -> {
+                            replace(RenderType.screenshot.index, neww, newh);
                         });
                     }
                 } else {
-                    pps[RenderType.screenshot.index] = newPostProcessor(getWidth(RenderType.screenshot), getHeight(RenderType.screenshot));
+                    pps[RenderType.screenshot.index] = newPostProcessor(neww, newh);
                 }
+            }
             break;
         case FRAME_SIZE_UDPATE:
-            if (pps != null && GlobalConf.frame.isRedrawMode())
+            if (pps != null && GlobalConf.frame.isRedrawMode()) {
+                int neww = (Integer) data[0];
+                int newh = (Integer) data[1];
                 if (pps[RenderType.frame.index] != null) {
-                    if (changed(pps[RenderType.frame.index].pp, GlobalConf.frame.RENDER_WIDTH, GlobalConf.frame.RENDER_HEIGHT)) {
-                        Gdx.app.postRunnable(new Runnable() {
-
-                            @Override
-                            public void run() {
-                                replace(RenderType.frame.index, GlobalConf.frame.RENDER_WIDTH, GlobalConf.frame.RENDER_HEIGHT);
-                            }
+                    if (changed(pps[RenderType.frame.index].pp, neww, newh)) {
+                        Gdx.app.postRunnable(() -> {
+                            replace(RenderType.frame.index, neww, newh);
                         });
                     }
                 } else {
-                    pps[RenderType.frame.index] = newPostProcessor(getWidth(RenderType.frame), getHeight(RenderType.frame));
+                    pps[RenderType.frame.index] = newPostProcessor(neww, newh);
                 }
+            }
             break;
         case BLOOM_CMD:
-            Gdx.app.postRunnable(new Runnable() {
-                @Override
-                public void run() {
-                    float intensity = (float) data[0];
-                    for (int i = 0; i < RenderType.values().length; i++) {
-                        if (pps[i] != null) {
-                            PostProcessBean ppb = pps[i];
-                            ppb.bloom.setBloomIntesity(intensity);
-                            ppb.bloom.setEnabled(intensity > 0);
-                        }
+            Gdx.app.postRunnable(() -> {
+                float intensity = (float) data[0];
+                for (int i = 0; i < RenderType.values().length; i++) {
+                    if (pps[i] != null) {
+                        PostProcessBean ppb = pps[i];
+                        ppb.bloom.setBloomIntesity(intensity);
+                        ppb.bloom.setEnabled(intensity > 0);
                     }
                 }
             });
@@ -349,39 +345,33 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
             }
             break;
         case CAMERA_MOTION_UPDATED:
-            Gdx.app.postRunnable(new Runnable() {
-                @Override
-                public void run() {
-                    Vector3d campos = (Vector3d) data[0];
-                    PerspectiveCamera cam = (PerspectiveCamera) data[3];
+            Gdx.app.postRunnable(() -> {
+                Vector3d campos = (Vector3d) data[0];
+                PerspectiveCamera cam = (PerspectiveCamera) data[3];
 
-                    boolean cameraChanged = !Arrays.equals(cam.combined.val, prevCombined.val) || !campos.equals(prevCampos);
+                boolean cameraChanged = !Arrays.equals(cam.combined.val, prevCombined.val) || !campos.equals(prevCampos);
 
-                    for (int i = 0; i < RenderType.values().length; i++) {
-                        if (pps[i] != null) {
-                            PostProcessBean ppb = pps[i];
+                for (int i = 0; i < RenderType.values().length; i++) {
+                    if (pps[i] != null) {
+                        PostProcessBean ppb = pps[i];
 
-                            // Motion blur
-                            ppb.motionblur.setEnabled(GlobalConf.postprocess.POSTPROCESS_MOTION_BLUR != 0 && cameraChanged);
+                        // Motion blur
+                        ppb.motionblur.setEnabled(GlobalConf.postprocess.POSTPROCESS_MOTION_BLUR != 0 && cameraChanged);
 
-                        }
                     }
-                    prevCombined.set(cam.combined);
-                    prevCampos.set(campos);
                 }
+                prevCombined.set(cam.combined);
+                prevCampos.set(campos);
             });
             break;
         case MOTION_BLUR_CMD:
-            Gdx.app.postRunnable(new Runnable() {
-                @Override
-                public void run() {
-                    float opacity = (float) data[0];
-                    for (int i = 0; i < RenderType.values().length; i++) {
-                        if (pps[i] != null) {
-                            PostProcessBean ppb = pps[i];
-                            ppb.motionblur.setBlurOpacity(opacity);
-                            ppb.motionblur.setEnabled(opacity > 0);
-                        }
+            Gdx.app.postRunnable(() -> {
+                float opacity = (float) data[0];
+                for (int i = 0; i < RenderType.values().length; i++) {
+                    if (pps[i] != null) {
+                        PostProcessBean ppb = pps[i];
+                        ppb.motionblur.setBlurOpacity(opacity);
+                        ppb.motionblur.setEnabled(opacity > 0);
                     }
                 }
             });
@@ -421,34 +411,31 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
             break;
         case ANTIALIASING_CMD:
             final int aavalue = (Integer) data[0];
-            Gdx.app.postRunnable(new Runnable() {
-                @Override
-                public void run() {
-                    for (int i = 0; i < RenderType.values().length; i++) {
-                        if (pps[i] != null) {
-                            PostProcessBean ppb = pps[i];
-                            if (aavalue < 0) {
-                                // clean
-                                if (ppb.antialiasing != null) {
-                                    ppb.antialiasing.setEnabled(false);
-                                    ppb.pp.removeEffect(ppb.antialiasing);
-                                    ppb.antialiasing = null;
-                                }
-                                // update
-                                initAntiAliasing(aavalue, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), ppb);
-                                // ensure motion blur and levels go after
-                                ppb.pp.removeEffect(ppb.levels);
-                                initLevels(ppb);
-                                ppb.pp.removeEffect(ppb.motionblur);
-                                initMotionBlur(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), ppb);
+            Gdx.app.postRunnable(() -> {
+                for (int i = 0; i < RenderType.values().length; i++) {
+                    if (pps[i] != null) {
+                        PostProcessBean ppb = pps[i];
+                        if (aavalue < 0) {
+                            // clean
+                            if (ppb.antialiasing != null) {
+                                ppb.antialiasing.setEnabled(false);
+                                ppb.pp.removeEffect(ppb.antialiasing);
+                                ppb.antialiasing = null;
+                            }
+                            // update
+                            initAntiAliasing(aavalue, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), ppb);
+                            // ensure motion blur and levels go after
+                            ppb.pp.removeEffect(ppb.levels);
+                            initLevels(ppb);
+                            ppb.pp.removeEffect(ppb.motionblur);
+                            initMotionBlur(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), ppb);
 
-                            } else {
-                                // remove
-                                if (ppb.antialiasing != null) {
-                                    ppb.antialiasing.setEnabled(false);
-                                    ppb.pp.removeEffect(ppb.antialiasing);
-                                    ppb.antialiasing = null;
-                                }
+                        } else {
+                            // remove
+                            if (ppb.antialiasing != null) {
+                                ppb.antialiasing.setEnabled(false);
+                                ppb.pp.removeEffect(ppb.antialiasing);
+                                ppb.antialiasing = null;
                             }
                         }
                     }
@@ -490,7 +477,9 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
 
     /**
      * Reloads the postprocessor at the given index with the given width and
-     * height.
+     * height.new Runnable() {
+     * 
+     * @Override public void run()
      * 
      * @param index
      * @param width

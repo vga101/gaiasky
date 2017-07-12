@@ -334,7 +334,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         EventManager.instance.post(Events.TIME_CHANGE_INFO, time.getTime());
 
         // Subscribe to events
-        EventManager.instance.subscribe(this, Events.TOGGLE_AMBIENT_LIGHT, Events.AMBIENT_LIGHT_CMD, Events.RECORD_CAMERA_CMD, Events.CAMERA_MODE_CMD, Events.TOGGLE_STEREOSCOPIC_INFO);
+        EventManager.instance.subscribe(this, Events.TOGGLE_AMBIENT_LIGHT, Events.AMBIENT_LIGHT_CMD, Events.RECORD_CAMERA_CMD, Events.CAMERA_MODE_CMD, Events.TOGGLE_STEREOSCOPIC_INFO, Events.FRAME_SIZE_UDPATE, Events.SCREENSHOT_SIZE_UDPATE);
 
         // Re-enable input
         if (!GlobalConf.runtime.STRIPPED_FOV_MODE)
@@ -662,6 +662,15 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         return w + "x" + h;
     }
 
+    public void clearFrameBufferMap() {
+        Set<String> keySet = fbmap.keySet();
+        for (String key : keySet) {
+            FrameBuffer fb = fbmap.get(key);
+            fb.dispose();
+        }
+        fbmap.clear();
+    }
+
     public ICamera getICamera() {
         return cam.current;
     }
@@ -782,6 +791,12 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
                 currentGui = previousGui;
             }
 
+            break;
+        case SCREENSHOT_SIZE_UDPATE:
+        case FRAME_SIZE_UDPATE:
+            Gdx.app.postRunnable(() -> {
+                //clearFrameBufferMap();
+            });
             break;
         default:
             break;

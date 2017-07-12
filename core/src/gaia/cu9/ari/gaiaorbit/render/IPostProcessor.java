@@ -49,7 +49,7 @@ public interface IPostProcessor extends Disposable {
 
         public void dispose() {
             if (pp != null)
-                pp.dispose();
+                pp.dispose(false);
         }
 
     }

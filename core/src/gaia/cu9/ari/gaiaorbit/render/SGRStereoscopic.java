@@ -325,12 +325,17 @@ public class SGRStereoscopic extends SGRAbstract implements ISGR, IObserver {
 
     }
 
-    public void dispose() {
+    private void clearFrameBufferMap() {
         Set<Integer> keySet = fb3D.keySet();
         for (Integer key : keySet) {
             FrameBuffer fb = fb3D.get(key);
             fb.dispose();
         }
+        fb3D.clear();
+    }
+
+    public void dispose() {
+        clearFrameBufferMap();
     }
 
     @Override
@@ -338,17 +343,9 @@ public class SGRStereoscopic extends SGRAbstract implements ISGR, IObserver {
         switch (event) {
         case SCREENSHOT_SIZE_UDPATE:
         case FRAME_SIZE_UDPATE:
-            final Integer w = (Integer) data[0];
-            final Integer h = (Integer) data[1];
-            final Integer key = getKey(w / 2, h);
-            if (!fb3D.containsKey(key)) {
-                Gdx.app.postRunnable(new Runnable() {
-                    @Override
-                    public void run() {
-                        fb3D.put(key, new FrameBuffer(Format.RGB888, w / 2, h, true));
-                    }
-                });
-            }
+            Gdx.app.postRunnable(() -> {
+                clearFrameBufferMap();
+            });
             break;
         default:
             break;
