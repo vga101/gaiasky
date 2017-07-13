@@ -1,12 +1,12 @@
 package gaia.cu9.ari.gaiaorbit.data.group;
 
 import java.io.ObjectInputStream;
+import java.util.HashMap;
 import java.util.List;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.TimeUtils;
 
 import gaia.cu9.ari.gaiaorbit.scenegraph.StarGroup;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
@@ -23,10 +23,11 @@ public class SerializedDataProvider extends AbstractStarGroupDataProvider {
 
     @SuppressWarnings("unchecked")
     public Array<double[]> loadData(String file, double factor) {
+        Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.datafile", file));
+
         FileHandle f = Gdx.files.internal(file);
         ObjectInputStream ois;
         try {
-            long t = TimeUtils.nanoTime();
             ois = new ObjectInputStream(f.read());
             List<Object> main = (List<Object>) ois.readObject(); // cast is needed.
             ois.close();
@@ -35,6 +36,7 @@ public class SerializedDataProvider extends AbstractStarGroupDataProvider {
             List<double[]> l = (List<double[]>) main.get(0);
             ids = (List<Long>) main.get(1);
             names = (List<String>) main.get(2);
+            index = new HashMap<String, Integer>();
 
             // Convert to Array, reconstruct index
             int n = l.size();
@@ -51,9 +53,6 @@ public class SerializedDataProvider extends AbstractStarGroupDataProvider {
                 }
                 index.put(Long.toString(ids.get(i)), i);
             }
-
-            long elapsed = TimeUtils.nanoTime() - t;
-            System.out.println("Elapsed secs: " + elapsed * 1e-9d);
 
             Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.nodeloader", pointData.size, file));
             return pointData;

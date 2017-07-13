@@ -1,9 +1,7 @@
 package gaia.cu9.ari.gaiaorbit.interfce;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.assets.AssetDescriptor;
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -151,12 +149,10 @@ public class SpacecraftGui extends AbstractGui {
         db = new DecalBatch(new CameraGroupStrategy(aiCam));
         mb = new ModelBatch();
 
-        FileHandle att = Gdx.files.internal("data/tex/attitudeindicator.png");
-        System.out.println("EXISTS: " + att.exists() + ", PATH: " + att.file().getAbsolutePath());
-        assetManager.load(new AssetDescriptor<Texture>(att, Texture.class));
-        assetManager.load(new AssetDescriptor<Texture>(Gdx.files.internal("img/ai-pointer.png"), Texture.class));
-        assetManager.load(new AssetDescriptor<Texture>(Gdx.files.internal("img/ai-vel.png"), Texture.class));
-        assetManager.load(new AssetDescriptor<Texture>(Gdx.files.internal("img/ai-antivel.png"), Texture.class));
+        assetManager.load("data/tex/attitudeindicator.png", Texture.class);
+        assetManager.load("img/ai-pointer.png", Texture.class);
+        assetManager.load("img/ai-vel.png", Texture.class);
+        assetManager.load("img/ai-antivel.png", Texture.class);
 
     }
 

@@ -32,14 +32,15 @@ public class HYGDataProvider extends AbstractStarGroupDataProvider {
     }
 
     public Array<double[]> loadData(String file, double factor) {
-
-        Array<double[]> pointData = new Array<double[]>();
+        Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.datafile", file));
 
         FileHandle f = Gdx.files.internal(file);
-        InputStream data = f.read();
-        DataInputStream data_in = new DataInputStream(data);
 
         try {
+            initLists(f);
+
+            InputStream data = f.read();
+            DataInputStream data_in = new DataInputStream(data);
             // Read size of stars
             int size = data_in.readInt();
             int stari = 0;

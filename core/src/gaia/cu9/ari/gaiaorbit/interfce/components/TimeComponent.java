@@ -2,6 +2,7 @@ package gaia.cu9.ari.gaiaorbit.interfce.components;
 
 import java.util.Date;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -112,7 +113,7 @@ public class TimeComponent extends GuiComponent implements IObserver {
 
         timeWarp = new OwnLabel(getFormattedTimeWrap(), skin, "warp");
         timeWarp.setName("time warp");
-        Container wrapWrapper = new Container(timeWarp);
+        Container<Label> wrapWrapper = new Container<Label>(timeWarp);
         wrapWrapper.width(60f * GlobalConf.SCALE_FACTOR);
         wrapWrapper.align(Align.center);
 
@@ -144,7 +145,9 @@ public class TimeComponent extends GuiComponent implements IObserver {
         case TIME_CHANGE_CMD:
             // Update input time
             Date time = (Date) data[0];
-            date.setText(df.format(time));
+            Gdx.app.postRunnable(() -> {
+                date.setText(df.format(time));
+            });
 
             break;
         case PACE_CHANGED_INFO:

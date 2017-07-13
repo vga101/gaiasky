@@ -31,8 +31,6 @@ public class TGASHYGDataProvider extends AbstractStarGroupDataProvider {
 
     @Override
     public Array<double[]> loadData(String file, double factor) {
-        Array<double[]> pointData;
-
         Array<double[]> tgasdata = tgas.loadData("data/tgas_final/tgas.csv");
         Array<double[]> hygdata = hyg.loadData("data/hyg/hygxyz.bin");
 

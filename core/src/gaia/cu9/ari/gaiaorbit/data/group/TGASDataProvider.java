@@ -37,12 +37,17 @@ public class TGASDataProvider extends AbstractStarGroupDataProvider {
     }
 
     public Array<double[]> loadData(String file, double factor) {
+        Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.datafile", file));
+
         Pair<Map<String, Float>, Map<String, Integer>> extra = loadTYCBVHIP(btvtColorsFile);
 
-        Array<double[]> pointData = new Array<double[]>();
+        index = new HashMap<String, Integer>();
+
         FileHandle f = Gdx.files.internal(file);
 
         try {
+            initLists(f);
+
             BufferedReader br = new BufferedReader(new InputStreamReader(f.read()));
             String line;
             int i = 0;
