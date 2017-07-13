@@ -6,6 +6,7 @@
 
 **Implemented enhancements:**
 
+- Scale point primitives by ratio to default [\#163](https://github.com/langurmonkey/gaiasky/issues/163)
 - Implement GPU-based implementation for star catalogs [\#162](https://github.com/langurmonkey/gaiasky/issues/162)
 - Additive blending [\#160](https://github.com/langurmonkey/gaiasky/issues/160)
 - Enable star particle groups [\#159](https://github.com/langurmonkey/gaiasky/issues/159)
@@ -42,6 +43,9 @@
 
 **Fixed bugs:**
 
+- Random crash at startup [\#165](https://github.com/langurmonkey/gaiasky/issues/165)
+- Fix postprocessing framebuffer resize issue [\#164](https://github.com/langurmonkey/gaiasky/issues/164)
+- Scale point primitives by ratio to default [\#163](https://github.com/langurmonkey/gaiasky/issues/163)
 - Milky Way texture off when rotated [\#158](https://github.com/langurmonkey/gaiasky/issues/158)
 - Fix controller input in non-cinematic mode [\#142](https://github.com/langurmonkey/gaiasky/issues/142)
 - Fix smooth transitions in multithread mode [\#141](https://github.com/langurmonkey/gaiasky/issues/141)
