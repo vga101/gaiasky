@@ -25,6 +25,9 @@ However, if you are a maverick and do not like installers, you can also
 run the Gaia Sky directly from the source code in ``GitHub`` or
 using the ``tgz`` package.
 
+
+.. _running-from-source:
+
 Running from source
 ===================
 
