@@ -17,6 +17,8 @@ The different types of data are:
 Data belonging to either group will be loaded differently into the Gaia
 Sky. The sections below describe the data format in detail:
 
+.. _general-data-loading:
+
 General information on the data loading mechanisms
 ==================================================
 
@@ -117,11 +119,10 @@ Particle data refers to the loading of particles (stars, galaxies, etc.) where e
 in the internal scene graph model. This allows for selection, labeling, levels of detail, etc.
 
 There are several off-the-shelf options to get local data in various formats
-into ``Gaia Sky``. 
+into Gaia Sky. 
 
 In order to load **local data** there are a series of default options
-which can be combined. As described in the [[General data
-loading\|General-information-on-the-data-loading-mechanisms]] section,
+which can be combined. As described in the :ref:`general data loading <general-data-loading>` section,
 multiple catalogue loaders can be used at once. Each catalog loader will
 get a list of files to load. A description of the main local catalog
 loaders follows.
@@ -129,7 +130,7 @@ loaders follows.
 Particle groups
 ---------------
 
-As of version ``1.5.0``, ``Gaia Sky`` offers a new data type, the particle group. Particle groups can be either point particles or stars (defined by star groups).
+As of version ``1.5.0``, Gaia Sky offers a new data type, the particle group. Particle groups can be either point particles or stars (defined by star groups).
 Particle data are read from a file using a certain particle/star group provider implementation, and these data
 are sent to GPU memory where they reside. This approach allows for these objects to be composed of hundreds of
 thousands of particles and still have a minimal impact on performance.
