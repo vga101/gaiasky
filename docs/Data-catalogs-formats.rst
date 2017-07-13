@@ -185,6 +185,66 @@ Let's go over the attributes:
 -  ``factor``  -- A factor to be applied to each coordinate of each data point. If not specified, defaults to 1.
 -  ``datafile``  -- The actual file with the data. It must be in a format that the data provider specified in ``provider`` knows how to load.
 
+Star groups
+~~~~~~~~~~~
+
+As of version ``1.5.0``, entire star catalogs can also be provided as a special type of particle groups: star groups. The stars in a star
+group will function very much like their single particles counterparts. They are rendered using the magnitude and color information, they are
+selectable and focusable, they can render labels and proper motions, and they get close-up detail quads. Since most of the rendering is GPU-based using VBOs, 
+and there's only one object in the scene graph for the whole star group, this method is much more performant than the single particles method. Also,
+to update some model information a background thread is spawned for every star group which sorts the particles in the background according to their current
+view angle.
+
+To define a catalog containing a star group, we need to create a pointer and load it using the regular ``JsonLoader``:
+
+.. code:: json
+
+	{
+		"name" : "TGAS+HYG (GPU)",
+		"description" : "Gaia DR1 TGAS catalog, GPU version. About 1.5 million stars.",
+		"data" : [
+		{
+			"loader": "gaia.cu9.ari.gaiaorbit.data.JsonLoader",
+			"files": [ "data/tgas-pg.json" ]
+		}
+	]}
+
+The file ``tgas-pg.json`` contains a single object with the actual star group definition:
+
+.. code:: json
+
+	{ "objects" : [
+		{
+			"name" : "TGAS",
+			"position" : [0.0, 0.0, 0.0],
+			// Color of particles
+			"color" : [1.0, 1.0, 1.0, 0.25],
+			// Size of particles
+			"size" : 6.0,
+			"labelcolor" : [1.0, 1.0, 1.0, 1.0],
+			// Position in parsecs
+			"labelposition" : [0.0, -5.0e7, -4e8]
+			"ct" : Stars,
+			
+			"fadeout" : [21e2, .5e5],
+			
+			"profiledecay" : 1.0,
+		
+			"parent" : "Universe", 
+			"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.StarGroup",
+			
+			// Extends IParticleGroupDataProvider
+			"provider" : "gaia.cu9.ari.gaiaorbit.data.group.SerializedDataProvider",
+			"datafile" : "data/catalog/tgashyg.bin"
+		}
+	]}
+	
+In this case, the data file, ``tgashyg.bin``, is a binary file which contains java objects serialized. These can be loaded using the ``SerializedDataProvider``. However,
+anyone can implement a new provider to load any other kind of catalog file by implementing the ``IStarGroupDataProvider`` --`here <https://github.com/langurmonkey/gaiasky/blob/master/core/src/gaia/cu9/ari/gaiaorbit/data/group/IStarGroupDataProvider.java>`__
+interface.
+
+Star groups can also be combined with octrees (levels of detail method) to allow for huge catalogs like DR2 (hundreds of millions of points). This option is still not implemented. 
+
 Single particles
 ----------------
 
