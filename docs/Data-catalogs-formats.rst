@@ -126,8 +126,76 @@ multiple catalogue loaders can be used at once. Each catalog loader will
 get a list of files to load. A description of the main local catalog
 loaders follows.
 
+Particle groups
+---------------
+
+As of version ``1.5.0``, ``Gaia Sky`` offers a new data type, the particle group. Particle groups can be either point particles or stars (defined by star groups).
+Particle data are read from a file using a certain particle/star group provider implementation, and these data
+are sent to GPU memory where they reside. This approach allows for these objects to be composed of hundreds of
+thousands of particles and still have a minimal impact on performance.
+
+Let's see an example of the definition of one of such particle groups in the Oort cloud:
+
+.. code:: json
+
+	{
+		"name" : "Oort cloud",
+		"position" : [0.0, 0.0, 0.0],
+		// Color of particles
+		"color" : [0.9, 0.9, 0.9, 0.8],
+		// Size of particles
+		"size" : 2.0,
+		"labelcolor" : [0.3, 0.6, 1.0, 1.0],
+		// Position in parsecs
+		"labelposition" : [0.0484814, 0.0, 0.0484814]
+		"ct" : Others,
+	
+		// Fade distances, in parsecs
+		"fadein" : [0.0004, 0.004],
+		"fadeout" : [0.1, 15.0],
+		
+		"profiledecay" : 1.0,
+		
+	
+		"parent" : "Universe", 
+		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.ParticleGroup",
+		
+		// Extends IParticleGroupDataProvider
+		"provider" : "gaia.cu9.ari.gaiaorbit.data.group.PointDataProvider",
+		"factor" :  149.597871,
+		"datafile" : "data/oort/oort_10000particles.dat"	
+	}
+
+Let's go over the attributes:
+
+-  ``name`` -- The name of the particle group.
+-  ``position`` -- The mean cartesian position (see :ref:`internal reference system <reference-system>`) in parsecs, used for sorting purposes and also for positioning the label. If this is not provided, the mean position of all the particles is used.
+-  ``color`` -- The color of the particles as an ``rgba`` array.
+-  ``size``  -- The size of the particles. In a non HiDPI screen, this is in pixel units. In HiDPI screens, the size will be scaled up to maintain the proportions.
+-  ``labelcolor``  -- The color of the label as an ``rgba`` array.
+-  ``labelposition``  -- The cartesian position (see :ref:`internal reference system <reference-system>`) of the label, in parsecs.
+-  ``ct``  -- The ``ComponentType`` --`here <https://github.com/langurmonkey/gaiasky/blob/master/core/src/gaia/cu9/ari/gaiaorbit/render/SceneGraphRenderer.java#L59>`__--. This is basically a ``string`` that will be matched to the entity type in ``ComponentType`` enum. Valid component types are ``Stars``, ``Planets``, ``Moons``, ``Satellites``, ``Atmospheres``, ``Constellations``, etc.
+-  ``fadein``  -- The fade in inetrpolation distances, in parsecs. If this property is defined, there will be a fade-in effect applied to the particle group between the distance ``fadein[0]`` and the distance ``fadein[1]``.
+-  ``fadeout``  -- The fade out inetrpolation distances, in parsecs. If this property is defined, there will be a fade-in effect applied to the particle group between the distance ``fadein[0]`` and the distance ``fadein[1]``.
+-  ``profiledecay``  -- This attribute controls how particles are rendered. This is basically the opacity profile decay of each particle, as in ``(1.0 - dist)^profiledecay``, where dist is the distance from the center (center dist is 0, edge dist is 1).
+-  ``parent``  -- The name of the parent object in the scenegraph.
+-  ``impl``  -- The full name of the model class. This should always be ``gaia.cu9.ari.gaiaorbit.scenegraph.ParticleGroup``.
+-  ``provider``  -- The full name of the data provider class. This must extend ``gaia.cu9.ari.gaiaorbit.data.group.IParticleGroupDataProvider`` (see `here <https://github.com/langurmonkey/gaiasky/blob/master/core/src/gaia/cu9/ari/gaiaorbit/data/group/IParticleGroupDataProvider.java>`__).
+-  ``factor``  -- A factor to be applied to each coordinate of each data point. If not specified, defaults to 1.
+-  ``datafile``  -- The actual file with the data. It must be in a format that the data provider specified in ``provider`` knows how to load.
+
+Single particles
+----------------
+
+This approach creates a model object for every single star or particle. Also, these model objects are 
+inserted into the scene graph and updated every loop cycle. This means that as the number of particles grow, the
+impact on performance will also grow (linearly or not, depending on the multithreading setting). This method is
+discouraged for very large catalogs (+1M objects) because it will inevitably produce low frame rates.
+By combining single particles into a levels of detail structure (i.e. an octree), we can deal and explore huge datasets, as described below.
+Let's see what loaders are available for the single particles approach.
+
 HYG catalog loaders
--------------------
+~~~~~~~~~~~~~~~~~~~
 
 These loaders
 (``HYGBinaryLoader`` --`here <https://github.com/langurmonkey/gaiasky/blob/master/core/src/gaia/cu9/ari/gaiaorbit/data/stars/HYGBinaryLoader.java>`__--
@@ -140,7 +208,6 @@ file in the same format. The ``csv`` and ``bin`` formats are described
 below.
 
 - **CSV format**: This is the ``csv`` format as downloaded
-
 from the `HYG Database site <http://www.astronexus.com/hyg>`__. The
 first line contains the headers and is skipped. Then, each following row
 contains a particle (star) with the following columns:
@@ -194,7 +261,7 @@ contains a particle (star) with the following columns:
    There is a utility to convert the ``csv`` catalog to the ``bin`` format. It is called ``HYGToBinary`` --`here <https://github.com/langurmonkey/gaiasky/blob/master/desktop/src/gaia/cu9/ari/gaiaorbit/data/HYGToBinary.java>`__-- and it can easily be adapted to convert any supported format to this binary format.
 
 Legacy octree catalog loader (single file)
-------------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This is practically the same format as the binary in the
 ``HYGBinaryLoader`` but adding some metadata to construct an
@@ -256,10 +323,10 @@ may be used to read a catalog from a file, generate the octree and write
 both the particles and the metadata files back to a file.
 
 Octree catalog loader (multifile)
----------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 As of version ``1.5.0``, a new on-demand catalog loader exists, called Octree multifile loader. 
-This is a version of the Octree catalog loader specially designed for very large datasets. This version
+This is a version of the octree catalog loader specially designed for very large datasets. This version
 does not load everything at startup. It needs the catalog to be organised into several files, each one corresponding to 
 a particluar octree node. This is an option in the `OctreeGeneratorTest <https://github.com/langurmonkey/gaiasky/blob/master/desktop/src/gaia/cu9/ari/gaiaorbit/data/OctreeGeneratorTest.java>`__.
 Back to the loader, it can pre-load files down to a certain depth level; the rest of the
@@ -268,7 +335,7 @@ to the main memory as the user explores the dataset. It also results in a very f
 This loader is called ``OctreeMultiFileLoader`` and is implemented `here <https://github.com/langurmonkey/gaiasky/blob/master/core/src/gaia/cu9/ari/gaiaorbit/data/stars/OctreeMultiFileLoader.java>`__. 
 
 STIL catalog loader
--------------------
+~~~~~~~~~~~~~~~~~~~
 
 As of version ``v0.704`` the Gaia Sky supports all formats supported
 by the ``STIL`` `library <http://www.star.bristol.ac.uk/~mbt/stil/>`__.
@@ -290,67 +357,6 @@ unique nature, this catalog loader makes a series of assumptions:
 -  If ``meta.id`` and/or ``meta.id;meta.main`` are present, they are
    used as name and identifier of the stars respectively. Otherwise, a
    random name and identifier are generated and assigned.
-
-
-
-Particle groups
-===============
-
-As of version ``1.5.0``, ``Gaia Sky`` offers a new data type, the particle group. Particle groups are intended to 
-be objects defined by point particles which are themselves not focusable or selectable. Particle data
-are read from a file using a certain particle group provider implementation, and these data
-are sent to GPU memory where they reside. This approach allows for these objects to be composed of hundreds of
-thousands of particles and still have a minimal impact on performance.
-
-Let's see an example of the definition of one of such particle groups in the Oort cloud:
-
-.. code:: json
-
-	{
-		"name" : "Oort cloud",
-		"position" : [0.0, 0.0, 0.0],
-		// Color of particles
-		"color" : [0.9, 0.9, 0.9, 0.8],
-		// Size of particles
-		"size" : 2.0,
-		"labelcolor" : [0.3, 0.6, 1.0, 1.0],
-		// Position in parsecs
-		"labelposition" : [0.0484814, 0.0, 0.0484814]
-		"ct" : Others,
-	
-		// Fade distances, in parsecs
-		"fadein" : [0.0004, 0.004],
-		"fadeout" : [0.1, 15.0],
-		
-		"profiledecay" : 1.0,
-		
-	
-		"parent" : "Universe", 
-		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.ParticleGroup",
-		
-		// Extends IParticleGroupDataProvider
-		"provider" : "gaia.cu9.ari.gaiaorbit.data.group.PointDataProvider",
-		"factor" :  149.597871,
-		"datafile" : "data/oort/oort_10000particles.dat"	
-	}
-
-Let's go over the attributes:
-
--  ``name`` -- The name of the particle group.
--  ``position`` -- The mean cartesian position (see :ref:`internal reference system <reference-system>`) in parsecs, used for sorting purposes and also for positioning the label. If this is not provided, the mean position of all the particles is used.
--  ``color`` -- The color of the particles as an ``rgba`` array.
--  ``size``  -- The size of the particles. In a non HiDPI screen, this is in pixel units. In HiDPI screens, the size will be scaled up to maintain the proportions.
--  ``labelcolor``  -- The color of the label as an ``rgba`` array.
--  ``labelposition``  -- The cartesian position (see :ref:`internal reference system <reference-system>`) of the label, in parsecs.
--  ``ct``  -- The ``ComponentType`` --`here <https://github.com/langurmonkey/gaiasky/blob/master/core/src/gaia/cu9/ari/gaiaorbit/render/SceneGraphRenderer.java#L59>`__--. This is basically a ``string`` that will be matched to the entity type in ``ComponentType`` enum. Valid component types are ``Stars``, ``Planets``, ``Moons``, ``Satellites``, ``Atmospheres``, ``Constellations``, etc.
--  ``fadein``  -- The fade in inetrpolation distances, in parsecs. If this property is defined, there will be a fade-in effect applied to the particle group between the distance ``fadein[0]`` and the distance ``fadein[1]``.
--  ``fadeout``  -- The fade out inetrpolation distances, in parsecs. If this property is defined, there will be a fade-in effect applied to the particle group between the distance ``fadein[0]`` and the distance ``fadein[1]``.
--  ``profiledecay``  -- This attribute controls how particles are rendered. This is basically the opacity profile decay of each particle, as in ``(1.0 - dist)^profiledecay``, where dist is the distance from the center (center dist is 0, edge dist is 1).
--  ``parent``  -- The name of the parent object in the scenegraph.
--  ``impl``  -- The full name of the model class. This should always be ``gaia.cu9.ari.gaiaorbit.scenegraph.ParticleGroup``.
--  ``provider``  -- The full name of the data provider class. This must extend ``gaia.cu9.ari.gaiaorbit.data.group.IParticleGroupDataProvider`` (see `here <https://github.com/langurmonkey/gaiasky/blob/master/core/src/gaia/cu9/ari/gaiaorbit/data/group/IParticleGroupDataProvider.java>`__).
--  ``factor``  -- A factor to be applied to each coordinate of each data point. If not specified, defaults to 1.
--  ``datafile``  -- The actual file with the data. It must be in a format that the data provider specified in ``provider`` knows how to load.
 
 
 Non-particle data: Planets, Moons, Asteroids, etc.
