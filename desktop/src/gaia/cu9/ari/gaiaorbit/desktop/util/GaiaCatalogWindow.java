@@ -51,7 +51,7 @@ public class GaiaCatalogWindow extends CollapsibleWindow {
 
     private static String URL_GAIA_WEB_SOURCE = "http://gaia.ari.uni-heidelberg.de/singlesource.html#id=";
 
-    private static String URL_GAIA_HIP = "http://gaia.ari.uni-heidelberg.de/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=csv&QUERY=SELECT+*+FROM+extcat.hipparcos+WHERE+hip=";
+    private static String URL_GAIA_HIP = "http://gaia.ari.uni-heidelberg.de/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+*+FROM+extcat.hipparcos+WHERE+hip=";
     private static final String separator = "\n";
 
     private final GaiaCatalogWindow me;
@@ -104,7 +104,7 @@ public class GaiaCatalogWindow extends CollapsibleWindow {
         scroll.setOverscroll(false, false);
         scroll.setSmoothScrolling(true);
 
-        add(scroll);
+        add(scroll).pad(pad);
         row();
         add(buttonGroup).colspan(2).pad(pad, pad, pad, pad).bottom().right();
         getTitleTable().align(Align.left);
@@ -138,11 +138,10 @@ public class GaiaCatalogWindow extends CollapsibleWindow {
         this.st = st;
 
         table.clear();
-
         requestData(new GaiaDataListener(st));
-
         table.pack();
-        scroll.setWidth(table.getWidth() + scroll.getStyle().vScroll.getMinWidth());
+
+        //scroll.setWidth(Math.max(table.getWidth() + scroll.getStyle().vScroll.getMinWidth(), 500 * GlobalConf.SCALE_FACTOR));
         pack();
         me.setPosition(Math.round(stage.getWidth() / 2f - me.getWidth() / 2f), Math.round(stage.getHeight() / 2f - me.getHeight() / 2f));
 
@@ -176,7 +175,7 @@ public class GaiaCatalogWindow extends CollapsibleWindow {
     }
 
     private void getDataByHipId(int hip, GaiaDataListener listener) {
-        getTAPData(URL_GAIA_HIP + Integer.toString(hip), "csv", listener);
+        getTAPData(URL_GAIA_HIP + Integer.toString(hip), "json", listener);
     }
 
     private String[][] getTAPData(String url, final String format, final GaiaDataListener listener) {
@@ -287,7 +286,7 @@ public class GaiaCatalogWindow extends CollapsibleWindow {
             int i = 0;
             do {
                 colnames[i] = column.getString("name");
-                descriptions[i] = column.getString("description");
+                descriptions[i] = column.getString("description") + (column.has("unit") ? " [" + column.getString("unit") + "]" : "");
                 i++;
                 column = column.next;
             } while (column != null);
@@ -357,18 +356,18 @@ public class GaiaCatalogWindow extends CollapsibleWindow {
                     left();
                     table.row();
                 }
-                scroll.setHeight(Gdx.graphics.getHeight() * 0.7f);
+                scroll.setHeight((float) Math.min(table.getMinHeight(), Gdx.graphics.getHeight() * 0.6) + pad);
                 finish();
             });
         }
 
         public void ko() {
-            // No ID
+            // Error getting data
             Gdx.app.postRunnable(() -> {
-                String msg = I18n.bundle.format("error.gaiacatalog.noid", st.getName());
+                String msg = I18n.bundle.format("error.gaiacatalog.data", st.getName());
                 table.add(new OwnLabel(msg, skin, "ui-15"));
                 table.pack();
-                scroll.setHeight(table.getHeight() + pad);
+                scroll.setHeight((float) Math.min(table.getHeight(), Gdx.graphics.getHeight() * 0.6) + pad);
                 finish();
             });
         }
