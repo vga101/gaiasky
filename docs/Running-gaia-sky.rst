@@ -36,9 +36,8 @@ Requirements
 
 If you want to compile the source code, you will need the following:
 
--  `JDK7 or
+-  `JDK8 or
    above <http://www.oracle.com/technetwork/java/javase/downloads/index.html>`__
-   (JDK8 recommended)
 
 Please, be aware that only ``tags`` are guaranteed to work
 (`here <https://github.com/langurmonkey/gaiasky/tags>`__). The ``master``
