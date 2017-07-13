@@ -11,8 +11,7 @@ their geometrical and spatial relations.
 
 The different types of data are:
 
-- **Particle data** -- usually stars which come from a star catalogue. In this group we have two different approaches: **single particles** and **particle groups**.
-The TLDR version says that the **single particles** method is fundamentally slower and CPU-bound, while the **particle groups** method is faster and GPU-based. More on this later.
+- **Particle data** -- usually stars which come from a star catalogue. In this group we have two different approaches: **single particles** and **particle groups**. The TLDR version says that the **single particles** method is fundamentally slower and CPU-bound, while the **particle groups** method is faster and GPU-based. More on this later.
 - **Rest of data** -- planets, orbits, constellations, grids and everything else qualifies for this category.
 
 Data belonging to either group will be loaded differently into the Gaia
