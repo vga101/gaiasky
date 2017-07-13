@@ -11,7 +11,8 @@ their geometrical and spatial relations.
 
 The different types of data are:
 
-- **Particle data** -- usually stars which come from a star catalogue.
+- **Particle data** -- usually stars which come from a star catalogue. In this group we have two different approaches: **single particles** and **particle groups**.
+The TLDR version says that the **single particles** method is fundamentally slower and CPU-bound, while the **particle groups** method is faster and GPU-based. More on this later.
 - **Rest of data** -- planets, orbits, constellations, grids and everything else qualifies for this category.
 
 Data belonging to either group will be loaded differently into the Gaia
@@ -116,21 +117,8 @@ Particle data
 Particle data refers to the loading of particles (stars, galaxies, etc.) where each gets an object
 in the internal scene graph model. This allows for selection, labeling, levels of detail, etc.
 
-There are several off-the-shelf options to get data in various formats
-into ``Gaia Sky``. These options can be organized into two main
-categories:
-
--  **Local data** -- The data to load are files in the local disk.
--  **Object server** -- The data will be loaded/streamed from an object
-   server in the local machine or over the network.
-
-.. figure:: img/catalog-loading.png
-   :alt: Particle data loading system
-
-   Particle data loading system
-
-Local data
-----------
+There are several off-the-shelf options to get local data in various formats
+into ``Gaia Sky``. 
 
 In order to load **local data** there are a series of default options
 which can be combined. As described in the [[General data
@@ -140,7 +128,7 @@ get a list of files to load. A description of the main local catalog
 loaders follows.
 
 HYG catalog loaders
-~~~~~~~~~~~~~~~~~~~
+-------------------
 
 These loaders
 (``HYGBinaryLoader`` --`here <https://github.com/langurmonkey/gaiasky/blob/master/core/src/gaia/cu9/ari/gaiaorbit/data/stars/HYGBinaryLoader.java>`__--
@@ -206,8 +194,8 @@ contains a particle (star) with the following columns:
 
    There is a utility to convert the ``csv`` catalog to the ``bin`` format. It is called ``HYGToBinary`` --`here <https://github.com/langurmonkey/gaiasky/blob/master/desktop/src/gaia/cu9/ari/gaiaorbit/data/HYGToBinary.java>`__-- and it can easily be adapted to convert any supported format to this binary format.
 
-Octree catalog loader
-~~~~~~~~~~~~~~~~~~~~~
+Legacy octree catalog loader (single file)
+------------------------------------------
 
 This is practically the same format as the binary in the
 ``HYGBinaryLoader`` but adding some metadata to construct an
@@ -269,7 +257,7 @@ may be used to read a catalog from a file, generate the octree and write
 both the particles and the metadata files back to a file.
 
 Octree catalog loader (multifile)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+---------------------------------
 
 As of version ``1.5.0``, a new on-demand catalog loader exists, called Octree multifile loader. 
 This is a version of the Octree catalog loader specially designed for very large datasets. This version
@@ -281,7 +269,7 @@ to the main memory as the user explores the dataset. It also results in a very f
 This loader is called ``OctreeMultiFileLoader`` and is implemented `here <https://github.com/langurmonkey/gaiasky/blob/master/core/src/gaia/cu9/ari/gaiaorbit/data/stars/OctreeMultiFileLoader.java>`__. 
 
 STIL catalog loader
-~~~~~~~~~~~~~~~~~~~
+-------------------
 
 As of version ``v0.704`` the Gaia Sky supports all formats supported
 by the ``STIL`` `library <http://www.star.bristol.ac.uk/~mbt/stil/>`__.
