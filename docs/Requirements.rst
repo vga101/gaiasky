@@ -167,9 +167,8 @@ Requirements
 
 If you want to compile the source code, you will need the following:
 
--  `JDK7 or
+-  `JDK8 or
    above <http://www.oracle.com/technetwork/java/javase/downloads/index.html>`__
-   (JDK8 recommended)
 
 Please, be aware that only ``tags`` are guaranteed to work
 (`here <https://github.com/langurmonkey/gaiasky/tags>`__). The ``master``
@@ -182,6 +181,17 @@ on Windows, you will need `git for
 windows <http://git-scm.com/download/win>`__ and `Power
 Shell <http://en.wikipedia.org/wiki/Windows_PowerShell>`__, even though
 it has not been tested.
+
+The TGAS catalog files (Gaia data) are **not** in the repository, so if you want to use TGAS when running
+from source you need to download
+the ``tar`` file corresponding to your version:
+
+-  `tgas single file (version 1.0.3 or older) <http://wwwstaff.ari.uni-heidelberg.de/gaiasandbox/files/20161206_tgas_gaiasky_1.0.3.tar.gz>`__ 
+-  `tags single file (version 1.0.4) <http://wwwstaff.ari.uni-heidelberg.de/gaiasandbox/files/20161206_tgas_gaiasky_1.0.4.tar.gz>`__ 
+-  `tags gpu (version 1.5.0 or newer) <http://wwwstaff.ari.uni-heidelberg.de/gaiasandbox/files/20170713_tgas_gaiasky_1.5.0.tar.gz>`__ 
+
+You must extract the contents tarball into the folder ``gaiasky/android/assets/data/octree`` (versions ``1.0.3`` and ``1.0.4``) or in the folder ``gaiasky/android/assets/data/catalog`` (version ``1.5.0``).
+
 
 First, clone the repository:
 

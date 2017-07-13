@@ -160,17 +160,17 @@ git clone https://github.com/langurmonkey/gaiasky.git
 cd gaiasky
 ```
 
-Make sure you have at least `JDK7` installed.
+Make sure you have at least `JDK8` installed.
 
 The TGAS catalog files (Gaia data) are **not** in the repository, so if you want to use TGAS when running
-from source you either need to choose `HYG` in the Data tab of the configuration dialog or download
+from source you need to download
 the `tar` file corresponding to your version:
 
 -  [tgas single file (version 1.0.3 or older)](http://wwwstaff.ari.uni-heidelberg.de/gaiasandbox/files/20161206_tgas_gaiasky_1.0.3.tar.gz) 
 -  [tags single file (version 1.0.4)](http://wwwstaff.ari.uni-heidelberg.de/gaiasandbox/files/20161206_tgas_gaiasky_1.0.4.tar.gz)
--  [tags multifile (version 1.5.0 or newer)](http://wwwstaff.ari.uni-heidelberg.de/gaiasandbox/files/20170427_tgas_gaiasky_1.5.0.tar.gz)
+-  [tags gpu (version 1.5.0 or newer)](http://wwwstaff.ari.uni-heidelberg.de/gaiasandbox/files/20170713_tgas_gaiasky_1.5.0.tar.gz)
 
-You must extract the contents tarball into the folder `gaiasky/android/assets/data/octree`. In the case of the multifile package, you need to keep the directory structure.
+You must extract the contents tarball into the folder `gaiasky/android/assets/data/octree` (versions `1.0.3` and `1.0.4`) or in the folder `gaiasky/android/assets/data/catalog` (version `1.5.0`).
 
 Finally, run Gaia Sky with:
 
