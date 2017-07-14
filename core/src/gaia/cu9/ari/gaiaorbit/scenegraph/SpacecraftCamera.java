@@ -41,7 +41,7 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
     private static final double stopAt = 10000 * Constants.M_TO_U;
 
     /** Seconds to reach full power **/
-    private static final double fullPowerTime = 0.5;
+    private static final double fullPowerTime = 1.0;
 
     /** Camera to render the attitude indicator system **/
     private PerspectiveCamera guiCam;
@@ -60,8 +60,14 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
     /**
      * Factor (adapt to be able to navigate small and large scale structures
      **/
-    public static final double[] thrustFactor = new double[] { 0.1, 1.0, 1e1, 1e2, 1e3, 1e4, 1e5, 1e6, 1e7, 1e8, 1e9, 1e10, 1e11 };
-    public int thrustFactorIndex = 1;
+    public static final double[] thrustFactor = new double[17];
+    static {
+        double val = 0.1;
+        for (int i = 0; i < 17; i++) {
+            thrustFactor[i] = val * Math.pow(10, i);
+        }
+    }
+    public int thrustFactorIndex = 0;
 
     /** Instantaneous engine power, this is in [0..1] **/
     public double enginePower;

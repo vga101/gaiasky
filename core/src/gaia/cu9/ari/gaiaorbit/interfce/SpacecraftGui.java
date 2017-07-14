@@ -312,7 +312,7 @@ public class SpacecraftGui extends AbstractGui {
         // Power slider - The value of the slider is the index of the thrustFactor array 
         enginePower = new OwnSlider(0, SpacecraftCamera.thrustFactor.length - 1, 1, true, skin, "sc-engine");
         enginePower.setName("engine power slider");
-        enginePower.setValue(1);
+        enginePower.setValue(0);
         enginePower.setHeight(enginePowerH);
         enginePower.addListener(new EventListener() {
             @Override
