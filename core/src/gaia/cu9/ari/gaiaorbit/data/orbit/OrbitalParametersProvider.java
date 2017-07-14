@@ -2,7 +2,7 @@ package gaia.cu9.ari.gaiaorbit.data.orbit;
 
 import java.util.Date;
 
-import gaia.cu9.ari.gaiaorbit.data.orbit.OrbitDataLoader.OrbitDataLoaderParameter;
+import gaia.cu9.ari.gaiaorbit.assets.OrbitDataLoader.OrbitDataLoaderParameter;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.OrbitComponent;

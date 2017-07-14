@@ -24,6 +24,9 @@ import com.bitfire.postprocessing.filters.Glow;
 import com.bitfire.utils.ShaderLoader;
 
 import gaia.cu9.ari.gaiaorbit.GaiaSky;
+import gaia.cu9.ari.gaiaorbit.assets.AtmosphereGroundShaderProviderLoader.AtmosphereGroundShaderProviderParameter;
+import gaia.cu9.ari.gaiaorbit.assets.AtmosphereShaderProviderLoader.AtmosphereShaderProviderParameter;
+import gaia.cu9.ari.gaiaorbit.assets.DefaultShaderProviderLoader.DefaultShaderProviderParameter;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
@@ -103,25 +106,61 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
     @Override
     public void initialize(AssetManager manager) {
+        ShaderLoader.Pedantic = false;
+        ShaderProgram.pedantic = false;
+
+        /** LOAD SHADER PROGRAMS WITH ASSET MANAGER **/
+        manager.load("shader/star.vertex.glsl", ShaderProgram.class);
+        manager.load("shader/gal.vertex.glsl", ShaderProgram.class);
+        manager.load("shader/font.vertex.glsl", ShaderProgram.class);
+        manager.load("atmgrounddefault", AtmosphereGroundShaderProvider.class, new AtmosphereGroundShaderProviderParameter("shader/default.vertex.glsl", "shader/default.fragment.glsl"));
+        manager.load("spsurface", DefaultShaderProvider.class, new DefaultShaderProviderParameter("shader/default.vertex.glsl", "shader/starsurface.fragment.glsl"));
+        manager.load("spbeam", DefaultShaderProvider.class, new DefaultShaderProviderParameter("shader/default.vertex.glsl", "shader/beam.fragment.glsl"));
+        manager.load("atm", AtmosphereShaderProvider.class, new AtmosphereShaderProviderParameter("shader/atm.vertex.glsl", "shader/atm.fragment.glsl"));
+        if (!Constants.webgl) {
+            manager.load("atmground", AtmosphereGroundShaderProvider.class, new AtmosphereGroundShaderProviderParameter("shader/normal.vertex.glsl", "shader/normal.fragment.glsl"));
+        }
+
+        pixelRenderSystems = new AbstractRenderSystem[3];
+
+        renderProcesses = new Array<IRenderSystem>();
+
+        blendNoDepthRunnable = new RenderSystemRunnable() {
+            @Override
+            public void run(AbstractRenderSystem renderSystem, Array<IRenderable> renderables, ICamera camera) {
+                Gdx.gl.glEnable(GL20.GL_BLEND);
+                Gdx.gl.glDisable(GL20.GL_DEPTH_TEST);
+                Gdx.gl.glDepthMask(false);
+            }
+        };
+        blendDepthRunnable = new RenderSystemRunnable() {
+            @Override
+            public void run(AbstractRenderSystem renderSystem, Array<IRenderable> renderables, ICamera camera) {
+                Gdx.gl.glEnable(GL20.GL_BLEND);
+                Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
+                Gdx.gl.glDepthMask(true);
+            }
+        };
+
+    }
+
+    public void doneLoading(AssetManager manager) {
         IntBuffer intBuffer = BufferUtils.newIntBuffer(16);
         Gdx.gl20.glGetIntegerv(GL20.GL_MAX_TEXTURE_SIZE, intBuffer);
         maxTexSize = intBuffer.get();
         Logger.info(this.getClass().getSimpleName(), "Max texture size: " + maxTexSize + "^2 pixels");
 
-        ShaderLoader.Pedantic = false;
-        ShaderProgram.pedantic = false;
-
         /**
          * STAR SHADER
          */
-        starShader = new ShaderProgram(Gdx.files.internal("shader/star.vertex.glsl"), Gdx.files.internal("shader/star.fragment.glsl"));
+        starShader = manager.get("shader/star.vertex.glsl");
         if (!starShader.isCompiled()) {
             Logger.error(new RuntimeException(), this.getClass().getName() + " - Star shader compilation failed:\n" + starShader.getLog());
         }
         /**
          * GALAXY SHADER
          */
-        galaxyShader = new ShaderProgram(Gdx.files.internal("shader/gal.vertex.glsl"), Gdx.files.internal("shader/gal.fragment.glsl"));
+        galaxyShader = manager.get("shader/gal.vertex.glsl");
         if (!galaxyShader.isCompiled()) {
             Logger.error(new RuntimeException(), this.getClass().getName() + " - Galaxy shader compilation failed:\n" + galaxyShader.getLog());
         }
@@ -129,7 +168,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         /**
          * FONT SHADER
          */
-        fontShader = new ShaderProgram(Gdx.files.internal("shader/font.vertex.glsl"), Gdx.files.internal("shader/font.fragment.glsl"));
+        fontShader = manager.get("shader/font.vertex.glsl");
         if (!fontShader.isCompiled()) {
             Logger.error(new RuntimeException(), this.getClass().getName() + " - Font shader compilation failed:\n" + fontShader.getLog());
         }
@@ -141,11 +180,11 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
             render_lists.put(rg, new Multilist<IRenderable>(numLists, 40000));
         }
 
-        ShaderProvider sp = new AtmosphereGroundShaderProvider(Gdx.files.internal("shader/default.vertex.glsl"), Gdx.files.internal("shader/default.fragment.glsl"));
-        ShaderProvider spnormal = Constants.webgl ? sp : new AtmosphereGroundShaderProvider(Gdx.files.internal("shader/normal.vertex.glsl"), Gdx.files.internal("shader/normal.fragment.glsl"));
-        ShaderProvider spatm = new AtmosphereShaderProvider(Gdx.files.internal("shader/atm.vertex.glsl"), Gdx.files.internal("shader/atm.fragment.glsl"));
-        ShaderProvider spsurface = new DefaultShaderProvider(Gdx.files.internal("shader/default.vertex.glsl"), Gdx.files.internal("shader/starsurface.fragment.glsl"));
-        ShaderProvider spbeam = new DefaultShaderProvider(Gdx.files.internal("shader/default.vertex.glsl"), Gdx.files.internal("shader/beam.fragment.glsl"));
+        ShaderProvider sp = manager.get("atmgrounddefault");
+        ShaderProvider spnormal = Constants.webgl ? sp : manager.get("atmground");
+        ShaderProvider spatm = manager.get("atm");
+        ShaderProvider spsurface = manager.get("spsurface");
+        ShaderProvider spbeam = manager.get("spbeam");
 
         RenderableSorter noSorter = new RenderableSorter() {
             @Override
@@ -210,26 +249,6 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
          * ======= INITIALIZE RENDER COMPONENTS =======
          *
          **/
-        pixelRenderSystems = new AbstractRenderSystem[3];
-
-        renderProcesses = new Array<IRenderSystem>();
-
-        blendNoDepthRunnable = new RenderSystemRunnable() {
-            @Override
-            public void run(AbstractRenderSystem renderSystem, Array<IRenderable> renderables, ICamera camera) {
-                Gdx.gl.glEnable(GL20.GL_BLEND);
-                Gdx.gl.glDisable(GL20.GL_DEPTH_TEST);
-                Gdx.gl.glDepthMask(false);
-            }
-        };
-        blendDepthRunnable = new RenderSystemRunnable() {
-            @Override
-            public void run(AbstractRenderSystem renderSystem, Array<IRenderable> renderables, ICamera camera) {
-                Gdx.gl.glEnable(GL20.GL_BLEND);
-                Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
-                Gdx.gl.glDepthMask(true);
-            }
-        };
 
         int priority = 0;
 

@@ -1,6 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.data.orbit;
 
-import gaia.cu9.ari.gaiaorbit.data.orbit.OrbitDataLoader.OrbitDataLoaderParameter;
+import gaia.cu9.ari.gaiaorbit.assets.OrbitDataLoader.OrbitDataLoaderParameter;
 
 public interface IOrbitDataProvider {
 

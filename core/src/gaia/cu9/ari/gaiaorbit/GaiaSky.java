@@ -14,25 +14,31 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.FileHandleResolver;
+import com.badlogic.gdx.assets.loaders.ShaderProgramLoader;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap.Format;
+import com.badlogic.gdx.graphics.g3d.utils.DefaultShaderProvider;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.GLFrameBuffer;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.scenes.scene2d.ui.TooltipManager;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.Timer.Task;
 
+import gaia.cu9.ari.gaiaorbit.assets.AtmosphereGroundShaderProviderLoader;
+import gaia.cu9.ari.gaiaorbit.assets.AtmosphereShaderProviderLoader;
+import gaia.cu9.ari.gaiaorbit.assets.DefaultShaderProviderLoader;
+import gaia.cu9.ari.gaiaorbit.assets.GaiaAttitudeLoader;
+import gaia.cu9.ari.gaiaorbit.assets.GaiaAttitudeLoader.GaiaAttitudeLoaderParameter;
+import gaia.cu9.ari.gaiaorbit.assets.OrbitDataLoader;
+import gaia.cu9.ari.gaiaorbit.assets.SGLoader;
+import gaia.cu9.ari.gaiaorbit.assets.SGLoader.SGLoaderParameter;
 import gaia.cu9.ari.gaiaorbit.data.AssetBean;
-import gaia.cu9.ari.gaiaorbit.data.GaiaAttitudeLoader;
-import gaia.cu9.ari.gaiaorbit.data.GaiaAttitudeLoader.GaiaAttitudeLoaderParameter;
-import gaia.cu9.ari.gaiaorbit.data.SGLoader;
-import gaia.cu9.ari.gaiaorbit.data.SGLoader.SGLoaderParameter;
 import gaia.cu9.ari.gaiaorbit.data.orbit.OrbitData;
-import gaia.cu9.ari.gaiaorbit.data.orbit.OrbitDataLoader;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
@@ -75,6 +81,8 @@ import gaia.cu9.ari.gaiaorbit.util.MemInfo;
 import gaia.cu9.ari.gaiaorbit.util.ModelCache;
 import gaia.cu9.ari.gaiaorbit.util.MusicManager;
 import gaia.cu9.ari.gaiaorbit.util.gaia.GaiaAttitudeServer;
+import gaia.cu9.ari.gaiaorbit.util.override.AtmosphereGroundShaderProvider;
+import gaia.cu9.ari.gaiaorbit.util.override.AtmosphereShaderProvider;
 import gaia.cu9.ari.gaiaorbit.util.time.GlobalClock;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 import gaia.cu9.ari.gaiaorbit.util.time.RealTimeClock;
@@ -209,6 +217,10 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         manager.setLoader(ISceneGraph.class, new SGLoader(resolver));
         manager.setLoader(OrbitData.class, new OrbitDataLoader(resolver));
         manager.setLoader(GaiaAttitudeServer.class, new GaiaAttitudeLoader(resolver));
+        manager.setLoader(ShaderProgram.class, new ShaderProgramLoader(resolver, ".vertex.glsl", ".fragment.glsl"));
+        manager.setLoader(DefaultShaderProvider.class, new DefaultShaderProviderLoader<>(resolver));
+        manager.setLoader(AtmosphereShaderProvider.class, new AtmosphereShaderProviderLoader<>(resolver));
+        manager.setLoader(AtmosphereGroundShaderProvider.class, new AtmosphereGroundShaderProviderLoader<>(resolver));
 
         // Init global resources
         GlobalResources.initialize(manager);
@@ -232,9 +244,13 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         guis = new ArrayList<IGui>(3);
         reinitialiseGUI1();
 
-        // Post processor
+        // Post-processor
         pp = PostProcessorFactory.instance.getPostProcessor();
         pp.initialize(manager);
+
+        // Scene graph renderer
+        sgr = new SceneGraphRenderer();
+        sgr.initialize(manager);
 
         // Tell the asset manager to load all the assets
         Set<AssetBean> assets = AssetBean.getAssets();
@@ -285,11 +301,9 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         }
 
         /**
-         * FINISH LOADING POST-PROCESSOR
+         * POST-PROCESSOR
          */
         pp.doneLoading(manager);
-
-        GlobalResources.doneLoading(manager);
 
         /**
          * GET SCENE GRAPH
@@ -299,11 +313,10 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         }
 
         /**
-         * INITIALIZE RENDERER
+         * SCENE GRAPH RENDERER
          */
         AbstractRenderer.initialize(sg);
-        sgr = new SceneGraphRenderer();
-        sgr.initialize(manager);
+        sgr.doneLoading(manager);
         sgr.resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
         // First time, set assets

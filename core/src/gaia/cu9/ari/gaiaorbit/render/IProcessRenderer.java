@@ -33,6 +33,22 @@ public interface IProcessRenderer extends Disposable {
      */
     public void render(ICamera camera, float dt, int rw, int rh, FrameBuffer fb, PostProcessBean ppb);
 
-    public void initialize(AssetManager assetManager);
+    /**
+     * Initializes the renderer, sending all the necessary assets to the manager
+     * for loading
+     * 
+     * @param manager
+     *            The asset manager
+     */
+    public void initialize(AssetManager manager);
+
+    /**
+     * Actually initializes all the clockwork of this renderer using the assets
+     * in the given manager
+     * 
+     * @param manager
+     *            The asset manager
+     */
+    public void doneLoading(AssetManager manager);
 
 }

@@ -1,4 +1,4 @@
-package gaia.cu9.ari.gaiaorbit.data.orbit;
+package gaia.cu9.ari.gaiaorbit.assets;
 
 import java.util.Date;
 
@@ -11,11 +11,14 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
 
+import gaia.cu9.ari.gaiaorbit.data.orbit.IOrbitDataProvider;
+import gaia.cu9.ari.gaiaorbit.data.orbit.OrbitData;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.OrbitComponent;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 
 /**
  * Abstract data loader to rule them all.
+ * 
  * @author Toni Sagrista
  *
  */
@@ -55,13 +58,13 @@ public class OrbitDataLoader extends AsynchronousAssetLoader<OrbitData, OrbitDat
     static public class OrbitDataLoaderParameter extends AssetLoaderParameters<OrbitData> {
 
         Class<? extends IOrbitDataProvider> providerClass;
-        Date ini;
-        boolean forward;
-        float orbitalPeriod;
-        double multiplier;
-        int numSamples;
-        String name;
-        OrbitComponent orbitalParamaters;
+        public Date ini;
+        public boolean forward;
+        public float orbitalPeriod;
+        public double multiplier;
+        public int numSamples;
+        public String name;
+        public OrbitComponent orbitalParamaters;
 
         public OrbitDataLoaderParameter(Class<? extends IOrbitDataProvider> providerClass) {
             this.providerClass = providerClass;

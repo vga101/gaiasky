@@ -1,4 +1,4 @@
-package gaia.cu9.ari.gaiaorbit.data;
+package gaia.cu9.ari.gaiaorbit.assets;
 
 import com.badlogic.gdx.assets.AssetDescriptor;
 import com.badlogic.gdx.assets.AssetLoaderParameters;

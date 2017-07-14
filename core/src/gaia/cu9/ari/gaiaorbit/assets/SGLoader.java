@@ -1,4 +1,4 @@
-package gaia.cu9.ari.gaiaorbit.data;
+package gaia.cu9.ari.gaiaorbit.assets;
 
 import com.badlogic.gdx.assets.AssetDescriptor;
 import com.badlogic.gdx.assets.AssetLoaderParameters;
@@ -9,6 +9,7 @@ import com.badlogic.gdx.assets.loaders.FileHandleResolver;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Array;
 
+import gaia.cu9.ari.gaiaorbit.data.SceneGraphJsonLoader;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
@@ -16,7 +17,9 @@ import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
 /**
- * {@link AssetLoader} for all the {@link SceneGraphNode} instances. Loads all the entities in the scene graph.
+ * {@link AssetLoader} for all the {@link SceneGraphNode} instances. Loads all
+ * the entities in the scene graph.
+ * 
  * @author Toni Sagrista
  *
  */

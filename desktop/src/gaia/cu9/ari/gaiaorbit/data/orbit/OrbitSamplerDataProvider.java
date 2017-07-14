@@ -10,7 +10,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl.LwjglFiles;
 import com.badlogic.gdx.files.FileHandle;
 
-import gaia.cu9.ari.gaiaorbit.data.orbit.OrbitDataLoader.OrbitDataLoaderParameter;
+import gaia.cu9.ari.gaiaorbit.assets.OrbitDataLoader.OrbitDataLoaderParameter;
 import gaia.cu9.ari.gaiaorbit.desktop.format.DesktopDateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.desktop.format.DesktopNumberFormatFactory;
 import gaia.cu9.ari.gaiaorbit.desktop.util.DesktopConfInit;
