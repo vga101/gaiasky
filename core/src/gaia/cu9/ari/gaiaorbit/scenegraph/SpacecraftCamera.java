@@ -548,7 +548,7 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
     @Override
     public void render(int rw, int rh) {
         // Renders crosshair if focus mode
-        if (GlobalConf.scene.CROSSHAIR) {
+        if (GlobalConf.scene.CROSSHAIR && !GlobalConf.program.STEREOSCOPIC_MODE && !GlobalConf.program.CUBEMAP360_MODE) {
             spriteBatch.begin();
             spriteBatch.draw(crosshairTex, rw / 2f - chw2, rh / 2f - chh2);
             spriteBatch.end();

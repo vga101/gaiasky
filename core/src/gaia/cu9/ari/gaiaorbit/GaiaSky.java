@@ -761,10 +761,9 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
                     im.addProcessor(0, stereoGui.getGuiStage());
 
                     // Update state
-                    previousGui = currentGui;
                     currentGui = stereoGui;
                 }
-            } else if (mode == CameraMode.Spacecraft && currentGui != spacecraftGui) {
+            } else if (mode == CameraMode.Spacecraft) {
                 // Remove current gui
                 GuiRegistry.unregisterGui(currentGui);
                 im.removeProcessor(currentGui.getGuiStage());
@@ -774,22 +773,19 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
                 im.addProcessor(0, spacecraftGui.getGuiStage());
 
                 // Update state
-                previousGui = currentGui;
                 currentGui = spacecraftGui;
 
-            } else if (previousGui != null) {
+            } else {
                 // Remove current gui
                 GuiRegistry.unregisterGui(currentGui);
                 im.removeProcessor(currentGui.getGuiStage());
 
                 // Add main gui
-                GuiRegistry.registerGui(previousGui);
-                im.addProcessor(0, previousGui.getGuiStage());
+                GuiRegistry.registerGui(mainGui);
+                im.addProcessor(0, mainGui.getGuiStage());
 
                 // Update state
-                IGui aux = previousGui;
-                previousGui = currentGui;
-                currentGui = aux;
+                currentGui = mainGui;
             }
             break;
         case TOGGLE_STEREOSCOPIC_INFO:
