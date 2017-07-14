@@ -1,5 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.render;
 
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.utils.Disposable;
 import com.bitfire.postprocessing.PostProcessor;
@@ -64,6 +65,10 @@ public interface IPostProcessor extends Disposable {
         }
 
     }
+
+    public void initialize(AssetManager manager);
+
+    public void doneLoading(AssetManager manager);
 
     public PostProcessBean getPostProcessBean(RenderType type);
 

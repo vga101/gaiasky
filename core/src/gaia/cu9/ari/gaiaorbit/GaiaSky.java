@@ -226,11 +226,15 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         manager.load(ATTITUDE_FOLDER, GaiaAttitudeServer.class, new GaiaAttitudeLoaderParameter(GlobalConf.runtime.STRIPPED_FOV_MODE ? new String[] { "OPS_RSLS_0022916_rsls_nsl_gareq1_afterFirstSpinPhaseOptimization.2.xml" } : new String[] {}));
 
         // Initialise hidden helper user
-        HiddenHelperUser.initialise();
+        HiddenHelperUser.initialize();
 
         // GUI
         guis = new ArrayList<IGui>(3);
         reinitialiseGUI1();
+
+        // Post processor
+        pp = PostProcessorFactory.instance.getPostProcessor();
+        pp.initialize(manager);
 
         // Tell the asset manager to load all the assets
         Set<AssetBean> assets = AssetBean.getAssets();
@@ -280,7 +284,10 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
             GaiaAttitudeServer.instance = manager.get(ATTITUDE_FOLDER);
         }
 
-        pp = PostProcessorFactory.instance.getPostProcessor();
+        /**
+         * FINISH LOADING POST-PROCESSOR
+         */
+        pp.doneLoading(manager);
 
         GlobalResources.doneLoading(manager);
 

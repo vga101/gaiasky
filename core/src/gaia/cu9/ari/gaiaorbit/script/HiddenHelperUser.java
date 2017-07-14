@@ -29,7 +29,7 @@ public class HiddenHelperUser implements IObserver {
         return hhu;
     }
 
-    public static void initialise() {
+    public static void initialize() {
         instance();
     }
 

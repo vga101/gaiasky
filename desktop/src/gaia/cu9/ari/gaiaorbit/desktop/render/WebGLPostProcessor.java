@@ -1,6 +1,7 @@
 package gaia.cu9.ari.gaiaorbit.desktop.render;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetManager;
 import com.bitfire.postprocessing.PostProcessor;
 import com.bitfire.utils.ShaderLoader;
 
@@ -17,6 +18,14 @@ public class WebGLPostProcessor implements IPostProcessor {
     public WebGLPostProcessor() {
         ShaderLoader.BasePath = "shaders/";
         pps = newPostProcessor(getWidth(RenderType.screen), getHeight(RenderType.screen));
+    }
+
+    @Override
+    public void initialize(AssetManager manager) {
+    }
+
+    @Override
+    public void doneLoading(AssetManager manager) {
     }
 
     private int getWidth(RenderType type) {

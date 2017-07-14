@@ -3,6 +3,7 @@ package gaia.cu9.ari.gaiaorbit.desktop.render;
 import java.util.Arrays;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
@@ -34,7 +35,7 @@ import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
 public class DesktopPostProcessor implements IPostProcessor, IObserver {
-
+    private AssetManager manager;
     private PostProcessBean[] pps;
 
     float bloomFboScale = 0.5f;
@@ -57,16 +58,31 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
         prevViewProj = new Matrix4();
         prevCombined = new Matrix4();
 
+    }
+
+    public void initialize(AssetManager manager) {
+        this.manager = manager;
+        manager.load("img/lenscolor.png", Texture.class);
+        if (GlobalConf.scene.isHighQuality()) {
+            manager.load("img/lensdirt.jpg", Texture.class);
+            manager.load("img/star_glow.png", Texture.class);
+        } else {
+            manager.load("img/lensdirt_s.jpg", Texture.class);
+            manager.load("img/star_glow_s.png", Texture.class);
+        }
+        manager.load("img/lensstarburst.jpg", Texture.class);
+    }
+
+    public void doneLoading(AssetManager manager) {
         pps = new PostProcessBean[RenderType.values().length];
 
-        pps[RenderType.screen.index] = newPostProcessor(getWidth(RenderType.screen), getHeight(RenderType.screen));
+        pps[RenderType.screen.index] = newPostProcessor(getWidth(RenderType.screen), getHeight(RenderType.screen), manager);
         if (GlobalConf.screenshot.isRedrawMode())
-            pps[RenderType.screenshot.index] = newPostProcessor(getWidth(RenderType.screenshot), getHeight(RenderType.screenshot));
+            pps[RenderType.screenshot.index] = newPostProcessor(getWidth(RenderType.screenshot), getHeight(RenderType.screenshot), manager);
         if (GlobalConf.frame.isRedrawMode())
-            pps[RenderType.frame.index] = newPostProcessor(getWidth(RenderType.frame), getHeight(RenderType.frame));
+            pps[RenderType.frame.index] = newPostProcessor(getWidth(RenderType.frame), getHeight(RenderType.frame), manager);
 
         EventManager.instance.subscribe(this, Events.SCREENSHOT_SIZE_UDPATE, Events.FRAME_SIZE_UDPATE, Events.BLOOM_CMD, Events.LENS_FLARE_CMD, Events.MOTION_BLUR_CMD, Events.LIGHT_POS_2D_UPDATED, Events.LIGHT_SCATTERING_CMD, Events.FISHEYE_CMD, Events.CAMERA_MOTION_UPDATED, Events.CUBEMAP360_CMD, Events.ANTIALIASING_CMD, Events.BRIGHTNESS_CMD, Events.CONTRAST_CMD, Events.TOGGLE_STEREO_PROFILE_CMD, Events.TOGGLE_STEREOSCOPIC_CMD, Events.FPS_INFO);
-
     }
 
     private int getWidth(RenderType type) {
@@ -93,7 +109,7 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
         return 0;
     }
 
-    private PostProcessBean newPostProcessor(int width, int height) {
+    private PostProcessBean newPostProcessor(int width, int height, AssetManager manager) {
         PostProcessBean ppb = new PostProcessBean();
 
         float ar = (float) width / (float) height;
@@ -112,11 +128,11 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
             nghosts = 6;
             lensFboScale = 0.2f;
         }
-        Texture lcol = new Texture(Gdx.files.internal("img/lenscolor.png"));
+        Texture lcol = manager.get("img/lenscolor.png");
         lcol.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-        Texture ldirt = new Texture(Gdx.files.internal(GlobalConf.scene.isHighQuality() ? "img/lensdirt.jpg" : "img/lensdirt_s.jpg"));
+        Texture ldirt = GlobalConf.scene.isHighQuality() ? manager.get("img/lensdirt.jpg") : manager.get("img/lensdirt_s.jpg");
         ldirt.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-        Texture lburst = new Texture(Gdx.files.internal("img/lensstarburst.jpg"));
+        Texture lburst = manager.get("img/lensstarburst.jpg");
         lburst.setFilter(TextureFilter.Linear, TextureFilter.Linear);
         ppb.lens = new LensFlare2((int) (width * lensFboScale), (int) (height * lensFboScale));
         ppb.lens.setGhosts(nghosts);
@@ -141,19 +157,19 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
             nsamples = 45;
             lgw = 1920;
             lgh = Math.round(lgw / ar);
-            glow = new Texture(Gdx.files.internal("img/star_glow.png"));
+            glow = manager.get("img/star_glow.png");
             Glow.N = 70;
         } else if (GlobalConf.scene.isNormalQuality()) {
             nsamples = 15;
             lgw = 1280;
             lgh = Math.round(lgw / ar);
-            glow = new Texture(Gdx.files.internal("img/star_glow_s.png"));
+            glow = manager.get("img/star_glow_s.png");
             Glow.N = 30;
         } else {
             nsamples = 10;
             lgw = 1000;
             lgh = Math.round(lgw / ar);
-            glow = new Texture(Gdx.files.internal("img/star_glow_s.png"));
+            glow = manager.get("img/star_glow_s.png");
             Glow.N = 10;
         }
         glow.setFilter(TextureFilter.Linear, TextureFilter.Linear);
@@ -282,7 +298,7 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
                         });
                     }
                 } else {
-                    pps[RenderType.screenshot.index] = newPostProcessor(neww, newh);
+                    pps[RenderType.screenshot.index] = newPostProcessor(neww, newh, manager);
                 }
             }
             break;
@@ -297,7 +313,7 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
                         });
                     }
                 } else {
-                    pps[RenderType.frame.index] = newPostProcessor(neww, newh);
+                    pps[RenderType.frame.index] = newPostProcessor(neww, newh, manager);
                 }
             }
             break;
@@ -489,7 +505,7 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
         // Dispose of old post processor
         pps[index].dispose();
         // Create new
-        pps[index] = newPostProcessor(width, height);
+        pps[index] = newPostProcessor(width, height, manager);
     }
 
     private boolean changed(PostProcessor postProcess, int width, int height) {
