@@ -368,10 +368,6 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
             EventManager.instance.post(Events.TOGGLE_TIME_CMD, true, false);
         }
 
-        // Resize guis to current size
-        for (IGui gui : guis)
-            gui.resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-
         // Initialise frames
         frames = 0;
 
@@ -754,7 +750,21 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
             InputMultiplexer im = (InputMultiplexer) Gdx.input.getInputProcessor();
             // Register/unregister gui
             CameraMode mode = (CameraMode) data[0];
-            if (mode == CameraMode.Spacecraft && currentGui != spacecraftGui) {
+            if (GlobalConf.program.isStereoHalfViewport()) {
+                if (currentGui != stereoGui) {
+                    // Remove current gui
+                    GuiRegistry.unregisterGui(currentGui);
+                    im.removeProcessor(currentGui.getGuiStage());
+
+                    // Add spacecraft gui
+                    GuiRegistry.registerGui(stereoGui);
+                    im.addProcessor(0, stereoGui.getGuiStage());
+
+                    // Update state
+                    previousGui = currentGui;
+                    currentGui = stereoGui;
+                }
+            } else if (mode == CameraMode.Spacecraft && currentGui != spacecraftGui) {
                 // Remove current gui
                 GuiRegistry.unregisterGui(currentGui);
                 im.removeProcessor(currentGui.getGuiStage());
@@ -766,7 +776,8 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
                 // Update state
                 previousGui = currentGui;
                 currentGui = spacecraftGui;
-            } else if (mode != CameraMode.Spacecraft && previousGui != spacecraftGui && previousGui != null) {
+
+            } else if (previousGui != null) {
                 // Remove current gui
                 GuiRegistry.unregisterGui(currentGui);
                 im.removeProcessor(currentGui.getGuiStage());
