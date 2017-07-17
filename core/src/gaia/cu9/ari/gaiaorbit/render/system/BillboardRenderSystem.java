@@ -135,7 +135,7 @@ public class BillboardRenderSystem extends AbstractRenderSystem implements IObse
     }
 
     @Override
-    public void renderStud(Array<IRenderable> renderables, ICamera camera, float t) {
+    public void renderStud(Array<IRenderable> renderables, ICamera camera, double t) {
         if ((ctindex >= 0 ? alphas[ctindex] != 0 : true)) {
             renderables.sort(comp);
 
@@ -159,7 +159,7 @@ public class BillboardRenderSystem extends AbstractRenderSystem implements IObse
 
             if (!Constants.mobile) {
                 // Global uniforms
-                shaderProgram.setUniformf("u_time", t);
+                shaderProgram.setUniformf("u_time", (float) t);
             }
 
             int size = renderables.size;

@@ -49,8 +49,8 @@ public abstract class AbstractGui implements IObserver, IGui {
     }
 
     @Override
-    public void update(float dt) {
-        ui.act(dt);
+    public void update(double dt) {
+        ui.act((float) dt);
     }
 
     @Override

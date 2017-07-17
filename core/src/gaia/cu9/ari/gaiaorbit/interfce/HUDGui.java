@@ -128,8 +128,8 @@ public class HUDGui implements IGui {
     }
 
     @Override
-    public void update(float dt) {
-        ui.act(dt);
+    public void update(double dt) {
+        ui.act((float) dt);
         notificationsInterface.update();
     }
 

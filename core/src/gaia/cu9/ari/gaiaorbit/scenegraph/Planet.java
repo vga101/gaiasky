@@ -119,7 +119,7 @@ public class Planet extends ModelBody implements IAtmosphereRenderable, ILineRen
      * Renders model
      */
     @Override
-    public void render(ModelBatch modelBatch, float alpha, float t) {
+    public void render(ModelBatch modelBatch, float alpha, double t) {
         mc.touch();
         render(modelBatch, alpha, t, false);
     }
@@ -128,7 +128,7 @@ public class Planet extends ModelBody implements IAtmosphereRenderable, ILineRen
      * Renders atmosphere
      */
     @Override
-    public void render(ModelBatch modelBatch, float alpha, float t, boolean atm) {
+    public void render(ModelBatch modelBatch, float alpha, double t, boolean atm) {
         // Atmosphere fades in between 1 and 2 degrees of view angle apparent
         float atmopacity = (float) MathUtilsd.lint(viewAngle, 0.01745329f, 0.03490659f, 0f, 1f);
         if (!atm) {

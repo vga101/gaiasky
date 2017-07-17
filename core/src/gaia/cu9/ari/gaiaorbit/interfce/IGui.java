@@ -41,7 +41,7 @@ public interface IGui extends Disposable {
      * @param dt
      *            Time in seconds since the last frame
      */
-    public void update(float dt);
+    public void update(double dt);
 
     /**
      * Renders this GUI

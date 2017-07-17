@@ -67,7 +67,7 @@ public interface ICamera {
      * @param time
      *            The frame time provider (simulation time).
      */
-    public void update(float dt, ITimeFrameProvider time);
+    public void update(double dt, ITimeFrameProvider time);
 
     public void updateMode(CameraMode mode, boolean postEvent);
 

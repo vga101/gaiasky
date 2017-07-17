@@ -38,7 +38,7 @@ public class GuiRegistry {
         }
     }
 
-    public static void update(float dt) {
+    public static void update(double dt) {
         for (IGui gui : guis)
             gui.update(dt);
     }

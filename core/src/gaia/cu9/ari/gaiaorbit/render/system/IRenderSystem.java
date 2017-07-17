@@ -9,6 +9,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
 
 /**
  * A component that renders a type of objects.
+ * 
  * @author Toni Sagrista
  *
  */
@@ -18,7 +19,7 @@ public interface IRenderSystem extends Comparable<IRenderSystem> {
 
     public int getPriority();
 
-    public void render(Array<IRenderable> renderables, ICamera camera, float t, RenderContext rc);
+    public void render(Array<IRenderable> renderables, ICamera camera, double t, RenderContext rc);
 
     public void resize(int w, int h);
 

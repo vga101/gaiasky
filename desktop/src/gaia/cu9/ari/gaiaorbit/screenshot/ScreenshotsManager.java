@@ -117,7 +117,7 @@ public class ScreenshotsManager implements IObserver {
      *            the {@link IFileImageRenderer} to use.
      * @return
      */
-    public String renderToImage(IMainRenderer mr, ICamera camera, float dt, PostProcessBean ppb, int width, int height, String folder, String filename, IFileImageRenderer renderer, ImageType type) {
+    public String renderToImage(IMainRenderer mr, ICamera camera, double dt, PostProcessBean ppb, int width, int height, String folder, String filename, IFileImageRenderer renderer, ImageType type) {
         FrameBuffer frameBuffer = mr.getFrameBuffer(width, height);
         // TODO That's a dirty trick, we should find a better way (i.e. making
         // buildEnabledEffectsList() method public)
@@ -171,7 +171,7 @@ public class ScreenshotsManager implements IObserver {
             screenshot.takeScreenshot((int) data[0], (int) data[1], (String) data[2]);
             break;
         case UPDATE_GUI:
-            renderGui().update((Float) data[0]);
+            renderGui().update((Double) data[0]);
             break;
         case DISPOSE:
             renderGui().dispose();

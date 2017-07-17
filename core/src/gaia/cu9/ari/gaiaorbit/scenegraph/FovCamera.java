@@ -149,7 +149,7 @@ public class FovCamera extends AbstractCamera implements IObserver {
         EventManager.instance.subscribe(this, Events.GAIA_LOADED, Events.COMPUTE_GAIA_SCAN_CMD);
     }
 
-    public void update(float dt, ITimeFrameProvider time) {
+    public void update(double dt, ITimeFrameProvider time) {
         distance = pos.len();
 
         up.set(0, 1, 0);

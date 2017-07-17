@@ -214,7 +214,7 @@ public class CameraManager implements ICamera, IObserver {
      * @param time
      *            The time frame provider.
      */
-    public void update(float dt, ITimeFrameProvider time) {
+    public void update(double dt, ITimeFrameProvider time) {
         current.update(dt, time);
         if (current != fovCamera && GlobalConf.scene.COMPUTE_GAIA_SCAN) {
             fovCamera.updateDirections(time);

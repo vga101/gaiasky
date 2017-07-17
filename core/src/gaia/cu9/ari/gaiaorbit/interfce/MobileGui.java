@@ -99,9 +99,9 @@ public class MobileGui extends AbstractGui {
     }
 
     @Override
-    public void update(float dt) {
+    public void update(double dt) {
         if (ui != null)
-            ui.act(dt);
+            ui.act((float) dt);
         if (notificationsInterface != null)
             notificationsInterface.update();
     }

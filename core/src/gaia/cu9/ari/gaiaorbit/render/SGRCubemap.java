@@ -54,7 +54,7 @@ public class SGRCubemap extends SGRAbstract implements ISGR {
     }
 
     @Override
-    public void render(SceneGraphRenderer sgr, ICamera camera, float t, int rw, int rh, FrameBuffer fb, PostProcessBean ppb) {
+    public void render(SceneGraphRenderer sgr, ICamera camera, double t, int rw, int rh, FrameBuffer fb, PostProcessBean ppb) {
 
         PerspectiveCamera cam = camera.getCamera();
 

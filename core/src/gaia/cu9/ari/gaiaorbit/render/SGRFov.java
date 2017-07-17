@@ -7,9 +7,10 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 
 /**
- * Renders the Gaia Field of View camera mode. Positions two cameras inside 
+ * Renders the Gaia Field of View camera mode. Positions two cameras inside
  * gaia, each looking through one of the apertures, and renders them in the same
  * viewport with a CCD texture.
+ * 
  * @author tsagrista
  *
  */
@@ -20,7 +21,7 @@ public class SGRFov extends SGRAbstract implements ISGR {
     }
 
     @Override
-    public void render(SceneGraphRenderer sgr, ICamera camera, float t, int rw, int rh, FrameBuffer fb, PostProcessBean ppb) {
+    public void render(SceneGraphRenderer sgr, ICamera camera, double t, int rw, int rh, FrameBuffer fb, PostProcessBean ppb) {
         boolean postproc = postprocessCapture(ppb, fb, rw, rh);
 
         /** FIELD OF VIEW CAMERA **/

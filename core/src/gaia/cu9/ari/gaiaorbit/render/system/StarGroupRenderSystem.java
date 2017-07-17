@@ -80,7 +80,7 @@ public class StarGroupRenderSystem extends ImmediateRenderSystem implements IObs
     }
 
     @Override
-    public void renderStud(Array<IRenderable> renderables, ICamera camera, float t) {
+    public void renderStud(Array<IRenderable> renderables, ICamera camera, double t) {
         renderables.sort(comp);
         if (renderables.size > 0) {
             for (IRenderable renderable : renderables) {

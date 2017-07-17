@@ -31,7 +31,7 @@ public interface IProcessRenderer extends Disposable {
      * @param ppb
      *            The post process bean.
      */
-    public void render(ICamera camera, float dt, int rw, int rh, FrameBuffer fb, PostProcessBean ppb);
+    public void render(ICamera camera, double dt, int rw, int rh, FrameBuffer fb, PostProcessBean ppb);
 
     /**
      * Initializes the renderer, sending all the necessary assets to the manager

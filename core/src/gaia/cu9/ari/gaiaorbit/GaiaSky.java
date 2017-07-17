@@ -130,9 +130,9 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
     private long startTime;
 
     // The current actual dt in seconds
-    private float dt;
+    private double dt;
     // Time since the start in seconds
-    private float t;
+    private double t;
 
     // The frame number
     public long frames;
@@ -408,7 +408,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         debugGui = new DebugGui();
         debugGui.initialize(manager);
 
-        spacecraftGui = new SpacecraftGui(cam.spacecraftCamera);
+        spacecraftGui = new SpacecraftGui();
         spacecraftGui.initialize(manager);
 
         stereoGui = new StereoGui();
@@ -555,7 +555,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
      * @param deltat
      *            Delta time in seconds.
      */
-    public void update(float deltat) {
+    public void update(double deltat) {
         if (GlobalConf.frame.RENDER_OUTPUT) {
             // If RENDER_OUTPUT is active, we need to set our dt according to
             // the fps
@@ -575,7 +575,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
 
         EventManager.instance.post(Events.UPDATE_GUI, this.dt);
 
-        float dtScene = this.dt;
+        double dtScene = this.dt;
         if (!GlobalConf.runtime.TIME_ON) {
             dtScene = 0;
         }
@@ -601,7 +601,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
     }
 
-    public void renderSgr(ICamera camera, float t, int width, int height, FrameBuffer frameBuffer, PostProcessBean ppb) {
+    public void renderSgr(ICamera camera, double t, int width, int height, FrameBuffer frameBuffer, PostProcessBean ppb) {
         sgr.render(camera, t, width, height, frameBuffer, ppb);
     }
 
@@ -691,7 +691,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         return cam.current;
     }
 
-    public float getT() {
+    public double getT() {
         return t;
     }
 

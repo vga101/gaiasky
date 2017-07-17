@@ -416,12 +416,12 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
      * Model rendering
      */
     @Override
-    public void render(ModelBatch modelBatch, float alpha, float t) {
+    public void render(ModelBatch modelBatch, float alpha, double t) {
         mc.touch();
         mc.setTransparency(alpha * (float) MathUtilsd.lint(closestDist, modelDist / 50f, modelDist, 1f, 0f));
         float[] col = closestCol;
         ((ColorAttribute) mc.env.get(ColorAttribute.AmbientLight)).color.set(col[0], col[1], col[2], 1f);
-        ((FloatAttribute) mc.env.get(FloatAttribute.Shininess)).value = t;
+        ((FloatAttribute) mc.env.get(FloatAttribute.Shininess)).value = (float) t;
         // Local transform
         mc.instance.transform.idt().translate((float) closestPos.x, (float) closestPos.y, (float) closestPos.z).scl((float) (getRadius(active[0]) * 2d));
         modelBatch.render(mc.instance, mc.env);

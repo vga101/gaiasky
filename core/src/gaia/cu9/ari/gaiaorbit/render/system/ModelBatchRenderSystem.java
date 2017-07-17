@@ -35,33 +35,33 @@ public class ModelBatchRenderSystem extends AbstractRenderSystem {
      *            Atmosphere rendering.
      */
     public ModelBatchRenderSystem(RenderGroup rg, int priority, float[] alphas, ModelBatch batch, boolean atmosphere) {
-	super(rg, priority, alphas);
-	this.batch = batch;
-	this.atmosphere = atmosphere;
-	comp = new ModelComparator<IRenderable>();
+        super(rg, priority, alphas);
+        this.batch = batch;
+        this.atmosphere = atmosphere;
+        comp = new ModelComparator<IRenderable>();
     }
 
     @Override
-    public void renderStud(Array<IRenderable> renderables, ICamera camera, float t) {
-	renderables.sort(comp);
-	if (mustRender()) {
-	    batch.begin(camera.getCamera());
-	    int size = renderables.size;
-	    for (int i = 0; i < size; i++) {
-		IModelRenderable s = (IModelRenderable) renderables.get(i);
-		if (!atmosphere) {
-		    s.render(batch, getAlpha(s), t);
-		} else {
-		    ((IAtmosphereRenderable) s).render(batch, getAlpha(s), t, atmosphere);
-		}
-	    }
-	    batch.end();
+    public void renderStud(Array<IRenderable> renderables, ICamera camera, double t) {
+        renderables.sort(comp);
+        if (mustRender()) {
+            batch.begin(camera.getCamera());
+            int size = renderables.size;
+            for (int i = 0; i < size; i++) {
+                IModelRenderable s = (IModelRenderable) renderables.get(i);
+                if (!atmosphere) {
+                    s.render(batch, getAlpha(s), t);
+                } else {
+                    ((IAtmosphereRenderable) s).render(batch, getAlpha(s), t, atmosphere);
+                }
+            }
+            batch.end();
 
-	}
+        }
     }
 
     protected boolean mustRender() {
-	return true;
+        return true;
     }
 
 }

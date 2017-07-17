@@ -225,7 +225,7 @@ public class LineQuadRenderSystem extends LineRenderSystem {
     }
 
     @Override
-    public void renderStud(Array<IRenderable> renderables, ICamera camera, float t) {
+    public void renderStud(Array<IRenderable> renderables, ICamera camera, double t) {
         this.camera = camera;
 
         int size = renderables.size;

@@ -29,8 +29,10 @@
 	{
 	"name" : "Spacecraft",
 	// in Km
-	"size" : 10,
+	"size" : 10.0,
 	"ct" : Satellites,
+	// in Kg
+	"mass" : .5e5,
 	
 	"parent" : "Universe",
 	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Spacecraft",

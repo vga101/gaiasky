@@ -74,7 +74,7 @@ public class Mw extends AbstractPositionEntity implements IModelRenderable {
     }
 
     @Override
-    public void render(ModelBatch modelBatch, float alpha, float t) {
+    public void render(ModelBatch modelBatch, float alpha, double t) {
         mc.touch();
         mc.setTransparency(alpha * cc[3] * opacity);
         modelBatch.render(mc.instance, mc.env);

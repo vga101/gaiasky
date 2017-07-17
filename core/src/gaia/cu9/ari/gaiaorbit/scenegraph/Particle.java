@@ -282,7 +282,7 @@ public class Particle extends CelestialBody implements IStarFocus, IPointRendera
     }
 
     @Override
-    public void render(ModelBatch modelBatch, float alpha, float t) {
+    public void render(ModelBatch modelBatch, float alpha, double t) {
         // Void
     }
 

@@ -139,7 +139,7 @@ public class Galaxy extends Particle {
         shader.setUniformf("u_alpha", alpha * opacity);
         shader.setUniformf("u_distance", (float) distToCamera);
         shader.setUniformf("u_apparent_angle", (float) viewAngleApparent);
-        shader.setUniformf("u_time", GaiaSky.instance.getT() / 5f);
+        shader.setUniformf("u_time", (float) GaiaSky.instance.getT() / 5f);
 
         shader.setUniformf("u_sliders", (tt + 3.4f) / 14f, 0.1f, 0f, i / 180f);
         // Vector3d sph = aux3d1.get();

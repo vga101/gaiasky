@@ -43,7 +43,7 @@ public abstract class AbstractRenderSystem implements IRenderSystem {
     }
 
     @Override
-    public void render(Array<IRenderable> renderables, ICamera camera, float t, RenderContext rc) {
+    public void render(Array<IRenderable> renderables, ICamera camera, double t, RenderContext rc) {
         if (renderables != null && renderables.size != 0) {
             this.rc = rc;
             run(preRunnable, renderables, camera);
@@ -52,7 +52,7 @@ public abstract class AbstractRenderSystem implements IRenderSystem {
         }
     }
 
-    public abstract void renderStud(Array<IRenderable> renderables, ICamera camera, float t);
+    public abstract void renderStud(Array<IRenderable> renderables, ICamera camera, double t);
 
     public void setPreRunnable(RenderSystemRunnable r) {
         preRunnable = r;

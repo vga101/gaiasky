@@ -441,7 +441,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
     }
 
     @Override
-    public void render(ICamera camera, float t, int rw, int rh, FrameBuffer fb, PostProcessBean ppb) {
+    public void render(ICamera camera, double t, int rw, int rh, FrameBuffer fb, PostProcessBean ppb) {
         if (sgr == null)
             initSGR(camera);
 
@@ -458,7 +458,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
      * @param rc
      *            The render context.
      */
-    public void renderScene(ICamera camera, float t, RenderContext rc) {
+    public void renderScene(ICamera camera, double t, RenderContext rc) {
         // Update time difference since last update
         for (ComponentType ct : ComponentType.values()) {
             alphas[ct.ordinal()] = calculateAlpha(ct, t);
@@ -613,7 +613,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
      *            The current time in seconds.
      * @return The alpha value.
      */
-    private float calculateAlpha(ComponentType type, float t) {
+    private float calculateAlpha(ComponentType type, double t) {
         int ordinal = type.ordinal();
         long diff = (long) (t * 1000f) - times[ordinal];
         if (diff > GlobalConf.scene.OBJECT_FADE_MS) {

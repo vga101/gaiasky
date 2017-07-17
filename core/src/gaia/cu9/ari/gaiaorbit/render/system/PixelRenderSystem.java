@@ -85,7 +85,7 @@ public class PixelRenderSystem extends ImmediateRenderSystem implements IObserve
     }
 
     @Override
-    public void renderStud(Array<IRenderable> renderables, ICamera camera, float t) {
+    public void renderStud(Array<IRenderable> renderables, ICamera camera, double t) {
         if (POINT_UPDATE_FLAG) {
             // Reset variables
             curr.clear();

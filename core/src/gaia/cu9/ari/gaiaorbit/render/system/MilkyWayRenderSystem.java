@@ -109,7 +109,7 @@ public class MilkyWayRenderSystem extends ImmediateRenderSystem implements IObse
     }
 
     @Override
-    public void renderStud(Array<IRenderable> renderables, ICamera camera, float t) {
+    public void renderStud(Array<IRenderable> renderables, ICamera camera, double t) {
         if (renderables.size > 0) {
             MilkyWayReal mw = (MilkyWayReal) renderables.get(0);
             Random rand = new Random(24601);
@@ -128,8 +128,7 @@ public class MilkyWayRenderSystem extends ImmediateRenderSystem implements IObse
                     aux1.set((float) star[0], (float) star[1], (float) star[2]);
                     double distanceCenter = aux1.sub(center).len() / (mw.getRadius() * 2f);
 
-                    float[] col = new float[] { (float) (rand.nextGaussian() * 0.02f) + 0.93f, (float) (rand.nextGaussian() * 0.02) + 0.8f, (float) (rand.nextGaussian() * 0.02) + 0.97f,
-                            rand.nextFloat() * 0.5f + 0.4f };
+                    float[] col = new float[] { (float) (rand.nextGaussian() * 0.02f) + 0.93f, (float) (rand.nextGaussian() * 0.02) + 0.8f, (float) (rand.nextGaussian() * 0.02) + 0.97f, rand.nextFloat() * 0.5f + 0.4f };
 
                     if (distanceCenter < 1f) {
                         float add = (float) MathUtilsd.clamp(1f - distanceCenter, 0f, 1f) * 0.5f;
@@ -324,8 +323,7 @@ public class MilkyWayRenderSystem extends ImmediateRenderSystem implements IObse
                     shaderProgram.setUniformf("u_camPos", camera.getCurrent().getPos().put(aux1));
                     shaderProgram.setUniformf("u_fovFactor", camera.getFovFactor());
                     shaderProgram.setUniformf("u_alpha", mw.opacity * alpha * 0.2f);
-                    shaderProgram.setUniformf("u_ar", GlobalConf.program.STEREOSCOPIC_MODE
-                            && (GlobalConf.program.STEREO_PROFILE != StereoProfile.HD_3DTV && GlobalConf.program.STEREO_PROFILE != StereoProfile.ANAGLYPHIC) ? 0.5f : 1f);
+                    shaderProgram.setUniformf("u_ar", GlobalConf.program.STEREOSCOPIC_MODE && (GlobalConf.program.STEREO_PROFILE != StereoProfile.HD_3DTV && GlobalConf.program.STEREO_PROFILE != StereoProfile.ANAGLYPHIC) ? 0.5f : 1f);
                     curr.mesh.setVertices(curr.vertices, 0, curr.vertexIdx);
                     curr.mesh.render(shaderProgram, ShapeType.Point.getGlType());
                     shaderProgram.end();

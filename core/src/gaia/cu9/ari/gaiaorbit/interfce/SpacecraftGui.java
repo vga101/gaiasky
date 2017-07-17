@@ -49,7 +49,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
-import gaia.cu9.ari.gaiaorbit.scenegraph.SpacecraftCamera;
+import gaia.cu9.ari.gaiaorbit.scenegraph.Spacecraft;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
@@ -74,8 +74,8 @@ public class SpacecraftGui extends AbstractGui {
     private Slider thrustvm, thrustym, thrustpm, thrustrm;
     private OwnLabel mainvel, yawvel, pitchvel, rollvel, closestname, closestdist, thrustfactor;
 
-    /** The spacecraft camera **/
-    private SpacecraftCamera camera;
+    /** The spacecraft object **/
+    private Spacecraft sc;
 
     /** Number format **/
     private INumberFormat nf, sf;
@@ -107,11 +107,8 @@ public class SpacecraftGui extends AbstractGui {
 
     private boolean thrustEvents = true;
 
-    public SpacecraftGui(SpacecraftCamera camera) {
+    public SpacecraftGui() {
         super();
-        this.camera = camera;
-        this.qf = camera.getRotationQuaternion();
-        this.vel = camera.vel;
         aux3f1 = new Vector3();
         aux3f2 = new Vector3();
 
@@ -154,6 +151,7 @@ public class SpacecraftGui extends AbstractGui {
         assetManager.load("img/ai-vel.png", Texture.class);
         assetManager.load("img/ai-antivel.png", Texture.class);
 
+        EventManager.instance.subscribe(this, Events.SPACECRAFT_LOADED);
     }
 
     /**
@@ -184,6 +182,7 @@ public class SpacecraftGui extends AbstractGui {
         buildGui();
 
         EventManager.instance.subscribe(this, Events.SPACECRAFT_STABILISE_CMD, Events.SPACECRAFT_STOP_CMD, Events.SPACECRAFT_INFO, Events.SPACECRAFT_THRUST_INFO);
+        EventManager.instance.unsubscribe(this, Events.SPACECRAFT_LOADED);
 
     }
 
@@ -205,7 +204,7 @@ public class SpacecraftGui extends AbstractGui {
         stabilise = new OwnImageButton(skin, "sc-stabilise");
         stabilise.setProgrammaticChangeEvents(false);
         stabilise.setName("stabilise");
-        stabilise.setChecked(camera.isStabilising());
+        stabilise.setChecked(sc.isStabilising());
         stabilise.addListener(new EventListener() {
             @Override
             public boolean handle(Event event) {
@@ -221,7 +220,7 @@ public class SpacecraftGui extends AbstractGui {
         stop = new OwnImageButton(skin, "sc-stop");
         stop.setProgrammaticChangeEvents(false);
         stop.setName("stop spacecraft");
-        stop.setChecked(camera.isStopping());
+        stop.setChecked(sc.isStopping());
         stop.addListener(new EventListener() {
             @Override
             public boolean handle(Event event) {
@@ -310,7 +309,7 @@ public class SpacecraftGui extends AbstractGui {
         engineControls.add(engineMinus);
 
         // Power slider - The value of the slider is the index of the thrustFactor array 
-        enginePower = new OwnSlider(0, SpacecraftCamera.thrustFactor.length - 1, 1, true, skin, "sc-engine");
+        enginePower = new OwnSlider(0, Spacecraft.thrustFactor.length - 1, 1, true, skin, "sc-engine");
         enginePower.setName("engine power slider");
         enginePower.setValue(0);
         enginePower.setHeight(enginePowerH);
@@ -578,6 +577,11 @@ public class SpacecraftGui extends AbstractGui {
     @Override
     public void notify(Events event, Object... data) {
         switch (event) {
+        case SPACECRAFT_LOADED:
+            this.sc = (Spacecraft) data[0];
+            this.qf = sc.getRotationQuaternion();
+            this.vel = sc.vel;
+            break;
         case SPACECRAFT_STABILISE_CMD:
             Boolean state = (Boolean) data[0];
             stabilise.setChecked(state);

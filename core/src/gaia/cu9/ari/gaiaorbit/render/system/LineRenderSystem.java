@@ -79,7 +79,7 @@ public class LineRenderSystem extends ImmediateRenderSystem {
     }
 
     @Override
-    public void renderStud(Array<IRenderable> renderables, ICamera camera, float t) {
+    public void renderStud(Array<IRenderable> renderables, ICamera camera, double t) {
         this.camera = camera;
         int size = renderables.size;
         for (int i = 0; i < size; i++) {
@@ -113,7 +113,7 @@ public class LineRenderSystem extends ImmediateRenderSystem {
         // CLEAR
         curr.clear();
         if (OUTLINES)
-        curr_outline.clear();
+            curr_outline.clear();
     }
 
     public void addLine(double x0, double y0, double z0, double x1, double y1, double z1, Color col) {

@@ -64,7 +64,7 @@ public class VolumeCloudsRenderSystem extends AbstractRenderSystem {
     }
 
     @Override
-    public void render(Array<IRenderable> renderables, ICamera camera, float t, RenderContext rc) {
+    public void render(Array<IRenderable> renderables, ICamera camera, double t, RenderContext rc) {
         this.rc = rc;
         run(preRunnable, renderables, camera);
 
@@ -85,7 +85,7 @@ public class VolumeCloudsRenderSystem extends AbstractRenderSystem {
         run(postRunnable, renderables, camera);
     }
 
-    public void renderStud(Array<IRenderable> renderables, ICamera camera, float t) {
+    public void renderStud(Array<IRenderable> renderables, ICamera camera, double t) {
         // empty
     }
 

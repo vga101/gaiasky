@@ -567,6 +567,8 @@ public enum Events {
     /** Reload music files **/
     MUSIC_RELOAD_CMD,
 
+    /** Contains the spacecraft object after it has been loaded **/
+    SPACECRAFT_LOADED,
     /** Level spacecraft command, contains boolean with state **/
     SPACECRAFT_STABILISE_CMD,
     /** Stop spacecraft, contains boolean with state **/

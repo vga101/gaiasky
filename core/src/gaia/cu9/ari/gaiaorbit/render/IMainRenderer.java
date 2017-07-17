@@ -12,11 +12,11 @@ public interface IMainRenderer {
 
     public void preRenderScene();
 
-    public void renderSgr(ICamera camera, float dt, int width, int height, FrameBuffer frameBuffer, PostProcessBean ppb);
+    public void renderSgr(ICamera camera, double dt, int width, int height, FrameBuffer frameBuffer, PostProcessBean ppb);
 
     public ICamera getICamera();
 
-    public float getT();
+    public double getT();
 
     public CameraManager getCameraManager();
 

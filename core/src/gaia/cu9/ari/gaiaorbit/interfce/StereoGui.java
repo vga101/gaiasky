@@ -110,9 +110,9 @@ public class StereoGui extends AbstractGui {
     }
 
     @Override
-    public void update(float dt) {
+    public void update(double dt) {
         notificationsTwo.setX(notificationsTwo.getMessagesWidth() / 2);
-        ui.act(dt);
+        ui.act((float) dt);
     }
 
     @Override

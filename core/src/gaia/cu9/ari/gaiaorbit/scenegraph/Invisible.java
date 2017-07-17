@@ -27,7 +27,7 @@ public class Invisible extends CelestialBody {
     }
 
     @Override
-    public void render(ModelBatch modelBatch, float alpha, float t) {
+    public void render(ModelBatch modelBatch, float alpha, double t) {
     }
 
     @Override

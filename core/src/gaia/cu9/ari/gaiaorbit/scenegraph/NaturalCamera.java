@@ -211,7 +211,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
     }
 
     // Set up direction and lookAtSensor if accelerometer is enabled
-    public void update(float dt, ITimeFrameProvider time) {
+    public void update(double dt, ITimeFrameProvider time) {
         if (accelerometer) {
             synchronized (lookAtSensor) {
                 direction.set(lookAtSensor).nor();
@@ -224,7 +224,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 
     }
 
-    private void camUpdate(float dt, ITimeFrameProvider time) {
+    private void camUpdate(double dt, ITimeFrameProvider time) {
         // The whole update thread must lock the value of direction and up
         distance = pos.len();
         CameraMode m = (parent.current == this ? parent.mode : lastMode);
@@ -725,7 +725,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
      * 
      * @param dt
      */
-    private void updateRotationFree(float dt, double rotateSpeed) {
+    private void updateRotationFree(double dt, double rotateSpeed) {
         // Add position to compensate for coordinates centered on camera
         if (updatePosition(pitch, dt)) {
             // Pitch
@@ -741,7 +741,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
         defaultState(yaw, !GlobalConf.scene.CINEMATIC_CAMERA && !inputByController);
     }
 
-    private void updateRoll(float dt, double rotateSpeed) {
+    private void updateRoll(double dt, double rotateSpeed) {
         if (updatePosition(roll, dt)) {
             // Roll
             rotate(direction, -roll.z * rotateSpeed);
@@ -754,7 +754,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
      * 
      * @param dt
      */
-    private void updateRotation(float dt, final Vector3d rotationCenter) {
+    private void updateRotation(double dt, final Vector3d rotationCenter) {
         // Add position to compensate for coordinates centered on camera
         //rotationCenter.add(pos);
         if (updatePosition(vertical, dt)) {
@@ -781,7 +781,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
             vec.y = 0;
     }
 
-    private void updateLateral(float dt, double translateUnits) {
+    private void updateLateral(double dt, double translateUnits) {
         // Pan with hor
         aux1.set(direction).crs(up).nor();
         aux1.scl(horizontal.y * dt * translateUnits);
@@ -796,7 +796,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
      * @param dt
      * @return
      */
-    private boolean updatePosition(Vector3d angle, float dt) {
+    private boolean updatePosition(Vector3d angle, double dt) {
         if (angle.x != 0 || angle.y != 0) {
             // Calculate velocity from acceleration
             angle.y += angle.x * dt;
