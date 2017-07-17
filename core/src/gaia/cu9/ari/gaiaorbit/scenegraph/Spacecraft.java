@@ -16,7 +16,7 @@ import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
 /**
- * The spacecraft in the spacecraft camera mode
+ * The spacecraft.
  * 
  * @author tsagrista
  *

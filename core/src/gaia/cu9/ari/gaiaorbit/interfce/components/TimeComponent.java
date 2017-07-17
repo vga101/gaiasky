@@ -146,7 +146,7 @@ public class TimeComponent extends GuiComponent implements IObserver {
             // Update input time
             Date time = (Date) data[0];
             Gdx.app.postRunnable(() -> {
-                date.setText(df.format(time));
+                date.setText(df.format(time) + " UT");
             });
 
             break;
