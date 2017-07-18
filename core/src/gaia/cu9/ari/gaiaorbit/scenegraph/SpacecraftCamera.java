@@ -164,7 +164,7 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
         scpos = sc.computePosition(dt, sc.enginePower, scthrust, sc.direction, scforce, scaccel, scvel, scpos);
 
         // POSITION
-        double tgfac = targetDistance * sc.factor;
+        double tgfac = targetDistance * sc.factor / fovFactor;
         relpos.scl(sc.factor);
         aux2.set(sc.up).nor().scl(tgfac / 2d);
         desired.set(sc.direction).nor().scl(-tgfac).add(aux2);

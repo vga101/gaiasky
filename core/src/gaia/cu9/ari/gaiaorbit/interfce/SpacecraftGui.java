@@ -31,6 +31,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputEvent.Type;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Container;
 import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -57,7 +58,9 @@ import gaia.cu9.ari.gaiaorbit.util.Pair;
 import gaia.cu9.ari.gaiaorbit.util.format.INumberFormat;
 import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.g3d.ModelBuilder2;
+import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
+import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnCheckBox;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnImageButton;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnLabel;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnSlider;
@@ -68,12 +71,13 @@ public class SpacecraftGui extends AbstractGui {
     private Container<Label> thrustContainer;
     private HorizontalGroup buttonRow, engineGroup;
     private VerticalGroup thrustGroup;
-    private Table motionGroup, nearestGroup;
+    private Table motionGroup, nearestGroup, controlsGroup;
     private OwnImageButton stabilise, stop, exit, enginePlus, engineMinus;
-    private Slider enginePower;
+    private Slider enginePower, drag, responsiveness;
     private Slider thrustv, thrusty, thrustp, thrustr;
     private Slider thrustvm, thrustym, thrustpm, thrustrm;
     private OwnLabel mainvel, yawvel, pitchvel, rollvel, closestname, closestdist, thrustfactor;
+    private CheckBox velToDir;
 
     /** The spacecraft object **/
     private Spacecraft sc;
@@ -314,22 +318,63 @@ public class SpacecraftGui extends AbstractGui {
         enginePower.setName("engine power slider");
         enginePower.setValue(0);
         enginePower.setHeight(enginePowerH);
-        enginePower.addListener(new EventListener() {
-            @Override
-            public boolean handle(Event event) {
-                if (thrustEvents)
-                    if (event instanceof ChangeEvent) {
-                        EventManager.instance.post(Events.SPACECRAFT_THRUST_SET_CMD, Math.round(enginePower.getValue()));
-                        return true;
-                    }
-                return false;
-            }
+        enginePower.addListener(event -> {
+            if (thrustEvents)
+                if (event instanceof ChangeEvent) {
+                    EventManager.instance.post(Events.SPACECRAFT_THRUST_SET_CMD, Math.round(enginePower.getValue()));
+                    return true;
+                }
+            return false;
         });
 
         engineGroup.addActor(enginePower);
         engineGroup.addActor(engineControls);
 
         engineGroup.pack();
+
+        /** CONTROLS **/
+        controlsGroup = new Table();
+        controlsGroup.pad(0, 10 * factor, 280 * factor, 0);
+        controlsGroup.align(Align.topLeft);
+
+        responsiveness = new OwnSlider(Constants.MIN_SLIDER, Constants.MAX_SLIDER, 1, false, skin);
+        responsiveness.setName("sc responsiveness");
+        responsiveness.setValue(MathUtilsd.lint(GlobalConf.spacecraft.SC_RESPONSIVENESS, Constants.MIN_SC_RESPONSIVENESS, Constants.MAX_SC_RESPONSIVENESS, Constants.MIN_SLIDER, Constants.MAX_SLIDER));
+        responsiveness.addListener(event -> {
+            if (event instanceof ChangeEvent) {
+                GlobalConf.spacecraft.SC_RESPONSIVENESS = MathUtilsd.lint(responsiveness.getValue(), Constants.MIN_SLIDER, Constants.MAX_SLIDER, Constants.MIN_SC_RESPONSIVENESS, Constants.MAX_SC_RESPONSIVENESS);
+                return true;
+            }
+            return false;
+        });
+
+        drag = new OwnSlider(Constants.MIN_SLIDER, Constants.MAX_SLIDER, 1, false, skin);
+        drag.setName("sc drag");
+        drag.setValue(GlobalConf.spacecraft.SC_HANDLING_FRICTION * Constants.MAX_SLIDER);
+        drag.addListener(event -> {
+            if (event instanceof ChangeEvent) {
+                GlobalConf.spacecraft.SC_HANDLING_FRICTION = drag.getValue() / Constants.MAX_SLIDER;
+                return true;
+            }
+            return false;
+        });
+
+        velToDir = new OwnCheckBox("Velocity to direction vector", skin, 10 * factor);
+        velToDir.setName("sc veltodir");
+        velToDir.setChecked(GlobalConf.spacecraft.SC_VEL_TO_DIRECTION);
+        velToDir.addListener(event -> {
+            if (event instanceof ChangeEvent) {
+                GlobalConf.spacecraft.SC_VEL_TO_DIRECTION = velToDir.isChecked();
+            }
+            return false;
+        });
+
+        controlsGroup.add(new OwnLabel("Handling responsiveness", skin, "sc-header")).left().padRight(10 * factor).padBottom(5 * factor);
+        controlsGroup.add(responsiveness).left().padBottom(5 * factor).row();
+        controlsGroup.add(new OwnLabel("Handling drag", skin, "sc-header")).left().padRight(10 * factor).padBottom(5 * factor);
+        controlsGroup.add(drag).left().padBottom(5 * factor).row();
+        controlsGroup.add(velToDir).left().colspan(2).row();
+        controlsGroup.pack();
 
         /** INFORMATION **/
         float groupspacing = 2 * factor;
@@ -464,6 +509,7 @@ public class SpacecraftGui extends AbstractGui {
             ui.clear();
             ui.addActor(buttonContainer);
             ui.addActor(engineGroup);
+            ui.addActor(controlsGroup);
             ui.addActor(motionGroup);
             ui.addActor(nearestGroup);
             ui.addActor(thrustContainer);

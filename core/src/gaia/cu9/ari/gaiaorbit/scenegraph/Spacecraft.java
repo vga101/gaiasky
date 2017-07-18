@@ -245,7 +245,7 @@ public class Spacecraft extends ModelBody implements IModelRenderable, ILineRend
 
         if (GlobalConf.spacecraft.SC_VEL_TO_DIRECTION) {
             double vellen = vel.len();
-            vel.set(direction).nor().scl(vellen);
+            vel.set(direction).nor().scl(enginePower * vellen);
         }
         vel.add(acc.scl(dt));
         Vector3d velo = aux3d2.get().set(vel);
@@ -319,7 +319,7 @@ public class Spacecraft extends ModelBody implements IModelRenderable, ILineRend
         rollf = rollp * GlobalConf.spacecraft.SC_RESPONSIVENESS;
 
         // Friction
-        double friction = (GlobalConf.spacecraft.SC_HANDLING_FRICTION * GlobalConf.spacecraft.SC_RESPONSIVENESS) * dt;
+        double friction = (GlobalConf.spacecraft.SC_HANDLING_FRICTION * 2e7) * dt;
         yawf -= yawv * friction;
         pitchf -= pitchv * friction;
         rollf -= rollv * friction;

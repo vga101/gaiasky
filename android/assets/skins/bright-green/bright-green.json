@@ -18,6 +18,8 @@ com.badlogic.gdx.graphics.g2d.BitmapFont: { ui-23: { file: skins/fonts/ui-23.fnt
 com.badlogic.gdx.graphics.g2d.BitmapFont: { ui-23-bold: { file: skins/fonts/ui-23-bold.fnt } },
 com.badlogic.gdx.graphics.g2d.BitmapFont: { ui-25: { file: skins/fonts/ui-25.fnt } },
 com.badlogic.gdx.graphics.g2d.BitmapFont: { ui-25-shadow: { file: skins/fonts/ui-25-shadow.fnt } },
+com.badlogic.gdx.graphics.g2d.BitmapFont: { ui-12-bold: { file: skins/fonts/ui-12-bold.fnt } },
+com.badlogic.gdx.graphics.g2d.BitmapFont: { ui-19-bold: { file: skins/fonts/ui-19-bold.fnt } },
 com.badlogic.gdx.graphics.g2d.BitmapFont: { grid-annotation: { file: skins/fonts/ui-11.fnt } },
 com.badlogic.gdx.graphics.Color: {
 	green: { a: 1, b: 0.52941, g: 0.55686, r: 0.20784 },
@@ -132,7 +134,7 @@ com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
 	link: { font: ui-11, fontColor: blue},
 	help-title: {font: ui-13, fontColor: green},
 	
-	sc-header: { font: ui-11, fontColor: sc-blue },
+	sc-header: { font: ui-12-bold, fontColor: sc-blue },
 	
 	tooltip: { font: ui-11, fontColor: black, background: tooltip-bg }
 },
