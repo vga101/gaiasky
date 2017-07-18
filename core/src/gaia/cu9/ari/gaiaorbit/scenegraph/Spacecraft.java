@@ -312,10 +312,18 @@ public class Spacecraft extends ModelBody implements IModelRenderable, ILineRend
                 EventManager.instance.post(Events.SPACECRAFT_STABILISE_CMD, false);
             }
         }
+
         // Yaw, pitch and roll
         yawf = yawp * GlobalConf.spacecraft.SC_RESPONSIVENESS;
         pitchf = pitchp * GlobalConf.spacecraft.SC_RESPONSIVENESS;
         rollf = rollp * GlobalConf.spacecraft.SC_RESPONSIVENESS;
+
+        // Friction
+        double friction = (GlobalConf.spacecraft.SC_HANDLING_FRICTION * GlobalConf.spacecraft.SC_RESPONSIVENESS) * dt;
+        System.out.println(friction);
+        yawf -= yawv * friction;
+        pitchf -= pitchv * friction;
+        rollf -= rollv * friction;
 
         // accel
         yawa = yawf / mass;
