@@ -581,6 +581,18 @@ public class GlobalConf {
 
     }
 
+    public static class SpacecraftConf implements IConf {
+        public float SC_RESPONSIVENESS;
+        public boolean SC_VEL_TO_DIRECTION;
+        public float SC_HANDLING_FRICTION;
+
+        public void initialize(float sC_RESPONSIVENESS, boolean sC_VEL_TO_DIRECTION, float sC_HANDLING_FRICTION) {
+            this.SC_RESPONSIVENESS = sC_RESPONSIVENESS;
+            this.SC_VEL_TO_DIRECTION = sC_VEL_TO_DIRECTION;
+            this.SC_HANDLING_FRICTION = sC_HANDLING_FRICTION;
+        }
+    }
+
     public static class VersionConf implements IConf {
         public String version;
         public String buildtime;
@@ -934,6 +946,7 @@ public class GlobalConf {
     public static PerformanceConf performance;
     public static PostprocessConf postprocess;
     public static ControlsConf controls;
+    public static SpacecraftConf spacecraft;
     public static VersionConf version;
 
     static boolean initialized = false;
@@ -949,7 +962,7 @@ public class GlobalConf {
     /**
      * Initialises the properties
      */
-    public static void initialize(VersionConf vc, ProgramConf pc, SceneConf sc, DataConf dc, RuntimeConf rc, PostprocessConf ppc, PerformanceConf pfc, FrameConf fc, ScreenConf scrc, ScreenshotConf shc, ControlsConf cc) throws Exception {
+    public static void initialize(VersionConf vc, ProgramConf pc, SceneConf sc, DataConf dc, RuntimeConf rc, PostprocessConf ppc, PerformanceConf pfc, FrameConf fc, ScreenConf scrc, ScreenshotConf shc, ControlsConf cc, SpacecraftConf scc) throws Exception {
         if (!initialized) {
             if (configurations == null) {
                 configurations = new ArrayList<IConf>();
@@ -966,6 +979,7 @@ public class GlobalConf {
             screenshot = shc;
             screen = scrc;
             controls = cc;
+            spacecraft = scc;
 
             configurations.add(program);
             configurations.add(scene);
@@ -977,6 +991,7 @@ public class GlobalConf {
             configurations.add(screenshot);
             configurations.add(screen);
             configurations.add(controls);
+            configurations.add(spacecraft);
 
             initialized = true;
         }

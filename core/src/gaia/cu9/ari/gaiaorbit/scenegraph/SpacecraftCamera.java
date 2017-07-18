@@ -54,7 +54,7 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
     private Texture crosshairTex;
     private float chw2, chh2;
 
-    private Vector3d aux1, aux2, todesired, desired;
+    private Vector3d aux2, todesired, desired, scthrust, scforce, scaccel, scvel, scpos;
 
     private double targetDistance;
 
@@ -68,8 +68,12 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
 
         todesired = new Vector3d();
         desired = new Vector3d();
-        aux1 = new Vector3d();
         aux2 = new Vector3d();
+        scthrust = new Vector3d();
+        scforce = new Vector3d();
+        scaccel = new Vector3d();
+        scvel = new Vector3d();
+        scpos = new Vector3d();
 
         // init camera
         camera = new PerspectiveCamera(GlobalConf.scene.CAMERA_FOV, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -149,7 +153,12 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
     public void update(double dt, ITimeFrameProvider time) {
 
         // FUTURE POS OF SC
-        aux1.set(sc.accel).scl(Constants.M_TO_U).scl(dt).add(sc.vel).scl(dt).add(sc.pos);
+        scthrust.set(sc.thrust);
+        scforce.set(sc.force);
+        scaccel.set(sc.accel);
+        scvel.set(sc.vel);
+        scpos.set(sc.pos);
+        scpos = sc.computePosition(dt, sc.enginePower, scthrust, sc.direction, scforce, scaccel, scvel, scpos);
 
         // POSITION
         double tgfac = targetDistance * sc.factor;
@@ -157,19 +166,20 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
         aux2.set(sc.up).nor().scl(tgfac / 2d);
         desired.set(sc.direction).nor().scl(-tgfac).add(aux2);
         todesired.set(desired).sub(relpos);
-        todesired.scl(dt * 2d);
+        todesired.scl(dt * GlobalConf.spacecraft.SC_RESPONSIVENESS / .5e6);
         relpos.add(todesired);
-        pos.set(aux1).add(relpos);
+        pos.set(scpos).add(relpos);
         relpos.scl(1 / sc.factor);
+        distance = pos.len();
 
         // DIRECTION
         aux2.set(sc.direction).nor().scl(tgfac);
-        direction.set(aux1).add(aux2).sub(pos).nor();
+        direction.set(scpos).add(aux2).sub(pos).nor();
 
         // UP
         desired.set(sc.up);
         todesired.set(desired).sub(up);
-        todesired.scl(dt);
+        todesired.scl(dt * GlobalConf.spacecraft.SC_RESPONSIVENESS / .5e6);
         up.add(todesired).nor();
 
         // Update camera

@@ -16,6 +16,7 @@ import gaia.cu9.ari.gaiaorbit.util.GlobalConf.RuntimeConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf.SceneConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf.ScreenConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf.ScreenshotConf;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf.SpacecraftConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf.VersionConf;
 
 public class WebGLConfInit extends ConfInit {
@@ -69,7 +70,10 @@ public class WebGLConfInit extends ConfInit {
         ControlsConf cc = new ControlsConf();
         cc.initialize("mappings/xbox360.controller", true);
 
-        GlobalConf.initialize(vc, prc, sc, dc, rc, ppc, pc, fc, scrc, shc, cc);
+        SpacecraftConf scc = new SpacecraftConf();
+        scc.initialize(.5e7f, true, 1f);
+
+        GlobalConf.initialize(vc, prc, sc, dc, rc, ppc, pc, fc, scrc, shc, cc, scc);
 
     }
 

@@ -17,6 +17,8 @@ import gaia.cu9.ari.gaiaorbit.render.system.LineRenderSystem;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
+import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
@@ -35,19 +37,19 @@ public class Spacecraft extends ModelBody implements IModelRenderable, ILineRend
     /**
      * Factor (adapt to be able to navigate small and large scale structures
      **/
-    public static final double[] thrustFactor = new double[17];
+    public static final double[] thrustFactor = new double[14];
     static {
         double val = 0.1;
-        for (int i = 0; i < 17; i++) {
+        for (int i = 0; i < 14; i++) {
             thrustFactor[i] = val * Math.pow(10, i);
         }
     }
 
-    /** Seconds to reach full power **/
-    private static final double fullPowerTime = 1.0;
-
     /** Collision stop-at value **/
     private static final double stopAt = 10000 * Constants.M_TO_U;
+
+    /** Seconds to reach full power **/
+    public double fullPowerTime = 0.5;
 
     /** Force, acceleration and velocity **/
     public Vector3d force, accel, vel;
@@ -66,6 +68,9 @@ public class Spacecraft extends ModelBody implements IModelRenderable, ILineRend
     /** Factor hack **/
     public double factor = 1d;
 
+    /** Only the rotation matrix **/
+    public Matrix4 rotationMatrix;
+
     /**
      * Index of the current engine power setting
      */
@@ -75,8 +80,6 @@ public class Spacecraft extends ModelBody implements IModelRenderable, ILineRend
     public double enginePower;
 
     /** Yaw, pitch and roll **/
-    // yaw, pitch, roll multiplier
-    public double yprLength = .1e7d;
     // power in each angle in [0..1]
     public double yawp, pitchp, rollp;
     // angular forces
@@ -99,6 +102,7 @@ public class Spacecraft extends ModelBody implements IModelRenderable, ILineRend
     public Spacecraft() {
         super();
         localTransform = new Matrix4();
+        rotationMatrix = new Matrix4();
         EventManager.instance.subscribe(this, Events.CAMERA_MODE_CMD);
 
         // position attributes
@@ -195,20 +199,22 @@ public class Spacecraft extends ModelBody implements IModelRenderable, ILineRend
 
     protected void updateLocalTransform() {
         // Local transform
-        localTransform.idt().setToLookAt(posf, directionf.add(posf), upf).inv();
-        localTransform.getRotation(qf);
-        float sizeFac = (float) (factor * size);
-        localTransform.scale(sizeFac, sizeFac, sizeFac);
+        try {
+            localTransform.idt().setToLookAt(posf, directionf.add(posf), upf).inv();
+            float sizeFac = (float) (factor * size);
+            localTransform.scale(sizeFac, sizeFac, sizeFac);
+
+            // Rotation for attitude indicator
+            rotationMatrix.idt().setToLookAt(directionf, upf);
+            rotationMatrix.getRotation(qf);
+        } catch (Exception e) {
+            Logger.error(e, this.getClass().getSimpleName());
+        }
 
     }
 
-    @Override
-    public void updateLocalValues(ITimeFrameProvider time, ICamera camera) {
-        double dt = Gdx.graphics.getDeltaTime();
-        // Poll keys
-        pollKeys(dt);
-
-        /** POSITION **/
+    public Vector3d computePosition(double dt, double enginePower, Vector3d thrust, Vector3d direction, Vector3d force, Vector3d accel, Vector3d vel, Vector3d pos) {
+        enginePower = Math.signum(enginePower);
         // Compute force from thrust
         thrust.set(direction).scl(thrustLength * thrustFactor[thrustFactorIndex] * enginePower);
         force.set(thrust);
@@ -238,7 +244,7 @@ public class Spacecraft extends ModelBody implements IModelRenderable, ILineRend
         // convert metres to internal units so we have the velocity in u/s
         Vector3d acc = aux3d1.get().set(accel).scl(Constants.M_TO_U);
 
-        if (true) {
+        if (GlobalConf.spacecraft.SC_VEL_TO_DIRECTION) {
             double vellen = vel.len();
             vel.set(direction).nor().scl(vellen);
         }
@@ -265,9 +271,25 @@ public class Spacecraft extends ModelBody implements IModelRenderable, ILineRend
         //            }
         //        } else {
         pos.set(position);
-        //        }
+        //      }
 
-        factor = pos.len() > 100 * Constants.AU_TO_U ? 100 : 1;
+        return pos;
+    }
+
+    @Override
+    public void updateLocalValues(ITimeFrameProvider time, ICamera camera) {
+        double dt = Gdx.graphics.getDeltaTime();
+        // Poll keys
+        pollKeys(dt);
+
+        /** POSITION **/
+        pos = computePosition(dt, enginePower, thrust, direction, force, accel, vel, pos);
+
+        /**
+         * SCALING FACTOR - counteracts double precision problems at very large
+         * distances
+         **/
+        factor = MathUtilsd.lint(pos.len(), 100 * Constants.AU_TO_U, 5000 * Constants.PC_TO_U, 1, 10000);
 
         if (leveling) {
             // No velocity, we just stop Euler angle motions
@@ -291,11 +313,10 @@ public class Spacecraft extends ModelBody implements IModelRenderable, ILineRend
                 EventManager.instance.post(Events.SPACECRAFT_STABILISE_CMD, false);
             }
         }
-
         // Yaw, pitch and roll
-        yawf = yawp * yprLength;
-        pitchf = pitchp * yprLength;
-        rollf = rollp * yprLength;
+        yawf = yawp * GlobalConf.spacecraft.SC_RESPONSIVENESS;
+        pitchf = pitchp * GlobalConf.spacecraft.SC_RESPONSIVENESS;
+        rollf = rollp * GlobalConf.spacecraft.SC_RESPONSIVENESS;
 
         // accel
         yawa = yawf / mass;
@@ -469,6 +490,16 @@ public class Spacecraft extends ModelBody implements IModelRenderable, ILineRend
         this.size = (float) size * (float) Constants.KM_TO_U;
     }
 
+    @Override
+    public double getRadius() {
+        return super.getRadius() * factor;
+    }
+
+    @Override
+    public double getSize() {
+        return super.getSize() * factor;
+    }
+
     public void setMass(Double mass) {
         this.mass = mass;
     }
@@ -510,12 +541,12 @@ public class Spacecraft extends ModelBody implements IModelRenderable, ILineRend
     public void render(LineRenderSystem renderer, ICamera camera, float alpha) {
         // Direction
         Vector3d d = aux3d1.get().set(direction);
-        d.nor().scl(.5e-4);
+        d.nor().scl(.5e-4 * factor);
         renderer.addLine(posf.x, posf.y, posf.z, posf.x + d.x, posf.y + d.y, posf.z + d.z, 1, 0, 0, 1);
 
         // Up
         Vector3d u = aux3d1.get().set(up);
-        u.nor().scl(.2e-4);
+        u.nor().scl(.2e-4 * factor);
         renderer.addLine(posf.x, posf.y, posf.z, posf.x + u.x, posf.y + u.y, posf.z + u.z, 0, 0, 1, 1);
 
     }

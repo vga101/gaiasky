@@ -27,6 +27,7 @@ import gaia.cu9.ari.gaiaorbit.util.GlobalConf.SceneConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf.ScreenConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf.ScreenshotConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf.ScreenshotMode;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf.SpacecraftConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf.VersionConf;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.SysUtilsFactory;
@@ -275,8 +276,16 @@ public class DesktopConfInit extends ConfInit {
 
         cc.initialize(cONTROLLER_MAPPINGS_FILE, INVERT_LOOK_Y_AXIS);
 
+        /** SPACECRAFT CONF **/
+        SpacecraftConf scc = new SpacecraftConf();
+        float sC_RESPONSIVENESS = Float.parseFloat(p.getProperty("spacecraft.responsiveness", ".5e7"));
+        boolean sC_VEL_TO_DIRECTION = Boolean.parseBoolean(p.getProperty("spacecraft.velocity.direction", "true"));
+        float sC_HANDLING_FRICTION = Float.parseFloat(p.getProperty("spacecraft.handling.friction", "1.0"));
+
+        scc.initialize(sC_RESPONSIVENESS, sC_VEL_TO_DIRECTION, sC_HANDLING_FRICTION);
+
         /** INIT GLOBAL CONF **/
-        GlobalConf.initialize(vc, prc, sc, dc, rc, ppc, pc, fc, scrc, shc, cc);
+        GlobalConf.initialize(vc, prc, sc, dc, rc, ppc, pc, fc, scrc, shc, cc, scc);
 
     }
 
@@ -400,6 +409,11 @@ public class DesktopConfInit extends ConfInit {
         /** CONTROLS **/
         p.setProperty("controls.mappings.file", GlobalConf.controls.CONTROLLER_MAPPINGS_FILE);
         p.setProperty("controls.invert.y", Boolean.toString(GlobalConf.controls.INVERT_LOOK_Y_AXIS));
+
+        /** SPACECRAFT **/
+        p.setProperty("spacecraft.responsiveness", Float.toString(GlobalConf.spacecraft.SC_RESPONSIVENESS));
+        p.setProperty("spacecraft.velocity.direction", Boolean.toString(GlobalConf.spacecraft.SC_VEL_TO_DIRECTION));
+        p.setProperty("spacecraft.handling.friction", Float.toString(GlobalConf.spacecraft.SC_HANDLING_FRICTION));
 
     }
 

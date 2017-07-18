@@ -406,6 +406,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         // Quads for galaxies and stars
         renderProcesses.add(quadGalaxiesProc);
         renderProcesses.add(quadStarsProc);
+        renderProcesses.add(galaxyProc);
 
         renderProcesses.add(modelFrontProc);
 
@@ -413,8 +414,6 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         renderProcesses.add(lineProc);
         renderProcesses.add(labelsProc);
         renderProcesses.add(quadSSOProc);
-
-        renderProcesses.add(galaxyProc);
 
         renderProcesses.add(modelStarsProc);
         renderProcesses.add(modelAtmProc);
