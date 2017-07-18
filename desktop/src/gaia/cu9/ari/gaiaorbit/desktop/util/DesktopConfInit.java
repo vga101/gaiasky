@@ -398,15 +398,6 @@ public class DesktopConfInit extends ConfInit {
             idx++;
         }
 
-        try {
-            FileOutputStream fos = new FileOutputStream(propsFile);
-            p.store(fos, null);
-            fos.close();
-            Logger.info("Configuration saved to " + propsFile.getAbsolutePath());
-        } catch (Exception e) {
-            Logger.error(e);
-        }
-
         /** CONTROLS **/
         p.setProperty("controls.mappings.file", GlobalConf.controls.CONTROLLER_MAPPINGS_FILE);
         p.setProperty("controls.invert.y", Boolean.toString(GlobalConf.controls.INVERT_LOOK_Y_AXIS));
@@ -416,6 +407,15 @@ public class DesktopConfInit extends ConfInit {
         p.setProperty("spacecraft.velocity.direction", Boolean.toString(GlobalConf.spacecraft.SC_VEL_TO_DIRECTION));
         p.setProperty("spacecraft.handling.friction", Float.toString(GlobalConf.spacecraft.SC_HANDLING_FRICTION));
         p.setProperty("spacecraft.show.axes", Boolean.toString(GlobalConf.spacecraft.SC_SHOW_AXES));
+
+        try {
+            FileOutputStream fos = new FileOutputStream(propsFile);
+            p.store(fos, null);
+            fos.close();
+            Logger.info("Configuration saved to " + propsFile.getAbsolutePath());
+        } catch (Exception e) {
+            Logger.error(e);
+        }
 
     }
 

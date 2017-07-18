@@ -369,9 +369,9 @@ public class SpacecraftGui extends AbstractGui {
             return false;
         });
 
-        controlsGroup.add(new OwnLabel("Handling responsiveness", skin, "sc-header")).left().padRight(10 * factor).padBottom(5 * factor);
+        controlsGroup.add(new OwnLabel("Responsiveness", skin, "sc-header")).left().padRight(10 * factor).padBottom(5 * factor);
         controlsGroup.add(responsiveness).left().padBottom(5 * factor).row();
-        controlsGroup.add(new OwnLabel("Handling drag", skin, "sc-header")).left().padRight(10 * factor).padBottom(5 * factor);
+        controlsGroup.add(new OwnLabel("Drag", skin, "sc-header")).left().padRight(10 * factor).padBottom(5 * factor);
         controlsGroup.add(drag).left().padBottom(5 * factor).row();
         controlsGroup.add(velToDir).left().colspan(2).row();
         controlsGroup.pack();

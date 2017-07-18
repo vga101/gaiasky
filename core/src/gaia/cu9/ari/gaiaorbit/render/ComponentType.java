@@ -47,7 +47,7 @@ public enum ComponentType {
 
     @Override
     public String toString() {
-        return getName();
+        return super.toString();
     }
 
     public static ComponentType getFromKey(String key) {

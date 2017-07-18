@@ -12,11 +12,13 @@ import com.badlogic.gdx.utils.Array;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
+import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.render.ILineRenderable;
 import gaia.cu9.ari.gaiaorbit.render.IModelRenderable;
 import gaia.cu9.ari.gaiaorbit.render.system.LineRenderSystem;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
+import gaia.cu9.ari.gaiaorbit.util.ComponentTypes;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
@@ -68,7 +70,7 @@ public class Spacecraft extends ModelBody implements IModelRenderable, ILineRend
     public double mass;
 
     /** Factor hack **/
-    public double factor = 1d;
+    public double factor = 10d;
 
     /** Only the rotation matrix **/
     public Matrix4 rotationMatrix;
@@ -103,6 +105,7 @@ public class Spacecraft extends ModelBody implements IModelRenderable, ILineRend
 
     public Spacecraft() {
         super();
+        ct = new ComponentTypes(ComponentType.Satellites);
         localTransform = new Matrix4();
         rotationMatrix = new Matrix4();
         EventManager.instance.subscribe(this, Events.CAMERA_MODE_CMD);
@@ -218,6 +221,9 @@ public class Spacecraft extends ModelBody implements IModelRenderable, ILineRend
         thrust.set(direction).scl(thrustLength * thrustFactor[thrustFactorIndex] * enginePower);
         force.set(thrust);
 
+        double friction = (GlobalConf.spacecraft.SC_HANDLING_FRICTION * 2e16) * dt;
+        force.add(aux3d1.get().set(vel).scl(-friction));
+
         if (stopping) {
             double speed = vel.len();
             if (speed != 0) {
@@ -245,9 +251,10 @@ public class Spacecraft extends ModelBody implements IModelRenderable, ILineRend
 
         if (GlobalConf.spacecraft.SC_VEL_TO_DIRECTION) {
             double vellen = vel.len();
-            vel.set(direction).nor().scl(enginePower * vellen);
+            vel.set(direction).nor().scl(vellen);
         }
         vel.add(acc.scl(dt));
+
         Vector3d velo = aux3d2.get().set(vel);
         // New position in auxd3
         Vector3d position = aux3d3.get().set(pos).add(velo.scl(dt));
@@ -276,89 +283,90 @@ public class Spacecraft extends ModelBody implements IModelRenderable, ILineRend
 
     @Override
     public void updateLocalValues(ITimeFrameProvider time, ICamera camera) {
-        double dt = Gdx.graphics.getDeltaTime();
-        // Poll keys
-        pollKeys(dt);
+        if (render) {
+            double dt = Gdx.graphics.getDeltaTime();
+            // Poll keys
+            pollKeys(dt);
 
-        /** POSITION **/
-        pos = computePosition(dt, camera.getClosest2(), enginePower, thrust, direction, force, accel, vel, pos);
+            /** POSITION **/
+            pos = computePosition(dt, camera.getClosest2(), enginePower, thrust, direction, force, accel, vel, pos);
 
-        /**
-         * SCALING FACTOR - counteracts double precision problems at very large
-         * distances
-         **/
-        factor = MathUtilsd.lint(pos.len(), 100 * Constants.AU_TO_U, 5000 * Constants.PC_TO_U, 1, 10000);
+            /**
+             * SCALING FACTOR - counteracts double precision problems at very
+             * large distances
+             **/
+            factor = MathUtilsd.lint(pos.len(), 100 * Constants.AU_TO_U, 5000 * Constants.PC_TO_U, 10, 10000);
 
-        if (leveling) {
-            // No velocity, we just stop Euler angle motions
-            if (yawv != 0) {
-                yawp = -Math.signum(yawv) * MathUtilsd.clamp(Math.abs(yawv), 0, 1);
-            }
-            if (pitchv != 0) {
-                pitchp = -Math.signum(pitchv) * MathUtilsd.clamp(Math.abs(pitchv), 0, 1);
-            }
-            if (rollv != 0) {
-                rollp = -Math.signum(rollv) * MathUtilsd.clamp(Math.abs(rollv), 0, 1);
-            }
-            if (Math.abs(yawv) < 1e-3 && Math.abs(pitchv) < 1e-3 && Math.abs(rollv) < 1e-3) {
-                setYawPower(0);
-                setPitchPower(0);
-                setRollPower(0);
+            if (leveling) {
+                // No velocity, we just stop Euler angle motions
+                if (yawv != 0) {
+                    yawp = -Math.signum(yawv) * MathUtilsd.clamp(Math.abs(yawv), 0, 1);
+                }
+                if (pitchv != 0) {
+                    pitchp = -Math.signum(pitchv) * MathUtilsd.clamp(Math.abs(pitchv), 0, 1);
+                }
+                if (rollv != 0) {
+                    rollp = -Math.signum(rollv) * MathUtilsd.clamp(Math.abs(rollv), 0, 1);
+                }
+                if (Math.abs(yawv) < 1e-3 && Math.abs(pitchv) < 1e-3 && Math.abs(rollv) < 1e-3) {
+                    setYawPower(0);
+                    setPitchPower(0);
+                    setRollPower(0);
 
-                yawv = 0;
-                pitchv = 0;
-                rollv = 0;
-                EventManager.instance.post(Events.SPACECRAFT_STABILISE_CMD, false);
+                    yawv = 0;
+                    pitchv = 0;
+                    rollv = 0;
+                    EventManager.instance.post(Events.SPACECRAFT_STABILISE_CMD, false);
+                }
             }
+
+            // Yaw, pitch and roll
+            yawf = yawp * GlobalConf.spacecraft.SC_RESPONSIVENESS;
+            pitchf = pitchp * GlobalConf.spacecraft.SC_RESPONSIVENESS;
+            rollf = rollp * GlobalConf.spacecraft.SC_RESPONSIVENESS;
+
+            // Friction
+            double friction = (GlobalConf.spacecraft.SC_HANDLING_FRICTION * 2e7) * dt;
+            yawf -= yawv * friction;
+            pitchf -= pitchv * friction;
+            rollf -= rollv * friction;
+
+            // accel
+            yawa = yawf / mass;
+            pitcha = pitchf / mass;
+            rolla = rollf / mass;
+
+            // vel
+            yawv += yawa * dt;
+            pitchv += pitcha * dt;
+            rollv += rolla * dt;
+
+            // pos
+            double yawdiff = yawv * dt;
+            double pitchdiff = pitchv * dt;
+            double rolldiff = rollv * dt;
+
+            // apply yaw
+            direction.rotate(up, yawdiff);
+
+            // apply pitch
+            Vector3d aux1 = aux3d1.get().set(direction).crs(up);
+            direction.rotate(aux1, pitchdiff);
+            up.rotate(aux1, pitchdiff);
+
+            // apply roll
+            up.rotate(direction, -rolldiff);
+
+            double len = direction.len();
+            pitch = Math.asin(direction.y / len);
+            yaw = Math.atan2(direction.z, direction.x);
+            roll += rolldiff;
+
+            pitch = Math.toDegrees(pitch);
+            yaw = Math.toDegrees(yaw);
         }
-
-        // Yaw, pitch and roll
-        yawf = yawp * GlobalConf.spacecraft.SC_RESPONSIVENESS;
-        pitchf = pitchp * GlobalConf.spacecraft.SC_RESPONSIVENESS;
-        rollf = rollp * GlobalConf.spacecraft.SC_RESPONSIVENESS;
-
-        // Friction
-        double friction = (GlobalConf.spacecraft.SC_HANDLING_FRICTION * 2e7) * dt;
-        yawf -= yawv * friction;
-        pitchf -= pitchv * friction;
-        rollf -= rollv * friction;
-
-        // accel
-        yawa = yawf / mass;
-        pitcha = pitchf / mass;
-        rolla = rollf / mass;
-
-        // vel
-        yawv += yawa * dt;
-        pitchv += pitcha * dt;
-        rollv += rolla * dt;
-
-        // pos
-        double yawdiff = yawv * dt;
-        double pitchdiff = pitchv * dt;
-        double rolldiff = rollv * dt;
-
-        // apply yaw
-        direction.rotate(up, yawdiff);
-
-        // apply pitch
-        Vector3d aux1 = aux3d1.get().set(direction).crs(up);
-        direction.rotate(aux1, pitchdiff);
-        up.rotate(aux1, pitchdiff);
-
-        // apply roll
-        up.rotate(direction, -rolldiff);
-
-        double len = direction.len();
-        pitch = Math.asin(direction.y / len);
-        yaw = Math.atan2(direction.z, direction.x);
-        roll += rolldiff;
-
-        pitch = Math.toDegrees(pitch);
-        yaw = Math.toDegrees(yaw);
-
         // Update float vectors
-        aux1.set(pos).add(camera.getInversePos()).put(posf);
+        aux3d1.get().set(pos).add(camera.getInversePos()).put(posf);
         direction.put(directionf);
         up.put(upf);
 
