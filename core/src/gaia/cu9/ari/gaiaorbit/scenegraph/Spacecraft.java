@@ -320,7 +320,6 @@ public class Spacecraft extends ModelBody implements IModelRenderable, ILineRend
 
         // Friction
         double friction = (GlobalConf.spacecraft.SC_HANDLING_FRICTION * GlobalConf.spacecraft.SC_RESPONSIVENESS) * dt;
-        System.out.println(friction);
         yawf -= yawv * friction;
         pitchf -= pitchv * friction;
         rollf -= rollv * friction;
