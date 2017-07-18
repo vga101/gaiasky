@@ -278,9 +278,9 @@ public class DesktopConfInit extends ConfInit {
 
         /** SPACECRAFT CONF **/
         SpacecraftConf scc = new SpacecraftConf();
-        float sC_RESPONSIVENESS = Float.parseFloat(p.getProperty("spacecraft.responsiveness", ".5e7"));
-        boolean sC_VEL_TO_DIRECTION = Boolean.parseBoolean(p.getProperty("spacecraft.velocity.direction", "true"));
-        float sC_HANDLING_FRICTION = Float.parseFloat(p.getProperty("spacecraft.handling.friction", "1.0"));
+        float sC_RESPONSIVENESS = Float.parseFloat(p.getProperty("spacecraft.responsiveness", "1.65e7"));
+        boolean sC_VEL_TO_DIRECTION = Boolean.parseBoolean(p.getProperty("spacecraft.velocity.direction", "false"));
+        float sC_HANDLING_FRICTION = Float.parseFloat(p.getProperty("spacecraft.handling.friction", "0.37"));
         boolean sC_SHOW_AXES = Boolean.parseBoolean(p.getProperty("spacecraft.show.axes", "false"));
 
         scc.initialize(sC_RESPONSIVENESS, sC_VEL_TO_DIRECTION, sC_HANDLING_FRICTION, sC_SHOW_AXES);

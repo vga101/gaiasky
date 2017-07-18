@@ -300,7 +300,7 @@ public class SpacecraftGui extends AbstractGui {
         });
 
         Group engineLabelRotated = new Group();
-        Label engineLabel = new OwnLabel("ENGINE POWER", skin);
+        Label engineLabel = new OwnLabel(txt("gui.sc.enginepower"), skin);
         engineLabelRotated.addActor(engineLabel);
         float engineLabelH = enginePowerH - enginePlus.getHeight() - engineMinus.getHeight() - 2;
         engineLabelRotated.addAction(Actions.rotateBy(-90));
@@ -359,7 +359,7 @@ public class SpacecraftGui extends AbstractGui {
             return false;
         });
 
-        velToDir = new OwnCheckBox("Velocity to direction vector", skin, 10 * factor);
+        velToDir = new OwnCheckBox(txt("gui.sc.veltodir"), skin, 10 * factor);
         velToDir.setName("sc veltodir");
         velToDir.setChecked(GlobalConf.spacecraft.SC_VEL_TO_DIRECTION);
         velToDir.addListener(event -> {
@@ -369,9 +369,9 @@ public class SpacecraftGui extends AbstractGui {
             return false;
         });
 
-        controlsGroup.add(new OwnLabel("Responsiveness", skin, "sc-header")).left().padRight(10 * factor).padBottom(5 * factor);
+        controlsGroup.add(new OwnLabel(txt("gui.sc.responsiveness"), skin, "sc-header")).left().padRight(10 * factor).padBottom(5 * factor);
         controlsGroup.add(responsiveness).left().padBottom(5 * factor).row();
-        controlsGroup.add(new OwnLabel("Drag", skin, "sc-header")).left().padRight(10 * factor).padBottom(5 * factor);
+        controlsGroup.add(new OwnLabel(txt("gui.sc.drag"), skin, "sc-header")).left().padRight(10 * factor).padBottom(5 * factor);
         controlsGroup.add(drag).left().padBottom(5 * factor).row();
         controlsGroup.add(velToDir).left().colspan(2).row();
         controlsGroup.pack();
