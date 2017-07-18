@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Array;
 
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
@@ -19,6 +20,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
+import gaia.cu9.ari.gaiaorbit.util.math.Intersectord;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
@@ -106,7 +108,6 @@ public class Spacecraft extends ModelBody implements IModelRenderable, ILineRend
         EventManager.instance.subscribe(this, Events.CAMERA_MODE_CMD);
 
         // position attributes
-        pos.set(2e6 * Constants.KM_TO_U, 0, 0);
         force = new Vector3d();
         accel = new Vector3d();
         vel = new Vector3d();
@@ -145,7 +146,6 @@ public class Spacecraft extends ModelBody implements IModelRenderable, ILineRend
         if (mc != null) {
             mc.doneLoading(manager, localTransform, null);
         }
-
         // Broadcast me
         EventManager.instance.post(Events.SPACECRAFT_LOADED, this);
 
@@ -212,7 +212,7 @@ public class Spacecraft extends ModelBody implements IModelRenderable, ILineRend
 
     }
 
-    public Vector3d computePosition(double dt, double enginePower, Vector3d thrust, Vector3d direction, Vector3d force, Vector3d accel, Vector3d vel, Vector3d pos) {
+    public Vector3d computePosition(double dt, CelestialBody closest, double enginePower, Vector3d thrust, Vector3d direction, Vector3d force, Vector3d accel, Vector3d vel, Vector3d pos) {
         enginePower = Math.signum(enginePower);
         // Compute force from thrust
         thrust.set(direction).scl(thrustLength * thrustFactor[thrustFactorIndex] * enginePower);
@@ -252,25 +252,24 @@ public class Spacecraft extends ModelBody implements IModelRenderable, ILineRend
         // New position in auxd3
         Vector3d position = aux3d3.get().set(pos).add(velo.scl(dt));
         // Check collision!
-        // TODO
-        //        if (closest != null) {
-        //            // d1 is the new distance to the centre of the object
-        //            if (!vel.isZero() && Intersectord.distanceSegmentPoint(pos, aux3d3, closest.pos) < closest.getRadius() + stopAt) {
-        //                EventManager.instance.post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), "Crashed against " + closest.name + "!");
-        //
-        //                Array<Vector3d> intersections = Intersectord.intersectRaySphere(pos, aux3d3, closest.pos, closest.getRadius() + stopAt);
-        //
-        //                if (intersections.size >= 1) {
-        //                    pos.set(intersections.get(0));
-        //                }
-        //
-        //                stopAllMovement();
-        //            } else {
-        //                pos.set(position);
-        //            }
-        //        } else {
-        pos.set(position);
-        //      }
+        if (closest != null) {
+            // d1 is the new distance to the centre of the object
+            if (!vel.isZero() && Intersectord.distanceSegmentPoint(pos, aux3d3.get(), closest.pos) < closest.getRadius() + stopAt) {
+                EventManager.instance.post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), "Crashed against " + closest.name + "!");
+
+                Array<Vector3d> intersections = Intersectord.intersectRaySphere(pos, aux3d3.get(), closest.pos, closest.getRadius() + stopAt);
+
+                if (intersections.size >= 1) {
+                    pos.set(intersections.get(0));
+                }
+
+                stopAllMovement();
+            } else {
+                pos.set(position);
+            }
+        } else {
+            pos.set(position);
+        }
 
         return pos;
     }
@@ -282,7 +281,7 @@ public class Spacecraft extends ModelBody implements IModelRenderable, ILineRend
         pollKeys(dt);
 
         /** POSITION **/
-        pos = computePosition(dt, enginePower, thrust, direction, force, accel, vel, pos);
+        pos = computePosition(dt, camera.getClosest2(), enginePower, thrust, direction, force, accel, vel, pos);
 
         /**
          * SCALING FACTOR - counteracts double precision problems at very large

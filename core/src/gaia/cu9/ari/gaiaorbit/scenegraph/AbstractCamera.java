@@ -196,6 +196,11 @@ public abstract class AbstractCamera implements ICamera {
         return closest;
     }
 
+    @Override
+    public CelestialBody getClosest2() {
+        return closest;
+    }
+
     public void copyParamsFrom(AbstractCamera other) {
         this.pos.set(other.pos);
         this.posinv.set(other.posinv);

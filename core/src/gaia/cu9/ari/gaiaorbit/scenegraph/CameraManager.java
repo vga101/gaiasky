@@ -418,6 +418,11 @@ public class CameraManager implements ICamera, IObserver {
     }
 
     @Override
+    public CelestialBody getClosest2() {
+        return current.getClosest2();
+    }
+
+    @Override
     public void resize(int width, int height) {
         for (ICamera cam : cameras)
             cam.resize(width, height);

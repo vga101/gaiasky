@@ -15,6 +15,7 @@ import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.input.GestureDetector.GestureAdapter;
 import com.badlogic.gdx.math.Vector3;
 
+import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
@@ -60,6 +61,7 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
     private Vector3d aux2, todesired, desired, scthrust, scforce, scaccel, scvel, scpos;
 
     private double targetDistance;
+    private boolean firstTime = true;
 
     public SpacecraftCamera(AssetManager assetManager, CameraManager parent) {
         super(parent);
@@ -161,7 +163,7 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
         scaccel.set(sc.accel);
         scvel.set(sc.vel);
         scpos.set(sc.pos);
-        scpos = sc.computePosition(dt, sc.enginePower, scthrust, sc.direction, scforce, scaccel, scvel, scpos);
+        scpos = sc.computePosition(dt, closest2, sc.enginePower, scthrust, sc.direction, scforce, scaccel, scvel, scpos);
 
         // POSITION
         double tgfac = targetDistance * sc.factor / fovFactor;
@@ -248,6 +250,13 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
             Controllers.clearListeners();
             Controllers.addListener(controllerListener);
             sc.stopAllMovement();
+            if (firstTime) {
+                // Put spacecraft close to earth
+                Vector3d earthpos = GaiaSky.instance.sg.getNode("Earth").getPosition();
+                sc.pos.set(earthpos.x + 12000 * Constants.KM_TO_U, earthpos.y, earthpos.z);
+
+                firstTime = false;
+            }
         } else {
             // Unregister input controller
             im.removeProcessor(inputController);
@@ -538,6 +547,11 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
         super.checkClosest(cb);
         if (closest2 == null || (closest2 != null && cb != sc && cb.distToCamera < closest2.distToCamera))
             closest2 = cb;
+    }
+
+    @Override
+    public CelestialBody getClosest2() {
+        return closest2;
     }
 
     @Override
