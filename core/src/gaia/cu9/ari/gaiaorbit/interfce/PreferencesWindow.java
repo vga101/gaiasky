@@ -1320,6 +1320,7 @@ public class PreferencesWindow extends GenericDialog {
                     // Reinitialise GUI system
                     GlobalResources.updateSkin();
                     GaiaSky.instance.reinitialiseGUI1();
+                    EventManager.instance.post(Events.SPACECRAFT_LOADED, GaiaSky.instance.sg.getNode("Spacecraft"));
                     GaiaSky.instance.reinitialiseGUI2();
                     // Time init
                     EventManager.instance.post(Events.TIME_CHANGE_INFO, GaiaSky.instance.time.getTime());

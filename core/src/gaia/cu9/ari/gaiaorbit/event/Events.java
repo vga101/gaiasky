@@ -590,8 +590,6 @@ public enum Events {
      * <li>current yaw angle [deg]</li>
      * <li>current pitch angle [deg]</li>
      * <li>current roll angle [deg]</li>
-     * <li>nearest object name</li>
-     * <li>distance to nearest object [u]</li>
      * <li>thrust factor</li>
      * <li>engine power [-1..1]</li>
      * <li>yaw power [-1..1]</li>
@@ -600,6 +598,15 @@ public enum Events {
      * </ul>
      **/
     SPACECRAFT_INFO,
+
+    /**
+     * Contains following info about the nearest object:
+     * <ul>
+     * <li>nearest object name</li>
+     * <li>distance to nearest object [u]</li>
+     * </ul>
+     */
+    SPACECRAFT_NEAREST_INFO,
 
     /**
      * Toggles the fading of particles in the octree. Contains a boolean with

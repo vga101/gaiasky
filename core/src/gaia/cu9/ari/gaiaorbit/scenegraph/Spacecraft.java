@@ -37,10 +37,10 @@ public class Spacecraft extends ModelBody implements IModelRenderable, ILineRend
     /**
      * Factor (adapt to be able to navigate small and large scale structures
      **/
-    public static final double[] thrustFactor = new double[14];
+    public static final double[] thrustFactor = new double[13];
     static {
         double val = 0.1;
-        for (int i = 0; i < 14; i++) {
+        for (int i = 0; i < 13; i++) {
             thrustFactor[i] = val * Math.pow(10, i);
         }
     }
@@ -189,8 +189,7 @@ public class Spacecraft extends ModelBody implements IModelRenderable, ILineRend
         super.updateLocal(time, camera);
 
         if (render) {
-            //TODO remove clname, cldist
-            EventManager.instance.post(Events.SPACECRAFT_INFO, yaw % 360, pitch % 360, roll % 360, vel.len(), "None", 0d, thrustFactor[thrustFactorIndex], enginePower, yawp, pitchp, rollp);
+            EventManager.instance.post(Events.SPACECRAFT_INFO, yaw % 360, pitch % 360, roll % 360, vel.len(), thrustFactor[thrustFactorIndex], enginePower, yawp, pitchp, rollp);
         }
 
         addToRenderLists(camera);
@@ -470,7 +469,8 @@ public class Spacecraft extends ModelBody implements IModelRenderable, ILineRend
     protected void addToRenderLists(ICamera camera) {
         camera.checkClosest(this);
         addToRender(this, RenderGroup.MODEL_F);
-        addToRender(this, RenderGroup.LINE);
+        if (GlobalConf.spacecraft.SC_SHOW_AXES)
+            addToRender(this, RenderGroup.LINE);
     }
 
     public void setModel(ModelComponent mc) {

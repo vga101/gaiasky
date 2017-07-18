@@ -54,6 +54,9 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
     private Texture crosshairTex;
     private float chw2, chh2;
 
+    /** Closest body apart from the spacecraft **/
+    private CelestialBody closest2;
+
     private Vector3d aux2, todesired, desired, scthrust, scforce, scaccel, scvel, scpos;
 
     private double targetDistance;
@@ -186,15 +189,16 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
         updatePerspectiveCamera();
         updateFrustum(frustum, camera, pos, direction, up);
 
+        // Broadcast nearest info
         String clname = null;
         double cldist = -1d;
         if (closestStar != null) {
             double closestStarDist = closestStar.getClosestDist();
             String closestStarName = closestStar.getClosestName();
-            if (closest != null) {
-                if (closest.distToCamera < closestStarDist) {
-                    clname = closest.name;
-                    cldist = closest.distToCamera;
+            if (closest2 != null) {
+                if (closest2.distToCamera < closestStarDist) {
+                    clname = closest2.name;
+                    cldist = closest2.distToCamera;
                 } else {
                     clname = closestStarName;
                     cldist = closestStarDist;
@@ -204,8 +208,7 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
                 cldist = closestStarDist;
             }
         }
-
-        // TODO Broadcast clname and cldist
+        EventManager.instance.post(Events.SPACECRAFT_NEAREST_INFO, clname, cldist);
 
     }
 
@@ -528,6 +531,13 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
             return false;
         }
 
+    }
+
+    @Override
+    public void checkClosest(CelestialBody cb) {
+        super.checkClosest(cb);
+        if (closest2 == null || (closest2 != null && cb != sc && cb.distToCamera < closest2.distToCamera))
+            closest2 = cb;
     }
 
     @Override

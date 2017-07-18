@@ -75,7 +75,7 @@ public class WebGLConfInitLite extends ConfInit {
         cc.initialize("mappings/xbox360.controller", true);
 
         SpacecraftConf scc = new SpacecraftConf();
-        scc.initialize(.5e7f, true, 1f);
+        scc.initialize(.5e7f, true, 1f, false);
 
         GlobalConf.initialize(vc, prc, sc, dc, rc, ppc, pc, fc, scrc, shc, cc, scc);
     }

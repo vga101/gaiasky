@@ -67,7 +67,8 @@ public class SpacecraftGui extends AbstractGui {
     private Container<HorizontalGroup> buttonContainer;
     private Container<Label> thrustContainer;
     private HorizontalGroup buttonRow, engineGroup;
-    private VerticalGroup motionGroup, nearestGroup, thrustGroup;
+    private VerticalGroup thrustGroup;
+    private Table motionGroup, nearestGroup;
     private OwnImageButton stabilise, stop, exit, enginePlus, engineMinus;
     private Slider enginePower;
     private Slider thrustv, thrusty, thrustp, thrustr;
@@ -181,13 +182,13 @@ public class SpacecraftGui extends AbstractGui {
 
         buildGui();
 
-        EventManager.instance.subscribe(this, Events.SPACECRAFT_STABILISE_CMD, Events.SPACECRAFT_STOP_CMD, Events.SPACECRAFT_INFO, Events.SPACECRAFT_THRUST_INFO);
+        EventManager.instance.subscribe(this, Events.SPACECRAFT_STABILISE_CMD, Events.SPACECRAFT_STOP_CMD, Events.SPACECRAFT_INFO, Events.SPACECRAFT_NEAREST_INFO, Events.SPACECRAFT_THRUST_INFO);
         EventManager.instance.unsubscribe(this, Events.SPACECRAFT_LOADED);
 
     }
 
     private void unsubscribe() {
-        EventManager.instance.unsubscribe(this, Events.SPACECRAFT_STABILISE_CMD, Events.SPACECRAFT_STOP_CMD, Events.SPACECRAFT_INFO, Events.SPACECRAFT_THRUST_INFO);
+        EventManager.instance.unsubscribe(this, Events.SPACECRAFT_STABILISE_CMD, Events.SPACECRAFT_STOP_CMD, Events.SPACECRAFT_INFO, Events.SPACECRAFT_NEAREST_INFO, Events.SPACECRAFT_THRUST_INFO);
     }
 
     private void buildGui() {
@@ -357,42 +358,38 @@ public class SpacecraftGui extends AbstractGui {
         rvg.addActor(new OwnLabel(txt("gui.sc.roll") + ":", skin, "sc-header"));
         rvg.addActor(rollvel);
 
-        motionGroup = new VerticalGroup();
+        motionGroup = new Table();
         motionGroup.pad(0, 80 * factor, 200 * factor, 0);
-        motionGroup.space(1 * factor);
         motionGroup.align(Align.topLeft);
 
-        HorizontalGroup ypGroup = new HorizontalGroup();
-        ypGroup.space(4 * factor);
-        ypGroup.addActor(yvg);
-        ypGroup.addActor(pvg);
-
-        motionGroup.addActor(mvg);
-        motionGroup.addActor(ypGroup);
-        motionGroup.addActor(rvg);
+        motionGroup.add(mvg).left().row();
+        motionGroup.add(yvg).left().row();
+        motionGroup.add(pvg).left().row();
+        motionGroup.add(rvg).left();
 
         motionGroup.pack();
 
         /** NEAREST **/
-        nearestGroup = new VerticalGroup();
+        nearestGroup = new Table();
         nearestGroup.pad(0, 160 * factor, 5 * factor, 0);
-        nearestGroup.space(1 * factor);
         nearestGroup.align(Align.topLeft);
 
         closestname = new OwnLabel("", skin);
         closestdist = new OwnLabel("", skin);
         HorizontalGroup cng = new HorizontalGroup();
+        cng.align(Align.left);
         cng.space(groupspacing);
         cng.addActor(new OwnLabel(txt("gui.sc.nearest") + ":", skin, "sc-header"));
         cng.addActor(closestname);
 
         HorizontalGroup cdg = new HorizontalGroup();
+        cdg.align(Align.left);
         cdg.space(groupspacing);
         cdg.addActor(new OwnLabel(txt("gui.sc.distance") + ":", skin, "sc-header"));
         cdg.addActor(closestdist);
 
-        nearestGroup.addActor(cng);
-        nearestGroup.addActor(cdg);
+        nearestGroup.add(cng).left().row();
+        nearestGroup.add(cdg).left();
 
         nearestGroup.pack();
 
@@ -595,11 +592,11 @@ public class SpacecraftGui extends AbstractGui {
             double p = -(Double) data[1];
             double r = (Double) data[2];
             double v = (Double) data[3];
-            double thf = (Double) data[6];
-            double epow = (Double) data[7];
-            double ypow = (Double) data[8];
-            double ppow = (Double) data[9];
-            double rpow = (Double) data[10];
+            double thf = (Double) data[4];
+            double epow = (Double) data[5];
+            double ypow = (Double) data[6];
+            double ppow = (Double) data[7];
+            double rpow = (Double) data[8];
 
             yawvel.setText(nf.format(y) + "°");
             pitchvel.setText(nf.format(p) + "°");
@@ -608,21 +605,23 @@ public class SpacecraftGui extends AbstractGui {
             Pair<Double, String> velstr = GlobalResources.doubleToVelocityString(v);
             mainvel.setText(sf.format(velstr.getFirst()) + " " + velstr.getSecond());
 
-            if (data[4] != null) {
-                closestname.setText((String) data[4]);
-                Pair<Double, String> cldist = GlobalResources.doubleToDistanceString((Double) data[5]);
-                closestdist.setText(sf.format(cldist.getFirst()) + " " + cldist.getSecond());
-            } else {
-                closestname.setText("");
-                closestdist.setText("");
-            }
-
             thrustfactor.setText("x" + (thf > 1000 ? sf.format(thf) : nf.format(thf)));
 
             setPowerValuesSlider(thrustv, thrustvm, epow);
             setPowerValuesSlider(thrusty, thrustym, ypow);
             setPowerValuesSlider(thrustp, thrustpm, ppow);
             setPowerValuesSlider(thrustr, thrustrm, rpow);
+
+            break;
+        case SPACECRAFT_NEAREST_INFO:
+            if (data[0] != null) {
+                closestname.setText((String) data[0]);
+                Pair<Double, String> cldist = GlobalResources.doubleToDistanceString((Double) data[1]);
+                closestdist.setText(sf.format(cldist.getFirst()) + " " + cldist.getSecond());
+            } else {
+                closestname.setText("");
+                closestdist.setText("");
+            }
 
             break;
         case SPACECRAFT_THRUST_INFO:
