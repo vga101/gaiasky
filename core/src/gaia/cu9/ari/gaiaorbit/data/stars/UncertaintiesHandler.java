@@ -38,7 +38,7 @@ public class UncertaintiesHandler implements IObserver {
     private int coloridx = 0;
 
     private UncertaintiesHandler() {
-        path = "/media/tsagrista/Daten/Gaia/Coryn-data/data2/";
+        path = "/media/tsagrista/Daten/Gaia/Coryn-data/data3/";
 
         particleGroups = new Array<ParticleGroup>();
         colors = new double[][] { { 0, 1, 0, 1 }, { 1, 0, 0, 1 }, { 0, 0, 1, 1 }, { 1, 1, 0, 1 }, { 1, 0, 1, 1 }, { 0, 1, 1, 1 }, { 0.5, 1, 1, 1 } };

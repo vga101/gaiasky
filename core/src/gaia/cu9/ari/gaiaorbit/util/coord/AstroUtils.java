@@ -62,7 +62,7 @@ public class AstroUtils {
     public static final double MILLARCSEC_TO_RAD = MILLARCSEC_TO_DEG * TO_RAD;
 
     // Distance units
-    public static final double PC_TO_KM = 3.08567758e13d;
+    public static final double PC_TO_KM = 3.08567758149137e13d;
     public static final double KM_TO_PC = 1 / PC_TO_KM;
     public static final double AU_TO_KM = 149597871d;
     public static final double KM_TO_AU = 1 / AU_TO_KM;

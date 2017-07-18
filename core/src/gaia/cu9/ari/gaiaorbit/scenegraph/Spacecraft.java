@@ -21,7 +21,6 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
 import gaia.cu9.ari.gaiaorbit.util.ComponentTypes;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
-import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.math.Intersectord;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
@@ -210,7 +209,6 @@ public class Spacecraft extends ModelBody implements IModelRenderable, ILineRend
             rotationMatrix.idt().setToLookAt(directionf, upf);
             rotationMatrix.getRotation(qf);
         } catch (Exception e) {
-            Logger.error(e, this.getClass().getSimpleName());
         }
 
     }
