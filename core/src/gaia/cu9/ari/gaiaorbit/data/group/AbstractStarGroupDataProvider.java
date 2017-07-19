@@ -35,14 +35,23 @@ public abstract class AbstractStarGroupDataProvider implements IStarGroupDataPro
     protected void initLists(FileHandle f) {
         try {
             int lines = countLines(f);
-
-            pointData = new Array<double[]>(lines);
-            ids = new ArrayList<Long>(lines);
-            names = new ArrayList<String>(lines);
-            index = new HashMap<String, Integer>();
+            initLists(lines - 1);
         } catch (Exception e) {
             Logger.error(e);
         }
+    }
+
+    /**
+     * Initialises the lists and structures given number of elements
+     * 
+     * @param f
+     */
+    protected void initLists(int elems) {
+        pointData = new Array<double[]>(elems);
+        ids = new ArrayList<Long>(elems);
+        names = new ArrayList<String>(elems);
+        index = new HashMap<String, Integer>();
+
     }
 
     protected int countLines(FileHandle f) throws IOException {

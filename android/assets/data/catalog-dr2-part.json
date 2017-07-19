@@ -1,6 +1,6 @@
 {
-	"name" : "TGAS+HYG (GPU)",
-	"description" : "Gaia DR1 TGAS catalog, GPU version. About 1.5 million stars.",
+	"name" : "DR2 test",
+	"description" : "Test for DR2 loader",
 	"data" : [
 	{
 		"loader": "gaia.cu9.ari.gaiaorbit.data.stars.SunLoader",
@@ -8,7 +8,6 @@
 	},
 	{
 		"loader": "gaia.cu9.ari.gaiaorbit.data.JsonLoader",
-		"files": [ "data/particles-tgas.json" ]
+		"files": [ "data/particles-dr2.json" ]
 	}
 ]}
-	

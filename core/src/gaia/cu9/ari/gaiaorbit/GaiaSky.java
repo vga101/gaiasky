@@ -368,6 +368,10 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
             EventManager.instance.post(Events.TOGGLE_TIME_CMD, true, false);
         }
 
+        // Resize guis to current size
+        for (IGui gui : guis)
+            gui.resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+
         // Initialise frames
         frames = 0;
 

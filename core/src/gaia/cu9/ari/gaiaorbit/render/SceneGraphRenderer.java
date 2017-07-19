@@ -396,9 +396,9 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         modelCloseUpProc.setPreRunnable(blendDepthRunnable);
 
         // Add components to set
+        renderProcesses.add(modelBackProc);
         renderProcesses.add(pixelStarProc);
         renderProcesses.add(starGroupProc);
-        renderProcesses.add(modelBackProc);
         // renderProcesses.add(cloudsProc);
         renderProcesses.add(annotationsProc);
         renderProcesses.add(particleGroupProc);

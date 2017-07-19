@@ -21,7 +21,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.ParticleGroup;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 
 public class UncertaintiesHandler implements IObserver {
-
+    private static final boolean PRELOAD = true;
     private static UncertaintiesHandler singleton;
 
     public static UncertaintiesHandler getInstance() {
@@ -54,6 +54,12 @@ public class UncertaintiesHandler implements IObserver {
                     fname = fname.substring(0, pos);
                     Long id = Long.parseLong(fname);
                     sourceIds.add(id);
+
+                    if (PRELOAD) {
+                        ParticleGroup pg = load(id);
+                        GaiaSky.instance.sg.getRoot().addChild(pg, true);
+                        particleGroups.add(pg);
+                    }
                 }
             }
         } catch (NoSuchFileException e) {
@@ -83,20 +89,7 @@ public class UncertaintiesHandler implements IObserver {
 
                     @Override
                     public void run() {
-                        String source_id = String.valueOf(s.getCandidateId());
-                        ParticleGroup pg = new ParticleGroup();
-                        pg.setColor(colors[coloridx]);
-                        coloridx = (coloridx + 1) % colors.length;
-                        pg.setSize(3.5d);
-                        pg.setProfiledecay(0.3);
-                        pg.setName("");
-                        pg.setLabelcolor(new double[] { 1, 1, 1, 0 });
-                        pg.setLabelposition(new double[] { 0, 0, 0 });
-                        pg.setCt("Others");
-                        pg.setParent("Universe");
-                        pg.setProvider("gaia.cu9.ari.gaiaorbit.data.group.UncertaintiesProvider");
-                        pg.setDatafile(path + source_id + ".csv");
-                        pg.initialize();
+                        ParticleGroup pg = load(s.getCandidateId());
 
                         GaiaSky.instance.sg.getRoot().addChild(pg, true);
                         particleGroups.add(pg);
@@ -121,6 +114,24 @@ public class UncertaintiesHandler implements IObserver {
             break;
         }
 
+    }
+
+    private ParticleGroup load(long sid) {
+        String source_id = String.valueOf(sid);
+        ParticleGroup pg = new ParticleGroup();
+        pg.setColor(colors[coloridx]);
+        coloridx = (coloridx + 1) % colors.length;
+        pg.setSize(3.5d);
+        pg.setProfiledecay(0.3);
+        pg.setName("");
+        pg.setLabelcolor(new double[] { 1, 1, 1, 0 });
+        pg.setLabelposition(new double[] { 0, 0, 0 });
+        pg.setCt("Others");
+        pg.setParent("Universe");
+        pg.setProvider("gaia.cu9.ari.gaiaorbit.data.group.UncertaintiesProvider");
+        pg.setDatafile(path + source_id + ".csv");
+        pg.initialize();
+        return pg;
     }
 
 }
