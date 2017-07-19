@@ -15,6 +15,7 @@ import gaia.cu9.ari.gaiaorbit.util.coord.IBodyCoordinates;
 import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
+import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
 import net.jafama.FastMath;
 
 /**
@@ -74,6 +75,12 @@ public abstract class AbstractPositionEntity extends SceneGraphNode {
      * Is this just a copy?
      */
     protected boolean copy = false;
+
+    /** The id of the octant it belongs to, if any **/
+    public Long octantId;
+
+    /** Its page **/
+    public OctreeNode octant;
 
     protected AbstractPositionEntity() {
         super();

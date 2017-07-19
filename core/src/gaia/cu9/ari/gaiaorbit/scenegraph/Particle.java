@@ -24,7 +24,6 @@ import gaia.cu9.ari.gaiaorbit.util.color.ColourUtils;
 import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadIndexer;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
-import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
 import net.jafama.FastMath;
 
 /**
@@ -123,15 +122,6 @@ public class Particle extends CelestialBody implements IStarFocus, IPointRendera
     double radius;
     boolean randomName = false;
     boolean hasPm = false;
-
-    /**
-     * Object server properties
-     */
-
-    /** The id of the octant it belongs to, if any **/
-    public long octantId;
-    /** Its page **/
-    public OctreeNode octant;
 
     public Particle() {
         this.parentName = ROOT_NAME;
