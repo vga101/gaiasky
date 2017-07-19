@@ -248,22 +248,27 @@ public class AstroUtils {
     }
 
     /**
-     * Coordinates of pluto
+     * Ecliptic coordinates of pluto at the given date
      * 
      * @param date
+     *            The date
      * @param out
-     * @return
+     *            The out vector
+     * @return Ecliptic coordinates of Pluto at the given julian date
      */
     public static Vector3d plutoEclipticCoordinates(Date date, Vector3d out) {
         return plutoEclipticCoordinates(getDaysSinceJ2000(date), out);
     }
 
     /**
-     * See http://www.stjarnhimlen.se/comp/ppcomp.html
+     * Ecliptic coordinates of pluto at the given date. See
+     * http://www.stjarnhimlen.se/comp/ppcomp.html
      * 
      * @param d
+     *            Julian date
      * @param out
-     * @return
+     *            The out vector
+     * @return Ecliptic coordinates of Pluto at the given julian date
      */
     public static Vector3d plutoEclipticCoordinates(double d, Vector3d out) {
         ITrigonometry trigo = MathManager.instance.trigo;
