@@ -1,5 +1,7 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph;
 
+import java.io.Serializable;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
@@ -42,11 +44,20 @@ import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
  *
  */
 public class ParticleGroup extends FadeNode implements I3DTextRenderable, IFocus, IObserver {
+    public static class ParticleBean implements Serializable {
+        private static final long serialVersionUID = 1L;
+
+        public double[] data;
+
+        public ParticleBean(double[] data) {
+            this.data = data;
+        }
+    }
 
     /**
      * List that contains the point data. It contains only [x y z]
      */
-    public Array<double[]> pointData;
+    public Array<? extends ParticleBean> pointData;
 
     /**
      * Fully qualified name of data provider class
@@ -151,8 +162,8 @@ public class ParticleGroup extends FadeNode implements I3DTextRenderable, IFocus
 
             if (!fixedMeanPosition) {
                 // Mean position
-                for (double[] point : pointData) {
-                    pos.add(point[0], point[1], point[2]);
+                for (ParticleBean point : pointData) {
+                    pos.add(point.data[0], point.data[1], point.data[2]);
                 }
                 pos.scl(1d / pointData.size);
             }
@@ -451,7 +462,7 @@ public class ParticleGroup extends FadeNode implements I3DTextRenderable, IFocus
         if (this.opacity > 0) {
             Array<Pair<Integer, Double>> temporalHits = new Array<Pair<Integer, Double>>();
             for (int i = 0; i < n; i++) {
-                double[] vals = pointData.get(i);
+                double[] vals = pointData.get(i).data;
                 Vector3 pos = aux3f1.get();
                 Vector3d aux = aux3d1.get().set(vals[0], vals[1], vals[2]);
                 Vector3d posd = aux.add(camera.posinv);
@@ -535,7 +546,7 @@ public class ParticleGroup extends FadeNode implements I3DTextRenderable, IFocus
         if (focusIndex < 0) {
             focusData = null;
         } else {
-            focusData = pointData.get(focusIndex);
+            focusData = pointData.get(focusIndex).data;
             focusPosition.set(focusData[0], focusData[1], focusData[2]);
             Vector3d possph = Coordinates.cartesianToSpherical(focusPosition, aux3d1.get());
             focusPositionSph.set((float) (MathUtilsd.radDeg * possph.x), (float) (MathUtilsd.radDeg * possph.y));

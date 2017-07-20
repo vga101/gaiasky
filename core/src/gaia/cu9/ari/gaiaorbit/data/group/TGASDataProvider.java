@@ -12,7 +12,7 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.utils.Array;
 
-import gaia.cu9.ari.gaiaorbit.scenegraph.StarGroup;
+import gaia.cu9.ari.gaiaorbit.scenegraph.StarGroup.StarBean;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
@@ -32,16 +32,14 @@ public class TGASDataProvider extends AbstractStarGroupDataProvider {
         super();
     }
 
-    public Array<double[]> loadData(String file) {
+    public Array<StarBean> loadData(String file) {
         return loadData(file, 1d);
     }
 
-    public Array<double[]> loadData(String file, double factor) {
+    public Array<StarBean> loadData(String file, double factor) {
         Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.datafile", file));
 
         Pair<Map<String, Float>, Map<String, Integer>> extra = loadTYCBVHIP(btvtColorsFile);
-
-        index = new HashMap<String, Integer>();
 
         FileHandle f = Gdx.files.internal(file);
 
@@ -57,7 +55,7 @@ public class TGASDataProvider extends AbstractStarGroupDataProvider {
                 if (!line.isEmpty() && !line.startsWith("#")) {
                     // Read line
                     String[] tokens = line.split(",");
-                    double[] point = new double[StarGroup.SIZE];
+                    double[] point = new double[StarBean.SIZE];
 
                     double pllx = Parser.parseDouble(tokens[3]);
                     double pllxerr = Parser.parseDouble(tokens[4]);
@@ -68,9 +66,6 @@ public class TGASDataProvider extends AbstractStarGroupDataProvider {
                     // Keep only stars with relevant parallaxes
                     if (dist >= 0 && pllx / pllxerr > 7 && pllxerr <= 1) {
                         long sourceid = Parser.parseLong(tokens[0]);
-
-                        /** ID **/
-                        ids.add(sourceid);
 
                         /** INDEX **/
                         String tyc = tokens[9].replace("\"", "");
@@ -93,12 +88,13 @@ public class TGASDataProvider extends AbstractStarGroupDataProvider {
                         }
 
                         /** NAME **/
+                        String name;
                         if (tyc1 > 0) {
-                            names.add("TYC " + tyc);
+                            name = "TYC " + tyc;
                         } else if (hip > 0) {
-                            names.add("HIP " + hip);
+                            name = "HIP " + hip;
                         } else {
-                            names.add(String.valueOf((long) sourceid));
+                            name = String.valueOf((long) sourceid);
                         }
 
                         /** RA and DEC **/
@@ -130,25 +126,25 @@ public class TGASDataProvider extends AbstractStarGroupDataProvider {
                         float[] rgb = ColourUtils.BVtoRGB(colorbv);
                         double col = Color.toFloatBits(rgb[0], rgb[1], rgb[2], 1.0f);
 
-                        point[StarGroup.I_HIP] = hip;
-                        point[StarGroup.I_TYC1] = tyc1;
-                        point[StarGroup.I_TYC2] = tyc2;
-                        point[StarGroup.I_TYC3] = tyc3;
-                        point[StarGroup.I_X] = pos.x;
-                        point[StarGroup.I_Y] = pos.y;
-                        point[StarGroup.I_Z] = pos.z;
-                        point[StarGroup.I_PMX] = pm.x;
-                        point[StarGroup.I_PMY] = pm.y;
-                        point[StarGroup.I_PMZ] = pm.z;
-                        point[StarGroup.I_MUALPHA] = mualpha;
-                        point[StarGroup.I_MUDELTA] = mudelta;
-                        point[StarGroup.I_RADVEL] = 0;
-                        point[StarGroup.I_COL] = col;
-                        point[StarGroup.I_SIZE] = size;
-                        point[StarGroup.I_APPMAG] = appmag;
-                        point[StarGroup.I_ABSMAG] = absmag;
+                        point[StarBean.I_HIP] = hip;
+                        point[StarBean.I_TYC1] = tyc1;
+                        point[StarBean.I_TYC2] = tyc2;
+                        point[StarBean.I_TYC3] = tyc3;
+                        point[StarBean.I_X] = pos.x;
+                        point[StarBean.I_Y] = pos.y;
+                        point[StarBean.I_Z] = pos.z;
+                        point[StarBean.I_PMX] = pm.x;
+                        point[StarBean.I_PMY] = pm.y;
+                        point[StarBean.I_PMZ] = pm.z;
+                        point[StarBean.I_MUALPHA] = mualpha;
+                        point[StarBean.I_MUDELTA] = mudelta;
+                        point[StarBean.I_RADVEL] = 0;
+                        point[StarBean.I_COL] = col;
+                        point[StarBean.I_SIZE] = size;
+                        point[StarBean.I_APPMAG] = appmag;
+                        point[StarBean.I_ABSMAG] = absmag;
 
-                        pointData.add(point);
+                        list.add(new StarBean(point, sourceid, name));
                         i++;
                     }
                 }
@@ -157,15 +153,15 @@ public class TGASDataProvider extends AbstractStarGroupDataProvider {
             br.close();
 
             if (dumpToDisk) {
-                dumpToDisk(pointData, "/tmp/tgas.bin");
+                dumpToDisk(list, "/tmp/tgas.bin");
             }
 
-            Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.nodeloader", pointData.size, file));
+            Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.nodeloader", list.size, file));
         } catch (Exception e) {
             Logger.error(e, TGASDataProvider.class.getName());
         }
 
-        return pointData;
+        return list;
     }
 
     private Pair<Map<String, Float>, Map<String, Integer>> loadTYCBVHIP(String file) {

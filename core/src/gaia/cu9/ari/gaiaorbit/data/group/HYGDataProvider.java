@@ -10,7 +10,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.utils.Array;
 
 import gaia.cu9.ari.gaiaorbit.data.stars.HYGBinaryLoader;
-import gaia.cu9.ari.gaiaorbit.scenegraph.StarGroup;
+import gaia.cu9.ari.gaiaorbit.scenegraph.StarGroup.StarBean;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
@@ -27,11 +27,11 @@ public class HYGDataProvider extends AbstractStarGroupDataProvider {
         super();
     }
 
-    public Array<double[]> loadData(String file) {
+    public Array<StarBean> loadData(String file) {
         return loadData(file, 1d);
     }
 
-    public Array<double[]> loadData(String file, double factor) {
+    public Array<StarBean> loadData(String file, double factor) {
         Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.datafile", file));
 
         FileHandle f = Gdx.files.internal(file);
@@ -67,17 +67,12 @@ public class HYGDataProvider extends AbstractStarGroupDataProvider {
                     id = -1l;// HIP stars with no gaia id go by 0
                     int hip = data_in.readInt();
                     if (appmag < GlobalConf.data.LIMIT_MAG_LOAD && !name.equals("Sol") && !index.containsKey(name.toLowerCase())) {
-                        /** ID **/
-                        ids.add(id);
 
                         /** INDEX **/
                         index.put(name.toLowerCase(), stari);
                         if (hip > 0) {
                             index.put("hip " + hip, stari);
                         }
-
-                        /** NAME **/
-                        names.add(name);
 
                         double flux = Math.pow(10, -absmag / 2.5f);
                         double starsize = Math.min((Math.pow(flux, 0.5f) * Constants.PC_TO_U * 0.16f), 1e9f) / 1.5;
@@ -89,26 +84,26 @@ public class HYGDataProvider extends AbstractStarGroupDataProvider {
                         float[] rgb = ColourUtils.BVtoRGB(colorbv);
                         double col = Color.toFloatBits(rgb[0], rgb[1], rgb[2], 1.0f);
 
-                        double[] point = new double[StarGroup.SIZE];
-                        point[StarGroup.I_HIP] = hip;
-                        point[StarGroup.I_TYC1] = -1;
-                        point[StarGroup.I_TYC2] = -1;
-                        point[StarGroup.I_TYC3] = -1;
-                        point[StarGroup.I_X] = pos.x;
-                        point[StarGroup.I_Y] = pos.y;
-                        point[StarGroup.I_Z] = pos.z;
-                        point[StarGroup.I_PMX] = pm.x;
-                        point[StarGroup.I_PMY] = pm.y;
-                        point[StarGroup.I_PMZ] = pm.z;
-                        point[StarGroup.I_MUALPHA] = mualpha;
-                        point[StarGroup.I_MUDELTA] = mudelta;
-                        point[StarGroup.I_RADVEL] = radvel;
-                        point[StarGroup.I_COL] = col;
-                        point[StarGroup.I_SIZE] = starsize;
-                        point[StarGroup.I_APPMAG] = appmag;
-                        point[StarGroup.I_ABSMAG] = absmag;
+                        double[] point = new double[StarBean.SIZE];
+                        point[StarBean.I_HIP] = hip;
+                        point[StarBean.I_TYC1] = -1;
+                        point[StarBean.I_TYC2] = -1;
+                        point[StarBean.I_TYC3] = -1;
+                        point[StarBean.I_X] = pos.x;
+                        point[StarBean.I_Y] = pos.y;
+                        point[StarBean.I_Z] = pos.z;
+                        point[StarBean.I_PMX] = pm.x;
+                        point[StarBean.I_PMY] = pm.y;
+                        point[StarBean.I_PMZ] = pm.z;
+                        point[StarBean.I_MUALPHA] = mualpha;
+                        point[StarBean.I_MUDELTA] = mudelta;
+                        point[StarBean.I_RADVEL] = radvel;
+                        point[StarBean.I_COL] = col;
+                        point[StarBean.I_SIZE] = starsize;
+                        point[StarBean.I_APPMAG] = appmag;
+                        point[StarBean.I_ABSMAG] = absmag;
 
-                        pointData.add(point);
+                        list.add(new StarBean(point, id, name));
                         stari++;
                     }
                 } catch (EOFException eof) {
@@ -119,15 +114,15 @@ public class HYGDataProvider extends AbstractStarGroupDataProvider {
             data_in.close();
 
             if (dumpToDisk) {
-                dumpToDisk(pointData, "/tmp/hyg.bin");
+                dumpToDisk(list, "/tmp/hyg.bin");
             }
 
-            Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.nodeloader", pointData.size, file));
+            Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.nodeloader", list.size, file));
         } catch (Exception e) {
             Logger.error(e, HYGDataProvider.class.getName());
         }
 
-        return pointData;
+        return list;
     }
 
 }

@@ -10,7 +10,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import com.badlogic.gdx.Gdx;
@@ -22,6 +21,7 @@ import gaia.cu9.ari.gaiaorbit.data.stars.STILCatalogLoader;
 import gaia.cu9.ari.gaiaorbit.desktop.format.DesktopDateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.desktop.util.LogWriter;
 import gaia.cu9.ari.gaiaorbit.desktop.util.WebGLConfInit;
+import gaia.cu9.ari.gaiaorbit.scenegraph.AbstractPositionEntity;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
@@ -44,7 +44,7 @@ import net.jafama.FastMath;
  */
 public class GaiaCatalogFilter {
 
-    Array<? extends CelestialBody> catalog;
+    Array<AbstractPositionEntity> catalog;
     long MAX_OVERLAP_TIME;
     double BAM_2;
     double angleEdgeRad;
@@ -95,7 +95,7 @@ public class GaiaCatalogFilter {
             // Add Sun
             CelestialBody sun = new Star(new Vector3d(0, 0, 0), 4.83f, 4.83f, 0.656f, "Sol", (int) System.currentTimeMillis());
             sun.initialize();
-            ((List<CelestialBody>) catalog).add(sun);
+            catalog.add(sun);
         }
 
         // Format
@@ -142,7 +142,7 @@ public class GaiaCatalogFilter {
 
         Date current = new Date(ini.getTime());
 
-        Set<CelestialBody> out = new HashSet<CelestialBody>(100000);
+        Set<AbstractPositionEntity> out = new HashSet<AbstractPositionEntity>(100000);
 
         while (current.getTime() < end.getTime()) {
             out.clear();
@@ -151,7 +151,7 @@ public class GaiaCatalogFilter {
             for (long t = dayStart - overlap; t < dayStart + msDay + overlap * 2; t += MAX_OVERLAP_TIME) {
                 Pair<Vector3d, Vector3d> dirs = getDirections(new Date(t));
 
-                for (CelestialBody p : catalog) {
+                for (AbstractPositionEntity p : catalog) {
                     double poslen = p.pos.len();
                     boolean observed = FastMath.acos(p.pos.dot(dirs.getFirst()) / poslen) < angleEdgeRad || FastMath.acos(p.pos.dot(dirs.getSecond()) / poslen) < angleEdgeRad;
                     // Sun should always be there because of the scene graph
@@ -180,7 +180,7 @@ public class GaiaCatalogFilter {
 
     }
 
-    public void writeToBinary(Set<CelestialBody> catalog, String bin) throws IOException {
+    public void writeToBinary(Set<AbstractPositionEntity> catalog, String bin) throws IOException {
         File binFile = new File(bin);
         binFile.mkdirs();
         if (binFile.exists()) {
@@ -194,7 +194,8 @@ public class GaiaCatalogFilter {
 
         // Size of stars
         data_out.writeInt(catalog.size());
-        for (CelestialBody s : catalog) {
+        for (AbstractPositionEntity ape : catalog) {
+            CelestialBody s = (CelestialBody) ape;
             // name_length, name, appmag, absmag, colorbv, ra, dec, dist
             data_out.writeInt(s.name.length());
             data_out.writeChars(s.name);

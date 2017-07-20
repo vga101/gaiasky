@@ -8,6 +8,7 @@ import java.util.Map;
 
 import com.badlogic.gdx.utils.Array;
 
+import gaia.cu9.ari.gaiaorbit.scenegraph.AbstractPositionEntity;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
@@ -29,10 +30,10 @@ import uk.ac.starlink.util.FileDataSource;
 public class STILCatalogLoader extends AbstractCatalogLoader {
 
     @Override
-    public Array<? extends CelestialBody> loadData() throws FileNotFoundException {
+    public Array<AbstractPositionEntity> loadData() throws FileNotFoundException {
         long starid = 1000000;
 
-        Array<CelestialBody> result = new Array<CelestialBody>();
+        Array<AbstractPositionEntity> result = new Array<AbstractPositionEntity>();
         StarTableFactory factory = new StarTableFactory();
         Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.limitmag", GlobalConf.data.LIMIT_MAG_LOAD));
 

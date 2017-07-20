@@ -12,9 +12,9 @@ import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.render.system.AbstractRenderSystem;
+import gaia.cu9.ari.gaiaorbit.scenegraph.AbstractPositionEntity;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.IFocus;
-import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Transform;
 import gaia.cu9.ari.gaiaorbit.util.ComponentTypes;
@@ -36,7 +36,7 @@ public abstract class AbstractOctreeWrapper extends SceneGraphNode implements It
     public OctreeNode root;
     /** Roulette list with the objects to process **/
     protected Array<SceneGraphNode> roulette;
-    public Map<Particle, OctreeNode> parenthood;
+    public Map<AbstractPositionEntity, OctreeNode> parenthood;
     /** The number of objects added to render in the last frame **/
     protected int lastNumberObjects = 0;
     /**
@@ -53,7 +53,7 @@ public abstract class AbstractOctreeWrapper extends SceneGraphNode implements It
         this.ct = new ComponentTypes(ComponentType.Others);
         this.root = root;
         this.parentName = parentName;
-        this.parenthood = new HashMap<Particle, OctreeNode>();
+        this.parenthood = new HashMap<AbstractPositionEntity, OctreeNode>();
 
     }
 
@@ -76,7 +76,7 @@ public abstract class AbstractOctreeWrapper extends SceneGraphNode implements It
     private void addObjectsDeep(OctreeNode octant, SceneGraphNode root) {
         if (octant.objects != null) {
             root.add(octant.objects.items);
-            for (Particle sgn : octant.objects) {
+            for (AbstractPositionEntity sgn : octant.objects) {
                 parenthood.put(sgn, octant);
             }
         }
@@ -89,19 +89,19 @@ public abstract class AbstractOctreeWrapper extends SceneGraphNode implements It
         }
     }
 
-    public void add(List<Particle> children, OctreeNode octant) {
+    public void add(List<AbstractPositionEntity> children, OctreeNode octant) {
         super.add(children);
-        for (Particle sgn : children) {
+        for (AbstractPositionEntity sgn : children) {
             parenthood.put(sgn, octant);
         }
     }
 
-    public void add(Particle child, OctreeNode octant) {
+    public void add(AbstractPositionEntity child, OctreeNode octant) {
         super.add(child);
         parenthood.put(child, octant);
     }
 
-    public void removeParenthood(SceneGraphNode child) {
+    public void removeParenthood(AbstractPositionEntity child) {
         parenthood.remove(child);
     }
 

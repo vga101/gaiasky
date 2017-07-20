@@ -12,7 +12,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 
 import gaia.cu9.ari.gaiaorbit.data.ISceneGraphLoader;
-import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
+import gaia.cu9.ari.gaiaorbit.scenegraph.AbstractPositionEntity;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
@@ -49,8 +49,8 @@ import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 public class HYGBinaryLoader extends AbstractCatalogLoader implements ISceneGraphLoader {
 
     @Override
-    public Array<Particle> loadData() throws FileNotFoundException {
-        Array<Particle> stars = new Array<Particle>();
+    public Array<AbstractPositionEntity> loadData() throws FileNotFoundException {
+        Array<AbstractPositionEntity> stars = new Array<AbstractPositionEntity>();
         for (String f : files) {
             FileHandle file = Gdx.files.internal(f);
             InputStream data = file.read();

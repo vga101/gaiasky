@@ -7,6 +7,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Array;
 
+import gaia.cu9.ari.gaiaorbit.scenegraph.ParticleGroup.ParticleBean;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.parse.Parser;
@@ -20,12 +21,12 @@ import gaia.cu9.ari.gaiaorbit.util.parse.Parser;
  */
 public class PointDataProvider implements IParticleGroupDataProvider {
 
-    public Array<double[]> loadData(String file) {
+    public Array<? extends ParticleBean> loadData(String file) {
         return loadData(file, 1d);
     }
 
-    public Array<double[]> loadData(String file, double factor) {
-        Array<double[]> pointData = new Array<double[]>();
+    public Array<? extends ParticleBean> loadData(String file, double factor) {
+        Array<ParticleBean> pointData = new Array<ParticleBean>();
         FileHandle f = Gdx.files.internal(file);
 
         try {
@@ -41,7 +42,7 @@ public class PointDataProvider implements IParticleGroupDataProvider {
                     for (int j = 0; j < tokenslen; j++) {
                         point[j] = Parser.parseDouble(tokens[j]) * factor;
                     }
-                    pointData.add(point);
+                    pointData.add(new ParticleBean(point));
                 }
             }
 

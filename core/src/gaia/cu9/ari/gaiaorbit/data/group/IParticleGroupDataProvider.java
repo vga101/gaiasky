@@ -2,6 +2,8 @@ package gaia.cu9.ari.gaiaorbit.data.group;
 
 import com.badlogic.gdx.utils.Array;
 
+import gaia.cu9.ari.gaiaorbit.scenegraph.ParticleGroup.ParticleBean;
+
 /**
  * Data provider for a particle group.
  * 
@@ -15,7 +17,7 @@ public interface IParticleGroupDataProvider {
      * @param file
      * @return
      */
-    public Array<double[]> loadData(String file);
+    public Array<? extends ParticleBean> loadData(String file);
 
     /**
      * Loads the data applying a factor.
@@ -24,5 +26,5 @@ public interface IParticleGroupDataProvider {
      * @param factor
      * @return
      */
-    public Array<double[]> loadData(String file, double factor);
+    public Array<? extends ParticleBean> loadData(String file, double factor);
 }

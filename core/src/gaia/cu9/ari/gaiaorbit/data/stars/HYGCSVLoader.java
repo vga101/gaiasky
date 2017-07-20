@@ -14,7 +14,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 
 import gaia.cu9.ari.gaiaorbit.data.ISceneGraphLoader;
-import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
+import gaia.cu9.ari.gaiaorbit.scenegraph.AbstractPositionEntity;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
@@ -39,7 +39,7 @@ public class HYGCSVLoader extends AbstractCatalogLoader implements ISceneGraphLo
     public String pmFile;
 
     @Override
-    public Array<Particle> loadData() throws FileNotFoundException {
+    public Array<AbstractPositionEntity> loadData() throws FileNotFoundException {
         // Proper motions
 
         Map<Integer, float[]> pmMap = null;
@@ -73,7 +73,7 @@ public class HYGCSVLoader extends AbstractCatalogLoader implements ISceneGraphLo
             }
         }
 
-        Array<Particle> stars = new Array<Particle>();
+        Array<AbstractPositionEntity> stars = new Array<AbstractPositionEntity>();
         for (String file : files) {
             FileHandle f = Gdx.files.internal(file);
             InputStream data = f.read();
@@ -107,7 +107,7 @@ public class HYGCSVLoader extends AbstractCatalogLoader implements ISceneGraphLo
         return stars;
     }
 
-    private void addStar(String line, Array<Particle> stars, Map<Integer, float[]> pmMap) {
+    private void addStar(String line, Array<AbstractPositionEntity> stars, Map<Integer, float[]> pmMap) {
         String[] st = line.split(separator);
 
         long starid = -1l;

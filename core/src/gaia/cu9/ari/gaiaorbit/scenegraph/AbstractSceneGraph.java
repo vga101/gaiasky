@@ -8,6 +8,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.IntMap;
 
 import gaia.cu9.ari.gaiaorbit.render.system.PixelRenderSystem;
+import gaia.cu9.ari.gaiaorbit.scenegraph.StarGroup.StarBean;
 import gaia.cu9.ari.gaiaorbit.scenegraph.octreewrapper.AbstractOctreeWrapper;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
@@ -116,6 +117,7 @@ public abstract class AbstractSceneGraph implements ISceneGraph {
             }
         } else if (node.getStarCount() > 1) {
             if (node instanceof AbstractOctreeWrapper) {
+                @SuppressWarnings("unchecked")
                 Array<AbstractPositionEntity> stars = (Array<AbstractPositionEntity>) node.getStars();
                 for (AbstractPositionEntity s : stars) {
                     if (s instanceof Star && ((Star) s).hip >= 0) {
@@ -127,10 +129,11 @@ public abstract class AbstractSceneGraph implements ISceneGraph {
                     }
                 }
             } else if (node instanceof StarGroup) {
-                Array<double[]> stars = ((StarGroup) node).pointData;
-                for (double[] s : stars) {
-                    if (s[StarGroup.I_HIP] > 0) {
-                        hipMap.put((int) s[StarGroup.I_HIP], new Position(s[StarGroup.I_X], s[StarGroup.I_Y], s[StarGroup.I_Z]));
+                @SuppressWarnings("unchecked")
+                Array<StarBean> stars = (Array<StarBean>) ((StarGroup) node).pointData;
+                for (StarBean s : stars) {
+                    if (s.hip() > 0) {
+                        hipMap.put((int) s.hip(), new Position(s.x(), s.y(), s.z()));
                     }
                 }
             }
@@ -144,6 +147,7 @@ public abstract class AbstractSceneGraph implements ISceneGraph {
                 hipMap.remove(((Star) s).hip);
             }
         } else if (node.getStarCount() > 1) {
+            @SuppressWarnings("unchecked")
             Array<AbstractPositionEntity> stars = (Array<AbstractPositionEntity>) node.getStars();
             for (AbstractPositionEntity s : stars) {
                 if (s instanceof Star && ((Star) s).hip >= 0) {

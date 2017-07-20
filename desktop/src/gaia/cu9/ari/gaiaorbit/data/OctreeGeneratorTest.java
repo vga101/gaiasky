@@ -31,6 +31,7 @@ import gaia.cu9.ari.gaiaorbit.desktop.util.DesktopConfInit;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
+import gaia.cu9.ari.gaiaorbit.scenegraph.AbstractPositionEntity;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
@@ -168,9 +169,9 @@ public class OctreeGeneratorTest implements IObserver {
         loader.initialize(new String[] { input });
 
         /** LOAD HYG **/
-        Array<Particle> listStars = hyg.loadData();
-        Map<Integer, Particle> hips = new HashMap<Integer, Particle>();
-        for (Particle p : listStars) {
+        Array<AbstractPositionEntity> listStars = hyg.loadData();
+        Map<Integer, AbstractPositionEntity> hips = new HashMap<Integer, AbstractPositionEntity>();
+        for (AbstractPositionEntity p : listStars) {
             if (p instanceof Star && ((Star) p).hip > 0) {
                 hips.put(((Star) p).hip, p);
             }
@@ -198,7 +199,7 @@ public class OctreeGeneratorTest implements IObserver {
         }
 
         // Initialise rgba color array and size
-        for (Particle p : listStars) {
+        for (AbstractPositionEntity p : listStars) {
             p.initialize();
         }
 

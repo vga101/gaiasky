@@ -2,7 +2,7 @@ package gaia.cu9.ari.gaiaorbit.data.octreegen;
 
 import com.badlogic.gdx.utils.Array;
 
-import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
+import gaia.cu9.ari.gaiaorbit.scenegraph.AbstractPositionEntity;
 import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
 
 /**
@@ -15,8 +15,8 @@ import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
 public interface IAggregationAlgorithm {
 
     /**
-     * Creates the sample of virtual stars from the given input stars. All these
-     * stars should be in the box defined by the center and the sizes.
+     * Creates the sub-sample from the given input stars. All these stars should
+     * be in the box defined by the center and the sizes.
      * 
      * @param inputStars
      *            The actual stars that are inside the octant.
@@ -27,7 +27,7 @@ public interface IAggregationAlgorithm {
      *            The percentage of objects to be included in the octant.
      * @return True if we are in a leaf.
      */
-    public boolean sample(Array<Particle> inputStars, OctreeNode octant, float percentage);
+    public boolean sample(Array<AbstractPositionEntity> inputStars, OctreeNode octant, float percentage);
 
     /**
      * Gets the maximum number of particles in a single node

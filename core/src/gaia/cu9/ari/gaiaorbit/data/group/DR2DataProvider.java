@@ -12,7 +12,7 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.utils.Array;
 
-import gaia.cu9.ari.gaiaorbit.scenegraph.StarGroup;
+import gaia.cu9.ari.gaiaorbit.scenegraph.StarGroup.StarBean;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
@@ -45,25 +45,12 @@ public class DR2DataProvider extends AbstractStarGroupDataProvider {
     public Map<Long, Integer> sidHIPMap;
 
     /**
-     * INDICES: 
+     * INDICES:
      * 
-     * source_id 
-     * ra[deg] 
-     * dec[deg] 
-     * parallax[mas] 
-     * ra_err[mas]
-     * dec_err[mas] 
-     * pllx_err[mas] 
-     * mualpha[mas/yr] 
-     * mudelta[mas/yr] 
-     * radvel[km/s]
-     * mualpha_err[mas/yr] 
-     * mudelta_err[mas/yr] 
-     * radvel_err[km/s] 
-     * gmag[mag]
-     * bp[mag] 
-     * rp[mag] 
-     * ref_epoch[julian years]
+     * source_id ra[deg] dec[deg] parallax[mas] ra_err[mas] dec_err[mas]
+     * pllx_err[mas] mualpha[mas/yr] mudelta[mas/yr] radvel[km/s]
+     * mualpha_err[mas/yr] mudelta_err[mas/yr] radvel_err[km/s] gmag[mag]
+     * bp[mag] rp[mag] ref_epoch[julian years]
      */
     private static final int SOURCE_ID = 0;
     private static final int RA = 1;
@@ -85,11 +72,11 @@ public class DR2DataProvider extends AbstractStarGroupDataProvider {
 
     private static final int[] indices = new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 };
 
-    public Array<double[]> loadData(String file) {
+    public Array<StarBean> loadData(String file) {
         return loadData(file, 1d);
     }
 
-    public Array<double[]> loadData(String file, double factor) {
+    public Array<StarBean> loadData(String file, double factor) {
         initLists(50000000);
 
         FileHandle f = Gdx.files.internal(file);
@@ -110,8 +97,8 @@ public class DR2DataProvider extends AbstractStarGroupDataProvider {
         } else if (f.name().endsWith(".csv")) {
             loadFile(f, factor, i);
         }
-        Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.nodeloader", pointData.size, f.path()));
-        return pointData;
+        Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.nodeloader", list.size, f.path()));
+        return list;
     }
 
     public void loadFile(FileHandle f, double factor, Integer i) {
@@ -144,7 +131,7 @@ public class DR2DataProvider extends AbstractStarGroupDataProvider {
 
     private void addStar(String line, Integer i) {
         String[] tokens = line.split(separator);
-        double[] point = new double[StarGroup.SIZE];
+        double[] point = new double[StarBean.SIZE];
 
         double pllx = Parser.parseDouble(tokens[indices[PLLX]]);
         double pllxerr = Parser.parseDouble(tokens[indices[PLLX_ERR]]);
@@ -154,16 +141,14 @@ public class DR2DataProvider extends AbstractStarGroupDataProvider {
 
         // Keep only stars with relevant parallaxes
         if (dist >= 0 && pllx / pllxerr > 7 && pllxerr <= 1) {
+            /** ID **/
             long sourceid = Parser.parseLong(tokens[indices[SOURCE_ID]]);
 
-            /** ID **/
-            ids.add(sourceid);
+            /** NAME **/
+            String name = String.valueOf((long) sourceid);
 
             /** INDEX **/
             index.put(String.valueOf((long) sourceid), i);
-
-            /** NAME **/
-            names.add(String.valueOf((long) sourceid));
 
             /** RA and DEC **/
             double ra = Parser.parseDouble(tokens[indices[RA]]);
@@ -198,25 +183,25 @@ public class DR2DataProvider extends AbstractStarGroupDataProvider {
             float[] rgb = ColourUtils.BVtoRGB(colorbv);
             double col = Color.toFloatBits(rgb[0], rgb[1], rgb[2], 1.0f);
 
-            point[StarGroup.I_HIP] = -1;
-            point[StarGroup.I_TYC1] = -1;
-            point[StarGroup.I_TYC2] = -1;
-            point[StarGroup.I_TYC3] = -1;
-            point[StarGroup.I_X] = pos.x;
-            point[StarGroup.I_Y] = pos.y;
-            point[StarGroup.I_Z] = pos.z;
-            point[StarGroup.I_PMX] = pm.x;
-            point[StarGroup.I_PMY] = pm.y;
-            point[StarGroup.I_PMZ] = pm.z;
-            point[StarGroup.I_MUALPHA] = mualpha;
-            point[StarGroup.I_MUDELTA] = mudelta;
-            point[StarGroup.I_RADVEL] = 0;
-            point[StarGroup.I_COL] = col;
-            point[StarGroup.I_SIZE] = size;
-            point[StarGroup.I_APPMAG] = appmag;
-            point[StarGroup.I_ABSMAG] = absmag;
+            point[StarBean.I_HIP] = -1;
+            point[StarBean.I_TYC1] = -1;
+            point[StarBean.I_TYC2] = -1;
+            point[StarBean.I_TYC3] = -1;
+            point[StarBean.I_X] = pos.x;
+            point[StarBean.I_Y] = pos.y;
+            point[StarBean.I_Z] = pos.z;
+            point[StarBean.I_PMX] = pm.x;
+            point[StarBean.I_PMY] = pm.y;
+            point[StarBean.I_PMZ] = pm.z;
+            point[StarBean.I_MUALPHA] = mualpha;
+            point[StarBean.I_MUDELTA] = mudelta;
+            point[StarBean.I_RADVEL] = 0;
+            point[StarBean.I_COL] = col;
+            point[StarBean.I_SIZE] = size;
+            point[StarBean.I_APPMAG] = appmag;
+            point[StarBean.I_ABSMAG] = absmag;
 
-            pointData.add(point);
+            list.add(new StarBean(point, sourceid, name));
             i++;
         }
     }

@@ -1,6 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.data.group;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -18,17 +17,4 @@ public interface IStarGroupDataProvider extends IParticleGroupDataProvider {
      */
     public Map<String, Integer> getIndex();
 
-    /**
-     * Gets the names list, in the same order as the particle data
-     * 
-     * @return The names array
-     */
-    public List<String> getNames();
-
-    /**
-     * Gets the identifiers, in the same order as the particle data
-     * 
-     * @return The identifiers
-     */
-    public List<Long> getIds();
 }

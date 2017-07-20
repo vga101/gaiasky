@@ -18,8 +18,8 @@ import gaia.cu9.ari.gaiaorbit.data.octreegen.ParticleDataBinaryIO;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
+import gaia.cu9.ari.gaiaorbit.scenegraph.AbstractPositionEntity;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Constellation;
-import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.octreewrapper.AbstractOctreeWrapper;
 import gaia.cu9.ari.gaiaorbit.scenegraph.octreewrapper.OctreeWrapper;
@@ -299,9 +299,9 @@ public class OctreeMultiFileLoader implements ISceneGraphLoader, IObserver {
         if (!octantFile.exists() || octantFile.isDirectory()) {
             return false;
         }
-        Array<Particle> data = particleReader.readParticles(octantFile.read());
+        Array<AbstractPositionEntity> data = particleReader.readParticles(octantFile.read());
         synchronized (octant) {
-            for (Particle star : data) {
+            for (AbstractPositionEntity star : data) {
                 star.octant = octant;
                 // Add objects to octree wrapper node
                 octreeWrapper.add(star, octant);
@@ -344,9 +344,9 @@ public class OctreeMultiFileLoader implements ISceneGraphLoader, IObserver {
 
     public void unloadOctant(OctreeNode octant, final AbstractOctreeWrapper octreeWrapper) {
         synchronized (octant) {
-            Array<Particle> objects = octant.objects;
+            Array<AbstractPositionEntity> objects = octant.objects;
             if (objects != null) {
-                for (Particle star : objects) {
+                for (AbstractPositionEntity star : objects) {
                     star.octant = null;
                     octreeWrapper.removeParenthood(star);
                     // Aux info

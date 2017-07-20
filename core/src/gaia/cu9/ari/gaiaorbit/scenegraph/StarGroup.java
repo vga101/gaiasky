@@ -2,7 +2,6 @@ package gaia.cu9.ari.gaiaorbit.scenegraph;
 
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -29,6 +28,7 @@ import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.TimeUtils;
 
 import gaia.cu9.ari.gaiaorbit.GaiaSky;
@@ -59,26 +59,116 @@ import net.jafama.FastMath;
  */
 public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFocus, IQuadRenderable, IModelRenderable {
 
-    public static final int SIZE = 19;
-    /** INDICES **/
-    public static final int I_X = 0;
-    public static final int I_Y = 1;
-    public static final int I_Z = 2;
-    public static final int I_PMX = 3;
-    public static final int I_PMY = 4;
-    public static final int I_PMZ = 5;
-    public static final int I_APPMAG = 6;
-    public static final int I_ABSMAG = 7;
-    public static final int I_COL = 8;
-    public static final int I_SIZE = 9;
-    public static final int I_HIP = 10;
-    public static final int I_TYC1 = 11;
-    public static final int I_TYC2 = 12;
-    public static final int I_TYC3 = 13;
-    public static final int I_MUALPHA = 14;
-    public static final int I_MUDELTA = 15;
-    public static final int I_RADVEL = 16;
-    public static final int I_ADDITIONAL = 17;
+    /**
+     * Contains info on one star
+     */
+    public static class StarBean extends ParticleBean {
+        private static final long serialVersionUID = 1L;
+
+        public static final int SIZE = 19;
+        /** INDICES **/
+        public static final int I_X = 0;
+        public static final int I_Y = 1;
+        public static final int I_Z = 2;
+        public static final int I_PMX = 3;
+        public static final int I_PMY = 4;
+        public static final int I_PMZ = 5;
+        public static final int I_APPMAG = 6;
+        public static final int I_ABSMAG = 7;
+        public static final int I_COL = 8;
+        public static final int I_SIZE = 9;
+        public static final int I_HIP = 10;
+        public static final int I_TYC1 = 11;
+        public static final int I_TYC2 = 12;
+        public static final int I_TYC3 = 13;
+        public static final int I_MUALPHA = 14;
+        public static final int I_MUDELTA = 15;
+        public static final int I_RADVEL = 16;
+        public static final int I_ADDITIONAL = 17;
+
+        public Long id;
+        public Long octantId;
+        public String name;
+
+        public StarBean(double[] data, Long id, String name) {
+            super(data);
+            this.id = id;
+            this.name = name;
+            this.octantId = -1l;
+        }
+
+        public double x() {
+            return data[I_X];
+        }
+
+        public double y() {
+            return data[I_Y];
+        }
+
+        public double z() {
+            return data[I_Z];
+        }
+
+        public double pmx() {
+            return data[I_PMX];
+        }
+
+        public double pmy() {
+            return data[I_PMY];
+        }
+
+        public double pmz() {
+            return data[I_PMZ];
+        }
+
+        public double appmag() {
+            return data[I_APPMAG];
+        }
+
+        public double absmag() {
+            return data[I_ABSMAG];
+        }
+
+        public double col() {
+            return data[I_COL];
+        }
+
+        public double size() {
+            return data[I_SIZE];
+        }
+
+        public double hip() {
+            return data[I_HIP];
+        }
+
+        public double tyc1() {
+            return data[I_TYC1];
+        }
+
+        public double tyc2() {
+            return data[I_TYC2];
+        }
+
+        public double tyc3() {
+            return data[I_TYC3];
+        }
+
+        public double mualpha() {
+            return data[I_MUALPHA];
+        }
+
+        public double mudelta() {
+            return data[I_MUDELTA];
+        }
+
+        public double radvel() {
+            return data[I_RADVEL];
+        }
+
+        public double additional() {
+            return data[I_ADDITIONAL];
+        }
+    }
 
     // Camera dx threshold
     private static final double CAM_DX_TH = 100 * Constants.AU_TO_U;
@@ -90,17 +180,9 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
     private static final long FADE_IN_MS = 1000;
 
     /**
-     * The indentifiers
-     */
-    List<Long> ids;
-    /**
      * The name index
      */
     Map<String, Integer> index;
-    /**
-     * Name of each particle
-     */
-    List<String> names;
 
     /**
      * Additional values
@@ -154,6 +236,7 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
         EventManager.instance.subscribe(this, Events.CAMERA_MOTION_UPDATED, Events.DISPOSE);
     }
 
+    @SuppressWarnings("unchecked")
     public void initialize() {
         /** Load data **/
         try {
@@ -166,14 +249,12 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
             lastSortTime = -1;
 
             pointData = provider.loadData(datafile, factor);
-            ids = provider.getIds();
             index = provider.getIndex();
-            names = provider.getNames();
 
             if (!fixedMeanPosition) {
                 // Mean position
-                for (double[] point : pointData) {
-                    pos.add(point[0], point[1], point[2]);
+                for (StarBean point : (Array<StarBean>) pointData) {
+                    pos.add(point.x(), point.y(), point.z());
                 }
                 pos.scl(1d / pointData.size);
             }
@@ -257,17 +338,17 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
         super.update(time, parentTransform, camera, opacity);
 
         // Update closest star
-        double[] closestStar = pointData.get(active[0]);
-        closestPos.set(closestStar[I_X], closestStar[I_Y], closestStar[I_Z]).sub(camera.getPos());
+        StarBean closestStar = (StarBean) pointData.get(active[0]);
+        closestPos.set(closestStar.x(), closestStar.y(), closestStar.z()).sub(camera.getPos());
         closestDist = closestPos.len() - getRadius(active[0]);
         Color c = new Color();
-        Color.abgr8888ToColor(c, (float) closestStar[I_COL]);
+        Color.abgr8888ToColor(c, (float) closestStar.col());
         closestCol[0] = c.r;
         closestCol[1] = c.g;
         closestCol[2] = c.b;
         closestCol[3] = c.a;
         closestSize = getSize(active[0]);
-        closestName = String.valueOf(ids.get(active[0]));
+        closestName = closestStar.name;
         camera.setClosestStar(this);
 
         // Model dist
@@ -287,8 +368,8 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
         Vector3d cpos = camera.getPos();
         int n = pointData.size;
         for (int i = 0; i < n; i++) {
-            double[] d = pointData.get(i);
-            additional[i] = -(((d[I_SIZE] * Constants.STAR_SIZE_FACTOR) / cpos.dst(d[I_X], d[I_Y], d[I_Z])) / camera.getFovFactor()) * GlobalConf.scene.STAR_BRIGHTNESS;
+            StarBean d = (StarBean) pointData.get(i);
+            additional[i] = -(((d.size() * Constants.STAR_SIZE_FACTOR) / cpos.dst(d.x(), d.y(), d.z())) / camera.getFovFactor()) * GlobalConf.scene.STAR_BRIGHTNESS;
         }
     }
 
@@ -371,15 +452,15 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
     }
 
     private void renderCloseupStar(int i, int idx, ICamera camera, ShaderProgram shader, Mesh mesh, double thpointTimesFovfactor, double thupOverFovfactor, double thdownOverFovfactor, float alpha) {
-        double[] star = pointData.get(idx);
+        StarBean star = (StarBean) pointData.get(idx);
         double size = getSize(idx);
         double radius = size * Constants.STAR_SIZE_FACTOR;
-        Vector3d lpos = aux3d1.get().set(star[I_X], star[I_Y], star[I_Z]).add(camera.getInversePos());
+        Vector3d lpos = aux3d1.get().set(star.x(), star.y(), star.z()).add(camera.getInversePos());
         double distToCamera = lpos.len();
         double viewAngle = (radius / distToCamera) / camera.getFovFactor();
         double viewAngleApparent = viewAngle * GlobalConf.scene.STAR_BRIGHTNESS;
         Color c = new Color();
-        Color.abgr8888ToColor(c, (float) star[I_COL]);
+        Color.abgr8888ToColor(c, (float) star.col());
         if (viewAngle >= thpointTimesFovfactor) {
             double ssize = getFuzzyRenderSize(camera, size, radius, distToCamera, viewAngle, thdownOverFovfactor, thupOverFovfactor);
 
@@ -434,15 +515,15 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
     public void render(LineRenderSystem renderer, ICamera camera, float alpha) {
         float thpointTimesFovfactor = (float) GlobalConf.scene.STAR_THRESHOLD_POINT * camera.getFovFactor();
         for (int i = N_CLOSEUP_STARS * 20; i >= 0; i--) {
-            double[] star = pointData.get(active[i]);
+            StarBean star = (StarBean) pointData.get(active[i]);
             float radius = (float) (getSize(active[i]) * Constants.STAR_SIZE_FACTOR);
-            Vector3d lpos = aux3d1.get().set(star[I_X], star[I_Y], star[I_Z]).sub(camera.getPos());
+            Vector3d lpos = aux3d1.get().set(star.x(), star.y(), star.z()).sub(camera.getPos());
             float distToCamera = (float) lpos.len();
             float viewAngle = (float) (((radius / distToCamera) / camera.getFovFactor()) * GlobalConf.scene.STAR_BRIGHTNESS);
             if (viewAngle >= thpointTimesFovfactor / GlobalConf.scene.PM_NUM_FACTOR) {
 
-                Vector3d p1 = aux3d1.get().set(star[I_X], star[I_Y], star[I_Z]).sub(camera.getPos());
-                Vector3d ppm = aux3d2.get().set(star[I_PMX], star[I_PMY], star[I_PMZ]).scl(GlobalConf.scene.PM_LEN_FACTOR);
+                Vector3d p1 = aux3d1.get().set(star.x(), star.y(), star.z()).sub(camera.getPos());
+                Vector3d ppm = aux3d2.get().set(star.pmx(), star.pmy(), star.pmz()).scl(GlobalConf.scene.PM_LEN_FACTOR);
                 Vector3d p2 = ppm.add(p1);
 
                 // Mualpha -> red channel
@@ -452,7 +533,7 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
                 final double mumin = -80;
                 final double mumax = 80;
                 final double maxmin = mumax - mumin;
-                renderer.addLine(p1.x, p1.y, p1.z, p2.x, p2.y, p2.z, (float) ((star[I_MUALPHA] - mumin) / maxmin) * 0.8f + 0.2f, (float) ((star[I_MUDELTA] - mumin) / maxmin) * 0.8f + 0.2f, (float) (star[I_RADVEL]) * 0.8f + 0.2f, alpha * this.opacity);
+                renderer.addLine(p1.x, p1.y, p1.z, p2.x, p2.y, p2.z, (float) ((star.mualpha() - mumin) / maxmin) * 0.8f + 0.2f, (float) ((star.mudelta() - mumin) / maxmin) * 0.8f + 0.2f, (float) (star.radvel()) * 0.8f + 0.2f, alpha * this.opacity);
             }
         }
 
@@ -466,9 +547,9 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
         float thOverFactor = (float) (GlobalConf.scene.STAR_THRESHOLD_POINT / GlobalConf.scene.LABEL_NUMBER_FACTOR / camera.getFovFactor());
         float textScale = 1f;
         for (int i = 0; i < N_CLOSEUP_STARS; i++) {
-            double[] star = pointData.get(active[i]);
+            StarBean star = (StarBean) pointData.get(active[i]);
             float radius = (float) getRadius(active[i]);
-            Vector3d lpos = aux3d1.get().set(star[I_X], star[I_Y], star[I_Z]).sub(camera.getPos());
+            Vector3d lpos = aux3d1.get().set(star.x(), star.y(), star.z()).sub(camera.getPos());
             float distToCamera = (float) lpos.len();
             float viewAngle = (float) (((radius / distToCamera) / camera.getFovFactor()) * GlobalConf.scene.STAR_BRIGHTNESS);
 
@@ -482,7 +563,7 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
                 float textSize = (float) FastMath.tanh(viewAngle) * distToCamera * 1e5f;
                 float alpha = Math.min((float) FastMath.atan(textSize / distToCamera), 1.e-3f);
                 textSize = (float) FastMath.tan(alpha) * distToCamera;
-                render3DLabel(batch, shader, font3d, camera, names.get(active[i]), lpos, textScale, textSize, textColour(), this.opacity);
+                render3DLabel(batch, shader, font3d, camera, star.name, lpos, textScale, textSize, textColour(), this.opacity);
 
             }
         }
@@ -506,7 +587,7 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
     }
 
     public double getFocusSize() {
-        return focusData[I_SIZE];
+        return focusData[StarBean.I_SIZE];
     }
 
     // Radius in stars is different!
@@ -520,23 +601,23 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
     }
 
     public float getAppmag() {
-        return (float) focusData[I_APPMAG];
+        return (float) focusData[StarBean.I_APPMAG];
     }
 
     public float getAbsmag() {
-        return (float) focusData[I_ABSMAG];
+        return (float) focusData[StarBean.I_ABSMAG];
     }
 
     public String getName() {
         if (focusData != null)
-            return names.get(focusIndex);
+            return ((StarBean) pointData.get(focusIndex)).name;
         else
             return null;
     }
 
     public long getId() {
         if (focusData != null)
-            return ids.get(focusIndex);
+            return ((StarBean) pointData.get(focusIndex)).id;
         else
             return -1;
     }
@@ -544,7 +625,7 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
     @Override
     public double getMuAlpha() {
         if (focusData != null)
-            return focusData[I_MUALPHA];
+            return focusData[StarBean.I_MUALPHA];
         else
             return 0;
     }
@@ -552,7 +633,7 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
     @Override
     public double getMuDelta() {
         if (focusData != null)
-            return focusData[I_MUDELTA];
+            return focusData[StarBean.I_MUDELTA];
         else
             return 0;
     }
@@ -565,7 +646,7 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
      * @return The size
      */
     public double getSize(int i) {
-        return pointData.get(i)[I_SIZE];
+        return ((StarBean) pointData.get(i)).size();
     }
 
     /**
@@ -649,26 +730,26 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
 
     @Override
     public int getHip() {
-        if (focusData != null && focusData[I_HIP] > 0)
-            return (int) focusData[I_HIP];
+        if (focusData != null && focusData[StarBean.I_HIP] > 0)
+            return (int) focusData[StarBean.I_HIP];
         return -1;
     }
 
     @Override
     public String getTycho() {
-        if (focusData != null && focusData[I_TYC1] > 0)
-            return (int) focusData[I_TYC1] + "-" + (int) focusData[I_TYC2] + "-" + (int) focusData[I_TYC3];
+        if (focusData != null && focusData[StarBean.I_TYC1] > 0)
+            return (int) focusData[StarBean.I_TYC1] + "-" + (int) focusData[StarBean.I_TYC2] + "-" + (int) focusData[StarBean.I_TYC3];
         return null;
     }
 
     @Override
     public long getCandidateId() {
-        return ids.get(candidateFocusIndex);
+        return ((StarBean) pointData.get(candidateFocusIndex)).id;
     }
 
     @Override
     public String getCandidateName() {
-        return names.get(candidateFocusIndex);
+        return ((StarBean) pointData.get(candidateFocusIndex)).name;
     }
 
     @Override

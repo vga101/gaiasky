@@ -22,8 +22,8 @@ import gaia.cu9.ari.gaiaorbit.desktop.format.DesktopNumberFormatFactory;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
+import gaia.cu9.ari.gaiaorbit.scenegraph.AbstractPositionEntity;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Constellation;
-import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
 import gaia.cu9.ari.gaiaorbit.util.ConfInit;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
@@ -71,9 +71,9 @@ public class ConstellationHIPUpdater implements IObserver {
         HYGBinaryLoader hyg = new HYGBinaryLoader();
         hyg.initialize(new String[] { "data/hygxyz.bin" });
 
-        Array<Particle> catalog = hyg.loadData();
+        Array<AbstractPositionEntity> catalog = hyg.loadData();
         Array<Star> stars = new Array<Star>(catalog.size);
-        for (Particle p : catalog)
+        for (AbstractPositionEntity p : catalog)
             if (p instanceof Star)
                 stars.add((Star) p);
 

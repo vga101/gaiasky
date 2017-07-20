@@ -19,6 +19,7 @@ import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.render.IRenderable;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ParticleGroup;
+import gaia.cu9.ari.gaiaorbit.scenegraph.ParticleGroup.ParticleBean;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf.ProgramConf.StereoProfile;
@@ -79,7 +80,8 @@ public class ParticleGroupRenderSystem extends ImmediateRenderSystem implements 
                  */
                 if (!particleGroup.inGpu) {
                     particleGroup.offset = curr.vertexIdx;
-                    for (double[] p : particleGroup.pointData) {
+                    for (ParticleBean pb : particleGroup.pointData) {
+                        double[] p = pb.data;
                         // COLOR
                         float[] c = particleGroup.cc;
                         curr.vertices[curr.vertexIdx + curr.colorOffset] = Color.toFloatBits(c[0], c[1], c[2], c[3]);

@@ -11,6 +11,7 @@ import java.io.OutputStream;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 
+import gaia.cu9.ari.gaiaorbit.scenegraph.AbstractPositionEntity;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
@@ -59,7 +60,7 @@ import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
  */
 public class ParticleDataBinaryIO {
 
-    public void writeParticles(Array<Particle> particles, OutputStream out) {
+    public void writeParticles(Array<AbstractPositionEntity> particles, OutputStream out) {
 
         try {
             // Wrap the FileOutputStream with a DataOutputStream
@@ -67,45 +68,48 @@ public class ParticleDataBinaryIO {
 
             // Size of stars
             data_out.writeInt(particles.size);
-            for (Particle s : particles) {
-                // name_length, name, appmag, absmag, colorbv, r, g, b, a,
-                // ra[deg], dec[deg], dist[u], (double) x[u], (double) y[u],
-                // (double) z[u], mualpha[mas/yr], mudelta[mas/yr],
-                // radvel[km/s], pmx[u/yr], pmy[u/yr], pmz[u/yr], id, hip,
-                // tychoLength, tycho, sourceCatalog, pageid, type
-                data_out.writeInt(s.name.length());
-                data_out.writeChars(s.name);
-                data_out.writeFloat(s.appmag);
-                data_out.writeFloat(s.absmag);
-                data_out.writeFloat(s.colorbv);
-                data_out.writeFloat(s.cc[0]);
-                data_out.writeFloat(s.cc[1]);
-                data_out.writeFloat(s.cc[2]);
-                data_out.writeFloat(s.cc[3]);
-                data_out.writeFloat((float) s.posSph.x);
-                data_out.writeFloat((float) s.posSph.y);
-                data_out.writeFloat((float) s.pos.len());
-                data_out.writeDouble(s.pos.x);
-                data_out.writeDouble(s.pos.y);
-                data_out.writeDouble(s.pos.z);
-                data_out.writeFloat(s.pmSph != null ? s.pmSph.x : 0f);
-                data_out.writeFloat(s.pmSph != null ? s.pmSph.y : 0f);
-                data_out.writeFloat(s.pmSph != null ? s.pmSph.z : 0f);
-                data_out.writeFloat(s.pm.x);
-                data_out.writeFloat(s.pm.y);
-                data_out.writeFloat(s.pm.z);
-                data_out.writeLong(s.id);
-                data_out.writeInt(s instanceof Star ? ((Star) s).hip : -1);
-                if (((Star) s).tycho != null && ((Star) s).tycho.length() > 0) {
-                    data_out.writeInt(((Star) s).tycho.length());
-                    data_out.writeChars(((Star) s).tycho);
-                } else {
+            for (AbstractPositionEntity ape : particles) {
+                if (ape instanceof Particle) {
+                    Particle s = (Particle) ape;
+                    // name_length, name, appmag, absmag, colorbv, r, g, b, a,
+                    // ra[deg], dec[deg], dist[u], (double) x[u], (double) y[u],
+                    // (double) z[u], mualpha[mas/yr], mudelta[mas/yr],
+                    // radvel[km/s], pmx[u/yr], pmy[u/yr], pmz[u/yr], id, hip,
+                    // tychoLength, tycho, sourceCatalog, pageid, type
+                    data_out.writeInt(s.name.length());
+                    data_out.writeChars(s.name);
+                    data_out.writeFloat(s.appmag);
+                    data_out.writeFloat(s.absmag);
+                    data_out.writeFloat(s.colorbv);
+                    data_out.writeFloat(s.cc[0]);
+                    data_out.writeFloat(s.cc[1]);
+                    data_out.writeFloat(s.cc[2]);
+                    data_out.writeFloat(s.cc[3]);
+                    data_out.writeFloat((float) s.posSph.x);
+                    data_out.writeFloat((float) s.posSph.y);
+                    data_out.writeFloat((float) s.pos.len());
+                    data_out.writeDouble(s.pos.x);
+                    data_out.writeDouble(s.pos.y);
+                    data_out.writeDouble(s.pos.z);
+                    data_out.writeFloat(s.pmSph != null ? s.pmSph.x : 0f);
+                    data_out.writeFloat(s.pmSph != null ? s.pmSph.y : 0f);
+                    data_out.writeFloat(s.pmSph != null ? s.pmSph.z : 0f);
+                    data_out.writeFloat(s.pm.x);
+                    data_out.writeFloat(s.pm.y);
+                    data_out.writeFloat(s.pm.z);
+                    data_out.writeLong(s.id);
+                    data_out.writeInt(s instanceof Star ? ((Star) s).hip : -1);
+                    if (((Star) s).tycho != null && ((Star) s).tycho.length() > 0) {
+                        data_out.writeInt(((Star) s).tycho.length());
+                        data_out.writeChars(((Star) s).tycho);
+                    } else {
+                        data_out.writeInt(0);
+                    }
+                    data_out.writeByte(s.catalogSource);
+                    data_out.writeInt(s.octantId.intValue());
+                    // TODO Legacy type, remove
                     data_out.writeInt(0);
                 }
-                data_out.writeByte(s.catalogSource);
-                data_out.writeInt(s.octantId.intValue());
-                // TODO Legacy type, remove
-                data_out.writeInt(0);
             }
             data_out.close();
             out.close();
@@ -114,14 +118,14 @@ public class ParticleDataBinaryIO {
         }
     }
 
-    public Array<Particle> readParticles(InputStream in) throws FileNotFoundException {
-        Array<Particle> stars = null;
+    public Array<AbstractPositionEntity> readParticles(InputStream in) throws FileNotFoundException {
+        Array<AbstractPositionEntity> stars = null;
         DataInputStream data_in = new DataInputStream(in);
 
         try {
             // Read size of stars
             int size = data_in.readInt();
-            stars = new Array<Particle>(size);
+            stars = new Array<AbstractPositionEntity>(size);
 
             for (int idx = 0; idx < size; idx++) {
                 try {

@@ -13,14 +13,13 @@ import java.util.Map;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Array;
 
+import gaia.cu9.ari.gaiaorbit.scenegraph.StarGroup.StarBean;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 
 public abstract class AbstractStarGroupDataProvider implements IStarGroupDataProvider {
 
-    protected Array<double[]> pointData;
+    protected Array<StarBean> list;
     protected Map<String, Integer> index;
-    protected List<String> names;
-    protected List<Long> ids;
 
     public AbstractStarGroupDataProvider() {
         super();
@@ -47,11 +46,8 @@ public abstract class AbstractStarGroupDataProvider implements IStarGroupDataPro
      * @param f
      */
     protected void initLists(int elems) {
-        pointData = new Array<double[]>(elems);
-        ids = new ArrayList<Long>(elems);
-        names = new ArrayList<String>(elems);
+        list = new Array<StarBean>(elems);
         index = new HashMap<String, Integer>();
-
     }
 
     protected int countLines(FileHandle f) throws IOException {
@@ -75,19 +71,14 @@ public abstract class AbstractStarGroupDataProvider implements IStarGroupDataPro
         }
     }
 
-    protected void dumpToDisk(Array<double[]> pointData, String filename) {
-        List<double[]> l = new ArrayList<double[]>(pointData.size);
-        for (double[] p : pointData)
+    protected void dumpToDisk(Array<StarBean> data, String filename) {
+        List<StarBean> l = new ArrayList<StarBean>(data.size);
+        for (StarBean p : data)
             l.add(p);
 
         try {
-            List<Object> main = new ArrayList<Object>(3);
-            main.add(l);
-            main.add(ids);
-            main.add(names);
-
             ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filename));
-            oos.writeObject(main);
+            oos.writeObject(l);
             oos.close();
 
         } catch (Exception e) {
@@ -98,16 +89,6 @@ public abstract class AbstractStarGroupDataProvider implements IStarGroupDataPro
     @Override
     public Map<String, Integer> getIndex() {
         return index;
-    }
-
-    @Override
-    public List<String> getNames() {
-        return names;
-    }
-
-    @Override
-    public List<Long> getIds() {
-        return ids;
     }
 
 }

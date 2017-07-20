@@ -22,6 +22,7 @@ import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.render.IRenderable;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.MilkyWayReal;
+import gaia.cu9.ari.gaiaorbit.scenegraph.ParticleGroup.ParticleBean;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf.ProgramConf.StereoProfile;
@@ -123,9 +124,9 @@ public class MilkyWayRenderSystem extends ImmediateRenderSystem implements IObse
                 /** STARS **/
                 curr.clear();
                 float density = GlobalConf.SCALE_FACTOR;
-                for (double[] star : mw.pointData) {
+                for (ParticleBean star : mw.pointData) {
                     // VERTEX
-                    aux1.set((float) star[0], (float) star[1], (float) star[2]);
+                    aux1.set((float) star.data[0], (float) star.data[1], (float) star.data[2]);
                     double distanceCenter = aux1.sub(center).len() / (mw.getRadius() * 2f);
 
                     float[] col = new float[] { (float) (rand.nextGaussian() * 0.02f) + 0.93f, (float) (rand.nextGaussian() * 0.02) + 0.8f, (float) (rand.nextGaussian() * 0.02) + 0.97f, rand.nextFloat() * 0.5f + 0.4f };
@@ -146,8 +147,8 @@ public class MilkyWayRenderSystem extends ImmediateRenderSystem implements IObse
 
                     // SIZE
                     double starSize = 0;
-                    if (star.length > 3) {
-                        starSize = (star[3] * 3
+                    if (star.data.length > 3) {
+                        starSize = (star.data[3] * 3
                                 + 1) /** (Constants.webgl ? 0.08f : 1f) */
                         ;
                     } else {
@@ -158,7 +159,7 @@ public class MilkyWayRenderSystem extends ImmediateRenderSystem implements IObse
 
                     // cb.transform.getTranslationf(aux);
                     // POSITION
-                    aux1.set((float) star[0], (float) star[1], (float) star[2]);
+                    aux1.set((float) star.data[0], (float) star.data[1], (float) star.data[2]);
                     final int idx = curr.vertexIdx;
                     curr.vertices[idx] = aux1.x;
                     curr.vertices[idx + 1] = aux1.y;
@@ -178,10 +179,10 @@ public class MilkyWayRenderSystem extends ImmediateRenderSystem implements IObse
                 Vector3 tr = new Vector3();
                 Vector3 normal = new Vector3();
                 Vector3 quadpoint = new Vector3();
-                for (double[] qp : mw.nebulaData) {
+                for (ParticleBean qp : mw.nebulaData) {
                     // 5 quads per nebula
                     for (int i = 0; i < 5; i++) {
-                        quadpoint.set((float) qp[0], (float) qp[1], (float) qp[2]);
+                        quadpoint.set((float) qp.data[0], (float) qp.data[1], (float) qp.data[2]);
                         float quadpointdist = quadpoint.len();
                         float texnum, alphamultiplier, quadsize;
                         if (quadpointdist < mw.size / 2f) {
@@ -189,7 +190,7 @@ public class MilkyWayRenderSystem extends ImmediateRenderSystem implements IObse
                         } else {
                             texnum = rand.nextInt(4);
                         }
-                        quadsize = qp.length > 3 ? (float) (qp[3] + 1.0f) * .46e11f : (float) (rand.nextFloat() + 1.0f) * 2e11f;
+                        quadsize = qp.data.length > 3 ? (float) (qp.data[3] + 1.0f) * .46e11f : (float) (rand.nextFloat() + 1.0f) * 2e11f;
                         alphamultiplier = MathUtilsd.lint(quadpointdist, 0, mw.size * 3, 6.0f, 1.0f);
 
                         rotaxis.set(rand.nextFloat(), rand.nextFloat(), rand.nextFloat());

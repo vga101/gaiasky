@@ -2,7 +2,6 @@ package gaia.cu9.ari.gaiaorbit.data;
 
 import java.io.DataOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
@@ -19,6 +18,7 @@ import gaia.cu9.ari.gaiaorbit.desktop.util.WebGLConfInit;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
+import gaia.cu9.ari.gaiaorbit.scenegraph.AbstractPositionEntity;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
@@ -78,9 +78,9 @@ public class HYGToBinary implements IObserver {
             HYGBinaryLoader binLoader = new HYGBinaryLoader();
 
             csvLoader.files = new String[] { csv };
-            Array<? extends CelestialBody> csvStars = csvLoader.loadData();
+            Array<AbstractPositionEntity> csvStars = csvLoader.loadData();
             binLoader.files = new String[] { bin };
-            Array<? extends CelestialBody> binStars = binLoader.loadData();
+            Array<AbstractPositionEntity> binStars = binLoader.loadData();
 
             if (csvStars.size != binStars.size) {
                 System.err.println("Different sizes");
@@ -88,8 +88,8 @@ public class HYGToBinary implements IObserver {
 
             int different = 0;
             for (int i = 0; i < csvStars.size; i++) {
-                CelestialBody csvs = csvStars.get(i);
-                CelestialBody bins = binStars.get(i);
+                CelestialBody csvs = (CelestialBody) csvStars.get(i);
+                CelestialBody bins = (CelestialBody) binStars.get(i);
 
                 if (!equals(csvs, bins) && csvs.name.equals("Betelgeuse")) {
                     Logger.info("Different stars: " + csvs + " // " + bins);
@@ -110,7 +110,7 @@ public class HYGToBinary implements IObserver {
         try {
             cat.files = new String[] { csv };
             cat.setPmFile(pm);
-            Array<? extends Particle> stars = cat.loadData();
+            Array<AbstractPositionEntity> stars = cat.loadData();
 
             // Write to binary
             File binFile = new File(bin);
@@ -126,7 +126,8 @@ public class HYGToBinary implements IObserver {
 
             // Size of stars
             data_out.writeInt(stars.size);
-            for (Particle s : stars) {
+            for (AbstractPositionEntity ape : stars) {
+                Particle s = (Particle) ape;
                 // name_length, name, appmag, absmag, colorbv, ra[deg], dec[deg], dist[u], mualpha[mas/yr], mudelta[mas/yr], radvel[km/s], id, hip
                 data_out.writeInt(s.name.length());
                 data_out.writeChars(s.name);
@@ -150,17 +151,6 @@ public class HYGToBinary implements IObserver {
         }
     }
 
-    public void loadBinaryFile(String fileIn) {
-        HYGBinaryLoader cat = new HYGBinaryLoader();
-        try {
-            cat.files = new String[] { fileIn };
-            Array<? extends CelestialBody> stars = cat.loadData();
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-    }
-
     @Override
     public void notify(Events event, Object... data) {
         switch (event) {
@@ -178,6 +168,9 @@ public class HYGToBinary implements IObserver {
             break;
         case JAVA_EXCEPTION:
             ((Throwable) data[0]).printStackTrace(System.err);
+            break;
+        default:
+            break;
         }
 
     }
