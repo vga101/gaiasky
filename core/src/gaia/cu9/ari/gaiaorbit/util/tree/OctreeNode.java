@@ -16,6 +16,7 @@ import gaia.cu9.ari.gaiaorbit.render.system.LineRenderSystem;
 import gaia.cu9.ari.gaiaorbit.scenegraph.AbstractPositionEntity;
 import gaia.cu9.ari.gaiaorbit.scenegraph.FovCamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
+import gaia.cu9.ari.gaiaorbit.scenegraph.ParticleGroup;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Transform;
 import gaia.cu9.ari.gaiaorbit.util.ComponentTypes;
@@ -211,9 +212,9 @@ public class OctreeNode implements ILineRenderable {
 
     public boolean add(AbstractPositionEntity e) {
         if (objects == null)
-            objects = new Array<AbstractPositionEntity>(false, 100);
+            objects = new Array<AbstractPositionEntity>(false, 1);
         objects.add(e);
-        ownObjects = objects.size;
+        ownObjects = e instanceof ParticleGroup ? objects.size - 1 + ((ParticleGroup) e).pointData.size : objects.size;
         return true;
     }
 
@@ -313,28 +314,6 @@ public class OctreeNode implements ILineRenderable {
             for (OctreeNode child : children) {
                 if (child != null) {
                     str.append(child.toString(rec));
-                }
-            }
-        }
-        return str.toString();
-    }
-
-    public String toStringRec() {
-        StringBuffer str = new StringBuffer(depth);
-        for (int i = 0; i < depth; i++) {
-            str.append("    ");
-        }
-        str.append(pageId).append("(").append(depth).append(")");
-        if (parent != null) {
-            str.append(" [i: ").append(Arrays.asList(parent.children).indexOf(this)).append(", ownobj: ");
-        } else {
-            str.append("[ownobj: ");
-        }
-        str.append(objects != null ? objects.size : "0").append("/").append(ownObjects).append(", recobj: ").append(nObjects).append(", nchld: ").append(childrenCount).append("] ").append(status).append("\n");
-        if (childrenCount > 0) {
-            for (OctreeNode child : children) {
-                if (child != null) {
-                    str.append(child.toString());
                 }
             }
         }
@@ -606,7 +585,15 @@ public class OctreeNode implements ILineRenderable {
      */
     public void updateNumbers() {
         // Number of own objects
-        this.ownObjects = objects != null ? objects.size : 0;
+        if (objects == null) {
+            this.ownObjects = 0;
+        } else {
+            this.ownObjects = 0;
+            for (AbstractPositionEntity ape : objects) {
+                this.ownObjects += ape instanceof ParticleGroup ? ((ParticleGroup) ape).pointData.size : 1;
+            }
+
+        }
 
         // Number of recursive objects
         this.nObjects = this.ownObjects;

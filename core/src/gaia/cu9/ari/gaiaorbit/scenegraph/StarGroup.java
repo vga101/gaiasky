@@ -2,6 +2,7 @@ package gaia.cu9.ari.gaiaorbit.scenegraph;
 
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -48,6 +49,7 @@ import gaia.cu9.ari.gaiaorbit.util.Pair;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
+import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
 import net.jafama.FastMath;
 
 /**
@@ -87,14 +89,14 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
         public static final int I_ADDITIONAL = 17;
 
         public Long id;
-        public Long octantId;
+        public transient OctreeNode octant;
         public String name;
 
         public StarBean(double[] data, Long id, String name) {
             super(data);
             this.id = id;
             this.name = name;
-            this.octantId = -1l;
+            this.octant = null;
         }
 
         public double x() {
@@ -151,6 +153,10 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
 
         public double tyc3() {
             return data[I_TYC3];
+        }
+
+        public String tyc() {
+            return tyc1() + "-" + tyc2() + "-" + tyc3();
         }
 
         public double mualpha() {
@@ -251,17 +257,47 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
             pointData = provider.loadData(datafile, factor);
             index = provider.getIndex();
 
-            if (!fixedMeanPosition) {
-                // Mean position
-                for (StarBean point : (Array<StarBean>) pointData) {
-                    pos.add(point.x(), point.y(), point.z());
-                }
-                pos.scl(1d / pointData.size);
-            }
-
         } catch (Exception e) {
             Logger.error(e, getClass().getSimpleName());
             pointData = null;
+        }
+
+        computeFixedMeanPosition();
+    }
+
+    public void setData(Array<StarBean> pointData) {
+        setData(pointData, true);
+    }
+
+    public void setData(Array<StarBean> pointData, boolean regenerateIndex) {
+        this.pointData = pointData;
+        if (regenerateIndex)
+            regenerateIndex();
+    }
+
+    public void regenerateIndex() {
+        index = new HashMap<String, Integer>();
+        int n = pointData.size;
+        for (int i = 0; i < n; i++) {
+            StarBean sb = (StarBean) pointData.get(i);
+            index.put(sb.name, i);
+            if (sb.hip() > 0) {
+                index.put("hip " + sb.hip(), i);
+            }
+            if (sb.tyc1() > 0) {
+                index.put("tyc " + sb.tyc(), i);
+            }
+
+        }
+    }
+
+    public void computeFixedMeanPosition() {
+        if (!fixedMeanPosition) {
+            // Mean position
+            for (StarBean point : (Array<StarBean>) pointData) {
+                pos.add(point.x(), point.y(), point.z());
+            }
+            pos.scl(1d / pointData.size);
         }
     }
 

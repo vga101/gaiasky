@@ -72,14 +72,10 @@ public class TGASLoader extends AbstractCatalogLoader implements ISceneGraphLoad
     private static final int PLLX_ERR = 4;
     private static final int MUALPHA = 5;
     private static final int MUDELTA = 6;
-    private static final int RADVEL = 7;
-    private static final int RADVEL_ERR = 8;
-    private static final int G_MAG = 9;
-    private static final int BP_MAG = 10;
-    private static final int RP_MAG = 11;
-    private static final int HIP = 12;
-    private static final int TYCHO2 = 13;
-    private static final int REF_EPOCH = 14;
+    private static final int APPMAG = 7;
+    private static final int HIP = 8;
+    private static final int TYCHO2 = 9;
+    private static final int REF_EPOCH = 10;
 
     private static final int[] indices_new = new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14 };
 
@@ -145,7 +141,7 @@ public class TGASLoader extends AbstractCatalogLoader implements ISceneGraphLoad
             tycho2 = st[indices[TYCHO2]].trim();
         }
 
-        float appmag = new Double(Parser.parseDouble(st[indices[G_MAG]].trim())).floatValue();
+        float appmag = new Double(Parser.parseDouble(st[indices[APPMAG]].trim())).floatValue();
 
         if (appmag < GlobalConf.data.LIMIT_MAG_LOAD) {
 
@@ -166,9 +162,6 @@ public class TGASLoader extends AbstractCatalogLoader implements ISceneGraphLoad
 
                 /** RADIAL VELOCITY in km/s **/
                 double radvel = 0;
-                if (indices[RADVEL] >= 0) {
-                    radvel = Parser.parseDouble(st[indices[RADVEL]].trim()) * Constants.KM_TO_U / Constants.S_TO_Y;
-                }
 
                 /** PROPER MOTION VECTOR = (pos+dx) - pos **/
                 Vector3d pm = Coordinates.sphericalToCartesian(Math.toRadians(ra + mualpha), Math.toRadians(dec + mudelta), dist + radvel, new Vector3d());
@@ -186,16 +179,6 @@ public class TGASLoader extends AbstractCatalogLoader implements ISceneGraphLoad
                     if (tycBV.containsKey(tycho2)) {
                         colorbv = tycBV.get(tycho2);
                     }
-                } else {
-                    if (indices[BP_MAG] >= 0 && indices[RP_MAG] >= 0) {
-                        // Real TGAS
-                        float bp = new Double(Parser.parseDouble(st[indices[BP_MAG]].trim())).floatValue();
-                        float rp = new Double(Parser.parseDouble(st[indices[RP_MAG]].trim())).floatValue();
-                        colorbv = bp - rp;
-                    } else {
-                        // Use color value in BP
-                        colorbv = new Double(Parser.parseDouble(st[indices[BP_MAG]].trim())).floatValue();
-                    }
                 }
 
                 double distpc = 1000d / pllx;
@@ -208,44 +191,6 @@ public class TGASLoader extends AbstractCatalogLoader implements ISceneGraphLoad
             }
 
         }
-    }
-
-    private Map<Long, Integer> loadSourceidHipCorrespondences(String file) {
-        Map<Long, Integer> result = new HashMap<Long, Integer>();
-
-        FileHandle f = Gdx.files.internal(file);
-        InputStream data = f.read();
-        BufferedReader br = new BufferedReader(new InputStreamReader(data));
-        try {
-            // skip first line with headers
-            br.readLine();
-
-            String line;
-            while ((line = br.readLine()) != null) {
-                if (!line.startsWith(comment))
-                    // Add correspondence
-                    addCorrespondence(line, result);
-            }
-        } catch (IOException e) {
-            Logger.error(e);
-        } finally {
-            try {
-                br.close();
-            } catch (IOException e) {
-                Logger.error(e);
-            }
-
-        }
-
-        return result;
-    }
-
-    private void addCorrespondence(String line, Map<Long, Integer> map) {
-        String[] st = line.split(comma);
-        int hip = Parser.parseInt(st[2].trim());
-        long sourceId = Parser.parseLong(st[3].trim());
-
-        map.put(sourceId, hip);
     }
 
     private Map<String, Float> loadTYCBVColours(String file) {

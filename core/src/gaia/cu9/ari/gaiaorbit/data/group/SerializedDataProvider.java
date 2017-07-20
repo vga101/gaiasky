@@ -1,5 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.data.group;
 
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.util.List;
 
@@ -25,9 +26,15 @@ public class SerializedDataProvider extends AbstractStarGroupDataProvider {
         Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.datafile", file));
 
         FileHandle f = Gdx.files.internal(file);
-        ObjectInputStream ois;
+        loadData(f.read(), factor);
+        Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.nodeloader", list.size, file));
+
+        return list;
+    }
+
+    public Array<StarBean> loadData(InputStream is, double factor) {
         try {
-            ois = new ObjectInputStream(f.read());
+            ObjectInputStream ois = new ObjectInputStream(is);
             List<StarBean> l = (List<StarBean>) ois.readObject(); // cast is needed.
             ois.close();
 
@@ -39,16 +46,15 @@ public class SerializedDataProvider extends AbstractStarGroupDataProvider {
                 StarBean point = l.get(i);
                 list.add(point);
                 index.put(point.name, i);
-                if (point.data[StarBean.I_HIP] > 0) {
+                if (point.hip() > 0) {
                     index.put("hip " + (int) point.data[StarBean.I_HIP], i);
                 }
-                if (point.data[StarBean.I_TYC1] > 0) {
+                if (point.tyc1() > 0) {
                     index.put("tyc " + (int) point.data[StarBean.I_TYC1] + "-" + (int) point.data[StarBean.I_TYC2] + "-" + (int) point.data[StarBean.I_TYC3], i);
                 }
                 index.put(Long.toString(point.id), i);
             }
 
-            Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.nodeloader", list.size, file));
             return list;
         } catch (Exception e) {
             Logger.error(e, this.getClass().getSimpleName());

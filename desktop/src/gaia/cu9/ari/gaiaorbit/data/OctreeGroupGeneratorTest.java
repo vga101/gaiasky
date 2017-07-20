@@ -16,15 +16,13 @@ import com.badlogic.gdx.utils.Array;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 
-import gaia.cu9.ari.gaiaorbit.data.octreegen.BrightestStars;
-import gaia.cu9.ari.gaiaorbit.data.octreegen.IAggregationAlgorithm;
+import gaia.cu9.ari.gaiaorbit.data.group.HYGDataProvider;
+import gaia.cu9.ari.gaiaorbit.data.group.IStarGroupDataProvider;
 import gaia.cu9.ari.gaiaorbit.data.octreegen.MetadataBinaryIO;
-import gaia.cu9.ari.gaiaorbit.data.octreegen.OctreeGenerator;
-import gaia.cu9.ari.gaiaorbit.data.octreegen.ParticleDataBinaryIO;
-import gaia.cu9.ari.gaiaorbit.data.stars.AbstractCatalogLoader;
-import gaia.cu9.ari.gaiaorbit.data.stars.CatalogFilter;
-import gaia.cu9.ari.gaiaorbit.data.stars.HYGBinaryLoader;
-import gaia.cu9.ari.gaiaorbit.data.stars.OctreeSingleFileLoader;
+import gaia.cu9.ari.gaiaorbit.data.octreegen.particlegroup.BrightestStars;
+import gaia.cu9.ari.gaiaorbit.data.octreegen.particlegroup.IAggregationAlgorithm;
+import gaia.cu9.ari.gaiaorbit.data.octreegen.particlegroup.OctreeGenerator;
+import gaia.cu9.ari.gaiaorbit.data.octreegen.particlegroup.ParticleGroupBinaryIO;
 import gaia.cu9.ari.gaiaorbit.desktop.format.DesktopDateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.desktop.format.DesktopNumberFormatFactory;
 import gaia.cu9.ari.gaiaorbit.desktop.util.DesktopConfInit;
@@ -32,12 +30,7 @@ import gaia.cu9.ari.gaiaorbit.desktop.util.DesktopSysUtilsFactory;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
-import gaia.cu9.ari.gaiaorbit.scenegraph.AbstractPositionEntity;
-import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
-import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
-import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
-import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
-import gaia.cu9.ari.gaiaorbit.scenegraph.octreewrapper.AbstractOctreeWrapper;
+import gaia.cu9.ari.gaiaorbit.scenegraph.StarGroup.StarBean;
 import gaia.cu9.ari.gaiaorbit.util.ConfInit;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
@@ -48,16 +41,17 @@ import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
 
-public class OctreeGeneratorTest implements IObserver {
-
-    public static enum Operation {
-        LOAD_OCTREE, GENERATE_OCTREE
-    }
-
-    public static Operation operation = Operation.GENERATE_OCTREE;
+/**
+ * Generates an octree of star groups. Each octant should have only one object,
+ * a star group.
+ * 
+ * @author tsagrista
+ *
+ */
+public class OctreeGroupGeneratorTest implements IObserver {
 
     public static void main(String[] args) {
-        OctreeGeneratorTest ogt = new OctreeGeneratorTest();
+        OctreeGroupGeneratorTest ogt = new OctreeGroupGeneratorTest();
         JCommander jc = new JCommander(ogt, args);
         jc.setProgramName("OctreeGeneratorTest");
         if (ogt.help) {
@@ -67,7 +61,7 @@ public class OctreeGeneratorTest implements IObserver {
         }
     }
 
-    @Parameter(names = { "-l", "--loader" }, description = "Name of the star loader class", required = true)
+    @Parameter(names = { "-l", "--loader" }, description = "Name of the star group loader class", required = true)
     private String loaderClass;
 
     @Parameter(names = { "-i", "--input" }, description = "Location of the input catalog", required = true)
@@ -76,17 +70,14 @@ public class OctreeGeneratorTest implements IObserver {
     @Parameter(names = { "-o", "--output" }, description = "Output folder. Defaults to system temp")
     private String outFolder;
 
-    @Parameter(names = { "-m", "--multifile" }, description = "Use multiple file mode, outputs each octree node data to its own file")
-    private boolean multifile = true;
-
     @Parameter(names = "--maxdepth", description = "Maximum tree depth in levels")
-    private int maxDepth = 6;//15
+    private int maxDepth = 6;
 
     @Parameter(names = "--maxpart", description = "Maximum number of objects in the densest node of a level")
-    private int maxPart = 200000; // 4000
+    private int maxPart = 200000;
 
     @Parameter(names = "--minpart", description = "Minimum number of objects in a node under which we do not further break the octree")
-    private int minPart = 30000; // 200
+    private int minPart = 30000;
 
     @Parameter(names = "--discard", description = "Whether to discard stars due to density")
     private boolean discard = false;
@@ -94,7 +85,7 @@ public class OctreeGeneratorTest implements IObserver {
     @Parameter(names = { "-h", "--help" }, help = true)
     private boolean help = false;
 
-    public OctreeGeneratorTest() {
+    public OctreeGroupGeneratorTest() {
         super();
     }
 
@@ -134,15 +125,7 @@ public class OctreeGeneratorTest implements IObserver {
             // Add notif watch
             EventManager.instance.subscribe(this, Events.POST_NOTIFICATION, Events.JAVA_EXCEPTION);
 
-            switch (operation) {
-            case GENERATE_OCTREE:
-                generateOctree();
-                break;
-            case LOAD_OCTREE:
-                Gdx.files = new LwjglFiles();
-                loadOctree();
-                break;
-            }
+            generateOctree();
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -159,67 +142,50 @@ public class OctreeGeneratorTest implements IObserver {
         OctreeGenerator og = new OctreeGenerator(aggr);
 
         /** HIP **/
-        HYGBinaryLoader hyg = new HYGBinaryLoader();
-        hyg.initialize(new String[] { "data/hyg/hygxyz.bin" });
-        hyg.addFilter(new CatalogFilter() {
-            @Override
-            public boolean filter(CelestialBody s) {
-                return (s instanceof Particle) && ((Particle) s).appmag <= 5.5f;
-            }
-        });
+        HYGDataProvider hyg = new HYGDataProvider();
 
         /** CATALOG **/
-        String fullLoaderClass = "gaia.cu9.ari.gaiaorbit.data.stars." + loaderClass;
-        AbstractCatalogLoader loader = (AbstractCatalogLoader) Class.forName(fullLoaderClass).newInstance();
-        loader.initialize(new String[] { input });
+        String fullLoaderClass = "gaia.cu9.ari.gaiaorbit.data.group." + loaderClass;
+        IStarGroupDataProvider loader = (IStarGroupDataProvider) Class.forName(fullLoaderClass).newInstance();
 
         /** LOAD HYG **/
-        Array<AbstractPositionEntity> listStars = hyg.loadData();
-        Map<Integer, AbstractPositionEntity> hips = new HashMap<Integer, AbstractPositionEntity>();
-        for (AbstractPositionEntity p : listStars) {
-            if (p instanceof Star && ((Star) p).hip > 0) {
-                hips.put(((Star) p).hip, p);
+        Array<StarBean> listHip = hyg.loadData("data/hyg/hygxyz.bin");
+        Map<Integer, StarBean> hips = new HashMap<Integer, StarBean>();
+        for (StarBean p : listHip) {
+            if (p.hip() > 0) {
+                hips.put((int) p.hip(), p);
             }
         }
 
         /** LOAD CATALOG **/
-        Array<? extends SceneGraphNode> listGaia = loader.loadData();
-        for (SceneGraphNode sgn : listGaia) {
-            Particle p = (Particle) sgn;
-            if (p instanceof Star && hips.containsKey(((Star) p).hip)) {
+        Array<StarBean> listGaia = (Array<StarBean>) loader.loadData(input);
+        for (StarBean s : listGaia) {
+            if (s.hip() > 0 && hips.containsKey(s.hip())) {
                 // modify
-                Star gaiastar = (Star) p;
-                Star hipstar = (Star) hips.get(((Star) p).hip);
+                StarBean gaiastar = s;
+                StarBean hipstar = hips.get(s.hip());
 
                 gaiastar.name = hipstar.name;
-                gaiastar.hip = hipstar.hip;
+                gaiastar.data[StarBean.I_HIP] = hipstar.data[StarBean.I_HIP];
 
                 // Remove from hipparcos list
-                listStars.removeValue(hipstar, true);
-                hips.remove(hipstar.hip);
+                listHip.removeValue(hipstar, true);
+                hips.remove(hipstar.hip());
 
             }
             // Add to main list
-            listStars.add(p);
+            listHip.add(s);
         }
+        Array<StarBean> list = listHip;
 
-        // Initialise rgba color array and size
-        for (AbstractPositionEntity p : listStars) {
-            p.initialize();
-        }
+        Logger.info("Generating octree with " + list.size + " actual stars");
 
-        Logger.info("Generating octree with " + listStars.size + " actual stars");
-
-        OctreeNode octree = og.generateOctree(listStars);
-
-        // Put all new particles in list
-        listStars.clear();
-        octree.addParticlesTo(listStars);
+        OctreeNode octree = og.generateOctree(list);
 
         System.out.println(octree.toString(true));
 
         /** NUMBERS **/
-        Logger.info("Octree generated with " + octree.numNodes() + " octants and " + listStars.size + " particles");
+        Logger.info("Octree generated with " + octree.numNodes() + " octants and " + list.size + " particles");
         Logger.info(aggr.getDiscarded() + " particles have been discarded due to density");
 
         /** WRITE METADATA **/
@@ -235,29 +201,14 @@ public class OctreeGeneratorTest implements IObserver {
         metadataWriter.writeMetadata(octree, new FileOutputStream(metadata));
 
         /** WRITE PARTICLES **/
-        ParticleDataBinaryIO particleWriter = new ParticleDataBinaryIO();
-        if (!multifile) {
-            File particles = new File(outFolder, "particles.bin");
-            if (particles.exists()) {
-                particles.delete();
-            }
-            particles.createNewFile();
-
-            Logger.info("Writing " + listStars.size + " particles to " + particles.getAbsolutePath());
-
-            particleWriter.writeParticles(listStars, new BufferedOutputStream(new FileOutputStream(particles)));
-        } else {
-            // Walk each node of the octree and write the particles for each in
-            // a different file
-            File particlesFolder = new File(outFolder + "/particles/");
-            particlesFolder.mkdirs();
-
-            writeParticlesToFiles(particleWriter, octree);
-        }
+        ParticleGroupBinaryIO particleWriter = new ParticleGroupBinaryIO();
+        File particlesFolder = new File(outFolder + "/particles/");
+        particlesFolder.mkdirs();
+        writeParticlesToFiles(particleWriter, octree);
 
     }
 
-    private void writeParticlesToFiles(ParticleDataBinaryIO particleWriter, OctreeNode current) throws IOException {
+    private void writeParticlesToFiles(ParticleGroupBinaryIO particleWriter, OctreeNode current) throws IOException {
         // Write current
         if (current.ownObjects > 0) {
             File particles = new File(outFolder + "/particles/", "particles_" + String.format("%06d", current.pageId) + ".bin");
@@ -273,31 +224,13 @@ public class OctreeGeneratorTest implements IObserver {
             }
     }
 
-    private void loadOctree() throws FileNotFoundException {
-        String[] files = new String[] { "data/hyg_particles.bin", "data/hyg_metadata.bin" };
-        ISceneGraphLoader loader = new OctreeSingleFileLoader();
-        loader.initialize(files);
-        Array<? extends SceneGraphNode> l = loader.loadData();
-        AbstractOctreeWrapper ow = null;
-        for (SceneGraphNode n : l) {
-            if (n instanceof AbstractOctreeWrapper) {
-                ow = (AbstractOctreeWrapper) n;
-                break;
-            }
-        }
-        Logger.info(ow.root.toString());
-
-    }
-
     @Override
     public void notify(Events event, Object... data) {
         switch (event) {
         case POST_NOTIFICATION:
             String message = "";
-            boolean perm = false;
             for (int i = 0; i < data.length; i++) {
                 if (i == data.length - 1 && data[i] instanceof Boolean) {
-                    perm = (Boolean) data[i];
                 } else {
                     message += (String) data[i];
                     if (i < data.length - 1 && !(i == data.length - 2 && data[data.length - 1] instanceof Boolean)) {
