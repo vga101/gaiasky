@@ -71,13 +71,13 @@ public class OctreeGroupGeneratorTest implements IObserver {
     private String outFolder;
 
     @Parameter(names = "--maxdepth", description = "Maximum tree depth in levels")
-    private int maxDepth = 6;
+    private int maxDepth = 8;
 
     @Parameter(names = "--maxpart", description = "Maximum number of objects in the densest node of a level")
-    private int maxPart = 200000;
+    private int maxPart = 100000;
 
     @Parameter(names = "--minpart", description = "Minimum number of objects in a node under which we do not further break the octree")
-    private int minPart = 30000;
+    private int minPart = 10000;
 
     @Parameter(names = "--discard", description = "Whether to discard stars due to density")
     private boolean discard = false;

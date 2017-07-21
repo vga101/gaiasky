@@ -150,7 +150,7 @@ public class ParticleGroup extends FadeNode implements I3DTextRenderable, IFocus
     public void initialize() {
         /** Load data **/
         try {
-            Class clazz = Class.forName(provider);
+            Class<?> clazz = Class.forName(provider);
             IParticleGroupDataProvider provider = (IParticleGroupDataProvider) clazz.newInstance();
 
             if (factor == null)

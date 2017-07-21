@@ -20,6 +20,13 @@ import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.tree.LoadStatus;
 import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
 
+/**
+ * Implements the loading from a single particle file. This version loads single
+ * stars using the
+ * {@link gaia.cu9.ari.gaiaorbit.data.octreegen.ParticleDataBinaryIO}
+ * 
+ * @author tsagrista
+ */
 public class OctreeSingleFileLoader implements ISceneGraphLoader {
 
     String metadata, particles;

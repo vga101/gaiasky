@@ -8,7 +8,7 @@ import java.util.TreeSet;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.utils.Array;
 
-import gaia.cu9.ari.gaiaorbit.data.stars.OctreeMultiFileLoader;
+import gaia.cu9.ari.gaiaorbit.data.StreamingOctreeLoader;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.render.ILineRenderable;
 import gaia.cu9.ari.gaiaorbit.render.system.AbstractRenderSystem;
@@ -413,9 +413,9 @@ public class OctreeNode implements ILineRenderable {
              * Load lists of pages
              */
             if (status == LoadStatus.NOT_LOADED && LOAD_ACTIVE) {
-                OctreeMultiFileLoader.addToQueue(this);
+                StreamingOctreeLoader.queue(this);
             } else if (status == LoadStatus.LOADED) {
-                OctreeMultiFileLoader.touch(this);
+                StreamingOctreeLoader.touch(this);
             }
 
             // Compute distance and view angle

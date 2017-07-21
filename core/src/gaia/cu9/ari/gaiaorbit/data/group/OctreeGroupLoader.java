@@ -1,4 +1,4 @@
-package gaia.cu9.ari.gaiaorbit.data.stars;
+package gaia.cu9.ari.gaiaorbit.data.group;
 
 import java.io.IOException;
 
@@ -9,40 +9,35 @@ import com.badlogic.gdx.utils.Array;
 import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.data.StreamingOctreeLoader;
 import gaia.cu9.ari.gaiaorbit.data.octreegen.MetadataBinaryIO;
-import gaia.cu9.ari.gaiaorbit.data.octreegen.ParticleDataBinaryIO;
-import gaia.cu9.ari.gaiaorbit.scenegraph.AbstractPositionEntity;
-import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
+import gaia.cu9.ari.gaiaorbit.scenegraph.StarGroup;
+import gaia.cu9.ari.gaiaorbit.scenegraph.StarGroup.StarBean;
 import gaia.cu9.ari.gaiaorbit.scenegraph.octreewrapper.AbstractOctreeWrapper;
 import gaia.cu9.ari.gaiaorbit.scenegraph.octreewrapper.OctreeWrapper;
-import gaia.cu9.ari.gaiaorbit.scenegraph.octreewrapper.OctreeWrapperConcurrent;
-import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
-import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.tree.LoadStatus;
 import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
 
 /**
  * Implements the loading and streaming of octree nodes from files. This version
- * loads single stars using the
- * {@link gaia.cu9.ari.gaiaorbit.data.octreegen.ParticleDataBinaryIO}
+ * loads star groups using the
+ * {@link gaia.cu9.ari.gaiaorbit.data.group.SerializedDataProvider}
  * 
  * @author tsagrista
  */
-public class OctreeMultiFileLoader extends StreamingOctreeLoader {
+public class OctreeGroupLoader extends StreamingOctreeLoader {
     /**
      * Data will be pre-loaded at startup down to this octree depth.
      */
     private static final int PRELOAD_DEPTH = 3;
 
     /** Binary particle reader **/
-    private ParticleDataBinaryIO particleReader;
+    private SerializedDataProvider particleReader;
 
-    public OctreeMultiFileLoader() {
-        super();
-        StreamingOctreeLoader.instance = this;
+    public OctreeGroupLoader() {
+        instance = this;
 
-        particleReader = new ParticleDataBinaryIO();
+        particleReader = new SerializedDataProvider();
 
     }
 
@@ -61,14 +56,10 @@ public class OctreeMultiFileLoader extends StreamingOctreeLoader {
         Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.loading", particles));
 
         /**
-         * CREATE OCTREE WRAPPER WITH ROOT NODE
+         * CREATE OCTREE WRAPPER WITH ROOT NODE - particle group is by default
+         * multithread
          */
-        AbstractOctreeWrapper octreeWrapper = null;
-        if (GlobalConf.performance.MULTITHREADING) {
-            octreeWrapper = new OctreeWrapperConcurrent("Universe", root);
-        } else {
-            octreeWrapper = new OctreeWrapper("Universe", root);
-        }
+        AbstractOctreeWrapper octreeWrapper = new OctreeWrapper("Universe", root);
 
         /**
          * LOAD LOD LEVELS - LOAD PARTICLE DATA
@@ -79,21 +70,10 @@ public class OctreeMultiFileLoader extends StreamingOctreeLoader {
             loadLod(depthLevel, octreeWrapper);
             flushLoadedIds();
 
-            OctreeNode solOctant = root.getBestOctant(new Vector3d());
-            boolean found = false;
-            while (!found) {
-                loadOctant(solOctant, octreeWrapper, false);
-                SceneGraphNode sol = octreeWrapper.getNode("Sol");
-                if (sol == null) {
-                    solOctant = solOctant.parent;
-                } else {
-                    found = true;
-                }
-            }
-
         } catch (IOException e) {
             Logger.error(e);
         }
+
         return octreeWrapper;
     }
 
@@ -102,21 +82,30 @@ public class OctreeMultiFileLoader extends StreamingOctreeLoader {
         if (!octantFile.exists() || octantFile.isDirectory()) {
             return false;
         }
-        Array<AbstractPositionEntity> data = particleReader.readParticles(octantFile.read());
-        synchronized (octant) {
-            for (AbstractPositionEntity star : data) {
-                if (fullinit)
-                    star.doneLoading(null);
+        Array<StarBean> data = particleReader.loadData(octantFile.read(), 1.0);
+        StarGroup sg = new StarGroup();
+        sg.setName("stargroup-" + sg.id);
+        sg.setFadeout(new double[] { 21e2, .5e5 });
+        sg.setLabelcolor(new double[] { 1.0, 1.0, 1.0, 1.0 });
+        sg.setColor(new double[] { 1.0, 1.0, 1.0, 0.25 });
+        sg.setSize(6.0);
+        sg.setLabelposition(new double[] { 0.0, -5.0e7, -4e8 });
+        sg.setCt("Stars");
+        sg.setData(data, particleReader.getIndex());
+        if (fullinit)
+            sg.doneLoading(null);
 
-                star.octant = octant;
-                // Add objects to octree wrapper node
-                octreeWrapper.add(star, octant);
-                // Aux info
-                if (GaiaSky.instance != null && GaiaSky.instance.sg != null)
-                    GaiaSky.instance.sg.addNodeAuxiliaryInfo(star);
-            }
-            nLoadedStars += data.size;
-            octant.objects = data;
+        synchronized (octant) {
+            sg.octant = octant;
+            sg.octantId = octant.pageId;
+            // Add objects to octree wrapper node
+            octreeWrapper.add(sg, octant);
+            // Aux info
+            if (GaiaSky.instance != null && GaiaSky.instance.sg != null)
+                GaiaSky.instance.sg.addNodeAuxiliaryInfo(sg);
+
+            nLoadedStars += sg.pointData.size;
+            octant.add(sg);
 
             // Put it at the end of the queue
             touch(octant);

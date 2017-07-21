@@ -180,10 +180,42 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
     private static final double CAM_DX_TH = 100 * Constants.AU_TO_U;
     // Min update time
     private static final double MIN_UPDATE_TIME_MS = 50;
-    // Close up stars treated
-    private static final int N_CLOSEUP_STARS = 250;
     // Fade in time to prevent pop-ins
     private static final long FADE_IN_MS = 1000;
+    // Sequence id
+    private static long idseq = 0;
+    /** Star model **/
+    private static ModelComponent mc;
+    private static Matrix4 modelTransform;
+
+    private static void initModel() {
+        if (mc == null) {
+            Texture tex = new Texture(Gdx.files.internal(GlobalConf.TEXTURES_FOLDER + "star.jpg"));
+            Texture lut = new Texture(Gdx.files.internal(GlobalConf.TEXTURES_FOLDER + "lut.jpg"));
+            tex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+
+            Map<String, Object> params = new TreeMap<String, Object>();
+            params.put("quality", 120l);
+            params.put("diameter", 1d);
+            params.put("flip", false);
+
+            Pair<Model, Map<String, Material>> pair = ModelCache.cache.getModel("sphere", params, Usage.Position | Usage.Normal | Usage.TextureCoordinates);
+            Model model = pair.getFirst();
+            Material mat = pair.getSecond().get("base");
+            mat.clear();
+            mat.set(new TextureAttribute(TextureAttribute.Diffuse, tex));
+            mat.set(new TextureAttribute(TextureAttribute.Normal, lut));
+            // Only to activate view vector (camera position)
+            mat.set(new TextureAttribute(TextureAttribute.Specular, lut));
+            mat.set(new BlendingAttribute(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA));
+            modelTransform = new Matrix4();
+            mc = new ModelComponent(false);
+            mc.env = new Environment();
+            mc.env.set(new ColorAttribute(ColorAttribute.AmbientLight, 1f, 1f, 1f, 1f));
+            mc.env.set(new FloatAttribute(FloatAttribute.Shininess, 0f));
+            mc.instance = new ModelInstance(model, modelTransform);
+        }
+    }
 
     /**
      * The name index
@@ -209,6 +241,9 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
     // Background indices list (the one we sort)
     Integer[] background;
 
+    // Close up stars treated
+    private int N_CLOSEUP_STARS;
+
     // Sorter daemon
     private SorterThread daemon;
 
@@ -219,9 +254,6 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
     private double closestSize;
     private float[] closestCol;
 
-    /** Star model **/
-    private ModelComponent mc;
-    private Matrix4 modelTransform;
     private double modelDist;
 
     /**
@@ -235,10 +267,12 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
 
     public StarGroup() {
         super();
+        id = idseq++;
         comp = new StarGroupComparator();
         closestPos = new Vector3d();
         lastSortCameraPos = new Vector3d(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE);
         closestCol = new float[4];
+        lastSortTime = -1;
         EventManager.instance.subscribe(this, Events.CAMERA_MOTION_UPDATED, Events.DISPOSE);
     }
 
@@ -246,15 +280,14 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
     public void initialize() {
         /** Load data **/
         try {
-            Class clazz = Class.forName(provider);
+            Class<?> clazz = Class.forName(provider);
             IStarGroupDataProvider provider = (IStarGroupDataProvider) clazz.newInstance();
 
             if (factor == null)
                 factor = 1d;
 
-            lastSortTime = -1;
-
             pointData = provider.loadData(datafile, factor);
+            this.N_CLOSEUP_STARS = Math.min(250, pointData.size);
             index = provider.getIndex();
 
         } catch (Exception e) {
@@ -265,12 +298,60 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
         computeFixedMeanPosition();
     }
 
+    @Override
+    public void doneLoading(AssetManager manager) {
+        super.doneLoading(manager);
+        initModel();
+
+        // Additional
+        additional = new double[pointData.size];
+
+        // Initialise indices list with natural order
+        indices1 = new Integer[pointData.size];
+        indices2 = new Integer[pointData.size];
+        for (int i = 0; i < pointData.size; i++) {
+            indices1[i] = i;
+            indices2[i] = i;
+        }
+        active = indices1;
+        background = indices2;
+
+        /**
+         * Index to scene graph
+         */
+        ISceneGraph sg = GaiaSky.instance.sg;
+        if (index != null) {
+            Set<String> keys = index.keySet();
+            for (String key : keys) {
+                sg.addToStringToNode(key, this);
+                if (!key.toLowerCase().equals(key))
+                    sg.addToStringToNode(key.toLowerCase(), this);
+            }
+        }
+
+        /**
+         * INITIALIZE DAEMON LOADER THREAD
+         */
+        daemon = new SorterThread(this);
+        daemon.setDaemon(true);
+        daemon.setName("daemon-star-group-sorter-" + id);
+        daemon.setPriority(Thread.MIN_PRIORITY);
+        daemon.start();
+    }
+
+    public void setData(Array<StarBean> pointData, Map<String, Integer> index) {
+        this.pointData = pointData;
+        this.N_CLOSEUP_STARS = Math.min(250, pointData.size);
+        this.index = index;
+    }
+
     public void setData(Array<StarBean> pointData) {
         setData(pointData, true);
     }
 
     public void setData(Array<StarBean> pointData, boolean regenerateIndex) {
         this.pointData = pointData;
+        this.N_CLOSEUP_STARS = Math.min(250, pointData.size);
         if (regenerateIndex)
             regenerateIndex();
     }
@@ -299,75 +380,6 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
             }
             pos.scl(1d / pointData.size);
         }
-    }
-
-    @Override
-    public void doneLoading(AssetManager manager) {
-        super.doneLoading(manager);
-
-        // Additional
-        additional = new double[pointData.size];
-
-        // Initialise indices list with natural order
-        indices1 = new Integer[pointData.size];
-        indices2 = new Integer[pointData.size];
-        for (int i = 0; i < pointData.size; i++) {
-            indices1[i] = i;
-            indices2[i] = i;
-        }
-        active = indices1;
-        background = indices2;
-
-        /**
-         * Index to scene graph
-         */
-        ISceneGraph sg = GaiaSky.instance.sg;
-        if (index != null) {
-            Set<String> keys = index.keySet();
-            for (String key : keys) {
-                sg.addToStringToNode(key, this);
-                if (!key.toLowerCase().equals(key))
-                    sg.addToStringToNode(key.toLowerCase(), this);
-            }
-        }
-
-        initModel();
-
-        /**
-         * INITIALIZE DAEMON LOADER THREAD
-         */
-        daemon = new SorterThread(this);
-        daemon.setDaemon(true);
-        daemon.setName("daemon-star-group-sorter");
-        daemon.setPriority(Thread.MIN_PRIORITY);
-        daemon.start();
-    }
-
-    public void initModel() {
-        Texture tex = new Texture(Gdx.files.internal(GlobalConf.TEXTURES_FOLDER + "star.jpg"));
-        Texture lut = new Texture(Gdx.files.internal(GlobalConf.TEXTURES_FOLDER + "lut.jpg"));
-        tex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-
-        Map<String, Object> params = new TreeMap<String, Object>();
-        params.put("quality", 120l);
-        params.put("diameter", 1d);
-        params.put("flip", false);
-
-        Pair<Model, Map<String, Material>> pair = ModelCache.cache.getModel("sphere", params, Usage.Position | Usage.Normal | Usage.TextureCoordinates);
-        Model model = pair.getFirst();
-        Material mat = pair.getSecond().get("base");
-        mat.clear();
-        mat.set(new TextureAttribute(TextureAttribute.Diffuse, tex));
-        mat.set(new TextureAttribute(TextureAttribute.Normal, lut));
-        // Only to activate view vector (camera position)
-        mat.set(new TextureAttribute(TextureAttribute.Specular, lut));
-        mat.set(new BlendingAttribute(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA));
-        modelTransform = new Matrix4();
-        mc = new ModelComponent(false);
-        mc.env = new Environment();
-        mc.env.set(new ColorAttribute(ColorAttribute.AmbientLight, 1f, 1f, 1f, 1f));
-        mc.env.set(new FloatAttribute(FloatAttribute.Shininess, 0f));
-        mc.instance = new ModelInstance(model, modelTransform);
     }
 
     public void update(ITimeFrameProvider time, final Transform parentTransform, ICamera camera, float opacity) {
@@ -550,7 +562,8 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
     @Override
     public void render(LineRenderSystem renderer, ICamera camera, float alpha) {
         float thpointTimesFovfactor = (float) GlobalConf.scene.STAR_THRESHOLD_POINT * camera.getFovFactor();
-        for (int i = N_CLOSEUP_STARS * 20; i >= 0; i--) {
+        int n = Math.min(N_CLOSEUP_STARS * 20, pointData.size);
+        for (int i = n; i >= 0; i--) {
             StarBean star = (StarBean) pointData.get(active[i]);
             float radius = (float) (getSize(active[i]) * Constants.STAR_SIZE_FACTOR);
             Vector3d lpos = aux3d1.get().set(star.x(), star.y(), star.z()).sub(camera.getPos());
@@ -741,12 +754,14 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
         super.notify(event, data);
         switch (event) {
         case CAMERA_MOTION_UPDATED:
-            final Vector3d currentCameraPos = (Vector3d) data[0];
-            long t = TimeUtils.millis() - lastSortTime;
-            if (!daemon.awake && this.opacity > 0 && (t > MIN_UPDATE_TIME_MS * 2 || (lastSortCameraPos.dst(currentCameraPos) > CAM_DX_TH && t > MIN_UPDATE_TIME_MS))) {
-                // Update
-                daemon.currentCameraPos = currentCameraPos;
-                daemon.interrupt();
+            if (daemon != null) {
+                final Vector3d currentCameraPos = (Vector3d) data[0];
+                long t = TimeUtils.millis() - lastSortTime;
+                if (!daemon.awake && this.opacity > 0 && (t > MIN_UPDATE_TIME_MS * 2 || (lastSortCameraPos.dst(currentCameraPos) > CAM_DX_TH && t > MIN_UPDATE_TIME_MS))) {
+                    // Update
+                    daemon.currentCameraPos = currentCameraPos;
+                    daemon.interrupt();
+                }
             }
             break;
         case DISPOSE:
