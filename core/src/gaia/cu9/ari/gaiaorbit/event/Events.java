@@ -627,6 +627,9 @@ public enum Events {
     /** Update external GUIs signal. Contains the dt in seconds. **/
     UPDATE_GUI,
 
+    /** Contains an the index of the mesh to be cleared **/
+    DISPOSE_STAR_GROUP_GPU_MESH,
+
     /** Dispose all resources, app is shutting down **/
     DISPOSE;
 

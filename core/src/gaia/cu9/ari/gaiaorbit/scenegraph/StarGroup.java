@@ -765,8 +765,7 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
             }
             break;
         case DISPOSE:
-            if (daemon != null)
-                daemon.stopExecution();
+            dispose();
             break;
         default:
             break;
@@ -844,6 +843,16 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
     @Override
     public int getStarCount() {
         return pointData.size;
+    }
+
+    @Override
+    public void dispose() {
+        if (daemon != null) {
+            daemon.stopExecution();
+            daemon = null;
+        }
+        // Dispose of GPU data
+        EventManager.instance.post(Events.DISPOSE_STAR_GROUP_GPU_MESH, this.offset);
     }
 
 }

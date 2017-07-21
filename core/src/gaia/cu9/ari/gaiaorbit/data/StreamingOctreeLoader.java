@@ -263,12 +263,14 @@ public abstract class StreamingOctreeLoader implements IObserver, ISceneGraphLoa
         synchronized (octant) {
             Array<AbstractPositionEntity> objects = octant.objects;
             if (objects != null) {
-                for (AbstractPositionEntity star : objects) {
-                    star.octant = null;
-                    octreeWrapper.removeParenthood(star);
+                for (AbstractPositionEntity object : objects) {
+                    object.octant = null;
+                    octreeWrapper.removeParenthood(object);
                     // Aux info
                     if (GaiaSky.instance != null && GaiaSky.instance.sg != null)
-                        GaiaSky.instance.sg.removeNodeAuxiliaryInfo(star);
+                        GaiaSky.instance.sg.removeNodeAuxiliaryInfo(object);
+                    // Stop thread in star groups
+                    object.dispose();
                 }
             }
             nLoadedStars -= objects.size;
