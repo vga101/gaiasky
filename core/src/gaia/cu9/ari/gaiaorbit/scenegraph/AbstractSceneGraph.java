@@ -149,9 +149,15 @@ public abstract class AbstractSceneGraph implements ISceneGraph {
         } else if (node.getStarCount() > 1) {
             @SuppressWarnings("unchecked")
             Array<AbstractPositionEntity> stars = (Array<AbstractPositionEntity>) node.getStars();
-            for (AbstractPositionEntity s : stars) {
-                if (s instanceof Star && ((Star) s).hip >= 0) {
-                    hipMap.remove(((Star) s).hip);
+            if (stars != null) {
+                for (AbstractPositionEntity s : stars) {
+                    if (s instanceof StarGroup) {
+                        StarGroup sg = (StarGroup) s;
+                        for (StarBean sb : (Array<StarBean>) sg.pointData) {
+                            if (sb.hip() >= 0)
+                                hipMap.remove((int) sb.hip());
+                        }
+                    }
                 }
             }
         }

@@ -64,7 +64,7 @@ public abstract class StreamingOctreeLoader implements IObserver, ISceneGraphLoa
     protected DaemonLoader daemon;
 
     public StreamingOctreeLoader() {
-        maxLoadedStars = 3000000;
+        maxLoadedStars = 10000000;
 
         toLoadQueue = new ArrayBlockingQueue<OctreeNode>(LOAD_QUEUE_MAX_SIZE);
         toUnloadQueue = new ArrayBlockingQueue<OctreeNode>(LOAD_QUEUE_MAX_SIZE);
@@ -349,7 +349,7 @@ public abstract class StreamingOctreeLoader implements IObserver, ISceneGraphLoa
                         // Get first in queue (unaccessed for the longest time)
                         // and release it
                         OctreeNode octant = loader.toUnloadQueue.poll();
-                        if (octant.getStatus() == LoadStatus.LOADED) {
+                        if (octant != null && octant.getStatus() == LoadStatus.LOADED) {
                             loader.unloadOctant(octant, octreeWrapper);
                         }
                     }
