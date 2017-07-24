@@ -217,23 +217,20 @@ public class NaturalInputController extends GestureDetector {
                 final long currentTime = TimeUtils.millis();
                 final long lastLeftTime = lastClickTime;
 
-                Gdx.app.postRunnable(new Runnable() {
-                    @Override
-                    public void run() {
-                        // 5% of width pixels distance
-                        if (!GlobalConf.scene.CINEMATIC_CAMERA || (GlobalConf.scene.CINEMATIC_CAMERA && gesture.dst(screenX, screenY) < MOVE_PX_DIST)) {
-                            boolean stopped = camera.stopMovement();
-                            boolean focusRemoved = GaiaSky.instance.mainGui != null && GaiaSky.instance.mainGui.cancelTouchFocus();
-                            boolean doubleClick = currentTime - lastLeftTime < doubleClickTime;
-                            gesture.set(0, 0);
+                Gdx.app.postRunnable(() -> {
+                    // 5% of width pixels distance
+                    if (!GlobalConf.scene.CINEMATIC_CAMERA || (GlobalConf.scene.CINEMATIC_CAMERA && gesture.dst(screenX, screenY) < MOVE_PX_DIST)) {
+                        boolean stopped = camera.stopMovement();
+                        boolean focusRemoved = GaiaSky.instance.mainGui != null && GaiaSky.instance.mainGui.cancelTouchFocus();
+                        boolean doubleClick = currentTime - lastLeftTime < doubleClickTime;
+                        gesture.set(0, 0);
 
-                            if (doubleClick && !stopped && !focusRemoved) {
-                                // Select star, if any
-                                IFocus hit = getBestHit(screenX, screenY);
-                                if (hit != null) {
-                                    EventManager.instance.post(Events.FOCUS_CHANGE_CMD, hit);
-                                    EventManager.instance.post(Events.CAMERA_MODE_CMD, CameraMode.Focus);
-                                }
+                        if (doubleClick && !stopped && !focusRemoved) {
+                            // Select star, if any
+                            IFocus hit = getBestHit(screenX, screenY);
+                            if (hit != null) {
+                                EventManager.instance.post(Events.FOCUS_CHANGE_CMD, hit);
+                                EventManager.instance.post(Events.CAMERA_MODE_CMD, CameraMode.Focus);
                             }
                         }
                     }
@@ -243,24 +240,19 @@ public class NaturalInputController extends GestureDetector {
                 lastClickTime = currentTime;
             } else if (button == this.button && button == Input.Buttons.RIGHT) {
                 // Ensure Octants observed property is computed
-                Gdx.app.postRunnable(new Runnable() {
+                Gdx.app.postRunnable(() -> {
+                    // 5% of width pixels distance
+                    if (gesture.dst(screenX, screenY) < MOVE_PX_DIST) {
+                        // Stop
+                        camera.setYaw(0);
+                        camera.setPitch(0);
 
-                    @Override
-                    public void run() {
-                        // 5% of width pixels distance
-                        if (gesture.dst(screenX, screenY) < MOVE_PX_DIST) {
-                            // Stop
-                            camera.setYaw(0);
-                            camera.setPitch(0);
-
-                            // Right click, context menu
-                            IFocus hit = getBestHit(screenX, screenY);
-                            if (hit != null) {
-                                EventManager.instance.post(Events.POPUP_MENU_FOCUS, hit, screenX, screenY);
-                            }
+                        // Right click, context menu
+                        IFocus hit = getBestHit(screenX, screenY);
+                        if (hit != null) {
+                            EventManager.instance.post(Events.POPUP_MENU_FOCUS, hit, screenX, screenY);
                         }
                     }
-
                 });
             }
 

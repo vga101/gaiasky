@@ -33,6 +33,7 @@ import gaia.cu9.ari.gaiaorbit.util.parse.Parser;
  *
  */
 public class DR2DataProvider extends AbstractStarGroupDataProvider {
+    private static final int FILE_NUMBER_LIMIT = -1;
 
     private static final String comma = ",";
     private static final String comment = "#";
@@ -91,7 +92,7 @@ public class DR2DataProvider extends AbstractStarGroupDataProvider {
             for (FileHandle fh : files) {
                 loadFile(fh, factor, i);
                 fn++;
-                if (fn >= 80)
+                if (FILE_NUMBER_LIMIT > 0 && fn >= FILE_NUMBER_LIMIT)
                     break;
             }
         } else if (f.name().endsWith(".csv")) {
@@ -158,9 +159,10 @@ public class DR2DataProvider extends AbstractStarGroupDataProvider {
             /** PROPER MOTIONS in mas/yr **/
             double mualpha = Parser.parseDouble(tokens[indices[MUALPHA]]);
             double mudelta = Parser.parseDouble(tokens[indices[MUDELTA]]);
+            double radvel = Parser.parseDouble(tokens[indices[RADVEL]]);
 
             /** PROPER MOTION VECTOR = (pos+dx) - pos **/
-            Vector3d pm = Coordinates.sphericalToCartesian(Math.toRadians(ra + mualpha * AstroUtils.MILLARCSEC_TO_DEG), Math.toRadians(dec + mudelta * AstroUtils.MILLARCSEC_TO_DEG), dist, new Vector3d());
+            Vector3d pm = Coordinates.sphericalToCartesian(Math.toRadians(ra + mualpha * AstroUtils.MILLARCSEC_TO_DEG), Math.toRadians(dec + mudelta * AstroUtils.MILLARCSEC_TO_DEG), dist + radvel * Constants.KM_TO_U / Constants.S_TO_Y, new Vector3d());
             pm.sub(pos);
 
             double appmag = Parser.parseDouble(tokens[indices[G_MAG]]);

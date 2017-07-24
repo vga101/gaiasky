@@ -52,7 +52,7 @@ OPTS="$OPTS -XX:+UseConcMarkSweepGC"
 # Run.
 #
 
-CMD="$JAVA $OPTS -cp \"$LIB_PATH\" gaia.cu9.ari.gaiaorbit.data.OctreeGeneratorTest $@"
+CMD="$JAVA $OPTS -cp \"$LIB_PATH\" gaia.cu9.ari.gaiaorbit.data.OctreeGroupGeneratorTest $@"
 echo "$CMD"
 
 ( cd "$GSDIR" && eval $CMD )

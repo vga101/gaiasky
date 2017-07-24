@@ -31,8 +31,8 @@ import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
 
 public class StarGroupRenderSystem extends ImmediateRenderSystem implements IObserver {
     private final double BRIGHTNESS_FACTOR;
-    /** Hopefully we won't have more than 100 star groups at once **/
-    private final int N_MESHES = 100;
+    /** Hopefully we won't have more than 5000 star groups at once **/
+    private final int N_MESHES = 5000;
 
     Vector3 aux1;
     int sizeOffset, pmOffset;
@@ -68,9 +68,11 @@ public class StarGroupRenderSystem extends ImmediateRenderSystem implements IObs
     /**
      * Adds a new mesh data to the meshes list and increases the mesh data index
      * 
+     * @param nVertices
+     *            The max number of vertices this mesh data can hold
      * @return The index of the new mesh data
      */
-    private int addMeshData() {
+    private int addMeshData(int nVertices) {
         // look for index
         int mdi;
         for (mdi = 0; mdi < N_MESHES; mdi++) {
@@ -89,7 +91,7 @@ public class StarGroupRenderSystem extends ImmediateRenderSystem implements IObs
 
         aux1 = new Vector3();
 
-        maxVertices = 10000000;
+        maxVertices = nVertices;
 
         VertexAttribute[] attribs = buildVertexAttributes();
         curr.mesh = new Mesh(false, maxVertices, 0, attribs);
@@ -131,7 +133,7 @@ public class StarGroupRenderSystem extends ImmediateRenderSystem implements IObs
                  * ADD PARTICLES
                  */
                 if (!starGroup.inGpu) {
-                    starGroup.offset = addMeshData();
+                    starGroup.offset = addMeshData(starGroup.pointData.size);
                     curr = meshes[starGroup.offset];
 
                     for (StarBean p : (Array<StarBean>) starGroup.pointData) {

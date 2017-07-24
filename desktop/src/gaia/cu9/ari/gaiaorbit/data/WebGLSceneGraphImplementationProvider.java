@@ -6,7 +6,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraph;
 public class WebGLSceneGraphImplementationProvider extends SceneGraphImplementationProvider {
 
     @Override
-    public ISceneGraph getImplementation(boolean multithreading, boolean hasOctree, int maxThreads) {
+    public ISceneGraph getImplementation(boolean multithreading, boolean hasOctree, boolean starGroup, int maxThreads) {
         return new SceneGraph();
     }
 

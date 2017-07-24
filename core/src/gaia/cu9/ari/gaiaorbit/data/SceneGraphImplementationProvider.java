@@ -4,6 +4,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
 
 /**
  * Provides the scene graph implementation.
+ * 
  * @author tsagrista
  *
  */
@@ -14,6 +15,20 @@ public abstract class SceneGraphImplementationProvider {
         SceneGraphImplementationProvider.provider = provider;
     }
 
-    public abstract ISceneGraph getImplementation(boolean multithreading, boolean hasOctree, int maxThreads);
+    /**
+     * Gets the right scene graph implementation for the given information about
+     * it
+     * 
+     * @param multithreading
+     *            Multithreading on?
+     * @param hasOctree
+     *            Does it have an octree?
+     * @param hasStarGroup
+     *            Does it contain a star gorup?
+     * @param maxThreads
+     *            Max number of threads
+     * @return The scene graph
+     */
+    public abstract ISceneGraph getImplementation(boolean multithreading, boolean hasOctree, boolean hasStarGroup, int maxThreads);
 
 }

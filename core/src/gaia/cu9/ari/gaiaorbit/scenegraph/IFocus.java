@@ -142,6 +142,14 @@ public interface IFocus {
     public double getViewAngleApparent();
 
     /**
+     * Returns the candidate apparent view angle (view angle corrected with the
+     * field of view) of this entity, in radians.
+     * 
+     * @return The apparent view angle in radians.
+     */
+    public double getCandidateViewAngleApparent();
+
+    /**
      * Returns the right ascension angle of this focus object.
      * 
      * @return The right ascension angle in degrees.

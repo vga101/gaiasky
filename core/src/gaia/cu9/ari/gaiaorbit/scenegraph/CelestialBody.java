@@ -467,6 +467,11 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
     }
 
     @Override
+    public double getCandidateViewAngleApparent() {
+        return getViewAngleApparent();
+    }
+
+    @Override
     public IFocus getFocus(String name) {
         if (this.name.toLowerCase().equals(name))
             return this;

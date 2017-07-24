@@ -11,6 +11,7 @@ import com.badlogic.gdx.utils.reflect.Constructor;
 
 import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
+import gaia.cu9.ari.gaiaorbit.scenegraph.StarGroup;
 import gaia.cu9.ari.gaiaorbit.scenegraph.octreewrapper.AbstractOctreeWrapper;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
@@ -57,14 +58,25 @@ public class SceneGraphJsonLoader {
 
             // Initialize nodes and look for octrees
             boolean hasOctree = false;
+            boolean hasStarGroup = false;
             for (SceneGraphNode node : nodes) {
                 node.initialize();
                 if (node instanceof AbstractOctreeWrapper) {
                     hasOctree = true;
+                    AbstractOctreeWrapper aow = (AbstractOctreeWrapper) node;
+                    for (SceneGraphNode n : aow.children) {
+                        if (n instanceof StarGroup) {
+                            hasStarGroup = true;
+                            break;
+                        }
+                    }
                 }
+
+                if (node instanceof StarGroup)
+                    hasStarGroup = true;
             }
 
-            sg = SceneGraphImplementationProvider.provider.getImplementation(multithreading, hasOctree, maxThreads);
+            sg = SceneGraphImplementationProvider.provider.getImplementation(multithreading, hasOctree, hasStarGroup, maxThreads);
 
             sg.initialize(nodes, time, hasOctree);
 

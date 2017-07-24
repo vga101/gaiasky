@@ -6,6 +6,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
@@ -99,6 +103,10 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
             this.octant = null;
         }
 
+        public Vector3d pos(Vector3d aux) {
+            return aux.set(x(), y(), z());
+        }
+
         public double x() {
             return data[I_X];
         }
@@ -137,6 +145,10 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
 
         public double size() {
             return data[I_SIZE];
+        }
+
+        public double radius() {
+            return size() * Constants.STAR_SIZE_FACTOR;
         }
 
         public double hip() {
@@ -218,6 +230,17 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
     }
 
     /**
+     * Thread pool executor
+     */
+    private static ThreadPoolExecutor pool;
+    private static BlockingQueue<Runnable> workQueue;
+    static {
+        workQueue = new LinkedBlockingQueue<Runnable>();
+        int nthreads = !GlobalConf.performance.MULTITHREADING ? 1 : GlobalConf.performance.NUMBER_THREADS();
+        pool = new ThreadPoolExecutor(nthreads, nthreads, 5, TimeUnit.SECONDS, workQueue);
+    }
+
+    /**
      * The name index
      */
     Map<String, Integer> index;
@@ -247,6 +270,9 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
     // Sorter daemon
     private SorterThread daemon;
 
+    // Updater task
+    private UpdaterTask updaterTask;
+
     /** CLOSEST **/
     private Vector3d closestPos;
     private String closestName;
@@ -264,6 +290,9 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
 
     private Vector3d lastSortCameraPos;
     private Comparator<Integer> comp;
+
+    // Is it updating?
+    private volatile boolean updating = false;
 
     public StarGroup() {
         super();
@@ -332,11 +361,16 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
         /**
          * INITIALIZE DAEMON LOADER THREAD
          */
-        daemon = new SorterThread(this);
-        daemon.setDaemon(true);
-        daemon.setName("daemon-star-group-sorter-" + id);
-        daemon.setPriority(Thread.MIN_PRIORITY);
-        daemon.start();
+        //        daemon = new SorterThread(this);
+        //        daemon.setDaemon(true);
+        //        daemon.setName("daemon-star-group-sorter-" + id);
+        //        daemon.setPriority(Thread.MIN_PRIORITY);
+        //        daemon.start();
+
+        /**
+         * INIT UPDATER TASK
+         */
+        updaterTask = new UpdaterTask(this);
     }
 
     public void setData(Array<StarBean> pointData, Map<String, Integer> index) {
@@ -563,7 +597,7 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
     public void render(LineRenderSystem renderer, ICamera camera, float alpha) {
         float thpointTimesFovfactor = (float) GlobalConf.scene.STAR_THRESHOLD_POINT * camera.getFovFactor();
         int n = Math.min(N_CLOSEUP_STARS * 20, pointData.size);
-        for (int i = n; i >= 0; i--) {
+        for (int i = n - 1; i >= 0; i--) {
             StarBean star = (StarBean) pointData.get(active[i]);
             float radius = (float) (getSize(active[i]) * Constants.STAR_SIZE_FACTOR);
             Vector3d lpos = aux3d1.get().set(star.x(), star.y(), star.z()).sub(camera.getPos());
@@ -748,19 +782,39 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
 
     }
 
+    public class UpdaterTask implements Runnable {
+
+        private StarGroup sg;
+
+        public UpdaterTask(StarGroup sg) {
+            this.sg = sg;
+        }
+
+        @Override
+        public void run() {
+            sg.updateSorter(GaiaSky.instance.time, GaiaSky.instance.getICamera());
+            updating = false;
+        }
+
+    }
+
     @Override
     public void notify(Events event, Object... data) {
         // Super handles FOCUS_CHANGED event
         super.notify(event, data);
         switch (event) {
         case CAMERA_MOTION_UPDATED:
-            if (daemon != null) {
+            if (updaterTask != null) {
                 final Vector3d currentCameraPos = (Vector3d) data[0];
                 long t = TimeUtils.millis() - lastSortTime;
-                if (!daemon.awake && this.opacity > 0 && (t > MIN_UPDATE_TIME_MS * 2 || (lastSortCameraPos.dst(currentCameraPos) > CAM_DX_TH && t > MIN_UPDATE_TIME_MS))) {
-                    // Update
-                    daemon.currentCameraPos = currentCameraPos;
-                    daemon.interrupt();
+                //                if (!daemon.awake && this.opacity > 0 && (t > MIN_UPDATE_TIME_MS * 2 || (lastSortCameraPos.dst(currentCameraPos) > CAM_DX_TH && t > MIN_UPDATE_TIME_MS))) {
+                //                    // Update
+                //                    daemon.currentCameraPos = currentCameraPos;
+                //                    daemon.interrupt();
+                //                }
+                if (!updating && !workQueue.contains(updaterTask) && this.opacity > 0 && (t > MIN_UPDATE_TIME_MS * 2 || (lastSortCameraPos.dst(currentCameraPos) > CAM_DX_TH && t > MIN_UPDATE_TIME_MS))) {
+                    updating = true;
+                    pool.execute(updaterTask);
                 }
             }
             break;
@@ -800,6 +854,19 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
     @Override
     public String getCandidateName() {
         return ((StarBean) pointData.get(candidateFocusIndex)).name;
+    }
+
+    @Override
+    public double getCandidateViewAngleApparent() {
+        if (candidateFocusIndex >= 0) {
+            StarBean candidate = (StarBean) pointData.get(candidateFocusIndex);
+            Vector3d aux = candidate.pos(aux3d1.get());
+            ICamera camera = GaiaSky.instance.getICamera();
+            double va = (float) ((candidate.radius() / aux.sub(camera.getPos()).len()) / camera.getFovFactor());
+            return va * GlobalConf.scene.STAR_BRIGHTNESS;
+        } else {
+            return -1;
+        }
     }
 
     @Override

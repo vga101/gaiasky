@@ -302,7 +302,7 @@ public class OctreeNode implements ILineRenderable {
                 str.append("   ");
             }
 
-        str.append(pageId).append("(lvl").append(depth).append(")");
+        str.append(pageId).append("(L").append(depth).append(")");
         if (parent != null) {
             str.append(" [i: ").append(Arrays.asList(parent.children).indexOf(this)).append(", ownobj: ");
         } else {
