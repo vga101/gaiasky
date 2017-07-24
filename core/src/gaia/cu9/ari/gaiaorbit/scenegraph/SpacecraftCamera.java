@@ -291,8 +291,8 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
         switch (event) {
         case SPACECRAFT_LOADED:
             this.sc = (Spacecraft) data[0];
-            this.targetDistance = sc.size * 3;
-            this.relpos.set(targetDistance, targetDistance, 0);
+            this.targetDistance = sc.size * 4;
+            this.relpos.set(targetDistance, targetDistance / 2, 0);
             break;
         case FOV_CHANGED_CMD:
             float fov = MathUtilsd.clamp((float) data[0], Constants.MIN_FOV, Constants.MAX_FOV);
