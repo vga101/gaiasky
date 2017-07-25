@@ -80,7 +80,7 @@ public class ParticleGroupRenderSystem extends ImmediateRenderSystem implements 
                  */
                 if (!particleGroup.inGpu) {
                     particleGroup.offset = curr.vertexIdx;
-                    for (ParticleBean pb : particleGroup.pointData) {
+                    for (ParticleBean pb : particleGroup.data()) {
                         double[] p = pb.data;
                         // COLOR
                         float[] c = particleGroup.cc;
@@ -98,7 +98,7 @@ public class ParticleGroupRenderSystem extends ImmediateRenderSystem implements 
 
                         curr.vertexIdx += curr.vertexSize;
                     }
-                    particleGroup.count = particleGroup.pointData.size * curr.vertexSize;
+                    particleGroup.count = particleGroup.size() * curr.vertexSize;
 
                     particleGroup.inGpu = true;
 

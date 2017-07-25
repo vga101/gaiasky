@@ -106,57 +106,52 @@ public abstract class AbstractSceneGraph implements ISceneGraph {
     }
 
     private void addToHipMap(SceneGraphNode node) {
-        if (node.getStarCount() == 1) {
-            CelestialBody s = (CelestialBody) node.getStars();
-            if (s instanceof Star && ((Star) s).hip >= 0) {
-                if (hipMap.containsKey(((Star) s).hip)) {
-                    Logger.debug(this.getClass().getSimpleName(), "Duplicated HIP id: " + ((Star) s).hip);
-                } else {
-                    hipMap.put(((Star) s).hip, (Star) s);
-                }
-            }
-        } else if (node.getStarCount() > 1) {
-            if (node instanceof AbstractOctreeWrapper) {
-                @SuppressWarnings("unchecked")
-                Array<AbstractPositionEntity> stars = (Array<AbstractPositionEntity>) node.getStars();
-                for (AbstractPositionEntity s : stars) {
-                    if (s instanceof Star && ((Star) s).hip >= 0) {
-                        if (hipMap.containsKey(((Star) s).hip)) {
-                            Logger.debug(this.getClass().getSimpleName(), "Duplicated HIP id: " + ((Star) s).hip);
-                        } else {
-                            hipMap.put(((Star) s).hip, (Star) s);
-                        }
+        if (node instanceof AbstractOctreeWrapper) {
+            AbstractOctreeWrapper aow = (AbstractOctreeWrapper) node;
+            Set<AbstractPositionEntity> set = aow.parenthood.keySet();
+            for (AbstractPositionEntity ape : set)
+                addToHipMap(ape);
+        } else {
+            if (node.getStarCount() == 1) {
+                CelestialBody s = (CelestialBody) node;
+                if (s instanceof Star && ((Star) s).hip > 0) {
+                    if (hipMap.containsKey(((Star) s).hip)) {
+                        Logger.debug(this.getClass().getSimpleName(), "Duplicated HIP id: " + ((Star) s).hip);
+                    } else {
+                        hipMap.put(((Star) s).hip, (Star) s);
                     }
                 }
-            } else if (node instanceof StarGroup) {
-                @SuppressWarnings("unchecked")
-                Array<StarBean> stars = (Array<StarBean>) ((StarGroup) node).pointData;
-                for (StarBean s : stars) {
-                    if (s.hip() > 0) {
-                        hipMap.put((int) s.hip(), new Position(s.x(), s.y(), s.z()));
+            } else if (node.getStarCount() > 1) {
+                if (node instanceof StarGroup) {
+                    Array<StarBean> stars = ((StarGroup) node).data();
+                    for (StarBean s : stars) {
+                        if (s.hip() > 0) {
+                            hipMap.put(s.hip(), new Position(s.x(), s.y(), s.z()));
+                        }
                     }
                 }
             }
         }
     }
 
-    private void removeFromStarMap(SceneGraphNode node) {
-        if (node.getStarCount() == 1) {
-            CelestialBody s = (CelestialBody) node.getStars();
-            if (s instanceof Star && ((Star) s).hip >= 0) {
-                hipMap.remove(((Star) s).hip);
-            }
-        } else if (node.getStarCount() > 1) {
-            @SuppressWarnings("unchecked")
-            Array<AbstractPositionEntity> stars = (Array<AbstractPositionEntity>) node.getStars();
-            if (stars != null) {
-                for (AbstractPositionEntity s : stars) {
-                    if (s instanceof StarGroup) {
-                        StarGroup sg = (StarGroup) s;
-                        for (StarBean sb : (Array<StarBean>) sg.pointData) {
-                            if (sb.hip() >= 0)
-                                hipMap.remove((int) sb.hip());
-                        }
+    private void removeFromHipMap(SceneGraphNode node) {
+        if (node instanceof AbstractOctreeWrapper) {
+            AbstractOctreeWrapper aow = (AbstractOctreeWrapper) node;
+            Set<AbstractPositionEntity> set = aow.parenthood.keySet();
+            for (AbstractPositionEntity ape : set)
+                removeFromHipMap(ape);
+        } else {
+            if (node.getStarCount() == 1) {
+                CelestialBody s = (CelestialBody) node;
+                if (s instanceof Star && ((Star) s).hip >= 0) {
+                    hipMap.remove(((Star) s).hip);
+                }
+            } else if (node.getStarCount() > 1) {
+                if (node instanceof StarGroup) {
+                    StarGroup sg = (StarGroup) node;
+                    for (StarBean sb : sg.data()) {
+                        if (sb.hip() >= 0)
+                            hipMap.remove(sb.hip());
                     }
                 }
             }
@@ -185,6 +180,14 @@ public abstract class AbstractSceneGraph implements ISceneGraph {
                     map.put(((Star) node).tycho, node);
                 }
 
+            } else if (node instanceof StarGroup) {
+                StarGroup sg = (StarGroup) node;
+                if (sg.index != null) {
+                    Set<String> keys = sg.index.keySet();
+                    for (String key : keys) {
+                        map.put(key, sg);
+                    }
+                }
             }
 
         }
@@ -212,7 +215,16 @@ public abstract class AbstractSceneGraph implements ISceneGraph {
                 if (((Star) node).tycho != null && !((Star) node).tycho.isEmpty()) {
                     map.remove(((Star) node).tycho);
                 }
+            } else if (node instanceof StarGroup) {
+                StarGroup sg = (StarGroup) node;
+                if (sg.index != null) {
+                    Set<String> keys = sg.index.keySet();
+                    for (String key : keys) {
+                        map.remove(key);
+                    }
+                }
             }
+
         }
     }
 
@@ -247,18 +259,18 @@ public abstract class AbstractSceneGraph implements ISceneGraph {
         return stringToNode;
     }
 
-    public void addNodeAuxiliaryInfo(SceneGraphNode node) {
+    public synchronized void addNodeAuxiliaryInfo(SceneGraphNode node) {
         // Name index
         addToIndex(node, stringToNode);
         // Star map
         addToHipMap(node);
     }
 
-    public void removeNodeAuxiliaryInfo(SceneGraphNode node) {
+    public synchronized void removeNodeAuxiliaryInfo(SceneGraphNode node) {
         // Name index
         removeFromIndex(node, stringToNode);
         // Star map
-        removeFromStarMap(node);
+        removeFromHipMap(node);
     }
 
     public boolean containsNode(String name) {

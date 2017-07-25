@@ -69,7 +69,6 @@ public class OctreeGroupLoader extends StreamingOctreeLoader {
             int depthLevel = Math.min(OctreeNode.maxDepth, PRELOAD_DEPTH);
             loadLod(depthLevel, octreeWrapper);
             flushLoadedIds();
-
         } catch (IOException e) {
             Logger.error(e);
         }
@@ -91,7 +90,7 @@ public class OctreeGroupLoader extends StreamingOctreeLoader {
         sg.setSize(6.0);
         sg.setLabelposition(new double[] { 0.0, -5.0e7, -4e8 });
         sg.setCt("Stars");
-        sg.setData(data, particleReader.getIndex());
+        sg.setData(data);
         if (fullinit)
             sg.doneLoading(null);
 
@@ -104,7 +103,7 @@ public class OctreeGroupLoader extends StreamingOctreeLoader {
             if (GaiaSky.instance != null && GaiaSky.instance.sg != null)
                 GaiaSky.instance.sg.addNodeAuxiliaryInfo(sg);
 
-            nLoadedStars += sg.pointData.size;
+            nLoadedStars += sg.size();
             octant.add(sg);
 
             // Put it at the end of the queue

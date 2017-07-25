@@ -57,7 +57,7 @@ public class ParticleGroup extends FadeNode implements I3DTextRenderable, IFocus
     /**
      * List that contains the point data. It contains only [x y z]
      */
-    public Array<? extends ParticleBean> pointData;
+    protected Array<? extends ParticleBean> pointData;
 
     /**
      * Fully qualified name of data provider class
@@ -177,6 +177,24 @@ public class ParticleGroup extends FadeNode implements I3DTextRenderable, IFocus
     @Override
     public void doneLoading(AssetManager manager) {
         super.doneLoading(manager);
+    }
+
+    /**
+     * Returns the data list
+     * 
+     * @return The data list
+     */
+    public Array<? extends ParticleBean> data() {
+        return pointData;
+    }
+
+    /**
+     * Number of objects of this group
+     * 
+     * @return The number of objects
+     */
+    public int size() {
+        return pointData.size;
     }
 
     public void update(ITimeFrameProvider time, final Transform parentTransform, ICamera camera, float opacity) {

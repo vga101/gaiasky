@@ -74,17 +74,9 @@ public class TGASDataProvider extends AbstractStarGroupDataProvider {
                         int tyc2 = !tyc.isEmpty() ? Integer.parseInt(tycgroups[1]) : -1;
                         int tyc3 = !tyc.isEmpty() ? Integer.parseInt(tycgroups[2]) : -1;
 
-                        index.put(String.valueOf((long) sourceid), i);
-
-                        if (tyc1 >= 0) {
-                            index.put("tyc " + tyc, i);
-                        }
                         int hip = Parser.parseInt(tokens[8]);
                         if (hip <= 0 && extra.getSecond().containsKey(tyc)) {
                             hip = extra.getSecond().get(tyc);
-                        }
-                        if (hip > 0) {
-                            index.put("hip " + hip, i);
                         }
 
                         /** NAME **/

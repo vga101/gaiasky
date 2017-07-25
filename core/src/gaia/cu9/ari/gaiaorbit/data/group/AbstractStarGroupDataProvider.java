@@ -6,9 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Array;
@@ -19,7 +17,6 @@ import gaia.cu9.ari.gaiaorbit.util.Logger;
 public abstract class AbstractStarGroupDataProvider implements IStarGroupDataProvider {
 
     protected Array<StarBean> list;
-    protected Map<String, Integer> index;
 
     public AbstractStarGroupDataProvider() {
         super();
@@ -47,7 +44,6 @@ public abstract class AbstractStarGroupDataProvider implements IStarGroupDataPro
      */
     protected void initLists(int elems) {
         list = new Array<StarBean>(elems);
-        index = new HashMap<String, Integer>();
     }
 
     protected int countLines(FileHandle f) throws IOException {
@@ -84,11 +80,6 @@ public abstract class AbstractStarGroupDataProvider implements IStarGroupDataPro
         } catch (Exception e) {
             Logger.error(e);
         }
-    }
-
-    @Override
-    public Map<String, Integer> getIndex() {
-        return index;
     }
 
 }

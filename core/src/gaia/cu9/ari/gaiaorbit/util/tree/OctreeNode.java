@@ -37,7 +37,8 @@ import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
  * @author Toni Sagrista
  */
 public class OctreeNode implements ILineRenderable {
-    public static int nObserved = 0;
+    public static int nOctantsObserved = 0;
+    public static int nObjectsObserved = 0;
     /** Max depth of the structure this node belongs to **/
     public static int maxDepth;
     /** Is dynamic loading active? **/
@@ -214,7 +215,7 @@ public class OctreeNode implements ILineRenderable {
         if (objects == null)
             objects = new Array<AbstractPositionEntity>(false, 1);
         objects.add(e);
-        ownObjects = e instanceof ParticleGroup ? objects.size - 1 + ((ParticleGroup) e).pointData.size : objects.size;
+        ownObjects = e instanceof ParticleGroup ? objects.size - 1 + ((ParticleGroup) e).size() : objects.size;
         return true;
     }
 
@@ -408,7 +409,7 @@ public class OctreeNode implements ILineRenderable {
         }
 
         if (observed) {
-            nObserved++;
+            nOctantsObserved++;
             /**
              * Load lists of pages
              */
@@ -422,16 +423,19 @@ public class OctreeNode implements ILineRenderable {
             distToCamera = auxD1.set(centre).add(cam.getInversePos()).len();
             viewAngle = (radius / distToCamera) / cam.getFovFactor();
 
-            if (viewAngle < GlobalConf.scene.OCTANT_THRESHOLD_0 / cam.getFovFactor()) {
+            float th0 = GlobalConf.scene.OCTANT_THRESHOLD_0 / cam.getFovFactor();
+            float th1 = GlobalConf.scene.OCTANT_THRESHOLD_1 / cam.getFovFactor();
+
+            if (viewAngle < th0) {
                 // Stay in current level
                 addObjectsTo(roulette);
                 setChildrenObserved(false);
             } else {
                 // Break down tree, fade in until th2
                 double alpha = 1;
-                if (GlobalConf.scene.OCTREE_PARTICLE_FADE) {
+                if (GlobalConf.scene.OCTREE_PARTICLE_FADE && viewAngle < th1) {
                     AbstractRenderSystem.POINT_UPDATE_FLAG = true;
-                    alpha = MathUtilsd.clamp(MathUtilsd.lint(viewAngle, GlobalConf.scene.OCTANT_THRESHOLD_0 / cam.getFovFactor(), GlobalConf.scene.OCTANT_THRESHOLD_1 / cam.getFovFactor(), 0d, 1d), 0f, 1f);
+                    alpha = MathUtilsd.clamp(MathUtilsd.lint(viewAngle, th0, th1, 0d, 1d), 0f, 1f);
                 }
 
                 // Add objects
@@ -451,6 +455,9 @@ public class OctreeNode implements ILineRenderable {
     private void addObjectsTo(Array<SceneGraphNode> roulette) {
         if (objects != null) {
             roulette.addAll(objects);
+            for (SceneGraphNode obj : objects) {
+                nObjectsObserved += obj.getStarCount();
+            }
         }
     }
 
@@ -590,7 +597,7 @@ public class OctreeNode implements ILineRenderable {
         } else {
             this.ownObjects = 0;
             for (AbstractPositionEntity ape : objects) {
-                this.ownObjects += ape instanceof ParticleGroup ? ((ParticleGroup) ape).pointData.size : 1;
+                this.ownObjects += ape instanceof ParticleGroup ? ((ParticleGroup) ape).size() : 1;
             }
 
         }

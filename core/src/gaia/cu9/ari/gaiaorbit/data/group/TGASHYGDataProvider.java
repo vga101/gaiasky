@@ -1,14 +1,13 @@
 package gaia.cu9.ari.gaiaorbit.data.group;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import com.badlogic.gdx.utils.Array;
 
+import gaia.cu9.ari.gaiaorbit.scenegraph.StarGroup;
 import gaia.cu9.ari.gaiaorbit.scenegraph.StarGroup.StarBean;
-import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 
@@ -34,8 +33,9 @@ public class TGASHYGDataProvider extends AbstractStarGroupDataProvider {
         Array<StarBean> tgasdata = tgas.loadData("data/tgas_final/tgas.csv");
         Array<StarBean> hygdata = hyg.loadData("data/hyg/hygxyz.bin");
 
-        Map<String, Integer> tgasindex = tgas.getIndex();
-        Map<String, Integer> hygindex = hyg.getIndex();
+        StarGroup aux = new StarGroup();
+        Map<String, Integer> tgasindex = aux.generateIndex(tgasdata);
+        Map<String, Integer> hygindex = aux.generateIndex(hygdata);
 
         // Merge everything, discarding hyg stars already in tgas
         // Contains removed HIP numbers
@@ -50,8 +50,6 @@ public class TGASHYGDataProvider extends AbstractStarGroupDataProvider {
         }
 
         // Add from hip to tgas
-        Map<Integer, List<String>> hygindexinv = GlobalResources.invertMap(hygindex);
-
         for (int i = 0; i < hygdata.size; i++) {
             StarBean curr = hygdata.get(i);
             Integer hip = (int) curr.data[StarBean.I_HIP];
@@ -59,11 +57,6 @@ public class TGASHYGDataProvider extends AbstractStarGroupDataProvider {
                 int newidx = tgasdata.size;
                 // Add to tgasdata
                 tgasdata.add(curr);
-
-                // Find out index and also add names
-                List<String> names = hygindexinv.get(i);
-                for (String n : names)
-                    tgasindex.put(n, newidx);
             } else {
                 // Use proper name
                 if (tgasindex.containsKey("HIP " + i)) {
@@ -74,7 +67,6 @@ public class TGASHYGDataProvider extends AbstractStarGroupDataProvider {
         }
 
         list = tgasdata;
-        index = tgasindex;
 
         if (dumpToDisk) {
             dumpToDisk(list, "/tmp/tgashyg.bin");

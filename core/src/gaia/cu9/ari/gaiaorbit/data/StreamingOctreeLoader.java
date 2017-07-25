@@ -7,6 +7,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ArrayBlockingQueue;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.Array;
 
 import gaia.cu9.ari.gaiaorbit.GaiaSky;
@@ -269,11 +270,14 @@ public abstract class StreamingOctreeLoader implements IObserver, ISceneGraphLoa
                     // Aux info
                     if (GaiaSky.instance != null && GaiaSky.instance.sg != null)
                         GaiaSky.instance.sg.removeNodeAuxiliaryInfo(object);
+
+                    nLoadedStars -= object.getStarCount();
+
                     // Stop thread in star groups
                     object.dispose();
+
                 }
             }
-            nLoadedStars -= objects.size;
             objects.clear();
             octant.setStatus(LoadStatus.NOT_LOADED);
 
@@ -354,8 +358,11 @@ public abstract class StreamingOctreeLoader implements IObserver, ISceneGraphLoa
                         }
                     }
 
-                    // Update constellations :S
-                    Constellation.updateConstellations();
+                    Gdx.app.postRunnable(() -> {
+                        // Update constellations :S
+                        Constellation.updateConstellations();
+                    });
+
                 }
 
                 /** ----------- SLEEP UNTIL INTERRUPTED ----------- **/

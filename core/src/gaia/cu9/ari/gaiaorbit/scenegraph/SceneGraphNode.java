@@ -629,11 +629,6 @@ public class SceneGraphNode implements IStarContainer, IPosition {
     }
 
     @Override
-    public Object getStars() {
-        return null;
-    }
-
-    @Override
     public Vector3d getPosition() {
         return null;
     }

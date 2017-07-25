@@ -115,10 +115,11 @@ public class StarGroupRenderSystem extends ImmediateRenderSystem implements IObs
 
         MeshData md = meshes[i];
 
-        md.mesh.dispose();
-        md.clear();
+        if (md != null && md.mesh != null) {
+            md.mesh.dispose();
 
-        meshes[i] = null;
+            meshes[i] = null;
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -133,10 +134,10 @@ public class StarGroupRenderSystem extends ImmediateRenderSystem implements IObs
                  * ADD PARTICLES
                  */
                 if (!starGroup.inGpu) {
-                    starGroup.offset = addMeshData(starGroup.pointData.size);
+                    starGroup.offset = addMeshData(starGroup.size());
                     curr = meshes[starGroup.offset];
 
-                    for (StarBean p : (Array<StarBean>) starGroup.pointData) {
+                    for (StarBean p : starGroup.data()) {
                         // COLOR
                         curr.vertices[curr.vertexIdx + curr.colorOffset] = (float) p.col();
 
@@ -156,7 +157,7 @@ public class StarGroupRenderSystem extends ImmediateRenderSystem implements IObs
 
                         curr.vertexIdx += curr.vertexSize;
                     }
-                    starGroup.count = starGroup.pointData.size * curr.vertexSize;
+                    starGroup.count = starGroup.size() * curr.vertexSize;
 
                     starGroup.inGpu = true;
 

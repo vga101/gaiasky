@@ -7,13 +7,13 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.IntMap;
 
 import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.render.I3DTextRenderable;
 import gaia.cu9.ari.gaiaorbit.render.system.LineRenderSystem;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
-import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 import gaia.cu9.ari.gaiaorbit.util.tree.IPosition;
@@ -25,7 +25,7 @@ import gaia.cu9.ari.gaiaorbit.util.tree.IPosition;
  *
  */
 public class Constellation extends LineObject implements I3DTextRenderable {
-    private static Array<Constellation> allConstellations = new Array<Constellation>(30);
+    private static Array<Constellation> allConstellations = new Array<Constellation>(88);
 
     public static void updateConstellations() {
         for (Constellation c : allConstellations) {
@@ -39,12 +39,10 @@ public class Constellation extends LineObject implements I3DTextRenderable {
 
     /** List of pairs of HIP identifiers **/
     public Array<int[]> ids;
-    /** List of pairs of stars between which there are lines **/
-    public Array<IPosition[]> stars;
     /**
-     * The positions themselves, in case the stars are not there (i.e. octrees)
+     * The lines themselves as pairs of positions
      **/
-    public Array<Vector3[]> positions;
+    public Vector3[][] lines;
 
     public Constellation() {
         super();
@@ -67,13 +65,19 @@ public class Constellation extends LineObject implements I3DTextRenderable {
     }
 
     public void update(ITimeFrameProvider time, final Transform parentTransform, ICamera camera, float opacity) {
+        // Recompute mean position
         pos.scl(0);
         Vector3d p = aux3d1.get();
-        for (int i = 0; i < stars.size; i++) {
-            p.set(stars.get(i)[0].getPosition()).add(camera.getInversePos());
-            pos.add(p);
+        int nstars = 0;
+        for (int i = 0; i < lines.length; i++) {
+            Vector3[] line = lines[i];
+            if (line != null) {
+                p.set(line[0]).add(camera.getInversePos());
+                pos.add(p);
+                nstars++;
+            }
         }
-        pos.scl((1d / stars.size));
+        pos.scl((1d / nstars));
         pos.nor().scl(100 * Constants.PC_TO_U);
         addToRenderLists(camera);
     }
@@ -81,24 +85,19 @@ public class Constellation extends LineObject implements I3DTextRenderable {
     @Override
     public void setUp() {
         if (!allLoaded) {
-            stars = new Array<IPosition[]>();
-            positions = new Array<Vector3[]>();
+            int npairs = ids.size;
+            if (lines == null)
+                lines = new Vector3[npairs][];
+            IntMap<IPosition> hipMap = sg.getStarMap();
             allLoaded = true;
-            for (int[] pair : ids) {
+            for (int i = 0; i < npairs; i++) {
+                int[] pair = ids.get(i);
                 IPosition s1, s2;
-                s1 = sg.getStarMap().get(pair[0]);
-                s2 = sg.getStarMap().get(pair[1]);
-                if (s1 != null && s2 != null) {
-                    stars.add(new IPosition[] { s1, s2 });
-                    positions.add(new Vector3[] { s1.getPosition().toVector3(), s2.getPosition().toVector3() });
+                s1 = hipMap.get(pair[0]);
+                s2 = hipMap.get(pair[1]);
+                if (lines[i] == null && s1 != null && s2 != null) {
+                    lines[i] = new Vector3[] { s1.getPosition().toVector3(), s2.getPosition().toVector3() };
                 } else {
-                    String wtf = "";
-                    if (s1 == null)
-                        wtf += pair[0];
-
-                    if (s2 == null)
-                        wtf += (wtf.length() > 0 ? ", " : "") + pair[1];
-                    Logger.debug(this.getClass().getSimpleName(), "Constellations stars not found (HIP): " + wtf);
                     allLoaded = false;
                 }
             }
@@ -118,12 +117,13 @@ public class Constellation extends LineObject implements I3DTextRenderable {
         Vector3 p2 = aux3f3.get();
         camera.getPos().setVector3(campos);
         // Fix, using positions directly
-        for (Vector3[] pair : positions) {
-            p1.set(pair[0]).sub(campos);
-            p2.set(pair[1]).sub(campos);
+        for (Vector3[] pair : lines) {
+            if (pair != null) {
+                p1.set(pair[0]).sub(campos);
+                p2.set(pair[1]).sub(campos);
 
-            renderer.addLine(p1.x, p1.y, p1.z, p2.x, p2.y, p2.z, cc[0], cc[1], cc[2], alpha);
-
+                renderer.addLine(p1.x, p1.y, p1.z, p2.x, p2.y, p2.z, cc[0], cc[1], cc[2], alpha);
+            }
         }
 
     }

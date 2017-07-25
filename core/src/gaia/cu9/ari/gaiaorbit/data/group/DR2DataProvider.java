@@ -148,9 +148,6 @@ public class DR2DataProvider extends AbstractStarGroupDataProvider {
             /** NAME **/
             String name = String.valueOf((long) sourceid);
 
-            /** INDEX **/
-            index.put(String.valueOf((long) sourceid), i);
-
             /** RA and DEC **/
             double ra = Parser.parseDouble(tokens[indices[RA]]);
             double dec = Parser.parseDouble(tokens[indices[DEC]]);

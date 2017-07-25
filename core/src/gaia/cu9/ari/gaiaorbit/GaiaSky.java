@@ -290,7 +290,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
                 EventManager.instance.post(Events.FPS_INFO, 1f / Gdx.graphics.getDeltaTime());
                 EventManager.instance.post(Events.DEBUG1, TimeUtils.timeSinceMillis(startTime) / 1000d);
                 EventManager.instance.post(Events.DEBUG2, MemInfo.getUsedMemory(), MemInfo.getFreeMemory(), MemInfo.getTotalMemory(), MemInfo.getMaxMemory());
-                EventManager.instance.post(Events.DEBUG4, GLFrameBuffer.getManagedStatus() + ", Observed octants: " + OctreeNode.nObserved);
+                EventManager.instance.post(Events.DEBUG4, GLFrameBuffer.getManagedStatus() + ", Observed octants: " + OctreeNode.nOctantsObserved);
             }
 
         }, 2, 1);

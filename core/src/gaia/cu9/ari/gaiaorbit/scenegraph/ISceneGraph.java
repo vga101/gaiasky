@@ -80,6 +80,7 @@ public interface ISceneGraph extends Disposable {
      * Updates the string to node map and the star map if necessary.
      * 
      * @param node
+     *            The node to add
      */
     public void addNodeAuxiliaryInfo(SceneGraphNode node);
 
@@ -87,9 +88,15 @@ public interface ISceneGraph extends Disposable {
      * Removes the info of the node from the aux lists.
      * 
      * @param node
+     *            The node to remove
      */
     public void removeNodeAuxiliaryInfo(SceneGraphNode node);
 
+    /**
+     * Gets the index from string to node
+     * 
+     * @return The index
+     */
     public HashMap<String, SceneGraphNode> getStringToNodeMap();
 
     /**

@@ -354,11 +354,7 @@ public class Particle extends CelestialBody implements IStarFocus, IPointRendera
         return 1;
     }
 
-    @Override
-    public Object getStars() {
-        return this;
-    }
-
+    @SuppressWarnings("unchecked")
     @Override
     public <T extends SceneGraphNode> T getSimpleCopy() {
         Particle copy = (Particle) super.getSimpleCopy();
@@ -454,4 +450,5 @@ public class Particle extends CelestialBody implements IStarFocus, IPointRendera
         else
             return 0;
     }
+
 }

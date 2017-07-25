@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -151,20 +150,20 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
             return size() * Constants.STAR_SIZE_FACTOR;
         }
 
-        public double hip() {
-            return data[I_HIP];
+        public int hip() {
+            return (int) data[I_HIP];
         }
 
-        public double tyc1() {
-            return data[I_TYC1];
+        public int tyc1() {
+            return (int) data[I_TYC1];
         }
 
-        public double tyc2() {
-            return data[I_TYC2];
+        public int tyc2() {
+            return (int) data[I_TYC2];
         }
 
-        public double tyc3() {
-            return data[I_TYC3];
+        public int tyc3() {
+            return (int) data[I_TYC3];
         }
 
         public String tyc() {
@@ -289,6 +288,8 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
     private float popInOpacity;
 
     private Vector3d lastSortCameraPos;
+
+    /** Comparator **/
     private Comparator<Integer> comp;
 
     // Is it updating?
@@ -315,9 +316,9 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
             if (factor == null)
                 factor = 1d;
 
-            pointData = provider.loadData(datafile, factor);
-            this.N_CLOSEUP_STARS = Math.min(250, pointData.size);
-            index = provider.getIndex();
+            // Set data, generate index
+            Array<StarBean> l = (Array<StarBean>) provider.loadData(datafile, factor);
+            this.setData(l);
 
         } catch (Exception e) {
             Logger.error(e, getClass().getSimpleName());
@@ -345,18 +346,18 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
         active = indices1;
         background = indices2;
 
-        /**
-         * Index to scene graph
-         */
-        ISceneGraph sg = GaiaSky.instance.sg;
-        if (index != null) {
-            Set<String> keys = index.keySet();
-            for (String key : keys) {
-                sg.addToStringToNode(key, this);
-                if (!key.toLowerCase().equals(key))
-                    sg.addToStringToNode(key.toLowerCase(), this);
-            }
-        }
+        //        /**
+        //         * Index to scene graph
+        //         */
+        //        ISceneGraph sg = GaiaSky.instance.sg;
+        //        if (index != null) {
+        //            Set<String> keys = index.keySet();
+        //            for (String key : keys) {
+        //                sg.addToStringToNode(key, this);
+        //                if (!key.toLowerCase().equals(key))
+        //                    sg.addToStringToNode(key.toLowerCase(), this);
+        //            }
+        //        }
 
         /**
          * INITIALIZE DAEMON LOADER THREAD
@@ -371,6 +372,16 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
          * INIT UPDATER TASK
          */
         updaterTask = new UpdaterTask(this);
+    }
+
+    /**
+     * Returns the data list
+     * 
+     * @return The data list
+     */
+    @SuppressWarnings("unchecked")
+    public Array<StarBean> data() {
+        return (Array<StarBean>) pointData;
     }
 
     public void setData(Array<StarBean> pointData, Map<String, Integer> index) {
@@ -391,25 +402,38 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
     }
 
     public void regenerateIndex() {
-        index = new HashMap<String, Integer>();
+        index = generateIndex(data());
+    }
+
+    public HashMap<String, Integer> generateIndex(Array<StarBean> pointData) {
+        HashMap<String, Integer> index = new HashMap<String, Integer>();
         int n = pointData.size;
         for (int i = 0; i < n; i++) {
-            StarBean sb = (StarBean) pointData.get(i);
-            index.put(sb.name, i);
+            StarBean sb = pointData.get(i);
+            String lcname = sb.name.toLowerCase();
+            index.put(lcname, i);
+            String lcid = sb.id.toString().toLowerCase();
+            if (sb.id > 0 && !lcid.equals(lcname)) {
+                index.put(lcid, i);
+            }
             if (sb.hip() > 0) {
-                index.put("hip " + sb.hip(), i);
+                String lchip = "hip " + sb.hip();
+                if (!lchip.equals(lcname))
+                    index.put(lchip, i);
             }
             if (sb.tyc1() > 0) {
-                index.put("tyc " + sb.tyc(), i);
+                String lctyc = "tyc " + sb.tyc();
+                if (!lctyc.equals(lcname))
+                    index.put(lctyc, i);
             }
-
         }
+        return index;
     }
 
     public void computeFixedMeanPosition() {
         if (!fixedMeanPosition) {
             // Mean position
-            for (StarBean point : (Array<StarBean>) pointData) {
+            for (StarBean point : data()) {
                 pos.add(point.x(), point.y(), point.z());
             }
             pos.scl(1d / pointData.size);
@@ -581,13 +605,16 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
     @Override
     public void render(ModelBatch modelBatch, float alpha, double t) {
         mc.touch();
-        mc.setTransparency(alpha * (float) MathUtilsd.lint(closestDist, modelDist / 50f, modelDist, 1f, 0f));
-        float[] col = closestCol;
-        ((ColorAttribute) mc.env.get(ColorAttribute.AmbientLight)).color.set(col[0], col[1], col[2], 1f);
-        ((FloatAttribute) mc.env.get(FloatAttribute.Shininess)).value = (float) t;
-        // Local transform
-        mc.instance.transform.idt().translate((float) closestPos.x, (float) closestPos.y, (float) closestPos.z).scl((float) (getRadius(active[0]) * 2d));
-        modelBatch.render(mc.instance, mc.env);
+        float opct = (float) MathUtilsd.lint(closestDist, modelDist / 50f, modelDist, 1f, 0f);
+        if (alpha * opct > 0) {
+            mc.setTransparency(alpha * opct);
+            float[] col = closestCol;
+            ((ColorAttribute) mc.env.get(ColorAttribute.AmbientLight)).color.set(col[0], col[1], col[2], 1f);
+            ((FloatAttribute) mc.env.get(FloatAttribute.Shininess)).value = (float) t;
+            // Local transform
+            mc.instance.transform.idt().translate((float) closestPos.x, (float) closestPos.y, (float) closestPos.z).scl((float) (getRadius(active[0]) * 2d));
+            modelBatch.render(mc.instance, mc.env);
+        }
     }
 
     /**

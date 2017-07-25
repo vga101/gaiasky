@@ -41,8 +41,8 @@ public class ParticleGroupBinaryIO {
     public void writeParticles(Array<AbstractPositionEntity> list, OutputStream out) {
         if (list.size > 0) {
             StarGroup sg = (StarGroup) list.get(0);
-            List<StarBean> l = new ArrayList<StarBean>(sg.pointData.size);
-            for (StarBean p : (Array<StarBean>) sg.pointData)
+            List<StarBean> l = new ArrayList<StarBean>(sg.size());
+            for (StarBean p : sg.data())
                 l.add(p);
 
             try {

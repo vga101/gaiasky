@@ -117,7 +117,8 @@ public abstract class AbstractOctreeWrapper extends SceneGraphNode implements It
         if (!copy) {
 
             // Compute observed octants and fill roulette list
-            OctreeNode.nObserved = 0;
+            OctreeNode.nOctantsObserved = 0;
+            OctreeNode.nObjectsObserved = 0;
             root.update(transform, camera, roulette, 1f);
 
             if (roulette.size != lastNumberObjects) {
@@ -130,7 +131,7 @@ public abstract class AbstractOctreeWrapper extends SceneGraphNode implements It
 
             // Call the update method of all entities in the roulette list. This
             // is implemented in the subclass.
-            EventManager.instance.post(Events.DEBUG3, "Objects: " + getRouletteDebug());
+            EventManager.instance.post(Events.DEBUG3, "Objects: " + OctreeNode.nObjectsObserved);
             updateOctreeObjects(time, transform, camera);
 
             // Reset mask
@@ -197,11 +198,6 @@ public abstract class AbstractOctreeWrapper extends SceneGraphNode implements It
         return root.nObjects;
     }
 
-    @Override
-    public Object getStars() {
-        return children;
-    }
-
     /**
      * Gets a copy of this object but does not copy its parent or children.
      * 
@@ -227,5 +223,4 @@ public abstract class AbstractOctreeWrapper extends SceneGraphNode implements It
         return null;
     }
 
-    protected abstract String getRouletteDebug();
 }

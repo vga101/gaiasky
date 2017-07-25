@@ -153,11 +153,12 @@ public class OctreeGroupGeneratorTest implements IObserver {
         Map<Integer, StarBean> hips = new HashMap<Integer, StarBean>();
         for (StarBean p : listHip) {
             if (p.hip() > 0) {
-                hips.put((int) p.hip(), p);
+                hips.put(p.hip(), p);
             }
         }
 
         /** LOAD CATALOG **/
+        @SuppressWarnings("unchecked")
         Array<StarBean> listGaia = (Array<StarBean>) loader.loadData(input);
         for (StarBean s : listGaia) {
             if (s.hip() > 0 && hips.containsKey(s.hip())) {

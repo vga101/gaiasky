@@ -3,6 +3,8 @@ package gaia.cu9.ari.gaiaorbit.data.group;
 import java.io.DataInputStream;
 import java.io.EOFException;
 import java.io.InputStream;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
@@ -46,6 +48,7 @@ public class HYGDataProvider extends AbstractStarGroupDataProvider {
             int stari = 0;
             for (int idx = 0; idx < size; idx++) {
                 try {
+                    Set<String> treated = new HashSet<String>();
                     // name_length, name, appmag, absmag, colorbv, ra, dec,
                     // dist, mualpha, mudelta, radvel, id, hip
                     int nameLength = data_in.readInt();
@@ -66,13 +69,8 @@ public class HYGDataProvider extends AbstractStarGroupDataProvider {
                     long id = data_in.readInt();
                     id = -1l;// HIP stars with no gaia id go by 0
                     int hip = data_in.readInt();
-                    if (appmag < GlobalConf.data.LIMIT_MAG_LOAD && !name.equals("Sol") && !index.containsKey(name.toLowerCase())) {
-
-                        /** INDEX **/
-                        index.put(name.toLowerCase(), stari);
-                        if (hip > 0) {
-                            index.put("hip " + hip, stari);
-                        }
+                    if (appmag < GlobalConf.data.LIMIT_MAG_LOAD && !name.equals("Sol") && !treated.contains(name.toLowerCase())) {
+                        treated.add(name.toLowerCase());
 
                         double flux = Math.pow(10, -absmag / 2.5f);
                         double starsize = Math.min((Math.pow(flux, 0.5f) * Constants.PC_TO_U * 0.16f), 1e9f) / 1.5;

@@ -6,5 +6,4 @@ public interface IStarContainer extends Disposable {
 
     public int getStarCount();
 
-    public Object getStars();
 }

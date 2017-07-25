@@ -46,11 +46,11 @@ public class SearchDialog extends Window {
                             me.remove();
                             return true;
                         } else {
-                            String text = searchInput.getText();
-                            if (sg.containsNode(text.toLowerCase())) {
-                                SceneGraphNode node = sg.getNode(text.toLowerCase());
+                            String text = searchInput.getText().toLowerCase();
+                            if (sg.containsNode(text)) {
+                                SceneGraphNode node = sg.getNode(text);
                                 if (node instanceof IFocus) {
-                                    IFocus focus = ((IFocus) node).getFocus(text.toLowerCase());
+                                    IFocus focus = ((IFocus) node).getFocus(text);
                                     EventManager.instance.post(Events.CAMERA_MODE_CMD, CameraMode.Focus, true);
                                     EventManager.instance.post(Events.FOCUS_CHANGE_CMD, focus, true);
                                     // This prevents further search
