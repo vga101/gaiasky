@@ -112,7 +112,7 @@ public abstract class AbstractSceneGraph implements ISceneGraph {
             for (AbstractPositionEntity ape : set)
                 addToHipMap(ape);
         } else {
-            if (node.getStarCount() == 1) {
+            if (node instanceof CelestialBody) {
                 CelestialBody s = (CelestialBody) node;
                 if (s instanceof Star && ((Star) s).hip > 0) {
                     if (hipMap.containsKey(((Star) s).hip)) {
@@ -121,16 +121,15 @@ public abstract class AbstractSceneGraph implements ISceneGraph {
                         hipMap.put(((Star) s).hip, (Star) s);
                     }
                 }
-            } else if (node.getStarCount() > 1) {
-                if (node instanceof StarGroup) {
-                    Array<StarBean> stars = ((StarGroup) node).data();
-                    for (StarBean s : stars) {
-                        if (s.hip() > 0) {
-                            hipMap.put(s.hip(), new Position(s.x(), s.y(), s.z()));
-                        }
+            } else if (node instanceof StarGroup) {
+                Array<StarBean> stars = ((StarGroup) node).data();
+                for (StarBean s : stars) {
+                    if (s.hip() > 0) {
+                        hipMap.put(s.hip(), new Position(s.x(), s.y(), s.z()));
                     }
                 }
             }
+
         }
     }
 
@@ -141,18 +140,16 @@ public abstract class AbstractSceneGraph implements ISceneGraph {
             for (AbstractPositionEntity ape : set)
                 removeFromHipMap(ape);
         } else {
-            if (node.getStarCount() == 1) {
+            if (node instanceof CelestialBody) {
                 CelestialBody s = (CelestialBody) node;
                 if (s instanceof Star && ((Star) s).hip >= 0) {
                     hipMap.remove(((Star) s).hip);
                 }
-            } else if (node.getStarCount() > 1) {
-                if (node instanceof StarGroup) {
-                    StarGroup sg = (StarGroup) node;
-                    for (StarBean sb : sg.data()) {
-                        if (sb.hip() >= 0)
-                            hipMap.remove(sb.hip());
-                    }
+            } else if (node instanceof StarGroup) {
+                StarGroup sg = (StarGroup) node;
+                for (StarBean sb : sg.data()) {
+                    if (sb.hip() >= 0)
+                        hipMap.remove(sb.hip());
                 }
             }
         }

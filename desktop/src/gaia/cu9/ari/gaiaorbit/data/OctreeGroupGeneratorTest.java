@@ -136,6 +136,15 @@ public class OctreeGroupGeneratorTest implements IObserver {
         }
     }
 
+    private void delete(File element) {
+        if (element.isDirectory()) {
+            for (File sub : element.listFiles()) {
+                delete(sub);
+            }
+        }
+        element.delete();
+    }
+
     private void generateOctree() throws IOException, InstantiationException, IllegalAccessException, ClassNotFoundException {
         IAggregationAlgorithm aggr = new BrightestStars(maxDepth, maxPart, minPart, discard);
 
@@ -189,21 +198,22 @@ public class OctreeGroupGeneratorTest implements IObserver {
         Logger.info("Octree generated with " + octree.numNodes() + " octants and " + list.size + " particles");
         Logger.info(aggr.getDiscarded() + " particles have been discarded due to density");
 
-        /** WRITE METADATA **/
-        File metadata = new File(outFolder, "metadata.bin");
-        if (metadata.exists()) {
-            metadata.delete();
-        }
-        metadata.createNewFile();
+        /** CLEAN CURRENT OUT DIR **/
+        File metadataFile = new File(outFolder, "metadata.bin");
+        delete(metadataFile);
+        File particlesFolder = new File(outFolder, "particles/");
+        delete(particlesFolder);
 
-        Logger.info("Writing metadata (" + octree.numNodes() + " nodes): " + metadata.getAbsolutePath());
+        /** WRITE METADATA **/
+        metadataFile.createNewFile();
+
+        Logger.info("Writing metadata (" + octree.numNodes() + " nodes): " + metadataFile.getAbsolutePath());
 
         MetadataBinaryIO metadataWriter = new MetadataBinaryIO();
-        metadataWriter.writeMetadata(octree, new FileOutputStream(metadata));
+        metadataWriter.writeMetadata(octree, new FileOutputStream(metadataFile));
 
         /** WRITE PARTICLES **/
         ParticleGroupBinaryIO particleWriter = new ParticleGroupBinaryIO();
-        File particlesFolder = new File(outFolder + "/particles/");
         particlesFolder.mkdirs();
         writeParticlesToFiles(particleWriter, octree);
 

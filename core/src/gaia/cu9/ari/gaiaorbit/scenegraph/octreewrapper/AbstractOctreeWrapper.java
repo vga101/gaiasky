@@ -54,7 +54,6 @@ public abstract class AbstractOctreeWrapper extends SceneGraphNode implements It
         this.root = root;
         this.parentName = parentName;
         this.parenthood = new HashMap<AbstractPositionEntity, OctreeNode>();
-
     }
 
     /**
@@ -119,6 +118,7 @@ public abstract class AbstractOctreeWrapper extends SceneGraphNode implements It
             // Compute observed octants and fill roulette list
             OctreeNode.nOctantsObserved = 0;
             OctreeNode.nObjectsObserved = 0;
+
             root.update(transform, camera, roulette, 1f);
 
             if (OctreeNode.nObjectsObserved != lastNumberObjects) {
@@ -129,9 +129,11 @@ public abstract class AbstractOctreeWrapper extends SceneGraphNode implements It
 
             updateLocal(time, camera);
 
+            // Broadcast the number of objects that we will try to render
+            EventManager.instance.post(Events.DEBUG3, "Objects: " + OctreeNode.nObjectsObserved);
+
             // Call the update method of all entities in the roulette list. This
             // is implemented in the subclass.
-            EventManager.instance.post(Events.DEBUG3, "Objects: " + OctreeNode.nObjectsObserved);
             updateOctreeObjects(time, transform, camera);
 
             // Reset mask

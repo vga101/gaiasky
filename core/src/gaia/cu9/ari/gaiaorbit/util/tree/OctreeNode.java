@@ -427,21 +427,24 @@ public class OctreeNode implements ILineRenderable {
                  * Load lists of pages
                  */
                 if (status == LoadStatus.NOT_LOADED && LOAD_ACTIVE) {
+                    // Add to load and go on
                     StreamingOctreeLoader.queue(this);
                 } else if (status == LoadStatus.LOADED) {
+                    // Visited last!
                     StreamingOctreeLoader.touch(this);
+
+                    // Break down tree, fade in until th2
+                    double alpha = 1;
+                    if (GlobalConf.scene.OCTREE_PARTICLE_FADE && viewAngle < th1) {
+                        AbstractRenderSystem.POINT_UPDATE_FLAG = true;
+                        alpha = MathUtilsd.clamp(MathUtilsd.lint(viewAngle, th0, th1, 0d, 1d), 0f, 1f);
+                    }
+                    this.opacity *= alpha;
+
+                    // Add objects
+                    addObjectsTo(roulette);
                 }
 
-                // Break down tree, fade in until th2
-                double alpha = 1;
-                if (GlobalConf.scene.OCTREE_PARTICLE_FADE && viewAngle < th1) {
-                    AbstractRenderSystem.POINT_UPDATE_FLAG = true;
-                    alpha = MathUtilsd.clamp(MathUtilsd.lint(viewAngle, th0, th1, 0d, 1d), 0f, 1f);
-                }
-                this.opacity *= alpha;
-
-                // Add objects
-                addObjectsTo(roulette);
                 // Update children
                 for (int i = 0; i < 8; i++) {
                     OctreeNode child = children[i];
