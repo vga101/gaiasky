@@ -235,15 +235,13 @@ public class OctreeGeneratorTest implements IObserver {
         /** WRITE PARTICLES **/
         ParticleDataBinaryIO particleWriter = new ParticleDataBinaryIO();
         if (!multifile) {
-            File particles = new File(outFolder, "particles.bin");
-            if (particles.exists()) {
-                particles.delete();
-            }
-            particles.createNewFile();
+            File particlesFile = new File(outFolder, "particles.bin");
+            delete(particlesFile);
+            particlesFile.createNewFile();
 
-            Logger.info("Writing " + listStars.size + " particles to " + particles.getAbsolutePath());
+            Logger.info("Writing " + listStars.size + " particles to " + particlesFile.getAbsolutePath());
 
-            particleWriter.writeParticles(listStars, new BufferedOutputStream(new FileOutputStream(particles)));
+            particleWriter.writeParticles(listStars, new BufferedOutputStream(new FileOutputStream(particlesFile)));
         } else {
             // Walk each node of the octree and write the particles for each in
             // a different file
