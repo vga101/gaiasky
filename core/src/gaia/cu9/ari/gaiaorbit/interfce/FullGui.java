@@ -164,7 +164,6 @@ public class FullGui extends AbstractGui {
 
         /** ADD TO UI **/
         rebuildGui();
-        // controls.collapse();
 
         // INVISIBLE IN STEREOSCOPIC MODE
         invisibleInStereoMode = new ArrayList<Actor>();
