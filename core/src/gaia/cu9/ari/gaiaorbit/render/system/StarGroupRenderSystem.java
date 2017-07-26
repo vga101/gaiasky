@@ -122,7 +122,6 @@ public class StarGroupRenderSystem extends ImmediateRenderSystem implements IObs
         }
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public void renderStud(Array<IRenderable> renderables, ICamera camera, double t) {
         renderables.sort(comp);

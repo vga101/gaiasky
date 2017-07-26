@@ -408,35 +408,37 @@ public class OctreeNode implements ILineRenderable {
         }
 
         if (observed) {
-            nOctantsObserved++;
-            /**
-             * Load lists of pages
-             */
-            if (status == LoadStatus.NOT_LOADED && LOAD_ACTIVE) {
-                StreamingOctreeLoader.queue(this);
-            } else if (status == LoadStatus.LOADED) {
-                StreamingOctreeLoader.touch(this);
-            }
-
             // Compute distance and view angle
             distToCamera = auxD1.set(centre).add(cam.getInversePos()).len();
-            // View angle is normalized to 40 deg when the octant is exactly the size of the sceeen height, regardless of the camera fov
+            // View angle is normalized to 40 degrees when the octant is exactly the size of the screen height, regardless of the camera fov
             viewAngle = Math.atan(radius / distToCamera) * 2 / cam.getFovFactor();
 
             float th0 = GlobalConf.scene.OCTANT_THRESHOLD_0 / cam.getFovFactor();
             float th1 = GlobalConf.scene.OCTANT_THRESHOLD_1 / cam.getFovFactor();
 
             if (viewAngle < th0) {
-                // Stay in current level
-                addObjectsTo(roulette);
+                // Not observed
+                this.observed = false;
                 setChildrenObserved(false);
             } else {
+                nOctantsObserved++;
+
+                /**
+                 * Load lists of pages
+                 */
+                if (status == LoadStatus.NOT_LOADED && LOAD_ACTIVE) {
+                    StreamingOctreeLoader.queue(this);
+                } else if (status == LoadStatus.LOADED) {
+                    StreamingOctreeLoader.touch(this);
+                }
+
                 // Break down tree, fade in until th2
                 double alpha = 1;
                 if (GlobalConf.scene.OCTREE_PARTICLE_FADE && viewAngle < th1) {
                     AbstractRenderSystem.POINT_UPDATE_FLAG = true;
                     alpha = MathUtilsd.clamp(MathUtilsd.lint(viewAngle, th0, th1, 0d, 1d), 0f, 1f);
                 }
+                this.opacity *= alpha;
 
                 // Add objects
                 addObjectsTo(roulette);
@@ -444,7 +446,7 @@ public class OctreeNode implements ILineRenderable {
                 for (int i = 0; i < 8; i++) {
                     OctreeNode child = children[i];
                     if (child != null) {
-                        child.update(parentTransform, cam, roulette, (float) alpha);
+                        child.update(parentTransform, cam, roulette, this.opacity);
                     }
                 }
 
@@ -500,60 +502,6 @@ public class OctreeNode implements ILineRenderable {
 
         return observed;
     }
-
-    /**
-     * The octant is observed if at least one of its vertices is in the view or
-     * the camera itself is in the view.
-     * 
-     * @param parentTransform
-     * @param angle
-     *            Angle edge of camera
-     * @param pos
-     *            Position of camera
-     * @param dir
-     *            Direction of camera
-     * @param up
-     *            Up vector of camera
-     */
-    // private boolean computeObserved2(Transform parentTransform, float angle,
-    // Vector3d pos, Vector3d dir, Vector3d up) {
-    // boxcopy.set(box);
-    // boxcopy.mul(boxtransf.idt().translate(parentTransform.getTranslation()));
-    //
-    // observed = GlobalConf.program.CUBEMAP360_MODE ||
-    // GlobalResources.isInView(boxcopy.getCenter(auxD1), angle, dir) ||
-    // GlobalResources.isInView(boxcopy.getCorner000(auxD1), angle, dir) ||
-    // GlobalResources.isInView(boxcopy.getCorner001(auxD1), angle, dir) ||
-    // GlobalResources.isInView(boxcopy.getCorner010(auxD1), angle, dir) ||
-    // GlobalResources.isInView(boxcopy.getCorner011(auxD1), angle, dir) ||
-    // GlobalResources.isInView(boxcopy.getCorner100(auxD1), angle, dir)
-    // || GlobalResources.isInView(boxcopy.getCorner101(auxD1), angle, dir) ||
-    // GlobalResources.isInView(boxcopy.getCorner110(auxD1), angle, dir) ||
-    // GlobalResources.isInView(boxcopy.getCorner111(auxD1), angle, dir) ||
-    // box.contains(pos);
-    //
-    // // Rays
-    // if (!observed) {
-    // auxD2.set(dir).crs(up);
-    //
-    // // Rays in direction-up plane (vertical plane)
-    // ray.direction.set(auxD1.set(dir).rotate(auxD2, angle));
-    // observed = observed || Intersectord.intersectRayBoundsFast(ray,
-    // boxcopy.getCenter(auxD3), boxcopy.getDimensions(auxD4));
-    // ray.direction.set(auxD1.set(dir).rotate(auxD2, -angle));
-    // observed = observed || Intersectord.intersectRayBoundsFast(ray,
-    // boxcopy.getCenter(auxD3), boxcopy.getDimensions(auxD4));
-    //
-    // // Rays in direction-crs(direction,up) plane (horizontal plane)
-    // ray.direction.set(auxD1.set(dir).rotate(up, angle));
-    // observed = observed || Intersectord.intersectRayBoundsFast(ray,
-    // boxcopy.getCenter(auxD3), boxcopy.getDimensions(auxD4));
-    // ray.direction.set(auxD1.set(dir).rotate(up, -angle));
-    // observed = observed || Intersectord.intersectRayBoundsFast(ray,
-    // boxcopy.getCenter(auxD3), boxcopy.getDimensions(auxD4));
-    // }
-    // return observed;
-    // }
 
     public LoadStatus getStatus() {
         return status;
@@ -621,7 +569,9 @@ public class OctreeNode implements ILineRenderable {
     public int countObjects() {
         int n = 0;
         if (objects != null) {
-            n += objects.size;
+            for (AbstractPositionEntity obj : objects) {
+                n += obj.getStarCount();
+            }
         }
 
         if (children != null)
@@ -655,52 +605,56 @@ public class OctreeNode implements ILineRenderable {
 
     @Override
     public void render(LineRenderSystem sr, ICamera camera, float alpha) {
-        //alpha *= MathUtilsd.lint(depth, 0, maxDepth, 1.0, 0.5);
-
         if (this.observed) {
-            this.col.set(Color.YELLOW);
+            this.col.set(Color.GREEN);
             this.col.a = alpha * opacity;
         } else {
-            this.col.set(Color.BROWN);
+            this.col.set(Color.RED);
             this.col.a = alpha * opacity;
         }
 
-        // Camera correction
-        Vector3d loc = aux3d1;
-        loc.set(this.blf).add(camera.getInversePos());
+        if (this.col.a > 0) {
+            // Camera correction
+            Vector3d loc = aux3d1;
+            loc.set(this.blf).add(camera.getInversePos());
 
-        /*
-         * .·------· .' | .'| +---+--·' | | | | | | ,+--+---· |.' | .' +------+'
-         */
-        line(sr, loc.x, loc.y, loc.z, loc.x + size.x, loc.y, loc.z, this.col);
-        line(sr, loc.x, loc.y, loc.z, loc.x, loc.y + size.y, loc.z, this.col);
-        line(sr, loc.x, loc.y, loc.z, loc.x, loc.y, loc.z + size.z, this.col);
+            /*
+             * .·------· .' | .'| +---+--·' | | | | | | ,+--+---· |.' | .'
+             * +------+'
+             */
+            line(sr, loc.x, loc.y, loc.z, loc.x + size.x, loc.y, loc.z, this.col);
+            line(sr, loc.x, loc.y, loc.z, loc.x, loc.y + size.y, loc.z, this.col);
+            line(sr, loc.x, loc.y, loc.z, loc.x, loc.y, loc.z + size.z, this.col);
 
-        /*
-         * .·------· .' | .'| ·---+--+' | | | | | | ,·--+---+ |.' | .' ·------+'
-         */
-        line(sr, loc.x + size.x, loc.y, loc.z, loc.x + size.x, loc.y + size.y, loc.z, this.col);
-        line(sr, loc.x + size.x, loc.y, loc.z, loc.x + size.x, loc.y, loc.z + size.z, this.col);
+            /*
+             * .·------· .' | .'| ·---+--+' | | | | | | ,·--+---+ |.' | .'
+             * ·------+'
+             */
+            line(sr, loc.x + size.x, loc.y, loc.z, loc.x + size.x, loc.y + size.y, loc.z, this.col);
+            line(sr, loc.x + size.x, loc.y, loc.z, loc.x + size.x, loc.y, loc.z + size.z, this.col);
 
-        /*
-         * .·------+ .' | .'| ·---+--·' | | | | | | ,+--+---+ |.' | .' ·------·'
-         */
-        line(sr, loc.x + size.x, loc.y, loc.z + size.z, loc.x, loc.y, loc.z + size.z, this.col);
-        line(sr, loc.x + size.x, loc.y, loc.z + size.z, loc.x + size.x, loc.y + size.y, loc.z + size.z, this.col);
+            /*
+             * .·------+ .' | .'| ·---+--·' | | | | | | ,+--+---+ |.' | .'
+             * ·------·'
+             */
+            line(sr, loc.x + size.x, loc.y, loc.z + size.z, loc.x, loc.y, loc.z + size.z, this.col);
+            line(sr, loc.x + size.x, loc.y, loc.z + size.z, loc.x + size.x, loc.y + size.y, loc.z + size.z, this.col);
 
-        /*
-         * .+------· .' | .'| ·---+--·' | | | | | | ,+--+---· |.' | .' ·------·'
-         */
-        line(sr, loc.x, loc.y, loc.z + size.z, loc.x, loc.y + size.y, loc.z + size.z, this.col);
+            /*
+             * .+------· .' | .'| ·---+--·' | | | | | | ,+--+---· |.' | .'
+             * ·------·'
+             */
+            line(sr, loc.x, loc.y, loc.z + size.z, loc.x, loc.y + size.y, loc.z + size.z, this.col);
 
-        /*
-         * .+------+ .' | .'| +---+--+' | | | | | | ,·--+---· |.' | .' ·------·'
-         */
-        line(sr, loc.x, loc.y + size.y, loc.z, loc.x + size.x, loc.y + size.y, loc.z, this.col);
-        line(sr, loc.x, loc.y + size.y, loc.z, loc.x, loc.y + size.y, loc.z + size.z, this.col);
-        line(sr, loc.x, loc.y + size.y, loc.z + size.z, loc.x + size.x, loc.y + size.y, loc.z + size.z, this.col);
-        line(sr, loc.x + size.x, loc.y + size.y, loc.z, loc.x + size.x, loc.y + size.y, loc.z + size.z, this.col);
-
+            /*
+             * .+------+ .' | .'| +---+--+' | | | | | | ,·--+---· |.' | .'
+             * ·------·'
+             */
+            line(sr, loc.x, loc.y + size.y, loc.z, loc.x + size.x, loc.y + size.y, loc.z, this.col);
+            line(sr, loc.x, loc.y + size.y, loc.z, loc.x, loc.y + size.y, loc.z + size.z, this.col);
+            line(sr, loc.x, loc.y + size.y, loc.z + size.z, loc.x + size.x, loc.y + size.y, loc.z + size.z, this.col);
+            line(sr, loc.x + size.x, loc.y + size.y, loc.z, loc.x + size.x, loc.y + size.y, loc.z + size.z, this.col);
+        }
     }
 
     /** Draws a line **/

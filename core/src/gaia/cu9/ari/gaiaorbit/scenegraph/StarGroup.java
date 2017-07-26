@@ -266,9 +266,6 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
     // Close up stars treated
     private int N_CLOSEUP_STARS;
 
-    // Sorter daemon
-    private SorterThread daemon;
-
     // Updater task
     private UpdaterTask updaterTask;
 
@@ -345,28 +342,6 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
         }
         active = indices1;
         background = indices2;
-
-        //        /**
-        //         * Index to scene graph
-        //         */
-        //        ISceneGraph sg = GaiaSky.instance.sg;
-        //        if (index != null) {
-        //            Set<String> keys = index.keySet();
-        //            for (String key : keys) {
-        //                sg.addToStringToNode(key, this);
-        //                if (!key.toLowerCase().equals(key))
-        //                    sg.addToStringToNode(key.toLowerCase(), this);
-        //            }
-        //        }
-
-        /**
-         * INITIALIZE DAEMON LOADER THREAD
-         */
-        //        daemon = new SorterThread(this);
-        //        daemon.setDaemon(true);
-        //        daemon.setName("daemon-star-group-sorter-" + id);
-        //        daemon.setPriority(Thread.MIN_PRIORITY);
-        //        daemon.start();
 
         /**
          * INIT UPDATER TASK
@@ -772,43 +747,6 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
         }
     }
 
-    private class SorterThread extends Thread {
-        public boolean awake;
-        public boolean running;
-
-        private StarGroup sg;
-        public Vector3d currentCameraPos;
-
-        public SorterThread(StarGroup sg) {
-            super();
-            this.awake = false;
-            this.running = true;
-            this.sg = sg;
-        }
-
-        public void stopExecution() {
-            this.running = false;
-        }
-
-        @Override
-        public void run() {
-            while (running) {
-                /** ----------- SLEEP UNTIL INTERRUPTED ----------- **/
-                try {
-                    awake = false;
-                    Thread.sleep(Long.MAX_VALUE - 8);
-                } catch (InterruptedException e) {
-                    // New data!
-                    awake = true;
-                }
-
-                sg.updateSorter(GaiaSky.instance.time, GaiaSky.instance.getICamera());
-                sg.lastSortCameraPos.set(currentCameraPos);
-            }
-        }
-
-    }
-
     public class UpdaterTask implements Runnable {
 
         private StarGroup sg;
@@ -834,11 +772,6 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
             if (updaterTask != null) {
                 final Vector3d currentCameraPos = (Vector3d) data[0];
                 long t = TimeUtils.millis() - lastSortTime;
-                //                if (!daemon.awake && this.opacity > 0 && (t > MIN_UPDATE_TIME_MS * 2 || (lastSortCameraPos.dst(currentCameraPos) > CAM_DX_TH && t > MIN_UPDATE_TIME_MS))) {
-                //                    // Update
-                //                    daemon.currentCameraPos = currentCameraPos;
-                //                    daemon.interrupt();
-                //                }
                 if (!updating && !workQueue.contains(updaterTask) && this.opacity > 0 && (t > MIN_UPDATE_TIME_MS * 2 || (lastSortCameraPos.dst(currentCameraPos) > CAM_DX_TH && t > MIN_UPDATE_TIME_MS))) {
                     updating = true;
                     pool.execute(updaterTask);
@@ -941,10 +874,6 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
 
     @Override
     public void dispose() {
-        if (daemon != null) {
-            daemon.stopExecution();
-            daemon = null;
-        }
         // Dispose of GPU data
         EventManager.instance.post(Events.DISPOSE_STAR_GROUP_GPU_MESH, this.offset);
     }

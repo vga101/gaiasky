@@ -199,6 +199,7 @@ public class ParticleGroup extends FadeNode implements I3DTextRenderable, IFocus
 
     public void update(ITimeFrameProvider time, final Transform parentTransform, ICamera camera, float opacity) {
         if (pointData != null) {
+            this.opacity = 1;
             super.update(time, parentTransform, camera, opacity);
 
             if (focusIndex >= 0) {
@@ -606,5 +607,10 @@ public class ParticleGroup extends FadeNode implements I3DTextRenderable, IFocus
     @Override
     public double getDelta() {
         return focusPositionSph.y;
+    }
+
+    @Override
+    protected float getBaseOpacity() {
+        return this.opacity;
     }
 }

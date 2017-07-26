@@ -31,37 +31,41 @@ public class FadeNode extends AbstractPositionEntity {
     private double currentDistance;
 
     public void update(ITimeFrameProvider time, final Transform parentTransform, ICamera camera, float opacity) {
-	this.opacity = opacity * this.opacity;
-	transform.set(parentTransform);
-	Vector3d aux = aux3d1.get();
-	this.currentDistance = aux.set(this.pos).sub(camera.getPos()).len() * camera.getFovFactor();
+        this.opacity = opacity * this.opacity;
+        transform.set(parentTransform);
+        Vector3d aux = aux3d1.get();
+        this.currentDistance = aux.set(this.pos).sub(camera.getPos()).len() * camera.getFovFactor();
 
-	// Update with translation/rotation/etc
-	updateLocal(time, camera);
+        // Update with translation/rotation/etc
+        updateLocal(time, camera);
 
-	if (children != null) {
-	    for (int i = 0; i < children.size; i++) {
-		SceneGraphNode child = children.get(i);
-		child.update(time, transform, camera, this.opacity);
-	    }
-	}
+        if (children != null) {
+            for (int i = 0; i < children.size; i++) {
+                SceneGraphNode child = children.get(i);
+                child.update(time, transform, camera, this.opacity);
+            }
+        }
     }
 
     @Override
     public void updateLocal(ITimeFrameProvider time, ICamera camera) {
-	this.distToCamera = (float) pos.dst(camera.getPos());
+        this.distToCamera = (float) pos.dst(camera.getPos());
 
-	// Update alpha
-	this.opacity = 1;
-	if (fadeIn != null)
-	    this.opacity *= MathUtilsd.lint((float) this.currentDistance, fadeIn.x, fadeIn.y, 0, 1);
-	if (fadeOut != null)
-	    this.opacity *= MathUtilsd.lint((float) this.currentDistance, fadeOut.x, fadeOut.y, 1, 0);
+        // Update alpha
+        this.opacity = getBaseOpacity();
+        if (fadeIn != null)
+            this.opacity *= MathUtilsd.lint((float) this.currentDistance, fadeIn.x, fadeIn.y, 0, 1);
+        if (fadeOut != null)
+            this.opacity *= MathUtilsd.lint((float) this.currentDistance, fadeOut.x, fadeOut.y, 1, 0);
 
-	if (!copy && opacity > 0) {
-	    addToRenderLists(camera);
-	}
+        if (!copy && opacity > 0) {
+            addToRenderLists(camera);
+        }
 
+    }
+
+    protected float getBaseOpacity() {
+        return 1;
     }
 
     @Override
@@ -73,15 +77,15 @@ public class FadeNode extends AbstractPositionEntity {
     }
 
     public void setFadein(double[] fadein) {
-	fadeIn = new Vector2((float) (fadein[0] * Constants.PC_TO_U), (float) (fadein[1] * Constants.PC_TO_U));
+        fadeIn = new Vector2((float) (fadein[0] * Constants.PC_TO_U), (float) (fadein[1] * Constants.PC_TO_U));
     }
 
     public void setFadeout(double[] fadeout) {
-	fadeOut = new Vector2((float) (fadeout[0] * Constants.PC_TO_U), (float) (fadeout[1] * Constants.PC_TO_U));
+        fadeOut = new Vector2((float) (fadeout[0] * Constants.PC_TO_U), (float) (fadeout[1] * Constants.PC_TO_U));
     }
 
     public void setPosition(double[] pos) {
-	this.pos.set(pos[0] * Constants.PC_TO_U, pos[1] * Constants.PC_TO_U, pos[2] * Constants.PC_TO_U);
+        this.pos.set(pos[0] * Constants.PC_TO_U, pos[1] * Constants.PC_TO_U, pos[2] * Constants.PC_TO_U);
     }
 
 }
