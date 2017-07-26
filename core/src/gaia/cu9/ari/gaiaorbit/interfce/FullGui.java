@@ -120,7 +120,7 @@ public class FullGui extends AbstractGui {
             addControlsWindow();
         }
 
-        nf = NumberFormatFactory.getFormatter("##0.###");
+        nf = NumberFormatFactory.getFormatter("##0.##");
 
         // FOCUS INFORMATION - BOTTOM RIGHT
         focusInterface = new FocusInfoInterface(skin);
@@ -158,7 +158,9 @@ public class FullGui extends AbstractGui {
 
         // MOUSE X/Y COORDINATES
         mouseXCoord = new OwnLabel("", skin, "default");
+        mouseXCoord.setAlignment(Align.bottom);
         mouseYCoord = new OwnLabel("", skin, "default");
+        mouseYCoord.setAlignment(Align.right | Align.center);
 
         /** ADD TO UI **/
         rebuildGui();
@@ -327,9 +329,9 @@ public class FullGui extends AbstractGui {
             Integer y = (Integer) data[3];
 
             mouseXCoord.setText("RA/".concat(nf.format(ra)).concat("°"));
-            mouseXCoord.setPosition(x, 10f * GlobalConf.SCALE_FACTOR);
+            mouseXCoord.setPosition(x, GlobalConf.SCALE_FACTOR);
             mouseYCoord.setText("DEC/".concat(nf.format(dec)).concat("°"));
-            mouseYCoord.setPosition(Gdx.graphics.getWidth() - (60f * GlobalConf.SCALE_FACTOR), Gdx.graphics.getHeight() - y);
+            mouseYCoord.setPosition(Gdx.graphics.getWidth() + GlobalConf.SCALE_FACTOR, Gdx.graphics.getHeight() - y);
             break;
         case LON_LAT_UPDATED:
             Double lon = (Double) data[0];
@@ -337,10 +339,10 @@ public class FullGui extends AbstractGui {
             x = (Integer) data[2];
             y = (Integer) data[3];
 
-            mouseXCoord.setText("Lon/" + nf.format(lon) + "°");
-            mouseXCoord.setPosition(x, 10f * GlobalConf.SCALE_FACTOR);
-            mouseYCoord.setText("Lat/" + nf.format(lat) + "°");
-            mouseYCoord.setPosition(Gdx.graphics.getWidth() - (60f * GlobalConf.SCALE_FACTOR), Gdx.graphics.getHeight() - y);
+            mouseXCoord.setText("Lon/".concat(nf.format(lon)).concat("°"));
+            mouseXCoord.setPosition(x, GlobalConf.SCALE_FACTOR);
+            mouseYCoord.setText("Lat/".concat(nf.format(lat)).concat("°"));
+            mouseYCoord.setPosition(Gdx.graphics.getWidth() + GlobalConf.SCALE_FACTOR, Gdx.graphics.getHeight() - y);
             break;
         case POPUP_MENU_FOCUS:
             final IFocus candidate = (IFocus) data[0];
