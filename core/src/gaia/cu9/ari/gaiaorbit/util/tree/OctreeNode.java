@@ -407,7 +407,7 @@ public class OctreeNode implements ILineRenderable {
             }
         }
 
-        if (true) {
+        if (observed) {
             nOctantsObserved++;
             /**
              * Load lists of pages
@@ -430,7 +430,6 @@ public class OctreeNode implements ILineRenderable {
                 // Stay in current level
                 addObjectsTo(roulette);
                 setChildrenObserved(false);
-
             } else {
                 // Break down tree, fade in until th2
                 double alpha = 1;

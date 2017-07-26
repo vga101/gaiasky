@@ -18,6 +18,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.IFocus;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Transform;
 import gaia.cu9.ari.gaiaorbit.util.ComponentTypes;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.MyPools;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
@@ -176,15 +177,14 @@ public abstract class AbstractOctreeWrapper extends SceneGraphNode implements It
     }
 
     public void addToRenderLists(ICamera camera, OctreeNode octant) {
-        for (int i = 0; i < 8; i++) {
-            OctreeNode child = octant.children[i];
-            if (child != null) {
-                addToRenderLists(camera, child);
+        if (GlobalConf.runtime.DRAW_OCTREE && octant.observed && addToRender(octant, RenderGroup.LINE)) {
+            for (int i = 0; i < 8; i++) {
+                OctreeNode child = octant.children[i];
+                if (child != null) {
+                    addToRenderLists(camera, child);
+                }
             }
         }
-
-        if (octant.pageId >= 49l && octant.pageId <= 52l || octant.pageId == 44l)
-            addToRender(octant, RenderGroup.LINE);
     }
 
     @Override
