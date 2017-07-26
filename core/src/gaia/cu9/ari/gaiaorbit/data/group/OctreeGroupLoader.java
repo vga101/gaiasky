@@ -57,7 +57,7 @@ public class OctreeGroupLoader extends StreamingOctreeLoader {
 
         /**
          * CREATE OCTREE WRAPPER WITH ROOT NODE - particle group is by default
-         * multithread
+         * parallel, so we never use OctreeWrapperConcurrent
          */
         AbstractOctreeWrapper octreeWrapper = new OctreeWrapper("Universe", root);
 

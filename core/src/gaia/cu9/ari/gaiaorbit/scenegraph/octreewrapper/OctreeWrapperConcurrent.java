@@ -3,6 +3,7 @@ package gaia.cu9.ari.gaiaorbit.scenegraph.octreewrapper;
 import com.badlogic.gdx.utils.Array;
 
 import gaia.cu9.ari.gaiaorbit.render.system.AbstractRenderSystem;
+import gaia.cu9.ari.gaiaorbit.scenegraph.AbstractPositionEntity;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Transform;
@@ -46,20 +47,21 @@ public class OctreeWrapperConcurrent extends AbstractOctreeWrapper {
         if (!copy) {
             // Compute observed octants and fill roulette list
             OctreeNode.nOctantsObserved = 0;
+            OctreeNode.nObjectsObserved = 0;
             root.update(transform, camera, roulette, 1f);
 
-            if (roulette.size != lastNumberObjects) {
+            if (OctreeNode.nObjectsObserved != lastNumberObjects) {
                 // Need to update the points in renderer
                 AbstractRenderSystem.POINT_UPDATE_FLAG = true;
-                lastNumberObjects = roulette.size;
+                lastNumberObjects = OctreeNode.nObjectsObserved;
             }
 
             updateLocal(time, camera);
 
         } else {
             // Just update children
-            for (SceneGraphNode node : children) {
-                node.update(time, transform, camera);
+            for (SceneGraphNode sgn : children) {
+                sgn.update(time, transform, camera, ((AbstractPositionEntity) sgn).octant.opacity);
             }
         }
 

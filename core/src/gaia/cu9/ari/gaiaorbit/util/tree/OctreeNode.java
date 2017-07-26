@@ -22,7 +22,6 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.Transform;
 import gaia.cu9.ari.gaiaorbit.util.ComponentTypes;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.Pair;
-import gaia.cu9.ari.gaiaorbit.util.color.ColourUtils;
 import gaia.cu9.ari.gaiaorbit.util.math.BoundingBoxd;
 import gaia.cu9.ari.gaiaorbit.util.math.Frustumd;
 import gaia.cu9.ari.gaiaorbit.util.math.Intersectord;
@@ -408,7 +407,7 @@ public class OctreeNode implements ILineRenderable {
             }
         }
 
-        if (observed) {
+        if (true) {
             nOctantsObserved++;
             /**
              * Load lists of pages
@@ -421,7 +420,8 @@ public class OctreeNode implements ILineRenderable {
 
             // Compute distance and view angle
             distToCamera = auxD1.set(centre).add(cam.getInversePos()).len();
-            viewAngle = (radius / distToCamera) / cam.getFovFactor();
+            // View angle is normalized to 40 deg when the octant is exactly the size of the sceeen height, regardless of the camera fov
+            viewAngle = Math.atan(radius / distToCamera) * 2 / cam.getFovFactor();
 
             float th0 = GlobalConf.scene.OCTANT_THRESHOLD_0 / cam.getFovFactor();
             float th1 = GlobalConf.scene.OCTANT_THRESHOLD_1 / cam.getFovFactor();
@@ -430,6 +430,7 @@ public class OctreeNode implements ILineRenderable {
                 // Stay in current level
                 addObjectsTo(roulette);
                 setChildrenObserved(false);
+
             } else {
                 // Break down tree, fade in until th2
                 double alpha = 1;
@@ -655,23 +656,19 @@ public class OctreeNode implements ILineRenderable {
 
     @Override
     public void render(LineRenderSystem sr, ICamera camera, float alpha) {
-        float maxDepth = OctreeNode.maxDepth * 2;
-        // Colour depends on depth
-        int rgb = 0xff000000 | ColourUtils.HSBtoRGB((float) depth / (float) maxDepth, 1f, 0.5f);
-
-        alpha *= MathUtilsd.lint(depth, 0, maxDepth, 1.0, 0.5);
-
-        this.col.set(ColourUtils.getRed(rgb) * alpha, ColourUtils.getGreen(rgb) * alpha, ColourUtils.getBlue(rgb) * alpha, alpha * opacity);
+        //alpha *= MathUtilsd.lint(depth, 0, maxDepth, 1.0, 0.5);
 
         if (this.observed) {
             this.col.set(Color.YELLOW);
+            this.col.a = alpha * opacity;
         } else {
             this.col.set(Color.BROWN);
+            this.col.a = alpha * opacity;
         }
 
         // Camera correction
         Vector3d loc = aux3d1;
-        loc.set(this.blf).add(transform);
+        loc.set(this.blf).add(camera.getInversePos());
 
         /*
          * .·------· .' | .'| +---+--·' | | | | | | ,+--+---· |.' | .' +------+'
