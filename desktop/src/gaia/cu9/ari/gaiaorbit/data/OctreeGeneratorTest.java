@@ -223,16 +223,14 @@ public class OctreeGeneratorTest implements IObserver {
         Logger.info(aggr.getDiscarded() + " particles have been discarded due to density");
 
         /** WRITE METADATA **/
-        File metadata = new File(outFolder, "metadata.bin");
-        if (metadata.exists()) {
-            metadata.delete();
-        }
-        metadata.createNewFile();
+        File metadataFile = new File(outFolder, "metadata.bin");
+        delete(metadataFile);
+        metadataFile.createNewFile();
 
-        Logger.info("Writing metadata (" + octree.numNodes() + " nodes): " + metadata.getAbsolutePath());
+        Logger.info("Writing metadata (" + octree.numNodes() + " nodes): " + metadataFile.getAbsolutePath());
 
         MetadataBinaryIO metadataWriter = new MetadataBinaryIO();
-        metadataWriter.writeMetadata(octree, new FileOutputStream(metadata));
+        metadataWriter.writeMetadata(octree, new FileOutputStream(metadataFile));
 
         /** WRITE PARTICLES **/
         ParticleDataBinaryIO particleWriter = new ParticleDataBinaryIO();
@@ -250,6 +248,7 @@ public class OctreeGeneratorTest implements IObserver {
             // Walk each node of the octree and write the particles for each in
             // a different file
             File particlesFolder = new File(outFolder + "/particles/");
+            delete(particlesFolder);
             particlesFolder.mkdirs();
 
             writeParticlesToFiles(particleWriter, octree);
@@ -287,6 +286,15 @@ public class OctreeGeneratorTest implements IObserver {
         }
         Logger.info(ow.root.toString());
 
+    }
+
+    private void delete(File element) {
+        if (element.isDirectory()) {
+            for (File sub : element.listFiles()) {
+                delete(sub);
+            }
+        }
+        element.delete();
     }
 
     @Override

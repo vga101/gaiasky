@@ -136,15 +136,6 @@ public class OctreeGroupGeneratorTest implements IObserver {
         }
     }
 
-    private void delete(File element) {
-        if (element.isDirectory()) {
-            for (File sub : element.listFiles()) {
-                delete(sub);
-            }
-        }
-        element.delete();
-    }
-
     private void generateOctree() throws IOException, InstantiationException, IllegalAccessException, ClassNotFoundException {
         IAggregationAlgorithm aggr = new BrightestStars(maxDepth, maxPart, minPart, discard);
 
@@ -233,6 +224,15 @@ public class OctreeGroupGeneratorTest implements IObserver {
                 if (child != null)
                     writeParticlesToFiles(particleWriter, child);
             }
+    }
+
+    private void delete(File element) {
+        if (element.isDirectory()) {
+            for (File sub : element.listFiles()) {
+                delete(sub);
+            }
+        }
+        element.delete();
     }
 
     @Override
