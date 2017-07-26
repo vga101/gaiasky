@@ -12,6 +12,8 @@ import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
  */
 public class SceneGraph extends AbstractSceneGraph {
 
+    int nobjects = -1;
+
     public SceneGraph() {
         super();
     }
@@ -23,8 +25,11 @@ public class SceneGraph extends AbstractSceneGraph {
         root.update(time, null, camera);
         objectsPerThread[0] = root.numChildren;
 
-        if (!hasOctree)
-            EventManager.instance.post(Events.DEBUG3, "Objects: " + root.numChildren);
+        if (!hasOctree) {
+            if (nobjects < 0)
+                nobjects = getNObjects();
+            EventManager.instance.post(Events.DEBUG3, "Objects: " + nobjects);
+        }
     }
 
     public void dispose() {

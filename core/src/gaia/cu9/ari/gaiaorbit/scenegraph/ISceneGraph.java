@@ -25,8 +25,10 @@ public interface ISceneGraph extends Disposable {
      *            The time provider
      * @param hasOctree
      *            Whether the list of nodes contains an octree
+     * @param hasStarGroup
+     *            Whether the list contains a star group
      */
-    public void initialize(Array<SceneGraphNode> nodes, ITimeFrameProvider time, boolean hasOctree);
+    public void initialize(Array<SceneGraphNode> nodes, ITimeFrameProvider time, boolean hasOctree, boolean hasStarGroup);
 
     /**
      * Inserts a node

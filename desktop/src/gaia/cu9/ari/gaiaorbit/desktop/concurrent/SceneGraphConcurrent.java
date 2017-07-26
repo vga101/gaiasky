@@ -45,9 +45,12 @@ public class SceneGraphConcurrent extends AbstractSceneGraph {
      *            The time provider
      * @param hasOctree
      *            Whether the list of nodes contains an octree
+     * @param hasStarGroup
+     *            Whether the list contains a star group
      */
-    public void initialize(Array<SceneGraphNode> nodes, ITimeFrameProvider time, boolean hasOctree) {
-        super.initialize(nodes, time, hasOctree);
+    @Override
+    public void initialize(Array<SceneGraphNode> nodes, ITimeFrameProvider time, boolean hasOctree, boolean hasStarGroup) {
+        super.initialize(nodes, time, hasOctree, hasStarGroup);
 
         pool = ThreadPoolManager.pool;
         objectsPerThread = new int[numThreads];

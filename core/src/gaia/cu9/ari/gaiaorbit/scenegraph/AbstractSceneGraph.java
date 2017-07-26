@@ -31,6 +31,8 @@ public abstract class AbstractSceneGraph implements ISceneGraph {
     protected int[] objectsPerThread;
     /** Does it contain an octree **/
     protected boolean hasOctree;
+    /** Does it contain a star group **/
+    protected boolean hasStarGroup;
 
     public AbstractSceneGraph() {
         // Id = -1 for root
@@ -41,8 +43,20 @@ public abstract class AbstractSceneGraph implements ISceneGraph {
         objectsPerThread = new int[1];
     }
 
+    /**
+     * Builds the scene graph using the given nodes.
+     * 
+     * @param nodes
+     *            The list of nodes
+     * @param time
+     *            The time provider
+     * @param hasOctree
+     *            Whether the list of nodes contains an octree
+     * @param hasStarGroup
+     *            Whether the list contains a star group
+     */
     @Override
-    public void initialize(Array<SceneGraphNode> nodes, ITimeFrameProvider time, boolean hasOctree) {
+    public void initialize(Array<SceneGraphNode> nodes, ITimeFrameProvider time, boolean hasOctree, boolean hasStarGroup) {
         Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.sg.insert", nodes.size));
 
         // Set the reference
@@ -50,6 +64,8 @@ public abstract class AbstractSceneGraph implements ISceneGraph {
 
         // Octree
         this.hasOctree = hasOctree;
+        // Star group
+        this.hasStarGroup = hasStarGroup;
 
         // Initialize stringToNode and starMap maps
         stringToNode = new HashMap<String, SceneGraphNode>(nodes.size * 2);
@@ -315,6 +331,20 @@ public abstract class AbstractSceneGraph implements ISceneGraph {
     @Override
     public IntMap<IPosition> getStarMap() {
         return hipMap;
+    }
+
+    public int getNObjects() {
+        if (!hasStarGroup) {
+            return root.numChildren;
+        } else {
+            int n = root.numChildren - 1;
+            // This assumes the star group is in the first level of the scene graph, right below universe
+            for (SceneGraphNode sgn : root.children) {
+                if (sgn instanceof StarGroup)
+                    n += ((StarGroup) sgn).getStarCount();
+            }
+            return n;
+        }
     }
 
 }
