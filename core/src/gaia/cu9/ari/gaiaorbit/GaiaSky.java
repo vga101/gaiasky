@@ -147,7 +147,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
     public IGui initialGui, loadingGui, mainGui, spacecraftGui, stereoGui, debugGui, currentGui, previousGui;
 
     /**
-     * List of guis
+     * List of GUIs
      */
     private List<IGui> guis;
 
@@ -354,7 +354,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
             EventManager.instance.post(Events.TOGGLE_TIME_CMD, true, false);
         }
 
-        // Resize guis to current size
+        // Resize GUIs to current size
         for (IGui gui : guis)
             gui.resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
@@ -653,10 +653,10 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
     }
 
     /**
-     * Renders a particular gui
+     * Renders a particular GUI
      * 
      * @param gui
-     *            The gui to render
+     *            The GUI to render
      */
     private void renderGui(IGui gui) {
         gui.update(Gdx.graphics.getDeltaTime());
@@ -761,15 +761,15 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
             break;
         case CAMERA_MODE_CMD:
             InputMultiplexer im = (InputMultiplexer) Gdx.input.getInputProcessor();
-            // Register/unregister gui
+            // Register/unregister GUI
             CameraMode mode = (CameraMode) data[0];
             if (GlobalConf.program.isStereoHalfViewport()) {
                 if (currentGui != stereoGui) {
-                    // Remove current gui
+                    // Remove current GUI
                     GuiRegistry.unregisterGui(currentGui);
                     im.removeProcessor(currentGui.getGuiStage());
 
-                    // Add spacecraft gui
+                    // Add spacecraft GUI
                     GuiRegistry.registerGui(stereoGui);
                     im.addProcessor(0, stereoGui.getGuiStage());
 
@@ -777,11 +777,11 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
                     currentGui = stereoGui;
                 }
             } else if (mode == CameraMode.Spacecraft) {
-                // Remove current gui
+                // Remove current GUI
                 GuiRegistry.unregisterGui(currentGui);
                 im.removeProcessor(currentGui.getGuiStage());
 
-                // Add spacecraft gui
+                // Add spacecraft GUI
                 GuiRegistry.registerGui(spacecraftGui);
                 im.addProcessor(0, spacecraftGui.getGuiStage());
 
@@ -789,11 +789,11 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
                 currentGui = spacecraftGui;
 
             } else {
-                // Remove current gui
+                // Remove current GUI
                 GuiRegistry.unregisterGui(currentGui);
                 im.removeProcessor(currentGui.getGuiStage());
 
-                // Add main gui
+                // Add main GUI
                 GuiRegistry.registerGui(mainGui);
                 im.addProcessor(0, mainGui.getGuiStage());
 
@@ -805,11 +805,11 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
             boolean stereomode = (Boolean) data[0];
             im = (InputMultiplexer) Gdx.input.getInputProcessor();
             if (stereomode && currentGui != stereoGui) {
-                // Remove current gui
+                // Remove current GUI
                 GuiRegistry.unregisterGui(currentGui);
                 im.removeProcessor(currentGui.getGuiStage());
 
-                // Add stereo gui
+                // Add stereo GUI
                 GuiRegistry.registerGui(stereoGui);
                 im.addProcessor(0, stereoGui.getGuiStage());
 
@@ -817,11 +817,11 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
                 previousGui = currentGui;
                 currentGui = stereoGui;
             } else if (!stereomode && previousGui != stereoGui) {
-                // Remove current gui
+                // Remove current GUI
                 GuiRegistry.unregisterGui(currentGui);
                 im.removeProcessor(currentGui.getGuiStage());
 
-                // Add backed up gui
+                // Add backed up GUI
                 if (previousGui == null)
                     previousGui = mainGui;
                 GuiRegistry.registerGui(previousGui);
