@@ -73,10 +73,10 @@ public class OctreeGroupGeneratorTest implements IObserver {
     @Parameter(names = "--maxdepth", description = "Maximum tree depth in levels")
     private int maxDepth = 10;
 
-    @Parameter(names = "--maxpart", description = "Maximum number of objects in the densest node of a level")
+    @Parameter(names = "--maxpart", description = "Number of objects in the densest node of a level")
     private int maxPart = 100000;
 
-    @Parameter(names = "--minpart", description = "Minimum number of objects in a node under which we do not further break the octree")
+    @Parameter(names = "--minpart", description = "Number of objects in a node below which we do not further break the octree")
     private int minPart = 5000;
 
     @Parameter(names = "--discard", description = "Whether to discard stars due to density")

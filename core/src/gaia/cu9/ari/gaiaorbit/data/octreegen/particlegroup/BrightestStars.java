@@ -32,10 +32,10 @@ public class BrightestStars implements IAggregationAlgorithm {
      * @param maxDepth
      *            Maximum depth of the octree
      * @param maxPart
-     *            Maximum number of objects in the densest node of this level
+     *            Number of objects in the densest node of this level
      * @param minPart
-     *            Minimum number of objects under which we do not further break
-     *            the octree
+     *            Number of objects below which we do not further break the
+     *            octree
      * @param discard
      *            Whether to discard stars due to density or not
      */
@@ -114,8 +114,8 @@ public class BrightestStars implements IAggregationAlgorithm {
                 sg.octant = octant;
                 sg.octantId = octant.pageId;
             }
-            // It is leaf if we didn't add any star
-            return added == 0;
+            // It is leaf if we added all the stars
+            return added == inputStars.size;
         }
 
     }

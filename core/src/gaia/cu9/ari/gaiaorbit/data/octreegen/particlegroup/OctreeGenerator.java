@@ -195,69 +195,6 @@ public class OctreeGenerator {
         return pageid.num++;
     }
 
-    /**
-     * Generate the octree in a recursive depth-first manner.
-     * 
-     * @param octant
-     * @param catalog
-     * @param percentage
-     */
-    private void treatOctant(OctreeNode octant, Array<StarBean> catalog, float percentage) {
-        boolean leaf = aggregation.sample(catalog, octant, percentage);
-
-        if (!leaf) {
-            // Generate 8 children
-            double hsx = octant.size.x / 4d;
-            double hsy = octant.size.y / 4d;
-            double hsz = octant.size.z / 4d;
-
-            /** CREATE OCTANTS **/
-            OctreeNode[] nodes = new OctreeNode[8];
-            // Front - top - left
-            nodes[0] = new OctreeNode(nextPageId(), octant.centre.x - hsx, octant.centre.y + hsy, octant.centre.z - hsz, hsx, hsy, hsz, octant.depth + 1);
-            // Front - top - right
-            nodes[1] = new OctreeNode(nextPageId(), octant.centre.x + hsx, octant.centre.y + hsy, octant.centre.z - hsz, hsx, hsy, hsz, octant.depth + 1);
-            // Front - bottom - left
-            nodes[2] = new OctreeNode(nextPageId(), octant.centre.x - hsx, octant.centre.y - hsy, octant.centre.z - hsz, hsx, hsy, hsz, octant.depth + 1);
-            // Front - bottom - right
-            nodes[3] = new OctreeNode(nextPageId(), octant.centre.x + hsx, octant.centre.y - hsy, octant.centre.z - hsz, hsx, hsy, hsz, octant.depth + 1);
-            // Back - top - left
-            nodes[4] = new OctreeNode(nextPageId(), octant.centre.x - hsx, octant.centre.y + hsy, octant.centre.z + hsz, hsx, hsy, hsz, octant.depth + 1);
-            // Back - top - right
-            nodes[5] = new OctreeNode(nextPageId(), octant.centre.x + hsx, octant.centre.y + hsy, octant.centre.z + hsz, hsx, hsy, hsz, octant.depth + 1);
-            // Back - bottom - left
-            nodes[6] = new OctreeNode(nextPageId(), octant.centre.x - hsx, octant.centre.y - hsy, octant.centre.z + hsz, hsx, hsy, hsz, octant.depth + 1);
-            // Back - bottom - right
-            nodes[7] = new OctreeNode(nextPageId(), octant.centre.x + hsx, octant.centre.y - hsy, octant.centre.z + hsz, hsx, hsy, hsz, octant.depth + 1);
-
-            /** INTERSECT CATALOG WITH OCTANTS **/
-            int maxSublevelObjs = 0;
-            Array<StarBean>[] lists = new Array[8];
-            for (int i = 0; i < 8; i++) {
-                lists[i] = intersect(catalog, nodes[i]);
-                if (lists[i].size > maxSublevelObjs) {
-                    maxSublevelObjs = lists[i].size;
-                }
-            }
-
-            float sublevelPercentage = MathUtils.clamp((float) aggregation.getMaxPart() / (float) maxSublevelObjs, 0f, 1f);
-
-            /** TREAT OCTANTS **/
-            for (int i = 0; i < 8; i++) {
-                if (lists[i].size > 0) {
-                    // Octant has particles, add
-                    treatOctant(nodes[i], lists[i], sublevelPercentage);
-                    octant.children[i] = nodes[i];
-                    nodes[i].parent = octant;
-                } else {
-                    // Octant has no particles, remove it!
-                    nodes[i] = null;
-                }
-            }
-
-        }
-    }
-
     private Vector3d pos(double[] s, Vector3d p) {
         return p.set(s[StarBean.I_X], s[StarBean.I_Y], s[StarBean.I_Z]);
     }
