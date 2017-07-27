@@ -78,7 +78,7 @@ public class DR2DataProvider extends AbstractStarGroupDataProvider {
     }
 
     public Array<StarBean> loadData(String file, double factor) {
-        initLists(50000000);
+        initLists(100000);
 
         FileHandle f = Gdx.files.internal(file);
         Integer i = 0;
@@ -102,11 +102,22 @@ public class DR2DataProvider extends AbstractStarGroupDataProvider {
         return list;
     }
 
-    public void loadFile(FileHandle f, double factor, Integer i) {
-        Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.datafile", f.path()));
+    public Array<StarBean> loadData(InputStream is, double factor) {
+        initLists(100000);
 
+        loadFile(is, factor, 0);
+
+        return list;
+    }
+
+    public void loadFile(FileHandle fh, double factor, Integer i) {
+        Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.datafile", fh.path()));
+        loadFile(fh.read(), factor, i);
+    }
+
+    public void loadFile(InputStream is, double factor, Integer i) {
         // Simple case
-        InputStream data = f.read();
+        InputStream data = is;
         BufferedReader br = new BufferedReader(new InputStreamReader(data));
 
         try {

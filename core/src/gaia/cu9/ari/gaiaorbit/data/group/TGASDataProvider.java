@@ -12,6 +12,7 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.utils.Array;
 
+import gaia.cu9.ari.gaiaorbit.scenegraph.ParticleGroup.ParticleBean;
 import gaia.cu9.ari.gaiaorbit.scenegraph.StarGroup.StarBean;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
@@ -39,16 +40,26 @@ public class TGASDataProvider extends AbstractStarGroupDataProvider {
     public Array<StarBean> loadData(String file, double factor) {
         Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.datafile", file));
 
-        Pair<Map<String, Float>, Map<String, Integer>> extra = loadTYCBVHIP(btvtColorsFile);
-
         FileHandle f = Gdx.files.internal(file);
 
-        try {
-            initLists(f);
+        initLists(f);
+        loadData(f.read(), factor);
 
-            BufferedReader br = new BufferedReader(new InputStreamReader(f.read()));
+        if (list != null)
+            Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.nodeloader", list.size, file));
+
+        return list;
+    }
+
+    @Override
+    public Array<? extends ParticleBean> loadData(InputStream is, double factor) {
+        Pair<Map<String, Float>, Map<String, Integer>> extra = loadTYCBVHIP(btvtColorsFile);
+
+        try {
+            initLists();
+
+            BufferedReader br = new BufferedReader(new InputStreamReader(is));
             String line;
-            int i = 0;
             // Skip first line
             br.readLine();
             while ((line = br.readLine()) != null) {
@@ -137,7 +148,6 @@ public class TGASDataProvider extends AbstractStarGroupDataProvider {
                         point[StarBean.I_ABSMAG] = absmag;
 
                         list.add(new StarBean(point, sourceid, name));
-                        i++;
                     }
                 }
             }
@@ -148,9 +158,9 @@ public class TGASDataProvider extends AbstractStarGroupDataProvider {
                 dumpToDisk(list, "/tmp/tgas.bin");
             }
 
-            Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.nodeloader", list.size, file));
         } catch (Exception e) {
             Logger.error(e, TGASDataProvider.class.getName());
+            list = null;
         }
 
         return list;

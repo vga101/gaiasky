@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.utils.Array;
 
 import gaia.cu9.ari.gaiaorbit.data.stars.HYGBinaryLoader;
+import gaia.cu9.ari.gaiaorbit.scenegraph.ParticleGroup.ParticleBean;
 import gaia.cu9.ari.gaiaorbit.scenegraph.StarGroup.StarBean;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
@@ -38,14 +39,24 @@ public class HYGDataProvider extends AbstractStarGroupDataProvider {
 
         FileHandle f = Gdx.files.internal(file);
 
-        try {
-            initLists(f);
+        initLists(f);
+        loadData(f.read(), factor);
 
-            InputStream data = f.read();
+        if (list != null)
+            Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.nodeloader", list.size, file));
+
+        return list;
+    }
+
+    @Override
+    public Array<? extends ParticleBean> loadData(InputStream is, double factor) {
+        try {
+            initLists();
+
+            InputStream data = is;
             DataInputStream data_in = new DataInputStream(data);
             // Read size of stars
             int size = data_in.readInt();
-            int stari = 0;
             for (int idx = 0; idx < size; idx++) {
                 try {
                     Set<String> treated = new HashSet<String>();
@@ -102,10 +113,10 @@ public class HYGDataProvider extends AbstractStarGroupDataProvider {
                         point[StarBean.I_ABSMAG] = absmag;
 
                         list.add(new StarBean(point, id, name));
-                        stari++;
                     }
                 } catch (EOFException eof) {
                     Logger.error(eof, HYGBinaryLoader.class.getSimpleName());
+                    list = null;
                 }
             }
 
@@ -115,7 +126,6 @@ public class HYGDataProvider extends AbstractStarGroupDataProvider {
                 dumpToDisk(list, "/tmp/hyg.bin");
             }
 
-            Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.nodeloader", list.size, file));
         } catch (Exception e) {
             Logger.error(e, HYGDataProvider.class.getName());
         }

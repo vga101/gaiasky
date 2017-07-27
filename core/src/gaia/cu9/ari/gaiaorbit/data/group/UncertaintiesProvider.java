@@ -1,6 +1,7 @@
 package gaia.cu9.ari.gaiaorbit.data.group;
 
 import java.io.BufferedReader;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import com.badlogic.gdx.Gdx;
@@ -25,11 +26,22 @@ public class UncertaintiesProvider implements IParticleGroupDataProvider {
     @Override
     public Array<ParticleBean> loadData(String file, double factor) {
 
-        Array<ParticleBean> pointData = new Array<ParticleBean>();
         FileHandle f = Gdx.files.internal(file);
+        @SuppressWarnings("unchecked")
+        Array<ParticleBean> pointData = (Array<ParticleBean>) loadData(f.read(), factor);
+
+        if (pointData != null)
+            Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.nodeloader", pointData.size, file));
+
+        return pointData;
+    }
+
+    @Override
+    public Array<? extends ParticleBean> loadData(InputStream is, double factor) {
+        Array<ParticleBean> pointData = new Array<ParticleBean>();
         try {
             int tokenslen;
-            BufferedReader br = new BufferedReader(new InputStreamReader(f.read()));
+            BufferedReader br = new BufferedReader(new InputStreamReader(is));
             String line;
             Vector3d pos = new Vector3d();
             while ((line = br.readLine()) != null) {
@@ -56,9 +68,9 @@ public class UncertaintiesProvider implements IParticleGroupDataProvider {
 
             br.close();
 
-            Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.nodeloader", pointData.size, file));
         } catch (Exception e) {
             Logger.error(e, PointDataProvider.class.getName());
+            return null;
         }
 
         return pointData;

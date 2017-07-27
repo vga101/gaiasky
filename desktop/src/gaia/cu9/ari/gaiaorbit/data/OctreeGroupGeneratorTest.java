@@ -22,7 +22,7 @@ import gaia.cu9.ari.gaiaorbit.data.octreegen.MetadataBinaryIO;
 import gaia.cu9.ari.gaiaorbit.data.octreegen.particlegroup.BrightestStars;
 import gaia.cu9.ari.gaiaorbit.data.octreegen.particlegroup.IAggregationAlgorithm;
 import gaia.cu9.ari.gaiaorbit.data.octreegen.particlegroup.OctreeGenerator;
-import gaia.cu9.ari.gaiaorbit.data.octreegen.particlegroup.ParticleGroupBinaryIO;
+import gaia.cu9.ari.gaiaorbit.data.octreegen.particlegroup.StarGroupSerializedIO;
 import gaia.cu9.ari.gaiaorbit.desktop.format.DesktopDateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.desktop.format.DesktopNumberFormatFactory;
 import gaia.cu9.ari.gaiaorbit.desktop.util.DesktopConfInit;
@@ -204,13 +204,13 @@ public class OctreeGroupGeneratorTest implements IObserver {
         metadataWriter.writeMetadata(octree, new FileOutputStream(metadataFile));
 
         /** WRITE PARTICLES **/
-        ParticleGroupBinaryIO particleWriter = new ParticleGroupBinaryIO();
+        StarGroupSerializedIO particleWriter = new StarGroupSerializedIO();
         particlesFolder.mkdirs();
         writeParticlesToFiles(particleWriter, octree);
 
     }
 
-    private void writeParticlesToFiles(ParticleGroupBinaryIO particleWriter, OctreeNode current) throws IOException {
+    private void writeParticlesToFiles(StarGroupSerializedIO particleWriter, OctreeNode current) throws IOException {
         // Write current
         if (current.ownObjects > 0) {
             File particles = new File(outFolder + "/particles/", "particles_" + String.format("%06d", current.pageId) + ".bin");

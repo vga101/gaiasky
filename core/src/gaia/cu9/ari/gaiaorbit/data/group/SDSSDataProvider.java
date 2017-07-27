@@ -1,6 +1,7 @@
 package gaia.cu9.ari.gaiaorbit.data.group;
 
 import java.io.BufferedReader;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import com.badlogic.gdx.Gdx;
@@ -22,12 +23,23 @@ public class SDSSDataProvider implements IParticleGroupDataProvider {
     }
 
     public Array<ParticleBean> loadData(String file, double factor) {
-        Array<ParticleBean> pointData = new Array<ParticleBean>();
         FileHandle f = Gdx.files.internal(file);
+
+        @SuppressWarnings("unchecked")
+        Array<ParticleBean> pointData = (Array<ParticleBean>) loadData(f.read(), factor);
+        if (pointData != null)
+            Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.nodeloader", pointData.size, file));
+
+        return pointData;
+    }
+
+    @Override
+    public Array<? extends ParticleBean> loadData(InputStream is, double factor) {
+        Array<ParticleBean> pointData = new Array<ParticleBean>();
 
         try {
             int tokenslen;
-            BufferedReader br = new BufferedReader(new InputStreamReader(f.read()));
+            BufferedReader br = new BufferedReader(new InputStreamReader(is));
             String line;
             while ((line = br.readLine()) != null) {
                 if (!line.isEmpty() && !line.startsWith("#")) {
@@ -58,89 +70,11 @@ public class SDSSDataProvider implements IParticleGroupDataProvider {
 
             br.close();
 
-            Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.nodeloader", pointData.size, file));
         } catch (Exception e) {
             Logger.error(e, SDSSDataProvider.class.getName());
+            return null;
         }
 
         return pointData;
-    }
-
-    /**
-     * See
-     * http://www.einsteins-theory-of-relativity-4engineers.com/cosmocalc.htm
-     * See
-     * https://www.physicsforums.com/threads/redshift-to-megaparsec-formula.561906/
-     * 
-     * @param OmegaM
-     *            Omega matter
-     * @param OmegaR
-     *            Omega radiation
-     * @param OmegaL
-     *            Omega lambda
-     * @param HubbleP
-     *            Hubble constant
-     * @param zo
-     *            Redshift (z) of the source
-     * @return The distance in megaparsecs for a given cosmology and redshift
-     */
-    private double redshiftToDistance(double OmegaM, double OmegaR, double OmegaL, double HubbleP, double zo) {
-        // >>>>>> Latest update 2012-08-12
-
-        // >>>>>> input
-
-        double Ol = OmegaL * 1; // Lambda density par
-        double Or = OmegaR * 1; // Radiation density par
-        double Om = OmegaM * 1; // matter density par
-        double Ok = 1 - Om - Or - Ol; // curvature densioty par
-        double H = HubbleP * 1; // Hubble const now
-        double zt = zo * 1; // redshift of object
-        double at = (1 / (1 + zt)); // requested redshift value
-
-        // >>>>>> output
-        double Dp = 0; // proper distance
-
-        // >>>>>> auxiliary
-        double N = 100000;
-        double a = 0;
-        double a_ic = 0;
-        double qa = 0;
-        double pa = 1 / N; // Incremental a
-
-        double Eset = 0;
-        double Dtp = 0;
-
-        // >>>>>> conversion 1/H to Myr
-        double Tyr = 978000;
-
-        // >>>>>> Loop from a = 0 to a = 1, stop to get at values
-        while (a_ic < 1) {
-            a = a_ic + (pa / 2); // expansion factor as incremented
-            qa = Math.sqrt((Om / a) + Ok + (Or / (a * a)) + (Ol * a * a)); // time
-            // variable
-            // density
-            // function
-            // (Or
-            // input
-            // 10000
-            // times
-            // hi)
-
-            Dp = Dp + ((1 / qa) * pa); // proper distance then
-            a_ic = a_ic + pa; // new a
-            if ((a > at) && (Eset == 0)) {
-                Dtp = Dp;
-                Eset = 1;
-            }
-            ;
-        }
-
-        // >>>>>> Conversion
-        Dp = Dp * (Tyr / H);
-        Dtp = Dtp * (Tyr / H);
-
-        // 1 Mly = 0.306 Mpc
-        return (Math.round((Dp - Dtp) * 10000) / 10000) * 0.306391534731;
-
     }
 }

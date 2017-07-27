@@ -9,6 +9,7 @@ import java.util.List;
 
 import com.badlogic.gdx.utils.Array;
 
+import gaia.cu9.ari.gaiaorbit.data.group.IStarGroupDataProvider;
 import gaia.cu9.ari.gaiaorbit.data.group.SerializedDataProvider;
 import gaia.cu9.ari.gaiaorbit.scenegraph.AbstractPositionEntity;
 import gaia.cu9.ari.gaiaorbit.scenegraph.StarGroup;
@@ -21,11 +22,11 @@ import gaia.cu9.ari.gaiaorbit.util.Logger;
  * @author Toni Sagrista
  *
  */
-public class ParticleGroupBinaryIO {
+public class StarGroupSerializedIO {
 
-    SerializedDataProvider provider;
+    IStarGroupDataProvider provider;
 
-    public ParticleGroupBinaryIO() {
+    public StarGroupSerializedIO() {
         provider = new SerializedDataProvider();
     }
 
@@ -64,7 +65,8 @@ public class ParticleGroupBinaryIO {
      * @return A list with a single star group object
      */
     public Array<AbstractPositionEntity> readParticles(InputStream in) throws FileNotFoundException {
-        Array<StarBean> data = provider.loadData(in, 1.0);
+        @SuppressWarnings("unchecked")
+        Array<StarBean> data = (Array<StarBean>) provider.loadData(in, 1.0);
         StarGroup sg = new StarGroup();
         sg.setData(data);
 

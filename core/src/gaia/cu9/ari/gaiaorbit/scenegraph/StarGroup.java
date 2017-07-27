@@ -70,7 +70,7 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
     public static class StarBean extends ParticleBean {
         private static final long serialVersionUID = 1L;
 
-        public static final int SIZE = 19;
+        public static final int SIZE = 18;
         /** INDICES **/
         public static final int I_X = 0;
         public static final int I_Y = 1;

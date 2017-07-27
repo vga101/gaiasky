@@ -19,7 +19,7 @@
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.StarGroup",
 		
 		// Extends IParticleGroupDataProvider
-		"provider" : "gaia.cu9.ari.gaiaorbit.data.group.SerializedDataProvider",
-		"datafile" : "data/catalog/tgashyg.bin"
+		"provider" : "gaia.cu9.ari.gaiaorbit.data.group.BinaryDataProvider",
+		"datafile" : "data/catalog/tgashyg.own.bin"
 	}
 ]}
