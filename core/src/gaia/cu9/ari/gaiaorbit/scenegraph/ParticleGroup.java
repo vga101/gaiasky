@@ -134,9 +134,9 @@ public class ParticleGroup extends FadeNode implements I3DTextRenderable, IFocus
     protected long lastSortTime;
 
     /**
-     * Reference to the current focus data
+     * Reference to the current focus
      */
-    double[] focusData;
+    ParticleBean focus;
 
     public ParticleGroup() {
         super();
@@ -563,10 +563,10 @@ public class ParticleGroup extends FadeNode implements I3DTextRenderable, IFocus
 
     private void updateFocusDataPos() {
         if (focusIndex < 0) {
-            focusData = null;
+            focus = null;
         } else {
-            focusData = pointData.get(focusIndex).data;
-            focusPosition.set(focusData[0], focusData[1], focusData[2]);
+            focus = pointData.get(focusIndex);
+            focusPosition.set(focus.data[0], focus.data[1], focus.data[2]);
             Vector3d possph = Coordinates.cartesianToSpherical(focusPosition, aux3d1.get());
             focusPositionSph.set((float) (MathUtilsd.radDeg * possph.x), (float) (MathUtilsd.radDeg * possph.y));
         }

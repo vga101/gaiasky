@@ -526,7 +526,7 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
             renderCloseupStar(i, active[i], camera, shader, mesh, thpointTimesFovfactor, thupOverFovfactor, thdownOverFovfactor, alph * this.popInOpacity);
             focusRendered = focusRendered || active[i] == focusIndex;
         }
-        if (focusData != null && !focusRendered) {
+        if (focus != null && !focusRendered) {
             renderCloseupStar(1, focusIndex, camera, shader, mesh, thpointTimesFovfactor, thupOverFovfactor, thdownOverFovfactor, alph);
         }
 
@@ -672,7 +672,7 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
     }
 
     public double getFocusSize() {
-        return focusData[StarBean.I_SIZE];
+        return focus.data[StarBean.I_SIZE];
     }
 
     // Radius in stars is different!
@@ -686,39 +686,39 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
     }
 
     public float getAppmag() {
-        return (float) focusData[StarBean.I_APPMAG];
+        return (float) focus.data[StarBean.I_APPMAG];
     }
 
     public float getAbsmag() {
-        return (float) focusData[StarBean.I_ABSMAG];
+        return (float) focus.data[StarBean.I_ABSMAG];
     }
 
     public String getName() {
-        if (focusData != null)
-            return ((StarBean) pointData.get(focusIndex)).name;
+        if (focus != null)
+            return ((StarBean) focus).name;
         else
             return null;
     }
 
     public long getId() {
-        if (focusData != null)
-            return ((StarBean) pointData.get(focusIndex)).id;
+        if (focus != null)
+            return ((StarBean) focus).id;
         else
             return -1;
     }
 
     @Override
     public double getMuAlpha() {
-        if (focusData != null)
-            return focusData[StarBean.I_MUALPHA];
+        if (focus != null)
+            return focus.data[StarBean.I_MUALPHA];
         else
             return 0;
     }
 
     @Override
     public double getMuDelta() {
-        if (focusData != null)
-            return focusData[StarBean.I_MUDELTA];
+        if (focus != null)
+            return focus.data[StarBean.I_MUDELTA];
         else
             return 0;
     }
@@ -794,15 +794,15 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
 
     @Override
     public int getHip() {
-        if (focusData != null && focusData[StarBean.I_HIP] > 0)
-            return (int) focusData[StarBean.I_HIP];
+        if (focus != null && focus.data[StarBean.I_HIP] > 0)
+            return (int) focus.data[StarBean.I_HIP];
         return -1;
     }
 
     @Override
     public String getTycho() {
-        if (focusData != null && focusData[StarBean.I_TYC1] > 0)
-            return (int) focusData[StarBean.I_TYC1] + "-" + (int) focusData[StarBean.I_TYC2] + "-" + (int) focusData[StarBean.I_TYC3];
+        if (focus != null && focus.data[StarBean.I_TYC1] > 0)
+            return (int) focus.data[StarBean.I_TYC1] + "-" + (int) focus.data[StarBean.I_TYC2] + "-" + (int) focus.data[StarBean.I_TYC3];
         return null;
     }
 
