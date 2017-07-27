@@ -321,6 +321,29 @@ public class OctreeNode implements ILineRenderable {
     }
 
     /**
+     * Removes this octant from the octree
+     */
+    public void remove() {
+        if (this.parent != null)
+            this.parent.removeChild(this);
+    }
+
+    /**
+     * Removes the child from this octant's descendants
+     * 
+     * @param child
+     */
+    public void removeChild(OctreeNode child) {
+        if (children != null)
+            for (int i = 0; i < children.length; i++) {
+                if (children[i] != null && children[i] == child && child.parent == this) {
+                    child.parent = null;
+                    children[i] = null;
+                }
+            }
+    }
+
+    /**
      * Counts the number of nodes recursively.
      * 
      * @return

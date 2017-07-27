@@ -108,8 +108,8 @@ public class BrightestStars implements IAggregationAlgorithm {
                 }
                 i++;
             }
-            // It is leaf if we didn't add any star
-            return added == 0;
+            // It is leaf if we added all stars
+            return added == inputStars.size;
         }
 
     }

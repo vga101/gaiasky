@@ -105,33 +105,42 @@ public class OctreeGenerator {
         octantsPerLevel[level + 1] = new ArrayList<OctreeNode>(levelOctants.size() * 8);
 
         /** CREATE OCTANTS FOR LEVEL+1 **/
-        for (OctreeNode octant : levelOctants) {
+        Iterator<OctreeNode> it = levelOctants.iterator();
+        while (it.hasNext()) {
+            OctreeNode octant = it.next();
             Array<AbstractPositionEntity> list = inputLists.get(octant);
-            boolean leaf = aggregation.sample(list, octant, percentage);
 
-            if (!leaf) {
-                // Generate 8 children per each level octant
-                double hsx = octant.size.x / 4d;
-                double hsy = octant.size.y / 4d;
-                double hsz = octant.size.z / 4d;
+            if (list.size == 0) {
+                // Empty node, remove
+                it.remove();
+                octant.remove();
+            } else {
+                boolean leaf = aggregation.sample(list, octant, percentage);
 
-                /** CREATE SUB-OCTANTS **/
-                // Front - top - left
-                octantsPerLevel[level + 1].add(new OctreeNode(nextPageId(), octant.centre.x - hsx, octant.centre.y + hsy, octant.centre.z - hsz, hsx, hsy, hsz, octant.depth + 1, octant, 0));
-                // Front - top - right
-                octantsPerLevel[level + 1].add(new OctreeNode(nextPageId(), octant.centre.x + hsx, octant.centre.y + hsy, octant.centre.z - hsz, hsx, hsy, hsz, octant.depth + 1, octant, 1));
-                // Front - bottom - left
-                octantsPerLevel[level + 1].add(new OctreeNode(nextPageId(), octant.centre.x - hsx, octant.centre.y - hsy, octant.centre.z - hsz, hsx, hsy, hsz, octant.depth + 1, octant, 2));
-                // Front - bottom - right
-                octantsPerLevel[level + 1].add(new OctreeNode(nextPageId(), octant.centre.x + hsx, octant.centre.y - hsy, octant.centre.z - hsz, hsx, hsy, hsz, octant.depth + 1, octant, 3));
-                // Back - top - left
-                octantsPerLevel[level + 1].add(new OctreeNode(nextPageId(), octant.centre.x - hsx, octant.centre.y + hsy, octant.centre.z + hsz, hsx, hsy, hsz, octant.depth + 1, octant, 4));
-                // Back - top - right
-                octantsPerLevel[level + 1].add(new OctreeNode(nextPageId(), octant.centre.x + hsx, octant.centre.y + hsy, octant.centre.z + hsz, hsx, hsy, hsz, octant.depth + 1, octant, 5));
-                // Back - bottom - left
-                octantsPerLevel[level + 1].add(new OctreeNode(nextPageId(), octant.centre.x - hsx, octant.centre.y - hsy, octant.centre.z + hsz, hsx, hsy, hsz, octant.depth + 1, octant, 6));
-                // Back - bottom - right
-                octantsPerLevel[level + 1].add(new OctreeNode(nextPageId(), octant.centre.x + hsx, octant.centre.y - hsy, octant.centre.z + hsz, hsx, hsy, hsz, octant.depth + 1, octant, 7));
+                if (!leaf) {
+                    // Generate 8 children per each level octant
+                    double hsx = octant.size.x / 4d;
+                    double hsy = octant.size.y / 4d;
+                    double hsz = octant.size.z / 4d;
+
+                    /** CREATE SUB-OCTANTS **/
+                    // Front - top - left
+                    octantsPerLevel[level + 1].add(new OctreeNode(nextPageId(), octant.centre.x - hsx, octant.centre.y + hsy, octant.centre.z - hsz, hsx, hsy, hsz, octant.depth + 1, octant, 0));
+                    // Front - top - right
+                    octantsPerLevel[level + 1].add(new OctreeNode(nextPageId(), octant.centre.x + hsx, octant.centre.y + hsy, octant.centre.z - hsz, hsx, hsy, hsz, octant.depth + 1, octant, 1));
+                    // Front - bottom - left
+                    octantsPerLevel[level + 1].add(new OctreeNode(nextPageId(), octant.centre.x - hsx, octant.centre.y - hsy, octant.centre.z - hsz, hsx, hsy, hsz, octant.depth + 1, octant, 2));
+                    // Front - bottom - right
+                    octantsPerLevel[level + 1].add(new OctreeNode(nextPageId(), octant.centre.x + hsx, octant.centre.y - hsy, octant.centre.z - hsz, hsx, hsy, hsz, octant.depth + 1, octant, 3));
+                    // Back - top - left
+                    octantsPerLevel[level + 1].add(new OctreeNode(nextPageId(), octant.centre.x - hsx, octant.centre.y + hsy, octant.centre.z + hsz, hsx, hsy, hsz, octant.depth + 1, octant, 4));
+                    // Back - top - right
+                    octantsPerLevel[level + 1].add(new OctreeNode(nextPageId(), octant.centre.x + hsx, octant.centre.y + hsy, octant.centre.z + hsz, hsx, hsy, hsz, octant.depth + 1, octant, 5));
+                    // Back - bottom - left
+                    octantsPerLevel[level + 1].add(new OctreeNode(nextPageId(), octant.centre.x - hsx, octant.centre.y - hsy, octant.centre.z + hsz, hsx, hsy, hsz, octant.depth + 1, octant, 6));
+                    // Back - bottom - right
+                    octantsPerLevel[level + 1].add(new OctreeNode(nextPageId(), octant.centre.x + hsx, octant.centre.y - hsy, octant.centre.z + hsz, hsx, hsy, hsz, octant.depth + 1, octant, 7));
+                }
             }
         }
 
