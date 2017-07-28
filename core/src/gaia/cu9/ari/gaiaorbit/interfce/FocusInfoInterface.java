@@ -307,20 +307,15 @@ public class FocusInfoInterface extends Table implements IObserver, IGuiInterfac
             }
 
             Float appmag = focus.getAppmag();
-
-            if (appmag != null) {
-                focusAppMag.setText(nf.format(appmag));
-            } else {
-                focusAppMag.setText("-");
-            }
+            focusAppMag.setText(nf.format(appmag));
             Float absmag = focus.getAbsmag();
+            focusAbsMag.setText(nf.format(absmag));
 
-            if (absmag != null) {
-                focusAbsMag.setText(nf.format(absmag));
+            if (ComponentType.values()[focus.getCt().getFirstOrdinal()] == ComponentType.Stars) {
+                focusRadius.setText("-");
             } else {
-                focusAbsMag.setText("-");
+                focusRadius.setText(sf.format(focus.getRadius() * Constants.U_TO_KM) + " km");
             }
-            focusRadius.setText(sf.format(focus.getRadius() * Constants.U_TO_KM) + " km");
 
             // Update more info table
             if (!daemon.executing()) {

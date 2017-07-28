@@ -25,6 +25,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
 import gaia.cu9.ari.gaiaorbit.scenegraph.IFocus;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
+import gaia.cu9.ari.gaiaorbit.scenegraph.IStarFocus;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Invisible;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Loc;
 import gaia.cu9.ari.gaiaorbit.scenegraph.NaturalCamera;
@@ -522,8 +523,12 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
         IFocus obj = sg.findFocus(name);
         if (obj == null)
             return -1;
-        else
+        else if (obj instanceof IStarFocus) {
+            // TODO Remove this dirty hack
+            return obj.getRadius() * 1.4856329941301618 * Constants.U_TO_KM;
+        } else {
             return obj.getRadius() * Constants.U_TO_KM;
+        }
     }
 
     @Override

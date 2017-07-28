@@ -122,51 +122,57 @@ public class DesktopNetworkChecker extends Thread implements INetworkChecker {
                     break;
                 executing = true;
                 if (focus != null) {
-                    Logger.debug(this.getClass().getSimpleName(), "Looking up network resources for '" + focus.getName() + "'");
+                    Gdx.app.postRunnable(() -> {
+                        Logger.debug(this.getClass().getSimpleName(), "Looking up network resources for '" + focus.getName() + "'");
 
-                    // Add table
-                    if (focus instanceof IStarFocus) {
-                        Button gaiaButton = new OwnTextButton("Gaia", skin, "link");
-                        gaiaButton.addListener(new GaiaButtonListener((IStarFocus) focus));
-                        table.add(gaiaButton).padRight(pad).left();
-                    }
-
-                    simbadLink = new Link("Simbad", linkStyle, "");
-                    wikiLink = new Link("Wikipedia ", linkStyle, "");
-
-                    simbadCell = table.add().left();
-                    wikiCell = table.add().left();
-
-                    String wikiname = focus.getName().replace(' ', '_');
-
-                    setWikiLink(wikiname, focus, new LinkListener() {
-                        @Override
-                        public void ok(String link) {
-                            wikiLink.setLinkURL(link);
-                            wikiCell.setActor(wikiLink);
-                            wikiCell.padRight(pad);
+                        // Add table
+                        if (focus instanceof IStarFocus) {
+                            Button gaiaButton = new OwnTextButton("Gaia", skin, "link");
+                            gaiaButton.addListener(new GaiaButtonListener((IStarFocus) focus));
+                            table.add(gaiaButton).padRight(pad).left();
                         }
 
-                        @Override
-                        public void ko(String link) {
-                        }
+                        simbadLink = new Link("Simbad", linkStyle, "");
+                        wikiLink = new Link("Wikipedia ", linkStyle, "");
+
+                        simbadCell = table.add().left();
+                        wikiCell = table.add().left();
+
+                        String wikiname = focus.getName().replace(' ', '_');
+
+                        setWikiLink(wikiname, focus, new LinkListener() {
+                            @Override
+                            public void ok(String link) {
+                                Gdx.app.postRunnable(() -> {
+                                    wikiLink.setLinkURL(link);
+                                    wikiCell.setActor(wikiLink);
+                                    wikiCell.padRight(pad);
+                                });
+                            }
+
+                            @Override
+                            public void ko(String link) {
+                            }
+                        });
+                        setSimbadLink(focus, new LinkListener() {
+
+                            @Override
+                            public void ok(String link) {
+                                Gdx.app.postRunnable(() -> {
+                                    simbadLink.setLinkURL(link);
+                                    simbadCell.setActor(simbadLink);
+                                    simbadCell.padRight(pad);
+                                });
+                            }
+
+                            @Override
+                            public void ko(String link) {
+                            }
+
+                        });
+
+                        focus = null;
                     });
-                    setSimbadLink(focus, new LinkListener() {
-
-                        @Override
-                        public void ok(String link) {
-                            simbadLink.setLinkURL(link);
-                            simbadCell.setActor(simbadLink);
-                            simbadCell.padRight(pad);
-                        }
-
-                        @Override
-                        public void ko(String link) {
-                        }
-
-                    });
-
-                    focus = null;
                 }
             }
 
