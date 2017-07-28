@@ -101,7 +101,12 @@ public class DesktopConfInit extends ConfInit {
         try {
             buildtime = df.parse(vp.getProperty("buildtime"));
         } catch (ParseException e) {
-            Logger.error(e);
+            df = new SimpleDateFormat("dd/MM/yyyy hh:mm a", Locale.ENGLISH);
+            try {
+                buildtime = df.parse(vp.getProperty("buildtime"));
+            } catch (ParseException e1) {
+                Logger.error(e1);
+            }
         }
         vc.initialize(versionStr, buildtime, vp.getProperty("builder"), vp.getProperty("system"), vp.getProperty("build"));
         Logger.info("Gaia Sky version " + vc.version + " - build " + vc.build);
