@@ -292,7 +292,10 @@ public abstract class AbstractSceneGraph implements ISceneGraph {
 
     public SceneGraphNode getNode(String name) {
         //return root.getNode(name);
-        return stringToNode.get(name);
+        SceneGraphNode node = stringToNode.get(name);
+        if (node instanceof StarGroup)
+            ((StarGroup) node).getFocus(name);
+        return node;
     }
 
     public Array<SceneGraphNode> getNodes() {
@@ -307,12 +310,12 @@ public abstract class AbstractSceneGraph implements ISceneGraph {
         return objects;
     }
 
-    public CelestialBody findFocus(String name) {
+    public IFocus findFocus(String name) {
         SceneGraphNode node = getNode(name);
-        if (node == null || !(node instanceof CelestialBody))
+        if (node == null || !(node instanceof IFocus))
             return null;
         else
-            return (CelestialBody) node;
+            return (IFocus) node;
     }
 
     public int getSize() {

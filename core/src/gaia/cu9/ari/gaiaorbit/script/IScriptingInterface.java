@@ -1,6 +1,7 @@
 package gaia.cu9.ari.gaiaorbit.script;
 
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
+import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 
 /**
  * Scripting interface. Provides an interface to the Gaia Sandbox core and
@@ -97,8 +98,7 @@ public interface IScriptingInterface {
      *            The size of the font. The system will use the existing font
      *            closest to the chosen size.
      */
-    public void displayMessageObject(int id, String message, float x, float y, float r, float g, float b, float a,
-	    float fontSize);
+    public void displayMessageObject(int id, String message, float x, float y, float r, float g, float b, float a, float fontSize);
 
     /**
      * Adds a new multi-line text in the screen with the given id, coordinates
@@ -135,8 +135,7 @@ public interface IScriptingInterface {
      *            The size of the font. The system will use the existing font
      *            closest to the chosen size.
      */
-    public void displayTextObject(int id, String text, float x, float y, float maxWidth, float maxHeight, float r,
-	    float g, float b, float a, float fontSize);
+    public void displayTextObject(int id, String text, float x, float y, float maxWidth, float maxHeight, float r, float g, float b, float a, float fontSize);
 
     /**
      * Adds a new image object at the given coordinates. If an object already
@@ -527,10 +526,10 @@ public interface IScriptingInterface {
      * @param name
      *            The name or id (HIP, TYC, sourceId) of the object.
      * @return The object as a
-     *         {@link gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody}, or null
+     *         {@link gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode}, or null
      *         if it does not exist.
      */
-    public CelestialBody getObject(String name);
+    public SceneGraphNode getObject(String name);
 
     /**
      * Gets the size of an object, in Km, by name or id (HIP, TYC, sourceId).

@@ -512,15 +512,15 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
     }
 
     @Override
-    public CelestialBody getObject(String name) {
+    public SceneGraphNode getObject(String name) {
         ISceneGraph sg = GaiaSky.instance.sg;
-        return sg.findFocus(name);
+        return sg.getNode(name.toLowerCase());
     }
 
     @Override
     public double getObjectRadius(String name) {
         ISceneGraph sg = GaiaSky.instance.sg;
-        IFocus obj = sg.findFocus(name);
+        IFocus obj = sg.findFocus(name.toLowerCase());
         if (obj == null)
             return -1;
         else if (obj instanceof IStarFocus) {
@@ -549,9 +549,10 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
     public void goToObject(String name, double angle, float focusWait, AtomicBoolean stop) {
         assert name != null : "Name can't be null";
 
+        String namelc = name.toLowerCase();
         ISceneGraph sg = GaiaSky.instance.sg;
-        if (sg.containsNode(name)) {
-            IFocus focus = sg.findFocus(name);
+        if (sg.containsNode(namelc)) {
+            IFocus focus = sg.findFocus(namelc);
             goToObject(focus, angle, focusWait, stop);
         }
     }
@@ -612,9 +613,10 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
     public void landOnObject(String name, AtomicBoolean stop) {
         assert name != null : "Name can't be null";
 
+        String namelc = name.toLowerCase();
         ISceneGraph sg = GaiaSky.instance.sg;
-        if (sg.containsNode(name)) {
-            IFocus focus = sg.findFocus(name);
+        if (sg.containsNode(namelc)) {
+            IFocus focus = sg.findFocus(namelc);
             landOnObject(focus, stop);
         }
 
@@ -757,9 +759,10 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
         assert name != null : "Name can't be null";
 
         stops.add(stop);
+        String namelc = name.toLowerCase();
         ISceneGraph sg = GaiaSky.instance.sg;
-        if (sg.containsNode(name)) {
-            IFocus focus = sg.findFocus(name);
+        if (sg.containsNode(namelc)) {
+            IFocus focus = sg.findFocus(namelc);
             landOnObjectLocation(focus, locationName, stop);
         }
     }
@@ -789,9 +792,10 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
     public void landOnObjectLocation(String name, double longitude, double latitude, AtomicBoolean stop) {
         assert name != null : "Name can't be null";
 
+        String namelc = name.toLowerCase();
         ISceneGraph sg = GaiaSky.instance.sg;
-        if (sg.containsNode(name)) {
-            IFocus focus = sg.findFocus(name);
+        if (sg.containsNode(namelc)) {
+            IFocus focus = sg.findFocus(namelc);
             landOnObjectLocation(focus, longitude, latitude, stop);
         }
 
@@ -919,9 +923,10 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
 
     @Override
     public double getDistanceTo(String name) {
+        String namelc = name.toLowerCase();
         ISceneGraph sg = GaiaSky.instance.sg;
-        if (sg.containsNode(name)) {
-            SceneGraphNode object = sg.getNode(name);
+        if (sg.containsNode(namelc)) {
+            SceneGraphNode object = sg.getNode(namelc);
             if (object instanceof AbstractPositionEntity) {
                 AbstractPositionEntity ape = (AbstractPositionEntity) object;
                 return (ape.distToCamera - ape.getRadius()) * Constants.U_TO_KM;

@@ -115,7 +115,7 @@ public interface ISceneGraph extends Disposable {
 
     public Array<IFocus> getFocusableObjects();
 
-    public CelestialBody findFocus(String name);
+    public IFocus findFocus(String name);
 
     public int getSize();
 

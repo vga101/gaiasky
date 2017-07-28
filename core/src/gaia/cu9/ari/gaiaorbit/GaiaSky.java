@@ -60,7 +60,6 @@ import gaia.cu9.ari.gaiaorbit.render.PostProcessorFactory;
 import gaia.cu9.ari.gaiaorbit.render.SceneGraphRenderer;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
-import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.IFocus;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
@@ -668,14 +667,6 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
 
     public Array<IFocus> getFocusableEntities() {
         return sg.getFocusableObjects();
-    }
-
-    public SceneGraphNode findEntity(String name) {
-        return sg.getNode(name);
-    }
-
-    public CelestialBody findFocusByName(String name) {
-        return sg.findFocus(name);
     }
 
     public FrameBuffer getFrameBuffer(int w, int h) {

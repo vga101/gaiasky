@@ -24,12 +24,11 @@ print("%s radius: %f Km" % (obj, rad))
 sleep(1)
 
 body = gs.getObject(obj)
-absmag = body.absmag
-appmag = body.appmag
-colbv = body.colorbv
-radec = body.posSph
+absmag = body.getAbsmag()
+appmag = body.getAppmag()
+radec = body.getPosSph()
 
-print("Absmag: %f, appmag: %f, B-V: %f, RA: %f, DEC: %f" % (absmag, appmag, colbv, radec.x, radec.y))
+print("Absmag: %f, appmag: %f, RA: %f, DEC: %f" % (absmag, appmag, radec.x, radec.y))
 
 
 # Now stop at a certain distance of earth
