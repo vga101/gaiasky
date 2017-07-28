@@ -21,7 +21,9 @@ import gaia.cu9.ari.gaiaorbit.data.group.IStarGroupDataProvider;
 import gaia.cu9.ari.gaiaorbit.data.octreegen.MetadataBinaryIO;
 import gaia.cu9.ari.gaiaorbit.data.octreegen.particlegroup.BrightestStars;
 import gaia.cu9.ari.gaiaorbit.data.octreegen.particlegroup.IAggregationAlgorithm;
+import gaia.cu9.ari.gaiaorbit.data.octreegen.particlegroup.IStarGroupIO;
 import gaia.cu9.ari.gaiaorbit.data.octreegen.particlegroup.OctreeGenerator;
+import gaia.cu9.ari.gaiaorbit.data.octreegen.particlegroup.StarGroupBinaryIO;
 import gaia.cu9.ari.gaiaorbit.data.octreegen.particlegroup.StarGroupSerializedIO;
 import gaia.cu9.ari.gaiaorbit.desktop.format.DesktopDateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.desktop.format.DesktopNumberFormatFactory;
@@ -81,6 +83,9 @@ public class OctreeGroupGeneratorTest implements IObserver {
 
     @Parameter(names = "--discard", description = "Whether to discard stars due to density")
     private boolean discard = false;
+
+    @Parameter(names = "--serialized", description = "Use the java serialization method instead of the binary format to output the particle files")
+    private boolean serialized = false;
 
     @Parameter(names = { "-h", "--help" }, help = true)
     private boolean help = false;
@@ -204,13 +209,13 @@ public class OctreeGroupGeneratorTest implements IObserver {
         metadataWriter.writeMetadata(octree, new FileOutputStream(metadataFile));
 
         /** WRITE PARTICLES **/
-        StarGroupSerializedIO particleWriter = new StarGroupSerializedIO();
+        IStarGroupIO particleWriter = serialized ? new StarGroupSerializedIO() : new StarGroupBinaryIO();
         particlesFolder.mkdirs();
         writeParticlesToFiles(particleWriter, octree);
 
     }
 
-    private void writeParticlesToFiles(StarGroupSerializedIO particleWriter, OctreeNode current) throws IOException {
+    private void writeParticlesToFiles(IStarGroupIO particleWriter, OctreeNode current) throws IOException {
         // Write current
         if (current.ownObjects > 0) {
             File particles = new File(outFolder + "/particles/", "particles_" + String.format("%06d", current.pageId) + ".bin");

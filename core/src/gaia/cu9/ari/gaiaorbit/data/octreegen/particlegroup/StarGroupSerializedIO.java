@@ -22,7 +22,7 @@ import gaia.cu9.ari.gaiaorbit.util.Logger;
  * @author Toni Sagrista
  *
  */
-public class StarGroupSerializedIO {
+public class StarGroupSerializedIO implements IStarGroupIO {
 
     IStarGroupDataProvider provider;
 

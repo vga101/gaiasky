@@ -17,7 +17,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.StarGroup.StarBean;
  * @author Toni Sagrista
  *
  */
-public class StarGroupBinaryIO {
+public class StarGroupBinaryIO implements IStarGroupIO {
 
     BinaryDataProvider provider;
 

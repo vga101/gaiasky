@@ -31,13 +31,19 @@ public class OctreeGroupLoader extends StreamingOctreeLoader {
      */
     private static final int PRELOAD_DEPTH = 3;
 
+    /**
+     * Whether to use the binary file format. If false, we use the java
+     * serialization method
+     **/
+    private Boolean binary = true;
+
     /** Binary particle reader **/
-    private SerializedDataProvider particleReader;
+    private IParticleGroupDataProvider particleReader;
 
     public OctreeGroupLoader() {
         instance = this;
 
-        particleReader = new SerializedDataProvider();
+        particleReader = binary ? new BinaryDataProvider() : new SerializedDataProvider();
 
     }
 
@@ -81,7 +87,8 @@ public class OctreeGroupLoader extends StreamingOctreeLoader {
         if (!octantFile.exists() || octantFile.isDirectory()) {
             return false;
         }
-        Array<StarBean> data = particleReader.loadData(octantFile.read(), 1.0);
+        @SuppressWarnings("unchecked")
+        Array<StarBean> data = (Array<StarBean>) particleReader.loadData(octantFile.read(), 1.0);
         StarGroup sg = new StarGroup();
         sg.setName("stargroup-" + sg.id);
         sg.setFadeout(new double[] { 21e2, .5e5 });
