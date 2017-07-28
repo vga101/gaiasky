@@ -44,8 +44,7 @@ public abstract class AbstractStarGroupDataProvider implements IStarGroupDataPro
      * @param f
      */
     protected void initLists(int elems) {
-        if (list == null)
-            list = new Array<StarBean>(elems);
+        list = new Array<StarBean>(elems);
     }
 
     protected void initLists() {
