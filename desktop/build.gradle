@@ -178,6 +178,8 @@ task dist (dependsOn: gaiaskyJar, description: "Compiles the project, creates th
 	                exclude "**/catalog-tgas.json"
 	                
 	                exclude "**/constel_id.csv"
+	                
+	                exclude "dummyversion"
 	
 	    }
 

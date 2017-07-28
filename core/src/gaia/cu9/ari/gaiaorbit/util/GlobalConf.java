@@ -467,7 +467,7 @@ public class GlobalConf {
         public String TUTORIAL_SCRIPT_LOCATION;
         public boolean SHOW_DEBUG_INFO;
         public Date LAST_CHECKED;
-        public String LAST_VERSION;
+        public String LAST_VERSION_TIME;
         public String VERSION_CHECK_URL;
         public String UI_THEME;
         public String SCRIPT_LOCATION;
@@ -485,13 +485,13 @@ public class GlobalConf {
             EventManager.instance.subscribe(this, Events.TOGGLE_STEREOSCOPIC_CMD, Events.TOGGLE_STEREO_PROFILE_CMD, Events.CUBEMAP360_CMD);
         }
 
-        public void initialize(boolean dISPLAY_TUTORIAL, String tUTORIAL_POINTER_SCRIPT_LOCATION, String tUTORIAL_SCRIPT_LOCATION, boolean sHOW_DEBUG_INFO, Date lAST_CHECKED, String lAST_VERSION, String vERSION_CHECK_URL, String uI_THEME, String sCRIPT_LOCATION, String lOCALE, boolean sTEREOSCOPIC_MODE, StereoProfile sTEREO_PROFILE, boolean cUBEMAP360_MODE, boolean aNALYTICS_ENABLED, boolean dISPLAY_HUD) {
+        public void initialize(boolean dISPLAY_TUTORIAL, String tUTORIAL_POINTER_SCRIPT_LOCATION, String tUTORIAL_SCRIPT_LOCATION, boolean sHOW_DEBUG_INFO, Date lAST_CHECKED, String lAST_VERSION_TIME, String vERSION_CHECK_URL, String uI_THEME, String sCRIPT_LOCATION, String lOCALE, boolean sTEREOSCOPIC_MODE, StereoProfile sTEREO_PROFILE, boolean cUBEMAP360_MODE, boolean aNALYTICS_ENABLED, boolean dISPLAY_HUD) {
             DISPLAY_TUTORIAL = dISPLAY_TUTORIAL;
             TUTORIAL_POINTER_SCRIPT_LOCATION = tUTORIAL_POINTER_SCRIPT_LOCATION;
             TUTORIAL_SCRIPT_LOCATION = tUTORIAL_SCRIPT_LOCATION;
             SHOW_DEBUG_INFO = sHOW_DEBUG_INFO;
             LAST_CHECKED = lAST_CHECKED;
-            LAST_VERSION = lAST_VERSION;
+            LAST_VERSION_TIME = lAST_VERSION_TIME;
             VERSION_CHECK_URL = vERSION_CHECK_URL;
             UI_THEME = uI_THEME;
             SCRIPT_LOCATION = sCRIPT_LOCATION;
@@ -597,26 +597,17 @@ public class GlobalConf {
 
     public static class VersionConf implements IConf {
         public String version;
-        public String buildtime;
+        public Date buildtime;
         public String builder;
         public String system;
         public String build;
 
-        // Version: major.minor.rev
-
-        public int major;
-        public int minor;
-        public int rev;
-
-        public void initialize(String version, String buildtime, String builder, String system, String build, int major, int minor, int rev) {
+        public void initialize(String version, Date buildtime, String builder, String system, String build) {
             this.version = version;
             this.buildtime = buildtime;
             this.builder = builder;
             this.system = system;
             this.build = build;
-            this.major = major;
-            this.minor = minor;
-            this.rev = rev;
         }
 
         public static int[] getMajorMinorRevFromString(String version) {

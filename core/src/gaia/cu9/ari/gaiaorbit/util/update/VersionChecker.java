@@ -1,5 +1,10 @@
 package gaia.cu9.ari.gaiaorbit.util.update;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Net.HttpMethods;
 import com.badlogic.gdx.Net.HttpRequest;
@@ -7,6 +12,9 @@ import com.badlogic.gdx.Net.HttpResponse;
 import com.badlogic.gdx.Net.HttpResponseListener;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.utils.JsonReader;
+import com.badlogic.gdx.utils.JsonValue;
+
+import gaia.cu9.ari.gaiaorbit.util.Logger;
 
 public class VersionChecker implements Runnable {
     private static final int VERSIONCHECK_TIMEOUT_MS = 5000;
@@ -27,8 +35,51 @@ public class VersionChecker implements Runnable {
         Gdx.net.sendHttpRequest(request, new HttpResponseListener() {
             public void handleHttpResponse(HttpResponse httpResponse) {
                 JsonReader reader = new JsonReader();
-                Object result = reader.parse(httpResponse.getResultAsStream());
-                listener.handle(new VersionCheckEvent(result));
+                JsonValue result = reader.parse(httpResponse.getResultAsStream());
+                // Parse commit url to get date
+                int n = result.size;
+                for (int i = 0; i < n; i++) {
+                    String tag = result.get(i).getString("name");
+
+                    // Check tag is major.minor.rev
+                    if (tag.matches("^(\\D{1})?\\d+.\\d+(\\D{1})?(.\\d+)?$")) {
+                        String commitUrl = result.get(0).get("commit").getString("url");
+                        HttpRequest request = new HttpRequest(HttpMethods.GET);
+                        request.setUrl(commitUrl);
+                        request.setTimeOut(VERSIONCHECK_TIMEOUT_MS);
+                        Gdx.net.sendHttpRequest(request, new HttpResponseListener() {
+
+                            @Override
+                            public void handleHttpResponse(HttpResponse httpResponse) {
+                                JsonReader reader = new JsonReader();
+                                JsonValue result = reader.parse(httpResponse.getResultAsStream());
+                                String date = result.getChild("commit").getString("date");
+                                //Format 2016-12-07T10:41:35Z
+                                DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+                                try {
+                                    Date tagDate = df.parse(date);
+                                    // Here is the commit object
+                                    listener.handle(new VersionCheckEvent(tag, tagDate));
+                                } catch (ParseException e) {
+                                    Logger.error(e);
+                                }
+                            }
+
+                            @Override
+                            public void failed(Throwable t) {
+                                listener.handle(new VersionCheckEvent(true));
+                            }
+
+                            @Override
+                            public void cancelled() {
+                                listener.handle(new VersionCheckEvent(true));
+                            }
+
+                        });
+                        break;
+                    }
+                }
+
             }
 
             public void failed(Throwable t) {

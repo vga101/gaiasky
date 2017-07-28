@@ -1,6 +1,7 @@
 package gaia.cu9.ari.gaiaorbit.desktop.util;
 
 import java.io.File;
+import java.util.Date;
 
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.util.ConfInit;
@@ -31,7 +32,7 @@ public class WebGLConfInitLite extends ConfInit {
         Constants.webgl = true;
 
         VersionConf vc = new VersionConf();
-        vc.initialize("0.706b", null, null, null, null, 0, 706, 0);
+        vc.initialize("0.706b", new Date(), null, null, null);
 
         PerformanceConf pc = new PerformanceConf();
         pc.initialize(false, 1);

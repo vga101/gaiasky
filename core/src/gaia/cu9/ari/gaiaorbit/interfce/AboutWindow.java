@@ -32,7 +32,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.BufferUtils;
-import com.badlogic.gdx.utils.JsonValue;
 
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
@@ -53,7 +52,7 @@ import gaia.cu9.ari.gaiaorbit.util.update.VersionChecker;
  *
  */
 public class AboutWindow extends GenericDialog {
-    private static long fiveDaysMs = 5 * 24 * 60 * 60 * 1000;
+    private static long versionCheckIntervalMs = 1 * 24 * 60 * 60 * 1000;
 
     private LabelStyle linkStyle;
     private Table checkTable;
@@ -259,7 +258,7 @@ public class AboutWindow extends GenericDialog {
         Label revision = new OwnLabel(GlobalConf.version.build, skin);
 
         Label timetitle = new OwnLabel(txt("gui.help.buildtime"), skin);
-        Label time = new OwnLabel(GlobalConf.version.buildtime, skin);
+        Label time = new OwnLabel(GlobalConf.version.buildtime.toString(), skin);
 
         Label systemtitle = new OwnLabel(txt("gui.help.buildsys"), skin);
         TextArea system = new OwnTextArea(GlobalConf.version.system, skin.get("regular", TextFieldStyle.class));
@@ -389,13 +388,13 @@ public class AboutWindow extends GenericDialog {
         checkLabel = new OwnLabel("", skin);
 
         checkTable.add(checkLabel).top().left().padBottom(pad).row();
-        if (GlobalConf.program.LAST_CHECKED == null || GlobalConf.program.LAST_VERSION.isEmpty() || new Date().getTime() - GlobalConf.program.LAST_CHECKED.getTime() > fiveDaysMs) {
+        if (GlobalConf.program.LAST_CHECKED == null || new Date().getTime() - GlobalConf.program.LAST_CHECKED.getTime() > versionCheckIntervalMs) {
             // Check!
             checkLabel.setText(txt("gui.newversion.checking"));
             getCheckVersionThread().start();
         } else {
             // Inform latest
-            newVersionCheck(GlobalConf.program.LAST_VERSION);
+            newVersionCheck(GlobalConf.version.version, GlobalConf.version.buildtime);
 
         }
 
@@ -450,7 +449,7 @@ public class AboutWindow extends GenericDialog {
     }
 
     /**
-     * Checks the given version against the current version and:
+     * Checks the given tag time against the current version time and:
      * <ul>
      * <li>Displays a "new version available" message if the given version is
      * newer than the current.</li>
@@ -461,12 +460,11 @@ public class AboutWindow extends GenericDialog {
      * @param version
      *            The version to check.
      */
-    private void newVersionCheck(String version) {
-        int[] majmin = GlobalConf.VersionConf.getMajorMinorRevFromString(version);
-
-        if (majmin[0] > GlobalConf.version.major || (majmin[0] == GlobalConf.version.major && majmin[1] > GlobalConf.version.minor) || (majmin[0] == GlobalConf.version.major && majmin[1] == GlobalConf.version.minor) && majmin[2] > GlobalConf.version.rev) {
+    private void newVersionCheck(String tagversion, Date tagdate) {
+        GlobalConf.program.LAST_CHECKED = new Date();
+        if (tagdate.after(GlobalConf.version.buildtime)) {
             // There's a new version!
-            checkLabel.setText(txt("gui.newversion.available", GlobalConf.version, version));
+            checkLabel.setText(txt("gui.newversion.available", GlobalConf.version, tagversion));
             final String uri = GlobalConf.WEBPAGE_DOWNLOADS;
 
             OwnTextButton button = new OwnTextButton(txt("gui.newversion.getit"), skin);
@@ -511,33 +509,22 @@ public class AboutWindow extends GenericDialog {
     private Thread getCheckVersionThread() {
         // Start version check
         VersionChecker vc = new VersionChecker(GlobalConf.program.VERSION_CHECK_URL);
-        vc.setListener(new EventListener() {
-            @Override
-            public boolean handle(Event event) {
-                if (event instanceof VersionCheckEvent) {
-                    VersionCheckEvent vce = (VersionCheckEvent) event;
-                    if (!vce.isFailed()) {
-                        checkTable.clear();
-                        checkTable.add(checkLabel).top().left().padBottom(pad).row();
-                        // All is fine
-                        Object result = vce.getResult();
-                        JsonValue json = (JsonValue) result;
+        vc.setListener((event) -> {
+            if (event instanceof VersionCheckEvent) {
+                VersionCheckEvent vce = (VersionCheckEvent) event;
+                if (!vce.isFailed()) {
+                    checkTable.clear();
+                    checkTable.add(checkLabel).top().left().padBottom(pad).row();
+                    // All is fine
+                    newVersionCheck(vce.getTag(), vce.getTagTime());
 
-                        JsonValue last = json.get(0);
-                        String version = last.getString("name");
-                        if (version.matches("^(\\D{1})?\\d+.\\d+(\\D{1})?(.\\d+)?$")) {
-                            GlobalConf.program.LAST_VERSION = new String(version);
-                            GlobalConf.program.LAST_CHECKED = new Date();
-                            newVersionCheck(version);
-                        }
-                    } else {
-                        // Handle failed case
-                        checkLabel.setText(txt("notif.error", (String) vce.getResult()));
-                        checkLabel.setColor(Color.RED);
-                    }
+                } else {
+                    // Handle failed case
+                    checkLabel.setText(txt("notif.error", "Could not get last version"));
+                    checkLabel.setColor(Color.RED);
                 }
-                return false;
             }
+            return false;
         });
         return new Thread(vc);
     }

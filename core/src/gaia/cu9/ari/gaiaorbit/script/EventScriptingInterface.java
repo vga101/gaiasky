@@ -1090,7 +1090,8 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
         case DISPOSE:
             // Stop all
             for (AtomicBoolean stop : stops) {
-                stop.set(true);
+                if (stop != null)
+                    stop.set(true);
             }
             break;
         default:

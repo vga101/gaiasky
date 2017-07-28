@@ -6,9 +6,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.channels.FileChannel;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Properties;
 
 import gaia.cu9.ari.gaiaorbit.desktop.GaiaSkyDesktop;
@@ -92,8 +96,14 @@ public class DesktopConfInit extends ConfInit {
         /** VERSION CONF **/
         VersionConf vc = new VersionConf();
         String versionStr = vp.getProperty("version");
-        int[] majminrev = VersionConf.getMajorMinorRevFromString(versionStr);
-        vc.initialize(versionStr, vp.getProperty("buildtime"), vp.getProperty("builder"), vp.getProperty("system"), vp.getProperty("build"), majminrev[0], majminrev[1], majminrev[2]);
+        DateFormat df = new SimpleDateFormat("EEE MMM dd kk:mm:ss z yyyy", Locale.ENGLISH);
+        Date buildtime = null;
+        try {
+            buildtime = df.parse(vp.getProperty("buildtime"));
+        } catch (ParseException e) {
+            Logger.error(e);
+        }
+        vc.initialize(versionStr, buildtime, vp.getProperty("builder"), vp.getProperty("system"), vp.getProperty("build"));
         Logger.info("Gaia Sky version " + vc.version + " - build " + vc.build);
 
         /** PERFORMANCE CONF **/
@@ -348,7 +358,6 @@ public class DesktopConfInit extends ConfInit {
         p.setProperty("program.displayhud", Boolean.toString(GlobalConf.program.DISPLAY_HUD));
         p.setProperty("program.debuginfo", Boolean.toString(GlobalConf.program.SHOW_DEBUG_INFO));
         p.setProperty("program.lastchecked", GlobalConf.program.LAST_CHECKED != null ? df.format(GlobalConf.program.LAST_CHECKED) : "");
-        p.setProperty("program.lastversion", GlobalConf.program.LAST_VERSION != null ? GlobalConf.program.LAST_VERSION : "");
         p.setProperty("program.versioncheckurl", GlobalConf.program.VERSION_CHECK_URL);
         p.setProperty("program.ui.theme", GlobalConf.program.UI_THEME);
         p.setProperty("program.scriptlocation", GlobalConf.program.SCRIPT_LOCATION);
