@@ -56,7 +56,7 @@ public class TimeComponent extends GuiComponent implements IObserver {
     @Override
     public void initialize() {
         // Time
-        date = new OwnLabel("", skin);
+        date = new OwnLabel("time UT", skin);
         date.setName("input time");
 
         dateEdit = new OwnImageButton(skin, "edit");

@@ -61,7 +61,10 @@ public class OctreeWrapperConcurrent extends AbstractOctreeWrapper {
         } else {
             // Just update children
             for (SceneGraphNode sgn : children) {
-                sgn.update(time, transform, camera, ((AbstractPositionEntity) sgn).octant.opacity);
+                if (copy)
+                    sgn.update(time, transform, camera);
+                else
+                    sgn.update(time, transform, camera, ((AbstractPositionEntity) sgn).octant.opacity);
             }
         }
 
