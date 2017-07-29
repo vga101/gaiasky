@@ -1,4 +1,5 @@
 octree/
+catalog/
 tgas_*/
 orbits_asteroid_extra*.json
 kepler-exoplanets.csv

@@ -20,6 +20,6 @@
 		
 		// Extends IParticleGroupDataProvider
 		"provider" : "gaia.cu9.ari.gaiaorbit.data.group.BinaryDataProvider",
-		"datafile" : "data/catalog/tgashyg.own.bin"
+		"datafile" : "data/catalog/tgashyg.bin"
 	}
 ]}
