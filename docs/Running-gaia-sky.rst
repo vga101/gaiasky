@@ -58,19 +58,52 @@ First, clone the repository:
     $ git clone https://github.com/langurmonkey/gaiasky.git
     $ cd gaiasky
 
-Compile and run
----------------
+Getting the catalog data
+------------------------
 
-The TGAS catalog files (Gaia data) are **not** in the repository, so if you want to use TGAS when running
-from source you need to download
-the ``tar`` file corresponding to your version:
+The TGAS catalog files (Gaia data) are **not** in the repository, so if
+you want to use TGAS when running from source you need to download the
+``tar`` file corresponding to your version.
 
--  `tgas single file (version 1.0.3 or older) <http://wwwstaff.ari.uni-heidelberg.de/gaiasandbox/files/20161206_tgas_gaiasky_1.0.3.tar.gz>`__ 
--  `tags single file (version 1.0.4) <http://wwwstaff.ari.uni-heidelberg.de/gaiasandbox/files/20161206_tgas_gaiasky_1.0.4.tar.gz>`__ 
--  `tags gpu (version 1.5.0 or newer) <http://wwwstaff.ari.uni-heidelberg.de/gaiasandbox/files/20170713_tgas_gaiasky_1.5.0.tar.gz>`__ 
+As of version ``1.5.0``, there are new GPU-bound catalogs which perform
+much better and can also be combined with the levels-of-detail structure
+to produce a good combo in terms of performance and load times. Choose
+which catalog you want to use. Usually, the single file GPU version
+should work fine (tgas gpu), and has no culling, so all particles are
+visible at all times.
 
-You must extract the contents tarball into the folder ``gaiasky/android/assets/data/octree`` (versions ``1.0.3`` and ``1.0.4``) or in the folder ``gaiasky/android/assets/data/catalog`` (version ``1.5.0``).
-Please make sure to get the TGAS data files if you want to use them before running from source.
++--------------------------------------------------------------------------------------------------------------------------+---------------------------------------------------+-----------------------------------------------+--------------------------------------+
+| **Catalog**                                                                                                              | **Description**                                   | **Location**                                  | **Catalog file**                     |
++==========================================================================================================================+===================================================+===============================================+======================================+
+| `tgas lod (1.0.3) <http://wwwstaff.ari.uni-heidelberg.de/gaiasandbox/files/20161206_tgas_gaiasky_1.0.3.tar.gz>`__        | Levels of detail (lod) TGAS catalog. CPU-bound.   | ``gaiasky/android/assets/data/octree``        | -                                    |
++--------------------------------------------------------------------------------------------------------------------------+---------------------------------------------------+-----------------------------------------------+--------------------------------------+
+| `tags lod (1.0.4) <http://wwwstaff.ari.uni-heidelberg.de/gaiasandbox/files/20161206_tgas_gaiasky_1.0.4.tar.gz>`__        | Levels of detail (lod) TGAS catalog. CPU-bound.   | ``gaiasky/android/assets/data/octree``        | -                                    |
++--------------------------------------------------------------------------------------------------------------------------+---------------------------------------------------+-----------------------------------------------+--------------------------------------+
+| `tags lod (1.5.0+) <http://wwwstaff.ari.uni-heidelberg.de/gaiasandbox/files/20170731_tgas_lod_gaiasky_1.5.0.tar.gz>`__   | Levels of detail (lod) TGAS catalog. GPU-bound.   | ``gaiasky/android/assets/data/octree/tgas``   | ``data/catalog-tgas-hyg-lod.json``   |
++--------------------------------------------------------------------------------------------------------------------------+---------------------------------------------------+-----------------------------------------------+--------------------------------------+
+| `tags gpu (1.5.0+) <http://wwwstaff.ari.uni-heidelberg.de/gaiasandbox/files/20170731_tgas_gpu_gaiasky_1.5.0.tar.gz>`__   | TGAS catalog, GPU-bound.                          | ``gaiasky/android/assets/data/catalog``       | ``data/catalog-tgas-hyg.json``       |
++--------------------------------------------------------------------------------------------------------------------------+---------------------------------------------------+-----------------------------------------------+--------------------------------------+
+
+For versions ``1.0.x`` just extract the package in the specified
+location. For versions ``1.5.0+`` you can choose whether you want to use
+the Levels of detail catalog (multiple files, uses an octree structure
+which culls particles outside the view frustum and hides particles which
+are far away according to the view distance setting) or the regular
+catalog (single file, loaded once at startup, contains the full catalog,
+which is sent to GPU memory). Then, you need to point the key
+``data.json.catalog`` in your ``$HOME/.gaiasky/global.properties`` file
+to the file specified in the last column in the table.
+
+Albeit **not recommended** for performance reasons, the legacy
+particle-based (CPU-bound) version of the catalog (version ``1.0.4``)
+can still be used with newer versions. To do so, extract the package in
+``gaiasky/android/assets/data/octree/tgas`` so that the ``metadata.bin``
+file and the ``particles`` folder are directly within that folder and
+edit the configuration file so that ``data.json.catalog`` points to
+``data/catalog-tgas-hyg-lod-old.json``.
+
+Compiling and running
+---------------------
 
 To compile the code and run the desktop version of the application:
 
@@ -79,8 +112,8 @@ To compile the code and run the desktop version of the application:
     $ gradlew desktop:run
 
 
-Package Gaia Sky
-----------------
+Packagin Gaia Sky
+-----------------
 
 To pack the application into a ``tar.gz`` file:
 
