@@ -6,6 +6,9 @@
 
 **Implemented enhancements:**
 
+- Integrate particle groups with levels of detail [\#170](https://github.com/langurmonkey/gaiasky/issues/170)
+- Set up renderer using asset manager [\#167](https://github.com/langurmonkey/gaiasky/issues/167)
+- Set up post processor through the asset manager [\#166](https://github.com/langurmonkey/gaiasky/issues/166)
 - Scale point primitives by ratio to default [\#163](https://github.com/langurmonkey/gaiasky/issues/163)
 - Implement GPU-based implementation for star catalogs [\#162](https://github.com/langurmonkey/gaiasky/issues/162)
 - Additive blending [\#160](https://github.com/langurmonkey/gaiasky/issues/160)
@@ -43,6 +46,7 @@
 
 **Fixed bugs:**
 
+- Fix eye separation in spacecraft+stereoscopic modes [\#168](https://github.com/langurmonkey/gaiasky/issues/168)
 - Random crash at startup [\#165](https://github.com/langurmonkey/gaiasky/issues/165)
 - Fix postprocessing framebuffer resize issue [\#164](https://github.com/langurmonkey/gaiasky/issues/164)
 - Scale point primitives by ratio to default [\#163](https://github.com/langurmonkey/gaiasky/issues/163)
@@ -64,6 +68,9 @@
 
 **Closed issues:**
 
+- Incorrect size of "Sol" via scripting interface [\#174](https://github.com/langurmonkey/gaiasky/issues/174)
+- Parsing of version string breaks when custom git tags are used [\#173](https://github.com/langurmonkey/gaiasky/issues/173)
+- Test script "getobject-test.py" crashes [\#172](https://github.com/langurmonkey/gaiasky/issues/172)
 - Constellation "Antlia" misspelled as "Antila" [\#153](https://github.com/langurmonkey/gaiasky/issues/153)
 - Closest object and camera speed in scripting interface [\#149](https://github.com/langurmonkey/gaiasky/issues/149)
 - Cinematic camera setting not saved [\#144](https://github.com/langurmonkey/gaiasky/issues/144)
@@ -77,6 +84,8 @@
 
 **Merged pull requests:**
 
+- Fix customobjects-test.py [\#171](https://github.com/langurmonkey/gaiasky/pull/171) ([vga101](https://github.com/vga101))
+- Suggested improvements for German translation [\#169](https://github.com/langurmonkey/gaiasky/pull/169) ([vga101](https://github.com/vga101))
 - Fix URL to home page [\#161](https://github.com/langurmonkey/gaiasky/pull/161) ([vga101](https://github.com/vga101))
 - Fix README rendering [\#115](https://github.com/langurmonkey/gaiasky/pull/115) ([rogersachan](https://github.com/rogersachan))
 - Fix links to scripting documentation [\#113](https://github.com/langurmonkey/gaiasky/pull/113) ([vga101](https://github.com/vga101))
