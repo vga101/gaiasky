@@ -63,7 +63,7 @@ Getting the catalog data
 
 The TGAS catalog files (Gaia data) are **not** in the repository, so if
 you want to use TGAS when running from source you need to download the
-``tar`` file corresponding to your version.
+``tar`` file corresponding to your version --- see table below.
 
 As of version ``1.5.0``, there are new GPU-bound catalogs which perform
 much better and can also be combined with the levels-of-detail structure
