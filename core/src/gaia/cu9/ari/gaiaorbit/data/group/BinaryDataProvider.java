@@ -62,15 +62,19 @@ public class BinaryDataProvider extends AbstractStarGroupDataProvider {
     }
 
     protected void writeStarBean(StarBean sb, DataOutputStream out) throws IOException {
-        int i = 0;
-        for (double d : sb.data) {
-            if (i >= StarBean.I_HIP && i <= StarBean.I_TYC3)
-                out.writeInt((int) d);
-            else
-                out.writeDouble(d);
-
-            i++;
+        // Double
+        for (int i = 0; i < StarBean.I_APPMAG; i++) {
+            out.writeDouble(sb.data[i]);
         }
+        // Float
+        for (int i = StarBean.I_APPMAG; i < StarBean.I_HIP; i++) {
+            out.writeFloat((float) sb.data[i]);
+        }
+        // Int
+        for (int i = StarBean.I_HIP; i < StarBean.SIZE; i++) {
+            out.writeInt((int) sb.data[i]);
+        }
+
         out.writeLong(sb.id);
         out.writeInt(sb.name.length());
         out.writeChars(sb.name);
@@ -103,12 +107,19 @@ public class BinaryDataProvider extends AbstractStarGroupDataProvider {
 
     protected StarBean readStarBean(DataInputStream in) throws IOException {
         double data[] = new double[StarBean.SIZE];
-        for (int i = 0; i < StarBean.SIZE; i++) {
-            if (i >= StarBean.I_HIP && i <= StarBean.I_TYC3)
-                data[i] = in.readInt();
-            else
-                data[i] = in.readDouble();
+        // Double
+        for (int i = 0; i < StarBean.I_APPMAG; i++) {
+            data[i] = in.readDouble();
         }
+        // Float
+        for (int i = StarBean.I_APPMAG; i < StarBean.I_HIP; i++) {
+            data[i] = in.readFloat();
+        }
+        // Int
+        for (int i = StarBean.I_HIP; i < StarBean.SIZE; i++) {
+            data[i] = in.readInt();
+        }
+
         Long id = in.readLong();
         int nameLength = in.readInt();
         StringBuilder name = new StringBuilder();

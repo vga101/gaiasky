@@ -70,26 +70,31 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
     public static class StarBean extends ParticleBean {
         private static final long serialVersionUID = 1L;
 
-        public static final int SIZE = 18;
+        public static final int SIZE = 17;
         /** INDICES **/
+
+        /** Stored doubles **/
         public static final int I_X = 0;
         public static final int I_Y = 1;
         public static final int I_Z = 2;
         public static final int I_PMX = 3;
         public static final int I_PMY = 4;
         public static final int I_PMZ = 5;
-        public static final int I_APPMAG = 6;
-        public static final int I_ABSMAG = 7;
-        public static final int I_COL = 8;
-        public static final int I_SIZE = 9;
-        public static final int I_HIP = 10;
-        public static final int I_TYC1 = 11;
-        public static final int I_TYC2 = 12;
-        public static final int I_TYC3 = 13;
-        public static final int I_MUALPHA = 14;
-        public static final int I_MUDELTA = 15;
-        public static final int I_RADVEL = 16;
-        public static final int I_ADDITIONAL = 17;
+        public static final int I_MUALPHA = 6;
+        public static final int I_MUDELTA = 7;
+        public static final int I_RADVEL = 8;
+
+        /** Stored as float **/
+        public static final int I_APPMAG = 9;
+        public static final int I_ABSMAG = 10;
+        public static final int I_COL = 11;
+        public static final int I_SIZE = 12;
+
+        /** Stored as int **/
+        public static final int I_HIP = 13;
+        public static final int I_TYC1 = 14;
+        public static final int I_TYC2 = 15;
+        public static final int I_TYC3 = 16;
 
         public Long id;
         public transient OctreeNode octant;
@@ -182,9 +187,6 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
             return data[I_RADVEL];
         }
 
-        public double additional() {
-            return data[I_ADDITIONAL];
-        }
     }
 
     // Camera dx threshold
