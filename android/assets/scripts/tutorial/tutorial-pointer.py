@@ -33,7 +33,7 @@ def arrow_small(id, x, y, *args):
     if(len(args) > 0):
         gs.displayImageObject(id, "scripts/tutorial/arrow-left-s.png", x / w, y / h, args[0], args[1], args[2], args[3])
     else:
-        gs.displayImageObject(id, "scripts/tutorial/arrow-left-s.png", x / w, y / h, 1.0, 1.0, 0.0, 1.0)
+        gs.displayImageObject(id, "scripts/tutorial/arrow-left-s.png", x / w, y / h, 1.0, 1.0, 1.0, 1.0)
 
 
 """
