@@ -62,8 +62,14 @@ public class BinaryDataProvider extends AbstractStarGroupDataProvider {
     }
 
     protected void writeStarBean(StarBean sb, DataOutputStream out) throws IOException {
+        int i = 0;
         for (double d : sb.data) {
-            out.writeDouble(d);
+            if (i >= StarBean.I_HIP && i <= StarBean.I_TYC3)
+                out.writeInt((int) d);
+            else
+                out.writeDouble(d);
+
+            i++;
         }
         out.writeLong(sb.id);
         out.writeInt(sb.name.length());
@@ -98,7 +104,10 @@ public class BinaryDataProvider extends AbstractStarGroupDataProvider {
     protected StarBean readStarBean(DataInputStream in) throws IOException {
         double data[] = new double[StarBean.SIZE];
         for (int i = 0; i < StarBean.SIZE; i++) {
-            data[i] = in.readDouble();
+            if (i >= StarBean.I_HIP && i <= StarBean.I_TYC3)
+                data[i] = in.readInt();
+            else
+                data[i] = in.readDouble();
         }
         Long id = in.readLong();
         int nameLength = in.readInt();
