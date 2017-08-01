@@ -121,8 +121,9 @@ public class DesktopNetworkChecker extends Thread implements INetworkChecker {
                 if (!running)
                     break;
                 executing = true;
-                if (focus != null) {
-                    Gdx.app.postRunnable(() -> {
+
+                Gdx.app.postRunnable(() -> {
+                    if (focus != null) {
                         Logger.debug(this.getClass().getSimpleName(), "Looking up network resources for '" + focus.getName() + "'");
 
                         // Add table
@@ -170,10 +171,11 @@ public class DesktopNetworkChecker extends Thread implements INetworkChecker {
                             }
 
                         });
-
                         focus = null;
-                    });
-                }
+                    }
+
+                });
+
             }
 
         } catch (Exception e) {

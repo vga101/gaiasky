@@ -154,8 +154,11 @@ task dist (dependsOn: gaiaskyJar, description: "Compiles the project, creates th
 	
 			exclude "**/tgas_201507"
 			exclude "**/tgas_final"
-			exclude "**/octree"
+			exclude "**/octree/tgas/group-ser"
+			exclude "**/octree/tgas/particles"
+			exclude "**/octree/tgas/metadata.bin"
 			exclude "**/hyg"
+			exclude "**/catalog"
 			
 			exclude "**/models/cassini"
 			exclude "**/models/rosetta"
@@ -170,14 +173,20 @@ task dist (dependsOn: gaiaskyJar, description: "Compiles the project, creates th
 	                exclude "**/*-wgl.json"
 	                exclude "**/*-wgl-fp.json"
 	                
-	                exclude "**/catalog-dr2.json"
+	                exclude "**/catalog-dr2*.json"
 	                exclude "**/catalog-hyg.json"
 	                exclude "**/catalog-sun.json"
-	                exclude "**/catalog-tgas-octree-multifile.json"
-	                exclude "**/catalog-tgas-octree.json"
+	                exclude "**/catalog-tgas-hyg-lod-old.json"
 	                exclude "**/catalog-tgas.json"
+	                exclude "**/catalog-wgl*.json"
+	                
+	                exclude "**/particles-dr2.json"
+	                exclude "**/particles-wgl*.json"
 	                
 	                exclude "**/constel_id.csv"
+	                
+	                exclude "**/tex/*-high.jpg"
+	                exclude "**/tex/*-high.png"
 	                
 	                exclude "dummyversion"
 	
