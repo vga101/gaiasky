@@ -4,7 +4,7 @@ Gaia Sky
 .. figure:: img/GaiaSkySplash-s.jpg
    :alt: Gaia Sky logo
 
-|Build status|
+|Build status| |License|
 
 .. note:: 08/12/2016 -- Version 1.0.4 is out!
 
@@ -52,8 +52,11 @@ Main features
 - **Scriptable and extensible** -- Use Python to script and extend the capabilities of Gaia Sky.
 - **Internationalised** -- Translated so far to English, German, Spanish and Catalan.
 
-.. |Build status| image:: https://circleci.com/gh/langurmonkey/gaiasky/tree/master.svg?style=svg
+.. |Build status| image:: https://circleci.com/gh/langurmonkey/gaiasky.svg?style=shield&circle-token=:circle-token
    :target: https://circleci.com/gh/langurmonkey/gaiasky/tree/master
+
+.. |License| image:: https://img.shields.io/badge/License-MPL%202.0-brightgreen.svg
+   :target: https://opensource.org/licenses/MPL-2.0
 
 Contents
 ========
