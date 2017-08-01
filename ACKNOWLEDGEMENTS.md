@@ -30,7 +30,7 @@
 -  Phil Stooke and Grant Hutchison (http://www.classe.cornell.edu/~seb/celestia/hutchison/index-125.html) for some of the textures
 -  David Navas for the [simple spaceship](http://www.blendswap.com/user/DeNapes) model
 -  Machuca+Arias+Caballero for the music track “Gaia-DR1”
--  [xnoybis](http://sampleswap.org/artist/xnoybis#contact) for 'The Firing Squad' track
+-  [Peppy & The Firing Squad](http://sampleswap.org/artist/xnoybis#contact) for 'Y=MX+B' track
 -  [DJ Masque](http://sampleswap.org/artist/djmasque) for the 'Oceanic Dawn' track
 -  [icons8.com](https://icons8.com) for some icons
 
