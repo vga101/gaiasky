@@ -6,7 +6,7 @@ Gaia Sky
 
 |Build status| |License|
 
-.. note:: 08/12/2016 -- Version 1.0.4 is out!
+.. note:: 02/08/2017 -- Version 1.5.0 is out!
 
 What is Gaia Sky
 ================
