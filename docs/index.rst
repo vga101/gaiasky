@@ -1,6 +1,3 @@
-Gaia Sky
-********
-
 .. figure:: img/GaiaSkySplash-s.jpg
    :alt: Gaia Sky logo
 
