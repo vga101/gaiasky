@@ -392,8 +392,8 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         });
 
         // MODEL CLOSE UP
-        AbstractRenderSystem modelCloseUpProc = new ModelBatchRenderSystem(RenderGroup.MODEL_CLOSEUP, priority++, alphas, modelBatchCloseUp, false);
-        modelCloseUpProc.setPreRunnable(blendDepthRunnable);
+        //        AbstractRenderSystem modelCloseUpProc = new ModelBatchRenderSystem(RenderGroup.MODEL_CLOSEUP, priority++, alphas, modelBatchCloseUp, false);
+        //        modelCloseUpProc.setPreRunnable(blendDepthRunnable);
 
         // Add components to set
         renderProcesses.add(modelBackProc);
@@ -417,7 +417,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
         renderProcesses.add(modelStarsProc);
         renderProcesses.add(modelAtmProc);
-        renderProcesses.add(modelCloseUpProc);
+        // renderProcesses.add(modelCloseUpProc);
 
         EventManager.instance.subscribe(this, Events.TOGGLE_VISIBILITY_CMD, Events.PIXEL_RENDERER_UPDATE, Events.LINE_RENDERER_UPDATE, Events.TOGGLE_STEREOSCOPIC_INFO, Events.CAMERA_MODE_CMD, Events.CUBEMAP360_CMD);
 
