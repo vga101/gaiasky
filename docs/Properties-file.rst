@@ -1,11 +1,11 @@
 .. _properties-file:
 
-The properties file
-*******************
+The configuration file
+**********************
 
-There is a configuration file which stores most of the properties
-explained in the previous section and some more. This section is devoted
-to these properties that are not represented in the GUI but are still
+There is a configuration file which stores most of the configration settings
+of Gaia Sky. This section is devoted
+to these seetings that are not represented in the GUI but are still
 configurable. The configuration file is located in
 ``$HOME/.gaiasky/global.properties``. Here are some of the properties
 found in this file that are not represented in the GUI.
@@ -16,6 +16,8 @@ Graphics properties
 -  **graphics.render.time** - This property gets a boolean
    (``true``\ \|\ ``false``) and indicates whether a timestamp is to be
    added to screenshots and frames.
+  
+-  **graphics.screen.resizable** - Whether the window (if in windowed mode) is resiable or not. Defaults to true.
 
 .. _data-properties:
 
@@ -23,9 +25,10 @@ Data properties
 ---------------
 
 -  **data.json.catalog** - This property points to the ``json`` file
-   where the catalog(s) to load are defined. The properties
-   ``data.json.catalog.*`` contain the default catalogs which are
-   shipped with Gaia Sky and are offered in the config dialog.
+   where the catalog(s) to load are defined. Unless you want to load your
+   own catalogs, this should either be ``data/catalog-tgas-hyg.json`` for the
+   GPU-bound non-LOD version, or ``data/catalog-tgas-hyg-lod.json``, for the 
+   LOD version of TGAS.
 
 -  **data.json.objects** - Contains the ``json`` file where the
    definition of all the rest of the data is specified. There are three
@@ -33,7 +36,7 @@ Data properties
    default graphics quality options.
 
 -  **data.limit.mag** - This contains the limiting magnitude above which
-   stars shall not be loaded.
+   stars shall not be loaded. Not all data loaders implement this.
 
 Scene properties
 ----------------
@@ -47,16 +50,19 @@ Scene properties
    `quads <https://www.opengl.org/wiki/Primitive#Quads>`__.
    ``Quads`` are basically 4-vertex quadrilaterals, and they can be
    rendered as textures (images) or using ``shaders``. They display more
-   detail but are costlier in terms of GPU processing.
+   detail but are costlier in terms of GPU processing. Do not touch unless
+   you know what you are doing.
 
 -  **scene.star.thresholdangle.point** - This property contains the view
    angle (in degrees) boundary above which the stars are rendered as
    `points <https://www.opengl.org/wiki/Primitive#Point_primitives>`__.
-   Points are single pixels, so they are not very resource demanding.
+   Points are single pixels, so they are not very resource demanding. Do not touch unless
+   you know what you are doing.
 
 -  **scene.star.thresholdangle.none** - This property contains the view
    angle (in degrees) below which the stars are not rendered at all.
-   Usually this is 0 unless you want to cull very distant stars.
+   Usually this is 0 unless you want to cull very distant stars. Do not touch unless
+   you know what you are doing.
 
 -  **scene.point.alpha.min** - Contains the minimum alpha value
    (opacity) in ``[0..1]`` for the stars rendered as ``points``. This
@@ -86,12 +92,3 @@ Program wide properties
    contains information such as the number of stars rendered as a quad,
    the number of stars rendered as a point or the frames per second.
    This can be activated in real time by pressing ``CTRL`` + ``D``.
-   
--  **program.ui.theme** - Specifies the GUI theme. Eight themes are
-   available: ``dark-green``, ``dark-orange``, ``dark-blue``, ``bright-green`` plus versions
-   of the same themes with a scale factor of two, to use with HiDPI
-   screens (retina, 4K monitors, etc.). Since version ``0.704b`` you can also
-   choose the theme by using the
-   :ref:`User Interface tab <user-interface-config>` in the
-   :ref:`Preferences dialog <configuration>`.
-  
