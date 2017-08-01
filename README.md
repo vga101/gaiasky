@@ -33,7 +33,7 @@ This file contains the following sections:
 | **GPU** | OpenGL 3.0 support / Intel HD 4000 / Nvidia GeForce 8400 GS, 500 MB GRAM |
 | **Memory** | 3 GB RAM |
 | **Hard drive**  | 230 MB of free disk space  |
-| **Java**  | On Linux, you need the Java Runtime Environment 7+ installed (openJRE is fine) |
+| **Java**  | On Linux, you need the Java Runtime Environment 8+ installed (openJRE is fine) |
 
 ### 1.2 Installation and uninstallation
 
