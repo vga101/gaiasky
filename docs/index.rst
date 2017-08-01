@@ -20,16 +20,16 @@ our Milky Way Galaxy. It is developed in the Gaia group of the
 (`ZAH <http://zah.uni-heidelberg.de>`__, `Universität
 Heidelberg <http://uni-heidelberg.de>`__).
 
-.. image:: img/screenshots/20161111_screenshot_00000.jpg
+.. image:: img/screenshots/20170731_screenshot_00002.jpg
   :width: 24%
 
-.. image:: img/screenshots/20161111_screenshot_00001.jpg
+.. image:: img/screenshots/20170731_screenshot_00004.jpg
   :width: 24%
 
-.. image:: img/screenshots/20161111_screenshot_00008.jpg
+.. image:: img/screenshots/20170731_screenshot_00011.jpg
   :width: 24%
 
-.. image:: img/screenshots/20161111_screenshot_00010.jpg
+.. image:: img/screenshots/20170801_screenshot_00002.jpg
   :width: 24%
 
 *  Visit our `home page <http://www.zah.uni-heidelberg.de/gaia/outreach/gaiasky/>`__
@@ -70,5 +70,4 @@ Contents
    Documentation
    Javadoc
    Changelog
-   Screenshots
    Contact-information
