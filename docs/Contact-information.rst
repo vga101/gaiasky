@@ -62,7 +62,7 @@ Textures, models, music and other assets
    for some of the textures
 -  David Navas for the `simple spaceship`_ model
 -  Machuca+Arias+Caballero for the music track “Gaia-DR1”
--  `xnoybis`_ for ‘The Firing Squad’ track
+-  `Peppy & The Firing Squad`_ for the ‘Y=MX+B’ track
 -  `DJ Masque`_ for the ‘Oceanic Dawn’ track
 
 Translations
@@ -94,7 +94,7 @@ Open source licenses
 .. _range slider: https://github.com/ernieyu/Swing-range-slider
 .. _Solar System Scope: http://www.solarsystemscope.com/
 .. _simple spaceship: http://www.blendswap.com/user/DeNapes
-.. _xnoybis: http://sampleswap.org/artist/xnoybis#contact
+.. _Peppy & The Firing Squad: http://sampleswap.org/artist/xnoybis#contact
 .. _DJ Masque: http://sampleswap.org/artist/djmasque
 .. _Stefan Jordan: mailto:jordan@ari.uni-heidelberg.de
 .. _Klemen Čotar: mailto:klemen.cotar@fmf.uni-lj.si
