@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 
+import com.badlogic.gdx.Gdx;
+
 import gaia.cu9.ari.gaiaorbit.desktop.GaiaSkyDesktop;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.util.ConfInit;
@@ -346,11 +348,11 @@ public class DesktopConfInit extends ConfInit {
         p.setProperty("data.highaccuracy.positions", Boolean.toString(GlobalConf.data.HIGH_ACCURACY_POSITIONS));
 
         /** SCREEN **/
-        p.setProperty("graphics.screen.width", Integer.toString(GlobalConf.screen.SCREEN_WIDTH));
-        p.setProperty("graphics.screen.height", Integer.toString(GlobalConf.screen.SCREEN_HEIGHT));
-        p.setProperty("graphics.screen.fullscreen.width", Integer.toString(GlobalConf.screen.FULLSCREEN_WIDTH));
-        p.setProperty("graphics.screen.fullscreen.height", Integer.toString(GlobalConf.screen.FULLSCREEN_HEIGHT));
-        p.setProperty("graphics.screen.fullscreen", Boolean.toString(GlobalConf.screen.FULLSCREEN));
+        p.setProperty("graphics.screen.width", Integer.toString(Gdx.graphics.isFullscreen() ? GlobalConf.screen.SCREEN_WIDTH : Gdx.graphics.getWidth()));
+        p.setProperty("graphics.screen.height", Integer.toString(Gdx.graphics.isFullscreen() ? GlobalConf.screen.SCREEN_HEIGHT : Gdx.graphics.getHeight()));
+        p.setProperty("graphics.screen.fullscreen.width", Integer.toString(!Gdx.graphics.isFullscreen() ? GlobalConf.screen.FULLSCREEN_WIDTH : Gdx.graphics.getWidth()));
+        p.setProperty("graphics.screen.fullscreen.height", Integer.toString(!Gdx.graphics.isFullscreen() ? GlobalConf.screen.FULLSCREEN_HEIGHT : Gdx.graphics.getHeight()));
+        p.setProperty("graphics.screen.fullscreen", Boolean.toString(Gdx.graphics.isFullscreen()));
         p.setProperty("graphics.screen.resizable", Boolean.toString(GlobalConf.screen.RESIZABLE));
         p.setProperty("graphics.screen.vsync", Boolean.toString(GlobalConf.screen.VSYNC));
         p.setProperty("graphics.screen.screenoutput", Boolean.toString(GlobalConf.screen.SCREEN_OUTPUT));
