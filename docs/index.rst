@@ -42,7 +42,7 @@ Main features
 - **Free and open source** -- The application is free and open source and will stay this way. You can even contribute to the development or the translations.
 - **From Gaia to the cosmos** -- Move freely through the cosmos and descend to the surface of any Planet or do a close-up inspection of Gaia. All movement and transitions are seamless!
 - **Gaia** - Observe Gaia in its orbit and discover its movement in the sky and its attitude.
-- **3D ready** -- With 5 stereoscopic modes: Anaglyphic (red-cyan), VR headset, 3DTV, cross-eye and parallel view.
+- **3D ready** -- With 5 stereoscopic profiles: Anaglyphic (red-cyan), VR headset, 3DTV, cross-eye and parallel view.
 - **Planetarium projection mode** -- Ready to produce videos for full dome systems.
 - **360 mode** -- Ready to produce 360 videos.
 - **Use your own data** -- Comes with ``TGAS``, ``NBG`` and ``SDSS``. Supports ``VOTable``, ``FITS``, ``CSV`` and all formats accepted by ``STIL``.
