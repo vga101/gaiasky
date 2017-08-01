@@ -42,15 +42,15 @@ Main features
 - **Free and open source** -- The application is free and open source and will stay this way. You can even contribute to the development or the translations.
 - **From Gaia to the cosmos** -- Move freely through the cosmos and descend to the surface of any Planet or do a close-up inspection of Gaia. All movement and transitions are seamless!
 - **Gaia** - Observe Gaia in its orbit and discover its movement in the sky and its attitude.
-- **3D ready** -- With 4 stereoscopic modes: Anaglyphic (red-cyan), VR headset, 3DTV, cross-eye.
+- **3D ready** -- With 5 stereoscopic modes: Anaglyphic (red-cyan), VR headset, 3DTV, cross-eye and parallel view.
 - **Planetarium projection mode** -- Ready to produce videos for full dome systems.
 - **360 mode** -- Ready to produce 360 videos.
-- **Use your own data** -- Comes with ``HYG`` and ``TGAS``. Supports ``VOTable``, ``FITS``, ``CSV`` and all formats accepted by ``STIL``.
+- **Use your own data** -- Comes with ``TGAS``, ``NBG`` and ``SDSS``. Supports ``VOTable``, ``FITS``, ``CSV`` and all formats accepted by ``STIL``.
 - **Navigate the galaxy** -- Support for controllers and gamepads makes navigating the Galaxy a piece of cake.
 - **Spacecraft mode** -- Jump aboard a spacecraft to navigate the skies!
 - **Record and play your camera paths** -- Ready to record and play camera paths off-the-shelf.
 - **Scriptable and extensible** -- Use Python to script and extend the capabilities of Gaia Sky.
-- **Internationalised** -- Translated so far to English, German, Spanish and Catalan.
+- **Internationalised** -- Translated so far to English, German, Spanish, French, Catalan and Slovenian.
 
 .. |Build status| image:: https://circleci.com/gh/langurmonkey/gaiasky.svg?style=shield&circle-token=:circle-token
    :target: https://circleci.com/gh/langurmonkey/gaiasky/tree/master
