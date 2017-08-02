@@ -10,7 +10,7 @@ following methods.
 -  Submit an issue to our `bug tracking system <http://github.com/langurmonkey/gaiasky/issues>`__.
 -  Drop us a line in `tsagrista@ari.uni-heidelberg.de <mailto:tsagrista@ari.uni-heidelberg.de>`__.
 
-Do not forget to visit our `Homepage@ARI <http://www.zah.uni-heidelberg.de/gaia2/outreach/gaiasky/>`__.
+Do not forget to visit our `Homepage@ARI <http://www.zah.uni-heidelberg.de/gaia/outreach/gaiasky/>`__.
 
 Author
 ======
