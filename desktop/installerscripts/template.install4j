@@ -438,7 +438,6 @@
       <excludedComponents />
       <includedDownloadableComponents />
       <excludedLaunchers>
-        <launcher id="22" />
       </excludedLaunchers>
       <excludedBeans />
       <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
@@ -459,7 +458,6 @@
       <excludedComponents />
       <includedDownloadableComponents />
       <excludedLaunchers>
-        <launcher id="143" />
       </excludedLaunchers>
       <excludedBeans />
       <overriddenPrincipalLanguage id="en" customLocalizationFile="" />

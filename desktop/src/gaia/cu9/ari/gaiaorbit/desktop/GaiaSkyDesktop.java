@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
+import java.util.Properties;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
@@ -269,24 +270,46 @@ public class GaiaSkyDesktop implements IObserver {
         SysUtilsFactory.getSysUtils().getDefaultCameraDir().mkdirs();
     }
 
+    /**
+     * Initialises the configuration file. Tries to load first the file in
+     * <code>$HOME/.gaiasky/global.properties</code>. Checks the
+     * <code>properties.version</code> key to determine whether the file is
+     * compatible or not. If it is, it uses the existing file. If it is not, it
+     * replaces it with the default file.
+     * 
+     * @param ow
+     *            Whether to overwrite
+     * @return The path of the file used
+     * @throws IOException
+     */
     private static String initConfigFile(boolean ow) throws IOException {
         // Use user folder
         File userFolder = SysUtilsFactory.getSysUtils().getGSHomeDir();
         userFolder.mkdirs();
         File userFolderConfFile = new File(userFolder, "global.properties");
 
-        if (ow || !userFolderConfFile.exists()) {
+        boolean overwrite = ow;
+        if (userFolderConfFile.exists()) {
+            Properties props = new Properties();
+            props.load(new FileInputStream(userFolderConfFile));
+            // Check that version is at least 150
+            if (!props.containsKey("properties.version") || (props.containsKey("properties.version") && Integer.parseInt(props.getProperty("properties.version")) < 150)) {
+                overwrite = true;
+            }
+        }
+
+        if (overwrite || !userFolderConfFile.exists()) {
             // Copy file
             File confFolder = new File("conf" + File.separator);
             if (confFolder.exists() && confFolder.isDirectory()) {
                 // Running released package
-                copyFile(new File("conf" + File.separator + "global.properties"), userFolderConfFile, ow);
+                copyFile(new File("conf" + File.separator + "global.properties"), userFolderConfFile, overwrite);
             } else {
                 // Running from code?
                 if (!new File("../android/assets/conf" + File.separator).exists()) {
                     throw new IOException("File ../android/assets/conf does not exist!");
                 }
-                copyFile(new File("../android/assets/conf" + File.separator + "global.properties"), userFolderConfFile, ow);
+                copyFile(new File("../android/assets/conf" + File.separator + "global.properties"), userFolderConfFile, overwrite);
             }
         }
         String props = userFolderConfFile.getAbsolutePath();
