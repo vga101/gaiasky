@@ -1,8 +1,7 @@
 # Change Log
 
-## [Unreleased](https://github.com/langurmonkey/gaiasky/tree/HEAD)
-
-[Full Changelog](https://github.com/langurmonkey/gaiasky/compare/1.0.4...HEAD)
+## [1.5.0](https://github.com/langurmonkey/gaiasky/tree/1.5.0) (2017-08-02)
+[Full Changelog](https://github.com/langurmonkey/gaiasky/compare/1.0.4...1.5.0)
 
 **Implemented enhancements:**
 
@@ -84,6 +83,8 @@
 
 **Merged pull requests:**
 
+- Fix ARI url [\#176](https://github.com/langurmonkey/gaiasky/pull/176) ([vga101](https://github.com/vga101))
+- Fix method comment for displayTextObject [\#175](https://github.com/langurmonkey/gaiasky/pull/175) ([vga101](https://github.com/vga101))
 - Fix customobjects-test.py [\#171](https://github.com/langurmonkey/gaiasky/pull/171) ([vga101](https://github.com/vga101))
 - Suggested improvements for German translation [\#169](https://github.com/langurmonkey/gaiasky/pull/169) ([vga101](https://github.com/vga101))
 - Fix URL to home page [\#161](https://github.com/langurmonkey/gaiasky/pull/161) ([vga101](https://github.com/vga101))
