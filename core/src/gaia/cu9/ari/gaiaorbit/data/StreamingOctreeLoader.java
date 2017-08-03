@@ -54,6 +54,7 @@ public abstract class StreamingOctreeLoader implements IObserver, ISceneGraphLoa
 
     /** Loaded octant ids, for logging **/
     protected long[] loadedIds;
+    protected int loadedObjects;
     protected int maxLoadedIds, idxLoadedIds;
 
     /** Load status of the different levels of detail **/
@@ -119,19 +120,21 @@ public abstract class StreamingOctreeLoader implements IObserver, ISceneGraphLoa
         return result;
     }
 
-    protected void addLoadedId(long id) {
+    protected void addLoadedInfo(long id, int nobjects) {
         if (idxLoadedIds >= maxLoadedIds) {
             flushLoadedIds();
         }
         loadedIds[idxLoadedIds++] = id;
+        loadedObjects += nobjects;
     }
 
     protected void flushLoadedIds() {
         if (idxLoadedIds > 0) {
             String str = "[" + loadedIds[0] + ", ..., " + loadedIds[idxLoadedIds - 1] + "]";
-            Logger.info(I18n.bundle.format("notif.octantsloaded", idxLoadedIds, str));
+            Logger.info(I18n.bundle.format("notif.octantsloaded", loadedObjects, idxLoadedIds, str));
 
             idxLoadedIds = 0;
+            loadedObjects = 0;
         }
 
     }
