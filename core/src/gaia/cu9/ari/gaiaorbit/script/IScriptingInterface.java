@@ -226,12 +226,26 @@ public interface IScriptingInterface {
 
     /**
      * Sets the camera in focus mode with the focus object that bears the given
-     * name.
+     * name. It returns immediately, so it does not wait for the camera
+     * direction to point to the focus.
      * 
      * @param focusName
      *            The name of the new focus object.
      */
     public void setCameraFocus(String focusName);
+
+    /**
+     * Sets the camera in focus mode with the focus object that bears the given
+     * name. Whether to wait for the camera direction to be aligned with the
+     * focus position can be specified.
+     * 
+     * @param focusName
+     *            The name of the new focus object.
+     * @param focusWait
+     *            Whether to wait for the camera direction to align with the
+     *            focus position
+     */
+    public void setCameraFocus(String focusName, boolean focusWait);
 
     /**
      * Activates or deactivates the camera lock to the focus reference system

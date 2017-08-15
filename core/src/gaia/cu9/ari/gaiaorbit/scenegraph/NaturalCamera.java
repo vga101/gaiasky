@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
 import gaia.cu9.ari.gaiaorbit.GaiaSky;
@@ -49,6 +50,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 
     /** Auxiliary double vectors **/
     private Vector3d aux1, aux2, aux3, aux5, aux4, dx;
+    private Vector2 aux2f2;
     /** Auxiliary float vector **/
     private Vector3 auxf1;
     /** Acceleration, velocity and position for pitch, yaw and roll **/
@@ -126,7 +128,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
     private NaturalControllerListener controllerListener;
 
     private SpriteBatch spriteBatch;
-    private Texture focusCrosshair, velocityCrosshair, antivelocityCrosshair;
+    private Texture focusCrosshair, focusArrow, velocityCrosshair, antivelocityCrosshair;
     private Sprite[] hudSprites;
 
     public NaturalCamera(AssetManager assetManager, CameraManager parent) {
@@ -168,6 +170,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
         aux4 = new Vector3d();
         aux5 = new Vector3d();
         auxf1 = new Vector3();
+        aux2f2 = new Vector2();
 
         dx = new Vector3d();
 
@@ -182,6 +185,10 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
         // Focus crosshair
         focusCrosshair = new Texture(Gdx.files.internal("img/crosshair-green.png"));
         focusCrosshair.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+
+        // Focus arrow
+        focusArrow = new Texture(Gdx.files.internal("img/crosshair-green-arrow.png"));
+        focusArrow.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 
         // Velocity vector crosshair
         velocityCrosshair = new Texture(Gdx.files.internal("img/ai-vel.png"));
@@ -1199,16 +1206,32 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
         if (GlobalConf.scene.CROSSHAIR && draw) {
 
             // Focus crosshair only in focus mode
+            IFocus chFocus = null;
             if (getMode().equals(CameraMode.Focus)) {
+                // Green
+                spriteBatch.setColor(0, 1, 0, 1);
+                chFocus = focus;
+            } else if (getMode().equals(CameraMode.Free_Camera) && closest != null) {
+                // Orange
+                spriteBatch.setColor(1f, .7f, .2f, 1f);
+                chFocus = (IFocus) closest.getComputedAncestor();
+            }
+
+            if (chFocus != null) {
                 float chw = focusCrosshair.getWidth();
                 float chh = focusCrosshair.getHeight();
                 float chw2 = chw / 2;
                 float chh2 = chh / 2;
 
-                focus.getAbsolutePosition(aux1).add(posinv);
-                projectToScreen(aux1, auxf1, rw, rh, chw, chh, chw2, chh2);
+                chFocus.getAbsolutePosition(aux1).add(posinv);
+                boolean inside = projectToScreen(aux1, auxf1, rw, rh, chw, chh, chw2, chh2);
 
-                spriteBatch.draw(focusCrosshair, auxf1.x - chw2, auxf1.y - chh2, chw, chh);
+                if (inside) {
+                    spriteBatch.draw(focusCrosshair, auxf1.x - chw2, auxf1.y - chh2, chw, chh);
+                } else {
+                    aux2f2.set(auxf1.x - (Gdx.graphics.getWidth() / 2), auxf1.y - (Gdx.graphics.getHeight() / 2));
+                    spriteBatch.draw(focusArrow, auxf1.x - chw2, auxf1.y - chh2, chw2, chh2, chw, chh, 1f, 1f, -90 + aux2f2.angle(), 0, 0, (int) chw, (int) chh, false, false);
+                }
             }
 
             // Velocity crosshair only if we move
@@ -1283,11 +1306,27 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
         spriteBatch.draw(tex, auxf1.x - chw2, auxf1.y - chh2, chw, chh);
     }
 
-    private void projectToScreen(Vector3d vec, Vector3 out, int rw, int rh, float chw, float chh, float chw2, float chh2) {
+    /**
+     * Projects to screen
+     * 
+     * @param vec
+     * @param out
+     * @param rw
+     * @param rh
+     * @param chw
+     * @param chh
+     * @param chw2
+     * @param chh2
+     * @return False if projected point falls outside the screen bounds, true
+     *         otherwise
+     */
+    private boolean projectToScreen(Vector3d vec, Vector3 out, int rw, int rh, float chw, float chh, float chw2, float chh2) {
         vec.put(out);
         camera.project(out, 0, 0, rw, rh);
 
-        if (direction.angle(vec) > 90) {
+        double ang = direction.angle(vec);
+
+        if (ang > 90) {
             out.x = rw - out.x;
             out.y = rh - out.y;
 
@@ -1320,6 +1359,8 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 
         out.x = MathUtils.clamp(out.x, chw2, rw - chw2);
         out.y = MathUtils.clamp(out.y, chh2, rh - chh2);
+
+        return ang < camera.fieldOfView;
     }
 
     @Override

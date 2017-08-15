@@ -174,10 +174,26 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
 
     @Override
     public void setCameraFocus(final String focusName) {
+        setCameraFocus(focusName, false);
+    }
+
+    @Override
+    public void setCameraFocus(final String focusName, final boolean focusWait) {
         Gdx.app.postRunnable(new Runnable() {
             @Override
             public void run() {
+                em.post(Events.CAMERA_MODE_CMD, CameraMode.Focus);
                 em.post(Events.FOCUS_CHANGE_CMD, focusName, true);
+                if (focusWait) {
+                    NaturalCamera cam = GaiaSky.instance.cam.naturalCamera;
+                    while (!cam.facingFocus) {
+                        // Wait
+                        try {
+                            Thread.sleep(100);
+                        } catch (Exception e) {
+                        }
+                    }
+                }
             }
         });
     }
