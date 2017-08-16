@@ -1213,6 +1213,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
         this.thrustDirection = direction;
     }
 
+    @SuppressWarnings("unused")
     @Override
     public void render(int rw, int rh) {
         boolean draw = !GlobalConf.program.CUBEMAP360_MODE && !GlobalConf.program.STEREOSCOPIC_MODE && !GlobalConf.postprocess.POSTPROCESS_FISHEYE;
