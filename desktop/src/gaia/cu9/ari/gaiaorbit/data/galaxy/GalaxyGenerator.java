@@ -67,9 +67,12 @@ public class GalaxyGenerator implements IObserver {
     public static void main(String[] args) {
         try {
             Gdx.files = new Lwjgl3Files();
+<<<<<<< HEAD
 
             // Sys utils
             SysUtilsFactory.initialize(new DesktopSysUtilsFactory());
+=======
+>>>>>>> Migrated to lwjgl3. Some MacOS systems do not work well
 
             // Initialize number format
             NumberFormatFactory.initialize(new DesktopNumberFormatFactory());
