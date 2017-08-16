@@ -15,6 +15,9 @@
  */
 package gaia.cu9.ari.gaiaorbit.util.scene2d;
 
+import java.awt.Menu;
+import java.awt.PopupMenu;
+
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
