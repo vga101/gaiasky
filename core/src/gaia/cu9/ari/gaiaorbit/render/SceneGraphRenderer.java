@@ -150,6 +150,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         maxTexSize = intBuffer.get();
         Logger.info(this.getClass().getSimpleName(), "Max texture size: " + maxTexSize + "^2 pixels");
 
+        intBuffer.clear();
         Gdx.gl20.glGetIntegerv(GL20.GL_DEPTH_BITS, intBuffer);
         Logger.info(this.getClass().getSimpleName(), "Depth buffer bits: " + intBuffer.get());
 
