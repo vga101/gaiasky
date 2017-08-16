@@ -6,7 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.backends.lwjgl.LwjglFiles;
+import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Files;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Array;
 
@@ -52,7 +52,7 @@ public class HYGToBinary implements IObserver {
 
         I18n.initialize(new FileHandle("/home/tsagrista/git/gaiasky/android/assets/i18n/gsbundle"));
 
-        Gdx.files = new LwjglFiles();
+        Gdx.files = new Lwjgl3Files();
         try {
             NumberFormatFactory.initialize(new DesktopNumberFormatFactory());
             DateFormatFactory.initialize(new DesktopDateFormatFactory());
