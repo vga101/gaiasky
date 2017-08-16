@@ -1,12 +1,12 @@
 package gaia.cu9.ari.gaiaorbit.client.format;
 
-import gaia.cu9.ari.gaiaorbit.util.format.IDateFormat;
-
 import java.util.Date;
 import java.util.Locale;
 
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
+
+import gaia.cu9.ari.gaiaorbit.util.format.IDateFormat;
 
 public class GwtDateFormat implements IDateFormat {
     private DateTimeFormat df;

@@ -1,5 +1,8 @@
 package gaia.cu9.ari.gaiaorbit.util;
 
+import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Pool;
+
 import gaia.cu9.ari.gaiaorbit.scenegraph.Gaia;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Planet;
@@ -10,9 +13,6 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.octreewrapper.OctreeWrapperConcurrent;
 import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector2d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
-
-import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.Pool;
 
 public class SimplePool<T> extends Pool<T> {
 

@@ -1,9 +1,9 @@
 package gaia.cu9.ari.gaiaorbit.client.format;
 
+import java.util.Locale;
+
 import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.format.IDateFormat;
-
-import java.util.Locale;
 
 public class GwtDateFormatFactory extends DateFormatFactory {
 

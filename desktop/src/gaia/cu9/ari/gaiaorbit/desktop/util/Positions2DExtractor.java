@@ -7,7 +7,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.backends.lwjgl.LwjglFiles;
+import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Files;
 import com.badlogic.gdx.files.FileHandle;
 
 import gaia.cu9.ari.gaiaorbit.desktop.format.DesktopDateFormatFactory;
@@ -34,7 +34,7 @@ public class Positions2DExtractor implements IObserver {
 
         I18n.initialize(new FileHandle("/home/tsagrista/git/gaiasandbox/android/assets/i18n/gsbundle"));
 
-        Gdx.files = new LwjglFiles();
+        Gdx.files = new Lwjgl3Files();
         try {
             NumberFormatFactory.initialize(new DesktopNumberFormatFactory());
             DateFormatFactory.initialize(new DesktopDateFormatFactory());
