@@ -1,12 +1,12 @@
 package gaia.cu9.ari.gaiaorbit.data.orbit;
 
-import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import com.badlogic.gdx.math.Vector3;
+
+import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
 public class OrbitData {
     // Values of x, y, z in world coordinates
