@@ -1,11 +1,11 @@
 package gaia.cu9.ari.gaiaorbit.util.gaia;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import gaia.cu9.ari.gaiaorbit.util.gaia.time.Duration;
 import gaia.cu9.ari.gaiaorbit.util.gaia.utils.AttitudeUtils;
 import gaia.cu9.ari.gaiaorbit.util.math.Quaterniond;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This class implements the Modified Scanning Law (MSL) by Hermite
