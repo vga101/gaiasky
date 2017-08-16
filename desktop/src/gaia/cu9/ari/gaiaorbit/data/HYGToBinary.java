@@ -54,12 +54,6 @@ public class HYGToBinary implements IObserver {
     public static void main(String[] args) {
         HYGToBinary hyg = new HYGToBinary();
 
-<<<<<<< HEAD
-=======
-        I18n.initialize(new FileHandle("/home/tsagrista/git/gaiasky/android/assets/i18n/gsbundle"));
-
-        Gdx.files = new Lwjgl3Files();
->>>>>>> Migrated to lwjgl3. Some MacOS systems do not work well
         try {
             // Assets location
             String ASSETS_LOC = (System.getProperty("assets.location") != null ? System.getProperty("assets.location") : "");

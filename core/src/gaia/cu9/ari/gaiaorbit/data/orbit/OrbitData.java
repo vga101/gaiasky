@@ -1,15 +1,9 @@
 package gaia.cu9.ari.gaiaorbit.data.orbit;
 
-<<<<<<< HEAD
-=======
-import java.util.ArrayList;
->>>>>>> Migrated to lwjgl3. Some MacOS systems do not work well
 import java.util.Date;
 
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
-
-import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
