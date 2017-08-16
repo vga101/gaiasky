@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.backends.lwjgl.LwjglFiles;
+import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Files;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Array;
 import com.beust.jcommander.JCommander;
@@ -112,7 +112,7 @@ public class OctreeGroupGeneratorTest implements IObserver {
             // Assets location
             String ASSETS_LOC = (System.getProperty("assets.location") != null ? System.getProperty("assets.location") : "");
 
-            Gdx.files = new LwjglFiles();
+            Gdx.files = new Lwjgl3Files();
 
             // Thread idx
             ThreadIndexer.initialize(new SingleThreadIndexer());

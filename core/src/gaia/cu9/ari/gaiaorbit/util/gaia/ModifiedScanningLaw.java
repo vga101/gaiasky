@@ -1,5 +1,7 @@
 package gaia.cu9.ari.gaiaorbit.util.gaia;
 
+import java.util.Arrays;
+
 import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
 import gaia.cu9.ari.gaiaorbit.util.coord.NslSun;
 import gaia.cu9.ari.gaiaorbit.util.gaia.time.Secs;
@@ -11,8 +13,6 @@ import gaia.cu9.ari.gaiaorbit.util.gaia.utils.RungeKuttaNs;
 import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
 import gaia.cu9.ari.gaiaorbit.util.math.Quaterniond;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
-
-import java.util.Arrays;
 
 /**
  * Class to generate Gaia Modified Scanning Law (MSL).

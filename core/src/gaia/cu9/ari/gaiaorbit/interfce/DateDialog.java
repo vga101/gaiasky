@@ -1,6 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.interfce;
 
-import java.util.Calendar;
 import java.util.Date;
 
 import com.badlogic.gdx.graphics.Color;
