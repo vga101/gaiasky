@@ -5,8 +5,10 @@ import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextTooltip;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
 import com.badlogic.gdx.utils.Align;
 
@@ -30,7 +32,7 @@ import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnLabel;
-import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextButton;
+import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextIconButton;
 
 /**
  * Part of the user interface which holds the information on the current focus
@@ -43,7 +45,7 @@ public class FocusInfoInterface extends Table implements IObserver, IGuiInterfac
     static private INetworkChecker daemon;
 
     protected OwnLabel focusName, focusType, focusId, focusRA, focusDEC, focusMuAlpha, focusMuDelta, focusAngle, focusDist, focusAppMag, focusAbsMag, focusRadius;
-    protected Button landOn, landAt;
+    protected Button goTo, landOn, landAt;
     protected OwnLabel pointerName, pointerLonLat, pointerRADEC;
     protected OwnLabel camName, camVel, camPos, lonLatLabel, RADECLabel;
 
@@ -102,8 +104,27 @@ public class FocusInfoInterface extends Table implements IObserver, IGuiInterfac
         camVel = new OwnLabel("", skin, "hud");
         camPos = new OwnLabel("", skin, "hud");
 
-        // LandOn and LandAt
-        landOn = new OwnTextButton(txt("gui.focusinfo.landon"), skin);
+        // GoTo, LandOn and LandAt
+        float size = 15 * GlobalConf.SCALE_FACTOR;
+
+        Image gotoimg = new Image(skin.getDrawable("go-to"));
+        goTo = new OwnTextIconButton("", gotoimg, skin);
+        goTo.setSize(size, size);
+        goTo.addListener(new EventListener() {
+            @Override
+            public boolean handle(Event event) {
+                if (currentFocus != null && event instanceof ChangeEvent) {
+                    EventManager.instance.post(Events.NAVIGATE_TO_OBJECT, currentFocus);
+                    return true;
+                }
+                return false;
+            }
+        });
+        goTo.addListener(new TextTooltip(txt("gui.focusinfo.goto"), skin));
+
+        Image landonimg = new Image(skin.getDrawable("land-on"));
+        landOn = new OwnTextIconButton("", landonimg, skin);
+        landOn.setSize(size, size);
         landOn.addListener(new EventListener() {
             @Override
             public boolean handle(Event event) {
@@ -114,7 +135,11 @@ public class FocusInfoInterface extends Table implements IObserver, IGuiInterfac
                 return false;
             }
         });
-        landAt = new OwnTextButton(txt("gui.focusinfo.landat"), skin);
+        landOn.addListener(new TextTooltip(txt("gui.focusinfo.landon"), skin));
+
+        Image landatimg = new Image(skin.getDrawable("land-at"));
+        landAt = new OwnTextIconButton("", landatimg, skin);
+        landAt.setSize(size, size);
         landAt.addListener(new EventListener() {
             @Override
             public boolean handle(Event event) {
@@ -125,16 +150,19 @@ public class FocusInfoInterface extends Table implements IObserver, IGuiInterfac
                 return false;
             }
         });
+        landAt.addListener(new TextTooltip(txt("gui.focusinfo.landat"), skin));
 
         bw = Math.max(landOn.getWidth(), landAt.getWidth());
         bw += 2 * GlobalConf.SCALE_FACTOR;
 
+        goTo.setWidth(bw);
         landOn.setWidth(bw);
         landAt.setWidth(bw);
 
         focusNameGroup = new HorizontalGroup();
         focusNameGroup.space(pad5);
         focusNameGroup.addActor(focusName);
+        focusNameGroup.addActor(goTo);
         focusNameGroup.addActor(landOn);
         focusNameGroup.addActor(landAt);
 
