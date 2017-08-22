@@ -1,7 +1,7 @@
 { "data" : [
 	{
 		"loader": gaia.cu9.ari.gaiaorbit.data.JsonLoader,
-		"files": [  "data/meshes.json",
+		"files": [  
 					"data/planets.json",
 					"data/moons.json",
 					"data/satellites.json",
@@ -14,7 +14,6 @@
 					"data/locations.json",
 					"data/locations_earth.json",
 					"data/locations_moon.json",
-					
 					//"data/orbits_asteroid_extra_sample.json"
 					]
 	},

@@ -44,29 +44,35 @@ public class MeshObject extends FadeNode implements IModelRenderable {
     public void doneLoading(AssetManager manager) {
         super.doneLoading(manager);
         if (mc != null) {
-            mc.doneLoading(manager, localTransform, cc);
-        }
-
-        coordinateSystem = new Matrix4();
-        if (transformName != null) {
-            Class<Coordinates> c = Coordinates.class;
             try {
-                Method m = ClassReflection.getMethod(c, transformName);
-                Matrix4 trf = (Matrix4) m.invoke(null);
-                coordinateSystem.set(trf);
-            } catch (ReflectionException e) {
-                Logger.error(Grid.class.getName(), "Error getting/invoking method Coordinates." + transformName + "()");
+                mc.doneLoading(manager, localTransform, cc);
+            } catch (Exception e) {
+                mc = null;
             }
-        } else {
-            // Equatorial, nothing
         }
 
-        if (scale != null)
-            coordinateSystem.scl(scale);
-        if (axis != null)
-            coordinateSystem.rotate(axis, degrees);
-        if (translate != null)
-            coordinateSystem.translate(translate);
+        if (mc != null) {
+            coordinateSystem = new Matrix4();
+            if (transformName != null) {
+                Class<Coordinates> c = Coordinates.class;
+                try {
+                    Method m = ClassReflection.getMethod(c, transformName);
+                    Matrix4 trf = (Matrix4) m.invoke(null);
+                    coordinateSystem.set(trf);
+                } catch (ReflectionException e) {
+                    Logger.error(Grid.class.getName(), "Error getting/invoking method Coordinates." + transformName + "()");
+                }
+            } else {
+                // Equatorial, nothing
+            }
+
+            if (scale != null)
+                coordinateSystem.scl(scale);
+            if (axis != null)
+                coordinateSystem.rotate(axis, degrees);
+            if (translate != null)
+                coordinateSystem.translate(translate);
+        }
     }
 
     @Override
@@ -77,8 +83,9 @@ public class MeshObject extends FadeNode implements IModelRenderable {
             mc.dlight.direction.set(transform.getTranslationf());
             mc.dlight.direction.add((float) camera.getPos().x, (float) camera.getPos().y, (float) camera.getPos().z);
             mc.dlight.color.set(1f, 1f, 1f, 0f);
+
+            updateLocalTransform();
         }
-        updateLocalTransform();
     }
 
     /**
@@ -114,9 +121,11 @@ public class MeshObject extends FadeNode implements IModelRenderable {
 
     @Override
     public void render(ModelBatch modelBatch, float alpha, double t) {
-        mc.touch();
-        mc.setTransparency(alpha * opacity);
-        modelBatch.render(mc.instance, mc.env);
+        if (mc != null) {
+            mc.touch();
+            mc.setTransparency(alpha * opacity);
+            modelBatch.render(mc.instance, mc.env);
+        }
     }
 
     public void setModel(ModelComponent mc) {
