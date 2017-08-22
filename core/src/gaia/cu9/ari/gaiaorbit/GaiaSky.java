@@ -211,6 +211,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         // Initialise asset manager
         FileHandleResolver resolver = new InternalFileHandleResolver();
         manager = new AssetManager(resolver);
+        //manager.setLoader(Model.class, ".obj", new AdvancedObjLoader(resolver));
         manager.setLoader(ISceneGraph.class, new SGLoader(resolver));
         manager.setLoader(OrbitData.class, new OrbitDataLoader(resolver));
         manager.setLoader(GaiaAttitudeServer.class, new GaiaAttitudeLoader(resolver));

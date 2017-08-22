@@ -27,6 +27,7 @@ import gaia.cu9.ari.gaiaorbit.util.Pair;
 public class ModelComponent implements Disposable {
     public boolean forceinit = false;
     private static ColorAttribute ambient;
+    private Boolean dirlight = true;
 
     static {
         ambient = new ColorAttribute(ColorAttribute.AmbientLight, (float) GlobalConf.scene.AMBIENT_LIGHT, (float) GlobalConf.scene.AMBIENT_LIGHT, (float) GlobalConf.scene.AMBIENT_LIGHT, 1f);
@@ -104,6 +105,15 @@ public class ModelComponent implements Disposable {
         Model model = null;
         Map<String, Material> materials = null;
 
+        if (!dirlight) {
+            // Remove dir and global ambient. Add ambient
+            env.remove(dlight);
+            // Ambient
+            ColorAttribute alight = new ColorAttribute(ColorAttribute.AmbientLight, 1f, 1f, 1f, 1f);
+            env.set(alight);
+
+        }
+
         if (modelFile != null && manager.isLoaded(modelFile)) {
             // Model comes from file (probably .obj or .g3db)
             model = manager.get(modelFile, Model.class);
@@ -115,6 +125,7 @@ public class ModelComponent implements Disposable {
             } else {
                 materials.put("base", model.materials.first());
             }
+
         } else if (type != null) {
             // We create the model
             Pair<Model, Map<String, Material>> pair = ModelCache.cache.getModel(type, params, Usage.Position | Usage.Normal | Usage.TextureCoordinates);
@@ -162,6 +173,17 @@ public class ModelComponent implements Disposable {
                     initialised = true;
                     loading = false;
                 }
+            } else {
+                // Use color
+                if (cc != null) {
+                    // Regular mesh, we use the color
+                    Material material = instance.materials.get(0);
+                    material.set(new ColorAttribute(ColorAttribute.Diffuse, cc[0], cc[1], cc[2], cc[3]));
+                    material.set(new ColorAttribute(ColorAttribute.Ambient, cc[0], cc[1], cc[2], cc[3]));
+                }
+                // Set to initialised
+                initialised = true;
+                loading = false;
             }
 
         }
@@ -223,6 +245,10 @@ public class ModelComponent implements Disposable {
      */
     public void setModel(String model) {
         this.modelFile = model;
+    }
+
+    public void setDirlight(String dirlight) {
+        this.dirlight = Boolean.valueOf(dirlight);
     }
 
     public void setParams(Map<String, Object> params) {

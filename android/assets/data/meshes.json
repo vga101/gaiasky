@@ -1,0 +1,25 @@
+{"objects" : [
+
+	{
+	"name" : "Hot v3 Iso 40 Percent",
+	"color" : [0.3, 0.8, 0.4, 0.6],
+	// Parsec to units
+	"size" :  3.0856775814913705E7,
+	"ct" : Meshes,
+	
+	"parent" : "Universe", 
+	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.MeshObject",
+	
+	// Transformations
+	"transformName" : equatorialToGalacticF,
+	"scale" : [1.0, 1.0, 1.0],
+	"rotate" : [1.0, 0.0, 0.0, -90.0],
+	"translate" : [-659.0, -659.0, -350.0],
+	
+	"model"		: {
+					"args" : [true],
+					"dirlight" : False,
+					"model" : "data/meshes/iso_40_percent_filtered_reduced_separated.obj"
+				}
+	}
+]}
