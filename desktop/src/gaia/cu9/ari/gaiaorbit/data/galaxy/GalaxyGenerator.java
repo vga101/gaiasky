@@ -18,12 +18,14 @@ import gaia.cu9.ari.gaiaorbit.data.OctreeGeneratorTest;
 import gaia.cu9.ari.gaiaorbit.desktop.format.DesktopDateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.desktop.format.DesktopNumberFormatFactory;
 import gaia.cu9.ari.gaiaorbit.desktop.util.DesktopConfInit;
+import gaia.cu9.ari.gaiaorbit.desktop.util.DesktopSysUtilsFactory;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.util.ConfInit;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
+import gaia.cu9.ari.gaiaorbit.util.SysUtilsFactory;
 import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.math.StdRandom;
@@ -34,37 +36,40 @@ public class GalaxyGenerator implements IObserver {
     private static final boolean writeFile = true;
 
     /** spiral | milkyway | uniform **/
-    private static String TYPE = "milkyway";
+    private static String TYPE = "spiral";
 
     /** Number of spiral arms **/
-    private static int Narms = 6;
+    private static int Narms = 4;
 
     /** Does the galaxy have a bar? **/
-    private static boolean bar = false;
+    private static boolean bar = true;
 
     /** The length of the bar, if it has one **/
     private static float barLength = 0.5f;
 
     /** Radius of the galaxy **/
-    private static float radius = 1.5f;
+    private static float radius = 1f;
 
     /** Number of particles **/
-    private static int N = 40000;
+    private static int N = 4000;
 
     /** Ratio radius/armWidth **/
-    private static float armWidthRatio = 1f;
+    private static float armWidthRatio = 0.05f;
 
     /** Ratio radius/armHeight **/
-    private static float armHeightRatio = 1f / 10f;
+    private static float armHeightRatio = 0.01f;
 
     /** Maximum spiral rotation (end of arm) in degrees **/
-    private static float maxRotation = 0;
+    private static float maxRotation = 20;
 
-    private static boolean radialDensity = false;
+    private static boolean radialDensity = true;
 
     public static void main(String[] args) {
         try {
             Gdx.files = new LwjglFiles();
+
+            // Sys utils
+            SysUtilsFactory.initialize(new DesktopSysUtilsFactory());
 
             // Initialize number format
             NumberFormatFactory.initialize(new DesktopNumberFormatFactory());
@@ -249,12 +254,12 @@ public class GalaxyGenerator implements IObserver {
                 Vector3 particle = new Vector3(x, y, z);
                 particle.rotate(rotAxis, angle);
 
-                // Rotate according to distance
+                // Differential rotation
                 particle.rotate(rotAxis, maxRotation * particle.len() / radius);
 
                 particle.add(0f, 0f, zplus);
 
-                particles.add(new float[] { x, y, z, (float) Math.abs(StdRandom.gaussian()) });
+                particles.add(new float[] { particle.x, particle.y, particle.z, (float) Math.abs(StdRandom.gaussian()) });
             }
             angle += stepAngle;
         }
@@ -288,7 +293,7 @@ public class GalaxyGenerator implements IObserver {
 
         for (int i = 0; i < gal.size(); i++) {
             float[] star = gal.get(i);
-            bw.write(star[0] + " " + star[1] + " " + star[2] + " " + star[3]);
+            bw.write(star[0] + " " + star[1] + " " + star[2]);
             bw.newLine();
         }
 
