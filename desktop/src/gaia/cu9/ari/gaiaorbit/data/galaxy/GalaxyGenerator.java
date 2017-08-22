@@ -60,7 +60,7 @@ public class GalaxyGenerator implements IObserver {
     private static float armHeightRatio = 0.01f;
 
     /** Maximum spiral rotation (end of arm) in degrees **/
-    private static float maxRotation = 20;
+    private static float maxRotation = 120;
 
     private static boolean radialDensity = true;
 
