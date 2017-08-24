@@ -37,7 +37,9 @@ import gaia.cu9.ari.gaiaorbit.util.ConfInit;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.SysUtilsFactory;
+import gaia.cu9.ari.gaiaorbit.util.concurrent.SingleThreadIndexer;
 import gaia.cu9.ari.gaiaorbit.util.concurrent.SingleThreadLocalFactory;
+import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadIndexer;
 import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadLocalFactory;
 import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
@@ -111,6 +113,9 @@ public class OctreeGroupGeneratorTest implements IObserver {
             String ASSETS_LOC = (System.getProperty("assets.location") != null ? System.getProperty("assets.location") : "");
 
             Gdx.files = new LwjglFiles();
+
+            // Thread idx
+            ThreadIndexer.initialize(new SingleThreadIndexer());
 
             // Sys utils
             SysUtilsFactory.initialize(new DesktopSysUtilsFactory());
