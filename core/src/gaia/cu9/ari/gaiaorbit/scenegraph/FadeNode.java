@@ -3,6 +3,7 @@ package gaia.cu9.ari.gaiaorbit.scenegraph;
 import com.badlogic.gdx.math.Vector2;
 
 import gaia.cu9.ari.gaiaorbit.util.Constants;
+import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
@@ -24,6 +25,11 @@ public class FadeNode extends AbstractPositionEntity {
      * Fade out low and high limits
      */
     private Vector2 fadeOut;
+
+    /**
+     * Colour of label
+     */
+    protected float[] labelColour;
 
     /**
      * The current distance at each cycle, in internal units
@@ -86,6 +92,15 @@ public class FadeNode extends AbstractPositionEntity {
 
     public void setPosition(double[] pos) {
         this.pos.set(pos[0] * Constants.PC_TO_U, pos[1] * Constants.PC_TO_U, pos[2] * Constants.PC_TO_U);
+    }
+
+    /**
+     * Sets the label color
+     * 
+     * @param labelcolor
+     */
+    public void setLabelcolor(double[] labelcolor) {
+        this.labelColour = GlobalResources.toFloatArray(labelcolor);
     }
 
 }

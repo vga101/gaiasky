@@ -24,7 +24,6 @@ import gaia.cu9.ari.gaiaorbit.render.I3DTextRenderable;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.RotationComponent;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
-import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.Pair;
 import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
@@ -68,11 +67,6 @@ public class ParticleGroup extends FadeNode implements I3DTextRenderable, IFocus
      * Path of data file
      */
     protected String datafile;
-
-    /**
-     * Colour of label
-     */
-    float[] labelColour;
 
     /**
      * Position of label
@@ -259,15 +253,6 @@ public class ParticleGroup extends FadeNode implements I3DTextRenderable, IFocus
     /**
      * LABEL
      */
-
-    /**
-     * Sets the label color
-     * 
-     * @param labelcolor
-     */
-    public void setLabelcolor(double[] labelcolor) {
-        this.labelColour = GlobalResources.toFloatArray(labelcolor);
-    }
 
     public String getProvider() {
         return provider;

@@ -1,7 +1,12 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
@@ -9,14 +14,17 @@ import com.badlogic.gdx.utils.reflect.Method;
 import com.badlogic.gdx.utils.reflect.ReflectionException;
 
 import gaia.cu9.ari.gaiaorbit.GaiaSky;
+import gaia.cu9.ari.gaiaorbit.render.ComponentType;
+import gaia.cu9.ari.gaiaorbit.render.I3DTextRenderable;
 import gaia.cu9.ari.gaiaorbit.render.IModelRenderable;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.ITransform;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
+import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
-public class MeshObject extends FadeNode implements IModelRenderable {
+public class MeshObject extends FadeNode implements IModelRenderable, I3DTextRenderable {
 
     private String transformName;
     private Matrix4 coordinateSystem;
@@ -70,8 +78,10 @@ public class MeshObject extends FadeNode implements IModelRenderable {
                 coordinateSystem.scl(scale);
             if (axis != null)
                 coordinateSystem.rotate(axis, degrees);
-            if (translate != null)
+            if (translate != null) {
+                pos.set(translate);
                 coordinateSystem.translate(translate);
+            }
         }
     }
 
@@ -114,6 +124,7 @@ public class MeshObject extends FadeNode implements IModelRenderable {
     protected void addToRenderLists(ICamera camera) {
         if (GaiaSky.instance.isOn(ct) && opacity > 0) {
             addToRender(this, RenderGroup.MODEL_FB);
+            addToRender(this, RenderGroup.LABEL);
         }
 
     }
@@ -151,5 +162,56 @@ public class MeshObject extends FadeNode implements IModelRenderable {
     @Override
     public boolean hasAtmosphere() {
         return false;
+    }
+
+    @Override
+    public boolean renderText() {
+        return name != null && GaiaSky.instance.isOn(ComponentType.Labels) && this.opacity > 0;
+    }
+
+    @Override
+    public void render(SpriteBatch batch, ShaderProgram shader, BitmapFont font3d, BitmapFont font2d, ICamera camera) {
+        Vector3d pos = aux3d1.get();
+        textPosition(camera, pos);
+        shader.setUniformf("a_viewAngle", 90f);
+        shader.setUniformf("a_thOverFactor", 1f);
+        render3DLabel(batch, shader, font3d, camera, text(), pos, textScale(), textSize(), textColour(), this.opacity);
+
+    }
+
+    @Override
+    public float[] textColour() {
+        return labelColour;
+    }
+
+    @Override
+    public float textSize() {
+        return (float) distToCamera * 2e-3f;
+    }
+
+    @Override
+    public float textScale() {
+        return 1;
+    }
+
+    @Override
+    public void textPosition(ICamera cam, Vector3d out) {
+        out.set(pos).add(cam.getInversePos());
+    }
+
+    @Override
+    public String text() {
+        return name;
+    }
+
+    @Override
+    public void textDepthBuffer() {
+        Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
+        Gdx.gl.glDepthMask(true);
+    }
+
+    @Override
+    public boolean isLabel() {
+        return true;
     }
 }
