@@ -43,7 +43,6 @@ import gaia.cu9.ari.gaiaorbit.render.system.ModelBatchRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.ParticleGroupRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.PixelRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.StarGroupRenderSystem;
-import gaia.cu9.ari.gaiaorbit.render.system.VolumeCloudsRenderSystem;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
@@ -267,8 +266,8 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         });
 
         // VOLUMETRIC CLOUDS
-        AbstractRenderSystem cloudsProc = new VolumeCloudsRenderSystem(priority++, alphas);
-        cloudsProc.setPreRunnable(blendNoDepthRunnable);
+        //        AbstractRenderSystem cloudsProc = new VolumeCloudsRenderSystem(priority++, alphas);
+        //        cloudsProc.setPreRunnable(blendNoDepthRunnable);
 
         // ANNOTATIONS
         AbstractRenderSystem annotationsProc = new FontRenderSystem(RenderGroup.MODEL_B_ANNOT, priority++, alphas, spriteBatch);

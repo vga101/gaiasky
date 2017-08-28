@@ -9,6 +9,6 @@
 	},
 	{
 		"loader": "gaia.cu9.ari.gaiaorbit.data.group.OctreeGroupLoader",
-		"files": [ "/media/tsagrista/Daten/Gaia/data/GDR2/earlydr2/g18/out-group/18-10000-10000/particles/", "/media/tsagrista/Daten/Gaia/data/GDR2/earlydr2/g18/out-group/18-10000-10000/metadata.bin" ]
+		"files": [ "/media/tsagrista/Daten/Gaia/data/GDR2/earlydr2/g18/out-group/18-20000-05000/particles/", "/media/tsagrista/Daten/Gaia/data/GDR2/earlydr2/g18/out-group/18-20000-05000/metadata.bin" ]
 	}
 ]}
