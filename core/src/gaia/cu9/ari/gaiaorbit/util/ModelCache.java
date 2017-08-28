@@ -100,7 +100,7 @@ public class ModelCache {
 
                 mb.begin();
                 mb.part("up", GL20.GL_TRIANGLES, attributes, mat).rect(vt00, vt01, vt11, vt10);
-                //mb.part("down", GL20.GL_TRIANGLES, attributes, mat).rect(vb00, vb10, vb11, vb01);
+                mb.part("down", GL20.GL_TRIANGLES, attributes, mat).rect(vb00, vb10, vb11, vb01);
                 model = mb.end();
                 break;
             case "cylinder":
