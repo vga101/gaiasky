@@ -82,7 +82,7 @@ public abstract class ModelBody extends CelestialBody {
                 mc.dlight.color.set(col[0], col[1], col[2], 1.0f);
             } else {
                 mc.dlight.direction.add((float) camera.getPos().x, (float) camera.getPos().y, (float) camera.getPos().z);
-                mc.dlight.color.set(1f, 1f, 1f, 0f);
+                mc.dlight.color.set(1f, 1f, 1f, 1f);
             }
         }
         updateLocalTransform();

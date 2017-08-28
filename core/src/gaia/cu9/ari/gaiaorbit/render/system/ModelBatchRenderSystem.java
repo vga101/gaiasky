@@ -46,6 +46,7 @@ public class ModelBatchRenderSystem extends AbstractRenderSystem {
         renderables.sort(comp);
         if (mustRender()) {
             batch.begin(camera.getCamera());
+
             int size = renderables.size;
             for (int i = 0; i < size; i++) {
                 IModelRenderable s = (IModelRenderable) renderables.get(i);

@@ -15,13 +15,13 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
  */
 public class SGRAbstract {
 
-    protected RenderContext rc;
+    protected RenderingContext rc;
     /** Viewport to use in normal mode **/
     protected Viewport extendViewport;
 
     public SGRAbstract() {
         // Render context
-        rc = new RenderContext();
+        rc = new RenderingContext();
         // Viewport
         extendViewport = new ExtendViewport(200, 200);
     }

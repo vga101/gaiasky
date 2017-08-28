@@ -12,7 +12,7 @@ import com.bitfire.postprocessing.utils.FullscreenQuad;
 import com.bitfire.utils.ShaderLoader;
 
 import gaia.cu9.ari.gaiaorbit.render.IRenderable;
-import gaia.cu9.ari.gaiaorbit.render.RenderContext;
+import gaia.cu9.ari.gaiaorbit.render.RenderingContext;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 
@@ -64,7 +64,7 @@ public class VolumeCloudsRenderSystem extends AbstractRenderSystem {
     }
 
     @Override
-    public void render(Array<IRenderable> renderables, ICamera camera, double t, RenderContext rc) {
+    public void render(Array<IRenderable> renderables, ICamera camera, double t, RenderingContext rc) {
         this.rc = rc;
         run(preRunnable, renderables, camera);
 

@@ -80,9 +80,8 @@ public class MeshObject extends FadeNode implements IModelRenderable {
         super.updateLocal(time, camera);
         // Update light with global position
         if (mc != null) {
-            mc.dlight.direction.set(transform.getTranslationf());
-            mc.dlight.direction.add((float) camera.getPos().x, (float) camera.getPos().y, (float) camera.getPos().z);
-            mc.dlight.color.set(1f, 1f, 1f, 0f);
+            mc.dlight.direction.set(1f, 0f, 0f);
+            mc.dlight.color.set(1f, 1f, 1f, 1f);
 
             updateLocalTransform();
         }
@@ -114,7 +113,7 @@ public class MeshObject extends FadeNode implements IModelRenderable {
     @Override
     protected void addToRenderLists(ICamera camera) {
         if (GaiaSky.instance.isOn(ct) && opacity > 0) {
-            addToRender(this, RenderGroup.MODEL_F);
+            addToRender(this, RenderGroup.MODEL_FB);
         }
 
     }

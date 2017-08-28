@@ -27,7 +27,10 @@ import gaia.cu9.ari.gaiaorbit.util.Pair;
 public class ModelComponent implements Disposable {
     public boolean forceinit = false;
     private static ColorAttribute ambient;
-    private Boolean dirlight = true;
+    /**
+     * Light never changes
+     */
+    private Boolean staticLight = false;
 
     static {
         ambient = new ColorAttribute(ColorAttribute.AmbientLight, (float) GlobalConf.scene.AMBIENT_LIGHT, (float) GlobalConf.scene.AMBIENT_LIGHT, (float) GlobalConf.scene.AMBIENT_LIGHT, 1f);
@@ -83,7 +86,7 @@ public class ModelComponent implements Disposable {
             env.set(ambient);
             // Direction from Sun to Earth
             dlight = new DirectionalLight();
-            dlight.color.set(1f, 1f, 1f, 0f);
+            dlight.color.set(1f, 0f, 0f, 1f);
             env.add(dlight);
         }
     }
@@ -105,11 +108,11 @@ public class ModelComponent implements Disposable {
         Model model = null;
         Map<String, Material> materials = null;
 
-        if (!dirlight) {
+        if (staticLight) {
             // Remove dir and global ambient. Add ambient
-            env.remove(dlight);
+            //env.remove(dlight);
             // Ambient
-            ColorAttribute alight = new ColorAttribute(ColorAttribute.AmbientLight, 1f, 1f, 1f, 1f);
+            ColorAttribute alight = new ColorAttribute(ColorAttribute.AmbientLight, .6f, .6f, .6f, 1f);
             env.set(alight);
 
         }
@@ -247,8 +250,8 @@ public class ModelComponent implements Disposable {
         this.modelFile = model;
     }
 
-    public void setDirlight(String dirlight) {
-        this.dirlight = Boolean.valueOf(dirlight);
+    public void setStaticlight(String staticLight) {
+        this.staticLight = Boolean.valueOf(staticLight);
     }
 
     public void setParams(Map<String, Object> params) {

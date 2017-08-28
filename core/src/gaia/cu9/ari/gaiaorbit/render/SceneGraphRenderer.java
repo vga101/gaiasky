@@ -193,12 +193,11 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
             }
         };
 
-        ModelBatch modelBatchB = new ModelBatch(sp, noSorter);
-        ModelBatch modelBatchF = Constants.webgl ? modelBatchB : new ModelBatch(spnormal, noSorter);
+        ModelBatch modelBatchFB = new ModelBatch(sp, noSorter);
+        ModelBatch modelBatchF = Constants.webgl ? new ModelBatch(sp, noSorter) : new ModelBatch(spnormal, noSorter);
         ModelBatch modelBatchAtm = new ModelBatch(spatm, noSorter);
         ModelBatch modelBatchS = new ModelBatch(spsurface, noSorter);
         ModelBatch modelBatchBeam = new ModelBatch(spbeam, noSorter);
-        ModelBatch modelBatchCloseUp = new ModelBatch(spnormal, noSorter);
 
         // Sprites
         spriteBatch = GlobalResources.spriteBatch;
@@ -256,10 +255,10 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         AbstractRenderSystem pixelStarProc = new PixelRenderSystem(RenderGroup.POINT_STAR, priority++, alphas, ComponentType.Stars);
         pixelStarProc.setPreRunnable(blendNoDepthRunnable);
 
-        // MODEL BACK
-        AbstractRenderSystem modelBackProc = new ModelBatchRenderSystem(RenderGroup.MODEL_B, priority++, alphas, modelBatchB, false);
-        modelBackProc.setPreRunnable(blendNoDepthRunnable);
-        modelBackProc.setPostRunnable(new RenderSystemRunnable() {
+        // MODEL FRONT-BACK - NO CULL FACE
+        AbstractRenderSystem modelFrontBackProc = new ModelBatchRenderSystem(RenderGroup.MODEL_FB, priority++, alphas, modelBatchFB, false);
+        modelFrontBackProc.setPreRunnable(blendNoDepthRunnable);
+        modelFrontBackProc.setPostRunnable(new RenderSystemRunnable() {
             @Override
             public void run(AbstractRenderSystem renderSystem, Array<IRenderable> renderables, ICamera camera) {
                 // This always goes at the back, clear depth buffer
@@ -347,7 +346,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         modelBeamProc.setPreRunnable(blendDepthRunnable);
 
         // GALAXY
-        AbstractRenderSystem galaxyProc = new MilkyWayRenderSystem(RenderGroup.GALAXY, priority++, alphas, modelBatchF);
+        AbstractRenderSystem galaxyProc = new MilkyWayRenderSystem(RenderGroup.GALAXY, priority++, alphas, modelBatchFB);
         galaxyProc.setPreRunnable(blendNoDepthRunnable);
 
         // PARTICLE GROUP
@@ -396,7 +395,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         //        modelCloseUpProc.setPreRunnable(blendDepthRunnable);
 
         // Add components to set
-        renderProcesses.add(modelBackProc);
+        renderProcesses.add(modelFrontBackProc);
         renderProcesses.add(pixelStarProc);
         renderProcesses.add(starGroupProc);
         // renderProcesses.add(cloudsProc);
@@ -457,7 +456,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
      * @param rc
      *            The render context.
      */
-    public void renderScene(ICamera camera, double t, RenderContext rc) {
+    public void renderScene(ICamera camera, double t, RenderingContext rc) {
         // Update time difference since last update
         for (ComponentType ct : ComponentType.values()) {
             alphas[ct.ordinal()] = calculateAlpha(ct, t);

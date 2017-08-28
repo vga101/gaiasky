@@ -54,10 +54,10 @@ public class GalaxyGenerator implements IObserver {
     private static int N = 4000;
 
     /** Ratio radius/armWidth **/
-    private static float armWidthRatio = 0.05f;
+    private static float armWidthRatio = 0.1f;
 
     /** Ratio radius/armHeight **/
-    private static float armHeightRatio = 0.01f;
+    private static float armHeightRatio = 0.05f;
 
     /** Maximum spiral rotation (end of arm) in degrees **/
     private static float maxRotation = 120;

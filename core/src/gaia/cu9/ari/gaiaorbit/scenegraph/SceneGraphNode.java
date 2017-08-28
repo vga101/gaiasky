@@ -47,8 +47,8 @@ public class SceneGraphNode implements IStarContainer, IPosition {
     public static enum RenderGroup {
         /** Foreground models **/
         MODEL_F(0),
-        /** Background models **/
-        MODEL_B(1),
+        /** Background models - NO CULL FACE - front and back **/
+        MODEL_FB(1),
         /** Shader - stars **/
         SHADER_STAR(2),
         /** Shader - galaxies **/

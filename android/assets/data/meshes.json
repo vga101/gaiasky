@@ -18,8 +18,8 @@
 	
 	"model"		: {
 					"args" : [true],
-					"dirlight" : False,
-					"model" : "data/meshes/iso_40_percent_filtered_reducdded_separated.obj"
+					"staticlight" : True,
+					"model" : "data/meshes/iso_40_percent_filtered_reduced_separated.obj"
 				}
 	}
 ]}

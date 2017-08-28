@@ -10,7 +10,7 @@ import gaia.cu9.ari.gaiaorbit.render.IPostProcessor.PostProcessBean;
  * @author tsagrista
  *
  */
-public class RenderContext {
+public class RenderingContext {
     private static final float HD_DIAG = (float) Math.sqrt(1280 * 1280 + 720 * 720);
 
     /** The post process bean. It may have no effects enabled. **/

@@ -5,7 +5,7 @@ import java.util.Comparator;
 import com.badlogic.gdx.utils.Array;
 
 import gaia.cu9.ari.gaiaorbit.render.IRenderable;
-import gaia.cu9.ari.gaiaorbit.render.RenderContext;
+import gaia.cu9.ari.gaiaorbit.render.RenderingContext;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
 
@@ -21,7 +21,7 @@ public abstract class AbstractRenderSystem implements IRenderSystem {
     protected float[] alphas;
     /** Comparator of renderables, in case of need **/
     protected Comparator<IRenderable> comp;
-    public RenderContext rc;
+    public RenderingContext rc;
 
     protected RenderSystemRunnable preRunnable, postRunnable;
 
@@ -43,7 +43,7 @@ public abstract class AbstractRenderSystem implements IRenderSystem {
     }
 
     @Override
-    public void render(Array<IRenderable> renderables, ICamera camera, double t, RenderContext rc) {
+    public void render(Array<IRenderable> renderables, ICamera camera, double t, RenderingContext rc) {
         if (renderables != null && renderables.size != 0) {
             this.rc = rc;
             run(preRunnable, renderables, camera);
