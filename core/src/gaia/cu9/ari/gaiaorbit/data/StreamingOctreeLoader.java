@@ -46,6 +46,9 @@ public abstract class StreamingOctreeLoader implements IObserver, ISceneGraphLoa
     /** The octant loading queue **/
     protected Queue<OctreeNode> toLoadQueue = null;
 
+    /** Whether loading is paused or not **/
+    protected boolean loadingPaused = false;
+
     /**
      * This queue is sorted ascending by access date, so that we know which
      * element to release if needed (oldest)
@@ -75,7 +78,7 @@ public abstract class StreamingOctreeLoader implements IObserver, ISceneGraphLoa
         idxLoadedIds = 0;
         loadedIds = new long[maxLoadedIds];
 
-        EventManager.instance.subscribe(this, Events.DISPOSE);
+        EventManager.instance.subscribe(this, Events.DISPOSE, Events.PAUSE_BACKGROUND_LOADING, Events.RESUME_BACKGROUND_LOADING);
     }
 
     @Override
@@ -196,7 +199,8 @@ public abstract class StreamingOctreeLoader implements IObserver, ISceneGraphLoa
      * Tells the loader to start loading the octants in the queue.
      */
     public void flushLoadQueue() {
-        if (!daemon.awake && !toLoadQueue.isEmpty()) {
+        if (!daemon.awake && !toLoadQueue.isEmpty() && !loadingPaused) {
+            EventManager.instance.post(Events.BACKGROUND_LOADING_INFO);
             daemon.interrupt();
         }
     }
@@ -383,6 +387,14 @@ public abstract class StreamingOctreeLoader implements IObserver, ISceneGraphLoa
     @Override
     public void notify(Events event, Object... data) {
         switch (event) {
+        case PAUSE_BACKGROUND_LOADING:
+            loadingPaused = true;
+            Logger.info(this.getClass().getSimpleName(), "Background data loading thread paused");
+            break;
+        case RESUME_BACKGROUND_LOADING:
+            loadingPaused = false;
+            Logger.info(this.getClass().getSimpleName(), "Background data loading thread resumed");
+            break;
         case DISPOSE:
             if (daemon != null) {
                 daemon.stopExecution();

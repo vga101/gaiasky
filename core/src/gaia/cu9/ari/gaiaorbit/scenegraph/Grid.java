@@ -43,6 +43,7 @@ public class Grid extends AbstractPositionEntity implements IModelRenderable, IA
     public ModelComponent mc;
     private Vector3 auxf;
     private Vector3d auxd;
+    private float[] labelColor;
 
     public Grid() {
         super();
@@ -85,6 +86,9 @@ public class Grid extends AbstractPositionEntity implements IModelRenderable, IA
         }
         mc.instance = new ModelInstance(model, this.localTransform);
 
+        float pl = .5f;
+        labelColor = new float[] { Math.min(1, cc[0] + pl), Math.min(1, cc[1] + pl), Math.min(1, cc[2] + pl), Math.min(1, cc[3] + pl) };
+
         font = GlobalResources.skin.getFont("grid-annotation");
 
     }
@@ -121,13 +125,14 @@ public class Grid extends AbstractPositionEntity implements IModelRenderable, IA
         // Horizon
         float stepAngle = 360 / divisionsU;
         alpha *= ANNOTATIONS_ALPHA;
+
+        font.setColor(labelColor[0], labelColor[1], labelColor[2], labelColor[3] * alpha);
+
         for (int angle = 0; angle < 360; angle += stepAngle) {
             auxf.set(Coordinates.sphericalToCartesian(Math.toRadians(angle), 0, 1f, auxd).valuesf()).mul(localTransform).nor();
             if (auxf.dot(camera.getCamera().direction.nor()) > 0) {
                 auxf.add(camera.getCamera().position);
                 camera.getCamera().project(auxf);
-                float pl = .7f;
-                font.setColor(Math.min(1, cc[0] + pl), Math.min(1, cc[1] + pl), Math.min(1, cc[2] + pl), alpha);
                 font.draw(spriteBatch, Integer.toString(angle), auxf.x, auxf.y);
             }
 
@@ -140,16 +145,12 @@ public class Grid extends AbstractPositionEntity implements IModelRenderable, IA
                 if (auxf.dot(camera.getCamera().direction.nor()) > 0) {
                     auxf.add(camera.getCamera().position);
                     camera.getCamera().project(auxf);
-                    float pl = .7f;
-                    font.setColor(Math.min(1, cc[0] + pl), Math.min(1, cc[1] + pl), Math.min(1, cc[2] + pl), alpha);
                     font.draw(spriteBatch, Integer.toString(angle), auxf.x, auxf.y);
                 }
                 auxf.set(Coordinates.sphericalToCartesian(0, Math.toRadians(-angle), -1f, auxd).valuesf()).mul(localTransform).nor();
                 if (auxf.dot(camera.getCamera().direction.nor()) > 0) {
                     auxf.add(camera.getCamera().position);
                     camera.getCamera().project(auxf);
-                    float pl = .7f;
-                    font.setColor(Math.min(1, cc[0] + pl), Math.min(1, cc[1] + pl), Math.min(1, cc[2] + pl), alpha);
                     font.draw(spriteBatch, Integer.toString(angle), auxf.x, auxf.y);
                 }
             }

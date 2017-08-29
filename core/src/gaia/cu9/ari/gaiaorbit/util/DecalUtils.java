@@ -1,6 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.util;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -8,6 +7,7 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
 
+import gaia.cu9.ari.gaiaorbit.render.RenderingContext;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
 /**
@@ -22,11 +22,11 @@ public class DecalUtils {
     static Vector3 tmp, tmp2;
     static Matrix4 idt, aux1, aux2;
     static {
-	tmp = new Vector3();
-	tmp2 = new Vector3();
-	idt = new Matrix4();
-	aux1 = new Matrix4();
-	aux2 = new Matrix4();
+        tmp = new Vector3();
+        tmp2 = new Vector3();
+        idt = new Matrix4();
+        aux1 = new Matrix4();
+        aux2 = new Matrix4();
     }
 
     /**
@@ -47,9 +47,8 @@ public class DecalUtils {
      * @param camera
      *            The camera.
      */
-    public static void drawFont3D(BitmapFont font, SpriteBatch batch, String text, Vector3 position, Camera camera,
-	    boolean faceCamera) {
-	drawFont3D(font, batch, text, position, 1f, camera, faceCamera);
+    public static void drawFont3D(BitmapFont font, SpriteBatch batch, String text, Vector3 position, Camera camera, boolean faceCamera) {
+        drawFont3D(font, batch, text, position, 1f, camera, faceCamera);
     }
 
     /**
@@ -78,24 +77,22 @@ public class DecalUtils {
      * @param faceCamera
      *            Whether to apply bill-boarding.
      */
-    public static void drawFont3D(BitmapFont font, SpriteBatch batch, String text, float x, float y, float z,
-	    float scale, Camera camera, boolean faceCamera) {
-	// Store batch matrices
-	aux1.set(batch.getTransformMatrix());
-	aux2.set(batch.getProjectionMatrix());
+    public static void drawFont3D(BitmapFont font, SpriteBatch batch, String text, float x, float y, float z, float scale, Camera camera, boolean faceCamera) {
+        // Store batch matrices
+        aux1.set(batch.getTransformMatrix());
+        aux2.set(batch.getProjectionMatrix());
 
-	Quaternion rotation = faceCamera ? getBillboardRotation(camera) : new Quaternion();
+        Quaternion rotation = faceCamera ? getBillboardRotation(camera) : new Quaternion();
 
-	batch.getTransformMatrix().set(camera.combined).translate(x, y, z).rotate(rotation).rotate(0, 1, 0, 180)
-		.scale(scale, scale, scale);
-	// Force matrices to be set to shader
-	batch.setProjectionMatrix(idt);
+        batch.getTransformMatrix().set(camera.combined).translate(x, y, z).rotate(rotation).rotate(0, 1, 0, 180).scale(scale, scale, scale);
+        // Force matrices to be set to shader
+        batch.setProjectionMatrix(idt);
 
-	font.draw(batch, text, 0, 0);
+        font.draw(batch, text, 0, 0);
 
-	// Restore batch matrices
-	batch.setTransformMatrix(aux1);
-	batch.setProjectionMatrix(aux2);
+        // Restore batch matrices
+        batch.setTransformMatrix(aux1);
+        batch.setProjectionMatrix(aux2);
     }
 
     /**
@@ -118,53 +115,54 @@ public class DecalUtils {
      * @param scale
      *            The scale of the font.
      */
-    public static void drawFont3D(BitmapFont font, SpriteBatch batch, String text, Vector3 position, float scale,
-	    Camera camera, boolean faceCamera) {
-	// Store batch matrices
-	aux1.set(batch.getTransformMatrix());
-	aux2.set(batch.getProjectionMatrix());
+    public static void drawFont3D(BitmapFont font, SpriteBatch batch, String text, Vector3 position, float scale, Camera camera, boolean faceCamera) {
+        // Store batch matrices
+        aux1.set(batch.getTransformMatrix());
+        aux2.set(batch.getProjectionMatrix());
 
-	Quaternion rotation = faceCamera ? getBillboardRotation(camera) : new Quaternion();
+        Quaternion rotation = faceCamera ? getBillboardRotation(camera) : new Quaternion();
 
-	batch.getTransformMatrix().set(camera.combined).translate(position).rotate(rotation).rotate(0, 1, 0, 180)
-		.scl(scale);
-	// Force matrices to be set to shader
-	batch.setProjectionMatrix(idt);
+        batch.getTransformMatrix().set(camera.combined).translate(position).rotate(rotation).rotate(0, 1, 0, 180).scl(scale);
+        // Force matrices to be set to shader
+        batch.setProjectionMatrix(idt);
 
-	font.draw(batch, text, 0, 0);
+        font.draw(batch, text, 0, 0);
 
-	// Restore batch matrices
-	batch.setTransformMatrix(aux1);
-	batch.setProjectionMatrix(aux2);
+        // Restore batch matrices
+        batch.setTransformMatrix(aux1);
+        batch.setProjectionMatrix(aux2);
     }
 
     public static void drawFont2D(BitmapFont font, SpriteBatch batch, String text, Vector3 position) {
-	font.draw(batch, text, position.x, position.y);
+        font.draw(batch, text, position.x, position.y);
     }
 
     public static void drawFont2D(BitmapFont font, SpriteBatch batch, String text, float x, float y) {
-	font.draw(batch, text, x, y);
+        font.draw(batch, text, x, y);
     }
 
-    public static void drawFont2D(BitmapFont font, SpriteBatch batch, String text, float x, float y, float scale) {
-	drawFont2D(font, batch, text, x, y, scale, -1);
+    public static void drawFont2D(BitmapFont font, SpriteBatch batch, RenderingContext rc, String text, float x, float y, float scale, float width) {
+        drawFont2D(font, batch, rc, text, x, y, scale, -1);
     }
 
-    public static void drawFont2D(BitmapFont font, SpriteBatch batch, String text, float x, float y, float scale,
-	    int align) {
-	// Save
-	float scalex = font.getData().scaleX;
-	float scaley = font.getData().scaleY;
+    public static void drawFont2D(BitmapFont font, SpriteBatch batch, RenderingContext rc, String text, float x, float y, float scale, int align) {
+        // Save
+        float scalex = font.getData().scaleX;
+        float scaley = font.getData().scaleY;
+        aux1.set(batch.getProjectionMatrix());
 
-	font.getData().setScale(scale);
-	if (align > 0) {
-	    font.draw(batch, text, x, y, Gdx.graphics.getWidth(), align, false);
-	} else {
-	    font.draw(batch, text, x, y);
-	}
+        batch.getProjectionMatrix().setToOrtho2D(0, 0, rc.w(), rc.h());
 
-	// Restore
-	font.getData().setScale(scalex, scaley);
+        font.getData().setScale(scale);
+        if (align > 0) {
+            font.draw(batch, text, x, y, rc.w(), align, false);
+        } else {
+            font.draw(batch, text, x, y);
+        }
+
+        // Restore
+        batch.setProjectionMatrix(aux1);
+        font.getData().setScale(scalex, scaley);
 
     }
 
@@ -175,7 +173,7 @@ public class DecalUtils {
      * @return
      */
     public static Quaternion getBillboardRotation(Camera camera) {
-	return getBillboardRotation(camera.direction, camera.up);
+        return getBillboardRotation(camera.direction, camera.up);
     }
 
     /**
@@ -189,9 +187,9 @@ public class DecalUtils {
      * @return
      */
     public static Quaternion getBillboardRotation(Vector3 direction, Vector3 up) {
-	Quaternion rotation = new Quaternion();
-	setBillboardRotation(rotation, direction, up);
-	return rotation;
+        Quaternion rotation = new Quaternion();
+        setBillboardRotation(rotation, direction, up);
+        return rotation;
     }
 
     /**
@@ -206,9 +204,9 @@ public class DecalUtils {
      *            the up vector
      */
     public static void setBillboardRotation(Quaternion rotation, final Vector3 direction, final Vector3 up) {
-	tmp.set(up).crs(direction).nor();
-	tmp2.set(direction).crs(tmp).nor();
-	rotation.setFromAxes(tmp.x, tmp2.x, direction.x, tmp.y, tmp2.y, direction.y, tmp.z, tmp2.z, direction.z);
+        tmp.set(up).crs(direction).nor();
+        tmp2.set(direction).crs(tmp).nor();
+        rotation.setFromAxes(tmp.x, tmp2.x, direction.x, tmp.y, tmp2.y, direction.y, tmp.z, tmp2.z, direction.z);
     }
 
     /**
@@ -221,11 +219,9 @@ public class DecalUtils {
      *            the up vector
      */
     public static void setBillboardRotation(Quaternion rotation, final Vector3d direction, final Vector3d up) {
-	tmp.set((float) up.x, (float) up.y, (float) up.z)
-		.crs((float) direction.x, (float) direction.y, (float) direction.z).nor();
-	tmp2.set((float) direction.x, (float) direction.y, (float) direction.z).crs(tmp).nor();
-	rotation.setFromAxes(tmp.x, tmp2.x, (float) direction.x, tmp.y, tmp2.y, (float) direction.y, tmp.z, tmp2.z,
-		(float) direction.z);
+        tmp.set((float) up.x, (float) up.y, (float) up.z).crs((float) direction.x, (float) direction.y, (float) direction.z).nor();
+        tmp2.set((float) direction.x, (float) direction.y, (float) direction.z).crs(tmp).nor();
+        rotation.setFromAxes(tmp.x, tmp2.x, (float) direction.x, tmp.y, tmp2.y, (float) direction.y, tmp.z, tmp2.z, (float) direction.z);
     }
 
 }

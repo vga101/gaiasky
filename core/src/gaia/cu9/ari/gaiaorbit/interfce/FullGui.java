@@ -65,7 +65,7 @@ public class FullGui extends AbstractGui {
     protected NotificationsInterface notificationsInterface;
     protected MessagesInterface messagesInterface;
     protected CustomInterface customInterface;
-    protected ScriptStateInterface inputInterface;
+    protected RunStateInterface runStateInterface;
     protected Container<WebGLInterface> wgl;
     protected WebGLInterface webglInterface;
 
@@ -146,11 +146,11 @@ public class FullGui extends AbstractGui {
         interfaces.add(messagesInterface);
 
         // INPUT STATE
-        inputInterface = new ScriptStateInterface(skin);
-        inputInterface.setFillParent(true);
-        inputInterface.right().top();
-        inputInterface.pad(100, 0, 0, 5);
-        interfaces.add(inputInterface);
+        runStateInterface = new RunStateInterface(skin);
+        runStateInterface.setFillParent(true);
+        runStateInterface.right().top();
+        runStateInterface.pad(100, 0, 0, 5);
+        interfaces.add(runStateInterface);
 
         // CUSTOM OBJECTS INTERFACE
         customInterface = new CustomInterface(ui, skin, lock);
@@ -170,7 +170,7 @@ public class FullGui extends AbstractGui {
         invisibleInStereoMode.add(controlsWindow);
         invisibleInStereoMode.add(fi);
         invisibleInStereoMode.add(messagesInterface);
-        invisibleInStereoMode.add(inputInterface);
+        invisibleInStereoMode.add(runStateInterface);
         // invisibleInStereoMode.add(customInterface);
         invisibleInStereoMode.add(mouseXCoord);
         invisibleInStereoMode.add(mouseYCoord);
@@ -201,8 +201,8 @@ public class FullGui extends AbstractGui {
                 ui.addActor(messagesInterface);
             if (focusInterface != null && !GlobalConf.runtime.STRIPPED_FOV_MODE)
                 ui.addActor(fi);
-            if (inputInterface != null && Constants.desktop) {
-                ui.addActor(inputInterface);
+            if (runStateInterface != null && Constants.desktop) {
+                ui.addActor(runStateInterface);
             }
             if (mouseXCoord != null && mouseYCoord != null) {
                 ui.addActor(mouseXCoord);

@@ -8,6 +8,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
 import gaia.cu9.ari.gaiaorbit.render.I3DTextRenderable;
+import gaia.cu9.ari.gaiaorbit.render.RenderingContext;
 import gaia.cu9.ari.gaiaorbit.util.DecalUtils;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
@@ -345,7 +346,7 @@ public abstract class AbstractPositionEntity extends SceneGraphNode {
         return viewAngleApparent;
     }
 
-    protected void render2DLabel(SpriteBatch batch, ShaderProgram shader, BitmapFont font, ICamera camera, String label, Vector3d pos3d) {
+    protected void render2DLabel(SpriteBatch batch, ShaderProgram shader, RenderingContext rc, BitmapFont font, ICamera camera, String label, Vector3d pos3d) {
         Vector3 p = aux3f1.get();
         pos3d.setVector3(p);
 
@@ -353,26 +354,26 @@ public abstract class AbstractPositionEntity extends SceneGraphNode {
         p.x += 15;
         p.y -= 15;
 
-        render2DLabel(batch, shader, font, camera, label, p.x, p.y);
+        render2DLabel(batch, shader, rc, font, camera, label, p.x, p.y);
 
         shader.setUniformf("scale", 1f);
         DecalUtils.drawFont2D(font, batch, label, p);
     }
 
-    protected void render2DLabel(SpriteBatch batch, ShaderProgram shader, BitmapFont font, ICamera camera, String label, float x, float y) {
-        render2DLabel(batch, shader, font, camera, label, x, y, 1f);
+    protected void render2DLabel(SpriteBatch batch, ShaderProgram shader, RenderingContext rc, BitmapFont font, ICamera camera, String label, float x, float y) {
+        render2DLabel(batch, shader, rc, font, camera, label, x, y, 1f);
     }
 
-    protected void render2DLabel(SpriteBatch batch, ShaderProgram shader, BitmapFont font, ICamera camera, String label, float x, float y, float scale) {
-        render2DLabel(batch, shader, font, camera, label, x, y, scale, -1);
+    protected void render2DLabel(SpriteBatch batch, ShaderProgram shader, RenderingContext rc, BitmapFont font, ICamera camera, String label, float x, float y, float scale) {
+        render2DLabel(batch, shader, rc, font, camera, label, x, y, scale, -1);
     }
 
-    protected void render2DLabel(SpriteBatch batch, ShaderProgram shader, BitmapFont font, ICamera camera, String label, float x, float y, float scale, int align) {
+    protected void render2DLabel(SpriteBatch batch, ShaderProgram shader, RenderingContext rc, BitmapFont font, ICamera camera, String label, float x, float y, float scale, int align) {
         shader.setUniformf("u_scale", scale);
-        DecalUtils.drawFont2D(font, batch, label, x, y, scale, align);
+        DecalUtils.drawFont2D(font, batch, rc, label, x, y, scale, align);
     }
 
-    protected void render3DLabel(SpriteBatch batch, ShaderProgram shader, BitmapFont font, ICamera camera, String label, Vector3d pos, float scale, float size, float[] colour, float alpha) {
+    protected void render3DLabel(SpriteBatch batch, ShaderProgram shader, BitmapFont font, ICamera camera, String label, Vector3d pos, float scale, float size, float[] colour) {
         // The smoothing scale must be set according to the distance
         shader.setUniformf("u_scale", scale / camera.getFovFactor());
 
@@ -382,7 +383,7 @@ public abstract class AbstractPositionEntity extends SceneGraphNode {
         // Enable or disable blending
         ((I3DTextRenderable) this).textDepthBuffer();
 
-        font.setColor(colour[0], colour[1], colour[2], colour[3] * alpha);
+        //font.setColor(colour[0], colour[1], colour[2], 1f);
         DecalUtils.drawFont3D(font, batch, label, (float) p.x, (float) p.y, (float) p.z, size, camera.getCamera(), true);
     }
 

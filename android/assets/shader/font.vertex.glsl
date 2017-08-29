@@ -8,12 +8,12 @@ attribute vec4 a_color;
 attribute vec2 a_texCoord0;
 
 uniform mat4 u_projTrans;
-uniform float a_viewAngle;
-uniform float a_viewAnglePow;
-uniform float a_thOverFactor;
-uniform float a_thOverFactorScl;
-uniform float a_componentAlpha;
-uniform float a_labelAlpha;
+uniform float u_viewAngle;
+uniform float u_viewAnglePow;
+uniform float u_thOverFactor;
+uniform float u_thOverFactorScl;
+uniform float u_componentAlpha;
+uniform vec4 u_color;
 
 varying vec4 v_color;
 varying vec2 v_texCoords;
@@ -21,9 +21,9 @@ varying float v_opacity;
 
 void main()
 {
-   float thOverFac = a_thOverFactor * a_thOverFactorScl;
-   v_opacity = clamp((pow(a_viewAngle, a_viewAnglePow) - thOverFac) / thOverFac, 0.0, 0.95) * a_componentAlpha * a_labelAlpha;
-   v_color = a_color;
+   float thOverFac = u_thOverFactor * u_thOverFactorScl;
+   v_opacity = clamp((pow(u_viewAngle, u_viewAnglePow) - thOverFac) / thOverFac, 0.0, 0.95) * u_componentAlpha;
+   v_color = u_color;
    v_texCoords = a_texCoord0;
    gl_Position =  u_projTrans * a_position;
 }

@@ -19,7 +19,7 @@ public class MobileGui extends AbstractGui {
     protected NotificationsInterface notificationsInterface;
     protected MessagesInterface messagesInterface;
     protected DebugInterface debugInterface;
-    protected ScriptStateInterface inputInterface;
+    protected RunStateInterface inputInterface;
 
     public MobileGui() {
         super();

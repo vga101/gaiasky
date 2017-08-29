@@ -42,6 +42,7 @@ import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.render.ILineRenderable;
 import gaia.cu9.ari.gaiaorbit.render.IModelRenderable;
 import gaia.cu9.ari.gaiaorbit.render.IQuadRenderable;
+import gaia.cu9.ari.gaiaorbit.render.RenderingContext;
 import gaia.cu9.ari.gaiaorbit.render.system.LineRenderSystem;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
@@ -630,7 +631,7 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
      * Label rendering
      */
     @Override
-    public void render(SpriteBatch batch, ShaderProgram shader, BitmapFont font3d, BitmapFont font2d, ICamera camera) {
+    public void render(SpriteBatch batch, ShaderProgram shader, BitmapFont font3d, BitmapFont font2d, RenderingContext rc, ICamera camera) {
         float thOverFactor = (float) (GlobalConf.scene.STAR_THRESHOLD_POINT / GlobalConf.scene.LABEL_NUMBER_FACTOR / camera.getFovFactor());
         float textScale = 1f;
         for (int i = 0; i < N_CLOSEUP_STARS; i++) {
@@ -643,14 +644,14 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
             if (viewAngle >= thOverFactor) {
 
                 textPosition(camera, lpos, distToCamera, radius);
-                shader.setUniformf("a_viewAngle", viewAngle);
-                shader.setUniformf("a_viewAnglePow", 1f);
-                shader.setUniformf("a_thOverFactor", thOverFactor);
-                shader.setUniformf("a_thOverFactorScl", camera.getFovFactor());
+                shader.setUniformf("u_viewAngle", viewAngle);
+                shader.setUniformf("u_viewAnglePow", 1f);
+                shader.setUniformf("u_thOverFactor", thOverFactor);
+                shader.setUniformf("u_thOverFactorScl", camera.getFovFactor());
                 float textSize = (float) FastMath.tanh(viewAngle) * distToCamera * 1e5f;
                 float alpha = Math.min((float) FastMath.atan(textSize / distToCamera), 1.e-3f);
                 textSize = (float) FastMath.tan(alpha) * distToCamera;
-                render3DLabel(batch, shader, font3d, camera, star.name, lpos, textScale, textSize, textColour(), this.opacity);
+                render3DLabel(batch, shader, font3d, camera, star.name, lpos, textScale, textSize, textColour());
 
             }
         }

@@ -17,6 +17,7 @@ import gaia.cu9.ari.gaiaorbit.render.I3DTextRenderable;
 import gaia.cu9.ari.gaiaorbit.render.IModelRenderable;
 import gaia.cu9.ari.gaiaorbit.render.IQuadRenderable;
 import gaia.cu9.ari.gaiaorbit.render.PostProcessorFactory;
+import gaia.cu9.ari.gaiaorbit.render.RenderingContext;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.RotationComponent;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
@@ -160,21 +161,21 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
      * Label rendering.
      */
     @Override
-    public void render(SpriteBatch batch, ShaderProgram shader, BitmapFont font3d, BitmapFont font2d, ICamera camera) {
+    public void render(SpriteBatch batch, ShaderProgram shader, BitmapFont font3d, BitmapFont font2d, RenderingContext rc, ICamera camera) {
         if (camera.getCurrent() instanceof FovCamera) {
-            render2DLabel(batch, shader, font2d, camera, text(), pos);
+            render2DLabel(batch, shader, rc, font2d, camera, text(), pos);
         } else {
             // render2DLabel(batch, shader, font, camera, text(),
             // transform.position);
             // 3D distance font
             Vector3d pos = aux3d1.get();
             textPosition(camera, pos);
-            shader.setUniformf("a_viewAngle", (float) viewAngleApparent);
-            shader.setUniformf("a_viewAnglePow", getViewAnglePow());
-            shader.setUniformf("a_thOverFactor", getThOverFactor(camera));
-            shader.setUniformf("a_thOverFactorScl", getThOverFactorScl());
+            shader.setUniformf("u_viewAngle", (float) viewAngleApparent);
+            shader.setUniformf("u_viewAnglePow", getViewAnglePow());
+            shader.setUniformf("u_thOverFactor", getThOverFactor(camera));
+            shader.setUniformf("u_thOverFactorScl", getThOverFactorScl());
 
-            render3DLabel(batch, shader, font3d, camera, text(), pos, textScale(), textSize(), textColour(), this.opacity);
+            render3DLabel(batch, shader, font3d, camera, text(), pos, textScale(), textSize(), textColour());
         }
 
     }

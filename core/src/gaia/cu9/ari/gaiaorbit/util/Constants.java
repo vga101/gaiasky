@@ -158,7 +158,7 @@ public class Constants {
     public static final float MAX_PM_LEN_FACTOR = 50f;
 
     /** Minimum angle where the LOD transitions start **/
-    public static final float MIN_LOD_TRANS_ANGLE_DEG = 1f;
+    public static final float MIN_LOD_TRANS_ANGLE_DEG = 0f;
     /** Maximum angle where the LOD transitions end **/
     public static final float MAX_LOD_TRANS_ANGLE_DEG = 93f;
 

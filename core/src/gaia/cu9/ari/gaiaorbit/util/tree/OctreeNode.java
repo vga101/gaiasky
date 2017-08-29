@@ -210,6 +210,10 @@ public class OctreeNode implements ILineRenderable {
         }
     }
 
+    public float getOpacity() {
+        return opacity;
+    }
+
     public boolean add(AbstractPositionEntity e) {
         if (objects == null)
             objects = new Array<AbstractPositionEntity>(false, 1);

@@ -77,6 +77,8 @@ public class SceneGraphNode implements IStarContainer, IPosition {
         PARTICLE_GROUP(14),
         /** Star grup **/
         STAR_GROUP(15),
+        /** Shapes **/
+        SHAPE(16),
 
         /** None **/
         NONE(-1);
@@ -639,5 +641,9 @@ public class SceneGraphNode implements IStarContainer, IPosition {
 
     public boolean isVisibilityOn() {
         return GaiaSky.instance.isOn(ct);
+    }
+
+    public float getOpacity() {
+        return opacity;
     }
 }

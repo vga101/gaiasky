@@ -42,6 +42,7 @@ import gaia.cu9.ari.gaiaorbit.render.system.MilkyWayRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.ModelBatchRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.ParticleGroupRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.PixelRenderSystem;
+import gaia.cu9.ari.gaiaorbit.render.system.ShapeRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.StarGroupRenderSystem;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
@@ -389,6 +390,10 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
             }
         });
 
+        // SHAPES
+        AbstractRenderSystem shapeProc = new ShapeRenderSystem(RenderGroup.SHAPE, priority++, alphas);
+        shapeProc.setPreRunnable(blendNoDepthRunnable);
+
         // MODEL CLOSE UP
         //        AbstractRenderSystem modelCloseUpProc = new ModelBatchRenderSystem(RenderGroup.MODEL_CLOSEUP, priority++, alphas, modelBatchCloseUp, false);
         //        modelCloseUpProc.setPreRunnable(blendDepthRunnable);
@@ -415,6 +420,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
         renderProcesses.add(modelStarsProc);
         renderProcesses.add(modelAtmProc);
+        renderProcesses.add(shapeProc);
         // renderProcesses.add(modelCloseUpProc);
 
         EventManager.instance.subscribe(this, Events.TOGGLE_VISIBILITY_CMD, Events.PIXEL_RENDERER_UPDATE, Events.LINE_RENDERER_UPDATE, Events.TOGGLE_STEREOSCOPIC_INFO, Events.CAMERA_MODE_CMD, Events.CUBEMAP360_CMD);

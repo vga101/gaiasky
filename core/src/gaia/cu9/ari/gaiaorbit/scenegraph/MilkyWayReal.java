@@ -19,6 +19,7 @@ import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.data.group.PointDataProvider;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.render.I3DTextRenderable;
+import gaia.cu9.ari.gaiaorbit.render.RenderingContext;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ParticleGroup.ParticleBean;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.GalaxydataComponent;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
@@ -201,12 +202,12 @@ public class MilkyWayReal extends AbstractPositionEntity implements I3DTextRende
      * Label rendering.
      */
     @Override
-    public void render(SpriteBatch batch, ShaderProgram shader, BitmapFont font3d, BitmapFont font2d, ICamera camera) {
+    public void render(SpriteBatch batch, ShaderProgram shader, BitmapFont font3d, BitmapFont font2d, RenderingContext rc, ICamera camera) {
         Vector3d pos = aux3d1.get();
         textPosition(camera, pos);
-        shader.setUniformf("a_viewAngle", 90f);
-        shader.setUniformf("a_thOverFactor", 1f);
-        render3DLabel(batch, shader, font3d, camera, text(), pos, textScale(), textSize(), textColour(), this.opacity);
+        shader.setUniformf("u_viewAngle", 90f);
+        shader.setUniformf("u_thOverFactor", 1f);
+        render3DLabel(batch, shader, font3d, camera, text(), pos, textScale(), textSize(), textColour());
     }
 
     public void setTransformName(String transformName) {

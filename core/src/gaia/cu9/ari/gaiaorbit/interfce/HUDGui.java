@@ -33,7 +33,7 @@ public class HUDGui implements IGui {
     protected NotificationsInterface notificationsInterface;
     protected MessagesInterface messagesInterface;
     protected DebugInterface debugInterface;
-    protected ScriptStateInterface inputInterface;
+    protected RunStateInterface inputInterface;
 
     protected Array<IGuiInterface> interfaces;
 
@@ -86,7 +86,7 @@ public class HUDGui implements IGui {
 
         if (Constants.desktop) {
             // INPUT STATE
-            inputInterface = new ScriptStateInterface(skin);
+            inputInterface = new RunStateInterface(skin);
             inputInterface.setFillParent(true);
             inputInterface.right().top();
             inputInterface.pad(50 * GlobalConf.SCALE_FACTOR, 0, 0, pad);

@@ -171,120 +171,81 @@
 	
 		"parent" : "Universe", 
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.FadeNode",
-	}
+	},
 	
-// 	{
-// 	"name" : "sshook",
-// 	"position" : [0.0, 0.0, 0.0],
-// 
-// 	"ct" : Labels,
-// 
-// 	// Fade distances, in parsecs
-// 	"fadein" : [3.240779e-7, 6.481559e-7],
-// 	"fadeout" : [0.000484814, 0.0242407],
-// 	
-// 
-// 	"parent" : "Universe", 
-// 	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.FadeNode",
-// 	
-// 	},
-// 	
-// 	{
-// 	"name" : "The Solar System",
-// 	"color" : [0.3, 0.5, 0.8, 0.8],
-// 	"scale" : 0.7,
-// 	"align": 1,
-// 
-// 	"ct" : Labels,
-// 
-// 	"parent" : "sshook", 
-// 	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Text2D"
-// 	
-// 	},
-// 	
-// 	{
-// 	"name" : "mwhook",
-// 	"position" : [0.0, 0.0, 0.0],
-// 
-// 	"ct" : Labels,
-// 
-// 	// Fade distances, in parsecs
-// 	"fadein" : [1.0, 8.0],
-// 	"fadeout" : [80e2, 6e4],
-// 	
-// 
-// 	"parent" : "Universe", 
-// 	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.FadeNode",
-// 	
-// 	},
-// 	
-// 	{
-// 	"name" : "The Milky Way",
-// 	"color" : [0.3, 0.5, 0.8, 0.8],
-// 	"scale" : 0.7,
-// 	"align": 1,
-// 
-// 	"ct" : Labels,
-// 
-// 	"parent" : "mwhook", 
-// 	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Text2D"
-// 	
-// 	},
-// 	
-// 	{
-// 	"name" : "lghook",
-// 	"position" : [0.0, 0.0, 0.0],
-// 
-// 	"ct" : Labels,
-// 
-// 	// Fade distances, in parsecs
-// 	"fadein" : [7e4, 30e4],
-// 	"fadeout" : [16e6, 100e6],
-// 	
-// 
-// 	"parent" : "Universe", 
-// 	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.FadeNode",
-// 	
-// 	},
-// 	
-// 	{
-// 	"name" : "The Local Group",
-// 	"color" : [0.3, 0.5, 0.8, 0.8],
-// 	"scale" : 0.7,
-// 	"align": 1,
-// 
-// 	"ct" : Labels,
-// 
-// 	"parent" : "lghook", 
-// 	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Text2D"
-// 	
-// 	},
-// 	
-// 	{
-// 	"name" : "kuhook",
-// 	"position" : [0.0, 0.0, 0.0],
-// 
-// 	"ct" : Labels,
-// 
-// 	// Fade distances, in parsecs
-// 	"fadein" : [110e6, 4e8],
-// 	
-// 
-// 	"parent" : "Universe", 
-// 	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.FadeNode",
-// 	
-// 	},
-// 	
-// 	{
-// 	"name" : "The Observable Universe",
-// 	"color" : [0.3, 0.5, 0.8, 0.8],
-// 	"scale" : 0.7,
-// 	"align": 1,
-// 
-// 	"ct" : Labels,
-// 
-// 	"parent" : "kuhook", 
-// 	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Text2D"
-// 	
-// 	}
+ 	
+ 	{
+ 	"name" : "The Solar System",
+ 	"position" : [0.0, 0.0, 0.0],
+ 	"labelcolor" : [0.3, 0.5, 0.8, 0.9],
+ 	"scale" : 0.7,
+ 	"align" : 1,
+ 	"lines" : "true",
+ 	
+ 	//Fade distances, in parsecs
+ 	"fadein" : [3.240779e-7, 6.481559e-7],
+ 	"fadeout" : [0.000484814, 0.0242407],
+ 
+ 	"ct" : Labels,
+ 
+ 	"parent" : "Universe", 
+ 	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Text2D"
+ 	
+ 	},
+ 	
+ 	{
+ 	"name" : "The Milky Way",
+ 	"position" : [0.0, 0.0, 0.0],
+ 	"labelcolor" : [0.3, 0.5, 0.8, 0.9],
+ 	"scale" : 0.7,
+ 	"align": 1,
+ 	"lines" : "true",
+ 	
+ 	 // Fade distances, in parsecs
+ 	 "fadein" : [1.0, 8.0],
+         "fadeout" : [80e2, 6e4],
+ 
+ 	"ct" : Labels,
+ 
+ 	"parent" : "Universe", 
+ 	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Text2D"
+ 	
+ 	},
+ 	
+ 	{
+ 	"name" : "The Local Group",
+ 	"position" : [0.0, 0.0, 0.0],
+ 	"labelcolor" : [0.3, 0.5, 0.8, 0.9],
+ 	"scale" : 0.7,
+ 	"align": 1,
+ 	"lines" : "true",
+ 	
+ 	//Fade distances, in parsecs
+ 	"fadein" : [7e4, 30e4],
+ 	"fadeout" : [16e6, 100e6],
+ 
+ 	"ct" : Labels,
+ 
+ 	"parent" : "Universe", 
+ 	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Text2D"
+ 	
+ 	},
+ 	
+ 	{
+ 	"name" : "The Observable Universe",
+ 	"position" : [0.0, 0.0, 0.0],
+ 	"labelcolor" : [0.3, 0.5, 0.8, 0.9],
+ 	"scale" : 0.7,
+ 	"align": 1,
+ 	"lines" : "true",
+ 	
+ 	// Fade distances, in parsecs
+ 	"fadein" : [110e6, 4e8],
+ 
+ 	"ct" : Labels,
+ 
+ 	"parent" : "Universe", 
+ 	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Text2D"
+ 	
+ 	}
 ]}
