@@ -175,77 +175,73 @@
 	
  	
  	{
- 	"name" : "The Solar System",
- 	"position" : [0.0, 0.0, 0.0],
- 	"labelcolor" : [0.3, 0.5, 0.8, 0.9],
- 	"scale" : 0.7,
- 	"align" : 1,
- 	"lines" : "true",
+ 	    "name" : "The Solar System",
+ 	    "position" : [0.0, 0.0, 0.0],
+ 	    "labelcolor" : [0.3, 0.5, 0.8, 0.9],
+ 	    "scale" : 0.7,
+ 	    "align" : 1,
+ 	    "lines" : "true",
  	
- 	//Fade distances, in parsecs
- 	"fadein" : [3.240779e-7, 6.481559e-7],
- 	"fadeout" : [0.000484814, 0.0242407],
+ 	    //Fade distances, in parsecs
+ 	    "fadein" : [3.240779e-7, 6.481559e-7],
+ 	    "fadeout" : [0.000484814, 0.0242407],
  
- 	"ct" : Labels,
+ 	    "ct" : Titles,
  
- 	"parent" : "Universe", 
- 	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Text2D"
- 	
+ 	    "parent" : "Universe", 
+ 	    "impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Text2D"
  	},
  	
  	{
- 	"name" : "The Milky Way",
- 	"position" : [0.0, 0.0, 0.0],
- 	"labelcolor" : [0.3, 0.5, 0.8, 0.9],
- 	"scale" : 0.7,
- 	"align": 1,
- 	"lines" : "true",
+ 	    "name" : "The Milky Way",
+ 	    "position" : [0.0, 0.0, 0.0],
+ 	    "labelcolor" : [0.3, 0.5, 0.8, 0.9],
+ 	    "scale" : 0.7,
+ 	    "align": 1,
+ 	    "lines" : "true",
  	
- 	 // Fade distances, in parsecs
- 	 "fadein" : [1.0, 8.0],
-         "fadeout" : [80e2, 6e4],
+ 	    // Fade distances, in parsecs
+ 	    "fadein" : [1.0, 8.0],
+ 	    "fadeout" : [80e2, 6e4],
  
- 	"ct" : Labels,
+ 	    "ct" : Titles,
  
- 	"parent" : "Universe", 
- 	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Text2D"
- 	
+ 	    "parent" : "Universe", 
+ 	    "impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Text2D"
  	},
  	
  	{
- 	"name" : "The Local Group",
- 	"position" : [0.0, 0.0, 0.0],
- 	"labelcolor" : [0.3, 0.5, 0.8, 0.9],
- 	"scale" : 0.7,
- 	"align": 1,
- 	"lines" : "true",
+ 	    "name" : "The Local Group",
+ 	    "position" : [0.0, 0.0, 0.0],
+ 	    "labelcolor" : [0.3, 0.5, 0.8, 0.9],
+ 	    "scale" : 0.7,
+ 	    "align": 1,
+ 	    "lines" : "true",
  	
- 	//Fade distances, in parsecs
- 	"fadein" : [7e4, 30e4],
- 	"fadeout" : [16e6, 100e6],
+ 	    //Fade distances, in parsecs
+ 	    "fadein" : [7e4, 30e4],
+ 	    "fadeout" : [16e6, 100e6],
  
- 	"ct" : Labels,
+ 	    "ct" : Titles,
  
- 	"parent" : "Universe", 
- 	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Text2D"
- 	
+ 	    "parent" : "Universe", 
+ 	    "impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Text2D"
  	},
  	
  	{
- 	"name" : "The Observable Universe",
- 	"position" : [0.0, 0.0, 0.0],
- 	"labelcolor" : [0.3, 0.5, 0.8, 0.9],
- 	"scale" : 0.7,
- 	"align": 1,
- 	"lines" : "true",
- 	
- 	// Fade distances, in parsecs
- 	"fadein" : [110e6, 4e8],
+ 	    "name" : "The Observable Universe",
+ 	    "position" : [0.0, 0.0, 0.0],
+ 	    "labelcolor" : [0.3, 0.5, 0.8, 0.9],
+ 	    "scale" : 0.7,
+ 	    "align": 1,
+ 	    "lines" : "true",
+ 	    
+ 	    // Fade distances, in parsecs
+ 	    "fadein" : [110e6, 4e8],
  
- 	"ct" : Labels,
+ 	    "ct" : Titles,
  
- 	"parent" : "Universe", 
- 	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Text2D"
- 	
+ 	    "parent" : "Universe", 
+ 	    "impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Text2D"
  	}
 ]}

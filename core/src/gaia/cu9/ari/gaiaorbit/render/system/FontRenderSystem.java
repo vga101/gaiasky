@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.utils.Array;
 
+import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.render.I3DTextRenderable;
 import gaia.cu9.ari.gaiaorbit.render.IAnnotationsRenderable;
 import gaia.cu9.ari.gaiaorbit.render.IRenderable;
@@ -61,6 +62,7 @@ public class FontRenderSystem extends AbstractRenderSystem {
                 s.render(batch, camera, getAlpha(s));
             }
         } else {
+            float lalpha = alphas[ComponentType.Labels.ordinal()];
             font3d.getData().setScale(0.6f);
             for (int i = 0; i < size; i++) {
                 I3DTextRenderable s = (I3DTextRenderable) renderables.get(i);
@@ -70,7 +72,7 @@ public class FontRenderSystem extends AbstractRenderSystem {
                 // Label color
                 shaderProgram.setUniform4fv("u_color", lr.textColour(), 0, 4);
                 // Component alpha
-                shaderProgram.setUniformf("u_componentAlpha", getAlpha(s));
+                shaderProgram.setUniformf("u_componentAlpha", getAlpha(s) * lalpha);
                 // Font opacity multiplier, take into account element opacity
                 shaderProgram.setUniformf("u_opacity", 0.75f * lr.getOpacity());
 

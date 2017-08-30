@@ -25,7 +25,6 @@ public class Text2D extends FadeNode implements I3DTextRenderable, IShapeRendera
 
     @Override
     public void initialize() {
-        super.initialize();
     }
 
     public void updateLocal(ITimeFrameProvider time, ICamera camera) {
@@ -55,7 +54,7 @@ public class Text2D extends FadeNode implements I3DTextRenderable, IShapeRendera
         float ybottom = (60f - lineHeight * scale - 10f * scale) * GlobalConf.SCALE_FACTOR;
 
         shapeRenderer.getProjectionMatrix().setToOrtho2D(0, 0, rc.w(), rc.h());
-        shapeRenderer.setColor(1f, 1f, 1f, 0.7f * opacity);
+        shapeRenderer.setColor(1f, 1f, 1f, 0.7f * opacity * alpha);
         shapeRenderer.line(x0, ytop, x1, ytop);
         shapeRenderer.line(x0, ybottom, x1, ybottom);
 
