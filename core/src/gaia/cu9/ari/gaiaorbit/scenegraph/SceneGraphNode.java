@@ -15,6 +15,7 @@ import gaia.cu9.ari.gaiaorbit.render.IRenderable;
 import gaia.cu9.ari.gaiaorbit.render.SceneGraphRenderer;
 import gaia.cu9.ari.gaiaorbit.scenegraph.octreewrapper.AbstractOctreeWrapper;
 import gaia.cu9.ari.gaiaorbit.util.ComponentTypes;
+import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.concurrent.IThreadLocal;
 import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadIndexer;
 import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadLocalFactory;
@@ -166,6 +167,11 @@ public class SceneGraphNode implements IStarContainer, IPosition {
      * The name of the node, if any.
      */
     public String name;
+
+    /**
+     * The key to the name in the i18n system.
+     */
+    protected String namekey;
 
     /**
      * The total number of descendants under this node.
@@ -448,6 +454,33 @@ public class SceneGraphNode implements IStarContainer, IPosition {
 
     public String getName() {
         return name;
+    }
+
+    public void setNamekey(String namekey) {
+        this.namekey = namekey;
+        updateName();
+    }
+
+    /**
+     * Updates the name using the key. This must be called when the language
+     * changes.
+     */
+    public void updateName() {
+        if (namekey != null) {
+            this.name = I18n.bundle.get(namekey);
+        }
+    }
+
+    /**
+     * Recursively updates the name using the key. This must be called when the
+     * language changes.
+     */
+    public void updateNames() {
+        this.updateName();
+        if (children != null && children.size > 0) {
+            for (SceneGraphNode node : children)
+                node.updateNames();
+        }
     }
 
     public long getId() {

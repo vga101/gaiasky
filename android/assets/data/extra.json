@@ -175,7 +175,7 @@
 	
  	
  	{
- 	    "name" : "The Solar System",
+ 	    "namekey" : "title.solarsystem",
  	    "position" : [0.0, 0.0, 0.0],
  	    "labelcolor" : [0.3, 0.5, 0.8, 0.9],
  	    "scale" : 0.7,
@@ -193,7 +193,7 @@
  	},
  	
  	{
- 	    "name" : "The Milky Way",
+ 	    "namekey" : "title.milkyway",
  	    "position" : [0.0, 0.0, 0.0],
  	    "labelcolor" : [0.3, 0.5, 0.8, 0.9],
  	    "scale" : 0.7,
@@ -211,7 +211,7 @@
  	},
  	
  	{
- 	    "name" : "The Local Group",
+ 	    "namekey" : "title.localgroup",
  	    "position" : [0.0, 0.0, 0.0],
  	    "labelcolor" : [0.3, 0.5, 0.8, 0.9],
  	    "scale" : 0.7,
@@ -229,7 +229,7 @@
  	},
  	
  	{
- 	    "name" : "The Observable Universe",
+ 	    "namekey" : "title.obsuniverse",
  	    "position" : [0.0, 0.0, 0.0],
  	    "labelcolor" : [0.3, 0.5, 0.8, 0.9],
  	    "scale" : 0.7,
