@@ -173,6 +173,29 @@
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.FadeNode",
 	},
 	
+	{
+		"name" : "Gal test",
+		"position" : [0.0, 0.0, 0.0],
+		// Color of particles
+		"color" : [0.8, 0.99, 0.3, 0.5],
+		// Size of particles
+		"size" : 10.0,
+		"labelcolor" : [0.8, 0.99, 0.3, 1.0],
+		// Position in parsecs
+		"labelposition" : [0.0484814, 0.0, 0.0484814]
+		"ct" : Others,
+		
+		"profiledecay" : 1.0,
+		
+		"parent" : "Universe", 
+		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.ParticleGroup",
+		
+		// Extends IParticleGroupDataProvider
+		"provider" : "gaia.cu9.ari.gaiaorbit.data.group.PointDataProvider",
+		"factor" :  1.0,
+		"datafile" : "/home/tsagrista/Documents/galaxy_nobar_6arms_15000particles_0.5radius_0.1ratio_90.0deg.txt"
+	},
+	
  	
  	{
  	    "namekey" : "title.solarsystem",
@@ -192,6 +215,40 @@
  	    "impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Text2D"
  	},
  	
+	{
+	     "name" : "The Earth",
+	     "positionobjectname" : "Earth",
+	     "labelcolor" : [0.3, 0.5, 0.8, 0.9],
+	     "scale" : 0.5,
+	     "align": 1,
+	     "lines" : "true",
+	
+	     // Fade distances, in parsecs
+	     "fadeout" : [3.24077929e-8, 9.722337869e-8],
+	
+	     "ct" : Titles,
+	
+	     "parentkey" : "title.solarsystem", 
+	     "impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Text2D"
+	},
+ 
+	{
+	    "name" : "The Moon",
+	    "positionobjectname" : "Moon",
+	    "labelcolor" : [0.3, 0.5, 0.8, 0.9],
+	    "scale" : 0.5,
+	    "align": 1,
+	    "lines" : "true",
+	
+	    // Fade distances, in parsecs
+	    "fadeout" : [1.6203896e-9, 4.86116893e-9],
+	
+	    "ct" : Titles,
+	
+	    "parent" : "The Earth", 
+	    "impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Text2D"
+	},
+ 	
  	{
  	    "namekey" : "title.milkyway",
  	    "position" : [0.0, 0.0, 0.0],
@@ -209,6 +266,7 @@
  	    "parent" : "Universe", 
  	    "impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Text2D"
  	},
+ 	
  	
  	{
  	    "namekey" : "title.localgroup",

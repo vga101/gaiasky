@@ -1,5 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph;
 
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.math.Vector2;
 
 import gaia.cu9.ari.gaiaorbit.util.Constants;
@@ -36,11 +37,39 @@ public class FadeNode extends AbstractPositionEntity {
      */
     private double currentDistance;
 
+    /**
+     * If set, the fade distance will be computed against this object.
+     * Otherwise, we use the static position in {@link SceneGraphNode.pos}
+     */
+    private AbstractPositionEntity position;
+
+    /**
+     * The name of the position object
+     */
+    private String positionobjectname;
+
+    @Override
+    public void doneLoading(AssetManager manager) {
+        super.doneLoading(manager);
+        if (positionobjectname != null) {
+            this.position = (AbstractPositionEntity) sg.getNode(positionobjectname);
+        }
+    }
+
     public void update(ITimeFrameProvider time, final Transform parentTransform, ICamera camera, float opacity) {
         this.opacity = opacity * this.opacity;
         transform.set(parentTransform);
         Vector3d aux = aux3d1.get();
-        this.currentDistance = aux.set(this.pos).sub(camera.getPos()).len() * camera.getFovFactor();
+
+        if (this.name.equals("The Earth")) {
+            int a = 234;
+        }
+
+        if (this.position == null) {
+            this.currentDistance = aux.set(this.pos).sub(camera.getPos()).len() * camera.getFovFactor();
+        } else {
+            this.currentDistance = this.position.distToCamera;
+        }
 
         // Update with translation/rotation/etc
         updateLocal(time, camera);
@@ -55,7 +84,7 @@ public class FadeNode extends AbstractPositionEntity {
 
     @Override
     public void updateLocal(ITimeFrameProvider time, ICamera camera) {
-        this.distToCamera = (float) pos.dst(camera.getPos());
+        this.distToCamera = this.position == null ? (float) pos.dst(camera.getPos()) : this.position.distToCamera;
 
         // Update alpha
         this.opacity = getBaseOpacity();
@@ -101,6 +130,10 @@ public class FadeNode extends AbstractPositionEntity {
      */
     public void setLabelcolor(double[] labelcolor) {
         this.labelColour = GlobalResources.toFloatArray(labelcolor);
+    }
+
+    public void setPositionobjectname(String po) {
+        this.positionobjectname = po;
     }
 
 }

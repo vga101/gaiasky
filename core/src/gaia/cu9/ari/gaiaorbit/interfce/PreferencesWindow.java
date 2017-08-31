@@ -1328,7 +1328,7 @@ public class PreferencesWindow extends GenericDialog {
                         // Refocus
                         EventManager.instance.post(Events.FOCUS_CHANGE_CMD, GaiaSky.instance.cam.getFocus());
                     // Update names with new language
-                    GaiaSky.instance.sg.getRoot().updateNames();
+                    GaiaSky.instance.sg.getRoot().updateNamesRec();
                 }
             });
         }

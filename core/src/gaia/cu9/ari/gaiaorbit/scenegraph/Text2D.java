@@ -29,8 +29,21 @@ public class Text2D extends FadeNode implements I3DTextRenderable, IShapeRendera
 
     public void updateLocal(ITimeFrameProvider time, ICamera camera) {
         super.updateLocal(time, camera);
+
+        // Propagate upwards if necessary
+        setParentOpacity();
+
         this.viewAngle = 80f;
         this.viewAngleApparent = this.viewAngle;
+    }
+
+    protected void setParentOpacity() {
+        if (this.opacity > 0 && this.parent instanceof Text2D) {
+            // If our parent is a text2d, we update its opacity
+            Text2D parent = (Text2D) this.parent;
+            parent.opacity *= (1 - this.opacity);
+            parent.setParentOpacity();
+        }
     }
 
     @Override

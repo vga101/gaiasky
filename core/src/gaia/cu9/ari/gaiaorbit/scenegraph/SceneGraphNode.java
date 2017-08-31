@@ -132,10 +132,6 @@ public class SceneGraphNode implements IStarContainer, IPosition {
      * The parent entity.
      */
     public SceneGraphNode parent;
-    /**
-     * The parent name
-     */
-    public String parentName = null;
 
     /**
      * List of children entities.
@@ -171,7 +167,17 @@ public class SceneGraphNode implements IStarContainer, IPosition {
     /**
      * The key to the name in the i18n system.
      */
-    protected String namekey;
+    protected String namekey = null;
+
+    /**
+     * The parent name.
+     */
+    public String parentName = null;
+
+    /**
+     * The key of the parent
+     */
+    protected String parentkey = null;
 
     /**
      * The total number of descendants under this node.
@@ -458,28 +464,29 @@ public class SceneGraphNode implements IStarContainer, IPosition {
 
     public void setNamekey(String namekey) {
         this.namekey = namekey;
-        updateName();
+        updateNames();
     }
 
     /**
      * Updates the name using the key. This must be called when the language
      * changes.
      */
-    public void updateName() {
-        if (namekey != null) {
+    public void updateNames() {
+        if (namekey != null)
             this.name = I18n.bundle.get(namekey);
-        }
+        if (parentkey != null)
+            this.parentName = I18n.bundle.get(parentkey);
     }
 
     /**
      * Recursively updates the name using the key. This must be called when the
      * language changes.
      */
-    public void updateNames() {
-        this.updateName();
+    public void updateNamesRec() {
+        this.updateNames();
         if (children != null && children.size > 0) {
             for (SceneGraphNode node : children)
-                node.updateNames();
+                node.updateNamesRec();
         }
     }
 
@@ -489,6 +496,11 @@ public class SceneGraphNode implements IStarContainer, IPosition {
 
     public void setParent(String parentName) {
         this.parentName = parentName;
+    }
+
+    public void setParentkey(String parentkey) {
+        this.parentkey = parentkey;
+        this.updateNames();
     }
 
     public void dispose() {

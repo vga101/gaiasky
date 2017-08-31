@@ -39,28 +39,28 @@ public class GalaxyGenerator implements IObserver {
     private static String TYPE = "spiral";
 
     /** Number of spiral arms **/
-    private static int Narms = 4;
+    private static int Narms = 8;
 
     /** Does the galaxy have a bar? **/
     private static boolean bar = true;
 
     /** The length of the bar, if it has one **/
-    private static float barLength = 0.5f;
+    private static float barLength = 0.8f;
 
     /** Radius of the galaxy **/
-    private static float radius = 1f;
+    private static float radius = 2.5f;
 
     /** Number of particles **/
-    private static int N = 4000;
+    private static int N = 15000;
 
     /** Ratio radius/armWidth **/
-    private static float armWidthRatio = 0.1f;
+    private static float armWidthRatio = 0.04f;
 
     /** Ratio radius/armHeight **/
-    private static float armHeightRatio = 0.05f;
+    private static float armHeightRatio = 0.02f;
 
     /** Maximum spiral rotation (end of arm) in degrees **/
-    private static float maxRotation = 120;
+    private static float maxRotation = 100;
 
     private static boolean radialDensity = true;
 
