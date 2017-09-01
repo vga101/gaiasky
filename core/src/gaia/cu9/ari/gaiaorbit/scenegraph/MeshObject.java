@@ -104,13 +104,13 @@ public class MeshObject extends FadeNode implements IModelRenderable, I3DTextRen
      * and size.
      */
     protected void updateLocalTransform() {
-        setToLocalTransform(1, localTransform, true);
+        setToLocalTransform(localTransform, true);
     }
 
-    public void setToLocalTransform(float sizeFactor, Matrix4 localTransform, boolean forceUpdate) {
-        if (sizeFactor != 1 || forceUpdate) {
+    public void setToLocalTransform(Matrix4 localTransform, boolean forceUpdate) {
+        if (forceUpdate) {
             float[] trnsltn = transform.getTranslationf();
-            localTransform.idt().translate(trnsltn[0], trnsltn[1], trnsltn[2]).scl((float) (size * sizeFactor)).mul(coordinateSystem);
+            localTransform.idt().translate(trnsltn[0], trnsltn[1], trnsltn[2]).scl((float) size).mul(coordinateSystem);
         } else {
             localTransform.set(this.localTransform);
         }
