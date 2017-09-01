@@ -70,11 +70,6 @@ public class ParticleGroup extends FadeNode implements I3DTextRenderable, IFocus
     protected String datafile;
 
     /**
-     * Position of label
-     */
-    Vector3d labelPosition;
-
-    /**
      * Profile decay of the particles in the shader
      */
     public float profileDecay = 4.0f;
@@ -310,10 +305,6 @@ public class ParticleGroup extends FadeNode implements I3DTextRenderable, IFocus
     @Override
     public boolean isLabel() {
         return true;
-    }
-
-    public void setLabelposition(double[] labelposition) {
-        this.labelPosition = new Vector3d(labelposition[0] * Constants.PC_TO_U, labelposition[1] * Constants.PC_TO_U, labelposition[2] * Constants.PC_TO_U);
     }
 
     public void setFactor(Double factor) {

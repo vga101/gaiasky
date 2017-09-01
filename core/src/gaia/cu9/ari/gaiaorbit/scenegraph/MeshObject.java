@@ -187,7 +187,7 @@ public class MeshObject extends FadeNode implements IModelRenderable, I3DTextRen
 
     @Override
     public float textSize() {
-        return (float) distToCamera * 2e-3f;
+        return (float) distToCamera * 1e-3f;
     }
 
     @Override
@@ -197,7 +197,10 @@ public class MeshObject extends FadeNode implements IModelRenderable, I3DTextRen
 
     @Override
     public void textPosition(ICamera cam, Vector3d out) {
-        out.set(pos).add(cam.getInversePos());
+        if (labelPosition != null)
+            out.set(labelPosition).add(cam.getInversePos());
+        else
+            out.set(pos).add(cam.getInversePos());
     }
 
     @Override

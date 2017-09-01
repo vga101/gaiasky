@@ -28,6 +28,11 @@ public class FadeNode extends AbstractPositionEntity {
     private Vector2 fadeOut;
 
     /**
+     * Position of label
+     */
+    protected Vector3d labelPosition;
+
+    /**
      * Colour of label
      */
     protected float[] labelColour;
@@ -121,6 +126,16 @@ public class FadeNode extends AbstractPositionEntity {
 
     public void setPosition(double[] pos) {
         this.pos.set(pos[0] * Constants.PC_TO_U, pos[1] * Constants.PC_TO_U, pos[2] * Constants.PC_TO_U);
+    }
+
+    /**
+     * Sets the position of the label, in parsecs and in the internal reference
+     * frame
+     * 
+     * @param labelposition
+     */
+    public void setLabelposition(double[] labelposition) {
+        this.labelPosition = new Vector3d(labelposition[0] * Constants.PC_TO_U, labelposition[1] * Constants.PC_TO_U, labelposition[2] * Constants.PC_TO_U);
     }
 
     /**
