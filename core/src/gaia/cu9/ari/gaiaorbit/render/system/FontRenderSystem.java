@@ -17,6 +17,7 @@ import gaia.cu9.ari.gaiaorbit.render.IAnnotationsRenderable;
 import gaia.cu9.ari.gaiaorbit.render.IRenderable;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
+import gaia.cu9.ari.gaiaorbit.scenegraph.Text2D;
 import gaia.cu9.ari.gaiaorbit.util.comp.DistToCameraComparator;
 
 public class FontRenderSystem extends AbstractRenderSystem {
@@ -72,7 +73,7 @@ public class FontRenderSystem extends AbstractRenderSystem {
                 // Label color
                 shaderProgram.setUniform4fv("u_color", lr.textColour(), 0, 4);
                 // Component alpha
-                shaderProgram.setUniformf("u_componentAlpha", getAlpha(s) * lalpha);
+                shaderProgram.setUniformf("u_componentAlpha", getAlpha(s) * (s instanceof Text2D ? 1 : lalpha));
                 // Font opacity multiplier, take into account element opacity
                 shaderProgram.setUniformf("u_opacity", 0.75f * lr.getOpacity());
 
