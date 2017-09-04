@@ -22,6 +22,7 @@ public class ShapeRenderSystem extends AbstractRenderSystem {
     @Override
     public void renderStud(Array<IRenderable> renderables, ICamera camera, double t) {
         int size = renderables.size;
+
         shapeRenderer.begin(ShapeType.Line);
         for (int i = 0; i < size; i++) {
             IShapeRenderable sr = (IShapeRenderable) renderables.get(i);
@@ -29,6 +30,12 @@ public class ShapeRenderSystem extends AbstractRenderSystem {
         }
         shapeRenderer.end();
 
+    }
+
+    @Override
+    public void resize(int w, int h) {
+        super.resize(w, h);
+        shapeRenderer.setProjectionMatrix(shapeRenderer.getProjectionMatrix().setToOrtho2D(0, 0, w, h));
     }
 
 }

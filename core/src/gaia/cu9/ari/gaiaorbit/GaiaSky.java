@@ -623,7 +623,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         Gdx.app.postRunnable(new Runnable() {
             @Override
             public void run() {
-                resizeImmediate(width, height, true, false, true);
+                resizeImmediate(width, height, true, true, true);
             }
         });
 

@@ -58,7 +58,6 @@ public class Text2D extends FadeNode implements I3DTextRenderable, IShapeRendera
 
     @Override
     public void render(ShapeRenderer shapeRenderer, RenderingContext rc, float alpha, ICamera camera) {
-        scale = 0.7f;
         float lenw = 0.4f * scale * rc.w();
         float x0 = (rc.w() - lenw) / 2f;
         float x1 = x0 + lenw;
@@ -66,7 +65,6 @@ public class Text2D extends FadeNode implements I3DTextRenderable, IShapeRendera
         float ytop = (60f + 10f * scale) * GlobalConf.SCALE_FACTOR;
         float ybottom = (60f - lineHeight * scale - 10f * scale) * GlobalConf.SCALE_FACTOR;
 
-        shapeRenderer.getProjectionMatrix().setToOrtho2D(0, 0, rc.w(), rc.h());
         shapeRenderer.setColor(1f, 1f, 1f, 0.7f * opacity * alpha);
         shapeRenderer.line(x0, ytop, x1, ytop);
         shapeRenderer.line(x0, ybottom, x1, ybottom);
@@ -75,7 +73,6 @@ public class Text2D extends FadeNode implements I3DTextRenderable, IShapeRendera
 
     @Override
     public void render(SpriteBatch batch, ShaderProgram shader, BitmapFont font3d, BitmapFont font2d, RenderingContext rc, ICamera camera) {
-        scale = 0.7f;
         shader.setUniformf("u_viewAngle", (float) viewAngleApparent);
         shader.setUniformf("u_viewAnglePow", 1f);
         shader.setUniformf("u_thOverFactor", 1f);
