@@ -184,18 +184,19 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
             public void run() {
                 em.post(Events.CAMERA_MODE_CMD, CameraMode.Focus);
                 em.post(Events.FOCUS_CHANGE_CMD, focusName, true);
-                if (focusWait) {
-                    NaturalCamera cam = GaiaSky.instance.cam.naturalCamera;
-                    while (!cam.facingFocus) {
-                        // Wait
-                        try {
-                            Thread.sleep(100);
-                        } catch (Exception e) {
-                        }
-                    }
-                }
             }
         });
+
+        if (focusWait) {
+            NaturalCamera cam = GaiaSky.instance.cam.naturalCamera;
+            while (!cam.facingFocus) {
+                // Wait
+                try {
+                    Thread.sleep(100);
+                } catch (Exception e) {
+                }
+            }
+        }
     }
 
     @Override
