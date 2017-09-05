@@ -33,6 +33,7 @@
 -  [Peppy & The Firing Squad](http://sampleswap.org/artist/xnoybis#contact) for 'Y=MX+B' track
 -  [DJ Masque](http://sampleswap.org/artist/djmasque) for the 'Oceanic Dawn' track
 -  [icons8.com](https://icons8.com) for some icons
+-  [Galaxy Map](http://galaxymap.org/) ([@galaxy_map](https://twitter.com/galaxy_map) for the isodensity meshes
 
 ## Translations
 
