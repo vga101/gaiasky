@@ -109,7 +109,9 @@ public class TGASDataProvider extends AbstractStarGroupDataProvider {
                         double mualpha = Parser.parseDouble(tokens[5]);
                         double mudelta = Parser.parseDouble(tokens[6]);
 
-                        /** PROPER MOTION VECTOR = (pos+dx) - pos **/
+                        /**
+                         * PROPER MOTION VECTOR = (pos+dx) - pos - [units/yr]
+                         **/
                         Vector3d pm = Coordinates.sphericalToCartesian(Math.toRadians(ra + mualpha * AstroUtils.MILLARCSEC_TO_DEG), Math.toRadians(dec + mudelta * AstroUtils.MILLARCSEC_TO_DEG), dist, new Vector3d());
                         pm.sub(pos);
 

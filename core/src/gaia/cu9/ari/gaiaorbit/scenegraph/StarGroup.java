@@ -50,6 +50,7 @@ import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.ModelCache;
 import gaia.cu9.ari.gaiaorbit.util.Pair;
+import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
@@ -202,6 +203,11 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
     private static ModelComponent mc;
     private static Matrix4 modelTransform;
 
+    /** Epoch as julian days **/
+    private double epoch_jd = AstroUtils.JD_J2015_5;
+    /** Current computed epoch time **/
+    private double currDeltaYears = 0;
+
     private static void initModel() {
         if (mc == null) {
             Texture tex = new Texture(Gdx.files.internal(GlobalConf.TEXTURES_FOLDER + "star.jpg"));
@@ -273,7 +279,7 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
     private UpdaterTask updaterTask;
 
     /** CLOSEST **/
-    private Vector3d closestPos;
+    private Vector3d closestPos, closestPm;
     private String closestName;
     private double closestDist;
     private double closestSize;
@@ -300,6 +306,7 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
         id = idseq++;
         comp = new StarGroupComparator();
         closestPos = new Vector3d();
+        closestPm = new Vector3d();
         lastSortCameraPos = new Vector3d(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE);
         closestCol = new float[4];
         lastSortTime = -1;
@@ -419,11 +426,16 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
     }
 
     public void update(ITimeFrameProvider time, final Transform parentTransform, ICamera camera, float opacity) {
+        // Delta years
+        currDeltaYears = AstroUtils.getMsSince(time.getTime(), epoch_jd) * Constants.MS_TO_Y;
+
         super.update(time, parentTransform, camera, opacity);
 
         // Update closest star
         StarBean closestStar = (StarBean) pointData.get(active[0]);
-        closestPos.set(closestStar.x(), closestStar.y(), closestStar.z()).sub(camera.getPos());
+
+        closestPm.set(closestStar.pmx(), closestStar.pmy(), closestStar.pmz()).scl(currDeltaYears);
+        closestPos.set(closestStar.x(), closestStar.y(), closestStar.z()).sub(camera.getPos()).add(closestPm);
         closestDist = closestPos.len() - getRadius(active[0]);
         Color c = new Color();
         Color.abgr8888ToColor(c, (float) closestStar.col());
@@ -441,19 +453,47 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
         // Pop in opacity
         long timeSinceLastSort = TimeUtils.millis() - lastSortTime;
         popInOpacity = MathUtilsd.lint(timeSinceLastSort, 0, FADE_IN_MS, 0, 1);
+
     }
 
     /**
-     * Updates the additional information array, to use for sorting.
+     * Updates the parameters of the focus, if the focus is active in this group
+     * 
+     * @param time
+     *            The time frame provider
+     * @param camera
+     *            The current camera
+     */
+    public void updateFocus(ITimeFrameProvider time, ICamera camera) {
+        StarBean focus = (StarBean) pointData.get(focusIndex);
+        Vector3d aux = this.fetchPosition(focus, camera.getPos(), aux3d1.get());
+
+        this.focusPosition.set(aux).add(camera.getPos());
+        this.focusDistToCamera = aux.len();
+        this.focusSize = getFocusSize();
+        this.focusViewAngle = (float) ((getRadius() / this.focusDistToCamera) / camera.getFovFactor());
+        this.focusViewAngleApparent = this.focusViewAngle * GlobalConf.scene.STAR_BRIGHTNESS;
+    }
+
+    /**
+     * Updates the additional information array, to use for sorting. TODO -
+     * Include proper motion
      * 
      * @param camera
      */
-    public void updateAdditional(ICamera camera) {
+    public void updateAdditional(ITimeFrameProvider time, ICamera camera) {
         Vector3d cpos = camera.getPos();
+        double deltaYears = AstroUtils.getMsSince(time.getTime(), epoch_jd) * Constants.MS_TO_Y;
         int n = pointData.size;
         for (int i = 0; i < n; i++) {
             StarBean d = (StarBean) pointData.get(i);
-            additional[i] = -(((d.size() * Constants.STAR_SIZE_FACTOR) / cpos.dst(d.x(), d.y(), d.z())) / camera.getFovFactor()) * GlobalConf.scene.STAR_BRIGHTNESS;
+
+            // Pm
+            Vector3d dx = aux3d2.get().set(d.pmx(), d.pmy(), d.pmz()).scl(deltaYears);
+            // Pos
+            Vector3d x = aux3d1.get().set(d.x(), d.y(), d.z()).add(dx);
+
+            additional[i] = -(((d.size() * Constants.STAR_SIZE_FACTOR) / cpos.dst(x.x, x.y, x.z)) / camera.getFovFactor()) * GlobalConf.scene.STAR_BRIGHTNESS;
         }
     }
 
@@ -466,7 +506,7 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
      */
     public void updateSorter(ITimeFrameProvider time, ICamera camera) {
         // Prepare metadata to sort
-        updateAdditional(camera);
+        updateAdditional(time, camera);
 
         // Sort background list of indices
         Arrays.sort(background, comp);
@@ -539,7 +579,7 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
         StarBean star = (StarBean) pointData.get(idx);
         double size = getSize(idx);
         double radius = size * Constants.STAR_SIZE_FACTOR;
-        Vector3d lpos = aux3d1.get().set(star.x(), star.y(), star.z()).add(camera.getInversePos());
+        Vector3d lpos = fetchPosition(star, camera.getPos(), aux3d1.get());
         double distToCamera = lpos.len();
         double viewAngle = (radius / distToCamera) / camera.getFovFactor();
         double viewAngleApparent = viewAngle * GlobalConf.scene.STAR_BRIGHTNESS;
@@ -605,12 +645,16 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
         for (int i = n - 1; i >= 0; i--) {
             StarBean star = (StarBean) pointData.get(active[i]);
             float radius = (float) (getSize(active[i]) * Constants.STAR_SIZE_FACTOR);
-            Vector3d lpos = aux3d1.get().set(star.x(), star.y(), star.z()).sub(camera.getPos());
+            // Position
+            Vector3d lpos = fetchPosition(star, camera.getPos(), aux3d1.get());
+            // Proper motion
+            Vector3d pm = aux3d2.get().set(star.pmx(), star.pmy(), star.pmz()).scl(currDeltaYears);
+            // Rest of attributes
             float distToCamera = (float) lpos.len();
             float viewAngle = (float) (((radius / distToCamera) / camera.getFovFactor()) * GlobalConf.scene.STAR_BRIGHTNESS);
             if (viewAngle >= thpointTimesFovfactor / GlobalConf.scene.PM_NUM_FACTOR) {
 
-                Vector3d p1 = aux3d1.get().set(star.x(), star.y(), star.z()).sub(camera.getPos());
+                Vector3d p1 = aux3d1.get().set(star.x() + pm.x, star.y() + pm.y, star.z() + pm.z).sub(camera.getPos());
                 Vector3d ppm = aux3d2.get().set(star.pmx(), star.pmy(), star.pmz()).scl(GlobalConf.scene.PM_LEN_FACTOR);
                 Vector3d p2 = ppm.add(p1);
 
@@ -637,7 +681,7 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
         for (int i = 0; i < N_CLOSEUP_STARS; i++) {
             StarBean star = (StarBean) pointData.get(active[i]);
             float radius = (float) getRadius(active[i]);
-            Vector3d lpos = aux3d1.get().set(star.x(), star.y(), star.z()).sub(camera.getPos());
+            Vector3d lpos = fetchPosition(star, camera.getPos(), aux3d1.get());
             float distToCamera = (float) lpos.len();
             float viewAngle = (float) (((radius / distToCamera) / camera.getFovFactor()) * GlobalConf.scene.STAR_BRIGHTNESS);
 
@@ -879,6 +923,13 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
     public void dispose() {
         // Dispose of GPU data
         EventManager.instance.post(Events.DISPOSE_STAR_GROUP_GPU_MESH, this.offset);
+    }
+
+    @Override
+    protected Vector3d fetchPosition(ParticleBean pb, Vector3d campos, Vector3d dest) {
+        StarBean sb = (StarBean) pb;
+        Vector3d pm = aux3d2.get().set(sb.pmx(), sb.pmy(), sb.pmz()).scl(currDeltaYears);
+        return dest.set(pb.data[0], pb.data[1], pb.data[2]).sub(campos).add(pm);
     }
 
 }

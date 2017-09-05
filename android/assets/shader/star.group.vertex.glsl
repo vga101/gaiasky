@@ -4,8 +4,8 @@ precision mediump int;
 #endif
 
 // ATTRIBUTES
-attribute vec4 a_position;
-attribute vec4 a_pm;
+attribute vec3 a_position;
+attribute vec3 a_pm;
 attribute vec4 a_color;
 attribute float a_size;
 
@@ -28,6 +28,7 @@ varying float v_discard;
 
 #define len0 170000.0
 #define len1 len0 * 100.0
+#define ms_to_year 1.0 / (1000.0 * 86400.0 * 365.25)
 
 float lint2(float x, float x0, float x1, float y0, float y1) {
     return mix(y0, y1, (x - x0) / (x1 - x0));
@@ -38,7 +39,7 @@ float lint(float x, float x0, float x1, float y0, float y1) {
 }
 
 void main() {
-    vec3 pos = a_position.xyz - u_camPos;
+    vec3 pos = a_position - u_camPos;
 
     float dist = length(pos);
     float fadeout = smoothstep(dist, len0, len1);
@@ -49,12 +50,10 @@ void main() {
     }
     
     // Proper motion
-//    vec3 pm = a_pm.xyz * u_t / 1000.0;
-//    pos = pos + pm;
+    pos = pos + a_pm * u_t * ms_to_year;
 
     float viewAngleApparent = atan((a_size * u_alphaSizeFovBr.w) / dist) / u_alphaSizeFovBr.z;
     float opacity = pow(lint2(viewAngleApparent, 0.0, u_thAnglePoint, u_pointAlpha.x, u_pointAlpha.y), 1.2);
-    //float opacity = pow(lint(viewAngleApparent, 0.0, u_thAnglePoint, u_pointAlpha.x * 2.0, u_pointAlpha.y * 2.0), 6.0);
 
     v_col = vec4(a_color.rgb, opacity * u_alphaSizeFovBr.x * fadeout);
 

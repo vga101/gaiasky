@@ -458,10 +458,9 @@ public class ParticleGroup extends FadeNode implements I3DTextRenderable, IFocus
         if (this.opacity > 0) {
             Array<Pair<Integer, Double>> temporalHits = new Array<Pair<Integer, Double>>();
             for (int i = 0; i < n; i++) {
-                double[] vals = pointData.get(i).data;
+                ParticleBean pb = pointData.get(i);
                 Vector3 pos = aux3f1.get();
-                Vector3d aux = aux3d1.get().set(vals[0], vals[1], vals[2]);
-                Vector3d posd = aux.add(camera.posinv);
+                Vector3d posd = fetchPosition(pb, camera.getPos(), aux3d1.get());
                 pos.set(posd.valuesf());
 
                 if (camera.direction.dot(posd) > 0) {
@@ -589,5 +588,17 @@ public class ParticleGroup extends FadeNode implements I3DTextRenderable, IFocus
     @Override
     protected float getBaseOpacity() {
         return this.opacity;
+    }
+
+    /**
+     * Fetches the real position of the particle. It will apply the necessary
+     * integrations (i.e. proper motion).
+     * 
+     * @param pb
+     * @param dest
+     * @return The vector for chaining
+     */
+    protected Vector3d fetchPosition(ParticleBean pb, Vector3d campos, Vector3d dest) {
+        return dest.set(pb.data[0], pb.data[1], pb.data[2]).sub(campos);
     }
 }

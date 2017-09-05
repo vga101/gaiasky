@@ -99,7 +99,7 @@ public class StarGroupRenderSystem extends ImmediateRenderSystem implements IObs
         curr.vertices = new float[maxVertices * (curr.mesh.getVertexAttributes().vertexSize / 4)];
         curr.vertexSize = curr.mesh.getVertexAttributes().vertexSize / 4;
         curr.colorOffset = curr.mesh.getVertexAttribute(Usage.ColorPacked) != null ? curr.mesh.getVertexAttribute(Usage.ColorPacked).offset / 4 : 0;
-        //pmOffset = curr.mesh.getVertexAttribute(Usage.Tangent) != null ? curr.mesh.getVertexAttribute(Usage.Tangent).offset / 4 : 0;
+        pmOffset = curr.mesh.getVertexAttribute(Usage.Tangent) != null ? curr.mesh.getVertexAttribute(Usage.Tangent).offset / 4 : 0;
         sizeOffset = curr.mesh.getVertexAttribute(Usage.Generic) != null ? curr.mesh.getVertexAttribute(Usage.Generic).offset / 4 : 0;
         return mdi;
     }
@@ -143,16 +143,15 @@ public class StarGroupRenderSystem extends ImmediateRenderSystem implements IObs
                         // SIZE
                         curr.vertices[curr.vertexIdx + sizeOffset] = (float) (p.size() * Constants.STAR_SIZE_FACTOR);
 
-                        // POSITION
-                        final int idx = curr.vertexIdx;
-                        curr.vertices[idx] = (float) p.x();
-                        curr.vertices[idx + 1] = (float) p.y();
-                        curr.vertices[idx + 2] = (float) p.z();
+                        // POSITION [u]
+                        curr.vertices[curr.vertexIdx] = (float) p.x();
+                        curr.vertices[curr.vertexIdx + 1] = (float) p.y();
+                        curr.vertices[curr.vertexIdx + 2] = (float) p.z();
 
-                        // PROPER MOTION
-                        //                        curr.vertices[curr.vertexIdx + pmOffset] = (float) p.pmx();
-                        //                        curr.vertices[curr.vertexIdx + pmOffset + 1] = (float) p.pmy();
-                        //                        curr.vertices[curr.vertexIdx + pmOffset + 2] = (float) p.pmz();
+                        // PROPER MOTION [u/yr]
+                        curr.vertices[curr.vertexIdx + pmOffset] = (float) p.pmx();
+                        curr.vertices[curr.vertexIdx + pmOffset + 1] = (float) p.pmy();
+                        curr.vertices[curr.vertexIdx + pmOffset + 2] = (float) p.pmz();
 
                         curr.vertexIdx += curr.vertexSize;
                     }
@@ -187,7 +186,7 @@ public class StarGroupRenderSystem extends ImmediateRenderSystem implements IObs
                 alphaSizeFovBr[3] = (float) (GlobalConf.scene.STAR_BRIGHTNESS * BRIGHTNESS_FACTOR);
                 shaderProgram.setUniform4fv("u_alphaSizeFovBr", alphaSizeFovBr, 0, 4);
 
-                shaderProgram.setUniformf("u_t", (float) AstroUtils.getMsSinceJ2000(GaiaSky.instance.time.getTime()));
+                shaderProgram.setUniformf("u_t", (float) AstroUtils.getMsSince(GaiaSky.instance.time.getTime(), AstroUtils.JD_J2015_5));
                 shaderProgram.setUniformf("u_ar", GlobalConf.program.STEREOSCOPIC_MODE && (GlobalConf.program.STEREO_PROFILE != StereoProfile.HD_3DTV && GlobalConf.program.STEREO_PROFILE != StereoProfile.ANAGLYPHIC) ? 0.5f : 1f);
                 shaderProgram.setUniformf("u_thAnglePoint", (float) 1e-8);
 
@@ -205,7 +204,7 @@ public class StarGroupRenderSystem extends ImmediateRenderSystem implements IObs
     protected VertexAttribute[] buildVertexAttributes() {
         Array<VertexAttribute> attribs = new Array<VertexAttribute>();
         attribs.add(new VertexAttribute(Usage.Position, 3, ShaderProgram.POSITION_ATTRIBUTE));
-        //attribs.add(new VertexAttribute(Usage.Tangent, 3, "a_pm"));
+        attribs.add(new VertexAttribute(Usage.Tangent, 3, "a_pm"));
         attribs.add(new VertexAttribute(Usage.ColorPacked, 4, ShaderProgram.COLOR_ATTRIBUTE));
         attribs.add(new VertexAttribute(Usage.Generic, 1, "a_size"));
 

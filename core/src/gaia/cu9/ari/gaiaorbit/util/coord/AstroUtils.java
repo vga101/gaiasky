@@ -1,6 +1,7 @@
 package gaia.cu9.ari.gaiaorbit.util.coord;
 
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.LruCache;
@@ -25,12 +26,19 @@ public class AstroUtils {
     /** Julian date of J2000 epoch **/
     static final public double JD_J2000 = 2451545.; // Julian Date of J2000
     /**
-     * Julian date of the Gaia-specific reference epoch J2010 = J2010.0 =
-     * JD2455197.5 = 2010-01-01T00:00:00
+     * Julian date of reference epoch J2015.0 = JD2455197.5 =
+     * 2015-01-01T00:00:00
      **/
-    static final public double JD_J2010 = 2455197.5;
-    /** Julian date of TGAS epoch 2010-01-01T00:00:00 **/
     static final public double JD_J2015 = 2457023.500000;
+
+    /**
+     * Julian date of the Gaia DR2 reference epoch, J2015.5 = JD2455197.5 =
+     * 2015-01-01T00:00:00
+     **/
+    static final public double JD_J2015_5 = JD_J2015 + 365.25 / 2;
+
+    /** Julian date of TGAS epoch 2010-01-01T00:00:00 **/
+    static final public double JD_J2010 = 2455197.5;
 
     /** Julian date of B1900 epoch */
     static final public double JD_B1900 = 2415020.31352;// Julian Date of B1900
@@ -38,7 +46,7 @@ public class AstroUtils {
     public static final long J2000_MS;
 
     static {
-        Date d = new Date(2000, 0, 1, 0, 0, 0);
+        Date d = (new GregorianCalendar(2000, 0, 1, 0, 0, 0)).getTime();
         J2000_MS = d.getTime();
     }
 
@@ -476,20 +484,66 @@ public class AstroUtils {
         return getJulianDate(year, month, day, hour, min, sec, nanos, true);
     }
 
+    /**
+     * Returns the elapsed milliseconds since the epoch J2010 until the given
+     * date. Can be negavite.
+     * 
+     * @param date
+     *            The date
+     * @return The elapsed milliseconds
+     */
     public static double getMsSinceJ2010(Date date) {
         return (getJulianDateCache(date) - JD_J2010) * DAY_TO_MS;
     }
 
+    /**
+     * Returns the elapsed milliseconds since the epoch J2000 until the given
+     * date. Can be negavite.
+     * 
+     * @param date
+     *            The date
+     * @return The elapsed milliseconds
+     */
     public static double getMsSinceJ2000(Date date) {
         return (getJulianDateCache(date) - JD_J2000) * DAY_TO_MS;
     }
 
+    /**
+     * Returns the elapsed days since the epoch J2000 until the given date. Can
+     * be negavite.
+     * 
+     * @param date
+     *            The date
+     * @return The elapsed days
+     */
     public static double getDaysSinceJ2000(Date date) {
         return getJulianDateCache(date) - JD_J2000;
     }
 
+    /**
+     * Returns the elapsed milliseconds since the epoch J2015 until the given
+     * date. Can be negavite.
+     * 
+     * @param date
+     *            The date
+     * @return The elapsed milliseconds
+     */
     public static double getMsSinceJ2015(Date date) {
         return (getJulianDateCache(date) - JD_J2015) * DAY_TO_MS;
+    }
+
+    /**
+     * Returns the elapsed milliseconds since the given julian date jd until the
+     * given date. Can be negavite.
+     * 
+     * @param date
+     *            The date
+     * @param jd
+     *            The reference epoch in julian days
+     * @return The elapsed milliseconds
+     */
+    public static double getMsSince(Date date, double jd) {
+        return (getJulianDateCache(date) - jd) * DAY_TO_MS;
     }
 
     /**
