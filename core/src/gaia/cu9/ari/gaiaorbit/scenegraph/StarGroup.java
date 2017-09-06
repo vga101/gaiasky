@@ -476,8 +476,7 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
     }
 
     /**
-     * Updates the additional information array, to use for sorting. TODO -
-     * Include proper motion
+     * Updates the additional information array, to use for sorting.
      * 
      * @param camera
      */
