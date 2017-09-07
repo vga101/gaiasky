@@ -298,6 +298,8 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
     /** Comparator **/
     private Comparator<Integer> comp;
 
+    private Vector3d aux;
+
     // Is it updating?
     private volatile boolean updating = false;
 
@@ -310,6 +312,7 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
         lastSortCameraPos = new Vector3d(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE);
         closestCol = new float[4];
         lastSortTime = -1;
+        aux = new Vector3d();
         EventManager.instance.subscribe(this, Events.CAMERA_MOTION_UPDATED, Events.DISPOSE);
     }
 
@@ -941,11 +944,16 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
     @Override
     protected Vector3d fetchPosition(ParticleBean pb, Vector3d campos, Vector3d dest, double deltaYears) {
         StarBean sb = (StarBean) pb;
-        Vector3d pm = aux3d2.get().set(sb.pmx(), sb.pmy(), sb.pmz()).scl(deltaYears);
+        Vector3d pm = aux.set(sb.pmx(), sb.pmy(), sb.pmz()).scl(deltaYears);
         if (campos != null)
             return dest.set(pb.data[0], pb.data[1], pb.data[2]).sub(campos).add(pm);
         else
             return dest.set(pb.data[0], pb.data[1], pb.data[2]).add(pm);
+    }
+
+    @Override
+    protected double getDeltaYears() {
+        return currDeltaYears;
     }
 
 }

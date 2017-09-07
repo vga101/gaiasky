@@ -460,7 +460,7 @@ public class ParticleGroup extends FadeNode implements I3DTextRenderable, IFocus
             for (int i = 0; i < n; i++) {
                 ParticleBean pb = pointData.get(i);
                 Vector3 pos = aux3f1.get();
-                Vector3d posd = fetchPosition(pb, camera.getPos(), aux3d1.get(), 0);
+                Vector3d posd = fetchPosition(pb, camera.getPos(), aux3d1.get(), getDeltaYears());
                 pos.set(posd.valuesf());
 
                 if (camera.direction.dot(posd) > 0) {
@@ -611,5 +611,14 @@ public class ParticleGroup extends FadeNode implements I3DTextRenderable, IFocus
             return dest.set(pb.data[0], pb.data[1], pb.data[2]).sub(campos);
         else
             return dest.set(pb.data[0], pb.data[1], pb.data[2]);
+    }
+
+    /**
+     * Returns the delta years to integrate the proper motion.
+     * 
+     * @return
+     */
+    protected double getDeltaYears() {
+        return 0;
     }
 }
