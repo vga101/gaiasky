@@ -35,6 +35,11 @@ public class ShapeRenderSystem extends AbstractRenderSystem {
     @Override
     public void resize(int w, int h) {
         super.resize(w, h);
+        updateBatchSize(w, h);
+    }
+
+    @Override
+    public void updateBatchSize(int w, int h) {
         shapeRenderer.setProjectionMatrix(shapeRenderer.getProjectionMatrix().setToOrtho2D(0, 0, w, h));
     }
 

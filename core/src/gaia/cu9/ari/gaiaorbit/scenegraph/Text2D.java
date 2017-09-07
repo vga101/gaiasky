@@ -47,13 +47,23 @@ public class Text2D extends FadeNode implements I3DTextRenderable, IShapeRendera
     }
 
     @Override
+    protected void addToRenderLists(ICamera camera) {
+        if (renderText()) {
+            addToRender(this, RenderGroup.LABEL);
+            if (lines) {
+                addToRender(this, RenderGroup.SHAPE);
+            }
+        }
+    }
+
+    @Override
     public double getDistToCamera() {
         return 0;
     }
 
     @Override
     public boolean renderText() {
-        return this.opacity > 0;
+        return this.opacity > 0 && !GlobalConf.program.CUBEMAP360_MODE;
     }
 
     @Override
@@ -65,6 +75,10 @@ public class Text2D extends FadeNode implements I3DTextRenderable, IShapeRendera
         float ytop = (60f + 10f * scale) * GlobalConf.SCALE_FACTOR;
         float ybottom = (60f - lineHeight * scale - 10f * scale) * GlobalConf.SCALE_FACTOR;
 
+        // Resize batch
+        shapeRenderer.setProjectionMatrix(shapeRenderer.getProjectionMatrix().setToOrtho2D(0, 0, rc.w(), rc.h()));
+
+        // Lines
         shapeRenderer.setColor(1f, 1f, 1f, 0.7f * opacity * alpha);
         shapeRenderer.line(x0, ytop, x1, ytop);
         shapeRenderer.line(x0, ybottom, x1, ybottom);
@@ -77,6 +91,9 @@ public class Text2D extends FadeNode implements I3DTextRenderable, IShapeRendera
         shader.setUniformf("u_viewAnglePow", 1f);
         shader.setUniformf("u_thOverFactor", 1f);
         shader.setUniformf("u_thOverFactorScl", 1f);
+
+        // Resize batch
+        batch.setProjectionMatrix(batch.getProjectionMatrix().setToOrtho2D(0, 0, rc.w(), rc.h()));
 
         // Text
         render2DLabel(batch, shader, rc, font3d, camera, text(), 0, 60f * GlobalConf.SCALE_FACTOR, scale * GlobalConf.SCALE_FACTOR, align);
@@ -115,16 +132,6 @@ public class Text2D extends FadeNode implements I3DTextRenderable, IShapeRendera
     @Override
     public boolean isLabel() {
         return true;
-    }
-
-    @Override
-    protected void addToRenderLists(ICamera camera) {
-        if (renderText()) {
-            addToRender(this, RenderGroup.LABEL);
-            if (lines) {
-                addToRender(this, RenderGroup.SHAPE);
-            }
-        }
     }
 
     @Override

@@ -637,12 +637,16 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
     public void resize(final int w, final int h, boolean resizeRenderSys) {
         if (resizeRenderSys)
-            for (IRenderSystem rendSys : renderProcesses) {
-                rendSys.resize(w, h);
-            }
+            resizeRenderSystems(w, h);
 
         for (ISGR sgr : sgrs) {
             sgr.resize(w, h);
+        }
+    }
+
+    public void resizeRenderSystems(final int w, final int h) {
+        for (IRenderSystem rendSys : renderProcesses) {
+            rendSys.resize(w, h);
         }
     }
 

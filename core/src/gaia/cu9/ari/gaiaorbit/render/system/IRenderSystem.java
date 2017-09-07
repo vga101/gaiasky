@@ -23,4 +23,6 @@ public interface IRenderSystem extends Comparable<IRenderSystem> {
 
     public void resize(int w, int h);
 
+    public void updateBatchSize(int w, int h);
+
 }

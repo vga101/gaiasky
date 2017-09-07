@@ -87,7 +87,12 @@ public class FontRenderSystem extends AbstractRenderSystem {
     @Override
     public void resize(int w, int h) {
         super.resize(w, h);
-        batch.getProjectionMatrix().setToOrtho2D(0, 0, w, h);
+        updateBatchSize(w, h);
+    }
+
+    @Override
+    public void updateBatchSize(int w, int h) {
+        batch.setProjectionMatrix(batch.getProjectionMatrix().setToOrtho2D(0, 0, w, h));
     }
 
 }

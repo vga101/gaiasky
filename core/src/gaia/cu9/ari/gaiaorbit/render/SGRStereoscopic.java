@@ -120,6 +120,7 @@ public class SGRStereoscopic extends SGRAbstract implements ISGR, IObserver {
         Vector3d backupPosd = aux1d.set(camera.getPos());
 
         if (GlobalConf.program.STEREO_PROFILE == StereoProfile.ANAGLYPHIC) {
+            // Update viewport
             extendViewport.setCamera(camera.getCamera());
             extendViewport.setWorldSize(rw, rh);
             extendViewport.setScreenBounds(0, 0, rw, rh);

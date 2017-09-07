@@ -96,6 +96,11 @@ public abstract class AbstractRenderSystem implements IRenderSystem {
         // Empty, to override in subclasses if needed
     }
 
+    @Override
+    public void updateBatchSize(int w, int h) {
+        // Empty by default
+    }
+
     public interface RenderSystemRunnable {
         public abstract void run(AbstractRenderSystem renderSystem, Array<IRenderable> renderables, ICamera camera);
     }

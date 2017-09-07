@@ -22,10 +22,13 @@ public class SGR extends SGRAbstract implements ISGR {
     public void render(SceneGraphRenderer sgr, ICamera camera, double t, int rw, int rh, FrameBuffer fb, PostProcessBean ppb) {
         boolean postproc = postprocessCapture(ppb, fb, rw, rh);
 
+        // Viewport
         extendViewport.setCamera(camera.getCamera());
         extendViewport.setWorldSize(rw, rh);
         extendViewport.setScreenSize(rw, rh);
         extendViewport.apply();
+
+        // Render
         sgr.renderScene(camera, t, rc);
 
         postprocessRender(ppb, fb, postproc, camera, rw, rh);
