@@ -466,13 +466,27 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
      */
     public void updateFocus(ITimeFrameProvider time, ICamera camera) {
         StarBean focus = (StarBean) pointData.get(focusIndex);
-        Vector3d aux = this.fetchPosition(focus, camera.getPos(), aux3d1.get());
+        Vector3d aux = this.fetchPosition(focus, camera.getPos(), aux3d1.get(), currDeltaYears);
 
         this.focusPosition.set(aux).add(camera.getPos());
         this.focusDistToCamera = aux.len();
         this.focusSize = getFocusSize();
         this.focusViewAngle = (float) ((getRadius() / this.focusDistToCamera) / camera.getFovFactor());
         this.focusViewAngleApparent = this.focusViewAngle * GlobalConf.scene.STAR_BRIGHTNESS;
+    }
+
+    /**
+     * Overrides {@link ParticleGroup}'s implementation by actually integrating
+     * the position using the proper motion and the given time.
+     * 
+     */
+    public Vector3d getPredictedPosition(Vector3d aux, ITimeFrameProvider time, ICamera camera, boolean force) {
+        if (time.getDt() == 0 && !force) {
+            return getAbsolutePosition(aux);
+        } else {
+            double deltaYears = AstroUtils.getMsSince(time.getTime(), epoch_jd) * Constants.MS_TO_Y;
+            return this.fetchPosition((StarBean) pointData.get(focusIndex), null, aux, deltaYears);
+        }
     }
 
     /**
@@ -578,7 +592,7 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
         StarBean star = (StarBean) pointData.get(idx);
         double size = getSize(idx);
         double radius = size * Constants.STAR_SIZE_FACTOR;
-        Vector3d lpos = fetchPosition(star, camera.getPos(), aux3d1.get());
+        Vector3d lpos = fetchPosition(star, camera.getPos(), aux3d1.get(), currDeltaYears);
         double distToCamera = lpos.len();
         double viewAngle = (radius / distToCamera) / camera.getFovFactor();
         double viewAngleApparent = viewAngle * GlobalConf.scene.STAR_BRIGHTNESS;
@@ -645,7 +659,7 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
             StarBean star = (StarBean) pointData.get(active[i]);
             float radius = (float) (getSize(active[i]) * Constants.STAR_SIZE_FACTOR);
             // Position
-            Vector3d lpos = fetchPosition(star, camera.getPos(), aux3d1.get());
+            Vector3d lpos = fetchPosition(star, camera.getPos(), aux3d1.get(), currDeltaYears);
             // Proper motion
             Vector3d pm = aux3d2.get().set(star.pmx(), star.pmy(), star.pmz()).scl(currDeltaYears);
             // Rest of attributes
@@ -680,7 +694,7 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
         for (int i = 0; i < N_CLOSEUP_STARS; i++) {
             StarBean star = (StarBean) pointData.get(active[i]);
             float radius = (float) getRadius(active[i]);
-            Vector3d lpos = fetchPosition(star, camera.getPos(), aux3d1.get());
+            Vector3d lpos = fetchPosition(star, camera.getPos(), aux3d1.get(), currDeltaYears);
             float distToCamera = (float) lpos.len();
             float viewAngle = (float) (((radius / distToCamera) / camera.getFovFactor()) * GlobalConf.scene.STAR_BRIGHTNESS);
 
@@ -925,10 +939,13 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
     }
 
     @Override
-    protected Vector3d fetchPosition(ParticleBean pb, Vector3d campos, Vector3d dest) {
+    protected Vector3d fetchPosition(ParticleBean pb, Vector3d campos, Vector3d dest, double deltaYears) {
         StarBean sb = (StarBean) pb;
-        Vector3d pm = aux3d2.get().set(sb.pmx(), sb.pmy(), sb.pmz()).scl(currDeltaYears);
-        return dest.set(pb.data[0], pb.data[1], pb.data[2]).sub(campos).add(pm);
+        Vector3d pm = aux3d2.get().set(sb.pmx(), sb.pmy(), sb.pmz()).scl(deltaYears);
+        if (campos != null)
+            return dest.set(pb.data[0], pb.data[1], pb.data[2]).sub(campos).add(pm);
+        else
+            return dest.set(pb.data[0], pb.data[1], pb.data[2]).add(pm);
     }
 
 }

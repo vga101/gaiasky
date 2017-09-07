@@ -11,7 +11,7 @@ attribute float a_size;
 
 
 // UNIFORMS
-uniform float u_t; // time in ms since J2000
+uniform int u_t; // time in hours since epoch
 uniform mat4 u_projModelView;
 uniform vec3 u_camPos;
 uniform vec2 u_pointAlpha;
@@ -28,7 +28,7 @@ varying float v_discard;
 
 #define len0 170000.0
 #define len1 len0 * 100.0
-#define ms_to_year 1.0 / (1000.0 * 86400.0 * 365.25)
+#define h_to_year 1.0 / (24.0 * 365.25)
 
 float lint2(float x, float x0, float x1, float y0, float y1) {
     return mix(y0, y1, (x - x0) / (x1 - x0));
@@ -50,7 +50,7 @@ void main() {
     }
     
     // Proper motion
-    pos = pos + a_pm * u_t * ms_to_year;
+    pos = pos + a_pm * u_t * h_to_year;
 
     float viewAngleApparent = atan((a_size * u_alphaSizeFovBr.w) / dist) / u_alphaSizeFovBr.z;
     float opacity = pow(lint2(viewAngleApparent, 0.0, u_thAnglePoint, u_pointAlpha.x, u_pointAlpha.y), 1.2);

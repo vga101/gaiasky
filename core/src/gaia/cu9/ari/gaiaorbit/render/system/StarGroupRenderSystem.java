@@ -186,7 +186,8 @@ public class StarGroupRenderSystem extends ImmediateRenderSystem implements IObs
                 alphaSizeFovBr[3] = (float) (GlobalConf.scene.STAR_BRIGHTNESS * BRIGHTNESS_FACTOR);
                 shaderProgram.setUniform4fv("u_alphaSizeFovBr", alphaSizeFovBr, 0, 4);
 
-                shaderProgram.setUniformf("u_t", (float) AstroUtils.getMsSince(GaiaSky.instance.time.getTime(), AstroUtils.JD_J2015_5));
+                // Hours since epoch
+                shaderProgram.setUniformi("u_t", (int) (AstroUtils.getMsSince(GaiaSky.instance.time.getTime(), AstroUtils.JD_J2015_5) * Constants.MS_TO_H));
                 shaderProgram.setUniformf("u_ar", GlobalConf.program.STEREOSCOPIC_MODE && (GlobalConf.program.STEREO_PROFILE != StereoProfile.HD_3DTV && GlobalConf.program.STEREO_PROFILE != StereoProfile.ANAGLYPHIC) ? 0.5f : 1f);
                 shaderProgram.setUniformf("u_thAnglePoint", (float) 1e-8);
 
