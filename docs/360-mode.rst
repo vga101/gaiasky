@@ -26,11 +26,11 @@ In order to create panorama images that can be viewed with a VR device or simply
 Injecting panorama metadata to 360 images
 -----------------------------------------
 
-To do so, we can use `ExifTool <http://owl.phy.queensu.ca/~phil/exiftool/>`__. We will inject the metadata with the following command:
+To do so, we can use `ExifTool <http://owl.phy.queensu.ca/~phil/exiftool/>`__ in Linux, MacOS and Windows. To inject the metadata which describes a 360 degrees 4K image (3840x2160) we need to run the following command:
 
 .. code:: bash
 
-  exiftool -ProjectionType="equirectangular" -UsePanoramaViewer="True" -"PoseHeadingDegrees<$exif:GPSImgDirection" -"CroppedAreaImageWidthPixels<$ImageWidth" -"CroppedAreaImageHeightPixels<$ImageHeight" -"FullPanoWidthPixels<$ImageWidth" -"FullPanoHeightPixels<$ImageHeight" -CroppedAreaLeftPixels="0" -CroppedAreaTopPixels="0" image_name.jpg
+  exiftool -UsePanoramaViewer=True -ProjectionType=equirectangular -PoseHeadingDegrees=360.0 -CroppedAreaLeftPixels=0 -FullPanoWidthPixels=3840 -CroppedAreaImageHeightPixels=2160 -FullPanoHeightPixels=2160 -CroppedAreaImageWidthPixels=3840 -CroppedAreaTopPixels=0 -LargestValidInteriorRectLeft=0 -LargestValidInteriorRectTop=0 -LargestValidInteriorRectWidth=3840 -LargestValidInteriorRectHeight=2160 image_name.jpg 
 
 Now we can enjoy our image in any 360 panorama viewer like Google Street View app or the Cardboard Camera!
 Find some examples in this `album <https://goo.gl/photos/kn2MvugZHYcr5Fty8>`__.
