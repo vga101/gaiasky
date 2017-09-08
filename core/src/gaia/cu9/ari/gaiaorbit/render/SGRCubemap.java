@@ -17,6 +17,7 @@ import com.bitfire.postprocessing.effects.CubemapEquirectangular;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.render.IPostProcessor.PostProcessBean;
+import gaia.cu9.ari.gaiaorbit.render.RenderingContext.CubemapSide;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 
@@ -84,6 +85,8 @@ public class SGRCubemap extends SGRAbstract implements ISGR {
         boolean postproc;
 
         // RIGHT +X
+        rc.cubemapSide = CubemapSide.SIDE_RIGHT;
+
         cam.up.set(upbak);
         cam.direction.set(dirbak).rotate(upbak, -90);
         cam.update();
@@ -93,6 +96,8 @@ public class SGRCubemap extends SGRAbstract implements ISGR {
         postprocessRender(ppb, xposfb, postproc, camera, rw, rh);
 
         // LEFT -X
+        rc.cubemapSide = CubemapSide.SIDE_LEFT;
+
         cam.up.set(upbak);
         cam.direction.set(dirbak).rotate(upbak, 90);
         cam.update();
@@ -101,7 +106,9 @@ public class SGRCubemap extends SGRAbstract implements ISGR {
         sgr.renderScene(camera, t, rc);
         postprocessRender(ppb, xnegfb, postproc, camera, rw, rh);
 
-        // TOP +Y
+        // UP +Y
+        rc.cubemapSide = CubemapSide.SIDE_UP;
+
         aux1.set(dirbak);
         aux2.set(upbak);
         aux1.crs(aux2).scl(-1);
@@ -113,7 +120,9 @@ public class SGRCubemap extends SGRAbstract implements ISGR {
         sgr.renderScene(camera, t, rc);
         postprocessRender(ppb, yposfb, postproc, camera, rw, rh);
 
-        // BOTTOM -Y
+        // DOWN -Y
+        rc.cubemapSide = CubemapSide.SIDE_DOWN;
+
         aux1.set(dirbak);
         aux2.set(upbak);
         aux1.crs(aux2).scl(-1);
@@ -126,6 +135,8 @@ public class SGRCubemap extends SGRAbstract implements ISGR {
         postprocessRender(ppb, ynegfb, postproc, camera, rw, rh);
 
         // FRONT +Z
+        rc.cubemapSide = CubemapSide.SIDE_FRONT;
+
         cam.direction.set(dirbak);
         cam.up.set(upbak);
         cam.update();
@@ -135,6 +146,8 @@ public class SGRCubemap extends SGRAbstract implements ISGR {
         postprocessRender(ppb, zposfb, postproc, camera, rw, rh);
 
         // BACK -Z
+        rc.cubemapSide = CubemapSide.SIDE_BACK;
+
         cam.up.set(upbak);
         cam.direction.set(dirbak).rotate(upbak, -180);
         cam.update();
@@ -146,6 +159,7 @@ public class SGRCubemap extends SGRAbstract implements ISGR {
         // Restore camera parameters
         cam.direction.set(dirbak);
         cam.up.set(upbak);
+        rc.cubemapSide = CubemapSide.SIDE_NONE;
 
         // Effect
         cubemapEffect.setSides(xposfb, xnegfb, yposfb, ynegfb, zposfb, znegfb);

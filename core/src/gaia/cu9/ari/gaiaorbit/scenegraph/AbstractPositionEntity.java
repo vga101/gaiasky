@@ -1,5 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -9,6 +10,7 @@ import com.badlogic.gdx.math.Vector3;
 
 import gaia.cu9.ari.gaiaorbit.render.I3DTextRenderable;
 import gaia.cu9.ari.gaiaorbit.render.RenderingContext;
+import gaia.cu9.ari.gaiaorbit.render.RenderingContext.CubemapSide;
 import gaia.cu9.ari.gaiaorbit.util.DecalUtils;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
@@ -373,7 +375,7 @@ public abstract class AbstractPositionEntity extends SceneGraphNode {
         DecalUtils.drawFont2D(font, batch, rc, label, x, y, scale, align);
     }
 
-    protected void render3DLabel(SpriteBatch batch, ShaderProgram shader, BitmapFont font, ICamera camera, String label, Vector3d pos, float scale, float size, float[] colour) {
+    protected void render3DLabel(SpriteBatch batch, ShaderProgram shader, BitmapFont font, ICamera camera, RenderingContext rc, String label, Vector3d pos, float scale, float size, float[] colour) {
         // The smoothing scale must be set according to the distance
         shader.setUniformf("u_scale", scale / camera.getFovFactor());
 
@@ -383,8 +385,18 @@ public abstract class AbstractPositionEntity extends SceneGraphNode {
         // Enable or disable blending
         ((I3DTextRenderable) this).textDepthBuffer();
 
+        float rot = 0;
+        if (rc.cubemapSide == CubemapSide.SIDE_UP || rc.cubemapSide == CubemapSide.SIDE_DOWN) {
+            Vector3 v1 = aux3f1.get();
+            Vector3 v2 = aux3f2.get();
+            camera.getCamera().project(v1.set((float) p.x, (float) p.y, (float) p.z));
+            v1.z = 0;
+            v2.set(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2, 0);
+            rot = GlobalResources.angle2d(v1, v2) + (rc.cubemapSide == CubemapSide.SIDE_UP ? 90 : -90);
+        }
+
         //font.setColor(colour[0], colour[1], colour[2], 1f);
-        DecalUtils.drawFont3D(font, batch, label, (float) p.x, (float) p.y, (float) p.z, size, camera.getCamera(), true);
+        DecalUtils.drawFont3D(font, batch, label, (float) p.x, (float) p.y, (float) p.z, size, rot, camera.getCamera(), true);
     }
 
     public void setCoordinates(IBodyCoordinates coord) {

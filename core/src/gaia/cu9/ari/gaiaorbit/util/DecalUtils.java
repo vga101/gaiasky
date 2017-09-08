@@ -72,19 +72,21 @@ public class DecalUtils {
      *            The z coordinate.
      * @param scale
      *            The scale of the font.
+     * @param rotationCenter
+     *            Angles to rotate around center.
      * @param camera
      *            The camera.
      * @param faceCamera
      *            Whether to apply bill-boarding.
      */
-    public static void drawFont3D(BitmapFont font, SpriteBatch batch, String text, float x, float y, float z, float scale, Camera camera, boolean faceCamera) {
+    public static void drawFont3D(BitmapFont font, SpriteBatch batch, String text, float x, float y, float z, float scale, float rotationCenter, Camera camera, boolean faceCamera) {
         // Store batch matrices
         aux1.set(batch.getTransformMatrix());
         aux2.set(batch.getProjectionMatrix());
 
         Quaternion rotation = faceCamera ? getBillboardRotation(camera) : new Quaternion();
 
-        batch.getTransformMatrix().set(camera.combined).translate(x, y, z).rotate(rotation).rotate(0, 1, 0, 180).scale(scale, scale, scale);
+        batch.getTransformMatrix().set(camera.combined).translate(x, y, z).rotate(rotation).rotate(0, 1, 0, 180).rotate(0, 0, 1, rotationCenter).scale(scale, scale, scale);
         // Force matrices to be set to shader
         batch.setProjectionMatrix(idt);
 
@@ -116,21 +118,7 @@ public class DecalUtils {
      *            The scale of the font.
      */
     public static void drawFont3D(BitmapFont font, SpriteBatch batch, String text, Vector3 position, float scale, Camera camera, boolean faceCamera) {
-        // Store batch matrices
-        aux1.set(batch.getTransformMatrix());
-        aux2.set(batch.getProjectionMatrix());
-
-        Quaternion rotation = faceCamera ? getBillboardRotation(camera) : new Quaternion();
-
-        batch.getTransformMatrix().set(camera.combined).translate(position).rotate(rotation).rotate(0, 1, 0, 180).scl(scale);
-        // Force matrices to be set to shader
-        batch.setProjectionMatrix(idt);
-
-        font.draw(batch, text, 0, 0);
-
-        // Restore batch matrices
-        batch.setTransformMatrix(aux1);
-        batch.setProjectionMatrix(aux2);
+        drawFont3D(font, batch, text, position.x, position.y, position.z, scale, 0, camera, faceCamera);
     }
 
     public static void drawFont2D(BitmapFont font, SpriteBatch batch, String text, Vector3 position) {

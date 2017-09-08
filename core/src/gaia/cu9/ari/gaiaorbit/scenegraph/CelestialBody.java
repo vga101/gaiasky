@@ -175,7 +175,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
             shader.setUniformf("u_thOverFactor", getThOverFactor(camera));
             shader.setUniformf("u_thOverFactorScl", getThOverFactorScl());
 
-            render3DLabel(batch, shader, font3d, camera, text(), pos, textScale(), textSize(), textColour());
+            render3DLabel(batch, shader, font3d, camera, rc, text(), pos, textScale(), textSize(), textColour());
         }
 
     }

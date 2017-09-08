@@ -31,6 +31,13 @@ public class RenderingContext {
      */
     public float scaleFactor;
 
+    public enum CubemapSide {
+        SIDE_UP, SIDE_DOWN, SIDE_RIGHT, SIDE_LEFT, SIDE_FRONT, SIDE_BACK, SIDE_NONE
+    }
+
+    /** Side of the cubemap, if any **/
+    public CubemapSide cubemapSide = CubemapSide.SIDE_NONE;
+
     /**
      * Gets the width
      * 
