@@ -59,6 +59,11 @@ public class TGASLoader extends AbstractCatalogLoader implements ISceneGraphLoad
     /** TYC identifier to B-V colours **/
     private Map<String, Float> tycBV;
 
+    /** Gaia sourceid to radial velocities file **/
+    private static final String raveTgasFile = "data/tgas_final/rave_rv.csv";
+    /** SourceId to heliocentric radial velocity in km/s **/
+    private Map<Long, Double> radialVelocities;
+
     /**
      * INDICES: source_id ra[deg] dec[deg] parallax[mas] parallax_error[mas]
      * pmra[mas/yr] pmdec[mas/yr] radial_velocity[km/s]
@@ -95,6 +100,7 @@ public class TGASLoader extends AbstractCatalogLoader implements ISceneGraphLoad
         }
 
         tycBV = loadTYCBVColours(btvtColorsFile);
+        radialVelocities = loadRadialVelocities(raveTgasFile);
 
         Array<Particle> stars = new Array<Particle>();
         for (String file : files) {
@@ -160,18 +166,15 @@ public class TGASLoader extends AbstractCatalogLoader implements ISceneGraphLoad
                 double mualpha = Parser.parseDouble(st[indices[MUALPHA]].trim()) * AstroUtils.MILLARCSEC_TO_DEG;
                 double mudelta = Parser.parseDouble(st[indices[MUDELTA]].trim()) * AstroUtils.MILLARCSEC_TO_DEG;
 
-                /** RADIAL VELOCITY in km/s **/
-                double radvel = 0;
+                /** RADIAL VELOCITY in km/s, convert to u/ur **/
+                double radvel = radialVelocities != null && radialVelocities.containsKey(sourceid) ? radialVelocities.get(sourceid) : 0;
 
                 /** PROPER MOTION VECTOR = (pos+dx) - pos **/
-                Vector3d pm = Coordinates.sphericalToCartesian(Math.toRadians(ra + mualpha), Math.toRadians(dec + mudelta), dist + radvel, new Vector3d());
+                Vector3d pm = Coordinates.sphericalToCartesian(Math.toRadians(ra + mualpha), Math.toRadians(dec + mudelta), dist + radvel * Constants.KM_TO_U / Constants.S_TO_Y, new Vector3d());
                 pm.sub(pos);
 
-                // TODO Use radial velocity if necessary to get a 3D proper
-                // motion
-
                 Vector3 pmfloat = pm.toVector3();
-                Vector3 pmSph = new Vector3(Parser.parseFloat(st[indices[MUALPHA]].trim()), Parser.parseFloat(st[indices[MUDELTA]].trim()), 0f);
+                Vector3 pmSph = new Vector3(Parser.parseFloat(st[indices[MUALPHA]].trim()), Parser.parseFloat(st[indices[MUDELTA]].trim()), (float) radvel);
 
                 /** COLOR, we use the tycBV map if present **/
                 float colorbv = 0;
@@ -193,6 +196,56 @@ public class TGASLoader extends AbstractCatalogLoader implements ISceneGraphLoad
         }
     }
 
+    /**
+     * Loads the radial velocities file (RAVE)
+     * 
+     * @param file
+     *            The file location
+     * @return The data map
+     */
+    private Map<Long, Double> loadRadialVelocities(String file) {
+        Map<Long, Double> result = new HashMap<Long, Double>();
+
+        FileHandle f = Gdx.files.internal(file);
+
+        if (!f.exists())
+            return null;
+
+        InputStream data = f.read();
+        BufferedReader br = new BufferedReader(new InputStreamReader(data));
+        try {
+            // skip first line with headers
+            br.readLine();
+
+            int i = 1;
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] tokens = line.split(",");
+                Long sourceid = Parser.parseLong(tokens[0]);
+                Double radvel = Parser.parseDouble(tokens[1]);
+                result.put(sourceid, radvel);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                br.close();
+            } catch (IOException e) {
+                Logger.error(e);
+            }
+
+        }
+
+        return result;
+    }
+
+    /**
+     * Loads the TYC to BT-VT colour file
+     * 
+     * @param file
+     *            The file location
+     * @return Map with the data
+     */
     private Map<String, Float> loadTYCBVColours(String file) {
         Map<String, Float> result = new HashMap<String, Float>();
         FileHandle f = Gdx.files.internal(file);
@@ -201,14 +254,12 @@ public class TGASLoader extends AbstractCatalogLoader implements ISceneGraphLoad
         try {
             // skip first line with headers
             br.readLine();
-            int i = 1;
             String line;
             while ((line = br.readLine()) != null) {
 
                 if (!line.startsWith(comment))
                     // Add B-V colour
                     addColour(line, result);
-                Logger.debug("Line " + i++);
             }
         } catch (IOException e) {
             e.printStackTrace();

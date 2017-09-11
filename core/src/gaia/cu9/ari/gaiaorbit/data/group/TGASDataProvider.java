@@ -28,6 +28,8 @@ public class TGASDataProvider extends AbstractStarGroupDataProvider {
     private static final boolean dumpToDisk = false;
     /** Colors BT, VT for all Tycho2 stars file **/
     private static final String btvtColorsFile = "data/tgas_final/bt-vt-tycho.csv";
+    /** Gaia sourceid to radial velocities file **/
+    private static final String raveTgasFile = "data/tgas_final/rave_rv.csv";
 
     public TGASDataProvider() {
         super();
@@ -54,6 +56,7 @@ public class TGASDataProvider extends AbstractStarGroupDataProvider {
     @Override
     public Array<? extends ParticleBean> loadData(InputStream is, double factor) {
         Pair<Map<String, Float>, Map<String, Integer>> extra = loadTYCBVHIP(btvtColorsFile);
+        Map<Long, Double> radialVelocities = loadRadialVelocities(raveTgasFile);
 
         try {
             initLists();
@@ -101,6 +104,9 @@ public class TGASDataProvider extends AbstractStarGroupDataProvider {
                         }
 
                         /** RA and DEC **/
+                        if (sourceid == 6777024360873583872l) {
+                            int abc = 3;
+                        }
                         double ra = Parser.parseDouble(tokens[1]);
                         double dec = Parser.parseDouble(tokens[2]);
                         Vector3d pos = Coordinates.sphericalToCartesian(Math.toRadians(ra), Math.toRadians(dec), dist, new Vector3d());
@@ -109,10 +115,13 @@ public class TGASDataProvider extends AbstractStarGroupDataProvider {
                         double mualpha = Parser.parseDouble(tokens[5]);
                         double mudelta = Parser.parseDouble(tokens[6]);
 
+                        /** RADIAL VELOCITY in km/s **/
+                        double radvel = radialVelocities != null && radialVelocities.containsKey(sourceid) ? radialVelocities.get(sourceid) : 0;
+
                         /**
                          * PROPER MOTION VECTOR = (pos+dx) - pos - [units/yr]
                          **/
-                        Vector3d pm = Coordinates.sphericalToCartesian(Math.toRadians(ra + mualpha * AstroUtils.MILLARCSEC_TO_DEG), Math.toRadians(dec + mudelta * AstroUtils.MILLARCSEC_TO_DEG), dist, new Vector3d());
+                        Vector3d pm = Coordinates.sphericalToCartesian(Math.toRadians(ra + mualpha * AstroUtils.MILLARCSEC_TO_DEG), Math.toRadians(dec + mudelta * AstroUtils.MILLARCSEC_TO_DEG), dist + radvel * Constants.KM_TO_U / Constants.S_TO_Y, new Vector3d());
                         pm.sub(pos);
 
                         double appmag = Parser.parseDouble(tokens[7]);
@@ -143,7 +152,7 @@ public class TGASDataProvider extends AbstractStarGroupDataProvider {
                         point[StarBean.I_PMZ] = pm.z;
                         point[StarBean.I_MUALPHA] = mualpha;
                         point[StarBean.I_MUDELTA] = mudelta;
-                        point[StarBean.I_RADVEL] = 0;
+                        point[StarBean.I_RADVEL] = radvel;
                         point[StarBean.I_COL] = col;
                         point[StarBean.I_SIZE] = size;
                         point[StarBean.I_APPMAG] = appmag;
@@ -166,6 +175,48 @@ public class TGASDataProvider extends AbstractStarGroupDataProvider {
         }
 
         return list;
+    }
+
+    /**
+     * Loads the radial velocities file (RAVE)
+     * 
+     * @param file
+     *            The file location
+     * @return The data map
+     */
+    private Map<Long, Double> loadRadialVelocities(String file) {
+        Map<Long, Double> result = new HashMap<Long, Double>();
+
+        FileHandle f = Gdx.files.internal(file);
+
+        if (!f.exists())
+            return null;
+
+        InputStream data = f.read();
+        BufferedReader br = new BufferedReader(new InputStreamReader(data));
+        try {
+            // skip first line with headers
+            br.readLine();
+
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] tokens = line.split(",");
+                Long sourceid = Parser.parseLong(tokens[0]);
+                Double radvel = Parser.parseDouble(tokens[1]);
+                result.put(sourceid, radvel);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                br.close();
+            } catch (IOException e) {
+                Logger.error(e);
+            }
+
+        }
+
+        return result;
     }
 
     private Pair<Map<String, Float>, Map<String, Integer>> loadTYCBVHIP(String file) {

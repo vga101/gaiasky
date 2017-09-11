@@ -451,4 +451,12 @@ public class Particle extends CelestialBody implements IStarFocus, IPointRendera
             return 0;
     }
 
+    @Override
+    public double getRadialVelocity() {
+        if (this.pmSph != null)
+            return this.pmSph.z;
+        else
+            return 0;
+    }
+
 }

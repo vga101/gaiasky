@@ -90,4 +90,11 @@ public interface IStarFocus extends IFocus {
      */
     public double getMuDelta();
 
+    /**
+     * Returns the radial velocity in km/s
+     * 
+     * @return The radial velocity in km/s
+     */
+    public double getRadialVelocity();
+
 }

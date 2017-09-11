@@ -48,24 +48,11 @@ public class DR2Loader extends AbstractCatalogLoader implements ISceneGraphLoade
     public Map<Long, Integer> sidHIPMap;
 
     /**
-     * INDICES: 
+     * INDICES:
      * 
-     * source_id 
-     * ra[deg] 
-     * dec[deg] 
-     * parallax[mas] 
-     * ra_err[mas]
-     * dec_err[mas] 
-     * pllx_err[mas] 
-     * pmra[mas/yr] 
-     * pmdec[mas/yr] 
-     * radvel[km/s]
-     * mualpha_err[mas/yr] 
-     * mudelta_err[mas/yr] 
-     * radvel_err[km/s] 
-     * gmag[mag]
-     * bp[mag] 
-     * rp[mag] 
+     * source_id ra[deg] dec[deg] parallax[mas] ra_err[mas] dec_err[mas]
+     * pllx_err[mas] pmra[mas/yr] pmdec[mas/yr] radvel[km/s] mualpha_err[mas/yr]
+     * mudelta_err[mas/yr] radvel_err[km/s] gmag[mag] bp[mag] rp[mag]
      * ref_epoch[julian years]
      */
     private static final int SOURCE_ID = 0;
@@ -170,21 +157,18 @@ public class DR2Loader extends AbstractCatalogLoader implements ISceneGraphLoade
                 double mualpha = Parser.parseDouble(tokens[indices[MUALPHA]].trim()) * AstroUtils.MILLARCSEC_TO_DEG;
                 double mudelta = Parser.parseDouble(tokens[indices[MUDELTA]].trim()) * AstroUtils.MILLARCSEC_TO_DEG;
 
-                /** RADIAL VELOCITY in km/s **/
+                /** RADIAL VELOCITY in km/s, convert to u/yr **/
                 double radvel = 0;
                 if (indices[RADVEL] >= 0) {
                     radvel = Parser.parseDouble(tokens[indices[RADVEL]].trim());
                 }
 
                 /** PROPER MOTION VECTOR = (pos+dx) - pos **/
-                Vector3d pm = Coordinates.sphericalToCartesian(Math.toRadians(ra + mualpha), Math.toRadians(dec + mudelta), dist, new Vector3d());
+                Vector3d pm = Coordinates.sphericalToCartesian(Math.toRadians(ra + mualpha), Math.toRadians(dec + mudelta), dist + radvel * Constants.KM_TO_U / Constants.S_TO_Y, new Vector3d());
                 pm.sub(pos);
 
-                // TODO Use radial velocity if necessary to get a 3D proper
-                // motion
-
                 Vector3 pmfloat = pm.toVector3();
-                Vector3 pmSph = new Vector3(Parser.parseFloat(tokens[indices[MUALPHA]].trim()), Parser.parseFloat(tokens[indices[MUDELTA]].trim()), 0f);
+                Vector3 pmSph = new Vector3(Parser.parseFloat(tokens[indices[MUALPHA]].trim()), Parser.parseFloat(tokens[indices[MUDELTA]].trim()), (float) radvel);
 
                 /** COLOR, we use the tycBV map if present **/
                 float colorbv = 0;

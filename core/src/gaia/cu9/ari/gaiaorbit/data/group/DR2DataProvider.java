@@ -167,6 +167,7 @@ public class DR2DataProvider extends AbstractStarGroupDataProvider {
             /** PROPER MOTIONS in mas/yr **/
             double mualpha = Parser.parseDouble(tokens[indices[MUALPHA]]);
             double mudelta = Parser.parseDouble(tokens[indices[MUDELTA]]);
+            /** RADIAL VELOCITY in km/s **/
             double radvel = Parser.parseDouble(tokens[indices[RADVEL]]);
 
             /** PROPER MOTION VECTOR = (pos+dx) - pos **/
@@ -205,7 +206,7 @@ public class DR2DataProvider extends AbstractStarGroupDataProvider {
             point[StarBean.I_PMZ] = pm.z;
             point[StarBean.I_MUALPHA] = mualpha;
             point[StarBean.I_MUDELTA] = mudelta;
-            point[StarBean.I_RADVEL] = 0;
+            point[StarBean.I_RADVEL] = radvel;
             point[StarBean.I_COL] = col;
             point[StarBean.I_SIZE] = size;
             point[StarBean.I_APPMAG] = appmag;

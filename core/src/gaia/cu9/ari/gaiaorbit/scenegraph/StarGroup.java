@@ -786,6 +786,14 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
             return 0;
     }
 
+    @Override
+    public double getRadialVelocity() {
+        if (focus != null)
+            return focus.data[StarBean.I_RADVEL];
+        else
+            return 0;
+    }
+
     /**
      * Returns the size of the particle at index i
      * 

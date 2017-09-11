@@ -44,7 +44,7 @@ import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextIconButton;
 public class FocusInfoInterface extends Table implements IObserver, IGuiInterface {
     static private INetworkChecker daemon;
 
-    protected OwnLabel focusName, focusType, focusId, focusRA, focusDEC, focusMuAlpha, focusMuDelta, focusAngle, focusDist, focusAppMag, focusAbsMag, focusRadius;
+    protected OwnLabel focusName, focusType, focusId, focusRA, focusDEC, focusMuAlpha, focusMuDelta, focusRadVel, focusAngle, focusDist, focusAppMag, focusAbsMag, focusRadius;
     protected Button goTo, landOn, landAt;
     protected OwnLabel pointerName, pointerLonLat, pointerRADEC;
     protected OwnLabel camName, camVel, camPos, lonLatLabel, RADECLabel;
@@ -86,6 +86,7 @@ public class FocusInfoInterface extends Table implements IObserver, IGuiInterfac
         focusDEC = new OwnLabel("", skin, "hud");
         focusMuAlpha = new OwnLabel("", skin, "hud");
         focusMuDelta = new OwnLabel("", skin, "hud");
+        focusRadVel = new OwnLabel("", skin, "hud");
         focusAppMag = new OwnLabel("", skin, "hud");
         focusAbsMag = new OwnLabel("", skin, "hud");
         focusAngle = new OwnLabel("", skin, "hud");
@@ -172,6 +173,7 @@ public class FocusInfoInterface extends Table implements IObserver, IGuiInterfac
         focusDEC.setWidth(w);
         focusMuAlpha.setWidth(w);
         focusMuDelta.setWidth(w);
+        focusRadVel.setWidth(w);
         focusAngle.setWidth(w);
         focusDist.setWidth(w);
         camVel.setWidth(w);
@@ -196,6 +198,9 @@ public class FocusInfoInterface extends Table implements IObserver, IGuiInterfac
         focusInfo.row();
         focusInfo.add(new OwnLabel(txt("gui.focusinfo.mudelta"), skin, "hud-big")).left();
         focusInfo.add(focusMuDelta).left().padLeft(pad10);
+        focusInfo.row();
+        focusInfo.add(new OwnLabel(txt("gui.focusinfo.radvel"), skin, "hud-big")).left();
+        focusInfo.add(focusRadVel).left().padLeft(pad10);
         focusInfo.row();
         focusInfo.add(new OwnLabel(txt("gui.focusinfo.appmag"), skin, "hud-big")).left();
         focusInfo.add(focusAppMag).left().padLeft(pad10);
@@ -329,9 +334,11 @@ public class FocusInfoInterface extends Table implements IObserver, IGuiInterfac
                 IStarFocus part = (IStarFocus) focus;
                 focusMuAlpha.setText(nf.format(part.getMuAlpha()) + " mas/yr");
                 focusMuDelta.setText(nf.format(part.getMuDelta()) + " mas/yr");
+                focusRadVel.setText(nf.format(part.getRadialVelocity()) + " km/s");
             } else {
                 focusMuAlpha.setText("-");
                 focusMuDelta.setText("-");
+                focusRadVel.setText("-");
             }
 
             Float appmag = focus.getAppmag();
