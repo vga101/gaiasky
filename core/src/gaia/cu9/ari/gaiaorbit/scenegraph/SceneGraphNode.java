@@ -387,6 +387,20 @@ public class SceneGraphNode implements IStarContainer, IPosition {
         return null;
     }
 
+    public Array<SceneGraphNode> getChildrenByType(Class<? extends SceneGraphNode> clazz, Array<SceneGraphNode> list) {
+        if (children != null) {
+            int size = children.size;
+            for (int i = 0; i < size; i++) {
+                SceneGraphNode child = children.get(i);
+                if (clazz.isInstance(child))
+                    list.add(child);
+
+                child.getChildrenByType(clazz, list);
+            }
+        }
+        return list;
+    }
+
     public SceneGraphNode getNode(String name) {
         if (this.name != null && this.name.equals(name)) {
             return this;

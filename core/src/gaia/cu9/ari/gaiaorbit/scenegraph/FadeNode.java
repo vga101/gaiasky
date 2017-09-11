@@ -1,9 +1,11 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.math.Vector2;
 
 import gaia.cu9.ari.gaiaorbit.util.Constants;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
@@ -53,6 +55,16 @@ public class FadeNode extends AbstractPositionEntity {
      */
     private String positionobjectname;
 
+    /**
+     * Is this fade node visible?
+     */
+    private boolean visible = true;
+
+    /**
+     * Elapsed milliseconds since this node visibility was last changed.
+     */
+    private long msSinceStateChange = Long.MAX_VALUE;
+
     @Override
     public void doneLoading(AssetManager manager) {
         super.doneLoading(manager);
@@ -65,10 +77,6 @@ public class FadeNode extends AbstractPositionEntity {
         this.opacity = opacity * this.opacity;
         transform.set(parentTransform);
         Vector3d aux = aux3d1.get();
-
-        if (this.name.equals("The Earth")) {
-            int a = 234;
-        }
 
         if (this.position == null) {
             this.currentDistance = aux.set(this.pos).sub(camera.getPos()).len() * camera.getFovFactor();
@@ -98,7 +106,15 @@ public class FadeNode extends AbstractPositionEntity {
         if (fadeOut != null)
             this.opacity *= MathUtilsd.lint((float) this.currentDistance, fadeOut.x, fadeOut.y, 1, 0);
 
-        if (!copy && opacity > 0) {
+        // Visibility
+        this.msSinceStateChange += Gdx.graphics.getDeltaTime() * 1000;
+        float visop = MathUtilsd.lint(this.msSinceStateChange, 0, GlobalConf.scene.OBJECT_FADE_MS, 0, 1);
+        if (!this.visible) {
+            visop = 1 - visop;
+        }
+        this.opacity *= visop;
+
+        if (!this.copy && this.opacity > 0) {
             addToRenderLists(camera);
         }
 
@@ -149,6 +165,15 @@ public class FadeNode extends AbstractPositionEntity {
 
     public void setPositionobjectname(String po) {
         this.positionobjectname = po;
+    }
+
+    public void setVisible(boolean visible) {
+        this.visible = visible;
+        this.msSinceStateChange = 0;
+    }
+
+    public boolean isVisible() {
+        return this.visible;
     }
 
 }

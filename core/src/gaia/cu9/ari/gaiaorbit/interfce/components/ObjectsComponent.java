@@ -27,12 +27,14 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
 import gaia.cu9.ari.gaiaorbit.scenegraph.IFocus;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
+import gaia.cu9.ari.gaiaorbit.scenegraph.MeshObject;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.TwoWayHashmap;
 import gaia.cu9.ari.gaiaorbit.util.comp.CelestialBodyComparator;
+import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnCheckBox;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnScrollPane;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextField;
 
@@ -206,10 +208,45 @@ public class ObjectsComponent extends GuiComponent implements IObserver {
             focusListScrollPane.setWidth(componentWidth);
         }
 
+        // Get meshes
+        Array<SceneGraphNode> meshes = new Array<SceneGraphNode>();
+        sg.getRoot().getChildrenByType(MeshObject.class, meshes);
+
+        // Add if any
+        VerticalGroup meshesGroup = null;
+        if (meshes.size > 0) {
+            meshesGroup = new VerticalGroup();
+            meshesGroup.left();
+            meshesGroup.columnLeft();
+            meshesGroup.space(4 * GlobalConf.SCALE_FACTOR);
+
+            Label meshesLabel = new Label(txt("gui.meshes"), skin, "header");
+            meshesGroup.addActor(meshesLabel);
+
+            for (SceneGraphNode node : meshes) {
+                MeshObject mesh = (MeshObject) node;
+                OwnCheckBox meshCb = new OwnCheckBox(mesh.name, skin, 5 * GlobalConf.SCALE_FACTOR);
+                meshCb.setChecked(mesh.isVisibilityOn());
+                meshCb.addListener((event) -> {
+                    if (event instanceof ChangeEvent) {
+                        Gdx.app.postRunnable(() -> {
+                            mesh.setVisible(meshCb.isChecked());
+                        });
+                    }
+                    return false;
+                });
+                meshesGroup.addActor(meshCb);
+            }
+        }
+
         VerticalGroup objectsGroup = new VerticalGroup().align(Align.left).columnAlign(Align.left).space(3 * GlobalConf.SCALE_FACTOR);
         objectsGroup.addActor(searchBox);
         if (focusListScrollPane != null) {
             objectsGroup.addActor(focusListScrollPane);
+        }
+
+        if (meshesGroup != null) {
+            objectsGroup.addActor(meshesGroup);
         }
 
         component = objectsGroup;

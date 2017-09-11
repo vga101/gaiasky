@@ -126,7 +126,12 @@ public class ModelComponent implements Disposable {
                 model.materials.add(material);
                 materials.put("base", material);
             } else {
-                materials.put("base", model.materials.first());
+                if (model.materials.size > 1)
+                    for (int i = 0; i < model.materials.size; i++) {
+                        materials.put("base" + i, model.materials.get(i));
+                    }
+                else
+                    materials.put("base", model.materials.first());
             }
 
         } else if (type != null) {
@@ -139,7 +144,8 @@ public class ModelComponent implements Disposable {
             Logger.error(new RuntimeException("The 'model' element must contain either a 'type' or a 'model' attribute"));
         }
         // Clear base material
-        materials.get("base").clear();
+        if (materials.containsKey("base"))
+            materials.get("base").clear();
 
         // INITIALIZE MATERIAL
         if (forceinit || !GlobalConf.scene.LAZY_TEXTURE_INIT && tc != null) {
@@ -180,9 +186,12 @@ public class ModelComponent implements Disposable {
                 // Use color
                 if (cc != null) {
                     // Regular mesh, we use the color
-                    Material material = instance.materials.get(0);
-                    material.set(new ColorAttribute(ColorAttribute.Diffuse, cc[0], cc[1], cc[2], cc[3]));
-                    material.set(new ColorAttribute(ColorAttribute.Ambient, cc[0], cc[1], cc[2], cc[3]));
+                    int n = instance.materials.size;
+                    for (int i = 0; i < n; i++) {
+                        Material material = instance.materials.get(i);
+                        material.set(new ColorAttribute(ColorAttribute.Diffuse, cc[0], cc[1], cc[2], cc[3]));
+                        material.set(new ColorAttribute(ColorAttribute.Ambient, cc[0], cc[1], cc[2], cc[3]));
+                    }
                 }
                 // Set to initialised
                 initialised = true;
@@ -206,7 +215,8 @@ public class ModelComponent implements Disposable {
 
     public void setTransparency(float alpha) {
         if (instance != null) {
-            for (int i = 0; i < instance.materials.size; i++) {
+            int n = instance.materials.size;
+            for (int i = 0; i < n; i++) {
                 Material mat = instance.materials.get(i);
                 BlendingAttribute ba = null;
                 if (mat.has(BlendingAttribute.Type)) {
@@ -222,7 +232,10 @@ public class ModelComponent implements Disposable {
 
     public void setTransparencyColor(float alpha) {
         if (instance != null) {
-            ((ColorAttribute) instance.materials.get(0).get(ColorAttribute.Diffuse)).color.a = alpha;
+            int n = instance.materials.size;
+            for (int i = 0; i < n; i++) {
+                ((ColorAttribute) instance.materials.get(i).get(ColorAttribute.Diffuse)).color.a = alpha;
+            }
         }
     }
 

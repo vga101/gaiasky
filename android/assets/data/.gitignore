@@ -1,7 +1,6 @@
 octree/
 catalog/
 tgas_*/
-meshes/
 orbits_asteroid_extra*.json
 kepler-exoplanets.csv
 countries.csv
