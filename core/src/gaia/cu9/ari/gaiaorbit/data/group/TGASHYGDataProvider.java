@@ -56,7 +56,6 @@ public class TGASHYGDataProvider extends AbstractStarGroupDataProvider {
             StarBean curr = hygdata.get(i);
             Integer hip = (int) curr.data[StarBean.I_HIP];
             if (!removed.contains(hip)) {
-                int newidx = tgasdata.size;
                 // Add to tgasdata
                 tgasdata.add(curr);
             } else {
