@@ -65,7 +65,7 @@ public class AstroUtils {
     public static final double DEG_TO_ARCSEC = 3600;
     public static final double ARCSEC_TO_DEG = 1 / DEG_TO_ARCSEC;
     public static final double DEG_TO_MILLARCSEC = DEG_TO_ARCSEC * 1000;
-    public static final double MILLARCSEC_TO_DEG = 1 / DEG_TO_ARCSEC;
+    public static final double MILLARCSEC_TO_DEG = 1 / DEG_TO_MILLARCSEC;
     public static final double RAD_TO_MILLARCSEC = TO_DEG * DEG_TO_MILLARCSEC;
     public static final double MILLARCSEC_TO_RAD = MILLARCSEC_TO_DEG * TO_RAD;
 
