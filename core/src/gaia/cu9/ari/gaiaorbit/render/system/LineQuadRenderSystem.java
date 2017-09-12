@@ -44,7 +44,7 @@ public class LineQuadRenderSystem extends LineRenderSystem {
     }
 
     Vector3d line, camdir0, camdir1, camdir15, point, vec, aux, aux2;
-    final static double widthAngle = Math.toRadians(0.06);
+    final static double widthAngle = Math.toRadians(0.08);
     final static double widthAngleTan = Math.tan(widthAngle);
 
     public LineQuadRenderSystem(RenderGroup rg, int priority, float[] alphas) {
@@ -119,14 +119,18 @@ public class LineQuadRenderSystem extends LineRenderSystem {
     }
 
     public void addLine(double x0, double y0, double z0, double x1, double y1, double z1, float r, float g, float b, float a) {
-        addLineInternal(x0, y0, z0, x1, y1, z1, r, g, b, a);
+        addLine(x0, y0, z0, x1, y1, z1, r, g, b, a, widthAngleTan);
     }
 
-    public void addLineInternal(double x0, double y0, double z0, double x1, double y1, double z1, float r, float g, float b, float a) {
-        addLineInternal(x0, y0, z0, x1, y1, z1, r, g, b, a, true);
+    public void addLine(double x0, double y0, double z0, double x1, double y1, double z1, float r, float g, float b, float a, double widthAngleTan) {
+        addLineInternal(x0, y0, z0, x1, y1, z1, r, g, b, a, widthAngleTan);
     }
 
-    public void addLineInternal(double x0, double y0, double z0, double x1, double y1, double z1, float r, float g, float b, float a, boolean rec) {
+    public void addLineInternal(double x0, double y0, double z0, double x1, double y1, double z1, float r, float g, float b, float a, double widthAngleTan) {
+        addLineInternal(x0, y0, z0, x1, y1, z1, r, g, b, a, widthAngleTan, true);
+    }
+
+    public void addLineInternal(double x0, double y0, double z0, double x1, double y1, double z1, float r, float g, float b, float a, double widthAngleTan, boolean rec) {
         double distToSegment = MathUtilsd.distancePointSegment(x0, y0, z0, x1, y1, z1, 0, 0, 0);
 
         double dist0 = Math.sqrt(x0 * x0 + y0 * y0 + z0 * z0);
@@ -138,8 +142,8 @@ public class LineQuadRenderSystem extends LineRenderSystem {
             // Projection falls in line, split line
             p15 = MathUtilsd.getClosestPoint2(x0, y0, z0, x1, y1, z1, 0, 0, 0);
 
-            addLineInternal(x0, y0, z0, p15.x, p15.y, p15.z, r, g, b, a, false);
-            addLineInternal(p15.x, p15.y, p15.z, x1, y1, z1, r, g, b, a, false);
+            addLineInternal(x0, y0, z0, p15.x, p15.y, p15.z, r, g, b, a, widthAngleTan, false);
+            addLineInternal(p15.x, p15.y, p15.z, x1, y1, z1, r, g, b, a, widthAngleTan, false);
         } else {
             // Add line to list
             // x0 y0 z0 x1 y1 z1 r g b a dist0 dist1 distMean
@@ -157,11 +161,12 @@ public class LineQuadRenderSystem extends LineRenderSystem {
             l[10] = dist0;
             l[11] = dist1;
             l[12] = (dist0 + dist1) / 2d;
+            l[13] = widthAngleTan;
             provisionalLines.add(l);
         }
     }
 
-    public void addLinePostproc(double x0, double y0, double z0, double x1, double y1, double z1, double r, double g, double b, double a, double dist0, double dist1) {
+    public void addLinePostproc(double x0, double y0, double z0, double x1, double y1, double z1, double r, double g, double b, double a, double dist0, double dist1, double widthTan) {
 
         // Check if 6 more indices fit
         if (currext.numVertices + 3 >= shortLimit) {
@@ -170,8 +175,8 @@ public class LineQuadRenderSystem extends LineRenderSystem {
         }
 
         // Projection falls outside line
-        double width0 = widthAngleTan * dist0 * camera.getFovFactor();
-        double width1 = widthAngleTan * dist1 * camera.getFovFactor();
+        double width0 = widthTan * dist0 * camera.getFovFactor();
+        double width1 = widthTan * dist1 * camera.getFovFactor();
 
         line.set(x1 - x0, y1 - y0, z1 - z0);
 
@@ -241,7 +246,7 @@ public class LineQuadRenderSystem extends LineRenderSystem {
         // Sort phase
         provisionalLines.sort(sorter);
         for (double[] l : provisionalLines)
-            addLinePostproc(l[0], l[1], l[2], l[3], l[4], l[5], l[6], l[7], l[8], l[9], l[10], l[11]);
+            addLinePostproc(l[0], l[1], l[2], l[3], l[4], l[5], l[6], l[7], l[8], l[9], l[10], l[11], l[13]);
 
         shaderProgram.begin();
         shaderProgram.setUniformMatrix("u_projModelView", camera.getCamera().combined);
@@ -290,7 +295,7 @@ public class LineQuadRenderSystem extends LineRenderSystem {
 
         @Override
         protected double[] newObject() {
-            return new double[13];
+            return new double[14];
         }
 
     }

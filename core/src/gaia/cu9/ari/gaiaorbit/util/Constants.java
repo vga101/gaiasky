@@ -159,9 +159,9 @@ public class Constants {
     public static final float MAX_PM_NUM_FACTOR = 25f;
 
     /** Minimum length factor for proper motion vectors **/
-    public static final float MIN_PM_LEN_FACTOR = 1f;
+    public static final float MIN_PM_LEN_FACTOR = 500f;
     /** Maximum length factor for proper motion vectors **/
-    public static final float MAX_PM_LEN_FACTOR = 50f;
+    public static final float MAX_PM_LEN_FACTOR = 30000f;
 
     /** Minimum angle where the LOD transitions start **/
     public static final float MIN_LOD_TRANS_ANGLE_DEG = 0f;

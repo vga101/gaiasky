@@ -7,10 +7,8 @@ import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.LruCache;
 import gaia.cu9.ari.gaiaorbit.util.coord.vsop87.VSOP87;
 import gaia.cu9.ari.gaiaorbit.util.coord.vsop87.iVSOP87;
-import gaia.cu9.ari.gaiaorbit.util.math.FastTrigonometry;
 import gaia.cu9.ari.gaiaorbit.util.math.ITrigonometry;
 import gaia.cu9.ari.gaiaorbit.util.math.MathManager;
-import gaia.cu9.ari.gaiaorbit.util.math.Trigonometry;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector2d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
@@ -83,12 +81,6 @@ public class AstroUtils {
 
     private static final Vector3d aux3 = new Vector3d();
     private static final Vector2d aux2 = new Vector2d();
-
-    /**
-     * TRIGONOMETRY FUNCTIONS
-     */
-    private static final FastTrigonometry fastTrigonometry = new FastTrigonometry();
-    private static final Trigonometry trigo = new Trigonometry();
 
     /**
      * Algorithm in "Astronomical Algorithms" book by Jean Meeus. Finds out the

@@ -110,7 +110,7 @@ public class Grid extends AbstractPositionEntity implements IModelRenderable, IA
      */
     @Override
     public void render(ModelBatch modelBatch, float alpha, double t) {
-        Gdx.gl.glLineWidth(1f * GlobalConf.SCALE_FACTOR);
+        Gdx.gl.glLineWidth(1.4f * GlobalConf.SCALE_FACTOR);
         mc.touch();
         mc.setTransparencyColor(alpha * cc[3] * opacity);
         modelBatch.render(mc.instance, mc.env);

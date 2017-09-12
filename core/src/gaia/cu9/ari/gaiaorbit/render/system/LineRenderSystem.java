@@ -98,13 +98,13 @@ public class LineRenderSystem extends ImmediateRenderSystem {
 
         // Outlines
         if (OUTLINES) {
-            Gdx.gl.glLineWidth(3f);
+            Gdx.gl.glLineWidth(3f * GlobalConf.SCALE_FACTOR);
             curr_outline.mesh.setVertices(curr_outline.vertices, 0, curr_outline.vertexIdx);
             curr_outline.mesh.render(shaderProgram, glType);
         }
 
         // Regular
-        Gdx.gl.glLineWidth(1f);
+        Gdx.gl.glLineWidth(1f * GlobalConf.SCALE_FACTOR);
         curr.mesh.setVertices(curr.vertices, 0, curr.vertexIdx);
         curr.mesh.render(shaderProgram, glType);
 
@@ -133,6 +133,10 @@ public class LineRenderSystem extends ImmediateRenderSystem {
         color(r, g, b, a);
         vertex((float) x1, (float) y1, (float) z1);
 
+    }
+
+    public void addLine(double x0, double y0, double z0, double x1, double y1, double z1, float r, float g, float b, float a, double width) {
+        addLine(x0, y0, z0, x1, y1, z1, r, g, b, a);
     }
 
     public void color_outline(float r, float g, float b, float a) {

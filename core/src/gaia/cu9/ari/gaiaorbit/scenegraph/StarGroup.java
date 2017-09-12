@@ -201,7 +201,11 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
     private static long idseq = 0;
     /** Star model **/
     private static ModelComponent mc;
+    // Model transfomr
     private static Matrix4 modelTransform;
+    // Width of lines for stars with/without radial veloctiy
+    private static double radVelLineWidth = 0.002;
+    private static double noRadVelLineWidth = 0.0006;
 
     /** Epoch as julian days **/
     private double epoch_jd = AstroUtils.JD_J2015_5;
@@ -681,7 +685,13 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
                 final double mumin = -80;
                 final double mumax = 80;
                 final double maxmin = mumax - mumin;
-                renderer.addLine(p1.x, p1.y, p1.z, p2.x, p2.y, p2.z, (float) ((star.mualpha() - mumin) / maxmin) * 0.8f + 0.2f, (float) ((star.mudelta() - mumin) / maxmin) * 0.8f + 0.2f, (float) (star.radvel()) * 0.8f + 0.2f, alpha * this.opacity);
+
+                // Color using orientation
+                float r = (float) ((star.mualpha() - mumin) / maxmin) * 0.8f + 0.2f;
+                float g = (float) ((star.mudelta() - mumin) / maxmin) * 0.8f + 0.2f;
+                float b = (float) (star.radvel()) * 0.8f + 0.2f;
+
+                renderer.addLine(p1.x, p1.y, p1.z, p2.x, p2.y, p2.z, r, g, b, alpha * this.opacity, star.radvel() != 0 ? radVelLineWidth : noRadVelLineWidth);
             }
         }
 

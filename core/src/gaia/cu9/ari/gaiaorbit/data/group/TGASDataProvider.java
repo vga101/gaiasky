@@ -58,7 +58,9 @@ public class TGASDataProvider extends AbstractStarGroupDataProvider {
         Pair<Map<String, Float>, Map<String, Integer>> extra = loadTYCBVHIP(btvtColorsFile);
         Map<Long, Double> radialVelocities = loadRadialVelocities(raveTgasFile);
 
+        int raveStars = 0;
         try {
+
             initLists();
 
             BufferedReader br = new BufferedReader(new InputStreamReader(is));
@@ -104,9 +106,6 @@ public class TGASDataProvider extends AbstractStarGroupDataProvider {
                         }
 
                         /** RA and DEC **/
-                        if (sourceid == 6777024360873583872l) {
-                            int abc = 3;
-                        }
                         double ra = Parser.parseDouble(tokens[1]);
                         double dec = Parser.parseDouble(tokens[2]);
                         Vector3d pos = Coordinates.sphericalToCartesian(Math.toRadians(ra), Math.toRadians(dec), dist, new Vector3d());
@@ -116,7 +115,11 @@ public class TGASDataProvider extends AbstractStarGroupDataProvider {
                         double mudelta = Parser.parseDouble(tokens[6]);
 
                         /** RADIAL VELOCITY in km/s **/
-                        double radvel = radialVelocities != null && radialVelocities.containsKey(sourceid) ? radialVelocities.get(sourceid) : 0;
+                        double radvel = 0;
+                        if (radialVelocities != null && radialVelocities.containsKey(sourceid)) {
+                            radvel = radialVelocities.get(sourceid);
+                            raveStars++;
+                        }
 
                         /**
                          * PROPER MOTION VECTOR = (pos+dx) - pos - [units/yr]
@@ -174,6 +177,8 @@ public class TGASDataProvider extends AbstractStarGroupDataProvider {
             list = null;
         }
 
+        Logger.info("Found " + raveStars + " with RAVE radial velocities in TGAS");
+
         return list;
     }
 
@@ -203,7 +208,9 @@ public class TGASDataProvider extends AbstractStarGroupDataProvider {
                 String[] tokens = line.split(",");
                 Long sourceid = Parser.parseLong(tokens[0]);
                 Double radvel = Parser.parseDouble(tokens[1]);
-                result.put(sourceid, radvel);
+                if (!result.containsKey(sourceid)) {
+                    result.put(sourceid, radvel);
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
