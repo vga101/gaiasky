@@ -526,7 +526,7 @@ public class AstroUtils {
 
     /**
      * Returns the elapsed milliseconds since the given julian date jd until the
-     * given date. Can be negavite.
+     * given date. Can be negative.
      * 
      * @param date
      *            The date
