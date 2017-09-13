@@ -34,6 +34,13 @@ public enum Events {
     FOV_CHANGED_CMD,
     /** Contains the new camera speed **/
     CAMERA_SPEED_CMD,
+
+    /**
+     * Contains a boolean with the cinematic mode state (on/off) and a boolean
+     * indicating if this comes from the interface
+     **/
+    CAMERA_CINEMATIC_CMD,
+
     /**
      * Contains the new camera rotation speed and a boolean indicating if this
      * comes from the interface

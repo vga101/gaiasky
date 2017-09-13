@@ -84,91 +84,71 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
 
     @Override
     public void activateRealTimeFrame() {
-        Gdx.app.postRunnable(new Runnable() {
-            @Override
-            public void run() {
-                em.post(Events.EVENT_TIME_FRAME_CMD, TimeFrame.REAL_TIME);
-            }
+        Gdx.app.postRunnable(() -> {
+            em.post(Events.EVENT_TIME_FRAME_CMD, TimeFrame.REAL_TIME);
         });
     }
 
     @Override
     public void activateSimulationTimeFrame() {
-        Gdx.app.postRunnable(new Runnable() {
-            @Override
-            public void run() {
-                em.post(Events.EVENT_TIME_FRAME_CMD, TimeFrame.SIMULATION_TIME);
-            }
+        Gdx.app.postRunnable(() -> {
+            em.post(Events.EVENT_TIME_FRAME_CMD, TimeFrame.SIMULATION_TIME);
         });
     }
 
     @Override
     public void setHeadlineMessage(final String headline) {
-        Gdx.app.postRunnable(new Runnable() {
-            @Override
-            public void run() {
-                em.post(Events.POST_HEADLINE_MESSAGE, headline);
-            }
+        Gdx.app.postRunnable(() -> {
+            em.post(Events.POST_HEADLINE_MESSAGE, headline);
         });
     }
 
     @Override
     public void setSubheadMessage(final String subhead) {
-        Gdx.app.postRunnable(new Runnable() {
-            @Override
-            public void run() {
-                em.post(Events.POST_SUBHEAD_MESSAGE, subhead);
-            }
+        Gdx.app.postRunnable(() -> {
+            em.post(Events.POST_SUBHEAD_MESSAGE, subhead);
         });
     }
 
     @Override
     public void clearHeadlineMessage() {
-        Gdx.app.postRunnable(new Runnable() {
-            @Override
-            public void run() {
-                em.post(Events.CLEAR_HEADLINE_MESSAGE);
-            }
+        Gdx.app.postRunnable(() -> {
+            em.post(Events.CLEAR_HEADLINE_MESSAGE);
         });
     }
 
     @Override
     public void clearSubheadMessage() {
-        Gdx.app.postRunnable(new Runnable() {
-            @Override
-            public void run() {
-                em.post(Events.CLEAR_SUBHEAD_MESSAGE);
-            }
+        Gdx.app.postRunnable(() -> {
+            em.post(Events.CLEAR_SUBHEAD_MESSAGE);
         });
     }
 
     @Override
     public void clearAllMessages() {
-        Gdx.app.postRunnable(new Runnable() {
-            @Override
-            public void run() {
-                em.post(Events.CLEAR_MESSAGES);
-            }
+        Gdx.app.postRunnable(() -> {
+            em.post(Events.CLEAR_MESSAGES);
         });
     }
 
     @Override
     public void disableInput() {
-        Gdx.app.postRunnable(new Runnable() {
-            @Override
-            public void run() {
-                em.post(Events.INPUT_ENABLED_CMD, false);
-            }
+        Gdx.app.postRunnable(() -> {
+            em.post(Events.INPUT_ENABLED_CMD, false);
         });
     }
 
     @Override
     public void enableInput() {
-        Gdx.app.postRunnable(new Runnable() {
-            @Override
-            public void run() {
-                em.post(Events.INPUT_ENABLED_CMD, true);
-            }
+        Gdx.app.postRunnable(() -> {
+            em.post(Events.INPUT_ENABLED_CMD, true);
+        });
+    }
+
+    @Override
+    public void setCinematicCamera(boolean cinematic) {
+        Gdx.app.postRunnable(() -> {
+            em.post(Events.CAMERA_CINEMATIC_CMD, cinematic, false);
         });
     }
 

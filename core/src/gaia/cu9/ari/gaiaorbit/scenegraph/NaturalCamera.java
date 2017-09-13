@@ -845,6 +845,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
         }
         desired.nor();
         double angl = desired.angle(direction);
+        //boolean samedir = aux1.set(desired).add(direction).len2() > Math.max(desired.len2(), direction.len2());
         if (angl > 0.5) {
             // Add desired to direction with given turn velocity (v*dt)
             desired.scl(turnVelocity * dt);
@@ -855,7 +856,6 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
             up.set(aux1).crs(direction).nor();
             facingFocus = false;
         } else {
-
             facingFocus = true;
         }
     }
@@ -892,6 +892,8 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
         if (focus != null) {
             this.focus = focus;
             this.focus.makeFocus();
+            // Reset facing focus
+            this.facingFocus = false;
             // Create event to notify focus change
             EventManager.instance.post(Events.FOCUS_CHANGED, focus);
         }

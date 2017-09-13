@@ -225,6 +225,14 @@ public interface IScriptingInterface {
     public void enableInput();
 
     /**
+     * Enables or disables the cinematic camera mode.
+     * 
+     * @param cinematic
+     *            Whether to enable or disable the cinematic mode.
+     */
+    public void setCinematicCamera(boolean cinematic);
+
+    /**
      * Sets the camera in focus mode with the focus object that bears the given
      * name. It returns immediately, so it does not wait for the camera
      * direction to point to the focus.

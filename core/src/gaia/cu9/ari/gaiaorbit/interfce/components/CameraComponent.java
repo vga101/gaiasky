@@ -47,7 +47,7 @@ public class CameraComponent extends GuiComponent implements IObserver {
 
     public CameraComponent(Skin skin, Stage stage) {
         super(skin, stage);
-        EventManager.instance.subscribe(this, Events.CAMERA_MODE_CMD, Events.ROTATION_SPEED_CMD, Events.TURNING_SPEED_CMD, Events.CAMERA_SPEED_CMD, Events.SPEED_LIMIT_CMD, Events.TOGGLE_STEREOSCOPIC_INFO, Events.FOV_CHANGE_NOTIFICATION, Events.CUBEMAP360_CMD);
+        EventManager.instance.subscribe(this, Events.CAMERA_MODE_CMD, Events.ROTATION_SPEED_CMD, Events.TURNING_SPEED_CMD, Events.CAMERA_SPEED_CMD, Events.SPEED_LIMIT_CMD, Events.TOGGLE_STEREOSCOPIC_INFO, Events.FOV_CHANGE_NOTIFICATION, Events.CUBEMAP360_CMD, Events.CAMERA_CINEMATIC_CMD);
     }
 
     @Override
@@ -64,7 +64,7 @@ public class CameraComponent extends GuiComponent implements IObserver {
             @Override
             public boolean handle(Event event) {
                 if (event instanceof ChangeEvent) {
-                    GlobalConf.scene.CINEMATIC_CAMERA = cinematic.isChecked();
+                    EventManager.instance.post(Events.CAMERA_CINEMATIC_CMD, cinematic.isChecked(), true);
                     return true;
                 }
                 return false;
@@ -383,6 +383,16 @@ public class CameraComponent extends GuiComponent implements IObserver {
     @Override
     public void notify(Events event, Object... data) {
         switch (event) {
+        case CAMERA_CINEMATIC_CMD:
+
+            boolean gui = (Boolean) data[1];
+            if (!gui) {
+                cinematic.setProgrammaticChangeEvents(false);
+                cinematic.setChecked((Boolean) data[0]);
+                cinematic.setProgrammaticChangeEvents(true);
+            }
+
+            break;
         case CAMERA_MODE_CMD:
             // Update camera mode selection
             CameraMode mode = (CameraMode) data[0];
