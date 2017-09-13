@@ -21,7 +21,7 @@ import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
  */
 public class AstroUtils {
 
-    /** Julian date of J2000 epoch **/
+    /** Julian date of J2000 epoch (julian days since January 1, 4713 BCE) **/
     static final public double JD_J2000 = 2451545.; // Julian Date of J2000
     /**
      * Julian date of reference epoch J2015.0 = JD2455197.5 =
@@ -534,8 +534,8 @@ public class AstroUtils {
      *            The reference epoch in julian days
      * @return The elapsed milliseconds
      */
-    public static double getMsSince(Date date, double jd) {
-        return (getJulianDateCache(date) - jd) * DAY_TO_MS;
+    public static double getMsSince(Date date, double epoch_jd) {
+        return (getJulianDateCache(date) - epoch_jd) * DAY_TO_MS;
     }
 
     /**

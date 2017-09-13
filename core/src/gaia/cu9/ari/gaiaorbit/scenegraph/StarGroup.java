@@ -207,7 +207,7 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
     private static double radVelLineWidth = 0.002;
     private static double noRadVelLineWidth = 0.0006;
 
-    /** Epoch as julian days **/
+    /** Epoch in julian days **/
     private double epoch_jd = AstroUtils.JD_J2015_5;
     /** Current computed epoch time **/
     private double currDeltaYears = 0;
@@ -972,6 +972,25 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
     @Override
     protected double getDeltaYears() {
         return currDeltaYears;
+    }
+
+    /**
+     * Sets the epoch to use for the stars in this group.
+     * 
+     * @param epochJd
+     *            The epoch in julian days (days since January 1, 4713 BCE)
+     */
+    public void setEpoch(Double epochJd) {
+        this.epoch_jd = epochJd;
+    }
+
+    /**
+     * Returns the epoch in Julian Days used for the stars in this group.
+     * 
+     * @return
+     */
+    public Double getEpoch() {
+        return this.epoch_jd;
     }
 
 }
