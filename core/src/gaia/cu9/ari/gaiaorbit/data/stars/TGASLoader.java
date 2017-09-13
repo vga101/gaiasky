@@ -163,8 +163,9 @@ public class TGASLoader extends AbstractCatalogLoader implements ISceneGraphLoad
                 Vector3d pos = Coordinates.sphericalToCartesian(Math.toRadians(ra), Math.toRadians(dec), dist, new Vector3d());
 
                 /** PROPER MOTIONS in mas/yr **/
-                double mualpha = Parser.parseDouble(st[indices[MUALPHA]].trim()) * AstroUtils.MILLARCSEC_TO_DEG;
+                double mualphastar = Parser.parseDouble(st[indices[MUALPHA]].trim()) * AstroUtils.MILLARCSEC_TO_DEG;
                 double mudelta = Parser.parseDouble(st[indices[MUDELTA]].trim()) * AstroUtils.MILLARCSEC_TO_DEG;
+                double mualpha = mualphastar / Math.cos(Math.toRadians(dec));
 
                 /** RADIAL VELOCITY in km/s, convert to u/ur **/
                 double radvel = radialVelocities != null && radialVelocities.containsKey(sourceid) ? radialVelocities.get(sourceid) : 0;

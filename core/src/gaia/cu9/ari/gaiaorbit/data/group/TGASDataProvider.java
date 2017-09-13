@@ -111,8 +111,9 @@ public class TGASDataProvider extends AbstractStarGroupDataProvider {
                         Vector3d pos = Coordinates.sphericalToCartesian(Math.toRadians(ra), Math.toRadians(dec), dist, new Vector3d());
 
                         /** PROPER MOTIONS in mas/yr **/
-                        double mualpha = Parser.parseDouble(tokens[5]);
+                        double mualphastar = Parser.parseDouble(tokens[5]);
                         double mudelta = Parser.parseDouble(tokens[6]);
+                        double mualpha = mualphastar / Math.cos(Math.toRadians(dec));
 
                         /** RADIAL VELOCITY in km/s **/
                         double radvel = 0;
@@ -153,7 +154,7 @@ public class TGASDataProvider extends AbstractStarGroupDataProvider {
                         point[StarBean.I_PMX] = pm.x;
                         point[StarBean.I_PMY] = pm.y;
                         point[StarBean.I_PMZ] = pm.z;
-                        point[StarBean.I_MUALPHA] = mualpha;
+                        point[StarBean.I_MUALPHA] = mualphastar;
                         point[StarBean.I_MUDELTA] = mudelta;
                         point[StarBean.I_RADVEL] = radvel;
                         point[StarBean.I_COL] = col;
@@ -177,7 +178,8 @@ public class TGASDataProvider extends AbstractStarGroupDataProvider {
             list = null;
         }
 
-        Logger.info("Found " + raveStars + " with RAVE radial velocities in TGAS");
+        if (radialVelocities != null)
+            Logger.info(TGASDataProvider.class.getSimpleName(), "Found " + raveStars + " with RAVE radial velocities in TGAS");
 
         return list;
     }

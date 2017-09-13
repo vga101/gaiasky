@@ -154,8 +154,9 @@ public class DR2Loader extends AbstractCatalogLoader implements ISceneGraphLoade
                 Vector3d pos = Coordinates.sphericalToCartesian(Math.toRadians(ra), Math.toRadians(dec), dist, new Vector3d());
 
                 /** PROPER MOTIONS in mas/yr **/
-                double mualpha = Parser.parseDouble(tokens[indices[MUALPHA]].trim()) * AstroUtils.MILLARCSEC_TO_DEG;
+                double mualphastar = Parser.parseDouble(tokens[indices[MUALPHA]].trim()) * AstroUtils.MILLARCSEC_TO_DEG;
                 double mudelta = Parser.parseDouble(tokens[indices[MUDELTA]].trim()) * AstroUtils.MILLARCSEC_TO_DEG;
+                double mualpha = mualphastar / Math.cos(Math.toRadians(dec));
 
                 /** RADIAL VELOCITY in km/s, convert to u/yr **/
                 double radvel = 0;
