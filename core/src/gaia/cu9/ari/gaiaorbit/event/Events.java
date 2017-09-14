@@ -338,6 +338,10 @@ public enum Events {
      **/
     DISPLAY_GUI_CMD,
     /**
+     * Informs the UI theme has been reloaded. Contains the new skin.
+     */
+    UI_THEME_RELOAD_INFO,
+    /**
      * Toggles the pause of the update process. Contains the localised name.
      **/
     TOGGLE_UPDATEPAUSE,

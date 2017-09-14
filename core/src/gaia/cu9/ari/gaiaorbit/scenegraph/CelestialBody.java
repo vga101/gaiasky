@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Vector2;
@@ -18,6 +17,7 @@ import gaia.cu9.ari.gaiaorbit.render.IModelRenderable;
 import gaia.cu9.ari.gaiaorbit.render.IQuadRenderable;
 import gaia.cu9.ari.gaiaorbit.render.PostProcessorFactory;
 import gaia.cu9.ari.gaiaorbit.render.RenderingContext;
+import gaia.cu9.ari.gaiaorbit.render.system.FontRenderSystem;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.RotationComponent;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
@@ -161,9 +161,9 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
      * Label rendering.
      */
     @Override
-    public void render(SpriteBatch batch, ShaderProgram shader, BitmapFont font3d, BitmapFont font2d, RenderingContext rc, ICamera camera) {
+    public void render(SpriteBatch batch, ShaderProgram shader, FontRenderSystem sys, RenderingContext rc, ICamera camera) {
         if (camera.getCurrent() instanceof FovCamera) {
-            render2DLabel(batch, shader, rc, font2d, camera, text(), pos);
+            render2DLabel(batch, shader, rc, sys.font2d, camera, text(), pos);
         } else {
             // render2DLabel(batch, shader, font, camera, text(),
             // transform.position);
@@ -175,7 +175,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
             shader.setUniformf("u_thOverFactor", getThOverFactor(camera));
             shader.setUniformf("u_thOverFactorScl", getThOverFactorScl());
 
-            render3DLabel(batch, shader, font3d, camera, rc, text(), pos, textScale(), textSize(), textColour());
+            render3DLabel(batch, shader, sys.font3d, camera, rc, text(), pos, textScale(), textSize(), textColour());
         }
 
     }

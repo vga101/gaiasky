@@ -24,7 +24,7 @@ public class FontRenderSystem extends AbstractRenderSystem {
 
     private SpriteBatch batch;
     private ShaderProgram shaderProgram;
-    private BitmapFont font3d, font2d;
+    public BitmapFont font3d, font2d, fontTitles;
     private Comparator<IRenderable> comp;
 
     public FontRenderSystem(RenderGroup rg, int priority, float[] alphas, SpriteBatch batch) {
@@ -48,6 +48,11 @@ public class FontRenderSystem extends AbstractRenderSystem {
         Texture texture2d = new Texture(Gdx.files.internal("font/font2d.png"), true);
         texture2d.setFilter(TextureFilter.Linear, TextureFilter.Linear);
         font2d = new BitmapFont(Gdx.files.internal("font/font2d.fnt"), new TextureRegion(texture2d), false);
+
+        // Title font
+        Texture textureTitles = new Texture(Gdx.files.internal("font/font-titles.png"), true);
+        textureTitles.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+        fontTitles = new BitmapFont(Gdx.files.internal("font/font-titles.fnt"), new TextureRegion(textureTitles), false);
 
     }
 
@@ -77,7 +82,7 @@ public class FontRenderSystem extends AbstractRenderSystem {
                 // Font opacity multiplier, take into account element opacity
                 shaderProgram.setUniformf("u_opacity", 0.75f * lr.getOpacity());
 
-                s.render(batch, shaderProgram, font3d, font2d, rc, camera);
+                s.render(batch, shaderProgram, this, rc, camera);
             }
         }
         batch.end();

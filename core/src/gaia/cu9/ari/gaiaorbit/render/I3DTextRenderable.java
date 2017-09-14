@@ -1,9 +1,9 @@
 package gaia.cu9.ari.gaiaorbit.render;
 
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 
+import gaia.cu9.ari.gaiaorbit.render.system.FontRenderSystem;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
@@ -28,12 +28,11 @@ public interface I3DTextRenderable extends IRenderable {
      * 
      * @param batch
      * @param shader
-     * @param font3d
-     * @param font2d
+     * @param sys
      * @param rc
      * @param camera
      */
-    public void render(SpriteBatch batch, ShaderProgram shader, BitmapFont font3d, BitmapFont font2d, RenderingContext rc, ICamera camera);
+    public void render(SpriteBatch batch, ShaderProgram shader, FontRenderSystem sys, RenderingContext rc, ICamera camera);
 
     /**
      * Returns an array with the text colour in the fashion [r, g, b, a].

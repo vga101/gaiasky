@@ -18,7 +18,6 @@ import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.Material;
@@ -43,6 +42,7 @@ import gaia.cu9.ari.gaiaorbit.render.ILineRenderable;
 import gaia.cu9.ari.gaiaorbit.render.IModelRenderable;
 import gaia.cu9.ari.gaiaorbit.render.IQuadRenderable;
 import gaia.cu9.ari.gaiaorbit.render.RenderingContext;
+import gaia.cu9.ari.gaiaorbit.render.system.FontRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.LineRenderSystem;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
@@ -701,7 +701,7 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
      * Label rendering
      */
     @Override
-    public void render(SpriteBatch batch, ShaderProgram shader, BitmapFont font3d, BitmapFont font2d, RenderingContext rc, ICamera camera) {
+    public void render(SpriteBatch batch, ShaderProgram shader, FontRenderSystem sys, RenderingContext rc, ICamera camera) {
         float thOverFactor = (float) (GlobalConf.scene.STAR_THRESHOLD_POINT / GlobalConf.scene.LABEL_NUMBER_FACTOR / camera.getFovFactor());
         float textScale = 1f;
         for (int i = 0; i < N_CLOSEUP_STARS; i++) {
@@ -721,7 +721,7 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
                 float textSize = (float) FastMath.tanh(viewAngle) * distToCamera * 1e5f;
                 float alpha = Math.min((float) FastMath.atan(textSize / distToCamera), 1.e-3f);
                 textSize = (float) FastMath.tan(alpha) * distToCamera;
-                render3DLabel(batch, shader, font3d, camera, rc, star.name, lpos, textScale, textSize, textColour());
+                render3DLabel(batch, shader, sys.font3d, camera, rc, star.name, lpos, textScale, textSize, textColour());
 
             }
         }

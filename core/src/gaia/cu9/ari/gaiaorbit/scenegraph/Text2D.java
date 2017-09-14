@@ -1,18 +1,24 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph;
 
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
+import gaia.cu9.ari.gaiaorbit.event.EventManager;
+import gaia.cu9.ari.gaiaorbit.event.Events;
+import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.render.I3DTextRenderable;
 import gaia.cu9.ari.gaiaorbit.render.IShapeRenderable;
 import gaia.cu9.ari.gaiaorbit.render.RenderingContext;
+import gaia.cu9.ari.gaiaorbit.render.system.FontRenderSystem;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
+import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
-public class Text2D extends FadeNode implements I3DTextRenderable, IShapeRenderable {
+public class Text2D extends FadeNode implements I3DTextRenderable, IShapeRenderable, IObserver {
 
     private float scale = 1f;
     private int align;
@@ -25,6 +31,12 @@ public class Text2D extends FadeNode implements I3DTextRenderable, IShapeRendera
 
     @Override
     public void initialize() {
+        EventManager.instance.subscribe(this, Events.UI_THEME_RELOAD_INFO);
+
+        LabelStyle headerStyle = GlobalResources.skin.get("header", LabelStyle.class);
+        labelColour[0] = headerStyle.fontColor.r;
+        labelColour[1] = headerStyle.fontColor.g;
+        labelColour[2] = headerStyle.fontColor.b;
     }
 
     public void updateLocal(ITimeFrameProvider time, ICamera camera) {
@@ -68,25 +80,29 @@ public class Text2D extends FadeNode implements I3DTextRenderable, IShapeRendera
 
     @Override
     public void render(ShapeRenderer shapeRenderer, RenderingContext rc, float alpha, ICamera camera) {
-        float lenw = 0.4f * scale * rc.w();
-        float x0 = (rc.w() - lenw) / 2f;
-        float x1 = x0 + lenw;
+        float lenwtop = 0.5f * scale * rc.w();
+        float x0top = (rc.w() - lenwtop) / 2f;
+        float x1top = x0top + lenwtop;
 
-        float ytop = (60f + 10f * scale) * GlobalConf.SCALE_FACTOR;
-        float ybottom = (60f - lineHeight * scale - 10f * scale) * GlobalConf.SCALE_FACTOR;
+        float lenwbottom = 0.6f * scale * rc.w();
+        float x0bottom = (rc.w() - lenwbottom) / 2f;
+        float x1bottom = x0bottom + lenwbottom;
+
+        float ytop = (60f + 15f * scale) * GlobalConf.SCALE_FACTOR;
+        float ybottom = (60f - lineHeight * scale + 10f * scale) * GlobalConf.SCALE_FACTOR;
 
         // Resize batch
         shapeRenderer.setProjectionMatrix(shapeRenderer.getProjectionMatrix().setToOrtho2D(0, 0, rc.w(), rc.h()));
 
         // Lines
         shapeRenderer.setColor(1f, 1f, 1f, 0.7f * opacity * alpha);
-        shapeRenderer.line(x0, ytop, x1, ytop);
-        shapeRenderer.line(x0, ybottom, x1, ybottom);
+        shapeRenderer.line(x0top, ytop, x1top, ytop);
+        shapeRenderer.line(x0bottom, ybottom, x1bottom, ybottom);
 
     }
 
     @Override
-    public void render(SpriteBatch batch, ShaderProgram shader, BitmapFont font3d, BitmapFont font2d, RenderingContext rc, ICamera camera) {
+    public void render(SpriteBatch batch, ShaderProgram shader, FontRenderSystem sys, RenderingContext rc, ICamera camera) {
         shader.setUniformf("u_viewAngle", (float) viewAngleApparent);
         shader.setUniformf("u_viewAnglePow", 1f);
         shader.setUniformf("u_thOverFactor", 1f);
@@ -96,9 +112,9 @@ public class Text2D extends FadeNode implements I3DTextRenderable, IShapeRendera
         batch.setProjectionMatrix(batch.getProjectionMatrix().setToOrtho2D(0, 0, rc.w(), rc.h()));
 
         // Text
-        render2DLabel(batch, shader, rc, font3d, camera, text(), 0, 60f * GlobalConf.SCALE_FACTOR, scale * GlobalConf.SCALE_FACTOR, align);
+        render2DLabel(batch, shader, rc, sys.fontTitles, camera, text(), 0, 60f * GlobalConf.SCALE_FACTOR, scale * GlobalConf.SCALE_FACTOR, align);
 
-        lineHeight = font3d.getLineHeight();
+        lineHeight = sys.fontTitles.getLineHeight();
     }
 
     @Override
@@ -149,6 +165,23 @@ public class Text2D extends FadeNode implements I3DTextRenderable, IShapeRendera
 
     public void setLines(String linesText) {
         lines = Boolean.parseBoolean(linesText);
+    }
+
+    @Override
+    public void notify(Events event, Object... data) {
+        switch (event) {
+        case UI_THEME_RELOAD_INFO:
+            Skin skin = (Skin) data[0];
+            // Get new theme color and put it in the label colour
+            LabelStyle headerStyle = skin.get("header", LabelStyle.class);
+            labelColour[0] = headerStyle.fontColor.r;
+            labelColour[1] = headerStyle.fontColor.g;
+            labelColour[2] = headerStyle.fontColor.b;
+            break;
+        default:
+            break;
+        }
+
     }
 
 }

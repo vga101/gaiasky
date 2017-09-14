@@ -2,7 +2,6 @@ package gaia.cu9.ari.gaiaorbit.scenegraph;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Matrix4;
@@ -12,6 +11,7 @@ import com.badlogic.gdx.math.Vector3;
 import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.render.I3DTextRenderable;
 import gaia.cu9.ari.gaiaorbit.render.RenderingContext;
+import gaia.cu9.ari.gaiaorbit.render.system.FontRenderSystem;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
@@ -109,7 +109,7 @@ public class Loc extends AbstractPositionEntity implements I3DTextRenderable {
      * Label rendering.
      */
     @Override
-    public void render(SpriteBatch batch, ShaderProgram shader, BitmapFont font3d, BitmapFont font2d, RenderingContext rc, ICamera camera) {
+    public void render(SpriteBatch batch, ShaderProgram shader, FontRenderSystem sys, RenderingContext rc, ICamera camera) {
 
         Vector3d pos = aux3d1.get();
         textPosition(camera, pos);
@@ -117,7 +117,7 @@ public class Loc extends AbstractPositionEntity implements I3DTextRenderable {
         shader.setUniformf("u_viewAnglePow", 1f);
         shader.setUniformf("u_thOverFactor", ((ModelBody) parent).locThOverFactor);
         shader.setUniformf("u_viewAnglePow", 1f);
-        render3DLabel(batch, shader, font3d, camera, rc, text(), pos, textScale(), textSize(), textColour());
+        render3DLabel(batch, shader, sys.font3d, camera, rc, text(), pos, textScale(), textSize(), textColour());
     }
 
     @Override
