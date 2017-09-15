@@ -173,6 +173,20 @@
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.FadeNode",
 	},
 	
+	{
+		"name" : "MWSC",
+		"position" : [0.0, 0.0, 0.0],
+	
+		"ct" : Clusters,
+	
+ 	    // Fade distances, in parsecs
+ 	    "fadeout" : [100e2, 500e2],
+		
+	
+		"parent" : "Universe", 
+		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.FadeNode",
+	},
+	
  	{
  	    "namekey" : "title.solarsystem",
  	    "position" : [0.0, 0.0, 0.0],

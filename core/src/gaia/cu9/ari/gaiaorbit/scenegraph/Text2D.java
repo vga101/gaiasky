@@ -101,6 +101,9 @@ public class Text2D extends FadeNode implements I3DTextRenderable, IShapeRendera
 
     }
 
+    /**
+     * Label rendering
+     */
     @Override
     public void render(SpriteBatch batch, ShaderProgram shader, FontRenderSystem sys, RenderingContext rc, ICamera camera) {
         shader.setUniformf("u_viewAngle", (float) viewAngleApparent);

@@ -558,7 +558,7 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
     @Override
     protected void addToRenderLists(ICamera camera) {
         addToRender(this, RenderGroup.STAR_GROUP);
-        addToRender(this, RenderGroup.SHADER_STAR);
+        addToRender(this, RenderGroup.BILLBOARD_STAR);
         addToRender(this, RenderGroup.LINE);
         addToRender(this, RenderGroup.MODEL_S);
         if (renderText()) {
@@ -721,7 +721,7 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
                 float textSize = (float) FastMath.tanh(viewAngle) * distToCamera * 1e5f;
                 float alpha = Math.min((float) FastMath.atan(textSize / distToCamera), 1.e-3f);
                 textSize = (float) FastMath.tan(alpha) * distToCamera;
-                render3DLabel(batch, shader, sys.font3d, camera, rc, star.name, lpos, textScale, textSize, textColour());
+                render3DLabel(batch, shader, sys.font3d, camera, rc, star.name, lpos, textScale, textSize);
 
             }
         }

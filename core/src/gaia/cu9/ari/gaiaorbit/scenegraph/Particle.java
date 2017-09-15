@@ -22,6 +22,7 @@ import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.color.ColourUtils;
 import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadIndexer;
+import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 import net.jafama.FastMath;
@@ -213,12 +214,10 @@ public class Particle extends CelestialBody implements IStarFocus, IPointRendera
         if (appmag <= GlobalConf.runtime.LIMIT_MAG_RUNTIME) {
             this.opacity = opacity;
             transform.position.set(parentTransform.position).add(pos);
-            // if (hasPm) {
-            // Vector3 pmv = new Vector3(pm).scl((float)
-            // Constants.S_TO_Y).scl((float)
-            // AstroUtils.getMsSinceJ2015(time.getTime()) / 1000f);
-            // transform.position.add(pmv);
-            // }
+            if (hasPm) {
+                Vector3d pmv = aux3d1.get().set(pm).scl(AstroUtils.getMsSince(time.getTime(), AstroUtils.JD_J2015_5) * Constants.MS_TO_Y);
+                transform.position.add(pmv);
+            }
             distToCamera = transform.position.len();
 
             if (!copy) {
@@ -251,7 +250,7 @@ public class Particle extends CelestialBody implements IStarFocus, IPointRendera
         } else {
 
             if (viewAngleApparent >= thpointTimesFovfactor) {
-                addToRender(this, RenderGroup.SHADER_STAR);
+                addToRender(this, RenderGroup.BILLBOARD_STAR);
             }
             if (viewAngleApparent >= thpointTimesFovfactor / GlobalConf.scene.PM_NUM_FACTOR && this.hasPm) {
                 addToRender(this, RenderGroup.LINE);

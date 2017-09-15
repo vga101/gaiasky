@@ -375,12 +375,12 @@ public abstract class AbstractPositionEntity extends SceneGraphNode {
         DecalUtils.drawFont2D(font, batch, rc, label, x, y, scale, align);
     }
 
-    protected void render3DLabel(SpriteBatch batch, ShaderProgram shader, BitmapFont font, ICamera camera, RenderingContext rc, String label, Vector3d pos, float scale, float size, float[] colour) {
+    protected void render3DLabel(SpriteBatch batch, ShaderProgram shader, BitmapFont font, ICamera camera, RenderingContext rc, String label, Vector3d pos, float scale, float size) {
         // The smoothing scale must be set according to the distance
         shader.setUniformf("u_scale", scale / camera.getFovFactor());
 
         double len = pos.len();
-        Vector3d p = pos.clamp(0, len - size);
+        pos.clamp(0, len - size);
 
         // Enable or disable blending
         ((I3DTextRenderable) this).textDepthBuffer();
@@ -389,14 +389,13 @@ public abstract class AbstractPositionEntity extends SceneGraphNode {
         if (rc.cubemapSide == CubemapSide.SIDE_UP || rc.cubemapSide == CubemapSide.SIDE_DOWN) {
             Vector3 v1 = aux3f1.get();
             Vector3 v2 = aux3f2.get();
-            camera.getCamera().project(v1.set((float) p.x, (float) p.y, (float) p.z));
+            camera.getCamera().project(v1.set((float) pos.x, (float) pos.y, (float) pos.z));
             v1.z = 0;
             v2.set(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2, 0);
             rot = GlobalResources.angle2d(v1, v2) + (rc.cubemapSide == CubemapSide.SIDE_UP ? 90 : -90);
         }
 
-        //font.setColor(colour[0], colour[1], colour[2], 1f);
-        DecalUtils.drawFont3D(font, batch, label, (float) p.x, (float) p.y, (float) p.z, size, rot, camera.getCamera(), true);
+        DecalUtils.drawFont3D(font, batch, label, (float) pos.x, (float) pos.y, (float) pos.z, size, rot, camera.getCamera(), true);
     }
 
     public void setCoordinates(IBodyCoordinates coord) {

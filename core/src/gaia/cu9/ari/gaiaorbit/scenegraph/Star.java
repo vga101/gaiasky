@@ -252,10 +252,10 @@ public class Star extends Particle {
         if (camera.getCurrent() instanceof FovCamera) {
             // Render as point, do nothing
             if (visByCam)
-                addToRender(this, RenderGroup.SHADER_STAR);
+                addToRender(this, RenderGroup.BILLBOARD_STAR);
         } else {
             if (viewAngleApparent >= thpointTimesFovfactor && visByCam) {
-                addToRender(this, RenderGroup.SHADER_STAR);
+                addToRender(this, RenderGroup.BILLBOARD_STAR);
                 if (distToCamera < modelDistance) {
                     camera.checkClosest(this);
                     addToRender(this, RenderGroup.MODEL_S);

@@ -161,7 +161,7 @@ public class DR2Loader extends AbstractCatalogLoader implements ISceneGraphLoade
                 /** RADIAL VELOCITY in km/s, convert to u/yr **/
                 double radvel = 0;
                 if (indices[RADVEL] >= 0) {
-                    radvel = Parser.parseDouble(tokens[indices[RADVEL]].trim());
+                    radvel = tokens[indices[RADVEL]].isEmpty() ? 0 : Parser.parseDouble(tokens[indices[RADVEL]].trim());
                 }
 
                 /** PROPER MOTION VECTOR = (pos+dx) - pos **/

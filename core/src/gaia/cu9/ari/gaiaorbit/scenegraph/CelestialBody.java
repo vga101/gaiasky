@@ -116,7 +116,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
     }
 
     /**
-     * Shader render, for planets and stars.
+     * Billboard quad render, for planets and stars.
      */
     @Override
     public void render(ShaderProgram shader, float alpha, boolean colorTransit, Mesh mesh, ICamera camera) {
@@ -175,7 +175,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
             shader.setUniformf("u_thOverFactor", getThOverFactor(camera));
             shader.setUniformf("u_thOverFactorScl", getThOverFactorScl());
 
-            render3DLabel(batch, shader, sys.font3d, camera, rc, text(), pos, textScale(), textSize(), textColour());
+            render3DLabel(batch, shader, sys.font3d, camera, rc, text(), pos, textScale(), textSize());
         }
 
     }
@@ -355,7 +355,6 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
         aux.add(cam.getUp()).nor().scl(dist);
 
         out.add(aux);
-
     }
 
     @Override

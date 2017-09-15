@@ -140,8 +140,8 @@ public class DecalUtils {
         aux1.set(batch.getProjectionMatrix());
 
         batch.getProjectionMatrix().setToOrtho2D(0, 0, rc.w(), rc.h());
-
         font.getData().setScale(scale);
+
         if (align > 0) {
             font.draw(batch, text, x, y, rc.w(), align, false);
         } else {

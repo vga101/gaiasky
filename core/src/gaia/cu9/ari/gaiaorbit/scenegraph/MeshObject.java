@@ -130,6 +130,9 @@ public class MeshObject extends FadeNode implements IModelRenderable, I3DTextRen
 
     }
 
+    /**
+     * Model rendering
+     */
     @Override
     public void render(ModelBatch modelBatch, float alpha, double t) {
         if (mc != null) {
@@ -170,14 +173,18 @@ public class MeshObject extends FadeNode implements IModelRenderable, I3DTextRen
         return name != null && GaiaSky.instance.isOn(ComponentType.Labels) && this.opacity > 0;
     }
 
+    /**
+     * Label rendering
+     */
     @Override
     public void render(SpriteBatch batch, ShaderProgram shader, FontRenderSystem sys, RenderingContext rc, ICamera camera) {
         Vector3d pos = aux3d1.get();
         textPosition(camera, pos);
         shader.setUniformf("u_viewAngle", 90f);
+        shader.setUniformf("u_viewAnglePow", 1f);
         shader.setUniformf("u_thOverFactor", 1f);
-        render3DLabel(batch, shader, sys.font3d, camera, rc, text(), pos, textScale(), textSize(), textColour());
-
+        shader.setUniformf("u_thOverFactorScl", 1f);
+        render3DLabel(batch, shader, sys.font3d, camera, rc, text(), pos, textScale(), textSize());
     }
 
     @Override
