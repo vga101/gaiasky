@@ -1,6 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
@@ -21,7 +20,6 @@ import com.badlogic.gdx.utils.reflect.ReflectionException;
 import gaia.cu9.ari.gaiaorbit.render.IAnnotationsRenderable;
 import gaia.cu9.ari.gaiaorbit.render.IModelRenderable;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
-import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.ModelCache;
@@ -110,7 +108,6 @@ public class Grid extends AbstractPositionEntity implements IModelRenderable, IA
      */
     @Override
     public void render(ModelBatch modelBatch, float alpha, double t) {
-        Gdx.gl.glLineWidth(1.4f * GlobalConf.SCALE_FACTOR);
         mc.touch();
         mc.setTransparencyColor(alpha * cc[3] * opacity);
         modelBatch.render(mc.instance, mc.env);

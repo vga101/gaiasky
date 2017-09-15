@@ -33,7 +33,8 @@ import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.render.IPostProcessor.PostProcessBean;
 import gaia.cu9.ari.gaiaorbit.render.system.AbstractRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.AbstractRenderSystem.RenderSystemRunnable;
-import gaia.cu9.ari.gaiaorbit.render.system.BillboardRenderSystem;
+import gaia.cu9.ari.gaiaorbit.render.system.BillboardSpriteRenderSystem;
+import gaia.cu9.ari.gaiaorbit.render.system.BillboardStarRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.FontRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.IRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.LineQuadRenderSystem;
@@ -75,7 +76,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
     public AbstractRenderSystem[] pixelRenderSystems;
 
-    private ShaderProgram starShader, galaxyShader, fontShader;
+    private ShaderProgram starShader, galaxyShader, fontShader, spriteShader;
 
     private int maxTexSize;
 
@@ -113,6 +114,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         manager.load("shader/star.vertex.glsl", ShaderProgram.class);
         manager.load("shader/gal.vertex.glsl", ShaderProgram.class);
         manager.load("shader/font.vertex.glsl", ShaderProgram.class);
+        manager.load("shader/sprite.vertex.glsl", ShaderProgram.class);
         manager.load("atmgrounddefault", AtmosphereGroundShaderProvider.class, new AtmosphereGroundShaderProviderParameter("shader/default.vertex.glsl", "shader/default.fragment.glsl"));
         manager.load("spsurface", DefaultShaderProvider.class, new DefaultShaderProviderParameter("shader/default.vertex.glsl", "shader/starsurface.fragment.glsl"));
         manager.load("spbeam", DefaultShaderProvider.class, new DefaultShaderProviderParameter("shader/default.vertex.glsl", "shader/beam.fragment.glsl"));
@@ -171,6 +173,14 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         fontShader = manager.get("shader/font.vertex.glsl");
         if (!fontShader.isCompiled()) {
             Logger.error(new RuntimeException(), this.getClass().getName() + " - Font shader compilation failed:\n" + fontShader.getLog());
+        }
+
+        /**
+         * SPRITE SHADER
+         */
+        spriteShader = manager.get("shader/sprite.vertex.glsl");
+        if (!spriteShader.isCompiled()) {
+            Logger.error(new RuntimeException(), this.getClass().getName() + " - Sprite shader compilation failed:\n" + spriteShader.getLog());
         }
 
         int numLists = GlobalConf.performance.MULTITHREADING ? GlobalConf.performance.NUMBER_THREADS() : 1;
@@ -281,10 +291,10 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
             }
         });
 
-        // SHADER STARS
-        AbstractRenderSystem quadStarsProc = new BillboardRenderSystem(RenderGroup.SHADER_STAR, priority++, alphas, starShader, true, "img/star_glow_s.png", ComponentType.Stars.ordinal());
-        quadStarsProc.setPreRunnable(blendNoDepthRunnable);
-        quadStarsProc.setPostRunnable(new RenderSystemRunnable() {
+        // BILLBOARD STARS
+        AbstractRenderSystem billboardStarsProc = new BillboardStarRenderSystem(RenderGroup.BILLBOARD_STAR, priority++, alphas, starShader, true, "img/star_glow_s.png", ComponentType.Stars.ordinal());
+        billboardStarsProc.setPreRunnable(blendNoDepthRunnable);
+        billboardStarsProc.setPostRunnable(new RenderSystemRunnable() {
 
             private float[] positions = new float[Glow.N * 2];
             private float[] viewAngles = new float[Glow.N];
@@ -330,9 +340,13 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
         });
 
-        // SHADER GALAXIEWS
-        BillboardRenderSystem quadGalaxiesProc = new BillboardRenderSystem(RenderGroup.SHADER_GAL, priority++, alphas, galaxyShader, true, "img/static.jpg", ComponentType.Galaxies.ordinal());
-        quadGalaxiesProc.setPreRunnable(blendNoDepthRunnable);
+        // BILLBOARD GALAXIES
+        AbstractRenderSystem billboardGalaxiesProc = new BillboardStarRenderSystem(RenderGroup.BILLBOARD_GAL, priority++, alphas, galaxyShader, true, "img/static.jpg", ComponentType.Galaxies.ordinal());
+        billboardGalaxiesProc.setPreRunnable(blendNoDepthRunnable);
+
+        // BILLBOARD SPRITES
+        AbstractRenderSystem billboardSpritesProc = new BillboardSpriteRenderSystem(RenderGroup.BILLBOARD_SPRITE, priority++, alphas, spriteShader, ComponentType.Others.ordinal());
+        billboardSpritesProc.setPreRunnable(blendNoDepthRunnable);
 
         // LINES
         AbstractRenderSystem lineProc = getLineRenderSystem();
@@ -365,9 +379,9 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         AbstractRenderSystem labelsProc = new FontRenderSystem(RenderGroup.LABEL, priority++, alphas, fontBatch, fontShader);
         labelsProc.setPreRunnable(blendNoDepthRunnable);
 
-        // SHADER SSO
-        AbstractRenderSystem quadSSOProc = new BillboardRenderSystem(RenderGroup.SHADER_SSO, priority++, alphas, starShader, false, "img/sso.png", -1);
-        quadSSOProc.setPreRunnable(blendDepthRunnable);
+        // BILLBOARD SSO
+        AbstractRenderSystem billboardSSOProc = new BillboardStarRenderSystem(RenderGroup.BILLBOARD_SSO, priority++, alphas, starShader, false, "img/sso.png", -1);
+        billboardSSOProc.setPreRunnable(blendDepthRunnable);
 
         // MODEL ATMOSPHERE
         AbstractRenderSystem modelAtmProc = new ModelBatchRenderSystem(RenderGroup.MODEL_F_ATM, priority++, alphas, modelBatchAtm, true) {
@@ -406,17 +420,20 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         renderProcesses.add(annotationsProc);
         renderProcesses.add(particleGroupProc);
 
-        // Quads for galaxies and stars
-        renderProcesses.add(quadGalaxiesProc);
-        renderProcesses.add(quadStarsProc);
+        // Billboards for galaxies and stars
+        renderProcesses.add(billboardGalaxiesProc);
+        renderProcesses.add(billboardStarsProc);
         renderProcesses.add(galaxyProc);
+
+        // Billboard for sprites
+        renderProcesses.add(billboardSpritesProc);
 
         renderProcesses.add(modelFrontProc);
 
         renderProcesses.add(modelBeamProc);
         renderProcesses.add(lineProc);
         renderProcesses.add(labelsProc);
-        renderProcesses.add(quadSSOProc);
+        renderProcesses.add(billboardSSOProc);
 
         renderProcesses.add(modelStarsProc);
         renderProcesses.add(modelAtmProc);

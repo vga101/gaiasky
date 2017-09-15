@@ -25,7 +25,7 @@ import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.DecalUtils;
 import gaia.cu9.ari.gaiaorbit.util.comp.DistToCameraComparator;
 
-public class BillboardRenderSystem extends AbstractRenderSystem implements IObserver {
+public class BillboardStarRenderSystem extends AbstractRenderSystem implements IObserver {
 
     private ShaderProgram shaderProgram;
     private Mesh mesh;
@@ -36,7 +36,7 @@ public class BillboardRenderSystem extends AbstractRenderSystem implements IObse
     private Texture texture0;
     private int ctindex = -1;
 
-    public BillboardRenderSystem(RenderGroup rg, int priority, float[] alphas, ShaderProgram shaderProgram, boolean useStarColorTransit, String tex0, int ctindex, float w, float h) {
+    public BillboardStarRenderSystem(RenderGroup rg, int priority, float[] alphas, ShaderProgram shaderProgram, boolean useStarColorTransit, String tex0, int ctindex, float w, float h) {
         super(rg, priority, alphas);
         this.shaderProgram = shaderProgram;
         this.useStarColorTransit = useStarColorTransit;
@@ -60,7 +60,7 @@ public class BillboardRenderSystem extends AbstractRenderSystem implements IObse
      * @param useStarColorTransit
      *            Whether to use the star color transit or not.
      */
-    public BillboardRenderSystem(RenderGroup rg, int priority, float[] alphas, ShaderProgram shaderProgram, boolean useStarColorTransit, String tex0, int ctindex) {
+    public BillboardStarRenderSystem(RenderGroup rg, int priority, float[] alphas, ShaderProgram shaderProgram, boolean useStarColorTransit, String tex0, int ctindex) {
         this(rg, priority, alphas, shaderProgram, useStarColorTransit, tex0, ctindex, 2, 2);
     }
 

@@ -115,7 +115,7 @@ public class Galaxy extends Particle {
             if (camera.getCurrent() instanceof FovCamera) {
                 // Render as point, do nothing
             } else {
-                addToRender(this, RenderGroup.SHADER_GAL);
+                addToRender(this, RenderGroup.BILLBOARD_GAL);
             }
             if (renderText() && camera.isVisible(GaiaSky.instance.time, this)) {
                 addToRender(this, RenderGroup.LABEL);

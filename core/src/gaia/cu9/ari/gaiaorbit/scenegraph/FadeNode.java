@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.math.Vector2;
 
+import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
@@ -87,7 +88,7 @@ public class FadeNode extends AbstractPositionEntity {
         // Update with translation/rotation/etc
         updateLocal(time, camera);
 
-        if (children != null) {
+        if (children != null && GaiaSky.instance.isOn(ct)) {
             for (int i = 0; i < children.size; i++) {
                 SceneGraphNode child = children.get(i);
                 child.update(time, transform, camera, this.opacity);

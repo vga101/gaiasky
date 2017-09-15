@@ -114,7 +114,6 @@ public class ModelComponent implements Disposable {
             // Ambient
             ColorAttribute alight = new ColorAttribute(ColorAttribute.AmbientLight, .6f, .6f, .6f, 1f);
             env.set(alight);
-
         }
 
         if (modelFile != null && manager.isLoaded(modelFile)) {

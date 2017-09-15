@@ -51,11 +51,11 @@ public class SceneGraphNode implements IStarContainer, IPosition {
         /** Background models - NO CULL FACE - front and back **/
         MODEL_FB(1),
         /** Shader - stars **/
-        SHADER_STAR(2),
+        BILLBOARD_STAR(2),
         /** Shader - galaxies **/
-        SHADER_GAL(3),
+        BILLBOARD_GAL(3),
         /** Shader - front (planets, satellites...) **/
-        SHADER_SSO(4),
+        BILLBOARD_SSO(4),
         /** Single pixel **/
         POINT_STAR(5),
         /** Line **/
@@ -80,6 +80,8 @@ public class SceneGraphNode implements IStarContainer, IPosition {
         STAR_GROUP(15),
         /** Shapes **/
         SHAPE(16),
+        /** Regular billboard sprite **/
+        BILLBOARD_SPRITE(17),
 
         /** None **/
         NONE(-1);
@@ -462,7 +464,8 @@ public class SceneGraphNode implements IStarContainer, IPosition {
     }
 
     public void initialize() {
-        ct = new ComponentTypes(ComponentType.Others.ordinal());
+        if (ct == null)
+            ct = new ComponentTypes(ComponentType.Others.ordinal());
     }
 
     public void doneLoading(AssetManager manager) {
