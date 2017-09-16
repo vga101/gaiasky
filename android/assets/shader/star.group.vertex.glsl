@@ -50,7 +50,7 @@ void main() {
     }
     
     // Proper motion
-    pos = pos + a_pm * u_t * day_to_year;
+    pos = pos + a_pm * float(u_t) * day_to_year;
 
     float viewAngleApparent = atan((a_size * u_alphaSizeFovBr.w) / dist) / u_alphaSizeFovBr.z;
     float opacity = pow(lint2(viewAngleApparent, 0.0, u_thAnglePoint, u_pointAlpha.x, u_pointAlpha.y), 1.2);
