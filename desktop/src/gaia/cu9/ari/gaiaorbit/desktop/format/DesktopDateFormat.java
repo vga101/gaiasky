@@ -15,10 +15,13 @@ public class DesktopDateFormat implements IDateFormat {
         df = new SimpleDateFormat(pattern);
     }
 
-    public DesktopDateFormat(Locale loc, boolean onlytime) {
-        if (onlytime)
+    public DesktopDateFormat(Locale loc, boolean date, boolean time) {
+        assert date || time : "Formatter must include date or time";
+        if (date && !time)
+            df = DateFormat.getDateInstance(DateFormat.MEDIUM, loc);
+        else if (!date && time)
             df = DateFormat.getTimeInstance(DateFormat.MEDIUM, loc);
-        else
+        else if (date && time)
             df = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM, loc);
     }
 

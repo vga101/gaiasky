@@ -34,11 +34,12 @@ import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnLabel;
 public class TimeComponent extends GuiComponent implements IObserver {
 
     /** Date format **/
-    private IDateFormat df;
+    private IDateFormat dfdate, dftime;
     /** Decimal format **/
     private INumberFormat nf, nfsci;
 
     protected OwnLabel date;
+    protected OwnLabel time;
     protected ImageButton plus, minus;
     protected Label timeWarp;
     protected ImageButton dateEdit;
@@ -47,7 +48,8 @@ public class TimeComponent extends GuiComponent implements IObserver {
     public TimeComponent(Skin skin, Stage stage) {
         super(skin, stage);
 
-        df = DateFormatFactory.getFormatter(I18n.locale, DateType.DATE);
+        dfdate = DateFormatFactory.getFormatter(I18n.locale, DateType.DATE);
+        dftime = DateFormatFactory.getFormatter(I18n.locale, DateType.TIME);
         nf = NumberFormatFactory.getFormatter("#########.###");
         nfsci = NumberFormatFactory.getFormatter("0.#E0");
         EventManager.instance.subscribe(this, Events.TIME_CHANGE_INFO, Events.TIME_CHANGE_CMD, Events.PACE_CHANGED_INFO);
@@ -56,8 +58,13 @@ public class TimeComponent extends GuiComponent implements IObserver {
     @Override
     public void initialize() {
         // Time
-        date = new OwnLabel("time UT", skin);
-        date.setName("input time");
+        date = new OwnLabel("date UT", skin, "lcd");
+        date.setName("label date");
+        date.setWidth(150 * GlobalConf.SCALE_FACTOR);
+
+        time = new OwnLabel("time UT", skin, "lcd");
+        time.setName("label time");
+        time.setWidth(150 * GlobalConf.SCALE_FACTOR);
 
         dateEdit = new OwnImageButton(skin, "edit");
         dateEdit.addListener(new EventListener() {
@@ -114,14 +121,17 @@ public class TimeComponent extends GuiComponent implements IObserver {
         timeWarp = new OwnLabel(getFormattedTimeWrap(), skin, "warp");
         timeWarp.setName("time warp");
         Container<Label> wrapWrapper = new Container<Label>(timeWarp);
-        wrapWrapper.width(60f * GlobalConf.SCALE_FACTOR);
+        wrapWrapper.width(80f * GlobalConf.SCALE_FACTOR);
         wrapWrapper.align(Align.center);
 
         VerticalGroup timeGroup = new VerticalGroup().align(Align.left).columnAlign(Align.left).space(3 * GlobalConf.SCALE_FACTOR).padTop(3 * GlobalConf.SCALE_FACTOR);
 
         HorizontalGroup dateGroup = new HorizontalGroup();
         dateGroup.space(4 * GlobalConf.SCALE_FACTOR);
-        dateGroup.addActor(date);
+        VerticalGroup datetimeGroup = new VerticalGroup();
+        datetimeGroup.addActor(date);
+        datetimeGroup.addActor(time);
+        dateGroup.addActor(datetimeGroup);
         dateGroup.addActor(dateEdit);
         timeGroup.addActor(dateGroup);
 
@@ -144,9 +154,10 @@ public class TimeComponent extends GuiComponent implements IObserver {
         case TIME_CHANGE_INFO:
         case TIME_CHANGE_CMD:
             // Update input time
-            Date time = (Date) data[0];
+            Date datetime = (Date) data[0];
             Gdx.app.postRunnable(() -> {
-                date.setText(df.format(time) + " UT");
+                date.setText(dfdate.format(datetime));
+                time.setText(dftime.format(datetime) + " UT");
             });
 
             break;

@@ -20,6 +20,7 @@ com.badlogic.gdx.graphics.g2d.BitmapFont: { ui-25: { file: skins/fonts/ui-25.fnt
 com.badlogic.gdx.graphics.g2d.BitmapFont: { ui-25-shadow: { file: skins/fonts/ui-25-shadow.fnt } },
 com.badlogic.gdx.graphics.g2d.BitmapFont: { ui-12-bold: { file: skins/fonts/ui-12-bold.fnt } },
 com.badlogic.gdx.graphics.g2d.BitmapFont: { ui-19-bold: { file: skins/fonts/ui-19-bold.fnt } },
+com.badlogic.gdx.graphics.g2d.BitmapFont: { lcd: { file: skins/fonts/lcd-small.fnt } },
 com.badlogic.gdx.graphics.g2d.BitmapFont: { grid-annotation: { file: skins/fonts/ui-11.fnt } },
 com.badlogic.gdx.graphics.Color: {
 	green: { a: 1, b: 0, g: 0.701, r: 0.18 },
@@ -120,6 +121,7 @@ com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
 	msg-19:   { font: ui-19, fontColor: white},
 	msg-21:   { font: ui-21, fontColor: white},
 	msg-23:   { font: ui-23, fontColor: white},
+	lcd:      { font: lcd, fontColor: white},
 	
 	menuitem-shortcut: { font: ui-11, fontColor: grey },
 	

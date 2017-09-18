@@ -6,7 +6,7 @@ public abstract class DateFormatFactory {
     private static DateFormatFactory instance;
 
     public enum DateType {
-        DATE, TIME
+        DATE, TIME, DATETIME
     }
 
     public static void initialize(DateFormatFactory inst) {
@@ -23,6 +23,8 @@ public abstract class DateFormatFactory {
             return instance.getDateFormatter(loc);
         case TIME:
             return instance.getTimeFormatter(loc);
+        case DATETIME:
+            return instance.getDateTimeFormatter(loc);
         }
         return null;
     }
@@ -32,4 +34,6 @@ public abstract class DateFormatFactory {
     protected abstract IDateFormat getDateFormatter(Locale loc);
 
     protected abstract IDateFormat getTimeFormatter(Locale loc);
+
+    protected abstract IDateFormat getDateTimeFormatter(Locale loc);
 }
