@@ -453,7 +453,7 @@ public class AstroUtils {
      *            The date.
      * @return The Julian Date.
      */
-    public static double getJulianDateCache(Date date) {
+    public static synchronized double getJulianDateCache(Date date) {
         long time = date.getTime();
         if (jdcache.containsKey(time)) {
             return jdcache.get(time);

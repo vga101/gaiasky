@@ -8,29 +8,47 @@ import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 
 /**
- * Keeps pace of the simulation time vs real time and holds the global clock
+ * Keeps pace of the simulation time vs real time and holds the global clock. It
+ * uses a time warp factor which is a multiplier to real time.
+ * 
  * @author Toni Sagrista
  *
  */
 public class GlobalClock implements IObserver, ITimeFrameProvider {
+    // Max time, 5 Myr
+    private static final long MAX_TIME_MS = 5000000l * (long) Constants.Y_TO_MS;
+    // Min time, -5 Myr
+    private static final long MIN_TIME_MS = -MAX_TIME_MS;
+
+    // Maximum time warp factor
+    private static final double MAX_WARP = 35184372088832d;
+    // Minimum time warp factor
+    private static final double MIN_WARP = -MAX_WARP;
+
     private static final double MS_TO_HOUR = 1 / 3600000d;
 
-    /**The current time of the clock **/
+    /** The current time of the clock **/
     public Date time, lastTime;
     /** The hour difference from the last frame **/
     public double hdiff;
 
-    /** Represents the time wrap multiplier. Scales the real time pace **/
+    /** Represents the time wrap multiplier. Scales the real time **/
     public double timeWarp = 1;
+
     // Seconds since last event POST
     private float lastUpdate = 1;
-    /** The fixed frame rate when not in real time. Set negative to use real time **/
+    /**
+     * The fixed frame rate when not in real time. Set negative to use real time
+     **/
     public float fps = -1;
 
     /**
      * Creates a new GlobalClock
-     * @param timeWrap The time wrap multiplier
-     * @param date The date with which to initialise the clock
+     * 
+     * @param timeWrap
+     *            The time wrap multiplier
+     * @param date
+     *            The date with which to initialise the clock
      */
     public GlobalClock(double timeWrap, Date date) {
         super();
@@ -44,9 +62,11 @@ public class GlobalClock implements IObserver, ITimeFrameProvider {
 
     double msacum = 0d;
 
-    /** 
+    /**
      * Update function
-     * @param dt Delta time in seconds
+     * 
+     * @param dt
+     *            Delta time in seconds
      */
     public void update(double dt) {
         if (dt != 0) {
@@ -63,7 +83,26 @@ public class GlobalClock implements IObserver, ITimeFrameProvider {
 
             long currentTime = time.getTime();
             lastTime.setTime(currentTime);
-            time.setTime(currentTime + (long) ms);
+
+            long newTime = currentTime + (long) ms;
+            if (newTime > MAX_TIME_MS) {
+                newTime = MAX_TIME_MS;
+                if (currentTime < MAX_TIME_MS) {
+                    EventManager.instance.post(Events.POST_NOTIFICATION, "Maximum time reached (" + (MAX_TIME_MS * Constants.MS_TO_Y) + " years)!");
+                    // Turn off time
+                    EventManager.instance.post(Events.TOGGLE_TIME_CMD, false, false);
+                }
+            }
+            if (newTime < MIN_TIME_MS) {
+                newTime = MIN_TIME_MS;
+                if (currentTime > MIN_TIME_MS) {
+                    EventManager.instance.post(Events.POST_NOTIFICATION, "Minimum time reached (" + (MIN_TIME_MS * Constants.MS_TO_Y) + " years)!");
+                    // Turn off time
+                    EventManager.instance.post(Events.TOGGLE_TIME_CMD, false, false);
+                }
+            }
+
+            time.setTime(newTime);
 
             // Post event each 1/2 second
             lastUpdate += dt;
@@ -90,6 +129,7 @@ public class GlobalClock implements IObserver, ITimeFrameProvider {
         case PACE_CHANGE_CMD:
             // Update pace
             this.timeWarp = (Double) data[0];
+            checkTimeWarpValue();
             EventManager.instance.post(Events.PACE_CHANGED_INFO, this.timeWarp);
             break;
         case TIME_WARP_INCREASE_CMD:
@@ -102,6 +142,7 @@ public class GlobalClock implements IObserver, ITimeFrameProvider {
             } else {
                 timeWarp *= 2.0;
             }
+            checkTimeWarpValue();
             EventManager.instance.post(Events.PACE_CHANGED_INFO, this.timeWarp);
             break;
         case TIME_WARP_DECREASE_CMD:
@@ -114,17 +155,35 @@ public class GlobalClock implements IObserver, ITimeFrameProvider {
             } else {
                 timeWarp /= 2.0;
             }
+            checkTimeWarpValue();
             EventManager.instance.post(Events.PACE_CHANGED_INFO, this.timeWarp);
             break;
         case TIME_CHANGE_CMD:
             // Update time
             long newt = ((Date) data[0]).getTime();
+            if (newt > MAX_TIME_MS) {
+                newt = MAX_TIME_MS;
+                EventManager.instance.post(Events.POST_NOTIFICATION, "Time overflow, set to maximum (" + (MIN_TIME_MS * Constants.MS_TO_Y) + " years)");
+            }
+            if (newt < MIN_TIME_MS) {
+                newt = MIN_TIME_MS;
+                EventManager.instance.post(Events.POST_NOTIFICATION, "Time overflow, set to minimum (" + (MIN_TIME_MS * Constants.MS_TO_Y) + " years)");
+            }
             this.time.setTime(newt);
             break;
         default:
             break;
         }
 
+    }
+
+    private void checkTimeWarpValue() {
+        if (timeWarp > MAX_WARP) {
+            timeWarp = MAX_WARP;
+        }
+        if (timeWarp < MIN_WARP) {
+            timeWarp = MIN_WARP;
+        }
     }
 
     /**
