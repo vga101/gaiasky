@@ -18,6 +18,9 @@ public abstract class AbstractVSOP87 implements iVSOP87, IBodyCoordinates {
 
     @Override
     public Vector3d getEclipticSphericalCoordinates(Date date, Vector3d out) {
+        if (!Constants.withinVSOPTime(date.getTime()))
+            return null;
+
         double tau = AstroUtils.tau(AstroUtils.getJulianDateCache(date));
 
         double L = (L0(tau) + L1(tau) + L2(tau) + L3(tau) + L4(tau) + L5(tau));
@@ -32,7 +35,9 @@ public abstract class AbstractVSOP87 implements iVSOP87, IBodyCoordinates {
 
     @Override
     public Vector3d getEclipticCartesianCoordinates(Date date, Vector3d out) {
-        getEclipticSphericalCoordinates(date, out);
+        Vector3d v = getEclipticSphericalCoordinates(date, out);
+        if (v == null)
+            return null;
         Coordinates.sphericalToCartesian(out, out);
         return out;
 
@@ -40,7 +45,9 @@ public abstract class AbstractVSOP87 implements iVSOP87, IBodyCoordinates {
 
     @Override
     public Vector3d getEquatorialCartesianCoordinates(Date date, Vector3d out) {
-        getEclipticSphericalCoordinates(date, out);
+        Vector3d v = getEclipticSphericalCoordinates(date, out);
+        if (v == null)
+            return null;
         Coordinates.sphericalToCartesian(out, out);
         out.mul(Coordinates.equatorialToEcliptic());
         return out;

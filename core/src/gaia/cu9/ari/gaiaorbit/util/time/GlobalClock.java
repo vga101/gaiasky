@@ -15,15 +15,6 @@ import gaia.cu9.ari.gaiaorbit.util.Constants;
  *
  */
 public class GlobalClock implements IObserver, ITimeFrameProvider {
-    // Max time, 5 Myr
-    private static final long MAX_TIME_MS = 5000000l * (long) Constants.Y_TO_MS;
-    // Min time, -5 Myr
-    private static final long MIN_TIME_MS = -MAX_TIME_MS;
-
-    // Maximum time warp factor
-    private static final double MAX_WARP = 35184372088832d;
-    // Minimum time warp factor
-    private static final double MIN_WARP = -MAX_WARP;
 
     private static final double MS_TO_HOUR = 1 / 3600000d;
 
@@ -85,18 +76,18 @@ public class GlobalClock implements IObserver, ITimeFrameProvider {
             lastTime.setTime(currentTime);
 
             long newTime = currentTime + (long) ms;
-            if (newTime > MAX_TIME_MS) {
-                newTime = MAX_TIME_MS;
-                if (currentTime < MAX_TIME_MS) {
-                    EventManager.instance.post(Events.POST_NOTIFICATION, "Maximum time reached (" + (MAX_TIME_MS * Constants.MS_TO_Y) + " years)!");
+            if (newTime > Constants.MAX_TIME_MS) {
+                newTime = Constants.MAX_TIME_MS;
+                if (currentTime < Constants.MAX_TIME_MS) {
+                    EventManager.instance.post(Events.POST_NOTIFICATION, "Maximum time reached (" + (Constants.MAX_TIME_MS * Constants.MS_TO_Y) + " years)!");
                     // Turn off time
                     EventManager.instance.post(Events.TOGGLE_TIME_CMD, false, false);
                 }
             }
-            if (newTime < MIN_TIME_MS) {
-                newTime = MIN_TIME_MS;
-                if (currentTime > MIN_TIME_MS) {
-                    EventManager.instance.post(Events.POST_NOTIFICATION, "Minimum time reached (" + (MIN_TIME_MS * Constants.MS_TO_Y) + " years)!");
+            if (newTime < Constants.MIN_TIME_MS) {
+                newTime = Constants.MIN_TIME_MS;
+                if (currentTime > Constants.MIN_TIME_MS) {
+                    EventManager.instance.post(Events.POST_NOTIFICATION, "Minimum time reached (" + (Constants.MIN_TIME_MS * Constants.MS_TO_Y) + " years)!");
                     // Turn off time
                     EventManager.instance.post(Events.TOGGLE_TIME_CMD, false, false);
                 }
@@ -161,13 +152,13 @@ public class GlobalClock implements IObserver, ITimeFrameProvider {
         case TIME_CHANGE_CMD:
             // Update time
             long newt = ((Date) data[0]).getTime();
-            if (newt > MAX_TIME_MS) {
-                newt = MAX_TIME_MS;
-                EventManager.instance.post(Events.POST_NOTIFICATION, "Time overflow, set to maximum (" + (MIN_TIME_MS * Constants.MS_TO_Y) + " years)");
+            if (newt > Constants.MAX_TIME_MS) {
+                newt = Constants.MAX_TIME_MS;
+                EventManager.instance.post(Events.POST_NOTIFICATION, "Time overflow, set to maximum (" + (Constants.MIN_TIME_MS * Constants.MS_TO_Y) + " years)");
             }
-            if (newt < MIN_TIME_MS) {
-                newt = MIN_TIME_MS;
-                EventManager.instance.post(Events.POST_NOTIFICATION, "Time overflow, set to minimum (" + (MIN_TIME_MS * Constants.MS_TO_Y) + " years)");
+            if (newt < Constants.MIN_TIME_MS) {
+                newt = Constants.MIN_TIME_MS;
+                EventManager.instance.post(Events.POST_NOTIFICATION, "Time overflow, set to minimum (" + (Constants.MIN_TIME_MS * Constants.MS_TO_Y) + " years)");
             }
             this.time.setTime(newt);
             break;
@@ -178,11 +169,11 @@ public class GlobalClock implements IObserver, ITimeFrameProvider {
     }
 
     private void checkTimeWarpValue() {
-        if (timeWarp > MAX_WARP) {
-            timeWarp = MAX_WARP;
+        if (timeWarp > Constants.MAX_WARP) {
+            timeWarp = Constants.MAX_WARP;
         }
-        if (timeWarp < MIN_WARP) {
-            timeWarp = MIN_WARP;
+        if (timeWarp < Constants.MIN_WARP) {
+            timeWarp = Constants.MIN_WARP;
         }
     }
 

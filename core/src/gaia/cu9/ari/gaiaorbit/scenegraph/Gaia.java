@@ -17,7 +17,6 @@ import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 public class Gaia extends Satellite {
 
     public Vector3d unrotatedPos;
-    boolean display = true;
     Attitude attitude;
     Quaterniond quaterniond;
     Quaternion quaternion;
@@ -42,8 +41,7 @@ public class Gaia extends Satellite {
 
     @Override
     protected void addToRenderLists(ICamera camera) {
-        if (display)
-            super.addToRenderLists(camera);
+        super.addToRenderLists(camera);
     }
 
     @Override

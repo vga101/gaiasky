@@ -239,7 +239,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
         double translateUnits = Math.max(10d * Constants.M_TO_U, realTransUnits);
         switch (m) {
         case Focus:
-            if (focus.withinMagLimit()) {
+            if (focus.withinMagLimit() && !focus.isCoordinatesTimeOverflow()) {
                 focusBak = focus;
                 focus = (IFocus) focus.getComputedAncestor();
                 focus.getAbsolutePosition(focusPos);
@@ -367,7 +367,6 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 
         updatePerspectiveCamera();
         updateFrustum(frustum, camera, pos, direction, up);
-        // updateHUD(dt);
     }
 
     public void updateHUD(float dt) {

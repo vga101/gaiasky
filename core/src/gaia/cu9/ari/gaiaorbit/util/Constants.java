@@ -197,11 +197,40 @@ public class Constants {
     public static final float MIN_CONTRAST = 0.0f;
     public static final float MAX_CONTRAST = 2.0f;
 
+    // Max time, 5 Myr
+    public static final long MAX_TIME_MS = 5000000l * (long) Y_TO_MS;
+    // Min time, -5 Myr
+    public static final long MIN_TIME_MS = -MAX_TIME_MS;
+
+    // Max time for VSOP87 algorithms
+    public static final long MAX_VSOP_TIME_MS = 50000l * (long) Y_TO_MS;
+
+    // Min time for VSOP87 algorithms
+    public static final long MIN_VSOP_TIME_MS = -MAX_VSOP_TIME_MS;
+
+    // Maximum time warp factor
+    public static final double MAX_WARP = 35184372088832d;
+    // Minimum time warp factor
+    public static final double MIN_WARP = -MAX_WARP;
+
     /** Camera speed factor **/
     public static final float CAMERA_SPEED_FACTOR = 10f;
 
     /** Motion blur value **/
     public static final float MOTION_BLUR_VALUE = 0.7f;
+
+    /**
+     * Checks whether the given time is within the acceptable bounds of VSOP87
+     * algorithms.
+     * 
+     * @param time
+     *            The time as the number of milliseconds since January 1, 1970,
+     *            00:00:00 GMT.
+     * @return Whether the given time is within the bounds of VSOP
+     */
+    public static boolean withinVSOPTime(long time) {
+        return time <= Constants.MAX_VSOP_TIME_MS && time >= Constants.MIN_VSOP_TIME_MS;
+    }
 
     /**
      * 

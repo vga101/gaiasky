@@ -1,5 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.interfce;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
@@ -46,15 +47,17 @@ public class SearchDialog extends Window {
                             me.remove();
                             return true;
                         } else {
-                            String text = searchInput.getText().toLowerCase();
-                            if (sg.containsNode(text)) {
-                                SceneGraphNode node = sg.getNode(text);
+                            String name = searchInput.getText().toLowerCase();
+                            if (sg.containsNode(name)) {
+                                SceneGraphNode node = sg.getNode(name);
                                 if (node instanceof IFocus) {
-                                    IFocus focus = ((IFocus) node).getFocus(text);
-                                    EventManager.instance.post(Events.CAMERA_MODE_CMD, CameraMode.Focus, true);
-                                    EventManager.instance.post(Events.FOCUS_CHANGE_CMD, focus, true);
-                                    // This prevents further search
-                                    //searchInput.selectAll();
+                                    IFocus focus = ((IFocus) node).getFocus(name);
+                                    if (!focus.isCoordinatesTimeOverflow()) {
+                                        Gdx.app.postRunnable(() -> {
+                                            EventManager.instance.post(Events.CAMERA_MODE_CMD, CameraMode.Focus, true);
+                                            EventManager.instance.post(Events.FOCUS_CHANGE_CMD, focus, true);
+                                        });
+                                    }
                                 }
                             }
                         }

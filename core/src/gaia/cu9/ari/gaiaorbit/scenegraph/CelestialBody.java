@@ -78,8 +78,18 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
     /** Last observations increase in ms **/
     public long lastTransitIncrease = 0;
 
+    /** Component alpha mirror **/
     public float compalpha;
 
+    /**
+     * Whether we are out of the time baseline range in the algorithm that works
+     * out the coordinates of this body
+     **/
+    protected boolean coordinatesTimeOverflow = false;
+
+    /**
+     * Simple constructor
+     */
     public CelestialBody() {
         super();
         TH_OVER_FACTOR = (float) (THRESHOLD_POINT() / GlobalConf.scene.LABEL_NUMBER_FACTOR);
@@ -450,7 +460,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
     }
 
     protected boolean checkHitCondition() {
-        return true;
+        return !coordinatesTimeOverflow;
     }
 
     public void makeFocus() {
@@ -477,6 +487,11 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
             return this;
         else
             return null;
+    }
+
+    @Override
+    public boolean isCoordinatesTimeOverflow() {
+        return coordinatesTimeOverflow;
     }
 
 }

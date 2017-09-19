@@ -105,7 +105,7 @@ public class Planet extends ModelBody implements IAtmosphereRenderable, ILineRen
         if (time.getDt() != 0 || force) {
             Vector3d aux3 = aux3d1.get();
             // Load this planet's spherical ecliptic coordinates into pos
-            coordinates.getEquatorialCartesianCoordinates(time.getTime(), pos);
+            coordinatesTimeOverflow = coordinates.getEquatorialCartesianCoordinates(time.getTime(), pos) == null;
 
             // Convert to cartesian coordinates and put them in aux3 vector
             Coordinates.cartesianToSpherical(pos, aux3);
@@ -158,7 +158,7 @@ public class Planet extends ModelBody implements IAtmosphereRenderable, ILineRen
     protected void addToRenderLists(ICamera camera) {
         super.addToRenderLists(camera);
         // Add atmosphere to default render group if necessary
-        if (ac != null && isInRender(this, RenderGroup.MODEL_F)) {
+        if (ac != null && isInRender(this, RenderGroup.MODEL_F) && !coordinatesTimeOverflow) {
             addToRender(this, RenderGroup.MODEL_F_ATM);
         }
     }

@@ -49,7 +49,7 @@ public abstract class Satellite extends ModelBody {
      */
     protected void forceUpdatePosition(ITimeFrameProvider time, boolean force) {
         if (time.getDt() != 0 || force) {
-            coordinates.getEquatorialCartesianCoordinates(time.getTime(), pos);
+            coordinatesTimeOverflow = coordinates.getEquatorialCartesianCoordinates(time.getTime(), pos) == null;
             // Convert to cartesian coordinates and put them in aux3 vector
             Vector3d aux3 = aux3d1.get();
             Coordinates.cartesianToSpherical(pos, aux3);

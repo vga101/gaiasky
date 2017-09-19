@@ -114,19 +114,21 @@ public abstract class ModelBody extends CelestialBody {
 
     @Override
     protected void addToRenderLists(ICamera camera) {
-        camera.checkClosest(this);
-        if (GaiaSky.instance.isOn(ct)) {
-            double thPoint = (THRESHOLD_POINT() * camera.getFovFactor());
-            if (viewAngleApparent >= thPoint) {
-                opacity = (float) MathUtilsd.lint(viewAngleApparent, thPoint, thPoint * 4, 0, 1);
-                if (viewAngleApparent < THRESHOLD_QUAD() * camera.getFovFactor()) {
-                    addToRender(this, RenderGroup.BILLBOARD_SSO);
-                } else {
-                    addToRender(this, RenderGroup.MODEL_F);
-                }
+        if (!coordinatesTimeOverflow) {
+            camera.checkClosest(this);
+            if (GaiaSky.instance.isOn(ct)) {
+                double thPoint = (THRESHOLD_POINT() * camera.getFovFactor());
+                if (viewAngleApparent >= thPoint) {
+                    opacity = (float) MathUtilsd.lint(viewAngleApparent, thPoint, thPoint * 4, 0, 1);
+                    if (viewAngleApparent < THRESHOLD_QUAD() * camera.getFovFactor()) {
+                        addToRender(this, RenderGroup.BILLBOARD_SSO);
+                    } else {
+                        addToRender(this, RenderGroup.MODEL_F);
+                    }
 
-                if (renderText()) {
-                    addToRender(this, RenderGroup.LABEL);
+                    if (renderText()) {
+                        addToRender(this, RenderGroup.LABEL);
+                    }
                 }
             }
         }

@@ -621,4 +621,9 @@ public class ParticleGroup extends FadeNode implements I3DTextRenderable, IFocus
     protected double getDeltaYears() {
         return 0;
     }
+
+    @Override
+    public boolean isCoordinatesTimeOverflow() {
+        return false;
+    }
 }

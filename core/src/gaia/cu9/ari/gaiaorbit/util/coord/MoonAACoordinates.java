@@ -19,6 +19,8 @@ public class MoonAACoordinates implements IBodyCoordinates {
 
     @Override
     public Vector3d getEclipticSphericalCoordinates(Date date, Vector3d out) {
+        if (!Constants.withinVSOPTime(date.getTime()))
+            return null;
         AstroUtils.moonEclipticCoordinates(date, out);
         // To internal units
         out.z *= Constants.KM_TO_U;
@@ -27,17 +29,20 @@ public class MoonAACoordinates implements IBodyCoordinates {
 
     @Override
     public Vector3d getEclipticCartesianCoordinates(Date date, Vector3d out) {
-        getEclipticSphericalCoordinates(date, out);
+        Vector3d v = getEclipticSphericalCoordinates(date, out);
+        if (v == null)
+            return null;
         Coordinates.sphericalToCartesian(out, out);
         return out;
     }
 
     @Override
     public Vector3d getEquatorialCartesianCoordinates(Date date, Vector3d out) {
-        getEclipticSphericalCoordinates(date, out);
+        Vector3d v = getEclipticSphericalCoordinates(date, out);
+        if (v == null)
+            return null;
         Coordinates.sphericalToCartesian(out, out);
         out.mul(Coordinates.equatorialToEcliptic());
-
         return out;
     }
 
