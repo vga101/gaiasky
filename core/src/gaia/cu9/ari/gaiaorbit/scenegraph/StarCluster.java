@@ -35,19 +35,23 @@ import gaia.cu9.ari.gaiaorbit.util.ModelCache;
 import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
 import gaia.cu9.ari.gaiaorbit.util.g3d.MeshPartBuilder2;
 import gaia.cu9.ari.gaiaorbit.util.g3d.ModelBuilder2;
+import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 import net.jafama.FastMath;
 
 public class StarCluster extends AbstractPositionEntity implements IModelRenderable, I3DTextRenderable, IQuadRenderable {
 
-    private static final double TH_ANGLE = Math.toRadians(0.5);
-    private static ModelComponent mc;
+    private static final double TH_ANGLE = Math.toRadians(0.6);
+    private static final double TH_ANGLE_OVERLAP = Math.toRadians(0.7);
+    private static Model model;
     private static Matrix4 modelTransform;
     private static Texture clusterTex;
 
     // Label and model colors
     private static float[] col = new float[] { 0.9f, 0.9f, 0.2f, 1.0f };
+
+    private ModelComponent mc;
 
     protected Vector3d pm;
     protected Vector3 pmSph;
@@ -63,6 +67,12 @@ public class StarCluster extends AbstractPositionEntity implements IModelRendera
     // Number of stars of this cluster
     protected int nstars;
 
+    /**
+     * Fade alpha between quad and model. Attribute contains model opacity. Quad
+     * opacity is 1-fadeAlpha
+     **/
+    protected float fadeAlpha;
+
     public StarCluster(String name, String parentName, Vector3d pos, Vector3d pm, Vector3d posSph, Vector3 pmSph, double raddeg, int nstars) {
         super();
         this.parentName = parentName;
@@ -77,8 +87,12 @@ public class StarCluster extends AbstractPositionEntity implements IModelRendera
         this.labelcolor = new float[] { col[0], col[1], col[2], 8.0f };
     }
 
-    public static void initModel() {
-        if (mc == null) {
+    public void initModel() {
+        if (clusterTex == null) {
+            clusterTex = new Texture(Gdx.files.internal("data/tex/cluster-tex.png"), true);
+            clusterTex.setFilter(TextureFilter.MipMapLinearNearest, TextureFilter.Linear);
+        }
+        if (model == null) {
             Material mat = new Material(new BlendingAttribute(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA), new ColorAttribute(ColorAttribute.Diffuse, col[0], col[1], col[2], col[3]));
             ModelBuilder2 modelBuilder = ModelCache.cache.mb;
             modelBuilder.begin();
@@ -86,21 +100,19 @@ public class StarCluster extends AbstractPositionEntity implements IModelRendera
             MeshPartBuilder2 bPartBuilder = modelBuilder.part("sph", GL20.GL_LINES, Usage.Position, mat);
             bPartBuilder.icosphere(1, 3, false, true);
 
-            Model model = (modelBuilder.end());
-
+            model = (modelBuilder.end());
             modelTransform = new Matrix4();
-            mc = new ModelComponent(false);
-            mc.dlight = new DirectionalLight();
-            mc.dlight.set(1, 1, 1, 1, 1, 1);
-            mc.env = new Environment();
-            mc.env.add(mc.dlight);
-            mc.env.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.4f, 0.4f, 0.4f, 1f));
-            mc.env.set(new FloatAttribute(FloatAttribute.Shininess, 0.2f));
-            mc.instance = new ModelInstance(model, modelTransform);
         }
 
-        clusterTex = new Texture(Gdx.files.internal("data/tex/cluster-tex.png"), true);
-        clusterTex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+        mc = new ModelComponent(false);
+        mc.dlight = new DirectionalLight();
+        mc.dlight.set(1, 1, 1, 1, 1, 1);
+        mc.env = new Environment();
+        mc.env.add(mc.dlight);
+        mc.env.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.4f, 0.4f, 0.4f, 1f));
+        mc.env.set(new FloatAttribute(FloatAttribute.Shininess, 0.2f));
+        mc.instance = new ModelInstance(model, modelTransform);
+
     }
 
     public void initialize() {
@@ -140,6 +152,7 @@ public class StarCluster extends AbstractPositionEntity implements IModelRendera
         }
 
         this.opacity *= 0.1f;
+        this.fadeAlpha = (float) MathUtilsd.lint(this.viewAngleApparent, TH_ANGLE, TH_ANGLE_OVERLAP, 0f, 1f);
     }
 
     @Override
@@ -152,7 +165,9 @@ public class StarCluster extends AbstractPositionEntity implements IModelRendera
             if (this.viewAngleApparent > TH_ANGLE) {
                 addToRender(this, RenderGroup.MODEL_FB);
                 addToRender(this, RenderGroup.LABEL);
-            } else {
+            }
+
+            if (this.viewAngleApparent < TH_ANGLE_OVERLAP) {
                 addToRender(this, RenderGroup.BILLBOARD_SPRITE);
             }
         }
@@ -164,7 +179,7 @@ public class StarCluster extends AbstractPositionEntity implements IModelRendera
     @Override
     public void render(ModelBatch modelBatch, float alpha, double t) {
         mc.touch();
-        mc.setTransparency(alpha * opacity);
+        mc.setTransparency(alpha * opacity * fadeAlpha);
         mc.instance.transform.set(this.localTransform);
         modelBatch.render(mc.instance, mc.env);
 
@@ -182,10 +197,12 @@ public class StarCluster extends AbstractPositionEntity implements IModelRendera
             shader.setUniformi("u_texture0", 0);
         }
 
+        float fa = 1 - fadeAlpha;
+
         Vector3 aux = aux3f1.get();
         shader.setUniformf("u_pos", transform.getTranslationf(aux));
         shader.setUniformf("u_size", size);
-        shader.setUniformf("u_color", col[0], col[1], col[2], col[3] * alpha * opacity);
+        shader.setUniformf("u_color", col[0] * fa, col[1] * fa, col[2] * fa, col[3] * alpha * opacity * 4f);
         // Sprite.render
         mesh.render(shader, GL20.GL_TRIANGLES, 0, 6);
     }
@@ -217,6 +234,7 @@ public class StarCluster extends AbstractPositionEntity implements IModelRendera
 
     @Override
     public float[] textColour() {
+        labelcolor[3] = 8.0f * fadeAlpha;
         return labelcolor;
     }
 

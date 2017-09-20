@@ -13,7 +13,7 @@ uniform sampler2D u_texture0;
 
 vec4 draw() {
     vec4 tex = texture2D(u_texture0, v_texCoords);
-    return vec4(tex.rgb * v_color.rgb, 1.0) * v_color.a * 4.0;
+    return vec4(tex.rgb * v_color.rgb, 1.0) * v_color.a;
 }
 
 void main() {
