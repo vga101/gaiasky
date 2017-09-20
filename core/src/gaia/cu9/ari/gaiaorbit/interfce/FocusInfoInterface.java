@@ -19,8 +19,10 @@ import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.IFocus;
+import gaia.cu9.ari.gaiaorbit.scenegraph.IProperMotion;
 import gaia.cu9.ari.gaiaorbit.scenegraph.IStarFocus;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Planet;
+import gaia.cu9.ari.gaiaorbit.scenegraph.StarCluster;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
@@ -47,7 +49,7 @@ public class FocusInfoInterface extends Table implements IObserver, IGuiInterfac
     protected OwnLabel focusName, focusType, focusId, focusRA, focusDEC, focusMuAlpha, focusMuDelta, focusRadVel, focusAngle, focusDist, focusAppMag, focusAbsMag, focusRadius;
     protected Button goTo, landOn, landAt;
     protected OwnLabel pointerName, pointerLonLat, pointerRADEC;
-    protected OwnLabel camName, camVel, camPos, lonLatLabel, RADECLabel;
+    protected OwnLabel camName, camVel, camPos, lonLatLabel, RADECLabel, appmagLabel, absmagLabel;
 
     protected HorizontalGroup focusNameGroup;
 
@@ -92,6 +94,10 @@ public class FocusInfoInterface extends Table implements IObserver, IGuiInterfac
         focusAngle = new OwnLabel("", skin, "hud");
         focusDist = new OwnLabel("", skin, "hud");
         focusRadius = new OwnLabel("", skin, "hud");
+
+        // Labels
+        appmagLabel = new OwnLabel(txt("gui.focusinfo.appmag"), skin, "hud-big");
+        absmagLabel = new OwnLabel(txt("gui.focusinfo.absmag"), skin, "hud-big");
 
         // Pointer
         pointerName = new OwnLabel(I18n.bundle.get("gui.pointer"), skin, "hud-header");
@@ -202,10 +208,10 @@ public class FocusInfoInterface extends Table implements IObserver, IGuiInterfac
         focusInfo.add(new OwnLabel(txt("gui.focusinfo.radvel"), skin, "hud-big")).left();
         focusInfo.add(focusRadVel).left().padLeft(pad10);
         focusInfo.row();
-        focusInfo.add(new OwnLabel(txt("gui.focusinfo.appmag"), skin, "hud-big")).left();
+        focusInfo.add(appmagLabel).left();
         focusInfo.add(focusAppMag).left().padLeft(pad10);
         focusInfo.row();
-        focusInfo.add(new OwnLabel(txt("gui.focusinfo.absmag"), skin, "hud-big")).left();
+        focusInfo.add(absmagLabel).left();
         focusInfo.add(focusAbsMag).left().padLeft(pad10);
         focusInfo.row();
         focusInfo.add(new OwnLabel(txt("gui.focusinfo.angle"), skin, "hud-big")).left();
@@ -330,8 +336,8 @@ public class FocusInfoInterface extends Table implements IObserver, IGuiInterfac
                 focusDEC.setText(nf.format(MathUtilsd.radDeg * pos.y % 360) + "°");
             }
 
-            if (focus instanceof IStarFocus) {
-                IStarFocus part = (IStarFocus) focus;
+            if (focus instanceof IProperMotion) {
+                IProperMotion part = (IProperMotion) focus;
                 focusMuAlpha.setText(nf.format(part.getMuAlpha()) + " mas/yr");
                 focusMuDelta.setText(nf.format(part.getMuDelta()) + " mas/yr");
                 focusRadVel.setText(nf.format(part.getRadialVelocity()) + " km/s");
@@ -341,10 +347,18 @@ public class FocusInfoInterface extends Table implements IObserver, IGuiInterfac
                 focusRadVel.setText("-");
             }
 
-            Float appmag = focus.getAppmag();
-            focusAppMag.setText(nf.format(appmag));
-            Float absmag = focus.getAbsmag();
-            focusAbsMag.setText(nf.format(absmag));
+            if (!(focus instanceof StarCluster)) {
+                appmagLabel.setText(txt("gui.focusinfo.appmag"));
+                Float appmag = focus.getAppmag();
+                focusAppMag.setText(nf.format(appmag));
+                Float absmag = focus.getAbsmag();
+                focusAbsMag.setText(nf.format(absmag));
+            } else {
+                appmagLabel.setText("# " + txt("element.stars"));
+                StarCluster sc = (StarCluster) focus;
+                focusAppMag.setText(Integer.toString(sc.getNStars()));
+                focusAbsMag.setText("-");
+            }
 
             if (ComponentType.values()[focus.getCt().getFirstOrdinal()] == ComponentType.Stars) {
                 focusRadius.setText("-");

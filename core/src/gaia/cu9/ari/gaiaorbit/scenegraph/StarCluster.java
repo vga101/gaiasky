@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Mesh;
+import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
@@ -20,6 +21,7 @@ import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Array;
 
 import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
@@ -29,18 +31,21 @@ import gaia.cu9.ari.gaiaorbit.render.IQuadRenderable;
 import gaia.cu9.ari.gaiaorbit.render.RenderingContext;
 import gaia.cu9.ari.gaiaorbit.render.system.FontRenderSystem;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
+import gaia.cu9.ari.gaiaorbit.scenegraph.component.RotationComponent;
 import gaia.cu9.ari.gaiaorbit.util.ComponentTypes;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.ModelCache;
 import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
 import gaia.cu9.ari.gaiaorbit.util.g3d.MeshPartBuilder2;
 import gaia.cu9.ari.gaiaorbit.util.g3d.ModelBuilder2;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
+import gaia.cu9.ari.gaiaorbit.util.math.Quaterniond;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 import net.jafama.FastMath;
 
-public class StarCluster extends AbstractPositionEntity implements IModelRenderable, I3DTextRenderable, IQuadRenderable {
+public class StarCluster extends AbstractPositionEntity implements IFocus, IProperMotion, IModelRenderable, I3DTextRenderable, IQuadRenderable {
 
     private static final double TH_ANGLE = Math.toRadians(0.6);
     private static final double TH_ANGLE_OVERLAP = Math.toRadians(0.7);
@@ -161,7 +166,7 @@ public class StarCluster extends AbstractPositionEntity implements IModelRendera
 
     @Override
     protected void addToRenderLists(ICamera camera) {
-        if (GaiaSky.instance.isOn(ct) && this.opacity > 0) {
+        if (this.opacity > 0) {
             if (this.viewAngleApparent > TH_ANGLE) {
                 addToRender(this, RenderGroup.MODEL_FB);
                 addToRender(this, RenderGroup.LABEL);
@@ -280,6 +285,142 @@ public class StarCluster extends AbstractPositionEntity implements IModelRendera
     @Override
     public boolean isLabel() {
         return true;
+    }
+
+    @Override
+    public long getCandidateId() {
+        return id;
+    }
+
+    @Override
+    public String getCandidateName() {
+        return name;
+    }
+
+    @Override
+    public boolean isActive() {
+        return GaiaSky.instance.isOn(ct) && this.opacity > 0;
+    }
+
+    /**
+     * Adds all the children that are focusable objects to the list.
+     * 
+     * @param list
+     */
+    public void addFocusableObjects(Array<IFocus> list) {
+        list.add(this);
+        super.addFocusableObjects(list);
+    }
+
+    @Override
+    public boolean withinMagLimit() {
+        return true;
+    }
+
+    @Override
+    public double getCandidateViewAngleApparent() {
+        return this.viewAngleApparent;
+    }
+
+    @Override
+    public float getAppmag() {
+        return 0f;
+    }
+
+    @Override
+    public float getAbsmag() {
+        return 0f;
+    }
+
+    @Override
+    public RotationComponent getRotationComponent() {
+        return null;
+    }
+
+    @Override
+    public Quaterniond getOrientationQuaternion() {
+        return null;
+    }
+
+    @Override
+    public void addHit(int screenX, int screenY, int w, int h, int pxdist, NaturalCamera camera, Array<IFocus> hits) {
+        if (withinMagLimit() && isActive()) {
+            Vector3 pos = aux3f1.get();
+            Vector3d aux = aux3d1.get();
+            Vector3d posd = getAbsolutePosition(aux).add(camera.posinv);
+            pos.set(posd.valuesf());
+
+            if (camera.direction.dot(posd) > 0) {
+                // The star is in front of us
+                // Diminish the size of the star
+                // when we are close by
+                double angle = viewAngle;
+
+                PerspectiveCamera pcamera;
+                if (GlobalConf.program.STEREOSCOPIC_MODE) {
+                    if (screenX < Gdx.graphics.getWidth() / 2f) {
+                        pcamera = camera.getCameraStereoLeft();
+                        pcamera.update();
+                    } else {
+                        pcamera = camera.getCameraStereoRight();
+                        pcamera.update();
+                    }
+                } else {
+                    pcamera = camera.camera;
+                }
+
+                angle = (float) Math.toDegrees(angle * camera.fovFactor) * (40f / pcamera.fieldOfView);
+                double pixelSize = ((angle * pcamera.viewportHeight) / pcamera.fieldOfView) / 2;
+                pcamera.project(pos);
+                pos.y = pcamera.viewportHeight - pos.y;
+                if (GlobalConf.program.STEREOSCOPIC_MODE) {
+                    pos.x /= 2;
+                }
+                // Check click distance
+                if (checkClickDistance(screenX, screenY, pos, camera, pcamera, pixelSize)) {
+                    //Hit
+                    hits.add(this);
+                }
+            }
+        }
+
+    }
+
+    protected boolean checkClickDistance(int screenX, int screenY, Vector3 pos, NaturalCamera camera, PerspectiveCamera pcamera, double pixelSize) {
+        return pos.dst(screenX % pcamera.viewportWidth, screenY, pos.z) <= pixelSize;
+    }
+
+    @Override
+    public void makeFocus() {
+    }
+
+    @Override
+    public IFocus getFocus(String name) {
+        return this;
+    }
+
+    @Override
+    public boolean isCoordinatesTimeOverflow() {
+        return false;
+    }
+
+    @Override
+    public double getMuAlpha() {
+        return pmSph.x;
+    }
+
+    @Override
+    public double getMuDelta() {
+        return pmSph.y;
+    }
+
+    @Override
+    public double getRadialVelocity() {
+        return pmSph.z;
+    }
+
+    public int getNStars() {
+        return nstars;
     }
 
 }

@@ -455,7 +455,7 @@ public class ParticleGroup extends FadeNode implements I3DTextRenderable, IFocus
 
     public void addHit(int screenX, int screenY, int w, int h, int pxdist, NaturalCamera camera, Array<IFocus> hits) {
         int n = pointData.size;
-        if (this.opacity > 0) {
+        if (GaiaSky.instance.isOn(ct) && this.opacity > 0) {
             Array<Pair<Integer, Double>> temporalHits = new Array<Pair<Integer, Double>>();
             for (int i = 0; i < n; i++) {
                 ParticleBean pb = pointData.get(i);

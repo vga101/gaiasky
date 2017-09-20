@@ -460,7 +460,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
     }
 
     protected boolean checkHitCondition() {
-        return !coordinatesTimeOverflow;
+        return !coordinatesTimeOverflow && GaiaSky.instance.isOn(ct);
     }
 
     public void makeFocus() {
