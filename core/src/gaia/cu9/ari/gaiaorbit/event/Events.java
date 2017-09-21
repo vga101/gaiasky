@@ -91,8 +91,8 @@ public enum Events {
      **/
     FOCUS_CHANGED,
     /**
-     * Contains the distance [0], the viewing angle [1], right ascension in deg
-     * [2] and declination in deg [3]
+     * Contains the distance to the camera [0], the viewing angle [1], right
+     * ascension in deg [2], declination in deg [3] and the distance to Sol [4]
      **/
     FOCUS_INFO_UPDATED,
     /**

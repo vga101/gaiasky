@@ -46,7 +46,7 @@ import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextIconButton;
 public class FocusInfoInterface extends Table implements IObserver, IGuiInterface {
     static private INetworkChecker daemon;
 
-    protected OwnLabel focusName, focusType, focusId, focusRA, focusDEC, focusMuAlpha, focusMuDelta, focusRadVel, focusAngle, focusDist, focusAppMag, focusAbsMag, focusRadius;
+    protected OwnLabel focusName, focusType, focusId, focusRA, focusDEC, focusMuAlpha, focusMuDelta, focusRadVel, focusAngle, focusDistCam, focusDistSol, focusAppMag, focusAbsMag, focusRadius;
     protected Button goTo, landOn, landAt;
     protected OwnLabel pointerName, pointerLonLat, pointerRADEC;
     protected OwnLabel camName, camVel, camPos, lonLatLabel, RADECLabel, appmagLabel, absmagLabel;
@@ -92,7 +92,8 @@ public class FocusInfoInterface extends Table implements IObserver, IGuiInterfac
         focusAppMag = new OwnLabel("", skin, "hud");
         focusAbsMag = new OwnLabel("", skin, "hud");
         focusAngle = new OwnLabel("", skin, "hud");
-        focusDist = new OwnLabel("", skin, "hud");
+        focusDistSol = new OwnLabel("", skin, "hud");
+        focusDistCam = new OwnLabel("", skin, "hud");
         focusRadius = new OwnLabel("", skin, "hud");
 
         // Labels
@@ -181,7 +182,8 @@ public class FocusInfoInterface extends Table implements IObserver, IGuiInterfac
         focusMuDelta.setWidth(w);
         focusRadVel.setWidth(w);
         focusAngle.setWidth(w);
-        focusDist.setWidth(w);
+        focusDistSol.setWidth(w);
+        focusDistCam.setWidth(w);
         camVel.setWidth(w);
 
         /** FOCUS INFO **/
@@ -217,8 +219,11 @@ public class FocusInfoInterface extends Table implements IObserver, IGuiInterfac
         focusInfo.add(new OwnLabel(txt("gui.focusinfo.angle"), skin, "hud-big")).left();
         focusInfo.add(focusAngle).left().padLeft(pad10);
         focusInfo.row();
-        focusInfo.add(new OwnLabel(txt("gui.focusinfo.distance"), skin, "hud-big")).left();
-        focusInfo.add(focusDist).left().padLeft(pad10);
+        focusInfo.add(new OwnLabel(txt("gui.focusinfo.distance.sol"), skin, "hud-big")).left();
+        focusInfo.add(focusDistSol).left().padLeft(pad10);
+        focusInfo.row();
+        focusInfo.add(new OwnLabel(txt("gui.focusinfo.distance.cam"), skin, "hud-big")).left();
+        focusInfo.add(focusDistCam).left().padLeft(pad10);
         focusInfo.row();
         focusInfo.add(new OwnLabel(txt("gui.focusinfo.radius"), skin, "hud-big")).left();
         focusInfo.add(focusRadius).left().padLeft(pad10);
@@ -351,13 +356,15 @@ public class FocusInfoInterface extends Table implements IObserver, IGuiInterfac
                 appmagLabel.setText(txt("gui.focusinfo.appmag"));
                 Float appmag = focus.getAppmag();
                 focusAppMag.setText(nf.format(appmag));
+                absmagLabel.setText(txt("gui.focusinfo.absmag"));
                 Float absmag = focus.getAbsmag();
                 focusAbsMag.setText(nf.format(absmag));
             } else {
                 appmagLabel.setText("# " + txt("element.stars"));
                 StarCluster sc = (StarCluster) focus;
                 focusAppMag.setText(Integer.toString(sc.getNStars()));
-                focusAbsMag.setText("-");
+                absmagLabel.setText("");
+                focusAbsMag.setText("");
             }
 
             if (ComponentType.values()[focus.getCt().getFirstOrdinal()] == ComponentType.Stars) {
@@ -376,8 +383,17 @@ public class FocusInfoInterface extends Table implements IObserver, IGuiInterfac
             break;
         case FOCUS_INFO_UPDATED:
             focusAngle.setText(sf.format(Math.toDegrees((double) data[1]) % 360) + "°");
-            Pair<Double, String> dist = GlobalResources.doubleToDistanceString((double) data[0]);
-            focusDist.setText(sf.format(Math.max(0d, dist.getFirst())) + " " + dist.getSecond());
+
+            // Dist to cam
+            Pair<Double, String> distCam = GlobalResources.doubleToDistanceString((double) data[0]);
+            focusDistCam.setText(sf.format(Math.max(0d, distCam.getFirst())) + " " + distCam.getSecond());
+
+            // Dist to sol
+            if (data.length > 4) {
+                Pair<Double, String> distSol = GlobalResources.doubleToDistanceString((double) data[4]);
+                focusDistSol.setText(sf.format(Math.max(0d, distSol.getFirst())) + " " + distSol.getSecond());
+            }
+
             focusRA.setText(nf.format((double) data[2] % 360) + "°");
             focusDEC.setText(nf.format((double) data[3] % 360) + "°");
             break;
