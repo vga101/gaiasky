@@ -117,7 +117,7 @@ public class Loc extends AbstractPositionEntity implements I3DTextRenderable {
         shader.setUniformf("u_viewAnglePow", 1f);
         shader.setUniformf("u_thOverFactor", ((ModelBody) parent).locThOverFactor);
         shader.setUniformf("u_viewAnglePow", 1f);
-        render3DLabel(batch, shader, sys.font3d, camera, rc, text(), pos, textScale(), textSize());
+        render3DLabel(batch, shader, sys.font3d, camera, rc, text(), pos, textScale(), textSize() * camera.getFovFactor());
     }
 
     @Override
@@ -127,12 +127,12 @@ public class Loc extends AbstractPositionEntity implements I3DTextRenderable {
 
     @Override
     public float textSize() {
-        return size / 2f;
+        return size / 3.5f;
     }
 
     @Override
     public float textScale() {
-        return .5f;
+        return textSize() * 2e5f;
     }
 
     @Override

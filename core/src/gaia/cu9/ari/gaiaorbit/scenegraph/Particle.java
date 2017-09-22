@@ -313,7 +313,7 @@ public class Particle extends CelestialBody implements IStarFocus, IPointRendera
 
     @Override
     public float textScale() {
-        return (float) FastMath.atan(labelMax()) * labelFactor() * 2.5e2f;
+        return (float) FastMath.atan(labelMax()) * labelFactor() * 1e3f;
     }
 
     @Override
