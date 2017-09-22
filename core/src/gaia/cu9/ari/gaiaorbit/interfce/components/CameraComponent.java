@@ -47,7 +47,7 @@ public class CameraComponent extends GuiComponent implements IObserver {
 
     public CameraComponent(Skin skin, Stage stage) {
         super(skin, stage);
-        EventManager.instance.subscribe(this, Events.CAMERA_MODE_CMD, Events.ROTATION_SPEED_CMD, Events.TURNING_SPEED_CMD, Events.CAMERA_SPEED_CMD, Events.SPEED_LIMIT_CMD, Events.TOGGLE_STEREOSCOPIC_INFO, Events.FOV_CHANGE_NOTIFICATION, Events.CUBEMAP360_CMD, Events.CAMERA_CINEMATIC_CMD);
+        EventManager.instance.subscribe(this, Events.CAMERA_MODE_CMD, Events.ROTATION_SPEED_CMD, Events.TURNING_SPEED_CMD, Events.CAMERA_SPEED_CMD, Events.SPEED_LIMIT_CMD, Events.TOGGLE_STEREOSCOPIC_INFO, Events.FOV_CHANGE_NOTIFICATION, Events.CUBEMAP360_CMD, Events.CAMERA_CINEMATIC_CMD, Events.ORIENTATION_LOCK_CMD);
     }
 
     @Override
@@ -204,16 +204,13 @@ public class CameraComponent extends GuiComponent implements IObserver {
         cameraSpeedLimit.setName("camera speed limit");
         cameraSpeedLimit.setWidth(width);
         cameraSpeedLimit.setItems(speedLimits);
-        cameraSpeedLimit.addListener(new EventListener() {
-            @Override
-            public boolean handle(Event event) {
-                if (event instanceof ChangeEvent) {
-                    int idx = cameraSpeedLimit.getSelectedIndex();
-                    EventManager.instance.post(Events.SPEED_LIMIT_CMD, idx, true);
-                    return true;
-                }
-                return false;
+        cameraSpeedLimit.addListener((event) -> {
+            if (event instanceof ChangeEvent) {
+                int idx = cameraSpeedLimit.getSelectedIndex();
+                EventManager.instance.post(Events.SPEED_LIMIT_CMD, idx, true);
+                return true;
             }
+            return false;
         });
         cameraSpeedLimit.setSelectedIndex(GlobalConf.scene.CAMERA_SPEED_LIMIT_IDX);
 
@@ -299,7 +296,7 @@ public class CameraComponent extends GuiComponent implements IObserver {
             @Override
             public boolean handle(Event event) {
                 if (event instanceof ChangeEvent) {
-                    EventManager.instance.post(Events.ORIENTATION_LOCK_CMD, txt("gui.camera.lock.orientation"), orientationLock.isChecked());
+                    EventManager.instance.post(Events.ORIENTATION_LOCK_CMD, txt("gui.camera.lock.orientation"), orientationLock.isChecked(), true);
                     return true;
                 }
                 return false;
@@ -434,7 +431,20 @@ public class CameraComponent extends GuiComponent implements IObserver {
                 interf = (Boolean) data[1];
             if (!interf) {
                 int value = (Integer) data[0];
+                cameraSpeedLimit.getSelection().setProgrammaticChangeEvents(false);
                 cameraSpeedLimit.setSelectedIndex(value);
+                cameraSpeedLimit.getSelection().setProgrammaticChangeEvents(true);
+            }
+            break;
+        case ORIENTATION_LOCK_CMD:
+            interf = false;
+            if (data.length > 2)
+                interf = (Boolean) data[2];
+            if (!interf) {
+                boolean lock = (Boolean) data[1];
+                orientationLock.setProgrammaticChangeEvents(false);
+                orientationLock.setChecked(lock);
+                orientationLock.setProgrammaticChangeEvents(true);
             }
             break;
         case TOGGLE_STEREOSCOPIC_INFO:

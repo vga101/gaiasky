@@ -174,7 +174,7 @@ public interface IScriptingInterface {
      *            want to remove it.
      * @param path
      *            The path to the image. It can either be an absolute path (not
-     *            recommended) or a path relative to the Gaia Sandbox folder.
+     *            recommended) or a path relative to the Gaia Sky folder.
      * @param x
      *            The x coordinate of the bottom-left corner, in [0..1] from
      *            left to right. This is not resolution-dependant.
@@ -210,7 +210,7 @@ public interface IScriptingInterface {
      * whatever else.
      * 
      * @param ids
-     *            Vector with the integer ids of the objects to remove.
+     *            Vector with the integer ids of the objects to remove
      */
     public void removeObjects(int[] ids);
 
@@ -251,9 +251,18 @@ public interface IScriptingInterface {
      *            The name of the new focus object.
      * @param focusWait
      *            Whether to wait for the camera direction to align with the
-     *            focus position
+     *            focus position.
      */
     public void setCameraFocus(String focusName, boolean focusWait);
+
+    /**
+     * Sets the camera in focus mode with the given focus object. It also
+     * instantly sets the camera direction vector to point towards the focus.
+     * 
+     * @param focusName
+     *            The name of the new focus object.
+     */
+    public void setCameraFocusInstant(final String focusName);
 
     /**
      * Activates or deactivates the camera lock to the focus reference system
@@ -346,6 +355,24 @@ public interface IScriptingInterface {
     public double[] getCameraUp();
 
     /**
+     * Sets the focus and instantly moves the camera to a point in the line
+     * defined by <code>focus</code>-<code>other</code> and rotated
+     * <code>rotation</code> degrees around <code>focus<code> using the camera
+     * up vector as a rotation axis.
+     * 
+     * @param focus
+     *            The name of the focus object.
+     * @param other
+     *            The name of the other object, to the fine a line from this to
+     *            foucs. Usually a light source.
+     * @param rotation
+     *            The rotation angle, in degrees.
+     * @param viewAngle
+     *            The view angle which determines the distance.
+     */
+    public void setCameraPositionAndFocus(String focus, String other, double rotation, double viewAngle);
+
+    /**
      * Changes the speed multiplier of the camera and its acceleration.
      * 
      * @param speed
@@ -375,6 +402,41 @@ public interface IScriptingInterface {
      *            The new turning speed, from 1 to 100.
      */
     public void setTurningCameraSpeed(float speed);
+
+    /**
+     * Sets the speed limit of the camera given an index. The index corresponds
+     * to the following:
+     * <ul>
+     * <li>0 - 100 Km/h</li>
+     * <li>1 - 1 c</li>
+     * <li>2 - 2 c</li>
+     * <li>3 - 10 c</li>
+     * <li>4 - 1e3 c</li>
+     * <li>5 - 1 AU/s</li>
+     * <li>6 - 10 AU/s</li>
+     * <li>7 - 1000 AU/s</li>
+     * <li>8 - 10000 AU/s</li>
+     * <li>9 - 1 pc/s</li>
+     * <li>10 - 1 pc/s</li>
+     * <li>11 - 2 pc/s</li>
+     * <li>12 - 10 pc/s</li>
+     * <li>13 - 1000 pc/s</li>
+     * <li>14 - unlimited</li>
+     * </ul>
+     * 
+     * @param index
+     *            The index of the top speed.
+     */
+    public void setCameraSpeedLimit(int index);
+
+    /**
+     * Locks or unlocks the orientation of the camera to the focus object's
+     * rotation.
+     * 
+     * @param lock
+     *            Whether to lock or unlock the camera orientation to the focus
+     */
+    public void setCameraOrientationLock(boolean lock);
 
     /**
      * Adds a forward movement to the camera with the given value. If value is
@@ -585,11 +647,11 @@ public interface IScriptingInterface {
      * 
      * @param name
      *            The name or id (HIP, TYC, sourceId) of the object.
-     * @param angle
+     * @param viewAngle
      *            The target view angle of the object, in degrees. The angle
      *            gets larger and larger as we approach the object.
      */
-    public void goToObject(String name, double angle);
+    public void goToObject(String name, double viewAngle);
 
     /**
      * Runs a seamless trip to the object with the given name until the object
@@ -603,7 +665,7 @@ public interface IScriptingInterface {
      * 
      * @param name
      *            The name or id (HIP, TYC, sourceId) of the object.
-     * @param angle
+     * @param viewAngle
      *            The target view angle of the object, in degrees. The angle
      *            gets larger and larger as we approach the object.
      * @param focusWait
@@ -611,7 +673,7 @@ public interface IScriptingInterface {
      *            vector from the camera position to the target object to be
      *            aligned.
      */
-    public void goToObject(String name, double angle, float focusWait);
+    public void goToObject(String name, double viewAngle, float focusWait);
 
     /**
      * Lands on the object with the given name, if it is an instance of
