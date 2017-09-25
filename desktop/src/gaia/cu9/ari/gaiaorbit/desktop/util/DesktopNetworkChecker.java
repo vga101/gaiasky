@@ -144,13 +144,14 @@ public class DesktopNetworkChecker extends Thread implements INetworkChecker {
                         setWikiLink(wikiname, focus, new LinkListener() {
                             @Override
                             public void ok(String link) {
-                                Gdx.app.postRunnable(() -> {
-                                    if (wikiLink != null && wikiCell != null) {
+                                if (wikiLink != null && wikiCell != null) {
+                                    try {
                                         wikiLink.setLinkURL(link);
                                         wikiCell.setActor(wikiLink);
                                         wikiCell.padRight(pad);
+                                    } catch (Exception e) {
                                     }
-                                });
+                                }
                             }
 
                             @Override
@@ -161,13 +162,14 @@ public class DesktopNetworkChecker extends Thread implements INetworkChecker {
 
                             @Override
                             public void ok(String link) {
-                                Gdx.app.postRunnable(() -> {
-                                    if (simbadLink != null && simbadCell != null) {
+                                if (simbadLink != null && simbadCell != null) {
+                                    try {
                                         simbadLink.setLinkURL(link);
                                         simbadCell.setActor(simbadLink);
                                         simbadCell.padRight(pad);
+                                    } catch (Exception e) {
                                     }
-                                });
+                                }
                             }
 
                             @Override

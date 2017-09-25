@@ -949,9 +949,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
                 focus = (IFocus) data[0];
                 diverted = false;
             }
-            if (focus != null) {
-                setFocus(focus);
-            }
+            setFocus(focus);
 
             checkFocus();
 

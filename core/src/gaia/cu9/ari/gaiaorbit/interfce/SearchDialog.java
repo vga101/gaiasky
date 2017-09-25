@@ -29,6 +29,7 @@ public class SearchDialog extends Window {
     private final Window me;
     private final IGui gui;
     private final TextField searchInput;
+    private String currentInputText = "";
 
     public SearchDialog(IGui gui, Skin skin, final ISceneGraph sg) {
         super(I18n.bundle.get("gui.objects.search"), skin);
@@ -46,8 +47,10 @@ public class SearchDialog extends Window {
                         if (ie.getKeyCode() == Keys.ESCAPE || ie.getKeyCode() == Keys.ENTER) {
                             me.remove();
                             return true;
-                        } else {
-                            String name = searchInput.getText().toLowerCase();
+                        } else if (!searchInput.getText().equals(currentInputText)) {
+                            // Process only if text changed
+                            currentInputText = searchInput.getText();
+                            String name = currentInputText.toLowerCase();
                             if (sg.containsNode(name)) {
                                 SceneGraphNode node = sg.getNode(name);
                                 if (node instanceof IFocus) {
