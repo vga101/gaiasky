@@ -443,7 +443,7 @@ public interface IScriptingInterface {
      * negative the movement is backwards.
      * 
      * @param value
-     *            The magnitude of the movement, between 0 and 1.
+     *            The magnitude of the movement, between -1 and 1.
      */
     public void cameraForward(double value);
 

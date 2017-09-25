@@ -32,7 +32,7 @@ def wait_input(y, idsToRemove):
     gs.removeObject(waitid)
 
 
-""" 
+"""
 Adds arrow to screen.
 id - The id of the arrow.
 x - x coordinate of bottom-left corner in pixels, from left to right.
@@ -45,7 +45,7 @@ def arrow(id, x, y):
     gs.displayImageObject(id, "scripts/tutorial/arrow-left.png", x / w, y / h, 1.0, 1.0, 0.0, 1.0)
 
 
-""" 
+"""
 Adds a small arrow to screen.
 id - The id of the arrow.
 x - x coordinate of bottom-left corner in pixels, from left to right.
@@ -75,7 +75,7 @@ def message(id, msg, x, y, color, size):
 
 """
 Creates a typewriter effect where text appears one letter at a time.
-The parameter twdelay indicates the time in seconds between each letter. 
+The parameter twdelay indicates the time in seconds between each letter.
 """
 def typewriter(id, text, x, y, width, height, r, g, b, a, twdelay):
     buffer = ""
@@ -92,6 +92,7 @@ gs.disableInput()
 gs.cameraStop()
 gs.stopSimulationTime()
 gs.setFov(50.0)
+gs.setCinematicCamera(True)
 gs.minimizeInterfaceWindow()
 gs.setGuiPosition(0, 1)
 gs.goToObject("Earth")
@@ -121,25 +122,25 @@ wait_input(0.65, [2, 3])
 sleep(1.0)
 gs.setRotationCameraSpeed(20.0)
 typewriter(2, 'For example, right...', 0.3, 0.75, 0.6, 0.08, 1.0, 1.0, 1.0, 1.0, twdelay)
-gs.cameraRotate(-0.1, 0)
+gs.cameraRotate(-0.5, 0)
 sleep(3.0)
 gs.cameraStop()
 sleep(1.0)
 
 typewriter(3, 'And left', 0.3, 0.73, 0.6, 0.08, 1.0, 1.0, 1.0, 1.0, twdelay)
-gs.cameraRotate(0.1, 0)
+gs.cameraRotate(0.5, 0)
 sleep(3.0)
 gs.cameraStop()
 sleep(1.0)
 
 typewriter(4, 'Up...', 0.3, 0.71, 0.6, 0.08, 1.0, 1.0, 1.0, 1.0, twdelay)
-gs.cameraRotate(0, -0.1)
+gs.cameraRotate(0, -0.5)
 sleep(3.0)
 gs.cameraStop()
 sleep(1.0)
 
 typewriter(5, 'And down', 0.3, 0.69, 0.6, 0.08, 1.0, 1.0, 1.0, 1.0, twdelay)
-gs.cameraRotate(0, 0.1)
+gs.cameraRotate(0, 0.5)
 sleep(3.0)
 gs.cameraStop()
 sleep(1.0)
@@ -148,7 +149,8 @@ gs.removeObjects([2, 3, 4, 5])
 
 gs.setCameraSpeed(20.0)
 typewriter(2, 'Using the MOUSE WHEEL, we can also move away from Earth...', 0.3, 0.75, 0.6, 0.08, 1.0, 1.0, 1.0, 1.0, twdelay)
-gs.goToObject("Earth", 800000)
+gs.cameraForward(-1.0)
+sleep(2.0)
 gs.cameraStop()
 sleep(1.0)
 

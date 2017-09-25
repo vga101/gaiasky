@@ -392,7 +392,7 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
 
     @Override
     public void cameraForward(final double value) {
-        assert value >= 0d && value <= 1d : "Value must be between 0 and 1";
+        assert value >= -1d && value <= 1d : "Value must be between -1 and 1";
         Gdx.app.postRunnable(() -> {
             em.post(Events.CAMERA_FWD, value);
         });
