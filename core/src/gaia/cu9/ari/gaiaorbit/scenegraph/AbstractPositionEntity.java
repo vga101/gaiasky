@@ -108,7 +108,7 @@ public abstract class AbstractPositionEntity extends SceneGraphNode {
         super.doneLoading(manager);
 
         if (coordinates != null)
-            coordinates.doneLoading(sg);
+            coordinates.doneLoading(sg, this);
     }
 
     /**

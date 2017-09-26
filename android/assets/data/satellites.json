@@ -42,5 +42,33 @@
 						"model" : "data/models/spaceship/spaceship.g3db"
 						}
 	
+	},
+	
+	{
+	"name" : "DeLorean",
+	"wikiname" : "DeLorean time machine",
+	"color" : [0.3, 0.5, 0.9, 1.0],
+	// in Km
+	"size" : 0.01,
+	"ct" : Others,
+	
+	"parent" : "Earth",
+	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.GenericSpacecraft",
+	
+	"coordinates" : {
+				// This must implement gaia.cu9.ari.gaiaorbit.util.coord.IBodyCoordinates				
+				"impl" : "gaia.cu9.ari.gaiaorbit.util.coord.StaticParentRotationCoordinates",
+				"position" : [0.0, -6371.1, 0.0]
+				},
+	"parentorientation" : True,
+	"hidden" : True,
+	
+	"model"			: {
+						"args" : [true],
+						"model" : "data/models/extra/dmc/dmc.g3db"
+						}
+	
 	}
+	
+
 ]}

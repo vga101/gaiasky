@@ -13,6 +13,7 @@ import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.BlendingAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
+import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.utils.Disposable;
@@ -130,7 +131,7 @@ public class ModelComponent implements Disposable {
                         materials.put("base" + i, model.materials.get(i));
                     }
                 else
-                    materials.put("base", model.materials.first());
+                    materials.put("base0", model.materials.first());
             }
 
         } else if (type != null) {
@@ -188,8 +189,10 @@ public class ModelComponent implements Disposable {
                     int n = instance.materials.size;
                     for (int i = 0; i < n; i++) {
                         Material material = instance.materials.get(i);
-                        material.set(new ColorAttribute(ColorAttribute.Diffuse, cc[0], cc[1], cc[2], cc[3]));
-                        material.set(new ColorAttribute(ColorAttribute.Ambient, cc[0], cc[1], cc[2], cc[3]));
+                        if (material.get(TextureAttribute.Ambient) == null && material.get(TextureAttribute.Diffuse) == null) {
+                            material.set(new ColorAttribute(ColorAttribute.Diffuse, cc[0], cc[1], cc[2], cc[3]));
+                            material.set(new ColorAttribute(ColorAttribute.Ambient, cc[0], cc[1], cc[2], cc[3]));
+                        }
                     }
                 }
                 // Set to initialised
