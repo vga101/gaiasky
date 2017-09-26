@@ -220,13 +220,15 @@ public class DesktopNetworkChecker extends Thread implements INetworkChecker {
                         urlCheck(url + wikiname + suffix, listener);
                     }
                 }
+            } else {
+                urlCheck(url + wikiname, listener);
             }
-            urlCheck(url + wikiname, listener);
 
         } catch (Exception e) {
             Logger.error(e);
+            listener.ko(null);
         }
-        listener.ko(null);
+
     }
 
     private void urlCheck(final String url, final LinkListener listener) {
