@@ -159,25 +159,18 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
 
     @Override
     public void setCameraFocus(final String focusName) {
-        setCameraFocus(focusName, false);
+        setCameraFocus(focusName, 0.0f);
     }
 
     @Override
-    public void setCameraFocus(final String focusName, final boolean focusWait) {
+    public void setCameraFocus(final String focusName, final float waitTimeSeconds) {
         assert focusName != null : "Focus name can't be null";
 
-        em.post(Events.CAMERA_MODE_CMD, CameraMode.Focus);
-        em.post(Events.FOCUS_CHANGE_CMD, focusName, true);
-
-        if (focusWait) {
+        ISceneGraph sg = GaiaSky.instance.sg;
+        if (sg.containsNode(focusName)) {
+            IFocus focus = sg.findFocus(focusName);
             NaturalCamera cam = GaiaSky.instance.cam.naturalCamera;
-            while (!cam.facingFocus) {
-                // Wait
-                try {
-                    Thread.sleep(100);
-                } catch (Exception e) {
-                }
-            }
+            changeFocusAndWait(focus, cam, waitTimeSeconds);
         }
     }
 
@@ -559,61 +552,61 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
     }
 
     @Override
-    public void goToObject(String name, double viewAngle, float focusWait) {
-        goToObject(name, viewAngle, focusWait, null);
+    public void goToObject(String name, double viewAngle, float waitTimeSeconds) {
+        goToObject(name, viewAngle, waitTimeSeconds, null);
     }
 
-    public void goToObject(String name, double viewAngle, float focusWait, AtomicBoolean stop) {
+    public void goToObject(String name, double viewAngle, float waitTimeSeconds, AtomicBoolean stop) {
         assert name != null : "Name can't be null";
 
         String namelc = name.toLowerCase();
         ISceneGraph sg = GaiaSky.instance.sg;
         if (sg.containsNode(namelc)) {
             IFocus focus = sg.findFocus(namelc);
-            goToObject(focus, viewAngle, focusWait, stop);
+            goToObject(focus, viewAngle, waitTimeSeconds, stop);
         }
     }
 
-    public void goToObject(IFocus object, double viewAngle, float focusWait, AtomicBoolean stop) {
+    public void goToObject(IFocus object, double viewAngle, float waitTimeSeconds, AtomicBoolean stop) {
         assert object != null : "Object can't be null";
         assert viewAngle > 0 : "Angle must be larger than zero";
 
         stops.add(stop);
         NaturalCamera cam = GaiaSky.instance.cam.naturalCamera;
 
-        // Post focus change
-        em.post(Events.CAMERA_MODE_CMD, CameraMode.Focus);
-        em.post(Events.FOCUS_CHANGE_CMD, object);
-
-        // Wait til camera is facing focus
-        if (focusWait < 0) {
-            while (!cam.facingFocus) {
-                // Wait
-                try {
-                    Thread.sleep(100);
-                } catch (Exception e) {
-                }
-            }
-        } else {
-            this.sleep(focusWait);
-        }
+        changeFocusAndWait(object, cam, waitTimeSeconds);
 
         /* target angle */
         double target = Math.toRadians(viewAngle);
         if (target < 0)
             target = Math.toRadians(20d);
 
-        // Add forward movement while distance > target distance
         long prevtime = TimeUtils.millis();
-        while (object.getViewAngleApparent() < target && (stop == null || (stop != null && !stop.get()))) {
-            // dt in ms
-            long dt = TimeUtils.timeSinceMillis(prevtime);
-            prevtime = TimeUtils.millis();
+        if (object.getViewAngleApparent() < target) {
+            // Add forward movement while distance > target distance
+            while (object.getViewAngleApparent() < target && (stop == null || (stop != null && !stop.get()))) {
+                // dt in ms
+                long dt = TimeUtils.timeSinceMillis(prevtime);
+                prevtime = TimeUtils.millis();
 
-            em.post(Events.CAMERA_FWD, 1d * dt);
-            try {
-                Thread.sleep(5);
-            } catch (Exception e) {
+                em.post(Events.CAMERA_FWD, 1d * dt);
+                try {
+                    Thread.sleep(5);
+                } catch (Exception e) {
+                }
+            }
+        } else {
+            // Add backward movement while distance > target distance
+            while (object.getViewAngleApparent() > target && (stop == null || (stop != null && !stop.get()))) {
+                // dt in ms
+                long dt = TimeUtils.timeSinceMillis(prevtime);
+                prevtime = TimeUtils.millis();
+
+                em.post(Events.CAMERA_FWD, -1d * dt);
+                try {
+                    Thread.sleep(5);
+                } catch (Exception e) {
+                }
             }
         }
 
@@ -646,7 +639,7 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
         if (object instanceof Planet) {
             NaturalCamera cam = GaiaSky.instance.cam.naturalCamera;
             // Focus wait - 2 seconds
-            float focusWait = -1;
+            float waitTimeSeconds = -1;
 
             /**
              * SAVE
@@ -668,22 +661,7 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
              * FOCUS
              */
 
-            // Post focus change
-            em.post(Events.CAMERA_MODE_CMD, CameraMode.Focus);
-            em.post(Events.FOCUS_CHANGE_CMD, object);
-
-            // Wait til camera is facing focus
-            if (focusWait < 0) {
-                while (!cam.facingFocus) {
-                    // Wait
-                    try {
-                        Thread.sleep(100);
-                    } catch (Exception e) {
-                    }
-                }
-            } else {
-                this.sleep(focusWait);
-            }
+            changeFocusAndWait(object, cam, waitTimeSeconds);
 
             /* target distance */
             double target = 100 * Constants.M_TO_U;
@@ -1244,6 +1222,46 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
             }
         }
 
+    }
+
+    /**
+     * Checks if the object is the current focus of the given camera. If it is
+     * not, it sets it as focus and waits if necessary.
+     * 
+     * @param object
+     *            The new focus object.
+     * @param cam
+     *            The current camera.
+     * @param waitTimeSeconds
+     *            Max time to wait for the camera to face the focus, in seconds.
+     *            If negative, we wait until the end.
+     */
+    private void changeFocusAndWait(IFocus object, NaturalCamera cam, float waitTimeSeconds) {
+        // Post focus change and wait, if needed
+        IFocus currentFocus = cam.getFocus();
+        if (currentFocus != object) {
+            em.post(Events.CAMERA_MODE_CMD, CameraMode.Focus);
+            em.post(Events.FOCUS_CHANGE_CMD, object);
+
+            // Wait til camera is facing focus or 
+            if (waitTimeSeconds < 0) {
+                waitTimeSeconds = Float.MAX_VALUE;
+            }
+            float start = System.currentTimeMillis();
+            float elapsedTimeMs;
+            while (!cam.facingFocus) {
+                elapsedTimeMs = System.currentTimeMillis() - start;
+                if (elapsedTimeMs / 1000f > waitTimeSeconds) {
+                    // We've waited long enough, stop!
+                    break;
+                }
+                // Wait
+                try {
+                    Thread.sleep(100);
+                } catch (Exception e) {
+                }
+            }
+        }
     }
 
 }

@@ -191,7 +191,7 @@ public class RunScriptWindow extends CollapsibleWindow {
                         if (internal)
                             name = name.substring(INTERNAL_PREFIX.length(), name.length());
                         for (FileHandle fh : scripts) {
-                            if ((internal && fh.file().getPath().startsWith(GlobalConf.program.SCRIPT_LOCATION)) || !internal) {
+                            if ((internal && fh.file().getPath().startsWith(GlobalConf.program.SCRIPT_LOCATION)) || (!internal && fh.file().getPath().startsWith(SysUtilsFactory.getSysUtils().getDefaultScriptDir().getAbsolutePath()))) {
                                 if (fh.name().equals(name)) {
                                     selectedScript = fh;
                                     break;

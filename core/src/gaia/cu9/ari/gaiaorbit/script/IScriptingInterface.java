@@ -234,8 +234,8 @@ public interface IScriptingInterface {
 
     /**
      * Sets the camera in focus mode with the focus object that bears the given
-     * name. It returns immediately, so it does not wait for the camera
-     * direction to point to the focus.
+     * <code>focusName</code>. It returns immediately, so it does not wait for
+     * the camera direction to point to the focus.
      * 
      * @param focusName
      *            The name of the new focus object.
@@ -244,16 +244,17 @@ public interface IScriptingInterface {
 
     /**
      * Sets the camera in focus mode with the focus object that bears the given
-     * name. Whether to wait for the camera direction to be aligned with the
-     * focus position can be specified.
+     * <code>focusName</code>. The amount of time to block and wait for the
+     * camera to face the focus can also be specified in
+     * <code>waitTimeSeconds</code>.
      * 
      * @param focusName
      *            The name of the new focus object.
-     * @param focusWait
-     *            Whether to wait for the camera direction to align with the
-     *            focus position.
+     * @param waitTimeSeconds
+     *            Maximum time in seconds to wait for the camera to face the
+     *            focus. If negative, we wait indefinitely.
      */
-    public void setCameraFocus(String focusName, boolean focusWait);
+    public void setCameraFocus(String focusName, float waitTimeSeconds);
 
     /**
      * Sets the camera in focus mode with the given focus object. It also
@@ -608,7 +609,7 @@ public interface IScriptingInterface {
     public void setFrameOutput(boolean active);
 
     /**
-     * Gets an object by name or id (HIP, TYC, sourceId).
+     * Gets an object by <code>name</code> or id (HIP, TYC, sourceId).
      * 
      * @param name
      *            The name or id (HIP, TYC, sourceId) of the object.
@@ -619,7 +620,8 @@ public interface IScriptingInterface {
     public SceneGraphNode getObject(String name);
 
     /**
-     * Gets the size of an object, in Km, by name or id (HIP, TYC, sourceId).
+     * Gets the size of the object identified by <code>name</code>, in Km, by
+     * name or id (HIP, TYC, sourceId).
      * 
      * @param name
      *            The name or id (HIP, TYC, sourceId) of the object.
@@ -630,9 +632,8 @@ public interface IScriptingInterface {
     public double getObjectRadius(String name);
 
     /**
-     * Runs a seamless trip to the object with the given name. The camera will
-     * stop by default at a distance of <code>target.radius * 5</code>.
-     * <strong>Warning> This will only work in asynchronous mode.</strong>
+     * Runs a seamless trip to the object with the name <code>focusName</code>
+     * until the object view angle is <code>20 degrees</code>.
      * 
      * @param name
      *            The name or id (HIP, TYC, sourceId) of the object.
@@ -640,10 +641,9 @@ public interface IScriptingInterface {
     public void goToObject(String name);
 
     /**
-     * Runs a seamless trip to the object with the given name until the object
-     * view angle is met. If angle is negative, the default angle is
-     * <code>20 degrees</code>. <strong>Warning> This will only work in
-     * asynchronous mode.</strong>
+     * Runs a seamless trip to the object with the name <code>focusName</code>
+     * until the object view angle <code>viewAngle</code> is met. If angle is
+     * negative, the default angle is <code>20 degrees</code>.
      * 
      * @param name
      *            The name or id (HIP, TYC, sourceId) of the object.
@@ -654,26 +654,26 @@ public interface IScriptingInterface {
     public void goToObject(String name, double viewAngle);
 
     /**
-     * Runs a seamless trip to the object with the given name until the object
-     * view angle is met. If angle is negative, the default angle is
-     * <code>20 degrees</code>. If focusWait is positive, it indicates the
-     * number of seconds to wait for the target object to be centred before
-     * starting the forward movement. This very much depends on the
+     * Runs a seamless trip to the object with the name <code>focusName</code>
+     * until the object view angle <code>viewAngle</code> is met. If angle is
+     * negative, the default angle is <code>20 degrees</code>. If
+     * <code>waitTimeSeconds</code> is positive, it indicates the number of
+     * seconds to wait (block the function) for the camera to face the focus
+     * before starting the forward movement. This very much depends on the
      * <code>turn velocity</code> of the camera. See
-     * {@link #setTurningCameraSpeed(float)}. <strong>Warning> This will only
-     * work in asynchronous mode.</strong>
+     * {@link #setTurningCameraSpeed(float)}.
      * 
      * @param name
      *            The name or id (HIP, TYC, sourceId) of the object.
      * @param viewAngle
      *            The target view angle of the object, in degrees. The angle
      *            gets larger and larger as we approach the object.
-     * @param focusWait
+     * @param waitTimeSeconds
      *            The seconds to wait for the camera direction vector and the
      *            vector from the camera position to the target object to be
      *            aligned.
      */
-    public void goToObject(String name, double viewAngle, float focusWait);
+    public void goToObject(String name, double viewAngle, float waitTimeSeconds);
 
     /**
      * Lands on the object with the given name, if it is an instance of
@@ -687,9 +687,9 @@ public interface IScriptingInterface {
     public void landOnObject(String name);
 
     /**
-     * Lands on the object with the given name, if it is an instance of
-     * {@link gaia.cu9.ari.gaiaorbit.scenegraph.Planet}, at the location with
-     * the given name, if it exists.
+     * Lands on the object with the given <code>name</code>, if it is an
+     * instance of {@link gaia.cu9.ari.gaiaorbit.scenegraph.Planet}, at the
+     * location with the given name, if it exists.
      * 
      * @param name
      *            The proper name of the object.
@@ -699,9 +699,9 @@ public interface IScriptingInterface {
     public void landOnObjectLocation(String name, String locationName);
 
     /**
-     * Lands on the object with the given name, if it is an instance of
-     * {@link gaia.cu9.ari.gaiaorbit.scenegraph.Planet}, at the location
-     * specified in by [latitude, longitude], in degrees.
+     * Lands on the object with the given <code>name</code>, if it is an
+     * instance of {@link gaia.cu9.ari.gaiaorbit.scenegraph.Planet}, at the
+     * location specified in by [latitude, longitude], in degrees.
      * 
      * @param name
      *            The proper name of the object.
@@ -714,8 +714,8 @@ public interface IScriptingInterface {
 
     /**
      * Returns the distance to the surface of the object identified with the
-     * given name. If the object is an abstract node or does not exist, it
-     * returns a negative distance.
+     * given <code>name</code>. If the object is an abstract node or does not
+     * exist, it returns a negative distance.
      * 
      * @param name
      *            The name or id (HIP, TYC, sourceId) of the object.
@@ -842,8 +842,8 @@ public interface IScriptingInterface {
 
     /**
      * Sleeps for the given number of seconds in the application time (FPS), so
-     * if we are capturing and the frame rate is set to 30 FPS, the command
-     * sleep(1) will put the script to sleep for 30 frames.
+     * if we are capturing frames and the frame rate is set to 30 FPS, the
+     * command sleep(1) will put the script to sleep for 30 frames.
      * 
      * @param seconds
      *            The number of seconds to wait.
@@ -851,7 +851,8 @@ public interface IScriptingInterface {
     public void sleep(float seconds);
 
     /**
-     * Sleeps for a number of frames
+     * Sleeps for a number of frames. This is very useful for scripts which need
+     * to run alongside the frame output system.
      * 
      * @param frames
      *            The number of frames to wait.
