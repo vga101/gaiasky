@@ -25,29 +25,23 @@ public class GaiaComponent extends GuiComponent {
     public void initialize() {
         computeGaiaScan = new CheckBox(" " + txt("gui.gaiascan.enable"), skin);
         computeGaiaScan.setName("compute gaia scan");
-        computeGaiaScan.addListener(new EventListener() {
-            @Override
-            public boolean handle(Event event) {
-                if (event instanceof ChangeEvent) {
-                    EventManager.instance.post(Events.COMPUTE_GAIA_SCAN_CMD, txt("gui.gaiascan.compute"), computeGaiaScan.isChecked());
-                    return true;
-                }
-                return false;
+        computeGaiaScan.addListener(event -> {
+            if (event instanceof ChangeEvent) {
+                EventManager.instance.post(Events.COMPUTE_GAIA_SCAN_CMD, txt("gui.gaiascan.compute"), computeGaiaScan.isChecked());
+                return true;
             }
+            return false;
         });
         computeGaiaScan.setChecked(GlobalConf.scene.COMPUTE_GAIA_SCAN);
 
         transitColor = new CheckBox(" " + txt("gui.gaiascan.colour"), skin);
         transitColor.setName("transit color");
-        transitColor.addListener(new EventListener() {
-            @Override
-            public boolean handle(Event event) {
-                if (event instanceof ChangeEvent) {
-                    EventManager.instance.post(Events.TRANSIT_COLOUR_CMD, txt("gui.gaiascan.transit"), transitColor.isChecked());
-                    return true;
-                }
-                return false;
+        transitColor.addListener(event -> {
+            if (event instanceof ChangeEvent) {
+                EventManager.instance.post(Events.TRANSIT_COLOUR_CMD, txt("gui.gaiascan.transit"), transitColor.isChecked());
+                return true;
             }
+            return false;
         });
         transitColor.setChecked(GlobalConf.scene.STAR_COLOR_TRANSIT);
 

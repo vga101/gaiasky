@@ -1,7 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.interfce.components;
 
-import com.badlogic.gdx.scenes.scene2d.Event;
-import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
 import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup;
@@ -48,16 +46,13 @@ public class VisualEffectsComponent extends GuiComponent implements IObserver {
         starBrightness.setName("star brightness");
         starBrightness.setWidth(sliderWidth);
         starBrightness.setValue((float) MathUtilsd.lint(GlobalConf.scene.STAR_BRIGHTNESS, Constants.MIN_STAR_BRIGHT, Constants.MAX_STAR_BRIGHT, Constants.MIN_SLIDER, Constants.MAX_SLIDER));
-        starBrightness.addListener(new EventListener() {
-            @Override
-            public boolean handle(Event event) {
-                if (event instanceof ChangeEvent && hackProgrammaticChangeEvents) {
-                    EventManager.instance.post(Events.STAR_BRIGHTNESS_CMD, MathUtilsd.lint(starBrightness.getValue(), Constants.MIN_SLIDER, Constants.MAX_SLIDER, Constants.MIN_STAR_BRIGHT, Constants.MAX_STAR_BRIGHT), true);
-                    starbrightnessl.setText(Integer.toString((int) starBrightness.getValue()));
-                    return true;
-                }
-                return false;
+        starBrightness.addListener(event -> {
+            if (event instanceof ChangeEvent && hackProgrammaticChangeEvents) {
+                EventManager.instance.post(Events.STAR_BRIGHTNESS_CMD, MathUtilsd.lint(starBrightness.getValue(), Constants.MIN_SLIDER, Constants.MAX_SLIDER, Constants.MIN_STAR_BRIGHT, Constants.MAX_STAR_BRIGHT), true);
+                starbrightnessl.setText(Integer.toString((int) starBrightness.getValue()));
+                return true;
             }
+            return false;
         });
         HorizontalGroup sbrightnessGroup = new HorizontalGroup();
         sbrightnessGroup.space(space3);
@@ -71,16 +66,13 @@ public class VisualEffectsComponent extends GuiComponent implements IObserver {
         starSize.setName("star size");
         starSize.setWidth(sliderWidth);
         starSize.setValue(MathUtilsd.lint(GlobalConf.scene.STAR_POINT_SIZE, Constants.MIN_STAR_POINT_SIZE, Constants.MAX_STAR_POINT_SIZE, Constants.MIN_SLIDER, Constants.MAX_SLIDER));
-        starSize.addListener(new EventListener() {
-            @Override
-            public boolean handle(Event event) {
-                if (flag && event instanceof ChangeEvent) {
-                    EventManager.instance.post(Events.STAR_POINT_SIZE_CMD, MathUtilsd.lint(starSize.getValue(), Constants.MIN_SLIDER, Constants.MAX_SLIDER, Constants.MIN_STAR_POINT_SIZE, Constants.MAX_STAR_POINT_SIZE));
-                    size.setText(Integer.toString((int) starSize.getValue()));
-                    return true;
-                }
-                return false;
+        starSize.addListener(event -> {
+            if (flag && event instanceof ChangeEvent) {
+                EventManager.instance.post(Events.STAR_POINT_SIZE_CMD, MathUtilsd.lint(starSize.getValue(), Constants.MIN_SLIDER, Constants.MAX_SLIDER, Constants.MIN_STAR_POINT_SIZE, Constants.MAX_STAR_POINT_SIZE));
+                size.setText(Integer.toString((int) starSize.getValue()));
+                return true;
             }
+            return false;
         });
         HorizontalGroup sizeGroup = new HorizontalGroup();
         sizeGroup.space(space3);
@@ -94,16 +86,13 @@ public class VisualEffectsComponent extends GuiComponent implements IObserver {
         starOpacity.setName("star opacity");
         starOpacity.setWidth(sliderWidth);
         starOpacity.setValue(MathUtilsd.lint(GlobalConf.scene.POINT_ALPHA_MIN, Constants.MIN_STAR_MIN_OPACITY, Constants.MAX_STAR_MIN_OPACITY, Constants.MIN_SLIDER, Constants.MAX_SLIDER));
-        starOpacity.addListener(new EventListener() {
-            @Override
-            public boolean handle(Event event) {
-                if (event instanceof ChangeEvent) {
-                    EventManager.instance.post(Events.STAR_MIN_OPACITY_CMD, MathUtilsd.lint(starOpacity.getValue(), Constants.MIN_SLIDER, Constants.MAX_SLIDER, Constants.MIN_STAR_MIN_OPACITY, Constants.MAX_STAR_MIN_OPACITY));
-                    opacity.setText(Integer.toString((int) starOpacity.getValue()));
-                    return true;
-                }
-                return false;
+        starOpacity.addListener(event -> {
+            if (event instanceof ChangeEvent) {
+                EventManager.instance.post(Events.STAR_MIN_OPACITY_CMD, MathUtilsd.lint(starOpacity.getValue(), Constants.MIN_SLIDER, Constants.MAX_SLIDER, Constants.MIN_STAR_MIN_OPACITY, Constants.MAX_STAR_MIN_OPACITY));
+                opacity.setText(Integer.toString((int) starOpacity.getValue()));
+                return true;
             }
+            return false;
         });
         HorizontalGroup opacityGroup = new HorizontalGroup();
         opacityGroup.space(space3);
@@ -117,16 +106,13 @@ public class VisualEffectsComponent extends GuiComponent implements IObserver {
         ambientLight.setName("ambient light");
         ambientLight.setWidth(sliderWidth);
         ambientLight.setValue((float) GlobalConf.scene.AMBIENT_LIGHT * 100);
-        ambientLight.addListener(new EventListener() {
-            @Override
-            public boolean handle(Event event) {
-                if (event instanceof ChangeEvent) {
-                    EventManager.instance.post(Events.AMBIENT_LIGHT_CMD, ambientLight.getValue() / 100f);
-                    ambient.setText(Integer.toString((int) ambientLight.getValue()));
-                    return true;
-                }
-                return false;
+        ambientLight.addListener(event -> {
+            if (event instanceof ChangeEvent) {
+                EventManager.instance.post(Events.AMBIENT_LIGHT_CMD, ambientLight.getValue() / 100f);
+                ambient.setText(Integer.toString((int) ambientLight.getValue()));
+                return true;
             }
+            return false;
         });
         HorizontalGroup ambientGroup = new HorizontalGroup();
         ambientGroup.space(space3);
@@ -141,16 +127,13 @@ public class VisualEffectsComponent extends GuiComponent implements IObserver {
             bloomEffect.setName("bloom effect");
             bloomEffect.setWidth(sliderWidth);
             bloomEffect.setValue(GlobalConf.postprocess.POSTPROCESS_BLOOM_INTENSITY * 10f);
-            bloomEffect.addListener(new EventListener() {
-                @Override
-                public boolean handle(Event event) {
-                    if (event instanceof ChangeEvent) {
-                        EventManager.instance.post(Events.BLOOM_CMD, bloomEffect.getValue() / 10f);
-                        bloom.setText(Integer.toString((int) bloomEffect.getValue()));
-                        return true;
-                    }
-                    return false;
+            bloomEffect.addListener(event -> {
+                if (event instanceof ChangeEvent) {
+                    EventManager.instance.post(Events.BLOOM_CMD, bloomEffect.getValue() / 10f);
+                    bloom.setText(Integer.toString((int) bloomEffect.getValue()));
+                    return true;
                 }
+                return false;
             });
 
             bloomGroup = new HorizontalGroup();
@@ -165,16 +148,13 @@ public class VisualEffectsComponent extends GuiComponent implements IObserver {
             brightness.setName("brightness");
             brightness.setWidth(sliderWidth);
             brightness.setValue(MathUtilsd.lint(GlobalConf.postprocess.POSTPROCESS_BRIGHTNESS, Constants.MIN_BRIGHTNESS, Constants.MAX_BRIGHTNESS, Constants.MIN_SLIDER, Constants.MAX_SLIDER));
-            brightness.addListener(new EventListener() {
-                @Override
-                public boolean handle(Event event) {
-                    if (event instanceof ChangeEvent) {
-                        EventManager.instance.post(Events.BRIGHTNESS_CMD, MathUtilsd.lint(brightness.getValue(), Constants.MIN_SLIDER, Constants.MAX_SLIDER, Constants.MIN_BRIGHTNESS, Constants.MAX_BRIGHTNESS));
-                        brightnessLabel.setText(Integer.toString((int) brightness.getValue()));
-                        return true;
-                    }
-                    return false;
+            brightness.addListener(event -> {
+                if (event instanceof ChangeEvent) {
+                    EventManager.instance.post(Events.BRIGHTNESS_CMD, MathUtilsd.lint(brightness.getValue(), Constants.MIN_SLIDER, Constants.MAX_SLIDER, Constants.MIN_BRIGHTNESS, Constants.MAX_BRIGHTNESS));
+                    brightnessLabel.setText(Integer.toString((int) brightness.getValue()));
+                    return true;
                 }
+                return false;
             });
 
             brightnessGroup = new HorizontalGroup();
@@ -189,16 +169,13 @@ public class VisualEffectsComponent extends GuiComponent implements IObserver {
             contrast.setName("contrast");
             contrast.setWidth(sliderWidth);
             contrast.setValue(MathUtilsd.lint(GlobalConf.postprocess.POSTPROCESS_CONTRAST, Constants.MIN_CONTRAST, Constants.MAX_CONTRAST, Constants.MIN_SLIDER, Constants.MAX_SLIDER));
-            contrast.addListener(new EventListener() {
-                @Override
-                public boolean handle(Event event) {
-                    if (event instanceof ChangeEvent) {
-                        EventManager.instance.post(Events.CONTRAST_CMD, MathUtilsd.lint(contrast.getValue(), Constants.MIN_SLIDER, Constants.MAX_SLIDER, Constants.MIN_CONTRAST, Constants.MAX_CONTRAST));
-                        contrastLabel.setText(Integer.toString((int) contrast.getValue()));
-                        return true;
-                    }
-                    return false;
+            contrast.addListener(event -> {
+                if (event instanceof ChangeEvent) {
+                    EventManager.instance.post(Events.CONTRAST_CMD, MathUtilsd.lint(contrast.getValue(), Constants.MIN_SLIDER, Constants.MAX_SLIDER, Constants.MIN_CONTRAST, Constants.MAX_CONTRAST));
+                    contrastLabel.setText(Integer.toString((int) contrast.getValue()));
+                    return true;
                 }
+                return false;
             });
 
             contrastGroup = new HorizontalGroup();
@@ -210,29 +187,23 @@ public class VisualEffectsComponent extends GuiComponent implements IObserver {
             motionBlur = new CheckBox(" " + txt("gui.motionblur"), skin);
             motionBlur.setName("motion blur");
             motionBlur.setChecked(GlobalConf.postprocess.POSTPROCESS_MOTION_BLUR != 0);
-            motionBlur.addListener(new EventListener() {
-                @Override
-                public boolean handle(Event event) {
-                    if (event instanceof ChangeEvent) {
-                        EventManager.instance.post(Events.MOTION_BLUR_CMD, motionBlur.isChecked() ? Constants.MOTION_BLUR_VALUE : 0.0f);
-                        return true;
-                    }
-                    return false;
+            motionBlur.addListener(event -> {
+                if (event instanceof ChangeEvent) {
+                    EventManager.instance.post(Events.MOTION_BLUR_CMD, motionBlur.isChecked() ? Constants.MOTION_BLUR_VALUE : 0.0f);
+                    return true;
                 }
+                return false;
             });
 
             /** Lens flare **/
             lensFlare = new CheckBox(" " + txt("gui.lensflare"), skin);
             lensFlare.setName("lens flare");
-            lensFlare.addListener(new EventListener() {
-                @Override
-                public boolean handle(Event event) {
-                    if (event instanceof ChangeEvent) {
-                        EventManager.instance.post(Events.LENS_FLARE_CMD, lensFlare.isChecked());
-                        return true;
-                    }
-                    return false;
+            lensFlare.addListener(event -> {
+                if (event instanceof ChangeEvent) {
+                    EventManager.instance.post(Events.LENS_FLARE_CMD, lensFlare.isChecked());
+                    return true;
                 }
+                return false;
             });
             lensFlare.setChecked(GlobalConf.postprocess.POSTPROCESS_LENS_FLARE);
 
@@ -240,15 +211,12 @@ public class VisualEffectsComponent extends GuiComponent implements IObserver {
             lightScattering = new CheckBox(" " + txt("gui.lightscattering"), skin);
             lightScattering.setName("light scattering");
             lightScattering.setChecked(GlobalConf.postprocess.POSTPROCESS_LIGHT_SCATTERING);
-            lightScattering.addListener(new EventListener() {
-                @Override
-                public boolean handle(Event event) {
-                    if (event instanceof ChangeEvent) {
-                        EventManager.instance.post(Events.LIGHT_SCATTERING_CMD, lightScattering.isChecked());
-                        return true;
-                    }
-                    return false;
+            lightScattering.addListener(event -> {
+                if (event instanceof ChangeEvent) {
+                    EventManager.instance.post(Events.LIGHT_SCATTERING_CMD, lightScattering.isChecked());
+                    return true;
                 }
+                return false;
             });
 
         }

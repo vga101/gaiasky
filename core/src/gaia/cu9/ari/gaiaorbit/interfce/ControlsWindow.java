@@ -96,15 +96,12 @@ public class ControlsWindow extends CollapsibleWindow implements IObserver {
         playstop = new OwnImageButton(skin, "playstop");
         playstop.setName("play stop");
         playstop.setChecked(GlobalConf.runtime.TIME_ON);
-        playstop.addListener(new EventListener() {
-            @Override
-            public boolean handle(Event event) {
-                if (event instanceof ChangeEvent) {
-                    EventManager.instance.post(Events.TOGGLE_TIME_CMD, playstop.isChecked(), true);
-                    return true;
-                }
-                return false;
+        playstop.addListener(event -> {
+            if (event instanceof ChangeEvent) {
+                EventManager.instance.post(Events.TOGGLE_TIME_CMD, playstop.isChecked(), true);
+                return true;
             }
+            return false;
         });
         playstop.addListener(new TextTooltip(txt("gui.tooltip.playstop"), skin));
 
@@ -122,15 +119,12 @@ public class ControlsWindow extends CollapsibleWindow implements IObserver {
             recCamera = new OwnImageButton(skin, "rec");
             recCamera.setName("recCam");
             recCamera.setChecked(GlobalConf.runtime.RECORD_CAMERA);
-            recCamera.addListener(new EventListener() {
-                @Override
-                public boolean handle(Event event) {
-                    if (event instanceof ChangeEvent) {
-                        EventManager.instance.post(Events.RECORD_CAMERA_CMD, recCamera.isChecked(), true);
-                        return true;
-                    }
-                    return false;
+            recCamera.addListener(event -> {
+                if (event instanceof ChangeEvent) {
+                    EventManager.instance.post(Events.RECORD_CAMERA_CMD, recCamera.isChecked(), true);
+                    return true;
                 }
+                return false;
             });
             recCamera.addListener(new TextTooltip(txt("gui.tooltip.reccamera"), skin));
 
@@ -138,15 +132,12 @@ public class ControlsWindow extends CollapsibleWindow implements IObserver {
             playCamera = new OwnImageButton(skin, "play");
             playCamera.setName("playCam");
             playCamera.setChecked(false);
-            playCamera.addListener(new EventListener() {
-                @Override
-                public boolean handle(Event event) {
-                    if (event instanceof ChangeEvent) {
-                        EventManager.instance.post(Events.SHOW_PLAYCAMERA_ACTION, ui, skin);
-                        return true;
-                    }
-                    return false;
+            playCamera.addListener(event -> {
+                if (event instanceof ChangeEvent) {
+                    EventManager.instance.post(Events.SHOW_PLAYCAMERA_ACTION, ui, skin);
+                    return true;
                 }
+                return false;
             });
 
             playCamera.addListener(new TextTooltip(txt("gui.tooltip.playcamera"), skin));
@@ -213,16 +204,13 @@ public class ControlsWindow extends CollapsibleWindow implements IObserver {
 
         /** ----BACK TO WEBGL LINK---- **/
         Button switchWebgl = new OwnTextButton(txt("gui.webgl.back"), skin, "link");
-        switchWebgl.addListener(new EventListener() {
-            @Override
-            public boolean handle(Event event) {
-                if (event instanceof ChangeEvent) {
-                    // Remove webgl, add controls window
-                    EventManager.instance.post(Events.REMOVE_GUI_COMPONENT, "controlsWindow");
-                    EventManager.instance.post(Events.ADD_GUI_COMPONENT, "webglInterface");
-                }
-                return true;
+        switchWebgl.addListener(event -> {
+            if (event instanceof ChangeEvent) {
+                // Remove webgl, add controls window
+                EventManager.instance.post(Events.REMOVE_GUI_COMPONENT, "controlsWindow");
+                EventManager.instance.post(Events.ADD_GUI_COMPONENT, "webglInterface");
             }
+            return true;
         });
         mainActors.add(switchWebgl);
 

@@ -3,8 +3,6 @@ package gaia.cu9.ari.gaiaorbit.interfce.components;
 import java.util.Date;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.scenes.scene2d.Event;
-import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Container;
 import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup;
@@ -67,21 +65,16 @@ public class TimeComponent extends GuiComponent implements IObserver {
         time.setWidth(150 * GlobalConf.SCALE_FACTOR);
 
         dateEdit = new OwnImageButton(skin, "edit");
-        dateEdit.addListener(new EventListener() {
-
-            @Override
-            public boolean handle(Event event) {
-                if (event instanceof ChangeEvent) {
-                    // Left button click
-                    if (dateDialog == null) {
-                        dateDialog = new DateDialog(stage, skin);
-                    }
-                    dateDialog.updateTime(GaiaSky.instance.time.getTime());
-                    dateDialog.display();
+        dateEdit.addListener(event -> {
+            if (event instanceof ChangeEvent) {
+                // Left button click
+                if (dateDialog == null) {
+                    dateDialog = new DateDialog(stage, skin);
                 }
-                return false;
+                dateDialog.updateTime(GaiaSky.instance.time.getTime());
+                dateDialog.display();
             }
-
+            return false;
         });
         dateEdit.addListener(new TextTooltip(txt("gui.tooltip.dateedit"), skin));
 
@@ -89,32 +82,26 @@ public class TimeComponent extends GuiComponent implements IObserver {
         Label paceLabel = new Label(txt("gui.pace"), skin);
         plus = new OwnImageButton(skin, "plus");
         plus.setName("plus");
-        plus.addListener(new EventListener() {
-            @Override
-            public boolean handle(Event event) {
-                if (event instanceof ChangeEvent) {
-                    // Plus pressed
-                    EventManager.instance.post(Events.TIME_WARP_INCREASE_CMD);
+        plus.addListener(event -> {
+            if (event instanceof ChangeEvent) {
+                // Plus pressed
+                EventManager.instance.post(Events.TIME_WARP_INCREASE_CMD);
 
-                    return true;
-                }
-                return false;
+                return true;
             }
+            return false;
         });
         plus.addListener(new TextTooltip(txt("gui.tooltip.timewarpplus"), skin));
 
         minus = new OwnImageButton(skin, "minus");
         minus.setName("minus");
-        minus.addListener(new EventListener() {
-            @Override
-            public boolean handle(Event event) {
-                if (event instanceof ChangeEvent) {
-                    // Minus pressed
-                    EventManager.instance.post(Events.TIME_WARP_DECREASE_CMD);
-                    return true;
-                }
-                return false;
+        minus.addListener(event -> {
+            if (event instanceof ChangeEvent) {
+                // Minus pressed
+                EventManager.instance.post(Events.TIME_WARP_DECREASE_CMD);
+                return true;
             }
+            return false;
         });
         minus.addListener(new TextTooltip(txt("gui.tooltip.timewarpminus"), skin));
 

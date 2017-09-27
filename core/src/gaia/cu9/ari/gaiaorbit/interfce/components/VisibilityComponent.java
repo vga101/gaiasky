@@ -112,16 +112,13 @@ public class VisibilityComponent extends GuiComponent implements IObserver {
         pmNumFactorSlider = new Slider(Constants.MIN_SLIDER_1, Constants.MAX_SLIDER, 1, false, skin);
         pmNumFactorSlider.setName("proper motion vectors number factor");
         pmNumFactorSlider.setValue(MathUtilsd.lint(GlobalConf.scene.PM_NUM_FACTOR, Constants.MIN_PM_NUM_FACTOR, Constants.MAX_PM_NUM_FACTOR, Constants.MIN_SLIDER_1, Constants.MAX_SLIDER));
-        pmNumFactorSlider.addListener(new EventListener() {
-            @Override
-            public boolean handle(Event event) {
-                if (event instanceof ChangeEvent) {
-                    EventManager.instance.post(Events.PM_NUM_FACTOR_CMD, MathUtilsd.lint(pmNumFactorSlider.getValue(), Constants.MIN_SLIDER_1, Constants.MAX_SLIDER, Constants.MIN_PM_NUM_FACTOR, Constants.MAX_PM_NUM_FACTOR));
-                    pmNumFactor.setText(Integer.toString((int) pmNumFactorSlider.getValue()));
-                    return true;
-                }
-                return false;
+        pmNumFactorSlider.addListener(event -> {
+            if (event instanceof ChangeEvent) {
+                EventManager.instance.post(Events.PM_NUM_FACTOR_CMD, MathUtilsd.lint(pmNumFactorSlider.getValue(), Constants.MIN_SLIDER_1, Constants.MAX_SLIDER, Constants.MIN_PM_NUM_FACTOR, Constants.MAX_PM_NUM_FACTOR));
+                pmNumFactor.setText(Integer.toString((int) pmNumFactorSlider.getValue()));
+                return true;
             }
+            return false;
         });
 
         pmNumFactorGroup = new VerticalGroup();
@@ -140,16 +137,13 @@ public class VisibilityComponent extends GuiComponent implements IObserver {
         pmLenFactorSlider = new Slider(Constants.MIN_PM_LEN_FACTOR, Constants.MAX_PM_LEN_FACTOR, 0.5f, false, skin);
         pmLenFactorSlider.setName("proper motion vectors number factor");
         pmLenFactorSlider.setValue(GlobalConf.scene.PM_LEN_FACTOR);
-        pmLenFactorSlider.addListener(new EventListener() {
-            @Override
-            public boolean handle(Event event) {
-                if (event instanceof ChangeEvent) {
-                    EventManager.instance.post(Events.PM_LEN_FACTOR_CMD, pmLenFactorSlider.getValue());
-                    pmLenFactor.setText(Integer.toString(Math.round(pmLenFactorSlider.getValue())));
-                    return true;
-                }
-                return false;
+        pmLenFactorSlider.addListener(event -> {
+            if (event instanceof ChangeEvent) {
+                EventManager.instance.post(Events.PM_LEN_FACTOR_CMD, pmLenFactorSlider.getValue());
+                pmLenFactor.setText(Integer.toString(Math.round(pmLenFactorSlider.getValue())));
+                return true;
             }
+            return false;
         });
         pmLenFactorGroup = new VerticalGroup();
         pmLenFactorGroup.align(Align.left).columnAlign(Align.left);
@@ -164,24 +158,21 @@ public class VisibilityComponent extends GuiComponent implements IObserver {
         pmGroup = new VerticalGroup().align(Align.left).columnAlign(Align.left);
         properMotions = new CheckBox(" " + txt("gui.checkbox.propermotionvectors"), skin);
         properMotions.setName("pm vectors");
-        properMotions.addListener(new EventListener() {
-            @Override
-            public boolean handle(Event event) {
-                if (event instanceof ChangeEvent) {
-                    EventManager.instance.post(Events.PROPER_MOTIONS_CMD, "Proper motions", properMotions.isChecked());
-                    if (pmGroup != null) {
-                        if (properMotions.isChecked()) {
-                            pmGroup.addActor(pmNumFactorGroup);
-                            pmGroup.addActor(pmLenFactorGroup);
-                        } else {
-                            pmGroup.removeActor(pmNumFactorGroup);
-                            pmGroup.removeActor(pmLenFactorGroup);
-                        }
+        properMotions.addListener(event -> {
+            if (event instanceof ChangeEvent) {
+                EventManager.instance.post(Events.PROPER_MOTIONS_CMD, "Proper motions", properMotions.isChecked());
+                if (pmGroup != null) {
+                    if (properMotions.isChecked()) {
+                        pmGroup.addActor(pmNumFactorGroup);
+                        pmGroup.addActor(pmLenFactorGroup);
+                    } else {
+                        pmGroup.removeActor(pmNumFactorGroup);
+                        pmGroup.removeActor(pmLenFactorGroup);
                     }
-                    return true;
                 }
-                return false;
+                return true;
             }
+            return false;
         });
 
         pmGroup.addActor(properMotions);

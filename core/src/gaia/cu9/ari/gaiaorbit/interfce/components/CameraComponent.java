@@ -3,8 +3,6 @@ package gaia.cu9.ari.gaiaorbit.interfce.components;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.badlogic.gdx.scenes.scene2d.Event;
-import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
@@ -60,15 +58,12 @@ public class CameraComponent extends GuiComponent implements IObserver {
         cinematic = new OwnCheckBox(txt("gui.camera.cinematic"), skin, pad);
         cinematic.setName("cinematic camera");
         cinematic.setChecked(GlobalConf.scene.CINEMATIC_CAMERA);
-        cinematic.addListener(new EventListener() {
-            @Override
-            public boolean handle(Event event) {
-                if (event instanceof ChangeEvent) {
-                    EventManager.instance.post(Events.CAMERA_CINEMATIC_CMD, cinematic.isChecked(), true);
-                    return true;
-                }
-                return false;
+        cinematic.addListener(event -> {
+            if (event instanceof ChangeEvent) {
+                EventManager.instance.post(Events.CAMERA_CINEMATIC_CMD, cinematic.isChecked(), true);
+                return true;
             }
+            return false;
         });
 
         Label modeLabel = new Label(txt("gui.camera.mode"), skin, "default");
@@ -81,25 +76,22 @@ public class CameraComponent extends GuiComponent implements IObserver {
         cameraMode.setName("camera mode");
         cameraMode.setWidth(width);
         cameraMode.setItems(cameraOptions);
-        cameraMode.addListener(new EventListener() {
-            @Override
-            public boolean handle(Event event) {
-                if (event instanceof ChangeEvent) {
-                    String selection = cameraMode.getSelected();
-                    CameraMode mode = null;
-                    try {
-                        mode = CameraMode.fromString(selection);
-                    } catch (IllegalArgumentException e) {
-                        // Foucs to one of our models
-                        mode = CameraMode.Focus;
-                        EventManager.instance.post(Events.FOCUS_CHANGE_CMD, selection, true);
-                    }
-
-                    EventManager.instance.post(Events.CAMERA_MODE_CMD, mode);
-                    return true;
+        cameraMode.addListener(event -> {
+            if (event instanceof ChangeEvent) {
+                String selection = cameraMode.getSelected();
+                CameraMode mode = null;
+                try {
+                    mode = CameraMode.fromString(selection);
+                } catch (IllegalArgumentException e) {
+                    // Foucs to one of our models
+                    mode = CameraMode.Focus;
+                    EventManager.instance.post(Events.FOCUS_CHANGE_CMD, selection, true);
                 }
-                return false;
+
+                EventManager.instance.post(Events.CAMERA_MODE_CMD, mode);
+                return true;
             }
+            return false;
         });
 
         List<Button> buttonList = new ArrayList<Button>();
@@ -110,53 +102,44 @@ public class CameraComponent extends GuiComponent implements IObserver {
         button3d = new OwnTextIconButton("", img3d, skin, "toggle");
         button3d.addListener(new TextTooltip(GlobalResources.capitalise(txt("element.stereomode")), skin));
         button3d.setName("3d");
-        button3d.addListener(new EventListener() {
-            @Override
-            public boolean handle(Event event) {
-                if (event instanceof ChangeEvent) {
-                    EventManager.instance.post(Events.TOGGLE_STEREOSCOPIC_CMD, txt("notif.stereoscopic"), button3d.isChecked());
-                    return true;
-                }
-                return false;
+        button3d.addListener(event -> {
+            if (event instanceof ChangeEvent) {
+                EventManager.instance.post(Events.TOGGLE_STEREOSCOPIC_CMD, txt("notif.stereoscopic"), button3d.isChecked());
+                return true;
             }
+            return false;
         });
 
         buttonDome = new OwnTextIconButton("", imgDome, skin, "toggle");
         buttonDome.addListener(new TextTooltip(GlobalResources.capitalise(txt("element.planetarium")), skin));
         buttonDome.setName("dome");
-        buttonDome.addListener(new EventListener() {
-            @Override
-            public boolean handle(Event event) {
-                if (event instanceof ChangeEvent) {
+        buttonDome.addListener(event -> {
+            if (event instanceof ChangeEvent) {
 
-                    EventManager.instance.post(Events.FISHEYE_CMD, buttonDome.isChecked());
-                    if (buttonDome.isChecked()) {
-                        fovBackup = GaiaSky.instance.cam.getCamera().fieldOfView;
-                        EventManager.instance.post(Events.FOV_CHANGED_CMD, 130f);
-                        EventManager.instance.post(Events.PLANETARIUM_FOCUS_ANGLE_CMD, 30f);
-                    } else {
-                        EventManager.instance.post(Events.FOV_CHANGED_CMD, fovBackup);
-                        EventManager.instance.post(Events.PLANETARIUM_FOCUS_ANGLE_CMD, 0f);
-                    }
-                    return true;
+                EventManager.instance.post(Events.FISHEYE_CMD, buttonDome.isChecked());
+                if (buttonDome.isChecked()) {
+                    fovBackup = GaiaSky.instance.cam.getCamera().fieldOfView;
+                    EventManager.instance.post(Events.FOV_CHANGED_CMD, 130f);
+                    EventManager.instance.post(Events.PLANETARIUM_FOCUS_ANGLE_CMD, 30f);
+                } else {
+                    EventManager.instance.post(Events.FOV_CHANGED_CMD, fovBackup);
+                    EventManager.instance.post(Events.PLANETARIUM_FOCUS_ANGLE_CMD, 0f);
                 }
-                return false;
+                return true;
             }
+            return false;
         });
 
         buttonCubemap = new OwnTextIconButton("", imgCubemap, skin, "toggle");
         buttonCubemap.setProgrammaticChangeEvents(false);
         buttonCubemap.addListener(new TextTooltip(GlobalResources.capitalise(txt("element.360")), skin));
         buttonCubemap.setName("cubemap");
-        buttonCubemap.addListener(new EventListener() {
-            @Override
-            public boolean handle(Event event) {
-                if (event instanceof ChangeEvent) {
-                    EventManager.instance.post(Events.CUBEMAP360_CMD, buttonCubemap.isChecked(), true);
-                    return true;
-                }
-                return false;
+        buttonCubemap.addListener(event -> {
+            if (event instanceof ChangeEvent) {
+                EventManager.instance.post(Events.CUBEMAP360_CMD, buttonCubemap.isChecked(), true);
+                return true;
             }
+            return false;
         });
 
         buttonList.add(button3d);
@@ -168,19 +151,16 @@ public class CameraComponent extends GuiComponent implements IObserver {
         fieldOfView.setName("field of view");
         fieldOfView.setWidth(width);
         fieldOfView.setValue(GlobalConf.scene.CAMERA_FOV);
-        fieldOfView.addListener(new EventListener() {
-            @Override
-            public boolean handle(Event event) {
-                if (fovFlag && event instanceof ChangeEvent) {
-                    float value = MathUtilsd.clamp(fieldOfView.getValue(), Constants.MIN_FOV, Constants.MAX_FOV);
-                    EventManager.instance.post(Events.FOV_CHANGED_CMD, value);
-                    fov.setText(Integer.toString((int) value) + "°");
-                    return true;
-                }
-                return false;
+        fieldOfView.addListener(event -> {
+            if (fovFlag && event instanceof ChangeEvent) {
+                float value = MathUtilsd.clamp(fieldOfView.getValue(), Constants.MIN_FOV, Constants.MAX_FOV);
+                EventManager.instance.post(Events.FOV_CHANGED_CMD, value);
+                fov.setText(Integer.toString((int) value) + "°");
+                return true;
             }
-
+            return false;
         });
+
         fov = new OwnLabel(Integer.toString((int) GlobalConf.scene.CAMERA_FOV) + "°", skin, "default");
 
         /** CAMERA SPEED LIMIT **/
@@ -204,7 +184,7 @@ public class CameraComponent extends GuiComponent implements IObserver {
         cameraSpeedLimit.setName("camera speed limit");
         cameraSpeedLimit.setWidth(width);
         cameraSpeedLimit.setItems(speedLimits);
-        cameraSpeedLimit.addListener((event) -> {
+        cameraSpeedLimit.addListener(event -> {
             if (event instanceof ChangeEvent) {
                 int idx = cameraSpeedLimit.getSelectedIndex();
                 EventManager.instance.post(Events.SPEED_LIMIT_CMD, idx, true);
@@ -219,18 +199,15 @@ public class CameraComponent extends GuiComponent implements IObserver {
         cameraSpeed.setName("camera speed");
         cameraSpeed.setWidth(width);
         cameraSpeed.setValue((float) (GlobalConf.scene.CAMERA_SPEED * Constants.CAMERA_SPEED_FACTOR));
-        cameraSpeed.addListener(new EventListener() {
-            @Override
-            public boolean handle(Event event) {
-                if (event instanceof ChangeEvent) {
-                    EventManager.instance.post(Events.CAMERA_SPEED_CMD, cameraSpeed.getValue() / Constants.CAMERA_SPEED_FACTOR, true);
-                    speed.setText(Integer.toString((int) cameraSpeed.getValue()));
-                    return true;
-                }
-                return false;
+        cameraSpeed.addListener(event -> {
+            if (event instanceof ChangeEvent) {
+                EventManager.instance.post(Events.CAMERA_SPEED_CMD, cameraSpeed.getValue() / Constants.CAMERA_SPEED_FACTOR, true);
+                speed.setText(Integer.toString((int) cameraSpeed.getValue()));
+                return true;
             }
-
+            return false;
         });
+
         speed = new OwnLabel(Integer.toString((int) (GlobalConf.scene.CAMERA_SPEED * Constants.CAMERA_SPEED_FACTOR)), skin, "default");
 
         /** ROTATION SPEED **/
@@ -238,18 +215,15 @@ public class CameraComponent extends GuiComponent implements IObserver {
         rotateSpeed.setName("rotate speed");
         rotateSpeed.setWidth(width);
         rotateSpeed.setValue((float) MathUtilsd.lint(GlobalConf.scene.ROTATION_SPEED, Constants.MIN_ROT_SPEED, Constants.MAX_ROT_SPEED, Constants.MIN_SLIDER, Constants.MAX_SLIDER));
-        rotateSpeed.addListener(new EventListener() {
-            @Override
-            public boolean handle(Event event) {
-                if (event instanceof ChangeEvent) {
-                    EventManager.instance.post(Events.ROTATION_SPEED_CMD, (float) MathUtilsd.lint(rotateSpeed.getValue(), Constants.MIN_SLIDER, Constants.MAX_SLIDER, Constants.MIN_ROT_SPEED, Constants.MAX_ROT_SPEED), true);
-                    rotate.setText(Integer.toString((int) rotateSpeed.getValue()));
-                    return true;
-                }
-                return false;
+        rotateSpeed.addListener(event -> {
+            if (event instanceof ChangeEvent) {
+                EventManager.instance.post(Events.ROTATION_SPEED_CMD, (float) MathUtilsd.lint(rotateSpeed.getValue(), Constants.MIN_SLIDER, Constants.MAX_SLIDER, Constants.MIN_ROT_SPEED, Constants.MAX_ROT_SPEED), true);
+                rotate.setText(Integer.toString((int) rotateSpeed.getValue()));
+                return true;
             }
-
+            return false;
         });
+
         rotate = new OwnLabel(Integer.toString((int) MathUtilsd.lint(GlobalConf.scene.ROTATION_SPEED, Constants.MIN_ROT_SPEED, Constants.MAX_ROT_SPEED, Constants.MIN_SLIDER, Constants.MAX_SLIDER)), skin, "default");
 
         /** TURNING SPEED **/
@@ -257,34 +231,28 @@ public class CameraComponent extends GuiComponent implements IObserver {
         turnSpeed.setName("turn speed");
         turnSpeed.setWidth(width);
         turnSpeed.setValue((float) MathUtilsd.lint(GlobalConf.scene.TURNING_SPEED, Constants.MIN_TURN_SPEED, Constants.MAX_TURN_SPEED, Constants.MIN_SLIDER, Constants.MAX_SLIDER));
-        turnSpeed.addListener(new EventListener() {
-            @Override
-            public boolean handle(Event event) {
-                if (event instanceof ChangeEvent) {
-                    EventManager.instance.post(Events.TURNING_SPEED_CMD, MathUtilsd.lint(turnSpeed.getValue(), Constants.MIN_SLIDER, Constants.MAX_SLIDER, Constants.MIN_TURN_SPEED, Constants.MAX_TURN_SPEED), true);
-                    turn.setText(Integer.toString((int) turnSpeed.getValue()));
-                    return true;
-                }
-                return false;
+        turnSpeed.addListener(event -> {
+            if (event instanceof ChangeEvent) {
+                EventManager.instance.post(Events.TURNING_SPEED_CMD, MathUtilsd.lint(turnSpeed.getValue(), Constants.MIN_SLIDER, Constants.MAX_SLIDER, Constants.MIN_TURN_SPEED, Constants.MAX_TURN_SPEED), true);
+                turn.setText(Integer.toString((int) turnSpeed.getValue()));
+                return true;
             }
-
+            return false;
         });
+
         turn = new OwnLabel(Integer.toString((int) MathUtilsd.lint(GlobalConf.scene.TURNING_SPEED, Constants.MIN_TURN_SPEED, Constants.MAX_TURN_SPEED, Constants.MIN_SLIDER, Constants.MAX_SLIDER)), skin, "default");
 
         /** Focus lock **/
         focusLock = new CheckBox(" " + txt("gui.camera.lock"), skin);
         focusLock.setName("focus lock");
         focusLock.setChecked(GlobalConf.scene.FOCUS_LOCK);
-        focusLock.addListener(new EventListener() {
-            @Override
-            public boolean handle(Event event) {
-                if (event instanceof ChangeEvent) {
-                    EventManager.instance.post(Events.FOCUS_LOCK_CMD, txt("gui.camera.lock"), focusLock.isChecked());
-                    orientationLock.setVisible(focusLock.isChecked());
-                    return true;
-                }
-                return false;
+        focusLock.addListener(event -> {
+            if (event instanceof ChangeEvent) {
+                EventManager.instance.post(Events.FOCUS_LOCK_CMD, txt("gui.camera.lock"), focusLock.isChecked());
+                orientationLock.setVisible(focusLock.isChecked());
+                return true;
             }
+            return false;
         });
 
         /** Focus orientation lock **/
@@ -292,30 +260,24 @@ public class CameraComponent extends GuiComponent implements IObserver {
         orientationLock.setName("orientation lock");
         orientationLock.setChecked(GlobalConf.scene.FOCUS_LOCK_ORIENTATION);
         orientationLock.setVisible(GlobalConf.scene.FOCUS_LOCK);
-        orientationLock.addListener(new EventListener() {
-            @Override
-            public boolean handle(Event event) {
-                if (event instanceof ChangeEvent) {
-                    EventManager.instance.post(Events.ORIENTATION_LOCK_CMD, txt("gui.camera.lock.orientation"), orientationLock.isChecked(), true);
-                    return true;
-                }
-                return false;
+        orientationLock.addListener(event -> {
+            if (event instanceof ChangeEvent) {
+                EventManager.instance.post(Events.ORIENTATION_LOCK_CMD, txt("gui.camera.lock.orientation"), orientationLock.isChecked(), true);
+                return true;
             }
+            return false;
         });
 
         /** Crosshair **/
         crosshair = new OwnCheckBox(" " + txt("gui.camera.crosshair"), skin, pad);
         crosshair.setName("orientation lock");
         crosshair.setChecked(GlobalConf.scene.CROSSHAIR);
-        crosshair.addListener(new EventListener() {
-            @Override
-            public boolean handle(Event event) {
-                if (event instanceof ChangeEvent) {
-                    EventManager.instance.post(Events.CROSSHAIR_CMD, crosshair.isChecked());
-                    return true;
-                }
-                return false;
+        crosshair.addListener(event -> {
+            if (event instanceof ChangeEvent) {
+                EventManager.instance.post(Events.CROSSHAIR_CMD, crosshair.isChecked());
+                return true;
             }
+            return false;
         });
 
         VerticalGroup cameraGroup = new VerticalGroup().align(Align.left).columnAlign(Align.left);

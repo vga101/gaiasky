@@ -4,8 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.Event;
-import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputEvent.Type;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -64,42 +62,39 @@ public class ObjectsComponent extends GuiComponent implements IObserver {
         searchBox.setName("search box");
         searchBox.setWidth(componentWidth);
         searchBox.setMessageText(txt("gui.objects.search"));
-        searchBox.addListener(new EventListener() {
-            @Override
-            public boolean handle(Event event) {
-                if (event instanceof InputEvent) {
-                    InputEvent ie = (InputEvent) event;
-                    if (ie.getType() == Type.keyUp) {
-                        String text = searchBox.getText();
-                        if (sg.containsNode(text.toLowerCase())) {
-                            final SceneGraphNode node = sg.getNode(text.toLowerCase());
-                            if (node instanceof IFocus) {
-                                IFocus focus = (IFocus) node;
-                                if (!focus.isCoordinatesTimeOverflow()) {
-                                    Gdx.app.postRunnable(() -> {
-                                        EventManager.instance.post(Events.CAMERA_MODE_CMD, CameraMode.Focus, true);
-                                        EventManager.instance.post(Events.FOCUS_CHANGE_CMD, focus, true);
-                                    });
-                                }
-
+        searchBox.addListener(event -> {
+            if (event instanceof InputEvent) {
+                InputEvent ie = (InputEvent) event;
+                if (ie.getType() == Type.keyUp) {
+                    String text = searchBox.getText();
+                    if (sg.containsNode(text.toLowerCase())) {
+                        final SceneGraphNode node = sg.getNode(text.toLowerCase());
+                        if (node instanceof IFocus) {
+                            IFocus focus = (IFocus) node;
+                            if (!focus.isCoordinatesTimeOverflow()) {
+                                Gdx.app.postRunnable(() -> {
+                                    EventManager.instance.post(Events.CAMERA_MODE_CMD, CameraMode.Focus, true);
+                                    EventManager.instance.post(Events.FOCUS_CHANGE_CMD, focus, true);
+                                });
                             }
-                        }
-                        NaturalInputController.pressedKeys.remove(ie.getKeyCode());
 
-                        if (ie.getKeyCode() == Keys.ESCAPE) {
-                            // Lose focus
-                            stage.setKeyboardFocus(null);
-                        }
-                    } else if (ie.getType() == Type.keyDown) {
-                        if (ie.getKeyCode() == Keys.CONTROL_LEFT || ie.getKeyCode() == Keys.CONTROL_RIGHT || ie.getKeyCode() == Keys.SHIFT_LEFT || ie.getKeyCode() == Keys.SHIFT_RIGHT) {
-                            // Lose focus
-                            stage.setKeyboardFocus(null);
                         }
                     }
-                    return true;
+                    NaturalInputController.pressedKeys.remove(ie.getKeyCode());
+
+                    if (ie.getKeyCode() == Keys.ESCAPE) {
+                        // Lose focus
+                        stage.setKeyboardFocus(null);
+                    }
+                } else if (ie.getType() == Type.keyDown) {
+                    if (ie.getKeyCode() == Keys.CONTROL_LEFT || ie.getKeyCode() == Keys.CONTROL_RIGHT || ie.getKeyCode() == Keys.SHIFT_LEFT || ie.getKeyCode() == Keys.SHIFT_RIGHT) {
+                        // Lose focus
+                        stage.setKeyboardFocus(null);
+                    }
                 }
-                return false;
+                return true;
             }
+            return false;
         });
 
         treeToModel = new TwoWayHashmap<SceneGraphNode, Node>();
@@ -117,34 +112,29 @@ public class ObjectsComponent extends GuiComponent implements IObserver {
                 objectsTree.add(node);
             }
             objectsTree.expandAll();
-            objectsTree.addListener(new EventListener() {
-
-                @Override
-                public boolean handle(Event event) {
-                    if (event instanceof ChangeEvent) {
+            objectsTree.addListener(event -> {
+                if (event instanceof ChangeEvent) {
+                    if (objectsTree.getSelection().hasItems()) {
                         if (objectsTree.getSelection().hasItems()) {
-                            if (objectsTree.getSelection().hasItems()) {
-                                Node n = objectsTree.getSelection().first();
-                                final SceneGraphNode node = treeToModel.getBackward(n);
-                                if (node instanceof IFocus) {
-                                    IFocus focus = (IFocus) node;
-                                    if (!focus.isCoordinatesTimeOverflow()) {
-                                        Gdx.app.postRunnable(() -> {
-                                            EventManager.instance.post(Events.CAMERA_MODE_CMD, CameraMode.Focus, true);
-                                            EventManager.instance.post(Events.FOCUS_CHANGE_CMD, focus, true);
-                                        });
-                                    }
-
+                            Node n = objectsTree.getSelection().first();
+                            final SceneGraphNode node = treeToModel.getBackward(n);
+                            if (node instanceof IFocus) {
+                                IFocus focus = (IFocus) node;
+                                if (!focus.isCoordinatesTimeOverflow()) {
+                                    Gdx.app.postRunnable(() -> {
+                                        EventManager.instance.post(Events.CAMERA_MODE_CMD, CameraMode.Focus, true);
+                                        EventManager.instance.post(Events.FOCUS_CHANGE_CMD, focus, true);
+                                    });
                                 }
 
                             }
 
                         }
-                        return true;
-                    }
-                    return false;
-                }
 
+                    }
+                    return true;
+                }
+                return false;
             });
             objectsList = objectsTree;
         } else if (list) {
@@ -172,30 +162,26 @@ public class ObjectsComponent extends GuiComponent implements IObserver {
 
             focusList.setItems(names);
             focusList.pack();//
-            focusList.addListener(new EventListener() {
-
-                @Override
-                public boolean handle(Event event) {
-                    if (event instanceof ChangeEvent) {
-                        ChangeEvent ce = (ChangeEvent) event;
-                        Actor actor = ce.getTarget();
-                        final String name = ((com.badlogic.gdx.scenes.scene2d.ui.List<String>) actor).getSelected();
-                        if (sg.containsNode(name)) {
-                            SceneGraphNode node = sg.getNode(name);
-                            if (node instanceof IFocus) {
-                                IFocus focus = (IFocus) node;
-                                if (!focus.isCoordinatesTimeOverflow()) {
-                                    Gdx.app.postRunnable(() -> {
-                                        EventManager.instance.post(Events.CAMERA_MODE_CMD, CameraMode.Focus, true);
-                                        EventManager.instance.post(Events.FOCUS_CHANGE_CMD, focus, true);
-                                    });
-                                }
+            focusList.addListener(event -> {
+                if (event instanceof ChangeEvent) {
+                    ChangeEvent ce = (ChangeEvent) event;
+                    Actor actor = ce.getTarget();
+                    final String name = ((com.badlogic.gdx.scenes.scene2d.ui.List<String>) actor).getSelected();
+                    if (sg.containsNode(name)) {
+                        SceneGraphNode node = sg.getNode(name);
+                        if (node instanceof IFocus) {
+                            IFocus focus = (IFocus) node;
+                            if (!focus.isCoordinatesTimeOverflow()) {
+                                Gdx.app.postRunnable(() -> {
+                                    EventManager.instance.post(Events.CAMERA_MODE_CMD, CameraMode.Focus, true);
+                                    EventManager.instance.post(Events.FOCUS_CHANGE_CMD, focus, true);
+                                });
                             }
                         }
-                        return true;
                     }
-                    return false;
+                    return true;
                 }
+                return false;
             });
             objectsList = focusList;
         }

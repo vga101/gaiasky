@@ -10,8 +10,6 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.Event;
-import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.ButtonGroup;
@@ -290,17 +288,12 @@ public class AboutWindow extends GenericDialog {
         TextButton memoryinfobutton = new OwnTextButton(txt("gui.help.meminfo"), skin, "default");
         memoryinfobutton.setName("memoryinfo");
         memoryinfobutton.setSize(150 * GlobalConf.SCALE_FACTOR, 20 * GlobalConf.SCALE_FACTOR);
-        memoryinfobutton.addListener(new EventListener() {
-            @Override
-            public boolean handle(Event event) {
-                if (event instanceof ChangeEvent) {
-                    EventManager.instance.post(Events.DISPLAY_MEM_INFO_WINDOW, stage, skin);
-                    return true;
-                }
-
-                return false;
+        memoryinfobutton.addListener(event -> {
+            if (event instanceof ChangeEvent) {
+                EventManager.instance.post(Events.DISPLAY_MEM_INFO_WINDOW, stage, skin);
+                return true;
             }
-
+            return false;
         });
 
         // OpenGL info
@@ -469,17 +462,12 @@ public class AboutWindow extends GenericDialog {
 
             OwnTextButton button = new OwnTextButton(txt("gui.newversion.getit"), skin);
             button.pad(pad);
-            button.addListener(new EventListener() {
-
-                @Override
-                public boolean handle(Event event) {
-                    if (event instanceof ChangeEvent) {
-                        Gdx.net.openURI(GlobalConf.WEBPAGE_DOWNLOADS);
-                        return true;
-                    }
-                    return false;
+            button.addListener(event -> {
+                if (event instanceof ChangeEvent) {
+                    Gdx.net.openURI(GlobalConf.WEBPAGE_DOWNLOADS);
+                    return true;
                 }
-
+                return false;
             });
             checkTable.add(button).center().padBottom(pad).row();
 
@@ -490,17 +478,12 @@ public class AboutWindow extends GenericDialog {
             checkLabel.setText(txt("gui.newversion.nonew", GlobalConf.program.getLastCheckedString()));
             // Add check now button
             OwnTextButton button = new OwnTextButton(txt("gui.newversion.checknow"), skin);
-            button.addListener(new EventListener() {
-
-                @Override
-                public boolean handle(Event event) {
-                    if (event instanceof ChangeEvent) {
-                        getCheckVersionThread().start();
-                        return true;
-                    }
-                    return false;
+            button.addListener(event -> {
+                if (event instanceof ChangeEvent) {
+                    getCheckVersionThread().start();
+                    return true;
                 }
-
+                return false;
             });
             checkTable.add(button).center();
         }
@@ -509,7 +492,7 @@ public class AboutWindow extends GenericDialog {
     private Thread getCheckVersionThread() {
         // Start version check
         VersionChecker vc = new VersionChecker(GlobalConf.program.VERSION_CHECK_URL);
-        vc.setListener((event) -> {
+        vc.setListener(event -> {
             if (event instanceof VersionCheckEvent) {
                 VersionCheckEvent vce = (VersionCheckEvent) event;
                 if (!vce.isFailed()) {

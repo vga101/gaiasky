@@ -1,7 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.interfce.components;
 
-import com.badlogic.gdx.scenes.scene2d.Event;
-import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
@@ -42,42 +40,33 @@ public class MusicComponent extends GuiComponent implements IObserver {
         float componentWidth = 140 * GlobalConf.SCALE_FACTOR;
         nf = NumberFormatFactory.getFormatter("000");
         prev = new OwnImageButton(skin, "audio-bwd");
-        prev.addListener(new EventListener() {
-            @Override
-            public boolean handle(Event event) {
-                if (event instanceof ChangeEvent) {
-                    EventManager.instance.post(Events.MUSIC_PREVIOUS_CMD);
-                    return true;
-                }
-                return false;
+        prev.addListener(event -> {
+            if (event instanceof ChangeEvent) {
+                EventManager.instance.post(Events.MUSIC_PREVIOUS_CMD);
+                return true;
             }
+            return false;
         });
         prev.addListener(new TextTooltip(txt("gui.music.previous"), skin));
 
         play = new OwnImageButton(skin, "audio-playpause");
         play.setChecked(false);
-        play.addListener(new EventListener() {
-            @Override
-            public boolean handle(Event event) {
-                if (event instanceof ChangeEvent) {
-                    EventManager.instance.post(Events.MUSIC_PLAYPAUSE_CMD);
-                    return true;
-                }
-                return false;
+        play.addListener(event -> {
+            if (event instanceof ChangeEvent) {
+                EventManager.instance.post(Events.MUSIC_PLAYPAUSE_CMD);
+                return true;
             }
+            return false;
         });
         play.addListener(new TextTooltip(txt("gui.music.playpause"), skin));
 
         next = new OwnImageButton(skin, "audio-fwd");
-        next.addListener(new EventListener() {
-            @Override
-            public boolean handle(Event event) {
-                if (event instanceof ChangeEvent) {
-                    EventManager.instance.post(Events.MUSIC_NEXT_CMD);
-                    return true;
-                }
-                return false;
+        next.addListener(event -> {
+            if (event instanceof ChangeEvent) {
+                EventManager.instance.post(Events.MUSIC_NEXT_CMD);
+                return true;
             }
+            return false;
         });
         next.addListener(new TextTooltip(txt("gui.music.next"), skin));
 
@@ -85,18 +74,14 @@ public class MusicComponent extends GuiComponent implements IObserver {
         volume.setName("volume");
         volume.setWidth(componentWidth);
         volume.setValue(MusicManager.instance.getVolume() * Constants.MAX_SLIDER);
-        volume.addListener(new EventListener() {
-            @Override
-            public boolean handle(Event event) {
-                if (event instanceof ChangeEvent) {
-                    float value = volume.getValue();
-                    EventManager.instance.post(Events.MUSIC_VOLUME_CMD, value / Constants.MAX_SLIDER);
-                    vol.setText(nf.format(value));
-                    return true;
-                }
-                return false;
+        volume.addListener(event -> {
+            if (event instanceof ChangeEvent) {
+                float value = volume.getValue();
+                EventManager.instance.post(Events.MUSIC_VOLUME_CMD, value / Constants.MAX_SLIDER);
+                vol.setText(nf.format(value));
+                return true;
             }
-
+            return false;
         });
         vol = new OwnLabel(nf.format(volume.getValue()), skin, "default");
 
