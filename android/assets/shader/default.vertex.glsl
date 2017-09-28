@@ -395,8 +395,8 @@ void main() {
                                 #ifdef cameraPositionFlag
                                     // Add light to tangent zones
                                     vec3 view = normalize(u_cameraPosition.xyz - pos.xyz);
-                                    float VdotN = 1.0 - clamp(dot(view, normal), 0.0, 1.0);
-                                    v_lightDiffuse += pow(VdotN, 6.0);
+                                    float VdotN = 1.0 - dot(view, normal);
+                                    v_lightDiffuse += pow(VdotN  * 1.3, 10.0) * NdotL;
                                 #endif // cameraPositionFlag
 
 				#ifdef specularFlag
