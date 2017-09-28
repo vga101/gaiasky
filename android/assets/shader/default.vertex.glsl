@@ -391,6 +391,14 @@ void main() {
 				float NdotL = clamp(dot(normal, lightDir), 0.0, 1.0);
 				vec3 value = u_dirLights[i].color * NdotL;
 				v_lightDiffuse += value;
+                                
+                                #ifdef cameraPositionFlag
+                                    // Add light to tangent zones
+                                    vec3 view = normalize(u_cameraPosition.xyz - pos.xyz);
+                                    float VdotN = 1.0 - clamp(dot(view, normal), 0.0, 1.0);
+                                    v_lightDiffuse += pow(VdotN, 6.0);
+                                #endif // cameraPositionFlag
+
 				#ifdef specularFlag
 					float halfDotView = max(0.0, dot(normal, normalize(lightDir + viewVec)));
 					v_lightSpecular += value * pow(halfDotView, u_shininess);
