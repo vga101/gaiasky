@@ -95,10 +95,10 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
     /** The particular current scene graph renderer **/
     private ISGR sgr;
     /**
-     * Renderer vector, with 0 = normal, 1 = stereoscopic, 2 = FOV, 3 = cubemap
+     * Renderers vector, with 0 = normal, 1 = stereoscopic, 2 = FOV, 3 = cubemap
      **/
     private ISGR[] sgrs;
-
+    // Indexes
     final int SGR_DEFAULT_IDX = 0, SGR_STEREO_IDX = 1, SGR_FOV_IDX = 2, SGR_CUBEMAP_IDX = 3;
 
     public SceneGraphRenderer() {
