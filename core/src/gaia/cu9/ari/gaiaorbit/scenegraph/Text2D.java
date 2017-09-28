@@ -61,7 +61,7 @@ public class Text2D extends FadeNode implements I3DTextRenderable, IShapeRendera
     @Override
     protected void addToRenderLists(ICamera camera) {
         if (renderText()) {
-            addToRender(this, RenderGroup.LABEL);
+            addToRender(this, RenderGroup.FONT_LABEL);
             if (lines) {
                 addToRender(this, RenderGroup.SHAPE);
             }

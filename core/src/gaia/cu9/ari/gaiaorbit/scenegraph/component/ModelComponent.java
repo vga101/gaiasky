@@ -13,6 +13,7 @@ import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.BlendingAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
+import com.badlogic.gdx.graphics.g3d.attributes.IntAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.math.Matrix4;
@@ -192,6 +193,8 @@ public class ModelComponent implements Disposable {
                         if (material.get(TextureAttribute.Ambient) == null && material.get(TextureAttribute.Diffuse) == null) {
                             material.set(new ColorAttribute(ColorAttribute.Diffuse, cc[0], cc[1], cc[2], cc[3]));
                             material.set(new ColorAttribute(ColorAttribute.Ambient, cc[0], cc[1], cc[2], cc[3]));
+                            if (!culling)
+                                material.set(new IntAttribute(IntAttribute.CullFace, GL20.GL_NONE));
                         }
                     }
                 }
@@ -279,6 +282,13 @@ public class ModelComponent implements Disposable {
 
     public void setScale(Long scale) {
         this.scale = scale;
+    }
+
+    public void setCulling(String culling) {
+        try {
+            this.culling = Boolean.parseBoolean(culling);
+        } catch (Exception e) {
+        }
     }
 
     public void setCulling(Boolean culling) {

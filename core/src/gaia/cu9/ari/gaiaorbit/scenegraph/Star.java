@@ -258,7 +258,7 @@ public class Star extends Particle {
                 addToRender(this, RenderGroup.BILLBOARD_STAR);
                 if (distToCamera < modelDistance) {
                     camera.checkClosest(this);
-                    addToRender(this, RenderGroup.MODEL_S);
+                    addToRender(this, RenderGroup.MODEL_STAR);
                 }
             }
             if (this.hasPm && viewAngleApparent >= thpointTimesFovfactor / GlobalConf.scene.PM_NUM_FACTOR) {
@@ -267,7 +267,7 @@ public class Star extends Particle {
         }
 
         if ((renderText() || camera.getCurrent() instanceof FovCamera) && visByCam) {
-            addToRender(this, RenderGroup.LABEL);
+            addToRender(this, RenderGroup.FONT_LABEL);
         }
 
     }

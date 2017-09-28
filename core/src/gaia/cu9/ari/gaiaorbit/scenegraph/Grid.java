@@ -95,8 +95,8 @@ public class Grid extends AbstractPositionEntity implements IModelRenderable, IA
     protected void addToRenderLists(ICamera camera) {
         // Render group never changes
         // Add to toRender list
-        addToRender(this, RenderGroup.MODEL_FB);
-        addToRender(this, RenderGroup.MODEL_B_ANNOT);
+        addToRender(this, RenderGroup.MODEL_DEFAULT);
+        addToRender(this, RenderGroup.FONT_ANNOTATION);
     }
 
     @Override

@@ -158,8 +158,8 @@ public class Planet extends ModelBody implements IAtmosphereRenderable, ILineRen
     protected void addToRenderLists(ICamera camera) {
         super.addToRenderLists(camera);
         // Add atmosphere to default render group if necessary
-        if (ac != null && isInRender(this, RenderGroup.MODEL_F) && !coordinatesTimeOverflow) {
-            addToRender(this, RenderGroup.MODEL_F_ATM);
+        if (ac != null && isInRender(this, RenderGroup.MODEL_NORMAL) && !coordinatesTimeOverflow) {
+            addToRender(this, RenderGroup.MODEL_ATM);
         }
     }
 

@@ -111,11 +111,11 @@ public abstract class Satellite extends ModelBody {
                     if (viewAngleApparent < THRESHOLD_QUAD() * camera.getFovFactor() && !hidden) {
                         addToRender(this, RenderGroup.BILLBOARD_SSO);
                     } else {
-                        addToRender(this, RenderGroup.MODEL_F);
+                        addToRender(this, RenderGroup.MODEL_NORMAL);
                     }
 
                     if (renderText()) {
-                        addToRender(this, RenderGroup.LABEL);
+                        addToRender(this, RenderGroup.FONT_LABEL);
                     }
                 }
             }

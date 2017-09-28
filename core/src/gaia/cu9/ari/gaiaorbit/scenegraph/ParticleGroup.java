@@ -230,7 +230,7 @@ public class ParticleGroup extends FadeNode implements I3DTextRenderable, IFocus
         addToRender(this, RenderGroup.PARTICLE_GROUP);
 
         if (renderText()) {
-            addToRender(this, RenderGroup.LABEL);
+            addToRender(this, RenderGroup.FONT_LABEL);
         }
     }
 

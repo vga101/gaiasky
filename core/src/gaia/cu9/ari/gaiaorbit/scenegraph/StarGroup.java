@@ -560,9 +560,9 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
         addToRender(this, RenderGroup.STAR_GROUP);
         addToRender(this, RenderGroup.BILLBOARD_STAR);
         addToRender(this, RenderGroup.LINE);
-        addToRender(this, RenderGroup.MODEL_S);
+        addToRender(this, RenderGroup.MODEL_STAR);
         if (renderText()) {
-            addToRender(this, RenderGroup.LABEL);
+            addToRender(this, RenderGroup.FONT_LABEL);
         }
     }
 

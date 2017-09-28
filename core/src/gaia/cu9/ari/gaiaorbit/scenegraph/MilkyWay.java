@@ -74,9 +74,9 @@ public class MilkyWay extends Blob implements IModelRenderable, I3DTextRenderabl
     @Override
     protected void addToRenderLists(ICamera camera) {
         if (viewAngle <= highAngle) {
-            addToRender(this, RenderGroup.MODEL_F);
+            addToRender(this, RenderGroup.MODEL_NORMAL);
             if (renderText()) {
-                addToRender(this, RenderGroup.LABEL);
+                addToRender(this, RenderGroup.FONT_LABEL);
             }
         }
     }

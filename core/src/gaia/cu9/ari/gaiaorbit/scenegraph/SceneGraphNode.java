@@ -46,10 +46,10 @@ public class SceneGraphNode implements IStarContainer, IPosition {
      * step.
      */
     public static enum RenderGroup {
-        /** Foreground models **/
-        MODEL_F(0),
-        /** Background models - NO CULL FACE - front and back **/
-        MODEL_FB(1),
+        /** Using normal shader for per-pixel lighting **/
+        MODEL_NORMAL(0),
+        /** Using default shader, no normal map **/
+        MODEL_DEFAULT(1),
         /** Shader - stars **/
         BILLBOARD_STAR(2),
         /** Shader - galaxies **/
@@ -60,14 +60,14 @@ public class SceneGraphNode implements IStarContainer, IPosition {
         POINT_STAR(5),
         /** Line **/
         LINE(6),
-        /** Annotations of background models (grids) **/
-        MODEL_B_ANNOT(7),
-        /** Atmospheres of foreground models (planets) **/
-        MODEL_F_ATM(8),
+        /** Annotations **/
+        FONT_ANNOTATION(7),
+        /** Atmospheres of planets **/
+        MODEL_ATM(8),
         /** Label **/
-        LABEL(9),
+        FONT_LABEL(9),
         /** Model star **/
-        MODEL_S(10),
+        MODEL_STAR(10),
         /** Galaxy as a whole **/
         GALAXY(11),
         /** Model close up **/

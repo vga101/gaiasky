@@ -203,10 +203,10 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
             }
         };
 
-        ModelBatch modelBatchFB = new ModelBatch(sp, noSorter);
-        ModelBatch modelBatchF = Constants.webgl ? new ModelBatch(sp, noSorter) : new ModelBatch(spnormal, noSorter);
-        ModelBatch modelBatchAtm = new ModelBatch(spatm, noSorter);
-        ModelBatch modelBatchS = new ModelBatch(spsurface, noSorter);
+        ModelBatch modelBatchDefault = new ModelBatch(sp, noSorter);
+        ModelBatch modelBatchNormal = Constants.webgl ? new ModelBatch(sp, noSorter) : new ModelBatch(spnormal, noSorter);
+        ModelBatch modelBatchAtmosphere = new ModelBatch(spatm, noSorter);
+        ModelBatch modelBatchStar = new ModelBatch(spsurface, noSorter);
         ModelBatch modelBatchBeam = new ModelBatch(spbeam, noSorter);
 
         // Sprites
@@ -266,8 +266,8 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         pixelStarProc.setPreRunnable(blendNoDepthRunnable);
 
         // MODEL FRONT-BACK - NO CULL FACE
-        AbstractRenderSystem modelFrontBackProc = new ModelBatchRenderSystem(RenderGroup.MODEL_FB, priority++, alphas, modelBatchFB, false);
-        modelFrontBackProc.setPreRunnable(blendNoDepthRunnable);
+        AbstractRenderSystem modelFrontBackProc = new ModelBatchRenderSystem(RenderGroup.MODEL_DEFAULT, priority++, alphas, modelBatchDefault, false);
+        modelFrontBackProc.setPreRunnable(blendDepthRunnable);
         modelFrontBackProc.setPostRunnable(new RenderSystemRunnable() {
             @Override
             public void run(AbstractRenderSystem renderSystem, Array<IRenderable> renderables, ICamera camera) {
@@ -281,7 +281,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         //        cloudsProc.setPreRunnable(blendNoDepthRunnable);
 
         // ANNOTATIONS
-        AbstractRenderSystem annotationsProc = new FontRenderSystem(RenderGroup.MODEL_B_ANNOT, priority++, alphas, spriteBatch);
+        AbstractRenderSystem annotationsProc = new FontRenderSystem(RenderGroup.FONT_ANNOTATION, priority++, alphas, spriteBatch);
         annotationsProc.setPreRunnable(blendNoDepthRunnable);
         annotationsProc.setPostRunnable(new RenderSystemRunnable() {
             @Override
@@ -352,7 +352,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         AbstractRenderSystem lineProc = getLineRenderSystem();
 
         // MODEL FRONT
-        AbstractRenderSystem modelFrontProc = new ModelBatchRenderSystem(RenderGroup.MODEL_F, priority++, alphas, modelBatchF, false);
+        AbstractRenderSystem modelFrontProc = new ModelBatchRenderSystem(RenderGroup.MODEL_NORMAL, priority++, alphas, modelBatchNormal, false);
         modelFrontProc.setPreRunnable(blendDepthRunnable);
 
         // MODEL BEAM
@@ -360,7 +360,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         modelBeamProc.setPreRunnable(blendDepthRunnable);
 
         // GALAXY
-        AbstractRenderSystem galaxyProc = new MilkyWayRenderSystem(RenderGroup.GALAXY, priority++, alphas, modelBatchFB);
+        AbstractRenderSystem galaxyProc = new MilkyWayRenderSystem(RenderGroup.GALAXY, priority++, alphas, modelBatchDefault);
         galaxyProc.setPreRunnable(blendNoDepthRunnable);
 
         // PARTICLE GROUP
@@ -372,11 +372,11 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         starGroupProc.setPreRunnable(blendNoDepthRunnable);
 
         // MODEL STARS
-        AbstractRenderSystem modelStarsProc = new ModelBatchRenderSystem(RenderGroup.MODEL_S, priority++, alphas, modelBatchS, false);
+        AbstractRenderSystem modelStarsProc = new ModelBatchRenderSystem(RenderGroup.MODEL_STAR, priority++, alphas, modelBatchStar, false);
         modelStarsProc.setPreRunnable(blendDepthRunnable);
 
         // LABELS
-        AbstractRenderSystem labelsProc = new FontRenderSystem(RenderGroup.LABEL, priority++, alphas, fontBatch, fontShader);
+        AbstractRenderSystem labelsProc = new FontRenderSystem(RenderGroup.FONT_LABEL, priority++, alphas, fontBatch, fontShader);
         labelsProc.setPreRunnable(blendNoDepthRunnable);
 
         // BILLBOARD SSO
@@ -384,7 +384,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         billboardSSOProc.setPreRunnable(blendDepthRunnable);
 
         // MODEL ATMOSPHERE
-        AbstractRenderSystem modelAtmProc = new ModelBatchRenderSystem(RenderGroup.MODEL_F_ATM, priority++, alphas, modelBatchAtm, true) {
+        AbstractRenderSystem modelAtmProc = new ModelBatchRenderSystem(RenderGroup.MODEL_ATM, priority++, alphas, modelBatchAtmosphere, true) {
             @Override
             public float getAlpha(IRenderable s) {
                 return alphas[ComponentType.Atmospheres.ordinal()] * (float) Math.pow(alphas[s.getComponentType().getFirstOrdinal()], 2);

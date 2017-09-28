@@ -145,7 +145,7 @@ public class Constellation extends LineObject implements I3DTextRenderable {
     protected void addToRenderLists(ICamera camera) {
         addToRender(this, RenderGroup.LINE);
         if (renderText()) {
-            addToRender(this, RenderGroup.LABEL);
+            addToRender(this, RenderGroup.FONT_LABEL);
 
         }
     }

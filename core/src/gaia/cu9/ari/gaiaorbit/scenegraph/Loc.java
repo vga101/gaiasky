@@ -47,7 +47,7 @@ public class Loc extends AbstractPositionEntity implements I3DTextRenderable {
     @Override
     protected void addToRenderLists(ICamera camera) {
         if (renderText() && isVisibilityOn()) {
-            addToRender(this, RenderGroup.LABEL);
+            addToRender(this, RenderGroup.FONT_LABEL);
         }
     }
 

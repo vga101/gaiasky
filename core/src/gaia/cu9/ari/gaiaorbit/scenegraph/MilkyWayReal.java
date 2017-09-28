@@ -180,7 +180,7 @@ public class MilkyWayReal extends AbstractPositionEntity implements I3DTextRende
         if ((fadeIn == null || fadeIn != null && currentDistance > fadeIn.x) && (fadeOut == null || fadeOut != null && currentDistance < fadeOut.y)) {
 
             if (renderText()) {
-                addToRender(this, RenderGroup.LABEL);
+                addToRender(this, RenderGroup.FONT_LABEL);
             }
             addToRender(this, RenderGroup.GALAXY);
         }

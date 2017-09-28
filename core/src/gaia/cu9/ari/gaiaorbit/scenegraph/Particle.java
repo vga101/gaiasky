@@ -257,7 +257,7 @@ public class Particle extends CelestialBody implements IStarFocus, IPointRendera
             }
         }
         if (renderText() && camera.isVisible(GaiaSky.instance.time, this)) {
-            addToRender(this, RenderGroup.LABEL);
+            addToRender(this, RenderGroup.FONT_LABEL);
         }
 
     }

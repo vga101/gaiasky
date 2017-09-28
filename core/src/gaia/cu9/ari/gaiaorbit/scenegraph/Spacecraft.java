@@ -480,7 +480,7 @@ public class Spacecraft extends ModelBody implements IModelRenderable, ILineRend
      */
     protected void addToRenderLists(ICamera camera) {
         camera.checkClosest(this);
-        addToRender(this, RenderGroup.MODEL_F);
+        addToRender(this, RenderGroup.MODEL_NORMAL);
         if (GlobalConf.spacecraft.SC_SHOW_AXES)
             addToRender(this, RenderGroup.LINE);
     }

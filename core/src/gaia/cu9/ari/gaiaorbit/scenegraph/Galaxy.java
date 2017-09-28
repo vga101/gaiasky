@@ -118,7 +118,7 @@ public class Galaxy extends Particle {
                 addToRender(this, RenderGroup.BILLBOARD_GAL);
             }
             if (renderText() && camera.isVisible(GaiaSky.instance.time, this)) {
-                addToRender(this, RenderGroup.LABEL);
+                addToRender(this, RenderGroup.FONT_LABEL);
             }
         }
 

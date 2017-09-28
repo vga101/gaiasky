@@ -66,7 +66,7 @@ public class Mw extends AbstractPositionEntity implements IModelRenderable {
     protected void addToRenderLists(ICamera camera) {
         // Render group never changes
         // Add to toRender list
-        addToRender(this, RenderGroup.MODEL_FB);
+        addToRender(this, RenderGroup.MODEL_DEFAULT);
     }
 
     @Override
