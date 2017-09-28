@@ -414,6 +414,8 @@ varying float v_alphaTest;
 		g_normal = normalize(cross(g_tangent, g_binormal));
     }
 #endif
+#else
+    #define calculateTangentVectors() nop()
 #endif
 
 //////////////////////////////////////////////////////
@@ -517,8 +519,14 @@ void main() {
 	squaredNormal.z * mix(u_ambientCubemap[4], u_ambientCubemap[5], isPositive.z);
     #endif // ambientCubemapFlag
 
-    v_lightDir = normalize(-u_dirLights[0].direction * worldToTangent);
-    v_lightCol = u_dirLights[0].color;
+    #ifdef directionalLightsFlag
+        v_lightDir = normalize(-u_dirLights[0].direction * worldToTangent);
+        v_lightCol = u_dirLights[0].color;
+    #else
+        v_lightDir = vec3(0.0, 0.0, 0.0);
+        v_lightCol = vec3(0.0);
+    #endif // directionalLightsFlag
+    
     vec3 viewDir = (u_cameraPosition.xyz - g_position.xyz);
     v_viewDir = normalize(viewDir * worldToTangent);
     #ifdef environmentCubemapFlag
