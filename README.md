@@ -13,6 +13,7 @@ To get the latest up-to-date and most complete information,
 *  Visit our [**home page**](https://zah.uni-heidelberg.de/gaia/outreach/gaiasky)
 *  Read the [**Documentation**](http://gaia-sky.readthedocs.io)
 *  Submit a [**bug** or a **feature request**](https://github.com/langurmonkey/gaiasky/issues)
+*  Follow development news at [@GaiaSkyDev](https://twitter.com/GaiaSkyDev)
 
 This file contains the following sections:
 
