@@ -130,11 +130,12 @@ public class Planet extends ModelBody implements IAtmosphereRenderable, ILineRen
     @Override
     public void render(ModelBatch modelBatch, float alpha, double t, boolean atm) {
         // Atmosphere fades in between 1 and 2 degrees of view angle apparent
-        float atmopacity = (float) MathUtilsd.lint(viewAngle, 0.01745329f, 0.03490659f, 0f, 1f);
+
         if (!atm) {
             // Normal rendering
             compalpha = alpha;
             if (ac != null) {
+                float atmopacity = (float) MathUtilsd.lint(viewAngle, 0.01745329f, 0.03490659f, 0f, 1f);
                 if (GlobalConf.scene.VISIBILITY[ComponentType.Atmospheres.ordinal()] && atmopacity > 0) {
                     ac.updateAtmosphericScatteringParams(mc.instance.materials.first(), alpha * atmopacity, true, transform, parent, rc);
                 } else {
@@ -144,7 +145,7 @@ public class Planet extends ModelBody implements IAtmosphereRenderable, ILineRen
             mc.setTransparency(alpha * opacity);
             modelBatch.render(mc.instance, mc.env);
         } else {
-
+            float atmopacity = (float) MathUtilsd.lint(viewAngle, 0.01745329f, 0.03490659f, 0f, 1f);
             if (atmopacity > 0) {
                 // Atmosphere
                 ac.updateAtmosphericScatteringParams(ac.mc.instance.materials.first(), alpha * atmopacity, false, transform, parent, rc);

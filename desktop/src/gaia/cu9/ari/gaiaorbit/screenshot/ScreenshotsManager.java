@@ -57,7 +57,7 @@ public class ScreenshotsManager implements IObserver {
         screenshotRenderer = new BasicFileImageRenderer();
         screenshot = new ScreenshotCmd();
 
-        EventManager.instance.subscribe(this, Events.RENDER_FRAME, Events.RENDER_SCREENSHOT, Events.FLUSH_FRAMES, Events.SCREENSHOT_CMD, Events.UPDATE_GUI, Events.DISPOSE);
+        EventManager.instance.subscribe(this, Events.RENDER_FRAME, Events.RENDER_SCREENSHOT, Events.RENDER_FRAME_BUFFER, Events.FLUSH_FRAMES, Events.SCREENSHOT_CMD, Events.UPDATE_GUI, Events.DISPOSE);
     }
 
     public void renderFrame(IMainRenderer mr) {
@@ -97,6 +97,13 @@ public class ScreenshotsManager implements IObserver {
                 EventManager.instance.post(Events.SCREENSHOT_INFO, file);
             }
 
+        }
+    }
+
+    public void renderCurrentFrameBuffer(String folder, String file, int w, int h) {
+        String f = ImageRenderer.renderToImageGl20(folder, file, w, h, ImageType.JPG);
+        if (f != null) {
+            EventManager.instance.post(Events.SCREENSHOT_INFO, f);
         }
     }
 
@@ -163,6 +170,13 @@ public class ScreenshotsManager implements IObserver {
         case RENDER_SCREENSHOT:
             mr = (IMainRenderer) data[0];
             renderScreenshot(mr);
+            break;
+        case RENDER_FRAME_BUFFER:
+            String folder = (String) data[0];
+            String file = (String) data[1];
+            Integer w = (Integer) data[2];
+            Integer h = (Integer) data[3];
+            renderCurrentFrameBuffer(folder, file, w, h);
             break;
         case FLUSH_FRAMES:
             frameRenderer.flush();
