@@ -117,7 +117,6 @@ uniform sampler2D u_emissiveTexture;
 uniform sampler2D u_shadowTexture;
 uniform float u_shadowPCFOffset;
 varying vec3 v_shadowMapUv;
-#define separateAmbientFlag
 
 float getShadowness(vec2 offset)
     {
@@ -129,11 +128,16 @@ float getShadow()
     {
     return (//getShadowness(vec2(0,0)) + 
 	    getShadowness(vec2(u_shadowPCFOffset, u_shadowPCFOffset)) +
-	    getShadowness(vec2(-u_shadowPCFOffset, u_shadowPCFOffset)4) +
+	    getShadowness(vec2(-u_shadowPCFOffset, u_shadowPCFOffset)) +
 	    getShadowness(vec2(u_shadowPCFOffset, -u_shadowPCFOffset)) +
 	    getShadowness(vec2(-u_shadowPCFOffset, -u_shadowPCFOffset))) * 0.25;
     }
+
+vec4 getShadow3() {
+    return texture2D(u_shadowTexture, v_texCoord0);
+}
 #endif //shadowMapFlag
+
 
 // AMBIENT LIGHT
 
@@ -257,6 +261,10 @@ void main() {
     // Prevent saturation
     gl_FragColor = clamp(gl_FragColor + edge, 0.0, 1.0);
     gl_FragColor.rgb *= 0.95;
+    
+    #ifdef shadowMapFlag
+    gl_FragColor = getShadow3();
+    #endif
     
 
 

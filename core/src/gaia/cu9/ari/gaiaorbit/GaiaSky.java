@@ -78,8 +78,8 @@ import gaia.cu9.ari.gaiaorbit.util.MemInfo;
 import gaia.cu9.ari.gaiaorbit.util.ModelCache;
 import gaia.cu9.ari.gaiaorbit.util.MusicManager;
 import gaia.cu9.ari.gaiaorbit.util.gaia.GaiaAttitudeServer;
-import gaia.cu9.ari.gaiaorbit.util.override.AtmosphereGroundShaderProvider;
 import gaia.cu9.ari.gaiaorbit.util.override.AtmosphereShaderProvider;
+import gaia.cu9.ari.gaiaorbit.util.override.GroundShaderProvider;
 import gaia.cu9.ari.gaiaorbit.util.time.GlobalClock;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 import gaia.cu9.ari.gaiaorbit.util.time.RealTimeClock;
@@ -120,7 +120,8 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
     private String dataLoadString;
 
     public ISceneGraph sg;
-    private SceneGraphRenderer sgr;
+    // TODO make this private again
+    public SceneGraphRenderer sgr;
     private IPostProcessor pp;
 
     // Start time
@@ -218,7 +219,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         manager.setLoader(ShaderProgram.class, new ShaderProgramLoader(resolver, ".vertex.glsl", ".fragment.glsl"));
         manager.setLoader(DefaultShaderProvider.class, new DefaultShaderProviderLoader<>(resolver));
         manager.setLoader(AtmosphereShaderProvider.class, new AtmosphereShaderProviderLoader<>(resolver));
-        manager.setLoader(AtmosphereGroundShaderProvider.class, new AtmosphereGroundShaderProviderLoader<>(resolver));
+        manager.setLoader(GroundShaderProvider.class, new AtmosphereGroundShaderProviderLoader<>(resolver));
 
         // Init global resources
         GlobalResources.initialize(manager);

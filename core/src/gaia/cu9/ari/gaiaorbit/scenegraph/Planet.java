@@ -2,12 +2,16 @@ package gaia.cu9.ari.gaiaorbit.scenegraph;
 
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
+import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Array;
 
+import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.render.IAtmosphereRenderable;
 import gaia.cu9.ari.gaiaorbit.render.ILineRenderable;
+import gaia.cu9.ari.gaiaorbit.render.SceneGraphRenderer;
 import gaia.cu9.ari.gaiaorbit.render.system.LineRenderSystem;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.AtmosphereComponent;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
@@ -16,6 +20,9 @@ import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
 import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
+import gaia.cu9.ari.gaiaorbit.util.override.DepthMapAttribute;
+import gaia.cu9.ari.gaiaorbit.util.override.Matrix4Attribute;
+import gaia.cu9.ari.gaiaorbit.util.override.ShadowMapAttribute;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
 public class Planet extends ModelBody implements IAtmosphereRenderable, ILineRenderable {
@@ -130,21 +137,44 @@ public class Planet extends ModelBody implements IAtmosphereRenderable, ILineRen
     @Override
     public void render(ModelBatch modelBatch, float alpha, double t, boolean atm) {
         // Atmosphere fades in between 1 and 2 degrees of view angle apparent
-        float atmopacity = (float) MathUtilsd.lint(viewAngle, 0.01745329f, 0.03490659f, 0f, 1f);
+
         if (!atm) {
             // Normal rendering
             compalpha = alpha;
             if (ac != null) {
+                float atmopacity = (float) MathUtilsd.lint(viewAngle, 0.01745329f, 0.03490659f, 0f, 1f);
                 if (GlobalConf.scene.VISIBILITY[ComponentType.Atmospheres.ordinal()] && atmopacity > 0) {
                     ac.updateAtmosphericScatteringParams(mc.instance.materials.first(), alpha * atmopacity, true, transform, parent, rc);
                 } else {
                     ac.removeAtmosphericScattering(mc.instance.materials.first());
                 }
             }
+
+            if (name.equals("Saturn")) {
+                SceneGraphRenderer sgr = GaiaSky.instance.sgr;
+                Array<Material> mats = mc.instance.materials;
+                Material mat = mats.first();
+                if (sgr.shadowMapTexture != null) {
+                    if (!mat.has(DepthMapAttribute.ShadowTexture))
+                        mat.set(new DepthMapAttribute(DepthMapAttribute.ShadowTexture, sgr.shadowMapFb.getColorBufferTexture()));
+                    else
+                        ((DepthMapAttribute) mat.get(DepthMapAttribute.ShadowTexture)).set(sgr.shadowMapFb.getColorBufferTexture());
+
+                    if (!mat.has(Matrix4Attribute.ShadowMapProjViewTrans))
+                        mat.set(new Matrix4Attribute(Matrix4Attribute.ShadowMapProjViewTrans, sgr.cameraLight.combined));
+                    else
+                        ((Matrix4Attribute) mat.get(Matrix4Attribute.ShadowMapProjViewTrans)).set(sgr.cameraLight.combined);
+
+                    if (!mat.has(ShadowMapAttribute.ShadowPCFOffset))
+                        mat.set(new ShadowMapAttribute(ShadowMapAttribute.ShadowPCFOffset, 0.0f));
+                }
+            }
+
             mc.setTransparency(alpha * opacity);
             modelBatch.render(mc.instance, mc.env);
         } else {
-
+            // We are an atmosphere :_D
+            float atmopacity = (float) MathUtilsd.lint(viewAngle, 0.01745329f, 0.03490659f, 0f, 1f);
             if (atmopacity > 0) {
                 // Atmosphere
                 ac.updateAtmosphericScatteringParams(ac.mc.instance.materials.first(), alpha * atmopacity, false, transform, parent, rc);

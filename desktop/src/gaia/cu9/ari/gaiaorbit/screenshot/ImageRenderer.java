@@ -37,9 +37,13 @@ public class ImageRenderer {
      * name. This method works with OpenGL 2.0
      * 
      * @param absoluteLocation
+     *            The location folder
      * @param baseFileName
+     *            File name without extension
      * @param w
+     *            The width of the image
      * @param h
+     *            The height of the image
      */
     public static String renderToImageGl20(String absoluteLocation, String baseFileName, int w, int h, ImageType type) {
         Pixmap pixmap = getScreenshot(0, 0, w, h, true);

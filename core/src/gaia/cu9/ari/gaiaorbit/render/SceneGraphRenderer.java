@@ -2,12 +2,16 @@ package gaia.cu9.ari.gaiaorbit.render;
 
 import java.nio.IntBuffer;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.PerspectiveCamera;
+import com.badlogic.gdx.graphics.Pixmap.Format;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.Renderable;
@@ -47,7 +51,9 @@ import gaia.cu9.ari.gaiaorbit.render.system.ShapeRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.StarGroupRenderSystem;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
+import gaia.cu9.ari.gaiaorbit.scenegraph.IFocus;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
+import gaia.cu9.ari.gaiaorbit.scenegraph.Planet;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
 import gaia.cu9.ari.gaiaorbit.util.ComponentTypes;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
@@ -56,8 +62,8 @@ import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.ds.Multilist;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
-import gaia.cu9.ari.gaiaorbit.util.override.AtmosphereGroundShaderProvider;
 import gaia.cu9.ari.gaiaorbit.util.override.AtmosphereShaderProvider;
+import gaia.cu9.ari.gaiaorbit.util.override.GroundShaderProvider;
 
 /**
  * Renders a scenegraph.
@@ -80,8 +86,6 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
     private int maxTexSize;
 
-    FrameBuffer depthfb;
-
     /** Render lists for all render groups **/
     public static Map<RenderGroup, Multilist<IRenderable>> render_lists;
 
@@ -101,6 +105,15 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
     // Indexes
     final int SGR_DEFAULT_IDX = 0, SGR_STEREO_IDX = 1, SGR_FOV_IDX = 2, SGR_CUBEMAP_IDX = 3;
 
+    // Camera at light position, with same direction. For shadow mapping
+    public Camera cameraLight;
+    public FrameBuffer shadowMapFb;
+    public Texture shadowMapTexture;
+    public static int SHADOW_MAP_TEX_WIDTH = 1024;
+    public static int SHADOW_MAP_TEX_HEIGHT = 1024;
+    public ModelBatch modelBatchDepth;
+    private Vector3 aux1;
+
     public SceneGraphRenderer() {
         super();
     }
@@ -115,12 +128,13 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         manager.load("shader/gal.vertex.glsl", ShaderProgram.class);
         manager.load("shader/font.vertex.glsl", ShaderProgram.class);
         manager.load("shader/sprite.vertex.glsl", ShaderProgram.class);
-        manager.load("atmgrounddefault", AtmosphereGroundShaderProvider.class, new AtmosphereGroundShaderProviderParameter("shader/default.vertex.glsl", "shader/default.fragment.glsl"));
+        manager.load("atmgrounddefault", GroundShaderProvider.class, new AtmosphereGroundShaderProviderParameter("shader/default.vertex.glsl", "shader/default.fragment.glsl"));
         manager.load("spsurface", DefaultShaderProvider.class, new DefaultShaderProviderParameter("shader/default.vertex.glsl", "shader/starsurface.fragment.glsl"));
         manager.load("spbeam", DefaultShaderProvider.class, new DefaultShaderProviderParameter("shader/default.vertex.glsl", "shader/beam.fragment.glsl"));
+        manager.load("spdepth", DefaultShaderProvider.class, new DefaultShaderProviderParameter("shader/normal.vertex.glsl", "shader/depth.fragment.glsl"));
         manager.load("atm", AtmosphereShaderProvider.class, new AtmosphereShaderProviderParameter("shader/atm.vertex.glsl", "shader/atm.fragment.glsl"));
         if (!Constants.webgl) {
-            manager.load("atmground", AtmosphereGroundShaderProvider.class, new AtmosphereGroundShaderProviderParameter("shader/normal.vertex.glsl", "shader/normal.fragment.glsl"));
+            manager.load("atmground", GroundShaderProvider.class, new AtmosphereGroundShaderProviderParameter("shader/normal.vertex.glsl", "shader/normal.fragment.glsl"));
         }
 
         pixelRenderSystems = new AbstractRenderSystem[3];
@@ -144,6 +158,11 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
             }
         };
 
+        // Shadow map camera
+        cameraLight = new PerspectiveCamera(60f, SHADOW_MAP_TEX_WIDTH, SHADOW_MAP_TEX_HEIGHT);
+        // Shadow map frame buffer
+        shadowMapFb = new FrameBuffer(Format.RGBA8888, SHADOW_MAP_TEX_WIDTH, SHADOW_MAP_TEX_HEIGHT, true);
+        aux1 = new Vector3();
     }
 
     public void doneLoading(AssetManager manager) {
@@ -195,6 +214,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         ShaderProvider spatm = manager.get("atm");
         ShaderProvider spsurface = manager.get("spsurface");
         ShaderProvider spbeam = manager.get("spbeam");
+        ShaderProvider spdepth = manager.get("spdepth");
 
         RenderableSorter noSorter = new RenderableSorter() {
             @Override
@@ -208,6 +228,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         ModelBatch modelBatchAtmosphere = new ModelBatch(spatm, noSorter);
         ModelBatch modelBatchStar = new ModelBatch(spsurface, noSorter);
         ModelBatch modelBatchBeam = new ModelBatch(spbeam, noSorter);
+        modelBatchDepth = new ModelBatch(spdepth, noSorter);
 
         // Sprites
         spriteBatch = GlobalResources.spriteBatch;
@@ -292,7 +313,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         });
 
         // BILLBOARD STARS
-        AbstractRenderSystem billboardStarsProc = new BillboardStarRenderSystem(RenderGroup.BILLBOARD_STAR, priority++, alphas, starShader, true, "img/star_glow_s.png", ComponentType.Stars.ordinal());
+        AbstractRenderSystem billboardStarsProc = new BillboardStarRenderSystem(RenderGroup.BILLBOARD_STAR, priority++, alphas, starShader, true, "data/tex/star_glow_s.png", ComponentType.Stars.ordinal());
         billboardStarsProc.setPreRunnable(blendNoDepthRunnable);
         billboardStarsProc.setPostRunnable(new RenderSystemRunnable() {
 
@@ -460,11 +481,74 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         }
     }
 
+    boolean written = false;
+
+    private void renderShadowMap(ICamera camera) {
+        /**
+         * Shadow mapping here?
+         * <ul>
+         * <li>Extract model bodies (front)</li>
+         * <li>Work out light direction</li>
+         * <li>Set orthographic camera at set distance from bodies, direction of
+         * light, clip planes</li>
+         * <li>Render depth map to frame buffer (fb)</li>
+         * <li>Send frame buffer texture in to ModelBatchRenderSystem along with
+         * light position, direction, clip planes and light camera combined
+         * matrix</li>
+         * <li>Compare real distance from light to texture sample, render shadow
+         * if different</li>
+         * </ul>
+         */
+        Multilist<IRenderable> models = render_lists.get(RenderGroup.MODEL_NORMAL);
+        Iterator<IRenderable> it = models.iterator();
+        while (it.hasNext()) {
+            IFocus mr = (IFocus) it.next();
+            if (mr.getName().equals("Saturn")) {
+                // Yes!
+                Planet saturn = (Planet) mr;
+
+                Vector3 camDir = aux1.set(saturn.mc.dlight.direction);
+                // Direction is that of the light
+                cameraLight.direction.set(camDir);
+                // Position, 250000 km in anti-direction
+                saturn.pos.put(cameraLight.position).sub((float) camera.getPos().x, (float) camera.getPos().y, (float) camera.getPos().z).sub(camDir.nor().scl((float) (250000 * Constants.KM_TO_U)));
+                // Up is perpendicular to dir
+                if (cameraLight.direction.y != 0 || cameraLight.direction.z != 0)
+                    aux1.set(1, 0, 0);
+                else
+                    aux1.set(0, 1, 0);
+                cameraLight.up.set(cameraLight.direction).crs(aux1);
+                cameraLight.near = (float) (100000 * Constants.KM_TO_U);
+                cameraLight.far = (float) (1000000 * Constants.KM_TO_U);
+                // Update cam
+                cameraLight.update();
+
+                // Render model depth map to frame buffer
+                shadowMapFb.begin();
+                modelBatchDepth.begin(cameraLight);
+                saturn.render(modelBatchDepth, 1, 0);
+                modelBatchDepth.end();
+
+                if (!written) {
+                    //EventManager.instance.post(Events.RENDER_FRAME_BUFFER, "/tmp", "depthmap", SHADOW_MAP_TEX_WIDTH, SHADOW_MAP_TEX_HEIGHT);
+                    written = true;
+                }
+
+                shadowMapTexture = shadowMapFb.getColorBufferTexture();
+
+                shadowMapFb.end();
+
+                break;
+            }
+        }
+    }
+
     @Override
     public void render(ICamera camera, double t, int rw, int rh, FrameBuffer fb, PostProcessBean ppb) {
         if (sgr == null)
             initSGR(camera);
 
+        renderShadowMap(camera);
         sgr.render(this, camera, t, rw, rh, fb, ppb);
     }
 

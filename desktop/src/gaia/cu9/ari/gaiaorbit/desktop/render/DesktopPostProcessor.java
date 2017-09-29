@@ -62,15 +62,15 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
 
     public void initialize(AssetManager manager) {
         this.manager = manager;
-        manager.load("img/lenscolor.png", Texture.class);
+        manager.load("data/tex/lenscolor.png", Texture.class);
         if (GlobalConf.scene.isHighQuality()) {
-            manager.load("img/lensdirt.jpg", Texture.class);
-            manager.load("img/star_glow.png", Texture.class);
+            manager.load("data/tex/lensdirt.jpg", Texture.class);
+            manager.load("data/tex/star_glow.png", Texture.class);
         } else {
-            manager.load("img/lensdirt_s.jpg", Texture.class);
-            manager.load("img/star_glow_s.png", Texture.class);
+            manager.load("data/tex/lensdirt_s.jpg", Texture.class);
+            manager.load("data/tex/star_glow_s.png", Texture.class);
         }
-        manager.load("img/lensstarburst.jpg", Texture.class);
+        manager.load("data/tex/lensstarburst.jpg", Texture.class);
     }
 
     public void doneLoading(AssetManager manager) {
@@ -128,11 +128,11 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
             nghosts = 6;
             lensFboScale = 0.2f;
         }
-        Texture lcol = manager.get("img/lenscolor.png");
+        Texture lcol = manager.get("data/tex/lenscolor.png");
         lcol.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-        Texture ldirt = GlobalConf.scene.isHighQuality() ? manager.get("img/lensdirt.jpg") : manager.get("img/lensdirt_s.jpg");
+        Texture ldirt = GlobalConf.scene.isHighQuality() ? manager.get("data/tex/lensdirt.jpg") : manager.get("data/tex/lensdirt_s.jpg");
         ldirt.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-        Texture lburst = manager.get("img/lensstarburst.jpg");
+        Texture lburst = manager.get("data/tex/lensstarburst.jpg");
         lburst.setFilter(TextureFilter.Linear, TextureFilter.Linear);
         ppb.lens = new LensFlare2((int) (width * lensFboScale), (int) (height * lensFboScale));
         ppb.lens.setGhosts(nghosts);
@@ -157,19 +157,19 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
             nsamples = 45;
             lgw = 1920;
             lgh = Math.round(lgw / ar);
-            glow = manager.get("img/star_glow.png");
+            glow = manager.get("data/tex/star_glow.png");
             Glow.N = 70;
         } else if (GlobalConf.scene.isNormalQuality()) {
             nsamples = 15;
             lgw = 1280;
             lgh = Math.round(lgw / ar);
-            glow = manager.get("img/star_glow_s.png");
+            glow = manager.get("data/tex/star_glow_s.png");
             Glow.N = 30;
         } else {
             nsamples = 10;
             lgw = 1000;
             lgh = Math.round(lgw / ar);
-            glow = manager.get("img/star_glow_s.png");
+            glow = manager.get("data/tex/star_glow_s.png");
             Glow.N = 10;
         }
         glow.setFilter(TextureFilter.Linear, TextureFilter.Linear);
