@@ -112,7 +112,7 @@ To compile the code and run the desktop version of the application:
     $ gradlew desktop:run
 
 
-Packagin Gaia Sky
+Packaging Gaia Sky
 -----------------
 
 To pack the application into a ``tar.gz`` file:
