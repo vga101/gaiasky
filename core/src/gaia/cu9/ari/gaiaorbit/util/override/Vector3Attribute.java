@@ -22,6 +22,9 @@ public class Vector3Attribute extends Attribute {
     public static final String LightPosAlias = "lightPos";
     public static final long LightPos = register(LightPosAlias);
 
+    public static final String LightPositionAlias = "lightPosition";
+    public static final long LightPosition = register(LightPositionAlias);
+
     public static final String CameraPosAlias = "cameraPos";
     public static final long CameraPos = register(CameraPosAlias);
 
@@ -30,7 +33,7 @@ public class Vector3Attribute extends Attribute {
 
     public static final String CameraUpAlias = "cameraUp";
     public static final long CameraUp = register(CameraUpAlias);
-    
+
     @Override
     public Attribute copy() {
         return new Vector3Attribute(type, value);

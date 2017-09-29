@@ -150,8 +150,15 @@ public class AtmosphereComponent {
         }
 
         // These are here to get the desired effect inside the atmosphere
-        mat.set(new AtmosphereAttribute(AtmosphereAttribute.KrESun, m_Kr * m_ESun));
-        mat.set(new AtmosphereAttribute(AtmosphereAttribute.KmESun, m_Km * m_ESun));
+        if (mat.has(AtmosphereAttribute.KrESun))
+            ((AtmosphereAttribute) mat.get(AtmosphereAttribute.KrESun)).value = m_Kr * m_ESun;
+        else
+            mat.set(new AtmosphereAttribute(AtmosphereAttribute.KrESun, m_Kr * m_ESun));
+
+        if (mat.has(AtmosphereAttribute.KmESun))
+            ((AtmosphereAttribute) mat.get(AtmosphereAttribute.KmESun)).value = m_Km * m_ESun;
+        else
+            mat.set(new AtmosphereAttribute(AtmosphereAttribute.KmESun, m_Km * m_ESun));
 
         // Camera height
         if (mat.has(AtmosphereAttribute.CameraHeight))

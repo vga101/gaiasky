@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.Pixmap.Format;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.Renderable;
@@ -61,8 +62,8 @@ import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.ds.Multilist;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
-import gaia.cu9.ari.gaiaorbit.util.override.AtmosphereGroundShaderProvider;
 import gaia.cu9.ari.gaiaorbit.util.override.AtmosphereShaderProvider;
+import gaia.cu9.ari.gaiaorbit.util.override.GroundShaderProvider;
 
 /**
  * Renders a scenegraph.
@@ -105,11 +106,12 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
     final int SGR_DEFAULT_IDX = 0, SGR_STEREO_IDX = 1, SGR_FOV_IDX = 2, SGR_CUBEMAP_IDX = 3;
 
     // Camera at light position, with same direction. For shadow mapping
-    private Camera cameraLight;
-    private FrameBuffer shadowMapFb;
-    private static int SHADOW_MAP_TEX_WIDTH = 1024;
-    private static int SHADOW_MAP_TEX_HEIGHT = 1024;
-    private ModelBatch modelBatchDepth;
+    public Camera cameraLight;
+    public FrameBuffer shadowMapFb;
+    public Texture shadowMapTexture;
+    public static int SHADOW_MAP_TEX_WIDTH = 1024;
+    public static int SHADOW_MAP_TEX_HEIGHT = 1024;
+    public ModelBatch modelBatchDepth;
     private Vector3 aux1;
 
     public SceneGraphRenderer() {
@@ -126,13 +128,13 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         manager.load("shader/gal.vertex.glsl", ShaderProgram.class);
         manager.load("shader/font.vertex.glsl", ShaderProgram.class);
         manager.load("shader/sprite.vertex.glsl", ShaderProgram.class);
-        manager.load("atmgrounddefault", AtmosphereGroundShaderProvider.class, new AtmosphereGroundShaderProviderParameter("shader/default.vertex.glsl", "shader/default.fragment.glsl"));
+        manager.load("atmgrounddefault", GroundShaderProvider.class, new AtmosphereGroundShaderProviderParameter("shader/default.vertex.glsl", "shader/default.fragment.glsl"));
         manager.load("spsurface", DefaultShaderProvider.class, new DefaultShaderProviderParameter("shader/default.vertex.glsl", "shader/starsurface.fragment.glsl"));
         manager.load("spbeam", DefaultShaderProvider.class, new DefaultShaderProviderParameter("shader/default.vertex.glsl", "shader/beam.fragment.glsl"));
         manager.load("spdepth", DefaultShaderProvider.class, new DefaultShaderProviderParameter("shader/normal.vertex.glsl", "shader/depth.fragment.glsl"));
         manager.load("atm", AtmosphereShaderProvider.class, new AtmosphereShaderProviderParameter("shader/atm.vertex.glsl", "shader/atm.fragment.glsl"));
         if (!Constants.webgl) {
-            manager.load("atmground", AtmosphereGroundShaderProvider.class, new AtmosphereGroundShaderProviderParameter("shader/normal.vertex.glsl", "shader/normal.fragment.glsl"));
+            manager.load("atmground", GroundShaderProvider.class, new AtmosphereGroundShaderProviderParameter("shader/normal.vertex.glsl", "shader/normal.fragment.glsl"));
         }
 
         pixelRenderSystems = new AbstractRenderSystem[3];
@@ -311,7 +313,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         });
 
         // BILLBOARD STARS
-        AbstractRenderSystem billboardStarsProc = new BillboardStarRenderSystem(RenderGroup.BILLBOARD_STAR, priority++, alphas, starShader, true, "img/star_glow_s.png", ComponentType.Stars.ordinal());
+        AbstractRenderSystem billboardStarsProc = new BillboardStarRenderSystem(RenderGroup.BILLBOARD_STAR, priority++, alphas, starShader, true, "data/tex/star_glow_s.png", ComponentType.Stars.ordinal());
         billboardStarsProc.setPreRunnable(blendNoDepthRunnable);
         billboardStarsProc.setPostRunnable(new RenderSystemRunnable() {
 
@@ -528,10 +530,11 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
                 modelBatchDepth.end();
 
                 if (!written) {
-                    EventManager.instance.post(Events.RENDER_FRAME_BUFFER, "/tmp", "depthmap", SHADOW_MAP_TEX_WIDTH, SHADOW_MAP_TEX_HEIGHT);
+                    //EventManager.instance.post(Events.RENDER_FRAME_BUFFER, "/tmp", "depthmap", SHADOW_MAP_TEX_WIDTH, SHADOW_MAP_TEX_HEIGHT);
                     written = true;
-                    System.out.println("Written to /tmp/depthmap.jpg");
                 }
+
+                shadowMapTexture = shadowMapFb.getColorBufferTexture();
 
                 shadowMapFb.end();
 
