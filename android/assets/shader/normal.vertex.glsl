@@ -119,6 +119,17 @@ varying vec2 v_texCoord0;
 #endif // texCoord0Flag
 
 
+//////////////////////////////////////////////////////
+////// SHADOW MAPPING
+//////////////////////////////////////////////////////
+#ifdef shadowMapFlag
+uniform sampler2D u_shadowTexture;
+uniform float u_shadowPCFOffset;
+uniform mat4 u_shadowMapProjViewTrans;
+
+varying vec3 v_shadowMapUv;
+#endif //shadowMapFlag
+
 
 ////////////////////////////////////////////////////////////////////////////////////
 ////////// GROUND ATMOSPHERIC SCATTERING - VERTEX
@@ -379,15 +390,6 @@ varying float v_alphaTest;
 #if defined(specularFlag) || defined(fogFlag)
     #define cameraPositionFlag
 #endif
-
-//////////////////////////////////////////////////////
-//////SHADOW MAPPING
-//////////////////////////////////////////////////////
-#ifdef shadowMapFlag
-    uniform mat4 u_shadowMapProjViewTrans;
-    varying vec3 v_shadowMapUv;
-#endif //shadowMapFlag
-
 
 
 #if defined(normalFlag) && defined(binormalFlag) && defined(tangentFlag)
