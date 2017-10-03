@@ -32,14 +32,6 @@ public class GroundShader extends DefaultShader {
         public final static Uniform lightPos = new Uniform("v3LightPos");
         public final static Uniform cameraPos = new Uniform("v3CameraPos");
         public final static Uniform invWavelength = new Uniform("v3InvWavelength");
-
-        public final static Uniform shadowTexture = new Uniform("shadowTexture");
-        public final static Uniform shadowMapProjViewTrans = new Uniform("shadowMapProjViewTrans");
-        public final static Uniform shadowPCFOffset = new Uniform("shadowPCFOffset");
-
-        public final static Uniform cameraNear = new Uniform("cameraNear");
-        public final static Uniform cameraFar = new Uniform("cameraFar");
-        public final static Uniform lightPosition = new Uniform("lightPosition");
     }
 
     public static class Setters extends DefaultShader.Setters {
@@ -325,85 +317,6 @@ public class GroundShader extends DefaultShader {
             }
         };
 
-        public final static Setter shadowTexture = new Setter() {
-            @Override
-            public boolean isGlobal(BaseShader shader, int inputID) {
-                return false;
-            }
-
-            @Override
-            public void set(BaseShader shader, int inputID, Renderable renderable, Attributes combinedAttributes) {
-                if (combinedAttributes.has(DepthMapAttribute.ShadowTexture)) {
-                    final DepthMapAttribute da = (DepthMapAttribute) (combinedAttributes.get(DepthMapAttribute.ShadowTexture));
-                    shader.set(inputID, da.textureDescription.texture);
-                }
-            }
-        };
-
-        public final static Setter shadowMapProjViewTrans = new Setter() {
-            @Override
-            public boolean isGlobal(BaseShader shader, int inputID) {
-                return false;
-            }
-
-            @Override
-            public void set(BaseShader shader, int inputID, Renderable renderable, Attributes combinedAttributes) {
-                if (combinedAttributes.has(Matrix4Attribute.ShadowMapProjViewTrans))
-                    shader.set(inputID, ((Matrix4Attribute) (combinedAttributes.get(Matrix4Attribute.ShadowMapProjViewTrans))).value);
-            }
-        };
-
-        public final static Setter shadowPCFOffset = new Setter() {
-            @Override
-            public boolean isGlobal(BaseShader shader, int inputID) {
-                return false;
-            }
-
-            @Override
-            public void set(BaseShader shader, int inputID, Renderable renderable, Attributes combinedAttributes) {
-                if (combinedAttributes.has(ShadowMapAttribute.ShadowPCFOffset))
-                    shader.set(inputID, ((ShadowMapAttribute) (combinedAttributes.get(ShadowMapAttribute.ShadowPCFOffset))).value);
-            }
-        };
-
-        public final static Setter cameraNear = new Setter() {
-            @Override
-            public boolean isGlobal(BaseShader shader, int inputID) {
-                return false;
-            }
-
-            @Override
-            public void set(BaseShader shader, int inputID, Renderable renderable, Attributes combinedAttributes) {
-                if (combinedAttributes.has(ShadowMapAttribute.CameraNear))
-                    shader.set(inputID, ((ShadowMapAttribute) (combinedAttributes.get(ShadowMapAttribute.CameraNear))).value);
-            }
-        };
-
-        public final static Setter cameraFar = new Setter() {
-            @Override
-            public boolean isGlobal(BaseShader shader, int inputID) {
-                return false;
-            }
-
-            @Override
-            public void set(BaseShader shader, int inputID, Renderable renderable, Attributes combinedAttributes) {
-                if (combinedAttributes.has(ShadowMapAttribute.CameraFar))
-                    shader.set(inputID, ((ShadowMapAttribute) (combinedAttributes.get(ShadowMapAttribute.CameraFar))).value);
-            }
-        };
-
-        public final static Setter lightPosition = new Setter() {
-            @Override
-            public boolean isGlobal(BaseShader shader, int inputID) {
-                return false;
-            }
-
-            @Override
-            public void set(BaseShader shader, int inputID, Renderable renderable, Attributes combinedAttributes) {
-                if (combinedAttributes.has(Vector3Attribute.LightPosition))
-                    shader.set(inputID, ((Vector3Attribute) (combinedAttributes.get(Vector3Attribute.LightPosition))).value);
-            }
-        };
     }
 
     // Material uniforms
@@ -432,14 +345,6 @@ public class GroundShader extends DefaultShader {
     public final int v3LightPos;
     public final int v3CameraPos;
     public final int v3InvWavelength;
-
-    public final int shadowTexture;
-    public final int shadowMapProjViewTrans;
-    public final int shadowPCFOffset;
-
-    public final int cameraNear;
-    public final int cameraFar;
-    public final int lightPosition;
 
     public GroundShader(final Renderable renderable) {
         this(renderable, new Config());
@@ -485,13 +390,6 @@ public class GroundShader extends DefaultShader {
         v3LightPos = register(Inputs.lightPos, Setters.lightPos);
         v3InvWavelength = register(Inputs.invWavelength, Setters.invWavelength);
 
-        shadowTexture = register(Inputs.shadowTexture, Setters.shadowTexture);
-        shadowMapProjViewTrans = register(Inputs.shadowMapProjViewTrans, Setters.shadowMapProjViewTrans);
-        shadowPCFOffset = register(Inputs.shadowPCFOffset, Setters.shadowPCFOffset);
-
-        cameraNear = register(Inputs.cameraNear, Setters.cameraNear);
-        cameraFar = register(Inputs.cameraFar, Setters.cameraFar);
-        lightPosition = register(Inputs.lightPosition, Setters.lightPosition);
     }
 
     public static String createPrefix(final Renderable renderable, final Config config) {
@@ -500,9 +398,6 @@ public class GroundShader extends DefaultShader {
         // Atmosphere ground only if camera height is set
         if ((mask & AtmosphereAttribute.CameraHeight) == AtmosphereAttribute.CameraHeight)
             prefix += "#define atmosphereGround\n";
-        // Shadow map only if depth map is present
-        if ((mask & DepthMapAttribute.ShadowTexture) == DepthMapAttribute.ShadowTexture)
-            prefix += "#define shadowMapFlag\n";
         return prefix;
     }
 }

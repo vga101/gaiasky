@@ -11,7 +11,6 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.Pixmap.Format;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.Renderable;
@@ -108,7 +107,6 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
     // Camera at light position, with same direction. For shadow mapping
     public Camera cameraLight;
     public FrameBuffer shadowMapFb;
-    public Texture shadowMapTexture;
     public static int SHADOW_MAP_TEX_WIDTH = 1024;
     public static int SHADOW_MAP_TEX_HEIGHT = 1024;
     public ModelBatch modelBatchDepth;
@@ -511,7 +509,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
                 // Direction is that of the light
                 cameraLight.direction.set(camDir);
                 // Position, 250000 km in anti-direction
-                saturn.pos.put(cameraLight.position).sub((float) camera.getPos().x, (float) camera.getPos().y, (float) camera.getPos().z).sub(camDir.nor().scl((float) (250000 * Constants.KM_TO_U)));
+                saturn.pos.put(cameraLight.position).sub((float) camera.getPos().x, (float) camera.getPos().y, (float) camera.getPos().z).sub(camDir.nor().scl((float) (300000 * Constants.KM_TO_U)));
                 // Up is perpendicular to dir
                 if (cameraLight.direction.y != 0 || cameraLight.direction.z != 0)
                     aux1.set(1, 0, 0);
@@ -530,11 +528,9 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
                 modelBatchDepth.end();
 
                 if (!written) {
-                    //EventManager.instance.post(Events.RENDER_FRAME_BUFFER, "/tmp", "depthmap", SHADOW_MAP_TEX_WIDTH, SHADOW_MAP_TEX_HEIGHT);
+                    EventManager.instance.post(Events.RENDER_FRAME_BUFFER, "/tmp", "depthmap", SHADOW_MAP_TEX_WIDTH, SHADOW_MAP_TEX_HEIGHT);
                     written = true;
                 }
-
-                shadowMapTexture = shadowMapFb.getColorBufferTexture();
 
                 shadowMapFb.end();
 
