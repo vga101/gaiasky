@@ -157,7 +157,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         };
 
         // Shadow map camera
-        cameraLight = new PerspectiveCamera(30f, SHADOW_MAP_TEX_WIDTH, SHADOW_MAP_TEX_HEIGHT);
+        cameraLight = new PerspectiveCamera(25f, SHADOW_MAP_TEX_WIDTH, SHADOW_MAP_TEX_HEIGHT);
         // Shadow map frame buffer
         shadowMapFb = new FrameBuffer(Format.RGBA8888, SHADOW_MAP_TEX_WIDTH, SHADOW_MAP_TEX_HEIGHT, true);
         aux1 = new Vector3();
