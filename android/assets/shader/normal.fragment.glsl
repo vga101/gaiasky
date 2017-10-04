@@ -129,13 +129,6 @@ float getShadowness(vec2 offset)
     return step(v_shadowMapUv.z - bias, dot(texture2D(u_shadowTexture, v_shadowMapUv.xy + offset, TEXTURE_LOD_BIAS), bitShifts)); //+(1.0/255.0));
 }
 
-vec2 poissonDisk[4] = vec2[](
-  vec2( -0.94201624, -0.39906216 ),
-  vec2( 0.94558609, -0.76890725 ),
-  vec2( -0.094184101, -0.92938870 ),
-  vec2( 0.34495938, 0.29387760 )
-);
-
 float getShadow()
 {
     //return (//getShadowness(vec2(0,0)) + 
@@ -145,12 +138,22 @@ float getShadow()
 	//getShadowness(vec2(-u_shadowPCFOffset, -u_shadowPCFOffset))) * 0.25;
 	
 	float visibility = 1.0;
+
 	const vec4 bitShifts = vec4(1.0, 1.0 / 255.0, 1.0 / 65025.0, 1.0 / 160581375.0);
-	for (int i=0; i<4; i++){
-  		if (dot(texture2D(u_shadowTexture, v_shadowMapUv.xy + poissonDark[i] / 700.0), bitShifts).z < v_shadowMapUv.z - bias){
-    		visibility-=0.2;
-  		}
+
+	if (dot(texture2D(u_shadowTexture, v_shadowMapUv.xy + vec2( -0.94201624, -0.39906216 ) / 700.0), bitShifts) < v_shadowMapUv.z - bias){
+		visibility-=0.2;
 	}
+	if (dot(texture2D(u_shadowTexture, v_shadowMapUv.xy + vec2( 0.94558609, -0.76890725 ) / 700.0), bitShifts) < v_shadowMapUv.z - bias){
+		visibility-=0.2;
+	}
+	if (dot(texture2D(u_shadowTexture, v_shadowMapUv.xy + vec2( -0.094184101, -0.92938870 ) / 700.0), bitShifts) < v_shadowMapUv.z - bias){
+		visibility-=0.2;
+	}
+	if (dot(texture2D(u_shadowTexture, v_shadowMapUv.xy + vec2( 0.34495938, 0.29387760 ) / 700.0), bitShifts) < v_shadowMapUv.z - bias){
+		visibility-=0.2;
+	}
+
 	return visibility;
 }
 

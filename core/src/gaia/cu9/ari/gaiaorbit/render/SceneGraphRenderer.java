@@ -157,7 +157,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         };
 
         // Shadow map camera
-        cameraLight = new PerspectiveCamera(60f, SHADOW_MAP_TEX_WIDTH, SHADOW_MAP_TEX_HEIGHT);
+        cameraLight = new PerspectiveCamera(30f, SHADOW_MAP_TEX_WIDTH, SHADOW_MAP_TEX_HEIGHT);
         // Shadow map frame buffer
         shadowMapFb = new FrameBuffer(Format.RGBA8888, SHADOW_MAP_TEX_WIDTH, SHADOW_MAP_TEX_HEIGHT, true);
         aux1 = new Vector3();
@@ -509,7 +509,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
                 // Direction is that of the light
                 cameraLight.direction.set(camDir);
                 // Position, 250000 km in anti-direction
-                saturn.pos.put(cameraLight.position).sub((float) camera.getPos().x, (float) camera.getPos().y, (float) camera.getPos().z).sub(camDir.nor().scl((float) (300000 * Constants.KM_TO_U)));
+                saturn.pos.put(cameraLight.position).sub((float) camera.getPos().x, (float) camera.getPos().y, (float) camera.getPos().z).sub(camDir.nor().scl((float) (700000 * Constants.KM_TO_U)));
                 // Up is perpendicular to dir
                 if (cameraLight.direction.y != 0 || cameraLight.direction.z != 0)
                     aux1.set(1, 0, 0);
