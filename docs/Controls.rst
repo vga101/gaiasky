@@ -181,7 +181,7 @@ Gamepad controls
 ================
 
 Gaia Sky supports (as of version ``1.5.0``) mappings for different controller types.
-However, so far only the mappings file for the **Xbox 360 controller** and the **PS3 controlelr** are provided.
+However, so far only the mappings files for the **Xbox 360 controller** and the **PS3 controlelr** are provided.
 
 .. figure:: img/360controller.jpg
    :alt: Xbox 360 controller button configuration
