@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.g3d.shaders.BaseShader;
 import com.badlogic.gdx.graphics.g3d.shaders.DefaultShader;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 
-public class AtmosphereGroundShader extends DefaultShader {
+public class GroundShader extends DefaultShader {
 
     public static class Inputs extends DefaultShader.Inputs {
         public final static Uniform alpha = new Uniform("fAlpha");
@@ -316,6 +316,7 @@ public class AtmosphereGroundShader extends DefaultShader {
                     shader.set(inputID, ((Vector3Attribute) (combinedAttributes.get(Vector3Attribute.InvWavelength))).value);
             }
         };
+
     }
 
     // Material uniforms
@@ -345,23 +346,23 @@ public class AtmosphereGroundShader extends DefaultShader {
     public final int v3CameraPos;
     public final int v3InvWavelength;
 
-    public AtmosphereGroundShader(final Renderable renderable) {
+    public GroundShader(final Renderable renderable) {
         this(renderable, new Config());
     }
 
-    public AtmosphereGroundShader(final Renderable renderable, final Config config) {
+    public GroundShader(final Renderable renderable, final Config config) {
         this(renderable, config, createPrefix(renderable, config));
     }
 
-    public AtmosphereGroundShader(final Renderable renderable, final Config config, final String prefix) {
+    public GroundShader(final Renderable renderable, final Config config, final String prefix) {
         this(renderable, config, prefix, config.vertexShader != null ? config.vertexShader : getDefaultVertexShader(), config.fragmentShader != null ? config.fragmentShader : getDefaultFragmentShader());
     }
 
-    public AtmosphereGroundShader(final Renderable renderable, final Config config, final String prefix, final String vertexShader, final String fragmentShader) {
+    public GroundShader(final Renderable renderable, final Config config, final String prefix, final String vertexShader, final String fragmentShader) {
         this(renderable, config, new ShaderProgram(prefix + vertexShader, prefix + fragmentShader));
     }
 
-    public AtmosphereGroundShader(final Renderable renderable, final Config config, final ShaderProgram shaderProgram) {
+    public GroundShader(final Renderable renderable, final Config config, final ShaderProgram shaderProgram) {
         super(renderable, config, shaderProgram);
 
         fAlpha = register(Inputs.alpha, Setters.alpha);
@@ -388,6 +389,12 @@ public class AtmosphereGroundShader extends DefaultShader {
         v3CameraPos = register(Inputs.cameraPos, Setters.cameraPos);
         v3LightPos = register(Inputs.lightPos, Setters.lightPos);
         v3InvWavelength = register(Inputs.invWavelength, Setters.invWavelength);
+
+    }
+
+    @Override
+    public boolean canRender(final Renderable renderable) {
+        return super.canRender(renderable) && this.shadowMap == (renderable.environment.shadowMap != null);
     }
 
     public static String createPrefix(final Renderable renderable, final Config config) {

@@ -36,12 +36,6 @@ public class Gaia extends Satellite {
     public void doneLoading(AssetManager manager) {
         super.doneLoading(manager);
         EventManager.instance.post(Events.GAIA_LOADED, this);
-
-    }
-
-    @Override
-    protected void addToRenderLists(ICamera camera) {
-        super.addToRenderLists(camera);
     }
 
     @Override

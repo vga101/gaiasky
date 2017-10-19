@@ -708,4 +708,12 @@ public class SceneGraphNode implements IStarContainer, IPosition {
     public float getOpacity() {
         return opacity;
     }
+
+    public int getSceneGraphDepth() {
+        if (this.parent == null) {
+            return 0;
+        } else {
+            return this.parent.getSceneGraphDepth() + 1;
+        }
+    }
 }

@@ -9,11 +9,11 @@ import com.badlogic.gdx.assets.loaders.FileHandleResolver;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Array;
 
-import gaia.cu9.ari.gaiaorbit.util.override.AtmosphereGroundShaderProvider;
+import gaia.cu9.ari.gaiaorbit.util.override.GroundShaderProvider;
 
-public class AtmosphereGroundShaderProviderLoader<T extends AtmosphereGroundShaderProviderLoader.AtmosphereGroundShaderProviderParameter> extends AsynchronousAssetLoader<AtmosphereGroundShaderProvider, T> {
+public class AtmosphereGroundShaderProviderLoader<T extends AtmosphereGroundShaderProviderLoader.AtmosphereGroundShaderProviderParameter> extends AsynchronousAssetLoader<GroundShaderProvider, T> {
 
-    AtmosphereGroundShaderProvider shaderProvider;
+    GroundShaderProvider shaderProvider;
 
     public AtmosphereGroundShaderProviderLoader(FileHandleResolver resolver) {
         super(resolver);
@@ -21,11 +21,11 @@ public class AtmosphereGroundShaderProviderLoader<T extends AtmosphereGroundShad
 
     @Override
     public void loadAsync(AssetManager manager, String fileName, FileHandle file, T parameter) {
-        shaderProvider = new AtmosphereGroundShaderProvider(Gdx.files.internal(parameter.vertexShader), Gdx.files.internal(parameter.fragmentShader));
+        shaderProvider = new GroundShaderProvider(Gdx.files.internal(parameter.vertexShader), Gdx.files.internal(parameter.fragmentShader));
     }
 
     @Override
-    public AtmosphereGroundShaderProvider loadSync(AssetManager manager, String fileName, FileHandle file, AtmosphereGroundShaderProviderParameter parameter) {
+    public GroundShaderProvider loadSync(AssetManager manager, String fileName, FileHandle file, AtmosphereGroundShaderProviderParameter parameter) {
         return shaderProvider;
     }
 
@@ -34,7 +34,7 @@ public class AtmosphereGroundShaderProviderLoader<T extends AtmosphereGroundShad
         return null;
     }
 
-    public static class AtmosphereGroundShaderProviderParameter extends AssetLoaderParameters<AtmosphereGroundShaderProvider> {
+    public static class AtmosphereGroundShaderProviderParameter extends AssetLoaderParameters<GroundShaderProvider> {
         String vertexShader;
         String fragmentShader;
 

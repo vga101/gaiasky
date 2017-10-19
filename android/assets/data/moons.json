@@ -65,7 +65,7 @@
 						// This must implement gaia.cu9.ari.gaiaorbit.util.coord.IBodyCoordinates				
 						"impl" : "gaia.cu9.ari.gaiaorbit.util.coord.OrbitLintCoordinates",
 						"orbitname" : "Phobos orbit"
-						},
+				},
 			
 		"rotation" 		: {
 							// In hours
@@ -76,7 +76,7 @@
 							"inclination" : 1.082,
 							"ascendingnode" : 47.68,
 							"meridianangle" : 35.06
-							},
+					},
 							
 		"model"			: {
 							"args" : [true],
@@ -86,7 +86,9 @@
 										"normal" : "data/tex/phobos-normal*.jpg",
 										"specular" : "data/tex/all-mild-specular.jpg"
 										}
-							}
+					},
+
+		"shadowvalues" : [ 24.0, 2.0, 2.0 ]
 	},
 	
 	
@@ -107,7 +109,7 @@
 						// This must implement gaia.cu9.ari.gaiaorbit.util.coord.IBodyCoordinates				
 						"impl" : "gaia.cu9.ari.gaiaorbit.util.coord.OrbitLintCoordinates",
 						"orbitname" : "Deimos orbit"
-						},
+				},
 			
 		"rotation" 		: {
 							// In hours
@@ -118,7 +120,7 @@
 							"inclination" : 1.791,
 							"ascendingnode" : 47.65,
 							"meridianangle" : 79.41
-							},
+					},
 							
 		"model"			: {
 							"args" : [true],
@@ -128,7 +130,9 @@
 										"normal" : "data/tex/deimos-normal.jpg",
 										"specular" : "data/tex/all-mild-specular.jpg"
 										}
-							}
+					},
+
+		"shadowvalues" : [ 24.0, 2.0, 2.0 ]
 	},
 	
 	
@@ -149,7 +153,7 @@
 						// This must implement gaia.cu9.ari.gaiaorbit.util.coord.IBodyCoordinates				
 						"impl" : "gaia.cu9.ari.gaiaorbit.util.coord.OrbitLintCoordinates",
 						"orbitname" : "Amalthea orbit"
-						},
+				},
 			
 		"rotation" 		: {
 							// In hours
@@ -160,13 +164,15 @@
 							"inclination" : 25.51,
 							"ascendingnode" : 358.05,
 							"meridianangle" : 231.67
-							},
+					},
 							
 		"model"			: {
 							"args" : [true],
 							"model" : "data/models/amalthea.g3db",
 
-							}
+					},
+
+		"shadowvalues" : [ 24.0, 2.0, 2.0 ]
 	},
 	
 	
@@ -371,7 +377,7 @@
 						// This must implement gaia.cu9.ari.gaiaorbit.util.coord.IBodyCoordinates				
 						"impl" : "gaia.cu9.ari.gaiaorbit.util.coord.OrbitLintCoordinates",
 						"orbitname" : "Prometheus orbit"
-						},
+				},
 			
 		"rotation" 		: {
 							// In hours
@@ -382,12 +388,14 @@
 							"inclination" : 0.008,
 							"ascendingnode" : 28.542,
 							"meridianangle" : 121.609
-							},
+					},
 							
 		"model"			: {
 							"args" : [true],
 							"model" : "data/models/prometheus.g3db",
-							}
+					},
+
+		"shadowvalues" : [ 24.0, 2.0, 2.0 ]
 	},
 	
 	{

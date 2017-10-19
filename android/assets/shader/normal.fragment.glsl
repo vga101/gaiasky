@@ -113,27 +113,62 @@ uniform sampler2D u_emissiveTexture;
 #define ambientFlag
 #endif //ambientFlag
 
+
+//////////////////////////////////////////////////////
+////// SHADOW MAPPING
+//////////////////////////////////////////////////////
 #ifdef shadowMapFlag
+#define bias 0.003
 uniform sampler2D u_shadowTexture;
 uniform float u_shadowPCFOffset;
 varying vec3 v_shadowMapUv;
-#define separateAmbientFlag
 
 float getShadowness(vec2 offset)
-    {
+{
     const vec4 bitShifts = vec4(1.0, 1.0 / 255.0, 1.0 / 65025.0, 1.0 / 160581375.0);
-    return step(v_shadowMapUv.z, dot(texture2D(u_shadowTexture, v_shadowMapUv.xy + offset, TEXTURE_LOD_BIAS), bitShifts)); //+(1.0/255.0));
-    }
+    return step(v_shadowMapUv.z - bias, dot(texture2D(u_shadowTexture, v_shadowMapUv.xy + offset, TEXTURE_LOD_BIAS), bitShifts)); //+(1.0/255.0));
+}
 
 float getShadow()
-    {
-    return (//getShadowness(vec2(0,0)) + 
-	    getShadowness(vec2(u_shadowPCFOffset, u_shadowPCFOffset)) +
-	    getShadowness(vec2(-u_shadowPCFOffset, u_shadowPCFOffset)4) +
-	    getShadowness(vec2(u_shadowPCFOffset, -u_shadowPCFOffset)) +
-	    getShadowness(vec2(-u_shadowPCFOffset, -u_shadowPCFOffset))) * 0.25;
-    }
+{
+    //return (//getShadowness(vec2(0,0)) + 
+	//getShadowness(vec2(u_shadowPCFOffset, u_shadowPCFOffset)) +
+	//getShadowness(vec2(-u_shadowPCFOffset, u_shadowPCFOffset)) +
+	//getShadowness(vec2(u_shadowPCFOffset, -u_shadowPCFOffset)) +
+	//getShadowness(vec2(-u_shadowPCFOffset, -u_shadowPCFOffset))) * 0.25;
+	
+	float visibility = 1.0;
+
+	const vec4 bitShifts = vec4(1.0, 1.0 / 255.0, 1.0 / 65025.0, 1.0 / 160581375.0);
+
+	if (dot(texture2D(u_shadowTexture, v_shadowMapUv.xy + vec2( -0.94201624, -0.39906216 ) / 700.0), bitShifts) < v_shadowMapUv.z - bias){
+		visibility-=0.2;
+	}
+	if (dot(texture2D(u_shadowTexture, v_shadowMapUv.xy + vec2( 0.94558609, -0.76890725 ) / 700.0), bitShifts) < v_shadowMapUv.z - bias){
+		visibility-=0.2;
+	}
+	if (dot(texture2D(u_shadowTexture, v_shadowMapUv.xy + vec2( -0.094184101, -0.92938870 ) / 700.0), bitShifts) < v_shadowMapUv.z - bias){
+		visibility-=0.2;
+	}
+	if (dot(texture2D(u_shadowTexture, v_shadowMapUv.xy + vec2( 0.34495938, 0.29387760 ) / 700.0), bitShifts) < v_shadowMapUv.z - bias){
+		visibility-=0.2;
+	}
+
+	return visibility;
+}
+
+float getShadowSimple()
+{
+	float visibility = 1.0;
+	const vec4 bitShifts = vec4(1.0, 1.0 / 255.0, 1.0 / 65025.0, 1.0 / 160581375.0);
+	if (dot(texture2D(u_shadowTexture, v_shadowMapUv.xy),  bitShifts) <  v_shadowMapUv.z - bias){
+    	visibility = 0.5;
+	}
+	return visibility;
+}
+
 #endif //shadowMapFlag
+
 
 // AMBIENT LIGHT
 
@@ -242,8 +277,9 @@ void main() {
     #endif // environmentCubemapFlag
 
     #ifdef shadowMapFlag
-        vec3 dayColor = (v_lightCol * diffuse.rgb) * NL * getShadow() + (ambient * diffuse.rgb) * (1.0 - NL);
-        vec3 nightColor = (v_lightCol * night.rgb) * max(0.0, (0.6 - NL)) * getShadow();
+    	float shdw = clamp(getShadow(), 0.05, 1.0);
+        vec3 dayColor = (v_lightCol * diffuse.rgb) * NL * shdw + (ambient * diffuse.rgb) * (1.0 - NL);
+        vec3 nightColor = (v_lightCol * night.rgb) * max(0.0, (0.6 - NL)) * shdw;
         gl_FragColor = vec4(dayColor + nightColor, diffuse.a * v_opacity);
     #else
         vec3 dayColor = (v_lightCol * diffuse.rgb) * NL + (ambient * diffuse.rgb) * (1.0 - NL);

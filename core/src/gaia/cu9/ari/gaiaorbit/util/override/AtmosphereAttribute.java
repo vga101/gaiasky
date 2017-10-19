@@ -1,19 +1,17 @@
 package gaia.cu9.ari.gaiaorbit.util.override;
 
 import com.badlogic.gdx.graphics.g3d.Attribute;
+import com.badlogic.gdx.graphics.g3d.attributes.FloatAttribute;
 import com.badlogic.gdx.utils.NumberUtils;
 
-public class AtmosphereAttribute extends Attribute {
+public class AtmosphereAttribute extends FloatAttribute {
     public AtmosphereAttribute(long type) {
         super(type);
     }
 
     public AtmosphereAttribute(long type, float value) {
-        super(type);
-        this.value = value;
+        super(type, value);
     }
-
-    public float value;
 
     public static final String AlphaAlias = "alpha";
     public static final long Alpha = register(AlphaAlias);

@@ -5,8 +5,10 @@ import java.util.Iterator;
 import com.badlogic.gdx.utils.Array;
 
 /**
- * A multiple list, holding a number of indexed lists. Useful for threaded applications.
- * Not all methods of {@link java.util.List} are implemented, check the comments.
+ * A multiple list, holding a number of indexed lists. Useful for threaded
+ * applications. Not all methods of {@link java.util.List} are implemented,
+ * check the comments.
+ * 
  * @author Toni Sagrista
  *
  * @param <T>
@@ -17,9 +19,11 @@ public class Multilist<T> {
     private Array<T> tolist;
 
     /**
-     * Creates a multiple list with the given number of lists and an
-     * initial capacity of each list of ten.
-     * @param numLists The number of lists.
+     * Creates a multiple list with the given number of lists and an initial
+     * capacity of each list of ten.
+     * 
+     * @param numLists
+     *            The number of lists.
      */
     public Multilist(int numLists) {
         this(numLists, 10000);
@@ -28,8 +32,11 @@ public class Multilist<T> {
     /**
      * Creates a multiple list with the given number of lists and initial
      * capacity for each list.
-     * @param numLists The number of lists.
-     * @param initialCapacity The initial capacity for each list.
+     * 
+     * @param numLists
+     *            The number of lists.
+     * @param initialCapacity
+     *            The initial capacity for each list.
      */
     public Multilist(int numLists, int initialCapacity) {
         super();
@@ -42,6 +49,7 @@ public class Multilist<T> {
 
     /**
      * Converts this multilist to a simple list
+     * 
      * @return
      */
     public Array<T> toList() {
@@ -76,12 +84,16 @@ public class Multilist<T> {
     }
 
     /**
-     * Returns true if this collection contains the specified element in the list identified
-     * by the given index.
-     * More formally, returns true if and only if the list contains
-     * at least one element e such that (o==null ? e==null : o.equals(e)).
-     * @param o element whose presence in this collection is to be tested
-     * @param listIndex <tt>true</tt> if this collection contains the specified element.
+     * Returns true if this collection contains the specified element in the
+     * list identified by the given index. More formally, returns true if and
+     * only if the list contains at least one element e such that (o==null ?
+     * e==null : o.equals(e)).
+     * 
+     * @param o
+     *            element whose presence in this collection is to be tested
+     * @param listIndex
+     *            <tt>true</tt> if this collection contains the specified
+     *            element.
      * @return
      */
     public boolean contains(T o, int listIndex) {
@@ -99,10 +111,13 @@ public class Multilist<T> {
     }
 
     /**
-     * Adds the element e in the list identified by the given index.
-     * See {@link java.util.Collection#add(Object))}.
-     * @param e The element to add.
-     * @param index The index of the list to add the element to.
+     * Adds the element e in the list identified by the given index. See
+     * {@link java.util.Collection#add(Object))}.
+     * 
+     * @param e
+     *            The element to add.
+     * @param index
+     *            The index of the list to add the element to.
      * @return <tt>true</tt> if this collection changed as a result of the call
      */
     public boolean add(T e, int index) {
@@ -120,11 +135,14 @@ public class Multilist<T> {
     }
 
     /**
-     * Removes the element e in the list identified by the given index. This version
-     * is faster than the version without the index.
-     * See {@link java.util.Collection#remove(Object))}.
-     * @param e The element to remove.
-     * @param index The index of the list to remove the element from.
+     * Removes the element e in the list identified by the given index. This
+     * version is faster than the version without the index. See
+     * {@link java.util.Collection#remove(Object))}.
+     * 
+     * @param e
+     *            The element to remove.
+     * @param index
+     *            The index of the list to remove the element from.
      * @return <tt>true</tt> if the element was removed as a result of the call
      */
     public boolean remove(T o, int index) {
@@ -162,8 +180,11 @@ public class Multilist<T> {
 
     /**
      * Gets the element of the given list index at the given index.
-     * @param index The index of the element in the list.
-     * @param listIndex The index of the list.
+     * 
+     * @param index
+     *            The index of the element in the list.
+     * @param listIndex
+     *            The index of the list.
      * @return The element if exists, null otherwise.
      */
     public T get(int index, int listIndex) {
@@ -176,9 +197,13 @@ public class Multilist<T> {
 
     /**
      * Sets the element at the given index in the given list.
-     * @param index The index of the element.
-     * @param element The element.
-     * @param listIndex The index of the list.
+     * 
+     * @param index
+     *            The index of the element.
+     * @param element
+     *            The element.
+     * @param listIndex
+     *            The index of the list.
      * @return <tt>true</tt> if the list was modified.
      */
     public void set(int index, T element, int listIndex) {
@@ -192,8 +217,11 @@ public class Multilist<T> {
 
     /**
      * Removes the element of the given list index at the given index.
-     * @param index The index of the element in the list.
-     * @param listIndex The index of the list.
+     * 
+     * @param index
+     *            The index of the element in the list.
+     * @param listIndex
+     *            The index of the list.
      * @return The element if it was removed, null otherwise.
      */
     public T remove(int index, int listIndex) {
@@ -223,7 +251,7 @@ public class Multilist<T> {
 
         @Override
         public boolean hasNext() {
-            return (index < lists[listIndex].size - 1) || (listIndex < lists.length - 1 && !emptyFrom(listIndex + 1));
+            return (index < lists[listIndex].size) || (listIndex < lists.length - 1 && !emptyFrom(listIndex + 1));
         }
 
         /** Are the lists from index li onwards empty? **/
@@ -237,13 +265,14 @@ public class Multilist<T> {
 
         @Override
         public T next() {
+            T elem = (T) lists[listIndex].get(index);
             if (index == lists[listIndex].size - 1) {
                 index = 0;
                 listIndex++;
             } else {
                 index++;
             }
-            return (T) lists[listIndex].get(index);
+            return elem;
         }
 
         @Override

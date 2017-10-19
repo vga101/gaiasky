@@ -275,13 +275,19 @@ public enum Events {
      * Contains an optional boolean indicating whether debug info should be
      * shown or not. Otherwise, it toggles its state
      **/
-    SHOW_DEBUG_CMD, SHOW_ABOUT_ACTION, SHOW_TUTORIAL_ACTION, SHOW_PREFERENCES_ACTION, SHOW_RUNSCRIPT_ACTION, SHOW_LAND_AT_LOCATION_ACTION,
+    SHOW_DEBUG_CMD,
+    SHOW_ABOUT_ACTION,
+    SHOW_TUTORIAL_ACTION,
+    SHOW_PREFERENCES_ACTION,
+    SHOW_RUNSCRIPT_ACTION,
+    SHOW_LAND_AT_LOCATION_ACTION,
     /** Shows the camera path file selector, contains the stage and the skin **/
     SHOW_PLAYCAMERA_ACTION,
     /** Informs about the number of running scripts **/
     NUM_RUNNING_SCRIPTS,
     /** Cancels the next script **/
-    CANCEL_SCRIPT_CMD, SHOW_SEARCH_ACTION,
+    CANCEL_SCRIPT_CMD,
+    SHOW_SEARCH_ACTION,
     /**
      * This event is issued when the screen has been resized. It contains the
      * new width and height
@@ -459,6 +465,11 @@ public enum Events {
     RENDER_SCREENSHOT,
     /** Issues the command to render a frame **/
     RENDER_FRAME,
+    /**
+     * Issues the command to render the current frame buffer with a given
+     * folder, file (without filename), width and height
+     **/
+    RENDER_FRAME_BUFFER,
 
     /** Issues the command to flush the frame system **/
     FLUSH_FRAMES,
@@ -476,7 +487,10 @@ public enum Events {
     /** Sets the limit magnitude. Contains a double with the new magnitude **/
     LIMIT_MAG_CMD,
     /** Debug info **/
-    DEBUG1, DEBUG2, DEBUG3, DEBUG4,
+    DEBUG1,
+    DEBUG2,
+    DEBUG3,
+    DEBUG4,
     /**
      * Notifies from a java exception, it sends the Throwable and an optional
      * tag.

@@ -119,6 +119,17 @@ varying vec2 v_texCoord0;
 #endif // texCoord0Flag
 
 
+//////////////////////////////////////////////////////
+////// SHADOW MAPPING
+//////////////////////////////////////////////////////
+#ifdef shadowMapFlag
+uniform sampler2D u_shadowTexture;
+uniform float u_shadowPCFOffset;
+uniform mat4 u_shadowMapProjViewTrans;
+
+varying vec3 v_shadowMapUv;
+#endif //shadowMapFlag
+
 
 ////////////////////////////////////////////////////////////////////////////////////
 ////////// GROUND ATMOSPHERIC SCATTERING - VERTEX
@@ -380,11 +391,6 @@ varying float v_alphaTest;
     #define cameraPositionFlag
 #endif
 
-#ifdef shadowMapFlag
-    uniform mat4 u_shadowMapProjViewTrans;
-    varying vec3 v_shadowMapUv;
-    #define separateAmbientFlag
-#endif //shadowMapFlag
 
 #if defined(normalFlag) && defined(binormalFlag) && defined(tangentFlag)
     #define calculateTangentVectors() nop()
@@ -496,9 +502,11 @@ void main() {
 
     #ifdef shadowMapFlag
 	vec4 spos = u_shadowMapProjViewTrans * g_position;
-	v_shadowMapUv.xy = (spos.xy / spos.w) * 0.5 + 0.5;
-	v_shadowMapUv.z = min(spos.z * 0.5 + 0.5, 0.998);
+        
+	v_shadowMapUv.xyz = (spos.xyz / spos.w) * 0.5 + 0.5;
+	//v_shadowMapUv.z = min(spos.z * 0.5 + 0.5, 0.998);
     #endif //shadowMapFlag
+    
 
     mat3 worldToTangent;
     worldToTangent[0] = g_tangent;

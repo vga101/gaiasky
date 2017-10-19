@@ -1,7 +1,9 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.math.Vector3;
 
@@ -25,6 +27,8 @@ public class Planet extends ModelBody implements IAtmosphereRenderable, ILineRen
 
     Vector3d endline = new Vector3d();
     Vector3d dx = new Vector3d();
+
+    static Texture auxTex;
     double previousOrientationAngle = 0;
 
     @Override
@@ -71,6 +75,9 @@ public class Planet extends ModelBody implements IAtmosphereRenderable, ILineRen
 
         if (Planet.manager == null) {
             Planet.manager = manager;
+        }
+        if (auxTex == null) {
+            auxTex = new Texture(Gdx.files.internal("data/tex/star.jpg"));
         }
 
         // INITIALIZE ATMOSPHERE
@@ -125,26 +132,32 @@ public class Planet extends ModelBody implements IAtmosphereRenderable, ILineRen
     }
 
     /**
-     * Renders atmosphere
+     * Renders the model
      */
     @Override
     public void render(ModelBatch modelBatch, float alpha, double t, boolean atm) {
         // Atmosphere fades in between 1 and 2 degrees of view angle apparent
-        float atmopacity = (float) MathUtilsd.lint(viewAngle, 0.01745329f, 0.03490659f, 0f, 1f);
+
         if (!atm) {
-            // Normal rendering
+            // Regular planet, render model normally
             compalpha = alpha;
             if (ac != null) {
+                // If atmosphere params are present, set them
+                float atmopacity = (float) MathUtilsd.lint(viewAngle, 0.01745329f, 0.03490659f, 0f, 1f);
                 if (GlobalConf.scene.VISIBILITY[ComponentType.Atmospheres.ordinal()] && atmopacity > 0) {
                     ac.updateAtmosphericScatteringParams(mc.instance.materials.first(), alpha * atmopacity, true, transform, parent, rc);
                 } else {
                     ac.removeAtmosphericScattering(mc.instance.materials.first());
                 }
             }
+
+            prepareShadowEnvironment();
+            mc.touch();
             mc.setTransparency(alpha * opacity);
             modelBatch.render(mc.instance, mc.env);
         } else {
-
+            // We are an atmosphere :_D
+            float atmopacity = (float) MathUtilsd.lint(viewAngle, 0.01745329f, 0.03490659f, 0f, 1f);
             if (atmopacity > 0) {
                 // Atmosphere
                 ac.updateAtmosphericScatteringParams(ac.mc.instance.materials.first(), alpha * atmopacity, false, transform, parent, rc);
