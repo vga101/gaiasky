@@ -23,7 +23,6 @@ import gaia.cu9.ari.gaiaorbit.interfce.XBox360Mappings;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
-import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
@@ -81,7 +80,7 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
         scpos = new Vector3d();
 
         // init camera
-        camera = new PerspectiveCamera(GlobalConf.scene.CAMERA_FOV, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        camera = new PerspectiveCamera(20, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         camera.near = (float) (100000d * Constants.M_TO_U);
         camera.far = (float) CAM_FAR;
 
@@ -168,7 +167,7 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
         // POSITION
         double tgfac = targetDistance * sc.factor / fovFactor;
         relpos.scl(sc.factor);
-        aux2.set(sc.up).nor().scl(tgfac / 2d);
+        aux2.set(sc.up).nor().scl(tgfac / 3d);
         desired.set(sc.direction).nor().scl(-tgfac).add(aux2);
         todesired.set(desired).sub(relpos);
         todesired.scl(dt * GlobalConf.spacecraft.SC_RESPONSIVENESS / .5e6);
@@ -178,7 +177,7 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
         distance = pos.len();
 
         // DIRECTION
-        aux2.set(sc.direction).nor().scl(tgfac);
+        aux2.set(sc.direction).nor().scl(tgfac / 1.5f);
         direction.set(scpos).add(aux2).sub(pos).nor();
 
         // UP
@@ -222,8 +221,7 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
     }
 
     protected void updatePerspectiveCamera() {
-
-        camera.near = (float) targetDistance * 0.9f;
+        camera.near = (float) targetDistance * 1.6f;
         if (closest != null) {
             camera.near = Math.min(camera.near, ((float) closest.pos.dst(pos) - (float) closest.getRadius()) * (float) sc.factor / 2.5f) * (float) sc.factor;
         }
@@ -293,18 +291,6 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
             this.sc = (Spacecraft) data[0];
             this.targetDistance = sc.size * 6;
             this.relpos.set(targetDistance, targetDistance / 2, 0);
-            break;
-        case FOV_CHANGED_CMD:
-            float fov = MathUtilsd.clamp((float) data[0], Constants.MIN_FOV, Constants.MAX_FOV);
-
-            for (PerspectiveCamera cam : cameras) {
-                cam.fieldOfView = fov;
-            }
-
-            fovFactor = camera.fieldOfView / 40f;
-            if (parent.current == this) {
-                EventManager.instance.post(Events.FOV_CHANGE_NOTIFICATION, fov, fovFactor);
-            }
             break;
         default:
             break;
