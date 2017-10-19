@@ -23,7 +23,9 @@
 	"model"			: {
 						"args" : [true],
 						"model" : "data/models/gaia/gaia.g3db"
-						}
+				},
+
+	"shadowvalues" : [ 30.0, 4.0, 3.0 ]
 	},
 	
 	{
@@ -40,7 +42,9 @@
 	"model"			: {
 						"args" : [true],
 						"model" : "data/models/spaceship/spaceship.g3db"
-						}
+				},
+
+	"shadowvalues" : [ 50.0, 13.0, 3.0 ]
 	
 	},
 	

@@ -5913,7 +5913,7 @@
 			], 
 			"parts": [
 				{
-					"id": "shape1_part1", 
+					"id": "shape1_part17", 
 					"type": "TRIANGLES", 
 					"indices": [
 						  0,   1,   2,   0,   2,   3,   4,   5,   6,   5,   4,   7, 
@@ -5931,7 +5931,7 @@
 					]
 				}, 
 				{
-					"id": "shape1_part2", 
+					"id": "shape1_part16", 
 					"type": "TRIANGLES", 
 					"indices": [
 						 96,  97,  98,  97,  96,  99,  100,  101,  102,  101,  100,  103, 
@@ -5939,7 +5939,7 @@
 					]
 				}, 
 				{
-					"id": "shape1_part3", 
+					"id": "shape1_part15", 
 					"type": "TRIANGLES", 
 					"indices": [
 						 108,  109,  110,  110,  109,  111,  112,  113,  114,  112,  114,  115, 
@@ -5949,7 +5949,7 @@
 					]
 				}, 
 				{
-					"id": "shape1_part4", 
+					"id": "shape1_part14", 
 					"type": "TRIANGLES", 
 					"indices": [
 						 140,  141,  142,  143,  140,  144,  141,  145,  142,  145,  141,  146, 
@@ -5958,7 +5958,7 @@
 					]
 				}, 
 				{
-					"id": "shape1_part5", 
+					"id": "shape1_part13", 
 					"type": "TRIANGLES", 
 					"indices": [
 						 152,  153,  154,  153,  152,  155,  156,  157,  158,  156,  158,  159, 
@@ -6054,7 +6054,7 @@
 					]
 				}, 
 				{
-					"id": "shape1_part6", 
+					"id": "shape1_part12", 
 					"type": "TRIANGLES", 
 					"indices": [
 						 672,  673,  674,  674,  675,  672,  676,  677,  678,  678,  679,  676, 
@@ -6150,7 +6150,7 @@
 					]
 				}, 
 				{
-					"id": "shape1_part7", 
+					"id": "shape1_part11", 
 					"type": "TRIANGLES", 
 					"indices": [
 						 1392,  1393,  1394,  1392,  1395,  1393,  1393,  1395,  1396,  1397,  1398,  1399, 
@@ -6265,7 +6265,7 @@
 					]
 				}, 
 				{
-					"id": "shape1_part8", 
+					"id": "shape1_part10", 
 					"type": "TRIANGLES", 
 					"indices": [
 						 2252,  2253,  2254,  2253,  2252,  2255,  2256,  2257,  2258,  2256,  2258,  2259, 
@@ -6434,7 +6434,7 @@
 					]
 				}, 
 				{
-					"id": "shape1_part10", 
+					"id": "shape1_part8", 
 					"type": "TRIANGLES", 
 					"indices": [
 						 3288,  3289,  3290,  3290,  3289,  3291,  3289,  3292,  3293,  3292,  3289,  3294, 
@@ -6477,7 +6477,7 @@
 					]
 				}, 
 				{
-					"id": "shape1_part11", 
+					"id": "shape1_part7", 
 					"type": "TRIANGLES", 
 					"indices": [
 						 3463,  3464,  3465,  3465,  3466,  3463,  3467,  3468,  3464,  3464,  3463,  3467, 
@@ -6522,7 +6522,7 @@
 					]
 				}, 
 				{
-					"id": "shape1_part12", 
+					"id": "shape1_part6", 
 					"type": "TRIANGLES", 
 					"indices": [
 						 3547,  3548,  3549,  3550,  3549,  3548,  3551,  3552,  3553,  3552,  3551,  3554, 
@@ -6566,7 +6566,7 @@
 					]
 				}, 
 				{
-					"id": "shape1_part13", 
+					"id": "shape1_part5", 
 					"type": "TRIANGLES", 
 					"indices": [
 						 3697,  3698,  3699,  3699,  3700,  3697,  3701,  3702,  3703,  3702,  3701,  3704, 
@@ -6616,7 +6616,7 @@
 					]
 				}, 
 				{
-					"id": "shape1_part14", 
+					"id": "shape1_part4", 
 					"type": "TRIANGLES", 
 					"indices": [
 						 3961,  3962,  3963,  3963,  3962,  3964,  3962,  3965,  3966,  3965,  3962,  3967, 
@@ -6659,7 +6659,7 @@
 					]
 				}, 
 				{
-					"id": "shape1_part15", 
+					"id": "shape1_part3", 
 					"type": "TRIANGLES", 
 					"indices": [
 						 4227,  4228,  4229,  4228,  4227,  4230,  4231,  4232,  4233,  4232,  4231,  4234, 
@@ -6747,7 +6747,7 @@
 					]
 				}, 
 				{
-					"id": "shape1_part16", 
+					"id": "shape1_part2", 
 					"type": "TRIANGLES", 
 					"indices": [
 						 4583,  4584,  4585,  4583,  4586,  4584,  4587,  4584,  4586,  4588,  4586,  4583, 
@@ -6862,7 +6862,7 @@
 					]
 				}, 
 				{
-					"id": "shape1_part17", 
+					"id": "shape1_part1", 
 					"type": "TRIANGLES", 
 					"indices": [
 						 5042,  5043,  5044,  5044,  5045,  5042,  5046,  5047,  5048,  5046,  5048,  5049, 
@@ -7016,47 +7016,27 @@
 	], 
 	"materials": [
 		{
-			"id": "Bottom", 
-			"diffuse": [ 0.640000,  0.640000,  0.640000], 
-			"specular": [ 0.500000,  0.500000,  0.500000], 
+			"id": "Aluminum", 
+			"ambient": [ 0.000000,  0.000000,  0.000000], 
+			"diffuse": [ 0.225641,  0.225641,  0.225641], 
+			"emissive": [ 0.000000,  0.000000,  0.000000], 
+			"opacity":  1.000000, 
+			"specular": [ 1.000000,  1.000000,  1.000000], 
 			"shininess":  96.078430, 
 			"textures": [
 				{
-					"id": "Bottom", 
-					"filename": "circuit.jpg", 
-					"type": "DIFFUSE"
-				}
-			]
-		}, 
-		{
-			"id": "Hook-tex", 
-			"diffuse": [ 0.640000,  0.640000,  0.640000], 
-			"specular": [ 0.500000,  0.500000,  0.500000], 
-			"shininess":  96.078430, 
-			"textures": [
-				{
-					"id": "Hook-tex", 
-					"filename": "hook-tex.jpg", 
-					"type": "DIFFUSE"
-				}
-			]
-		}, 
-		{
-			"id": "DarkM", 
-			"diffuse": [ 0.640000,  0.640000,  0.640000], 
-			"specular": [ 0.500000,  0.500000,  0.500000], 
-			"shininess":  96.078430, 
-			"textures": [
-				{
-					"id": "DarkM", 
-					"filename": "circuit2.jpg", 
+					"id": "Aluminum", 
+					"filename": "aluminum-foil.bak.jpg", 
 					"type": "DIFFUSE"
 				}
 			]
 		}, 
 		{
 			"id": "AluminumGold", 
+			"ambient": [ 0.000000,  0.000000,  0.000000], 
 			"diffuse": [ 0.800000,  0.800000,  0.800000], 
+			"emissive": [ 0.000000,  0.000000,  0.000000], 
+			"opacity":  1.000000, 
 			"specular": [ 1.000000,  1.000000,  1.000000], 
 			"shininess":  96.078430, 
 			"textures": [
@@ -7068,8 +7048,107 @@
 			]
 		}, 
 		{
-			"id": "DarkM_darkmetal.jpg", 
+			"id": "BelowTTS", 
+			"ambient": [ 0.000000,  0.000000,  0.000000], 
+			"diffuse": [ 0.339145,  0.339145,  0.339145], 
+			"emissive": [ 0.000000,  0.000000,  0.000000], 
+			"opacity":  1.000000, 
+			"specular": [ 1.000000,  1.000000,  1.000000], 
+			"shininess":  96.078430, 
+			"textures": [
+				{
+					"id": "BelowTTS", 
+					"filename": "gaiametal.jpg", 
+					"type": "DIFFUSE"
+				}
+			]
+		}, 
+		{
+			"id": "Bottom", 
+			"ambient": [ 0.000000,  0.000000,  0.000000], 
 			"diffuse": [ 0.640000,  0.640000,  0.640000], 
+			"emissive": [ 0.000000,  0.000000,  0.000000], 
+			"opacity":  1.000000, 
+			"specular": [ 0.500000,  0.500000,  0.500000], 
+			"shininess":  96.078430, 
+			"textures": [
+				{
+					"id": "Bottom", 
+					"filename": "circuit.jpg", 
+					"type": "DIFFUSE"
+				}
+			]
+		}, 
+		{
+			"id": "CCD", 
+			"ambient": [ 0.000000,  0.000000,  0.000000], 
+			"diffuse": [ 0.592485,  0.592485,  0.592485], 
+			"emissive": [ 0.000000,  0.000000,  0.000000], 
+			"opacity":  1.000000, 
+			"specular": [ 1.000000,  1.000000,  1.000000], 
+			"shininess":  96.078430, 
+			"textures": [
+				{
+					"id": "CCD", 
+					"filename": "solar-panel-small.jpg", 
+					"type": "DIFFUSE"
+				}
+			]
+		}, 
+		{
+			"id": "Circuit1", 
+			"ambient": [ 0.000000,  0.000000,  0.000000], 
+			"diffuse": [ 0.640000,  0.640000,  0.640000], 
+			"emissive": [ 0.000000,  0.000000,  0.000000], 
+			"opacity":  1.000000, 
+			"specular": [ 0.500000,  0.500000,  0.500000], 
+			"shininess":  96.078430, 
+			"textures": [
+				{
+					"id": "Circuit1", 
+					"filename": "sq.jpg", 
+					"type": "DIFFUSE"
+				}
+			]
+		}, 
+		{
+			"id": "Circuit2", 
+			"ambient": [ 0.000000,  0.000000,  0.000000], 
+			"diffuse": [ 0.800000,  0.800000,  0.800000], 
+			"emissive": [ 0.000000,  0.000000,  0.000000], 
+			"opacity":  1.000000, 
+			"specular": [ 0.553571,  0.553571,  0.553571], 
+			"shininess":  96.078430, 
+			"textures": [
+				{
+					"id": "Circuit2", 
+					"filename": "circuit2.jpg", 
+					"type": "DIFFUSE"
+				}
+			]
+		}, 
+		{
+			"id": "DarkM", 
+			"ambient": [ 0.000000,  0.000000,  0.000000], 
+			"diffuse": [ 0.640000,  0.640000,  0.640000], 
+			"emissive": [ 0.000000,  0.000000,  0.000000], 
+			"opacity":  1.000000, 
+			"specular": [ 0.500000,  0.500000,  0.500000], 
+			"shininess":  96.078430, 
+			"textures": [
+				{
+					"id": "DarkM", 
+					"filename": "circuit2.jpg", 
+					"type": "DIFFUSE"
+				}
+			]
+		}, 
+		{
+			"id": "DarkM_darkmetal.jpg", 
+			"ambient": [ 0.000000,  0.000000,  0.000000], 
+			"diffuse": [ 0.640000,  0.640000,  0.640000], 
+			"emissive": [ 0.000000,  0.000000,  0.000000], 
+			"opacity":  1.000000, 
 			"specular": [ 0.500000,  0.500000,  0.500000], 
 			"shininess":  96.078430, 
 			"textures": [
@@ -7082,7 +7161,10 @@
 		}, 
 		{
 			"id": "DarkMetal", 
+			"ambient": [ 0.000000,  0.000000,  0.000000], 
 			"diffuse": [ 0.640000,  0.640000,  0.640000], 
+			"emissive": [ 0.000000,  0.000000,  0.000000], 
+			"opacity":  1.000000, 
 			"specular": [ 0.500000,  0.500000,  0.500000], 
 			"shininess":  96.078430, 
 			"textures": [
@@ -7094,21 +7176,11 @@
 			]
 		}, 
 		{
-			"id": "Circuit2", 
-			"diffuse": [ 0.800000,  0.800000,  0.800000], 
-			"specular": [ 0.553571,  0.553571,  0.553571], 
-			"shininess":  96.078430, 
-			"textures": [
-				{
-					"id": "Circuit2", 
-					"filename": "circuit2.jpg", 
-					"type": "DIFFUSE"
-				}
-			]
-		}, 
-		{
 			"id": "GaiaMetal", 
+			"ambient": [ 0.000000,  0.000000,  0.000000], 
 			"diffuse": [ 0.640000,  0.640000,  0.640000], 
+			"emissive": [ 0.000000,  0.000000,  0.000000], 
+			"opacity":  1.000000, 
 			"specular": [ 0.260684,  0.260684,  0.260684], 
 			"shininess":  96.078430, 
 			"textures": [
@@ -7120,85 +7192,11 @@
 			]
 		}, 
 		{
-			"id": "None", 
-			"diffuse": [ 0.800000,  0.800000,  0.800000], 
-			"specular": [ 0.800000,  0.800000,  0.800000], 
-			"textures": [
-				{
-					"id": "None", 
-					"filename": "darkmetal.jpg", 
-					"type": "DIFFUSE"
-				}
-			]
-		}, 
-		{
-			"id": "Circuit1", 
-			"diffuse": [ 0.640000,  0.640000,  0.640000], 
-			"specular": [ 0.500000,  0.500000,  0.500000], 
-			"shininess":  96.078430, 
-			"textures": [
-				{
-					"id": "Circuit1", 
-					"filename": "sq.jpg", 
-					"type": "DIFFUSE"
-				}
-			]
-		}, 
-		{
-			"id": "CCD", 
-			"diffuse": [ 0.592485,  0.592485,  0.592485], 
-			"specular": [ 1.000000,  1.000000,  1.000000], 
-			"shininess":  96.078430, 
-			"textures": [
-				{
-					"id": "CCD", 
-					"filename": "solar-panel-small.jpg", 
-					"type": "DIFFUSE"
-				}
-			]
-		}, 
-		{
-			"id": "BelowTTS", 
-			"diffuse": [ 0.339145,  0.339145,  0.339145], 
-			"specular": [ 1.000000,  1.000000,  1.000000], 
-			"shininess":  96.078430, 
-			"textures": [
-				{
-					"id": "BelowTTS", 
-					"filename": "gaiametal.jpg", 
-					"type": "DIFFUSE"
-				}
-			]
-		}, 
-		{
-			"id": "SolarArray", 
-			"diffuse": [ 0.380171,  0.380171,  0.380171], 
-			"specular": [ 1.000000,  1.000000,  1.000000], 
-			"shininess":  96.078430, 
-			"textures": [
-				{
-					"id": "SolarArray", 
-					"filename": "solar-panel-small.jpg", 
-					"type": "DIFFUSE"
-				}
-			]
-		}, 
-		{
-			"id": "Aluminum", 
-			"diffuse": [ 0.225641,  0.225641,  0.225641], 
-			"specular": [ 1.000000,  1.000000,  1.000000], 
-			"shininess":  96.078430, 
-			"textures": [
-				{
-					"id": "Aluminum", 
-					"filename": "aluminum-foil.bak.jpg", 
-					"type": "DIFFUSE"
-				}
-			]
-		}, 
-		{
 			"id": "Gold", 
+			"ambient": [ 0.000000,  0.000000,  0.000000], 
 			"diffuse": [ 0.640000,  0.640000,  0.640000], 
+			"emissive": [ 0.000000,  0.000000,  0.000000], 
+			"opacity":  1.000000, 
 			"specular": [ 0.500000,  0.500000,  0.500000], 
 			"shininess":  96.078430, 
 			"textures": [
@@ -7210,27 +7208,81 @@
 			]
 		}, 
 		{
-			"id": "Top", 
-			"diffuse": [ 0.800000,  0.800000,  0.800000], 
-			"specular": [ 0.991453,  0.991453,  0.991453], 
-			"shininess":  96.078430, 
-			"textures": [
-				{
-					"id": "Top", 
-					"filename": "skin-top.jpg", 
-					"type": "DIFFUSE"
-				}
-			]
-		}, 
-		{
 			"id": "GoldFoil", 
+			"ambient": [ 0.000000,  0.000000,  0.000000], 
 			"diffuse": [ 0.496410,  0.496410,  0.496410], 
+			"emissive": [ 0.000000,  0.000000,  0.000000], 
+			"opacity":  1.000000, 
 			"specular": [ 1.000000,  1.000000,  1.000000], 
 			"shininess":  96.078430, 
 			"textures": [
 				{
 					"id": "GoldFoil", 
 					"filename": "gold-foil.jpg", 
+					"type": "DIFFUSE"
+				}
+			]
+		}, 
+		{
+			"id": "Hook-tex", 
+			"ambient": [ 0.000000,  0.000000,  0.000000], 
+			"diffuse": [ 0.640000,  0.640000,  0.640000], 
+			"emissive": [ 0.000000,  0.000000,  0.000000], 
+			"opacity":  1.000000, 
+			"specular": [ 0.500000,  0.500000,  0.500000], 
+			"shininess":  96.078430, 
+			"textures": [
+				{
+					"id": "Hook-tex", 
+					"filename": "hook-tex.jpg", 
+					"type": "DIFFUSE"
+				}
+			]
+		}, 
+		{
+			"id": "None", 
+			"ambient": [ 0.000000,  0.000000,  0.000000], 
+			"diffuse": [ 0.800000,  0.800000,  0.800000], 
+			"emissive": [ 0.000000,  0.000000,  0.000000], 
+			"opacity":  1.000000, 
+			"specular": [ 0.800000,  0.800000,  0.800000], 
+			"shininess":  0.000000, 
+			"textures": [
+				{
+					"id": "None", 
+					"filename": "darkmetal.jpg", 
+					"type": "DIFFUSE"
+				}
+			]
+		}, 
+		{
+			"id": "SolarArray", 
+			"ambient": [ 0.000000,  0.000000,  0.000000], 
+			"diffuse": [ 0.380171,  0.380171,  0.380171], 
+			"emissive": [ 0.000000,  0.000000,  0.000000], 
+			"opacity":  1.000000, 
+			"specular": [ 1.000000,  1.000000,  1.000000], 
+			"shininess":  96.078430, 
+			"textures": [
+				{
+					"id": "SolarArray", 
+					"filename": "solar-panel-small.jpg", 
+					"type": "DIFFUSE"
+				}
+			]
+		}, 
+		{
+			"id": "Top", 
+			"ambient": [ 0.000000,  0.000000,  0.000000], 
+			"diffuse": [ 0.800000,  0.800000,  0.800000], 
+			"emissive": [ 0.000000,  0.000000,  0.000000], 
+			"opacity":  1.000000, 
+			"specular": [ 0.991453,  0.991453,  0.991453], 
+			"shininess":  96.078430, 
+			"textures": [
+				{
+					"id": "Top", 
+					"filename": "skin-top.jpg", 
 					"type": "DIFFUSE"
 				}
 			]
@@ -7244,42 +7296,42 @@
 					"id": "default", 
 					"parts": [
 						{
-							"meshpartid": "shape1_part1", 
+							"meshpartid": "shape1_part17", 
 							"materialid": "CCD", 
 							"uvMapping": [[  0]]
 						}, 
 						{
-							"meshpartid": "shape1_part2", 
+							"meshpartid": "shape1_part16", 
 							"materialid": "Circuit1", 
 							"uvMapping": [[  0]]
 						}, 
 						{
-							"meshpartid": "shape1_part3", 
+							"meshpartid": "shape1_part15", 
 							"materialid": "DarkM_darkmetal.jpg", 
 							"uvMapping": [[  0]]
 						}, 
 						{
-							"meshpartid": "shape1_part4", 
+							"meshpartid": "shape1_part14", 
 							"materialid": "Bottom", 
 							"uvMapping": [[  0]]
 						}, 
 						{
-							"meshpartid": "shape1_part5", 
+							"meshpartid": "shape1_part13", 
 							"materialid": "BelowTTS", 
 							"uvMapping": [[  0]]
 						}, 
 						{
-							"meshpartid": "shape1_part6", 
+							"meshpartid": "shape1_part12", 
 							"materialid": "Hook-tex", 
 							"uvMapping": [[  0]]
 						}, 
 						{
-							"meshpartid": "shape1_part7", 
+							"meshpartid": "shape1_part11", 
 							"materialid": "DarkMetal", 
 							"uvMapping": [[  0]]
 						}, 
 						{
-							"meshpartid": "shape1_part8", 
+							"meshpartid": "shape1_part10", 
 							"materialid": "Gold", 
 							"uvMapping": [[  0]]
 						}, 
@@ -7289,42 +7341,42 @@
 							"uvMapping": [[  0]]
 						}, 
 						{
-							"meshpartid": "shape1_part10", 
+							"meshpartid": "shape1_part8", 
 							"materialid": "Aluminum", 
 							"uvMapping": [[  0]]
 						}, 
 						{
-							"meshpartid": "shape1_part11", 
+							"meshpartid": "shape1_part7", 
 							"materialid": "DarkM", 
 							"uvMapping": [[  0]]
 						}, 
 						{
-							"meshpartid": "shape1_part12", 
+							"meshpartid": "shape1_part6", 
 							"materialid": "Circuit2", 
 							"uvMapping": [[  0]]
 						}, 
 						{
-							"meshpartid": "shape1_part13", 
+							"meshpartid": "shape1_part5", 
 							"materialid": "SolarArray", 
 							"uvMapping": [[  0]]
 						}, 
 						{
-							"meshpartid": "shape1_part14", 
+							"meshpartid": "shape1_part4", 
 							"materialid": "AluminumGold", 
 							"uvMapping": [[  0]]
 						}, 
 						{
-							"meshpartid": "shape1_part15", 
+							"meshpartid": "shape1_part3", 
 							"materialid": "Top", 
 							"uvMapping": [[  0]]
 						}, 
 						{
-							"meshpartid": "shape1_part16", 
+							"meshpartid": "shape1_part2", 
 							"materialid": "GaiaMetal", 
 							"uvMapping": [[  0]]
 						}, 
 						{
-							"meshpartid": "shape1_part17", 
+							"meshpartid": "shape1_part1", 
 							"materialid": "GoldFoil", 
 							"uvMapping": [[  0]]
 						}

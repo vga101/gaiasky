@@ -254,4 +254,11 @@ public interface IFocus {
      */
     public boolean isCoordinatesTimeOverflow();
 
+    /**
+     * Gets the depth of this focus object in the scene graph.
+     * 
+     * @return
+     */
+    public int getSceneGraphDepth();
+
 }

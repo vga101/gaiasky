@@ -3,7 +3,6 @@ package gaia.cu9.ari.gaiaorbit.scenegraph;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
@@ -193,8 +192,6 @@ public class Spacecraft extends ModelBody implements IModelRenderable, ILineRend
         if (render) {
             EventManager.instance.post(Events.SPACECRAFT_INFO, yaw % 360, pitch % 360, roll % 360, vel.len(), thrustFactor[thrustFactorIndex], enginePower, yawp, pitchp, rollp);
         }
-
-        addToRenderLists(camera);
 
     }
 
@@ -479,10 +476,12 @@ public class Spacecraft extends ModelBody implements IModelRenderable, ILineRend
      * camera and the view angle have been determined.
      */
     protected void addToRenderLists(ICamera camera) {
-        camera.checkClosest(this);
-        addToRender(this, RenderGroup.MODEL_NORMAL);
-        if (GlobalConf.spacecraft.SC_SHOW_AXES)
-            addToRender(this, RenderGroup.LINE);
+        if (this.viewAngleApparent > Math.toRadians(0.01)) {
+            camera.checkClosest(this);
+            addToRender(this, RenderGroup.MODEL_NORMAL);
+            if (GlobalConf.spacecraft.SC_SHOW_AXES)
+                addToRender(this, RenderGroup.LINE);
+        }
     }
 
     public void setModel(ModelComponent mc) {
@@ -531,13 +530,6 @@ public class Spacecraft extends ModelBody implements IModelRenderable, ILineRend
 
     public Quaternion getRotationQuaternion() {
         return qf;
-    }
-
-    @Override
-    public void render(ModelBatch modelBatch, float alpha, double t) {
-        mc.touch();
-        mc.setTransparency(alpha * opacity);
-        modelBatch.render(mc.instance, mc.env);
     }
 
     @Override

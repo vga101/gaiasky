@@ -4,17 +4,12 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
-import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 
-import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.render.IAtmosphereRenderable;
 import gaia.cu9.ari.gaiaorbit.render.ILineRenderable;
-import gaia.cu9.ari.gaiaorbit.render.SceneGraphRenderer;
-import gaia.cu9.ari.gaiaorbit.render.ShadowMapImpl;
 import gaia.cu9.ari.gaiaorbit.render.system.LineRenderSystem;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.AtmosphereComponent;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
@@ -137,7 +132,7 @@ public class Planet extends ModelBody implements IAtmosphereRenderable, ILineRen
     }
 
     /**
-     * Renders atmosphere
+     * Renders the model
      */
     @Override
     public void render(ModelBatch modelBatch, float alpha, double t, boolean atm) {
@@ -156,31 +151,8 @@ public class Planet extends ModelBody implements IAtmosphereRenderable, ILineRen
                 }
             }
 
-            if (name.equals("Saturn")) {
-                Environment env = mc.env;
-                SceneGraphRenderer sgr = GaiaSky.instance.sgr;
-                if (env.shadowMap == null) {
-                    env.shadowMap = new ShadowMapImpl(new Matrix4(sgr.cameraLight.combined), sgr.shadowMapFb.getColorBufferTexture());
-                } else {
-                    ((ShadowMapImpl) env.shadowMap).setDepthMap(sgr.shadowMapFb.getColorBufferTexture());
-                    ((ShadowMapImpl) env.shadowMap).setProjViewTrans(sgr.cameraLight.combined);
-                }
-                //                Array<Material> mats = mc.instance.materials;
-                //                Material mat = mats.first();
-                //                if (sgr.shadowMapTexture != null) {
-                //                    if (!mat.has(DepthMapAttribute.ShadowTexture))
-                //                        mat.set(new DepthMapAttribute(DepthMapAttribute.ShadowTexture, auxTex));
-                //
-                //                    //                    if (!mat.has(Matrix4Attribute.ShadowMapProjViewTrans))
-                //                    //                        mat.set(new Matrix4Attribute(Matrix4Attribute.ShadowMapProjViewTrans, sgr.cameraLight.combined));
-                //                    //                    else
-                //                    //                        ((Matrix4Attribute) mat.get(Matrix4Attribute.ShadowMapProjViewTrans)).set(sgr.cameraLight.combined);
-                //
-                //                    if (!mat.has(ShadowMapAttribute.ShadowPCFOffset))
-                //                        mat.set(new ShadowMapAttribute(ShadowMapAttribute.ShadowPCFOffset, 1f));
-                //                }
-            }
-
+            prepareShadowEnvironment();
+            mc.touch();
             mc.setTransparency(alpha * opacity);
             modelBatch.render(mc.instance, mc.env);
         } else {

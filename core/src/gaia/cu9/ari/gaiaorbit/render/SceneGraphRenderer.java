@@ -20,6 +20,7 @@ import com.badlogic.gdx.graphics.g3d.utils.ShaderProvider;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.BufferUtils;
@@ -51,8 +52,8 @@ import gaia.cu9.ari.gaiaorbit.render.system.StarGroupRenderSystem;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.IFocus;
+import gaia.cu9.ari.gaiaorbit.scenegraph.ModelBody;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
-import gaia.cu9.ari.gaiaorbit.scenegraph.Planet;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
 import gaia.cu9.ari.gaiaorbit.util.ComponentTypes;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
@@ -61,6 +62,7 @@ import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.ds.Multilist;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
+import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.override.AtmosphereShaderProvider;
 import gaia.cu9.ari.gaiaorbit.util.override.GroundShaderProvider;
 
@@ -107,10 +109,10 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
     // Camera at light position, with same direction. For shadow mapping
     public Camera cameraLight;
     public FrameBuffer shadowMapFb;
-    public static int SHADOW_MAP_TEX_WIDTH = 1024;
-    public static int SHADOW_MAP_TEX_HEIGHT = 1024;
     public ModelBatch modelBatchDepth;
     private Vector3 aux1;
+    private Vector3d aux1d;
+    private Matrix4 maux1;
 
     public SceneGraphRenderer() {
         super();
@@ -157,10 +159,12 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         };
 
         // Shadow map camera
-        cameraLight = new PerspectiveCamera(25f, SHADOW_MAP_TEX_WIDTH, SHADOW_MAP_TEX_HEIGHT);
+        cameraLight = new PerspectiveCamera(5f, GlobalConf.scene.SHADOW_MAPPING_RESOLUTION, GlobalConf.scene.SHADOW_MAPPING_RESOLUTION);
         // Shadow map frame buffer
-        shadowMapFb = new FrameBuffer(Format.RGBA8888, SHADOW_MAP_TEX_WIDTH, SHADOW_MAP_TEX_HEIGHT, true);
+        shadowMapFb = new FrameBuffer(Format.RGBA8888, GlobalConf.scene.SHADOW_MAPPING_RESOLUTION, GlobalConf.scene.SHADOW_MAPPING_RESOLUTION, true);
         aux1 = new Vector3();
+        aux1d = new Vector3d();
+        maux1 = new Matrix4();
     }
 
     public void doneLoading(AssetManager manager) {
@@ -479,8 +483,6 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         }
     }
 
-    boolean written = false;
-
     private void renderShadowMap(ICamera camera) {
         /**
          * Shadow mapping here?
@@ -499,43 +501,65 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
          */
         Multilist<IRenderable> models = render_lists.get(RenderGroup.MODEL_NORMAL);
         Iterator<IRenderable> it = models.iterator();
+        double maxAngle = Double.MIN_VALUE;
+        IFocus candidateFocus = null;
         while (it.hasNext()) {
-            IFocus mr = (IFocus) it.next();
-            if (mr.getName().equals("Saturn")) {
-                // Yes!
-                Planet saturn = (Planet) mr;
-
-                Vector3 camDir = aux1.set(saturn.mc.dlight.direction);
-                // Direction is that of the light
-                cameraLight.direction.set(camDir);
-                // Position, 250000 km in anti-direction
-                saturn.pos.put(cameraLight.position).sub((float) camera.getPos().x, (float) camera.getPos().y, (float) camera.getPos().z).sub(camDir.nor().scl((float) (700000 * Constants.KM_TO_U)));
-                // Up is perpendicular to dir
-                if (cameraLight.direction.y != 0 || cameraLight.direction.z != 0)
-                    aux1.set(1, 0, 0);
-                else
-                    aux1.set(0, 1, 0);
-                cameraLight.up.set(cameraLight.direction).crs(aux1);
-                cameraLight.near = (float) (100000 * Constants.KM_TO_U);
-                cameraLight.far = (float) (1000000 * Constants.KM_TO_U);
-                // Update cam
-                cameraLight.update();
-
-                // Render model depth map to frame buffer
-                shadowMapFb.begin();
-                modelBatchDepth.begin(cameraLight);
-                saturn.render(modelBatchDepth, 1, 0);
-                modelBatchDepth.end();
-
-                if (!written) {
-                    EventManager.instance.post(Events.RENDER_FRAME_BUFFER, "/tmp", "depthmap", SHADOW_MAP_TEX_WIDTH, SHADOW_MAP_TEX_HEIGHT);
-                    written = true;
+            ModelBody mr = (ModelBody) it.next();
+            if (mr.isShadow()) {
+                double ang = mr.getCandidateViewAngleApparent();
+                if (ang > maxAngle) {
+                    maxAngle = ang;
+                    candidateFocus = mr;
                 }
-
-                shadowMapFb.end();
-
-                break;
             }
+            mr.shadow = false;
+        }
+        if (candidateFocus != null) {
+            // Yes!
+            ModelBody candidate = (ModelBody) candidateFocus;
+            candidate.shadow = true;
+
+            Vector3 camDir = aux1.set(candidate.mc.dlight.direction);
+            // Direction is that of the light
+            cameraLight.direction.set(camDir);
+
+            double radius = candidate.getRadius();
+            // Distance from camera to object, radius * sv[0]
+            double distance = radius * candidate.shadowMapValues[0];
+            // Position, factor of radius
+            candidate.getAbsolutePosition(aux1d);
+            aux1d.sub(camera.getPos()).sub(camDir.nor().scl((float) distance));
+            aux1d.put(cameraLight.position);
+            // Up is perpendicular to dir
+            if (cameraLight.direction.y != 0 || cameraLight.direction.z != 0)
+                aux1.set(1, 0, 0);
+            else
+                aux1.set(0, 1, 0);
+            cameraLight.up.set(cameraLight.direction).crs(aux1);
+            // Near is sv[1]*radius before the object
+            cameraLight.near = (float) (distance - radius * candidate.shadowMapValues[1]);
+            // Far is sv[2]*radius after the object
+            cameraLight.far = (float) (distance + radius * candidate.shadowMapValues[2]);
+            // Update cam
+            cameraLight.update();
+
+            // Render model depth map to frame buffer
+            shadowMapFb.begin();
+            Gdx.gl.glClearColor(0, 0, 0, 0);
+            Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
+
+            modelBatchDepth.begin(cameraLight);
+            candidate.render(modelBatchDepth, 1, 0);
+            //            it = models.iterator();
+            //            while (it.hasNext()) {
+            //                IModelRenderable mr = (IModelRenderable) it.next();
+            //                mr.render(modelBatchDepth, 1, 0);
+            //            }
+            modelBatchDepth.end();
+            shadowMapFb.end();
+
+            candidate.shadow = true;
+
         }
     }
 
@@ -544,7 +568,9 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         if (sgr == null)
             initSGR(camera);
 
-        renderShadowMap(camera);
+        if (GlobalConf.scene.SHADOW_MAPPING)
+            renderShadowMap(camera);
+
         sgr.render(this, camera, t, rw, rh, fb, ppb);
     }
 

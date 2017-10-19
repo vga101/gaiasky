@@ -1,11 +1,14 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph;
 
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.math.Matrix4;
 
 import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
+import gaia.cu9.ari.gaiaorbit.render.SceneGraphRenderer;
+import gaia.cu9.ari.gaiaorbit.render.ShadowMapImpl;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.ITransform;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
@@ -48,6 +51,17 @@ public abstract class ModelBody extends CelestialBody {
     /** ThOverFactor for Locs **/
     public float locThOverFactor = 1f;
 
+    /** Shadow map properties **/
+    private ShadowMapImpl shadowMap;
+
+    /** State flag; whether to render the shadow **/
+    public boolean shadow;
+    /**
+     * Array with shadow camera distance, cam near and cam far as a function of
+     * the radius of the object
+     */
+    public double[] shadowMapValues;
+
     public ModelBody() {
         super();
         localTransform = new Matrix4();
@@ -81,7 +95,8 @@ public abstract class ModelBody extends CelestialBody {
                 mc.dlight.direction.sub(sf.getClosestPos(aux3d1.get()).put(aux3f1.get()));
                 mc.dlight.color.set(col[0], col[1], col[2], 1.0f);
             } else {
-                mc.dlight.direction.add((float) camera.getPos().x, (float) camera.getPos().y, (float) camera.getPos().z);
+                Vector3d campos = camera.getPos();
+                mc.dlight.direction.add((float) campos.x, (float) campos.y, (float) campos.z);
                 mc.dlight.color.set(1f, 1f, 1f, 1f);
             }
         }
@@ -99,8 +114,7 @@ public abstract class ModelBody extends CelestialBody {
 
     public void setToLocalTransform(float sizeFactor, Matrix4 localTransform, boolean forceUpdate) {
         if (sizeFactor != 1 || forceUpdate) {
-            float[] trnsltn = transform.getTranslationf();
-            localTransform.idt().translate(trnsltn[0], trnsltn[1], trnsltn[2]).scl(size * sizeFactor).rotate(0, 1, 0, (float) rc.ascendingNode).rotate(0, 0, 1, (float) (rc.inclination + rc.axialTilt)).rotate(0, 1, 0, (float) rc.angle);
+            transform.getMatrix(localTransform).scl(size * sizeFactor).rotate(0, 1, 0, (float) rc.ascendingNode).rotate(0, 0, 1, (float) (rc.inclination + rc.axialTilt)).rotate(0, 1, 0, (float) rc.angle);
             orientation.idt().rotate(0, 1, 0, (float) rc.ascendingNode).rotate(0, 0, 1, (float) (rc.inclination + rc.axialTilt));
         } else {
             localTransform.set(this.localTransform);
@@ -147,6 +161,7 @@ public abstract class ModelBody extends CelestialBody {
 
     @Override
     public void render(ModelBatch modelBatch, float alpha, double t) {
+        prepareShadowEnvironment();
         mc.touch();
         mc.setTransparency(alpha * opacity);
         modelBatch.render(mc.instance, mc.env);
@@ -249,5 +264,47 @@ public abstract class ModelBody extends CelestialBody {
 
         getAbsolutePosition(out).add(aux2);
         return out;
+    }
+
+    /**
+     * Sets the shadow environment
+     */
+    protected void prepareShadowEnvironment() {
+        if (GlobalConf.scene.SHADOW_MAPPING) {
+            Environment env = mc.env;
+            if (shadow) {
+                SceneGraphRenderer sgr = GaiaSky.instance.sgr;
+                if (env.shadowMap == null) {
+                    if (shadowMap == null)
+                        shadowMap = new ShadowMapImpl(new Matrix4(sgr.cameraLight.combined), sgr.shadowMapFb.getColorBufferTexture());
+                    env.shadowMap = shadowMap;
+                } else {
+                    shadowMap.setDepthMap(sgr.shadowMapFb.getColorBufferTexture());
+                    shadowMap.setProjViewTrans(sgr.cameraLight.combined);
+                }
+
+                shadow = false;
+            } else {
+                env.shadowMap = null;
+            }
+        }
+    }
+
+    /**
+     * Whether shadows should be rendered for this object
+     * 
+     * @return
+     */
+    public boolean isShadow() {
+        return shadowMapValues != null;
+    }
+
+    /**
+     * Sets the shadow mapping values for this object.
+     * 
+     * @param shadowMapValues
+     */
+    public void setShadowvalues(double[] shadowMapValues) {
+        this.shadowMapValues = shadowMapValues;
     }
 }

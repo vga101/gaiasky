@@ -294,7 +294,7 @@
 						// Inclination of orbit plane with respect to ecliptic
 						"inclination" : 2.485240,
 						"meridianangle" : 358.93
-						},
+				},
 						
 	"model"			: {
 						"args" : [true],
@@ -311,7 +311,9 @@
 									"base" : "data/tex/saturn.jpg",
 									"ring" : "data/tex/saturn-ring.png"
 									},
-						}
+				},
+
+        "shadowvalues" : [ 60.0, 20.0, 3.0 ]
 	},
 
 	

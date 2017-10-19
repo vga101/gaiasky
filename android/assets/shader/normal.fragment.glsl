@@ -277,7 +277,7 @@ void main() {
     #endif // environmentCubemapFlag
 
     #ifdef shadowMapFlag
-    	float shdw = clamp(getShadow(), 0.3, 1.0);
+    	float shdw = clamp(getShadow(), 0.05, 1.0);
         vec3 dayColor = (v_lightCol * diffuse.rgb) * NL * shdw + (ambient * diffuse.rgb) * (1.0 - NL);
         vec3 nightColor = (v_lightCol * night.rgb) * max(0.0, (0.6 - NL)) * shdw;
         gl_FragColor = vec4(dayColor + nightColor, diffuse.a * v_opacity);

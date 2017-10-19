@@ -1,9 +1,11 @@
 package gaia.cu9.ari.gaiaorbit.render;
 
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 
 import gaia.cu9.ari.gaiaorbit.render.IPostProcessor.PostProcessBean;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 
 /**
  * Normal SGR, takes care of the regular to-screen rednering with no strange
@@ -14,8 +16,11 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
  */
 public class SGR extends SGRAbstract implements ISGR {
 
+    SpriteBatch sb;
+
     public SGR() {
         super();
+        sb = new SpriteBatch();
     }
 
     @Override
@@ -30,6 +35,14 @@ public class SGR extends SGRAbstract implements ISGR {
 
         // Render
         sgr.renderScene(camera, t, rc);
+
+        if (GlobalConf.scene.SHADOW_MAPPING) {
+            // Render shadow map
+            int s = 512;
+            sb.begin();
+            sb.draw(sgr.shadowMapFb.getColorBufferTexture(), 0, 0, s, s);
+            sb.end();
+        }
 
         postprocessRender(ppb, fb, postproc, camera, rw, rh);
 

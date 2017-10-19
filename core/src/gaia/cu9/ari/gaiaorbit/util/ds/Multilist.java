@@ -251,7 +251,7 @@ public class Multilist<T> {
 
         @Override
         public boolean hasNext() {
-            return (index < lists[listIndex].size - 1) || (listIndex < lists.length - 1 && !emptyFrom(listIndex + 1));
+            return (index < lists[listIndex].size) || (listIndex < lists.length - 1 && !emptyFrom(listIndex + 1));
         }
 
         /** Are the lists from index li onwards empty? **/
