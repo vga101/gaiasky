@@ -1,6 +1,7 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph;
 
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.math.Matrix4;
@@ -272,16 +273,17 @@ public abstract class ModelBody extends CelestialBody {
     protected void prepareShadowEnvironment() {
         if (GlobalConf.scene.SHADOW_MAPPING) {
             Environment env = mc.env;
-            if (shadow) {
-                SceneGraphRenderer sgr = GaiaSky.instance.sgr;
+            SceneGraphRenderer sgr = GaiaSky.instance.sgr;
+            if (shadow && sgr.smTexMap.containsKey(this)) {
+                Matrix4 combined = sgr.smCombinedMap.get(this);
+                Texture tex = sgr.smTexMap.get(this);
                 if (env.shadowMap == null) {
                     if (shadowMap == null)
-                        shadowMap = new ShadowMapImpl(new Matrix4(sgr.cameraLight.combined), sgr.shadowMapFb.getColorBufferTexture());
+                        shadowMap = new ShadowMapImpl(combined, tex);
                     env.shadowMap = shadowMap;
-                } else {
-                    shadowMap.setDepthMap(sgr.shadowMapFb.getColorBufferTexture());
-                    shadowMap.setProjViewTrans(sgr.cameraLight.combined);
                 }
+                shadowMap.setProjViewTrans(combined);
+                shadowMap.setDepthMap(tex);
 
                 shadow = false;
             } else {

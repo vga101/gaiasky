@@ -2,7 +2,6 @@ package gaia.cu9.ari.gaiaorbit.render;
 
 import java.nio.IntBuffer;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import com.badlogic.gdx.Gdx;
@@ -11,6 +10,7 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.Pixmap.Format;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.Renderable;
@@ -51,7 +51,6 @@ import gaia.cu9.ari.gaiaorbit.render.system.ShapeRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.StarGroupRenderSystem;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
-import gaia.cu9.ari.gaiaorbit.scenegraph.IFocus;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ModelBody;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
@@ -107,12 +106,15 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
     final int SGR_DEFAULT_IDX = 0, SGR_STEREO_IDX = 1, SGR_FOV_IDX = 2, SGR_CUBEMAP_IDX = 3;
 
     // Camera at light position, with same direction. For shadow mapping
-    public Camera cameraLight;
-    public FrameBuffer shadowMapFb;
+    private Camera cameraLight;
+    private Array<ModelBody> candidates;
+    public FrameBuffer[] shadowMapFb;
+    public Matrix4[] shadowMapCombined;
+    public Map<ModelBody, Texture> smTexMap;
+    public Map<ModelBody, Matrix4> smCombinedMap;
     public ModelBatch modelBatchDepth;
     private Vector3 aux1;
     private Vector3d aux1d;
-    private Matrix4 maux1;
 
     public SceneGraphRenderer() {
         super();
@@ -161,10 +163,19 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         // Shadow map camera
         cameraLight = new PerspectiveCamera(5f, GlobalConf.scene.SHADOW_MAPPING_RESOLUTION, GlobalConf.scene.SHADOW_MAPPING_RESOLUTION);
         // Shadow map frame buffer
-        shadowMapFb = new FrameBuffer(Format.RGBA8888, GlobalConf.scene.SHADOW_MAPPING_RESOLUTION, GlobalConf.scene.SHADOW_MAPPING_RESOLUTION, true);
+        shadowMapFb = new FrameBuffer[GlobalConf.scene.SHADOW_MAPPING_N_SHADOWS];
+        // Shadow map combined matrices
+        shadowMapCombined = new Matrix4[GlobalConf.scene.SHADOW_MAPPING_N_SHADOWS];
+        // Init
+        for (int i = 0; i < GlobalConf.scene.SHADOW_MAPPING_N_SHADOWS; i++) {
+            shadowMapFb[i] = new FrameBuffer(Format.RGBA8888, GlobalConf.scene.SHADOW_MAPPING_RESOLUTION, GlobalConf.scene.SHADOW_MAPPING_RESOLUTION, true);
+            shadowMapCombined[i] = new Matrix4();
+        }
+        smTexMap = new HashMap<ModelBody, Texture>();
+        smCombinedMap = new HashMap<ModelBody, Matrix4>();
+        candidates = new Array<ModelBody>(GlobalConf.scene.SHADOW_MAPPING_N_SHADOWS);
         aux1 = new Vector3();
         aux1d = new Vector3d();
-        maux1 = new Matrix4();
     }
 
     public void doneLoading(AssetManager manager) {
@@ -499,24 +510,30 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
          * if different</li>
          * </ul>
          */
-        Multilist<IRenderable> models = render_lists.get(RenderGroup.MODEL_NORMAL);
-        Iterator<IRenderable> it = models.iterator();
-        double maxAngle = Double.MIN_VALUE;
-        IFocus candidateFocus = null;
-        while (it.hasNext()) {
-            ModelBody mr = (ModelBody) it.next();
+        Array<IRenderable> models = render_lists.get(RenderGroup.MODEL_NORMAL).toList();
+        models.sort((a, b) -> {
+            return Double.compare(((ModelBody) a).getDistToCamera(), ((ModelBody) b).getDistToCamera());
+        });
+
+        candidates.clear();
+        int num = 0;
+        for (int i = 0; i < models.size; i++) {
+            ModelBody mr = (ModelBody) models.get(i);
             if (mr.isShadow()) {
-                double ang = mr.getCandidateViewAngleApparent();
-                if (ang > maxAngle) {
-                    maxAngle = ang;
-                    candidateFocus = mr;
-                }
+                candidates.insert(num, mr);
+                mr.shadow = false;
+                num++;
+                if (num == GlobalConf.scene.SHADOW_MAPPING_N_SHADOWS)
+                    break;
             }
-            mr.shadow = false;
         }
-        if (candidateFocus != null) {
+
+        // Clear maps
+        smTexMap.clear();
+        smCombinedMap.clear();
+        int i = 0;
+        for (ModelBody candidate : candidates) {
             // Yes!
-            ModelBody candidate = (ModelBody) candidateFocus;
             candidate.shadow = true;
 
             Vector3 camDir = aux1.set(candidate.mc.dlight.direction);
@@ -544,22 +561,21 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
             cameraLight.update();
 
             // Render model depth map to frame buffer
-            shadowMapFb.begin();
+            shadowMapFb[i].begin();
             Gdx.gl.glClearColor(0, 0, 0, 0);
             Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
-
             modelBatchDepth.begin(cameraLight);
             candidate.render(modelBatchDepth, 1, 0);
-            //            it = models.iterator();
-            //            while (it.hasNext()) {
-            //                IModelRenderable mr = (IModelRenderable) it.next();
-            //                mr.render(modelBatchDepth, 1, 0);
-            //            }
             modelBatchDepth.end();
-            shadowMapFb.end();
 
+            // Save frame buffer and combined matrix
             candidate.shadow = true;
+            shadowMapCombined[i].set(cameraLight.combined);
+            smCombinedMap.put(candidate, shadowMapCombined[i]);
+            smTexMap.put(candidate, shadowMapFb[i].getColorBufferTexture());
 
+            shadowMapFb[i].end();
+            i++;
         }
     }
 

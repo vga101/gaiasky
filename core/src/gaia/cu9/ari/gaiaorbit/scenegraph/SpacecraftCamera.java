@@ -223,7 +223,7 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
 
     protected void updatePerspectiveCamera() {
 
-        camera.near = (float) (1 * Constants.KM_TO_U);
+        camera.near = (float) targetDistance * 0.9f;
         if (closest != null) {
             camera.near = Math.min(camera.near, ((float) closest.pos.dst(pos) - (float) closest.getRadius()) * (float) sc.factor / 2.5f) * (float) sc.factor;
         }
@@ -291,7 +291,7 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
         switch (event) {
         case SPACECRAFT_LOADED:
             this.sc = (Spacecraft) data[0];
-            this.targetDistance = sc.size * 4;
+            this.targetDistance = sc.size * 6;
             this.relpos.set(targetDistance, targetDistance / 2, 0);
             break;
         case FOV_CHANGED_CMD:
