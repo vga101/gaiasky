@@ -392,6 +392,11 @@ public class GroundShader extends DefaultShader {
 
     }
 
+    @Override
+    public boolean canRender(final Renderable renderable) {
+        return super.canRender(renderable) && this.shadowMap == (renderable.environment.shadowMap != null);
+    }
+
     public static String createPrefix(final Renderable renderable, final Config config) {
         String prefix = DefaultShader.createPrefix(renderable, config);
         final long mask = renderable.material.getMask();
