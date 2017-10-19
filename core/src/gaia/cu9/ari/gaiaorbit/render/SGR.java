@@ -20,7 +20,7 @@ public class SGR extends SGRAbstract implements ISGR {
 
     public SGR() {
         super();
-        sb = new SpriteBatch();
+        sb = new SpriteBatch(GlobalConf.scene.SHADOW_MAPPING_N_SHADOWS);
     }
 
     @Override
@@ -36,15 +36,16 @@ public class SGR extends SGRAbstract implements ISGR {
         // Render
         sgr.renderScene(camera, t, rc);
 
-        if (GlobalConf.scene.SHADOW_MAPPING) {
-            // Render shadow map
-            int s = 512;
-            sb.begin();
-            for (int i = 0; i < sgr.shadowMapFb.length; i++) {
-                sb.draw(sgr.shadowMapFb[i].getColorBufferTexture(), 0, 0, s, s);
-            }
-            sb.end();
-        }
+        // Uncomment this to show the shadow map
+        //        if (GlobalConf.scene.SHADOW_MAPPING && GlobalConf.scene.debug) {
+        //            // Render shadow map
+        //            int s = 512;
+        //            sb.begin();
+        //            for (int i = 0; i < sgr.shadowMapFb.length; i++) {
+        //                sb.draw(sgr.shadowMapFb[i].getColorBufferTexture(), 0, 0, s, s);
+        //            }
+        //            sb.end();
+        //        }
 
         postprocessRender(ppb, fb, postproc, camera, rw, rh);
 
