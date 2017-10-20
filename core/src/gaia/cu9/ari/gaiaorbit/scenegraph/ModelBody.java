@@ -1,10 +1,15 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph;
 
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Array;
 
 import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
@@ -15,6 +20,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
+import gaia.cu9.ari.gaiaorbit.util.math.Intersectord;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
@@ -134,10 +140,21 @@ public abstract class ModelBody extends CelestialBody {
             if (GaiaSky.instance.isOn(ct)) {
                 double thPoint = (THRESHOLD_POINT() * camera.getFovFactor());
                 if (viewAngleApparent >= thPoint) {
-                    opacity = (float) MathUtilsd.lint(viewAngleApparent, thPoint, thPoint * 4, 0, 1);
-                    if (viewAngleApparent < THRESHOLD_QUAD() * camera.getFovFactor()) {
-                        addToRender(this, RenderGroup.BILLBOARD_SSO);
+                    double thQuad2 = THRESHOLD_QUAD() * camera.getFovFactor() * 2;
+                    double thQuad1 = thQuad2 / 8.0;
+                    if (viewAngleApparent < thPoint * 4) {
+                        opacity = (float) MathUtilsd.lint(viewAngleApparent, thPoint, thPoint * 4, 1, 0);
                     } else {
+                        opacity = (float) MathUtilsd.lint(viewAngleApparent, thQuad1, thQuad2, 0, 1);
+                    }
+
+                    if (viewAngleApparent < thQuad1) {
+                        addToRender(this, RenderGroup.BILLBOARD_SSO);
+                    } else if (viewAngleApparent > thQuad2) {
+                        addToRender(this, RenderGroup.MODEL_NORMAL);
+                    } else {
+                        // Both
+                        addToRender(this, RenderGroup.BILLBOARD_SSO);
                         addToRender(this, RenderGroup.MODEL_NORMAL);
                     }
 
@@ -160,6 +177,36 @@ public abstract class ModelBody extends CelestialBody {
         mc.dispose();
     }
 
+    /**
+     * Billboard quad rendering
+     */
+    @Override
+    public void render(ShaderProgram shader, float alpha, boolean colorTransit, Mesh mesh, ICamera camera) {
+        compalpha = alpha;
+
+        float size = getFuzzyRenderSize(camera);
+
+        Vector3 aux = aux3f1.get();
+        shader.setUniformf("u_pos", transform.getTranslationf(aux));
+        shader.setUniformf("u_size", size);
+
+        float[] col = colorTransit ? ccTransit : ccPale;
+        shader.setUniformf("u_color", col[0], col[1], col[2], alpha * (1 - opacity));
+        shader.setUniformf("u_inner_rad", getInnerRad());
+        shader.setUniformf("u_distance", (float) distToCamera);
+        shader.setUniformf("u_apparent_angle", (float) viewAngleApparent);
+        shader.setUniformf("u_thpoint", (float) THRESHOLD_POINT() * camera.getFovFactor());
+
+        // Whether light scattering is enabled or not
+        shader.setUniformi("u_lightScattering", 0);
+
+        shader.setUniformf("u_radius", (float) getRadius());
+
+        // Sprite.render
+        mesh.render(shader, GL20.GL_TRIANGLES, 0, 6);
+    }
+
+    /** Model rendering **/
     @Override
     public void render(ModelBatch modelBatch, float alpha, double t) {
         prepareShadowEnvironment();
@@ -290,6 +337,46 @@ public abstract class ModelBody extends CelestialBody {
                 env.shadowMap = null;
             }
         }
+    }
+
+    /**
+     * If we render the model, we set up a sphere at the object's position with
+     * its radius and check for intersections with the ray
+     */
+    public void addHit(int screenX, int screenY, int w, int h, int minPixDist, NaturalCamera camera, Array<IFocus> hits) {
+        if (withinMagLimit() && checkHitCondition()) {
+            if (viewAngleApparent < THRESHOLD_QUAD() * camera.getFovFactor()) {
+                super.addHit(screenX, screenY, w, h, minPixDist, camera, hits);
+            } else {
+                Vector3 auxf = aux3f1.get();
+                Vector3d aux1d = aux3d1.get();
+                Vector3d aux2d = aux3d2.get();
+                Vector3d aux3d = aux3d3.get();
+
+                // aux1d contains the position of the body in the camera ref sys
+                aux1d.set(transform.position);
+                auxf.set(aux1d.valuesf());
+
+                if (camera.direction.dot(aux1d) > 0) {
+                    // The object is in front of us
+                    auxf.set(screenX, screenY, 2f);
+                    camera.camera.unproject(auxf).nor();
+
+                    // aux2d contains the position of the click in the camera ref sys
+                    aux2d.set(auxf.x, auxf.y, auxf.z);
+
+                    // aux3d contains the camera position, [0,0,0]
+                    aux3d.set(0, 0, 0);
+
+                    boolean intersect = Intersectord.checkIntersectRaySpehre(aux3d, aux2d, aux1d, getRadius());
+                    if (intersect) {
+                        //Hit
+                        hits.add(this);
+                    }
+                }
+            }
+        }
+
     }
 
     /**

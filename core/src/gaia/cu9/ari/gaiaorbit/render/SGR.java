@@ -37,7 +37,7 @@ public class SGR extends SGRAbstract implements ISGR {
         sgr.renderScene(camera, t, rc);
 
         // Uncomment this to show the shadow map
-        //        if (GlobalConf.scene.SHADOW_MAPPING && GlobalConf.scene.debug) {
+        //        if (GlobalConf.scene.SHADOW_MAPPING) {
         //            // Render shadow map
         //            int s = 512;
         //            sb.begin();

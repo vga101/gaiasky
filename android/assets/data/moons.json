@@ -80,7 +80,7 @@
 							
 		"model"			: {
 							"args" : [true],
-							"model" : "data/models/phobos.g3db",
+							"model" : "data/models/phobos/phobos.g3db",
 							"texture" : {
 										"base" : "data/tex/phobos*.jpg",
 										"normal" : "data/tex/phobos-normal*.jpg",
@@ -124,7 +124,7 @@
 							
 		"model"			: {
 							"args" : [true],
-							"model" : "data/models/deimos.g3db",
+							"model" : "data/models/deimos/deimos.g3db",
 							"texture" : {
 										"base" : "data/tex/deimos.jpg",
 										"normal" : "data/tex/deimos-normal.jpg",
@@ -168,11 +168,11 @@
 							
 		"model"			: {
 							"args" : [true],
-							"model" : "data/models/amalthea.g3db",
+							"model" : "data/models/amalthea/amalthea.g3db",
 
 					},
 
-		"shadowvalues" : [ 24.0, 2.0, 2.0 ]
+		"shadowvalues" : [ 24.0, 3.0, 3.0 ]
 	},
 	
 	
@@ -392,10 +392,10 @@
 							
 		"model"			: {
 							"args" : [true],
-							"model" : "data/models/prometheus.g3db",
+							"model" : "data/models/prometheus/prometheus.g3db",
 					},
 
-		"shadowvalues" : [ 24.0, 2.0, 2.0 ]
+		"shadowvalues" : [ 24.0, 3.0, 3.0 ]
 	},
 	
 	{
@@ -696,7 +696,7 @@
 							
 		"model"			: {
 							"args" : [true],
-							"model" : "data/models/janus.g3db",
+							"model" : "data/models/janus/janus.g3db",
 							"texture" : {
 										"base" : "data/tex/janus.jpg"
 										}

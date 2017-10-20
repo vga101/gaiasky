@@ -254,7 +254,7 @@ public class Spacecraft extends ModelBody implements IModelRenderable, ILineRend
         // New position in auxd3
         Vector3d position = aux3d3.get().set(pos).add(velo.scl(dt));
         // Check collision!
-        if (closest != null) {
+        if (closest != null && closest != this) {
             // d1 is the new distance to the centre of the object
             if (!vel.isZero() && Intersectord.distanceSegmentPoint(pos, aux3d3.get(), closest.pos) < closest.getRadius() + stopAt) {
                 EventManager.instance.post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), "Crashed against " + closest.name + "!");
@@ -278,7 +278,7 @@ public class Spacecraft extends ModelBody implements IModelRenderable, ILineRend
 
     @Override
     public void updateLocalValues(ITimeFrameProvider time, ICamera camera) {
-        if (render) {
+        if (yawv != 0 || pitchv != 0 || rollv != 0 || vel.len2() != 0 || render) {
             double dt = Gdx.graphics.getDeltaTime();
             // Poll keys
             pollKeys(dt);
@@ -392,15 +392,15 @@ public class Spacecraft extends ModelBody implements IModelRenderable, ILineRend
 
     protected void stopAllMovement() {
         setEnginePower(0);
-        vel.set(0, 0, 0);
+        //vel.set(0, 0, 0);
 
         setYawPower(0);
         setPitchPower(0);
         setRollPower(0);
 
-        yawv = 0;
-        pitchv = 0;
-        rollv = 0;
+        //yawv = 0;
+        //pitchv = 0;
+        //rollv = 0;
 
         leveling = false;
         stopping = false;

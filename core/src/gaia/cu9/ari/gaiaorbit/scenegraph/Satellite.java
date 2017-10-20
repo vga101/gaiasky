@@ -3,12 +3,10 @@ package gaia.cu9.ari.gaiaorbit.scenegraph;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.math.Matrix4;
 
-import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.RotationComponent;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
 import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
-import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
@@ -98,28 +96,6 @@ public abstract class Satellite extends ModelBody {
             localTransform.set(this.localTransform);
         }
 
-    }
-
-    @Override
-    protected void addToRenderLists(ICamera camera) {
-        if (!coordinatesTimeOverflow) {
-            camera.checkClosest(this);
-            if (GaiaSky.instance.isOn(ct)) {
-                double thPoint = (THRESHOLD_POINT() * camera.getFovFactor());
-                if (viewAngleApparent >= thPoint) {
-                    opacity = (float) MathUtilsd.lint(viewAngleApparent, thPoint, thPoint * 4, 0, 1);
-                    if (viewAngleApparent < THRESHOLD_QUAD() * camera.getFovFactor() && !hidden) {
-                        addToRender(this, RenderGroup.BILLBOARD_SSO);
-                    } else {
-                        addToRender(this, RenderGroup.MODEL_NORMAL);
-                    }
-
-                    if (renderText()) {
-                        addToRender(this, RenderGroup.FONT_LABEL);
-                    }
-                }
-            }
-        }
     }
 
     @Override

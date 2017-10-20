@@ -67,7 +67,7 @@ public class NaturalInputController extends GestureDetector {
     /** Max pixel distance to be considered a click **/
     private float MOVE_PX_DIST;
     /** Max distance from the click to the actual selected star **/
-    private int MAX_PX_DIST;
+    private int MIN_PIX_DIST;
     private Vector2 gesture = new Vector2();
     private Vector3d aux;
 
@@ -143,7 +143,7 @@ public class NaturalInputController extends GestureDetector {
         this.comp = new ViewAngleComparator<IFocus>();
         // 1% of width
         this.MOVE_PX_DIST = !Constants.mobile ? (float) Math.max(5, Gdx.graphics.getWidth() * 0.01) : (float) Math.max(80, Gdx.graphics.getWidth() * 0.05);
-        this.MAX_PX_DIST = !Constants.mobile ? 5 : 150;
+        this.MIN_PIX_DIST = !Constants.mobile ? 5 : (int) (160 * GlobalConf.SCALE_FACTOR);
 
         this.dragDx = 0;
         this.dragDy = 0;
@@ -190,7 +190,7 @@ public class NaturalInputController extends GestureDetector {
         // Add all hits
         while (it.hasNext()) {
             IFocus s = it.next();
-            s.addHit(screenX, screenY, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), MAX_PX_DIST, camera, hits);
+            s.addHit(screenX, screenY, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), MIN_PIX_DIST, camera, hits);
         }
 
         return hits;

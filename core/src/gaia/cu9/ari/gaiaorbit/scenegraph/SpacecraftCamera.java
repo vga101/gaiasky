@@ -167,7 +167,7 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
         // POSITION
         double tgfac = targetDistance * sc.factor / fovFactor;
         relpos.scl(sc.factor);
-        aux2.set(sc.up).nor().scl(tgfac / 3d);
+        aux2.set(sc.up).nor().scl(tgfac / 4d);
         desired.set(sc.direction).nor().scl(-tgfac).add(aux2);
         todesired.set(desired).sub(relpos);
         todesired.scl(dt * GlobalConf.spacecraft.SC_RESPONSIVENESS / .5e6);
@@ -289,7 +289,7 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
         switch (event) {
         case SPACECRAFT_LOADED:
             this.sc = (Spacecraft) data[0];
-            this.targetDistance = sc.size * 6;
+            this.targetDistance = sc.size * 2.5;
             this.relpos.set(targetDistance, targetDistance / 2, 0);
             break;
         default:

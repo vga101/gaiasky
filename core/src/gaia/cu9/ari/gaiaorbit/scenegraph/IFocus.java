@@ -225,7 +225,7 @@ public interface IFocus {
      * @param h
      *            The viewport height
      * @param pxdist
-     *            The maximum pixel distance to consider as hit
+     *            The minimum pixel distance to consider as hit
      * @param camera
      *            The camera
      * @param hits

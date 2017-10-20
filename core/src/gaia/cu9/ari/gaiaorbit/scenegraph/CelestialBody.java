@@ -408,7 +408,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
         return null;
     }
 
-    public void addHit(int screenX, int screenY, int w, int h, int pxdist, NaturalCamera camera, Array<IFocus> hits) {
+    public void addHit(int screenX, int screenY, int w, int h, int minPixDist, NaturalCamera camera, Array<IFocus> hits) {
         if (withinMagLimit() && checkHitCondition()) {
             Vector3 pos = aux3f1.get();
             Vector3d aux = aux3d1.get();
@@ -416,9 +416,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
             pos.set(posd.valuesf());
 
             if (camera.direction.dot(posd) > 0) {
-                // The star is in front of us
-                // Diminish the size of the star
-                // when we are close by
+                // The object is in front of us
                 double angle = computeViewAngle(camera.getFovFactor());
 
                 PerspectiveCamera pcamera;
@@ -435,7 +433,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
                 }
 
                 angle = (float) Math.toDegrees(angle * camera.fovFactor) * (40f / pcamera.fieldOfView);
-                double pixelSize = Math.max(pxdist, ((angle * pcamera.viewportHeight) / pcamera.fieldOfView) / 2);
+                double pixelSize = Math.max(minPixDist, ((angle * pcamera.viewportHeight) / pcamera.fieldOfView) / 2);
                 pcamera.project(pos);
                 pos.y = pcamera.viewportHeight - pos.y;
                 if (GlobalConf.program.STEREOSCOPIC_MODE) {
