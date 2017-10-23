@@ -291,12 +291,6 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
 
     private double modelDist;
 
-    /**
-     * Opacity value to prevent pop-ins. Uses the last sort time and FADE_IN_MS
-     * to compute an opacity in [0..1]
-     **/
-    private float popInOpacity;
-
     private Vector3d lastSortCameraPos;
 
     /** Comparator **/
@@ -457,10 +451,6 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
         // Model dist
         modelDist = 172.4643429 * getRadius(active[0]);
 
-        // Pop in opacity
-        long timeSinceLastSort = TimeUtils.millis() - lastSortTime;
-        popInOpacity = MathUtilsd.lint(timeSinceLastSort, 0, FADE_IN_MS, 0, 1);
-
     }
 
     /**
@@ -586,7 +576,7 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
         /** RENDER ACTUAL STARS **/
         boolean focusRendered = false;
         for (int i = 0; i < N_CLOSEUP_STARS; i++) {
-            renderCloseupStar(i, active[i], camera, shader, mesh, thpointTimesFovfactor, thupOverFovfactor, thdownOverFovfactor, alph * this.popInOpacity);
+            renderCloseupStar(i, active[i], camera, shader, mesh, thpointTimesFovfactor, thupOverFovfactor, thdownOverFovfactor, alph);
             focusRendered = focusRendered || active[i] == focusIndex;
         }
         if (focus != null && !focusRendered) {

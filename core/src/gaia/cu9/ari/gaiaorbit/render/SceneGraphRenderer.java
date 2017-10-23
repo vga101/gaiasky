@@ -160,22 +160,24 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
             }
         };
 
-        // Shadow map camera
-        cameraLight = new PerspectiveCamera(5f, GlobalConf.scene.SHADOW_MAPPING_RESOLUTION, GlobalConf.scene.SHADOW_MAPPING_RESOLUTION);
-        // Shadow map frame buffer
-        shadowMapFb = new FrameBuffer[GlobalConf.scene.SHADOW_MAPPING_N_SHADOWS];
-        // Shadow map combined matrices
-        shadowMapCombined = new Matrix4[GlobalConf.scene.SHADOW_MAPPING_N_SHADOWS];
-        // Init
-        for (int i = 0; i < GlobalConf.scene.SHADOW_MAPPING_N_SHADOWS; i++) {
-            shadowMapFb[i] = new FrameBuffer(Format.RGBA8888, GlobalConf.scene.SHADOW_MAPPING_RESOLUTION, GlobalConf.scene.SHADOW_MAPPING_RESOLUTION, true);
-            shadowMapCombined[i] = new Matrix4();
+        if (GlobalConf.scene.SHADOW_MAPPING) {
+            // Shadow map camera
+            cameraLight = new PerspectiveCamera(5f, GlobalConf.scene.SHADOW_MAPPING_RESOLUTION, GlobalConf.scene.SHADOW_MAPPING_RESOLUTION);
+            // Shadow map frame buffer
+            shadowMapFb = new FrameBuffer[GlobalConf.scene.SHADOW_MAPPING_N_SHADOWS];
+            // Shadow map combined matrices
+            shadowMapCombined = new Matrix4[GlobalConf.scene.SHADOW_MAPPING_N_SHADOWS];
+            // Init
+            for (int i = 0; i < GlobalConf.scene.SHADOW_MAPPING_N_SHADOWS; i++) {
+                shadowMapFb[i] = new FrameBuffer(Format.RGBA8888, GlobalConf.scene.SHADOW_MAPPING_RESOLUTION, GlobalConf.scene.SHADOW_MAPPING_RESOLUTION, true);
+                shadowMapCombined[i] = new Matrix4();
+            }
+            smTexMap = new HashMap<ModelBody, Texture>();
+            smCombinedMap = new HashMap<ModelBody, Matrix4>();
+            candidates = new Array<ModelBody>(GlobalConf.scene.SHADOW_MAPPING_N_SHADOWS);
+            aux1 = new Vector3();
+            aux1d = new Vector3d();
         }
-        smTexMap = new HashMap<ModelBody, Texture>();
-        smCombinedMap = new HashMap<ModelBody, Matrix4>();
-        candidates = new Array<ModelBody>(GlobalConf.scene.SHADOW_MAPPING_N_SHADOWS);
-        aux1 = new Vector3();
-        aux1d = new Vector3d();
     }
 
     public void doneLoading(AssetManager manager) {

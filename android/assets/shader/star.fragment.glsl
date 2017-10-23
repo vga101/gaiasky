@@ -87,7 +87,6 @@ vec4 draw() {
         }
     } else {
         // We are close to the star
-
         level = min(level, 1.0);
         float level_corona = u_lightScattering * level;
 

@@ -41,7 +41,7 @@
 	
 	"model"			: {
 						"args" : [true],
-						"model" : "data/models/usse/ussenterprise.obj"
+						"model" : "data/models/spaceship/spaceship.g3db"
 				},
 
 	"shadowvalues" : [ 25.0, 1.5, 1.5 ]
