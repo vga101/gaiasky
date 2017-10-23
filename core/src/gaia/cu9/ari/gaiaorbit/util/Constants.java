@@ -119,7 +119,7 @@ public class Constants {
     public static final double STAR_SIZE_FACTOR_INV = 1d / STAR_SIZE_FACTOR;
 
     /** Threshold radius/distance where star size remains constant. **/
-    public static final double THRESHOLD_DOWN = 1e-7;
+    public static final double THRESHOLD_DOWN = .35e-6;
     public static final double THRESHOLD_UP = 1e-2;
 
     /**
