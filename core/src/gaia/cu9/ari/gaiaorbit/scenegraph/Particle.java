@@ -241,6 +241,8 @@ public class Particle extends CelestialBody implements IStarFocus, IPointRendera
             if (GlobalConf.scene.COMPUTE_GAIA_SCAN)
                 camera.computeGaiaScan(time, this);
         }
+
+        innerRad = 0.01f * DISC_FACTOR + GlobalConf.scene.STAR_POINT_SIZE * 0.016f;
     }
 
     @Override
