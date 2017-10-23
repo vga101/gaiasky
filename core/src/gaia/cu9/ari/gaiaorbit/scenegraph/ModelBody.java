@@ -58,6 +58,9 @@ public abstract class ModelBody extends CelestialBody {
     /** ThOverFactor for Locs **/
     public float locThOverFactor = 1f;
 
+    /** Fade opacity, special to model bodies **/
+    private float fadeOpacity;
+
     /** Shadow map properties **/
     private ShadowMapImpl shadowMap;
 
@@ -143,9 +146,9 @@ public abstract class ModelBody extends CelestialBody {
                     double thQuad2 = THRESHOLD_QUAD() * camera.getFovFactor() * 2;
                     double thQuad1 = thQuad2 / 8.0;
                     if (viewAngleApparent < thPoint * 4) {
-                        opacity = (float) MathUtilsd.lint(viewAngleApparent, thPoint, thPoint * 4, 1, 0);
+                        fadeOpacity = (float) MathUtilsd.lint(viewAngleApparent, thPoint, thPoint * 4, 1, 0);
                     } else {
-                        opacity = (float) MathUtilsd.lint(viewAngleApparent, thQuad1, thQuad2, 0, 1);
+                        fadeOpacity = (float) MathUtilsd.lint(viewAngleApparent, thQuad1, thQuad2, 0, 1);
                     }
 
                     if (viewAngleApparent < thQuad1) {
@@ -191,7 +194,7 @@ public abstract class ModelBody extends CelestialBody {
         shader.setUniformf("u_size", size);
 
         float[] col = colorTransit ? ccTransit : ccPale;
-        shader.setUniformf("u_color", col[0], col[1], col[2], alpha * (1 - opacity));
+        shader.setUniformf("u_color", col[0], col[1], col[2], alpha * (1 - fadeOpacity));
         shader.setUniformf("u_inner_rad", getInnerRad());
         shader.setUniformf("u_distance", (float) distToCamera);
         shader.setUniformf("u_apparent_angle", (float) viewAngleApparent);
@@ -211,7 +214,7 @@ public abstract class ModelBody extends CelestialBody {
     public void render(ModelBatch modelBatch, float alpha, double t) {
         prepareShadowEnvironment();
         mc.touch();
-        mc.setTransparency(alpha * opacity);
+        mc.setTransparency(alpha * fadeOpacity);
         modelBatch.render(mc.instance, mc.env);
     }
 
