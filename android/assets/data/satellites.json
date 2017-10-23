@@ -32,7 +32,7 @@
 	{
 	"name" : "Spacecraft",
 	// in Km
-	"size" : 100.0,
+	"size" : 50.0,
 	"ct" : Satellites,
 	// in Kg
 	"mass" : 2e5,

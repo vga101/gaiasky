@@ -255,17 +255,21 @@ public class Spacecraft extends ModelBody implements IModelRenderable, ILineRend
         Vector3d position = aux3d3.get().set(pos).add(velo.scl(dt));
         // Check collision!
         if (closest != null && closest != this) {
+            double twoRadiuses = closest.getRadius() + this.getRadius();
             // d1 is the new distance to the centre of the object
-            if (!vel.isZero() && Intersectord.distanceSegmentPoint(pos, aux3d3.get(), closest.pos) < closest.getRadius() + stopAt) {
+            if (!vel.isZero() && Intersectord.distanceSegmentPoint(pos, position, closest.pos) < twoRadiuses) {
                 EventManager.instance.post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), "Crashed against " + closest.name + "!");
 
-                Array<Vector3d> intersections = Intersectord.intersectRaySphere(pos, aux3d3.get(), closest.pos, closest.getRadius() + stopAt);
+                Array<Vector3d> intersections = Intersectord.intersectRaySphere(pos, position, closest.pos, twoRadiuses);
 
                 if (intersections.size >= 1) {
                     pos.set(intersections.get(0));
                 }
 
                 stopAllMovement();
+            } else if (pos.dst(closest.pos) < twoRadiuses) {
+                Vector3d newpos = aux3d1.get().set(pos).sub(closest.pos).nor().scl(pos.dst(closest.pos));
+                pos.set(newpos);
             } else {
                 pos.set(position);
             }
