@@ -59,7 +59,7 @@ public abstract class ModelBody extends CelestialBody {
     public float locThOverFactor = 1f;
 
     /** Fade opacity, special to model bodies **/
-    private float fadeOpacity;
+    protected float fadeOpacity;
 
     /** Shadow map properties **/
     private ShadowMapImpl shadowMap;

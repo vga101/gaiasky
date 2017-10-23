@@ -32,7 +32,7 @@ import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
  *
  */
 public class Spacecraft extends ModelBody implements IModelRenderable, ILineRenderable, IObserver {
-
+    protected static final double TH_ANGLE_POINT = Math.toRadians(0.025);
     /** This is the power **/
     public static final double thrustLength = 1e12d;
 
@@ -476,9 +476,10 @@ public class Spacecraft extends ModelBody implements IModelRenderable, ILineRend
      * camera and the view angle have been determined.
      */
     protected void addToRenderLists(ICamera camera) {
-        if (this.viewAngleApparent > Math.toRadians(0.01)) {
+        if (this.viewAngleApparent > TH_ANGLE_POINT * camera.getFovFactor()) {
             camera.checkClosest(this);
             addToRender(this, RenderGroup.MODEL_NORMAL);
+            this.fadeOpacity = 1.0f;
             if (GlobalConf.spacecraft.SC_SHOW_AXES)
                 addToRender(this, RenderGroup.LINE);
         }

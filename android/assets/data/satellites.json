@@ -28,20 +28,21 @@
 	"shadowvalues" : [ 24.0, 1.6, 0.9 ]
 	},
 	
+	
 	{
 	"name" : "Spacecraft",
 	// in Km
-	"size" : 10.0,
+	"size" : 100.0,
 	"ct" : Satellites,
 	// in Kg
-	"mass" : .5e5,
+	"mass" : 2e5,
 	
 	"parent" : "Universe",
 	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Spacecraft",
 	
 	"model"			: {
 						"args" : [true],
-						"model" : "data/models/spaceship/spaceship.g3db"
+						"model" : "data/models/usse/usse.g3db"
 				},
 
 	"shadowvalues" : [ 25.0, 1.5, 1.5 ]
