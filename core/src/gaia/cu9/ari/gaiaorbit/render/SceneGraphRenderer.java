@@ -379,7 +379,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         billboardGalaxiesProc.setPreRunnable(blendNoDepthRunnable);
 
         // BILLBOARD SPRITES
-        AbstractRenderSystem billboardSpritesProc = new BillboardSpriteRenderSystem(RenderGroup.BILLBOARD_SPRITE, priority++, alphas, spriteShader, ComponentType.Others.ordinal());
+        AbstractRenderSystem billboardSpritesProc = new BillboardSpriteRenderSystem(RenderGroup.BILLBOARD_SPRITE, priority++, alphas, spriteShader, ComponentType.Clusters.ordinal());
         billboardSpritesProc.setPreRunnable(blendNoDepthRunnable);
 
         // LINES

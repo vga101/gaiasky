@@ -74,7 +74,7 @@ public class StarCluster extends AbstractPositionEntity implements IFocus, IProp
 
     /**
      * Fade alpha between quad and model. Attribute contains model opacity. Quad
-     * opacity is 1-fadeAlpha
+     * opacity is <code>1-fadeAlpha</code>
      **/
     protected float fadeAlpha;
 
@@ -195,7 +195,6 @@ public class StarCluster extends AbstractPositionEntity implements IFocus, IProp
      */
     @Override
     public void render(ShaderProgram shader, float alpha, boolean colorTransit, Mesh mesh, ICamera camera) {
-
         // Bind texture
         if (clusterTex != null) {
             clusterTex.bind(0);
