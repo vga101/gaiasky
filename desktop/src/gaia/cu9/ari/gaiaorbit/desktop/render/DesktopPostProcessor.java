@@ -116,39 +116,6 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
 
         ppb.pp = new PostProcessor(width, height, true, false, true);
 
-        // LENS FLARE
-        float lensFboScale;
-        if (GlobalConf.scene.isHighQuality()) {
-            nghosts = 12;
-            lensFboScale = 0.5f;
-        } else if (GlobalConf.scene.isNormalQuality()) {
-            nghosts = 10;
-            lensFboScale = 0.3f;
-        } else {
-            nghosts = 6;
-            lensFboScale = 0.2f;
-        }
-        Texture lcol = manager.get("data/tex/lenscolor.png");
-        lcol.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-        Texture ldirt = GlobalConf.scene.isHighQuality() ? manager.get("data/tex/lensdirt.jpg") : manager.get("data/tex/lensdirt_s.jpg");
-        ldirt.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-        Texture lburst = manager.get("data/tex/lensstarburst.jpg");
-        lburst.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-        ppb.lens = new LensFlare2((int) (width * lensFboScale), (int) (height * lensFboScale));
-        ppb.lens.setGhosts(nghosts);
-        ppb.lens.setHaloWidth(0.4f);
-        ppb.lens.setLensColorTexture(lcol);
-        ppb.lens.setLensDirtTexture(ldirt);
-        ppb.lens.setLensStarburstTexture(lburst);
-        ppb.lens.setFlareIntesity(GlobalConf.postprocess.POSTPROCESS_LENS_FLARE ? flareIntensity : 0f);
-        ppb.lens.setFlareSaturation(0.5f);
-        ppb.lens.setBaseIntesity(1f);
-        ppb.lens.setBias(-0.95f);
-        ppb.lens.setBlurAmount(1f);
-        ppb.lens.setBlurPasses(10);
-        ppb.lens.setEnabled(true);
-        ppb.pp.addEffect(ppb.lens);
-
         // LIGHT GLOW
         int nsamples;
         int lgw, lgh;
@@ -184,6 +151,39 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
         ppb.lglow.setTextureScale(1f / GaiaSky.instance.cam.getFovFactor());
         ppb.lglow.setEnabled(GlobalConf.postprocess.POSTPROCESS_LIGHT_SCATTERING);
         ppb.pp.addEffect(ppb.lglow);
+
+        // LENS FLARE
+        float lensFboScale;
+        if (GlobalConf.scene.isHighQuality()) {
+            nghosts = 12;
+            lensFboScale = 0.5f;
+        } else if (GlobalConf.scene.isNormalQuality()) {
+            nghosts = 10;
+            lensFboScale = 0.3f;
+        } else {
+            nghosts = 6;
+            lensFboScale = 0.2f;
+        }
+        Texture lcol = manager.get("data/tex/lenscolor.png");
+        lcol.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+        Texture ldirt = GlobalConf.scene.isHighQuality() ? manager.get("data/tex/lensdirt.jpg") : manager.get("data/tex/lensdirt_s.jpg");
+        ldirt.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+        Texture lburst = manager.get("data/tex/lensstarburst.jpg");
+        lburst.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+        ppb.lens = new LensFlare2((int) (width * lensFboScale), (int) (height * lensFboScale));
+        ppb.lens.setGhosts(nghosts);
+        ppb.lens.setHaloWidth(0.4f);
+        ppb.lens.setLensColorTexture(lcol);
+        ppb.lens.setLensDirtTexture(ldirt);
+        ppb.lens.setLensStarburstTexture(lburst);
+        ppb.lens.setFlareIntesity(GlobalConf.postprocess.POSTPROCESS_LENS_FLARE ? flareIntensity : 0f);
+        ppb.lens.setFlareSaturation(0.5f);
+        ppb.lens.setBaseIntesity(1f);
+        ppb.lens.setBias(-0.95f);
+        ppb.lens.setBlurAmount(1f);
+        ppb.lens.setBlurPasses(10);
+        ppb.lens.setEnabled(true);
+        ppb.pp.addEffect(ppb.lens);
 
         // HDR
         //        ppb.hdr = new HDR();
