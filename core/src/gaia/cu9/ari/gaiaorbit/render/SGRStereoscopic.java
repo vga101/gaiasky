@@ -59,7 +59,7 @@ public class SGRStereoscopic extends SGRAbstract implements ISGR, IObserver {
 
         // INIT FRAME BUFFER FOR 3D MODE
         fb3D = new HashMap<Integer, FrameBuffer>();
-        fb3D.put(getKey(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight()), new FrameBuffer(Format.RGB888, Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight(), true));
+        fb3D.put(getKey(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight()), FrameBuffer.createFrameBuffer(Format.RGB888, Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight(), true));
 
         // Init anaglyphic effect
         anaglyphic = new Anaglyphic();
@@ -294,7 +294,7 @@ public class SGRStereoscopic extends SGRAbstract implements ISGR, IObserver {
     private FrameBuffer getFrameBuffer(int w, int h, int extra) {
         int key = getKey(w, h, extra);
         if (!fb3D.containsKey(key)) {
-            fb3D.put(key, new FrameBuffer(Format.RGB888, w, h, true));
+            fb3D.put(key, FrameBuffer.createFrameBuffer(Format.RGB888, w, h, true));
         }
         return fb3D.get(key);
     }
@@ -312,11 +312,11 @@ public class SGRStereoscopic extends SGRAbstract implements ISGR, IObserver {
             int keyFull = getKey(w, h);
 
             if (!fb3D.containsKey(keyHalf)) {
-                fb3D.put(keyHalf, new FrameBuffer(Format.RGB888, w / 2, h, true));
+                fb3D.put(keyHalf, FrameBuffer.createFrameBuffer(Format.RGB888, w / 2, h, true));
             }
 
             if (!fb3D.containsKey(keyFull)) {
-                fb3D.put(keyFull, new FrameBuffer(Format.RGB888, w, h, true));
+                fb3D.put(keyFull, FrameBuffer.createFrameBuffer(Format.RGB888, w, h, true));
             }
 
             Iterator<Map.Entry<Integer, FrameBuffer>> iter = fb3D.entrySet().iterator();

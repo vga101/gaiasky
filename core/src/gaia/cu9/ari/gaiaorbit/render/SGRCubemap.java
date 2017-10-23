@@ -186,7 +186,7 @@ public class SGRCubemap extends SGRAbstract implements ISGR {
     private FrameBuffer getFrameBuffer(int w, int h, int extra) {
         int key = getKey(w, h, extra);
         if (!fb3D.containsKey(key)) {
-            fb3D.put(key, new FrameBuffer(Format.RGB888, w, h, true));
+            fb3D.put(key, FrameBuffer.createFrameBuffer(Format.RGB888, w, h, true));
         }
         return fb3D.get(key);
     }

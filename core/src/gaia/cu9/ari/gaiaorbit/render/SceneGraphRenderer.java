@@ -169,7 +169,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
             shadowMapCombined = new Matrix4[GlobalConf.scene.SHADOW_MAPPING_N_SHADOWS];
             // Init
             for (int i = 0; i < GlobalConf.scene.SHADOW_MAPPING_N_SHADOWS; i++) {
-                shadowMapFb[i] = new FrameBuffer(Format.RGBA8888, GlobalConf.scene.SHADOW_MAPPING_RESOLUTION, GlobalConf.scene.SHADOW_MAPPING_RESOLUTION, true);
+                shadowMapFb[i] = FrameBuffer.createFrameBuffer(Format.RGBA8888, GlobalConf.scene.SHADOW_MAPPING_RESOLUTION, GlobalConf.scene.SHADOW_MAPPING_RESOLUTION, true);
                 shadowMapCombined[i] = new Matrix4();
             }
             smTexMap = new HashMap<ModelBody, Texture>();
