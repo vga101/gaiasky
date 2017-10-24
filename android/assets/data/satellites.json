@@ -30,7 +30,7 @@
 	
 	
 	{
-	"name" : "Spacecraftdd",
+	"name" : "Spacecraft",
 	// in Km
 	"size" : 10.0,
 	"ct" : Satellites,
@@ -51,25 +51,6 @@
 	
 	},
 	
-{
-"name" : "Spacecraft",
-// in Km
-"size" : 10.0,
-"ct" : Satellites,
-// in Kg
-"mass" : .5e5,
-
-"parent" : "Universe",
-"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Spacecraft",
-
-"model": {
-"args" : [true],
-"model" : "data/models/spaceship/ss.obj"
-},
-
-"shadowvalues" : [ 25.0, 1.5, 1.5 ]
-
-},
 	
 	{
 	"name" : "DeLorean",
