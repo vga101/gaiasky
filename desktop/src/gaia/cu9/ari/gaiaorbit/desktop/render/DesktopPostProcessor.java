@@ -40,10 +40,10 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
 
     float bloomFboScale = 0.5f;
 
-    float flareIntensity = 0.45f;
-
+    // Intensity of flare
+    float flareIntensity = 0.4f;
     // Number of flares
-    int nghosts;
+    int nghosts = 6;
 
     Vector3d auxd, prevCampos;
     Vector3 auxf;
@@ -155,13 +155,10 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
         // LENS FLARE
         float lensFboScale;
         if (GlobalConf.scene.isHighQuality()) {
-            nghosts = 12;
             lensFboScale = 0.5f;
         } else if (GlobalConf.scene.isNormalQuality()) {
-            nghosts = 10;
             lensFboScale = 0.3f;
         } else {
-            nghosts = 6;
             lensFboScale = 0.2f;
         }
         Texture lcol = manager.get("data/tex/lenscolor.png");
@@ -179,9 +176,8 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
         ppb.lens.setFlareIntesity(GlobalConf.postprocess.POSTPROCESS_LENS_FLARE ? flareIntensity : 0f);
         ppb.lens.setFlareSaturation(0.5f);
         ppb.lens.setBaseIntesity(1f);
-        ppb.lens.setBias(-0.95f);
-        ppb.lens.setBlurAmount(1f);
-        ppb.lens.setBlurPasses(10);
+        ppb.lens.setBias(-0.98f);
+        ppb.lens.setBlurPasses(40);
         ppb.lens.setEnabled(true);
         ppb.pp.addEffect(ppb.lens);
 
