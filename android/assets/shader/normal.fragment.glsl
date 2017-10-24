@@ -93,6 +93,10 @@ uniform sampler2D u_specularTexture;
 uniform sampler2D u_normalTexture;
 #endif
 
+#ifdef emissiveColorFlag
+uniform vec4 u_emissiveColor;
+#endif
+
 #ifdef emissiveTextureFlag
 uniform sampler2D u_emissiveTexture;
 #endif
@@ -102,6 +106,10 @@ uniform sampler2D u_emissiveTexture;
 #endif
 
 #if defined(specularTextureFlag) || defined(specularColorFlag)
+#define specularFlag
+#endif
+
+#if defined(emissiveTextureFlag) || defined(emissiveColorFlag)
 #define specularFlag
 #endif
 
@@ -186,20 +194,27 @@ varying vec3 v_ambientLight;
     #define fetchColorDiffuseTD(texture, texCoord, defaultValue) defaultValue
 #endif // diffuseTextureFlag && diffuseColorFlag
 
-
 #if defined(diffuseTextureFlag) || defined(diffuseColorFlag)
     #define fetchColorDiffuse(baseColor, texture, texCoord, defaultValue) baseColor * fetchColorDiffuseTD(texture, texCoord, defaultValue)
 #else
     #define fetchColorDiffuse(baseColor, texture, texCoord, defaultValue) baseColor
 #endif // diffuseTextureFlag || diffuseColorFlag
 
-// COLOR NIGHT
+// COLOR EMISSIVE
 
-#if defined(emissiveTextureFlag)
-#define fetchColorNight(emissiveTex, texCoord) texture2D(emissiveTex, texCoord, TEXTURE_LOD_BIAS)
+#if defined(emissiveTextureFlag) && defined(emissiveColorFlag)
+    #define fetchColorEmissiveTD(texture, texCoord) texture2D(texture, texCoord, TEXTURE_LOD_BIAS) * u_emissiveColor
+#elif defined(emissiveTextureFlag)
+    #define fetchColorEmissiveTD(texture, texCoord) texture2D(texture, texCoord, TEXTURE_LOD_BIAS)
+#elif defined(emissiveColorFlag)
+    #define fetchColorEmissiveTD(texture, texCoord) u_emissiveColor
+#endif // emissiveTextureFlag && emissiveColorFlag
+    
+#if defined(emissiveTextureFlag) || defined(emissiveColorFlag)
+    #define fetchColorEmissive(emissiveTex, texCoord) fetchColorEmissiveTD(emissiveTex, texCoord)
 #else
-#define fetchColorNight(emissiveTex, texCoord) vec4(0.0, 0.0, 0.0, 0.0)
-#endif // emissiveTextureFlag
+    #define fetchColorEmissive(emissiveTex, texCoord) vec4(0.0, 0.0, 0.0, 0.0)
+#endif // emissiveTextureFlag || emissiveColorFlag
 
 // COLOR SPECULAR
 
@@ -236,8 +251,13 @@ uniform vec4 u_reflectionColor;
 void main() {
     vec2 g_texCoord0 = v_texCoord0;
 
+    // Ramp up emissive color
+    #if defined(emissiveColorFlag)
+        u_emissiveColor = u_emissiveColor * 4.0;
+    #endif
+    
     vec4 diffuse = fetchColorDiffuse(v_color, u_diffuseTexture, g_texCoord0, vec4(1.0, 1.0, 1.0, 1.0));
-    vec4 night = fetchColorNight(u_emissiveTexture, g_texCoord0);
+    vec4 emissive = fetchColorEmissive(u_emissiveTexture, g_texCoord0);
     vec3 specular = fetchColorSpecular(g_texCoord0, vec3(0.0, 0.0, 0.0));
     vec3 ambient = v_ambientLight;
 
@@ -276,15 +296,18 @@ void main() {
 		#endif // reflectionColorFlag
     #endif // environmentCubemapFlag
 
+    vec3 emissiveColor = (v_lightCol * emissive.rgb);
+    #ifndef emissiveColorFlag
+        emissiveColor *= max(0.0, (0.6 - NL));
+    #endif
+    
     #ifdef shadowMapFlag
     	float shdw = clamp(getShadow(), 0.05, 1.0);
         vec3 dayColor = (v_lightCol * diffuse.rgb) * NL * shdw + (ambient * diffuse.rgb) * (1.0 - NL);
-        vec3 nightColor = (v_lightCol * night.rgb) * max(0.0, (0.6 - NL)) * shdw;
-        gl_FragColor = vec4(dayColor + nightColor, diffuse.a * v_opacity);
+        gl_FragColor = vec4(dayColor + emissiveColor, diffuse.a * v_opacity);
     #else
         vec3 dayColor = (v_lightCol * diffuse.rgb) * NL + (ambient * diffuse.rgb) * (1.0 - NL);
-        vec3 nightColor = (v_lightCol * night.rgb) * max(0.0, (0.6 - NL));
-        gl_FragColor = vec4(dayColor + nightColor, diffuse.a * v_opacity);
+        gl_FragColor = vec4(dayColor + emissiveColor, diffuse.a * v_opacity);
     #endif // shadowMapFlag
 
     gl_FragColor.rgb += selfShadow * spec * specular;
