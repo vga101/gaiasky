@@ -203,11 +203,11 @@ varying vec3 v_ambientLight;
 // COLOR EMISSIVE
 
 #if defined(emissiveTextureFlag) && defined(emissiveColorFlag)
-    #define fetchColorEmissiveTD(texture, texCoord) texture2D(texture, texCoord, TEXTURE_LOD_BIAS) * u_emissiveColor
+    #define fetchColorEmissiveTD(texture, texCoord) texture2D(texture, texCoord, TEXTURE_LOD_BIAS) * u_emissiveColor * 2.0
 #elif defined(emissiveTextureFlag)
     #define fetchColorEmissiveTD(texture, texCoord) texture2D(texture, texCoord, TEXTURE_LOD_BIAS)
 #elif defined(emissiveColorFlag)
-    #define fetchColorEmissiveTD(texture, texCoord) u_emissiveColor
+    #define fetchColorEmissiveTD(texture, texCoord) u_emissiveColor * 2.0
 #endif // emissiveTextureFlag && emissiveColorFlag
     
 #if defined(emissiveTextureFlag) || defined(emissiveColorFlag)
@@ -251,11 +251,6 @@ uniform vec4 u_reflectionColor;
 void main() {
     vec2 g_texCoord0 = v_texCoord0;
 
-    // Ramp up emissive color
-    #if defined(emissiveColorFlag)
-        u_emissiveColor = u_emissiveColor * 2.0;
-    #endif
-    
     vec4 diffuse = fetchColorDiffuse(v_color, u_diffuseTexture, g_texCoord0, vec4(1.0, 1.0, 1.0, 1.0));
     vec4 emissive = fetchColorEmissive(u_emissiveTexture, g_texCoord0);
     vec3 specular = fetchColorSpecular(g_texCoord0, vec3(0.0, 0.0, 0.0));
