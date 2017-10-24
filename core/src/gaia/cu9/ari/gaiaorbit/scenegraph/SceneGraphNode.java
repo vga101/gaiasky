@@ -659,6 +659,15 @@ public class SceneGraphNode implements IStarContainer, IPosition {
         }
     }
 
+    /**
+     * Adds the given renderable to the given render group list
+     * 
+     * @param renderable
+     *            The renderable to add
+     * @param rg
+     *            The render group that identifies the renderable list
+     * @return True if added, false otherwise
+     */
     protected boolean addToRender(IRenderable renderable, RenderGroup rg) {
         boolean on = ct.intersects(SceneGraphRenderer.visible);
         if (on || (!on && SceneGraphRenderer.alphas[ct.getFirstOrdinal()] > 0)) {
@@ -666,6 +675,19 @@ public class SceneGraphNode implements IStarContainer, IPosition {
             return true;
         }
         return false;
+    }
+
+    /**
+     * Removes the given renderable from the given render group list.
+     * 
+     * @param renderable
+     *            The renderable to remove
+     * @param rg
+     *            The render group to remove from
+     * @return True if removed, false otherwise
+     */
+    protected boolean removeFromRender(IRenderable renderable, RenderGroup rg) {
+        return SceneGraphRenderer.render_lists.get(rg).remove(renderable);
     }
 
     protected boolean isInRender(IRenderable renderable, RenderGroup rg) {

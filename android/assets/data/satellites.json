@@ -32,13 +32,15 @@
 	{
 	"name" : "Spacecraft",
 	// in Km
-	"size" : 50.0,
+	"size" : 10.0,
 	"ct" : Satellites,
 	// in Kg
 	"mass" : 2e5,
 	
 	"parent" : "Universe",
 	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Spacecraft",
+
+	"renderquad" : False,
 	
 	"model"			: {
 						"args" : [true],
@@ -55,7 +57,7 @@
 	"color" : [0.3, 0.5, 0.9, 1.0],
 	// in Km
 	"size" : 0.01,
-	"ct" : Others,
+	"ct" : Satellites,
 	
 	"parent" : "Earth",
 	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.GenericSpacecraft",
@@ -67,11 +69,14 @@
 				},
 	"parentorientation" : True,
 	"hidden" : True,
+	"renderquad" : False,
 	
 	"model"			: {
 						"args" : [true],
 						"model" : "data/models/extra/dmc/dmc.g3db"
-						}
+				},
+	
+	"shadowvalues" : [ 30.0, 2.0, 2.0 ]
 	
 	}
 	

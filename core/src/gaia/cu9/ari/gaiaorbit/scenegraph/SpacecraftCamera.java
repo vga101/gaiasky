@@ -81,7 +81,7 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
 
         // init camera
         camera = new PerspectiveCamera(20, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        camera.near = (float) (100000d * Constants.M_TO_U);
+        camera.near = (float) (100d * Constants.KM_TO_U);
         camera.far = (float) CAM_FAR;
 
         // init cameras vector

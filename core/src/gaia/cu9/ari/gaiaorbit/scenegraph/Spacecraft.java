@@ -13,7 +13,6 @@ import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.render.ILineRenderable;
-import gaia.cu9.ari.gaiaorbit.render.IModelRenderable;
 import gaia.cu9.ari.gaiaorbit.render.system.LineRenderSystem;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
@@ -31,7 +30,7 @@ import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
  * @author tsagrista
  *
  */
-public class Spacecraft extends ModelBody implements IModelRenderable, ILineRenderable, IObserver {
+public class Spacecraft extends GenericSpacecraft implements ILineRenderable, IObserver {
     protected static final double TH_ANGLE_POINT = Math.toRadians(0.025);
     /** This is the power **/
     public static final double thrustLength = 1e12d;
@@ -46,9 +45,6 @@ public class Spacecraft extends ModelBody implements IModelRenderable, ILineRend
             thrustFactor[i] = val * Math.pow(10, i);
         }
     }
-
-    /** Collision stop-at value **/
-    private static final double stopAt = 10000 * Constants.M_TO_U;
 
     /** Seconds to reach full power **/
     public double fullPowerTime = 0.5;
@@ -481,9 +477,7 @@ public class Spacecraft extends ModelBody implements IModelRenderable, ILineRend
      */
     protected void addToRenderLists(ICamera camera) {
         if (this.viewAngleApparent > TH_ANGLE_POINT * camera.getFovFactor()) {
-            camera.checkClosest(this);
-            addToRender(this, RenderGroup.MODEL_NORMAL);
-            this.fadeOpacity = 1.0f;
+            super.addToRenderLists(camera);
             if (GlobalConf.spacecraft.SC_SHOW_AXES)
                 addToRender(this, RenderGroup.LINE);
         }
