@@ -253,7 +253,7 @@ void main() {
 
     // Ramp up emissive color
     #if defined(emissiveColorFlag)
-        u_emissiveColor = u_emissiveColor * 4.0;
+        u_emissiveColor = u_emissiveColor * 2.0;
     #endif
     
     vec4 diffuse = fetchColorDiffuse(v_color, u_diffuseTexture, g_texCoord0, vec4(1.0, 1.0, 1.0, 1.0));
