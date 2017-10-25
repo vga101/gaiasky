@@ -69,7 +69,7 @@ public class WebGLConfInit extends ConfInit {
         ScreenshotConf shc = new ScreenshotConf();
 
         ControlsConf cc = new ControlsConf();
-        cc.initialize("mappings/xbox360.controller", true);
+        cc.initialize("mappings/xbox360.controller", true, false);
 
         SpacecraftConf scc = new SpacecraftConf();
         scc.initialize(.5e7f, true, 1f, false);

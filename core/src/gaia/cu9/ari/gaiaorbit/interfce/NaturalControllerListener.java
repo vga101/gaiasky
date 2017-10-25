@@ -12,6 +12,7 @@ import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.NaturalCamera;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
+import gaia.cu9.ari.gaiaorbit.util.Logger;
 
 public class NaturalControllerListener implements ControllerListener, IObserver {
 
@@ -46,6 +47,10 @@ public class NaturalControllerListener implements ControllerListener, IObserver 
 
     @Override
     public boolean buttonDown(Controller controller, int buttonCode) {
+        if (GlobalConf.controls.DEBUG_MODE) {
+            Logger.info("button down [controller/code]: " + controller.getName() + " / " + buttonCode);
+        }
+
         if (buttonCode == mappings.getButtonVelocityMultiplierHalf()) {
             cam.setGamepadMultiplier(0.5);
         } else if (buttonCode == mappings.getButtonVelocityMultiplierTenth()) {
@@ -56,11 +61,16 @@ public class NaturalControllerListener implements ControllerListener, IObserver 
             cam.setVelocity(-1);
         }
         cam.setInputByController(true);
+
         return true;
     }
 
     @Override
     public boolean buttonUp(Controller controller, int buttonCode) {
+        if (GlobalConf.controls.DEBUG_MODE) {
+            Logger.info("button up [controller/code]: " + controller.getName() + " / " + buttonCode);
+        }
+
         if (buttonCode == mappings.getButtonVelocityMultiplierHalf()) {
             cam.setGamepadMultiplier(1);
         } else if (buttonCode == mappings.getButtonVelocityMultiplierTenth()) {
@@ -71,11 +81,16 @@ public class NaturalControllerListener implements ControllerListener, IObserver 
             cam.setVelocity(0);
         }
         cam.setInputByController(true);
+
         return true;
     }
 
     @Override
     public boolean axisMoved(Controller controller, int axisCode, float value) {
+        if (GlobalConf.controls.DEBUG_MODE) {
+            Logger.info("axis moved [controller/code/value]: " + controller.getName() + " / " + axisCode + " / " + value);
+        }
+
         boolean treated = false;
 
         // y = x^4

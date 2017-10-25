@@ -292,10 +292,11 @@ public class DesktopConfInit extends ConfInit {
 
         /** CONTROLS CONF **/
         ControlsConf cc = new ControlsConf();
-        String cONTROLLER_MAPPINGS_FILE = p.getProperty("controls.mappings.file", "mappings/xbox360.controller");
+        String CONTROLLER_MAPPINGS_FILE = p.getProperty("controls.mappings.file", "mappings/xbox360.controller");
         boolean INVERT_LOOK_Y_AXIS = Boolean.parseBoolean(p.getProperty("controls.invert.y", "true"));
+        boolean DEBUG_MODE = Boolean.parseBoolean(p.getProperty("controls.debugmode", "false"));
 
-        cc.initialize(cONTROLLER_MAPPINGS_FILE, INVERT_LOOK_Y_AXIS);
+        cc.initialize(CONTROLLER_MAPPINGS_FILE, INVERT_LOOK_Y_AXIS, DEBUG_MODE);
 
         /** SPACECRAFT CONF **/
         SpacecraftConf scc = new SpacecraftConf();
@@ -424,6 +425,7 @@ public class DesktopConfInit extends ConfInit {
         /** CONTROLS **/
         p.setProperty("controls.mappings.file", GlobalConf.controls.CONTROLLER_MAPPINGS_FILE);
         p.setProperty("controls.invert.y", Boolean.toString(GlobalConf.controls.INVERT_LOOK_Y_AXIS));
+        p.setProperty("controls.debugmode", Boolean.toString(GlobalConf.controls.DEBUG_MODE));
 
         /** SPACECRAFT **/
         p.setProperty("spacecraft.responsiveness", Float.toString(GlobalConf.spacecraft.SC_RESPONSIVENESS));
