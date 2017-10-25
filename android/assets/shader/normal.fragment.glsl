@@ -126,53 +126,52 @@ uniform sampler2D u_emissiveTexture;
 ////// SHADOW MAPPING
 //////////////////////////////////////////////////////
 #ifdef shadowMapFlag
-#define bias 0.003
+#define bias 0.005
 uniform sampler2D u_shadowTexture;
 uniform float u_shadowPCFOffset;
 varying vec3 v_shadowMapUv;
 
-float getShadowness(vec2 offset)
-{
+float getShadowness(vec2 uv, vec2 offset, float compare){
     const vec4 bitShifts = vec4(1.0, 1.0 / 255.0, 1.0 / 65025.0, 1.0 / 160581375.0);
-    return step(v_shadowMapUv.z - bias, dot(texture2D(u_shadowTexture, v_shadowMapUv.xy + offset, TEXTURE_LOD_BIAS), bitShifts)); //+(1.0/255.0));
+    return step(compare - bias, dot(texture2D(u_shadowTexture, uv + offset, TEXTURE_LOD_BIAS), bitShifts)); //+(1.0/255.0));
+}
+
+
+float texture2DShadowLerp(vec2 size, vec2 uv, float compare){
+    vec2 texelSize = vec2(1.0) / size;
+    vec2 f = fract(uv * size + 0.5);
+    vec2 centroidUV = floor(uv * size + 0.5) / size;
+
+    float lb = getShadowness(centroidUV, texelSize * vec2(0.0, 0.0), compare);
+    float lt = getShadowness(centroidUV, texelSize * vec2(0.0, 1.0), compare);
+    float rb = getShadowness(centroidUV, texelSize * vec2(1.0, 0.0), compare);
+    float rt = getShadowness(centroidUV, texelSize * vec2(1.0, 1.0), compare);
+    float a = mix(lb, lt, f.y);
+    float b = mix(rb, rt, f.y);
+    float c = mix(a, b, f.x);
+    return c;
 }
 
 float getShadow()
 {
-    //return (//getShadowness(vec2(0,0)) + 
-	//getShadowness(vec2(u_shadowPCFOffset, u_shadowPCFOffset)) +
-	//getShadowness(vec2(-u_shadowPCFOffset, u_shadowPCFOffset)) +
-	//getShadowness(vec2(u_shadowPCFOffset, -u_shadowPCFOffset)) +
-	//getShadowness(vec2(-u_shadowPCFOffset, -u_shadowPCFOffset))) * 0.25;
-	
-	float visibility = 1.0;
-
-	const vec4 bitShifts = vec4(1.0, 1.0 / 255.0, 1.0 / 65025.0, 1.0 / 160581375.0);
-
-	if (dot(texture2D(u_shadowTexture, v_shadowMapUv.xy + vec2( -0.94201624, -0.39906216 ) / 700.0), bitShifts) < v_shadowMapUv.z - bias){
-		visibility-=0.2;
-	}
-	if (dot(texture2D(u_shadowTexture, v_shadowMapUv.xy + vec2( 0.94558609, -0.76890725 ) / 700.0), bitShifts) < v_shadowMapUv.z - bias){
-		visibility-=0.2;
-	}
-	if (dot(texture2D(u_shadowTexture, v_shadowMapUv.xy + vec2( -0.094184101, -0.92938870 ) / 700.0), bitShifts) < v_shadowMapUv.z - bias){
-		visibility-=0.2;
-	}
-	if (dot(texture2D(u_shadowTexture, v_shadowMapUv.xy + vec2( 0.34495938, 0.29387760 ) / 700.0), bitShifts) < v_shadowMapUv.z - bias){
-		visibility-=0.2;
-	}
-
-	return visibility;
-}
-
-float getShadowSimple()
-{
-	float visibility = 1.0;
-	const vec4 bitShifts = vec4(1.0, 1.0 / 255.0, 1.0 / 65025.0, 1.0 / 160581375.0);
-	if (dot(texture2D(u_shadowTexture, v_shadowMapUv.xy),  bitShifts) <  v_shadowMapUv.z - bias){
-    	visibility = 0.5;
-	}
-	return visibility;
+//    float pcf = u_shadowPCFOffset;
+//    
+//    return (//getShadowness(vec2(0,0)) + 
+//	getShadowness(vec2(pcf, pcf)) +
+//	getShadowness(vec2(-pcf, pcf)) +
+//	getShadowness(vec2(pcf, -pcf)) +
+//	getShadowness(vec2(-pcf, -pcf))) * 0.25;
+    
+    vec2 size = vec2(1.0 / (2.0 * u_shadowPCFOffset));
+    float result = 0.0;
+    for(int x=-2.0; x<=2.0; x++){
+        for(int y=-2.0; y<=2.0; y++){
+            vec2 offset = vec2(x, y) / size;
+            result += texture2DShadowLerp(size, v_shadowMapUv.xy + offset, v_shadowMapUv.z);
+            //result += getShadowness(v_shadowMapUv.xy, offset, v_shadowMapUv.z);
+        }
+    }
+    return result / 25.0;
 }
 
 #endif //shadowMapFlag
