@@ -29,6 +29,7 @@
 -  [Solar System Scope](http://www.solarsystemscope.com/) for some textures (Mercury, Venus, Earth, Moon)
 -  Phil Stooke and Grant Hutchison (http://www.classe.cornell.edu/~seb/celestia/hutchison/index-125.html) for some of the textures
 -  David Navas for the [simple spaceship](http://www.blendswap.com/user/DeNapes) model
+-  Terranimperial for the [USS Enterprise NCC-1701-A](https://sketchfab.com/models/75156f5812e34342a3dd5c2ba394d4ed) model, licensed under [CC Attribution](http://creativecommons.org/licenses/by/4.0/)
 -  Machuca+Arias+Caballero for the music track “Gaia-DR1”
 -  [Peppy & The Firing Squad](http://sampleswap.org/artist/xnoybis#contact) for 'Y=MX+B' track
 -  [DJ Masque](http://sampleswap.org/artist/djmasque) for the 'Oceanic Dawn' track
