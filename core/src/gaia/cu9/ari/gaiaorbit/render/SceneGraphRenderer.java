@@ -517,13 +517,15 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
             return Double.compare(((ModelBody) a).getDistToCamera(), ((ModelBody) b).getDistToCamera());
         });
 
+        int shadowNRender = GlobalConf.program.STEREOSCOPIC_MODE ? 2 : 1;
+
         candidates.clear();
         int num = 0;
         for (int i = 0; i < models.size; i++) {
             ModelBody mr = (ModelBody) models.get(i);
             if (mr.isShadow()) {
                 candidates.insert(num, mr);
-                mr.shadow = false;
+                mr.shadow = 0;
                 num++;
                 if (num == GlobalConf.scene.SHADOW_MAPPING_N_SHADOWS)
                     break;
@@ -536,7 +538,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         int i = 0;
         for (ModelBody candidate : candidates) {
             // Yes!
-            candidate.shadow = true;
+            candidate.shadow = shadowNRender;
 
             Vector3 camDir = aux1.set(candidate.mc.dlight.direction);
             // Direction is that of the light
@@ -571,7 +573,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
             modelBatchDepth.end();
 
             // Save frame buffer and combined matrix
-            candidate.shadow = true;
+            candidate.shadow = shadowNRender;
             shadowMapCombined[i].set(cameraLight.combined);
             smCombinedMap.put(candidate, shadowMapCombined[i]);
             smTexMap.put(candidate, shadowMapFb[i].getColorBufferTexture());

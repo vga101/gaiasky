@@ -64,8 +64,8 @@ public abstract class ModelBody extends CelestialBody {
     /** Shadow map properties **/
     private ShadowMapImpl shadowMap;
 
-    /** State flag; whether to render the shadow **/
-    public boolean shadow;
+    /** State flag; whether to render the shadow (number of times left) **/
+    public int shadow;
     /**
      * Array with shadow camera distance, cam near and cam far as a function of
      * the radius of the object
@@ -324,7 +324,7 @@ public abstract class ModelBody extends CelestialBody {
         if (GlobalConf.scene.SHADOW_MAPPING) {
             Environment env = mc.env;
             SceneGraphRenderer sgr = GaiaSky.instance.sgr;
-            if (shadow && sgr.smTexMap.containsKey(this)) {
+            if (shadow > 0 && sgr.smTexMap.containsKey(this)) {
                 Matrix4 combined = sgr.smCombinedMap.get(this);
                 Texture tex = sgr.smTexMap.get(this);
                 if (env.shadowMap == null) {
@@ -335,7 +335,7 @@ public abstract class ModelBody extends CelestialBody {
                 shadowMap.setProjViewTrans(combined);
                 shadowMap.setDepthMap(tex);
 
-                shadow = false;
+                shadow--;
             } else {
                 env.shadowMap = null;
             }
