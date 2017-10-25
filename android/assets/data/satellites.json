@@ -25,7 +25,7 @@
 						"model" : "data/models/gaia/gaia.g3db"
 				},
 
-	"shadowvalues" : [ 24.0, 1.6, 0.9 ]
+	"shadowvalues" : [ 240.0, 1.6, 0.9 ]
 	},
 	
 	
@@ -47,7 +47,7 @@
 						"model" : "data/models/usse/usse.obj"
 				},
 
-	"shadowvalues" : [ 25.0, 1.5, 1.5 ]
+	"shadowvalues" : [ 270.0, 1.5, 1.5 ]
 	
 	},
 	
@@ -77,7 +77,7 @@
 						"model" : "data/models/extra/dmc/dmc.g3db"
 				},
 	
-	"shadowvalues" : [ 30.0, 2.0, 2.0 ]
+	"shadowvalues" : [ 450.0, 2.5, 2.5 ]
 	
 	}
 	

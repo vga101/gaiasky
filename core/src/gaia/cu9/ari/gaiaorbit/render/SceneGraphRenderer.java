@@ -162,7 +162,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
         if (GlobalConf.scene.SHADOW_MAPPING) {
             // Shadow map camera
-            cameraLight = new PerspectiveCamera(5f, GlobalConf.scene.SHADOW_MAPPING_RESOLUTION, GlobalConf.scene.SHADOW_MAPPING_RESOLUTION);
+            cameraLight = new PerspectiveCamera(0.5f, GlobalConf.scene.SHADOW_MAPPING_RESOLUTION, GlobalConf.scene.SHADOW_MAPPING_RESOLUTION);
             // Shadow map frame buffer
             shadowMapFb = new FrameBuffer[GlobalConf.scene.SHADOW_MAPPING_N_SHADOWS];
             // Shadow map combined matrices
@@ -557,12 +557,14 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
             else
                 aux1.set(0, 1, 0);
             cameraLight.up.set(cameraLight.direction).crs(aux1);
+
             // Near is sv[1]*radius before the object
             cameraLight.near = (float) (distance - radius * candidate.shadowMapValues[1]);
             // Far is sv[2]*radius after the object
             cameraLight.far = (float) (distance + radius * candidate.shadowMapValues[2]);
+
             // Update cam
-            cameraLight.update();
+            cameraLight.update(false);
 
             // Render model depth map to frame buffer
             shadowMapFb[i].begin();

@@ -88,7 +88,7 @@
 										}
 					},
 
-		"shadowvalues" : [ 24.0, 2.0, 2.0 ]
+		"shadowvalues" : [ 240.0, 2.0, 2.0 ]
 	},
 	
 	
@@ -132,7 +132,7 @@
 										}
 					},
 
-		"shadowvalues" : [ 24.0, 2.0, 2.0 ]
+		"shadowvalues" : [ 240.0, 2.0, 2.0 ]
 	},
 	
 	
@@ -172,7 +172,7 @@
 
 					},
 
-		"shadowvalues" : [ 24.0, 3.0, 3.0 ]
+		"shadowvalues" : [ 240.0, 3.0, 3.0 ]
 	},
 	
 	
@@ -395,7 +395,7 @@
 							"model" : "data/models/prometheus/prometheus.g3db",
 					},
 
-		"shadowvalues" : [ 24.0, 3.0, 3.0 ]
+		"shadowvalues" : [ 240.0, 3.0, 3.0 ]
 	},
 	
 	{

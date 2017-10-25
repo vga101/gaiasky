@@ -33,7 +33,7 @@ public class ShadowMapImpl implements ShadowMap {
     }
 
     public void setDepthMap(Texture tex) {
-        this.td.set(tex, TextureFilter.Linear, TextureFilter.Linear, TextureWrap.ClampToEdge, TextureWrap.ClampToEdge);
+        this.td.set(tex, TextureFilter.Nearest, TextureFilter.Nearest, TextureWrap.ClampToEdge, TextureWrap.ClampToEdge);
     }
 
 }

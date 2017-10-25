@@ -39,7 +39,7 @@ public class SGR extends SGRAbstract implements ISGR {
         // Uncomment this to show the shadow map
         //        if (GlobalConf.scene.SHADOW_MAPPING) {
         //            // Render shadow map
-        //            int s = 512;
+        //            int s = GlobalConf.scene.SHADOW_MAPPING_RESOLUTION;
         //            sb.begin();
         //            for (int i = 0; i < sgr.shadowMapFb.length; i++) {
         //                sb.draw(sgr.shadowMapFb[i].getColorBufferTexture(), 0, 0, s, s);

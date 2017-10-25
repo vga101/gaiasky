@@ -154,14 +154,16 @@ float texture2DShadowLerp(vec2 size, vec2 uv, float compare){
 
 float getShadow()
 {
-//    float pcf = u_shadowPCFOffset;
+      // Only PCF
+//    float pcf = u_shadowPCFOffset / 2.0;
 //    
 //    return (//getShadowness(vec2(0,0)) + 
-//	getShadowness(vec2(pcf, pcf)) +
-//	getShadowness(vec2(-pcf, pcf)) +
-//	getShadowness(vec2(pcf, -pcf)) +
-//	getShadowness(vec2(-pcf, -pcf))) * 0.25;
+//	getShadowness(v_shadowMapUv.xy, vec2(pcf, pcf), v_shadowMapUv.z) +
+//	getShadowness(v_shadowMapUv.xy, vec2(-pcf, pcf), v_shadowMapUv.z) +
+//	getShadowness(v_shadowMapUv.xy, vec2(pcf, -pcf), v_shadowMapUv.z) +
+//	getShadowness(v_shadowMapUv.xy, vec2(-pcf, -pcf), v_shadowMapUv.z)) * 0.25;
     
+    // Complex lookup: PCF + interpolation (see http://codeflow.org/entries/2013/feb/15/soft-shadow-mapping/)
     vec2 size = vec2(1.0 / (2.0 * u_shadowPCFOffset));
     float result = 0.0;
     for(int x=-2.0; x<=2.0; x++){
@@ -172,6 +174,9 @@ float getShadow()
         }
     }
     return result / 25.0;
+    
+    // Simple lookup
+    //return getShadowness(v_shadowMapUv.xy, vec2(0.0), v_shadowMapUv.z);
 }
 
 #endif //shadowMapFlag
