@@ -12,40 +12,7 @@ d 1.000000
 illum 2
 map_Kd Blinds_Roman_Hobbled_Blue.jpg
 
-newmtl Blinds_Roman_Hobbled_Blue.001
-Ns 92.156863
-Ka 1.000000 1.000000 1.000000
-Kd 0.640000 0.640000 0.640000
-Ks 0.500000 0.500000 0.500000
-Ke 0.000000 0.000000 0.000000
-Ni 1.000000
-d 1.000000
-illum 2
-map_Kd Blinds_Roman_Hobbled_Blue.jpg
-
 newmtl JJprise_aztec_EnterpriseA
-Ns 92.156863
-Ka 1.000000 1.000000 1.000000
-Kd 0.640000 0.640000 0.640000
-Ks 0.500000 0.500000 0.500000
-Ke 0.000000 0.000000 0.000000
-Ni 1.000000
-d 1.000000
-illum 2
-map_Kd JJprise_aztec_EnterpriseA.jpg
-
-newmtl JJprise_aztec_EnterpriseA.001
-Ns 92.156863
-Ka 1.000000 1.000000 1.000000
-Kd 0.640000 0.640000 0.640000
-Ks 0.500000 0.500000 0.500000
-Ke 0.000000 0.000000 0.000000
-Ni 1.000000
-d 1.000000
-illum 2
-map_Kd JJprise_aztec_EnterpriseA.jpg
-
-newmtl JJprise_aztec_EnterpriseA_NONE.001
 Ns 92.156863
 Ka 1.000000 1.000000 1.000000
 Kd 0.640000 0.640000 0.640000
@@ -67,39 +34,7 @@ d 1.000000
 illum 2
 map_Kd Lisanne_Brush_Handle1.jpg
 
-newmtl Lisanne_Brush_Handle1.001
-Ns 92.156863
-Ka 1.000000 1.000000 1.000000
-Kd 0.640000 0.640000 0.640000
-Ks 0.500000 0.500000 0.500000
-Ke 2.000000 2.000000 2.000000
-Ni 1.000000
-d 1.000000
-illum 2
-map_Kd Lisanne_Brush_Handle1.jpg
-
-newmtl Lisanne_Brush_Handle1_NONE
-Ns 92.156863
-Ka 1.000000 1.000000 1.000000
-Kd 0.640000 0.640000 0.640000
-Ks 0.500000 0.500000 0.500000
-Ke 2.000000 2.000000 2.000000
-Ni 1.000000
-d 1.000000
-illum 2
-map_Kd Lisanne_Brush_Handle1.jpg
-
 newmtl Lisanne_Hammer1
-Ns 92.156863
-Ka 1.000000 1.000000 1.000000
-Kd 0.309804 0.313726 0.317647
-Ks 0.500000 0.500000 0.500000
-Ke 0.000000 0.000000 0.000000
-Ni 1.000000
-d 1.000000
-illum 2
-
-newmtl Lisanne_Hammer1.001
 Ns 92.156863
 Ka 1.000000 1.000000 1.000000
 Kd 0.309804 0.313726 0.317647
@@ -119,17 +54,7 @@ Ni 1.000000
 d 1.000000
 illum 2
 
-newmtl Lisanne_Metal1.001
-Ns 92.156863
-Ka 1.000000 1.000000 1.000000
-Kd 0.588235 0.588235 0.588235
-Ks 0.500000 0.500000 0.500000
-Ke 0.000000 0.000000 0.000000
-Ni 1.000000
-d 1.000000
-illum 2
-
-newmtl Lisanne_Necklace1.001
+newmtl Lisanne_Necklace1
 Ns 92.156863
 Ka 1.000000 1.000000 1.000000
 Kd 0.423529 0.537255 0.525490
@@ -223,18 +148,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd uss-enterprise-ncc-1701-a/temp_export/Material_4.png
-
-newmtl Material_4_NONE
-Ns 92.156863
-Ka 1.000000 1.000000 1.000000
-Kd 0.640000 0.640000 0.640000
-Ks 0.500000 0.500000 0.500000
-Ke 0.000000 0.000000 0.000000
-Ni 1.000000
-d 1.000000
-illum 2
-map_Kd uss-enterprise-ncc-1701-a/temp_export/Material_4.png
+map_Kd Material_4.jpg
 
 newmtl Material_4m
 Ns 92.156863

@@ -39,7 +39,7 @@ float core(float distance_center, float inner_rad){
         return 0.0;
     }
     float core = 1.0 - step(inner_rad / 5.0, distance_center);
-    float core_glow = smoothstep(inner_rad / 2.0, inner_rad / 5.0, distance_center);
+    float core_glow = smoothstep(inner_rad / 2.0, inner_rad / 6.0, distance_center);
     return core_glow + core;
 }
 
