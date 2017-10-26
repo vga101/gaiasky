@@ -141,7 +141,7 @@ public abstract class AbstractSceneGraph implements ISceneGraph {
                 Array<StarBean> stars = ((StarGroup) node).data();
                 for (StarBean s : stars) {
                     if (s.hip() > 0) {
-                        hipMap.put(s.hip(), new Position(s.x(), s.y(), s.z()));
+                        hipMap.put(s.hip(), new Position(s.x(), s.y(), s.z(), s.pmx(), s.pmy(), s.pmz()));
                     }
                 }
             }

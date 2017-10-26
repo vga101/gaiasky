@@ -31,7 +31,6 @@ import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
  *
  */
 public class Spacecraft extends GenericSpacecraft implements ILineRenderable, IObserver {
-    protected static final double TH_ANGLE_POINT = Math.toRadians(0.025);
     /** This is the power **/
     public static final double thrustLength = 1e12d;
 
@@ -128,15 +127,6 @@ public class Spacecraft extends GenericSpacecraft implements ILineRenderable, IO
         qf = new Quaternion();
     }
 
-    public void initialize() {
-        opacity = 1;
-        if (mc != null) {
-            mc.initialize();
-        }
-
-        EventManager.instance.subscribe(this, Events.CAMERA_MODE_CMD);
-    }
-
     @Override
     public void doneLoading(AssetManager manager) {
         super.doneLoading(manager);
@@ -146,7 +136,7 @@ public class Spacecraft extends GenericSpacecraft implements ILineRenderable, IO
         // Broadcast me
         EventManager.instance.post(Events.SPACECRAFT_LOADED, this);
 
-        EventManager.instance.subscribe(this, Events.SPACECRAFT_STABILISE_CMD, Events.SPACECRAFT_STOP_CMD, Events.SPACECRAFT_THRUST_DECREASE_CMD, Events.SPACECRAFT_THRUST_INCREASE_CMD, Events.SPACECRAFT_THRUST_SET_CMD);
+        EventManager.instance.subscribe(this, Events.CAMERA_MODE_CMD, Events.SPACECRAFT_STABILISE_CMD, Events.SPACECRAFT_STOP_CMD, Events.SPACECRAFT_THRUST_DECREASE_CMD, Events.SPACECRAFT_THRUST_INCREASE_CMD, Events.SPACECRAFT_THRUST_SET_CMD);
     }
 
     @Override
@@ -552,16 +542,6 @@ public class Spacecraft extends GenericSpacecraft implements ILineRenderable, IO
         u.nor().scl(.2e-4 * factor);
         renderer.addLine(posf.x, posf.y, posf.z, posf.x + u.x, posf.y + u.y, posf.z + u.z, 0, 0, 1, 1);
 
-    }
-
-    @Override
-    public double THRESHOLD_NONE() {
-        return 0;
-    }
-
-    @Override
-    public double THRESHOLD_QUAD() {
-        return 0;
     }
 
     @Override

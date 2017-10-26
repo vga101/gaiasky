@@ -22,6 +22,7 @@
 						
 	"model"			: {
 						"args" : [true],
+						"usecolor" : False,
 						"model" : "data/models/gaia/gaia.g3db"
 				},
 
@@ -31,6 +32,7 @@
 	
 	{
 	"name" : "Spacecraft",
+	"color" : [0.3, 0.5, 0.9, 1.0],
 	// in Km
 	"size" : 10.0,
 	"ct" : Satellites,
@@ -42,14 +44,43 @@
 
 	"renderquad" : False,
 	
-	"model"			: {
-						"args" : [true],
-						"model" : "data/models/usse/usse.obj"
-				},
+	"model"	: {
+			"args" : [true],
+			"usecolor" : False,
+			"model" : "data/models/usse/usse.obj",
+		},
 
 	"shadowvalues" : [ 270.0, 1.5, 1.5 ]
 	
 	},
+	
+	{
+        "name" : "Solar sail",
+        "color" : [0.3, 0.5, 0.9, 1.0],
+        // in Km
+        "size" : 0.1,
+        "ct" : Satellites,
+
+        "parent" : "Universe",
+        "impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.GenericSpacecraft",
+
+        "coordinates" : {
+                     // This must implement gaia.cu9.ari.gaiaorbit.util.coord.IBodyCoordinates
+                     "impl" : "gaia.cu9.ari.gaiaorbit.util.coord.StaticCoordinates",
+                     "position" : [0.0, 0.0, -1e9],
+                     "transformMatrix" : [ -1.0, 0.0, 4.6e-8, 0.0, 0.0, 1.0, 0.0, 0.0, -4.6e-8, 0.0, -1.0, 0.0, 0.0, 0.0, 0.0, 1.0 ]
+         },
+        "renderquad" : False,
+
+        "model": {
+                        "args" : [true],
+                        "usecolor" : False,
+                         "model" : "data/models/solarsail/solarsail.obj"
+                },
+
+        "shadowvalues" : [ 240.0, 1.5, 1.5 ]
+
+        },
 	
 	
 	{
@@ -72,10 +103,11 @@
 	"hidden" : True,
 	"renderquad" : False,
 	
-	"model"			: {
-						"args" : [true],
-						"model" : "data/models/extra/dmc/dmc.g3db"
-				},
+	"model"	: {
+			"args" : [true],
+			"usecolor" : False,
+			"model" : "data/models/extra/dmc/dmc.g3db"
+		},
 	
 	"shadowvalues" : [ 450.0, 2.5, 2.5 ]
 	

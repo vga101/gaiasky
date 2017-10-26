@@ -15,6 +15,7 @@ import gaia.cu9.ari.gaiaorbit.render.RenderingContext;
 import gaia.cu9.ari.gaiaorbit.render.system.FontRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.LineRenderSystem;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
+import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 import gaia.cu9.ari.gaiaorbit.util.tree.IPosition;
@@ -27,6 +28,7 @@ import gaia.cu9.ari.gaiaorbit.util.tree.IPosition;
  */
 public class Constellation extends LineObject implements I3DTextRenderable {
     private static Array<Constellation> allConstellations = new Array<Constellation>(88);
+    private double deltaYears;
 
     public static void updateConstellations() {
         for (Constellation c : allConstellations) {
@@ -43,7 +45,7 @@ public class Constellation extends LineObject implements I3DTextRenderable {
     /**
      * The lines themselves as pairs of positions
      **/
-    public Vector3[][] lines;
+    public IPosition[][] lines;
 
     public Constellation() {
         super();
@@ -67,13 +69,14 @@ public class Constellation extends LineObject implements I3DTextRenderable {
 
     public void update(ITimeFrameProvider time, final Transform parentTransform, ICamera camera, float opacity) {
         // Recompute mean position
+
         pos.scl(0);
         Vector3d p = aux3d1.get();
         int nstars = 0;
         for (int i = 0; i < lines.length; i++) {
-            Vector3[] line = lines[i];
+            IPosition[] line = lines[i];
             if (line != null) {
-                p.set(line[0]).add(camera.getInversePos());
+                p.set(line[0].getPosition()).add(camera.getInversePos());
                 pos.add(p);
                 nstars++;
             }
@@ -81,14 +84,18 @@ public class Constellation extends LineObject implements I3DTextRenderable {
         pos.scl((1d / nstars));
         pos.nor().scl(100 * Constants.PC_TO_U);
         addToRenderLists(camera);
+
+        deltaYears = AstroUtils.getMsSince(time.getTime(), AstroUtils.JD_J2015_5) * Constants.MS_TO_Y;
+
     }
 
     @Override
     public void setUp() {
         if (!allLoaded) {
             int npairs = ids.size;
-            if (lines == null)
-                lines = new Vector3[npairs][];
+            if (lines == null) {
+                lines = new IPosition[npairs][];
+            }
             IntMap<IPosition> hipMap = sg.getStarMap();
             allLoaded = true;
             for (int i = 0; i < npairs; i++) {
@@ -97,7 +104,7 @@ public class Constellation extends LineObject implements I3DTextRenderable {
                 s1 = hipMap.get(pair[0]);
                 s2 = hipMap.get(pair[1]);
                 if (lines[i] == null && s1 != null && s2 != null) {
-                    lines[i] = new Vector3[] { s1.getPosition().toVector3(), s2.getPosition().toVector3() };
+                    lines[i] = new IPosition[] { s1, s2 };
                 } else {
                     allLoaded = false;
                 }
@@ -117,16 +124,26 @@ public class Constellation extends LineObject implements I3DTextRenderable {
         Vector3 p1 = aux3f2.get();
         Vector3 p2 = aux3f3.get();
         camera.getPos().setVector3(campos);
-        // Fix, using positions directly
-        for (Vector3[] pair : lines) {
+
+        for (IPosition[] pair : lines) {
             if (pair != null) {
-                p1.set(pair[0]).sub(campos);
-                p2.set(pair[1]).sub(campos);
+                getPosition(pair[0], campos, p1);
+                getPosition(pair[1], campos, p2);
 
                 renderer.addLine(p1.x, p1.y, p1.z, p2.x, p2.y, p2.z, cc[0], cc[1], cc[2], alpha);
             }
         }
 
+    }
+
+    private void getPosition(IPosition posbean, Vector3 campos, Vector3 out) {
+        Vector3d vel = aux3d1.get();
+        if (posbean.getVelocity() != null) {
+            vel.set(posbean.getVelocity()).scl(deltaYears);
+        }
+
+        Vector3d position = aux3d2.get().set(posbean.getPosition()).sub(campos).add(vel);
+        position.put(out);
     }
 
     /**

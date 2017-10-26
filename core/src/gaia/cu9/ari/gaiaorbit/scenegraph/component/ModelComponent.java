@@ -68,6 +68,7 @@ public class ModelComponent implements Disposable {
     public double scale = 1d;
     public boolean culling = true;
     private boolean initialised, loading;
+    private boolean useColor = true;
 
     private AssetManager manager;
     private float[] cc;
@@ -184,8 +185,8 @@ public class ModelComponent implements Disposable {
                     loading = false;
                 }
             } else {
-                // Use color
-                if (cc != null) {
+                // Use color if necessary
+                if (cc != null && useColor) {
                     // Regular mesh, we use the color
                     int n = instance.materials.size;
                     for (int i = 0; i < n; i++) {
@@ -293,6 +294,13 @@ public class ModelComponent implements Disposable {
 
     public void setCulling(Boolean culling) {
         this.culling = culling;
+    }
+
+    public void setUsecolor(String usecolor) {
+        try {
+            this.useColor = Boolean.parseBoolean(usecolor);
+        } catch (Exception e) {
+        }
     }
 
 }

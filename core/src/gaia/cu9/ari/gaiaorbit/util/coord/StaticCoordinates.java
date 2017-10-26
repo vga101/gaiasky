@@ -25,6 +25,9 @@ public class StaticCoordinates implements IBodyCoordinates {
 
     @Override
     public void doneLoading(Object... params) {
+        if (trf != null) {
+            this.position.mul(trf);
+        }
     }
 
     @Override
@@ -60,11 +63,13 @@ public class StaticCoordinates implements IBodyCoordinates {
         }
     }
 
+    public void setTransformMatrix(double[] transformMatrix) {
+        trf = new Matrix4d(transformMatrix);
+    }
+
     public void setPosition(double[] position) {
         this.position = new Vector3d(position[0] * Constants.KM_TO_U, position[1] * Constants.KM_TO_U, position[2] * Constants.KM_TO_U);
-        if (trf != null) {
-            this.position.mul(trf);
-        }
+
     }
 
 }

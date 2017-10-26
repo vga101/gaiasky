@@ -719,6 +719,11 @@ public class SceneGraphNode implements IStarContainer, IPosition {
         return null;
     }
 
+    @Override
+    public Vector3d getVelocity() {
+        return null;
+    }
+
     public Matrix4d getOrientation() {
         return orientation;
     }
