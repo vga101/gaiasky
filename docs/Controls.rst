@@ -220,7 +220,11 @@ Creating mappings files for new controllers
 
 As of version ``1.5.1`` a new controller debug mode has been added to help **create new mappings files**. This mode prints to the log all key press and release events with their respective key codes, as well as trigger events, values and codes. It also prints controller connection and disconnection events.
 
-In order to enable the controller debug mode, set the property `controls.debugmode=true` in the `$HOME/.gaiasky/global.properties` file.
+In order to enable the controller debug mode, set the property ``controls.debugmode=true`` in the ``$HOME/.gaiasky/global.properties`` file.
+
+Put your new files in ``$GS_INSTALL_LOCATION/mappings/`` or ``$HOME/.gaiasky/mappings/``. The name of the file should be ``[controller brand and model].mappings``. For example, ``xboxone.mappings`` or ``logitech_f310.mappings``.
+
+Please, if you create mappings files for new game controllers, create a pull request in the `gaiasky github <https://github.com/langurmonkey/gaiasky/pulls>` so that the community can benefit.
 
 
 .. _gamepad-focus-mode:
