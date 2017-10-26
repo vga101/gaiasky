@@ -211,8 +211,17 @@ controller to the actions.
 	button.velocityhalf=4
 
 
+
 The actions depend on the current camera
 mode (focus, free, spacecraft), and are described below:
+
+Creating mappings files for new controllers
+-------------------------------------------
+
+As of version ``1.5.1`` a new controller debug mode has been added to help **create new mappings files**. This mode prints to the log all key press and release events with their respective key codes, as well as trigger events, values and codes. It also prints controller connection and disconnection events.
+
+In order to enable the controller debug mode, set the property `controls.debugmode=true` in the `$HOME/.gaiasky/global.properties` file.
+
 
 .. _gamepad-focus-mode:
 

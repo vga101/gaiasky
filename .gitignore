@@ -39,6 +39,12 @@ nohup.out
    ehthumbs.db
    Thumbs.db
 
+
+# Vim files #
+#############
+*.swp
+
+
 # Output folder #
 #################
 releases/
