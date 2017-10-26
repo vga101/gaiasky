@@ -87,13 +87,13 @@ public class PreferencesWindow extends GenericDialog {
 
     private INumberFormat nf3;
 
-    private CheckBox fullscreen, windowed, vsync, multithreadCb, lodFadeCb, cbAutoCamrec, tgas, real, nsl, report, inverty, highAccuracyPositions;
+    private CheckBox fullscreen, windowed, vsync, multithreadCb, lodFadeCb, cbAutoCamrec, tgas, real, nsl, report, inverty, highAccuracyPositions, shadowsCb;
     private OwnSelectBox<DisplayMode> fullscreenResolutions;
-    private OwnSelectBox<ComboBoxBean> gquality, aa, lineRenderer, numThreads, screenshotMode, frameoutputMode;
+    private OwnSelectBox<ComboBoxBean> gquality, aa, lineRenderer, numThreads, screenshotMode, frameoutputMode, nshadows;
     private OwnSelectBox<LangComboBoxBean> lang;
     private OwnSelectBox<String> theme;
     private OwnSelectBox<FileComboBoxBean> controllerMappings;
-    private OwnTextField widthField, heightField, sswidthField, ssheightField, frameoutputPrefix, frameoutputFps, fowidthField, foheightField, camrecFps, cmResolution;
+    private OwnTextField widthField, heightField, sswidthField, ssheightField, frameoutputPrefix, frameoutputFps, fowidthField, foheightField, camrecFps, cmResolution, smResolution;
     private OwnSlider lodTransitions;
     private OwnTextButton screenshotsLocation, frameoutputLocation;
 
@@ -354,7 +354,54 @@ public class PreferencesWindow extends GenericDialog {
 
         // Add to content
         contentGraphics.add(titleGraphics).left().padBottom(pad * 2).row();
-        contentGraphics.add(graphics).left();
+        contentGraphics.add(graphics).left().padBottom(pad * 4).row();
+
+        // SHADOWS
+        Label titleShadows = new OwnLabel(txt("gui.graphics.shadows"), skin, "help-title");
+        Table shadows = new Table();
+
+        // SHADOW MAP RESOLUTION
+        OwnLabel smResolutionLabel = new OwnLabel(txt("gui.graphics.shadows.resolution"), skin);
+        smResolutionLabel.setDisabled(!GlobalConf.scene.SHADOW_MAPPING);
+        IntValidator smResValidator = new IntValidator(128, 2048);
+        smResolution = new OwnTextField(Integer.toString(MathUtils.clamp(GlobalConf.scene.SHADOW_MAPPING_RESOLUTION, 128, 2048)), skin, smResValidator);
+        smResolution.setWidth(textwidth * 3f);
+        smResolution.setDisabled(!GlobalConf.scene.SHADOW_MAPPING);
+
+        // N SHADOWS
+        OwnLabel nShadowsLabel = new OwnLabel("#" + txt("gui.graphics.shadows"), skin);
+        nShadowsLabel.setDisabled(!GlobalConf.scene.SHADOW_MAPPING);
+        ComboBoxBean[] nsh = new ComboBoxBean[] { new ComboBoxBean("1", 1), new ComboBoxBean("2", 2), new ComboBoxBean("3", 3), new ComboBoxBean("4", 4) };
+        nshadows = new OwnSelectBox<ComboBoxBean>(skin);
+        nshadows.setItems(nsh);
+        nshadows.setWidth(textwidth * 3f);
+        nshadows.setSelected(nsh[GlobalConf.scene.SHADOW_MAPPING_N_SHADOWS - 1]);
+        nshadows.setDisabled(!GlobalConf.scene.SHADOW_MAPPING);
+
+        // ENABLE SHADOWS
+        shadowsCb = new OwnCheckBox(txt("gui.graphics.shadows.enable"), skin, "default", pad);
+        shadowsCb.setChecked(GlobalConf.scene.SHADOW_MAPPING);
+        shadowsCb.addListener((event) -> {
+            if (event instanceof ChangeEvent) {
+                // Enable or disable resolution
+                enableComponents(shadowsCb.isChecked(), smResolution, smResolutionLabel, nshadows, nShadowsLabel);
+                return true;
+            }
+            return false;
+        });
+
+        // LABELS
+        labels.add(smResolutionLabel);
+
+        shadows.add(shadowsCb).left().padRight(pad * 2).padBottom(pad).row();
+        shadows.add(smResolutionLabel).left().padRight(pad * 4).padBottom(pad);
+        shadows.add(smResolution).left().padRight(pad * 2).padBottom(pad).row();
+        shadows.add(nShadowsLabel).left().padRight(pad * 4).padBottom(pad);
+        shadows.add(nshadows).left().padRight(pad * 2).padBottom(pad);
+
+        // Add to content
+        contentGraphics.add(titleShadows).left().padBottom(pad * 2).row();
+        contentGraphics.add(shadows).left();
 
         /**
          * ==== UI ====
@@ -1206,6 +1253,12 @@ public class PreferencesWindow extends GenericDialog {
         bean = lineRenderer.getSelected();
         GlobalConf.scene.LINE_RENDERER = bean.value;
 
+        // Shadow mapping
+        GlobalConf.scene.SHADOW_MAPPING = shadowsCb.isChecked();
+        int newshadowres = Integer.parseInt(smResolution.getText());
+        int newnshadows = nshadows.getSelected().value;
+        final boolean reloadShadows = shadowsCb.isChecked() && (GlobalConf.scene.SHADOW_MAPPING_RESOLUTION != newshadowres || GlobalConf.scene.SHADOW_MAPPING_N_SHADOWS != newnshadows);
+
         // Interface
         LangComboBoxBean lbean = lang.getSelected();
         boolean reloadUI = GlobalConf.program.UI_THEME != theme.getSelected() || !lbean.locale.toLanguageTag().equals(GlobalConf.program.LOCALE);
@@ -1301,40 +1354,46 @@ public class PreferencesWindow extends GenericDialog {
         EventManager.instance.post(Events.PROPERTIES_WRITTEN);
 
         if (reloadScreenMode) {
-            Gdx.app.postRunnable(new Runnable() {
-                @Override
-                public void run() {
-                    EventManager.instance.post(Events.SCREEN_MODE_CMD);
-                }
+            Gdx.app.postRunnable(() -> {
+                EventManager.instance.post(Events.SCREEN_MODE_CMD);
             });
         }
 
         if (reloadLineRenderer) {
-            EventManager.instance.post(Events.LINE_RENDERER_UPDATE);
+            Gdx.app.postRunnable(() -> {
+                EventManager.instance.post(Events.LINE_RENDERER_UPDATE);
+            });
+        }
+
+        if (reloadShadows) {
+            Gdx.app.postRunnable(() -> {
+                GlobalConf.scene.SHADOW_MAPPING_RESOLUTION = newshadowres;
+                GlobalConf.scene.SHADOW_MAPPING_N_SHADOWS = newnshadows;
+
+                EventManager.instance.post(Events.REBUILD_SHADOW_MAP_DATA_CMD);
+            });
         }
 
         if (reloadUI) {
             // Reinitialise user interface
-            Gdx.app.postRunnable(new Runnable() {
-                public void run() {
-                    // Reinitialise GUI system
-                    GlobalResources.updateSkin();
-                    GaiaSky.instance.reinitialiseGUI1();
-                    EventManager.instance.post(Events.SPACECRAFT_LOADED, GaiaSky.instance.sg.getNode("Spacecraft"));
-                    GaiaSky.instance.reinitialiseGUI2();
-                    // Time init
-                    EventManager.instance.post(Events.TIME_CHANGE_INFO, GaiaSky.instance.time.getTime());
-                    if (GaiaSky.instance.cam.mode == CameraManager.CameraMode.Focus)
-                        // Refocus
-                        EventManager.instance.post(Events.FOCUS_CHANGE_CMD, GaiaSky.instance.cam.getFocus());
-                    // Update names with new language
-                    GaiaSky.instance.sg.getRoot().updateNamesRec();
-                    // UI theme reload broadcast
-                    EventManager.instance.post(Events.UI_THEME_RELOAD_INFO, GlobalResources.skin);
-
-                }
+            Gdx.app.postRunnable(() -> {
+                // Reinitialise GUI system
+                GlobalResources.updateSkin();
+                GaiaSky.instance.reinitialiseGUI1();
+                EventManager.instance.post(Events.SPACECRAFT_LOADED, GaiaSky.instance.sg.getNode("Spacecraft"));
+                GaiaSky.instance.reinitialiseGUI2();
+                // Time init
+                EventManager.instance.post(Events.TIME_CHANGE_INFO, GaiaSky.instance.time.getTime());
+                if (GaiaSky.instance.cam.mode == CameraManager.CameraMode.Focus)
+                    // Refocus
+                    EventManager.instance.post(Events.FOCUS_CHANGE_CMD, GaiaSky.instance.cam.getFocus());
+                // Update names with new language
+                GaiaSky.instance.sg.getRoot().updateNamesRec();
+                // UI theme reload broadcast
+                EventManager.instance.post(Events.UI_THEME_RELOAD_INFO, GlobalResources.skin);
             });
         }
+
     }
 
     private void selectFullscreen(boolean fullscreen, OwnTextField widthField, OwnTextField heightField, SelectBox<DisplayMode> fullScreenResolutions, OwnLabel widthLabel, OwnLabel heightLabel) {

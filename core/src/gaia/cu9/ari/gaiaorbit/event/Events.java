@@ -626,6 +626,11 @@ public enum Events {
     SPACECRAFT_NEAREST_INFO,
 
     /**
+     * Event to update the shadow map metadata
+     */
+    REBUILD_SHADOW_MAP_DATA_CMD,
+
+    /**
      * Toggles the fading of particles in the octree. Contains a boolean with
      * the state of the flag.
      **/

@@ -163,20 +163,13 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         if (GlobalConf.scene.SHADOW_MAPPING) {
             // Shadow map camera
             cameraLight = new PerspectiveCamera(0.5f, GlobalConf.scene.SHADOW_MAPPING_RESOLUTION, GlobalConf.scene.SHADOW_MAPPING_RESOLUTION);
-            // Shadow map frame buffer
-            shadowMapFb = new FrameBuffer[GlobalConf.scene.SHADOW_MAPPING_N_SHADOWS];
-            // Shadow map combined matrices
-            shadowMapCombined = new Matrix4[GlobalConf.scene.SHADOW_MAPPING_N_SHADOWS];
-            // Init
-            for (int i = 0; i < GlobalConf.scene.SHADOW_MAPPING_N_SHADOWS; i++) {
-                shadowMapFb[i] = FrameBuffer.createFrameBuffer(Format.RGBA8888, GlobalConf.scene.SHADOW_MAPPING_RESOLUTION, GlobalConf.scene.SHADOW_MAPPING_RESOLUTION, true);
-                shadowMapCombined[i] = new Matrix4();
-            }
-            smTexMap = new HashMap<ModelBody, Texture>();
-            smCombinedMap = new HashMap<ModelBody, Matrix4>();
-            candidates = new Array<ModelBody>(GlobalConf.scene.SHADOW_MAPPING_N_SHADOWS);
+
+            // Aux vectors
             aux1 = new Vector3();
             aux1d = new Vector3d();
+
+            // Build frame buffers and arrays
+            buildShadowMapData();
         }
     }
 
@@ -476,7 +469,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         renderProcesses.add(shapeProc);
         // renderProcesses.add(modelCloseUpProc);
 
-        EventManager.instance.subscribe(this, Events.TOGGLE_VISIBILITY_CMD, Events.PIXEL_RENDERER_UPDATE, Events.LINE_RENDERER_UPDATE, Events.TOGGLE_STEREOSCOPIC_INFO, Events.CAMERA_MODE_CMD, Events.CUBEMAP360_CMD);
+        EventManager.instance.subscribe(this, Events.TOGGLE_VISIBILITY_CMD, Events.PIXEL_RENDERER_UPDATE, Events.LINE_RENDERER_UPDATE, Events.TOGGLE_STEREOSCOPIC_INFO, Events.CAMERA_MODE_CMD, Events.CUBEMAP360_CMD, Events.REBUILD_SHADOW_MAP_DATA_CMD);
 
     }
 
@@ -747,6 +740,9 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
             }
             break;
+        case REBUILD_SHADOW_MAP_DATA_CMD:
+            buildShadowMapData();
+            break;
         default:
             break;
         }
@@ -800,6 +796,39 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
             if (sgr != null)
                 sgr.dispose();
         }
+    }
+
+    /**
+     * Builds the shadow map data; frame buffers, arrays, etc.
+     */
+    private void buildShadowMapData() {
+        if (shadowMapFb != null) {
+            for (FrameBuffer fb : shadowMapFb)
+                fb.dispose();
+            shadowMapFb = null;
+        }
+        shadowMapCombined = null;
+
+        // Shadow map frame buffer
+        shadowMapFb = new FrameBuffer[GlobalConf.scene.SHADOW_MAPPING_N_SHADOWS];
+        // Shadow map combined matrices
+        shadowMapCombined = new Matrix4[GlobalConf.scene.SHADOW_MAPPING_N_SHADOWS];
+        // Init
+        for (int i = 0; i < GlobalConf.scene.SHADOW_MAPPING_N_SHADOWS; i++) {
+            shadowMapFb[i] = FrameBuffer.createFrameBuffer(Format.RGBA8888, GlobalConf.scene.SHADOW_MAPPING_RESOLUTION, GlobalConf.scene.SHADOW_MAPPING_RESOLUTION, true);
+            shadowMapCombined[i] = new Matrix4();
+        }
+        if (smTexMap == null)
+            smTexMap = new HashMap<ModelBody, Texture>();
+        smTexMap.clear();
+
+        if (smCombinedMap == null)
+            smCombinedMap = new HashMap<ModelBody, Matrix4>();
+        smCombinedMap.clear();
+
+        if (candidates == null)
+            candidates = new Array<ModelBody>(GlobalConf.scene.SHADOW_MAPPING_N_SHADOWS);
+        candidates.clear();
     }
 
     public void updateLineRenderSystem() {
