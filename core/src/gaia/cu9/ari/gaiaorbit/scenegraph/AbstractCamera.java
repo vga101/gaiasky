@@ -182,13 +182,15 @@ public abstract class AbstractCamera implements ICamera {
 
     @Override
     public void checkClosest(CelestialBody cb) {
-        if (closest == null) {
-            closest = cb;
-        } else {
-            if (closest.distToCamera - closest.getRadius() > cb.distToCamera - cb.getRadius()) {
+        // A copy can never bee the closest
+        if (!cb.copy)
+            if (closest == null) {
                 closest = cb;
+            } else {
+                if (closest.distToCamera - closest.getRadius() > cb.distToCamera - cb.getRadius()) {
+                    closest = cb;
+                }
             }
-        }
     }
 
     @Override

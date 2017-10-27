@@ -240,7 +240,7 @@ public class Spacecraft extends GenericSpacecraft implements ILineRenderable, IO
         // New position in auxd3
         Vector3d position = aux3d3.get().set(pos).add(velo.scl(dt));
         // Check collision!
-        if (closest != null && closest != this) {
+        if (closest != null && closest != this && !this.copy) {
             double twoRadiuses = closest.getRadius() + this.getRadius();
             // d1 is the new distance to the centre of the object
             if (!vel.isZero() && Intersectord.distanceSegmentPoint(pos, position, closest.pos) < twoRadiuses) {
@@ -545,8 +545,59 @@ public class Spacecraft extends GenericSpacecraft implements ILineRenderable, IO
     }
 
     @Override
+    public <T extends SceneGraphNode> T getSimpleCopy() {
+        Spacecraft copy = super.getSimpleCopy();
+        copy.force.set(this.force);
+        copy.accel.set(this.accel);
+        copy.vel.set(this.vel);
+
+        copy.fullPowerTime = this.fullPowerTime;
+
+        copy.posf.set(this.posf);
+        copy.direction.set(this.direction);
+        copy.directionf.set(this.directionf);
+        copy.up.set(this.up);
+        copy.upf.set(this.upf);
+        copy.thrust.set(this.thrust);
+
+        copy.mass = this.mass;
+        copy.factor = this.factor;
+
+        copy.rotationMatrix.set(this.rotationMatrix);
+
+        copy.thrustFactorIndex = this.thrustFactorIndex;
+
+        copy.enginePower = this.enginePower;
+
+        copy.yawp = this.yawp;
+        copy.yawf = this.yawf;
+        copy.yawa = this.yawa;
+        copy.yawv = this.yawv;
+
+        copy.pitchp = this.pitchp;
+        copy.pitchf = this.pitchf;
+        copy.pitcha = this.pitcha;
+        copy.pitchv = this.pitchv;
+
+        copy.rollp = this.rollp;
+        copy.rollf = this.rollf;
+        copy.rolla = this.rolla;
+        copy.rollv = this.rollv;
+
+        copy.leveling = this.leveling;
+        copy.stopping = this.stopping;
+
+        return (T) copy;
+    }
+
+    @Override
     protected float labelFactor() {
         return 0;
+    }
+
+    @Override
+    protected boolean mustUpdatePosition(ITimeFrameProvider time) {
+        return true;
     }
 
 }

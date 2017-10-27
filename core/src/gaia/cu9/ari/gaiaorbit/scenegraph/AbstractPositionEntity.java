@@ -138,7 +138,7 @@ public abstract class AbstractPositionEntity extends SceneGraphNode {
      * @return The aux vector for chaining.
      */
     public Vector3d getPredictedPosition(Vector3d aux, ITimeFrameProvider time, ICamera camera, boolean force) {
-        if (time.getDt() == 0 && !force) {
+        if (!mustUpdatePosition(time) && !force) {
             return getAbsolutePosition(aux);
         } else {
             // Get copy of focus and update it to know where it will be in the
@@ -160,6 +160,18 @@ public abstract class AbstractPositionEntity extends SceneGraphNode {
 
             return aux;
         }
+    }
+
+    /**
+     * Whether position must be recomputed for this entity. By default, only
+     * when time is on.
+     * 
+     * @param time
+     *            The current time.
+     * @return True if position should be recomputed for this entity
+     */
+    protected boolean mustUpdatePosition(ITimeFrameProvider time) {
+        return time.getDt() != 0;
     }
 
     /**
