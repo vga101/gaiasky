@@ -1,5 +1,47 @@
 # Change Log
 
+## [Unreleased](https://github.com/langurmonkey/gaiasky/tree/HEAD)
+
+[Full Changelog](https://github.com/langurmonkey/gaiasky/compare/1.5.0...HEAD)
+
+**Implemented enhancements:**
+
+- Constellations with proper motions [\#203](https://github.com/langurmonkey/gaiasky/issues/203)
+- Add controller debug mode to help create mappings [\#202](https://github.com/langurmonkey/gaiasky/issues/202)
+- Add support for emissive colors and textures [\#201](https://github.com/langurmonkey/gaiasky/issues/201)
+- Upgrade to libgdx 1.9.7 [\#200](https://github.com/langurmonkey/gaiasky/issues/200)
+- Adapt normal lighting shader to accept no directional lights [\#197](https://github.com/langurmonkey/gaiasky/issues/197)
+- Update Jython to 2.7.0 [\#194](https://github.com/langurmonkey/gaiasky/issues/194)
+- Feature request - scripting functions [\#192](https://github.com/langurmonkey/gaiasky/issues/192)
+- Add distance to Sol in focus info interface [\#191](https://github.com/langurmonkey/gaiasky/issues/191)
+- Look for ways to prevent time overflow [\#190](https://github.com/langurmonkey/gaiasky/issues/190)
+- Add star clusters [\#188](https://github.com/langurmonkey/gaiasky/issues/188)
+- Enable proper motions [\#185](https://github.com/langurmonkey/gaiasky/issues/185)
+- Allow arbitrary meshes in json data files [\#184](https://github.com/langurmonkey/gaiasky/issues/184)
+- Add 'pause background loading' action [\#181](https://github.com/langurmonkey/gaiasky/issues/181)
+- Fix action buttons \(stop script, stop camera path\) [\#180](https://github.com/langurmonkey/gaiasky/issues/180)
+- Add titles to data with i18n [\#179](https://github.com/langurmonkey/gaiasky/issues/179)
+- Crosshair when in free camera + target mode [\#178](https://github.com/langurmonkey/gaiasky/issues/178)
+- Crosshair to point to focus direction when off-screen [\#177](https://github.com/langurmonkey/gaiasky/issues/177)
+- Shadow mapping [\#60](https://github.com/langurmonkey/gaiasky/issues/60)
+
+**Fixed bugs:**
+
+- goToObject\(name, angle\) not zooming out if current angle is larger than target [\#195](https://github.com/langurmonkey/gaiasky/issues/195)
+- NullPointerException in DesktopNetworkChecker [\#193](https://github.com/langurmonkey/gaiasky/issues/193)
+- Look for ways to prevent time overflow [\#190](https://github.com/langurmonkey/gaiasky/issues/190)
+- Fix visibility of date/time and time warp factor [\#189](https://github.com/langurmonkey/gaiasky/issues/189)
+- Fix `facingFocus` state issue [\#187](https://github.com/langurmonkey/gaiasky/issues/187)
+- Fix MAS\_TO\_DEG conversion in AstroUtils [\#186](https://github.com/langurmonkey/gaiasky/issues/186)
+- Fix 'run script' window handling of scripts with same name [\#182](https://github.com/langurmonkey/gaiasky/issues/182)
+
+**Closed issues:**
+
+- Adding meshes [\#205](https://github.com/langurmonkey/gaiasky/issues/205)
+- On Windows, install fails with "Could not determine java version from '9.0.1' [\#204](https://github.com/langurmonkey/gaiasky/issues/204)
+- Docs don't mention where record data appears [\#198](https://github.com/langurmonkey/gaiasky/issues/198)
+- Javadocs no longer available [\#183](https://github.com/langurmonkey/gaiasky/issues/183)
+
 ## [1.5.0](https://github.com/langurmonkey/gaiasky/tree/1.5.0) (2017-08-02)
 [Full Changelog](https://github.com/langurmonkey/gaiasky/compare/1.0.4...1.5.0)
 
@@ -116,7 +158,7 @@
 
 **Merged pull requests:**
 
-- Fixed broken download links in README.md [\#99](https://github.com/langurmonkey/gaiasky/pull/99) ([AdamK117](https://github.com/AdamK117))
+- Fixed broken download links in README.md [\#99](https://github.com/langurmonkey/gaiasky/pull/99) ([adamkewley](https://github.com/adamkewley))
 
 ## [1.0.3](https://github.com/langurmonkey/gaiasky/tree/1.0.3) (2016-11-15)
 [Full Changelog](https://github.com/langurmonkey/gaiasky/compare/1.0.2...1.0.3)
