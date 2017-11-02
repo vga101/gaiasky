@@ -1,222 +1,222 @@
-apply plugin: "java"
-apply plugin: "jetty"
-
-gwt {
-    gwtVersion='2.7.0' // Should match the gwt version used for building the gwt backend
-    minHeapSize="1G"
-    maxHeapSize="3G" // Default 256m is not enough for gwt compiler. GWT is HUNGRY
-
-    src = files(file("src/")) // Needs to be in front of "modules" below.
-    modules 'gaia.cu9.ari.gaiaorbit.GdxDefinition'
-    devModules 'gaia.cu9.ari.gaiaorbit.GdxDefinitionSuperdev'
-    project.webAppDirName = 'webapp'
-
-    compiler {
-        strict = true;
-        enableClosureCompiler = true;
-        disableCastChecking = true;
-    }
-}
-
-compileGwt {
-    minHeapSize = "1G";
-    maxHeapSize = "3G";
-}
-
-task draftRun(type: JettyRunWar) {
-    dependsOn draftWar
-    dependsOn.remove('war')
-    webApp=draftWar.archivePath
-    daemon=true
-}
-
-task superDev(type: de.richsource.gradle.plugins.gwt.GwtSuperDev) {
-    dependsOn draftRun
-    doFirst {
-    	gwt.modules = gwt.devModules
-    }
-}
-
-task dist(dependsOn: [clean, compileGwt]) {
-    doLast {
-        file("build/dist").mkdirs()
-        copy {
-            from "build/gwt/out"
-            into "build/dist"
-        }
-        copy {
-            from "webapp"
-            into "build/dist"
-            }
-        copy {
-            from "war"
-            into "build/dist"
-        }
-    }
-}
-
-task afterGwtCompileFull << {
-	String distfold = "war"
-    // update logo
-    delete distfold + '/html/logo.png'
-    copy {
-        from '../android/assets/img/gaiaskylogo.png'
-        into distfold + '/html/'
-    }
-    file(distfold + '/html/gaiaskylogo.png').renameTo(file(distfold + '/html/logo.png'))
-    
-    // update index.html
-    delete distfold + '/index.html'
-    delete distfold + '/index-lite.html'
-    copy {
-        from 'webapp/index.html'
-        into distfold
-    }
-    
-    
-    // copy orbit files from android folder
-    copy {
-        from distfold + '/assets/data/android/orb.EARTH.dat'
-        into distfold + '/assets/data/'
-    }
-    copy {
-        from distfold + '/assets/data/android/orb.GAIA.dat'
-        into distfold + '/assets/data/'
-    }
-    copy {
-        from distfold + '/assets/data/android/orb.JUPITER.dat'
-        into distfold + '/assets/data/'
-    }
-    copy {
-        from distfold + '/assets/data/android/orb.MARS.dat'
-        into distfold + '/assets/data/'
-    }
-    copy {
-        from distfold + '/assets/data/android/orb.MERCURY.dat'
-        into distfold + '/assets/data/'
-    }
-    copy {
-        from distfold + '/assets/data/android/orb.MOON.dat'
-        into distfold + '/assets/data/'
-    }
-    copy {
-        from distfold + '/assets/data/android/orb.NEPTUNE.dat'
-        into distfold + '/assets/data/'
-    }
-    copy {
-        from distfold + '/assets/data/android/orb.SATURN.dat'
-        into distfold + '/assets/data/'
-    }
-    copy {
-        from distfold + '/assets/data/android/orb.URANUS.dat'
-        into distfold + '/assets/data/'
-    }
-    copy {
-        from distfold + '/assets/data/android/orb.VENUS.dat'
-        into distfold + '/assets/data/'
-    }
-    
-    // update assets.txt
-    delete distfold + '/assets/assets.txt'
-    copy {
-        from 'assets/assets-wgl.txt'
-        into distfold + '/assets/'
-    }
-    file(distfold + '/assets/assets-wgl.txt').renameTo(file(distfold + '/assets/assets.txt'))
-    
-    // delete unused files
-    def galaxyUnused = fileTree(distfold + '/assets/data/galaxy/')
-    galaxyUnused.include 'galaxy_bar*'
-    galaxyUnused.include 'galaxy_nobar*'
-    galaxyUnused.each { it.delete() }
-    
-    delete distfold + '/assets/conf',
-            distfold + '/assets/data/android',
-            distfold + '/assets/data/hyg_metadata.bin',
-            distfold + '/assets/data/hyg_particles.bin',
-            distfold + '/assets/data/data-lite.json',
-            distfold + '/assets/data/extra-lite.json',
-            distfold + '/assets/data/planets-lite.json',
-            distfold + '/assets/data/satellites-lite.json',
-            distfold + '/assets/data/tex/earth-4k.jpg',
-            distfold + '/assets/data/tex/earth-8k.jpg',
-            distfold + '/assets/data/tex/earth-night-2k.jpg',
-            distfold + '/assets/data/tex/earth-night-4k.jpg',
-            distfold + '/assets/data/tex/earth-normal-4k.jpg',
-            distfold + '/assets/data/tex/earth-normal.jpg',
-            distfold + '/assets/data/tex/earth-specular-4k.jpg',
-            distfold + '/assets/data/tex/jupiter-4k.jpg',
-            distfold + '/assets/data/tex/mars-2k.jpg',
-            distfold + '/assets/data/tex/mars-normal.jpg',
-            distfold + '/assets/data/tex/moon-4k.jpg',
-            distfold + '/assets/data/tex/moon-normal.jpg',
-            distfold + '/assets/data/tex/venus-1k.jpg',
-            distfold + '/assets/data/tex/phobos-normal.jpg',
-            distfold + '/assets/data/tex/deimos-normal.jpg',
-            distfold + '/assets/scripts',
-            distfold + '/assets/music',
-            distfold + '/assets/data/octree',
-            distfold + '/assets/data/tgas_201507'
-    
-}
-
-task afterGwtCompileLite << {
-	String distfold = "war"
-    // update logo
-    delete distfold + '/html/logo.png'
-    copy {
-        from '../android/assets/img/gaiaskylogo.png'
-        into distfold + '/html/'
-    }
-    file(distfold + '/html/gaiaskylogo.png').renameTo(file(distfold + '/html/logo.png'))
-    
-    // update index.html
-    delete distfold + '/index.html'
-    delete distfold + '/index-fp.html'
-    copy {
-        from 'webapp/index-fp.html'
-        into distfold + '/'
-    }
-    file(distfold + '/index-fp.html').renameTo(file(distfold + '/index.html'))
-    
-    // update assets.txt
-    delete distfold + '/assets/assets.txt'
-    copy {
-        from 'assets/assets-wgl-fp.txt'
-        into distfold + '/assets/'
-    }
-    file(distfold + '/assets/assets-wgl-fp.txt').renameTo(file(distfold + '/assets/assets.txt'))
-    
-    // delete unused files
-    def galaxyUnused = fileTree(distfold + '/assets/data/galaxy/')
-    galaxyUnused.include 'galaxy_bar*'
-    galaxyUnused.include 'galaxy_nobar*'
-    galaxyUnused.each { it.delete() }
-    
-    delete distfold + '/assets/conf', 
-            distfold + '/assets/data/android',
-            distfold + '/assets/scripts',
-            distfold + '/assets/music',
-            distfold + '/assets/data/octree',
-            distfold + '/assets/data/tgas_201507'
-            
-}
-
-draftWar {
-   from "war"
-}
-
-task addSource << {
-	sourceSets.main.compileClasspath += files(project(':core').sourceSets.main.allJava.srcDirs)
-}
-
-tasks.compileGwt.dependsOn(addSource)
-tasks.draftCompileGwt.dependsOn(addSource)
-
-sourceCompatibility = 1.7
-sourceSets.main.java.srcDirs = [ "src/" ]
-
-
-eclipse.project {
-    name = appName + "-html"
-}
+//apply plugin: "java"
+//apply plugin: "jetty"
+//
+//gwt {
+//    gwtVersion='2.7.0' // Should match the gwt version used for building the gwt backend
+//    minHeapSize="1G"
+//    maxHeapSize="3G" // Default 256m is not enough for gwt compiler. GWT is HUNGRY
+//
+//    src = files(file("src/")) // Needs to be in front of "modules" below.
+//    modules 'gaia.cu9.ari.gaiaorbit.GdxDefinition'
+//    devModules 'gaia.cu9.ari.gaiaorbit.GdxDefinitionSuperdev'
+//    project.webAppDirName = 'webapp'
+//
+//    compiler {
+//        strict = true;
+//        enableClosureCompiler = true;
+//        disableCastChecking = true;
+//    }
+//}
+//
+//compileGwt {
+//    minHeapSize = "1G";
+//    maxHeapSize = "3G";
+//}
+//
+//task draftRun(type: JettyRunWar) {
+//    dependsOn draftWar
+//    dependsOn.remove('war')
+//    webApp=draftWar.archivePath
+//    daemon=true
+//}
+//
+//task superDev(type: de.richsource.gradle.plugins.gwt.GwtSuperDev) {
+//    dependsOn draftRun
+//    doFirst {
+//    	gwt.modules = gwt.devModules
+//    }
+//}
+//
+//task dist(dependsOn: [clean, compileGwt]) {
+//    doLast {
+//        file("build/dist").mkdirs()
+//        copy {
+//            from "build/gwt/out"
+//            into "build/dist"
+//        }
+//        copy {
+//            from "webapp"
+//            into "build/dist"
+//            }
+//        copy {
+//            from "war"
+//            into "build/dist"
+//        }
+//    }
+//}
+//
+//task afterGwtCompileFull << {
+//	String distfold = "war"
+//    // update logo
+//    delete distfold + '/html/logo.png'
+//    copy {
+//        from '../android/assets/img/gaiaskylogo.png'
+//        into distfold + '/html/'
+//    }
+//    file(distfold + '/html/gaiaskylogo.png').renameTo(file(distfold + '/html/logo.png'))
+//    
+//    // update index.html
+//    delete distfold + '/index.html'
+//    delete distfold + '/index-lite.html'
+//    copy {
+//        from 'webapp/index.html'
+//        into distfold
+//    }
+//    
+//    
+//    // copy orbit files from android folder
+//    copy {
+//        from distfold + '/assets/data/android/orb.EARTH.dat'
+//        into distfold + '/assets/data/'
+//    }
+//    copy {
+//        from distfold + '/assets/data/android/orb.GAIA.dat'
+//        into distfold + '/assets/data/'
+//    }
+//    copy {
+//        from distfold + '/assets/data/android/orb.JUPITER.dat'
+//        into distfold + '/assets/data/'
+//    }
+//    copy {
+//        from distfold + '/assets/data/android/orb.MARS.dat'
+//        into distfold + '/assets/data/'
+//    }
+//    copy {
+//        from distfold + '/assets/data/android/orb.MERCURY.dat'
+//        into distfold + '/assets/data/'
+//    }
+//    copy {
+//        from distfold + '/assets/data/android/orb.MOON.dat'
+//        into distfold + '/assets/data/'
+//    }
+//    copy {
+//        from distfold + '/assets/data/android/orb.NEPTUNE.dat'
+//        into distfold + '/assets/data/'
+//    }
+//    copy {
+//        from distfold + '/assets/data/android/orb.SATURN.dat'
+//        into distfold + '/assets/data/'
+//    }
+//    copy {
+//        from distfold + '/assets/data/android/orb.URANUS.dat'
+//        into distfold + '/assets/data/'
+//    }
+//    copy {
+//        from distfold + '/assets/data/android/orb.VENUS.dat'
+//        into distfold + '/assets/data/'
+//    }
+//    
+//    // update assets.txt
+//    delete distfold + '/assets/assets.txt'
+//    copy {
+//        from 'assets/assets-wgl.txt'
+//        into distfold + '/assets/'
+//    }
+//    file(distfold + '/assets/assets-wgl.txt').renameTo(file(distfold + '/assets/assets.txt'))
+//    
+//    // delete unused files
+//    def galaxyUnused = fileTree(distfold + '/assets/data/galaxy/')
+//    galaxyUnused.include 'galaxy_bar*'
+//    galaxyUnused.include 'galaxy_nobar*'
+//    galaxyUnused.each { it.delete() }
+//    
+//    delete distfold + '/assets/conf',
+//            distfold + '/assets/data/android',
+//            distfold + '/assets/data/hyg_metadata.bin',
+//            distfold + '/assets/data/hyg_particles.bin',
+//            distfold + '/assets/data/data-lite.json',
+//            distfold + '/assets/data/extra-lite.json',
+//            distfold + '/assets/data/planets-lite.json',
+//            distfold + '/assets/data/satellites-lite.json',
+//            distfold + '/assets/data/tex/earth-4k.jpg',
+//            distfold + '/assets/data/tex/earth-8k.jpg',
+//            distfold + '/assets/data/tex/earth-night-2k.jpg',
+//            distfold + '/assets/data/tex/earth-night-4k.jpg',
+//            distfold + '/assets/data/tex/earth-normal-4k.jpg',
+//            distfold + '/assets/data/tex/earth-normal.jpg',
+//            distfold + '/assets/data/tex/earth-specular-4k.jpg',
+//            distfold + '/assets/data/tex/jupiter-4k.jpg',
+//            distfold + '/assets/data/tex/mars-2k.jpg',
+//            distfold + '/assets/data/tex/mars-normal.jpg',
+//            distfold + '/assets/data/tex/moon-4k.jpg',
+//            distfold + '/assets/data/tex/moon-normal.jpg',
+//            distfold + '/assets/data/tex/venus-1k.jpg',
+//            distfold + '/assets/data/tex/phobos-normal.jpg',
+//            distfold + '/assets/data/tex/deimos-normal.jpg',
+//            distfold + '/assets/scripts',
+//            distfold + '/assets/music',
+//            distfold + '/assets/data/octree',
+//            distfold + '/assets/data/tgas_201507'
+//    
+//}
+//
+//task afterGwtCompileLite << {
+//	String distfold = "war"
+//    // update logo
+//    delete distfold + '/html/logo.png'
+//    copy {
+//        from '../android/assets/img/gaiaskylogo.png'
+//        into distfold + '/html/'
+//    }
+//    file(distfold + '/html/gaiaskylogo.png').renameTo(file(distfold + '/html/logo.png'))
+//    
+//    // update index.html
+//    delete distfold + '/index.html'
+//    delete distfold + '/index-fp.html'
+//    copy {
+//        from 'webapp/index-fp.html'
+//        into distfold + '/'
+//    }
+//    file(distfold + '/index-fp.html').renameTo(file(distfold + '/index.html'))
+//    
+//    // update assets.txt
+//    delete distfold + '/assets/assets.txt'
+//    copy {
+//        from 'assets/assets-wgl-fp.txt'
+//        into distfold + '/assets/'
+//    }
+//    file(distfold + '/assets/assets-wgl-fp.txt').renameTo(file(distfold + '/assets/assets.txt'))
+//    
+//    // delete unused files
+//    def galaxyUnused = fileTree(distfold + '/assets/data/galaxy/')
+//    galaxyUnused.include 'galaxy_bar*'
+//    galaxyUnused.include 'galaxy_nobar*'
+//    galaxyUnused.each { it.delete() }
+//    
+//    delete distfold + '/assets/conf', 
+//            distfold + '/assets/data/android',
+//            distfold + '/assets/scripts',
+//            distfold + '/assets/music',
+//            distfold + '/assets/data/octree',
+//            distfold + '/assets/data/tgas_201507'
+//            
+//}
+//
+//draftWar {
+//   from "war"
+//}
+//
+//task addSource << {
+//	sourceSets.main.compileClasspath += files(project(':core').sourceSets.main.allJava.srcDirs)
+//}
+//
+//tasks.compileGwt.dependsOn(addSource)
+//tasks.draftCompileGwt.dependsOn(addSource)
+//
+//sourceCompatibility = 1.7
+//sourceSets.main.java.srcDirs = [ "src/" ]
+//
+//
+//eclipse.project {
+//    name = appName + "-html"
+//}
