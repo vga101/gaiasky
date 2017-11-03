@@ -694,17 +694,29 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
     public void render(SpriteBatch batch, ShaderProgram shader, FontRenderSystem sys, RenderingContext rc, ICamera camera) {
         float thOverFactor = (float) (GlobalConf.scene.STAR_THRESHOLD_POINT / GlobalConf.scene.LABEL_NUMBER_FACTOR / camera.getFovFactor());
         float textScale = 1f;
-        for (int i = 0; i < N_CLOSEUP_STARS; i++) {
-            StarBean star = (StarBean) pointData.get(active[i]);
-            Vector3d lpos = fetchPosition(star, camera.getPos(), aux3d1.get(), currDeltaYears);
-            if (camera.getCurrent() instanceof FovCamera) {
-                render2DLabel(batch, shader, rc, sys.font2d, camera, star.name, lpos);
-            } else {
-                float radius = (float) getRadius(active[i]);
+
+        if (camera.getCurrent() instanceof FovCamera) {
+            int n = Math.min(pointData.size, N_CLOSEUP_STARS * 5);
+            for (int i = 0; i < n; i++) {
+                StarBean star = (StarBean) pointData.get(active[i]);
+                Vector3d lpos = fetchPosition(star, camera.getPos(), aux3d1.get(), currDeltaYears);
                 float distToCamera = (float) lpos.len();
+                float radius = (float) getRadius(active[i]);
                 float viewAngle = (float) (((radius / distToCamera) / camera.getFovFactor()) * GlobalConf.scene.STAR_BRIGHTNESS);
 
-                if (viewAngle >= thOverFactor) {
+                if (camera.isVisible(GaiaSky.instance.time, viewAngle, lpos, distToCamera)) {
+                    render2DLabel(batch, shader, rc, sys.font2d, camera, star.name, lpos);
+                }
+            }
+        } else {
+            for (int i = 0; i < N_CLOSEUP_STARS; i++) {
+                StarBean star = (StarBean) pointData.get(active[i]);
+                Vector3d lpos = fetchPosition(star, camera.getPos(), aux3d1.get(), currDeltaYears);
+                float distToCamera = (float) lpos.len();
+                float radius = (float) getRadius(active[i]);
+                float viewAngle = (float) (((radius / distToCamera) / camera.getFovFactor()) * GlobalConf.scene.STAR_BRIGHTNESS);
+
+                if (viewAngle >= thOverFactor && camera.isVisible(GaiaSky.instance.time, viewAngle, lpos, distToCamera)) {
 
                     textPosition(camera, lpos, distToCamera, radius);
                     shader.setUniformf("u_viewAngle", viewAngle);
@@ -719,7 +731,6 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
                 }
             }
         }
-
     }
 
     public void textPosition(ICamera cam, Vector3d out, float len, float rad) {

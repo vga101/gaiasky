@@ -147,7 +147,12 @@ public abstract class AbstractCamera implements ICamera {
 
     @Override
     public boolean isVisible(ITimeFrameProvider time, CelestialBody cb) {
-        return (!(this instanceof FovCamera) && cb.viewAngle > VIEW_ANGLE) || GlobalResources.isInView(cb.transform.position, cb.distToCamera, angleEdgeRad, getDirection());
+        return isVisible(time, cb.viewAngle, cb.transform.position, cb.distToCamera);
+    }
+
+    @Override
+    public boolean isVisible(ITimeFrameProvider time, double viewAngle, Vector3d pos, double distToCamera) {
+        return (!(this instanceof FovCamera) && viewAngle > VIEW_ANGLE) || GlobalResources.isInView(pos, distToCamera, angleEdgeRad, getDirection());
     }
 
     /**

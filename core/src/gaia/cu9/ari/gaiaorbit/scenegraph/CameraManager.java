@@ -383,6 +383,11 @@ public class CameraManager implements ICamera, IObserver {
     }
 
     @Override
+    public boolean isVisible(ITimeFrameProvider time, double viewAngle, Vector3d pos, double distToCamera) {
+        return current.isVisible(time, viewAngle, pos, distToCamera);
+    }
+
+    @Override
     public double getDistance() {
         return current.getDistance();
     }
