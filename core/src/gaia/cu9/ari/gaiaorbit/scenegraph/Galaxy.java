@@ -42,6 +42,10 @@ public class Galaxy extends Particle {
      **/
     String mcl;
 
+    public Galaxy() {
+        super();
+    }
+
     public Galaxy(Vector3d pos, float appmag, float absmag, float colorbv, String name, float ra, float dec, float bmag, float a26, float ba, int hrv, int i, int tt, String mcl, long starid) {
         super(pos, appmag, absmag, colorbv, name, ra, dec, starid);
         this.bmag = bmag;
