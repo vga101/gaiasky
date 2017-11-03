@@ -74,6 +74,9 @@ public class StarCluster extends AbstractPositionEntity implements IFocus, IProp
     // Number of stars of this cluster
     protected int nstars;
 
+    // Years since epoch
+    protected double ySinceEpoch;
+
     /**
      * Fade alpha between quad and model. Attribute contains model opacity. Quad
      * opacity is <code>1-fadeAlpha</code>
@@ -150,7 +153,8 @@ public class StarCluster extends AbstractPositionEntity implements IFocus, IProp
     public void updateLocal(ITimeFrameProvider time, ICamera camera) {
         // Update pos, local transform
         this.transform.translate(pos);
-        Vector3d pmv = aux3d1.get().set(pm).scl(AstroUtils.getMsSince(time.getTime(), AstroUtils.JD_J2015_5) * Constants.MS_TO_Y);
+        ySinceEpoch = AstroUtils.getMsSince(time.getTime(), AstroUtils.JD_J2015_5) * Constants.MS_TO_Y;
+        Vector3d pmv = aux3d1.get().set(pm).scl(ySinceEpoch);
         this.transform.position.add(pmv);
 
         this.localTransform.idt().translate(this.transform.position.put(aux3f1.get())).scl(this.size);
@@ -183,6 +187,19 @@ public class StarCluster extends AbstractPositionEntity implements IFocus, IProp
                 addToRender(this, RenderGroup.BILLBOARD_SPRITE);
             }
         }
+    }
+
+    @Override
+    public Vector3d getAbsolutePosition(Vector3d aux) {
+        aux.set(pos);
+        Vector3d pmv = aux3d2.get().set(pm).scl(ySinceEpoch);
+        aux.add(pmv);
+        AbstractPositionEntity entity = this;
+        while (entity.parent != null && entity.parent instanceof AbstractPositionEntity) {
+            entity = (AbstractPositionEntity) entity.parent;
+            aux.add(entity.pos);
+        }
+        return aux;
     }
 
     /**
