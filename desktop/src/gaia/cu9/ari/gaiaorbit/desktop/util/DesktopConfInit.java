@@ -190,8 +190,9 @@ public class DesktopConfInit extends ConfInit {
         boolean CUBEMAPE360_MODE = Boolean.parseBoolean(p.getProperty("program.cubemap360", "false"));
         boolean ANALYTICS_ENABLED = Boolean.parseBoolean(p.getProperty("program.analytics", "true"));
         boolean DISPLAY_HUD = Boolean.parseBoolean(p.getProperty("program.displayhud", "false"));
+        boolean DISPLAY_POINTER_COORDS = Boolean.parseBoolean(p.getProperty("program.displaypointercoords", "true"));
 
-        prc.initialize(DISPLAY_TUTORIAL, TUTORIAL_POINTER_SCRIPT_LOCATION, TUTORIAL_SCRIPT_LOCATION, SHOW_DEBUG_INFO, LAST_CHECKED, LAST_VERSION, VERSION_CHECK_URL, UI_THEME, SCRIPT_LOCATION, LOCALE, STEREOSCOPIC_MODE, STEREO_PROFILE, CUBEMAPE360_MODE, ANALYTICS_ENABLED, DISPLAY_HUD);
+        prc.initialize(DISPLAY_TUTORIAL, TUTORIAL_POINTER_SCRIPT_LOCATION, TUTORIAL_SCRIPT_LOCATION, SHOW_DEBUG_INFO, LAST_CHECKED, LAST_VERSION, VERSION_CHECK_URL, UI_THEME, SCRIPT_LOCATION, LOCALE, STEREOSCOPIC_MODE, STEREO_PROFILE, CUBEMAPE360_MODE, ANALYTICS_ENABLED, DISPLAY_HUD, DISPLAY_POINTER_COORDS);
 
         /** SCENE CONF **/
         int GRAPHICS_QUALITY = Integer.parseInt(p.getProperty("scene.graphics.quality"));
@@ -368,6 +369,7 @@ public class DesktopConfInit extends ConfInit {
         p.setProperty("program.tutorial.script", GlobalConf.program.TUTORIAL_SCRIPT_LOCATION);
         p.setProperty("program.analytics", Boolean.toString(GlobalConf.program.ANALYTICS_ENABLED));
         p.setProperty("program.displayhud", Boolean.toString(GlobalConf.program.DISPLAY_HUD));
+        p.setProperty("program.displaypointercoords", Boolean.toString(GlobalConf.program.DISPLAY_POINTER_COORDS));
         p.setProperty("program.debuginfo", Boolean.toString(GlobalConf.program.SHOW_DEBUG_INFO));
         p.setProperty("program.lastchecked", GlobalConf.program.LAST_CHECKED != null ? df.format(GlobalConf.program.LAST_CHECKED) : "");
         p.setProperty("program.versioncheckurl", GlobalConf.program.VERSION_CHECK_URL);

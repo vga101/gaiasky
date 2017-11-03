@@ -111,6 +111,11 @@ public enum Events {
     RA_DEC_UPDATED,
 
     /**
+     * Contains a boolean with the display status
+     */
+    DISPLAY_POINTER_COORDS_CMD,
+
+    /**
      * Issues the command to toggle the time. Contains the boolean indicating
      * the state (may be null) and a boolean indicating whether this comes from
      * the interface.

@@ -87,7 +87,7 @@ public class PreferencesWindow extends GenericDialog {
 
     private INumberFormat nf3;
 
-    private CheckBox fullscreen, windowed, vsync, multithreadCb, lodFadeCb, cbAutoCamrec, tgas, real, nsl, report, inverty, highAccuracyPositions, shadowsCb;
+    private CheckBox fullscreen, windowed, vsync, multithreadCb, lodFadeCb, cbAutoCamrec, tgas, real, nsl, report, inverty, highAccuracyPositions, shadowsCb, pointerCoords;
     private OwnSelectBox<DisplayMode> fullscreenResolutions;
     private OwnSelectBox<ComboBoxBean> gquality, aa, lineRenderer, numThreads, screenshotMode, frameoutputMode, nshadows;
     private OwnSelectBox<LangComboBoxBean> lang;
@@ -453,6 +453,10 @@ public class PreferencesWindow extends GenericDialog {
         theme.setItems(themes);
         theme.setSelected(GlobalConf.program.UI_THEME);
 
+        // POINTER COORDINATES
+        pointerCoords = new OwnCheckBox(txt("gui.ui.pointercoordinates"), skin, "default", pad);
+        pointerCoords.setChecked(GlobalConf.program.DISPLAY_POINTER_COORDS);
+
         // LABELS
         labels.addAll(langLabel, themeLabel);
 
@@ -461,6 +465,7 @@ public class PreferencesWindow extends GenericDialog {
         ui.add(lang).left().padBottom(pad).row();
         ui.add(themeLabel).left().padRight(pad * 4).padBottom(pad);
         ui.add(theme).left().padBottom(pad).row();
+        ui.add(pointerCoords).left().padRight(pad * 2).padBottom(pad).row();
 
         // Add to content
         contentUI.add(titleUI).left().padBottom(pad * 2).row();
@@ -1265,6 +1270,11 @@ public class PreferencesWindow extends GenericDialog {
         GlobalConf.program.LOCALE = lbean.locale.toLanguageTag();
         I18n.forceinit(Gdx.files.internal("i18n/gsbundle"));
         GlobalConf.program.UI_THEME = theme.getSelected();
+        boolean previousPointerCoords = GlobalConf.program.DISPLAY_POINTER_COORDS;
+        GlobalConf.program.DISPLAY_POINTER_COORDS = pointerCoords.isChecked();
+        if (previousPointerCoords != GlobalConf.program.DISPLAY_POINTER_COORDS) {
+            EventManager.instance.post(Events.DISPLAY_POINTER_COORDS_CMD, GlobalConf.program.DISPLAY_POINTER_COORDS);
+        }
         // Update scale factor according to theme - for HiDPI screens
         GlobalConf.updateScaleFactor(GlobalConf.program.UI_THEME.endsWith("x2") ? 2f : 1f);
 

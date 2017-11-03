@@ -75,7 +75,7 @@ public class FullGui extends AbstractGui {
     protected VisualEffectsComponent visualEffectsComponent;
 
     protected INumberFormat nf;
-    protected Label mouseXCoord, mouseYCoord;
+    protected Label pointerXCoord, pointerYCoord;
 
     protected ISceneGraph sg;
     private ComponentType[] visibilityEntities;
@@ -103,7 +103,7 @@ public class FullGui extends AbstractGui {
         buildGui();
 
         // We must subscribe to the desired events
-        EventManager.instance.subscribe(this, Events.FOV_CHANGED_CMD, Events.SHOW_TUTORIAL_ACTION, Events.SHOW_SEARCH_ACTION, Events.REMOVE_KEYBOARD_FOCUS, Events.REMOVE_GUI_COMPONENT, Events.ADD_GUI_COMPONENT, Events.SHOW_ABOUT_ACTION, Events.RA_DEC_UPDATED, Events.LON_LAT_UPDATED, Events.POPUP_MENU_FOCUS, Events.SHOW_PREFERENCES_ACTION, Events.SHOW_LAND_AT_LOCATION_ACTION);
+        EventManager.instance.subscribe(this, Events.FOV_CHANGED_CMD, Events.SHOW_TUTORIAL_ACTION, Events.SHOW_SEARCH_ACTION, Events.REMOVE_KEYBOARD_FOCUS, Events.REMOVE_GUI_COMPONENT, Events.ADD_GUI_COMPONENT, Events.SHOW_ABOUT_ACTION, Events.RA_DEC_UPDATED, Events.LON_LAT_UPDATED, Events.POPUP_MENU_FOCUS, Events.SHOW_PREFERENCES_ACTION, Events.SHOW_LAND_AT_LOCATION_ACTION, Events.DISPLAY_POINTER_COORDS_CMD);
     }
 
     protected void buildGui() {
@@ -157,10 +157,12 @@ public class FullGui extends AbstractGui {
         interfaces.add(customInterface);
 
         // MOUSE X/Y COORDINATES
-        mouseXCoord = new OwnLabel("", skin, "default");
-        mouseXCoord.setAlignment(Align.bottom);
-        mouseYCoord = new OwnLabel("", skin, "default");
-        mouseYCoord.setAlignment(Align.right | Align.center);
+        pointerXCoord = new OwnLabel("", skin, "default");
+        pointerXCoord.setAlignment(Align.bottom);
+        pointerXCoord.setVisible(GlobalConf.program.DISPLAY_POINTER_COORDS);
+        pointerYCoord = new OwnLabel("", skin, "default");
+        pointerYCoord.setAlignment(Align.right | Align.center);
+        pointerYCoord.setVisible(GlobalConf.program.DISPLAY_POINTER_COORDS);
 
         /** ADD TO UI **/
         rebuildGui();
@@ -172,8 +174,8 @@ public class FullGui extends AbstractGui {
         invisibleInStereoMode.add(messagesInterface);
         invisibleInStereoMode.add(runStateInterface);
         // invisibleInStereoMode.add(customInterface);
-        invisibleInStereoMode.add(mouseXCoord);
-        invisibleInStereoMode.add(mouseYCoord);
+        invisibleInStereoMode.add(pointerXCoord);
+        invisibleInStereoMode.add(pointerYCoord);
     }
 
     public void recalculateOptionsSize() {
@@ -204,9 +206,9 @@ public class FullGui extends AbstractGui {
             if (runStateInterface != null && Constants.desktop) {
                 ui.addActor(runStateInterface);
             }
-            if (mouseXCoord != null && mouseYCoord != null) {
-                ui.addActor(mouseXCoord);
-                ui.addActor(mouseYCoord);
+            if (pointerXCoord != null && pointerYCoord != null) {
+                ui.addActor(pointerXCoord);
+                ui.addActor(pointerYCoord);
             }
 
             if (customInterface != null) {
@@ -322,26 +324,35 @@ public class FullGui extends AbstractGui {
             rebuildGui();
             break;
         case RA_DEC_UPDATED:
-            Double ra = (Double) data[0];
-            Double dec = (Double) data[1];
-            Integer x = (Integer) data[2];
-            Integer y = (Integer) data[3];
+            if (GlobalConf.program.DISPLAY_POINTER_COORDS) {
+                Double ra = (Double) data[0];
+                Double dec = (Double) data[1];
+                Integer x = (Integer) data[2];
+                Integer y = (Integer) data[3];
 
-            mouseXCoord.setText("RA/".concat(nf.format(ra)).concat("°"));
-            mouseXCoord.setPosition(x, GlobalConf.SCALE_FACTOR);
-            mouseYCoord.setText("DEC/".concat(nf.format(dec)).concat("°"));
-            mouseYCoord.setPosition(Gdx.graphics.getWidth() + GlobalConf.SCALE_FACTOR, Gdx.graphics.getHeight() - y);
+                pointerXCoord.setText("RA/".concat(nf.format(ra)).concat("°"));
+                pointerXCoord.setPosition(x, GlobalConf.SCALE_FACTOR);
+                pointerYCoord.setText("DEC/".concat(nf.format(dec)).concat("°"));
+                pointerYCoord.setPosition(Gdx.graphics.getWidth() + GlobalConf.SCALE_FACTOR, Gdx.graphics.getHeight() - y);
+            }
             break;
         case LON_LAT_UPDATED:
-            Double lon = (Double) data[0];
-            Double lat = (Double) data[1];
-            x = (Integer) data[2];
-            y = (Integer) data[3];
+            if (GlobalConf.program.DISPLAY_POINTER_COORDS) {
+                Double lon = (Double) data[0];
+                Double lat = (Double) data[1];
+                Integer x = (Integer) data[2];
+                Integer y = (Integer) data[3];
 
-            mouseXCoord.setText("Lon/".concat(nf.format(lon)).concat("°"));
-            mouseXCoord.setPosition(x, GlobalConf.SCALE_FACTOR);
-            mouseYCoord.setText("Lat/".concat(nf.format(lat)).concat("°"));
-            mouseYCoord.setPosition(Gdx.graphics.getWidth() + GlobalConf.SCALE_FACTOR, Gdx.graphics.getHeight() - y);
+                pointerXCoord.setText("Lon/".concat(nf.format(lon)).concat("°"));
+                pointerXCoord.setPosition(x, GlobalConf.SCALE_FACTOR);
+                pointerYCoord.setText("Lat/".concat(nf.format(lat)).concat("°"));
+                pointerYCoord.setPosition(Gdx.graphics.getWidth() + GlobalConf.SCALE_FACTOR, Gdx.graphics.getHeight() - y);
+            }
+            break;
+        case DISPLAY_POINTER_COORDS_CMD:
+            Boolean display = (Boolean) data[0];
+            pointerXCoord.setVisible(display);
+            pointerYCoord.setVisible(display);
             break;
         case POPUP_MENU_FOCUS:
             final IFocus candidate = (IFocus) data[0];
