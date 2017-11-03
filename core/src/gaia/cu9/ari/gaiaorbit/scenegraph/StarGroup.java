@@ -696,23 +696,27 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
         float textScale = 1f;
         for (int i = 0; i < N_CLOSEUP_STARS; i++) {
             StarBean star = (StarBean) pointData.get(active[i]);
-            float radius = (float) getRadius(active[i]);
             Vector3d lpos = fetchPosition(star, camera.getPos(), aux3d1.get(), currDeltaYears);
-            float distToCamera = (float) lpos.len();
-            float viewAngle = (float) (((radius / distToCamera) / camera.getFovFactor()) * GlobalConf.scene.STAR_BRIGHTNESS);
+            if (camera.getCurrent() instanceof FovCamera) {
+                render2DLabel(batch, shader, rc, sys.font2d, camera, star.name, lpos);
+            } else {
+                float radius = (float) getRadius(active[i]);
+                float distToCamera = (float) lpos.len();
+                float viewAngle = (float) (((radius / distToCamera) / camera.getFovFactor()) * GlobalConf.scene.STAR_BRIGHTNESS);
 
-            if (viewAngle >= thOverFactor) {
+                if (viewAngle >= thOverFactor) {
 
-                textPosition(camera, lpos, distToCamera, radius);
-                shader.setUniformf("u_viewAngle", viewAngle);
-                shader.setUniformf("u_viewAnglePow", 1f);
-                shader.setUniformf("u_thOverFactor", thOverFactor);
-                shader.setUniformf("u_thOverFactorScl", camera.getFovFactor());
-                float textSize = (float) FastMath.tanh(viewAngle) * distToCamera * 1e5f;
-                float alpha = Math.min((float) FastMath.atan(textSize / distToCamera), 1.e-3f);
-                textSize = (float) FastMath.tan(alpha) * distToCamera * 0.7f;
-                render3DLabel(batch, shader, sys.font3d, camera, rc, star.name, lpos, textScale, textSize * camera.getFovFactor());
+                    textPosition(camera, lpos, distToCamera, radius);
+                    shader.setUniformf("u_viewAngle", viewAngle);
+                    shader.setUniformf("u_viewAnglePow", 1f);
+                    shader.setUniformf("u_thOverFactor", thOverFactor);
+                    shader.setUniformf("u_thOverFactorScl", camera.getFovFactor());
+                    float textSize = (float) FastMath.tanh(viewAngle) * distToCamera * 1e5f;
+                    float alpha = Math.min((float) FastMath.atan(textSize / distToCamera), 1.e-3f);
+                    textSize = (float) FastMath.tan(alpha) * distToCamera * 0.7f;
+                    render3DLabel(batch, shader, sys.font3d, camera, rc, star.name, lpos, textScale, textSize * camera.getFovFactor());
 
+                }
             }
         }
 
