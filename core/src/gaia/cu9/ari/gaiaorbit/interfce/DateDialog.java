@@ -1,6 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.interfce;
 
-import java.util.Calendar;
 import java.util.Date;
 
 import com.badlogic.gdx.graphics.Color;
@@ -55,7 +54,7 @@ public class DateDialog extends CollapsibleWindow {
                 return false;
             }
         });
-        setNow.setSize(100 * GlobalConf.SCALE_FACTOR, 20 * GlobalConf.SCALE_FACTOR);
+        setNow.setSize(150 * GlobalConf.SCALE_FACTOR, 20 * GlobalConf.SCALE_FACTOR);
         add(setNow).center().colspan(2).padTop(pad);
         row();
 
@@ -195,7 +194,7 @@ public class DateDialog extends CollapsibleWindow {
                     if (cool) {
                         // Set the date
                         Date date = new Date();
-                        date.setYear(Integer.parseInt(year.getText())-1900);
+                        date.setYear(Integer.parseInt(year.getText()) - 1900);
                         date.setMonth(month.getSelectedIndex());
                         date.setDate(Integer.parseInt(day.getText()));
                         date.setHours(Integer.parseInt(hour.getText()));
@@ -247,6 +246,7 @@ public class DateDialog extends CollapsibleWindow {
 
     /**
      * Returns true if all is good
+     * 
      * @param f
      * @param min
      * @param max
@@ -269,7 +269,7 @@ public class DateDialog extends CollapsibleWindow {
 
     /** Updates the time **/
     public void updateTime(Date date) {
-    	int year = date.getYear() + 1900;
+        int year = date.getYear() + 1900;
         int month = date.getMonth();
         int day = date.getDate();
 
