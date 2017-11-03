@@ -58,7 +58,9 @@ public class StarCluster extends AbstractPositionEntity implements IFocus, IProp
 
     private ModelComponent mc;
 
+    /** Proper motion in units/year **/
     protected Vector3d pm;
+    /** Proper motion in mas/year **/
     protected Vector3 pmSph;
 
     protected float[] labelcolor;
@@ -78,8 +80,15 @@ public class StarCluster extends AbstractPositionEntity implements IFocus, IProp
      **/
     protected float fadeAlpha;
 
-    public StarCluster(String name, String parentName, Vector3d pos, Vector3d pm, Vector3d posSph, Vector3 pmSph, double raddeg, int nstars) {
+    public StarCluster() {
         super();
+        this.localTransform = new Matrix4();
+        this.pm = new Vector3d();
+        this.pmSph = new Vector3();
+    }
+
+    public StarCluster(String name, String parentName, Vector3d pos, Vector3d pm, Vector3d posSph, Vector3 pmSph, double raddeg, int nstars) {
+        this();
         this.parentName = parentName;
         this.name = name.replace("_", " ");
         this.pos = pos;
@@ -124,8 +133,6 @@ public class StarCluster extends AbstractPositionEntity implements IFocus, IProp
         this.ct = new ComponentTypes(ComponentType.Clusters.ordinal());
         // Compute size from distance and radius, convert to units
         this.size = (float) (Math.tan(Math.toRadians(this.raddeg)) * this.dist * 2);
-
-        this.localTransform = new Matrix4();
 
     }
 
@@ -420,6 +427,20 @@ public class StarCluster extends AbstractPositionEntity implements IFocus, IProp
 
     public int getNStars() {
         return nstars;
+    }
+
+    @Override
+    public <T extends SceneGraphNode> T getSimpleCopy() {
+        StarCluster copy = (StarCluster) super.getSimpleCopy();
+        copy.localTransform.set(this.localTransform);
+        copy.pm.set(this.pm);
+        copy.pmSph.set(this.pmSph);
+        copy.labelcolor = this.labelcolor;
+        copy.dist = this.dist;
+        copy.raddeg = this.raddeg;
+        copy.nstars = this.nstars;
+
+        return (T) copy;
     }
 
 }

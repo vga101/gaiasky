@@ -84,11 +84,15 @@ public class TGASDataProvider extends AbstractStarGroupDataProvider {
                         long sourceid = Parser.parseLong(tokens[0]);
 
                         /** INDEX **/
-                        String tyc = tokens[9].replace("\"", "");
-                        String[] tycgroups = tyc.split("-");
-                        int tyc1 = !tyc.isEmpty() ? Integer.parseInt(tycgroups[0]) : -1;
-                        int tyc2 = !tyc.isEmpty() ? Integer.parseInt(tycgroups[1]) : -1;
-                        int tyc3 = !tyc.isEmpty() ? Integer.parseInt(tycgroups[2]) : -1;
+                        int tyc1 = -1, tyc2 = -1, tyc3 = -1;
+                        String tyc = "";
+                        if (tokens.length > 9) {
+                            tyc = tokens[9].replace("\"", "");
+                            String[] tycgroups = tyc.split("-");
+                            tyc1 = !tyc.isEmpty() ? Integer.parseInt(tycgroups[0]) : -1;
+                            tyc2 = !tyc.isEmpty() ? Integer.parseInt(tycgroups[1]) : -1;
+                            tyc3 = !tyc.isEmpty() ? Integer.parseInt(tycgroups[2]) : -1;
+                        }
 
                         int hip = Parser.parseInt(tokens[8]);
                         if (hip <= 0 && extra.getSecond().containsKey(tyc)) {
@@ -192,7 +196,7 @@ public class TGASDataProvider extends AbstractStarGroupDataProvider {
      * @return The data map
      */
     private Map<Long, Double> loadRadialVelocities(String file) {
-        Map<Long, Double> result = new HashMap<Long, Double>();
+        Map<Long, Double> result = new HashMap<Long, Double>(220000);
 
         FileHandle f = Gdx.files.internal(file);
 

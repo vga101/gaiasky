@@ -365,17 +365,6 @@ public class KeyBindings {
             }
         }), SPECIAL1, Keys.U);
 
-        // CTRL + P -> Change pixel renderer
-        // addMapping(new ProgramAction(txt("action.toggle",
-        // txt("element.pixelrenderer")), new Runnable() {
-        // @Override
-        // public void run() {
-        // EventManager.instance.post(Events.PIXEL_RENDERER_CMD,
-        // (GlobalConf.scene.PIXEL_RENDERER + 1) % 3);
-        // EventManager.instance.post(Events.PIXEL_RENDERER_UPDATE);
-        // }
-        // }), SPECIAL1, Keys.P);
-
         // CTRL + G -> Travel to focus object
         addMapping(new ProgramAction(txt("action.gotoobject"), new Runnable() {
             @Override

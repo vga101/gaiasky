@@ -51,12 +51,12 @@ public class TGASHYGDataProvider extends AbstractStarGroupDataProvider {
             }
         }
 
-        // Add from hip to tgas
+        // Add from hip to TGAS
         for (int i = 0; i < hygdata.size; i++) {
             StarBean curr = hygdata.get(i);
             Integer hip = (int) curr.data[StarBean.I_HIP];
             if (!removed.contains(hip)) {
-                // Add to tgasdata
+                // Add to TGAS data
                 tgasdata.add(curr);
             } else {
                 // Use proper name
