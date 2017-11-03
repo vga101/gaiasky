@@ -392,6 +392,15 @@ public class KeyBindings {
             }
         }), SPECIAL1, SPECIAL2, Keys.G);
 
+        // HOME -> Back to Earth
+        addMapping(new ProgramAction(txt("action.home"), new Runnable() {
+            @Override
+            public void run() {
+                EventManager.instance.post(Events.FOCUS_CHANGE_CMD, "Earth");
+                EventManager.instance.post(Events.GO_TO_OBJECT_CMD);
+            }
+        }), Keys.HOME);
+
     }
 
     /**
