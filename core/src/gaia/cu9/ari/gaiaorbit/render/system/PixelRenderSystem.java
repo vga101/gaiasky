@@ -56,7 +56,7 @@ public class PixelRenderSystem extends ImmediateRenderSystem implements IObserve
         if (!shaderProgram.isCompiled()) {
             Logger.error(this.getClass().getName(), "Pixel shader compilation failed:\n" + shaderProgram.getLog());
         }
-        pointAlpha = new float[] { GlobalConf.scene.POINT_ALPHA_MIN, GlobalConf.scene.POINT_ALPHA_MAX };
+        pointAlpha = new float[] { GlobalConf.scene.POINT_ALPHA_MIN, GlobalConf.scene.POINT_ALPHA_MIN + GlobalConf.scene.POINT_ALPHA_MAX };
         shaderProgram.begin();
         shaderProgram.setUniform2fv("u_pointAlpha", pointAlpha, 0, 2);
         shaderProgram.end();

@@ -53,10 +53,7 @@ public class StarGroupRenderSystem extends ImmediateRenderSystem implements IObs
         if (!shaderProgram.isCompiled()) {
             Logger.error(this.getClass().getName(), "Star group shader compilation failed:\n" + shaderProgram.getLog());
         }
-        pointAlpha = new float[] { GlobalConf.scene.POINT_ALPHA_MIN, GlobalConf.scene.POINT_ALPHA_MAX };
-        shaderProgram.begin();
-        shaderProgram.setUniform2fv("u_pointAlpha", pointAlpha, 0, 2);
-        shaderProgram.end();
+        pointAlpha = new float[] { GlobalConf.scene.POINT_ALPHA_MIN, GlobalConf.scene.POINT_ALPHA_MIN + GlobalConf.scene.POINT_ALPHA_MAX };
     }
 
     @Override
@@ -177,6 +174,7 @@ public class StarGroupRenderSystem extends ImmediateRenderSystem implements IObs
                 Gdx.gl20.glBlendFunc(GL20.GL_ONE, GL20.GL_ONE);
 
                 shaderProgram.begin();
+                shaderProgram.setUniform2fv("u_pointAlpha", pointAlpha, 0, 2);
                 shaderProgram.setUniformMatrix("u_projModelView", camera.getCamera().combined);
                 shaderProgram.setUniformf("u_camPos", camera.getCurrent().getPos().put(aux1));
 
@@ -220,12 +218,9 @@ public class StarGroupRenderSystem extends ImmediateRenderSystem implements IObs
         switch (event) {
         case STAR_MIN_OPACITY_CMD:
             if (shaderProgram != null && shaderProgram.isCompiled()) {
-                pointAlpha[0] = (float) data[0];
-                pointAlpha[1] = pointAlpha[0] + GlobalConf.scene.POINT_ALPHA_MAX;
                 Gdx.app.postRunnable(() -> {
-                    shaderProgram.begin();
-                    shaderProgram.setUniform2fv("u_pointAlpha", pointAlpha, 0, 2);
-                    shaderProgram.end();
+                    pointAlpha[0] = (float) data[0];
+                    pointAlpha[1] = pointAlpha[0] + GlobalConf.scene.POINT_ALPHA_MAX;
                 });
             }
             break;
