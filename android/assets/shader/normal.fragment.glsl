@@ -166,9 +166,9 @@ float getShadow()
     // Complex lookup: PCF + interpolation (see http://codeflow.org/entries/2013/feb/15/soft-shadow-mapping/)
     vec2 size = vec2(1.0 / (2.0 * u_shadowPCFOffset));
     float result = 0.0;
-    for(int x=-2.0; x<=2.0; x++){
-        for(int y=-2.0; y<=2.0; y++){
-            vec2 offset = vec2(x, y) / size;
+    for(int x=-2; x<=2; x++){
+        for(int y=-2; y<=2; y++){
+            vec2 offset = vec2(float(x), float(y)) / size;
             result += texture2DShadowLerp(size, v_shadowMapUv.xy + offset, v_shadowMapUv.z);
             //result += getShadowness(v_shadowMapUv.xy, offset, v_shadowMapUv.z);
         }
