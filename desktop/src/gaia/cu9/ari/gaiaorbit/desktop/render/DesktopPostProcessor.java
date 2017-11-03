@@ -272,12 +272,13 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
 
     @Override
     public void dispose() {
-        for (int i = 0; i < RenderType.values().length; i++) {
-            if (pps[i] != null) {
-                PostProcessBean ppb = pps[i];
-                ppb.dispose();
+        if (pps != null)
+            for (int i = 0; i < RenderType.values().length; i++) {
+                if (pps[i] != null) {
+                    PostProcessBean ppb = pps[i];
+                    ppb.dispose();
+                }
             }
-        }
     }
 
     @Override
