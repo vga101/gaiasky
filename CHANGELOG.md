@@ -27,6 +27,8 @@
 
 **Fixed bugs:**
 
+- Fix star min opacity initialisation [\#207](https://github.com/langurmonkey/gaiasky/issues/207)
+- Crash when selecting NBG galaxy with the time on [\#206](https://github.com/langurmonkey/gaiasky/issues/206)
 - goToObject\(name, angle\) not zooming out if current angle is larger than target [\#195](https://github.com/langurmonkey/gaiasky/issues/195)
 - NullPointerException in DesktopNetworkChecker [\#193](https://github.com/langurmonkey/gaiasky/issues/193)
 - Look for ways to prevent time overflow [\#190](https://github.com/langurmonkey/gaiasky/issues/190)
