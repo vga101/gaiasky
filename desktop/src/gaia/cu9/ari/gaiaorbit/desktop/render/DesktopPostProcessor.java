@@ -385,6 +385,18 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
                 }
             });
             break;
+        case CUBEMAP360_CMD:
+            boolean c360 = (Boolean) data[0];
+            boolean enabled = !c360 && GlobalConf.postprocess.POSTPROCESS_MOTION_BLUR > 0;
+            for (int i = 0; i < RenderType.values().length; i++) {
+                if (pps[i] != null) {
+                    PostProcessBean ppb = pps[i];
+                    ppb.motionblur.setBlurOpacity(!enabled ? 0 : GlobalConf.postprocess.POSTPROCESS_MOTION_BLUR);
+                    ppb.motionblur.setEnabled(enabled);
+                }
+            }
+
+            break;
 
         case LIGHT_POS_2D_UPDATED:
             Integer nLights = (Integer) data[0];
