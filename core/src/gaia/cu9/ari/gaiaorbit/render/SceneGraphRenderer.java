@@ -321,7 +321,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         });
 
         // BILLBOARD STARS
-        AbstractRenderSystem billboardStarsProc = new BillboardStarRenderSystem(RenderGroup.BILLBOARD_STAR, priority++, alphas, starShader, true, "data/tex/star_glow_s.png", ComponentType.Stars.ordinal());
+        AbstractRenderSystem billboardStarsProc = new BillboardStarRenderSystem(RenderGroup.BILLBOARD_STAR, priority++, alphas, starShader, "data/tex/star_glow_s.png", ComponentType.Stars.ordinal());
         billboardStarsProc.setPreRunnable(blendNoDepthRunnable);
         billboardStarsProc.setPostRunnable(new RenderSystemRunnable() {
 
@@ -370,7 +370,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         });
 
         // BILLBOARD GALAXIES
-        AbstractRenderSystem billboardGalaxiesProc = new BillboardStarRenderSystem(RenderGroup.BILLBOARD_GAL, priority++, alphas, galaxyShader, true, "img/static.jpg", ComponentType.Galaxies.ordinal());
+        AbstractRenderSystem billboardGalaxiesProc = new BillboardStarRenderSystem(RenderGroup.BILLBOARD_GAL, priority++, alphas, galaxyShader, "img/static.jpg", ComponentType.Galaxies.ordinal());
         billboardGalaxiesProc.setPreRunnable(blendNoDepthRunnable);
 
         // BILLBOARD SPRITES
@@ -409,7 +409,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         labelsProc.setPreRunnable(blendNoDepthRunnable);
 
         // BILLBOARD SSO
-        AbstractRenderSystem billboardSSOProc = new BillboardStarRenderSystem(RenderGroup.BILLBOARD_SSO, priority++, alphas, starShader, false, "img/sso.png", -1);
+        AbstractRenderSystem billboardSSOProc = new BillboardStarRenderSystem(RenderGroup.BILLBOARD_SSO, priority++, alphas, starShader, "img/sso.png", -1);
         billboardSSOProc.setPreRunnable(blendDepthRunnable);
 
         // MODEL ATMOSPHERE

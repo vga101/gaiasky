@@ -142,7 +142,7 @@ public class BillboardSpriteRenderSystem extends AbstractRenderSystem {
             int size = renderables.size;
             for (int i = 0; i < size; i++) {
                 IQuadRenderable s = (IQuadRenderable) renderables.get(i);
-                s.render(shaderProgram, getAlpha(s), false, mesh, camera);
+                s.render(shaderProgram, getAlpha(s), mesh, camera);
             }
             shaderProgram.end();
 

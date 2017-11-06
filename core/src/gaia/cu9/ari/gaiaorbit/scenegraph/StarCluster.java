@@ -218,7 +218,7 @@ public class StarCluster extends AbstractPositionEntity implements IFocus, IProp
      * Billboard quad rendering
      */
     @Override
-    public void render(ShaderProgram shader, float alpha, boolean colorTransit, Mesh mesh, ICamera camera) {
+    public void render(ShaderProgram shader, float alpha, Mesh mesh, ICamera camera) {
         // Bind texture
         if (clusterTex != null) {
             clusterTex.bind(0);

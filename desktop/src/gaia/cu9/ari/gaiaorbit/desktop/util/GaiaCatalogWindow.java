@@ -51,7 +51,8 @@ public class GaiaCatalogWindow extends CollapsibleWindow {
 
     private static String URL_GAIA_WEB_SOURCE = "http://gaia.ari.uni-heidelberg.de/singlesource.html#id=";
 
-    private static String URL_GAIA_HIP = "http://gaia.ari.uni-heidelberg.de/tap/sync?REQUEST=doQuery&LANG=ADQL&FORMAT=json&QUERY=SELECT+*+FROM+extcat.hipparcos+WHERE+hip=";
+    private static String URL_HIP_WEB_SOURCE = "http://gaia.ari.uni-heidelberg.de/singlesource.html#id=";
+
     private static final String separator = "\n";
 
     private final GaiaCatalogWindow me;
@@ -171,14 +172,14 @@ public class GaiaCatalogWindow extends CollapsibleWindow {
     }
 
     private void getDataBySourceId(long sourceid, GaiaDataListener listener) {
-        getTAPData(URL_GAIA_JSON_SOURCE + Long.toString(sourceid), "json", listener);
+        getTAPData(URL_GAIA_JSON_SOURCE + Long.toString(sourceid), false, "json", listener);
     }
 
     private void getDataByHipId(int hip, GaiaDataListener listener) {
-        getTAPData(URL_GAIA_HIP + Integer.toString(hip), "json", listener);
+        getTAPData(URL_HIP_JSON_SOURCE + Integer.toString(hip), true, "json", listener);
     }
 
-    private String[][] getTAPData(String url, final String format, final GaiaDataListener listener) {
+    private String[][] getTAPData(String url, boolean hip, final String format, final GaiaDataListener listener) {
         HttpRequest request = new HttpRequest(HttpMethods.GET);
         request.setUrl(url);
         request.setTimeOut(5000);
@@ -188,7 +189,7 @@ public class GaiaCatalogWindow extends CollapsibleWindow {
             public void handleHttpResponse(HttpResponse httpResponse) {
                 if (httpResponse.getStatus().getStatusCode() == HttpStatus.SC_OK) {
                     // Ok
-                    listener.ok(isToArray(httpResponse.getResultAsStream(), format));
+                    listener.ok(isToArray(httpResponse.getResultAsStream(), format), hip);
                 } else {
                     // Ko with code
                     listener.ko(httpResponse.getStatus().toString());
@@ -315,7 +316,7 @@ public class GaiaCatalogWindow extends CollapsibleWindow {
             this.st = st;
         }
 
-        public void ok(String[][] data) {
+        public void ok(final String[][] data, boolean hip) {
             Gdx.app.postRunnable(() -> {
 
                 HorizontalGroup links = new HorizontalGroup();
@@ -323,10 +324,13 @@ public class GaiaCatalogWindow extends CollapsibleWindow {
                 links.pad(5, 5, 5, 5);
                 links.space(10);
 
-                links.addActor(new Link(txt("gui.data.json"), linkStyle, URL_GAIA_JSON_SOURCE + st.getId()));
-                links.addActor(new OwnLabel("|", skin));
-                links.addActor(new Link(txt("gui.data.archive"), linkStyle, URL_GAIA_WEB_SOURCE + st.getId()));
-                //links.addActor(new Link(txt("gui.data.json"), linkStyle, URL_HIP_JSON_SOURCE + st.hip));
+                if (hip)
+                    links.addActor(new Link(txt("gui.data.json"), linkStyle, URL_HIP_JSON_SOURCE + st.getHip()));
+                else {
+                    links.addActor(new Link(txt("gui.data.json"), linkStyle, URL_GAIA_JSON_SOURCE + st.getId()));
+                    links.addActor(new OwnLabel("|", skin));
+                    links.addActor(new Link(txt("gui.data.archive"), linkStyle, URL_GAIA_WEB_SOURCE + st.getId()));
+                }
 
                 table.add(links).colspan(2).padTop(pad * 2).padBottom(pad * 2);
                 table.row();

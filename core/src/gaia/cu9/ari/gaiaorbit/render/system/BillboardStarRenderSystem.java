@@ -14,9 +14,6 @@ import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 
-import gaia.cu9.ari.gaiaorbit.event.EventManager;
-import gaia.cu9.ari.gaiaorbit.event.Events;
-import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.render.IQuadRenderable;
 import gaia.cu9.ari.gaiaorbit.render.IRenderable;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
@@ -25,25 +22,20 @@ import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.DecalUtils;
 import gaia.cu9.ari.gaiaorbit.util.comp.DistToCameraComparator;
 
-public class BillboardStarRenderSystem extends AbstractRenderSystem implements IObserver {
+public class BillboardStarRenderSystem extends AbstractRenderSystem {
 
     private ShaderProgram shaderProgram;
     private Mesh mesh;
-    private boolean useStarColorTransit;
-    private boolean starColorTransit = false;
     private Quaternion quaternion;
     private Vector3 aux;
     private Texture texture0;
     private int ctindex = -1;
 
-    public BillboardStarRenderSystem(RenderGroup rg, int priority, float[] alphas, ShaderProgram shaderProgram, boolean useStarColorTransit, String tex0, int ctindex, float w, float h) {
+    public BillboardStarRenderSystem(RenderGroup rg, int priority, float[] alphas, ShaderProgram shaderProgram, String tex0, int ctindex, float w, float h) {
         super(rg, priority, alphas);
         this.shaderProgram = shaderProgram;
-        this.useStarColorTransit = useStarColorTransit;
         this.ctindex = ctindex;
         init(tex0, w, h);
-        if (this.useStarColorTransit)
-            EventManager.instance.subscribe(this, Events.TRANSIT_COLOUR_CMD);
     }
 
     /**
@@ -57,11 +49,9 @@ public class BillboardStarRenderSystem extends AbstractRenderSystem implements I
      *            The alphas list.
      * @param shaderProgram
      *            The shader program to render the quad with.
-     * @param useStarColorTransit
-     *            Whether to use the star color transit or not.
      */
-    public BillboardStarRenderSystem(RenderGroup rg, int priority, float[] alphas, ShaderProgram shaderProgram, boolean useStarColorTransit, String tex0, int ctindex) {
-        this(rg, priority, alphas, shaderProgram, useStarColorTransit, tex0, ctindex, 2, 2);
+    public BillboardStarRenderSystem(RenderGroup rg, int priority, float[] alphas, ShaderProgram shaderProgram, String tex0, int ctindex) {
+        this(rg, priority, alphas, shaderProgram, tex0, ctindex, 2, 2);
     }
 
     private void init(String tex0, float w, float h) {
@@ -165,20 +155,12 @@ public class BillboardStarRenderSystem extends AbstractRenderSystem implements I
             int size = renderables.size;
             for (int i = 0; i < size; i++) {
                 IQuadRenderable s = (IQuadRenderable) renderables.get(i);
-                s.render(shaderProgram, getAlpha(s), starColorTransit, mesh, camera);
+                s.render(shaderProgram, getAlpha(s), mesh, camera);
             }
             shaderProgram.end();
 
             // Restore
             Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
-        }
-
-    }
-
-    @Override
-    public void notify(Events event, Object... data) {
-        if (event == Events.TRANSIT_COLOUR_CMD) {
-            starColorTransit = (boolean) data[1];
         }
 
     }

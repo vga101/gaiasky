@@ -184,7 +184,7 @@ public abstract class ModelBody extends CelestialBody {
      * Billboard quad rendering
      */
     @Override
-    public void render(ShaderProgram shader, float alpha, boolean colorTransit, Mesh mesh, ICamera camera) {
+    public void render(ShaderProgram shader, float alpha, Mesh mesh, ICamera camera) {
         compalpha = alpha;
 
         float size = getFuzzyRenderSize(camera);
@@ -193,8 +193,7 @@ public abstract class ModelBody extends CelestialBody {
         shader.setUniformf("u_pos", transform.getTranslationf(aux));
         shader.setUniformf("u_size", size);
 
-        float[] col = colorTransit ? ccTransit : ccPale;
-        shader.setUniformf("u_color", col[0], col[1], col[2], alpha * (1 - fadeOpacity));
+        shader.setUniformf("u_color", cc[0], cc[1], cc[2], alpha * (1 - fadeOpacity));
         shader.setUniformf("u_inner_rad", getInnerRad());
         shader.setUniformf("u_distance", (float) distToCamera);
         shader.setUniformf("u_apparent_angle", (float) viewAngleApparent);

@@ -560,7 +560,7 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
      * Quad rendering
      */
     @Override
-    public void render(ShaderProgram shader, float alpha, boolean colorTransit, Mesh mesh, ICamera camera) {
+    public void render(ShaderProgram shader, float alpha, Mesh mesh, ICamera camera) {
         double thpointTimesFovfactor = GlobalConf.scene.STAR_THRESHOLD_POINT * camera.getFovFactor() * .5e-1f;
         double thupOverFovfactor = Constants.THRESHOLD_UP / camera.getFovFactor();
         double thdownOverFovfactor = Constants.THRESHOLD_DOWN / camera.getFovFactor();

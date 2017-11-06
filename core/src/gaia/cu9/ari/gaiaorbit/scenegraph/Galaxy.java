@@ -129,7 +129,7 @@ public class Galaxy extends Particle {
     }
 
     @Override
-    public void render(ShaderProgram shader, float alpha, boolean colorTransit, Mesh mesh, ICamera camera) {
+    public void render(ShaderProgram shader, float alpha, Mesh mesh, ICamera camera) {
         compalpha = alpha;
 
         float size = getFuzzyRenderSize(camera);
@@ -138,8 +138,7 @@ public class Galaxy extends Particle {
         shader.setUniformf("u_pos", transform.getTranslationf(aux));
         shader.setUniformf("u_size", size);
 
-        float[] col = colorTransit ? ccTransit : ccPale;
-        shader.setUniformf("u_color", col[0], col[1], col[2], alpha);
+        shader.setUniformf("u_color", ccPale[0], ccPale[1], ccPale[2], alpha);
         shader.setUniformf("u_alpha", alpha * opacity);
         shader.setUniformf("u_distance", (float) distToCamera);
         shader.setUniformf("u_apparent_angle", (float) viewAngleApparent);

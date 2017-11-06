@@ -3,7 +3,7 @@
 	{
 	"name" : "Mercury",
 	"wikiname" : "Mercury (planet)",
-	"color" : [.51, .32, .08, 1.0],
+	"color" : [.71, .32, .08, 1.0],
 	"size" : 2439.7,
 	"ct" : Planets,
 
@@ -48,7 +48,7 @@
 	{
 	"name" : "Venus",
 	"wikiname" : "Venus",
-	"color" : [.56, .29, .04, 1.0],
+	"color" : [.76, .1, .04, 1.0],
 	"size" : 6052.0,
 	"ct" : Planets,
 
@@ -105,7 +105,7 @@
 	{
 	"name" : "Earth",
 	"wikiname" : "Earth",
-	"color" : [.23, .36, .89, 1.0],
+	"color" : [.13, .26, .89, 1.0],
 	"size" : 6371.1,
 	"ct" : Planets,
 
@@ -168,7 +168,7 @@
 	{
 	"name" : "Mars",
 	"wikiname" : "Mars",
-	"color" : [.36, .18, .08, 1.0],
+	"color" : [1.0, .28, .08, 1.0],
 	"size" : 3389.5,
 	"ct" : Planets,
 
@@ -320,7 +320,7 @@
 	{
 	"name" : "Uranus",
 	"wikiname" : "Uranus",
-	"color" : [.40, .76, .92, 1.0],
+	"color" : [.20, .56, .92, 1.0],
 	"size" : 25362.0,
 	"ct" : Planets,
 
@@ -363,7 +363,7 @@
 	{
 	"name" : "Neptune",
 	"wikiname" : "Neptune",
-	"color" : [.23, .36, .89, 1.0],
+	"color" : [.23, .36, .99, 1.0],
 	"size" : 24622.0,
 	"ct" : Planets,
 
