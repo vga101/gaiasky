@@ -1,7 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.desktop.render;
 
-import java.util.Arrays;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
@@ -361,8 +359,6 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
             Gdx.app.postRunnable(() -> {
                 Vector3d campos = (Vector3d) data[0];
                 PerspectiveCamera cam = (PerspectiveCamera) data[3];
-
-                boolean cameraChanged = !Arrays.equals(cam.combined.val, prevCombined.val) || !campos.equals(prevCampos);
 
                 for (int i = 0; i < RenderType.values().length; i++) {
                     if (pps[i] != null) {
