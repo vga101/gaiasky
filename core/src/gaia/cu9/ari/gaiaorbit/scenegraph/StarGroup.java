@@ -622,7 +622,8 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
             }
             computedSize = (size * (dist / radius) * Constants.THRESHOLD_DOWN);
         }
-        computedSize *= GlobalConf.scene.STAR_BRIGHTNESS * 0.2;
+        // Change the factor at the end here to control the stray light of stars
+        computedSize *= GlobalConf.scene.STAR_BRIGHTNESS * 0.15;
 
         return computedSize;
     }

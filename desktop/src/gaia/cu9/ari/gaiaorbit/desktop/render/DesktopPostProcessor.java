@@ -369,7 +369,7 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
                         PostProcessBean ppb = pps[i];
 
                         // Motion blur
-                        ppb.motionblur.setEnabled(GlobalConf.postprocess.POSTPROCESS_MOTION_BLUR != 0 && cameraChanged);
+                        ppb.motionblur.setEnabled(GlobalConf.postprocess.POSTPROCESS_MOTION_BLUR != 0);
 
                     }
                 }
