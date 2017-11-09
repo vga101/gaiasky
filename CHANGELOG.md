@@ -6,6 +6,8 @@
 
 **Implemented enhancements:**
 
+- Add 'Back to Earth' key mapping [\#209](https://github.com/langurmonkey/gaiasky/issues/209)
+- Add pointer coordinates toggle in preferences [\#208](https://github.com/langurmonkey/gaiasky/issues/208)
 - Constellations with proper motions [\#203](https://github.com/langurmonkey/gaiasky/issues/203)
 - Add controller debug mode to help create mappings [\#202](https://github.com/langurmonkey/gaiasky/issues/202)
 - Add support for emissive colors and textures [\#201](https://github.com/langurmonkey/gaiasky/issues/201)
@@ -36,6 +38,7 @@
 - Fix `facingFocus` state issue [\#187](https://github.com/langurmonkey/gaiasky/issues/187)
 - Fix MAS\_TO\_DEG conversion in AstroUtils [\#186](https://github.com/langurmonkey/gaiasky/issues/186)
 - Fix 'run script' window handling of scripts with same name [\#182](https://github.com/langurmonkey/gaiasky/issues/182)
+- Motion blur causes problems with 360 mode [\#87](https://github.com/langurmonkey/gaiasky/issues/87)
 
 **Closed issues:**
 
