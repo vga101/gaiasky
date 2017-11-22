@@ -23,10 +23,10 @@
 	"model"			: {
 						"args" : [true],
 						"usecolor" : False,
-						"model" : "data/models/gaia/gaia.g3db"
+						"model" : "data/models/gaia/gaia.obj"
 				},
 
-	"shadowvalues" : [ 240.0, 1.6, 0.9 ]
+	"shadowvalues" : [ 270.0, 1.5, 1.5 ]
 	},
 	
 	

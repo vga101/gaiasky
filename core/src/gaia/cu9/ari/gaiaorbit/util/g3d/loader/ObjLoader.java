@@ -380,6 +380,7 @@ class MtlLoader {
         float shininess = 0.f;
         String texDiffuseFilename = null;
         String texEmissiveFilename = null;
+        String texNormalFilename = null;
 
         if (file == null || file.exists() == false)
             return;
@@ -400,7 +401,7 @@ class MtlLoader {
                 else {
                     final String key = tokens[0].toLowerCase();
                     if (key.equals("newmtl")) {
-                        addCurrentMat(curMatName, difcolor, speccolor, emicolor, opacity, shininess, texDiffuseFilename, texEmissiveFilename, materials);
+                        addCurrentMat(curMatName, difcolor, speccolor, emicolor, opacity, shininess, texDiffuseFilename, texEmissiveFilename, texNormalFilename, materials);
 
                         if (tokens.length > 1) {
                             curMatName = tokens[1];
@@ -440,6 +441,8 @@ class MtlLoader {
                         texDiffuseFilename = file.parent().child(tokens[1]).path();
                     } else if (key.equals("map_ke")) {
                         texEmissiveFilename = file.parent().child(tokens[1]).path();
+                    } else if (key.equals("map_kn") || key.equals("map_bump")) {
+                        texNormalFilename = file.parent().child(tokens[1]).path();
                     }
                 }
             }
@@ -449,12 +452,12 @@ class MtlLoader {
         }
 
         // last material
-        addCurrentMat(curMatName, difcolor, speccolor, emicolor, opacity, shininess, texDiffuseFilename, texEmissiveFilename, materials);
+        addCurrentMat(curMatName, difcolor, speccolor, emicolor, opacity, shininess, texDiffuseFilename, texEmissiveFilename, texNormalFilename, materials);
 
         return;
     }
 
-    private void addCurrentMat(String curMatName, Color difcolor, Color speccolor, Color emicolor, float opacity, float shininess, String texDiffuseFilename, String texEmissiveFilename, Array<ModelMaterial> materials) {
+    private void addCurrentMat(String curMatName, Color difcolor, Color speccolor, Color emicolor, float opacity, float shininess, String texDiffuseFilename, String texEmissiveFilename, String texNormalFilename, Array<ModelMaterial> materials) {
         ModelMaterial mat = new ModelMaterial();
         mat.id = curMatName;
         mat.diffuse = new Color(difcolor);
@@ -474,6 +477,14 @@ class MtlLoader {
             ModelTexture tex = new ModelTexture();
             tex.usage = ModelTexture.USAGE_EMISSIVE;
             tex.fileName = new String(texEmissiveFilename);
+            if (mat.textures == null)
+                mat.textures = new Array<ModelTexture>(1);
+            mat.textures.add(tex);
+        }
+        if (texNormalFilename != null) {
+            ModelTexture tex = new ModelTexture();
+            tex.usage = ModelTexture.USAGE_NORMAL;
+            tex.fileName = new String(texNormalFilename);
             if (mat.textures == null)
                 mat.textures = new Array<ModelTexture>(1);
             mat.textures.add(tex);
