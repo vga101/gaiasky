@@ -44,7 +44,7 @@ public class Gaia extends Satellite {
         if (time.getDt() != 0 || force) {
             unrotatedPos.set(pos);
             // Undo rotation
-            unrotatedPos.mul(Coordinates.eclipticToEquatorial()).rotate(-AstroUtils.getSunLongitude(time.getTime()) - 180, 0, 1, 0);
+            unrotatedPos.mul(Coordinates.eqToEcl()).rotate(-AstroUtils.getSunLongitude(time.getTime()) - 180, 0, 1, 0);
             attitude = GaiaAttitudeServer.instance.getAttitude(time.getTime());
         }
     }

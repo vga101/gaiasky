@@ -549,8 +549,9 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
     protected void addToRenderLists(ICamera camera) {
         addToRender(this, RenderGroup.STAR_GROUP);
         addToRender(this, RenderGroup.BILLBOARD_STAR);
-        addToRender(this, RenderGroup.LINE);
         addToRender(this, RenderGroup.MODEL_STAR);
+        if (GlobalConf.scene.PROPER_MOTION_VECTORS)
+            addToRender(this, RenderGroup.LINE);
         if (renderText()) {
             addToRender(this, RenderGroup.FONT_LABEL);
         }

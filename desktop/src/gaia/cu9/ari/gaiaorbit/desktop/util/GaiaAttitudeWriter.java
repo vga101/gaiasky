@@ -80,7 +80,7 @@ public class GaiaAttitudeWriter {
                         writerEq.append(Math.toDegrees(sph1.x) + ", " + Math.toDegrees(sph1.y) + ", " + t + ", " + current + ", " + GaiaAttitudeServer.instance.getCurrentAttitudeName() + "\n");
 
                         //Ecliptic
-                        v1.mul(Coordinates.eclipticToEquatorial());
+                        v1.mul(Coordinates.eqToEcl());
                         Coordinates.cartesianToSpherical(v1, sph1);
                         writerEcl.append(Math.toDegrees(sph1.x) + ", " + Math.toDegrees(sph1.y) + ", " + t + ", " + current + ", " + GaiaAttitudeServer.instance.getCurrentAttitudeName() + "\n");
                     } else if (type.equals(OutputType.FOV_VECTORS)) {
@@ -96,8 +96,8 @@ public class GaiaAttitudeWriter {
                         writerEq.append(Math.toDegrees(sph1.x) + ", " + Math.toDegrees(sph1.y) + ", " + Math.toDegrees(sph2.x) + ", " + Math.toDegrees(sph2.y) + ", " + t + ", " + current + ", " + GaiaAttitudeServer.instance.getCurrentAttitudeName() + "\n");
 
                         //Ecliptic
-                        v1.mul(Coordinates.eclipticToEquatorial());
-                        v2.mul(Coordinates.eclipticToEquatorial());
+                        v1.mul(Coordinates.eqToEcl());
+                        v2.mul(Coordinates.eqToEcl());
                         Coordinates.cartesianToSpherical(v1, sph1);
                         Coordinates.cartesianToSpherical(v2, sph2);
                         writerEcl.append(Math.toDegrees(sph1.x) + ", " + Math.toDegrees(sph1.y) + ", " + Math.toDegrees(sph2.x) + ", " + Math.toDegrees(sph2.y) + ", " + t + ", " + current + ", " + GaiaAttitudeServer.instance.getCurrentAttitudeName() + "\n");

@@ -1,5 +1,7 @@
 package gaia.cu9.ari.gaiaorbit.util.gaia;
 
+import java.util.Arrays;
+
 import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
 import gaia.cu9.ari.gaiaorbit.util.coord.NslSun;
 import gaia.cu9.ari.gaiaorbit.util.gaia.time.Secs;
@@ -11,8 +13,6 @@ import gaia.cu9.ari.gaiaorbit.util.gaia.utils.RungeKuttaNs;
 import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
 import gaia.cu9.ari.gaiaorbit.util.math.Quaterniond;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
-
-import java.util.Arrays;
 
 /**
  * Class to generate Gaia Modified Scanning Law (MSL).
@@ -198,7 +198,9 @@ public class ModifiedScanningLaw {
 
     /**
      * Constructor with NSL initialization for given start time
-     * @param gtBeg - The time elapsed in nanoseconds since epoch J2010
+     * 
+     * @param gtBeg
+     *            - The time elapsed in nanoseconds since epoch J2010
      */
     public ModifiedScanningLaw(long gtBeg) {
 
@@ -472,7 +474,7 @@ public class ModifiedScanningLaw {
         double radius2 = 0.50 * DEG;
         Coordinates.sphericalToCartesian(1.44 * DEG, -2.64 * DEG, radius2, dir2);
 
-        Matrix4d galEq = Coordinates.galacticToEquatorial();
+        Matrix4d galEq = Coordinates.eqToGal();
         dir1.mul(galEq);
         dir2.mul(galEq);
 

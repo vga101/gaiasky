@@ -14,9 +14,7 @@ import com.badlogic.gdx.utils.Pool;
 import gaia.cu9.ari.gaiaorbit.render.ILineRenderable;
 import gaia.cu9.ari.gaiaorbit.render.IRenderable;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
-import gaia.cu9.ari.gaiaorbit.scenegraph.IStarFocus;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
-import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
@@ -236,11 +234,7 @@ public class LineQuadRenderSystem extends LineRenderSystem {
         int size = renderables.size;
         for (int i = 0; i < size; i++) {
             ILineRenderable renderable = (ILineRenderable) renderables.get(i);
-            boolean rend = true;
-            if (renderable instanceof IStarFocus && !GlobalConf.scene.PROPER_MOTION_VECTORS)
-                rend = false;
-            if (rend)
-                renderable.render(this, camera, getAlpha(renderable));
+            renderable.render(this, camera, getAlpha(renderable));
         }
 
         // Sort phase

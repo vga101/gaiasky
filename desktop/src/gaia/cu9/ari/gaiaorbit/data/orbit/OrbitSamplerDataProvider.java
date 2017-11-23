@@ -121,7 +121,7 @@ public class OrbitSamplerDataProvider implements IOrbitDataProvider, IObserver {
             }
 
             Coordinates.sphericalToCartesian(ecl, ecl);
-            ecl.mul(Coordinates.equatorialToEcliptic()).scl(1);
+            ecl.mul(Coordinates.eclToEq()).scl(1);
             data.x.add(ecl.x);
             data.y.add(ecl.y);
             data.z.add(ecl.z);

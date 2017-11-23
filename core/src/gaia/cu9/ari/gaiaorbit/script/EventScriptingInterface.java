@@ -308,7 +308,7 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
         double dist = radius / Math.tan(Math.toRadians(viewAngle / 2)) + radius;
 
         // Up to ecliptic north pole
-        Vector3d up = new Vector3d(0, 1, 0).mul(Coordinates.equatorialToEcliptic());
+        Vector3d up = new Vector3d(0, 1, 0).mul(Coordinates.eclToEq());
 
         Vector3d focusPos = aux1;
         focus.getAbsolutePosition(focusPos);

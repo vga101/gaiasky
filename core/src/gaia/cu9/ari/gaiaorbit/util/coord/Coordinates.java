@@ -41,27 +41,27 @@ public class Coordinates {
         // Initialize matrices
 
         // EQ -> ECL
-        equatorialToEcliptic = getRotationMatrix(0, OBLIQUITY_DEG_J2000, 0);
+        equatorialToEcliptic = getRotationMatrix(0, -OBLIQUITY_DEG_J2000, 0);
         equatorialToEclipticF = equatorialToEcliptic.putIn(new Matrix4());
 
         // ECL -> EQ
-        eclipticToEquatorial = getRotationMatrix(0, -OBLIQUITY_DEG_J2000, 0);
+        eclipticToEquatorial = getRotationMatrix(0, OBLIQUITY_DEG_J2000, 0);
         eclipticToEquatorialF = eclipticToEquatorial.putIn(new Matrix4());
 
         // EQ -> GAL
-        equatorialToGalactic = getRotationMatrix(-R, 90 - Q, 90 + P);
+        equatorialToGalactic = getRotationMatrix(R, -(90 - Q), -(90 + P));
         equatorialToGalacticF = equatorialToGalactic.putIn(new Matrix4());
 
         // GAL -> EQ
-        galacticToEquatorial = getRotationMatrix(R, -(90 - Q), -(90 + P));
+        galacticToEquatorial = getRotationMatrix(-R, 90 - Q, 90 + P);
         galacticToEquatorialF = galacticToEquatorial.putIn(new Matrix4());
 
         // ECL -> GAL
-        eclipticToGalactic = new Matrix4d(eclipticToEquatorial).mul(equatorialToGalactic);
+        eclipticToGalactic = new Matrix4d(galacticToEquatorial).mul(equatorialToEcliptic);
         eclipticToGalacticF = eclipticToGalactic.putIn(new Matrix4());
 
         // GAL -> ECL
-        galacticToEcliptic = new Matrix4d(galacticToEquatorial).mul(equatorialToEcliptic);
+        galacticToEcliptic = new Matrix4d(eclipticToEquatorial).mul(equatorialToGalactic);
         galacticToEclipticF = galacticToEcliptic.putIn(new Matrix4());
 
     }
@@ -106,14 +106,62 @@ public class Coordinates {
      * @return The matrix to transform from equatorial coordinates to ecliptic
      *         coordinates.
      */
-    public static Matrix4d equatorialToEcliptic() {
+    public static Matrix4d eclToEq() {
         //return getRotationMatrix(0, obliquity, 0);
+        return eclipticToEquatorial;
+    }
+
+    public static Matrix4d eclipticToEquatorial() {
+        return eclToEq();
+    }
+
+    public static Matrix4 eclToEqF() {
+        //return getRotationMatrix(0, obliquity, 0);
+        return eclipticToEquatorialF;
+    }
+
+    public static Matrix4 eclipticToEquatorialF() {
+        return eclToEqF();
+    }
+
+    /**
+     * Gets the rotation matrix to transform from the ecliptic system to the
+     * equatorial system. See {@link Coordinates#equatorialToEcliptic()} for
+     * more information, for this is the inverse transformation.
+     * 
+     * @return The transformation matrix.
+     */
+    public static Matrix4d eclToEq(double julianDate) {
+        return getRotationMatrix(0, AstroUtils.obliquity(julianDate), 0);
+    }
+
+    public static Matrix4d eclipticToEquatorial(double jd) {
+        return eclToEq(jd);
+    }
+
+    /**
+     * Gets the rotation matrix to transform from the ecliptic system to the
+     * equatorial system. See {@link Coordinates#eclToEq()} for more
+     * information, for this is the inverse transformation.
+     * 
+     * @return The transformation matrix.
+     */
+    public static Matrix4d eqToEcl() {
+        //return getRotationMatrix(0, -obliquity, 0);
         return equatorialToEcliptic;
     }
 
-    public static Matrix4 equatorialToEclipticF() {
-        //return getRotationMatrix(0, obliquity, 0);
+    public static Matrix4d equatorialToEcliptic() {
+        return eqToEcl();
+    }
+
+    public static Matrix4 eqToEclF() {
+        //return getRotationMatrix(0, -obliquity, 0);
         return equatorialToEclipticF;
+    }
+
+    public static Matrix4 equatorialToEclipticF() {
+        return eqToEclF();
     }
 
     /**
@@ -128,36 +176,37 @@ public class Coordinates {
      * @return The matrix to transform from equatorial coordinates to ecliptic
      *         coordinates.
      */
-    public static Matrix4d equatorialToEcliptic(double julianDate) {
-        return getRotationMatrix(0, AstroUtils.obliquity(julianDate), 0);
-    }
-
-    /**
-     * Gets the rotation matrix to transform from the ecliptic system to the
-     * equatorial system. See {@link Coordinates#equatorialToEcliptic()} for
-     * more information, for this is the inverse transformation.
-     * 
-     * @return The transformation matrix.
-     */
-    public static Matrix4d eclipticToEquatorial() {
-        //return getRotationMatrix(0, -obliquity, 0);
-        return eclipticToEquatorial;
-    }
-
-    public static Matrix4 eclipticToEquatorialF() {
-        //return getRotationMatrix(0, -obliquity, 0);
-        return eclipticToEquatorialF;
-    }
-
-    /**
-     * Gets the rotation matrix to transform from the ecliptic system to the
-     * equatorial system. See {@link Coordinates#equatorialToEcliptic()} for
-     * more information, for this is the inverse transformation.
-     * 
-     * @return The transformation matrix.
-     */
-    public static Matrix4d eclipticToEquatorial(double julianDate) {
+    public static Matrix4d eqToEcl(double julianDate) {
         return getRotationMatrix(0, -AstroUtils.obliquity(julianDate), 0);
+    }
+
+    public static Matrix4d equatorialToEcliptic(double jd) {
+        return eqToEcl(jd);
+    }
+
+    /**
+     * Gets the rotation matrix to transform from the galactic system to the
+     * equatorial system. See {@link Coordinates#galToEq()} for more
+     * information, since this is the inverse transformation. Use this matrix if
+     * you need to convert equatorial cartesian coordinates to galactic
+     * cartesian coordinates.
+     * 
+     * @return The transformation matrix.
+     */
+    public static Matrix4d galToEq() {
+        return galacticToEquatorial;
+    }
+
+    public static Matrix4d galacticToEquatorial() {
+        return galToEq();
+    }
+
+    public static Matrix4 galToEqF() {
+        return galacticToEquatorialF;
+    }
+
+    public static Matrix4 galacticToEquatorialF() {
+        return galToEqF();
     }
 
     /**
@@ -169,87 +218,20 @@ public class Coordinates {
      * 
      * @return The transformation matrix.
      */
-    public static Matrix4d equatorialToGalactic() {
+    public static Matrix4d eqToGal() {
         return equatorialToGalactic;
     }
 
-    public static Matrix4 equatorialToGalacticF() {
+    public static Matrix4d equatorialToGalactic() {
+        return eqToGal();
+    }
+
+    public static Matrix4 eqToGalF() {
         return equatorialToGalacticF;
     }
 
-    /**
-     * Gets the rotation matrix to transform from the galactic system to the
-     * equatorial system. See {@link Coordinates#equatorialToGalactic()} for
-     * more information, since this is the inverse transformation. Use this
-     * matrix if you need to convert equatorial cartesian coordinates to
-     * galactic cartesian coordinates.
-     * 
-     * @return The transformation matrix.
-     */
-    public static Matrix4d galacticToEquatorial() {
-        return galacticToEquatorial;
-    }
-
-    public static Matrix4 galacticToEquatorialF() {
-        return galacticToEquatorialF;
-    }
-
-    /**
-     * Transforms from equatorial to ecliptic coordinates
-     * 
-     * @param vec
-     *            Vector with ra (&alpha;) and dec (&delta;) in radians.
-     * @param out
-     *            The output vector.
-     * @return The output vector with ecliptic longitude (&lambda;) and ecliptic
-     *         latitude (&beta;) in radians, for chaining.
-     */
-    public static Vector2d equatorialToEcliptic(Vector2d vec, Vector2d out) {
-        return equatorialToEcliptic(vec.x, vec.y, out);
-    }
-
-    /**
-     * Transforms from equatorial to ecliptic coordinates
-     * 
-     * @param alpha
-     *            Right ascension (&alpha;) in radians.
-     * @param delta
-     *            Declination (&delta;) in radians.
-     * @param out
-     *            The output vector.
-     * @return The output vector with ecliptic longitude (&lambda;) and ecliptic
-     *         latitude (&beta;) in radians, for chaining.
-     */
-    public static Vector2d equatorialToEcliptic(double alpha, double delta, Vector2d out) {
-        double lambda = Math.atan2((Math.sin(alpha) * Math.cos(OBLIQUITY_RAD_J2000) + Math.tan(delta) * Math.sin(OBLIQUITY_RAD_J2000)), Math.cos(alpha));
-        if (lambda < 0) {
-            lambda += Math.PI * 2;
-        }
-        double beta = Math.asin(Math.sin(delta) * Math.cos(OBLIQUITY_RAD_J2000) - Math.cos(delta) * Math.sin(OBLIQUITY_RAD_J2000) * Math.sin(alpha));
-
-        return out.set(lambda, beta);
-    }
-
-    /**
-     * Transforms from equatorial to ecliptic coordinates
-     * 
-     * @param vec
-     *            Vector with ra (&alpha;) and dec (&delta;) in radians.
-     * @return Vector with ecliptic longitude (&lambda;) and ecliptic latitude
-     *         (&beta;) in radians.
-     */
-    public static Vector2d equatorialToEcliptic(Vector2d vec, double julianDate) {
-        double alpha = vec.x;
-        double delta = vec.y;
-        double obliquity_rad = Math.toRadians(julianDate);
-
-        double lambda = Math.atan2((Math.sin(alpha) * Math.cos(obliquity_rad) + Math.tan(delta) * Math.sin(obliquity_rad)), Math.cos(alpha));
-        if (lambda < 0) {
-            lambda += Math.PI * 2;
-        }
-        double beta = Math.asin(Math.sin(delta) * Math.cos(obliquity_rad) - Math.cos(delta) * Math.sin(obliquity_rad) * Math.sin(alpha));
-
-        return new Vector2d((float) lambda, (float) beta);
+    public static Matrix4 equatorialToGalacticF() {
+        return eqToGalF();
     }
 
     /**
@@ -288,28 +270,6 @@ public class Coordinates {
         double delta = Math.asin(Math.sin(beta) * Math.cos(OBLIQUITY_RAD_J2000) + Math.cos(beta) * Math.sin(OBLIQUITY_RAD_J2000) * Math.sin(lambda));
 
         return out.set(alpha, delta);
-    }
-
-    /**
-     * Transforms from ecliptic to equatorial coordinates
-     * 
-     * @param vec
-     *            Vector with ecliptic longitude (&lambda;) and ecliptic
-     *            latitude (&beta;) in radians.
-     * @return Vector with ra (&alpha;) and dec (&delta;) in radians.
-     */
-    public static Vector2d eclipticToEquatorial(Vector2d vec, double julianDate) {
-        double lambda = vec.x;
-        double beta = vec.y;
-        double obliquity_rad = Math.toRadians(AstroUtils.obliquity(julianDate));
-
-        double alpha = Math.atan2((Math.sin(lambda) * Math.cos(obliquity_rad) - Math.tan(beta) * Math.sin(obliquity_rad)), Math.cos(lambda));
-        if (alpha < 0) {
-            alpha += Math.PI * 2;
-        }
-        double delta = Math.asin(Math.sin(beta) * Math.cos(obliquity_rad) + Math.cos(beta) * Math.sin(obliquity_rad) * Math.sin(lambda));
-
-        return new Vector2d((float) alpha, (float) delta);
     }
 
     public static Matrix4d eclipticToGalactic() {

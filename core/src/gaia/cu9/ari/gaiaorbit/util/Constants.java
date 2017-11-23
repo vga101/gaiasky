@@ -162,7 +162,7 @@ public class Constants {
     /** Minimum number factor for proper motion vectors **/
     public static final float MIN_PM_NUM_FACTOR = 1f;
     /** Maximum number factor for proper motion vectors **/
-    public static final float MAX_PM_NUM_FACTOR = 25f;
+    public static final float MAX_PM_NUM_FACTOR = 6f;
 
     /** Minimum length factor for proper motion vectors **/
     public static final float MIN_PM_LEN_FACTOR = 500f;

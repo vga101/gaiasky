@@ -8,25 +8,24 @@ import gaia.cu9.ari.gaiaorbit.util.units.Quantity.Length;
 import gaia.cu9.ari.gaiaorbit.util.units.Quantity.Length.LengthUnit;
 
 /**
- * Helper class that transforms various positional information into the internal position of the application.
+ * Helper class that transforms various positional information into the internal
+ * position of the application.
+ * 
  * @author Toni Sagrista
  *
  */
 public class Position {
 
     public enum PositionType {
-        RA_DEC_DIST,
-        RA_DEC_PLX,
-        GLON_GLAT_DIST,
-        GLON_GLAT_PLX,
-        XYZ_EQUATORIAL,
-        XYZ_GALACTIC
+        RA_DEC_DIST, RA_DEC_PLX, GLON_GLAT_DIST, GLON_GLAT_PLX, XYZ_EQUATORIAL, XYZ_GALACTIC
     }
 
     public final Vector3d gsposition;
 
     /**
-     * Works out the cartesian equatorial position in the Gaia Sandbox reference system. The units of the result are parsecs.
+     * Works out the cartesian equatorial position in the Gaia Sandbox reference
+     * system. The units of the result are parsecs.
+     * 
      * @param a
      * @param unitA
      * @param b
@@ -46,7 +45,7 @@ public class Position {
             Length dist = new Length(c, unitC);
 
             Coordinates.sphericalToCartesian(lon.get(AngleUnit.RAD), lat.get(AngleUnit.RAD), dist.get(LengthUnit.PC), gsposition);
-            gsposition.mul(Coordinates.galacticToEquatorial());
+            gsposition.mul(Coordinates.eqToGal());
 
             break;
         case GLON_GLAT_PLX:
@@ -56,7 +55,7 @@ public class Position {
             dist = new Angle(c, unitC).getParallaxDistance();
 
             Coordinates.sphericalToCartesian(lon.get(AngleUnit.RAD), lat.get(AngleUnit.RAD), dist.get(LengthUnit.PC), gsposition);
-            gsposition.mul(Coordinates.galacticToEquatorial());
+            gsposition.mul(Coordinates.eqToGal());
 
             break;
         case RA_DEC_DIST:
@@ -93,7 +92,7 @@ public class Position {
             z = new Length(c, unitC);
 
             gsposition.set(x.get(LengthUnit.PC), y.get(LengthUnit.PC), z.get(LengthUnit.PC));
-            gsposition.mul(Coordinates.galacticToEquatorial());
+            gsposition.mul(Coordinates.eqToGal());
 
             break;
         default:

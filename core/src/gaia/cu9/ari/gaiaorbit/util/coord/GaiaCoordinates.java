@@ -31,7 +31,7 @@ public class GaiaCoordinates implements IBodyCoordinates {
     public Vector3d getEquatorialCartesianCoordinates(Date date, Vector3d out) {
         boolean inRange = data.loadPoint(out, date);
         // Rotate by solar longitude, and convert to equatorial.
-        out.rotate(AstroUtils.getSunLongitude(date) + 180, 0, 1, 0).mul(Coordinates.equatorialToEcliptic());
+        out.rotate(AstroUtils.getSunLongitude(date) + 180, 0, 1, 0).mul(Coordinates.eclToEq());
         return inRange ? out : null;
     }
 

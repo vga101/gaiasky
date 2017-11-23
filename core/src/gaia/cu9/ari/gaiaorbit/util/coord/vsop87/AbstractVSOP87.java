@@ -49,7 +49,7 @@ public abstract class AbstractVSOP87 implements iVSOP87, IBodyCoordinates {
         if (v == null)
             return null;
         Coordinates.sphericalToCartesian(out, out);
-        out.mul(Coordinates.equatorialToEcliptic());
+        out.mul(Coordinates.eclToEq());
         return out;
     }
 

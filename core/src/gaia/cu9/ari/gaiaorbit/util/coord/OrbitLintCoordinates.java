@@ -36,7 +36,7 @@ public class OrbitLintCoordinates implements IBodyCoordinates {
     @Override
     public Vector3d getEclipticSphericalCoordinates(Date date, Vector3d out) {
         getEquatorialCartesianCoordinates(date, out);
-        out.mul(Coordinates.eclipticToEquatorial());
+        out.mul(Coordinates.eqToEcl());
 
         // To spherical
         Coordinates.cartesianToSpherical(out, out);
@@ -46,7 +46,7 @@ public class OrbitLintCoordinates implements IBodyCoordinates {
     @Override
     public Vector3d getEclipticCartesianCoordinates(Date date, Vector3d out) {
         getEquatorialCartesianCoordinates(date, out);
-        out.mul(Coordinates.eclipticToEquatorial());
+        out.mul(Coordinates.eqToEcl());
         return out;
     }
 

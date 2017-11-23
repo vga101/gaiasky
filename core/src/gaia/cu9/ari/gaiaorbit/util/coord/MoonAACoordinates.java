@@ -42,7 +42,7 @@ public class MoonAACoordinates implements IBodyCoordinates {
         if (v == null)
             return null;
         Coordinates.sphericalToCartesian(out, out);
-        out.mul(Coordinates.equatorialToEcliptic());
+        out.mul(Coordinates.eclToEq());
         return out;
     }
 

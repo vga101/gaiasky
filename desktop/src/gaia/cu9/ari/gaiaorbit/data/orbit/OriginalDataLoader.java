@@ -34,24 +34,26 @@ public class OriginalDataLoader {
     }
 
     /**
-     * Loads the data in the input stream and transforms it into Cartesian <b>ecliptic</b> coordinates.
-     * The reference system of the data goes as follows:
-     * <ul><li>
-     * Origin of frame : Earth
-     * </li><li>
-     * X and Y axis in the EQUATORIAL PLANE with X pointing in the direction of vernal equinox.
-     * </li><li>
-     * Z perpendicular to the the EQUATORIAL PLANE in the north direction
-     * </li><li>
-     * The Y direction is defined to have (X,Y,Z) as a "three axis" positively oriented.
-     * </li></ul>
+     * Loads the data in the input stream and transforms it into Cartesian
+     * <b>ecliptic</b> coordinates. The reference system of the data goes as
+     * follows:
+     * <ul>
+     * <li>Origin of frame : Earth</li>
+     * <li>X and Y axis in the EQUATORIAL PLANE with X pointing in the direction
+     * of vernal equinox.</li>
+     * <li>Z perpendicular to the the EQUATORIAL PLANE in the north direction
+     * </li>
+     * <li>The Y direction is defined to have (X,Y,Z) as a "three axis"
+     * positively oriented.</li>
+     * </ul>
      * 
      * The simulation reference system:
-     * <ul><li>
-     * - XZ lies in the ECLIPTIC PLANE, with Z pointing to the vernal equinox.
-     * </li><li>
-     * - Y perpendicular to the ECLIPTIC PLANE pointing north.
-     * </li></ul>
+     * <ul>
+     * <li>- XZ lies in the ECLIPTIC PLANE, with Z pointing to the vernal
+     * equinox.</li>
+     * <li>- Y perpendicular to the ECLIPTIC PLANE pointing north.</li>
+     * </ul>
+     * 
      * @param data
      * @param referenceFrame
      * @throws Exception
@@ -70,19 +72,18 @@ public class OriginalDataLoader {
                     // Valid data line
                     Timestamp t = Timestamp.valueOf(tokens[0].replace('T', ' '));
 
-                    /* From Data coordinates to OpenGL world coordinates
-                     * Z -> -X
-                     * X -> Y
-                     * Y -> Z
-                    */
+                    /*
+                     * From Data coordinates to OpenGL world coordinates Z -> -X
+                     * X -> Y Y -> Z
+                     */
                     Vector3d pos = new Vector3d(parsed(tokens[2]), parsed(tokens[3]), -parsed(tokens[1]));
 
                     // Transform to heliotropic using the Sun's ecliptic longitude
                     Vector3d posHel = correctSunLongitude(pos, t, 0);
 
                     // To ecliptic again
-                    pos.mul(Coordinates.eclipticToEquatorial());
-                    posHel.mul(Coordinates.eclipticToEquatorial());
+                    pos.mul(Coordinates.eqToEcl());
+                    posHel.mul(Coordinates.eqToEcl());
 
                     if (count++ % 7 == 0) {
                         orbitData.time.add(t);
@@ -115,8 +116,11 @@ public class OriginalDataLoader {
 
     /**
      * Transforms the given vector to a heliotropic system using the given time.
-     * @param pos Position vector
-     * @param t Time
+     * 
+     * @param pos
+     *            Position vector
+     * @param t
+     *            Time
      * @return Vector3 with the position in the heliotropic reference frame
      */
     protected Vector3d correctSunLongitude(final Vector3d pos, Date t) {
@@ -125,15 +129,19 @@ public class OriginalDataLoader {
 
     /**
      * Transforms the given vector to a heliotropic system using the given time.
-     * @param pos Position vector
-     * @param t Time
-     * @param origin The origin angle
+     * 
+     * @param pos
+     *            Position vector
+     * @param t
+     *            Time
+     * @param origin
+     *            The origin angle
      * @return Vector3 with the position in the heliotropic reference frame
      */
     protected Vector3d correctSunLongitude(final Vector3d pos, Date t, float origin) {
         Vector3d upDirection = new Vector3d(0, 1, 0);
         // We get the Up direction of the ecliptic in equatorial coordinates
-        upDirection.mul(Coordinates.equatorialToEcliptic());
+        upDirection.mul(Coordinates.eclToEq());
         return pos.cpy().rotate(upDirection, AstroUtils.getSunLongitude(t) - origin);
     }
 
