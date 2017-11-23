@@ -16,7 +16,7 @@
 	"color" : [0.0, 1.0, 0.0, 0.5],
 	"size" : 1.3e12,
 	"ct" : Ecliptic,
-	"transformName" : equatorialToEcliptic,
+	"transformName" : eclipticToEquatorial,
 
 	"parent" : "Universe", 
 	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Grid"
@@ -28,7 +28,7 @@
 	"color" : [0.3, 0.5, 1.0, 0.5],
 	"size" : 1.4e12,
 	"ct" : Galactic,
-	"transformName" : equatorialToGalactic,
+	"transformName" : galacticToEquatorial,
 
 	"parent" : "Universe", 
 	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Grid"
@@ -43,7 +43,7 @@
 	"labelposition" : [5.0e3, 5.0e2, 5.0e3]
 	"size" : 3.0e17,
 	"ct" : [MilkyWay, Galaxies],
-	"transformName" : equatorialToGalactic,
+	"transformName" : galacticToEquatorial,
 
 	// Fade in distances, in parsecs
 	"fadein" : [5.0e3, 3.0e4],
@@ -56,7 +56,7 @@
 	"coordinates" : {
 				// This must implement gaia.cu9.ari.gaiaorbit.util.coord.IBodyCoordinates				
 				"impl" : "gaia.cu9.ari.gaiaorbit.util.coord.StaticCoordinates",
-				"transformName" : equatorialToGalactic,
+				"transformName" : galToEq,
 				// In galacitc system, 8kpc from galactic center, in km
 				"position" : [0.0, 0.0, 246858341148427170.0]
 				},
@@ -82,7 +82,7 @@
 	"color" : [1.0, 1.0, 1.0, 0.6],
 	"size" : 1.6e12,
 	"ct" : [MilkyWay, Galaxies],
-	"transformName" : equatorialToGalactic,
+	"transformName" : galacticToEquatorial,
 
 	"parent" : "Milky Way", 
 	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Mw",

@@ -9,7 +9,7 @@
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Orbit",
 		"provider" : "gaia.cu9.ari.gaiaorbit.data.orbit.OrbitalParametersProvider",
 		
-		"transformFunction" : "equatorialToEcliptic",
+		"transformFunction" : "eclipticToEquatorial",
 			
 		"orbit" 		: {
 							// In days
@@ -37,7 +37,7 @@
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Orbit",
 		"provider" : "gaia.cu9.ari.gaiaorbit.data.orbit.OrbitalParametersProvider",
 		
-		"transformFunction" : "equatorialToEcliptic",
+		"transformFunction" : "eclipticToEquatorial",
 			
 		"orbit" 		: {
 							// In days
@@ -66,7 +66,7 @@
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Orbit",
 		"provider" : "gaia.cu9.ari.gaiaorbit.data.orbit.OrbitalParametersProvider",
 		
-		"transformFunction" : "equatorialToEcliptic",
+		"transformFunction" : "eclipticToEquatorial",
 			
 		"orbit" 		: {
 							// In days
@@ -95,7 +95,7 @@
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Orbit",
 		"provider" : "gaia.cu9.ari.gaiaorbit.data.orbit.OrbitalParametersProvider",
 		
-		"transformFunction" : "equatorialToEcliptic",
+		"transformFunction" : "eclipticToEquatorial",
 			
 		"orbit" 		: {
 							// In days
