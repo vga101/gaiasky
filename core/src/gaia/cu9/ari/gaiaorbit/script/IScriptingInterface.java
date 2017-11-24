@@ -876,7 +876,8 @@ public interface IScriptingInterface {
     public void collapseGuiComponent(String name);
 
     /**
-     * Converts galactic coordinates to the internal coordinate system.
+     * Converts galactic coordinates to the internal cartesian coordinate
+     * system.
      * 
      * @param l
      *            The galactic longitude in degrees.
@@ -890,7 +891,8 @@ public interface IScriptingInterface {
     public double[] galacticToInternalCartesian(double l, double b, double r);
 
     /**
-     * Converts ecliptic coordinates to the internal coordinate system.
+     * Converts ecliptic coordinates to the internal cartesian coordinate
+     * system.
      * 
      * @param l
      *            The ecliptic longitude in degrees.
@@ -904,7 +906,8 @@ public interface IScriptingInterface {
     public double[] eclipticToInternalCartesian(double l, double b, double r);
 
     /**
-     * Converts equatorial coordinates to the internal coordinate system.
+     * Converts equatorial coordinates to the internal cartesian coordinate
+     * system.
      * 
      * @param ra
      *            The right ascension in degrees.
