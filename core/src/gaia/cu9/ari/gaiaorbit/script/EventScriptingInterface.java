@@ -36,6 +36,7 @@ import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.LruCache;
+import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
 import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
 import gaia.cu9.ari.gaiaorbit.util.math.Intersectord;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
@@ -448,6 +449,7 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
     @Override
     public void setVisibility(final String key, final boolean visible) {
         Gdx.app.postRunnable(() -> {
+
             em.post(Events.TOGGLE_VISIBILITY_CMD, key, false, visible);
         });
     }
@@ -1262,6 +1264,33 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
                 }
             }
         }
+    }
+
+    @Override
+    public double[] galacticToInternalCartesian(double l, double b, double r) {
+        Vector3d pos = Coordinates.sphericalToCartesian(l * AstroUtils.TO_RAD, b * AstroUtils.TO_RAD, r, new Vector3d());
+        pos.mul(Coordinates.galacticToEquatorial());
+        return new double[] { pos.x, pos.y, pos.z };
+    }
+
+    @Override
+    public double[] eclipticToInternalCartesian(double l, double b, double r) {
+        Vector3d pos = Coordinates.sphericalToCartesian(l * AstroUtils.TO_RAD, b * AstroUtils.TO_RAD, r, new Vector3d());
+        pos.mul(Coordinates.eclipticToEquatorial());
+        return new double[] { pos.x, pos.y, pos.z };
+    }
+
+    @Override
+    public double[] equatorialToInternalCartesian(double ra, double dec, double r) {
+        Vector3d pos = Coordinates.sphericalToCartesian(ra * AstroUtils.TO_RAD, dec * AstroUtils.TO_RAD, r, new Vector3d());
+        return new double[] { pos.x, pos.y, pos.z };
+    }
+
+    public double[] internalCartesianToEquatorial(double x, double y, double z) {
+        Vector3d in = new Vector3d(x, y, z);
+        Vector3d out = new Vector3d();
+        Coordinates.cartesianToSpherical(in, out);
+        return new double[] { out.x * AstroUtils.TO_DEG, out.y * AstroUtils.TO_DEG, in.len() };
     }
 
 }

@@ -303,7 +303,7 @@ public interface IScriptingInterface {
      * system.
      * 
      * @param vec
-     *            Vector of three components in equatorial coordinates and km.
+     *            Vector of three components in internal coordinates and Km.
      * @deprecated Use {@link #setCameraPosition(double[])} instead.
      */
     public void setCameraPostion(double[] vec);
@@ -313,7 +313,7 @@ public interface IScriptingInterface {
      * system.
      * 
      * @param vec
-     *            Vector of three components in equatorial coordinates and km.
+     *            Vector of three components in internal coordinates and Km.
      */
     public void setCameraPosition(double[] vec);
 
@@ -369,7 +369,7 @@ public interface IScriptingInterface {
      * @param rotation
      *            The rotation angle, in degrees.
      * @param viewAngle
-     *            The view angle which determines the distance.
+     *            The view angle which determines the distance, in degrees.
      */
     public void setCameraPositionAndFocus(String focus, String other, double rotation, double viewAngle);
 
@@ -874,5 +874,64 @@ public interface IScriptingInterface {
      *            The name, as in `CameraComponent` or `ObjectsComponent`
      */
     public void collapseGuiComponent(String name);
+
+    /**
+     * Converts galactic coordinates to the internal coordinates system.
+     * 
+     * @param l
+     *            The galactic longitude in degrees.
+     * @param b
+     *            The galactic latitude in degrees.
+     * @param r
+     *            The distance in Km.
+     * @return An array of doubles containing <code>[x, y, z]</code> in the
+     *         internal reference system, in internal units.
+     */
+    public double[] galacticToInternalCartesian(double l, double b, double r);
+
+    /**
+     * Converts ecliptic coordinates to the internal coordinates system.
+     * 
+     * @param l
+     *            The ecliptic longitude in degrees.
+     * @param b
+     *            The ecliptic latitude in degrees.
+     * @param r
+     *            The distance in Km.
+     * @return An array of doubles containing <code>[x, y, z]</code> in the
+     *         internal reference system, in internal units.
+     */
+    public double[] eclipticToInternalCartesian(double l, double b, double r);
+
+    /**
+     * Converts equatorial coordinates to the internal coordinates system.
+     * 
+     * @param ra
+     *            The right ascension in degrees.
+     * @param dec
+     *            The declination in degrees.
+     * @param r
+     *            The distance in Km.
+     * @return An array of doubles containing <code>[x, y, z]</code> in the
+     *         internal reference system, in internal units.
+     */
+    public double[] equatorialToInternalCartesian(double ra, double dec, double r);
+
+    /**
+     * Converts internal cartesian coordinates to equatorial
+     * <code>[ra, dec, distance]</code> coordinates.
+     * 
+     * @param x
+     *            The x component, in any distance units.
+     * @param y
+     *            The y component, in any distance units.
+     * @param z
+     *            The z component, in any distance units.
+     * @return An array of doubles containing <code>[ra, dec, distance]</code>
+     *         with <code>ra</code> and <code>dec</code> in degrees and
+     *         <code>distance</code> in the same distance units as the input
+     *         position.
+     */
+    public double[] internalCartesianToEquatorial(double x, double y, double z);
 
 }

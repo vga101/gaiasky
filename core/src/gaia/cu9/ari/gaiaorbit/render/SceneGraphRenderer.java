@@ -678,11 +678,16 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
             int idx = ct.ordinal();
             if (data.length == 3) {
                 // We have the boolean
-                if ((boolean) data[2])
-                    visible.set(ct.ordinal());
-                else
-                    visible.clear(ct.ordinal());
-                times[idx] = (long) (GaiaSky.instance.getT() * 1000f);
+                boolean currvis = visible.get(ct.ordinal());
+                boolean newvis = (boolean) data[2];
+                if (currvis != newvis) {
+                    // Only update if visibility different
+                    if (newvis)
+                        visible.set(ct.ordinal());
+                    else
+                        visible.clear(ct.ordinal());
+                    times[idx] = (long) (GaiaSky.instance.getT() * 1000f);
+                }
             } else {
                 // Only toggle
                 visible.flip(ct.ordinal());
