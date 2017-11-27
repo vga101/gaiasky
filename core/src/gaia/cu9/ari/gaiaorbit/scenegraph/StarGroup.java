@@ -964,6 +964,10 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
     public void dispose() {
         // Dispose of GPU data
         EventManager.instance.post(Events.DISPOSE_STAR_GROUP_GPU_MESH, this.offset);
+        // Shut down pool
+        if (pool != null && !pool.isShutdown()) {
+            pool.shutdown();
+        }
     }
 
     @Override
