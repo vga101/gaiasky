@@ -131,7 +131,13 @@ task gaiaskyJar (dependsOn: [compileJava, jar, copyToLib],  description: "Create
 	        from "$baseDir/desktop/build/libs/desktop-" + version + ".jar"
 	        into "$distLib/"
 	    }
-	    file("$distLib/desktop-" + version + ".jar").renameTo(file("$distLib/gaiasky.jar"))
+	    file("$distLib/desktop-" + version + ".jar").renameTo(file("$distLib/gaiasky-desktop.jar"))
+	    
+	    copy {
+	        from "$baseDir/core/build/libs/core-" + version + ".jar"
+	        into "$distLib/"
+	    }
+	    file("$distLib/core-" + version + ".jar").renameTo(file("$distLib/gaiasky-core.jar"))
     }
 }
 

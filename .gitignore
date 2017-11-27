@@ -44,9 +44,6 @@ nohup.out
 #############
 *.swp
 
-# SO files #
-############
-
 # Output folder #
 #################
 releases/
