@@ -65,7 +65,7 @@ public class ObjectsComponent extends GuiComponent implements IObserver {
         searchBox.addListener(event -> {
             if (event instanceof InputEvent) {
                 InputEvent ie = (InputEvent) event;
-                if (ie.getType() == Type.keyUp) {
+                if (ie.getType() == Type.keyUp && !searchBox.getText().isEmpty()) {
                     String text = searchBox.getText();
                     if (sg.containsNode(text.toLowerCase())) {
                         final SceneGraphNode node = sg.getNode(text.toLowerCase());
@@ -87,7 +87,7 @@ public class ObjectsComponent extends GuiComponent implements IObserver {
                         stage.setKeyboardFocus(null);
                     }
                 } else if (ie.getType() == Type.keyDown) {
-                    if (ie.getKeyCode() == Keys.CONTROL_LEFT || ie.getKeyCode() == Keys.CONTROL_RIGHT || ie.getKeyCode() == Keys.SHIFT_LEFT || ie.getKeyCode() == Keys.SHIFT_RIGHT) {
+                    if (ie.getKeyCode() == Keys.CONTROL_LEFT || ie.getKeyCode() == Keys.CONTROL_RIGHT) {
                         // Lose focus
                         stage.setKeyboardFocus(null);
                     }

@@ -241,26 +241,30 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
     public void updateMode(CameraMode mode, boolean postEvent) {
         InputMultiplexer im = (InputMultiplexer) Gdx.input.getInputProcessor();
         if (mode == CameraMode.Spacecraft) {
-            // Register input controller
-            if (!im.getProcessors().contains(inputController, true))
-                im.addProcessor(im.size(), inputController);
-            // Register controller listener
-            Controllers.clearListeners();
-            Controllers.addListener(controllerListener);
-            sc.stopAllMovement();
-            if (firstTime) {
-                // Put spacecraft close to earth
-                Vector3d earthpos = GaiaSky.instance.sg.getNode("Earth").getPosition();
-                sc.pos.set(earthpos.x + 12000 * Constants.KM_TO_U, earthpos.y, earthpos.z);
+            Gdx.app.postRunnable(() -> {
+                // Register input controller
+                if (!im.getProcessors().contains(inputController, true))
+                    im.addProcessor(im.size(), inputController);
+                // Register controller listener
+                Controllers.clearListeners();
+                Controllers.addListener(controllerListener);
+                sc.stopAllMovement();
+                if (firstTime) {
+                    // Put spacecraft close to earth
+                    Vector3d earthpos = GaiaSky.instance.sg.getNode("Earth").getPosition();
+                    sc.pos.set(earthpos.x + 12000 * Constants.KM_TO_U, earthpos.y, earthpos.z);
 
-                firstTime = false;
-            }
+                    firstTime = false;
+                }
+            });
         } else {
-            // Unregister input controller
-            im.removeProcessor(inputController);
-            // Unregister controller listener
-            Controllers.removeListener(controllerListener);
-            sc.stopAllMovement();
+            Gdx.app.postRunnable(() -> {
+                // Unregister input controller
+                im.removeProcessor(inputController);
+                // Unregister controller listener
+                Controllers.removeListener(controllerListener);
+                sc.stopAllMovement();
+            });
         }
     }
 

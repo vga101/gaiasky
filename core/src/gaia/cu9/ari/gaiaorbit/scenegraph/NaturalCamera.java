@@ -871,18 +871,22 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
             checkFocus();
         case Free_Camera:
         case Gaia_Scene:
-            // Register input controller
-            if (!im.getProcessors().contains(inputController, true))
-                im.addProcessor(im.size(), inputController);
-            // Register controller listener
-            Controllers.clearListeners();
-            Controllers.addListener(controllerListener);
+            Gdx.app.postRunnable(() -> {
+                // Register input controller
+                if (!im.getProcessors().contains(inputController, true))
+                    im.addProcessor(im.size(), inputController);
+                // Register controller listener
+                Controllers.clearListeners();
+                Controllers.addListener(controllerListener);
+            });
             break;
         default:
-            // Unregister input controller
-            im.removeProcessor(inputController);
-            // Unregister controller listener
-            Controllers.removeListener(controllerListener);
+            Gdx.app.postRunnable(() -> {
+                // Unregister input controller
+                im.removeProcessor(inputController);
+                // Unregister controller listener
+                Controllers.removeListener(controllerListener);
+            });
             break;
         }
     }

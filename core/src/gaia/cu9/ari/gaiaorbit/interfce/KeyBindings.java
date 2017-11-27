@@ -303,7 +303,7 @@ public class KeyBindings {
         }), SPECIAL1, SPECIAL2, Keys.R);
 
         // Camera modes (NUMERIC KEYPAD)
-        for (int i = 144; i <= 153; i++) {
+        for (int i = 144; i <= 150; i++) {
             // Camera mode
             int m = i - 144;
             final CameraMode mode = CameraMode.getMode(m);

@@ -14,6 +14,7 @@ import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 
 /**
  * This input controller connects the input events with the key binding actions
+ * 
  * @author tsagrista
  *
  */
