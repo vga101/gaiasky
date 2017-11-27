@@ -288,19 +288,29 @@ public class GaiaSkyDesktop implements IObserver {
         userFolder.mkdirs();
         File userFolderConfFile = new File(userFolder, "global.properties");
 
+        // Internal config
+        File confFolder = new File("conf" + File.separator);
+        File internalFolderConfFile = new File(confFolder, "global.properties");
+
         boolean overwrite = ow;
         if (userFolderConfFile.exists()) {
-            Properties props = new Properties();
-            props.load(new FileInputStream(userFolderConfFile));
-            // Check that version is at least 150
-            if (!props.containsKey("properties.version") || (props.containsKey("properties.version") && Integer.parseInt(props.getProperty("properties.version")) < 150)) {
+            Properties userprops = new Properties();
+            userprops.load(new FileInputStream(userFolderConfFile));
+            int internalversion = 150;
+            if (internalFolderConfFile.exists()) {
+                Properties internalprops = new Properties();
+                internalprops.load(new FileInputStream(internalFolderConfFile));
+                internalversion = Integer.parseInt(internalprops.getProperty("properties.version"));
+            }
+
+            // Check latest version
+            if (!userprops.containsKey("properties.version") || (userprops.containsKey("properties.version") && Integer.parseInt(userprops.getProperty("properties.version")) < internalversion)) {
                 overwrite = true;
             }
         }
 
         if (overwrite || !userFolderConfFile.exists()) {
             // Copy file
-            File confFolder = new File("conf" + File.separator);
             if (confFolder.exists() && confFolder.isDirectory()) {
                 // Running released package
                 copyFile(new File("conf" + File.separator + "global.properties"), userFolderConfFile, overwrite);
