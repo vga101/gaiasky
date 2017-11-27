@@ -248,7 +248,7 @@ task dist (dependsOn: gaiaskyJar, description: "Compiles the project, creates th
 	    cmd.execute()
 	
 	    // Replace version in readme file
-	    project.ext.versionFile = file("../core/build/classes/main/version").text
+	    project.ext.versionFile = file("../core/build/classes/java/main/version").text
 	    ant.replace(file: "$distDir/README.md", token: "--------------------------", value: "$versionFile")
 	}
 }
