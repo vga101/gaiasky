@@ -296,8 +296,20 @@ public class AboutWindow extends GenericDialog {
             return false;
         });
 
+        // System info
+        Label sysinfo = new OwnLabel(txt("gui.help.sysinfo"), skin, "help-title");
+
+        Label sysostitle = new OwnLabel(txt("gui.help.os"), skin);
+        Label sysos = new OwnLabel(System.getProperty("os.name") + " " + System.getProperty("os.version") + " " + System.getProperty("os.arch"), skin);
+
+        Label glrenderertitle = new OwnLabel(txt("gui.help.graphicsdevice"), skin);
+        Label glrenderer = new OwnLabel(Gdx.gl.glGetString(GL20.GL_RENDERER), skin);
+
         // OpenGL info
         Label glinfo = new OwnLabel(txt("gui.help.openglinfo"), skin, "help-title");
+
+        Label glvendortitle = new OwnLabel(txt("gui.help.glvendor"), skin);
+        Label glvendor = new OwnLabel(Gdx.gl.glGetString(GL20.GL_VENDOR), skin);
 
         Label glversiontitle = new OwnLabel(txt("gui.help.openglversion"), skin);
         Label glversion = new OwnLabel(Gdx.gl.glGetString(GL20.GL_VERSION), skin);
@@ -324,7 +336,7 @@ public class AboutWindow extends GenericDialog {
         glextensionsscroll.setFadeScrollBars(false);
         scrolls.add(glextensionsscroll);
 
-        contentSystem.add(buildinfo).colspan(2).align(Align.left).padTop(pad * 3);
+        contentSystem.add(buildinfo).colspan(2).align(Align.left).padTop(pad * 3).padBottom(pad * 2);
         contentSystem.row();
         contentSystem.add(versiontitle).align(Align.topLeft).padRight(pad * 2);
         contentSystem.add(version).align(Align.left);
@@ -342,7 +354,7 @@ public class AboutWindow extends GenericDialog {
         contentSystem.add(system).align(Align.left);
         contentSystem.row();
 
-        contentSystem.add(javainfo).colspan(2).align(Align.left).padTop(pad * 2);
+        contentSystem.add(javainfo).colspan(2).align(Align.left).padTop(pad * 2).padBottom(pad * 2);
         contentSystem.row();
         contentSystem.add(javaversiontitle).align(Align.topLeft).padRight(pad * 2);
         contentSystem.add(javaversion).align(Align.left);
@@ -359,12 +371,25 @@ public class AboutWindow extends GenericDialog {
         contentSystem.add(javavmvendortitle).align(Align.topLeft).padRight(pad * 2);
         contentSystem.add(javavmvendor).align(Align.left).padBottom(pad * 2);
         contentSystem.row();
-        contentSystem.add(memoryinfobutton).colspan(2).align(Align.left).padBottom(pad * 3);
+        contentSystem.add(memoryinfobutton).colspan(2).align(Align.left);
         contentSystem.row();
-        contentSystem.add(glinfo).colspan(2).align(Align.left).padTop(pad * 2);
+
+        contentSystem.add(sysinfo).colspan(2).align(Align.left).padTop(pad * 2).padBottom(pad * 2);
+        contentSystem.row();
+        contentSystem.add(sysostitle).align(Align.topLeft).padRight(pad * 2);
+        contentSystem.add(sysos).align(Align.left);
+        contentSystem.row();
+        contentSystem.add(glrenderertitle).align(Align.topLeft).padRight(pad * 2);
+        contentSystem.add(glrenderer).align(Align.left);
+        contentSystem.row();
+
+        contentSystem.add(glinfo).colspan(2).align(Align.left).padTop(pad * 2).padBottom(pad * 2);
         contentSystem.row();
         contentSystem.add(glversiontitle).align(Align.topLeft).padRight(pad * 2);
         contentSystem.add(glversion).align(Align.left);
+        contentSystem.row();
+        contentSystem.add(glvendortitle).align(Align.topLeft).padRight(pad * 2);
+        contentSystem.add(glvendor).align(Align.left);
         contentSystem.row();
         contentSystem.add(glslversiontitle).align(Align.topLeft).padRight(pad * 2);
         contentSystem.add(glslversion).align(Align.left);
