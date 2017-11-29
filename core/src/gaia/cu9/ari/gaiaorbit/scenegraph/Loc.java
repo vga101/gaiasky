@@ -132,7 +132,7 @@ public class Loc extends AbstractPositionEntity implements I3DTextRenderable {
 
     @Override
     public float textScale() {
-        return textSize() * 2e5f;
+        return textSize() * 2e12f;
     }
 
     @Override
