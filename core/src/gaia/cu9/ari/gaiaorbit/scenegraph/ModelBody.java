@@ -338,6 +338,8 @@ public abstract class ModelBody extends CelestialBody {
             } else {
                 env.shadowMap = null;
             }
+        } else {
+            mc.env.shadowMap = null;
         }
     }
 

@@ -512,69 +512,71 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
         int shadowNRender = GlobalConf.program.STEREOSCOPIC_MODE ? 2 : 1;
 
-        candidates.clear();
-        int num = 0;
-        for (int i = 0; i < models.size; i++) {
-            ModelBody mr = (ModelBody) models.get(i);
-            if (mr.isShadow()) {
-                candidates.insert(num, mr);
-                mr.shadow = 0;
-                num++;
-                if (num == GlobalConf.scene.SHADOW_MAPPING_N_SHADOWS)
-                    break;
+        if (candidates != null && shadowMapFb != null && smCombinedMap != null) {
+            candidates.clear();
+            int num = 0;
+            for (int i = 0; i < models.size; i++) {
+                ModelBody mr = (ModelBody) models.get(i);
+                if (mr.isShadow()) {
+                    candidates.insert(num, mr);
+                    mr.shadow = 0;
+                    num++;
+                    if (num == GlobalConf.scene.SHADOW_MAPPING_N_SHADOWS)
+                        break;
+                }
             }
-        }
 
-        // Clear maps
-        smTexMap.clear();
-        smCombinedMap.clear();
-        int i = 0;
-        for (ModelBody candidate : candidates) {
-            // Yes!
-            candidate.shadow = shadowNRender;
+            // Clear maps
+            smTexMap.clear();
+            smCombinedMap.clear();
+            int i = 0;
+            for (ModelBody candidate : candidates) {
+                // Yes!
+                candidate.shadow = shadowNRender;
 
-            Vector3 camDir = aux1.set(candidate.mc.dlight.direction);
-            // Direction is that of the light
-            cameraLight.direction.set(camDir);
+                Vector3 camDir = aux1.set(candidate.mc.dlight.direction);
+                // Direction is that of the light
+                cameraLight.direction.set(camDir);
 
-            double radius = candidate.getRadius();
-            // Distance from camera to object, radius * sv[0]
-            double distance = radius * candidate.shadowMapValues[0];
-            // Position, factor of radius
-            candidate.getAbsolutePosition(aux1d);
-            aux1d.sub(camera.getPos()).sub(camDir.nor().scl((float) distance));
-            aux1d.put(cameraLight.position);
-            // Up is perpendicular to dir
-            if (cameraLight.direction.y != 0 || cameraLight.direction.z != 0)
-                aux1.set(1, 0, 0);
-            else
-                aux1.set(0, 1, 0);
-            cameraLight.up.set(cameraLight.direction).crs(aux1);
+                double radius = candidate.getRadius();
+                // Distance from camera to object, radius * sv[0]
+                double distance = radius * candidate.shadowMapValues[0];
+                // Position, factor of radius
+                candidate.getAbsolutePosition(aux1d);
+                aux1d.sub(camera.getPos()).sub(camDir.nor().scl((float) distance));
+                aux1d.put(cameraLight.position);
+                // Up is perpendicular to dir
+                if (cameraLight.direction.y != 0 || cameraLight.direction.z != 0)
+                    aux1.set(1, 0, 0);
+                else
+                    aux1.set(0, 1, 0);
+                cameraLight.up.set(cameraLight.direction).crs(aux1);
 
-            // Near is sv[1]*radius before the object
-            cameraLight.near = (float) (distance - radius * candidate.shadowMapValues[1]);
-            // Far is sv[2]*radius after the object
-            cameraLight.far = (float) (distance + radius * candidate.shadowMapValues[2]);
+                // Near is sv[1]*radius before the object
+                cameraLight.near = (float) (distance - radius * candidate.shadowMapValues[1]);
+                // Far is sv[2]*radius after the object
+                cameraLight.far = (float) (distance + radius * candidate.shadowMapValues[2]);
 
-            // Update cam
-            cameraLight.update(false);
+                // Update cam
+                cameraLight.update(false);
 
-            // Render model depth map to frame buffer
-            shadowMapFb[i].begin();
-            Gdx.gl.glClearColor(0, 0, 0, 0);
-            Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
-            modelBatchDepth.begin(cameraLight);
-            candidate.render(modelBatchDepth, 1, 0);
-            modelBatchDepth.end();
+                // Render model depth map to frame buffer
+                shadowMapFb[i].begin();
+                Gdx.gl.glClearColor(0, 0, 0, 0);
+                Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
+                modelBatchDepth.begin(cameraLight);
+                candidate.render(modelBatchDepth, 1, 0);
+                modelBatchDepth.end();
 
-            // Save frame buffer and combined matrix
-            candidate.shadow = shadowNRender;
-            shadowMapCombined[i].set(cameraLight.combined);
-            smCombinedMap.put(candidate, shadowMapCombined[i]);
-            smTexMap.put(candidate, shadowMapFb[i].getColorBufferTexture());
+                // Save frame buffer and combined matrix
+                candidate.shadow = shadowNRender;
+                shadowMapCombined[i].set(cameraLight.combined);
+                smCombinedMap.put(candidate, shadowMapCombined[i]);
+                smTexMap.put(candidate, shadowMapFb[i].getColorBufferTexture());
 
-            shadowMapFb[i].end();
-            i++;
+                shadowMapFb[i].end();
+                i++;
+            }
         }
     }
 
