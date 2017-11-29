@@ -1362,6 +1362,7 @@ public class PreferencesWindow extends GenericDialog {
         GlobalConf.scene.LINE_RENDERER = bean.value;
 
         // Shadow mapping
+        boolean deactivateShadows = GlobalConf.scene.SHADOW_MAPPING && !shadowsCb.isChecked();
         GlobalConf.scene.SHADOW_MAPPING = shadowsCb.isChecked();
         int newshadowres = Integer.parseInt(smResolution.getText());
         int newnshadows = nshadows.getSelected().value;
