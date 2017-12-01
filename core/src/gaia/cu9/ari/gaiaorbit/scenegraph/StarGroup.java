@@ -743,7 +743,7 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
 
         aux.crs(out).nor();
 
-        float dist = -0.02f * (float) out.len();
+        float dist = -0.02f * cam.getFovFactor() * (float) out.len();
 
         aux.add(cam.getUp()).nor().scl(dist);
 
