@@ -450,8 +450,14 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
     @Override
     public void setVisibility(final String key, final boolean visible) {
         Gdx.app.postRunnable(() -> {
-
             em.post(Events.TOGGLE_VISIBILITY_CMD, key, false, visible);
+        });
+    }
+
+    @Override
+    public void setCrosshairVisibility(boolean visible) {
+        Gdx.app.postRunnable(() -> {
+            em.post(Events.CROSSHAIR_CMD, visible);
         });
     }
 

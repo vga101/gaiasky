@@ -522,6 +522,14 @@ public interface IScriptingInterface {
     public void setVisibility(String key, boolean visible);
 
     /**
+     * Sets the visibility of the crosshair in focus and free modes.
+     * 
+     * @param visible
+     *            The visibility state.
+     */
+    public void setCrosshairVisibility(boolean visible);
+
+    /**
      * Sets the ambient light to a certain value.
      * 
      * @param value
