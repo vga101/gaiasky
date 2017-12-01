@@ -11267,7 +11267,7 @@
 		"parent" : "Moon",
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Loc",
 		"ct": [ "Locations" ],
-		"name" : "Vega",
+		"name" : "Vega cr.",
 		"location" : [63.40, -45.40],
 		"size" : 1.5
 	},

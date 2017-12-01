@@ -2,6 +2,7 @@ package gaia.cu9.ari.gaiaorbit.data;
 
 import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
@@ -14,7 +15,8 @@ import gaia.cu9.ari.gaiaorbit.data.stars.HYGBinaryLoader;
 import gaia.cu9.ari.gaiaorbit.data.stars.HYGCSVLoader;
 import gaia.cu9.ari.gaiaorbit.desktop.format.DesktopDateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.desktop.format.DesktopNumberFormatFactory;
-import gaia.cu9.ari.gaiaorbit.desktop.util.WebGLConfInit;
+import gaia.cu9.ari.gaiaorbit.desktop.util.DesktopConfInit;
+import gaia.cu9.ari.gaiaorbit.desktop.util.DesktopSysUtilsFactory;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
@@ -26,6 +28,9 @@ import gaia.cu9.ari.gaiaorbit.util.ConfInit;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
+import gaia.cu9.ari.gaiaorbit.util.SysUtilsFactory;
+import gaia.cu9.ari.gaiaorbit.util.concurrent.SingleThreadLocalFactory;
+import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadLocalFactory;
 import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
 
@@ -43,31 +48,44 @@ import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
 public class HYGToBinary implements IObserver {
 
     static String fileIn = "/home/tsagrista/git/gaiasky/android/assets-bak/data/hygxyz.csv";
-    static String fileInPm = "/home/tsagrista/git/gaiasky/android/assets/data/hip_pm.csv";
+    static String fileInPm = "/home/tsagrista/git/gaiasky/android/assets-bak/data/hip_pm.csv";
     static String fileOut = "/home/tsagrista/git/gaiasky/android/assets-bak/data/hygxyz.bin";
 
     public static void main(String[] args) {
         HYGToBinary hyg = new HYGToBinary();
-        EventManager.instance.subscribe(hyg, Events.POST_NOTIFICATION, Events.JAVA_EXCEPTION);
 
-        I18n.initialize(new FileHandle("/home/tsagrista/git/gaiasky/android/assets/i18n/gsbundle"));
-
-        Gdx.files = new LwjglFiles();
         try {
+            // Assets location
+            String ASSETS_LOC = (System.getProperty("assets.location") != null ? System.getProperty("assets.location") : "");
+
+            Gdx.files = new LwjglFiles();
+
+            // Sys utils
+            SysUtilsFactory.initialize(new DesktopSysUtilsFactory());
+
+            // Initialize number format
             NumberFormatFactory.initialize(new DesktopNumberFormatFactory());
+
+            // Initialize date format
             DateFormatFactory.initialize(new DesktopDateFormatFactory());
-            ConfInit.initialize(new WebGLConfInit());
+
+            ConfInit.initialize(new DesktopConfInit(new FileInputStream(new File(ASSETS_LOC + "conf/global.properties")), new FileInputStream(new File(ASSETS_LOC + "data/dummyversion"))));
+
+            I18n.initialize(new FileHandle(ASSETS_LOC + "i18n/gsbundle"));
+
+            ThreadLocalFactory.initialize(new SingleThreadLocalFactory());
 
             GlobalConf.data.LIMIT_MAG_LOAD = 20;
-        } catch (IOException e) {
-            Logger.error(e);
+
+            EventManager.instance.subscribe(hyg, Events.POST_NOTIFICATION, Events.JAVA_EXCEPTION);
+
+            //hyg.compareCSVtoBinary(fileIn, fileOut);
+
+            hyg.convertToBinary(fileIn, fileInPm, fileOut);
+
         } catch (Exception e) {
             Logger.error(e);
         }
-
-        //hyg.compareCSVtoBinary(fileIn, fileOut);
-
-        hyg.convertToBinary(fileIn, fileInPm, fileOut);
 
     }
 

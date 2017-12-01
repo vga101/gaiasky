@@ -55,7 +55,7 @@ public class SearchDialog extends Window {
                                 SceneGraphNode node = sg.getNode(name);
                                 if (node instanceof IFocus) {
                                     IFocus focus = ((IFocus) node).getFocus(name);
-                                    if (!focus.isCoordinatesTimeOverflow()) {
+                                    if (focus != null && !focus.isCoordinatesTimeOverflow()) {
                                         Gdx.app.postRunnable(() -> {
                                             EventManager.instance.post(Events.CAMERA_MODE_CMD, CameraMode.Focus, true);
                                             EventManager.instance.post(Events.FOCUS_CHANGE_CMD, focus, true);
