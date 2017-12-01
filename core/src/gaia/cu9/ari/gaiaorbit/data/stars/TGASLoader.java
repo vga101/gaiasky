@@ -218,7 +218,6 @@ public class TGASLoader extends AbstractCatalogLoader implements ISceneGraphLoad
             // skip first line with headers
             br.readLine();
 
-            int i = 1;
             String line;
             while ((line = br.readLine()) != null) {
                 String[] tokens = line.split(",");
