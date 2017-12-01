@@ -530,6 +530,27 @@ public interface IScriptingInterface {
     public void setAmbientLight(float value);
 
     /**
+     * Sets the time of the application.
+     * 
+     * @param year
+     *            The year to represent
+     * @param month
+     *            The month-of-year to represent, from 1 (January) to 12
+     *            (December)
+     * @param day
+     *            The day-of-month to represent, from 1 to 31
+     * @param hour
+     *            The hour-of-day to represent, from 0 to 23
+     * @param min
+     *            The minute-of-hour to represent, from 0 to 59
+     * @param sec
+     *            The second-of-minute to represent, from 0 to 59
+     * @param millisec
+     *            The millisecond within the second, from 0 to 999
+     */
+    public void setSimulationTime(int year, int month, int day, int hour, int min, int sec, int millisec);
+
+    /**
      * Sets the time of the application. The long value represents specified
      * number of milliseconds since the standard base time known as "the epoch",
      * namely January 1, 1970, 00:00:00 GMT.

@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.zip.GZIPInputStream;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
@@ -102,9 +103,21 @@ public class DR2Loader extends AbstractCatalogLoader implements ISceneGraphLoade
             });
             for (FileHandle fh : files)
                 loadFile(fh, stars);
-        } else if (f.name().endsWith(".csv")) {
+        } else if (f.name().endsWith(".csv") || f.name().endsWith(".gz")) {
+            boolean gz = f.name().endsWith(".gz");
+
             // Simple case
             InputStream data = f.read();
+
+            if (gz) {
+                try {
+                    data = new GZIPInputStream(data);
+                } catch (IOException e) {
+                    Logger.error(e);
+                    return;
+                }
+            }
+
             BufferedReader br = new BufferedReader(new InputStreamReader(data));
 
             long i = 0;

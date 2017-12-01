@@ -1,5 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.script;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -459,6 +460,16 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
         assert value >= Constants.MIN_SLIDER && value <= Constants.MAX_SLIDER : "Value must be between 0 and 100";
         Gdx.app.postRunnable(() -> {
             em.post(Events.AMBIENT_LIGHT_CMD, value / 100f);
+        });
+    }
+
+    @Override
+    public void setSimulationTime(int year, int month, int day, int hour, int min, int sec, int millisec) {
+        Calendar c = Calendar.getInstance();
+        c.set(year, month - 1, day, hour, min, sec);
+        Date date = new Date(c.getTime().getTime() + millisec);
+        Gdx.app.postRunnable(() -> {
+            em.post(Events.TIME_CHANGE_CMD, date);
         });
     }
 
