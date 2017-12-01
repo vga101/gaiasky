@@ -79,7 +79,7 @@ public class TimeComponent extends GuiComponent implements IObserver {
         dateEdit.addListener(new TextTooltip(txt("gui.tooltip.dateedit"), skin));
 
         // Pace
-        Label paceLabel = new Label(txt("gui.pace"), skin);
+        Label paceLabel = new Label(txt("gui.pace") + " ", skin);
         plus = new OwnImageButton(skin, "plus");
         plus.setName("plus");
         plus.addListener(event -> {
@@ -123,7 +123,7 @@ public class TimeComponent extends GuiComponent implements IObserver {
         timeGroup.addActor(dateGroup);
 
         HorizontalGroup paceGroup = new HorizontalGroup();
-        paceGroup.space(1 * GlobalConf.SCALE_FACTOR);
+        paceGroup.space(3 * GlobalConf.SCALE_FACTOR);
         paceGroup.addActor(paceLabel);
         paceGroup.addActor(minus);
         paceGroup.addActor(wrapWrapper);
