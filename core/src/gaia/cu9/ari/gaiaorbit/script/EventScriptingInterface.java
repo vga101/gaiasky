@@ -161,7 +161,7 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
 
     @Override
     public void setCameraFocus(final String focusName) {
-        setCameraFocus(focusName, 0.0f);
+        setCameraFocus(focusName.toLowerCase(), 0.0f);
     }
 
     @Override
@@ -169,8 +169,8 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
         assert focusName != null : "Focus name can't be null";
 
         ISceneGraph sg = GaiaSky.instance.sg;
-        if (sg.containsNode(focusName)) {
-            IFocus focus = sg.findFocus(focusName);
+        if (sg.containsNode(focusName.toLowerCase())) {
+            IFocus focus = sg.findFocus(focusName.toLowerCase());
             NaturalCamera cam = GaiaSky.instance.cam.naturalCamera;
             changeFocusAndWait(focus, cam, waitTimeSeconds);
         }
