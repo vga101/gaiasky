@@ -554,7 +554,7 @@ public interface IScriptingInterface {
      * @param sec
      *            The second-of-minute to represent, from 0 to 59
      * @param millisec
-     *            The millisecond within the second, from 0 to 999
+     *            The millisecond-of-second, from 0 to 999
      */
     public void setSimulationTime(int year, int month, int day, int hour, int min, int sec, int millisec);
 
@@ -567,6 +567,30 @@ public interface IScriptingInterface {
      *            Number of milliseconds since the epoch (Jan 1, 1970)
      */
     public void setSimulationTime(long time);
+
+    /**
+     * Returns the current simulation time as the number of milliseconds since
+     * Jan 1, 1970.
+     * 
+     * @return Number of milliseconds since the epoch (Jan 1, 1970)
+     */
+    public long getSimulationTime();
+
+    /**
+     * Returns the current simulation time in an array.
+     * 
+     * @return The current simulation time in an array with the given indices.
+     *         <ul>
+     *         <li>0 - The year</li>
+     *         <li>1 - The month, from 1 (January) to 12 (December)</li>
+     *         <li>2 - The day-of-month, from 1 to 31</li>
+     *         <li>3 - The hour-of-day, from 0 to 23</li>
+     *         <li>4 - The minute-of-hour, from 0 to 59</li>
+     *         <li>5 - The second-of-minute, from 0 to 59</li>
+     *         <li>6 - The millisecond-of-second, from 0 to 999</li>
+     *         </ul>
+     */
+    public int[] getSimulationTimeArr();
 
     /**
      * Starts the simulation.

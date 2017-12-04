@@ -42,6 +42,7 @@ import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
 import gaia.cu9.ari.gaiaorbit.util.math.Intersectord;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
+import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
 /**
  * Implementation of the scripting interface using the event system.
@@ -485,6 +486,28 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
         Gdx.app.postRunnable(() -> {
             em.post(Events.TIME_CHANGE_CMD, new Date(time));
         });
+    }
+
+    @Override
+    public long getSimulationTime() {
+        ITimeFrameProvider time = GaiaSky.instance.time;
+        return time.getTime().getTime();
+    }
+
+    @Override
+    public int[] getSimulationTimeArr() {
+        ITimeFrameProvider time = GaiaSky.instance.time;
+        Calendar c = Calendar.getInstance();
+        c.setTime(time.getTime());
+        int[] result = new int[7];
+        result[0] = c.get(Calendar.YEAR);
+        result[1] = c.get(Calendar.MONTH) + 1;
+        result[2] = c.get(Calendar.DAY_OF_MONTH);
+        result[3] = c.get(Calendar.HOUR_OF_DAY);
+        result[4] = c.get(Calendar.MINUTE);
+        result[5] = c.get(Calendar.SECOND);
+        result[6] = c.get(Calendar.MILLISECOND);
+        return result;
     }
 
     @Override
