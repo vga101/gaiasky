@@ -313,7 +313,7 @@ public class GaiaSkyDesktop implements IObserver {
             // Copy file
             if (confFolder.exists() && confFolder.isDirectory()) {
                 // Running released package
-                copyFile(new File("conf" + File.separator + "global.properties"), userFolderConfFile, overwrite);
+                copyFile(internalFolderConfFile, userFolderConfFile, overwrite);
             } else {
                 // Running from code?
                 if (!new File("../android/assets/conf" + File.separator).exists()) {

@@ -2,6 +2,10 @@ package gaia.cu9.ari.gaiaorbit.interfce;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.channels.FileChannel;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Locale;
@@ -52,6 +56,7 @@ import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
+import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.SysUtilsFactory;
 import gaia.cu9.ari.gaiaorbit.util.format.INumberFormat;
 import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
@@ -1136,8 +1141,32 @@ public class PreferencesWindow extends GenericDialog {
         report = new OwnCheckBox(txt("gui.system.allowreporting"), skin, pad);
         report.setChecked(GlobalConf.program.ANALYTICS_ENABLED);
 
+        // RELOAD DEFAULTS
+        OwnTextButton reloadDefaults = new OwnTextButton(txt("gui.system.reloaddefaults"), skin);
+        reloadDefaults.addListener(new EventListener() {
+            @Override
+            public boolean handle(Event event) {
+                if (event instanceof ChangeEvent) {
+                    reloadDefaultPreferences();
+                    me.hide();
+                    // Prevent saving current state
+                    GaiaSky.instance.savestate = false;
+                    Gdx.app.exit();
+                    return true;
+                }
+
+                return false;
+            }
+
+        });
+        reloadDefaults.setWidth(180 * GlobalConf.SCALE_FACTOR);
+
+        OwnLabel warningLabel = new OwnLabel(txt("gui.system.reloaddefaults.warn"), skin, "default-red");
+
         // Add to table
-        stats.add(report).left().padBottom(pad).row();
+        stats.add(report).left().padBottom(pad * 5).row();
+        stats.add(warningLabel).left().padBottom(pad).row();
+        stats.add(reloadDefaults).left();
 
         // Add to content
         contentSystem.add(titleStats).left().padBottom(pad * 2).row();
@@ -1225,6 +1254,67 @@ public class PreferencesWindow extends GenericDialog {
 
     @Override
     protected void cancel() {
+    }
+
+    private void reloadDefaultPreferences() {
+        // User config file
+        File userFolder = SysUtilsFactory.getSysUtils().getGSHomeDir();
+        File userFolderConfFile = new File(userFolder, "global.properties");
+
+        // Internal config
+        File confFolder = new File("conf" + File.separator);
+        File internalFolderConfFile = new File(confFolder, "global.properties");
+
+        // Delete current conf
+        if (userFolderConfFile.exists()) {
+            userFolderConfFile.delete();
+        }
+
+        // Copy file
+        try {
+            if (confFolder.exists() && confFolder.isDirectory()) {
+                // Running released package
+                copyFile(internalFolderConfFile, userFolderConfFile, true);
+            } else {
+                // Running from code?
+                if (!new File("../android/assets/conf" + File.separator).exists()) {
+                    throw new IOException("File ../android/assets/conf does not exist!");
+                }
+                copyFile(new File("../android/assets/conf" + File.separator + "global.properties"), userFolderConfFile, true);
+            }
+
+        } catch (Exception e) {
+            Logger.error(e, "Error copying default preferences file to user folder: " + userFolderConfFile.getAbsolutePath());
+        }
+
+    }
+
+    private static void copyFile(File sourceFile, File destFile, boolean ow) throws IOException {
+        if (destFile.exists()) {
+            if (ow) {
+                // Overwrite, delete file
+                destFile.delete();
+            } else {
+                return;
+            }
+        }
+        // Create new
+        destFile.createNewFile();
+
+        FileChannel source = null;
+        FileChannel destination = null;
+        try {
+            source = new FileInputStream(sourceFile).getChannel();
+            destination = new FileOutputStream(destFile).getChannel();
+            destination.transferFrom(source, 0, source.size());
+        } finally {
+            if (source != null) {
+                source.close();
+            }
+            if (destination != null) {
+                destination.close();
+            }
+        }
     }
 
     private void saveCurrentPreferences() {
@@ -1385,25 +1475,29 @@ public class PreferencesWindow extends GenericDialog {
         }
 
         if (reloadUI) {
-            // Reinitialise user interface
-            Gdx.app.postRunnable(() -> {
-                // Reinitialise GUI system
-                GlobalResources.updateSkin();
-                GaiaSky.instance.reinitialiseGUI1();
-                EventManager.instance.post(Events.SPACECRAFT_LOADED, GaiaSky.instance.sg.getNode("Spacecraft"));
-                GaiaSky.instance.reinitialiseGUI2();
-                // Time init
-                EventManager.instance.post(Events.TIME_CHANGE_INFO, GaiaSky.instance.time.getTime());
-                if (GaiaSky.instance.cam.mode == CameraManager.CameraMode.Focus)
-                    // Refocus
-                    EventManager.instance.post(Events.FOCUS_CHANGE_CMD, GaiaSky.instance.cam.getFocus());
-                // Update names with new language
-                GaiaSky.instance.sg.getRoot().updateNamesRec();
-                // UI theme reload broadcast
-                EventManager.instance.post(Events.UI_THEME_RELOAD_INFO, GlobalResources.skin);
-            });
+            reloadUI();
         }
 
+    }
+
+    private void reloadUI() {
+        // Reinitialise user interface
+        Gdx.app.postRunnable(() -> {
+            // Reinitialise GUI system
+            GlobalResources.updateSkin();
+            GaiaSky.instance.reinitialiseGUI1();
+            EventManager.instance.post(Events.SPACECRAFT_LOADED, GaiaSky.instance.sg.getNode("Spacecraft"));
+            GaiaSky.instance.reinitialiseGUI2();
+            // Time init
+            EventManager.instance.post(Events.TIME_CHANGE_INFO, GaiaSky.instance.time.getTime());
+            if (GaiaSky.instance.cam.mode == CameraManager.CameraMode.Focus)
+                // Refocus
+                EventManager.instance.post(Events.FOCUS_CHANGE_CMD, GaiaSky.instance.cam.getFocus());
+            // Update names with new language
+            GaiaSky.instance.sg.getRoot().updateNamesRec();
+            // UI theme reload broadcast
+            EventManager.instance.post(Events.UI_THEME_RELOAD_INFO, GlobalResources.skin);
+        });
     }
 
     private void selectFullscreen(boolean fullscreen, OwnTextField widthField, OwnTextField heightField, SelectBox<DisplayMode> fullScreenResolutions, OwnLabel widthLabel, OwnLabel heightLabel) {

@@ -104,6 +104,7 @@ com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
 	header:  { font: ui-21, fontColor: green },
 	default: { font: ui-18, fontColor: black },
 	default-blue: { font: ui-18, fontColor: blue },
+	default-red: { font: ui-18, fontColor: red },
 	default-inv: { font: ui-18, fontColor: white },
 	ui-10:   { font: ui-13, fontColor: black},
 	ui-11:   { font: ui-14, fontColor: black},

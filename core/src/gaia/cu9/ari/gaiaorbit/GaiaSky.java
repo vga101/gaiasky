@@ -172,6 +172,11 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
     private boolean initialized = false;
 
     /**
+     * Save state on exit
+     */
+    public boolean savestate = true;
+
+    /**
      * Creates a GaiaSky instance.
      */
     public GaiaSky() {
@@ -456,7 +461,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
     @Override
     public void dispose() {
 
-        if (Constants.desktop)
+        if (Constants.desktop && savestate)
             ConfInit.instance.persistGlobalConf(new File(System.getProperty("properties.file")));
 
         // Flush frames

@@ -85,4 +85,8 @@ public class WebGLConfInitLite extends ConfInit {
     public void persistGlobalConf(File propsFile) {
     }
 
+    @Override
+    public void initialiseProperties(File confFile) {
+    }
+
 }

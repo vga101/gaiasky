@@ -64,6 +64,7 @@ public class DesktopConfInit extends ConfInit {
 
             File confFile = new File(propsFileProperty);
             InputStream fis = new FileInputStream(confFile);
+
             // This should work for the normal execution
             InputStream vis = GaiaSkyDesktop.class.getResourceAsStream("/version");
             if (vis == null) {
@@ -75,6 +76,7 @@ public class DesktopConfInit extends ConfInit {
 
             p = new CommentedProperties();
             p.load(fis);
+
         } catch (Exception e) {
             Logger.error(e);
         }
@@ -86,6 +88,16 @@ public class DesktopConfInit extends ConfInit {
             vp = new Properties();
             vp.load(vis);
 
+            p = new CommentedProperties();
+            p.load(fis);
+        } catch (Exception e) {
+            Logger.error(e);
+        }
+    }
+
+    public void initialiseProperties(File confFile) {
+        try {
+            InputStream fis = new FileInputStream(confFile);
             p = new CommentedProperties();
             p.load(fis);
         } catch (Exception e) {
