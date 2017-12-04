@@ -258,7 +258,7 @@ public class KeyBindings {
         addMapping(new ProgramAction(txt("action.toggle", txt("element.frameoutput")), new Runnable() {
             @Override
             public void run() {
-                EventManager.instance.post(Events.FRAME_OUTPUT_CMD);
+                EventManager.instance.post(Events.FRAME_OUTPUT_CMD, !GlobalConf.frame.RENDER_OUTPUT);
             }
         }), Keys.F6);
 

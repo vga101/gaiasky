@@ -257,15 +257,11 @@ public class NotificationsInterface extends Table implements IObserver, IGuiInte
                 addMessage(I18n.bundle.format("notif.stereoscopic.profile", GlobalConf.program.STEREO_PROFILE.toString()));
                 break;
             case FRAME_OUTPUT_CMD:
-                if (data.length == 0) {
-                    addMessage(I18n.bundle.format("notif.toggle", I18n.bundle.get("element.frameoutput")));
+                boolean activated = (Boolean) data[0];
+                if (activated) {
+                    addMessage(I18n.bundle.format("notif.activated", I18n.bundle.get("element.frameoutput")));
                 } else {
-                    boolean activated = (Boolean) data[0];
-                    if (activated) {
-                        addMessage(I18n.bundle.format("notif.activated", I18n.bundle.get("element.frameoutput")));
-                    } else {
-                        addMessage(I18n.bundle.format("notif.deactivated", I18n.bundle.get("element.frameoutput")));
-                    }
+                    addMessage(I18n.bundle.format("notif.deactivated", I18n.bundle.get("element.frameoutput")));
                 }
                 break;
             default:

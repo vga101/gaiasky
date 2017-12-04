@@ -213,8 +213,7 @@ public enum Events {
     HIGH_ACCURACY_CMD,
 
     /**
-     * Issues the frame output command. Contains an optional boolean with the
-     * state. Otherwise, the state is toggled
+     * Issues the frame output command. Contains a boolean with the state.
      **/
     FRAME_OUTPUT_CMD,
 

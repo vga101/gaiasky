@@ -362,10 +362,6 @@ public class ControlsWindow extends CollapsibleWindow implements IObserver {
         return I18n.bundle.get(key);
     }
 
-    private String txt(String key, Object... params) {
-        return I18n.bundle.format(key, params);
-    }
-
     @Override
     public void notify(Events event, Object... data) {
         switch (event) {

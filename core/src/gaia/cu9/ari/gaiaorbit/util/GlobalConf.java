@@ -345,11 +345,7 @@ public class GlobalConf {
                 RENDER_FILE_NAME = (String) data[4];
                 break;
             case FRAME_OUTPUT_CMD:
-                if (data.length > 0) {
-                    RENDER_OUTPUT = (Boolean) data[0];
-                } else {
-                    RENDER_OUTPUT = !RENDER_OUTPUT;
-                }
+                RENDER_OUTPUT = (Boolean) data[0];
                 // Flush buffer if needed
                 if (!RENDER_OUTPUT && GaiaSky.instance != null) {
                     EventManager.instance.post(Events.FLUSH_FRAMES);
