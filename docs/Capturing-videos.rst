@@ -18,7 +18,7 @@ Windows, Linux and OS X.
 When the frame output system is active, each frame is saved as a ``JPEG`` image to disk. Refer to the
 :ref:`frame-output-config` section to learn how to configure the frame output system.
 
-Once you have the image frames you can convert using a ``ffmpeg`` preset (slow, veryslow, fast, etc.) using the following:
+Once you have the image frames you can encode a video using a ``ffmpeg`` preset (slow, veryslow, fast, etc.) with the following command:
 
 .. code:: bash
 
@@ -33,8 +33,10 @@ You can also use a constant rate factor ``-crf`` setting:
 
 You need to obviously change the prefix and start number, if any, choose the
 right resolution, frame rate and preset and modify the output format if
-you need to. It is quite a complex topic, so for more information please refer
-to the original `ffmpeg documentation <http://ffmpeg.org/ffmpeg.html>`__.
+you need to. 
+
+``ffmpeg`` is quite a complex command which provides a lot of options, so for more information please refer
+to the official `ffmpeg documentation <http://ffmpeg.org/ffmpeg.html>`__.
 
 OpenGL context recorder
 =======================
