@@ -1,9 +1,9 @@
 package gaia.cu9.ari.gaiaorbit.util.gaia.utils;
 
+import java.util.Random;
+
 import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
-
-import java.util.Random;
 
 /**
  * Specifies a celestial position
@@ -59,8 +59,7 @@ public class Place {
      *            Random number generator
      */
     public Place(Random rnd) {
-        dirICRS = new Vector3d(rnd.nextGaussian(), rnd.nextGaussian(), rnd
-                .nextGaussian()).nor();
+        dirICRS = new Vector3d(rnd.nextGaussian(), rnd.nextGaussian(), rnd.nextGaussian()).nor();
         haveAngles = false;
     }
 
@@ -86,7 +85,7 @@ public class Place {
     /**
      * Returns the right ascension [rad] of the Place
      *
-     * @return
+     * @return The right ascension in radians
      */
     public double getAlpha() {
         if (!haveAngles) {
@@ -99,7 +98,7 @@ public class Place {
     /**
      * Returns the declination [rad] of the Place
      *
-     * @return
+     * @return The declination in radians
      */
     public double getDelta() {
         if (!haveAngles) {
@@ -158,8 +157,7 @@ public class Place {
      */
     @Override
     public String toString() {
-        return "Place at (alpha, delta) = (" + this.getAlpha() + ", "
-                + this.getDelta() + ")";
+        return "Place at (alpha, delta) = (" + this.getAlpha() + ", " + this.getDelta() + ")";
     }
 
     /**

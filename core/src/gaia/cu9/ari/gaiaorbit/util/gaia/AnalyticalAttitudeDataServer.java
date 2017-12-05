@@ -11,7 +11,8 @@ import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
  * in the superclass.
  *
  * @author Lennart Lindegren
- * @version $Id: AnalyticalAttitudeDataServer.java 329790 2013-11-15 16:31:56Z ulammers $
+ * @version $Id: AnalyticalAttitudeDataServer.java 329790 2013-11-15 16:31:56Z
+ *          ulammers $
  *
  */
 public abstract class AnalyticalAttitudeDataServer extends BaseAttitudeDataServer<Attitude> {
@@ -65,8 +66,8 @@ public abstract class AnalyticalAttitudeDataServer extends BaseAttitudeDataServe
     private double targetPrecessionRate;
 
     /*
-    * every thread gets is own local copy of the NslSun
-    */
+     * every thread gets is own local copy of the NslSun
+     */
     protected NslSun nslSun = new NslSun();
 
     /**
@@ -213,15 +214,13 @@ public abstract class AnalyticalAttitudeDataServer extends BaseAttitudeDataServe
         return targetPrecessionRate;
     }
 
-    /**
-     * @Override
-     */
     public boolean inGap(long time) {
         return false;
     }
 
     /**
      * Ref time in nanoseconds since epoch.
+     * 
      * @return The reference time [ns]
      */
     public long getRefTime() {
@@ -230,7 +229,9 @@ public abstract class AnalyticalAttitudeDataServer extends BaseAttitudeDataServe
 
     /**
      * Sets the reference time in nanoseconds.
-     * @param tRef [ns]
+     * 
+     * @param tRef
+     *            [ns]
      */
     public void setRefTime(long tRef) {
         this.tRef = tRef;

@@ -15,6 +15,7 @@ import com.badlogic.gdx.utils.Array;
 
 /**
  * Helper generic class to create icospheres.
+ * 
  * @author Toni Sagrista
  *
  */
@@ -24,8 +25,11 @@ public class IcoSphereCreator extends ModelCreator {
 
     /**
      * Adds a vertex and its UV mapping.
-     * @param p The point.
-     * @param radius The radius.
+     * 
+     * @param p
+     *            The point.
+     * @param radius
+     *            The radius.
      * @return
      */
     protected int addVertex(Vector3 p, float radius) {
@@ -40,7 +44,9 @@ public class IcoSphereCreator extends ModelCreator {
 
     /**
      * Implements the spherical UV mapping
-     * @param p The normalized point
+     * 
+     * @param p
+     *            The normalized point
      */
     protected void addUV(final Vector3 p) {
         // UV
@@ -144,10 +150,14 @@ public class IcoSphereCreator extends ModelCreator {
 
     /**
      * Creates an ico-sphere.
-     * @param radius The radius of the sphere. 
-     * @param divisions The number of divisions, it must be bigger than 0.
-     * @param flipNormals Whether to flip normals or not.
-     * @return
+     * 
+     * @param radius
+     *            The radius of the sphere.
+     * @param divisions
+     *            The number of divisions, it must be bigger than 0.
+     * @param flipNormals
+     *            Whether to flip normals or not.
+     * @return This creator
      */
     public IcoSphereCreator create(float radius, int divisions, boolean flipNormals) {
         return create(radius, divisions, flipNormals, false);
@@ -155,11 +165,17 @@ public class IcoSphereCreator extends ModelCreator {
 
     /**
      * Creates an ico-sphere.
-     * @param radius The radius of the sphere. 
-     * @param divisions The number of divisions, it must be bigger than 0.
-     * @param flipNormals Whether to flip normals or not.
-     * @param hardEdges Whether to use smoothLighting (all vertices in a face have a different  normal) or not.
-     * @return
+     * 
+     * @param radius
+     *            The radius of the sphere.
+     * @param divisions
+     *            The number of divisions, it must be bigger than 0.
+     * @param flipNormals
+     *            Whether to flip normals or not.
+     * @param hardEdges
+     *            Whether to use smoothLighting (all vertices in a face have a
+     *            different normal) or not.
+     * @return This creator
      */
     public IcoSphereCreator create(float radius, int divisions, boolean flipNormals, boolean hardEdges) {
         assert divisions >= 1 : "Recursion level must be greater than 0";

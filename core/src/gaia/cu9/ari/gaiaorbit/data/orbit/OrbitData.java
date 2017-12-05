@@ -1,12 +1,12 @@
 package gaia.cu9.ari.gaiaorbit.data.orbit;
 
-import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import com.badlogic.gdx.math.Vector3;
+
+import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
 public class OrbitData {
     // Values of x, y, z in world coordinates
@@ -26,9 +26,11 @@ public class OrbitData {
     }
 
     /**
-     * Loads the data point at the index in the vector in the Orbit reference system
+     * Loads the data point at the index in the vector in the Orbit reference
+     * system
+     * 
      * @param v
-     * @param index 
+     * @param index
      */
     public void loadPoint(Vector3d v, int index) {
         v.set(x.get(index), y.get(index), z.get(index));
@@ -55,7 +57,9 @@ public class OrbitData {
     }
 
     /**
-     * Loads the data point at the index in the vector in the world reference system
+     * Loads the data point at the index in the vector in the world reference
+     * system
+     * 
      * @param v
      * @param index
      */
@@ -64,10 +68,14 @@ public class OrbitData {
     }
 
     /**
-     * Returns a vector with the data point at the given time. It uses
-     * linear interpolation.
+     * Returns a vector with the data point at the given time. It uses linear
+     * interpolation
+     * 
+     * @param v
+     *            The vector
      * @param date
-     * @return
+     *            The date
+     * @return Whether the operation completes successfully
      */
     public boolean loadPoint(Vector3d v, Date date) {
         // Data is sorted

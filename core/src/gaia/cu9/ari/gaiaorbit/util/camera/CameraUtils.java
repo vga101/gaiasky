@@ -23,8 +23,7 @@ public class CameraUtils {
      * Checks if the planet p is hit by the screen position x and y.
      * 
      * @param p
-     * @param x
-     * @param y
+     *            The planet
      * @return Whether an intersection has occurred
      */
     public static boolean intersectScreenSphere(Planet p, ICamera camera, int sx, int sy, Vector3 v0, Vector3 v1, Vector3 vec, Vector3 intersection) {

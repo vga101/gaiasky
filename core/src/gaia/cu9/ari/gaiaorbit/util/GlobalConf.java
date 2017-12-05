@@ -87,9 +87,9 @@ public class GlobalConf {
         /**
          * Returns the actual number of threads. It accounts for the number of
          * threads being 0 or less, "let the program decide" option, in which
-         * case the number of processors is returned.
+         * case the number of processors is returned
          *
-         * @return
+         * @return The number of threads
          */
         public int NUMBER_THREADS() {
             if (NUMBER_THREADS <= 0)

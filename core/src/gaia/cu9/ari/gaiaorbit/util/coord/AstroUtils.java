@@ -527,11 +527,11 @@ public class AstroUtils {
 
     /**
      * Returns the elapsed milliseconds since the given julian date jd until the
-     * given date. Can be negative.
+     * given date. Can be negative
      * 
      * @param date
      *            The date
-     * @param jd
+     * @param epoch_jd
      *            The reference epoch in julian days
      * @return The elapsed milliseconds
      */

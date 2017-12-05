@@ -71,7 +71,7 @@ public class Transform {
     /**
      * Sets the given matrix to this transform
      * 
-     * @param mat
+     * @param aux
      *            The out matrix
      * @return The matrix with the transform
      */

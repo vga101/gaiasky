@@ -70,7 +70,7 @@ public final class MathUtilsd {
             return max;
         return value;
     }
-    
+
     /**
      * Returns true if the value is zero (using the default tolerance as upper
      * bound)
@@ -89,7 +89,7 @@ public final class MathUtilsd {
     static public boolean isZero(double value, double tolerance) {
         return Math.abs(value) <= tolerance;
     }
-    
+
     /**
      * Returns true if a is nearly equal to b. The function uses the default
      * doubleing error tolerance.
@@ -117,12 +117,13 @@ public final class MathUtilsd {
     static public boolean isEqual(double a, double b, double tolerance) {
         return Math.abs(a - b) <= tolerance;
     }
-    
+
     /**
-     * Fast sqrt method. Default passes it through one round of Newton's method.
+     * Fast sqrt method. Default passes it through one round of Newton's method
      * 
      * @param value
-     * @return
+     *            The value
+     * @return The square root value
      */
     static public double sqrt(double value) {
         double sqrt = Double.longBitsToDouble(((Double.doubleToLongBits(value) - (1l << 52)) >> 1) + (1l << 61));
@@ -130,19 +131,19 @@ public final class MathUtilsd {
     }
 
     /**
-     * Lineal interpolation.
+     * Linear interpolation
      * 
      * @param x
-     *            The value to interpolate.
+     *            The value to interpolate
      * @param x0
-     *            Inferior limit to the independent value.
+     *            Inferior limit to the independent value
      * @param x1
-     *            Superior limit to the independent value.
+     *            Superior limit to the independent value
      * @param y0
-     *            Inferior limit to the dependent value.
+     *            Inferior limit to the dependent value
      * @param y1
-     *            Superior limit to the dependent value.
-     * @return
+     *            Superior limit to the dependent value
+     * @return The interpolated value
      */
     public static double lint(double x, double x0, double x1, double y0, double y1) {
         double rx0 = x0;
@@ -163,19 +164,19 @@ public final class MathUtilsd {
     }
 
     /**
-     * Lineal interpolation.
+     * Linear interpolation
      * 
      * @param x
-     *            The value to interpolate.
+     *            The value to interpolate
      * @param x0
-     *            Inferior limit to the independent value.
+     *            Inferior limit to the independent value
      * @param x1
-     *            Superior limit to the independent value.
+     *            Superior limit to the independent value
      * @param y0
-     *            Inferior limit to the dependent value.
+     *            Inferior limit to the dependent value
      * @param y1
-     *            Superior limit to the dependent value.
-     * @return
+     *            Superior limit to the dependent value
+     * @return The interpolated value
      */
     public static float lint(float x, float x0, float x1, float y0, float y1) {
         float rx0 = x0;
@@ -196,19 +197,19 @@ public final class MathUtilsd {
     }
 
     /**
-     * Lineal interpolation.
+     * Linear interpolation
      * 
      * @param x
-     *            The value to interpolate.
+     *            The value to interpolate
      * @param x0
-     *            Inferior limit to the independent value.
+     *            Inferior limit to the independent value
      * @param x1
-     *            Superior limit to the independent value.
+     *            Superior limit to the independent value
      * @param y0
-     *            Inferior limit to the dependent value.
+     *            Inferior limit to the dependent value
      * @param y1
-     *            Superior limit to the dependent value.
-     * @return
+     *            Superior limit to the dependent value
+     * @return The interpolated value
      */
     public static float lint(long x, long x0, long x1, float y0, float y1) {
         double rx0 = x0;
@@ -242,15 +243,15 @@ public final class MathUtilsd {
      * Gets the distance from the point x0 to the line denoted by x1-x2.<br/>
      * Check <a href=
      * "http://mathworld.wolfram.com/Point-LineDistance3-Dimensional.html">this
-     * link</a>.
+     * link</a>
      * 
      * @param x1
-     *            The first point in the line.
+     *            The first point in the line
      * @param x2
-     *            The second point in the line.
+     *            The second point in the line
      * @param x0
-     *            The point.
-     * @return The euclidean distance between the line (x1, x2) and x0.
+     *            The point
+     * @return The Euclidean distance between the line (x1, x2) and x0
      */
     public static double distancePointLine(double x1, double y1, double z1, double x2, double y2, double z2, double x0, double y0, double z0) {
 
@@ -274,7 +275,7 @@ public final class MathUtilsd {
      *            The second segment delimiter.
      * @param x0
      *            The point.
-     * @return The euclidean distance between the segment (x1, x2)
+     * @return The Euclidean distance between the segment (x1, x2)
      */
     public static double distancePointSegment(double x1, double y1, double z1, double x2, double y2, double z2, double x0, double y0, double z0) {
         Vector3d v = aux0.set(x1, y1, z1);

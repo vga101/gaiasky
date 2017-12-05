@@ -400,7 +400,7 @@ public class Spacecraft extends GenericSpacecraft implements ILineRenderable, IO
     /**
      * Sets the current engine power
      * 
-     * @param power
+     * @param enginePower
      *            The power in [-1..1]
      */
     public void setEnginePower(double enginePower) {

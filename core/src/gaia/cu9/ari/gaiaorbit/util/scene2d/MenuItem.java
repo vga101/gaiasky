@@ -1,17 +1,17 @@
 /*
  * Copyright 2014-2016 See AUTHORS file.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  *
  * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  */
 package gaia.cu9.ari.gaiaorbit.util.scene2d;
 
@@ -32,18 +32,22 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Pools;
 import com.badlogic.gdx.utils.Scaling;
 
 /**
- * MenuItem displayed in {@link Menu} and {@link PopupMenu}. MenuItem contains text or text with icon.
- * Best icon size is 22px. MenuItem can also have a hotkey text.
+ * MenuItem contains text or text with icon. Best icon size is 22px. MenuItem
+ * can also have a hotkey text.
  * <p>
- * When listening for menu item press {@link ChangeListener} should be always preferred (instead of {@link ClickListener}).
- * {@link ClickListener} does not support disabling menu item and will still report item clicks.
+ * When listening for menu item press
+ * {@link com.badlogic.gdx.scenes.scene2d.utils.ChangeListener} should be always
+ * preferred (instead of
+ * {@link com.badlogic.gdx.scenes.scene2d.utils.ClickListener}).
+ * {@link com.badlogic.gdx.scenes.scene2d.utils.ClickListener} does not support
+ * disabling menu item and will still report item clicks.
+ * 
  * @author Kotcrab
  * @author langurmonkey
  */
@@ -295,17 +299,21 @@ public class MenuItem extends Button {
     }
 
     /**
-     * Changes generateDisabledImage property, when true that function is enabled. When it is enabled and this MenuItem
-     * is disabled then image color will be changed to gray meaning that it is disabled, by default it is enabled.
+     * Changes generateDisabledImage property, when true that function is
+     * enabled. When it is enabled and this MenuItem is disabled then image
+     * color will be changed to gray meaning that it is disabled, by default it
+     * is enabled.
      */
     public void setGenerateDisabledImage(boolean generateDisabledImage) {
         this.generateDisabledImage = generateDisabledImage;
     }
 
     /**
-     * Set shortcuts text displayed in this menu item.
-     * This DOES NOT set actual hot key for this menu item, it only makes shortcut text visible in item.
-     * @param keycode from {@link Keys}.
+     * Set shortcuts text displayed in this menu item. This DOES NOT set actual
+     * hot key for this menu item, it only makes shortcut text visible in item.
+     * 
+     * @param keycode
+     *            from {@link Keys}.
      */
     public MenuItem setShortcut(int keycode) {
         return setShortcut(Keys.toString(keycode));
@@ -316,9 +324,11 @@ public class MenuItem extends Button {
     }
 
     /**
-     * Set shortcuts text displayed in this menu item. This DOES NOT set actual hot key for this menu item,
-     * it only makes shortcut text visible in item.
-     * @param text text that will be displayed
+     * Set shortcuts text displayed in this menu item. This DOES NOT set actual
+     * hot key for this menu item, it only makes shortcut text visible in item.
+     * 
+     * @param text
+     *            text that will be displayed
      * @return this object for the purpose of chaining methods
      */
     public MenuItem setShortcut(String text) {
@@ -328,13 +338,19 @@ public class MenuItem extends Button {
     }
 
     /**
-     * Creates platform dependant shortcut text. Converts int keycodes to String text. Eg. Keys.CONTROL_LEFT,
-     * Keys.SHIFT_LEFT, Keys.F5 will be converted to Ctrl+Shift+F5 on Windows and Linux, and to ⌘⇧F5 on Mac.
+     * Creates platform dependant shortcut text. Converts int keycodes to String
+     * text. Eg. Keys.CONTROL_LEFT, Keys.SHIFT_LEFT, Keys.F5 will be converted
+     * to Ctrl+Shift+F5 on Windows and Linux, and to ⌘⇧F5 on Mac.
      * <p>
-     * CONTROL_LEFT and CONTROL_RIGHT are mapped to Ctrl. The same goes for Alt (ALT_LEFT, ALT_RIGHT) and Shift (SHIFT_LEFT, SHIFT_RIGHT).
+     * CONTROL_LEFT and CONTROL_RIGHT are mapped to Ctrl. The same goes for Alt
+     * (ALT_LEFT, ALT_RIGHT) and Shift (SHIFT_LEFT, SHIFT_RIGHT).
      * <p>
-     * This DOES NOT set actual hot key for this menu item, it only makes shortcut text visible in item.
-     * @param keycodes keycodes from {@link Keys} that are used to create shortcut text
+     * This DOES NOT set actual hot key for this menu item, it only makes
+     * shortcut text visible in item.
+     * 
+     * @param keycodes
+     *            keycodes from {@link Keys} that are used to create shortcut
+     *            text
      * @return this object for the purpose of chaining methods
      */
     public MenuItem setShortcut(int... keycodes) {

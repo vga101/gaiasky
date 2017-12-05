@@ -6,9 +6,8 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.AbstractPositionEntity;
 
 /**
  * Compares entities. Further entities go first, nearer entities go last.
+ * 
  * @author Toni Sagrista
- *
- * @param <IRenderable>
  */
 public class DistToCameraComparator<T> implements Comparator<T> {
 

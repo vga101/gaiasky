@@ -71,11 +71,11 @@ public class ColourUtils {
     }
 
     /**
-     * Converts a scalar normalized to de range [0:1] into a long rainbow of
-     * rgba values. See: http://www.particleincell.com/blog/2014/colormap/
+     * Converts a scalar in [0..1] to a long rainbow of rgba values. See
+     * <a href="http://www.particleincell.com/blog/2014/colormap/">here</a>
      * 
      * @param value
-     * @return
+     *            The value in [0..1]
      */
     public static void long_rainbow(float value, float[] rgba) {
         if (rgba == null)
@@ -122,11 +122,11 @@ public class ColourUtils {
     }
 
     /**
-     * Converts a scalar normalized to de range [0:1] into a yellow to red map.
-     * See: http://www.particleincell.com/blog/2014/colormap/
+     * Converts a scalar in [0..1] to a yellow to red map. See
+     * <a href="http://www.particleincell.com/blog/2014/colormap/">here</a>
      * 
      * @param value
-     * @return
+     *            The value to convert
      */
     public static void yellow_to_red(float value, float[] rgba) {
         rgba[0] = 1;
@@ -141,12 +141,12 @@ public class ColourUtils {
     }
 
     /**
-     * Converts the color index B-V to RGB model. See
-     * http://stackoverflow.com/questions/21977786/star-b-v-color-index-to-apparent-rgb-color
+     * Converts the color index B-V to RGB model. See <a href=
+     * "http://stackoverflow.com/questions/21977786/star-b-v-color-index-to-apparent-rgb-color">here</a>
      * 
      * @param bv
-     *            The B-V coor index.
-     * @return
+     *            The B-V coor index
+     * @return The rgb as a float array
      */
     public static float[] BVtoRGB(double bv) {
         double t = 4600 * ((1 / ((0.92 * bv) + 1.7)) + (1 / ((0.92 * bv) + 0.62)));
@@ -200,13 +200,13 @@ public class ColourUtils {
     }
 
     /**
-     * Returns a copy of the rgb colour brightened up by the given amount.
+     * Returns a copy of the RGB colour brightened up by the given amount
      * 
      * @param rgb
-     *            The RGB color.
+     *            The RGB color
      * @param luminosity
-     *            The new luminosity amount in [0, 1]
-     * @return
+     *            The new luminosity amount in [0..1]
+     * @return The new RGB array
      */
     public static float[] brighten(float[] rgb, float luminosity) {
         float[] hsl = rgbToHsl(rgb);
@@ -217,7 +217,7 @@ public class ColourUtils {
     /**
      * Converts an RGB color value to HSL. Conversion formula adapted from
      * http://en.wikipedia.org/wiki/HSL_color_space. Assumes r, g, and b are
-     * contained in the set [0, 255] and returns h, s, and l in the set [0, 1].
+     * contained in the set [0..255] and returns h, s, and l in the set [0..1]
      *
      * @param Number
      *            r The red color value
@@ -258,7 +258,7 @@ public class ColourUtils {
     /**
      * Converts an HSL color value to RGB. Conversion formula adapted from
      * http://en.wikipedia.org/wiki/HSL_color_space. Assumes h, s, and l are
-     * contained in the set [0, 1] and returns r, g, and b in the set [0, 255].
+     * contained in the set [0..1] and returns r, g, and b in the set [0..255].
      *
      * @param Number
      *            h The hue

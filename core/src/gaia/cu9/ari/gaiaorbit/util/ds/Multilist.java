@@ -112,7 +112,7 @@ public class Multilist<T> {
 
     /**
      * Adds the element e in the list identified by the given index. See
-     * {@link java.util.Collection#add(Object))}.
+     * {@link java.util.Collection#add(E)}.
      * 
      * @param e
      *            The element to add.
@@ -137,12 +137,12 @@ public class Multilist<T> {
     /**
      * Removes the element e in the list identified by the given index. This
      * version is faster than the version without the index. See
-     * {@link java.util.Collection#remove(Object))}.
+     * {@link java.util.Collection#remove(E)}
      * 
-     * @param e
-     *            The element to remove.
+     * @param o
+     *            The element to remove
      * @param index
-     *            The index of the list to remove the element from.
+     *            The index of the list to remove the element from
      * @return <tt>true</tt> if the element was removed as a result of the call
      */
     public boolean remove(T o, int index) {
@@ -179,13 +179,13 @@ public class Multilist<T> {
     }
 
     /**
-     * Gets the element of the given list index at the given index.
+     * Gets the element of the given list index at the given index
      * 
      * @param index
-     *            The index of the element in the list.
+     *            The index of the element in the list
      * @param listIndex
-     *            The index of the list.
-     * @return The element if exists, null otherwise.
+     *            The index of the list
+     * @return The element if exists, null otherwise
      */
     public T get(int index, int listIndex) {
         return lists[listIndex].get(index);
@@ -204,7 +204,6 @@ public class Multilist<T> {
      *            The element.
      * @param listIndex
      *            The index of the list.
-     * @return <tt>true</tt> if the list was modified.
      */
     public void set(int index, T element, int listIndex) {
         lists[listIndex].set(index, element);

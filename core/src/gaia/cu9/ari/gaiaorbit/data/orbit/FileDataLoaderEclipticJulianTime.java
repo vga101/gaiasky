@@ -18,9 +18,10 @@ public class FileDataLoaderEclipticJulianTime {
 
     /**
      * Loads the data in the input stream into an OrbitData object.
+     * 
      * @param data
-     * @param referenceFrame
-     * @throws Exception
+     *            The input stream
+     * @return The orbit data
      */
     public OrbitData load(InputStream data) throws Exception {
         OrbitData orbitData = new OrbitData();

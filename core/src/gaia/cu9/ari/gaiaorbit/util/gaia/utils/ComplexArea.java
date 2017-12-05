@@ -1,10 +1,10 @@
 package gaia.cu9.ari.gaiaorbit.util.gaia.utils;
 
-import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Random;
+
+import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
 /**
  * Specifies a combination of {@link Area}s.
@@ -81,7 +81,8 @@ public class ComplexArea implements Area {
     /**
      * Get a random Place within the ComplexArea
      *
-     * @param rnd Random number generator
+     * @param rnd
+     *            Random number generator
      * @return random Place
      */
     public Place getRandomPlace(Random rnd) {
@@ -130,6 +131,7 @@ public class ComplexArea implements Area {
      * Set the name of the area
      *
      * @param str
+     *            The string
      */
     public void setName(String str) {
         this.name = str;
@@ -138,7 +140,7 @@ public class ComplexArea implements Area {
     /**
      * Get the name of the area
      *
-     * @return
+     * @return The name
      */
     public String getName() {
         return this.name;

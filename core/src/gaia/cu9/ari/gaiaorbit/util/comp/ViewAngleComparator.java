@@ -8,8 +8,6 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.IFocus;
  * Compares entities. Further entities go first, nearer entities go last.
  * 
  * @author Toni Sagrista
- *
- * @param <IRenderable>
  */
 public class ViewAngleComparator<T> implements Comparator<T> {
 

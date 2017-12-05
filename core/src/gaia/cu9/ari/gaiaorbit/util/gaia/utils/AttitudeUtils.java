@@ -1,19 +1,19 @@
 /*
  * Copyright (C) 2006-2011 Gaia Data Processing and Analysis Consortium
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
  *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
  *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  *
  */
 package gaia.cu9.ari.gaiaorbit.util.gaia.utils;
@@ -23,24 +23,27 @@ import gaia.cu9.ari.gaiaorbit.util.Logger;
 /**
  * Class with static utility methods to deal with B-splines.
  *
- * @author Uwe Lammers and David Hobbs modified from original AttitudeUtils class by hsiddiqu
+ * @author Uwe Lammers and David Hobbs modified from original AttitudeUtils
+ *         class by hsiddiqu
  * @version $Id: AttitudeUtils.java 206987 2011-11-17 15:51:06Z dhobbs $
  */
 public class AttitudeUtils {
 
     /**
-     * In the non-decreasing sequence xa[0:n-1], finds the left index such that xa[left] &lt;= x &lt; xa[left+1]
+     * In the non-decreasing sequence xa[0:n-1], finds the left index such that
+     * xa[left] &lt;= x &lt; xa[left+1]
      *
-     * If x &lt; xa[0] the method returns left = -1. If x &gt;= xa[n-1] the method returns left = n-1 (the last valid index to
-     * the array). These are the logical extensions of the basic condition when x is outside the interval defined by the
-     * array - formally they could be derived by putting xa[-1] = -inf and xa[n] = +inf.
+     * If x &lt; xa[0] the method returns left = -1. If x &gt;= xa[n-1] the
+     * method returns left = n-1 (the last valid index to the array). These are
+     * the logical extensions of the basic condition when x is outside the
+     * interval defined by the array - formally they could be derived by putting
+     * xa[-1] = -inf and xa[n] = +inf.
      *
-     * This implementation of findLeftIndex uses an estimation method which assumes that the intervals have the same or
-     * similar length to speed up the search, this method is faster than the bisection one at least when there aren't
-     * many gaps and the time intervals are identical or similar.
+     * This implementation of findLeftIndex uses an estimation method which
+     * assumes that the intervals have the same or similar length to speed up
+     * the search, this method is faster than the bisection one at least when
+     * there aren't many gaps and the time intervals are identical or similar.
      *
-     * @TODO: The argument splineOrder is confusing and not strictly necessary. Find a better way to estimate the
-     *        increment.
      *
      * @param x
      *            value to find the left index for
@@ -48,7 +51,7 @@ public class AttitudeUtils {
      *            array of spline knot times
      * @param splineOrder
      *            order of the spline
-     * @return left index
+     * @return The left index
      **/
     public static int findLeftIndex(final long x, final long[] xa, int splineOrder) {
         // Check if x is in the range of xa.
@@ -90,9 +93,10 @@ public class AttitudeUtils {
     }
 
     /**
-     * Variant of findLeftIndex which returns left = xa.length - 2 if x == xa[xa.length-1]. This allows linear or cubic
-     * Hermite interpolation between xa[left] and xa[left+1] also in the case when x is exactly equal to the last point
-     * in the array.
+     * Variant of findLeftIndex which returns left = xa.length - 2 if x ==
+     * xa[xa.length-1]. This allows linear or cubic Hermite interpolation
+     * between xa[left] and xa[left+1] also in the case when x is exactly equal
+     * to the last point in the array.
      *
      * @param x
      *            value to find the left index for
@@ -114,22 +118,26 @@ public class AttitudeUtils {
     }
 
     /**
-     * Variant of findLeftIndex to be used for BSpline interpolation. In general the value of left is determined such
-     * that * xa[left] and xa[left+1] exist * xa[left+1] - xa[left] &gt; 0 * xa[left] &lt;= x &lt; xa[left+1]
+     * Variant of findLeftIndex to be used for BSpline interpolation. In general
+     * the value of left is determined such that * xa[left] and xa[left+1] exist
+     * * xa[left+1] - xa[left] &gt; 0 * xa[left] &lt;= x &lt; xa[left+1]
      *
      * More specific, this means that
      *
-     * if x &gt; xa[xa.length - 1], then the BSpline cannot be evaluated so -1 is returned.
-     *
-     * if x == xa[xa.length-1] then left is determined such that left is the largest value for which xa[left] &lt;
-     * xa[xa.length-n] for the largest value of n &gt; 0 for which xa[xa.length-n] == xa[xa.length-1].
-     *
-     * for all xa[0] &lt; x &lt; xa[xa.length-1] left is determined such that xa[left] &lt;= x &lt; xa[left+1]. If then xa[left] ==
-     * xa[left-1] &lt;= x then n is determined to be the smallest value for which xa[left-n] &lt; xa[left] and then left - n
+     * if x &gt; xa[xa.length - 1], then the BSpline cannot be evaluated so -1
      * is returned.
      *
-     * if xa[left] &lt;= x and left == 0, then n is determined to be the largest value for which xa[left] == xa[left+n] and
-     * then left + n is returned.
+     * if x == xa[xa.length-1] then left is determined such that left is the
+     * largest value for which xa[left] &lt; xa[xa.length-n] for the largest
+     * value of n &gt; 0 for which xa[xa.length-n] == xa[xa.length-1].
+     *
+     * for all xa[0] &lt; x &lt; xa[xa.length-1] left is determined such that
+     * xa[left] &lt;= x &lt; xa[left+1]. If then xa[left] == xa[left-1] &lt;= x
+     * then n is determined to be the smallest value for which xa[left-n] &lt;
+     * xa[left] and then left - n is returned.
+     *
+     * if xa[left] &lt;= x and left == 0, then n is determined to be the largest
+     * value for which xa[left] == xa[left+n] and then left + n is returned.
      *
      * if x &lt; xa[0], then the BSpline cannot be evaluated so -1 is returned.
      *
@@ -192,11 +200,14 @@ public class AttitudeUtils {
     }
 
     /**
-     * In the non-decreasing sequence xa[0:n-1], finds the left index such that xa[left] &lt;= x &lt; xa[left+1]
+     * In the non-decreasing sequence xa[0:n-1], finds the left index such that
+     * xa[left] &lt;= x &lt; xa[left+1]
      *
-     * If x &lt; xa[0] the method returns left = -1. If x &gt;= xa[n-1] the method returns left = n-1 (the last valid index to
-     * the array). These are the logical extensions of the basic condition when x is outside the interval defined by the
-     * array - formally they could be derived by putting xa[-1] = -inf and xa[n] = +inf.
+     * If x &lt; xa[0] the method returns left = -1. If x &gt;= xa[n-1] the
+     * method returns left = n-1 (the last valid index to the array). These are
+     * the logical extensions of the basic condition when x is outside the
+     * interval defined by the array - formally they could be derived by putting
+     * xa[-1] = -inf and xa[n] = +inf.
      *
      * This method uses a straight bisection method to locate the left index.
      *
@@ -232,9 +243,10 @@ public class AttitudeUtils {
     }
 
     /**
-     * Variant of findLeftIndexBisection which returns left = xa.length - 2 if x == xa[xa.length-1]. This allows linear
-     * or cubic Hermite interpolation between xa[left] and xa[left+1] also in the case when x is exactly equal to the
-     * last point in the array.
+     * Variant of findLeftIndexBisection which returns left = xa.length - 2 if x
+     * == xa[xa.length-1]. This allows linear or cubic Hermite interpolation
+     * between xa[left] and xa[left+1] also in the case when x is exactly equal
+     * to the last point in the array.
      *
      * @param x
      *            value to find the left index for
@@ -254,11 +266,14 @@ public class AttitudeUtils {
     }
 
     /**
-     * In the non-decreasing sequence xa[0:n-1], finds the left index such that xa[left] &lt;= x &lt; xa[left+1]
+     * In the non-decreasing sequence xa[0:n-1], finds the left index such that
+     * xa[left] &lt;= x &lt; xa[left+1]
      *
-     * If x &lt; xa[0] the method returns left = -1. If x &gt;= xa[n-1] the method returns left = n-1 (the last valid index to
-     * the array). These are the logical extensions of the basic condition when x is outside the interval defined by the
-     * array - formally they could be derived by putting xa[-1] = -inf and xa[n] = +inf.
+     * If x &lt; xa[0] the method returns left = -1. If x &gt;= xa[n-1] the
+     * method returns left = n-1 (the last valid index to the array). These are
+     * the logical extensions of the basic condition when x is outside the
+     * interval defined by the array - formally they could be derived by putting
+     * xa[-1] = -inf and xa[n] = +inf.
      *
      * This method uses a straight bisection method to locate the left index.
      *
@@ -294,9 +309,10 @@ public class AttitudeUtils {
     }
 
     /**
-     * Variant of findLeftIndexBisection which returns left = xa.length - 2 if x == xa[xa.length-1]. This allows linear
-     * or cubic Hermite interpolation between xa[left] and xa[left+1] also in the case when x is exactly equal to the
-     * last point in the array.
+     * Variant of findLeftIndexBisection which returns left = xa.length - 2 if x
+     * == xa[xa.length-1]. This allows linear or cubic Hermite interpolation
+     * between xa[left] and xa[left+1] also in the case when x is exactly equal
+     * to the last point in the array.
      *
      * @param x
      *            value to find the left index for
@@ -316,15 +332,18 @@ public class AttitudeUtils {
     }
 
     /**
-     * Returns the values and first derivatives of the four non-zero cubic B-splines in the interval tau(left) &lt;= x &lt;
-     * tau(left+1)
+     * Returns the values and first derivatives of the four non-zero cubic
+     * B-splines in the interval tau(left) &lt;= x &lt; tau(left+1)
      * <p>
-     * Based on the subroutine BSPLVB in C. de Boor, A Practical Guide to Splines, Springer 1978
+     * Based on the subroutine BSPLVB in C. de Boor, A Practical Guide to
+     * Splines, Springer 1978
      * <p>
-     * Calculation of derivatives was added (perhaps inefficiently) as the analytical derivative of each statement in
-     * the original BSPLVB routine, using that (d/dx)deltar(j) = -1 and (d/dx)deltal(j) = +1.
+     * Calculation of derivatives was added (perhaps inefficiently) as the
+     * analytical derivative of each statement in the original BSPLVB routine,
+     * using that (d/dx)deltar(j) = -1 and (d/dx)deltal(j) = +1.
      * <p>
-     * The order of the spline is set by the parameter ATT_SPLINE_ORDER (=4 for cubic)
+     * The order of the spline is set by the parameter ATT_SPLINE_ORDER (=4 for
+     * cubic)
      *
      * @param tau
      *            knot sequence
@@ -333,7 +352,8 @@ public class AttitudeUtils {
      * @param splineOrder
      *            order of the spline
      * @param leftIndex
-     *            integer chosen (usually) such that tau(leftIndex) &lt;= x &lt; tau(leftIndex+1) (left can be found by
+     *            integer chosen (usually) such that tau(leftIndex) &lt;= x &lt;
+     *            tau(leftIndex+1) (left can be found by
      *            {@link #findLeftIndex(long, long[], int)}
      * @param b0
      *            values of the cubic B-splines at point {@code x}
@@ -344,9 +364,11 @@ public class AttitudeUtils {
      */
     public static void calcBsplines(final long x, final long[] tau, int splineOrder, final int leftIndex, final double[] b0, final double[] b1) throws RuntimeException {
         /*
-         * check that left index is in correct range to avoid AIOBE below: See B.2 in AGIS A&A paper: The knots used for
-         * computing the B-spline values in the interval [tau_l, tau_(l+1)) are tau_(l-M+2) through tau_(l+M-1) hence
-         * l-M+2 >= 0 => l>=M-2 l+M-1 <= N+M-1 => l<=N and since L=N+M => N=L-M, so, l<=L-M
+         * check that left index is in correct range to avoid AIOBE below: See
+         * B.2 in AGIS A&A paper: The knots used for computing the B-spline
+         * values in the interval [tau_l, tau_(l+1)) are tau_(l-M+2) through
+         * tau_(l+M-1) hence l-M+2 >= 0 => l>=M-2 l+M-1 <= N+M-1 => l<=N and
+         * since L=N+M => N=L-M, so, l<=L-M
          */
         if (leftIndex < splineOrder - 2 || leftIndex > tau.length - splineOrder) {
             throw new RuntimeException("leftIndex (" + leftIndex + ")" + " is not within valid bounds [M-2, N]=[" + (splineOrder - 2) + ", " + (tau.length - splineOrder) + "]");
@@ -391,21 +413,27 @@ public class AttitudeUtils {
     }
 
     /**
-     * Deprecated : Use the Quaternion class instead and this method is not reliable
-     * E.g. 		double[] angleDiff = q1.smallAngularDifference(q2); using quaternions
-     * E.g.  		double[] angleDiff = new Quaternion(q1).smallAngularDifference(new Quaternion(q2)); using double arrays
+     * Deprecated : Use the Quaternion class instead and this method is not
+     * reliable E.g. double[] angleDiff = q1.smallAngularDifference(q2); using
+     * quaternions E.g. double[] angleDiff = new
+     * Quaternion(q1).smallAngularDifference(new Quaternion(q2)); using double
+     * arrays
      *
-     * Compute the angular differences about the principal axes of two body-triads represented by two quaternions. This
-     * calculation comes from SAG-LL-30 where an inertial rotation vector between to attitudes represented by quaternion
-     * q0 and q1 is derived. It is a SMALL ANGLE approximation. If the algorithm finds a difference&gt;EPS between the
-     * components of the 2 quaternions, it will flip sign of q1. This is vain if the angular difference is too large and
-     * a warning is then logged. Note this is a static utility.
+     * Compute the angular differences about the principal axes of two
+     * body-triads represented by two quaternions. This calculation comes from
+     * SAG-LL-30 where an inertial rotation vector between to attitudes
+     * represented by quaternion q0 and q1 is derived. It is a SMALL ANGLE
+     * approximation. If the algorithm finds a difference&gt;EPS between the
+     * components of the 2 quaternions, it will flip sign of q1. This is vain if
+     * the angular difference is too large and a warning is then logged. Note
+     * this is a static utility.
      *
      * @param q0
      *            First quaternion
      * @param q1
      *            Second quaternion
-     * @return Array of length 3 with angle between principal axes TODO: Move this the Quaternion class
+     * @return Array of length 3 with angle between principal axes TODO: Move
+     *         this the Quaternion class
      */
     @Deprecated
     public static double[] smallAngularDifferences(final double[] q0, final double[] q1) {
@@ -433,8 +461,8 @@ public class AttitudeUtils {
     }
 
     /**
-     * Insert one or more knots in a knot sequence with a certain multiplicity This will redefine a larger knot sequence
-     * of the same duration
+     * Insert one or more knots in a knot sequence with a certain multiplicity
+     * This will redefine a larger knot sequence of the same duration
      *
      * @param oldKnots
      *            The initial array of knot times
@@ -444,7 +472,8 @@ public class AttitudeUtils {
      *            The multiplicity of the inserted knots
      * @param splineOrder
      *            spline order
-     * @return knots The updated knot times, including inserted knots of multiplicity
+     * @return knots The updated knot times, including inserted knots of
+     *         multiplicity
      *
      */
     public static long[] insertKnots(long[] oldKnots, long[] tInsert, int multiplicity, int splineOrder) {
@@ -473,18 +502,22 @@ public class AttitudeUtils {
     }
 
     /**
-     * Insert one or more knots in a knot sequence with a certain multiplicity This will redefine a larger knot sequence
-     * of the same duration Additionally, corresponding spline coefficients are inserted with zero as their starting
-     * values. These zero values need to be replaced by a fit or updated values.
+     * Insert one or more knots in a knot sequence with a certain multiplicity
+     * This will redefine a larger knot sequence of the same duration
+     * Additionally, corresponding spline coefficients are inserted with zero as
+     * their starting values. These zero values need to be replaced by a fit or
+     * updated values.
      *
      * @param old
-     *            The initial array of knot times The initial array of spline coefficients
+     *            The initial array of knot times The initial array of spline
+     *            coefficients
      * @param tInsert
      *            The array of knot insert times
      * @param multiplicity
      *            The multiplicity of the inserted knots
-     * @return knots The updated knot times, including inserted knots of multiplicity The updated spline coefficients,
-     *         including inserted splines at knots of multiplicity
+     * @return knots The updated knot times, including inserted knots of
+     *         multiplicity The updated spline coefficients, including inserted
+     *         splines at knots of multiplicity
      *
      */
     public static KnotsAndSplines insertKnotsAndSplines(KnotsAndSplines old, long[] tInsert, int multiplicity, int splineOrder) {
@@ -523,8 +556,9 @@ public class AttitudeUtils {
     }
 
     /**
-     * Insert one or more elements in an array with a certain multiplicity This will redefine a larger array of the same
-     * duration. This is designed to work with a knot sequence.
+     * Insert one or more elements in an array with a certain multiplicity This
+     * will redefine a larger array of the same duration. This is designed to
+     * work with a knot sequence.
      *
      * @param oldElements
      *            The initial array at of elements at knot times
@@ -536,7 +570,8 @@ public class AttitudeUtils {
      *            The multiplicity of the inserted elements
      * @param splineOrder
      *            spline order
-     * @return elements The updated elements including inserted knots of multiplicity
+     * @return elements The updated elements including inserted knots of
+     *         multiplicity
      *
      */
     public static double[] insertElements(double[] oldElements, long[] knots, long[] tInsert, int multiplicity, int splineOrder) {

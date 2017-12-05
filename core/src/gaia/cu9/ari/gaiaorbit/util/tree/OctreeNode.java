@@ -348,9 +348,9 @@ public class OctreeNode implements ILineRenderable {
     }
 
     /**
-     * Counts the number of nodes recursively.
+     * Counts the number of nodes recursively
      * 
-     * @return
+     * @return The number of nodes
      */
     public int numNodes() {
         int numNodes = 1;
@@ -375,10 +375,11 @@ public class OctreeNode implements ILineRenderable {
     }
 
     /**
-     * Returns the deepest octant that contains the position.
+     * Returns the deepest octant that contains the position
      * 
      * @param position
-     * @return
+     *            The position
+     * @return The best octant
      */
     public OctreeNode getBestOctant(Vector3d position) {
         if (!this.box.contains(position)) {
@@ -410,7 +411,6 @@ public class OctreeNode implements ILineRenderable {
      *            List where the nodes to be processed are to be added.
      * @param opacity
      *            The opacity to set.
-     * @return Whether new objects have been added since last frame
      */
     public void update(Transform parentTransform, ICamera cam, Array<SceneGraphNode> roulette, float opacity) {
         parentTransform.getTranslation(transform);

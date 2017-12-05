@@ -25,7 +25,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
  * A separator widget (horizontal or vertical bar) that can be used in menus,
  * tables or other widgets, typically added to new row with growX() (if creating
  * horizontal separator) OR growY() (if creating vertical separator) PopupMenu
- * and {@link VisTable} provides utilities addSeparator() methods that adds new
+ * and VisTable provides utilities addSeparator() methods that adds new
  * separator.
  * 
  * @author Kotcrab
