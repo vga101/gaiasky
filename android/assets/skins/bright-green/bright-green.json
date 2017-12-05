@@ -17,6 +17,9 @@ com.badlogic.gdx.graphics.g2d.BitmapFont: { ui-21: { file: skins/fonts/ui-21.fnt
 com.badlogic.gdx.graphics.g2d.BitmapFont: { ui-23: { file: skins/fonts/ui-23.fnt } },
 com.badlogic.gdx.graphics.g2d.BitmapFont: { ui-23-bold: { file: skins/fonts/ui-23-bold.fnt } },
 com.badlogic.gdx.graphics.g2d.BitmapFont: { ui-25: { file: skins/fonts/ui-25.fnt } },
+com.badlogic.gdx.graphics.g2d.BitmapFont: { ui-28: { file: skins/fonts/ui-28.fnt } },
+com.badlogic.gdx.graphics.g2d.BitmapFont: { ui-30: { file: skins/fonts/ui-30.fnt } },
+com.badlogic.gdx.graphics.g2d.BitmapFont: { ui-33: { file: skins/fonts/ui-33.fnt } },
 com.badlogic.gdx.graphics.g2d.BitmapFont: { ui-25-shadow: { file: skins/fonts/ui-25-shadow.fnt } },
 com.badlogic.gdx.graphics.g2d.BitmapFont: { ui-12-bold: { file: skins/fonts/ui-12-bold.fnt } },
 com.badlogic.gdx.graphics.g2d.BitmapFont: { ui-19-bold: { file: skins/fonts/ui-19-bold.fnt } },
@@ -122,6 +125,10 @@ com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
 	msg-19:   { font: ui-19, fontColor: black},
 	msg-21:   { font: ui-21, fontColor: black},
 	msg-23:   { font: ui-23, fontColor: black},
+	msg-25:   { font: ui-25, fontColor: black},
+	msg-28:   { font: ui-28, fontColor: black},
+	msg-30:   { font: ui-30, fontColor: black},
+	msg-33:   { font: ui-33, fontColor: black},
 	lcd:      { font: lcd, fontColor: black},
 	
 	menuitem-shortcut: { font: ui-11, fontColor: grey },
@@ -158,7 +165,11 @@ com.badlogic.gdx.scenes.scene2d.ui.TextField$TextFieldStyle: {
 	msg-17:   { font: ui-17-bold, fontColor: black, background: null},
 	msg-19:   { font: ui-19, fontColor: black, background: null},
 	msg-21:   { font: ui-21, fontColor: black, background: null},
-	msg-23:   { font: ui-23, fontColor: black, background: null}
+	msg-23:   { font: ui-23, fontColor: black, background: null},
+	msg-25:   { font: ui-25, fontColor: black, background: null},
+	msg-28:   { font: ui-28, fontColor: black, background: null},
+	msg-30:   { font: ui-30, fontColor: black, background: null},
+	msg-33:   { font: ui-33, fontColor: black, background: null}
 },
 com.badlogic.gdx.scenes.scene2d.ui.CheckBox$CheckBoxStyle: {
 	default: { checkboxOn: check-on, checkboxOnDisabled: check-on-disabled, checkboxOff: check-off, checkboxOffDisabled: check-off-disabled,font: ui-11, fontColor: black },

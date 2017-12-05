@@ -1,7 +1,6 @@
 # This script tests the various coordinate conversion utilities in the scripting API. To be run asynchronously.
 # Created by Toni Sagrista
 
-from time import sleep
 from gaia.cu9.ari.gaiaorbit.script import EventScriptingInterface
 from gaia.cu9.ari.gaiaorbit.util import GlobalConf
 
@@ -34,33 +33,33 @@ gs.setVisibility("element.galactic", False)
 gs.displayMessageObject(0, "Equatorial coordinates test", text_x, text_y, 1.0, 0.3, 0.3, 1.0, text_size)
 # Enable equatorial grid
 gs.setVisibility("element.equatorial", True)
-sleep(1.5)
+gs.sleep(1.5)
 
 # Go to north equatorial pole, looking down on the Sun
 eqxyz = gs.equatorialToInternalCartesian(0, 90, 8 * au_to_km)
 gs.setCameraPosition(eqxyz)
 
 # Sleep
-sleep(3.0)
+gs.sleep(3.0)
 
 # Go to south equatorial pole
 eqxyz = gs.equatorialToInternalCartesian(0, -90, 8 * au_to_km)
 gs.setCameraPosition(eqxyz)
 
 # Sleep
-sleep(3.0)
+gs.sleep(3.0)
 
 # Equatorial plane
 eqxyz = gs.equatorialToInternalCartesian(90, 0, 8 * au_to_km)
 gs.setCameraPosition(eqxyz)
 
 # Sleep
-sleep(3.0)
+gs.sleep(3.0)
 
 gs.removeObject(0)
 # Disable equatorial grid
 gs.setVisibility("element.equatorial", False)
-sleep(1.5)
+gs.sleep(1.5)
 
 #
 # ECLIPTIC COORDINATES
@@ -68,33 +67,33 @@ sleep(1.5)
 gs.displayMessageObject(0, "Ecliptic coordinates test", text_x, text_y, 0.3, 1.0, 0.3, 1.0, text_size)
 # Enable equatorial grid
 gs.setVisibility("element.ecliptic", True)
-sleep(1.5)
+gs.sleep(1.5)
 
 # Go to north equatorial pole, looking down on the Sun
 eqxyz = gs.eclipticToInternalCartesian(0, 90, 8 * au_to_km)
 gs.setCameraPosition(eqxyz)
 
 # Sleep
-sleep(3.0)
+gs.sleep(3.0)
 
 # Go to south equatorial pole
 eqxyz = gs.eclipticToInternalCartesian(0, -90, 8 * au_to_km)
 gs.setCameraPosition(eqxyz)
 
 # Sleep
-sleep(3.0)
+gs.sleep(3.0)
 
 # Equatorial plane
 eqxyz = gs.eclipticToInternalCartesian(90, 0, 8 * au_to_km)
 gs.setCameraPosition(eqxyz)
 
 # Sleep
-sleep(3.0)
+gs.sleep(3.0)
 
 gs.removeObject(0)
 # Disable equatorial grid
 gs.setVisibility("element.ecliptic", False)
-sleep(1.5)
+gs.sleep(1.5)
 
 
 #
@@ -103,30 +102,30 @@ sleep(1.5)
 gs.displayMessageObject(0, "Galactic coordinates test", text_x, text_y, 0.3, 0.3, 1.0, 1.0, text_size)
 # Enable equatorial grid
 gs.setVisibility("element.galactic", True)
-sleep(1.5)
+gs.sleep(1.5)
 
 # Go to north equatorial pole, looking down on the Sun
 eqxyz = gs.galacticToInternalCartesian(0, 90, 8 * au_to_km)
 gs.setCameraPosition(eqxyz)
 
 # Sleep
-sleep(3.0)
+gs.sleep(3.0)
 
 # Go to south equatorial pole
 eqxyz = gs.galacticToInternalCartesian(0, -90, 8 * au_to_km)
 gs.setCameraPosition(eqxyz)
 
 # Sleep
-sleep(3.0)
+gs.sleep(3.0)
 
 # Equatorial plane
 eqxyz = gs.galacticToInternalCartesian(90, 0, 8 * au_to_km)
 gs.setCameraPosition(eqxyz)
 
 # Sleep
-sleep(3.0)
+gs.sleep(3.0)
 
 gs.removeObject(0)
 # Disable equatorial grid
 gs.setVisibility("element.galactic", False)
-sleep(1.5)
+gs.sleep(1.5)

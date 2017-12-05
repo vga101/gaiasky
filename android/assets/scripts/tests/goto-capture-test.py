@@ -1,7 +1,6 @@
 # This script tests the go-to and capture frame commands. To be run asynchronously.
 # Created by Toni Sagrista
 
-from time import sleep
 from gaia.cu9.ari.gaiaorbit.script import EventScriptingInterface
 
 
@@ -35,7 +34,7 @@ gs.sleepFrames(60)
 gs.clearAllMessages()
 
 gs.setCameraFocus("Sol")
-gs.sleep(4)
+gs.gs.sleep(4)
 
 gs.setFrameOutput(False)
 

@@ -1,7 +1,6 @@
 # Test script. Tests simulation time commands.
 # Created by Toni Sagrista
 
-from time import sleep
 from gaia.cu9.ari.gaiaorbit.script import EventScriptingInterface
 
 

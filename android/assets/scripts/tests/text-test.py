@@ -1,7 +1,6 @@
 # This script tests the displaying of custom messages and images.
 # Created by Toni Sagrista
 
-from time import sleep
 from gaia.cu9.ari.gaiaorbit.script import EventScriptingInterface
 
 
@@ -31,7 +30,7 @@ def typewriter(id, text, x, y, width, height, r, g, b, a, delay):
     for letter in text:
         buffer += letter
         gs.displayTextObject(id, buffer, x, y, width, height, r, g, b, a, textSize)
-        sleep(delay)
+        gs.sleep(delay)
 
 
 # Minimize interface, disable input, stop camera
@@ -43,8 +42,8 @@ textSize = 13
 text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean sollicitudin felis et metus cursus, ac placerat nisi laoreet. Aenean porttitor elit velit. Curabitur cursus diam non bibendum tincidunt. Maecenas laoreet pellentesque nunc, a sollicitudin ligula lacinia vitae.";
 gs.displayMessageObject(1, "Position/size test", 0.1, 0.9, 1.0, 0.7, 0.0, 1.0, 22)
 gs.displayTextObject(2, "1 -" + text, 0.1, 0.5, 0.9, 0.3, 1.0, 1.0, 1.0, 1.0, textSize)
-gs.displayTextObject(3, "2 - " + text, 0.2, 0.1, 0.36, 0.3, 1.0, 1.0, 1.0, 1.0, textSize)
-gs.displayTextObject(4, "3 - " + text, 0.6, 0.1, 0.36, 0.4, 1.0, 1.0, 1.0, 1.0, textSize)
+gs.displayTextObject(3, "2 - " + text, 0.2, 0.1, 0.36, 0.3, 1.0, 1.0, 1.0, 1.0, 25)
+gs.displayTextObject(4, "3 - " + text, 0.6, 0.1, 0.36, 0.4, 1.0, 1.0, 1.0, 1.0, 30)
 
 
 wait_input(0, [1, 2, 3, 4])

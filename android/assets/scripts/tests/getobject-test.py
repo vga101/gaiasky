@@ -2,7 +2,6 @@
 # Created by Toni Sagrista
 
 import math
-from time import sleep
 from gaia.cu9.ari.gaiaorbit.script import EventScriptingInterface
 
 
@@ -14,14 +13,14 @@ gs.cameraStop()
 # Use the object with the following name
 obj = "Betelgeuse"
 
-sleep(1)
+gs.sleep(1)
 gs.goToObject(obj, 3.5)
 
 rad = gs.getObjectRadius(obj)
 
 print("%s radius: %f Km" % (obj, rad))
 
-sleep(1)
+gs.sleep(1)
 
 body = gs.getObject(obj)
 absmag = body.getAbsmag()
