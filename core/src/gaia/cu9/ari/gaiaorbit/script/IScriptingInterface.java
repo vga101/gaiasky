@@ -73,7 +73,9 @@ public interface IScriptingInterface {
      * Adds a new one-line message in the screen with the given id and the given
      * coordinates. If an object already exists with the given id, it is
      * removed. However, if a message object already exists with the same id,
-     * its properties are updated.
+     * its properties are updated. <strong>The messages placed with this method
+     * will not appear in the screenshots/frames in advanced mode. This is
+     * intended for running interactively only.</strong>
      * 
      * @param id
      *            A unique identifier, used to identify this message when you
@@ -107,7 +109,9 @@ public interface IScriptingInterface {
      * Adds a new multi-line text in the screen with the given id, coordinates
      * and size. If an object already exists with the given id, it is removed.
      * However, if a text object already exists with the same id, its properties
-     * are updated.
+     * are updated. <strong>The texts placed with this method will not appear in
+     * the screenshots/frames in advanced mode. This is intended for running
+     * interactively only.</strong>
      * 
      * @param id
      *            A unique identifier, used to identify this message when you
@@ -146,8 +150,9 @@ public interface IScriptingInterface {
      * Adds a new image object at the given coordinates. If an object already
      * exists with the given id, it is removed. However, if an image object
      * already exists with the same id, its properties are updated.<br>
-     * <strong>Warning: This method will only work in the asynchronous mode. Run
-     * the script with the "asynchronous" check box activated!</strong>
+     * <strong>The messages placed with this method will not appear in the
+     * screenshots/frames in advanced mode. This is intended for running
+     * interactively only.</strong>
      * 
      * @param id
      *            A unique identifier, used to identify this message when you
