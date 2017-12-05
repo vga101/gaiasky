@@ -18,16 +18,23 @@ Windows, Linux and OS X.
 When the frame output system is active, each frame is saved as a ``JPEG`` image to disk. Refer to the
 :ref:`frame-output-config` section to learn how to configure the frame output system.
 
-Once you have the image frames you can convert them
-into a video using the following command:
+Once you have the image frames you can convert using a ``ffmpeg`` preset (slow, veryslow, fast, etc.) using the following:
 
 .. code:: bash
 
-    $ ffmpeg -start_number [start_img_num] -i [prefix]%05d.png -vframes [num_images] -s 1280x720 -c:v libx264 -r 25 -preset [slower|veryslow|placebo] -pix_fmt + [out_video_filename].mp4
+    $ ffmpeg --framerate 60 -start_number [start_img_num] -i [prefix]%05d.jpg -vframes [num_images] -s 1280x720 -c:v libx264 -preset [slower|veryslow|placebo] [out_video_filename].mp4
 
-You need to obviously change the prefix and start number, choose the
+Please note that if you don't want scaling, the ``--framerate`` and ``-s`` resolution settings must match the settings defined in the frame output system preferences in Gaia Sky.
+You can also use a constant rate factor ``-crf`` setting:
+
+.. code:: bash
+
+	$ ffmpeg -framerate 60 -start_number [start_img_num] -i [prefix]%05d.jpg  -vframes [num_images] -s 1280x720 -c:v libx264 -pix_fmt yuv420p -crf 23 [out_video_filename].mp4
+
+You need to obviously change the prefix and start number, if any, choose the
 right resolution, frame rate and preset and modify the output format if
-you need to.
+you need to. It is quite a complex topic, so for more information please refer
+to the original `ffmpeg documentation <http://ffmpeg.org/ffmpeg.html>`__.
 
 OpenGL context recorder
 =======================
