@@ -22,14 +22,14 @@ Once you have the image frames you can encode a video using a ``ffmpeg`` preset 
 
 .. code:: bash
 
-    $ ffmpeg --framerate 60 -r 60 -start_number [start_img_num] -i [prefix]%05d.jpg -vframes [num_images] -s 1280x720 -c:v libx264 -preset [slower|veryslow|placebo] [out_video_filename].mp4
+    $ ffmpeg -framerate 60 -start_number [start_img_num] -i [prefix]%05d.jpg -vframes [num_images] -s 1280x720 -c:v libx264 -preset [slower|veryslow|placebo] -r 60  [out_video_filename].mp4
 
 Please note that if you don't want scaling, the ``--framerate`` input framerate, ``-r`` output framerate and ``-s`` resolution settings must match the settings defined in the frame output system preferences in Gaia Sky.
 You can also use a constant rate factor ``-crf`` setting:
 
 .. code:: bash
 
-	$ ffmpeg -framerate 60 -r 60 -start_number [start_img_num] -i [prefix]%05d.jpg  -vframes [num_images] -s 1280x720 -c:v libx264 -pix_fmt yuv420p -crf 23 [out_video_filename].mp4
+	$ ffmpeg -framerate 60 -start_number [start_img_num] -i [prefix]%05d.jpg  -vframes [num_images] -s 1280x720 -c:v libx264 -pix_fmt yuv420p -crf 23 -r 60  [out_video_filename].mp4
 
 You need to obviously change the prefix and start number, if any, choose the
 right resolution, frame rate and preset and modify the output format if
