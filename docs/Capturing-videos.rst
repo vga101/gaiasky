@@ -13,7 +13,7 @@ Gaia Sky to later gather them to create a video using a video encoder
 software such as `ffmpeg <https://ffmpeg.org/>`__, which works on
 Windows, Linux and OS X.
 
-.. note:: Use ``F6`` to activate the frame output mode and start saving each frame as an image. Use ``F6`` again to deactivate it.
+.. note:: Use ``F6`` to activate the frame output mode and start saving each frame as an image. Use ``F6`` again to deactivate it. When the frame output mode is active, the icon |frameoutput| is displayed at the top-right corner of the screen.
 
 When the frame output system is active, each frame is saved as a ``JPEG`` image to disk. Refer to the
 :ref:`frame-output-config` section to learn how to configure the frame output system.
@@ -22,14 +22,14 @@ Once you have the image frames you can encode a video using a ``ffmpeg`` preset 
 
 .. code:: bash
 
-    $ ffmpeg --framerate 60 -start_number [start_img_num] -i [prefix]%05d.jpg -vframes [num_images] -s 1280x720 -c:v libx264 -preset [slower|veryslow|placebo] [out_video_filename].mp4
+    $ ffmpeg --framerate 60 -r 60 -start_number [start_img_num] -i [prefix]%05d.jpg -vframes [num_images] -s 1280x720 -c:v libx264 -preset [slower|veryslow|placebo] [out_video_filename].mp4
 
-Please note that if you don't want scaling, the ``--framerate`` and ``-s`` resolution settings must match the settings defined in the frame output system preferences in Gaia Sky.
+Please note that if you don't want scaling, the ``--framerate`` input framerate, ``-r`` output framerate and ``-s`` resolution settings must match the settings defined in the frame output system preferences in Gaia Sky.
 You can also use a constant rate factor ``-crf`` setting:
 
 .. code:: bash
 
-	$ ffmpeg -framerate 60 -start_number [start_img_num] -i [prefix]%05d.jpg  -vframes [num_images] -s 1280x720 -c:v libx264 -pix_fmt yuv420p -crf 23 [out_video_filename].mp4
+	$ ffmpeg -framerate 60 -r 60 -start_number [start_img_num] -i [prefix]%05d.jpg  -vframes [num_images] -s 1280x720 -c:v libx264 -pix_fmt yuv420p -crf 23 [out_video_filename].mp4
 
 You need to obviously change the prefix and start number, if any, choose the
 right resolution, frame rate and preset and modify the output format if
@@ -66,3 +66,6 @@ Windows
 -  `NVIDIA
    Shadowplay <http://www.geforce.com/geforce-experience/shadowplay>`__
    - Only for Geforce cards.
+   
+
+.. |frameoutput| image:: img/ui/frameoutput.png
