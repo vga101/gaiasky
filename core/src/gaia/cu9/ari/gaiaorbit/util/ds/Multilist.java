@@ -50,7 +50,7 @@ public class Multilist<T> {
     /**
      * Converts this multilist to a simple list
      * 
-     * @return
+     * @return The array
      */
     public Array<T> toList() {
         tolist.clear();
@@ -94,7 +94,7 @@ public class Multilist<T> {
      * @param listIndex
      *            <tt>true</tt> if this collection contains the specified
      *            element.
-     * @return
+     * @return Whether this collection contains the element
      */
     public boolean contains(T o, int listIndex) {
         return lists[listIndex].contains(o, true);

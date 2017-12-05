@@ -642,15 +642,23 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         return res;
     }
 
+    /**
+     * Checks if a given component type is on
+     * 
+     * @param comp
+     *            The component
+     * @return Whether the component is on
+     */
     public boolean isOn(ComponentType comp) {
         return visible.get(comp.ordinal()) || alphas[comp.ordinal()] > 0;
     }
 
     /**
-     * TODO Make this faster!
+     * Checks if the component types are all on
      * 
      * @param comp
-     * @return
+     *            The components
+     * @return Whether the components are all on
      */
     public boolean isOn(ComponentTypes comp) {
         boolean allon = comp.allSetLike(visible);

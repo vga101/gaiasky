@@ -82,8 +82,8 @@ public class GlobalResources {
      * ModelTextureBump
      * 
      * @param property
-     *            The property name.
-     * @return
+     *            The property name
+     * @return The method name
      */
     public static String propertyToMethodName(String property) {
         String[] parts = property.split("\\.");
@@ -98,7 +98,8 @@ public class GlobalResources {
      * Returns the given string with the first letter capitalised
      * 
      * @param line
-     * @return
+     *            The string to capitalise
+     * @return The string capitalised
      */
     public static String capitalise(String line) {
         return Character.toUpperCase(line.charAt(0)) + line.substring(1);
@@ -109,18 +110,20 @@ public class GlobalResources {
      * others in lower case.
      * 
      * @param line
-     * @return
+     *            The string to capitalise
+     * @return The string with the first letter in upper case and the others in
+     *         lower case
      */
     public static String trueCapitalise(String line) {
         return Character.toUpperCase(line.charAt(0)) + line.substring(1).toLowerCase();
     }
 
     /**
-     * Converts this double to the string representation of a distance.
+     * Converts this double to the string representation of a distance
      * 
      * @param d
      *            In internal units
-     * @return An array containing the float number and the string units.
+     * @return An array containing the float number and the string units
      */
     public static Pair<Double, String> doubleToDistanceString(double d) {
         d = d * Constants.U_TO_KM;
@@ -155,11 +158,11 @@ public class GlobalResources {
     }
 
     /**
-     * Converts this float to the string representation of a distance.
+     * Converts this float to the string representation of a distance
      * 
      * @param f
      *            In internal units
-     * @return An array containing the float number and the string units.
+     * @return An array containing the float number and the string units
      */
     public static Pair<Float, String> floatToDistanceString(float f) {
         Pair<Double, String> result = doubleToDistanceString((double) f);
@@ -168,10 +171,11 @@ public class GlobalResources {
 
     /**
      * Transforms the given double array into a float array by casting each of
-     * its numbers.
+     * its numbers
      * 
      * @param array
-     * @return
+     *            The array of doubles
+     * @return The array of floats
      */
     public static float[] toFloatArray(double[] array) {
         float[] res = new float[array.length];
@@ -183,16 +187,16 @@ public class GlobalResources {
     /**
      * Computes whether a body with the given position is visible by a camera
      * with the given direction and angle. Coordinates are assumed to be in the
-     * camera-origin system.
+     * camera-origin system
      * 
      * @param point
      *            The position of the body in the reference system of the camera
-     *            (i.e. camera is at origin).
+     *            (i.e. camera is at origin)
      * @param coneAngle
-     *            The cone angle of the camera.
+     *            The cone angle of the camera
      * @param dir
-     *            The direction.
-     * @return True if the body is visible.
+     *            The direction
+     * @return True if the body is visible
      */
     public static boolean isInView(Vector3d point, float coneAngle, Vector3d dir) {
         return FastMath.acos(point.dot(dir) / point.len()) < coneAngle;
@@ -201,18 +205,18 @@ public class GlobalResources {
     /**
      * Computes whether a body with the given position is visible by a camera
      * with the given direction and angle. Coordinates are assumed to be in the
-     * camera-origin system.
+     * camera-origin system
      * 
      * @param point
      *            The position of the body in the reference system of the camera
-     *            (i.e. camera is at origin).
+     *            (i.e. camera is at origin)
      * @param len
      *            The point length
      * @param coneAngle
-     *            The cone angle of the camera.
+     *            The cone angle of the camera
      * @param dir
-     *            The direction.
-     * @return True if the body is visible.
+     *            The direction
+     * @return True if the body is visible
      */
     public static boolean isInView(Vector3d point, double len, float coneAngle, Vector3d dir) {
         return FastMath.acos(point.dot(dir) / len) < coneAngle;
@@ -221,15 +225,15 @@ public class GlobalResources {
     /**
      * Computes whether any of the given points is visible by a camera with the
      * given direction and the given cone angle. Coordinates are assumed to be
-     * in the camera-origin system.
+     * in the camera-origin system
      * 
      * @param points
-     *            The array of points to check.
+     *            The array of points to check
      * @param coneAngle
-     *            The cone angle of the camera (field of view).
+     *            The cone angle of the camera (field of view)
      * @param dir
-     *            The direction.
-     * @return True if any of the points is in the camera view cone.
+     *            The direction
+     * @return True if any of the points is in the camera view cone
      */
     public static boolean isAnyInView(Vector3d[] points, float coneAngle, Vector3d dir) {
         boolean inview = false;

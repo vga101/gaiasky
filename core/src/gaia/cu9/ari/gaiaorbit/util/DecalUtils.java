@@ -155,10 +155,11 @@ public class DecalUtils {
     }
 
     /**
-     * Gets the billboard rotation using the parameters of the given camera.
+     * Gets the billboard rotation using the parameters of the given camera
      * 
      * @param camera
-     * @return
+     *            The camera
+     * @return The quaternion with the rotation
      */
     public static Quaternion getBillboardRotation(Camera camera) {
         return getBillboardRotation(camera.direction, camera.up);
@@ -166,13 +167,13 @@ public class DecalUtils {
 
     /**
      * Returns a Quaternion representing the billboard rotation to be applied to
-     * a decal that is always to face the given direction and up vector.
+     * a decal that is always to face the given direction and up vector
      * 
      * @param direction
-     *            The direction vector.
+     *            The direction vector
      * @param up
-     *            The up vector.
-     * @return
+     *            The up vector
+     * @return The quaternion with the rotation
      */
     public static Quaternion getBillboardRotation(Vector3 direction, Vector3 up) {
         Quaternion rotation = new Quaternion();
