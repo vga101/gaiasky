@@ -139,7 +139,9 @@ public class CustomInterface implements IObserver, IGuiInterface {
 
                 float s = (Float) data[8];
                 int size = (int) s;
-                String style = "msg-" + findClosestSize(size);
+                int csize = findClosestSize(size);
+                float scalefactor = (float) size / (float) csize;
+                String style = "msg-" + csize;
 
                 OwnLabel customMsg = null;
                 add = false;
@@ -160,6 +162,7 @@ public class CustomInterface implements IObserver, IGuiInterface {
 
                 customMsg.setColor(r, g, b, a);
                 customMsg.setPosition(x, y);
+                customMsg.setFontScale(scalefactor);
 
                 if (add)
                     ui.addActor(customMsg);
@@ -184,7 +187,9 @@ public class CustomInterface implements IObserver, IGuiInterface {
 
                 s = (Float) data[10];
                 size = (int) s;
-                style = "msg-" + findClosestSize(size);
+                csize = findClosestSize(size);
+                scalefactor = (float) size / (float) csize;
+                style = "msg-" + csize;
 
                 TextArea customText = null;
                 add = false;

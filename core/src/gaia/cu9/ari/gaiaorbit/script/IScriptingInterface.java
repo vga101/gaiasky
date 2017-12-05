@@ -97,7 +97,9 @@ public interface IScriptingInterface {
      *            The alpha component of the color in [0..1].
      * @param fontSize
      *            The size of the font. The system will use the existing font
-     *            closest to the chosen size.
+     *            closest to the chosen size and scale it up or down to match
+     *            the desired size. Scaling can cause artifacts, so to ensure
+     *            the best font quality, stick to the existing sizes.
      */
     public void displayMessageObject(int id, String message, float x, float y, float r, float g, float b, float a, float fontSize);
 

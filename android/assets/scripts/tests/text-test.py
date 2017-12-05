@@ -37,13 +37,13 @@ def typewriter(id, text, x, y, width, height, r, g, b, a, delay):
 gs.disableInput()
 gs.cameraStop()
 gs.minimizeInterfaceWindow()
+gs.setVisibility("element.labels", False)
 
 textSize = 13
-text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean sollicitudin felis et metus cursus, ac placerat nisi laoreet. Aenean porttitor elit velit. Curabitur cursus diam non bibendum tincidunt. Maecenas laoreet pellentesque nunc, a sollicitudin ligula lacinia vitae.";
-gs.displayMessageObject(1, "Position/size test", 0.1, 0.9, 1.0, 0.7, 0.0, 1.0, 22)
-gs.displayTextObject(2, "1 -" + text, 0.1, 0.5, 0.9, 0.3, 1.0, 1.0, 1.0, 1.0, textSize)
-gs.displayTextObject(3, "2 - " + text, 0.2, 0.1, 0.36, 0.3, 1.0, 1.0, 1.0, 1.0, 25)
-gs.displayTextObject(4, "3 - " + text, 0.6, 0.1, 0.36, 0.4, 1.0, 1.0, 1.0, 1.0, 30)
+gs.displayMessageObject(1, "0 - Text size 18, no scaling", 0.1, 0.9, 1.0, 0.7, 0.0, 1.0, 18)
+gs.displayMessageObject(2, "1 - Text size 23, no scaling", 0.1, 0.5, 1.0, 1.0, 1.0, 1.0, 23)
+gs.displayMessageObject(3, "2 - Text size 38, scaling up from 33", 0.1, 0.3, 1.0, 1.0, 1.0, 1.0, 38)
+gs.displayMessageObject(4, "3 - Text size 32, scaling down from 33", 0.5, 0.5, 1.0, 1.0, 1.0, 1.0, 32)
 
 
 wait_input(0, [1, 2, 3, 4])
