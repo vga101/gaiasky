@@ -20,7 +20,7 @@ public interface IFileImageRenderer {
      *            Forces synchronous immediate write to disk.
      * @param type
      *            The image type, JPG or PNG
-     * @return
+     * @return String with the path to the screenshot image file
      */
     public String saveScreenshot(String folder, String fileprefix, int w, int h, boolean immediate, ImageType type);
 

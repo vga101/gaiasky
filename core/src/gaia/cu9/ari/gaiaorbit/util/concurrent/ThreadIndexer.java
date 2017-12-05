@@ -2,6 +2,7 @@ package gaia.cu9.ari.gaiaorbit.util.concurrent;
 
 /**
  * Class that returns the thread indices.
+ * 
  * @author Toni Sagrista
  *
  */
@@ -19,13 +20,15 @@ public abstract class ThreadIndexer {
 
     /**
      * Gets the index of the current thread
-     * @return
+     * 
+     * @return The index
      */
     public abstract int idx();
 
     /**
      * Number of threads
-     * @return
+     * 
+     * @return The number of threads
      */
     public abstract int nthreads();
 

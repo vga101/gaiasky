@@ -97,11 +97,13 @@ public class SceneGraphNode implements IStarContainer, IPosition {
         }
 
         /**
-         * Adds the given render groups to the given Bits mask.
+         * Adds the given render groups to the given Bits mask
          * 
          * @param rgmask
+         *            The bit mask
          * @param rgs
-         * @return
+         *            The render groups
+         * @return The bits instance
          */
         public static Bits add(Bits rgmask, RenderGroup... rgs) {
             for (RenderGroup rg : rgs) {
@@ -111,11 +113,13 @@ public class SceneGraphNode implements IStarContainer, IPosition {
         }
 
         /**
-         * Sets the given Bits mask to the given render groups.
+         * Sets the given Bits mask to the given render groups
          * 
          * @param rgmask
+         *            The bit mask
          * @param rgs
-         * @return
+         *            The render groups
+         * @return The bits instance
          */
         public static Bits set(Bits rgmask, RenderGroup... rgs) {
             rgmask.clear();
@@ -577,9 +581,9 @@ public class SceneGraphNode implements IStarContainer, IPosition {
     }
 
     /**
-     * Gets the number of nodes contained in this node, including itself.
+     * Gets the number of nodes contained in this node, including itself
      * 
-     * @return
+     * @return The number of children of this node and its descendents
      */
     public int getAggregatedChildren() {
         return numChildren + 1;
@@ -598,9 +602,9 @@ public class SceneGraphNode implements IStarContainer, IPosition {
     }
 
     /**
-     * Gets a copy of this object but does not copy its parent or children.
+     * Gets a copy of this object but does not copy its parent or children
      * 
-     * @return
+     * @return The copied object
      */
     public <T extends SceneGraphNode> T getSimpleCopy() {
         T copy = null;

@@ -905,7 +905,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
     /**
      * This depends on the distance from the focus.
      * 
-     * @return
+     * @return The translate units
      */
     public double getTranslateUnits() {
         double dist;
@@ -924,7 +924,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
     /**
      * Depends on the distance to the focus
      * 
-     * @return
+     * @return The rotation units
      */
     public double getRotationUnits() {
         double dist;

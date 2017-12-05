@@ -122,7 +122,7 @@ public class ScreenshotsManager implements IObserver {
      *            The file name prefix.
      * @param renderer
      *            the {@link IFileImageRenderer} to use.
-     * @return
+     * @return String with the path to the screenshot image file.
      */
     public String renderToImage(IMainRenderer mr, ICamera camera, double dt, PostProcessBean ppb, int width, int height, String folder, String filename, IFileImageRenderer renderer, ImageType type) {
         FrameBuffer frameBuffer = mr.getFrameBuffer(width, height);

@@ -84,10 +84,11 @@ public class AstroUtils {
 
     /**
      * Algorithm in "Astronomical Algorithms" book by Jean Meeus. Finds out the
-     * distance from the Sun to the Earth in km.
+     * distance from the Sun to the Earth in Km
      * 
      * @param date
-     * @return
+     *            The date
+     * @return The distancee from the Sun to the Earth in Km
      */
     public static double getSunDistance(Date date) {
         return getSunDistance(getJulianDateCache(date));
@@ -436,7 +437,7 @@ public class AstroUtils {
      * @param nanos
      * @param gregorian
      *            Whether to use the Gregorian or the Julian calendar
-     * @return
+     * @return The julian date number
      */
     public static double getJulianDate(int year, int month, int day, int hour, int min, int sec, int nanos, boolean gregorian) {
         if (gregorian) {
@@ -642,10 +643,14 @@ public class AstroUtils {
      * Gets the day fraction from the day quantities
      * 
      * @param hour
+     *            The hour in 0-24
      * @param min
+     *            The minute in 0-1440
      * @param sec
+     *            The second in 0-86400
      * @param nanos
-     * @return
+     *            The nanoseconds
+     * @return The day fraction
      */
     public static double getDayFraction(int hour, int min, int sec, int nanos) {
         return hour / 24.0 + min / 1440.0 + (sec + nanos / 1.0E9) / 86400.0;
@@ -667,9 +672,9 @@ public class AstroUtils {
 
     /**
      * Returns the obliquity of the ecliptic (inclination of the Earth's axis of
-     * rotation) for a given date, in degrees.
+     * rotation) for a given date, in degrees
      * 
-     * @return
+     * @return The obliquity in degrees
      */
     public static double obliquity(double julianDate) {
         // JPL's fundamental ephemerides have been continually updated. The
@@ -691,7 +696,8 @@ public class AstroUtils {
      * Time T measured in Julian centuries from the Epoch J2000.0
      * 
      * @param julianDate
-     * @return
+     *            The julian date
+     * @return The time in julian centuries
      */
     public static double T(double julianDate) {
         return (julianDate - 2451545) / 36525;

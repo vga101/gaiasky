@@ -11,7 +11,7 @@ import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
 /**
- * Contract that all focus objects must implement.
+ * Contract that all focus objects must implement
  * 
  * @author tsagrista
  *
@@ -19,37 +19,37 @@ import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 public interface IFocus {
 
     /**
-     * Returns the unique id of this focus.
+     * Returns the unique id of this focus
      * 
-     * @return The id.
+     * @return The id
      */
     public long getId();
 
     /**
      * Returns the id of the focus candidate of this object. Defaults to
-     * {@link IFocus#getId()}.
+     * {@link IFocus#getId()}
      * 
-     * @return The id of the candidate.
+     * @return The id of the candidate
      */
     public long getCandidateId();
 
     /**
-     * Returns the name of this focus.
+     * Returns the name of this focus
      * 
-     * @return The name.
+     * @return The name
      */
     public String getName();
 
     /**
      * Returns the name of the focus candidate of this object. Defaults to
-     * {@link IFocus#getName()}.
+     * {@link IFocus#getName()}
      * 
-     * @return The name of the candidate.
+     * @return The name of the candidate
      */
     public String getCandidateName();
 
     /**
-     * Returns the component types of this focus.
+     * Returns the component types of this focus
      * 
      * @return The component types
      */
@@ -57,9 +57,9 @@ public interface IFocus {
 
     /**
      * Returns whether this focus object is active or not. Useful for particle
-     * groups.
+     * groups
      * 
-     * @return The active status.
+     * @return The active status
      */
     public boolean isActive();
 
@@ -72,7 +72,7 @@ public interface IFocus {
     public boolean withinMagLimit();
 
     /**
-     * Gets the first computed ancestor of this entity. Usually it is itself.
+     * Gets the first computed ancestor of this entity. Usually it is itself
      * 
      * @return First computed ancestor
      */
@@ -87,7 +87,7 @@ public interface IFocus {
 
     /**
      * Returns the absolute position of this entity in the native coordinates
-     * (equatorial system).
+     * (equatorial system)
      * 
      * @param aux
      *            Vector3d where to put the return value
@@ -105,75 +105,75 @@ public interface IFocus {
     /**
      * Gets the predicted position of this entity in the next time step in the
      * internal reference system using the given time provider and the given
-     * camera.
+     * camera
      * 
      * @param aux
-     *            The out vector where the result will be stored.
+     *            The out vector where the result will be stored
      * @param time
-     *            The time frame provider.
+     *            The time frame provider
      * @param camera
-     *            The camera.
+     *            The camera
      * @param force
-     *            Whether to force the computation if time is off.
-     * @return The aux vector for chaining.
+     *            Whether to force the computation if time is off
+     * @return The aux vector for chaining
      */
     public Vector3d getPredictedPosition(Vector3d aux, ITimeFrameProvider time, ICamera camera, boolean force);
 
     /**
-     * Returns the current distance to the camera in internal units.
+     * Returns the current distance to the camera in internal units
      * 
-     * @return The current distance to the camera, in internal units.
+     * @return The current distance to the camera, in internal units
      */
     public double getDistToCamera();
 
     /**
-     * Returns the current view angle of this entity, in radians.
+     * Returns the current view angle of this entity, in radians
      * 
-     * @return The view angle in radians.
+     * @return The view angle in radians
      */
     public double getViewAngle();
 
     /**
      * Returns the current apparent view angle (view angle corrected with the
-     * field of view) of this entity, in radians.
+     * field of view) of this entity, in radians
      * 
-     * @return The apparent view angle in radians.
+     * @return The apparent view angle in radians
      */
     public double getViewAngleApparent();
 
     /**
      * Returns the candidate apparent view angle (view angle corrected with the
-     * field of view) of this entity, in radians.
+     * field of view) of this entity, in radians
      * 
-     * @return The apparent view angle in radians.
+     * @return The apparent view angle in radians
      */
     public double getCandidateViewAngleApparent();
 
     /**
-     * Returns the right ascension angle of this focus object.
+     * Returns the right ascension angle of this focus object
      * 
-     * @return The right ascension angle in degrees.
+     * @return The right ascension angle in degrees
      */
     public double getAlpha();
 
     /**
-     * Returns the declination angle of this focus object.
+     * Returns the declination angle of this focus object
      * 
-     * @return The declination angle in degrees.
+     * @return The declination angle in degrees
      */
     public double getDelta();
 
     /**
-     * Returns the size (diameter) of this entity in internal units.
+     * Returns the size (diameter) of this entity in internal units
      * 
-     * @return The size in internal units.
+     * @return The size in internal units
      */
     public double getSize();
 
     /**
-     * Returns the radius of this focus object in internal units.
+     * Returns the radius of this focus object in internal units
      * 
-     * @return The radius of the focus, in internal units.
+     * @return The radius of the focus, in internal units
      */
     public double getRadius();
 
@@ -192,23 +192,23 @@ public interface IFocus {
     public float getAbsmag();
 
     /**
-     * Returns the orientation matrix of this focus.
+     * Returns the orientation matrix of this focus
      * 
-     * @return The orientation matrix. Can be null.
+     * @return The orientation matrix. Can be null
      */
     public Matrix4d getOrientation();
 
     /**
-     * Returns the rotation component of this focus.
+     * Returns the rotation component of this focus
      * 
-     * @return The rotation component. Can be null.
+     * @return The rotation component. Can be null
      */
     public RotationComponent getRotationComponent();
 
     /**
-     * Returns the orientation quaternion of this focus.
+     * Returns the orientation quaternion of this focus
      * 
-     * @return The orientation quaternion. Can be null.
+     * @return The orientation quaternion. Can be null
      */
     public Quaterniond getOrientationQuaternion();
 
@@ -234,7 +234,7 @@ public interface IFocus {
     public void addHit(int screenX, int screenY, int w, int h, int pxdist, NaturalCamera camera, Array<IFocus> hits);
 
     /**
-     * Hook that runs when the candidate is actually made focus.
+     * Hook that runs when the candidate is actually made focus
      */
     public void makeFocus();
 
@@ -248,16 +248,16 @@ public interface IFocus {
 
     /**
      * Checks whether this foucs is within its valid time range, so that it can
-     * be used as a focus.
+     * be used as a focus
      * 
-     * @return Whether the focus object is within its valid time range.
+     * @return Whether the focus object is within its valid time range
      */
     public boolean isCoordinatesTimeOverflow();
 
     /**
-     * Gets the depth of this focus object in the scene graph.
+     * Gets the depth of this focus object in the scene graph
      * 
-     * @return
+     * @return The depth of the scene graph
      */
     public int getSceneGraphDepth();
 

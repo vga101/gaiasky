@@ -386,16 +386,17 @@ public abstract class ModelBody extends CelestialBody {
     /**
      * Whether shadows should be rendered for this object
      * 
-     * @return
+     * @return Whether shadows should be rendered for this object
      */
     public boolean isShadow() {
         return shadowMapValues != null;
     }
 
     /**
-     * Sets the shadow mapping values for this object.
+     * Sets the shadow mapping values for this object
      * 
      * @param shadowMapValues
+     *            The values
      */
     public void setShadowvalues(double[] shadowMapValues) {
         this.shadowMapValues = shadowMapValues;

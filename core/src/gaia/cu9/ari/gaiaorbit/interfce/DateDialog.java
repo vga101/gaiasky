@@ -248,9 +248,13 @@ public class DateDialog extends CollapsibleWindow {
      * Returns true if all is good
      * 
      * @param f
+     *            The text field
      * @param min
+     *            The minimum value
      * @param max
-     * @return
+     *            The maximum value
+     * @return The boolean indicating whether the value in this field is between
+     *         min and max
      */
     public boolean checkField(TextField f, int min, int max) {
         try {

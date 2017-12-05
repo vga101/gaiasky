@@ -55,7 +55,7 @@ public class OriginalDataLoader {
      * </ul>
      * 
      * @param data
-     * @param referenceFrame
+     *            The input stream with the data to load
      * @throws Exception
      */
     public OrbitData load(InputStream data) throws Exception {

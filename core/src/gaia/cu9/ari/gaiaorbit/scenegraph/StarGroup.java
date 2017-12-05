@@ -986,7 +986,7 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
     }
 
     /**
-     * Sets the epoch to use for the stars in this group.
+     * Sets the epoch to use for the stars in this group
      * 
      * @param epochJd
      *            The epoch in julian days (days since January 1, 4713 BCE)
@@ -996,9 +996,9 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
     }
 
     /**
-     * Returns the epoch in Julian Days used for the stars in this group.
+     * Returns the epoch in Julian Days used for the stars in this group
      * 
-     * @return
+     * @return The epoch in julian days
      */
     public Double getEpoch() {
         return this.epoch_jd;

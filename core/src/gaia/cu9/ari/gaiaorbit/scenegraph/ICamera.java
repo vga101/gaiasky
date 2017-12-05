@@ -105,23 +105,24 @@ public interface ICamera {
     public double getDistance();
 
     /**
-     * Returns the foucs if any.
+     * Returns the foucs if any
      * 
-     * @return The foucs object if it is in focus mode. Null otherwise.
+     * @return The foucs object if it is in focus mode. Null otherwise
      */
     public IFocus getFocus();
 
     /**
-     * Checks if this body is the current focus.
+     * Checks if this body is the current focus
      * 
      * @param cb
-     * @return
+     *            The body
+     * @return Whether the body is focus
      */
     public boolean isFocus(IFocus cb);
 
     /**
      * Called after updating the body's distance to the cam, it updates the
-     * closest body in the camera to figure out the camera near.
+     * closest body in the camera to figure out the camera near
      * 
      * @param cb
      *            The body to check

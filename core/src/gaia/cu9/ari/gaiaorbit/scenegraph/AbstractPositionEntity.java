@@ -164,10 +164,10 @@ public abstract class AbstractPositionEntity extends SceneGraphNode {
 
     /**
      * Whether position must be recomputed for this entity. By default, only
-     * when time is on.
+     * when time is on
      * 
      * @param time
-     *            The current time.
+     *            The current time
      * @return True if position should be recomputed for this entity
      */
     protected boolean mustUpdatePosition(ITimeFrameProvider time) {
@@ -176,10 +176,11 @@ public abstract class AbstractPositionEntity extends SceneGraphNode {
 
     /**
      * Returns the absolute position of this entity in the native coordinates
-     * (equatorial system).
+     * (equatorial system)
      * 
      * @param aux
-     * @return
+     *            Auxiliary vector to put the result in
+     * @return The vector with the position
      */
     public Vector3d getAbsolutePosition(Vector3d aux) {
         aux.set(pos);
@@ -296,9 +297,9 @@ public abstract class AbstractPositionEntity extends SceneGraphNode {
     }
 
     /**
-     * Gets a copy of this object but does not copy its parent or children.
+     * Gets a copy of this object but does not copy its parent or children
      * 
-     * @return
+     * @return The copied object
      */
     @Override
     public <T extends SceneGraphNode> T getSimpleCopy() {

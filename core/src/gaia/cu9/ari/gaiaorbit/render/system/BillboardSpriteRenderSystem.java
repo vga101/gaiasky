@@ -36,18 +36,18 @@ public class BillboardSpriteRenderSystem extends AbstractRenderSystem {
     }
 
     /**
-     * Creates a new billboard quad render component.
+     * Creates a new billboard quad render component
      * 
      * @param rg
-     *            The render group.
+     *            The render group
      * @param priority
-     *            The priority of the component.
+     *            The priority of the component
      * @param alphas
-     *            The alphas list.
+     *            The alphas list
      * @param shaderProgram
-     *            The shader program to render the quad with.
-     * @param useStarColorTransit
-     *            Whether to use the star color transit or not.
+     *            The shader program to render the quad with
+     * @param ctindex
+     *            The component type index
      */
     public BillboardSpriteRenderSystem(RenderGroup rg, int priority, float[] alphas, ShaderProgram shaderProgram, int ctindex) {
         this(rg, priority, alphas, shaderProgram, ctindex, 2, 2);

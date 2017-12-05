@@ -1,12 +1,13 @@
 package gaia.cu9.ari.gaiaorbit.util.g3d;
 
-import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
-
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
+import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
+
 /**
  * Helper generic class to create rings.
+ * 
  * @author Toni Sagrista
  *
  */
@@ -21,21 +22,29 @@ public class RingCreator extends ModelCreator {
 
     /**
      * Creates a new ring with the given parameters.
-     * @param innerRadius The inner radius length.
-     * @param outerRadius The outer radius length.
-     * @param flipNormals Whether to flip normals or not.
-     * @return
+     * 
+     * @param innerRadius
+     *            The inner radius length.
+     * @param outerRadius
+     *            The outer radius length.
+     * @param flipNormals
+     *            Whether to flip normals or not.
+     * @return This ring creator, for chaining
      */
     public RingCreator create(int divisions, float innerRadius, float outerRadius, boolean flipNormals) {
         return create(divisions, innerRadius, outerRadius, flipNormals, 0, 360);
     }
 
     /**
-     * Creates a new ring with the given parameters.
-     * @param innerRadius The inner radius length.
-     * @param outerRadius The outer radius length.
-     * @param flipNormals Whether to flip normals or not.
-     * @return
+     * Creates a new ring with the given parameters
+     * 
+     * @param innerRadius
+     *            The inner radius length
+     * @param outerRadius
+     *            The outer radius length
+     * @param flipNormals
+     *            Whether to flip normals or not
+     * @return This ring creator, for chaining
      */
     public RingCreator create(int divisions, float innerRadius, float outerRadius, boolean flipNormals, float startAngle, float endAngle) {
         this.innerRadius = innerRadius;

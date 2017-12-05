@@ -23,10 +23,12 @@ public class TextUtils {
 
     /**
      * Converts from property displayName to method displayName by removing the
-     * separator dots and capitalising each chunk.
-     * Example: model.texture.bump -> ModelTextureBump
-     * @param property The property displayName.
-     * @return
+     * separator dots and capitalising each chunk. Example: model.texture.bump
+     * -> ModelTextureBump
+     * 
+     * @param property
+     *            The property displayName
+     * @return The method name
      */
     public static String propertyToMethodName(String property) {
         String[] parts = property.split("\\.");
@@ -39,17 +41,23 @@ public class TextUtils {
 
     /**
      * Returns the given string with the first letter capitalised
+     * 
      * @param line
-     * @return
+     *            The input string
+     * @return The string with its first letter capitalised
      */
     public static String capitalise(String line) {
         return Character.toUpperCase(line.charAt(0)) + line.substring(1);
     }
 
     /**
-     * Returns the given string with the first letter capitalised and all the others in lower case.
+     * Returns the given string with the first letter capitalised and all the
+     * others in lower case
+     * 
      * @param line
-     * @return
+     *            The input string
+     * @return The string with its first letter capitalised and the others in
+     *         lower case
      */
     public static String trueCapitalise(String line) {
         return Character.toUpperCase(line.charAt(0)) + line.substring(1).toLowerCase();

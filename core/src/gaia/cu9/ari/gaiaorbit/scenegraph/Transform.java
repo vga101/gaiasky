@@ -6,10 +6,12 @@ import com.badlogic.gdx.math.Vector3;
 import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
-/** 
- * Represents a geometric transformation. It can be either a matrix or a position. Since we have
- * such a vast amount of stars, it is convenient to be able to represent translations
- * with a position vector rather than with an almost empty transform matrix.
+/**
+ * Represents a geometric transformation. It can be either a matrix or a
+ * position. Since we have such a vast amount of stars, it is convenient to be
+ * able to represent translations with a position vector rather than with an
+ * almost empty transform matrix.
+ * 
  * @author Toni Sagrista
  *
  */
@@ -29,6 +31,7 @@ public class Transform {
 
     /**
      * Sets this transform to represent the same as the other transform.
+     * 
      * @param parent
      */
     public void set(Transform parent) {
@@ -67,8 +70,10 @@ public class Transform {
 
     /**
      * Sets the given matrix to this transform
+     * 
      * @param mat
-     * @return
+     *            The out matrix
+     * @return The matrix with the transform
      */
     public Matrix4d getMatrix(Matrix4d aux) {
         if (transform != null) {
@@ -108,8 +113,10 @@ public class Transform {
         }
     }
 
-    /** Adds the translation of this object to the aux vector, and 
-     * returns it for chaining.
+    /**
+     * Adds the translation of this object to the aux vector, and returns it for
+     * chaining.
+     * 
      * @param aux
      */
     public Vector3d addTranslationTo(Vector3d aux) {
