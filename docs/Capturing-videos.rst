@@ -36,7 +36,7 @@ right resolution, frame rate and preset and modify the output format if
 you need to. 
 
 ``ffmpeg`` is quite a complex command which provides a lot of options, so for more information please refer
-to the official `ffmpeg documentation <http://ffmpeg.org/ffmpeg.html>`__.
+to the official `ffmpeg documentation <http://ffmpeg.org/documentation.html>`__.
 
 OpenGL context recorder
 =======================
