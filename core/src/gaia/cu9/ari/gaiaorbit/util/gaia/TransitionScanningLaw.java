@@ -73,7 +73,7 @@ public class TransitionScanningLaw extends AnalyticalAttitudeDataServer {
     /**
      * Return the Epsl.Mode (preceding or following)
      * 
-     * @return
+     * @return The mode
      */
     public Epsl.Mode getMode() {
         Epsl.Mode mode = Epsl.Mode.PRECEDING;

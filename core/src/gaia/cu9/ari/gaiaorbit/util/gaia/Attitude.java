@@ -1,14 +1,13 @@
 package gaia.cu9.ari.gaiaorbit.util.gaia;
 
-import gaia.cu9.ari.gaiaorbit.util.gaia.time.TimeContext;
 import gaia.cu9.ari.gaiaorbit.util.math.Quaterniond;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
 /**
  * This is the basic interface for all attitude representations and scanning
- * laws. An {@linkplain Attitude} represents the three-dimensional orientation of the
- * SRS of Gaia at a specific instant in time as well as its inertial angular
- * rotation at that moment.
+ * laws. An {@linkplain Attitude} represents the three-dimensional orientation
+ * of the SRS of Gaia at a specific instant in time as well as its inertial
+ * angular rotation at that moment.
  * 
  * Getters exists to provide the attitude and inertial rotation in various
  * forms, including a quaternion ({@link #getQuaternion()}, a set of heliotropic
@@ -22,10 +21,10 @@ import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
  */
 public interface Attitude {
     /**
-     * Get the time that this attitude is valid for as a single long value.
-     * The meaning of the time depends on the {@link TimeContext} of the
-     * {@link AttitudeDataServer} that generated the attitude. Use {@link #getGaiaTime()}
-     * to get the time as an absolute {@link GaiaTime} if needed.
+     * Get the time that this attitude is valid for as a single long value. The
+     * meaning of the time depends on the TimeContext of the AttitudeDataServer
+     * that generated the attitude. Use #getGaiaTime() to get the time as an
+     * absolute GaiaTime if needed.
      * 
      * @return time time that the attitude is valid for
      */
@@ -99,6 +98,5 @@ public interface Attitude {
      * @return two-element double array containing the angular speed AL and AC
      *         [rad/s]
      */
-    public double[] getAlAcRates(FOV fov, double alFieldAngle,
-            double acFieldAngle);
+    public double[] getAlAcRates(FOV fov, double alFieldAngle, double acFieldAngle);
 }

@@ -1,5 +1,7 @@
 package gaia.cu9.ari.gaiaorbit.util.gaia;
 
+import java.util.Date;
+
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.util.BinarySearchTree;
@@ -7,12 +9,11 @@ import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.math.Quaterniond;
 
-import java.util.Date;
-
 /**
- * Provides caching of the last Nsl37 attitude requested.
- * This allows for calculating the attitude only once in each
- * time step and using it in several points in the processing.
+ * Provides caching of the last Nsl37 attitude requested. This allows for
+ * calculating the attitude only once in each time step and using it in several
+ * points in the processing.
+ * 
  * @author Toni Sagrista
  *
  */
@@ -47,8 +48,10 @@ public class GaiaAttitudeServer {
 
     /**
      * Returns the NSL37 attitude for the given date.
+     * 
      * @param date
-     * @return
+     *            The date
+     * @return The attitude
      */
     public synchronized Attitude getAttitude(Date date) {
         Attitude result;

@@ -1,11 +1,11 @@
 package gaia.cu9.ari.gaiaorbit.util.gaia;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import gaia.cu9.ari.gaiaorbit.util.gaia.time.Duration;
 import gaia.cu9.ari.gaiaorbit.util.gaia.utils.AttitudeUtils;
 import gaia.cu9.ari.gaiaorbit.util.math.Quaterniond;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This class implements the Modified Scanning Law (MSL) by Hermite
@@ -15,8 +15,7 @@ import java.util.List;
  * @author Lennart Lindegren
  *
  */
-public class MslAttitudeDataServer extends
-        HermiteInterpolatedAttitudeDataServer {
+public class MslAttitudeDataServer extends HermiteInterpolatedAttitudeDataServer {
 
     protected ModifiedScanningLaw msl;
 
@@ -90,8 +89,7 @@ public class MslAttitudeDataServer extends
         super(tStart, tLength);
 
         if (tStart < msl.getGTimeBeg()) {
-            throw new IllegalArgumentException(
-                    "MslAttitudeDataServer starts earlier than ModifiedScanningLaw");
+            throw new IllegalArgumentException("MslAttitudeDataServer starts earlier than ModifiedScanningLaw");
         }
 
         // Attitude data server must have the same reference epoch as MSL
@@ -133,8 +131,7 @@ public class MslAttitudeDataServer extends
         // multiple of the timeGranularity (the smallest such multiple not not
         // less than the original tEnd is chosen):
         long tEndNsFromRef = tEnd - refEpoch;
-        tEndNsFromRef = timeGranularity
-                * ((tEndNsFromRef - 1L) / timeGranularity + 1L);
+        tEndNsFromRef = timeGranularity * ((tEndNsFromRef - 1L) / timeGranularity + 1L);
 
         long tEndNs = refEpoch + tEndNsFromRef;
 
@@ -193,8 +190,7 @@ public class MslAttitudeDataServer extends
             double nuDot = msl.getNuDot();
             double omegaDot = msl.getOmegaDot();
 
-            Quaterniond qq[] = AttitudeConverter.heliotropicToQuaternions(lSun,
-                    xi, nu, omega, lSunDot, nuDot, omegaDot);
+            Quaterniond qq[] = AttitudeConverter.heliotropicToQuaternions(lSun, xi, nu, omega, lSunDot, nuDot, omegaDot);
             Quaterniond q = qq[0];
             Quaterniond qInvQDot = qq[1].mulLeftInverse(q);
             qX[i] = q.x;
@@ -287,8 +283,7 @@ public class MslAttitudeDataServer extends
      */
     private void setExtraOmega(double extraOmega) {
         this.extraOmega = extraOmega;
-        this.qExtraOmega.set(0.0, 0.0, Math.sin(extraOmega / 2),
-                Math.cos(extraOmega / 2));
+        this.qExtraOmega.set(0.0, 0.0, Math.sin(extraOmega / 2), Math.cos(extraOmega / 2));
     }
 
     /**
@@ -374,7 +369,8 @@ public class MslAttitudeDataServer extends
      * interval containing t
      *
      * @param t
-     * @return
+     *            The rate
+     * @return Whether it is in a transition phase
      */
     public boolean isTransition(long t) {
         int left = AttitudeUtils.findLeftIndexVar(t, tNs, 0);

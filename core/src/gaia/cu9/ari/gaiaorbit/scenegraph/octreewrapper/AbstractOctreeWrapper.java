@@ -204,9 +204,9 @@ public abstract class AbstractOctreeWrapper extends SceneGraphNode implements It
     }
 
     /**
-     * Gets a copy of this object but does not copy its parent or children.
+     * Gets a copy of this object but does not copy its parent or children
      * 
-     * @return
+     * @return The copied object
      */
     @Override
     public <T extends SceneGraphNode> T getSimpleCopy() {
