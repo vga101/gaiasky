@@ -1333,4 +1333,21 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
         return new double[] { out.x * AstroUtils.TO_DEG, out.y * AstroUtils.TO_DEG, in.len() };
     }
 
+    @Override
+    public void setBrightnessLevel(double level) {
+        assert level >= -1d && level <= 1d : "Brightness level value must be in [-1..1]: " + Double.toString(level);
+        Gdx.app.postRunnable(() -> {
+            em.post(Events.BRIGHTNESS_CMD, (float) level, false);
+        });
+
+    }
+
+    @Override
+    public void setContrastLevel(double level) {
+        assert level >= 0d && level <= 2d : "Contrast level value must be in [0..2]: " + Double.toString(level);
+        Gdx.app.postRunnable(() -> {
+            em.post(Events.CONTRAST_CMD, (float) level, false);
+        });
+    }
+
 }

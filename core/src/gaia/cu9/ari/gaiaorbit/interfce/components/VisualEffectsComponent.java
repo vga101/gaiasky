@@ -149,8 +149,8 @@ public class VisualEffectsComponent extends GuiComponent implements IObserver {
             brightness.setWidth(sliderWidth);
             brightness.setValue(MathUtilsd.lint(GlobalConf.postprocess.POSTPROCESS_BRIGHTNESS, Constants.MIN_BRIGHTNESS, Constants.MAX_BRIGHTNESS, Constants.MIN_SLIDER, Constants.MAX_SLIDER));
             brightness.addListener(event -> {
-                if (event instanceof ChangeEvent) {
-                    EventManager.instance.post(Events.BRIGHTNESS_CMD, MathUtilsd.lint(brightness.getValue(), Constants.MIN_SLIDER, Constants.MAX_SLIDER, Constants.MIN_BRIGHTNESS, Constants.MAX_BRIGHTNESS));
+                if (event instanceof ChangeEvent && hackProgrammaticChangeEvents) {
+                    EventManager.instance.post(Events.BRIGHTNESS_CMD, MathUtilsd.lint(brightness.getValue(), Constants.MIN_SLIDER, Constants.MAX_SLIDER, Constants.MIN_BRIGHTNESS, Constants.MAX_BRIGHTNESS), true);
                     brightnessLabel.setText(Integer.toString((int) brightness.getValue()));
                     return true;
                 }
@@ -170,8 +170,8 @@ public class VisualEffectsComponent extends GuiComponent implements IObserver {
             contrast.setWidth(sliderWidth);
             contrast.setValue(MathUtilsd.lint(GlobalConf.postprocess.POSTPROCESS_CONTRAST, Constants.MIN_CONTRAST, Constants.MAX_CONTRAST, Constants.MIN_SLIDER, Constants.MAX_SLIDER));
             contrast.addListener(event -> {
-                if (event instanceof ChangeEvent) {
-                    EventManager.instance.post(Events.CONTRAST_CMD, MathUtilsd.lint(contrast.getValue(), Constants.MIN_SLIDER, Constants.MAX_SLIDER, Constants.MIN_CONTRAST, Constants.MAX_CONTRAST));
+                if (event instanceof ChangeEvent && hackProgrammaticChangeEvents) {
+                    EventManager.instance.post(Events.CONTRAST_CMD, MathUtilsd.lint(contrast.getValue(), Constants.MIN_SLIDER, Constants.MAX_SLIDER, Constants.MIN_CONTRAST, Constants.MAX_CONTRAST), true);
                     contrastLabel.setText(Integer.toString((int) contrast.getValue()));
                     return true;
                 }
@@ -252,7 +252,7 @@ public class VisualEffectsComponent extends GuiComponent implements IObserver {
 
         component = lightingGroup;
 
-        EventManager.instance.subscribe(this, Events.STAR_POINT_SIZE_INFO, Events.STAR_BRIGHTNESS_CMD);
+        EventManager.instance.subscribe(this, Events.STAR_POINT_SIZE_INFO, Events.STAR_BRIGHTNESS_CMD, Events.BRIGHTNESS_CMD, Events.CONTRAST_CMD);
     }
 
     @Override
@@ -272,6 +272,28 @@ public class VisualEffectsComponent extends GuiComponent implements IObserver {
                 hackProgrammaticChangeEvents = false;
                 starBrightness.setValue(sliderValue);
                 starbrightnessl.setText(Integer.toString((int) sliderValue));
+                hackProgrammaticChangeEvents = true;
+            }
+            break;
+        case BRIGHTNESS_CMD:
+            if (data.length == 2 && !(Boolean) data[1]) {
+                // Update UI element
+                float level = (Float) data[0];
+                float sliderLevel = MathUtilsd.lint(level, Constants.MIN_BRIGHTNESS, Constants.MAX_BRIGHTNESS, Constants.MIN_SLIDER, Constants.MAX_SLIDER);
+                hackProgrammaticChangeEvents = false;
+                brightness.setValue(sliderLevel);
+                brightnessLabel.setText(Integer.toString((int) sliderLevel));
+                hackProgrammaticChangeEvents = true;
+            }
+            break;
+        case CONTRAST_CMD:
+            if (data.length == 2 && !(Boolean) data[1]) {
+                // Update UI element
+                float level = (Float) data[0];
+                float sliderLevel = MathUtilsd.lint(level, Constants.MIN_CONTRAST, Constants.MAX_CONTRAST, Constants.MIN_SLIDER, Constants.MAX_SLIDER);
+                hackProgrammaticChangeEvents = false;
+                contrast.setValue(sliderLevel);
+                contrastLabel.setText(Integer.toString((int) sliderLevel));
                 hackProgrammaticChangeEvents = true;
             }
             break;

@@ -173,10 +173,16 @@ public enum Events {
     /** Contains the opacity of motion blur between 0 and 1 **/
     MOTION_BLUR_CMD,
 
-    /** Contains the brightness level in [-1..1] **/
+    /**
+     * Contains the brightness level (float) in [-1..1] and an optional boolean
+     * indicating whether this comes from the interface
+     **/
     BRIGHTNESS_CMD,
 
-    /** Contains the contrast level in [0..2] **/
+    /**
+     * Contains the contrast level (float) in [0..2] and an optional boolean
+     * indicating whether this comes from the interface
+     **/
     CONTRAST_CMD,
 
     /** Contains a float with the pace **/
