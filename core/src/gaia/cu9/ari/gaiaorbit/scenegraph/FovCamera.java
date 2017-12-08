@@ -68,6 +68,9 @@ public class FovCamera extends AbstractCamera implements IObserver {
 
     public long currentTime, lastTime;
 
+    // Direction index for the render stage
+    public int dirindex;
+
     private Vector3d dir1, dir2;
     private Matrix4d matrix;
 
@@ -76,7 +79,6 @@ public class FovCamera extends AbstractCamera implements IObserver {
     Stage[] fpstages;
     Drawable fp, fp_fov1, fp_fov2;
 
-    @SuppressWarnings("unchecked")
     public FovCamera(AssetManager assetManager, CameraManager parent) {
         super(parent);
         initialize(assetManager);
@@ -346,8 +348,6 @@ public class FovCamera extends AbstractCamera implements IObserver {
      * We have fixed field of view angles and thus fixed aspect ratio.
      */
     public void updateAngleEdge(int width, int height) {
-        float h = (float) Satellite.FOV_AC_ACTIVE;
-        float w = (float) Satellite.FOV_AL;
         angleEdgeRad = (float) (Satellite.FOV_AL * Math.PI / 180);
         // Update max overlap time
         MAX_OVERLAP_TIME = (long) (angleEdgeRad / (Satellite.SCANRATE * (Math.PI / (3600 * 180)))) * 1000;

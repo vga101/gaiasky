@@ -41,6 +41,7 @@ import gaia.cu9.ari.gaiaorbit.data.orbit.OrbitData;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
+import gaia.cu9.ari.gaiaorbit.interfce.ConsoleLogger;
 import gaia.cu9.ari.gaiaorbit.interfce.DebugGui;
 import gaia.cu9.ari.gaiaorbit.interfce.FullGui;
 import gaia.cu9.ari.gaiaorbit.interfce.GuiRegistry;
@@ -144,6 +145,11 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
     private InputMultiplexer inputMultiplexer;
 
     /**
+     * Provisional console logger
+     */
+    private ConsoleLogger clogger;
+
+    /**
      * The user interfaces
      */
     public IGui initialGui, loadingGui, mainGui, spacecraftGui, stereoGui, debugGui, currentGui, previousGui;
@@ -192,6 +198,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
     public void create() {
         startTime = TimeUtils.millis();
         Gdx.app.setLogLevel(Application.LOG_INFO);
+        clogger = new ConsoleLogger(true);
 
         fbmap = new HashMap<String, FrameBuffer>();
 
@@ -323,6 +330,9 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         // Initialise input handlers
         inputMultiplexer = new InputMultiplexer();
 
+        // Destroy console logger
+        clogger.dispose();
+        clogger = null;
         // Init GUIs, step 2
         reinitialiseGUI2();
 

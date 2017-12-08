@@ -3,7 +3,9 @@ package gaia.cu9.ari.gaiaorbit.render;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 
 import gaia.cu9.ari.gaiaorbit.render.IPostProcessor.PostProcessBean;
-import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
+import gaia.cu9.ari.gaiaorbit.render.system.StarGroupRenderSystem;
+import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager;
+import gaia.cu9.ari.gaiaorbit.scenegraph.FovCamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 
 /**
@@ -24,19 +26,19 @@ public class SGRFov extends SGRAbstract implements ISGR {
     public void render(SceneGraphRenderer sgr, ICamera camera, double t, int rw, int rh, FrameBuffer fb, PostProcessBean ppb) {
         boolean postproc = postprocessCapture(ppb, fb, rw, rh);
 
-        /** FIELD OF VIEW CAMERA **/
+        /** FIELD OF VIEW CAMERA - we only render the star group process **/
 
-        CameraMode aux = camera.getMode();
+        FovCamera cam = ((CameraManager) camera).fovCamera;
+        int fovmode = camera.getMode().getGaiaFovMode();
+        if (fovmode == 1 || fovmode == 3) {
+            cam.dirindex = 0;
+            sgr.renderSystem(camera, t, rc, StarGroupRenderSystem.class);
+        }
 
-        camera.updateMode(CameraMode.Gaia_FOV1, false);
-
-        sgr.renderScene(camera, t, rc);
-
-        camera.updateMode(CameraMode.Gaia_FOV2, false);
-
-        sgr.renderScene(camera, t, rc);
-
-        camera.updateMode(aux, false);
+        if (fovmode == 2 || fovmode == 3) {
+            cam.dirindex = 1;
+            sgr.renderSystem(camera, t, rc, StarGroupRenderSystem.class);
+        }
 
         postprocessRender(ppb, fb, postproc, camera, rw, rh);
 

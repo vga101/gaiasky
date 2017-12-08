@@ -595,11 +595,11 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
      * Renders the scene
      * 
      * @param camera
-     *            The camera to use.
+     *            The camera to use
      * @param t
-     *            The time in seconds since the start.
+     *            The time in seconds since the start
      * @param rc
-     *            The render context.
+     *            The render context
      */
     public void renderScene(ICamera camera, double t, RenderingContext rc) {
         // Update time difference since last update
@@ -620,6 +620,40 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
             }
         }
 
+    }
+
+    /**
+     * Renders all the systems which are the same type of the given class
+     * 
+     * @param camera
+     *            The camera to use
+     * @param t
+     *            The time in seconds since the start
+     * @param rc
+     *            The render contex
+     * @param clazz
+     *            The class
+     */
+    public void renderSystem(ICamera camera, double t, RenderingContext rc, Class<? extends IRenderSystem> clazz) {
+        // Update time difference since last update
+        for (ComponentType ct : ComponentType.values()) {
+            alphas[ct.ordinal()] = calculateAlpha(ct, t);
+        }
+
+        int size = renderProcesses.size;
+        for (int i = 0; i < size; i++) {
+            IRenderSystem process = renderProcesses.get(i);
+            if (clazz.isInstance(process)) {
+                // If we have no render group, this means all the info is already in
+                // the render system. No lists needed
+                if (process.getRenderGroup() != null) {
+                    Array<IRenderable> l = render_lists.get(process.getRenderGroup()).toList();
+                    process.render(l, camera, t, rc);
+                } else {
+                    process.render(null, camera, t, rc);
+                }
+            }
+        }
     }
 
     /**

@@ -84,6 +84,30 @@ public class CameraManager implements ICamera, IObserver {
         public boolean isGaiaFov() {
             return this.equals(CameraMode.Gaia_FOV1) || this.equals(CameraMode.Gaia_FOV2) || this.equals(CameraMode.Gaia_FOV1and2);
         }
+
+        /**
+         * Returns the current FOV mode:
+         * <ul>
+         * <li>1 - FOV1</li>
+         * <li>2 - FOV2</li>
+         * <li>3 - FOV1&2</li>
+         * <li>0 - No FOV mode</li>
+         * </ul>
+         * 
+         * @return The current FOV mode of the camera as an integer
+         */
+        public int getGaiaFovMode() {
+            switch (this) {
+            case Gaia_FOV1:
+                return 1;
+            case Gaia_FOV2:
+                return 2;
+            case Gaia_FOV1and2:
+                return 3;
+            default:
+                return 0;
+            }
+        }
     }
 
     public CameraMode mode;

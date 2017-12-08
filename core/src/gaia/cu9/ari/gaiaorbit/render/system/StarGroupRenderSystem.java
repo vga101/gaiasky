@@ -6,6 +6,7 @@ import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Mesh;
+import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
@@ -18,6 +19,8 @@ import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.render.IRenderable;
+import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager;
+import gaia.cu9.ari.gaiaorbit.scenegraph.FovCamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
 import gaia.cu9.ari.gaiaorbit.scenegraph.StarGroup;
@@ -34,7 +37,7 @@ public class StarGroupRenderSystem extends ImmediateRenderSystem implements IObs
     /** Hopefully we won't have more than 5000 star groups at once **/
     private final int N_MESHES = 5000;
 
-    Vector3 aux1;
+    Vector3 aux1, aux2;
     int sizeOffset, pmOffset;
     Comparator<IRenderable> comp;
     float[] pointAlpha, alphaSizeFovBr;
@@ -44,6 +47,9 @@ public class StarGroupRenderSystem extends ImmediateRenderSystem implements IObs
         BRIGHTNESS_FACTOR = Constants.webgl ? 15 : 10;
         this.comp = new DistToCameraComparator<IRenderable>();
         this.alphaSizeFovBr = new float[4];
+        aux1 = new Vector3();
+        aux2 = new Vector3();
+
         EventManager.instance.subscribe(this, Events.STAR_MIN_OPACITY_CMD, Events.DISPOSE_STAR_GROUP_GPU_MESH);
     }
 
@@ -85,8 +91,6 @@ public class StarGroupRenderSystem extends ImmediateRenderSystem implements IObs
 
         curr = new MeshData();
         meshes[mdi] = curr;
-
-        aux1 = new Vector3();
 
         maxVertices = nVertices;
 
@@ -172,6 +176,7 @@ public class StarGroupRenderSystem extends ImmediateRenderSystem implements IObs
 
                 // Additive blending
                 Gdx.gl20.glBlendFunc(GL20.GL_ONE, GL20.GL_ONE);
+                int fovmode = camera.getMode().getGaiaFovMode();
 
                 shaderProgram.begin();
                 shaderProgram.setUniform2fv("u_pointAlpha", pointAlpha, 0, 2);
@@ -179,7 +184,7 @@ public class StarGroupRenderSystem extends ImmediateRenderSystem implements IObs
                 shaderProgram.setUniformf("u_camPos", camera.getCurrent().getPos().put(aux1));
 
                 alphaSizeFovBr[0] = starGroup.opacity * alphas[starGroup.ct.getFirstOrdinal()];
-                alphaSizeFovBr[1] = camera.getNCameras() == 1 ? (GlobalConf.scene.STAR_POINT_SIZE * rc.scaleFactor * (GlobalConf.program.isStereoFullWidth() ? 1 : 2)) : (GlobalConf.scene.STAR_POINT_SIZE * rc.scaleFactor * 10);
+                alphaSizeFovBr[1] = fovmode == 0 ? (GlobalConf.scene.STAR_POINT_SIZE * rc.scaleFactor * (GlobalConf.program.isStereoFullWidth() ? 1 : 2)) : (GlobalConf.scene.STAR_POINT_SIZE * rc.scaleFactor * 10);
                 alphaSizeFovBr[2] = camera.getFovFactor();
                 alphaSizeFovBr[3] = (float) (GlobalConf.scene.STAR_BRIGHTNESS * BRIGHTNESS_FACTOR);
                 shaderProgram.setUniform4fv("u_alphaSizeFovBr", alphaSizeFovBr, 0, 4);
@@ -188,6 +193,22 @@ public class StarGroupRenderSystem extends ImmediateRenderSystem implements IObs
                 shaderProgram.setUniformi("u_t", (int) (AstroUtils.getMsSince(GaiaSky.instance.time.getTime(), starGroup.getEpoch()) * Constants.MS_TO_D));
                 shaderProgram.setUniformf("u_ar", GlobalConf.program.STEREOSCOPIC_MODE && (GlobalConf.program.STEREO_PROFILE != StereoProfile.HD_3DTV && GlobalConf.program.STEREO_PROFILE != StereoProfile.ANAGLYPHIC) ? 0.5f : 1f);
                 shaderProgram.setUniformf("u_thAnglePoint", (float) 1e-8);
+
+                // Compute visibility (FOV and so)
+                // u_fovcam contains 1, 2 or 3 if FOV mode on, else 0
+                shaderProgram.setUniformi("u_fovcam", fovmode);
+                if (fovmode > 0) {
+                    // Cam is Fov1 or Fov2
+                    FovCamera cam = ((CameraManager) camera).fovCamera;
+                    shaderProgram.setUniformf("u_fovcam_angleedge", camera.getAngleEdge());
+                    shaderProgram.setUniformf("u_fovcam_dir", camera.getDirections()[cam.dirindex].put(aux2));
+
+                    if (fovmode == 3) {
+                        // Update combined
+                        PerspectiveCamera[] cams = camera.getFrontCameras();
+                        shaderProgram.setUniformMatrix("u_projModelView", cams[cam.dirindex].combined);
+                    }
+                }
 
                 curr.mesh.setVertices(curr.vertices, 0, starGroup.count);
                 curr.mesh.render(shaderProgram, ShapeType.Point.getGlType());
