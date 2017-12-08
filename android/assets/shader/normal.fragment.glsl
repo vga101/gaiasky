@@ -126,7 +126,7 @@ uniform sampler2D u_emissiveTexture;
 ////// SHADOW MAPPING
 //////////////////////////////////////////////////////
 #ifdef shadowMapFlag
-#define bias 0.005
+#define bias 0.006
 uniform sampler2D u_shadowTexture;
 uniform float u_shadowPCFOffset;
 varying vec3 v_shadowMapUv;
@@ -169,8 +169,8 @@ float getShadow()
     for(int x=-2; x<=2; x++){
         for(int y=-2; y<=2; y++){
             vec2 offset = vec2(float(x), float(y)) / size;
-            result += texture2DShadowLerp(size, v_shadowMapUv.xy + offset, v_shadowMapUv.z);
-            //result += getShadowness(v_shadowMapUv.xy, offset, v_shadowMapUv.z);
+            //result += texture2DShadowLerp(size, v_shadowMapUv.xy + offset, v_shadowMapUv.z);
+            result += getShadowness(v_shadowMapUv.xy, offset, v_shadowMapUv.z);
         }
     }
     return result / 25.0;
