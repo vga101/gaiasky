@@ -66,6 +66,8 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
     private double lastFwdAmount = 0;
     /** Previous angle in orientation lock **/
     double previousOrientationAngle = 0;
+    /** Fov value backup **/
+    float fovBackup;
 
     /** Thrust which keeps the camera going. Mainly for game pads **/
     private double thrust = 0;
@@ -214,7 +216,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
         }
 
         // Focus is changed from GUI
-        EventManager.instance.subscribe(this, Events.FOCUS_CHANGE_CMD, Events.FOV_CHANGED_CMD, Events.ORIENTATION_LOCK_CMD, Events.CAMERA_POS_CMD, Events.CAMERA_DIR_CMD, Events.CAMERA_UP_CMD, Events.CAMERA_FWD, Events.CAMERA_ROTATE, Events.CAMERA_PAN, Events.CAMERA_ROLL, Events.CAMERA_TURN, Events.CAMERA_STOP, Events.CAMERA_CENTER, Events.GO_TO_OBJECT_CMD, Events.PLANETARIUM_FOCUS_ANGLE_CMD);
+        EventManager.instance.subscribe(this, Events.FOCUS_CHANGE_CMD, Events.FOV_CHANGED_CMD, Events.ORIENTATION_LOCK_CMD, Events.CAMERA_POS_CMD, Events.CAMERA_DIR_CMD, Events.CAMERA_UP_CMD, Events.CAMERA_FWD, Events.CAMERA_ROTATE, Events.CAMERA_PAN, Events.CAMERA_ROLL, Events.CAMERA_TURN, Events.CAMERA_STOP, Events.CAMERA_CENTER, Events.GO_TO_OBJECT_CMD, Events.PLANETARIUM_FOCUS_ANGLE_CMD, Events.PLANETARIUM_CMD);
     }
 
     // Set up direction and lookAtSensor if accelerometer is enabled
@@ -967,6 +969,18 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
             fovFactor = camera.fieldOfView / 40f;
             if (parent.current == this) {
                 EventManager.instance.post(Events.FOV_CHANGE_NOTIFICATION, fov, fovFactor);
+            }
+            break;
+        case PLANETARIUM_CMD:
+            boolean state = (boolean) data[0];
+            EventManager.instance.post(Events.FISHEYE_CMD, state);
+            if (state) {
+                fovBackup = GaiaSky.instance.cam.getCamera().fieldOfView;
+                EventManager.instance.post(Events.FOV_CHANGED_CMD, 130f);
+                EventManager.instance.post(Events.PLANETARIUM_FOCUS_ANGLE_CMD, 30f);
+            } else {
+                EventManager.instance.post(Events.FOV_CHANGED_CMD, fovBackup);
+                EventManager.instance.post(Events.PLANETARIUM_FOCUS_ANGLE_CMD, 0f);
             }
             break;
         case CAMERA_POS_CMD:

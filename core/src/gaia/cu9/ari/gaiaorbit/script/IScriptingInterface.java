@@ -1015,4 +1015,12 @@ public interface IScriptingInterface {
      */
     public void setContrastLevel(double level);
 
+    /**
+     * Enables and disables the planetarium mode.
+     * 
+     * @param state
+     *            The boolean sate. True to activate, false to deactivate.
+     */
+    public void setPlanetariumMode(boolean state);
+
 }

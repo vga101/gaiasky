@@ -347,6 +347,11 @@ public enum Events {
      * boolean indicating whether this comes from the interface
      **/
     CUBEMAP360_CMD,
+    /**
+     * Enables and disables the planetarium mode. Contains a boolean with the
+     * state and another boolean indicating whether it comes from the interface.
+     */
+    PLANETARIUM_CMD,
     /** Anti aliasing changed, contains the new value for aa **/
     ANTIALIASING_CMD,
     /**

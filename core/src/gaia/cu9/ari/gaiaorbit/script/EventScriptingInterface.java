@@ -1350,4 +1350,12 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
         });
     }
 
+    @Override
+    public void setPlanetariumMode(boolean state) {
+        Gdx.app.postRunnable(() -> {
+            em.post(Events.PLANETARIUM_CMD, state, false);
+        });
+
+    }
+
 }

@@ -17,7 +17,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
 import com.badlogic.gdx.utils.Align;
 
-import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
@@ -45,7 +44,7 @@ public class CameraComponent extends GuiComponent implements IObserver {
 
     public CameraComponent(Skin skin, Stage stage) {
         super(skin, stage);
-        EventManager.instance.subscribe(this, Events.CAMERA_MODE_CMD, Events.ROTATION_SPEED_CMD, Events.TURNING_SPEED_CMD, Events.CAMERA_SPEED_CMD, Events.SPEED_LIMIT_CMD, Events.TOGGLE_STEREOSCOPIC_INFO, Events.FOV_CHANGE_NOTIFICATION, Events.CUBEMAP360_CMD, Events.CAMERA_CINEMATIC_CMD, Events.ORIENTATION_LOCK_CMD);
+        EventManager.instance.subscribe(this, Events.CAMERA_MODE_CMD, Events.ROTATION_SPEED_CMD, Events.TURNING_SPEED_CMD, Events.CAMERA_SPEED_CMD, Events.SPEED_LIMIT_CMD, Events.TOGGLE_STEREOSCOPIC_INFO, Events.FOV_CHANGE_NOTIFICATION, Events.CUBEMAP360_CMD, Events.CAMERA_CINEMATIC_CMD, Events.ORIENTATION_LOCK_CMD, Events.PLANETARIUM_CMD);
     }
 
     @Override
@@ -115,16 +114,8 @@ public class CameraComponent extends GuiComponent implements IObserver {
         buttonDome.setName("dome");
         buttonDome.addListener(event -> {
             if (event instanceof ChangeEvent) {
-
-                EventManager.instance.post(Events.FISHEYE_CMD, buttonDome.isChecked());
-                if (buttonDome.isChecked()) {
-                    fovBackup = GaiaSky.instance.cam.getCamera().fieldOfView;
-                    EventManager.instance.post(Events.FOV_CHANGED_CMD, 130f);
-                    EventManager.instance.post(Events.PLANETARIUM_FOCUS_ANGLE_CMD, 30f);
-                } else {
-                    EventManager.instance.post(Events.FOV_CHANGED_CMD, fovBackup);
-                    EventManager.instance.post(Events.PLANETARIUM_FOCUS_ANGLE_CMD, 0f);
-                }
+                // Enable
+                EventManager.instance.post(Events.PLANETARIUM_CMD, buttonDome.isChecked(), true);
                 return true;
             }
             return false;
@@ -430,6 +421,15 @@ public class CameraComponent extends GuiComponent implements IObserver {
             } else {
                 // Not coming from interface
                 buttonCubemap.setChecked((Boolean) data[0]);
+            }
+            break;
+        case PLANETARIUM_CMD:
+            boolean iface = (boolean) data[1];
+            if (!iface) {
+                boolean planetarium = (boolean) data[0];
+                buttonDome.setProgrammaticChangeEvents(false);
+                buttonDome.setChecked(planetarium);
+                buttonDome.setProgrammaticChangeEvents(true);
             }
             break;
         default:
