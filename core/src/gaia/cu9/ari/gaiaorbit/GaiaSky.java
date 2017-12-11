@@ -692,7 +692,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
     public FrameBuffer getFrameBuffer(int w, int h) {
         String key = getKey(w, h);
         if (!fbmap.containsKey(key)) {
-            FrameBuffer fb = FrameBuffer.createFrameBuffer(Format.RGB888, w, h, true);
+            FrameBuffer fb = new FrameBuffer(Format.RGB888, w, h, true);
             fbmap.put(key, fb);
         }
         return fbmap.get(key);

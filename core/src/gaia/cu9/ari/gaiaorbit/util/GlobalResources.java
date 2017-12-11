@@ -399,7 +399,7 @@ public class GlobalResources {
         sb.setProjectionMatrix(projectionMatrix);
 
         //Create a frame buffer.
-        FrameBuffer fb = FrameBuffer.createFrameBuffer(Pixmap.Format.RGBA8888, width, height, false);
+        FrameBuffer fb = new FrameBuffer(Pixmap.Format.RGBA8888, width, height, false);
 
         //Call begin(). So all next drawing will go to the new FrameBuffer.
         fb.begin();

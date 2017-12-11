@@ -139,15 +139,19 @@ public class OctreeGroupGeneratorTest implements IObserver {
             // Add notif watch
             EventManager.instance.subscribe(this, Events.POST_NOTIFICATION, Events.JAVA_EXCEPTION);
 
-            generateOctree();
+            OctreeNode octree = generateOctree();
 
-            // Save arguments
+            // Save arguments and structure
             StringBuffer argstr = new StringBuffer();
             for (int i = 0; i < arguments.length; i++) {
                 argstr.append(arguments[i]).append(" ");
             }
             try (PrintStream out = new PrintStream(new FileOutputStream(outFolder + "arguments"))) {
                 out.print(argstr);
+                out.println();
+                out.println();
+                out.println("OCTREE (" + octree.numNodes() + " nodes, " + octree.countObjects() + " particles)");
+                out.print(octree.toString(true));
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -158,7 +162,7 @@ public class OctreeGroupGeneratorTest implements IObserver {
         }
     }
 
-    private void generateOctree() throws IOException, InstantiationException, IllegalAccessException, ClassNotFoundException {
+    private OctreeNode generateOctree() throws IOException, InstantiationException, IllegalAccessException, ClassNotFoundException {
         IAggregationAlgorithm aggr = new BrightestStars(maxDepth, maxPart, minPart, discard);
 
         OctreeGenerator og = new OctreeGenerator(aggr);
@@ -230,6 +234,7 @@ public class OctreeGroupGeneratorTest implements IObserver {
         particlesFolder.mkdirs();
         writeParticlesToFiles(particleWriter, octree);
 
+        return octree;
     }
 
     private void writeParticlesToFiles(IStarGroupIO particleWriter, OctreeNode current) throws IOException {
