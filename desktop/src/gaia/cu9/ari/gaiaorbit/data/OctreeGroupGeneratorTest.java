@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -53,10 +54,13 @@ import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
  *
  */
 public class OctreeGroupGeneratorTest implements IObserver {
+    private static JCommander jc;
+    private static String[] arguments;
 
     public static void main(String[] args) {
+        arguments = args;
         OctreeGroupGeneratorTest ogt = new OctreeGroupGeneratorTest();
-        JCommander jc = new JCommander(ogt, args);
+        jc = new JCommander(ogt, args);
         jc.setProgramName("OctreeGeneratorTest");
         if (ogt.help) {
             jc.usage();
@@ -137,6 +141,14 @@ public class OctreeGroupGeneratorTest implements IObserver {
 
             generateOctree();
 
+            // Save arguments
+            StringBuffer argstr = new StringBuffer();
+            for (int i = 0; i < arguments.length; i++) {
+                argstr.append(arguments[i]).append(" ");
+            }
+            try (PrintStream out = new PrintStream(new FileOutputStream(outFolder + "arguments"))) {
+                out.print(argstr);
+            }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {

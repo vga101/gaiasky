@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.zip.GZIPInputStream;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
@@ -33,7 +34,7 @@ import gaia.cu9.ari.gaiaorbit.util.parse.Parser;
  *
  */
 public class DR2DataProvider extends AbstractStarGroupDataProvider {
-    private static final int FILE_NUMBER_LIMIT = -1;
+    private static final int FILE_NUMBER_LIMIT = 4;
 
     private static final String comma = ",";
     private static final String comment = "#";
@@ -95,8 +96,10 @@ public class DR2DataProvider extends AbstractStarGroupDataProvider {
                 if (FILE_NUMBER_LIMIT > 0 && fn >= FILE_NUMBER_LIMIT)
                     break;
             }
-        } else if (f.name().endsWith(".csv")) {
+        } else if (f.name().endsWith(".csv") || f.name().endsWith(".gz")) {
             loadFile(f, factor, i);
+        } else {
+            Logger.warn(this.getClass().getSimpleName(), "File skipped: " + f.path());
         }
         Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.nodeloader", list.size, f.path()));
         return list;
@@ -112,14 +115,28 @@ public class DR2DataProvider extends AbstractStarGroupDataProvider {
 
     public void loadFile(FileHandle fh, double factor, Integer i) {
         Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.datafile", fh.path()));
-        loadFile(fh.read(), factor, i);
+        boolean gz = fh.name().endsWith(".gz");
+
+        // Simple case
+        InputStream data = fh.read();
+
+        if (gz) {
+            try {
+                data = new GZIPInputStream(data);
+            } catch (IOException e) {
+                Logger.error(e);
+                return;
+            }
+        }
+        long nstars = loadFile(data, factor, i);
+        Logger.info(this.getClass().getSimpleName(), fh.path() + " loaded with " + nstars + " stars");
     }
 
-    public void loadFile(InputStream is, double factor, Integer i) {
+    public long loadFile(InputStream is, double factor, Integer i) {
         // Simple case
         InputStream data = is;
         BufferedReader br = new BufferedReader(new InputStreamReader(data));
-
+        int inisize = list.size;
         try {
             String line;
             while ((line = br.readLine()) != null) {
@@ -139,6 +156,7 @@ public class DR2DataProvider extends AbstractStarGroupDataProvider {
             }
 
         }
+        return list.size - inisize;
     }
 
     private void addStar(String line, Integer i) {
@@ -152,7 +170,7 @@ public class DR2DataProvider extends AbstractStarGroupDataProvider {
         double dist = distpc * Constants.PC_TO_U;
 
         // Keep only stars with relevant parallaxes
-        if (dist >= 0 && pllx / pllxerr > 8 && pllxerr <= 1) {
+        if (dist >= 0 && pllx / pllxerr > 5 && pllxerr <= 1) {
             /** ID **/
             long sourceid = Parser.parseLong(tokens[indices[SOURCE_ID]]);
 
