@@ -8,12 +8,11 @@ precision mediump int;
 uniform vec3 v3LightPos;
 uniform float g;
 uniform float g2;
-uniform float fAlpha;
 
 // Direction from the vertex to the camera
 varying vec3 v3Direction;
 // Calculated colors
-varying vec3 frontColor;
+varying vec4 frontColor;
 varying vec3 frontSecondaryColor;
 
 void main(void) {
@@ -24,8 +23,7 @@ void main(void) {
 
     gl_FragColor.rgb = (fRayleighPhase * frontColor.rgb + fMiePhase * frontSecondaryColor.rgb);
     gl_FragColor.rgb = vec3(1.0) - exp(-exposure * gl_FragColor.rgb);
-    
-    gl_FragColor.a = fAlpha * length(gl_FragColor.rgb);
+    gl_FragColor.a = frontColor.a * length(gl_FragColor.rgb);
     
     // Prevent saturation
     gl_FragColor.rgb = clamp(gl_FragColor.rgb, 0.0, 0.95);

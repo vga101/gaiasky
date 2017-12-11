@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.math.Vector3;
 
+import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.render.IAtmosphereRenderable;
 import gaia.cu9.ari.gaiaorbit.render.ILineRenderable;
@@ -157,7 +158,14 @@ public class Planet extends ModelBody implements IAtmosphereRenderable, ILineRen
             modelBatch.render(mc.instance, mc.env);
         } else {
             // We are an atmosphere :_D
-            float atmopacity = (float) MathUtilsd.lint(viewAngle, 0.01745329f, 0.03490659f, 0f, 1f);
+            ICamera cam = GaiaSky.instance.getICamera();
+
+            float near = cam.getCamera().near;
+            float nearopacity = 1f;
+            if (near < 1e-3f && cam.getClosest() != this) {
+                nearopacity = MathUtilsd.lint(near, 1e-5f, 1e-3f, 0f, 1f);
+            }
+            float atmopacity = (float) MathUtilsd.lint(viewAngle, 0.01745329f, 0.03490659f, 0f, 1f) * nearopacity;
             if (atmopacity > 0) {
                 // Atmosphere
                 ac.updateAtmosphericScatteringParams(ac.mc.instance.materials.first(), alpha * atmopacity, false, transform, parent, rc);

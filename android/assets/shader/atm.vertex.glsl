@@ -23,12 +23,13 @@ uniform float fKm4PI; /* Km * 4 * PI*/
 uniform float fScale; /* 1 / (fOuterRadius - fInnerRadius)*/
 uniform float fScaleDepth; /* The scale depth (i.e. the altitude at which the atmosphere's average density is found)*/
 uniform float fScaleOverScaleDepth; /* fScale / fScaleDepth*/
+uniform float fAlpha; /* Atmosphere effect opacity */
 
 uniform int nSamples;
 uniform float fSamples;
 
 varying vec3 v3Direction;
-varying vec3 frontColor;
+varying vec4 frontColor;
 varying vec3 frontSecondaryColor;
 
 float scale(float fCos) {
@@ -86,7 +87,7 @@ void main(void) {
     vec3 v3SamplePoint = v3Start + v3SampleRay * 0.5;
 
     // Now loop through the sample rays
-    vec3 v3FrontColor = vec3 (0.0, 0.0, 0.0);
+    vec3 v3FrontColor = vec3 (0.0);
     for (int i = 0; i < nSamples; i++) {
 		float fHeight = length (v3SamplePoint);
 		float fDepth = exp (fScaleOverScaleDepth * (fInnerRadius - fHeight));
@@ -101,6 +102,7 @@ void main(void) {
 
     // Finally, scale the Mie and Rayleigh colors and set up the varying variables for the pixel shader
     frontColor.rgb = v3FrontColor * (v3InvWavelength * fKrESun);
+    frontColor.a = fAlpha;
     frontSecondaryColor.rgb = v3FrontColor * fKmESun;
 
     gl_Position = u_projViewTrans * u_worldTrans * vec4(a_position, 1.0);
