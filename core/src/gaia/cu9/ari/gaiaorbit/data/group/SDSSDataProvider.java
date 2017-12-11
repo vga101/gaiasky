@@ -77,4 +77,7 @@ public class SDSSDataProvider implements IParticleGroupDataProvider {
 
         return pointData;
     }
+
+    public void setFileNumberCap(int cap) {
+    }
 }

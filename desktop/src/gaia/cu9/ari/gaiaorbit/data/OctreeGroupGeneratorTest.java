@@ -93,6 +93,9 @@ public class OctreeGroupGeneratorTest implements IObserver {
     @Parameter(names = "--serialized", description = "Use the java serialization method instead of the binary format to output the particle files")
     private boolean serialized = false;
 
+    @Parameter(names = "--nfiles", description = "Caps the number of data files to load. Defaults to unlimited")
+    private int fileNumCap = -1;
+
     @Parameter(names = { "-h", "--help" }, help = true)
     private boolean help = false;
 
@@ -136,7 +139,7 @@ public class OctreeGroupGeneratorTest implements IObserver {
 
             ThreadLocalFactory.initialize(new SingleThreadLocalFactory());
 
-            // Add notif watch
+            // Add notification watch
             EventManager.instance.subscribe(this, Events.POST_NOTIFICATION, Events.JAVA_EXCEPTION);
 
             OctreeNode octree = generateOctree();
@@ -146,7 +149,7 @@ public class OctreeGroupGeneratorTest implements IObserver {
             for (int i = 0; i < arguments.length; i++) {
                 argstr.append(arguments[i]).append(" ");
             }
-            try (PrintStream out = new PrintStream(new FileOutputStream(outFolder + "arguments"))) {
+            try (PrintStream out = new PrintStream(new FileOutputStream(outFolder + "log"))) {
                 out.print(argstr);
                 out.println();
                 out.println();
@@ -173,6 +176,7 @@ public class OctreeGroupGeneratorTest implements IObserver {
         /** CATALOG **/
         String fullLoaderClass = "gaia.cu9.ari.gaiaorbit.data.group." + loaderClass;
         IStarGroupDataProvider loader = (IStarGroupDataProvider) Class.forName(fullLoaderClass).newInstance();
+        loader.setFileNumberCap(fileNumCap);
 
         /** LOAD HYG **/
         Array<StarBean> listHip = hyg.loadData("data/hyg/hygxyz.bin");
@@ -195,7 +199,7 @@ public class OctreeGroupGeneratorTest implements IObserver {
                 gaiastar.name = hipstar.name;
                 gaiastar.data[StarBean.I_HIP] = hipstar.data[StarBean.I_HIP];
 
-                // Remove from hipparcos list
+                // Remove from Hipparcos list
                 listHip.removeValue(hipstar, true);
                 hips.remove(hipstar.hip());
 

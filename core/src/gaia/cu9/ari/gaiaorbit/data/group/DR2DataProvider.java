@@ -34,13 +34,16 @@ import gaia.cu9.ari.gaiaorbit.util.parse.Parser;
  *
  */
 public class DR2DataProvider extends AbstractStarGroupDataProvider {
-    private static final int FILE_NUMBER_LIMIT = 50;
 
     private static final String comma = ",";
     private static final String comment = "#";
 
     private static final String separator = comma;
 
+    /**
+     * Maximum file count to load. 0 or negative for unlimited
+     */
+    private int fileNumberCap = -1;
     /** Whether to load the sourceId->HIP correspondences file **/
     public boolean useHIP = false;
     /** Map of Gaia sourceId to HIP id **/
@@ -74,6 +77,10 @@ public class DR2DataProvider extends AbstractStarGroupDataProvider {
 
     private static final int[] indices = new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 };
 
+    public void setFileNumberCap(int cap) {
+        fileNumberCap = cap;
+    }
+
     public Array<StarBean> loadData(String file) {
         return loadData(file, 1d);
     }
@@ -93,7 +100,7 @@ public class DR2DataProvider extends AbstractStarGroupDataProvider {
             for (FileHandle fh : files) {
                 loadFile(fh, factor, i);
                 fn++;
-                if (FILE_NUMBER_LIMIT > 0 && fn >= FILE_NUMBER_LIMIT)
+                if (fileNumberCap > 0 && fn >= fileNumberCap)
                     break;
             }
         } else if (f.name().endsWith(".csv") || f.name().endsWith(".gz")) {

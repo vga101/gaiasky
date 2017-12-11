@@ -75,4 +75,7 @@ public class UncertaintiesProvider implements IParticleGroupDataProvider {
 
         return pointData;
     }
+
+    public void setFileNumberCap(int cap) {
+    }
 }

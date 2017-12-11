@@ -112,4 +112,7 @@ public abstract class AbstractStarGroupDataProvider implements IStarGroupDataPro
         }
     }
 
+    public void setFileNumberCap(int cap) {
+    }
+
 }

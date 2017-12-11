@@ -66,4 +66,7 @@ public class PointDataProvider implements IParticleGroupDataProvider {
 
         return pointData;
     }
+
+    public void setFileNumberCap(int cap) {
+    }
 }

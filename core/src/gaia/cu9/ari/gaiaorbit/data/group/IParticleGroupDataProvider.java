@@ -43,4 +43,13 @@ public interface IParticleGroupDataProvider {
      * @return Array of particle beans
      */
     public Array<? extends ParticleBean> loadData(InputStream is, double factor);
+
+    /**
+     * Sets a cap on the number of files to load. Set to 0 or negative for
+     * unlimited
+     * 
+     * @param cap
+     *            The cap number
+     */
+    public void setFileNumberCap(int cap);
 }
