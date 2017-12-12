@@ -40,6 +40,13 @@ public interface ITimeFrameProvider {
     public double getWarpFactor();
 
     /**
+     * Is the time on?
+     * 
+     * @return True if time is on
+     */
+    public boolean isTimeOn();
+
+    /**
      * Returns whether the frame rate is set to fixed or not
      * 
      * @return Whether fix rate mode is on

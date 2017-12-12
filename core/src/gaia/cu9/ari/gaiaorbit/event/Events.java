@@ -194,6 +194,11 @@ public enum Events {
     /** Contains the new pace **/
     PACE_CHANGED_INFO,
     /**
+     * Sets and unsets the target time. Contains a time (set), or nothing
+     * (unset)
+     **/
+    TARGET_TIME_CMD,
+    /**
      * Issues the command to enable camera recording. Contains the boolean
      * indicating the state (may be null) and a boolean indicating whether this
      * comes from the interface.

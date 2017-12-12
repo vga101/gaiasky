@@ -470,22 +470,22 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
         });
     }
 
-    @Override
-    public void setSimulationTime(int year, int month, int day, int hour, int min, int sec, int millisec) {
+    private Date getDateObject(int year, int month, int day, int hour, int min, int sec, int millisec) {
         Calendar c = Calendar.getInstance();
         c.set(year, month - 1, day, hour, min, sec);
-        Date date = new Date(c.getTime().getTime() + millisec);
-        Gdx.app.postRunnable(() -> {
-            em.post(Events.TIME_CHANGE_CMD, date);
-        });
+        return new Date(c.getTime().getTime() + millisec);
+    }
+
+    @Override
+    public void setSimulationTime(int year, int month, int day, int hour, int min, int sec, int millisec) {
+        Date date = getDateObject(year, month, day, hour, min, sec, millisec);
+        em.post(Events.TIME_CHANGE_CMD, date);
     }
 
     @Override
     public void setSimulationTime(final long time) {
         assert time > 0 : "Time can not be negative";
-        Gdx.app.postRunnable(() -> {
-            em.post(Events.TIME_CHANGE_CMD, new Date(time));
-        });
+        em.post(Events.TIME_CHANGE_CMD, new Date(time));
     }
 
     @Override
@@ -512,23 +512,37 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
 
     @Override
     public void startSimulationTime() {
-        Gdx.app.postRunnable(() -> {
-            em.post(Events.TOGGLE_TIME_CMD, true, false);
-        });
+        em.post(Events.TOGGLE_TIME_CMD, true, false);
     }
 
     @Override
     public void stopSimulationTime() {
-        Gdx.app.postRunnable(() -> {
-            em.post(Events.TOGGLE_TIME_CMD, false, false);
-        });
+        em.post(Events.TOGGLE_TIME_CMD, false, false);
+    }
+
+    @Override
+    public boolean isSimulationTimeOn() {
+        return GaiaSky.instance.time.isTimeOn();
     }
 
     @Override
     public void setSimulationPace(final double pace) {
-        Gdx.app.postRunnable(() -> {
-            em.post(Events.PACE_CHANGE_CMD, pace);
-        });
+        em.post(Events.PACE_CHANGE_CMD, pace);
+    }
+
+    @Override
+    public void setTargetTime(long ms) {
+        em.post(Events.TARGET_TIME_CMD, new Date(ms));
+    }
+
+    @Override
+    public void setTargetTime(int year, int month, int day, int hour, int min, int sec, int millisec) {
+        em.post(Events.TARGET_TIME_CMD, getDateObject(year, month, day, hour, min, sec, millisec));
+    }
+
+    @Override
+    public void unsetTargetTime() {
+        em.post(Events.TARGET_TIME_CMD);
     }
 
     @Override

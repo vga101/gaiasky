@@ -66,4 +66,9 @@ public class RealTimeClock implements ITimeFrameProvider {
         return -1;
     }
 
+    @Override
+    public boolean isTimeOn() {
+        return true;
+    }
+
 }

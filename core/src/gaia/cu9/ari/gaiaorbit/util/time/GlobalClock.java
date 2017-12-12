@@ -20,6 +20,8 @@ public class GlobalClock implements IObserver, ITimeFrameProvider {
 
     /** The current time of the clock **/
     public Date time, lastTime;
+    /** Target time to stop the clock, if any **/
+    private Date targetTime;
     /** The hour difference from the last frame **/
     public double hdiff;
 
@@ -47,8 +49,9 @@ public class GlobalClock implements IObserver, ITimeFrameProvider {
         this.timeWarp = timeWrap;
         hdiff = 0d;
         time = date;
+        targetTime = null;
         lastTime = new Date(time.getTime());
-        EventManager.instance.subscribe(this, Events.PACE_CHANGE_CMD, Events.TIME_WARP_DECREASE_CMD, Events.TIME_WARP_INCREASE_CMD, Events.TIME_CHANGE_CMD);
+        EventManager.instance.subscribe(this, Events.PACE_CHANGE_CMD, Events.TIME_WARP_DECREASE_CMD, Events.TIME_WARP_INCREASE_CMD, Events.TIME_CHANGE_CMD, Events.TARGET_TIME_CMD);
     }
 
     double msacum = 0d;
@@ -76,6 +79,18 @@ public class GlobalClock implements IObserver, ITimeFrameProvider {
             lastTime.setTime(currentTime);
 
             long newTime = currentTime + (long) ms;
+            // Check target time
+            if (targetTime != null) {
+                long target = targetTime.getTime();
+                if ((timeWarp > 0 && currentTime <= target && newTime > target) || (timeWarp < 0 && currentTime >= target && newTime < target)) {
+                    newTime = target;
+                    // Unset target time
+                    targetTime = null;
+                    // STOP!
+                    setTimeWarp(0);
+                }
+            }
+
             if (newTime > Constants.MAX_TIME_MS) {
                 newTime = Constants.MAX_TIME_MS;
                 if (currentTime < Constants.MAX_TIME_MS) {
@@ -117,37 +132,41 @@ public class GlobalClock implements IObserver, ITimeFrameProvider {
     @Override
     public void notify(Events event, Object... data) {
         switch (event) {
+        case TARGET_TIME_CMD:
+            if (data.length > 0) {
+                targetTime = (Date) data[0];
+            } else {
+                targetTime = null;
+            }
+            break;
         case PACE_CHANGE_CMD:
             // Update pace
-            this.timeWarp = (Double) data[0];
-            checkTimeWarpValue();
-            EventManager.instance.post(Events.PACE_CHANGED_INFO, this.timeWarp);
+            setTimeWarp((Double) data[0]);
             break;
         case TIME_WARP_INCREASE_CMD:
+            double tw;
             if (timeWarp == 0) {
-                timeWarp = 0.125;
+                tw = 0.125;
             } else if (timeWarp == -0.125) {
-                timeWarp = 0;
+                tw = 0;
             } else if (timeWarp < 0) {
-                timeWarp /= 2.0;
+                tw = timeWarp / 2.0;
             } else {
-                timeWarp *= 2.0;
+                tw = timeWarp * 2.0;
             }
-            checkTimeWarpValue();
-            EventManager.instance.post(Events.PACE_CHANGED_INFO, this.timeWarp);
+            setTimeWarp(tw);
             break;
         case TIME_WARP_DECREASE_CMD:
             if (timeWarp == 0.125) {
-                timeWarp = 0;
+                tw = 0;
             } else if (timeWarp == 0) {
-                timeWarp = -0.125;
+                tw = -0.125;
             } else if (timeWarp < 0) {
-                timeWarp *= 2.0;
+                tw = timeWarp * 2.0;
             } else {
-                timeWarp /= 2.0;
+                tw = timeWarp / 2.0;
             }
-            checkTimeWarpValue();
-            EventManager.instance.post(Events.PACE_CHANGED_INFO, this.timeWarp);
+            setTimeWarp(tw);
             break;
         case TIME_CHANGE_CMD:
             // Update time
@@ -166,6 +185,12 @@ public class GlobalClock implements IObserver, ITimeFrameProvider {
             break;
         }
 
+    }
+
+    public void setTimeWarp(double tw) {
+        this.timeWarp = tw;
+        checkTimeWarpValue();
+        EventManager.instance.post(Events.PACE_CHANGED_INFO, this.timeWarp);
     }
 
     private void checkTimeWarpValue() {
@@ -197,6 +222,11 @@ public class GlobalClock implements IObserver, ITimeFrameProvider {
     @Override
     public float getFixedRate() {
         return fps;
+    }
+
+    @Override
+    public boolean isTimeOn() {
+        return timeWarp != 0d;
     }
 
 }

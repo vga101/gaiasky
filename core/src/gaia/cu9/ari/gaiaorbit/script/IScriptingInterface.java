@@ -610,12 +610,57 @@ public interface IScriptingInterface {
     public void stopSimulationTime();
 
     /**
+     * Queries whether the time is on or not.
+     * 
+     * @return True if the time is on, false otherwise.
+     */
+    public boolean isSimulationTimeOn();
+
+    /**
      * Changes the pace of time.
      * 
      * @param pace
-     *            The pace in number of simulation hours per real time second.
+     *            The pace as a factor of real physical time pace. 2.0 sets the
+     *            pace to be twice as fast as real time.
      */
     public void setSimulationPace(double pace);
+
+    /**
+     * Sets a time bookmark in the global clock that, when reached, the clock
+     * automatically stops.
+     * 
+     * @param ms
+     *            The time as the number of milliseconds since the epoch (Jan 1,
+     *            1970)
+     */
+    public void setTargetTime(long ms);
+
+    /**
+     * Sets a time bookmark in the global clock that, when reached, the clock
+     * automatically stops.
+     * 
+     * @param year
+     *            The year to represent
+     * @param month
+     *            The month-of-year to represent, from 1 (January) to 12
+     *            (December)
+     * @param day
+     *            The day-of-month to represent, from 1 to 31
+     * @param hour
+     *            The hour-of-day to represent, from 0 to 23
+     * @param min
+     *            The minute-of-hour to represent, from 0 to 59
+     * @param sec
+     *            The second-of-minute to represent, from 0 to 59
+     * @param millisec
+     *            The millisecond-of-second, from 0 to 999
+     */
+    public void setTargetTime(int year, int month, int day, int hour, int min, int sec, int millisec);
+
+    /**
+     * Unsets the target time bookmark from the global clock, if any.
+     */
+    public void unsetTargetTime();
 
     /**
      * Sets the star brightness value.
