@@ -77,7 +77,7 @@ public abstract class Satellite extends ModelBody {
 
     @Override
     protected void updateLocalTransform() {
-        setToLocalTransform(1, localTransform, true);
+        setToLocalTransform(sizeScaleFactor, localTransform, true);
     }
 
     /**

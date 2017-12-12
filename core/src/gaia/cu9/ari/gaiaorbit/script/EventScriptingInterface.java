@@ -29,6 +29,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
 import gaia.cu9.ari.gaiaorbit.scenegraph.IStarFocus;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Invisible;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Loc;
+import gaia.cu9.ari.gaiaorbit.scenegraph.ModelBody;
 import gaia.cu9.ari.gaiaorbit.scenegraph.NaturalCamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Planet;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
@@ -581,6 +582,22 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
     public SceneGraphNode getObject(String name) {
         ISceneGraph sg = GaiaSky.instance.sg;
         return sg.getNode(name.toLowerCase());
+    }
+
+    @Override
+    public void setObjectSizeScaling(String name, double scalingFactor) {
+        SceneGraphNode sgn = getObject(name);
+        if (sgn == null) {
+            Logger.error("Object '" + name + "' does not exist");
+            return;
+        }
+        if (sgn instanceof ModelBody) {
+            ModelBody m = (ModelBody) sgn;
+            m.setSizescalefactor(scalingFactor);
+        } else {
+            Logger.error("Object '" + name + "' is not a model object");
+            return;
+        }
     }
 
     @Override

@@ -61,6 +61,9 @@ public abstract class ModelBody extends CelestialBody {
     /** Render size, different from actual size **/
     public float renderSize;
 
+    /** Size factor, which can be set to scale model objects up or down **/
+    public float sizeScaleFactor = 1f;
+
     /** Fade opacity, special to model bodies **/
     protected float fadeOpacity;
 
@@ -122,18 +125,18 @@ public abstract class ModelBody extends CelestialBody {
      * and size.
      */
     protected void updateLocalTransform() {
-        setToLocalTransform(1, localTransform, true);
+        setToLocalTransform(sizeScaleFactor, localTransform, true);
     }
 
     public void setToLocalTransform(float sizeFactor, Matrix4 localTransform, boolean forceUpdate) {
         renderSize = size;
+        // TODO
         //        if (!this.hasAtmosphere() && GaiaSky.instance.getICamera().getClosest() != this && distToCamera > size) {
         //            renderSize /= 4f;
         //            transform.position.scl(1f / 4f);
         //        }
         if (sizeFactor != 1 || forceUpdate) {
-            transform.getMatrix(localTransform).scl(renderSize * sizeFactor).rotate(0, 1, 0, (float) rc.ascendingNode).rotate(0, 0, 1, (float) (rc.inclination
-                    + rc.axialTilt)).rotate(0, 1, 0, (float) rc.angle);
+            transform.getMatrix(localTransform).scl(renderSize * sizeFactor).rotate(0, 1, 0, (float) rc.ascendingNode).rotate(0, 0, 1, (float) (rc.inclination + rc.axialTilt)).rotate(0, 1, 0, (float) rc.angle);
             orientation.idt().rotate(0, 1, 0, (float) rc.ascendingNode).rotate(0, 0, 1, (float) (rc.inclination + rc.axialTilt));
         } else {
             localTransform.set(this.localTransform);
@@ -150,10 +153,10 @@ public abstract class ModelBody extends CelestialBody {
         if (!coordinatesTimeOverflow) {
             camera.checkClosest(this);
             if (GaiaSky.instance.isOn(ct)) {
-                double thPoint = (THRESHOLD_POINT() * camera.getFovFactor());
+                double thPoint = (THRESHOLD_POINT() * camera.getFovFactor()) / sizeScaleFactor;
                 if (viewAngleApparent >= thPoint) {
-                    double thQuad2 = THRESHOLD_QUAD() * camera.getFovFactor() * 2;
-                    double thQuad1 = thQuad2 / 8.0;
+                    double thQuad2 = THRESHOLD_QUAD() * camera.getFovFactor() * 2 / sizeScaleFactor;
+                    double thQuad1 = thQuad2 / 8.0 / sizeScaleFactor;
                     if (viewAngleApparent < thPoint * 4) {
                         fadeOpacity = (float) MathUtilsd.lint(viewAngleApparent, thPoint, thPoint * 4, 1, 0);
                     } else {
@@ -392,6 +395,15 @@ public abstract class ModelBody extends CelestialBody {
 
     }
 
+    @Override
+    public double getSize() {
+        return super.getSize() * sizeScaleFactor;
+    }
+
+    public double getRadius() {
+        return super.getRadius() * sizeScaleFactor;
+    }
+
     /**
      * Whether shadows should be rendered for this object
      * 
@@ -409,5 +421,9 @@ public abstract class ModelBody extends CelestialBody {
      */
     public void setShadowvalues(double[] shadowMapValues) {
         this.shadowMapValues = shadowMapValues;
+    }
+
+    public void setSizescalefactor(Double sizescalefactor) {
+        this.sizeScaleFactor = sizescalefactor.floatValue();
     }
 }

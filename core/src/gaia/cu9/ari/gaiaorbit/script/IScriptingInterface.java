@@ -725,6 +725,23 @@ public interface IScriptingInterface {
     public SceneGraphNode getObject(String name);
 
     /**
+     * Sets the given size scaling factor to the object identified by
+     * <code>name</code>. This method will only work with model objects such as
+     * planets, asteroids, satellites etc. It will not work with orbits, stars
+     * or any other types.
+     * 
+     * Also, <strong>use this with caution</strong>, as scaling the size of
+     * objects can have unintended side effects, and remember to set the scaling
+     * back to 1.0 at the end of your script.
+     * 
+     * @param name
+     *            The name or id (HIP, TYC, sourceId) of the object.
+     * @param scalingFactor
+     *            The scaling factor to scale the size of that object.
+     */
+    public void setObjectSizeScaling(String name, double scalingFactor);
+
+    /**
      * Gets the size of the object identified by <code>name</code>, in Km, by
      * name or id (HIP, TYC, sourceId).
      * 
