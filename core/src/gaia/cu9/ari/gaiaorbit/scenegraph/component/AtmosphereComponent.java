@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.g3d.attributes.BlendingAttribute;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 
+import gaia.cu9.ari.gaiaorbit.scenegraph.Planet;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Transform;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
@@ -24,6 +25,7 @@ public class AtmosphereComponent {
 
     public int quality;
     public float size;
+    public float planetSize;
     public ModelComponent mc;
     public Matrix4 localTransform;
     public double[] wavelengths;
@@ -44,13 +46,14 @@ public class AtmosphereComponent {
     }
 
     public void doneLoading(Material planetMat, float planetSize) {
-        setUpAtmosphericScatteringMaterial(planetMat, planetSize);
+        this.planetSize = planetSize;
+        setUpAtmosphericScatteringMaterial(planetMat);
 
         Pair<Model, Map<String, Material>> pair = ModelCache.cache.getModel("sphere", params, Usage.Position | Usage.Normal);
         Model atmosphereModel = pair.getFirst();
         Material atmMat = pair.getSecond().get("base");
         atmMat.clear();
-        setUpAtmosphericScatteringMaterial(atmMat, planetSize);
+        setUpAtmosphericScatteringMaterial(atmMat);
         atmMat.set(new BlendingAttribute(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA));
 
         // CREATE ATMOSPHERE MODEL
@@ -67,7 +70,7 @@ public class AtmosphereComponent {
      * @param mat
      *            The material to set up.
      */
-    public void setUpAtmosphericScatteringMaterial(Material mat, float planetSize) {
+    public void setUpAtmosphericScatteringMaterial(Material mat) {
         float camHeight = 1f;
         float m_Kr4PI = m_Kr * 4.0f * (float) Math.PI;
         float m_Km4PI = m_Km * 4.0f * (float) Math.PI;
@@ -135,8 +138,13 @@ public class AtmosphereComponent {
      *            The opacity value.
      * @param ground
      *            Whether it is the ground shader or the atmosphere.
+     * @param planet
+     *            The planet itself, holder of this atmosphere
      */
-    public void updateAtmosphericScatteringParams(Material mat, float alpha, boolean ground, Transform transform, SceneGraphNode parent, RotationComponent rc) {
+    public void updateAtmosphericScatteringParams(Material mat, float alpha, boolean ground, Planet planet) {
+        Transform transform = planet.transform;
+        RotationComponent rc = planet.rc;
+        SceneGraphNode sol = planet.parent;
         transform.getTranslation(aux3);
         // Distance to planet
         float camHeight = (float) (aux3.len());
@@ -181,7 +189,7 @@ public class AtmosphereComponent {
         ((Vector3Attribute) mat.get(Vector3Attribute.CameraPos)).value.set(aux3.valuesf());
 
         // Light position respect the earth: LightPos = SunPos - EarthPos
-        parent.transform.addTranslationTo(aux3).nor();
+        sol.transform.addTranslationTo(aux3).nor();
         if (ground) {
             // Camera position must be corrected using the rotation angle of the planet
             aux3.rotate(rc.ascendingNode, 0, 1, 0).rotate(-rc.inclination - rc.axialTilt, 0, 0, 1).rotate(-rc.angle, 0, 1, 0);

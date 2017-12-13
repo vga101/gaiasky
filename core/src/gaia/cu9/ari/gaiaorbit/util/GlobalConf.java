@@ -481,7 +481,7 @@ public class GlobalConf {
         public boolean ANALYTICS_ENABLED;
 
         public ProgramConf() {
-            EventManager.instance.subscribe(this, Events.TOGGLE_STEREOSCOPIC_CMD, Events.TOGGLE_STEREO_PROFILE_CMD, Events.CUBEMAP360_CMD);
+            EventManager.instance.subscribe(this, Events.STEREOSCOPIC_CMD, Events.STEREO_PROFILE_CMD, Events.CUBEMAP360_CMD);
         }
 
         public void initialize(boolean dISPLAY_TUTORIAL, String tUTORIAL_POINTER_SCRIPT_LOCATION, String tUTORIAL_SCRIPT_LOCATION, boolean sHOW_DEBUG_INFO, Date lAST_CHECKED, String lAST_VERSION_TIME, String vERSION_CHECK_URL, String uI_THEME, String sCRIPT_LOCATION, String lOCALE, boolean sTEREOSCOPIC_MODE, StereoProfile sTEREO_PROFILE, boolean cUBEMAP360_MODE, boolean aNALYTICS_ENABLED, boolean dISPLAY_HUD, boolean dISPLAY_POINTER_COORDS) {
@@ -532,29 +532,17 @@ public class GlobalConf {
         @Override
         public void notify(Events event, Object... data) {
             switch (event) {
-            case TOGGLE_STEREOSCOPIC_CMD:
+            case STEREOSCOPIC_CMD:
                 if (!GaiaSky.instance.cam.mode.isGaiaFov()) {
-                    boolean stereomode = !STEREOSCOPIC_MODE;
-                    if (data.length > 1)
-                        stereomode = (boolean) data[1];
-
+                    boolean stereomode = (Boolean) data[0];
                     STEREOSCOPIC_MODE = stereomode;
-                    // Enable/disable gui
-                    // EventManager.instance.post(Events.DISPLAY_GUI_CMD,
-                    // I18n.bundle.get("notif.cleanmode"), !STEREOSCOPIC_MODE);
-                    EventManager.instance.post(Events.TOGGLE_STEREOSCOPIC_INFO, STEREOSCOPIC_MODE);
 
                     EventManager.instance.post(Events.POST_NOTIFICATION, "You have entered 3D mode. Go back to normal mode using <CTRL+S>");
                     EventManager.instance.post(Events.POST_NOTIFICATION, "Switch between stereoscopic modes using <CTRL+SHIFT+S>");
                 }
                 break;
-            case TOGGLE_STEREO_PROFILE_CMD:
-                int idx = STEREO_PROFILE.ordinal();
-                StereoProfile[] vals = StereoProfile.values();
-                idx = (idx + 1) % vals.length;
-                STEREO_PROFILE = vals[idx];
-
-                EventManager.instance.post(Events.TOGGLE_STEREO_PROFILE_INFO, STEREO_PROFILE);
+            case STEREO_PROFILE_CMD:
+                STEREO_PROFILE = StereoProfile.values()[(Integer) data[0]];
                 break;
             case CUBEMAP360_CMD:
                 CUBEMAP360_MODE = (Boolean) data[0];
@@ -891,12 +879,12 @@ public class GlobalConf {
                 STAR_POINT_SIZE = (float) data[0];
                 break;
             case STAR_POINT_SIZE_INCREASE_CMD:
-                STAR_POINT_SIZE = Math.min(STAR_POINT_SIZE + Constants.STEP_STAR_POINT_SIZE, Constants.MAX_STAR_POINT_SIZE);
-                EventManager.instance.post(Events.STAR_POINT_SIZE_INFO, STAR_POINT_SIZE);
+                float size = Math.min(STAR_POINT_SIZE + Constants.STEP_STAR_POINT_SIZE, Constants.MAX_STAR_POINT_SIZE);
+                EventManager.instance.post(Events.STAR_POINT_SIZE_CMD, size, false);
                 break;
             case STAR_POINT_SIZE_DECREASE_CMD:
-                STAR_POINT_SIZE = Math.max(STAR_POINT_SIZE - Constants.STEP_STAR_POINT_SIZE, Constants.MIN_STAR_POINT_SIZE);
-                EventManager.instance.post(Events.STAR_POINT_SIZE_INFO, STAR_POINT_SIZE);
+                size = Math.max(STAR_POINT_SIZE - Constants.STEP_STAR_POINT_SIZE, Constants.MIN_STAR_POINT_SIZE);
+                EventManager.instance.post(Events.STAR_POINT_SIZE_CMD, size, false);
                 break;
             case STAR_POINT_SIZE_RESET_CMD:
                 STAR_POINT_SIZE = STAR_POINT_SIZE_BAK;

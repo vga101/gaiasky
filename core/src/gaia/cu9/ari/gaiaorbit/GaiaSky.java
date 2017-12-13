@@ -359,7 +359,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         EventManager.instance.post(Events.TIME_CHANGE_INFO, time.getTime());
 
         // Subscribe to events
-        EventManager.instance.subscribe(this, Events.TOGGLE_AMBIENT_LIGHT, Events.AMBIENT_LIGHT_CMD, Events.RECORD_CAMERA_CMD, Events.CAMERA_MODE_CMD, Events.TOGGLE_STEREOSCOPIC_INFO, Events.FRAME_SIZE_UDPATE, Events.SCREENSHOT_SIZE_UDPATE);
+        EventManager.instance.subscribe(this, Events.TOGGLE_AMBIENT_LIGHT, Events.AMBIENT_LIGHT_CMD, Events.RECORD_CAMERA_CMD, Events.CAMERA_MODE_CMD, Events.STEREOSCOPIC_CMD, Events.FRAME_SIZE_UDPATE, Events.SCREENSHOT_SIZE_UDPATE);
 
         // Re-enable input
         if (!GlobalConf.runtime.STRIPPED_FOV_MODE)
@@ -812,7 +812,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
                 currentGui = mainGui;
             }
             break;
-        case TOGGLE_STEREOSCOPIC_INFO:
+        case STEREOSCOPIC_CMD:
             boolean stereomode = (Boolean) data[0];
             im = (InputMultiplexer) Gdx.input.getInputProcessor();
             if (stereomode && currentGui != stereoGui) {

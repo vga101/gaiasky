@@ -1,4 +1,4 @@
-# Test script. Tests brightness and contrast commands.
+# Test script. Tests the scaling commands.
 # Created by Toni Sagrista
 
 from gaia.cu9.ari.gaiaorbit.script import EventScriptingInterface
@@ -56,17 +56,17 @@ gs.sleep(8.0)
 gs.setVisibility("element.orbits", True)
 gs.sleep(4.0)
 
-# Gently zoom out for 30 seconds
+# Gently zoom out for 30 seconds (30 * 60 frames)
 gs.setCinematicCamera(True)
 gs.setCameraSpeed(1.0)
 
-start_ms = current_time_ms()
-current_ms = start_ms
+start_frame = gs.getCurrentFrameNumber()
+current_frame = start_frame
 
-while current_ms - start_ms < 30000:
+while current_frame - start_frame < 1800:
     gs.cameraForward(-0.5)
     gs.sleep(0.2)
-    current_ms = current_time_ms()
+    current_frame = gs.getCurrentFrameNumber()
 
 # Finish! stop time
 gs.stopSimulationTime()

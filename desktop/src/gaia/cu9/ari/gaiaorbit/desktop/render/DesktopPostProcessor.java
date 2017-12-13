@@ -80,7 +80,7 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
         if (GlobalConf.frame.isRedrawMode())
             pps[RenderType.frame.index] = newPostProcessor(getWidth(RenderType.frame), getHeight(RenderType.frame), manager);
 
-        EventManager.instance.subscribe(this, Events.SCREENSHOT_SIZE_UDPATE, Events.FRAME_SIZE_UDPATE, Events.BLOOM_CMD, Events.LENS_FLARE_CMD, Events.MOTION_BLUR_CMD, Events.LIGHT_POS_2D_UPDATED, Events.LIGHT_SCATTERING_CMD, Events.FISHEYE_CMD, Events.CAMERA_MOTION_UPDATED, Events.CUBEMAP360_CMD, Events.ANTIALIASING_CMD, Events.BRIGHTNESS_CMD, Events.CONTRAST_CMD, Events.TOGGLE_STEREO_PROFILE_CMD, Events.TOGGLE_STEREOSCOPIC_CMD, Events.FPS_INFO);
+        EventManager.instance.subscribe(this, Events.SCREENSHOT_SIZE_UDPATE, Events.FRAME_SIZE_UDPATE, Events.BLOOM_CMD, Events.LENS_FLARE_CMD, Events.MOTION_BLUR_CMD, Events.LIGHT_POS_2D_UPDATED, Events.LIGHT_SCATTERING_CMD, Events.FISHEYE_CMD, Events.CAMERA_MOTION_UPDATED, Events.CUBEMAP360_CMD, Events.ANTIALIASING_CMD, Events.BRIGHTNESS_CMD, Events.CONTRAST_CMD, Events.STEREO_PROFILE_CMD, Events.STEREOSCOPIC_CMD, Events.FPS_INFO);
     }
 
     private int getWidth(RenderType type) {
@@ -414,21 +414,11 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
                 }
             }
             break;
-        case TOGGLE_STEREOSCOPIC_CMD:
-        case TOGGLE_STEREO_PROFILE_CMD:
-            boolean curvatureEnabled = GlobalConf.program.STEREOSCOPIC_MODE && GlobalConf.program.STEREO_PROFILE == StereoProfile.VR_HEADSET;
-            boolean viewportHalved = GlobalConf.program.STEREOSCOPIC_MODE && GlobalConf.program.STEREO_PROFILE != StereoProfile.ANAGLYPHIC && GlobalConf.program.STEREO_PROFILE != StereoProfile.HD_3DTV;
-
-            for (int i = 0; i < RenderType.values().length; i++) {
-                if (pps[i] != null) {
-                    PostProcessBean ppb = pps[i];
-                    ppb.curvature.setEnabled(curvatureEnabled);
-
-                    RenderType currentRenderType = RenderType.values()[i];
-                    ppb.lglow.setViewportSize(getWidth(currentRenderType) / (viewportHalved ? 2 : 1), getHeight(currentRenderType));
-                }
-            }
-
+        case STEREOSCOPIC_CMD:
+            updateStereo((boolean) data[0], GlobalConf.program.STEREO_PROFILE);
+            break;
+        case STEREO_PROFILE_CMD:
+            updateStereo(GlobalConf.program.STEREOSCOPIC_MODE, StereoProfile.values()[(Integer) data[0]]);
             break;
         case ANTIALIASING_CMD:
             final int aavalue = (Integer) data[0];
@@ -520,6 +510,21 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
     @Override
     public boolean isLightScatterEnabled() {
         return pps[RenderType.screen.index].lglow.isEnabled();
+    }
+
+    private void updateStereo(boolean stereo, StereoProfile profile) {
+        boolean curvatureEnabled = stereo && profile == StereoProfile.VR_HEADSET;
+        boolean viewportHalved = stereo && profile != StereoProfile.ANAGLYPHIC && profile != StereoProfile.HD_3DTV;
+
+        for (int i = 0; i < RenderType.values().length; i++) {
+            if (pps[i] != null) {
+                PostProcessBean ppb = pps[i];
+                ppb.curvature.setEnabled(curvatureEnabled);
+
+                RenderType currentRenderType = RenderType.values()[i];
+                ppb.lglow.setViewportSize(getWidth(currentRenderType) / (viewportHalved ? 2 : 1), getHeight(currentRenderType));
+            }
+        }
     }
 
 }

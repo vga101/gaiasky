@@ -1,4 +1,4 @@
-# This script tests the star brightness commands.
+# This script tests the star size commands.
 # Created by Toni Sagrista
 
 from gaia.cu9.ari.gaiaorbit.script import EventScriptingInterface
@@ -9,13 +9,15 @@ from gaia.cu9.ari.gaiaorbit.event import Events
 
 gs = EventScriptingInterface.instance()
 
-gs.setStarBrightness(100.0)
+gs.maximizeInterfaceWindow()
+
+gs.setStarSize(100.0)
 gs.sleep(2)
-gs.setStarBrightness(70.0)
+gs.setStarSize(70.0)
 gs.sleep(2)
-gs.setStarBrightness(50.0)
+gs.setStarSize(50.0)
 gs.sleep(2)
-gs.setStarBrightness(30.0)
+gs.setStarSize(30.0)
 gs.sleep(2)
-gs.setStarBrightness(12.0)
+gs.setStarSize(12.0)
 gs.sleep(2)

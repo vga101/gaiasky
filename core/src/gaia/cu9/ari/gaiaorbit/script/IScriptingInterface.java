@@ -663,12 +663,34 @@ public interface IScriptingInterface {
     public void unsetTargetTime();
 
     /**
+     * Gets the star brightness value.
+     * 
+     * @return The brightness value, between 0 and 100.
+     */
+    public float getStarBrightness();
+
+    /**
      * Sets the star brightness value.
      * 
      * @param brightness
      *            The brightness value, between 0 and 100.
      */
     public void setStarBrightness(float brightness);
+
+    /**
+     * Gets the current star size.
+     * 
+     * @return The size value, between 0 and 100.
+     */
+    public float getStarSize();
+
+    /**
+     * Sets the star size value.
+     * 
+     * @param size
+     *            The size value, between 0 and 100.
+     */
+    public void setStarSize(float size);
 
     /**
      * Configures the frame outputting system, setting the resolution of the
@@ -1084,5 +1106,43 @@ public interface IScriptingInterface {
      *            The boolean sate. True to activate, false to deactivate.
      */
     public void setPlanetariumMode(boolean state);
+
+    /**
+     * Enables and disables the 360 mode.
+     * 
+     * @param state
+     *            The boolean sate. True to activate, false to deactivate.
+     */
+    public void set360Mode(boolean state);
+
+    /**
+     * Enables and disables the stereoscopic mode.
+     * 
+     * @param state
+     *            The boolean sate. True to activate, false to deactivate.
+     */
+    public void setStereoscopicMode(boolean state);
+
+    /**
+     * Changes the stereoscopic profile.
+     * 
+     * @param index
+     *            The index of the new profile:
+     *            <ul>
+     *            <li>0 - VR_HEADSET</li>
+     *            <li>1 - HD_3DTV</li>
+     *            <li>2 - CROSSEYE</li>
+     *            <li>3 - PARALLEL_VIEW</li>
+     *            <li>4 - ANAGLYPHIC (red-cyan)</li>
+     *            </ul>
+     */
+    public void setStereoscopicProfile(int index);
+
+    /**
+     * Gets the current frame number. Useful for timing actions in scripts.
+     * 
+     * @return The current frame number
+     */
+    public long getCurrentFrameNumber();
 
 }

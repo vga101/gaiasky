@@ -129,14 +129,8 @@ public abstract class ModelBody extends CelestialBody {
     }
 
     public void setToLocalTransform(float sizeFactor, Matrix4 localTransform, boolean forceUpdate) {
-        renderSize = size;
-        // TODO
-        //        if (!this.hasAtmosphere() && GaiaSky.instance.getICamera().getClosest() != this && distToCamera > size) {
-        //            renderSize /= 4f;
-        //            transform.position.scl(1f / 4f);
-        //        }
         if (sizeFactor != 1 || forceUpdate) {
-            transform.getMatrix(localTransform).scl(renderSize * sizeFactor).rotate(0, 1, 0, (float) rc.ascendingNode).rotate(0, 0, 1, (float) (rc.inclination + rc.axialTilt)).rotate(0, 1, 0, (float) rc.angle);
+            transform.getMatrix(localTransform).scl(size * sizeFactor).rotate(0, 1, 0, (float) rc.ascendingNode).rotate(0, 0, 1, (float) (rc.inclination + rc.axialTilt)).rotate(0, 1, 0, (float) rc.angle);
             orientation.idt().rotate(0, 1, 0, (float) rc.ascendingNode).rotate(0, 0, 1, (float) (rc.inclination + rc.axialTilt));
         } else {
             localTransform.set(this.localTransform);

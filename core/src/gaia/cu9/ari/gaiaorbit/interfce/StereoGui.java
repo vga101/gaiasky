@@ -51,7 +51,7 @@ public class StereoGui extends AbstractGui {
         buildGui();
 
         // We must subscribe to the desired events
-        EventManager.instance.subscribe(this, Events.TOGGLE_STEREO_PROFILE_INFO);
+        EventManager.instance.subscribe(this, Events.STEREO_PROFILE_CMD);
     }
 
     private void buildGui() {
@@ -118,8 +118,8 @@ public class StereoGui extends AbstractGui {
     @Override
     public void notify(Events event, Object... data) {
         switch (event) {
-        case TOGGLE_STEREO_PROFILE_INFO:
-            StereoProfile profile = (StereoProfile) data[0];
+        case STEREO_PROFILE_CMD:
+            StereoProfile profile = StereoProfile.values()[(Integer) data[0]];
             if (profile == StereoProfile.ANAGLYPHIC) {
                 notificationsTwo.setVisible(false);
             } else {

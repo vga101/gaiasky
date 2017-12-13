@@ -68,7 +68,7 @@ public class VisualEffectsComponent extends GuiComponent implements IObserver {
         starSize.setValue(MathUtilsd.lint(GlobalConf.scene.STAR_POINT_SIZE, Constants.MIN_STAR_POINT_SIZE, Constants.MAX_STAR_POINT_SIZE, Constants.MIN_SLIDER, Constants.MAX_SLIDER));
         starSize.addListener(event -> {
             if (flag && event instanceof ChangeEvent) {
-                EventManager.instance.post(Events.STAR_POINT_SIZE_CMD, MathUtilsd.lint(starSize.getValue(), Constants.MIN_SLIDER, Constants.MAX_SLIDER, Constants.MIN_STAR_POINT_SIZE, Constants.MAX_STAR_POINT_SIZE));
+                EventManager.instance.post(Events.STAR_POINT_SIZE_CMD, MathUtilsd.lint(starSize.getValue(), Constants.MIN_SLIDER, Constants.MAX_SLIDER, Constants.MIN_STAR_POINT_SIZE, Constants.MAX_STAR_POINT_SIZE), true);
                 size.setText(Integer.toString((int) starSize.getValue()));
                 return true;
             }
@@ -252,18 +252,21 @@ public class VisualEffectsComponent extends GuiComponent implements IObserver {
 
         component = lightingGroup;
 
-        EventManager.instance.subscribe(this, Events.STAR_POINT_SIZE_INFO, Events.STAR_BRIGHTNESS_CMD, Events.BRIGHTNESS_CMD, Events.CONTRAST_CMD);
+        EventManager.instance.subscribe(this, Events.STAR_POINT_SIZE_CMD, Events.STAR_BRIGHTNESS_CMD, Events.BRIGHTNESS_CMD, Events.CONTRAST_CMD);
     }
 
     @Override
     public void notify(Events event, Object... data) {
         switch (event) {
-        case STAR_POINT_SIZE_INFO:
-            flag = false;
-            float newsize = MathUtilsd.lint((float) data[0], Constants.MIN_STAR_POINT_SIZE, Constants.MAX_STAR_POINT_SIZE, Constants.MIN_SLIDER, Constants.MAX_SLIDER);
-            starSize.setValue(newsize);
-            size.setText(Integer.toString((int) starSize.getValue()));
-            flag = true;
+        case STAR_POINT_SIZE_CMD:
+            boolean iface = (Boolean) data[1];
+            if (!iface) {
+                flag = false;
+                float newsize = MathUtilsd.lint((float) data[0], Constants.MIN_STAR_POINT_SIZE, Constants.MAX_STAR_POINT_SIZE, Constants.MIN_SLIDER, Constants.MAX_SLIDER);
+                starSize.setValue(newsize);
+                size.setText(Integer.toString((int) starSize.getValue()));
+                flag = true;
+            }
             break;
         case STAR_BRIGHTNESS_CMD:
             if (data.length == 1 || data.length > 1 && !(Boolean) data[1]) {

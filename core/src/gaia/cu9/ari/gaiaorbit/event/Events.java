@@ -313,10 +313,11 @@ public enum Events {
      **/
     VIEWPORT_RESIZE,
 
-    /** Set a new value for the star point size **/
+    /**
+     * Set a new value for the star point size and a boolean saying if it comes
+     * from the interface
+     **/
     STAR_POINT_SIZE_CMD,
-    /** Contains the newly set star point size **/
-    STAR_POINT_SIZE_INFO,
     /**
      * Increase star point size by
      * {@link gaia.cu9.ari.gaiaorbit.util.Constants#STEP_STAR_POINT_SIZE}
@@ -334,19 +335,12 @@ public enum Events {
     STAR_MIN_OPACITY_CMD,
 
     /**
-     * Stereoscopic vision, side by side rendering. Contains the localised name.
-     * Contains the name and optionally contains a boolean with the new state.
+     * Stereoscopic vision, side by side rendering. Contains the state boolean
+     * and another boolean indicating whether it comes from the interface.
      **/
-    TOGGLE_STEREOSCOPIC_CMD,
-    /**
-     * Informs the stereoscopic mode has been toggled. Contains the new state
-     * (true/false)
-     **/
-    TOGGLE_STEREOSCOPIC_INFO,
-    /** Switches stereoscopic profile **/
-    TOGGLE_STEREO_PROFILE_CMD,
-    /** Broadcasts the new stereo profile. Contains the StereoProfile object **/
-    TOGGLE_STEREO_PROFILE_INFO,
+    STEREOSCOPIC_CMD,
+    /** Switches stereoscopic profile, contains the index of the new profile **/
+    STEREO_PROFILE_CMD,
     /**
      * Sets the 360 mode. Contains a boolean with the new state and an optional
      * boolean indicating whether this comes from the interface

@@ -469,7 +469,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         renderProcesses.add(shapeProc);
         // renderProcesses.add(modelCloseUpProc);
 
-        EventManager.instance.subscribe(this, Events.TOGGLE_VISIBILITY_CMD, Events.PIXEL_RENDERER_UPDATE, Events.LINE_RENDERER_UPDATE, Events.TOGGLE_STEREOSCOPIC_INFO, Events.CAMERA_MODE_CMD, Events.CUBEMAP360_CMD, Events.REBUILD_SHADOW_MAP_DATA_CMD);
+        EventManager.instance.subscribe(this, Events.TOGGLE_VISIBILITY_CMD, Events.PIXEL_RENDERER_UPDATE, Events.LINE_RENDERER_UPDATE, Events.STEREOSCOPIC_CMD, Events.CAMERA_MODE_CMD, Events.CUBEMAP360_CMD, Events.REBUILD_SHADOW_MAP_DATA_CMD);
 
     }
 
@@ -760,7 +760,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
             });
             break;
-        case TOGGLE_STEREOSCOPIC_INFO:
+        case STEREOSCOPIC_CMD:
             boolean stereo = (Boolean) data[0];
             if (stereo)
                 sgr = sgrs[SGR_STEREO_IDX];

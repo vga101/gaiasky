@@ -555,6 +555,24 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
     }
 
     @Override
+    public float getStarBrightness() {
+        return (float) MathUtilsd.lint(GlobalConf.scene.STAR_BRIGHTNESS, Constants.MIN_STAR_BRIGHT, Constants.MAX_STAR_BRIGHT, Constants.MIN_SLIDER, Constants.MAX_SLIDER);
+    }
+
+    @Override
+    public void setStarSize(final float size) {
+        assert size >= Constants.MIN_SLIDER && size <= Constants.MAX_SLIDER : "Size value must be between 0 and 100";
+        Gdx.app.postRunnable(() -> {
+            em.post(Events.STAR_POINT_SIZE_CMD, MathUtilsd.lint(size, Constants.MIN_SLIDER, Constants.MAX_SLIDER, Constants.MIN_STAR_POINT_SIZE, Constants.MAX_STAR_POINT_SIZE), false);
+        });
+    }
+
+    @Override
+    public float getStarSize() {
+        return MathUtilsd.lint(GlobalConf.scene.STAR_POINT_SIZE, Constants.MIN_STAR_POINT_SIZE, Constants.MAX_STAR_POINT_SIZE, Constants.MIN_SLIDER, Constants.MAX_SLIDER);
+    }
+
+    @Override
     public void configureRenderOutput(int width, int height, int fps, String folder, String namePrefix) {
         assert width > 0 : "Width must be positive";
         assert height > 0 : "Height must be positive";
@@ -1382,11 +1400,37 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
     }
 
     @Override
+    public void set360Mode(boolean state) {
+        Gdx.app.postRunnable(() -> {
+            em.post(Events.CUBEMAP360_CMD, state, false);
+        });
+    }
+
+    @Override
+    public void setStereoscopicMode(boolean state) {
+        Gdx.app.postRunnable(() -> {
+            em.post(Events.STEREOSCOPIC_CMD, state, false);
+        });
+    }
+
+    @Override
+    public void setStereoscopicProfile(int index) {
+        Gdx.app.postRunnable(() -> {
+            em.post(Events.STEREO_PROFILE_CMD, index);
+        });
+    }
+
+    @Override
     public void setPlanetariumMode(boolean state) {
         Gdx.app.postRunnable(() -> {
             em.post(Events.PLANETARIUM_CMD, state, false);
         });
 
+    }
+
+    @Override
+    public long getCurrentFrameNumber() {
+        return GaiaSky.instance.frames;
     }
 
 }

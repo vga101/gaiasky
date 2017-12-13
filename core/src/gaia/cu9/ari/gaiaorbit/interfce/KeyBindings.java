@@ -12,6 +12,7 @@ import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf.ProgramConf.StereoProfile;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 
@@ -274,7 +275,7 @@ public class KeyBindings {
         addMapping(new ProgramAction(txt("action.toggle", txt("element.360")), new Runnable() {
             @Override
             public void run() {
-                EventManager.instance.post(Events.CUBEMAP360_CMD, !GlobalConf.program.CUBEMAP360_MODE);
+                EventManager.instance.post(Events.CUBEMAP360_CMD, !GlobalConf.program.CUBEMAP360_MODE, false);
             }
         }), SPECIAL1, Keys.NUM_3);
 
@@ -345,7 +346,7 @@ public class KeyBindings {
         addMapping(new ProgramAction(txt("action.toggle", txt("element.stereomode")), new Runnable() {
             @Override
             public void run() {
-                EventManager.instance.post(Events.TOGGLE_STEREOSCOPIC_CMD, txt("notif.stereoscopic"));
+                EventManager.instance.post(Events.STEREOSCOPIC_CMD, !GlobalConf.program.STEREOSCOPIC_MODE, false);
             }
         }), SPECIAL1, Keys.S);
 
@@ -353,9 +354,19 @@ public class KeyBindings {
         addMapping(new ProgramAction(txt("action.switchstereoprofile"), new Runnable() {
             @Override
             public void run() {
-                EventManager.instance.post(Events.TOGGLE_STEREO_PROFILE_CMD);
+                int newidx = GlobalConf.program.STEREO_PROFILE.ordinal();
+                newidx = (newidx + 1) % StereoProfile.values().length;
+                EventManager.instance.post(Events.STEREO_PROFILE_CMD, newidx);
             }
         }), SPECIAL1, SPECIAL2, Keys.S);
+
+        // CTRL + P -> Toggle planetarium mode
+        addMapping(new ProgramAction(txt("action.toggle", txt("element.planetarium")), new Runnable() {
+            @Override
+            public void run() {
+                EventManager.instance.post(Events.PLANETARIUM_CMD, !GlobalConf.postprocess.POSTPROCESS_FISHEYE, false);
+            }
+        }), SPECIAL1, Keys.P);
 
         // CTRL + U -> Toggle clean (no GUI) mode
         addMapping(new ProgramAction(txt("action.toggle", txt("element.cleanmode")), new Runnable() {

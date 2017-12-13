@@ -44,7 +44,7 @@ public class CameraComponent extends GuiComponent implements IObserver {
 
     public CameraComponent(Skin skin, Stage stage) {
         super(skin, stage);
-        EventManager.instance.subscribe(this, Events.CAMERA_MODE_CMD, Events.ROTATION_SPEED_CMD, Events.TURNING_SPEED_CMD, Events.CAMERA_SPEED_CMD, Events.SPEED_LIMIT_CMD, Events.TOGGLE_STEREOSCOPIC_INFO, Events.FOV_CHANGE_NOTIFICATION, Events.CUBEMAP360_CMD, Events.CAMERA_CINEMATIC_CMD, Events.ORIENTATION_LOCK_CMD, Events.PLANETARIUM_CMD);
+        EventManager.instance.subscribe(this, Events.CAMERA_MODE_CMD, Events.ROTATION_SPEED_CMD, Events.TURNING_SPEED_CMD, Events.CAMERA_SPEED_CMD, Events.SPEED_LIMIT_CMD, Events.STEREOSCOPIC_CMD, Events.FOV_CHANGE_NOTIFICATION, Events.CUBEMAP360_CMD, Events.CAMERA_CINEMATIC_CMD, Events.ORIENTATION_LOCK_CMD, Events.PLANETARIUM_CMD);
     }
 
     @Override
@@ -103,7 +103,7 @@ public class CameraComponent extends GuiComponent implements IObserver {
         button3d.setName("3d");
         button3d.addListener(event -> {
             if (event instanceof ChangeEvent) {
-                EventManager.instance.post(Events.TOGGLE_STEREOSCOPIC_CMD, txt("notif.stereoscopic"), button3d.isChecked());
+                EventManager.instance.post(Events.STEREOSCOPIC_CMD, button3d.isChecked(), true);
                 return true;
             }
             return false;
@@ -400,11 +400,12 @@ public class CameraComponent extends GuiComponent implements IObserver {
                 orientationLock.setProgrammaticChangeEvents(true);
             }
             break;
-        case TOGGLE_STEREOSCOPIC_INFO:
-            boolean stereo = (boolean) data[0];
-            button3d.setProgrammaticChangeEvents(false);
-            button3d.setChecked(stereo);
-            button3d.setProgrammaticChangeEvents(true);
+        case STEREOSCOPIC_CMD:
+            if (!(boolean) data[1]) {
+                button3d.setProgrammaticChangeEvents(false);
+                button3d.setChecked((boolean) data[0]);
+                button3d.setProgrammaticChangeEvents(true);
+            }
             break;
         case FOV_CHANGE_NOTIFICATION:
             fovFlag = false;
@@ -413,22 +414,16 @@ public class CameraComponent extends GuiComponent implements IObserver {
             fovFlag = true;
             break;
         case CUBEMAP360_CMD:
-            if (data.length > 1) {
-                if (!(Boolean) data[1]) {
-                    // Not coming from interface
-                    buttonCubemap.setChecked((Boolean) data[0]);
-                }
-            } else {
-                // Not coming from interface
-                buttonCubemap.setChecked((Boolean) data[0]);
+            if (!(boolean) data[1]) {
+                buttonCubemap.setProgrammaticChangeEvents(false);
+                buttonCubemap.setChecked((boolean) data[0]);
+                buttonCubemap.setProgrammaticChangeEvents(true);
             }
             break;
         case PLANETARIUM_CMD:
-            boolean iface = (boolean) data[1];
-            if (!iface) {
-                boolean planetarium = (boolean) data[0];
+            if (!(boolean) data[1]) {
                 buttonDome.setProgrammaticChangeEvents(false);
-                buttonDome.setChecked(planetarium);
+                buttonDome.setChecked((boolean) data[0]);
                 buttonDome.setProgrammaticChangeEvents(true);
             }
             break;
