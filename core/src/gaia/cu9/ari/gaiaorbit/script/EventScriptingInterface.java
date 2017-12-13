@@ -573,22 +573,37 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
     }
 
     @Override
-    public void configureRenderOutput(int width, int height, int fps, String folder, String namePrefix) {
+    public void configureFrameOutput(int width, int height, int fps, String folder, String namePrefix) {
         assert width > 0 : "Width must be positive";
         assert height > 0 : "Height must be positive";
         assert fps > 0 : "FPS must be positive";
         assert folder != null && namePrefix != null : "Folder and file name prefix must not be null";
-        em.post(Events.CONFIG_PIXEL_RENDERER, width, height, fps, folder, namePrefix);
+        em.post(Events.CONFIG_FRAME_OUTPUT, width, height, fps, folder, namePrefix);
     }
 
     @Override
-    public boolean isRenderOutputActive() {
+    public void configureRenderOutput(int width, int height, int fps, String folder, String namePrefix) {
+        configureFrameOutput(width, height, fps, folder, namePrefix);
+    }
+
+    @Override
+    public boolean isFrameOutputActive() {
         return GlobalConf.frame.RENDER_OUTPUT;
     }
 
     @Override
-    public int getRenderOutputFps() {
+    public boolean isRenderOutputActive() {
+        return isFrameOutputActive();
+    }
+
+    @Override
+    public int getFrameOutputFps() {
         return GlobalConf.frame.RENDER_TARGET_FPS;
+    }
+
+    @Override
+    public int getRenderOutputFps() {
+        return getFrameOutputFps();
     }
 
     @Override
@@ -1289,8 +1304,8 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
 
     @Override
     public void sleep(float seconds) {
-        if (this.isRenderOutputActive()) {
-            this.sleepFrames(Math.round(this.getRenderOutputFps() * seconds));
+        if (this.isFrameOutputActive()) {
+            this.sleepFrames(Math.round(this.getFrameOutputFps() * seconds));
         } else {
             try {
                 Thread.sleep(Math.round(seconds * 1000));

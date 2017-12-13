@@ -310,7 +310,7 @@ public class GlobalConf {
         public ScreenshotMode FRAME_MODE;
 
         public FrameConf() {
-            EventManager.instance.subscribe(this, Events.CONFIG_PIXEL_RENDERER, Events.FRAME_OUTPUT_CMD);
+            EventManager.instance.subscribe(this, Events.CONFIG_FRAME_OUTPUT, Events.FRAME_OUTPUT_CMD);
         }
 
         public boolean isSimpleMode() {
@@ -337,7 +337,7 @@ public class GlobalConf {
         @Override
         public void notify(Events event, Object... data) {
             switch (event) {
-            case CONFIG_PIXEL_RENDERER:
+            case CONFIG_FRAME_OUTPUT:
                 RENDER_WIDTH = (int) data[0];
                 RENDER_HEIGHT = (int) data[1];
                 RENDER_TARGET_FPS = (int) data[2];

@@ -547,7 +547,7 @@ public enum Events {
      * Configures the render system. Contains width, height, FPS, folder and
      * file
      **/
-    CONFIG_PIXEL_RENDERER,
+    CONFIG_FRAME_OUTPUT,
     /** Forces recalculation of main GUI window size **/
     RECALCULATE_OPTIONS_SIZE,
 

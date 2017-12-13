@@ -693,9 +693,28 @@ public interface IScriptingInterface {
     public void setStarSize(float size);
 
     /**
-     * Configures the frame outputting system, setting the resolution of the
-     * images, the target frames per second, the output folder and the image
-     * name prefix.
+     * Configures the frame output system, setting the resolution of the images,
+     * the target frames per second, the output folder and the image name
+     * prefix.
+     * 
+     * @param width
+     *            Width of images.
+     * @param height
+     *            Height of images.
+     * @param fps
+     *            Target frames per second (number of images per second).
+     * @param folder
+     *            The output folder path.
+     * @param namePrefix
+     *            The file name prefix.
+     * @deprecated
+     */
+    public void configureRenderOutput(int width, int height, int fps, String folder, String namePrefix);
+
+    /**
+     * Configures the frame output system, setting the resolution of the images,
+     * the target frames per second, the output folder and the image name
+     * prefix.
      * 
      * @param width
      *            Width of images.
@@ -709,21 +728,37 @@ public interface IScriptingInterface {
      *            The file name prefix.
      * 
      */
-    public void configureRenderOutput(int width, int height, int fps, String folder, String namePrefix);
+    public void configureFrameOutput(int width, int height, int fps, String folder, String namePrefix);
 
     /**
-     * Is the system outputting frames to images?
+     * Is the frame output system on?
      * 
-     * @return True if the render output is active.
+     * @return True if the frame output is active.
+     * @deprecated
      */
     public boolean isRenderOutputActive();
 
     /**
-     * Gets the current FPS setting in the render output system.
+     * Is the frame output system on?
+     * 
+     * @return True if the render output is active.
+     */
+    public boolean isFrameOutputActive();
+
+    /**
+     * Gets the current FPS setting in the frame output system.
+     * 
+     * @return The FPS setting.
+     * @deprecated
+     */
+    public int getRenderOutputFps();
+
+    /**
+     * Gets the current FPS setting in the frame output system.
      * 
      * @return The FPS setting.
      */
-    public int getRenderOutputFps();
+    public int getFrameOutputFps();
 
     /**
      * Activates or deactivates the image output system. If called with true,
