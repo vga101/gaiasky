@@ -6,6 +6,17 @@
 
 **Implemented enhancements:**
 
+- Add visual effects controls to API [\#230](https://github.com/langurmonkey/gaiasky/issues/230)
+- Add stereo and 360 modes to API [\#229](https://github.com/langurmonkey/gaiasky/issues/229)
+- Add star size setter to API [\#228](https://github.com/langurmonkey/gaiasky/issues/228)
+- Add 'stop time' to scripting API [\#226](https://github.com/langurmonkey/gaiasky/issues/226)
+- Add setPlanetariumMode\(\) API call [\#225](https://github.com/langurmonkey/gaiasky/issues/225)
+- Add API call to control brightness and contrast [\#221](https://github.com/langurmonkey/gaiasky/issues/221)
+- Add a reload default settings button [\#220](https://github.com/langurmonkey/gaiasky/issues/220)
+- Add getSimulationTime\(\) to scripting [\#219](https://github.com/langurmonkey/gaiasky/issues/219)
+- Add frame output state indicator [\#218](https://github.com/langurmonkey/gaiasky/issues/218)
+- Set crosshair visibility API call [\#215](https://github.com/langurmonkey/gaiasky/issues/215)
+- Add setSimulationTime with comprehensive params to scripting [\#214](https://github.com/langurmonkey/gaiasky/issues/214)
 - Add 'Back to Earth' key mapping [\#209](https://github.com/langurmonkey/gaiasky/issues/209)
 - Add pointer coordinates toggle in preferences [\#208](https://github.com/langurmonkey/gaiasky/issues/208)
 - Constellations with proper motions [\#203](https://github.com/langurmonkey/gaiasky/issues/203)
@@ -29,6 +40,14 @@
 
 **Fixed bugs:**
 
+- Add object scaling to scripting API [\#227](https://github.com/langurmonkey/gaiasky/issues/227)
+- Fix atmosphere flickering due to z fighting [\#224](https://github.com/langurmonkey/gaiasky/issues/224)
+- Fix Gaia FoV detection and projection [\#223](https://github.com/langurmonkey/gaiasky/issues/223)
+- Fixed errors not logging correctly during init [\#222](https://github.com/langurmonkey/gaiasky/issues/222)
+- Remove wrong \[h/sec\] units in time warp label [\#217](https://github.com/langurmonkey/gaiasky/issues/217)
+- Star label positioning does not react to fov setting [\#216](https://github.com/langurmonkey/gaiasky/issues/216)
+- Fix focus issue using shift in objects component input [\#213](https://github.com/langurmonkey/gaiasky/issues/213)
+- Fix NUMPAD4/5/6 to acces FOV camera modes [\#212](https://github.com/langurmonkey/gaiasky/issues/212)
 - Fix star min opacity initialisation [\#207](https://github.com/langurmonkey/gaiasky/issues/207)
 - Crash when selecting NBG galaxy with the time on [\#206](https://github.com/langurmonkey/gaiasky/issues/206)
 - goToObject\(name, angle\) not zooming out if current angle is larger than target [\#195](https://github.com/langurmonkey/gaiasky/issues/195)
@@ -42,6 +61,7 @@
 
 **Closed issues:**
 
+- Feature request: galactic cartesian coordinates [\#211](https://github.com/langurmonkey/gaiasky/issues/211)
 - Adding meshes [\#205](https://github.com/langurmonkey/gaiasky/issues/205)
 - On Windows, install fails with "Could not determine java version from '9.0.1' [\#204](https://github.com/langurmonkey/gaiasky/issues/204)
 - Docs don't mention where record data appears [\#198](https://github.com/langurmonkey/gaiasky/issues/198)
