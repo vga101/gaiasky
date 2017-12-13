@@ -30,7 +30,7 @@ To do so, we can use `ExifTool <http://owl.phy.queensu.ca/~phil/exiftool/>`__ in
 
 .. code:: bash
 
-  exiftool -UsePanoramaViewer=True -ProjectionType=equirectangular -PoseHeadingDegrees=360.0 -CroppedAreaLeftPixels=0 -FullPanoWidthPixels=3840 -CroppedAreaImageHeightPixels=2160 -FullPanoHeightPixels=2160 -CroppedAreaImageWidthPixels=3840 -CroppedAreaTopPixels=0 -LargestValidInteriorRectLeft=0 -LargestValidInteriorRectTop=0 -LargestValidInteriorRectWidth=3840 -LargestValidInteriorRectHeight=2160 image_name.jpg 
+  $  exiftool -UsePanoramaViewer=True -ProjectionType=equirectangular -PoseHeadingDegrees=360.0 -CroppedAreaLeftPixels=0 -FullPanoWidthPixels=3840 -CroppedAreaImageHeightPixels=2160 -FullPanoHeightPixels=2160 -CroppedAreaImageWidthPixels=3840 -CroppedAreaTopPixels=0 -LargestValidInteriorRectLeft=0 -LargestValidInteriorRectTop=0 -LargestValidInteriorRectWidth=3840 -LargestValidInteriorRectHeight=2160 image_name.jpg 
 
 Now we can enjoy our image in any 360 panorama viewer like Google Street View app or the Cardboard Camera!
 Find some examples in this `album <https://goo.gl/photos/kn2MvugZHYcr5Fty8>`__.
@@ -51,15 +51,15 @@ First, clone the project.
 
 .. code:: bash
 
-  git clone https://github.com/google/spatial-media.git
-  cd spatial-media/
+  $  git clone https://github.com/google/spatial-media.git
+  $  cd spatial-media/
   
 Then, launch the GUI utility with the following command. Python 2.7 must be used to run the tool, so make sure to use that version.
 
 .. code:: bash
 
-  cd spatialmedia
-  python2 gui.py
+  $  cd spatialmedia
+  $  python2 gui.py
   
 Finally, click on ``Open``, select your video file, select the ``My video is spherical (360)`` checkbox and click on ``Inject metadata``. You are done, your video can now be viewed using any 360 video player or even uploaded to `YouTube <https://youtube.com>`__.
 
