@@ -1448,4 +1448,32 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
         return GaiaSky.instance.frames;
     }
 
+    @Override
+    public void setLensFlare(boolean state) {
+        Gdx.app.postRunnable(() -> {
+            em.post(Events.LENS_FLARE_CMD, state, false);
+        });
+    }
+
+    @Override
+    public void setMotionBlur(boolean state) {
+        Gdx.app.postRunnable(() -> {
+            em.post(Events.MOTION_BLUR_CMD, state ? Constants.MOTION_BLUR_VALUE : 0f, false);
+        });
+    }
+
+    @Override
+    public void setStarGlow(boolean state) {
+        Gdx.app.postRunnable(() -> {
+            em.post(Events.LIGHT_SCATTERING_CMD, state, false);
+        });
+    }
+
+    @Override
+    public void setBloom(float value) {
+        Gdx.app.postRunnable(() -> {
+            em.post(Events.BLOOM_CMD, value, false);
+        });
+    }
+
 }

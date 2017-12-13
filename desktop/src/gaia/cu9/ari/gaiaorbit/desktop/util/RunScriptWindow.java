@@ -155,6 +155,10 @@ public class RunScriptWindow extends CollapsibleWindow {
         if (scriptFolder2.exists())
             scripts = GlobalResources.listRec(scriptFolder2, scripts, ".py");
 
+        scripts.sort((fh1, fh2) -> {
+            return fh1.name().compareTo(fh2.name());
+        });
+
         HorizontalGroup titlegroup = new HorizontalGroup();
         titlegroup.space(pad);
         ImageButton tooltip = new OwnImageButton(skin, "tooltip");
@@ -178,7 +182,7 @@ public class RunScriptWindow extends CollapsibleWindow {
         names.sort();
 
         scriptsList.setItems(names);
-        scriptsList.pack();//
+        scriptsList.pack();
         scriptsList.addListener(new EventListener() {
             @Override
             public boolean handle(Event event) {

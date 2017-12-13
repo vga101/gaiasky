@@ -161,16 +161,26 @@ public enum Events {
      **/
     ONLY_OBSERVED_STARS_CMD,
     /**
-     * Activate/deactivate lens flare. Contains a boolean with the new state
+     * Activate/deactivate lens flare. Contains a boolean with the new state and
+     * a boolean for whether it comes from the interface
      **/
     LENS_FLARE_CMD,
-    /** Activate/deactivate the light scattering. Contains boolean **/
+    /**
+     * Activate/deactivate the light scattering. Contains boolean with state and
+     * a boolean for whether it comes from the interface
+     **/
     LIGHT_SCATTERING_CMD,
     /** Fisheye effect toggle. Contains boolean **/
     FISHEYE_CMD,
-    /** Contains the intensity value between 0 and 1 **/
+    /**
+     * Contains the intensity value between 0 and 1 and a boolean for whether it
+     * comes from the interface
+     **/
     BLOOM_CMD,
-    /** Contains the opacity of motion blur between 0 and 1 **/
+    /**
+     * Contains the opacity of motion blur between 0 and 1 and a boolean for
+     * whether it comes from the interface
+     **/
     MOTION_BLUR_CMD,
 
     /**

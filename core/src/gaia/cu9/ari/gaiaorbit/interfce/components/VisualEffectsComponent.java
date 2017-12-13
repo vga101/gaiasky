@@ -129,7 +129,7 @@ public class VisualEffectsComponent extends GuiComponent implements IObserver {
             bloomEffect.setValue(GlobalConf.postprocess.POSTPROCESS_BLOOM_INTENSITY * 10f);
             bloomEffect.addListener(event -> {
                 if (event instanceof ChangeEvent) {
-                    EventManager.instance.post(Events.BLOOM_CMD, bloomEffect.getValue() / 10f);
+                    EventManager.instance.post(Events.BLOOM_CMD, bloomEffect.getValue() / 10f, true);
                     bloom.setText(Integer.toString((int) bloomEffect.getValue()));
                     return true;
                 }
@@ -189,7 +189,7 @@ public class VisualEffectsComponent extends GuiComponent implements IObserver {
             motionBlur.setChecked(GlobalConf.postprocess.POSTPROCESS_MOTION_BLUR != 0);
             motionBlur.addListener(event -> {
                 if (event instanceof ChangeEvent) {
-                    EventManager.instance.post(Events.MOTION_BLUR_CMD, motionBlur.isChecked() ? Constants.MOTION_BLUR_VALUE : 0.0f);
+                    EventManager.instance.post(Events.MOTION_BLUR_CMD, motionBlur.isChecked() ? Constants.MOTION_BLUR_VALUE : 0.0f, true);
                     return true;
                 }
                 return false;
@@ -200,7 +200,7 @@ public class VisualEffectsComponent extends GuiComponent implements IObserver {
             lensFlare.setName("lens flare");
             lensFlare.addListener(event -> {
                 if (event instanceof ChangeEvent) {
-                    EventManager.instance.post(Events.LENS_FLARE_CMD, lensFlare.isChecked());
+                    EventManager.instance.post(Events.LENS_FLARE_CMD, lensFlare.isChecked(), true);
                     return true;
                 }
                 return false;
@@ -213,7 +213,7 @@ public class VisualEffectsComponent extends GuiComponent implements IObserver {
             lightScattering.setChecked(GlobalConf.postprocess.POSTPROCESS_LIGHT_SCATTERING);
             lightScattering.addListener(event -> {
                 if (event instanceof ChangeEvent) {
-                    EventManager.instance.post(Events.LIGHT_SCATTERING_CMD, lightScattering.isChecked());
+                    EventManager.instance.post(Events.LIGHT_SCATTERING_CMD, lightScattering.isChecked(), true);
                     return true;
                 }
                 return false;
@@ -252,15 +252,14 @@ public class VisualEffectsComponent extends GuiComponent implements IObserver {
 
         component = lightingGroup;
 
-        EventManager.instance.subscribe(this, Events.STAR_POINT_SIZE_CMD, Events.STAR_BRIGHTNESS_CMD, Events.BRIGHTNESS_CMD, Events.CONTRAST_CMD);
+        EventManager.instance.subscribe(this, Events.STAR_POINT_SIZE_CMD, Events.STAR_BRIGHTNESS_CMD, Events.BRIGHTNESS_CMD, Events.CONTRAST_CMD, Events.MOTION_BLUR_CMD, Events.LENS_FLARE_CMD, Events.LIGHT_SCATTERING_CMD, Events.BLOOM_CMD);
     }
 
     @Override
     public void notify(Events event, Object... data) {
         switch (event) {
         case STAR_POINT_SIZE_CMD:
-            boolean iface = (Boolean) data[1];
-            if (!iface) {
+            if (!(boolean) data[1]) {
                 flag = false;
                 float newsize = MathUtilsd.lint((float) data[0], Constants.MIN_STAR_POINT_SIZE, Constants.MAX_STAR_POINT_SIZE, Constants.MIN_SLIDER, Constants.MAX_SLIDER);
                 starSize.setValue(newsize);
@@ -269,7 +268,7 @@ public class VisualEffectsComponent extends GuiComponent implements IObserver {
             }
             break;
         case STAR_BRIGHTNESS_CMD:
-            if (data.length == 1 || data.length > 1 && !(Boolean) data[1]) {
+            if (!(boolean) data[1]) {
                 Float brightness = (Float) data[0];
                 float sliderValue = MathUtilsd.lint(brightness, Constants.MIN_STAR_BRIGHT, Constants.MAX_STAR_BRIGHT, Constants.MIN_SLIDER, Constants.MAX_SLIDER);
                 hackProgrammaticChangeEvents = false;
@@ -279,7 +278,7 @@ public class VisualEffectsComponent extends GuiComponent implements IObserver {
             }
             break;
         case BRIGHTNESS_CMD:
-            if (data.length == 2 && !(Boolean) data[1]) {
+            if (!(boolean) data[1]) {
                 // Update UI element
                 float level = (Float) data[0];
                 float sliderLevel = MathUtilsd.lint(level, Constants.MIN_BRIGHTNESS, Constants.MAX_BRIGHTNESS, Constants.MIN_SLIDER, Constants.MAX_SLIDER);
@@ -290,7 +289,7 @@ public class VisualEffectsComponent extends GuiComponent implements IObserver {
             }
             break;
         case CONTRAST_CMD:
-            if (data.length == 2 && !(Boolean) data[1]) {
+            if (!(boolean) data[1]) {
                 // Update UI element
                 float level = (Float) data[0];
                 float sliderLevel = MathUtilsd.lint(level, Constants.MIN_CONTRAST, Constants.MAX_CONTRAST, Constants.MIN_SLIDER, Constants.MAX_SLIDER);
@@ -298,6 +297,39 @@ public class VisualEffectsComponent extends GuiComponent implements IObserver {
                 contrast.setValue(sliderLevel);
                 contrastLabel.setText(Integer.toString((int) sliderLevel));
                 hackProgrammaticChangeEvents = true;
+            }
+            break;
+        case BLOOM_CMD:
+            if (!(boolean) data[1]) {
+                // Update UI element
+                float level = (float) data[0];
+                hackProgrammaticChangeEvents = false;
+                bloomEffect.setValue(level);
+                bloom.setText(Integer.toString((int) level));
+                hackProgrammaticChangeEvents = true;
+            }
+            break;
+        case MOTION_BLUR_CMD:
+            if (!(boolean) data[1]) {
+                float level = (Float) data[0];
+                motionBlur.setProgrammaticChangeEvents(false);
+                motionBlur.setChecked(level != 0);
+                motionBlur.setProgrammaticChangeEvents(true);
+            }
+            break;
+
+        case LIGHT_SCATTERING_CMD:
+            if (!(boolean) data[1]) {
+                lightScattering.setProgrammaticChangeEvents(false);
+                lightScattering.setChecked((boolean) data[0]);
+                lightScattering.setProgrammaticChangeEvents(true);
+            }
+            break;
+        case LENS_FLARE_CMD:
+            if (!(boolean) data[1]) {
+                lensFlare.setProgrammaticChangeEvents(false);
+                lensFlare.setChecked((boolean) data[0]);
+                lensFlare.setProgrammaticChangeEvents(true);
             }
             break;
         default:

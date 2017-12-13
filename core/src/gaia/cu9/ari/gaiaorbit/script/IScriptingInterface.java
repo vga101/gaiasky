@@ -1180,4 +1180,37 @@ public interface IScriptingInterface {
      */
     public long getCurrentFrameNumber();
 
+    /**
+     * Enables or deisables the lens flare effect.
+     * 
+     * @param state
+     *            Activate (true) or deactivate (false)
+     */
+    public void setLensFlare(boolean state);
+
+    /**
+     * Enables or disables the motion blur effect.
+     * 
+     * @param state
+     *            Activate (true) or deactivate (false)
+     */
+    public void setMotionBlur(boolean state);
+
+    /**
+     * Enables or disables the star glow effect.
+     * 
+     * @param state
+     *            Activate (true) or deactivate (false)
+     */
+    public void setStarGlow(boolean state);
+
+    /**
+     * Sets the strength value for the bloom effect.
+     * 
+     * @param value
+     *            Bloom strength between 0 and 100. Set to 0 to deactivate the
+     *            bloom.
+     */
+    public void setBloom(float value);
+
 }
