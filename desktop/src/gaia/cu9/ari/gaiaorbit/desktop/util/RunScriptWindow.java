@@ -175,6 +175,7 @@ public class RunScriptWindow extends CollapsibleWindow {
             else
                 names.add(fh.name());
         }
+        names.sort();
 
         scriptsList.setItems(names);
         scriptsList.pack();//
