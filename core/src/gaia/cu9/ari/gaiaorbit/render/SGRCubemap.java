@@ -16,6 +16,7 @@ import com.bitfire.postprocessing.effects.CubemapEquirectangular;
 
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
+import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.render.IPostProcessor.PostProcessBean;
 import gaia.cu9.ari.gaiaorbit.render.RenderingContext.CubemapSide;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
@@ -29,7 +30,7 @@ import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
  * @author tsagrista
  *
  */
-public class SGRCubemap extends SGRAbstract implements ISGR {
+public class SGRCubemap extends SGRAbstract implements ISGR, IObserver {
 
     Vector3 aux1, aux2, aux3, dirbak, upbak;
 
@@ -37,8 +38,8 @@ public class SGRCubemap extends SGRAbstract implements ISGR {
 
     CubemapEquirectangular cubemapEffect;
 
-    /** Frame buffers for 3D mode (screen, screenshot, frame output) **/
-    Map<Integer, FrameBuffer> fb3D;
+    /** Frame buffers for each side of the cubemap **/
+    Map<Integer, FrameBuffer> fbcm;
 
     public SGRCubemap() {
         super();
@@ -49,9 +50,11 @@ public class SGRCubemap extends SGRAbstract implements ISGR {
         upbak = new Vector3();
         stretchViewport = new StretchViewport(Gdx.graphics.getHeight(), Gdx.graphics.getHeight());
 
-        fb3D = new HashMap<Integer, FrameBuffer>();
+        fbcm = new HashMap<Integer, FrameBuffer>();
 
         cubemapEffect = new CubemapEquirectangular();
+
+        EventManager.instance.subscribe(this, Events.CUBEMAP_RESOLUTION_CMD);
     }
 
     @Override
@@ -185,10 +188,10 @@ public class SGRCubemap extends SGRAbstract implements ISGR {
 
     private FrameBuffer getFrameBuffer(int w, int h, int extra) {
         int key = getKey(w, h, extra);
-        if (!fb3D.containsKey(key)) {
-            fb3D.put(key, new FrameBuffer(Format.RGB888, w, h, true));
+        if (!fbcm.containsKey(key)) {
+            fbcm.put(key, new FrameBuffer(Format.RGB888, w, h, true));
         }
-        return fb3D.get(key);
+        return fbcm.get(key);
     }
 
     @Override
@@ -198,11 +201,33 @@ public class SGRCubemap extends SGRAbstract implements ISGR {
 
     @Override
     public void dispose() {
-        Set<Integer> keySet = fb3D.keySet();
+        Set<Integer> keySet = fbcm.keySet();
         for (Integer key : keySet) {
-            FrameBuffer fb = fb3D.get(key);
+            FrameBuffer fb = fbcm.get(key);
             fb.dispose();
         }
+    }
+
+    @Override
+    public void notify(Events event, Object... data) {
+        switch (event) {
+        case CUBEMAP_RESOLUTION_CMD:
+            int res = (Integer) data[0];
+            if (!fbcm.containsKey(getKey(res, res, 0))) {
+                // Clear
+                Set<Integer> keyset = fbcm.keySet();
+                for (Integer key : keyset) {
+                    fbcm.get(key).dispose();
+                }
+                fbcm.clear();
+            } else {
+                // All good
+            }
+            break;
+        default:
+            break;
+        }
+
     }
 
 }

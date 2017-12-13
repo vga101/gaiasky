@@ -1053,7 +1053,8 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
     }
 
     @Override
-    public void displayTextObject(final int id, final String text, final float x, final float y, final float maxWidth, final float maxHeight, final float r, final float g, final float b, final float a, final float fontSize) {
+    public void displayTextObject(final int id, final String text, final float x, final float y, final float maxWidth, final float maxHeight, final float r, final float g, final float b,
+            final float a, final float fontSize) {
         Gdx.app.postRunnable(() -> {
             em.post(Events.ADD_CUSTOM_TEXT, id, text, x, y, maxWidth, maxHeight, r, g, b, a, fontSize);
         });
@@ -1419,6 +1420,17 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
         Gdx.app.postRunnable(() -> {
             em.post(Events.CUBEMAP360_CMD, state, false);
         });
+    }
+
+    @Override
+    public void setCubemapResolution(int resolution) {
+        if (resolution > 19 && resolution < 15000) {
+            Gdx.app.postRunnable(() -> {
+                em.post(Events.CUBEMAP_RESOLUTION_CMD, resolution);
+            });
+        } else {
+            Logger.error("Cubemap resolution must be 20 <= resolution <= 15000");
+        }
     }
 
     @Override
