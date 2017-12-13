@@ -510,7 +510,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
             return Double.compare(((ModelBody) a).getDistToCamera(), ((ModelBody) b).getDistToCamera());
         });
 
-        int shadowNRender = GlobalConf.program.STEREOSCOPIC_MODE ? 2 : 1;
+        int shadowNRender = GlobalConf.program.STEREOSCOPIC_MODE ? 2 : GlobalConf.program.CUBEMAP360_MODE ? 6 : 1;
 
         if (candidates != null && shadowMapFb != null && smCombinedMap != null) {
             candidates.clear();
