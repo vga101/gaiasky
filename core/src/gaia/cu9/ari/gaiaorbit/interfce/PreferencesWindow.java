@@ -1438,7 +1438,9 @@ public class PreferencesWindow extends GenericDialog {
         GlobalConf.frame.AUTO_FRAME_OUTPUT_CAMERA_PLAY = (Boolean) cbAutoCamrec.isChecked();
 
         // Cube map resolution
-        GlobalConf.scene.CUBEMAP_FACE_RESOLUTION = Integer.parseInt(cmResolution.getText());
+        int newres = Integer.parseInt(cmResolution.getText());
+        if (newres != GlobalConf.scene.CUBEMAP_FACE_RESOLUTION)
+            EventManager.instance.post(Events.CUBEMAP_RESOLUTION_CMD, newres);
 
         // Controllers
         String mappingsFile = controllerMappings.getSelected().file;
