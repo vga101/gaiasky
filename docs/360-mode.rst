@@ -51,7 +51,7 @@ First, clone the project.
 
 .. code:: bash
 
-  git clone git@github.com:google/spatial-media.git
+  git clone https://github.com/google/spatial-media.git
   cd spatial-media/
   
 Then, launch the GUI utility with the following command. Python 2.7 must be used to run the tool, so make sure to use that version.
