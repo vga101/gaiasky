@@ -41,3 +41,28 @@ Find some examples in this `album <https://goo.gl/photos/kn2MvugZHYcr5Fty8>`__.
   Panorama image captured with Gaia Sky
 
 .. |cubemap-icon| image:: img/ui/cubemap-icon.png
+
+
+Injecting metadata to 360 videos
+--------------------------------
+
+First, you need to capture the 360 video. To do so, capture the images and use ``ffmpeg`` to encode them or capture the video directly using a screen recorder, see :ref:`capture-videos` for more info.
+Once you have the video file, you must use the `spatial media <https://github.com/google/spatial-media>>`__ project to inject the metadata.
+
+First, clone the project:
+
+.. code:: bash
+
+  git clone git@github.com:google/spatial-media.git
+  cd spatial-media/
+  
+Then, you can launch the GUI utility with the following command. ``spatial-media`` only supports ``python 2``, so be sure to use that version.
+
+.. code:: bash
+
+  cd spatialmedia
+  python2 gui.py
+  
+Finally, click on ``Open``, select your video file, select the ``My video is spherical (360)`` checkbox and click on ``Inject metadata``. You are done, your video can now be viewed using any 360 video player or even uploaded to `YouTube <https://youtube.com>`__.
+
+  

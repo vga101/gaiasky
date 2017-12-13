@@ -1,3 +1,5 @@
+.. _capture-videos:
+
 Capturing videos
 ****************
 
