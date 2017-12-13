@@ -60,13 +60,16 @@ Then, inject the spherical metadata with the following command. Python 2.7 must 
 
   $  python spatialmedia -i <inupt_file> <output_file>
 
+
+You are done, your video can now be viewed using any 360 video player or even uploaded to `YouTube <https://youtube.com>`__.
+
 To check whether the metadata has been injected correctly, just do:
 
 .. code:: bash
 
   $  python spatialmedia <file>
   
-Finally, click on ``Open``, select your video file, select the ``My video is spherical (360)`` checkbox and click on ``Inject metadata``. You are done, your video can now be viewed using any 360 video player or even uploaded to `YouTube <https://youtube.com>`__.
+
 
 
 .. |cubemap-icon| image:: img/ui/cubemap-icon.png
