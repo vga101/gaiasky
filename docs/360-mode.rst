@@ -54,12 +54,17 @@ First, clone the project.
   $  git clone https://github.com/google/spatial-media.git
   $  cd spatial-media/
   
-Then, launch the GUI utility with the following command. Python 2.7 must be used to run the tool, so make sure to use that version.
+Then, inject the spherical metadata with the following command. Python 2.7 must be used to run the tool, so make sure to use that version.
 
 .. code:: bash
 
-  $  cd spatialmedia
-  $  python2 gui.py
+  $  python spatialmedia -i <inupt_file> <output_file>
+
+To check whether the metadata has been injected correctly, just do:
+
+.. code:: bash
+
+  $  python spatialmedia <file>
   
 Finally, click on ``Open``, select your video file, select the ``My video is spherical (360)`` checkbox and click on ``Inject metadata``. You are done, your video can now be viewed using any 360 video player or even uploaded to `YouTube <https://youtube.com>`__.
 
