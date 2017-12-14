@@ -3,6 +3,7 @@ package gaia.cu9.ari.gaiaorbit.util.coord;
 import java.util.Date;
 
 import gaia.cu9.ari.gaiaorbit.data.orbit.OrbitData;
+import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
 import gaia.cu9.ari.gaiaorbit.scenegraph.HeliotropicOrbit;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
@@ -14,6 +15,8 @@ public class GaiaCoordinates extends AbstractOrbitCoordinates {
     public void doneLoading(Object... params) {
         orbitname = "Gaia orbit";
         orbit = (HeliotropicOrbit) ((ISceneGraph) params[0]).getNode("Gaia orbit");
+        if (params[1] instanceof CelestialBody)
+            orbit.setBody((CelestialBody) params[1]);
         data = orbit.orbitData;
     }
 

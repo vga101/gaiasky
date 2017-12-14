@@ -19,8 +19,8 @@ public abstract class AbstractOrbitCoordinates implements IBodyCoordinates {
             if (orbitname != null && !orbitname.isEmpty()) {
                 SceneGraphNode sgn = ((ISceneGraph) params[0]).getNode(orbitname);
                 orbit = (Orbit) sgn;
-                if (sgn instanceof CelestialBody)
-                    orbit.setBody((CelestialBody) sgn);
+                if (params[1] instanceof CelestialBody)
+                    orbit.setBody((CelestialBody) params[1]);
             }
         }
     }

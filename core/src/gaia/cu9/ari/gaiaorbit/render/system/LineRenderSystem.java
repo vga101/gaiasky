@@ -1,5 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.render.system;
 
+import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -103,6 +104,18 @@ public class LineRenderSystem extends ImmediateRenderSystem {
             curr_outline.mesh.render(shaderProgram, glType);
         }
 
+        if (Gdx.app.getType() == ApplicationType.Desktop) {
+            // Enable GL_LINE_SMOOTH
+            Gdx.gl20.glEnable(0xB20);
+            // Enable GL_LINE_WIDTH
+            Gdx.gl20.glEnable(0xB21);
+            // Enable GL_ALIASED_LINE_WIDTH_RANGE
+            Gdx.gl20.glEnable(0x846E);
+            // Enable GL_SMOOTH_LINE_WIDTH_RANGE
+            Gdx.gl20.glEnable(0xB22);
+            // Enable GL_SMOOTH_LINE_WIDTH_GRANULARITY
+            Gdx.gl20.glEnable(0xB23);
+        }
         // Regular
         Gdx.gl.glLineWidth(1f * GlobalConf.SCALE_FACTOR);
         curr.mesh.setVertices(curr.vertices, 0, curr.vertexIdx);

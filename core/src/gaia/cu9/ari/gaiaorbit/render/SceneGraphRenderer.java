@@ -41,6 +41,7 @@ import gaia.cu9.ari.gaiaorbit.render.system.BillboardSpriteRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.BillboardStarRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.FontRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.IRenderSystem;
+import gaia.cu9.ari.gaiaorbit.render.system.LineGPURenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.LineQuadRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.LineRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.MilkyWayRenderSystem;
@@ -377,8 +378,12 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         AbstractRenderSystem billboardSpritesProc = new BillboardSpriteRenderSystem(RenderGroup.BILLBOARD_SPRITE, priority++, alphas, spriteShader, ComponentType.Clusters.ordinal());
         billboardSpritesProc.setPreRunnable(blendNoDepthRunnable);
 
-        // LINES
+        // LINES CPU
         AbstractRenderSystem lineProc = getLineRenderSystem();
+
+        // LINES GPU
+        AbstractRenderSystem lineGpuProc = new LineGPURenderSystem(RenderGroup.LINE_GPU, priority++, alphas);
+        lineGpuProc.setPreRunnable(blendDepthRunnable);
 
         // MODEL FRONT
         AbstractRenderSystem modelFrontProc = new ModelBatchRenderSystem(RenderGroup.MODEL_NORMAL, priority++, alphas, modelBatchNormal, false);
@@ -461,6 +466,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
         renderProcesses.add(modelBeamProc);
         renderProcesses.add(lineProc);
+        renderProcesses.add(lineGpuProc);
         renderProcesses.add(labelsProc);
         renderProcesses.add(billboardSSOProc);
 

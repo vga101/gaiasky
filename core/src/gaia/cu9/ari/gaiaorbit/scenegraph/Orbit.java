@@ -3,6 +3,7 @@ package gaia.cu9.ari.gaiaorbit.scenegraph;
 import java.util.Date;
 
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.badlogic.gdx.utils.reflect.Method;
 import com.badlogic.gdx.utils.reflect.ReflectionException;
@@ -33,15 +34,24 @@ public class Orbit extends LineObject {
     public OrbitData orbitData;
     protected CelestialBody body;
     protected Vector3d prev, curr;
-    protected double alpha;
+    public double alpha;
+    public Matrix4 localTransform;
     public Matrix4d localTransformD, transformFunction;
     protected String provider;
     protected Double multiplier = 1.0d;
     protected Class<? extends IOrbitDataProvider> providerClass;
     public OrbitComponent oc;
 
+    /** GPU rendering attributes **/
+    public boolean inGpu = false;
+    public int offset;
+    public int count;
+
+    private float distUp, distDown;
+
     public Orbit() {
         super();
+        localTransform = new Matrix4();
         localTransformD = new Matrix4d();
         prev = new Vector3d();
         curr = new Vector3d();
@@ -90,6 +100,8 @@ public class Orbit extends LineObject {
         localTransformD.rotate(0, 0, 1, oc.i);
         localTransformD.rotate(0, 1, 0, oc.ascendingnode);
 
+        localTransformD.putIn(localTransform);
+
     }
 
     @Override
@@ -108,7 +120,15 @@ public class Orbit extends LineObject {
                     this.alpha = cc[3];
                 }
 
-                addToRender(this, RenderGroup.LINE);
+                if (body == null) {
+                    // No body, always render
+                    addToRender(this, RenderGroup.LINE);
+                } else if (body != null && body.distToCamera > distDown) {
+                    // Body, disappear slowly
+                    if (body.distToCamera < distUp)
+                        this.alpha *= MathUtilsd.lint(body.distToCamera, distDown, distUp, 0, 1);
+                    addToRender(this, RenderGroup.LINE);
+                }
             }
         }
 
@@ -181,6 +201,8 @@ public class Orbit extends LineObject {
 
     public void setBody(CelestialBody body) {
         this.body = body;
+        this.distUp = (float) Math.max(this.body.getRadius() * 200, 1000 * Constants.KM_TO_U);
+        this.distDown = (float) Math.max(this.body.getRadius() * 50, 100 * Constants.KM_TO_U);
     }
 
 }

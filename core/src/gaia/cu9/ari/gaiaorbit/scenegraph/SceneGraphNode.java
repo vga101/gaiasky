@@ -82,6 +82,8 @@ public class SceneGraphNode implements IStarContainer, IPosition {
         SHAPE(16),
         /** Regular billboard sprite **/
         BILLBOARD_SPRITE(17),
+        /** Line GPU **/
+        LINE_GPU(18),
 
         /** None **/
         NONE(-1);

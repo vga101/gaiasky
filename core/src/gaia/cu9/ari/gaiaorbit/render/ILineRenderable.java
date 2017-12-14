@@ -5,6 +5,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 
 /**
  * Interface to implement by all entities that are to be rendered as lines.
+ * 
  * @author Toni Sagrista
  *
  */
