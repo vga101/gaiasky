@@ -7,12 +7,12 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.HeliotropicOrbit;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
-public class GaiaCoordinates implements IBodyCoordinates {
-    HeliotropicOrbit orbit;
+public class GaiaCoordinates extends AbstractOrbitCoordinates {
     OrbitData data;
 
     @Override
     public void doneLoading(Object... params) {
+        orbitname = "Gaia orbit";
         orbit = (HeliotropicOrbit) ((ISceneGraph) params[0]).getNode("Gaia orbit");
         data = orbit.orbitData;
     }

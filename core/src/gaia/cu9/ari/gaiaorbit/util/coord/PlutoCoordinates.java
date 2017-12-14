@@ -5,9 +5,10 @@ import java.util.Date;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
-public class PlutoCoordinates implements IBodyCoordinates {
+public class PlutoCoordinates extends AbstractOrbitCoordinates {
     @Override
     public void doneLoading(Object... params) {
+        super.doneLoading(params);
     }
 
     @Override

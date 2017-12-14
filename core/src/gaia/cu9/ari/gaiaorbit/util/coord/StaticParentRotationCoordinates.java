@@ -4,6 +4,7 @@ import java.util.Date;
 
 import gaia.cu9.ari.gaiaorbit.scenegraph.AbstractPositionEntity;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ModelBody;
+import gaia.cu9.ari.gaiaorbit.scenegraph.Orbit;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.RotationComponent;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
@@ -57,6 +58,11 @@ public class StaticParentRotationCoordinates implements IBodyCoordinates {
 
     public void setPosition(double[] position) {
         this.position = new Vector3d(position[0] * Constants.KM_TO_U, position[1] * Constants.KM_TO_U, position[2] * Constants.KM_TO_U);
+    }
+
+    @Override
+    public Orbit getOrbitObject() {
+        return null;
     }
 
 }

@@ -31,6 +31,7 @@ public class Orbit extends LineObject {
     protected static final float SHADER_MODEL_OVERLAP_FACTOR = 20f;
 
     public OrbitData orbitData;
+    protected CelestialBody body;
     protected Vector3d prev, curr;
     protected double alpha;
     public Matrix4d localTransformD, transformFunction;
@@ -176,6 +177,10 @@ public class Orbit extends LineObject {
 
     public void setMultiplier(Double multiplier) {
         this.multiplier = multiplier;
+    }
+
+    public void setBody(CelestialBody body) {
+        this.body = body;
     }
 
 }

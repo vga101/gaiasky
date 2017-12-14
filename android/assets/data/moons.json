@@ -17,7 +17,8 @@
 
 	"coordinates" : {
 				// This must implement gaia.cu9.ari.gaiaorbit.util.coord.IBodyCoordinates				
-				"impl" : "gaia.cu9.ari.gaiaorbit.util.coord.MoonAACoordinates"
+						"impl" : "gaia.cu9.ari.gaiaorbit.util.coord.MoonAACoordinates",
+						"orbitname" : "Moon orbit"
 				},	
 		
 	"rotation" 		: {

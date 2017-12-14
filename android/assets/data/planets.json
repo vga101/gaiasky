@@ -15,7 +15,8 @@
 	
 	"coordinates" : {
 					// This must implement gaia.cu9.ari.gaiaorbit.util.coord.IBodyCoordinates				
-					"impl" : "gaia.cu9.ari.gaiaorbit.util.coord.vsop87.MercuryVSOP87"
+						"impl" : "gaia.cu9.ari.gaiaorbit.util.coord.vsop87.MercuryVSOP87",
+						"orbitname" : "Mercury orbit"
 					},	
 		
 	"rotation" 		: {
@@ -60,7 +61,8 @@
 
 	"coordinates" : {
 					// This must implement gaia.cu9.ari.gaiaorbit.util.coord.IBodyCoordinates				
-					"impl" : "gaia.cu9.ari.gaiaorbit.util.coord.vsop87.VenusVSOP87"
+						"impl" : "gaia.cu9.ari.gaiaorbit.util.coord.vsop87.VenusVSOP87",
+						"orbitname" : "Venus orbit"
 					},	
 		
 	"rotation" 		: {
@@ -120,7 +122,8 @@
 	
 	"coordinates" : {
 					// This must implement gaia.cu9.ari.gaiaorbit.util.coord.IBodyCoordinates				
-					"impl" : "gaia.cu9.ari.gaiaorbit.util.coord.vsop87.EarthVSOP87"
+						"impl" : "gaia.cu9.ari.gaiaorbit.util.coord.vsop87.EarthVSOP87",
+						"orbitname" : "Earth orbit"
 					},	
 		
 	"rotation" 		: {
@@ -180,7 +183,8 @@
 	
 	"coordinates" : {
 					// This must implement gaia.cu9.ari.gaiaorbit.util.coord.IBodyCoordinates				
-					"impl" : "gaia.cu9.ari.gaiaorbit.util.coord.vsop87.MarsVSOP87"
+						"impl" : "gaia.cu9.ari.gaiaorbit.util.coord.vsop87.MarsVSOP87",
+						"orbitname" : "Mars orbit"
 					},	
 		
 	"rotation" 		: {
@@ -239,7 +243,8 @@
 	
 	"coordinates" : {
 					// This must implement gaia.cu9.ari.gaiaorbit.util.coord.IBodyCoordinates				
-					"impl" : "gaia.cu9.ari.gaiaorbit.util.coord.vsop87.JupiterVSOP87"
+						"impl" : "gaia.cu9.ari.gaiaorbit.util.coord.vsop87.JupiterVSOP87",
+						"orbitname" : "Jupiter orbit"
 					},	
 		
 	"rotation" 		: {
@@ -283,7 +288,8 @@
 	
 	"coordinates" : {
 					// This must implement gaia.cu9.ari.gaiaorbit.util.coord.IBodyCoordinates				
-					"impl" : "gaia.cu9.ari.gaiaorbit.util.coord.vsop87.SaturnVSOP87"
+						"impl" : "gaia.cu9.ari.gaiaorbit.util.coord.vsop87.SaturnVSOP87",
+						"orbitname" : "Saturn orbit"
 					},	
 		
 	"rotation" 		: {
@@ -332,7 +338,8 @@
 	
 	"coordinates" : {
 					// This must implement gaia.cu9.ari.gaiaorbit.util.coord.IBodyCoordinates				
-					"impl" : "gaia.cu9.ari.gaiaorbit.util.coord.vsop87.UranusVSOP87"
+						"impl" : "gaia.cu9.ari.gaiaorbit.util.coord.vsop87.UranusVSOP87",
+						"orbitname" : "Uranus orbit"
 					},	
 		
 	"rotation" 		: {
@@ -375,7 +382,8 @@
 
 	"coordinates" : {
 					// This must implement gaia.cu9.ari.gaiaorbit.util.coord.IBodyCoordinates				
-					"impl" : "gaia.cu9.ari.gaiaorbit.util.coord.vsop87.NeptuneVSOP87"
+						"impl" : "gaia.cu9.ari.gaiaorbit.util.coord.vsop87.NeptuneVSOP87",
+						"orbitname" : "Neptune orbit"
 					},	
 		
 	"rotation" 		: {
@@ -419,7 +427,8 @@
 
 	"coordinates" : {
 				// This must implement gaia.cu9.ari.gaiaorbit.util.coord.IBodyCoordinates				
-				"impl" : "gaia.cu9.ari.gaiaorbit.util.coord.PlutoCoordinates"
+						"impl" : "gaia.cu9.ari.gaiaorbit.util.coord.PlutoCoordinates",
+						"orbitname" : "Pluto orbit"
 				},		
 			
 	"rotation" 		: {

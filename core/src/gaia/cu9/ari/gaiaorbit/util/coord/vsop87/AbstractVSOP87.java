@@ -3,17 +3,18 @@ package gaia.cu9.ari.gaiaorbit.util.coord.vsop87;
 import java.util.Date;
 
 import gaia.cu9.ari.gaiaorbit.util.Constants;
+import gaia.cu9.ari.gaiaorbit.util.coord.AbstractOrbitCoordinates;
 import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
 import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
-import gaia.cu9.ari.gaiaorbit.util.coord.IBodyCoordinates;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
-public abstract class AbstractVSOP87 implements iVSOP87, IBodyCoordinates {
+public abstract class AbstractVSOP87 extends AbstractOrbitCoordinates implements iVSOP87 {
 
     protected boolean highAccuracy;
 
     @Override
     public void doneLoading(Object... params) {
+        super.doneLoading(params);
     }
 
     @Override
@@ -30,7 +31,6 @@ public abstract class AbstractVSOP87 implements iVSOP87, IBodyCoordinates {
 
         out.set(L, B, R * Constants.KM_TO_U);
         return out;
-
     }
 
     @Override

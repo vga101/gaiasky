@@ -12,9 +12,10 @@ import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
  * @author Toni Sagrista
  *
  */
-public class MoonAACoordinates implements IBodyCoordinates {
+public class MoonAACoordinates extends AbstractOrbitCoordinates {
     @Override
     public void doneLoading(Object... params) {
+        super.doneLoading(params);
     }
 
     @Override

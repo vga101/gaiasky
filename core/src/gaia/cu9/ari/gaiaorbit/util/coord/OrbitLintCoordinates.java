@@ -4,17 +4,12 @@ import java.util.Date;
 
 import gaia.cu9.ari.gaiaorbit.data.orbit.OrbitData;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
-import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
-import gaia.cu9.ari.gaiaorbit.scenegraph.Orbit;
-import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.OrbitComponent;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
-public class OrbitLintCoordinates implements IBodyCoordinates {
-    String orbitname;
-    Orbit orbit;
+public class OrbitLintCoordinates extends AbstractOrbitCoordinates {
     OrbitComponent orbitalParams;
     OrbitData data;
     Matrix4d transf;
@@ -25,9 +20,8 @@ public class OrbitLintCoordinates implements IBodyCoordinates {
         if (params.length == 0) {
             Logger.error(new RuntimeException("OrbitLintCoordinates need the scene graph"));
         } else {
+            super.doneLoading(params);
             transf = new Matrix4d();
-            SceneGraphNode sgn = ((ISceneGraph) params[0]).getNode(orbitname);
-            orbit = (Orbit) sgn;
             orbitalParams = orbit.oc;
             data = orbit.orbitData;
         }
@@ -85,10 +79,6 @@ public class OrbitLintCoordinates implements IBodyCoordinates {
 
         out.mul(transf);
         return out;
-    }
-
-    public void setOrbitname(String orbitname) {
-        this.orbitname = orbitname;
     }
 
 }
