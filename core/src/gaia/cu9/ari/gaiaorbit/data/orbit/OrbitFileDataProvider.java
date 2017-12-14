@@ -10,6 +10,7 @@ import gaia.cu9.ari.gaiaorbit.util.Logger;
 
 /**
  * Reads an orbit file into an OrbitData object.
+ * 
  * @author Toni Sagrista
  *
  */
@@ -23,7 +24,7 @@ public class OrbitFileDataProvider implements IOrbitDataProvider {
             FileHandle f = Gdx.files.internal(file);
             data = odl.load(f.read());
             if (parameter.multiplier != 1f) {
-                int n = data.x.size();
+                int n = data.x.size;
                 for (int i = 0; i < n; i++) {
                     data.x.set(i, data.x.get(i) * parameter.multiplier);
                     data.y.set(i, data.y.get(i) * parameter.multiplier);

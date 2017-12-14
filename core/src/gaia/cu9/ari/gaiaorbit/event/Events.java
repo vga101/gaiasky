@@ -15,7 +15,8 @@ public enum Events {
     /**
      * Issues a change time command, contains the Date object with the new time
      **/
-    TIME_CHANGE_CMD, GAIA_POSITION,
+    TIME_CHANGE_CMD,
+    GAIA_POSITION,
 
     /** Dataset has been choosen, loading can start **/
     LOAD_DATA_CMD,
@@ -299,13 +300,19 @@ public enum Events {
      * Contains an optional boolean indicating whether debug info should be
      * shown or not. Otherwise, it toggles its state
      **/
-    SHOW_DEBUG_CMD, SHOW_ABOUT_ACTION, SHOW_TUTORIAL_ACTION, SHOW_PREFERENCES_ACTION, SHOW_RUNSCRIPT_ACTION, SHOW_LAND_AT_LOCATION_ACTION,
+    SHOW_DEBUG_CMD,
+    SHOW_ABOUT_ACTION,
+    SHOW_TUTORIAL_ACTION,
+    SHOW_PREFERENCES_ACTION,
+    SHOW_RUNSCRIPT_ACTION,
+    SHOW_LAND_AT_LOCATION_ACTION,
     /** Shows the camera path file selector, contains the stage and the skin **/
     SHOW_PLAYCAMERA_ACTION,
     /** Informs about the number of running scripts **/
     NUM_RUNNING_SCRIPTS,
     /** Cancels the next script **/
-    CANCEL_SCRIPT_CMD, SHOW_SEARCH_ACTION,
+    CANCEL_SCRIPT_CMD,
+    SHOW_SEARCH_ACTION,
     /**
      * This event is issued when the screen has been resized. It contains the
      * new width and height
@@ -334,7 +341,10 @@ public enum Events {
     /** Reset star point size to original value **/
     STAR_POINT_SIZE_RESET_CMD,
 
-    /** Minimum star opacity **/
+    /**
+     * Minimum star opacity. Contains the opacity in [0..100] and a boolean
+     * whether it comes from the interface
+     **/
     STAR_MIN_OPACITY_CMD,
 
     /**
@@ -349,7 +359,10 @@ public enum Events {
      * boolean indicating whether this comes from the interface
      **/
     CUBEMAP360_CMD,
-    /** Sets the resolution of the cubemap, contains an integer in [20..15000] with the resolution. **/
+    /**
+     * Sets the resolution of the cubemap, contains an integer in [20..15000]
+     * with the resolution.
+     **/
     CUBEMAP_RESOLUTION_CMD,
     /**
      * Enables and disables the planetarium mode. Contains a boolean with the
@@ -506,7 +519,10 @@ public enum Events {
     /** Sets the limit magnitude. Contains a double with the new magnitude **/
     LIMIT_MAG_CMD,
     /** Debug info **/
-    DEBUG1, DEBUG2, DEBUG3, DEBUG4,
+    DEBUG1,
+    DEBUG2,
+    DEBUG3,
+    DEBUG4,
     /**
      * Notifies from a java exception, it sends the Throwable and an optional
      * tag.

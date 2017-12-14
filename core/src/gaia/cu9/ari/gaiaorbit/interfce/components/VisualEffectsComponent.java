@@ -87,8 +87,8 @@ public class VisualEffectsComponent extends GuiComponent implements IObserver {
         starOpacity.setWidth(sliderWidth);
         starOpacity.setValue(MathUtilsd.lint(GlobalConf.scene.POINT_ALPHA_MIN, Constants.MIN_STAR_MIN_OPACITY, Constants.MAX_STAR_MIN_OPACITY, Constants.MIN_SLIDER, Constants.MAX_SLIDER));
         starOpacity.addListener(event -> {
-            if (event instanceof ChangeEvent) {
-                EventManager.instance.post(Events.STAR_MIN_OPACITY_CMD, MathUtilsd.lint(starOpacity.getValue(), Constants.MIN_SLIDER, Constants.MAX_SLIDER, Constants.MIN_STAR_MIN_OPACITY, Constants.MAX_STAR_MIN_OPACITY));
+            if (event instanceof ChangeEvent && hackProgrammaticChangeEvents) {
+                EventManager.instance.post(Events.STAR_MIN_OPACITY_CMD, MathUtilsd.lint(starOpacity.getValue(), Constants.MIN_SLIDER, Constants.MAX_SLIDER, Constants.MIN_STAR_MIN_OPACITY, Constants.MAX_STAR_MIN_OPACITY), true);
                 opacity.setText(Integer.toString((int) starOpacity.getValue()));
                 return true;
             }
@@ -252,7 +252,7 @@ public class VisualEffectsComponent extends GuiComponent implements IObserver {
 
         component = lightingGroup;
 
-        EventManager.instance.subscribe(this, Events.STAR_POINT_SIZE_CMD, Events.STAR_BRIGHTNESS_CMD, Events.BRIGHTNESS_CMD, Events.CONTRAST_CMD, Events.MOTION_BLUR_CMD, Events.LENS_FLARE_CMD, Events.LIGHT_SCATTERING_CMD, Events.BLOOM_CMD);
+        EventManager.instance.subscribe(this, Events.STAR_POINT_SIZE_CMD, Events.STAR_BRIGHTNESS_CMD, Events.BRIGHTNESS_CMD, Events.CONTRAST_CMD, Events.MOTION_BLUR_CMD, Events.LENS_FLARE_CMD, Events.LIGHT_SCATTERING_CMD, Events.BLOOM_CMD, Events.STAR_MIN_OPACITY_CMD);
     }
 
     @Override
@@ -274,6 +274,16 @@ public class VisualEffectsComponent extends GuiComponent implements IObserver {
                 hackProgrammaticChangeEvents = false;
                 starBrightness.setValue(sliderValue);
                 starbrightnessl.setText(Integer.toString((int) sliderValue));
+                hackProgrammaticChangeEvents = true;
+            }
+            break;
+        case STAR_MIN_OPACITY_CMD:
+            if (!(boolean) data[1]) {
+                Float minopacity = (Float) data[0];
+                float sliderValue = MathUtilsd.lint(minopacity, Constants.MIN_STAR_MIN_OPACITY, Constants.MAX_STAR_MIN_OPACITY, Constants.MIN_SLIDER, Constants.MAX_SLIDER);
+                hackProgrammaticChangeEvents = false;
+                starOpacity.setValue(sliderValue);
+                opacity.setText(Integer.toString((int) sliderValue));
                 hackProgrammaticChangeEvents = true;
             }
             break;

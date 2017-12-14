@@ -1,25 +1,24 @@
 package gaia.cu9.ari.gaiaorbit.data.orbit;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Array;
 
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
 public class OrbitData {
     // Values of x, y, z in world coordinates
-    public List<Double> x, y, z;
-    public List<Date> time;
+    public Array<Double> x, y, z;
+    public Array<Date> time;
 
     private Vector3d v0, v1;
 
     public OrbitData() {
-        x = new ArrayList<Double>();
-        y = new ArrayList<Double>();
-        z = new ArrayList<Double>();
-        time = new ArrayList<Date>();
+        x = new Array<Double>();
+        y = new Array<Double>();
+        z = new Array<Double>();
+        time = new Array<Date>();
 
         v0 = new Vector3d();
         v1 = new Vector3d();
@@ -37,7 +36,7 @@ public class OrbitData {
     }
 
     public int getNumPoints() {
-        return x.size();
+        return x.size;
     }
 
     public double getX(int index) {
@@ -81,7 +80,7 @@ public class OrbitData {
         // Data is sorted
         int idx = binarySearch(time, date);
 
-        if (idx < 0 || idx >= time.size()) {
+        if (idx < 0 || idx >= time.size) {
             // No data for this time
             return false;
         }
@@ -101,16 +100,16 @@ public class OrbitData {
         return true;
     }
 
-    private int binarySearch(List<Date> times, Date elem) {
+    private int binarySearch(Array<Date> times, Date elem) {
         long time = elem.getTime();
-        if (time >= times.get(0).getTime() && time <= times.get(times.size() - 1).getTime()) {
-            return binarySearch(times, time, 0, times.size() - 1);
+        if (time >= times.get(0).getTime() && time <= times.get(times.size - 1).getTime()) {
+            return binarySearch(times, time, 0, times.size - 1);
         } else {
             return -1;
         }
     }
 
-    private int binarySearch(List<Date> times, long time, int i0, int i1) {
+    private int binarySearch(Array<Date> times, long time, int i0, int i1) {
         if (i0 > i1) {
             return -1;
         } else if (i0 == i1) {

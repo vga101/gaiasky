@@ -573,6 +573,19 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
     }
 
     @Override
+    public float getMinStarOpacity() {
+        return MathUtilsd.lint(GlobalConf.scene.POINT_ALPHA_MIN, Constants.MIN_STAR_MIN_OPACITY, Constants.MAX_STAR_MIN_OPACITY, Constants.MIN_SLIDER, Constants.MAX_SLIDER);
+    }
+
+    @Override
+    public void setMinStarOpacity(float opacity) {
+        assert opacity >= Constants.MIN_SLIDER && opacity <= Constants.MAX_SLIDER : "Opacity value must be between 0 and 100";
+        Gdx.app.postRunnable(() -> {
+            EventManager.instance.post(Events.STAR_MIN_OPACITY_CMD, MathUtilsd.lint(opacity, Constants.MIN_SLIDER, Constants.MAX_SLIDER, Constants.MIN_STAR_MIN_OPACITY, Constants.MAX_STAR_MIN_OPACITY), false);
+        });
+    }
+
+    @Override
     public void configureFrameOutput(int width, int height, int fps, String folder, String namePrefix) {
         assert width > 0 : "Width must be positive";
         assert height > 0 : "Height must be positive";
@@ -1053,8 +1066,7 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
     }
 
     @Override
-    public void displayTextObject(final int id, final String text, final float x, final float y, final float maxWidth, final float maxHeight, final float r, final float g, final float b,
-            final float a, final float fontSize) {
+    public void displayTextObject(final int id, final String text, final float x, final float y, final float maxWidth, final float maxHeight, final float r, final float g, final float b, final float a, final float fontSize) {
         Gdx.app.postRunnable(() -> {
             em.post(Events.ADD_CUSTOM_TEXT, id, text, x, y, maxWidth, maxHeight, r, g, b, a, fontSize);
         });

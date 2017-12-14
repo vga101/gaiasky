@@ -693,6 +693,21 @@ public interface IScriptingInterface {
     public void setStarSize(float size);
 
     /**
+     * Gets the minimum star opacity.
+     * 
+     * @return The minimum opacity value, between 0 and 100.
+     */
+    public float getMinStarOpacity();
+
+    /**
+     * Sets the minimum star opacity.
+     * 
+     * @param opacity
+     *            The minimum opacity value, between 0 and 100.
+     */
+    public void setMinStarOpacity(float opacity);
+
+    /**
      * Configures the frame output system, setting the resolution of the images,
      * the target frames per second, the output folder and the image name
      * prefix.
@@ -1151,11 +1166,15 @@ public interface IScriptingInterface {
     public void set360Mode(boolean state);
 
     /**
-     * Sets the resolution (width and height are the same) of each side of the frame buffers
-     * used to capture each of the 6 directions that go into the cubemap to construct the 
-     * equirectangular image for the 360 mode. This should roughly be 1/3 of the output resolution
-     * at which the 360 mode are to be captured (or screen resolution). 
-     * @param resolution The resolution of each of the sides of the cubemap for the 360 mode.
+     * Sets the resolution (width and height are the same) of each side of the
+     * frame buffers used to capture each of the 6 directions that go into the
+     * cubemap to construct the equirectangular image for the 360 mode. This
+     * should roughly be 1/3 of the output resolution at which the 360 mode are
+     * to be captured (or screen resolution).
+     * 
+     * @param resolution
+     *            The resolution of each of the sides of the cubemap for the 360
+     *            mode.
      */
     public void setCubemapResolution(int resolution);
 
