@@ -12,8 +12,11 @@ import gaia.cu9.ari.gaiaorbit.util.format.IDateFormat;
 public class OrbitDataWriter {
     /**
      * Dumps the current orbit data to the given file
-     * @param filePath The path to the file to write
-     * @param data The OrbitData instance
+     * 
+     * @param filePath
+     *            The path to the file to write
+     * @param data
+     *            The OrbitData instance
      * @throws IOException
      */
     public static void writeOrbitData(String filePath, OrbitData data) throws IOException {
@@ -34,7 +37,7 @@ public class OrbitDataWriter {
         BufferedWriter bw = new BufferedWriter(fw);
         bw.write("#time X Y Z");
         bw.newLine();
-        int n = data.x.size();
+        int n = data.x.size;
 
         for (int i = 0; i < n; i++) {
             bw.write(df.format(data.time.get(i)) + " " + (data.x.get(i) * Constants.U_TO_KM) + " " + (data.y.get(i) * Constants.U_TO_KM) + " " + (data.z.get(i) * Constants.U_TO_KM));
