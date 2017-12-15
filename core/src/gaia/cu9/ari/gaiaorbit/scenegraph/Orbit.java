@@ -121,7 +121,7 @@ public class Orbit extends LineObject {
                     this.alpha = cc[3];
                 }
 
-                RenderGroup rg = GlobalConf.scene.LINE_RENDERER == 0 ? RenderGroup.LINE_GPU : RenderGroup.LINE;
+                RenderGroup rg = GlobalConf.scene.ORBIT_RENDERER == 1 ? RenderGroup.LINE_GPU : RenderGroup.LINE;
 
                 if (body == null) {
                     // No body, always render

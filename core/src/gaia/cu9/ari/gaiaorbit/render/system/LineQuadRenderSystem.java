@@ -1,7 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.render.system;
 
-import java.util.Comparator;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Mesh;
@@ -20,10 +18,6 @@ import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
 public class LineQuadRenderSystem extends LineRenderSystem {
-    private static final int MAX_VERTICES = 5000000;
-    private static final int INI_DPOOL_SIZE = 5000;
-    private static final int MAX_DPOOL_SIZE = 100000;
-
     private MeshDataExt currext;
     private Array<double[]> provisionalLines;
     private LineArraySorter sorter;
@@ -47,9 +41,9 @@ public class LineQuadRenderSystem extends LineRenderSystem {
 
     public LineQuadRenderSystem(RenderGroup rg, int priority, float[] alphas) {
         super(rg, priority, alphas);
-        dpool = new DPool(INI_DPOOL_SIZE, MAX_DPOOL_SIZE);
+        dpool = new DPool(INI_DPOOL_SIZE, MAX_DPOOL_SIZE, 14);
         provisionalLines = new Array<double[]>();
-        sorter = new LineArraySorter();
+        sorter = new LineArraySorter(12);
         glType = GL20.GL_TRIANGLES;
         line = new Vector3d();
         camdir0 = new Vector3d();
@@ -264,34 +258,6 @@ public class LineQuadRenderSystem extends LineRenderSystem {
         for (int i = 0; i < n; i++)
             dpool.free(provisionalLines.get(i));
         provisionalLines.clear();
-    }
-
-    private class LineArraySorter implements Comparator<double[]> {
-
-        @Override
-        public int compare(double[] o1, double[] o2) {
-            double f = o1[12] - o2[12];
-            if (f == 0)
-                return 0;
-            else if (f < 0)
-                return 1;
-            else
-                return -1;
-        }
-
-    }
-
-    private class DPool extends Pool<double[]> {
-
-        public DPool(int initialCapacity, int max) {
-            super(initialCapacity, max);
-        }
-
-        @Override
-        protected double[] newObject() {
-            return new double[14];
-        }
-
     }
 
 }

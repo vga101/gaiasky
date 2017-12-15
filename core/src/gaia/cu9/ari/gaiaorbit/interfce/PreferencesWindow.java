@@ -94,7 +94,7 @@ public class PreferencesWindow extends GenericDialog {
 
     private CheckBox fullscreen, windowed, vsync, multithreadCb, lodFadeCb, cbAutoCamrec, tgas, real, nsl, report, inverty, highAccuracyPositions, shadowsCb, pointerCoords;
     private OwnSelectBox<DisplayMode> fullscreenResolutions;
-    private OwnSelectBox<ComboBoxBean> gquality, aa, lineRenderer, numThreads, screenshotMode, frameoutputMode, nshadows;
+    private OwnSelectBox<ComboBoxBean> gquality, aa, orbitRenderer, lineRenderer, numThreads, screenshotMode, frameoutputMode, nshadows;
     private OwnSelectBox<LangComboBoxBean> lang;
     private OwnSelectBox<String> theme;
     private OwnSelectBox<FileComboBoxBean> controllerMappings;
@@ -314,6 +314,14 @@ public class PreferencesWindow extends GenericDialog {
         OwnImageButton aaTooltip = new OwnImageButton(skin, "tooltip");
         aaTooltip.addListener(new TextTooltip(txt("gui.aa.info"), skin));
 
+        // ORBITS
+        OwnLabel orbitsLabel = new OwnLabel(txt("gui.orbitrenderer"), skin);
+        ComboBoxBean[] orbitItems = new ComboBoxBean[] { new ComboBoxBean(txt("gui.orbitrenderer.line"), 0), new ComboBoxBean(txt("gui.orbitrenderer.gpu"), 1) };
+        orbitRenderer = new OwnSelectBox<ComboBoxBean>(skin);
+        orbitRenderer.setItems(orbitItems);
+        orbitRenderer.setWidth(textwidth * 3f);
+        orbitRenderer.setSelected(orbitItems[GlobalConf.scene.ORBIT_RENDERER]);
+
         // LINE RENDERER
         OwnLabel lrLabel = new OwnLabel(txt("gui.linerenderer"), skin);
         ComboBoxBean[] lineRenderers = new ComboBoxBean[] { new ComboBoxBean(txt("gui.linerenderer.normal"), 0), new ComboBoxBean(txt("gui.linerenderer.quad"), 1) };
@@ -323,7 +331,7 @@ public class PreferencesWindow extends GenericDialog {
         lineRenderer.setSelected(lineRenderers[GlobalConf.scene.LINE_RENDERER]);
 
         // LABELS
-        labels.addAll(gqualityLabel, aaLabel, lrLabel);
+        labels.addAll(gqualityLabel, aaLabel, orbitsLabel, lrLabel);
 
         graphics.add(gqualityLabel).left().padRight(pad * 4).padBottom(pad);
         graphics.add(gquality).left().padRight(pad * 2).padBottom(pad);
@@ -333,6 +341,8 @@ public class PreferencesWindow extends GenericDialog {
         graphics.add(aaLabel).left().padRight(pad * 4).padBottom(pad);
         graphics.add(aa).left().padRight(pad * 2).padBottom(pad);
         graphics.add(aaTooltip).left().padBottom(pad).row();
+        graphics.add(orbitsLabel).left().padRight(pad * 4).padBottom(pad);
+        graphics.add(orbitRenderer).colspan(2).left().padBottom(pad).row();
         graphics.add(lrLabel).left().padRight(pad * 4).padBottom(pad);
         graphics.add(lineRenderer).colspan(2).left().padBottom(pad).row();
 
@@ -558,8 +568,7 @@ public class PreferencesWindow extends GenericDialog {
         // Draw distance
         OwnLabel ddLabel = new OwnLabel(txt("gui.lod.thresholds"), skin);
         lodTransitions = new OwnSlider(Constants.MIN_SLIDER, Constants.MAX_SLIDER, 0.1f, false, skin);
-        lodTransitions.setValue(Math.round(MathUtilsd.lint(GlobalConf.scene.OCTANT_THRESHOLD_0
-                * MathUtilsd.radDeg, Constants.MIN_LOD_TRANS_ANGLE_DEG, Constants.MAX_LOD_TRANS_ANGLE_DEG, Constants.MIN_SLIDER, Constants.MAX_SLIDER)));
+        lodTransitions.setValue(Math.round(MathUtilsd.lint(GlobalConf.scene.OCTANT_THRESHOLD_0 * MathUtilsd.radDeg, Constants.MIN_LOD_TRANS_ANGLE_DEG, Constants.MAX_LOD_TRANS_ANGLE_DEG, Constants.MIN_SLIDER, Constants.MAX_SLIDER)));
 
         final OwnLabel lodValueLabel = new OwnLabel(nf3.format(GlobalConf.scene.OCTANT_THRESHOLD_0 * MathUtilsd.radDeg), skin);
 
@@ -1322,11 +1331,7 @@ public class PreferencesWindow extends GenericDialog {
         // Add all properties to GlobalConf.instance
 
         final boolean reloadFullscreenMode = fullscreen.isChecked() != GlobalConf.screen.FULLSCREEN;
-        final boolean reloadScreenMode = reloadFullscreenMode
-                || (GlobalConf.screen.FULLSCREEN
-                        && (GlobalConf.screen.FULLSCREEN_WIDTH != fullscreenResolutions.getSelected().width || GlobalConf.screen.FULLSCREEN_HEIGHT != fullscreenResolutions.getSelected().height))
-                || (!GlobalConf.screen.FULLSCREEN && (GlobalConf.screen.SCREEN_WIDTH != Integer.parseInt(widthField.getText()))
-                        || GlobalConf.screen.SCREEN_HEIGHT != Integer.parseInt(heightField.getText()));
+        final boolean reloadScreenMode = reloadFullscreenMode || (GlobalConf.screen.FULLSCREEN && (GlobalConf.screen.FULLSCREEN_WIDTH != fullscreenResolutions.getSelected().width || GlobalConf.screen.FULLSCREEN_HEIGHT != fullscreenResolutions.getSelected().height)) || (!GlobalConf.screen.FULLSCREEN && (GlobalConf.screen.SCREEN_WIDTH != Integer.parseInt(widthField.getText())) || GlobalConf.screen.SCREEN_HEIGHT != Integer.parseInt(heightField.getText()));
 
         GlobalConf.screen.FULLSCREEN = fullscreen.isChecked();
 
@@ -1347,6 +1352,9 @@ public class PreferencesWindow extends GenericDialog {
         GlobalConf.postprocess.POSTPROCESS_ANTIALIAS = bean.value;
         EventManager.instance.post(Events.ANTIALIASING_CMD, bean.value);
         GlobalConf.screen.VSYNC = vsync.isChecked();
+
+        // Orbit renderer
+        GlobalConf.scene.ORBIT_RENDERER = orbitRenderer.getSelected().value;
 
         // Line renderer
         boolean reloadLineRenderer = GlobalConf.scene.LINE_RENDERER != lineRenderer.getSelected().value;
@@ -1379,8 +1387,7 @@ public class PreferencesWindow extends GenericDialog {
         GlobalConf.performance.MULTITHREADING = multithreadCb.isChecked();
 
         GlobalConf.scene.OCTREE_PARTICLE_FADE = lodFadeCb.isChecked();
-        GlobalConf.scene.OCTANT_THRESHOLD_0 = MathUtilsd.lint(lodTransitions.getValue(), Constants.MIN_SLIDER, Constants.MAX_SLIDER, Constants.MIN_LOD_TRANS_ANGLE_DEG, Constants.MAX_LOD_TRANS_ANGLE_DEG)
-                * (float) MathUtilsd.degRad;
+        GlobalConf.scene.OCTANT_THRESHOLD_0 = MathUtilsd.lint(lodTransitions.getValue(), Constants.MIN_SLIDER, Constants.MAX_SLIDER, Constants.MIN_LOD_TRANS_ANGLE_DEG, Constants.MAX_LOD_TRANS_ANGLE_DEG) * (float) MathUtilsd.degRad;
         // Here we use a 0.4 rad between the thresholds
         GlobalConf.scene.OCTANT_THRESHOLD_1 = GlobalConf.scene.OCTREE_PARTICLE_FADE ? GlobalConf.scene.OCTANT_THRESHOLD_0 + 0.4f : GlobalConf.scene.OCTANT_THRESHOLD_0;
 

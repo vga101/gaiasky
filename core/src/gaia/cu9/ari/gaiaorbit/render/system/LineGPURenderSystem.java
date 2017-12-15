@@ -122,8 +122,8 @@ public class LineGPURenderSystem extends ImmediateRenderSystem {
             // Enable GL_SMOOTH_LINE_WIDTH_GRANULARITY
             Gdx.gl20.glEnable(0xB23);
         }
+        Gdx.gl20.glEnable(GL20.GL_DEPTH_TEST);
         Gdx.gl20.glEnable(GL20.GL_BLEND);
-        // Additive blending
         Gdx.gl20.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
         // Line width
         Gdx.gl.glLineWidth(1 * GlobalConf.SCALE_FACTOR);
@@ -174,8 +174,6 @@ public class LineGPURenderSystem extends ImmediateRenderSystem {
 
             shaderProgram.end();
         }
-        // Restore
-        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
     }
 
     protected VertexAttribute[] buildVertexAttributes() {
