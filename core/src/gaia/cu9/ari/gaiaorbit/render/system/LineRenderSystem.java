@@ -104,12 +104,6 @@ public class LineRenderSystem extends ImmediateRenderSystem {
             Gdx.gl20.glEnable(0xB20);
             // Enable GL_LINE_WIDTH
             Gdx.gl20.glEnable(0xB21);
-            // Enable GL_ALIASED_LINE_WIDTH_RANGE
-            Gdx.gl20.glEnable(0x846E);
-            // Enable GL_SMOOTH_LINE_WIDTH_RANGE
-            Gdx.gl20.glEnable(0xB22);
-            // Enable GL_SMOOTH_LINE_WIDTH_GRANULARITY
-            Gdx.gl20.glEnable(0xB23);
         }
         Gdx.gl20.glEnable(GL20.GL_DEPTH_TEST);
         Gdx.gl20.glEnable(GL20.GL_BLEND);

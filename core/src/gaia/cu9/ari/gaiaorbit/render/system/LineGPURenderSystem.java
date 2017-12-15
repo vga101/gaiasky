@@ -109,24 +109,17 @@ public class LineGPURenderSystem extends ImmediateRenderSystem {
 
     @Override
     public void renderStud(Array<IRenderable> renderables, ICamera camera, double t) {
-        // Smooth lines
         if (Gdx.app.getType() == ApplicationType.Desktop) {
             // Enable GL_LINE_SMOOTH
             Gdx.gl20.glEnable(0xB20);
             // Enable GL_LINE_WIDTH
             Gdx.gl20.glEnable(0xB21);
-            // Enable GL_ALIASED_LINE_WIDTH_RANGE
-            Gdx.gl20.glEnable(0x846E);
-            // Enable GL_SMOOTH_LINE_WIDTH_RANGE
-            Gdx.gl20.glEnable(0xB22);
-            // Enable GL_SMOOTH_LINE_WIDTH_GRANULARITY
-            Gdx.gl20.glEnable(0xB23);
         }
         Gdx.gl20.glEnable(GL20.GL_DEPTH_TEST);
         Gdx.gl20.glEnable(GL20.GL_BLEND);
         Gdx.gl20.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
-        // Line width
-        Gdx.gl.glLineWidth(1 * GlobalConf.SCALE_FACTOR);
+        // Regular
+        Gdx.gl.glLineWidth(1f * GlobalConf.SCALE_FACTOR);
 
         this.camera = camera;
         int size = renderables.size;
@@ -142,11 +135,11 @@ public class LineGPURenderSystem extends ImmediateRenderSystem {
                 renderable.offset = addMeshData(npoints);
                 float[] cc = renderable.cc;
                 for (int point_i = 0; point_i < npoints; point_i++) {
-                    color(cc[0], cc[1], cc[2], cc[3]);
+                    color(cc[0], cc[1], cc[2], 1.0);
                     vertex((float) od.getX(point_i), (float) od.getY(point_i), (float) od.getZ(point_i));
                 }
                 // Close loop
-                color(cc[0], cc[1], cc[2], cc[3]);
+                color(cc[0], cc[1], cc[2], 1.0);
                 vertex((float) od.getX(0), (float) od.getY(0), (float) od.getZ(0));
 
                 renderable.count = npoints * curr.vertexSize;
