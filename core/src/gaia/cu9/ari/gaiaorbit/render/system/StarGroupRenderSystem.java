@@ -125,6 +125,16 @@ public class StarGroupRenderSystem extends ImmediateRenderSystem implements IObs
 
     @Override
     public void renderStud(Array<IRenderable> renderables, ICamera camera, double t) {
+        if (Gdx.app.getType() == ApplicationType.Desktop) {
+            // Enable gl_PointCoord
+            Gdx.gl20.glEnable(34913);
+            // Enable point sizes
+            Gdx.gl20.glEnable(0x8642);
+        }
+
+        // Additive blending
+        Gdx.gl20.glBlendFunc(GL20.GL_ONE, GL20.GL_ONE);
+
         renderables.sort(comp);
         if (renderables.size > 0) {
             for (IRenderable renderable : renderables) {
@@ -167,15 +177,6 @@ public class StarGroupRenderSystem extends ImmediateRenderSystem implements IObs
                  */
                 curr = meshes[starGroup.offset];
 
-                if (Gdx.app.getType() == ApplicationType.Desktop) {
-                    // Enable gl_PointCoord
-                    Gdx.gl20.glEnable(34913);
-                    // Enable point sizes
-                    Gdx.gl20.glEnable(0x8642);
-                }
-
-                // Additive blending
-                Gdx.gl20.glBlendFunc(GL20.GL_ONE, GL20.GL_ONE);
                 int fovmode = camera.getMode().getGaiaFovMode();
 
                 shaderProgram.begin();
@@ -214,11 +215,10 @@ public class StarGroupRenderSystem extends ImmediateRenderSystem implements IObs
                 curr.mesh.render(shaderProgram, ShapeType.Point.getGlType());
                 shaderProgram.end();
 
-                // Restore
-                Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
             }
         }
-
+        // Restore
+        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
     }
 
     protected VertexAttribute[] buildVertexAttributes() {

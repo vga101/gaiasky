@@ -8,5 +8,5 @@ uniform float u_alpha;
 varying vec4 v_col;
 void main() {
     float alpha = v_col.a * u_alpha;
-    gl_FragColor = vec4(alpha * (v_col.rgb + pow(alpha, 4.0) * 2.0), alpha);
+    gl_FragColor = vec4(clamp(v_col.rgb + vec3(0.5), 0.0, 1.0), alpha);
 }

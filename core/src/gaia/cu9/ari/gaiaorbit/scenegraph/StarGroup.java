@@ -195,15 +195,13 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
     private static final double CAM_DX_TH = 100 * Constants.AU_TO_U;
     // Min update time
     private static final double MIN_UPDATE_TIME_MS = 50;
-    // Fade in time to prevent pop-ins
-    private static final long FADE_IN_MS = 1000;
     // Sequence id
     private static long idseq = 0;
     /** Star model **/
     private static ModelComponent mc;
     // Model transfomr
     private static Matrix4 modelTransform;
-    // Width of lines for stars with/without radial veloctiy
+    // Width of lines for stars with/without radial velocity
     private static double radVelLineWidth = 0.002;
     private static double noRadVelLineWidth = 0.0006;
 

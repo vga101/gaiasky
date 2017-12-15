@@ -16,4 +16,5 @@ void main() {
    vec4 pos = vec4(a_position.xyz - u_parentPos, a_position.w);
    gl_Position = u_projModelView * pos;
    v_col = a_color;
+   //v_col.a *= 0.6;
 }

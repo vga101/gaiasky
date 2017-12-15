@@ -15,6 +15,7 @@ import gaia.cu9.ari.gaiaorbit.data.orbit.OrbitData;
 import gaia.cu9.ari.gaiaorbit.render.system.LineRenderSystem;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.OrbitComponent;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
@@ -120,14 +121,16 @@ public class Orbit extends LineObject {
                     this.alpha = cc[3];
                 }
 
+                RenderGroup rg = GlobalConf.scene.LINE_RENDERER == 0 ? RenderGroup.LINE_GPU : RenderGroup.LINE;
+
                 if (body == null) {
                     // No body, always render
-                    addToRender(this, RenderGroup.LINE);
+                    addToRender(this, rg);
                 } else if (body != null && body.distToCamera > distDown) {
                     // Body, disappear slowly
                     if (body.distToCamera < distUp)
                         this.alpha *= MathUtilsd.lint(body.distToCamera, distDown, distUp, 0, 1);
-                    addToRender(this, RenderGroup.LINE);
+                    addToRender(this, rg);
                 }
             }
         }

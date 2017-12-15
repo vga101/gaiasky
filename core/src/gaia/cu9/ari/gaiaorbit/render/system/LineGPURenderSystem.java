@@ -20,6 +20,12 @@ import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
+/**
+ * Sends all the lines to the GPU at once in a VBO.
+ * 
+ * @author tsagrista
+ *
+ */
 public class LineGPURenderSystem extends ImmediateRenderSystem {
     protected ICamera camera;
     protected int glType;
@@ -103,6 +109,25 @@ public class LineGPURenderSystem extends ImmediateRenderSystem {
 
     @Override
     public void renderStud(Array<IRenderable> renderables, ICamera camera, double t) {
+        // Smooth lines
+        if (Gdx.app.getType() == ApplicationType.Desktop) {
+            // Enable GL_LINE_SMOOTH
+            Gdx.gl20.glEnable(0xB20);
+            // Enable GL_LINE_WIDTH
+            Gdx.gl20.glEnable(0xB21);
+            // Enable GL_ALIASED_LINE_WIDTH_RANGE
+            Gdx.gl20.glEnable(0x846E);
+            // Enable GL_SMOOTH_LINE_WIDTH_RANGE
+            Gdx.gl20.glEnable(0xB22);
+            // Enable GL_SMOOTH_LINE_WIDTH_GRANULARITY
+            Gdx.gl20.glEnable(0xB23);
+        }
+        Gdx.gl20.glEnable(GL20.GL_BLEND);
+        // Additive blending
+        Gdx.gl20.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+        // Line width
+        Gdx.gl.glLineWidth(1 * GlobalConf.SCALE_FACTOR);
+
         this.camera = camera;
         int size = renderables.size;
 
@@ -133,24 +158,6 @@ public class LineGPURenderSystem extends ImmediateRenderSystem {
              */
             curr = meshes[renderable.offset];
 
-            // Smooth lines
-            if (Gdx.app.getType() == ApplicationType.Desktop) {
-                // Enable GL_LINE_SMOOTH
-                Gdx.gl20.glEnable(0xB20);
-                // Enable GL_LINE_WIDTH
-                Gdx.gl20.glEnable(0xB21);
-                // Enable GL_ALIASED_LINE_WIDTH_RANGE
-                Gdx.gl20.glEnable(0x846E);
-                // Enable GL_SMOOTH_LINE_WIDTH_RANGE
-                Gdx.gl20.glEnable(0xB22);
-                // Enable GL_SMOOTH_LINE_WIDTH_GRANULARITY
-                Gdx.gl20.glEnable(0xB23);
-            }
-            // Additive blending
-            Gdx.gl20.glBlendFunc(GL20.GL_ONE, GL20.GL_ONE);
-            // Line width
-            Gdx.gl.glLineWidth(0.5f * GlobalConf.SCALE_FACTOR);
-
             shaderProgram.begin();
 
             shaderProgram.setUniformMatrix("u_projModelView", modelView.set(camera.getCamera().combined).mul(renderable.localTransform));
@@ -166,10 +173,9 @@ public class LineGPURenderSystem extends ImmediateRenderSystem {
             curr.mesh.render(shaderProgram, glType);
 
             shaderProgram.end();
-
-            // Restore
-            Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
         }
+        // Restore
+        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
     }
 
     protected VertexAttribute[] buildVertexAttributes() {

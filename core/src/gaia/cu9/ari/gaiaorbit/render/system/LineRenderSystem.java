@@ -19,7 +19,6 @@ import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 
 public class LineRenderSystem extends ImmediateRenderSystem {
-    private final static boolean OUTLINES = false;
     protected ICamera camera;
     protected int glType;
 
@@ -53,19 +52,6 @@ public class LineRenderSystem extends ImmediateRenderSystem {
         curr.vertices = new float[maxVertices * (curr.mesh.getVertexAttributes().vertexSize / 4)];
         curr.vertexSize = curr.mesh.getVertexAttributes().vertexSize / 4;
         curr.colorOffset = curr.mesh.getVertexAttribute(Usage.ColorPacked) != null ? curr.mesh.getVertexAttribute(Usage.ColorPacked).offset / 4 : 0;
-
-        // OUTLINES
-        if (OUTLINES) {
-            curr_outline = new MeshData();
-            meshes[1] = curr_outline;
-
-            curr_outline.mesh = new Mesh(false, maxVertices, 0, attribs);
-
-            curr_outline.vertices = new float[maxVertices * (curr_outline.mesh.getVertexAttributes().vertexSize / 4)];
-            curr_outline.vertexSize = curr_outline.mesh.getVertexAttributes().vertexSize / 4;
-            curr_outline.colorOffset = curr_outline.mesh.getVertexAttribute(Usage.ColorPacked) != null ? curr_outline.mesh.getVertexAttribute(Usage.ColorPacked).offset / 4 : 0;
-        }
-
     }
 
     protected VertexAttribute[] buildVertexAttributes() {
@@ -97,13 +83,6 @@ public class LineRenderSystem extends ImmediateRenderSystem {
         shaderProgram.begin();
         shaderProgram.setUniformMatrix("u_projModelView", camera.getCamera().combined);
 
-        // Outlines
-        if (OUTLINES) {
-            Gdx.gl.glLineWidth(3f * GlobalConf.SCALE_FACTOR);
-            curr_outline.mesh.setVertices(curr_outline.vertices, 0, curr_outline.vertexIdx);
-            curr_outline.mesh.render(shaderProgram, glType);
-        }
-
         if (Gdx.app.getType() == ApplicationType.Desktop) {
             // Enable GL_LINE_SMOOTH
             Gdx.gl20.glEnable(0xB20);
@@ -125,8 +104,6 @@ public class LineRenderSystem extends ImmediateRenderSystem {
 
         // CLEAR
         curr.clear();
-        if (OUTLINES)
-            curr_outline.clear();
     }
 
     public void addLine(double x0, double y0, double z0, double x1, double y1, double z1, Color col) {
@@ -134,13 +111,6 @@ public class LineRenderSystem extends ImmediateRenderSystem {
     }
 
     public void addLine(double x0, double y0, double z0, double x1, double y1, double z1, float r, float g, float b, float a) {
-        if (OUTLINES) {
-            color_outline(0f, 0f, 0f, 1f);
-            vertex_outline((float) x0, (float) y0, (float) z0);
-            color_outline(0f, 0f, 0f, 1f);
-            vertex_outline((float) x1, (float) y1, (float) z1);
-        }
-
         color(r, g, b, a);
         vertex((float) x0, (float) y0, (float) z0);
         color(r, g, b, a);
