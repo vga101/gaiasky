@@ -24,14 +24,14 @@ public interface IScriptingInterface {
     public void preloadTextures(String... paths);
 
     /**
-     * Sets the current time frame to <b>real time,</b>. All the commands
+     * Sets the current time frame to <b>real time</b>. All the commands
      * executed after this command becomes active will be in the <b>real
      * time</b> frame (clock ticks).
      */
     public void activateRealTimeFrame();
 
     /**
-     * Sets the current time frame to <b>simulation time,</b>. All the commands
+     * Sets the current time frame to <b>simulation time</b>. All the commands
      * executed after this command becomes active will be in the <b>simulation
      * time</b> frame (simulation clock in the app).
      */
