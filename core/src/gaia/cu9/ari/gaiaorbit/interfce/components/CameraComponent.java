@@ -260,7 +260,7 @@ public class CameraComponent extends GuiComponent implements IObserver {
         });
 
         /** Crosshair **/
-        crosshair = new OwnCheckBox(" " + txt("gui.camera.crosshair"), skin, pad);
+        crosshair = new OwnCheckBox("" + txt("gui.camera.crosshair"), skin, pad);
         crosshair.setName("orientation lock");
         crosshair.setChecked(GlobalConf.scene.CROSSHAIR);
         crosshair.addListener(event -> {
