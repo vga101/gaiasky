@@ -79,8 +79,8 @@ project(":desktop") {
     version = "$tag"
 
     println ""
-    println "BUILD INFO FROM GIT"
-    println "==================="
+    println "GIT REVISION INFO"
+    println "================="
     println "git tag: $tag"
     println "git rev: $rev"
     println "buildtime: $buildtime"
@@ -152,9 +152,6 @@ project(":desktop") {
         from('../core/build/classes/main') {
             include '**'
         }
-
-
-        println "Creating desktop jar file"
     }
 
 }
@@ -199,7 +196,6 @@ project(":core") {
             attributes 'Implementation-Title': 'Gaia Sky core',
                        'Implementation-Version': version
         }
-        println "Creating core jar file"
     }
 }
 
@@ -226,22 +222,4 @@ tasks.eclipse.doLast {
 }
 
 
-
-tasks.create('versionFile').doLast {
-    File versionFile = file('core/build/classes/java/main/version')
-    delete versionFile
-    def writer = new FileWriter(versionFile)
-
-    try {
-       writer.write('buildtime=' + project(':desktop').buildtime + '\n')
-       writer.write('build=' + project(':desktop').rev + '\n')
-       writer.write('version=' + project(':desktop').tag + '\n')
-       writer.write('builder=' + project(':desktop').builder + '\n')
-       writer.write('system=' + project(':desktop').system + '\n')
-       writer.flush()
-    } finally {
-       writer.close()
-    }
-}
-
-task createWrapper(type: Wrapper) { gradleVersion = "3.2" }
+task createWrapper(type: Wrapper) { gradleVersion = "4.4.1" }

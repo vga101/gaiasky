@@ -82,7 +82,7 @@ task runGalaxyGenerator(dependsOn: jar, type: JavaExec, description: "Runs the g
     ignoreExitValue = true
 }
 
-task createDistDir (dependsOn: ':versionFile', description: "Creates the releases/dist folder") {
+task createDistDir (description: "Creates the releases/dist folder") {
 	doLast {
 	    File distDir = new File(project.distDir)
 	    // Prepare output directory
@@ -91,7 +91,7 @@ task createDistDir (dependsOn: ':versionFile', description: "Creates the release
 	}
 }
 
-task copyToLib (dependsOn: [compileJava, createDistDir], description: "Copies the runtime dependencies to releases/dist/lib") {
+task copyToLib (dependsOn: createDistDir, description: "Copies the runtime dependencies to releases/dist/lib") {
 	doLast {
 	    // Create releases/dist/lib
 	    File distLib = new File(project.distDir, 'lib')
