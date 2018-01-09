@@ -117,11 +117,15 @@ project(":desktop") {
         compile "com.badlogicgames.gdx:gdx-controllers-lwjgl3:$gdxVersion"
         compile "org.python:jython-standalone:$jythonVersion"
         compile "org.lwjgl:lwjgl-openvr:$lwjglVersion"
+        compile "org.lwjgl:lwjgl-openvr:$lwjglVersion:natives-linux"
+        compile "org.lwjgl:lwjgl-openvr:$lwjglVersion:natives-windows"
+        compile "org.lwjgl:lwjgl-openvr:$lwjglVersion:natives-macos"
         compile "com.beust:jcommander:$jcommanderVersion"
         compile "com.brsanthu:google-analytics-java:$googleanalyticsjavaVersion"
         compile "org.slf4j:slf4j-nop:$slf4jVersion"
 		compile files('../core/lib/postprocessing.jar',
-						'../android/assets',
+                        '../core/lib/gdx-vr.jar',
+			'../android/assets',
                         'lib/stil.jar')
     }
 
@@ -187,7 +191,7 @@ project(":core") {
         compile "com.badlogicgames.gdx:gdx-controllers:$gdxVersion"
 	compile "junit:junit:4.12"
 	compile "net.jafama:jafama:$jafamaVersion"
-	compile files('lib/postprocessing.jar')
+	compile files('lib/postprocessing.jar', 'lib/gdx-vr.jar')
     }
 
     jar {

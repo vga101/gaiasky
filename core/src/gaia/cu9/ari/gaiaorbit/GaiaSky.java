@@ -20,13 +20,25 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.g3d.Model;
+import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.utils.DefaultShaderProvider;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.GLFrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.badlogic.gdx.math.Intersector;
+import com.badlogic.gdx.math.Plane;
+import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.math.collision.Ray;
 import com.badlogic.gdx.scenes.scene2d.ui.TooltipManager;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.TimeUtils;
+import com.badlogic.gdx.vr.VRContext;
+import com.badlogic.gdx.vr.VRContext.Eye;
+import com.badlogic.gdx.vr.VRContext.Space;
+import com.badlogic.gdx.vr.VRContext.VRControllerButtons;
+import com.badlogic.gdx.vr.VRContext.VRDevice;
+import com.badlogic.gdx.vr.VRContext.VRDeviceListener;
+import com.badlogic.gdx.vr.VRContext.VRDeviceType;
 
 import gaia.cu9.ari.gaiaorbit.assets.AtmosphereGroundShaderProviderLoader;
 import gaia.cu9.ari.gaiaorbit.assets.AtmosphereShaderProviderLoader;
@@ -112,6 +124,12 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
 
     /** Singleton instance **/
     public static GaiaSky instance;
+
+    /**
+     * The {@link VRContext} setup in createVR(), may be null if no HMD is
+     * present or SteamVR is not installed
+     */
+    VRContext context;
 
     // Asset manager
     public AssetManager manager;
@@ -282,7 +300,116 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
             EventManager.instance.post(Events.LOAD_DATA_CMD);
         }
 
+        createVR();
+
         Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.glslversion", Gdx.gl.glGetString(GL20.GL_SHADING_LANGUAGE_VERSION)));
+    }
+
+    /** All {@link ModelInstance}s to be rendered **/
+    //Array<ModelInstance> modelInstances = new Array<ModelInstance>();
+
+    private void createVR() {
+        // Initializing the VRContext may fail if no HMD is connected or SteamVR
+        // is not installed.
+        try {
+            context = new VRContext();
+
+            // Set the far clip plane distance on the camera of each eye
+            // All units are in meters.
+            context.getEyeData(Eye.Left).camera.far = 100f;
+            context.getEyeData(Eye.Right).camera.far = 100f;
+
+            // Register a VRDeviceListener to get notified when
+            // controllers are (dis-)connected and their buttons
+            // are pressed. Note that we add/remove a ModelInstance for
+            // controllers for rendering on (dis-)connect.
+            context.addListener(new VRDeviceListener() {
+                @Override
+                public void connected(VRDevice device) {
+                    Logger.info(device + " connected");
+                    if (device.getType() == VRDeviceType.Controller && device.getModelInstance() != null) {
+                        //modelInstances.add(device.getModelInstance());
+                    }
+                }
+
+                @Override
+                public void disconnected(VRDevice device) {
+                    Logger.info(device + " disconnected");
+                    if (device.getType() == VRDeviceType.Controller && device.getModelInstance() != null) {
+                        //modelInstances.removeValue(device.getModelInstance(), true);
+                    }
+                }
+
+                @Override
+                public void buttonPressed(VRDevice device, int button) {
+                    Logger.info(device + " button pressed: " + button);
+
+                    // If the trigger button on the first controller was
+                    // pressed, setup teleporting
+                    // mode.
+                    if (device == context.getDeviceByType(VRDeviceType.Controller)) {
+                        if (button == VRControllerButtons.SteamVR_Trigger) {
+                            //isTeleporting = true;
+                        }
+                    }
+                }
+
+                @Override
+                public void buttonReleased(VRDevice device, int button) {
+                    Logger.info(device + " button released: " + button);
+
+                    // If the trigger button the first controller was released,
+                    // teleport the player.
+                    if (device == context.getDeviceByType(VRDeviceType.Controller)) {
+                        if (button == VRControllerButtons.SteamVR_Trigger) {
+                            if (intersectControllerXZPlane(context.getDeviceByType(VRDeviceType.Controller), tmp)) {
+                                // Teleportation
+                                // - Tracker space origin in world space is initially at [0,0,0]
+                                // - When teleporting, we want to set the tracker space origin in world space to the
+                                //   teleportation point
+                                // - Then we need to offset the tracker space
+                                //   origin in world space by the camera
+                                //   x/z position so the camera is at the
+                                //   teleportation point in world space
+                                tmp2.set(context.getDeviceByType(VRDeviceType.HeadMountedDisplay).getPosition(Space.Tracker));
+                                tmp2.y = 0;
+                                tmp.sub(tmp2);
+
+                                context.getTrackerSpaceOriginToWorldSpaceTranslationOffset().set(tmp);
+                            }
+                            //isTeleporting = false;
+                        }
+                    }
+                }
+            });
+        } catch (Exception e) {
+            // If initializing the VRContext failed, we fall back
+            // to desktop only mode with a FirstPersonCameraController.
+            //cameraController = new FirstPersonCameraController(companionCamera);
+            //Gdx.input.setInputProcessor(cameraController);
+
+            // Set the camera height to 1.7m to emulate an
+            // average human's height. We'd get this from the
+            // HMD tracking otherwise.
+            //companionCamera.position.y = 1.7f;
+
+            // We also enable vsync which the VRContext would have
+            // managed otherwise
+            //Gdx.graphics.setVSync(true);
+
+            Logger.error("Initialisation of VR context failed - falling back to desktop mode");
+        }
+    }
+
+    Plane xzPlane = new Plane(Vector3.Y, 0);
+    Ray ray = new Ray();
+    Vector3 tmp = new Vector3();
+    Vector3 tmp2 = new Vector3();
+
+    private boolean intersectControllerXZPlane(VRDevice controller, Vector3 intersection) {
+        ray.origin.set(controller.getPosition(Space.World));
+        ray.direction.set(controller.getDirection(Space.World).nor());
+        return Intersector.intersectRayPlane(ray, xzPlane, intersection);
     }
 
     /**
