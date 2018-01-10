@@ -66,9 +66,10 @@ project(":desktop") {
     proc = cmd.execute()
     project.ext.rev = proc.text.trim()
 
-    cmd = "uname -snmr"
-    proc = cmd.execute()
-    project.ext.system = proc.text.trim()
+//    cmd = "uname -snmr"
+//    proc = cmd.execute()
+//    project.ext.system = proc.text.trim()
+    project.ext.system = "Windows10 x86_64"
 
     cmd = "whoami"
     proc = cmd.execute()
@@ -123,9 +124,8 @@ project(":desktop") {
         compile "com.beust:jcommander:$jcommanderVersion"
         compile "com.brsanthu:google-analytics-java:$googleanalyticsjavaVersion"
         compile "org.slf4j:slf4j-nop:$slf4jVersion"
-		compile files('../core/lib/postprocessing.jar',
-                        '../core/lib/gdx-vr.jar',
-			'../android/assets',
+		        compile files('../core/lib/postprocessing.jar',
+                        '../android/assets',
                         'lib/stil.jar')
     }
 
@@ -189,9 +189,13 @@ project(":core") {
     dependencies {
         compile "com.badlogicgames.gdx:gdx:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-controllers:$gdxVersion"
-	compile "junit:junit:4.12"
-	compile "net.jafama:jafama:$jafamaVersion"
-	compile files('lib/postprocessing.jar', 'lib/gdx-vr.jar')
+        compile "junit:junit:4.12"
+        compile "net.jafama:jafama:$jafamaVersion"
+        compile "org.lwjgl:lwjgl-openvr:$lwjglVersion"
+        compile "org.lwjgl:lwjgl-openvr:$lwjglVersion:natives-linux"
+        compile "org.lwjgl:lwjgl-openvr:$lwjglVersion:natives-windows"
+        compile "org.lwjgl:lwjgl-openvr:$lwjglVersion:natives-macos"
+        compile files('lib/postprocessing.jar')
     }
 
     jar {
@@ -203,21 +207,21 @@ project(":core") {
 }
 
 project(":android") {
-    apply plugin: "android"
-
-    configurations { natives }
-
-    dependencies {
-        compile project(":core")
-        compile "com.badlogicgames.gdx:gdx-backend-android:$gdxVersion"
-        natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi"
-        natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi-v7a"
-        natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86"
-        compile "com.badlogicgames.gdx:gdx-controllers:$gdxVersion"
-		  compile "org.python:jython-standalone:$jythonVersion"
-        compile "com.badlogicgames.gdx:gdx-controllers-android:$gdxVersion"
-		  compile files('../core/lib/postprocessing.jar')
-    }
+//    apply plugin: "android"
+//
+//    configurations { natives }
+//
+//    dependencies {
+//        compile project(":core")
+//        compile "com.badlogicgames.gdx:gdx-backend-android:$gdxVersion"
+//        natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi"
+//        natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi-v7a"
+//        natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86"
+//        compile "com.badlogicgames.gdx:gdx-controllers:$gdxVersion"
+//		  compile "org.python:jython-standalone:$jythonVersion"
+//        compile "com.badlogicgames.gdx:gdx-controllers-android:$gdxVersion"
+//		  compile files('../core/lib/postprocessing.jar')
+//    }
 }
 
 tasks.eclipse.doLast {

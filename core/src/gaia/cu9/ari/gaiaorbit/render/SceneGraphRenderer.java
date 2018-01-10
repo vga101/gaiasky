@@ -24,6 +24,7 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.BufferUtils;
+import com.badlogic.gdx.vr.VRContext;
 import com.bitfire.postprocessing.filters.Glow;
 import com.bitfire.utils.ShaderLoader;
 
@@ -100,11 +101,12 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
     /** The particular current scene graph renderer **/
     private ISGR sgr;
     /**
-     * Renderers vector, with 0 = normal, 1 = stereoscopic, 2 = FOV, 3 = cubemap
+     * Renderers vector, with 0 = normal, 1 = stereoscopic, 2 = FOV, 3 =
+     * cubemap, 4 = OpenVR
      **/
     private ISGR[] sgrs;
     // Indexes
-    final int SGR_DEFAULT_IDX = 0, SGR_STEREO_IDX = 1, SGR_FOV_IDX = 2, SGR_CUBEMAP_IDX = 3;
+    final int SGR_DEFAULT_IDX = 0, SGR_STEREO_IDX = 1, SGR_FOV_IDX = 2, SGR_CUBEMAP_IDX = 3, SGR_OPENVR_IDX = 4;
 
     // Camera at light position, with same direction. For shadow mapping
     private Camera cameraLight;
@@ -117,8 +119,12 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
     private Vector3 aux1;
     private Vector3d aux1d;
 
-    public SceneGraphRenderer() {
+    // VRContext, may be null
+    private VRContext vrContext;
+
+    public SceneGraphRenderer(VRContext vrContext) {
         super();
+        this.vrContext = vrContext;
     }
 
     @Override
@@ -276,11 +282,12 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         /**
          * INITIALIZE SGRs
          */
-        sgrs = new ISGR[4];
+        sgrs = new ISGR[5];
         sgrs[SGR_DEFAULT_IDX] = new SGR();
         sgrs[SGR_STEREO_IDX] = new SGRStereoscopic();
         sgrs[SGR_FOV_IDX] = new SGRFov();
         sgrs[SGR_CUBEMAP_IDX] = new SGRCubemap();
+        sgrs[SGR_OPENVR_IDX] = new SGROpenVR(vrContext);
         sgr = null;
 
         /**
@@ -480,7 +487,10 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
     }
 
     private void initSGR(ICamera camera) {
-        if (camera.getNCameras() > 1) {
+        if (GlobalConf.runtime.OPENVR) {
+            // Using Steam OpenVR renderer
+            sgr = sgrs[SGR_OPENVR_IDX];
+        } else if (camera.getNCameras() > 1) {
             // FOV mode
             sgr = sgrs[SGR_FOV_IDX];
         } else if (GlobalConf.program.STEREOSCOPIC_MODE) {
@@ -771,22 +781,31 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
             if (stereo)
                 sgr = sgrs[SGR_STEREO_IDX];
             else {
-                sgr = sgrs[SGR_DEFAULT_IDX];
+                if (GlobalConf.runtime.OPENVR)
+                    sgr = sgrs[SGR_OPENVR_IDX];
+                else
+                    sgr = sgrs[SGR_DEFAULT_IDX];
             }
             break;
         case CUBEMAP360_CMD:
             boolean cubemap = (Boolean) data[0];
-            if (cubemap)
+            if (cubemap) {
                 sgr = sgrs[SGR_CUBEMAP_IDX];
-            else
-                sgr = sgrs[SGR_DEFAULT_IDX];
+            } else {
+                if (GlobalConf.runtime.OPENVR)
+                    sgr = sgrs[SGR_OPENVR_IDX];
+                else
+                    sgr = sgrs[SGR_DEFAULT_IDX];
+            }
             break;
         case CAMERA_MODE_CMD:
             CameraMode cm = (CameraMode) data[0];
             if (cm.isGaiaFov())
                 sgr = sgrs[SGR_FOV_IDX];
             else {
-                if (GlobalConf.program.STEREOSCOPIC_MODE)
+                if (GlobalConf.runtime.OPENVR)
+                    sgr = sgrs[SGR_OPENVR_IDX];
+                else if (GlobalConf.program.STEREOSCOPIC_MODE)
                     sgr = sgrs[SGR_STEREO_IDX];
                 else if (GlobalConf.program.CUBEMAP360_MODE)
                     sgr = sgrs[SGR_CUBEMAP_IDX];

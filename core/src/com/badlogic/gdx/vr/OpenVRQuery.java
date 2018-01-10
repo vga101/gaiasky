@@ -1,4 +1,5 @@
-package gaia.cu9.ari.gaiaorbit.desktop.vr;
+package com.badlogic.gdx.vr;
+
 import static org.lwjgl.openvr.VR.ETrackedDeviceProperty_Prop_ModelNumber_String;
 import static org.lwjgl.openvr.VR.ETrackedDeviceProperty_Prop_SerialNumber_String;
 import static org.lwjgl.openvr.VR.VR_GetVRInitErrorAsEnglishDescription;
@@ -18,15 +19,14 @@ import java.nio.IntBuffer;
 import org.lwjgl.openvr.OpenVR;
 import org.lwjgl.system.MemoryStack;
 
+import gaia.cu9.ari.gaiaorbit.util.Logger;
+
 public class OpenVRQuery {
-
-    private OpenVRQuery() {
-    }
-
-    public static void main(String[] args) {
-        System.err.println("VR_IsRuntimeInstalled() = " + VR_IsRuntimeInstalled());
-        System.err.println("VR_RuntimePath() = " + VR_RuntimePath());
-        System.err.println("VR_IsHmdPresent() = " + VR_IsHmdPresent());
+    public static void queryOpenVr() {
+        Logger.info("==== Querying OpenVR status ====");
+        Logger.info("OpenVR runtime installed: " + VR_IsRuntimeInstalled());
+        Logger.info("OpenVR runtime path: " + VR_RuntimePath());
+        Logger.info("HMD present: " + VR_IsHmdPresent());
 
         try (MemoryStack stack = stackPush()) {
             IntBuffer peError = stack.mallocInt(1);
@@ -36,20 +36,20 @@ public class OpenVRQuery {
                 try {
                     OpenVR.create(token);
 
-                    System.err.println("Model Number : " + VRSystem_GetStringTrackedDeviceProperty(k_unTrackedDeviceIndex_Hmd, ETrackedDeviceProperty_Prop_ModelNumber_String, peError));
-                    System.err.println("Serial Number: " + VRSystem_GetStringTrackedDeviceProperty(k_unTrackedDeviceIndex_Hmd, ETrackedDeviceProperty_Prop_SerialNumber_String, peError));
+                    Logger.info("Model Number : " + VRSystem_GetStringTrackedDeviceProperty(k_unTrackedDeviceIndex_Hmd, ETrackedDeviceProperty_Prop_ModelNumber_String, peError));
+                    Logger.info("Serial Number: " + VRSystem_GetStringTrackedDeviceProperty(k_unTrackedDeviceIndex_Hmd, ETrackedDeviceProperty_Prop_SerialNumber_String, peError));
 
                     IntBuffer w = stack.mallocInt(1);
                     IntBuffer h = stack.mallocInt(1);
                     VRSystem_GetRecommendedRenderTargetSize(w, h);
-                    System.err.println("Recommended width : " + w.get(0));
-                    System.err.println("Recommended height: " + h.get(0));
+                    Logger.info("Recommended width : " + w.get(0));
+                    Logger.info("Recommended height: " + h.get(0));
                 } finally {
                     VR_ShutdownInternal();
                 }
             } else {
-                System.out.println("INIT ERROR SYMBOL: " + VR_GetVRInitErrorAsSymbol(peError.get(0)));
-                System.out.println("INIT ERROR  DESCR: " + VR_GetVRInitErrorAsEnglishDescription(peError.get(0)));
+                Logger.error("INIT ERROR SYMBOL: " + VR_GetVRInitErrorAsSymbol(peError.get(0)));
+                Logger.error("INIT ERROR  DESCR: " + VR_GetVRInitErrorAsEnglishDescription(peError.get(0)));
             }
         }
     }

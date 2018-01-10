@@ -182,7 +182,9 @@ public class GlobalConf {
      *
      */
     public static class RuntimeConf implements IConf, IObserver {
-
+        // These are hacks, to be initialized in GaiaSky if VR context is detected
+        public boolean OPENVR = true;
+        public boolean OVR = false;
         public boolean DISPLAY_GUI;
         public boolean UPDATE_PAUSE;
         public boolean TIME_ON;
@@ -475,7 +477,7 @@ public class GlobalConf {
         public boolean CUBEMAP360_MODE;
         public boolean STEREOSCOPIC_MODE;
         /** Eye separation in stereoscopic mode in meters **/
-        public float STEREOSCOPIC_EYE_SEPARATION_M = 1;
+        public float STEREOSCOPIC_EYE_SEPARATION_M = 0.06f;
         /** This controls the side of the images in the stereoscopic mode **/
         public StereoProfile STEREO_PROFILE = StereoProfile.VR_HEADSET;
         public boolean ANALYTICS_ENABLED;

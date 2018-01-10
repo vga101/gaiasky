@@ -12,9 +12,7 @@ import java.util.concurrent.TimeUnit;
 import javax.swing.UIManager;
 import javax.swing.plaf.FontUIResource;
 
-import com.badlogic.gdx.Files;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Graphics.DisplayMode;
 import com.badlogic.gdx.LifecycleListener;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
@@ -67,7 +65,6 @@ import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadLocalFactory;
 import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.math.MathManager;
-import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 
 /**
  * Main class for the desktop launcher
@@ -189,29 +186,11 @@ public class GaiaSkyDesktop implements IObserver {
     public void launchMainApp() {
         Lwjgl3ApplicationConfiguration cfg = new Lwjgl3ApplicationConfiguration();
         cfg.setTitle(GlobalConf.getFullApplicationName());
-        if (GlobalConf.screen.FULLSCREEN) {
-            // Get mode
-            DisplayMode[] modes = Lwjgl3ApplicationConfiguration.getDisplayModes();
-            DisplayMode mymode = null;
-            for (DisplayMode mode : modes) {
-                if (mode.height == GlobalConf.screen.FULLSCREEN_HEIGHT && mode.width == GlobalConf.screen.FULLSCREEN_WIDTH) {
-                    mymode = mode;
-                    break;
-                }
-            }
-            if (mymode == null)
-                mymode = Lwjgl3ApplicationConfiguration.getDisplayMode(Gdx.graphics.getPrimaryMonitor());
-            cfg.setFullscreenMode(mymode);
-        } else {
-            cfg.setWindowedMode(GlobalConf.screen.getScreenWidth(), GlobalConf.screen.getScreenHeight());
-            cfg.setResizable(GlobalConf.screen.RESIZABLE);
-        }
-        cfg.setBackBufferConfig(8, 8, 8, 8, 24, 0, MathUtilsd.clamp(GlobalConf.postprocess.POSTPROCESS_ANTIALIAS, 0, 16));
-        cfg.setIdleFPS(0);
-        cfg.useVsync(GlobalConf.screen.VSYNC);
-        cfg.setWindowIcon(Files.FileType.Internal, "icon/ic_launcher.png");
-
-        System.out.println("Display mode set to " + cfg.getDisplayMode().width + "x" + cfg.getDisplayMode().height + ", fullscreen: " + GlobalConf.screen.FULLSCREEN);
+        // Note that we disable VSync! The VRContext manages vsync with respect
+        // to
+        // the HMD
+        cfg.useVsync(false);
+        cfg.setWindowedMode(1344, 1600);
 
         // Thread pool manager
         if (GlobalConf.performance.MULTITHREADING) {
