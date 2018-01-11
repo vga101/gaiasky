@@ -20,7 +20,6 @@ import org.lwjgl.openvr.VREvent;
 import org.lwjgl.openvr.VRRenderModels;
 import org.lwjgl.openvr.VRSystem;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -28,7 +27,6 @@ import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
@@ -36,8 +34,6 @@ import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.model.MeshPart;
 import com.badlogic.gdx.graphics.g3d.model.Node;
 import com.badlogic.gdx.graphics.g3d.model.NodePart;
-import com.badlogic.gdx.graphics.glutils.FrameBuffer;
-import com.badlogic.gdx.graphics.glutils.GLFrameBuffer;
 import com.badlogic.gdx.graphics.glutils.PixmapTextureData;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
@@ -275,9 +271,6 @@ public class VRContext implements Disposable {
     private final IntBuffer error = BufferUtils.newIntBuffer(1);
     private final IntBuffer scratch = BufferUtils.newIntBuffer(1), scratch2 = BufferUtils.newIntBuffer(1);
 
-    // per eye data such as rendering surfaces, textures, regions, cameras etc. for each eye
-    private final VRPerEyeData perEyeData[] = new VRPerEyeData[2];
-
     // batcher to draw eye rendering surface to companion window
     private final SpriteBatch batcher;
 
@@ -357,16 +350,6 @@ public class VRContext implements Disposable {
 
     public int getHeight() {
         return height;
-    }
-
-    private void setupEye(Eye eye, int width, int height, boolean hasStencil) {
-        FrameBuffer buffer = new FrameBuffer(Format.RGBA8888, width, height, true, hasStencil);
-        TextureRegion region = new TextureRegion(buffer.getColorBufferTexture());
-        region.flip(false, true);
-        VRCamera camera = new VRCamera(this, eye);
-        camera.near = 0.1f;
-        camera.far = 1000f;
-        perEyeData[eye.index] = new VRPerEyeData(buffer, region, camera);
     }
 
     private void checkInitError(IntBuffer errorBuffer) {
@@ -597,76 +580,9 @@ public class VRContext implements Disposable {
         devices[index].updateAxesAndPosition();
     }
 
-    /**
-     * @return the {@link VRPerEyeData} such as rendering surface and camera
-     */
-    public VRPerEyeData getEyeData(Eye eye) {
-        return perEyeData[eye.index];
-    }
-
-    /**
-     * Start rendering to the rendering surface for the given eye. Complete by
-     * calling {@link #endEye()}.
-     */
-    public void beginEye(Eye eye) {
-        if (!renderingStarted)
-            throw new GdxRuntimeException("Call begin() before calling beginEye()");
-        if (currentEye != null)
-            throw new GdxRuntimeException("Last beginEye() call not completed, call endEye() before starting a new render");
-        currentEye = eye;
-        perEyeData[eye.index].buffer.begin();
-    }
-
-    /**
-     * Completes rendering to the rendering surface for the given eye.
-     */
-    public void endEye() {
-        if (currentEye == null)
-            throw new GdxRuntimeException("Call beginEye() before endEye()");
-        perEyeData[currentEye.index].buffer.end();
-        currentEye = null;
-    }
-
-    /**
-     * Completes rendering and submits the rendering surfaces to the head
-     * mounted display.
-     */
-    public void end() {
-        if (!renderingStarted)
-            throw new GdxRuntimeException("Call begin() before end()");
-        renderingStarted = false;
-
-        VRCompositor.VRCompositor_Submit(VR.EVREye_Eye_Left, perEyeData[Eye.Left.index].texture, null, VR.EVRSubmitFlags_Submit_Default);
-        VRCompositor.VRCompositor_Submit(VR.EVREye_Eye_Right, perEyeData[Eye.Right.index].texture, null, VR.EVRSubmitFlags_Submit_Default);
-    }
-
     public void dispose() {
-        for (VRPerEyeData eyeData : perEyeData)
-            eyeData.buffer.dispose();
         batcher.dispose();
         VR_ShutdownInternal();
-    }
-
-    /**
-     * Resizes the companion window so the rendering buffers can be displayed
-     * without stretching.
-     */
-    public void resizeCompanionWindow() {
-        GLFrameBuffer<Texture> buffer = perEyeData[0].buffer;
-        Gdx.graphics.setWindowedMode(buffer.getWidth(), buffer.getHeight());
-    }
-
-    /**
-     * Renders the content of the given eye's rendering surface to the entirety
-     * of the companion window.
-     */
-    public void renderToCompanionWindow(Eye eye) {
-        GLFrameBuffer<Texture> buffer = perEyeData[eye.index].buffer;
-        TextureRegion region = perEyeData[eye.index].region;
-        batcher.getProjectionMatrix().setToOrtho2D(0, 0, buffer.getWidth(), buffer.getHeight());
-        batcher.begin();
-        batcher.draw(region, 0, 0);
-        batcher.end();
     }
 
     private Model loadRenderModel(String name) {
@@ -750,45 +666,6 @@ public class VRContext implements Disposable {
         models.put(name, model);
 
         return model;
-    }
-
-    /**
-     * Keeps track of per eye data such as rendering surface, or
-     * {@link VRCamera}.
-     */
-    public static class VRPerEyeData {
-        /** the {@link GLFrameBuffer<Texture>} for this eye */
-        private GLFrameBuffer<Texture> buffer;
-        /**
-         * a {@link TextureRegion} wrapping the color texture of the framebuffer
-         * for 2D rendering
-         **/
-        public final TextureRegion region;
-        /** the {@link VRCamera} for this eye **/
-        public final VRCamera camera;
-        /** used internally to submit the frame buffer to OpenVR **/
-        final org.lwjgl.openvr.Texture texture;
-
-        VRPerEyeData(FrameBuffer buffer, TextureRegion region, VRCamera cameras) {
-            this.buffer = buffer;
-            this.region = region;
-            this.camera = cameras;
-            this.texture = org.lwjgl.openvr.Texture.create();
-            this.texture.set(buffer.getColorBufferTexture().getTextureObjectHandle(), VR.ETextureType_TextureType_OpenGL, VR.EColorSpace_ColorSpace_Gamma);
-        }
-
-        public void setFrameBuffer(GLFrameBuffer<Texture> fbo, boolean disposeOld) {
-            if (disposeOld) {
-                this.buffer.dispose();
-            }
-            this.buffer = fbo;
-            this.region.setTexture(fbo.getColorBufferTexture());
-            this.texture.set(buffer.getColorBufferTexture().getTextureObjectHandle(), VR.ETextureType_TextureType_OpenGL, VR.EColorSpace_ColorSpace_Gamma);
-        }
-
-        public GLFrameBuffer<Texture> getFrameBuffer() {
-            return buffer;
-        }
     }
 
     /**

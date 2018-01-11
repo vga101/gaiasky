@@ -785,7 +785,7 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
             /* target distance */
             double target = 100 * Constants.M_TO_U;
 
-            object.getAbsolutePosition(aux1).add(cam.posinv).nor();
+            object.getAbsolutePosition(aux1).add(cam.getInversePos()).nor();
             Vector3d dir = cam.direction;
 
             // Add forward movement while distance > target distance
@@ -827,7 +827,7 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
             // Roll till done
             Vector3d up = cam.up;
             // aux1 <- camera-object
-            object.getAbsolutePosition(aux1).sub(cam.pos);
+            object.getAbsolutePosition(aux1).sub(cam.getPos());
             double ang1 = up.angle(aux1);
             double ang2 = up.cpy().rotate(cam.direction, 1).angle(aux1);
             double rollsign = ang1 < ang2 ? -1d : 1d;
@@ -975,7 +975,7 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
             Vector3d objectPosition = planet.getAbsolutePosition(aux2);
 
             // Check intersection with object
-            boolean intersects = Intersectord.checkIntersectSegmentSphere(cam.pos, target, objectPosition, planet.getRadius());
+            boolean intersects = Intersectord.checkIntersectSegmentSphere(cam.getPos(), target, objectPosition, planet.getRadius());
 
             if (intersects) {
                 cameraRotate(5, 5);
@@ -985,7 +985,7 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
                 sleep(0.1f);
 
                 objectPosition = planet.getAbsolutePosition(aux2);
-                intersects = Intersectord.checkIntersectSegmentSphere(cam.pos, target, objectPosition, planet.getRadius());
+                intersects = Intersectord.checkIntersectSegmentSphere(cam.getPos(), target, objectPosition, planet.getRadius());
             }
 
             cameraStop();

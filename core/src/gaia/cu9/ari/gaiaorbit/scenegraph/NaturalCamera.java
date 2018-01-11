@@ -1,19 +1,11 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input.Peripheral;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.controllers.Controllers;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.Texture.TextureFilter;
-import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
 
 import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
@@ -37,7 +29,13 @@ import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
  */
 public class NaturalCamera extends AbstractCamera implements IObserver {
 
-    private static final double MIN_DIST = 5 * Constants.M_TO_U;
+    private static final double MIN_DIST = 1000 * Constants.M_TO_U;
+
+    /** VR offset **/
+    public Vector3d vroffset;
+
+    /** VR position = pos + vroffset **/
+    public Vector3d vrpos;
 
     /** Acceleration and velocity **/
     public Vector3d accel, vel;
@@ -50,9 +48,6 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 
     /** Auxiliary double vectors **/
     private Vector3d aux1, aux2, aux3, aux5, aux4, dx;
-    private Vector2 aux2f2;
-    /** Auxiliary float vector **/
-    private Vector3 auxf1;
     /** Acceleration, velocity and position for pitch, yaw and roll **/
     private Vector3d pitch, yaw, roll;
     /**
@@ -108,14 +103,6 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
      **/
     boolean inputByController = false;
 
-    boolean diverted = false;
-
-    boolean accelerometer = false;
-
-    private float planetariumFocusAngle = 0f;
-
-    public static float[] upSensor, lookAtSensor;
-
     public double[] hudScales;
     public Color[] hudColors;
     public int hudColor;
@@ -129,12 +116,10 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
     /** Controller listener **/
     private NaturalControllerListener controllerListener;
 
-    private SpriteBatch spriteBatch;
-    private Texture focusCrosshair, focusArrow, velocityCrosshair, antivelocityCrosshair;
-    private Sprite[] hudSprites;
-
     public NaturalCamera(AssetManager assetManager, CameraManager parent) {
         super(parent);
+        vroffset = new Vector3d();
+        vrpos = new Vector3d();
         vel = new Vector3d();
         accel = new Vector3d();
         force = new Vector3d();
@@ -171,66 +156,18 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
         aux3 = new Vector3d();
         aux4 = new Vector3d();
         aux5 = new Vector3d();
-        auxf1 = new Vector3();
-        aux2f2 = new Vector2();
 
         dx = new Vector3d();
-
-        accelerometer = Gdx.input.isPeripheralAvailable(Peripheral.Accelerometer);
 
         inputController = new NaturalInputController(this);
         controllerListener = new NaturalControllerListener(this, GlobalConf.controls.CONTROLLER_MAPPINGS_FILE);
 
-        // Init sprite batch for crosshair
-        spriteBatch = new SpriteBatch();
-
-        // Focus crosshair
-        focusCrosshair = new Texture(Gdx.files.internal("img/crosshair-green.png"));
-        focusCrosshair.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-
-        // Focus arrow
-        focusArrow = new Texture(Gdx.files.internal("img/crosshair-green-arrow.png"));
-        focusArrow.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-
-        // Velocity vector crosshair
-        velocityCrosshair = new Texture(Gdx.files.internal("img/ai-vel.png"));
-        velocityCrosshair.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-
-        // Antivelocity vector crosshair
-        antivelocityCrosshair = new Texture(Gdx.files.internal("img/ai-antivel.png"));
-        antivelocityCrosshair.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-
-        // Speed HUD
-        Texture sHUD = new Texture(Gdx.files.internal("img/hud-corners.png"));
-        sHUD.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-        hudw = sHUD.getWidth();
-        hudh = sHUD.getHeight();
-
-        hudScales = new double[] { HUD_SCALE_MIN, HUD_SCALE_MIN + (HUD_SCALE_MAX - HUD_SCALE_MIN) / 3d, HUD_SCALE_MIN + (HUD_SCALE_MAX - HUD_SCALE_MIN) * 2d / 3d };
-        hudSprites = new Sprite[hudScales.length];
-        hudColors = new Color[] { Color.WHITE, Color.GREEN, Color.GOLD, Color.LIME, Color.PINK, Color.ORANGE, Color.CORAL, Color.CYAN, Color.FIREBRICK, Color.FOREST };
-
-        for (int i = 0; i < hudScales.length; i++) {
-            hudSprites[i] = new Sprite(sHUD);
-            hudSprites[i].setOriginCenter();
-        }
-
         // Focus is changed from GUI
-        EventManager.instance.subscribe(this, Events.FOCUS_CHANGE_CMD, Events.FOV_CHANGED_CMD, Events.ORIENTATION_LOCK_CMD, Events.CAMERA_POS_CMD, Events.CAMERA_DIR_CMD, Events.CAMERA_UP_CMD, Events.CAMERA_FWD, Events.CAMERA_ROTATE, Events.CAMERA_PAN, Events.CAMERA_ROLL, Events.CAMERA_TURN, Events.CAMERA_STOP, Events.CAMERA_CENTER, Events.GO_TO_OBJECT_CMD, Events.PLANETARIUM_FOCUS_ANGLE_CMD, Events.PLANETARIUM_CMD);
+        EventManager.instance.subscribe(this, Events.FOCUS_CHANGE_CMD, Events.FOV_CHANGED_CMD, Events.ORIENTATION_LOCK_CMD, Events.CAMERA_POS_CMD, Events.CAMERA_DIR_CMD, Events.CAMERA_UP_CMD, Events.CAMERA_FWD, Events.CAMERA_PAN, Events.CAMERA_STOP, Events.CAMERA_CENTER, Events.GO_TO_OBJECT_CMD);
     }
 
-    // Set up direction and lookAtSensor if accelerometer is enabled
     public void update(double dt, ITimeFrameProvider time) {
-        if (accelerometer) {
-            synchronized (lookAtSensor) {
-                direction.set(lookAtSensor).nor();
-                up.set(upSensor).nor();
-            }
-            updatePerspectiveCamera();
-        } else {
-            camUpdate(dt, time);
-        }
-
+        camUpdate(dt, time);
     }
 
     private void camUpdate(double dt, ITimeFrameProvider time) {
@@ -279,7 +216,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
                             aux3.add(aux5);
                             // pos <- aux3
                             pos.set(aux3);
-                            direction.rotate(aux2, angle);
+                            //direction.rotate(aux2, angle);
                             up.rotate(aux2, angle);
 
                             previousOrientationAngle = anglebak;
@@ -296,15 +233,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
                 // listener
                 this.focus.getAbsolutePosition(aux4).add(dx);
 
-                if (!diverted) {
-                    directionToTarget(dt, aux4, GlobalConf.scene.TURNING_SPEED / (GlobalConf.scene.CINEMATIC_CAMERA ? 1e3f : 1e2f), planetariumFocusAngle);
-                } else {
-                    updateRotationFree(dt, GlobalConf.scene.TURNING_SPEED);
-                }
-                updateRoll(dt, GlobalConf.scene.TURNING_SPEED);
-
                 updatePosition(dt, translateUnits, realTransUnits);
-                updateRotation(dt, aux4);
 
                 // Update focus direction
                 focusDirection.set(aux4).sub(pos).nor();
@@ -325,36 +254,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
             break;
         case Free_Camera:
             updatePosition(dt, translateUnits, GlobalConf.scene.FREE_CAMERA_TARGET_MODE_ON ? realTransUnits : 1);
-
-            // Update direction with pitch, yaw, roll
-            updateRotationFree(dt, GlobalConf.scene.TURNING_SPEED);
-            updateRoll(dt, GlobalConf.scene.TURNING_SPEED);
             updateLateral(dt, translateUnits);
-            break;
-        case Gaia_Scene:
-            if (entity1 == null || entity2 == null) {
-                entity1 = (CelestialBody) GaiaSky.instance.sg.getNode("Gaia");
-                entity2 = (CelestialBody) GaiaSky.instance.sg.getNode("Earth");
-                entity3 = (CelestialBody) GaiaSky.instance.sg.getNode("Mars");
-            }
-            AbstractPositionEntity fccopy = entity1.getLineCopy();
-            fccopy.getRoot().transform.position.set(0f, 0f, 0f);
-            fccopy.getRoot().update(time, null, this);
-            this.pos.set(fccopy.transform.getTranslation());
-
-            this.pos.add(0, 0, entity1.getRadius() * 5);
-            this.posinv.set(this.pos).scl(-1);
-            this.direction.set(0, 0, -1);
-            this.up.set(0, 1, 0);
-            closest = entity1;
-
-            // Return to pool
-            SceneGraphNode ape = fccopy;
-            do {
-                ape.returnToPool();
-                ape = ape.parent;
-            } while (ape != null);
-
             break;
         default:
             break;
@@ -368,7 +268,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
         lastMode = m;
 
         updatePerspectiveCamera();
-        updateFrustum(frustum, camera, pos, direction, up);
+        updateFrustum(frustum, camera, vrpos, direction, up);
     }
 
     public void updateHUD(float dt) {
@@ -432,7 +332,8 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
         camera.up.set(up.valuesf());
         camera.update();
 
-        posinv.set(pos).scl(-1);
+        vrpos.set(pos).add(vroffset);
+        posinv.set(vrpos).scl(-1);
 
     }
 
@@ -507,7 +408,6 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
             double vadeg = Math.toDegrees(focus.getViewAngle());
 
             if (focusLookKeyPressed) {
-                diverted = true;
                 addYaw(deltaX, acceleration);
                 addPitch(deltaY, acceleration);
             } else {
@@ -725,68 +625,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 
             lastvel.set(vel);
         }
-        posinv.set(pos).scl(-1);
-    }
-
-    /**
-     * Updates the rotation for the free camera.
-     * 
-     * @param dt
-     */
-    private void updateRotationFree(double dt, double rotateSpeed) {
-        // Add position to compensate for coordinates centered on camera
-        if (updatePosition(pitch, dt)) {
-            // Pitch
-            aux1.set(direction).crs(up).nor();
-            rotate(aux1, pitch.z * rotateSpeed);
-        }
-        if (updatePosition(yaw, dt)) {
-            // Yaw
-            rotate(up, -yaw.z * rotateSpeed);
-        }
-
-        defaultState(pitch, !GlobalConf.scene.CINEMATIC_CAMERA && !inputByController);
-        defaultState(yaw, !GlobalConf.scene.CINEMATIC_CAMERA && !inputByController);
-    }
-
-    private void updateRoll(double dt, double rotateSpeed) {
-        if (updatePosition(roll, dt)) {
-            // Roll
-            rotate(direction, -roll.z * rotateSpeed);
-        }
-        defaultState(roll, !GlobalConf.scene.CINEMATIC_CAMERA && !inputByController);
-    }
-
-    /**
-     * Updates the direction vector using the pitch, yaw and roll forces.
-     * 
-     * @param dt
-     */
-    private void updateRotation(double dt, final Vector3d rotationCenter) {
-        // Add position to compensate for coordinates centered on camera
-        //rotationCenter.add(pos);
-        if (updatePosition(vertical, dt)) {
-            // Pitch
-            aux1.set(direction).crs(up).nor();
-            rotateAround(rotationCenter, aux1, vertical.z * GlobalConf.scene.ROTATION_SPEED);
-        }
-        if (updatePosition(horizontal, dt)) {
-            // Yaw
-            rotateAround(rotationCenter, up, -horizontal.z * GlobalConf.scene.ROTATION_SPEED);
-        }
-
-        defaultState(vertical, !GlobalConf.scene.CINEMATIC_CAMERA && !inputByController);
-        defaultState(horizontal, !GlobalConf.scene.CINEMATIC_CAMERA && !inputByController);
-
-    }
-
-    private void defaultState(Vector3d vec, boolean resetVelocity) {
-        // Always reset acceleration
-        vec.x = 0;
-
-        // Reset velocity if needed
-        if (resetVelocity)
-            vec.y = 0;
+        posinv.set(pos).add(vroffset).scl(-1);
     }
 
     private void updateLateral(double dt, double translateUnits) {
@@ -798,70 +637,6 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
     }
 
     /**
-     * Updates the given accel/vel/pos of the angle using dt.
-     * 
-     * @param angle
-     * @param dt
-     * @return
-     */
-    private boolean updatePosition(Vector3d angle, double dt) {
-        if (angle.x != 0 || angle.y != 0) {
-            // Calculate velocity from acceleration
-            angle.y += angle.x * dt;
-            // Cap velocity
-            angle.y = Math.signum(angle.y) * Math.abs(angle.y);
-            // Update position
-            angle.z = (angle.y * dt) % 360f;
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     * Updates the camera direction and up vectors with a gentle turn towards
-     * the given target.
-     * 
-     * @param dt
-     *            The current time step
-     * @param target
-     *            The position of the target
-     * @param turnVelocity
-     *            The velocity at which to turn
-     * @param planetariumAngle
-     *            In degrees. In the case of planetaria, the target must be a
-     *            few degrees lower (skewed domes) so that we need to target a
-     *            point which is a few degrees above the focus.
-     */
-    private void directionToTarget(double dt, final Vector3d target, double turnVelocity, double planetariumAngle) {
-        desired.set(target).sub(pos);
-        if (planetariumAngle != 0) {
-            // Use up to target area above focus with given angle
-            double uplen = Math.tan(MathUtilsd.degRad * planetariumAngle) * desired.len();
-            aux3.set(desired).crs(up);
-            aux3.crs(desired);
-            aux2.set(aux3).nor().scl(uplen);
-            aux1.set(target).add(aux2);
-            desired.set(aux1).sub(pos);
-        }
-        desired.nor();
-        double angl = desired.angle(direction);
-        //boolean samedir = aux1.set(desired).add(direction).len2() > Math.max(desired.len2(), direction.len2());
-        if (angl > 0.5) {
-            // Add desired to direction with given turn velocity (v*dt)
-            desired.scl(turnVelocity * dt);
-            direction.add(desired).nor();
-
-            // Update up so that it is always perpendicular
-            aux1.set(direction).crs(up);
-            up.set(aux1).crs(direction).nor();
-            facingFocus = false;
-        } else {
-            facingFocus = true;
-        }
-    }
-
-    /**
      * Updates the camera mode
      */
     @Override
@@ -869,7 +644,6 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
         InputMultiplexer im = (InputMultiplexer) Gdx.input.getInputProcessor();
         switch (mode) {
         case Focus:
-            diverted = false;
             checkFocus();
         case Free_Camera:
         case Gaia_Scene:
@@ -949,11 +723,9 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
                 SceneGraphNode sgn = GaiaSky.instance.sg.getNode((String) data[0]);
                 if (sgn instanceof IFocus) {
                     focus = (IFocus) sgn;
-                    diverted = false;
                 }
             } else if (data[0] instanceof IFocus) {
                 focus = (IFocus) data[0];
-                diverted = false;
             }
             setFocus(focus);
 
@@ -985,7 +757,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
             break;
         case CAMERA_POS_CMD:
             pos.set((double[]) data[0]);
-            posinv.set(pos).scl(-1d);
+            posinv.set(pos).add(vroffset).scl(-1d);
             break;
         case CAMERA_DIR_CMD:
             direction.set((double[]) data[0]);
@@ -1012,7 +784,6 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
             stopTotalMovement();
             break;
         case CAMERA_CENTER:
-            diverted = false;
             break;
         case GO_TO_OBJECT_CMD:
             if (this.focus != null) {
@@ -1027,7 +798,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
                         pos.set(aux1);
 
                         pos.add(0, 0, -f.getSize() * 3);
-                        posinv.set(pos).scl(-1);
+                        posinv.set(pos).add(vroffset).scl(-1);
                         direction.set(0, 0, 1);
                         up.set(0, 1, 0);
                         rotate(up, 0.01);
@@ -1036,12 +807,6 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
                 });
 
             }
-            break;
-        case PLANETARIUM_FOCUS_ANGLE_CMD:
-            if (data.length == 0)
-                planetariumFocusAngle = 0;
-            else
-                planetariumFocusAngle = (float) data[0];
             break;
         case ORIENTATION_LOCK_CMD:
             previousOrientationAngle = 0;
@@ -1182,7 +947,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
                 pos.set(aux1);
 
                 pos.add(0, 0, -this.focus.getSize() * 6);
-                posinv.set(pos).scl(-1);
+                posinv.set(pos).add(vroffset).scl(-1);
                 direction.set(0, 0, 1);
             }
         }
@@ -1190,6 +955,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 
     public void resetState() {
         pos.scl(0);
+        vroffset.scl(0);
         posinv.scl(0);
         direction.set(0, 0, -1);
         for (PerspectiveCamera cam : cameras) {
@@ -1213,177 +979,23 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
         this.thrustDirection = direction;
     }
 
-    @SuppressWarnings("unused")
     @Override
     public void render(int rw, int rh) {
-        boolean draw = !GlobalConf.program.CUBEMAP360_MODE && !GlobalConf.program.STEREOSCOPIC_MODE && !GlobalConf.postprocess.POSTPROCESS_FISHEYE;
 
-        spriteBatch.begin();
-
-        // Renders crosshair if focus mode
-        if (GlobalConf.scene.CROSSHAIR && draw) {
-
-            // Focus crosshair only in focus mode
-            IFocus chFocus = null;
-            if (getMode().equals(CameraMode.Focus)) {
-                // Green
-                spriteBatch.setColor(0, 1, 0, 1);
-                chFocus = focus;
-            } else if (getMode().equals(CameraMode.Free_Camera) && closest != null) {
-                // Orange
-                spriteBatch.setColor(1f, .7f, .2f, 1f);
-                chFocus = (IFocus) closest.getComputedAncestor();
-            }
-
-            if (chFocus != null) {
-                float chw = focusCrosshair.getWidth();
-                float chh = focusCrosshair.getHeight();
-                float chw2 = chw / 2;
-                float chh2 = chh / 2;
-
-                chFocus.getAbsolutePosition(aux1).add(posinv);
-                boolean inside = projectToScreen(aux1, auxf1, rw, rh, chw, chh, chw2, chh2);
-
-                if (inside) {
-                    spriteBatch.draw(focusCrosshair, auxf1.x - chw2, auxf1.y - chh2, chw, chh);
-                } else {
-                    aux2f2.set(auxf1.x - (Gdx.graphics.getWidth() / 2), auxf1.y - (Gdx.graphics.getHeight() / 2));
-                    spriteBatch.draw(focusArrow, auxf1.x - chw2, auxf1.y - chh2, chw2, chh2, chw, chh, 1f, 1f, -90 + aux2f2.angle(), 0, 0, (int) chw, (int) chh, false, false);
-                }
-            }
-
-            // Velocity crosshair only if we move
-            // double speed = vel.len();
-            // if (speed > 0) {
-            // float chw = velocityCrosshair.getWidth();
-            // float chh = velocityCrosshair.getHeight();
-            // float chw2 = chw / 2;
-            // float chh2 = chh / 2;
-            //
-            // if (vel.anglePrecise(direction) < 60) {
-            //
-            // // ANTIVEL
-            // drawVelCrosshair(antivelocityCrosshair, rw, rh, chw, chh, chw2,
-            // chh2, -1);
-            //
-            // // VEL
-            // drawVelCrosshair(velocityCrosshair, rw, rh, chw, chh, chw2, chh2,
-            // 1);
-            // } else {
-            // // VEL
-            // drawVelCrosshair(velocityCrosshair, rw, rh, chw, chh, chw2, chh2,
-            // 1);
-            //
-            // // ANTIVEL
-            // drawVelCrosshair(antivelocityCrosshair, rw, rh, chw, chh, chw2,
-            // chh2, -1);
-            // }
-            // }
-        }
-
-        if (false && GlobalConf.program.DISPLAY_HUD) {
-            // Speed HUD
-            float dx, dy;
-            float centerx = rw / 2;
-            float centery = rh / 2;
-            if (vel.len2() != 0) {
-                aux1.set(vel);
-                if (vel.anglePrecise(direction) > 90) {
-                    aux1.scl(-1);
-                }
-                projectToScreen(aux1, auxf1, rw, rh, 0, 0, 0, 0);
-                dx = auxf1.x - rw / 2;
-                dy = auxf1.y - rh / 2;
-            } else {
-                dx = 0;
-                dy = 0;
-            }
-
-            for (int i = 0; i < hudScales.length; i++) {
-                float scl = (float) hudScales[i];
-
-                float dscale = (float) MathUtilsd.lint(scl, HUD_SCALE_MIN, HUD_SCALE_MAX, 1d, 0d);
-
-                Sprite s = hudSprites[i];
-                s.setColor(hudColors[hudColor]);
-                s.setOriginCenter();
-                s.setScale(scl);
-                s.setPosition(centerx + (dx * dscale) - hudw / 2, centery + (dy * dscale) - hudh / 2);
-                s.draw(spriteBatch);
-
-            }
-        }
-
-        spriteBatch.end();
-    }
-
-    private void drawVelCrosshair(Texture tex, int rw, int rh, float chw, float chh, float chw2, float chh2, float scl) {
-        aux1.set(vel).scl(scl);
-        projectToScreen(aux1, auxf1, rw, rh, chw, chh, chw2, chh2);
-
-        spriteBatch.draw(tex, auxf1.x - chw2, auxf1.y - chh2, chw, chh);
-    }
-
-    /**
-     * Projects to screen
-     * 
-     * @param vec
-     * @param out
-     * @param rw
-     * @param rh
-     * @param chw
-     * @param chh
-     * @param chw2
-     * @param chh2
-     * @return False if projected point falls outside the screen bounds, true
-     *         otherwise
-     */
-    private boolean projectToScreen(Vector3d vec, Vector3 out, int rw, int rh, float chw, float chh, float chw2, float chh2) {
-        vec.put(out);
-        camera.project(out, 0, 0, rw, rh);
-
-        double ang = direction.angle(vec);
-
-        if (ang > 90) {
-            out.x = rw - out.x;
-            out.y = rh - out.y;
-
-            float w2 = rw / 2f;
-            float h2 = rh / 2f;
-
-            // Q1 | Q2
-            // -------
-            // Q3 | Q4
-
-            if (out.x <= w2 && out.y >= h2) {
-                // Q1
-                out.x = chw2;
-                out.y = rh - chh2;
-
-            } else if (out.x > w2 && out.y > h2) {
-                // Q2
-                out.x = rw - chw2;
-                out.y = rh - chh2;
-            } else if (out.x <= w2 && out.y <= h2) {
-                // Q3
-                out.x = chw2;
-                out.y = chh2;
-            } else if (out.x > w2 && out.y < h2) {
-                // Q4
-                out.x = rw - chw2;
-                out.y = chh2;
-            }
-        }
-
-        out.x = MathUtils.clamp(out.x, chw2, rw - chw2);
-        out.y = MathUtils.clamp(out.y, chh2, rh - chh2);
-
-        return ang < camera.fieldOfView;
     }
 
     @Override
     public void resize(int width, int height) {
-        spriteBatch.getProjectionMatrix().setToOrtho2D(0, 0, width, height);
+    }
+
+    @Override
+    public Vector3d getPos() {
+        return vrpos;
+    }
+
+    @Override
+    public Vector3d getInversePos() {
+        return posinv;
     }
 
 }

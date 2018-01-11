@@ -411,7 +411,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
         if (withinMagLimit() && checkHitCondition()) {
             Vector3 pos = aux3f1.get();
             Vector3d aux = aux3d1.get();
-            Vector3d posd = getAbsolutePosition(aux).add(camera.posinv);
+            Vector3d posd = getAbsolutePosition(aux).add(camera.getInversePos());
             pos.set(posd.valuesf());
 
             if (camera.direction.dot(posd) > 0) {

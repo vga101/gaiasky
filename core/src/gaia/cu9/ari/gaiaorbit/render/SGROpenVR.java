@@ -20,6 +20,7 @@ import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.render.IPostProcessor.PostProcessBean;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
+import gaia.cu9.ari.gaiaorbit.scenegraph.NaturalCamera;
 import gaia.cu9.ari.gaiaorbit.vr.VRContext;
 import gaia.cu9.ari.gaiaorbit.vr.VRContext.Space;
 import gaia.cu9.ari.gaiaorbit.vr.VRContext.VRDevice;
@@ -80,8 +81,7 @@ public class SGROpenVR extends SGRAbstract implements ISGR, IObserver {
         /** LEFT EYE **/
 
         // Camera to left
-        //moveCamera(camera, sideRemainder, side, sideCapped, dirangleDeg, true);
-        updateCamera(camera, camera.getCamera(), 0, true);
+        updateCamera((NaturalCamera) camera.getCurrent(), camera.getCamera(), 0, true);
 
         fbLeft.begin();
         rc.fb = fbLeft;
@@ -92,9 +92,7 @@ public class SGROpenVR extends SGRAbstract implements ISGR, IObserver {
         /** RIGHT EYE **/
 
         // Camera to right
-        //restoreCameras(camera, cam, backupPosd, backupPos, backupDir);
-        //moveCamera(camera, sideRemainder, side, sideCapped, dirangleDeg, false);
-        updateCamera(camera, camera.getCamera(), 1, true);
+        updateCamera((NaturalCamera) camera.getCurrent(), camera.getCamera(), 1, true);
 
         fbRight.begin();
         rc.fb = fbRight;
@@ -113,7 +111,7 @@ public class SGROpenVR extends SGRAbstract implements ISGR, IObserver {
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
     }
 
-    private void updateCamera(ICamera cam, PerspectiveCamera camera, int eye, boolean updateFrustum) {
+    private void updateCamera(NaturalCamera cam, PerspectiveCamera camera, int eye, boolean updateFrustum) {
         // get the projection matrix from the HDM 
         VRSystem.VRSystem_GetProjectionMatrix(eye, camera.near, camera.far, projectionMat);
         VRContext.hmdMat4toMatrix4(projectionMat, camera.projection);
@@ -125,16 +123,17 @@ public class SGROpenVR extends SGRAbstract implements ISGR, IObserver {
 
         // get the pose matrix from the HDM
         VRDevice hmd = vrContext.getDeviceByType(VRDeviceType.HeadMountedDisplay);
-        Vector3 y = hmd.getUp(Space.Tracker);
-        Vector3 z = hmd.getDirection(Space.Tracker);
-        Vector3 p = hmd.getPosition(Space.Tracker);
+        Vector3 up = hmd.getUp(Space.Tracker);
+        Vector3 dir = hmd.getDirection(Space.Tracker);
+        Vector3 pos = hmd.getPosition(Space.Tracker);
 
         camera.view.idt();
-        camera.view.setToLookAt(p, tmp.set(p).add(z), y);
+        camera.view.setToLookAt(pos, tmp.set(pos).add(dir), up);
 
-        //camera.position.set(p);
-        camera.direction.set(z);
-        camera.up.set(y);
+        // Update main camera
+        cam.vroffset.set(pos);
+        cam.direction.set(dir);
+        cam.up.set(up);
 
         camera.combined.set(camera.projection);
         Matrix4.mul(camera.combined.val, invEyeSpace.val);
