@@ -28,10 +28,6 @@ import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.scenes.scene2d.ui.TooltipManager;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.TimeUtils;
-import com.badlogic.gdx.vr.OpenVRQuery;
-import com.badlogic.gdx.vr.VRContext;
-import com.badlogic.gdx.vr.VRContext.VRDevice;
-import com.badlogic.gdx.vr.VRContext.VRDeviceType;
 
 import gaia.cu9.ari.gaiaorbit.assets.AtmosphereGroundShaderProviderLoader;
 import gaia.cu9.ari.gaiaorbit.assets.AtmosphereShaderProviderLoader;
@@ -92,6 +88,10 @@ import gaia.cu9.ari.gaiaorbit.util.time.GlobalClock;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 import gaia.cu9.ari.gaiaorbit.util.time.RealTimeClock;
 import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
+import gaia.cu9.ari.gaiaorbit.vr.OpenVRQuery;
+import gaia.cu9.ari.gaiaorbit.vr.VRContext;
+import gaia.cu9.ari.gaiaorbit.vr.VRContext.VRDevice;
+import gaia.cu9.ari.gaiaorbit.vr.VRContext.VRDeviceType;
 
 /**
  * The main class. Holds all the entities manages the update/draw cycle as well

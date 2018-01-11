@@ -1,4 +1,4 @@
-package com.badlogic.gdx.vr;
+package gaia.cu9.ari.gaiaorbit.vr;
 
 import static org.lwjgl.openvr.VR.VR_ShutdownInternal;
 

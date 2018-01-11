@@ -1,4 +1,4 @@
-package com.badlogic.gdx.vr;
+package gaia.cu9.ari.gaiaorbit.vr;
 
 import org.lwjgl.openvr.HmdMatrix34;
 import org.lwjgl.openvr.HmdMatrix44;
@@ -7,10 +7,11 @@ import org.lwjgl.openvr.VRSystem;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.vr.VRContext.Eye;
-import com.badlogic.gdx.vr.VRContext.Space;
-import com.badlogic.gdx.vr.VRContext.VRDevice;
-import com.badlogic.gdx.vr.VRContext.VRDeviceType;
+
+import gaia.cu9.ari.gaiaorbit.vr.VRContext.Eye;
+import gaia.cu9.ari.gaiaorbit.vr.VRContext.Space;
+import gaia.cu9.ari.gaiaorbit.vr.VRContext.VRDevice;
+import gaia.cu9.ari.gaiaorbit.vr.VRContext.VRDeviceType;
 
 /**
  * A {@link Camera} implementation for one {@link Eye} of a {@link VRContext}.

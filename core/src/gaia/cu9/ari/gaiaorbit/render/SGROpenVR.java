@@ -14,16 +14,16 @@ import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.vr.VRContext;
-import com.badlogic.gdx.vr.VRContext.Space;
-import com.badlogic.gdx.vr.VRContext.VRDevice;
-import com.badlogic.gdx.vr.VRContext.VRDeviceType;
 
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.render.IPostProcessor.PostProcessBean;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
+import gaia.cu9.ari.gaiaorbit.vr.VRContext;
+import gaia.cu9.ari.gaiaorbit.vr.VRContext.Space;
+import gaia.cu9.ari.gaiaorbit.vr.VRContext.VRDevice;
+import gaia.cu9.ari.gaiaorbit.vr.VRContext.VRDeviceType;
 
 /**
  * Renders to OpenVR. Renders basically two scenes, one for each eye, using the

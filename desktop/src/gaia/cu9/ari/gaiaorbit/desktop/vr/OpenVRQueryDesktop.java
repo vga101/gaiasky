@@ -6,7 +6,6 @@ import java.io.FileInputStream;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Files;
 import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.vr.OpenVRQuery;
 
 import gaia.cu9.ari.gaiaorbit.desktop.format.DesktopDateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.desktop.format.DesktopNumberFormatFactory;
@@ -22,6 +21,7 @@ import gaia.cu9.ari.gaiaorbit.util.concurrent.SingleThreadLocalFactory;
 import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadLocalFactory;
 import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
+import gaia.cu9.ari.gaiaorbit.vr.OpenVRQuery;
 
 public class OpenVRQueryDesktop implements IObserver {
 
