@@ -152,6 +152,8 @@ $  tar -zxvf gaiasky-<version>.tgz
 In order to run the program just click on the shortcut
 provided in your operating system.
 
+If Windows is your OS of choice, you first need to install [Git for Windows](https://git-scm.com/download/win).
+
 ### 2.2 Running from source
 
 First, clone the [GitHub](https://github.com/langurmonkey/gaiasky) repository:
