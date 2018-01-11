@@ -47,9 +47,9 @@ use a ``tag`` version if you want to run it right away from source.
 
 Also, this guide is for **Unix-like systems only**. If you are working
 on Windows, you will need `git for
-windows <http://git-scm.com/download/win>`__ and `Power
-Shell <http://en.wikipedia.org/wiki/Windows_PowerShell>`__, even though
-it has not been tested.
+windows <http://git-scm.com/download/win>`__, which contains a version of
+MinGW (bash) packed with ``git``, ``vim`` and some other utils. All other
+parts of the process should work the same under Windows systems.
 
 First, clone the repository:
 
