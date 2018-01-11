@@ -74,7 +74,6 @@ public class SGROpenVR extends SGRAbstract implements ISGR, IObserver {
     @Override
     public void render(SceneGraphRenderer sgr, ICamera camera, double t, int rw, int rh, FrameBuffer fb, PostProcessBean ppb) {
         rc.ppb = null;
-        rc.set(rw, rh);
 
         vrContext.pollEvents();
 
@@ -83,22 +82,18 @@ public class SGROpenVR extends SGRAbstract implements ISGR, IObserver {
         // Camera to left
         updateCamera((NaturalCamera) camera.getCurrent(), camera.getCamera(), 0, true);
 
-        fbLeft.begin();
-        rc.fb = fbLeft;
-        clear();
+        boolean postproc = postprocessCapture(ppb, fbLeft, rw, rh);
         sgr.renderScene(camera, t, rc);
-        fbLeft.end();
+        postprocessRender(ppb, fbLeft, postproc, camera, rw, rh);
 
         /** RIGHT EYE **/
 
         // Camera to right
         updateCamera((NaturalCamera) camera.getCurrent(), camera.getCamera(), 1, true);
 
-        fbRight.begin();
-        rc.fb = fbRight;
-        clear();
+        postproc = postprocessCapture(ppb, fbRight, rw, rh);
         sgr.renderScene(camera, t, rc);
-        fbRight.end();
+        postprocessRender(ppb, fbRight, postproc, camera, rw, rh);
 
         /** SUBMIT TO VR COMPOSITOR **/
         VRCompositor.VRCompositor_Submit(VR.EVREye_Eye_Left, texLeft, null, VR.EVRSubmitFlags_Submit_Default);
