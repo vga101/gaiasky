@@ -23,10 +23,10 @@ import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadLocalFactory;
 import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
 
-public class OpenVRQueryDestkop implements IObserver {
+public class OpenVRQueryDesktop implements IObserver {
 
     public static void main(String[] args) {
-        OpenVRQueryDestkop ovrq = new OpenVRQueryDestkop();
+        OpenVRQueryDesktop ovrq = new OpenVRQueryDesktop();
         try {
             // Assets location
             String ASSETS_LOC = (System.getProperty("assets.location") != null ? System.getProperty("assets.location") : "../android/assets/");
