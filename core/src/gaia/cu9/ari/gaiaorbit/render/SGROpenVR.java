@@ -7,8 +7,6 @@ import org.lwjgl.openvr.VR;
 import org.lwjgl.openvr.VRCompositor;
 import org.lwjgl.openvr.VRSystem;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
@@ -99,11 +97,6 @@ public class SGROpenVR extends SGRAbstract implements ISGR, IObserver {
         VRCompositor.VRCompositor_Submit(VR.EVREye_Eye_Left, texLeft, null, VR.EVRSubmitFlags_Submit_Default);
         VRCompositor.VRCompositor_Submit(VR.EVREye_Eye_Right, texRight, null, VR.EVRSubmitFlags_Submit_Default);
 
-    }
-
-    private void clear() {
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT | (Gdx.graphics.getBufferFormat().coverageSampling ? GL20.GL_COVERAGE_BUFFER_BIT_NV : 0));
-        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
     }
 
     private void updateCamera(NaturalCamera cam, PerspectiveCamera camera, int eye, boolean updateFrustum) {
