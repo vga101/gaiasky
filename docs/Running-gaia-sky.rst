@@ -55,8 +55,8 @@ First, clone the repository:
 
 .. code-block:: bash
 
-    $ git clone https://github.com/langurmonkey/gaiasky.git
-    $ cd gaiasky
+    $  git clone https://github.com/langurmonkey/gaiasky.git
+    $  cd gaiasky
 
 Getting the catalog data
 ------------------------
@@ -109,7 +109,15 @@ To compile the code and run the desktop version of the application:
 
 .. code-block:: bash
 
-    $ gradlew desktop:run
+    $  gradlew desktop:run
+    
+In order to pull the latest changes from the GitHub repository to your local clone:
+
+.. code-block:: bash
+
+	$  git pull
+	
+Remember that the master branch is the development branch and therefore intrinsically unstable. It is not guaranteed to always work.
 
 
 Packaging Gaia Sky
@@ -119,14 +127,14 @@ To pack the application into a ``tar.gz`` file:
 
 .. code-block:: bash
 
-    $ gradlew desktop:createTar
+    $  gradlew desktop:createTar
 
 In order to produce the desktop installers for the various systems you
 need a licensed version of ``Install4j``.
 
 .. code-block:: bash
 
-    $ gradlew desktop:pack
+    $  gradlew desktop:pack
 
 These commands will compile and package the application into a
 ``gaiasky-[version]`` folder under the ``gaiasky/releases`` folder.
@@ -145,9 +153,9 @@ run it.
 
 .. code-block:: bash
 
-    $ tar zxvf gaiasky-[version].tar.gz
-    $ cd gaiasky-[version]/
-    $ gaiasky
+    $  tar zxvf gaiasky-[version].tar.gz
+    $  cd gaiasky-[version]/
+    $  gaiasky
 
 Windows
 -------
@@ -157,8 +165,8 @@ In order to run the application on Windows, open a terminal window (type
 
 .. code-block:: bash
 
-    cd path_to_gaiasky_folder
-    gaiasky.cmd
+    $  cd path_to_gaiasky_folder
+    $  gaiasky.cmd
 
 macOS X
 -------
