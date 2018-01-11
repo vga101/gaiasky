@@ -111,7 +111,7 @@ To compile the code and run the desktop version of the application:
 
     $  gradlew desktop:run
     
-In order to pull the latest changes from the GitHub repository to your local clone:
+In order to pull the latest changes from the GitHub repository:
 
 .. code-block:: bash
 
