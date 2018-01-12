@@ -5,7 +5,7 @@
 	"wikiname" : "Gaia (spacecraft)",
 	"color" : [0.7, 0.8, 0.1, 1.0],
 	// 5m of radius, 0.005 Km
-	"size" : 0.005,
+	"size" : 2000.0,
 	"ct" : Satellites,
 
 	"mag" : 3.78,
@@ -59,7 +59,7 @@
         "name" : "Solar sail",
         "color" : [0.3, 0.5, 0.9, 1.0],
         // in Km
-        "size" : 0.1,
+        "size" : 2000.0,
         "ct" : Satellites,
 
         "parent" : "Universe",

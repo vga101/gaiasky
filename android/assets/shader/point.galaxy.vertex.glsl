@@ -26,7 +26,7 @@ float lint(float x, float x0, float x1, float y0, float y1) {
 
 void main() {
     vec3 pos = a_position.xyz - u_camPos;
-    float distNorm = length(pos) / 800000000000.0;
+    float distNorm = length(pos) / 1e15;
 
     v_col = vec4(a_color.rgb, a_color.a);
 

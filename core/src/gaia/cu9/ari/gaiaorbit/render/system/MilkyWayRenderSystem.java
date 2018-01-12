@@ -24,6 +24,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.MilkyWayReal;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ParticleGroup.ParticleBean;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
+import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf.ProgramConf.StereoProfile;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
@@ -115,7 +116,7 @@ public class MilkyWayRenderSystem extends ImmediateRenderSystem implements IObse
             /**
              * STAR RENDER
              */
-            if (UPDATE_POINTS) {
+            if (GlobalConf.scene.GALAXY_3D && UPDATE_POINTS) {
                 Vector3 center = mw.getPosition().toVector3();
 
                 /** STARS **/
@@ -126,10 +127,10 @@ public class MilkyWayRenderSystem extends ImmediateRenderSystem implements IObse
                     aux1.set((float) star.data[0], (float) star.data[1], (float) star.data[2]);
                     double distanceCenter = aux1.sub(center).len() / (mw.getRadius() * 2f);
 
-                    float[] col = new float[] { (float) (rand.nextGaussian() * 0.02f) + 0.93f, (float) (rand.nextGaussian() * 0.02) + 0.8f, (float) (rand.nextGaussian() * 0.02) + 0.97f, rand.nextFloat() * 0.5f + 0.4f };
+                    float[] col = new float[] { (float) (rand.nextGaussian() * 0.02f) + 0.9f, (float) (rand.nextGaussian() * 0.02) + 0.7f, (float) (rand.nextGaussian() * 0.02) + 0.97f, rand.nextFloat() * 0.5f + 0.4f };
 
                     if (distanceCenter < 1f) {
-                        float add = (float) MathUtilsd.clamp(1f - distanceCenter, 0f, 1f) * 0.5f;
+                        float add = (float) MathUtilsd.clamp(1f - distanceCenter, 0f, 1f) * 0.3f;
                         col[0] = col[0] + add;
                         col[1] = col[1] + add;
                         col[2] = col[2] + add;
@@ -187,7 +188,7 @@ public class MilkyWayRenderSystem extends ImmediateRenderSystem implements IObse
                         } else {
                             texnum = rand.nextInt(4);
                         }
-                        quadsize = qp.data.length > 3 ? (float) (qp.data[3] + 1.0f) * .46e11f : (float) (rand.nextFloat() + 1.0f) * 2e11f;
+                        quadsize = (float) ((qp.data.length > 3 ? (qp.data[3] + 1.0f) * .46e11f : (rand.nextFloat() + 1.0f) * 2e11f) * Constants.M_TO_U_CONV);
                         alphamultiplier = MathUtilsd.lint(quadpointdist, 0, mw.size * 3, 6.0f, 1.0f);
 
                         rotaxis.set(rand.nextFloat(), rand.nextFloat(), rand.nextFloat());
@@ -291,7 +292,7 @@ public class MilkyWayRenderSystem extends ImmediateRenderSystem implements IObse
                     // General uniforms
                     quadProgram.setUniformMatrix("u_projModelView", camera.getCamera().combined);
                     quadProgram.setUniformf("u_camPos", camera.getCurrent().getPos().put(aux1));
-                    quadProgram.setUniformf("u_alpha", 0.015f * mw.opacity * alpha);
+                    quadProgram.setUniformf("u_alpha", 0.04f * mw.opacity * alpha);
 
                     for (int i = 0; i < 4; i++) {
                         nebulatextures[i].bind(i);
@@ -329,12 +330,12 @@ public class MilkyWayRenderSystem extends ImmediateRenderSystem implements IObse
                     // Restore
                     Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
                 }
-
                 /**
                  * IMAGE RENDERER
                  */
                 mw.mc.touch();
-                mw.mc.setTransparency(mw.opacity * alpha * (GlobalConf.scene.GALAXY_3D ? 0.6f : 0.8f));
+                //mw.mc.setTransparency(mw.opacity * alpha * (GlobalConf.scene.GALAXY_3D ? 0.6f : 0.8f));
+                mw.mc.setTransparency(mw.opacity * alpha * 1f);
 
                 modelBatch.begin(camera.getCamera());
                 modelBatch.render(mw.mc.instance, mw.mc.env);
