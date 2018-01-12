@@ -330,9 +330,9 @@ public class FullGui extends AbstractGui {
                 Integer x = (Integer) data[2];
                 Integer y = (Integer) data[3];
 
-                pointerXCoord.setText("RA/".concat(nf.format(ra)).concat("Â°"));
+                pointerXCoord.setText("RA/".concat(nf.format(ra)).concat("°"));
                 pointerXCoord.setPosition(x, GlobalConf.SCALE_FACTOR);
-                pointerYCoord.setText("DEC/".concat(nf.format(dec)).concat("Â°"));
+                pointerYCoord.setText("DEC/".concat(nf.format(dec)).concat("°"));
                 pointerYCoord.setPosition(Gdx.graphics.getWidth() + GlobalConf.SCALE_FACTOR, Gdx.graphics.getHeight() - y);
             }
             break;
@@ -343,9 +343,9 @@ public class FullGui extends AbstractGui {
                 Integer x = (Integer) data[2];
                 Integer y = (Integer) data[3];
 
-                pointerXCoord.setText("Lon/".concat(nf.format(lon)).concat("Â°"));
+                pointerXCoord.setText("Lon/".concat(nf.format(lon)).concat("°"));
                 pointerXCoord.setPosition(x, GlobalConf.SCALE_FACTOR);
-                pointerYCoord.setText("Lat/".concat(nf.format(lat)).concat("Â°"));
+                pointerYCoord.setText("Lat/".concat(nf.format(lat)).concat("°"));
                 pointerYCoord.setPosition(Gdx.graphics.getWidth() + GlobalConf.SCALE_FACTOR, Gdx.graphics.getHeight() - y);
             }
             break;

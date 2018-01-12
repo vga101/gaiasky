@@ -103,6 +103,8 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
      **/
     boolean inputByController = false;
 
+    boolean diverted = false;
+
     public double[] hudScales;
     public Color[] hudColors;
     public int hudColor;
@@ -233,7 +235,18 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
                 // listener
                 this.focus.getAbsolutePosition(aux4).add(dx);
 
+                if (!GlobalConf.runtime.OPENVR) {
+                    if (!diverted) {
+                        directionToTarget(dt, aux4, GlobalConf.scene.TURNING_SPEED / (GlobalConf.scene.CINEMATIC_CAMERA ? 1e3f : 1e2f));
+                    } else {
+                        updateRotationFree(dt, GlobalConf.scene.TURNING_SPEED);
+                    }
+                    updateRoll(dt, GlobalConf.scene.TURNING_SPEED);
+                }
+
                 updatePosition(dt, translateUnits, realTransUnits);
+                if (!GlobalConf.runtime.OPENVR)
+                    updateRotation(dt, aux4);
 
                 // Update focus direction
                 focusDirection.set(aux4).sub(pos).nor();
@@ -254,6 +267,11 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
             break;
         case Free_Camera:
             updatePosition(dt, translateUnits, GlobalConf.scene.FREE_CAMERA_TARGET_MODE_ON ? realTransUnits : 1);
+            if (!GlobalConf.runtime.OPENVR) {
+                // Update direction with pitch, yaw, roll
+                updateRotationFree(dt, GlobalConf.scene.TURNING_SPEED);
+                updateRoll(dt, GlobalConf.scene.TURNING_SPEED);
+            }
             updateLateral(dt, translateUnits);
             break;
         default:
@@ -628,12 +646,124 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
         posinv.set(pos).add(vroffset).scl(-1);
     }
 
+    /**
+     * Updates the rotation for the free camera.
+     * 
+     * @param dt
+     */
+    private void updateRotationFree(double dt, double rotateSpeed) {
+        // Add position to compensate for coordinates centered on camera
+        if (updatePosition(pitch, dt)) {
+            // Pitch
+            aux1.set(direction).crs(up).nor();
+            rotate(aux1, pitch.z * rotateSpeed);
+        }
+        if (updatePosition(yaw, dt)) {
+            // Yaw
+            rotate(up, -yaw.z * rotateSpeed);
+        }
+
+        defaultState(pitch, !GlobalConf.scene.CINEMATIC_CAMERA && !inputByController);
+        defaultState(yaw, !GlobalConf.scene.CINEMATIC_CAMERA && !inputByController);
+    }
+
+    private void updateRoll(double dt, double rotateSpeed) {
+        if (updatePosition(roll, dt)) {
+            // Roll
+            rotate(direction, -roll.z * rotateSpeed);
+        }
+        defaultState(roll, !GlobalConf.scene.CINEMATIC_CAMERA && !inputByController);
+    }
+
+    /**
+     * Updates the direction vector using the pitch, yaw and roll forces.
+     * 
+     * @param dt
+     */
+    private void updateRotation(double dt, final Vector3d rotationCenter) {
+        // Add position to compensate for coordinates centered on camera
+        //rotationCenter.add(pos);
+        if (updatePosition(vertical, dt)) {
+            // Pitch
+            aux1.set(direction).crs(up).nor();
+            rotateAround(rotationCenter, aux1, vertical.z * GlobalConf.scene.ROTATION_SPEED);
+        }
+        if (updatePosition(horizontal, dt)) {
+            // Yaw
+            rotateAround(rotationCenter, up, -horizontal.z * GlobalConf.scene.ROTATION_SPEED);
+        }
+
+        defaultState(vertical, !GlobalConf.scene.CINEMATIC_CAMERA && !inputByController);
+        defaultState(horizontal, !GlobalConf.scene.CINEMATIC_CAMERA && !inputByController);
+
+    }
+
+    private void defaultState(Vector3d vec, boolean resetVelocity) {
+        // Always reset acceleration
+        vec.x = 0;
+
+        // Reset velocity if needed
+        if (resetVelocity)
+            vec.y = 0;
+    }
+
     private void updateLateral(double dt, double translateUnits) {
         // Pan with hor
         aux1.set(direction).crs(up).nor();
         aux1.scl(horizontal.y * dt * translateUnits);
         translate(aux1);
 
+    }
+
+    /**
+     * Updates the given accel/vel/pos of the angle using dt.
+     * 
+     * @param angle
+     * @param dt
+     * @return
+     */
+    private boolean updatePosition(Vector3d angle, double dt) {
+        if (angle.x != 0 || angle.y != 0) {
+            // Calculate velocity from acceleration
+            angle.y += angle.x * dt;
+            // Cap velocity
+            angle.y = Math.signum(angle.y) * Math.abs(angle.y);
+            // Update position
+            angle.z = (angle.y * dt) % 360f;
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Updates the camera direction and up vectors with a gentle turn towards
+     * the given target.
+     * 
+     * @param dt
+     *            The current time step
+     * @param target
+     *            The position of the target
+     * @param turnVelocity
+     *            The velocity at which to turn
+     */
+    private void directionToTarget(double dt, final Vector3d target, double turnVelocity) {
+        desired.set(target).sub(pos);
+        desired.nor();
+        double angl = desired.angle(direction);
+        //boolean samedir = aux1.set(desired).add(direction).len2() > Math.max(desired.len2(), direction.len2());
+        if (angl > 0.5) {
+            // Add desired to direction with given turn velocity (v*dt)
+            desired.scl(turnVelocity * dt);
+            direction.add(desired).nor();
+
+            // Update up so that it is always perpendicular
+            aux1.set(direction).crs(up);
+            up.set(aux1).crs(direction).nor();
+            facingFocus = false;
+        } else {
+            facingFocus = true;
+        }
     }
 
     /**

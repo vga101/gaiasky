@@ -50,12 +50,9 @@ public class MilkyWayRenderSystem extends ImmediateRenderSystem implements IObse
     protected void initShaderProgram() {
 
         // POINT (STARS) PROGRAM
-        if (Gdx.app.getType() == ApplicationType.WebGL)
-            shaderProgram = new ShaderProgram(Gdx.files.internal("shader/point.galaxy.vertex.glsl"), Gdx.files.internal("shader/point.galaxy.fragment.wgl.glsl"));
-        else
-            shaderProgram = new ShaderProgram(Gdx.files.internal("shader/point.galaxy.vertex.glsl"), Gdx.files.internal("shader/point.galaxy.fragment.glsl"));
+        shaderProgram = new ShaderProgram(Gdx.files.internal("shader/point.galaxy.vertex.glsl"), Gdx.files.internal("shader/point.galaxy.fragment.glsl"));
         if (!shaderProgram.isCompiled()) {
-            Logger.error(this.getClass().getName(), "Point shader compilation failed:\n" + shaderProgram.getLog());
+            Logger.error(this.getClass().getName(), "MW shader compilation failed:\n" + shaderProgram.getLog());
         }
         shaderProgram.begin();
         shaderProgram.setUniformf("u_pointAlphaMin", 0.1f);

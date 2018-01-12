@@ -146,13 +146,13 @@ public class CameraComponent extends GuiComponent implements IObserver {
             if (fovFlag && event instanceof ChangeEvent) {
                 float value = MathUtilsd.clamp(fieldOfView.getValue(), Constants.MIN_FOV, Constants.MAX_FOV);
                 EventManager.instance.post(Events.FOV_CHANGED_CMD, value);
-                fov.setText(Integer.toString((int) value) + "Â°");
+                fov.setText(Integer.toString((int) value) + "°");
                 return true;
             }
             return false;
         });
 
-        fov = new OwnLabel(Integer.toString((int) GlobalConf.scene.CAMERA_FOV) + "Â°", skin, "default");
+        fov = new OwnLabel(Integer.toString((int) GlobalConf.scene.CAMERA_FOV) + "°", skin, "default");
 
         /** CAMERA SPEED LIMIT **/
         String[] speedLimits = new String[14];
@@ -410,7 +410,7 @@ public class CameraComponent extends GuiComponent implements IObserver {
         case FOV_CHANGE_NOTIFICATION:
             fovFlag = false;
             fieldOfView.setValue(GlobalConf.scene.CAMERA_FOV);
-            fov.setText(Integer.toString((int) GlobalConf.scene.CAMERA_FOV) + "Â°");
+            fov.setText(Integer.toString((int) GlobalConf.scene.CAMERA_FOV) + "°");
             fovFlag = true;
             break;
         case CUBEMAP360_CMD:

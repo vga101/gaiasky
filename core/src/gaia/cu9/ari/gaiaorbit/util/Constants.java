@@ -23,9 +23,20 @@ public class Constants {
     public static final double R_o = .6957964e6;
 
     /**
+     * Original scaling
+     */
+    public static final double M_TO_U_ORIGINAL = 1e-9;
+
+    /**
      * Metre to local unit conversion. Multiply this by all values in m.
      */
-    public static final double M_TO_U = 1e-5;
+    public static final double M_TO_U = 1e-6;
+
+    /**
+     * Conversion from original to VR scaling
+     */
+    public static final double M_TO_U_CONV = M_TO_U / M_TO_U_ORIGINAL;
+
     /**
      * Local unit to m conversion.
      */

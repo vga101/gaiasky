@@ -185,41 +185,44 @@ public class TextureComponent {
      *            Plain color used if there is no texture.
      */
     public void initMaterial(AssetManager manager, Map<String, Material> materials, float[] cc, boolean culling) {
-        Material material = materials.get("base");
-        if (base != null) {
-            baseTex = manager.get(base, Texture.class);
-            material.set(new TextureAttribute(TextureAttribute.Diffuse, baseTex));
-        }
-        if (cc != null && (coloriftex || base == null)) {
-            // Add diffuse colour
-            material.set(new ColorAttribute(ColorAttribute.Diffuse, cc[0], cc[1], cc[2], cc[3]));
-        }
+        Material material = materials.containsKey("base") ? materials.get("base") : materials.size() > 0 ? materials.get(materials.keySet().iterator().next()) : null;
 
-        if (normal != null) {
-            Texture tex = manager.get(normal, Texture.class);
-            material.set(new TextureAttribute(TextureAttribute.Normal, tex));
-        }
-        if (specular != null) {
-            Texture tex = manager.get(specular, Texture.class);
-            material.set(new TextureAttribute(TextureAttribute.Specular, tex));
-            // Control amount of specularity
-            material.set(new ColorAttribute(ColorAttribute.Specular, 0.5f, 0.5f, 0.5f, 1f));
-        }
-        if (night != null) {
-            Texture tex = manager.get(night, Texture.class);
-            material.set(new TextureAttribute(TextureAttribute.Emissive, tex));
-        }
-        if (materials.containsKey("ring")) {
-            // Ring material
-            Material ringMat = materials.get("ring");
-            Texture tex = manager.get(ring, Texture.class);
-            ringMat.set(new TextureAttribute(TextureAttribute.Diffuse, tex));
-            ringMat.set(new BlendingAttribute(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA));
-            if (!culling)
-                ringMat.set(new IntAttribute(IntAttribute.CullFace, GL20.GL_NONE));
-        }
-        if (!culling) {
-            material.set(new IntAttribute(IntAttribute.CullFace, GL20.GL_NONE));
+        if (material != null) {
+            if (base != null) {
+                baseTex = manager.get(base, Texture.class);
+                material.set(new TextureAttribute(TextureAttribute.Diffuse, baseTex));
+            }
+            if (cc != null && (coloriftex || base == null)) {
+                // Add diffuse colour
+                material.set(new ColorAttribute(ColorAttribute.Diffuse, cc[0], cc[1], cc[2], cc[3]));
+            }
+
+            if (normal != null) {
+                Texture tex = manager.get(normal, Texture.class);
+                material.set(new TextureAttribute(TextureAttribute.Normal, tex));
+            }
+            if (specular != null) {
+                Texture tex = manager.get(specular, Texture.class);
+                material.set(new TextureAttribute(TextureAttribute.Specular, tex));
+                // Control amount of specularity
+                material.set(new ColorAttribute(ColorAttribute.Specular, 0.5f, 0.5f, 0.5f, 1f));
+            }
+            if (night != null) {
+                Texture tex = manager.get(night, Texture.class);
+                material.set(new TextureAttribute(TextureAttribute.Emissive, tex));
+            }
+            if (materials.containsKey("ring")) {
+                // Ring material
+                Material ringMat = materials.get("ring");
+                Texture tex = manager.get(ring, Texture.class);
+                ringMat.set(new TextureAttribute(TextureAttribute.Diffuse, tex));
+                ringMat.set(new BlendingAttribute(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA));
+                if (!culling)
+                    ringMat.set(new IntAttribute(IntAttribute.CullFace, GL20.GL_NONE));
+            }
+            if (!culling) {
+                material.set(new IntAttribute(IntAttribute.CullFace, GL20.GL_NONE));
+            }
         }
     }
 

@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.Pair;
 import gaia.cu9.ari.gaiaorbit.util.tree.LoadStatus;
@@ -69,12 +70,12 @@ public class MetadataBinaryIO {
                 try {
                     // name_length, name, appmag, absmag, colorbv, ra, dec, dist
                     long pageId = data_in.readInt();
-                    float x = data_in.readFloat();
-                    float y = data_in.readFloat();
-                    float z = data_in.readFloat();
-                    float hsx = data_in.readFloat() / 2f;
-                    float hsy = data_in.readFloat() / 2f;
-                    float hsz = data_in.readFloat() / 2f;
+                    float x = data_in.readFloat() * (float) Constants.M_TO_U_CONV;
+                    float y = data_in.readFloat() * (float) Constants.M_TO_U_CONV;
+                    float z = data_in.readFloat() * (float) Constants.M_TO_U_CONV;
+                    float hsx = (data_in.readFloat() / 2f) * (float) Constants.M_TO_U_CONV;
+                    float hsy = (data_in.readFloat() / 2f) * (float) Constants.M_TO_U_CONV;
+                    float hsz = (data_in.readFloat() / 2f) * (float) Constants.M_TO_U_CONV;
                     long[] childrenIds = new long[8];
                     for (int i = 0; i < 8; i++) {
                         childrenIds[i] = data_in.readInt();

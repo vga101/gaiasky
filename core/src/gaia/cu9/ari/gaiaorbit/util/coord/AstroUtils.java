@@ -679,7 +679,7 @@ public class AstroUtils {
     public static double obliquity(double julianDate) {
         // JPL's fundamental ephemerides have been continually updated. The
         // Astronomical Almanac for 2010 specifies:
-        // E = 23° 26′ 21″.406 − 46″.836769 T − 0″.0001831 T2 + 0″.00200340 T3 −
+        // E = 23� 26′ 21″.406 − 46″.836769 T − 0″.0001831 T2 + 0″.00200340 T3 −
         // 0″.576×10−6 T4 − 4″.34×10−8 T5
         double T = T(julianDate);
         /*

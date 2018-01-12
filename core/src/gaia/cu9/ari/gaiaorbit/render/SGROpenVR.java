@@ -53,49 +53,53 @@ public class SGROpenVR extends SGRAbstract implements ISGR, IObserver {
         // VR Context
         this.vrContext = vrContext;
 
-        // Left eye, fb and texture
-        fbLeft = new FrameBuffer(Format.RGBA8888, vrContext.getWidth(), vrContext.getHeight(), true);
-        texLeft = org.lwjgl.openvr.Texture.create();
-        texLeft.set(fbLeft.getColorBufferTexture().getTextureObjectHandle(), VR.ETextureType_TextureType_OpenGL, VR.EColorSpace_ColorSpace_Gamma);
+        if (vrContext != null) {
+            // Left eye, fb and texture
+            fbLeft = new FrameBuffer(Format.RGBA8888, vrContext.getWidth(), vrContext.getHeight(), true);
+            texLeft = org.lwjgl.openvr.Texture.create();
+            texLeft.set(fbLeft.getColorBufferTexture().getTextureObjectHandle(), VR.ETextureType_TextureType_OpenGL, VR.EColorSpace_ColorSpace_Gamma);
 
-        // Right eye, fb and texture
-        fbRight = new FrameBuffer(Format.RGBA8888, vrContext.getWidth(), vrContext.getHeight(), true);
-        texRight = org.lwjgl.openvr.Texture.create();
-        texRight.set(fbRight.getColorBufferTexture().getTextureObjectHandle(), VR.ETextureType_TextureType_OpenGL, VR.EColorSpace_ColorSpace_Gamma);
+            // Right eye, fb and texture
+            fbRight = new FrameBuffer(Format.RGBA8888, vrContext.getWidth(), vrContext.getHeight(), true);
+            texRight = org.lwjgl.openvr.Texture.create();
+            texRight.set(fbRight.getColorBufferTexture().getTextureObjectHandle(), VR.ETextureType_TextureType_OpenGL, VR.EColorSpace_ColorSpace_Gamma);
 
-        // Aux vectors
-        tmp = new Vector3();
+            // Aux vectors
+            tmp = new Vector3();
 
-        EventManager.instance.subscribe(this, Events.FRAME_SIZE_UDPATE, Events.SCREENSHOT_SIZE_UDPATE);
+            EventManager.instance.subscribe(this, Events.FRAME_SIZE_UDPATE, Events.SCREENSHOT_SIZE_UDPATE);
+        }
     }
 
     @Override
     public void render(SceneGraphRenderer sgr, ICamera camera, double t, int rw, int rh, FrameBuffer fb, PostProcessBean ppb) {
-        rc.ppb = null;
+        if (vrContext != null) {
+            rc.ppb = null;
 
-        vrContext.pollEvents();
+            vrContext.pollEvents();
 
-        /** LEFT EYE **/
+            /** LEFT EYE **/
 
-        // Camera to left
-        updateCamera((NaturalCamera) camera.getCurrent(), camera.getCamera(), 0, true);
+            // Camera to left
+            updateCamera((NaturalCamera) camera.getCurrent(), camera.getCamera(), 0, true);
 
-        boolean postproc = postprocessCapture(ppb, fbLeft, rw, rh);
-        sgr.renderScene(camera, t, rc);
-        postprocessRender(ppb, fbLeft, postproc, camera, rw, rh);
+            boolean postproc = postprocessCapture(ppb, fbLeft, rw, rh);
+            sgr.renderScene(camera, t, rc);
+            postprocessRender(ppb, fbLeft, postproc, camera, rw, rh);
 
-        /** RIGHT EYE **/
+            /** RIGHT EYE **/
 
-        // Camera to right
-        updateCamera((NaturalCamera) camera.getCurrent(), camera.getCamera(), 1, true);
+            // Camera to right
+            updateCamera((NaturalCamera) camera.getCurrent(), camera.getCamera(), 1, true);
 
-        postproc = postprocessCapture(ppb, fbRight, rw, rh);
-        sgr.renderScene(camera, t, rc);
-        postprocessRender(ppb, fbRight, postproc, camera, rw, rh);
+            postproc = postprocessCapture(ppb, fbRight, rw, rh);
+            sgr.renderScene(camera, t, rc);
+            postprocessRender(ppb, fbRight, postproc, camera, rw, rh);
 
-        /** SUBMIT TO VR COMPOSITOR **/
-        VRCompositor.VRCompositor_Submit(VR.EVREye_Eye_Left, texLeft, null, VR.EVRSubmitFlags_Submit_Default);
-        VRCompositor.VRCompositor_Submit(VR.EVREye_Eye_Right, texRight, null, VR.EVRSubmitFlags_Submit_Default);
+            /** SUBMIT TO VR COMPOSITOR **/
+            VRCompositor.VRCompositor_Submit(VR.EVREye_Eye_Left, texLeft, null, VR.EVRSubmitFlags_Submit_Default);
+            VRCompositor.VRCompositor_Submit(VR.EVREye_Eye_Right, texRight, null, VR.EVRSubmitFlags_Submit_Default);
+        }
 
     }
 
@@ -139,7 +143,8 @@ public class SGROpenVR extends SGRAbstract implements ISGR, IObserver {
     }
 
     public void dispose() {
-        vrContext.dispose();
+        if (vrContext != null)
+            vrContext.dispose();
     }
 
     @Override

@@ -154,7 +154,7 @@
 		
 		// Extends IParticleGroupDataProvider
 		"provider" : "gaia.cu9.ari.gaiaorbit.data.group.PointDataProvider",
-		"factor" :  149.597871,
+		"factor" :  149000.597871,
 		"datafile" : "data/oort/oort_10000particles.dat"
 	},
 	
