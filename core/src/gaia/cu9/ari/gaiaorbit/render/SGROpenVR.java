@@ -119,13 +119,15 @@ public class SGROpenVR extends SGRAbstract implements ISGR, IObserver {
         Vector3 dir = hmd.getDirection(Space.Tracker);
         Vector3 pos = hmd.getPosition(Space.Tracker);
 
-        camera.view.idt();
-        camera.view.setToLookAt(pos, tmp.set(pos).add(dir), up);
-
         // Update main camera
         cam.vroffset.set(pos);
         cam.direction.set(dir);
         cam.up.set(up);
+
+        // Update Eye camera
+        pos.set(0, 0, 0);
+        camera.view.idt();
+        camera.view.setToLookAt(pos, tmp.set(pos).add(dir), up);
 
         camera.combined.set(camera.projection);
         Matrix4.mul(camera.combined.val, invEyeSpace.val);
