@@ -26,7 +26,6 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.VertexAttribute;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
@@ -271,9 +270,6 @@ public class VRContext implements Disposable {
     private final IntBuffer error = BufferUtils.newIntBuffer(1);
     private final IntBuffer scratch = BufferUtils.newIntBuffer(1), scratch2 = BufferUtils.newIntBuffer(1);
 
-    // batcher to draw eye rendering surface to companion window
-    private final SpriteBatch batcher;
-
     // internal native objects to get device poses 
     private final TrackedDevicePose.Buffer trackedDevicePoses = TrackedDevicePose.create(VR.k_unMaxTrackedDeviceCount);
     private final TrackedDevicePose.Buffer trackedDeviceGamePoses = TrackedDevicePose.create(VR.k_unMaxTrackedDeviceCount);
@@ -337,10 +333,6 @@ public class VRContext implements Disposable {
         width = (int) (scratch.get(0) * renderTargetMultiplier);
         height = (int) (scratch2.get(0) * renderTargetMultiplier);
 
-        //        setupEye(Eye.Left, width, height, hasStencil);
-        //        setupEye(Eye.Right, width, height, hasStencil);
-
-        batcher = new SpriteBatch();
     }
 
     public int getWidth() {
@@ -577,7 +569,6 @@ public class VRContext implements Disposable {
     }
 
     public void dispose() {
-        batcher.dispose();
         VR_ShutdownInternal();
     }
 
