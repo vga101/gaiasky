@@ -9,9 +9,14 @@ import org.lwjgl.openvr.VRSystem;
 
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.Pixmap.Format;
+import com.badlogic.gdx.graphics.g3d.Environment;
+import com.badlogic.gdx.graphics.g3d.ModelBatch;
+import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
+import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Array;
 
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
@@ -40,18 +45,26 @@ public class SGROpenVR extends SGRAbstract implements ISGR, IObserver {
     /** Textures **/
     Texture texLeft, texRight;
 
+    /** Model batch to render controllers **/
+    ModelBatch modelBatch;
+
     HmdMatrix44 projectionMat = HmdMatrix44.create();
     HmdMatrix34 eyeMat = HmdMatrix34.create();
 
     public final Matrix4 eyeSpace = new Matrix4();
     public final Matrix4 invEyeSpace = new Matrix4();
 
+    private Array<VRDevice> controllers;
+    private Environment controllersEnv;
+
     private Vector3 tmp;
 
-    public SGROpenVR(VRContext vrContext) {
+    public SGROpenVR(VRContext vrContext, ModelBatch modelBatch) {
         super();
         // VR Context
         this.vrContext = vrContext;
+        // Model batch
+        this.modelBatch = modelBatch;
 
         if (vrContext != null) {
             // Left eye, fb and texture
@@ -66,6 +79,17 @@ public class SGROpenVR extends SGRAbstract implements ISGR, IObserver {
 
             // Aux vectors
             tmp = new Vector3();
+
+            // Controllers
+            controllers = vrContext.getDevicesByType(VRDeviceType.Controller);
+
+            // Env
+            controllersEnv = new Environment();
+            controllersEnv.set(new ColorAttribute(ColorAttribute.AmbientLight, 1f, 1f, 1f, 1f));
+            DirectionalLight dlight = new DirectionalLight();
+            dlight.color.set(1f, 0f, 0f, 1f);
+            dlight.direction.set(0, 1, 0);
+            controllersEnv.add(dlight);
 
             EventManager.instance.subscribe(this, Events.FRAME_SIZE_UDPATE, Events.SCREENSHOT_SIZE_UDPATE);
         }
@@ -84,7 +108,25 @@ public class SGROpenVR extends SGRAbstract implements ISGR, IObserver {
             updateCamera((NaturalCamera) camera.getCurrent(), camera.getCamera(), 0, true, rc);
 
             boolean postproc = postprocessCapture(ppb, fbLeft, rw, rh);
+
+            // Render scene
             sgr.renderScene(camera, t, rc);
+
+            // Render controllers
+            float near = camera.getCamera().near;
+            float far = camera.getCamera().far;
+            camera.getCamera().near = 0.01f;
+            camera.getCamera().far = 100f;
+            camera.getCamera().update();
+            modelBatch.begin(camera.getCamera());
+            for (VRDevice controller : controllers) {
+                modelBatch.render(controller.getModelInstance(), controllersEnv);
+            }
+            modelBatch.end();
+            camera.getCamera().near = near;
+            camera.getCamera().far = far;
+            camera.getCamera().update();
+
             postprocessRender(ppb, fbLeft, postproc, camera, rw, rh);
 
             /** RIGHT EYE **/
@@ -93,7 +135,23 @@ public class SGROpenVR extends SGRAbstract implements ISGR, IObserver {
             updateCamera((NaturalCamera) camera.getCurrent(), camera.getCamera(), 1, true, rc);
 
             postproc = postprocessCapture(ppb, fbRight, rw, rh);
+
+            // Render scene
             sgr.renderScene(camera, t, rc);
+
+            // Render controllers
+            camera.getCamera().near = 0.01f;
+            camera.getCamera().far = 100f;
+            camera.getCamera().update();
+            modelBatch.begin(camera.getCamera());
+            for (VRDevice controller : controllers) {
+                modelBatch.render(controller.getModelInstance(), controllersEnv);
+            }
+            modelBatch.end();
+            camera.getCamera().near = near;
+            camera.getCamera().far = far;
+            camera.getCamera().update();
+
             postprocessRender(ppb, fbRight, postproc, camera, rw, rh);
 
             /** SUBMIT TO VR COMPOSITOR **/
