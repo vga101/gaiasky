@@ -9,6 +9,7 @@ import com.badlogic.gdx.utils.reflect.Method;
 import com.badlogic.gdx.utils.reflect.ReflectionException;
 
 import gaia.cu9.ari.gaiaorbit.render.IModelRenderable;
+import gaia.cu9.ari.gaiaorbit.render.RenderingContext;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
@@ -74,7 +75,7 @@ public class Mw extends AbstractPositionEntity implements IModelRenderable {
     }
 
     @Override
-    public void render(ModelBatch modelBatch, float alpha, double t) {
+    public void render(ModelBatch modelBatch, float alpha, double t, RenderingContext rc) {
         mc.touch();
         mc.setTransparency(alpha * cc[3] * opacity);
         modelBatch.render(mc.instance, mc.env);

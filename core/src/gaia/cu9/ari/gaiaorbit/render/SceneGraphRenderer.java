@@ -581,7 +581,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
                 Gdx.gl.glClearColor(0, 0, 0, 0);
                 Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
                 modelBatchDepth.begin(cameraLight);
-                candidate.render(modelBatchDepth, 1, 0);
+                candidate.render(modelBatchDepth, 1, 0, null);
                 modelBatchDepth.end();
 
                 // Save frame buffer and combined matrix
@@ -871,6 +871,15 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
                 if (sgr != null)
                     sgr.dispose();
             }
+        if (modelBatchDepth != null)
+            modelBatchDepth.dispose();
+        if (shadowMapFb != null)
+            for (FrameBuffer fb : shadowMapFb)
+                fb.dispose();
+        if (spriteBatch != null)
+            spriteBatch.dispose();
+        if (fontBatch != null)
+            fontBatch.dispose();
     }
 
     /**

@@ -81,7 +81,7 @@ public class SGROpenVR extends SGRAbstract implements ISGR, IObserver {
             /** LEFT EYE **/
 
             // Camera to left
-            updateCamera((NaturalCamera) camera.getCurrent(), camera.getCamera(), 0, true);
+            updateCamera((NaturalCamera) camera.getCurrent(), camera.getCamera(), 0, true, rc);
 
             boolean postproc = postprocessCapture(ppb, fbLeft, rw, rh);
             sgr.renderScene(camera, t, rc);
@@ -90,7 +90,7 @@ public class SGROpenVR extends SGRAbstract implements ISGR, IObserver {
             /** RIGHT EYE **/
 
             // Camera to right
-            updateCamera((NaturalCamera) camera.getCurrent(), camera.getCamera(), 1, true);
+            updateCamera((NaturalCamera) camera.getCurrent(), camera.getCamera(), 1, true, rc);
 
             postproc = postprocessCapture(ppb, fbRight, rw, rh);
             sgr.renderScene(camera, t, rc);
@@ -103,7 +103,7 @@ public class SGROpenVR extends SGRAbstract implements ISGR, IObserver {
 
     }
 
-    private void updateCamera(NaturalCamera cam, PerspectiveCamera camera, int eye, boolean updateFrustum) {
+    private void updateCamera(NaturalCamera cam, PerspectiveCamera camera, int eye, boolean updateFrustum, RenderingContext rc) {
         // get the projection matrix from the HDM 
         VRSystem.VRSystem_GetProjectionMatrix(eye, camera.near, camera.far, projectionMat);
         VRContext.hmdMat4toMatrix4(projectionMat, camera.projection);
@@ -123,9 +123,10 @@ public class SGROpenVR extends SGRAbstract implements ISGR, IObserver {
         cam.vroffset.set(pos);
         cam.direction.set(dir);
         cam.up.set(up);
+        rc.vroffset = cam.vroffset;
 
         // Update Eye camera
-        pos.set(0, 0, 0);
+        //pos.set(0, 0, 0);
         camera.view.idt();
         camera.view.setToLookAt(pos, tmp.set(pos).add(dir), up);
 
@@ -145,8 +146,13 @@ public class SGROpenVR extends SGRAbstract implements ISGR, IObserver {
     }
 
     public void dispose() {
-        if (vrContext != null)
+        if (fbLeft != null)
+            fbLeft.dispose();
+        if (fbRight != null)
+            fbRight.dispose();
+        if (vrContext != null) {
             vrContext.dispose();
+        }
     }
 
     @Override

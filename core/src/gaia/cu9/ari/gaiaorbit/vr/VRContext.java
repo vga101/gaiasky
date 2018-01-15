@@ -291,7 +291,6 @@ public class VRContext implements Disposable {
     private final ObjectMap<String, Model> models = new ObjectMap<String, Model>();
 
     // book keeping
-    private Eye currentEye = null;
     private boolean renderingStarted = false;
     private boolean initialDevicesReported = false;
 
@@ -456,9 +455,6 @@ public class VRContext implements Disposable {
         if (renderingStarted)
             throw new GdxRuntimeException("Last begin() call not completed, call end() before starting a new render");
         renderingStarted = true;
-
-        //perEyeData[Eye.Left.index].camera.update();
-        //perEyeData[Eye.Right.index].camera.update();
     }
 
     /**
@@ -722,7 +718,6 @@ public class VRContext implements Disposable {
         private final Vector3 yAxisWorld = new Vector3();
         private final Vector3 zAxisWorld = new Vector3();
 
-        private final Vector3 vecTmp = new Vector3();
         private final Matrix4 matTmp = new Matrix4();
 
         VRDevice(VRDevicePose pose, VRDeviceType type, VRControllerRole role) {

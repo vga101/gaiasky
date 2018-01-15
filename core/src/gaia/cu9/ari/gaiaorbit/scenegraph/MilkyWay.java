@@ -111,7 +111,7 @@ public class MilkyWay extends Blob implements IModelRenderable, I3DTextRenderabl
      * Model rendering.
      */
     @Override
-    public void render(ModelBatch modelBatch, float alpha, double t) {
+    public void render(ModelBatch modelBatch, float alpha, double t, RenderingContext rc) {
         mc.touch();
         mc.setTransparency(alpha * cc[3] * opacity);
         modelBatch.render(mc.instance, mc.env);

@@ -13,6 +13,7 @@ import com.badlogic.gdx.utils.Array;
 
 import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
+import gaia.cu9.ari.gaiaorbit.render.RenderingContext;
 import gaia.cu9.ari.gaiaorbit.render.SceneGraphRenderer;
 import gaia.cu9.ari.gaiaorbit.render.ShadowMapImpl;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.ITransform;
@@ -216,7 +217,7 @@ public abstract class ModelBody extends CelestialBody {
 
     /** Model rendering **/
     @Override
-    public void render(ModelBatch modelBatch, float alpha, double t) {
+    public void render(ModelBatch modelBatch, float alpha, double t, RenderingContext rc) {
         prepareShadowEnvironment();
         mc.touch();
         mc.setTransparency(alpha * fadeOpacity);

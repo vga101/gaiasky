@@ -3,6 +3,7 @@ package gaia.cu9.ari.gaiaorbit.render;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 
 import gaia.cu9.ari.gaiaorbit.render.IPostProcessor.PostProcessBean;
+import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
 /**
  * Holds some context information useful when rendering.
@@ -24,6 +25,9 @@ public class RenderingContext {
 
     /** Render width and height **/
     private int w, h;
+
+    /** VR position offset **/
+    public Vector3d vroffset;
 
     /**
      * Scale factor, the ratio between the diagonal of HD resolution (1280x720)

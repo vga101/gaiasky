@@ -2,6 +2,8 @@ package gaia.cu9.ari.gaiaorbit.render;
 
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 
+import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
+
 /**
  * To be implemented by all entities wanting to render an atmosphere.
  * 
@@ -19,8 +21,10 @@ public interface IAtmosphereRenderable extends IRenderable {
      *            The opacity.
      * @param t
      *            The time in seconds since the start.
+     * @param vroffset
+     *            Positional offset in vr mode, if any.
      * @param atm
      *            Render atmosphere.
      */
-    public void render(ModelBatch modelBatch, float alpha, double t, boolean atm);
+    public void render(ModelBatch modelBatch, float alpha, double t, Vector3d vroffset, boolean atm);
 }

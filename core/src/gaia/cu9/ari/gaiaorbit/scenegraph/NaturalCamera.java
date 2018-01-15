@@ -29,7 +29,7 @@ import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
  */
 public class NaturalCamera extends AbstractCamera implements IObserver {
 
-    private static final double MIN_DIST = 5 * Constants.M_TO_U;
+    private static final double MIN_DIST = 10 * Constants.M_TO_U;
 
     /** VR offset **/
     public Vector3d vroffset;
@@ -353,7 +353,6 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 
         vrpos.set(pos).add(vroffset);
         posinv.set(vrpos).scl(-1);
-
     }
 
     /**
@@ -928,9 +927,9 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
                         f.getAbsolutePosition(aux1);
                         pos.set(aux1);
 
-                        pos.add(0, 0, -f.getSize() * 3);
+                        pos.add(0, 0, f.getSize() * 3);
                         posinv.set(pos).add(vroffset).scl(-1);
-                        direction.set(0, 0, 1);
+                        direction.set(0, 0, -1);
                         up.set(0, 1, 0);
                         rotate(up, 0.01);
                     }

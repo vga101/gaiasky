@@ -15,6 +15,7 @@ import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.render.ILineRenderable;
 import gaia.cu9.ari.gaiaorbit.render.IPointRenderable;
 import gaia.cu9.ari.gaiaorbit.render.IRenderable;
+import gaia.cu9.ari.gaiaorbit.render.RenderingContext;
 import gaia.cu9.ari.gaiaorbit.render.SceneGraphRenderer;
 import gaia.cu9.ari.gaiaorbit.render.system.LineRenderSystem;
 import gaia.cu9.ari.gaiaorbit.util.ComponentTypes;
@@ -273,7 +274,7 @@ public class Particle extends CelestialBody implements IStarFocus, IPointRendera
     }
 
     @Override
-    public void render(ModelBatch modelBatch, float alpha, double t) {
+    public void render(ModelBatch modelBatch, float alpha, double t, RenderingContext rc) {
         // Void
     }
 

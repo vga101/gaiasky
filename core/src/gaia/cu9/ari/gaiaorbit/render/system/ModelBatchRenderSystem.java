@@ -54,9 +54,9 @@ public class ModelBatchRenderSystem extends AbstractRenderSystem {
             for (int i = 0; i < size; i++) {
                 IModelRenderable s = (IModelRenderable) renderables.get(i);
                 if (!atmosphere) {
-                    s.render(batch, getAlpha(s), t);
+                    s.render(batch, getAlpha(s), t, rc);
                 } else {
-                    ((IAtmosphereRenderable) s).render(batch, getAlpha(s), t, atmosphere);
+                    ((IAtmosphereRenderable) s).render(batch, getAlpha(s), t, rc.vroffset, atmosphere);
                 }
             }
             batch.end();

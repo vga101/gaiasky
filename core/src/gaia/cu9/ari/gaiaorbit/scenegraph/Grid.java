@@ -19,6 +19,7 @@ import com.badlogic.gdx.utils.reflect.ReflectionException;
 
 import gaia.cu9.ari.gaiaorbit.render.IAnnotationsRenderable;
 import gaia.cu9.ari.gaiaorbit.render.IModelRenderable;
+import gaia.cu9.ari.gaiaorbit.render.RenderingContext;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
@@ -107,7 +108,7 @@ public class Grid extends AbstractPositionEntity implements IModelRenderable, IA
      * Model rendering.
      */
     @Override
-    public void render(ModelBatch modelBatch, float alpha, double t) {
+    public void render(ModelBatch modelBatch, float alpha, double t, RenderingContext rc) {
         mc.touch();
         mc.setTransparencyColor(alpha * cc[3] * opacity);
         modelBatch.render(mc.instance, mc.env);

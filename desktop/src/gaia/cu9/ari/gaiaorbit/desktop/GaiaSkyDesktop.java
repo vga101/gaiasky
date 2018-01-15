@@ -204,7 +204,7 @@ public class GaiaSkyDesktop implements IObserver {
 
         // Launch app
         Lwjgl3Application app = new Lwjgl3Application(new GaiaSky(), cfg);
-        app.addLifecycleListener(new GaiaSkyWindowListener());
+        //app.addLifecycleListener(new GaiaSkyWindowListener());
 
         EventManager.instance.unsubscribe(this, Events.POST_NOTIFICATION, Events.JAVA_EXCEPTION);
     }

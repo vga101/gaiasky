@@ -141,11 +141,14 @@ public class AtmosphereComponent {
      * @param planet
      *            The planet itself, holder of this atmosphere
      */
-    public void updateAtmosphericScatteringParams(Material mat, float alpha, boolean ground, Planet planet) {
+    public void updateAtmosphericScatteringParams(Material mat, float alpha, boolean ground, Planet planet, Vector3d vroffset) {
         Transform transform = planet.transform;
         RotationComponent rc = planet.rc;
         SceneGraphNode sol = planet.parent;
         transform.getTranslation(aux3);
+        if (vroffset != null)
+            aux3.sub(vroffset);
+
         // Distance to planet
         float camHeight = (float) (aux3.len());
         float m_ESun = 15f;

@@ -23,6 +23,7 @@ import com.badlogic.gdx.math.Vector3;
 
 import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
+import gaia.cu9.ari.gaiaorbit.render.RenderingContext;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
 import gaia.cu9.ari.gaiaorbit.util.ComponentTypes;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
@@ -273,7 +274,7 @@ public class Star extends Particle {
     }
 
     @Override
-    public void render(ModelBatch modelBatch, float alpha, double t) {
+    public void render(ModelBatch modelBatch, float alpha, double t, RenderingContext rc) {
         mc.touch();
         mc.setTransparency(alpha * (float) MathUtilsd.lint(distToCamera, modelDistance / 50f, modelDistance, 1f, 0f));
         float[] col = GlobalConf.scene.STAR_COLOR_TRANSIT ? ccTransit : cc;

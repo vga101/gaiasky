@@ -135,7 +135,7 @@ public class MeshObject extends FadeNode implements IModelRenderable, I3DTextRen
      * Model rendering
      */
     @Override
-    public void render(ModelBatch modelBatch, float alpha, double t) {
+    public void render(ModelBatch modelBatch, float alpha, double t, RenderingContext rc) {
         if (mc != null) {
             mc.touch();
             mc.setTransparency(alpha * opacity);
