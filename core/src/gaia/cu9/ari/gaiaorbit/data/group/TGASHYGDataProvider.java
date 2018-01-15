@@ -15,6 +15,7 @@ import gaia.cu9.ari.gaiaorbit.util.Logger;
 
 public class TGASHYGDataProvider extends AbstractStarGroupDataProvider {
     private static final boolean dumpToDisk = true;
+    private static final String format = "csv";
 
     HYGDataProvider hyg;
     TGASDataProvider tgas;
@@ -69,8 +70,14 @@ public class TGASHYGDataProvider extends AbstractStarGroupDataProvider {
 
         list = tgasdata;
 
+        sphericalPositions = hyg.sphericalPositions;
+        sphericalPositions.putAll(tgas.sphericalPositions);
+
+        colors = hyg.colors;
+        colors.putAll(tgas.colors);
+
         if (dumpToDisk) {
-            dumpToDisk(list, "/tmp/tgashyg.bin");
+            dumpToDisk(list, "/tmp/tgashyg." + format, format);
         }
 
         Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.nodeloader", list.size, file));
