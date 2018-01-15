@@ -15,6 +15,7 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Array;
 
 import gaia.cu9.ari.gaiaorbit.scenegraph.StarGroup.StarBean;
+import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
@@ -135,7 +136,7 @@ public abstract class AbstractStarGroupDataProvider implements IStarGroupDataPro
                 double x = star.z();
                 double y = -star.x();
                 double z = star.y();
-                gal.set(x, y, z);
+                gal.set(x, y, z).scl(Constants.U_TO_KM);
                 gal.mul(Coordinates.equatorialToGalactic());
                 writer.println(star.name + sep + x + sep + y + sep + z + sep + star.absmag() + sep + star.appmag() + sep + col[0] + sep + col[1] + sep + col[2]);
             }
