@@ -24,6 +24,9 @@ import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.render.IPostProcessor.PostProcessBean;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.NaturalCamera;
+import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
+import gaia.cu9.ari.gaiaorbit.scenegraph.StubModel;
+import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadIndexer;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.vr.VRContext;
 import gaia.cu9.ari.gaiaorbit.vr.VRContext.Space;
@@ -106,6 +109,11 @@ public class SGROpenVR extends SGRAbstract implements ISGR, IObserver {
 
             vrContext.pollEvents();
 
+            // Add controllers
+            for (VRDevice controller : controllers) {
+                SceneGraphRenderer.render_lists.get(RenderGroup.MODEL_NORMAL).add(new StubModel(controller.getModelInstance(), controllersEnv), ThreadIndexer.i());
+            }
+
             /** LEFT EYE **/
 
             // Camera to left
@@ -115,13 +123,6 @@ public class SGROpenVR extends SGRAbstract implements ISGR, IObserver {
 
             // Render scene
             sgr.renderScene(camera, t, rc);
-
-            // Add controllers
-            modelBatch.begin(camera.getCamera());
-            for (VRDevice controller : controllers) {
-                modelBatch.render(controller.getModelInstance(), controllersEnv);
-            }
-            modelBatch.end();
 
             postprocessRender(ppb, fbLeft, postproc, camera, rw, rh);
 
@@ -134,13 +135,6 @@ public class SGROpenVR extends SGRAbstract implements ISGR, IObserver {
 
             // Render scene
             sgr.renderScene(camera, t, rc);
-
-            // Render controllers
-            modelBatch.begin(camera.getCamera());
-            for (VRDevice controller : controllers) {
-                modelBatch.render(controller.getModelInstance(), controllersEnv);
-            }
-            modelBatch.end();
 
             postprocessRender(ppb, fbRight, postproc, camera, rw, rh);
 
