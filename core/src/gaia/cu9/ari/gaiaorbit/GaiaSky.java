@@ -78,7 +78,6 @@ import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.MemInfo;
-import gaia.cu9.ari.gaiaorbit.util.ModelCache;
 import gaia.cu9.ari.gaiaorbit.util.MusicManager;
 import gaia.cu9.ari.gaiaorbit.util.g3d.loader.ObjLoader;
 import gaia.cu9.ari.gaiaorbit.util.gaia.GaiaAttitudeServer;
@@ -537,29 +536,11 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         if (Constants.desktop && savestate)
             ConfInit.instance.persistGlobalConf(new File(System.getProperty("properties.file")));
 
-        // Flush frames
-        EventManager.instance.post(Events.FLUSH_FRAMES);
-
-        // Dispose all
-        for (IGui gui : guis)
-            gui.dispose();
-
         EventManager.instance.post(Events.DISPOSE);
-        if (sg != null) {
-            sg.dispose();
-        }
-        ModelCache.cache.dispose();
-
-        // Renderer
-        if (sgr != null)
-            sgr.dispose();
-
-        // Post processor
-        if (pp != null)
-            pp.dispose();
-
         // Dispose music manager
         MusicManager.dispose();
+
+        System.exit(0);
 
     }
 

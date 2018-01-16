@@ -24,10 +24,7 @@ import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.render.IPostProcessor.PostProcessBean;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.NaturalCamera;
-import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
 import gaia.cu9.ari.gaiaorbit.scenegraph.StubModel;
-import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadIndexer;
-import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.vr.VRContext;
 import gaia.cu9.ari.gaiaorbit.vr.VRContext.Space;
 import gaia.cu9.ari.gaiaorbit.vr.VRContext.VRDevice;
@@ -49,27 +46,20 @@ public class SGROpenVR extends SGRAbstract implements ISGR, IObserver {
     /** Textures **/
     Texture texLeft, texRight;
 
-    /** Model batch to render controllers **/
-    ModelBatch modelBatch;
-
     HmdMatrix44 projectionMat = HmdMatrix44.create();
     HmdMatrix34 eyeMat = HmdMatrix34.create();
 
     public final Matrix4 eyeSpace = new Matrix4();
     public final Matrix4 invEyeSpace = new Matrix4();
 
-    private Array<VRDevice> controllers;
-    private Environment controllersEnv;
+    private Array<StubModel> controllerObjects;
 
-    private Vector3 tmp, tmp2;
-    private Vector3d[] vroffset;
+    private Vector3 tmp;
 
     public SGROpenVR(VRContext vrContext, ModelBatch modelBatch) {
         super();
         // VR Context
         this.vrContext = vrContext;
-        // Model batch
-        this.modelBatch = modelBatch;
 
         if (vrContext != null) {
             // Left eye, fb and texture
@@ -84,19 +74,22 @@ public class SGROpenVR extends SGRAbstract implements ISGR, IObserver {
 
             // Aux vectors
             tmp = new Vector3();
-            tmp2 = new Vector3();
-            vroffset = new Vector3d[2];
 
             // Controllers
-            controllers = vrContext.getDevicesByType(VRDeviceType.Controller);
+            Array<VRDevice> controllers = vrContext.getDevicesByType(VRDeviceType.Controller);
 
             // Env
-            controllersEnv = new Environment();
+            Environment controllersEnv = new Environment();
             controllersEnv.set(new ColorAttribute(ColorAttribute.AmbientLight, 1f, 1f, 1f, 1f));
             DirectionalLight dlight = new DirectionalLight();
             dlight.color.set(1f, 0f, 0f, 1f);
             dlight.direction.set(0, 1, 0);
             controllersEnv.add(dlight);
+
+            // Controller objects
+            controllerObjects = new Array<StubModel>(controllers.size);
+            for (VRDevice controller : controllers)
+                controllerObjects.add(new StubModel(controller.getModelInstance(), controllersEnv));
 
             EventManager.instance.subscribe(this, Events.FRAME_SIZE_UDPATE, Events.SCREENSHOT_SIZE_UDPATE);
         }
@@ -110,8 +103,8 @@ public class SGROpenVR extends SGRAbstract implements ISGR, IObserver {
             vrContext.pollEvents();
 
             // Add controllers
-            for (VRDevice controller : controllers) {
-                SceneGraphRenderer.render_lists.get(RenderGroup.MODEL_NORMAL).add(new StubModel(controller.getModelInstance(), controllersEnv), ThreadIndexer.i());
+            for (StubModel controller : controllerObjects) {
+                controller.addToRenderLists();
             }
 
             /** LEFT EYE **/
