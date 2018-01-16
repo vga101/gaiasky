@@ -731,15 +731,9 @@ public class VRContext implements Disposable {
         public void updateAxesAndPosition() {
             Matrix4 matrix = pose.transform;
             matrix.getTranslation(position);
-            if (type != VRDeviceType.Controller) {
-                xAxis.set(matrix.val[Matrix4.M00], matrix.val[Matrix4.M10], matrix.val[Matrix4.M20]).nor();
-                yAxis.set(matrix.val[Matrix4.M01], matrix.val[Matrix4.M11], matrix.val[Matrix4.M21]).nor();
-                zAxis.set(matrix.val[Matrix4.M02], matrix.val[Matrix4.M12], matrix.val[Matrix4.M22]).nor().scl(-1);
-            } else {
-                yAxis.set(matrix.val[Matrix4.M00], matrix.val[Matrix4.M10], matrix.val[Matrix4.M20]).nor();
-                zAxis.set(matrix.val[Matrix4.M01], matrix.val[Matrix4.M11], matrix.val[Matrix4.M21]).nor().scl(-1);
-                xAxis.set(matrix.val[Matrix4.M02], matrix.val[Matrix4.M12], matrix.val[Matrix4.M22]).nor();
-            }
+            xAxis.set(matrix.val[Matrix4.M00], matrix.val[Matrix4.M10], matrix.val[Matrix4.M20]).nor();
+            yAxis.set(matrix.val[Matrix4.M01], matrix.val[Matrix4.M11], matrix.val[Matrix4.M21]).nor();
+            zAxis.set(matrix.val[Matrix4.M02], matrix.val[Matrix4.M12], matrix.val[Matrix4.M22]).nor().scl(-1);
 
             matTmp.set(trackerSpaceToWorldspaceRotationOffset);
             positionWorld.set(position).mul(matTmp);

@@ -24,6 +24,7 @@ import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.render.IPostProcessor.PostProcessBean;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.NaturalCamera;
+import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.vr.VRContext;
 import gaia.cu9.ari.gaiaorbit.vr.VRContext.Space;
 import gaia.cu9.ari.gaiaorbit.vr.VRContext.VRDevice;
@@ -57,7 +58,8 @@ public class SGROpenVR extends SGRAbstract implements ISGR, IObserver {
     private Array<VRDevice> controllers;
     private Environment controllersEnv;
 
-    private Vector3 tmp;
+    private Vector3 tmp, tmp2;
+    private Vector3d[] vroffset;
 
     public SGROpenVR(VRContext vrContext, ModelBatch modelBatch) {
         super();
@@ -79,6 +81,8 @@ public class SGROpenVR extends SGRAbstract implements ISGR, IObserver {
 
             // Aux vectors
             tmp = new Vector3();
+            tmp2 = new Vector3();
+            vroffset = new Vector3d[2];
 
             // Controllers
             controllers = vrContext.getDevicesByType(VRDeviceType.Controller);
@@ -105,34 +109,26 @@ public class SGROpenVR extends SGRAbstract implements ISGR, IObserver {
             /** LEFT EYE **/
 
             // Camera to left
-            updateCamera((NaturalCamera) camera.getCurrent(), camera.getCamera(), 0, true, rc);
+            updateCamera((NaturalCamera) camera.getCurrent(), camera.getCamera(), 0, false, rc);
 
             boolean postproc = postprocessCapture(ppb, fbLeft, rw, rh);
 
             // Render scene
             sgr.renderScene(camera, t, rc);
 
-            // Render controllers
-            float near = camera.getCamera().near;
-            float far = camera.getCamera().far;
-            camera.getCamera().near = 0.01f;
-            camera.getCamera().far = 100f;
-            camera.getCamera().update();
+            // Add controllers
             modelBatch.begin(camera.getCamera());
             for (VRDevice controller : controllers) {
                 modelBatch.render(controller.getModelInstance(), controllersEnv);
             }
             modelBatch.end();
-            camera.getCamera().near = near;
-            camera.getCamera().far = far;
-            camera.getCamera().update();
 
             postprocessRender(ppb, fbLeft, postproc, camera, rw, rh);
 
             /** RIGHT EYE **/
 
             // Camera to right
-            updateCamera((NaturalCamera) camera.getCurrent(), camera.getCamera(), 1, true, rc);
+            updateCamera((NaturalCamera) camera.getCurrent(), camera.getCamera(), 1, false, rc);
 
             postproc = postprocessCapture(ppb, fbRight, rw, rh);
 
@@ -140,17 +136,11 @@ public class SGROpenVR extends SGRAbstract implements ISGR, IObserver {
             sgr.renderScene(camera, t, rc);
 
             // Render controllers
-            camera.getCamera().near = 0.01f;
-            camera.getCamera().far = 100f;
-            camera.getCamera().update();
             modelBatch.begin(camera.getCamera());
             for (VRDevice controller : controllers) {
                 modelBatch.render(controller.getModelInstance(), controllersEnv);
             }
             modelBatch.end();
-            camera.getCamera().near = near;
-            camera.getCamera().far = far;
-            camera.getCamera().update();
 
             postprocessRender(ppb, fbRight, postproc, camera, rw, rh);
 
@@ -163,7 +153,7 @@ public class SGROpenVR extends SGRAbstract implements ISGR, IObserver {
 
     private void updateCamera(NaturalCamera cam, PerspectiveCamera camera, int eye, boolean updateFrustum, RenderingContext rc) {
         // get the projection matrix from the HDM 
-        VRSystem.VRSystem_GetProjectionMatrix(eye, camera.near, camera.far, projectionMat);
+        VRSystem.VRSystem_GetProjectionMatrix(eye, 0.2500f, camera.far, projectionMat);
         VRContext.hmdMat4toMatrix4(projectionMat, camera.projection);
 
         // get the eye space matrix from the HDM
@@ -178,7 +168,7 @@ public class SGROpenVR extends SGRAbstract implements ISGR, IObserver {
         Vector3 pos = hmd.getPosition(Space.Tracker);
 
         // Update main camera
-        cam.vroffset.set(pos);
+        cam.vroffset.set(pos).scl(0.1);
         cam.direction.set(dir);
         cam.up.set(up);
         rc.vroffset = cam.vroffset;
