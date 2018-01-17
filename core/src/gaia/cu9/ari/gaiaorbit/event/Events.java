@@ -695,6 +695,12 @@ public enum Events {
     /** Contains an the index of the mesh to be cleared **/
     DISPOSE_STAR_GROUP_GPU_MESH,
 
+    /** New VR device connected. Contains the VRDevice object. **/
+    VR_DEVICE_CONNECTED,
+
+    /** VR device disconnected. Contains the VRDevice object. **/
+    VR_DEVICE_DISCONNECTED,
+
     /** Dispose all resources, app is shutting down **/
     DISPOSE;
 

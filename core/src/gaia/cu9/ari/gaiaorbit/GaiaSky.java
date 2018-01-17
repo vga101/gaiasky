@@ -51,6 +51,7 @@ import gaia.cu9.ari.gaiaorbit.interfce.InitialGui;
 import gaia.cu9.ari.gaiaorbit.interfce.KeyInputController;
 import gaia.cu9.ari.gaiaorbit.interfce.LoadingGui;
 import gaia.cu9.ari.gaiaorbit.interfce.MobileGui;
+import gaia.cu9.ari.gaiaorbit.interfce.OpenVRListener;
 import gaia.cu9.ari.gaiaorbit.interfce.SpacecraftGui;
 import gaia.cu9.ari.gaiaorbit.interfce.StereoGui;
 import gaia.cu9.ari.gaiaorbit.render.AbstractRenderer;
@@ -308,7 +309,24 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
             OpenVRQuery.queryOpenVr();
 
             vrContext = new VRContext();
+            vrContext.addListener(new OpenVRListener());
             vrContext.pollEvents();
+
+            VRDevice hmd = vrContext.getDeviceByType(VRDeviceType.HeadMountedDisplay);
+            Logger.info("Initialization of VR successful");
+            if (hmd == null) {
+                Logger.info("HMD device is null!");
+            } else {
+                Logger.info("HMD device is not null: " + vrContext.getDeviceByType(VRDeviceType.HeadMountedDisplay).toString());
+            }
+
+            GlobalConf.runtime.OPENVR = true;
+            GlobalConf.screen.SCREEN_HEIGHT = vrContext.getHeight();
+            GlobalConf.screen.SCREEN_WIDTH = vrContext.getWidth();
+            GlobalConf.screen.VSYNC = false;
+
+            Gdx.graphics.setWindowedMode(GlobalConf.screen.SCREEN_WIDTH, GlobalConf.screen.SCREEN_HEIGHT);
+            Gdx.graphics.setVSync(GlobalConf.screen.VSYNC);
 
         } catch (Exception e) {
             // If initializing the VRContext failed, we fall back
@@ -329,21 +347,6 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
             GlobalConf.runtime.OPENVR = false;
             return;
         }
-        VRDevice hmd = vrContext.getDeviceByType(VRDeviceType.HeadMountedDisplay);
-        Logger.info("Initialization of VR successful");
-        if (hmd == null) {
-            Logger.info("HMD device is null!");
-        } else {
-            Logger.info("HMD device is not null: " + vrContext.getDeviceByType(VRDeviceType.HeadMountedDisplay).toString());
-        }
-
-        GlobalConf.runtime.OPENVR = true;
-        GlobalConf.screen.SCREEN_HEIGHT = vrContext.getHeight();
-        GlobalConf.screen.SCREEN_WIDTH = vrContext.getWidth();
-        GlobalConf.screen.VSYNC = false;
-
-        Gdx.graphics.setWindowedMode(GlobalConf.screen.SCREEN_WIDTH, GlobalConf.screen.SCREEN_HEIGHT);
-        Gdx.graphics.setVSync(GlobalConf.screen.VSYNC);
 
     }
 

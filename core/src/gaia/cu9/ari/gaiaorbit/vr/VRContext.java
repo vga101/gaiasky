@@ -528,6 +528,11 @@ public class VRContext implements Disposable {
                     l.buttonReleased(devices[index], button);
                 }
                 break;
+            default:
+                for (VRDeviceListener l : listeners) {
+                    l.event(event.eventType());
+                }
+                break;
             }
         }
     }
@@ -935,26 +940,6 @@ public class VRContext implements Disposable {
         public String toString() {
             return "VRDevice[manufacturer=" + getStringProperty(VRDeviceProperty.ManufacturerName_String) + ", renderModel=" + getStringProperty(VRDeviceProperty.RenderModelName_String) + ", index=" + pose.index + ", type=" + type + ", role=" + role + "]";
         }
-    }
-
-    public interface VRDeviceListener {
-        /** A new {@link VRDevice} has connected **/
-        void connected(VRDevice device);
-
-        /** A {@link VRDevice} has disconnected **/
-        void disconnected(VRDevice device);
-
-        /**
-         * A button from {@link VRControllerButtons} was pressed on the
-         * {@link VRDevice}
-         **/
-        void buttonPressed(VRDevice device, int button);
-
-        /**
-         * A button from {@link VRControllerButtons} was released on the
-         * {@link VRDevice}
-         **/
-        void buttonReleased(VRDevice device, int button);
     }
 
     public static void hmdMat4toMatrix4(HmdMatrix44 hdm, Matrix4 mat) {

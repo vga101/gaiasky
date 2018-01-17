@@ -11,16 +11,20 @@ import gaia.cu9.ari.gaiaorbit.render.IModelRenderable;
 import gaia.cu9.ari.gaiaorbit.render.RenderingContext;
 import gaia.cu9.ari.gaiaorbit.util.ComponentTypes;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
+import gaia.cu9.ari.gaiaorbit.vr.VRContext.VRDevice;
 
 public class StubModel extends AbstractPositionEntity implements IModelRenderable {
 
-    private ModelInstance instance;
+    public ModelInstance instance;
     private Environment env;
+    private VRDevice device;
+    private boolean delayRender = false;
 
-    public StubModel(ModelInstance instance, Environment env) {
+    public StubModel(VRDevice device, Environment env) {
         super();
-        this.instance = instance;
         this.env = env;
+        this.instance = device.getModelInstance();
+        this.device = device;
         setCt("Others");
     }
 
@@ -69,16 +73,27 @@ public class StubModel extends AbstractPositionEntity implements IModelRenderabl
 
     @Override
     protected void addToRenderLists(ICamera camera) {
-        addToRender(this, RenderGroup.MODEL_NORMAL);
     }
 
-    public void addToRenderLists() {
-        this.addToRenderLists(null);
+    public void addToRenderLists(RenderGroup rg) {
+        addToRender(this, rg);
     }
 
     @Override
     public void updateLocalValues(ITimeFrameProvider time, ICamera camera) {
 
+    }
+
+    public VRDevice getDevice() {
+        return device;
+    }
+
+    public boolean getDelayRender() {
+        return delayRender;
+    }
+
+    public void setDelayRender(boolean dr) {
+        this.delayRender = dr;
     }
 
 }
