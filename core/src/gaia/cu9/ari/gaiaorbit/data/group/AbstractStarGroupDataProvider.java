@@ -149,4 +149,9 @@ public abstract class AbstractStarGroupDataProvider implements IStarGroupDataPro
     public void setFileNumberCap(int cap) {
     }
 
+    @Override
+    public Map<Long, float[]> getColors() {
+        return colors;
+    }
+
 }
