@@ -213,7 +213,7 @@ controller to the actions.
 
 
 The actions depend on the current camera
-mode (focus, free, spacecraft), and are described below:
+mode (focus, free, spacecraft), and are described below.
 
 Creating mappings files for new controllers
 -------------------------------------------
@@ -224,7 +224,7 @@ In order to enable the controller debug mode, set the property ``controls.debugm
 
 Put your new files in ``$GS_INSTALL_LOCATION/mappings/`` or ``$HOME/.gaiasky/mappings/``. The name of the file should be ``[controller brand and model].mappings``. For example, ``xboxone.mappings`` or ``logitech_f310.mappings``.
 
-Please, if you create mappings files for new game controllers, create a pull request in the `gaiasky github <https://github.com/langurmonkey/gaiasky/pulls>` so that the community can benefit.
+Please, if you create mappings files for new game controllers, create a pull request in the `gaiasky github <https://github.com/langurmonkey/gaiasky/pulls>`__ so that the community can benefit.
 
 
 .. _gamepad-focus-mode:
