@@ -13,6 +13,7 @@ import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.interfce.NaturalControllerListener;
 import gaia.cu9.ari.gaiaorbit.interfce.NaturalInputController;
+import gaia.cu9.ari.gaiaorbit.interfce.OpenVRListener;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.RotationComponent;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
@@ -118,6 +119,9 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
     /** Controller listener **/
     private NaturalControllerListener controllerListener;
 
+    /** VR listener **/
+    private OpenVRListener openVRListener;
+
     public NaturalCamera(AssetManager assetManager, CameraManager parent) {
         super(parent);
         vroffset = new Vector3d();
@@ -163,6 +167,8 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 
         inputController = new NaturalInputController(this);
         controllerListener = new NaturalControllerListener(this, GlobalConf.controls.CONTROLLER_MAPPINGS_FILE);
+        if (GlobalConf.runtime.OPENVR)
+            openVRListener = new OpenVRListener(this);
 
         // Focus is changed from GUI
         EventManager.instance.subscribe(this, Events.FOCUS_CHANGE_CMD, Events.FOV_CHANGED_CMD, Events.ORIENTATION_LOCK_CMD, Events.CAMERA_POS_CMD, Events.CAMERA_DIR_CMD, Events.CAMERA_UP_CMD, Events.CAMERA_FWD, Events.CAMERA_PAN, Events.CAMERA_STOP, Events.CAMERA_CENTER, Events.GO_TO_OBJECT_CMD);
@@ -784,6 +790,8 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
                 // Register controller listener
                 Controllers.clearListeners();
                 Controllers.addListener(controllerListener);
+                if (GlobalConf.runtime.OPENVR)
+                    GaiaSky.instance.vrContext.addListener(openVRListener);
             });
             break;
         default:
@@ -792,6 +800,9 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
                 im.removeProcessor(inputController);
                 // Unregister controller listener
                 Controllers.removeListener(controllerListener);
+                // Remove vr listener
+                if (GlobalConf.runtime.OPENVR)
+                    GaiaSky.instance.vrContext.removeListener(openVRListener);
             });
             break;
         }

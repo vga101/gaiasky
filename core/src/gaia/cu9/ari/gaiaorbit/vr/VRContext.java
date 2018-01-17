@@ -375,7 +375,8 @@ public class VRContext implements Disposable {
      * Adds a {@link VRDeviceListener} to receive events
      */
     public void addListener(VRDeviceListener listener) {
-        this.listeners.add(listener);
+        if (!this.listeners.contains(listener, true))
+            this.listeners.add(listener);
     }
 
     /**

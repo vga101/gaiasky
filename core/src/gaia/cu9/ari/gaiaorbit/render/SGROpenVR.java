@@ -127,7 +127,7 @@ public class SGROpenVR extends SGRAbstract implements ISGR, IObserver {
                 // Length from headset to controller
                 auxd1.set(devicepos).sub(vrContext.getDeviceByType(VRDeviceType.HeadMountedDisplay).getPosition(Space.Tracker));
                 double controllerDist = auxd1.len();
-                if (camnearbak < controllerDist || closestDist / controllerDist > 0.5) {
+                if (camnearbak < controllerDist || closestDist / controllerDist < 0.5) {
                     controller.addToRenderLists(RenderGroup.MODEL_NORMAL);
                     controller.setDelayRender(false);
                 } else {

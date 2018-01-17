@@ -51,7 +51,6 @@ import gaia.cu9.ari.gaiaorbit.interfce.InitialGui;
 import gaia.cu9.ari.gaiaorbit.interfce.KeyInputController;
 import gaia.cu9.ari.gaiaorbit.interfce.LoadingGui;
 import gaia.cu9.ari.gaiaorbit.interfce.MobileGui;
-import gaia.cu9.ari.gaiaorbit.interfce.OpenVRListener;
 import gaia.cu9.ari.gaiaorbit.interfce.SpacecraftGui;
 import gaia.cu9.ari.gaiaorbit.interfce.StereoGui;
 import gaia.cu9.ari.gaiaorbit.render.AbstractRenderer;
@@ -122,7 +121,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
      * The {@link VRContext} setup in createVR(), may be null if no HMD is
      * present or SteamVR is not installed
      */
-    VRContext vrContext;
+    public VRContext vrContext;
 
     // Asset manager
     public AssetManager manager;
@@ -309,7 +308,6 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
             OpenVRQuery.queryOpenVr();
 
             vrContext = new VRContext();
-            vrContext.addListener(new OpenVRListener());
             vrContext.pollEvents();
 
             VRDevice hmd = vrContext.getDeviceByType(VRDeviceType.HeadMountedDisplay);
@@ -451,13 +449,6 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         EventManager.instance.post(Events.GO_TO_OBJECT_CMD);
 
         initialized = true;
-
-        // Run tutorial
-        //        if (GlobalConf.program.DISPLAY_TUTORIAL) {
-        //            EventManager.instance.post(Events.RUN_SCRIPT_PATH, GlobalConf.program.TUTORIAL_POINTER_SCRIPT_LOCATION);
-        //            GlobalConf.program.DISPLAY_TUTORIAL = false;
-        //        }
-
     }
 
     /**
