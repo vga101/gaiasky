@@ -88,7 +88,8 @@ public class NaturalControllerListener implements ControllerListener, IObserver 
     @Override
     public boolean axisMoved(Controller controller, int axisCode, float value) {
         if (GlobalConf.controls.DEBUG_MODE) {
-            Logger.info("axis moved [controller/code/value]: " + controller.getName() + " / " + axisCode + " / " + value);
+            if (Math.abs(value) > 0.2)
+                Logger.info("axis moved [controller/code/value]: " + controller.getName() + " / " + axisCode + " / " + value);
         }
 
         boolean treated = false;
