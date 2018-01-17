@@ -31,52 +31,52 @@ public class XBox360Mappings implements IControllerMappings {
 
     @Override
     public int getAxisRoll() {
-	return AXIS_JOY2HOR;
+        return AXIS_JOY2HOR;
     }
 
     @Override
     public int getAxisPitch() {
-	return AXIS_JOY1VERT;
+        return AXIS_JOY1VERT;
     }
 
     @Override
     public int getAxisYaw() {
-	return AXIS_JOY1HOR;
+        return AXIS_JOY1HOR;
     }
 
     @Override
     public int getAxisMove() {
-	return AXIS_JOY2VERT;
+        return AXIS_JOY2VERT;
     }
 
     @Override
     public int getAxisVelocityUp() {
-	return AXIS_RT;
+        return AXIS_RT;
     }
 
     @Override
     public int getAxisVelocityDown() {
-	return AXIS_LT;
+        return AXIS_LT;
     }
 
     @Override
     public int getButtonVelocityMultiplierTenth() {
-	return BUTTON_RB;
+        return BUTTON_RB;
     }
 
     @Override
     public int getButtonVelocityMultiplierHalf() {
-	return BUTTON_LB;
+        return BUTTON_LB;
     }
 
     @Override
     public int getButtonVelocityUp() {
-	return BUTTON_X;
+        return BUTTON_X;
     }
 
     @Override
     public int getButtonVelocityDown() {
-	return BUTTON_A;
+        return BUTTON_A;
     }
 
 }
