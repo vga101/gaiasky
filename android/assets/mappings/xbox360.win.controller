@@ -1,0 +1,15 @@
+# AXES
+
+axis.roll=3
+axis.pitch=0
+axis.yaw=1
+axis.move=2
+axis.velocityup=5
+axis.velocitydown=4
+
+# BUTTONS
+
+button.velocityup=2
+button.velocitydown=0
+button.velocitytenth=5
+button.velocityhalf=4
