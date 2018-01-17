@@ -71,7 +71,7 @@ following command. You will need root privileges to install a `deb` package in
 your system.
 
 ```
-sudo dpkg -i gaiasky_linux_<version>.deb
+$  sudo dpkg -i gaiasky_linux_<version>.deb
 ```
 
 This will install the application in the `/opt/gaiasky/` folder
@@ -80,14 +80,14 @@ and it will create the necessary shortcuts.
 In order to **uninstall**, just type:
 
 ```
-sudo apt-get remove gaiasky
+$  sudo apt-get remove gaiasky
 ```
 ##### 1.2.2.2 AUR
 
 We also provide an [AUR package](https://aur.archlinux.org/packages/gaiasky/) called `gaiasky`. You can install it easily with any tool capable of accessing `AUR`, for example `yaourt`.
 
 ```
-yaourt -S gaiasky
+$  yaourt -S gaiasky
 ```
 
 ##### 1.2.2.3 RPM
@@ -98,7 +98,7 @@ following command. You will need root privileges to install a `rpm` package in
 your system.
 
 ```
-sudo yum install gaiasky_linux_<version>.rpm
+$  sudo yum install gaiasky_linux_<version>.rpm
 ```
 
 This will install the application in the `/opt/gaiasky/` folder
@@ -107,7 +107,7 @@ and it will create the necessary shortcuts.
 In order to **uninstall**, just type:
 
 ```
-sudo yum remove gaiasky-x86
+$  sudo yum remove gaiasky-x86
 ```
 
 ##### 1.2.2.4 Linux installer
@@ -118,7 +118,7 @@ Download the file `gaiasandbox_unix_<version>.sh` to your disk.
 Then run the following to start the installation.
 
 ```
-./gaiasky_unix_[version].sh
+$  ./gaiasky_unix_[version].sh
 ```
 
 Follow the on-screen instructions to proceed with the installation.
@@ -142,7 +142,7 @@ In **Windows**, use an archiver software (7zip, iZArc, etc.) to unpack it.
 In **Linux** and **macOS**, you can use:
 
 ```
-tar -zxvf gaiasky-<version>.tgz
+$  tar -zxvf gaiasky-<version>.tgz
 ```
 
 ##  2. Running instructions
@@ -152,13 +152,15 @@ tar -zxvf gaiasky-<version>.tgz
 In order to run the program just click on the shortcut
 provided in your operating system.
 
+If Windows is your OS of choice, you first need to install [Git for Windows](https://git-scm.com/download/win).
+
 ### 2.2 Running from source
 
 First, clone the [GitHub](https://github.com/langurmonkey/gaiasky) repository:
 
 ```
-git clone https://github.com/langurmonkey/gaiasky.git
-cd gaiasky
+$  git clone https://github.com/langurmonkey/gaiasky.git
+$  cd gaiasky
 ```
 
 Make sure you have at least `JDK8` installed.
@@ -188,10 +190,18 @@ edit the configuration file so that `data.json.catalog` points to `data/catalog-
 Finally, run Gaia Sky with:
 
 ```
-gradlew desktop:run
+$  gradlew desktop:run
 ```
 
-Et voilà! Gaia Sky is running on your machine.
+Et voilà! The bleeding edge Gaia Sky is running in your machine.
+
+In order to pull the latest version from the repository, just run the following from the `gaiasky` folder.
+
+```
+$  git pull
+```
+
+Remember that the master branch is the development branch and therefore intrinsically unstable. It is not guaranteed to always work.
 
 ##  3. Documentation and help
 

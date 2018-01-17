@@ -87,11 +87,14 @@ public class HYGDataProvider extends AbstractStarGroupDataProvider {
                         double starsize = Math.min((Math.pow(flux, 0.5f) * Constants.PC_TO_U * 0.16f), 1e9f) / 1.5;
 
                         Vector3d pos = Coordinates.sphericalToCartesian(Math.toRadians(ra), Math.toRadians(dec), dist, new Vector3d());
-                        Vector3d pm = Coordinates.sphericalToCartesian(Math.toRadians(ra + mualpha * AstroUtils.MILLARCSEC_TO_DEG), Math.toRadians(dec + mudelta * AstroUtils.MILLARCSEC_TO_DEG), dist + radvel * Constants.KM_TO_U * Constants.S_TO_Y, new Vector3d());
+                        Vector3d pm = Coordinates.sphericalToCartesian(Math.toRadians(ra + mualpha * AstroUtils.MILLARCSEC_TO_DEG), Math.toRadians(dec + mudelta * AstroUtils.MILLARCSEC_TO_DEG), dist
+                                + radvel * Constants.KM_TO_U * Constants.S_TO_Y, new Vector3d());
                         pm.sub(pos);
 
                         float[] rgb = ColourUtils.BVtoRGB(colorbv);
                         double col = Color.toFloatBits(rgb[0], rgb[1], rgb[2], 1.0f);
+                        colors.put(id, rgb);
+                        sphericalPositions.put(id, new double[] { ra, dec, dist });
 
                         double[] point = new double[StarBean.SIZE];
                         point[StarBean.I_HIP] = hip;
@@ -123,7 +126,7 @@ public class HYGDataProvider extends AbstractStarGroupDataProvider {
             data_in.close();
 
             if (dumpToDisk) {
-                dumpToDisk(list, "/tmp/hyg.bin");
+                dumpToDisk(list, "/tmp/hyg.bin", "bin");
             }
 
         } catch (Exception e) {
