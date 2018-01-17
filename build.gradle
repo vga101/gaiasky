@@ -66,10 +66,13 @@ project(":desktop") {
     proc = cmd.execute()
     project.ext.rev = proc.text.trim()
 
-//    cmd = "uname -snmr"
-//    proc = cmd.execute()
-//    project.ext.system = proc.text.trim()
-    project.ext.system = "Windows10 x86_64"
+	if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+        project.ext.system = "Windows10 x86_64"
+    }else {
+        cmd = "uname -snmr"
+        proc = cmd.execute()
+        project.ext.system = proc.text.trim()
+    }
 
     cmd = "whoami"
     proc = cmd.execute()
