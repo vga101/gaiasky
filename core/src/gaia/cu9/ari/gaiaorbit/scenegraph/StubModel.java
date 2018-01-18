@@ -23,14 +23,15 @@ public class StubModel extends AbstractPositionEntity implements IModelRenderabl
     private Environment env;
     private VRDevice device;
     private boolean delayRender = false;
-    private Vector3 aux;
+    private Vector3 beamP0, beamP1;
 
     public StubModel(VRDevice device, Environment env) {
         super();
         this.env = env;
         this.instance = device.getModelInstance();
         this.device = device;
-        aux = new Vector3();
+        beamP0 = new Vector3();
+        beamP1 = new Vector3();
         this.cc = new float[] { 1f, 0f, 0f };
         setCt("Others");
     }
@@ -70,12 +71,9 @@ public class StubModel extends AbstractPositionEntity implements IModelRenderabl
     @Override
     public void render(LineRenderSystem renderer, ICamera camera, float alpha) {
         Matrix4 transform = instance.transform;
-        aux.set(0, -0.1f, 0).mul(transform);
-        double x = aux.x;
-        double y = aux.y;
-        double z = aux.z;
-        aux.set(0, -.8e15f, -1e15f).mul(transform);
-        renderer.addLine(x, y, z, aux.x, aux.y - 0.1, aux.z, 0.5f, 0f, 0f, alpha);
+        beamP0.set(0, -0.1f, 0).mul(transform);
+        beamP1.set(0, -.8e15f, -1e15f).mul(transform);
+        renderer.addLine(beamP0.x, beamP0.y, beamP0.z, beamP1.x, beamP1.y - 0.1f, beamP1.z, 1f, 0.0f, 0.0f, 0.5f);
     }
 
     public void setTransparency(float alpha) {
@@ -115,6 +113,24 @@ public class StubModel extends AbstractPositionEntity implements IModelRenderabl
 
     public void setDelayRender(boolean dr) {
         this.delayRender = dr;
+    }
+
+    /**
+     * Gets the initial point of the controller beam in camera space
+     * 
+     * @return Initial point of controller beam
+     */
+    public Vector3 getBeamP0() {
+        return beamP0;
+    }
+
+    /**
+     * Gets the end point of the controller beam in camera space
+     * 
+     * @return End point of controller beam
+     */
+    public Vector3 getBeamP1() {
+        return beamP1;
     }
 
 }

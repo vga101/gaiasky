@@ -24,15 +24,14 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.NaturalCamera;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.comp.ViewAngleComparator;
-import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
 /**
- * Input controller for the natural camera.
+ * Input listener for the natural camera.
  * 
  * @author tsagrista
  *
  */
-public class NaturalInputController extends GestureDetector {
+public class NaturalInputListener extends GestureDetector {
 
     /**
      * The button for rotating the camera either around its center or around the
@@ -69,7 +68,6 @@ public class NaturalInputController extends GestureDetector {
     /** Max distance from the click to the actual selected star **/
     private int MIN_PIX_DIST;
     private Vector2 gesture = new Vector2();
-    private Vector3d aux;
 
     /** dx(mouse pointer) since last time **/
     private double dragDx;
@@ -88,7 +86,7 @@ public class NaturalInputController extends GestureDetector {
     private static final long doubleClickTime = 400;
 
     protected static class GaiaGestureListener extends GestureAdapter {
-        public NaturalInputController controller;
+        public NaturalInputListener controller;
         private float previousZoom;
 
         @Override
@@ -134,12 +132,11 @@ public class NaturalInputController extends GestureDetector {
 
     protected final GaiaGestureListener gestureListener;
 
-    protected NaturalInputController(final GaiaGestureListener gestureListener, NaturalCamera camera) {
+    protected NaturalInputListener(final GaiaGestureListener gestureListener, NaturalCamera camera) {
         super(gestureListener);
         this.gestureListener = gestureListener;
         this.gestureListener.controller = this;
         this.camera = camera;
-        this.aux = new Vector3d();
         this.comp = new ViewAngleComparator<IFocus>();
         // 1% of width
         this.MOVE_PX_DIST = !Constants.mobile ? (float) Math.max(5, Gdx.graphics.getWidth() * 0.01) : (float) Math.max(80, Gdx.graphics.getWidth() * 0.05);
@@ -156,7 +153,7 @@ public class NaturalInputController extends GestureDetector {
         pressedKeys = new HashSet<Integer>();
     }
 
-    public NaturalInputController(final NaturalCamera camera) {
+    public NaturalInputListener(final NaturalCamera camera) {
         this(new GaiaGestureListener(), camera);
     }
 

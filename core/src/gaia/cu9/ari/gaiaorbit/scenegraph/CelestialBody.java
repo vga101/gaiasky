@@ -22,6 +22,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.component.RotationComponent;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.color.ColourUtils;
+import gaia.cu9.ari.gaiaorbit.util.math.Intersectord;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Quaterniond;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
@@ -446,6 +447,26 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
             }
         }
 
+    }
+
+    public void addHit(Vector3d p0, Vector3d p1, NaturalCamera camera, Array<IFocus> hits) {
+        if (withinMagLimit() && checkHitCondition()) {
+            Vector3d aux = aux3d1.get();
+            Vector3d posd = getAbsolutePosition(aux).add(camera.getInversePos());
+
+            if (camera.direction.dot(posd) > 0) {
+                // The star is in front of us
+                // Diminish the size of the star
+                // when we are close by
+                double dist = posd.len();
+                double distToLine = Intersectord.distanceLinePoint(p0, p1, posd);
+                double value = distToLine / dist;
+
+                if (value < 0.01) {
+                    hits.add(this);
+                }
+            }
+        }
     }
 
     protected boolean checkClickDistance(int screenX, int screenY, Vector3 pos, NaturalCamera camera, PerspectiveCamera pcamera, double pixelSize) {

@@ -68,6 +68,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.IFocus;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
+import gaia.cu9.ari.gaiaorbit.scenegraph.StubModel;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
 import gaia.cu9.ari.gaiaorbit.script.HiddenHelperUser;
 import gaia.cu9.ari.gaiaorbit.util.ComponentTypes;
@@ -122,6 +123,11 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
      * present or SteamVR is not installed
      */
     public VRContext vrContext;
+
+    /**
+     * Maps the VR devices to model objects
+     */
+    private HashMap<VRDevice, StubModel> vrDeviceToModel;
 
     // Asset manager
     public AssetManager manager;
@@ -317,6 +323,8 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
             } else {
                 Logger.info("HMD device is not null: " + vrContext.getDeviceByType(VRDeviceType.HeadMountedDisplay).toString());
             }
+
+            vrDeviceToModel = new HashMap<VRDevice, StubModel>();
 
             GlobalConf.runtime.OPENVR = true;
             GlobalConf.screen.SCREEN_HEIGHT = vrContext.getHeight();
@@ -761,6 +769,10 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
             fb.dispose();
         }
         fbmap.clear();
+    }
+
+    public HashMap<VRDevice, StubModel> getVRDeviceToModel() {
+        return vrDeviceToModel;
     }
 
     public ICamera getICamera() {

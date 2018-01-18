@@ -20,7 +20,7 @@ import com.badlogic.gdx.utils.Array;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
-import gaia.cu9.ari.gaiaorbit.interfce.NaturalInputController;
+import gaia.cu9.ari.gaiaorbit.interfce.NaturalInputListener;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.IFocus;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
@@ -80,7 +80,7 @@ public class ObjectsComponent extends GuiComponent implements IObserver {
 
                         }
                     }
-                    NaturalInputController.pressedKeys.remove(ie.getKeyCode());
+                    NaturalInputListener.pressedKeys.remove(ie.getKeyCode());
 
                     if (ie.getKeyCode() == Keys.ESCAPE) {
                         // Lose focus

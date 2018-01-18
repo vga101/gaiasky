@@ -390,6 +390,25 @@ public abstract class ModelBody extends CelestialBody {
 
     }
 
+    public void addHit(Vector3d p0, Vector3d p1, NaturalCamera camera, Array<IFocus> hits) {
+        if (withinMagLimit() && checkHitCondition()) {
+            if (viewAngleApparent < THRESHOLD_QUAD() * camera.getFovFactor()) {
+                super.addHit(p0, p1, camera, hits);
+            } else {
+                Vector3d aux1d = aux3d1.get();
+
+                // aux1d contains the position of the body in the camera ref sys
+                aux1d.set(transform.position);
+
+                boolean intersect = Intersectord.checkIntersectRaySpehre(p0, p1, aux1d, getRadius());
+                if (intersect) {
+                    //Hit
+                    hits.add(this);
+                }
+            }
+        }
+    }
+
     @Override
     public double getSize() {
         return super.getSize() * sizeScaleFactor;

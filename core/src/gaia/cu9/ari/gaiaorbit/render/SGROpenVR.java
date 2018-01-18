@@ -1,6 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.render;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.lwjgl.openvr.HmdMatrix34;
@@ -23,6 +22,7 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 
+import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
@@ -61,7 +61,7 @@ public class SGROpenVR extends SGRAbstract implements ISGR, IObserver {
 
     private ModelBatch modelBatch;
     private Array<StubModel> controllerObjects;
-    private Map<VRDevice, StubModel> vrdevices;
+    private Map<VRDevice, StubModel> vrDeviceToModel;
     private Environment controllersEnv;
 
     private Vector3 auxf1;
@@ -101,7 +101,7 @@ public class SGROpenVR extends SGRAbstract implements ISGR, IObserver {
             controllersEnv.add(dlight);
 
             // Controller objects
-            vrdevices = new HashMap<VRDevice, StubModel>();
+            vrDeviceToModel = GaiaSky.instance.getVRDeviceToModel();
             controllerObjects = new Array<StubModel>(controllers.size);
             for (VRDevice controller : controllers) {
                 addVRController(controller);
@@ -248,18 +248,18 @@ public class SGROpenVR extends SGRAbstract implements ISGR, IObserver {
     }
 
     private void addVRController(VRDevice device) {
-        if (!vrdevices.containsKey(device)) {
+        if (!vrDeviceToModel.containsKey(device)) {
             StubModel sm = new StubModel(device, controllersEnv);
             controllerObjects.add(sm);
-            vrdevices.put(device, sm);
+            vrDeviceToModel.put(device, sm);
         }
     }
 
     private void removeVRController(VRDevice device) {
-        if (vrdevices.containsKey(device)) {
-            StubModel sm = vrdevices.get(device);
+        if (vrDeviceToModel.containsKey(device)) {
+            StubModel sm = vrDeviceToModel.get(device);
             controllerObjects.removeValue(sm, true);
-            vrdevices.remove(device);
+            vrDeviceToModel.remove(device);
         }
     }
 

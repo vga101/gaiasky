@@ -39,6 +39,7 @@ import gaia.cu9.ari.gaiaorbit.util.ModelCache;
 import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
 import gaia.cu9.ari.gaiaorbit.util.g3d.MeshPartBuilder2;
 import gaia.cu9.ari.gaiaorbit.util.g3d.ModelBuilder2;
+import gaia.cu9.ari.gaiaorbit.util.math.Intersectord;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Quaterniond;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
@@ -402,6 +403,26 @@ public class StarCluster extends AbstractPositionEntity implements IFocus, IProp
                 // Check click distance
                 if (checkClickDistance(screenX, screenY, pos, camera, pcamera, pixelSize)) {
                     //Hit
+                    hits.add(this);
+                }
+            }
+        }
+    }
+
+    public void addHit(Vector3d p0, Vector3d p1, NaturalCamera camera, Array<IFocus> hits) {
+        if (withinMagLimit() && isActive()) {
+            Vector3d aux = aux3d1.get();
+            Vector3d posd = getAbsolutePosition(aux).add(camera.getInversePos());
+
+            if (camera.direction.dot(posd) > 0) {
+                // The star is in front of us
+                // Diminish the size of the star
+                // when we are close by
+                double dist = posd.len();
+                double distToLine = Intersectord.distanceLinePoint(p0, p1, posd);
+                double value = distToLine / dist;
+
+                if (value < 0.01) {
                     hits.add(this);
                 }
             }
