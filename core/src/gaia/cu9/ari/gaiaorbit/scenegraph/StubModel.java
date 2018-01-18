@@ -6,25 +6,32 @@ import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.BlendingAttribute;
+import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Vector3;
 
+import gaia.cu9.ari.gaiaorbit.render.ILineRenderable;
 import gaia.cu9.ari.gaiaorbit.render.IModelRenderable;
 import gaia.cu9.ari.gaiaorbit.render.RenderingContext;
+import gaia.cu9.ari.gaiaorbit.render.system.LineRenderSystem;
 import gaia.cu9.ari.gaiaorbit.util.ComponentTypes;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 import gaia.cu9.ari.gaiaorbit.vr.VRContext.VRDevice;
 
-public class StubModel extends AbstractPositionEntity implements IModelRenderable {
+public class StubModel extends AbstractPositionEntity implements IModelRenderable, ILineRenderable {
 
     public ModelInstance instance;
     private Environment env;
     private VRDevice device;
     private boolean delayRender = false;
+    private Vector3 aux;
 
     public StubModel(VRDevice device, Environment env) {
         super();
         this.env = env;
         this.instance = device.getModelInstance();
         this.device = device;
+        aux = new Vector3();
+        this.cc = new float[] { 1f, 0f, 0f };
         setCt("Others");
     }
 
@@ -43,10 +50,34 @@ public class StubModel extends AbstractPositionEntity implements IModelRenderabl
         return 0;
     }
 
+    public void addToRenderLists(RenderGroup rg) {
+        if (rg != null) {
+            addToRender(this, rg);
+            addToRender(this, RenderGroup.LINE);
+        } else {
+            addToRender(this, RenderGroup.LINE);
+        }
+    }
+
+    @Override
+    protected void addToRenderLists(ICamera camera) {
+    }
+
     @Override
     public void render(ModelBatch modelBatch, float alpha, double t, RenderingContext rc) {
         setTransparency(alpha);
         modelBatch.render(instance, env);
+    }
+
+    @Override
+    public void render(LineRenderSystem renderer, ICamera camera, float alpha) {
+        Matrix4 transform = instance.transform;
+        aux.set(0, -0.1f, 0).mul(transform);
+        double x = aux.x;
+        double y = aux.y;
+        double z = aux.z;
+        aux.set(0, -.8e15f, -1e15f).mul(transform);
+        renderer.addLine(x, y, z, aux.x, aux.y - 0.1, aux.z, 0.5f, 0f, 0f, alpha);
     }
 
     public void setTransparency(float alpha) {
@@ -69,14 +100,6 @@ public class StubModel extends AbstractPositionEntity implements IModelRenderabl
     @Override
     public boolean hasAtmosphere() {
         return false;
-    }
-
-    @Override
-    protected void addToRenderLists(ICamera camera) {
-    }
-
-    public void addToRenderLists(RenderGroup rg) {
-        addToRender(this, rg);
     }
 
     @Override

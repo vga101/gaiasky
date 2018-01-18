@@ -42,11 +42,6 @@ public class OpenVRListener implements VRDeviceListener {
                 cam.setVelocity(-1);
             }
         }
-
-        //        if (device == context.getDeviceByType(VRDeviceType.Controller)) {
-        //            if (button == VRControllerButtons.SteamVR_Trigger)
-        //                isTeleporting = true;
-        //        }
     }
 
     public void buttonReleased(VRDevice device, int button) {
@@ -61,27 +56,6 @@ public class OpenVRListener implements VRDeviceListener {
             CameraMode cm = cam.getMode().equals(CameraMode.Focus) ? CameraMode.Free_Camera : CameraMode.Focus;
             EventManager.instance.post(Events.CAMERA_MODE_CMD, cm);
         }
-
-        //        if (device == context.getDeviceByType(VRDeviceType.Controller)) {
-        //            if (button == VRControllerButtons.SteamVR_Trigger) {
-        //                if (intersectControllerXZPlane(context.getDeviceByType(VRDeviceType.Controller), tmp)) {
-        //                    // Teleportation
-        //                    // - Tracker space origin in world space is initially at [0,0,0]
-        //                    // - When teleporting, we want to set the tracker space origin in world space to the
-        //                    // teleportation point
-        //                    // - Then we need to offset the tracker space
-        //                    // origin in world space by the camera
-        //                    // x/z position so the camera is at the
-        //                    // teleportation point in world space
-        //                    tmp2.set(context.getDeviceByType(VRDeviceType.HeadMountedDisplay).getPosition(Space.Tracker));
-        //                    tmp2.y = 0;
-        //                    tmp.sub(tmp2);
-        //
-        //                    context.getTrackerSpaceOriginToWorldSpaceTranslationOffset().set(tmp);
-        //                }
-        //                isTeleporting = false;
-        //            }
-        //        }
     }
 
     @Override

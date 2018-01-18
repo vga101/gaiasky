@@ -84,6 +84,8 @@ public class SceneGraphNode implements IStarContainer, IPosition {
         BILLBOARD_SPRITE(17),
         /** Line GPU **/
         LINE_GPU(18),
+        /** Line no depth, for VR pointers **/
+        LINE_NODEPTH(19),
 
         /** None **/
         NONE(-1);
