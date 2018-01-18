@@ -172,16 +172,17 @@ the `tar` file corresponding to your version — see table below.
 As of version `1.5.0`, there are new GPU-bound catalogs which perform much better and can also be combined with the levels-of-detail structure to produce a good combo in terms of performance
 and load times. Choose which catalog you want to use. Usually, the single file GPU version should work fine (tgas gpu), and has no culling, so all particles are visible at all times.
 
-| **Catalog** | **Description** | **Location** | **Catalog file** |
+| **Catalog** | **Description** | **Extract location** | **Catalog file** |
 |---------|-------------|----------|----------|
 | [tgas lod (1.0.3)](http://wwwstaff.ari.uni-heidelberg.de/gaiasandbox/files/20161206_tgas_gaiasky_1.0.3.tar.gz)  | Levels of detail (lod) TGAS catalog. CPU-bound. | `gaiasky/android/assets/data/octree` | - |
 | [tags lod (1.0.4)](http://wwwstaff.ari.uni-heidelberg.de/gaiasandbox/files/20161206_tgas_gaiasky_1.0.4.tar.gz)  | Levels of detail (lod) TGAS catalog. CPU-bound. | `gaiasky/android/assets/data/octree` | - |
 | tags lod ([1.5.0](http://wwwstaff.ari.uni-heidelberg.de/gaiasandbox/files/20170731_tgas_lod_gaiasky_1.5.0.tar.gz), [1.5.1](http://wwwstaff.ari.uni-heidelberg.de/gaiasandbox/files/20171204_tgas_lod_gaiasky_1.5.1.tar.gz))  | Levels of detail (lod) TGAS catalog. GPU-bound. Version `1.5.1` contains a fix in proper motion and RAVE radial velocities.  | `gaiasky/android/assets/data/octree/tgas` | `data/catalog-tgas-hyg-lod.json` |
 | tags gpu ([1.5.0](http://wwwstaff.ari.uni-heidelberg.de/gaiasandbox/files/20170731_tgas_gpu_gaiasky_1.5.0.tar.gz), [1.5.1](http://wwwstaff.ari.uni-heidelberg.de/gaiasandbox/files/20171204_tgas_gpu_gaiasky_1.5.1.tar.gz))  | TGAS catalog, GPU-bound. Version `1.5.1` contains a fix in proper motion and RAVE radial velocities.  | `gaiasky/android/assets/data/catalog` | `data/catalog-tgas-hyg.json` | 
 
-For versions `1.0.x` just extract the package in the specified location. For versions `1.5.0+` you can choose whether you want to use the Levels of detail catalog (multiple files, uses an octree structure which culls particles outside the view frustum and hides particles which are far away according
-to the view distance setting) or the regular catalog (single file, loaded once at startup, contains the full catalog, which is sent to GPU memory). Then, you need to point the key `data.json.catalog` in your `$HOME/.gaiasky/global.properties` file to the
-file specified in the last column in the table.
+First, choose the package corresponding to your Gaia Sky version and extract it into the specified **Extract location**. `tgas lod` means levels of detail, so data in these catalogs is streamed from disk to GPU. `tgas gpu` means that the data is loaded all at startup and sent to the GPU at that moment. Choose `tgas gpu` if you have a good graphics card.
+
+Then, you need to point the key `data.json.catalog` in your `$HOME/.gaiasky/global.properties` file to the
+file specified in the last column in the table (**Catalog file**).
 
 Albeit **not recommended** for performance reasons, the legacy particle-based (CPU-bound) version of the catalog (version `1.0.4`) can still be used with newer versions. To do so, extract the package in `gaiasky/android/assets/data/octree/tgas` so that the `metadata.bin` file and the `particles` folder are directly within that folder and 
 edit the configuration file so that `data.json.catalog` points to `data/catalog-tgas-hyg-lod-old.json`.
