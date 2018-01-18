@@ -449,16 +449,11 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         AbstractRenderSystem shapeProc = new ShapeRenderSystem(RenderGroup.SHAPE, priority++, alphas);
         shapeProc.setPreRunnable(blendNoDepthRunnable);
 
-        // LINE NO DEPTH
-        AbstractRenderSystem lineNoDepthProc = new LineRenderSystem(RenderGroup.LINE_NODEPTH, priority++, alphas);
-        lineNoDepthProc.setPreRunnable((renderSystem, renderables, camera) -> {
-            // Clear depth
-            Gdx.gl.glClear(GL20.GL_DEPTH_BUFFER_BIT);
-        });
-
         // MODEL CLOSE UP
-        //        AbstractRenderSystem modelCloseUpProc = new ModelBatchRenderSystem(RenderGroup.MODEL_CLOSEUP, priority++, alphas, modelBatchCloseUp, false);
-        //        modelCloseUpProc.setPreRunnable(blendDepthRunnable);
+        //        AbstractRenderSystem modelCloseUpProc = new ModelBatchRenderSystem(RenderGroup.MODEL_CLOSEUP, priority++, alphas, modelBatchNormal, false);
+        //        modelCloseUpProc.setPreRunnable((renderSystem, renderables, camera) -> {
+        //            Gdx.gl.glClear(GL20.GL_DEPTH_BUFFER_BIT);
+        //        });
 
         // Add components to set
         renderProcesses.add(modelFrontBackProc);
@@ -487,8 +482,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         renderProcesses.add(modelStarsProc);
         renderProcesses.add(modelAtmProc);
         renderProcesses.add(shapeProc);
-        // renderProcesses.add(modelCloseUpProc);
-        renderProcesses.add(lineNoDepthProc);
+        //renderProcesses.add(modelCloseUpProc);
 
         EventManager.instance.subscribe(this, Events.TOGGLE_VISIBILITY_CMD, Events.PIXEL_RENDERER_UPDATE, Events.LINE_RENDERER_UPDATE, Events.STEREOSCOPIC_CMD, Events.CAMERA_MODE_CMD, Events.CUBEMAP360_CMD, Events.REBUILD_SHADOW_MAP_DATA_CMD);
 

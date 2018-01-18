@@ -6,6 +6,12 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.controllers.Controllers;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Texture.TextureFilter;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 
 import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
@@ -51,6 +57,9 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
     private Vector3d aux1, aux2, aux3, aux5, aux4, dx;
     /** Acceleration, velocity and position for pitch, yaw and roll **/
     private Vector3d pitch, yaw, roll;
+    private Vector2 aux2f2;
+    /** Auxiliary float vector **/
+    private Vector3 auxf1;
     /**
      * Acceleration, velocity and position for the horizontal and vertical
      * rotation around the focus
@@ -122,6 +131,9 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
     /** VR listener **/
     private OpenVRListener openVRListener;
 
+    private SpriteBatch spriteBatch;
+    private Texture focusCrosshair, focusArrow, velocityCrosshair, antivelocityCrosshair;
+
     public NaturalCamera(AssetManager assetManager, CameraManager parent) {
         super(parent);
         vroffset = new Vector3d();
@@ -162,6 +174,8 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
         aux3 = new Vector3d();
         aux4 = new Vector3d();
         aux5 = new Vector3d();
+        auxf1 = new Vector3();
+        aux2f2 = new Vector2();
 
         dx = new Vector3d();
 
@@ -170,6 +184,24 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
         if (GlobalConf.runtime.OPENVR)
             openVRListener = new OpenVRListener(this);
 
+        // Init sprite batch for crosshair
+        spriteBatch = new SpriteBatch();
+
+        // Focus crosshair
+        focusCrosshair = new Texture(Gdx.files.internal("img/crosshair-green.png"));
+        focusCrosshair.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+
+        // Focus arrow
+        focusArrow = new Texture(Gdx.files.internal("img/crosshair-green-arrow.png"));
+        focusArrow.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+
+        // Velocity vector crosshair
+        velocityCrosshair = new Texture(Gdx.files.internal("img/ai-vel.png"));
+        velocityCrosshair.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+
+        // Antivelocity vector crosshair
+        antivelocityCrosshair = new Texture(Gdx.files.internal("img/ai-antivel.png"));
+        antivelocityCrosshair.setFilter(TextureFilter.Linear, TextureFilter.Linear);
         // Focus is changed from GUI
         EventManager.instance.subscribe(this, Events.FOCUS_CHANGE_CMD, Events.FOV_CHANGED_CMD, Events.ORIENTATION_LOCK_CMD, Events.CAMERA_POS_CMD, Events.CAMERA_DIR_CMD, Events.CAMERA_UP_CMD, Events.CAMERA_FWD, Events.CAMERA_PAN, Events.CAMERA_STOP, Events.CAMERA_CENTER, Events.GO_TO_OBJECT_CMD);
     }
@@ -1122,7 +1154,99 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 
     @Override
     public void render(int rw, int rh) {
+        // Renders crosshair if focus mode
+        if (GlobalConf.scene.CROSSHAIR) {
+            spriteBatch.begin();
+            // Focus crosshair only in focus mode
+            IFocus chFocus = null;
+            if (getMode().equals(CameraMode.Focus)) {
+                // Green
+                spriteBatch.setColor(0, 1, 0, 1);
+                chFocus = focus;
+            } else if (getMode().equals(CameraMode.Free_Camera) && closest != null) {
+                // Orange
+                spriteBatch.setColor(1f, .7f, .2f, 1f);
+                chFocus = (IFocus) closest.getComputedAncestor();
+            }
 
+            if (chFocus != null) {
+                float chw = focusCrosshair.getWidth();
+                float chh = focusCrosshair.getHeight();
+                float chw2 = chw / 2;
+                float chh2 = chh / 2;
+
+                chFocus.getAbsolutePosition(aux1).add(posinv);
+                boolean inside = projectToScreen(aux1, auxf1, rw, rh, chw, chh, chw2, chh2);
+
+                if (inside) {
+                    spriteBatch.draw(focusCrosshair, auxf1.x - chw2, auxf1.y - chh2, chw, chh);
+                } else {
+                    aux2f2.set(auxf1.x - (Gdx.graphics.getWidth() / 2), auxf1.y - (Gdx.graphics.getHeight() / 2));
+                    //                    spriteBatch.draw(focusArrow, auxf1.x - chw2, auxf1.y - chh2, chw2, chh2, chw, chh, 1f, 1f, -90 + aux2f2.angle(), 0, 0, (int) chw, (int) chh, false, false);
+                    aux1.set(vroffset).scl(10).add(direction);
+                    projectToScreen(aux1, auxf1, rw, rh, chw, chh, chw2, chh2);
+                    spriteBatch.draw(focusArrow, auxf1.x, auxf1.y, chw2, chh2, chw, chh, 1f, 1f, -90 + aux2f2.angle(), 0, 0, (int) chw, (int) chw, false, false);
+                }
+            }
+            spriteBatch.end();
+        }
+    }
+
+    /**
+     * Projects to screen
+     * 
+     * @param vec
+     * @param out
+     * @param rw
+     * @param rh
+     * @param chw
+     * @param chh
+     * @param chw2
+     * @param chh2
+     * @return False if projected point falls outside the screen bounds, true
+     *         otherwise
+     */
+    private boolean projectToScreen(Vector3d vec, Vector3 out, int rw, int rh, float chw, float chh, float chw2, float chh2) {
+        vec.put(out);
+        camera.project(out, 0, 0, rw, rh);
+
+        double ang = direction.angle(vec);
+
+        if (ang > 90) {
+            out.x = rw - out.x;
+            out.y = rh - out.y;
+
+            float w2 = rw / 2f;
+            float h2 = rh / 2f;
+
+            // Q1 | Q2
+            // -------
+            // Q3 | Q4
+
+            if (out.x <= w2 && out.y >= h2) {
+                // Q1
+                out.x = chw2;
+                out.y = rh - chh2;
+
+            } else if (out.x > w2 && out.y > h2) {
+                // Q2
+                out.x = rw - chw2;
+                out.y = rh - chh2;
+            } else if (out.x <= w2 && out.y <= h2) {
+                // Q3
+                out.x = chw2;
+                out.y = chh2;
+            } else if (out.x > w2 && out.y < h2) {
+                // Q4
+                out.x = rw - chw2;
+                out.y = chh2;
+            }
+        }
+
+        out.x = MathUtils.clamp(out.x, chw2, rw - chw2);
+        out.y = MathUtils.clamp(out.y, chh2, rh - chh2);
+
+        return ang < 30;
     }
 
     @Override

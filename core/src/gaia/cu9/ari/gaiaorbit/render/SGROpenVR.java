@@ -19,7 +19,6 @@ import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
-import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
@@ -61,7 +60,6 @@ public class SGROpenVR extends SGRAbstract implements ISGR, IObserver {
     public final Matrix4 invEyeSpace = new Matrix4();
 
     private ModelBatch modelBatch;
-    private ShaderProgram lineProgram;
     private Array<StubModel> controllerObjects;
     private Map<VRDevice, StubModel> vrdevices;
     private Environment controllersEnv;
@@ -75,8 +73,6 @@ public class SGROpenVR extends SGRAbstract implements ISGR, IObserver {
         this.vrContext = vrContext;
         // Model batch
         this.modelBatch = modelBatch;
-        // Line shader
-        this.lineProgram = new ShaderProgram(Gdx.files.internal("shader/line.vertex.glsl"), Gdx.files.internal("shader/line.fragment.glsl"));
 
         if (vrContext != null) {
             // Left eye, fb and texture
@@ -151,6 +147,8 @@ public class SGROpenVR extends SGRAbstract implements ISGR, IObserver {
 
             // Render scene
             sgr.renderScene(camera, t, rc);
+            // Camera
+            camera.render(rw, rh);
 
             if (r) {
                 updateCamera((NaturalCamera) camera.getCurrent(), camera.getCamera(), 0, false, rc, 0.1f);
@@ -174,6 +172,8 @@ public class SGROpenVR extends SGRAbstract implements ISGR, IObserver {
 
             // Render scene
             sgr.renderScene(camera, t, rc);
+            // Camera
+            camera.render(rw, rh);
 
             if (r) {
                 updateCamera((NaturalCamera) camera.getCurrent(), camera.getCamera(), 1, false, rc, 0.1f);
