@@ -18,7 +18,7 @@ import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 import net.jafama.FastMath;
 
 public class Loc extends AbstractPositionEntity implements I3DTextRenderable {
-    private static final float LOWER_LIMIT = 3e-4f;
+    private static final float LOWER_LIMIT = 3e-7f;
     private static final float UPPER_LIMIT = 3e-3f;
 
     /** The display name **/
@@ -53,7 +53,6 @@ public class Loc extends AbstractPositionEntity implements I3DTextRenderable {
 
     @Override
     public void updateLocal(ITimeFrameProvider time, ICamera camera) {
-
         if (((ModelBody) parent).viewAngle > ((ModelBody) parent).THRESHOLD_QUAD() * 30f) {
             updateLocalValues(time, camera);
 
@@ -95,6 +94,7 @@ public class Loc extends AbstractPositionEntity implements I3DTextRenderable {
 
     @Override
     public boolean renderText() {
+        System.out.println(viewAngle + "");
         if (viewAngle < LOWER_LIMIT || viewAngle > UPPER_LIMIT || !GaiaSky.instance.isOn(ct.getFirstOrdinal())) {
             return false;
         }
@@ -115,9 +115,9 @@ public class Loc extends AbstractPositionEntity implements I3DTextRenderable {
         textPosition(camera, pos);
         shader.setUniformf("u_viewAngle", (float) (viewAngleApparent * ((ModelBody) parent).locVaMultiplier * Constants.U_TO_KM));
         shader.setUniformf("u_viewAnglePow", 1f);
-        shader.setUniformf("u_thOverFactor", ((ModelBody) parent).locThOverFactor);
+        shader.setUniformf("u_thOverFactor", ((ModelBody) parent).locThOverFactor * 1e-3f);
         shader.setUniformf("u_viewAnglePow", 1f);
-        render3DLabel(batch, shader, sys.font3d, camera, rc, text(), pos, textScale(), textSize() * camera.getFovFactor());
+        render3DLabel(batch, shader, sys.font3d, camera, rc, text(), pos, textScale(), textSize());
     }
 
     @Override
@@ -176,7 +176,7 @@ public class Loc extends AbstractPositionEntity implements I3DTextRenderable {
     @Override
     public void setName(String name) {
         this.name = name;
-        this.displayName = '\u02D9' + " " + name;
+        this.displayName = " " + name;
     }
 
 }

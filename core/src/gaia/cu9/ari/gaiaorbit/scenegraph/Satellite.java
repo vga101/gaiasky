@@ -110,7 +110,7 @@ public abstract class Satellite extends ModelBody {
 
     @Override
     protected float labelMax() {
-        return super.labelMax() * 2;
+        return super.labelMax() * 4e2f;
     }
 
     protected float getViewAnglePow() {

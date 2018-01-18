@@ -14,6 +14,7 @@
 	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Gaia",
 
 	"locvamultiplier" : 7.0,
+	"locthoverfactor" : 4E-9,
 
 	"coordinates" : {
 				// This must implement gaia.cu9.ari.gaiaorbit.util.coord.IBodyCoordinates				
