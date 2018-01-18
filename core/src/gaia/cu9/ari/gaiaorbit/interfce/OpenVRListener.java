@@ -62,11 +62,21 @@ public class OpenVRListener implements VRDeviceListener {
         if (button == VRControllerButtons.Grip) {
             if (device.getControllerRole().compareTo(VRControllerRole.RightHand) == 0) {
                 // Forward
-                cam.setVelocity(1);
+                lazyInit();
+                StubModel sm = vrDeviceToModel.get(device);
+                if (sm != null) {
+                    // Direct direction
+                    cam.setVelocityVR(sm.getBeamP0(), sm.getBeamP1(), 1);
+                }
             }
             if (device.getControllerRole().compareTo(VRControllerRole.LeftHand) == 0) {
                 // Backward
-                cam.setVelocity(-1);
+                lazyInit();
+                StubModel sm = vrDeviceToModel.get(device);
+                if (sm != null) {
+                    // Invert direction
+                    cam.setVelocityVR(sm.getBeamP0(), sm.getBeamP1(), -1);
+                }
             }
         }
     }
@@ -93,7 +103,7 @@ public class OpenVRListener implements VRDeviceListener {
             }
         } else if (button == VRControllerButtons.Grip) {
             // Stop
-            cam.setVelocity(0);
+            cam.clearVelocityVR();
         } else if (button == VRControllerButtons.A) {
             // Change mode from free to focus and viceversa
             CameraMode cm = cam.getMode().equals(CameraMode.Focus) ? CameraMode.Free_Camera : CameraMode.Focus;

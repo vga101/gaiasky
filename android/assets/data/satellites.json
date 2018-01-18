@@ -36,7 +36,7 @@
 	"name" : "Spacecraft",
 	"color" : [0.3, 0.5, 0.9, 1.0],
 	// in Km
-	"size" : 10.0,
+	"size" : 10000.0,
 	"ct" : Satellites,
 	// in Kg
 	"mass" : 2e5,

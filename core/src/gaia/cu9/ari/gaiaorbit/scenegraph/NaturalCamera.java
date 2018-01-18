@@ -103,9 +103,14 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 
     private Vector3d desired;
 
+    /** Velocity factor for gamepads **/
+    private double gamepadMultiplier = 1;
     /** Velocity module, in case it comes from a gamepad **/
     private double velocityGamepad = 0;
-    private double gamepadMultiplier = 1;
+    /** VR velocity vectors **/
+    private Vector3 velocityVR0, velocityVR1;
+    /** Magnitude of velocityVR vector **/
+    private double velocityVR = 0;
 
     /**
      * Holds whether the last input was issued by a controller. Useful to keep
@@ -429,6 +434,35 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
     }
 
     /**
+     * Sets the velocity of the VR controller as a vector. The magnitude of this
+     * vector should not be larger than 1
+     * 
+     * @param p0
+     *            Start point of the beam
+     * @param p1
+     *            End point of the beam
+     */
+    public void setVelocityVR(Vector3 p0, Vector3 p1, double amount) {
+        if (getMode() == CameraMode.Focus) {
+            setVelocity(amount);
+        } else {
+            velocityVR0 = p0;
+            velocityVR1 = p1;
+            velocityVR = amount;
+        }
+    }
+
+    /**
+     * Clears the velocityVR vector
+     */
+    public void clearVelocityVR() {
+        setVelocity(0);
+        velocityVR0 = null;
+        velocityVR1 = null;
+        velocityVR = 0;
+    }
+
+    /**
      * Adds a pan movement to the camera.
      * 
      * @param deltaX
@@ -627,6 +661,8 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
         // Calculate velocity if coming from gamepad
         if (velocityGamepad != 0) {
             vel.set(direction).nor().scl(velocityGamepad * gamepadMultiplier * multiplier);
+        } else if (velocityVR != 0) {
+            vel.set(velocityVR1).sub(velocityVR0).nor().scl(velocityVR * gamepadMultiplier * multiplier);
         }
 
         double forceLen = force.len();
@@ -640,7 +676,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 
         force.add(friction);
 
-        if (lastFwdTime > (GlobalConf.scene.CINEMATIC_CAMERA ? 1.5 : 0.25) && velocityGamepad == 0 && fullStop || lastFwdAmount > 0 && transUnits == 0) {
+        if (lastFwdTime > (GlobalConf.scene.CINEMATIC_CAMERA ? 1.5 : 0.25) && velocityGamepad == 0 && velocityVR == 0 && fullStop || lastFwdAmount > 0 && transUnits == 0) {
             stopForwardMovement();
         }
 

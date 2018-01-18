@@ -109,6 +109,7 @@ public class Spacecraft extends GenericSpacecraft implements ILineRenderable, IO
         vel = new Vector3d();
 
         // orientation
+        pos.set(1e7 * Constants.KM_TO_U, 0, 1e8 * Constants.KM_TO_U);
         direction = new Vector3d(1, 0, 0);
         up = new Vector3d(0, 1, 0);
 
