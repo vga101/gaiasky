@@ -71,7 +71,7 @@ following command. You will need root privileges to install a `deb` package in
 your system.
 
 ```
-sudo dpkg -i gaiasky_linux_<version>.deb
+$  sudo dpkg -i gaiasky_linux_<version>.deb
 ```
 
 This will install the application in the `/opt/gaiasky/` folder
@@ -80,14 +80,14 @@ and it will create the necessary shortcuts.
 In order to **uninstall**, just type:
 
 ```
-sudo apt-get remove gaiasky
+$  sudo apt-get remove gaiasky
 ```
 ##### 1.2.2.2 AUR
 
 We also provide an [AUR package](https://aur.archlinux.org/packages/gaiasky/) called `gaiasky`. You can install it easily with any tool capable of accessing `AUR`, for example `yaourt`.
 
 ```
-yaourt -S gaiasky
+$  yaourt -S gaiasky
 ```
 
 ##### 1.2.2.3 RPM
@@ -98,7 +98,7 @@ following command. You will need root privileges to install a `rpm` package in
 your system.
 
 ```
-sudo yum install gaiasky_linux_<version>.rpm
+$  sudo yum install gaiasky_linux_<version>.rpm
 ```
 
 This will install the application in the `/opt/gaiasky/` folder
@@ -107,7 +107,7 @@ and it will create the necessary shortcuts.
 In order to **uninstall**, just type:
 
 ```
-sudo yum remove gaiasky-x86
+$  sudo yum remove gaiasky-x86
 ```
 
 ##### 1.2.2.4 Linux installer
@@ -118,7 +118,7 @@ Download the file `gaiasandbox_unix_<version>.sh` to your disk.
 Then run the following to start the installation.
 
 ```
-./gaiasky_unix_[version].sh
+$  ./gaiasky_unix_[version].sh
 ```
 
 Follow the on-screen instructions to proceed with the installation.
@@ -142,7 +142,7 @@ In **Windows**, use an archiver software (7zip, iZArc, etc.) to unpack it.
 In **Linux** and **macOS**, you can use:
 
 ```
-tar -zxvf gaiasky-<version>.tgz
+$  tar -zxvf gaiasky-<version>.tgz
 ```
 
 ##  2. Running instructions
@@ -152,13 +152,15 @@ tar -zxvf gaiasky-<version>.tgz
 In order to run the program just click on the shortcut
 provided in your operating system.
 
+If Windows is your OS of choice, you first need to install [Git for Windows](https://git-scm.com/download/win).
+
 ### 2.2 Running from source
 
 First, clone the [GitHub](https://github.com/langurmonkey/gaiasky) repository:
 
 ```
-git clone https://github.com/langurmonkey/gaiasky.git
-cd gaiasky
+$  git clone https://github.com/langurmonkey/gaiasky.git
+$  cd gaiasky
 ```
 
 Make sure you have at least `JDK8` installed.
@@ -170,16 +172,17 @@ the `tar` file corresponding to your version — see table below.
 As of version `1.5.0`, there are new GPU-bound catalogs which perform much better and can also be combined with the levels-of-detail structure to produce a good combo in terms of performance
 and load times. Choose which catalog you want to use. Usually, the single file GPU version should work fine (tgas gpu), and has no culling, so all particles are visible at all times.
 
-| **Catalog** | **Description** | **Location** | **Catalog file** |
+| **Catalog** | **Description** | **Extract location** | **Catalog file** |
 |---------|-------------|----------|----------|
 | [tgas lod (1.0.3)](http://wwwstaff.ari.uni-heidelberg.de/gaiasandbox/files/20161206_tgas_gaiasky_1.0.3.tar.gz)  | Levels of detail (lod) TGAS catalog. CPU-bound. | `gaiasky/android/assets/data/octree` | - |
 | [tags lod (1.0.4)](http://wwwstaff.ari.uni-heidelberg.de/gaiasandbox/files/20161206_tgas_gaiasky_1.0.4.tar.gz)  | Levels of detail (lod) TGAS catalog. CPU-bound. | `gaiasky/android/assets/data/octree` | - |
 | tags lod ([1.5.0](http://wwwstaff.ari.uni-heidelberg.de/gaiasandbox/files/20170731_tgas_lod_gaiasky_1.5.0.tar.gz), [1.5.1](http://wwwstaff.ari.uni-heidelberg.de/gaiasandbox/files/20171204_tgas_lod_gaiasky_1.5.1.tar.gz))  | Levels of detail (lod) TGAS catalog. GPU-bound. Version `1.5.1` contains a fix in proper motion and RAVE radial velocities.  | `gaiasky/android/assets/data/octree/tgas` | `data/catalog-tgas-hyg-lod.json` |
 | tags gpu ([1.5.0](http://wwwstaff.ari.uni-heidelberg.de/gaiasandbox/files/20170731_tgas_gpu_gaiasky_1.5.0.tar.gz), [1.5.1](http://wwwstaff.ari.uni-heidelberg.de/gaiasandbox/files/20171204_tgas_gpu_gaiasky_1.5.1.tar.gz))  | TGAS catalog, GPU-bound. Version `1.5.1` contains a fix in proper motion and RAVE radial velocities.  | `gaiasky/android/assets/data/catalog` | `data/catalog-tgas-hyg.json` | 
 
-For versions `1.0.x` just extract the package in the specified location. For versions `1.5.0+` you can choose whether you want to use the Levels of detail catalog (multiple files, uses an octree structure which culls particles outside the view frustum and hides particles which are far away according
-to the view distance setting) or the regular catalog (single file, loaded once at startup, contains the full catalog, which is sent to GPU memory). Then, you need to point the key `data.json.catalog` in your `$HOME/.gaiasky/global.properties` file to the
-file specified in the last column in the table.
+First, choose the package corresponding to your Gaia Sky version and extract it into the specified **Extract location**. `tgas lod` means levels of detail, so data in these catalogs is streamed from disk to GPU. `tgas gpu` means that the data is loaded all at startup and sent to the GPU at that moment. Choose `tgas gpu` if you have a good graphics card.
+
+Then, you need to point the key `data.json.catalog` in your `$HOME/.gaiasky/global.properties` file to the
+file specified in the last column in the table (**Catalog file**).
 
 Albeit **not recommended** for performance reasons, the legacy particle-based (CPU-bound) version of the catalog (version `1.0.4`) can still be used with newer versions. To do so, extract the package in `gaiasky/android/assets/data/octree/tgas` so that the `metadata.bin` file and the `particles` folder are directly within that folder and 
 edit the configuration file so that `data.json.catalog` points to `data/catalog-tgas-hyg-lod-old.json`.
@@ -188,10 +191,18 @@ edit the configuration file so that `data.json.catalog` points to `data/catalog-
 Finally, run Gaia Sky with:
 
 ```
-gradlew desktop:run
+$  gradlew desktop:run
 ```
 
-Et voilà! Gaia Sky is running on your machine.
+Et voilà! The bleeding edge Gaia Sky is running in your machine.
+
+In order to pull the latest version from the repository, just run the following from the `gaiasky` folder.
+
+```
+$  git pull
+```
+
+Remember that the master branch is the development branch and therefore intrinsically unstable. It is not guaranteed to always work.
 
 ##  3. Documentation and help
 

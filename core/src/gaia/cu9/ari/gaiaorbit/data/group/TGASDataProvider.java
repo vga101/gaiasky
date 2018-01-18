@@ -129,7 +129,8 @@ public class TGASDataProvider extends AbstractStarGroupDataProvider {
                         /**
                          * PROPER MOTION VECTOR = (pos+dx) - pos - [units/yr]
                          **/
-                        Vector3d pm = Coordinates.sphericalToCartesian(Math.toRadians(ra + mualpha * AstroUtils.MILLARCSEC_TO_DEG), Math.toRadians(dec + mudelta * AstroUtils.MILLARCSEC_TO_DEG), dist + radvel * Constants.KM_TO_U / Constants.S_TO_Y, new Vector3d());
+                        Vector3d pm = Coordinates.sphericalToCartesian(Math.toRadians(ra + mualpha * AstroUtils.MILLARCSEC_TO_DEG), Math.toRadians(dec + mudelta * AstroUtils.MILLARCSEC_TO_DEG), dist
+                                + radvel * Constants.KM_TO_U / Constants.S_TO_Y, new Vector3d());
                         pm.sub(pos);
 
                         double appmag = Parser.parseDouble(tokens[7]);
@@ -147,6 +148,8 @@ public class TGASDataProvider extends AbstractStarGroupDataProvider {
 
                         float[] rgb = ColourUtils.BVtoRGB(colorbv);
                         double col = Color.toFloatBits(rgb[0], rgb[1], rgb[2], 1.0f);
+                        colors.put(sourceid, rgb);
+                        sphericalPositions.put(sourceid, new double[] { ra, dec, dist });
 
                         point[StarBean.I_HIP] = hip;
                         point[StarBean.I_TYC1] = tyc1;
@@ -174,7 +177,7 @@ public class TGASDataProvider extends AbstractStarGroupDataProvider {
             br.close();
 
             if (dumpToDisk) {
-                dumpToDisk(list, "/tmp/tgas.bin");
+                dumpToDisk(list, "/tmp/tgas.bin", "bin");
             }
 
         } catch (Exception e) {

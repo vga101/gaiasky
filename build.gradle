@@ -68,7 +68,7 @@ project(":desktop") {
     proc = cmd.execute()
     project.ext.rev = proc.text.trim()
 
-	if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+    if (Os.isFamily(Os.FAMILY_WINDOWS)) {
         project.ext.system = "Windows10 x86_64"
     }else {
         cmd = "uname -snmr"

@@ -1,9 +1,9 @@
 # AXES
 
-axis.roll=2
-axis.pitch=1
-axis.yaw=0
-axis.move=3
+axis.roll=3
+axis.pitch=0
+axis.yaw=1
+axis.move=2
 axis.velocityup=5
 axis.velocitydown=4
 
