@@ -9,6 +9,8 @@
 	},
 	{
 		"loader": "gaia.cu9.ari.gaiaorbit.data.group.OctreeGroupLoader",
-		"files": [ "data/octree/dr2/particles/", "data/octree/dr2/metadata.bin" ]
+		//"files": [ "data/octree/dr2/dr2int5/00-test-50000-25000/particles/", "data/octree/dr2/dr2int5/00-test-50000-25000/metadata.bin" ]
+		//"files": [ "data/octree/dr2/dr2int5/01-test-10000-1000/particles/", "data/octree/dr2/dr2int5/01-test-10000-1000/metadata.bin" ]
+		"files": [ "data/octree/dr2/dr2int5/02-test-20000-10000/particles/", "data/octree/dr2/dr2int5/02-test-20000-10000/metadata.bin" ]
 	}
 ]}

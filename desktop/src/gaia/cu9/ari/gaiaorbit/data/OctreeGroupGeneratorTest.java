@@ -213,9 +213,12 @@ public class OctreeGroupGeneratorTest implements IObserver {
             // Add to main list
             listHip.add(s);
         }
-        colors.putAll(hyg.getColors());
-        colors.putAll(loader.getColors());
         Array<StarBean> list = listHip;
+
+        //        if (hyg.getColors() != null)
+        //            colors.putAll(hyg.getColors());
+        //        if (loader.getColors() != null)
+        //            colors.putAll(loader.getColors());
 
         //        dumpToDiskCsv(list, "/tmp/tgashyg-eq.csv");
         //        if (true)

@@ -103,6 +103,7 @@ task copyToLib (dependsOn: createDistDir, description: "Copies the runtime depen
 	        copy {
 	            from configurations.getByName(mode).files
 	            into project.distLib
+	            exclude "**/data"
 	            exclude "**/core-1.0.jar"
 	            exclude "**/core-" + version + ".jar"
 	        }
@@ -165,6 +166,7 @@ task dist (dependsOn: gaiaskyJar, description: "Compiles the project, creates th
 			exclude "**/octree/tgas/metadata.bin"
 			exclude "**/hyg"
 			exclude "**/catalog"
+			exclude "**/octree/dr2"
 			
 			exclude "**/models/cassini"
 			exclude "**/models/rosetta"

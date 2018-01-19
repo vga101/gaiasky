@@ -98,13 +98,13 @@ public class DR2DataProvider extends AbstractStarGroupDataProvider {
             });
             int fn = 0;
             for (FileHandle fh : files) {
-                loadFile(fh, factor, i);
+                loadFile(fh, factor, i, fn + 1);
                 fn++;
                 if (fileNumberCap > 0 && fn >= fileNumberCap)
                     break;
             }
         } else if (f.name().endsWith(".csv") || f.name().endsWith(".gz")) {
-            loadFile(f, factor, i);
+            loadFile(f, factor, i, 1);
         } else {
             Logger.warn(this.getClass().getSimpleName(), "File skipped: " + f.path());
         }
@@ -120,8 +120,8 @@ public class DR2DataProvider extends AbstractStarGroupDataProvider {
         return list;
     }
 
-    public void loadFile(FileHandle fh, double factor, Integer i) {
-        Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.datafile", fh.path()));
+    public void loadFile(FileHandle fh, double factor, Integer i, int fileNumber) {
+        //Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.datafile", fh.path()));
         boolean gz = fh.name().endsWith(".gz");
 
         // Simple case
@@ -136,7 +136,7 @@ public class DR2DataProvider extends AbstractStarGroupDataProvider {
             }
         }
         long nstars = loadFile(data, factor, i);
-        Logger.info(this.getClass().getSimpleName(), fh.path() + " loaded with " + nstars + " stars");
+        Logger.info(this.getClass().getSimpleName(), fh.name() + " loaded with " + nstars + " stars (file number " + fileNumber + ")");
     }
 
     public long loadFile(InputStream is, double factor, Integer i) {
