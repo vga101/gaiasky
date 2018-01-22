@@ -159,11 +159,9 @@ task dist (dependsOn: gaiaskyJar, description: "Compiles the project, creates th
 	        into "$distDir/data"
 	                exclude "**/android"
 	
-			exclude "**/tgas_201507"
 			exclude "**/tgas_final"
-			exclude "**/octree/tgas/group-ser"
-			exclude "**/octree/tgas/particles"
-			exclude "**/octree/tgas/metadata.bin"
+			exclude "**/octree/tgas/group-bin-all"
+			exclude "**/octree/tgas/group-bin-old"
 			exclude "**/hyg"
 			exclude "**/catalog"
 			exclude "**/octree/dr2"
