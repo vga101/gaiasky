@@ -115,7 +115,7 @@ public class ModelComponent implements Disposable {
             // Remove dir and global ambient. Add ambient
             //env.remove(dlight);
             // Ambient
-            ColorAttribute alight = new ColorAttribute(ColorAttribute.AmbientLight, .6f, .6f, .6f, 1f);
+            ColorAttribute alight = new ColorAttribute(ColorAttribute.AmbientLight, 1f, 1f, 1f, 1f);
             env.set(alight);
         }
 

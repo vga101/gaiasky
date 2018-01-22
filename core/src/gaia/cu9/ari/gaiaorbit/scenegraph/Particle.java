@@ -37,7 +37,7 @@ import net.jafama.FastMath;
 public class Particle extends CelestialBody implements IStarFocus, IPointRenderable, ILineRenderable {
 
     private static final float DISC_FACTOR = 1.5f;
-    private static final float LABEL_FACTOR = Constants.webgl ? 3f : 1f;
+    protected static final float LABEL_FACTOR = Constants.webgl ? 3f : 1f;
 
     private static Random rnd = new Random();
 
@@ -154,7 +154,6 @@ public class Particle extends CelestialBody implements IStarFocus, IPointRendera
         this.absmag = absmag;
         this.colorbv = colorbv;
         this.id = starid;
-
         if (this.name == null) {
             randomName = true;
             this.name = "star_" + rnd.nextInt(10000000);
@@ -213,6 +212,7 @@ public class Particle extends CelestialBody implements IStarFocus, IPointRendera
     @Override
     public void update(ITimeFrameProvider time, final Transform parentTransform, ICamera camera, float opacity) {
         if (appmag <= GlobalConf.runtime.LIMIT_MAG_RUNTIME) {
+            TH_OVER_FACTOR = 1e-12f;
             this.opacity = opacity;
             transform.position.set(parentTransform.position).add(pos);
             if (hasPm) {

@@ -188,7 +188,7 @@ public class MilkyWayRenderSystem extends ImmediateRenderSystem implements IObse
                         } else {
                             texnum = rand.nextInt(4);
                         }
-                        quadsize = (float) ((qp.data.length > 3 ? (qp.data[3] + 1.0f) * .46e11f : (rand.nextFloat() + 1.0f) * 2e11f) * Constants.M_TO_U_CONV);
+                        quadsize = (float) ((qp.data.length > 3 ? (qp.data[3] + 0.7f) * .2e11f : (rand.nextFloat() + 1.0f) * 0.7e11f) * Constants.M_TO_U_CONV);
                         alphamultiplier = MathUtilsd.lint(quadpointdist, 0, mw.size * 3, 6.0f, 1.0f);
 
                         rotaxis.set(rand.nextFloat(), rand.nextFloat(), rand.nextFloat());
@@ -303,6 +303,11 @@ public class MilkyWayRenderSystem extends ImmediateRenderSystem implements IObse
                     quad.mesh.setIndices(quad.indices, 0, quad.indexIdx);
                     quad.mesh.render(quadProgram, GL20.GL_TRIANGLES, 0, quad.indexIdx);
 
+                    for (int i = 100; i < 104; i++) {
+                        int idx = i - 100;
+                        nebulatextures[idx].bind(0);
+                    }
+
                     quadProgram.end();
 
                     /**
@@ -321,7 +326,7 @@ public class MilkyWayRenderSystem extends ImmediateRenderSystem implements IObse
                     shaderProgram.setUniformMatrix("u_projModelView", camera.getCamera().combined);
                     shaderProgram.setUniformf("u_camPos", camera.getCurrent().getPos().put(aux1));
                     shaderProgram.setUniformf("u_fovFactor", camera.getFovFactor());
-                    shaderProgram.setUniformf("u_alpha", mw.opacity * alpha * 0.2f);
+                    shaderProgram.setUniformf("u_alpha", mw.opacity * alpha * 0.6f);
                     shaderProgram.setUniformf("u_ar", GlobalConf.program.STEREOSCOPIC_MODE && (GlobalConf.program.STEREO_PROFILE != StereoProfile.HD_3DTV && GlobalConf.program.STEREO_PROFILE != StereoProfile.ANAGLYPHIC) ? 0.5f : 1f);
                     curr.mesh.setVertices(curr.vertices, 0, curr.vertexIdx);
                     curr.mesh.render(shaderProgram, ShapeType.Point.getGlType());
@@ -330,16 +335,17 @@ public class MilkyWayRenderSystem extends ImmediateRenderSystem implements IObse
                     // Restore
                     Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
                 }
+
                 /**
                  * IMAGE RENDERER
                  */
-                mw.mc.touch();
-                //mw.mc.setTransparency(mw.opacity * alpha * (GlobalConf.scene.GALAXY_3D ? 0.6f : 0.8f));
-                mw.mc.setTransparency(mw.opacity * alpha * 1f);
-
-                modelBatch.begin(camera.getCamera());
-                modelBatch.render(mw.mc.instance, mw.mc.env);
-                modelBatch.end();
+                //                mw.mc.touch();
+                //                //mw.mc.setTransparency(mw.opacity * alpha * (GlobalConf.scene.GALAXY_3D ? 0.6f : 0.8f));
+                //                mw.mc.setTransparency(mw.opacity * alpha * 1f);
+                //
+                //                modelBatch.begin(camera.getCamera());
+                //                modelBatch.render(mw.mc.instance, mw.mc.env);
+                //                modelBatch.end();
 
             }
         }

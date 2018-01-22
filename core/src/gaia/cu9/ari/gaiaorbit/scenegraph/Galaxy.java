@@ -90,7 +90,7 @@ public class Galaxy extends Particle {
     @Override
     public void update(ITimeFrameProvider time, final Transform parentTransform, ICamera camera, float opacity) {
         if (appmag <= GlobalConf.runtime.LIMIT_MAG_RUNTIME) {
-            TH_OVER_FACTOR = (float) (THRESHOLD_POINT() / GlobalConf.scene.LABEL_NUMBER_FACTOR);
+            TH_OVER_FACTOR = 1e-12f;
             transform.position.set(parentTransform.position).add(pos);
             distToCamera = transform.position.len();
 
@@ -157,13 +157,18 @@ public class Galaxy extends Particle {
     }
 
     @Override
+    public float labelSizeConcrete() {
+        return super.labelSizeConcrete() * .5e2f;
+    }
+
+    @Override
     protected float labelFactor() {
         return 1.2e1f;
     }
 
     @Override
     protected float labelMax() {
-        return 0.00010f;
+        return 1e1f;
     }
 
 }

@@ -26,6 +26,8 @@ import gaia.cu9.ari.gaiaorbit.util.ConfInit;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.SysUtilsFactory;
+import gaia.cu9.ari.gaiaorbit.util.concurrent.SingleThreadLocalFactory;
+import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadLocalFactory;
 import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.math.StdRandom;
@@ -39,19 +41,19 @@ public class GalaxyGenerator implements IObserver {
     private static String TYPE = "spiral";
 
     /** Number of spiral arms **/
-    private static int Narms = 8;
+    private static int Narms = 4;
 
     /** Does the galaxy have a bar? **/
     private static boolean bar = true;
 
     /** The length of the bar, if it has one **/
-    private static float barLength = 0.8f;
+    private static float barLength = 0.9f;
 
     /** Radius of the galaxy **/
     private static float radius = 2.5f;
 
     /** Number of particles **/
-    private static int N = 15000;
+    private static int N = 160;
 
     /** Ratio radius/armWidth **/
     private static float armWidthRatio = 0.04f;
@@ -60,12 +62,17 @@ public class GalaxyGenerator implements IObserver {
     private static float armHeightRatio = 0.02f;
 
     /** Maximum spiral rotation (end of arm) in degrees **/
-    private static float maxRotation = 100;
+    private static float maxRotation = 140;
 
-    private static boolean radialDensity = true;
+    private static boolean radialDensity = false;
 
     public static void main(String[] args) {
         try {
+            String outFolder = System.getProperty("java.io.tmpdir");
+
+            // Assets location
+            String ASSETS_LOC = (System.getProperty("assets.location") != null ? System.getProperty("assets.location") : "");
+
             Gdx.files = new Lwjgl3Files();
 
             // Sys utils
@@ -77,9 +84,11 @@ public class GalaxyGenerator implements IObserver {
             // Initialize date format
             DateFormatFactory.initialize(new DesktopDateFormatFactory());
 
-            ConfInit.initialize(new DesktopConfInit(new FileInputStream(new File("../android/assets/conf/global.properties")), new FileInputStream(new File("../android/assets/data/dummyversion"))));
+            ConfInit.initialize(new DesktopConfInit(new FileInputStream(new File(ASSETS_LOC + "conf/global.properties")), new FileInputStream(new File(ASSETS_LOC + "data/dummyversion"))));
 
-            I18n.initialize(new FileHandle("/home/tsagrista/git/gaiasky/android/assets/i18n/gsbundle"));
+            I18n.initialize(new FileHandle(ASSETS_LOC + "i18n/gsbundle"));
+
+            ThreadLocalFactory.initialize(new SingleThreadLocalFactory());
 
             // Add notif watch
             EventManager.instance.subscribe(new OctreeGeneratorTest(), Events.POST_NOTIFICATION, Events.JAVA_EXCEPTION);
@@ -95,7 +104,7 @@ public class GalaxyGenerator implements IObserver {
             }
 
             if (writeFile) {
-                writeToDisk(gal, "/home/tsagrista/Documents/");
+                writeToDisk(gal, outFolder);
             }
 
         } catch (FileNotFoundException e) {
