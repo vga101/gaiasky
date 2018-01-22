@@ -115,7 +115,6 @@ public class SGROpenVR extends SGRAbstract implements ISGR, IObserver {
     public void render(SceneGraphRenderer sgr, ICamera camera, double t, int rw, int rh, FrameBuffer fb, PostProcessBean ppb) {
         if (vrContext != null) {
             rc.ppb = null;
-
             vrContext.pollEvents();
 
             // Add controllers

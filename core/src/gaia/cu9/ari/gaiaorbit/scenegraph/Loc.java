@@ -74,7 +74,7 @@ public class Loc extends AbstractPositionEntity implements I3DTextRenderable {
         ModelBody papa = (ModelBody) parent;
         papa.setToLocalTransform(distFactor, localTransform, false);
 
-        location3d.set(0, 0, -.5f);
+        location3d.set(0, 0, -0.51f);
         // Latitude [-90..90]
         location3d.rotate(location.y, 1, 0, 0);
         // Longitude [0..360]
@@ -145,7 +145,7 @@ public class Loc extends AbstractPositionEntity implements I3DTextRenderable {
 
     @Override
     public void textDepthBuffer() {
-        Gdx.gl.glDisable(GL20.GL_DEPTH_TEST);
+        Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
         Gdx.gl.glDepthMask(true);
     }
 

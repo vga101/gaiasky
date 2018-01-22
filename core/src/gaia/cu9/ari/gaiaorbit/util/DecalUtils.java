@@ -84,7 +84,7 @@ public class DecalUtils {
         aux1.set(batch.getTransformMatrix());
         aux2.set(batch.getProjectionMatrix());
 
-        Quaternion rotation = faceCamera ? getBillboardRotation(camera) : new Quaternion();
+        Quaternion rotation = faceCamera ? (GlobalConf.runtime.OPENVR ? getBillboardVRRotation(camera) : getBillboardRotation(camera)) : new Quaternion();
 
         batch.getTransformMatrix().set(camera.combined).translate(x, y, z).rotate(rotation).rotate(0, 1, 0, 180).rotate(0, 0, 1, rotationCenter).scale(scale, scale, scale);
         // Force matrices to be set to shader
@@ -166,6 +166,18 @@ public class DecalUtils {
     }
 
     /**
+     * Gets the billboard rotation using the parameters of the given camera
+     * taking into account that this is for VR
+     * 
+     * @param camera
+     *            The camera
+     * @return The quaternion with the rotation
+     */
+    public static Quaternion getBillboardVRRotation(Camera camera) {
+        return getBillboardRotation(camera.direction, new Vector3(0, 1, 0));
+    }
+
+    /**
      * Returns a Quaternion representing the billboard rotation to be applied to
      * a decal that is always to face the given direction and up vector
      * 
@@ -194,7 +206,7 @@ public class DecalUtils {
      */
     public static void setBillboardRotation(Quaternion rotation, final Vector3 direction, final Vector3 up) {
         tmp.set(up).crs(direction).nor();
-        tmp2.set(direction).crs(tmp).nor();
+        tmp2.set(up).nor();
         rotation.setFromAxes(tmp.x, tmp2.x, direction.x, tmp.y, tmp2.y, direction.y, tmp.z, tmp2.z, direction.z);
     }
 
@@ -209,7 +221,7 @@ public class DecalUtils {
      */
     public static void setBillboardRotation(Quaternion rotation, final Vector3d direction, final Vector3d up) {
         tmp.set((float) up.x, (float) up.y, (float) up.z).crs((float) direction.x, (float) direction.y, (float) direction.z).nor();
-        tmp2.set((float) direction.x, (float) direction.y, (float) direction.z).crs(tmp).nor();
+        tmp2.set((float) up.x, (float) up.y, (float) up.z).nor();
         rotation.setFromAxes(tmp.x, tmp2.x, (float) direction.x, tmp.y, tmp2.y, (float) direction.y, tmp.z, tmp2.z, (float) direction.z);
     }
 
