@@ -84,7 +84,7 @@ public class DecalUtils {
         aux1.set(batch.getTransformMatrix());
         aux2.set(batch.getProjectionMatrix());
 
-        Quaternion rotation = faceCamera ? (GlobalConf.runtime.OPENVR ? getBillboardVRRotation(camera) : getBillboardRotation(camera)) : new Quaternion();
+        Quaternion rotation = faceCamera ? getBillboardRotation(camera) : new Quaternion();
 
         batch.getTransformMatrix().set(camera.combined).translate(x, y, z).rotate(rotation).rotate(0, 1, 0, 180).rotate(0, 0, 1, rotationCenter).scale(scale, scale, scale);
         // Force matrices to be set to shader
@@ -163,18 +163,6 @@ public class DecalUtils {
      */
     public static Quaternion getBillboardRotation(Camera camera) {
         return getBillboardRotation(camera.direction, camera.up);
-    }
-
-    /**
-     * Gets the billboard rotation using the parameters of the given camera
-     * taking into account that this is for VR
-     * 
-     * @param camera
-     *            The camera
-     * @return The quaternion with the rotation
-     */
-    public static Quaternion getBillboardVRRotation(Camera camera) {
-        return getBillboardRotation(camera.direction, tmp.set(0, 1, 0));
     }
 
     /**

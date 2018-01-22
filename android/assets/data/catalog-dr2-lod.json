@@ -1,6 +1,6 @@
 {
 	"name" : "DR2 (lod)",
-	"description" : "Gaia DR2 catalog with levels of detail. 75 million stars.",
+	"description" : "Gaia DR2 catalog with levels of detail. 100 million stars.",
 	"data" : [
 	
 	{
@@ -9,6 +9,6 @@
 	},
 	{
 		"loader": "gaia.cu9.ari.gaiaorbit.data.group.OctreeGroupLoader",
-		"files": [ "data/octree/dr2/particles/", "data/octree/dr2/metadata.bin" ]
+		"files": [ "D:\\Gaia\\data\\GDR2\\dr2int5\\out\\10-full-20000-2000-7\\particles\\", "D:\\Gaia\\data\\GDR2\\dr2int5\\out\\10-full-20000-2000-7\\metadata.bin" ]
 	}
 ]}
