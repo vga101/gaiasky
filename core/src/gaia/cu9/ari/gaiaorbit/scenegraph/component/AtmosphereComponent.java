@@ -20,6 +20,7 @@ import gaia.cu9.ari.gaiaorbit.util.Pair;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.override.AtmosphereAttribute;
 import gaia.cu9.ari.gaiaorbit.util.override.Vector3Attribute;
+import gaia.cu9.ari.gaiaorbit.vr.VRContext;
 
 public class AtmosphereComponent {
 
@@ -37,11 +38,12 @@ public class AtmosphereComponent {
     // Model parameters
     public Map<String, Object> params;
 
-    Vector3d aux3;
+    Vector3d aux1, aux3;
 
     public AtmosphereComponent() {
         localTransform = new Matrix4();
         mc = new ModelComponent(false);
+        aux1 = new Vector3d();
         aux3 = new Vector3d();
     }
 
@@ -146,8 +148,10 @@ public class AtmosphereComponent {
         RotationComponent rc = planet.rc;
         SceneGraphNode sol = planet.parent;
         transform.getTranslation(aux3);
-        if (vroffset != null)
-            aux3.sub(vroffset);
+        if (vroffset != null) {
+            aux1.set(vroffset).scl(1 / VRContext.VROFFSET_FACTOR);
+            aux3.sub(aux1);
+        }
 
         // Distance to planet
         float camHeight = (float) (aux3.len());

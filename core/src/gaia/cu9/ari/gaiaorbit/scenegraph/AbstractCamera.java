@@ -98,7 +98,7 @@ public abstract class AbstractCamera implements ICamera {
 
     @Override
     public float getFovFactor() {
-        return fovFactor;
+        return 1.5f;
     }
 
     @Override

@@ -18,7 +18,6 @@ import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.comp.ViewAngleComparator;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.vr.VRContext.VRControllerButtons;
-import gaia.cu9.ari.gaiaorbit.vr.VRContext.VRControllerRole;
 import gaia.cu9.ari.gaiaorbit.vr.VRContext.VRDevice;
 import gaia.cu9.ari.gaiaorbit.vr.VRDeviceListener;
 
@@ -60,23 +59,20 @@ public class OpenVRListener implements VRDeviceListener {
         }
 
         if (button == VRControllerButtons.Grip) {
-            if (device.getControllerRole().compareTo(VRControllerRole.RightHand) == 0) {
-                // Forward
-                lazyInit();
-                StubModel sm = vrDeviceToModel.get(device);
-                if (sm != null) {
-                    // Direct direction
-                    cam.setVelocityVR(sm.getBeamP0(), sm.getBeamP1(), 1);
-                }
+            // Forward
+            lazyInit();
+            StubModel sm = vrDeviceToModel.get(device);
+            if (sm != null) {
+                // Direct direction
+                cam.setVelocityVR(sm.getBeamP0(), sm.getBeamP1(), 1);
             }
-            if (device.getControllerRole().compareTo(VRControllerRole.LeftHand) == 0) {
-                // Backward
-                lazyInit();
-                StubModel sm = vrDeviceToModel.get(device);
-                if (sm != null) {
-                    // Invert direction
-                    cam.setVelocityVR(sm.getBeamP0(), sm.getBeamP1(), -1);
-                }
+        } else if (button == VRControllerButtons.SteamVR_Touchpad) {
+            // Backward
+            lazyInit();
+            StubModel sm = vrDeviceToModel.get(device);
+            if (sm != null) {
+                // Invert direction
+                cam.setVelocityVR(sm.getBeamP0(), sm.getBeamP1(), -1);
             }
         }
     }
@@ -101,7 +97,7 @@ public class OpenVRListener implements VRDeviceListener {
             } else {
                 Logger.info("Model corresponding to device not found");
             }
-        } else if (button == VRControllerButtons.Grip) {
+        } else if (button == VRControllerButtons.Grip || button == VRControllerButtons.SteamVR_Touchpad) {
             // Stop
             cam.clearVelocityVR();
         } else if (button == VRControllerButtons.A) {

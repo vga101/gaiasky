@@ -27,6 +27,10 @@ import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
+import gaia.cu9.ari.gaiaorbit.vr.VRContext;
+import gaia.cu9.ari.gaiaorbit.vr.VRContext.Space;
+import gaia.cu9.ari.gaiaorbit.vr.VRContext.VRDevice;
+import gaia.cu9.ari.gaiaorbit.vr.VRContext.VRDeviceType;
 
 /**
  * Models the movement of the camera
@@ -1006,9 +1010,17 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
                         f.getAbsolutePosition(aux1);
                         pos.set(aux1);
 
-                        pos.add(0, 0, f.getSize() * 3);
+                        if (GlobalConf.runtime.OPENVR) {
+                            VRContext vrContext = GaiaSky.instance.vrContext;
+                            VRDevice hmd = vrContext.getDeviceByType(VRDeviceType.HeadMountedDisplay);
+                            aux3.set(hmd.getDirection(Space.Tracker));
+                        } else {
+                            aux3.set(0, 0, -1);
+                        }
+                        aux2.set(aux3).scl(-f.getSize() * 3);
+                        pos.add(aux2);
                         posinv.set(pos).add(vroffset).scl(-1);
-                        direction.set(0, 0, -1);
+                        direction.set(aux3);
                         up.set(0, 1, 0);
                         rotate(up, 0.01);
                     }

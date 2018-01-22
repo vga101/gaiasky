@@ -212,7 +212,7 @@ public class SGROpenVR extends SGRAbstract implements ISGR, IObserver {
         Vector3 pos = hmd.getPosition(Space.Tracker);
 
         // Update main camera
-        cam.vroffset.set(pos).scl(0.1);
+        cam.vroffset.set(pos).scl(VRContext.VROFFSET_FACTOR);
         cam.direction.set(dir);
         cam.up.set(up);
         rc.vroffset = cam.vroffset;

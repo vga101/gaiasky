@@ -326,7 +326,7 @@ public class MilkyWayRenderSystem extends ImmediateRenderSystem implements IObse
                     shaderProgram.setUniformMatrix("u_projModelView", camera.getCamera().combined);
                     shaderProgram.setUniformf("u_camPos", camera.getCurrent().getPos().put(aux1));
                     shaderProgram.setUniformf("u_fovFactor", camera.getFovFactor());
-                    shaderProgram.setUniformf("u_alpha", mw.opacity * alpha * 0.6f);
+                    shaderProgram.setUniformf("u_alpha", mw.opacity * alpha * 0.25f);
                     shaderProgram.setUniformf("u_ar", GlobalConf.program.STEREOSCOPIC_MODE && (GlobalConf.program.STEREO_PROFILE != StereoProfile.HD_3DTV && GlobalConf.program.STEREO_PROFILE != StereoProfile.ANAGLYPHIC) ? 0.5f : 1f);
                     curr.mesh.setVertices(curr.vertices, 0, curr.vertexIdx);
                     curr.mesh.render(shaderProgram, ShapeType.Point.getGlType());

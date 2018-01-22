@@ -484,7 +484,7 @@ public class ParticleGroup extends FadeNode implements I3DTextRenderable, IFocus
                         pcamera = camera.camera;
                     }
 
-                    angle = (float) Math.toDegrees(angle * camera.fovFactor) * (40f / pcamera.fieldOfView);
+                    angle = (float) Math.toDegrees(angle * camera.getFovFactor()) * (40f / pcamera.fieldOfView);
                     double pixelSize = Math.max(pxdist, ((angle * pcamera.viewportHeight) / pcamera.fieldOfView) / 2);
                     pcamera.project(pos);
                     pos.y = pcamera.viewportHeight - pos.y;

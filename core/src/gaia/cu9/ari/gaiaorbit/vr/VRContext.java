@@ -51,6 +51,8 @@ import com.badlogic.gdx.utils.ObjectMap;
  * FIXME add multisampling plus draw/resolve buffers
  */
 public class VRContext implements Disposable {
+    public static float VROFFSET_FACTOR = 0.1f;
+
     /** device index of the head mounted display **/
     public static final int HMD_DEVICE_INDEX = VR.k_unTrackedDeviceIndex_Hmd;
 

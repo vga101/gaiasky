@@ -432,7 +432,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
                     pcamera = camera.camera;
                 }
 
-                angle = (float) Math.toDegrees(angle * camera.fovFactor) * (40f / pcamera.fieldOfView);
+                angle = (float) Math.toDegrees(angle * camera.getFovFactor()) * (40f / pcamera.fieldOfView);
                 double pixelSize = Math.max(minPixDist, ((angle * pcamera.viewportHeight) / pcamera.fieldOfView) / 2);
                 pcamera.project(pos);
                 pos.y = pcamera.viewportHeight - pos.y;
