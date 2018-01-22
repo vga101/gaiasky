@@ -15,6 +15,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl.LwjglFiles;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.TimeUtils;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 
@@ -172,6 +173,8 @@ public class OctreeGroupGeneratorTest implements IObserver {
     }
 
     private OctreeNode generateOctree() throws IOException, InstantiationException, IllegalAccessException, ClassNotFoundException {
+        long startMs = TimeUtils.millis();
+
         IAggregationAlgorithm aggr = new BrightestStars(maxDepth, maxPart, minPart, discard);
 
         OctreeGenerator og = new OctreeGenerator(aggr);
@@ -224,11 +227,19 @@ public class OctreeGroupGeneratorTest implements IObserver {
         //        if (true)
         //            return null;
 
+        long loadingMs = TimeUtils.millis();
+        float loadingSecs = ((loadingMs - startMs) / 1000);
+        Logger.info("TIME STATS: Data loaded in " + loadingSecs + " seconds");
+
         Logger.info("Generating octree with " + list.size + " actual stars");
 
         OctreeNode octree = og.generateOctree(list);
 
         System.out.println(octree.toString(true));
+
+        long generatingMs = TimeUtils.millis();
+        float generatingSecs = ((generatingMs - loadingMs) / 1000);
+        Logger.info("TIME STATS: Octree generated in " + generatingSecs + " seconds");
 
         /** NUMBERS **/
         Logger.info("Octree generated with " + octree.numNodes() + " octants and " + list.size + " particles");
@@ -252,6 +263,18 @@ public class OctreeGroupGeneratorTest implements IObserver {
         IStarGroupIO particleWriter = serialized ? new StarGroupSerializedIO() : new StarGroupBinaryIO();
         particlesFolder.mkdirs();
         writeParticlesToFiles(particleWriter, octree);
+
+        long writingMs = TimeUtils.millis();
+        float writingSecs = (writingMs - generatingMs) / 1000;
+        float totalSecs = loadingSecs + generatingSecs + writingSecs;
+
+        Logger.info("================");
+        Logger.info("FINAL TIME STATS");
+        Logger.info("================");
+        Logger.info("Loading: " + loadingSecs + " seconds");
+        Logger.info("Generating: " + generatingSecs + " seconds");
+        Logger.info("Writing: " + writingSecs + " seconds");
+        Logger.info("Total: " + totalSecs + " seconds");
 
         return octree;
     }
