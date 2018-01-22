@@ -107,6 +107,10 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 
     private Vector3d desired;
 
+    /** VR mode stuff **/
+    private boolean firstAux = true;
+    private float firstAngl = 0;
+
     /** Velocity factor for gamepads **/
     private double gamepadMultiplier = 1;
     /** Velocity module, in case it comes from a gamepad **/
@@ -1217,23 +1221,30 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
                 chFocus = (IFocus) closest.getComputedAncestor();
             }
 
-            if (chFocus != null) {
+            if (chFocus != null && chFocus.getDistToCamera() > chFocus.getRadius() * 2) {
                 float chw = focusCrosshair.getWidth();
                 float chh = focusCrosshair.getHeight();
                 float chw2 = chw / 2;
                 float chh2 = chh / 2;
 
                 chFocus.getAbsolutePosition(aux1).add(posinv);
+                aux1.nor().scl(chFocus.getDistToCamera() - chFocus.getRadius());
                 boolean inside = projectToScreen(aux1, auxf1, rw, rh, chw, chh, chw2, chh2);
 
                 if (inside) {
                     spriteBatch.draw(focusCrosshair, auxf1.x - chw2, auxf1.y - chh2, chw, chh);
                 } else {
-                    aux2f2.set(auxf1.x - (Gdx.graphics.getWidth() / 2), auxf1.y - (Gdx.graphics.getHeight() / 2));
+                    float ang = firstAux ? -90 + aux2f2.angle() : firstAngl;
+                    if (firstAux) {
+                        firstAngl = ang;
+                    }
+                    firstAux = !firstAux;
                     //                    spriteBatch.draw(focusArrow, auxf1.x - chw2, auxf1.y - chh2, chw2, chh2, chw, chh, 1f, 1f, -90 + aux2f2.angle(), 0, 0, (int) chw, (int) chh, false, false);
-                    aux1.set(vroffset).scl(10).add(direction);
+                    aux2f2.set(auxf1.x - (Gdx.graphics.getWidth() / 2), auxf1.y - (Gdx.graphics.getHeight() / 2));
+                    aux2.set(up).rotate(direction, 90).add(up).scl(0.04);
+                    aux1.set(vroffset).add(aux2).scl(1 / VRContext.VROFFSET_FACTOR).add(direction);
                     projectToScreen(aux1, auxf1, rw, rh, chw, chh, chw2, chh2);
-                    spriteBatch.draw(focusArrow, auxf1.x, auxf1.y, chw2, chh2, chw, chh, 1f, 1f, -90 + aux2f2.angle(), 0, 0, (int) chw, (int) chw, false, false);
+                    spriteBatch.draw(focusArrow, auxf1.x, auxf1.y, chw2, chh2, chw, chh, 1f, 1f, ang, 0, 0, (int) chw, (int) chw, false, false);
                 }
             }
             spriteBatch.end();
