@@ -11,4 +11,6 @@ import java.util.Map;
  */
 public interface IStarGroupDataProvider extends IParticleGroupDataProvider {
     public Map<Long, float[]> getColors();
+
+    public void setParallaxOverError(double parallaxOverError);
 }

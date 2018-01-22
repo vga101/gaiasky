@@ -25,6 +25,10 @@ public abstract class AbstractStarGroupDataProvider implements IStarGroupDataPro
     protected Array<StarBean> list;
     protected Map<Long, double[]> sphericalPositions;
     protected Map<Long, float[]> colors;
+    /**
+     * Parallax over error must be larger than this value for stars to be loaded
+     */
+    protected double parallaxOverError = 7;
 
     public AbstractStarGroupDataProvider() {
         super();
@@ -152,6 +156,10 @@ public abstract class AbstractStarGroupDataProvider implements IStarGroupDataPro
     @Override
     public Map<Long, float[]> getColors() {
         return colors;
+    }
+
+    public void setParallaxOverError(double parallaxOverError) {
+        this.parallaxOverError = parallaxOverError;
     }
 
 }

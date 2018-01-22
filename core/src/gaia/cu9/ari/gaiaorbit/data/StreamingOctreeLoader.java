@@ -25,7 +25,7 @@ import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
 
 /**
  * Contains the infrastructure common to all multifile octree loaders which
- * streams data on-demand.
+ * streams data on-demand from disk and unloads unused data.
  * 
  * @author tsagrista
  *

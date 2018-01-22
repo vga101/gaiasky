@@ -97,6 +97,9 @@ public class OctreeGroupGeneratorTest implements IObserver {
     @Parameter(names = "--serialized", description = "Use the java serialization method instead of the binary format to output the particle files")
     private boolean serialized = false;
 
+    @Parameter(names = "--pllxovererr", description = "Parallax over parallax error must be larger than this value for the star to be accepted")
+    private double pllxovererr = 7;
+
     @Parameter(names = "--nfiles", description = "Caps the number of data files to load. Defaults to unlimited")
     private int fileNumCap = -1;
 
@@ -185,6 +188,7 @@ public class OctreeGroupGeneratorTest implements IObserver {
         /** CATALOG **/
         String fullLoaderClass = "gaia.cu9.ari.gaiaorbit.data.group." + loaderClass;
         IStarGroupDataProvider loader = (IStarGroupDataProvider) Class.forName(fullLoaderClass).newInstance();
+        loader.setParallaxOverError(pllxovererr);
         loader.setFileNumberCap(fileNumCap);
 
         /** LOAD HYG **/

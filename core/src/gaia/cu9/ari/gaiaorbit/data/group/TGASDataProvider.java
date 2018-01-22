@@ -80,7 +80,7 @@ public class TGASDataProvider extends AbstractStarGroupDataProvider {
                     double dist = distpc * Constants.PC_TO_U;
 
                     // Keep only stars with relevant parallaxes
-                    if (dist >= 0 && pllx / pllxerr > 7 && pllxerr <= 1) {
+                    if (dist >= 0 && pllx / pllxerr > parallaxOverError && pllxerr <= 1) {
                         long sourceid = Parser.parseLong(tokens[0]);
 
                         /** INDEX **/
@@ -129,8 +129,7 @@ public class TGASDataProvider extends AbstractStarGroupDataProvider {
                         /**
                          * PROPER MOTION VECTOR = (pos+dx) - pos - [units/yr]
                          **/
-                        Vector3d pm = Coordinates.sphericalToCartesian(Math.toRadians(ra + mualpha * AstroUtils.MILLARCSEC_TO_DEG), Math.toRadians(dec + mudelta * AstroUtils.MILLARCSEC_TO_DEG), dist
-                                + radvel * Constants.KM_TO_U / Constants.S_TO_Y, new Vector3d());
+                        Vector3d pm = Coordinates.sphericalToCartesian(Math.toRadians(ra + mualpha * AstroUtils.MILLARCSEC_TO_DEG), Math.toRadians(dec + mudelta * AstroUtils.MILLARCSEC_TO_DEG), dist + radvel * Constants.KM_TO_U / Constants.S_TO_Y, new Vector3d());
                         pm.sub(pos);
 
                         double appmag = Parser.parseDouble(tokens[7]);
