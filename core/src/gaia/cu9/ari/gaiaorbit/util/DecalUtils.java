@@ -174,7 +174,7 @@ public class DecalUtils {
      * @return The quaternion with the rotation
      */
     public static Quaternion getBillboardVRRotation(Camera camera) {
-        return getBillboardRotation(camera.direction, new Vector3(0, 1, 0));
+        return getBillboardRotation(camera.direction, tmp.set(0, 1, 0));
     }
 
     /**
@@ -221,7 +221,7 @@ public class DecalUtils {
      */
     public static void setBillboardRotation(Quaternion rotation, final Vector3d direction, final Vector3d up) {
         tmp.set((float) up.x, (float) up.y, (float) up.z).crs((float) direction.x, (float) direction.y, (float) direction.z).nor();
-        tmp2.set((float) up.x, (float) up.y, (float) up.z).nor();
+        tmp2.set((float) up.x, (float) up.y, (float) up.z).crs(tmp).nor();
         rotation.setFromAxes(tmp.x, tmp2.x, (float) direction.x, tmp.y, tmp2.y, (float) direction.y, tmp.z, tmp2.z, (float) direction.z);
     }
 

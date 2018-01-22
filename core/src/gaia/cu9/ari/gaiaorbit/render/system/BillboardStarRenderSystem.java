@@ -20,7 +20,6 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.DecalUtils;
-import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.comp.DistToCameraComparator;
 
 public class BillboardStarRenderSystem extends AbstractRenderSystem {
@@ -131,11 +130,7 @@ public class BillboardStarRenderSystem extends AbstractRenderSystem {
             renderables.sort(comp);
 
             // Calculate billobard rotation quaternion ONCE
-            if (GlobalConf.runtime.OPENVR) {
-                DecalUtils.setBillboardRotation(quaternion, camera.getCamera().direction, aux.set(0, 1, 0));
-            } else {
-                DecalUtils.setBillboardRotation(quaternion, camera.getCamera().direction, camera.getCamera().up);
-            }
+            DecalUtils.setBillboardRotation(quaternion, camera.getCamera().direction, camera.getCamera().up);
 
             // Additive blending
             Gdx.gl20.glBlendFunc(GL20.GL_ONE, GL20.GL_ONE);

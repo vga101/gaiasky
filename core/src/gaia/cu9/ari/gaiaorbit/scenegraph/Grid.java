@@ -21,6 +21,7 @@ import gaia.cu9.ari.gaiaorbit.render.IAnnotationsRenderable;
 import gaia.cu9.ari.gaiaorbit.render.IModelRenderable;
 import gaia.cu9.ari.gaiaorbit.render.RenderingContext;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.ModelCache;
@@ -30,6 +31,7 @@ import gaia.cu9.ari.gaiaorbit.util.g3d.ModelBuilder2;
 import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
+import gaia.cu9.ari.gaiaorbit.vr.VRContext;
 
 public class Grid extends AbstractPositionEntity implements IModelRenderable, IAnnotationsRenderable {
     private static final float ANNOTATIONS_ALPHA = 0.8f;
@@ -126,10 +128,20 @@ public class Grid extends AbstractPositionEntity implements IModelRenderable, IA
 
         font.setColor(labelColor[0], labelColor[1], labelColor[2], labelColor[3] * alpha);
 
+        Vector3 vroffset = aux3f4.get();
+        if (GlobalConf.runtime.OPENVR) {
+            if (camera.getCurrent() instanceof NaturalCamera) {
+                ((NaturalCamera) camera.getCurrent()).vroffset.put(vroffset);
+                vroffset.scl(1 / VRContext.VROFFSET_FACTOR);
+            }
+        } else {
+            vroffset.set(0, 0, 0);
+        }
+
         for (int angle = 0; angle < 360; angle += stepAngle) {
             auxf.set(Coordinates.sphericalToCartesian(Math.toRadians(angle), 0, 1f, auxd).valuesf()).mul(localTransform).nor();
             if (auxf.dot(camera.getCamera().direction.nor()) > 0) {
-                auxf.add(camera.getCamera().position);
+                auxf.add(camera.getCamera().position).scl(100).add(vroffset);
                 camera.getCamera().project(auxf);
                 font.draw(spriteBatch, Integer.toString(angle), auxf.x, auxf.y);
             }
@@ -141,13 +153,13 @@ public class Grid extends AbstractPositionEntity implements IModelRenderable, IA
             if (angle != 0) {
                 auxf.set(Coordinates.sphericalToCartesian(0, Math.toRadians(angle), 1f, auxd).valuesf()).mul(localTransform).nor();
                 if (auxf.dot(camera.getCamera().direction.nor()) > 0) {
-                    auxf.add(camera.getCamera().position);
+                    auxf.add(camera.getCamera().position).scl(100).add(vroffset);
                     camera.getCamera().project(auxf);
                     font.draw(spriteBatch, Integer.toString(angle), auxf.x, auxf.y);
                 }
                 auxf.set(Coordinates.sphericalToCartesian(0, Math.toRadians(-angle), -1f, auxd).valuesf()).mul(localTransform).nor();
                 if (auxf.dot(camera.getCamera().direction.nor()) > 0) {
-                    auxf.add(camera.getCamera().position);
+                    auxf.add(camera.getCamera().position).scl(100).add(vroffset);
                     camera.getCamera().project(auxf);
                     font.draw(spriteBatch, Integer.toString(angle), auxf.x, auxf.y);
                 }
