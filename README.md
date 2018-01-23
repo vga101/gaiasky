@@ -21,7 +21,7 @@ This file contains the following sections:
 2. [Running instructions](https://github.com/langurmonkey/gaiasky/blob/master/README.md#2-running-instructions)
 3. [Documentation and help](https://github.com/langurmonkey/gaiasky/blob/master/README.md#3-documentation-and-help)
 4. [Copyright and licensing information](https://github.com/langurmonkey/gaiasky/blob/master/README.md#4-copyright-and-licensing-information)
-5. [Contact information](https://github.com/langurmonkey/gaiasky/blob/master/README.md#4-contact-information)
+5. [Contact information](https://github.com/langurmonkey/gaiasky/blob/master/README.md#5-contact-information)
 6. [Credits and acknowledgements](https://github.com/langurmonkey/gaiasky/blob/master/README.md#6-acknowledgements)
 
 ##  1. Installation instructions and requirements
