@@ -23,6 +23,7 @@ This file contains the following sections:
 4. [Copyright and licensing information](#4-copyright-and-licensing-information)
 5. [Contact information](#5-contact-information)
 6. [Credits and acknowledgements](#6-acknowledgements)
+7. [Gaia Sky VR](#7-gaia-sky-vr)
 
 ##  1. Installation instructions and requirements
 
@@ -165,6 +166,8 @@ $  cd gaiasky
 
 Make sure you have at least `JDK8` installed.
 
+### 2.3 Getting the data
+
 The TGAS catalog files (Gaia data) are **not** in the repository, so if you want to use TGAS when running
 from source you need to download
 the `tar` file corresponding to your version — see table below.
@@ -187,6 +190,7 @@ file specified in the last column in the table (**Catalog file**).
 Albeit **not recommended** for performance reasons, the legacy particle-based (CPU-bound) version of the catalog (version `1.0.4`) can still be used with newer versions. To do so, extract the package in `gaiasky/android/assets/data/octree/tgas` so that the `metadata.bin` file and the `particles` folder are directly within that folder and 
 edit the configuration file so that `data.json.catalog` points to `data/catalog-tgas-hyg-lod-old.json`.
 
+### 2.4 Running
 
 Finally, run Gaia Sky with:
 
@@ -224,3 +228,7 @@ the latest versions and the latest information on Gaia Sky.
 ##  6. Acknowledgements
 
 The latest acknowledgements are always in the [ACKNOWLEDGEMENTS.md](https://github.com/langurmonkey/gaiasky/blob/master/ACKNOWLEDGEMENTS.md) file.
+
+##  7. Gaia Sky VR
+
+There exists a development version of Gaia Sky which works with the VR headsets supporting OpenVR. More information on this is available in the [README.md file on the vr branch](/blob/vr/README.md).
