@@ -231,4 +231,4 @@ The latest acknowledgements are always in the [ACKNOWLEDGEMENTS.md](https://gith
 
 ##  7. Gaia Sky VR
 
-There exists a development version of Gaia Sky which works with the VR headsets supporting OpenVR. More information on this is available in the [README.md file on the vr branch](/blob/vr/README.md).
+There exists a development version of Gaia Sky which works with the VR headsets supporting OpenVR. More information on this is available in the [README.md file on the vr branch](https://github.com/langurmonkey/gaiasky/blob/vr/README.md).
