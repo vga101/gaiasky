@@ -18,8 +18,8 @@ To get the latest up-to-date and most complete information,
 This file contains the following sections:
 
 1. Installation instructions and requirements
-2. Configuration instructions
-3. Running instructions
+2. Running instructions
+3. Documentation and help
 4. Copyright and licensing information
 5. Contact information
 6. Credits and acknowledgements
@@ -220,3 +220,7 @@ or visiting https://opensource.org/licenses/MPL-2.0
 The main webpage of the project is
 **[https://www.zah.uni-heidelberg.de/gaia/outreach/gaiasky](https://www.zah.uni-heidelberg.de/gaia/outreach/gaiasky)**. There you can find
 the latest versions and the latest information on Gaia Sky.
+
+##  6. Acknowledgements
+
+The latest acknowledgements are always in the [ACKNOWLEDGEMENTS.md](https://github.com/langurmonkey/gaiasky/blob/master/ACKNOWLEDGEMENTS.md) file.
