@@ -19,18 +19,19 @@ This file contains the following sections:
 
 1. [Running Gaia Sky VR](#1-running-gaia-sky-vr)
 2. [Documentation and help](#2-documentation-and-help)
-2. Copyright and licensing information
-3. Contact information
-4. Credits and acknowledgements
+3. [Copyright and licensing information](#3-copyright-and-licensing-information)
+4. [Contact information](#4-contact-information)
+5. [Credits and acknowledgements](#5-acknowledgements)
 
 
 ## 1. Running Gaia Sky VR
 
-First, clone the [GitHub](https://github.com/langurmonkey/gaiasky) repository:
+First, clone the [GitHub](https://github.com/langurmonkey/gaiasky) repository and checkout the `vr` branch:
 
 ```
 $  git clone https://github.com/langurmonkey/gaiasky.git
 $  cd gaiasky
+$  git checkout vr
 ```
 
 Make sure you have at least `JDK8` installed.
