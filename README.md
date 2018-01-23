@@ -26,7 +26,21 @@ This file contains the following sections:
 
 ## 1. Running Gaia Sky VR
 
-First, clone the [GitHub](https://github.com/langurmonkey/gaiasky) repository and checkout the `vr` branch:
+The Gaia Sky VR project is the Virtual Reality version of Gaia Sky. At the moment, only [OpenVR](https://github.com/ValveSoftware/openvr) is supported, but nothing prevents us from supporting other APIs (like the Kronos Group's [OpenXR](https://www.khronos.org/openxr) in the future if it makes sense. Our tests have only been carried out with the Oculus Rift CV1 headset in direct mode under Windows. Supporting Linux is a top priority for us, and the HTC Vive should work well under Linux, even though the state of OpenVR in the platform is a bit rough. Also, we want to point out that Linux support for the Oculus Rift was dropped for the CV1 and it is not expected to be continued any time soon, unfortunately.
+
+Gaia Sky VR is heavily under development, and it is not guaranteed to work. Currently, no binaries are provided, but it can still be run by compiling the source. Just keep in mind that this is the developmen branch.
+
+### 1.1. Pre-requisites
+
+This guide is for running Gaia Sky VR with the Oculus Rift in Windows. You will need the following: 
+
+1. Download and install [Git for Windows](http://gitforwindows.org/) and get used to the unix-like command line interface.
+2. If you are using the Oculus Rift headset, follow the provided instructions and install the Oculus app with the runtime.
+3. Download and install [Steam](http://store.steampowered.com/) and then install [SteamVR](http://store.steampowered.com/steamvr).
+
+### 1.2. Cloning the repository
+
+First, open the Git for Windows CLI and clone the [GitHub](https://github.com/langurmonkey/gaiasky) repository and checkout the `vr` branch:
 
 ```
 $  git clone https://github.com/langurmonkey/gaiasky.git
@@ -35,6 +49,8 @@ $  git checkout vr
 ```
 
 Make sure you have at least `JDK8` installed.
+
+### 1.3. Getting the data
 
 The TGAS catalog files (Gaia data) are **not** in the repository, so if you want to use TGAS when running
 from source you need to download
@@ -59,18 +75,20 @@ Albeit **not recommended** for performance reasons, the legacy particle-based (C
 edit the configuration file so that `data.json.catalog` points to `data/catalog-tgas-hyg-lod-old.json`.
 
 
-Finally, run Gaia Sky with:
+### 1.4. Running
+
+To run Gaia Sky VR, make sure that both the Oculus runtime and Steam VR are running. Then, run Gaia Sky through gradle. The first time it will pull lots of dependencies and compile the whole project, so it may take a while.
 
 ```
-$  gradlew desktop:run
+$  gradlew.bat desktop:run
 ```
 
-Et voilà! The bleeding edge Gaia Sky is running in your machine.
+Et voilà! Gaia Sky VR dev branch is running.
 
 In order to pull the latest version from the repository, just run the following from the `gaiasky` folder.
 
 ```
-$  git pull
+$  git pull origin vr
 ```
 
 Remember that the master branch is the development branch and therefore intrinsically unstable. It is not guaranteed to always work.
