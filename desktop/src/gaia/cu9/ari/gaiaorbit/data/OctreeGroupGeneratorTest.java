@@ -1,11 +1,13 @@
 package gaia.cu9.ari.gaiaorbit.data;
 
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.HashMap;
@@ -48,6 +50,7 @@ import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadLocalFactory;
 import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
+import gaia.cu9.ari.gaiaorbit.util.parse.Parser;
 import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
 
 /**
@@ -102,6 +105,9 @@ public class OctreeGroupGeneratorTest implements IObserver {
 
     @Parameter(names = "--nfiles", description = "Caps the number of data files to load. Defaults to unlimited")
     private int fileNumCap = -1;
+
+    @Parameter(names = "--xmatchfile", description = "Crossmatch file with source_id to hip")
+    private String xmatchFile = null;
 
     @Parameter(names = { "-h", "--help" }, help = true)
     private boolean help = false;
@@ -203,33 +209,32 @@ public class OctreeGroupGeneratorTest implements IObserver {
         /** LOAD CATALOG **/
         @SuppressWarnings("unchecked")
         Array<StarBean> listGaia = (Array<StarBean>) loader.loadData(input);
+
+        /** Check x-match file **/
+        Map<Long, Integer> xmatchTable = null;
+        if (xmatchFile != null && !xmatchFile.isEmpty()) {
+            // Load xmatchTable
+            xmatchTable = readXmatchTable(xmatchFile);
+        }
         for (StarBean s : listGaia) {
-            if (s.hip() > 0 && hips.containsKey(s.hip())) {
-                // modify
+            // Check if star is also in HYG catalog
+            if ((xmatchTable == null && (s.hip() > 0 && hips.containsKey(s.hip()))) || (xmatchTable != null && (xmatchTable.containsKey(s.id) && hips.containsKey(xmatchTable.get(s.id))))) {
+                // Add name and hip number to gaia star
                 StarBean gaiastar = s;
                 StarBean hipstar = hips.get(s.hip());
 
                 gaiastar.name = hipstar.name;
                 gaiastar.data[StarBean.I_HIP] = hipstar.data[StarBean.I_HIP];
 
-                // Remove from Hipparcos list
+                // Remove from HYG list
                 listHip.removeValue(hipstar, true);
                 hips.remove(hipstar.hip());
-
             }
             // Add to main list
             listHip.add(s);
         }
+
         Array<StarBean> list = listHip;
-
-        //        if (hyg.getColors() != null)
-        //            colors.putAll(hyg.getColors());
-        //        if (loader.getColors() != null)
-        //            colors.putAll(loader.getColors());
-
-        //        dumpToDiskCsv(list, "/tmp/tgashyg-eq.csv");
-        //        if (true)
-        //            return null;
 
         long loadingMs = TimeUtils.millis();
         float loadingSecs = ((loadingMs - startMs) / 1000);
@@ -297,6 +302,32 @@ public class OctreeGroupGeneratorTest implements IObserver {
                 if (child != null)
                     writeParticlesToFiles(particleWriter, child);
             }
+    }
+
+    private Map<Long, Integer> readXmatchTable(String xmatchFile) {
+        File xm = new File(xmatchFile);
+        if (xm.exists()) {
+            try {
+                Map<Long, Integer> map = new HashMap<Long, Integer>();
+                BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(xm)));
+                // Skip header line
+                br.readLine();
+                String line;
+                while ((line = br.readLine()) != null) {
+                    String[] tokens = line.split(",");
+                    Long sourceid = Parser.parseLong(tokens[0]);
+                    Integer hip = Parser.parseInt(tokens[1]);
+                    map.put(sourceid, hip);
+                }
+                br.close();
+                return map;
+            } catch (Exception e) {
+                Logger.error(e);
+            }
+        } else {
+            Logger.error("Cross-match file '" + xmatchFile + "' does not exist");
+        }
+        return null;
     }
 
     private void delete(File element) {

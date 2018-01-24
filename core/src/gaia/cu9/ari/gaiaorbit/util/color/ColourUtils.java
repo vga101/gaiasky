@@ -1,5 +1,7 @@
 package gaia.cu9.ari.gaiaorbit.util.color;
 
+import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
+
 public class ColourUtils {
 
     public enum ColorMap {
@@ -138,6 +140,56 @@ public class ColourUtils {
         rgba[0] = value;
         rgba[1] = 0;
         rgba[2] = 1;
+    }
+
+    /**
+     * Converts effective temperature in Kelvin (1000-40000) to RGB
+     * 
+     * @see http://www.tannerhelland.com/4435/convert-temperature-rgb-algorithm-code/
+     * @see http://www.zombieprototypes.com/?p=210
+     * 
+     * @param teff
+     * @return
+     */
+    public static float[] teffToRGB(double teff) {
+        double r, g, b;
+
+        double temp = teff / 100;
+
+        // Red
+        if (temp <= 66) {
+            r = 255;
+        } else {
+            double x = temp - 55;
+            r = 351.97690566805693 + 0.114206453784165 * x - 40.25366309332127 * Math.log(x);
+            r = MathUtilsd.clamp(r, 0, 255);
+        }
+
+        // Green
+        if (temp <= 66) {
+            double x = temp - 2;
+            g = -155.25485562709179 - 0.44596950469579133 * x + 104.49216199393888 * Math.log(x);
+            g = MathUtilsd.clamp(g, 0, 255);
+        } else {
+            double x = temp - 50;
+            g = 325.4494125711974 + 0.07943456536662342 * x - 28.0852963507957 * Math.log(x);
+            g = MathUtilsd.clamp(g, 0, 255);
+        }
+
+        // Blue
+        if (temp >= 66) {
+            b = 255;
+        } else {
+            if (temp <= 19) {
+                b = 0;
+            } else {
+                double x = temp - 10;
+                b = -254.76935184120902 + 0.8274096064007395 * x + 115.67994401066147 * Math.log(x);
+                b = MathUtilsd.clamp(b, 0, 255);
+            }
+        }
+
+        return new float[] { (float) (r / 255d), (float) (g / 255d), (float) (b / 255d) };
     }
 
     /**

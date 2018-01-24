@@ -34,7 +34,7 @@ public abstract class StreamingOctreeLoader implements IObserver, ISceneGraphLoa
     /**
      * Default load queue size in octants
      */
-    protected static final int LOAD_QUEUE_MAX_SIZE = 100000;
+    protected static final int LOAD_QUEUE_MAX_SIZE = 10000;
 
     public static StreamingOctreeLoader instance;
 

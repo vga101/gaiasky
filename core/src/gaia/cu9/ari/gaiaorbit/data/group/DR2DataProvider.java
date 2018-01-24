@@ -207,18 +207,21 @@ public class DR2DataProvider extends AbstractStarGroupDataProvider {
             double size = Math.min((Math.pow(flux, 0.5f) * Constants.PC_TO_U * 0.16f), 1e9f) / 1.5;
 
             /** COLOR, we use the tycBV map if present **/
-            double colorbv = 0;
+            double colorxp = 0;
             if (indices[BP_MAG] >= 0 && indices[RP_MAG] >= 0) {
                 // Real TGAS
                 float bp = new Double(Parser.parseDouble(tokens[indices[BP_MAG]].trim())).floatValue();
                 float rp = new Double(Parser.parseDouble(tokens[indices[RP_MAG]].trim())).floatValue();
-                colorbv = bp - rp;
+                colorxp = bp - rp;
             } else {
                 // Use color value in BP
-                colorbv = new Double(Parser.parseDouble(tokens[indices[BP_MAG]].trim())).floatValue();
+                colorxp = new Double(Parser.parseDouble(tokens[indices[BP_MAG]].trim())).floatValue();
             }
+            // See Gaia broad band photometry (https://doi.org/10.1051/0004-6361/201015441)
+            double teff = Math.pow(10, 3.999 - 0.654 * colorxp + 0.709 * Math.pow(colorxp, 2) - 0.316 * Math.pow(colorxp, 3));
 
-            float[] rgb = ColourUtils.BVtoRGB(colorbv);
+            float[] rgb = ColourUtils.teffToRGB(colorxp);
+            //float[] rgb = ColourUtils.BVtoRGB(colorxp);
             double col = Color.toFloatBits(rgb[0], rgb[1], rgb[2], 1.0f);
 
             point[StarBean.I_HIP] = -1;

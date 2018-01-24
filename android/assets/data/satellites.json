@@ -59,7 +59,7 @@
         "name" : "Solar sail",
         "color" : [0.3, 0.5, 0.9, 1.0],
         // in Km
-        "size" : 0.1,
+        "size" : 0.01,
         "ct" : Satellites,
 
         "parent" : "Universe",
