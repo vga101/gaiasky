@@ -216,12 +216,14 @@ public class OctreeGroupGeneratorTest implements IObserver {
             // Load xmatchTable
             xmatchTable = readXmatchTable(xmatchFile);
         }
+        int hipnum = listHip.size;
+        int hiphits = 0;
         for (StarBean s : listGaia) {
             // Check if star is also in HYG catalog
             if ((xmatchTable == null && (s.hip() > 0 && hips.containsKey(s.hip()))) || (xmatchTable != null && (xmatchTable.containsKey(s.id) && hips.containsKey(xmatchTable.get(s.id))))) {
                 // Add name and hip number to gaia star
                 StarBean gaiastar = s;
-                StarBean hipstar = hips.get(s.hip());
+                StarBean hipstar = hips.get(xmatchTable.get(s.id));
 
                 gaiastar.name = hipstar.name;
                 gaiastar.data[StarBean.I_HIP] = hipstar.data[StarBean.I_HIP];
@@ -229,15 +231,17 @@ public class OctreeGroupGeneratorTest implements IObserver {
                 // Remove from HYG list
                 listHip.removeValue(hipstar, true);
                 hips.remove(hipstar.hip());
+                hiphits++;
             }
             // Add to main list
             listHip.add(s);
         }
+        Logger.info(hiphits + " of " + hipnum + " HYG stars are also in Gaia");
 
         Array<StarBean> list = listHip;
 
         long loadingMs = TimeUtils.millis();
-        float loadingSecs = ((loadingMs - startMs) / 1000);
+        double loadingSecs = ((loadingMs - startMs) / 1000.0);
         Logger.info("TIME STATS: Data loaded in " + loadingSecs + " seconds");
 
         Logger.info("Generating octree with " + list.size + " actual stars");
@@ -247,7 +251,7 @@ public class OctreeGroupGeneratorTest implements IObserver {
         System.out.println(octree.toString(true));
 
         long generatingMs = TimeUtils.millis();
-        float generatingSecs = ((generatingMs - loadingMs) / 1000);
+        double generatingSecs = ((generatingMs - loadingMs) / 1000.0);
         Logger.info("TIME STATS: Octree generated in " + generatingSecs + " seconds");
 
         /** NUMBERS **/
@@ -274,8 +278,8 @@ public class OctreeGroupGeneratorTest implements IObserver {
         writeParticlesToFiles(particleWriter, octree);
 
         long writingMs = TimeUtils.millis();
-        float writingSecs = (writingMs - generatingMs) / 1000;
-        float totalSecs = loadingSecs + generatingSecs + writingSecs;
+        double writingSecs = (writingMs - generatingMs) / 1000.0;
+        double totalSecs = loadingSecs + generatingSecs + writingSecs;
 
         Logger.info("================");
         Logger.info("FINAL TIME STATS");
