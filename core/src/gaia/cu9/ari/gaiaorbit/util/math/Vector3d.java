@@ -776,6 +776,10 @@ public class Vector3d implements Serializable {
         return MathUtilsd.radiansToDegrees * Math.acos(this.dot(v) / (this.len() * v.len()));
     }
 
+    public boolean hasNaN() {
+        return Double.isNaN(this.x) || Double.isNaN(this.y) || Double.isNaN(this.z);
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj)

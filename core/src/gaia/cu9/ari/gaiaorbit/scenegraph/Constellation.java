@@ -137,8 +137,8 @@ public class Constellation extends LineObject implements I3DTextRenderable {
     }
 
     private void getPosition(IPosition posbean, Vector3 campos, Vector3 out) {
-        Vector3d vel = aux3d1.get();
-        if (posbean.getVelocity() != null) {
+        Vector3d vel = aux3d1.get().setZero();
+        if (posbean.getVelocity() != null && !posbean.getVelocity().hasNaN()) {
             vel.set(posbean.getVelocity()).scl(deltaYears);
         }
 
