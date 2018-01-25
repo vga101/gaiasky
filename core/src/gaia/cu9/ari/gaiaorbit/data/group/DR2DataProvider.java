@@ -220,7 +220,7 @@ public class DR2DataProvider extends AbstractStarGroupDataProvider {
             // See Gaia broad band photometry (https://doi.org/10.1051/0004-6361/201015441)
             double teff = Math.pow(10, 3.999 - 0.654 * colorxp + 0.709 * Math.pow(colorxp, 2) - 0.316 * Math.pow(colorxp, 3));
 
-            float[] rgb = ColourUtils.teffToRGB(colorxp);
+            float[] rgb = ColourUtils.teffToRGB(teff);
             //float[] rgb = ColourUtils.BVtoRGB(colorxp);
             double col = Color.toFloatBits(rgb[0], rgb[1], rgb[2], 1.0f);
 
