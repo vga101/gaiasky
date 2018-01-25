@@ -49,6 +49,7 @@ import gaia.cu9.ari.gaiaorbit.interfce.KeyBindings;
 import gaia.cu9.ari.gaiaorbit.interfce.MusicActorsManager;
 import gaia.cu9.ari.gaiaorbit.interfce.NetworkCheckerManager;
 import gaia.cu9.ari.gaiaorbit.render.PostProcessorFactory;
+import gaia.cu9.ari.gaiaorbit.rest.RESTServer;
 import gaia.cu9.ari.gaiaorbit.screenshot.ScreenshotsManager;
 import gaia.cu9.ari.gaiaorbit.script.JythonFactory;
 import gaia.cu9.ari.gaiaorbit.script.ScriptingFactory;
@@ -119,6 +120,11 @@ public class GaiaSkyDesktop implements IObserver {
             // Jython
             ScriptingFactory.initialize(JythonFactory.getInstance());
 
+            // REST API server
+            if (GlobalConf.program.REST_PORT >= 0) {
+                RESTServer.initialize(GlobalConf.program.REST_PORT);
+            }
+
             // Fullscreen command
             ScreenModeCmd.initialize();
 
@@ -175,6 +181,7 @@ public class GaiaSkyDesktop implements IObserver {
     public GaiaSkyDesktop() {
         super();
         EventManager.instance.subscribe(this, Events.SHOW_ABOUT_ACTION, Events.SHOW_RUNSCRIPT_ACTION, Events.JAVA_EXCEPTION, Events.SHOW_PLAYCAMERA_ACTION, Events.DISPLAY_MEM_INFO_WINDOW);
+        EventManager.instance.subscribe(this, Events.SCENE_GRAPH_LOADED, Events.DISPOSE);
     }
 
     private void init() {
@@ -254,6 +261,18 @@ public class GaiaSkyDesktop implements IObserver {
             break;
         case JAVA_EXCEPTION:
             ((Throwable) data[0]).printStackTrace(System.err);
+            break;
+        case SCENE_GRAPH_LOADED:
+            if (GlobalConf.program.REST_PORT >= 0) {
+                /* Notify REST server that GUI is loaded and everything should be in a well-defined state */
+                RESTServer.activate();
+            }
+            break;
+        case DISPOSE:
+            if (GlobalConf.program.REST_PORT >= 0) {
+                /* Shutdown REST server thread on termination */
+                RESTServer.stop();
+            }
             break;
         default:
             break;

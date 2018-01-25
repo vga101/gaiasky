@@ -469,6 +469,7 @@ public class GlobalConf {
         public String VERSION_CHECK_URL;
         public String UI_THEME;
         public String SCRIPT_LOCATION;
+        public int REST_PORT;
         public String LOCALE;
         public boolean DISPLAY_HUD;
         public boolean DISPLAY_POINTER_COORDS;
@@ -484,7 +485,7 @@ public class GlobalConf {
             EventManager.instance.subscribe(this, Events.STEREOSCOPIC_CMD, Events.STEREO_PROFILE_CMD, Events.CUBEMAP360_CMD);
         }
 
-        public void initialize(boolean dISPLAY_TUTORIAL, String tUTORIAL_POINTER_SCRIPT_LOCATION, String tUTORIAL_SCRIPT_LOCATION, boolean sHOW_DEBUG_INFO, Date lAST_CHECKED, String lAST_VERSION_TIME, String vERSION_CHECK_URL, String uI_THEME, String sCRIPT_LOCATION, String lOCALE, boolean sTEREOSCOPIC_MODE, StereoProfile sTEREO_PROFILE, boolean cUBEMAP360_MODE, boolean aNALYTICS_ENABLED, boolean dISPLAY_HUD, boolean dISPLAY_POINTER_COORDS) {
+        public void initialize(boolean dISPLAY_TUTORIAL, String tUTORIAL_POINTER_SCRIPT_LOCATION, String tUTORIAL_SCRIPT_LOCATION, boolean sHOW_DEBUG_INFO, Date lAST_CHECKED, String lAST_VERSION_TIME, String vERSION_CHECK_URL, String uI_THEME, String sCRIPT_LOCATION, int rEST_PORT, String lOCALE, boolean sTEREOSCOPIC_MODE, StereoProfile sTEREO_PROFILE, boolean cUBEMAP360_MODE, boolean aNALYTICS_ENABLED, boolean dISPLAY_HUD, boolean dISPLAY_POINTER_COORDS) {
             DISPLAY_TUTORIAL = dISPLAY_TUTORIAL;
             TUTORIAL_POINTER_SCRIPT_LOCATION = tUTORIAL_POINTER_SCRIPT_LOCATION;
             TUTORIAL_SCRIPT_LOCATION = tUTORIAL_SCRIPT_LOCATION;
@@ -494,6 +495,7 @@ public class GlobalConf {
             VERSION_CHECK_URL = vERSION_CHECK_URL;
             UI_THEME = uI_THEME;
             SCRIPT_LOCATION = sCRIPT_LOCATION;
+            REST_PORT = rEST_PORT;
             LOCALE = lOCALE;
             STEREOSCOPIC_MODE = sTEREOSCOPIC_MODE;
             STEREO_PROFILE = sTEREO_PROFILE;
