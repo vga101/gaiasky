@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 
+import gaia.cu9.ari.gaiaorbit.data.StreamingOctreeLoader;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
@@ -121,7 +122,7 @@ public class CameraManager implements ICamera, IObserver {
     private ICamera[] cameras;
 
     /** Last position, for working out velocity **/
-    private Vector3d lastPos, out, in;
+    private Vector3d lastPos, lastDir, out, in;
     private Vector3 vec, v0, v1, isec;
     private Matrix4 localTransformInv;
 
@@ -142,6 +143,7 @@ public class CameraManager implements ICamera, IObserver {
 
         this.mode = mode;
         lastPos = new Vector3d();
+        lastDir = new Vector3d();
         in = new Vector3d();
         out = new Vector3d();
         vec = new Vector3();
@@ -249,11 +251,21 @@ public class CameraManager implements ICamera, IObserver {
         velocitynor.set(velocity).nor();
         speed = (velocity.len() * Constants.U_TO_KM) / (dt * Constants.S_TO_H);
 
+        // Pan speed (direction) in deg/sec
+        double panSpeed = lastDir.angle(current.getDirection()) / dt;
+
+        // High speed?
+        if (speed > 5e1 || panSpeed > 40) {
+            //System.out.println(panSpeed + " deg/s, " + speed + " km/h");
+            StreamingOctreeLoader.clearQueue();
+        }
+
         // Post event with camera motion parameters
         EventManager.instance.post(Events.CAMERA_MOTION_UPDATED, current.getPos(), speed, velocitynor, current.getCamera());
 
-        // Update last pos
+        // Update last pos and dir
         lastPos.set(current.getPos());
+        lastDir.set(current.getDirection());
 
         int screenX = Gdx.input.getX();
         int screenY = Gdx.input.getY();

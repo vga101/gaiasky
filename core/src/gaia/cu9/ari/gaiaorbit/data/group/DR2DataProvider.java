@@ -170,7 +170,8 @@ public class DR2DataProvider extends AbstractStarGroupDataProvider {
         String[] tokens = line.split(separator);
         double[] point = new double[StarBean.SIZE];
 
-        double pllx = Parser.parseDouble(tokens[indices[PLLX]]);
+        // We add 29 mas because the zero point was recalibrated and shifted
+        double pllx = Parser.parseDouble(tokens[indices[PLLX]]) + 29d;
         double pllxerr = Parser.parseDouble(tokens[indices[PLLX_ERR]]);
 
         double distpc = (1000d / pllx);

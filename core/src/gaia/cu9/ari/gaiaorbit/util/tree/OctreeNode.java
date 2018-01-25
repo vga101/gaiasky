@@ -470,6 +470,8 @@ public class OctreeNode implements ILineRenderable {
 
                     // Add objects
                     addObjectsTo(roulette);
+                } else if (status == LoadStatus.QUEUED) {
+                    // What do? Move first in queue?
                 }
 
                 // Update children

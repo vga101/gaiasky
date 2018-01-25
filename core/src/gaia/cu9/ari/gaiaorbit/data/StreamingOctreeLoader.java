@@ -9,6 +9,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.TimeUtils;
 
 import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
@@ -36,6 +37,11 @@ public abstract class StreamingOctreeLoader implements IObserver, ISceneGraphLoa
      */
     protected static final int LOAD_QUEUE_MAX_SIZE = 10000;
 
+    /**
+     * Minimum time to pass to be able to clear the queue again
+     */
+    protected static final long MIN_QUEUE_CLEAR_MS = 2000;
+
     public static StreamingOctreeLoader instance;
 
     /** Current number of stars that are loaded **/
@@ -48,6 +54,9 @@ public abstract class StreamingOctreeLoader implements IObserver, ISceneGraphLoa
 
     /** Whether loading is paused or not **/
     protected boolean loadingPaused = false;
+
+    /** Last time of a queue clear event went through **/
+    protected long lastQueueClearMs = 0;
 
     /**
      * This queue is sorted ascending by access date, so that we know which
@@ -161,6 +170,18 @@ public abstract class StreamingOctreeLoader implements IObserver, ISceneGraphLoa
     }
 
     /**
+     * Clears the current load queue
+     */
+    public static void clearQueue() {
+        if (instance != null) {
+            if (TimeUtils.millis() - instance.lastQueueClearMs > MIN_QUEUE_CLEAR_MS) {
+                instance.emptyLoadQueue();
+                instance.lastQueueClearMs = TimeUtils.millis();
+            }
+        }
+    }
+
+    /**
      * Moves the octant to the end of the unload queue
      * 
      * @param octant
@@ -169,6 +190,17 @@ public abstract class StreamingOctreeLoader implements IObserver, ISceneGraphLoa
         if (instance != null) {
             instance.touchOctant(octant);
         }
+    }
+
+    /**
+     * Removes all octants from the current load queue. This happens when the
+     * camera viewport changes radically (velocity is high, direction changes a
+     * lot, etc.) so that the old octants are dropped and newly observed octants
+     * are loaded right away
+     */
+    public void emptyLoadQueue() {
+        toLoadQueue.clear();
+        Logger.info("Load queue emptied");
     }
 
     public void addToQueue(OctreeNode octant) {
@@ -254,10 +286,17 @@ public abstract class StreamingOctreeLoader implements IObserver, ISceneGraphLoa
      */
     public int loadOctants(final Array<OctreeNode> octants, final AbstractOctreeWrapper octreeWrapper) throws IOException {
         int loaded = 0;
-        for (OctreeNode octant : octants)
-            if (loadOctant(octant, octreeWrapper, true))
-                loaded++;
-        flushLoadedIds();
+        if (octants.size > 0) {
+            int i = 0;
+            OctreeNode octant = octants.get(0);
+            while (i < octants.size) {
+                if (loadOctant(octant, octreeWrapper, true))
+                    loaded++;
+                i += 1;
+                octant = octants.get(i);
+            }
+            flushLoadedIds();
+        }
         return loaded;
     }
 
