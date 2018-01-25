@@ -42,6 +42,11 @@ public abstract class StreamingOctreeLoader implements IObserver, ISceneGraphLoa
      */
     protected static final long MIN_QUEUE_CLEAR_MS = 2000;
 
+    /**
+     * Maximum number of pages to send to load every batch
+     **/
+    protected static final int MAX_LOAD_CHUNK = 50;
+
     public static StreamingOctreeLoader instance;
 
     /** Current number of stars that are loaded **/
@@ -181,6 +186,14 @@ public abstract class StreamingOctreeLoader implements IObserver, ISceneGraphLoa
         }
     }
 
+    public static int getLoadQueueSize() {
+        if (instance != null) {
+            return instance.toLoadQueue.size();
+        } else {
+            return -1;
+        }
+    }
+
     /**
      * Moves the octant to the end of the unload queue
      * 
@@ -199,8 +212,9 @@ public abstract class StreamingOctreeLoader implements IObserver, ISceneGraphLoa
      * are loaded right away
      */
     public void emptyLoadQueue() {
+        int n = toLoadQueue.size();
         toLoadQueue.clear();
-        Logger.info("Load queue emptied");
+        Logger.info(I18n.bundle.format("notif.loadingoctants.emtpied", n));
     }
 
     public void addToQueue(OctreeNode octant) {
@@ -377,9 +391,11 @@ public abstract class StreamingOctreeLoader implements IObserver, ISceneGraphLoa
                 /** ----------- PROCESS OCTANTS ----------- **/
                 while (!instance.toLoadQueue.isEmpty()) {
                     toLoad.clear();
-                    while (instance.toLoadQueue.peek() != null) {
+                    int i = 0;
+                    while (instance.toLoadQueue.peek() != null && i <= MAX_LOAD_CHUNK) {
                         OctreeNode octant = (OctreeNode) instance.toLoadQueue.poll();
                         toLoad.add(octant);
+                        i++;
                     }
 
                     // Load octants if any
@@ -390,7 +406,8 @@ public abstract class StreamingOctreeLoader implements IObserver, ISceneGraphLoa
 
                             Logger.debug(I18n.bundle.format("notif.loadingoctants.finished", loaded));
                         } catch (Exception e) {
-                            Logger.error(I18n.bundle.get("notif.loadingoctants.fail"));
+                            // This will happen when the queue has been cleared during processing
+                            Logger.debug(I18n.bundle.get("notif.loadingoctants.fail"));
                         }
                     }
 

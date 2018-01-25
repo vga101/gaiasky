@@ -37,6 +37,7 @@ import gaia.cu9.ari.gaiaorbit.assets.OrbitDataLoader;
 import gaia.cu9.ari.gaiaorbit.assets.SGLoader;
 import gaia.cu9.ari.gaiaorbit.assets.SGLoader.SGLoaderParameter;
 import gaia.cu9.ari.gaiaorbit.data.AssetBean;
+import gaia.cu9.ari.gaiaorbit.data.StreamingOctreeLoader;
 import gaia.cu9.ari.gaiaorbit.data.orbit.OrbitData;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
@@ -513,7 +514,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
             // Memory
             EventManager.instance.post(Events.DEBUG2, MemInfo.getUsedMemory(), MemInfo.getFreeMemory(), MemInfo.getTotalMemory(), MemInfo.getMaxMemory());
             // Observed octants
-            EventManager.instance.post(Events.DEBUG4, GLFrameBuffer.getManagedStatus() + ", Observed octants: " + OctreeNode.nOctantsObserved);
+            EventManager.instance.post(Events.DEBUG4, GLFrameBuffer.getManagedStatus() + ", Observed octants: " + OctreeNode.nOctantsObserved + ", Load queue: " + StreamingOctreeLoader.getLoadQueueSize());
         }
     };
 
