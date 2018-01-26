@@ -197,8 +197,8 @@ public class ColourUtils {
      * "http://stackoverflow.com/questions/21977786/star-b-v-color-index-to-apparent-rgb-color">here</a>
      * 
      * @param bv
-     *            The B-V coor index
-     * @return The rgb as a float array
+     *            The B-V color index
+     * @return The RGB as a float array in [0..1]
      */
     public static float[] BVtoRGB(double bv) {
         double t = 4600 * ((1 / ((0.92 * bv) + 1.7)) + (1 / ((0.92 * bv) + 0.62)));

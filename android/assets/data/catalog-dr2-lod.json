@@ -17,7 +17,8 @@
 		//"files": [ "data/octree/dr2/dr2int5/05-test-20000-2000/particles/", "data/octree/dr2/dr2int5/05-test-20000-2000/metadata.bin" ]
 		//"files": [ "/media/tsagrista/Daten/Gaia/data/GDR2/dr2int5/out/10-full-20000-2000-7/particles/", "/media/tsagrista/Daten/Gaia/data/GDR2/dr2int5/out/10-full-20000-2000-7/metadata.bin" ]
 		//"files": [ "/media/tsagrista/Daten/Gaia/data/GDR2/dr2int5/out/11-full-30000-5000-7/particles/", "/media/tsagrista/Daten/Gaia/data/GDR2/dr2int5/out/11-full-30000-5000-7/metadata.bin" ]
-		"files": [ "/media/tsagrista/Daten/Gaia/data/GDR2/dr2int5/out/12-full-25000-4000-7/particles/", "/media/tsagrista/Daten/Gaia/data/GDR2/dr2int5/out/12-full-25000-4000-7/metadata.bin" ]
+		//"files": [ "/media/tsagrista/Daten/Gaia/data/GDR2/dr2int5/out/12-full-25000-4000-7/particles/", "/media/tsagrista/Daten/Gaia/data/GDR2/dr2int5/out/12-full-25000-4000-7/metadata.bin" ]
+		"files": [ "/media/tsagrista/Daten/Gaia/data/GDR2/dr2int5/out/test/particles/", "/media/tsagrista/Daten/Gaia/data/GDR2/dr2int5/out/test/metadata.bin" ]
 		
 	}
 ]}
