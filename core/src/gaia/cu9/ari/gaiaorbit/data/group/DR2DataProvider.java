@@ -20,6 +20,7 @@ import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.color.ColourUtils;
 import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
 import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
+import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.parse.Parser;
 
@@ -230,7 +231,13 @@ public class DR2DataProvider extends AbstractStarGroupDataProvider {
                 colorxp = new Double(Parser.parseDouble(tokens[indices[BP_MAG]].trim())).floatValue();
             }
             // See Gaia broad band photometry (https://doi.org/10.1051/0004-6361/201015441)
-            double teff = Math.pow(10, 3.999 - 0.654 * colorxp + 0.709 * Math.pow(colorxp, 2) - 0.316 * Math.pow(colorxp, 3));
+            double teff;
+            if (colorxp <= 1.5) {
+                teff = Math.pow(10.0, 3.999 - 0.654 * colorxp + 0.709 * Math.pow(colorxp, 2.0) - 0.316 * Math.pow(colorxp, 3.0));
+            } else {
+                // We do a linear regression between [1.5, 3521.6] and [15, 3000]
+                teff = MathUtilsd.lint(colorxp, 1.5, 15, 3521.6, 3000);
+            }
             float[] rgb = ColourUtils.teffToRGB(teff);
             //            float[] rgb = ColourUtils.BVtoRGB(colorxp);
             double col = Color.toFloatBits(rgb[0], rgb[1], rgb[2], 1.0f);

@@ -13,6 +13,7 @@ import javax.swing.JFrame;
 import com.badlogic.gdx.math.MathUtils;
 
 import gaia.cu9.ari.gaiaorbit.util.color.ColourUtils;
+import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 
 /**
  * Tests the color conversion tools
@@ -26,12 +27,18 @@ public class ColorTest {
         Scanner sc = new Scanner(System.in);
 
         System.out.print("Enter BP: ");
-        float bp = readFloat(sc);
+        double bp = readFloat(sc);
         System.out.print("Enter RP: ");
-        float rp = readFloat(sc);
+        double rp = readFloat(sc);
 
-        float colorxp = bp - rp;
-        double teff = Math.pow(10, 3.999 - 0.654 * colorxp + 0.709 * Math.pow(colorxp, 2) - 0.316 * Math.pow(colorxp, 3));
+        double colorxp = bp - rp;
+        double teff;
+        if (colorxp <= 1.5) {
+            teff = Math.pow(10.0, 3.999 - 0.654 * colorxp + 0.709 * Math.pow(colorxp, 2.0) - 0.316 * Math.pow(colorxp, 3.0));
+        } else {
+            // We do a linear regression between [1.5, 3521.6] and [15, 3000]
+            teff = MathUtilsd.lint(colorxp, 1.5, 15, 3521.6, 3000);
+        }
 
         //        System.out.print("Enter the color in kelvin (1000-50000): ");
         //        int teff = readInteger(sc);
@@ -42,6 +49,7 @@ public class ColorTest {
         int gi = Math.round(rgb[1] * 255);
         int bi = Math.round(rgb[2] * 255);
         String colorhex = String.format("#%02x%02x%02x", ri, gi, bi);
+        System.out.println("ColXP (BP-RP):  " + colorxp);
         System.out.println("Teff: " + teff + " K");
         System.out.println("Color: " + colorhex);
         System.out.println("r: " + rgb[0] + " g: " + rgb[1] + " b: " + rgb[2]);
