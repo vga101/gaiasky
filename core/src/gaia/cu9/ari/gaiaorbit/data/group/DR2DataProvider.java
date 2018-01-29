@@ -36,7 +36,6 @@ import gaia.cu9.ari.gaiaorbit.util.parse.Parser;
 public class DR2DataProvider extends AbstractStarGroupDataProvider {
 
     private static final String comma = ",";
-    private static final String comment = "#";
 
     private static final String separator = comma;
 
@@ -86,10 +85,9 @@ public class DR2DataProvider extends AbstractStarGroupDataProvider {
     }
 
     public Array<StarBean> loadData(String file, double factor) {
-        initLists(100000);
+        initLists(10000000);
 
         FileHandle f = Gdx.files.internal(file);
-        Integer i = 0;
         if (f.isDirectory()) {
             // Recursive
             FileHandle[] files = f.list();
@@ -98,13 +96,13 @@ public class DR2DataProvider extends AbstractStarGroupDataProvider {
             });
             int fn = 0;
             for (FileHandle fh : files) {
-                loadFile(fh, factor, i, fn + 1);
+                loadFileFh(fh, factor, fn + 1);
                 fn++;
                 if (fileNumberCap > 0 && fn >= fileNumberCap)
                     break;
             }
         } else if (f.name().endsWith(".csv") || f.name().endsWith(".gz")) {
-            loadFile(f, factor, i, 1);
+            loadFileFh(f, factor, 1);
         } else {
             Logger.warn(this.getClass().getSimpleName(), "File skipped: " + f.path());
         }
@@ -115,12 +113,12 @@ public class DR2DataProvider extends AbstractStarGroupDataProvider {
     public Array<StarBean> loadData(InputStream is, double factor) {
         initLists(100000);
 
-        loadFile(is, factor, 0);
+        loadFileIs(is, factor, new LongWrap(0l), new LongWrap(0l));
 
         return list;
     }
 
-    public void loadFile(FileHandle fh, double factor, Integer i, int fileNumber) {
+    public void loadFileFh(FileHandle fh, double factor, int fileNumber) {
         //Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.datafile", fh.path()));
         boolean gz = fh.name().endsWith(".gz");
 
@@ -135,23 +133,30 @@ public class DR2DataProvider extends AbstractStarGroupDataProvider {
                 return;
             }
         }
-        long nstars = loadFile(data, factor, i);
-        Logger.info(this.getClass().getSimpleName(), fh.name() + " loaded with " + nstars + " stars (file number " + fileNumber + ")");
+        LongWrap addedStars = new LongWrap(0l);
+        LongWrap discardedStars = new LongWrap(0l);
+        loadFileIs(data, factor, addedStars, discardedStars);
+        Logger.info(this.getClass().getSimpleName(), fileNumber + " - " + fh.name() + " --> " + addedStars.value + "/" + (addedStars.value + discardedStars.value) + " stars (" + (100 * addedStars.value / (addedStars.value + discardedStars.value)) + "%)");
     }
 
-    public long loadFile(InputStream is, double factor, Integer i) {
+    public void loadFileIs(InputStream is, double factor, LongWrap addedStars, LongWrap discardedStars) {
         // Simple case
         InputStream data = is;
         BufferedReader br = new BufferedReader(new InputStreamReader(data));
-        int inisize = list.size;
         try {
+            int i = 0;
             String line;
             while ((line = br.readLine()) != null) {
-                if (!line.startsWith(comment)) {
+                // Skip first line
+                if (i > 0) {
                     // Add star
-                    addStar(line, i);
-                    i++;
+                    if (addStar(line)) {
+                        addedStars.value++;
+                    } else {
+                        discardedStars.value++;
+                    }
                 }
+                i++;
             }
         } catch (IOException e) {
             Logger.error(e);
@@ -163,15 +168,21 @@ public class DR2DataProvider extends AbstractStarGroupDataProvider {
             }
 
         }
-        return list.size - inisize;
     }
 
-    private void addStar(String line, Integer i) {
+    /**
+     * Adds the star if it meets the criteria.
+     * 
+     * @param line
+     *            The string line
+     * @return True if star was added, false otherwise
+     */
+    private boolean addStar(String line) {
         String[] tokens = line.split(separator);
         double[] point = new double[StarBean.SIZE];
 
-        // We add 29 mas because the zero point was recalibrated and shifted
-        double pllx = Parser.parseDouble(tokens[indices[PLLX]]) + 29d;
+        // Add the zero point to the parallax
+        double pllx = Parser.parseDouble(tokens[indices[PLLX]]) + parallaxZeroPoint;
         double pllxerr = Parser.parseDouble(tokens[indices[PLLX_ERR]]);
 
         double distpc = (1000d / pllx);
@@ -219,9 +230,9 @@ public class DR2DataProvider extends AbstractStarGroupDataProvider {
                 colorxp = new Double(Parser.parseDouble(tokens[indices[BP_MAG]].trim())).floatValue();
             }
             // See Gaia broad band photometry (https://doi.org/10.1051/0004-6361/201015441)
-            //            double teff = Math.pow(10, 3.999 - 0.654 * colorxp + 0.709 * Math.pow(colorxp, 2) - 0.316 * Math.pow(colorxp, 3));
-            //            float[] rgb = ColourUtils.teffToRGB(teff);
-            float[] rgb = ColourUtils.BVtoRGB(colorxp);
+            double teff = Math.pow(10, 3.999 - 0.654 * colorxp + 0.709 * Math.pow(colorxp, 2) - 0.316 * Math.pow(colorxp, 3));
+            float[] rgb = ColourUtils.teffToRGB(teff);
+            //            float[] rgb = ColourUtils.BVtoRGB(colorxp);
             double col = Color.toFloatBits(rgb[0], rgb[1], rgb[2], 1.0f);
 
             point[StarBean.I_HIP] = -1;
@@ -243,8 +254,24 @@ public class DR2DataProvider extends AbstractStarGroupDataProvider {
             point[StarBean.I_ABSMAG] = absmag;
 
             list.add(new StarBean(point, sourceid, name));
-            i++;
+            return true;
+        } else {
+            return false;
         }
+    }
+
+    private class LongWrap {
+        public Long value;
+
+        public LongWrap(Long val) {
+            this.value = val;
+        }
+
+        @Override
+        public String toString() {
+            return Long.toString(value);
+        }
+
     }
 
 }

@@ -101,7 +101,10 @@ public class OctreeGroupGeneratorTest implements IObserver {
     private boolean serialized = false;
 
     @Parameter(names = "--pllxovererr", description = "Parallax over parallax error must be larger than this value for the star to be accepted")
-    private double pllxovererr = 7;
+    private double pllxovererr = 7d;
+
+    @Parameter(names = "--pllxzeropoint", description = "Zero point value for the parallax in mas")
+    private double pllxzeropoint = 0d;
 
     @Parameter(names = "--nfiles", description = "Caps the number of data files to load. Defaults to unlimited")
     private int fileNumCap = -1;
@@ -195,6 +198,7 @@ public class OctreeGroupGeneratorTest implements IObserver {
         String fullLoaderClass = "gaia.cu9.ari.gaiaorbit.data.group." + loaderClass;
         IStarGroupDataProvider loader = (IStarGroupDataProvider) Class.forName(fullLoaderClass).newInstance();
         loader.setParallaxOverError(pllxovererr);
+        loader.setParallaxZeroPoint(pllxzeropoint);
         loader.setFileNumberCap(fileNumCap);
 
         /** LOAD HYG **/
@@ -281,6 +285,13 @@ public class OctreeGroupGeneratorTest implements IObserver {
         double writingSecs = (writingMs - generatingMs) / 1000.0;
         double totalSecs = loadingSecs + generatingSecs + writingSecs;
 
+        Logger.info("============");
+        Logger.info("OCTREE STATS");
+        Logger.info("============");
+        Logger.info("Octants: " + octree.numNodes());
+        Logger.info("Particles: " + list.size);
+        Logger.info("Depth: " + octree.depth);
+        Logger.info();
         Logger.info("================");
         Logger.info("FINAL TIME STATS");
         Logger.info("================");
