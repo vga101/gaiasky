@@ -112,6 +112,9 @@ public class OctreeGroupGeneratorTest implements IObserver {
     @Parameter(names = "--xmatchfile", description = "Crossmatch file with source_id to hip")
     private String xmatchFile = null;
 
+    @Parameter(names = { "-c", "--magcorrections" }, description = "Flag to apply magnitude and color corrections for extinction and reddening")
+    private boolean magCorrections = false;
+
     @Parameter(names = { "-h", "--help" }, help = true)
     private boolean help = false;
 

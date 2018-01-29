@@ -37,6 +37,11 @@ public abstract class AbstractStarGroupDataProvider implements IStarGroupDataPro
      */
     protected double parallaxZeroPoint = 0;
 
+    /**
+     * Apply magnitude/color corrections for extinction/reddening
+     */
+    protected boolean magCorrections = false;
+
     public AbstractStarGroupDataProvider() {
         super();
     }
@@ -173,4 +178,7 @@ public abstract class AbstractStarGroupDataProvider implements IStarGroupDataPro
         this.parallaxZeroPoint = parallaxZeroPoint;
     }
 
+    public void setMagCorrections(boolean magCorrections) {
+        this.magCorrections = magCorrections;
+    }
 }

@@ -29,4 +29,13 @@ public interface IStarGroupDataProvider extends IParticleGroupDataProvider {
      *            The parallax zero point
      */
     public void setParallaxZeroPoint(double parallaxZeroPoint);
+
+    /**
+     * Sets the flag to apply magnitude and color corrections for extinction and
+     * reddening
+     * 
+     * @param magCorrections
+     *            Whether to apply the corrections
+     */
+    public void setMagCorrections(boolean magCorrections);
 }

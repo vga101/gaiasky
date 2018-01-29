@@ -214,22 +214,43 @@ public class DR2DataProvider extends AbstractStarGroupDataProvider {
             Vector3d pm = Coordinates.sphericalToCartesian(Math.toRadians(ra + mualpha * AstroUtils.MILLARCSEC_TO_DEG), Math.toRadians(dec + mudelta * AstroUtils.MILLARCSEC_TO_DEG), dist + radvel * Constants.KM_TO_U / Constants.S_TO_Y, new Vector3d());
             pm.sub(pos);
 
-            double appmag = Parser.parseDouble(tokens[indices[G_MAG]]);
+            // Compute magnitude correction due to extinction
+            double ag = 0;
+            // Galactic latitude in radians
+            double magcorraux = 0;
+            if (magCorrections) {
+                Vector3d posgal = new Vector3d(pos);
+                posgal.mul(Coordinates.eqToGal());
+                Vector3d posgalsph = Coordinates.cartesianToSpherical(posgal, new Vector3d());
+                double b = posgalsph.y;
+                magcorraux = Math.min(distpc, 150d / Math.abs(Math.sin(b)));
+                ag = magcorraux * 5.9e-4;
+            }
+
+            double appmag = Parser.parseDouble(tokens[indices[G_MAG]]) - ag;
             double absmag = (appmag - 2.5 * Math.log10(Math.pow(distpc / 10d, 2d)));
             double flux = Math.pow(10, -absmag / 2.5f);
             double size = Math.min((Math.pow(flux, 0.5f) * Constants.PC_TO_U * 0.16f), 1e9f) / 1.5;
 
             /** COLOR, we use the tycBV map if present **/
+
+            // Color correction due to reddening by interstellar matter
+            double ebr = 0;
+            if (magCorrections) {
+                ebr = magcorraux * 2.9e-4;
+            }
+
             double colorxp = 0;
             if (indices[BP_MAG] >= 0 && indices[RP_MAG] >= 0) {
                 // Real TGAS
                 float bp = new Double(Parser.parseDouble(tokens[indices[BP_MAG]].trim())).floatValue();
                 float rp = new Double(Parser.parseDouble(tokens[indices[RP_MAG]].trim())).floatValue();
-                colorxp = bp - rp;
+                colorxp = bp - rp - ebr;
             } else {
                 // Use color value in BP
                 colorxp = new Double(Parser.parseDouble(tokens[indices[BP_MAG]].trim())).floatValue();
             }
+
             // See Gaia broad band photometry (https://doi.org/10.1051/0004-6361/201015441)
             double teff;
             if (colorxp <= 1.5) {
