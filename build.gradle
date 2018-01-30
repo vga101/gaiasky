@@ -126,9 +126,10 @@ project(":desktop") {
         compile "org.python:jython-standalone:$jythonVersion"
         compile "com.beust:jcommander:$jcommanderVersion"
         compile "com.brsanthu:google-analytics-java:$googleanalyticsjavaVersion"
-        compile "org.slf4j:slf4j-simple:$slf4jVersion"
-        compile "com.sparkjava:spark-core:2.7.1"  // for REST API
-        compile "com.google.code.gson:gson:2.8.0" // json lib
+        compile "org.slf4j:slf4j-nop:$slf4jVersion"
+        //compile "org.slf4j:slf4j-simple:$slf4jVersion"
+        //compile "com.sparkjava:spark-core:2.7.1"  // for REST API
+        //compile "com.google.code.gson:gson:2.8.0" // json lib
 		compile files('../core/lib/postprocessing.jar',
 						'../android/assets',
                         'lib/stil.jar')

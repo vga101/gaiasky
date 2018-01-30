@@ -49,7 +49,6 @@ import gaia.cu9.ari.gaiaorbit.interfce.KeyBindings;
 import gaia.cu9.ari.gaiaorbit.interfce.MusicActorsManager;
 import gaia.cu9.ari.gaiaorbit.interfce.NetworkCheckerManager;
 import gaia.cu9.ari.gaiaorbit.render.PostProcessorFactory;
-import gaia.cu9.ari.gaiaorbit.rest.RESTServer;
 import gaia.cu9.ari.gaiaorbit.screenshot.ScreenshotsManager;
 import gaia.cu9.ari.gaiaorbit.script.JythonFactory;
 import gaia.cu9.ari.gaiaorbit.script.ScriptingFactory;
@@ -122,7 +121,7 @@ public class GaiaSkyDesktop implements IObserver {
 
             // REST API server
             if (GlobalConf.program.REST_PORT >= 0) {
-                RESTServer.initialize(GlobalConf.program.REST_PORT);
+                //RESTServer.initialize(GlobalConf.program.REST_PORT);
             }
 
             // Fullscreen command
@@ -264,14 +263,17 @@ public class GaiaSkyDesktop implements IObserver {
             break;
         case SCENE_GRAPH_LOADED:
             if (GlobalConf.program.REST_PORT >= 0) {
-                /* Notify REST server that GUI is loaded and everything should be in a well-defined state */
-                RESTServer.activate();
+                /*
+                 * Notify REST server that GUI is loaded and everything should
+                 * be in a well-defined state
+                 */
+                //RESTServer.activate();
             }
             break;
         case DISPOSE:
             if (GlobalConf.program.REST_PORT >= 0) {
                 /* Shutdown REST server thread on termination */
-                RESTServer.stop();
+                //RESTServer.stop();
             }
             break;
         default:

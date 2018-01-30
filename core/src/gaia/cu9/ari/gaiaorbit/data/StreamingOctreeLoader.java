@@ -433,7 +433,7 @@ public abstract class StreamingOctreeLoader implements IObserver, ISceneGraphLoa
                     // Release resources if needed
                     int nUnloaded = 0;
                     int nStars = loader.nLoadedStars;
-                    if (nStars >= loader.maxLoadedStars)
+                    if (running && nStars >= loader.maxLoadedStars)
                         while (true) {
                             // Get first in queue (unaccessed for the longest time)
                             // and release it
