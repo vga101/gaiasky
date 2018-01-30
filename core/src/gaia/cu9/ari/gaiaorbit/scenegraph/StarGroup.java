@@ -312,7 +312,7 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
         closestCol = new float[4];
         lastSortTime = -1;
         aux = new Vector3d();
-        EventManager.instance.subscribe(this, Events.CAMERA_MOTION_UPDATED, Events.DISPOSE);
+        EventManager.instance.subscribe(this, Events.CAMERA_MOTION_UPDATED);
     }
 
     @SuppressWarnings("unchecked")
@@ -866,9 +866,6 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
                     pool.execute(updaterTask);
                 }
             }
-            break;
-        case DISPOSE:
-            dispose();
             break;
         default:
             break;
