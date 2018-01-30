@@ -206,12 +206,6 @@ public class OctreeGroupGeneratorTest implements IObserver {
 
         /** LOAD HYG **/
         Array<StarBean> listHip = hyg.loadData("data/hyg/hygxyz.bin");
-        Map<Integer, StarBean> hips = new HashMap<Integer, StarBean>();
-        for (StarBean p : listHip) {
-            if (p.hip() > 0) {
-                hips.put(p.hip(), p);
-            }
-        }
 
         /** LOAD CATALOG **/
         @SuppressWarnings("unchecked")
@@ -223,29 +217,26 @@ public class OctreeGroupGeneratorTest implements IObserver {
             // Load xmatchTable
             xmatchTable = readXmatchTable(xmatchFile);
         }
-        int hipnum = listHip.size;
-        int hiphits = 0;
+        int gaianum = listGaia.size;
+        int gaiahits = 0;
         for (StarBean s : listGaia) {
             // Check if star is also in HYG catalog
-            if ((xmatchTable == null && (s.hip() > 0 && hips.containsKey(s.hip()))) || (xmatchTable != null && (xmatchTable.containsKey(s.id) && hips.containsKey(xmatchTable.get(s.id))))) {
-                // Add name and hip number to gaia star
-                StarBean gaiastar = s;
-                StarBean hipstar = hips.get(xmatchTable.get(s.id));
-
-                gaiastar.name = hipstar.name;
-                gaiastar.data[StarBean.I_HIP] = hipstar.data[StarBean.I_HIP];
-
-                // Remove from HYG list
-                listHip.removeValue(hipstar, true);
-                hips.remove(hipstar.hip());
-                hiphits++;
+            if ((xmatchTable == null || (xmatchTable != null && !xmatchTable.containsKey(s.id)))) {
+                // Add to Gaia star to main list
+                listHip.add(s);
+            } else {
+                // Keep HIP star, ignore Gaia star
+                gaiahits++;
             }
-            // Add to main list
-            listHip.add(s);
         }
-        Logger.info(hiphits + " of " + hipnum + " HYG stars are also in Gaia");
+        Logger.info(gaiahits + " of " + gaianum + " Gaia stars discarded due to being in matched to a HIP star");
 
+        // Main list is listHip
         Array<StarBean> list = listHip;
+
+        // Free some memory
+        listGaia.clear();
+        listGaia = null;
 
         long loadingMs = TimeUtils.millis();
         double loadingSecs = ((loadingMs - startMs) / 1000.0);

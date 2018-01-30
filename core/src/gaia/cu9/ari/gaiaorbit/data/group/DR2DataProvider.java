@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Arrays;
-import java.util.Map;
 import java.util.zip.GZIPInputStream;
 
 import com.badlogic.gdx.Gdx;
@@ -46,8 +45,6 @@ public class DR2DataProvider extends AbstractStarGroupDataProvider {
     private int fileNumberCap = -1;
     /** Whether to load the sourceId->HIP correspondences file **/
     public boolean useHIP = false;
-    /** Map of Gaia sourceId to HIP id **/
-    public Map<Long, Integer> sidHIPMap;
 
     /**
      * INDICES:
@@ -137,7 +134,8 @@ public class DR2DataProvider extends AbstractStarGroupDataProvider {
         LongWrap addedStars = new LongWrap(0l);
         LongWrap discardedStars = new LongWrap(0l);
         loadFileIs(data, factor, addedStars, discardedStars);
-        Logger.info(this.getClass().getSimpleName(), fileNumber + " - " + fh.name() + " --> " + addedStars.value + "/" + (addedStars.value + discardedStars.value) + " stars (" + (100 * addedStars.value / (addedStars.value + discardedStars.value)) + "%)");
+        Logger.info(this.getClass().getSimpleName(), fileNumber + " - " + fh.name() + " --> " + addedStars.value + "/" + (addedStars.value + discardedStars.value) + " stars ("
+                + (100 * addedStars.value / (addedStars.value + discardedStars.value)) + "%)");
     }
 
     public void loadFileIs(InputStream is, double factor, LongWrap addedStars, LongWrap discardedStars) {
@@ -212,7 +210,8 @@ public class DR2DataProvider extends AbstractStarGroupDataProvider {
                 double radvel = Parser.parseDouble(tokens[indices[RADVEL]]);
 
                 /** PROPER MOTION VECTOR = (pos+dx) - pos **/
-                Vector3d pm = Coordinates.sphericalToCartesian(Math.toRadians(ra + mualpha * AstroUtils.MILLARCSEC_TO_DEG), Math.toRadians(dec + mudelta * AstroUtils.MILLARCSEC_TO_DEG), dist + radvel * Constants.KM_TO_U / Constants.S_TO_Y, new Vector3d());
+                Vector3d pm = Coordinates.sphericalToCartesian(Math.toRadians(ra + mualpha * AstroUtils.MILLARCSEC_TO_DEG), Math.toRadians(dec + mudelta * AstroUtils.MILLARCSEC_TO_DEG), dist
+                        + radvel * Constants.KM_TO_U / Constants.S_TO_Y, new Vector3d());
                 pm.sub(pos);
 
                 // Compute magnitude correction due to extinction
