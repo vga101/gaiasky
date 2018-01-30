@@ -156,7 +156,7 @@ public final class Parser {
         int pos = 0;
         int len = input.length();
         if (len == 0)
-            return 0;
+            return Double.NaN;
         char c = input.charAt(0);
         double sign = 1;
 
