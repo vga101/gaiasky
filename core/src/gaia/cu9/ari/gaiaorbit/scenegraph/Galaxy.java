@@ -79,7 +79,7 @@ public class Galaxy extends Particle {
 
         // Calculate size - This contains arbitrary boundary values to make
         // things nice on the render side
-        size = (float) (Math.max((Math.pow(flux, 0.5f) * Constants.PC_TO_U * 1e-3), .6e9f) * 4.5e0d);
+        size = (float) Math.min(.3e11, (Math.max((Math.pow(flux, 0.5f) * Constants.PC_TO_U * 1e-3), .6e9f) * 4.5e0d));
         computedSize = 0;
     }
 

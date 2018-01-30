@@ -293,7 +293,7 @@ public class OctreeGroupGeneratorTest implements IObserver {
         Logger.info("============");
         Logger.info("Octants: " + octree.numNodes());
         Logger.info("Particles: " + list.size);
-        Logger.info("Depth: " + octree.depth);
+        Logger.info("Depth: " + octree.getMaxDepth());
         Logger.info();
         Logger.info("================");
         Logger.info("FINAL TIME STATS");

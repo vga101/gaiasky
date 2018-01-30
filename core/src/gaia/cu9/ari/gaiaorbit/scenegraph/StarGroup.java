@@ -205,6 +205,9 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
     private static double radVelLineWidth = 0.002;
     private static double noRadVelLineWidth = 0.0006;
 
+    // Has been disposed
+    public boolean disposed = false;
+
     /** Epoch in julian days **/
     private double epoch_jd = AstroUtils.JD_J2015_5;
     /** Current computed epoch time **/
@@ -858,7 +861,7 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
             if (updaterTask != null) {
                 final Vector3d currentCameraPos = (Vector3d) data[0];
                 long t = TimeUtils.millis() - lastSortTime;
-                if (!updating && !workQueue.contains(updaterTask) && this.opacity > 0 && (t > MIN_UPDATE_TIME_MS * 2 || (lastSortCameraPos.dst(currentCameraPos) > CAM_DX_TH && t > MIN_UPDATE_TIME_MS))) {
+                if (!updating && !pool.isShutdown() && !workQueue.contains(updaterTask) && this.opacity > 0 && (t > MIN_UPDATE_TIME_MS * 2 || (lastSortCameraPos.dst(currentCameraPos) > CAM_DX_TH && t > MIN_UPDATE_TIME_MS))) {
                     updating = true;
                     pool.execute(updaterTask);
                 }
@@ -960,12 +963,15 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
 
     @Override
     public void dispose() {
-        // Dispose of GPU data
-        EventManager.instance.post(Events.DISPOSE_STAR_GROUP_GPU_MESH, this.offset);
+        this.disposed = true;
+        // Unsubscribe from all events
+        EventManager.instance.unsubscribe(this, Events.CAMERA_MOTION_UPDATED, Events.DISPOSE);
         // Shut down pool
         if (pool != null && !pool.isShutdown()) {
             pool.shutdown();
         }
+        // Dispose of GPU data
+        EventManager.instance.post(Events.DISPOSE_STAR_GROUP_GPU_MESH, this.offset);
     }
 
     @Override
