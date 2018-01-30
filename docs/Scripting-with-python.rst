@@ -14,20 +14,27 @@ An interface is provided in order to encapsulate some complex-behaviour
 functions and to make scripting easier. This scripting interface is
 described in the following section.
 
-The scripting interface
-=======================
+The scripting API
+=================
 
-The scripting interface is located in the package ``gaia.cu9.ari.gaiaorbit.script`` (see `here <http://langurmonkey.github.io/gaiasky/javadoc/gaia/cu9/ari/gaiaorbit/script/package-summary.html>`__).
+The scripting API is a set of methods which can be called to interact with Gaia Sky. The available methods differ depending on the version of Gaia Sky.
 
-Description of the functions
-----------------------------
+API documentation
+-----------------
 
-Before starting, have a look at the
-`documentation of the scripting interface <http://langurmonkey.github.io/gaiasky/javadoc/gaia/cu9/ari/gaiaorbit/script/IScriptingInterface.html>`__,
-which provides extensive descriptions of each function.
+The only up-to-date API documentation for each version is in the interface header files themselves. Below is a list of links to the different APIs.
 
-Using the scripting interface
------------------------------
+- `API Gaia Sky master (development branch) <https://github.com/langurmonkey/gaiasky/blob/master/core/src/gaia/cu9/ari/gaiaorbit/script/IScriptingInterface.java>`__
+- `API Gaia Sky 1.5.0 <https://github.com/langurmonkey/gaiasky/blob/1.5.0/core/src/gaia/cu9/ari/gaiaorbit/script/IScriptingInterface.java>`__
+- `API Gaia Sky 1.0.4 <https://github.com/langurmonkey/gaiasky/blob/1.0.4/core/src/gaia/cu9/ari/gaiaorbit/script/IScriptingInterface.java>`__
+- `API Gaia Sky 1.0.3 <https://github.com/langurmonkey/gaiasky/blob/1.0.3/core/src/gaia/cu9/ari/gaiaorbit/script/IScriptingInterface.java>`__
+- `API Gaia Sky 1.0.2 <https://github.com/langurmonkey/gaiasky/blob/1.0.2/core/src/gaia/cu9/ari/gaiaorbit/script/IScriptingInterface.java>`__
+- `API Gaia Sky 1.0.1 <https://github.com/langurmonkey/gaiasky/blob/1.0.1/core/src/gaia/cu9/ari/gaiaorbit/script/IScriptingInterface.java>`__
+- `API Gaia Sky 1.0.0 <https://github.com/langurmonkey/gaiasky/blob/1.0.0/core/src/gaia/cu9/ari/gaiaorbit/script/IScriptingInterface.java>`__
+
+
+Using the scripting API
+-----------------------
 
 In order to import the scripting interface package in your script, you
 just need to import the default implementation
