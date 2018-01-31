@@ -31,7 +31,7 @@ public class TGASHYGToBinary implements IObserver {
     public static void main(String[] args) {
         TGASHYGDataProvider tgashyg = new TGASHYGDataProvider();
         TGASHYGDataProvider.setDumpToDisk(true, "bin");
-        tgashyg.setParallaxOverError(10.0);
+        tgashyg.setParallaxOverError(14.0);
 
         try {
             // Assets location
