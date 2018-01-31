@@ -15,9 +15,9 @@
 		//"files": [ "data/octree/dr2/dr2int5/03-test-25000-5000/particles/", "data/octree/dr2/dr2int5/03-test-25000-5000/metadata.bin" ]
 		//"files": [ "data/octree/dr2/dr2int5/04-test-10000-1000/particles/", "data/octree/dr2/dr2int5/04-test-10000-1000/metadata.bin" ]
 		//"files": [ "data/octree/dr2/dr2int5/05-test-20000-2000/particles/", "data/octree/dr2/dr2int5/05-test-20000-2000/metadata.bin" ]
-		//"files": [ "/media/tsagrista/Daten/Gaia/data/GDR2/dr2int5/out/10-full-20000-2000-7/particles/", "/media/tsagrista/Daten/Gaia/data/GDR2/dr2int5/out/10-full-20000-2000-7/metadata.bin" ]
-		//"files": [ "/media/tsagrista/Daten/Gaia/data/GDR2/dr2int5/out/11-full-30000-5000-7/particles/", "/media/tsagrista/Daten/Gaia/data/GDR2/dr2int5/out/11-full-30000-5000-7/metadata.bin" ]
-		"files": [ "/media/tsagrista/Daten/Gaia/data/GDR2/dr2int5/out/12-full-25000-4000-8.0/particles/", "/media/tsagrista/Daten/Gaia/data/GDR2/dr2int5/out/12-full-25000-4000-8.0/metadata.bin" ]
+		//"files": [ "/media/tsagrista/Daten/Gaia/data/GDR2/dr2int5/out/12-full-25000-4000-8.0/particles/", "/media/tsagrista/Daten/Gaia/data/GDR2/dr2int5/out/12-full-25000-4000-8.0/metadata.bin" ]
+		"files": [ "/media/tsagrista/Daten/Gaia/data/GDR2/dr2int5/out/14-full-25000-4000-7.0-xmatch-pm/particles/", "/media/tsagrista/Daten/Gaia/data/GDR2/dr2int5/out/14-full-25000-4000-7.0-xmatch-pm/metadata.bin" ]
+		//"files": [ "/media/tsagrista/Daten/Gaia/data/GDR2/dr2int5/out/15-full-25000-4000-7.0-xmatch-best/particles/", "/media/tsagrista/Daten/Gaia/data/GDR2/dr2int5/out/15-full-25000-4000-7.0-xmatch-best/metadata.bin" ]
 		//"files": [ "/media/tsagrista/Daten/Gaia/data/GDR2/dr2int5/out/test-pllxzero-0.29-500-7.0/particles/", "/media/tsagrista/Daten/Gaia/data/GDR2/dr2int5/out/test-pllxzero-0.29-500-7.0/metadata.bin" ]
 		
 	}

@@ -371,7 +371,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         });
 
         // BILLBOARD GALAXIES
-        AbstractRenderSystem billboardGalaxiesProc = new BillboardStarRenderSystem(RenderGroup.BILLBOARD_GAL, priority++, alphas, galaxyShader, "img/static.jpg", ComponentType.Galaxies.ordinal());
+        AbstractRenderSystem billboardGalaxiesProc = new BillboardStarRenderSystem(RenderGroup.BILLBOARD_GAL, priority++, alphas, galaxyShader, "data/tex/static.jpg", ComponentType.Galaxies.ordinal());
         billboardGalaxiesProc.setPreRunnable(blendNoDepthRunnable);
 
         // BILLBOARD SPRITES

@@ -25,8 +25,12 @@ uniform float u_time;
 #define light_decay 0.5
 
 
-vec4 galaxyTexture(vec2 tc){
-	return texture2D(u_texture0, tc);
+float average(vec4 color){
+    return (color.r + color.g + color.b) / 3.0;
+}
+
+float galtex(vec2 tc){
+    return clamp(average(texture2D(u_texture0, tc)), 0.0, 1.0);
 }
 
 float light(float distance_center, float decay) {
@@ -42,8 +46,10 @@ vec4 drawSimple(vec2 tc) {
 
 void main() {
 
-	// float factor = smoothstep(distfacinv/8.0, distfacinv, u_distance);
-	gl_FragColor = drawSimple(v_texCoords) * u_alpha;
+    //float factor = smoothstep(distfacinv/8.0, distfacinv, u_distance);
+    gl_FragColor = drawSimple(v_texCoords) * u_alpha;
+    //float val = galtex(v_texCoords);
+    //gl_FragColor = vec4(val, val, val, 1.0) * u_alpha;
 
     // Debug! - visualise depth buffer
     //gl_FragColor = vec4(vec3(gl_FragCoord.z), 1.0f);
