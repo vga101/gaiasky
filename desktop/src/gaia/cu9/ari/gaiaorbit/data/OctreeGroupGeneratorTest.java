@@ -120,9 +120,12 @@ public class OctreeGroupGeneratorTest implements IObserver {
 
     protected Map<Long, float[]> colors;
 
+    protected Array<String> logMessages;
+
     public OctreeGroupGeneratorTest() {
         super();
         colors = new HashMap<Long, float[]>();
+        logMessages = new Array<String>();
     }
 
     public void run() {
@@ -175,8 +178,10 @@ public class OctreeGroupGeneratorTest implements IObserver {
                 out.print(argstr);
                 out.println();
                 out.println();
-                out.println("OCTREE (" + octree.numNodes() + " nodes, " + octree.countObjects() + " particles)");
-                out.print(octree.toString(true));
+                for (String msg : logMessages) {
+                    out.println(msg);
+                }
+                logMessages.clear();
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -222,7 +227,7 @@ public class OctreeGroupGeneratorTest implements IObserver {
         for (StarBean s : listGaia) {
             // Check if star is also in HYG catalog
             if ((xmatchTable == null || (xmatchTable != null && !xmatchTable.containsKey(s.id)))) {
-                // Add to Gaia star to main list
+                // No hit, add to main list
                 listHip.add(s);
             } else {
                 // Keep HIP star, ignore Gaia star
@@ -362,11 +367,13 @@ public class OctreeGroupGeneratorTest implements IObserver {
                     }
                 }
             }
+            logMessages.add(message);
             System.out.println(message);
             break;
         case JAVA_EXCEPTION:
             Exception e = (Exception) data[0];
             e.printStackTrace(System.err);
+            logMessages.add(e.getMessage());
             break;
         default:
             break;
