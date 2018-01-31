@@ -14,8 +14,13 @@ import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 
 public class TGASHYGDataProvider extends AbstractStarGroupDataProvider {
-    private static final boolean dumpToDisk = true;
-    private static final String format = "csv";
+    private static boolean dumpToDisk = true;
+    private static String format = "bin";
+
+    public static void setDumpToDisk(boolean dump, String format) {
+        TGASHYGDataProvider.dumpToDisk = dump;
+        TGASHYGDataProvider.format = format;
+    }
 
     HYGDataProvider hyg;
     TGASDataProvider tgas;
@@ -24,6 +29,13 @@ public class TGASHYGDataProvider extends AbstractStarGroupDataProvider {
         super();
         hyg = new HYGDataProvider();
         tgas = new TGASDataProvider();
+    }
+
+    @Override
+    public void setParallaxOverError(double parallaxOverError) {
+        super.setParallaxOverError(parallaxOverError);
+        if (tgas != null)
+            tgas.setParallaxOverError(parallaxOverError);
     }
 
     @Override
