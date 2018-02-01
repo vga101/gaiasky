@@ -90,7 +90,7 @@ We also provide an [AUR package](https://aur.archlinux.org/packages/gaiasky/) ca
 ```
 $  yaourt -S gaiasky
 ```
-
+ 
 ##### 1.2.2.3 RPM
 
 This is the package for RPM-based distributions (Red Hat, Fedora, Mandriva, SUSE, CentOS, etc.)
