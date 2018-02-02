@@ -8,6 +8,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.lwjgl.openvr.Texture;
+import org.lwjgl.openvr.VR;
+import org.lwjgl.openvr.VRCompositor;
+
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
@@ -124,6 +128,11 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
      */
     public VRContext vrContext;
 
+    /** Loading fb **/
+    public FrameBuffer vrLoadingLeftFb, vrLoadingRightFb;
+    /** Loading texture **/
+    public Texture vrLoadingLeftTex, vrLoadingRightTex;
+
     /**
      * Maps the VR devices to model objects
      */
@@ -168,7 +177,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
     /**
      * The user interfaces
      */
-    public IGui initialGui, loadingGui, mainGui, spacecraftGui, stereoGui, debugGui, currentGui, previousGui;
+    public IGui initialGui, loadingGui, loadingGuiLeft, loadingGuiRight, mainGui, spacecraftGui, stereoGui, debugGui, currentGui, previousGui;
 
     /**
      * List of GUIs
@@ -334,6 +343,14 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
             Gdx.graphics.setWindowedMode(GlobalConf.screen.SCREEN_WIDTH, GlobalConf.screen.SCREEN_HEIGHT);
             Gdx.graphics.setVSync(GlobalConf.screen.VSYNC);
 
+            vrLoadingLeftFb = new FrameBuffer(Format.RGBA8888, vrContext.getWidth(), vrContext.getHeight(), true);
+            vrLoadingLeftTex = org.lwjgl.openvr.Texture.create();
+            vrLoadingLeftTex.set(vrLoadingLeftFb.getColorBufferTexture().getTextureObjectHandle(), VR.ETextureType_TextureType_OpenGL, VR.EColorSpace_ColorSpace_Gamma);
+
+            vrLoadingRightFb = new FrameBuffer(Format.RGBA8888, vrContext.getWidth(), vrContext.getHeight(), true);
+            vrLoadingRightTex = org.lwjgl.openvr.Texture.create();
+            vrLoadingRightTex.set(vrLoadingRightFb.getColorBufferTexture().getTextureObjectHandle(), VR.ETextureType_TextureType_OpenGL, VR.EColorSpace_ColorSpace_Gamma);
+
         } catch (Exception e) {
             // If initializing the VRContext failed, we fall back
             // to desktop only mode with a FirstPersonCameraController.
@@ -367,6 +384,24 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         initialGui = null;
         loadingGui.dispose();
         loadingGui = null;
+
+        // Dispose vr loading GUI
+        if (GlobalConf.runtime.OPENVR) {
+            loadingGuiLeft.dispose();
+            loadingGuiLeft = null;
+            loadingGuiRight.dispose();
+            loadingGuiRight = null;
+
+            vrLoadingLeftTex.clear();
+            vrLoadingLeftFb.dispose();
+            vrLoadingLeftTex = null;
+            vrLoadingLeftFb = null;
+
+            vrLoadingRightTex.clear();
+            vrLoadingRightFb.dispose();
+            vrLoadingRightTex = null;
+            vrLoadingRightFb = null;
+        }
 
         // Get attitude
         if (manager.isLoaded(ATTITUDE_FOLDER)) {
@@ -570,11 +605,25 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         } else if (LOADING) {
             if (manager.update()) {
                 doneLoading();
-
                 LOADING = false;
             } else {
                 // Display loading screen
                 renderGui(loadingGui);
+                if (GlobalConf.runtime.OPENVR) {
+                    vrContext.pollEvents();
+
+                    vrLoadingLeftFb.begin();
+                    renderGui(loadingGuiLeft);
+                    vrLoadingLeftFb.end();
+
+                    vrLoadingRightFb.begin();
+                    renderGui(loadingGuiRight);
+                    vrLoadingRightFb.end();
+
+                    /** SUBMIT TO VR COMPOSITOR **/
+                    VRCompositor.VRCompositor_Submit(VR.EVREye_Eye_Left, vrLoadingLeftTex, null, VR.EVRSubmitFlags_Submit_Default);
+                    VRCompositor.VRCompositor_Submit(VR.EVREye_Eye_Right, vrLoadingRightTex, null, VR.EVRSubmitFlags_Submit_Default);
+                }
             }
         } else {
 
@@ -811,6 +860,16 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
             loadingGui = new LoadingGui();
             loadingGui.initialize(manager);
             Gdx.input.setInputProcessor(loadingGui.getGuiStage());
+
+            // Also VR
+            if (GlobalConf.runtime.OPENVR) {
+                loadingGuiLeft = new LoadingGui(300);
+                loadingGuiLeft.initialize(manager);
+
+                loadingGuiRight = new LoadingGui(-300);
+                loadingGuiRight.initialize(manager);
+            }
+
             DSCHOSEN = true;
             LOADING = true;
 
