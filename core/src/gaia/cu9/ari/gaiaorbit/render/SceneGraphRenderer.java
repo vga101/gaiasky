@@ -114,8 +114,16 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
     public Map<ModelBody, Texture> smTexMap;
     public Map<ModelBody, Matrix4> smCombinedMap;
     public ModelBatch modelBatchDepth;
+
+    // Light glow pre-render
+    public FrameBuffer glowFb;
+    public Texture glowTex;
+    public ModelBatch modelBatchOpaque;
+
     private Vector3 aux1;
     private Vector3d aux1d;
+
+    AbstractRenderSystem billboardStarsProc;
 
     public SceneGraphRenderer() {
         super();
@@ -135,6 +143,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         manager.load("spsurface", DefaultShaderProvider.class, new DefaultShaderProviderParameter("shader/starsurface.vertex.glsl", "shader/starsurface.fragment.glsl"));
         manager.load("spbeam", DefaultShaderProvider.class, new DefaultShaderProviderParameter("shader/default.vertex.glsl", "shader/beam.fragment.glsl"));
         manager.load("spdepth", DefaultShaderProvider.class, new DefaultShaderProviderParameter("shader/normal.vertex.glsl", "shader/depth.fragment.glsl"));
+        manager.load("spopaque", DefaultShaderProvider.class, new DefaultShaderProviderParameter("shader/normal.vertex.glsl", "shader/opaque.fragment.glsl"));
         manager.load("atm", AtmosphereShaderProvider.class, new AtmosphereShaderProviderParameter("shader/atm.vertex.glsl", "shader/atm.fragment.glsl"));
         if (!Constants.webgl) {
             manager.load("atmground", GroundShaderProvider.class, new AtmosphereGroundShaderProviderParameter("shader/normal.vertex.glsl", "shader/normal.fragment.glsl"));
@@ -171,6 +180,10 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
             // Build frame buffers and arrays
             buildShadowMapData();
+        }
+
+        if (GlobalConf.postprocess.POSTPROCESS_LIGHT_SCATTERING) {
+            buildGlowData();
         }
     }
 
@@ -224,6 +237,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         ShaderProvider spsurface = manager.get("spsurface");
         ShaderProvider spbeam = manager.get("spbeam");
         ShaderProvider spdepth = manager.get("spdepth");
+        ShaderProvider spopaque = manager.get("spopaque");
 
         RenderableSorter noSorter = new RenderableSorter() {
             @Override
@@ -238,6 +252,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         ModelBatch modelBatchStar = new ModelBatch(spsurface, noSorter);
         ModelBatch modelBatchBeam = new ModelBatch(spbeam, noSorter);
         modelBatchDepth = new ModelBatch(spdepth, noSorter);
+        modelBatchOpaque = new ModelBatch(spopaque, noSorter);
 
         // Sprites
         spriteBatch = GlobalResources.spriteBatch;
@@ -322,7 +337,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         });
 
         // BILLBOARD STARS
-        AbstractRenderSystem billboardStarsProc = new BillboardStarRenderSystem(RenderGroup.BILLBOARD_STAR, priority++, alphas, starShader, "data/tex/star_glow_s.png", ComponentType.Stars.ordinal());
+        billboardStarsProc = new BillboardStarRenderSystem(RenderGroup.BILLBOARD_STAR, priority++, alphas, starShader, "data/tex/star_glow_s.png", ComponentType.Stars.ordinal());
         billboardStarsProc.setPreRunnable(blendNoDepthRunnable);
         billboardStarsProc.setPostRunnable(new RenderSystemRunnable() {
 
@@ -475,7 +490,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         renderProcesses.add(shapeProc);
         // renderProcesses.add(modelCloseUpProc);
 
-        EventManager.instance.subscribe(this, Events.TOGGLE_VISIBILITY_CMD, Events.PIXEL_RENDERER_UPDATE, Events.LINE_RENDERER_UPDATE, Events.STEREOSCOPIC_CMD, Events.CAMERA_MODE_CMD, Events.CUBEMAP360_CMD, Events.REBUILD_SHADOW_MAP_DATA_CMD);
+        EventManager.instance.subscribe(this, Events.TOGGLE_VISIBILITY_CMD, Events.PIXEL_RENDERER_UPDATE, Events.LINE_RENDERER_UPDATE, Events.STEREOSCOPIC_CMD, Events.CAMERA_MODE_CMD, Events.CUBEMAP360_CMD, Events.REBUILD_SHADOW_MAP_DATA_CMD, Events.LIGHT_SCATTERING_CMD);
 
     }
 
@@ -493,6 +508,34 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
             // Default mode
             sgr = sgrs[SGR_DEFAULT_IDX];
         }
+    }
+
+    private void renderGlowPass(ICamera camera) {
+        // Get all billboard stars
+        Array<IRenderable> stars = render_lists.get(RenderGroup.BILLBOARD_STAR).toList();
+
+        // Get all models
+        Array<IRenderable> models = render_lists.get(RenderGroup.MODEL_NORMAL).toList();
+
+        glowFb.begin();
+        Gdx.gl.glClearColor(0, 0, 0, 0);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
+
+        // Render billboard stars
+        billboardStarsProc.renderStud(stars, camera, 0);
+
+        // Render models
+        modelBatchOpaque.begin(camera.getCamera());
+        for (IRenderable model : models) {
+            ModelBody mb = (ModelBody) model;
+            mb.render(modelBatchOpaque, 1, 0);
+        }
+        modelBatchOpaque.end();
+        glowFb.end();
+
+        // Save to texture for later use
+        glowTex = glowFb.getColorBufferTexture();
+
     }
 
     private void renderShadowMap(ICamera camera) {
@@ -593,6 +636,9 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
         if (GlobalConf.scene.SHADOW_MAPPING)
             renderShadowMap(camera);
+
+        if (GlobalConf.postprocess.POSTPROCESS_LIGHT_SCATTERING && glowFb != null)
+            renderGlowPass(camera);
 
         sgr.render(this, camera, t, rw, rh, fb, ppb);
     }
@@ -798,6 +844,12 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         case REBUILD_SHADOW_MAP_DATA_CMD:
             buildShadowMapData();
             break;
+        case LIGHT_SCATTERING_CMD:
+            boolean glow = (Boolean) data[0];
+            if (glow) {
+                buildGlowData();
+            }
+            break;
         default:
             break;
         }
@@ -885,6 +937,11 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         if (candidates == null)
             candidates = new Array<ModelBody>(GlobalConf.scene.SHADOW_MAPPING_N_SHADOWS);
         candidates.clear();
+    }
+
+    private void buildGlowData() {
+        if (glowFb == null)
+            glowFb = new FrameBuffer(Format.RGBA8888, 1080, 720, true);
     }
 
     public void updateLineRenderSystem() {
