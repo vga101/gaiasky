@@ -140,10 +140,6 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
         glow.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 
         ppb.lglow = new LightGlow(lgw, lgh);
-        ppb.lglow.setScatteringIntesity(1f);
-        ppb.lglow.setScatteringSaturation(1f);
-        ppb.lglow.setBaseIntesity(1f);
-        ppb.lglow.setBias(-0.95f);
         ppb.lglow.setLightGlowTexture(glow);
         ppb.lglow.setNSamples(nsamples);
         ppb.lglow.setTextureScale(1f / GaiaSky.instance.cam.getFovFactor());
@@ -403,6 +399,7 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
             float[] lightpos = (float[]) data[1];
             float[] angles = (float[]) data[2];
             float[] colors = (float[]) data[3];
+            Texture prePass = (Texture) data[4];
 
             for (int i = 0; i < RenderType.values().length; i++) {
                 if (pps[i] != null) {
@@ -411,6 +408,8 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
                     ppb.lglow.setLightViewAngles(angles);
                     ppb.lglow.setLightColors(colors);
                     ppb.lglow.setTextureScale(1.5f / GaiaSky.instance.cam.getFovFactor());
+                    if (prePass != null)
+                        ppb.lglow.setPrePassTexture(prePass);
                 }
             }
             break;

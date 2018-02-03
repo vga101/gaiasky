@@ -250,7 +250,9 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         TooltipManager.getInstance().initialTime = 1f;
 
         // Initialise Gaia attitudes
-        manager.load(ATTITUDE_FOLDER, GaiaAttitudeServer.class, new GaiaAttitudeLoaderParameter(GlobalConf.runtime.STRIPPED_FOV_MODE ? new String[] { "OPS_RSLS_0022916_rsls_nsl_gareq1_afterFirstSpinPhaseOptimization.2.xml" } : new String[] {}));
+        manager.load(ATTITUDE_FOLDER, GaiaAttitudeServer.class, new GaiaAttitudeLoaderParameter(GlobalConf.runtime.STRIPPED_FOV_MODE
+                ? new String[] { "OPS_RSLS_0022916_rsls_nsl_gareq1_afterFirstSpinPhaseOptimization.2.xml" }
+                : new String[] {}));
 
         // Initialise hidden helper user
         HiddenHelperUser.initialize();
@@ -514,7 +516,8 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
             // Memory
             EventManager.instance.post(Events.DEBUG2, MemInfo.getUsedMemory(), MemInfo.getFreeMemory(), MemInfo.getTotalMemory(), MemInfo.getMaxMemory());
             // Observed octants
-            EventManager.instance.post(Events.DEBUG4, GLFrameBuffer.getManagedStatus() + ", Observed octants: " + OctreeNode.nOctantsObserved + ", Load queue: " + StreamingOctreeLoader.getLoadQueueSize());
+            EventManager.instance.post(Events.DEBUG4, GLFrameBuffer.getManagedStatus() + ", Observed octants: " + OctreeNode.nOctantsObserved + ", Load queue: "
+                    + StreamingOctreeLoader.getLoadQueueSize());
         }
     };
 
@@ -626,30 +629,6 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
 
         // Update scene graph
         sg.update(time, cam);
-
-        //        if (false) {
-        //            // Output 
-        //            Array<SceneGraphNode> l = new Array<SceneGraphNode>();
-        //            sg.getRoot().getChildrenByType(Planet.class, l);
-        //
-        //            String timestr = time.getTime().toString();
-        //
-        //            try {
-        //                String sep = ", ";
-        //                Vector3d position = new Vector3d();
-        //                PrintWriter writer = new PrintWriter("/tmp/solarsystem-" + timestr + ".csv", "UTF-8");
-        //                writer.println("name, x[km], y[km], z[km], radius[km], r, g, b");
-        //                for (SceneGraphNode sgn : l) {
-        //                    Planet p = (Planet) sgn;
-        //                    p.getAbsolutePosition(position).scl(Constants.U_TO_KM);
-        //                    position.mul(Coordinates.equatorialToGalactic());
-        //                    writer.println(p.name + sep + position.x + sep + position.y + sep + position.z + sep + (p.getRadius() * Constants.U_TO_KM) + sep + p.cc[0] + sep + p.cc[1] + sep + p.cc[2]);
-        //                }
-        //                writer.close();
-        //            } catch (Exception e) {
-        //                Logger.error(e);
-        //            }
-        //        }
 
     }
 

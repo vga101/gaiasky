@@ -9,9 +9,13 @@ precision mediump int;
 
 #define N 30
 
+// Current frame
 uniform sampler2D u_texture0;
 // Glow texture
 uniform sampler2D u_texture1;
+// Pre pass
+uniform sampler2D u_texture2;
+
 uniform vec2 u_viewport;
 uniform int u_nSamples;
 uniform float u_textureScale;
@@ -49,7 +53,7 @@ void main()
 {
 	 float ar = u_viewport.x / u_viewport.y;
 	 gl_FragColor = vec4(0.0);
-
+	 
 	 for (int li = 0; li < u_nLights; li++){
 	 	 float viewAngle = min(0.0001, u_lightViewAngles[li]);
 	 	 vec3 lightColor = u_lightColors[li];
@@ -62,11 +66,11 @@ void main()
 		 
 		 float lum = 0.0;
 		 for(int idx = 1; idx < u_nSamples; idx++){
-		 	lum += (texture2D(u_texture0, u_lightPositions[li] + vec2(fx(t, a) / ar, fy(t, a)))).r;
+		 	lum += (texture2D(u_texture2, u_lightPositions[li] + vec2(fx(t, a) / ar, fy(t, a)))).r;
 		 	t += dt;
 		 }
 		 
-		 vec4 star_color = texture2D(u_texture0, u_lightPositions[li] + vec2(fx(t, a) / ar, fy(t, a) * ar));
+		 vec4 star_color = texture2D(u_texture2, u_lightPositions[li] + vec2(fx(t, a) / ar, fy(t, a) * ar));
 		 lum += star_color.r;
 		 lum /= u_nSamples;
 
@@ -82,4 +86,8 @@ void main()
 		 float core_inc = (0.1 - min(0.1, dist_center)) * color_glow;
 		 gl_FragColor += vec4(color_glow * lightColor.r + core_inc, color_glow * lightColor.g + core_inc, color_glow * lightColor.b + core_inc, 1.0);
 	 }
+	 gl_FragColor += texture2D(u_texture0, v_texCoords);
+	 //gl_FragColor *= 0.00001;
+	 //gl_FragColor += texture2D(u_texture2, v_texCoords);
+
 }

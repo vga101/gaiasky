@@ -55,6 +55,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ModelBody;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
+import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
 import gaia.cu9.ari.gaiaorbit.util.ComponentTypes;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
@@ -123,6 +124,8 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
     private Vector3 aux1;
     private Vector3d aux1d;
 
+    Array<IRenderable> stars;
+
     AbstractRenderSystem billboardStarsProc;
 
     public SceneGraphRenderer() {
@@ -148,6 +151,8 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         if (!Constants.webgl) {
             manager.load("atmground", GroundShaderProvider.class, new AtmosphereGroundShaderProviderParameter("shader/normal.vertex.glsl", "shader/normal.fragment.glsl"));
         }
+
+        stars = new Array<IRenderable>();
 
         pixelRenderSystems = new AbstractRenderSystem[3];
 
@@ -377,9 +382,9 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
                             }
                         }
                     }
-                    EventManager.instance.post(Events.LIGHT_POS_2D_UPDATED, lightIndex, positions, viewAngles, colors);
+                    EventManager.instance.post(Events.LIGHT_POS_2D_UPDATED, lightIndex, positions, viewAngles, colors, glowTex);
                 } else {
-                    EventManager.instance.post(Events.LIGHT_POS_2D_UPDATED, 0, positions, viewAngles, colors);
+                    EventManager.instance.post(Events.LIGHT_POS_2D_UPDATED, 0, positions, viewAngles, colors, glowTex);
                 }
             }
 
@@ -512,7 +517,14 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
     private void renderGlowPass(ICamera camera) {
         // Get all billboard stars
-        Array<IRenderable> stars = render_lists.get(RenderGroup.BILLBOARD_STAR).toList();
+        Array<IRenderable> bbstars = render_lists.get(RenderGroup.BILLBOARD_STAR).toList();
+        stars.clear();
+        for (IRenderable st : bbstars) {
+            if (st instanceof Star) {
+                stars.add(st);
+                break;
+            }
+        }
 
         // Get all models
         Array<IRenderable> models = render_lists.get(RenderGroup.MODEL_NORMAL).toList();
@@ -531,10 +543,11 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
             mb.render(modelBatchOpaque, 1, 0);
         }
         modelBatchOpaque.end();
-        glowFb.end();
 
         // Save to texture for later use
         glowTex = glowFb.getColorBufferTexture();
+
+        glowFb.end();
 
     }
 
@@ -641,6 +654,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
             renderGlowPass(camera);
 
         sgr.render(this, camera, t, rw, rh, fb, ppb);
+
     }
 
     /**
