@@ -515,129 +515,133 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         }
     }
 
-    private void renderGlowPass(ICamera camera) {
-        // Get all billboard stars
-        Array<IRenderable> bbstars = render_lists.get(RenderGroup.BILLBOARD_STAR).toList();
-        stars.clear();
-        for (IRenderable st : bbstars) {
-            if (st instanceof Star) {
-                stars.add(st);
-                break;
+    public void renderGlowPass(ICamera camera) {
+        if (GlobalConf.postprocess.POSTPROCESS_LIGHT_SCATTERING && glowFb != null) {
+            // Get all billboard stars
+            Array<IRenderable> bbstars = render_lists.get(RenderGroup.BILLBOARD_STAR).toList();
+            stars.clear();
+            for (IRenderable st : bbstars) {
+                if (st instanceof Star) {
+                    stars.add(st);
+                    break;
+                }
             }
+
+            // Get all models
+            Array<IRenderable> models = render_lists.get(RenderGroup.MODEL_NORMAL).toList();
+
+            glowFb.begin();
+            Gdx.gl.glClearColor(0, 0, 0, 0);
+            Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
+
+            // Render billboard stars
+            billboardStarsProc.renderStud(stars, camera, 0);
+
+            // Render models
+            modelBatchOpaque.begin(camera.getCamera());
+            for (IRenderable model : models) {
+                ModelBody mb = (ModelBody) model;
+                mb.render(modelBatchOpaque, 1, 0);
+            }
+            modelBatchOpaque.end();
+
+            // Save to texture for later use
+            glowTex = glowFb.getColorBufferTexture();
+
+            glowFb.end();
         }
-
-        // Get all models
-        Array<IRenderable> models = render_lists.get(RenderGroup.MODEL_NORMAL).toList();
-
-        glowFb.begin();
-        Gdx.gl.glClearColor(0, 0, 0, 0);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
-
-        // Render billboard stars
-        billboardStarsProc.renderStud(stars, camera, 0);
-
-        // Render models
-        modelBatchOpaque.begin(camera.getCamera());
-        for (IRenderable model : models) {
-            ModelBody mb = (ModelBody) model;
-            mb.render(modelBatchOpaque, 1, 0);
-        }
-        modelBatchOpaque.end();
-
-        // Save to texture for later use
-        glowTex = glowFb.getColorBufferTexture();
-
-        glowFb.end();
 
     }
 
     private void renderShadowMap(ICamera camera) {
-        /**
-         * Shadow mapping here?
-         * <ul>
-         * <li>Extract model bodies (front)</li>
-         * <li>Work out light direction</li>
-         * <li>Set orthographic camera at set distance from bodies, direction of
-         * light, clip planes</li>
-         * <li>Render depth map to frame buffer (fb)</li>
-         * <li>Send frame buffer texture in to ModelBatchRenderSystem along with
-         * light position, direction, clip planes and light camera combined
-         * matrix</li>
-         * <li>Compare real distance from light to texture sample, render shadow
-         * if different</li>
-         * </ul>
-         */
-        Array<IRenderable> models = render_lists.get(RenderGroup.MODEL_NORMAL).toList();
-        models.sort((a, b) -> {
-            return Double.compare(((ModelBody) a).getDistToCamera(), ((ModelBody) b).getDistToCamera());
-        });
+        if (GlobalConf.scene.SHADOW_MAPPING) {
+            /**
+             * Shadow mapping here?
+             * <ul>
+             * <li>Extract model bodies (front)</li>
+             * <li>Work out light direction</li>
+             * <li>Set orthographic camera at set distance from bodies, direction of
+             * light, clip planes</li>
+             * <li>Render depth map to frame buffer (fb)</li>
+             * <li>Send frame buffer texture in to ModelBatchRenderSystem along with
+             * light position, direction, clip planes and light camera combined
+             * matrix</li>
+             * <li>Compare real distance from light to texture sample, render shadow
+             * if different</li>
+             * </ul>
+             */
+            Array<IRenderable> models = render_lists.get(RenderGroup.MODEL_NORMAL).toList();
+            models.sort((a, b) -> {
+                return Double.compare(((ModelBody) a).getDistToCamera(), ((ModelBody) b).getDistToCamera());
+            });
 
-        int shadowNRender = GlobalConf.program.STEREOSCOPIC_MODE ? 2 : GlobalConf.program.CUBEMAP360_MODE ? 6 : 1;
+            int shadowNRender = GlobalConf.program.STEREOSCOPIC_MODE ? 2 : GlobalConf.program.CUBEMAP360_MODE ? 6 : 1;
 
-        if (candidates != null && shadowMapFb != null && smCombinedMap != null) {
-            candidates.clear();
-            int num = 0;
-            for (int i = 0; i < models.size; i++) {
-                ModelBody mr = (ModelBody) models.get(i);
-                if (mr.isShadow()) {
-                    candidates.insert(num, mr);
-                    mr.shadow = 0;
-                    num++;
-                    if (num == GlobalConf.scene.SHADOW_MAPPING_N_SHADOWS)
-                        break;
+            if (candidates != null && shadowMapFb != null && smCombinedMap != null) {
+                candidates.clear();
+                int num = 0;
+                for (int i = 0; i < models.size; i++) {
+                    ModelBody mr = (ModelBody) models.get(i);
+                    if (mr.isShadow()) {
+                        candidates.insert(num, mr);
+                        mr.shadow = 0;
+                        num++;
+                        if (num == GlobalConf.scene.SHADOW_MAPPING_N_SHADOWS)
+                            break;
+                    }
                 }
-            }
 
-            // Clear maps
-            smTexMap.clear();
-            smCombinedMap.clear();
-            int i = 0;
-            for (ModelBody candidate : candidates) {
-                // Yes!
-                candidate.shadow = shadowNRender;
+                // Clear maps
+                smTexMap.clear();
+                smCombinedMap.clear();
+                int i = 0;
+                for (ModelBody candidate : candidates) {
+                    // Yes!
+                    candidate.shadow = shadowNRender;
 
-                Vector3 camDir = aux1.set(candidate.mc.dlight.direction);
-                // Direction is that of the light
-                cameraLight.direction.set(camDir);
+                    Vector3 camDir = aux1.set(candidate.mc.dlight.direction);
+                    // Direction is that of the light
+                    cameraLight.direction.set(camDir);
 
-                double radius = candidate.getRadius();
-                // Distance from camera to object, radius * sv[0]
-                double distance = radius * candidate.shadowMapValues[0];
-                // Position, factor of radius
-                candidate.getAbsolutePosition(aux1d);
-                aux1d.sub(camera.getPos()).sub(camDir.nor().scl((float) distance));
-                aux1d.put(cameraLight.position);
-                // Up is perpendicular to dir
-                if (cameraLight.direction.y != 0 || cameraLight.direction.z != 0)
-                    aux1.set(1, 0, 0);
-                else
-                    aux1.set(0, 1, 0);
-                cameraLight.up.set(cameraLight.direction).crs(aux1);
+                    double radius = candidate.getRadius();
+                    // Distance from camera to object, radius * sv[0]
+                    double distance = radius * candidate.shadowMapValues[0];
+                    // Position, factor of radius
+                    candidate.getAbsolutePosition(aux1d);
+                    aux1d.sub(camera.getPos()).sub(camDir.nor().scl((float) distance));
+                    aux1d.put(cameraLight.position);
+                    // Up is perpendicular to dir
+                    if (cameraLight.direction.y != 0 || cameraLight.direction.z != 0)
+                        aux1.set(1, 0, 0);
+                    else
+                        aux1.set(0, 1, 0);
+                    cameraLight.up.set(cameraLight.direction).crs(aux1);
 
-                // Near is sv[1]*radius before the object
-                cameraLight.near = (float) (distance - radius * candidate.shadowMapValues[1]);
-                // Far is sv[2]*radius after the object
-                cameraLight.far = (float) (distance + radius * candidate.shadowMapValues[2]);
+                    // Near is sv[1]*radius before the object
+                    cameraLight.near = (float) (distance - radius * candidate.shadowMapValues[1]);
+                    // Far is sv[2]*radius after the object
+                    cameraLight.far = (float) (distance + radius * candidate.shadowMapValues[2]);
 
-                // Update cam
-                cameraLight.update(false);
+                    // Update cam
+                    cameraLight.update(false);
 
-                // Render model depth map to frame buffer
-                shadowMapFb[i].begin();
-                Gdx.gl.glClearColor(0, 0, 0, 0);
-                Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
-                modelBatchDepth.begin(cameraLight);
-                candidate.render(modelBatchDepth, 1, 0);
-                modelBatchDepth.end();
+                    // Render model depth map to frame buffer
+                    shadowMapFb[i].begin();
+                    Gdx.gl.glClearColor(0, 0, 0, 0);
+                    Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
+                    modelBatchDepth.begin(cameraLight);
+                    candidate.render(modelBatchDepth, 1, 0);
+                    modelBatchDepth.end();
 
-                // Save frame buffer and combined matrix
-                candidate.shadow = shadowNRender;
-                shadowMapCombined[i].set(cameraLight.combined);
-                smCombinedMap.put(candidate, shadowMapCombined[i]);
-                smTexMap.put(candidate, shadowMapFb[i].getColorBufferTexture());
+                    // Save frame buffer and combined matrix
+                    candidate.shadow = shadowNRender;
+                    shadowMapCombined[i].set(cameraLight.combined);
+                    smCombinedMap.put(candidate, shadowMapCombined[i]);
+                    smTexMap.put(candidate, shadowMapFb[i].getColorBufferTexture());
 
-                shadowMapFb[i].end();
-                i++;
+                    shadowMapFb[i].end();
+                    i++;
+                }
             }
         }
     }
@@ -647,10 +651,11 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         if (sgr == null)
             initSGR(camera);
 
-        if (GlobalConf.scene.SHADOW_MAPPING)
-            renderShadowMap(camera);
+        // Shadow maps are the same for all
+        renderShadowMap(camera);
 
-        if (GlobalConf.postprocess.POSTPROCESS_LIGHT_SCATTERING && glowFb != null)
+        // In stereo and cubemap modes, the glow pass is rendered in the SGR itself
+        if (!GlobalConf.program.STEREOSCOPIC_MODE && !GlobalConf.program.CUBEMAP360_MODE)
             renderGlowPass(camera);
 
         sgr.render(this, camera, t, rw, rh, fb, ppb);
