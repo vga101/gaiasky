@@ -119,19 +119,19 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
         int lgw, lgh;
         Texture glow;
         if (GlobalConf.scene.isHighQuality()) {
-            nsamples = 45;
+            nsamples = 16;
             lgw = 1920;
             lgh = Math.round(lgw / ar);
             glow = manager.get("data/tex/star_glow.png");
             Glow.N = 70;
         } else if (GlobalConf.scene.isNormalQuality()) {
-            nsamples = 15;
+            nsamples = 8;
             lgw = 1280;
             lgh = Math.round(lgw / ar);
             glow = manager.get("data/tex/star_glow_s.png");
             Glow.N = 30;
         } else {
-            nsamples = 10;
+            nsamples = 4;
             lgw = 1000;
             lgh = Math.round(lgw / ar);
             glow = manager.get("data/tex/star_glow_s.png");
