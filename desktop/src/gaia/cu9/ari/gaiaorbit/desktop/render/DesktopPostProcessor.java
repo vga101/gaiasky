@@ -163,15 +163,15 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
         lburst.setFilter(TextureFilter.Linear, TextureFilter.Linear);
         ppb.lens = new LensFlare2((int) (width * lensFboScale), (int) (height * lensFboScale));
         ppb.lens.setGhosts(nghosts);
-        ppb.lens.setHaloWidth(0.4f);
+        ppb.lens.setHaloWidth(0.5f);
         ppb.lens.setLensColorTexture(lcol);
         ppb.lens.setLensDirtTexture(ldirt);
         ppb.lens.setLensStarburstTexture(lburst);
         ppb.lens.setFlareIntesity(GlobalConf.postprocess.POSTPROCESS_LENS_FLARE ? flareIntensity : 0f);
-        ppb.lens.setFlareSaturation(0.5f);
+        ppb.lens.setFlareSaturation(0.8f);
         ppb.lens.setBaseIntesity(1f);
         ppb.lens.setBias(-0.98f);
-        ppb.lens.setBlurPasses(40);
+        ppb.lens.setBlurPasses(20);
         ppb.lens.setEnabled(true);
         ppb.pp.addEffect(ppb.lens);
 
