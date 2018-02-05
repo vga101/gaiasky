@@ -94,6 +94,8 @@ public class SGRCubemap extends SGRAbstract implements ISGR, IObserver {
         cam.direction.set(dirbak).rotate(upbak, -90);
         cam.update();
 
+        sgr.renderGlowPass(camera);
+
         postproc = postprocessCapture(ppb, xposfb, wh, wh);
         sgr.renderScene(camera, t, rc);
         postprocessRender(ppb, xposfb, postproc, camera, rw, rh);
@@ -104,6 +106,8 @@ public class SGRCubemap extends SGRAbstract implements ISGR, IObserver {
         cam.up.set(upbak);
         cam.direction.set(dirbak).rotate(upbak, 90);
         cam.update();
+
+        sgr.renderGlowPass(camera);
 
         postproc = postprocessCapture(ppb, xnegfb, wh, wh);
         sgr.renderScene(camera, t, rc);
@@ -119,6 +123,8 @@ public class SGRCubemap extends SGRAbstract implements ISGR, IObserver {
         cam.up.set(upbak).rotate(aux1, 90);
         cam.update();
 
+        sgr.renderGlowPass(camera);
+
         postproc = postprocessCapture(ppb, yposfb, wh, wh);
         sgr.renderScene(camera, t, rc);
         postprocessRender(ppb, yposfb, postproc, camera, rw, rh);
@@ -133,6 +139,8 @@ public class SGRCubemap extends SGRAbstract implements ISGR, IObserver {
         cam.up.set(upbak).rotate(aux1, -90);
         cam.update();
 
+        sgr.renderGlowPass(camera);
+
         postproc = postprocessCapture(ppb, ynegfb, wh, wh);
         sgr.renderScene(camera, t, rc);
         postprocessRender(ppb, ynegfb, postproc, camera, rw, rh);
@@ -144,6 +152,8 @@ public class SGRCubemap extends SGRAbstract implements ISGR, IObserver {
         cam.up.set(upbak);
         cam.update();
 
+        sgr.renderGlowPass(camera);
+
         postproc = postprocessCapture(ppb, zposfb, wh, wh);
         sgr.renderScene(camera, t, rc);
         postprocessRender(ppb, zposfb, postproc, camera, rw, rh);
@@ -154,6 +164,8 @@ public class SGRCubemap extends SGRAbstract implements ISGR, IObserver {
         cam.up.set(upbak);
         cam.direction.set(dirbak).rotate(upbak, -180);
         cam.update();
+
+        sgr.renderGlowPass(camera);
 
         postproc = postprocessCapture(ppb, znegfb, wh, wh);
         sgr.renderScene(camera, t, rc);

@@ -1,5 +1,6 @@
 octree/
 catalog/
+gdr2hip/
 tgas_*/
 orbits_asteroids_extra*.json
 kepler-exoplanets.csv

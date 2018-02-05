@@ -154,6 +154,7 @@ public class Particle extends CelestialBody implements IStarFocus, IPointRendera
         this.absmag = absmag;
         this.colorbv = colorbv;
         this.id = starid;
+
         if (this.name == null) {
             randomName = true;
             this.name = "star_" + rnd.nextInt(10000000);
@@ -338,7 +339,7 @@ public class Particle extends CelestialBody implements IStarFocus, IPointRendera
             }
             computedSize = this.size * (dist / this.radius) * Constants.THRESHOLD_DOWN;
         }
-        computedSize *= GlobalConf.scene.STAR_BRIGHTNESS * 0.18;
+        computedSize *= GlobalConf.scene.STAR_BRIGHTNESS * 0.14;
 
         return (float) computedSize;
     }

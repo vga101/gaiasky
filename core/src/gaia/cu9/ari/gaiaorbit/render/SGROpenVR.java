@@ -142,6 +142,8 @@ public class SGROpenVR extends SGRAbstract implements ISGR, IObserver {
             // Camera to left
             updateCamera((NaturalCamera) camera.getCurrent(), camera.getCamera(), 0, false, rc, camnearbak);
 
+            sgr.renderGlowPass(camera);
+
             boolean postproc = postprocessCapture(ppb, fbLeft, rw, rh);
 
             // Render scene
@@ -166,6 +168,8 @@ public class SGROpenVR extends SGRAbstract implements ISGR, IObserver {
 
             // Camera to right
             updateCamera((NaturalCamera) camera.getCurrent(), camera.getCamera(), 1, false, rc, camnearbak);
+
+            sgr.renderGlowPass(camera);
 
             postproc = postprocessCapture(ppb, fbRight, rw, rh);
 

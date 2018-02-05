@@ -5,10 +5,10 @@ precision mediump float;
 #define LOWP 
 #endif
 
-//Renders a depth map for the shadow mapping algorithm
+// Renders all black for the occlusion testing
 void main() {
 
-    gl_FragColor = vec4(gl_FragCoord.z, 0.0, 0.0, 1.0);
+    gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
 
     // Debug! - vectors
     //float theta = acos(L.z); // in [0..Pi]

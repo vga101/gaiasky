@@ -129,22 +129,23 @@ public class SGRStereoscopic extends SGRAbstract implements ISGR, IObserver {
             FrameBuffer fbmain = getFrameBuffer(rw, rh, 0);
 
             /** LEFT EYE **/
-            FrameBuffer fb1 = getFrameBuffer(rw, rh, 1);
-            boolean postproc = postprocessCapture(ppb, fb1, rw, rh);
 
             // Camera to the left
             if (movecam) {
                 moveCamera(camera, sideRemainder, side, sideCapped, dirangleDeg, false);
             }
             camera.setCameraStereoLeft(cam);
+
+            sgr.renderGlowPass(camera);
+
+            FrameBuffer fb1 = getFrameBuffer(rw, rh, 1);
+            boolean postproc = postprocessCapture(ppb, fb1, rw, rh);
             sgr.renderScene(camera, t, rc);
 
             postprocessRender(ppb, fb1, postproc, camera, rw, rh);
             Texture texLeft = fb1.getColorBufferTexture();
 
             /** RIGHT EYE **/
-            FrameBuffer fb2 = getFrameBuffer(rw, rh, 2);
-            postproc = postprocessCapture(ppb, fb2, rw, rh);
 
             // Camera to the right
             if (movecam) {
@@ -152,6 +153,11 @@ public class SGRStereoscopic extends SGRAbstract implements ISGR, IObserver {
                 moveCamera(camera, sideRemainder, side, sideCapped, dirangleDeg, true);
             }
             camera.setCameraStereoRight(cam);
+
+            sgr.renderGlowPass(camera);
+
+            FrameBuffer fb2 = getFrameBuffer(rw, rh, 2);
+            postproc = postprocessCapture(ppb, fb2, rw, rh);
             sgr.renderScene(camera, t, rc);
 
             postprocessRender(ppb, fb2, postproc, camera, rw, rh);
@@ -186,15 +192,16 @@ public class SGRStereoscopic extends SGRAbstract implements ISGR, IObserver {
             viewport.setScreenBounds(0, 0, rw / 2, rh);
             viewport.apply();
 
-            FrameBuffer fb3d = getFrameBuffer(rw / 2, rh);
-
-            boolean postproc = postprocessCapture(ppb, fb3d, rw / 2, rh);
-
             // Camera to left
             if (movecam) {
                 moveCamera(camera, sideRemainder, side, sideCapped, dirangleDeg, changesides);
             }
             camera.setCameraStereoLeft(cam);
+
+            sgr.renderGlowPass(camera);
+
+            FrameBuffer fb3d = getFrameBuffer(rw / 2, rh);
+            boolean postproc = postprocessCapture(ppb, fb3d, rw / 2, rh);
             sgr.renderScene(camera, t, rc);
 
             Texture tex = null;
@@ -218,14 +225,16 @@ public class SGRStereoscopic extends SGRAbstract implements ISGR, IObserver {
             viewport.setScreenBounds(rw / 2, 0, rw / 2, rh);
             viewport.apply();
 
-            postproc = postprocessCapture(ppb, fb3d, rw / 2, rh);
-
             // Camera to right
             if (movecam) {
                 restoreCameras(camera, cam, backupPosd, backupPos, backupDir);
                 moveCamera(camera, sideRemainder, side, sideCapped, dirangleDeg, !changesides);
             }
             camera.setCameraStereoRight(cam);
+
+            sgr.renderGlowPass(camera);
+
+            postproc = postprocessCapture(ppb, fb3d, rw / 2, rh);
             sgr.renderScene(camera, t, rc);
 
             postprocessRender(ppb, fb3d, postproc, camera, rw / 2, rh);

@@ -9,6 +9,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.TimeUtils;
 
 import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
@@ -25,16 +26,30 @@ import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
 
 /**
  * Contains the infrastructure common to all multifile octree loaders which
- * streams data on-demand.
+ * streams data on-demand from disk and unloads unused data.
  * 
  * @author tsagrista
  *
  */
 public abstract class StreamingOctreeLoader implements IObserver, ISceneGraphLoader {
     /**
+     * Data will be pre-loaded at startup down to this octree depth.
+     */
+    protected static final int PRELOAD_DEPTH = 3;
+    /**
      * Default load queue size in octants
      */
-    protected static final int LOAD_QUEUE_MAX_SIZE = 100000;
+    protected static final int LOAD_QUEUE_MAX_SIZE = 10000;
+
+    /**
+     * Minimum time to pass to be able to clear the queue again
+     */
+    protected static final long MIN_QUEUE_CLEAR_MS = 2000;
+
+    /**
+     * Maximum number of pages to send to load every batch
+     **/
+    protected static final int MAX_LOAD_CHUNK = 50;
 
     public static StreamingOctreeLoader instance;
 
@@ -48,6 +63,9 @@ public abstract class StreamingOctreeLoader implements IObserver, ISceneGraphLoa
 
     /** Whether loading is paused or not **/
     protected boolean loadingPaused = false;
+
+    /** Last time of a queue clear event went through **/
+    protected long lastQueueClearMs = 0;
 
     /**
      * This queue is sorted ascending by access date, so that we know which
@@ -69,7 +87,11 @@ public abstract class StreamingOctreeLoader implements IObserver, ISceneGraphLoa
     protected DaemonLoader daemon;
 
     public StreamingOctreeLoader() {
-        maxLoadedStars = 10000000;
+        // TODO Use memory info to work this figure out
+        // We assume 1Gb of graphics memory
+        // GPU ~ 32 byte/star
+        // CPU ~ 136 byte/star
+        maxLoadedStars = 6000000;
 
         toLoadQueue = new ArrayBlockingQueue<OctreeNode>(LOAD_QUEUE_MAX_SIZE);
         toUnloadQueue = new ArrayBlockingQueue<OctreeNode>(LOAD_QUEUE_MAX_SIZE);
@@ -161,6 +183,34 @@ public abstract class StreamingOctreeLoader implements IObserver, ISceneGraphLoa
     }
 
     /**
+     * Clears the current load queue
+     */
+    public static void clearQueue() {
+        if (instance != null) {
+            if (TimeUtils.millis() - instance.lastQueueClearMs > MIN_QUEUE_CLEAR_MS) {
+                instance.emptyLoadQueue();
+                instance.lastQueueClearMs = TimeUtils.millis();
+            }
+        }
+    }
+
+    public static int getLoadQueueSize() {
+        if (instance != null) {
+            return instance.toLoadQueue.size();
+        } else {
+            return -1;
+        }
+    }
+
+    public static int getNLoadedStars() {
+        if (instance != null) {
+            return instance.nLoadedStars;
+        } else {
+            return -1;
+        }
+    }
+
+    /**
      * Moves the octant to the end of the unload queue
      * 
      * @param octant
@@ -168,6 +218,20 @@ public abstract class StreamingOctreeLoader implements IObserver, ISceneGraphLoa
     public static void touch(OctreeNode octant) {
         if (instance != null) {
             instance.touchOctant(octant);
+        }
+    }
+
+    /**
+     * Removes all octants from the current load queue. This happens when the
+     * camera viewport changes radically (velocity is high, direction changes a
+     * lot, etc.) so that the old octants are dropped and newly observed octants
+     * are loaded right away
+     */
+    public void emptyLoadQueue() {
+        int n = toLoadQueue.size();
+        if (n > 0) {
+            toLoadQueue.clear();
+            Logger.info(I18n.bundle.format("notif.loadingoctants.emtpied", n));
         }
     }
 
@@ -192,7 +256,9 @@ public abstract class StreamingOctreeLoader implements IObserver, ISceneGraphLoa
         if (toUnloadQueue.contains(octant)) {
             toUnloadQueue.remove(octant);
         }
-        toUnloadQueue.offer(octant);
+        // Only attempt to unload the octants with a depth larger than preload_depth
+        if (octant.depth > PRELOAD_DEPTH)
+            toUnloadQueue.offer(octant);
     }
 
     /**
@@ -254,10 +320,17 @@ public abstract class StreamingOctreeLoader implements IObserver, ISceneGraphLoa
      */
     public int loadOctants(final Array<OctreeNode> octants, final AbstractOctreeWrapper octreeWrapper) throws IOException {
         int loaded = 0;
-        for (OctreeNode octant : octants)
-            if (loadOctant(octant, octreeWrapper, true))
-                loaded++;
-        flushLoadedIds();
+        if (octants.size > 0) {
+            int i = 0;
+            OctreeNode octant = octants.get(0);
+            while (i < octants.size) {
+                if (loadOctant(octant, octreeWrapper, true))
+                    loaded++;
+                i += 1;
+                octant = octants.get(i);
+            }
+            flushLoadedIds();
+        }
         return loaded;
     }
 
@@ -271,22 +344,21 @@ public abstract class StreamingOctreeLoader implements IObserver, ISceneGraphLoa
         synchronized (octant) {
             Array<AbstractPositionEntity> objects = octant.objects;
             if (objects != null) {
-                for (AbstractPositionEntity object : objects) {
-                    object.octant = null;
-                    octreeWrapper.removeParenthood(object);
-                    // Aux info
-                    if (GaiaSky.instance != null && GaiaSky.instance.sg != null)
-                        GaiaSky.instance.sg.removeNodeAuxiliaryInfo(object);
+                Gdx.app.postRunnable(() -> {
+                    for (AbstractPositionEntity object : objects) {
+                        object.dispose();
+                        object.octant = null;
+                        octreeWrapper.removeParenthood(object);
+                        // Aux info
+                        if (GaiaSky.instance != null && GaiaSky.instance.sg != null)
+                            GaiaSky.instance.sg.removeNodeAuxiliaryInfo(object);
 
-                    nLoadedStars -= object.getStarCount();
-
-                    // Stop thread in star groups
-                    object.dispose();
-
-                }
+                        nLoadedStars -= object.getStarCount();
+                    }
+                    objects.clear();
+                    octant.setStatus(LoadStatus.NOT_LOADED);
+                });
             }
-            objects.clear();
-            octant.setStatus(LoadStatus.NOT_LOADED);
 
         }
     }
@@ -338,9 +410,11 @@ public abstract class StreamingOctreeLoader implements IObserver, ISceneGraphLoa
                 /** ----------- PROCESS OCTANTS ----------- **/
                 while (!instance.toLoadQueue.isEmpty()) {
                     toLoad.clear();
-                    while (instance.toLoadQueue.peek() != null) {
+                    int i = 0;
+                    while (instance.toLoadQueue.peek() != null && i <= MAX_LOAD_CHUNK) {
                         OctreeNode octant = (OctreeNode) instance.toLoadQueue.poll();
                         toLoad.add(octant);
+                        i++;
                     }
 
                     // Load octants if any
@@ -351,19 +425,28 @@ public abstract class StreamingOctreeLoader implements IObserver, ISceneGraphLoa
 
                             Logger.debug(I18n.bundle.format("notif.loadingoctants.finished", loaded));
                         } catch (Exception e) {
-                            Logger.error(I18n.bundle.get("notif.loadingoctants.fail"));
+                            // This will happen when the queue has been cleared during processing
+                            Logger.debug(I18n.bundle.get("notif.loadingoctants.fail"));
                         }
                     }
 
                     // Release resources if needed
-                    while (loader.nLoadedStars >= loader.maxLoadedStars) {
-                        // Get first in queue (unaccessed for the longest time)
-                        // and release it
-                        OctreeNode octant = loader.toUnloadQueue.poll();
-                        if (octant != null && octant.getStatus() == LoadStatus.LOADED) {
-                            loader.unloadOctant(octant, octreeWrapper);
+                    int nUnloaded = 0;
+                    int nStars = loader.nLoadedStars;
+                    if (running && nStars >= loader.maxLoadedStars)
+                        while (true) {
+                            // Get first in queue (unaccessed for the longest time)
+                            // and release it
+                            OctreeNode octant = loader.toUnloadQueue.poll();
+                            if (octant != null && octant.getStatus() == LoadStatus.LOADED) {
+                                loader.unloadOctant(octant, octreeWrapper);
+                            }
+                            AbstractPositionEntity sg = octant.objects.get(0);
+                            nUnloaded += sg.getStarCount();
+                            if (nStars - nUnloaded < loader.maxLoadedStars * 0.85) {
+                                break;
+                            }
                         }
-                    }
 
                     Gdx.app.postRunnable(() -> {
                         // Update constellations :S

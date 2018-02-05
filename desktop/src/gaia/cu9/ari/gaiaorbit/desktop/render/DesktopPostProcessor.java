@@ -42,6 +42,8 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
     float flareIntensity = 0.4f;
     // Number of flares
     int nghosts = 6;
+    // Number of samples for the light glow
+    int lglowNSamples = 1;
 
     Vector3d auxd, prevCampos;
     Vector3 auxf;
@@ -80,7 +82,7 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
         if (GlobalConf.frame.isRedrawMode())
             pps[RenderType.frame.index] = newPostProcessor(getWidth(RenderType.frame), getHeight(RenderType.frame), manager);
 
-        EventManager.instance.subscribe(this, Events.SCREENSHOT_SIZE_UDPATE, Events.FRAME_SIZE_UDPATE, Events.BLOOM_CMD, Events.LENS_FLARE_CMD, Events.MOTION_BLUR_CMD, Events.LIGHT_POS_2D_UPDATED, Events.LIGHT_SCATTERING_CMD, Events.FISHEYE_CMD, Events.CAMERA_MOTION_UPDATED, Events.CUBEMAP360_CMD, Events.ANTIALIASING_CMD, Events.BRIGHTNESS_CMD, Events.CONTRAST_CMD, Events.STEREO_PROFILE_CMD, Events.STEREOSCOPIC_CMD, Events.FPS_INFO);
+        EventManager.instance.subscribe(this, Events.SCREENSHOT_SIZE_UDPATE, Events.FRAME_SIZE_UDPATE, Events.BLOOM_CMD, Events.LENS_FLARE_CMD, Events.MOTION_BLUR_CMD, Events.LIGHT_POS_2D_UPDATED, Events.LIGHT_SCATTERING_CMD, Events.FISHEYE_CMD, Events.CAMERA_MOTION_UPDATED, Events.CUBEMAP360_CMD, Events.ANTIALIASING_CMD, Events.BRIGHTNESS_CMD, Events.CONTRAST_CMD, Events.STEREO_PROFILE_CMD, Events.STEREOSCOPIC_CMD, Events.FPS_INFO, Events.FOV_CHANGE_NOTIFICATION);
     }
 
     private int getWidth(RenderType type) {
@@ -115,23 +117,22 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
         ppb.pp = new PostProcessor(width, height, true, false, true);
 
         // LIGHT GLOW
-        int nsamples;
         int lgw, lgh;
         Texture glow;
         if (GlobalConf.scene.isHighQuality()) {
-            nsamples = 45;
-            lgw = 1920;
-            lgh = Math.round(lgw / ar);
-            glow = manager.get("data/tex/star_glow.png");
-            Glow.N = 70;
-        } else if (GlobalConf.scene.isNormalQuality()) {
-            nsamples = 15;
+            lglowNSamples = 12;
             lgw = 1280;
             lgh = Math.round(lgw / ar);
-            glow = manager.get("data/tex/star_glow_s.png");
+            glow = manager.get("data/tex/star_glow.png");
             Glow.N = 30;
+        } else if (GlobalConf.scene.isNormalQuality()) {
+            lglowNSamples = 8;
+            lgw = 1000;
+            lgh = Math.round(lgw / ar);
+            glow = manager.get("data/tex/star_glow_s.png");
+            Glow.N = 20;
         } else {
-            nsamples = 10;
+            lglowNSamples = 4;
             lgw = 1000;
             lgh = Math.round(lgw / ar);
             glow = manager.get("data/tex/star_glow_s.png");
@@ -140,13 +141,9 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
         glow.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 
         ppb.lglow = new LightGlow(lgw, lgh);
-        ppb.lglow.setScatteringIntesity(1f);
-        ppb.lglow.setScatteringSaturation(1f);
-        ppb.lglow.setBaseIntesity(1f);
-        ppb.lglow.setBias(-0.95f);
         ppb.lglow.setLightGlowTexture(glow);
-        ppb.lglow.setNSamples(nsamples);
-        ppb.lglow.setTextureScale(1f / GaiaSky.instance.cam.getFovFactor());
+        ppb.lglow.setNSamples(lglowNSamples);
+        ppb.lglow.setTextureScale(0.9f / GaiaSky.instance.cam.getFovFactor());
         ppb.lglow.setEnabled(GlobalConf.postprocess.POSTPROCESS_LIGHT_SCATTERING);
         ppb.pp.addEffect(ppb.lglow);
 
@@ -167,15 +164,15 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
         lburst.setFilter(TextureFilter.Linear, TextureFilter.Linear);
         ppb.lens = new LensFlare2((int) (width * lensFboScale), (int) (height * lensFboScale));
         ppb.lens.setGhosts(nghosts);
-        ppb.lens.setHaloWidth(0.4f);
+        ppb.lens.setHaloWidth(0.5f);
         ppb.lens.setLensColorTexture(lcol);
         ppb.lens.setLensDirtTexture(ldirt);
         ppb.lens.setLensStarburstTexture(lburst);
         ppb.lens.setFlareIntesity(GlobalConf.postprocess.POSTPROCESS_LENS_FLARE ? flareIntensity : 0f);
-        ppb.lens.setFlareSaturation(0.5f);
+        ppb.lens.setFlareSaturation(0.7f);
         ppb.lens.setBaseIntesity(1f);
         ppb.lens.setBias(-0.98f);
-        ppb.lens.setBlurPasses(40);
+        ppb.lens.setBlurPasses(30);
         ppb.lens.setEnabled(true);
         ppb.pp.addEffect(ppb.lens);
 
@@ -282,6 +279,15 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
     @Override
     public void notify(Events event, final Object... data) {
         switch (event) {
+        case FOV_CHANGE_NOTIFICATION:
+            float newfov = (Float) data[0];
+            for (int i = 0; i < RenderType.values().length; i++) {
+                if (pps[i] != null) {
+                    PostProcessBean ppb = pps[i];
+                    ppb.lglow.setNSamples(newfov > 65 ? 1 : lglowNSamples);
+                }
+            }
+            break;
         case SCREENSHOT_SIZE_UDPATE:
             if (pps != null && GlobalConf.screenshot.isRedrawMode()) {
                 int neww = (Integer) data[0];
@@ -352,6 +358,7 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
                 if (pps[i] != null) {
                     PostProcessBean ppb = pps[i];
                     ppb.fisheye.setEnabled(active);
+                    ppb.lglow.setNSamples(active ? 1 : lglowNSamples);
                 }
             }
             break;
@@ -393,6 +400,7 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
                     PostProcessBean ppb = pps[i];
                     ppb.motionblur.setBlurOpacity(!enabled ? 0 : GlobalConf.postprocess.POSTPROCESS_MOTION_BLUR);
                     ppb.motionblur.setEnabled(enabled);
+                    ppb.lglow.setNSamples(enabled ? 1 : lglowNSamples);
                 }
             }
 
@@ -403,6 +411,7 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
             float[] lightpos = (float[]) data[1];
             float[] angles = (float[]) data[2];
             float[] colors = (float[]) data[3];
+            Texture prePass = (Texture) data[4];
 
             for (int i = 0; i < RenderType.values().length; i++) {
                 if (pps[i] != null) {
@@ -410,7 +419,9 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
                     ppb.lglow.setLightPositions(nLights, lightpos);
                     ppb.lglow.setLightViewAngles(angles);
                     ppb.lglow.setLightColors(colors);
-                    ppb.lglow.setTextureScale(1.5f / GaiaSky.instance.cam.getFovFactor());
+                    ppb.lglow.setTextureScale(0.9f / GaiaSky.instance.cam.getFovFactor());
+                    if (prePass != null)
+                        ppb.lglow.setPrePassTexture(prePass);
                 }
             }
             break;

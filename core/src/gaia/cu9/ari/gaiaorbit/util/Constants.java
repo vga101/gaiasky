@@ -140,7 +140,7 @@ public class Constants {
     public static final int MAX_MOTION_BLUR = 85;
 
     /** Maximum fov value, in degrees **/
-    public static final int MAX_FOV = 170;
+    public static final int MAX_FOV = 95;
     /** Minimum fov value, in degrees **/
     public static final int MIN_FOV = 2;
 
