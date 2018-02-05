@@ -35,7 +35,7 @@ public abstract class StreamingOctreeLoader implements IObserver, ISceneGraphLoa
     /**
      * Data will be pre-loaded at startup down to this octree depth.
      */
-    protected static final int PRELOAD_DEPTH = 3;
+    protected static final int PRELOAD_DEPTH = 2;
     /**
      * Default load queue size in octants
      */
@@ -230,6 +230,9 @@ public abstract class StreamingOctreeLoader implements IObserver, ISceneGraphLoa
     public void emptyLoadQueue() {
         int n = toLoadQueue.size();
         if (n > 0) {
+            for (OctreeNode octant : toLoadQueue) {
+                octant.setStatus(LoadStatus.NOT_LOADED);
+            }
             toLoadQueue.clear();
             Logger.info(I18n.bundle.format("notif.loadingoctants.emtpied", n));
         }
