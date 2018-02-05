@@ -143,7 +143,7 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
         ppb.lglow = new LightGlow(lgw, lgh);
         ppb.lglow.setLightGlowTexture(glow);
         ppb.lglow.setNSamples(lglowNSamples);
-        ppb.lglow.setTextureScale(0.9f / GaiaSky.instance.cam.getFovFactor());
+        ppb.lglow.setTextureScale(0.7f / GaiaSky.instance.cam.getFovFactor());
         ppb.lglow.setEnabled(GlobalConf.postprocess.POSTPROCESS_LIGHT_SCATTERING);
         ppb.pp.addEffect(ppb.lglow);
 
@@ -419,7 +419,7 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
                     ppb.lglow.setLightPositions(nLights, lightpos);
                     ppb.lglow.setLightViewAngles(angles);
                     ppb.lglow.setLightColors(colors);
-                    ppb.lglow.setTextureScale(0.9f / GaiaSky.instance.cam.getFovFactor());
+                    ppb.lglow.setTextureScale(0.7f / GaiaSky.instance.cam.getFovFactor());
                     if (prePass != null)
                         ppb.lglow.setPrePassTexture(prePass);
                 }
