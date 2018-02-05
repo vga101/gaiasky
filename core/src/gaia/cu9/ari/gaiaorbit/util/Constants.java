@@ -23,11 +23,6 @@ public class Constants {
     public static final double C_KMH = 1.079253e9;
 
     /**
-     * Solar radius in Km
-     */
-    public static final double R_o = .6957964e6;
-
-    /**
      * Metre to local unit conversion. Multiply this by all values in m.
      */
     public static final double M_TO_U = 1e-9;
@@ -104,6 +99,21 @@ public class Constants {
 
     /** Milliseconds to year **/
     public static final double MS_TO_Y = 1 / Y_TO_MS;
+
+    /**
+     * Solar radius in Km
+     */
+    public static final double Ro_TO_KM = .6957964e6;
+
+    /**
+     * Solar radius to local units
+     */
+    public static final double Ro_TO_U = Ro_TO_KM * KM_TO_U;
+
+    /**
+     * Units to solar radius
+     */
+    public static final double U_TO_Ro = 1 / Ro_TO_U;
 
     /** Multiplier for all KM values in the application **/
     public static final double KM_MULTIPLIER = AstroUtils.KM_TO_PC * 1e9 * SCALE_FACTOR;

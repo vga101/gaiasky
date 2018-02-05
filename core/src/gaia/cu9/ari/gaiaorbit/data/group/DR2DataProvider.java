@@ -71,8 +71,12 @@ public class DR2DataProvider extends AbstractStarGroupDataProvider {
     private static final int BP_MAG = 14;
     private static final int RP_MAG = 15;
     private static final int REF_EPOCH = 16;
+    private static final int TEFF = 17;
+    private static final int RADIUS = 18;
+    private static final int A_G = 19;
+    private static final int E_BP_MIN_RP = 20;
 
-    private static final int[] indices = new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 };
+    private static final int[] indices = new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20 };
 
     public void setFileNumberCap(int cap) {
         fileNumberCap = cap;
@@ -134,8 +138,7 @@ public class DR2DataProvider extends AbstractStarGroupDataProvider {
         LongWrap addedStars = new LongWrap(0l);
         LongWrap discardedStars = new LongWrap(0l);
         loadFileIs(data, factor, addedStars, discardedStars);
-        Logger.info(this.getClass().getSimpleName(), fileNumber + " - " + fh.name() + " --> " + addedStars.value + "/" + (addedStars.value + discardedStars.value) + " stars ("
-                + (100 * addedStars.value / (addedStars.value + discardedStars.value)) + "%)");
+        Logger.info(this.getClass().getSimpleName(), fileNumber + " - " + fh.name() + " --> " + addedStars.value + "/" + (addedStars.value + discardedStars.value) + " stars (" + (100 * addedStars.value / (addedStars.value + discardedStars.value)) + "%)");
     }
 
     public void loadFileIs(InputStream is, double factor, LongWrap addedStars, LongWrap discardedStars) {
@@ -184,6 +187,7 @@ public class DR2DataProvider extends AbstractStarGroupDataProvider {
         if (!tokens[indices[PLLX]].isEmpty()) {
             // Add the zero point to the parallax
             double pllx = Parser.parseDouble(tokens[indices[PLLX]]) + parallaxZeroPoint;
+            //pllx = 0.0200120072;
             double pllxerr = Parser.parseDouble(tokens[indices[PLLX_ERR]]);
 
             // Keep only stars with relevant parallaxes
@@ -206,61 +210,84 @@ public class DR2DataProvider extends AbstractStarGroupDataProvider {
                 double mudelta = Parser.parseDouble(tokens[indices[MUDELTA]]);
                 double mualpha = mualphastar / Math.cos(Math.toRadians(dec));
 
+                // mualpha -= 1.8;
+                // mudelta -= 0.6;
+
                 /** RADIAL VELOCITY in km/s **/
                 double radvel = Parser.parseDouble(tokens[indices[RADVEL]]);
+                if (Double.isNaN(radvel)) {
+                    radvel = 0;
+                }
 
                 /** PROPER MOTION VECTOR = (pos+dx) - pos **/
-                Vector3d pm = Coordinates.sphericalToCartesian(Math.toRadians(ra + mualpha * AstroUtils.MILLARCSEC_TO_DEG), Math.toRadians(dec + mudelta * AstroUtils.MILLARCSEC_TO_DEG), dist
-                        + radvel * Constants.KM_TO_U / Constants.S_TO_Y, new Vector3d());
+                Vector3d pm = Coordinates.sphericalToCartesian(Math.toRadians(ra + mualpha * AstroUtils.MILLARCSEC_TO_DEG), Math.toRadians(dec + mudelta * AstroUtils.MILLARCSEC_TO_DEG), dist + radvel * Constants.KM_TO_U / Constants.S_TO_Y, new Vector3d());
                 pm.sub(pos);
 
-                // Compute magnitude correction due to extinction
+                // Line of sight extinction in the G band
                 double ag = 0;
                 // Galactic latitude in radians
                 double magcorraux = 0;
                 if (magCorrections) {
-                    Vector3d posgal = new Vector3d(pos);
-                    posgal.mul(Coordinates.eqToGal());
-                    Vector3d posgalsph = Coordinates.cartesianToSpherical(posgal, new Vector3d());
-                    double b = posgalsph.y;
-                    magcorraux = Math.min(distpc, 150d / Math.abs(Math.sin(b)));
-                    ag = magcorraux * 5.9e-4;
+                    if (tokens.length >= 20 && !tokens[indices[A_G]].isEmpty()) {
+                        // Take extinction from database
+                        ag = Parser.parseDouble(tokens[indices[A_G]]);
+                    } else {
+                        // Compute extinction analitically
+                        Vector3d posgal = new Vector3d(pos);
+                        posgal.mul(Coordinates.eqToGal());
+                        Vector3d posgalsph = Coordinates.cartesianToSpherical(posgal, new Vector3d());
+                        double b = posgalsph.y;
+                        magcorraux = Math.min(distpc, 150d / Math.abs(Math.sin(b)));
+                        ag = magcorraux * 5.9e-4;
+                    }
                 }
 
                 double appmag = Parser.parseDouble(tokens[indices[G_MAG]]) - ag;
                 double absmag = (appmag - 2.5 * Math.log10(Math.pow(distpc / 10d, 2d)));
                 double flux = Math.pow(10, -absmag / 2.5f);
                 double size = Math.min((Math.pow(flux, 0.5f) * Constants.PC_TO_U * 0.16f), 1e9f) / 1.5;
+                double radius = tokens.length >= 19 && !tokens[indices[RADIUS]].isEmpty() ? Parser.parseDouble(tokens[indices[RADIUS]]) * Constants.Ro_TO_U : size * Constants.STAR_SIZE_FACTOR;
 
                 /** COLOR, we use the tycBV map if present **/
 
-                // Color correction due to reddening by interstellar matter
+                // Reddening
                 double ebr = 0;
                 if (magCorrections) {
-                    ebr = magcorraux * 2.9e-4;
+                    if (tokens.length >= 21 && !tokens[indices[E_BP_MIN_RP]].isEmpty()) {
+                        // Take reddening from table
+                        ebr = Parser.parseDouble(tokens[indices[E_BP_MIN_RP]]);
+                    } else {
+                        // Compute reddening analtytically
+                        ebr = magcorraux * 2.9e-4;
+                    }
                 }
 
-                double colorxp = 0;
+                double xp = 0;
                 if (indices[BP_MAG] >= 0 && indices[RP_MAG] >= 0) {
                     // Real TGAS
                     float bp = new Double(Parser.parseDouble(tokens[indices[BP_MAG]].trim())).floatValue();
                     float rp = new Double(Parser.parseDouble(tokens[indices[RP_MAG]].trim())).floatValue();
-                    colorxp = bp - rp - ebr;
+                    xp = bp - rp - ebr;
                 } else {
                     // Use color value in BP
-                    colorxp = new Double(Parser.parseDouble(tokens[indices[BP_MAG]].trim())).floatValue();
+                    xp = new Double(Parser.parseDouble(tokens[indices[BP_MAG]].trim())).floatValue();
                 }
 
                 // See Gaia broad band photometry (https://doi.org/10.1051/0004-6361/201015441)
                 double teff;
-                if (colorxp <= 1.5) {
-                    teff = Math.pow(10.0, 3.999 - 0.654 * colorxp + 0.709 * Math.pow(colorxp, 2.0) - 0.316 * Math.pow(colorxp, 3.0));
+                if (tokens.length > 18 && !tokens[indices[TEFF]].isEmpty()) {
+                    // Use database Teff
+                    teff = Parser.parseDouble(tokens[indices[TEFF]]);
                 } else {
-                    // We do a linear regression between [1.5, 3521.6] and [15, 3000]
-                    teff = MathUtilsd.lint(colorxp, 1.5, 15, 3521.6, 3000);
+                    // Compute Teff from XP color
+                    if (xp <= 1.5) {
+                        teff = Math.pow(10.0, 3.999 - 0.654 * xp + 0.709 * Math.pow(xp, 2.0) - 0.316 * Math.pow(xp, 3.0));
+                    } else {
+                        // We do a linear regression between [1.5, 3521.6] and [15, 3000]
+                        teff = MathUtilsd.lint(xp, 1.5, 15, 3521.6, 3000);
+                    }
                 }
                 float[] rgb = ColourUtils.teffToRGB(teff);
-                //            float[] rgb = ColourUtils.BVtoRGB(colorxp);
                 double col = Color.toFloatBits(rgb[0], rgb[1], rgb[2], 1.0f);
 
                 point[StarBean.I_HIP] = -1;
@@ -278,6 +305,7 @@ public class DR2DataProvider extends AbstractStarGroupDataProvider {
                 point[StarBean.I_RADVEL] = radvel;
                 point[StarBean.I_COL] = col;
                 point[StarBean.I_SIZE] = size;
+                //point[StarBean.I_RADIUS] = radius;
                 point[StarBean.I_APPMAG] = appmag;
                 point[StarBean.I_ABSMAG] = absmag;
 
@@ -286,7 +314,6 @@ public class DR2DataProvider extends AbstractStarGroupDataProvider {
             }
         }
         return false;
-
     }
 
     private class LongWrap {
