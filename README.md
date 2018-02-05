@@ -29,13 +29,13 @@ This file contains the following sections:
 
 ### 1.1 Requirements
 
-| **Operating system**  | Windows 7+ / macOS / Linux |
+| **Operating system**  | Linux / Windows 7+ / macOS |
 | :---: | :--- |
 | **CPU** | Intel Core i3 3rd Generation or similar  |
 | **GPU** | OpenGL 3.0 support / Intel HD 4000 / Nvidia GeForce 8400 GS, 500 MB GRAM |
 | **Memory** | 3 GB RAM |
 | **Hard drive**  | 230 MB of free disk space  |
-| **Java**  | On Linux, you need the Java Runtime Environment 8+ installed (openJRE is fine) |
+| **Java**  | On Linux, you need the Java Runtime Environment 8 installed (openJdk is fine) |
 
 ### 1.2 Installation and uninstallation
 
@@ -43,28 +43,12 @@ Depending on your system and your personal preferences the installation
 procedure may vary. Below is a description of the various installation methods
 available. You can download the packages [here](https://zah.uni-heidelberg.de/gaia/outreach/gaiasky/downloads/).
 
-#### 1.2.1 Windows
-
-Two windows installers are available for 32 and 64-bit systems [here](https://zah.uni-heidelberg.de/gaia/outreach/gaiasky/downloads/).
-
-- `gaiasky_windows_<version>.exe` - 32 bit installer.
-- `gaiasky_windows-x64_<version>.exe` - 64 bit installer.
-
-Both versions will automatically install the JRE if it is not present
-in the system.
-To install Gaia Sky, just double click on the installer and
-then follow the on-screen instructions. You will need to choose the
-directory where the application is to be installed.
-
-In order to **uninstall** the application you can use the Windows Control Panel or
-you can use the provided uninstaller in the Gaia Sky folder.
-
-#### 1.2.2 Linux
+#### 1.2.1 Linux
 
 We provide 4 packages for linux systems. `deb`, `rpm`, an `aur` package and a linux installer. You can get them [here](https://zah.uni-heidelberg.de/gaia/outreach/gaiasky/downloads/).
 The `aur` package can be installed using any `AUR` helper.
 
-##### 1.2.2.1 DEB
+##### 1.2.1.1 DEB
 
 This is the package for Debian-based distros (Debian, Ubuntu, Mint, SteamOS, etc.).
 Download the `gaiasandbox_linux_<version>.deb` file and run the
@@ -83,7 +67,7 @@ In order to **uninstall**, just type:
 ```
 $  sudo apt-get remove gaiasky
 ```
-##### 1.2.2.2 AUR
+##### 1.2.1.2 AUR
 
 We also provide an [AUR package](https://aur.archlinux.org/packages/gaiasky/) called `gaiasky`. You can install it easily with any tool capable of accessing `AUR`, for example `yaourt`.
 
@@ -91,7 +75,7 @@ We also provide an [AUR package](https://aur.archlinux.org/packages/gaiasky/) ca
 $  yaourt -S gaiasky
 ```
  
-##### 1.2.2.3 RPM
+##### 1.2.1.3 RPM
 
 This is the package for RPM-based distributions (Red Hat, Fedora, Mandriva, SUSE, CentOS, etc.)
 Download the `gaiasky_linux_<version>.rpm` file and run the
@@ -111,7 +95,7 @@ In order to **uninstall**, just type:
 $  sudo yum remove gaiasky-x86
 ```
 
-##### 1.2.2.4 Linux installer
+##### 1.2.1.4 Linux installer
 
 We also provide a Linux installer ([here](https://zah.uni-heidelberg.de/gaia/outreach/gaiasky/downloads/)) which will trigger a graphical interface
 where you can choose the installation location and some other settings.
@@ -127,7 +111,23 @@ Follow the on-screen instructions to proceed with the installation.
 In order to **uninstall**, just run the `uninstall` file in the
 installation folder.
 
-#### 1.2.3 macOS X
+#### 1.2.2 Windows
+
+Two windows installers are available for 32 and 64-bit systems [here](https://zah.uni-heidelberg.de/gaia/outreach/gaiasky/downloads/).
+
+- `gaiasky_windows_<version>.exe` - 32 bit installer.
+- `gaiasky_windows-x64_<version>.exe` - 64 bit installer.
+
+Both versions will automatically install the JRE if it is not present
+in the system.
+To install Gaia Sky, just double click on the installer and
+then follow the on-screen instructions. You will need to choose the
+directory where the application is to be installed.
+
+In order to **uninstall** the application you can use the Windows Control Panel or
+you can use the provided uninstaller in the Gaia Sky folder.
+
+#### 1.2.3 macOS
 
 For macOS we provide a `gaiasky_macos_<version>.dmg` file
 which is installed by unpacking into the Applications folder. Get it [here](https://zah.uni-heidelberg.de/gaia/outreach/gaiasky/downloads/). Once unpacked, you can run it by clicking on it.
@@ -139,6 +139,7 @@ in all systems but you need to unpack it yourself and create the desired
 shortcuts.
 
 In **Windows**, use an archiver software (7zip, iZArc, etc.) to unpack it.
+When using the `tgz` package, uou need to install the [JRE8](http://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html) yourself.
 
 In **Linux** and **macOS**, you can use:
 
@@ -154,6 +155,8 @@ In order to run the program just click on the shortcut
 provided in your operating system.
 
 If Windows is your OS of choice, you first need to install [Git for Windows](https://git-scm.com/download/win).
+Also, on Windows you will need to use the `gradlew.bat` script instead of the bash `gradlew`, so
+make sure to substitute this in the commands below.
 
 ### 2.2 Running from source
 
@@ -170,7 +173,7 @@ Make sure you have at least `JDK8` installed.
 
 The TGAS catalog files (Gaia data) are **not** in the repository, so if you want to use TGAS when running
 from source you need to download
-the `tar` file corresponding to your version — see table below.
+the `tar` file corresponding to your version â€” see table below.
 
 As of version `1.5.0`, there are new GPU-bound catalogs which perform much better and can also be combined with the levels-of-detail structure to produce a good combo in terms of performance
 and load times. Choose which catalog you want to use. Usually, the single file GPU version should work fine (tgas gpu), and has no culling, so all particles are visible at all times.
@@ -192,13 +195,19 @@ edit the configuration file so that `data.json.catalog` points to `data/catalog-
 
 ### 2.4 Running
 
-Finally, run Gaia Sky with:
+Finally, run Gaia Sky (Linux, MacOS) with:
 
 ```
 $  gradlew desktop:run
 ```
 
-Et voilà! The bleeding edge Gaia Sky is running in your machine.
+On Windows, do:
+
+```
+.\gradlew.bat desktop:run
+```
+
+Et voilà ! The bleeding edge Gaia Sky is running in your machine.
 
 In order to pull the latest version from the repository, just run the following from the `gaiasky` folder.
 
