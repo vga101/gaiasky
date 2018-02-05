@@ -204,8 +204,9 @@ public class DesktopConfInit extends ConfInit {
         boolean ANALYTICS_ENABLED = Boolean.parseBoolean(p.getProperty("program.analytics", "true"));
         boolean DISPLAY_HUD = Boolean.parseBoolean(p.getProperty("program.displayhud", "false"));
         boolean DISPLAY_POINTER_COORDS = Boolean.parseBoolean(p.getProperty("program.displaypointercoords", "true"));
+        boolean DISPLAY_DATASET_DIALOG = Boolean.parseBoolean(p.getProperty("program.dataset.dialog", "false"));
 
-        prc.initialize(DISPLAY_TUTORIAL, TUTORIAL_POINTER_SCRIPT_LOCATION, TUTORIAL_SCRIPT_LOCATION, SHOW_DEBUG_INFO, LAST_CHECKED, LAST_VERSION, VERSION_CHECK_URL, UI_THEME, SCRIPT_LOCATION, REST_PORT, LOCALE, STEREOSCOPIC_MODE, STEREO_PROFILE, CUBEMAPE360_MODE, ANALYTICS_ENABLED, DISPLAY_HUD, DISPLAY_POINTER_COORDS);
+        prc.initialize(DISPLAY_TUTORIAL, TUTORIAL_POINTER_SCRIPT_LOCATION, TUTORIAL_SCRIPT_LOCATION, SHOW_DEBUG_INFO, LAST_CHECKED, LAST_VERSION, VERSION_CHECK_URL, UI_THEME, SCRIPT_LOCATION, REST_PORT, LOCALE, STEREOSCOPIC_MODE, STEREO_PROFILE, CUBEMAPE360_MODE, ANALYTICS_ENABLED, DISPLAY_HUD, DISPLAY_POINTER_COORDS, DISPLAY_DATASET_DIALOG);
 
         /** SCENE CONF **/
         int GRAPHICS_QUALITY = Integer.parseInt(p.getProperty("scene.graphics.quality"));
@@ -394,6 +395,7 @@ public class DesktopConfInit extends ConfInit {
         p.setProperty("program.stereoscopic", Boolean.toString(GlobalConf.program.STEREOSCOPIC_MODE));
         p.setProperty("program.stereoscopic.profile", Integer.toString(GlobalConf.program.STEREO_PROFILE.ordinal()));
         p.setProperty("program.cubemap360", Boolean.toString(GlobalConf.program.CUBEMAP360_MODE));
+        p.setProperty("program.dataset.dialog", Boolean.toString(GlobalConf.program.DISPLAY_DATASET_DIALOG));
 
         /** SCENE **/
         p.setProperty("scene.graphics.quality", Integer.toString(GlobalConf.scene.GRAPHICS_QUALITY));

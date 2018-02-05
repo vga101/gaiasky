@@ -97,11 +97,6 @@ import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
  *
  */
 public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
-    /**
-     * Whether the dataset has been chosen. If this is set to false, a window
-     * will prompt at startup asking for the dataset to use.
-     */
-    private static boolean DSCHOSEN = true;
 
     /**
      * Private state boolean indicating whether we are still loading resources.
@@ -122,6 +117,12 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
 
     // Data load string
     private String dataLoadString;
+
+    /**
+     * Whether the dataset has been chosen. If this is set to false, a window
+     * will prompt at startup asking for the dataset to use.
+     */
+    private boolean DSCHOSEN;
 
     public ISceneGraph sg;
     // TODO make this private again
@@ -206,6 +207,8 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         // Disable all kinds of input
         EventManager.instance.post(Events.INPUT_ENABLED_CMD, false);
 
+        DSCHOSEN = !GlobalConf.program.DISPLAY_DATASET_DIALOG;
+
         if (!GlobalConf.initialized()) {
             Logger.error(new RuntimeException("FATAL: Global configuration not initlaized"));
             return;
@@ -250,9 +253,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         TooltipManager.getInstance().initialTime = 1f;
 
         // Initialise Gaia attitudes
-        manager.load(ATTITUDE_FOLDER, GaiaAttitudeServer.class, new GaiaAttitudeLoaderParameter(GlobalConf.runtime.STRIPPED_FOV_MODE
-                ? new String[] { "OPS_RSLS_0022916_rsls_nsl_gareq1_afterFirstSpinPhaseOptimization.2.xml" }
-                : new String[] {}));
+        manager.load(ATTITUDE_FOLDER, GaiaAttitudeServer.class, new GaiaAttitudeLoaderParameter(GlobalConf.runtime.STRIPPED_FOV_MODE ? new String[] { "OPS_RSLS_0022916_rsls_nsl_gareq1_afterFirstSpinPhaseOptimization.2.xml" } : new String[] {}));
 
         // Initialise hidden helper user
         HiddenHelperUser.initialize();
@@ -516,8 +517,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
             // Memory
             EventManager.instance.post(Events.DEBUG2, MemInfo.getUsedMemory(), MemInfo.getFreeMemory(), MemInfo.getTotalMemory(), MemInfo.getMaxMemory());
             // Observed octants
-            EventManager.instance.post(Events.DEBUG4, GLFrameBuffer.getManagedStatus() + ", Observed octants: " + OctreeNode.nOctantsObserved + ", Load queue: "
-                    + StreamingOctreeLoader.getLoadQueueSize());
+            EventManager.instance.post(Events.DEBUG4, GLFrameBuffer.getManagedStatus() + ", Observed octants: " + OctreeNode.nOctantsObserved + ", Load queue: " + StreamingOctreeLoader.getLoadQueueSize());
         }
     };
 
