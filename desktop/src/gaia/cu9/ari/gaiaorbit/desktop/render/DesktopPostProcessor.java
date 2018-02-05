@@ -148,14 +148,7 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
         ppb.pp.addEffect(ppb.lglow);
 
         // LENS FLARE
-        float lensFboScale;
-        if (GlobalConf.scene.isHighQuality()) {
-            lensFboScale = 0.5f;
-        } else if (GlobalConf.scene.isNormalQuality()) {
-            lensFboScale = 0.3f;
-        } else {
-            lensFboScale = 0.2f;
-        }
+        float lensFboScale = 0.2f;
         Texture lcol = manager.get("data/tex/lenscolor.png");
         lcol.setFilter(TextureFilter.Linear, TextureFilter.Linear);
         Texture ldirt = GlobalConf.scene.isHighQuality() ? manager.get("data/tex/lensdirt.jpg") : manager.get("data/tex/lensdirt_s.jpg");
@@ -169,10 +162,10 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
         ppb.lens.setLensDirtTexture(ldirt);
         ppb.lens.setLensStarburstTexture(lburst);
         ppb.lens.setFlareIntesity(GlobalConf.postprocess.POSTPROCESS_LENS_FLARE ? flareIntensity : 0f);
-        ppb.lens.setFlareSaturation(0.7f);
+        ppb.lens.setFlareSaturation(0.6f);
         ppb.lens.setBaseIntesity(1f);
         ppb.lens.setBias(-0.98f);
-        ppb.lens.setBlurPasses(30);
+        ppb.lens.setBlurPasses(35);
         ppb.lens.setEnabled(true);
         ppb.pp.addEffect(ppb.lens);
 
