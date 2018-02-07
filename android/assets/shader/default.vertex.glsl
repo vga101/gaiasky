@@ -32,12 +32,6 @@ varying vec2 v_texCoords0;
 
 uniform mat4 u_worldTrans;
 
-#if defined(numBones)
-#if numBones > 0
-uniform mat4 u_bones[numBones];
-#endif //numBones
-#endif
-
 #ifdef shininessFlag
 uniform float u_shininess;
 #else
