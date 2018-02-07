@@ -22,11 +22,17 @@ public class Vector3Attribute extends Attribute {
     public static final String LightPosAlias = "lightPos";
     public static final long LightPos = register(LightPosAlias);
 
+    public static final String RelAttrAlias = "relAttr";
+    public static final long RelAttr = register(RelAttrAlias);
+
     public static final String LightPositionAlias = "lightPosition";
     public static final long LightPosition = register(LightPositionAlias);
 
     public static final String CameraPosAlias = "cameraPos";
     public static final long CameraPos = register(CameraPosAlias);
+
+    public static final String VelocityDirAlias = "velocityDir";
+    public static final long VelocityDir = register(VelocityDirAlias);
 
     public static final String InvWavelengthAlias = "invWavelength";
     public static final long InvWavelength = register(InvWavelengthAlias);

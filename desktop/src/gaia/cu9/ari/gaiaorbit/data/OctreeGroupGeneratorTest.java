@@ -208,6 +208,7 @@ public class OctreeGroupGeneratorTest implements IObserver {
         loader.setParallaxOverError(pllxovererr);
         loader.setParallaxZeroPoint(pllxzeropoint);
         loader.setFileNumberCap(fileNumCap);
+        loader.setMagCorrections(magCorrections);
 
         /** LOAD HYG **/
         Array<StarBean> listHip = hyg.loadData("data/hyg/hygxyz.bin");

@@ -15,6 +15,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 
 import gaia.cu9.ari.gaiaorbit.GaiaSky;
+import gaia.cu9.ari.gaiaorbit.assets.ShaderLoader;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
@@ -55,7 +56,7 @@ public class StarGroupRenderSystem extends ImmediateRenderSystem implements IObs
 
     @Override
     protected void initShaderProgram() {
-        shaderProgram = new ShaderProgram(Gdx.files.internal("shader/star.group.vertex.glsl"), Gdx.files.internal("shader/star.group.fragment.glsl"));
+        shaderProgram = new ShaderProgram(ShaderLoader.load("shader/star.group.vertex.glsl"), ShaderLoader.load("shader/star.group.fragment.glsl"));
         if (!shaderProgram.isCompiled()) {
             Logger.error(this.getClass().getName(), "Star group shader compilation failed:\n" + shaderProgram.getLog());
         }
@@ -185,6 +186,16 @@ public class StarGroupRenderSystem extends ImmediateRenderSystem implements IObs
                             shaderProgram.setUniform2fv("u_pointAlpha", pointAlpha, 0, 2);
                             shaderProgram.setUniformMatrix("u_projModelView", camera.getCamera().combined);
                             shaderProgram.setUniformf("u_camPos", camera.getCurrent().getPos().put(aux1));
+
+                            // Relativistic aberration
+                            shaderProgram.setUniformi("u_relativsiticAberration", GlobalConf.runtime.RELATIVISTIC_ABERRATION ? 1 : 0);
+                            if (camera.getVelocity() == null || camera.getVelocity().len() == 0) {
+                                aux2.set(1, 0, 0);
+                            } else {
+                                camera.getVelocity().put(aux2).nor();
+                            }
+                            shaderProgram.setUniformf("u_camDir", aux2);
+                            shaderProgram.setUniformf("u_vc", (float) (camera.getSpeed() / Constants.C_KMH));
 
                             alphaSizeFovBr[0] = starGroup.opacity * alphas[starGroup.ct.getFirstOrdinal()];
                             alphaSizeFovBr[1] = fovmode == 0 ? (GlobalConf.scene.STAR_POINT_SIZE * rc.scaleFactor * (GlobalConf.program.isStereoFullWidth() ? 1 : 2)) : (GlobalConf.scene.STAR_POINT_SIZE * rc.scaleFactor * 10);

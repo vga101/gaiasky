@@ -286,4 +286,9 @@ public abstract class AbstractCamera implements ICamera {
 
     }
 
+    @Override
+    public Vector3d getVelocity() {
+        return null;
+    }
+
 }

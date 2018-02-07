@@ -212,9 +212,15 @@ public class CameraManager implements ICamera, IObserver {
         current.setPos(pos);
     }
 
+
     @Override
     public Vector3d getInversePos() {
         return current.getInversePos();
+    }
+
+    @Override
+    public Vector3d getVelocity() {
+        return current.getVelocity();
     }
 
     @Override

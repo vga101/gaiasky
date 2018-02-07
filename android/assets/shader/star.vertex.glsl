@@ -3,9 +3,11 @@ precision mediump float;
 precision mediump int;
 #endif
 
+// Attributes
 attribute vec4 a_position;
 attribute vec2 a_texCoord0;
 
+// Uniforms
 uniform mat4 u_projTrans;
 uniform vec4 u_color;
 uniform vec4 u_quaternion;
@@ -14,13 +16,18 @@ uniform float u_size;
 uniform float u_apparent_angle;
 uniform float u_th_angle_point;
 uniform vec3 u_camShift;
+uniform int u_relativsiticAberration; // Relativistic aberration flag
+uniform vec3 u_camDir; // Velocity vector
+uniform float u_vc; // Fraction of the speed of light, v/c
 
+// Varyings
 varying vec4 v_color;
 varying vec2 v_texCoords;
 
-float lint(float x, float x0, float x1, float y0, float y1) {
-    return mix(y0, y1, (x - x0) / (x1 - x0));
-}
+<INCLUDE shader/lib_math.glsl>
+
+<INCLUDE shader/lib_geometry.glsl>
+
 
 void main()
 {
@@ -34,9 +41,23 @@ void main()
    // Translate
    mat4 translate = mat4(1.0);
    
-   translate[3][0] = u_pos.x - u_camShift.x;
-   translate[3][1] = u_pos.y - u_camShift.y;
-   translate[3][2] = u_pos.z - u_camShift.z;
+   vec3 pos = u_pos - u_camShift;
+   
+   if(u_relativsiticAberration == 1) {
+       // Relativistic aberration
+       // Current cosine of angle cos(th_s) cos A = DotProduct(v1, v2) / (Length(v1) * Length(v2))
+       float dist = length(pos);
+       vec3 cdir = u_camDir * -1.0;
+       float costh_s = dot(cdir, pos) / dist;
+       float th_s = acos(costh_s);
+       float costh_o = (costh_s - u_vc) / (1 - u_vc * costh_s);
+       float th_o = acos(costh_o);
+       pos = rotate_vertex_position(pos, normalize(cross(cdir, pos)), th_o - th_s);
+   }
+   
+   translate[3][0] = pos.x;
+   translate[3][1] = pos.y;
+   translate[3][2] = pos.z;
    translate[3][3] = 1.0;
    transform *= translate;
    

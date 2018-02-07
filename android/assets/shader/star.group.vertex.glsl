@@ -14,8 +14,12 @@ attribute float a_size;
 uniform int u_t; // time in days since epoch
 uniform mat4 u_projModelView;
 uniform vec3 u_camPos;
+
 uniform vec2 u_pointAlpha;
 uniform float u_thAnglePoint;
+uniform int u_relativsiticAberration; // Relativistic aberration flag
+uniform vec3 u_camDir; // Velocity vector
+uniform float u_vc; // Fraction of the speed of light, v/c
 // 0 - alpha
 // 1 - point size
 // 2 - fov factor
@@ -34,23 +38,29 @@ varying float v_discard;
 #define len1 len0 * 100.0
 #define day_to_year 1.0 / 365.25
 
-float lint2(float x, float x0, float x1, float y0, float y1) {
-    return mix(y0, y1, (x - x0) / (x1 - x0));
-}
+<INCLUDE shader/lib_math.glsl>
 
-float lint(float x, float x0, float x1, float y0, float y1) {
-    return y0 + (y1 - y0) * smoothstep(x, x0, x1);
-}
-
-// Returns >=0 if visible, <0 if not visible 
-float in_view(vec3 pos, vec3 dir, float dist, float angle_edge) {
-    return angle_edge - acos(dot(pos, dir) / dist);
-}
+<INCLUDE shader/lib_geometry.glsl>
 
 void main() {
     vec3 pos = a_position - u_camPos;
-
+    // Proper motion
+    pos = pos + a_pm * float(u_t) * day_to_year;
+    
+    // Distance to star
     float dist = length(pos);
+    
+    if(u_relativsiticAberration == 1) {
+        // Relativistic aberration
+        // Current cosine of angle cos(th_s) cos A = DotProduct(v1, v2) / (Length(v1) * Length(v2))
+        vec3 cdir = u_camDir * -1.0;
+        float costh_s = dot(cdir, pos) / dist;
+        float th_s = acos(costh_s);
+        float costh_o = (costh_s - u_vc) / (1 - u_vc * costh_s);
+        float th_o = acos(costh_o);
+        pos = rotate_vertex_position(pos, normalize(cross(cdir, pos)), th_o - th_s);
+    }
+    
     
     // Compute fov observation if necessary (only Fov1, Fov2)
     float observed = 1.0;
@@ -65,9 +75,6 @@ void main() {
         v_discard = -1.0;
     }
     
-    // Proper motion
-    pos = pos + a_pm * float(u_t) * day_to_year;
-
     float viewAngleApparent = atan((a_size * u_alphaSizeFovBr.w) / dist) / u_alphaSizeFovBr.z;
     float opacity = pow(lint2(viewAngleApparent, 0.0, u_thAnglePoint, u_pointAlpha.x, u_pointAlpha.y), 1.2);
 

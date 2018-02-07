@@ -206,12 +206,12 @@ public class DR2DataProvider extends AbstractStarGroupDataProvider {
                 Vector3d pos = Coordinates.sphericalToCartesian(Math.toRadians(ra), Math.toRadians(dec), dist, new Vector3d());
 
                 /** PROPER MOTIONS in mas/yr **/
-                double mualphastar = Parser.parseDouble(tokens[indices[MUALPHA]]);
+                double mualpha = Parser.parseDouble(tokens[indices[MUALPHA]]);
+                // mualpha /= Math.cos(Math.toRadians(dec));
                 double mudelta = Parser.parseDouble(tokens[indices[MUDELTA]]);
-                double mualpha = mualphastar / Math.cos(Math.toRadians(dec));
 
-                // mualpha -= 1.8;
-                // mudelta -= 0.6;
+                //mualpha -= 1.829;
+                //mudelta -= 0.395;
 
                 /** RADIAL VELOCITY in km/s **/
                 double radvel = Parser.parseDouble(tokens[indices[RADVEL]]);
@@ -246,7 +246,7 @@ public class DR2DataProvider extends AbstractStarGroupDataProvider {
                 double absmag = (appmag - 2.5 * Math.log10(Math.pow(distpc / 10d, 2d)));
                 double flux = Math.pow(10, -absmag / 2.5f);
                 double size = Math.min((Math.pow(flux, 0.5f) * Constants.PC_TO_U * 0.16f), 1e9f) / 1.5;
-                double radius = tokens.length >= 19 && !tokens[indices[RADIUS]].isEmpty() ? Parser.parseDouble(tokens[indices[RADIUS]]) * Constants.Ro_TO_U : size * Constants.STAR_SIZE_FACTOR;
+                //double radius = tokens.length >= 19 && !tokens[indices[RADIUS]].isEmpty() ? Parser.parseDouble(tokens[indices[RADIUS]]) * Constants.Ro_TO_U : size * Constants.STAR_SIZE_FACTOR;
 
                 /** COLOR, we use the tycBV map if present **/
 
@@ -300,12 +300,13 @@ public class DR2DataProvider extends AbstractStarGroupDataProvider {
                 point[StarBean.I_PMX] = pm.x;
                 point[StarBean.I_PMY] = pm.y;
                 point[StarBean.I_PMZ] = pm.z;
-                point[StarBean.I_MUALPHA] = mualphastar;
+                point[StarBean.I_MUALPHA] = mualpha;
                 point[StarBean.I_MUDELTA] = mudelta;
                 point[StarBean.I_RADVEL] = radvel;
                 point[StarBean.I_COL] = col;
                 point[StarBean.I_SIZE] = size;
                 //point[StarBean.I_RADIUS] = radius;
+                //point[StarBean.I_TEFF] = teff;
                 point[StarBean.I_APPMAG] = appmag;
                 point[StarBean.I_ABSMAG] = absmag;
 

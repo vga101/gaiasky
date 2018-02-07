@@ -37,11 +37,13 @@ public class AtmosphereComponent {
     // Model parameters
     public Map<String, Object> params;
 
+    Vector3 aux;
     Vector3d aux3;
 
     public AtmosphereComponent() {
         localTransform = new Matrix4();
         mc = new ModelComponent(false);
+        aux = new Vector3();
         aux3 = new Vector3d();
     }
 
@@ -122,7 +124,6 @@ public class AtmosphereComponent {
         mat.set(new Vector3Attribute(Vector3Attribute.CameraPos, new Vector3()));
         mat.set(new Vector3Attribute(Vector3Attribute.LightPos, new Vector3()));
         mat.set(new Vector3Attribute(Vector3Attribute.InvWavelength, new Vector3(1.0f / m_fWavelength4[0], 1.0f / m_fWavelength4[1], 1.0f / m_fWavelength4[2])));
-
     }
 
     public void removeAtmosphericScattering(Material mat) {
@@ -182,11 +183,11 @@ public class AtmosphereComponent {
             // Camera position must be corrected using the rotation angle of the planet
             aux3.rotate(rc.ascendingNode, 0, 1, 0).rotate(-rc.inclination - rc.axialTilt, 0, 0, 1).rotate(-rc.angle, 0, 1, 0);
         }
-        ((Vector3Attribute) mat.get(Vector3Attribute.PlanetPos)).value.set(aux3.valuesf());
+        ((Vector3Attribute) mat.get(Vector3Attribute.PlanetPos)).value.set(aux3.put(aux));
         // CameraPos = -EarthPos
         aux3.scl(-1f);
 
-        ((Vector3Attribute) mat.get(Vector3Attribute.CameraPos)).value.set(aux3.valuesf());
+        ((Vector3Attribute) mat.get(Vector3Attribute.CameraPos)).value.set(aux3.put(aux));
 
         // Light position respect the earth: LightPos = SunPos - EarthPos
         sol.transform.addTranslationTo(aux3).nor();
@@ -194,7 +195,7 @@ public class AtmosphereComponent {
             // Camera position must be corrected using the rotation angle of the planet
             aux3.rotate(rc.ascendingNode, 0, 1, 0).rotate(-rc.inclination - rc.axialTilt, 0, 0, 1).rotate(-rc.angle, 0, 1, 0);
         }
-        ((Vector3Attribute) mat.get(Vector3Attribute.LightPos)).value.set(aux3.valuesf());
+        ((Vector3Attribute) mat.get(Vector3Attribute.LightPos)).value.set(aux3.put(aux));
 
         // Alpha value
         ((AtmosphereAttribute) mat.get(AtmosphereAttribute.Alpha)).value = alpha;

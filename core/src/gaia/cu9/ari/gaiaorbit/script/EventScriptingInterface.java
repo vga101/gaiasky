@@ -374,7 +374,7 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
 
     @Override
     public void setCameraSpeedLimit(int index) {
-        assert index >= 0 && index <= 13 : "Speed limit index must be in [0..13]";
+        assert index >= 0 && index <= 18 : "Speed limit index must be in [0..18]";
         Gdx.app.postRunnable(() -> {
             em.post(Events.SPEED_LIMIT_CMD, index, false);
         });

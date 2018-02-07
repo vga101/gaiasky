@@ -549,4 +549,9 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
         spriteBatch.getProjectionMatrix().setToOrtho2D(0, 0, width, height);
     }
 
+    @Override
+    public Vector3d getVelocity() {
+        return scvel;
+    }
+
 }

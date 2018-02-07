@@ -48,9 +48,27 @@ public enum Events {
     /** Contains the new turning speed **/
     TURNING_SPEED_CMD,
     /**
-     * Contains the speed limit index as in: 0 - 100 km/h 1 - c (3e8 m/s) 2 -
-     * 2*c 3 - 10*c 4 - 1000*c 5 - 1 pc/s 6 - 2 pc/s 7 - 10 pc/s 8 - 1000 pc/s 9
-     * - No limit It also contains a boolean indicating whether this comes from
+     * Contains the speed limit index as in: 
+     * 0 - 100 km/h 
+     * 1 - 0.5 * c
+     * 2 - 0.8 * c
+     * 3 - 0.9 * c
+     * 4 - 0.99 * c
+     * 5 - 0.99999 * c
+     * 6 - c (3e8 m/s) 
+     * 7 - 2*c
+     * 8 - 10*c
+     * 9 - 1000*c
+     * 10 - 1 AU/s
+     * 11 - 10 AU/s
+     * 12 - 1000 AU/s
+     * 13 - 10000 AU/s
+     * 14 - 1 pc/s
+     * 15 - 2 pc/s
+     * 16 - 10 pc/s
+     * 17 - 1000 pc/s
+     * 18 - No limit
+     * It also contains a boolean indicating whether this comes from
      * the interface.
      **/
     SPEED_LIMIT_CMD,

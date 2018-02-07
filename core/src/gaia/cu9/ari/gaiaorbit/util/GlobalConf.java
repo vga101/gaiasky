@@ -195,6 +195,7 @@ public class GlobalConf {
         public boolean STRIPPED_FOV_MODE = false;
         /** Whether octree drawing is active or not **/
         public boolean DRAW_OCTREE;
+        public boolean RELATIVISTIC_ABERRATION = false;
 
         public RuntimeConf() {
             EventManager.instance.subscribe(this, Events.LIMIT_MAG_CMD, Events.INPUT_ENABLED_CMD, Events.DISPLAY_GUI_CMD, Events.TOGGLE_UPDATEPAUSE, Events.TOGGLE_TIME_CMD, Events.RECORD_CAMERA_CMD);
@@ -775,44 +776,61 @@ public class GlobalConf {
                 CAMERA_SPEED_LIMIT = 0.0277777778 * Constants.KM_TO_U;
                 break;
             case 1:
+                CAMERA_SPEED_LIMIT = 0.5 * Constants.C * Constants.M_TO_U;
+                break;
             case 2:
-                // 1 c and 2 c
-                CAMERA_SPEED_LIMIT = CAMERA_SPEED_LIMIT_IDX * 3e8 * Constants.M_TO_U;
+                CAMERA_SPEED_LIMIT = 0.8 * Constants.C * Constants.M_TO_U;
                 break;
             case 3:
-                // 10 c
-                CAMERA_SPEED_LIMIT = 10 * 3e8 * Constants.M_TO_U;
+                CAMERA_SPEED_LIMIT = 0.9 * Constants.C * Constants.M_TO_U;
                 break;
             case 4:
-                // 1000 c
-                CAMERA_SPEED_LIMIT = 1000 * 3e8 * Constants.M_TO_U;
+                CAMERA_SPEED_LIMIT = 0.99 * Constants.C * Constants.M_TO_U;
                 break;
             case 5:
-                CAMERA_SPEED_LIMIT = 1 * Constants.AU_TO_U;
+                CAMERA_SPEED_LIMIT = 0.99999 * Constants.C * Constants.M_TO_U;
                 break;
             case 6:
-                CAMERA_SPEED_LIMIT = 10 * Constants.AU_TO_U;
+                CAMERA_SPEED_LIMIT = Constants.C * Constants.M_TO_U;
                 break;
             case 7:
-                CAMERA_SPEED_LIMIT = 1000 * Constants.AU_TO_U;
+                CAMERA_SPEED_LIMIT = 2.0 * Constants.C * Constants.M_TO_U;
                 break;
             case 8:
-                CAMERA_SPEED_LIMIT = 10000 * Constants.AU_TO_U;
+                // 10 c
+                CAMERA_SPEED_LIMIT = 10.0 * Constants.C * Constants.M_TO_U;
                 break;
             case 9:
+                // 1000 c
+                CAMERA_SPEED_LIMIT = 1000.0 * Constants.C * Constants.M_TO_U;
+                break;
             case 10:
-                // 1 pc/s and 2 pc/s
-                CAMERA_SPEED_LIMIT = (CAMERA_SPEED_LIMIT_IDX - 8) * Constants.PC_TO_U;
+                CAMERA_SPEED_LIMIT = 1.0 * Constants.AU_TO_U;
                 break;
             case 11:
-                // 10 pc/s
-                CAMERA_SPEED_LIMIT = 10 * Constants.PC_TO_U;
+                CAMERA_SPEED_LIMIT = 10.0 * Constants.AU_TO_U;
                 break;
             case 12:
-                // 1000 pc/s
-                CAMERA_SPEED_LIMIT = 1000 * Constants.PC_TO_U;
+                CAMERA_SPEED_LIMIT = 1000.0 * Constants.AU_TO_U;
                 break;
             case 13:
+                CAMERA_SPEED_LIMIT = 10000.0 * Constants.AU_TO_U;
+                break;
+            case 14:
+                CAMERA_SPEED_LIMIT = Constants.PC_TO_U;
+                break;
+            case 15:
+                CAMERA_SPEED_LIMIT = 2.0 * Constants.PC_TO_U;
+                break;
+            case 16:
+                // 10 pc/s
+                CAMERA_SPEED_LIMIT = 10.0 * Constants.PC_TO_U;
+                break;
+            case 17:
+                // 1000 pc/s
+                CAMERA_SPEED_LIMIT = 1000.0 * Constants.PC_TO_U;
+                break;
+            case 18:
                 // No limit
                 CAMERA_SPEED_LIMIT = -1;
                 break;

@@ -20,6 +20,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.DecalUtils;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.comp.DistToCameraComparator;
 
 public class BillboardStarRenderSystem extends AbstractRenderSystem {
@@ -146,6 +147,16 @@ public class BillboardStarRenderSystem extends AbstractRenderSystem {
             shaderProgram.setUniformMatrix("u_projTrans", camera.getCamera().combined);
             shaderProgram.setUniformf("u_quaternion", quaternion.x, quaternion.y, quaternion.z, quaternion.w);
             shaderProgram.setUniformf("u_camShift", camera.getCurrent().getShift().put(aux));
+
+            // Relativistic aberration
+            shaderProgram.setUniformi("u_relativsiticAberration", GlobalConf.runtime.RELATIVISTIC_ABERRATION ? 1 : 0);
+            if (camera.getVelocity() == null || camera.getVelocity().len() == 0) {
+                aux.set(1, 0, 0);
+            } else {
+                camera.getVelocity().put(aux).nor();
+            }
+            shaderProgram.setUniformf("u_camDir", aux);
+            shaderProgram.setUniformf("u_vc", (float) (camera.getSpeed() / Constants.C_KMH));
 
             if (!Constants.mobile) {
                 // Global uniforms

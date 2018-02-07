@@ -39,7 +39,6 @@ public class CameraComponent extends GuiComponent implements IObserver {
     protected Slider fieldOfView, cameraSpeed, turnSpeed, rotateSpeed;
     protected CheckBox focusLock, orientationLock, crosshair, cinematic;
     protected OwnTextIconButton button3d, buttonDome, buttonCubemap, buttonAnaglyph, button3dtv, buttonVR, buttonCrosseye;
-    private float fovBackup;
     protected boolean fovFlag = true;
 
     public CameraComponent(Skin skin, Stage stage) {
@@ -155,21 +154,26 @@ public class CameraComponent extends GuiComponent implements IObserver {
         fov = new OwnLabel(Integer.toString((int) GlobalConf.scene.CAMERA_FOV) + "°", skin, "default");
 
         /** CAMERA SPEED LIMIT **/
-        String[] speedLimits = new String[14];
+        String[] speedLimits = new String[19];
         speedLimits[0] = txt("gui.camera.speedlimit.100kmh");
-        speedLimits[1] = txt("gui.camera.speedlimit.c");
-        speedLimits[2] = txt("gui.camera.speedlimit.cfactor", 2);
-        speedLimits[3] = txt("gui.camera.speedlimit.cfactor", 10);
-        speedLimits[4] = txt("gui.camera.speedlimit.cfactor", 1000);
-        speedLimits[5] = txt("gui.camera.speedlimit.aus", 1);
-        speedLimits[6] = txt("gui.camera.speedlimit.aus", 10);
-        speedLimits[7] = txt("gui.camera.speedlimit.aus", 1000);
-        speedLimits[8] = txt("gui.camera.speedlimit.aus", 10000);
-        speedLimits[9] = txt("gui.camera.speedlimit.pcs", 1);
-        speedLimits[10] = txt("gui.camera.speedlimit.pcs", 2);
-        speedLimits[11] = txt("gui.camera.speedlimit.pcs", 10);
-        speedLimits[12] = txt("gui.camera.speedlimit.pcs", 1000);
-        speedLimits[13] = txt("gui.camera.speedlimit.nolimit");
+        speedLimits[1] = txt("gui.camera.speedlimit.cfactor", "0.5");
+        speedLimits[2] = txt("gui.camera.speedlimit.cfactor", "0.8");
+        speedLimits[3] = txt("gui.camera.speedlimit.cfactor", "0.9");
+        speedLimits[4] = txt("gui.camera.speedlimit.cfactor", "0.99");
+        speedLimits[5] = txt("gui.camera.speedlimit.cfactor", "0.99999");
+        speedLimits[6] = txt("gui.camera.speedlimit.c");
+        speedLimits[7] = txt("gui.camera.speedlimit.cfactor", 2);
+        speedLimits[8] = txt("gui.camera.speedlimit.cfactor", 10);
+        speedLimits[9] = txt("gui.camera.speedlimit.cfactor", 1000);
+        speedLimits[10] = txt("gui.camera.speedlimit.aus", 1);
+        speedLimits[11] = txt("gui.camera.speedlimit.aus", 10);
+        speedLimits[12] = txt("gui.camera.speedlimit.aus", 1000);
+        speedLimits[13] = txt("gui.camera.speedlimit.aus", 10000);
+        speedLimits[14] = txt("gui.camera.speedlimit.pcs", 1);
+        speedLimits[15] = txt("gui.camera.speedlimit.pcs", 2);
+        speedLimits[16] = txt("gui.camera.speedlimit.pcs", 10);
+        speedLimits[17] = txt("gui.camera.speedlimit.pcs", 1000);
+        speedLimits[18] = txt("gui.camera.speedlimit.nolimit");
 
         cameraSpeedLimit = new OwnSelectBox<String>(skin);
         cameraSpeedLimit.setName("camera speed limit");
