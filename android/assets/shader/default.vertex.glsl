@@ -236,8 +236,7 @@ void main() {
             // Relativistic aberration
             // Current cosine of angle cos(th_s) cos A = DotProduct(v1, v2) / (Length(v1) * Length(v2))
             vec3 cdir = u_velDir * -1.0;
-            float dist = length(pos.xyz);
-            float costh_s = dot(cdir, pos.xyz) / dist;
+            float costh_s = dot(cdir, pos.xyz) / length(pos.xyz);
             float th_s = acos(costh_s);
             float costh_o = (costh_s - u_vc) / (1 - u_vc * costh_s);
             float th_o = acos(costh_o);

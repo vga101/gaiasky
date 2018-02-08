@@ -149,14 +149,18 @@ public class BillboardStarRenderSystem extends AbstractRenderSystem {
             shaderProgram.setUniformf("u_camShift", camera.getCurrent().getShift().put(aux));
 
             // Relativistic aberration
-            shaderProgram.setUniformi("u_relativsiticAberration", GlobalConf.runtime.RELATIVISTIC_ABERRATION ? 1 : 0);
-            if (camera.getVelocity() == null || camera.getVelocity().len() == 0) {
-                aux.set(1, 0, 0);
+            if (GlobalConf.runtime.RELATIVISTIC_ABERRATION) {
+                shaderProgram.setUniformi("u_relativsiticAberration", 1);
+                if (camera.getVelocity() == null || camera.getVelocity().len() == 0) {
+                    aux.set(1, 0, 0);
+                } else {
+                    camera.getVelocity().put(aux).nor();
+                }
+                shaderProgram.setUniformf("u_velDir", aux);
+                shaderProgram.setUniformf("u_vc", (float) (camera.getSpeed() / Constants.C_KMH));
             } else {
-                camera.getVelocity().put(aux).nor();
+                shaderProgram.setUniformi("u_relativsiticAberration", 0);
             }
-            shaderProgram.setUniformf("u_velDir", aux);
-            shaderProgram.setUniformf("u_vc", (float) (camera.getSpeed() / Constants.C_KMH));
 
             // Global uniforms
             shaderProgram.setUniformf("u_time", (float) t);

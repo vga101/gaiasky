@@ -21,6 +21,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ParticleGroup;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ParticleGroup.ParticleBean;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
+import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf.ProgramConf.StereoProfile;
 import gaia.cu9.ari.gaiaorbit.util.comp.DistToCameraComparator;
@@ -29,6 +30,7 @@ public class ParticleGroupRenderSystem extends ImmediateRenderSystem implements 
 
     Vector3 aux1;
     int additionalOffset, pmOffset;
+
 
     Comparator<IRenderable> comp;
 
@@ -119,6 +121,21 @@ public class ParticleGroupRenderSystem extends ImmediateRenderSystem implements 
                 shaderProgram.setUniformf("u_ar", GlobalConf.program.STEREOSCOPIC_MODE && (GlobalConf.program.STEREO_PROFILE != StereoProfile.HD_3DTV && GlobalConf.program.STEREO_PROFILE != StereoProfile.ANAGLYPHIC) ? 0.5f : 1f);
                 shaderProgram.setUniformf("u_profileDecay", particleGroup.profileDecay);
                 shaderProgram.setUniformf("u_sizeFactor", rc.scaleFactor);
+
+                // Relativistic aberration
+                if (GlobalConf.runtime.RELATIVISTIC_ABERRATION) {
+                    shaderProgram.setUniformi("u_relativsiticAberration", 1);
+                    if (camera.getVelocity() == null || camera.getVelocity().len() == 0) {
+                        aux1.set(1, 0, 0);
+                    } else {
+                        camera.getVelocity().put(aux1).nor();
+                    }
+                    shaderProgram.setUniformf("u_velDir", aux1);
+                    shaderProgram.setUniformf("u_vc", (float) (camera.getSpeed() / Constants.C_KMH));
+                } else {
+                    shaderProgram.setUniformi("u_relativsiticAberration", 0);
+                }
+
                 curr.mesh.setVertices(curr.vertices, particleGroup.offset, particleGroup.count);
                 curr.mesh.render(shaderProgram, ShapeType.Point.getGlType());
                 shaderProgram.end();

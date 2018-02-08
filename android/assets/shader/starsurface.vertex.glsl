@@ -29,73 +29,8 @@ attribute vec2 a_texCoord0;
 varying vec2 v_texCoords0;
 #endif // textureFlag
 
-#ifdef boneWeight0Flag
-#define boneWeightsFlag
-attribute vec2 a_boneWeight0;
-#endif //boneWeight0Flag
-
-#ifdef boneWeight1Flag
-#ifndef boneWeightsFlag
-#define boneWeightsFlag
-#endif
-attribute vec2 a_boneWeight1;
-#endif //boneWeight1Flag
-
-#ifdef boneWeight2Flag
-#ifndef boneWeightsFlag
-#define boneWeightsFlag
-#endif
-attribute vec2 a_boneWeight2;
-#endif //boneWeight2Flag
-
-#ifdef boneWeight3Flag
-#ifndef boneWeightsFlag
-#define boneWeightsFlag
-#endif
-attribute vec2 a_boneWeight3;
-#endif //boneWeight3Flag
-
-#ifdef boneWeight4Flag
-#ifndef boneWeightsFlag
-#define boneWeightsFlag
-#endif
-attribute vec2 a_boneWeight4;
-#endif //boneWeight4Flag
-
-#ifdef boneWeight5Flag
-#ifndef boneWeightsFlag
-#define boneWeightsFlag
-#endif
-attribute vec2 a_boneWeight5;
-#endif //boneWeight5Flag
-
-#ifdef boneWeight6Flag
-#ifndef boneWeightsFlag
-#define boneWeightsFlag
-#endif
-attribute vec2 a_boneWeight6;
-#endif //boneWeight6Flag
-
-#ifdef boneWeight7Flag
-#ifndef boneWeightsFlag
-#define boneWeightsFlag
-#endif
-attribute vec2 a_boneWeight7;
-#endif //boneWeight7Flag
-
-#if defined(numBones) && defined(boneWeightsFlag)
-#if (numBones > 0) 
-#define skinningFlag
-#endif
-#endif
 
 uniform mat4 u_worldTrans;
-
-#if defined(numBones)
-#if numBones > 0
-uniform mat4 u_bones[numBones];
-#endif //numBones
-#endif
 
 #ifdef shininessFlag
 uniform float u_shininess;
@@ -178,95 +113,16 @@ varying vec3 v_ambientLight;
 #endif // lightingFlag
 
 ////////////////////////////////////////////////////////////////////////////////////
-////////// GROUND ATMOSPHERIC SCATTERING - VERTEX
+//////////RELATIVISTIC EFFECTS - VERTEX
 ////////////////////////////////////////////////////////////////////////////////////
-varying vec3 v_atmosphereColor;
-#ifdef atmosphereGround
-    uniform vec3 v3PlanetPos; /* The position of the planet */
-    uniform vec3 v3CameraPos; /* The camera's current position*/
-    uniform vec3 v3LightPos; /* The direction vector to the light source*/
-    uniform vec3 v3InvWavelength; /* 1 / pow(wavelength, 4) for the red, green, and blue channels*/
-    
-    uniform float fCameraHeight;
-    uniform float fCameraHeight2; /* fCameraHeight^2*/
-    uniform float fOuterRadius; /* The outer (atmosphere) radius*/
-    uniform float fOuterRadius2; /* fOuterRadius^2*/
-    uniform float fInnerRadius; /* The inner (planetary) radius*/
-    uniform float fKrESun; /* Kr * ESun*/
-    uniform float fKmESun; /* Km * ESun*/
-    uniform float fKr4PI; /* Kr * 4 * PI*/
-    uniform float fKm4PI; /* Km * 4 * PI*/
-    uniform float fScale; /* 1 / (fOuterRadius - fInnerRadius)*/
-    uniform float fScaleDepth; /* The scale depth (i.e. the altitude at which the atmosphere's average density is found)*/
-    uniform float fScaleOverScaleDepth; /* fScale / fScaleDepth*/
-    
-    uniform int nSamples;
-    uniform float fSamples;
-    
-    
-    float scale(float fCos)
-    {
-    	float x = 1.0 - fCos;
-    	return fScaleDepth * exp(-0.00287 + x*(0.459 + x*(3.83 + x*(-6.80 + x*5.25))));
-    }
-    
-    float getNearIntersection(vec3 pos, vec3 ray, float distance2, float radius2) {
-        float B = 2.0 * dot (pos, ray);
-        float C = distance2 - radius2;
-        float fDet = max (0.0, B * B - 4.0 * C);
-        return 0.5 * (-B - sqrt (fDet));
-    }
-    
-    vec3 calculateAtmosphereGroundColor() {
-		// Get the ray from the camera to the vertex and its length (which is the far point of the ray passing through the atmosphere)
-		vec3 v3Pos = a_position * fOuterRadius;
-		vec3 v3Ray = v3Pos - v3CameraPos;
-		float fFar = length (v3Ray);
-		v3Ray /= fFar;
-	
-		// Calculate the closest intersection of the ray with the outer atmosphere (which is the near point of the ray passing through the atmosphere)
-		float fNear = getNearIntersection (v3CameraPos, v3Ray, fCameraHeight2, fOuterRadius2);
-	
-		// Calculate the ray's starting position, then calculate its scattering offset
-		vec3 v3Start = v3CameraPos + v3Ray * fNear;
-		fFar -= fNear;
-		float fStartDepth = exp((fInnerRadius - fOuterRadius) / fScaleDepth);
-		float fCameraAngle = dot(-v3Ray, a_position) / length(a_position);
-		float fLightAngle = dot(v3LightPos, a_position) / length(a_position);
-		float fCameraScale = scale(fCameraAngle);
-		float fLightScale = scale(fLightAngle);
-		float fCameraOffset = fStartDepth * fCameraScale;
-		float fTemp = (fLightScale + fCameraScale);
-	
-		/* Initialize the scattering loop variables*/
-		float fSampleLength = fFar / fSamples;
-		float fScaledLength = fSampleLength * fScale;
-		vec3 v3SampleRay = v3Ray * fSampleLength;
-		vec3 v3SamplePoint = v3Start + v3SampleRay * 0.5;
-	
-		// Now loop through the sample rays
-		vec3 v3FrontColor = vec3(0.0, 0.0, 0.0);
-		vec3 v3Attenuate;
-		for (int i = 0; i < 11; i++) {
-		    float fHeight = length (v3SamplePoint);
-		    float fDepth = exp (fScaleOverScaleDepth * (fInnerRadius - fHeight));
-		    float fScatter = fDepth * fTemp - fCameraOffset;
-		    
-		    v3Attenuate = exp(-fScatter * (v3InvWavelength * fKr4PI + fKm4PI));
-		    v3FrontColor += v3Attenuate * (fDepth * fScaledLength);
-		    v3SamplePoint += v3SampleRay;
-		}
-		
-		return vec3(v3FrontColor * (v3InvWavelength * fKrESun + fKmESun));
-    }
-#else
-    vec3 calculateAtmosphereGroundColor() {
-	return vec3(0.0, 0.0, 0.0);
-    }
-#endif // atmosphereGround
+#ifdef relativistcEffects
+uniform float u_vc; // v/c
+uniform vec3 u_velDir; // Camera velocity direction
+
+<INCLUDE shader/lib_geometry.glsl>
+#endif // relativistcEffects
 
 void main() {
-	v_atmosphereColor = calculateAtmosphereGroundColor();
 	v_time = u_shininess;
 	#ifdef textureFlag
 		v_texCoords0 = a_texCoord0;
@@ -283,39 +139,18 @@ void main() {
 		#endif //alphaTestFlag
 	#endif // blendedFlag
 
-	#ifdef skinningFlag
-		mat4 skinning = mat4(0.0);
-		#ifdef boneWeight0Flag
-			skinning += (a_boneWeight0.y) * u_bones[int(a_boneWeight0.x)];
-		#endif //boneWeight0Flag
-		#ifdef boneWeight1Flag				
-			skinning += (a_boneWeight1.y) * u_bones[int(a_boneWeight1.x)];
-		#endif //boneWeight1Flag
-		#ifdef boneWeight2Flag		
-			skinning += (a_boneWeight2.y) * u_bones[int(a_boneWeight2.x)];
-		#endif //boneWeight2Flag
-		#ifdef boneWeight3Flag
-			skinning += (a_boneWeight3.y) * u_bones[int(a_boneWeight3.x)];
-		#endif //boneWeight3Flag
-		#ifdef boneWeight4Flag
-			skinning += (a_boneWeight4.y) * u_bones[int(a_boneWeight4.x)];
-		#endif //boneWeight4Flag
-		#ifdef boneWeight5Flag
-			skinning += (a_boneWeight5.y) * u_bones[int(a_boneWeight5.x)];
-		#endif //boneWeight5Flag
-		#ifdef boneWeight6Flag
-			skinning += (a_boneWeight6.y) * u_bones[int(a_boneWeight6.x)];
-		#endif //boneWeight6Flag
-		#ifdef boneWeight7Flag
-			skinning += (a_boneWeight7.y) * u_bones[int(a_boneWeight7.x)];
-		#endif //boneWeight7Flag
-	#endif //skinningFlag
+	vec4 pos = u_worldTrans * vec4(a_position, 1.0);
 
-	#ifdef skinningFlag
-		vec4 pos = u_worldTrans * skinning * vec4(a_position, 1.0);
-	#else
-		vec4 pos = u_worldTrans * vec4(a_position, 1.0);
-	#endif
+        #ifdef relativistcEffects
+            // Relativistic aberration
+            // Current cosine of angle cos(th_s) cos A = DotProduct(v1, v2) / (Length(v1) * Length(v2))
+            vec3 cdir = u_velDir * -1.0;
+            float costh_s = dot(cdir, pos.xyz) / length(pos.xyz);
+            float th_s = acos(costh_s);
+            float costh_o = (costh_s - u_vc) / (1 - u_vc * costh_s);
+            float th_o = acos(costh_o);
+            pos.xyz = rotate_vertex_position(pos.xyz, normalize(cross(cdir, pos.xyz)), th_o - th_s);
+        #endif // relativisticEffects
 
 	gl_Position = u_projViewTrans * pos;
 
@@ -326,11 +161,7 @@ void main() {
 	#endif //shadowMapFlag
 
 	#if defined(normalFlag)
-		#if defined(skinningFlag)
-			vec3 normal = normalize((u_worldTrans * skinning * vec4(a_normal, 0.0)).xyz);
-		#else
-			vec3 normal = normalize(u_normalMatrix * a_normal);
-		#endif
+		vec3 normal = normalize(u_normalMatrix * a_normal);
 		v_normal = normal;
 	#endif // normalFlag
 

@@ -30,8 +30,6 @@ varying vec2 v_texCoords;
 #define distfac 3.24e-8 / 60000.0
 #define distfacinv 60000.0 / 3.23e-8
 
-
-
 void main()
 {
 
