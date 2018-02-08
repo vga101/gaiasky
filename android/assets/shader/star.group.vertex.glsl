@@ -3,6 +3,9 @@ precision mediump float;
 precision mediump int;
 #endif
 
+<INCLUDE shader/lib_math.glsl>
+<INCLUDE shader/lib_geometry.glsl>
+
 // ATTRIBUTES
 attribute vec3 a_position;
 attribute vec3 a_pm;
@@ -21,6 +24,7 @@ uniform float u_thAnglePoint;
 #ifdef relativistcEffects
     uniform vec3 u_velDir; // Velocity vector
     uniform float u_vc; // Fraction of the speed of light, v/c
+    <INCLUDE shader/lib_relativity.glsl>
 #endif // relativistcEffects
 
 // 0 - alpha
@@ -41,10 +45,6 @@ varying float v_discard;
 #define len1 len0 * 100.0
 #define day_to_year 1.0 / 365.25
 
-
-<INCLUDE shader/lib_math.glsl>
-<INCLUDE shader/lib_geometry.glsl>
-
 void main() {
     vec3 pos = a_position - u_camPos;
     // Proper motion
@@ -54,14 +54,7 @@ void main() {
     float dist = length(pos);
     
     #ifdef relativistcEffects
-        // Relativistic aberration
-        // Current cosine of angle cos(th_s) cos A = DotProduct(v1, v2) / (Length(v1) * Length(v2))
-        vec3 cdir = u_velDir * -1.0;
-        float costh_s = dot(cdir, pos) / dist;
-        float th_s = acos(costh_s);
-        float costh_o = (costh_s - u_vc) / (1.0 - u_vc * costh_s);
-        float th_o = acos(costh_o);
-        pos = rotate_vertex_position(pos, normalize(cross(cdir, pos)), th_o - th_s);
+    	pos = computeRelativisticAberration(pos, dist, u_velDir, u_vc);
     #endif // relativisticEffects
     
     
