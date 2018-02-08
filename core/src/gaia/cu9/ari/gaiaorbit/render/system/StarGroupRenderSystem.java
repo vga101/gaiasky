@@ -37,13 +37,16 @@ public class StarGroupRenderSystem extends ImmediateRenderSystem implements IObs
     /** Hopefully we won't have more than 5000 star groups at once **/
     private final int N_MESHES = 5000;
 
-    Vector3 aux1, aux2;
-    int sizeOffset, pmOffset;
-    Comparator<IRenderable> comp;
-    float[] pointAlpha, alphaSizeFovBr;
+    /** Shader program with relativistic effects **/
+    private ShaderProgram shaderProgramRel;
+    private Vector3 aux1, aux2;
+    private int sizeOffset, pmOffset;
+    private Comparator<IRenderable> comp;
+    private float[] pointAlpha, alphaSizeFovBr;
 
-    public StarGroupRenderSystem(RenderGroup rg, int priority, float[] alphas, ShaderProgram shaderProgram) {
+    public StarGroupRenderSystem(RenderGroup rg, int priority, float[] alphas, ShaderProgram shaderProgram, ShaderProgram shaderProgramRel) {
         super(rg, priority, alphas, shaderProgram);
+        this.shaderProgramRel = shaderProgramRel;
         BRIGHTNESS_FACTOR = Constants.webgl ? 15 : 10;
         this.comp = new DistToCameraComparator<IRenderable>();
         this.alphaSizeFovBr = new float[4];
@@ -62,6 +65,10 @@ public class StarGroupRenderSystem extends ImmediateRenderSystem implements IObs
     protected void initVertices() {
         /** STARS **/
         meshes = new MeshData[N_MESHES];
+    }
+
+    private ShaderProgram getShaderProgram() {
+        return GlobalConf.runtime.RELATIVISTIC_ABERRATION ? shaderProgramRel : shaderProgram;
     }
 
     /**
@@ -177,6 +184,8 @@ public class StarGroupRenderSystem extends ImmediateRenderSystem implements IObs
                         if (curr != null) {
                             int fovmode = camera.getMode().getGaiaFovMode();
 
+                            ShaderProgram shaderProgram = getShaderProgram();
+
                             shaderProgram.begin();
                             shaderProgram.setUniform2fv("u_pointAlpha", pointAlpha, 0, 2);
                             shaderProgram.setUniformMatrix("u_projModelView", camera.getCamera().combined);
@@ -184,7 +193,6 @@ public class StarGroupRenderSystem extends ImmediateRenderSystem implements IObs
 
                             // Relativistic aberration
                             if (GlobalConf.runtime.RELATIVISTIC_ABERRATION) {
-                                shaderProgram.setUniformi("u_relativsiticAberration", 1);
                                 if (camera.getVelocity() == null || camera.getVelocity().len() == 0) {
                                     aux2.set(1, 0, 0);
                                 } else {
@@ -192,8 +200,6 @@ public class StarGroupRenderSystem extends ImmediateRenderSystem implements IObs
                                 }
                                 shaderProgram.setUniformf("u_velDir", aux2);
                                 shaderProgram.setUniformf("u_vc", (float) (camera.getSpeed() / Constants.C_KMH));
-                            } else {
-                                shaderProgram.setUniformi("u_relativsiticAberration", 0);
                             }
 
                             alphaSizeFovBr[0] = starGroup.opacity * alphas[starGroup.ct.getFirstOrdinal()];

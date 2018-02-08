@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetDescriptor;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.BitmapFontLoader.BitmapFontParameter;
 import com.badlogic.gdx.graphics.Camera;
@@ -69,6 +70,7 @@ import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.override.AtmosphereShaderProvider;
 import gaia.cu9.ari.gaiaorbit.util.override.GroundShaderProvider;
 import gaia.cu9.ari.gaiaorbit.util.override.RelativisticShaderProvider;
+import gaia.cu9.ari.gaiaorbit.util.override.ShaderProgramProvider.ShaderProgramParameter;
 
 /**
  * Renders a scenegraph.
@@ -87,8 +89,10 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
     public AbstractRenderSystem[] pixelRenderSystems;
 
-    private ShaderProgram starShader, galaxyShader, fontShader, spriteShader, lineShader, lineQuadShader, lineGpuShader, mwPointShader, mwNebulaShader, particleGroupShader, starGroupShader, pixelShader;
+    private ShaderProgram starShader, galaxyShader, fontShader, spriteShader, lineShader, lineQuadShader, lineGpuShader, mwPointShader, mwNebulaShader, particleGroupShader, starGroupShader, starGroupShaderRel, pixelShader;
     private BitmapFont font3d, font2d, fontTitles;
+
+    private AssetDescriptor<ShaderProgram>[] starGroupDesc;
 
     private int maxTexSize;
 
@@ -136,6 +140,26 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         super();
     }
 
+    private AssetDescriptor<ShaderProgram>[] loadShader(AssetManager manager, String vfile, String ffile, String[] names, String[] prependVertex) {
+        @SuppressWarnings("unchecked")
+        AssetDescriptor<ShaderProgram>[] result = new AssetDescriptor[prependVertex.length];
+
+        int i = 0;
+        for (String prep : prependVertex) {
+            ShaderProgramParameter spp = new ShaderProgramParameter();
+            spp.prependVertexCode = prep;
+            spp.vertexFile = vfile;
+            spp.fragmentFile = ffile;
+            manager.load(names[i], ShaderProgram.class, spp);
+            AssetDescriptor<ShaderProgram> desc = new AssetDescriptor<ShaderProgram>(names[i], ShaderProgram.class, spp);
+            result[i] = desc;
+
+            i++;
+        }
+
+        return result;
+    }
+
     @Override
     public void initialize(AssetManager manager) {
         ShaderLoader.Pedantic = false;
@@ -152,8 +176,8 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         manager.load("shader/point.galaxy.vertex.glsl", ShaderProgram.class);
         manager.load("shader/nebula.vertex.glsl", ShaderProgram.class);
         manager.load("shader/particle.group.vertex.glsl", ShaderProgram.class);
-        manager.load("shader/star.group.vertex.glsl", ShaderProgram.class);
         manager.load("shader/point.vertex.glsl", ShaderProgram.class);
+        starGroupDesc = loadShader(manager, "shader/star.group.vertex.glsl", "shader/star.group.fragment.glsl", new String[] { "starGroup", "starGroupRel" }, new String[] { "", "#define relativistcEffects\n" });
 
         manager.load("atmgrounddefault", GroundShaderProvider.class, new GroundShaderProviderParameter("shader/default.vertex.glsl", "shader/default.fragment.glsl"));
         manager.load("spsurface", RelativisticShaderProvider.class, new RelativisticShaderProviderParameter("shader/starsurface.vertex.glsl", "shader/starsurface.fragment.glsl"));
@@ -298,11 +322,19 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         }
 
         /**
-         * STAR GROUP
+         * STAR GROUP - default
          */
-        starGroupShader = manager.get("shader/star.group.vertex.glsl");
+        starGroupShader = manager.get(starGroupDesc[0]);
         if (!starGroupShader.isCompiled()) {
             Logger.error(new RuntimeException(), this.getClass().getName() + " - Star group shader compilation failed:\n" + starGroupShader.getLog());
+        }
+
+        /**
+         * STAR GROUP - relativistic
+         */
+        starGroupShaderRel = manager.get(starGroupDesc[1]);
+        if (!starGroupShaderRel.isCompiled()) {
+            Logger.error(new RuntimeException(), this.getClass().getName() + " - Star group shader (rel) compilation failed:\n" + starGroupShaderRel.getLog());
         }
 
         /**
@@ -511,7 +543,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         particleGroupProc.setPreRunnable(blendNoDepthRunnable);
 
         // STAR GROUP
-        AbstractRenderSystem starGroupProc = new StarGroupRenderSystem(RenderGroup.STAR_GROUP, priority++, alphas, starGroupShader);
+        AbstractRenderSystem starGroupProc = new StarGroupRenderSystem(RenderGroup.STAR_GROUP, priority++, alphas, starGroupShader, starGroupShaderRel);
         starGroupProc.setPreRunnable(blendNoDepthRunnable);
 
         // MODEL STARS
