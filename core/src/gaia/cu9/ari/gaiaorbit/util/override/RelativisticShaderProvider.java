@@ -5,6 +5,8 @@ import com.badlogic.gdx.graphics.g3d.Renderable;
 import com.badlogic.gdx.graphics.g3d.Shader;
 import com.badlogic.gdx.graphics.g3d.utils.DefaultShaderProvider;
 
+import gaia.cu9.ari.gaiaorbit.assets.ShaderTemplatingLoader;
+
 public class RelativisticShaderProvider extends DefaultShaderProvider {
     public final RelativisticShader.Config config;
 
@@ -17,7 +19,7 @@ public class RelativisticShaderProvider extends DefaultShaderProvider {
     }
 
     public RelativisticShaderProvider(final FileHandle vertexShader, final FileHandle fragmentShader) {
-        this(vertexShader.readString(), fragmentShader.readString());
+        this(ShaderTemplatingLoader.load(vertexShader), ShaderTemplatingLoader.load(fragmentShader));
     }
 
     public RelativisticShaderProvider() {

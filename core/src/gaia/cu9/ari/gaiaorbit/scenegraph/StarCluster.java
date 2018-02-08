@@ -35,6 +35,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.component.RotationComponent;
 import gaia.cu9.ari.gaiaorbit.util.ComponentTypes;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
+import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.ModelCache;
 import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
 import gaia.cu9.ari.gaiaorbit.util.g3d.MeshPartBuilder2;
@@ -122,6 +123,7 @@ public class StarCluster extends AbstractPositionEntity implements IFocus, IProp
         }
 
         mc = new ModelComponent(false);
+        mc.initialize();
         mc.dlight = new DirectionalLight();
         mc.dlight.set(1, 1, 1, 1, 1, 1);
         mc.env = new Environment();
@@ -129,6 +131,10 @@ public class StarCluster extends AbstractPositionEntity implements IFocus, IProp
         mc.env.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.4f, 0.4f, 0.4f, 1f));
         mc.env.set(new FloatAttribute(FloatAttribute.Shininess, 0.2f));
         mc.instance = new ModelInstance(model, modelTransform);
+
+        // Relativistic effects
+        if (GlobalConf.runtime.RELATIVISTIC_ABERRATION)
+            mc.rec.setUpRelativisticEffectsMaterial(mc.instance.materials);
 
     }
 
@@ -210,6 +216,7 @@ public class StarCluster extends AbstractPositionEntity implements IFocus, IProp
         mc.touch();
         mc.setTransparency(alpha * opacity * fadeAlpha);
         mc.instance.transform.set(this.localTransform);
+        mc.updateRelativisticEffects(GaiaSky.instance.getICamera());
         modelBatch.render(mc.instance, mc.env);
 
     }
@@ -292,6 +299,7 @@ public class StarCluster extends AbstractPositionEntity implements IFocus, IProp
         aux.add(cam.getUp()).nor().scl(dist);
 
         out.add(aux);
+        GlobalResources.applyRelativisticAberration(out, cam);
     }
 
     @Override

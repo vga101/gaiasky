@@ -18,6 +18,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.DecalUtils;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.comp.DistToCameraComparator;
 
 public class BillboardSpriteRenderSystem extends AbstractRenderSystem {
@@ -134,10 +135,18 @@ public class BillboardSpriteRenderSystem extends AbstractRenderSystem {
             shaderProgram.setUniformf("u_quaternion", quaternion.x, quaternion.y, quaternion.z, quaternion.w);
             shaderProgram.setUniformf("u_camShift", camera.getCurrent().getShift().put(aux));
 
-            if (!Constants.mobile) {
-                // Global uniforms
-                shaderProgram.setUniformf("u_time", (float) t);
+            // Relativistic aberration
+            shaderProgram.setUniformi("u_relativsiticAberration", GlobalConf.runtime.RELATIVISTIC_ABERRATION ? 1 : 0);
+            if (camera.getVelocity() == null || camera.getVelocity().len() == 0) {
+                aux.set(1, 0, 0);
+            } else {
+                camera.getVelocity().put(aux).nor();
             }
+            shaderProgram.setUniformf("u_velDir", aux);
+            shaderProgram.setUniformf("u_vc", (float) (camera.getSpeed() / Constants.C_KMH));
+
+            // Global uniforms
+            shaderProgram.setUniformf("u_time", (float) t);
 
             int size = renderables.size;
             for (int i = 0; i < size; i++) {
@@ -148,7 +157,6 @@ public class BillboardSpriteRenderSystem extends AbstractRenderSystem {
 
             // Restore
             Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
-
         }
 
     }

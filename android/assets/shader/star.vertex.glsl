@@ -38,9 +38,6 @@ void main()
    
    mat4 transform = u_projTrans;
    
-   // Translate
-   mat4 translate = mat4(1.0);
-   
    vec3 pos = u_pos - u_camShift;
    
    if(u_relativsiticAberration == 1) {
@@ -54,6 +51,9 @@ void main()
        float th_o = acos(costh_o);
        pos = rotate_vertex_position(pos, normalize(cross(cdir, pos)), th_o - th_s);
    }
+   
+   // Translate
+   mat4 translate = mat4(1.0);
    
    translate[3][0] = pos.x;
    translate[3][1] = pos.y;

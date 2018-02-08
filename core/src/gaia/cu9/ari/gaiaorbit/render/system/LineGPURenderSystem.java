@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 
 import gaia.cu9.ari.gaiaorbit.data.orbit.OrbitData;
@@ -16,6 +17,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.Gaia;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Orbit;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
+import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
@@ -32,21 +34,20 @@ public class LineGPURenderSystem extends ImmediateRenderSystem {
 
     private Matrix4 modelView;
 
+    private Vector3 aux2;
+
     /** Hopefully we won't have more than 1000000 orbits at once **/
     private final int N_MESHES = 1000000;
 
-    public LineGPURenderSystem(RenderGroup rg, int priority, float[] alphas) {
-        super(rg, priority, alphas);
+    public LineGPURenderSystem(RenderGroup rg, int priority, float[] alphas, ShaderProgram shaderProgram) {
+        super(rg, priority, alphas, shaderProgram);
         modelView = new Matrix4();
         glType = GL20.GL_LINE_STRIP;
+        aux2 = new Vector3();
     }
 
     @Override
     protected void initShaderProgram() {
-        shaderProgram = new ShaderProgram(Gdx.files.internal("shader/line.gpu.vertex.glsl"), Gdx.files.internal("shader/line.gpu.fragment.glsl"));
-        if (!shaderProgram.isCompiled()) {
-            Logger.error(this.getClass().getName(), "Line shader compilation failed:\n" + shaderProgram.getLog());
-        }
     }
 
     @Override
@@ -162,6 +163,20 @@ public class LineGPURenderSystem extends ImmediateRenderSystem {
                 shaderProgram.setUniformf("u_parentPos", 0, 0, 0);
             }
 
+            // Relativistic aberration
+            if (GlobalConf.runtime.RELATIVISTIC_ABERRATION) {
+                shaderProgram.setUniformi("u_relativsiticAberration", 1);
+                if (camera.getVelocity() == null || camera.getVelocity().len() == 0) {
+                    aux2.set(1, 0, 0);
+                } else {
+                    camera.getVelocity().put(aux2).nor();
+                }
+                shaderProgram.setUniformf("u_velDir", aux2);
+                shaderProgram.setUniformf("u_vc", (float) (camera.getSpeed() / Constants.C_KMH));
+            } else {
+                shaderProgram.setUniformi("u_relativsiticAberration", 0);
+            }
+
             curr.mesh.setVertices(curr.vertices, 0, renderable.count);
             curr.mesh.render(shaderProgram, glType);
 
@@ -179,5 +194,6 @@ public class LineGPURenderSystem extends ImmediateRenderSystem {
             array[i] = attribs.get(i);
         return array;
     }
+
 
 }

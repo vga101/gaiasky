@@ -158,10 +158,8 @@ public class BillboardStarRenderSystem extends AbstractRenderSystem {
             shaderProgram.setUniformf("u_velDir", aux);
             shaderProgram.setUniformf("u_vc", (float) (camera.getSpeed() / Constants.C_KMH));
 
-            if (!Constants.mobile) {
-                // Global uniforms
-                shaderProgram.setUniformf("u_time", (float) t);
-            }
+            // Global uniforms
+            shaderProgram.setUniformf("u_time", (float) t);
 
             int size = renderables.size;
             for (int i = 0; i < size; i++) {

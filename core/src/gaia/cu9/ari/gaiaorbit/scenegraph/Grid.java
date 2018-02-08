@@ -21,6 +21,7 @@ import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.render.IAnnotationsRenderable;
 import gaia.cu9.ari.gaiaorbit.render.IModelRenderable;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.ModelCache;
@@ -85,6 +86,10 @@ public class Grid extends AbstractPositionEntity implements IModelRenderable, IA
             // Equatorial, nothing
         }
         mc.instance = new ModelInstance(model, this.localTransform);
+
+        // Relativistic effects
+        if (GlobalConf.runtime.RELATIVISTIC_ABERRATION)
+            mc.rec.setUpRelativisticEffectsMaterial(mc.instance.materials);
 
         float pl = .5f;
         labelColor = new float[] { Math.min(1, cc[0] + pl), Math.min(1, cc[1] + pl), Math.min(1, cc[2] + pl), Math.min(1, cc[3] + pl) };

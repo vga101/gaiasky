@@ -39,11 +39,12 @@ public abstract class ImmediateRenderSystem extends AbstractRenderSystem {
 
     protected int maxVertices;
 
-    protected ImmediateRenderSystem(RenderGroup rg, int priority, float[] alphas) {
-	super(rg, priority, alphas);
-	initShaderProgram();
-	initVertices();
-	meshIdx = 0;
+    protected ImmediateRenderSystem(RenderGroup rg, int priority, float[] alphas, ShaderProgram shaderProgram) {
+        super(rg, priority, alphas);
+        this.shaderProgram = shaderProgram;
+        initShaderProgram();
+        initVertices();
+        meshIdx = 0;
     }
 
     protected abstract void initShaderProgram();

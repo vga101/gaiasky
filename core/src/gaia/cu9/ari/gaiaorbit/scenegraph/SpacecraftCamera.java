@@ -57,7 +57,7 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
     /** Closest body apart from the spacecraft **/
     private CelestialBody closest2;
 
-    private Vector3d aux2, todesired, desired, scthrust, scforce, scaccel, scvel, scpos;
+    private Vector3d aux1, aux2, todesired, desired, scthrust, scforce, scaccel, scvel, scpos;
 
     private double targetDistance;
     private boolean firstTime = true;
@@ -72,6 +72,7 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
 
         todesired = new Vector3d();
         desired = new Vector3d();
+        aux1 = new Vector3d();
         aux2 = new Vector3d();
         scthrust = new Vector3d();
         scforce = new Vector3d();
@@ -167,7 +168,7 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
         // POSITION
         double tgfac = targetDistance * sc.factor / fovFactor;
         relpos.scl(sc.factor);
-        aux2.set(sc.up).nor().scl(tgfac / 4d);
+        aux2.set(sc.up).nor().scl(tgfac / 8d);
         desired.set(sc.direction).nor().scl(-tgfac).add(aux2);
         todesired.set(desired).sub(relpos);
         todesired.scl(dt * GlobalConf.spacecraft.SC_RESPONSIVENESS / .5e6);
@@ -177,7 +178,8 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
         distance = pos.len();
 
         // DIRECTION
-        aux2.set(sc.direction).nor().scl(tgfac / 1.5f);
+        aux1.set(sc.up).nor().scl(0.0001);
+        aux2.set(sc.direction).nor().scl(tgfac * 4).add(aux1);
         direction.set(scpos).add(aux2).sub(pos).nor();
 
         // UP

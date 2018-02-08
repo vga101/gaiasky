@@ -26,7 +26,6 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.ParticleGroup.ParticleBean;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf.ProgramConf.StereoProfile;
-import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 
 public class MilkyWayRenderSystem extends ImmediateRenderSystem implements IObserver {
@@ -41,32 +40,20 @@ public class MilkyWayRenderSystem extends ImmediateRenderSystem implements IObse
 
     private ModelBatch modelBatch;
 
-    public MilkyWayRenderSystem(RenderGroup rg, int priority, float[] alphas, ModelBatch modelBatch) {
-        super(rg, priority, alphas);
+    public MilkyWayRenderSystem(RenderGroup rg, int priority, float[] alphas, ModelBatch modelBatch, ShaderProgram pointProgram, ShaderProgram nebulaProgram) {
+        super(rg, priority, alphas, pointProgram);
+        this.quadProgram = nebulaProgram;
         this.modelBatch = modelBatch;
     }
 
     @Override
     protected void initShaderProgram() {
 
-        // POINT (STARS) PROGRAM
-        if (Gdx.app.getType() == ApplicationType.WebGL)
-            shaderProgram = new ShaderProgram(Gdx.files.internal("shader/point.galaxy.vertex.glsl"), Gdx.files.internal("shader/point.galaxy.fragment.wgl.glsl"));
-        else
-            shaderProgram = new ShaderProgram(Gdx.files.internal("shader/point.galaxy.vertex.glsl"), Gdx.files.internal("shader/point.galaxy.fragment.glsl"));
-        if (!shaderProgram.isCompiled()) {
-            Logger.error(this.getClass().getName(), "Point shader compilation failed:\n" + shaderProgram.getLog());
-        }
         shaderProgram.begin();
         shaderProgram.setUniformf("u_pointAlphaMin", 0.1f);
         shaderProgram.setUniformf("u_pointAlphaMax", 1.0f);
         shaderProgram.end();
 
-        // QUAD (NEBULA) PROGRAM
-        quadProgram = new ShaderProgram(Gdx.files.internal("shader/nebula.vertex.glsl"), Gdx.files.internal("shader/nebula.fragment.glsl"));
-        if (!quadProgram.isCompiled()) {
-            Logger.error(this.getClass().getName(), "Nebula shader compilation failed:\n" + quadProgram.getLog());
-        }
         nebulatextures = new Texture[4];
         for (int i = 0; i < 4; i++) {
             Texture tex = new Texture(Gdx.files.internal(GlobalConf.TEXTURES_FOLDER + "nebula00" + (i + 1) + ".png"));

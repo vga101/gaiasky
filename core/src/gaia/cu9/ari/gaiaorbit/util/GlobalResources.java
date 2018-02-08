@@ -23,6 +23,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
 
+import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
@@ -44,6 +45,8 @@ public class GlobalResources {
     public static Pixmap linkCursor;
     /** The global skin **/
     public static Skin skin;
+
+    private static Vector3d aux = new Vector3d();
 
     /**
      * Model for atmosphere scattering
@@ -450,6 +453,30 @@ public class GlobalResources {
     /** Gets the angle in degrees between the two vectors **/
     public static float angle2d(Vector3 v1, Vector3 v2) {
         return (float) (MathUtilsd.radiansToDegrees * FastMath.atan2(v2.y - v1.y, v2.x - v1.x));
+    }
+
+    public static synchronized Vector3d applyRelativisticAberration(Vector3d pos, ICamera cam) {
+        // Relativistic aberration
+        if (GlobalConf.runtime.RELATIVISTIC_ABERRATION) {
+            Vector3d cdir = aux;
+            if (cam.getVelocity() != null)
+                cdir.set(cam.getVelocity()).nor();
+            else
+                cdir.set(1, 0, 0);
+
+            double vc = cam.getSpeed() / Constants.C_KMH;
+            if (vc > 0) {
+                cdir.scl(-1);
+                double costh_s = cdir.dot(pos) / pos.len();
+                double th_s = Math.acos(costh_s);
+
+                double costh_o = (costh_s - vc) / (1 - vc * costh_s);
+                double th_o = Math.acos(costh_o);
+
+                pos.rotate(cdir.crs(pos).nor(), Math.toDegrees(th_o - th_s));
+            }
+        }
+        return pos;
     }
 
 }

@@ -21,6 +21,7 @@ import gaia.cu9.ari.gaiaorbit.render.system.FontRenderSystem;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.RotationComponent;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
+import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.color.ColourUtils;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Quaterniond;
@@ -363,7 +364,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
 
         aux.add(cam.getUp()).nor().scl(dist);
 
-        out.add(aux);
+        GlobalResources.applyRelativisticAberration(out.add(aux), cam);
     }
 
     @Override

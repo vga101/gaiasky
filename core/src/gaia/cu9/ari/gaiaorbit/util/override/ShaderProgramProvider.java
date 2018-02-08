@@ -27,7 +27,7 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.utils.Array;
 
-import gaia.cu9.ari.gaiaorbit.assets.ShaderLoader;
+import gaia.cu9.ari.gaiaorbit.assets.ShaderTemplatingLoader;
 
 /** {@link AssetLoader} for {@link ShaderProgram} instances loaded from text files. If the file suffix is ".vert", it is assumed
  * to be a vertex shader, and a fragment shader is found using the same file name with a ".frag" suffix. And vice versa if the
@@ -80,8 +80,8 @@ public class ShaderProgramProvider extends AsynchronousAssetLoader<ShaderProgram
         }
         FileHandle vertexFile = vertFileName == null ? file : resolve(vertFileName);
         FileHandle fragmentFile = fragFileName == null ? file : resolve(fragFileName);
-        String vertexCode = ShaderLoader.load(vertexFile);
-        String fragmentCode = vertexFile.equals(fragmentFile) ? vertexCode : ShaderLoader.load(fragmentFile);
+        String vertexCode = ShaderTemplatingLoader.load(vertexFile);
+        String fragmentCode = vertexFile.equals(fragmentFile) ? vertexCode : ShaderTemplatingLoader.load(fragmentFile);
         if (parameter != null) {
             if (parameter.prependVertexCode != null)
                 vertexCode = parameter.prependVertexCode + vertexCode;

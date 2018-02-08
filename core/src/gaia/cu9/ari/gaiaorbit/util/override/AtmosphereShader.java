@@ -96,6 +96,10 @@ public class AtmosphereShader extends BaseShader {
         public final static Uniform cameraPos = new Uniform("v3CameraPos");
         public final static Uniform invWavelength = new Uniform("v3InvWavelength");
 
+        // Since atmosphere shader does not extend default shader, we need the relativsitic parameters here too
+        public final static Uniform vc = new Uniform("u_vc");
+        public final static Uniform velDir = new Uniform("u_velDir");
+
     }
 
     public static class Setters {
@@ -476,6 +480,32 @@ public class AtmosphereShader extends BaseShader {
             }
         };
 
+        public final static Setter vc = new Setter() {
+            @Override
+            public boolean isGlobal(BaseShader shader, int inputID) {
+                return false;
+            }
+
+            @Override
+            public void set(BaseShader shader, int inputID, Renderable renderable, Attributes combinedAttributes) {
+                if (combinedAttributes.has(RelativisticEffectFloatAttribute.Vc))
+                    shader.set(inputID, ((RelativisticEffectFloatAttribute) (combinedAttributes.get(RelativisticEffectFloatAttribute.Vc))).value);
+            }
+        };
+
+        public final static Setter velDir = new Setter() {
+            @Override
+            public boolean isGlobal(BaseShader shader, int inputID) {
+                return false;
+            }
+
+            @Override
+            public void set(BaseShader shader, int inputID, Renderable renderable, Attributes combinedAttributes) {
+                if (combinedAttributes.has(Vector3Attribute.VelDir))
+                    shader.set(inputID, ((Vector3Attribute) (combinedAttributes.get(Vector3Attribute.VelDir))).value);
+            }
+        };
+
     }
 
     private static String defaultVertexShader = null;
@@ -541,6 +571,10 @@ public class AtmosphereShader extends BaseShader {
     public final int v3LightPos;
     public final int v3CameraPos;
     public final int v3InvWavelength;
+
+    // Material uniforms
+    public final int u_vc;
+    public final int u_velDir;
 
     /** The renderable used to create this shader, invalid after the call to init */
     private Renderable renderable;
@@ -613,6 +647,9 @@ public class AtmosphereShader extends BaseShader {
         v3LightPos = register(Inputs.lightPos, Setters.lightPos);
         v3InvWavelength = register(Inputs.invWavelength, Setters.invWavelength);
 
+        u_vc = register(Inputs.vc, Setters.vc);
+        u_velDir = register(Inputs.velDir, Setters.velDir);
+
     }
 
     @Override
@@ -626,6 +663,10 @@ public class AtmosphereShader extends BaseShader {
 
     public static String createPrefix(final Renderable renderable, final Config config) {
         String prefix = "";
+        final long mask = renderable.material.getMask();
+        // Atmosphere ground only if camera height is set
+        if ((mask & RelativisticEffectFloatAttribute.Vc) == RelativisticEffectFloatAttribute.Vc)
+            prefix += "#define relativistcEffects\n";
         return prefix;
     }
 

@@ -32,6 +32,16 @@ varying vec3 v3Direction;
 varying vec4 frontColor;
 varying vec3 frontSecondaryColor;
 
+////////////////////////////////////////////////////////////////////////////////////
+//////////RELATIVISTIC EFFECTS - VERTEX
+////////////////////////////////////////////////////////////////////////////////////
+#ifdef relativistcEffects
+    uniform float u_vc; // v/c
+    uniform vec3 u_velDir; // Camera velocity direction
+
+    <INCLUDE shader/lib_geometry.glsl>
+#endif // relativistcEffects
+
 float scale(float fCos) {
     float x = 1.0 - fCos;
     return fScaleDepth * exp (-0.00287 + x * (0.459 + x * (3.83 + x * (-6.80 + x * 5.25))));
@@ -105,7 +115,23 @@ void main(void) {
     frontColor.a = fAlpha;
     frontSecondaryColor.rgb = v3FrontColor * fKmESun;
 
-    gl_Position = u_projViewTrans * u_worldTrans * vec4(a_position, 1.0);
+    vec4 g_position = vec4(a_position, 1.0);
+    vec4 pos = u_worldTrans * g_position;
+    
+    #ifdef relativistcEffects
+        // Relativistic aberration
+        // Current cosine of angle cos(th_s) cos A = DotProduct(v1, v2) / (Length(v1) * Length(v2))
+        vec3 cdir = u_velDir * -1.0;
+        float dist = length(pos.xyz);
+        float costh_s = dot(cdir, pos.xyz) / dist;
+        float th_s = acos(costh_s);
+        float costh_o = (costh_s - u_vc) / (1 - u_vc * costh_s);
+        float th_o = acos(costh_o);
+        pos.xyz = rotate_vertex_position(pos.xyz, normalize(cross(cdir, pos.xyz)), th_o - th_s);
+    #endif // relativisticEffects
+    
+    gl_Position = u_projViewTrans * pos;
+    
     // Direction from the vertex to the camera 
     v3Direction = v3CameraPos - v3Pos;
 

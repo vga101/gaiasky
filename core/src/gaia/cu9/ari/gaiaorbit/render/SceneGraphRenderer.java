@@ -6,11 +6,14 @@ import java.util.Map;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.assets.loaders.BitmapFontLoader.BitmapFontParameter;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Texture.TextureFilter;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.Renderable;
@@ -84,7 +87,8 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
     public AbstractRenderSystem[] pixelRenderSystems;
 
-    private ShaderProgram starShader, galaxyShader, fontShader, spriteShader;
+    private ShaderProgram starShader, galaxyShader, fontShader, spriteShader, lineShader, lineQuadShader, lineGpuShader, mwPointShader, mwNebulaShader, particleGroupShader, starGroupShader, pixelShader;
+    private BitmapFont font3d, font2d, fontTitles;
 
     private int maxTexSize;
 
@@ -142,6 +146,15 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         manager.load("shader/gal.vertex.glsl", ShaderProgram.class);
         manager.load("shader/font.vertex.glsl", ShaderProgram.class);
         manager.load("shader/sprite.vertex.glsl", ShaderProgram.class);
+        manager.load("shader/line.gpu.vertex.glsl", ShaderProgram.class);
+        manager.load("shader/line.quad.vertex.glsl", ShaderProgram.class);
+        manager.load("shader/line.vertex.glsl", ShaderProgram.class);
+        manager.load("shader/point.galaxy.vertex.glsl", ShaderProgram.class);
+        manager.load("shader/nebula.vertex.glsl", ShaderProgram.class);
+        manager.load("shader/particle.group.vertex.glsl", ShaderProgram.class);
+        manager.load("shader/star.group.vertex.glsl", ShaderProgram.class);
+        manager.load("shader/point.vertex.glsl", ShaderProgram.class);
+
         manager.load("atmgrounddefault", GroundShaderProvider.class, new GroundShaderProviderParameter("shader/default.vertex.glsl", "shader/default.fragment.glsl"));
         manager.load("spsurface", RelativisticShaderProvider.class, new RelativisticShaderProviderParameter("shader/starsurface.vertex.glsl", "shader/starsurface.fragment.glsl"));
         manager.load("spbeam", RelativisticShaderProvider.class, new RelativisticShaderProviderParameter("shader/default.vertex.glsl", "shader/beam.fragment.glsl"));
@@ -151,6 +164,13 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         if (!Constants.webgl) {
             manager.load("atmground", GroundShaderProvider.class, new GroundShaderProviderParameter("shader/normal.vertex.glsl", "shader/normal.fragment.glsl"));
         }
+
+        BitmapFontParameter bfp = new BitmapFontParameter();
+        bfp.magFilter = TextureFilter.Linear;
+        bfp.minFilter = TextureFilter.Linear;
+        manager.load("font/main-font.fnt", BitmapFont.class, bfp);
+        manager.load("font/font2d.fnt", BitmapFont.class, bfp);
+        manager.load("font/font-titles.fnt", BitmapFont.class, bfp);
 
         stars = new Array<IRenderable>();
 
@@ -229,6 +249,70 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
             Logger.error(new RuntimeException(), this.getClass().getName() + " - Sprite shader compilation failed:\n" + spriteShader.getLog());
         }
 
+        /**
+         * LINE
+         */
+        lineShader = manager.get("shader/line.vertex.glsl");
+        if (!lineShader.isCompiled()) {
+            Logger.error(new RuntimeException(), this.getClass().getName() + " - Line shader compilation failed:\n" + lineShader.getLog());
+        }
+
+        /**
+         * LINE QUAD
+         */
+        lineQuadShader = manager.get("shader/line.quad.vertex.glsl");
+        if (!lineQuadShader.isCompiled()) {
+            Logger.error(new RuntimeException(), this.getClass().getName() + " - Line quad shader compilation failed:\n" + lineQuadShader.getLog());
+        }
+
+        /**
+         * LINE GPU
+         */
+        lineGpuShader = manager.get("shader/line.gpu.vertex.glsl");
+        if (!lineGpuShader.isCompiled()) {
+            Logger.error(new RuntimeException(), this.getClass().getName() + " - Line GPU shader compilation failed:\n" + lineGpuShader.getLog());
+        }
+
+        /**
+         * MW POINTS
+         */
+        mwPointShader = manager.get("shader/point.galaxy.vertex.glsl");
+        if (!mwPointShader.isCompiled()) {
+            Logger.error(new RuntimeException(), this.getClass().getName() + " - MW point shader compilation failed:\n" + mwPointShader.getLog());
+        }
+
+        /**
+         * MW NEBULAE
+         */
+        mwNebulaShader = manager.get("shader/nebula.vertex.glsl");
+        if (!mwNebulaShader.isCompiled()) {
+            Logger.error(new RuntimeException(), this.getClass().getName() + " - MW nebula shader compilation failed:\n" + mwNebulaShader.getLog());
+        }
+
+        /**
+         * PARTICLE GROUP
+         */
+        particleGroupShader = manager.get("shader/particle.group.vertex.glsl");
+        if (!particleGroupShader.isCompiled()) {
+            Logger.error(new RuntimeException(), this.getClass().getName() + " - Particle group shader compilation failed:\n" + particleGroupShader.getLog());
+        }
+
+        /**
+         * STAR GROUP
+         */
+        starGroupShader = manager.get("shader/star.group.vertex.glsl");
+        if (!starGroupShader.isCompiled()) {
+            Logger.error(new RuntimeException(), this.getClass().getName() + " - Star group shader compilation failed:\n" + starGroupShader.getLog());
+        }
+
+        /**
+         * PIXEL
+         */
+        pixelShader = manager.get("shader/point.vertex.glsl");
+        if (!pixelShader.isCompiled()) {
+            Logger.error(new RuntimeException(), this.getClass().getName() + " - Pixel shader compilation failed:\n" + pixelShader.getLog());
+        }
+
         int numLists = GlobalConf.performance.MULTITHREADING ? GlobalConf.performance.NUMBER_THREADS() : 1;
         RenderGroup[] renderGroups = RenderGroup.values();
         render_lists = new HashMap<RenderGroup, Multilist<IRenderable>>(renderGroups.length);
@@ -258,6 +342,11 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         ModelBatch modelBatchBeam = new ModelBatch(spbeam, noSorter);
         modelBatchDepth = new ModelBatch(spdepth, noSorter);
         modelBatchOpaque = new ModelBatch(spopaque, noSorter);
+
+        // Fonts
+        font3d = manager.get("font/main-font.fnt");
+        font2d = manager.get("font/font2d.fnt");
+        fontTitles = manager.get("font/font-titles.fnt");
 
         // Sprites
         spriteBatch = GlobalResources.spriteBatch;
@@ -312,7 +401,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         int priority = 0;
 
         // POINTS
-        AbstractRenderSystem pixelStarProc = new PixelRenderSystem(RenderGroup.POINT_STAR, priority++, alphas, ComponentType.Stars);
+        AbstractRenderSystem pixelStarProc = new PixelRenderSystem(RenderGroup.POINT_STAR, priority++, alphas, pixelShader, ComponentType.Stars);
         pixelStarProc.setPreRunnable(blendNoDepthRunnable);
 
         // MODEL FRONT-BACK - NO CULL FACE
@@ -402,7 +491,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         AbstractRenderSystem lineProc = getLineRenderSystem();
 
         // LINES GPU
-        AbstractRenderSystem lineGpuProc = new LineGPURenderSystem(RenderGroup.LINE_GPU, priority++, alphas);
+        AbstractRenderSystem lineGpuProc = new LineGPURenderSystem(RenderGroup.LINE_GPU, priority++, alphas, lineGpuShader);
         lineGpuProc.setPreRunnable(blendDepthRunnable);
 
         // MODEL FRONT
@@ -414,15 +503,15 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         modelBeamProc.setPreRunnable(blendDepthRunnable);
 
         // GALAXY
-        AbstractRenderSystem galaxyProc = new MilkyWayRenderSystem(RenderGroup.GALAXY, priority++, alphas, modelBatchDefault);
+        AbstractRenderSystem galaxyProc = new MilkyWayRenderSystem(RenderGroup.GALAXY, priority++, alphas, modelBatchDefault, mwPointShader, mwNebulaShader);
         galaxyProc.setPreRunnable(blendNoDepthRunnable);
 
         // PARTICLE GROUP
-        AbstractRenderSystem particleGroupProc = new ParticleGroupRenderSystem(RenderGroup.PARTICLE_GROUP, priority++, alphas);
+        AbstractRenderSystem particleGroupProc = new ParticleGroupRenderSystem(RenderGroup.PARTICLE_GROUP, priority++, alphas, particleGroupShader);
         particleGroupProc.setPreRunnable(blendNoDepthRunnable);
 
         // STAR GROUP
-        AbstractRenderSystem starGroupProc = new StarGroupRenderSystem(RenderGroup.STAR_GROUP, priority++, alphas);
+        AbstractRenderSystem starGroupProc = new StarGroupRenderSystem(RenderGroup.STAR_GROUP, priority++, alphas, starGroupShader);
         starGroupProc.setPreRunnable(blendNoDepthRunnable);
 
         // MODEL STARS
@@ -430,7 +519,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         modelStarsProc.setPreRunnable(blendDepthRunnable);
 
         // LABELS
-        AbstractRenderSystem labelsProc = new FontRenderSystem(RenderGroup.FONT_LABEL, priority++, alphas, fontBatch, fontShader);
+        AbstractRenderSystem labelsProc = new FontRenderSystem(RenderGroup.FONT_LABEL, priority++, alphas, fontBatch, fontShader, font3d, font2d, fontTitles);
         labelsProc.setPreRunnable(blendNoDepthRunnable);
 
         // BILLBOARD SSO
@@ -982,11 +1071,11 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         AbstractRenderSystem sys = null;
         if (GlobalConf.scene.isNormalLineRenderer()) {
             // Normal
-            sys = new LineRenderSystem(RenderGroup.LINE, 0, alphas);
+            sys = new LineRenderSystem(RenderGroup.LINE, 0, alphas, lineShader);
             sys.setPreRunnable(blendDepthRunnable);
         } else {
             // Quad
-            sys = new LineQuadRenderSystem(RenderGroup.LINE, 0, alphas);
+            sys = new LineQuadRenderSystem(RenderGroup.LINE, 0, alphas, lineQuadShader);
             sys.setPreRunnable(blendDepthRunnable);
         }
         return sys;

@@ -6,11 +6,12 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 
 /**
- * Loads shaders with extra functionality to add code from other shaders
+ * Loads shaders with extra functionality to add code from other shaders.
+ * Recognizes the directive <INCLUDE shader.glsl> in glsl files.
  * @author tsagrista
  *
  */
-public class ShaderLoader {
+public class ShaderTemplatingLoader {
 
     public static String load(String file) {
         FileHandle fh = Gdx.files.internal(file);
@@ -25,10 +26,10 @@ public class ShaderLoader {
         Scanner scanner = new Scanner(in);
         while (scanner.hasNextLine()) {
             String line = scanner.nextLine();
-            if (line.matches("<INCLUDE \\S+\\.glsl>")) {
+            if (line.matches("\\s*<INCLUDE \\S+\\.glsl>\\s*")) {
                 // Load file and include
-                String inc = line.substring(9, line.length() - 1);
-                String incSource = ShaderLoader.load(inc);
+                String inc = line.substring(line.indexOf("<INCLUDE") + 9, line.length() - 1);
+                String incSource = ShaderTemplatingLoader.load(inc);
                 sb.append(incSource);
                 sb.append('\n');
             } else if (!line.isEmpty() && !line.startsWith("//")) {

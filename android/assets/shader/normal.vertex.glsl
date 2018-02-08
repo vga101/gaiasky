@@ -221,6 +221,16 @@ varying vec4 v_atmosphereColor;
     }
 #endif // atmosphereGround
 
+////////////////////////////////////////////////////////////////////////////////////
+//////////RELATIVISTIC EFFECTS - VERTEX
+////////////////////////////////////////////////////////////////////////////////////
+#ifdef relativistcEffects
+    uniform float u_vc; // v/c
+    uniform vec3 u_velDir; // Camera velocity direction
+
+    <INCLUDE shader/lib_geometry.glsl>
+#endif // relativistcEffects
+
 
 // Uniforms which are always available
 uniform mat4 u_projViewTrans;
@@ -391,11 +401,24 @@ void main() {
     g_binormal = normalize(u_normalMatrix * g_binormal);
     g_tangent = normalize(u_normalMatrix * g_tangent);
 
-    g_position = u_worldTrans * g_position;
-    gl_Position = u_projViewTrans * g_position;
+    vec4 pos = u_worldTrans * g_position;
+    
+    #ifdef relativistcEffects
+        // Relativistic aberration
+        // Current cosine of angle cos(th_s) cos A = DotProduct(v1, v2) / (Length(v1) * Length(v2))
+        vec3 cdir = u_velDir * -1.0;
+        float dist = length(pos.xyz);
+        float costh_s = dot(cdir, pos.xyz) / dist;
+        float th_s = acos(costh_s);
+        float costh_o = (costh_s - u_vc) / (1 - u_vc * costh_s);
+        float th_o = acos(costh_o);
+        pos.xyz = rotate_vertex_position(pos.xyz, normalize(cross(cdir, pos.xyz)), th_o - th_s);
+    #endif // relativisticEffects
+    
+    gl_Position = u_projViewTrans * pos;
 
     #ifdef shadowMapFlag
-	vec4 spos = u_shadowMapProjViewTrans * g_position;
+	vec4 spos = u_shadowMapProjViewTrans * pos;
         
 	v_shadowMapUv.xyz = (spos.xyz / spos.w) * 0.5 + 0.5;
 	//v_shadowMapUv.z = min(spos.z * 0.5 + 0.5, 0.998);
@@ -429,7 +452,7 @@ void main() {
         v_lightCol = vec3(0.0);
     #endif // directionalLightsFlag
     
-    vec3 viewDir = (u_cameraPosition.xyz - g_position.xyz);
+    vec3 viewDir = (u_cameraPosition.xyz - pos.xyz);
     v_viewDir = normalize(viewDir * worldToTangent);
     #ifdef environmentCubemapFlag
 	v_reflect = reflect(-viewDir, g_normal);

@@ -23,7 +23,6 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.ParticleGroup.ParticleBean;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf.ProgramConf.StereoProfile;
-import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.comp.DistToCameraComparator;
 
 public class ParticleGroupRenderSystem extends ImmediateRenderSystem implements IObserver {
@@ -33,17 +32,13 @@ public class ParticleGroupRenderSystem extends ImmediateRenderSystem implements 
 
     Comparator<IRenderable> comp;
 
-    public ParticleGroupRenderSystem(RenderGroup rg, int priority, float[] alphas) {
-        super(rg, priority, alphas);
+    public ParticleGroupRenderSystem(RenderGroup rg, int priority, float[] alphas, ShaderProgram shaderProgram) {
+        super(rg, priority, alphas, shaderProgram);
         comp = new DistToCameraComparator<IRenderable>();
     }
 
     @Override
     protected void initShaderProgram() {
-        shaderProgram = new ShaderProgram(Gdx.files.internal("shader/particle.group.vertex.glsl"), Gdx.files.internal("shader/particle.group.fragment.glsl"));
-        if (!shaderProgram.isCompiled()) {
-            Logger.error(this.getClass().getName(), "Particle group shader compilation failed:\n" + shaderProgram.getLog());
-        }
     }
 
     @Override

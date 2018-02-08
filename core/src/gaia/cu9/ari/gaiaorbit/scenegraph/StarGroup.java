@@ -47,6 +47,7 @@ import gaia.cu9.ari.gaiaorbit.render.system.LineRenderSystem;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
+import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.ModelCache;
 import gaia.cu9.ari.gaiaorbit.util.Pair;
@@ -235,10 +236,14 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
             mat.set(new BlendingAttribute(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA));
             modelTransform = new Matrix4();
             mc = new ModelComponent(false);
+            mc.initialize();
             mc.env = new Environment();
             mc.env.set(new ColorAttribute(ColorAttribute.AmbientLight, 1f, 1f, 1f, 1f));
             mc.env.set(new FloatAttribute(FloatAttribute.Shininess, 0f));
             mc.instance = new ModelInstance(model, modelTransform);
+            // Relativistic effects
+            if (GlobalConf.runtime.RELATIVISTIC_ABERRATION)
+                mc.rec.setUpRelativisticEffectsMaterial(mc.instance.materials);
         }
     }
 
@@ -644,6 +649,7 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
             ((FloatAttribute) mc.env.get(FloatAttribute.Shininess)).value = (float) t;
             // Local transform
             mc.instance.transform.idt().translate((float) closestPos.x, (float) closestPos.y, (float) closestPos.z).scl((float) (getRadius(active[0]) * 2d));
+            mc.updateRelativisticEffects(GaiaSky.instance.getICamera());
             modelBatch.render(mc.instance, mc.env);
         }
     }
@@ -748,8 +754,7 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
 
         aux.add(cam.getUp()).nor().scl(dist);
 
-        out.add(aux);
-
+        GlobalResources.applyRelativisticAberration(out.add(aux), cam);
     }
 
     public double getFocusSize() {

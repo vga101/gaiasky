@@ -15,7 +15,6 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 
 import gaia.cu9.ari.gaiaorbit.GaiaSky;
-import gaia.cu9.ari.gaiaorbit.assets.ShaderLoader;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
@@ -43,8 +42,8 @@ public class StarGroupRenderSystem extends ImmediateRenderSystem implements IObs
     Comparator<IRenderable> comp;
     float[] pointAlpha, alphaSizeFovBr;
 
-    public StarGroupRenderSystem(RenderGroup rg, int priority, float[] alphas) {
-        super(rg, priority, alphas);
+    public StarGroupRenderSystem(RenderGroup rg, int priority, float[] alphas, ShaderProgram shaderProgram) {
+        super(rg, priority, alphas, shaderProgram);
         BRIGHTNESS_FACTOR = Constants.webgl ? 15 : 10;
         this.comp = new DistToCameraComparator<IRenderable>();
         this.alphaSizeFovBr = new float[4];
@@ -56,10 +55,6 @@ public class StarGroupRenderSystem extends ImmediateRenderSystem implements IObs
 
     @Override
     protected void initShaderProgram() {
-        shaderProgram = new ShaderProgram(ShaderLoader.load("shader/star.group.vertex.glsl"), ShaderLoader.load("shader/star.group.fragment.glsl"));
-        if (!shaderProgram.isCompiled()) {
-            Logger.error(this.getClass().getName(), "Star group shader compilation failed:\n" + shaderProgram.getLog());
-        }
         pointAlpha = new float[] { GlobalConf.scene.POINT_ALPHA_MIN, GlobalConf.scene.POINT_ALPHA_MIN + GlobalConf.scene.POINT_ALPHA_MAX };
     }
 
@@ -188,14 +183,18 @@ public class StarGroupRenderSystem extends ImmediateRenderSystem implements IObs
                             shaderProgram.setUniformf("u_camPos", camera.getCurrent().getPos().put(aux1));
 
                             // Relativistic aberration
-                            shaderProgram.setUniformi("u_relativsiticAberration", GlobalConf.runtime.RELATIVISTIC_ABERRATION ? 1 : 0);
-                            if (camera.getVelocity() == null || camera.getVelocity().len() == 0) {
-                                aux2.set(1, 0, 0);
+                            if (GlobalConf.runtime.RELATIVISTIC_ABERRATION) {
+                                shaderProgram.setUniformi("u_relativsiticAberration", 1);
+                                if (camera.getVelocity() == null || camera.getVelocity().len() == 0) {
+                                    aux2.set(1, 0, 0);
+                                } else {
+                                    camera.getVelocity().put(aux2).nor();
+                                }
+                                shaderProgram.setUniformf("u_velDir", aux2);
+                                shaderProgram.setUniformf("u_vc", (float) (camera.getSpeed() / Constants.C_KMH));
                             } else {
-                                camera.getVelocity().put(aux2).nor();
+                                shaderProgram.setUniformi("u_relativsiticAberration", 0);
                             }
-                            shaderProgram.setUniformf("u_velDir", aux2);
-                            shaderProgram.setUniformf("u_vc", (float) (camera.getSpeed() / Constants.C_KMH));
 
                             alphaSizeFovBr[0] = starGroup.opacity * alphas[starGroup.ct.getFirstOrdinal()];
                             alphaSizeFovBr[1] = fovmode == 0 ? (GlobalConf.scene.STAR_POINT_SIZE * rc.scaleFactor * (GlobalConf.program.isStereoFullWidth() ? 1 : 2)) : (GlobalConf.scene.STAR_POINT_SIZE * rc.scaleFactor * 10);
