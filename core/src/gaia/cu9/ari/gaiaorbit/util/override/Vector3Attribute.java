@@ -31,14 +31,14 @@ public class Vector3Attribute extends Attribute {
     public static final String CameraPosAlias = "cameraPos";
     public static final long CameraPos = register(CameraPosAlias);
 
-    public static final String VelocityDirAlias = "velocityDir";
-    public static final long VelocityDir = register(VelocityDirAlias);
-
     public static final String InvWavelengthAlias = "invWavelength";
     public static final long InvWavelength = register(InvWavelengthAlias);
 
     public static final String CameraUpAlias = "cameraUp";
     public static final long CameraUp = register(CameraUpAlias);
+
+    public static final String VelDirAlias = "velDir";
+    public static final long VelDir = register(VelDirAlias);
 
     @Override
     public Attribute copy() {

@@ -449,7 +449,6 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
                 sc.increaseThrustFactorIndex(true);
                 break;
             case XBox360Mappings.BUTTON_LB:
-                System.out.println("LB");
                 EventManager.instance.post(Events.SPACECRAFT_STABILISE_CMD, true);
                 break;
             case XBox360Mappings.BUTTON_RB:

@@ -19,7 +19,6 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.g3d.Model;
-import com.badlogic.gdx.graphics.g3d.utils.DefaultShaderProvider;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.GLFrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
@@ -27,12 +26,12 @@ import com.badlogic.gdx.scenes.scene2d.ui.TooltipManager;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.TimeUtils;
 
-import gaia.cu9.ari.gaiaorbit.assets.AtmosphereGroundShaderProviderLoader;
 import gaia.cu9.ari.gaiaorbit.assets.AtmosphereShaderProviderLoader;
-import gaia.cu9.ari.gaiaorbit.assets.DefaultShaderProviderLoader;
 import gaia.cu9.ari.gaiaorbit.assets.GaiaAttitudeLoader;
 import gaia.cu9.ari.gaiaorbit.assets.GaiaAttitudeLoader.GaiaAttitudeLoaderParameter;
+import gaia.cu9.ari.gaiaorbit.assets.GroundShaderProviderLoader;
 import gaia.cu9.ari.gaiaorbit.assets.OrbitDataLoader;
+import gaia.cu9.ari.gaiaorbit.assets.RelativisticShaderProviderLoader;
 import gaia.cu9.ari.gaiaorbit.assets.SGLoader;
 import gaia.cu9.ari.gaiaorbit.assets.SGLoader.SGLoaderParameter;
 import gaia.cu9.ari.gaiaorbit.data.AssetBean;
@@ -83,6 +82,7 @@ import gaia.cu9.ari.gaiaorbit.util.g3d.loader.ObjLoader;
 import gaia.cu9.ari.gaiaorbit.util.gaia.GaiaAttitudeServer;
 import gaia.cu9.ari.gaiaorbit.util.override.AtmosphereShaderProvider;
 import gaia.cu9.ari.gaiaorbit.util.override.GroundShaderProvider;
+import gaia.cu9.ari.gaiaorbit.util.override.RelativisticShaderProvider;
 import gaia.cu9.ari.gaiaorbit.util.override.ShaderProgramProvider;
 import gaia.cu9.ari.gaiaorbit.util.time.GlobalClock;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
@@ -235,9 +235,10 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         manager.setLoader(OrbitData.class, new OrbitDataLoader(resolver));
         manager.setLoader(GaiaAttitudeServer.class, new GaiaAttitudeLoader(resolver));
         manager.setLoader(ShaderProgram.class, new ShaderProgramProvider(resolver, ".vertex.glsl", ".fragment.glsl"));
-        manager.setLoader(DefaultShaderProvider.class, new DefaultShaderProviderLoader<>(resolver));
+        //manager.setLoader(DefaultShaderProvider.class, new DefaultShaderProviderLoader<>(resolver));
         manager.setLoader(AtmosphereShaderProvider.class, new AtmosphereShaderProviderLoader<>(resolver));
-        manager.setLoader(GroundShaderProvider.class, new AtmosphereGroundShaderProviderLoader<>(resolver));
+        manager.setLoader(GroundShaderProvider.class, new GroundShaderProviderLoader<>(resolver));
+        manager.setLoader(RelativisticShaderProvider.class, new RelativisticShaderProviderLoader<>(resolver));
         manager.setLoader(Model.class, ".obj", new ObjLoader(resolver));
 
         // Init global resources

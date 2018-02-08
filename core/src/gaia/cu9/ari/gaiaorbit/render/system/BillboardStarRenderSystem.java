@@ -155,7 +155,7 @@ public class BillboardStarRenderSystem extends AbstractRenderSystem {
             } else {
                 camera.getVelocity().put(aux).nor();
             }
-            shaderProgram.setUniformf("u_camDir", aux);
+            shaderProgram.setUniformf("u_velDir", aux);
             shaderProgram.setUniformf("u_vc", (float) (camera.getSpeed() / Constants.C_KMH));
 
             if (!Constants.mobile) {

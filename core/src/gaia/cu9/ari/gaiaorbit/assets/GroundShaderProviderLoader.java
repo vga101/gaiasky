@@ -11,11 +11,11 @@ import com.badlogic.gdx.utils.Array;
 
 import gaia.cu9.ari.gaiaorbit.util.override.GroundShaderProvider;
 
-public class AtmosphereGroundShaderProviderLoader<T extends AtmosphereGroundShaderProviderLoader.AtmosphereGroundShaderProviderParameter> extends AsynchronousAssetLoader<GroundShaderProvider, T> {
+public class GroundShaderProviderLoader<T extends GroundShaderProviderLoader.GroundShaderProviderParameter> extends AsynchronousAssetLoader<GroundShaderProvider, T> {
 
     GroundShaderProvider shaderProvider;
 
-    public AtmosphereGroundShaderProviderLoader(FileHandleResolver resolver) {
+    public GroundShaderProviderLoader(FileHandleResolver resolver) {
         super(resolver);
     }
 
@@ -25,20 +25,20 @@ public class AtmosphereGroundShaderProviderLoader<T extends AtmosphereGroundShad
     }
 
     @Override
-    public GroundShaderProvider loadSync(AssetManager manager, String fileName, FileHandle file, AtmosphereGroundShaderProviderParameter parameter) {
+    public GroundShaderProvider loadSync(AssetManager manager, String fileName, FileHandle file, GroundShaderProviderParameter parameter) {
         return shaderProvider;
     }
 
     @Override
-    public Array<AssetDescriptor> getDependencies(String fileName, FileHandle file, AtmosphereGroundShaderProviderParameter parameter) {
+    public Array<AssetDescriptor> getDependencies(String fileName, FileHandle file, GroundShaderProviderParameter parameter) {
         return null;
     }
 
-    public static class AtmosphereGroundShaderProviderParameter extends AssetLoaderParameters<GroundShaderProvider> {
+    public static class GroundShaderProviderParameter extends AssetLoaderParameters<GroundShaderProvider> {
         String vertexShader;
         String fragmentShader;
 
-        public AtmosphereGroundShaderProviderParameter(String vertexShader, String fragmentShader) {
+        public GroundShaderProviderParameter(String vertexShader, String fragmentShader) {
             super();
             this.vertexShader = vertexShader;
             this.fragmentShader = fragmentShader;

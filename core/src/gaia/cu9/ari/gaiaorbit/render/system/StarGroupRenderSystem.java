@@ -194,7 +194,7 @@ public class StarGroupRenderSystem extends ImmediateRenderSystem implements IObs
                             } else {
                                 camera.getVelocity().put(aux2).nor();
                             }
-                            shaderProgram.setUniformf("u_camDir", aux2);
+                            shaderProgram.setUniformf("u_velDir", aux2);
                             shaderProgram.setUniformf("u_vc", (float) (camera.getSpeed() / Constants.C_KMH));
 
                             alphaSizeFovBr[0] = starGroup.opacity * alphas[starGroup.ct.getFirstOrdinal()];

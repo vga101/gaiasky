@@ -17,7 +17,7 @@ uniform float u_apparent_angle;
 uniform float u_th_angle_point;
 uniform vec3 u_camShift;
 uniform int u_relativsiticAberration; // Relativistic aberration flag
-uniform vec3 u_camDir; // Velocity vector
+uniform vec3 u_velDir; // Velocity vector
 uniform float u_vc; // Fraction of the speed of light, v/c
 
 // Varyings
@@ -47,7 +47,7 @@ void main()
        // Relativistic aberration
        // Current cosine of angle cos(th_s) cos A = DotProduct(v1, v2) / (Length(v1) * Length(v2))
        float dist = length(pos);
-       vec3 cdir = u_camDir * -1.0;
+       vec3 cdir = u_velDir * -1.0;
        float costh_s = dot(cdir, pos) / dist;
        float th_s = acos(costh_s);
        float costh_o = (costh_s - u_vc) / (1 - u_vc * costh_s);

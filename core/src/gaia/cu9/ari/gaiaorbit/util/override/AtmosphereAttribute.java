@@ -2,7 +2,6 @@ package gaia.cu9.ari.gaiaorbit.util.override;
 
 import com.badlogic.gdx.graphics.g3d.Attribute;
 import com.badlogic.gdx.graphics.g3d.attributes.FloatAttribute;
-import com.badlogic.gdx.utils.NumberUtils;
 
 public class AtmosphereAttribute extends FloatAttribute {
     public AtmosphereAttribute(long type) {
@@ -75,21 +74,4 @@ public class AtmosphereAttribute extends FloatAttribute {
         return new AtmosphereAttribute(type, value);
     }
 
-    @Override
-    public int hashCode() {
-        int result = (int) type;
-        result = 977 * result + NumberUtils.floatToRawIntBits(value);
-        return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        return super.equals(obj);
-    }
-
-    /** TODO Implement this **/
-    @Override
-    public int compareTo(Attribute o) {
-        return 0;
-    }
 }

@@ -14,7 +14,6 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.Renderable;
-import com.badlogic.gdx.graphics.g3d.utils.DefaultShaderProvider;
 import com.badlogic.gdx.graphics.g3d.utils.RenderableSorter;
 import com.badlogic.gdx.graphics.g3d.utils.ShaderProvider;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
@@ -28,9 +27,9 @@ import com.bitfire.postprocessing.filters.Glow;
 import com.bitfire.utils.ShaderLoader;
 
 import gaia.cu9.ari.gaiaorbit.GaiaSky;
-import gaia.cu9.ari.gaiaorbit.assets.AtmosphereGroundShaderProviderLoader.AtmosphereGroundShaderProviderParameter;
 import gaia.cu9.ari.gaiaorbit.assets.AtmosphereShaderProviderLoader.AtmosphereShaderProviderParameter;
-import gaia.cu9.ari.gaiaorbit.assets.DefaultShaderProviderLoader.DefaultShaderProviderParameter;
+import gaia.cu9.ari.gaiaorbit.assets.GroundShaderProviderLoader.GroundShaderProviderParameter;
+import gaia.cu9.ari.gaiaorbit.assets.RelativisticShaderProviderLoader.RelativisticShaderProviderParameter;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
@@ -66,6 +65,7 @@ import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.override.AtmosphereShaderProvider;
 import gaia.cu9.ari.gaiaorbit.util.override.GroundShaderProvider;
+import gaia.cu9.ari.gaiaorbit.util.override.RelativisticShaderProvider;
 
 /**
  * Renders a scenegraph.
@@ -142,14 +142,14 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         manager.load("shader/gal.vertex.glsl", ShaderProgram.class);
         manager.load("shader/font.vertex.glsl", ShaderProgram.class);
         manager.load("shader/sprite.vertex.glsl", ShaderProgram.class);
-        manager.load("atmgrounddefault", GroundShaderProvider.class, new AtmosphereGroundShaderProviderParameter("shader/default.vertex.glsl", "shader/default.fragment.glsl"));
-        manager.load("spsurface", DefaultShaderProvider.class, new DefaultShaderProviderParameter("shader/starsurface.vertex.glsl", "shader/starsurface.fragment.glsl"));
-        manager.load("spbeam", DefaultShaderProvider.class, new DefaultShaderProviderParameter("shader/default.vertex.glsl", "shader/beam.fragment.glsl"));
-        manager.load("spdepth", DefaultShaderProvider.class, new DefaultShaderProviderParameter("shader/normal.vertex.glsl", "shader/depth.fragment.glsl"));
-        manager.load("spopaque", DefaultShaderProvider.class, new DefaultShaderProviderParameter("shader/normal.vertex.glsl", "shader/opaque.fragment.glsl"));
+        manager.load("atmgrounddefault", GroundShaderProvider.class, new GroundShaderProviderParameter("shader/default.vertex.glsl", "shader/default.fragment.glsl"));
+        manager.load("spsurface", RelativisticShaderProvider.class, new RelativisticShaderProviderParameter("shader/starsurface.vertex.glsl", "shader/starsurface.fragment.glsl"));
+        manager.load("spbeam", RelativisticShaderProvider.class, new RelativisticShaderProviderParameter("shader/default.vertex.glsl", "shader/beam.fragment.glsl"));
+        manager.load("spdepth", RelativisticShaderProvider.class, new RelativisticShaderProviderParameter("shader/normal.vertex.glsl", "shader/depth.fragment.glsl"));
+        manager.load("spopaque", RelativisticShaderProvider.class, new RelativisticShaderProviderParameter("shader/normal.vertex.glsl", "shader/opaque.fragment.glsl"));
         manager.load("atm", AtmosphereShaderProvider.class, new AtmosphereShaderProviderParameter("shader/atm.vertex.glsl", "shader/atm.fragment.glsl"));
         if (!Constants.webgl) {
-            manager.load("atmground", GroundShaderProvider.class, new AtmosphereGroundShaderProviderParameter("shader/normal.vertex.glsl", "shader/normal.fragment.glsl"));
+            manager.load("atmground", GroundShaderProvider.class, new GroundShaderProviderParameter("shader/normal.vertex.glsl", "shader/normal.fragment.glsl"));
         }
 
         stars = new Array<IRenderable>();
