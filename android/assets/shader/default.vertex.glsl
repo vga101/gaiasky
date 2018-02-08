@@ -238,7 +238,7 @@ void main() {
             vec3 cdir = u_velDir * -1.0;
             float costh_s = dot(cdir, pos.xyz) / length(pos.xyz);
             float th_s = acos(costh_s);
-            float costh_o = (costh_s - u_vc) / (1 - u_vc * costh_s);
+            float costh_o = (costh_s - u_vc) / (1.0 - u_vc * costh_s);
             float th_o = acos(costh_o);
             pos.xyz = rotate_vertex_position(pos.xyz, normalize(cross(cdir, pos.xyz)), th_o - th_s);
         #endif // relativisticEffects

@@ -13,7 +13,7 @@ float in_view(vec3 pos, vec3 dir, float dist, float angle_edge) {
 vec4 get_quat_rotation(vec3 axis, float radians) {
     float d = 1.0 / length(axis);
     float l_ang;
-    if(radians < 0) {
+    if(radians < 0.0) {
         l_ang = PI2 - (mod(-radians, PI2));
     }else {
         l_ang = mod(radians, PI2);
