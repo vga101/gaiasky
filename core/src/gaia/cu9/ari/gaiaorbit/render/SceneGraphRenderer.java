@@ -447,7 +447,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
             private float[] viewAngles = new float[Glow.N];
             private float[] colors = new float[Glow.N * 3];
             private Vector3 auxv = new Vector3();
-            private Vector3 auxv2 = new Vector3();
+            private Vector3d auxd = new Vector3d();
 
             @Override
             public void run(AbstractRenderSystem renderSystem, Array<IRenderable> renderables, ICamera camera) {
@@ -462,8 +462,15 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
                         if (s instanceof Particle) {
                             Particle p = (Particle) s;
                             if (!Constants.webgl && lightIndex < Glow.N && (GlobalConf.program.CUBEMAP360_MODE || GaiaSky.instance.cam.getDirection().angle(p.transform.position) < angleEdgeDeg)) {
-                                Vector3 pos3 = p.transform.getTranslationf(auxv);
-                                pos3.sub(camera.getShift().put(auxv2));
+                                Vector3d pos3d = p.transform.getTranslation(auxd);
+                                pos3d.sub(camera.getShift());
+
+                                // Aberration
+                                if (GlobalConf.runtime.RELATIVISTIC_EFFECTS) {
+                                    GlobalResources.applyRelativisticAberration(pos3d, camera);
+                                }
+                                Vector3 pos3 = pos3d.put(auxv);
+
                                 camera.getCamera().project(pos3);
                                 // Here we **need** to use
                                 // Gdx.graphics.getWidth/Height() because we use
