@@ -89,10 +89,12 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
     public AbstractRenderSystem[] pixelRenderSystems;
 
-    private ShaderProgram starShader, galaxyShader, fontShader, spriteShader, lineShader, lineQuadShader, lineGpuShader, mwPointShader, mwNebulaShader, particleGroupShader, starGroupShader, starGroupShaderRel, pixelShader;
     private BitmapFont font3d, font2d, fontTitles;
 
-    private AssetDescriptor<ShaderProgram>[] starGroupDesc;
+    private ShaderProgram fontShader;
+
+    private ShaderProgram[] starGroupShaders, particleGroupShaders, lineShaders, lineQuadShaders, lineGpuShaders, mwPointShaders, mwNebulaShaders, pixelShaders, galShaders, spriteShaders, starShaders;
+    private AssetDescriptor<ShaderProgram>[] starGroupDesc, particleGroupDesc, lineDesc, lineQuadDesc, lineGpuDesc, mwPointDesc, mwNebulaDesc, pixelDesc, galDesc, spriteDesc, starDesc;
 
     private int maxTexSize;
 
@@ -166,18 +168,19 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         ShaderProgram.pedantic = false;
 
         /** LOAD SHADER PROGRAMS WITH ASSET MANAGER **/
-        manager.load("shader/star.vertex.glsl", ShaderProgram.class);
-        manager.load("shader/gal.vertex.glsl", ShaderProgram.class);
         manager.load("shader/font.vertex.glsl", ShaderProgram.class);
-        manager.load("shader/sprite.vertex.glsl", ShaderProgram.class);
-        manager.load("shader/line.gpu.vertex.glsl", ShaderProgram.class);
-        manager.load("shader/line.quad.vertex.glsl", ShaderProgram.class);
-        manager.load("shader/line.vertex.glsl", ShaderProgram.class);
-        manager.load("shader/point.galaxy.vertex.glsl", ShaderProgram.class);
-        manager.load("shader/nebula.vertex.glsl", ShaderProgram.class);
-        manager.load("shader/particle.group.vertex.glsl", ShaderProgram.class);
-        manager.load("shader/point.vertex.glsl", ShaderProgram.class);
-        starGroupDesc = loadShader(manager, "shader/star.group.vertex.glsl", "shader/star.group.fragment.glsl", new String[] { "starGroup", "starGroupRel" }, new String[] { "", "#define relativistcEffects\n" });
+
+        starDesc = loadShader(manager, "shader/star.vertex.glsl", "shader/star.fragment.glsl", new String[] { "star", "starRel" }, new String[] { "", "#define relativisticEffects\n" });
+        spriteDesc = loadShader(manager, "shader/sprite.vertex.glsl", "shader/sprite.fragment.glsl", new String[] { "sprite", "spriteRel" }, new String[] { "", "#define relativisticEffects\n" });
+        pixelDesc = loadShader(manager, "shader/point.vertex.glsl", "shader/point.fragment.glsl", new String[] { "pixel", "pixelRel" }, new String[] { "", "#define relativisticEffects\n" });
+        mwPointDesc = loadShader(manager, "shader/point.galaxy.vertex.glsl", "shader/point.galaxy.fragment.glsl", new String[] { "pointGal", "pointGalRel" }, new String[] { "", "#define relativisticEffects\n" });
+        mwNebulaDesc = loadShader(manager, "shader/nebula.vertex.glsl", "shader/nebula.fragment.glsl", new String[] { "nebula", "nebulaRel" }, new String[] { "", "#define relativisticEffects\n" });
+        lineDesc = loadShader(manager, "shader/line.vertex.glsl", "shader/line.fragment.glsl", new String[] { "line", "lineRel" }, new String[] { "", "#define relativisticEffects\n" });
+        lineQuadDesc = loadShader(manager, "shader/line.quad.vertex.glsl", "shader/line.quad.fragment.glsl", new String[] { "lineQuad", "lineQuadRel" }, new String[] { "", "#define relativisticEffects\n" });
+        lineGpuDesc = loadShader(manager, "shader/line.gpu.vertex.glsl", "shader/line.gpu.fragment.glsl", new String[] { "lineGpu", "lineGpuRel" }, new String[] { "", "#define relativisticEffects\n" });
+        galDesc = loadShader(manager, "shader/gal.vertex.glsl", "shader/gal.fragment.glsl", new String[] { "gal", "galRel" }, new String[] { "", "#define relativisticEffects\n" });
+        particleGroupDesc = loadShader(manager, "shader/particle.group.vertex.glsl", "shader/particle.group.fragment.glsl", new String[] { "particleGroup", "particleGroupRel" }, new String[] { "", "#define relativisticEffects\n" });
+        starGroupDesc = loadShader(manager, "shader/star.group.vertex.glsl", "shader/star.group.fragment.glsl", new String[] { "starGroup", "starGroupRel" }, new String[] { "", "#define relativisticEffects\n" });
 
         manager.load("atmgrounddefault", GroundShaderProvider.class, new GroundShaderProviderParameter("shader/default.vertex.glsl", "shader/default.fragment.glsl"));
         manager.load("spsurface", RelativisticShaderProvider.class, new RelativisticShaderProviderParameter("shader/starsurface.vertex.glsl", "shader/starsurface.fragment.glsl"));
@@ -236,6 +239,19 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         }
     }
 
+    private ShaderProgram[] fetchShaderProgram(AssetManager manager, AssetDescriptor<ShaderProgram>[] descriptors, String... names) {
+        int n = descriptors.length;
+        ShaderProgram[] shaders = new ShaderProgram[n];
+
+        for (int i = 0; i < n; i++) {
+            shaders[i] = manager.get(descriptors[i]);
+            if (!shaders[i].isCompiled()) {
+                Logger.error(new RuntimeException(), this.getClass().getName() + " - " + names[i] + " shader compilation failed:\n" + shaders[i].getLog());
+            }
+        }
+        return shaders;
+    }
+
     public void doneLoading(AssetManager manager) {
         IntBuffer intBuffer = BufferUtils.newIntBuffer(16);
         Gdx.gl20.glGetIntegerv(GL20.GL_MAX_TEXTURE_SIZE, intBuffer);
@@ -245,17 +261,12 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         /**
          * STAR SHADER
          */
-        starShader = manager.get("shader/star.vertex.glsl");
-        if (!starShader.isCompiled()) {
-            Logger.error(new RuntimeException(), this.getClass().getName() + " - Star shader compilation failed:\n" + starShader.getLog());
-        }
+        starShaders = fetchShaderProgram(manager, starDesc, "Star", "Star (rel)");
+
         /**
          * GALAXY SHADER
          */
-        galaxyShader = manager.get("shader/gal.vertex.glsl");
-        if (!galaxyShader.isCompiled()) {
-            Logger.error(new RuntimeException(), this.getClass().getName() + " - Galaxy shader compilation failed:\n" + galaxyShader.getLog());
-        }
+        galShaders = fetchShaderProgram(manager, galDesc, "Galaxy", "Galaxy (rel)");
 
         /**
          * FONT SHADER
@@ -268,82 +279,47 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         /**
          * SPRITE SHADER
          */
-        spriteShader = manager.get("shader/sprite.vertex.glsl");
-        if (!spriteShader.isCompiled()) {
-            Logger.error(new RuntimeException(), this.getClass().getName() + " - Sprite shader compilation failed:\n" + spriteShader.getLog());
-        }
+        spriteShaders = fetchShaderProgram(manager, spriteDesc, "Sprite", "Sprite (rel)");
 
         /**
          * LINE
          */
-        lineShader = manager.get("shader/line.vertex.glsl");
-        if (!lineShader.isCompiled()) {
-            Logger.error(new RuntimeException(), this.getClass().getName() + " - Line shader compilation failed:\n" + lineShader.getLog());
-        }
+        lineShaders = fetchShaderProgram(manager, lineDesc, "Line", "Line (rel)");
 
         /**
          * LINE QUAD
          */
-        lineQuadShader = manager.get("shader/line.quad.vertex.glsl");
-        if (!lineQuadShader.isCompiled()) {
-            Logger.error(new RuntimeException(), this.getClass().getName() + " - Line quad shader compilation failed:\n" + lineQuadShader.getLog());
-        }
+        lineQuadShaders = fetchShaderProgram(manager, lineQuadDesc, "Line quad", "Line quad (rel)");
 
         /**
          * LINE GPU
          */
-        lineGpuShader = manager.get("shader/line.gpu.vertex.glsl");
-        if (!lineGpuShader.isCompiled()) {
-            Logger.error(new RuntimeException(), this.getClass().getName() + " - Line GPU shader compilation failed:\n" + lineGpuShader.getLog());
-        }
+        lineGpuShaders = fetchShaderProgram(manager, lineGpuDesc, "Line GPU", "Line GPU (rel)");
 
         /**
          * MW POINTS
          */
-        mwPointShader = manager.get("shader/point.galaxy.vertex.glsl");
-        if (!mwPointShader.isCompiled()) {
-            Logger.error(new RuntimeException(), this.getClass().getName() + " - MW point shader compilation failed:\n" + mwPointShader.getLog());
-        }
+        mwPointShaders = fetchShaderProgram(manager, mwPointDesc, "MW point", "MW point (rel)");
 
         /**
          * MW NEBULAE
          */
-        mwNebulaShader = manager.get("shader/nebula.vertex.glsl");
-        if (!mwNebulaShader.isCompiled()) {
-            Logger.error(new RuntimeException(), this.getClass().getName() + " - MW nebula shader compilation failed:\n" + mwNebulaShader.getLog());
-        }
+        mwNebulaShaders = fetchShaderProgram(manager, mwNebulaDesc, "MW nebula", "MW nebula (rel)");
 
         /**
-         * PARTICLE GROUP
+         * PARTICLE GROUP - default and relativistic
          */
-        particleGroupShader = manager.get("shader/particle.group.vertex.glsl");
-        if (!particleGroupShader.isCompiled()) {
-            Logger.error(new RuntimeException(), this.getClass().getName() + " - Particle group shader compilation failed:\n" + particleGroupShader.getLog());
-        }
+        particleGroupShaders = fetchShaderProgram(manager, particleGroupDesc, "Particle group", "Particle group (rel)");
 
         /**
-         * STAR GROUP - default
+         * STAR GROUP - default and relativistic
          */
-        starGroupShader = manager.get(starGroupDesc[0]);
-        if (!starGroupShader.isCompiled()) {
-            Logger.error(new RuntimeException(), this.getClass().getName() + " - Star group shader compilation failed:\n" + starGroupShader.getLog());
-        }
-
-        /**
-         * STAR GROUP - relativistic
-         */
-        starGroupShaderRel = manager.get(starGroupDesc[1]);
-        if (!starGroupShaderRel.isCompiled()) {
-            Logger.error(new RuntimeException(), this.getClass().getName() + " - Star group shader (rel) compilation failed:\n" + starGroupShaderRel.getLog());
-        }
+        starGroupShaders = fetchShaderProgram(manager, starGroupDesc, "Star group", "Star group (rel)");
 
         /**
          * PIXEL
          */
-        pixelShader = manager.get("shader/point.vertex.glsl");
-        if (!pixelShader.isCompiled()) {
-            Logger.error(new RuntimeException(), this.getClass().getName() + " - Pixel shader compilation failed:\n" + pixelShader.getLog());
-        }
+        pixelShaders = fetchShaderProgram(manager, pixelDesc, "Pixel", "Pixel (rel)");
 
         int numLists = GlobalConf.performance.MULTITHREADING ? GlobalConf.performance.NUMBER_THREADS() : 1;
         RenderGroup[] renderGroups = RenderGroup.values();
@@ -433,7 +409,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         int priority = 0;
 
         // POINTS
-        AbstractRenderSystem pixelStarProc = new PixelRenderSystem(RenderGroup.POINT_STAR, priority++, alphas, pixelShader, ComponentType.Stars);
+        AbstractRenderSystem pixelStarProc = new PixelRenderSystem(RenderGroup.POINT_STAR, priority++, alphas, pixelShaders, ComponentType.Stars);
         pixelStarProc.setPreRunnable(blendNoDepthRunnable);
 
         // MODEL FRONT-BACK - NO CULL FACE
@@ -463,7 +439,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         });
 
         // BILLBOARD STARS
-        billboardStarsProc = new BillboardStarRenderSystem(RenderGroup.BILLBOARD_STAR, priority++, alphas, starShader, "data/tex/star_glow_s.png", ComponentType.Stars.ordinal());
+        billboardStarsProc = new BillboardStarRenderSystem(RenderGroup.BILLBOARD_STAR, priority++, alphas, starShaders[0], starShaders[1], "data/tex/star_glow_s.png", ComponentType.Stars.ordinal());
         billboardStarsProc.setPreRunnable(blendNoDepthRunnable);
         billboardStarsProc.setPostRunnable(new RenderSystemRunnable() {
 
@@ -512,18 +488,18 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         });
 
         // BILLBOARD GALAXIES
-        AbstractRenderSystem billboardGalaxiesProc = new BillboardStarRenderSystem(RenderGroup.BILLBOARD_GAL, priority++, alphas, galaxyShader, "data/tex/static.jpg", ComponentType.Galaxies.ordinal());
+        AbstractRenderSystem billboardGalaxiesProc = new BillboardStarRenderSystem(RenderGroup.BILLBOARD_GAL, priority++, alphas, galShaders[0], galShaders[1], "data/tex/static.jpg", ComponentType.Galaxies.ordinal());
         billboardGalaxiesProc.setPreRunnable(blendNoDepthRunnable);
 
         // BILLBOARD SPRITES
-        AbstractRenderSystem billboardSpritesProc = new BillboardSpriteRenderSystem(RenderGroup.BILLBOARD_SPRITE, priority++, alphas, spriteShader, ComponentType.Clusters.ordinal());
+        AbstractRenderSystem billboardSpritesProc = new BillboardSpriteRenderSystem(RenderGroup.BILLBOARD_SPRITE, priority++, alphas, spriteShaders[0], spriteShaders[1], ComponentType.Clusters.ordinal());
         billboardSpritesProc.setPreRunnable(blendNoDepthRunnable);
 
         // LINES CPU
         AbstractRenderSystem lineProc = getLineRenderSystem();
 
         // LINES GPU
-        AbstractRenderSystem lineGpuProc = new LineGPURenderSystem(RenderGroup.LINE_GPU, priority++, alphas, lineGpuShader);
+        AbstractRenderSystem lineGpuProc = new LineGPURenderSystem(RenderGroup.LINE_GPU, priority++, alphas, lineGpuShaders);
         lineGpuProc.setPreRunnable(blendDepthRunnable);
 
         // MODEL FRONT
@@ -535,15 +511,15 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         modelBeamProc.setPreRunnable(blendDepthRunnable);
 
         // GALAXY
-        AbstractRenderSystem galaxyProc = new MilkyWayRenderSystem(RenderGroup.GALAXY, priority++, alphas, modelBatchDefault, mwPointShader, mwNebulaShader);
+        AbstractRenderSystem galaxyProc = new MilkyWayRenderSystem(RenderGroup.GALAXY, priority++, alphas, modelBatchDefault, mwPointShaders, mwNebulaShaders);
         galaxyProc.setPreRunnable(blendNoDepthRunnable);
 
         // PARTICLE GROUP
-        AbstractRenderSystem particleGroupProc = new ParticleGroupRenderSystem(RenderGroup.PARTICLE_GROUP, priority++, alphas, particleGroupShader);
+        AbstractRenderSystem particleGroupProc = new ParticleGroupRenderSystem(RenderGroup.PARTICLE_GROUP, priority++, alphas, particleGroupShaders);
         particleGroupProc.setPreRunnable(blendNoDepthRunnable);
 
         // STAR GROUP
-        AbstractRenderSystem starGroupProc = new StarGroupRenderSystem(RenderGroup.STAR_GROUP, priority++, alphas, starGroupShader, starGroupShaderRel);
+        AbstractRenderSystem starGroupProc = new StarGroupRenderSystem(RenderGroup.STAR_GROUP, priority++, alphas, starGroupShaders);
         starGroupProc.setPreRunnable(blendNoDepthRunnable);
 
         // MODEL STARS
@@ -555,7 +531,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         labelsProc.setPreRunnable(blendNoDepthRunnable);
 
         // BILLBOARD SSO
-        AbstractRenderSystem billboardSSOProc = new BillboardStarRenderSystem(RenderGroup.BILLBOARD_SSO, priority++, alphas, starShader, "img/sso.png", -1);
+        AbstractRenderSystem billboardSSOProc = new BillboardStarRenderSystem(RenderGroup.BILLBOARD_SSO, priority++, alphas, starShaders[0], starShaders[1], "img/sso.png", -1);
         billboardSSOProc.setPreRunnable(blendDepthRunnable);
 
         // MODEL ATMOSPHERE
@@ -1103,11 +1079,11 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         AbstractRenderSystem sys = null;
         if (GlobalConf.scene.isNormalLineRenderer()) {
             // Normal
-            sys = new LineRenderSystem(RenderGroup.LINE, 0, alphas, lineShader);
+            sys = new LineRenderSystem(RenderGroup.LINE, 0, alphas, lineShaders);
             sys.setPreRunnable(blendDepthRunnable);
         } else {
             // Quad
-            sys = new LineQuadRenderSystem(RenderGroup.LINE, 0, alphas, lineQuadShader);
+            sys = new LineQuadRenderSystem(RenderGroup.LINE, 0, alphas, lineQuadShaders);
             sys.setPreRunnable(blendDepthRunnable);
         }
         return sys;

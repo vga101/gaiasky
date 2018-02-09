@@ -3,6 +3,10 @@ precision mediump float;
 precision mediump int;
 #endif
 
+
+<INCLUDE shader/lib_math.glsl>
+<INCLUDE shader/lib_geometry.glsl>
+
 attribute vec4 a_position;
 attribute vec2 a_texCoord0;
 
@@ -16,16 +20,16 @@ uniform float u_distance;
 // Apparent angle in deg
 uniform float u_apparent_angle;
 uniform vec3 u_camShift;
-uniform int u_relativsiticAberration; // Relativistic aberration flag
-uniform vec3 u_velDir; // Velocity vector
-uniform float u_vc; // Fraction of the speed of light, v/c
+
+#ifdef relativisticEffects
+    uniform vec3 u_velDir; // Velocity vector
+    uniform float u_vc; // Fraction of the speed of light, v/c
+
+    <INCLUDE shader/lib_relativity.glsl>
+#endif // relativisticEffects
 
 varying vec4 v_color;
 varying vec2 v_texCoords;
-
-<INCLUDE shader/lib_math.glsl>
-
-<INCLUDE shader/lib_geometry.glsl>
 
 #define distfac 3.24e-8 / 60000.0
 #define distfacinv 60000.0 / 3.23e-8
@@ -40,17 +44,9 @@ void main()
    
    vec3 pos = u_pos - u_camShift;
    
-   if(u_relativsiticAberration == 1) {
-       // Relativistic aberration
-       // Current cosine of angle cos(th_s) cos A = DotProduct(v1, v2) / (Length(v1) * Length(v2))
-       float dist = length(pos);
-       vec3 cdir = u_velDir * -1.0;
-       float costh_s = dot(cdir, pos) / dist;
-       float th_s = acos(costh_s);
-       float costh_o = (costh_s - u_vc) / (1.0 - u_vc * costh_s);
-       float th_o = acos(costh_o);
-       pos = rotate_vertex_position(pos, normalize(cross(cdir, pos)), th_o - th_s);
-   }
+   #ifdef relativisticEffects
+       pos = computeRelativisticAberration(pos, length(pos), u_velDir, u_vc);
+   #endif // relativisticEffects
    
    // Translate
    mat4 translate = mat4(1.0);

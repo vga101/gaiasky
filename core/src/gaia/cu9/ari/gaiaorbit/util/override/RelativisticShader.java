@@ -75,7 +75,7 @@ public class RelativisticShader extends DefaultShader {
         final long mask = renderable.material.getMask();
         // Atmosphere ground only if camera height is set
         if ((mask & RelativisticEffectFloatAttribute.Vc) == RelativisticEffectFloatAttribute.Vc)
-            prefix += "#define relativistcEffects\n";
+            prefix += "#define relativisticEffects\n";
         return prefix;
     }
 }

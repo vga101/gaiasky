@@ -36,8 +36,8 @@ public class LineRenderSystem extends ImmediateRenderSystem {
 
     protected MeshData curr_outline;
 
-    public LineRenderSystem(RenderGroup rg, int priority, float[] alphas, ShaderProgram shaderProgram) {
-        super(rg, priority, alphas, shaderProgram);
+    public LineRenderSystem(RenderGroup rg, int priority, float[] alphas, ShaderProgram[] shaders) {
+        super(rg, priority, alphas, shaders);
         dpool = new DPool(INI_DPOOL_SIZE, MAX_DPOOL_SIZE, 11);
         provisionalLines = new Array<double[]>();
         sorter = new LineArraySorter(10);
@@ -96,12 +96,13 @@ public class LineRenderSystem extends ImmediateRenderSystem {
         for (double[] l : provisionalLines)
             addLinePostproc(l[0], l[1], l[2], l[3], l[4], l[5], l[6], l[7], l[8], l[9]);
 
+        ShaderProgram shaderProgram = getShaderProgram();
+
         shaderProgram.begin();
         shaderProgram.setUniformMatrix("u_projModelView", camera.getCamera().combined);
 
         // Relativistic aberration
-        if (GlobalConf.runtime.RELATIVISTIC_ABERRATION) {
-            shaderProgram.setUniformi("u_relativsiticAberration", 1);
+        if (GlobalConf.runtime.RELATIVISTIC_EFFECTS) {
             if (camera.getVelocity() == null || camera.getVelocity().len() == 0) {
                 aux2.set(1, 0, 0);
             } else {
@@ -109,8 +110,6 @@ public class LineRenderSystem extends ImmediateRenderSystem {
             }
             shaderProgram.setUniformf("u_velDir", aux2);
             shaderProgram.setUniformf("u_vc", (float) (camera.getSpeed() / Constants.C_KMH));
-        } else {
-            shaderProgram.setUniformi("u_relativsiticAberration", 0);
         }
 
         if (Gdx.app.getType() == ApplicationType.Desktop) {

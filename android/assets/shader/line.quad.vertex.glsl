@@ -13,19 +13,20 @@ uniform vec2 u_viewport;
 varying vec4 v_col;
 varying vec2 v_uv;
 
-uniform int u_relativsiticAberration; // Relativistic aberration flag
-uniform vec3 u_velDir; // Velocity vector
-uniform float u_vc; // Fraction of the speed of light, v/c
+#ifdef relativisticEffects
+    uniform vec3 u_velDir; // Velocity vector
+    uniform float u_vc; // Fraction of the speed of light, v/c
 
-<INCLUDE shader/lib_geometry.glsl>
-<INCLUDE shader/lib_relativity.glsl>
+    <INCLUDE shader/lib_geometry.glsl>
+    <INCLUDE shader/lib_relativity.glsl>
+#endif // relativisticEffects
 
 void main() {
     vec4 pos = vec4(a_position);
     
-   	if(u_relativsiticAberration == 1) {
-   	    pos.xyz = computeRelativisticAberration(pos.xyz, length(pos.xyz), u_velDir, u_vc);
-   	}
+    #ifdef relativisticEffects
+        pos.xyz = computeRelativisticAberration(pos.xyz, length(pos.xyz), u_velDir, u_vc);
+    #endif // relativisticEffects
     
     gl_Position = u_projModelView * pos;
     v_col = a_color;

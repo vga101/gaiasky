@@ -106,7 +106,7 @@ public class ModelComponent implements Disposable {
             tc.initialize();
         }
 
-        if (GlobalConf.runtime.RELATIVISTIC_ABERRATION) {
+        if (GlobalConf.runtime.RELATIVISTIC_EFFECTS) {
             rec = new RelativisticEffectsComponent();
         }
     }
@@ -162,7 +162,7 @@ public class ModelComponent implements Disposable {
         }
 
         // INIT RELATIVISITC
-        if (GlobalConf.runtime.RELATIVISTIC_ABERRATION) {
+        if (GlobalConf.runtime.RELATIVISTIC_EFFECTS) {
             rec.doneLoading(materials);
         }
 
@@ -316,7 +316,7 @@ public class ModelComponent implements Disposable {
     }
 
     public void updateRelativisticEffects(ICamera camera) {
-        if (GlobalConf.runtime.RELATIVISTIC_ABERRATION) {
+        if (GlobalConf.runtime.RELATIVISTIC_EFFECTS) {
             for (Material mat : instance.materials) {
                 rec.updateRelativisticEffectsMaterial(mat, camera);
             }

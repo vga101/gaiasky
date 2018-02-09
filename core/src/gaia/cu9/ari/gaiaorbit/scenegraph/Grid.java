@@ -88,7 +88,7 @@ public class Grid extends AbstractPositionEntity implements IModelRenderable, IA
         mc.instance = new ModelInstance(model, this.localTransform);
 
         // Relativistic effects
-        if (GlobalConf.runtime.RELATIVISTIC_ABERRATION)
+        if (GlobalConf.runtime.RELATIVISTIC_EFFECTS)
             mc.rec.setUpRelativisticEffectsMaterial(mc.instance.materials);
 
         float pl = .5f;

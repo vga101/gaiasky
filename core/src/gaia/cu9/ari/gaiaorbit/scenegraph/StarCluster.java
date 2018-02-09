@@ -133,7 +133,7 @@ public class StarCluster extends AbstractPositionEntity implements IFocus, IProp
         mc.instance = new ModelInstance(model, modelTransform);
 
         // Relativistic effects
-        if (GlobalConf.runtime.RELATIVISTIC_ABERRATION)
+        if (GlobalConf.runtime.RELATIVISTIC_EFFECTS)
             mc.rec.setUpRelativisticEffectsMaterial(mc.instance.materials);
 
     }

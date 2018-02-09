@@ -31,11 +31,10 @@ public class ParticleGroupRenderSystem extends ImmediateRenderSystem implements 
     Vector3 aux1;
     int additionalOffset, pmOffset;
 
-
     Comparator<IRenderable> comp;
 
-    public ParticleGroupRenderSystem(RenderGroup rg, int priority, float[] alphas, ShaderProgram shaderProgram) {
-        super(rg, priority, alphas, shaderProgram);
+    public ParticleGroupRenderSystem(RenderGroup rg, int priority, float[] alphas, ShaderProgram[] shaders) {
+        super(rg, priority, alphas, shaders);
         comp = new DistToCameraComparator<IRenderable>();
     }
 
@@ -114,6 +113,8 @@ public class ParticleGroupRenderSystem extends ImmediateRenderSystem implements 
                 // Additive blending
                 Gdx.gl20.glBlendFunc(GL20.GL_ONE, GL20.GL_ONE);
 
+                ShaderProgram shaderProgram = getShaderProgram();
+
                 shaderProgram.begin();
                 shaderProgram.setUniformMatrix("u_projModelView", camera.getCamera().combined);
                 shaderProgram.setUniformf("u_camPos", camera.getCurrent().getPos().put(aux1));
@@ -123,8 +124,7 @@ public class ParticleGroupRenderSystem extends ImmediateRenderSystem implements 
                 shaderProgram.setUniformf("u_sizeFactor", rc.scaleFactor);
 
                 // Relativistic aberration
-                if (GlobalConf.runtime.RELATIVISTIC_ABERRATION) {
-                    shaderProgram.setUniformi("u_relativsiticAberration", 1);
+                if (GlobalConf.runtime.RELATIVISTIC_EFFECTS) {
                     if (camera.getVelocity() == null || camera.getVelocity().len() == 0) {
                         aux1.set(1, 0, 0);
                     } else {
@@ -132,8 +132,6 @@ public class ParticleGroupRenderSystem extends ImmediateRenderSystem implements 
                     }
                     shaderProgram.setUniformf("u_velDir", aux1);
                     shaderProgram.setUniformf("u_vc", (float) (camera.getSpeed() / Constants.C_KMH));
-                } else {
-                    shaderProgram.setUniformi("u_relativsiticAberration", 0);
                 }
 
                 curr.mesh.setVertices(curr.vertices, particleGroup.offset, particleGroup.count);

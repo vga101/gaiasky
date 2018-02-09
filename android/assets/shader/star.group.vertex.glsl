@@ -21,11 +21,11 @@ uniform vec3 u_camPos;
 uniform vec2 u_pointAlpha;
 uniform float u_thAnglePoint;
 
-#ifdef relativistcEffects
+#ifdef relativisticEffects
     uniform vec3 u_velDir; // Velocity vector
     uniform float u_vc; // Fraction of the speed of light, v/c
     <INCLUDE shader/lib_relativity.glsl>
-#endif // relativistcEffects
+#endif // relativisticEffects
 
 // 0 - alpha
 // 1 - point size
@@ -53,7 +53,7 @@ void main() {
     // Distance to star
     float dist = length(pos);
     
-    #ifdef relativistcEffects
+    #ifdef relativisticEffects
     	pos = computeRelativisticAberration(pos, dist, u_velDir, u_vc);
     #endif // relativisticEffects
     

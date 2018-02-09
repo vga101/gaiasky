@@ -115,12 +115,13 @@ varying vec3 v_ambientLight;
 ////////////////////////////////////////////////////////////////////////////////////
 //////////RELATIVISTIC EFFECTS - VERTEX
 ////////////////////////////////////////////////////////////////////////////////////
-#ifdef relativistcEffects
-uniform float u_vc; // v/c
-uniform vec3 u_velDir; // Camera velocity direction
+#ifdef relativisticEffects
+    uniform float u_vc; // v/c
+    uniform vec3 u_velDir; // Camera velocity direction
 
-<INCLUDE shader/lib_geometry.glsl>
-#endif // relativistcEffects
+    <INCLUDE shader/lib_geometry.glsl>
+    <INCLUDE shader/lib_relativity.glsl>
+#endif // relativisticEffects
 
 void main() {
 	v_time = u_shininess;
@@ -141,15 +142,8 @@ void main() {
 
 	vec4 pos = u_worldTrans * vec4(a_position, 1.0);
 
-        #ifdef relativistcEffects
-            // Relativistic aberration
-            // Current cosine of angle cos(th_s) cos A = DotProduct(v1, v2) / (Length(v1) * Length(v2))
-            vec3 cdir = u_velDir * -1.0;
-            float costh_s = dot(cdir, pos.xyz) / length(pos.xyz);
-            float th_s = acos(costh_s);
-            float costh_o = (costh_s - u_vc) / (1.0 - u_vc * costh_s);
-            float th_o = acos(costh_o);
-            pos.xyz = rotate_vertex_position(pos.xyz, normalize(cross(cdir, pos.xyz)), th_o - th_s);
+        #ifdef relativisticEffects
+            pos.xyz = computeRelativisticAberration(pos.xyz, length(pos.xyz), u_velDir, u_vc);
         #endif // relativisticEffects
 
 	gl_Position = u_projViewTrans * pos;

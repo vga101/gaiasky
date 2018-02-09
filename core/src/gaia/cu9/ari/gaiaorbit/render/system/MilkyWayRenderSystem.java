@@ -35,25 +35,26 @@ public class MilkyWayRenderSystem extends ImmediateRenderSystem implements IObse
     Vector3 aux1;
     int additionalOffset, pmOffset;
 
-    private ShaderProgram quadProgram;
+    private ShaderProgram[] nebulaShaders;
     private MeshData quad;
     private Texture[] nebulatextures;
 
     private ModelBatch modelBatch;
 
-    public MilkyWayRenderSystem(RenderGroup rg, int priority, float[] alphas, ModelBatch modelBatch, ShaderProgram pointProgram, ShaderProgram nebulaProgram) {
-        super(rg, priority, alphas, pointProgram);
-        this.quadProgram = nebulaProgram;
+    public MilkyWayRenderSystem(RenderGroup rg, int priority, float[] alphas, ModelBatch modelBatch, ShaderProgram[] pointShaders, ShaderProgram[] nebulaShaders) {
+        super(rg, priority, alphas, pointShaders);
+        this.nebulaShaders = nebulaShaders;
         this.modelBatch = modelBatch;
     }
 
     @Override
     protected void initShaderProgram() {
-
-        shaderProgram.begin();
-        shaderProgram.setUniformf("u_pointAlphaMin", 0.1f);
-        shaderProgram.setUniformf("u_pointAlphaMax", 1.0f);
-        shaderProgram.end();
+        for (ShaderProgram shaderProgram : programs) {
+            shaderProgram.begin();
+            shaderProgram.setUniformf("u_pointAlphaMin", 0.1f);
+            shaderProgram.setUniformf("u_pointAlphaMax", 1.0f);
+            shaderProgram.end();
+        }
 
         nebulatextures = new Texture[4];
         for (int i = 0; i < 4; i++) {
@@ -97,6 +98,10 @@ public class MilkyWayRenderSystem extends ImmediateRenderSystem implements IObse
         quad.indices = new short[maxQuadIndices];
     }
 
+    private ShaderProgram getNebulaProgram() {
+        return GlobalConf.runtime.RELATIVISTIC_EFFECTS ? nebulaShaders[1] : nebulaShaders[0];
+    }
+
     @Override
     public void renderStud(Array<IRenderable> renderables, ICamera camera, double t) {
         if (renderables.size > 0) {
@@ -136,8 +141,7 @@ public class MilkyWayRenderSystem extends ImmediateRenderSystem implements IObse
                     // SIZE
                     double starSize = 0;
                     if (star.data.length > 3) {
-                        starSize = (star.data[3] * 3
-                                + 1) /** (Constants.webgl ? 0.08f : 1f) */
+                        starSize = (star.data[3] * 3 + 1) /** (Constants.webgl ? 0.08f : 1f) */
                         ;
                     } else {
                         starSize = (float) Math.abs(rand.nextGaussian()) * 8f + 1.0f;
@@ -277,37 +281,36 @@ public class MilkyWayRenderSystem extends ImmediateRenderSystem implements IObse
                      * NEBULA RENDERER
                      */
 
-                    quadProgram.begin();
+                    ShaderProgram nebulaProgram = getNebulaProgram();
+
+                    nebulaProgram.begin();
 
                     // General uniforms
-                    quadProgram.setUniformMatrix("u_projModelView", camera.getCamera().combined);
-                    quadProgram.setUniformf("u_camPos", camera.getCurrent().getPos().put(aux1));
-                    quadProgram.setUniformf("u_alpha", 0.015f * mw.opacity * alpha);
+                    nebulaProgram.setUniformMatrix("u_projModelView", camera.getCamera().combined);
+                    nebulaProgram.setUniformf("u_camPos", camera.getCurrent().getPos().put(aux1));
+                    nebulaProgram.setUniformf("u_alpha", 0.015f * mw.opacity * alpha);
 
                     for (int i = 0; i < 4; i++) {
                         nebulatextures[i].bind(i);
-                        quadProgram.setUniformi("u_nebulaTexture" + i, i);
+                        nebulaProgram.setUniformi("u_nebulaTexture" + i, i);
                     }
 
                     // Relativistic aberration
-                    if (GlobalConf.runtime.RELATIVISTIC_ABERRATION) {
-                        quadProgram.setUniformi("u_relativsiticAberration", 1);
+                    if (GlobalConf.runtime.RELATIVISTIC_EFFECTS) {
                         if (camera.getVelocity() == null || camera.getVelocity().len() == 0) {
                             aux1.set(1, 0, 0);
                         } else {
                             camera.getVelocity().put(aux1).nor();
                         }
-                        quadProgram.setUniformf("u_velDir", aux1);
-                        quadProgram.setUniformf("u_vc", (float) (camera.getSpeed() / Constants.C_KMH));
-                    } else {
-                        quadProgram.setUniformi("u_relativsiticAberration", 0);
+                        nebulaProgram.setUniformf("u_velDir", aux1);
+                        nebulaProgram.setUniformf("u_vc", (float) (camera.getSpeed() / Constants.C_KMH));
                     }
 
                     quad.mesh.setVertices(quad.vertices, 0, quad.vertexIdx);
                     quad.mesh.setIndices(quad.indices, 0, quad.indexIdx);
-                    quad.mesh.render(quadProgram, GL20.GL_TRIANGLES, 0, quad.indexIdx);
+                    quad.mesh.render(nebulaProgram, GL20.GL_TRIANGLES, 0, quad.indexIdx);
 
-                    quadProgram.end();
+                    nebulaProgram.end();
 
                     /**
                      * STAR RENDERER
@@ -321,6 +324,8 @@ public class MilkyWayRenderSystem extends ImmediateRenderSystem implements IObse
                     // Additive blending
                     Gdx.gl20.glBlendFunc(GL20.GL_ONE, GL20.GL_ONE);
 
+                    ShaderProgram shaderProgram = getShaderProgram();
+
                     shaderProgram.begin();
                     shaderProgram.setUniformMatrix("u_projModelView", camera.getCamera().combined);
                     shaderProgram.setUniformf("u_camPos", camera.getCurrent().getPos().put(aux1));
@@ -329,8 +334,7 @@ public class MilkyWayRenderSystem extends ImmediateRenderSystem implements IObse
                     shaderProgram.setUniformf("u_ar", GlobalConf.program.STEREOSCOPIC_MODE && (GlobalConf.program.STEREO_PROFILE != StereoProfile.HD_3DTV && GlobalConf.program.STEREO_PROFILE != StereoProfile.ANAGLYPHIC) ? 0.5f : 1f);
 
                     // Relativistic aberration
-                    if (GlobalConf.runtime.RELATIVISTIC_ABERRATION) {
-                        shaderProgram.setUniformi("u_relativsiticAberration", 1);
+                    if (GlobalConf.runtime.RELATIVISTIC_EFFECTS) {
                         if (camera.getVelocity() == null || camera.getVelocity().len() == 0) {
                             aux1.set(1, 0, 0);
                         } else {
@@ -338,8 +342,6 @@ public class MilkyWayRenderSystem extends ImmediateRenderSystem implements IObse
                         }
                         shaderProgram.setUniformf("u_velDir", aux1);
                         shaderProgram.setUniformf("u_vc", (float) (camera.getSpeed() / Constants.C_KMH));
-                    } else {
-                        shaderProgram.setUniformi("u_relativsiticAberration", 0);
                     }
 
                     curr.mesh.setVertices(curr.vertices, 0, curr.vertexIdx);

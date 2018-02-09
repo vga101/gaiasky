@@ -39,8 +39,8 @@ public class LineQuadRenderSystem extends LineRenderSystem {
     final static double widthAngle = Math.toRadians(0.05);
     final static double widthAngleTan = Math.tan(widthAngle);
 
-    public LineQuadRenderSystem(RenderGroup rg, int priority, float[] alphas, ShaderProgram shaderProgram) {
-        super(rg, priority, alphas, shaderProgram);
+    public LineQuadRenderSystem(RenderGroup rg, int priority, float[] alphas, ShaderProgram[] shaders) {
+        super(rg, priority, alphas, shaders);
         dpool = new DPool(INI_DPOOL_SIZE, MAX_DPOOL_SIZE, 14);
         provisionalLines = new Array<double[]>();
         sorter = new LineArraySorter(12);
@@ -227,12 +227,13 @@ public class LineQuadRenderSystem extends LineRenderSystem {
         for (double[] l : provisionalLines)
             addLinePostproc(l[0], l[1], l[2], l[3], l[4], l[5], l[6], l[7], l[8], l[9], l[10], l[11], l[13]);
 
+        ShaderProgram shaderProgram = getShaderProgram();
+
         shaderProgram.begin();
         shaderProgram.setUniformMatrix("u_projModelView", camera.getCamera().combined);
 
         // Relativistic aberration
-        if (GlobalConf.runtime.RELATIVISTIC_ABERRATION) {
-            shaderProgram.setUniformi("u_relativsiticAberration", 1);
+        if (GlobalConf.runtime.RELATIVISTIC_EFFECTS) {
             if (camera.getVelocity() == null || camera.getVelocity().len() == 0) {
                 aux2.set(1, 0, 0);
             } else {
@@ -240,8 +241,6 @@ public class LineQuadRenderSystem extends LineRenderSystem {
             }
             shaderProgram.setUniformf("u_velDir", aux2);
             shaderProgram.setUniformf("u_vc", (float) (camera.getSpeed() / Constants.C_KMH));
-        } else {
-            shaderProgram.setUniformi("u_relativsiticAberration", 0);
         }
 
         for (int i = 0; i < meshIdx; i++) {

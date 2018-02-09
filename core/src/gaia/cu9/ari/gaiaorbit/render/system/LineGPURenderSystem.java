@@ -39,8 +39,8 @@ public class LineGPURenderSystem extends ImmediateRenderSystem {
     /** Hopefully we won't have more than 1000000 orbits at once **/
     private final int N_MESHES = 1000000;
 
-    public LineGPURenderSystem(RenderGroup rg, int priority, float[] alphas, ShaderProgram shaderProgram) {
-        super(rg, priority, alphas, shaderProgram);
+    public LineGPURenderSystem(RenderGroup rg, int priority, float[] alphas, ShaderProgram[] shaders) {
+        super(rg, priority, alphas, shaders);
         modelView = new Matrix4();
         glType = GL20.GL_LINE_STRIP;
         aux2 = new Vector3();
@@ -152,9 +152,12 @@ public class LineGPURenderSystem extends ImmediateRenderSystem {
              */
             curr = meshes[renderable.offset];
 
+            ShaderProgram shaderProgram = getShaderProgram();
+
             shaderProgram.begin();
 
-            shaderProgram.setUniformMatrix("u_projModelView", modelView.set(camera.getCamera().combined).mul(renderable.localTransform));
+            shaderProgram.setUniformMatrix("u_worldTransform", renderable.localTransform);
+            shaderProgram.setUniformMatrix("u_projModelView", camera.getCamera().combined);
             shaderProgram.setUniformf("u_alpha", (float) (renderable.alpha) * getAlpha(renderable));
             if (renderable.parent.name.equals("Gaia")) {
                 Vector3d ppos = ((Gaia) renderable.parent).unrotatedPos;
@@ -164,8 +167,7 @@ public class LineGPURenderSystem extends ImmediateRenderSystem {
             }
 
             // Relativistic aberration
-            if (GlobalConf.runtime.RELATIVISTIC_ABERRATION) {
-                shaderProgram.setUniformi("u_relativsiticAberration", 1);
+            if (GlobalConf.runtime.RELATIVISTIC_EFFECTS) {
                 if (camera.getVelocity() == null || camera.getVelocity().len() == 0) {
                     aux2.set(1, 0, 0);
                 } else {
@@ -173,8 +175,6 @@ public class LineGPURenderSystem extends ImmediateRenderSystem {
                 }
                 shaderProgram.setUniformf("u_velDir", aux2);
                 shaderProgram.setUniformf("u_vc", (float) (camera.getSpeed() / Constants.C_KMH));
-            } else {
-                shaderProgram.setUniformi("u_relativsiticAberration", 0);
             }
 
             curr.mesh.setVertices(curr.vertices, 0, renderable.count);

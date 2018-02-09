@@ -37,16 +37,13 @@ public class StarGroupRenderSystem extends ImmediateRenderSystem implements IObs
     /** Hopefully we won't have more than 5000 star groups at once **/
     private final int N_MESHES = 5000;
 
-    /** Shader program with relativistic effects **/
-    private ShaderProgram shaderProgramRel;
     private Vector3 aux1, aux2;
     private int sizeOffset, pmOffset;
     private Comparator<IRenderable> comp;
     private float[] pointAlpha, alphaSizeFovBr;
 
-    public StarGroupRenderSystem(RenderGroup rg, int priority, float[] alphas, ShaderProgram shaderProgram, ShaderProgram shaderProgramRel) {
-        super(rg, priority, alphas, shaderProgram);
-        this.shaderProgramRel = shaderProgramRel;
+    public StarGroupRenderSystem(RenderGroup rg, int priority, float[] alphas, ShaderProgram[] shaders) {
+        super(rg, priority, alphas, shaders);
         BRIGHTNESS_FACTOR = Constants.webgl ? 15 : 10;
         this.comp = new DistToCameraComparator<IRenderable>();
         this.alphaSizeFovBr = new float[4];
@@ -67,9 +64,6 @@ public class StarGroupRenderSystem extends ImmediateRenderSystem implements IObs
         meshes = new MeshData[N_MESHES];
     }
 
-    private ShaderProgram getShaderProgram() {
-        return GlobalConf.runtime.RELATIVISTIC_ABERRATION ? shaderProgramRel : shaderProgram;
-    }
 
     /**
      * Adds a new mesh data to the meshes list and increases the mesh data index
@@ -192,7 +186,7 @@ public class StarGroupRenderSystem extends ImmediateRenderSystem implements IObs
                             shaderProgram.setUniformf("u_camPos", camera.getCurrent().getPos().put(aux1));
 
                             // Relativistic aberration
-                            if (GlobalConf.runtime.RELATIVISTIC_ABERRATION) {
+                            if (GlobalConf.runtime.RELATIVISTIC_EFFECTS) {
                                 if (camera.getVelocity() == null || camera.getVelocity().len() == 0) {
                                     aux2.set(1, 0, 0);
                                 } else {
@@ -261,11 +255,18 @@ public class StarGroupRenderSystem extends ImmediateRenderSystem implements IObs
     public void notify(Events event, Object... data) {
         switch (event) {
         case STAR_MIN_OPACITY_CMD:
-            if (shaderProgram != null && shaderProgram.isCompiled()) {
-                Gdx.app.postRunnable(() -> {
+            for (ShaderProgram p : programs) {
+                if (p != null && p.isCompiled()) {
                     pointAlpha[0] = (float) data[0];
-                    pointAlpha[1] = pointAlpha[0] + GlobalConf.scene.POINT_ALPHA_MAX;
-                });
+                    Gdx.app.postRunnable(new Runnable() {
+                        @Override
+                        public void run() {
+                            p.begin();
+                            p.setUniform2fv("u_pointAlpha", pointAlpha, 0, 2);
+                            p.end();
+                        }
+                    });
+                }
             }
             break;
         case DISPOSE_STAR_GROUP_GPU_MESH:

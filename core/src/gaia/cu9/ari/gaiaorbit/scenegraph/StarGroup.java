@@ -242,7 +242,7 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
             mc.env.set(new FloatAttribute(FloatAttribute.Shininess, 0f));
             mc.instance = new ModelInstance(model, modelTransform);
             // Relativistic effects
-            if (GlobalConf.runtime.RELATIVISTIC_ABERRATION)
+            if (GlobalConf.runtime.RELATIVISTIC_EFFECTS)
                 mc.rec.setUpRelativisticEffectsMaterial(mc.instance.materials);
         }
     }
