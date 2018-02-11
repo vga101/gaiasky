@@ -5,7 +5,7 @@ Gaia Sky offers the possibility to run ``Python`` scripts in the same
 ``JVM`` using `Jython <http://www.jython.org/>`__.
 
 You can find some example scripts in the
-`scripts <http://github.com/langurmonkey/gaiasky/tree/master/android/assets/scripts>`__
+`scripts <http://github.com/langurmonkey/gaiasky/tree/master/assets/scripts>`__
 folder of the project.
 
 .. hint:: Add your own scripts to the folder ``$HOME/.gaiasky/scripts`` so that Gaia Sky can run them.
@@ -69,7 +69,7 @@ More examples
 -------------
 
 You can find more examples by looking at the ``scripts``
-`folder <http://github.com/langurmonkey/gaiasky/tree/master/android/assets/scripts>`__ in the
+`folder <http://github.com/langurmonkey/gaiasky/tree/master/assets/scripts>`__ in the
 Gaia Sky package.
 
 How to run scripts

@@ -72,17 +72,17 @@ which catalog you want to use. Usually, the single file GPU version
 should work fine (tgas GPU), and has no culling, so all particles are
 visible at all times.
 
-+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------+------------------------------------------------------+--------------------------------------+
-| **Catalog**                                                                                                                                                                                                                         | **Description**                                                                                    | **Location**                                         | **Catalog file**                     |
-+=====================================================================================================================================================================================================================================+====================================================================================================+======================================================+======================================+
-| `tgas LoD (1.0.3) <http://wwwstaff.ari.uni-heidelberg.de/gaiasandbox/files/20161206_tgas_gaiasky_1.0.3.tar.gz>`__                                                                                                                   | Levels of detail (lod) TGAS catalog. CPU-bound.                                                    | ``gaiasky/android/assets/data/octree``               | x                                    |
-+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------+------------------------------------------------------+--------------------------------------+
-| `tags LoD (1.0.4) <http://wwwstaff.ari.uni-heidelberg.de/gaiasandbox/files/20161206_tgas_gaiasky_1.0.4.tar.gz>`__                                                                                                                   | Levels of detail (lod) TGAS catalog. CPU-bound.                                                    | ``gaiasky/android/assets/data/octree``               | x                                    |
-+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------+------------------------------------------------------+--------------------------------------+
-| tags LoD (`1.5.0 <http://wwwstaff.ari.uni-heidelberg.de/gaiasandbox/files/20170731_tgas_lod_gaiasky_1.5.0.tar.gz>`__, `1.5.1 <http://wwwstaff.ari.uni-heidelberg.de/gaiasandbox/files/20171204_tgas_lod_gaiasky_1.5.1.tar.gz>`__)   | Levels of detail (lod) TGAS catalog. GPU-bound. Version ``1.5.1`` contains a pm fix and RAVE rv.   | ``gaiasky/android/assets/data/octree/tgas``          | ``data/catalog-tgas-hyg-lod.json``   |
-+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------+------------------------------------------------------+--------------------------------------+
-| tags GPU (`1.5.0 <http://wwwstaff.ari.uni-heidelberg.de/gaiasandbox/files/20170731_tgas_gpu_gaiasky_1.5.0.tar.gz>`__, `1.5.1 <http://wwwstaff.ari.uni-heidelberg.de/gaiasandbox/files/20171204_tgas_gpu_gaiasky_1.5.1.tar.gz>`__)   | TGAS catalog, GPU-bound. Version ``1.5.1`` contains a pm fix and RAVE rv.                          | ``gaiasky/android/assets/data/catalog``              | ``data/catalog-tgas-hyg.json``       |
-+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------+------------------------------------------------------+--------------------------------------+
++-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------+----------------------------------------------+--------------------------------------+
+| **Catalog**                                                                                                                                                                                                                         | **Description**                                                                                    | **Location**                                 | **Catalog file**                     |
++=====================================================================================================================================================================================================================================+====================================================================================================+==============================================+======================================+
+| `tgas LoD (1.0.3) <http://wwwstaff.ari.uni-heidelberg.de/gaiasandbox/files/20161206_tgas_gaiasky_1.0.3.tar.gz>`__                                                                                                                   | Levels of detail (lod) TGAS catalog. CPU-bound.                                                    | ``gaiasky/assets/data/octree``               | x                                    |
++-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------+----------------------------------------------+--------------------------------------+
+| `tags LoD (1.0.4) <http://wwwstaff.ari.uni-heidelberg.de/gaiasandbox/files/20161206_tgas_gaiasky_1.0.4.tar.gz>`__                                                                                                                   | Levels of detail (lod) TGAS catalog. CPU-bound.                                                    | ``gaiasky/assets/data/octree``               | x                                    |
++-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------+----------------------------------------------+--------------------------------------+
+| tags LoD (`1.5.0 <http://wwwstaff.ari.uni-heidelberg.de/gaiasandbox/files/20170731_tgas_lod_gaiasky_1.5.0.tar.gz>`__, `1.5.1 <http://wwwstaff.ari.uni-heidelberg.de/gaiasandbox/files/20171204_tgas_lod_gaiasky_1.5.1.tar.gz>`__)   | Levels of detail (lod) TGAS catalog. GPU-bound. Version ``1.5.1`` contains a pm fix and RAVE rv.   | ``gaiasky/assets/data/octree/tgas``          | ``data/catalog-tgas-hyg-lod.json``   |
++-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------+----------------------------------------------+--------------------------------------+
+| tags GPU (`1.5.0 <http://wwwstaff.ari.uni-heidelberg.de/gaiasandbox/files/20170731_tgas_gpu_gaiasky_1.5.0.tar.gz>`__, `1.5.1 <http://wwwstaff.ari.uni-heidelberg.de/gaiasandbox/files/20171204_tgas_gpu_gaiasky_1.5.1.tar.gz>`__)   | TGAS catalog, GPU-bound. Version ``1.5.1`` contains a pm fix and RAVE rv.                          | ``gaiasky/assets/data/catalog``              | ``data/catalog-tgas-hyg.json``       |
++-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------+----------------------------------------------+--------------------------------------+
 
 For versions ``1.0.x`` just extract the package in the specified
 location. For versions ``1.5.0+`` you can choose whether you want to use
@@ -97,7 +97,7 @@ to the file specified in the last column in the table.
 Albeit **not recommended** for performance reasons, the legacy
 particle-based (CPU-bound) version of the catalog (version ``1.0.4``)
 can still be used with newer versions. To do so, extract the package in
-``gaiasky/android/assets/data/octree/tgas`` so that the ``metadata.bin``
+``gaiasky/assets/data/octree/tgas`` so that the ``metadata.bin``
 file and the ``particles`` folder are directly within that folder and
 edit the configuration file so that ``data.json.catalog`` points to
 ``data/catalog-tgas-hyg-lod-old.json``.
@@ -105,11 +105,11 @@ edit the configuration file so that ``data.json.catalog`` points to
 Compiling and running
 ---------------------
 
-To compile the code and run the desktop version of the application:
+To compile the code and run Gaia Sky run the following.
 
 .. code-block:: bash
 
-    $  gradlew desktop:run
+    $  gradlew core:run
     
 In order to pull the latest changes from the GitHub repository:
 
@@ -123,21 +123,30 @@ Remember that the master branch is the development branch and therefore intrinsi
 Packaging Gaia Sky
 -----------------
 
-To pack the application into a ``tar.gz`` file:
+Gaia Sky can be exported to a folder to be run as a standalone app with the following.
 
 .. code-block:: bash
 
-    $  gradlew desktop:createTar
+	$ gradlew core:dist
+	
+That will create a new folder called ``releases/gaiasky-[version].[revison]`` with the exported application. Run scripts
+are provided with the name ``gaiasky`` (Linux, macOS) and ``gaiasky.cmd`` (Windows).
+
+Also, to export Gaia Sky into a ``tar.gz`` archive file, run the following.
+
+.. code-block:: bash
+
+    $  gradlew core:createTar
 
 In order to produce the desktop installers for the various systems you
-need a licensed version of ``Install4j``.
+need a licensed version of ``Install4j``. Then, you need to run:
 
 .. code-block:: bash
 
-    $  gradlew desktop:pack
+    $  gradlew core:pack
 
-These commands will compile and package the application into a
-``gaiasky-[version]`` folder under the ``gaiasky/releases`` folder.
+These command will produce the different OS packages (``.exe``, ``.dmg``, ``.deb``, ``.rpm``, etc.) 
+of Gaia Sky into ``releases/packages-[version].[revision]`` folder.
 
 Running from downloaded package
 ===============================

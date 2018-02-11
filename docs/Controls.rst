@@ -191,7 +191,7 @@ For example, if we have the file ``xbox360.controller`` is defined in the config
 ``xbox360.linux.controller`` if on Linux, and so on. If found, the file is used. Otherwise, the default ``xbox360.controller`` file is used. Gaia Sky
 provides the default ``xbox360.controller`` file, which defines the Linux mappings, and also the Windows mappings ``xbox360.win.controller``.
 
-The mappings files (see `here <https://github.com/langurmonkey/gaiasky/blob/master/android/assets/mappings/xbox360.controller>`__)
+The mappings files (see `here <https://github.com/langurmonkey/gaiasky/blob/master/assets/mappings/xbox360.controller>`__)
 must be in the ``$GS_INSTALL_LOCATION/mappings`` or in the ``$HOME/.gaiasky/mappings`` folder, and basically assign the button and axis codes for the particular
 controller to the actions.
 

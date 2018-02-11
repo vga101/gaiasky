@@ -404,7 +404,7 @@ task pack (dependsOn: install4jMedia, description: "Creates the releases for win
 
 eclipse {
     project {
-        name = appName + "-core"
+        name = appName.toLowerCase() + "-core"
         linkedResource name: 'assets', type: '2', location: 'PARENT-1-PROJECT_LOC/assets'
     }
 }

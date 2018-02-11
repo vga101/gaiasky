@@ -125,9 +125,7 @@ example:
         }
 
 The ``quality`` parameter specifies here the number of both vertical and
-horizontal divisions that the sphere will have. This number is reduced
-in the ``Android`` port of the Gaia Sky to something between 30 and
-50 depending on the object.
+horizontal divisions that the sphere will have.
 
 Additionally, some other models, such as that of the Gaia spacecraft,
 come from a binary model file ``.g3db``. These models are created using

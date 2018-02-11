@@ -100,7 +100,7 @@ here are some rules:
    interface. Each one of these will load a different kind of data; the
    ``JSONLoader`` --`here <https://github.com/langurmonkey/gaiasky/blob/master/core/src/gaia/cu9/ari/gaiaorbit/data/JsonLoader.java>`__--
    loads non-catalog data (planets, satellites, orbits, etc.), the
-   ``STILCatalogLoader`` --`here <https://github.com/langurmonkey/gaiasky/blob/master/desktop/src/gaia/cu9/ari/gaiaorbit/data/stars/STILCatalogLoader.java>`__--
+   ``STILCatalogLoader`` --`here <https://github.com/langurmonkey/gaiasky/blob/master/core/src/gaia/cu9/ari/gaiaorbit/data/stars/STILCatalogLoader.java>`__--
    loads ``VOTables``, ``FITS``, ``CSV`` and other files through the
    `STIL <http://www.star.bristol.ac.uk/~mbt/stil/>`__ library,
    ``ConstellationsLoader`` --`here <https://github.com/langurmonkey/gaiasky/blob/master/core/src/gaia/cu9/ari/gaiaorbit/data/constel/ConstellationsLoader.java>`__--
@@ -319,7 +319,7 @@ contains a particle (star) with the following columns:
    -  **64 bits (long)** -- Star identifier
 
 
-   There is a utility to convert the ``csv`` catalog to the ``bin`` format. It is called ``HYGToBinary`` --`here <https://github.com/langurmonkey/gaiasky/blob/master/desktop/src/gaia/cu9/ari/gaiaorbit/data/HYGToBinary.java>`__-- and it can easily be adapted to convert any supported format to this binary format.
+   There is a utility to convert the ``csv`` catalog to the ``bin`` format. It is called ``HYGToBinary`` --`here <https://github.com/langurmonkey/gaiasky/blob/master/core/src/gaia/cu9/ari/gaiaorbit/data/HYGToBinary.java>`__-- and it can easily be adapted to convert any supported format to this binary format.
 
 Legacy octree catalog loader (single file)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -379,7 +379,7 @@ In order to produce these files from a catalog, one needs to
 ``OctreeGenerator`` --`here <https://github.com/langurmonkey/gaiasky/blob/master/core/src/gaia/cu9/ari/gaiaorbit/data/octreegen/OctreeGenerator.java>`__--.
 This class will get a list of stars and will produce the Octree
 according to certain parameters. The class
-``OctreeGeneratorTest`` --`here <https://github.com/langurmonkey/gaiasky/blob/master/desktop/src/gaia/cu9/ari/gaiaorbit/data/OctreeGeneratorTest.java>`__--
+``OctreeGeneratorTest`` --`here <https://github.com/langurmonkey/gaiasky/blob/master/src/gaia/cu9/ari/gaiaorbit/data/OctreeGeneratorTest.java>`__--
 may be used to read a catalog from a file, generate the octree and write
 both the particles and the metadata files back to a file.
 
@@ -389,7 +389,7 @@ Octree catalog loader (multifile)
 As of version ``1.5.0``, a new on-demand catalog loader exists, called Octree multifile loader. 
 This is a version of the octree catalog loader specially designed for very large datasets. This version
 does not load everything at startup. It needs the catalog to be organised into several files, each one corresponding to 
-a particluar octree node. This is an option in the `OctreeGeneratorTest <https://github.com/langurmonkey/gaiasky/blob/master/desktop/src/gaia/cu9/ari/gaiaorbit/data/OctreeGeneratorTest.java>`__.
+a particluar octree node. This is an option in the `OctreeGeneratorTest <https://github.com/langurmonkey/gaiasky/blob/master/src/gaia/cu9/ari/gaiaorbit/data/OctreeGeneratorTest.java>`__.
 Back to the loader, it can pre-load files down to a certain depth level; the rest of the
 files will be loaded when needed and unloaded if necessary. This offers a convenient way in which the data is streamed from disk
 to the main memory as the user explores the dataset. It also results in a very fast program startup.
