@@ -160,6 +160,7 @@ project(":core") {
             include 'shaders/**'
             include 'skins/**'
             exclude 'skins/raw'
+            exclude 'assets-bak/**'
         }
         from('build/classes/main') {
             include '**'
