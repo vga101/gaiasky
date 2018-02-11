@@ -14,7 +14,6 @@ buildscript {
     dependencies {
         classpath 'de.richsource.gradle.plugins:gwt-gradle-plugin:0.6'
         classpath "gradle.plugin.install4j.install4j:gradle_plugin:6.1.2"
-        classpath "com.android.tools.build:gradle:2.3.1"
     }
 
 }
@@ -57,7 +56,7 @@ allprojects {
     }
 }
 
-project(":desktop") {
+project(":core") {
     apply plugin: "java"
 
     def cmd = "git describe --abbrev=0 --tags HEAD"
@@ -115,11 +114,16 @@ project(":desktop") {
     println "packages dir: $packageDir"
     println ""
 
+    tasks.withType(JavaCompile) {
+        options.compilerArgs << '-parameters'
+    }
+
     dependencies {
-        compile project(":core")
-        //compile "com.badlogicgames.gdx:gdx-tools:$gdxVersion"
+    	//compile "com.badlogicgames.gdx:gdx-tools:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
         compile "org.lwjgl.lwjgl:lwjgl:$lwjglVersion"
+        compile "com.badlogicgames.gdx:gdx:$gdxVersion"
+        compile "com.badlogicgames.gdx:gdx-controllers:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
         compile "com.badlogicgames.gdx:gdx-controllers-desktop:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-controllers-platform:$gdxVersion:natives-desktop"
@@ -130,17 +134,19 @@ project(":desktop") {
         //compile "org.slf4j:slf4j-simple:$slf4jVersion"
         //compile "com.sparkjava:spark-core:2.7.1"  // for REST API
         //compile "com.google.code.gson:gson:2.8.0" // json lib
-		compile files('../core/lib/postprocessing.jar',
-						'../android/assets',
-                        'lib/stil.jar')
+		compile "junit:junit:4.12"
+		compile "net.jafama:jafama:$jafamaVersion"
+		compile files('lib/postprocessing.jar',
+				'../assets',
+                'lib/stil.jar')
     }
 
     jar {
         manifest {
-            attributes 'Implementation-Title': 'Gaia Sky desktop',
+            attributes 'Implementation-Title': 'Gaia Sky',
                        'Implementation-Version': version
         }
-        from('../android/assets') {
+        from('../assets') {
             include 'font/main-font.fnt'
             include 'font/main-font.png'
             include 'font/font2d.fnt'
@@ -158,76 +164,8 @@ project(":desktop") {
         from('build/classes/main') {
             include '**'
         }
-        from('../core/build/classes/main') {
-            include '**'
-        }
     }
-
-}
-
-
-
-project(":html") {
-    apply plugin: "gwt"
-    apply plugin: "war"
-
-	configurations.all {
-		resolutionStrategy {
-			failOnVersionConflict()
-			force 'com.google.gwt:gwt-user:2.7.0', 'com.google.gwt:gwt-dev:2.7.0'
-		}
-	}
-
-    dependencies {
-        compile project(":core")
-        compile "com.badlogicgames.gdx:gdx-backend-gwt:$gdxVersion"
-        compile "com.badlogicgames.gdx:gdx:$gdxVersion:sources"
-        compile "com.badlogicgames.gdx:gdx-backend-gwt:$gdxVersion:sources"
-        compile "com.badlogicgames.gdx:gdx-controllers:$gdxVersion:sources"
-        compile "com.badlogicgames.gdx:gdx-controllers-gwt:$gdxVersion"
-        compile "com.badlogicgames.gdx:gdx-controllers-gwt:$gdxVersion:sources"
-    }
-}
-
-project(":core") {
-    apply plugin: "java"
-
-    tasks.withType(JavaCompile) {
-        options.compilerArgs << '-parameters'
-    }
-
-    dependencies {
-        compile "com.badlogicgames.gdx:gdx:$gdxVersion"
-        compile "com.badlogicgames.gdx:gdx-controllers:$gdxVersion"
-	compile "junit:junit:4.12"
-	compile "net.jafama:jafama:$jafamaVersion"
-	compile files('lib/postprocessing.jar')
-    }
-
-    jar {
-        manifest {
-            attributes 'Implementation-Title': 'Gaia Sky core',
-                       'Implementation-Version': version
-        }
-    }
-}
-
-project(":android") {
-//    apply plugin: "android"
-//
-//    configurations { natives }
-//
-//    dependencies {
-//        compile project(":core")
-//        compile "com.badlogicgames.gdx:gdx-backend-android:$gdxVersion"
-//        natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi"
-//        natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi-v7a"
-//        natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86"
-//        compile "com.badlogicgames.gdx:gdx-controllers:$gdxVersion"
-//		  compile "org.python:jython-standalone:$jythonVersion"
-//        compile "com.badlogicgames.gdx:gdx-controllers-android:$gdxVersion"
-//		  compile files('../core/lib/postprocessing.jar')
-//    }
+    
 }
 
 tasks.eclipse.doLast {

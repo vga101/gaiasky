@@ -1,8 +1,0 @@
-/build/
-/war/
-/webapp/html/
-/webapp/war/
-/webapp/assets/
-/gwt-unitCache/
-*.war
-/.gwt/
