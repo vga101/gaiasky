@@ -114,8 +114,6 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 
     private float planetariumFocusAngle = 0f;
 
-    public static float[] upSensor, lookAtSensor;
-
     public double[] hudScales;
     public Color[] hudColors;
     public int hudColor;
@@ -221,16 +219,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 
     // Set up direction and lookAtSensor if accelerometer is enabled
     public void update(double dt, ITimeFrameProvider time) {
-        if (accelerometer) {
-            synchronized (lookAtSensor) {
-                direction.set(lookAtSensor).nor();
-                up.set(upSensor).nor();
-            }
-            updatePerspectiveCamera();
-        } else {
-            camUpdate(dt, time);
-        }
-
+        camUpdate(dt, time);
     }
 
     private void camUpdate(double dt, ITimeFrameProvider time) {
