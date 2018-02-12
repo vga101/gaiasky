@@ -27,8 +27,6 @@ public class ModelBatchRenderSystem extends AbstractRenderSystem {
      * 
      * @param rg
      *            The render group.
-     * @param priority
-     *            The priority.
      * @param alphas
      *            The alphas list.
      * @param batch
@@ -36,8 +34,8 @@ public class ModelBatchRenderSystem extends AbstractRenderSystem {
      * @param atmosphere
      *            Atmosphere rendering.
      */
-    public ModelBatchRenderSystem(RenderGroup rg, int priority, float[] alphas, ModelBatch batch, boolean atmosphere) {
-        super(rg, priority, alphas);
+    public ModelBatchRenderSystem(RenderGroup rg, float[] alphas, ModelBatch batch, boolean atmosphere) {
+        super(rg, alphas);
         this.batch = batch;
         this.atmosphere = atmosphere;
         comp = new ModelComparator<IRenderable>();

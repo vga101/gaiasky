@@ -42,8 +42,8 @@ public class StarGroupRenderSystem extends ImmediateRenderSystem implements IObs
     private Comparator<IRenderable> comp;
     private float[] pointAlpha, alphaSizeFovBr;
 
-    public StarGroupRenderSystem(RenderGroup rg, int priority, float[] alphas, ShaderProgram[] shaders) {
-        super(rg, priority, alphas, shaders);
+    public StarGroupRenderSystem(RenderGroup rg, float[] alphas, ShaderProgram[] shaders) {
+        super(rg, alphas, shaders);
         BRIGHTNESS_FACTOR = Constants.webgl ? 15 : 10;
         this.comp = new DistToCameraComparator<IRenderable>();
         this.alphaSizeFovBr = new float[4];

@@ -411,14 +411,12 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
          *
          **/
 
-        int priority = 0;
-
         // POINTS
-        AbstractRenderSystem pixelStarProc = new PixelRenderSystem(RenderGroup.POINT_STAR, priority++, alphas, pixelShaders, ComponentType.Stars);
+        AbstractRenderSystem pixelStarProc = new PixelRenderSystem(RenderGroup.POINT_STAR, alphas, pixelShaders, ComponentType.Stars);
         pixelStarProc.setPreRunnable(blendNoDepthRunnable);
 
         // MODEL FRONT-BACK - NO CULL FACE
-        AbstractRenderSystem modelFrontBackProc = new ModelBatchRenderSystem(RenderGroup.MODEL_DEFAULT, priority++, alphas, modelBatchDefault, false);
+        AbstractRenderSystem modelFrontBackProc = new ModelBatchRenderSystem(RenderGroup.MODEL_DEFAULT, alphas, modelBatchDefault, false);
         modelFrontBackProc.setPreRunnable(blendDepthRunnable);
         modelFrontBackProc.setPostRunnable(new RenderSystemRunnable() {
             @Override
@@ -429,11 +427,11 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         });
 
         // VOLUMETRIC CLOUDS
-        //        AbstractRenderSystem cloudsProc = new VolumeCloudsRenderSystem(priority++, alphas);
+        //        AbstractRenderSystem cloudsProc = new VolumeCloudsRenderSystem( alphas);
         //        cloudsProc.setPreRunnable(blendNoDepthRunnable);
 
         // ANNOTATIONS
-        AbstractRenderSystem annotationsProc = new FontRenderSystem(RenderGroup.FONT_ANNOTATION, priority++, alphas, spriteBatch);
+        AbstractRenderSystem annotationsProc = new FontRenderSystem(RenderGroup.FONT_ANNOTATION, alphas, spriteBatch);
         annotationsProc.setPreRunnable(blendNoDepthRunnable);
         annotationsProc.setPostRunnable(new RenderSystemRunnable() {
             @Override
@@ -444,7 +442,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         });
 
         // BILLBOARD STARS
-        billboardStarsProc = new BillboardStarRenderSystem(RenderGroup.BILLBOARD_STAR, priority++, alphas, starShaders[0], starShaders[1], "data/tex/star_glow_s.png", ComponentType.Stars.ordinal());
+        billboardStarsProc = new BillboardStarRenderSystem(RenderGroup.BILLBOARD_STAR, alphas, starShaders[0], starShaders[1], "data/tex/star_glow_s.png", ComponentType.Stars.ordinal());
         billboardStarsProc.setPreRunnable(blendNoDepthRunnable);
         billboardStarsProc.setPostRunnable(new RenderSystemRunnable() {
 
@@ -500,54 +498,54 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         });
 
         // BILLBOARD GALAXIES
-        AbstractRenderSystem billboardGalaxiesProc = new BillboardStarRenderSystem(RenderGroup.BILLBOARD_GAL, priority++, alphas, galShaders[0], galShaders[1], "data/tex/static.jpg", ComponentType.Galaxies.ordinal());
+        AbstractRenderSystem billboardGalaxiesProc = new BillboardStarRenderSystem(RenderGroup.BILLBOARD_GAL, alphas, galShaders[0], galShaders[1], "data/tex/static.jpg", ComponentType.Galaxies.ordinal());
         billboardGalaxiesProc.setPreRunnable(blendNoDepthRunnable);
 
         // BILLBOARD SPRITES
-        AbstractRenderSystem billboardSpritesProc = new BillboardSpriteRenderSystem(RenderGroup.BILLBOARD_SPRITE, priority++, alphas, spriteShaders[0], spriteShaders[1], ComponentType.Clusters.ordinal());
+        AbstractRenderSystem billboardSpritesProc = new BillboardSpriteRenderSystem(RenderGroup.BILLBOARD_SPRITE, alphas, spriteShaders[0], spriteShaders[1], ComponentType.Clusters.ordinal());
         billboardSpritesProc.setPreRunnable(blendNoDepthRunnable);
 
         // LINES CPU
         AbstractRenderSystem lineProc = getLineRenderSystem();
 
         // LINES GPU
-        AbstractRenderSystem lineGpuProc = new LineGPURenderSystem(RenderGroup.LINE_GPU, priority++, alphas, lineGpuShaders);
+        AbstractRenderSystem lineGpuProc = new LineGPURenderSystem(RenderGroup.LINE_GPU, alphas, lineGpuShaders);
         lineGpuProc.setPreRunnable(blendDepthRunnable);
 
         // MODEL FRONT
-        AbstractRenderSystem modelFrontProc = new ModelBatchRenderSystem(RenderGroup.MODEL_NORMAL, priority++, alphas, modelBatchNormal, false);
+        AbstractRenderSystem modelFrontProc = new ModelBatchRenderSystem(RenderGroup.MODEL_NORMAL, alphas, modelBatchNormal, false);
         modelFrontProc.setPreRunnable(blendDepthRunnable);
 
         // MODEL BEAM
-        AbstractRenderSystem modelBeamProc = new ModelBatchRenderSystem(RenderGroup.MODEL_BEAM, priority++, alphas, modelBatchBeam, false);
+        AbstractRenderSystem modelBeamProc = new ModelBatchRenderSystem(RenderGroup.MODEL_BEAM, alphas, modelBatchBeam, false);
         modelBeamProc.setPreRunnable(blendDepthRunnable);
 
         // GALAXY
-        AbstractRenderSystem galaxyProc = new MilkyWayRenderSystem(RenderGroup.GALAXY, priority++, alphas, modelBatchDefault, mwPointShaders, mwNebulaShaders);
+        AbstractRenderSystem galaxyProc = new MilkyWayRenderSystem(RenderGroup.GALAXY, alphas, modelBatchDefault, mwPointShaders, mwNebulaShaders);
         galaxyProc.setPreRunnable(blendNoDepthRunnable);
 
         // PARTICLE GROUP
-        AbstractRenderSystem particleGroupProc = new ParticleGroupRenderSystem(RenderGroup.PARTICLE_GROUP, priority++, alphas, particleGroupShaders);
+        AbstractRenderSystem particleGroupProc = new ParticleGroupRenderSystem(RenderGroup.PARTICLE_GROUP, alphas, particleGroupShaders);
         particleGroupProc.setPreRunnable(blendNoDepthRunnable);
 
         // STAR GROUP
-        AbstractRenderSystem starGroupProc = new StarGroupRenderSystem(RenderGroup.STAR_GROUP, priority++, alphas, starGroupShaders);
+        AbstractRenderSystem starGroupProc = new StarGroupRenderSystem(RenderGroup.STAR_GROUP, alphas, starGroupShaders);
         starGroupProc.setPreRunnable(blendNoDepthRunnable);
 
         // MODEL STARS
-        AbstractRenderSystem modelStarsProc = new ModelBatchRenderSystem(RenderGroup.MODEL_STAR, priority++, alphas, modelBatchStar, false);
+        AbstractRenderSystem modelStarsProc = new ModelBatchRenderSystem(RenderGroup.MODEL_STAR, alphas, modelBatchStar, false);
         modelStarsProc.setPreRunnable(blendDepthRunnable);
 
         // LABELS
-        AbstractRenderSystem labelsProc = new FontRenderSystem(RenderGroup.FONT_LABEL, priority++, alphas, fontBatch, fontShader, font3d, font2d, fontTitles);
+        AbstractRenderSystem labelsProc = new FontRenderSystem(RenderGroup.FONT_LABEL, alphas, fontBatch, fontShader, font3d, font2d, fontTitles);
         labelsProc.setPreRunnable(blendNoDepthRunnable);
 
         // BILLBOARD SSO
-        AbstractRenderSystem billboardSSOProc = new BillboardStarRenderSystem(RenderGroup.BILLBOARD_SSO, priority++, alphas, starShaders[0], starShaders[1], "img/sso.png", -1);
+        AbstractRenderSystem billboardSSOProc = new BillboardStarRenderSystem(RenderGroup.BILLBOARD_SSO, alphas, starShaders[0], starShaders[1], "img/sso.png", -1);
         billboardSSOProc.setPreRunnable(blendDepthRunnable);
 
         // MODEL ATMOSPHERE
-        AbstractRenderSystem modelAtmProc = new ModelBatchRenderSystem(RenderGroup.MODEL_ATM, priority++, alphas, modelBatchAtmosphere, true) {
+        AbstractRenderSystem modelAtmProc = new ModelBatchRenderSystem(RenderGroup.MODEL_ATM, alphas, modelBatchAtmosphere, true) {
             @Override
             public float getAlpha(IRenderable s) {
                 return alphas[ComponentType.Atmospheres.ordinal()] * (float) Math.pow(alphas[s.getComponentType().getFirstOrdinal()], 2);
@@ -568,11 +566,11 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         });
 
         // SHAPES
-        AbstractRenderSystem shapeProc = new ShapeRenderSystem(RenderGroup.SHAPE, priority++, alphas);
+        AbstractRenderSystem shapeProc = new ShapeRenderSystem(RenderGroup.SHAPE, alphas);
         shapeProc.setPreRunnable(blendNoDepthRunnable);
 
         // MODEL CLOSE UP
-        //        AbstractRenderSystem modelCloseUpProc = new ModelBatchRenderSystem(RenderGroup.MODEL_CLOSEUP, priority++, alphas, modelBatchCloseUp, false);
+        //        AbstractRenderSystem modelCloseUpProc = new ModelBatchRenderSystem(RenderGroup.MODEL_CLOSEUP,  alphas, modelBatchCloseUp, false);
         //        modelCloseUpProc.setPreRunnable(blendDepthRunnable);
 
         // Add components to set
@@ -653,7 +651,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
             modelBatchOpaque.begin(camera.getCamera());
             for (IRenderable model : models) {
                 ModelBody mb = (ModelBody) model;
-                mb.render(modelBatchOpaque, 1, 0, null);
+                mb.renderOpaque(modelBatchOpaque, 1, 0);
             }
             modelBatchOpaque.end();
 
@@ -1112,11 +1110,11 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         AbstractRenderSystem sys = null;
         if (GlobalConf.scene.isNormalLineRenderer()) {
             // Normal
-            sys = new LineRenderSystem(RenderGroup.LINE, 0, alphas, lineShaders);
+            sys = new LineRenderSystem(RenderGroup.LINE, alphas, lineShaders);
             sys.setPreRunnable(blendDepthRunnable);
         } else {
             // Quad
-            sys = new LineQuadRenderSystem(RenderGroup.LINE, 0, alphas, lineQuadShaders);
+            sys = new LineQuadRenderSystem(RenderGroup.LINE, alphas, lineQuadShaders);
             sys.setPreRunnable(blendDepthRunnable);
         }
         return sys;

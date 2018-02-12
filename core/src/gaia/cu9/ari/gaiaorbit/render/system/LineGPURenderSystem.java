@@ -7,7 +7,6 @@ import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
-import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 
@@ -32,16 +31,13 @@ public class LineGPURenderSystem extends ImmediateRenderSystem {
     protected ICamera camera;
     protected int glType;
 
-    private Matrix4 modelView;
-
     private Vector3 aux2;
 
     /** Hopefully we won't have more than 1000000 orbits at once **/
     private final int N_MESHES = 1000000;
 
-    public LineGPURenderSystem(RenderGroup rg, int priority, float[] alphas, ShaderProgram[] shaders) {
-        super(rg, priority, alphas, shaders);
-        modelView = new Matrix4();
+    public LineGPURenderSystem(RenderGroup rg, float[] alphas, ShaderProgram[] shaders) {
+        super(rg, alphas, shaders);
         glType = GL20.GL_LINE_STRIP;
         aux2 = new Vector3();
     }

@@ -13,11 +13,9 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
  * @author Toni Sagrista
  *
  */
-public interface IRenderSystem extends Comparable<IRenderSystem> {
+public interface IRenderSystem {
 
     public RenderGroup getRenderGroup();
-
-    public int getPriority();
 
     public void render(Array<IRenderable> renderables, ICamera camera, double t, RenderingContext rc);
 

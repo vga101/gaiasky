@@ -5,7 +5,6 @@ import java.util.Comparator;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
-import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
@@ -23,18 +22,16 @@ public class FontRenderSystem extends AbstractRenderSystem {
     private ShaderProgram shaderProgram;
     public BitmapFont font3d, font2d, fontTitles;
     private Comparator<IRenderable> comp;
-    private Vector3 aux2;
 
-    public FontRenderSystem(RenderGroup rg, int priority, float[] alphas, SpriteBatch batch) {
-        super(rg, priority, alphas);
+    public FontRenderSystem(RenderGroup rg, float[] alphas, SpriteBatch batch) {
+        super(rg, alphas);
         this.batch = batch;
-        this.aux2 = new Vector3();
         // Init comparator
         comp = new DistToCameraComparator<IRenderable>();
     }
 
-    public FontRenderSystem(RenderGroup rg, int priority, float[] alphas, SpriteBatch batch, ShaderProgram shaderProgram, BitmapFont font3d, BitmapFont font2d, BitmapFont fontTitles) {
-        this(rg, priority, alphas, batch);
+    public FontRenderSystem(RenderGroup rg, float[] alphas, SpriteBatch batch, ShaderProgram shaderProgram, BitmapFont font3d, BitmapFont font2d, BitmapFont fontTitles) {
+        this(rg, alphas, batch);
         this.shaderProgram = shaderProgram;
 
         this.font3d = font3d;

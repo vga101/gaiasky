@@ -55,6 +55,6 @@ void main() {
     
     v_col = vec4(a_color.rgb, a_color.a * opacity * u_alphaSizeFovBr.x * smoothstep(u_thAnglePoint * 50.0, u_thAnglePoint, viewAngleApparent / 2.0));
 
-    gl_Position = u_projModelView * vec4(pos, 0.0);
+    gl_Position = u_projModelView * vec4(pos, a_position.w);
     gl_PointSize = u_alphaSizeFovBr.y;
 }

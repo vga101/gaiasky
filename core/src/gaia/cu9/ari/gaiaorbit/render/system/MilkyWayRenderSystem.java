@@ -39,12 +39,10 @@ public class MilkyWayRenderSystem extends ImmediateRenderSystem implements IObse
     private MeshData quad;
     private Texture[] nebulatextures;
 
-    private ModelBatch modelBatch;
 
-    public MilkyWayRenderSystem(RenderGroup rg, int priority, float[] alphas, ModelBatch modelBatch, ShaderProgram[] pointShaders, ShaderProgram[] nebulaShaders) {
-        super(rg, priority, alphas, pointShaders);
+    public MilkyWayRenderSystem(RenderGroup rg, float[] alphas, ModelBatch modelBatch, ShaderProgram[] pointShaders, ShaderProgram[] nebulaShaders) {
+        super(rg, alphas, pointShaders);
         this.nebulaShaders = nebulaShaders;
-        this.modelBatch = modelBatch;
     }
 
     @Override

@@ -30,8 +30,8 @@ public class BillboardSpriteRenderSystem extends AbstractRenderSystem {
     private Vector3 aux;
     private int ctindex = -1;
 
-    public BillboardSpriteRenderSystem(RenderGroup rg, int priority, float[] alphas, ShaderProgram shaderProgram, ShaderProgram shaderProgramRel, int ctindex, float w, float h) {
-        super(rg, priority, alphas);
+    public BillboardSpriteRenderSystem(RenderGroup rg, float[] alphas, ShaderProgram shaderProgram, ShaderProgram shaderProgramRel, int ctindex, float w, float h) {
+        super(rg, alphas);
         this.shaderProgram = shaderProgram;
         this.shaderProgramRel = shaderProgramRel;
         this.ctindex = ctindex;
@@ -52,8 +52,8 @@ public class BillboardSpriteRenderSystem extends AbstractRenderSystem {
      * @param ctindex
      *            The component type index
      */
-    public BillboardSpriteRenderSystem(RenderGroup rg, int priority, float[] alphas, ShaderProgram shaderProgram, ShaderProgram shaderProgramRel, int ctindex) {
-        this(rg, priority, alphas, shaderProgram, shaderProgramRel, ctindex, 2, 2);
+    public BillboardSpriteRenderSystem(RenderGroup rg, float[] alphas, ShaderProgram shaderProgram, ShaderProgram shaderProgramRel, int ctindex) {
+        this(rg, alphas, shaderProgram, shaderProgramRel, ctindex, 2, 2);
     }
 
     private void init(float w, float h) {
