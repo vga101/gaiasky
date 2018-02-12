@@ -23,7 +23,6 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
-import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
 
 public class PixelRenderSystem extends ImmediateRenderSystem implements IObserver {
@@ -37,8 +36,8 @@ public class PixelRenderSystem extends ImmediateRenderSystem implements IObserve
 
     boolean initializing = false;
 
-    public PixelRenderSystem(RenderGroup rg, int priority, float[] alphas, ComponentType ct) {
-        super(rg, priority, alphas);
+    public PixelRenderSystem(RenderGroup rg, int priority, float[] alphas, ShaderProgram[] shaders, ComponentType ct) {
+        super(rg, priority, alphas, shaders);
         EventManager.instance.subscribe(this, Events.TRANSIT_COLOUR_CMD, Events.ONLY_OBSERVED_STARS_CMD, Events.STAR_MIN_OPACITY_CMD);
         BRIGHTNESS_FACTOR = Constants.webgl ? 15 : 10;
         this.ct = ct;
@@ -48,18 +47,15 @@ public class PixelRenderSystem extends ImmediateRenderSystem implements IObserve
 
     @Override
     protected void initShaderProgram() {
-        // Initialise renderer
-        if (Gdx.app.getType() == ApplicationType.WebGL)
-            shaderProgram = new ShaderProgram(Gdx.files.internal("shader/point.vertex.glsl"), Gdx.files.internal("shader/point.fragment.wgl.glsl"));
-        else
-            shaderProgram = new ShaderProgram(Gdx.files.internal("shader/point.vertex.glsl"), Gdx.files.internal("shader/point.fragment.glsl"));
-        if (!shaderProgram.isCompiled()) {
-            Logger.error(this.getClass().getName(), "Pixel shader compilation failed:\n" + shaderProgram.getLog());
-        }
         pointAlpha = new float[] { GlobalConf.scene.POINT_ALPHA_MIN, GlobalConf.scene.POINT_ALPHA_MIN + GlobalConf.scene.POINT_ALPHA_MAX };
-        shaderProgram.begin();
-        shaderProgram.setUniform2fv("u_pointAlpha", pointAlpha, 0, 2);
-        shaderProgram.end();
+
+        for (ShaderProgram p : programs) {
+            if (p != null) {
+                p.begin();
+                p.setUniform2fv("u_pointAlpha", pointAlpha, 0, 2);
+                p.end();
+            }
+        }
 
     }
 
@@ -131,6 +127,8 @@ public class PixelRenderSystem extends ImmediateRenderSystem implements IObserve
             Gdx.gl20.glBlendFunc(GL20.GL_ONE, GL20.GL_ONE);
             int fovmode = camera.getMode().getGaiaFovMode();
 
+            ShaderProgram shaderProgram = getShaderProgram();
+
             shaderProgram.begin();
             shaderProgram.setUniformMatrix("u_projModelView", camera.getCamera().combined);
             shaderProgram.setUniformf("u_camPos", camera.getCurrent().getPos().put(aux));
@@ -144,6 +142,17 @@ public class PixelRenderSystem extends ImmediateRenderSystem implements IObserve
             shaderProgram.setUniformf("u_t", (float) AstroUtils.getMsSinceJ2000(GaiaSky.instance.time.getTime()));
             shaderProgram.setUniformf("u_ar", GlobalConf.program.isStereoHalfWidth() ? 0.5f : 1f);
             shaderProgram.setUniformf("u_thAnglePoint", (float) GlobalConf.scene.STAR_THRESHOLD_POINT);
+
+            // Relativistic aberration
+            if (GlobalConf.runtime.RELATIVISTIC_EFFECTS) {
+                if (camera.getVelocity() == null || camera.getVelocity().len() == 0) {
+                    aux.set(1, 0, 0);
+                } else {
+                    camera.getVelocity().put(aux).nor();
+                }
+                shaderProgram.setUniformf("u_velDir", aux);
+                shaderProgram.setUniformf("u_vc", (float) (camera.getSpeed() / Constants.C_KMH));
+            }
 
             curr.mesh.setVertices(curr.vertices, 0, curr.vertexIdx);
             curr.mesh.render(shaderProgram, ShapeType.Point.getGlType());
@@ -179,17 +188,19 @@ public class PixelRenderSystem extends ImmediateRenderSystem implements IObserve
             POINT_UPDATE_FLAG = true;
             break;
         case STAR_MIN_OPACITY_CMD:
-            if (shaderProgram != null && shaderProgram.isCompiled()) {
-                pointAlpha[0] = (float) data[0];
-                Gdx.app.postRunnable(new Runnable() {
-                    @Override
-                    public void run() {
-                        shaderProgram.begin();
-                        shaderProgram.setUniform2fv("u_pointAlpha", pointAlpha, 0, 2);
-                        shaderProgram.end();
-                    }
-
-                });
+            for (ShaderProgram p : programs) {
+                if (p != null && p.isCompiled()) {
+                    pointAlpha[0] = (float) data[0];
+                    Gdx.app.postRunnable(new Runnable() {
+                        @Override
+                        public void run() {
+                            p.begin();
+                            p.setUniform2fv("u_pointAlpha", pointAlpha, 0, 2);
+                            p.end();
+                        }
+                    
+                    });
+                }
             }
             break;
         default:

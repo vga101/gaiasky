@@ -230,6 +230,9 @@ public abstract class StreamingOctreeLoader implements IObserver, ISceneGraphLoa
     public void emptyLoadQueue() {
         int n = toLoadQueue.size();
         if (n > 0) {
+            for (OctreeNode octant : toLoadQueue) {
+                octant.setStatus(LoadStatus.NOT_LOADED);
+            }
             toLoadQueue.clear();
             Logger.info(I18n.bundle.format("notif.loadingoctants.emtpied", n));
         }

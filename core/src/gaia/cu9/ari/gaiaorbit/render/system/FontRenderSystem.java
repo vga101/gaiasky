@@ -2,13 +2,10 @@ package gaia.cu9.ari.gaiaorbit.render.system;
 
 import java.util.Comparator;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
@@ -26,33 +23,23 @@ public class FontRenderSystem extends AbstractRenderSystem {
     private ShaderProgram shaderProgram;
     public BitmapFont font3d, font2d, fontTitles;
     private Comparator<IRenderable> comp;
+    private Vector3 aux2;
 
     public FontRenderSystem(RenderGroup rg, int priority, float[] alphas, SpriteBatch batch) {
         super(rg, priority, alphas);
         this.batch = batch;
-
+        this.aux2 = new Vector3();
         // Init comparator
         comp = new DistToCameraComparator<IRenderable>();
     }
 
-    public FontRenderSystem(RenderGroup rg, int priority, float[] alphas, SpriteBatch batch, ShaderProgram shaderProgram) {
+    public FontRenderSystem(RenderGroup rg, int priority, float[] alphas, SpriteBatch batch, ShaderProgram shaderProgram, BitmapFont font3d, BitmapFont font2d, BitmapFont fontTitles) {
         this(rg, priority, alphas, batch);
         this.shaderProgram = shaderProgram;
 
-        // 3D font
-        Texture texture3d = new Texture(Gdx.files.internal("font/main-font.png"), true);
-        texture3d.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-        font3d = new BitmapFont(Gdx.files.internal("font/main-font.fnt"), new TextureRegion(texture3d), false);
-
-        // 2D font
-        Texture texture2d = new Texture(Gdx.files.internal("font/font2d.png"), true);
-        texture2d.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-        font2d = new BitmapFont(Gdx.files.internal("font/font2d.fnt"), new TextureRegion(texture2d), false);
-
-        // Title font
-        Texture textureTitles = new Texture(Gdx.files.internal("font/font-titles.png"), true);
-        textureTitles.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-        fontTitles = new BitmapFont(Gdx.files.internal("font/font-titles.fnt"), new TextureRegion(textureTitles), false);
+        this.font3d = font3d;
+        this.font2d = font2d;
+        this.fontTitles = fontTitles;
 
     }
 
@@ -60,6 +47,7 @@ public class FontRenderSystem extends AbstractRenderSystem {
     public void renderStud(Array<IRenderable> renderables, ICamera camera, double t) {
         renderables.sort(comp);
         batch.begin();
+
         int size = renderables.size;
         if (shaderProgram == null) {
             for (int i = 0; i < size; i++) {

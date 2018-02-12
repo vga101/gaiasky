@@ -5,10 +5,11 @@ import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 
 public abstract class ImmediateRenderSystem extends AbstractRenderSystem {
     protected static final int shortLimit = (int) Math.pow(2, 2 * 8);
-    protected ShaderProgram shaderProgram;
+    protected ShaderProgram[] programs;
 
     protected int meshIdx;
     protected MeshData[] meshes;
@@ -39,16 +40,25 @@ public abstract class ImmediateRenderSystem extends AbstractRenderSystem {
 
     protected int maxVertices;
 
-    protected ImmediateRenderSystem(RenderGroup rg, int priority, float[] alphas) {
-	super(rg, priority, alphas);
-	initShaderProgram();
-	initVertices();
-	meshIdx = 0;
+    protected ImmediateRenderSystem(RenderGroup rg, int priority, float[] alphas, ShaderProgram[] shaders) {
+        super(rg, priority, alphas);
+        /**
+         * 0 - normal
+         * 1 - relativistic 
+         */
+        this.programs = shaders;
+        initShaderProgram();
+        initVertices();
+        meshIdx = 0;
     }
 
     protected abstract void initShaderProgram();
 
     protected abstract void initVertices();
+
+    protected ShaderProgram getShaderProgram() {
+        return GlobalConf.runtime.RELATIVISTIC_EFFECTS ? programs[1] : programs[0];
+    }
 
     public void color(Color color) {
 	curr.vertices[curr.vertexIdx + curr.colorOffset] = color.toFloatBits();

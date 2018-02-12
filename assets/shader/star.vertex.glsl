@@ -3,9 +3,14 @@ precision mediump float;
 precision mediump int;
 #endif
 
+<INCLUDE shader/lib_math.glsl>
+<INCLUDE shader/lib_geometry.glsl>
+
+// Attributes
 attribute vec4 a_position;
 attribute vec2 a_texCoord0;
 
+// Uniforms
 uniform mat4 u_projTrans;
 uniform vec4 u_color;
 uniform vec4 u_quaternion;
@@ -15,12 +20,17 @@ uniform float u_apparent_angle;
 uniform float u_th_angle_point;
 uniform vec3 u_camShift;
 
+#ifdef relativisticEffects
+    uniform vec3 u_velDir; // Velocity vector
+    uniform float u_vc; // Fraction of the speed of light, v/c
+
+    <INCLUDE shader/lib_relativity.glsl>
+#endif // relativisticEffects
+
+
+// Varyings
 varying vec4 v_color;
 varying vec2 v_texCoords;
-
-float lint(float x, float x0, float x1, float y0, float y1) {
-    return mix(y0, y1, (x - x0) / (x1 - x0));
-}
 
 void main()
 {
@@ -31,12 +41,18 @@ void main()
    
    mat4 transform = u_projTrans;
    
+   vec3 pos = u_pos - u_camShift;
+   
+   #ifdef relativisticEffects
+       pos = computeRelativisticAberration(pos, length(pos), u_velDir, u_vc);
+   #endif // relativisticEffects
+   
    // Translate
    mat4 translate = mat4(1.0);
    
-   translate[3][0] = u_pos.x - u_camShift.x;
-   translate[3][1] = u_pos.y - u_camShift.y;
-   translate[3][2] = u_pos.z - u_camShift.z;
+   translate[3][0] = pos.x;
+   translate[3][1] = pos.y;
+   translate[3][2] = pos.z;
    translate[3][3] = 1.0;
    transform *= translate;
    

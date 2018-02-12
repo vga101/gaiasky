@@ -3,6 +3,9 @@ precision mediump float;
 precision mediump int;
 #endif
 
+<INCLUDE shader/lib_math.glsl>
+<INCLUDE shader/lib_geometry.glsl>
+
 // ATTRIBUTES
 attribute vec4 a_position;
 attribute vec4 a_pm;
@@ -25,13 +28,13 @@ uniform vec4 u_alphaSizeFovBr;
 // VARYINGs
 varying vec4 v_col;
 
-float lint2(float x, float x0, float x1, float y0, float y1) {
-    return mix(y0, y1, (x - x0) / (x1 - x0));
-}
+#ifdef relativisticEffects
+    uniform vec3 u_velDir; // Velocity vector
+    uniform float u_vc; // Fraction of the speed of light, v/c
 
-float lint(float x, float x0, float x1, float y0, float y1) {
-    return y0 + (y1 - y0) * smoothstep(x, x0, x1);
-}
+    <INCLUDE shader/lib_relativity.glsl>
+#endif // relativisticEffects
+
 
 void main() {
     vec3 pos = a_position.xyz - u_camPos;
@@ -39,8 +42,14 @@ void main() {
     // Proper motion
     vec3 pm = a_pm.xyz * u_t / 1000.0;     
     pos = pos + pm;
+    
+    float dist = length(pos);
+    
+    #ifdef relativisticEffects
+        pos = computeRelativisticAberration(pos, dist, u_velDir, u_vc);
+    #endif // relativisticEffects
   
-    float viewAngleApparent = atan((a_size * u_alphaSizeFovBr.w) / length(pos)) / u_alphaSizeFovBr.z;
+    float viewAngleApparent = atan((a_size * u_alphaSizeFovBr.w) / dist) / u_alphaSizeFovBr.z;
     float opacity = pow(lint2(viewAngleApparent, 0.0, u_thAnglePoint, u_pointAlpha.x, u_pointAlpha.y), 1.2);
     //float opacity = pow(lint(viewAngleApparent, 0.0, u_thAnglePoint, u_pointAlpha.x, u_pointAlpha.y), 6.0);
     

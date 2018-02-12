@@ -18,14 +18,11 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.FileHandleResolver;
-import com.badlogic.gdx.assets.loaders.ShaderProgramLoader;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.g3d.Model;
-import com.badlogic.gdx.graphics.g3d.ModelInstance;
-import com.badlogic.gdx.graphics.g3d.utils.DefaultShaderProvider;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.GLFrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
@@ -33,12 +30,12 @@ import com.badlogic.gdx.scenes.scene2d.ui.TooltipManager;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.TimeUtils;
 
-import gaia.cu9.ari.gaiaorbit.assets.AtmosphereGroundShaderProviderLoader;
 import gaia.cu9.ari.gaiaorbit.assets.AtmosphereShaderProviderLoader;
-import gaia.cu9.ari.gaiaorbit.assets.DefaultShaderProviderLoader;
 import gaia.cu9.ari.gaiaorbit.assets.GaiaAttitudeLoader;
 import gaia.cu9.ari.gaiaorbit.assets.GaiaAttitudeLoader.GaiaAttitudeLoaderParameter;
+import gaia.cu9.ari.gaiaorbit.assets.GroundShaderProviderLoader;
 import gaia.cu9.ari.gaiaorbit.assets.OrbitDataLoader;
+import gaia.cu9.ari.gaiaorbit.assets.RelativisticShaderProviderLoader;
 import gaia.cu9.ari.gaiaorbit.assets.SGLoader;
 import gaia.cu9.ari.gaiaorbit.assets.SGLoader.SGLoaderParameter;
 import gaia.cu9.ari.gaiaorbit.data.AssetBean;
@@ -89,6 +86,8 @@ import gaia.cu9.ari.gaiaorbit.util.g3d.loader.ObjLoader;
 import gaia.cu9.ari.gaiaorbit.util.gaia.GaiaAttitudeServer;
 import gaia.cu9.ari.gaiaorbit.util.override.AtmosphereShaderProvider;
 import gaia.cu9.ari.gaiaorbit.util.override.GroundShaderProvider;
+import gaia.cu9.ari.gaiaorbit.util.override.RelativisticShaderProvider;
+import gaia.cu9.ari.gaiaorbit.util.override.ShaderProgramProvider;
 import gaia.cu9.ari.gaiaorbit.util.time.GlobalClock;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 import gaia.cu9.ari.gaiaorbit.util.time.RealTimeClock;
@@ -106,11 +105,6 @@ import gaia.cu9.ari.gaiaorbit.vr.VRContext.VRDeviceType;
  *
  */
 public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
-    /**
-     * Whether the dataset has been chosen. If this is set to false, a window
-     * will prompt at startup asking for the dataset to use.
-     */
-    private static boolean DSCHOSEN = true;
 
     /**
      * Private state boolean indicating whether we are still loading resources.
@@ -147,6 +141,12 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
 
     // Data load string
     private String dataLoadString;
+
+    /**
+     * Whether the dataset has been chosen. If this is set to false, a window
+     * will prompt at startup asking for the dataset to use.
+     */
+    private boolean DSCHOSEN;
 
     public ISceneGraph sg;
     // TODO make this private again
@@ -231,6 +231,8 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         // Disable all kinds of input
         EventManager.instance.post(Events.INPUT_ENABLED_CMD, false);
 
+        DSCHOSEN = !GlobalConf.program.DISPLAY_DATASET_DIALOG;
+
         if (!GlobalConf.initialized()) {
             Logger.error(new RuntimeException("FATAL: Global configuration not initlaized"));
             return;
@@ -256,10 +258,11 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         manager.setLoader(ISceneGraph.class, new SGLoader(resolver));
         manager.setLoader(OrbitData.class, new OrbitDataLoader(resolver));
         manager.setLoader(GaiaAttitudeServer.class, new GaiaAttitudeLoader(resolver));
-        manager.setLoader(ShaderProgram.class, new ShaderProgramLoader(resolver, ".vertex.glsl", ".fragment.glsl"));
-        manager.setLoader(DefaultShaderProvider.class, new DefaultShaderProviderLoader<>(resolver));
+        manager.setLoader(ShaderProgram.class, new ShaderProgramProvider(resolver, ".vertex.glsl", ".fragment.glsl"));
+        //manager.setLoader(DefaultShaderProvider.class, new DefaultShaderProviderLoader<>(resolver));
         manager.setLoader(AtmosphereShaderProvider.class, new AtmosphereShaderProviderLoader<>(resolver));
-        manager.setLoader(GroundShaderProvider.class, new AtmosphereGroundShaderProviderLoader<>(resolver));
+        manager.setLoader(GroundShaderProvider.class, new GroundShaderProviderLoader<>(resolver));
+        manager.setLoader(RelativisticShaderProvider.class, new RelativisticShaderProviderLoader<>(resolver));
         manager.setLoader(Model.class, ".obj", new ObjLoader(resolver));
 
         // Init global resources
@@ -595,8 +598,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
             // Memory
             EventManager.instance.post(Events.DEBUG2, MemInfo.getUsedMemory(), MemInfo.getFreeMemory(), MemInfo.getTotalMemory(), MemInfo.getMaxMemory());
             // Observed octants
-            EventManager.instance.post(Events.DEBUG4, GLFrameBuffer.getManagedStatus() + ", Observed octants: " + OctreeNode.nOctantsObserved + ", Load queue: "
-                    + StreamingOctreeLoader.getLoadQueueSize());
+            EventManager.instance.post(Events.DEBUG4, GLFrameBuffer.getManagedStatus() + ", Observed octants: " + OctreeNode.nOctantsObserved + ", Load queue: " + StreamingOctreeLoader.getLoadQueueSize());
         }
     };
 

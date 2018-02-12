@@ -21,9 +21,9 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ParticleGroup;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ParticleGroup.ParticleBean;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
+import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf.ProgramConf.StereoProfile;
-import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.comp.DistToCameraComparator;
 
 public class ParticleGroupRenderSystem extends ImmediateRenderSystem implements IObserver {
@@ -33,17 +33,13 @@ public class ParticleGroupRenderSystem extends ImmediateRenderSystem implements 
 
     Comparator<IRenderable> comp;
 
-    public ParticleGroupRenderSystem(RenderGroup rg, int priority, float[] alphas) {
-        super(rg, priority, alphas);
+    public ParticleGroupRenderSystem(RenderGroup rg, int priority, float[] alphas, ShaderProgram[] shaders) {
+        super(rg, priority, alphas, shaders);
         comp = new DistToCameraComparator<IRenderable>();
     }
 
     @Override
     protected void initShaderProgram() {
-        shaderProgram = new ShaderProgram(Gdx.files.internal("shader/particle.group.vertex.glsl"), Gdx.files.internal("shader/particle.group.fragment.glsl"));
-        if (!shaderProgram.isCompiled()) {
-            Logger.error(this.getClass().getName(), "Particle group shader compilation failed:\n" + shaderProgram.getLog());
-        }
     }
 
     @Override
@@ -117,6 +113,8 @@ public class ParticleGroupRenderSystem extends ImmediateRenderSystem implements 
                 // Additive blending
                 Gdx.gl20.glBlendFunc(GL20.GL_ONE, GL20.GL_ONE);
 
+                ShaderProgram shaderProgram = getShaderProgram();
+
                 shaderProgram.begin();
                 shaderProgram.setUniformMatrix("u_projModelView", camera.getCamera().combined);
                 shaderProgram.setUniformf("u_camPos", camera.getCurrent().getPos().put(aux1));
@@ -124,6 +122,18 @@ public class ParticleGroupRenderSystem extends ImmediateRenderSystem implements 
                 shaderProgram.setUniformf("u_ar", GlobalConf.program.STEREOSCOPIC_MODE && (GlobalConf.program.STEREO_PROFILE != StereoProfile.HD_3DTV && GlobalConf.program.STEREO_PROFILE != StereoProfile.ANAGLYPHIC) ? 0.5f : 1f);
                 shaderProgram.setUniformf("u_profileDecay", particleGroup.profileDecay);
                 shaderProgram.setUniformf("u_sizeFactor", rc.scaleFactor);
+
+                // Relativistic aberration
+                if (GlobalConf.runtime.RELATIVISTIC_EFFECTS) {
+                    if (camera.getVelocity() == null || camera.getVelocity().len() == 0) {
+                        aux1.set(1, 0, 0);
+                    } else {
+                        camera.getVelocity().put(aux1).nor();
+                    }
+                    shaderProgram.setUniformf("u_velDir", aux1);
+                    shaderProgram.setUniformf("u_vc", (float) (camera.getSpeed() / Constants.C_KMH));
+                }
+
                 curr.mesh.setVertices(curr.vertices, particleGroup.offset, particleGroup.count);
                 curr.mesh.render(shaderProgram, ShapeType.Point.getGlType());
                 shaderProgram.end();

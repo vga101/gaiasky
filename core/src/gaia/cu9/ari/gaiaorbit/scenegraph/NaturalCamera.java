@@ -59,11 +59,11 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 
     /** Auxiliary double vectors **/
     private Vector3d aux1, aux2, aux3, aux5, aux4, dx;
-    /** Acceleration, velocity and position for pitch, yaw and roll **/
-    private Vector3d pitch, yaw, roll;
     private Vector2 aux2f2;
     /** Auxiliary float vector **/
     private Vector3 auxf1;
+    /** Acceleration, velocity and position for pitch, yaw and roll **/
+    private Vector3d pitch, yaw, roll;
     /**
      * Acceleration, velocity and position for the horizontal and vertical
      * rotation around the focus

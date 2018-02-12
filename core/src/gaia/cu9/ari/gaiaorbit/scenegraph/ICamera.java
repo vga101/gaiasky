@@ -49,6 +49,8 @@ public interface ICamera {
 
     public Vector3d getDirection();
 
+    public Vector3d getVelocity();
+
     public Vector3d getUp();
 
     public Vector3d[] getDirections();

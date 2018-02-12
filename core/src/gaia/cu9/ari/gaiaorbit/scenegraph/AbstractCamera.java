@@ -20,7 +20,7 @@ public abstract class AbstractCamera implements ICamera {
 
     private static Matrix4d invProjectionView = new Matrix4d();
 
-    protected Vector3d pos, posinv, shift, tmp;
+    public Vector3d pos, posinv, shift, tmp;
     /**
      * Angle from the center to the corner of the screen in scene coordinates,
      * in radians
@@ -284,6 +284,11 @@ public abstract class AbstractCamera implements ICamera {
             closestStar = star;
         }
 
+    }
+
+    @Override
+    public Vector3d getVelocity() {
+        return null;
     }
 
 }

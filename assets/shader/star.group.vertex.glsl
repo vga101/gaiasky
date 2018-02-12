@@ -3,6 +3,9 @@ precision mediump float;
 precision mediump int;
 #endif
 
+<INCLUDE shader/lib_math.glsl>
+<INCLUDE shader/lib_geometry.glsl>
+
 // ATTRIBUTES
 attribute vec3 a_position;
 attribute vec3 a_pm;
@@ -14,8 +17,16 @@ attribute float a_size;
 uniform int u_t; // time in days since epoch
 uniform mat4 u_projModelView;
 uniform vec3 u_camPos;
+
 uniform vec2 u_pointAlpha;
 uniform float u_thAnglePoint;
+
+#ifdef relativisticEffects
+    uniform vec3 u_velDir; // Velocity vector
+    uniform float u_vc; // Fraction of the speed of light, v/c
+    <INCLUDE shader/lib_relativity.glsl>
+#endif // relativisticEffects
+
 // 0 - alpha
 // 1 - point size
 // 2 - fov factor
@@ -30,27 +41,22 @@ uniform vec3 u_fovcam_dir;
 varying vec4 v_col;
 varying float v_discard;
 
-#define len0 170000000.0
+#define len0 170000.0
 #define len1 len0 * 100.0
 #define day_to_year 1.0 / 365.25
 
-float lint2(float x, float x0, float x1, float y0, float y1) {
-    return mix(y0, y1, (x - x0) / (x1 - x0));
-}
-
-float lint(float x, float x0, float x1, float y0, float y1) {
-    return y0 + (y1 - y0) * smoothstep(x, x0, x1);
-}
-
-// Returns >=0 if visible, <0 if not visible 
-float in_view(vec3 pos, vec3 dir, float dist, float angle_edge) {
-    return angle_edge - acos(dot(pos, dir) / dist);
-}
-
 void main() {
     vec3 pos = a_position - u_camPos;
-
+    // Proper motion
+    pos = pos + a_pm * float(u_t) * day_to_year;
+    
+    // Distance to star
     float dist = length(pos);
+    
+    #ifdef relativisticEffects
+    	pos = computeRelativisticAberration(pos, dist, u_velDir, u_vc);
+    #endif // relativisticEffects
+    
     
     // Compute fov observation if necessary (only Fov1, Fov2)
     float observed = 1.0;
@@ -65,9 +71,6 @@ void main() {
         v_discard = -1.0;
     }
     
-    // Proper motion
-    pos = pos + a_pm * float(u_t) * day_to_year;
-
     float viewAngleApparent = atan((a_size * u_alphaSizeFovBr.w) / dist) / u_alphaSizeFovBr.z;
     float opacity = pow(lint2(viewAngleApparent, 0.0, u_thAnglePoint, u_pointAlpha.x, u_pointAlpha.y), 1.2);
 

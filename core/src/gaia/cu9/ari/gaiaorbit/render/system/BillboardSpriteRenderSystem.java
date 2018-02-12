@@ -18,19 +18,22 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.DecalUtils;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.comp.DistToCameraComparator;
 
 public class BillboardSpriteRenderSystem extends AbstractRenderSystem {
 
     private ShaderProgram shaderProgram;
+    private ShaderProgram shaderProgramRel;
     private Mesh mesh;
     private Quaternion quaternion;
     private Vector3 aux;
     private int ctindex = -1;
 
-    public BillboardSpriteRenderSystem(RenderGroup rg, int priority, float[] alphas, ShaderProgram shaderProgram, int ctindex, float w, float h) {
+    public BillboardSpriteRenderSystem(RenderGroup rg, int priority, float[] alphas, ShaderProgram shaderProgram, ShaderProgram shaderProgramRel, int ctindex, float w, float h) {
         super(rg, priority, alphas);
         this.shaderProgram = shaderProgram;
+        this.shaderProgramRel = shaderProgramRel;
         this.ctindex = ctindex;
         init(w, h);
     }
@@ -49,8 +52,8 @@ public class BillboardSpriteRenderSystem extends AbstractRenderSystem {
      * @param ctindex
      *            The component type index
      */
-    public BillboardSpriteRenderSystem(RenderGroup rg, int priority, float[] alphas, ShaderProgram shaderProgram, int ctindex) {
-        this(rg, priority, alphas, shaderProgram, ctindex, 2, 2);
+    public BillboardSpriteRenderSystem(RenderGroup rg, int priority, float[] alphas, ShaderProgram shaderProgram, ShaderProgram shaderProgramRel, int ctindex) {
+        this(rg, priority, alphas, shaderProgram, shaderProgramRel, ctindex, 2, 2);
     }
 
     private void init(float w, float h) {
@@ -116,6 +119,10 @@ public class BillboardSpriteRenderSystem extends AbstractRenderSystem {
         vertices[idx++] = v;
     }
 
+    private ShaderProgram getShaderProgram() {
+        return GlobalConf.runtime.RELATIVISTIC_EFFECTS ? shaderProgramRel : shaderProgram;
+    }
+
     @Override
     public void renderStud(Array<IRenderable> renderables, ICamera camera, double t) {
         if ((ctindex >= 0 ? alphas[ctindex] != 0 : true)) {
@@ -127,6 +134,8 @@ public class BillboardSpriteRenderSystem extends AbstractRenderSystem {
             // Additive blending
             Gdx.gl20.glBlendFunc(GL20.GL_ONE, GL20.GL_ONE);
 
+            ShaderProgram shaderProgram = getShaderProgram();
+
             shaderProgram.begin();
 
             // General uniforms
@@ -134,10 +143,19 @@ public class BillboardSpriteRenderSystem extends AbstractRenderSystem {
             shaderProgram.setUniformf("u_quaternion", quaternion.x, quaternion.y, quaternion.z, quaternion.w);
             shaderProgram.setUniformf("u_camShift", camera.getCurrent().getShift().put(aux));
 
-            if (!Constants.mobile) {
-                // Global uniforms
-                shaderProgram.setUniformf("u_time", (float) t);
+            // Relativistic aberration
+            if (GlobalConf.runtime.RELATIVISTIC_EFFECTS) {
+                if (camera.getVelocity() == null || camera.getVelocity().len() == 0) {
+                    aux.set(1, 0, 0);
+                } else {
+                    camera.getVelocity().put(aux).nor();
+                }
+                shaderProgram.setUniformf("u_velDir", aux);
+                shaderProgram.setUniformf("u_vc", (float) (camera.getSpeed() / Constants.C_KMH));
             }
+
+            // Global uniforms
+            shaderProgram.setUniformf("u_time", (float) t);
 
             int size = renderables.size;
             for (int i = 0; i < size; i++) {
@@ -148,7 +166,6 @@ public class BillboardSpriteRenderSystem extends AbstractRenderSystem {
 
             // Restore
             Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
-
         }
 
     }

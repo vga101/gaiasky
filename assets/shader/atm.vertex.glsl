@@ -32,6 +32,17 @@ varying vec3 v3Direction;
 varying vec4 frontColor;
 varying vec3 frontSecondaryColor;
 
+////////////////////////////////////////////////////////////////////////////////////
+//////////RELATIVISTIC EFFECTS - VERTEX
+////////////////////////////////////////////////////////////////////////////////////
+#ifdef relativisticEffects
+    uniform float u_vc; // v/c
+    uniform vec3 u_velDir; // Camera velocity direction
+
+    <INCLUDE shader/lib_geometry.glsl>
+    <INCLUDE shader/lib_relativity.glsl>
+#endif // relativisticEffects
+
 float scale(float fCos) {
     float x = 1.0 - fCos;
     return fScaleDepth * exp (-0.00287 + x * (0.459 + x * (3.83 + x * (-6.80 + x * 5.25))));
@@ -105,7 +116,15 @@ void main(void) {
     frontColor.a = fAlpha;
     frontSecondaryColor.rgb = v3FrontColor * fKmESun;
 
-    gl_Position = u_projViewTrans * u_worldTrans * vec4(a_position, 1.0);
+    vec4 g_position = vec4(a_position, 1.0);
+    vec4 pos = u_worldTrans * g_position;
+    
+    #ifdef relativisticEffects
+        pos.xyz = computeRelativisticAberration(pos.xyz, length(pos.xyz), u_velDir, u_vc);
+    #endif // relativisticEffects
+    
+    gl_Position = u_projViewTrans * pos;
+    
     // Direction from the vertex to the camera 
     v3Direction = v3CameraPos - v3Pos;
 

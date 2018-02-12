@@ -47,6 +47,7 @@ import gaia.cu9.ari.gaiaorbit.render.system.LineRenderSystem;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
+import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.ModelCache;
 import gaia.cu9.ari.gaiaorbit.util.Pair;
@@ -205,6 +206,9 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
     private static double radVelLineWidth = 0.002;
     private static double noRadVelLineWidth = 0.0006;
 
+    // Has been disposed
+    public boolean disposed = false;
+
     /** Epoch in julian days **/
     private double epoch_jd = AstroUtils.JD_J2015_5;
     /** Current computed epoch time **/
@@ -232,10 +236,14 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
             mat.set(new BlendingAttribute(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA));
             modelTransform = new Matrix4();
             mc = new ModelComponent(false);
+            mc.initialize();
             mc.env = new Environment();
             mc.env.set(new ColorAttribute(ColorAttribute.AmbientLight, 1f, 1f, 1f, 1f));
             mc.env.set(new FloatAttribute(FloatAttribute.Shininess, 0f));
             mc.instance = new ModelInstance(model, modelTransform);
+            // Relativistic effects
+            if (GlobalConf.runtime.RELATIVISTIC_EFFECTS)
+                mc.rec.setUpRelativisticEffectsMaterial(mc.instance.materials);
         }
     }
 
@@ -309,7 +317,7 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
         closestCol = new float[4];
         lastSortTime = -1;
         aux = new Vector3d();
-        EventManager.instance.subscribe(this, Events.CAMERA_MOTION_UPDATED, Events.DISPOSE);
+        EventManager.instance.subscribe(this, Events.CAMERA_MOTION_UPDATED);
     }
 
     @SuppressWarnings("unchecked")
@@ -641,6 +649,7 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
             ((FloatAttribute) mc.env.get(FloatAttribute.Shininess)).value = (float) t;
             // Local transform
             mc.instance.transform.idt().translate((float) closestPos.x, (float) closestPos.y, (float) closestPos.z).scl((float) (getRadius(active[0]) * 2d));
+            mc.updateRelativisticEffects(GaiaSky.instance.getICamera());
             modelBatch.render(mc.instance, mc.env);
         }
     }
@@ -745,8 +754,7 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
 
         aux.add(cam.getUp()).nor().scl(dist);
 
-        out.add(aux);
-
+        GlobalResources.applyRelativisticAberration(out.add(aux), cam);
     }
 
     public double getFocusSize() {
@@ -858,14 +866,11 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
             if (updaterTask != null) {
                 final Vector3d currentCameraPos = (Vector3d) data[0];
                 long t = TimeUtils.millis() - lastSortTime;
-                if (!updating && !workQueue.contains(updaterTask) && this.opacity > 0 && (t > MIN_UPDATE_TIME_MS * 2 || (lastSortCameraPos.dst(currentCameraPos) > CAM_DX_TH && t > MIN_UPDATE_TIME_MS))) {
+                if (!updating && !pool.isShutdown() && !workQueue.contains(updaterTask) && this.opacity > 0 && (t > MIN_UPDATE_TIME_MS * 2 || (lastSortCameraPos.dst(currentCameraPos) > CAM_DX_TH && t > MIN_UPDATE_TIME_MS))) {
                     updating = true;
                     pool.execute(updaterTask);
                 }
             }
-            break;
-        case DISPOSE:
-            dispose();
             break;
         default:
             break;
@@ -960,12 +965,15 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
 
     @Override
     public void dispose() {
-        // Dispose of GPU data
-        EventManager.instance.post(Events.DISPOSE_STAR_GROUP_GPU_MESH, this.offset);
+        this.disposed = true;
+        // Unsubscribe from all events
+        EventManager.instance.unsubscribe(this, Events.CAMERA_MOTION_UPDATED);
         // Shut down pool
         if (pool != null && !pool.isShutdown()) {
             pool.shutdown();
         }
+        // Dispose of GPU data
+        EventManager.instance.post(Events.DISPOSE_STAR_GROUP_GPU_MESH, this.offset);
     }
 
     @Override

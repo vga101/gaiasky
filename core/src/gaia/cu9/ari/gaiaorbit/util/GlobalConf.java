@@ -117,7 +117,8 @@ public class GlobalConf {
             EventManager.instance.subscribe(this, Events.BLOOM_CMD, Events.LENS_FLARE_CMD, Events.MOTION_BLUR_CMD, Events.LIGHT_SCATTERING_CMD, Events.FISHEYE_CMD, Events.BRIGHTNESS_CMD, Events.CONTRAST_CMD);
         }
 
-        public void initialize(int POSTPROCESS_ANTIALIAS, float POSTPROCESS_BLOOM_INTENSITY, float POSTPROCESS_MOTION_BLUR, boolean POSTPROCESS_LENS_FLARE, boolean POSTPROCESS_LIGHT_SCATTERING, boolean POSTPROCESS_FISHEYE, float POSTPROCESS_BRIGHTNESS, float POSTPROCESS_CONTRAST) {
+        public void initialize(int POSTPROCESS_ANTIALIAS, float POSTPROCESS_BLOOM_INTENSITY, float POSTPROCESS_MOTION_BLUR, boolean POSTPROCESS_LENS_FLARE, boolean POSTPROCESS_LIGHT_SCATTERING,
+                boolean POSTPROCESS_FISHEYE, float POSTPROCESS_BRIGHTNESS, float POSTPROCESS_CONTRAST) {
             this.POSTPROCESS_ANTIALIAS = POSTPROCESS_ANTIALIAS;
             this.POSTPROCESS_BLOOM_INTENSITY = POSTPROCESS_BLOOM_INTENSITY;
             this.POSTPROCESS_MOTION_BLUR = POSTPROCESS_MOTION_BLUR;
@@ -197,12 +198,14 @@ public class GlobalConf {
         public boolean STRIPPED_FOV_MODE = false;
         /** Whether octree drawing is active or not **/
         public boolean DRAW_OCTREE;
+        public boolean RELATIVISTIC_EFFECTS = false;
 
         public RuntimeConf() {
             EventManager.instance.subscribe(this, Events.LIMIT_MAG_CMD, Events.INPUT_ENABLED_CMD, Events.DISPLAY_GUI_CMD, Events.TOGGLE_UPDATEPAUSE, Events.TOGGLE_TIME_CMD, Events.RECORD_CAMERA_CMD);
         }
 
-        public void initialize(boolean dISPLAY_GUI, boolean uPDATE_PAUSE, boolean sTRIPPED_FOV_MODE, boolean tIME_ON, boolean iNPUT_ENABLED, boolean rECORD_CAMERA, float lIMIT_MAG_RUNTIME, boolean rEAL_TIME, boolean dRAW_OCTREE) {
+        public void initialize(boolean dISPLAY_GUI, boolean uPDATE_PAUSE, boolean sTRIPPED_FOV_MODE, boolean tIME_ON, boolean iNPUT_ENABLED, boolean rECORD_CAMERA, float lIMIT_MAG_RUNTIME,
+                boolean rEAL_TIME, boolean dRAW_OCTREE) {
             DISPLAY_GUI = dISPLAY_GUI;
             UPDATE_PAUSE = uPDATE_PAUSE;
             TIME_ON = tIME_ON;
@@ -323,7 +326,8 @@ public class GlobalConf {
             return FRAME_MODE.equals(ScreenshotMode.redraw);
         }
 
-        public void initialize(int rENDER_WIDTH, int rENDER_HEIGHT, int rENDER_TARGET_FPS, int cAMERA_REC_TARGET_FPS, boolean aUTO_FRAME_OUTPUT_CAMERA_PLAY, String rENDER_FOLDER, String rENDER_FILE_NAME, boolean rENDER_SCREENSHOT_TIME, boolean rENDER_OUTPUT, ScreenshotMode fRAME_MODE) {
+        public void initialize(int rENDER_WIDTH, int rENDER_HEIGHT, int rENDER_TARGET_FPS, int cAMERA_REC_TARGET_FPS, boolean aUTO_FRAME_OUTPUT_CAMERA_PLAY, String rENDER_FOLDER,
+                String rENDER_FILE_NAME, boolean rENDER_SCREENSHOT_TIME, boolean rENDER_OUTPUT, ScreenshotMode fRAME_MODE) {
             RENDER_WIDTH = rENDER_WIDTH;
             RENDER_HEIGHT = rENDER_HEIGHT;
             RENDER_TARGET_FPS = rENDER_TARGET_FPS;
@@ -471,6 +475,7 @@ public class GlobalConf {
         public String VERSION_CHECK_URL;
         public String UI_THEME;
         public String SCRIPT_LOCATION;
+        public int REST_PORT;
         public String LOCALE;
         public boolean DISPLAY_HUD;
         public boolean DISPLAY_POINTER_COORDS;
@@ -481,12 +486,16 @@ public class GlobalConf {
         /** This controls the side of the images in the stereoscopic mode **/
         public StereoProfile STEREO_PROFILE = StereoProfile.VR_HEADSET;
         public boolean ANALYTICS_ENABLED;
+        /** Whether to display the dataset dialog at startup or not **/
+        public boolean DISPLAY_DATASET_DIALOG;
 
         public ProgramConf() {
             EventManager.instance.subscribe(this, Events.STEREOSCOPIC_CMD, Events.STEREO_PROFILE_CMD, Events.CUBEMAP360_CMD);
         }
 
-        public void initialize(boolean dISPLAY_TUTORIAL, String tUTORIAL_POINTER_SCRIPT_LOCATION, String tUTORIAL_SCRIPT_LOCATION, boolean sHOW_DEBUG_INFO, Date lAST_CHECKED, String lAST_VERSION_TIME, String vERSION_CHECK_URL, String uI_THEME, String sCRIPT_LOCATION, String lOCALE, boolean sTEREOSCOPIC_MODE, StereoProfile sTEREO_PROFILE, boolean cUBEMAP360_MODE, boolean aNALYTICS_ENABLED, boolean dISPLAY_HUD, boolean dISPLAY_POINTER_COORDS) {
+        public void initialize(boolean dISPLAY_TUTORIAL, String tUTORIAL_POINTER_SCRIPT_LOCATION, String tUTORIAL_SCRIPT_LOCATION, boolean sHOW_DEBUG_INFO, Date lAST_CHECKED, String lAST_VERSION_TIME,
+                String vERSION_CHECK_URL, String uI_THEME, String sCRIPT_LOCATION, int rEST_PORT, String lOCALE, boolean sTEREOSCOPIC_MODE, StereoProfile sTEREO_PROFILE, boolean cUBEMAP360_MODE,
+                boolean aNALYTICS_ENABLED, boolean dISPLAY_HUD, boolean dISPLAY_POINTER_COORDS, boolean dISPLAY_DATASET_DIALOG) {
             DISPLAY_TUTORIAL = dISPLAY_TUTORIAL;
             TUTORIAL_POINTER_SCRIPT_LOCATION = tUTORIAL_POINTER_SCRIPT_LOCATION;
             TUTORIAL_SCRIPT_LOCATION = tUTORIAL_SCRIPT_LOCATION;
@@ -496,6 +505,7 @@ public class GlobalConf {
             VERSION_CHECK_URL = vERSION_CHECK_URL;
             UI_THEME = uI_THEME;
             SCRIPT_LOCATION = sCRIPT_LOCATION;
+            REST_PORT = rEST_PORT;
             LOCALE = lOCALE;
             STEREOSCOPIC_MODE = sTEREOSCOPIC_MODE;
             STEREO_PROFILE = sTEREO_PROFILE;
@@ -503,6 +513,7 @@ public class GlobalConf {
             ANALYTICS_ENABLED = aNALYTICS_ENABLED;
             DISPLAY_HUD = dISPLAY_HUD;
             DISPLAY_POINTER_COORDS = dISPLAY_POINTER_COORDS;
+            DISPLAY_DATASET_DIALOG = dISPLAY_DATASET_DIALOG;
         }
 
         public void initialize(boolean dISPLAY_TUTORIAL, boolean sHOW_DEBUG_INFO, String uI_THEME, String lOCALE, boolean sTEREOSCOPIC_MODE, StereoProfile sTEREO_PROFILE) {
@@ -550,18 +561,6 @@ public class GlobalConf {
                 CUBEMAP360_MODE = (Boolean) data[0];
                 EventManager.instance.post(Events.DISPLAY_GUI_CMD, I18n.bundle.get("notif.cleanmode"), !CUBEMAP360_MODE);
 
-                // if (CUBEMAP360_MODE) {
-                // // Entering 360 mode
-                // lensglowBackup =
-                // GlobalConf.postprocess.POSTPROCESS_LIGHT_SCATTERING;
-                // EventManager.instance.post(Events.LIGHT_SCATTERING_CMD,
-                // false);
-                // } else {
-                // // Exiting 360 mode
-                // if (lensglowBackup != null)
-                // EventManager.instance.post(Events.LIGHT_SCATTERING_CMD,
-                // lensglowBackup);
-                // }
                 EventManager.instance.post(Events.POST_NOTIFICATION, "You have entered the 360 mode.  Go back to normal mode using <CTRL+3>");
                 break;
             default:
@@ -731,8 +730,12 @@ public class GlobalConf {
             EventManager.instance.subscribe(this, Events.TOGGLE_VISIBILITY_CMD, Events.FOCUS_LOCK_CMD, Events.ORIENTATION_LOCK_CMD, Events.PROPER_MOTIONS_CMD, Events.STAR_BRIGHTNESS_CMD, Events.PM_LEN_FACTOR_CMD, Events.PM_NUM_FACTOR_CMD, Events.FOV_CHANGED_CMD, Events.CAMERA_SPEED_CMD, Events.ROTATION_SPEED_CMD, Events.TURNING_SPEED_CMD, Events.SPEED_LIMIT_CMD, Events.TRANSIT_COLOUR_CMD, Events.ONLY_OBSERVED_STARS_CMD, Events.COMPUTE_GAIA_SCAN_CMD, Events.OCTREE_PARTICLE_FADE_CMD, Events.STAR_POINT_SIZE_CMD, Events.STAR_POINT_SIZE_INCREASE_CMD, Events.STAR_POINT_SIZE_DECREASE_CMD, Events.STAR_POINT_SIZE_RESET_CMD, Events.STAR_MIN_OPACITY_CMD, Events.AMBIENT_LIGHT_CMD, Events.GALAXY_3D_CMD, Events.CROSSHAIR_CMD, Events.CAMERA_CINEMATIC_CMD, Events.CUBEMAP_RESOLUTION_CMD);
         }
 
-        public void initialize(int gRAPHICS_QUALITY, long oBJECT_FADE_MS, float sTAR_BRIGHTNESS, float aMBIENT_LIGHT, int cAMERA_FOV, float cAMERA_SPEED, float tURNING_SPEED, float rOTATION_SPEED, int cAMERA_SPEED_LIMIT_IDX, boolean fOCUS_LOCK, boolean fOCUS_LOCK_ORIENTATION, float lABEL_NUMBER_FACTOR, boolean[] vISIBILITY, int oRBIT_RENDERER, int lINE_RENDERER, double sTAR_TH_ANGLE_NONE, double sTAR_TH_ANGLE_POINT, double sTAR_TH_ANGLE_QUAD, float pOINT_ALPHA_MIN, float pOINT_ALPHA_MAX,
-                boolean oCTREE_PARTICLE_FADE, float oCTANT_TH_ANGLE_0, float oCTANT_TH_ANGLE_1, boolean pROPER_MOTION_VECTORS, float pM_NUM_FACTOR, float pM_LEN_FACTOR, float sTAR_POINT_SIZE, boolean gALAXY_3D, int cUBEMAP_FACE_RESOLUTION, boolean cROSSHAIR, boolean cINEMATIC_CAMERA, boolean lAZY_TEXTURE_INIT, boolean fREE_CAMERA_TARGET_MODE_ON, boolean sHADOW_MAPPING, int sHADOW_MAPPING_N_SHADOWS, int sHADOW_MAPPING_RESOLUTION) {
+        public void initialize(int gRAPHICS_QUALITY, long oBJECT_FADE_MS, float sTAR_BRIGHTNESS, float aMBIENT_LIGHT, int cAMERA_FOV, float cAMERA_SPEED, float tURNING_SPEED, float rOTATION_SPEED,
+                int cAMERA_SPEED_LIMIT_IDX, boolean fOCUS_LOCK, boolean fOCUS_LOCK_ORIENTATION, float lABEL_NUMBER_FACTOR, boolean[] vISIBILITY, int oRBIT_RENDERER, int lINE_RENDERER,
+                double sTAR_TH_ANGLE_NONE, double sTAR_TH_ANGLE_POINT, double sTAR_TH_ANGLE_QUAD, float pOINT_ALPHA_MIN, float pOINT_ALPHA_MAX,
+                boolean oCTREE_PARTICLE_FADE, float oCTANT_TH_ANGLE_0, float oCTANT_TH_ANGLE_1, boolean pROPER_MOTION_VECTORS, float pM_NUM_FACTOR, float pM_LEN_FACTOR, float sTAR_POINT_SIZE,
+                boolean gALAXY_3D, int cUBEMAP_FACE_RESOLUTION, boolean cROSSHAIR, boolean cINEMATIC_CAMERA, boolean lAZY_TEXTURE_INIT, boolean fREE_CAMERA_TARGET_MODE_ON, boolean sHADOW_MAPPING,
+                int sHADOW_MAPPING_N_SHADOWS, int sHADOW_MAPPING_RESOLUTION) {
             GRAPHICS_QUALITY = gRAPHICS_QUALITY;
             OBJECT_FADE_MS = oBJECT_FADE_MS;
             STAR_BRIGHTNESS = sTAR_BRIGHTNESS;
@@ -780,44 +783,61 @@ public class GlobalConf {
                 CAMERA_SPEED_LIMIT = 0.0277777778 * Constants.KM_TO_U;
                 break;
             case 1:
+                CAMERA_SPEED_LIMIT = 0.5 * Constants.C * Constants.M_TO_U;
+                break;
             case 2:
-                // 1 c and 2 c
-                CAMERA_SPEED_LIMIT = CAMERA_SPEED_LIMIT_IDX * 3e8 * Constants.M_TO_U;
+                CAMERA_SPEED_LIMIT = 0.8 * Constants.C * Constants.M_TO_U;
                 break;
             case 3:
-                // 10 c
-                CAMERA_SPEED_LIMIT = 10 * 3e8 * Constants.M_TO_U;
+                CAMERA_SPEED_LIMIT = 0.9 * Constants.C * Constants.M_TO_U;
                 break;
             case 4:
-                // 1000 c
-                CAMERA_SPEED_LIMIT = 1000 * 3e8 * Constants.M_TO_U;
+                CAMERA_SPEED_LIMIT = 0.99 * Constants.C * Constants.M_TO_U;
                 break;
             case 5:
-                CAMERA_SPEED_LIMIT = 1 * Constants.AU_TO_U;
+                CAMERA_SPEED_LIMIT = 0.99999 * Constants.C * Constants.M_TO_U;
                 break;
             case 6:
-                CAMERA_SPEED_LIMIT = 10 * Constants.AU_TO_U;
+                CAMERA_SPEED_LIMIT = Constants.C * Constants.M_TO_U;
                 break;
             case 7:
-                CAMERA_SPEED_LIMIT = 1000 * Constants.AU_TO_U;
+                CAMERA_SPEED_LIMIT = 2.0 * Constants.C * Constants.M_TO_U;
                 break;
             case 8:
-                CAMERA_SPEED_LIMIT = 10000 * Constants.AU_TO_U;
+                // 10 c
+                CAMERA_SPEED_LIMIT = 10.0 * Constants.C * Constants.M_TO_U;
                 break;
             case 9:
+                // 1000 c
+                CAMERA_SPEED_LIMIT = 1000.0 * Constants.C * Constants.M_TO_U;
+                break;
             case 10:
-                // 1 pc/s and 2 pc/s
-                CAMERA_SPEED_LIMIT = (CAMERA_SPEED_LIMIT_IDX - 8) * Constants.PC_TO_U;
+                CAMERA_SPEED_LIMIT = 1.0 * Constants.AU_TO_U;
                 break;
             case 11:
-                // 10 pc/s
-                CAMERA_SPEED_LIMIT = 10 * Constants.PC_TO_U;
+                CAMERA_SPEED_LIMIT = 10.0 * Constants.AU_TO_U;
                 break;
             case 12:
-                // 1000 pc/s
-                CAMERA_SPEED_LIMIT = 1000 * Constants.PC_TO_U;
+                CAMERA_SPEED_LIMIT = 1000.0 * Constants.AU_TO_U;
                 break;
             case 13:
+                CAMERA_SPEED_LIMIT = 10000.0 * Constants.AU_TO_U;
+                break;
+            case 14:
+                CAMERA_SPEED_LIMIT = Constants.PC_TO_U;
+                break;
+            case 15:
+                CAMERA_SPEED_LIMIT = 2.0 * Constants.PC_TO_U;
+                break;
+            case 16:
+                // 10 pc/s
+                CAMERA_SPEED_LIMIT = 10.0 * Constants.PC_TO_U;
+                break;
+            case 17:
+                // 1000 pc/s
+                CAMERA_SPEED_LIMIT = 1000.0 * Constants.PC_TO_U;
+                break;
+            case 18:
                 // No limit
                 CAMERA_SPEED_LIMIT = -1;
                 break;
@@ -972,7 +992,8 @@ public class GlobalConf {
     /**
      * Initialises the properties
      */
-    public static void initialize(VersionConf vc, ProgramConf pc, SceneConf sc, DataConf dc, RuntimeConf rc, PostprocessConf ppc, PerformanceConf pfc, FrameConf fc, ScreenConf scrc, ScreenshotConf shc, ControlsConf cc, SpacecraftConf scc) throws Exception {
+    public static void initialize(VersionConf vc, ProgramConf pc, SceneConf sc, DataConf dc, RuntimeConf rc, PostprocessConf ppc, PerformanceConf pfc, FrameConf fc, ScreenConf scrc,
+            ScreenshotConf shc, ControlsConf cc, SpacecraftConf scc) throws Exception {
         if (!initialized) {
             if (configurations == null) {
                 configurations = new ArrayList<IConf>();

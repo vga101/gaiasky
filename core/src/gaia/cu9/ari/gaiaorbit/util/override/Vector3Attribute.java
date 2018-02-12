@@ -34,6 +34,9 @@ public class Vector3Attribute extends Attribute {
     public static final String CameraUpAlias = "cameraUp";
     public static final long CameraUp = register(CameraUpAlias);
 
+    public static final String VelDirAlias = "velDir";
+    public static final long VelDir = register(VelDirAlias);
+
     @Override
     public Attribute copy() {
         return new Vector3Attribute(type, value);

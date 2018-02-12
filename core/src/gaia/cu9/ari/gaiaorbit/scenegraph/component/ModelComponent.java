@@ -20,6 +20,7 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.utils.Disposable;
 
 import gaia.cu9.ari.gaiaorbit.data.AssetBean;
+import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
@@ -78,6 +79,8 @@ public class ModelComponent implements Disposable {
      */
     // Texture
     public TextureComponent tc;
+    // Relativistic effects
+    public RelativisticEffectsComponent rec;
 
     public ModelComponent() {
         this(true);
@@ -101,6 +104,10 @@ public class ModelComponent implements Disposable {
 
         if (forceinit || !GlobalConf.scene.LAZY_TEXTURE_INIT && tc != null) {
             tc.initialize();
+        }
+
+        if (GlobalConf.runtime.RELATIVISTIC_EFFECTS) {
+            rec = new RelativisticEffectsComponent();
         }
     }
 
@@ -152,6 +159,11 @@ public class ModelComponent implements Disposable {
         // INITIALIZE MATERIAL
         if (forceinit || !GlobalConf.scene.LAZY_TEXTURE_INIT && tc != null) {
             tc.initMaterial(manager, materials, cc, culling);
+        }
+
+        // INIT RELATIVISITC
+        if (GlobalConf.runtime.RELATIVISTIC_EFFECTS) {
+            rec.doneLoading(materials);
         }
 
         // CREATE MAIN MODEL INSTANCE
@@ -309,6 +321,22 @@ public class ModelComponent implements Disposable {
         try {
             this.useColor = Boolean.parseBoolean(usecolor);
         } catch (Exception e) {
+        }
+    }
+
+    public void updateRelativisticEffects(ICamera camera) {
+        if (GlobalConf.runtime.RELATIVISTIC_EFFECTS) {
+            for (Material mat : instance.materials) {
+                rec.updateRelativisticEffectsMaterial(mat, camera);
+            }
+        }
+    }
+
+    public void updateRelativisticEffects(ICamera camera, float vc) {
+        if (GlobalConf.runtime.RELATIVISTIC_EFFECTS) {
+            for (Material mat : instance.materials) {
+                rec.updateRelativisticEffectsMaterial(mat, camera, vc);
+            }
         }
     }
 

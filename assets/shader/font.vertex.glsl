@@ -25,5 +25,6 @@ void main()
    v_opacity = clamp((pow(u_viewAngle, u_viewAnglePow) - thOverFac) / thOverFac, 0.0, 0.95) * u_componentAlpha;
    v_color = u_color;
    v_texCoords = a_texCoord0;
+   
    gl_Position =  u_projTrans * a_position;
 }

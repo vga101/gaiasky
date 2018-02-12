@@ -3,30 +3,39 @@ precision mediump float;
 precision mediump int;
 #endif
 
+<INCLUDE shader/lib_math.glsl>
+<INCLUDE shader/lib_geometry.glsl>
+
 attribute vec4 a_position;
 attribute vec4 a_color;
 // x - size, y - th_angle_point
 attribute vec4 a_additional;
 
-
 uniform float u_pointAlphaMin;
 uniform float u_pointAlphaMax;
 uniform float u_fovFactor;
 uniform float u_starBrightness;
-
 uniform mat4 u_projModelView;
 uniform vec3 u_camPos;
 
+#ifdef relativisticEffects
+    uniform vec3 u_velDir; // Velocity vector
+    uniform float u_vc; // Fraction of the speed of light, v/c
+
+    <INCLUDE shader/lib_relativity.glsl>
+#endif // relativisticEffects
+
 varying vec4 v_col;
-
-
-float lint(float x, float x0, float x1, float y0, float y1) {
-    return mix(y0, y1, (x - x0) / (x1 - x0));
-}
 
 void main() {
     vec3 pos = a_position.xyz - u_camPos;
-    float distNorm = length(pos) / 1e15;
+    float dist = length(pos);
+    
+    #ifdef relativisticEffects
+        pos = computeRelativisticAberration(pos, dist, u_velDir, u_vc);
+    #endif // relativisticEffects
+    
+    float distNorm = dist / 1e15;
 
     v_col = vec4(a_color.rgb, a_color.a);
 

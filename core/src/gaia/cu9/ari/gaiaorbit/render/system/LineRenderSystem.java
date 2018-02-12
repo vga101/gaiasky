@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
 
@@ -18,8 +19,8 @@ import gaia.cu9.ari.gaiaorbit.render.IRenderable;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
+import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
-import gaia.cu9.ari.gaiaorbit.util.Logger;
 
 public class LineRenderSystem extends ImmediateRenderSystem {
     protected static final int MAX_VERTICES = 5000000;
@@ -31,22 +32,21 @@ public class LineRenderSystem extends ImmediateRenderSystem {
     private LineArraySorter sorter;
     private Pool<double[]> dpool;
 
+    protected Vector3 aux2;
+
     protected MeshData curr_outline;
 
-    public LineRenderSystem(RenderGroup rg, int priority, float[] alphas) {
-        super(rg, priority, alphas);
+    public LineRenderSystem(RenderGroup rg, int priority, float[] alphas, ShaderProgram[] shaders) {
+        super(rg, priority, alphas, shaders);
         dpool = new DPool(INI_DPOOL_SIZE, MAX_DPOOL_SIZE, 11);
         provisionalLines = new Array<double[]>();
         sorter = new LineArraySorter(10);
         glType = GL20.GL_LINES;
+        aux2 = new Vector3();
     }
 
     @Override
     protected void initShaderProgram() {
-        shaderProgram = new ShaderProgram(Gdx.files.internal("shader/line.vertex.glsl"), Gdx.files.internal("shader/line.fragment.glsl"));
-        if (!shaderProgram.isCompiled()) {
-            Logger.error(this.getClass().getName(), "Line shader compilation failed:\n" + shaderProgram.getLog());
-        }
     }
 
     @Override
@@ -96,8 +96,21 @@ public class LineRenderSystem extends ImmediateRenderSystem {
         for (double[] l : provisionalLines)
             addLinePostproc(l[0], l[1], l[2], l[3], l[4], l[5], l[6], l[7], l[8], l[9]);
 
+        ShaderProgram shaderProgram = getShaderProgram();
+
         shaderProgram.begin();
         shaderProgram.setUniformMatrix("u_projModelView", camera.getCamera().combined);
+
+        // Relativistic aberration
+        if (GlobalConf.runtime.RELATIVISTIC_EFFECTS) {
+            if (camera.getVelocity() == null || camera.getVelocity().len() == 0) {
+                aux2.set(1, 0, 0);
+            } else {
+                camera.getVelocity().put(aux2).nor();
+            }
+            shaderProgram.setUniformf("u_velDir", aux2);
+            shaderProgram.setUniformf("u_vc", (float) (camera.getSpeed() / Constants.C_KMH));
+        }
 
         if (Gdx.app.getType() == ApplicationType.Desktop) {
             // Enable GL_LINE_SMOOTH
