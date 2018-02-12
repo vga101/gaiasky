@@ -61,10 +61,10 @@ and load times. Choose which catalog you want to use. Usually, the single file G
 
 | **Catalog** | **Description** | **Extract location** | **Catalog file** |
 |---------|-------------|----------|----------|
-| [tgas lod (1.0.3)](http://wwwstaff.ari.uni-heidelberg.de/gaiasandbox/files/20161206_tgas_gaiasky_1.0.3.tar.gz)  | Levels of detail (lod) TGAS catalog. CPU-bound. | `gaiasky/android/assets/data/octree` | - |
-| [tags lod (1.0.4)](http://wwwstaff.ari.uni-heidelberg.de/gaiasandbox/files/20161206_tgas_gaiasky_1.0.4.tar.gz)  | Levels of detail (lod) TGAS catalog. CPU-bound. | `gaiasky/android/assets/data/octree` | - |
-| tags lod ([1.5.0](http://wwwstaff.ari.uni-heidelberg.de/gaiasandbox/files/20170731_tgas_lod_gaiasky_1.5.0.tar.gz), [1.5.1](http://wwwstaff.ari.uni-heidelberg.de/gaiasandbox/files/20171204_tgas_lod_gaiasky_1.5.1.tar.gz))  | Levels of detail (lod) TGAS catalog. GPU-bound. Version `1.5.1` contains a fix in proper motion and RAVE radial velocities.  | `gaiasky/android/assets/data/octree/tgas` | `data/catalog-tgas-hyg-lod.json` |
-| tags gpu ([1.5.0](http://wwwstaff.ari.uni-heidelberg.de/gaiasandbox/files/20170731_tgas_gpu_gaiasky_1.5.0.tar.gz), [1.5.1](http://wwwstaff.ari.uni-heidelberg.de/gaiasandbox/files/20171204_tgas_gpu_gaiasky_1.5.1.tar.gz))  | TGAS catalog, GPU-bound. Version `1.5.1` contains a fix in proper motion and RAVE radial velocities.  | `gaiasky/android/assets/data/catalog` | `data/catalog-tgas-hyg.json` | 
+| [tgas lod (1.0.3)](http://wwwstaff.ari.uni-heidelberg.de/gaiasandbox/files/20161206_tgas_gaiasky_1.0.3.tar.gz)  | Levels of detail (lod) TGAS catalog. CPU-bound. | `gaiasky/assets/data/octree` | - |
+| [tags lod (1.0.4)](http://wwwstaff.ari.uni-heidelberg.de/gaiasandbox/files/20161206_tgas_gaiasky_1.0.4.tar.gz)  | Levels of detail (lod) TGAS catalog. CPU-bound. | `gaiasky/assets/data/octree` | - |
+| tags lod ([1.5.0](http://wwwstaff.ari.uni-heidelberg.de/gaiasandbox/files/20170731_tgas_lod_gaiasky_1.5.0.tar.gz), [1.5.1](http://wwwstaff.ari.uni-heidelberg.de/gaiasandbox/files/20171204_tgas_lod_gaiasky_1.5.1.tar.gz))  | Levels of detail (lod) TGAS catalog. GPU-bound. Version `1.5.1` contains a fix in proper motion and RAVE radial velocities.  | `gaiasky/assets/data/octree/tgas` | `data/catalog-tgas-hyg-lod.json` |
+| tags gpu ([1.5.0](http://wwwstaff.ari.uni-heidelberg.de/gaiasandbox/files/20170731_tgas_gpu_gaiasky_1.5.0.tar.gz), [1.5.1](http://wwwstaff.ari.uni-heidelberg.de/gaiasandbox/files/20171204_tgas_gpu_gaiasky_1.5.1.tar.gz))  | TGAS catalog, GPU-bound. Version `1.5.1` contains a fix in proper motion and RAVE radial velocities.  | `gaiasky/assets/data/catalog` | `data/catalog-tgas-hyg.json` | 
 
 First, choose the package corresponding to your Gaia Sky version and extract it into the specified **Extract location**. `tgas lod` means levels of detail, so data in these catalogs is streamed from disk to GPU. `tgas gpu` means that the data is loaded all at startup and sent to the GPU at that moment. Choose `tgas gpu` if you have a good graphics card.
 
@@ -80,7 +80,7 @@ edit the configuration file so that `data.json.catalog` points to `data/catalog-
 To run Gaia Sky VR, make sure that both the Oculus runtime and Steam VR are running. Then, run Gaia Sky through gradle. The first time it will pull lots of dependencies and compile the whole project, so it may take a while.
 
 ```
-$  gradlew.bat desktop:run
+$  gradlew.bat core:run
 ```
 
 Et voilà! Gaia Sky VR dev branch is running.
