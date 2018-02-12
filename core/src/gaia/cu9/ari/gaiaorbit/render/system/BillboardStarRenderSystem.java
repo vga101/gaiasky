@@ -33,8 +33,8 @@ public class BillboardStarRenderSystem extends AbstractRenderSystem {
     private Texture texture0;
     private int ctindex = -1;
 
-    public BillboardStarRenderSystem(RenderGroup rg, int priority, float[] alphas, ShaderProgram shaderProgram, ShaderProgram shaderProgramRel, String tex0, int ctindex, float w, float h) {
-        super(rg, priority, alphas);
+    public BillboardStarRenderSystem(RenderGroup rg, float[] alphas, ShaderProgram shaderProgram, ShaderProgram shaderProgramRel, String tex0, int ctindex, float w, float h) {
+        super(rg, alphas);
         this.shaderProgram = shaderProgram;
         this.shaderProgramRel = shaderProgramRel;
         this.ctindex = ctindex;
@@ -46,15 +46,13 @@ public class BillboardStarRenderSystem extends AbstractRenderSystem {
      * 
      * @param rg
      *            The render group.
-     * @param priority
-     *            The priority of the component.
      * @param alphas
      *            The alphas list.
      * @param shaderProgram
      *            The shader program to render the quad with.
      */
-    public BillboardStarRenderSystem(RenderGroup rg, int priority, float[] alphas, ShaderProgram shaderProgram, ShaderProgram shaderProgramRel, String tex0, int ctindex) {
-        this(rg, priority, alphas, shaderProgram, shaderProgramRel, tex0, ctindex, 2, 2);
+    public BillboardStarRenderSystem(RenderGroup rg, float[] alphas, ShaderProgram shaderProgram, ShaderProgram shaderProgramRel, String tex0, int ctindex) {
+        this(rg, alphas, shaderProgram, shaderProgramRel, tex0, ctindex, 2, 2);
     }
 
     private void init(String tex0, float w, float h) {

@@ -33,8 +33,8 @@ public class ParticleGroupRenderSystem extends ImmediateRenderSystem implements 
 
     Comparator<IRenderable> comp;
 
-    public ParticleGroupRenderSystem(RenderGroup rg, int priority, float[] alphas, ShaderProgram[] shaders) {
-        super(rg, priority, alphas, shaders);
+    public ParticleGroupRenderSystem(RenderGroup rg, float[] alphas, ShaderProgram[] shaders) {
+        super(rg, alphas, shaders);
         comp = new DistToCameraComparator<IRenderable>();
     }
 

@@ -36,8 +36,8 @@ public class PixelRenderSystem extends ImmediateRenderSystem implements IObserve
 
     boolean initializing = false;
 
-    public PixelRenderSystem(RenderGroup rg, int priority, float[] alphas, ShaderProgram[] shaders, ComponentType ct) {
-        super(rg, priority, alphas, shaders);
+    public PixelRenderSystem(RenderGroup rg, float[] alphas, ShaderProgram[] shaders, ComponentType ct) {
+        super(rg, alphas, shaders);
         EventManager.instance.subscribe(this, Events.TRANSIT_COLOUR_CMD, Events.ONLY_OBSERVED_STARS_CMD, Events.STAR_MIN_OPACITY_CMD);
         BRIGHTNESS_FACTOR = Constants.webgl ? 15 : 10;
         this.ct = ct;

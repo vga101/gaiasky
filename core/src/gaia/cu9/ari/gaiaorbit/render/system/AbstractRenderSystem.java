@@ -17,7 +17,6 @@ public abstract class AbstractRenderSystem implements IRenderSystem {
     public static boolean POINT_UPDATE_FLAG = true;
 
     private RenderGroup group;
-    protected int priority;
     protected float[] alphas;
     /** Comparator of renderables, in case of need **/
     protected Comparator<IRenderable> comp;
@@ -25,10 +24,9 @@ public abstract class AbstractRenderSystem implements IRenderSystem {
 
     protected RenderSystemRunnable preRunnable, postRunnable;
 
-    protected AbstractRenderSystem(RenderGroup rg, int priority, float[] alphas) {
+    protected AbstractRenderSystem(RenderGroup rg, float[] alphas) {
         super();
         this.group = rg;
-        this.priority = priority;
         this.alphas = alphas;
     }
 
@@ -37,10 +35,6 @@ public abstract class AbstractRenderSystem implements IRenderSystem {
         return group;
     }
 
-    @Override
-    public int getPriority() {
-        return priority;
-    }
 
     @Override
     public void render(Array<IRenderable> renderables, ICamera camera, double t, RenderingContext rc) {
@@ -86,10 +80,6 @@ public abstract class AbstractRenderSystem implements IRenderSystem {
         return alpha;
     }
 
-    @Override
-    public int compareTo(IRenderSystem o) {
-        return Integer.compare(priority, o.getPriority());
-    }
 
     @Override
     public void resize(int w, int h) {

@@ -39,8 +39,8 @@ public class LineQuadRenderSystem extends LineRenderSystem {
     final static double widthAngle = Math.toRadians(0.05);
     final static double widthAngleTan = Math.tan(widthAngle);
 
-    public LineQuadRenderSystem(RenderGroup rg, int priority, float[] alphas, ShaderProgram[] shaders) {
-        super(rg, priority, alphas, shaders);
+    public LineQuadRenderSystem(RenderGroup rg, float[] alphas, ShaderProgram[] shaders) {
+        super(rg, alphas, shaders);
         dpool = new DPool(INI_DPOOL_SIZE, MAX_DPOOL_SIZE, 14);
         provisionalLines = new Array<double[]>();
         sorter = new LineArraySorter(12);

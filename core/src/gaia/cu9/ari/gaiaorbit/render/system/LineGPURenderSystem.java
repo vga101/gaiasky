@@ -1,13 +1,11 @@
 package gaia.cu9.ari.gaiaorbit.render.system;
 
-import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
-import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 
@@ -32,16 +30,13 @@ public class LineGPURenderSystem extends ImmediateRenderSystem {
     protected ICamera camera;
     protected int glType;
 
-    private Matrix4 modelView;
-
     private Vector3 aux2;
 
     /** Hopefully we won't have more than 1000000 orbits at once **/
     private final int N_MESHES = 1000000;
 
-    public LineGPURenderSystem(RenderGroup rg, int priority, float[] alphas, ShaderProgram[] shaders) {
-        super(rg, priority, alphas, shaders);
-        modelView = new Matrix4();
+    public LineGPURenderSystem(RenderGroup rg, float[] alphas, ShaderProgram[] shaders) {
+        super(rg, alphas, shaders);
         glType = GL20.GL_LINE_STRIP;
         aux2 = new Vector3();
     }
@@ -110,12 +105,10 @@ public class LineGPURenderSystem extends ImmediateRenderSystem {
 
     @Override
     public void renderStud(Array<IRenderable> renderables, ICamera camera, double t) {
-        if (Gdx.app.getType() == ApplicationType.Desktop) {
-            // Enable GL_LINE_SMOOTH
-            Gdx.gl20.glEnable(0xB20);
-            // Enable GL_LINE_WIDTH
-            Gdx.gl20.glEnable(0xB21);
-        }
+        // Enable GL_LINE_SMOOTH
+        Gdx.gl20.glEnable(0xB20);
+        // Enable GL_LINE_WIDTH
+        Gdx.gl20.glEnable(0xB21);
         Gdx.gl20.glEnable(GL20.GL_DEPTH_TEST);
         Gdx.gl20.glEnable(GL20.GL_BLEND);
         Gdx.gl20.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
@@ -125,11 +118,12 @@ public class LineGPURenderSystem extends ImmediateRenderSystem {
         this.camera = camera;
         int size = renderables.size;
 
-        /**
-         * ADD LINES
-         */
         for (int i = 0; i < size; i++) {
             Orbit renderable = (Orbit) renderables.get(i);
+
+            /**
+             * ADD LINES
+             */
             if (!renderable.inGpu) {
                 OrbitData od = renderable.orbitData;
                 int npoints = od.getNumPoints();
@@ -194,6 +188,5 @@ public class LineGPURenderSystem extends ImmediateRenderSystem {
             array[i] = attribs.get(i);
         return array;
     }
-
 
 }

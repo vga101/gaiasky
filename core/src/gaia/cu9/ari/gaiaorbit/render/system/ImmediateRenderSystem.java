@@ -40,8 +40,8 @@ public abstract class ImmediateRenderSystem extends AbstractRenderSystem {
 
     protected int maxVertices;
 
-    protected ImmediateRenderSystem(RenderGroup rg, int priority, float[] alphas, ShaderProgram[] shaders) {
-        super(rg, priority, alphas);
+    protected ImmediateRenderSystem(RenderGroup rg, float[] alphas, ShaderProgram[] shaders) {
+        super(rg, alphas);
         /**
          * 0 - normal
          * 1 - relativistic 

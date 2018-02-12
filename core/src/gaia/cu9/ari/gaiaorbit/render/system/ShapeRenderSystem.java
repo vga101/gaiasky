@@ -13,8 +13,8 @@ public class ShapeRenderSystem extends AbstractRenderSystem {
 
     private ShapeRenderer shapeRenderer;
 
-    public ShapeRenderSystem(RenderGroup rg, int priority, float[] alphas) {
-        super(rg, priority, alphas);
+    public ShapeRenderSystem(RenderGroup rg, float[] alphas) {
+        super(rg, alphas);
         this.shapeRenderer = new ShapeRenderer();
 
     }

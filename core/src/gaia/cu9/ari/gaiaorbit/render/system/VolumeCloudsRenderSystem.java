@@ -35,8 +35,8 @@ public class VolumeCloudsRenderSystem extends AbstractRenderSystem {
 
     private long initime;
 
-    public VolumeCloudsRenderSystem(int priority, float[] alphas) {
-        super(null, priority, alphas);
+    public VolumeCloudsRenderSystem(float[] alphas) {
+        super(null, alphas);
         ShaderLoader.BasePath = "shaders/";
         shaderProgram = ShaderLoader.fromFile("screenspace", "volumeclouds");
         quad = new FullscreenQuad();

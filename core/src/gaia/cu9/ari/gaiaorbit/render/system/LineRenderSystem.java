@@ -2,7 +2,6 @@ package gaia.cu9.ari.gaiaorbit.render.system;
 
 import java.util.Comparator;
 
-import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -36,8 +35,8 @@ public class LineRenderSystem extends ImmediateRenderSystem {
 
     protected MeshData curr_outline;
 
-    public LineRenderSystem(RenderGroup rg, int priority, float[] alphas, ShaderProgram[] shaders) {
-        super(rg, priority, alphas, shaders);
+    public LineRenderSystem(RenderGroup rg, float[] alphas, ShaderProgram[] shaders) {
+        super(rg, alphas, shaders);
         dpool = new DPool(INI_DPOOL_SIZE, MAX_DPOOL_SIZE, 11);
         provisionalLines = new Array<double[]>();
         sorter = new LineArraySorter(10);
@@ -79,6 +78,16 @@ public class LineRenderSystem extends ImmediateRenderSystem {
 
     @Override
     public void renderStud(Array<IRenderable> renderables, ICamera camera, double t) {
+        // Enable GL_LINE_SMOOTH
+        Gdx.gl20.glEnable(0xB20);
+        // Enable GL_LINE_WIDTH
+        Gdx.gl20.glEnable(0xB21);
+        Gdx.gl20.glEnable(GL20.GL_DEPTH_TEST);
+        Gdx.gl20.glEnable(GL20.GL_BLEND);
+        Gdx.gl20.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+        // Regular
+        Gdx.gl.glLineWidth(1f * GlobalConf.SCALE_FACTOR);
+
         this.camera = camera;
         int size = renderables.size;
         for (int i = 0; i < size; i++) {
@@ -112,17 +121,6 @@ public class LineRenderSystem extends ImmediateRenderSystem {
             shaderProgram.setUniformf("u_vc", (float) (camera.getSpeed() / Constants.C_KMH));
         }
 
-        if (Gdx.app.getType() == ApplicationType.Desktop) {
-            // Enable GL_LINE_SMOOTH
-            Gdx.gl20.glEnable(0xB20);
-            // Enable GL_LINE_WIDTH
-            Gdx.gl20.glEnable(0xB21);
-        }
-        Gdx.gl20.glEnable(GL20.GL_DEPTH_TEST);
-        Gdx.gl20.glEnable(GL20.GL_BLEND);
-        Gdx.gl20.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
-        // Regular
-        Gdx.gl.glLineWidth(1f * GlobalConf.SCALE_FACTOR);
         curr.mesh.setVertices(curr.vertices, 0, curr.vertexIdx);
         curr.mesh.render(shaderProgram, glType);
 

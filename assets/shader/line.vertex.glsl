@@ -20,7 +20,7 @@ varying vec4 v_col;
 #endif // relativisticEffects
 
 void main() {
-    vec4 pos = vec4(a_position.xyz, 0.0);
+    vec4 pos = a_position;
     
     #ifdef relativisticEffects
         pos.xyz = computeRelativisticAberration(pos.xyz, length(pos.xyz), u_velDir, u_vc);
