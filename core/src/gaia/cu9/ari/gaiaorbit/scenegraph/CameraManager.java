@@ -86,6 +86,10 @@ public class CameraManager implements ICamera, IObserver {
             return this.equals(CameraMode.Gaia_FOV1) || this.equals(CameraMode.Gaia_FOV2) || this.equals(CameraMode.Gaia_FOV1and2);
         }
 
+        public boolean isSpacecraft() {
+            return this.equals(CameraMode.Spacecraft);
+        }
+
         /**
          * Returns the current FOV mode:
          * <ul>

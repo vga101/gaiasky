@@ -50,10 +50,14 @@ public class RelativisticEffectsComponent {
     }
 
     public void updateRelativisticEffectsMaterial(Material material, ICamera camera) {
+        updateRelativisticEffectsMaterial(material, camera, (float) (camera.getSpeed() / Constants.C_KMH));
+    }
+
+    public void updateRelativisticEffectsMaterial(Material material, ICamera camera, float vc) {
 
         // v/c
         if (material.get(RelativisticEffectFloatAttribute.Vc) != null)
-            ((RelativisticEffectFloatAttribute) material.get(RelativisticEffectFloatAttribute.Vc)).value = (float) (camera.getSpeed() / Constants.C_KMH);
+            ((RelativisticEffectFloatAttribute) material.get(RelativisticEffectFloatAttribute.Vc)).value = vc;
 
         // Velocity direction
         if (material.get(Vector3Attribute.VelDir) != null) {
@@ -64,7 +68,6 @@ public class RelativisticEffectsComponent {
             }
             ((Vector3Attribute) material.get(Vector3Attribute.VelDir)).value.set(aux);
         }
-
     }
 
 }

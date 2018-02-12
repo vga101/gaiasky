@@ -323,4 +323,12 @@ public class ModelComponent implements Disposable {
         }
     }
 
+    public void updateRelativisticEffects(ICamera camera, float vc) {
+        if (GlobalConf.runtime.RELATIVISTIC_EFFECTS) {
+            for (Material mat : instance.materials) {
+                rec.updateRelativisticEffectsMaterial(mat, camera, vc);
+            }
+        }
+    }
+
 }

@@ -3,11 +3,13 @@ package gaia.cu9.ari.gaiaorbit.scenegraph;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 
+import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
@@ -528,6 +530,22 @@ public class Spacecraft extends GenericSpacecraft implements ILineRenderable, IO
 
     public void dispose() {
         super.dispose();
+    }
+    
+
+    /** Model rendering. Spacecraft in spacecraft mode is not affected by the relativistic aberration **/
+    @Override
+    public void render(ModelBatch modelBatch, float alpha, double t) {
+        ICamera cam = GaiaSky.instance.getICamera();
+        prepareShadowEnvironment();
+        mc.touch();
+        mc.setTransparency(alpha * fadeOpacity);
+        // In Spacecraft mode, we are not affected by relativistic aberration or Doppler shift
+        if (cam.getMode().isSpacecraft())
+            mc.updateRelativisticEffects(cam, 0);
+        else
+            mc.updateRelativisticEffects(cam);
+        modelBatch.render(mc.instance, mc.env);
     }
 
     @Override
