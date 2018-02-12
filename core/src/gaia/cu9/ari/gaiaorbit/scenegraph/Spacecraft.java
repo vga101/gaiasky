@@ -36,6 +36,9 @@ public class Spacecraft extends GenericSpacecraft implements ILineRenderable, IO
     /** This is the power **/
     public static final double thrustLength = 1e12d;
 
+    /** Max speed in relativistic mode **/
+    private static final double relativisticSpeedCap = Constants.C_US * 0.99999;
+
     /**
      * Factor (adapt to be able to navigate small and large scale structures
      **/
@@ -204,8 +207,16 @@ public class Spacecraft extends GenericSpacecraft implements ILineRenderable, IO
         thrust.set(direction).scl(thrustLength * thrustFactor[thrustFactorIndex] * enginePower);
         force.set(thrust);
 
+        // Scale force if relativistic effects are on
+        if (GlobalConf.runtime.RELATIVISTIC_EFFECTS) {
+            double speed = vel.len();
+            double scale = (relativisticSpeedCap - speed) / relativisticSpeedCap;
+            force.scl(scale);
+        }
+
         double friction = (GlobalConf.spacecraft.SC_HANDLING_FRICTION * 2e16) * dt;
         force.add(aux3d1.get().set(vel).scl(-friction));
+
 
         if (stopping) {
             double speed = vel.len();

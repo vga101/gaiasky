@@ -13,16 +13,6 @@ public class Constants {
     public static final double SCALE_FACTOR = 5e-6;
 
     /**
-     * Speed of light in m/s
-     */
-    public static final double C = 299792458;
-
-    /**
-     * Speed of light in km/h
-     */
-    public static final double C_KMH = 1.079253e9;
-
-    /**
      * Metre to local unit conversion. Multiply this by all values in m.
      */
     public static final double M_TO_U = 1e-9;
@@ -99,6 +89,21 @@ public class Constants {
 
     /** Milliseconds to year **/
     public static final double MS_TO_Y = 1 / Y_TO_MS;
+
+    /**
+     * Speed of light in m/s
+     */
+    public static final double C = 299792458;
+
+    /**
+     * Speed of light in km/h
+     */
+    public static final double C_KMH = 1.079253e9;
+
+    /**
+     * Speed of light in internal units per second
+     */
+    public static final double C_US = C * M_TO_U;
 
     /**
      * Solar radius in Km
