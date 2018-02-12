@@ -1,3 +1,5 @@
+.. _gaiasky-vr:
+
 Gaia Sky VR
 ***********
 
