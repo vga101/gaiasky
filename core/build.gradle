@@ -131,6 +131,7 @@ task copyToLib (dependsOn: createDistDir, description: "Copies the runtime depen
 	            from configurations.getByName(mode).files
 	            into project.distLib
 	            exclude "**/data"
+	            exclude "**/assets-bak"
 	            exclude "**/core-1.0.jar"
 	            exclude "**/core-" + version + ".jar"
 	        }
@@ -150,6 +151,8 @@ task copyToLib (dependsOn: createDistDir, description: "Copies the runtime depen
 	    delete project.distLib + '/shaders'
 	    delete project.distLib + '/skins'
 	    delete project.distLib + '/postprocessing-sources.jar'
+	    // Comment this if you need to use the REST API
+	    delete project.distLib + '/rest-static'
 	}
 }
 
