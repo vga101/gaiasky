@@ -1,3 +1,0 @@
-0 - Update the README.txt file in desktop/exe/README.txt with the new features/bugs/changelog.
-1 - Execute 'gradle desktop:pack'. This will produce a new release in the releases folder. It will also package the app.
-3 - Update the documentation accordingly.
