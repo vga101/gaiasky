@@ -391,13 +391,6 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         EventManager.instance.post(Events.GO_TO_OBJECT_CMD);
 
         initialized = true;
-
-        // Run tutorial
-        //        if (GlobalConf.program.DISPLAY_TUTORIAL) {
-        //            EventManager.instance.post(Events.RUN_SCRIPT_PATH, GlobalConf.program.TUTORIAL_POINTER_SCRIPT_LOCATION);
-        //            GlobalConf.program.DISPLAY_TUTORIAL = false;
-        //        }
-
     }
 
     /**

@@ -65,7 +65,7 @@ public class SearchDialog extends Window {
                             }
                         }
 
-                        NaturalInputController.pressedKeys.remove(ie.getKeyCode());
+                        NaturalInputListener.pressedKeys.remove(ie.getKeyCode());
                     }
                 }
                 return false;

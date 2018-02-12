@@ -967,7 +967,7 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
     public void dispose() {
         this.disposed = true;
         // Unsubscribe from all events
-        EventManager.instance.unsubscribe(this, Events.CAMERA_MOTION_UPDATED, Events.DISPOSE);
+        EventManager.instance.unsubscribe(this, Events.CAMERA_MOTION_UPDATED);
         // Shut down pool
         if (pool != null && !pool.isShutdown()) {
             pool.shutdown();

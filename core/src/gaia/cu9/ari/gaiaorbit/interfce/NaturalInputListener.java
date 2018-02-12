@@ -32,7 +32,7 @@ import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
  * @author tsagrista
  *
  */
-public class NaturalInputController extends GestureDetector {
+public class NaturalInputListener extends GestureDetector {
 
     /**
      * The button for rotating the camera either around its center or around the
@@ -88,7 +88,7 @@ public class NaturalInputController extends GestureDetector {
     private static final long doubleClickTime = 400;
 
     protected static class GaiaGestureListener extends GestureAdapter {
-        public NaturalInputController controller;
+        public NaturalInputListener controller;
         private float previousZoom;
 
         @Override
@@ -134,7 +134,7 @@ public class NaturalInputController extends GestureDetector {
 
     protected final GaiaGestureListener gestureListener;
 
-    protected NaturalInputController(final GaiaGestureListener gestureListener, NaturalCamera camera) {
+    protected NaturalInputListener(final GaiaGestureListener gestureListener, NaturalCamera camera) {
         super(gestureListener);
         this.gestureListener = gestureListener;
         this.gestureListener.controller = this;
@@ -156,7 +156,7 @@ public class NaturalInputController extends GestureDetector {
         pressedKeys = new HashSet<Integer>();
     }
 
-    public NaturalInputController(final NaturalCamera camera) {
+    public NaturalInputListener(final NaturalCamera camera) {
         this(new GaiaGestureListener(), camera);
     }
 

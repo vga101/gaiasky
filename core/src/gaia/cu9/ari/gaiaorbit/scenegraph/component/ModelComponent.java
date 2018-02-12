@@ -169,6 +169,11 @@ public class ModelComponent implements Disposable {
         // CREATE MAIN MODEL INSTANCE
         instance = new ModelInstance(model, localTransform);
 
+        // COLOR IF NO TEXTURE
+        if (tc == null) {
+            addColorToMat();
+        }
+
         // Initialised
         initialised = !GlobalConf.scene.LAZY_TEXTURE_INIT;
         // Loading
@@ -198,19 +203,7 @@ public class ModelComponent implements Disposable {
                 }
             } else {
                 // Use color if necessary
-                if (cc != null && useColor) {
-                    // Regular mesh, we use the color
-                    int n = instance.materials.size;
-                    for (int i = 0; i < n; i++) {
-                        Material material = instance.materials.get(i);
-                        if (material.get(TextureAttribute.Ambient) == null && material.get(TextureAttribute.Diffuse) == null) {
-                            material.set(new ColorAttribute(ColorAttribute.Diffuse, cc[0], cc[1], cc[2], cc[3]));
-                            material.set(new ColorAttribute(ColorAttribute.Ambient, cc[0], cc[1], cc[2], cc[3]));
-                            if (!culling)
-                                material.set(new IntAttribute(IntAttribute.CullFace, GL20.GL_NONE));
-                        }
-                    }
-                }
+                addColorToMat();
                 // Set to initialised
                 initialised = true;
                 loading = false;
@@ -218,6 +211,22 @@ public class ModelComponent implements Disposable {
 
         }
 
+    }
+
+    public void addColorToMat() {
+        if (cc != null && useColor) {
+            // Regular mesh, we use the color
+            int n = instance.materials.size;
+            for (int i = 0; i < n; i++) {
+                Material material = instance.materials.get(i);
+                if (material.get(TextureAttribute.Ambient) == null && material.get(TextureAttribute.Diffuse) == null) {
+                    material.set(new ColorAttribute(ColorAttribute.Diffuse, cc[0], cc[1], cc[2], cc[3]));
+                    material.set(new ColorAttribute(ColorAttribute.Ambient, cc[0], cc[1], cc[2], cc[3]));
+                    if (!culling)
+                        material.set(new IntAttribute(IntAttribute.CullFace, GL20.GL_NONE));
+                }
+            }
+        }
     }
 
     public void addDirectionalLight(float r, float g, float b, float x, float y, float z) {

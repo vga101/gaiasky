@@ -188,9 +188,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         manager.load("spdepth", RelativisticShaderProvider.class, new RelativisticShaderProviderParameter("shader/normal.vertex.glsl", "shader/depth.fragment.glsl"));
         manager.load("spopaque", RelativisticShaderProvider.class, new RelativisticShaderProviderParameter("shader/normal.vertex.glsl", "shader/opaque.fragment.glsl"));
         manager.load("atm", AtmosphereShaderProvider.class, new AtmosphereShaderProviderParameter("shader/atm.vertex.glsl", "shader/atm.fragment.glsl"));
-        if (!Constants.webgl) {
-            manager.load("atmground", GroundShaderProvider.class, new GroundShaderProviderParameter("shader/normal.vertex.glsl", "shader/normal.fragment.glsl"));
-        }
+        manager.load("atmground", GroundShaderProvider.class, new GroundShaderProviderParameter("shader/normal.vertex.glsl", "shader/normal.fragment.glsl"));
 
         BitmapFontParameter bfp = new BitmapFontParameter();
         bfp.magFilter = TextureFilter.Linear;
@@ -1064,7 +1062,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
     private void buildGlowData() {
         if (glowFb == null)
-            glowFb = new FrameBuffer(Format.RGBA8888, 1080, 720, true);
+            glowFb = new FrameBuffer(Format.RGBA8888, 1080, 720, false);
     }
 
     public void updateLineRenderSystem() {

@@ -20,7 +20,7 @@ import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.interfce.NaturalControllerListener;
-import gaia.cu9.ari.gaiaorbit.interfce.NaturalInputController;
+import gaia.cu9.ari.gaiaorbit.interfce.NaturalInputListener;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.RotationComponent;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
@@ -124,7 +124,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
     private static double HUD_SCALE_MAX = 3.0f;
 
     /** The input controller attached to this camera **/
-    private NaturalInputController inputController;
+    private NaturalInputListener inputController;
 
     /** Controller listener **/
     private NaturalControllerListener controllerListener;
@@ -178,7 +178,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 
         accelerometer = Gdx.input.isPeripheralAvailable(Peripheral.Accelerometer);
 
-        inputController = new NaturalInputController(this);
+        inputController = new NaturalInputListener(this);
         controllerListener = new NaturalControllerListener(this, GlobalConf.controls.CONTROLLER_MAPPINGS_FILE);
 
         // Init sprite batch for crosshair

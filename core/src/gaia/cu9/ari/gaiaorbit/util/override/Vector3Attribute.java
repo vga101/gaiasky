@@ -22,9 +22,6 @@ public class Vector3Attribute extends Attribute {
     public static final String LightPosAlias = "lightPos";
     public static final long LightPos = register(LightPosAlias);
 
-    public static final String RelAttrAlias = "relAttr";
-    public static final long RelAttr = register(RelAttrAlias);
-
     public static final String LightPositionAlias = "lightPosition";
     public static final long LightPosition = register(LightPositionAlias);
 

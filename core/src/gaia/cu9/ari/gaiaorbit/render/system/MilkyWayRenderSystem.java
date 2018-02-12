@@ -111,7 +111,7 @@ public class MilkyWayRenderSystem extends ImmediateRenderSystem implements IObse
             /**
              * STAR RENDER
              */
-            if (UPDATE_POINTS) {
+            if (GlobalConf.scene.GALAXY_3D && UPDATE_POINTS) {
                 Vector3 center = mw.getPosition().toVector3();
 
                 /** STARS **/
