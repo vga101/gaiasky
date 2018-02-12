@@ -26,10 +26,14 @@ public abstract class AbstractStarGroupDataProvider implements IStarGroupDataPro
     protected Map<Long, double[]> sphericalPositions;
     protected Map<Long, float[]> colors;
     /**
-     * Parallax over error must be larger than this value for stars to be
-     * loaded. Stars will only be loaded if pllx/pllx_err > parallaxOverError
-     */
-    protected double parallaxOverError = 7;
+     * <p>
+     * The loader will only load stars for which the parallax error is
+     * at most the percentage given here, in [0..1].
+     * More specifically, the following must be met:
+     * </p>
+     * <code>pllx_err &lt; pllx * pllxErrFactor</code>
+     **/
+    protected double parallaxErrorFactor = 0.14;
 
     /**
      * The zero point for the parallaxes in mas. Gets added to all loaded
@@ -175,8 +179,8 @@ public abstract class AbstractStarGroupDataProvider implements IStarGroupDataPro
         return colors;
     }
 
-    public void setParallaxOverError(double parallaxOverError) {
-        this.parallaxOverError = parallaxOverError;
+    public void setParallaxErrorFactor(double parallaxErrorFactor) {
+        this.parallaxErrorFactor = parallaxErrorFactor;
     }
 
     public void setParallaxZeroPoint(double parallaxZeroPoint) {

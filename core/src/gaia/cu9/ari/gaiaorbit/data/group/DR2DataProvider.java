@@ -191,7 +191,7 @@ public class DR2DataProvider extends AbstractStarGroupDataProvider {
             double pllxerr = Parser.parseDouble(tokens[indices[PLLX_ERR]]);
 
             // Keep only stars with relevant parallaxes
-            if (pllx >= 0 && pllx / pllxerr > parallaxOverError && pllxerr <= 1) {
+            if (pllx >= 0 && pllxerr < pllx * parallaxErrorFactor && pllxerr <= 1) {
                 double distpc = (1000d / pllx);
                 double dist = distpc * Constants.PC_TO_U;
                 /** ID **/

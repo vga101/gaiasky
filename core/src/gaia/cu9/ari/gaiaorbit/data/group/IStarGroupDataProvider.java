@@ -13,13 +13,17 @@ public interface IStarGroupDataProvider extends IParticleGroupDataProvider {
     public Map<Long, float[]> getColors();
 
     /**
-     * The loader will only load stars for which pllx/pllx_error >
-     * parallaxOverError
+     * <p>
+     * The loader will only load stars for which the parallax error is
+     * at most the percentage given here, in [0..1].
+     * More specifically, the following must be met:
+     * </p>
+     * <code>pllx_err &lt; pllx * pllxErrFactor</code>
      * 
-     * @param parallaxOverError
-     *            The capping value
+     * @param parallaxErrorFactor
+     *            The percentage value of parallax errors with respect to parallax
      */
-    public void setParallaxOverError(double parallaxOverError);
+    public void setParallaxErrorFactor(double parallaxErrorFactor);
 
     /**
      * Sets the zero point of the parallax as an addition to the parallax

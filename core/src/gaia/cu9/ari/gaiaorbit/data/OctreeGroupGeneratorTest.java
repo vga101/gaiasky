@@ -100,8 +100,8 @@ public class OctreeGroupGeneratorTest implements IObserver {
     @Parameter(names = "--serialized", description = "Use the java serialization method instead of the binary format to output the particle files")
     private boolean serialized = false;
 
-    @Parameter(names = "--pllxovererr", description = "Parallax over parallax error must be larger than this value for the star to be accepted")
-    private double pllxovererr = 7d;
+    @Parameter(names = "--pllxerrfac", description = "Parallax error factor, acceptance criteria as a percentage of paralllax error with respect to parallax, in [0..1]")
+    private double pllxerrfac = 0.14;
 
     @Parameter(names = "--pllxzeropoint", description = "Zero point value for the parallax in mas")
     private double pllxzeropoint = 0d;
@@ -205,7 +205,7 @@ public class OctreeGroupGeneratorTest implements IObserver {
         /** CATALOG **/
         String fullLoaderClass = "gaia.cu9.ari.gaiaorbit.data.group." + loaderClass;
         IStarGroupDataProvider loader = (IStarGroupDataProvider) Class.forName(fullLoaderClass).newInstance();
-        loader.setParallaxOverError(pllxovererr);
+        loader.setParallaxErrorFactor(pllxerrfac);
         loader.setParallaxZeroPoint(pllxzeropoint);
         loader.setFileNumberCap(fileNumCap);
         loader.setMagCorrections(magCorrections);

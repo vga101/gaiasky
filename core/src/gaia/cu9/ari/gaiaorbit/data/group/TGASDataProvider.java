@@ -80,7 +80,7 @@ public class TGASDataProvider extends AbstractStarGroupDataProvider {
                     double dist = distpc * Constants.PC_TO_U;
 
                     // Keep only stars with relevant parallaxes
-                    if (dist >= 0 && pllx / pllxerr > parallaxOverError && pllxerr <= 1) {
+                    if (pllx >= 0 && pllxerr < pllx * parallaxErrorFactor && pllxerr <= 1) {
                         long sourceid = Parser.parseLong(tokens[0]);
 
                         /** INDEX **/

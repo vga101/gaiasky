@@ -31,12 +31,12 @@ public class TGASHYGDataProvider extends AbstractStarGroupDataProvider {
         tgas = new TGASDataProvider();
     }
 
-    @Override
-    public void setParallaxOverError(double parallaxOverError) {
-        super.setParallaxOverError(parallaxOverError);
+    public void setParallaxErrorFactor(double parallaxErrorFactor) {
+        super.setParallaxErrorFactor(parallaxErrorFactor);
         if (tgas != null)
-            tgas.setParallaxOverError(parallaxOverError);
+            tgas.setParallaxErrorFactor(parallaxErrorFactor);
     }
+
 
     @Override
     public Array<StarBean> loadData(String file) {
