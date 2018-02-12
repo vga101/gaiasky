@@ -39,6 +39,6 @@ void main() {
 
     v_col = vec4(a_color.rgb, a_color.a);
 
-    gl_Position = u_projModelView * vec4(pos, 0.0);
+    gl_Position = u_projModelView * vec4(pos, a_position.w);
     gl_PointSize = a_additional.x / distNorm;
 }

@@ -642,7 +642,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
             modelBatchOpaque.begin(camera.getCamera());
             for (IRenderable model : models) {
                 ModelBody mb = (ModelBody) model;
-                mb.render(modelBatchOpaque, 1, 0);
+                mb.renderOpaque(modelBatchOpaque, 1, 0);
             }
             modelBatchOpaque.end();
 
@@ -758,6 +758,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         // In stereo and cubemap modes, the glow pass is rendered in the SGR itself
         if (!GlobalConf.program.STEREOSCOPIC_MODE && !GlobalConf.program.CUBEMAP360_MODE)
             renderGlowPass(camera);
+
 
         sgr.render(this, camera, t, rw, rh, fb, ppb);
 

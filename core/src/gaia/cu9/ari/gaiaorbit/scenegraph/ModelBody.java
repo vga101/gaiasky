@@ -224,6 +224,14 @@ public abstract class ModelBody extends CelestialBody {
         modelBatch.render(mc.instance, mc.env);
     }
 
+    /** Model opaque rendering. Disable shadow mapping **/
+    public void renderOpaque(ModelBatch modelBatch, float alpha, double t) {
+        mc.touch();
+        mc.setTransparency(alpha * fadeOpacity);
+        mc.updateRelativisticEffects(GaiaSky.instance.getICamera());
+        modelBatch.render(mc.instance, mc.env);
+    }
+
     public boolean withinMagLimit() {
         return this.absmag <= GlobalConf.runtime.LIMIT_MAG_RUNTIME;
     }
