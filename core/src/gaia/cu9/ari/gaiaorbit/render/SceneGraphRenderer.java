@@ -762,6 +762,10 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
         sgr.render(this, camera, t, rw, rh, fb, ppb);
 
+        //        spriteBatch.begin();
+        //        spriteBatch.draw(glowTex, 0, 0, 1080, 720);
+        //        spriteBatch.end();
+
     }
 
     /**
