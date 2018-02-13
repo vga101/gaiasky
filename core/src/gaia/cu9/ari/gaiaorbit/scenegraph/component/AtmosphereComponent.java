@@ -34,6 +34,7 @@ public class AtmosphereComponent {
     public float m_fOuterRadius;
     public float m_fAtmosphereHeight;
     public float m_Kr, m_Km;
+    public boolean correctGround;
 
     // Model parameters
     public Map<String, Object> params;
@@ -51,13 +52,13 @@ public class AtmosphereComponent {
 
     public void doneLoading(Material planetMat, float planetSize) {
         this.planetSize = planetSize;
-        setUpAtmosphericScatteringMaterial(planetMat);
+        setUpAtmosphericScatteringMaterial(planetMat, correctGround ? true : false);
 
         Pair<Model, Map<String, Material>> pair = ModelCache.cache.getModel("sphere", params, Usage.Position | Usage.Normal);
         Model atmosphereModel = pair.getFirst();
         Material atmMat = pair.getSecond().get("base");
         atmMat.clear();
-        setUpAtmosphericScatteringMaterial(atmMat);
+        setUpAtmosphericScatteringMaterial(atmMat, false);
         atmMat.set(new BlendingAttribute(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA));
 
         // Relativistic effects
@@ -79,14 +80,14 @@ public class AtmosphereComponent {
      * @param mat
      *            The material to set up.
      */
-    public void setUpAtmosphericScatteringMaterial(Material mat) {
+    public void setUpAtmosphericScatteringMaterial(Material mat, boolean ground) {
         float camHeight = 1f;
         float m_Kr4PI = m_Kr * 4.0f * (float) Math.PI;
         float m_Km4PI = m_Km * 4.0f * (float) Math.PI;
         float m_ESun = 15.0f; // Sun brightness (almost) constant
         float m_g = -0.95f; // The Mie phase asymmetry factor
         m_fInnerRadius = planetSize / 2f;
-        m_fOuterRadius = this.size;
+        m_fOuterRadius = ground ? (float) (this.size + 150 * Constants.KM_TO_U) : this.size;
         m_fAtmosphereHeight = m_fOuterRadius - m_fInnerRadius;
         float m_fScaleDepth = .20f;
         float m_fScale = 1.0f / (m_fAtmosphereHeight);
@@ -238,6 +239,10 @@ public class AtmosphereComponent {
 
     public void setParams(Map<String, Object> params) {
         this.params = params;
+    }
+
+    public void setCorrectground(Boolean correctGround) {
+        this.correctGround = correctGround;
     }
 
 }
