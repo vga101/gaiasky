@@ -2,10 +2,13 @@ package gaia.cu9.ari.gaiaorbit.data;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.Queue;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.PriorityBlockingQueue;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.Array;
@@ -93,7 +96,8 @@ public abstract class StreamingOctreeLoader implements IObserver, ISceneGraphLoa
         // CPU ~ 136 byte/star
         maxLoadedStars = 6000000;
 
-        toLoadQueue = new ArrayBlockingQueue<OctreeNode>(LOAD_QUEUE_MAX_SIZE);
+        Comparator<OctreeNode> depthComparator = (OctreeNode o1, OctreeNode o2) -> Integer.compare(o1.depth, o2.depth);
+        toLoadQueue = new PriorityBlockingQueue<OctreeNode>(LOAD_QUEUE_MAX_SIZE, depthComparator);
         toUnloadQueue = new ArrayBlockingQueue<OctreeNode>(LOAD_QUEUE_MAX_SIZE);
 
         maxLoadedIds = 50;
@@ -191,6 +195,7 @@ public abstract class StreamingOctreeLoader implements IObserver, ISceneGraphLoa
                 instance.emptyLoadQueue();
                 instance.lastQueueClearMs = TimeUtils.millis();
             }
+            instance.abortCurrentLoading();
         }
     }
 
@@ -240,10 +245,11 @@ public abstract class StreamingOctreeLoader implements IObserver, ISceneGraphLoa
 
     public void addToQueue(OctreeNode octant) {
         // Add only if there is room
-        if (toLoadQueue.size() < LOAD_QUEUE_MAX_SIZE - 1) {
-            toLoadQueue.add(octant);
-            octant.setStatus(LoadStatus.QUEUED);
-        }
+        if (!loadingPaused)
+            if (toLoadQueue.size() < LOAD_QUEUE_MAX_SIZE - 1) {
+                toLoadQueue.add(octant);
+                octant.setStatus(LoadStatus.QUEUED);
+            }
     }
 
     /** Adds a list of octants to the queue to be loaded **/
@@ -251,11 +257,14 @@ public abstract class StreamingOctreeLoader implements IObserver, ISceneGraphLoa
         for (OctreeNode octant : octants) {
             addToQueue(octant);
         }
-
     }
 
     /** Puts it at the end of the toUnloadQueue **/
     public void touchOctant(OctreeNode octant) {
+        // Since higher levels are always observed, or 'touched',
+        // it follows naturally that lower levels will always be kept
+        // at the head of the queue, whereas higher level octants
+        // are always at the tail and are the last to be unloaded
         if (toUnloadQueue.contains(octant)) {
             toUnloadQueue.remove(octant);
         }
@@ -272,6 +281,14 @@ public abstract class StreamingOctreeLoader implements IObserver, ISceneGraphLoa
             EventManager.instance.post(Events.BACKGROUND_LOADING_INFO);
             daemon.interrupt();
         }
+    }
+
+    /**
+     * Tells the daemon to immediately stop the loading of 
+     * octants and wait for new data
+     */
+    public void abortCurrentLoading() {
+        daemon.abort();
     }
 
     /**
@@ -318,21 +335,30 @@ public abstract class StreamingOctreeLoader implements IObserver, ISceneGraphLoa
      *            The list holding the octants to load.
      * @param octreeWrapper
      *            The octree wrapper.
+     * @param abort
+     *            State variable that will be set to true if an abort is called.
      * @return The actual number of loaded octants
      * @throws IOException
      */
-    public int loadOctants(final Array<OctreeNode> octants, final AbstractOctreeWrapper octreeWrapper) throws IOException {
+    public int loadOctants(final Array<OctreeNode> octants, final AbstractOctreeWrapper octreeWrapper, final AtomicBoolean abort) throws IOException {
         int loaded = 0;
         if (octants.size > 0) {
             int i = 0;
             OctreeNode octant = octants.get(0);
-            while (i < octants.size) {
+            while (i < octants.size && !abort.get()) {
                 if (loadOctant(octant, octreeWrapper, true))
                     loaded++;
                 i += 1;
                 octant = octants.get(i);
             }
             flushLoadedIds();
+
+            if (abort.get()) {
+                // We aborted, roll back status of rest of octants
+                for (int j = i; j < octants.size; j++) {
+                    octants.get(j).setStatus(LoadStatus.NOT_LOADED);
+                }
+            }
         }
         return loaded;
     }
@@ -388,8 +414,9 @@ public abstract class StreamingOctreeLoader implements IObserver, ISceneGraphLoa
      *
      */
     protected static class DaemonLoader extends Thread {
-        public boolean awake;
-        public boolean running;
+        private boolean awake;
+        private boolean running;
+        private AtomicBoolean abort;
 
         private StreamingOctreeLoader loader;
         private AbstractOctreeWrapper octreeWrapper;
@@ -398,13 +425,24 @@ public abstract class StreamingOctreeLoader implements IObserver, ISceneGraphLoa
         public DaemonLoader(AbstractOctreeWrapper aow, StreamingOctreeLoader loader) {
             this.awake = false;
             this.running = true;
+            this.abort = new AtomicBoolean(false);
             this.loader = loader;
             this.octreeWrapper = aow;
             this.toLoad = new Array<OctreeNode>();
         }
 
-        public void stopExecution() {
+        /**
+         * Stops the daemon iterations when
+         */
+        public void stopDaemon() {
             running = false;
+        }
+
+        /**
+         * Aborts only the current iteration
+         */
+        public void abort() {
+            abort.set(true);
         }
 
         @Override
@@ -424,7 +462,7 @@ public abstract class StreamingOctreeLoader implements IObserver, ISceneGraphLoa
                     if (toLoad.size > 0) {
                         Logger.debug(I18n.bundle.format("notif.loadingoctants", toLoad.size));
                         try {
-                            int loaded = loader.loadOctants(toLoad, octreeWrapper);
+                            int loaded = loader.loadOctants(toLoad, octreeWrapper, abort);
 
                             Logger.debug(I18n.bundle.format("notif.loadingoctants.finished", loaded));
                         } catch (Exception e) {
@@ -461,6 +499,7 @@ public abstract class StreamingOctreeLoader implements IObserver, ISceneGraphLoa
                 /** ----------- SLEEP UNTIL INTERRUPTED ----------- **/
                 try {
                     awake = false;
+                    abort.set(false);
                     Thread.sleep(Long.MAX_VALUE - 8);
                 } catch (InterruptedException e) {
                     // New data!
@@ -475,15 +514,17 @@ public abstract class StreamingOctreeLoader implements IObserver, ISceneGraphLoa
         switch (event) {
         case PAUSE_BACKGROUND_LOADING:
             loadingPaused = true;
+            clearQueue();
             Logger.info(this.getClass().getSimpleName(), "Background data loading thread paused");
             break;
         case RESUME_BACKGROUND_LOADING:
             loadingPaused = false;
+            clearQueue();
             Logger.info(this.getClass().getSimpleName(), "Background data loading thread resumed");
             break;
         case DISPOSE:
             if (daemon != null) {
-                daemon.stopExecution();
+                daemon.stopDaemon();
             }
             break;
         default:
