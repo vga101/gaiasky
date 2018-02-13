@@ -337,10 +337,10 @@ public class GaiaSkyDesktop implements IObserver {
                 copyFile(internalFolderConfFile, userFolderConfFile, overwrite);
             } else {
                 // Running from code?
-                if (!new File("../android/assets/conf" + File.separator).exists()) {
-                    throw new IOException("File ../android/assets/conf does not exist!");
+                if (!new File("../assets/conf" + File.separator).exists()) {
+                    throw new IOException("File ../assets/conf does not exist!");
                 }
-                copyFile(new File("../android/assets/conf" + File.separator + "global.properties"), userFolderConfFile, overwrite);
+                copyFile(new File("../assets/conf" + File.separator + "global.properties"), userFolderConfFile, overwrite);
             }
         }
         String props = userFolderConfFile.getAbsolutePath();
