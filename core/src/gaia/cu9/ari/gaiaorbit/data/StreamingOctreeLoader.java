@@ -52,7 +52,7 @@ public abstract class StreamingOctreeLoader implements IObserver, ISceneGraphLoa
     /**
      * Maximum number of pages to send to load every batch
      **/
-    protected static final int MAX_LOAD_CHUNK = 50;
+    protected static final int MAX_LOAD_CHUNK = 5;
 
     public static StreamingOctreeLoader instance;
 
@@ -138,7 +138,7 @@ public abstract class StreamingOctreeLoader implements IObserver, ISceneGraphLoa
                 flushLoadQueue();
             }
 
-        }, 1000, 2000);
+        }, 1000, 1000);
 
         // Add octreeWrapper to result list and return
         Array<SceneGraphNode> result = new Array<SceneGraphNode>(1);
