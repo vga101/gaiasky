@@ -31,7 +31,7 @@ public class BinaryDataProvider extends AbstractStarGroupDataProvider {
         Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.datafile", file));
 
         FileHandle f = Gdx.files.internal(file);
-        loadData(f.read(), factor);
+        loadDataMapped(f.file(), factor);
         Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.nodeloader", list.size, file));
 
         return list;
