@@ -2,6 +2,7 @@ package gaia.cu9.ari.gaiaorbit.data.group;
 
 import java.io.DataInputStream;
 import java.io.EOFException;
+import java.io.File;
 import java.io.InputStream;
 import java.util.HashSet;
 import java.util.Set;
@@ -87,8 +88,7 @@ public class HYGDataProvider extends AbstractStarGroupDataProvider {
                         double starsize = Math.min((Math.pow(flux, 0.5f) * Constants.PC_TO_U * 0.16f), 1e9f) / 1.5;
 
                         Vector3d pos = Coordinates.sphericalToCartesian(Math.toRadians(ra), Math.toRadians(dec), dist, new Vector3d());
-                        Vector3d pm = Coordinates.sphericalToCartesian(Math.toRadians(ra + mualpha * AstroUtils.MILLARCSEC_TO_DEG), Math.toRadians(dec + mudelta * AstroUtils.MILLARCSEC_TO_DEG), dist
-                                + radvel * Constants.KM_TO_U * Constants.S_TO_Y, new Vector3d());
+                        Vector3d pm = Coordinates.sphericalToCartesian(Math.toRadians(ra + mualpha * AstroUtils.MILLARCSEC_TO_DEG), Math.toRadians(dec + mudelta * AstroUtils.MILLARCSEC_TO_DEG), dist + radvel * Constants.KM_TO_U * Constants.S_TO_Y, new Vector3d());
                         pm.sub(pos);
 
                         float[] rgb = ColourUtils.BVtoRGB(colorbv);
@@ -134,6 +134,12 @@ public class HYGDataProvider extends AbstractStarGroupDataProvider {
         }
 
         return list;
+    }
+
+    @Override
+    public Array<? extends ParticleBean> loadData(File file, double factor) {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }

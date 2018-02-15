@@ -2,9 +2,13 @@ package gaia.cu9.ari.gaiaorbit.data.group;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.RandomAccessFile;
+import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
@@ -125,6 +129,55 @@ public class BinaryDataProvider extends AbstractStarGroupDataProvider {
         StringBuilder name = new StringBuilder();
         for (int i = 0; i < nameLength; i++)
             name.append(in.readChar());
+
+        return new StarBean(data, id, name.toString());
+    }
+
+    @Override
+    public Array<? extends ParticleBean> loadData(File file, double factor) {
+        try {
+
+            FileChannel fc = new RandomAccessFile(file, "r").getChannel();
+
+            MappedByteBuffer mem = fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size());
+            Array<StarBean> data = null;
+            // Read size of stars
+            int size = mem.getInt();
+            data = new Array<StarBean>(size);
+            for (int i = 0; i < size; i++) {
+                data.add(readStarBean(mem));
+            }
+
+            fc.close();
+
+            return data;
+
+        } catch (Exception e) {
+            Logger.error(e);
+        }
+        return null;
+    }
+
+    public StarBean readStarBean(MappedByteBuffer mem) {
+        double data[] = new double[StarBean.SIZE];
+        // Double
+        for (int i = 0; i < StarBean.I_APPMAG; i++) {
+            data[i] = mem.getDouble();
+        }
+        // Float
+        for (int i = StarBean.I_APPMAG; i < StarBean.I_HIP; i++) {
+            data[i] = mem.getFloat();
+        }
+        // Int
+        for (int i = StarBean.I_HIP; i < StarBean.SIZE; i++) {
+            data[i] = mem.getInt();
+        }
+
+        Long id = mem.getLong();
+        int nameLength = mem.getInt();
+        StringBuilder name = new StringBuilder();
+        for (int i = 0; i < nameLength; i++)
+            name.append(mem.getChar());
 
         return new StarBean(data, id, name.toString());
     }

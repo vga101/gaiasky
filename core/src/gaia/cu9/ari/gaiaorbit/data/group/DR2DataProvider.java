@@ -1,6 +1,7 @@
 package gaia.cu9.ari.gaiaorbit.data.group;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -12,6 +13,7 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.utils.Array;
 
+import gaia.cu9.ari.gaiaorbit.scenegraph.ParticleGroup.ParticleBean;
 import gaia.cu9.ari.gaiaorbit.scenegraph.StarGroup.StarBean;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
@@ -329,6 +331,12 @@ public class DR2DataProvider extends AbstractStarGroupDataProvider {
             return Long.toString(value);
         }
 
+    }
+
+    @Override
+    public Array<? extends ParticleBean> loadData(File file, double factor) {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }

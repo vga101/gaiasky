@@ -1,5 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.data.group;
 
+import java.io.File;
 import java.io.InputStream;
 import java.util.HashSet;
 import java.util.Map;
@@ -36,7 +37,6 @@ public class TGASHYGDataProvider extends AbstractStarGroupDataProvider {
         if (tgas != null)
             tgas.setParallaxErrorFactor(parallaxErrorFactor);
     }
-
 
     @Override
     public Array<StarBean> loadData(String file) {
@@ -100,6 +100,12 @@ public class TGASHYGDataProvider extends AbstractStarGroupDataProvider {
     @Override
     public Array<? extends ParticleBean> loadData(InputStream is, double factor) {
         return loadData("", factor);
+    }
+
+    @Override
+    public Array<? extends ParticleBean> loadData(File file, double factor) {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }

@@ -3,9 +3,14 @@ package gaia.cu9.ari.gaiaorbit.data.octreegen;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.EOFException;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.RandomAccessFile;
+import java.nio.BufferUnderflowException;
+import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -114,6 +119,82 @@ public class MetadataBinaryIO {
             Logger.error(e);
         }
         return null;
+    }
+
+    public OctreeNode readMetadata(File file) {
+        return readMetadata(file, null);
+    }
+
+    public OctreeNode readMetadata(File file, LoadStatus status) {
+        nodesMap = new HashMap<Long, Pair<OctreeNode, long[]>>();
+
+        try {
+
+            FileChannel fc = new RandomAccessFile(file, "r").getChannel();
+
+            MappedByteBuffer mem = fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size());
+
+            OctreeNode root = null;
+            // Read size of stars
+            int size = mem.getInt();
+            int maxDepth = 0;
+
+            for (int idx = 0; idx < size; idx++) {
+                try {
+                    // name_length, name, appmag, absmag, colorbv, ra, dec, dist
+                    long pageId = mem.getInt();
+                    float x = mem.getFloat();
+                    float y = mem.getFloat();
+                    float z = mem.getFloat();
+                    float hsx = mem.getFloat() / 2f;
+                    //float hsy = mem.getFloat() / 2f;
+                    mem.position(mem.position() + 4); // skip hsy
+                    float hsy = hsx;
+                    //float hsz = mem.getFloat() / 2f;
+                    mem.position(mem.position() + 4); // skip hsz
+                    float hsz = hsx;
+                    long[] childrenIds = new long[8];
+                    for (int i = 0; i < 8; i++) {
+                        childrenIds[i] = mem.getInt();
+                    }
+                    int depth = mem.getInt();
+                    int nObjects = mem.getInt();
+                    int ownObjects = mem.getInt();
+                    int childrenCount = mem.getInt();
+
+                    maxDepth = Math.max(maxDepth, depth);
+
+                    OctreeNode node = new OctreeNode(pageId, x, y, z, hsx, hsy, hsz, childrenCount, nObjects, ownObjects, depth);
+                    nodesMap.put(pageId, new Pair<OctreeNode, long[]>(node, childrenIds));
+                    if (status != null)
+                        node.setStatus(status);
+
+                    if (depth == 0) {
+                        root = node;
+                    }
+
+                } catch (BufferUnderflowException bue) {
+                    Logger.error(bue);
+                }
+            }
+
+            OctreeNode.maxDepth = maxDepth;
+            // All data has arrived
+            if (root != null) {
+                root.resolveChildren(nodesMap);
+            } else {
+                Logger.error(new RuntimeException("No root node in visualization-metadata"));
+            }
+
+            fc.close();
+
+            return root;
+
+        } catch (Exception e) {
+            Logger.error(e);
+        }
+        return null;
+
     }
 
     /**

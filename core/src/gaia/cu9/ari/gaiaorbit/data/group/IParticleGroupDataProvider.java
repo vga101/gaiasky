@@ -1,5 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.data.group;
 
+import java.io.File;
 import java.io.InputStream;
 
 import com.badlogic.gdx.utils.Array;
@@ -21,6 +22,14 @@ public interface IParticleGroupDataProvider {
      * @return Array of particle beans
      */
     public Array<? extends ParticleBean> loadData(String file);
+
+    /**
+     * Loads the data applying a factor.
+     * @param file The file to load
+     * @param factor Factor to apply to the positions
+     * @return Array of particle beans
+     */
+    public Array<? extends ParticleBean> loadData(File file, double factor);
 
     /**
      * Loads the data applying a factor.
