@@ -1,0 +1,21 @@
+{
+	"name" : "DR2 (lod)",
+	"description" : "Gaia DR2 catalog (14% error) with levels of detail. 105M stars.",
+	"data" : [
+	
+	{
+		"loader": "gaia.cu9.ari.gaiaorbit.data.stars.SunLoader",
+		"files": [ "" ]
+	},
+	{
+		"loader": "gaia.cu9.ari.gaiaorbit.data.group.OctreeGroupLoader",
+		//"files": [ "data/octree/dr2/dr2int5/00-test-50000-25000/particles/", "data/octree/dr2/dr2int5/00-test-50000-25000/metadata.bin" ]
+		//"files": [ "data/octree/dr2/dr2int5/01-test-10000-1000/particles/", "data/octree/dr2/dr2int5/01-test-10000-1000/metadata.bin" ]
+		//"files": [ "data/octree/dr2/dr2int5/02-test-20000-10000/particles/", "data/octree/dr2/dr2int5/02-test-20000-10000/metadata.bin" ]
+		//"files": [ "data/octree/dr2/dr2int5/03-test-25000-5000/particles/", "data/octree/dr2/dr2int5/03-test-25000-5000/metadata.bin" ]
+		//"files": [ "data/octree/dr2/dr2int5/04-test-10000-1000/particles/", "data/octree/dr2/dr2int5/04-test-10000-1000/metadata.bin" ]
+		//"files": [ "data/octree/dr2/dr2int5/05-test-20000-2000/particles/", "data/octree/dr2/dr2int5/05-test-20000-2000/metadata.bin" ]
+		"files": [ "/media/tsagrista/Daten/Gaia/data/GDR2/dr2int5/out/16-full-25000-4000-0.14/particles/", "/media/tsagrista/Daten/Gaia/data/GDR2/dr2int5/out/16-full-25000-4000-0.14/metadata.bin" ]
+		
+	}
+]}
