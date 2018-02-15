@@ -83,7 +83,7 @@ public class SDSSDataProvider implements IParticleGroupDataProvider {
     }
 
     @Override
-    public Array<? extends ParticleBean> loadData(File file, double factor) {
+    public Array<? extends ParticleBean> loadDataMapped(File file, double factor) {
         // TODO Auto-generated method stub
         return null;
     }

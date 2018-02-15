@@ -134,7 +134,7 @@ public class BinaryDataProvider extends AbstractStarGroupDataProvider {
     }
 
     @Override
-    public Array<? extends ParticleBean> loadData(File file, double factor) {
+    public Array<? extends ParticleBean> loadDataMapped(File file, double factor) {
         try {
 
             FileChannel fc = new RandomAccessFile(file, "r").getChannel();
