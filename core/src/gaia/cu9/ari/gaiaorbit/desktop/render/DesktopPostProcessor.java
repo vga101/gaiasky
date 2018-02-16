@@ -274,12 +274,14 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
         switch (event) {
         case FOV_CHANGE_NOTIFICATION:
             float newfov = (Float) data[0];
-            for (int i = 0; i < RenderType.values().length; i++) {
-                if (pps[i] != null) {
-                    PostProcessBean ppb = pps[i];
-                    ppb.lglow.setNSamples(newfov > 65 ? 1 : lglowNSamples);
+            Gdx.app.postRunnable(() -> {
+                for (int i = 0; i < RenderType.values().length; i++) {
+                    if (pps[i] != null) {
+                        PostProcessBean ppb = pps[i];
+                        ppb.lglow.setNSamples(newfov > 65 ? 1 : lglowNSamples);
+                    }
                 }
-            }
+            });
             break;
         case SCREENSHOT_SIZE_UDPATE:
             if (pps != null && GlobalConf.screenshot.isRedrawMode()) {
