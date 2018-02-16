@@ -20,6 +20,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.StarGroup.StarBean;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
+import gaia.cu9.ari.gaiaorbit.util.SysUtilsFactory;
 import gaia.cu9.ari.gaiaorbit.util.color.ColourUtils;
 import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
 import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
@@ -103,15 +104,15 @@ public class DR2DataProvider extends AbstractStarGroupDataProvider {
             });
             int fn = 0;
             for (FileHandle fh : files) {
-                //loadDataMapped(fh.file(), factor, fn + 1);
-                loadFileFh(fh, factor, fn + 1);
+                loadDataMapped(SysUtilsFactory.getSysUtils().getTruePath(fh.path()), factor, fn + 1);
+                //loadFileFh(fh, factor, fn + 1);
                 fn++;
                 if (fileNumberCap > 0 && fn >= fileNumberCap)
                     break;
             }
         } else if (f.name().endsWith(".csv") || f.name().endsWith(".gz")) {
-            //loadDataMapped(f.file(), factor, 1);
-            loadFileFh(f, factor, 1);
+            loadDataMapped(SysUtilsFactory.getSysUtils().getTruePath(file), factor, 1);
+            //loadFileFh(f, factor, 1);
         } else {
             Logger.warn(this.getClass().getSimpleName(), "File skipped: " + f.path());
         }

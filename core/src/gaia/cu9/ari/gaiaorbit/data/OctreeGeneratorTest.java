@@ -48,6 +48,12 @@ import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
 
+/**
+ * @deprecated This generates an octree of particles. Use OctreeGroupGeneratorTest instead, to
+ * generate an octree of particle groups.
+ * @author tsagrista
+ *
+ */
 public class OctreeGeneratorTest implements IObserver {
 
     public static enum Operation {

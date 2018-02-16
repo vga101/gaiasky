@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.RandomAccessFile;
 import java.io.StringReader;
+import java.nio.CharBuffer;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
@@ -18,6 +19,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.ParticleGroup.ParticleBean;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
+import gaia.cu9.ari.gaiaorbit.util.SysUtilsFactory;
 import gaia.cu9.ari.gaiaorbit.util.parse.Parser;
 import gaia.cu9.ari.gaiaorbit.util.units.Position;
 import gaia.cu9.ari.gaiaorbit.util.units.Position.PositionType;
@@ -32,8 +34,8 @@ public class SDSSDataProvider implements IParticleGroupDataProvider {
         FileHandle f = Gdx.files.internal(file);
 
         @SuppressWarnings("unchecked")
-        Array<ParticleBean> pointData = (Array<ParticleBean>) loadData(f.read(), factor);
-        //Array<ParticleBean> pointData = (Array<ParticleBean>) loadDataMapped(path, factor);
+        //Array<ParticleBean> pointData = (Array<ParticleBean>) loadData(f.read(), factor);
+        Array<ParticleBean> pointData = (Array<ParticleBean>) loadDataMapped(SysUtilsFactory.getSysUtils().getTruePath(file), factor);
         if (pointData != null)
             Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.nodeloader", pointData.size, file));
 
@@ -99,11 +101,12 @@ public class SDSSDataProvider implements IParticleGroupDataProvider {
             FileChannel fc = new RandomAccessFile(file, "r").getChannel();
             MappedByteBuffer mem = fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size());
 
-            String filestr = new String(mem.array(), Charset.forName("UTF-8"));
-
-            BufferedReader br = new BufferedReader(new StringReader(filestr));
-            loadFromBufferedReader(br, pointData);
-            br.close();
+            if (mem != null) {
+                CharBuffer charBuffer = Charset.forName("UTF-8").decode(mem);
+                BufferedReader br = new BufferedReader(new StringReader(charBuffer.toString()));
+                loadFromBufferedReader(br, pointData);
+                br.close();
+            }
             fc.close();
         } catch (Exception e) {
             Logger.error(e, SDSSDataProvider.class.getName());
