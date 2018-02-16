@@ -53,6 +53,9 @@ OPTS="$OPTS -XX:+UseConcMarkSweepGC"
 #	OPTS="$OPTS -XstartOnFirstThread -Djava.awt.headless=true"
 #fi
 
+# Assets location
+OPTS="$OPTS -Dassets.location=$GSDIR/"
+
 #
 # Run.
 #
