@@ -1,6 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.data.group;
 
-import java.io.File;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.util.List;
@@ -57,7 +56,7 @@ public class SerializedDataProvider extends AbstractStarGroupDataProvider {
     }
 
     @Override
-    public Array<? extends ParticleBean> loadDataMapped(File file, double factor) {
+    public Array<? extends ParticleBean> loadDataMapped(String file, double factor) {
         // TODO Auto-generated method stub
         return null;
     }

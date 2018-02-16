@@ -52,7 +52,7 @@ public class OctreeGroupLoader extends StreamingOctreeLoader {
         Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.loading", metadata));
 
         MetadataBinaryIO metadataReader = new MetadataBinaryIO();
-        OctreeNode root = metadataReader.readMetadata(Gdx.files.internal(metadata).file());
+        OctreeNode root = metadataReader.readMetadataMapped(metadata);
 
         Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.nodeloader", root.numNodes(), metadata));
         Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.loading", particles));
@@ -84,7 +84,7 @@ public class OctreeGroupLoader extends StreamingOctreeLoader {
             return false;
         }
         @SuppressWarnings("unchecked")
-        Array<StarBean> data = (Array<StarBean>) particleReader.loadDataMapped(octantFile.file(), 1.0);
+        Array<StarBean> data = (Array<StarBean>) particleReader.loadDataMapped(octantFile.path(), 1.0);
         StarGroup sg = new StarGroup();
         sg.setName("stargroup-" + sg.id);
         sg.setFadeout(new double[] { 21e2, .5e5 });

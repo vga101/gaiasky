@@ -1,6 +1,6 @@
 { 
-	"name" : "TGAS (lod)",
-	"description" : "Gaia DR1 TGAS catalog with levels of detail and on-demand loading. About 600K stars.",
+	"name" : "TGAS - 12.5%",
+	"description" : "Gaia DR1 TGAS catalog (12.5% error). About 700K stars.",
 	"data" : [
 
 	{

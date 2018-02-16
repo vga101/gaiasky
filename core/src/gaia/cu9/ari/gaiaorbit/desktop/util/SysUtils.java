@@ -92,15 +92,6 @@ public class SysUtils implements ISysUtils {
         return System.getProperty("os.version");
     }
 
-    public static void main(String[] args) {
-        SysUtils su = new SysUtils();
-        System.out.println(OS);
-        System.out.println("Unity: " + su.checkUnity());
-        System.out.println("KDE: " + su.checkKDE());
-        System.out.println("Gnome: " + su.checkGnome());
-        System.out.println("Xfce: " + su.checkXfce());
-        System.out.println("Budgie: " + su.checkBudgie());
-    }
 
     public String getAssetsLocation() {
         return System.getProperty("assets.location") != null ? System.getProperty("assets.location") : "";
@@ -177,6 +168,16 @@ public class SysUtils implements ISysUtils {
      */
     public File getDefaultMappingsDir() {
         return new File(System.getProperty("user.home") + File.separator + GAIASKY_DIR_NAME + File.separator + MAPPINGS_DIR_NAME + File.separator);
+    }
+
+    public static void main(String[] args) {
+        SysUtils su = new SysUtils();
+        System.out.println(OS);
+        System.out.println("Unity: " + su.checkUnity());
+        System.out.println("KDE: " + su.checkKDE());
+        System.out.println("Gnome: " + su.checkGnome());
+        System.out.println("Xfce: " + su.checkXfce());
+        System.out.println("Budgie: " + su.checkBudgie());
     }
 
 }

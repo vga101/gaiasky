@@ -1,7 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.data.group;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
@@ -81,7 +80,7 @@ public class UncertaintiesProvider implements IParticleGroupDataProvider {
     }
 
     @Override
-    public Array<? extends ParticleBean> loadDataMapped(File file, double factor) {
+    public Array<? extends ParticleBean> loadDataMapped(String file, double factor) {
         // TODO Auto-generated method stub
         return null;
     }

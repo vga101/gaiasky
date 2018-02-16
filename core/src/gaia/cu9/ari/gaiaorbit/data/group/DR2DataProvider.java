@@ -1,10 +1,12 @@
 package gaia.cu9.ari.gaiaorbit.data.group;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.RandomAccessFile;
+import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel;
 import java.util.Arrays;
 import java.util.zip.GZIPInputStream;
 
@@ -21,6 +23,7 @@ import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.color.ColourUtils;
 import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
 import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
+import gaia.cu9.ari.gaiaorbit.util.io.ByteBufferInputStream;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.parse.Parser;
@@ -100,12 +103,14 @@ public class DR2DataProvider extends AbstractStarGroupDataProvider {
             });
             int fn = 0;
             for (FileHandle fh : files) {
+                //loadDataMapped(fh.file(), factor, fn + 1);
                 loadFileFh(fh, factor, fn + 1);
                 fn++;
                 if (fileNumberCap > 0 && fn >= fileNumberCap)
                     break;
             }
         } else if (f.name().endsWith(".csv") || f.name().endsWith(".gz")) {
+            //loadDataMapped(f.file(), factor, 1);
             loadFileFh(f, factor, 1);
         } else {
             Logger.warn(this.getClass().getSimpleName(), "File skipped: " + f.path());
@@ -334,9 +339,47 @@ public class DR2DataProvider extends AbstractStarGroupDataProvider {
     }
 
     @Override
-    public Array<? extends ParticleBean> loadDataMapped(File file, double factor) {
-        // TODO Auto-generated method stub
+    public Array<? extends ParticleBean> loadDataMapped(String file, double factor) {
+        return loadDataMapped(file, factor, 0);
+    }
+
+    /**
+     * Uses memory mapped files to load catalog files.
+     * This is not working right now
+     * @param file
+     * @param factor
+     * @param fileNumber
+     * @return
+     */
+    public Array<? extends ParticleBean> loadDataMapped(String file, double factor, int fileNumber) {
+        //Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.datafile", fh.path()));
+        boolean gz = file.endsWith(".gz");
+
+        try {
+            FileChannel fc = new RandomAccessFile(file, "r").getChannel();
+            MappedByteBuffer mem = fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size());
+            InputStream data = new ByteBufferInputStream(mem);
+
+            if (gz) {
+                try {
+                    data = new GZIPInputStream(data);
+                } catch (IOException e) {
+                    Logger.error(e);
+                }
+            }
+            LongWrap addedStars = new LongWrap(0l);
+            LongWrap discardedStars = new LongWrap(0l);
+            loadFileIs(data, factor, addedStars, discardedStars);
+            Logger.info(this.getClass().getSimpleName(), fileNumber + " - " + file + " --> " + addedStars.value + "/" + (addedStars.value + discardedStars.value) + " stars (" + (100 * addedStars.value / (addedStars.value + discardedStars.value)) + "%)");
+
+            fc.close();
+
+            return list;
+        } catch (Exception e) {
+            Logger.error(e);
+        }
         return null;
     }
+
 
 }

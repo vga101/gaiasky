@@ -10,14 +10,13 @@ import java.io.RandomAccessFile;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Array;
 
 import gaia.cu9.ari.gaiaorbit.scenegraph.ParticleGroup.ParticleBean;
 import gaia.cu9.ari.gaiaorbit.scenegraph.StarGroup.StarBean;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
+import gaia.cu9.ari.gaiaorbit.util.SysUtilsFactory;
 
 public class BinaryDataProvider extends AbstractStarGroupDataProvider {
 
@@ -30,8 +29,9 @@ public class BinaryDataProvider extends AbstractStarGroupDataProvider {
     public Array<? extends ParticleBean> loadData(String file, double factor) {
         Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.datafile", file));
 
-        FileHandle f = Gdx.files.internal(file);
-        loadDataMapped(f.file(), factor);
+        // Prepend assets location if necessary
+        String path = (new File(file)).isAbsolute() ? file : SysUtilsFactory.getSysUtils().getAssetsLocation() + File.separator + file;
+        loadDataMapped(path, factor);
         Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.nodeloader", list.size, file));
 
         return list;
@@ -134,10 +134,10 @@ public class BinaryDataProvider extends AbstractStarGroupDataProvider {
     }
 
     @Override
-    public Array<? extends ParticleBean> loadDataMapped(File file, double factor) {
+    public Array<? extends ParticleBean> loadDataMapped(String file, double factor) {
         try {
-
-            FileChannel fc = new RandomAccessFile(file, "r").getChannel();
+            String path = (new File(file)).isAbsolute() ? file : SysUtilsFactory.getSysUtils().getAssetsLocation() + File.separator + file;
+            FileChannel fc = new RandomAccessFile(path, "r").getChannel();
 
             MappedByteBuffer mem = fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size());
             Array<StarBean> data = null;

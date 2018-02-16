@@ -18,24 +18,27 @@ import java.util.Map;
 
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.Pair;
+import gaia.cu9.ari.gaiaorbit.util.SysUtilsFactory;
 import gaia.cu9.ari.gaiaorbit.util.tree.LoadStatus;
 import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
 
 /**
  * Writes and reats the metadata to/from binary. The format is as follows:
  * 
- * - 32 bits (int) with the number of nodes, nNodes repeat the following nNodes
- * times (for each node) - 64 bits (long) - pageId - The page id - 64 bits
- * (double) - centreX - The x component of the centre - 64 bits (double) -
- * centreY - The y component of the centre - 64 bits (double) - centreZ - The z
- * component of the centre - 64 bits (double) - sx - The size in x - 64 bits
- * (double) - sy - The size in y - 64 bits (double) - sz - The size in z - 64
- * bits * 8 (long) - childrenIds - 8 longs with the ids of the children. If no
- * child in the given position, the id is negative. - 32 bits (int) - depth -
- * The depth of the node - 32 bits (int) - nObjects - The number of objects of
- * this node and its descendants - 32 bits (int) - ownObjects - The number of
- * objects of this node - 32 bits (int) - childCount - The number of children
- * nodes
+ * - 32 bits (int) with the number of nodes, nNodes repeat the following nNodes times (for each node)
+ * - 64 bits (long)
+ * - pageId - The page id
+ * - 64 bits (double) - centreX - The x component of the centre
+ * - 64 bits (double) - centreY - The y component of the centre
+ * - 64 bits (double) - centreZ - The z component of the centre
+ * - 64 bits (double) - sx - The size in x
+ * - 64 bits (double) - sy - The size in y
+ * - 64 bits (double) - sz - The size in z
+ * - 64 bits * 8 (long) - childrenIds - 8 longs with the ids of the children. If no child in the given position, the id is negative.
+ * - 32 bits (int) - depth - The depth of the node
+ * - 32 bits (int) - nObjects - The number of objects of this node and its descendants
+ * - 32 bits (int) - ownObjects - The number of objects of this node
+ * - 32 bits (int) - childCount - The number of children nodes
  * 
  * @author Toni Sagrista
  *
@@ -121,16 +124,17 @@ public class MetadataBinaryIO {
         return null;
     }
 
-    public OctreeNode readMetadata(File file) {
-        return readMetadata(file, null);
+    public OctreeNode readMetadataMapped(String file) {
+        return readMetadataMapped(file, null);
     }
 
-    public OctreeNode readMetadata(File file, LoadStatus status) {
+    public OctreeNode readMetadataMapped(String file, LoadStatus status) {
         nodesMap = new HashMap<Long, Pair<OctreeNode, long[]>>();
 
         try {
-
-            FileChannel fc = new RandomAccessFile(file, "r").getChannel();
+            // Prepend assets location if necessary
+            String path = (new File(file)).isAbsolute() ? file : SysUtilsFactory.getSysUtils().getAssetsLocation() + File.separator + file;
+            FileChannel fc = new RandomAccessFile(path, "r").getChannel();
 
             MappedByteBuffer mem = fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size());
 
