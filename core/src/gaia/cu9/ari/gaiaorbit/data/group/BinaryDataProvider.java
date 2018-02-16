@@ -2,7 +2,6 @@ package gaia.cu9.ari.gaiaorbit.data.group;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -18,6 +17,12 @@ import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.SysUtilsFactory;
 
+/**
+ * Reads arrays of star beans from binary files, usually to go in
+ * an octree.
+ * @author tsagrista
+ *
+ */
 public class BinaryDataProvider extends AbstractStarGroupDataProvider {
 
     @Override
@@ -28,10 +33,7 @@ public class BinaryDataProvider extends AbstractStarGroupDataProvider {
     @Override
     public Array<? extends ParticleBean> loadData(String file, double factor) {
         Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.datafile", file));
-
-        // Prepend assets location if necessary
-        String path = (new File(file)).isAbsolute() ? file : SysUtilsFactory.getSysUtils().getAssetsLocation() + File.separator + file;
-        loadDataMapped(path, factor);
+        loadDataMapped(SysUtilsFactory.getSysUtils().getTruePath(file), factor);
         Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.nodeloader", list.size, file));
 
         return list;
@@ -133,24 +135,21 @@ public class BinaryDataProvider extends AbstractStarGroupDataProvider {
         return new StarBean(data, id, name.toString());
     }
 
-    @Override
     public Array<? extends ParticleBean> loadDataMapped(String file, double factor) {
         try {
-            String path = (new File(file)).isAbsolute() ? file : SysUtilsFactory.getSysUtils().getAssetsLocation() + File.separator + file;
-            FileChannel fc = new RandomAccessFile(path, "r").getChannel();
+            FileChannel fc = new RandomAccessFile(SysUtilsFactory.getSysUtils().getTruePath(file), "r").getChannel();
 
             MappedByteBuffer mem = fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size());
-            Array<StarBean> data = null;
             // Read size of stars
             int size = mem.getInt();
-            data = new Array<StarBean>(size);
+            list = new Array<StarBean>(size);
             for (int i = 0; i < size; i++) {
-                data.add(readStarBean(mem));
+                list.add(readStarBean(mem));
             }
 
             fc.close();
 
-            return data;
+            return list;
 
         } catch (Exception e) {
             Logger.error(e);

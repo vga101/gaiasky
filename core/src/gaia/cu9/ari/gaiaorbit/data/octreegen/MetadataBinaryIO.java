@@ -3,7 +3,6 @@ package gaia.cu9.ari.gaiaorbit.data.octreegen;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.EOFException;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -23,7 +22,7 @@ import gaia.cu9.ari.gaiaorbit.util.tree.LoadStatus;
 import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
 
 /**
- * Writes and reats the metadata to/from binary. The format is as follows:
+ * Writes and reads the metadata to/from binary. The format is as follows:
  * 
  * - 32 bits (int) with the number of nodes, nNodes repeat the following nNodes times (for each node)
  * - 64 bits (long)
@@ -132,9 +131,7 @@ public class MetadataBinaryIO {
         nodesMap = new HashMap<Long, Pair<OctreeNode, long[]>>();
 
         try {
-            // Prepend assets location if necessary
-            String path = (new File(file)).isAbsolute() ? file : SysUtilsFactory.getSysUtils().getAssetsLocation() + File.separator + file;
-            FileChannel fc = new RandomAccessFile(path, "r").getChannel();
+            FileChannel fc = new RandomAccessFile(SysUtilsFactory.getSysUtils().getTruePath(file), "r").getChannel();
 
             MappedByteBuffer mem = fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size());
 

@@ -167,7 +167,7 @@ public class OctreeGroupGeneratorTest implements IObserver {
             // Add notification watch
             EventManager.instance.subscribe(this, Events.POST_NOTIFICATION, Events.JAVA_EXCEPTION);
 
-            OctreeNode octree = generateOctree();
+            generateOctree();
 
             // Save arguments and structure
             StringBuffer argstr = new StringBuffer();
