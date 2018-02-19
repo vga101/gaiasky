@@ -197,9 +197,9 @@ public class Constants {
     public static final float STEP_STAR_POINT_SIZE = 0.5f;
 
     /** Minimum spacecraft responsiveness **/
-    public static final float MIN_SC_RESPONSIVENESS = 1e6f;
+    public static final float MIN_SC_RESPONSIVENESS = .5e6f;
     /** Maximum spacecraft responsiveness **/
-    public static final float MAX_SC_RESPONSIVENESS = 2e7f;
+    public static final float MAX_SC_RESPONSIVENESS = .5e7f;
 
     /** Minimum star minimum opacity **/
     public static final float MIN_STAR_MIN_OPACITY = 0.0f;

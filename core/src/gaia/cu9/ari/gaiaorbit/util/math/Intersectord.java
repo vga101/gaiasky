@@ -5,6 +5,8 @@ import com.badlogic.gdx.utils.Array;
 
 public class Intersectord {
 
+    private static Vector3d auxd1 = new Vector3d(), auxd2 = new Vector3d(), auxd3 = new Vector3d();
+
     /**
      * Quick check whether the given {@link Ray} and {@link BoundingBoxd}
      * intersect.
@@ -75,7 +77,7 @@ public class Intersectord {
         return D >= 0;
     }
 
-    public static Array<Vector3d> intersectRaySphere(Vector3d linePoint0, Vector3d linePoint1, Vector3d sphereCenter, double sphereRadius) {
+    public synchronized static Array<Vector3d> intersectRaySphere(Vector3d linePoint0, Vector3d linePoint1, Vector3d sphereCenter, double sphereRadius) {
         // http://www.codeproject.com/Articles/19799/Simple-Ray-Tracing-in-C-Part-II-Triangles-Intersec
 
         double cx = sphereCenter.x;
@@ -105,14 +107,14 @@ public class Intersectord {
 
         double t1 = (-B - Math.sqrt(D)) / (2.0 * A);
 
-        Vector3d solution1 = new Vector3d(linePoint0.x * (1 - t1) + t1 * linePoint1.x, linePoint0.y * (1 - t1) + t1 * linePoint1.y, linePoint0.z * (1 - t1) + t1 * linePoint1.z);
+        Vector3d solution1 = auxd1.set(linePoint0.x * (1 - t1) + t1 * linePoint1.x, linePoint0.y * (1 - t1) + t1 * linePoint1.y, linePoint0.z * (1 - t1) + t1 * linePoint1.z);
         if (D == 0) {
             result.add(solution1);
             return result;
         }
 
         double t2 = (-B + Math.sqrt(D)) / (2.0 * A);
-        Vector3d solution2 = new Vector3d(linePoint0.x * (1 - t2) + t2 * linePoint1.x, linePoint0.y * (1 - t2) + t2 * linePoint1.y, linePoint0.z * (1 - t2) + t2 * linePoint1.z);
+        Vector3d solution2 = auxd2.set(linePoint0.x * (1 - t2) + t2 * linePoint1.x, linePoint0.y * (1 - t2) + t2 * linePoint1.y, linePoint0.z * (1 - t2) + t2 * linePoint1.z);
 
         // prefer a solution that's on the line segment itself
 
@@ -128,9 +130,25 @@ public class Intersectord {
     }
 
     public static boolean checkIntersectSegmentSphere(Vector3d linePoint0, Vector3d linePoint1, Vector3d sphereCenter, double sphereRadius) {
-        return intersectSegmentSphere(linePoint0, linePoint1, sphereCenter, sphereRadius).size > 0;
+        Array<Vector3d> solutions = intersectRaySphere(linePoint0, linePoint1, sphereCenter, sphereRadius);
+        // Test each point
+        int n = solutions.size;
+        for (int i = 0; i < n; i++) {
+            if (isBetween(linePoint0, linePoint1, solutions.get(i))) {
+                return true;
+            }
+        }
+        return false;
     }
 
+    /**
+     * TODO: Not working well due to aux vectors
+     * @param linePoint0
+     * @param linePoint1
+     * @param sphereCenter
+     * @param sphereRadius
+     * @return
+     */
     public static Array<Vector3d> intersectSegmentSphere(Vector3d linePoint0, Vector3d linePoint1, Vector3d sphereCenter, double sphereRadius) {
         Array<Vector3d> solutions = intersectRaySphere(linePoint0, linePoint1, sphereCenter, sphereRadius);
         int n = solutions.size;
@@ -188,9 +206,9 @@ public class Intersectord {
      *            Point to test
      * @return The minimum distance between the line and the point
      */
-    public static double distanceLinePoint(Vector3d x1, Vector3d x2, Vector3d x0) {
-        Vector3d crs = new Vector3d();
-        Vector3d aux1 = new Vector3d(x0).sub(x2);
+    public synchronized static double distanceLinePoint(Vector3d x1, Vector3d x2, Vector3d x0) {
+        Vector3d crs = auxd1;
+        Vector3d aux1 = auxd2.set(x0).sub(x2);
         double nominador = crs.set(x0).sub(x1).crs(aux1).len();
         double denominador = aux1.set(x2).sub(x1).len();
         return nominador / denominador;
@@ -207,16 +225,16 @@ public class Intersectord {
      *            end of line segment
      * @return distance from v to line segment [a,b]
      */
-    public static double distanceSegmentPoint(final Vector3d a, final Vector3d b, final Vector3d v) {
-        final Vector3d ab = new Vector3d(b).sub(a);
+    public synchronized static double distanceSegmentPoint(final Vector3d a, final Vector3d b, final Vector3d v) {
+        final Vector3d ab = auxd1.set(b).sub(a);
         double ablen = ab.len();
-        final Vector3d av = new Vector3d(v).sub(a);
+        final Vector3d av = auxd2.set(v).sub(a);
         double avlen = av.len();
 
         if (av.dot(ab) <= 0.0) // Point is lagging behind start of the segment, so perpendicular distance is not viable.
             return avlen; // Use distance to start of segment instead.
 
-        final Vector3d bv = new Vector3d(v).sub(b);
+        final Vector3d bv = auxd3.set(v).sub(b);
         double bvlen = bv.len();
 
         if (bv.dot(ab) >= 0.0) // Point is advanced past the end of the segment, so perpendicular distance is not viable.

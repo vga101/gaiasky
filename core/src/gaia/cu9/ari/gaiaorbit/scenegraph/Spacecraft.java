@@ -21,6 +21,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
 import gaia.cu9.ari.gaiaorbit.util.ComponentTypes;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
+import gaia.cu9.ari.gaiaorbit.util.Pair;
 import gaia.cu9.ari.gaiaorbit.util.math.Intersectord;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
@@ -58,6 +59,8 @@ public class Spacecraft extends GenericSpacecraft implements ILineRenderable, IO
     /** Direction and up vectors **/
     public Vector3d direction, up;
 
+    public Pair<Vector3d, Vector3d> dirup;
+
     /** Float counterparts **/
     public Vector3 posf, directionf, upf;
 
@@ -68,7 +71,7 @@ public class Spacecraft extends GenericSpacecraft implements ILineRenderable, IO
     public double mass;
 
     /** Factor hack **/
-    public double factor = 10d;
+    public double sizeFactor = 10d;
 
     /** Only the rotation matrix **/
     public Matrix4 rotationMatrix;
@@ -116,6 +119,7 @@ public class Spacecraft extends GenericSpacecraft implements ILineRenderable, IO
         // orientation
         direction = new Vector3d(1, 0, 0);
         up = new Vector3d(0, 1, 0);
+        dirup = new Pair<Vector3d, Vector3d>(direction, up);
 
         posf = new Vector3();
         directionf = new Vector3(1, 0, 0);
@@ -190,7 +194,7 @@ public class Spacecraft extends GenericSpacecraft implements ILineRenderable, IO
         // Local transform
         try {
             localTransform.idt().setToLookAt(posf, directionf.add(posf), upf).inv();
-            float sizeFac = (float) (factor * size);
+            float sizeFac = (float) (sizeFactor * size);
             localTransform.scale(sizeFac, sizeFac, sizeFac);
 
             // Rotation for attitude indicator
@@ -216,7 +220,6 @@ public class Spacecraft extends GenericSpacecraft implements ILineRenderable, IO
 
         double friction = (GlobalConf.spacecraft.SC_HANDLING_FRICTION * 2e16) * dt;
         force.add(aux3d1.get().set(vel).scl(-friction));
-
 
         if (stopping) {
             double speed = vel.len();
@@ -279,6 +282,50 @@ public class Spacecraft extends GenericSpacecraft implements ILineRenderable, IO
         return pos;
     }
 
+    public double computeDirectionUp(double dt, Pair<Vector3d, Vector3d> pair) {
+        // Yaw, pitch and roll
+        yawf = yawp * GlobalConf.spacecraft.SC_RESPONSIVENESS;
+        pitchf = pitchp * GlobalConf.spacecraft.SC_RESPONSIVENESS;
+        rollf = rollp * GlobalConf.spacecraft.SC_RESPONSIVENESS;
+
+        // Friction
+        double friction = (GlobalConf.spacecraft.SC_HANDLING_FRICTION * 2e7) * dt;
+        yawf -= yawv * friction;
+        pitchf -= pitchv * friction;
+        rollf -= rollv * friction;
+
+        // accel
+        yawa = yawf / mass;
+        pitcha = pitchf / mass;
+        rolla = rollf / mass;
+
+        // vel
+        yawv += yawa * dt;
+        pitchv += pitcha * dt;
+        rollv += rolla * dt;
+
+        // pos
+        double yawdiff = yawv * dt;
+        double pitchdiff = pitchv * dt;
+        double rolldiff = rollv * dt;
+
+        Vector3d direction = pair.getFirst();
+        Vector3d up = pair.getSecond();
+
+        // apply yaw
+        direction.rotate(up, yawdiff);
+
+        // apply pitch
+        Vector3d aux1 = aux3d1.get().set(direction).crs(up);
+        direction.rotate(aux1, pitchdiff);
+        up.rotate(aux1, pitchdiff);
+
+        // apply roll
+        up.rotate(direction, -rolldiff);
+
+        return rolldiff;
+    }
+
     @Override
     public void updateLocalValues(ITimeFrameProvider time, ICamera camera) {
         if (yawv != 0 || pitchv != 0 || rollv != 0 || vel.len2() != 0 || render) {
@@ -293,7 +340,7 @@ public class Spacecraft extends GenericSpacecraft implements ILineRenderable, IO
              * SCALING FACTOR - counteracts double precision problems at very
              * large distances
              **/
-            factor = MathUtilsd.lint(pos.len(), 100 * Constants.AU_TO_U, 5000 * Constants.PC_TO_U, 10, 10000);
+            sizeFactor = MathUtilsd.lint(pos.len(), 100 * Constants.AU_TO_U, 5000 * Constants.PC_TO_U, 10, 10000);
 
             if (leveling) {
                 // No velocity, we just stop Euler angle motions
@@ -318,42 +365,7 @@ public class Spacecraft extends GenericSpacecraft implements ILineRenderable, IO
                 }
             }
 
-            // Yaw, pitch and roll
-            yawf = yawp * GlobalConf.spacecraft.SC_RESPONSIVENESS;
-            pitchf = pitchp * GlobalConf.spacecraft.SC_RESPONSIVENESS;
-            rollf = rollp * GlobalConf.spacecraft.SC_RESPONSIVENESS;
-
-            // Friction
-            double friction = (GlobalConf.spacecraft.SC_HANDLING_FRICTION * 2e7) * dt;
-            yawf -= yawv * friction;
-            pitchf -= pitchv * friction;
-            rollf -= rollv * friction;
-
-            // accel
-            yawa = yawf / mass;
-            pitcha = pitchf / mass;
-            rolla = rollf / mass;
-
-            // vel
-            yawv += yawa * dt;
-            pitchv += pitcha * dt;
-            rollv += rolla * dt;
-
-            // pos
-            double yawdiff = yawv * dt;
-            double pitchdiff = pitchv * dt;
-            double rolldiff = rollv * dt;
-
-            // apply yaw
-            direction.rotate(up, yawdiff);
-
-            // apply pitch
-            Vector3d aux1 = aux3d1.get().set(direction).crs(up);
-            direction.rotate(aux1, pitchdiff);
-            up.rotate(aux1, pitchdiff);
-
-            // apply roll
-            up.rotate(direction, -rolldiff);
+            double rolldiff = computeDirectionUp(dt, dirup);
 
             double len = direction.len();
             pitch = Math.asin(direction.y / len);
@@ -505,12 +517,12 @@ public class Spacecraft extends GenericSpacecraft implements ILineRenderable, IO
 
     @Override
     public double getRadius() {
-        return super.getRadius() * factor;
+        return super.getRadius() * sizeFactor;
     }
 
     @Override
     public double getSize() {
-        return super.getSize() * factor;
+        return super.getSize() * sizeFactor;
     }
 
     public void setMass(Double mass) {
@@ -542,7 +554,6 @@ public class Spacecraft extends GenericSpacecraft implements ILineRenderable, IO
     public void dispose() {
         super.dispose();
     }
-    
 
     /** Model rendering. Spacecraft in spacecraft mode is not affected by the relativistic aberration **/
     @Override
@@ -577,12 +588,12 @@ public class Spacecraft extends GenericSpacecraft implements ILineRenderable, IO
     public void render(LineRenderSystem renderer, ICamera camera, float alpha) {
         // Direction
         Vector3d d = aux3d1.get().set(direction);
-        d.nor().scl(.5e-4 * factor);
+        d.nor().scl(.5e-4 * sizeFactor);
         renderer.addLine(posf.x, posf.y, posf.z, posf.x + d.x, posf.y + d.y, posf.z + d.z, 1, 0, 0, 1);
 
         // Up
         Vector3d u = aux3d1.get().set(up);
-        u.nor().scl(.2e-4 * factor);
+        u.nor().scl(.2e-4 * sizeFactor);
         renderer.addLine(posf.x, posf.y, posf.z, posf.x + u.x, posf.y + u.y, posf.z + u.z, 0, 0, 1, 1);
 
     }
@@ -604,7 +615,7 @@ public class Spacecraft extends GenericSpacecraft implements ILineRenderable, IO
         copy.thrust.set(this.thrust);
 
         copy.mass = this.mass;
-        copy.factor = this.factor;
+        copy.sizeFactor = this.sizeFactor;
 
         copy.rotationMatrix.set(this.rotationMatrix);
 
