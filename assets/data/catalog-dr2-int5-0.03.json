@@ -1,6 +1,6 @@
 {
-	"name" : "DR2 - 3%",
-	"description" : "Gaia DR2 catalog (3% error). 15M stars.",
+	"name" : "DR2 int5 - 3%",
+	"description" : "Gaia DR2 int5 (3% error). 15M stars.",
 	"data" : [
 	
 	{
