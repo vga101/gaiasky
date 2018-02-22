@@ -1,7 +1,3 @@
-#ifdef GL_ES
-precision mediump float;
-precision mediump int;
-#endif
 
 <INCLUDE shader/lib_math.glsl>
 <INCLUDE shader/lib_geometry.glsl>
@@ -39,7 +35,6 @@ uniform vec3 u_fovcam_dir;
 
 // VARYINGS
 varying vec4 v_col;
-varying float v_discard;
 
 #define len0 170000.0
 #define len1 len0 * 100.0
@@ -64,11 +59,10 @@ void main() {
         observed = in_view(pos, u_fovcam_dir, dist, u_fovcam_angleedge);
     }
     
-    // Discard vertex if too close or Gaia Fov1or2 and not observed    
+    // Discard vertex if too close or Gaia Fov1or2 and not observed
+    float v_discard = 1.0;
     if(dist < len0 || observed < 0.0) {
-        v_discard = 1.0;
-    } else {
-        v_discard = -1.0;
+        v_discard = 0.0;
     }
     
     float viewAngleApparent = atan((a_size * u_alphaSizeFovBr.w) / dist) / u_alphaSizeFovBr.z;
@@ -77,6 +71,6 @@ void main() {
     float fadeout = smoothstep(dist, len0, len1);
     v_col = vec4(a_color.rgb, opacity * u_alphaSizeFovBr.x * fadeout);
 
-    gl_Position = u_projModelView * vec4(pos, 0.0);
+    gl_Position = u_projModelView * vec4(pos, 0.0) * v_discard;
     gl_PointSize = u_alphaSizeFovBr.y;
 }
