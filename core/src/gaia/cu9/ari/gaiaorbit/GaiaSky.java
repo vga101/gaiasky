@@ -84,6 +84,7 @@ import gaia.cu9.ari.gaiaorbit.util.override.AtmosphereShaderProvider;
 import gaia.cu9.ari.gaiaorbit.util.override.GroundShaderProvider;
 import gaia.cu9.ari.gaiaorbit.util.override.RelativisticShaderProvider;
 import gaia.cu9.ari.gaiaorbit.util.override.ShaderProgramProvider;
+import gaia.cu9.ari.gaiaorbit.util.samp.SAMPClient;
 import gaia.cu9.ari.gaiaorbit.util.time.GlobalClock;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 import gaia.cu9.ari.gaiaorbit.util.time.RealTimeClock;
@@ -306,6 +307,11 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         if (manager.isLoaded(ATTITUDE_FOLDER)) {
             GaiaAttitudeServer.instance = manager.get(ATTITUDE_FOLDER);
         }
+
+        /**
+         * SAMP
+         */
+        SAMPClient.getInstance().initialize();
 
         /**
          * POST-PROCESSOR

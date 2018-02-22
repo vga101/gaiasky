@@ -29,7 +29,10 @@ public class GlobalConf {
     public static final String WEBPAGE = "https://www.zah.uni-heidelberg.de/gaia/outreach/gaiasky";
     public static final String WEBPAGE_DOWNLOADS = "https://www.zah.uni-heidelberg.de/gaia/outreach/gaiasky/downloads";
     public static final String DOCUMENTATION = "http://gaia-sky.rtfd.io";
-    public static final String ICON_URL = "http://www.zah.uni-heidelberg.de/uploads/pics/gaiasandboxlogo_02.png";
+    public static final String ICON_URL = "https://github.com/langurmonkey/gaiasky/blob/master/assets/icon/gs_064.png?raw=true";
+    public static final String AUTHOR_NAME = "Toni Sagrista Selles";
+    public static final String AUTHOR_EMAIL = "tsagrista@ari.uni-heidelberg.de";
+    public static final String AUTHOR_AFFILIATION = "Heidelberg University, Zentrum fuer Astronomie, Astronomisches Rechen-Institut";
 
     public static final String TEXTURES_FOLDER = "data/tex/";
 

@@ -35,7 +35,9 @@ public class Position {
      * @param type
      */
     public Position(double a, String unitA, double b, String unitB, double c, String unitC, PositionType type) {
-
+        if (Double.isNaN(c)) {
+            c = 0.03;
+        }
         gsposition = new Vector3d();
 
         switch (type) {
