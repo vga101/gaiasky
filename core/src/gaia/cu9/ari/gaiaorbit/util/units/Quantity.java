@@ -1,5 +1,7 @@
 package gaia.cu9.ari.gaiaorbit.util.units;
 
+import gaia.cu9.ari.gaiaorbit.util.units.Quantity.Angle.AngleUnit;
+import gaia.cu9.ari.gaiaorbit.util.units.Quantity.Brightness.BrightnessUnit;
 import gaia.cu9.ari.gaiaorbit.util.units.Quantity.Length.LengthUnit;
 
 /**
@@ -41,7 +43,7 @@ public class Quantity {
         }
 
         public Length(double value, String unit) {
-            this(value, LengthUnit.valueOf(unit.toUpperCase()));
+            this(value, parseLength(unit));
         }
 
         public double get(LengthUnit unit) {
@@ -77,7 +79,7 @@ public class Quantity {
         }
 
         public Angle(double value, String unit) {
-            this(value, AngleUnit.valueOf(unit.toUpperCase()));
+            this(value, parseAngle(unit));
         }
 
         public double get(AngleUnit unit) {
@@ -117,12 +119,39 @@ public class Quantity {
         }
 
         public Brightness(double value, String unit) {
-            this(value, BrightnessUnit.valueOf(unit.toUpperCase()));
+            this(value, parseMag(unit));
         }
 
         public double get(BrightnessUnit unit) {
             return value_mag * (1d / unit.mag);
         }
 
+    }
+
+    private static LengthUnit parseLength(String unit) {
+        // Check format 'measure[unit]'
+        if (unit.matches("[^\\[\\]]+\\[[^\\[\\]]+\\]")) {
+            return LengthUnit.valueOf(unit.substring(unit.indexOf('[') + 1, unit.indexOf(']')).toUpperCase());
+        }else {
+            return LengthUnit.valueOf(unit.toUpperCase());
+        }
+    }
+
+    private static AngleUnit parseAngle(String unit) {
+        // Check format 'measure[unit]'
+        if (unit.matches("[^\\[\\]]+\\[[^\\[\\]]+\\]")) {
+            return AngleUnit.valueOf(unit.substring(unit.indexOf('[') + 1, unit.indexOf(']')).toUpperCase());
+        } else {
+            return AngleUnit.valueOf(unit.toUpperCase());
+        }
+    }
+
+    private static BrightnessUnit parseMag(String unit) {
+        // Check format 'measure[unit]'
+        if (unit.matches("[^\\[\\]]+\\[[^\\[\\]]+\\]")) {
+            return BrightnessUnit.valueOf(unit.substring(unit.indexOf('[') + 1, unit.indexOf(']')).toUpperCase());
+        } else {
+            return BrightnessUnit.valueOf(unit.toUpperCase());
+        }
     }
 }

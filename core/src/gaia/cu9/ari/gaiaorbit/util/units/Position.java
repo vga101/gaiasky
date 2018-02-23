@@ -17,7 +17,18 @@ import gaia.cu9.ari.gaiaorbit.util.units.Quantity.Length.LengthUnit;
 public class Position {
 
     public enum PositionType {
-        RA_DEC_DIST, RA_DEC_PLX, GLON_GLAT_DIST, GLON_GLAT_PLX, XYZ_EQUATORIAL, XYZ_GALACTIC
+        EQ_SPH_DIST,
+        EQ_SPH_PLX,
+
+        ECL_SPH_DIST,
+        ECL_SPH_PLX,
+
+        GAL_SPH_DIST,
+        GAL_SPH_PLX,
+
+        EQ_XYZ,
+        ECL_XYZ,
+        GAL_XYZ
     }
 
     public final Vector3d gsposition;
@@ -36,50 +47,63 @@ public class Position {
      */
     public Position(double a, String unitA, double b, String unitB, double c, String unitC, PositionType type) {
         if (Double.isNaN(c)) {
-            c = 0.03;
+            c = 0.04;
+            unitC = "mas";
         }
         gsposition = new Vector3d();
 
         switch (type) {
-        case GLON_GLAT_DIST:
+        case EQ_SPH_DIST:
+
             Angle lon = new Angle(a, unitA);
             Angle lat = new Angle(b, unitB);
             Length dist = new Length(c, unitC);
 
             Coordinates.sphericalToCartesian(lon.get(AngleUnit.RAD), lat.get(AngleUnit.RAD), dist.get(LengthUnit.PC), gsposition);
-            gsposition.mul(Coordinates.eqToGal());
 
             break;
-        case GLON_GLAT_PLX:
+        case EQ_SPH_PLX:
 
             lon = new Angle(a, unitA);
             lat = new Angle(b, unitB);
             dist = new Angle(c, unitC).getParallaxDistance();
 
             Coordinates.sphericalToCartesian(lon.get(AngleUnit.RAD), lat.get(AngleUnit.RAD), dist.get(LengthUnit.PC), gsposition);
-            gsposition.mul(Coordinates.eqToGal());
 
             break;
-        case RA_DEC_DIST:
-
+        case GAL_SPH_DIST:
             lon = new Angle(a, unitA);
             lat = new Angle(b, unitB);
             dist = new Length(c, unitC);
 
             Coordinates.sphericalToCartesian(lon.get(AngleUnit.RAD), lat.get(AngleUnit.RAD), dist.get(LengthUnit.PC), gsposition);
-
+            gsposition.mul(Coordinates.galToEq());
             break;
-        case RA_DEC_PLX:
-
+        case GAL_SPH_PLX:
             lon = new Angle(a, unitA);
             lat = new Angle(b, unitB);
             dist = new Angle(c, unitC).getParallaxDistance();
 
             Coordinates.sphericalToCartesian(lon.get(AngleUnit.RAD), lat.get(AngleUnit.RAD), dist.get(LengthUnit.PC), gsposition);
-
+            gsposition.mul(Coordinates.galToEq());
             break;
-        case XYZ_EQUATORIAL:
+        case ECL_SPH_DIST:
+            lon = new Angle(a, unitA);
+            lat = new Angle(b, unitB);
+            dist = new Length(c, unitC);
 
+            Coordinates.sphericalToCartesian(lon.get(AngleUnit.RAD), lat.get(AngleUnit.RAD), dist.get(LengthUnit.PC), gsposition);
+            gsposition.mul(Coordinates.eclToEq());
+            break;
+        case ECL_SPH_PLX:
+            lon = new Angle(a, unitA);
+            lat = new Angle(b, unitB);
+            dist = new Angle(c, unitC).getParallaxDistance();
+
+            Coordinates.sphericalToCartesian(lon.get(AngleUnit.RAD), lat.get(AngleUnit.RAD), dist.get(LengthUnit.PC), gsposition);
+            gsposition.mul(Coordinates.eclToEq());
+            break;
+        case EQ_XYZ:
             Length x = new Length(a, unitA);
             Length y = new Length(b, unitB);
             Length z = new Length(c, unitC);
@@ -87,15 +111,21 @@ public class Position {
             gsposition.set(x.get(LengthUnit.PC), y.get(LengthUnit.PC), z.get(LengthUnit.PC));
 
             break;
-        case XYZ_GALACTIC:
-
+        case GAL_XYZ:
             x = new Length(a, unitA);
             y = new Length(b, unitB);
             z = new Length(c, unitC);
 
             gsposition.set(x.get(LengthUnit.PC), y.get(LengthUnit.PC), z.get(LengthUnit.PC));
-            gsposition.mul(Coordinates.eqToGal());
+            gsposition.mul(Coordinates.galToEq());
+            break;
+        case ECL_XYZ:
+            x = new Length(a, unitA);
+            y = new Length(b, unitB);
+            z = new Length(c, unitC);
 
+            gsposition.set(x.get(LengthUnit.PC), y.get(LengthUnit.PC), z.get(LengthUnit.PC));
+            gsposition.mul(Coordinates.eclToEq());
             break;
         default:
             break;

@@ -1,6 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.util.samp;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -13,6 +12,7 @@ import org.astrogrid.samp.client.ClientProfile;
 import org.astrogrid.samp.client.DefaultClientProfile;
 import org.astrogrid.samp.client.HubConnection;
 import org.astrogrid.samp.client.HubConnector;
+import org.astrogrid.samp.client.SampException;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.Array;
@@ -32,9 +32,11 @@ import uk.ac.starlink.util.URLDataSource;
 
 public class SAMPClient implements IObserver {
 
-    private static final String ENV_VAR = "SAMP_HUB";
-    private static final String VAR_PREFIX = "std-lockurl:";
-    private static final String LOCKFILE = ".samp";
+    /** 
+     * Whether to prefetch tables when a row selection is issued, even if
+     * table was not sent initially.
+     */
+    private static final boolean PREFETCH = false;
 
     private static SAMPClient instance;
 
@@ -46,11 +48,13 @@ public class SAMPClient implements IObserver {
 
     private HubConnector conn;
     private STILDataProvider provider;
-    private Map<String, StarGroup> sgMap;
+    private Map<String, StarGroup> mapIdSg;
+    private Map<String, String> mapIdUrl;
+    private boolean preventProgrammaticEvents = false;
 
     public SAMPClient() {
         super();
-        EventManager.instance.subscribe(this, Events.DISPOSE);
+        EventManager.instance.subscribe(this, Events.FOCUS_CHANGED, Events.DISPOSE);
     }
 
     public void initialize() {
@@ -59,12 +63,13 @@ public class SAMPClient implements IObserver {
 
         // Init provider
         provider = new STILDataProvider();
-        
+
         // Init map
-        sgMap = new HashMap<String, StarGroup>();
+        mapIdSg = new HashMap<String, StarGroup>();
+        mapIdUrl = new HashMap<String, String>();
 
         ClientProfile cp = DefaultClientProfile.getProfile();
-        HubConnector conn = new GaiaSkyHubConnector(cp);
+        conn = new GaiaSkyHubConnector(cp);
 
         // Configure it with metadata about this application
         Metadata meta = new Metadata();
@@ -87,33 +92,13 @@ public class SAMPClient implements IObserver {
                 String name = (String) msg.getParam("name");
                 String id = (String) msg.getParam("table-id");
                 String url = (String) msg.getParam("url");
-                Logger.info("Load VOTable: " + msg.getParam("id"));
 
-                try {
-                    DataSource ds = new URLDataSource(new URL(url));
-                    @SuppressWarnings("unchecked")
-                    Array<StarBean> data = (Array<StarBean>) provider.loadData(ds, 1.0f);
-                    StarGroup sg = new StarGroup();
-                    sg.setName(id);
-                    sg.setParent("Universe");
-                    sg.setFadeout(new double[] { 21e2, .5e8 });
-                    sg.setLabelcolor(new double[] { 1.0, 1.0, 1.0, 1.0 });
-                    sg.setColor(new double[] { 1.0, 1.0, 1.0, 0.25 });
-                    sg.setSize(6.0);
-                    sg.setLabelposition(new double[] { 0.0, -5.0e7, -4e8 });
-                    sg.setCt("Stars");
-                    sg.setData(data);
-                    sg.doneLoading(null);
+                boolean loaded = loadVOTable(url, id, name);
 
-                    sgMap.put(id, sg);
-
-                    // Insert
-                    Gdx.app.postRunnable(() -> {
-                        GaiaSky.instance.sg.insert(sg, true);
-                    });
-
-                } catch (MalformedURLException e) {
-                    Logger.error(e);
+                if (loaded) {
+                    Logger.info(SAMPClient.class.getSimpleName(), "VOTable " + name + " loaded successfully");
+                } else {
+                    Logger.info(SAMPClient.class.getSimpleName(), "Error loading VOTable " + name);
                 }
 
                 return null;
@@ -127,12 +112,24 @@ public class SAMPClient implements IObserver {
                 Long row = Parser.parseLong((String) msg.getParam("row"));
                 String id = (String) msg.getParam("table-id");
                 String url = (String) msg.getParam("url");
-                Logger.info("Select row " + row + " of " + id);
 
-                if (sgMap.containsKey(id)) {
-                    StarGroup sg = sgMap.get(id);
-                    sg.setFocusIndex(row.intValue());
-                    EventManager.instance.post(Events.FOCUS_CHANGE_CMD, sg);
+                // First, fetch table if not here
+                boolean loaded = mapIdSg.containsKey(id);
+                if (!loaded && PREFETCH) {
+                    loaded = loadVOTable(url, id, id);
+                }
+
+                // If table here, select
+                if (loaded) {
+                    Logger.info(SAMPClient.class.getSimpleName(), "Select row " + row + " of " + id);
+
+                    if (mapIdSg.containsKey(id)) {
+                        StarGroup sg = mapIdSg.get(id);
+                        sg.setFocusIndex(row.intValue());
+                        preventProgrammaticEvents = true;
+                        EventManager.instance.post(Events.FOCUS_CHANGE_CMD, sg);
+                        preventProgrammaticEvents = false;
+                    }
                 }
                 return null;
             }
@@ -142,7 +139,7 @@ public class SAMPClient implements IObserver {
         conn.addMessageHandler(new AbstractMessageHandler("table.select.rowList") {
             public Map processCall(HubConnection c, String senderId, Message msg) {
                 // do stuff
-                Logger.info("Select rows");
+                Logger.info(SAMPClient.class.getSimpleName(), "Select rows");
                 return null;
             }
         });
@@ -151,7 +148,7 @@ public class SAMPClient implements IObserver {
         conn.addMessageHandler(new AbstractMessageHandler("coord.pointAt.sky") {
             public Map processCall(HubConnection c, String senderId, Message msg) {
                 // do stuff
-                Logger.info("Point to coordinate");
+                Logger.info(SAMPClient.class.getSimpleName(), "Point to coordinate");
                 return null;
             }
         });
@@ -167,9 +164,71 @@ public class SAMPClient implements IObserver {
 
     }
 
+    /**
+     * Loads a VOTable into a star group
+     * @param url The URL to fetch the table
+     * @param id The table id
+     * @param name The table name
+     * @return Boolean indicating whether loading succeeded or not
+     */
+    private boolean loadVOTable(String url, String id, String name) {
+        Logger.info(SAMPClient.class.getSimpleName(), "Loading VOTable: " + name + " from " + url);
+
+        try {
+            DataSource ds = new URLDataSource(new URL(url));
+            @SuppressWarnings("unchecked")
+            Array<StarBean> data = (Array<StarBean>) provider.loadData(ds, 1.0f);
+            StarGroup sg = new StarGroup();
+            sg.setName(id);
+            sg.setParent("Universe");
+            sg.setFadeout(new double[] { 21e2, .5e8 });
+            sg.setLabelcolor(new double[] { 1.0, 1.0, 1.0, 1.0 });
+            sg.setColor(new double[] { 1.0, 1.0, 1.0, 0.25 });
+            sg.setSize(6.0);
+            sg.setLabelposition(new double[] { 0.0, -5.0e7, -4e8 });
+            sg.setCt("Stars");
+            sg.setData(data);
+            sg.doneLoading(null);
+
+            mapIdSg.put(id, sg);
+            mapIdUrl.put(id, url);
+
+            // Insert
+            Gdx.app.postRunnable(() -> {
+                GaiaSky.instance.sg.insert(sg, true);
+            });
+            return true;
+        } catch (Exception e) {
+            Logger.error(e);
+            return false;
+        }
+    }
+
     @Override
     public void notify(Events event, Object... data) {
         switch (event) {
+        case FOCUS_CHANGED:
+            if (!preventProgrammaticEvents && data[0] instanceof StarGroup) {
+                StarGroup sg = (StarGroup) data[0];
+                if (conn != null && conn.isConnected() && mapIdSg.containsValue(sg)) {
+                    String id = sg.name;
+                    String name = id;
+                    String url = mapIdUrl.get(id);
+                    int row = sg.getCandidateIndex();
+
+                    Message msg = new Message("table.highlight.row");
+                    msg.addParam("row", Integer.toString(row));
+                    msg.addParam("table-id", id);
+                    msg.addParam("url", url);
+
+                    try {
+                        conn.getConnection().notifyAll(msg);
+                    } catch (SampException e) {
+                        Logger.error(e);
+                    }
+                }
+            }
+            break;
         case DISPOSE:
             if (conn != null && conn.isConnected()) {
                 conn.setActive(false);

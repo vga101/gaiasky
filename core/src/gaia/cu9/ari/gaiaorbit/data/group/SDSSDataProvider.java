@@ -78,7 +78,7 @@ public class SDSSDataProvider implements IParticleGroupDataProvider {
                     double dist = ((z * 299792.46) / 71);
                     if (dist > 16) {
                         // Convert position
-                        Position p = new Position(ra, "deg", dec, "deg", dist, "mpc", PositionType.RA_DEC_DIST);
+                        Position p = new Position(ra, "deg", dec, "deg", dist, "mpc", PositionType.EQ_SPH_DIST);
                         p.gsposition.scl(Constants.PC_TO_U);
                         point[0] = p.gsposition.x;
                         point[1] = p.gsposition.y;

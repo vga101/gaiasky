@@ -562,6 +562,10 @@ public class ParticleGroup extends FadeNode implements I3DTextRenderable, IFocus
 
     }
 
+    public int getCandidateIndex() {
+        return candidateFocusIndex;
+    }
+
     @Override
     public long getCandidateId() {
         return getId();

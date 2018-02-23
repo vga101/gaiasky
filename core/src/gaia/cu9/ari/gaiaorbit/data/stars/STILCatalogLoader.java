@@ -84,7 +84,7 @@ public class STILCatalogLoader extends AbstractCatalogLoader {
                     ac = ucds.get("pos.eq.ra");
                     bc = ucds.get("pos.eq.dec");
                     cc = ucds.containsKey("pos.parallax.trig") ? ucds.get("pos.parallax.trig") : ucds.get("pos.distance");
-                    type = ucds.containsKey("pos.parallax.trig") ? PositionType.RA_DEC_PLX : PositionType.RA_DEC_DIST;
+                    type = ucds.containsKey("pos.parallax.trig") ? PositionType.EQ_SPH_PLX : PositionType.EQ_SPH_DIST;
                 }
 
                 if (type == null && ucds.containsKey("pos.galactic.lon")) {
@@ -92,7 +92,7 @@ public class STILCatalogLoader extends AbstractCatalogLoader {
                     ac = ucds.get("pos.galactic.lon");
                     bc = ucds.get("pos.galactic.lat");
                     cc = ucds.containsKey("pos.parallax.trig") ? ucds.get("pos.parallax.trig") : ucds.get("pos.distance");
-                    type = ucds.containsKey("pos.parallax.trig") ? PositionType.GLON_GLAT_PLX : PositionType.GLON_GLAT_DIST;
+                    type = ucds.containsKey("pos.parallax.trig") ? PositionType.GAL_SPH_PLX : PositionType.GAL_SPH_DIST;
                 }
 
                 if (type == null && ucds.containsKey("pos.eq.x")) {
@@ -100,7 +100,7 @@ public class STILCatalogLoader extends AbstractCatalogLoader {
                     ac = ucds.get("pos.eq.x");
                     bc = ucds.get("pos.eq.y");
                     cc = ucds.get("pos.eq.z");
-                    type = PositionType.XYZ_EQUATORIAL;
+                    type = PositionType.EQ_XYZ;
                 }
 
                 if (type == null && ucds.containsKey("pos.galactic.x")) {
@@ -108,7 +108,7 @@ public class STILCatalogLoader extends AbstractCatalogLoader {
                     ac = ucds.get("pos.galactic.x");
                     bc = ucds.get("pos.galactic.y");
                     cc = ucds.get("pos.galactic.z");
-                    type = PositionType.XYZ_GALACTIC;
+                    type = PositionType.GAL_XYZ;
                 }
 
                 if (type == null) {
