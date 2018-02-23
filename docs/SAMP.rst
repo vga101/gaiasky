@@ -19,22 +19,43 @@ Also, the only supported format is VOTable. There are, however, some restriction
 as to how the VOTables received through SAMP are interpreted and used (if at all)
 by Gaia Sky:
 
--  For the **positional data**, Gaia Sky will look for spherical and cartesian coordinates. In the
-case of spherical coordinates, the following are supported: 
-    -  Equatorial (`pos.eq.ra`, `pos.eq.dec`)
-    -  Galactic (`pos.galactic.lon`, `pos.galactic.lat`)
-    -  Ecliptic (`pos.ecliptic.lon`, `pos.ecliptic.lat`)
+Positions
+---------
+
+For the **positional data**, Gaia Sky will look for spherical and cartesian coordinates. In the case of spherical coordinates, the following are supported: 
+
+-  Equatorial (`pos.eq.ra`, `pos.eq.dec`)
+-  Galactic (`pos.galactic.lon`, `pos.galactic.lat`)
+-  Ecliptic (`pos.ecliptic.lon`, `pos.ecliptic.lat`)
+
 To work out the distance, it looks for `pos.parallax` and `pos.distance`. If either of those are found, they are used. Otherwise, a default parallax of 0.04 mas is used. 
 With respect to cartesian coordinates, it recognizes `pos.cartesian.x|y|z`, and they are interpreted in the equatorial system by default.
-If no UCDs are available, only equatorial coordinates (ra, dec) are supported, and they are looked up using
-the column names.
--  **Proper motions** are not yet supported via SAMP.
--  **Magnituded** are supported using the `phot.mag` or `phot.mag;stat.mean` UCDs. Otherwise, they are
+If no UCDs are available, only equatorial coordinates (ra, dec) are supported, and they are looked up using the column names.
+
+Proper motions
+--------------
+
+**Proper motions** are not yet supported via SAMP.
+
+Magnitudes
+----------
+
+**Magnitudes** are supported using the `phot.mag` or `phot.mag;stat.mean` UCDs. Otherwise, they are
 discovered using the column names `mag`, `bmag`, `gmag`, `phot_g_mean_mag`. If no magnitudes are found,
 the default value of 15 is used.
--  **Colors** are discovered using the `phot.color` UCD. If not present, the column names `b_v`, `v_i`,
+
+
+Colors
+------
+
+**Colors** are discovered using the `phot.color` UCD. If not present, the column names `b_v`, `v_i`,
 `bp_rp`, `bp_g` and `g_rp` are used, if present. If no color is discovered at all, the default value of 0.656 is used.
-- Other physical quantities (mass, flux, T_eff, radius, etc.) are not yet supported via SAMP.
+
+
+Others
+------
+
+Other physical quantities (mass, flux, T_eff, radius, etc.) are not yet supported via SAMP.
 
 Implemented features
 ====================
