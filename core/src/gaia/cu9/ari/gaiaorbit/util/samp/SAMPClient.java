@@ -114,7 +114,7 @@ public class SAMPClient implements IObserver {
                 String url = (String) msg.getParam("url");
 
                 // First, fetch table if not here
-                boolean loaded = mapIdSg.containsKey(id);
+                boolean loaded = mapIdUrl.containsValue(url);
                 if (!loaded && PREFETCH) {
                     loaded = loadVOTable(url, id, id);
                 }
@@ -123,7 +123,8 @@ public class SAMPClient implements IObserver {
                 if (loaded) {
                     Logger.info(SAMPClient.class.getSimpleName(), "Select row " + row + " of " + id);
 
-                    if (mapIdSg.containsKey(id)) {
+                    if (mapIdUrl.containsValue(url)) {
+                        id = mapIdUrl.get(url);
                         StarGroup sg = mapIdSg.get(id);
                         sg.setFocusIndex(row.intValue());
                         preventProgrammaticEvents = true;
