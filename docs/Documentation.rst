@@ -22,3 +22,4 @@ Documentation
    Scripting-with-python
    Capturing-videos
    Taking-screenshots
+   SAMP
