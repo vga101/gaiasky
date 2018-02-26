@@ -26,35 +26,49 @@ Gaia Sky uses a flexible data loading mechanism where the
 correspondences between data loader and files are defined in a couple of
 ``JSON`` files which are specified in the ``global.properties``
 configuration file in ``$HOME/.gaiasky/``. The two main files are the
-catalog file (usually ``data/catalog-*.json``) and the objects file
-(``data/data-low.json``, ``data/data-normal.json`` and
-``data/data-high.json`` are the default options, which provide the low,
-normal and high graphics quality settings). See the :ref:`properties file <properties-file>` section for more information on this.
+catalog file, with the key ``data.json.catalog`` (usually one of ``data/catalog-*.json``) and the objects file, with the
+key ``data.json.objects`` (``data/data-main.json`` by default). See 
+the :ref:`properties file <properties-file>` section for more information on this.
 
 catalog-\*.json example files
 -----------------------------
 
 .. code:: json
 
-    { "data" : [
-        {
-            "loader": "gaia.cu9.ari.gaiaorbit.data.stars.HYGBinaryLoader",
-            "files": [ "data/hygxyz.bin" ]
-        }
-    ]}
+    {
+		"name" : "TGAS+HYG (GPU)",
+		"description" : "Gaia DR1 TGAS catalog, GPU version. About 1.5 million stars.",
+		"data" : [
+		{
+			"loader": "gaia.cu9.ari.gaiaorbit.data.stars.SunLoader",
+			"files": [ "" ]
+		},
+		{
+			"loader": "gaia.cu9.ari.gaiaorbit.data.JsonLoader",
+			"files": [ "data/particles-tgas.json" ]
+		}
+	]}
 
 .. code:: json
 
-    { "data" : [
-    	{
-    		"loader": "gaia.cu9.ari.gaiaorbit.data.stars.OctreeCatalogLoader",
-    		"files": [ "data/octree/tgas_final_particles.bin", "data/octree/tgas_final_metadata.bin" ]
-    	}
-    ]}
+    { 
+		"name" : "TGAS - 12.5%",
+		"description" : "Gaia DR1 TGAS catalog (12.5% error). About 700K stars.",
+		"data" : [
+
+		{
+			"loader": "gaia.cu9.ari.gaiaorbit.data.stars.SunLoader",
+			"files": [ "" ]
+		},
+		{
+			"loader": "gaia.cu9.ari.gaiaorbit.data.group.OctreeGroupLoader",
+			"files": [ "data/octree/tgas/group-bin/particles/", "data/octree/tgas/group-bin/metadata.bin" ]
+		}
+	]}
 
 
-data-\*.json example file
--------------------------
+data-main.json example file
+---------------------------
 
 .. code:: json
 

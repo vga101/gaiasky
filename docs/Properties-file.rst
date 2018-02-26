@@ -7,7 +7,9 @@ There is a configuration file which stores most of the configration settings
 of Gaia Sky. This section is devoted
 to these seetings that are not represented in the GUI but are still
 configurable. The configuration file is located in
-``$HOME/.gaiasky/global.properties``. Here are some of the properties
+``$HOME/.gaiasky/global.properties``. The file is annotated with
+comments specifying the function of most properties. However, here is an 
+explanation of some of the properties
 found in this file that are not represented in the GUI.
 
 Graphics properties
@@ -31,12 +33,11 @@ Data properties
    LOD version of TGAS.
 
 -  **data.json.objects** - Contains the ``json`` file where the
-   definition of all the rest of the data is specified. There are three
-   child properties (``data.json.objects.gq.[0..2]``) which contain the
-   default graphics quality options.
+   definition of all the rest of the data is specified.
 
 -  **data.limit.mag** - This contains the limiting magnitude above which
-   stars shall not be loaded. Not all data loaders implement this.
+   stars shall not be loaded. Not all data loaders implement this. It is
+   now deprecated.
 
 Scene properties
 ----------------
@@ -45,7 +46,7 @@ Scene properties
    number of star labels to display. The larger the number, the more
    stars will have a label.
 
--  **scene.star.thresholdangle.quad** - This property contains the view
+-  **scene.star.threshold.quad** - This property contains the view
    angle (in degrees) boundary above which the stars are rendered as
    `quads <https://www.opengl.org/wiki/Primitive#Quads>`__.
    ``Quads`` are basically 4-vertex quadrilaterals, and they can be
@@ -53,13 +54,13 @@ Scene properties
    detail but are costlier in terms of GPU processing. Do not touch unless
    you know what you are doing.
 
--  **scene.star.thresholdangle.point** - This property contains the view
+-  **scene.star.threshold.point** - This property contains the view
    angle (in degrees) boundary above which the stars are rendered as
    `points <https://www.opengl.org/wiki/Primitive#Point_primitives>`__.
    Points are single pixels, so they are not very resource demanding. Do not touch unless
    you know what you are doing.
 
--  **scene.star.thresholdangle.none** - This property contains the view
+-  **scene.star.threshold.none** - This property contains the view
    angle (in degrees) below which the stars are not rendered at all.
    Usually this is 0 unless you want to cull very distant stars. Do not touch unless
    you know what you are doing.
