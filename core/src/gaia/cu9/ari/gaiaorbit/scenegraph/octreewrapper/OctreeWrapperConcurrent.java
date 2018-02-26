@@ -13,7 +13,7 @@ import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
 /**
  * Static Octree wrapper that can be inserted into the scene graph. This
  * implementation is prepared to work with the
- * {@link gaia.cu9.ari.gaiaorbit.desktop.concurrent.SceneGraphConcurrentOctree},
+ * {@link gaia.cu9.ari.gaiaorbit.desktop.concurrent.SceneGraphConcurrent},
  * which is designed to take advantage of knowing an octree is present in the
  * scenegraph.
  * 
