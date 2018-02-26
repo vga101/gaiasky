@@ -288,15 +288,7 @@ public class PreferencesWindow extends GenericDialog {
         gquality = new OwnSelectBox<ComboBoxBean>(skin);
         gquality.setItems(gqs);
         gquality.setWidth(textwidth * 3f);
-        int index = -1;
-        for (int i = 0; i < GlobalConf.data.OBJECTS_JSON_FILE_GQ.length; i++) {
-            if (GlobalConf.data.OBJECTS_JSON_FILE_GQ[i].equals(GlobalConf.data.OBJECTS_JSON_FILE)) {
-                index = i;
-                break;
-            }
-        }
-        int gqidx = index;
-        gquality.setSelected(gqs[gqidx]);
+        gquality.setSelected(gqs[GlobalConf.scene.GRAPHICS_QUALITY]);
 
         OwnImageButton gqualityTooltip = new OwnImageButton(skin, "tooltip");
         gqualityTooltip.addListener(new TextTooltip(txt("gui.gquality.info"), skin));
@@ -1345,7 +1337,6 @@ public class PreferencesWindow extends GenericDialog {
 
         // Graphics
         ComboBoxBean bean = gquality.getSelected();
-        GlobalConf.data.OBJECTS_JSON_FILE = GlobalConf.data.OBJECTS_JSON_FILE_GQ[bean.value];
         GlobalConf.scene.GRAPHICS_QUALITY = bean.value;
 
         bean = aa.getSelected();

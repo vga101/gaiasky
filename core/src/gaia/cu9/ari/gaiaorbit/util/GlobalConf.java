@@ -374,8 +374,6 @@ public class GlobalConf {
 
         /** The json data file in case of local data source **/
         public String OBJECTS_JSON_FILE;
-        /** String with different files for different qualities **/
-        public String[] OBJECTS_JSON_FILE_GQ;
 
         /** The json file with the catalogue(s) to load **/
         public String CATALOG_JSON_FILE;
@@ -395,12 +393,10 @@ public class GlobalConf {
          **/
         public boolean REAL_GAIA_ATTITUDE;
 
-        public void initialize(String cATALOG_JSON_FILE, String oBJECTS_JSON_FILE, String[] oBJECTS_JSON_FILE_GQ, float lIMIT_MAG_LOAD, boolean rEAL_GAIA_ATTITUDE, boolean hIGH_ACCURACY_POSITIONS) {
+        public void initialize(String cATALOG_JSON_FILE, String oBJECTS_JSON_FILE, float lIMIT_MAG_LOAD, boolean rEAL_GAIA_ATTITUDE, boolean hIGH_ACCURACY_POSITIONS) {
 
             CATALOG_JSON_FILE = cATALOG_JSON_FILE;
-
             OBJECTS_JSON_FILE = oBJECTS_JSON_FILE;
-            OBJECTS_JSON_FILE_GQ = oBJECTS_JSON_FILE_GQ;
             LIMIT_MAG_LOAD = lIMIT_MAG_LOAD;
             REAL_GAIA_ATTITUDE = rEAL_GAIA_ATTITUDE;
             HIGH_ACCURACY_POSITIONS = hIGH_ACCURACY_POSITIONS;

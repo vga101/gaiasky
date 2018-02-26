@@ -9,9 +9,7 @@ import java.nio.channels.FileChannel;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 
@@ -155,15 +153,6 @@ public class DesktopConfInit extends ConfInit {
         String CATALOG_JSON_FILE = p.getProperty("data.json.catalog");
 
         String OBJECTS_JSON_FILE = p.getProperty("data.json.objects");
-        List<String> files = new ArrayList<String>();
-        int i = 0;
-        String gqualityFile;
-        while ((gqualityFile = p.getProperty("data.json.objects.gq." + i)) != null) {
-            files.add(gqualityFile);
-            i++;
-        }
-        String[] OBJECTS_JSON_FILE_GQ = new String[files.size()];
-        OBJECTS_JSON_FILE_GQ = files.toArray(OBJECTS_JSON_FILE_GQ);
 
         boolean REAL_GAIA_ATTITUDE = Boolean.parseBoolean(p.getProperty("data.attitude.real"));
         boolean HIGH_ACCURACY_POSITIONS = Boolean.parseBoolean(p.getProperty("data.highaccuracy.positions", "false"));
@@ -174,7 +163,7 @@ public class DesktopConfInit extends ConfInit {
         } else {
             LIMIT_MAG_LOAD = Float.MAX_VALUE;
         }
-        dc.initialize(CATALOG_JSON_FILE, OBJECTS_JSON_FILE, OBJECTS_JSON_FILE_GQ, LIMIT_MAG_LOAD, REAL_GAIA_ATTITUDE, HIGH_ACCURACY_POSITIONS);
+        dc.initialize(CATALOG_JSON_FILE, OBJECTS_JSON_FILE, LIMIT_MAG_LOAD, REAL_GAIA_ATTITUDE, HIGH_ACCURACY_POSITIONS);
 
         /** PROGRAM CONF **/
         ProgramConf prc = new ProgramConf();
