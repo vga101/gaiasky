@@ -27,7 +27,8 @@ import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
  * need to be parallelized at the top level.
  * 
  * @author Toni Sagrista
- *
+ * @deprecated Deprecated since star and particle groups are in GPU and parallelized by default.
+ * Single stars in the object model not supported anymore.
  */
 public class SceneGraphConcurrent extends AbstractSceneGraph {
 
