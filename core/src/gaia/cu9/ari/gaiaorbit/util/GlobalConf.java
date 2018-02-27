@@ -105,7 +105,40 @@ public class GlobalConf {
 
     public static class PostprocessConf implements IConf, IObserver {
 
-        public int POSTPROCESS_ANTIALIAS;
+        public enum Antialias {
+            NONE(0), FXAA(-1), NFAA(-2), SSAA(1);
+
+            int aacode;
+
+            private Antialias(int aacode) {
+                this.aacode = aacode;
+            }
+
+            public int getAACode() {
+                return this.aacode;
+            }
+
+            public boolean isPostProcessAntialias() {
+                return this.aacode < 0;
+            }
+        }
+
+        public Antialias getAntialias(int code) {
+            switch (code) {
+            case 0:
+                return Antialias.NONE;
+            case -1:
+                return Antialias.FXAA;
+            case -2:
+                return Antialias.FXAA;
+            case 1:
+                return Antialias.SSAA;
+            default:
+                return Antialias.NONE;
+            }
+        }
+
+        public Antialias POSTPROCESS_ANTIALIAS;
         public float POSTPROCESS_BLOOM_INTENSITY;
         public float POSTPROCESS_MOTION_BLUR;
         public boolean POSTPROCESS_LENS_FLARE;
@@ -120,7 +153,7 @@ public class GlobalConf {
             EventManager.instance.subscribe(this, Events.BLOOM_CMD, Events.LENS_FLARE_CMD, Events.MOTION_BLUR_CMD, Events.LIGHT_SCATTERING_CMD, Events.FISHEYE_CMD, Events.BRIGHTNESS_CMD, Events.CONTRAST_CMD);
         }
 
-        public void initialize(int POSTPROCESS_ANTIALIAS, float POSTPROCESS_BLOOM_INTENSITY, float POSTPROCESS_MOTION_BLUR, boolean POSTPROCESS_LENS_FLARE, boolean POSTPROCESS_LIGHT_SCATTERING,
+        public void initialize(Antialias POSTPROCESS_ANTIALIAS, float POSTPROCESS_BLOOM_INTENSITY, float POSTPROCESS_MOTION_BLUR, boolean POSTPROCESS_LENS_FLARE, boolean POSTPROCESS_LIGHT_SCATTERING,
                 boolean POSTPROCESS_FISHEYE, float POSTPROCESS_BRIGHTNESS, float POSTPROCESS_CONTRAST) {
             this.POSTPROCESS_ANTIALIAS = POSTPROCESS_ANTIALIAS;
             this.POSTPROCESS_BLOOM_INTENSITY = POSTPROCESS_BLOOM_INTENSITY;

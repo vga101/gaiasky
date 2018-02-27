@@ -27,6 +27,7 @@ import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.render.IPostProcessor;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf.PostprocessConf.Antialias;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf.ProgramConf.StereoProfile;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
@@ -221,19 +222,19 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
         ppb.pp.addEffect(ppb.motionblur);
     }
 
-    private void initAntiAliasing(int aavalue, int width, int height, PostProcessBean ppb) {
-        if (aavalue == -1) {
+    private void initAntiAliasing(Antialias aavalue, int width, int height, PostProcessBean ppb) {
+        if (aavalue.equals(Antialias.FXAA)) {
             ppb.antialiasing = new Fxaa(width, height);
             ((Fxaa) ppb.antialiasing).setSpanMax(8f);
             ((Fxaa) ppb.antialiasing).setReduceMin(1f / 16f);
             ((Fxaa) ppb.antialiasing).setReduceMul(1f / 8f);
             Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.selected", "FXAA"));
-        } else if (aavalue == -2) {
+        } else if (aavalue.equals(Antialias.NFAA)) {
             ppb.antialiasing = new Nfaa(width, height);
             Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.selected", "NFAA"));
         }
         if (ppb.antialiasing != null) {
-            ppb.antialiasing.setEnabled(GlobalConf.postprocess.POSTPROCESS_ANTIALIAS < 0);
+            ppb.antialiasing.setEnabled(GlobalConf.postprocess.POSTPROCESS_ANTIALIAS.isPostProcessAntialias());
             ppb.pp.addEffect(ppb.antialiasing);
         }
     }
@@ -427,12 +428,12 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
             updateStereo(GlobalConf.program.STEREOSCOPIC_MODE, StereoProfile.values()[(Integer) data[0]]);
             break;
         case ANTIALIASING_CMD:
-            final int aavalue = (Integer) data[0];
+            final Antialias aavalue = (Antialias) data[0];
             Gdx.app.postRunnable(() -> {
                 for (int i = 0; i < RenderType.values().length; i++) {
                     if (pps[i] != null) {
                         PostProcessBean ppb = pps[i];
-                        if (aavalue < 0) {
+                        if (aavalue.isPostProcessAntialias()) {
                             // clean
                             if (ppb.antialiasing != null) {
                                 ppb.antialiasing.setEnabled(false);

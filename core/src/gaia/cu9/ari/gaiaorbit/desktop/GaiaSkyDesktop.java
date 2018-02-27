@@ -66,7 +66,6 @@ import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadLocalFactory;
 import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.math.MathManager;
-import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 
 /**
  * Main class for the desktop launcher
@@ -199,7 +198,7 @@ public class GaiaSkyDesktop implements IObserver {
         cfg.resizable = GlobalConf.screen.RESIZABLE;
         cfg.width = GlobalConf.screen.getScreenWidth();
         cfg.height = GlobalConf.screen.getScreenHeight();
-        cfg.samples = MathUtilsd.clamp(GlobalConf.postprocess.POSTPROCESS_ANTIALIAS, 0, 16);
+        cfg.samples = 0;
         cfg.vSyncEnabled = GlobalConf.screen.VSYNC;
         cfg.foregroundFPS = 0;
         cfg.backgroundFPS = 0;
