@@ -369,8 +369,6 @@ public abstract class AbstractPositionEntity extends SceneGraphNode {
         p.x += 15;
         p.y -= 15;
 
-        render2DLabel(batch, shader, rc, font, camera, label, p.x, p.y);
-
         shader.setUniformf("scale", 1f);
         DecalUtils.drawFont2D(font, batch, label, p);
     }

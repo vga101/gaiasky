@@ -1384,15 +1384,6 @@ public class PreferencesWindow extends GenericDialog {
         GlobalConf.scene.OCTANT_THRESHOLD_1 = GlobalConf.scene.OCTREE_PARTICLE_FADE ? GlobalConf.scene.OCTANT_THRESHOLD_0 + 0.4f : GlobalConf.scene.OCTANT_THRESHOLD_0;
 
         // Data
-        //        if (hyg.isChecked())
-        //            GlobalConf.data.CATALOG_JSON_FILE = GlobalConf.data.HYG_JSON_FILE;
-        //        else if (tgas.isChecked())
-        //            GlobalConf.data.CATALOG_JSON_FILE = GlobalConf.data.TGAS_JSON_FILE;
-        //        else if (dr2.isChecked())
-        //            GlobalConf.data.CATALOG_JSON_FILE = GlobalConf.data.DR2_JSON_FILE;
-        //        else if (GlobalConf.data.CATALOG_JSON_FILE == null || GlobalConf.data.CATALOG_JSON_FILE.length() == 0)
-        //            Logger.error(this.getClass().getSimpleName(), "No catalog file selected!");
-
         boolean hapos = GlobalConf.data.HIGH_ACCURACY_POSITIONS;
         GlobalConf.data.HIGH_ACCURACY_POSITIONS = highAccuracyPositions.isChecked();
 

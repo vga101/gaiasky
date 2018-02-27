@@ -35,6 +35,7 @@
 -  [DJ Masque](http://sampleswap.org/artist/djmasque) for the 'Oceanic Dawn' track
 -  [icons8.com](https://icons8.com) for some icons
 -  [Galaxy Map](http://galaxymap.org/) (Kevin Jardine, [@galaxy_map](https://twitter.com/galaxy_map)) for the isodensity meshes
+-  ESA/Planck/C. North, [www.chromoscope.net/planck](http://www.chromoscope.net/planck) for the Cosmic Microwave Background images.
 
 ## Translations
 

@@ -163,7 +163,11 @@ public class ModelCache {
     public void dispose() {
         Collection<Model> models = modelCache.values();
         for (Model model : models) {
-            model.dispose();
+            try {
+                model.dispose();
+            } catch (Exception e) {
+                // Do nothing
+            }
         }
     }
 }
