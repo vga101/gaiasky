@@ -1,5 +1,5 @@
 // Computes 
-vec3 computeGravitationalWaves(vec3 pos, vec2 gw, float t, float omgw, vec4 hterms) {
+vec3 computeGravitationalWaves(vec3 pos, vec3 gw, mat3 gwmat3, float t, float omgw, vec4 hterms) {
     float hpluscos = hterms.x;
     float hplussin = hterms.y;
     float htimescos = hterms.z;
@@ -8,16 +8,11 @@ vec3 computeGravitationalWaves(vec3 pos, vec2 gw, float t, float omgw, vec4 hter
     float agw = gw.x;
     float dgw = gw.y;
     
-    float cosagw = cos(agw);
-    float cosdgw = cos(dgw);
-    float sinagw = sin(agw);
-    float sindgw = sin(dgw);
-    
-    vec3 p = vec3(cosagw * cosdgw, sinagw * cosdgw, sindgw);
+    vec3 p = gw;
     mat3 eplus = mat3(1,0,0, 0,-1,0, 0,0,0);
     mat3 etimes = mat3(0,1,0, 1,0,0, 0,0,0);
     
-    mat3 P = mat3(-sinagw, -cosagw * sindgw, cosagw * cosdgw, cosagw, -sinagw * sindgw, sinagw * cosdgw, 0, cosdgw, sindgw);
+    mat3 P = gwmat3;
     mat3 pepluspt = P * eplus * transpose(P);
     mat3 petimespt = P * etimes * transpose(P);
     

@@ -80,6 +80,7 @@ import gaia.cu9.ari.gaiaorbit.util.ModelCache;
 import gaia.cu9.ari.gaiaorbit.util.MusicManager;
 import gaia.cu9.ari.gaiaorbit.util.g3d.loader.ObjLoader;
 import gaia.cu9.ari.gaiaorbit.util.gaia.GaiaAttitudeServer;
+import gaia.cu9.ari.gaiaorbit.util.gravwaves.GravitationalWavesManager;
 import gaia.cu9.ari.gaiaorbit.util.override.AtmosphereShaderProvider;
 import gaia.cu9.ari.gaiaorbit.util.override.GroundShaderProvider;
 import gaia.cu9.ari.gaiaorbit.util.override.RelativisticShaderProvider;
@@ -259,6 +260,9 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
 
         // Initialise hidden helper user
         HiddenHelperUser.initialize();
+
+        // Initialise gravitational waves helper
+        GravitationalWavesManager.initialize(time);
 
         // GUI
         guis = new ArrayList<IGui>(3);
@@ -607,8 +611,8 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
 
         this.t += this.dt;
 
+        // Update GUI 
         GuiRegistry.update(this.dt);
-
         EventManager.instance.post(Events.UPDATE_GUI, this.dt);
 
         double dtScene = this.dt;
@@ -626,6 +630,9 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
 
         // Precompute isOn for all stars and galaxies
         Particle.renderOn = isOn(ComponentType.Stars);
+
+        // Update GravWaves params
+        GravitationalWavesManager.instance().update(time);
 
         // Update scene graph
         sg.update(time, cam);

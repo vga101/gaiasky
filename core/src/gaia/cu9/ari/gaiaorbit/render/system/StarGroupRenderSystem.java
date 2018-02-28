@@ -31,6 +31,7 @@ import gaia.cu9.ari.gaiaorbit.util.GlobalConf.ProgramConf.StereoProfile;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.comp.DistToCameraComparator;
 import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
+import gaia.cu9.ari.gaiaorbit.util.gravwaves.GravitationalWavesManager;
 
 public class StarGroupRenderSystem extends ImmediateRenderSystem implements IObserver {
     private final double BRIGHTNESS_FACTOR;
@@ -42,8 +43,6 @@ public class StarGroupRenderSystem extends ImmediateRenderSystem implements IObs
     private Comparator<IRenderable> comp;
     private float[] pointAlpha, alphaSizeFovBr;
 
-    private long initime;
-
     public StarGroupRenderSystem(RenderGroup rg, float[] alphas, ShaderProgram[] shaders) {
         super(rg, alphas, shaders);
         BRIGHTNESS_FACTOR = Constants.webgl ? 15 : 10;
@@ -51,7 +50,6 @@ public class StarGroupRenderSystem extends ImmediateRenderSystem implements IObs
         this.alphaSizeFovBr = new float[4];
         aux1 = new Vector3();
         aux2 = new Vector3();
-        initime = GaiaSky.instance.time.getTime().getTime();
         EventManager.instance.subscribe(this, Events.STAR_MIN_OPACITY_CMD, Events.DISPOSE_STAR_GROUP_GPU_MESH);
     }
 
@@ -200,15 +198,17 @@ public class StarGroupRenderSystem extends ImmediateRenderSystem implements IObs
                             
                             // Gravitational waves
                             if(GlobalConf.runtime.GRAVITATIONAL_WAVES) {
-                                float timesecs = (float) ((GaiaSky.instance.time.getTime().getTime() - initime) / 1000d);
+                                GravitationalWavesManager gwm = GravitationalWavesManager.instance();
                                 // Time in seconds - use simulation time
-                                shaderProgram.setUniformf("u_ts", timesecs);
+                                shaderProgram.setUniformf("u_ts", gwm.gwtime);
                                 // Wave frequency
-                                shaderProgram.setUniformf("u_omgw", 0.9f);
-                                // Coordinates of wave
-                                shaderProgram.setUniformf("u_gw", 1.5f, 0f);
+                                shaderProgram.setUniformf("u_omgw", gwm.omgw);
+                                // Coordinates of wave (cartesian)
+                                shaderProgram.setUniformf("u_gw", gwm.gw);
+                                // Transformation matrix 
+                                shaderProgram.setUniformMatrix("u_gwmat3", gwm.gwmat3);
                                 // H terms - hpluscos, hplussin, htimescos, htimessin
-                                shaderProgram.setUniformf("u_hterms", 0, 0, 0.1f, 0.1f);
+                                shaderProgram.setUniform4fv("u_hterms", gwm.hterms, 0, 4);
                             }
 
                             alphaSizeFovBr[0] = starGroup.opacity * alphas[starGroup.ct.getFirstOrdinal()];

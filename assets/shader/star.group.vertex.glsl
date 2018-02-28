@@ -26,7 +26,8 @@ uniform float u_thAnglePoint;
 
 #ifdef gravitationalWaves
     uniform vec4 u_hterms; // hpluscos, hplussin, htimescos, htimessin
-    uniform vec2 u_gw; // Location of gravitational wave
+    uniform vec3 u_gw; // Location of gravitational wave, cartesian
+    uniform mat3 u_gwmat3; // Rotation matrix so that u_gw = u_gw_mat * (0 0 1)^T
     uniform float u_ts; // Time in seconds since start
     uniform float u_omgw; // Wave frequency
     <INCLUDE shader/lib_gravwaves.glsl>
@@ -61,8 +62,18 @@ void main() {
     	pos = computeRelativisticAberration(pos, dist, u_velDir, u_vc);
     #endif // relativisticEffects
     
+    vec4 col = a_color;
+    
     #ifdef gravitationalWaves
-        pos = computeGravitationalWaves(pos, u_gw, u_ts, u_omgw, u_hterms);
+        pos = computeGravitationalWaves(pos, u_gw, u_gwmat3, u_ts, u_omgw, u_hterms);
+    
+        float cosalpha = dot(u_gw, pos) / (length(u_gw) * length(pos));
+        if(acos(cosalpha) < 0.035) {
+            // Paint red
+            col.r = 1.0;
+            col.g = 1.0;
+            col.b = 0.0;
+        }
     #endif // gravitationalWaves
     
     
@@ -82,7 +93,7 @@ void main() {
     float opacity = pow(lint2(viewAngleApparent, 0.0, u_thAnglePoint, u_pointAlpha.x, u_pointAlpha.y), 1.2);
 
     float fadeout = smoothstep(dist, len0, len1);
-    v_col = vec4(a_color.rgb, opacity * u_alphaSizeFovBr.x * fadeout);
+    v_col = vec4(col.rgb, opacity * u_alphaSizeFovBr.x * fadeout);
 
     gl_Position = u_projModelView * vec4(pos, 0.0) * v_discard;
     gl_PointSize = u_alphaSizeFovBr.y;
