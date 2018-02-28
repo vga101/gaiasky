@@ -66,14 +66,13 @@ void main() {
     
     #ifdef gravitationalWaves
         pos = computeGravitationalWaves(pos, u_gw, u_gwmat3, u_ts, u_omgw, u_hterms);
-    
-        float cosalpha = dot(u_gw, pos) / (length(u_gw) * length(pos));
-        if(acos(cosalpha) < 0.035) {
-            // Paint red
-            col.r = 1.0;
-            col.g = 1.0;
-            col.b = 0.0;
-        }
+//        float cosalpha = dot(u_gw, pos) / (length(u_gw) * length(pos));
+//        if(acos(cosalpha) < 0.035) {
+//            // Paint red
+//            col.r = 1.0;
+//            col.g = 1.0;
+//            col.b = 0.0;
+//        }
     #endif // gravitationalWaves
     
     

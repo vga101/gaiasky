@@ -96,9 +96,14 @@ public class AtmosphereShader extends BaseShader {
         public final static Uniform cameraPos = new Uniform("v3CameraPos");
         public final static Uniform invWavelength = new Uniform("v3InvWavelength");
 
-        // Since atmosphere shader does not extend default shader, we need the relativsitic parameters here too
+        // Since atmosphere shader does not extend default shader, we need the relativsitic and gravwaves parameters here too
         public final static Uniform vc = new Uniform("u_vc");
         public final static Uniform velDir = new Uniform("u_velDir");
+        public final static Uniform hterms = new Uniform("u_hterms");
+        public final static Uniform gw = new Uniform("u_gw");
+        public final static Uniform gwmat3 = new Uniform("u_gwmat3");
+        public final static Uniform ts = new Uniform("u_ts");
+        public final static Uniform omgw = new Uniform("u_omgw");
 
     }
 
@@ -506,6 +511,73 @@ public class AtmosphereShader extends BaseShader {
             }
         };
 
+        public final static Setter hterms = new Setter() {
+            @Override
+            public boolean isGlobal(BaseShader shader, int inputID) {
+                return false;
+            }
+
+            @Override
+            public void set(BaseShader shader, int inputID, Renderable renderable, Attributes combinedAttributes) {
+                if (combinedAttributes.has(Vector4Attribute.Hterms)) {
+                    float[] val = ((Vector4Attribute) (combinedAttributes.get(Vector4Attribute.Hterms))).value;
+                    shader.set(inputID, val[0], val[1], val[2], val[3]);
+                }
+            }
+        };
+
+        public final static Setter gw = new Setter() {
+            @Override
+            public boolean isGlobal(BaseShader shader, int inputID) {
+                return false;
+            }
+
+            @Override
+            public void set(BaseShader shader, int inputID, Renderable renderable, Attributes combinedAttributes) {
+                if (combinedAttributes.has(Vector3Attribute.Gw))
+                    shader.set(inputID, ((Vector3Attribute) (combinedAttributes.get(Vector3Attribute.Gw))).value);
+            }
+        };
+
+        public final static Setter gwmat3 = new Setter() {
+            @Override
+            public boolean isGlobal(BaseShader shader, int inputID) {
+                return false;
+            }
+
+            @Override
+            public void set(BaseShader shader, int inputID, Renderable renderable, Attributes combinedAttributes) {
+                if (combinedAttributes.has(Matrix3Attribute.Gwmat3))
+                    shader.set(inputID, ((Matrix3Attribute) (combinedAttributes.get(Matrix3Attribute.Gwmat3))).value);
+            }
+        };
+
+        public final static Setter ts = new Setter() {
+            @Override
+            public boolean isGlobal(BaseShader shader, int inputID) {
+                return false;
+            }
+
+            @Override
+            public void set(BaseShader shader, int inputID, Renderable renderable, Attributes combinedAttributes) {
+                if (combinedAttributes.has(RelativisticEffectFloatAttribute.Ts))
+                    shader.set(inputID, ((RelativisticEffectFloatAttribute) (combinedAttributes.get(RelativisticEffectFloatAttribute.Ts))).value);
+            }
+        };
+
+        public final static Setter omgw = new Setter() {
+            @Override
+            public boolean isGlobal(BaseShader shader, int inputID) {
+                return false;
+            }
+
+            @Override
+            public void set(BaseShader shader, int inputID, Renderable renderable, Attributes combinedAttributes) {
+                if (combinedAttributes.has(RelativisticEffectFloatAttribute.Omgw))
+                    shader.set(inputID, ((RelativisticEffectFloatAttribute) (combinedAttributes.get(RelativisticEffectFloatAttribute.Omgw))).value);
+            }
+        };
+
     }
 
     private static String defaultVertexShader = null;
@@ -572,9 +644,15 @@ public class AtmosphereShader extends BaseShader {
     public final int v3CameraPos;
     public final int v3InvWavelength;
 
-    // Material uniforms
+    // Special relativity
     public final int u_vc;
     public final int u_velDir;
+    // Gravitational waves
+    public final int u_hterms;
+    public final int u_gw;
+    public final int u_gwmat3;
+    public final int u_ts;
+    public final int u_omgw;
 
     /** The renderable used to create this shader, invalid after the call to init */
     private Renderable renderable;
@@ -650,6 +728,12 @@ public class AtmosphereShader extends BaseShader {
         u_vc = register(Inputs.vc, Setters.vc);
         u_velDir = register(Inputs.velDir, Setters.velDir);
 
+        u_hterms = register(Inputs.hterms, Setters.hterms);
+        u_gw = register(Inputs.gw, Setters.gw);
+        u_gwmat3 = register(Inputs.gwmat3, Setters.gwmat3);
+        u_ts = register(Inputs.ts, Setters.ts);
+        u_omgw = register(Inputs.omgw, Setters.omgw);
+
     }
 
     @Override
@@ -667,6 +751,9 @@ public class AtmosphereShader extends BaseShader {
         // Atmosphere ground only if camera height is set
         if ((mask & RelativisticEffectFloatAttribute.Vc) == RelativisticEffectFloatAttribute.Vc)
             prefix += "#define relativisticEffects\n";
+        // Gravitational waves
+        if ((mask & RelativisticEffectFloatAttribute.Omgw) == RelativisticEffectFloatAttribute.Omgw)
+            prefix += "#define gravitationalWaves\n";
         return prefix;
     }
 

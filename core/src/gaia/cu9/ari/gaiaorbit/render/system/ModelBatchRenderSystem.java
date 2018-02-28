@@ -37,7 +37,7 @@ public class ModelBatchRenderSystem extends AbstractRenderSystem {
      *            Atmosphere rendering.
      */
     public ModelBatchRenderSystem(RenderGroup rg, float[] alphas, ModelBatch batch, boolean atmosphere) {
-        super(rg, alphas);
+        super(rg, alphas, null);
         this.batch = batch;
         this.atmosphere = atmosphere;
         comp = new ModelComparator<IRenderable>();

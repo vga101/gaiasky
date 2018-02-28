@@ -24,7 +24,6 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.MilkyWayReal;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ParticleGroup.ParticleBean;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
-import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf.ProgramConf.StereoProfile;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
@@ -295,16 +294,8 @@ public class MilkyWayRenderSystem extends ImmediateRenderSystem implements IObse
                         nebulaProgram.setUniformi("u_nebulaTexture" + i, i);
                     }
 
-                    // Relativistic aberration
-                    if (GlobalConf.runtime.RELATIVISTIC_EFFECTS) {
-                        if (camera.getVelocity() == null || camera.getVelocity().len() == 0) {
-                            aux1.set(1, 0, 0);
-                        } else {
-                            camera.getVelocity().put(aux1).nor();
-                        }
-                        nebulaProgram.setUniformf("u_velDir", aux1);
-                        nebulaProgram.setUniformf("u_vc", (float) (camera.getSpeed() / Constants.C_KMH));
-                    }
+                    // Relativistic effects
+                    addEffectsUniforms(nebulaProgram, camera);
 
                     quad.mesh.setVertices(quad.vertices, 0, quad.vertexIdx);
                     quad.mesh.setIndices(quad.indices, 0, quad.indexIdx);
@@ -333,16 +324,8 @@ public class MilkyWayRenderSystem extends ImmediateRenderSystem implements IObse
                     shaderProgram.setUniformf("u_alpha", mw.opacity * alpha * 0.2f);
                     shaderProgram.setUniformf("u_ar", GlobalConf.program.STEREOSCOPIC_MODE && (GlobalConf.program.STEREO_PROFILE != StereoProfile.HD_3DTV && GlobalConf.program.STEREO_PROFILE != StereoProfile.ANAGLYPHIC) ? 0.5f : 1f);
 
-                    // Relativistic aberration
-                    if (GlobalConf.runtime.RELATIVISTIC_EFFECTS) {
-                        if (camera.getVelocity() == null || camera.getVelocity().len() == 0) {
-                            aux1.set(1, 0, 0);
-                        } else {
-                            camera.getVelocity().put(aux1).nor();
-                        }
-                        shaderProgram.setUniformf("u_velDir", aux1);
-                        shaderProgram.setUniformf("u_vc", (float) (camera.getSpeed() / Constants.C_KMH));
-                    }
+                    // Relativistic effects
+                    addEffectsUniforms(shaderProgram, camera);
 
                     curr.mesh.setVertices(curr.vertices, 0, curr.vertexIdx);
                     curr.mesh.render(shaderProgram, ShapeType.Point.getGlType());

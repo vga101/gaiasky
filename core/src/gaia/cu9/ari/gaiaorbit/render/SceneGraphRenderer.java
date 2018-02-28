@@ -65,6 +65,7 @@ import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.ds.Multilist;
+import gaia.cu9.ari.gaiaorbit.util.gravwaves.GravitationalWavesManager;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.override.AtmosphereShaderProvider;
@@ -170,17 +171,17 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         /** LOAD SHADER PROGRAMS WITH ASSET MANAGER **/
         manager.load("shader/font.vertex.glsl", ShaderProgram.class);
 
-        starDesc = loadShader(manager, "shader/star.vertex.glsl", "shader/star.fragment.glsl", new String[] { "star", "starRel" }, new String[] { "", "#define relativisticEffects\n" });
-        spriteDesc = loadShader(manager, "shader/sprite.vertex.glsl", "shader/sprite.fragment.glsl", new String[] { "sprite", "spriteRel" }, new String[] { "", "#define relativisticEffects\n" });
-        pixelDesc = loadShader(manager, "shader/point.vertex.glsl", "shader/point.fragment.glsl", new String[] { "pixel", "pixelRel" }, new String[] { "", "#define relativisticEffects\n" });
-        mwPointDesc = loadShader(manager, "shader/point.galaxy.vertex.glsl", "shader/point.galaxy.fragment.glsl", new String[] { "pointGal", "pointGalRel" }, new String[] { "", "#define relativisticEffects\n" });
-        mwNebulaDesc = loadShader(manager, "shader/nebula.vertex.glsl", "shader/nebula.fragment.glsl", new String[] { "nebula", "nebulaRel" }, new String[] { "", "#define relativisticEffects\n" });
-        lineDesc = loadShader(manager, "shader/line.vertex.glsl", "shader/line.fragment.glsl", new String[] { "line", "lineRel" }, new String[] { "", "#define relativisticEffects\n" });
-        lineQuadDesc = loadShader(manager, "shader/line.quad.vertex.glsl", "shader/line.quad.fragment.glsl", new String[] { "lineQuad", "lineQuadRel" }, new String[] { "", "#define relativisticEffects\n" });
-        lineGpuDesc = loadShader(manager, "shader/line.gpu.vertex.glsl", "shader/line.gpu.fragment.glsl", new String[] { "lineGpu", "lineGpuRel" }, new String[] { "", "#define relativisticEffects\n" });
-        galDesc = loadShader(manager, "shader/gal.vertex.glsl", "shader/gal.fragment.glsl", new String[] { "gal", "galRel" }, new String[] { "", "#define relativisticEffects\n" });
-        particleGroupDesc = loadShader(manager, "shader/particle.group.vertex.glsl", "shader/particle.group.fragment.glsl", new String[] { "particleGroup", "particleGroupRel" }, new String[] { "", "#define relativisticEffects\n" });
-        starGroupDesc = loadShader(manager, "shader/star.group.vertex.glsl", "shader/star.group.fragment.glsl", new String[] { "starGroup", "starGroupRel", "starGroupGrav" }, new String[] { "", "#define relativisticEffects\n", "#define gravitationalWaves\n" });
+        starDesc = loadShader(manager, "shader/star.vertex.glsl", "shader/star.fragment.glsl", new String[] { "star", "starRel", "starGrav", "starRelGrav" }, new String[] { "", "#define relativisticEffects\n", "#define gravitationalWaves\n", "#define relativisticEffects\n#define gravitationalWaves\n" });
+        spriteDesc = loadShader(manager, "shader/sprite.vertex.glsl", "shader/sprite.fragment.glsl", new String[] { "sprite", "spriteRel", "spriteGrav", "spriteRelGrav" }, new String[] { "", "#define relativisticEffects\n", "#define gravitationalWaves\n", "#define relativisticEffects\n#define gravitationalWaves\n" });
+        pixelDesc = loadShader(manager, "shader/point.vertex.glsl", "shader/point.fragment.glsl", new String[] { "pixel", "pixelRel", "pixelGrav", "pixelRelGrav" }, new String[] { "", "#define relativisticEffects\n", "#define gravitationalWaves\n", "#define relativisticEffects\n#define gravitationalWaves\n" });
+        mwPointDesc = loadShader(manager, "shader/point.galaxy.vertex.glsl", "shader/point.galaxy.fragment.glsl", new String[] { "pointGal", "pointGalRel", "pointGalGrav", "pointGalRelGrav" }, new String[] { "", "#define relativisticEffects\n", "#define gravitationalWaves\n", "#define relativisticEffects\n#define gravitationalWaves\n" });
+        mwNebulaDesc = loadShader(manager, "shader/nebula.vertex.glsl", "shader/nebula.fragment.glsl", new String[] { "nebula", "nebulaRel", "nebulaGrav", "nebulaRelGrav" }, new String[] { "", "#define relativisticEffects\n", "#define gravitationalWaves\n", "#define relativisticEffects\n#define gravitationalWaves\n" });
+        lineDesc = loadShader(manager, "shader/line.vertex.glsl", "shader/line.fragment.glsl", new String[] { "line", "lineRel", "lineGrav", "lineRelGrav" }, new String[] { "", "#define relativisticEffects\n", "#define gravitationalWaves\n", "#define relativisticEffects\n#define gravitationalWaves\n" });
+        lineQuadDesc = loadShader(manager, "shader/line.quad.vertex.glsl", "shader/line.quad.fragment.glsl", new String[] { "lineQuad", "lineQuadRel", "lineQuadGrav", "lineQuadRelGrav" }, new String[] { "", "#define relativisticEffects\n", "#define gravitationalWaves\n", "#define relativisticEffects\n#define gravitationalWaves\n" });
+        lineGpuDesc = loadShader(manager, "shader/line.gpu.vertex.glsl", "shader/line.gpu.fragment.glsl", new String[] { "lineGpu", "lineGpuRel", "lineGpuGrav", "lineGpuRelGrav" }, new String[] { "", "#define relativisticEffects\n", "#define gravitationalWaves\n", "#define relativisticEffects\n#define gravitationalWaves\n" });
+        galDesc = loadShader(manager, "shader/gal.vertex.glsl", "shader/gal.fragment.glsl", new String[] { "gal", "galRel", "galGrav", "galRelGrav" }, new String[] { "", "#define relativisticEffects\n", "#define gravitationalWaves\n", "#define relativisticEffects\n#define gravitationalWaves\n" });
+        particleGroupDesc = loadShader(manager, "shader/particle.group.vertex.glsl", "shader/particle.group.fragment.glsl", new String[] { "particleGroup", "particleGroupRel", "particleGroupGrav", "particleGroupRelGrav" }, new String[] { "", "#define relativisticEffects\n", "#define gravitationalWaves\n", "#define relativisticEffects\n#define gravitationalWaves\n" });
+        starGroupDesc = loadShader(manager, "shader/star.group.vertex.glsl", "shader/star.group.fragment.glsl", new String[] { "starGroup", "starGroupRel", "starGroupGrav", "starGroupRelGrav" }, new String[] { "", "#define relativisticEffects\n", "#define gravitationalWaves\n", "#define relativisticEffects\n#define gravitationalWaves\n" });
 
         manager.load("atmgrounddefault", GroundShaderProvider.class, new GroundShaderProviderParameter("shader/default.vertex.glsl", "shader/default.fragment.glsl"));
         manager.load("spsurface", RelativisticShaderProvider.class, new RelativisticShaderProviderParameter("shader/starsurface.vertex.glsl", "shader/starsurface.fragment.glsl"));
@@ -404,7 +405,6 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
          *
          **/
 
-
         // POINTS
         AbstractRenderSystem pixelStarProc = new PixelRenderSystem(RenderGroup.POINT_STAR, alphas, pixelShaders, ComponentType.Stars);
         pixelStarProc.setPreRunnable(blendNoDepthRunnable);
@@ -425,7 +425,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         //        cloudsProc.setPreRunnable(blendNoDepthRunnable);
 
         // ANNOTATIONS
-        AbstractRenderSystem annotationsProc = new FontRenderSystem(RenderGroup.FONT_ANNOTATION, alphas, spriteBatch);
+        AbstractRenderSystem annotationsProc = new FontRenderSystem(RenderGroup.FONT_ANNOTATION, alphas, spriteBatch, null);
         annotationsProc.setPreRunnable(blendNoDepthRunnable);
         annotationsProc.setPostRunnable(new RenderSystemRunnable() {
             @Override
@@ -436,7 +436,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         });
 
         // BILLBOARD STARS
-        billboardStarsProc = new BillboardStarRenderSystem(RenderGroup.BILLBOARD_STAR, alphas, starShaders[0], starShaders[1], "data/tex/star_glow_s.png", ComponentType.Stars.ordinal());
+        billboardStarsProc = new BillboardStarRenderSystem(RenderGroup.BILLBOARD_STAR, alphas, starShaders, "data/tex/star_glow_s.png", ComponentType.Stars.ordinal());
         billboardStarsProc.setPreRunnable(blendNoDepthRunnable);
         billboardStarsProc.setPostRunnable(new RenderSystemRunnable() {
 
@@ -462,9 +462,9 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
                                 pos3d.sub(camera.getShift());
 
                                 // Aberration
-                                if (GlobalConf.runtime.RELATIVISTIC_EFFECTS) {
-                                    GlobalResources.applyRelativisticAberration(pos3d, camera);
-                                }
+                                GlobalResources.applyRelativisticAberration(pos3d, camera);
+                                // GravWaves
+                                GravitationalWavesManager.instance().gravitationalWavePos(pos3d);
                                 Vector3 pos3 = pos3d.put(auxv);
 
                                 camera.getCamera().project(pos3);
@@ -491,11 +491,11 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         });
 
         // BILLBOARD GALAXIES
-        AbstractRenderSystem billboardGalaxiesProc = new BillboardStarRenderSystem(RenderGroup.BILLBOARD_GAL, alphas, galShaders[0], galShaders[1], "data/tex/static.jpg", ComponentType.Galaxies.ordinal());
+        AbstractRenderSystem billboardGalaxiesProc = new BillboardStarRenderSystem(RenderGroup.BILLBOARD_GAL, alphas, galShaders, "data/tex/static.jpg", ComponentType.Galaxies.ordinal());
         billboardGalaxiesProc.setPreRunnable(blendNoDepthRunnable);
 
         // BILLBOARD SPRITES
-        AbstractRenderSystem billboardSpritesProc = new BillboardSpriteRenderSystem(RenderGroup.BILLBOARD_SPRITE, alphas, spriteShaders[0], spriteShaders[1], ComponentType.Clusters.ordinal());
+        AbstractRenderSystem billboardSpritesProc = new BillboardSpriteRenderSystem(RenderGroup.BILLBOARD_SPRITE, alphas, spriteShaders, ComponentType.Clusters.ordinal());
         billboardSpritesProc.setPreRunnable(blendNoDepthRunnable);
 
         // LINES CPU
@@ -534,7 +534,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         labelsProc.setPreRunnable(blendNoDepthRunnable);
 
         // BILLBOARD SSO
-        AbstractRenderSystem billboardSSOProc = new BillboardStarRenderSystem(RenderGroup.BILLBOARD_SSO, alphas, starShaders[0], starShaders[1], "img/sso.png", -1);
+        AbstractRenderSystem billboardSSOProc = new BillboardStarRenderSystem(RenderGroup.BILLBOARD_SSO, alphas, starShaders, "img/sso.png", -1);
         billboardSSOProc.setPreRunnable(blendDepthRunnable);
 
         // MODEL ATMOSPHERE
@@ -757,7 +757,6 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         // In stereo and cubemap modes, the glow pass is rendered in the SGR itself
         if (!GlobalConf.program.STEREOSCOPIC_MODE && !GlobalConf.program.CUBEMAP360_MODE)
             renderGlowPass(camera);
-
 
         sgr.render(this, camera, t, rw, rh, fb, ppb);
 

@@ -35,6 +35,15 @@ varying vec4 v_col;
     <INCLUDE shader/lib_relativity.glsl>
 #endif // relativisticEffects
 
+#ifdef gravitationalWaves
+    uniform vec4 u_hterms; // hpluscos, hplussin, htimescos, htimessin
+    uniform vec3 u_gw; // Location of gravitational wave, cartesian
+    uniform mat3 u_gwmat3; // Rotation matrix so that u_gw = u_gw_mat * (0 0 1)^T
+    uniform float u_ts; // Time in seconds since start
+    uniform float u_omgw; // Wave frequency
+    <INCLUDE shader/lib_gravwaves.glsl>
+#endif // gravitationalWaves
+
 
 void main() {
     vec3 pos = a_position.xyz - u_camPos;
@@ -48,6 +57,10 @@ void main() {
     #ifdef relativisticEffects
         pos = computeRelativisticAberration(pos, dist, u_velDir, u_vc);
     #endif // relativisticEffects
+    
+    #ifdef gravitationalWaves
+        pos = computeGravitationalWaves(pos, u_gw, u_gwmat3, u_ts, u_omgw, u_hterms);
+    #endif // gravitationalWaves
   
     float viewAngleApparent = atan((a_size * u_alphaSizeFovBr.w) / dist) / u_alphaSizeFovBr.z;
     float opacity = pow(lint2(viewAngleApparent, 0.0, u_thAnglePoint, u_pointAlpha.x, u_pointAlpha.y), 1.2);

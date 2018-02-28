@@ -64,6 +64,9 @@ public class AtmosphereComponent {
         // Relativistic effects
         if (GlobalConf.runtime.RELATIVISTIC_EFFECTS)
             mc.rec.setUpRelativisticEffectsMaterial(atmMat);
+        // Gravitational waves
+        if (GlobalConf.runtime.GRAVITATIONAL_WAVES)
+            mc.rec.setUpGravitationalWavesMaterial(atmMat);
 
         // CREATE ATMOSPHERE MODEL
         mc.instance = new ModelInstance(atmosphereModel, this.localTransform);

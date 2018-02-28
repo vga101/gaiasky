@@ -15,7 +15,6 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.Gaia;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Orbit;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
-import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
@@ -160,16 +159,8 @@ public class LineGPURenderSystem extends ImmediateRenderSystem {
                 shaderProgram.setUniformf("u_parentPos", 0, 0, 0);
             }
 
-            // Relativistic aberration
-            if (GlobalConf.runtime.RELATIVISTIC_EFFECTS) {
-                if (camera.getVelocity() == null || camera.getVelocity().len() == 0) {
-                    aux2.set(1, 0, 0);
-                } else {
-                    camera.getVelocity().put(aux2).nor();
-                }
-                shaderProgram.setUniformf("u_velDir", aux2);
-                shaderProgram.setUniformf("u_vc", (float) (camera.getSpeed() / Constants.C_KMH));
-            }
+            // Relativistic effects
+            addEffectsUniforms(shaderProgram, camera);
 
             curr.mesh.setVertices(curr.vertices, 0, renderable.count);
             curr.mesh.render(shaderProgram, glType);

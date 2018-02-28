@@ -24,7 +24,7 @@ vec3 computeGravitationalWaves(vec3 pos, vec3 gw, mat3 gwmat3, float t, float om
     
     mat3 pept = pepluspt + petimespt;
     
-    // Backpu distance to pos
+    // Backup distance to pos
     float poslen = length(pos);
     // Normalize pos
     pos = normalize(pos);

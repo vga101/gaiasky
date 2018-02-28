@@ -53,6 +53,7 @@ import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.ModelCache;
 import gaia.cu9.ari.gaiaorbit.util.Pair;
 import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
+import gaia.cu9.ari.gaiaorbit.util.gravwaves.GravitationalWavesManager;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
@@ -769,7 +770,10 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
 
         aux.add(cam.getUp()).nor().scl(dist);
 
-        GlobalResources.applyRelativisticAberration(out.add(aux), cam);
+        out.add(aux);
+
+        GlobalResources.applyRelativisticAberration(out, cam);
+        GravitationalWavesManager.instance().gravitationalWavePos(out);
     }
 
     public double getFocusSize() {

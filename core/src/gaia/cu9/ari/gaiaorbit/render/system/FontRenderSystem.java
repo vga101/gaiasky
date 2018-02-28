@@ -19,20 +19,18 @@ import gaia.cu9.ari.gaiaorbit.util.comp.DistToCameraComparator;
 public class FontRenderSystem extends AbstractRenderSystem {
 
     private SpriteBatch batch;
-    private ShaderProgram shaderProgram;
     public BitmapFont font3d, font2d, fontTitles;
     private Comparator<IRenderable> comp;
 
-    public FontRenderSystem(RenderGroup rg, float[] alphas, SpriteBatch batch) {
-        super(rg, alphas);
+    public FontRenderSystem(RenderGroup rg, float[] alphas, SpriteBatch batch, ShaderProgram program) {
+        super(rg, alphas, new ShaderProgram[] { program });
         this.batch = batch;
         // Init comparator
         comp = new DistToCameraComparator<IRenderable>();
     }
 
-    public FontRenderSystem(RenderGroup rg, float[] alphas, SpriteBatch batch, ShaderProgram shaderProgram, BitmapFont font3d, BitmapFont font2d, BitmapFont fontTitles) {
-        this(rg, alphas, batch);
-        this.shaderProgram = shaderProgram;
+    public FontRenderSystem(RenderGroup rg, float[] alphas, SpriteBatch batch, ShaderProgram program, BitmapFont font3d, BitmapFont font2d, BitmapFont fontTitles) {
+        this(rg, alphas, batch, program);
 
         this.font3d = font3d;
         this.font2d = font2d;
@@ -46,7 +44,8 @@ public class FontRenderSystem extends AbstractRenderSystem {
         batch.begin();
 
         int size = renderables.size;
-        if (shaderProgram == null) {
+        ShaderProgram program = programs[0];
+        if (program == null) {
             for (int i = 0; i < size; i++) {
                 IAnnotationsRenderable s = (IAnnotationsRenderable) renderables.get(i);
                 // Render sprite
@@ -61,13 +60,13 @@ public class FontRenderSystem extends AbstractRenderSystem {
                 // Regular mode, we use 3D distance field font
                 I3DTextRenderable lr = (I3DTextRenderable) s;
                 // Label color
-                shaderProgram.setUniform4fv("u_color", lr.textColour(), 0, 4);
+                program.setUniform4fv("u_color", lr.textColour(), 0, 4);
                 // Component alpha
-                shaderProgram.setUniformf("u_componentAlpha", getAlpha(s) * (s instanceof Text2D ? 1 : lalpha));
+                program.setUniformf("u_componentAlpha", getAlpha(s) * (s instanceof Text2D ? 1 : lalpha));
                 // Font opacity multiplier, take into account element opacity
-                shaderProgram.setUniformf("u_opacity", 0.75f * lr.getOpacity());
+                program.setUniformf("u_opacity", 0.75f * lr.getOpacity());
 
-                s.render(batch, shaderProgram, this, rc, camera);
+                s.render(batch, program, this, rc, camera);
             }
         }
         batch.end();

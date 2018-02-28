@@ -106,7 +106,7 @@ public class ModelComponent implements Disposable {
             tc.initialize();
         }
 
-        if (GlobalConf.runtime.RELATIVISTIC_EFFECTS) {
+        if (GlobalConf.runtime.RELATIVISTIC_EFFECTS || GlobalConf.runtime.GRAVITATIONAL_WAVES) {
             rec = new RelativisticEffectsComponent();
         }
     }
@@ -162,8 +162,8 @@ public class ModelComponent implements Disposable {
         }
 
         // INIT RELATIVISITC
-        if (GlobalConf.runtime.RELATIVISTIC_EFFECTS) {
-            rec.doneLoading(materials);
+        if (GlobalConf.runtime.RELATIVISTIC_EFFECTS || GlobalConf.runtime.GRAVITATIONAL_WAVES) {
+            rec.doneLoading(materials, GlobalConf.runtime.RELATIVISTIC_EFFECTS, GlobalConf.runtime.GRAVITATIONAL_WAVES);
         }
 
         // CREATE MAIN MODEL INSTANCE
@@ -330,6 +330,12 @@ public class ModelComponent implements Disposable {
                 rec.updateRelativisticEffectsMaterial(mat, camera);
             }
         }
+
+        if (GlobalConf.runtime.GRAVITATIONAL_WAVES) {
+            for (Material mat : instance.materials) {
+                rec.updateGravitationalWavesMaterial(mat, camera);
+            }
+        }
     }
 
     public void updateRelativisticEffects(ICamera camera, float vc) {
@@ -338,6 +344,13 @@ public class ModelComponent implements Disposable {
                 rec.updateRelativisticEffectsMaterial(mat, camera, vc);
             }
         }
+
+        if (GlobalConf.runtime.GRAVITATIONAL_WAVES) {
+            for (Material mat : instance.materials) {
+                rec.updateGravitationalWavesMaterial(mat, camera);
+            }
+        }
     }
+
 
 }

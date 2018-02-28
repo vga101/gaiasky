@@ -28,6 +28,7 @@ import gaia.cu9.ari.gaiaorbit.util.ModelCache;
 import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
 import gaia.cu9.ari.gaiaorbit.util.g3d.MeshPartBuilder2;
 import gaia.cu9.ari.gaiaorbit.util.g3d.ModelBuilder2;
+import gaia.cu9.ari.gaiaorbit.util.gravwaves.GravitationalWavesManager;
 import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
@@ -90,6 +91,9 @@ public class Grid extends AbstractPositionEntity implements IModelRenderable, IA
         // Relativistic effects
         if (GlobalConf.runtime.RELATIVISTIC_EFFECTS)
             mc.rec.setUpRelativisticEffectsMaterial(mc.instance.materials);
+        // Grav waves
+        if (GlobalConf.runtime.GRAVITATIONAL_WAVES)
+            mc.rec.setUpGravitationalWavesMaterial(mc.instance.materials);
 
         float pl = .5f;
         labelColor = new float[] { Math.min(1, cc[0] + pl), Math.min(1, cc[1] + pl), Math.min(1, cc[2] + pl), Math.min(1, cc[3] + pl) };
@@ -135,6 +139,7 @@ public class Grid extends AbstractPositionEntity implements IModelRenderable, IA
 
         for (int angle = 0; angle < 360; angle += stepAngle) {
             auxf.set(Coordinates.sphericalToCartesian(Math.toRadians(angle), 0, 1f, auxd).valuesf()).mul(localTransform).nor();
+            effectsPos(auxf, camera);
             if (auxf.dot(camera.getCamera().direction.nor()) > 0) {
                 auxf.add(camera.getCamera().position);
                 camera.getCamera().project(auxf);
@@ -147,12 +152,14 @@ public class Grid extends AbstractPositionEntity implements IModelRenderable, IA
         for (int angle = -90; angle <= 90; angle += stepAngle) {
             if (angle != 0) {
                 auxf.set(Coordinates.sphericalToCartesian(0, Math.toRadians(angle), 1f, auxd).valuesf()).mul(localTransform).nor();
+                effectsPos(auxf, camera);
                 if (auxf.dot(camera.getCamera().direction.nor()) > 0) {
                     auxf.add(camera.getCamera().position);
                     camera.getCamera().project(auxf);
                     font.draw(spriteBatch, Integer.toString(angle), auxf.x, auxf.y);
                 }
                 auxf.set(Coordinates.sphericalToCartesian(0, Math.toRadians(-angle), -1f, auxd).valuesf()).mul(localTransform).nor();
+                effectsPos(auxf, camera);
                 if (auxf.dot(camera.getCamera().direction.nor()) > 0) {
                     auxf.add(camera.getCamera().position);
                     camera.getCamera().project(auxf);
@@ -161,6 +168,27 @@ public class Grid extends AbstractPositionEntity implements IModelRenderable, IA
             }
         }
 
+    }
+
+    private void effectsPos(Vector3 auxf, ICamera camera) {
+        relativisticPos(auxf, camera);
+        gravwavePos(auxf);
+    }
+
+    private void relativisticPos(Vector3 auxf, ICamera camera) {
+        if (GlobalConf.runtime.RELATIVISTIC_EFFECTS) {
+            auxd.set(auxf);
+            GlobalResources.applyRelativisticAberration(auxd, camera);
+            auxd.put(auxf);
+        }
+    }
+
+    private void gravwavePos(Vector3 auxf) {
+        if (GlobalConf.runtime.GRAVITATIONAL_WAVES) {
+            auxd.set(auxf);
+            GravitationalWavesManager.instance().gravitationalWavePos(auxd);
+            auxd.put(auxf);
+        }
     }
 
     public void setTransformName(String transformName) {

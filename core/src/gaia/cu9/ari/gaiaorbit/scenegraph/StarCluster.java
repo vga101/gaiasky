@@ -40,6 +40,7 @@ import gaia.cu9.ari.gaiaorbit.util.ModelCache;
 import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
 import gaia.cu9.ari.gaiaorbit.util.g3d.MeshPartBuilder2;
 import gaia.cu9.ari.gaiaorbit.util.g3d.ModelBuilder2;
+import gaia.cu9.ari.gaiaorbit.util.gravwaves.GravitationalWavesManager;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Quaterniond;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
@@ -135,6 +136,9 @@ public class StarCluster extends AbstractPositionEntity implements IFocus, IProp
         // Relativistic effects
         if (GlobalConf.runtime.RELATIVISTIC_EFFECTS)
             mc.rec.setUpRelativisticEffectsMaterial(mc.instance.materials);
+        // Gravitational waves
+        if (GlobalConf.runtime.GRAVITATIONAL_WAVES)
+            mc.rec.setUpGravitationalWavesMaterial(mc.instance.materials);
 
     }
 
@@ -300,6 +304,7 @@ public class StarCluster extends AbstractPositionEntity implements IFocus, IProp
 
         out.add(aux);
         GlobalResources.applyRelativisticAberration(out, cam);
+        GravitationalWavesManager.instance().gravitationalWavePos(out);
     }
 
     @Override

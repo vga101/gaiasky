@@ -14,7 +14,7 @@ public class ShapeRenderSystem extends AbstractRenderSystem {
     private ShapeRenderer shapeRenderer;
 
     public ShapeRenderSystem(RenderGroup rg, float[] alphas) {
-        super(rg, alphas);
+        super(rg, alphas, null);
         this.shapeRenderer = new ShapeRenderer();
 
     }

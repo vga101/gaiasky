@@ -31,7 +31,6 @@ import gaia.cu9.ari.gaiaorbit.util.GlobalConf.ProgramConf.StereoProfile;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.comp.DistToCameraComparator;
 import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
-import gaia.cu9.ari.gaiaorbit.util.gravwaves.GravitationalWavesManager;
 
 public class StarGroupRenderSystem extends ImmediateRenderSystem implements IObserver {
     private final double BRIGHTNESS_FACTOR;
@@ -185,31 +184,8 @@ public class StarGroupRenderSystem extends ImmediateRenderSystem implements IObs
                             shaderProgram.setUniformMatrix("u_projModelView", camera.getCamera().combined);
                             shaderProgram.setUniformf("u_camPos", camera.getCurrent().getPos().put(aux1));
 
-                            // Relativistic aberration
-                            if (GlobalConf.runtime.RELATIVISTIC_EFFECTS) {
-                                if (camera.getVelocity() == null || camera.getVelocity().len() == 0) {
-                                    aux2.set(1, 0, 0);
-                                } else {
-                                    camera.getVelocity().put(aux2).nor();
-                                }
-                                shaderProgram.setUniformf("u_velDir", aux2);
-                                shaderProgram.setUniformf("u_vc", (float) (camera.getSpeed() / Constants.C_KMH));
-                            }
-                            
-                            // Gravitational waves
-                            if(GlobalConf.runtime.GRAVITATIONAL_WAVES) {
-                                GravitationalWavesManager gwm = GravitationalWavesManager.instance();
-                                // Time in seconds - use simulation time
-                                shaderProgram.setUniformf("u_ts", gwm.gwtime);
-                                // Wave frequency
-                                shaderProgram.setUniformf("u_omgw", gwm.omgw);
-                                // Coordinates of wave (cartesian)
-                                shaderProgram.setUniformf("u_gw", gwm.gw);
-                                // Transformation matrix 
-                                shaderProgram.setUniformMatrix("u_gwmat3", gwm.gwmat3);
-                                // H terms - hpluscos, hplussin, htimescos, htimessin
-                                shaderProgram.setUniform4fv("u_hterms", gwm.hterms, 0, 4);
-                            }
+                            // Relativistic effects
+                            addEffectsUniforms(shaderProgram, camera);
 
                             alphaSizeFovBr[0] = starGroup.opacity * alphas[starGroup.ct.getFirstOrdinal()];
                             alphaSizeFovBr[1] = fovmode == 0 ? (GlobalConf.scene.STAR_POINT_SIZE * rc.scaleFactor * (GlobalConf.program.isStereoFullWidth() ? 1 : 2)) : (GlobalConf.scene.STAR_POINT_SIZE * rc.scaleFactor * 10);

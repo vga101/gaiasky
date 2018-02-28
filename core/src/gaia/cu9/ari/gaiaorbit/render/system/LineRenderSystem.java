@@ -18,7 +18,6 @@ import gaia.cu9.ari.gaiaorbit.render.IRenderable;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
-import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 
 public class LineRenderSystem extends ImmediateRenderSystem {
@@ -110,16 +109,8 @@ public class LineRenderSystem extends ImmediateRenderSystem {
         shaderProgram.begin();
         shaderProgram.setUniformMatrix("u_projModelView", camera.getCamera().combined);
 
-        // Relativistic aberration
-        if (GlobalConf.runtime.RELATIVISTIC_EFFECTS) {
-            if (camera.getVelocity() == null || camera.getVelocity().len() == 0) {
-                aux2.set(1, 0, 0);
-            } else {
-                camera.getVelocity().put(aux2).nor();
-            }
-            shaderProgram.setUniformf("u_velDir", aux2);
-            shaderProgram.setUniformf("u_vc", (float) (camera.getSpeed() / Constants.C_KMH));
-        }
+        // Relativistic effects
+        addEffectsUniforms(shaderProgram, camera);
 
         curr.mesh.setVertices(curr.vertices, 0, curr.vertexIdx);
         curr.mesh.render(shaderProgram, glType);
