@@ -42,6 +42,8 @@ public class StarGroupRenderSystem extends ImmediateRenderSystem implements IObs
     private Comparator<IRenderable> comp;
     private float[] pointAlpha, alphaSizeFovBr;
 
+    private long initime;
+
     public StarGroupRenderSystem(RenderGroup rg, float[] alphas, ShaderProgram[] shaders) {
         super(rg, alphas, shaders);
         BRIGHTNESS_FACTOR = Constants.webgl ? 15 : 10;
@@ -49,7 +51,7 @@ public class StarGroupRenderSystem extends ImmediateRenderSystem implements IObs
         this.alphaSizeFovBr = new float[4];
         aux1 = new Vector3();
         aux2 = new Vector3();
-
+        initime = GaiaSky.instance.time.getTime().getTime();
         EventManager.instance.subscribe(this, Events.STAR_MIN_OPACITY_CMD, Events.DISPOSE_STAR_GROUP_GPU_MESH);
     }
 
@@ -194,6 +196,19 @@ public class StarGroupRenderSystem extends ImmediateRenderSystem implements IObs
                                 }
                                 shaderProgram.setUniformf("u_velDir", aux2);
                                 shaderProgram.setUniformf("u_vc", (float) (camera.getSpeed() / Constants.C_KMH));
+                            }
+                            
+                            // Gravitational waves
+                            if(GlobalConf.runtime.GRAVITATIONAL_WAVES) {
+                                float timesecs = (float) ((GaiaSky.instance.time.getTime().getTime() - initime) / 1000d);
+                                // Time in seconds - use simulation time
+                                shaderProgram.setUniformf("u_ts", timesecs);
+                                // Wave frequency
+                                shaderProgram.setUniformf("u_omgw", 0.9f);
+                                // Coordinates of wave
+                                shaderProgram.setUniformf("u_gw", 1.5f, 0f);
+                                // H terms - hpluscos, hplussin, htimescos, htimessin
+                                shaderProgram.setUniformf("u_hterms", 0, 0, 0.1f, 0.1f);
                             }
 
                             alphaSizeFovBr[0] = starGroup.opacity * alphas[starGroup.ct.getFirstOrdinal()];

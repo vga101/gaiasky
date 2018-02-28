@@ -180,7 +180,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         lineGpuDesc = loadShader(manager, "shader/line.gpu.vertex.glsl", "shader/line.gpu.fragment.glsl", new String[] { "lineGpu", "lineGpuRel" }, new String[] { "", "#define relativisticEffects\n" });
         galDesc = loadShader(manager, "shader/gal.vertex.glsl", "shader/gal.fragment.glsl", new String[] { "gal", "galRel" }, new String[] { "", "#define relativisticEffects\n" });
         particleGroupDesc = loadShader(manager, "shader/particle.group.vertex.glsl", "shader/particle.group.fragment.glsl", new String[] { "particleGroup", "particleGroupRel" }, new String[] { "", "#define relativisticEffects\n" });
-        starGroupDesc = loadShader(manager, "shader/star.group.vertex.glsl", "shader/star.group.fragment.glsl", new String[] { "starGroup", "starGroupRel" }, new String[] { "", "#define relativisticEffects\n" });
+        starGroupDesc = loadShader(manager, "shader/star.group.vertex.glsl", "shader/star.group.fragment.glsl", new String[] { "starGroup", "starGroupRel", "starGroupGrav" }, new String[] { "", "#define relativisticEffects\n", "#define gravitationalWaves\n" });
 
         manager.load("atmgrounddefault", GroundShaderProvider.class, new GroundShaderProviderParameter("shader/default.vertex.glsl", "shader/default.fragment.glsl"));
         manager.load("spsurface", RelativisticShaderProvider.class, new RelativisticShaderProviderParameter("shader/starsurface.vertex.glsl", "shader/starsurface.fragment.glsl"));
@@ -312,7 +312,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         /**
          * STAR GROUP - default and relativistic
          */
-        starGroupShaders = fetchShaderProgram(manager, starGroupDesc, "Star group", "Star group (rel)");
+        starGroupShaders = fetchShaderProgram(manager, starGroupDesc, "Star group", "Star group (rel)", "Star group (grav)");
 
         /**
          * PIXEL

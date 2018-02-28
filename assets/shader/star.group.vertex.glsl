@@ -1,3 +1,4 @@
+#version 120
 
 <INCLUDE shader/lib_math.glsl>
 <INCLUDE shader/lib_geometry.glsl>
@@ -22,6 +23,14 @@ uniform float u_thAnglePoint;
     uniform float u_vc; // Fraction of the speed of light, v/c
     <INCLUDE shader/lib_relativity.glsl>
 #endif // relativisticEffects
+
+#ifdef gravitationalWaves
+    uniform vec4 u_hterms; // hpluscos, hplussin, htimescos, htimessin
+    uniform vec2 u_gw; // Location of gravitational wave
+    uniform float u_ts; // Time in seconds since start
+    uniform float u_omgw; // Wave frequency
+    <INCLUDE shader/lib_gravwaves.glsl>
+#endif // gravitationalWaves
 
 // 0 - alpha
 // 1 - point size
@@ -51,6 +60,10 @@ void main() {
     #ifdef relativisticEffects
     	pos = computeRelativisticAberration(pos, dist, u_velDir, u_vc);
     #endif // relativisticEffects
+    
+    #ifdef gravitationalWaves
+        pos = computeGravitationalWaves(pos, u_gw, u_ts, u_omgw, u_hterms);
+    #endif // gravitationalWaves
     
     
     // Compute fov observation if necessary (only Fov1, Fov2)

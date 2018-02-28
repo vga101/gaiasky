@@ -57,7 +57,14 @@ public abstract class ImmediateRenderSystem extends AbstractRenderSystem {
     protected abstract void initVertices();
 
     protected ShaderProgram getShaderProgram() {
-        return GlobalConf.runtime.RELATIVISTIC_EFFECTS ? programs[1] : programs[0];
+        try {
+            if (GlobalConf.runtime.RELATIVISTIC_EFFECTS)
+                return programs[1];
+            else if (GlobalConf.runtime.GRAVITATIONAL_WAVES)
+                return programs[2];
+        } catch (Exception e) {
+        }
+        return programs[0];
     }
 
     public void color(Color color) {

@@ -233,6 +233,7 @@ public class GlobalConf {
         /** Whether octree drawing is active or not **/
         public boolean DRAW_OCTREE;
         public boolean RELATIVISTIC_EFFECTS = false;
+        public boolean GRAVITATIONAL_WAVES = false;
 
         public RuntimeConf() {
             EventManager.instance.subscribe(this, Events.LIMIT_MAG_CMD, Events.INPUT_ENABLED_CMD, Events.DISPLAY_GUI_CMD, Events.TOGGLE_UPDATEPAUSE, Events.TOGGLE_TIME_CMD, Events.RECORD_CAMERA_CMD);

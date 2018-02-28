@@ -20,6 +20,7 @@
 -  Mark Taylor's [STIL](http://www.star.bristol.ac.uk/~mbt/stil/) library
 -  The [Jython Project](http://www.jython.org/)
 -  [ernieyu](https://github.com/ernieyu/) for the Java Swing [range slider](https://github.com/ernieyu/Swing-range-slider)
+-  Sergei Klioner and Robin Geyer (TU Dresden) for the idea and octave implementation of the gravitational waves effect
 
 ## Textures, models, music and other assets
 

@@ -84,9 +84,9 @@ public class ShaderProgramProvider extends AsynchronousAssetLoader<ShaderProgram
         String fragmentCode = vertexFile.equals(fragmentFile) ? vertexCode : ShaderTemplatingLoader.load(fragmentFile);
         if (parameter != null) {
             if (parameter.prependVertexCode != null)
-                vertexCode = parameter.prependVertexCode + vertexCode;
+                vertexCode = getShaderCode(parameter.prependVertexCode, vertexCode);
             if (parameter.prependFragmentCode != null)
-                fragmentCode = parameter.prependFragmentCode + fragmentCode;
+                fragmentCode = getShaderCode(parameter.prependFragmentCode, fragmentCode);
         }
 
         ShaderProgram shaderProgram = new ShaderProgram(vertexCode, fragmentCode);
@@ -95,6 +95,17 @@ public class ShaderProgramProvider extends AsynchronousAssetLoader<ShaderProgram
         }
 
         return shaderProgram;
+    }
+
+    static private String getShaderCode(String prepend, String code) {
+        code = code.trim();
+        if (code.startsWith("#version") && !prepend.isEmpty()) {
+            int firstlineend = code.indexOf('\n') + 1;
+            String versionStr = code.substring(0, firstlineend);
+            return versionStr + prepend + code.substring(firstlineend);
+        } else {
+            return prepend + code;
+        }
     }
 
     static public class ShaderProgramParameter extends AssetLoaderParameters<ShaderProgram> {

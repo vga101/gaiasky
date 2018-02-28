@@ -33,8 +33,7 @@ import gaia.cu9.ari.gaiaorbit.util.parse.Parser;
  * Loads the DR2 catalog in CSV format
  * 
  * Source position and corresponding errors are in radians, parallax in mas and
- * proper motion in mas/yr. The colors we get from the BT and VT magnitudes in
- * the original Tycho2 catalog: B-V = 0.85 * (BT - VT)
+ * proper motion in mas/yr.
  * 
  * @author Toni Sagrista
  *
