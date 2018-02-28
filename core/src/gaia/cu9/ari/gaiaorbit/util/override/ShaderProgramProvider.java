@@ -97,14 +97,14 @@ public class ShaderProgramProvider extends AsynchronousAssetLoader<ShaderProgram
         return shaderProgram;
     }
 
-    static private String getShaderCode(String prepend, String code) {
+    static public String getShaderCode(String prefix, String code) {
         code = code.trim();
-        if (code.startsWith("#version") && !prepend.isEmpty()) {
+        if (code.startsWith("#version") && !prefix.isEmpty()) {
             int firstlineend = code.indexOf('\n') + 1;
             String versionStr = code.substring(0, firstlineend);
-            return versionStr + prepend + code.substring(firstlineend);
+            return versionStr + prefix + code.substring(firstlineend);
         } else {
-            return prepend + code;
+            return prefix + code;
         }
     }
 

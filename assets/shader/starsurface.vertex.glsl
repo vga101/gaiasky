@@ -1,3 +1,5 @@
+#version 120
+
 #if defined(diffuseTextureFlag) || defined(specularTextureFlag)
 #define textureFlag
 #endif

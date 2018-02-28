@@ -168,4 +168,5 @@ public class RelativisticShader extends DefaultShader {
             prefix += "#define gravitationalWaves\n";
         return prefix;
     }
+    
 }

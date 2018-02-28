@@ -674,7 +674,7 @@ public class AtmosphereShader extends BaseShader {
     }
 
     public AtmosphereShader(final Renderable renderable, final Config config, final String prefix, final String vertexShader, final String fragmentShader) {
-        this(renderable, config, new ShaderProgram(prefix + vertexShader, prefix + fragmentShader));
+        this(renderable, config, new ShaderProgram(ShaderProgramProvider.getShaderCode(prefix, vertexShader), ShaderProgramProvider.getShaderCode(prefix, fragmentShader)));
     }
 
     public AtmosphereShader(final Renderable renderable, final Config config, final ShaderProgram shaderProgram) {
