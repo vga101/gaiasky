@@ -25,9 +25,10 @@ import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
-/** 
+/**
  * A model which renders as a background, unaffected by the camera. It should
  * usually be a flipped sphere or cubemap.
+ * 
  * @author tsagrista
  *
  */
@@ -102,7 +103,7 @@ public class BackgroundModel extends AbstractPositionEntity implements IModelRen
     }
 
     /**
-     * Model rendering.
+     * Model rendering
      */
     @Override
     public void render(ModelBatch modelBatch, float alpha, double t, RenderingContext rc) {
@@ -110,6 +111,13 @@ public class BackgroundModel extends AbstractPositionEntity implements IModelRen
         mc.setTransparency(alpha * cc[3] * opacity);
         mc.updateRelativisticEffects(GaiaSky.instance.getICamera());
         modelBatch.render(mc.instance, mc.env);
+    }
+
+    /**
+     * Occlusion rendering
+     */
+    @Override
+    public void renderOpaque(ModelBatch modelBatch, float alpha, double t) {
     }
 
     /**
@@ -196,10 +204,9 @@ public class BackgroundModel extends AbstractPositionEntity implements IModelRen
     }
 
     /**
-     * Sets the position of the label.
-     * If label2d is on, this is interpreted as [x, y, scale]. Otherwise,
-     * it is interpreted as the 3D position in the internal reference system, in parsecs.
-     * frame
+     * Sets the position of the label. If label2d is on, this is interpreted as
+     * [x, y, scale]. Otherwise, it is interpreted as the 3D position in the
+     * internal reference system, in parsecs. frame
      * 
      * @param labelposition
      */

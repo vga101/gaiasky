@@ -59,6 +59,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.ModelBody;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
+import gaia.cu9.ari.gaiaorbit.scenegraph.StubModel;
 import gaia.cu9.ari.gaiaorbit.util.ComponentTypes;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
@@ -147,7 +148,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         super();
         this.vrContext = vrContext;
     }
-    
+
     private AssetDescriptor<ShaderProgram>[] loadShader(AssetManager manager, String vfile, String ffile, String[] names, String[] prependVertex) {
         @SuppressWarnings("unchecked")
         AssetDescriptor<ShaderProgram>[] result = new AssetDescriptor[prependVertex.length];
@@ -625,6 +626,22 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         }
     }
 
+    Array<StubModel> controllers = new Array<StubModel>();
+    PerspectiveCamera camaux = new PerspectiveCamera();
+
+    private void copyCamera(PerspectiveCamera from, PerspectiveCamera to) {
+        to.combined.set(from.combined);
+        to.view.set(from.view);
+        to.invProjectionView.set(from.invProjectionView);
+        to.direction.set(from.direction);
+        to.position.set(from.position);
+        to.up.set(from.up);
+
+        to.near = from.near;
+        to.far = from.far;
+        to.fieldOfView = from.fieldOfView;
+    }
+
     public void renderGlowPass(ICamera camera) {
         if (GlobalConf.postprocess.POSTPROCESS_LIGHT_SCATTERING && glowFb != null) {
             // Get all billboard stars
@@ -640,6 +657,15 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
             // Get all models
             Array<IRenderable> models = render_lists.get(RenderGroup.MODEL_NORMAL).toList();
 
+            // Controllers
+            SGROpenVR sgrov = (SGROpenVR) sgrs[SGR_OPENVR_IDX];
+            if (sgrov != null) {
+                for (StubModel m : sgrov.controllerObjects) {
+                    if (!models.contains(m, true))
+                        controllers.add(m);
+                }
+            }
+
             glowFb.begin();
             Gdx.gl.glClearColor(0, 0, 0, 0);
             Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
@@ -650,10 +676,17 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
             // Render models
             modelBatchOpaque.begin(camera.getCamera());
             for (IRenderable model : models) {
-                ModelBody mb = (ModelBody) model;
+                IModelRenderable mb = (IModelRenderable) model;
                 mb.renderOpaque(modelBatchOpaque, 1, 0);
             }
             modelBatchOpaque.end();
+
+            if (sgrov != null) {
+                copyCamera(camera.getCamera(), camaux);
+                sgrov.renderStubModels(modelBatchOpaque, null, camaux, controllers, 0);
+                sgrov.renderStubModels(modelBatchOpaque, null, camaux, controllers, 1);
+            }
+            controllers.clear();
 
             // Save to texture for later use
             glowTex = glowFb.getColorBufferTexture();
@@ -670,14 +703,14 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
              * <ul>
              * <li>Extract model bodies (front)</li>
              * <li>Work out light direction</li>
-             * <li>Set orthographic camera at set distance from bodies, direction of
-             * light, clip planes</li>
+             * <li>Set orthographic camera at set distance from bodies,
+             * direction of light, clip planes</li>
              * <li>Render depth map to frame buffer (fb)</li>
-             * <li>Send frame buffer texture in to ModelBatchRenderSystem along with
-             * light position, direction, clip planes and light camera combined
-             * matrix</li>
-             * <li>Compare real distance from light to texture sample, render shadow
-             * if different</li>
+             * <li>Send frame buffer texture in to ModelBatchRenderSystem along
+             * with light position, direction, clip planes and light camera
+             * combined matrix</li>
+             * <li>Compare real distance from light to texture sample, render
+             * shadow if different</li>
              * </ul>
              */
             Array<IRenderable> models = render_lists.get(RenderGroup.MODEL_NORMAL).toList();

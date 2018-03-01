@@ -12,6 +12,8 @@ public interface IModelRenderable extends IRenderable {
 
     public void render(ModelBatch modelBatch, float alpha, double t, RenderingContext rc);
 
+    public void renderOpaque(ModelBatch modelBatch, float alpha, double t);
+
     public boolean hasAtmosphere();
 
 }

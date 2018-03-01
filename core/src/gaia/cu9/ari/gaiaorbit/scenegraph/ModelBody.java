@@ -215,7 +215,9 @@ public abstract class ModelBody extends CelestialBody {
         mesh.render(shader, GL20.GL_TRIANGLES, 0, 6);
     }
 
-    /** Model rendering **/
+    /**
+     * Model rendering
+     **/
     @Override
     public void render(ModelBatch modelBatch, float alpha, double t, RenderingContext rc) {
         prepareShadowEnvironment();
@@ -225,7 +227,9 @@ public abstract class ModelBody extends CelestialBody {
         modelBatch.render(mc.instance, mc.env);
     }
 
-    /** Model opaque rendering. Disable shadow mapping **/
+    /**
+     * Occlusion rendering
+     **/
     public void renderOpaque(ModelBatch modelBatch, float alpha, double t) {
         mc.touch();
         mc.setTransparency(alpha * fadeOpacity);

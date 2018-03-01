@@ -671,6 +671,13 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
     }
 
     /**
+     * Occlusion rendering
+     */
+    @Override
+    public void renderOpaque(ModelBatch modelBatch, float alpha, double t) {
+    }
+
+    /**
      * Proper motion rendering
      */
     @Override

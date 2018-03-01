@@ -27,8 +27,18 @@ public class Invisible extends CelestialBody {
         this.size = 500 * (float) Constants.M_TO_U;
     }
 
+    /**
+     * Model rendering
+     */
     @Override
     public void render(ModelBatch modelBatch, float alpha, double t, RenderingContext rc) {
+    }
+
+    /**
+     * Occlusion rendering
+     */
+    @Override
+    public void renderOpaque(ModelBatch modelBatch, float alpha, double t) {
     }
 
     @Override

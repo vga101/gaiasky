@@ -144,6 +144,13 @@ public class MeshObject extends FadeNode implements IModelRenderable, I3DTextRen
         }
     }
 
+    /**
+     * Occlusion rendering
+     */
+    @Override
+    public void renderOpaque(ModelBatch modelBatch, float alpha, double t) {
+    }
+
     public void setModel(ModelComponent mc) {
         this.mc = mc;
     }

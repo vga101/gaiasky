@@ -117,7 +117,7 @@ public class Grid extends AbstractPositionEntity implements IModelRenderable, IA
     }
 
     /**
-     * Model rendering.
+     * Model rendering
      */
     @Override
     public void render(ModelBatch modelBatch, float alpha, double t, RenderingContext rc) {
@@ -125,6 +125,13 @@ public class Grid extends AbstractPositionEntity implements IModelRenderable, IA
         mc.setTransparencyColor(alpha * cc[3] * opacity);
         mc.updateRelativisticEffects(GaiaSky.instance.getICamera());
         modelBatch.render(mc.instance, mc.env);
+    }
+
+    /**
+     * Occlusion rendering
+     */
+    @Override
+    public void renderOpaque(ModelBatch modelBatch, float alpha, double t) {
     }
 
     /**

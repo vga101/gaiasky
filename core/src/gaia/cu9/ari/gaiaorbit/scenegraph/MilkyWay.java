@@ -108,7 +108,7 @@ public class MilkyWay extends Blob implements IModelRenderable, I3DTextRenderabl
     }
 
     /**
-     * Model rendering.
+     * Model rendering
      */
     @Override
     public void render(ModelBatch modelBatch, float alpha, double t, RenderingContext rc) {
@@ -118,7 +118,14 @@ public class MilkyWay extends Blob implements IModelRenderable, I3DTextRenderabl
     }
 
     /**
-     * Label rendering.
+     * Occlusion rendering
+     */
+    @Override
+    public void renderOpaque(ModelBatch modelBatch, float alpha, double t) {
+    }
+
+    /**
+     * Label rendering
      */
     @Override
     public void render(SpriteBatch batch, ShaderProgram shader, FontRenderSystem sys, RenderingContext rc, ICamera camera) {

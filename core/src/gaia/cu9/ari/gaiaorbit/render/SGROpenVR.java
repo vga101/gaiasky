@@ -60,7 +60,7 @@ public class SGROpenVR extends SGRAbstract implements ISGR, IObserver {
     public final Matrix4 invEyeSpace = new Matrix4();
 
     private ModelBatch modelBatch;
-    private Array<StubModel> controllerObjects;
+    public Array<StubModel> controllerObjects;
     private Map<VRDevice, StubModel> vrDeviceToModel;
     private Environment controllersEnv;
 
@@ -111,6 +111,17 @@ public class SGROpenVR extends SGRAbstract implements ISGR, IObserver {
         }
     }
 
+    public void renderStubModels(ModelBatch modelBatch, ICamera camera, PerspectiveCamera pc, Array<StubModel> controllerObjects, int eye) {
+        updateCamera(camera != null ? (NaturalCamera) camera.getCurrent() : null, pc, eye, false, rc, 0.1f);
+        Gdx.gl.glClear(GL20.GL_DEPTH_BUFFER_BIT);
+        modelBatch.begin(pc);
+        for (StubModel controller : controllerObjects) {
+            if (controller.getDelayRender())
+                modelBatch.render(controller.instance, controllersEnv);
+        }
+        modelBatch.end();
+    }
+
     @Override
     public void render(SceneGraphRenderer sgr, ICamera camera, double t, int rw, int rh, FrameBuffer fb, PostProcessBean ppb) {
         if (vrContext != null) {
@@ -152,14 +163,7 @@ public class SGROpenVR extends SGRAbstract implements ISGR, IObserver {
             camera.render(rw, rh);
 
             if (r) {
-                updateCamera((NaturalCamera) camera.getCurrent(), camera.getCamera(), 0, false, rc, 0.1f);
-                Gdx.gl.glClear(GL20.GL_DEPTH_BUFFER_BIT);
-                modelBatch.begin(camera.getCamera());
-                for (StubModel controller : controllerObjects) {
-                    if (controller.getDelayRender())
-                        modelBatch.render(controller.instance, controllersEnv);
-                }
-                modelBatch.end();
+                renderStubModels(modelBatch, camera, camera.getCamera(), controllerObjects, 0);
             }
 
             postprocessRender(ppb, fbLeft, postproc, camera, rw, rh);
@@ -179,14 +183,7 @@ public class SGROpenVR extends SGRAbstract implements ISGR, IObserver {
             camera.render(rw, rh);
 
             if (r) {
-                updateCamera((NaturalCamera) camera.getCurrent(), camera.getCamera(), 1, false, rc, 0.1f);
-                Gdx.gl.glClear(GL20.GL_DEPTH_BUFFER_BIT);
-                modelBatch.begin(camera.getCamera());
-                for (StubModel controller : controllerObjects) {
-                    if (controller.getDelayRender())
-                        modelBatch.render(controller.instance, controllersEnv);
-                }
-                modelBatch.end();
+                renderStubModels(modelBatch, camera, camera.getCamera(), controllerObjects, 1);
             }
 
             postprocessRender(ppb, fbRight, postproc, camera, rw, rh);
@@ -215,10 +212,12 @@ public class SGROpenVR extends SGRAbstract implements ISGR, IObserver {
         Vector3 pos = hmd.getPosition(Space.Tracker);
 
         // Update main camera
-        cam.vroffset.set(pos).scl(VRContext.VROFFSET_FACTOR);
-        cam.direction.set(dir);
-        cam.up.set(up);
-        rc.vroffset = cam.vroffset;
+        if (cam != null) {
+            cam.vroffset.set(pos).scl(VRContext.VROFFSET_FACTOR);
+            cam.direction.set(dir);
+            cam.up.set(up);
+            rc.vroffset = cam.vroffset;
+        }
 
         // Update Eye camera
         //pos.set(0, 0, 0);

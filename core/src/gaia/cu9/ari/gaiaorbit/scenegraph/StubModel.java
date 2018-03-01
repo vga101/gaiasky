@@ -68,6 +68,15 @@ public class StubModel extends AbstractPositionEntity implements IModelRenderabl
         modelBatch.render(instance, env);
     }
 
+    /**
+     * Occlusion rendering
+     */
+    @Override
+    public void renderOpaque(ModelBatch modelBatch, float alpha, double t) {
+        setTransparency(alpha);
+        modelBatch.render(instance, env);
+    }
+
     @Override
     public void render(LineRenderSystem renderer, ICamera camera, float alpha) {
         Matrix4 transform = instance.transform;
