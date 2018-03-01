@@ -27,7 +27,7 @@ import gaia.cu9.ari.gaiaorbit.util.comp.ViewAngleComparator;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
 /**
- * Input controller for the natural camera.
+ * Input listener for the natural camera.
  * 
  * @author tsagrista
  *
