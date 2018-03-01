@@ -401,6 +401,28 @@ public class OctreeNode implements ILineRenderable {
     }
 
     /**
+     * Gets the depth of this subtree, that is, the number of levels of the
+     * longest parent-child path starting at this node. If run on the root node,
+     * this gives the maximum octree depth.
+     * 
+     * @return The maximum depth of this node.
+     */
+    public int getMaxDepth() {
+        int maxChildrenDepth = 0;
+        if (children != null) {
+            for (OctreeNode child : children) {
+                if (child != null) {
+                    int d = child.getMaxDepth();
+                    if (d > maxChildrenDepth) {
+                        maxChildrenDepth = d;
+                    }
+                }
+            }
+        }
+        return maxChildrenDepth + 1;
+    }
+
+    /**
      * Computes the observed value and the transform of each observed node.
      * 
      * @param parentTransform
@@ -470,6 +492,8 @@ public class OctreeNode implements ILineRenderable {
 
                     // Add objects
                     addObjectsTo(roulette);
+                } else if (status == LoadStatus.QUEUED) {
+                    // What do? Move first in queue?
                 }
 
                 // Update children

@@ -5,7 +5,7 @@ precision mediump float;
 #define LOWP 
 #endif
 
-//Renders a depth map for the shadow mapping algorithm
+// Renders a depth map for the shadow mapping algorithm
 void main() {
 
     gl_FragColor = vec4(gl_FragCoord.z, 0.0, 0.0, 1.0);

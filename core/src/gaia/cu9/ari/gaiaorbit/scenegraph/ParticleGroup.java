@@ -594,11 +594,22 @@ public class ParticleGroup extends FadeNode implements I3DTextRenderable, IFocus
         }
     }
 
+    public void setFocusIndex(int index) {
+        if (index >= 0 && index < pointData.size) {
+            candidateFocusIndex = index;
+            makeFocus();
+        }
+    }
+
     @Override
     public void makeFocus() {
         focusIndex = candidateFocusIndex;
         updateFocusDataPos();
 
+    }
+
+    public int getCandidateIndex() {
+        return candidateFocusIndex;
     }
 
     @Override

@@ -73,10 +73,14 @@ public class Star extends Particle {
             mat.set(new BlendingAttribute(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA));
             modelTransform = new Matrix4();
             mc = new ModelComponent(false);
+            mc.initialize();
             mc.env = new Environment();
             mc.env.set(new ColorAttribute(ColorAttribute.AmbientLight, 1f, 1f, 1f, 1f));
             mc.env.set(new FloatAttribute(FloatAttribute.Shininess, 0f));
             mc.instance = new ModelInstance(model, modelTransform);
+            // Relativistic effects
+            if (GlobalConf.runtime.RELATIVISTIC_EFFECTS)
+                mc.rec.setUpRelativisticEffectsMaterial(mc.instance.materials);
         }
     }
 
@@ -282,6 +286,7 @@ public class Star extends Particle {
         ((FloatAttribute) mc.env.get(FloatAttribute.Shininess)).value = (float) t;
         // Local transform
         transform.getMatrix(mc.instance.transform).scl((float) (getRadius() * 2d));
+        mc.updateRelativisticEffects(GaiaSky.instance.getICamera());
         modelBatch.render(mc.instance, mc.env);
     }
 

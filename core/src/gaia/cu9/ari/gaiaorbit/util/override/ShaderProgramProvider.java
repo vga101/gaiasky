@@ -1,3 +1,4 @@
+
 /*******************************************************************************
  * Copyright 2011 See AUTHORS file.
  * 
@@ -83,9 +84,9 @@ public class ShaderProgramProvider extends AsynchronousAssetLoader<ShaderProgram
         String fragmentCode = vertexFile.equals(fragmentFile) ? vertexCode : ShaderTemplatingLoader.load(fragmentFile);
         if (parameter != null) {
             if (parameter.prependVertexCode != null)
-                vertexCode = parameter.prependVertexCode + vertexCode;
+                vertexCode = getShaderCode(parameter.prependVertexCode, vertexCode);
             if (parameter.prependFragmentCode != null)
-                fragmentCode = parameter.prependFragmentCode + fragmentCode;
+                fragmentCode = getShaderCode(parameter.prependFragmentCode, fragmentCode);
         }
 
         ShaderProgram shaderProgram = new ShaderProgram(vertexCode, fragmentCode);
@@ -94,6 +95,17 @@ public class ShaderProgramProvider extends AsynchronousAssetLoader<ShaderProgram
         }
 
         return shaderProgram;
+    }
+
+    static public String getShaderCode(String prefix, String code) {
+        code = code.trim();
+        if (code.startsWith("#version") && !prefix.isEmpty()) {
+            int firstlineend = code.indexOf('\n') + 1;
+            String versionStr = code.substring(0, firstlineend);
+            return versionStr + prefix + code.substring(firstlineend);
+        } else {
+            return prefix + code;
+        }
     }
 
     static public class ShaderProgramParameter extends AssetLoaderParameters<ShaderProgram> {

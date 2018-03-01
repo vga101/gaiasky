@@ -1,7 +1,4 @@
-#ifdef GL_ES
-precision mediump float;
-precision mediump int;
-#endif
+#version 120
 
 <INCLUDE shader/lib_math.glsl>
 <INCLUDE shader/lib_geometry.glsl>
@@ -27,6 +24,15 @@ uniform float u_thAnglePoint;
     <INCLUDE shader/lib_relativity.glsl>
 #endif // relativisticEffects
 
+#ifdef gravitationalWaves
+    uniform vec4 u_hterms; // hpluscos, hplussin, htimescos, htimessin
+    uniform vec3 u_gw; // Location of gravitational wave, cartesian
+    uniform mat3 u_gwmat3; // Rotation matrix so that u_gw = u_gw_mat * (0 0 1)^T
+    uniform float u_ts; // Time in seconds since start
+    uniform float u_omgw; // Wave frequency
+    <INCLUDE shader/lib_gravwaves.glsl>
+#endif // gravitationalWaves
+
 // 0 - alpha
 // 1 - point size
 // 2 - fov factor
@@ -39,7 +45,6 @@ uniform vec3 u_fovcam_dir;
 
 // VARYINGS
 varying vec4 v_col;
-varying float v_discard;
 
 #define len0 170000.0
 #define len1 len0 * 100.0
@@ -57,6 +62,19 @@ void main() {
     	pos = computeRelativisticAberration(pos, dist, u_velDir, u_vc);
     #endif // relativisticEffects
     
+    vec4 col = a_color;
+    
+    #ifdef gravitationalWaves
+        pos = computeGravitationalWaves(pos, u_gw, u_gwmat3, u_ts, u_omgw, u_hterms);
+//        float cosalpha = dot(u_gw, pos) / (length(u_gw) * length(pos));
+//        if(acos(cosalpha) < 0.035) {
+//            // Paint red
+//            col.r = 1.0;
+//            col.g = 1.0;
+//            col.b = 0.0;
+//        }
+    #endif // gravitationalWaves
+    
     
     // Compute fov observation if necessary (only Fov1, Fov2)
     float observed = 1.0;
@@ -64,19 +82,18 @@ void main() {
         observed = in_view(pos, u_fovcam_dir, dist, u_fovcam_angleedge);
     }
     
-    // Discard vertex if too close or Gaia Fov1or2 and not observed    
+    // Discard vertex if too close or Gaia Fov1or2 and not observed
+    float v_discard = 1.0;
     if(dist < len0 || observed < 0.0) {
-        v_discard = 1.0;
-    } else {
-        v_discard = -1.0;
+        v_discard = 0.0;
     }
     
     float viewAngleApparent = atan((a_size * u_alphaSizeFovBr.w) / dist) / u_alphaSizeFovBr.z;
     float opacity = pow(lint2(viewAngleApparent, 0.0, u_thAnglePoint, u_pointAlpha.x, u_pointAlpha.y), 1.2);
 
     float fadeout = smoothstep(dist, len0, len1);
-    v_col = vec4(a_color.rgb, opacity * u_alphaSizeFovBr.x * fadeout);
+    v_col = vec4(col.rgb, opacity * u_alphaSizeFovBr.x * fadeout);
 
-    gl_Position = u_projModelView * vec4(pos, 0.0);
+    gl_Position = u_projModelView * vec4(pos, 0.0) * v_discard;
     gl_PointSize = u_alphaSizeFovBr.y;
 }

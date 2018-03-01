@@ -287,22 +287,24 @@ public class CameraManager implements ICamera, IObserver {
     }
 
     private void updatePointerRADEC(int screenX, int screenY) {
-        vec.set(screenX, screenY, 0.5f);
-        ICamera camera = current;
-        camera.getCamera().unproject(vec);
+        if (GlobalConf.program.DISPLAY_POINTER_COORDS) {
+            vec.set(screenX, screenY, 0.5f);
+            ICamera camera = current;
+            camera.getCamera().unproject(vec);
 
-        in.set(vec);
+            in.set(vec);
 
-        Coordinates.cartesianToSpherical(in, out);
+            Coordinates.cartesianToSpherical(in, out);
 
-        double alpha = out.x * AstroUtils.TO_DEG;
-        double delta = out.y * AstroUtils.TO_DEG;
+            double alpha = out.x * AstroUtils.TO_DEG;
+            double delta = out.y * AstroUtils.TO_DEG;
 
-        EventManager.instance.post(Events.RA_DEC_UPDATED, alpha, delta, screenX, screenY);
+            EventManager.instance.post(Events.RA_DEC_UPDATED, alpha, delta, screenX, screenY);
+        }
     }
 
     private void updateFocusLatLon(int screenX, int screenY) {
-        if (isNatural()) {
+        if (isNatural() && GlobalConf.program.DISPLAY_POINTER_COORDS) {
             // Hover over planets gets us lat/lon
             if (current.getFocus() != null && current.getFocus() instanceof Planet) {
                 Planet p = (Planet) current.getFocus();

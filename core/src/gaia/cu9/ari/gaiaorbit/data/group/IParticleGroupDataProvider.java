@@ -23,6 +23,14 @@ public interface IParticleGroupDataProvider {
     public Array<? extends ParticleBean> loadData(String file);
 
     /**
+     * Loads the data applying a factor using a memory mapped file for improved speed.
+     * @param file The file to load
+     * @param factor Factor to apply to the positions
+     * @return Array of particle beans
+     */
+    public Array<? extends ParticleBean> loadDataMapped(String file, double factor);
+
+    /**
      * Loads the data applying a factor.
      * 
      * @param file

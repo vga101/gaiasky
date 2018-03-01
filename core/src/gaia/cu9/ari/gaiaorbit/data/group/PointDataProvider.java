@@ -69,4 +69,10 @@ public class PointDataProvider implements IParticleGroupDataProvider {
 
     public void setFileNumberCap(int cap) {
     }
+
+    @Override
+    public Array<? extends ParticleBean> loadDataMapped(String file, double factor) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

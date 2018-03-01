@@ -25,6 +25,26 @@ public abstract class AbstractStarGroupDataProvider implements IStarGroupDataPro
     protected Array<StarBean> list;
     protected Map<Long, double[]> sphericalPositions;
     protected Map<Long, float[]> colors;
+    /**
+     * <p>
+     * The loader will only load stars for which the parallax error is
+     * at most the percentage given here, in [0..1].
+     * More specifically, the following must be met:
+     * </p>
+     * <code>pllx_err &lt; pllx * pllxErrFactor</code>
+     **/
+    protected double parallaxErrorFactor = 0.14;
+
+    /**
+     * The zero point for the parallaxes in mas. Gets added to all loaded
+     * parallax values
+     */
+    protected double parallaxZeroPoint = 0;
+
+    /**
+     * Apply magnitude/color corrections for extinction/reddening
+     */
+    protected boolean magCorrections = false;
 
     public AbstractStarGroupDataProvider() {
         super();
@@ -110,7 +130,7 @@ public abstract class AbstractStarGroupDataProvider implements IStarGroupDataPro
                 ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filename));
                 oos.writeObject(l);
                 oos.close();
-
+                Logger.info("File " + filename + " written with " + l.size() + " stars");
             } catch (Exception e) {
                 Logger.error(e);
             }
@@ -118,7 +138,9 @@ public abstract class AbstractStarGroupDataProvider implements IStarGroupDataPro
             // Use own binary format
             BinaryDataProvider io = new BinaryDataProvider();
             try {
+                int n = data.get(0).data.length;
                 io.writeData(data, new FileOutputStream(filename));
+                Logger.info("File " + filename + " written with " + n + " stars");
             } catch (Exception e) {
                 Logger.error(e);
             }
@@ -131,6 +153,7 @@ public abstract class AbstractStarGroupDataProvider implements IStarGroupDataPro
             PrintWriter writer = new PrintWriter(filename, "UTF-8");
             writer.println("name, x[km], y[km], z[km], absmag, appmag, r, g, b");
             Vector3d gal = new Vector3d();
+            int n = 0;
             for (StarBean star : data) {
                 float[] col = colors.get(star.id);
                 double x = star.z();
@@ -139,8 +162,10 @@ public abstract class AbstractStarGroupDataProvider implements IStarGroupDataPro
                 gal.set(x, y, z).scl(Constants.U_TO_KM);
                 gal.mul(Coordinates.equatorialToGalactic());
                 writer.println(star.name + sep + x + sep + y + sep + z + sep + star.absmag() + sep + star.appmag() + sep + col[0] + sep + col[1] + sep + col[2]);
+                n++;
             }
             writer.close();
+            Logger.info("File " + filename + " written with " + n + " stars");
         } catch (Exception e) {
             Logger.error(e);
         }
@@ -154,4 +179,15 @@ public abstract class AbstractStarGroupDataProvider implements IStarGroupDataPro
         return colors;
     }
 
+    public void setParallaxErrorFactor(double parallaxErrorFactor) {
+        this.parallaxErrorFactor = parallaxErrorFactor;
+    }
+
+    public void setParallaxZeroPoint(double parallaxZeroPoint) {
+        this.parallaxZeroPoint = parallaxZeroPoint;
+    }
+
+    public void setMagCorrections(boolean magCorrections) {
+        this.magCorrections = magCorrections;
+    }
 }

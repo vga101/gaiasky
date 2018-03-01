@@ -54,6 +54,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager;
 import gaia.cu9.ari.gaiaorbit.util.ConfInit;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf.PostprocessConf.Antialias;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
@@ -288,15 +289,7 @@ public class PreferencesWindow extends GenericDialog {
         gquality = new OwnSelectBox<ComboBoxBean>(skin);
         gquality.setItems(gqs);
         gquality.setWidth(textwidth * 3f);
-        int index = -1;
-        for (int i = 0; i < GlobalConf.data.OBJECTS_JSON_FILE_GQ.length; i++) {
-            if (GlobalConf.data.OBJECTS_JSON_FILE_GQ[i].equals(GlobalConf.data.OBJECTS_JSON_FILE)) {
-                index = i;
-                break;
-            }
-        }
-        int gqidx = index;
-        gquality.setSelected(gqs[gqidx]);
+        gquality.setSelected(gqs[GlobalConf.scene.GRAPHICS_QUALITY]);
 
         OwnImageButton gqualityTooltip = new OwnImageButton(skin, "tooltip");
         gqualityTooltip.addListener(new TextTooltip(txt("gui.gquality.info"), skin));
@@ -1345,12 +1338,11 @@ public class PreferencesWindow extends GenericDialog {
 
         // Graphics
         ComboBoxBean bean = gquality.getSelected();
-        GlobalConf.data.OBJECTS_JSON_FILE = GlobalConf.data.OBJECTS_JSON_FILE_GQ[bean.value];
         GlobalConf.scene.GRAPHICS_QUALITY = bean.value;
 
         bean = aa.getSelected();
-        GlobalConf.postprocess.POSTPROCESS_ANTIALIAS = bean.value;
-        EventManager.instance.post(Events.ANTIALIASING_CMD, bean.value);
+        GlobalConf.postprocess.POSTPROCESS_ANTIALIAS = GlobalConf.postprocess.getAntialias(bean.value);
+        EventManager.instance.post(Events.ANTIALIASING_CMD, GlobalConf.postprocess.POSTPROCESS_ANTIALIAS);
         GlobalConf.screen.VSYNC = vsync.isChecked();
 
         // Orbit renderer
@@ -1393,15 +1385,6 @@ public class PreferencesWindow extends GenericDialog {
         GlobalConf.scene.OCTANT_THRESHOLD_1 = GlobalConf.scene.OCTREE_PARTICLE_FADE ? GlobalConf.scene.OCTANT_THRESHOLD_0 + 0.4f : GlobalConf.scene.OCTANT_THRESHOLD_0;
 
         // Data
-        //        if (hyg.isChecked())
-        //            GlobalConf.data.CATALOG_JSON_FILE = GlobalConf.data.HYG_JSON_FILE;
-        //        else if (tgas.isChecked())
-        //            GlobalConf.data.CATALOG_JSON_FILE = GlobalConf.data.TGAS_JSON_FILE;
-        //        else if (dr2.isChecked())
-        //            GlobalConf.data.CATALOG_JSON_FILE = GlobalConf.data.DR2_JSON_FILE;
-        //        else if (GlobalConf.data.CATALOG_JSON_FILE == null || GlobalConf.data.CATALOG_JSON_FILE.length() == 0)
-        //            Logger.error(this.getClass().getSimpleName(), "No catalog file selected!");
-
         boolean hapos = GlobalConf.data.HIGH_ACCURACY_POSITIONS;
         GlobalConf.data.HIGH_ACCURACY_POSITIONS = highAccuracyPositions.isChecked();
 
@@ -1529,14 +1512,14 @@ public class PreferencesWindow extends GenericDialog {
         enableComponents(fullscreen, fullScreenResolutions);
     }
 
-    private int idxAa(int base, int x) {
-        if (x == -1)
+    private int idxAa(int base, Antialias x) {
+        if (x.getAACode() == -1)
             return 1;
-        if (x == -2)
+        if (x.getAACode() == -2)
             return 2;
-        if (x == 0)
+        if (x.getAACode() == 0)
             return 0;
-        return (int) (Math.log(x) / Math.log(2) + 1e-10) + 2;
+        return (int) (Math.log(x.getAACode()) / Math.log(2) + 1e-10) + 2;
     }
 
     private int idxLang(String code, LangComboBoxBean[] langs) {

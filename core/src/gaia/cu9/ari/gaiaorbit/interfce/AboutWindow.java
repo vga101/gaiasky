@@ -177,8 +177,8 @@ public class AboutWindow extends GenericDialog {
 
         VerticalGroup author = new VerticalGroup();
         author.align(Align.left);
-        Label authorname = new OwnLabel("Toni Sagristà Sellés", skin);
-        Link authormail = new Link("tsagrista@ari.uni-heidelberg.de", linkStyle, "mailto:tsagrista@ari.uni-heidelberg.de");
+        Label authorname = new OwnLabel(GlobalConf.AUTHOR_NAME, skin);
+        Link authormail = new Link(GlobalConf.AUTHOR_EMAIL, linkStyle, "mailto:" + GlobalConf.AUTHOR_EMAIL);
         Link authorpage = new Link("www.tonisagrista.com", linkStyle, "https://tonisagrista.com");
         author.addActor(authorname);
         author.addActor(authormail);

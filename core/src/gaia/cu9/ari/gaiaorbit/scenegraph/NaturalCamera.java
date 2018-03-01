@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
@@ -24,6 +25,8 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.RotationComponent;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
+import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
+import gaia.cu9.ari.gaiaorbit.util.gravwaves.GravitationalWavesManager;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
@@ -145,7 +148,8 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
     private OpenVRListener openVRListener;
 
     private SpriteBatch spriteBatch;
-    private Texture focusCrosshair, focusArrow, velocityCrosshair, antivelocityCrosshair;
+    private Texture focusCrosshair, focusArrow, velocityCrosshair, antivelocityCrosshair, gravWaveCrosshair;
+    private Sprite[] hudSprites;
 
     public NaturalCamera(AssetManager assetManager, CameraManager parent) {
         super(parent);
@@ -215,6 +219,26 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
         // Antivelocity vector crosshair
         antivelocityCrosshair = new Texture(Gdx.files.internal("img/ai-antivel.png"));
         antivelocityCrosshair.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+
+        // Grav wave crosshair
+        gravWaveCrosshair = new Texture(Gdx.files.internal("img/gravwave-pointer.png"));
+        gravWaveCrosshair.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+
+        // Speed HUD
+        Texture sHUD = new Texture(Gdx.files.internal("img/hud-corners.png"));
+        sHUD.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+        hudw = sHUD.getWidth();
+        hudh = sHUD.getHeight();
+
+        hudScales = new double[] { HUD_SCALE_MIN, HUD_SCALE_MIN + (HUD_SCALE_MAX - HUD_SCALE_MIN) / 3d, HUD_SCALE_MIN + (HUD_SCALE_MAX - HUD_SCALE_MIN) * 2d / 3d };
+        hudSprites = new Sprite[hudScales.length];
+        hudColors = new Color[] { Color.WHITE, Color.GREEN, Color.GOLD, Color.LIME, Color.PINK, Color.ORANGE, Color.CORAL, Color.CYAN, Color.FIREBRICK, Color.FOREST };
+
+        for (int i = 0; i < hudScales.length; i++) {
+            hudSprites[i] = new Sprite(sHUD);
+            hudSprites[i].setOriginCenter();
+        }
+
         // Focus is changed from GUI
         EventManager.instance.subscribe(this, Events.FOCUS_CHANGE_CMD, Events.FOV_CHANGED_CMD, Events.ORIENTATION_LOCK_CMD, Events.CAMERA_POS_CMD, Events.CAMERA_DIR_CMD, Events.CAMERA_UP_CMD, Events.CAMERA_FWD, Events.CAMERA_PAN, Events.CAMERA_STOP, Events.CAMERA_CENTER, Events.GO_TO_OBJECT_CMD);
     }
@@ -395,7 +419,6 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
         double closestStarDist = closestStar == null ? Double.MAX_VALUE : closestStar.getClosestDist();
         if (closest != null) {
             camera.near = (float) Math.min(CAM_NEAR, Math.min(closest.distToCamera - closest.getRadius(), closestStarDist) / 3);
-            camera.far = (float) (1e7 * Constants.PC_TO_U);
         }
         camera.position.set(0f, 0f, 0f);
         camera.direction.set(direction.valuesf());
@@ -1228,6 +1251,10 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
                 float chh2 = chh / 2;
 
                 chFocus.getAbsolutePosition(aux1).add(posinv);
+
+                GlobalResources.applyRelativisticAberration(aux1, this);
+                GravitationalWavesManager.getInstance().gravitationalWavePos(aux1);
+
                 aux1.nor().scl(chFocus.getDistToCamera() - chFocus.getRadius());
                 boolean inside = projectToScreen(aux1, auxf1, rw, rh, chw, chh, chw2, chh2);
 
@@ -1245,6 +1272,29 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
                     aux1.set(vroffset).add(aux2).scl(1 / VRContext.VROFFSET_FACTOR).add(direction);
                     projectToScreen(aux1, auxf1, rw, rh, chw, chh, chw2, chh2);
                     spriteBatch.draw(focusArrow, auxf1.x, auxf1.y, chw2, chh2, chw, chh, 1f, 1f, ang, 0, 0, (int) chw, (int) chw, false, false);
+                }
+            }
+            
+         // Gravitational waves crosshair
+            if (GlobalConf.runtime.GRAVITATIONAL_WAVES) {
+                GravitationalWavesManager gw = GravitationalWavesManager.getInstance();
+
+                float chw = gravWaveCrosshair.getWidth();
+                float chh = gravWaveCrosshair.getHeight();
+                float chw2 = chw / 2;
+                float chh2 = chh / 2;
+
+                aux1.set(gw.gw).nor().scl(1e12).add(posinv);
+
+                GlobalResources.applyRelativisticAberration(aux1, this);
+                //GravitationalWavesManager.instance().gravitationalWavePos(aux1);
+
+                boolean inside = projectToScreen(aux1, auxf1, rw, rh, chw, chh, chw2, chh2);
+
+                if (inside) {
+                    // Cyan
+                    spriteBatch.setColor(0, 1, 1, 1);
+                    spriteBatch.draw(gravWaveCrosshair, auxf1.x - chw2, auxf1.y - chh2, chw, chh);
                 }
             }
             spriteBatch.end();

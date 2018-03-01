@@ -51,6 +51,13 @@ public class ConsoleLogger implements IObserver {
         Gdx.app.log(df.format(new Date()), msg);
     }
 
+    private void addMessage(String msg, boolean debug) {
+        if (debug)
+            Gdx.app.debug(df.format(new Date()), msg);
+        else
+            Gdx.app.log(df.format(new Date()), msg);
+    }
+
     @Override
     public void notify(Events event, Object... data) {
         switch (event) {
@@ -125,7 +132,7 @@ public class ConsoleLogger implements IObserver {
             }
             break;
         case ORBIT_DATA_LOADED:
-            addMessage(I18n.bundle.format("notif.orbitdata.loaded", data[1], ((OrbitData) data[0]).getNumPoints()));
+            addMessage(I18n.bundle.format("notif.orbitdata.loaded", data[1], ((OrbitData) data[0]).getNumPoints()), true);
             break;
         case SCREENSHOT_INFO:
             addMessage(I18n.bundle.format("notif.screenshot", data[0]));

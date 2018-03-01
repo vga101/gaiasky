@@ -8,21 +8,6 @@ import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
 public class Constants {
 
     /**
-     * Speed of light in m/s
-     */
-    public static final double C = 299792458;
-
-    /**
-     * Speed of light in km/h
-     */
-    public static final double C_KMH = 1.079253e9;
-
-    /**
-     * Solar radius in Km
-     */
-    public static final double R_o = .6957964e6;
-
-    /**
      * Original scaling
      */
     public static final double M_TO_U_ORIGINAL = 1e-9;
@@ -112,6 +97,36 @@ public class Constants {
     public static final double MS_TO_Y = 1 / Y_TO_MS;
 
     /**
+     * Speed of light in m/s
+     */
+    public static final double C = 299792458;
+
+    /**
+     * Speed of light in km/h
+     */
+    public static final double C_KMH = 1.079253e9;
+
+    /**
+     * Speed of light in internal units per second
+     */
+    public static final double C_US = C * M_TO_U;
+
+    /**
+     * Solar radius in Km
+     */
+    public static final double Ro_TO_KM = .6957964e6;
+
+    /**
+     * Solar radius to local units
+     */
+    public static final double Ro_TO_U = Ro_TO_KM * KM_TO_U;
+
+    /**
+     * Units to solar radius
+     */
+    public static final double U_TO_Ro = 1 / Ro_TO_U;
+
+    /**
      * Factor we need to use to get the real size of the star given its quad
      * *texture* size
      **/
@@ -182,9 +197,9 @@ public class Constants {
     public static final float STEP_STAR_POINT_SIZE = 0.5f;
 
     /** Minimum spacecraft responsiveness **/
-    public static final float MIN_SC_RESPONSIVENESS = 1e6f;
+    public static final float MIN_SC_RESPONSIVENESS = .5e6f;
     /** Maximum spacecraft responsiveness **/
-    public static final float MAX_SC_RESPONSIVENESS = 2e7f;
+    public static final float MAX_SC_RESPONSIVENESS = .5e7f;
 
     /** Minimum star minimum opacity **/
     public static final float MIN_STAR_MIN_OPACITY = 0.0f;

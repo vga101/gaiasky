@@ -1,0 +1,15 @@
+{
+	"name" : "DR2 int5 - 1%",
+	"description" : "Gaia DR2 int5 (1% error). 2.1M stars.",
+	"data" : [
+	
+	{
+		"loader": "gaia.cu9.ari.gaiaorbit.data.stars.SunLoader",
+		"files": [ "" ]
+	},
+	{
+		"loader": "gaia.cu9.ari.gaiaorbit.data.group.OctreeGroupLoader",
+		"files": [ "/media/tsagrista/Daten/Gaia/data/GDR2/dr2int5/out/18-full-25000-4000-0.01/particles/", "/media/tsagrista/Daten/Gaia/data/GDR2/dr2int5/out/18-full-25000-4000-0.01/metadata.bin" ]
+		
+	}
+]}

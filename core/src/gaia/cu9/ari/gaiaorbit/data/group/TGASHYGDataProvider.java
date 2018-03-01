@@ -14,8 +14,13 @@ import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 
 public class TGASHYGDataProvider extends AbstractStarGroupDataProvider {
-    private static final boolean dumpToDisk = true;
-    private static final String format = "csv";
+    private static boolean dumpToDisk = true;
+    private static String format = "bin";
+
+    public static void setDumpToDisk(boolean dump, String format) {
+        TGASHYGDataProvider.dumpToDisk = dump;
+        TGASHYGDataProvider.format = format;
+    }
 
     HYGDataProvider hyg;
     TGASDataProvider tgas;
@@ -24,6 +29,12 @@ public class TGASHYGDataProvider extends AbstractStarGroupDataProvider {
         super();
         hyg = new HYGDataProvider();
         tgas = new TGASDataProvider();
+    }
+
+    public void setParallaxErrorFactor(double parallaxErrorFactor) {
+        super.setParallaxErrorFactor(parallaxErrorFactor);
+        if (tgas != null)
+            tgas.setParallaxErrorFactor(parallaxErrorFactor);
     }
 
     @Override
@@ -88,6 +99,12 @@ public class TGASHYGDataProvider extends AbstractStarGroupDataProvider {
     @Override
     public Array<? extends ParticleBean> loadData(InputStream is, double factor) {
         return loadData("", factor);
+    }
+
+    @Override
+    public Array<? extends ParticleBean> loadDataMapped(String file, double factor) {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }

@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -52,6 +53,7 @@ import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.ModelCache;
 import gaia.cu9.ari.gaiaorbit.util.Pair;
 import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
+import gaia.cu9.ari.gaiaorbit.util.gravwaves.GravitationalWavesManager;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
@@ -247,6 +249,19 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
         }
     }
 
+    private static class DaemonThreadFactory implements ThreadFactory {
+        private int sequence = 0;
+
+        @Override
+        public Thread newThread(Runnable r) {
+            Thread t = new Thread(r, "updater-daemon-" + sequence);
+            sequence++;
+            t.setDaemon(true);
+            return t;
+        }
+
+    }
+
     /**
      * Thread pool executor
      */
@@ -256,6 +271,7 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
         workQueue = new LinkedBlockingQueue<Runnable>();
         int nthreads = !GlobalConf.performance.MULTITHREADING ? 1 : GlobalConf.performance.NUMBER_THREADS();
         pool = new ThreadPoolExecutor(nthreads, nthreads, 5, TimeUnit.SECONDS, workQueue);
+        pool.setThreadFactory(new DaemonThreadFactory());
     }
 
     /**
@@ -755,6 +771,8 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
         aux.add(cam.getUp()).nor().scl(dist);
 
         GlobalResources.applyRelativisticAberration(out.add(aux), cam);
+        GlobalResources.applyRelativisticAberration(out, cam);
+        GravitationalWavesManager.getInstance().gravitationalWavePos(out);
     }
 
     public double getFocusSize() {

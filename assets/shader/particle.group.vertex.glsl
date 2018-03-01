@@ -1,3 +1,5 @@
+#version 120
+
 #ifdef GL_ES
 precision mediump float;
 precision mediump int;
@@ -22,6 +24,15 @@ uniform float u_sizeFactor;
     
     <INCLUDE shader/lib_relativity.glsl>
 #endif // relativisticEffects
+
+#ifdef gravitationalWaves
+    uniform vec4 u_hterms; // hpluscos, hplussin, htimescos, htimessin
+    uniform vec3 u_gw; // Location of gravitational wave, cartesian
+    uniform mat3 u_gwmat3; // Rotation matrix so that u_gw = u_gw_mat * (0 0 1)^T
+    uniform float u_ts; // Time in seconds since start
+    uniform float u_omgw; // Wave frequency
+    <INCLUDE shader/lib_gravwaves.glsl>
+#endif // gravitationalWaves
     
 varying vec4 v_col;
 
@@ -31,6 +42,10 @@ void main() {
     #ifdef relativisticEffects
         pos = computeRelativisticAberration(pos, length(pos), u_velDir, u_vc);
     #endif // relativisticEffects
+    
+    #ifdef gravitationalWaves
+        pos = computeGravitationalWaves(pos, u_gw, u_gwmat3, u_ts, u_omgw, u_hterms);
+    #endif // gravitationalWaves
     
     v_col = vec4(a_color.rgb, a_color.a * u_alpha );
 

@@ -157,7 +157,8 @@ public class DR2Loader extends AbstractCatalogLoader implements ISceneGraphLoade
 
             double ra = Parser.parseDouble(tokens[indices[RA]].trim());
             double dec = Parser.parseDouble(tokens[indices[DEC]].trim());
-            double pllx = Parser.parseDouble(tokens[indices[PLLX]].trim());
+            // We add 29 mas because the zero point was recalibrated and shifted
+            double pllx = Parser.parseDouble(tokens[indices[PLLX]].trim()) + 29;
             double pllxerr = Parser.parseDouble(tokens[indices[PLLX_ERR]].trim());
 
             double dist = (1000d / pllx) * Constants.PC_TO_U;

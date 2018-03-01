@@ -1,6 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.render.system;
 
-import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Mesh;
@@ -16,7 +15,6 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.Gaia;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Orbit;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
-import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
@@ -106,12 +104,10 @@ public class LineGPURenderSystem extends ImmediateRenderSystem {
 
     @Override
     public void renderStud(Array<IRenderable> renderables, ICamera camera, double t) {
-        if (Gdx.app.getType() == ApplicationType.Desktop) {
-            // Enable GL_LINE_SMOOTH
-            Gdx.gl20.glEnable(0xB20);
-            // Enable GL_LINE_WIDTH
-            Gdx.gl20.glEnable(0xB21);
-        }
+        // Enable GL_LINE_SMOOTH
+        Gdx.gl20.glEnable(0xB20);
+        // Enable GL_LINE_WIDTH
+        Gdx.gl20.glEnable(0xB21);
         Gdx.gl20.glEnable(GL20.GL_DEPTH_TEST);
         Gdx.gl20.glEnable(GL20.GL_BLEND);
         Gdx.gl20.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
@@ -121,11 +117,12 @@ public class LineGPURenderSystem extends ImmediateRenderSystem {
         this.camera = camera;
         int size = renderables.size;
 
-        /**
-         * ADD LINES
-         */
         for (int i = 0; i < size; i++) {
             Orbit renderable = (Orbit) renderables.get(i);
+
+            /**
+             * ADD LINES
+             */
             if (!renderable.inGpu) {
                 OrbitData od = renderable.orbitData;
                 int npoints = od.getNumPoints();
@@ -162,16 +159,8 @@ public class LineGPURenderSystem extends ImmediateRenderSystem {
                 shaderProgram.setUniformf("u_parentPos", 0, 0, 0);
             }
 
-            // Relativistic aberration
-            if (GlobalConf.runtime.RELATIVISTIC_EFFECTS) {
-                if (camera.getVelocity() == null || camera.getVelocity().len() == 0) {
-                    aux2.set(1, 0, 0);
-                } else {
-                    camera.getVelocity().put(aux2).nor();
-                }
-                shaderProgram.setUniformf("u_velDir", aux2);
-                shaderProgram.setUniformf("u_vc", (float) (camera.getSpeed() / Constants.C_KMH));
-            }
+            // Relativistic effects
+            addEffectsUniforms(shaderProgram, camera);
 
             curr.mesh.setVertices(curr.vertices, 0, renderable.count);
             curr.mesh.render(shaderProgram, glType);
@@ -190,6 +179,5 @@ public class LineGPURenderSystem extends ImmediateRenderSystem {
             array[i] = attribs.get(i);
         return array;
     }
-
 
 }

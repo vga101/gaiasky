@@ -27,6 +27,7 @@ import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
+import gaia.cu9.ari.gaiaorbit.util.gravwaves.GravitationalWavesManager;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
@@ -258,6 +259,8 @@ public class MilkyWayReal extends AbstractPositionEntity implements I3DTextRende
     @Override
     public void textPosition(ICamera cam, Vector3d out) {
         out.set(labelPosition).add(cam.getInversePos());
+        GlobalResources.applyRelativisticAberration(out, cam);
+        GravitationalWavesManager.getInstance().gravitationalWavePos(out);
     }
 
     @Override

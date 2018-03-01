@@ -18,25 +18,19 @@ import gaia.cu9.ari.gaiaorbit.render.IQuadRenderable;
 import gaia.cu9.ari.gaiaorbit.render.IRenderable;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
-import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.DecalUtils;
-import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.comp.DistToCameraComparator;
 
 public class BillboardStarRenderSystem extends AbstractRenderSystem {
 
-    private ShaderProgram shaderProgram;
-    private ShaderProgram shaderProgramRel;
     private Mesh mesh;
     private Quaternion quaternion;
     private Vector3 aux;
     private Texture texture0;
     private int ctindex = -1;
 
-    public BillboardStarRenderSystem(RenderGroup rg, float[] alphas, ShaderProgram shaderProgram, ShaderProgram shaderProgramRel, String tex0, int ctindex, float w, float h) {
-        super(rg, alphas);
-        this.shaderProgram = shaderProgram;
-        this.shaderProgramRel = shaderProgramRel;
+    public BillboardStarRenderSystem(RenderGroup rg, float[] alphas, ShaderProgram[] programs, String tex0, int ctindex, float w, float h) {
+        super(rg, alphas, programs);
         this.ctindex = ctindex;
         init(tex0, w, h);
     }
@@ -51,8 +45,8 @@ public class BillboardStarRenderSystem extends AbstractRenderSystem {
      * @param shaderProgram
      *            The shader program to render the quad with.
      */
-    public BillboardStarRenderSystem(RenderGroup rg, float[] alphas, ShaderProgram shaderProgram, ShaderProgram shaderProgramRel, String tex0, int ctindex) {
-        this(rg, alphas, shaderProgram, shaderProgramRel, tex0, ctindex, 2, 2);
+    public BillboardStarRenderSystem(RenderGroup rg, float[] alphas, ShaderProgram[] shaderPrograms, String tex0, int ctindex) {
+        this(rg, alphas, shaderPrograms, tex0, ctindex, 2, 2);
     }
 
     private void init(String tex0, float w, float h) {
@@ -125,10 +119,6 @@ public class BillboardStarRenderSystem extends AbstractRenderSystem {
         vertices[idx++] = v;
     }
 
-    private ShaderProgram getShaderProgram() {
-        return GlobalConf.runtime.RELATIVISTIC_EFFECTS ? shaderProgramRel : shaderProgram;
-    }
-
     @Override
     public void renderStud(Array<IRenderable> renderables, ICamera camera, double t) {
         if ((ctindex >= 0 ? alphas[ctindex] != 0 : true)) {
@@ -154,16 +144,8 @@ public class BillboardStarRenderSystem extends AbstractRenderSystem {
             shaderProgram.setUniformf("u_quaternion", quaternion.x, quaternion.y, quaternion.z, quaternion.w);
             shaderProgram.setUniformf("u_camShift", camera.getCurrent().getShift().put(aux));
 
-            // Relativistic aberration
-            if (GlobalConf.runtime.RELATIVISTIC_EFFECTS) {
-                if (camera.getVelocity() == null || camera.getVelocity().len() == 0) {
-                    aux.set(1, 0, 0);
-                } else {
-                    camera.getVelocity().put(aux).nor();
-                }
-                shaderProgram.setUniformf("u_velDir", aux);
-                shaderProgram.setUniformf("u_vc", (float) (camera.getSpeed() / Constants.C_KMH));
-            }
+            // Relativistic effects
+            addEffectsUniforms(shaderProgram, camera);
 
             // Global uniforms
             shaderProgram.setUniformf("u_time", (float) t);

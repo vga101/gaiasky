@@ -2,6 +2,8 @@ package gaia.cu9.ari.gaiaorbit.interfce;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -56,6 +58,10 @@ public class ChooseDatasetWindow extends GenericDialog {
         float tawidth = 300 * GlobalConf.SCALE_FACTOR;
 
         JsonReader reader = new JsonReader();
+
+        // Sort by name
+        Comparator<FileHandle> byName = (FileHandle a, FileHandle b) -> a.name().compareTo(b.name());
+        Arrays.sort(catalogFiles, byName);
 
         cbs = new Button[catalogFiles.length];
         int i = 0;

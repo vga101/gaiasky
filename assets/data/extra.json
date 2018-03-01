@@ -83,9 +83,10 @@
 	"size" : 1.6e12,
 	"ct" : [MilkyWay, Galaxies],
 	"transformName" : galacticToEquatorial,
+	"label" : false,
 
 	"parent" : "Milky Way", 
-	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Mw",
+	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.BackgroundModel",
 	
 	"coordinates" : {
 				// This must implement gaia.cu9.ari.gaiaorbit.util.coord.IBodyCoordinates				
@@ -128,6 +129,54 @@
 		// Extends IParticleGroupDataProvider
 		"provider" : "gaia.cu9.ari.gaiaorbit.data.group.SDSSDataProvider",
 		"datafile" : "data/sdss/sdss_dr12.csv"
+	},
+	
+	{
+		"name" : "Planck CMB hook",
+		"position" : [0.0, 0.0, 0.0],
+	
+		"ct" : Galaxies,
+	
+		// Fade distances, in parsecs
+		"fadein" : [1.0e9, 20.0e9],
+		
+	
+		"parent" : "Universe", 
+		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.FadeNode",
+	},
+	
+	{
+		"name" : "Cosmic Microwave Background",
+		"color" : [1.0, 1.0, 1.0, 0.5],
+		"size" : 1e4,
+		"ct" : Others,
+		"transformName" : galacticToEquatorial,
+		"label" : true,
+		"label2d" : true,
+		// x, y, scale
+		"labelposition" : [200.0, 200.0, 2.0],
+		
+		"parent" : "Planck CMB hook", 
+		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.BackgroundModel",
+	
+		"coordinates" : {
+				// This must implement gaia.cu9.ari.gaiaorbit.util.coord.IBodyCoordinates				
+				"impl" : "gaia.cu9.ari.gaiaorbit.util.coord.StaticCoordinates",
+				"position" : [0.0, 0.0, 0.0]
+				},			
+	
+ 		"model" : {
+				"args" : [true],
+				"type" : "sphere",
+				"params" : {
+							"quality" : 90,
+							"diameter" : 1.0,
+							"flip" : true
+							},
+				"texture" : {
+							"base" : "data/tex/PlanckFig_map_columbi1_IDL_HighDR_colbar_70GHz_cart*.jpg"
+							}
+				}
 	},
 	
 	{

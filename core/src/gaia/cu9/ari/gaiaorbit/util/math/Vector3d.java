@@ -2,6 +2,7 @@ package gaia.cu9.ari.gaiaorbit.util.math;
 
 import java.io.Serializable;
 
+import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
 
@@ -273,6 +274,20 @@ public class Vector3d implements Serializable {
         return this;
     }
 
+    public Vector3d mul(Vector3d vec) {
+        this.x *= vec.x;
+        this.y *= vec.y;
+        this.z *= vec.z;
+        return this;
+    }
+
+    public Vector3d div(Vector3d vec) {
+        this.x /= vec.x;
+        this.y /= vec.y;
+        this.z /= vec.z;
+        return this;
+    }
+
     /** @return The euclidian length */
     public static double len(final double x, final double y, final double z) {
         return Math.sqrt(x * x + y * y + z * z);
@@ -453,6 +468,16 @@ public class Vector3d implements Serializable {
     public Vector3d mul(final Matrix4d matrix) {
         final double l_mat[] = matrix.val;
         return this.set(x * l_mat[Matrix4d.M00] + y * l_mat[Matrix4d.M01] + z * l_mat[Matrix4d.M02] + l_mat[Matrix4d.M03], x * l_mat[Matrix4d.M10] + y * l_mat[Matrix4d.M11] + z * l_mat[Matrix4d.M12] + l_mat[Matrix4d.M13], x * l_mat[Matrix4d.M20] + y * l_mat[Matrix4d.M21] + z * l_mat[Matrix4d.M22] + l_mat[Matrix4d.M23]);
+    }
+
+    public Vector3d mulLeft(final Matrix3 matrix) {
+        final float l_mat[] = matrix.val;
+        return this.set(x * l_mat[Matrix3.M00] + y * l_mat[Matrix3.M01] + z * l_mat[Matrix3.M02], x * l_mat[Matrix3.M10] + y * l_mat[Matrix3.M11] + z * l_mat[Matrix3.M12], x * l_mat[Matrix3.M20] + y * l_mat[Matrix3.M21] + z * l_mat[Matrix3.M22]);
+    }
+
+    public Vector3d mulRight(final Matrix3 matrix) {
+        final float l_mat[] = matrix.val;
+        return this.set(x * l_mat[Matrix3.M00] + y * l_mat[Matrix3.M10] + z * l_mat[Matrix3.M20], x * l_mat[Matrix3.M01] + y * l_mat[Matrix3.M11] + z * l_mat[Matrix3.M21], x * l_mat[Matrix3.M02] + y * l_mat[Matrix3.M12] + z * l_mat[Matrix3.M22]);
     }
 
     /**
@@ -774,6 +799,10 @@ public class Vector3d implements Serializable {
     /** Gets the angle in degrees between the two vectors **/
     public double anglePrecise(Vector3d v) {
         return MathUtilsd.radiansToDegrees * Math.acos(this.dot(v) / (this.len() * v.len()));
+    }
+
+    public boolean hasNaN() {
+        return Double.isNaN(this.x) || Double.isNaN(this.y) || Double.isNaN(this.z);
     }
 
     @Override

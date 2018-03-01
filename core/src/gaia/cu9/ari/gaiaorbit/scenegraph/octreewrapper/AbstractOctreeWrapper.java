@@ -8,6 +8,7 @@ import java.util.Map;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
 
+import gaia.cu9.ari.gaiaorbit.data.StreamingOctreeLoader;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
@@ -130,7 +131,7 @@ public abstract class AbstractOctreeWrapper extends SceneGraphNode implements It
             updateLocal(time, camera);
 
             // Broadcast the number of objects that we will try to render
-            EventManager.instance.post(Events.DEBUG3, "Objects: " + OctreeNode.nObjectsObserved);
+            EventManager.instance.post(Events.DEBUG3, "On display: " + OctreeNode.nObjectsObserved + ", Total loaded: " + StreamingOctreeLoader.getNLoadedStars());
 
             // Call the update method of all entities in the roulette list. This
             // is implemented in the subclass.

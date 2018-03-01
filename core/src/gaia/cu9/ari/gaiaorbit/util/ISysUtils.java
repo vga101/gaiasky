@@ -6,6 +6,16 @@ public interface ISysUtils {
 
     public String getAssetsLocation();
 
+    /**
+     * Gets the true path to the file.
+     * If the given path is absolute, then it is 
+     * returned immediately. Otherwise, the assets
+     * location is prepended.
+     * @param file The true path to access the file directly
+     * @return
+     */
+    public String getTruePath(String file);
+
     public File getGSHomeDir();
 
     public File getDefaultCameraDir();

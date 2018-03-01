@@ -23,6 +23,7 @@ import gaia.cu9.ari.gaiaorbit.interfce.XBox360Mappings;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
+import gaia.cu9.ari.gaiaorbit.util.Pair;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
@@ -57,7 +58,8 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
     /** Closest body apart from the spacecraft **/
     private CelestialBody closest2;
 
-    private Vector3d aux2, todesired, desired, scthrust, scforce, scaccel, scvel, scpos;
+    private Vector3d aux1, aux2, todesired, desired, scthrust, scforce, scaccel, scvel, scpos, scdir, scup;
+    private Pair<Vector3d, Vector3d> dirup;
 
     private double targetDistance;
     private boolean firstTime = true;
@@ -65,19 +67,23 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
     public SpacecraftCamera(AssetManager assetManager, CameraManager parent) {
         super(parent);
 
-        // orientation
+        // Vectors
         direction = new Vector3d(1, 0, 0);
         up = new Vector3d(0, 1, 0);
         relpos = new Vector3d();
-
         todesired = new Vector3d();
         desired = new Vector3d();
+        aux1 = new Vector3d();
         aux2 = new Vector3d();
         scthrust = new Vector3d();
         scforce = new Vector3d();
         scaccel = new Vector3d();
         scvel = new Vector3d();
         scpos = new Vector3d();
+        scdir = new Vector3d();
+        scup = new Vector3d();
+
+        dirup = new Pair<Vector3d, Vector3d>(scdir, scup);
 
         // init camera
         camera = new PerspectiveCamera(20, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -153,38 +159,25 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
 
     double lastangle = 0;
 
-    @Override
     public void update(double dt, ITimeFrameProvider time) {
+        /** FUTURE POS OF SC **/
 
-        // FUTURE POS OF SC
         scthrust.set(sc.thrust);
         scforce.set(sc.force);
         scaccel.set(sc.accel);
         scvel.set(sc.vel);
         scpos.set(sc.pos);
         scpos = sc.computePosition(dt, closest2, sc.enginePower, scthrust, sc.direction, scforce, scaccel, scvel, scpos);
+        scdir.set(sc.direction);
+        scup.set(sc.up);
+        sc.computeDirectionUp(dt, dirup);
 
-        // POSITION
-        double tgfac = targetDistance * sc.factor / fovFactor;
-        relpos.scl(sc.factor);
-        aux2.set(sc.up).nor().scl(tgfac / 4d);
-        desired.set(sc.direction).nor().scl(-tgfac).add(aux2);
-        todesired.set(desired).sub(relpos);
-        todesired.scl(dt * GlobalConf.spacecraft.SC_RESPONSIVENESS / .5e6);
-        relpos.add(todesired);
-        pos.set(scpos).add(relpos);
-        relpos.scl(1 / sc.factor);
+        /** ACTUAL UPDATE **/
+
+        updateHard(dt, time);
+
+        /** POST **/
         distance = pos.len();
-
-        // DIRECTION
-        aux2.set(sc.direction).nor().scl(tgfac / 1.5f);
-        direction.set(scpos).add(aux2).sub(pos).nor();
-
-        // UP
-        desired.set(sc.up);
-        todesired.set(desired).sub(up);
-        todesired.scl(dt * GlobalConf.spacecraft.SC_RESPONSIVENESS / .5e6);
-        up.add(todesired).nor();
 
         // Update camera
         updatePerspectiveCamera();
@@ -213,6 +206,37 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
 
     }
 
+    /**
+     * Updates the position and direction of the camera using a hard analytical algorithm.
+     * @param dt
+     * @param time
+     */
+    public void updateHard(double dt, ITimeFrameProvider time) {
+
+        // POSITION
+        double tgfac = targetDistance * sc.sizeFactor / fovFactor;
+        relpos.scl(sc.sizeFactor);
+        aux2.set(scup).nor().scl(tgfac / 8d);
+        desired.set(scdir).nor().scl(-tgfac).add(aux2);
+        todesired.set(desired).sub(relpos);
+        todesired.scl(dt * GlobalConf.spacecraft.SC_RESPONSIVENESS / 1e6);
+        relpos.add(todesired);
+        pos.set(scpos).add(relpos);
+        relpos.scl(1 / sc.sizeFactor);
+
+        // DIRECTION
+        aux1.set(scup).nor().scl(0.00001);
+        aux2.set(scdir).nor().scl(tgfac * 4).add(aux1);
+        direction.set(scpos).add(aux2).sub(pos).nor();
+
+        // UP
+        desired.set(scup);
+        todesired.set(desired).sub(up);
+        todesired.scl(dt * GlobalConf.spacecraft.SC_RESPONSIVENESS / 1e6);
+        up.add(todesired).nor();
+
+    }
+
     public double convertAngle(double angle) {
         if (angle <= 180)
             return angle;
@@ -221,9 +245,11 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
     }
 
     protected void updatePerspectiveCamera() {
-        camera.near = (float) targetDistance * 1.6f;
+        camera.fieldOfView = 40;
+        fovFactor = camera.fieldOfView / 40f;
+        camera.near = (float) (targetDistance * 0.6);
         if (closest != null) {
-            camera.near = Math.min(camera.near, ((float) closest.pos.dst(pos) - (float) closest.getRadius()) * (float) sc.factor / 2.5f) * (float) sc.factor;
+            camera.near = Math.min(camera.near, ((float) closest.pos.dst(pos) - (float) closest.getRadius()) * (float) sc.sizeFactor / 2.5f) * (float) sc.sizeFactor;
         }
         camera.position.set(0, 0, 0);
         direction.put(camera.direction);
@@ -232,8 +258,6 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
         camera.update();
 
         posinv.set(pos).scl(-1);
-
-        //camera.view.getRotation(qf);
 
     }
 
@@ -253,6 +277,8 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
                     // Put spacecraft close to earth
                     Vector3d earthpos = GaiaSky.instance.sg.getNode("Earth").getPosition();
                     sc.pos.set(earthpos.x + 12000 * Constants.KM_TO_U, earthpos.y, earthpos.z);
+                    pos.set(sc.pos);
+                    direction.set(sc.direction);
 
                     firstTime = false;
                 }
@@ -293,7 +319,7 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
         switch (event) {
         case SPACECRAFT_LOADED:
             this.sc = (Spacecraft) data[0];
-            this.targetDistance = sc.size * 2.5;
+            this.targetDistance = sc.size * 3.5;
             this.relpos.set(targetDistance, targetDistance / 2, 0);
             break;
         default:
@@ -449,7 +475,6 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
                 sc.increaseThrustFactorIndex(true);
                 break;
             case XBox360Mappings.BUTTON_LB:
-                System.out.println("LB");
                 EventManager.instance.post(Events.SPACECRAFT_STABILISE_CMD, true);
                 break;
             case XBox360Mappings.BUTTON_RB:
@@ -547,6 +572,11 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
     @Override
     public void resize(int width, int height) {
         spriteBatch.getProjectionMatrix().setToOrtho2D(0, 0, width, height);
+    }
+
+    @Override
+    public Vector3d getVelocity() {
+        return scvel;
     }
 
 }

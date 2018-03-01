@@ -5,9 +5,10 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.RandomAccessFile;
+import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Array;
 
 import gaia.cu9.ari.gaiaorbit.scenegraph.ParticleGroup.ParticleBean;
@@ -15,7 +16,14 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.StarGroup.StarBean;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
+import gaia.cu9.ari.gaiaorbit.util.SysUtilsFactory;
 
+/**
+ * Reads arrays of star beans from binary files, usually to go in
+ * an octree.
+ * @author tsagrista
+ *
+ */
 public class BinaryDataProvider extends AbstractStarGroupDataProvider {
 
     @Override
@@ -26,9 +34,7 @@ public class BinaryDataProvider extends AbstractStarGroupDataProvider {
     @Override
     public Array<? extends ParticleBean> loadData(String file, double factor) {
         Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.datafile", file));
-
-        FileHandle f = Gdx.files.internal(file);
-        loadData(f.read(), factor);
+        loadDataMapped(SysUtilsFactory.getSysUtils().getTruePath(file), factor);
         Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.nodeloader", list.size, file));
 
         return list;
@@ -131,6 +137,52 @@ public class BinaryDataProvider extends AbstractStarGroupDataProvider {
         StringBuilder name = new StringBuilder();
         for (int i = 0; i < nameLength; i++)
             name.append(in.readChar());
+
+        return new StarBean(data, id, name.toString());
+    }
+
+    public Array<? extends ParticleBean> loadDataMapped(String file, double factor) {
+        try {
+            FileChannel fc = new RandomAccessFile(SysUtilsFactory.getSysUtils().getTruePath(file), "r").getChannel();
+
+            MappedByteBuffer mem = fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size());
+            // Read size of stars
+            int size = mem.getInt();
+            list = new Array<StarBean>(size);
+            for (int i = 0; i < size; i++) {
+                list.add(readStarBean(mem));
+            }
+
+            fc.close();
+
+            return list;
+
+        } catch (Exception e) {
+            Logger.error(e);
+        }
+        return null;
+    }
+
+    public StarBean readStarBean(MappedByteBuffer mem) {
+        double data[] = new double[StarBean.SIZE];
+        // Double
+        for (int i = 0; i < StarBean.I_APPMAG; i++) {
+            data[i] = mem.getDouble();
+        }
+        // Float
+        for (int i = StarBean.I_APPMAG; i < StarBean.I_HIP; i++) {
+            data[i] = mem.getFloat();
+        }
+        // Int
+        for (int i = StarBean.I_HIP; i < StarBean.SIZE; i++) {
+            data[i] = mem.getInt();
+        }
+
+        Long id = mem.getLong();
+        int nameLength = mem.getInt();
+        StringBuilder name = new StringBuilder();
+        for (int i = 0; i < nameLength; i++)
+            name.append(mem.getChar());
 
         return new StarBean(data, id, name.toString());
     }

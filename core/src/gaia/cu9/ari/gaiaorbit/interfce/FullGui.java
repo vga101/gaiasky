@@ -45,6 +45,7 @@ import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.camera.CameraUtils;
 import gaia.cu9.ari.gaiaorbit.util.format.INumberFormat;
 import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
+import gaia.cu9.ari.gaiaorbit.util.gravwaves.GravitationalWavesManager;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.ContextMenu;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.MenuItem;
@@ -82,6 +83,9 @@ public class FullGui extends AbstractGui {
     private boolean[] visible;
 
     private List<Actor> invisibleInStereoMode;
+
+    // Uncertainties disabled by default
+    private boolean uncertainties = false;
 
     public FullGui() {
         super();
@@ -330,9 +334,9 @@ public class FullGui extends AbstractGui {
                 Integer x = (Integer) data[2];
                 Integer y = (Integer) data[3];
 
-                pointerXCoord.setText("RA/".concat(nf.format(ra)).concat("°"));
+                pointerXCoord.setText("RA/".concat(nf.format(ra)).concat("ï¿½"));
                 pointerXCoord.setPosition(x, GlobalConf.SCALE_FACTOR);
-                pointerYCoord.setText("DEC/".concat(nf.format(dec)).concat("°"));
+                pointerYCoord.setText("DEC/".concat(nf.format(dec)).concat("ï¿½"));
                 pointerYCoord.setPosition(Gdx.graphics.getWidth() + GlobalConf.SCALE_FACTOR, Gdx.graphics.getHeight() - y);
             }
             break;
@@ -343,9 +347,9 @@ public class FullGui extends AbstractGui {
                 Integer x = (Integer) data[2];
                 Integer y = (Integer) data[3];
 
-                pointerXCoord.setText("Lon/".concat(nf.format(lon)).concat("°"));
+                pointerXCoord.setText("Lon/".concat(nf.format(lon)).concat("ï¿½"));
                 pointerXCoord.setPosition(x, GlobalConf.SCALE_FACTOR);
-                pointerYCoord.setText("Lat/".concat(nf.format(lat)).concat("°"));
+                pointerYCoord.setText("Lat/".concat(nf.format(lat)).concat("ï¿½"));
                 pointerYCoord.setPosition(Gdx.graphics.getWidth() + GlobalConf.SCALE_FACTOR, Gdx.graphics.getHeight() - y);
             }
             break;
@@ -447,13 +451,13 @@ public class FullGui extends AbstractGui {
                 popup.addItem(landOnCoord);
             }
 
-            if (candidate instanceof IStarFocus) {
+            if (candidate instanceof IStarFocus && uncertainties) {
                 boolean sep = false;
                 if (UncertaintiesHandler.getInstance().containsStar(candidate.getCandidateId())) {
                     popup.addSeparator();
                     sep = true;
 
-                    MenuItem showUncertainties = new MenuItem("Show uncertainties", skin, "default");
+                    MenuItem showUncertainties = new MenuItem(txt("context.showuncertainties"), skin, "default");
                     showUncertainties.addListener(new EventListener() {
 
                         @Override
@@ -473,7 +477,7 @@ public class FullGui extends AbstractGui {
                     if (!sep)
                         popup.addSeparator();
 
-                    MenuItem hideUncertainties = new MenuItem("Hide uncertainties", skin, "default");
+                    MenuItem hideUncertainties = new MenuItem(txt("context.hideuncertainties"), skin, "default");
                     hideUncertainties.addListener(new EventListener() {
 
                         @Override
@@ -489,6 +493,42 @@ public class FullGui extends AbstractGui {
                     popup.addItem(hideUncertainties);
 
                 }
+            }
+
+            popup.addSeparator();
+
+            // Spawn gravitational waves
+            MenuItem gravWaveStart = new MenuItem(txt("context.startgravwave"), skin, "default");
+            gravWaveStart.addListener(new EventListener() {
+
+                @Override
+                public boolean handle(Event event) {
+                    if (event instanceof ChangeEvent) {
+                        EventManager.instance.post(Events.GRAV_WAVE_START, screenX, screenY);
+                        return true;
+                    }
+                    return false;
+                }
+
+            });
+            popup.addItem(gravWaveStart);
+
+            if (GravitationalWavesManager.getInstance().gravWavesOn()) {
+                // Cancel gravitational waves
+                MenuItem gravWaveStop = new MenuItem(txt("context.stopgravwave"), skin, "default");
+                gravWaveStop.addListener(new EventListener() {
+
+                    @Override
+                    public boolean handle(Event event) {
+                        if (event instanceof ChangeEvent) {
+                            EventManager.instance.post(Events.GRAV_WAVE_STOP);
+                            return true;
+                        }
+                        return false;
+                    }
+
+                });
+                popup.addItem(gravWaveStop);
             }
 
             int mx = Gdx.input.getX();

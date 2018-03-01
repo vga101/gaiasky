@@ -20,7 +20,8 @@ import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
 /**
  * Loads and writes particle data to/from our own binary format. The format is
- * defined as follows
+ * defined as follows. The operations are based on abstract position entities, so
+ * this is not suitable for loading star groups or particle groups.
  * 
  * <ul>
  * <li>32 bits (int) with the number of stars, starNum repeat the following

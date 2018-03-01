@@ -143,16 +143,8 @@ public class PixelRenderSystem extends ImmediateRenderSystem implements IObserve
             shaderProgram.setUniformf("u_ar", GlobalConf.program.isStereoHalfWidth() ? 0.5f : 1f);
             shaderProgram.setUniformf("u_thAnglePoint", (float) GlobalConf.scene.STAR_THRESHOLD_POINT);
 
-            // Relativistic aberration
-            if (GlobalConf.runtime.RELATIVISTIC_EFFECTS) {
-                if (camera.getVelocity() == null || camera.getVelocity().len() == 0) {
-                    aux.set(1, 0, 0);
-                } else {
-                    camera.getVelocity().put(aux).nor();
-                }
-                shaderProgram.setUniformf("u_velDir", aux);
-                shaderProgram.setUniformf("u_vc", (float) (camera.getSpeed() / Constants.C_KMH));
-            }
+            // Relativistic effects
+            addEffectsUniforms(shaderProgram, camera);
 
             curr.mesh.setVertices(curr.vertices, 0, curr.vertexIdx);
             curr.mesh.render(shaderProgram, ShapeType.Point.getGlType());
@@ -198,7 +190,7 @@ public class PixelRenderSystem extends ImmediateRenderSystem implements IObserve
                             p.setUniform2fv("u_pointAlpha", pointAlpha, 0, 2);
                             p.end();
                         }
-                    
+
                     });
                 }
             }

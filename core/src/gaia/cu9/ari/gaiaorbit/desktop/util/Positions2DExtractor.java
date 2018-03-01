@@ -19,6 +19,7 @@ import gaia.cu9.ari.gaiaorbit.util.ConfInit;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
+import gaia.cu9.ari.gaiaorbit.util.SysUtilsFactory;
 import gaia.cu9.ari.gaiaorbit.util.coord.MoonAACoordinates;
 import gaia.cu9.ari.gaiaorbit.util.coord.vsop87.AbstractVSOP87;
 import gaia.cu9.ari.gaiaorbit.util.coord.vsop87.VSOP87;
@@ -38,7 +39,7 @@ public class Positions2DExtractor implements IObserver {
         try {
             NumberFormatFactory.initialize(new DesktopNumberFormatFactory());
             DateFormatFactory.initialize(new DesktopDateFormatFactory());
-            ConfInit.initialize(new WebGLConfInit());
+            ConfInit.initialize(new DesktopConfInit(SysUtilsFactory.getSysUtils().getAssetsLocation()));
         } catch (IOException e) {
             Logger.error(e);
         } catch (Exception e) {

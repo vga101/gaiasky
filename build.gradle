@@ -139,8 +139,9 @@ project(":core") {
 		compile "junit:junit:4.12"
 		compile "net.jafama:jafama:$jafamaVersion"
 		compile files('lib/postprocessing.jar',
-                '../assets',
-                'lib/stil.jar')
+                'lib/stil.jar',
+                'lib/jsamp-1.3.5.jar',
+                '../assets')
     }
 
     jar {
@@ -167,11 +168,8 @@ project(":core") {
         from('build/classes/main') {
             include '**'
         }
-        from('build/classes/main') {
-            include '**'
-        }
     }
-
+    
 }
 
 tasks.eclipse.doLast {

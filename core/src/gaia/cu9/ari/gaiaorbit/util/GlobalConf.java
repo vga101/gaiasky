@@ -29,7 +29,10 @@ public class GlobalConf {
     public static final String WEBPAGE = "https://www.zah.uni-heidelberg.de/gaia/outreach/gaiasky";
     public static final String WEBPAGE_DOWNLOADS = "https://www.zah.uni-heidelberg.de/gaia/outreach/gaiasky/downloads";
     public static final String DOCUMENTATION = "http://gaia-sky.rtfd.io";
-    public static final String ICON_URL = "http://www.zah.uni-heidelberg.de/uploads/pics/gaiasandboxlogo_02.png";
+    public static final String ICON_URL = "https://github.com/langurmonkey/gaiasky/blob/master/assets/icon/gs_064.png?raw=true";
+    public static final String AUTHOR_NAME = "Toni Sagrista Selles";
+    public static final String AUTHOR_EMAIL = "tsagrista@ari.uni-heidelberg.de";
+    public static final String AUTHOR_AFFILIATION = "Heidelberg University, Zentrum fuer Astronomie, Astronomisches Rechen-Institut";
 
     public static final String TEXTURES_FOLDER = "data/tex/";
 
@@ -102,7 +105,40 @@ public class GlobalConf {
 
     public static class PostprocessConf implements IConf, IObserver {
 
-        public int POSTPROCESS_ANTIALIAS;
+        public enum Antialias {
+            NONE(0), FXAA(-1), NFAA(-2), SSAA(1);
+
+            int aacode;
+
+            private Antialias(int aacode) {
+                this.aacode = aacode;
+            }
+
+            public int getAACode() {
+                return this.aacode;
+            }
+
+            public boolean isPostProcessAntialias() {
+                return this.aacode < 0;
+            }
+        }
+
+        public Antialias getAntialias(int code) {
+            switch (code) {
+            case 0:
+                return Antialias.NONE;
+            case -1:
+                return Antialias.FXAA;
+            case -2:
+                return Antialias.FXAA;
+            case 1:
+                return Antialias.SSAA;
+            default:
+                return Antialias.NONE;
+            }
+        }
+
+        public Antialias POSTPROCESS_ANTIALIAS;
         public float POSTPROCESS_BLOOM_INTENSITY;
         public float POSTPROCESS_MOTION_BLUR;
         public boolean POSTPROCESS_LENS_FLARE;
@@ -117,7 +153,7 @@ public class GlobalConf {
             EventManager.instance.subscribe(this, Events.BLOOM_CMD, Events.LENS_FLARE_CMD, Events.MOTION_BLUR_CMD, Events.LIGHT_SCATTERING_CMD, Events.FISHEYE_CMD, Events.BRIGHTNESS_CMD, Events.CONTRAST_CMD);
         }
 
-        public void initialize(int POSTPROCESS_ANTIALIAS, float POSTPROCESS_BLOOM_INTENSITY, float POSTPROCESS_MOTION_BLUR, boolean POSTPROCESS_LENS_FLARE, boolean POSTPROCESS_LIGHT_SCATTERING,
+        public void initialize(Antialias POSTPROCESS_ANTIALIAS, float POSTPROCESS_BLOOM_INTENSITY, float POSTPROCESS_MOTION_BLUR, boolean POSTPROCESS_LENS_FLARE, boolean POSTPROCESS_LIGHT_SCATTERING,
                 boolean POSTPROCESS_FISHEYE, float POSTPROCESS_BRIGHTNESS, float POSTPROCESS_CONTRAST) {
             this.POSTPROCESS_ANTIALIAS = POSTPROCESS_ANTIALIAS;
             this.POSTPROCESS_BLOOM_INTENSITY = POSTPROCESS_BLOOM_INTENSITY;
@@ -199,9 +235,10 @@ public class GlobalConf {
         /** Whether octree drawing is active or not **/
         public boolean DRAW_OCTREE;
         public boolean RELATIVISTIC_EFFECTS = false;
+        public boolean GRAVITATIONAL_WAVES = false;
 
         public RuntimeConf() {
-            EventManager.instance.subscribe(this, Events.LIMIT_MAG_CMD, Events.INPUT_ENABLED_CMD, Events.DISPLAY_GUI_CMD, Events.TOGGLE_UPDATEPAUSE, Events.TOGGLE_TIME_CMD, Events.RECORD_CAMERA_CMD);
+            EventManager.instance.subscribe(this, Events.LIMIT_MAG_CMD, Events.INPUT_ENABLED_CMD, Events.DISPLAY_GUI_CMD, Events.TOGGLE_UPDATEPAUSE, Events.TOGGLE_TIME_CMD, Events.RECORD_CAMERA_CMD, Events.GRAV_WAVE_START, Events.GRAV_WAVE_STOP);
         }
 
         public void initialize(boolean dISPLAY_GUI, boolean uPDATE_PAUSE, boolean sTRIPPED_FOV_MODE, boolean tIME_ON, boolean iNPUT_ENABLED, boolean rECORD_CAMERA, float lIMIT_MAG_RUNTIME,
@@ -248,6 +285,12 @@ public class GlobalConf {
                 break;
             case RECORD_CAMERA_CMD:
                 toggleRecord((Boolean) data[0]);
+                break;
+            case GRAV_WAVE_START:
+                GRAVITATIONAL_WAVES = true;
+                break;
+            case GRAV_WAVE_STOP:
+                GRAVITATIONAL_WAVES = false;
                 break;
             default:
                 break;
@@ -373,8 +416,6 @@ public class GlobalConf {
 
         /** The json data file in case of local data source **/
         public String OBJECTS_JSON_FILE;
-        /** String with different files for different qualities **/
-        public String[] OBJECTS_JSON_FILE_GQ;
 
         /** The json file with the catalogue(s) to load **/
         public String CATALOG_JSON_FILE;
@@ -394,12 +435,10 @@ public class GlobalConf {
          **/
         public boolean REAL_GAIA_ATTITUDE;
 
-        public void initialize(String cATALOG_JSON_FILE, String oBJECTS_JSON_FILE, String[] oBJECTS_JSON_FILE_GQ, float lIMIT_MAG_LOAD, boolean rEAL_GAIA_ATTITUDE, boolean hIGH_ACCURACY_POSITIONS) {
+        public void initialize(String cATALOG_JSON_FILE, String oBJECTS_JSON_FILE, float lIMIT_MAG_LOAD, boolean rEAL_GAIA_ATTITUDE, boolean hIGH_ACCURACY_POSITIONS) {
 
             CATALOG_JSON_FILE = cATALOG_JSON_FILE;
-
             OBJECTS_JSON_FILE = oBJECTS_JSON_FILE;
-            OBJECTS_JSON_FILE_GQ = oBJECTS_JSON_FILE_GQ;
             LIMIT_MAG_LOAD = lIMIT_MAG_LOAD;
             REAL_GAIA_ATTITUDE = rEAL_GAIA_ATTITUDE;
             HIGH_ACCURACY_POSITIONS = hIGH_ACCURACY_POSITIONS;

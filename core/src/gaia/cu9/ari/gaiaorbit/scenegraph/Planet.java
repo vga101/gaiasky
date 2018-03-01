@@ -130,6 +130,8 @@ public class Planet extends ModelBody implements IAtmosphereRenderable, ILineRen
     @Override
     public void render(ModelBatch modelBatch, float alpha, double t, RenderingContext rc) {
         mc.touch();
+        mc.setTransparency(alpha * opacity);
+        mc.updateRelativisticEffects(GaiaSky.instance.getICamera());
         render(modelBatch, alpha, t, rc != null ? rc.vroffset : null, false);
     }
 
@@ -139,6 +141,7 @@ public class Planet extends ModelBody implements IAtmosphereRenderable, ILineRen
     @Override
     public void render(ModelBatch modelBatch, float alpha, double t, Vector3d vroffset, boolean atm) {
         // Atmosphere fades in between 1 and 2 degrees of view angle apparent
+        ICamera cam = GaiaSky.instance.getICamera();
         if (!atm) {
             // Regular planet, render model normally
             compalpha = alpha;
@@ -155,11 +158,10 @@ public class Planet extends ModelBody implements IAtmosphereRenderable, ILineRen
             prepareShadowEnvironment();
             mc.touch();
             mc.setTransparency(alpha * opacity);
+            mc.updateRelativisticEffects(cam);
             modelBatch.render(mc.instance, mc.env);
         } else {
             // We are an atmosphere :_D
-            ICamera cam = GaiaSky.instance.getICamera();
-
             float near = cam.getCamera().near;
             float nearopacity = 1f;
             if (near < 1e-3f && cam.getClosest() != this) {
@@ -167,9 +169,8 @@ public class Planet extends ModelBody implements IAtmosphereRenderable, ILineRen
             }
             float atmopacity = (float) MathUtilsd.lint(viewAngle, 0.01745329f, 0.03490659f, 0f, 1f) * nearopacity;
             if (atmopacity > 0) {
-                // Atmosphere
                 ac.updateAtmosphericScatteringParams(ac.mc.instance.materials.first(), alpha * atmopacity, false, this, vroffset);
-                // Render atmosphere
+                ac.mc.updateRelativisticEffects(cam);
                 modelBatch.render(ac.mc.instance, mc.env);
             }
         }

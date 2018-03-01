@@ -15,7 +15,9 @@ import gaia.cu9.ari.gaiaorbit.render.RenderingContext;
 import gaia.cu9.ari.gaiaorbit.render.system.FontRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.LineRenderSystem;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
+import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
+import gaia.cu9.ari.gaiaorbit.util.gravwaves.GravitationalWavesManager;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 import gaia.cu9.ari.gaiaorbit.util.tree.IPosition;
@@ -137,8 +139,8 @@ public class Constellation extends LineObject implements I3DTextRenderable {
     }
 
     private void getPosition(IPosition posbean, Vector3 campos, Vector3 out) {
-        Vector3d vel = aux3d1.get();
-        if (posbean.getVelocity() != null) {
+        Vector3d vel = aux3d1.get().setZero();
+        if (posbean.getVelocity() != null && !posbean.getVelocity().hasNaN()) {
             vel.set(posbean.getVelocity()).scl(deltaYears);
         }
 
@@ -189,6 +191,8 @@ public class Constellation extends LineObject implements I3DTextRenderable {
     @Override
     public void textPosition(ICamera cam, Vector3d out) {
         out.set(pos);
+        GlobalResources.applyRelativisticAberration(out, cam);
+        GravitationalWavesManager.getInstance().gravitationalWavePos(out);
     }
 
     @Override

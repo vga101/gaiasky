@@ -221,6 +221,7 @@ public abstract class ModelBody extends CelestialBody {
         prepareShadowEnvironment();
         mc.touch();
         mc.setTransparency(alpha * fadeOpacity);
+        mc.updateRelativisticEffects(GaiaSky.instance.getICamera());
         modelBatch.render(mc.instance, mc.env);
     }
 

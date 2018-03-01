@@ -49,7 +49,6 @@ public class StarGroupRenderSystem extends ImmediateRenderSystem implements IObs
         this.alphaSizeFovBr = new float[4];
         aux1 = new Vector3();
         aux2 = new Vector3();
-
         EventManager.instance.subscribe(this, Events.STAR_MIN_OPACITY_CMD, Events.DISPOSE_STAR_GROUP_GPU_MESH);
     }
 
@@ -185,16 +184,8 @@ public class StarGroupRenderSystem extends ImmediateRenderSystem implements IObs
                             shaderProgram.setUniformMatrix("u_projModelView", camera.getCamera().combined);
                             shaderProgram.setUniformf("u_camPos", camera.getCurrent().getPos().put(aux1));
 
-                            // Relativistic aberration
-                            if (GlobalConf.runtime.RELATIVISTIC_EFFECTS) {
-                                if (camera.getVelocity() == null || camera.getVelocity().len() == 0) {
-                                    aux2.set(1, 0, 0);
-                                } else {
-                                    camera.getVelocity().put(aux2).nor();
-                                }
-                                shaderProgram.setUniformf("u_velDir", aux2);
-                                shaderProgram.setUniformf("u_vc", (float) (camera.getSpeed() / Constants.C_KMH));
-                            }
+                            // Relativistic effects
+                            addEffectsUniforms(shaderProgram, camera);
 
                             alphaSizeFovBr[0] = starGroup.opacity * alphas[starGroup.ct.getFirstOrdinal()];
                             alphaSizeFovBr[1] = fovmode == 0 ? (GlobalConf.scene.STAR_POINT_SIZE * rc.scaleFactor * (GlobalConf.program.isStereoFullWidth() ? 1 : 2)) : (GlobalConf.scene.STAR_POINT_SIZE * rc.scaleFactor * 10);

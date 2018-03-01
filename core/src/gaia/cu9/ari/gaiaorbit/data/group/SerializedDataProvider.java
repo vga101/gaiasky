@@ -8,6 +8,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Array;
 
+import gaia.cu9.ari.gaiaorbit.scenegraph.ParticleGroup.ParticleBean;
 import gaia.cu9.ari.gaiaorbit.scenegraph.StarGroup.StarBean;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
@@ -51,6 +52,12 @@ public class SerializedDataProvider extends AbstractStarGroupDataProvider {
         } catch (Exception e) {
             Logger.error(e, this.getClass().getSimpleName());
         }
+        return null;
+    }
+
+    @Override
+    public Array<? extends ParticleBean> loadDataMapped(String file, double factor) {
+        // TODO Auto-generated method stub
         return null;
     }
 

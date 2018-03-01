@@ -84,10 +84,12 @@ import gaia.cu9.ari.gaiaorbit.util.MemInfo;
 import gaia.cu9.ari.gaiaorbit.util.MusicManager;
 import gaia.cu9.ari.gaiaorbit.util.g3d.loader.ObjLoader;
 import gaia.cu9.ari.gaiaorbit.util.gaia.GaiaAttitudeServer;
+import gaia.cu9.ari.gaiaorbit.util.gravwaves.GravitationalWavesManager;
 import gaia.cu9.ari.gaiaorbit.util.override.AtmosphereShaderProvider;
 import gaia.cu9.ari.gaiaorbit.util.override.GroundShaderProvider;
 import gaia.cu9.ari.gaiaorbit.util.override.RelativisticShaderProvider;
 import gaia.cu9.ari.gaiaorbit.util.override.ShaderProgramProvider;
+import gaia.cu9.ari.gaiaorbit.util.samp.SAMPClient;
 import gaia.cu9.ari.gaiaorbit.util.time.GlobalClock;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 import gaia.cu9.ari.gaiaorbit.util.time.RealTimeClock;
@@ -283,6 +285,9 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         // Initialise hidden helper user
         HiddenHelperUser.initialize();
 
+        // Initialise gravitational waves helper
+        GravitationalWavesManager.initialize(time);
+
         // GUI
         guis = new ArrayList<IGui>(3);
         reinitialiseGUI1();
@@ -411,6 +416,11 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         if (manager.isLoaded(ATTITUDE_FOLDER)) {
             GaiaAttitudeServer.instance = manager.get(ATTITUDE_FOLDER);
         }
+
+        /**
+         * SAMP
+         */
+        SAMPClient.getInstance().initialize();
 
         /**
          * POST-PROCESSOR
@@ -693,8 +703,8 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
 
         this.t += this.dt;
 
+        // Update GUI 
         GuiRegistry.update(this.dt);
-
         EventManager.instance.post(Events.UPDATE_GUI, this.dt);
 
         double dtScene = this.dt;
@@ -712,6 +722,9 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
 
         // Precompute isOn for all stars and galaxies
         Particle.renderOn = isOn(ComponentType.Stars);
+
+        // Update GravWaves params
+        GravitationalWavesManager.getInstance().update(time);
 
         // Update scene graph
         sg.update(time, cam);

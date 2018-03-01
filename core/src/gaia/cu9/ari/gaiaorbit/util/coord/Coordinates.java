@@ -48,13 +48,13 @@ public class Coordinates {
         eclipticToEquatorial = getRotationMatrix(0, OBLIQUITY_DEG_J2000, 0);
         eclipticToEquatorialF = eclipticToEquatorial.putIn(new Matrix4());
 
-        // EQ -> GAL
-        equatorialToGalactic = getRotationMatrix(R, -(90 - Q), -(90 + P));
-        equatorialToGalacticF = equatorialToGalactic.putIn(new Matrix4());
-
         // GAL -> EQ
         galacticToEquatorial = getRotationMatrix(-R, 90 - Q, 90 + P);
         galacticToEquatorialF = galacticToEquatorial.putIn(new Matrix4());
+
+        // EQ -> GAL
+        equatorialToGalactic = new Matrix4d(galacticToEquatorial).inv();
+        equatorialToGalacticF = equatorialToGalactic.putIn(new Matrix4());
 
         // ECL -> GAL
         eclipticToGalactic = new Matrix4d(galacticToEquatorial).mul(equatorialToEcliptic);

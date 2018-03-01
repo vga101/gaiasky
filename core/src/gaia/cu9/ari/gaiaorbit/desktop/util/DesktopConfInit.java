@@ -26,6 +26,7 @@ import gaia.cu9.ari.gaiaorbit.util.GlobalConf.DataConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf.FrameConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf.PerformanceConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf.PostprocessConf;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf.PostprocessConf.Antialias;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf.ProgramConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf.ProgramConf.StereoProfile;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf.RuntimeConf;
@@ -135,7 +136,7 @@ public class DesktopConfInit extends ConfInit {
 
         /** POSTPROCESS CONF **/
         PostprocessConf ppc = new PostprocessConf();
-        int POSTPROCESS_ANTIALIAS = Integer.parseInt(p.getProperty("postprocess.antialiasing"));
+        Antialias POSTPROCESS_ANTIALIAS = ppc.getAntialias(Integer.parseInt(p.getProperty("postprocess.antialiasing")));
         float POSTPROCESS_BLOOM_INTENSITY = Float.parseFloat(p.getProperty("postprocess.bloom.intensity"));
         float POSTPROCESS_MOTION_BLUR = Float.parseFloat(p.getProperty("postprocess.motionblur"));
         boolean POSTPROCESS_LENS_FLARE = Boolean.parseBoolean(p.getProperty("postprocess.lensflare"));
@@ -155,15 +156,6 @@ public class DesktopConfInit extends ConfInit {
         String CATALOG_JSON_FILE = p.getProperty("data.json.catalog");
 
         String OBJECTS_JSON_FILE = p.getProperty("data.json.objects");
-        List<String> files = new ArrayList<String>();
-        int i = 0;
-        String gqualityFile;
-        while ((gqualityFile = p.getProperty("data.json.objects.gq." + i)) != null) {
-            files.add(gqualityFile);
-            i++;
-        }
-        String[] OBJECTS_JSON_FILE_GQ = new String[files.size()];
-        OBJECTS_JSON_FILE_GQ = files.toArray(OBJECTS_JSON_FILE_GQ);
 
         boolean REAL_GAIA_ATTITUDE = Boolean.parseBoolean(p.getProperty("data.attitude.real"));
         boolean HIGH_ACCURACY_POSITIONS = Boolean.parseBoolean(p.getProperty("data.highaccuracy.positions", "false"));
@@ -174,7 +166,7 @@ public class DesktopConfInit extends ConfInit {
         } else {
             LIMIT_MAG_LOAD = Float.MAX_VALUE;
         }
-        dc.initialize(CATALOG_JSON_FILE, OBJECTS_JSON_FILE, OBJECTS_JSON_FILE_GQ, LIMIT_MAG_LOAD, REAL_GAIA_ATTITUDE, HIGH_ACCURACY_POSITIONS);
+        dc.initialize(CATALOG_JSON_FILE, OBJECTS_JSON_FILE, LIMIT_MAG_LOAD, REAL_GAIA_ATTITUDE, HIGH_ACCURACY_POSITIONS);
 
         /** PROGRAM CONF **/
         ProgramConf prc = new ProgramConf();
@@ -342,7 +334,7 @@ public class DesktopConfInit extends ConfInit {
         p.setProperty("global.conf.numthreads", Integer.toString(GlobalConf.performance.NUMBER_THREADS));
 
         /** POSTPROCESS **/
-        p.setProperty("postprocess.antialiasing", Integer.toString(GlobalConf.postprocess.POSTPROCESS_ANTIALIAS));
+        p.setProperty("postprocess.antialiasing", Integer.toString(GlobalConf.postprocess.POSTPROCESS_ANTIALIAS.getAACode()));
         p.setProperty("postprocess.bloom.intensity", Float.toString(GlobalConf.postprocess.POSTPROCESS_BLOOM_INTENSITY));
         p.setProperty("postprocess.motionblur", Float.toString(GlobalConf.postprocess.POSTPROCESS_MOTION_BLUR));
         p.setProperty("postprocess.lensflare", Boolean.toString(GlobalConf.postprocess.POSTPROCESS_LENS_FLARE));

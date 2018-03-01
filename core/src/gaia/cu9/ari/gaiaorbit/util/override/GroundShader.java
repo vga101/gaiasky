@@ -3,12 +3,11 @@ package gaia.cu9.ari.gaiaorbit.util.override;
 import com.badlogic.gdx.graphics.g3d.Attributes;
 import com.badlogic.gdx.graphics.g3d.Renderable;
 import com.badlogic.gdx.graphics.g3d.shaders.BaseShader;
-import com.badlogic.gdx.graphics.g3d.shaders.DefaultShader;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 
-public class GroundShader extends DefaultShader {
+public class GroundShader extends RelativisticShader {
 
-    public static class Inputs extends DefaultShader.Inputs {
+    public static class Inputs extends RelativisticShader.Inputs {
         public final static Uniform alpha = new Uniform("fAlpha");
         public final static Uniform cameraHeight = new Uniform("fCameraHeight");
         public final static Uniform cameraHeight2 = new Uniform("fCameraHeight2");
@@ -34,7 +33,7 @@ public class GroundShader extends DefaultShader {
         public final static Uniform invWavelength = new Uniform("v3InvWavelength");
     }
 
-    public static class Setters extends DefaultShader.Setters {
+    public static class Setters extends RelativisticShader.Setters {
         public final static Setter alpha = new Setter() {
             @Override
             public boolean isGlobal(BaseShader shader, int inputID) {
@@ -359,7 +358,7 @@ public class GroundShader extends DefaultShader {
     }
 
     public GroundShader(final Renderable renderable, final Config config, final String prefix, final String vertexShader, final String fragmentShader) {
-        this(renderable, config, new ShaderProgram(prefix + vertexShader, prefix + fragmentShader));
+        this(renderable, config, new ShaderProgram(ShaderProgramProvider.getShaderCode(prefix, vertexShader), ShaderProgramProvider.getShaderCode(prefix, fragmentShader)));
     }
 
     public GroundShader(final Renderable renderable, final Config config, final ShaderProgram shaderProgram) {
@@ -398,7 +397,7 @@ public class GroundShader extends DefaultShader {
     }
 
     public static String createPrefix(final Renderable renderable, final Config config) {
-        String prefix = DefaultShader.createPrefix(renderable, config);
+        String prefix = RelativisticShader.createPrefix(renderable, config);
         final long mask = renderable.material.getMask();
         // Atmosphere ground only if camera height is set
         if ((mask & AtmosphereAttribute.CameraHeight) == AtmosphereAttribute.CameraHeight)
