@@ -184,4 +184,8 @@ public class HUDGui implements IGui {
         return ui.getRoot().findActor(name);
     }
 
+    @Override
+    public void setHoffset(int hoffset) {
+    }
+
 }

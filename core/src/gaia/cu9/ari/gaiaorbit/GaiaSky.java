@@ -23,6 +23,7 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.g3d.Model;
+import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.GLFrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
@@ -55,6 +56,7 @@ import gaia.cu9.ari.gaiaorbit.interfce.LoadingGui;
 import gaia.cu9.ari.gaiaorbit.interfce.MobileGui;
 import gaia.cu9.ari.gaiaorbit.interfce.SpacecraftGui;
 import gaia.cu9.ari.gaiaorbit.interfce.StereoGui;
+import gaia.cu9.ari.gaiaorbit.interfce.VRGui;
 import gaia.cu9.ari.gaiaorbit.render.AbstractRenderer;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.render.IMainRenderer;
@@ -180,7 +182,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
     /**
      * The user interfaces
      */
-    public IGui initialGui, loadingGui, loadingGuiLeft, loadingGuiRight, mainGui, spacecraftGui, stereoGui, debugGui, currentGui, previousGui;
+    public IGui initialGui, loadingGui, loadingGuiVR, mainGui, spacecraftGui, stereoGui, debugGui, currentGui, previousGui;
 
     /**
      * List of GUIs
@@ -396,10 +398,8 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
 
         // Dispose vr loading GUI
         if (GlobalConf.runtime.OPENVR) {
-            loadingGuiLeft.dispose();
-            loadingGuiLeft = null;
-            loadingGuiRight.dispose();
-            loadingGuiRight = null;
+            loadingGuiVR.dispose();
+            loadingGuiVR = null;
 
             vrLoadingLeftTex.clear();
             vrLoadingLeftFb.dispose();
@@ -628,11 +628,11 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
                     vrContext.pollEvents();
 
                     vrLoadingLeftFb.begin();
-                    renderGui(loadingGuiLeft);
+                    renderGui(((VRGui) loadingGuiVR).left());
                     vrLoadingLeftFb.end();
 
                     vrLoadingRightFb.begin();
-                    renderGui(loadingGuiRight);
+                    renderGui(((VRGui) loadingGuiVR).right());
                     vrLoadingRightFb.end();
 
                     /** SUBMIT TO VR COMPOSITOR **/
@@ -857,11 +857,8 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
 
             // Also VR
             if (GlobalConf.runtime.OPENVR) {
-                loadingGuiLeft = new LoadingGui(300);
-                loadingGuiLeft.initialize(manager);
-
-                loadingGuiRight = new LoadingGui(-300);
-                loadingGuiRight.initialize(manager);
+                loadingGuiVR = new VRGui(LoadingGui.class, 200);
+                loadingGuiVR.initialize(manager);
             }
 
             DSCHOSEN = true;

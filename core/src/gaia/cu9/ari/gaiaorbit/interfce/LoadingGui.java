@@ -29,9 +29,8 @@ import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextIconButton;
  *
  */
 public class LoadingGui extends AbstractGui {
-    protected Table center, bottom;
+    protected Table center;
     protected Container<Button> screenMode;
-    protected int hoffset;
 
     protected NotificationsInterface notificationsInterface;
 

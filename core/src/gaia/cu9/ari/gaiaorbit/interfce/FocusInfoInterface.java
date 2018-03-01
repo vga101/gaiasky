@@ -63,6 +63,10 @@ public class FocusInfoInterface extends Table implements IObserver, IGuiInterfac
     float pad5, pad10, bw;
 
     public FocusInfoInterface(Skin skin) {
+        this(skin, false);
+    }
+
+    public FocusInfoInterface(Skin skin, boolean vr) {
         super(skin);
         this.setBackground("table-bg");
 
@@ -195,27 +199,29 @@ public class FocusInfoInterface extends Table implements IObserver, IGuiInterfac
         focusInfo.add(new OwnLabel("ID", skin, "hud-big")).left();
         focusInfo.add(focusId).left().padLeft(pad10);
         focusInfo.row();
-        focusInfo.add(new OwnLabel(txt("gui.focusinfo.alpha"), skin, "hud-big")).left();
-        focusInfo.add(focusRA).left().padLeft(pad10);
-        focusInfo.row();
-        focusInfo.add(new OwnLabel(txt("gui.focusinfo.delta"), skin, "hud-big")).left();
-        focusInfo.add(focusDEC).left().padLeft(pad10);
-        focusInfo.row();
-        focusInfo.add(new OwnLabel(txt("gui.focusinfo.mualpha"), skin, "hud-big")).left();
-        focusInfo.add(focusMuAlpha).left().padLeft(pad10);
-        focusInfo.row();
-        focusInfo.add(new OwnLabel(txt("gui.focusinfo.mudelta"), skin, "hud-big")).left();
-        focusInfo.add(focusMuDelta).left().padLeft(pad10);
-        focusInfo.row();
-        focusInfo.add(new OwnLabel(txt("gui.focusinfo.radvel"), skin, "hud-big")).left();
-        focusInfo.add(focusRadVel).left().padLeft(pad10);
-        focusInfo.row();
-        focusInfo.add(appmagLabel).left();
-        focusInfo.add(focusAppMag).left().padLeft(pad10);
-        focusInfo.row();
-        focusInfo.add(absmagLabel).left();
-        focusInfo.add(focusAbsMag).left().padLeft(pad10);
-        focusInfo.row();
+        if (!vr) {
+            focusInfo.add(new OwnLabel(txt("gui.focusinfo.alpha"), skin, "hud-big")).left();
+            focusInfo.add(focusRA).left().padLeft(pad10);
+            focusInfo.row();
+            focusInfo.add(new OwnLabel(txt("gui.focusinfo.delta"), skin, "hud-big")).left();
+            focusInfo.add(focusDEC).left().padLeft(pad10);
+            focusInfo.row();
+            focusInfo.add(new OwnLabel(txt("gui.focusinfo.mualpha"), skin, "hud-big")).left();
+            focusInfo.add(focusMuAlpha).left().padLeft(pad10);
+            focusInfo.row();
+            focusInfo.add(new OwnLabel(txt("gui.focusinfo.mudelta"), skin, "hud-big")).left();
+            focusInfo.add(focusMuDelta).left().padLeft(pad10);
+            focusInfo.row();
+            focusInfo.add(new OwnLabel(txt("gui.focusinfo.radvel"), skin, "hud-big")).left();
+            focusInfo.add(focusRadVel).left().padLeft(pad10);
+            focusInfo.row();
+            focusInfo.add(appmagLabel).left();
+            focusInfo.add(focusAppMag).left().padLeft(pad10);
+            focusInfo.row();
+            focusInfo.add(absmagLabel).left();
+            focusInfo.add(focusAbsMag).left().padLeft(pad10);
+            focusInfo.row();
+        }
         focusInfo.add(new OwnLabel(txt("gui.focusinfo.angle"), skin, "hud-big")).left();
         focusInfo.add(focusAngle).left().padLeft(pad10);
         focusInfo.row();
@@ -231,16 +237,17 @@ public class FocusInfoInterface extends Table implements IObserver, IGuiInterfac
         focusInfo.add(moreInfo).left().colspan(2).padBottom(pad5).padTop(pad10);
 
         /** POINTER INFO **/
-        pointerInfo.add(pointerName).left().colspan(2);
-        pointerInfo.row();
-        pointerInfo.add(RADECLabel).left();
-        pointerInfo.add(pointerRADEC).left().padLeft(pad10);
-        pointerInfo.row();
-        pointerInfo.add(lonLatLabel).left();
-        pointerInfo.add(pointerLonLat).left().padLeft(pad10);
+        if (!vr) {
+            pointerInfo.add(pointerName).left().colspan(2);
+            pointerInfo.row();
+            pointerInfo.add(RADECLabel).left();
+            pointerInfo.add(pointerRADEC).left().padLeft(pad10);
+            pointerInfo.row();
+            pointerInfo.add(lonLatLabel).left();
+            pointerInfo.add(pointerLonLat).left().padLeft(pad10);
+        }
 
         /** CAMERA INFO **/
-
         cameraInfo.add(camName).left().colspan(2);
         cameraInfo.row();
         cameraInfo.add(new OwnLabel(txt("gui.camera.vel"), skin, "hud-big")).left();
@@ -255,7 +262,7 @@ public class FocusInfoInterface extends Table implements IObserver, IGuiInterfac
         add(cameraInfo).align(Align.left);
         pack();
 
-        if (daemon == null) {
+        if (daemon == null && !vr) {
             daemon = NetworkCheckerManager.getNewtorkChecker();
             daemon.setParameters(moreInfo, skin, pad10);
             daemon.start();

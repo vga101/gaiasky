@@ -26,6 +26,9 @@ import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
+import gaia.cu9.ari.gaiaorbit.interfce.IGui;
+import gaia.cu9.ari.gaiaorbit.interfce.VRGui;
+import gaia.cu9.ari.gaiaorbit.interfce.VRInfoGui;
 import gaia.cu9.ari.gaiaorbit.render.IPostProcessor.PostProcessBean;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.NaturalCamera;
@@ -63,6 +66,9 @@ public class SGROpenVR extends SGRAbstract implements ISGR, IObserver {
     public Array<StubModel> controllerObjects;
     private Map<VRDevice, StubModel> vrDeviceToModel;
     private Environment controllersEnv;
+
+    // Focus info
+    private VRGui infoGui;
 
     private Vector3 auxf1;
     private Vector3d auxd1;
@@ -106,6 +112,9 @@ public class SGROpenVR extends SGRAbstract implements ISGR, IObserver {
             for (VRDevice controller : controllers) {
                 addVRController(controller);
             }
+
+            infoGui = new VRGui(VRInfoGui.class, 100);
+            infoGui.initialize(null);
 
             EventManager.instance.subscribe(this, Events.FRAME_SIZE_UDPATE, Events.SCREENSHOT_SIZE_UDPATE, Events.VR_DEVICE_CONNECTED, Events.VR_DEVICE_DISCONNECTED);
         }
@@ -162,6 +171,8 @@ public class SGROpenVR extends SGRAbstract implements ISGR, IObserver {
             // Camera
             camera.render(rw, rh);
 
+            renderGui(infoGui.left());
+
             if (r) {
                 renderStubModels(modelBatch, camera, camera.getCamera(), controllerObjects, 0);
             }
@@ -181,6 +192,8 @@ public class SGROpenVR extends SGRAbstract implements ISGR, IObserver {
             sgr.renderScene(camera, t, rc);
             // Camera
             camera.render(rw, rh);
+
+            renderGui(infoGui.right());
 
             if (r) {
                 renderStubModels(modelBatch, camera, camera.getCamera(), controllerObjects, 1);
@@ -233,6 +246,11 @@ public class SGROpenVR extends SGRAbstract implements ISGR, IObserver {
             Matrix4.inv(camera.invProjectionView.val);
             camera.frustum.update(camera.invProjectionView);
         }
+    }
+
+    private void renderGui(IGui gui) {
+        gui.update(Gdx.graphics.getDeltaTime());
+        gui.render(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
     }
 
     public void resize(final int w, final int h) {

@@ -114,4 +114,12 @@ public interface IGui extends Disposable {
      **/
     public Actor findActor(String name);
 
+    /**
+     * Sets the horizontal offset, for VR
+     * 
+     * @param hoffset
+     *            The horizontal offset in pixels
+     */
+    public void setHoffset(int hoffset);
+
 }
