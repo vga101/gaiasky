@@ -368,7 +368,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
         out.add(aux);
 
         GlobalResources.applyRelativisticAberration(out, cam);
-        GravitationalWavesManager.instance().gravitationalWavePos(out);
+        GravitationalWavesManager.getInstance().gravitationalWavePos(out);
     }
 
     @Override

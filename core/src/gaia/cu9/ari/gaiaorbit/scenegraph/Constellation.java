@@ -192,7 +192,7 @@ public class Constellation extends LineObject implements I3DTextRenderable {
     public void textPosition(ICamera cam, Vector3d out) {
         out.set(pos);
         GlobalResources.applyRelativisticAberration(out, cam);
-        GravitationalWavesManager.instance().gravitationalWavePos(out);
+        GravitationalWavesManager.getInstance().gravitationalWavePos(out);
     }
 
     @Override

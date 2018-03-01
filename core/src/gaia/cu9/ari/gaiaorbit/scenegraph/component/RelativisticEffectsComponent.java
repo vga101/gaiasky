@@ -24,15 +24,18 @@ public class RelativisticEffectsComponent {
         aux = new Vector3();
     }
 
-    public void doneLoading(Map<String, Material> materials, boolean rel, boolean grav) {
+    public void doneLoading(Map<String, Material> materials) {
         Set<String> keys = materials.keySet();
         for (String key : keys) {
             Material mat = materials.get(key);
-            if (rel)
-                setUpRelativisticEffectsMaterial(mat);
-            if (grav)
-                setUpGravitationalWavesMaterial(mat);
+            setUpRelativisticEffectsMaterial(mat);
+            setUpGravitationalWavesMaterial(mat);
         }
+    }
+
+    public void doneLoading(Material mat) {
+        setUpRelativisticEffectsMaterial(mat);
+        setUpGravitationalWavesMaterial(mat);
     }
 
     public void setUpRelativisticEffectsMaterial(Array<Material> materials) {
@@ -71,13 +74,13 @@ public class RelativisticEffectsComponent {
         mat.set(new RelativisticEffectFloatAttribute(RelativisticEffectFloatAttribute.Omgw, 0f));
     }
 
-    public void removeUpGravitationalWavesMaterial(Array<Material> materials) {
+    public void removeGravitationalWavesMaterial(Array<Material> materials) {
         for (Material material : materials) {
-            removeUpGravitationalWavesMaterial(material);
+            removeGravitationalWavesMaterial(material);
         }
     }
 
-    public void removeUpGravitationalWavesMaterial(Material mat) {
+    public void removeGravitationalWavesMaterial(Material mat) {
         mat.remove(Vector4Attribute.Hterms);
         mat.remove(Vector3Attribute.Gw);
         mat.remove(Matrix3Attribute.Gwmat3);
@@ -90,24 +93,26 @@ public class RelativisticEffectsComponent {
     }
 
     public void updateRelativisticEffectsMaterial(Material material, ICamera camera, float vc) {
-
+        if (material.get(RelativisticEffectFloatAttribute.Vc) == null) {
+            setUpRelativisticEffectsMaterial(material);
+        }
         // v/c
-        if (material.get(RelativisticEffectFloatAttribute.Vc) != null)
-            ((RelativisticEffectFloatAttribute) material.get(RelativisticEffectFloatAttribute.Vc)).value = vc;
+        ((RelativisticEffectFloatAttribute) material.get(RelativisticEffectFloatAttribute.Vc)).value = vc;
 
         // Velocity direction
-        if (material.get(Vector3Attribute.VelDir) != null) {
-            if (camera.getVelocity() == null || camera.getVelocity().len() == 0) {
-                aux.set(1, 0, 0);
-            } else {
-                camera.getVelocity().put(aux).nor();
-            }
-            ((Vector3Attribute) material.get(Vector3Attribute.VelDir)).value.set(aux);
+        if (camera.getVelocity() == null || camera.getVelocity().len() == 0) {
+            aux.set(1, 0, 0);
+        } else {
+            camera.getVelocity().put(aux).nor();
         }
+        ((Vector3Attribute) material.get(Vector3Attribute.VelDir)).value.set(aux);
     }
 
-    public void updateGravitationalWavesMaterial(Material material, ICamera camera) {
-        GravitationalWavesManager gw = GravitationalWavesManager.instance();
+    public void updateGravitationalWavesMaterial(Material material) {
+        if (material.get(Vector4Attribute.Hterms) == null) {
+            setUpGravitationalWavesMaterial(material);
+        }
+        GravitationalWavesManager gw = GravitationalWavesManager.getInstance();
 
         // hterms
         ((Vector4Attribute) material.get(Vector4Attribute.Hterms)).value = gw.hterms;

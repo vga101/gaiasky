@@ -236,7 +236,7 @@ public class GlobalConf {
         public boolean GRAVITATIONAL_WAVES = false;
 
         public RuntimeConf() {
-            EventManager.instance.subscribe(this, Events.LIMIT_MAG_CMD, Events.INPUT_ENABLED_CMD, Events.DISPLAY_GUI_CMD, Events.TOGGLE_UPDATEPAUSE, Events.TOGGLE_TIME_CMD, Events.RECORD_CAMERA_CMD);
+            EventManager.instance.subscribe(this, Events.LIMIT_MAG_CMD, Events.INPUT_ENABLED_CMD, Events.DISPLAY_GUI_CMD, Events.TOGGLE_UPDATEPAUSE, Events.TOGGLE_TIME_CMD, Events.RECORD_CAMERA_CMD, Events.GRAV_WAVE_START, Events.GRAV_WAVE_STOP);
         }
 
         public void initialize(boolean dISPLAY_GUI, boolean uPDATE_PAUSE, boolean sTRIPPED_FOV_MODE, boolean tIME_ON, boolean iNPUT_ENABLED, boolean rECORD_CAMERA, float lIMIT_MAG_RUNTIME,
@@ -283,6 +283,12 @@ public class GlobalConf {
                 break;
             case RECORD_CAMERA_CMD:
                 toggleRecord((Boolean) data[0]);
+                break;
+            case GRAV_WAVE_START:
+                GRAVITATIONAL_WAVES = true;
+                break;
+            case GRAV_WAVE_STOP:
+                GRAVITATIONAL_WAVES = false;
                 break;
             default:
                 break;

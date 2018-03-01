@@ -21,6 +21,7 @@ import com.badlogic.gdx.utils.Disposable;
 
 import gaia.cu9.ari.gaiaorbit.data.AssetBean;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
+import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
@@ -106,9 +107,7 @@ public class ModelComponent implements Disposable {
             tc.initialize();
         }
 
-        if (GlobalConf.runtime.RELATIVISTIC_EFFECTS || GlobalConf.runtime.GRAVITATIONAL_WAVES) {
-            rec = new RelativisticEffectsComponent();
-        }
+        rec = new RelativisticEffectsComponent();
     }
 
     public void doneLoading(AssetManager manager, Matrix4 localTransform, float[] cc) {
@@ -159,11 +158,6 @@ public class ModelComponent implements Disposable {
         // INITIALIZE MATERIAL
         if (forceinit || !GlobalConf.scene.LAZY_TEXTURE_INIT && tc != null) {
             tc.initMaterial(manager, materials, cc, culling);
-        }
-
-        // INIT RELATIVISITC
-        if (GlobalConf.runtime.RELATIVISTIC_EFFECTS || GlobalConf.runtime.GRAVITATIONAL_WAVES) {
-            rec.doneLoading(materials, GlobalConf.runtime.RELATIVISTIC_EFFECTS, GlobalConf.runtime.GRAVITATIONAL_WAVES);
         }
 
         // CREATE MAIN MODEL INSTANCE
@@ -325,32 +319,31 @@ public class ModelComponent implements Disposable {
     }
 
     public void updateRelativisticEffects(ICamera camera) {
-        if (GlobalConf.runtime.RELATIVISTIC_EFFECTS) {
-            for (Material mat : instance.materials) {
-                rec.updateRelativisticEffectsMaterial(mat, camera);
-            }
-        }
-
-        if (GlobalConf.runtime.GRAVITATIONAL_WAVES) {
-            for (Material mat : instance.materials) {
-                rec.updateGravitationalWavesMaterial(mat, camera);
-            }
-        }
+        updateRelativisticEffects(camera, (float) (camera.getSpeed() / Constants.C_KMH));
     }
 
     public void updateRelativisticEffects(ICamera camera, float vc) {
-        if (GlobalConf.runtime.RELATIVISTIC_EFFECTS) {
-            for (Material mat : instance.materials) {
-                rec.updateRelativisticEffectsMaterial(mat, camera, vc);
-            }
-        }
-
-        if (GlobalConf.runtime.GRAVITATIONAL_WAVES) {
-            for (Material mat : instance.materials) {
-                rec.updateGravitationalWavesMaterial(mat, camera);
-            }
+        for (Material mat : instance.materials) {
+            updateRelativisticEffects(mat, camera, vc);
         }
     }
 
+    public void updateRelativisticEffects(Material mat, ICamera camera) {
+        updateRelativisticEffects(mat, camera, (float) (camera.getSpeed() / Constants.C_KMH));
+    }
+
+    public void updateRelativisticEffects(Material mat, ICamera camera, float vc) {
+        if (GlobalConf.runtime.RELATIVISTIC_EFFECTS) {
+            rec.updateRelativisticEffectsMaterial(mat, camera, vc);
+        } else {
+            rec.removeRelativisticEffectsMaterial(mat);
+        }
+
+        if (GlobalConf.runtime.GRAVITATIONAL_WAVES) {
+            rec.updateGravitationalWavesMaterial(mat);
+        } else {
+            rec.removeGravitationalWavesMaterial(mat);
+        }
+    }
 
 }

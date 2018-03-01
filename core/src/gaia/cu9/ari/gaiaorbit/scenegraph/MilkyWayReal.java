@@ -260,7 +260,7 @@ public class MilkyWayReal extends AbstractPositionEntity implements I3DTextRende
     public void textPosition(ICamera cam, Vector3d out) {
         out.set(labelPosition).add(cam.getInversePos());
         GlobalResources.applyRelativisticAberration(out, cam);
-        GravitationalWavesManager.instance().gravitationalWavePos(out);
+        GravitationalWavesManager.getInstance().gravitationalWavePos(out);
     }
 
     @Override

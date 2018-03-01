@@ -304,7 +304,7 @@ public class StarCluster extends AbstractPositionEntity implements IFocus, IProp
 
         out.add(aux);
         GlobalResources.applyRelativisticAberration(out, cam);
-        GravitationalWavesManager.instance().gravitationalWavePos(out);
+        GravitationalWavesManager.getInstance().gravitationalWavePos(out);
     }
 
     @Override

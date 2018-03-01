@@ -15,7 +15,6 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.Planet;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Transform;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
-import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.ModelCache;
 import gaia.cu9.ari.gaiaorbit.util.Pair;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
@@ -60,13 +59,6 @@ public class AtmosphereComponent {
         atmMat.clear();
         setUpAtmosphericScatteringMaterial(atmMat, false);
         atmMat.set(new BlendingAttribute(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA));
-
-        // Relativistic effects
-        if (GlobalConf.runtime.RELATIVISTIC_EFFECTS)
-            mc.rec.setUpRelativisticEffectsMaterial(atmMat);
-        // Gravitational waves
-        if (GlobalConf.runtime.GRAVITATIONAL_WAVES)
-            mc.rec.setUpGravitationalWavesMaterial(atmMat);
 
         // CREATE ATMOSPHERE MODEL
         mc.instance = new ModelInstance(atmosphereModel, this.localTransform);

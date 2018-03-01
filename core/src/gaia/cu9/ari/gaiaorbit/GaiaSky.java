@@ -632,7 +632,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         Particle.renderOn = isOn(ComponentType.Stars);
 
         // Update GravWaves params
-        GravitationalWavesManager.instance().update(time);
+        GravitationalWavesManager.getInstance().update(time);
 
         // Update scene graph
         sg.update(time, cam);

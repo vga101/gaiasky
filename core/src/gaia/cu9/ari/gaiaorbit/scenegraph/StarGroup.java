@@ -773,7 +773,7 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
         out.add(aux);
 
         GlobalResources.applyRelativisticAberration(out, cam);
-        GravitationalWavesManager.instance().gravitationalWavePos(out);
+        GravitationalWavesManager.getInstance().gravitationalWavePos(out);
     }
 
     public double getFocusSize() {

@@ -260,12 +260,12 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         /**
          * STAR SHADER
          */
-        starShaders = fetchShaderProgram(manager, starDesc, "Star", "Star (rel)", "Star (grav)", "Star (rel+grav)");
+        starShaders = fetchShaderProgram(manager, starDesc, "Star", "Star (rel)");
 
         /**
          * GALAXY SHADER
          */
-        galShaders = fetchShaderProgram(manager, galDesc, "Galaxy", "Galaxy (rel)", "Galaxy (grav)", "Galaxy (rel+grav)");
+        galShaders = fetchShaderProgram(manager, galDesc, "Galaxy", "Galaxy (rel)");
 
         /**
          * FONT SHADER
@@ -278,47 +278,47 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         /**
          * SPRITE SHADER
          */
-        spriteShaders = fetchShaderProgram(manager, spriteDesc, "Sprite", "Sprite (rel)", "Sprite (grav)", "Sprite (rel+grav)");
+        spriteShaders = fetchShaderProgram(manager, spriteDesc, "Sprite", "Sprite (rel)");
 
         /**
          * LINE
          */
-        lineShaders = fetchShaderProgram(manager, lineDesc, "Line", "Line (rel)", "Line (grav)", "Line (rel+grav)");
+        lineShaders = fetchShaderProgram(manager, lineDesc, "Line", "Line (rel)");
 
         /**
          * LINE QUAD
          */
-        lineQuadShaders = fetchShaderProgram(manager, lineQuadDesc, "Line quad", "Line quad (rel)", "Line quad (grav)", "Line quad (rel+grav)");
+        lineQuadShaders = fetchShaderProgram(manager, lineQuadDesc, "Line quad", "Line quad (rel)");
 
         /**
          * LINE GPU
          */
-        lineGpuShaders = fetchShaderProgram(manager, lineGpuDesc, "Line GPU", "Line GPU (rel)", "Line GPU (grav)", "Line GPU (rel+grav)");
+        lineGpuShaders = fetchShaderProgram(manager, lineGpuDesc, "Line GPU", "Line GPU (rel)");
 
         /**
          * MW POINTS
          */
-        mwPointShaders = fetchShaderProgram(manager, mwPointDesc, "MW point", "MW point (rel)", "MW point (grav)", "MW point (rel+grav)");
+        mwPointShaders = fetchShaderProgram(manager, mwPointDesc, "MW point", "MW point (rel)");
 
         /**
          * MW NEBULAE
          */
-        mwNebulaShaders = fetchShaderProgram(manager, mwNebulaDesc, "MW nebula", "MW nebula (rel)", "MW nebula (grav)", "MW nebula (rel+grav)");
+        mwNebulaShaders = fetchShaderProgram(manager, mwNebulaDesc, "MW nebula", "MW nebula (rel)");
 
         /**
          * PARTICLE GROUP - default and relativistic
          */
-        particleGroupShaders = fetchShaderProgram(manager, particleGroupDesc, "Particle group", "Particle group (rel)", "Particle group (grav)", "Particle group (rel+grav)");
+        particleGroupShaders = fetchShaderProgram(manager, particleGroupDesc, "Particle group", "Particle group (rel)");
 
         /**
          * STAR GROUP - default and relativistic
          */
-        starGroupShaders = fetchShaderProgram(manager, starGroupDesc, "Star group", "Star group (rel)", "Star group (grav)", "Star group (rel+grav)");
+        starGroupShaders = fetchShaderProgram(manager, starGroupDesc, "Star group", "Star group (rel)", "Star group (grav)");
 
         /**
          * PIXEL
          */
-        pixelShaders = fetchShaderProgram(manager, pixelDesc, "Pixel", "Pixel (rel)", "Pixel (grav)", "Pixel (rel+grav)");
+        pixelShaders = fetchShaderProgram(manager, pixelDesc, "Pixel", "Pixel (rel)");
 
         int numLists = GlobalConf.performance.MULTITHREADING ? GlobalConf.performance.NUMBER_THREADS() : 1;
         RenderGroup[] renderGroups = RenderGroup.values();
@@ -464,7 +464,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
                                 // Aberration
                                 GlobalResources.applyRelativisticAberration(pos3d, camera);
                                 // GravWaves
-                                GravitationalWavesManager.instance().gravitationalWavePos(pos3d);
+                                GravitationalWavesManager.getInstance().gravitationalWavePos(pos3d);
                                 Vector3 pos3 = pos3d.put(auxv);
 
                                 camera.getCamera().project(pos3);

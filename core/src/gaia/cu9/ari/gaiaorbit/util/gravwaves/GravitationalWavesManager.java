@@ -4,6 +4,11 @@ import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 
+import gaia.cu9.ari.gaiaorbit.GaiaSky;
+import gaia.cu9.ari.gaiaorbit.event.EventManager;
+import gaia.cu9.ari.gaiaorbit.event.Events;
+import gaia.cu9.ari.gaiaorbit.event.IObserver;
+import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.math.ITrigonometry;
 import gaia.cu9.ari.gaiaorbit.util.math.MathManager;
@@ -16,11 +21,11 @@ import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
  * @author tsagrista
  *
  */
-public class GravitationalWavesManager {
+public class GravitationalWavesManager implements IObserver {
 
     private static GravitationalWavesManager instance;
 
-    public static GravitationalWavesManager instance() {
+    public static GravitationalWavesManager getInstance() {
         return instance;
     }
 
@@ -47,7 +52,7 @@ public class GravitationalWavesManager {
     private long initime;
 
     /** Unit vector **/
-    private Vector3 unitz;
+    private Vector3 unitz, screenCoords;
     /** Aux matrices **/
     private Matrix3 eplus, etimes, auxm1, auxm2, auxm3, auxm4;
     /** Aux vectors **/
@@ -55,7 +60,7 @@ public class GravitationalWavesManager {
 
     private GravitationalWavesManager(ITimeFrameProvider time) {
         super();
-        gw = new Vector3();
+        gw = new Vector3(0, 0, 1);
         gwmat3 = new Matrix3();
         gwmat4 = new Matrix4();
         initime = time.getTime().getTime();
@@ -75,6 +80,14 @@ public class GravitationalWavesManager {
         auxd3 = new Vector3d();
         auxd4 = new Vector3d();
         auxd5 = new Vector3d();
+
+        screenCoords = new Vector3();
+
+        EventManager.instance.subscribe(this, Events.GRAV_WAVE_START);
+    }
+
+    public boolean gravWavesOn() {
+        return GlobalConf.runtime.GRAVITATIONAL_WAVES;
     }
 
     /**
@@ -95,9 +108,6 @@ public class GravitationalWavesManager {
             hterms[1] = 0.f;
             hterms[2] = 0.f;
             hterms[3] = 0.f;
-
-            // Coordinates of wave
-            gw.set(1, 1, 0).nor();
 
             // Rotation matrix
             gwmat4.setToRotation(unitz, gw);
@@ -177,5 +187,26 @@ public class GravitationalWavesManager {
             one.val[i] += two.val[i];
         }
         return one;
+    }
+
+    @Override
+    public void notify(Events event, Object... data) {
+        switch (event) {
+        case GRAV_WAVE_START:
+            int x = (Integer) data[0];
+            int y = (Integer) data[1];
+
+            ICamera cam = GaiaSky.instance.getICamera();
+            screenCoords.set(x, y, 0.9f);
+            cam.getCamera().unproject(screenCoords);
+            screenCoords.nor();
+
+            this.gw.set(screenCoords);
+
+            break;
+        default:
+            break;
+        }
+
     }
 }

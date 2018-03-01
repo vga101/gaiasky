@@ -656,7 +656,9 @@ public class AtmosphereShader extends BaseShader {
 
     /** The renderable used to create this shader, invalid after the call to init */
     private Renderable renderable;
-    private long materialMask;
+    /** The attributes that this shader supports */
+    protected final long attributesMask;
+    private final long vertexMask;
     protected final Config config;
     /** Material attributes which are not required but always supported. */
     private final static long optionalAttributes = IntAttribute.CullFace | DepthTestAttribute.Type;
@@ -681,10 +683,11 @@ public class AtmosphereShader extends BaseShader {
         this.config = config;
         this.program = shaderProgram;
         this.renderable = renderable;
-        materialMask = renderable.material.getMask() | optionalAttributes;
+        attributesMask = renderable.material.getMask() | optionalAttributes;
+        vertexMask = renderable.meshPart.mesh.getVertexAttributes().getMaskWithSizePacked();
 
-        if (!config.ignoreUnimplemented && (implementedFlags & materialMask) != materialMask)
-            throw new GdxRuntimeException("Some attributes not implemented yet (" + materialMask + ")");
+        if (!config.ignoreUnimplemented && (implementedFlags & attributesMask) != attributesMask)
+            throw new GdxRuntimeException("Some attributes not implemented yet (" + attributesMask + ")");
 
         // Global uniforms
         u_projTrans = register(Inputs.projTrans, Setters.projTrans);
@@ -745,21 +748,44 @@ public class AtmosphereShader extends BaseShader {
 
     }
 
+    private final static Attributes tmpAttributes = new Attributes();
+
+    // TODO: Perhaps move responsibility for combining attributes to RenderableProvider?
+    private static final Attributes combineAttributes(final Renderable renderable) {
+        tmpAttributes.clear();
+        if (renderable.environment != null)
+            tmpAttributes.set(renderable.environment);
+        if (renderable.material != null)
+            tmpAttributes.set(renderable.material);
+        return tmpAttributes;
+    }
+
+    private static final long combineAttributeMasks(final Renderable renderable) {
+        long mask = 0;
+        if (renderable.environment != null)
+            mask |= renderable.environment.getMask();
+        if (renderable.material != null)
+            mask |= renderable.material.getMask();
+        return mask;
+    }
+
     public static String createPrefix(final Renderable renderable, final Config config) {
+        final Attributes attributes = combineAttributes(renderable);
         String prefix = "";
-        final long mask = renderable.material.getMask();
+        final long attributesMask = attributes.getMask();
         // Atmosphere ground only if camera height is set
-        if ((mask & RelativisticEffectFloatAttribute.Vc) == RelativisticEffectFloatAttribute.Vc)
+        if ((attributesMask & RelativisticEffectFloatAttribute.Vc) == RelativisticEffectFloatAttribute.Vc)
             prefix += "#define relativisticEffects\n";
         // Gravitational waves
-        if ((mask & RelativisticEffectFloatAttribute.Omgw) == RelativisticEffectFloatAttribute.Omgw)
+        if ((attributesMask & RelativisticEffectFloatAttribute.Omgw) == RelativisticEffectFloatAttribute.Omgw)
             prefix += "#define gravitationalWaves\n";
         return prefix;
     }
 
     @Override
     public boolean canRender(final Renderable renderable) {
-        return true;
+        final long renderableMask = combineAttributeMasks(renderable);
+        return (attributesMask == (renderableMask | optionalAttributes)) && (vertexMask == renderable.meshPart.mesh.getVertexAttributes().getMaskWithSizePacked());
     }
 
     @Override

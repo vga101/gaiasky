@@ -123,7 +123,7 @@ public abstract class AbstractRenderSystem implements IRenderSystem {
 
     protected void addGravWaveUniforms(ShaderProgram shaderProgram) {
         if (GlobalConf.runtime.GRAVITATIONAL_WAVES) {
-            GravitationalWavesManager gwm = GravitationalWavesManager.instance();
+            GravitationalWavesManager gwm = GravitationalWavesManager.getInstance();
             // Time in seconds - use simulation time
             shaderProgram.setUniformf("u_ts", gwm.gwtime);
             // Wave frequency

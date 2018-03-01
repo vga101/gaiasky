@@ -141,7 +141,7 @@ public class Loc extends AbstractPositionEntity implements I3DTextRenderable {
     public void textPosition(ICamera cam, Vector3d out) {
         out.set(location3d);
         GlobalResources.applyRelativisticAberration(out, cam);
-        GravitationalWavesManager.instance().gravitationalWavePos(out);
+        GravitationalWavesManager.getInstance().gravitationalWavePos(out);
     }
 
     @Override

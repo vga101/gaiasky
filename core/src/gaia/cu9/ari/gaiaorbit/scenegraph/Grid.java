@@ -186,7 +186,7 @@ public class Grid extends AbstractPositionEntity implements IModelRenderable, IA
     private void gravwavePos(Vector3 auxf) {
         if (GlobalConf.runtime.GRAVITATIONAL_WAVES) {
             auxd.set(auxf);
-            GravitationalWavesManager.instance().gravitationalWavePos(auxd);
+            GravitationalWavesManager.getInstance().gravitationalWavePos(auxd);
             auxd.put(auxf);
         }
     }

@@ -703,6 +703,12 @@ public enum Events {
     /** Contains an the index of the mesh to be cleared **/
     DISPOSE_STAR_GROUP_GPU_MESH,
 
+    /** Start gravitational wave. Contains on-screen position (x,y) of source as two integer parameters **/
+    GRAV_WAVE_START,
+
+    /** Stops gravitational wave **/
+    GRAV_WAVE_STOP,
+
     /** Dispose all resources, app is shutting down **/
     DISPOSE;
 

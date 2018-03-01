@@ -1239,7 +1239,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
                 chFocus.getAbsolutePosition(aux1).add(posinv);
 
                 GlobalResources.applyRelativisticAberration(aux1, this);
-                GravitationalWavesManager.instance().gravitationalWavePos(aux1);
+                GravitationalWavesManager.getInstance().gravitationalWavePos(aux1);
 
                 boolean inside = projectToScreen(aux1, auxf1, rw, rh, chw, chh, chw2, chh2);
 
@@ -1281,7 +1281,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 
             // Gravitational waves crosshair
             if (GlobalConf.runtime.GRAVITATIONAL_WAVES && draw) {
-                GravitationalWavesManager gw = GravitationalWavesManager.instance();
+                GravitationalWavesManager gw = GravitationalWavesManager.getInstance();
 
                 float chw = gravWaveCrosshair.getWidth();
                 float chh = gravWaveCrosshair.getHeight();
