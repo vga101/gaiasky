@@ -140,7 +140,7 @@ public class RelativisticShader extends DefaultShader {
     }
 
     public RelativisticShader(final Renderable renderable, final Config config, final String prefix, final String vertexShader, final String fragmentShader) {
-        this(renderable, config, new ShaderProgram(prefix + vertexShader, prefix + fragmentShader));
+        this(renderable, config, new ShaderProgram(ShaderProgramProvider.getShaderCode(prefix, vertexShader), ShaderProgramProvider.getShaderCode(prefix, fragmentShader)));
     }
 
     public RelativisticShader(final Renderable renderable, final Config config, final ShaderProgram shaderProgram) {
