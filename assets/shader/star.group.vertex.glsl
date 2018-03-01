@@ -46,7 +46,7 @@ uniform vec3 u_fovcam_dir;
 // VARYINGS
 varying vec4 v_col;
 
-#define len0 170000.0
+#define len0 170000000.0
 #define len1 len0 * 100.0
 #define day_to_year 1.0 / 365.25
 

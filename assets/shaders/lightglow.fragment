@@ -74,7 +74,7 @@ void main()
 		 lum += star_color.r;
 		 lum /= u_nSamples;
 
-		 float size = u_textureScale * min(1.6, viewAngle * 500000) * lum;
+		 float size = u_textureScale * min(1.0, viewAngle * 500000) * lum;
 		 
 		 vec2 glow_tc = (v_texCoords - u_lightPositions[li]);
 		 glow_tc.x *= ar;

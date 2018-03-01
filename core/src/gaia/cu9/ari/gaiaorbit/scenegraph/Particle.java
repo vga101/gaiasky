@@ -348,7 +348,7 @@ public class Particle extends CelestialBody implements IStarFocus, IPointRendera
             }
             computedSize = this.size * (dist / this.radius) * Constants.THRESHOLD_DOWN;
         }
-        computedSize *= GlobalConf.scene.STAR_BRIGHTNESS * 0.14;
+        computedSize *= GlobalConf.scene.STAR_BRIGHTNESS * 0.1;
 
         return (float) computedSize;
     }

@@ -19,8 +19,8 @@ import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.SysUtilsFactory;
 
 /**
- * Reads arrays of star beans from binary files, usually to go in
- * an octree.
+ * Reads arrays of star beans from binary files, usually to go in an octree.
+ * 
  * @author tsagrista
  *
  */
@@ -117,9 +117,8 @@ public class BinaryDataProvider extends AbstractStarGroupDataProvider {
         // Double
         for (int i = 0; i < StarBean.I_APPMAG; i++) {
             data[i] = in.readDouble();
-            if (i < 3) {
+            if (i < 3)
                 data[i] *= Constants.M_TO_U_CONV;
-            }
         }
         // Float
         for (int i = StarBean.I_APPMAG; i < StarBean.I_HIP; i++) {
@@ -168,10 +167,14 @@ public class BinaryDataProvider extends AbstractStarGroupDataProvider {
         // Double
         for (int i = 0; i < StarBean.I_APPMAG; i++) {
             data[i] = mem.getDouble();
+            if (i < 3)
+                data[i] *= Constants.M_TO_U_CONV;
         }
         // Float
         for (int i = StarBean.I_APPMAG; i < StarBean.I_HIP; i++) {
             data[i] = mem.getFloat();
+            if (i == StarBean.I_SIZE)
+                data[i] *= Constants.M_TO_U_CONV;
         }
         // Int
         for (int i = StarBean.I_HIP; i < StarBean.SIZE; i++) {
