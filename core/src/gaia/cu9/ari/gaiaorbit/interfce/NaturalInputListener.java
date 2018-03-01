@@ -246,9 +246,7 @@ public class NaturalInputListener extends GestureDetector {
 
                         // Right click, context menu
                         IFocus hit = getBestHit(screenX, screenY);
-                        if (hit != null) {
-                            EventManager.instance.post(Events.POPUP_MENU_FOCUS, hit, screenX, screenY);
-                        }
+                        EventManager.instance.post(Events.POPUP_MENU_FOCUS, hit, screenX, screenY);
                     }
                 });
             }
