@@ -421,7 +421,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         });
 
         // VOLUMETRIC CLOUDS
-        //        AbstractRenderSystem cloudsProc = new VolumeCloudsRenderSystem(priority++, alphas);
+        //        AbstractRenderSystem cloudsProc = new VolumeCloudsRenderSystem( alphas);
         //        cloudsProc.setPreRunnable(blendNoDepthRunnable);
 
         // ANNOTATIONS
@@ -450,7 +450,8 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
             public void run(AbstractRenderSystem renderSystem, Array<IRenderable> renderables, ICamera camera) {
                 int size = renderables.size;
                 if (PostProcessorFactory.instance.getPostProcessor().isLightScatterEnabled() && Particle.renderOn) {
-                    // Compute light positions for light scattering or light glow
+                    // Compute light positions for light scattering or light
+                    // glow
                     int lightIndex = 0;
                     float angleEdgeDeg = camera.getAngleEdge() * MathUtils.radDeg;
                     for (int i = size - 1; i >= 0; i--) {
@@ -563,7 +564,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         shapeProc.setPreRunnable(blendNoDepthRunnable);
 
         // MODEL CLOSE UP
-        //        AbstractRenderSystem modelCloseUpProc = new ModelBatchRenderSystem(RenderGroup.MODEL_CLOSEUP, priority++, alphas, modelBatchCloseUp, false);
+        //        AbstractRenderSystem modelCloseUpProc = new ModelBatchRenderSystem(RenderGroup.MODEL_CLOSEUP,  alphas, modelBatchCloseUp, false);
         //        modelCloseUpProc.setPreRunnable(blendDepthRunnable);
 
         // Add components to set

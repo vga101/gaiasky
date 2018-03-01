@@ -181,13 +181,13 @@ public class AtmosphereComponent {
         // Camera height **2
         ((AtmosphereAttribute) mat.get(AtmosphereAttribute.CameraHeight2)).value = camHeight * camHeight;
 
-        // Earth position
+        // Planet position
         if (ground) {
             // Camera position must be corrected using the rotation angle of the planet
             aux3.rotate(rc.ascendingNode, 0, 1, 0).rotate(-rc.inclination - rc.axialTilt, 0, 0, 1).rotate(-rc.angle, 0, 1, 0);
         }
         ((Vector3Attribute) mat.get(Vector3Attribute.PlanetPos)).value.set(aux3.put(aux));
-        // CameraPos = -EarthPos
+        // CameraPos = -PlanetPos
         aux3.scl(-1f);
 
         ((Vector3Attribute) mat.get(Vector3Attribute.CameraPos)).value.set(aux3.put(aux));

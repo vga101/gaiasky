@@ -1,7 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input.Peripheral;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.controllers.Controllers;
@@ -112,8 +111,6 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 
     boolean diverted = false;
 
-    boolean accelerometer = false;
-
     private float planetariumFocusAngle = 0f;
 
     public double[] hudScales;
@@ -176,8 +173,6 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 
         dx = new Vector3d();
 
-        accelerometer = Gdx.input.isPeripheralAvailable(Peripheral.Accelerometer);
-
         inputController = new NaturalInputListener(this);
         controllerListener = new NaturalControllerListener(this, GlobalConf.controls.CONTROLLER_MAPPINGS_FILE);
 
@@ -223,7 +218,6 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
         EventManager.instance.subscribe(this, Events.FOCUS_CHANGE_CMD, Events.FOV_CHANGED_CMD, Events.ORIENTATION_LOCK_CMD, Events.CAMERA_POS_CMD, Events.CAMERA_DIR_CMD, Events.CAMERA_UP_CMD, Events.CAMERA_FWD, Events.CAMERA_ROTATE, Events.CAMERA_PAN, Events.CAMERA_ROLL, Events.CAMERA_TURN, Events.CAMERA_STOP, Events.CAMERA_CENTER, Events.GO_TO_OBJECT_CMD, Events.PLANETARIUM_FOCUS_ANGLE_CMD, Events.PLANETARIUM_CMD);
     }
 
-    // Set up direction and lookAtSensor if accelerometer is enabled
     public void update(double dt, ITimeFrameProvider time) {
         camUpdate(dt, time);
     }
@@ -422,7 +416,6 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
         if (closest != null) {
             camera.near = (float) Math.min(CAM_NEAR, Math.min(closest.distToCamera - closest.getRadius(), closestStarDist) / 3);
         }
-        camera.far = 1e24f;
         camera.position.set(0f, 0f, 0f);
         camera.direction.set(direction.valuesf());
         camera.up.set(up.valuesf());

@@ -416,7 +416,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
         if (withinMagLimit() && checkHitCondition()) {
             Vector3 pos = aux3f1.get();
             Vector3d aux = aux3d1.get();
-            Vector3d posd = getAbsolutePosition(aux).add(camera.posinv);
+            Vector3d posd = getAbsolutePosition(aux).add(camera.getInversePos());
             pos.set(posd.valuesf());
 
             if (camera.direction.dot(posd) > 0) {
@@ -436,7 +436,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
                     pcamera = camera.camera;
                 }
 
-                angle = (float) Math.toDegrees(angle * camera.fovFactor) * (40f / pcamera.fieldOfView);
+                angle = (float) Math.toDegrees(angle * camera.getFovFactor()) * (40f / pcamera.fieldOfView);
                 double pixelSize = Math.max(minPixDist, ((angle * pcamera.viewportHeight) / pcamera.fieldOfView) / 2);
                 pcamera.project(pos);
                 pos.y = pcamera.viewportHeight - pos.y;

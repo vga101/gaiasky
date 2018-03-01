@@ -27,8 +27,6 @@ public class ModelBatchRenderSystem extends AbstractRenderSystem {
      * 
      * @param rg
      *            The render group.
-     * @param priority
-     *            The priority.
      * @param alphas
      *            The alphas list.
      * @param batch
