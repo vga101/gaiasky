@@ -365,137 +365,139 @@ public class FullGui extends AbstractGui {
 
             ContextMenu popup = new ContextMenu(skin, "default");
 
-            MenuItem select = new MenuItem(txt("context.select", candidate.getCandidateName()), skin, "default");
-            select.addListener(new EventListener() {
-
-                @Override
-                public boolean handle(Event event) {
-                    if (event instanceof ChangeEvent) {
-                        EventManager.instance.post(Events.CAMERA_MODE_CMD, CameraMode.Focus);
-                        EventManager.instance.post(Events.FOCUS_CHANGE_CMD, candidate);
-                    }
-                    return false;
-                }
-
-            });
-            popup.addItem(select);
-
-            MenuItem go = new MenuItem(txt("context.goto", candidate.getCandidateName()), skin, "default");
-            go.addListener(new EventListener() {
-
-                @Override
-                public boolean handle(Event event) {
-                    if (event instanceof ChangeEvent) {
-                        candidate.makeFocus();
-                        EventManager.instance.post(Events.NAVIGATE_TO_OBJECT, candidate);
-                    }
-                    return false;
-                }
-
-            });
-            popup.addItem(go);
-
-            if (candidate instanceof Planet) {
-                popup.addSeparator();
-
-                MenuItem landOn = new MenuItem(txt("context.landon", candidate.getCandidateName()), skin, "default");
-                landOn.addListener(new EventListener() {
+            if (candidate != null) {
+                MenuItem select = new MenuItem(txt("context.select", candidate.getCandidateName()), skin, "default");
+                select.addListener(new EventListener() {
 
                     @Override
                     public boolean handle(Event event) {
                         if (event instanceof ChangeEvent) {
-                            EventManager.instance.post(Events.LAND_ON_OBJECT, candidate);
-                            return true;
+                            EventManager.instance.post(Events.CAMERA_MODE_CMD, CameraMode.Focus);
+                            EventManager.instance.post(Events.FOCUS_CHANGE_CMD, candidate);
                         }
                         return false;
                     }
 
                 });
-                popup.addItem(landOn);
+                popup.addItem(select);
 
-                double[] lonlat = new double[2];
-                boolean ok = CameraUtils.getLonLat((Planet) candidate, GaiaSky.instance.getICamera(), screenX, screenY, new Vector3(), new Vector3(), new Vector3(), new Vector3(), new Vector3d(), new Vector3d(), new Matrix4(), lonlat);
-                if (ok) {
-                    final Double pointerLon = lonlat[0];
-                    final Double pointerLat = lonlat[1];
-                    // Add mouse pointer
-                    MenuItem landOnPointer = new MenuItem(txt("context.landatpointer", candidate.getCandidateName()), skin, "default");
-                    landOnPointer.addListener(new EventListener() {
-
-                        @Override
-                        public boolean handle(Event event) {
-                            if (event instanceof ChangeEvent) {
-                                EventManager.instance.post(Events.LAND_AT_LOCATION_OF_OBJECT, candidate, pointerLon, pointerLat);
-                                return true;
-                            }
-                            return false;
-                        }
-
-                    });
-                    popup.addItem(landOnPointer);
-                }
-
-                MenuItem landOnCoord = new MenuItem(txt("context.landatcoord", candidate.getCandidateName()), skin, "default");
-                landOnCoord.addListener(new EventListener() {
+                MenuItem go = new MenuItem(txt("context.goto", candidate.getCandidateName()), skin, "default");
+                go.addListener(new EventListener() {
 
                     @Override
                     public boolean handle(Event event) {
                         if (event instanceof ChangeEvent) {
-                            EventManager.instance.post(Events.SHOW_LAND_AT_LOCATION_ACTION, candidate);
-                            return true;
+                            candidate.makeFocus();
+                            EventManager.instance.post(Events.NAVIGATE_TO_OBJECT, candidate);
                         }
                         return false;
                     }
 
                 });
-                popup.addItem(landOnCoord);
-            }
+                popup.addItem(go);
 
-            if (candidate instanceof IStarFocus && uncertainties) {
-                boolean sep = false;
-                if (UncertaintiesHandler.getInstance().containsStar(candidate.getCandidateId())) {
+                if (candidate instanceof Planet) {
                     popup.addSeparator();
-                    sep = true;
 
-                    MenuItem showUncertainties = new MenuItem(txt("context.showuncertainties"), skin, "default");
-                    showUncertainties.addListener(new EventListener() {
+                    MenuItem landOn = new MenuItem(txt("context.landon", candidate.getCandidateName()), skin, "default");
+                    landOn.addListener(new EventListener() {
 
                         @Override
                         public boolean handle(Event event) {
                             if (event instanceof ChangeEvent) {
-                                EventManager.instance.post(Events.SHOW_UNCERTAINTIES, candidate);
+                                EventManager.instance.post(Events.LAND_ON_OBJECT, candidate);
                                 return true;
                             }
                             return false;
                         }
 
                     });
-                    popup.addItem(showUncertainties);
+                    popup.addItem(landOn);
+
+                    double[] lonlat = new double[2];
+                    boolean ok = CameraUtils.getLonLat((Planet) candidate, GaiaSky.instance.getICamera(), screenX, screenY, new Vector3(), new Vector3(), new Vector3(), new Vector3(), new Vector3d(), new Vector3d(), new Matrix4(), lonlat);
+                    if (ok) {
+                        final Double pointerLon = lonlat[0];
+                        final Double pointerLat = lonlat[1];
+                        // Add mouse pointer
+                        MenuItem landOnPointer = new MenuItem(txt("context.landatpointer", candidate.getCandidateName()), skin, "default");
+                        landOnPointer.addListener(new EventListener() {
+
+                            @Override
+                            public boolean handle(Event event) {
+                                if (event instanceof ChangeEvent) {
+                                    EventManager.instance.post(Events.LAND_AT_LOCATION_OF_OBJECT, candidate, pointerLon, pointerLat);
+                                    return true;
+                                }
+                                return false;
+                            }
+
+                        });
+                        popup.addItem(landOnPointer);
+                    }
+
+                    MenuItem landOnCoord = new MenuItem(txt("context.landatcoord", candidate.getCandidateName()), skin, "default");
+                    landOnCoord.addListener(new EventListener() {
+
+                        @Override
+                        public boolean handle(Event event) {
+                            if (event instanceof ChangeEvent) {
+                                EventManager.instance.post(Events.SHOW_LAND_AT_LOCATION_ACTION, candidate);
+                                return true;
+                            }
+                            return false;
+                        }
+
+                    });
+                    popup.addItem(landOnCoord);
                 }
 
-                if (UncertaintiesHandler.getInstance().containsUncertainties()) {
-                    if (!sep)
+                if (candidate instanceof IStarFocus && uncertainties) {
+                    boolean sep = false;
+                    if (UncertaintiesHandler.getInstance().containsStar(candidate.getCandidateId())) {
                         popup.addSeparator();
+                        sep = true;
 
-                    MenuItem hideUncertainties = new MenuItem(txt("context.hideuncertainties"), skin, "default");
-                    hideUncertainties.addListener(new EventListener() {
+                        MenuItem showUncertainties = new MenuItem(txt("context.showuncertainties"), skin, "default");
+                        showUncertainties.addListener(new EventListener() {
 
-                        @Override
-                        public boolean handle(Event event) {
-                            if (event instanceof ChangeEvent) {
-                                EventManager.instance.post(Events.HIDE_UNCERTAINTIES, candidate);
-                                return true;
+                            @Override
+                            public boolean handle(Event event) {
+                                if (event instanceof ChangeEvent) {
+                                    EventManager.instance.post(Events.SHOW_UNCERTAINTIES, candidate);
+                                    return true;
+                                }
+                                return false;
                             }
-                            return false;
-                        }
 
-                    });
-                    popup.addItem(hideUncertainties);
+                        });
+                        popup.addItem(showUncertainties);
+                    }
 
+                    if (UncertaintiesHandler.getInstance().containsUncertainties()) {
+                        if (!sep)
+                            popup.addSeparator();
+
+                        MenuItem hideUncertainties = new MenuItem(txt("context.hideuncertainties"), skin, "default");
+                        hideUncertainties.addListener(new EventListener() {
+
+                            @Override
+                            public boolean handle(Event event) {
+                                if (event instanceof ChangeEvent) {
+                                    EventManager.instance.post(Events.HIDE_UNCERTAINTIES, candidate);
+                                    return true;
+                                }
+                                return false;
+                            }
+
+                        });
+                        popup.addItem(hideUncertainties);
+
+                    }
                 }
-            }
 
-            popup.addSeparator();
+                popup.addSeparator();
+            }
 
             // Spawn gravitational waves
             MenuItem gravWaveStart = new MenuItem(txt("context.startgravwave"), skin, "default");
