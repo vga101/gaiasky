@@ -129,5 +129,12 @@ public class RelativisticEffectsComponent {
         // omgw
         ((RelativisticEffectFloatAttribute) material.get(RelativisticEffectFloatAttribute.Omgw)).value = gw.omgw;
     }
+    
+    public boolean hasGravitationalWaves(Material mat) {
+        return mat.get(Vector4Attribute.Hterms) != null;
+    }
 
+    public boolean hasRelativisticEffects(Material mat) {
+        return mat.get(Vector3Attribute.VelDir) != null;
+    }
 }

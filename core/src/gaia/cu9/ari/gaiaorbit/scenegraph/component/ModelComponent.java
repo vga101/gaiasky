@@ -335,13 +335,13 @@ public class ModelComponent implements Disposable {
     public void updateRelativisticEffects(Material mat, ICamera camera, float vc) {
         if (GlobalConf.runtime.RELATIVISTIC_EFFECTS) {
             rec.updateRelativisticEffectsMaterial(mat, camera, vc);
-        } else {
+        } else if(rec.hasRelativisticEffects(mat)){
             rec.removeRelativisticEffectsMaterial(mat);
         }
 
         if (GlobalConf.runtime.GRAVITATIONAL_WAVES) {
             rec.updateGravitationalWavesMaterial(mat);
-        } else {
+        } else if(rec.hasGravitationalWaves(mat)){
             rec.removeGravitationalWavesMaterial(mat);
         }
     }

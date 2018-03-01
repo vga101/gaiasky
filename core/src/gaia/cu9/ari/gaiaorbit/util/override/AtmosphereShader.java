@@ -784,8 +784,9 @@ public class AtmosphereShader extends BaseShader {
 
     @Override
     public boolean canRender(final Renderable renderable) {
-        final long renderableMask = combineAttributeMasks(renderable);
-        return (attributesMask == (renderableMask | optionalAttributes)) && (vertexMask == renderable.meshPart.mesh.getVertexAttributes().getMaskWithSizePacked());
+        //final long renderableMask = combineAttributeMasks(renderable);
+        //return (attributesMask == (renderableMask | optionalAttributes)) && (vertexMask == renderable.meshPart.mesh.getVertexAttributes().getMaskWithSizePacked());
+        return true;
     }
 
     @Override
