@@ -21,7 +21,6 @@ import com.badlogic.gdx.utils.Disposable;
 
 import gaia.cu9.ari.gaiaorbit.data.AssetBean;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
-import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
@@ -319,7 +318,7 @@ public class ModelComponent implements Disposable {
     }
 
     public void updateRelativisticEffects(ICamera camera) {
-        updateRelativisticEffects(camera, (float) (camera.getSpeed() / Constants.C_KMH));
+        updateRelativisticEffects(camera, -1);
     }
 
     public void updateRelativisticEffects(ICamera camera, float vc) {
@@ -329,7 +328,7 @@ public class ModelComponent implements Disposable {
     }
 
     public void updateRelativisticEffects(Material mat, ICamera camera) {
-        updateRelativisticEffects(mat, camera, (float) (camera.getSpeed() / Constants.C_KMH));
+        updateRelativisticEffects(mat, camera, -1);
     }
 
     public void updateRelativisticEffects(Material mat, ICamera camera, float vc) {

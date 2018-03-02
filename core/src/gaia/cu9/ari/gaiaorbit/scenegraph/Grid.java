@@ -28,7 +28,7 @@ import gaia.cu9.ari.gaiaorbit.util.ModelCache;
 import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
 import gaia.cu9.ari.gaiaorbit.util.g3d.MeshPartBuilder2;
 import gaia.cu9.ari.gaiaorbit.util.g3d.ModelBuilder2;
-import gaia.cu9.ari.gaiaorbit.util.gravwaves.GravitationalWavesManager;
+import gaia.cu9.ari.gaiaorbit.util.gravwaves.RelativisticEffectsManager;
 import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
@@ -186,7 +186,7 @@ public class Grid extends AbstractPositionEntity implements IModelRenderable, IA
     private void gravwavePos(Vector3 auxf) {
         if (GlobalConf.runtime.GRAVITATIONAL_WAVES) {
             auxd.set(auxf);
-            GravitationalWavesManager.getInstance().gravitationalWavePos(auxd);
+            RelativisticEffectsManager.getInstance().gravitationalWavePos(auxd);
             auxd.put(auxf);
         }
     }

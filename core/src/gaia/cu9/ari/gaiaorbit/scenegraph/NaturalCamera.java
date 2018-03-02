@@ -25,7 +25,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.component.RotationComponent;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
-import gaia.cu9.ari.gaiaorbit.util.gravwaves.GravitationalWavesManager;
+import gaia.cu9.ari.gaiaorbit.util.gravwaves.RelativisticEffectsManager;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
@@ -1232,7 +1232,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
                 chFocus.getAbsolutePosition(aux1).add(posinv);
 
                 GlobalResources.applyRelativisticAberration(aux1, this);
-                GravitationalWavesManager.getInstance().gravitationalWavePos(aux1);
+                RelativisticEffectsManager.getInstance().gravitationalWavePos(aux1);
 
                 boolean inside = projectToScreen(aux1, auxf1, rw, rh, chw, chh, chw2, chh2);
 
@@ -1274,7 +1274,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 
             // Gravitational waves crosshair
             if (GlobalConf.runtime.GRAVITATIONAL_WAVES && draw) {
-                GravitationalWavesManager gw = GravitationalWavesManager.getInstance();
+                RelativisticEffectsManager gw = RelativisticEffectsManager.getInstance();
 
                 float chw = gravWaveCrosshair.getWidth();
                 float chh = gravWaveCrosshair.getHeight();

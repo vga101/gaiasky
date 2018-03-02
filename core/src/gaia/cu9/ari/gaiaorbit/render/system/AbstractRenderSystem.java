@@ -10,9 +10,8 @@ import gaia.cu9.ari.gaiaorbit.render.IRenderable;
 import gaia.cu9.ari.gaiaorbit.render.RenderingContext;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
-import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
-import gaia.cu9.ari.gaiaorbit.util.gravwaves.GravitationalWavesManager;
+import gaia.cu9.ari.gaiaorbit.util.gravwaves.RelativisticEffectsManager;
 
 public abstract class AbstractRenderSystem implements IRenderSystem {
     /**
@@ -111,29 +110,25 @@ public abstract class AbstractRenderSystem implements IRenderSystem {
 
     protected void addRelativisticUniforms(ShaderProgram shaderProgram, ICamera camera) {
         if (GlobalConf.runtime.RELATIVISTIC_EFFECTS) {
-            if (camera.getVelocity() == null || camera.getVelocity().len() == 0) {
-                aux.set(1, 0, 0);
-            } else {
-                camera.getVelocity().put(aux).nor();
-            }
-            shaderProgram.setUniformf("u_velDir", aux);
-            shaderProgram.setUniformf("u_vc", (float) (camera.getSpeed() / Constants.C_KMH));
+            RelativisticEffectsManager rem = RelativisticEffectsManager.getInstance();
+            shaderProgram.setUniformf("u_velDir", rem.velDir);
+            shaderProgram.setUniformf("u_vc", rem.vc);
         }
     }
 
     protected void addGravWaveUniforms(ShaderProgram shaderProgram) {
         if (GlobalConf.runtime.GRAVITATIONAL_WAVES) {
-            GravitationalWavesManager gwm = GravitationalWavesManager.getInstance();
+            RelativisticEffectsManager rem = RelativisticEffectsManager.getInstance();
             // Time in seconds - use simulation time
-            shaderProgram.setUniformf("u_ts", gwm.gwtime);
+            shaderProgram.setUniformf("u_ts", rem.gwtime);
             // Wave frequency
-            shaderProgram.setUniformf("u_omgw", gwm.omgw);
+            shaderProgram.setUniformf("u_omgw", rem.omgw);
             // Coordinates of wave (cartesian)
-            shaderProgram.setUniformf("u_gw", gwm.gw);
+            shaderProgram.setUniformf("u_gw", rem.gw);
             // Transformation matrix 
-            shaderProgram.setUniformMatrix("u_gwmat3", gwm.gwmat3);
+            shaderProgram.setUniformMatrix("u_gwmat3", rem.gwmat3);
             // H terms - hpluscos, hplussin, htimescos, htimessin
-            shaderProgram.setUniform4fv("u_hterms", gwm.hterms, 0, 4);
+            shaderProgram.setUniform4fv("u_hterms", rem.hterms, 0, 4);
         }
     }
 

@@ -14,7 +14,7 @@ import gaia.cu9.ari.gaiaorbit.render.RenderingContext;
 import gaia.cu9.ari.gaiaorbit.render.system.FontRenderSystem;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
-import gaia.cu9.ari.gaiaorbit.util.gravwaves.GravitationalWavesManager;
+import gaia.cu9.ari.gaiaorbit.util.gravwaves.RelativisticEffectsManager;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 import net.jafama.FastMath;
@@ -141,7 +141,7 @@ public class Loc extends AbstractPositionEntity implements I3DTextRenderable {
     public void textPosition(ICamera cam, Vector3d out) {
         out.set(location3d);
         GlobalResources.applyRelativisticAberration(out, cam);
-        GravitationalWavesManager.getInstance().gravitationalWavePos(out);
+        RelativisticEffectsManager.getInstance().gravitationalWavePos(out);
     }
 
     @Override

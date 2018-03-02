@@ -65,7 +65,7 @@ import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.ds.Multilist;
-import gaia.cu9.ari.gaiaorbit.util.gravwaves.GravitationalWavesManager;
+import gaia.cu9.ari.gaiaorbit.util.gravwaves.RelativisticEffectsManager;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.override.AtmosphereShaderProvider;
@@ -465,7 +465,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
                                 // Aberration
                                 GlobalResources.applyRelativisticAberration(pos3d, camera);
                                 // GravWaves
-                                GravitationalWavesManager.getInstance().gravitationalWavePos(pos3d);
+                                RelativisticEffectsManager.getInstance().gravitationalWavePos(pos3d);
                                 Vector3 pos3 = pos3d.put(auxv);
 
                                 camera.getCamera().project(pos3);

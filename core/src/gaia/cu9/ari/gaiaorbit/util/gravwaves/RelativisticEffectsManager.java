@@ -9,6 +9,7 @@ import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
+import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.math.ITrigonometry;
 import gaia.cu9.ari.gaiaorbit.util.math.MathManager;
@@ -16,22 +17,34 @@ import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
 /**
- * Central hub where the parameters of the current gravitational
- * wave are updated and served to the renderers.
+ * Central hub where the parameters of the current relativistic
+ * effects (aberration, doppler, grav waves) are updated and served to the renderers.
  * @author tsagrista
  *
  */
-public class GravitationalWavesManager implements IObserver {
+public class RelativisticEffectsManager implements IObserver {
 
-    private static GravitationalWavesManager instance;
+    private static RelativisticEffectsManager instance;
 
-    public static GravitationalWavesManager getInstance() {
+    public static RelativisticEffectsManager getInstance() {
         return instance;
     }
 
     public static void initialize(ITimeFrameProvider time) {
-        instance = new GravitationalWavesManager(time);
+        instance = new RelativisticEffectsManager(time);
     }
+
+    /**
+     * RELATIVISTIC ABERRATION
+     */
+    /** Camera velocity direction vector **/
+    public Vector3 velDir;
+    /** v/c **/
+    public float vc;
+
+    /**
+     * GRAVITATIONAL WAVES
+     */
 
     /** Cartesian coordinates from the origin of the grav wave. Unit vector **/
     public Vector3 gw;
@@ -58,8 +71,9 @@ public class GravitationalWavesManager implements IObserver {
     /** Aux vectors **/
     private Vector3d auxd1, auxd2, auxd3, auxd4, auxd5;
 
-    private GravitationalWavesManager(ITimeFrameProvider time) {
+    private RelativisticEffectsManager(ITimeFrameProvider time) {
         super();
+        velDir = new Vector3();
         gw = new Vector3(0, 0, 1);
         gwmat3 = new Matrix3();
         gwmat4 = new Matrix4();
@@ -86,6 +100,10 @@ public class GravitationalWavesManager implements IObserver {
         EventManager.instance.subscribe(this, Events.GRAV_WAVE_START);
     }
 
+    public boolean relAberrationOn() {
+        return GlobalConf.runtime.RELATIVISTIC_EFFECTS;
+    }
+
     public boolean gravWavesOn() {
         return GlobalConf.runtime.GRAVITATIONAL_WAVES;
     }
@@ -95,7 +113,22 @@ public class GravitationalWavesManager implements IObserver {
      * the needed parameters for the gravitational waves
      * @param time
      */
-    public void update(ITimeFrameProvider time) {
+    public void update(ITimeFrameProvider time, ICamera camera) {
+        /**
+         * RELATIVISTIC ABERRATION
+         */
+        if (GlobalConf.runtime.RELATIVISTIC_EFFECTS) {
+            vc = (float) (camera.getSpeed() / Constants.C_KMH);
+            if (camera.getVelocity() == null || camera.getVelocity().len() == 0) {
+                velDir.set(1, 0, 0);
+            } else {
+                camera.getVelocity().put(velDir).nor();
+            }
+        }
+
+        /**
+         * GRAVITATIONAL WAVES
+         */
         if (GlobalConf.runtime.GRAVITATIONAL_WAVES) {
             // Time
             gwtime = (float) ((time.getTime().getTime() - initime) / 1000d);

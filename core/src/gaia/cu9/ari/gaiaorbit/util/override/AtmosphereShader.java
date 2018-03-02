@@ -31,16 +31,33 @@ import com.badlogic.gdx.graphics.g3d.attributes.FloatAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.IntAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.shaders.BaseShader;
-import com.badlogic.gdx.graphics.g3d.shaders.BaseShader.Setter;
-import com.badlogic.gdx.graphics.g3d.shaders.BaseShader.Uniform;
-import com.badlogic.gdx.graphics.g3d.shaders.DefaultShader;
 import com.badlogic.gdx.graphics.g3d.utils.RenderContext;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 
-public class AtmosphereShader extends DefaultShader {
+public class AtmosphereShader extends BaseShader {
+    public static class Config {
+        /** The uber vertex shader to use, null to use the default vertex shader. */
+        public String vertexShader = null;
+        /** The uber fragment shader to use, null to use the default fragment shader. */
+        public String fragmentShader = null;
+        /** */
+        public boolean ignoreUnimplemented = true;
+        /** Set to 0 to disable culling, -1 to inherit from {@link AtmosphereShader#defaultCullFace} */
+        public int defaultCullFace = -1;
+        /** Set to 0 to disable depth test, -1 to inherit from {@link AtmosphereShader#defaultDepthFunc} */
+        public int defaultDepthFunc = -1;
+
+        public Config() {
+        }
+
+        public Config(final String vertexShader, final String fragmentShader) {
+            this.vertexShader = vertexShader;
+            this.fragmentShader = fragmentShader;
+        }
+    }
 
     public static class Inputs {
         public final static Uniform projTrans = new Uniform("u_projTrans");
@@ -567,7 +584,7 @@ public class AtmosphereShader extends DefaultShader {
 
     public static String getDefaultVertexShader() {
         if (defaultVertexShader == null)
-            defaultVertexShader = Gdx.files.classpath("com/badlogic/gdx/graphics/g3d/shaders/default.vertex.glsl").readString();
+            defaultVertexShader = Gdx.files.internal("shader/atm.vertex.glsl").readString();
         return defaultVertexShader;
     }
 
@@ -575,7 +592,7 @@ public class AtmosphereShader extends DefaultShader {
 
     public static String getDefaultFragmentShader() {
         if (defaultFragmentShader == null)
-            defaultFragmentShader = Gdx.files.classpath("com/badlogic/gdx/graphics/g3d/shaders/default.fragment.glsl").readString();
+            defaultFragmentShader = Gdx.files.internal("shader/atm.fragment.glsl").readString();
         return defaultFragmentShader;
     }
 
@@ -663,12 +680,11 @@ public class AtmosphereShader extends DefaultShader {
     }
 
     public AtmosphereShader(final Renderable renderable, final Config config, final ShaderProgram shaderProgram) {
-        super(renderable, config, shaderProgram);
-        
+        final Attributes attributes = combineAttributes(renderable);
         this.config = config;
         this.program = shaderProgram;
         this.renderable = renderable;
-        attributesMask = renderable.material.getMask() | optionalAttributes;
+        attributesMask = attributes.getMask() | optionalAttributes;
         vertexMask = renderable.meshPart.mesh.getVertexAttributes().getMaskWithSizePacked();
 
         if (!config.ignoreUnimplemented && (implementedFlags & attributesMask) != attributesMask)
@@ -733,21 +749,143 @@ public class AtmosphereShader extends DefaultShader {
 
     }
 
+    private final static Attributes tmpAttributes = new Attributes();
+
+    // TODO: Perhaps move responsibility for combining attributes to RenderableProvider?
+    private static final Attributes combineAttributes(final Renderable renderable) {
+        tmpAttributes.clear();
+        if (renderable.environment != null)
+            tmpAttributes.set(renderable.environment);
+        if (renderable.material != null)
+            tmpAttributes.set(renderable.material);
+        return tmpAttributes;
+    }
+
+    private static final long combineAttributeMasks(final Renderable renderable) {
+        long mask = 0;
+        if (renderable.environment != null)
+            mask |= renderable.environment.getMask();
+        if (renderable.material != null)
+            mask |= renderable.material.getMask();
+        return mask;
+    }
+
     public static String createPrefix(final Renderable renderable, final Config config) {
+        final Attributes attributes = combineAttributes(renderable);
         String prefix = "";
-        final long mask = renderable.material.getMask();
+        final long attributesMask = attributes.getMask();
         // Atmosphere ground only if camera height is set
-        if ((mask & RelativisticEffectFloatAttribute.Vc) == RelativisticEffectFloatAttribute.Vc)
+        if ((attributesMask & RelativisticEffectFloatAttribute.Vc) == RelativisticEffectFloatAttribute.Vc)
             prefix += "#define relativisticEffects\n";
         // Gravitational waves
-        if ((mask & RelativisticEffectFloatAttribute.Omgw) == RelativisticEffectFloatAttribute.Omgw)
+        if ((attributesMask & RelativisticEffectFloatAttribute.Omgw) == RelativisticEffectFloatAttribute.Omgw)
             prefix += "#define gravitationalWaves\n";
         return prefix;
     }
 
     @Override
     public boolean canRender(final Renderable renderable) {
-        return super.canRender(renderable);
+        final long renderableMask = combineAttributeMasks(renderable);
+        return (attributesMask == (renderableMask | optionalAttributes)) && (vertexMask == renderable.meshPart.mesh.getVertexAttributes().getMaskWithSizePacked());
+    }
+
+    @Override
+    public int compareTo(Shader other) {
+        if (other == null)
+            return -1;
+        if (other == this)
+            return 0;
+        return 0;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return (obj instanceof AtmosphereShader) ? equals((AtmosphereShader) obj) : false;
+    }
+
+    public boolean equals(AtmosphereShader obj) {
+        return (obj == this);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
+
+    @Override
+    public void begin(final Camera camera, final RenderContext context) {
+        super.begin(camera, context);
+
+    }
+
+    @Override
+    public void render(final Renderable renderable) {
+        if (!renderable.material.has(BlendingAttribute.Type))
+            context.setBlending(false, GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+        bindMaterial(renderable);
+        super.render(renderable);
+    }
+
+    @Override
+    public void end() {
+        currentMaterial = null;
+        super.end();
+    }
+
+    Material currentMaterial;
+
+    protected void bindMaterial(final Renderable renderable) {
+        if (currentMaterial == renderable.material)
+            return;
+
+        int cullFace = config.defaultCullFace == -1 ? defaultCullFace : config.defaultCullFace;
+        int depthFunc = config.defaultDepthFunc == -1 ? defaultDepthFunc : config.defaultDepthFunc;
+        float depthRangeNear = 0f;
+        float depthRangeFar = 1f;
+        boolean depthMask = true;
+
+        currentMaterial = renderable.material;
+        for (final Attribute attr : currentMaterial) {
+            final long t = attr.type;
+            if (BlendingAttribute.is(t)) {
+                context.setBlending(true, ((BlendingAttribute) attr).sourceFunction, ((BlendingAttribute) attr).destFunction);
+            } else if ((t & IntAttribute.CullFace) == IntAttribute.CullFace)
+                cullFace = ((IntAttribute) attr).value;
+            else if ((t & DepthTestAttribute.Type) == DepthTestAttribute.Type) {
+                DepthTestAttribute dta = (DepthTestAttribute) attr;
+                depthFunc = dta.depthFunc;
+                depthRangeNear = dta.depthRangeNear;
+                depthRangeFar = dta.depthRangeFar;
+                depthMask = dta.depthMask;
+            } else if (!config.ignoreUnimplemented)
+                throw new GdxRuntimeException("Unknown material attribute: " + attr.toString());
+        }
+
+        context.setCullFace(cullFace);
+        context.setDepthTest(depthFunc, depthRangeNear, depthRangeFar);
+        context.setDepthMask(depthMask);
+    }
+
+    @Override
+    public void dispose() {
+        program.dispose();
+        super.dispose();
+    }
+
+    public int getDefaultCullFace() {
+        return config.defaultCullFace == -1 ? defaultCullFace : config.defaultCullFace;
+    }
+
+    public void setDefaultCullFace(int cullFace) {
+        config.defaultCullFace = cullFace;
+    }
+
+    public int getDefaultDepthFunc() {
+        return config.defaultDepthFunc == -1 ? defaultDepthFunc : config.defaultDepthFunc;
+    }
+
+    public void setDefaultDepthFunc(int depthFunc) {
+        config.defaultDepthFunc = depthFunc;
     }
 
 }
