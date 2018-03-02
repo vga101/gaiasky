@@ -23,7 +23,7 @@ import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.color.ColourUtils;
-import gaia.cu9.ari.gaiaorbit.util.gravwaves.GravitationalWavesManager;
+import gaia.cu9.ari.gaiaorbit.util.gravwaves.RelativisticEffectsManager;
 import gaia.cu9.ari.gaiaorbit.util.math.Intersectord;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Quaterniond;
@@ -369,7 +369,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
         out.add(aux);
 
         GlobalResources.applyRelativisticAberration(out, cam);
-        GravitationalWavesManager.getInstance().gravitationalWavePos(out);
+        RelativisticEffectsManager.getInstance().gravitationalWavePos(out);
     }
 
     @Override

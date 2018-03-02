@@ -53,7 +53,7 @@ import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.ModelCache;
 import gaia.cu9.ari.gaiaorbit.util.Pair;
 import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
-import gaia.cu9.ari.gaiaorbit.util.gravwaves.GravitationalWavesManager;
+import gaia.cu9.ari.gaiaorbit.util.gravwaves.RelativisticEffectsManager;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
@@ -244,7 +244,7 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
             mc.env.set(new FloatAttribute(FloatAttribute.Shininess, 0f));
             mc.instance = new ModelInstance(model, modelTransform);
             // Relativistic effects
-            if (GlobalConf.runtime.RELATIVISTIC_EFFECTS)
+            if (GlobalConf.runtime.RELATIVISTIC_ABERRATION)
                 mc.rec.setUpRelativisticEffectsMaterial(mc.instance.materials);
         }
     }
@@ -779,7 +779,7 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
 
         GlobalResources.applyRelativisticAberration(out.add(aux), cam);
         GlobalResources.applyRelativisticAberration(out, cam);
-        GravitationalWavesManager.getInstance().gravitationalWavePos(out);
+        RelativisticEffectsManager.getInstance().gravitationalWavePos(out);
     }
 
     public double getFocusSize() {

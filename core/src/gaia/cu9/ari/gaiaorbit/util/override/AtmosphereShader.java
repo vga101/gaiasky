@@ -584,7 +584,7 @@ public class AtmosphereShader extends BaseShader {
 
     public static String getDefaultVertexShader() {
         if (defaultVertexShader == null)
-            defaultVertexShader = Gdx.files.classpath("com/badlogic/gdx/graphics/g3d/shaders/default.vertex.glsl").readString();
+            defaultVertexShader = Gdx.files.internal("shader/atm.vertex.glsl").readString();
         return defaultVertexShader;
     }
 
@@ -592,7 +592,7 @@ public class AtmosphereShader extends BaseShader {
 
     public static String getDefaultFragmentShader() {
         if (defaultFragmentShader == null)
-            defaultFragmentShader = Gdx.files.classpath("com/badlogic/gdx/graphics/g3d/shaders/default.fragment.glsl").readString();
+            defaultFragmentShader = Gdx.files.internal("shader/atm.fragment.glsl").readString();
         return defaultFragmentShader;
     }
 
@@ -680,10 +680,11 @@ public class AtmosphereShader extends BaseShader {
     }
 
     public AtmosphereShader(final Renderable renderable, final Config config, final ShaderProgram shaderProgram) {
+        final Attributes attributes = combineAttributes(renderable);
         this.config = config;
         this.program = shaderProgram;
         this.renderable = renderable;
-        attributesMask = renderable.material.getMask() | optionalAttributes;
+        attributesMask = attributes.getMask() | optionalAttributes;
         vertexMask = renderable.meshPart.mesh.getVertexAttributes().getMaskWithSizePacked();
 
         if (!config.ignoreUnimplemented && (implementedFlags & attributesMask) != attributesMask)

@@ -9,19 +9,16 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
-import gaia.cu9.ari.gaiaorbit.util.Constants;
-import gaia.cu9.ari.gaiaorbit.util.gravwaves.GravitationalWavesManager;
+import gaia.cu9.ari.gaiaorbit.util.gravwaves.RelativisticEffectsManager;
 import gaia.cu9.ari.gaiaorbit.util.override.Matrix3Attribute;
 import gaia.cu9.ari.gaiaorbit.util.override.RelativisticEffectFloatAttribute;
 import gaia.cu9.ari.gaiaorbit.util.override.Vector3Attribute;
 import gaia.cu9.ari.gaiaorbit.util.override.Vector4Attribute;
 
 public class RelativisticEffectsComponent {
-    private Vector3 aux;
 
     public RelativisticEffectsComponent() {
         super();
-        aux = new Vector3();
     }
 
     public void doneLoading(Map<String, Material> materials) {
@@ -89,45 +86,52 @@ public class RelativisticEffectsComponent {
     }
 
     public void updateRelativisticEffectsMaterial(Material material, ICamera camera) {
-        updateRelativisticEffectsMaterial(material, camera, (float) (camera.getSpeed() / Constants.C_KMH));
+        updateRelativisticEffectsMaterial(material, camera, -1);
     }
 
     public void updateRelativisticEffectsMaterial(Material material, ICamera camera, float vc) {
         if (material.get(RelativisticEffectFloatAttribute.Vc) == null) {
             setUpRelativisticEffectsMaterial(material);
         }
-        // v/c
-        ((RelativisticEffectFloatAttribute) material.get(RelativisticEffectFloatAttribute.Vc)).value = vc;
-
-        // Velocity direction
-        if (camera.getVelocity() == null || camera.getVelocity().len() == 0) {
-            aux.set(1, 0, 0);
+        RelativisticEffectsManager rem = RelativisticEffectsManager.getInstance();
+        if (vc != -1) {
+            // v/c
+            ((RelativisticEffectFloatAttribute) material.get(RelativisticEffectFloatAttribute.Vc)).value = vc;
         } else {
-            camera.getVelocity().put(aux).nor();
+
+            // v/c
+            ((RelativisticEffectFloatAttribute) material.get(RelativisticEffectFloatAttribute.Vc)).value = rem.vc;
         }
-        ((Vector3Attribute) material.get(Vector3Attribute.VelDir)).value.set(aux);
+        // Velocity direction
+        ((Vector3Attribute) material.get(Vector3Attribute.VelDir)).value.set(rem.velDir);
     }
 
     public void updateGravitationalWavesMaterial(Material material) {
         if (material.get(Vector4Attribute.Hterms) == null) {
             setUpGravitationalWavesMaterial(material);
         }
-        GravitationalWavesManager gw = GravitationalWavesManager.getInstance();
-
+        RelativisticEffectsManager rem = RelativisticEffectsManager.getInstance();
         // hterms
-        ((Vector4Attribute) material.get(Vector4Attribute.Hterms)).value = gw.hterms;
+        ((Vector4Attribute) material.get(Vector4Attribute.Hterms)).value = rem.hterms;
 
         // gw
-        ((Vector3Attribute) material.get(Vector3Attribute.Gw)).value.set(gw.gw);
+        ((Vector3Attribute) material.get(Vector3Attribute.Gw)).value.set(rem.gw);
 
         // gwmat3
-        ((Matrix3Attribute) material.get(Matrix3Attribute.Gwmat3)).value.set(gw.gwmat3);
+        ((Matrix3Attribute) material.get(Matrix3Attribute.Gwmat3)).value.set(rem.gwmat3);
 
         // ts
-        ((RelativisticEffectFloatAttribute) material.get(RelativisticEffectFloatAttribute.Ts)).value = gw.gwtime;
+        ((RelativisticEffectFloatAttribute) material.get(RelativisticEffectFloatAttribute.Ts)).value = rem.gwtime;
 
         // omgw
-        ((RelativisticEffectFloatAttribute) material.get(RelativisticEffectFloatAttribute.Omgw)).value = gw.omgw;
+        ((RelativisticEffectFloatAttribute) material.get(RelativisticEffectFloatAttribute.Omgw)).value = rem.omgw;
     }
 
+    public boolean hasGravitationalWaves(Material mat) {
+        return mat.get(Vector4Attribute.Hterms) != null;
+    }
+
+    public boolean hasRelativisticEffects(Material mat) {
+        return mat.get(Vector3Attribute.VelDir) != null;
+    }
 }

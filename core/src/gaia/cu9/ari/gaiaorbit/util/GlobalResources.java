@@ -457,7 +457,7 @@ public class GlobalResources {
 
     public static synchronized Vector3d applyRelativisticAberration(Vector3d pos, ICamera cam) {
         // Relativistic aberration
-        if (GlobalConf.runtime.RELATIVISTIC_EFFECTS) {
+        if (GlobalConf.runtime.RELATIVISTIC_ABERRATION) {
             Vector3d cdir = aux;
             if (cam.getVelocity() != null)
                 cdir.set(cam.getVelocity()).nor();

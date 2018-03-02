@@ -17,7 +17,7 @@ import gaia.cu9.ari.gaiaorbit.render.system.LineRenderSystem;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
-import gaia.cu9.ari.gaiaorbit.util.gravwaves.GravitationalWavesManager;
+import gaia.cu9.ari.gaiaorbit.util.gravwaves.RelativisticEffectsManager;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 import gaia.cu9.ari.gaiaorbit.util.tree.IPosition;
@@ -192,7 +192,7 @@ public class Constellation extends LineObject implements I3DTextRenderable {
     public void textPosition(ICamera cam, Vector3d out) {
         out.set(pos);
         GlobalResources.applyRelativisticAberration(out, cam);
-        GravitationalWavesManager.getInstance().gravitationalWavePos(out);
+        RelativisticEffectsManager.getInstance().gravitationalWavePos(out);
     }
 
     @Override

@@ -234,7 +234,7 @@ public class GlobalConf {
         public boolean STRIPPED_FOV_MODE = false;
         /** Whether octree drawing is active or not **/
         public boolean DRAW_OCTREE;
-        public boolean RELATIVISTIC_EFFECTS = false;
+        public boolean RELATIVISTIC_ABERRATION = false;
         public boolean GRAVITATIONAL_WAVES = false;
 
         public RuntimeConf() {

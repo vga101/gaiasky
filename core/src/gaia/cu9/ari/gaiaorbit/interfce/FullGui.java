@@ -45,7 +45,7 @@ import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.camera.CameraUtils;
 import gaia.cu9.ari.gaiaorbit.util.format.INumberFormat;
 import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
-import gaia.cu9.ari.gaiaorbit.util.gravwaves.GravitationalWavesManager;
+import gaia.cu9.ari.gaiaorbit.util.gravwaves.RelativisticEffectsManager;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.ContextMenu;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.MenuItem;
@@ -515,7 +515,7 @@ public class FullGui extends AbstractGui {
             });
             popup.addItem(gravWaveStart);
 
-            if (GravitationalWavesManager.getInstance().gravWavesOn()) {
+            if (RelativisticEffectsManager.getInstance().gravWavesOn()) {
                 // Cancel gravitational waves
                 MenuItem gravWaveStop = new MenuItem(txt("context.stopgravwave"), skin, "default");
                 gravWaveStop.addListener(new EventListener() {
