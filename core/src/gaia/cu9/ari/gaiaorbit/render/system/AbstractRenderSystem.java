@@ -109,7 +109,7 @@ public abstract class AbstractRenderSystem implements IRenderSystem {
     }
 
     protected void addRelativisticUniforms(ShaderProgram shaderProgram, ICamera camera) {
-        if (GlobalConf.runtime.RELATIVISTIC_EFFECTS) {
+        if (GlobalConf.runtime.RELATIVISTIC_ABERRATION) {
             RelativisticEffectsManager rem = RelativisticEffectsManager.getInstance();
             shaderProgram.setUniformf("u_velDir", rem.velDir);
             shaderProgram.setUniformf("u_vc", rem.vc);
@@ -134,9 +134,9 @@ public abstract class AbstractRenderSystem implements IRenderSystem {
 
     protected ShaderProgram getShaderProgram() {
         try {
-            if (GlobalConf.runtime.RELATIVISTIC_EFFECTS && GlobalConf.runtime.GRAVITATIONAL_WAVES)
+            if (GlobalConf.runtime.RELATIVISTIC_ABERRATION && GlobalConf.runtime.GRAVITATIONAL_WAVES)
                 return programs[3];
-            else if (GlobalConf.runtime.RELATIVISTIC_EFFECTS)
+            else if (GlobalConf.runtime.RELATIVISTIC_ABERRATION)
                 return programs[1];
             else if (GlobalConf.runtime.GRAVITATIONAL_WAVES)
                 return programs[2];

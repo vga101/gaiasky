@@ -212,7 +212,7 @@ public class Spacecraft extends GenericSpacecraft implements ILineRenderable, IO
         force.set(thrust);
 
         // Scale force if relativistic effects are on
-        if (GlobalConf.runtime.RELATIVISTIC_EFFECTS) {
+        if (GlobalConf.runtime.RELATIVISTIC_ABERRATION) {
             double speed = vel.len();
             double scale = (relativisticSpeedCap - speed) / relativisticSpeedCap;
             force.scl(scale);

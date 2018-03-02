@@ -332,7 +332,7 @@ public class ModelComponent implements Disposable {
     }
 
     public void updateRelativisticEffects(Material mat, ICamera camera, float vc) {
-        if (GlobalConf.runtime.RELATIVISTIC_EFFECTS) {
+        if (GlobalConf.runtime.RELATIVISTIC_ABERRATION) {
             rec.updateRelativisticEffectsMaterial(mat, camera, vc);
         } else if(rec.hasRelativisticEffects(mat)){
             rec.removeRelativisticEffectsMaterial(mat);

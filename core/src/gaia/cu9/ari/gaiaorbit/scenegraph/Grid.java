@@ -89,7 +89,7 @@ public class Grid extends AbstractPositionEntity implements IModelRenderable, IA
         mc.instance = new ModelInstance(model, this.localTransform);
 
         // Relativistic effects
-        if (GlobalConf.runtime.RELATIVISTIC_EFFECTS)
+        if (GlobalConf.runtime.RELATIVISTIC_ABERRATION)
             mc.rec.setUpRelativisticEffectsMaterial(mc.instance.materials);
         // Grav waves
         if (GlobalConf.runtime.GRAVITATIONAL_WAVES)
@@ -176,7 +176,7 @@ public class Grid extends AbstractPositionEntity implements IModelRenderable, IA
     }
 
     private void relativisticPos(Vector3 auxf, ICamera camera) {
-        if (GlobalConf.runtime.RELATIVISTIC_EFFECTS) {
+        if (GlobalConf.runtime.RELATIVISTIC_ABERRATION) {
             auxd.set(auxf);
             GlobalResources.applyRelativisticAberration(auxd, camera);
             auxd.put(auxf);

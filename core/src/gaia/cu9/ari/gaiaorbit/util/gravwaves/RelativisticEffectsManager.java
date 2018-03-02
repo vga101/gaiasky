@@ -101,7 +101,7 @@ public class RelativisticEffectsManager implements IObserver {
     }
 
     public boolean relAberrationOn() {
-        return GlobalConf.runtime.RELATIVISTIC_EFFECTS;
+        return GlobalConf.runtime.RELATIVISTIC_ABERRATION;
     }
 
     public boolean gravWavesOn() {
@@ -117,7 +117,7 @@ public class RelativisticEffectsManager implements IObserver {
         /**
          * RELATIVISTIC ABERRATION
          */
-        if (GlobalConf.runtime.RELATIVISTIC_EFFECTS) {
+        if (GlobalConf.runtime.RELATIVISTIC_ABERRATION) {
             vc = (float) (camera.getSpeed() / Constants.C_KMH);
             if (camera.getVelocity() == null || camera.getVelocity().len() == 0) {
                 velDir.set(1, 0, 0);

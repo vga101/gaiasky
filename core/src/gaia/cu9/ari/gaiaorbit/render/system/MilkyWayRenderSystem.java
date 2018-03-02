@@ -98,7 +98,7 @@ public class MilkyWayRenderSystem extends ImmediateRenderSystem implements IObse
     }
 
     private ShaderProgram getNebulaProgram() {
-        return GlobalConf.runtime.RELATIVISTIC_EFFECTS ? nebulaShaders[1] : nebulaShaders[0];
+        return GlobalConf.runtime.RELATIVISTIC_ABERRATION ? nebulaShaders[1] : nebulaShaders[0];
     }
 
     @Override
