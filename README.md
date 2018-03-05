@@ -31,10 +31,10 @@ This file contains the following sections:
 
 | **Operating system**  | Linux / Windows 7+ / macOS |
 | :---: | :--- |
-| **CPU** | Intel Core i3 3rd Generation or similar  |
-| **GPU** | OpenGL 3.0 support / Intel HD 4000 / Nvidia GeForce 8400 GS, 500 MB GRAM |
-| **Memory** | 3 GB RAM |
-| **Hard drive**  | 230 MB of free disk space  |
+| **CPU** | Intel Core i5 3rd Generation or similar  |
+| **GPU** | OpenGL 3.0 support / Intel HD 4000 / Nvidia GeForce 8400 GS, 1 GB VRAM |
+| **Memory** | 4 GB RAM |
+| **Hard drive**  | 350 MB of free disk space  |
 | **Java**  | On Linux, you need the Java Runtime Environment 8 installed (openJdk is fine) |
 
 ### 1.2 Installation and uninstallation
