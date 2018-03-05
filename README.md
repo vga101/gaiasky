@@ -34,8 +34,7 @@ This file contains the following sections:
 | **CPU** | Intel Core i5 3rd Generation or similar  |
 | **GPU** | OpenGL 3.0 support / Intel HD 4000 / Nvidia GeForce 8400 GS, 1 GB VRAM |
 | **Memory** | 4 GB RAM |
-| **Hard drive**  | 350 MB of free disk space  |
-| **Java**  | On Linux, you need the Java Runtime Environment 8 installed (openJdk is fine) |
+| **Hard drive**  | 400 MB of free disk space  |
 
 ### 1.2 Installation and uninstallation
 
