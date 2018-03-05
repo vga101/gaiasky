@@ -279,31 +279,39 @@ public class CameraManager implements ICamera, IObserver {
         int screenX = Gdx.input.getX();
         int screenY = Gdx.input.getY();
 
-        // Update Pointer Alpha/Delta
-        updatePointerRADEC(screenX, screenY);
+        // Update Pointer and view Alpha/Delta
+        updateRADEC(screenX, screenY, Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
         // Update Pointer LAT/LON
         updateFocusLatLon(screenX, screenY);
     }
 
-    private void updatePointerRADEC(int screenX, int screenY) {
-        if (GlobalConf.program.DISPLAY_POINTER_COORDS) {
-            vec.set(screenX, screenY, 0.5f);
-            ICamera camera = current;
-            camera.getCamera().unproject(vec);
+    private void updateRADEC(int pointerX, int pointerY, int viewX, int viewY) {
+        ICamera camera = current;
 
-            in.set(vec);
+        // Pointer
+        vec.set(pointerX, pointerY, 0.5f);
+        camera.getCamera().unproject(vec);
+        in.set(vec);
+        Coordinates.cartesianToSpherical(in, out);
 
-            Coordinates.cartesianToSpherical(in, out);
+        double pointerRA = out.x * AstroUtils.TO_DEG;
+        double pointerDEC = out.y * AstroUtils.TO_DEG;
 
-            double alpha = out.x * AstroUtils.TO_DEG;
-            double delta = out.y * AstroUtils.TO_DEG;
+        // View
+        vec.set(viewX, viewY, 0.5f);
+        camera.getCamera().unproject(vec);
+        in.set(vec);
+        Coordinates.cartesianToSpherical(in, out);
 
-            EventManager.instance.post(Events.RA_DEC_UPDATED, alpha, delta, screenX, screenY);
-        }
+        double viewRA = out.x * AstroUtils.TO_DEG;
+        double viewDEC = out.y * AstroUtils.TO_DEG;
+
+        EventManager.instance.post(Events.RA_DEC_UPDATED, pointerRA, pointerDEC, viewRA, viewDEC, pointerX, pointerY);
+
     }
 
     private void updateFocusLatLon(int screenX, int screenY) {
-        if (isNatural() && GlobalConf.program.DISPLAY_POINTER_COORDS) {
+        if (isNatural()) {
             // Hover over planets gets us lat/lon
             if (current.getFocus() != null && current.getFocus() instanceof Planet) {
                 Planet p = (Planet) current.getFocus();

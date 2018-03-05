@@ -1,6 +1,7 @@
 package gaia.cu9.ari.gaiaorbit.util.samp;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -22,10 +23,12 @@ import gaia.cu9.ari.gaiaorbit.data.group.STILDataProvider;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
+import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.StarGroup;
 import gaia.cu9.ari.gaiaorbit.scenegraph.StarGroup.StarBean;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
+import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.parse.Parser;
 import uk.ac.starlink.util.DataSource;
 import uk.ac.starlink.util.URLDataSource;
@@ -45,8 +48,12 @@ public class SAMPClient implements IObserver {
     private Map<String, String> mapIdUrl;
     private boolean preventProgrammaticEvents = false;
 
+    private Vector3d aux1, aux2;
+
     public SAMPClient() {
         super();
+        aux1 = new Vector3d();
+        aux2 = new Vector3d();
         EventManager.instance.subscribe(this, Events.FOCUS_CHANGED, Events.DISPOSE);
     }
 
@@ -128,7 +135,26 @@ public class SAMPClient implements IObserver {
         conn.addMessageHandler(new AbstractMessageHandler("table.select.rowList") {
             public Map processCall(HubConnection c, String senderId, Message msg) {
                 // do stuff
-                Logger.info(SAMPClient.class.getSimpleName(), "Select rows");
+                ArrayList<String> rows = (ArrayList<String>) msg.getParam("row-list");
+                String id = (String) msg.getParam("table-id");
+
+                // First, fetch table if not here
+                boolean loaded = mapIdSg.containsKey(id);
+
+                // If table here, select
+                if (loaded && rows != null && !rows.isEmpty()) {
+                    Logger.info(SAMPClient.class.getSimpleName(), "Select " + rows.size() + " rows of " + id + ". Gaia Sky does not support multiple selection, so only the first entry is selected.");
+                    // We use the first one, as multiple selections are not supported in Gaia Sky
+                    int row = Integer.parseInt(rows.get(0));
+                    if (mapIdSg.containsKey(id)) {
+                        StarGroup sg = mapIdSg.get(id);
+                        sg.setFocusIndex(row);
+                        preventProgrammaticEvents = true;
+                        EventManager.instance.post(Events.FOCUS_CHANGE_CMD, sg);
+                        preventProgrammaticEvents = false;
+                    }
+                }
+
                 return null;
             }
         });
@@ -137,7 +163,13 @@ public class SAMPClient implements IObserver {
         conn.addMessageHandler(new AbstractMessageHandler("coord.pointAt.sky") {
             public Map processCall(HubConnection c, String senderId, Message msg) {
                 // do stuff
-                Logger.info(SAMPClient.class.getSimpleName(), "Point to coordinate");
+                float ra = Float.parseFloat((String) msg.getParam("ra"));
+                float dec = Float.parseFloat((String) msg.getParam("dec"));
+                Logger.info(SAMPClient.class.getSimpleName(), "Point to coordinate (ra,dec): (" + ra + ", " + dec + ")");
+
+                EventManager.instance.post(Events.CAMERA_MODE_CMD, CameraMode.Free_Camera);
+                EventManager.instance.post(Events.FREE_MODE_COORD_CMD, ra, dec);
+
                 return null;
             }
         });

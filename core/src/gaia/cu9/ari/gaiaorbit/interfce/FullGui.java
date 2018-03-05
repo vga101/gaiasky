@@ -331,8 +331,8 @@ public class FullGui extends AbstractGui {
             if (GlobalConf.program.DISPLAY_POINTER_COORDS) {
                 Double ra = (Double) data[0];
                 Double dec = (Double) data[1];
-                Integer x = (Integer) data[2];
-                Integer y = (Integer) data[3];
+                Integer x = (Integer) data[4];
+                Integer y = (Integer) data[5];
 
                 pointerXCoord.setText("RA/".concat(nf.format(ra)).concat("°"));
                 pointerXCoord.setPosition(x, GlobalConf.SCALE_FACTOR);

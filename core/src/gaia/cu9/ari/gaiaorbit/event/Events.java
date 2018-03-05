@@ -113,6 +113,14 @@ public enum Events {
      * ascension in deg [2], declination in deg [3] and the distance to Sol [4]
      **/
     FOCUS_INFO_UPDATED,
+    /** 
+     * Posts the coordinates of the free mode focus.
+     * <ul>
+     * <li>[0] - ra  [deg]</li>
+     * <li>[1] - dec [deg]</li>
+     * </ul>
+     */
+    FREE_MODE_COORD_CMD,
     /**
      * Will show a popup menu for a focus candidate. Contains the candidate and
      * the screenX and screenY coordinates of the click
@@ -123,8 +131,15 @@ public enum Events {
     LON_LAT_UPDATED,
 
     /**
-     * Contains two Double values, the Right ascension and the declination of
-     * the pointer in degrees
+     * Updates the position of the pointer and the view in equatorial coordinates.
+     * <ul>
+     * <li>[0] - pointer ra  [deg]</li>
+     * <li>[1] - pointer dec [deg]</li>
+     * <li>[2] - view ra     [deg]</li>
+     * <li>[3] - view dec    [deg]</li>
+     * <li>[4] - pointer x   [pixels]</li>
+     * <li>[5] - pointer y   [pixels]</li>
+     * </ul>
      **/
     RA_DEC_UPDATED,
 
