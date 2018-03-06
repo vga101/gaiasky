@@ -26,6 +26,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.component.RotationComponent;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
+import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
 import gaia.cu9.ari.gaiaorbit.util.gravwaves.RelativisticEffectsManager;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
@@ -107,6 +108,9 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
     private Vector3d lastvel;
     /** Focus position **/
     private Vector3d focusPos;
+    /** Free mode target **/
+    private Vector3d freeTargetPos;
+    private boolean freeTargetOn;
 
     private Vector3d desired;
 
@@ -185,6 +189,8 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
         friction = new Vector3d();
         lastvel = new Vector3d();
         focusPos = new Vector3d();
+        freeTargetPos = new Vector3d();
+        freeTargetOn = false;
 
         aux1 = new Vector3d();
         aux2 = new Vector3d();
@@ -240,7 +246,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
         }
 
         // Focus is changed from GUI
-        EventManager.instance.subscribe(this, Events.FOCUS_CHANGE_CMD, Events.FOV_CHANGED_CMD, Events.ORIENTATION_LOCK_CMD, Events.CAMERA_POS_CMD, Events.CAMERA_DIR_CMD, Events.CAMERA_UP_CMD, Events.CAMERA_FWD, Events.CAMERA_PAN, Events.CAMERA_STOP, Events.CAMERA_CENTER, Events.GO_TO_OBJECT_CMD);
+        EventManager.instance.subscribe(this, Events.FOCUS_CHANGE_CMD, Events.FOV_CHANGED_CMD, Events.ORIENTATION_LOCK_CMD, Events.CAMERA_POS_CMD, Events.CAMERA_DIR_CMD, Events.CAMERA_UP_CMD, Events.CAMERA_FWD, Events.CAMERA_PAN, Events.CAMERA_STOP, Events.CAMERA_CENTER, Events.GO_TO_OBJECT_CMD, Events.FREE_MODE_COORD_CMD);
     }
 
     public void update(double dt, ITimeFrameProvider time) {
@@ -343,6 +349,15 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
         case Free_Camera:
             updatePosition(dt, translateUnits, GlobalConf.scene.FREE_CAMERA_TARGET_MODE_ON ? realTransUnits : 1);
             if (!GlobalConf.runtime.OPENVR) {
+                
+                // If target is present, update direction
+                if (freeTargetOn) {
+                    directionToTarget(dt, freeTargetPos, GlobalConf.scene.TURNING_SPEED / (GlobalConf.scene.CINEMATIC_CAMERA ? 1e3f : 1e2f));
+                    if (facingFocus) {
+                        freeTargetOn = false;
+                    }
+                }
+                
                 // Update direction with pitch, yaw, roll
                 updateRotationFree(dt, GlobalConf.scene.TURNING_SPEED);
                 updateRoll(dt, GlobalConf.scene.TURNING_SPEED);
@@ -1059,6 +1074,15 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
         case ORIENTATION_LOCK_CMD:
             previousOrientationAngle = 0;
             break;
+        case FREE_MODE_COORD_CMD:
+            float ra = (Float) data[0];
+            float dec = (Float) data[1];
+            float dist = (float) (1e12 * Constants.PC_TO_U);
+            aux1.set(MathUtilsd.degRad * ra, MathUtilsd.degRad * dec, dist);
+            Coordinates.sphericalToCartesian(aux1, freeTargetPos);
+            facingFocus = false;
+            freeTargetOn = true;
+            break;
         default:
             break;
         }
@@ -1274,8 +1298,8 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
                     spriteBatch.draw(focusArrow, auxf1.x, auxf1.y, chw2, chh2, chw, chh, 1f, 1f, ang, 0, 0, (int) chw, (int) chw, false, false);
                 }
             }
-            
-         // Gravitational waves crosshair
+
+            // Gravitational waves crosshair
             if (GlobalConf.runtime.GRAVITATIONAL_WAVES) {
                 RelativisticEffectsManager gw = RelativisticEffectsManager.getInstance();
 
