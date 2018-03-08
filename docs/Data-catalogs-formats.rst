@@ -277,6 +277,9 @@ files will be loaded when needed and unloaded if necessary. This offers a conven
 to the main memory as the user explores the dataset. It also results in a very fast program startup.
 This loader is called ``OctreeMultiFileLoader`` and is implemented `here <https://github.com/langurmonkey/gaiasky/blob/master/core/src/gaia/cu9/ari/gaiaorbit/data/stars/OctreeMultiFileLoader.java>`__. 
 
+
+.. _stil-data-provider:
+
 STIL data provider
 ~~~~~~~~~~~~~~~~~~
 
@@ -585,7 +588,7 @@ grid correctly positioned in the celestial sphere.
 Creating your own catalogue loaders
 ===================================
 
-If you want to load data into Gaia Sky, changes are that the ``STILDataProvider`` can already do it. It
+If you want to load data into Gaia Sky, changes are that the ``STILDataProvider`` (see :ref:`stil-data-provider`) can already do it. It
 supports VOTable, FITS, ASCII, CSV, etc. and it loads the data making educated guesses on the 
 UCDs (if present) or on the column names.
 
