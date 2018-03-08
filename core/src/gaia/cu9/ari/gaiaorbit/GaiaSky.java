@@ -750,6 +750,18 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         return sgr.isOn(cts);
     }
 
+    private String concatenate(String split, String... strs) {
+        String out = "";
+        for (String str : strs) {
+            if (str != null && !str.isEmpty()) {
+                if (!out.isEmpty())
+                    out += split;
+                out += str;
+            }
+        }
+        return out;
+    }
+
     @Override
     public void notify(Events event, Object... data) {
         switch (event) {
@@ -763,7 +775,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
 
             /** LOAD SCENE GRAPH **/
             if (sg == null) {
-                dataLoadString = GlobalConf.data.CATALOG_JSON_FILES + "," + GlobalConf.data.OBJECTS_JSON_FILES;
+                dataLoadString = concatenate(",", GlobalConf.data.CATALOG_JSON_FILES, GlobalConf.data.OBJECTS_JSON_FILES);
                 manager.load(dataLoadString, ISceneGraph.class, new SGLoaderParameter(time, GlobalConf.performance.MULTITHREADING, GlobalConf.performance.NUMBER_THREADS()));
             }
             break;

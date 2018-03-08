@@ -103,7 +103,7 @@ public class ChooseDatasetWindow extends GenericDialog {
 
         }
         ButtonGroup<OwnTextButton> bg = new ButtonGroup<OwnTextButton>();
-        bg.setMinCheckCount(1);
+        bg.setMinCheckCount(0);
         bg.setMaxCheckCount(catalogFiles.length);
         bg.add(cbs);
 
