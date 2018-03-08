@@ -86,9 +86,9 @@ The following SAMP functions are not yet implemented:
 -  ``image.load.fits``
 -  ``spectrum.load.ssa-generic``
 -  ``client.env.get``
--  ``bibcode.load ``
+-  ``bibcode.load``
 -  ``voresource.loadlist``
--  ``coverage.load.moc.fits ``
+-  ``coverage.load.moc.fits``
 
 
 
