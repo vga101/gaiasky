@@ -15,9 +15,18 @@ connections at regular intervals of 10 seconds. Gaia Sky will
 never run its own SAMP hub, so the user always needs a SAMP-hub application (Topcat,
 Aladin, etc.) to use the interoperability that SAMP offers.
 
-Also, the only supported format is VOTable. There are, however, some restrictions
-as to how the VOTables received through SAMP are interpreted and used (if at all)
-by Gaia Sky:
+Also, the only supported format in SAMP is VOTable through the STIL data provider described below. 
+
+
+.. _stil-data-provider:
+
+STIL data provider
+==================
+
+Gaia Sky supports the loading of data in VOTable, CSV, ASCII, etc. using the ``STIL`` `library <http://www.star.bristol.ac.uk/~mbt/stil/>`__.
+It tries to make educated guesses using UCDs and column names to attribute semantics to columns.
+Here is what this provider can work with: 
+
 
 Positions
 ---------
@@ -65,11 +74,21 @@ The following features are implemented:
 -  Load VOTable (``table.load.votable``) - The VOTable will be loaded into Gaia Sky if it adheres to the format above.
 -  Highlight row (``table.highlight.row``) - The row (object) is set as the new focus if the table it comes frome is already loaded. Otherwise, Gaia Sky will **not** load the table lazily.
 -  Broadcast selection (``table.highlight.row``) - When a star of a table loaded via SAMP is selected, Gaia Sky broadcasts it as a row highlight, so that other clients may act on it.
+-  Point at sky (``coord.pointAt.sky``) - Puts camera in free mode and points it to the specific direction.
+-  Multi selection (``table.select.rowList``) - Gaia Sky does not have multiple selections so far, so only the first one is used right now.
 
 Unimplemented features
 ======================
 
 The following functions are not yet implemented:
 
--  Multi selection (``table.select.rowList``) - To be implemented when multi-selections are included in Gaia Sky.
--  Point at sky (``coord.pointAt.sky``) - To be implemented soon, as a simple camera movement in free mode.
+-  ``table.load.*`` - Only VOTable supported.
+-  ``image.load.fits``
+-  ``spectrum.load.ssa-generic``
+-  ``client.env.get``
+-  ``bibcode.load ``
+-  ``voresource.loadlist``
+-  ``coverage.load.moc.fits ``
+
+
+
