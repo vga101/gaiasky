@@ -122,9 +122,8 @@ constructs the screne graph tree structure which will contains the object model.
 As we said, each loader will load a different kind of data; the
 ``JSONLoader`` --`here <https://github.com/langurmonkey/gaiasky/blob/master/core/src/gaia/cu9/ari/gaiaorbit/data/JsonLoader.java>`__--
 loads non-catalog data (planets, satellites, orbits, etc.), the
-``STILCatalogLoader`` --`here <https://github.com/langurmonkey/gaiasky/blob/master/core/src/gaia/cu9/ari/gaiaorbit/data/stars/STILCatalogLoader.java>`__--
-loads ``VOTables``, ``FITS``, ``CSV`` and other files through the
-`STIL <http://www.star.bristol.ac.uk/~mbt/stil/>`__ library,
+``STILDataProvider`` --`here <https://github.com/langurmonkey/gaiasky/blob/master/core/src/gaia/cu9/ari/gaiaorbit/data/group/STILDataProvider.java>`__--
+loads ``VOTables``, ``FITS``, ``CSV`` and other files through the `STIL <http://www.star.bristol.ac.uk/~mbt/stil/>`__ library,
 ``ConstellationsLoader`` --`here <https://github.com/langurmonkey/gaiasky/blob/master/core/src/gaia/cu9/ari/gaiaorbit/data/constel/ConstellationsLoader.java>`__--
 and
 ``ConstellationsBoundariesLoader`` --`here <https://github.com/langurmonkey/gaiasky/blob/master/core/src/gaia/cu9/ari/gaiaorbit/data/constel/ConstelBoundariesLoader.java>`__--
@@ -278,29 +277,29 @@ files will be loaded when needed and unloaded if necessary. This offers a conven
 to the main memory as the user explores the dataset. It also results in a very fast program startup.
 This loader is called ``OctreeMultiFileLoader`` and is implemented `here <https://github.com/langurmonkey/gaiasky/blob/master/core/src/gaia/cu9/ari/gaiaorbit/data/stars/OctreeMultiFileLoader.java>`__. 
 
-STIL catalog loader
-~~~~~~~~~~~~~~~~~~~
+STIL data provider
+~~~~~~~~~~~~~~~~~~
 
 As of version ``v0.704`` the Gaia Sky supports all formats supported
 by the ``STIL`` `library <http://www.star.bristol.ac.uk/~mbt/stil/>`__.
 Since the data held by the formats supported by ``STIL`` is not of a
 unique nature, this catalog loader makes a series of assumptions:
 
--  Positional information exists in the source file (spherical/cartesian
-   equatorial/galactic coordinates are accepted, correspoding to the
-   ``ucd``\ s ``pos.eq.*`` and ``pos.galactic.*``, where the ``*`` can
-   be ``ra``, ``dec``, ``glat``, ``glon``, ``x``, ``y`` and ``z``).
--  Apparent magnitude data in at least one filter exists
-   (``phot.mag;em.opt.*``, where ``*`` can be ``V``, ``B``, ``I`` or
-   ``R``).
--  Absolute magnitude data is not required but always welcome
-   (``phys.magAbs;em.opt.*``).
--  B-V color index is present (corresponding to the ``ucd``
-   ``phot.color;em.opt.B;em.opt.V``). More colors will be supported
-   soon.
--  If ``meta.id`` and/or ``meta.id;meta.main`` are present, they are
-   used as name and identifier of the stars respectively. Otherwise, a
-   random name and identifier are generated and assigned.
+- For the **positional data**, Gaia Sky will look for spherical and cartesian coordinates. In the
+case of spherical coordinates, equatorial (``pos.eq.ra``, ``pos.eq.dec``), galactic (``pos.galactic.lon``, ``pos.galactic.lat``) and
+ecliptic (``pos.ecliptic.lon``, ``pos.ecliptic.lat``) are supported. To work out the distance, it looks for ``pos.parallax`` and
+``pos.distance``. If either of those are found, they are used. Otherwise, a default parallax of 0.04 mas is used. With
+respect to cartesian coordinates, it recognizes ``pos.cartesian.x|y|z``, and they are interpreted in the equatorial
+system by default.
+If no UCDs are available, only equatorial coordinates (ra, dec) are supported, and they are looked up using
+the column names.
+- **Proper motions** are not yet supported via SAMP.
+- **Magnituded** are supported using the ``phot.mag`` or ``phot.mag;stat.mean`` UCDs. Otherwise, they are
+discovered using the column names ``mag``, ``bmag``, ``gmag``, ``phot_g_mean_mag``. If no magnitudes are found,
+the default value of 15 is used.
+- **Colors** are discovered using the ``phot.color`` UCD. If not present, the column names ``b_v``, ``v_i``,
+``bp_rp``, ``bp_g`` and ``g_rp`` are used, if present. If no color is discovered at all, the default value of 0.656 is used.
+- Other physical quantities (mass, flux, T_eff, radius, etc.) are not yet supported via SAMP.
 
 
 Non-particle data: Planets, Moons, Asteroids, etc.
@@ -586,7 +585,7 @@ grid correctly positioned in the celestial sphere.
 Creating your own catalogue loaders
 ===================================
 
-If you want to load data into Gaia Sky, changes are that the ``STILCatalogLoader`` can already do it. It
+If you want to load data into Gaia Sky, changes are that the ``STILDataProvider`` can already do it. It
 supports VOTable, FITS, ASCII, CSV, etc. and it loads the data making educated guesses on the 
 UCDs (if present) or on the column names.
 
