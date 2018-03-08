@@ -352,8 +352,8 @@ public class DesktopConfInit extends ConfInit {
         p.setProperty("graphics.render.mode", GlobalConf.frame.FRAME_MODE.toString());
 
         /** DATA **/
-        p.setProperty("data.json.catalog", GlobalConf.data.CATALOG_JSON_FILE);
-        p.setProperty("data.json.objects", GlobalConf.data.OBJECTS_JSON_FILE);
+        p.setProperty("data.json.catalog", GlobalConf.data.CATALOG_JSON_FILES);
+        p.setProperty("data.json.objects", GlobalConf.data.OBJECTS_JSON_FILES);
         p.setProperty("data.limit.mag", Float.toString(GlobalConf.data.LIMIT_MAG_LOAD));
         p.setProperty("data.attitude.real", Boolean.toString(GlobalConf.data.REAL_GAIA_ATTITUDE));
         p.setProperty("data.highaccuracy.positions", Boolean.toString(GlobalConf.data.HIGH_ACCURACY_POSITIONS));

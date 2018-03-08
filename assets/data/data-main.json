@@ -18,6 +18,10 @@
 					]
 	},
 	{
+		"loader": "gaia.cu9.ari.gaiaorbit.data.stars.SunLoader",
+		"files": [ "" ]
+	},
+	{
 		"loader": gaia.cu9.ari.gaiaorbit.data.GeoJsonLoader,
 		"files": [ "data/countries/countries.geo.json" ]
 	},

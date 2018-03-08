@@ -413,10 +413,10 @@ public class GlobalConf {
     public static class DataConf implements IConf {
 
         /** The json data file in case of local data source **/
-        public String OBJECTS_JSON_FILE;
+        public String OBJECTS_JSON_FILES;
 
         /** The json file with the catalogue(s) to load **/
-        public String CATALOG_JSON_FILE;
+        public String CATALOG_JSON_FILES;
 
         /**
          * High accuracy positions for planets and moon - use all terms of
@@ -435,22 +435,22 @@ public class GlobalConf {
 
         public void initialize(String cATALOG_JSON_FILE, String oBJECTS_JSON_FILE, float lIMIT_MAG_LOAD, boolean rEAL_GAIA_ATTITUDE, boolean hIGH_ACCURACY_POSITIONS) {
 
-            CATALOG_JSON_FILE = cATALOG_JSON_FILE;
-            OBJECTS_JSON_FILE = oBJECTS_JSON_FILE;
+            CATALOG_JSON_FILES = cATALOG_JSON_FILE;
+            OBJECTS_JSON_FILES = oBJECTS_JSON_FILE;
             LIMIT_MAG_LOAD = lIMIT_MAG_LOAD;
             REAL_GAIA_ATTITUDE = rEAL_GAIA_ATTITUDE;
             HIGH_ACCURACY_POSITIONS = hIGH_ACCURACY_POSITIONS;
         }
 
         public void initialize(String cATALOG_JSON_FILE, String oBJECTS_JSON_FILE, boolean dATA_SOURCE_LOCAL, float lIMIT_MAG_LOAD) {
-            this.CATALOG_JSON_FILE = cATALOG_JSON_FILE;
-            this.OBJECTS_JSON_FILE = oBJECTS_JSON_FILE;
+            this.CATALOG_JSON_FILES = cATALOG_JSON_FILE;
+            this.OBJECTS_JSON_FILES = oBJECTS_JSON_FILE;
             this.LIMIT_MAG_LOAD = lIMIT_MAG_LOAD;
         }
 
         public void initialize(String cATALOG_JSON_FILE, String dATA_JSON_FILE, boolean dATA_SOURCE_LOCAL, float lIMIT_MAG_LOAD, boolean rEAL_GAIA_ATTITUDE) {
-            this.CATALOG_JSON_FILE = cATALOG_JSON_FILE;
-            this.OBJECTS_JSON_FILE = dATA_JSON_FILE;
+            this.CATALOG_JSON_FILES = cATALOG_JSON_FILE;
+            this.OBJECTS_JSON_FILES = dATA_JSON_FILE;
             this.LIMIT_MAG_LOAD = lIMIT_MAG_LOAD;
             this.REAL_GAIA_ATTITUDE = rEAL_GAIA_ATTITUDE;
         }
