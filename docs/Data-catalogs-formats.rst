@@ -586,6 +586,12 @@ grid correctly positioned in the celestial sphere.
 Creating your own catalogue loaders
 ===================================
 
+If you want to load data into Gaia Sky, changes are that the ``STILCatalogLoader`` can already do it. It
+supports VOTable, FITS, ASCII, CSV, etc. and it loads the data making educated guesses on the 
+UCDs (if present) or on the column names.
+
+If you still need to create your own loader, keep reading.
+
 In order to create a loader for your catalogue, one only needs to
 provide an implementation to the
 ``ISceneGraphLoader`` --`here <https://github.com/langurmonkey/gaiasky/blob/master/core/src/gaia/cu9/ari/gaiaorbit/data/ISceneGraphLoader.java>`__--
@@ -600,8 +606,7 @@ interface.
 
 The main method to implement is
 ``List<? extends SceneGraphNode> loadData()`` --`here <https://github.com/langurmonkey/gaiasky/blob/master/core/src/gaia/cu9/ari/gaiaorbit/data/ISceneGraphLoader.java#L10>`__--,
-which must return a list of elements that extend ``SceneGraphNode``,
-usually ``Star``\ s.
+which must return a list of elements that extend ``SceneGraphNode``.
 
 But how do we know which file to load? You need to create a
 ``catalog-*.json`` file, add your loader there and create the properties
@@ -615,9 +620,9 @@ file with your catalogue loader as a prefix will be passed in the
 Also, you will need to connect this new catalog file with the Gaia Sky
 configuration so that it is loaded at startup. To do so, locate your
 ``global.properties`` file (usually under ``$HOME/.gaiasky/``) and
-update the property ``data.json.catalog`` with your catalog json file.
+add your new file to the property ``data.json.catalog``.
 
-Add your implementing ``jar`` file to the ``classpath`` and you are good
+Add your implementing ``jar`` file to the ``classpath`` (usually putting it in the lib/ folder should do the trick) and you are good
 to go.
 
 Take a look at already implemented catalogue loaders such as the
