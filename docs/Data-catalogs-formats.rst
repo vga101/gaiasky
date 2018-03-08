@@ -11,7 +11,7 @@ their geometrical and spatial relations.
 
 The different types of data are:
 
-- **Particle data** -- usually stars which come from a star catalogue. In this group we have two different approaches: **single particles** and **particle groups**. The TLDR version says that the **single particles** method is fundamentally slower and CPU-bound, while the **particle groups** method is faster and GPU-based. More on this later.
+- **Catalogue data** -- usually stars which come from a star catalogue. In this group we have two different approaches: **single particles** and **particle groups**. The TLDR version says that the **single particles** method is fundamentally slower and CPU-bound, while the **particle groups** method is faster and GPU-based. Therefore, single particles are deprecated.
 - **Rest of data** -- planets, orbits, constellations, grids and everything else qualifies for this category.
 
 Data belonging to either group will be loaded differently into the Gaia
@@ -22,13 +22,18 @@ Sky. The sections below describe the data format in detail:
 General information on the data loading mechanisms
 ==================================================
 
-Gaia Sky uses a flexible data loading mechanism where the
-correspondences between data loader and files are defined in a couple of
-``JSON`` files which are specified in the ``global.properties``
-configuration file in ``$HOME/.gaiasky/``. The two main files are the
-catalog file, with the key ``data.json.catalog`` (usually one of ``data/catalog-*.json``) and the objects file, with the
-key ``data.json.objects`` (``data/data-main.json`` by default). See 
-the :ref:`properties file <properties-file>` section for more information on this.
+Gaia Sky implements a very flexible an open data mechanism. The data to be loaded is defined
+in a couple of keys in the ``global.properties`` configuration file, which is usually located
+in the ``$HOME/.gaiasky/`` folder. The keys are:
+
+- ``data.json.catalog`` -- contains a comma-separated list of data files which point to the catalogs to load. These files have usually the ``data/catalog-*.json`` format.
+- ``data.json.objects`` -- contains a comma-separated list of data files which point to the files with the rest of the data. By default, only the ``data/data-main.json`` file is there.
+
+Now, all the files in either properties have a very similar format, and nothing prevents you from putting catalogues into the objects file. However,
+the distinction is a semantic one, since the data defined in each file are fundamentally different. Also, Gaia Sky includes an option to choose the
+catalog(s) to load at startup using a GUI window (set property ``program.dataset.dialog`` to true to enable), and in this manner only the catalogue files
+can be modified.
+
 
 catalog-\*.json example files
 -----------------------------
@@ -39,10 +44,6 @@ catalog-\*.json example files
 		"name" : "TGAS+HYG (GPU)",
 		"description" : "Gaia DR1 TGAS catalog, GPU version. About 1.5 million stars.",
 		"data" : [
-		{
-			"loader": "gaia.cu9.ari.gaiaorbit.data.stars.SunLoader",
-			"files": [ "" ]
-		},
 		{
 			"loader": "gaia.cu9.ari.gaiaorbit.data.JsonLoader",
 			"files": [ "data/particles-tgas.json" ]
@@ -55,11 +56,6 @@ catalog-\*.json example files
 		"name" : "TGAS - 12.5%",
 		"description" : "Gaia DR1 TGAS catalog (12.5% error). About 700K stars.",
 		"data" : [
-
-		{
-			"loader": "gaia.cu9.ari.gaiaorbit.data.stars.SunLoader",
-			"files": [ "" ]
-		},
 		{
 			"loader": "gaia.cu9.ari.gaiaorbit.data.group.OctreeGroupLoader",
 			"files": [ "data/octree/tgas/group-bin/particles/", "data/octree/tgas/group-bin/metadata.bin" ]
@@ -89,6 +85,10 @@ data-main.json example file
                         "data/locations_moon.json"]
         },
         {
+		    "loader": "gaia.cu9.ari.gaiaorbit.data.stars.SunLoader",
+		    "files": [ "" ]
+	    },
+        {
             "loader": "gaia.cu9.ari.gaiaorbit.data.constel.ConstellationsLoader",
             "files": [ "data/constel_hip.csv" ]
         },
@@ -98,33 +98,39 @@ data-main.json example file
         }
     ]}
 
-As you see the format in both files is based on specifying ``Java``
-``"loader"`` classes that will load the list of files under the
-``"files"`` property. The format should be pretty self-explanatory, but
-here are some rules:
 
-.. figure:: img/gs_top_level.png
+The format in all files is the same. There is a ``"data"`` property, which is a list of pairs
+containing ``[loader: files]`` correspondences.
+Each ``"loader"`` contains the classes that will load the list of files under the
+corresponding ``"files"`` property. Obviously, each loader needs to know how to load the provided files.
+
+.. figure:: img/gaiasky_loading.svg
    :alt: Gaia Sky data loading diagram
 
    Gaia Sky data loading diagram
 
--  The **"data"** property contains a list of ``Java`` classes that
-   implement the
-   ``ISceneGraphLoader`` --`here <https://github.com/langurmonkey/gaiasky/blob/master/core/src/gaia/cu9/ari/gaiaorbit/data/ISceneGraphLoader.java>`__--
-   interface. Each one of these will load a different kind of data; the
-   ``JSONLoader`` --`here <https://github.com/langurmonkey/gaiasky/blob/master/core/src/gaia/cu9/ari/gaiaorbit/data/JsonLoader.java>`__--
-   loads non-catalog data (planets, satellites, orbits, etc.), the
-   ``STILCatalogLoader`` --`here <https://github.com/langurmonkey/gaiasky/blob/master/core/src/gaia/cu9/ari/gaiaorbit/data/stars/STILCatalogLoader.java>`__--
-   loads ``VOTables``, ``FITS``, ``CSV`` and other files through the
-   `STIL <http://www.star.bristol.ac.uk/~mbt/stil/>`__ library,
-   ``ConstellationsLoader`` --`here <https://github.com/langurmonkey/gaiasky/blob/master/core/src/gaia/cu9/ari/gaiaorbit/data/constel/ConstellationsLoader.java>`__--
-   and
-   ``ConstellationsBoundariesLoader`` --`here <https://github.com/langurmonkey/gaiasky/blob/master/core/src/gaia/cu9/ari/gaiaorbit/data/constel/ConstelBoundariesLoader.java>`__--
-   load constellation data and constellation boundary data respectively
-   and so on.
--  Then, for each one of these data loaders a **list of files** is
-   defined. This list will be passed to the loader, which will try to
-   load these files and add them to the scene graph.
+
+The files are sent to the Scene Graph JSON Loader, which iterates on each loader-files pair
+in each file, instantiates the loader and uses it to load the files. All loaders need to adhere
+to a contract, defined in the interface ``ISceneGraphLoader`` --`here <https://github.com/langurmonkey/gaiasky/blob/master/core/src/gaia/cu9/ari/gaiaorbit/data/ISceneGraphLoader.java>`__--.
+The ``loadData()`` method of each loader must return a list of Scene Graph objects, which is then
+added to a global list containing all the previously loaded files. At the end, we have a list
+with all the objects in the scene. This list is passed on to the Scene Graph instance, which 
+constructs the screne graph tree structure which will contains the object model.
+
+
+As we said, each loader will load a different kind of data; the
+``JSONLoader`` --`here <https://github.com/langurmonkey/gaiasky/blob/master/core/src/gaia/cu9/ari/gaiaorbit/data/JsonLoader.java>`__--
+loads non-catalog data (planets, satellites, orbits, etc.), the
+``STILCatalogLoader`` --`here <https://github.com/langurmonkey/gaiasky/blob/master/core/src/gaia/cu9/ari/gaiaorbit/data/stars/STILCatalogLoader.java>`__--
+loads ``VOTables``, ``FITS``, ``CSV`` and other files through the
+`STIL <http://www.star.bristol.ac.uk/~mbt/stil/>`__ library,
+``ConstellationsLoader`` --`here <https://github.com/langurmonkey/gaiasky/blob/master/core/src/gaia/cu9/ari/gaiaorbit/data/constel/ConstellationsLoader.java>`__--
+and
+``ConstellationsBoundariesLoader`` --`here <https://github.com/langurmonkey/gaiasky/blob/master/core/src/gaia/cu9/ari/gaiaorbit/data/constel/ConstelBoundariesLoader.java>`__--
+load constellation data and constellation boundary data respectively
+and so on.
+
 
 Particle data
 =============
@@ -259,146 +265,9 @@ interface.
 
 Star groups can also be combined with octrees (levels of detail method) to allow for huge catalogs like DR2 (hundreds of millions of points). This option is still not implemented. 
 
-Single particles
-----------------
 
-This approach creates a model object for every single star or particle. Also, these model objects are 
-inserted into the scene graph and updated every loop cycle. This means that as the number of particles grow, the
-impact on performance will also grow (linearly or not, depending on the multithreading setting). This method is
-discouraged for very large catalogs (+1M objects) because it will inevitably produce low frame rates.
-By combining single particles into a levels of detail structure (i.e. an octree), we can deal and explore huge datasets, as described below.
-Let's see what loaders are available for the single particles approach.
-
-HYG catalog loaders
-~~~~~~~~~~~~~~~~~~~
-
-These loaders
-(``HYGBinaryLoader`` --`here <https://github.com/langurmonkey/gaiasky/blob/master/core/src/gaia/cu9/ari/gaiaorbit/data/stars/HYGBinaryLoader.java>`__--
-and
-``HYGCSVLoader`` --`here <https://github.com/langurmonkey/gaiasky/blob/master/core/src/gaia/cu9/ari/gaiaorbit/data/stars/HYGCSVLoader.java>`__--)
-load the HYG catalog that comes bundled with the Gaia Sky, which may
-be in ``csv`` format or in an arbitrary (not standard) binary --``bin``--
-format. Even though they have the ``HYG-`` prefix, these can load any
-file in the same format. The ``csv`` and ``bin`` formats are described
-below.
-
-- **CSV format**: This is the ``csv`` format as downloaded
-from the `HYG Database site <http://www.astronexus.com/hyg>`__. The
-first line contains the headers and is skipped. Then, each following row
-contains a particle (star) with the following columns:
-
-+---------------------------------+-------------------+------------+-----------+
-| Name                            | Data type         | Optional   | Ignored   |
-+=================================+===================+============+===========+
-| Star ID (pk)                    | ``long``          | no         | no        |
-+---------------------------------+-------------------+------------+-----------+
-| Hipparcos catalog id            | ``long``          | yes        | no        |
-+---------------------------------+-------------------+------------+-----------+
-| Henry Draper catalog id         | ``long``          | yes        | yes       |
-+---------------------------------+-------------------+------------+-----------+
-| Harvard Revised catalog id      | ``long``          | yes        | yes       |
-+---------------------------------+-------------------+------------+-----------+
-| Gliese catalog id               | ``string``        | yes        | yes       |
-+---------------------------------+-------------------+------------+-----------+
-| Bayer / Flamsteed designation   | ``string``        | yes        | no        |
-+---------------------------------+-------------------+------------+-----------+
-| Proper name                     | ``string``        | yes        | no        |
-+---------------------------------+-------------------+------------+-----------+
-| Right ascension                 | ``float`` [deg]   | no         | no        |
-+---------------------------------+-------------------+------------+-----------+
-| Declination                     | ``float`` [deg]   | no         | no        |
-+---------------------------------+-------------------+------------+-----------+
-| Distance                        | ``float`` [pc]    | no         | no        |
-+---------------------------------+-------------------+------------+-----------+
-| Magnitude                       | ``float`` [mag]   | no         | no        |
-+---------------------------------+-------------------+------------+-----------+
-| Absolute magnitude              | ``float`` [mag]   | yes        | no        |
-+---------------------------------+-------------------+------------+-----------+
-| Spectrum type                   | ``string``        | no         | yes       |
-+---------------------------------+-------------------+------------+-----------+
-| Color index                     | ``float``         | no         | no        |
-+---------------------------------+-------------------+------------+-----------+
-
--  **BIN format**: The binary format is described in the class comment of ``HYGBinaryLoader`` --`here <https://github.com/langurmonkey/gaiasky/blob/master/core/src/gaia/cu9/ari/gaiaorbit/data/stars/HYGBinaryLoader.java>`__--. The meaning of each single bit in this format is described below:
-
-   -  **32 bits (int)** -- The number of stars in the file, ``starNum`` repeat the following ``starNum`` times (for each star)
-   -  **32 bits (int)** -- The the length of the name, or ``nameLength``
-   -  **16 bits \* ``nameLength`` (chars)** -- The name of the star
-   -  **32 bits (float)** -- Apparent magnitude
-   -  **32 bits (float)** -- Absolute magnitude
-   -  **32 bits (float)** -- Color index B-V
-   -  **32 bits (float)** -- Right ascension [deg]
-   -  **32 bits (float)** -- Declination [deg]
-   -  **32 bits (float)** -- Distance [pc \* 3.0856775204864006E7]
-   -  **64 bits (long)** -- Star identifier
-
-
-   There is a utility to convert the ``csv`` catalog to the ``bin`` format. It is called ``HYGToBinary`` --`here <https://github.com/langurmonkey/gaiasky/blob/master/core/src/gaia/cu9/ari/gaiaorbit/data/HYGToBinary.java>`__-- and it can easily be adapted to convert any supported format to this binary format.
-
-Legacy octree catalog loader (single file)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-This is practically the same format as the binary in the
-``HYGBinaryLoader`` but adding some metadata to construct an
-`octree <http://en.wikipedia.org/wiki/Octree>`__ in order to cull
-portions of the catalog that are not visible and to implement a
-level-of-detail system to reduce the amount of particles in the
-viewport. 
-This loader is called ``OctreeSingleFileLoader`` and is implemented `here <https://github.com/langurmonkey/gaiasky/blob/master/core/src/gaia/cu9/ari/gaiaorbit/data/stars/OctreeSingleFileLoader.java>`__. 
-
-This loader needs two files, the **particles file** and the
-**metadata** file. Both files are binary files and their description is
-below.
-
-- **Particles file**: The actual reading and writing of the particles file is done in the ``ParticleDataBinaryIO`` --`here <https://github.com/langurmonkey/gaiasky/blob/master/core/src/gaia/cu9/ari/gaiaorbit/data/octreegen/ParticleDataBinaryIO.java>`__--. The format is exactly the same as in the HYG ``bin`` format but adding two extra attributes to each star which indicate the ``pageId`` (the identifier of the octant) and the ``particleType``, an integer code indicating whether it is a real star or a virtual particle created for a higher LoD (level of detail).
-
-    - **32 bits (int)** -- The number of stars in the file, `starNum` repeat the following `starNum` times (for each star)
-    - **32 bits (int)** -- The the length of the name, or `nameLength`
-    - **16 bits * `nameLength` (chars)** -- The name of the star
-    - **32 bits (float)** -- Apparent magnitude
-    - **32 bits (float)** -- Absolute magnitude
-    - **32 bits (float)** -- Color index B-V
-    - **32 bits (float)** -- Right ascension [deg]
-    - **32 bits (float)** -- Declination [deg]
-    - **32 bits (float)** -- Distance [pc * 3.0856775204864006E7]
-    - **64 bits (long)** -- Star identifier
-    - **64 bits (long)** -- Page id
-    - **32 bits (int)** -- Particle type
-
--  **Metadata file**: This file contains the information of the Octree,
-   its nodes -octants- and the particles each node contains. The reading
-   and writing is handled by the
-   ``MetadataBinaryIO`` --`here <https://github.com/langurmonkey/gaiasky/blob/master/core/src/gaia/cu9/ari/gaiaorbit/data/octreegen/MetadataBinaryIO.java>`__--.
-   The format is as follows:
-
-   -  **32 bits (int)** with the number of nodes, ``nNodes`` repeat the following ``nNodes`` times (for each node)
-   -  **64 bits (long)** -- ``pageId`` - The page id
-   -  **64 bits (double)** -- ``centreX`` - The x component of the centre
-   -  **64 bits (double)** -- ``centreY`` - The y component of the centre
-   -  **64 bits (double)** -- ``centreZ`` - The z component of the centre
-   -  **64 bits (double)** -- ``sx`` - The size in x
-   -  **64 bits (double)** -- ``sy`` - The size in y
-   -  **64 bits (double)** -- ``sz`` - The size in z
-   -  **64 bits \* 8 (long)** -- ``childrenIds`` - 8 longs with the ids
-      of the children. If no child in the given position, the id is
-      negative.
-   -  **32 bits (int)** -- ``depth`` - The depth of the node
-   -  **32 bits (int)** -- ``nObjects`` - The number of objects of this
-      node and its descendants
-   -  **32 bits (int)** -- ``ownObjects`` - The number of objects of this
-      node
-   -  **32 bits (int)** -- ``childCount`` - The number of children nodes
-
-In order to produce these files from a catalog, one needs to
-``OctreeGenerator`` --`here <https://github.com/langurmonkey/gaiasky/blob/master/core/src/gaia/cu9/ari/gaiaorbit/data/octreegen/OctreeGenerator.java>`__--.
-This class will get a list of stars and will produce the Octree
-according to certain parameters. The class
-``OctreeGeneratorTest`` --`here <https://github.com/langurmonkey/gaiasky/blob/master/src/gaia/cu9/ari/gaiaorbit/data/OctreeGeneratorTest.java>`__--
-may be used to read a catalog from a file, generate the octree and write
-both the particles and the metadata files back to a file.
-
-Octree catalog loader (multifile)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Octree catalog loader
+~~~~~~~~~~~~~~~~~~~~~
 
 As of version ``1.5.0``, a new on-demand catalog loader exists, called Octree multifile loader. 
 This is a version of the octree catalog loader specially designed for very large datasets. This version
@@ -448,17 +317,15 @@ Top-level objects
 -----------------
 
 All objects in the ``json`` files must have at least the following 5
-properties: - ``name``: The name of the object. - ``color``: The colour
-of the object. This will translate to the line colour in orbits, to the
-colour of the point for planets when they are far away and to the colour
-of the grid in grids.
+properties: 
 
+- ``name``: The name of the object. 
+- ``color``: The colour of the object. This will translate to the line colour in orbits, to the colour of the point for planets when they are far away and to the colour of the grid in grids.
 - ``ct`` -- The ``ComponentType`` --`here <https://github.com/langurmonkey/gaiasky/blob/master/core/src/gaia/cu9/ari/gaiaorbit/render/SceneGraphRenderer.java#L59>`__--. This is basically a ``string`` that will be matched to the entity type in ``ComponentType`` enum. Valid component types are ``Stars``, ``Planets``, ``Moons``, ``Satellites``, ``Atmospheres``, ``Constellations``, etc.
-- ``impl`` -- The package and class name of the implementing class. - ``parent``: The name of the parent entity.
-
-Additionally, different types of entities accept different additional
-parameters which are matched to the model using reflection. Here are
-some examples of these parameters:
+- ``impl`` -- The package and class name of the implementing class.
+- ``parent``: The name of the parent entity.
+  
+Additionally, different types of entities accept different additional parameters which are matched to the model using reflection. Here are some examples of these parameters:
 
 -  ``size`` -- The size of the entity, usually the radius in ``km``.
 -  ``appmag`` -- The apparent magnitude.
