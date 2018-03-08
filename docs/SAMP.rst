@@ -69,7 +69,7 @@ Other physical quantities (mass, flux, T_eff, radius, etc.) are not yet supporte
 Implemented features
 ====================
 
-The following features are implemented:
+The following SAMP features are implemented:
 
 -  Load VOTable (``table.load.votable``) - The VOTable will be loaded into Gaia Sky if it adheres to the format above.
 -  Highlight row (``table.highlight.row``) - The row (object) is set as the new focus if the table it comes frome is already loaded. Otherwise, Gaia Sky will **not** load the table lazily.
@@ -80,7 +80,7 @@ The following features are implemented:
 Unimplemented features
 ======================
 
-The following functions are not yet implemented:
+The following SAMP functions are not yet implemented:
 
 -  ``table.load.*`` - Only VOTable supported.
 -  ``image.load.fits``
