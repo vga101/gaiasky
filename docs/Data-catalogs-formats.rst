@@ -288,20 +288,10 @@ by the ``STIL`` `library <http://www.star.bristol.ac.uk/~mbt/stil/>`__.
 Since the data held by the formats supported by ``STIL`` is not of a
 unique nature, this catalog loader makes a series of assumptions:
 
-- For the **positional data**, Gaia Sky will look for spherical and cartesian coordinates. In the
-case of spherical coordinates, equatorial (``pos.eq.ra``, ``pos.eq.dec``), galactic (``pos.galactic.lon``, ``pos.galactic.lat``) and
-ecliptic (``pos.ecliptic.lon``, ``pos.ecliptic.lat``) are supported. To work out the distance, it looks for ``pos.parallax`` and
-``pos.distance``. If either of those are found, they are used. Otherwise, a default parallax of 0.04 mas is used. With
-respect to cartesian coordinates, it recognizes ``pos.cartesian.x|y|z``, and they are interpreted in the equatorial
-system by default.
-If no UCDs are available, only equatorial coordinates (ra, dec) are supported, and they are looked up using
-the column names.
+- For the **positional data**, Gaia Sky will look for spherical and cartesian coordinates. In the case of spherical coordinates, equatorial (``pos.eq.ra``, ``pos.eq.dec``), galactic (``pos.galactic.lon``, ``pos.galactic.lat``) and ecliptic (``pos.ecliptic.lon``, ``pos.ecliptic.lat``) are supported. To work out the distance, it looks for ``pos.parallax`` and ``pos.distance``. If either of those are found, they are used. Otherwise, a default parallax of 0.04 mas is used. With respect to cartesian coordinates, it recognizes ``pos.cartesian.x|y|z``, and they are interpreted in the equatorial system by default. If no UCDs are available, only equatorial coordinates (ra, dec) are supported, and they are looked up using the column names.
 - **Proper motions** are not yet supported via SAMP.
-- **Magnituded** are supported using the ``phot.mag`` or ``phot.mag;stat.mean`` UCDs. Otherwise, they are
-discovered using the column names ``mag``, ``bmag``, ``gmag``, ``phot_g_mean_mag``. If no magnitudes are found,
-the default value of 15 is used.
-- **Colors** are discovered using the ``phot.color`` UCD. If not present, the column names ``b_v``, ``v_i``,
-``bp_rp``, ``bp_g`` and ``g_rp`` are used, if present. If no color is discovered at all, the default value of 0.656 is used.
+- **Magnituded** are supported using the ``phot.mag`` or ``phot.mag;stat.mean`` UCDs. Otherwise, they are discovered using the column names ``mag``, ``bmag``, ``gmag``, ``phot_g_mean_mag``. If no magnitudes are found, the default value of 15 is used.
+- **Colors** are discovered using the ``phot.color`` UCD. If not present, the column names ``b_v``, ``v_i``, ``bp_rp``, ``bp_g`` and ``g_rp`` are used, if present. If no color is discovered at all, the default value of 0.656 is used.
 - Other physical quantities (mass, flux, T_eff, radius, etc.) are not yet supported via SAMP.
 
 
