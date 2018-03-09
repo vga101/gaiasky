@@ -10,7 +10,6 @@ import gaia.cu9.ari.gaiaorbit.render.IRenderable;
 import gaia.cu9.ari.gaiaorbit.render.SceneGraphRenderer;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
-import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadIndexer;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
@@ -109,7 +108,7 @@ public class Galaxy extends Particle {
     }
 
     protected boolean addToRender(IRenderable renderable, RenderGroup rg) {
-        SceneGraphRenderer.render_lists.get(rg).add(renderable, ThreadIndexer.i());
+        SceneGraphRenderer.render_lists.get(rg.ordinal()).add(renderable);
         return true;
     }
 

@@ -21,7 +21,6 @@ import gaia.cu9.ari.gaiaorbit.util.ComponentTypes;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.color.ColourUtils;
-import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadIndexer;
 import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
@@ -266,7 +265,7 @@ public class Particle extends CelestialBody implements IStarFocus, IPointRendera
 
     protected boolean addToRender(IRenderable renderable, RenderGroup rg) {
         if (renderOn) {
-            SceneGraphRenderer.render_lists.get(rg).add(renderable, ThreadIndexer.i());
+            SceneGraphRenderer.render_lists.get(rg.ordinal()).add(renderable);
             return true;
         }
         return false;

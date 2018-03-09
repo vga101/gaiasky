@@ -64,7 +64,6 @@ import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
-import gaia.cu9.ari.gaiaorbit.util.ds.Multilist;
 import gaia.cu9.ari.gaiaorbit.util.gravwaves.RelativisticEffectsManager;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
@@ -100,7 +99,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
     private int maxTexSize;
 
     /** Render lists for all render groups **/
-    public static Map<RenderGroup, Multilist<IRenderable>> render_lists;
+    public static Array<Array<IRenderable>> render_lists;
 
     // Two model batches, for front (models), back and atmospheres
     private SpriteBatch spriteBatch, fontBatch;
@@ -320,11 +319,10 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
          */
         pixelShaders = fetchShaderProgram(manager, pixelDesc, "Pixel", "Pixel (rel)");
 
-        int numLists = GlobalConf.performance.MULTITHREADING ? GlobalConf.performance.NUMBER_THREADS() : 1;
         RenderGroup[] renderGroups = RenderGroup.values();
-        render_lists = new HashMap<RenderGroup, Multilist<IRenderable>>(renderGroups.length);
+        render_lists = new Array<Array<IRenderable>>(renderGroups.length);
         for (RenderGroup rg : renderGroups) {
-            render_lists.put(rg, new Multilist<IRenderable>(numLists, 40000));
+            render_lists.add(new Array<IRenderable>(40000));
         }
 
         ShaderProvider sp = manager.get("atmgrounddefault");
@@ -619,7 +617,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
     public void renderGlowPass(ICamera camera) {
         if (GlobalConf.postprocess.POSTPROCESS_LIGHT_SCATTERING && glowFb != null) {
             // Get all billboard stars
-            Array<IRenderable> bbstars = render_lists.get(RenderGroup.BILLBOARD_STAR).toList();
+            Array<IRenderable> bbstars = render_lists.get(RenderGroup.BILLBOARD_STAR.ordinal());
             stars.clear();
             for (IRenderable st : bbstars) {
                 if (st instanceof Star) {
@@ -629,7 +627,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
             }
 
             // Get all models
-            Array<IRenderable> models = render_lists.get(RenderGroup.MODEL_NORMAL).toList();
+            Array<IRenderable> models = render_lists.get(RenderGroup.MODEL_NORMAL.ordinal());
 
             glowFb.begin();
             Gdx.gl.glClearColor(0, 0, 0, 0);
@@ -671,7 +669,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
              * if different</li>
              * </ul>
              */
-            Array<IRenderable> models = render_lists.get(RenderGroup.MODEL_NORMAL).toList();
+            Array<IRenderable> models = render_lists.get(RenderGroup.MODEL_NORMAL.ordinal());
             models.sort((a, b) -> {
                 return Double.compare(((ModelBody) a).getDistToCamera(), ((ModelBody) b).getDistToCamera());
             });
@@ -789,7 +787,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
             // If we have no render group, this means all the info is already in
             // the render system. No lists needed
             if (process.getRenderGroup() != null) {
-                Array<IRenderable> l = render_lists.get(process.getRenderGroup()).toList();
+                Array<IRenderable> l = render_lists.get(process.getRenderGroup().ordinal());
                 process.render(l, camera, t, rc);
             } else {
                 process.render(null, camera, t, rc);
@@ -823,7 +821,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
                 // If we have no render group, this means all the info is already in
                 // the render system. No lists needed
                 if (process.getRenderGroup() != null) {
-                    Array<IRenderable> l = render_lists.get(process.getRenderGroup()).toList();
+                    Array<IRenderable> l = render_lists.get(process.getRenderGroup().ordinal());
                     process.render(l, camera, t, rc);
                 } else {
                     process.render(null, camera, t, rc);
@@ -838,7 +836,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
      */
     public void clearLists() {
         for (RenderGroup rg : RenderGroup.values()) {
-            render_lists.get(rg).clear();
+            render_lists.get(rg.ordinal()).clear();
         }
     }
 

@@ -17,7 +17,6 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.octreewrapper.AbstractOctreeWrapper;
 import gaia.cu9.ari.gaiaorbit.util.ComponentTypes;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.concurrent.IThreadLocal;
-import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadIndexer;
 import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadLocalFactory;
 import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector2d;
@@ -677,7 +676,7 @@ public class SceneGraphNode implements IStarContainer, IPosition {
     protected boolean addToRender(IRenderable renderable, RenderGroup rg) {
         boolean on = ct.intersects(SceneGraphRenderer.visible);
         if (on || (!on && SceneGraphRenderer.alphas[ct.getFirstOrdinal()] > 0)) {
-            SceneGraphRenderer.render_lists.get(rg).add(renderable, ThreadIndexer.i());
+            SceneGraphRenderer.render_lists.get(rg.ordinal()).add(renderable);
             return true;
         }
         return false;
@@ -693,11 +692,11 @@ public class SceneGraphNode implements IStarContainer, IPosition {
      * @return True if removed, false otherwise
      */
     protected boolean removeFromRender(IRenderable renderable, RenderGroup rg) {
-        return SceneGraphRenderer.render_lists.get(rg).remove(renderable);
+        return SceneGraphRenderer.render_lists.get(rg.ordinal()).removeValue(renderable, true);
     }
 
     protected boolean isInRender(IRenderable renderable, RenderGroup rg) {
-        return SceneGraphRenderer.render_lists.get(rg).contains(renderable, ThreadIndexer.i());
+        return SceneGraphRenderer.render_lists.get(rg.ordinal()).contains(renderable, true);
     }
 
     /**
