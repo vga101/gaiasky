@@ -90,6 +90,14 @@ public class CameraManager implements ICamera, IObserver {
             return this.equals(CameraMode.Spacecraft);
         }
 
+        public boolean isFocus() {
+            return this.equals(CameraMode.Focus);
+        }
+
+        public boolean isFree() {
+            return this.equals(CameraMode.Free_Camera);
+        }
+
         /**
          * Returns the current FOV mode:
          * <ul>

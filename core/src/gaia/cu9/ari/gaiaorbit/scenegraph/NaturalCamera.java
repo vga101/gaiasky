@@ -457,7 +457,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
             desired.set(direction);
         }
 
-        desired.nor().scl(amount * tu * 10);
+        desired.nor().scl(amount * tu * 100);
         force.add(desired);
         // We reset the time counter
         lastFwdTime = 0;
@@ -671,6 +671,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
      * @param multiplier
      */
     protected void updatePosition(double dt, double multiplier, double transUnits) {
+        boolean cinematic = GlobalConf.scene.CINEMATIC_CAMERA;
         // Calculate velocity if coming from gamepad
         if (velocityGamepad != 0) {
             vel.set(direction).nor().scl(velocityGamepad * gamepadMultiplier * multiplier);
@@ -680,14 +681,21 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
         double velocity = vel.len();
 
         // Half a second after we have stopped zooming, real friction kicks in
-        if (fullStop)
-            friction.set(force).nor().scl(-forceLen * dt * (lastFwdTime > 1 ? (lastFwdTime - 1) * 1000 : 1));
-        else
+        if (fullStop) {
+            double counterAmount = lastFwdAmount < 0 && cinematic ? transUnits : 2;
+            if (getMode().isFocus() && lastFwdAmount > 0) {
+                double factor = cinematic ? 100 : 1;
+                counterAmount *= factor / ((focus.getDistToCamera() - focus.getRadius()) / focus.getRadius());
+            }
+            friction.set(vel).nor().scl(-velocity * counterAmount * dt);
+            if (friction.len() != 0)
+                System.out.println(force.len() + " - " + friction.len());
+        } else
             friction.set(force).nor().scl(-forceLen * dt);
 
         force.add(friction);
 
-        if (lastFwdTime > (GlobalConf.scene.CINEMATIC_CAMERA ? 1.5 : 0.25) && velocityGamepad == 0 && fullStop || lastFwdAmount > 0 && transUnits == 0) {
+        if (lastFwdTime > (cinematic ? 250 : 0.25) && velocityGamepad == 0 && fullStop || lastFwdAmount > 0 && transUnits == 0) {
             stopForwardMovement();
         }
 
@@ -706,7 +714,6 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
             // Velocity changed direction
             if (lastvel.dot(vel) < 0) {
                 vel.scl(0);
-                force.scl(0);
             }
 
             velocity = vel.len();
@@ -727,6 +734,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
             accel.scl(0);
 
             lastvel.set(vel);
+            force.setZero();
         }
         posinv.set(pos).scl(-1);
     }
