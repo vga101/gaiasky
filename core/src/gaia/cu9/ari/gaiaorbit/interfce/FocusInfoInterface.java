@@ -189,7 +189,7 @@ public class FocusInfoInterface extends Table implements IObserver, IGuiInterfac
         focusNameGroup.addActor(landOn);
         focusNameGroup.addActor(landAt);
 
-        float w = 130 * GlobalConf.SCALE_FACTOR;
+        float w = 140 * GlobalConf.SCALE_FACTOR;
         focusId.setWidth(w);
         focusRA.setWidth(w);
         focusDEC.setWidth(w);
