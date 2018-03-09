@@ -1,17 +1,22 @@
-package gaia.cu9.ari.gaiaorbit.util.concurrent;
+package gaia.cu9.ari.gaiaorbit.desktop.concurrent;
 
 import java.util.HashMap;
 
 import com.badlogic.gdx.math.Vector3;
 
-import gaia.cu9.ari.gaiaorbit.util.concurrent.SingleThreadLocal.M4dThreadLocal;
-import gaia.cu9.ari.gaiaorbit.util.concurrent.SingleThreadLocal.V2dThreadLocal;
-import gaia.cu9.ari.gaiaorbit.util.concurrent.SingleThreadLocal.V3dThreadLocal;
-import gaia.cu9.ari.gaiaorbit.util.concurrent.SingleThreadLocal.V3fThreadLocal;
+import gaia.cu9.ari.gaiaorbit.desktop.concurrent.SingleThreadLocal.M4dThreadLocal;
+import gaia.cu9.ari.gaiaorbit.desktop.concurrent.SingleThreadLocal.V2dThreadLocal;
+import gaia.cu9.ari.gaiaorbit.desktop.concurrent.SingleThreadLocal.V3dThreadLocal;
+import gaia.cu9.ari.gaiaorbit.desktop.concurrent.SingleThreadLocal.V3fThreadLocal;
 import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector2d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
+/**
+ * @deprecated No longer used
+ * @author tsagrista
+ *
+ */
 public class SingleThreadLocalFactory extends ThreadLocalFactory {
 
     public SingleThreadLocalFactory() {

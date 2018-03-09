@@ -27,9 +27,6 @@ import gaia.cu9.ari.gaiaorbit.analytics.AnalyticsPermission;
 import gaia.cu9.ari.gaiaorbit.analytics.AnalyticsReporting;
 import gaia.cu9.ari.gaiaorbit.data.DesktopSceneGraphImplementationProvider;
 import gaia.cu9.ari.gaiaorbit.data.SceneGraphImplementationProvider;
-import gaia.cu9.ari.gaiaorbit.desktop.concurrent.MultiThreadIndexer;
-import gaia.cu9.ari.gaiaorbit.desktop.concurrent.MultiThreadLocalFactory;
-import gaia.cu9.ari.gaiaorbit.desktop.concurrent.ThreadPoolManager;
 import gaia.cu9.ari.gaiaorbit.desktop.format.DesktopDateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.desktop.format.DesktopNumberFormatFactory;
 import gaia.cu9.ari.gaiaorbit.desktop.render.DesktopPostProcessorFactory;
@@ -59,10 +56,6 @@ import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.MusicManager;
 import gaia.cu9.ari.gaiaorbit.util.SysUtilsFactory;
-import gaia.cu9.ari.gaiaorbit.util.concurrent.SingleThreadIndexer;
-import gaia.cu9.ari.gaiaorbit.util.concurrent.SingleThreadLocalFactory;
-import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadIndexer;
-import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadLocalFactory;
 import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.math.MathManager;
@@ -206,16 +199,6 @@ public class GaiaSkyDesktop implements IObserver {
         cfg.addIcon("icon/ic_launcher.png", Files.FileType.Internal);
 
         System.out.println("Display mode set to " + cfg.width + "x" + cfg.height + ", fullscreen: " + cfg.fullscreen);
-
-        // Thread pool manager
-        if (GlobalConf.performance.MULTITHREADING) {
-            ThreadIndexer.initialize(new MultiThreadIndexer());
-            ThreadPoolManager.initialize(GlobalConf.performance.NUMBER_THREADS());
-            ThreadLocalFactory.initialize(new MultiThreadLocalFactory());
-        } else {
-            ThreadIndexer.initialize(new SingleThreadIndexer());
-            ThreadLocalFactory.initialize(new SingleThreadLocalFactory());
-        }
 
         // Launch app
         LwjglApplication app = new LwjglApplication(new GaiaSky(), cfg);

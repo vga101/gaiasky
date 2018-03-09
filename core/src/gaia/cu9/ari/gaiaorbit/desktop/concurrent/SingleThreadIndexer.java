@@ -1,7 +1,8 @@
-package gaia.cu9.ari.gaiaorbit.util.concurrent;
+package gaia.cu9.ari.gaiaorbit.desktop.concurrent;
 
 /**
  * Single thread indexer. All indexes are 0.
+ * @deprecated No longer used
  * @author Toni Sagrista
  *
  */

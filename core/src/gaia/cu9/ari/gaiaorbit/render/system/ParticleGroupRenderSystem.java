@@ -69,7 +69,7 @@ public class ParticleGroupRenderSystem extends ImmediateRenderSystem implements 
         if (renderables.size > 0) {
             for (IRenderable renderable : renderables) {
                 ParticleGroup particleGroup = (ParticleGroup) renderable;
-
+                curr = meshes[particleGroup.offset];
                 /**
                  * GROUP RENDER
                  */
@@ -94,6 +94,7 @@ public class ParticleGroupRenderSystem extends ImmediateRenderSystem implements 
                         curr.vertexIdx += curr.vertexSize;
                     }
                     particleGroup.count = particleGroup.size() * curr.vertexSize;
+                    curr.mesh.setVertices(curr.vertices, particleGroup.offset, particleGroup.count);
 
                     particleGroup.inGpu = true;
 
@@ -125,7 +126,6 @@ public class ParticleGroupRenderSystem extends ImmediateRenderSystem implements 
                 // Relativistic effects
                 addEffectsUniforms(shaderProgram, camera);
 
-                curr.mesh.setVertices(curr.vertices, particleGroup.offset, particleGroup.count);
                 curr.mesh.render(shaderProgram, ShapeType.Point.getGlType());
                 shaderProgram.end();
 

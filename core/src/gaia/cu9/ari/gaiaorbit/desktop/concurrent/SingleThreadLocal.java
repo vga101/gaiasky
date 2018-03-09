@@ -1,4 +1,4 @@
-package gaia.cu9.ari.gaiaorbit.util.concurrent;
+package gaia.cu9.ari.gaiaorbit.desktop.concurrent;
 
 import com.badlogic.gdx.math.Vector3;
 
@@ -6,6 +6,11 @@ import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector2d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
+/**
+ * @deprecated No longer used
+ * @author tsagrista
+ *
+ */
 public abstract class SingleThreadLocal {
 
     public static class V3dThreadLocal implements IThreadLocal<Vector3d> {

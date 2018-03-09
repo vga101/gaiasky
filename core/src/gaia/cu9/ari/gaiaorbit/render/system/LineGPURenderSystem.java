@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
-import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 
 import gaia.cu9.ari.gaiaorbit.data.orbit.OrbitData;
@@ -29,15 +28,12 @@ public class LineGPURenderSystem extends ImmediateRenderSystem {
     protected ICamera camera;
     protected int glType;
 
-    private Vector3 aux2;
-
     /** Hopefully we won't have more than 1000000 orbits at once **/
     private final int N_MESHES = 1000000;
 
     public LineGPURenderSystem(RenderGroup rg, float[] alphas, ShaderProgram[] shaders) {
         super(rg, alphas, shaders);
         glType = GL20.GL_LINE_STRIP;
-        aux2 = new Vector3();
     }
 
     @Override
@@ -120,6 +116,7 @@ public class LineGPURenderSystem extends ImmediateRenderSystem {
         for (int i = 0; i < size; i++) {
             Orbit renderable = (Orbit) renderables.get(i);
 
+            curr = meshes[renderable.offset];
             /**
              * ADD LINES
              */
@@ -137,13 +134,13 @@ public class LineGPURenderSystem extends ImmediateRenderSystem {
                 vertex((float) od.getX(0), (float) od.getY(0), (float) od.getZ(0));
 
                 renderable.count = npoints * curr.vertexSize;
+                curr.mesh.setVertices(curr.vertices, 0, renderable.count);
                 renderable.inGpu = true;
             }
 
             /**
              * RENDER
              */
-            curr = meshes[renderable.offset];
 
             ShaderProgram shaderProgram = getShaderProgram();
 
@@ -162,7 +159,6 @@ public class LineGPURenderSystem extends ImmediateRenderSystem {
             // Relativistic effects
             addEffectsUniforms(shaderProgram, camera);
 
-            curr.mesh.setVertices(curr.vertices, 0, renderable.count);
             curr.mesh.render(shaderProgram, glType);
 
             shaderProgram.end();

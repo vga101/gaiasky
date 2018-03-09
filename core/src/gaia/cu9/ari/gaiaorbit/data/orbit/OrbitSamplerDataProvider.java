@@ -23,8 +23,6 @@ import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.SysUtilsFactory;
-import gaia.cu9.ari.gaiaorbit.util.concurrent.SingleThreadLocalFactory;
-import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadLocalFactory;
 import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
 import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
 import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
@@ -61,8 +59,6 @@ public class OrbitSamplerDataProvider implements IOrbitDataProvider, IObserver {
             ConfInit.initialize(new DesktopConfInit(new FileInputStream(new File(ASSETS_LOC + "conf/global.properties")), new FileInputStream(new File(ASSETS_LOC + "data/dummyversion"))));
 
             I18n.initialize(new FileHandle(ASSETS_LOC + "i18n/gsbundle"));
-
-            ThreadLocalFactory.initialize(new SingleThreadLocalFactory());
 
             OrbitSamplerDataProvider.writeData = true;
             OrbitSamplerDataProvider me = new OrbitSamplerDataProvider();

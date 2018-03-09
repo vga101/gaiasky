@@ -682,14 +682,12 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 
         // Half a second after we have stopped zooming, real friction kicks in
         if (fullStop) {
-            double counterAmount = lastFwdAmount < 0 && cinematic ? transUnits : 2;
+            double counterAmount = lastFwdAmount < 0 && cinematic ? Math.min(transUnits, 200) : 2;
             if (getMode().isFocus() && lastFwdAmount > 0) {
                 double factor = cinematic ? 100 : 1;
                 counterAmount *= factor / ((focus.getDistToCamera() - focus.getRadius()) / focus.getRadius());
             }
             friction.set(vel).nor().scl(-velocity * counterAmount * dt);
-            if (friction.len() != 0)
-                System.out.println(force.len() + " - " + friction.len());
         } else
             friction.set(force).nor().scl(-forceLen * dt);
 

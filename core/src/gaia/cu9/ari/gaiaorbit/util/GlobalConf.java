@@ -12,7 +12,6 @@ import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.render.system.AbstractRenderSystem;
-import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadIndexer;
 import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory.DateType;
 import gaia.cu9.ari.gaiaorbit.util.format.IDateFormat;
@@ -96,7 +95,7 @@ public class GlobalConf {
          */
         public int NUMBER_THREADS() {
             if (NUMBER_THREADS <= 0)
-                return ThreadIndexer.instance.nthreads();
+                return Runtime.getRuntime().availableProcessors();
             else
                 return NUMBER_THREADS;
         }

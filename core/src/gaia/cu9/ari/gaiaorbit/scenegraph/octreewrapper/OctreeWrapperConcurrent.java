@@ -17,6 +17,7 @@ import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
  * which is designed to take advantage of knowing an octree is present in the
  * scenegraph.
  * 
+ * @deprecated No longer used since the addition of star and particle groups
  * @author Toni Sagrista
  *
  */

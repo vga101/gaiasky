@@ -119,7 +119,6 @@ public abstract class AbstractOctreeWrapper extends SceneGraphNode implements It
             // Compute observed octants and fill roulette list
             OctreeNode.nOctantsObserved = 0;
             OctreeNode.nObjectsObserved = 0;
-
             root.update(transform, camera, roulette, 1f);
 
             if (OctreeNode.nObjectsObserved != lastNumberObjects) {

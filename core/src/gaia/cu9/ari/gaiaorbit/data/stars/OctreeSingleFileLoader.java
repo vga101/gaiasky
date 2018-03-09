@@ -13,8 +13,6 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
 import gaia.cu9.ari.gaiaorbit.scenegraph.octreewrapper.AbstractOctreeWrapper;
 import gaia.cu9.ari.gaiaorbit.scenegraph.octreewrapper.OctreeWrapper;
-import gaia.cu9.ari.gaiaorbit.scenegraph.octreewrapper.OctreeWrapperConcurrent;
-import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.tree.LoadStatus;
@@ -53,12 +51,8 @@ public class OctreeSingleFileLoader implements ISceneGraphLoader {
         /**
          * CREATE OCTREE WRAPPER WITH ROOT NODE
          */
-        AbstractOctreeWrapper octreeWrapper = null;
-        if (GlobalConf.performance.MULTITHREADING) {
-            octreeWrapper = new OctreeWrapperConcurrent("Universe", root);
-        } else {
-            octreeWrapper = new OctreeWrapper("Universe", root);
-        }
+        AbstractOctreeWrapper octreeWrapper = new OctreeWrapper("Universe", root);
+
         Array<SceneGraphNode> result = new Array<SceneGraphNode>(1);
         result.add(octreeWrapper);
 

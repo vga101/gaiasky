@@ -8,12 +8,15 @@ import gaia.cu9.ari.gaiaorbit.desktop.concurrent.MultiThreadLocal.M4dThreadLocal
 import gaia.cu9.ari.gaiaorbit.desktop.concurrent.MultiThreadLocal.V2dThreadLocal;
 import gaia.cu9.ari.gaiaorbit.desktop.concurrent.MultiThreadLocal.V3dThreadLocal;
 import gaia.cu9.ari.gaiaorbit.desktop.concurrent.MultiThreadLocal.V3fThreadLocal;
-import gaia.cu9.ari.gaiaorbit.util.concurrent.IThreadLocal;
-import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadLocalFactory;
 import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector2d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
+/**
+ * @deprecated No longer used
+ * @author tsagrista
+ *
+ */
 public class MultiThreadLocalFactory extends ThreadLocalFactory {
 
     public MultiThreadLocalFactory() {

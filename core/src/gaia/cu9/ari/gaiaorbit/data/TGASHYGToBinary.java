@@ -19,10 +19,6 @@ import gaia.cu9.ari.gaiaorbit.util.ConfInit;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.SysUtilsFactory;
-import gaia.cu9.ari.gaiaorbit.util.concurrent.SingleThreadIndexer;
-import gaia.cu9.ari.gaiaorbit.util.concurrent.SingleThreadLocalFactory;
-import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadIndexer;
-import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadLocalFactory;
 import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
 
@@ -39,9 +35,6 @@ public class TGASHYGToBinary implements IObserver {
 
             Gdx.files = new LwjglFiles();
 
-            // Thread idx
-            ThreadIndexer.initialize(new SingleThreadIndexer());
-
             // Sys utils
             SysUtilsFactory.initialize(new DesktopSysUtilsFactory());
 
@@ -54,8 +47,6 @@ public class TGASHYGToBinary implements IObserver {
             ConfInit.initialize(new DesktopConfInit(new FileInputStream(new File(ASSETS_LOC + "conf/global.properties")), new FileInputStream(new File(ASSETS_LOC + "data/dummyversion"))));
 
             I18n.initialize(new FileHandle(ASSETS_LOC + "i18n/gsbundle"));
-
-            ThreadLocalFactory.initialize(new SingleThreadLocalFactory());
 
             EventManager.instance.subscribe(new TGASHYGToBinary(), Events.POST_NOTIFICATION, Events.JAVA_EXCEPTION);
 

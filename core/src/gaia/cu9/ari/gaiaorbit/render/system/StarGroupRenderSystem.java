@@ -138,12 +138,12 @@ public class StarGroupRenderSystem extends ImmediateRenderSystem implements IObs
                 StarGroup starGroup = (StarGroup) renderable;
                 synchronized (starGroup) {
                     if (!starGroup.disposed) {
+                        curr = meshes[starGroup.offset];
                         /**
                          * ADD PARTICLES
                          */
                         if (!starGroup.inGpu) {
                             starGroup.offset = addMeshData(starGroup.size());
-                            curr = meshes[starGroup.offset];
 
                             for (StarBean p : starGroup.data()) {
                                 // COLOR
@@ -165,6 +165,7 @@ public class StarGroupRenderSystem extends ImmediateRenderSystem implements IObs
                                 curr.vertexIdx += curr.vertexSize;
                             }
                             starGroup.count = starGroup.size() * curr.vertexSize;
+                            curr.mesh.setVertices(curr.vertices, 0, starGroup.count);
 
                             starGroup.inGpu = true;
 
@@ -173,7 +174,6 @@ public class StarGroupRenderSystem extends ImmediateRenderSystem implements IObs
                         /**
                          * RENDER
                          */
-                        curr = meshes[starGroup.offset];
                         if (curr != null) {
                             int fovmode = camera.getMode().getGaiaFovMode();
 
@@ -214,7 +214,6 @@ public class StarGroupRenderSystem extends ImmediateRenderSystem implements IObs
                                 }
                             }
                             try {
-                                curr.mesh.setVertices(curr.vertices, 0, starGroup.count);
                                 curr.mesh.render(shaderProgram, ShapeType.Point.getGlType());
                             } catch (IllegalArgumentException e) {
                                 Logger.error("Render exception");

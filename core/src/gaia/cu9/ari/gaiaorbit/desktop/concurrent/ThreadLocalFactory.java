@@ -1,9 +1,14 @@
-package gaia.cu9.ari.gaiaorbit.util.concurrent;
+package gaia.cu9.ari.gaiaorbit.desktop.concurrent;
 
 import java.util.Map;
 
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 
+/**
+ * @deprecated No longer used
+ * @author tsagrista
+ *
+ */
 public abstract class ThreadLocalFactory {
 
     public static ThreadLocalFactory instance;
