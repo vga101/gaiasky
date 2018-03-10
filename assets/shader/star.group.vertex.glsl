@@ -82,17 +82,18 @@ void main() {
         observed = in_view(pos, u_fovcam_dir, dist, u_fovcam_angleedge);
     }
     
-    // Discard vertex if too close or Gaia Fov1or2 and not observed
-    float v_discard = 1.0;
-    if(dist < len0 || observed < 0.0) {
-        v_discard = 0.0;
-    }
-    
     float viewAngleApparent = atan((a_size * u_alphaSizeFovBr.w) / dist) / u_alphaSizeFovBr.z;
     float opacity = pow(lint2(viewAngleApparent, 0.0, u_thAnglePoint, u_pointAlpha.x, u_pointAlpha.y), 1.2);
 
     float fadeout = smoothstep(dist, len0, len1);
     v_col = vec4(col.rgb, opacity * u_alphaSizeFovBr.x * fadeout);
+
+	// Discard vertex if too close or Gaia Fov1or2 and not observed
+    float v_discard = 1.0;
+    if(dist < len0 || observed < 0.0) {
+        v_discard = 0.0;
+        v_col *= 0.0;
+    }
 
     gl_Position = u_projModelView * vec4(pos, 0.0) * v_discard;
     gl_PointSize = u_alphaSizeFovBr.y;
