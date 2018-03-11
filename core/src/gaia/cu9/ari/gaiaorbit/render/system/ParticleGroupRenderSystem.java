@@ -44,7 +44,7 @@ public class ParticleGroupRenderSystem extends ImmediateRenderSystem implements 
     @Override
     protected void initVertices() {
         /** STARS **/
-        meshes = new MeshData[1];
+        meshes = new MeshData[5];
         curr = new MeshData();
         meshes[0] = curr;
 
