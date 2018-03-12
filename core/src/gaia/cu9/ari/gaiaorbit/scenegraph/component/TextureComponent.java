@@ -35,7 +35,8 @@ public class TextureComponent {
         textureParams.minFilter = Constants.webgl ? TextureFilter.Linear : TextureFilter.MipMapLinearNearest;
     }
 
-    public String base, hires, specular, normal, night, ring;
+    public String base, specular, normal, night, ring;
+    public String baseT, specularT, normalT, nightT, ringT;
     public Texture baseTex;
     /** Add also color even if texture is present **/
     public boolean coloriftex = false;
@@ -46,24 +47,24 @@ public class TextureComponent {
 
     public void initialize(AssetManager manager) {
         // Add textures to load
-        base = addToLoad(base, manager);
-        normal = addToLoad(normal, manager);
-        specular = addToLoad(specular, manager);
-        night = addToLoad(night, manager);
-        ring = addToLoad(ring, manager);
+        baseT = addToLoad(base, manager);
+        normalT = addToLoad(normal, manager);
+        specularT = addToLoad(specular, manager);
+        nightT = addToLoad(night, manager);
+        ringT = addToLoad(ring, manager);
     }
 
     public void initialize() {
         // Add textures to load
-        base = addToLoad(base);
-        normal = addToLoad(normal);
-        specular = addToLoad(specular);
-        night = addToLoad(night);
-        ring = addToLoad(ring);
+        baseT = addToLoad(base);
+        normalT = addToLoad(normal);
+        specularT = addToLoad(specular);
+        nightT = addToLoad(night);
+        ringT = addToLoad(ring);
     }
 
     public boolean isFinishedLoading(AssetManager manager) {
-        return isFL(base, manager) && isFL(normal, manager) && isFL(specular, manager) && isFL(night, manager) && isFL(ring, manager);
+        return isFL(baseT, manager) && isFL(normalT, manager) && isFL(specularT, manager) && isFL(nightT, manager) && isFL(ringT, manager);
     }
 
     public boolean isFL(String tex, AssetManager manager) {
@@ -136,7 +137,7 @@ public class TextureComponent {
     public Material initMaterial(AssetManager manager, ModelInstance instance, float[] cc, boolean culling) {
         Material material = instance.materials.get(0);
         if (base != null) {
-            baseTex = manager.get(base, Texture.class);
+            baseTex = manager.get(baseT, Texture.class);
             material.set(new TextureAttribute(TextureAttribute.Diffuse, baseTex));
         }
         if (cc != null && (coloriftex || base == null)) {
@@ -145,23 +146,23 @@ public class TextureComponent {
         }
 
         if (normal != null) {
-            Texture tex = manager.get(normal, Texture.class);
+            Texture tex = manager.get(normalT, Texture.class);
             material.set(new TextureAttribute(TextureAttribute.Normal, tex));
         }
         if (specular != null) {
-            Texture tex = manager.get(specular, Texture.class);
+            Texture tex = manager.get(specularT, Texture.class);
             material.set(new TextureAttribute(TextureAttribute.Specular, tex));
             // Control amount of specularity
             material.set(new ColorAttribute(ColorAttribute.Specular, 0.5f, 0.5f, 0.5f, 1f));
         }
         if (night != null) {
-            Texture tex = manager.get(night, Texture.class);
+            Texture tex = manager.get(nightT, Texture.class);
             material.set(new TextureAttribute(TextureAttribute.Emissive, tex));
         }
         if (instance.materials.size > 1) {
             // Ring material
             Material ringMat = instance.materials.get(1);
-            Texture tex = manager.get(ring, Texture.class);
+            Texture tex = manager.get(ringT, Texture.class);
             ringMat.set(new TextureAttribute(TextureAttribute.Diffuse, tex));
             ringMat.set(new BlendingAttribute(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA));
             if (!culling)
@@ -187,7 +188,7 @@ public class TextureComponent {
     public void initMaterial(AssetManager manager, Map<String, Material> materials, float[] cc, boolean culling) {
         Material material = materials.get("base");
         if (base != null) {
-            baseTex = manager.get(base, Texture.class);
+            baseTex = manager.get(baseT, Texture.class);
             material.set(new TextureAttribute(TextureAttribute.Diffuse, baseTex));
         }
         if (cc != null && (coloriftex || base == null)) {
@@ -196,23 +197,23 @@ public class TextureComponent {
         }
 
         if (normal != null) {
-            Texture tex = manager.get(normal, Texture.class);
+            Texture tex = manager.get(normalT, Texture.class);
             material.set(new TextureAttribute(TextureAttribute.Normal, tex));
         }
         if (specular != null) {
-            Texture tex = manager.get(specular, Texture.class);
+            Texture tex = manager.get(specularT, Texture.class);
             material.set(new TextureAttribute(TextureAttribute.Specular, tex));
             // Control amount of specularity
             material.set(new ColorAttribute(ColorAttribute.Specular, 0.5f, 0.5f, 0.5f, 1f));
         }
         if (night != null) {
-            Texture tex = manager.get(night, Texture.class);
+            Texture tex = manager.get(nightT, Texture.class);
             material.set(new TextureAttribute(TextureAttribute.Emissive, tex));
         }
         if (materials.containsKey("ring")) {
             // Ring material
             Material ringMat = materials.get("ring");
-            Texture tex = manager.get(ring, Texture.class);
+            Texture tex = manager.get(ringT, Texture.class);
             ringMat.set(new TextureAttribute(TextureAttribute.Diffuse, tex));
             ringMat.set(new BlendingAttribute(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA));
             if (!culling)
@@ -247,4 +248,27 @@ public class TextureComponent {
         this.coloriftex = coloriftex;
     }
 
+    /** Disposes all currently loaded textures **/
+    public void disposeTextures(AssetManager manager) {
+        if (base != null && manager.containsAsset(baseT)) {
+            manager.unload(baseT);
+            baseT = null;
+        }
+        if (normal != null && manager.containsAsset(normalT)) {
+            manager.unload(normalT);
+            normalT = null;
+        }
+        if (specular != null && manager.containsAsset(specularT)) {
+            manager.unload(specularT);
+            specularT = null;
+        }
+        if (night != null && manager.containsAsset(nightT)) {
+            manager.unload(nightT);
+            nightT = null;
+        }
+        if (ring != null && manager.containsAsset(ringT)) {
+            manager.unload(ringT);
+            ringT = null;
+        }
+    }
 }

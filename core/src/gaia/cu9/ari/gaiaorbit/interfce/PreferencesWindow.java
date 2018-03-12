@@ -358,7 +358,7 @@ public class PreferencesWindow extends GenericDialog {
                 return false;
             }
         };
-        gquality.addListener(graphicsChangeListener);
+        //gquality.addListener(graphicsChangeListener);
 
         // Add to content
         contentGraphics.add(titleGraphics).left().padBottom(pad * 2).row();
@@ -1339,6 +1339,7 @@ public class PreferencesWindow extends GenericDialog {
         // Graphics
         ComboBoxBean bean = gquality.getSelected();
         GlobalConf.scene.GRAPHICS_QUALITY = bean.value;
+        EventManager.instance.post(Events.GRAPHICS_QUALITY_UPDATED, bean.value);
 
         bean = aa.getSelected();
         GlobalConf.postprocess.POSTPROCESS_ANTIALIAS = GlobalConf.postprocess.getAntialias(bean.value);

@@ -120,6 +120,7 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
         // LIGHT GLOW
         int lgw, lgh;
         Texture glow;
+        // TODO Listen to GRAPHICS_QUALITY_CHANGED and apply new settings on the fly
         if (GlobalConf.scene.isHighQuality()) {
             lglowNSamples = 12;
             lgw = 1280;

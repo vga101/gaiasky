@@ -39,6 +39,7 @@ import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.data.group.IStarGroupDataProvider;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
+import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.render.ILineRenderable;
 import gaia.cu9.ari.gaiaorbit.render.IModelRenderable;
 import gaia.cu9.ari.gaiaorbit.render.IQuadRenderable;
@@ -67,7 +68,7 @@ import net.jafama.FastMath;
  * @author tsagrista
  *
  */
-public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFocus, IQuadRenderable, IModelRenderable {
+public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFocus, IQuadRenderable, IModelRenderable, IObserver {
 
     /**
      * Contains info on one star
@@ -333,7 +334,7 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
         closestCol = new float[4];
         lastSortTime = -1;
         aux = new Vector3d();
-        EventManager.instance.subscribe(this, Events.CAMERA_MOTION_UPDATED);
+        EventManager.instance.subscribe(this, Events.CAMERA_MOTION_UPDATED, Events.GRAPHICS_QUALITY_UPDATED);
     }
 
     @SuppressWarnings("unchecked")
@@ -394,7 +395,7 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
 
     public void setData(Array<StarBean> pointData, Map<String, Integer> index) {
         this.pointData = pointData;
-        this.N_CLOSEUP_STARS = Math.min(40, pointData.size);
+        this.N_CLOSEUP_STARS = getNCloseupStars();
         this.index = index;
     }
 
@@ -404,9 +405,13 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
 
     public void setData(Array<StarBean> pointData, boolean regenerateIndex) {
         this.pointData = pointData;
-        this.N_CLOSEUP_STARS = Math.min(40, pointData.size);
+        this.N_CLOSEUP_STARS = getNCloseupStars();
         if (regenerateIndex)
             regenerateIndex();
+    }
+
+    private int getNCloseupStars() {
+        return Math.min(GlobalConf.scene.isHighQuality() ? 80 : (GlobalConf.scene.isNormalQuality() ? 60 : 40), pointData.size);
     }
 
     public void regenerateIndex() {
@@ -891,6 +896,9 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
                 }
             }
             break;
+        case GRAPHICS_QUALITY_UPDATED:
+            this.N_CLOSEUP_STARS = getNCloseupStars();
+            break;
         default:
             break;
         }
@@ -986,7 +994,7 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
     public void dispose() {
         this.disposed = true;
         // Unsubscribe from all events
-        EventManager.instance.unsubscribe(this, Events.CAMERA_MOTION_UPDATED);
+        EventManager.instance.unsubscribe(this, Events.CAMERA_MOTION_UPDATED, Events.GRAPHICS_QUALITY_UPDATED);
         // Shut down pool
         if (pool != null && !pool.isShutdown()) {
             pool.shutdown();
