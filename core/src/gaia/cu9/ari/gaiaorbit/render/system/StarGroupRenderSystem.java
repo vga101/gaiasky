@@ -35,7 +35,7 @@ import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
 public class StarGroupRenderSystem extends ImmediateRenderSystem implements IObserver {
     private final double BRIGHTNESS_FACTOR;
     /** Hopefully we won't have more than 5000 star groups at once **/
-    private final int N_MESHES = 5000;
+    private final int N_MESHES = 50000;
 
     private Vector3 aux1, aux2;
     private int sizeOffset, pmOffset;
@@ -132,18 +132,18 @@ public class StarGroupRenderSystem extends ImmediateRenderSystem implements IObs
         // Additive blending
         Gdx.gl20.glBlendFunc(GL20.GL_ONE, GL20.GL_ONE);
 
-        renderables.sort(comp);
+        //renderables.sort(comp);
         if (renderables.size > 0) {
             for (IRenderable renderable : renderables) {
                 StarGroup starGroup = (StarGroup) renderable;
                 synchronized (starGroup) {
                     if (!starGroup.disposed) {
+                        curr = meshes[starGroup.offset];
                         /**
                          * ADD PARTICLES
                          */
                         if (!starGroup.inGpu) {
                             starGroup.offset = addMeshData(starGroup.size());
-                            curr = meshes[starGroup.offset];
 
                             for (StarBean p : starGroup.data()) {
                                 // COLOR
@@ -165,6 +165,7 @@ public class StarGroupRenderSystem extends ImmediateRenderSystem implements IObs
                                 curr.vertexIdx += curr.vertexSize;
                             }
                             starGroup.count = starGroup.size() * curr.vertexSize;
+                            curr.mesh.setVertices(curr.vertices, 0, starGroup.count);
 
                             starGroup.inGpu = true;
 
@@ -173,7 +174,6 @@ public class StarGroupRenderSystem extends ImmediateRenderSystem implements IObs
                         /**
                          * RENDER
                          */
-                        curr = meshes[starGroup.offset];
                         if (curr != null) {
                             int fovmode = camera.getMode().getGaiaFovMode();
 
@@ -214,7 +214,6 @@ public class StarGroupRenderSystem extends ImmediateRenderSystem implements IObs
                                 }
                             }
                             try {
-                                curr.mesh.setVertices(curr.vertices, 0, starGroup.count);
                                 curr.mesh.render(shaderProgram, ShapeType.Point.getGlType());
                             } catch (IllegalArgumentException e) {
                                 Logger.error("Render exception");

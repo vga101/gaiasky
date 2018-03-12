@@ -419,6 +419,8 @@ public enum Events {
     TOGGLE_UPDATEPAUSE,
     /** Contains the new value **/
     UPDATEPAUSE_CHANGED,
+    /** Graphics quality updated **/
+    GRAPHICS_QUALITY_UPDATED,
     /**
      * Sets the vertical scroll position. Contains the scroll position in pixels
      **/

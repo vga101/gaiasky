@@ -39,6 +39,7 @@ import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.data.group.IStarGroupDataProvider;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
+import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.render.ILineRenderable;
 import gaia.cu9.ari.gaiaorbit.render.IModelRenderable;
 import gaia.cu9.ari.gaiaorbit.render.IQuadRenderable;
@@ -333,7 +334,7 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
         closestCol = new float[4];
         lastSortTime = -1;
         aux = new Vector3d();
-        EventManager.instance.subscribe(this, Events.CAMERA_MOTION_UPDATED);
+        EventManager.instance.subscribe(this, Events.CAMERA_MOTION_UPDATED, Events.GRAPHICS_QUALITY_UPDATED);
     }
 
     @SuppressWarnings("unchecked")
@@ -394,7 +395,7 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
 
     public void setData(Array<StarBean> pointData, Map<String, Integer> index) {
         this.pointData = pointData;
-        this.N_CLOSEUP_STARS = Math.min(250, pointData.size);
+        this.N_CLOSEUP_STARS = getNCloseupStars();
         this.index = index;
     }
 
@@ -404,9 +405,13 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
 
     public void setData(Array<StarBean> pointData, boolean regenerateIndex) {
         this.pointData = pointData;
-        this.N_CLOSEUP_STARS = Math.min(250, pointData.size);
+        this.N_CLOSEUP_STARS = getNCloseupStars();
         if (regenerateIndex)
             regenerateIndex();
+    }
+
+    private int getNCloseupStars() {
+        return Math.min(GlobalConf.scene.isHighQuality() ? 80 : (GlobalConf.scene.isNormalQuality() ? 60 : 40), pointData.size);
     }
 
     public void regenerateIndex() {
@@ -615,7 +620,6 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
         Vector3d lpos = fetchPosition(star, camera.getPos(), aux3d1.get(), currDeltaYears);
         double distToCamera = lpos.len();
         double viewAngle = (radius / distToCamera) / camera.getFovFactor();
-        double viewAngleApparent = viewAngle * GlobalConf.scene.STAR_BRIGHTNESS;
         Color c = new Color();
         Color.abgr8888ToColor(c, (float) star.col());
         if (viewAngle >= thpointTimesFovfactor) {
@@ -627,7 +631,7 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
 
             shader.setUniformf("u_color", c.r, c.g, c.b, alpha);
             shader.setUniformf("u_distance", (float) distToCamera);
-            shader.setUniformf("u_apparent_angle", (float) viewAngleApparent);
+            shader.setUniformf("u_apparent_angle", (float) (viewAngle * GlobalConf.scene.STAR_BRIGHTNESS));
             shader.setUniformf("u_radius", (float) radius);
 
             // Sprite.render
@@ -777,7 +781,8 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
 
         aux.add(cam.getUp()).nor().scl(dist);
 
-        GlobalResources.applyRelativisticAberration(out.add(aux), cam);
+        out.add(aux);
+
         GlobalResources.applyRelativisticAberration(out, cam);
         RelativisticEffectsManager.getInstance().gravitationalWavePos(out);
     }
@@ -897,6 +902,9 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
                 }
             }
             break;
+        case GRAPHICS_QUALITY_UPDATED:
+            this.N_CLOSEUP_STARS = getNCloseupStars();
+            break;
         default:
             break;
         }
@@ -992,7 +1000,7 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
     public void dispose() {
         this.disposed = true;
         // Unsubscribe from all events
-        EventManager.instance.unsubscribe(this, Events.CAMERA_MOTION_UPDATED);
+        EventManager.instance.unsubscribe(this, Events.CAMERA_MOTION_UPDATED, Events.GRAPHICS_QUALITY_UPDATED);
         // Shut down pool
         if (pool != null && !pool.isShutdown()) {
             pool.shutdown();

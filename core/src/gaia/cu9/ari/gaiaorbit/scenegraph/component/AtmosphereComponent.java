@@ -159,7 +159,7 @@ public class AtmosphereComponent {
 
         // Distance to planet
         float camHeight = (float) (aux3.len());
-        float m_ESun = 7f;
+        float m_ESun = 15f;
         float camHeightGr = camHeight - m_fInnerRadius;
         float atmFactor = (m_fAtmosphereHeight - camHeightGr) / m_fAtmosphereHeight;
 

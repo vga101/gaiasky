@@ -20,6 +20,9 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.utils.Disposable;
 
 import gaia.cu9.ari.gaiaorbit.data.AssetBean;
+import gaia.cu9.ari.gaiaorbit.event.EventManager;
+import gaia.cu9.ari.gaiaorbit.event.Events;
+import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
@@ -27,7 +30,7 @@ import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.ModelCache;
 import gaia.cu9.ari.gaiaorbit.util.Pair;
 
-public class ModelComponent implements Disposable {
+public class ModelComponent implements Disposable, IObserver {
     public boolean forceinit = false;
     private static ColorAttribute ambient;
     /**
@@ -166,7 +169,8 @@ public class ModelComponent implements Disposable {
         if (tc == null) {
             addColorToMat();
         }
-
+        // Subscribe to new graphics quality setting event
+        EventManager.instance.subscribe(this, Events.GRAPHICS_QUALITY_UPDATED);
         // Initialised
         initialised = !GlobalConf.scene.LAZY_TEXTURE_INIT;
         // Loading
@@ -342,6 +346,24 @@ public class ModelComponent implements Disposable {
             rec.updateGravitationalWavesMaterial(mat);
         } else if(rec.hasGravitationalWaves(mat)){
             rec.removeGravitationalWavesMaterial(mat);
+        }
+    }
+
+    @Override
+    public void notify(Events event, Object... data) {
+        switch (event) {
+        case GRAPHICS_QUALITY_UPDATED:
+            if (initialised) {
+                // Remove current textures
+                // TODO
+                initialised = false;
+                if (tc != null)
+                    tc.disposeTextures(this.manager);
+
+            }
+            break;
+        default:
+            break;
         }
     }
 
