@@ -394,7 +394,7 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
 
     public void setData(Array<StarBean> pointData, Map<String, Integer> index) {
         this.pointData = pointData;
-        this.N_CLOSEUP_STARS = Math.min(250, pointData.size);
+        this.N_CLOSEUP_STARS = Math.min(40, pointData.size);
         this.index = index;
     }
 
@@ -404,7 +404,7 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
 
     public void setData(Array<StarBean> pointData, boolean regenerateIndex) {
         this.pointData = pointData;
-        this.N_CLOSEUP_STARS = Math.min(250, pointData.size);
+        this.N_CLOSEUP_STARS = Math.min(40, pointData.size);
         if (regenerateIndex)
             regenerateIndex();
     }
