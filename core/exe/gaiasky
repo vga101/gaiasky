@@ -36,10 +36,10 @@ OPTS="$OPTS -Xms2g -Xmx3g"
 
 # Parallel GC 
 #OPTS="$OPTS -XX:+UseParallelGC"
-# CMS GC
-OPTS="$OPTS -XX:+UseConcMarkSweepGC"
+# CMS GC, deprecated since Java9
+#OPTS="$OPTS -XX:+UseConcMarkSweepGC"
 # G1 GC
-#OPTS="$OPTS -XX:+UseG1GC"
+OPTS="$OPTS -XX:+UseG1GC"
 
 # GC debug only
 #OPTS="$OPTS -verbose:gc -XX:+PrintGCDetails"
@@ -54,7 +54,7 @@ OPTS="$OPTS -XX:+UseConcMarkSweepGC"
 #fi
 
 # Assets location
-OPTS="$OPTS -Dassets.location=$GSDIR/"
+OPTS="$OPTS -Dassets.location=\"$GSDIR/\""
 
 #
 # Run.

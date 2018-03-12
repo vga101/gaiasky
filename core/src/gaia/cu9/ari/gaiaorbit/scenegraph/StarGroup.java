@@ -198,7 +198,7 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
     // Camera dx threshold
     private static final double CAM_DX_TH = 100 * Constants.AU_TO_U;
     // Min update time
-    private static final double MIN_UPDATE_TIME_MS = 50;
+    private static final double MIN_UPDATE_TIME_MS = 100;
     // Sequence id
     private static long idseq = 0;
     /** Star model **/

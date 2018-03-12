@@ -4,9 +4,9 @@
     <version>@version-tag@</version>
     <readmeFile>@gs-release-folder@/README.md</readmeFile>
     <licenseFile>@gs-release-folder@/LICENSE</licenseFile>
-    <logoImage>@gs-git-folder@/android/assets/icon/ic_launcher_s.png</logoImage>
-    <splashImage>@gs-git-folder@/android/assets/img/splash/splash-s.png</splashImage>
-    <wmImage>@gs-git-folder@/android/assets/icon/ic_launcher.png</wmImage>
+    <logoImage>@gs-git-folder@/assets/icon/ic_launcher_s.png</logoImage>
+    <splashImage>@gs-git-folder@/assets/img/splash/splash-s.png</splashImage>
+    <wmImage>@gs-git-folder@/assets/icon/ic_launcher.png</wmImage>
     <componentList>
         <component>
             <name>default</name>
@@ -156,8 +156,8 @@
     <enableTimestamp>1</enableTimestamp>
     <outputDirectory>@gs-git-folder@/releases</outputDirectory>
     <vendor>ARI - Universität Heidelberg</vendor>
-    <windowsExecutableIcon>@gs-git-folder@/android/assets/icon/ic_launcher.ico</windowsExecutableIcon>
-    <windowsUninstallerExecutableIcon>@gs-git-folder@/android/assets/icon/ic_launcher.ico</windowsUninstallerExecutableIcon>
+    <windowsExecutableIcon>@gs-git-folder@/assets/icon/ic_launcher.ico</windowsExecutableIcon>
+    <windowsUninstallerExecutableIcon>@gs-git-folder@/assets/icon/ic_launcher.ico</windowsUninstallerExecutableIcon>
     <licenseFileList>
         <licenseFile>
             <code>en</code>
