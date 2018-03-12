@@ -132,7 +132,7 @@ public class StarGroupRenderSystem extends ImmediateRenderSystem implements IObs
         // Additive blending
         Gdx.gl20.glBlendFunc(GL20.GL_ONE, GL20.GL_ONE);
 
-        renderables.sort(comp);
+        //renderables.sort(comp);
         if (renderables.size > 0) {
             for (IRenderable renderable : renderables) {
                 StarGroup starGroup = (StarGroup) renderable;

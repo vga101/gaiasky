@@ -620,7 +620,6 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
         Vector3d lpos = fetchPosition(star, camera.getPos(), aux3d1.get(), currDeltaYears);
         double distToCamera = lpos.len();
         double viewAngle = (radius / distToCamera) / camera.getFovFactor();
-        double viewAngleApparent = viewAngle * GlobalConf.scene.STAR_BRIGHTNESS;
         Color c = new Color();
         Color.abgr8888ToColor(c, (float) star.col());
         if (viewAngle >= thpointTimesFovfactor) {
@@ -632,7 +631,7 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
 
             shader.setUniformf("u_color", c.r, c.g, c.b, alpha);
             shader.setUniformf("u_distance", (float) distToCamera);
-            shader.setUniformf("u_apparent_angle", (float) viewAngleApparent);
+            shader.setUniformf("u_apparent_angle", (float) (viewAngle * GlobalConf.scene.STAR_BRIGHTNESS));
             shader.setUniformf("u_radius", (float) radius);
 
             // Sprite.render
