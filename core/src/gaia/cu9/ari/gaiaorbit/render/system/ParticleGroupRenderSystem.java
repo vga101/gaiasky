@@ -1,6 +1,7 @@
 package gaia.cu9.ari.gaiaorbit.render.system;
 
 import java.util.Comparator;
+import java.util.Random;
 
 import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
@@ -29,12 +30,14 @@ public class ParticleGroupRenderSystem extends ImmediateRenderSystem implements 
 
     Vector3 aux1;
     int additionalOffset, pmOffset;
+    Random rand;
 
     Comparator<IRenderable> comp;
 
     public ParticleGroupRenderSystem(RenderGroup rg, float[] alphas, ShaderProgram[] shaders) {
         super(rg, alphas, shaders);
         comp = new DistToCameraComparator<IRenderable>();
+        rand = new Random(123);
     }
 
     @Override
@@ -81,7 +84,7 @@ public class ParticleGroupRenderSystem extends ImmediateRenderSystem implements 
                         curr.vertices[curr.vertexIdx + curr.colorOffset] = Color.toFloatBits(c[0], c[1], c[2], c[3]);
 
                         // SIZE
-                        curr.vertices[curr.vertexIdx + additionalOffset] = particleGroup.size;
+                        curr.vertices[curr.vertexIdx + additionalOffset] = particleGroup.size + (float) (rand.nextGaussian() * particleGroup.size / 4d);
 
                         // cb.transform.getTranslationf(aux);
                         // POSITION

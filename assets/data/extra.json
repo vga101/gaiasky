@@ -114,7 +114,7 @@
 		// Color of particles
 		"color" : [0.3, 0.5, 0.8, 0.2],
 		// Size of particles
-		"size" : 6.0,
+		"size" : 4.0,
 		"labelcolor" : [0.3, 0.4, 0.9, 1.0],
 		// Position in parsecs
 		"labelposition" : [0.0, -5.0e7, -4e8]
