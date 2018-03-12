@@ -209,7 +209,8 @@ public class SpacecraftGui extends AbstractGui {
         stabilise = new OwnImageButton(skin, "sc-stabilise");
         stabilise.setProgrammaticChangeEvents(false);
         stabilise.setName("stabilise");
-        stabilise.setChecked(sc.isStabilising());
+        if (sc != null)
+            stabilise.setChecked(sc.isStabilising());
         stabilise.addListener(new EventListener() {
             @Override
             public boolean handle(Event event) {
