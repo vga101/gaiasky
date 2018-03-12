@@ -35,7 +35,7 @@ import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
 public class StarGroupRenderSystem extends ImmediateRenderSystem implements IObserver {
     private final double BRIGHTNESS_FACTOR;
     /** Hopefully we won't have more than 5000 star groups at once **/
-    private final int N_MESHES = 5000;
+    private final int N_MESHES = 50000;
 
     private Vector3 aux1, aux2;
     private int sizeOffset, pmOffset;

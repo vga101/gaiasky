@@ -44,7 +44,7 @@ public class ParticleGroupRenderSystem extends ImmediateRenderSystem implements 
     @Override
     protected void initVertices() {
         /** STARS **/
-        meshes = new MeshData[5];
+        meshes = new MeshData[1];
         curr = new MeshData();
         meshes[0] = curr;
 
@@ -69,7 +69,6 @@ public class ParticleGroupRenderSystem extends ImmediateRenderSystem implements 
         if (renderables.size > 0) {
             for (IRenderable renderable : renderables) {
                 ParticleGroup particleGroup = (ParticleGroup) renderable;
-                curr = meshes[particleGroup.offset];
                 /**
                  * GROUP RENDER
                  */
