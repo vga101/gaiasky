@@ -292,6 +292,9 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
             EventManager.instance.post(Events.LOAD_DATA_CMD);
         }
 
+        Logger.info(this.getClass().getSimpleName(), "v" + GlobalConf.version.version + " - " + I18n.bundle.format("gui.build", GlobalConf.version.build));
+        Logger.info(this.getClass().getSimpleName(), "Display mode set to " + Gdx.graphics.getWidth() + "x" + Gdx.graphics.getHeight() + ", fullscreen: " + Gdx.graphics.isFullscreen());
+
         Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.glslversion", Gdx.gl.glGetString(GL20.GL_SHADING_LANGUAGE_VERSION)));
     }
 
@@ -300,7 +303,6 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
      * to their classes and removes the Loading message
      */
     private void doneLoading() {
-
         // Dispose of initial and loading GUIs
         initialGui.dispose();
         initialGui = null;

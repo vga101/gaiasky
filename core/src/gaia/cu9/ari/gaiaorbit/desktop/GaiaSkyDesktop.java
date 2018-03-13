@@ -198,8 +198,6 @@ public class GaiaSkyDesktop implements IObserver {
         cfg.useHDPI = true;
         cfg.addIcon("icon/ic_launcher.png", Files.FileType.Internal);
 
-        System.out.println("Display mode set to " + cfg.width + "x" + cfg.height + ", fullscreen: " + cfg.fullscreen);
-
         // Launch app
         LwjglApplication app = new LwjglApplication(new GaiaSky(), cfg);
         app.addLifecycleListener(new GaiaSkyWindowListener());
