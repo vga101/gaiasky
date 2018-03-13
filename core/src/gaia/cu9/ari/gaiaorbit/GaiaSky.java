@@ -294,7 +294,6 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
 
         Logger.info(this.getClass().getSimpleName(), "v" + GlobalConf.version.version + " - " + I18n.bundle.format("gui.build", GlobalConf.version.build));
         Logger.info(this.getClass().getSimpleName(), "Display mode set to " + Gdx.graphics.getWidth() + "x" + Gdx.graphics.getHeight() + ", fullscreen: " + Gdx.graphics.isFullscreen());
-
         Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.glslversion", Gdx.gl.glGetString(GL20.GL_SHADING_LANGUAGE_VERSION)));
     }
 

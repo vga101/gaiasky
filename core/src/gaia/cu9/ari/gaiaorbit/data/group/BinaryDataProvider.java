@@ -18,8 +18,8 @@ import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.SysUtilsFactory;
 
 /**
- * Reads arrays of star beans from binary files, usually to go in
- * an octree.
+ * Reads arrays of star beans from binary files, usually to go in an octree.
+ * 
  * @author tsagrista
  *
  */
@@ -33,7 +33,7 @@ public class BinaryDataProvider extends AbstractStarGroupDataProvider {
     @Override
     public Array<? extends ParticleBean> loadData(String file, double factor) {
         Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.datafile", file));
-        loadDataMapped(SysUtilsFactory.getSysUtils().getTruePath(file), factor);
+        loadDataMapped(file, factor);
         Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.nodeloader", list.size, file));
 
         return list;
