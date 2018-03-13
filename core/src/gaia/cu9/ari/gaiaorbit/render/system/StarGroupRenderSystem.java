@@ -1,7 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.render.system;
 
-import java.util.Comparator;
-
 import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
@@ -39,7 +37,6 @@ public class StarGroupRenderSystem extends ImmediateRenderSystem implements IObs
 
     private Vector3 aux1, aux2;
     private int sizeOffset, pmOffset;
-    private Comparator<IRenderable> comp;
     private float[] pointAlpha, alphaSizeFovBr;
 
     public StarGroupRenderSystem(RenderGroup rg, float[] alphas, ShaderProgram[] shaders) {

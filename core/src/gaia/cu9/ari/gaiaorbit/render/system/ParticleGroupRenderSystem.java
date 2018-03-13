@@ -24,10 +24,11 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.ParticleGroup.ParticleBean;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf.ProgramConf.StereoProfile;
+import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.comp.DistToCameraComparator;
 
 public class ParticleGroupRenderSystem extends ImmediateRenderSystem implements IObserver {
-
+    private final int N_MESHES = 50;
     Vector3 aux1;
     int additionalOffset, pmOffset;
     Random rand;
@@ -38,6 +39,7 @@ public class ParticleGroupRenderSystem extends ImmediateRenderSystem implements 
         super(rg, alphas, shaders);
         comp = new DistToCameraComparator<IRenderable>();
         rand = new Random(123);
+        aux1 = new Vector3();
     }
 
     @Override
@@ -47,13 +49,34 @@ public class ParticleGroupRenderSystem extends ImmediateRenderSystem implements 
     @Override
     protected void initVertices() {
         /** STARS **/
-        meshes = new MeshData[1];
+        meshes = new MeshData[N_MESHES];
+    }
+
+    /**
+     * Adds a new mesh data to the meshes list and increases the mesh data index
+     * 
+     * @param nVertices
+     *            The max number of vertices this mesh data can hold
+     * @return The index of the new mesh data
+     */
+    private int addMeshData(int nVertices) {
+        // look for index
+        int mdi;
+        for (mdi = 0; mdi < N_MESHES; mdi++) {
+            if (meshes[mdi] == null) {
+                break;
+            }
+        }
+
+        if (mdi >= N_MESHES) {
+            Logger.error(this.getClass().getSimpleName(), "No more free meshes!");
+            return -1;
+        }
+
         curr = new MeshData();
-        meshes[0] = curr;
+        meshes[mdi] = curr;
 
-        aux1 = new Vector3();
-
-        maxVertices = 10000000;
+        maxVertices = nVertices;
 
         VertexAttribute[] attribs = buildVertexAttributes();
         curr.mesh = new Mesh(false, maxVertices, 0, attribs);
@@ -63,7 +86,7 @@ public class ParticleGroupRenderSystem extends ImmediateRenderSystem implements 
         curr.colorOffset = curr.mesh.getVertexAttribute(Usage.ColorPacked) != null ? curr.mesh.getVertexAttribute(Usage.ColorPacked).offset / 4 : 0;
         pmOffset = curr.mesh.getVertexAttribute(Usage.Tangent) != null ? curr.mesh.getVertexAttribute(Usage.Tangent).offset / 4 : 0;
         additionalOffset = curr.mesh.getVertexAttribute(Usage.Generic) != null ? curr.mesh.getVertexAttribute(Usage.Generic).offset / 4 : 0;
-
+        return mdi;
     }
 
     @Override
@@ -72,11 +95,12 @@ public class ParticleGroupRenderSystem extends ImmediateRenderSystem implements 
         if (renderables.size > 0) {
             for (IRenderable renderable : renderables) {
                 ParticleGroup particleGroup = (ParticleGroup) renderable;
+                curr = meshes[particleGroup.offset];
                 /**
                  * GROUP RENDER
                  */
                 if (!particleGroup.inGpu) {
-                    particleGroup.offset = curr.vertexIdx;
+                    particleGroup.offset = addMeshData(particleGroup.size());
                     for (ParticleBean pb : particleGroup.data()) {
                         double[] p = pb.data;
                         // COLOR
@@ -96,43 +120,45 @@ public class ParticleGroupRenderSystem extends ImmediateRenderSystem implements 
                         curr.vertexIdx += curr.vertexSize;
                     }
                     particleGroup.count = particleGroup.size() * curr.vertexSize;
-                    curr.mesh.setVertices(curr.vertices, particleGroup.offset, particleGroup.count);
+                    curr.mesh.setVertices(curr.vertices, 0, particleGroup.count);
 
                     particleGroup.inGpu = true;
 
                 }
 
-                /**
-                 * PARTICLE RENDERER
-                 */
-                if (Gdx.app.getType() == ApplicationType.Desktop) {
-                    // Enable gl_PointCoord
-                    Gdx.gl20.glEnable(34913);
-                    // Enable point sizes
-                    Gdx.gl20.glEnable(0x8642);
+                if (curr != null) {
+                    /**
+                     * PARTICLE RENDERER
+                     */
+                    if (Gdx.app.getType() == ApplicationType.Desktop) {
+                        // Enable gl_PointCoord
+                        Gdx.gl20.glEnable(34913);
+                        // Enable point sizes
+                        Gdx.gl20.glEnable(0x8642);
+                    }
+
+                    // Additive blending
+                    Gdx.gl20.glBlendFunc(GL20.GL_ONE, GL20.GL_ONE);
+
+                    ShaderProgram shaderProgram = getShaderProgram();
+
+                    shaderProgram.begin();
+                    shaderProgram.setUniformMatrix("u_projModelView", camera.getCamera().combined);
+                    shaderProgram.setUniformf("u_camPos", camera.getCurrent().getPos().put(aux1));
+                    shaderProgram.setUniformf("u_alpha", particleGroup.opacity * alphas[particleGroup.ct.getFirstOrdinal()]);
+                    shaderProgram.setUniformf("u_ar", GlobalConf.program.STEREOSCOPIC_MODE && (GlobalConf.program.STEREO_PROFILE != StereoProfile.HD_3DTV && GlobalConf.program.STEREO_PROFILE != StereoProfile.ANAGLYPHIC) ? 0.5f : 1f);
+                    shaderProgram.setUniformf("u_profileDecay", particleGroup.profileDecay);
+                    shaderProgram.setUniformf("u_sizeFactor", rc.scaleFactor);
+
+                    // Relativistic effects
+                    addEffectsUniforms(shaderProgram, camera);
+
+                    curr.mesh.render(shaderProgram, ShapeType.Point.getGlType());
+                    shaderProgram.end();
+
+                    // Restore
+                    Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
                 }
-
-                // Additive blending
-                Gdx.gl20.glBlendFunc(GL20.GL_ONE, GL20.GL_ONE);
-
-                ShaderProgram shaderProgram = getShaderProgram();
-
-                shaderProgram.begin();
-                shaderProgram.setUniformMatrix("u_projModelView", camera.getCamera().combined);
-                shaderProgram.setUniformf("u_camPos", camera.getCurrent().getPos().put(aux1));
-                shaderProgram.setUniformf("u_alpha", particleGroup.opacity * alphas[particleGroup.ct.getFirstOrdinal()]);
-                shaderProgram.setUniformf("u_ar", GlobalConf.program.STEREOSCOPIC_MODE && (GlobalConf.program.STEREO_PROFILE != StereoProfile.HD_3DTV && GlobalConf.program.STEREO_PROFILE != StereoProfile.ANAGLYPHIC) ? 0.5f : 1f);
-                shaderProgram.setUniformf("u_profileDecay", particleGroup.profileDecay);
-                shaderProgram.setUniformf("u_sizeFactor", rc.scaleFactor);
-
-                // Relativistic effects
-                addEffectsUniforms(shaderProgram, camera);
-
-                curr.mesh.render(shaderProgram, ShapeType.Point.getGlType());
-                shaderProgram.end();
-
-                // Restore
-                Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
             }
         }
 

@@ -419,7 +419,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         });
 
         // VOLUMETRIC CLOUDS
-        //        AbstractRenderSystem cloudsProc = new VolumeCloudsRenderSystem( alphas);
+        //        AbstractRenderSystem cloudsProc = new VolumeCloudsRenderSystem(alphas);
         //        cloudsProc.setPreRunnable(blendNoDepthRunnable);
 
         // ANNOTATIONS
@@ -569,7 +569,6 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         renderProcesses.add(modelFrontBackProc);
         renderProcesses.add(pixelStarProc);
         renderProcesses.add(starGroupProc);
-        // renderProcesses.add(cloudsProc);
         renderProcesses.add(annotationsProc);
         renderProcesses.add(particleGroupProc);
 
@@ -592,6 +591,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         renderProcesses.add(modelStarsProc);
         renderProcesses.add(modelAtmProc);
         renderProcesses.add(shapeProc);
+        //        renderProcesses.add(cloudsProc);
         // renderProcesses.add(modelCloseUpProc);
 
         EventManager.instance.subscribe(this, Events.TOGGLE_VISIBILITY_CMD, Events.PIXEL_RENDERER_UPDATE, Events.LINE_RENDERER_UPDATE, Events.STEREOSCOPIC_CMD, Events.CAMERA_MODE_CMD, Events.CUBEMAP360_CMD, Events.REBUILD_SHADOW_MAP_DATA_CMD, Events.LIGHT_SCATTERING_CMD);
