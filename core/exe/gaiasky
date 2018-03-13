@@ -36,10 +36,10 @@ OPTS="$OPTS -Xms2g -Xmx3g"
 
 # Parallel GC 
 #OPTS="$OPTS -XX:+UseParallelGC"
-# CMS GC
-OPTS="$OPTS -XX:+UseConcMarkSweepGC"
+# CMS GC, deprecated since Java9
+#OPTS="$OPTS -XX:+UseConcMarkSweepGC"
 # G1 GC
-#OPTS="$OPTS -XX:+UseG1GC"
+OPTS="$OPTS -XX:+UseG1GC"
 
 # GC debug only
 #OPTS="$OPTS -verbose:gc -XX:+PrintGCDetails"
@@ -49,9 +49,12 @@ OPTS="$OPTS -XX:+UseConcMarkSweepGC"
 #OPTS="$OPTS -XX:+UnlockDiagnosticVMOptions -XX:+TraceClassLoading -XX:+LogCompilation -XX:+PrintAssembly"
 
 # macOS hack - needs a couple of args to be happy
-if [[ "$OSTYPE" == "darwin"* ]]; then
-	OPTS="$OPTS -XstartOnFirstThread -Djava.awt.headless=true"
-fi
+#if [[ "$OSTYPE" == "darwin"* ]]; then
+#	OPTS="$OPTS -XstartOnFirstThread -Djava.awt.headless=true"
+#fi
+
+# Assets location
+OPTS="$OPTS -Dassets.location=\"$GSDIR/\""
 
 #
 # Run.

@@ -120,7 +120,7 @@
 		"labelposition" : [0.0, -5.0e7, -4e8]
 		"ct" : Galaxies,
 	
-		"profiledecay" : 0.5,
+		"profiledecay" : 0.6,
 
 		// Fade in distances, in parsecs
 		"fadein" : [1.0e6, 20.0e6],
@@ -197,7 +197,7 @@
 		"fadein" : [0.0004, 0.004],
 		"fadeout" : [0.1, 1.8],
 		
-		"profiledecay" : 0.5,
+		"profiledecay" : 0.7,
 		
 	
 		"parent" : "Universe", 

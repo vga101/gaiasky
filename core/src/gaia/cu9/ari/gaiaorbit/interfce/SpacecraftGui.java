@@ -209,7 +209,8 @@ public class SpacecraftGui extends AbstractGui {
         stabilise = new OwnImageButton(skin, "sc-stabilise");
         stabilise.setProgrammaticChangeEvents(false);
         stabilise.setName("stabilise");
-        stabilise.setChecked(sc.isStabilising());
+        if (sc != null)
+            stabilise.setChecked(sc.isStabilising());
         stabilise.addListener(new EventListener() {
             @Override
             public boolean handle(Event event) {
@@ -644,9 +645,9 @@ public class SpacecraftGui extends AbstractGui {
             double ppow = (Double) data[7];
             double rpow = (Double) data[8];
 
-            yawvel.setText(nf.format(y) + "°");
-            pitchvel.setText(nf.format(p) + "°");
-            rollvel.setText(nf.format(r) + "°");
+            yawvel.setText(nf.format(y) + "ï¿½");
+            pitchvel.setText(nf.format(p) + "ï¿½");
+            rollvel.setText(nf.format(r) + "ï¿½");
 
             Pair<Double, String> velstr = GlobalResources.doubleToVelocityString(v);
             mainvel.setText(sf.format(velstr.getFirst()) + " " + velstr.getSecond());
