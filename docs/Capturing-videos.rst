@@ -9,15 +9,14 @@ In order to capture videos there are at least two options which differ
 Frame output system + ``ffmpeg``
 ================================
 
-This method consists on outputting an image to a file every frame using
-the :ref:`frame-output-config` of
-Gaia Sky to later gather them to create a video using a video encoder
-software such as `ffmpeg <https://ffmpeg.org/>`__, which works on
-Windows, Linux and OS X.
+The frame output system enables automatic saving of every frame
+to an image file to disk with an arbitrary resolution and a user-defined
+frame rate. The image files can later be encoded into a video using
+video encoder software such as `ffmpeg <https://ffmpeg.org/>`__.
 
 .. note:: Use ``F6`` to activate the frame output mode and start saving each frame as an image. Use ``F6`` again to deactivate it. When the frame output mode is active, the icon |frameoutput| is displayed at the top-right corner of the screen.
 
-When the frame output system is active, each frame is saved as a ``JPEG`` image to disk. Refer to the
+When the frame output system is active, each frame is saved as a ``JPG`` or ``PNG`` image to disk. Refer to the
 :ref:`frame-output-config` section to learn how to configure the frame output system.
 
 Once you have the image frames you can encode a video using a ``ffmpeg`` preset (slow, veryslow, fast, etc.) with the following command:

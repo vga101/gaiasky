@@ -67,6 +67,13 @@ pressing ``F5``. There are two screenshot modes available: \*
 ``Simple``, the classic screenshot of what is currently on screen, with
 the same resolution. \* ``Advanced``, where you can define the
 resolution of the screenshots.
+Additionally, the output format (either ``JPG`` or ``PNG``) and the quality (in
+case of ``JPG`` format) can also be set in the configuration file, usually
+located in ``$HOME/.gaiasky/global.properties``. The keys to modify are:
+
+*  ``screenshot.format``
+*  ``screenshot.quality``
+
 
 .. _frame-output-config:
 
@@ -74,11 +81,16 @@ Frame output
 ============
 
 There is a feature in Gaia Sky that enables the output of every
-frame as a ``JPEG`` image. This is useful to produce videos. In order to
+frame as a ``JPG`` or ``PNG`` image. This is useful to produce videos. In order to
 configure the frame output system, use the ``Frame output`` tab. There
 you can select the output folder, the image prefix name, the output
-image resolution (in case of ``Advanced`` mode) and the target frames
-per second.
+image resolution (in case of ``Advanced`` mode) and the target frame rate.
+Additionally, the output format (either ``JPG`` or ``PNG``) and the quality (in
+case of ``JPG`` format) can also be set in the configuration file, usually
+located in ``$HOME/.gaiasky/global.properties``. The keys to modify are:
+
+*  ``graphics.render.format``
+*  ``graphics.render.quality``
 
 .. note:: Use ``F6`` to activate the frame output mode and start saving each frame as an image. Use ``F6`` again to deactivate it.
 
