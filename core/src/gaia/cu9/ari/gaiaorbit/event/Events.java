@@ -16,6 +16,7 @@ public enum Events {
      * Issues a change time command, contains the Date object with the new time
      **/
     TIME_CHANGE_CMD,
+
     GAIA_POSITION,
 
     /** Dataset has been choosen, loading can start **/

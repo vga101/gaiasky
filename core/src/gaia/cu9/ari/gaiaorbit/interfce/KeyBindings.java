@@ -1,5 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.interfce;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeSet;
@@ -10,7 +11,6 @@ import com.badlogic.gdx.Input.Keys;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
-import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf.ProgramConf.StereoProfile;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
@@ -42,8 +42,8 @@ public class KeyBindings {
     public KeyBindings() {
         mappings = new HashMap<TreeSet<Integer>, ProgramAction>();
         // Init special keys
-        SPECIAL1 = Constants.webgl ? Keys.SHIFT_LEFT : Keys.CONTROL_LEFT;
-        SPECIAL2 = Constants.webgl ? Keys.SHIFT_RIGHT : Keys.SHIFT_LEFT;
+        SPECIAL1 = Keys.CONTROL_LEFT;
+        SPECIAL2 = Keys.SHIFT_LEFT;
         // For now this will do
         initDefault();
     }
@@ -383,6 +383,14 @@ public class KeyBindings {
                 EventManager.instance.post(Events.GO_TO_OBJECT_CMD);
             }
         }), SPECIAL1, Keys.G);
+
+        // CTRL + R -> Reset time to current system time
+        addMapping(new ProgramAction(txt("action.resettime"), new Runnable() {
+            @Override
+            public void run() {
+                EventManager.instance.post(Events.TIME_CHANGE_CMD, new Date());
+            }
+        }), SPECIAL1, Keys.R);
 
         // CTRL + SHIFT + G -> Galaxy 2D - 3D
         addMapping(new ProgramAction(txt("action.toggle", txt("element.galaxy3d")), new Runnable() {
