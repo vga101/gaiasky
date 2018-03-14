@@ -38,7 +38,7 @@ public abstract class StreamingOctreeLoader implements IObserver, ISceneGraphLoa
     /**
      * Data will be pre-loaded at startup down to this octree depth.
      */
-    protected static final int PRELOAD_DEPTH = 3;
+    protected static final int PRELOAD_DEPTH = 2;
     /**
      * Default load queue size in octants
      */

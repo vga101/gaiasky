@@ -130,7 +130,7 @@ public class GlobalConf {
             case -1:
                 return Antialias.FXAA;
             case -2:
-                return Antialias.FXAA;
+                return Antialias.NFAA;
             case 1:
                 return Antialias.SSAA;
             default:

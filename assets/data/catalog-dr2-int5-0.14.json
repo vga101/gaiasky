@@ -2,11 +2,6 @@
 	"name" : "DR2 int5 - 14%",
 	"description" : "Gaia DR2 int5 (14% error). 105M stars.",
 	"data" : [
-	
-	{
-		"loader": "gaia.cu9.ari.gaiaorbit.data.stars.SunLoader",
-		"files": [ "" ]
-	},
 	{
 		"loader": "gaia.cu9.ari.gaiaorbit.data.group.OctreeGroupLoader",
 		"files": [ "data/octree/dr2int5/16-full-25000-4000-0.14/particles/", "data/octree/dr2int5/16-full-25000-4000-0.14/metadata.bin" ]

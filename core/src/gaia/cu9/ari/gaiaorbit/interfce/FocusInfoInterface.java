@@ -339,13 +339,13 @@ public class FocusInfoInterface extends Table implements IObserver, IGuiInterfac
             focusName.setText(objectName);
             Vector2 posSph = focus.getPosSph();
             if (posSph != null && posSph.len() > 0f) {
-                focusRA.setText(nf.format(posSph.x) + "°");
-                focusDEC.setText(nf.format(posSph.y) + "°");
+                focusRA.setText(nf.format(posSph.x) + "ï¿½");
+                focusDEC.setText(nf.format(posSph.y) + "ï¿½");
             } else {
                 Coordinates.cartesianToSpherical(focus.getAbsolutePosition(pos), pos);
 
-                focusRA.setText(nf.format(MathUtilsd.radDeg * pos.x % 360) + "°");
-                focusDEC.setText(nf.format(MathUtilsd.radDeg * pos.y % 360) + "°");
+                focusRA.setText(nf.format(MathUtilsd.radDeg * pos.x % 360) + "ï¿½");
+                focusDEC.setText(nf.format(MathUtilsd.radDeg * pos.y % 360) + "ï¿½");
             }
 
             if (focus instanceof IProperMotion) {
@@ -389,7 +389,7 @@ public class FocusInfoInterface extends Table implements IObserver, IGuiInterfac
 
             break;
         case FOCUS_INFO_UPDATED:
-            focusAngle.setText(sf.format(Math.toDegrees((double) data[1]) % 360) + "°");
+            focusAngle.setText(sf.format(Math.toDegrees((double) data[1]) % 360) + "ï¿½");
 
             // Dist to cam
             Pair<Double, String> distCam = GlobalResources.doubleToDistanceString((double) data[0]);
@@ -401,8 +401,8 @@ public class FocusInfoInterface extends Table implements IObserver, IGuiInterfac
                 focusDistSol.setText(sf.format(Math.max(0d, distSol.getFirst())) + " " + distSol.getSecond());
             }
 
-            focusRA.setText(nf.format((double) data[2] % 360) + "°");
-            focusDEC.setText(nf.format((double) data[3] % 360) + "°");
+            focusRA.setText(nf.format((double) data[2] % 360) + "ï¿½");
+            focusDEC.setText(nf.format((double) data[3] % 360) + "ï¿½");
             break;
         case CAMERA_MOTION_UPDATED:
             Vector3d campos = (Vector3d) data[0];
@@ -424,12 +424,12 @@ public class FocusInfoInterface extends Table implements IObserver, IGuiInterfac
         case LON_LAT_UPDATED:
             Double lon = (Double) data[0];
             Double lat = (Double) data[1];
-            pointerLonLat.setText(nf.format(lat) + "°/" + nf.format(lon) + "°");
+            pointerLonLat.setText(nf.format(lat) + "ï¿½/" + nf.format(lon) + "ï¿½");
             break;
         case RA_DEC_UPDATED:
             Double ra = (Double) data[0];
             Double dec = (Double) data[1];
-            pointerRADEC.setText(nf.format(ra) + "°/" + nf.format(dec) + "°");
+            pointerRADEC.setText(nf.format(ra) + "ï¿½/" + nf.format(dec) + "ï¿½");
             break;
         default:
             break;
