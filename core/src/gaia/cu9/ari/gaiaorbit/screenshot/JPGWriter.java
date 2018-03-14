@@ -45,8 +45,10 @@ public class JPGWriter {
     }
 
     public static void setQuality(float quality) {
-        JPGWriter.QUALITY = quality;
-        updateJPEGParams();
+        if (quality != JPGWriter.QUALITY) {
+            JPGWriter.QUALITY = quality;
+            updateJPEGParams();
+        }
     }
 
     public static void write(FileHandle file, Pixmap pix) {

@@ -22,6 +22,7 @@ import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf.ControlsConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf.DataConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf.FrameConf;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf.ImageFormat;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf.PerformanceConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf.PostprocessConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf.PostprocessConf.Antialias;
@@ -265,8 +266,10 @@ public class DesktopConfInit extends ConfInit {
         boolean RENDER_SCREENSHOT_TIME = Boolean.parseBoolean(p.getProperty("graphics.render.time"));
 
         ScreenshotMode FRAME_MODE = ScreenshotMode.valueOf(p.getProperty("graphics.render.mode"));
+        ImageFormat FRAME_FORMAT = ImageFormat.valueOf(p.getProperty("graphcis.render.format", "jpg").toUpperCase());
+        float FRAME_QUALITY = Float.parseFloat(p.getProperty("graphics.render.quality", "0.93"));
         FrameConf fc = new FrameConf();
-        fc.initialize(RENDER_WIDTH, RENDER_HEIGHT, RENDER_TARGET_FPS, CAMERA_REC_TARGET_FPS, AUTO_FRAME_OUTPUT_CAMERA_PLAY, RENDER_FOLDER, RENDER_FILE_NAME, RENDER_SCREENSHOT_TIME, RENDER_SCREENSHOT_TIME, FRAME_MODE);
+        fc.initialize(RENDER_WIDTH, RENDER_HEIGHT, RENDER_TARGET_FPS, CAMERA_REC_TARGET_FPS, AUTO_FRAME_OUTPUT_CAMERA_PLAY, RENDER_FOLDER, RENDER_FILE_NAME, RENDER_SCREENSHOT_TIME, RENDER_SCREENSHOT_TIME, FRAME_MODE, FRAME_FORMAT, FRAME_QUALITY);
 
         /** SCREEN CONF **/
         int SCREEN_WIDTH = Integer.parseInt(p.getProperty("graphics.screen.width"));
@@ -293,8 +296,10 @@ public class DesktopConfInit extends ConfInit {
         int SCREENSHOT_WIDTH = Integer.parseInt(p.getProperty("screenshot.width"));
         int SCREENSHOT_HEIGHT = Integer.parseInt(p.getProperty("screenshot.height"));
         ScreenshotMode SCREENSHOT_MODE = ScreenshotMode.valueOf(p.getProperty("screenshot.mode"));
+        ImageFormat SCREENSHOT_FORMAT = ImageFormat.valueOf(p.getProperty("screenshot.format", "jpg").toUpperCase());
+        float SCREENSHOT_QUALITY = Float.parseFloat(p.getProperty("screenshot.quality", "0.93"));
         ScreenshotConf shc = new ScreenshotConf();
-        shc.initialize(SCREENSHOT_WIDTH, SCREENSHOT_HEIGHT, SCREENSHOT_FOLDER, SCREENSHOT_MODE);
+        shc.initialize(SCREENSHOT_WIDTH, SCREENSHOT_HEIGHT, SCREENSHOT_FOLDER, SCREENSHOT_MODE, SCREENSHOT_FORMAT, SCREENSHOT_QUALITY);
 
         /** CONTROLS CONF **/
         ControlsConf cc = new ControlsConf();
@@ -326,6 +331,8 @@ public class DesktopConfInit extends ConfInit {
         p.setProperty("screenshot.width", Integer.toString(GlobalConf.screenshot.SCREENSHOT_WIDTH));
         p.setProperty("screenshot.height", Integer.toString(GlobalConf.screenshot.SCREENSHOT_HEIGHT));
         p.setProperty("screenshot.mode", GlobalConf.screenshot.SCREENSHOT_MODE.toString());
+        p.setProperty("screenshot.format", GlobalConf.screenshot.SCREENSHOT_FORMAT.toString().toLowerCase());
+        p.setProperty("screenshot.quality", Float.toString(GlobalConf.screenshot.SCREENSHOT_QUALITY));
 
         /** PERFORMANCE **/
         p.setProperty("global.conf.multithreading", Boolean.toString(GlobalConf.performance.MULTITHREADING));
@@ -350,6 +357,8 @@ public class DesktopConfInit extends ConfInit {
         p.setProperty("graphics.camera.recording.frameoutputauto", Boolean.toString(GlobalConf.frame.AUTO_FRAME_OUTPUT_CAMERA_PLAY));
         p.setProperty("graphics.render.time", Boolean.toString(GlobalConf.frame.RENDER_SCREENSHOT_TIME));
         p.setProperty("graphics.render.mode", GlobalConf.frame.FRAME_MODE.toString());
+        p.setProperty("graphics.render.format", GlobalConf.frame.FRAME_FORMAT.toString().toLowerCase());
+        p.setProperty("graphics.render.quality", Float.toString(GlobalConf.frame.FRAME_QUALITY));
 
         /** DATA **/
         p.setProperty("data.json.catalog", GlobalConf.data.CATALOG_JSON_FILES);

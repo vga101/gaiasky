@@ -49,6 +49,10 @@ public class GlobalConf {
         simple, redraw
     }
 
+    public static enum ImageFormat {
+        PNG, JPG
+    }
+
     public static class ScreenshotConf implements IConf {
 
         public static final int MIN_SCREENSHOT_SIZE = 50;
@@ -58,12 +62,16 @@ public class GlobalConf {
         public int SCREENSHOT_HEIGHT;
         public String SCREENSHOT_FOLDER;
         public ScreenshotMode SCREENSHOT_MODE;
+        public ImageFormat SCREENSHOT_FORMAT;
+        public float SCREENSHOT_QUALITY;
 
-        public void initialize(int sCREENSHOT_WIDTH, int sCREENSHOT_HEIGHT, String sCREENSHOT_FOLDER, ScreenshotMode sCREENSHOT_MODE) {
+        public void initialize(int sCREENSHOT_WIDTH, int sCREENSHOT_HEIGHT, String sCREENSHOT_FOLDER, ScreenshotMode sCREENSHOT_MODE, ImageFormat sCREENSHOT_FORMAT, float sCREENSHOT_QUALITY) {
             SCREENSHOT_WIDTH = sCREENSHOT_WIDTH;
             SCREENSHOT_HEIGHT = sCREENSHOT_HEIGHT;
             SCREENSHOT_FOLDER = sCREENSHOT_FOLDER;
             SCREENSHOT_MODE = sCREENSHOT_MODE;
+            SCREENSHOT_FORMAT = sCREENSHOT_FORMAT;
+            SCREENSHOT_QUALITY = sCREENSHOT_QUALITY;
         }
 
         public boolean isSimpleMode() {
@@ -353,6 +361,10 @@ public class GlobalConf {
         public boolean RENDER_OUTPUT = false;
         /** The frame output screenshot mode **/
         public ScreenshotMode FRAME_MODE;
+        /** Format **/
+        public ImageFormat FRAME_FORMAT;
+        /** Quality, in case format is JPG **/
+        public float FRAME_QUALITY;
 
         public FrameConf() {
             EventManager.instance.subscribe(this, Events.CONFIG_FRAME_OUTPUT, Events.FRAME_OUTPUT_CMD);
@@ -367,7 +379,7 @@ public class GlobalConf {
         }
 
         public void initialize(int rENDER_WIDTH, int rENDER_HEIGHT, int rENDER_TARGET_FPS, int cAMERA_REC_TARGET_FPS, boolean aUTO_FRAME_OUTPUT_CAMERA_PLAY, String rENDER_FOLDER,
-                String rENDER_FILE_NAME, boolean rENDER_SCREENSHOT_TIME, boolean rENDER_OUTPUT, ScreenshotMode fRAME_MODE) {
+                String rENDER_FILE_NAME, boolean rENDER_SCREENSHOT_TIME, boolean rENDER_OUTPUT, ScreenshotMode fRAME_MODE, ImageFormat fRAME_FORMAT, float fRAME_QUALITY) {
             RENDER_WIDTH = rENDER_WIDTH;
             RENDER_HEIGHT = rENDER_HEIGHT;
             RENDER_TARGET_FPS = rENDER_TARGET_FPS;
@@ -378,6 +390,8 @@ public class GlobalConf {
             RENDER_SCREENSHOT_TIME = rENDER_SCREENSHOT_TIME;
             RENDER_OUTPUT = rENDER_OUTPUT;
             FRAME_MODE = fRAME_MODE;
+            FRAME_FORMAT = fRAME_FORMAT;
+            FRAME_QUALITY = fRAME_QUALITY;
         }
 
         @Override

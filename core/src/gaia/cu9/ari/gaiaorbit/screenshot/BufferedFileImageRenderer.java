@@ -9,7 +9,8 @@ import com.badlogic.gdx.utils.Pool;
 import com.badlogic.gdx.utils.Pools;
 
 import gaia.cu9.ari.gaiaorbit.render.BufferedFrame;
-import gaia.cu9.ari.gaiaorbit.screenshot.ImageRenderer.ImageType;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf.ImageFormat;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 
@@ -37,7 +38,7 @@ public class BufferedFileImageRenderer implements IFileImageRenderer {
     }
 
     @Override
-    public String saveScreenshot(String folder, String fileprefix, int w, int h, boolean immediate, ImageType type) {
+    public String saveScreenshot(String folder, String fileprefix, int w, int h, boolean immediate, ImageFormat type, float quality) {
         String res = null;
         if (!immediate) {
             if (outputFrameBuffer.size() >= bufferSize) {
@@ -55,7 +56,7 @@ public class BufferedFileImageRenderer implements IFileImageRenderer {
             res = "buffer";
         } else {
             // Screenshot while the frame buffer is on
-            res = ImageRenderer.renderToImageGl20(folder, fileprefix, w, h, type);
+            res = ImageRenderer.renderToImageGl20(folder, fileprefix, w, h, type, quality);
         }
         return res;
     }
@@ -77,7 +78,7 @@ public class BufferedFileImageRenderer implements IFileImageRenderer {
                         String folder = null;
                         for (int i = 0; i < size; i++) {
                             BufferedFrame bf = outputFrameBufferCopy.get(i);
-                            ImageRenderer.writePixmapToImage(bf.folder, bf.filename, bf.pixmap, ImageType.JPG);
+                            ImageRenderer.writePixmapToImage(bf.folder, bf.filename, bf.pixmap, GlobalConf.frame.FRAME_FORMAT, GlobalConf.frame.FRAME_QUALITY);
                             folder = bf.folder;
                             bfPool.free(bf);
                         }
