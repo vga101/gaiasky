@@ -52,10 +52,11 @@ screen and are limited to its resolution.
 Linux
 -----
 
+-  `OBS Studio <https://obsproject.com/>`__ - Amazing open source streaming solution.
 -  `glc <https://github.com/nullkey/glc>`__/`glcs <https://github.com/lano1106/glcs>`__
    - Command-line interface applications. The documentation and user
-   guides can be found in this
-   `wiki <https://github.com/nullkey/glc/wiki>`__.
+   guides can be found in this `wiki <https://github.com/nullkey/glc/wiki>`__.
+-  `Simple Screen Recorder <http://www.maartenbaert.be/simplescreenrecorder/>`__ - The name says it all.
 -  `Gamecaster <https://launchpad.net/gamecaster>`__ - Front end to
    ``glc``.
 -  `Soul Capture <https://piga.orain.org/wiki/Soul_Capture>`__ - Front
@@ -64,6 +65,7 @@ Linux
 Windows
 -------
 
+-  `OBS Studio <https://obsproject.com/>`__ - Amazing open source streaming solution.
 -  `FRAPS <http://www.fraps.com/>`__ - 3rd party Direct3D and OpenGL
    recording software.
 -  `NVIDIA
