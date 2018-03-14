@@ -41,13 +41,13 @@ to the official `ffmpeg documentation <http://ffmpeg.org/documentation.html>`__.
 Also, `here <https://en.wikibooks.org/wiki/FFMPEG_An_Intermediate_Guide/image_sequence>`__ is a good resource on 
 encoding videos from image sequences with ``ffmpeg``.
 
-OpenGL context recorder
+OpenGL/Screen recorders
 =======================
 
-There are several available options to record OpenGL rendering to
-videos, in all systems. Below are some of these listed. These methods,
-however, will only record the OpenGL scene as it is displayed in the
-screen and are limited to its resolution.
+There are several available options to record the screen or OpenGL 
+context, in all systems. Below are some of these listed. These methods,
+however, will only record the scene as it is displayed in the
+screen and are limited to its window resolution.
 
 Linux
 -----
