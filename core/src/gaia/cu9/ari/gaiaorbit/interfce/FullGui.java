@@ -60,6 +60,7 @@ import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnLabel;
 public class FullGui extends AbstractGui {
 
     protected ControlsWindow controlsWindow;
+    protected MinimapWindow minimapWindow;
 
     protected Container<FocusInfoInterface> fi;
     protected FocusInfoInterface focusInterface;
@@ -124,6 +125,9 @@ public class FullGui extends AbstractGui {
             addControlsWindow();
         }
 
+        // MINIMAP
+        addMinimapWindow();
+
         nf = NumberFormatFactory.getFormatter("##0.##");
 
         // FOCUS INFORMATION - BOTTOM RIGHT
@@ -174,6 +178,7 @@ public class FullGui extends AbstractGui {
         // INVISIBLE IN STEREOSCOPIC MODE
         invisibleInStereoMode = new ArrayList<Actor>();
         invisibleInStereoMode.add(controlsWindow);
+        invisibleInStereoMode.add(minimapWindow);
         invisibleInStereoMode.add(fi);
         invisibleInStereoMode.add(messagesInterface);
         invisibleInStereoMode.add(runStateInterface);
@@ -198,6 +203,9 @@ public class FullGui extends AbstractGui {
                     controlsWindow.collapseInstant();
                 controlsWindow.setPosition(0, Gdx.graphics.getHeight() - controlsWindow.getHeight());
                 ui.addActor(controlsWindow);
+            }
+            if (minimapWindow != null) {
+                ui.addActor(minimapWindow);
             }
             if (webglInterface != null)
                 ui.addActor(wgl);
@@ -601,6 +609,12 @@ public class FullGui extends AbstractGui {
         controlsWindow.padBottom(5);
 
         controlsWindow.collapseInstant();
+    }
+
+    public void addMinimapWindow() {
+        minimapWindow = new MinimapWindow(ui, skin);
+        minimapWindow.right().bottom();
+
     }
 
 }
