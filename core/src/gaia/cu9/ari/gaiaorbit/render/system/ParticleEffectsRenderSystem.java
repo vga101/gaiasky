@@ -16,12 +16,12 @@ import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.render.IRenderable;
 import gaia.cu9.ari.gaiaorbit.render.RenderingContext;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
-import gaia.cu9.ari.gaiaorbit.scenegraph.NaturalCamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
 import gaia.cu9.ari.gaiaorbit.util.ComponentTypes;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf.ProgramConf.StereoProfile;
+import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
 public class ParticleEffectsRenderSystem extends ImmediateRenderSystem {
@@ -29,7 +29,7 @@ public class ParticleEffectsRenderSystem extends ImmediateRenderSystem {
 
     private Random rand;
     private Vector3 aux1f;
-    private Vector3d aux1, aux2, aux3, aux4, aux5;
+    private Vector3d aux1, aux2, aux5;
     private int sizeOffset, tOffset;
     private ComponentTypes ct;
     private Vector3[] positions, additional;
@@ -41,12 +41,10 @@ public class ParticleEffectsRenderSystem extends ImmediateRenderSystem {
         aux1f = new Vector3();
         aux1 = new Vector3d();
         aux2 = new Vector3d();
-        aux3 = new Vector3d();
-        aux4 = new Vector3d();
         aux5 = new Vector3d();
         rand = new Random(123);
         baset = System.currentTimeMillis();
-        ct = new ComponentTypes(ComponentType.valueOf("Others"));
+        ct = new ComponentTypes(ComponentType.valueOf("Effects"));
         positions = new Vector3[N_PARTICLES * 2];
         additional = new Vector3[N_PARTICLES * 2];
         campositions = new Vector3d[N_PARTICLES];
@@ -74,17 +72,34 @@ public class ParticleEffectsRenderSystem extends ImmediateRenderSystem {
     protected void initShaderProgram() {
     }
 
+    private double getFactor(double cspeed) {
+        if (cspeed <= 0.4) {
+            return 1;
+        } else if (cspeed <= 1.0) {
+            // lint(1..0.5)
+            return MathUtilsd.lint(cspeed, 0.4, 1.0, 1.0, 0.5);
+        } else if (cspeed <= 2.0) {
+            // lint(0.5..0.3)
+            return MathUtilsd.lint(cspeed, 1.0, 2.0, 0.5, 0.3);
+        } else if (cspeed <= 3.0) {
+            return 0.3;
+        } else {
+            // lint(0.3..0.1)
+            return MathUtilsd.lint(cspeed, 3, 5, 0.3, 0.1);
+        }
+    }
+
     private void updatePositions(ICamera cam) {
-        double dist = 100000;
-        double dists = dist - dist * 0.05;
+        double tu = cam.getCurrent().getTranslateUnits();
+        double dist = 1200000 * tu * Constants.KM_TO_U * getFactor(GlobalConf.scene.CAMERA_SPEED);
+        double dists = dist - dist * 0.1;
         Vector3d campos = aux1.set(cam.getPos());
-        double tu = ((NaturalCamera) cam.getCurrent()).getTranslateUnits();
         for (int i = 0; i < N_PARTICLES * 2; i++) {
             Vector3d pos = aux5.set(positions[i]);
             if (i % 2 == 0) {
                 // Base particle
-                if (pos.dst(campos) * Constants.U_TO_KM > dist * tu) {
-                    pos.set(rand.nextDouble() - 0.5, rand.nextDouble() - 0.5, rand.nextDouble() - 0.5).scl(dists * tu * Constants.KM_TO_U).add(campos);
+                if (pos.dst(campos) > dist) {
+                    pos.set(rand.nextDouble() - 0.5, rand.nextDouble() - 0.5, rand.nextDouble() - 0.5).scl(dists).add(campos);
                     pos.put(positions[i]);
                     additional[i].z = getT();
                     campositions[i / 2].set(campos);
@@ -155,59 +170,60 @@ public class ParticleEffectsRenderSystem extends ImmediateRenderSystem {
 
     @Override
     public void renderStud(Array<IRenderable> renderables, ICamera camera, double t) {
-        updatePositions(camera);
+        float alpha = getAlpha(ct);
+        if (alpha > 0) {
+            updatePositions(camera);
 
-        // Enable GL_LINE_SMOOTH
-        Gdx.gl20.glEnable(0xB20);
-        // Enable GL_LINE_WIDTH
-        Gdx.gl20.glEnable(0xB21);
-        Gdx.gl20.glEnable(GL20.GL_DEPTH_TEST);
-        Gdx.gl20.glEnable(GL20.GL_BLEND);
-        // Additive blending
-        Gdx.gl20.glBlendFunc(GL20.GL_ONE, GL20.GL_ONE);
-        // Regular
-        Gdx.gl.glLineWidth(1f * GlobalConf.SCALE_FACTOR);
+            // Enable GL_LINE_SMOOTH
+            Gdx.gl20.glEnable(0xB20);
+            // Enable GL_LINE_WIDTH
+            Gdx.gl20.glEnable(0xB21);
+            // Additive blending
+            Gdx.gl20.glBlendFunc(GL20.GL_ONE, GL20.GL_ONE);
+            // Regular
+            Gdx.gl.glLineWidth(1f * GlobalConf.SCALE_FACTOR);
 
-        curr.vertexIdx = 0;
-        curr.numVertices = N_PARTICLES * 2;
-        for (int i = 0; i < N_PARTICLES * 2; i++) {
-            // COLOR
-            curr.vertices[curr.vertexIdx + curr.colorOffset] = additional[i].x;
-            // SIZE
-            curr.vertices[curr.vertexIdx + sizeOffset] = additional[i].y;
-            // T
-            curr.vertices[curr.vertexIdx + tOffset] = additional[i].z;
-            // POSITION
-            curr.vertices[curr.vertexIdx] = positions[i].x;
-            curr.vertices[curr.vertexIdx + 1] = positions[i].y;
-            curr.vertices[curr.vertexIdx + 2] = positions[i].z;
+            curr.vertexIdx = 0;
+            curr.numVertices = N_PARTICLES * 2;
+            for (int i = 0; i < N_PARTICLES * 2; i++) {
+                // COLOR
+                curr.vertices[curr.vertexIdx + curr.colorOffset] = additional[i].x;
+                // SIZE
+                curr.vertices[curr.vertexIdx + sizeOffset] = additional[i].y;
+                // T
+                curr.vertices[curr.vertexIdx + tOffset] = additional[i].z;
+                // POSITION
+                curr.vertices[curr.vertexIdx] = positions[i].x;
+                curr.vertices[curr.vertexIdx + 1] = positions[i].y;
+                curr.vertices[curr.vertexIdx + 2] = positions[i].z;
 
-            curr.vertexIdx += curr.vertexSize;
-        }
+                curr.vertexIdx += curr.vertexSize;
+            }
 
-        /**
-         * RENDER
-         */
-        if (curr != null) {
-            ShaderProgram shaderProgram = getShaderProgram();
+            /**
+             * RENDER
+             */
+            if (curr != null) {
+                ShaderProgram shaderProgram = getShaderProgram();
 
-            shaderProgram.begin();
-            shaderProgram.setUniformMatrix("u_projModelView", camera.getCamera().combined);
-            shaderProgram.setUniformf("u_camPos", camera.getCurrent().getPos().put(aux1f));
-            shaderProgram.setUniformf("u_alpha", getAlpha(ct) * 0.6f);
-            shaderProgram.setUniformf("u_ar", GlobalConf.program.STEREOSCOPIC_MODE && (GlobalConf.program.STEREO_PROFILE != StereoProfile.HD_3DTV && GlobalConf.program.STEREO_PROFILE != StereoProfile.ANAGLYPHIC) ? 0.5f : 1f);
-            shaderProgram.setUniformf("u_sizeFactor", rc.scaleFactor);
-            shaderProgram.setUniformf("u_t", getT());
+                shaderProgram.begin();
+                shaderProgram.setUniformMatrix("u_projModelView", camera.getCamera().combined);
+                shaderProgram.setUniformf("u_camPos", camera.getCurrent().getPos().put(aux1f));
+                shaderProgram.setUniformf("u_alpha", alpha * 0.6f);
+                shaderProgram.setUniformf("u_ar", GlobalConf.program.STEREOSCOPIC_MODE && (GlobalConf.program.STEREO_PROFILE != StereoProfile.HD_3DTV && GlobalConf.program.STEREO_PROFILE != StereoProfile.ANAGLYPHIC) ? 0.5f : 1f);
+                shaderProgram.setUniformf("u_sizeFactor", rc.scaleFactor);
+                shaderProgram.setUniformf("u_t", getT());
 
-            // Relativistic effects
-            addEffectsUniforms(shaderProgram, camera);
+                // Relativistic effects
+                addEffectsUniforms(shaderProgram, camera);
 
-            curr.mesh.setVertices(curr.vertices, 0, N_PARTICLES * 2 * curr.vertexSize);
-            curr.mesh.render(shaderProgram, GL20.GL_LINES);
-            shaderProgram.end();
+                curr.mesh.setVertices(curr.vertices, 0, N_PARTICLES * 2 * curr.vertexSize);
+                curr.mesh.render(shaderProgram, GL20.GL_LINES);
+                shaderProgram.end();
 
-            // Restore
-            Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+                // Restore
+                Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+            }
         }
 
     }

@@ -521,4 +521,9 @@ public class CameraManager implements ICamera, IObserver {
         current.setClosestStar(star);
     }
 
+    @Override
+    public double getTranslateUnits() {
+        return current.getTranslateUnits();
+    }
+
 }

@@ -61,6 +61,8 @@ public interface ICamera {
 
     public Vector3d getShift();
 
+    public double getTranslateUnits();
+
     /**
      * Updates the camera.
      * 

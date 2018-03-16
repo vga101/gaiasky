@@ -579,4 +579,9 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
         return scvel;
     }
 
+    @Override
+    public double getTranslateUnits() {
+        return Math.max(0.001, scvel.len());
+    }
+
 }

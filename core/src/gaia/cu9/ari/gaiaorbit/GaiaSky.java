@@ -528,64 +528,69 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
 
     @Override
     public void render() {
-        if (!DSCHOSEN) {
-            renderGui(initialGui);
-        } else if (LOADING) {
-            if (manager.update()) {
-                doneLoading();
+        try {
+            if (!DSCHOSEN) {
+                renderGui(initialGui);
+            } else if (LOADING) {
+                if (manager.update()) {
+                    doneLoading();
 
-                LOADING = false;
+                    LOADING = false;
+                } else {
+                    // Display loading screen
+                    renderGui(loadingGui);
+                }
             } else {
-                // Display loading screen
-                renderGui(loadingGui);
-            }
-        } else {
 
-            // Asynchronous load of textures and resources
-            manager.update();
+                // Asynchronous load of textures and resources
+                manager.update();
 
-            if (!GlobalConf.runtime.UPDATE_PAUSE) {
-                /**
-                 * UPDATE
-                 */
-                update(Gdx.graphics.getDeltaTime());
+                if (!GlobalConf.runtime.UPDATE_PAUSE) {
+                    /**
+                     * UPDATE
+                     */
+                    update(Gdx.graphics.getDeltaTime());
 
-                /**
-                 * FRAME OUTPUT
-                 */
-                EventManager.instance.post(Events.RENDER_FRAME, this);
+                    /**
+                     * FRAME OUTPUT
+                     */
+                    EventManager.instance.post(Events.RENDER_FRAME, this);
 
-                /**
-                 * SCREENSHOT OUTPUT - simple|redraw mode
-                 */
-                EventManager.instance.post(Events.RENDER_SCREENSHOT, this);
+                    /**
+                     * SCREENSHOT OUTPUT - simple|redraw mode
+                     */
+                    EventManager.instance.post(Events.RENDER_SCREENSHOT, this);
 
-                /**
-                 * SCREEN OUTPUT
-                 */
-                if (GlobalConf.screen.SCREEN_OUTPUT) {
-                    /** RENDER THE SCENE **/
-                    preRenderScene();
-                    renderSgr(cam, t, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), null, pp.getPostProcessBean(RenderType.screen));
+                    /**
+                     * SCREEN OUTPUT
+                     */
+                    if (GlobalConf.screen.SCREEN_OUTPUT) {
+                        /** RENDER THE SCENE **/
+                        preRenderScene();
+                        renderSgr(cam, t, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), null, pp.getPostProcessBean(RenderType.screen));
 
-                    if (GlobalConf.runtime.DISPLAY_GUI) {
-                        // Render the GUI, setting the viewport
-                        GuiRegistry.render(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+                        if (GlobalConf.runtime.DISPLAY_GUI) {
+                            // Render the GUI, setting the viewport
+                            GuiRegistry.render(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+                        }
+
                     }
+                    // Clean lists
+                    sgr.clearLists();
+                    // Number of frames
+                    frames++;
 
+                    /** DEBUG - each 1 secs **/
+                    if (TimeUtils.millis() - lastDebugTime > 1000) {
+                        Gdx.app.postRunnable(debugTask);
+                        lastDebugTime = TimeUtils.millis();
+                    }
                 }
-                // Clean lists
-                sgr.clearLists();
-                // Number of frames
-                frames++;
 
-                /** DEBUG - each 1 secs **/
-                if (TimeUtils.millis() - lastDebugTime > 1000) {
-                    Gdx.app.postRunnable(debugTask);
-                    lastDebugTime = TimeUtils.millis();
-                }
             }
-
+        } catch (Throwable t) {
+            EventManager.instance.post(Events.JAVA_EXCEPTION, t);
+            // TODO implement error reporting?
         }
     }
 

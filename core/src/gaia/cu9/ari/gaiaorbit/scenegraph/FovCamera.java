@@ -409,4 +409,9 @@ public class FovCamera extends AbstractCamera implements IObserver {
         return frustum2;
     }
 
+    @Override
+    public double getTranslateUnits() {
+        return 0;
+    }
+
 }
