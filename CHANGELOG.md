@@ -6,6 +6,9 @@
 
 **Implemented enhancements:**
 
+- Add image format and quality for screenshots and frames to config [\#253](https://github.com/langurmonkey/gaiasky/issues/253)
+- Add reset time hotkey [\#252](https://github.com/langurmonkey/gaiasky/issues/252)
+- Apply graphics quality without restart [\#251](https://github.com/langurmonkey/gaiasky/issues/251)
 - Add gravitational wave model [\#249](https://github.com/langurmonkey/gaiasky/issues/249)
 - Add CMB [\#248](https://github.com/langurmonkey/gaiasky/issues/248)
 - Add SAMP support [\#246](https://github.com/langurmonkey/gaiasky/issues/246)
@@ -74,6 +77,8 @@
 
 **Closed issues:**
 
+- Enable particle effects [\#254](https://github.com/langurmonkey/gaiasky/issues/254)
+- Add-ons [\#250](https://github.com/langurmonkey/gaiasky/issues/250)
 - Crash with TGAS GPU dataset [\#236](https://github.com/langurmonkey/gaiasky/issues/236)
 - Preferences window shows wrong version number [\#234](https://github.com/langurmonkey/gaiasky/issues/234)
 - Cannot build desktop:dist [\#233](https://github.com/langurmonkey/gaiasky/issues/233)
@@ -81,6 +86,7 @@
 - Adding meshes [\#205](https://github.com/langurmonkey/gaiasky/issues/205)
 - On Windows, install fails with "Could not determine java version from '9.0.1' [\#204](https://github.com/langurmonkey/gaiasky/issues/204)
 - Docs don't mention where record data appears [\#198](https://github.com/langurmonkey/gaiasky/issues/198)
+- So....I...uhh...broke it in the most beautiful way I could think...ever. [\#196](https://github.com/langurmonkey/gaiasky/issues/196)
 - Javadocs no longer available [\#183](https://github.com/langurmonkey/gaiasky/issues/183)
 - Not truly compatible with Oculus Rift [\#44](https://github.com/langurmonkey/gaiasky/issues/44)
 
