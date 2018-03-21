@@ -422,6 +422,8 @@ public enum Events {
     UPDATEPAUSE_CHANGED,
     /** Graphics quality updated **/
     GRAPHICS_QUALITY_UPDATED,
+    /** Toggles minimap visibility **/
+    TOGGLE_MINIMAP,
     /**
      * Sets the vertical scroll position. Contains the scroll position in pixels
      **/

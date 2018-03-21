@@ -108,7 +108,7 @@ public class FullGui extends AbstractGui {
         buildGui();
 
         // We must subscribe to the desired events
-        EventManager.instance.subscribe(this, Events.FOV_CHANGED_CMD, Events.SHOW_TUTORIAL_ACTION, Events.SHOW_SEARCH_ACTION, Events.REMOVE_KEYBOARD_FOCUS, Events.REMOVE_GUI_COMPONENT, Events.ADD_GUI_COMPONENT, Events.SHOW_ABOUT_ACTION, Events.RA_DEC_UPDATED, Events.LON_LAT_UPDATED, Events.POPUP_MENU_FOCUS, Events.SHOW_PREFERENCES_ACTION, Events.SHOW_LAND_AT_LOCATION_ACTION, Events.DISPLAY_POINTER_COORDS_CMD);
+        EventManager.instance.subscribe(this, Events.FOV_CHANGED_CMD, Events.SHOW_TUTORIAL_ACTION, Events.SHOW_SEARCH_ACTION, Events.REMOVE_KEYBOARD_FOCUS, Events.REMOVE_GUI_COMPONENT, Events.ADD_GUI_COMPONENT, Events.SHOW_ABOUT_ACTION, Events.RA_DEC_UPDATED, Events.LON_LAT_UPDATED, Events.POPUP_MENU_FOCUS, Events.SHOW_PREFERENCES_ACTION, Events.SHOW_LAND_AT_LOCATION_ACTION, Events.DISPLAY_POINTER_COORDS_CMD, Events.TOGGLE_MINIMAP);
     }
 
     protected void buildGui() {
@@ -205,6 +205,7 @@ public class FullGui extends AbstractGui {
                 ui.addActor(controlsWindow);
             }
             if (minimapWindow != null) {
+                minimapWindow.setPosition(Gdx.graphics.getWidth() - minimapWindow.getWidth() * 2, 0);
                 ui.addActor(minimapWindow);
             }
             if (webglInterface != null)
@@ -551,6 +552,11 @@ public class FullGui extends AbstractGui {
             popup.showMenu(ui, px, py);
 
             break;
+        case TOGGLE_MINIMAP:
+            if (minimapWindow != null) {
+                minimapWindow.setVisible(!minimapWindow.isVisible());
+            }
+            break;
         default:
             break;
         }
@@ -613,8 +619,7 @@ public class FullGui extends AbstractGui {
 
     public void addMinimapWindow() {
         minimapWindow = new MinimapWindow(ui, skin);
-        minimapWindow.right().bottom();
-
+        minimapWindow.setVisible(false);
     }
 
 }

@@ -409,6 +409,14 @@ public class KeyBindings {
             }
         }), Keys.HOME);
 
+        // TAB -> Minimap toggle
+        addMapping(new ProgramAction(txt("action.toggle", txt("gui.minimap.title")), new Runnable() {
+            @Override
+            public void run() {
+                EventManager.instance.post(Events.TOGGLE_MINIMAP);
+            }
+        }), Keys.TAB);
+
     }
 
     /**
