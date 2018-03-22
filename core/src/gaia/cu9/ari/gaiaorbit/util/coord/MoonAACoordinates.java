@@ -1,6 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.util.coord;
 
-import java.util.Date;
+import java.time.Instant;
 
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
@@ -19,8 +19,8 @@ public class MoonAACoordinates extends AbstractOrbitCoordinates {
     }
 
     @Override
-    public Vector3d getEclipticSphericalCoordinates(Date date, Vector3d out) {
-        if (!Constants.withinVSOPTime(date.getTime()))
+    public Vector3d getEclipticSphericalCoordinates(Instant date, Vector3d out) {
+        if (!Constants.withinVSOPTime(date.toEpochMilli()))
             return null;
         AstroUtils.moonEclipticCoordinates(date, out);
         // To internal units
@@ -29,7 +29,7 @@ public class MoonAACoordinates extends AbstractOrbitCoordinates {
     }
 
     @Override
-    public Vector3d getEclipticCartesianCoordinates(Date date, Vector3d out) {
+    public Vector3d getEclipticCartesianCoordinates(Instant date, Vector3d out) {
         Vector3d v = getEclipticSphericalCoordinates(date, out);
         if (v == null)
             return null;
@@ -38,7 +38,7 @@ public class MoonAACoordinates extends AbstractOrbitCoordinates {
     }
 
     @Override
-    public Vector3d getEquatorialCartesianCoordinates(Date date, Vector3d out) {
+    public Vector3d getEquatorialCartesianCoordinates(Instant date, Vector3d out) {
         Vector3d v = getEclipticSphericalCoordinates(date, out);
         if (v == null)
             return null;

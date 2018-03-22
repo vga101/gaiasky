@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.time.Instant;
 import java.util.Date;
 
 import com.badlogic.gdx.Gdx;
@@ -93,7 +94,7 @@ public class OrbitSamplerDataProvider implements IOrbitDataProvider, IObserver {
         numSamples = Math.max(50, Math.min(1000, numSamples));
         data = new OrbitData();
         String bodyDesc = parameter.name;
-        Date d = new Date(parameter.ini.getTime());
+        Instant d = Instant.ofEpochMilli(parameter.ini.getTime());
         double last = 0, accum = 0;
         Vector3d ecl = new Vector3d();
 
@@ -121,16 +122,16 @@ public class OrbitSamplerDataProvider implements IOrbitDataProvider, IObserver {
             data.x.add(ecl.x);
             data.y.add(ecl.y);
             data.z.add(ecl.z);
-            d.setTime(d.getTime() + stepMs);
-            data.time.add(new Date(d.getTime()));
+            d = Instant.ofEpochMilli(d.toEpochMilli() + stepMs);
+            data.time.add(Instant.ofEpochMilli(d.toEpochMilli()));
         }
 
         // Close the circle
         data.x.add(data.x.get(0));
         data.y.add(data.y.get(0));
         data.z.add(data.z.get(0));
-        d.setTime(d.getTime() + stepMs);
-        data.time.add(new Date(d.getTime()));
+        d = Instant.ofEpochMilli(d.toEpochMilli() + stepMs);
+        data.time.add(Instant.ofEpochMilli(d.toEpochMilli()));
 
         if (writeData) {
             try {

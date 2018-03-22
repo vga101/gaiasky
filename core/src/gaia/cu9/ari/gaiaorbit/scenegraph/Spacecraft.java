@@ -305,9 +305,9 @@ public class Spacecraft extends GenericSpacecraft implements ILineRenderable, IO
         rollv += rolla * dt;
 
         // pos
-        double yawdiff = yawv * dt;
-        double pitchdiff = pitchv * dt;
-        double rolldiff = rollv * dt;
+        double yawdiff = (yawv * dt) % 360d;
+        double pitchdiff = (pitchv * dt) % 360d;
+        double rolldiff = (rollv * dt) % 360d;
 
         Vector3d direction = pair.getFirst();
         Vector3d up = pair.getSecond();
@@ -329,9 +329,10 @@ public class Spacecraft extends GenericSpacecraft implements ILineRenderable, IO
     @Override
     public void updateLocalValues(ITimeFrameProvider time, ICamera camera) {
         if (yawv != 0 || pitchv != 0 || rollv != 0 || vel.len2() != 0 || render) {
-            double dt = Gdx.graphics.getDeltaTime();
+            // We use the simulation time for the integration
+            double dt = time.getDt() * Constants.H_TO_S;
             // Poll keys
-            pollKeys(dt);
+            pollKeys(Gdx.graphics.getDeltaTime());
 
             /** POSITION **/
             pos = computePosition(dt, camera.getClosest2(), enginePower, thrust, direction, force, accel, vel, pos);

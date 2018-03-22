@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.Date;
 
 import com.badlogic.gdx.files.FileHandle;
@@ -75,7 +76,7 @@ public class CamRecorder implements IObserver {
         case RECORDING:
             if (os != null) {
                 try {
-                    os.append(Long.toString(time.getTime().getTime())).append(sep);
+                    os.append(Long.toString(time.getTime().toEpochMilli())).append(sep);
                     os.append(Double.toString(position.x)).append(sep).append(Double.toString(position.y)).append(sep).append(Double.toString(position.z));
                     os.append(sep).append(Double.toString(direction.x)).append(sep).append(Double.toString(direction.y)).append(sep).append(Double.toString(direction.z));
                     os.append(sep).append(Double.toString(up.x)).append(sep).append(Double.toString(up.y)).append(sep).append(Double.toString(up.z));
@@ -91,7 +92,7 @@ public class CamRecorder implements IObserver {
                     String line;
                     if ((line = is.readLine()) != null) {
                         String[] tokens = line.split("\\s+");
-                        EventManager.instance.post(Events.TIME_CHANGE_CMD, new Date(Parser.parseLong(tokens[0])));
+                        EventManager.instance.post(Events.TIME_CHANGE_CMD, Instant.ofEpochMilli(Parser.parseLong(tokens[0])));
 
                         dir.set(Parser.parseDouble(tokens[4]), Parser.parseDouble(tokens[5]), Parser.parseDouble(tokens[6]));
                         upp.set(Parser.parseDouble(tokens[7]), Parser.parseDouble(tokens[8]), Parser.parseDouble(tokens[9]));

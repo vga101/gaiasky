@@ -1,6 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.interfce;
 
-import java.util.Date;
+import java.time.Instant;
 
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -75,7 +75,7 @@ public class RenderGui extends AbstractGui {
         synchronized (lock) {
             switch (event) {
             case TIME_CHANGE_INFO:
-                time.setText(df.format((Date) data[0]));
+                time.setText(df.format((Instant) data[0]));
                 break;
             default:
                 break;

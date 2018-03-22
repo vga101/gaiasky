@@ -1,9 +1,9 @@
 package gaia.cu9.ari.gaiaorbit.util.update;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Net.HttpMethods;
@@ -55,12 +55,12 @@ public class VersionChecker implements Runnable {
                                 JsonValue result = reader.parse(httpResponse.getResultAsStream());
                                 String date = result.getChild("commit").getString("date");
                                 //Format 2016-12-07T10:41:35Z
-                                DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+                                DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
                                 try {
-                                    Date tagDate = df.parse(date);
+                                    LocalDateTime tagDate = LocalDateTime.parse(date, df);
                                     // Here is the commit object
-                                    listener.handle(new VersionCheckEvent(tag, tagDate));
-                                } catch (ParseException e) {
+                                    listener.handle(new VersionCheckEvent(tag, tagDate.toInstant(ZoneOffset.UTC)));
+                                } catch (DateTimeParseException e) {
                                     Logger.error(e);
                                 }
                             }

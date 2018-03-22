@@ -1,6 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.interfce;
 
-import java.util.Date;
+import java.time.Instant;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Event;
@@ -166,7 +166,7 @@ public class WebGLInterface extends Table implements IObserver, IGuiInterface {
         case TIME_CHANGE_CMD:
         case TIME_CHANGE_INFO:
             // Update input time
-            Date time = (Date) data[0];
+            Instant time = (Instant) data[0];
             date.setText(df.format(time));
             break;
         default:

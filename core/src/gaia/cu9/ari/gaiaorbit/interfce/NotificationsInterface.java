@@ -1,5 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.interfce;
 
+import java.time.Instant;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -282,16 +283,16 @@ public class NotificationsInterface extends Table implements IObserver, IGuiInte
 
     public class MessageBean {
         String msg;
-        Date date;
+        Instant date;
 
         public MessageBean(String msg) {
             this.msg = msg;
-            this.date = new Date();
+            this.date = Instant.now();
         }
 
         /** Has the message finished given the timeout? **/
         public boolean finished(long timeout) {
-            return new Date().getTime() - date.getTime() > timeout;
+            return new Date().getTime() - date.toEpochMilli() > timeout;
         }
 
         @Override

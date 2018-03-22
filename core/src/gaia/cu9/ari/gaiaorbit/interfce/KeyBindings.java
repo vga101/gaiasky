@@ -1,6 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.interfce;
 
-import java.util.Date;
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeSet;
@@ -388,7 +388,7 @@ public class KeyBindings {
         addMapping(new ProgramAction(txt("action.resettime"), new Runnable() {
             @Override
             public void run() {
-                EventManager.instance.post(Events.TIME_CHANGE_CMD, new Date());
+                EventManager.instance.post(Events.TIME_CHANGE_CMD, Instant.now());
             }
         }), SPECIAL1, Keys.R);
 

@@ -40,7 +40,7 @@ public class FileDataLoaderEclipticJulianTime {
                     Matrix4d transform = new Matrix4d();
                     transform.scl(Constants.KM_TO_U);
                     if (!t.equals(last)) {
-                        orbitData.time.add(t);
+                        orbitData.time.add(t.toInstant());
 
                         Vector3d pos = new Vector3d(parsed(tokens[1]), parsed(tokens[2]), parsed(tokens[3]));
                         pos.mul(transform);

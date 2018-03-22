@@ -1,5 +1,7 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph;
 
+import java.util.Date;
+
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Quaternion;
@@ -45,7 +47,7 @@ public class Gaia extends Satellite {
             unrotatedPos.set(pos);
             // Undo rotation
             unrotatedPos.mul(Coordinates.eqToEcl()).rotate(-AstroUtils.getSunLongitude(time.getTime()) - 180, 0, 1, 0);
-            attitude = GaiaAttitudeServer.instance.getAttitude(time.getTime());
+            attitude = GaiaAttitudeServer.instance.getAttitude(new Date(time.getTime().toEpochMilli()));
         }
     }
 

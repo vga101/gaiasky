@@ -1,6 +1,9 @@
 package gaia.cu9.ari.gaiaorbit.util.gaia;
 
 import java.io.IOException;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,7 +33,7 @@ import gaia.cu9.ari.gaiaorbit.util.units.Quantity;
  */
 public class AttitudeXmlParser {
 
-    private static Date endOfMission;
+    private static Instant endOfMission;
     private static IDateFormat format;
 
     static {
@@ -71,7 +74,7 @@ public class AttitudeXmlParser {
         final long overlapMs = 10 * 60 * 1000;
         final long threeHoursSec = 10800;
         // GENERATE LIST OF DURATIONS
-        SortedMap<Date, FileHandle> datesMap = new TreeMap<Date, FileHandle>();
+        SortedMap<Instant, FileHandle> datesMap = new TreeMap<Instant, FileHandle>();
         for (FileHandle fh : list) {
             try {
                 if (oneDayDuration) {
@@ -80,15 +83,14 @@ public class AttitudeXmlParser {
                      * We set the activation time to ten minutes before today starts. 
                      */
 
-                    Date date = new Date();
-                    date.setMinutes(0);
-                    date.setSeconds(0);
+                    LocalDateTime ldt = LocalDateTime.now();
+                    ldt = ldt.withMinute(0).withSecond(0);
+                    Instant date = ldt.toInstant(ZoneOffset.UTC);
                     // Date is the start of today. Lets subtract 10 minutes
-                    long time = date.getTime() - overlapMs;
-                    date.setTime(time);
+                    date.minusMillis(overlapMs);
                     datesMap.put(date, fh);
                 } else {
-                    Date date = parseActivationTime(fh);
+                    Instant date = parseActivationTime(fh);
                     datesMap.put(date, fh);
                 }
             } catch (IOException e) {
@@ -96,16 +98,16 @@ public class AttitudeXmlParser {
             }
         }
         Map<FileHandle, Duration> durationMap = new HashMap<FileHandle, Duration>();
-        Set<Date> dates = datesMap.keySet();
+        Set<Instant> dates = datesMap.keySet();
         FileHandle lastFH = null;
-        Date lastDate = null;
-        for (Date date : dates) {
+        Instant lastDate = null;
+        for (Instant date : dates) {
             if (lastDate != null && lastFH != null) {
                 if (oneDayDuration) {
                     Duration d = new Secs(threeHoursSec + overlapMs * 2 / 1000);
                     durationMap.put(lastFH, d);
                 } else {
-                    long elapsed = date.getTime() - lastDate.getTime();
+                    long elapsed = date.toEpochMilli() - lastDate.toEpochMilli();
 
                     Duration d = new Hours(elapsed * Constants.MS_TO_H);
                     durationMap.put(lastFH, d);
@@ -119,7 +121,7 @@ public class AttitudeXmlParser {
             Duration d = new Secs(threeHoursSec + overlapMs * 2 / 1000);
             durationMap.put(lastFH, d);
         } else {
-            long elapsed = endOfMission.getTime() - lastDate.getTime();
+            long elapsed = endOfMission.toEpochMilli() - lastDate.toEpochMilli();
             Duration d = new Hours(elapsed * Constants.MS_TO_H);
             durationMap.put(lastFH, d);
         }
@@ -141,9 +143,9 @@ public class AttitudeXmlParser {
         return bst;
     }
 
-    private static Date findActivationDate(FileHandle fh, SortedMap<Date, FileHandle> datesMap) {
-        Set<Date> keys = datesMap.keySet();
-        for (Date d : keys) {
+    private static Instant findActivationDate(FileHandle fh, SortedMap<Instant, FileHandle> datesMap) {
+        Set<Instant> keys = datesMap.keySet();
+        for (Instant d : keys) {
             if (datesMap.get(d).equals(fh)) {
                 return d;
             }
@@ -151,7 +153,7 @@ public class AttitudeXmlParser {
         return null;
     }
 
-    private static Date parseActivationTime(FileHandle fh) throws IOException {
+    private static Instant parseActivationTime(FileHandle fh) throws IOException {
 
         XmlReader reader = new XmlReader();
         XmlReader.Element element = reader.parse(fh);
@@ -162,7 +164,7 @@ public class AttitudeXmlParser {
         return getDate(activTime);
     }
 
-    private static AttitudeIntervalBean parseFile(FileHandle fh, Duration duration, Date activationTime) throws IOException {
+    private static AttitudeIntervalBean parseFile(FileHandle fh, Duration duration, Instant activationTime) throws IOException {
         BaseAttitudeDataServer<?> result = null;
 
         XmlReader reader = new XmlReader();
@@ -178,7 +180,7 @@ public class AttitudeXmlParser {
         /** SCAN LAW ELEMENT **/
         XmlReader.Element scanlaw = model.getChildByName("scanlaw");
         String epochRef = scanlaw.getAttribute("epochref");
-        Date refEpochDate = getDate(epochRef);
+        Instant refEpochDate = getDate(epochRef);
         double refEpoch = AstroUtils.getJulianDate(refEpochDate) * AstroUtils.DAY_TO_NS;
         double refEpochJ2010 = refEpoch - AstroUtils.JD_J2010 * AstroUtils.DAY_TO_NS;
 
@@ -243,11 +245,11 @@ public class AttitudeXmlParser {
             result = epsl;
         }
 
-        return new AttitudeIntervalBean(name, activationTime, result, fh.name());
+        return new AttitudeIntervalBean(name, new Date(activationTime.toEpochMilli()), result, fh.name());
     }
 
-    private static Date getDate(String date) {
-        Date d = format.parse(date);
+    private static Instant getDate(String date) {
+        Instant d = format.parse(date);
         return d;
     }
 

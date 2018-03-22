@@ -198,10 +198,10 @@ public class FovCamera extends AbstractCamera implements IObserver {
      */
     public void updateDirections(ITimeFrameProvider time) {
         lastTime = currentTime;
-        currentTime = time.getTime().getTime();
+        currentTime = time.getTime().toEpochMilli();
         trf = matrix;
         trf.idt();
-        Quaterniond quat = GaiaAttitudeServer.instance.getAttitude(time.getTime()).getQuaternion();
+        Quaterniond quat = GaiaAttitudeServer.instance.getAttitude(new Date(time.getTime().toEpochMilli())).getQuaternion();
         trf.rotate(quat).rotate(0, 0, 1, 180);
         directions[0].set(0, 0, 1).rotate(BAM_2, 0, 1, 0).mul(trf).nor();
         directions[1].set(0, 0, 1).rotate(-BAM_2, 0, 1, 0).mul(trf).nor();

@@ -8,8 +8,8 @@ import java.io.FileWriter;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.Calendar;
-import java.util.Date;
 
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
@@ -79,14 +79,14 @@ public class OriginalDataLoader {
                     Vector3d pos = new Vector3d(parsed(tokens[2]), parsed(tokens[3]), -parsed(tokens[1]));
 
                     // Transform to heliotropic using the Sun's ecliptic longitude
-                    Vector3d posHel = correctSunLongitude(pos, t, 0);
+                    Vector3d posHel = correctSunLongitude(pos, t.toInstant(), 0);
 
                     // To ecliptic again
                     pos.mul(Coordinates.eqToEcl());
                     posHel.mul(Coordinates.eqToEcl());
 
                     if (count++ % 7 == 0) {
-                        orbitData.time.add(t);
+                        orbitData.time.add(t.toInstant());
                         orbitData.x.add(posHel.x * Constants.KM_TO_U);
                         orbitData.y.add(posHel.y * Constants.KM_TO_U);
                         orbitData.z.add(posHel.z * Constants.KM_TO_U);
@@ -123,7 +123,7 @@ public class OriginalDataLoader {
      *            Time
      * @return Vector3 with the position in the heliotropic reference frame
      */
-    protected Vector3d correctSunLongitude(final Vector3d pos, Date t) {
+    protected Vector3d correctSunLongitude(final Vector3d pos, Instant t) {
         return correctSunLongitude(pos, t, 0);
     }
 
@@ -138,7 +138,7 @@ public class OriginalDataLoader {
      *            The origin angle
      * @return Vector3 with the position in the heliotropic reference frame
      */
-    protected Vector3d correctSunLongitude(final Vector3d pos, Date t, float origin) {
+    protected Vector3d correctSunLongitude(final Vector3d pos, Instant t, float origin) {
         Vector3d upDirection = new Vector3d(0, 1, 0);
         // We get the Up direction of the ecliptic in equatorial coordinates
         upDirection.mul(Coordinates.eclToEq());
@@ -183,11 +183,11 @@ public class OriginalDataLoader {
         int n = data.x.size;
         for (int i = 0; i < n; i++) {
             Vector3d pos = new Vector3d(data.x.get(i), data.y.get(i), data.z.get(i));
-            Date t = data.time.get(i);
+            Instant t = data.time.get(i);
 
-            long time = iniTime < 0 ? 0 : t.getTime() - iniTime;
+            long time = iniTime < 0 ? 0 : t.toEpochMilli() - iniTime;
             if (time == 0) {
-                iniTime = t.getTime();
+                iniTime = t.toEpochMilli();
             }
             float timey = getYearFraction(iniTime + time);
 

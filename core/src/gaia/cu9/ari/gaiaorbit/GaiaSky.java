@@ -1,8 +1,8 @@
 package gaia.cu9.ari.gaiaorbit;
 
 import java.io.File;
+import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -217,7 +217,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         }
 
         // Initialise times
-        clock = new GlobalClock(1, new Date());
+        clock = new GlobalClock(1, Instant.now());
         real = new RealTimeClock();
         time = GlobalConf.runtime.REAL_TIME ? real : clock;
         t = 0;
@@ -382,7 +382,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
             EventManager.instance.post(Events.INPUT_ENABLED_CMD, true);
 
         // Set current date
-        EventManager.instance.post(Events.TIME_CHANGE_CMD, new Date());
+        EventManager.instance.post(Events.TIME_CHANGE_CMD, Instant.now());
 
         if (Constants.focalplane) {
             // Activate time

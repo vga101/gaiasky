@@ -1,6 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.util.time;
 
-import java.util.Date;
+import java.time.Instant;
 
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
@@ -19,9 +19,10 @@ public class GlobalClock implements IObserver, ITimeFrameProvider {
     private static final double MS_TO_HOUR = 1 / 3600000d;
 
     /** The current time of the clock **/
-    public Date time, lastTime;
+    public Instant time;
+    long lastTime;
     /** Target time to stop the clock, if any **/
-    private Date targetTime;
+    private Instant targetTime;
     /** The hour difference from the last frame **/
     public double hdiff;
 
@@ -40,17 +41,17 @@ public class GlobalClock implements IObserver, ITimeFrameProvider {
      * 
      * @param timeWrap
      *            The time wrap multiplier
-     * @param date
-     *            The date with which to initialise the clock
+     * @param instant
+     *            The instant with which to initialise the clock
      */
-    public GlobalClock(double timeWrap, Date date) {
+    public GlobalClock(double timeWrap, Instant instant) {
         super();
         // Now
         this.timeWarp = timeWrap;
         hdiff = 0d;
-        time = date;
+        time = instant;
         targetTime = null;
-        lastTime = new Date(time.getTime());
+        lastTime = time.toEpochMilli();
         EventManager.instance.subscribe(this, Events.PACE_CHANGE_CMD, Events.TIME_WARP_DECREASE_CMD, Events.TIME_WARP_INCREASE_CMD, Events.TIME_CHANGE_CMD, Events.TARGET_TIME_CMD);
     }
 
@@ -75,13 +76,13 @@ public class GlobalClock implements IObserver, ITimeFrameProvider {
 
             double ms = sign * h * Constants.H_TO_MS;
 
-            long currentTime = time.getTime();
-            lastTime.setTime(currentTime);
+            long currentTime = time.toEpochMilli();
+            lastTime = currentTime;
 
             long newTime = currentTime + (long) ms;
             // Check target time
             if (targetTime != null) {
-                long target = targetTime.getTime();
+                long target = targetTime.toEpochMilli();
                 if ((timeWarp > 0 && currentTime <= target && newTime > target) || (timeWarp < 0 && currentTime >= target && newTime < target)) {
                     newTime = target;
                     // Unset target time
@@ -108,7 +109,7 @@ public class GlobalClock implements IObserver, ITimeFrameProvider {
                 }
             }
 
-            time.setTime(newTime);
+            time = Instant.ofEpochMilli(newTime);
 
             // Post event each 1/2 second
             lastUpdate += dt;
@@ -116,16 +117,16 @@ public class GlobalClock implements IObserver, ITimeFrameProvider {
                 EventManager.instance.post(Events.TIME_CHANGE_INFO, time);
                 lastUpdate = 0;
             }
-        } else if (time.getTime() - lastTime.getTime() != 0) {
-            hdiff = (time.getTime() - lastTime.getTime()) * MS_TO_HOUR;
-            lastTime.setTime(time.getTime());
+        } else if (time.toEpochMilli() - lastTime != 0) {
+            hdiff = (time.toEpochMilli() - lastTime) * MS_TO_HOUR;
+            lastTime = time.toEpochMilli();
         } else {
             hdiff = 0d;
         }
     }
 
     @Override
-    public Date getTime() {
+    public Instant getTime() {
         return time;
     }
 
@@ -134,7 +135,7 @@ public class GlobalClock implements IObserver, ITimeFrameProvider {
         switch (event) {
         case TARGET_TIME_CMD:
             if (data.length > 0) {
-                targetTime = (Date) data[0];
+                targetTime = (Instant) data[0];
             } else {
                 targetTime = null;
             }
@@ -170,16 +171,24 @@ public class GlobalClock implements IObserver, ITimeFrameProvider {
             break;
         case TIME_CHANGE_CMD:
             // Update time
-            long newt = ((Date) data[0]).getTime();
+            Instant newinstant = ((Instant) data[0]);
+            long newt = newinstant.toEpochMilli();
+            boolean updt = false;
             if (newt > Constants.MAX_TIME_MS) {
                 newt = Constants.MAX_TIME_MS;
                 EventManager.instance.post(Events.POST_NOTIFICATION, "Time overflow, set to maximum (" + (Constants.MIN_TIME_MS * Constants.MS_TO_Y) + " years)");
+                updt = true;
             }
             if (newt < Constants.MIN_TIME_MS) {
                 newt = Constants.MIN_TIME_MS;
                 EventManager.instance.post(Events.POST_NOTIFICATION, "Time overflow, set to minimum (" + (Constants.MIN_TIME_MS * Constants.MS_TO_Y) + " years)");
+                updt = true;
             }
-            this.time.setTime(newt);
+            if (updt) {
+                this.time = Instant.ofEpochMilli(newt);
+            } else {
+                this.time = newinstant;
+            }
             break;
         default:
             break;

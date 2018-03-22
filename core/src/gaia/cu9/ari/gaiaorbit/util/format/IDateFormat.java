@@ -1,9 +1,9 @@
 package gaia.cu9.ari.gaiaorbit.util.format;
 
-import java.util.Date;
+import java.time.Instant;
 
 public interface IDateFormat {
-    public String format(Date date);
+    public String format(Instant date);
 
-    public Date parse(String date);
+    public Instant parse(String date);
 }

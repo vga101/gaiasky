@@ -1,6 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.interfce;
 
-import java.util.Date;
+import java.time.Instant;
 
 import com.badlogic.gdx.Gdx;
 
@@ -39,7 +39,7 @@ public class ConsoleLogger implements IObserver {
     public ConsoleLogger(boolean writeDates) {
         this.msTimeout = DEFAULT_TIMEOUT;
 
-        this.df = DateFormatFactory.getFormatter(I18n.locale, DateType.TIME);
+        this.df = DateFormatFactory.getFormatter(I18n.locale, DateType.DATETIME);
         EventManager.instance.subscribe(this, Events.POST_NOTIFICATION, Events.FOCUS_CHANGED, Events.TOGGLE_TIME_CMD, Events.TOGGLE_VISIBILITY_CMD, Events.CAMERA_MODE_CMD, Events.PACE_CHANGED_INFO, Events.FOCUS_LOCK_CMD, Events.TOGGLE_AMBIENT_LIGHT, Events.FOV_CHANGE_NOTIFICATION, Events.JAVA_EXCEPTION, Events.ORBIT_DATA_LOADED, Events.SCREENSHOT_INFO, Events.COMPUTE_GAIA_SCAN_CMD, Events.ONLY_OBSERVED_STARS_CMD, Events.TRANSIT_COLOUR_CMD, Events.LIMIT_MAG_CMD, Events.STEREOSCOPIC_CMD, Events.DISPLAY_GUI_CMD, Events.FRAME_OUTPUT_CMD, Events.STEREO_PROFILE_CMD, Events.OCTREE_PARTICLE_FADE_CMD);
     }
 
@@ -48,14 +48,14 @@ public class ConsoleLogger implements IObserver {
     }
 
     private void addMessage(String msg) {
-        Gdx.app.log(df.format(new Date()), msg);
+        Gdx.app.log(df.format(Instant.now()), msg);
     }
 
     private void addMessage(String msg, boolean debug) {
         if (debug)
-            Gdx.app.debug(df.format(new Date()), msg);
+            Gdx.app.debug(df.format(Instant.now()), msg);
         else
-            Gdx.app.log(df.format(new Date()), msg);
+            Gdx.app.log(df.format(Instant.now()), msg);
     }
 
     @Override

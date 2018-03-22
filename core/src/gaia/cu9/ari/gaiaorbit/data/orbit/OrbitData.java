@@ -1,6 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.data.orbit;
 
-import java.util.Date;
+import java.time.Instant;
 
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
@@ -10,7 +10,7 @@ import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 public class OrbitData {
     // Values of x, y, z in world coordinates
     public Array<Double> x, y, z;
-    public Array<Date> time;
+    public Array<Instant> time;
 
     private Vector3d v0, v1;
 
@@ -18,7 +18,7 @@ public class OrbitData {
         x = new Array<Double>();
         y = new Array<Double>();
         z = new Array<Double>();
-        time = new Array<Date>();
+        time = new Array<Instant>();
 
         v0 = new Vector3d();
         v1 = new Vector3d();
@@ -51,7 +51,7 @@ public class OrbitData {
         return z.get(index);
     }
 
-    public Date getDate(int index) {
+    public Instant getDate(int index) {
         return time.get(index);
     }
 
@@ -76,44 +76,44 @@ public class OrbitData {
      *            The date
      * @return Whether the operation completes successfully
      */
-    public boolean loadPoint(Vector3d v, Date date) {
+    public boolean loadPoint(Vector3d v, Instant instant) {
         // Data is sorted
-        int idx = binarySearch(time, date);
+        int idx = binarySearch(time, instant);
 
         if (idx < 0 || idx >= time.size) {
             // No data for this time
             return false;
         }
 
-        if (time.get(idx).equals(date)) {
+        if (time.get(idx).equals(instant)) {
             v.set(x.get(idx), y.get(idx), z.get(idx));
         } else {
             // Interpolate
             loadPoint(v0, idx);
             loadPoint(v1, idx + 1);
-            Date t0 = time.get(idx);
-            Date t1 = time.get(idx + 1);
+            Instant t0 = time.get(idx);
+            Instant t1 = time.get(idx + 1);
 
-            double scl = (double) (date.getTime() - t0.getTime()) / (t1.getTime() - t0.getTime());
+            double scl = (double) (instant.toEpochMilli() - t0.toEpochMilli()) / (t1.toEpochMilli() - t0.toEpochMilli());
             v.set(v1.sub(v0).scl(scl).add(v0));
         }
         return true;
     }
 
-    private int binarySearch(Array<Date> times, Date elem) {
-        long time = elem.getTime();
-        if (time >= times.get(0).getTime() && time <= times.get(times.size - 1).getTime()) {
+    private int binarySearch(Array<Instant> times, Instant elem) {
+        long time = elem.toEpochMilli();
+        if (time >= times.get(0).toEpochMilli() && time <= times.get(times.size - 1).toEpochMilli()) {
             return binarySearch(times, time, 0, times.size - 1);
         } else {
             return -1;
         }
     }
 
-    private int binarySearch(Array<Date> times, long time, int i0, int i1) {
+    private int binarySearch(Array<Instant> times, long time, int i0, int i1) {
         if (i0 > i1) {
             return -1;
         } else if (i0 == i1) {
-            if (times.get(i0).getTime() > time) {
+            if (times.get(i0).toEpochMilli() > time) {
                 return i0 - 1;
             } else {
                 return i0;
@@ -121,9 +121,9 @@ public class OrbitData {
         }
 
         int mid = (i0 + i1) / 2;
-        if (times.get(mid).getTime() == time) {
+        if (times.get(mid).toEpochMilli() == time) {
             return mid;
-        } else if (times.get(mid).getTime() < time) {
+        } else if (times.get(mid).toEpochMilli() < time) {
             return binarySearch(times, time, mid + 1, i1);
         } else {
             return binarySearch(times, time, i0, mid);

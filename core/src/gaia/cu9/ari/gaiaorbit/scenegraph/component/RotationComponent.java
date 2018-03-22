@@ -47,7 +47,7 @@ public class RotationComponent {
     }
 
     public void update(ITimeFrameProvider time) {
-        double t = time.getTime().getTime() - AstroUtils.J2000_MS;
+        double t = time.getTime().toEpochMilli() - AstroUtils.J2000_MS;
         angle = (meridianAngle + angularVelocity * t * Constants.MS_TO_H) % 360d;
     }
 

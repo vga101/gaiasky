@@ -1,6 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph;
 
-import java.util.Date;
+import java.time.Instant;
 
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.math.Matrix4;
@@ -90,7 +90,7 @@ public class Orbit extends LineObject {
         updateLocalTransform(time.getTime());
     }
 
-    protected void updateLocalTransform(Date date) {
+    protected void updateLocalTransform(Instant date) {
         transform.getMatrix(localTransformD);
         if (parent.orientation != null)
             localTransformD.mul(parent.orientation);

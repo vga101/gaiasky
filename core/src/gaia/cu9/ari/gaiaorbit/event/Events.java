@@ -13,7 +13,7 @@ public enum Events {
     /** Notifies of a change in the time, contains the Date object **/
     TIME_CHANGE_INFO,
     /**
-     * Issues a change time command, contains the Date object with the new time
+     * Issues a change time command, contains the Instant object with the new time
      **/
     TIME_CHANGE_CMD,
 

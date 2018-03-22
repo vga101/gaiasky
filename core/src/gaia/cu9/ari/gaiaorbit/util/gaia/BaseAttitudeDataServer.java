@@ -74,7 +74,7 @@ public abstract class BaseAttitudeDataServer<A extends Attitude> {
     }
 
     public A getAttitude(Date date) {
-        long tNs = (long) ((AstroUtils.getJulianDateCache(date) - AstroUtils.JD_J2010) * AstroUtils.DAY_TO_NS);
+        long tNs = (long) ((AstroUtils.getJulianDateCache(date.toInstant()) - AstroUtils.JD_J2010) * AstroUtils.DAY_TO_NS);
         return getAttitudeNative(tNs);
     }
 

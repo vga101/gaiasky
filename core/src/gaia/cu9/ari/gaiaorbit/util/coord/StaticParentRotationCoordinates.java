@@ -1,6 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.util.coord;
 
-import java.util.Date;
+import java.time.Instant;
 
 import gaia.cu9.ari.gaiaorbit.scenegraph.AbstractPositionEntity;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ModelBody;
@@ -36,17 +36,17 @@ public class StaticParentRotationCoordinates implements IBodyCoordinates {
     }
 
     @Override
-    public Vector3d getEclipticSphericalCoordinates(Date date, Vector3d out) {
+    public Vector3d getEclipticSphericalCoordinates(Instant date, Vector3d out) {
         return getEquatorialCartesianCoordinates(date, out);
     }
 
     @Override
-    public Vector3d getEclipticCartesianCoordinates(Date date, Vector3d out) {
+    public Vector3d getEclipticCartesianCoordinates(Instant date, Vector3d out) {
         return getEquatorialCartesianCoordinates(date, out);
     }
 
     @Override
-    public Vector3d getEquatorialCartesianCoordinates(Date date, Vector3d out) {
+    public Vector3d getEquatorialCartesianCoordinates(Instant date, Vector3d out) {
         out.set(position);
         RotationComponent rc = parent.rc;
         if (rc != null) {

@@ -1,7 +1,7 @@
 package gaia.cu9.ari.gaiaorbit.util;
 
+import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import com.badlogic.gdx.math.MathUtils;
@@ -520,7 +520,7 @@ public class GlobalConf {
         public String TUTORIAL_POINTER_SCRIPT_LOCATION;
         public String TUTORIAL_SCRIPT_LOCATION;
         public boolean SHOW_DEBUG_INFO;
-        public Date LAST_CHECKED;
+        public Instant LAST_CHECKED;
         public String LAST_VERSION_TIME;
         public String VERSION_CHECK_URL;
         public String UI_THEME;
@@ -543,7 +543,7 @@ public class GlobalConf {
             EventManager.instance.subscribe(this, Events.STEREOSCOPIC_CMD, Events.STEREO_PROFILE_CMD, Events.CUBEMAP360_CMD);
         }
 
-        public void initialize(boolean dISPLAY_TUTORIAL, String tUTORIAL_POINTER_SCRIPT_LOCATION, String tUTORIAL_SCRIPT_LOCATION, boolean sHOW_DEBUG_INFO, Date lAST_CHECKED, String lAST_VERSION_TIME,
+        public void initialize(boolean dISPLAY_TUTORIAL, String tUTORIAL_POINTER_SCRIPT_LOCATION, String tUTORIAL_SCRIPT_LOCATION, boolean sHOW_DEBUG_INFO, Instant lAST_CHECKED, String lAST_VERSION_TIME,
                 String vERSION_CHECK_URL, String uI_THEME, String sCRIPT_LOCATION, int rEST_PORT, String lOCALE, boolean sTEREOSCOPIC_MODE, StereoProfile sTEREO_PROFILE, boolean cUBEMAP360_MODE,
                 boolean aNALYTICS_ENABLED, boolean dISPLAY_HUD, boolean dISPLAY_POINTER_COORDS, boolean dISPLAY_DATASET_DIALOG) {
             DISPLAY_TUTORIAL = dISPLAY_TUTORIAL;
@@ -640,12 +640,12 @@ public class GlobalConf {
 
     public static class VersionConf implements IConf {
         public String version;
-        public Date buildtime;
+        public Instant buildtime;
         public String builder;
         public String system;
         public String build;
 
-        public void initialize(String version, Date buildtime, String builder, String system, String build) {
+        public void initialize(String version, Instant buildtime, String builder, String system, String build) {
             this.version = version;
             this.buildtime = buildtime;
             this.builder = builder;

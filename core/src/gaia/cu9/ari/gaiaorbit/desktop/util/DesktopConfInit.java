@@ -6,10 +6,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.channels.FileChannel;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Locale;
 import java.util.Properties;
 
@@ -111,15 +112,15 @@ public class DesktopConfInit extends ConfInit {
         /** VERSION CONF **/
         VersionConf vc = new VersionConf();
         String versionStr = vp.getProperty("version");
-        DateFormat df = new SimpleDateFormat("EEE MMM dd kk:mm:ss z yyyy", Locale.ENGLISH);
-        Date buildtime = null;
+        DateTimeFormatter df = DateTimeFormatter.ofPattern("EEE MMM dd kk:mm:ss z yyyy", Locale.ENGLISH);
+        Instant buildtime = null;
         try {
-            buildtime = df.parse(vp.getProperty("buildtime"));
-        } catch (ParseException e) {
-            df = new SimpleDateFormat("dd/MM/yyyy hh:mm a", Locale.ENGLISH);
+            buildtime = LocalDateTime.parse(vp.getProperty("buildtime"), df).toInstant(ZoneOffset.UTC);
+        } catch (DateTimeParseException e) {
+            df = DateTimeFormatter.ofPattern("dd/MM/yyyy hh:mm a", Locale.ENGLISH);
             try {
-                buildtime = df.parse(vp.getProperty("buildtime"));
-            } catch (ParseException e1) {
+                buildtime = LocalDateTime.parse(vp.getProperty("buildtime"), df).toInstant(ZoneOffset.UTC);
+            } catch (DateTimeParseException e1) {
                 Logger.error(e1);
             }
         }
@@ -175,9 +176,9 @@ public class DesktopConfInit extends ConfInit {
         String TUTORIAL_POINTER_SCRIPT_LOCATION = p.getProperty("program.tutorial.pointer.script", "scripts/tutorial/tutorial-pointer.py");
         String TUTORIAL_SCRIPT_LOCATION = p.getProperty("program.tutorial.script", "scripts/tutorial/tutorial.py");
         boolean SHOW_DEBUG_INFO = Boolean.parseBoolean(p.getProperty("program.debuginfo"));
-        Date LAST_CHECKED;
+        Instant LAST_CHECKED;
         try {
-            LAST_CHECKED = df.parse(p.getProperty("program.lastchecked"));
+            LAST_CHECKED = LocalDateTime.parse(p.getProperty("program.lastchecked"), df).toInstant(ZoneOffset.UTC);
         } catch (Exception e) {
             LAST_CHECKED = null;
         }

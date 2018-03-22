@@ -1,12 +1,12 @@
 package gaia.cu9.ari.gaiaorbit.util.update;
 
-import java.util.Date;
+import java.time.Instant;
 
 import com.badlogic.gdx.scenes.scene2d.Event;
 
 public class VersionCheckEvent extends Event {
     private final String tag;
-    private final Date tagTime;
+    private final Instant tagTime;
     private final boolean failed;
 
     public VersionCheckEvent(boolean falied) {
@@ -15,7 +15,7 @@ public class VersionCheckEvent extends Event {
         this.failed = falied;
     }
 
-    public VersionCheckEvent(String tag, Date tagTime) {
+    public VersionCheckEvent(String tag, Instant tagTime) {
         this.tag = tag;
         this.tagTime = tagTime;
         this.failed = false;
@@ -25,7 +25,7 @@ public class VersionCheckEvent extends Event {
         return tag;
     }
 
-    public Date getTagTime() {
+    public Instant getTagTime() {
         return tagTime;
     }
 

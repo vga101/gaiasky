@@ -1,6 +1,7 @@
 package gaia.cu9.ari.gaiaorbit.interfce;
 
 import java.nio.IntBuffer;
+import java.time.Instant;
 import java.util.Date;
 
 import com.badlogic.gdx.Gdx;
@@ -406,7 +407,7 @@ public class AboutWindow extends GenericDialog {
         checkLabel = new OwnLabel("", skin);
 
         checkTable.add(checkLabel).top().left().padBottom(pad).row();
-        if (GlobalConf.program.LAST_CHECKED == null || new Date().getTime() - GlobalConf.program.LAST_CHECKED.getTime() > versionCheckIntervalMs) {
+        if (GlobalConf.program.LAST_CHECKED == null || new Date().getTime() - GlobalConf.program.LAST_CHECKED.toEpochMilli() > versionCheckIntervalMs) {
             // Check!
             checkLabel.setText(txt("gui.newversion.checking"));
             getCheckVersionThread().start();
@@ -477,10 +478,12 @@ public class AboutWindow extends GenericDialog {
      * 
      * @param version
      *            The version to check.
+     * @param tagdate
+     *            The date
      */
-    private void newVersionCheck(String tagversion, Date tagdate) {
-        GlobalConf.program.LAST_CHECKED = new Date();
-        if (tagdate.after(GlobalConf.version.buildtime)) {
+    private void newVersionCheck(String tagversion, Instant tagdate) {
+        GlobalConf.program.LAST_CHECKED = Instant.now();
+        if (tagdate.isAfter(GlobalConf.version.buildtime)) {
             // There's a new version!
             checkLabel.setText(txt("gui.newversion.available", GlobalConf.version, tagversion));
             final String uri = GlobalConf.WEBPAGE_DOWNLOADS;

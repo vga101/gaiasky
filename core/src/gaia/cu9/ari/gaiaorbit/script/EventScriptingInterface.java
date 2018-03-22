@@ -1,7 +1,9 @@
 package gaia.cu9.ari.gaiaorbit.script;
 
-import java.util.Calendar;
-import java.util.Date;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.temporal.ChronoField;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -471,43 +473,37 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
         });
     }
 
-    private Date getDateObject(int year, int month, int day, int hour, int min, int sec, int millisec) {
-        Calendar c = Calendar.getInstance();
-        c.set(year, month - 1, day, hour, min, sec);
-        return new Date(c.getTime().getTime() + millisec);
-    }
-
     @Override
     public void setSimulationTime(int year, int month, int day, int hour, int min, int sec, int millisec) {
-        Date date = getDateObject(year, month, day, hour, min, sec, millisec);
-        em.post(Events.TIME_CHANGE_CMD, date);
+        LocalDateTime date = LocalDateTime.of(year, month, day, hour, min, sec, millisec);
+        em.post(Events.TIME_CHANGE_CMD, date.toInstant(ZoneOffset.UTC));
     }
 
     @Override
     public void setSimulationTime(final long time) {
         assert time > 0 : "Time can not be negative";
-        em.post(Events.TIME_CHANGE_CMD, new Date(time));
+        em.post(Events.TIME_CHANGE_CMD, Instant.ofEpochMilli(time));
     }
 
     @Override
     public long getSimulationTime() {
         ITimeFrameProvider time = GaiaSky.instance.time;
-        return time.getTime().getTime();
+        return time.getTime().toEpochMilli();
     }
 
     @Override
     public int[] getSimulationTimeArr() {
         ITimeFrameProvider time = GaiaSky.instance.time;
-        Calendar c = Calendar.getInstance();
-        c.setTime(time.getTime());
+        Instant instant = time.getTime();
+        LocalDateTime c = LocalDateTime.ofInstant(instant, ZoneOffset.UTC);
         int[] result = new int[7];
-        result[0] = c.get(Calendar.YEAR);
-        result[1] = c.get(Calendar.MONTH) + 1;
-        result[2] = c.get(Calendar.DAY_OF_MONTH);
-        result[3] = c.get(Calendar.HOUR_OF_DAY);
-        result[4] = c.get(Calendar.MINUTE);
-        result[5] = c.get(Calendar.SECOND);
-        result[6] = c.get(Calendar.MILLISECOND);
+        result[0] = c.get(ChronoField.YEAR_OF_ERA);
+        result[1] = c.getMonthValue();
+        result[2] = c.getDayOfMonth();
+        result[3] = c.getHour();
+        result[4] = c.getMinute();
+        result[5] = c.getSecond();
+        result[6] = c.get(ChronoField.MILLI_OF_SECOND);
         return result;
     }
 
@@ -533,12 +529,12 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
 
     @Override
     public void setTargetTime(long ms) {
-        em.post(Events.TARGET_TIME_CMD, new Date(ms));
+        em.post(Events.TARGET_TIME_CMD, Instant.ofEpochMilli(ms));
     }
 
     @Override
     public void setTargetTime(int year, int month, int day, int hour, int min, int sec, int millisec) {
-        em.post(Events.TARGET_TIME_CMD, getDateObject(year, month, day, hour, min, sec, millisec));
+        em.post(Events.TARGET_TIME_CMD, LocalDateTime.of(year, month, day, hour, min, sec, millisec).toInstant(ZoneOffset.UTC));
     }
 
     @Override

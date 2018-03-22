@@ -1,6 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.data.orbit;
 
-import java.util.Date;
+import java.time.Instant;
 
 import gaia.cu9.ari.gaiaorbit.assets.OrbitDataLoader.OrbitDataLoaderParameter;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
@@ -49,7 +49,7 @@ public class OrbitalParametersProvider implements IOrbitDataProvider {
                 data.x.add(point.x);
                 data.y.add(point.y);
                 data.z.add(point.z);
-                data.time.add(new Date());
+                data.time.add(Instant.now());
             }
             EventManager.instance.post(Events.ORBIT_DATA_LOADED, data, parameter.name);
         } catch (Exception e) {

@@ -162,15 +162,18 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
     public void update(double dt, ITimeFrameProvider time) {
         /** FUTURE POS OF SC **/
 
+        // We use the simulation time for the integration
+        double sdt = time.getDt() * Constants.H_TO_S;
+
         scthrust.set(sc.thrust);
         scforce.set(sc.force);
         scaccel.set(sc.accel);
         scvel.set(sc.vel);
         scpos.set(sc.pos);
-        scpos = sc.computePosition(dt, closest2, sc.enginePower, scthrust, sc.direction, scforce, scaccel, scvel, scpos);
+        scpos = sc.computePosition(sdt, closest2, sc.enginePower, scthrust, sc.direction, scforce, scaccel, scvel, scpos);
         scdir.set(sc.direction);
         scup.set(sc.up);
-        sc.computeDirectionUp(dt, dirup);
+        sc.computeDirectionUp(sdt, dirup);
 
         /** ACTUAL UPDATE **/
 
@@ -212,6 +215,7 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
      * @param time
      */
     public void updateHard(double dt, ITimeFrameProvider time) {
+        double sdt = time.getDt() * Constants.H_TO_S;
 
         // POSITION
         double tgfac = targetDistance * sc.sizeFactor / fovFactor;
@@ -219,7 +223,7 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
         aux2.set(scup).nor().scl(tgfac / 8d);
         desired.set(scdir).nor().scl(-tgfac).add(aux2);
         todesired.set(desired).sub(relpos);
-        todesired.scl(dt * GlobalConf.spacecraft.SC_RESPONSIVENESS / 1e6);
+        todesired.scl(sdt * GlobalConf.spacecraft.SC_RESPONSIVENESS / 1e6);
         relpos.add(todesired);
         pos.set(scpos).add(relpos);
         relpos.scl(1 / sc.sizeFactor);
@@ -232,7 +236,7 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
         // UP
         desired.set(scup);
         todesired.set(desired).sub(up);
-        todesired.scl(dt * GlobalConf.spacecraft.SC_RESPONSIVENESS / 1e6);
+        todesired.scl(sdt * GlobalConf.spacecraft.SC_RESPONSIVENESS / 1e6);
         up.add(todesired).nor();
 
     }

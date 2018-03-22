@@ -482,10 +482,12 @@ public abstract class StreamingOctreeLoader implements IObserver, ISceneGraphLoa
                             if (octant != null && octant.getStatus() == LoadStatus.LOADED) {
                                 loader.unloadOctant(octant, octreeWrapper);
                             }
-                            AbstractPositionEntity sg = octant.objects.get(0);
-                            nUnloaded += sg.getStarCount();
-                            if (nStars - nUnloaded < loader.maxLoadedStars * 0.85) {
-                                break;
+                            if (octant != null) {
+                                AbstractPositionEntity sg = octant.objects.get(0);
+                                nUnloaded += sg.getStarCount();
+                                if (nStars - nUnloaded < loader.maxLoadedStars * 0.85) {
+                                    break;
+                                }
                             }
                         }
 
