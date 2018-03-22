@@ -410,6 +410,9 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
             EventManager.instance.post(Events.CAMERA_UP_CMD, new double[] { 0, 0, 1 });
         }
 
+        // VG: deactivate GUI for the "Solar System Explorer"
+        EventManager.instance.post(Events.DISPLAY_GUI_CMD, false);
+
         initialized = true;
     }
 
