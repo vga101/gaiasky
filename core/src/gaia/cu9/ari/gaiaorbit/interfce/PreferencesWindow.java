@@ -55,6 +55,7 @@ import gaia.cu9.ari.gaiaorbit.util.ConfInit;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf.PostprocessConf.Antialias;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf.ScreenshotMode;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
@@ -737,12 +738,15 @@ public class PreferencesWindow extends GenericDialog {
 
         // Size
         final OwnLabel screenshotsSizeLabel = new OwnLabel(txt("gui.screenshots.size"), skin);
+        screenshotsSizeLabel.setDisabled(GlobalConf.screenshot.isSimpleMode());
         final OwnLabel xLabel = new OwnLabel("x", skin);
         screenshotsSizeValidator = new IntValidator(GlobalConf.ScreenshotConf.MIN_SCREENSHOT_SIZE, GlobalConf.ScreenshotConf.MAX_SCREENSHOT_SIZE);
         sswidthField = new OwnTextField(Integer.toString(MathUtils.clamp(GlobalConf.screenshot.SCREENSHOT_WIDTH, GlobalConf.ScreenshotConf.MIN_SCREENSHOT_SIZE, GlobalConf.ScreenshotConf.MAX_SCREENSHOT_SIZE)), skin, screenshotsSizeValidator);
         sswidthField.setWidth(textwidth);
+        sswidthField.setDisabled(GlobalConf.screenshot.isSimpleMode());
         ssheightField = new OwnTextField(Integer.toString(MathUtils.clamp(GlobalConf.screenshot.SCREENSHOT_HEIGHT, GlobalConf.ScreenshotConf.MIN_SCREENSHOT_SIZE, GlobalConf.ScreenshotConf.MAX_SCREENSHOT_SIZE)), skin, screenshotsSizeValidator);
         ssheightField.setWidth(textwidth);
+        ssheightField.setDisabled(GlobalConf.screenshot.isSimpleMode());
         HorizontalGroup ssSizeGroup = new HorizontalGroup();
         ssSizeGroup.space(pad * 2);
         ssSizeGroup.addActor(sswidthField);
@@ -866,12 +870,15 @@ public class PreferencesWindow extends GenericDialog {
 
         // Size
         final OwnLabel frameoutputSizeLabel = new OwnLabel(txt("gui.frameoutput.size"), skin);
+        frameoutputSizeLabel.setDisabled(GlobalConf.frame.isSimpleMode());
         final OwnLabel xLabelfo = new OwnLabel("x", skin);
         frameoutputSizeValidator = new IntValidator(GlobalConf.FrameConf.MIN_FRAME_SIZE, GlobalConf.FrameConf.MAX_FRAME_SIZE);
         fowidthField = new OwnTextField(Integer.toString(MathUtils.clamp(GlobalConf.frame.RENDER_WIDTH, GlobalConf.FrameConf.MIN_FRAME_SIZE, GlobalConf.FrameConf.MAX_FRAME_SIZE)), skin, frameoutputSizeValidator);
         fowidthField.setWidth(textwidth);
+        fowidthField.setDisabled(GlobalConf.frame.isSimpleMode());
         foheightField = new OwnTextField(Integer.toString(MathUtils.clamp(GlobalConf.frame.RENDER_HEIGHT, GlobalConf.FrameConf.MIN_FRAME_SIZE, GlobalConf.FrameConf.MAX_FRAME_SIZE)), skin, frameoutputSizeValidator);
         foheightField.setWidth(textwidth);
+        foheightField.setDisabled(GlobalConf.frame.isSimpleMode());
         HorizontalGroup foSizeGroup = new HorizontalGroup();
         foSizeGroup.space(pad * 2);
         foSizeGroup.addActor(fowidthField);
@@ -1397,10 +1404,11 @@ public class PreferencesWindow extends GenericDialog {
         File ssfile = new File(screenshotsLocation.getText().toString());
         if (ssfile.exists() && ssfile.isDirectory())
             GlobalConf.screenshot.SCREENSHOT_FOLDER = ssfile.getAbsolutePath();
+        ScreenshotMode prev = GlobalConf.screenshot.SCREENSHOT_MODE;
         GlobalConf.screenshot.SCREENSHOT_MODE = GlobalConf.ScreenshotMode.values()[screenshotMode.getSelectedIndex()];
         int ssw = Integer.parseInt(sswidthField.getText());
         int ssh = Integer.parseInt(ssheightField.getText());
-        boolean ssupdate = ssw != GlobalConf.screenshot.SCREENSHOT_WIDTH || ssh != GlobalConf.screenshot.SCREENSHOT_HEIGHT;
+        boolean ssupdate = ssw != GlobalConf.screenshot.SCREENSHOT_WIDTH || ssh != GlobalConf.screenshot.SCREENSHOT_HEIGHT || !prev.equals(GlobalConf.screenshot.SCREENSHOT_MODE);
         GlobalConf.screenshot.SCREENSHOT_WIDTH = ssw;
         GlobalConf.screenshot.SCREENSHOT_HEIGHT = ssh;
         if (ssupdate)
@@ -1414,10 +1422,11 @@ public class PreferencesWindow extends GenericDialog {
         if (text.matches("^\\w+$")) {
             GlobalConf.frame.RENDER_FILE_NAME = text;
         }
+        prev = GlobalConf.frame.FRAME_MODE;
         GlobalConf.frame.FRAME_MODE = GlobalConf.ScreenshotMode.values()[frameoutputMode.getSelectedIndex()];
         int fow = Integer.parseInt(fowidthField.getText());
         int foh = Integer.parseInt(foheightField.getText());
-        boolean foupdate = fow != GlobalConf.frame.RENDER_WIDTH || foh != GlobalConf.frame.RENDER_HEIGHT;
+        boolean foupdate = fow != GlobalConf.frame.RENDER_WIDTH || foh != GlobalConf.frame.RENDER_HEIGHT || !prev.equals(GlobalConf.frame.FRAME_MODE);
         GlobalConf.frame.RENDER_WIDTH = fow;
         GlobalConf.frame.RENDER_HEIGHT = foh;
         GlobalConf.frame.RENDER_TARGET_FPS = Integer.parseInt(frameoutputFps.getText());
