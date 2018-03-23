@@ -81,7 +81,7 @@
 	"name" : "MW",
 	"color" : [1.0, 1.0, 1.0, 0.6],
 	"size" : 1.6e12,
-	"ct" : [MilkyWay, Galaxies],
+	"ct" : [MilkyWay],
 	"transformName" : galacticToEquatorial,
 	"label" : false,
 
