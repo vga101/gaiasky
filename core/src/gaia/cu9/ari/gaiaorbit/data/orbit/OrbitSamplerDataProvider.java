@@ -20,7 +20,6 @@ import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.util.ConfInit;
-import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.SysUtilsFactory;
@@ -28,6 +27,7 @@ import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
 import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
 import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
+import gaia.cu9.ari.gaiaorbit.util.math.MathManager;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
 /**
@@ -61,6 +61,9 @@ public class OrbitSamplerDataProvider implements IOrbitDataProvider, IObserver {
 
             I18n.initialize(new FileHandle(ASSETS_LOC + "i18n/gsbundle"));
 
+            // Initialize math manager
+            MathManager.initialize();
+
             OrbitSamplerDataProvider.writeData = true;
             OrbitSamplerDataProvider me = new OrbitSamplerDataProvider();
             EventManager.instance.subscribe(me, Events.JAVA_EXCEPTION, Events.POST_NOTIFICATION);
@@ -72,7 +75,7 @@ public class OrbitSamplerDataProvider implements IOrbitDataProvider, IObserver {
 
                 String b = bodies[i];
                 float period = periods[i];
-                OrbitDataLoaderParameter param = new OrbitDataLoaderParameter(me.getClass(), b, now, true, period, 80);
+                OrbitDataLoaderParameter param = new OrbitDataLoaderParameter(me.getClass(), b, now, true, period, 500);
                 me.load(null, param);
 
             }
@@ -90,8 +93,8 @@ public class OrbitSamplerDataProvider implements IOrbitDataProvider, IObserver {
     @Override
     public void load(String file, OrbitDataLoaderParameter parameter) {
         // Sample using VSOP
-        int numSamples = parameter.numSamples > 0 ? parameter.numSamples : (int) (200 * parameter.orbitalPeriod / 365);
-        numSamples = Math.max(50, Math.min(1000, numSamples));
+        int numSamples = parameter.numSamples > 0 ? parameter.numSamples : (int) (500 * parameter.orbitalPeriod / 365);
+        numSamples = Math.max(100, Math.min(2000, numSamples));
         data = new OrbitData();
         String bodyDesc = parameter.name;
         Instant d = Instant.ofEpochMilli(parameter.ini.getTime());
@@ -104,7 +107,7 @@ public class OrbitSamplerDataProvider implements IOrbitDataProvider, IObserver {
 
         // Load vsop orbit data
         for (int i = 0; i <= numSamples; i++) {
-            AstroUtils.getEclipticCoordinates(bodyDesc, d, ecl, GlobalConf.data.HIGH_ACCURACY_POSITIONS);
+            AstroUtils.getEclipticCoordinates(bodyDesc, d, ecl, true);
 
             if (last == 0) {
                 last = Math.toDegrees(ecl.x);
