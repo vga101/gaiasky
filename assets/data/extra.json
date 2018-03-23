@@ -42,7 +42,7 @@
 	// Position in parsecs
 	"labelposition" : [5.0e3, 5.0e2, 5.0e3]
 	"size" : 3.0e17,
-	"ct" : [MilkyWay, Galaxies],
+	"ct" : [MilkyWay],
 	"transformName" : galacticToEquatorial,
 
 	// Fade in distances, in parsecs

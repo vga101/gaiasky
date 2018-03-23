@@ -94,7 +94,7 @@ public abstract class StreamingOctreeLoader implements IObserver, ISceneGraphLoa
         // We assume 1Gb of graphics memory
         // GPU ~ 32 byte/star
         // CPU ~ 136 byte/star
-        maxLoadedStars = 6000000;
+        maxLoadedStars = 15000000;
 
         Comparator<OctreeNode> depthComparator = (OctreeNode o1, OctreeNode o2) -> Integer.compare(o1.depth, o2.depth);
         toLoadQueue = new PriorityBlockingQueue<OctreeNode>(LOAD_QUEUE_MAX_SIZE, depthComparator);
@@ -463,7 +463,6 @@ public abstract class StreamingOctreeLoader implements IObserver, ISceneGraphLoa
                         Logger.debug(I18n.bundle.format("notif.loadingoctants", toLoad.size));
                         try {
                             int loaded = loader.loadOctants(toLoad, octreeWrapper, abort);
-
                             Logger.debug(I18n.bundle.format("notif.loadingoctants.finished", loaded));
                         } catch (Exception e) {
                             // This will happen when the queue has been cleared during processing
@@ -482,7 +481,7 @@ public abstract class StreamingOctreeLoader implements IObserver, ISceneGraphLoa
                             if (octant != null && octant.getStatus() == LoadStatus.LOADED) {
                                 loader.unloadOctant(octant, octreeWrapper);
                             }
-                            if (octant != null) {
+                            if (octant != null && octant.objects != null && octant.objects.size > 0) {
                                 AbstractPositionEntity sg = octant.objects.get(0);
                                 nUnloaded += sg.getStarCount();
                                 if (nStars - nUnloaded < loader.maxLoadedStars * 0.85) {
