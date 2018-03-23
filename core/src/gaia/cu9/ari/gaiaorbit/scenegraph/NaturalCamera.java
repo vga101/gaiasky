@@ -239,8 +239,11 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
             if (focus.withinMagLimit() && !focus.isCoordinatesTimeOverflow()) {
                 focusBak = focus;
                 focus = (IFocus) focus.getComputedAncestor();
-                focus.getAbsolutePosition(focusPos);
-
+                focus.getAbsolutePosition(aux4);
+                // Hack, fix this by understanding underlying problem
+                if (!aux4.hasNaN()) {
+                    focusPos.set(aux4);
+                }
                 dx.set(0, 0, 0);
 
                 if (GlobalConf.scene.FOCUS_LOCK) {

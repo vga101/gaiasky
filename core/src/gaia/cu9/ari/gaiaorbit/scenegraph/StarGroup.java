@@ -1006,7 +1006,7 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
     protected Vector3d fetchPosition(ParticleBean pb, Vector3d campos, Vector3d dest, double deltaYears) {
         StarBean sb = (StarBean) pb;
         Vector3d pm = aux.set(sb.pmx(), sb.pmy(), sb.pmz()).scl(deltaYears);
-        if (campos != null)
+        if (campos != null && !campos.hasNaN())
             return dest.set(pb.data[0], pb.data[1], pb.data[2]).sub(campos).add(pm);
         else
             return dest.set(pb.data[0], pb.data[1], pb.data[2]).add(pm);
