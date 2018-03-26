@@ -2,6 +2,7 @@ package gaia.cu9.ari.gaiaorbit.interfce;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoField;
 
@@ -46,12 +47,12 @@ public class DateDialog extends CollapsibleWindow {
         float pad = 5 * GlobalConf.SCALE_FACTOR;
 
         /** SET NOW **/
-        setNow = new OwnTextButton("Set current time", skin);
+        setNow = new OwnTextButton("Set current time (UTC)", skin);
         setNow.addListener(new EventListener() {
             @Override
             public boolean handle(Event event) {
                 if (event instanceof ChangeEvent) {
-                    updateTime(Instant.now());
+                    updateTime(Instant.now(), ZoneOffset.UTC);
                     return true;
                 }
                 return false;
@@ -269,8 +270,8 @@ public class DateDialog extends CollapsibleWindow {
     }
 
     /** Updates the time **/
-    public void updateTime(Instant instant) {
-        LocalDateTime date = LocalDateTime.ofInstant(instant, ZoneOffset.UTC);
+    public void updateTime(Instant instant, ZoneId zid) {
+        LocalDateTime date = LocalDateTime.ofInstant(instant, zid);
         int year = date.get(ChronoField.YEAR_OF_ERA);
         int month = date.getMonthValue();
         int day = date.getDayOfMonth();

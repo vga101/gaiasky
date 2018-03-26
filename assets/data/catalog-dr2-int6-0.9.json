@@ -1,6 +1,6 @@
 {
 	"name" : "DR2 int6 - 90%",
-	"description" : "Gaia DR2 int6 (90% relative error) run 2. 601M stars.",
+	"description" : "Gaia DR2 int6 (90% relative error). 601M stars.",
 	"data" : [
 	{
 		"loader": "gaia.cu9.ari.gaiaorbit.data.group.OctreeGroupLoader",

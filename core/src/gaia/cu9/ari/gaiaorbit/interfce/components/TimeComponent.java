@@ -1,6 +1,7 @@
 package gaia.cu9.ari.gaiaorbit.interfce.components;
 
 import java.time.Instant;
+import java.time.ZoneOffset;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -71,7 +72,7 @@ public class TimeComponent extends GuiComponent implements IObserver {
                 if (dateDialog == null) {
                     dateDialog = new DateDialog(stage, skin);
                 }
-                dateDialog.updateTime(GaiaSky.instance.time.getTime());
+                dateDialog.updateTime(GaiaSky.instance.time.getTime(), ZoneOffset.UTC);
                 dateDialog.display();
             }
             return false;
