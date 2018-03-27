@@ -45,10 +45,11 @@ public class VisibilityComponent extends GuiComponent implements IObserver {
     private Label pmNumFactor, pmLenFactor, pmNumFactorLabel, pmLenFactorLabel;
     private VerticalGroup pmNumFactorGroup, pmLenFactorGroup;
     private VerticalGroup pmGroup;
+    private boolean sendEvents = true;
 
     public VisibilityComponent(Skin skin, Stage stage) {
         super(skin, stage);
-        EventManager.instance.subscribe(this, Events.TOGGLE_VISIBILITY_CMD);
+        EventManager.instance.subscribe(this, Events.TOGGLE_VISIBILITY_CMD, Events.PROPER_MOTIONS_CMD, Events.PM_LEN_FACTOR_CMD, Events.PM_NUM_FACTOR_CMD);
     }
 
     public void setVisibilityEntitites(ComponentType[] ve, boolean[] v) {
@@ -114,8 +115,10 @@ public class VisibilityComponent extends GuiComponent implements IObserver {
         pmNumFactorSlider.setValue(MathUtilsd.lint(GlobalConf.scene.PM_NUM_FACTOR, Constants.MIN_PM_NUM_FACTOR, Constants.MAX_PM_NUM_FACTOR, Constants.MIN_SLIDER_1, Constants.MAX_SLIDER));
         pmNumFactorSlider.addListener(event -> {
             if (event instanceof ChangeEvent) {
-                EventManager.instance.post(Events.PM_NUM_FACTOR_CMD, MathUtilsd.lint(pmNumFactorSlider.getValue(), Constants.MIN_SLIDER_1, Constants.MAX_SLIDER, Constants.MIN_PM_NUM_FACTOR, Constants.MAX_PM_NUM_FACTOR));
-                pmNumFactor.setText(Integer.toString((int) pmNumFactorSlider.getValue()));
+                if (sendEvents) {
+                    EventManager.instance.post(Events.PM_NUM_FACTOR_CMD, MathUtilsd.lint(pmNumFactorSlider.getValue(), Constants.MIN_SLIDER_1, Constants.MAX_SLIDER, Constants.MIN_PM_NUM_FACTOR, Constants.MAX_PM_NUM_FACTOR), true);
+                    pmNumFactor.setText(Integer.toString((int) pmNumFactorSlider.getValue()));
+                }
                 return true;
             }
             return false;
@@ -139,8 +142,10 @@ public class VisibilityComponent extends GuiComponent implements IObserver {
         pmLenFactorSlider.setValue(GlobalConf.scene.PM_LEN_FACTOR);
         pmLenFactorSlider.addListener(event -> {
             if (event instanceof ChangeEvent) {
-                EventManager.instance.post(Events.PM_LEN_FACTOR_CMD, pmLenFactorSlider.getValue());
-                pmLenFactor.setText(Integer.toString(Math.round(pmLenFactorSlider.getValue())));
+                if (sendEvents) {
+                    EventManager.instance.post(Events.PM_LEN_FACTOR_CMD, pmLenFactorSlider.getValue(), true);
+                    pmLenFactor.setText(Integer.toString(Math.round(pmLenFactorSlider.getValue())));
+                }
                 return true;
             }
             return false;
@@ -160,7 +165,8 @@ public class VisibilityComponent extends GuiComponent implements IObserver {
         properMotions.setName("pm vectors");
         properMotions.addListener(event -> {
             if (event instanceof ChangeEvent) {
-                EventManager.instance.post(Events.PROPER_MOTIONS_CMD, "Proper motions", properMotions.isChecked());
+                if (sendEvents)
+                    EventManager.instance.post(Events.PROPER_MOTIONS_CMD, "Proper motions", properMotions.isChecked());
                 if (pmGroup != null) {
                     if (properMotions.isChecked()) {
                         pmGroup.addActor(pmNumFactorGroup);
@@ -210,6 +216,35 @@ public class VisibilityComponent extends GuiComponent implements IObserver {
                     }
                 }
                 b.setProgrammaticChangeEvents(true);
+            }
+            break;
+        case PROPER_MOTIONS_CMD:
+            String key = (String) data[0];
+            if (key.equals("element.propermotions")) {
+                sendEvents = false;
+                properMotions.setChecked((Boolean) data[1]);
+                sendEvents = true;
+            }
+            break;
+        case PM_LEN_FACTOR_CMD:
+            interf = (Boolean) data[1];
+            if (!interf) {
+                sendEvents = false;
+                float value = (Float) data[0];
+                pmLenFactorSlider.setValue(value);
+                pmLenFactorLabel.setText(Integer.toString(Math.round(value)));
+                sendEvents = true;
+            }
+            break;
+        case PM_NUM_FACTOR_CMD:
+            interf = (Boolean) data[1];
+            if (!interf) {
+                sendEvents = false;
+                float value = (Float) data[0];
+                float val = MathUtilsd.lint(value, Constants.MIN_PM_NUM_FACTOR, Constants.MAX_PM_NUM_FACTOR, Constants.MIN_SLIDER_1, Constants.MAX_SLIDER);
+                pmNumFactorSlider.setValue(val);
+                pmNumFactor.setText(Integer.toString((int) val));
+                sendEvents = true;
             }
             break;
         default:
