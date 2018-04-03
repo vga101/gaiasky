@@ -55,10 +55,10 @@ public class FileChooser extends Dialog {
                 return -1;
             }
             if (file1.file.isDirectory() && file2.file.isDirectory()) {
-                return 0;
+                return file1.name.compareTo(file2.name);
             }
             if (!file1.file.isDirectory() && !file2.file.isDirectory()) {
-                return 0;
+                return file1.name.compareTo(file2.name);
             }
             return 1;
         }
@@ -137,7 +137,16 @@ public class FileChooser extends Dialog {
     public FileHandle getResult() {
         String path = currentDir.path() + "/";
         if (result != null && result.length() > 0) {
-            path += result;
+            String folder = currentDir.file().getName();
+            if (folder.equals(result)) {
+                if ((new FileHandle(path + result)).exists()) {
+                    path += result;
+                } else {
+                    // Nothing
+                }
+            } else {
+                path += result;
+            }
         }
         return new FileHandle(path);
     }

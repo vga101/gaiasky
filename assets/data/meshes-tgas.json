@@ -25,7 +25,7 @@
 	"model"		: {
 					"args" : [true],
 					"staticlight" : True,
-					"model" : "data/meshes/iso_40_percent_filtered_reduced_separated.g3db"
+					"model" : "data/meshes/tgas/iso_40_percent_filtered_reduced_separated.g3db"
 				}
 	},
 	
@@ -54,7 +54,7 @@
 	"model"		: {
 					"args" : [true],
 					"staticlight" : True,
-					"model" : "data/meshes/iso_50_percent_filtered_reduced_separated.g3db"
+					"model" : "data/meshes/tgas/iso_50_percent_filtered_reduced_separated.g3db"
 				}
 	},
 	
@@ -83,7 +83,7 @@
 	"model"		: {
 					"args" : [true],
 					"staticlight" : True,
-					"model" : "data/meshes/iso_60_percent_filtered_reduced_separated.g3db"
+					"model" : "data/meshes/tgas/iso_60_percent_filtered_reduced_separated.g3db"
 				}
 	},
 	
@@ -112,7 +112,7 @@
 	"model"		: {
 					"args" : [true],
 					"staticlight" : True,
-					"model" : "data/meshes/iso_70_percent_filtered_reduced_separated.g3db"
+					"model" : "data/meshes/tgas/iso_70_percent_filtered_reduced_separated.g3db"
 				}
 	},
 	
@@ -141,7 +141,7 @@
 	"model"		: {
 					"args" : [true],
 					"staticlight" : True,
-					"model" : "data/meshes/iso_80_percent_filtered_reduced_separated.g3db"
+					"model" : "data/meshes/tgas/iso_80_percent_filtered_reduced_separated.g3db"
 				}
 	},
 	
@@ -170,7 +170,7 @@
 	"model"		: {
 					"args" : [true],
 					"staticlight" : True,
-					"model" : "data/meshes/iso_90_percent_filtered_reduced_separated.g3db"
+					"model" : "data/meshes/tgas/iso_90_percent_filtered_reduced_separated.g3db"
 				}
 	}
 ]}
