@@ -57,10 +57,6 @@ public interface ICamera {
 
     public int getNCameras();
 
-    public void setShift(Vector3d shift);
-
-    public Vector3d getShift();
-
     public double getTranslateUnits();
 
     /**

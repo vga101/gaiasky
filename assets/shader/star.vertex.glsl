@@ -20,7 +20,6 @@ uniform vec3 u_pos;
 uniform float u_size;
 uniform float u_apparent_angle;
 uniform float u_th_angle_point;
-uniform vec3 u_camShift;
 
 #ifdef relativisticEffects
     uniform vec3 u_velDir; // Velocity vector
@@ -52,7 +51,7 @@ void main()
    
    mat4 transform = u_projTrans;
    
-   vec3 pos = u_pos - u_camShift;
+   vec3 pos = u_pos;
    
    #ifdef relativisticEffects
        pos = computeRelativisticAberration(pos, length(pos), u_velDir, u_vc);

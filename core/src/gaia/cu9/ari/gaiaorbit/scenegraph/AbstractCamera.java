@@ -20,7 +20,7 @@ public abstract class AbstractCamera implements ICamera {
 
     private static Matrix4d invProjectionView = new Matrix4d();
 
-    public Vector3d pos, posinv, shift, tmp;
+    public Vector3d pos, posinv, tmp;
     /**
      * Angle from the center to the corner of the screen in scene coordinates,
      * in radians
@@ -63,7 +63,6 @@ public abstract class AbstractCamera implements ICamera {
         this.parent = parent;
         pos = new Vector3d();
         posinv = new Vector3d();
-        shift = new Vector3d();
         tmp = new Vector3d();
 
         frustum = new Frustumd();
@@ -246,16 +245,6 @@ public abstract class AbstractCamera implements ICamera {
     @Override
     public void setCameraStereoRight(PerspectiveCamera cam) {
         copyCamera(cam, camRight);
-    }
-
-    @Override
-    public void setShift(Vector3d shift) {
-        this.shift.set(shift);
-    }
-
-    @Override
-    public Vector3d getShift() {
-        return this.shift;
     }
 
     @Override

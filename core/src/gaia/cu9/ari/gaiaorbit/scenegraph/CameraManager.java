@@ -497,16 +497,6 @@ public class CameraManager implements ICamera, IObserver {
     }
 
     @Override
-    public void setShift(Vector3d shift) {
-        current.setShift(shift);
-    }
-
-    @Override
-    public Vector3d getShift() {
-        return current.getShift();
-    }
-
-    @Override
     public Frustumd getFrustum() {
         return current.getFrustum();
     }

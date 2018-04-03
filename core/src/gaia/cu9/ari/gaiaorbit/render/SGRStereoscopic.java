@@ -105,8 +105,10 @@ public class SGRStereoscopic extends SGRAbstract implements ISGR, IObserver {
                 separation = Math.tan(Math.toRadians(EYE_ANGLE_DEG)) * distToFocus;
             }
             // Lets cap it to 100 AU
-            separationCapped = Math.min(separation, 1e2 * Constants.AU_TO_U);
+            separationCapped = Math.min(separation, 1 * Constants.AU_TO_U);
             dirangleDeg = EYE_ANGLE_DEG;
+        } else {
+            separationCapped = Math.min(separation, 1 * Constants.AU_TO_U);
         }
 
         // Aux5d contains the direction to the side of the camera, normalised
@@ -265,7 +267,6 @@ public class SGRStereoscopic extends SGRAbstract implements ISGR, IObserver {
         camera.setPos(backupPosd);
         cam.position.set(backupPos);
         cam.direction.set(backupDir);
-        camera.getShift().scl(0d);
     }
 
     private void moveCamera(ICamera camera, Vector3d sideRemainder, Vector3d side, Vector3d sideCapped, double angle, boolean switchSides) {
@@ -278,7 +279,6 @@ public class SGRStereoscopic extends SGRAbstract implements ISGR, IObserver {
 
             // Uncomment to enable 3D in points
             camera.getPos().add(sideRemainder);
-            camera.setShift(sideRemainder);
 
         } else {
             cam.position.sub(sidef);
@@ -286,8 +286,6 @@ public class SGRStereoscopic extends SGRAbstract implements ISGR, IObserver {
 
             // Uncomment to enable 3D in points
             camera.getPos().sub(sideRemainder);
-            camera.setShift(sideRemainder);
-            camera.getShift().scl(-1d);
         }
         cam.update();
     }
