@@ -93,7 +93,7 @@ public class ChooseDatasetWindow extends GenericDialog {
             // Description
             TextArea description = new OwnTextArea(desc, skin.get("regular", TextFieldStyle.class));
             description.setDisabled(true);
-            description.setPrefRows(3);
+            description.setPrefRows(2);
             description.setWidth(tawidth);
             content.add(description).left().top().padTop(pad).padLeft(pad).row();
 

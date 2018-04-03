@@ -182,6 +182,14 @@ public class KeyBindings {
             }
         }), SPECIAL2, Keys.H);
 
+        //SHIFT+V -> Toggle clusters
+        addMapping(new ProgramAction(txt("action.toggle", txt("element.clusters")), new Runnable() {
+            @Override
+            public void run() {
+                EventManager.instance.post(Events.TOGGLE_VISIBILITY_CMD, "element.clusters", false);
+            }
+        }), SPECIAL2, Keys.V);
+
         // Left bracket -> divide speed
         addMapping(new ProgramAction(txt("action.dividetime"), new Runnable() {
             @Override
