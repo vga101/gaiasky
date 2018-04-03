@@ -454,7 +454,25 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
     @Override
     public void setVisibility(final String key, final boolean visible) {
         Gdx.app.postRunnable(() -> {
-            em.post(Events.TOGGLE_VISIBILITY_CMD, key, false, visible);
+            if (key.equals("element.propermotions")) {
+                EventManager.instance.post(Events.PROPER_MOTIONS_CMD, key, visible);
+            } else {
+                em.post(Events.TOGGLE_VISIBILITY_CMD, key, false, visible);
+            }
+        });
+    }
+
+    @Override
+    public void setProperMotionsNumberFactor(float factor) {
+        Gdx.app.postRunnable(() -> {
+            EventManager.instance.post(Events.PM_NUM_FACTOR_CMD, MathUtilsd.lint(factor, Constants.MIN_SLIDER, Constants.MAX_SLIDER, Constants.MIN_PM_NUM_FACTOR, Constants.MAX_PM_NUM_FACTOR), false);
+        });
+    }
+
+    @Override
+    public void setProperMotionsLengthFactor(float factor) {
+        Gdx.app.postRunnable(() -> {
+            EventManager.instance.post(Events.PM_LEN_FACTOR_CMD, factor, false);
         });
     }
 
@@ -757,8 +775,8 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
             float waitTimeSeconds = -1;
 
             /**
-             * SAVE
-             */
+            			 * SAVE
+            			 */
 
             // Save speed, set it to 50
             double speed = GlobalConf.scene.CAMERA_SPEED;
@@ -773,8 +791,8 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
             GlobalConf.scene.CINEMATIC_CAMERA = true;
 
             /**
-             * FOCUS
-             */
+            			 * FOCUS
+            			 */
 
             changeFocusAndWait(object, cam, waitTimeSeconds);
 
@@ -841,8 +859,8 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
                 rollAndWait(rollsign * 0.003d, 178d, 50l, cam, aux1, stop);
             }
             /**
-             * RESTORE
-             */
+            			 * RESTORE
+            			 */
 
             // We can stop now
             em.post(Events.CAMERA_STOP);
@@ -1340,17 +1358,17 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
     }
 
     /**
-     * Checks if the object is the current focus of the given camera. If it is
-     * not, it sets it as focus and waits if necessary.
-     * 
-     * @param object
-     *            The new focus object.
-     * @param cam
-     *            The current camera.
-     * @param waitTimeSeconds
-     *            Max time to wait for the camera to face the focus, in seconds.
-     *            If negative, we wait until the end.
-     */
+    	 * Checks if the object is the current focus of the given camera. If it is not,
+    	 * it sets it as focus and waits if necessary.
+    	 * 
+    	 * @param object
+    	 *            The new focus object.
+    	 * @param cam
+    	 *            The current camera.
+    	 * @param waitTimeSeconds
+    	 *            Max time to wait for the camera to face the focus, in seconds. If
+    	 *            negative, we wait until the end.
+    	 */
     private void changeFocusAndWait(IFocus object, NaturalCamera cam, float waitTimeSeconds) {
         // Post focus change and wait, if needed
         IFocus currentFocus = cam.getFocus();
@@ -1358,7 +1376,7 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
             em.post(Events.CAMERA_MODE_CMD, CameraMode.Focus);
             em.post(Events.FOCUS_CHANGE_CMD, object);
 
-            // Wait til camera is facing focus or 
+            // Wait til camera is facing focus or
             if (waitTimeSeconds < 0) {
                 waitTimeSeconds = Float.MAX_VALUE;
             }

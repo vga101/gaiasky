@@ -523,10 +523,25 @@ public interface IScriptingInterface {
      *            The key of the component, see
      *            {@link gaia.cu9.ari.gaiaorbit.render.ComponentType}. Usually
      *            'element.stars', 'element.moons', 'element.atmospheres', etc.
+     *            Proper motion vectors are a special case not listed in component
+     *            types. Use the key 'element.propermotions' to that end.
      * @param visible
      *            The visible value.
      */
     public void setVisibility(String key, boolean visible);
+    
+    /**
+     * Sets the number factor of proper motion vectors that are visible. In [1..100].
+     * @param factor
+     */
+    public void setProperMotionsNumberFactor(float factor);
+    
+    /**
+     * Sets the length of the proper motion vectors, in [500..30000].
+     * 
+     * @param factor
+     */
+    public void setProperMotionsLengthFactor(float factor);
 
     /**
      * Sets the visibility of the crosshair in focus and free modes.

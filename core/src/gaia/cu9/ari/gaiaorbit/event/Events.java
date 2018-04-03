@@ -508,9 +508,9 @@ public enum Events {
     STAR_BRIGHTNESS_CMD,
     /** Frames per second info **/
     FPS_INFO,
-    /** Contains the number factor for pm vectors **/
+    /** Contains the number factor for pm vectors and a boolean indicating if this comes from the interface **/
     PM_NUM_FACTOR_CMD,
-    /** Contains the length factor for pm vectors **/
+    /** Contains the length factor for pm vectors and a boolean indicating if this comes from the interface **/
     PM_LEN_FACTOR_CMD,
     /**
      * Updates the screen mode according to whats in the
