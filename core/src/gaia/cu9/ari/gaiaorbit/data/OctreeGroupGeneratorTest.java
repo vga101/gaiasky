@@ -24,7 +24,7 @@ import com.beust.jcommander.Parameter;
 import gaia.cu9.ari.gaiaorbit.data.group.HYGDataProvider;
 import gaia.cu9.ari.gaiaorbit.data.group.IStarGroupDataProvider;
 import gaia.cu9.ari.gaiaorbit.data.octreegen.MetadataBinaryIO;
-import gaia.cu9.ari.gaiaorbit.data.octreegen.particlegroup.BrightestStars;
+import gaia.cu9.ari.gaiaorbit.data.octreegen.particlegroup.BrightestStarsSimple;
 import gaia.cu9.ari.gaiaorbit.data.octreegen.particlegroup.IAggregationAlgorithm;
 import gaia.cu9.ari.gaiaorbit.data.octreegen.particlegroup.IStarGroupIO;
 import gaia.cu9.ari.gaiaorbit.data.octreegen.particlegroup.OctreeGenerator;
@@ -36,12 +36,12 @@ import gaia.cu9.ari.gaiaorbit.desktop.util.DesktopConfInit;
 import gaia.cu9.ari.gaiaorbit.desktop.util.DesktopSysUtilsFactory;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
-import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.scenegraph.StarGroup.StarBean;
 import gaia.cu9.ari.gaiaorbit.util.ConfInit;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
+import gaia.cu9.ari.gaiaorbit.util.NotificationsListener;
 import gaia.cu9.ari.gaiaorbit.util.SysUtilsFactory;
 import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
@@ -56,7 +56,7 @@ import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
  * @author tsagrista
  *
  */
-public class OctreeGroupGeneratorTest implements IObserver {
+public class OctreeGroupGeneratorTest {
     private static JCommander jc;
     private static String[] arguments;
 
@@ -81,17 +81,8 @@ public class OctreeGroupGeneratorTest implements IObserver {
     @Parameter(names = { "-o", "--output" }, description = "Output folder. Defaults to system temp")
     private String outFolder;
 
-    @Parameter(names = "--maxdepth", description = "Maximum tree depth in levels")
-    private int maxDepth = 10;
-
-    @Parameter(names = "--maxpart", description = "Number of objects in the densest node of a level")
+    @Parameter(names = "--maxpart", description = "Maximum number of objects in an octant")
     private int maxPart = 100000;
-
-    @Parameter(names = "--minpart", description = "Number of objects in a node below which we do not further break the octree")
-    private int minPart = 5000;
-
-    @Parameter(names = "--discard", description = "Whether to discard stars due to density")
-    private boolean discard = false;
 
     @Parameter(names = "--serialized", description = "Use the java serialization method instead of the binary format to output the particle files")
     private boolean serialized = false;
@@ -116,12 +107,11 @@ public class OctreeGroupGeneratorTest implements IObserver {
 
     protected Map<Long, float[]> colors;
 
-    protected Array<String> logMessages;
+    private NotificationsListener nl;
 
     public OctreeGroupGeneratorTest() {
         super();
         colors = new HashMap<Long, float[]>();
-        logMessages = new Array<String>();
     }
 
     public void run() {
@@ -156,7 +146,7 @@ public class OctreeGroupGeneratorTest implements IObserver {
             I18n.initialize(new FileHandle(ASSETS_LOC + "i18n/gsbundle"));
 
             // Add notification watch
-            EventManager.instance.subscribe(this, Events.POST_NOTIFICATION, Events.JAVA_EXCEPTION);
+            EventManager.instance.subscribe((nl = new NotificationsListener()), Events.POST_NOTIFICATION, Events.JAVA_EXCEPTION);
 
             generateOctree();
 
@@ -169,10 +159,9 @@ public class OctreeGroupGeneratorTest implements IObserver {
                 out.print(argstr);
                 out.println();
                 out.println();
-                for (String msg : logMessages) {
+                for (String msg : nl.logMessages) {
                     out.println(msg);
                 }
-                logMessages.clear();
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -186,7 +175,7 @@ public class OctreeGroupGeneratorTest implements IObserver {
     private OctreeNode generateOctree() throws IOException, InstantiationException, IllegalAccessException, ClassNotFoundException {
         long startMs = TimeUtils.millis();
 
-        IAggregationAlgorithm aggr = new BrightestStars(maxDepth, maxPart, minPart, discard);
+        IAggregationAlgorithm aggr = new BrightestStarsSimple(maxPart);
 
         OctreeGenerator og = new OctreeGenerator(aggr);
 
@@ -276,12 +265,19 @@ public class OctreeGroupGeneratorTest implements IObserver {
         double writingSecs = (writingMs - generatingMs) / 1000.0;
         double totalSecs = loadingSecs + generatingSecs + writingSecs;
 
+        int[][] stats = octree.stats();
+
         Logger.info("============");
         Logger.info("OCTREE STATS");
         Logger.info("============");
         Logger.info("Octants: " + octree.numNodes());
         Logger.info("Particles: " + list.size);
         Logger.info("Depth: " + octree.getMaxDepth());
+        int level = 0;
+        for (int[] levelinfo : stats) {
+            Logger.info("   Level " + level + ": " + levelinfo[0] + " octants, " + levelinfo[1] + " stars");
+            level++;
+        }
         Logger.info();
         Logger.info("================");
         Logger.info("FINAL TIME STATS");
@@ -343,34 +339,6 @@ public class OctreeGroupGeneratorTest implements IObserver {
             }
         }
         element.delete();
-    }
-
-    @Override
-    public void notify(Events event, Object... data) {
-        switch (event) {
-        case POST_NOTIFICATION:
-            String message = "";
-            for (int i = 0; i < data.length; i++) {
-                if (i == data.length - 1 && data[i] instanceof Boolean) {
-                } else {
-                    message += (String) data[i];
-                    if (i < data.length - 1 && !(i == data.length - 2 && data[data.length - 1] instanceof Boolean)) {
-                        message += " - ";
-                    }
-                }
-            }
-            logMessages.add(message);
-            System.out.println(message);
-            break;
-        case JAVA_EXCEPTION:
-            Exception e = (Exception) data[0];
-            e.printStackTrace(System.err);
-            logMessages.add(e.getMessage());
-            break;
-        default:
-            break;
-        }
-
     }
 
     protected void dumpToDiskCsv(Array<StarBean> data, String filename) {

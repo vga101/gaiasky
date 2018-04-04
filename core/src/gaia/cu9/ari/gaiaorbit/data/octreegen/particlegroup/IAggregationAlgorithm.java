@@ -43,4 +43,10 @@ public interface IAggregationAlgorithm {
      */
     public int getDiscarded();
 
+    /**
+     * Returns the max depth setting.
+     * @return The max depth
+     */
+    public int getMaxDepth();
+
 }

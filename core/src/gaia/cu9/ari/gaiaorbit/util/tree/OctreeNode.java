@@ -325,6 +325,27 @@ public class OctreeNode implements ILineRenderable {
     }
 
     /**
+     * Gets some per-level stats on the octree node
+     * @return A [DEPTH,2] matrix with number of octants [i,0] and objects [i,1] per level
+     */
+    public int[][] stats() {
+        int[][] result = new int[getMaxDepth()][2];
+        statsRec(result);
+        return result;
+    }
+
+    private void statsRec(int[][] mat) {
+        mat[this.depth][0] += 1;
+        mat[this.depth][1] += this.ownObjects;
+
+        for (OctreeNode child : children) {
+            if (child != null) {
+                child.statsRec(mat);
+            }
+        }
+    }
+
+    /**
      * Removes this octant from the octree
      */
     public void remove() {
