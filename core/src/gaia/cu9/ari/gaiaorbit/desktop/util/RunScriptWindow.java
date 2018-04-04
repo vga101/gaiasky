@@ -128,9 +128,9 @@ public class RunScriptWindow extends CollapsibleWindow {
             }
 
         });
-        buttonGroup.addActor(cancel);
-        buttonGroup.addActor(reload);
         buttonGroup.addActor(run);
+        buttonGroup.addActor(reload);
+        buttonGroup.addActor(cancel);
 
         add(table).pad(pad);
         row();
