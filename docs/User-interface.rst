@@ -138,19 +138,6 @@ Here are a few options to control the lighting of the scene:
    are rendered using a glow texture in a post-processing step. This can
    have a performance hit on some older graphics cards.
 
-Gaia scan
----------
-
-You can also enable the real time computation of Gaia observation. To do
-so, tick the ``Enable Gaia scan`` checkbox. Keep in mind that this
-computation is done by interpolating the scan path and calculating what
-stars fall into Gaia's both fields of view, so if you set the time pace
-very high it is going to take a toll on the frames per second. Also, you
-can choose to colour the stars observed by Gaia according to the number
-of observations, where purple is 1 and red is 75. To do so, tick the
-``Colour observed stars`` checkbox. Finally, you can decide to only
-display the stars that have been observed by Gaia at least once. To do
-so, tick the ``Show only observed stars`` checkbox.
 
 Music
 -----
