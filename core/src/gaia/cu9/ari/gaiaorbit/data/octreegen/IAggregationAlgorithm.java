@@ -43,4 +43,9 @@ public interface IAggregationAlgorithm {
      */
     public int getDiscarded();
 
+    /**
+     * Returns the maximum depth of the octant, if set. Otherwise, it returns a negative value
+     * @return The maximum depth
+     */
+    public int getMaxDepth();
 }

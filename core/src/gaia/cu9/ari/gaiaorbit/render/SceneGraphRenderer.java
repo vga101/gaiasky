@@ -629,6 +629,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         if (GlobalConf.postprocess.POSTPROCESS_LIGHT_SCATTERING && glowFb != null) {
             // Get all billboard stars
             Array<IRenderable> bbstars = render_lists.get(RenderGroup.BILLBOARD_STAR.ordinal());
+
             stars.clear();
             for (IRenderable st : bbstars) {
                 if (st instanceof Star) {
@@ -644,21 +645,24 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
             Gdx.gl.glClearColor(0, 0, 0, 0);
             Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
-            // Render billboard stars
-            billboardStarsProc.renderStud(stars, camera, 0);
+            if (!GlobalConf.program.CUBEMAP360_MODE) {
+                // Render billboard stars
+                billboardStarsProc.renderStud(stars, camera, 0);
 
-            // Render models
-            modelBatchOpaque.begin(camera.getCamera());
-            for (IRenderable model : models) {
-                ModelBody mb = (ModelBody) model;
-                mb.renderOpaque(modelBatchOpaque, 1, 0);
+                // Render models
+                modelBatchOpaque.begin(camera.getCamera());
+                for (IRenderable model : models) {
+                    ModelBody mb = (ModelBody) model;
+                    mb.renderOpaque(modelBatchOpaque, 1, 0);
+                }
+                modelBatchOpaque.end();
             }
-            modelBatchOpaque.end();
 
             // Save to texture for later use
             glowTex = glowFb.getColorBufferTexture();
 
             glowFb.end();
+
         }
 
     }

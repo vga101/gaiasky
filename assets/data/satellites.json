@@ -68,7 +68,7 @@
         "coordinates" : {
                      // This must implement gaia.cu9.ari.gaiaorbit.util.coord.IBodyCoordinates
                      "impl" : "gaia.cu9.ari.gaiaorbit.util.coord.StaticCoordinates",
-                     "position" : [0.0, 0.0, -1e11],
+                     "position" : [0.0, 0.0, -1e9],
                      "transformMatrix" : [-0.9292035398230076, 0.35398228778724056, 0.10619473392453657, 0.0, 0.3539823139826705, 0.7699115044247788, 0.5309734425956234, 0.0, 0.10619464660643674, 0.5309734600592433, -0.8407079646017688, 0.0, 0.0, 0.0, 0.0, 1.0]
          },
         "renderquad" : False,

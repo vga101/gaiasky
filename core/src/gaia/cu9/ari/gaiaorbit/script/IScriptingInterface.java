@@ -369,29 +369,36 @@ public interface IScriptingInterface {
      * up vector as a rotation axis.
      * 
      * @param focus
-     *            The name of the focus object.
+     *            The name of the focus object
      * @param other
      *            The name of the other object, to the fine a line from this to
-     *            foucs. Usually a light source.
+     *            foucs. Usually a light source
      * @param rotation
-     *            The rotation angle, in degrees.
+     *            The rotation angle, in degrees
      * @param viewAngle
      *            The view angle which determines the distance, in degrees.
      */
     public void setCameraPositionAndFocus(String focus, String other, double rotation, double viewAngle);
 
     /**
-     * Changes the speed multiplier of the camera and its acceleration.
+     * Sets the camera in free mode and points it to the given coordinates in equatorial system
+     * @param ra Right ascension in degrees
+     * @param dec Declination in degrees
+     */
+    public void pointAtSkyCoordinate(double ra, double dec);
+
+    /**
+     * Changes the speed multiplier of the camera and its acceleration
      * 
      * @param speed
-     *            The new speed, from 1 to 100.
+     *            The new speed, from 1 to 100
      */
     public void setCameraSpeed(float speed);
 
     /**
-     * Gets the current physical speed of the camera in km/h.
+     * Gets the current physical speed of the camera in km/h
      * 
-     * @return The current speed of the camera in km/h.
+     * @return The current speed of the camera in km/h
      */
     public double getCameraSpeed();
 

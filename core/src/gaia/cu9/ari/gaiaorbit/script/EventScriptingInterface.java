@@ -302,6 +302,11 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
         }
     }
 
+    public void pointAtSkyCoordinate(double ra, double dec) {
+        em.post(Events.CAMERA_MODE_CMD, CameraMode.Free_Camera);
+        em.post(Events.FREE_MODE_COORD_CMD, ra, dec);
+    }
+
     public void setCameraPositionAndFocus(IFocus focus, IFocus other, double rotation, double viewAngle) {
         assert viewAngle > 0 : "View angle must be larger than zero";
         assert focus != null : "Focus can't be null";

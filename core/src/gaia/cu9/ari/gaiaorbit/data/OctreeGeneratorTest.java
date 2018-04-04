@@ -302,10 +302,8 @@ public class OctreeGeneratorTest implements IObserver {
         switch (event) {
         case POST_NOTIFICATION:
             String message = "";
-            boolean perm = false;
             for (int i = 0; i < data.length; i++) {
                 if (i == data.length - 1 && data[i] instanceof Boolean) {
-                    perm = (Boolean) data[i];
                 } else {
                     message += (String) data[i];
                     if (i < data.length - 1 && !(i == data.length - 2 && data[data.length - 1] instanceof Boolean)) {
