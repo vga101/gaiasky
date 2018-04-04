@@ -8,10 +8,10 @@ The Gaia Sky GUI is divided into six panes, `Time <#time>`__,
 `Camera <#camera>`__, `Type visibility <#type-visibility>`__, `Lighting <#lighting>`__, `Objects <#objects>`__,  and `Music <#music>`__.
 
 
-.. figure:: img/ui/gs-interface-collapsed.jpg
+.. image:: img/ui/gs-interface-collapsed.jpg
   :width: 15%
 
-.. figure:: img/ui/gs-interface-expanded.jpg
+.. image:: img/ui/gs-interface-expanded.jpg
   :width: 15%
 
 
