@@ -5,9 +5,19 @@ GUI window
 ==========
 
 The Gaia Sky GUI is divided into six sections, `Time <#time>`__,
-`Camera <#camera>`__, `Objects <#objects>`__, `Type
-visibility <#type-visibility>`__, `Lighting <#lighting>`__, `Gaia
-scan <#gaia-scan>`__ and `Music <#music>`__.
+`Camera <#camera>`__, `Type visibility <#type-visibility>`__, `Lighting <#lighting>`__, `Objects <#objects>`__,  and `Music <#music>`__.
+
+|ui-collapsed| |ui-expanded|
+
+.. figure:: img/ui/gs-interface-collapsed.jpg
+  :width: 45%
+
+.. figure:: img/ui/gs-interface-expanded.jpg
+  :width: 45%
+
+.. |ui-collapsed| image:: img/ui/gs-interface-collapsed.jpg
+.. |ui-expanded| image:: img/ui/gs-interface-expanded.jpg
+
 
 Time
 ----
