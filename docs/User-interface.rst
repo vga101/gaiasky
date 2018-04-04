@@ -7,16 +7,15 @@ GUI window
 The Gaia Sky GUI is divided into six panes, `Time <#time>`__,
 `Camera <#camera>`__, `Type visibility <#type-visibility>`__, `Lighting <#lighting>`__, `Objects <#objects>`__,  and `Music <#music>`__.
 
-
-.. image:: img/ui/gs-interface-collapsed.jpg
-  :width: 15%
-  :alt: User interface with all panes collapsed
-
-
-.. image:: img/ui/gs-interface-expanded.jpg
-  :width: 15%
-  :alt: User interface with camera pane expanded
-
++----------------------------------------------------+
+| .. image:: img/ui/gs-interface-collapsed.jpg       |
+|   :width: 15%                                      |
+|   :alt: User interface with all panes collapsed    |
++----------------------------------------------------+            
+| .. image:: img/ui/gs-interface-expanded.jpg        |
+|   :width: 15%                                      |
+|   :alt: User interface with camera pane expanded   |
++----------------------------------------------------+
 
 The six panes, except for the Time pane, are collapsed at startup. To expand them and reveal its controls just click on the little plus 
 icon |plus-icon| at the right of the pane title. Use the minus icon |minus-icon| to collapse it again. Panes can also be detached
