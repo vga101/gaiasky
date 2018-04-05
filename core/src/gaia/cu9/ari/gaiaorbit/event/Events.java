@@ -399,6 +399,10 @@ public enum Events {
      **/
     CUBEMAP_RESOLUTION_CMD,
     /**
+     * Sets a new cubemap projection. Contains the CubemapProjection object.
+     */
+    CUBEMAP_PROJECTION_CMD,
+    /**
      * Enables and disables the planetarium mode. Contains a boolean with the
      * state and another boolean indicating whether it comes from the interface.
      */

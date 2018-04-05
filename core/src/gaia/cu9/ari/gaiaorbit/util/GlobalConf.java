@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.badlogic.gdx.math.MathUtils;
+import com.bitfire.postprocessing.effects.CubemapProjections.CubemapProjection;
 
 import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
@@ -530,6 +531,8 @@ public class GlobalConf {
         public boolean DISPLAY_HUD;
         public boolean DISPLAY_POINTER_COORDS;
         public boolean CUBEMAP360_MODE;
+        /** Cubemap projection **/
+        public CubemapProjection CUBEMAP_PROJECTION = CubemapProjection.EQUIRECTANGULAR;
         public boolean STEREOSCOPIC_MODE;
         /** Eye separation in stereoscopic mode in meters **/
         public float STEREOSCOPIC_EYE_SEPARATION_M = 1;
@@ -540,7 +543,7 @@ public class GlobalConf {
         public boolean DISPLAY_DATASET_DIALOG;
 
         public ProgramConf() {
-            EventManager.instance.subscribe(this, Events.STEREOSCOPIC_CMD, Events.STEREO_PROFILE_CMD, Events.CUBEMAP360_CMD);
+            EventManager.instance.subscribe(this, Events.STEREOSCOPIC_CMD, Events.STEREO_PROFILE_CMD, Events.CUBEMAP360_CMD, Events.CUBEMAP_PROJECTION_CMD);
         }
 
         public void initialize(boolean dISPLAY_TUTORIAL, String tUTORIAL_POINTER_SCRIPT_LOCATION, String tUTORIAL_SCRIPT_LOCATION, boolean sHOW_DEBUG_INFO, Instant lAST_CHECKED, String lAST_VERSION_TIME,
@@ -604,8 +607,8 @@ public class GlobalConf {
                         EventManager.instance.post(Events.DISPLAY_GUI_CMD, I18n.bundle.get("notif.cleanmode"), true);
                     }
 
-                    EventManager.instance.post(Events.POST_NOTIFICATION, "You have entered 3D mode. Go back to normal mode using <CTRL+S>");
-                    EventManager.instance.post(Events.POST_NOTIFICATION, "Switch between stereoscopic modes using <CTRL+SHIFT+S>");
+                    Logger.info("You have entered 3D mode. Go back to normal mode using <CTRL+S>");
+                    Logger.info("Switch between stereoscopic modes using <CTRL+SHIFT+S>");
                 }
                 break;
             case STEREO_PROFILE_CMD:
@@ -615,7 +618,12 @@ public class GlobalConf {
                 CUBEMAP360_MODE = (Boolean) data[0];
                 EventManager.instance.post(Events.DISPLAY_GUI_CMD, I18n.bundle.get("notif.cleanmode"), !CUBEMAP360_MODE);
 
-                EventManager.instance.post(Events.POST_NOTIFICATION, "You have entered the 360 mode.  Go back to normal mode using <CTRL+3>");
+                Logger.info("You have entered the 360 mode.  Go back to normal mode using <CTRL+K>");
+                Logger.info("Switch between cubemap projections using <CTRL+SHIFT+K>");
+                break;
+            case CUBEMAP_PROJECTION_CMD:
+                CUBEMAP_PROJECTION = (CubemapProjection) data[0];
+                Logger.info("Cubemap projection set to " + CUBEMAP_PROJECTION.toString());
                 break;
             default:
                 break;

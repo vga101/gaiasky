@@ -12,7 +12,8 @@ import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.bitfire.postprocessing.effects.CubemapEquirectangular;
+import com.bitfire.postprocessing.effects.CubemapProjections;
+import com.bitfire.postprocessing.effects.CubemapProjections.CubemapProjection;
 
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
@@ -36,7 +37,7 @@ public class SGRCubemap extends SGRAbstract implements ISGR, IObserver {
 
     StretchViewport stretchViewport;
 
-    CubemapEquirectangular cubemapEffect;
+    CubemapProjections cubemapEffect;
 
     /** Frame buffers for each side of the cubemap **/
     Map<Integer, FrameBuffer> fbcm;
@@ -52,9 +53,10 @@ public class SGRCubemap extends SGRAbstract implements ISGR, IObserver {
 
         fbcm = new HashMap<Integer, FrameBuffer>();
 
-        cubemapEffect = new CubemapEquirectangular();
+        cubemapEffect = new CubemapProjections();
+        cubemapEffect.setProjection(GlobalConf.program.CUBEMAP_PROJECTION);
 
-        EventManager.instance.subscribe(this, Events.CUBEMAP_RESOLUTION_CMD);
+        EventManager.instance.subscribe(this, Events.CUBEMAP_RESOLUTION_CMD, Events.CUBEMAP_PROJECTION_CMD);
     }
 
     @Override
@@ -223,6 +225,12 @@ public class SGRCubemap extends SGRAbstract implements ISGR, IObserver {
             } else {
                 // All good
             }
+            break;
+        case CUBEMAP_PROJECTION_CMD:
+            CubemapProjection p = (CubemapProjection) data[0];
+            Gdx.app.postRunnable(() -> {
+                cubemapEffect.setProjection(p);
+            });
             break;
         default:
             break;

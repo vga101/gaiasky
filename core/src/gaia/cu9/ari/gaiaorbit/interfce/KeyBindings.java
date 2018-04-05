@@ -7,6 +7,7 @@ import java.util.TreeSet;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
+import com.bitfire.postprocessing.effects.CubemapProjections.CubemapProjection;
 
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
@@ -279,13 +280,22 @@ public class KeyBindings {
             }
         }), Keys.U);
 
-        // CTRL+3 -> toggle 360 mode
+        // CTRL+K -> toggle cubemap mode
         addMapping(new ProgramAction(txt("action.toggle", txt("element.360")), new Runnable() {
             @Override
             public void run() {
                 EventManager.instance.post(Events.CUBEMAP360_CMD, !GlobalConf.program.CUBEMAP360_MODE, false);
             }
-        }), SPECIAL1, Keys.NUM_3);
+        }), SPECIAL1, Keys.K);
+
+        // CTRL+SHIFT+K -> toggle cubemap projection
+        addMapping(new ProgramAction(txt("action.toggle", txt("element.projection")), new Runnable() {
+            @Override
+            public void run() {
+                int newprojidx = (GlobalConf.program.CUBEMAP_PROJECTION.ordinal() + 1) % CubemapProjection.values().length;
+                EventManager.instance.post(Events.CUBEMAP_PROJECTION_CMD, CubemapProjection.values()[newprojidx]);
+            }
+        }), SPECIAL1, SPECIAL2, Keys.K);
 
         // CTRL + SHIFT + UP -> increase star point size by 0.5
         addMapping(new ProgramAction(txt("action.starpointsize.inc"), new Runnable() {
@@ -311,10 +321,10 @@ public class KeyBindings {
             }
         }), SPECIAL1, SPECIAL2, Keys.R);
 
-        // Camera modes (NUMERIC KEYPAD)
-        for (int i = 144; i <= 150; i++) {
+        // Camera modes (NUMBERS)
+        for (int i = 7; i <= 16; i++) {
             // Camera mode
-            int m = i - 144;
+            int m = i - 7;
             final CameraMode mode = CameraMode.getMode(m);
             if (mode != null) {
                 addMapping(new ProgramAction(mode.name(), new Runnable() {
