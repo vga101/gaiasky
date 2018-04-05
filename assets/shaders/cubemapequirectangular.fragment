@@ -12,18 +12,74 @@ varying vec2 v_texCoords;
 
 #define PI 3.141592653589793238462643383
 #define TWOPI PI * 2.0
+#define DEG_RAD PI / 180.0
+#define RAD_DEG 180.0 / PI
  
-vec4 cubeToLatLon(samplerCube cubemap, vec2 inUV) 
-{ 
-	vec3 cubmapTexCoords; 
-	cubmapTexCoords.x = -sin(inUV.x * TWOPI) * sin(inUV.y * PI); 
-	cubmapTexCoords.y = cos(inUV.y * PI); 
-	cubmapTexCoords.z = -cos(inUV.x * TWOPI) * sin(inUV.y * PI); 
-	return textureCube(cubemap, cubmapTexCoords); 
+vec4 cubeToEquirectangular(samplerCube cubemap, vec2 tc){ 
+	vec3 cubmaptc; 
+	float lat = tc.y * PI;
+	float lon = tc.x * TWOPI;
+	cubmaptc.x = -sin(lon) * sin(lat); 
+	cubmaptc.y = cos(lat); 
+	cubmaptc.z = -cos(lon) * sin(lat); 
+	return textureCube(cubemap, cubmaptc); 
 }  
 
-void main( void ) 
-{
-	gl_FragColor = cubeToLatLon(u_cubemap, v_texCoords); 
+vec4 cubeToCylindrical(samplerCube cubemap, vec2 tc){
+	vec3 cubmaptc;
+	float lon = tc.x * TWOPI + PI;
+	float lat = asin(tc.y * 2.0 - 1.0) - PI / 2.0;	
+	
+	cubmaptc.x = -sin(lon) * sin(lat); 
+	cubmaptc.y = cos(lat); 
+	cubmaptc.z = -cos(lon) * sin(lat); 
+	return textureCube(cubemap, cubmaptc);
+}
+
+vec4 cubeToHammerAitoff(samplerCube cubemap, vec2 tc){
+	vec3 cubmaptc;
+	if(length(tc * 2.0 - 1.0) > 0.9){
+		//return vec4(0.0, 0.0, 0.0, 1.0);
+	}
+	float x = tc.x * 360.0 - 180.0;
+	float y = tc.y * 180.0 - 90.0;
+	
+	float z = sqrt(1.0 - pow(DEG_RAD * x / 4.0, 2.0) - pow(DEG_RAD * y / 2.0, 2.0));
+	
+	float lon = 2.0 * atan(2.0 * z * z - 1.0, DEG_RAD * z * x / 2.0) + PI;
+	float lat = asin(DEG_RAD * z * y) - PI / 2.0;
+	
+	cubmaptc.x = -sin(lon) * sin(lat); 
+	cubmaptc.y = cos(lat); 
+	cubmaptc.z = -cos(lon) * sin(lat); 
+	return textureCube(cubemap, cubmaptc);
+}
+
+
+vec4 cubeToAitoff(samplerCube cubemap, vec2 tc){
+	vec3 cubmaptc;
+	float x = (tc.x * 2.0 - 1.0);
+	float y = (tc.y * 2.0 - 1.0);
+	
+	float zsqr = 1.0 - x / 2.0 - y / 2.0;
+	
+	float z = sqrt(zsqr);
+	
+	float lon = 2.0 * atan(z * x / (2.0 * (2.0 * z * z - 1.0)));
+	float lat = asin(z * y);
+	
+	lon = mod(lon, TWOPI);
+	lat = mod(lat, PI);
+	
+	cubmaptc.x = -sin(lon) * sin(lat); 
+	cubmaptc.y = cos(lat); 
+	cubmaptc.z = -cos(lon) * sin(lat); 
+	return textureCube(cubemap, cubmaptc);
+}
+
+void main( void ){
+	//gl_FragColor = cubeToCylindrical(u_cubemap, v_texCoords); 
+	gl_FragColor = cubeToEquirectangular(u_cubemap, v_texCoords);
+	//gl_FragColor = cubeToHammerAitoff(u_cubemap, v_texCoords); 
 	//gl_FragColor = texture2D(u_texture0, v_texCoords);
 }
