@@ -94,11 +94,7 @@ public class SGRCubemap extends SGRAbstract implements ISGR, IObserver {
         cam.direction.set(dirbak).rotate(upbak, -90);
         cam.update();
 
-        sgr.renderGlowPass(camera);
-
-        postproc = postprocessCapture(ppb, xposfb, wh, wh);
-        sgr.renderScene(camera, t, rc);
-        postprocessRender(ppb, xposfb, postproc, camera, rw, rh);
+        renderFace(xposfb, camera, sgr, ppb, rw, rh, wh, t);
 
         // LEFT -X
         rc.cubemapSide = CubemapSide.SIDE_LEFT;
@@ -107,11 +103,7 @@ public class SGRCubemap extends SGRAbstract implements ISGR, IObserver {
         cam.direction.set(dirbak).rotate(upbak, 90);
         cam.update();
 
-        sgr.renderGlowPass(camera);
-
-        postproc = postprocessCapture(ppb, xnegfb, wh, wh);
-        sgr.renderScene(camera, t, rc);
-        postprocessRender(ppb, xnegfb, postproc, camera, rw, rh);
+        renderFace(xnegfb, camera, sgr, ppb, rw, rh, wh, t);
 
         // UP +Y
         rc.cubemapSide = CubemapSide.SIDE_UP;
@@ -123,11 +115,7 @@ public class SGRCubemap extends SGRAbstract implements ISGR, IObserver {
         cam.up.set(upbak).rotate(aux1, 90);
         cam.update();
 
-        sgr.renderGlowPass(camera);
-
-        postproc = postprocessCapture(ppb, yposfb, wh, wh);
-        sgr.renderScene(camera, t, rc);
-        postprocessRender(ppb, yposfb, postproc, camera, rw, rh);
+        renderFace(yposfb, camera, sgr, ppb, rw, rh, wh, t);
 
         // DOWN -Y
         rc.cubemapSide = CubemapSide.SIDE_DOWN;
@@ -139,11 +127,7 @@ public class SGRCubemap extends SGRAbstract implements ISGR, IObserver {
         cam.up.set(upbak).rotate(aux1, -90);
         cam.update();
 
-        sgr.renderGlowPass(camera);
-
-        postproc = postprocessCapture(ppb, ynegfb, wh, wh);
-        sgr.renderScene(camera, t, rc);
-        postprocessRender(ppb, ynegfb, postproc, camera, rw, rh);
+        renderFace(ynegfb, camera, sgr, ppb, rw, rh, wh, t);
 
         // FRONT +Z
         rc.cubemapSide = CubemapSide.SIDE_FRONT;
@@ -152,11 +136,7 @@ public class SGRCubemap extends SGRAbstract implements ISGR, IObserver {
         cam.up.set(upbak);
         cam.update();
 
-        sgr.renderGlowPass(camera);
-
-        postproc = postprocessCapture(ppb, zposfb, wh, wh);
-        sgr.renderScene(camera, t, rc);
-        postprocessRender(ppb, zposfb, postproc, camera, rw, rh);
+        renderFace(zposfb, camera, sgr, ppb, rw, rh, wh, t);
 
         // BACK -Z
         rc.cubemapSide = CubemapSide.SIDE_BACK;
@@ -165,11 +145,7 @@ public class SGRCubemap extends SGRAbstract implements ISGR, IObserver {
         cam.direction.set(dirbak).rotate(upbak, -180);
         cam.update();
 
-        sgr.renderGlowPass(camera);
-
-        postproc = postprocessCapture(ppb, znegfb, wh, wh);
-        sgr.renderScene(camera, t, rc);
-        postprocessRender(ppb, znegfb, postproc, camera, rw, rh);
+        renderFace(znegfb, camera, sgr, ppb, rw, rh, wh, t);
 
         // Restore camera parameters
         cam.direction.set(dirbak);
@@ -188,6 +164,18 @@ public class SGRCubemap extends SGRAbstract implements ISGR, IObserver {
 
         EventManager.instance.post(Events.FOV_CHANGED_CMD, fovbak);
 
+    }
+
+    private void renderFace(FrameBuffer fb, ICamera camera, SceneGraphRenderer sgr, PostProcessBean ppb, int rw, int rh, int wh, double t) {
+        renderRegularFace(fb, camera, sgr, ppb, rw, rh, wh, t);
+    }
+
+    private void renderRegularFace(FrameBuffer fb, ICamera camera, SceneGraphRenderer sgr, PostProcessBean ppb, int rw, int rh, int wh, double t) {
+        sgr.renderGlowPass(camera);
+
+        boolean postproc = postprocessCapture(ppb, fb, wh, wh);
+        sgr.renderScene(camera, t, rc);
+        postprocessRender(ppb, fb, postproc, camera, rw, rh);
     }
 
     private int getKey(int w, int h, int extra) {

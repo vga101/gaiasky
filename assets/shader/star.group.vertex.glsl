@@ -14,6 +14,8 @@ attribute float a_size;
 uniform int u_t; // time in days since epoch
 uniform mat4 u_projModelView;
 uniform vec3 u_camPos;
+uniform vec3 u_camDir;
+uniform int u_cubemap;
 
 uniform vec2 u_pointAlpha;
 uniform float u_thAnglePoint;
@@ -58,6 +60,14 @@ void main() {
     // Distance to star
     float dist = length(pos);
     
+    float sizefactor = 1.0;
+    if(u_cubemap == 1) {
+        // Cosine of angle between star position and camera direction
+        // Correct point primitive size error due to perspective projection
+        float cosphi = pow(dot(u_camDir, pos) / dist, 2.0);
+        sizefactor = 1.0 - cosphi * 0.65;
+    }
+    
     #ifdef relativisticEffects
     	pos = computeRelativisticAberration(pos, dist, u_velDir, u_vc);
     #endif // relativisticEffects
@@ -74,7 +84,6 @@ void main() {
 //            col.b = 0.0;
 //        }
     #endif // gravitationalWaves
-    
     
     // Compute fov observation if necessary (only Fov1, Fov2)
     float observed = 1.0;
@@ -96,5 +105,5 @@ void main() {
     }
 
     gl_Position = u_projModelView * vec4(pos, 0.0) * v_discard;
-    gl_PointSize = u_alphaSizeFovBr.y;
+    gl_PointSize = u_alphaSizeFovBr.y * sizefactor;
 }
