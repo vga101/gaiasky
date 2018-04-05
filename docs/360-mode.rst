@@ -1,13 +1,16 @@
-360 mode
-********
+Panorama mode
+*************
 
-Gaia Sky includes a 360 mode where the scene is rendered in all directions to a `cube map <https://en.wikipedia.org/wiki/Cube_mapping>`__.
-This cube map is then projected onto a flat image using an `equirectangular projection <http://alexcpeterson.com/2015/08/25/converting-a-cube-map-to-a-sphericalequirectangular-map/>`__. The final image can be used
+Gaia Sky includes a panorama mode where the scene is rendered in all directions to a `cube map <https://en.wikipedia.org/wiki/Cube_mapping>`__.
+This cube map is then projected onto a flat image. The projection to use can be an `equirectangular (spherical) projection <http://alexcpeterson.com/2015/08/25/converting-a-cube-map-to-a-sphericalequirectangular-map/>`__,
+a `cylindrical projection <https://en.wikipedia.org/wiki/Map_projection#Cylindrical>`__ or a `Hammer-Aitoff <https://en.wikipedia.org/wiki/Hammer_projection>`__ projection. The final image can be used
 to create 360 videos with head tracking (see `here <https://www.youtube.com/watch?v=Bvsb8LZwkgc&t=33s>`__)
 
-.. hint:: To activate the 360 mode, click on the |cubemap-icon| icon in the camera section of the controls window. Exit by clicking |cubemap-icon| again.
+.. hint:: To activate the panorama mode, click on the |cubemap-icon| icon in the camera section of the controls window. Exit by clicking |cubemap-icon| again.
 
-.. hint:: ``L-CTRL`` + ``3`` -- Can also be used to toggle the 360 mode.
+.. hint:: ``L-CTRL`` + ``K`` -- Toggle the panorama mode.
+.. hint:: ``L-CTRL`` + ``L-SHIFT`` + ``K`` -- Cycle between the projections (spherical, cylindrical and Hammer-Aitoff).
+
 
 Configuration
 =============
@@ -19,6 +22,7 @@ Creating panorama images
 
 In order to create panorama images that can be viewed with a VR device or simply a 360 viewer, we need to take into consideration a few points.
 
+*  You should probably use the equirectangular (spherical) projection, as it is the simplest and the one most programs use.
 *  Panoramas work best if their **aspect ratio is 2:1**, so a resolution of ``5300x2650`` or similar should work. (Refer to the :ref:`screenshots-configuration` section to learn how to take screenshots with an arbitrary resolution).
 *  Some services (like Google) have strong constraints on image properties. For instance, they must be at least 14 megapixels and in `jpeg` format. Learn more `here <https://support.google.com/maps/answer/7012050?hl=en&ref_topic=6275604>`__.
 *  Some **metadata** needs to be injected into the image file.
