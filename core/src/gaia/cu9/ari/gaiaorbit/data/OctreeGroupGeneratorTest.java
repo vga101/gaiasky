@@ -87,8 +87,11 @@ public class OctreeGroupGeneratorTest {
     @Parameter(names = "--serialized", description = "Use the java serialization method instead of the binary format to output the particle files")
     private boolean serialized = false;
 
-    @Parameter(names = "--pllxerrfac", description = "Parallax error factor, acceptance criteria as a percentage of paralllax error with respect to parallax, in [0..1]")
+    @Parameter(names = "--pllxerrfac", description = "Parallax error factor, acceptance criteria as a percentage of parallax error with respect to parallax, in [0..1]")
     private double pllxerrfac = 0.14;
+
+    @Parameter(names = "--adaptivepllx", description = "On by default, this enables the adaptive parallax criterion, which relaxes the threshold for bright stars to avoid artifacts")
+    private boolean adaptivepllx = true;
 
     @Parameter(names = "--pllxzeropoint", description = "Zero point value for the parallax in mas")
     private double pllxzeropoint = 0d;

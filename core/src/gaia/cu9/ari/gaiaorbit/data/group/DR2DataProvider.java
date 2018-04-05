@@ -179,6 +179,14 @@ public class DR2DataProvider extends AbstractStarGroupDataProvider {
         }
     }
 
+    private boolean acceptParallax(double appmag, double pllx, double pllxerr) {
+        if (adaptiveParallax && appmag < 13) {
+            return pllx >= 0 && pllxerr < pllx * (parallaxErrorFactor * 2.0) && pllxerr <= 1;
+        } else {
+            return pllx >= 0 && pllxerr < pllx * parallaxErrorFactor && pllxerr <= 1;
+        }
+    }
+
     /**
      * Adds the star if it meets the criteria.
      * 
@@ -196,9 +204,10 @@ public class DR2DataProvider extends AbstractStarGroupDataProvider {
             double pllx = Parser.parseDouble(tokens[indices[PLLX]]) + parallaxZeroPoint;
             //pllx = 0.0200120072;
             double pllxerr = Parser.parseDouble(tokens[indices[PLLX_ERR]]);
+            double appmag = Parser.parseDouble(tokens[indices[G_MAG]]);
 
             // Keep only stars with relevant parallaxes
-            if (pllx >= 0 && pllxerr < pllx * parallaxErrorFactor && pllxerr <= 1) {
+            if (acceptParallax(appmag, pllx, pllxerr)) {
                 double distpc = (1000d / pllx);
                 double dist = distpc * Constants.PC_TO_U;
                 /** ID **/
@@ -248,8 +257,8 @@ public class DR2DataProvider extends AbstractStarGroupDataProvider {
                         ag = magcorraux * 5.9e-4;
                     }
                 }
-
-                double appmag = Parser.parseDouble(tokens[indices[G_MAG]]) - ag;
+                // Apply extinction
+                appmag -= ag;
                 double absmag = (appmag - 2.5 * Math.log10(Math.pow(distpc / 10d, 2d)));
                 double flux = Math.pow(10, -absmag / 2.5f);
                 double size = Math.min((Math.pow(flux, 0.5f) * Constants.PC_TO_U * 0.16f), 1e9f) / 1.5;
@@ -380,6 +389,5 @@ public class DR2DataProvider extends AbstractStarGroupDataProvider {
         }
         return null;
     }
-
 
 }

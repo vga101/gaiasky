@@ -26,6 +26,12 @@ public interface IStarGroupDataProvider extends IParticleGroupDataProvider {
     public void setParallaxErrorFactor(double parallaxErrorFactor);
 
     /**
+     * Whether to use an adaptive threshold, relaxing it for bright (appmag >= 13) stars to let more 
+     * bright stars in.
+     */
+    public void setAdaptiveParallax(boolean adaptive);
+
+    /**
      * Sets the zero point of the parallax as an addition to the parallax
      * values, in [mas]
      * 

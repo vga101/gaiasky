@@ -36,6 +36,12 @@ public abstract class AbstractStarGroupDataProvider implements IStarGroupDataPro
     protected double parallaxErrorFactor = 0.14;
 
     /**
+     * Whether to use an adaptive threshold which lets more
+     * bright stars in to avoid artifacts.
+     */
+    protected boolean adaptiveParallax = true;
+
+    /**
      * The zero point for the parallaxes in mas. Gets added to all loaded
      * parallax values
      */
@@ -181,6 +187,10 @@ public abstract class AbstractStarGroupDataProvider implements IStarGroupDataPro
 
     public void setParallaxErrorFactor(double parallaxErrorFactor) {
         this.parallaxErrorFactor = parallaxErrorFactor;
+    }
+
+    public void setAdaptiveParallax(boolean adaptive) {
+        this.adaptiveParallax = adaptive;
     }
 
     public void setParallaxZeroPoint(double parallaxZeroPoint) {
