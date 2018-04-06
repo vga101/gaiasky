@@ -23,7 +23,6 @@ def to_json(line, num):
     groups = line.split('\"')
     '\"'.join(groups[:n]), '\"'.join(groups[n:])
     
-    
     values = groups[2].split(",")
     
     name = values[9]

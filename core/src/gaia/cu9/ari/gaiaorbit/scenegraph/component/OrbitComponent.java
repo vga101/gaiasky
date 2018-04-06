@@ -8,7 +8,7 @@ public class OrbitComponent {
     public double period;
     /** Base epoch **/
     public double epoch;
-    /** Semi major axis of the ellipse, a.**/
+    /** Semi major axis of the ellipse, a in Km.**/
     public double semimajoraxis;
     /** Eccentricity of the ellipse. **/
     public double e;

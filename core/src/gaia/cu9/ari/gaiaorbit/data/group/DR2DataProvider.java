@@ -181,7 +181,7 @@ public class DR2DataProvider extends AbstractStarGroupDataProvider {
 
     private boolean acceptParallax(double appmag, double pllx, double pllxerr) {
         if (adaptiveParallax && appmag < 13) {
-            return pllx >= 0 && pllxerr < pllx * (parallaxErrorFactor * 2.0) && pllxerr <= 1;
+            return pllx >= 0 && pllxerr < pllx * (parallaxErrorFactor * 4.0) && pllxerr <= 1;
         } else {
             return pllx >= 0 && pllxerr < pllx * parallaxErrorFactor && pllxerr <= 1;
         }
