@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 
-import json, io, re
+import json, io, re, datetime, jdcal
 
 AU_TO_KM = 149598000 
 N_MAX = 700
+FMT = "%Y%m%d"
 
 class SSO(object):
     def __init__(self, name, color, epoch, meananomaly, semimajoraxis, eccentricity, argofpericenter, ascendingnode, period, inclination):
@@ -30,7 +31,9 @@ def to_json(line, idx):
     name = values[2]
     color = [0.4, 1.0, 0.4, 0.5]
     # Epoch in yyyymmdd, convert
-    epoch = float(values[8])
+    ymd = values[8]
+    dt = datetime.datetime.strptime(ymd, FMT)
+    epoch = sum(jdcal.gcal2jd(dt.year, dt.month, dt.day))
     # Mean anomaly [deg]
     meananomaly = float(values[9])
     # Semimajor axis [Km]

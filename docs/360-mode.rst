@@ -3,13 +3,13 @@ Panorama mode
 
 Gaia Sky includes a panorama mode where the scene is rendered in all directions to a `cube map <https://en.wikipedia.org/wiki/Cube_mapping>`__.
 This cube map is then projected onto a flat image. The projection to use can be an `equirectangular (spherical) projection <http://alexcpeterson.com/2015/08/25/converting-a-cube-map-to-a-sphericalequirectangular-map/>`__,
-a `cylindrical projection <https://en.wikipedia.org/wiki/Map_projection#Cylindrical>`__ or a `Hammer-Aitoff <https://en.wikipedia.org/wiki/Hammer_projection>`__ projection. The final image can be used
+a `cylindrical projection <https://en.wikipedia.org/wiki/Map_projection#Cylindrical>`__ or a `Hammer <https://en.wikipedia.org/wiki/Hammer_projection>`__ projection. The final image can be used
 to create 360 videos with head tracking (see `here <https://www.youtube.com/watch?v=Bvsb8LZwkgc&t=33s>`__)
 
 .. hint:: To activate the panorama mode, click on the |cubemap-icon| icon in the camera section of the controls window. Exit by clicking |cubemap-icon| again.
 
 .. hint:: ``L-CTRL`` + ``K`` -- Toggle the panorama mode.
-.. hint:: ``L-CTRL`` + ``L-SHIFT`` + ``K`` -- Cycle between the projections (spherical, cylindrical and Hammer-Aitoff).
+.. hint:: ``L-CTRL`` + ``L-SHIFT`` + ``K`` -- Cycle between the projections (spherical, cylindrical and Hammer).
 
 
 Configuration
