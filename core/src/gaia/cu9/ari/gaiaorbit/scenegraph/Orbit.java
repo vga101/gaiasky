@@ -66,7 +66,7 @@ public class Orbit extends LineObject {
             IOrbitDataProvider provider;
             try {
                 provider = ClassReflection.newInstance(providerClass);
-                provider.load(oc.source, new OrbitDataLoader.OrbitDataLoaderParameter(name, providerClass, oc, multiplier));
+                provider.load(oc.source, new OrbitDataLoader.OrbitDataLoaderParameter(name, providerClass, oc, multiplier, 100));
                 orbitData = provider.getData();
             } catch (Exception e) {
                 Logger.error(e, getClass().getSimpleName());

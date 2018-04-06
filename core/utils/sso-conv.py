@@ -1,9 +1,16 @@
 #!/usr/bin/env python
 
-import json, io, re, datetime, jdcal
+import json, io, re, datetime, jdcal, math
 
-AU_TO_KM = 149598000 
+# Max number of asteroids to process
 N_MAX = 700
+# Unit conversion
+AU_TO_KM = 149598000
+Y_TO_D = 365.25 
+# Standard gravitational parameter of the Sun
+GM_SUN = 1.32712440019e20
+
+# Incoming date format
 FMT = "%Y%m%d"
 
 class SSO(object):
@@ -37,15 +44,16 @@ def to_json(line, idx):
     # Mean anomaly [deg]
     meananomaly = float(values[9])
     # Semimajor axis [Km]
-    semimajoraxis = float(values[14]) * AU_TO_KM
+    a_au = float(values[14])
+    semimajoraxis = a_au * AU_TO_KM
     # Eccentricity
     eccentricity = float(values[13])
     # Argument of pericenter [deg]
     argofpericenter = float(values[10])
     # Ascending node [deg]
     ascendingnode = float(values[11])
-    # Period in years, no data
-    period = 0.1
+    # Period in days
+    period = pow(a_au, 1.5) * Y_TO_D
     # Inclination [deg]
     inclination = float(values[12])
     

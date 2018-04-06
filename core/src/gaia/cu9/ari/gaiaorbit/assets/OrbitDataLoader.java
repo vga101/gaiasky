@@ -77,6 +77,14 @@ public class OrbitDataLoader extends AsynchronousAssetLoader<OrbitData, OrbitDat
             this.multiplier = multiplier;
         }
 
+        public OrbitDataLoaderParameter(String name, Class<? extends IOrbitDataProvider> providerClass, OrbitComponent orbitalParameters, double multiplier, int numSamples) {
+            this(providerClass);
+            this.name = name;
+            this.orbitalParamaters = orbitalParameters;
+            this.multiplier = multiplier;
+            this.numSamples = numSamples;
+        }
+
         public OrbitDataLoaderParameter(Class<? extends IOrbitDataProvider> providerClass, String name, Date ini, boolean forward, float orbitalPeriod, int numSamples) {
             this(providerClass);
             this.name = name;

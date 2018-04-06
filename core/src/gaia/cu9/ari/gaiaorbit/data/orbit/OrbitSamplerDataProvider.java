@@ -93,7 +93,8 @@ public class OrbitSamplerDataProvider implements IOrbitDataProvider, IObserver {
     @Override
     public void load(String file, OrbitDataLoaderParameter parameter) {
         // Sample using VSOP
-        int numSamples = parameter.numSamples > 0 ? parameter.numSamples : (int) (500 * parameter.orbitalPeriod / 365);
+        // If num samples is not defined, we use 300 samples per year of period
+        int numSamples = parameter.numSamples > 0 ? parameter.numSamples : (int) (300 * parameter.orbitalPeriod / 365);
         numSamples = Math.max(100, Math.min(2000, numSamples));
         data = new OrbitData();
         String bodyDesc = parameter.name;
