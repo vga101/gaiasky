@@ -37,7 +37,7 @@ public class Orbit extends LineObject {
     protected Vector3d prev, curr;
     public double alpha;
     public Matrix4 localTransform;
-    public Matrix4d localTransformD, transformFunction;
+    public Matrix4d localTransformD, transformFunction, orbitalElementsTransform;
     protected String provider;
     protected Double multiplier = 1.0d;
     protected Class<? extends IOrbitDataProvider> providerClass;
@@ -54,6 +54,7 @@ public class Orbit extends LineObject {
         super();
         localTransform = new Matrix4();
         localTransformD = new Matrix4d();
+        orbitalElementsTransform = new Matrix4d();
         prev = new Vector3d();
         curr = new Vector3d();
     }
@@ -82,6 +83,9 @@ public class Orbit extends LineObject {
         int last = orbitData.getNumPoints() - 1;
         Vector3d v = new Vector3d(orbitData.x.get(last), orbitData.y.get(last), orbitData.z.get(last));
         this.size = (float) v.len() * 5;
+        orbitalElementsTransform.rotate(0, 1, 0, oc.argofpericenter);
+        orbitalElementsTransform.rotate(0, 0, 1, oc.i);
+        orbitalElementsTransform.rotate(0, 1, 0, oc.ascendingnode);
     }
 
     @Override
@@ -97,9 +101,7 @@ public class Orbit extends LineObject {
         if (transformFunction != null)
             localTransformD.mul(transformFunction);
 
-        localTransformD.rotate(0, 1, 0, oc.argofpericenter);
-        localTransformD.rotate(0, 0, 1, oc.i);
-        localTransformD.rotate(0, 1, 0, oc.ascendingnode);
+        localTransformD.mul(orbitalElementsTransform);
 
         localTransformD.putIn(localTransform);
 
