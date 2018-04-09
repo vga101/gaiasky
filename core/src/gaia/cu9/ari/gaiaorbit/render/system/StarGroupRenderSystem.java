@@ -1,6 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.render.system;
 
-import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Mesh;
@@ -60,7 +59,6 @@ public class StarGroupRenderSystem extends ImmediateRenderSystem implements IObs
         meshes = new MeshData[N_MESHES];
     }
 
-
     /**
      * Adds a new mesh data to the meshes list and increases the mesh data index
      * 
@@ -119,12 +117,10 @@ public class StarGroupRenderSystem extends ImmediateRenderSystem implements IObs
 
     @Override
     public void renderStud(Array<IRenderable> renderables, ICamera camera, double t) {
-        if (Gdx.app.getType() == ApplicationType.Desktop) {
-            // Enable gl_PointCoord
-            Gdx.gl20.glEnable(34913);
-            // Enable point sizes
-            Gdx.gl20.glEnable(0x8642);
-        }
+        // Enable gl_PointCoord
+        Gdx.gl20.glEnable(34913);
+        // Enable point sizes
+        Gdx.gl20.glEnable(0x8642);
 
         // Additive blending
         Gdx.gl20.glBlendFunc(GL20.GL_ONE, GL20.GL_ONE);

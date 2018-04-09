@@ -127,6 +127,14 @@ public class KeyBindings {
             }
         }), SPECIAL2, Keys.T);
 
+        // SHIFT+A -> Toggle asteroids
+        addMapping(new ProgramAction(txt("action.toggle", txt("element.asteroids")), new Runnable() {
+            @Override
+            public void run() {
+                EventManager.instance.post(Events.TOGGLE_VISIBILITY_CMD, "element.asteroids", false);
+            }
+        }), SPECIAL2, Keys.A);
+
         // SHIFT+L -> Toggle labels
         addMapping(new ProgramAction(txt("action.toggle", txt("element.labels")), new Runnable() {
             @Override
@@ -325,6 +333,21 @@ public class KeyBindings {
         for (int i = 7; i <= 16; i++) {
             // Camera mode
             int m = i - 7;
+            final CameraMode mode = CameraMode.getMode(m);
+            if (mode != null) {
+                addMapping(new ProgramAction(mode.name(), new Runnable() {
+                    @Override
+                    public void run() {
+                        EventManager.instance.post(Events.CAMERA_MODE_CMD, mode);
+                    }
+                }), i);
+            }
+        }
+
+        // Camera modes (NUM_KEYPAD)
+        for (int i = 144; i <= 153; i++) {
+            // Camera mode
+            int m = i - 144;
             final CameraMode mode = CameraMode.getMode(m);
             if (mode != null) {
                 addMapping(new ProgramAction(mode.name(), new Runnable() {

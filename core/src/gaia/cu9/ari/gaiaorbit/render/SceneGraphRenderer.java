@@ -49,6 +49,7 @@ import gaia.cu9.ari.gaiaorbit.render.system.LineQuadRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.LineRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.MilkyWayRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.ModelBatchRenderSystem;
+import gaia.cu9.ari.gaiaorbit.render.system.OrbitalElementsParticlesRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.ParticleEffectsRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.ParticleGroupRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.PixelRenderSystem;
@@ -94,8 +95,8 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
     private ShaderProgram fontShader;
 
-    private ShaderProgram[] starGroupShaders, particleGroupShaders, particleEffectShaders, lineShaders, lineQuadShaders, lineGpuShaders, mwPointShaders, mwNebulaShaders, pixelShaders, galShaders, spriteShaders, starShaders;
-    private AssetDescriptor<ShaderProgram>[] starGroupDesc, particleGroupDesc, particleEffectDesc, lineDesc, lineQuadDesc, lineGpuDesc, mwPointDesc, mwNebulaDesc, pixelDesc, galDesc, spriteDesc, starDesc;
+    private ShaderProgram[] starGroupShaders, particleGroupShaders, particleEffectShaders, orbitElemShaders, lineShaders, lineQuadShaders, lineGpuShaders, mwPointShaders, mwNebulaShaders, pixelShaders, galShaders, spriteShaders, starShaders;
+    private AssetDescriptor<ShaderProgram>[] starGroupDesc, particleGroupDesc, particleEffectDesc, orbitElemDesc, lineDesc, lineQuadDesc, lineGpuDesc, mwPointDesc, mwNebulaDesc, pixelDesc, galDesc, spriteDesc, starDesc;
 
     private int maxTexSize;
 
@@ -183,6 +184,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         particleEffectDesc = loadShader(manager, "shader/particle.effect.vertex.glsl", "shader/particle.effect.fragment.glsl", new String[] { "particleEffect", "particleEffectRel", "particleEffectGrav", "particleEffectRelGrav" }, new String[] { "", "#define relativisticEffects\n", "#define gravitationalWaves\n", "#define relativisticEffects\n#define gravitationalWaves\n" });
         particleGroupDesc = loadShader(manager, "shader/particle.group.vertex.glsl", "shader/particle.group.fragment.glsl", new String[] { "particleGroup", "particleGroupRel", "particleGroupGrav", "particleGroupRelGrav" }, new String[] { "", "#define relativisticEffects\n", "#define gravitationalWaves\n", "#define relativisticEffects\n#define gravitationalWaves\n" });
         starGroupDesc = loadShader(manager, "shader/star.group.vertex.glsl", "shader/star.group.fragment.glsl", new String[] { "starGroup", "starGroupRel", "starGroupGrav", "starGroupRelGrav" }, new String[] { "", "#define relativisticEffects\n", "#define gravitationalWaves\n", "#define relativisticEffects\n#define gravitationalWaves\n" });
+        orbitElemDesc = loadShader(manager, "shader/orbitelem.vertex.glsl", "shader/orbitelem.fragment.glsl", new String[] { "orbitElem", "orbitElemRel", "orbitElemGrav", "orbitElemRelGrav" }, new String[] { "", "#define relativisticEffects\n", "#define gravitationalWaves\n", "#define relativisticEffects\n#define gravitationalWaves\n" });
 
         manager.load("atmgrounddefault", GroundShaderProvider.class, new GroundShaderProviderParameter("shader/default.vertex.glsl", "shader/default.fragment.glsl"));
         manager.load("spsurface", RelativisticShaderProvider.class, new RelativisticShaderProviderParameter("shader/starsurface.vertex.glsl", "shader/starsurface.fragment.glsl"));
@@ -261,12 +263,12 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         /**
          * STAR SHADER
          */
-        starShaders = fetchShaderProgram(manager, starDesc, "Star", "Star (rel)");
+        starShaders = fetchShaderProgram(manager, starDesc, "Star", "Star (rel)", "Star (grav)");
 
         /**
          * GALAXY SHADER
          */
-        galShaders = fetchShaderProgram(manager, galDesc, "Galaxy", "Galaxy (rel)");
+        galShaders = fetchShaderProgram(manager, galDesc, "Galaxy", "Galaxy (rel)", "Galaxy (grav)");
 
         /**
          * FONT SHADER
@@ -279,42 +281,42 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         /**
          * SPRITE SHADER
          */
-        spriteShaders = fetchShaderProgram(manager, spriteDesc, "Sprite", "Sprite (rel)");
+        spriteShaders = fetchShaderProgram(manager, spriteDesc, "Sprite", "Sprite (rel)", "Sprite (grav)");
 
         /**
          * LINE
          */
-        lineShaders = fetchShaderProgram(manager, lineDesc, "Line", "Line (rel)");
+        lineShaders = fetchShaderProgram(manager, lineDesc, "Line", "Line (rel)", "Line (grav)");
 
         /**
          * LINE QUAD
          */
-        lineQuadShaders = fetchShaderProgram(manager, lineQuadDesc, "Line quad", "Line quad (rel)");
+        lineQuadShaders = fetchShaderProgram(manager, lineQuadDesc, "Line quad", "Line quad (rel)", "Line quad (grav)");
 
         /**
          * LINE GPU
          */
-        lineGpuShaders = fetchShaderProgram(manager, lineGpuDesc, "Line GPU", "Line GPU (rel)");
+        lineGpuShaders = fetchShaderProgram(manager, lineGpuDesc, "Line GPU", "Line GPU (rel)", "Line GPU (grav)");
 
         /**
          * MW POINTS
          */
-        mwPointShaders = fetchShaderProgram(manager, mwPointDesc, "MW point", "MW point (rel)");
+        mwPointShaders = fetchShaderProgram(manager, mwPointDesc, "MW point", "MW point (rel)", "MW point (grav)");
 
         /**
          * MW NEBULAE
          */
-        mwNebulaShaders = fetchShaderProgram(manager, mwNebulaDesc, "MW nebula", "MW nebula (rel)");
+        mwNebulaShaders = fetchShaderProgram(manager, mwNebulaDesc, "MW nebula", "MW nebula (rel)", "MW nebula (grav)");
 
         /**
          * PARTICLE EFFECT - default and relativistic
          */
-        particleEffectShaders = fetchShaderProgram(manager, particleEffectDesc, "Particle effects", "Particle effects (rel)");
+        particleEffectShaders = fetchShaderProgram(manager, particleEffectDesc, "Particle effects", "Particle effects (rel)", "Particle effects (grav)");
 
         /**
          * PARTICLE GROUP - default and relativistic
          */
-        particleGroupShaders = fetchShaderProgram(manager, particleGroupDesc, "Particle group", "Particle group (rel)");
+        particleGroupShaders = fetchShaderProgram(manager, particleGroupDesc, "Particle group", "Particle group (rel)", "Particle group (grav)");
 
         /**
          * STAR GROUP - default and relativistic
@@ -324,7 +326,12 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         /**
          * PIXEL
          */
-        pixelShaders = fetchShaderProgram(manager, pixelDesc, "Pixel", "Pixel (rel)");
+        pixelShaders = fetchShaderProgram(manager, pixelDesc, "Pixel", "Pixel (rel), Pixel (grav)");
+
+        /**
+         * ORBITAL ELEMENTS PARTICLES - default and relativistic
+         */
+        orbitElemShaders = fetchShaderProgram(manager, orbitElemDesc, "Orbital elements particles", "Orbital elements particles (rel)", "Orbital elements particles (grav)");
 
         RenderGroup[] renderGroups = RenderGroup.values();
         render_lists = new Array<Array<IRenderable>>(renderGroups.length);
@@ -534,6 +541,10 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         AbstractRenderSystem starGroupProc = new StarGroupRenderSystem(RenderGroup.STAR_GROUP, alphas, starGroupShaders);
         starGroupProc.setPreRunnable(blendNoDepthRunnable);
 
+        // ORBITAL ELEMENTS PARTICLES
+        AbstractRenderSystem orbitElemProc = new OrbitalElementsParticlesRenderSystem(RenderGroup.PARTICLE_ORBIT_ELEMENTS, alphas, orbitElemShaders);
+        orbitElemProc.setPreRunnable(blendNoDepthRunnable);
+
         // MODEL STARS
         AbstractRenderSystem modelStarsProc = new ModelBatchRenderSystem(RenderGroup.MODEL_STAR, alphas, modelBatchStar, false);
         modelStarsProc.setPreRunnable(blendDepthRunnable);
@@ -579,6 +590,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         renderProcesses.add(modelFrontBackProc);
         renderProcesses.add(pixelStarProc);
         renderProcesses.add(starGroupProc);
+        renderProcesses.add(orbitElemProc);
         renderProcesses.add(annotationsProc);
         renderProcesses.add(particleGroupProc);
 

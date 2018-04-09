@@ -30,17 +30,16 @@ public class Area extends AbstractPositionEntity implements ILineRenderable {
     /** Max latitud/longitude and min latitude/longitude **/
     private Vector2 maxlonlat, minlonlat;
     /** Cartesian points correspoding to maximum lonlat and minimum lonlat **/
-    private Vector3 cart0, cart1;
+    private Vector3 cart0;
 
     public Area() {
-        cc = new float[] { 1f, 1f, 1f, 1f };
+        cc = new float[] { 0.8f, 0.8f, 0.f, 1f };
         localTransform = new Matrix4();
 
         maxlonlat = new Vector2(-1000, -1000);
         minlonlat = new Vector2(1000, 1000);
 
         cart0 = new Vector3();
-        cart1 = new Vector3();
     }
 
     public void initialize() {

@@ -99,6 +99,8 @@ public class SceneGraphNode implements IStarContainer, IPosition {
         BILLBOARD_SPRITE(17),
         /** Line GPU **/
         LINE_GPU(18),
+        /** Particle positions from orbital elements **/
+        PARTICLE_ORBIT_ELEMENTS(19),
 
         /** None **/
         NONE(-1);

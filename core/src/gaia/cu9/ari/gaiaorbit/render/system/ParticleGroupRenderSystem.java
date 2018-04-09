@@ -1,9 +1,7 @@
 package gaia.cu9.ari.gaiaorbit.render.system;
 
-import java.util.Comparator;
 import java.util.Random;
 
-import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -33,7 +31,6 @@ public class ParticleGroupRenderSystem extends ImmediateRenderSystem implements 
     int additionalOffset, pmOffset;
     Random rand;
 
-    Comparator<IRenderable> comp;
 
     public ParticleGroupRenderSystem(RenderGroup rg, float[] alphas, ShaderProgram[] shaders) {
         super(rg, alphas, shaders);
@@ -91,7 +88,6 @@ public class ParticleGroupRenderSystem extends ImmediateRenderSystem implements 
 
     @Override
     public void renderStud(Array<IRenderable> renderables, ICamera camera, double t) {
-        renderables.sort(comp);
         if (renderables.size > 0) {
             for (IRenderable renderable : renderables) {
                 ParticleGroup particleGroup = (ParticleGroup) renderable;
@@ -130,12 +126,10 @@ public class ParticleGroupRenderSystem extends ImmediateRenderSystem implements 
                     /**
                      * PARTICLE RENDERER
                      */
-                    if (Gdx.app.getType() == ApplicationType.Desktop) {
-                        // Enable gl_PointCoord
-                        Gdx.gl20.glEnable(34913);
-                        // Enable point sizes
-                        Gdx.gl20.glEnable(0x8642);
-                    }
+                    // Enable gl_PointCoord
+                    Gdx.gl20.glEnable(34913);
+                    // Enable point sizes
+                    Gdx.gl20.glEnable(0x8642);
 
                     // Additive blending
                     Gdx.gl20.glBlendFunc(GL20.GL_ONE, GL20.GL_ONE);

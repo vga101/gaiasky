@@ -72,8 +72,14 @@ public class Constants {
     /** Milliseconds to hours **/
     public static final double MS_TO_H = 1 / H_TO_MS;
 
+    /** Days to seconds **/
+    public static final double D_TO_S = 86400d;
+
+    /** Seconds to days **/
+    public static final double S_TO_D = 1 / D_TO_S;
+
     /** Days to milliseconds **/
-    public static final double D_TO_MS = 86400 * 1000;
+    public static final double D_TO_MS = 86400d * 1000d;
 
     /** Milliseconds to days **/
     public static final double MS_TO_D = 1 / D_TO_MS;

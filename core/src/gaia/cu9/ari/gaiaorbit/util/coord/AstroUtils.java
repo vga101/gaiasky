@@ -78,6 +78,9 @@ public class AstroUtils {
     // Earth equatorial radius in Km
     public static final float EARTH_RADIUS = 6378.1370f;
 
+    // Standard gravitational parameter (GM) of SOL
+    public static final double MU_SOL = 1.32712440041e20;
+
     /** Initialize nsl Sun **/
     private static final NslSun nslSun = new NslSun();
 
@@ -642,6 +645,12 @@ public class AstroUtils {
         return day + (int) ((153 * m + 2) / 5) + 365 * y + (int) (y / 4) - 32083.5;
     }
 
+    public static Instant julianDateToInstant(double jd) {
+        int[] cd = getCalendarDay(jd);
+        LocalDateTime ldt = LocalDateTime.of(cd[0], cd[1], cd[2], cd[3], cd[4], cd[5], cd[6]);
+        return ldt.toInstant(ZoneOffset.UTC);
+    }
+
     /**
      * Gets the day fraction from the day quantities
      * 
@@ -705,6 +714,7 @@ public class AstroUtils {
     public static double T(double julianDate) {
         return (julianDate - 2451545) / 36525;
     }
+
 
     public static double tau(double julianDate) {
         return (julianDate - 2451545) / 365250;

@@ -1,9 +1,9 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import json, io, re, datetime, jdcal, math
 
 # Max number of asteroids to process
-N_MAX = 700
+N_MAX = 90000
 # Unit conversion
 AU_TO_KM = 149598000
 Y_TO_D = 365.25 
@@ -31,6 +31,8 @@ class SSO(object):
         self.orbit["ascendingnode"] = ascendingnode
         self.orbit["period"] = period
         self.orbit["inclination"] = inclination
+        self.onlybody = True
+        
 
 def to_json(line, idx):
     values = line.split(',')

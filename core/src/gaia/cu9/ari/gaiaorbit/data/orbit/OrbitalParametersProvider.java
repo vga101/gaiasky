@@ -8,6 +8,8 @@ import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.OrbitComponent;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
+import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
+import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
@@ -21,6 +23,79 @@ public class OrbitalParametersProvider implements IOrbitDataProvider {
 
     @Override
     public void load(String file, OrbitDataLoaderParameter parameter) {
+
+        OrbitComponent params = parameter.orbitalParamaters;
+        try {
+            // See https://downloads.rene-schwarz.com/download/M001-Keplerian_Orbit_Elements_to_Cartesian_State_Vectors.pdf
+            double period = params.period * Constants.D_TO_S; // in secs
+            double epoch = params.epoch * Constants.D_TO_S; // in secs
+            double a = params.semimajoraxis * 1000d;
+            double e = params.e;
+            double i = params.i * MathUtilsd.degRad;
+            double omega_lan = params.ascendingnode * MathUtilsd.degRad;
+            double omega_ap = params.argofpericenter * MathUtilsd.degRad;
+            double M0 = params.meananomaly * MathUtilsd.degRad;
+
+            data = new OrbitData();
+
+            // Step time in seconds, a full period over number of samples starting at epoch
+            double t_step = period / parameter.numSamples;
+            for (double t = 0; t <= period; t += t_step) {
+                // 1
+                double deltat = t;
+                double M = M0 + deltat * Math.sqrt(AstroUtils.MU_SOL / Math.pow(a, 3d));
+
+                // 2
+                double E = M;
+                for (int j = 0; j < 2; j++) {
+                    E = E - ((E - e * Math.sin(E) - M) / (1 - e * Math.cos(E)));
+                }
+                double E_t = E;
+
+                // 3
+                double nu_t = 2d * Math.atan2(Math.sqrt(1d + e) * Math.sin(E_t / 2d), Math.sqrt(1d - e) * Math.cos(E_t / 2d));
+
+                // 4
+                double rc_t = a * (1d - e * Math.cos(E_t));
+
+                // 5
+                double ox = rc_t * Math.cos(nu_t);
+                double oy = rc_t * Math.sin(nu_t);
+
+                // 6
+                double sinomega = Math.sin(omega_ap);
+                double cosomega = Math.cos(omega_ap);
+                double sinOMEGA = Math.sin(omega_lan);
+                double cosOMEGA = Math.cos(omega_lan);
+                double cosi = Math.cos(i);
+                double sini = Math.sin(i);
+
+                double x = ox * (cosomega * cosOMEGA - sinomega * cosi * sinOMEGA) - oy * (sinomega * cosOMEGA + cosomega * cosi * sinOMEGA);
+                double y = ox * (cosomega * sinOMEGA + sinomega * cosi * cosOMEGA) + oy * (cosomega * cosi * cosOMEGA - sinomega * sinOMEGA);
+                double z = ox * (sinomega * sini) + oy * (cosomega * sini);
+
+                // 7
+                x *= Constants.M_TO_U;
+                y *= Constants.M_TO_U;
+                z *= Constants.M_TO_U;
+
+                data.x.add(y);
+                data.y.add(z);
+                data.z.add(x);
+                data.time.add(AstroUtils.julianDateToInstant(Constants.S_TO_D * (epoch + t)));
+            }
+            data.x.add(data.getX(0));
+            data.y.add(data.getY(0));
+            data.z.add(data.getZ(0));
+            data.time.add(data.getDate(0));
+
+            EventManager.instance.post(Events.ORBIT_DATA_LOADED, data, parameter.name);
+        } catch (Exception e) {
+            Logger.error(e);
+        }
+    }
+
+    public void load1(String file, OrbitDataLoaderParameter parameter) {
         OrbitComponent params = parameter.orbitalParamaters;
         try {
             // Parameters of the ellipse
