@@ -254,7 +254,7 @@ public abstract class AbstractCamera implements ICamera {
 
     public void updateFrustum(Frustumd frustum, PerspectiveCamera cam, Vector3d position, Vector3d direction, Vector3d up) {
         double aspect = cam.viewportWidth / cam.viewportHeight;
-        projection.setToProjection(CAM_NEAR, CAM_FAR, cam.fieldOfView, aspect);
+        projection.setToProjection(cam.near, cam.far, cam.fieldOfView, aspect);
         view.setToLookAt(position, tmp.set(position).add(direction), up);
         combined.set(projection);
         Matrix4d.mul(combined.val, view.val);
