@@ -40,10 +40,6 @@ uniform float u_thAnglePoint;
 // 2 - fov factor
 // 3 - star brightness
 uniform vec4 u_alphaSizeFovBr;
-// Fov observation
-uniform int u_fovcam; // 0.0 if regular camera, >0 if fov (1.0, 2.0 or 3.0)
-uniform float u_fovcam_angleedge;
-uniform vec3 u_fovcam_dir;
 
 // VARYINGS
 varying vec4 v_col;
@@ -85,12 +81,6 @@ void main() {
 //        }
     #endif // gravitationalWaves
     
-    // Compute fov observation if necessary (only Fov1, Fov2)
-    float observed = 1.0;
-    if(u_fovcam > 0) {
-        observed = in_view(pos, u_fovcam_dir, dist, u_fovcam_angleedge);
-    }
-    
     float viewAngleApparent = atan((a_size * u_alphaSizeFovBr.w) / dist) / u_alphaSizeFovBr.z;
     float opacity = pow(lint2(viewAngleApparent, 0.0, u_thAnglePoint, u_pointAlpha.x, u_pointAlpha.y), 1.2);
 
@@ -99,7 +89,7 @@ void main() {
 
 	// Discard vertex if too close or Gaia Fov1or2 and not observed
     float v_discard = 1.0;
-    if(dist < len0 || observed < 0.0) {
+    if(dist < len0) {
         v_discard = 0.0;
         v_col *= 0.0;
     }
