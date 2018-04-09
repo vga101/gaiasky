@@ -174,11 +174,6 @@ public class FovCamera extends AbstractCamera implements IObserver {
 
         updateCamera(directions[1], up, camera2);
 
-        // Update frustums
-        updateFrustum(frustum, camera, pos, directions[0], up);
-
-        updateFrustum(frustum2, camera2, pos, directions[1], up);
-
         // Dir middle
         dirMiddle.set(0, 0, 1).mul(trf);
 

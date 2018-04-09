@@ -41,9 +41,6 @@ public abstract class AbstractCamera implements ICamera {
     /** The main camera **/
     public PerspectiveCamera camera;
 
-    /** The frustum, uses double precision **/
-    protected Frustumd frustum;
-
     /** Stereoscopic mode cameras **/
     protected PerspectiveCamera camLeft, camRight;
 
@@ -64,8 +61,6 @@ public abstract class AbstractCamera implements ICamera {
         pos = new Vector3d();
         posinv = new Vector3d();
         tmp = new Vector3d();
-
-        frustum = new Frustumd();
 
         camLeft = new PerspectiveCamera(GlobalConf.scene.CAMERA_FOV, Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight());
         camLeft.near = (float) CAM_NEAR;
@@ -247,10 +242,6 @@ public abstract class AbstractCamera implements ICamera {
         copyCamera(cam, camRight);
     }
 
-    @Override
-    public Frustumd getFrustum() {
-        return frustum;
-    }
 
     public void updateFrustum(Frustumd frustum, PerspectiveCamera cam, Vector3d position, Vector3d direction, Vector3d up) {
         double aspect = cam.viewportWidth / cam.viewportHeight;

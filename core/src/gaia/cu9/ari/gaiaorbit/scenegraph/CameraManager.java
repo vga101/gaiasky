@@ -16,7 +16,6 @@ import gaia.cu9.ari.gaiaorbit.util.TwoWayHashmap;
 import gaia.cu9.ari.gaiaorbit.util.camera.CameraUtils;
 import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
 import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
-import gaia.cu9.ari.gaiaorbit.util.math.Frustumd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
@@ -494,11 +493,6 @@ public class CameraManager implements ICamera, IObserver {
     public void resize(int width, int height) {
         for (ICamera cam : cameras)
             cam.resize(width, height);
-    }
-
-    @Override
-    public Frustumd getFrustum() {
-        return current.getFrustum();
     }
 
     @Override

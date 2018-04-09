@@ -3,7 +3,6 @@ package gaia.cu9.ari.gaiaorbit.scenegraph;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
-import gaia.cu9.ari.gaiaorbit.util.math.Frustumd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
@@ -30,8 +29,6 @@ public interface ICamera {
     public void setCameraStereoLeft(PerspectiveCamera cam);
 
     public void setCameraStereoRight(PerspectiveCamera cam);
-
-    public Frustumd getFrustum();
 
     public PerspectiveCamera[] getFrontCameras();
 

@@ -381,7 +381,6 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
         }
 
         updatePerspectiveCamera();
-        updateFrustum(frustum, camera, pos, direction, up);
     }
 
     public void updateHUD(float dt) {
