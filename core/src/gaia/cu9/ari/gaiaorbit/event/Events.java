@@ -228,6 +228,16 @@ public enum Events {
      * indicating whether this comes from the interface
      **/
     CONTRAST_CMD,
+    /**
+     * Contains the hue level (float) in [0..2] and an optional boolean
+     * indicating whether this comes from the interface
+     **/
+    HUE_CMD,
+    /**
+     * Contains the saturation level (float) in [0..2] and an optional boolean
+     * indicating whether this comes from the interface
+     **/
+    SATURATION_CMD,
 
     /** Contains a float with the pace **/
     PACE_CHANGE_CMD,

@@ -1154,7 +1154,7 @@ public interface IScriptingInterface {
     public double[] internalCartesianToEquatorial(double x, double y, double z);
 
     /**
-     * Sets the general brightness level of the render system.
+     * Sets the brightness level of the render system.
      * 
      * @param level
      *            The brightness level as a double precision floating point
@@ -1163,13 +1163,31 @@ public interface IScriptingInterface {
     public void setBrightnessLevel(double level);
 
     /**
-     * Sets the general contrast level of the render system.
+     * Sets the contrast level of the render system.
      * 
      * @param level
      *            The contrast level as a double precision floating point number
      *            in [0..2]. The neutral value is 1.0.
      */
     public void setContrastLevel(double level);
+
+    /**
+     * Sets the hue level of the render system.
+     * 
+     * @param level
+     *            The hue level as a double precision floating point number
+     *            in [0..2]. The neutral value is 1.0.
+     */
+    public void setHueLevel(double level);
+
+    /**
+     * Sets the saturation level of the render system.
+     * 
+     * @param level
+     *            The saturation level as a double precision floating point number
+     *            in [0..2]. The neutral value is 1.0.
+     */
+    public void setSaturationLevel(double level);
 
     /**
      * Enables and disables the planetarium mode.

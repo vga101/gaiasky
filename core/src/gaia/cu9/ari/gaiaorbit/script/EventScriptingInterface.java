@@ -1447,6 +1447,22 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
     }
 
     @Override
+    public void setHueLevel(double level) {
+        assert level >= 0d && level <= 2d : "Hue level value must be in [0..2]: " + Double.toString(level);
+        Gdx.app.postRunnable(() -> {
+            em.post(Events.HUE_CMD, (float) level, false);
+        });
+    }
+
+    @Override
+    public void setSaturationLevel(double level) {
+        assert level >= 0d && level <= 2d : "Saturation level value must be in [0..2]: " + Double.toString(level);
+        Gdx.app.postRunnable(() -> {
+            em.post(Events.SATURATION_CMD, (float) level, false);
+        });
+    }
+
+    @Override
     public void set360Mode(boolean state) {
         Gdx.app.postRunnable(() -> {
             em.post(Events.CUBEMAP360_CMD, state, false);

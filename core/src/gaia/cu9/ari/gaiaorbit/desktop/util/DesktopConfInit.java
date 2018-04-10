@@ -144,7 +144,9 @@ public class DesktopConfInit extends ConfInit {
         boolean POSTPROCESS_FISHEYE = Boolean.parseBoolean(p.getProperty("postprocess.fisheye", "false"));
         float POSTPROCESS_BRIGHTNESS = Float.parseFloat(p.getProperty("postprocess.brightness", "0"));
         float POSTPROCESS_CONTRAST = Float.parseFloat(p.getProperty("postprocess.contrast", "1"));
-        ppc.initialize(POSTPROCESS_ANTIALIAS, POSTPROCESS_BLOOM_INTENSITY, POSTPROCESS_MOTION_BLUR, POSTPROCESS_LENS_FLARE, POSTPROCESS_LIGHT_SCATTERING, POSTPROCESS_FISHEYE, POSTPROCESS_BRIGHTNESS, POSTPROCESS_CONTRAST);
+        float POSTPROCESS_HUE = Float.parseFloat(p.getProperty("postprocess.hue", "1"));
+        float POSTPROCESS_SATURATION = Float.parseFloat(p.getProperty("postprocess.saturation", "1"));
+        ppc.initialize(POSTPROCESS_ANTIALIAS, POSTPROCESS_BLOOM_INTENSITY, POSTPROCESS_MOTION_BLUR, POSTPROCESS_LENS_FLARE, POSTPROCESS_LIGHT_SCATTERING, POSTPROCESS_FISHEYE, POSTPROCESS_BRIGHTNESS, POSTPROCESS_CONTRAST, POSTPROCESS_HUE, POSTPROCESS_SATURATION);
 
         /** RUNTIME CONF **/
         RuntimeConf rc = new RuntimeConf();
@@ -347,6 +349,8 @@ public class DesktopConfInit extends ConfInit {
         p.setProperty("postprocess.lightscattering", Boolean.toString(GlobalConf.postprocess.POSTPROCESS_LIGHT_SCATTERING));
         p.setProperty("postprocess.brightness", Float.toString(GlobalConf.postprocess.POSTPROCESS_BRIGHTNESS));
         p.setProperty("postprocess.contrast", Float.toString(GlobalConf.postprocess.POSTPROCESS_CONTRAST));
+        p.setProperty("postprocess.hue", Float.toString(GlobalConf.postprocess.POSTPROCESS_HUE));
+        p.setProperty("postprocess.saturation", Float.toString(GlobalConf.postprocess.POSTPROCESS_SATURATION));
 
         /** FRAME CONF **/
         p.setProperty("graphics.render.folder", GlobalConf.frame.RENDER_FOLDER);
