@@ -15,7 +15,6 @@ attribute vec4 a_additional;
 
 uniform float u_pointAlphaMin;
 uniform float u_pointAlphaMax;
-uniform float u_fovFactor;
 uniform float u_starBrightness;
 uniform mat4 u_projModelView;
 uniform vec3 u_camPos;

@@ -32,7 +32,6 @@ public class OrbitalElementsParticlesRenderSystem extends ImmediateRenderSystem 
     private Matrix4 maux;
     private int elems01Offset, elems02Offset, count;
 
-
     public OrbitalElementsParticlesRenderSystem(RenderGroup rg, float[] alphas, ShaderProgram[] shaders) {
         super(rg, alphas, shaders);
         auxf1 = new Vector3();
@@ -99,7 +98,6 @@ public class OrbitalElementsParticlesRenderSystem extends ImmediateRenderSystem 
                     if (!orbitElems.elemsInGpu) {
                         OrbitComponent oc = orbitElems.oc;
                         // ORBIT ELEMS 01
-
                         curr.vertices[curr.vertexIdx + elems01Offset + 0] = (float) Math.sqrt(AstroUtils.MU_SOL / Math.pow(oc.semimajoraxis * 1000d, 3d));
                         curr.vertices[curr.vertexIdx + elems01Offset + 1] = (float) oc.epoch;
                         curr.vertices[curr.vertexIdx + elems01Offset + 2] = (float) (oc.semimajoraxis * 1000d); // In metres
@@ -138,7 +136,10 @@ public class OrbitalElementsParticlesRenderSystem extends ImmediateRenderSystem 
                 shaderProgram.setUniformf("u_camPos", camera.getCurrent().getPos().put(auxf1));
                 shaderProgram.setUniformf("u_alpha", alphas[first.ct.getFirstOrdinal()] * first.getOpacity());
                 shaderProgram.setUniformf("u_ar", GlobalConf.program.STEREOSCOPIC_MODE && (GlobalConf.program.STEREO_PROFILE != StereoProfile.HD_3DTV && GlobalConf.program.STEREO_PROFILE != StereoProfile.ANAGLYPHIC) ? 0.5f : 1f);
-                shaderProgram.setUniformf("u_sizeFactor", rc.scaleFactor * 1.5f);
+                shaderProgram.setUniformf("u_size", rc.scaleFactor);
+                shaderProgram.setUniformf("u_scaleFactor", GlobalConf.SCALE_FACTOR);
+                shaderProgram.setUniformf("u_ar", GlobalConf.program.STEREOSCOPIC_MODE && (GlobalConf.program.STEREO_PROFILE != StereoProfile.HD_3DTV && GlobalConf.program.STEREO_PROFILE != StereoProfile.ANAGLYPHIC) ? 0.5f : 1f);
+                shaderProgram.setUniformf("u_profileDecay", 0.1f);
                 double currt = AstroUtils.getJulianDate(GaiaSky.instance.time.getTime());
                 shaderProgram.setUniformf("u_t", (float) currt);
                 // dt in seconds

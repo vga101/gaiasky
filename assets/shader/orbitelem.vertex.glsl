@@ -14,7 +14,8 @@ uniform mat4 u_projModelView;
 uniform mat4 u_eclToEq;
 uniform vec3 u_camPos;
 uniform float u_alpha;
-uniform float u_sizeFactor;
+uniform float u_size;
+uniform float u_scaleFactor;
 // Current julian date, in days
 uniform float u_t;
 // dt in seconds since epoch (assumes all objects have the same epoch!)
@@ -103,9 +104,10 @@ void main() {
     // Compute position for current time from orbital elements
     vec4 pos4 = keplerToCartesian() * u_eclToEq;
     vec3 pos = pos4.xyz - u_camPos;
+    float dist = length(pos);
     
     #ifdef relativisticEffects
-        pos = computeRelativisticAberration(pos, length(pos), u_velDir, u_vc);
+        pos = computeRelativisticAberration(pos, dist, u_velDir, u_vc);
     #endif // relativisticEffects
     
     #ifdef gravitationalWaves
@@ -114,6 +116,7 @@ void main() {
     
     v_col = vec4(0.8, 0.8, 0.8, 1.0) * u_alpha;
 
+    float distNorm = dist / 300.0;
+    gl_PointSize = clamp(u_size / distNorm, 1.0, 3.5) * u_scaleFactor;
     gl_Position = u_projModelView * vec4(pos, 0.0);
-    gl_PointSize = u_sizeFactor;
 }
