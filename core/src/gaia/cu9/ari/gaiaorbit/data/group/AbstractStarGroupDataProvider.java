@@ -25,6 +25,8 @@ public abstract class AbstractStarGroupDataProvider implements IStarGroupDataPro
     protected Array<StarBean> list;
     protected Map<Long, double[]> sphericalPositions;
     protected Map<Long, float[]> colors;
+    protected long[] countsPerMag;
+
     /**
      * <p>
      * The loader will only load stars for which the parallax error is
@@ -199,5 +201,9 @@ public abstract class AbstractStarGroupDataProvider implements IStarGroupDataPro
 
     public void setMagCorrections(boolean magCorrections) {
         this.magCorrections = magCorrections;
+    }
+
+    public long[] getCountsPerMag() {
+        return this.countsPerMag;
     }
 }

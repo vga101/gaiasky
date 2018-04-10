@@ -192,6 +192,7 @@ public class OctreeGroupGeneratorTest {
         loader.setParallaxZeroPoint(pllxzeropoint);
         loader.setFileNumberCap(fileNumCap);
         loader.setMagCorrections(magCorrections);
+        long[] cpm = loader.getCountsPerMag();
 
         /** LOAD HYG **/
         Array<StarBean> listHip = hyg.loadData("data/hyg/hygxyz.bin");
@@ -269,6 +270,16 @@ public class OctreeGroupGeneratorTest {
         double totalSecs = loadingSecs + generatingSecs + writingSecs;
 
         int[][] stats = octree.stats();
+
+        if (cpm != null) {
+            Logger.info("=================");
+            Logger.info("STAR COUNTS STATS");
+            Logger.info("=================");
+            for (int level = 0; level < cpm.length; level++) {
+                Logger.info("Magnitude " + level + ": " + cpm[level] + " stars");
+            }
+            Logger.info();
+        }
 
         Logger.info("============");
         Logger.info("OCTREE STATS");

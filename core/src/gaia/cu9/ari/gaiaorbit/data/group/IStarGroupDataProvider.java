@@ -48,4 +48,7 @@ public interface IStarGroupDataProvider extends IParticleGroupDataProvider {
      *            Whether to apply the corrections
      */
     public void setMagCorrections(boolean magCorrections);
+
+    /** Gets the star counts per magnitude **/
+    public long[] getCountsPerMag();
 }

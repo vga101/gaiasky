@@ -83,6 +83,11 @@ public class DR2DataProvider extends AbstractStarGroupDataProvider {
 
     private static final int[] indices = new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20 };
 
+    public DR2DataProvider() {
+        super();
+        countsPerMag = new long[22];
+    }
+
     public void setFileNumberCap(int cap) {
         fileNumberCap = cap;
     }
@@ -348,6 +353,9 @@ public class DR2DataProvider extends AbstractStarGroupDataProvider {
                 point[StarBean.I_ABSMAG] = absmag;
 
                 list.add(new StarBean(point, sourceid, name));
+
+                if ((int) appmag < countsPerMag.length)
+                    countsPerMag[(int) appmag] += 1;
                 return true;
             }
         }
