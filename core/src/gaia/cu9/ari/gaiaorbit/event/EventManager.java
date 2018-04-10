@@ -31,7 +31,7 @@ public class EventManager implements IObserver {
             if (this.equals(REAL_TIME)) {
                 return TimeUtils.millis();
             } else if (this.equals(SIMULATION_TIME)) {
-                return GaiaSky.instance.time.getTime().getTime();
+                return GaiaSky.instance.time.getTime().toEpochMilli();
             }
             return -1;
         }

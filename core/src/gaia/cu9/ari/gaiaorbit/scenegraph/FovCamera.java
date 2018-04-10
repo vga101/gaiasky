@@ -174,11 +174,6 @@ public class FovCamera extends AbstractCamera implements IObserver {
 
         updateCamera(directions[1], up, camera2);
 
-        // Update frustums
-        updateFrustum(frustum, camera, pos, directions[0], up);
-
-        updateFrustum(frustum2, camera2, pos, directions[1], up);
-
         // Dir middle
         dirMiddle.set(0, 0, 1).mul(trf);
 
@@ -198,10 +193,10 @@ public class FovCamera extends AbstractCamera implements IObserver {
      */
     public void updateDirections(ITimeFrameProvider time) {
         lastTime = currentTime;
-        currentTime = time.getTime().getTime();
+        currentTime = time.getTime().toEpochMilli();
         trf = matrix;
         trf.idt();
-        Quaterniond quat = GaiaAttitudeServer.instance.getAttitude(time.getTime()).getQuaternion();
+        Quaterniond quat = GaiaAttitudeServer.instance.getAttitude(new Date(time.getTime().toEpochMilli())).getQuaternion();
         trf.rotate(quat).rotate(0, 0, 1, 180);
         directions[0].set(0, 0, 1).rotate(BAM_2, 0, 1, 0).mul(trf).nor();
         directions[1].set(0, 0, 1).rotate(-BAM_2, 0, 1, 0).mul(trf).nor();
@@ -407,6 +402,11 @@ public class FovCamera extends AbstractCamera implements IObserver {
 
     public Frustumd getFrustum2() {
         return frustum2;
+    }
+
+    @Override
+    public double getTranslateUnits() {
+        return 0;
     }
 
 }

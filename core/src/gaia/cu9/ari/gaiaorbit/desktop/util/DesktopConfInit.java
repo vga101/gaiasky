@@ -6,12 +6,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.channels.FileChannel;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Locale;
 import java.util.Properties;
 
@@ -24,6 +23,7 @@ import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf.ControlsConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf.DataConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf.FrameConf;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf.ImageFormat;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf.PerformanceConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf.PostprocessConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf.PostprocessConf.Antialias;
@@ -112,15 +112,15 @@ public class DesktopConfInit extends ConfInit {
         /** VERSION CONF **/
         VersionConf vc = new VersionConf();
         String versionStr = vp.getProperty("version");
-        DateFormat df = new SimpleDateFormat("EEE MMM dd kk:mm:ss z yyyy", Locale.ENGLISH);
-        Date buildtime = null;
+        DateTimeFormatter df = DateTimeFormatter.ofPattern("EEE MMM dd kk:mm:ss z yyyy", Locale.ENGLISH);
+        Instant buildtime = null;
         try {
-            buildtime = df.parse(vp.getProperty("buildtime"));
-        } catch (ParseException e) {
-            df = new SimpleDateFormat("dd/MM/yyyy hh:mm a", Locale.ENGLISH);
+            buildtime = LocalDateTime.parse(vp.getProperty("buildtime"), df).toInstant(ZoneOffset.UTC);
+        } catch (DateTimeParseException e) {
+            df = DateTimeFormatter.ofPattern("dd/MM/yyyy hh:mm a", Locale.ENGLISH);
             try {
-                buildtime = df.parse(vp.getProperty("buildtime"));
-            } catch (ParseException e1) {
+                buildtime = LocalDateTime.parse(vp.getProperty("buildtime"), df).toInstant(ZoneOffset.UTC);
+            } catch (DateTimeParseException e1) {
                 Logger.error(e1);
             }
         }
@@ -144,7 +144,9 @@ public class DesktopConfInit extends ConfInit {
         boolean POSTPROCESS_FISHEYE = Boolean.parseBoolean(p.getProperty("postprocess.fisheye", "false"));
         float POSTPROCESS_BRIGHTNESS = Float.parseFloat(p.getProperty("postprocess.brightness", "0"));
         float POSTPROCESS_CONTRAST = Float.parseFloat(p.getProperty("postprocess.contrast", "1"));
-        ppc.initialize(POSTPROCESS_ANTIALIAS, POSTPROCESS_BLOOM_INTENSITY, POSTPROCESS_MOTION_BLUR, POSTPROCESS_LENS_FLARE, POSTPROCESS_LIGHT_SCATTERING, POSTPROCESS_FISHEYE, POSTPROCESS_BRIGHTNESS, POSTPROCESS_CONTRAST);
+        float POSTPROCESS_HUE = Float.parseFloat(p.getProperty("postprocess.hue", "1"));
+        float POSTPROCESS_SATURATION = Float.parseFloat(p.getProperty("postprocess.saturation", "1"));
+        ppc.initialize(POSTPROCESS_ANTIALIAS, POSTPROCESS_BLOOM_INTENSITY, POSTPROCESS_MOTION_BLUR, POSTPROCESS_LENS_FLARE, POSTPROCESS_LIGHT_SCATTERING, POSTPROCESS_FISHEYE, POSTPROCESS_BRIGHTNESS, POSTPROCESS_CONTRAST, POSTPROCESS_HUE, POSTPROCESS_SATURATION);
 
         /** RUNTIME CONF **/
         RuntimeConf rc = new RuntimeConf();
@@ -176,9 +178,9 @@ public class DesktopConfInit extends ConfInit {
         String TUTORIAL_POINTER_SCRIPT_LOCATION = p.getProperty("program.tutorial.pointer.script", "scripts/tutorial/tutorial-pointer.py");
         String TUTORIAL_SCRIPT_LOCATION = p.getProperty("program.tutorial.script", "scripts/tutorial/tutorial.py");
         boolean SHOW_DEBUG_INFO = Boolean.parseBoolean(p.getProperty("program.debuginfo"));
-        Date LAST_CHECKED;
+        Instant LAST_CHECKED;
         try {
-            LAST_CHECKED = df.parse(p.getProperty("program.lastchecked"));
+            LAST_CHECKED = LocalDateTime.parse(p.getProperty("program.lastchecked"), df).toInstant(ZoneOffset.UTC);
         } catch (Exception e) {
             LAST_CHECKED = null;
         }
@@ -267,8 +269,10 @@ public class DesktopConfInit extends ConfInit {
         boolean RENDER_SCREENSHOT_TIME = Boolean.parseBoolean(p.getProperty("graphics.render.time"));
 
         ScreenshotMode FRAME_MODE = ScreenshotMode.valueOf(p.getProperty("graphics.render.mode"));
+        ImageFormat FRAME_FORMAT = ImageFormat.valueOf(p.getProperty("graphcis.render.format", "jpg").toUpperCase());
+        float FRAME_QUALITY = Float.parseFloat(p.getProperty("graphics.render.quality", "0.93"));
         FrameConf fc = new FrameConf();
-        fc.initialize(RENDER_WIDTH, RENDER_HEIGHT, RENDER_TARGET_FPS, CAMERA_REC_TARGET_FPS, AUTO_FRAME_OUTPUT_CAMERA_PLAY, RENDER_FOLDER, RENDER_FILE_NAME, RENDER_SCREENSHOT_TIME, RENDER_SCREENSHOT_TIME, FRAME_MODE);
+        fc.initialize(RENDER_WIDTH, RENDER_HEIGHT, RENDER_TARGET_FPS, CAMERA_REC_TARGET_FPS, AUTO_FRAME_OUTPUT_CAMERA_PLAY, RENDER_FOLDER, RENDER_FILE_NAME, RENDER_SCREENSHOT_TIME, RENDER_SCREENSHOT_TIME, FRAME_MODE, FRAME_FORMAT, FRAME_QUALITY);
 
         /** SCREEN CONF **/
         int SCREEN_WIDTH = Integer.parseInt(p.getProperty("graphics.screen.width"));
@@ -295,8 +299,10 @@ public class DesktopConfInit extends ConfInit {
         int SCREENSHOT_WIDTH = Integer.parseInt(p.getProperty("screenshot.width"));
         int SCREENSHOT_HEIGHT = Integer.parseInt(p.getProperty("screenshot.height"));
         ScreenshotMode SCREENSHOT_MODE = ScreenshotMode.valueOf(p.getProperty("screenshot.mode"));
+        ImageFormat SCREENSHOT_FORMAT = ImageFormat.valueOf(p.getProperty("screenshot.format", "jpg").toUpperCase());
+        float SCREENSHOT_QUALITY = Float.parseFloat(p.getProperty("screenshot.quality", "0.93"));
         ScreenshotConf shc = new ScreenshotConf();
-        shc.initialize(SCREENSHOT_WIDTH, SCREENSHOT_HEIGHT, SCREENSHOT_FOLDER, SCREENSHOT_MODE);
+        shc.initialize(SCREENSHOT_WIDTH, SCREENSHOT_HEIGHT, SCREENSHOT_FOLDER, SCREENSHOT_MODE, SCREENSHOT_FORMAT, SCREENSHOT_QUALITY);
 
         /** CONTROLS CONF **/
         ControlsConf cc = new ControlsConf();
@@ -328,6 +334,8 @@ public class DesktopConfInit extends ConfInit {
         p.setProperty("screenshot.width", Integer.toString(GlobalConf.screenshot.SCREENSHOT_WIDTH));
         p.setProperty("screenshot.height", Integer.toString(GlobalConf.screenshot.SCREENSHOT_HEIGHT));
         p.setProperty("screenshot.mode", GlobalConf.screenshot.SCREENSHOT_MODE.toString());
+        p.setProperty("screenshot.format", GlobalConf.screenshot.SCREENSHOT_FORMAT.toString().toLowerCase());
+        p.setProperty("screenshot.quality", Float.toString(GlobalConf.screenshot.SCREENSHOT_QUALITY));
 
         /** PERFORMANCE **/
         p.setProperty("global.conf.multithreading", Boolean.toString(GlobalConf.performance.MULTITHREADING));
@@ -341,6 +349,8 @@ public class DesktopConfInit extends ConfInit {
         p.setProperty("postprocess.lightscattering", Boolean.toString(GlobalConf.postprocess.POSTPROCESS_LIGHT_SCATTERING));
         p.setProperty("postprocess.brightness", Float.toString(GlobalConf.postprocess.POSTPROCESS_BRIGHTNESS));
         p.setProperty("postprocess.contrast", Float.toString(GlobalConf.postprocess.POSTPROCESS_CONTRAST));
+        p.setProperty("postprocess.hue", Float.toString(GlobalConf.postprocess.POSTPROCESS_HUE));
+        p.setProperty("postprocess.saturation", Float.toString(GlobalConf.postprocess.POSTPROCESS_SATURATION));
 
         /** FRAME CONF **/
         p.setProperty("graphics.render.folder", GlobalConf.frame.RENDER_FOLDER);
@@ -352,10 +362,12 @@ public class DesktopConfInit extends ConfInit {
         p.setProperty("graphics.camera.recording.frameoutputauto", Boolean.toString(GlobalConf.frame.AUTO_FRAME_OUTPUT_CAMERA_PLAY));
         p.setProperty("graphics.render.time", Boolean.toString(GlobalConf.frame.RENDER_SCREENSHOT_TIME));
         p.setProperty("graphics.render.mode", GlobalConf.frame.FRAME_MODE.toString());
+        p.setProperty("graphics.render.format", GlobalConf.frame.FRAME_FORMAT.toString().toLowerCase());
+        p.setProperty("graphics.render.quality", Float.toString(GlobalConf.frame.FRAME_QUALITY));
 
         /** DATA **/
-        p.setProperty("data.json.catalog", GlobalConf.data.CATALOG_JSON_FILE);
-        p.setProperty("data.json.objects", GlobalConf.data.OBJECTS_JSON_FILE);
+        p.setProperty("data.json.catalog", GlobalConf.data.CATALOG_JSON_FILES);
+        p.setProperty("data.json.objects", GlobalConf.data.OBJECTS_JSON_FILES);
         p.setProperty("data.limit.mag", Float.toString(GlobalConf.data.LIMIT_MAG_LOAD));
         p.setProperty("data.attitude.real", Boolean.toString(GlobalConf.data.REAL_GAIA_ATTITUDE));
         p.setProperty("data.highaccuracy.positions", Boolean.toString(GlobalConf.data.HIGH_ACCURACY_POSITIONS));

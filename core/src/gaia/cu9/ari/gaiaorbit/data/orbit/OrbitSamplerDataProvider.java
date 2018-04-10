@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.time.Instant;
 import java.util.Date;
 
 import com.badlogic.gdx.Gdx;
@@ -19,16 +20,14 @@ import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.util.ConfInit;
-import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.SysUtilsFactory;
-import gaia.cu9.ari.gaiaorbit.util.concurrent.SingleThreadLocalFactory;
-import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadLocalFactory;
 import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
 import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
 import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
+import gaia.cu9.ari.gaiaorbit.util.math.MathManager;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
 /**
@@ -62,7 +61,8 @@ public class OrbitSamplerDataProvider implements IOrbitDataProvider, IObserver {
 
             I18n.initialize(new FileHandle(ASSETS_LOC + "i18n/gsbundle"));
 
-            ThreadLocalFactory.initialize(new SingleThreadLocalFactory());
+            // Initialize math manager
+            MathManager.initialize();
 
             OrbitSamplerDataProvider.writeData = true;
             OrbitSamplerDataProvider me = new OrbitSamplerDataProvider();
@@ -75,7 +75,7 @@ public class OrbitSamplerDataProvider implements IOrbitDataProvider, IObserver {
 
                 String b = bodies[i];
                 float period = periods[i];
-                OrbitDataLoaderParameter param = new OrbitDataLoaderParameter(me.getClass(), b, now, true, period, 80);
+                OrbitDataLoaderParameter param = new OrbitDataLoaderParameter(me.getClass(), b, now, true, period, 500);
                 me.load(null, param);
 
             }
@@ -93,11 +93,12 @@ public class OrbitSamplerDataProvider implements IOrbitDataProvider, IObserver {
     @Override
     public void load(String file, OrbitDataLoaderParameter parameter) {
         // Sample using VSOP
-        int numSamples = parameter.numSamples > 0 ? parameter.numSamples : (int) (200 * parameter.orbitalPeriod / 365);
-        numSamples = Math.max(50, Math.min(1000, numSamples));
+        // If num samples is not defined, we use 300 samples per year of period
+        int numSamples = parameter.numSamples > 0 ? parameter.numSamples : (int) (300 * parameter.orbitalPeriod / 365);
+        numSamples = Math.max(100, Math.min(2000, numSamples));
         data = new OrbitData();
         String bodyDesc = parameter.name;
-        Date d = new Date(parameter.ini.getTime());
+        Instant d = Instant.ofEpochMilli(parameter.ini.getTime());
         double last = 0, accum = 0;
         Vector3d ecl = new Vector3d();
 
@@ -107,7 +108,7 @@ public class OrbitSamplerDataProvider implements IOrbitDataProvider, IObserver {
 
         // Load vsop orbit data
         for (int i = 0; i <= numSamples; i++) {
-            AstroUtils.getEclipticCoordinates(bodyDesc, d, ecl, GlobalConf.data.HIGH_ACCURACY_POSITIONS);
+            AstroUtils.getEclipticCoordinates(bodyDesc, d, ecl, true);
 
             if (last == 0) {
                 last = Math.toDegrees(ecl.x);
@@ -125,16 +126,16 @@ public class OrbitSamplerDataProvider implements IOrbitDataProvider, IObserver {
             data.x.add(ecl.x);
             data.y.add(ecl.y);
             data.z.add(ecl.z);
-            d.setTime(d.getTime() + stepMs);
-            data.time.add(new Date(d.getTime()));
+            d = Instant.ofEpochMilli(d.toEpochMilli() + stepMs);
+            data.time.add(Instant.ofEpochMilli(d.toEpochMilli()));
         }
 
         // Close the circle
         data.x.add(data.x.get(0));
         data.y.add(data.y.get(0));
         data.z.add(data.z.get(0));
-        d.setTime(d.getTime() + stepMs);
-        data.time.add(new Date(d.getTime()));
+        d = Instant.ofEpochMilli(d.toEpochMilli() + stepMs);
+        data.time.add(Instant.ofEpochMilli(d.toEpochMilli()));
 
         if (writeData) {
             try {

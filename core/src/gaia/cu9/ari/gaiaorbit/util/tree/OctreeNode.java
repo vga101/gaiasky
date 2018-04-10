@@ -14,7 +14,6 @@ import gaia.cu9.ari.gaiaorbit.render.ILineRenderable;
 import gaia.cu9.ari.gaiaorbit.render.system.AbstractRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.LineRenderSystem;
 import gaia.cu9.ari.gaiaorbit.scenegraph.AbstractPositionEntity;
-import gaia.cu9.ari.gaiaorbit.scenegraph.FovCamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ParticleGroup;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
@@ -325,6 +324,27 @@ public class OctreeNode implements ILineRenderable {
     }
 
     /**
+     * Gets some per-level stats on the octree node
+     * @return A [DEPTH,2] matrix with number of octants [i,0] and objects [i,1] per level
+     */
+    public int[][] stats() {
+        int[][] result = new int[getMaxDepth()][2];
+        statsRec(result);
+        return result;
+    }
+
+    private void statsRec(int[][] mat) {
+        mat[this.depth][0] += 1;
+        mat[this.depth][1] += this.ownObjects;
+
+        for (OctreeNode child : children) {
+            if (child != null) {
+                child.statsRec(mat);
+            }
+        }
+    }
+
+    /**
      * Removes this octant from the octree
      */
     public void remove() {
@@ -437,24 +457,7 @@ public class OctreeNode implements ILineRenderable {
     public void update(Transform parentTransform, ICamera cam, Array<SceneGraphNode> roulette, float opacity) {
         parentTransform.getTranslation(transform);
         this.opacity = opacity;
-
-        // Is this octant observed??
-        if (!cam.getMode().isGaiaFov()) {
-            // Only one view direction
-            // computeObserved2(parentTransform, cam.getAngleEdge(),
-            // cam.getPos(), cam.getDirection(), cam.getUp());
-            computeObserved1(parentTransform, cam.getFrustum());
-        } else {
-            // FOV, we have two view directions
-            // computeObserved2(parentTransform, cam.getAngleEdge(),
-            // cam.getPos(), cam.getDirections()[0], cam.getUp());
-            computeObserved1(parentTransform, cam.getFrustum());
-            if (!observed) {
-                // computeObserved2(parentTransform, cam.getAngleEdge(),
-                // cam.getPos(), cam.getDirections()[1], cam.getUp());
-                computeObserved1(parentTransform, ((FovCamera) (cam.getCurrent())).getFrustum2());
-            }
-        }
+        this.observed = true;
 
         if (observed) {
             // Compute distance and view angle

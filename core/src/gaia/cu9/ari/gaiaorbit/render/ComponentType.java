@@ -25,8 +25,9 @@ public enum ComponentType {
     Countries("icon-elem-countries"), // 0000 1000 0000 0000 0000
     Locations("icon-elem-locations"), // 0001 0000 0000 0000 0000
     Meshes("icon-elem-meshes"), // 0010 0000 0000 0000 0000
-    Titles("icon-elem-titles"), // 0100 0000 0000 0000 0000
-    Others("icon-elem-others"); // 1000 0000 0000 0000 0000
+    Effects("icon-elem-effects"), // 0100 0000 0000 0000 0000
+    Titles("icon-elem-titles"), // 1000 0000 0000 0000 0000
+    Others("icon-elem-others"); // 0001 0000 0000 0000 0000 0000
 
     private static Map<String, ComponentType> keysMap = new HashMap<String, ComponentType>();
 

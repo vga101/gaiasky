@@ -1,7 +1,9 @@
 package gaia.cu9.ari.gaiaorbit.util.coord;
 
-import java.util.Date;
-import java.util.GregorianCalendar;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.temporal.ChronoField;
 
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.LruCache;
@@ -44,8 +46,8 @@ public class AstroUtils {
     public static final long J2000_MS;
 
     static {
-        Date d = (new GregorianCalendar(2000, 0, 1, 0, 0, 0)).getTime();
-        J2000_MS = d.getTime();
+        Instant d = (LocalDateTime.of(2000, 1, 1, 0, 0, 0)).toInstant(ZoneOffset.UTC);
+        J2000_MS = d.toEpochMilli();
     }
 
     /** Julian date cache, since most dates are used more than once **/
@@ -76,6 +78,9 @@ public class AstroUtils {
     // Earth equatorial radius in Km
     public static final float EARTH_RADIUS = 6378.1370f;
 
+    // Standard gravitational parameter (GM) of SOL
+    public static final double MU_SOL = 1.32712440041e20;
+
     /** Initialize nsl Sun **/
     private static final NslSun nslSun = new NslSun();
 
@@ -90,7 +95,7 @@ public class AstroUtils {
      *            The date
      * @return The distancee from the Sun to the Earth in Km
      */
-    public static double getSunDistance(Date date) {
+    public static double getSunDistance(Instant date) {
         return getSunDistance(getJulianDateCache(date));
     }
 
@@ -107,7 +112,7 @@ public class AstroUtils {
         return R * AU_TO_KM;
     }
 
-    private static Date cacheSunLongitudeDate = new Date();
+    private static Instant cacheSunLongitudeDate = Instant.now();
     private static double cacheSunLongitude;
 
     /**
@@ -118,14 +123,14 @@ public class AstroUtils {
      *            The time for which the longitude must be calculated
      * @return The Sun's longitude in [deg]
      */
-    public static double getSunLongitude(Date date) {
+    public static double getSunLongitude(Instant date) {
         if (!date.equals(cacheSunLongitudeDate)) {
             double julianDate = getJulianDateCache(date);
 
             nslSun.setTime(julianDate);
             double aux = Math.toDegrees(nslSun.getSolarLongitude()) % 360;
 
-            cacheSunLongitudeDate.setTime(date.getTime());
+            cacheSunLongitudeDate = Instant.ofEpochMilli(date.toEpochMilli());
             cacheSunLongitude = aux % 360;
         }
         return cacheSunLongitude;
@@ -157,7 +162,7 @@ public class AstroUtils {
      * 
      * @param date
      */
-    public static void moonEquatorialCoordinates(Vector3d placeholder, Date date) {
+    public static void moonEquatorialCoordinates(Vector3d placeholder, Instant date) {
         moonEquatorialCoordinates(placeholder, getJulianDateCache(date));
     }
 
@@ -184,7 +189,7 @@ public class AstroUtils {
      *            The output vector.
      * @return The output vector, for chaining.
      */
-    public static Vector3d moonEclipticCoordinates(Date date, Vector3d out) {
+    public static Vector3d moonEclipticCoordinates(Instant date, Vector3d out) {
         return moonEclipticCoordinates(getJulianDateCache(date), out);
     }
 
@@ -257,7 +262,7 @@ public class AstroUtils {
      *            The out vector
      * @return Ecliptic coordinates of Pluto at the given julian date
      */
-    public static Vector3d plutoEclipticCoordinates(Date date, Vector3d out) {
+    public static Vector3d plutoEclipticCoordinates(Instant date, Vector3d out) {
         return plutoEclipticCoordinates(getDaysSinceJ2000(date), out);
     }
 
@@ -389,7 +394,7 @@ public class AstroUtils {
      * 
      * @param body
      *            The body.
-     * @param date
+     * @param instant
      *            The date to get the position.
      * @param out
      *            The output vector
@@ -399,15 +404,15 @@ public class AstroUtils {
      * @return The output vector with L, B and R, for chaining.
      * @deprecated Should use the classes that extend IBodyCoordinates instead.
      */
-    public static Vector3d getEclipticCoordinates(String body, Date date, Vector3d out, boolean highAccuracy) {
+    public static Vector3d getEclipticCoordinates(String body, Instant instant, Vector3d out, boolean highAccuracy) {
 
         switch (body) {
         case "Moon":
-            return new MoonAACoordinates().getEclipticSphericalCoordinates(date, out);
+            return new MoonAACoordinates().getEclipticSphericalCoordinates(instant, out);
         case "Pluto":
-            return new PlutoCoordinates().getEclipticSphericalCoordinates(date, out);
+            return new PlutoCoordinates().getEclipticSphericalCoordinates(instant, out);
         default:
-            double tau = tau(getJulianDateCache(date));
+            double tau = tau(getJulianDateCache(instant));
 
             iVSOP87 coor = VSOP87.instance.getVOSP87(body);
             coor.setHighAccuracy(highAccuracy);
@@ -454,26 +459,27 @@ public class AstroUtils {
      *            The date.
      * @return The Julian Date.
      */
-    public static synchronized double getJulianDateCache(Date date) {
-        long time = date.getTime();
+    public static synchronized double getJulianDateCache(Instant instant) {
+        long time = instant.toEpochMilli();
         if (jdcache.containsKey(time)) {
             return jdcache.get(time);
         } else {
-            Double jd = getJulianDate(date);
+            Double jd = getJulianDate(instant);
             jdcache.put(time, jd);
             return jd;
         }
     }
 
-    public static double getJulianDate(Date date) {
-        int year = date.getYear() + 1900;
-        int month = date.getMonth() + 1;
-        int day = date.getDate();
+    public static double getJulianDate(Instant instant) {
+        LocalDateTime date = LocalDateTime.ofInstant(instant, ZoneOffset.UTC);
+        int year = date.get(ChronoField.YEAR_OF_ERA);
+        int month = date.getMonthValue();
+        int day = date.getDayOfMonth();
 
-        int hour = date.getHours();
-        int min = date.getMinutes();
-        int sec = date.getSeconds();
-        int nanos = (int) (date.getTime() % 1000) * 1000000;
+        int hour = date.getHour();
+        int min = date.getMinute();
+        int sec = date.getSecond();
+        int nanos = date.get(ChronoField.NANO_OF_SECOND);
         return getJulianDate(year, month, day, hour, min, sec, nanos, true);
     }
 
@@ -485,7 +491,7 @@ public class AstroUtils {
      *            The date
      * @return The elapsed milliseconds
      */
-    public static double getMsSinceJ2010(Date date) {
+    public static double getMsSinceJ2010(Instant date) {
         return (getJulianDateCache(date) - JD_J2010) * DAY_TO_MS;
     }
 
@@ -497,7 +503,7 @@ public class AstroUtils {
      *            The date
      * @return The elapsed milliseconds
      */
-    public static double getMsSinceJ2000(Date date) {
+    public static double getMsSinceJ2000(Instant date) {
         return (getJulianDateCache(date) - JD_J2000) * DAY_TO_MS;
     }
 
@@ -509,7 +515,7 @@ public class AstroUtils {
      *            The date
      * @return The elapsed days
      */
-    public static double getDaysSinceJ2000(Date date) {
+    public static double getDaysSinceJ2000(Instant date) {
         return getJulianDateCache(date) - JD_J2000;
     }
 
@@ -521,7 +527,7 @@ public class AstroUtils {
      *            The date
      * @return The elapsed milliseconds
      */
-    public static double getMsSinceJ2015(Date date) {
+    public static double getMsSinceJ2015(Instant date) {
         return (getJulianDateCache(date) - JD_J2015) * DAY_TO_MS;
     }
 
@@ -535,7 +541,7 @@ public class AstroUtils {
      *            The reference epoch in julian days
      * @return The elapsed milliseconds
      */
-    public static double getMsSince(Date date, double epoch_jd) {
+    public static double getMsSince(Instant date, double epoch_jd) {
         return (getJulianDateCache(date) - epoch_jd) * DAY_TO_MS;
     }
 
@@ -639,6 +645,12 @@ public class AstroUtils {
         return day + (int) ((153 * m + 2) / 5) + 365 * y + (int) (y / 4) - 32083.5;
     }
 
+    public static Instant julianDateToInstant(double jd) {
+        int[] cd = getCalendarDay(jd);
+        LocalDateTime ldt = LocalDateTime.of(cd[0], cd[1], cd[2], cd[3], cd[4], cd[5], cd[6]);
+        return ldt.toInstant(ZoneOffset.UTC);
+    }
+
     /**
      * Gets the day fraction from the day quantities
      * 
@@ -679,7 +691,7 @@ public class AstroUtils {
     public static double obliquity(double julianDate) {
         // JPL's fundamental ephemerides have been continually updated. The
         // Astronomical Almanac for 2010 specifies:
-        // E = 23� 26′ 21″.406 − 46″.836769 T − 0″.0001831 T2 + 0″.00200340 T3 −
+        // E = 23� 26′ 21″.406 − 46″.836769 T − 0″.0001831 T2 + 0″.00200340 T3 −
         // 0″.576×10−6 T4 − 4″.34×10−8 T5
         double T = T(julianDate);
         /*
@@ -702,6 +714,7 @@ public class AstroUtils {
     public static double T(double julianDate) {
         return (julianDate - 2451545) / 36525;
     }
+
 
     public static double tau(double julianDate) {
         return (julianDate - 2451545) / 365250;

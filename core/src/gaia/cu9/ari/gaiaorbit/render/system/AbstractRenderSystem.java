@@ -10,6 +10,7 @@ import gaia.cu9.ari.gaiaorbit.render.IRenderable;
 import gaia.cu9.ari.gaiaorbit.render.RenderingContext;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
+import gaia.cu9.ari.gaiaorbit.util.ComponentTypes;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.gravwaves.RelativisticEffectsManager;
 
@@ -42,6 +43,7 @@ public abstract class AbstractRenderSystem implements IRenderSystem {
     public RenderGroup getRenderGroup() {
         return group;
     }
+
 
     @Override
     public void render(Array<IRenderable> renderables, ICamera camera, double t, RenderingContext rc) {
@@ -79,13 +81,18 @@ public abstract class AbstractRenderSystem implements IRenderSystem {
      *         types.
      */
     public float getAlpha(IRenderable renderable) {
+        return getAlpha(renderable.getComponentType());
+    }
+
+    public float getAlpha(ComponentTypes ct) {
         int idx = -1;
         float alpha = 1f;
-        while ((idx = renderable.getComponentType().nextSetBit(idx + 1)) >= 0) {
+        while ((idx = ct.nextSetBit(idx + 1)) >= 0) {
             alpha *= alphas[idx];
         }
         return alpha;
     }
+
 
     @Override
     public void resize(int w, int h) {

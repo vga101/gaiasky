@@ -77,7 +77,7 @@ public class RelativisticEffectsManager implements IObserver {
         gw = new Vector3(0, 0, 1);
         gwmat3 = new Matrix3();
         gwmat4 = new Matrix4();
-        initime = time.getTime().getTime();
+        initime = time.getTime().toEpochMilli();
         gwtime = 0f;
         hterms = new float[4];
         unitz = new Vector3(0, 0, 1);
@@ -131,7 +131,7 @@ public class RelativisticEffectsManager implements IObserver {
          */
         if (GlobalConf.runtime.GRAVITATIONAL_WAVES) {
             // Time
-            gwtime = (float) ((time.getTime().getTime() - initime) / 1000d);
+            gwtime = (float) ((time.getTime().toEpochMilli() - initime) / 1000d);
 
             // Frequency
             omgw = 0.8f;

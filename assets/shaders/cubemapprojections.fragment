@@ -1,0 +1,79 @@
+#ifdef GL_ES
+	#define PRECISION mediump
+	precision PRECISION float;
+#else
+	#define PRECISION
+#endif
+
+uniform sampler2D u_texture0;
+uniform samplerCube u_cubemap;
+varying vec2 v_texCoords;
+
+#define PI 3.141592653589793238462643383
+#define TWOPI PI * 2.0
+#define PITWO PI / 2.0
+#define DEG_RAD PI / 180.0
+#define RAD_DEG 180.0 / PI
+
+#ifdef equirectangular
+// Equirectangular (spherical)
+vec4 cubeToProjection(samplerCube cubemap, vec2 tc){ 
+	float lat = tc.y * PI;
+	float lon = tc.x * TWOPI;
+	vec3 cubemaptc; 
+	cubemaptc.x = -sin(lon) * sin(lat); 
+	cubemaptc.y = cos(lat); 
+	cubemaptc.z = -cos(lon) * sin(lat); 
+	return textureCube(cubemap, cubemaptc); 
+}
+#endif //equirectangular
+
+#ifdef cylindrical
+// Cylindrical
+vec4 cubeToProjection(samplerCube cubemap, vec2 tc){
+	float lon = tc.x * TWOPI + PI;
+	float lat = asin((1.0 - tc.y) * 2.0 - 1.0) - PI / 2.0;	
+	
+	vec3 cubemaptc; 
+	cubemaptc.x = -sin(lon) * sin(lat); 
+	cubemaptc.y = cos(lat); 
+	cubemaptc.z = -cos(lon) * sin(lat); 
+	return textureCube(cubemap, cubemaptc);
+}
+#endif //cylindrical
+
+#ifdef hammer
+// Hammer
+vec4 cubeToProjection(samplerCube cubemap, vec2 tc) {
+    // The 0.9 factor is a hack to make the projection occupy the full extent of the screen
+    #define EXTENT 0.9
+    #define EXTENTRES2 (1.0 - EXTENT) / 2.0
+    float x = (1.0 - tc.x * EXTENT - EXTENTRES2) * 360.0 - 180.0;
+    float y = (1.0 - tc.y * EXTENT - EXTENTRES2) * 180.0 - 90.0;
+    //x *= 1.273;
+    //y *= 1.273;
+    x *= DEG_RAD;
+    y *= DEG_RAD;
+        
+	
+    float zsqr = 1.0 - pow(x / 4.0, 2.0) - pow(y / 2.0, 2.0);
+    if((x * x / 8.0 + y * y / 2.0 - 1.0) > 0.0) {
+        // Deprojection not valid, values must be inside space
+        return vec4(0.0, 0.0, 0.0, 1.0);
+    }
+    float z = sqrt(zsqr);
+	
+    float lon = 2.0 * atan(4.0 * z * z - 2.0, z * x) - PI;
+    float lat = asin(z * y) - PITWO;
+	
+    vec3 cubemaptc;
+    cubemaptc.x = -sin(lon) * sin(lat); 
+    cubemaptc.y = cos(lat); 
+    cubemaptc.z = -cos(lon) * sin(lat); 
+    return textureCube(cubemap, cubemaptc);
+}
+#endif //hammer
+
+void main( void ){
+	gl_FragColor = cubeToProjection(u_cubemap, v_texCoords); 
+}

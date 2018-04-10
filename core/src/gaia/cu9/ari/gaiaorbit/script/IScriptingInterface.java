@@ -369,29 +369,36 @@ public interface IScriptingInterface {
      * up vector as a rotation axis.
      * 
      * @param focus
-     *            The name of the focus object.
+     *            The name of the focus object
      * @param other
      *            The name of the other object, to the fine a line from this to
-     *            foucs. Usually a light source.
+     *            foucs. Usually a light source
      * @param rotation
-     *            The rotation angle, in degrees.
+     *            The rotation angle, in degrees
      * @param viewAngle
      *            The view angle which determines the distance, in degrees.
      */
     public void setCameraPositionAndFocus(String focus, String other, double rotation, double viewAngle);
 
     /**
-     * Changes the speed multiplier of the camera and its acceleration.
+     * Sets the camera in free mode and points it to the given coordinates in equatorial system
+     * @param ra Right ascension in degrees
+     * @param dec Declination in degrees
+     */
+    public void pointAtSkyCoordinate(double ra, double dec);
+
+    /**
+     * Changes the speed multiplier of the camera and its acceleration
      * 
      * @param speed
-     *            The new speed, from 1 to 100.
+     *            The new speed, from 1 to 100
      */
     public void setCameraSpeed(float speed);
 
     /**
-     * Gets the current physical speed of the camera in km/h.
+     * Gets the current physical speed of the camera in km/h
      * 
-     * @return The current speed of the camera in km/h.
+     * @return The current speed of the camera in km/h
      */
     public double getCameraSpeed();
 
@@ -523,10 +530,25 @@ public interface IScriptingInterface {
      *            The key of the component, see
      *            {@link gaia.cu9.ari.gaiaorbit.render.ComponentType}. Usually
      *            'element.stars', 'element.moons', 'element.atmospheres', etc.
+     *            Proper motion vectors are a special case not listed in component
+     *            types. Use the key 'element.propermotions' to that end.
      * @param visible
      *            The visible value.
      */
     public void setVisibility(String key, boolean visible);
+    
+    /**
+     * Sets the number factor of proper motion vectors that are visible. In [1..100].
+     * @param factor
+     */
+    public void setProperMotionsNumberFactor(float factor);
+    
+    /**
+     * Sets the length of the proper motion vectors, in [500..30000].
+     * 
+     * @param factor
+     */
+    public void setProperMotionsLengthFactor(float factor);
 
     /**
      * Sets the visibility of the crosshair in focus and free modes.
@@ -1132,7 +1154,7 @@ public interface IScriptingInterface {
     public double[] internalCartesianToEquatorial(double x, double y, double z);
 
     /**
-     * Sets the general brightness level of the render system.
+     * Sets the brightness level of the render system.
      * 
      * @param level
      *            The brightness level as a double precision floating point
@@ -1141,13 +1163,31 @@ public interface IScriptingInterface {
     public void setBrightnessLevel(double level);
 
     /**
-     * Sets the general contrast level of the render system.
+     * Sets the contrast level of the render system.
      * 
      * @param level
      *            The contrast level as a double precision floating point number
      *            in [0..2]. The neutral value is 1.0.
      */
     public void setContrastLevel(double level);
+
+    /**
+     * Sets the hue level of the render system.
+     * 
+     * @param level
+     *            The hue level as a double precision floating point number
+     *            in [0..2]. The neutral value is 1.0.
+     */
+    public void setHueLevel(double level);
+
+    /**
+     * Sets the saturation level of the render system.
+     * 
+     * @param level
+     *            The saturation level as a double precision floating point number
+     *            in [0..2]. The neutral value is 1.0.
+     */
+    public void setSaturationLevel(double level);
 
     /**
      * Enables and disables the planetarium mode.

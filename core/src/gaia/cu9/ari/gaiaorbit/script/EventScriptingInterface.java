@@ -1,7 +1,9 @@
 package gaia.cu9.ari.gaiaorbit.script;
 
-import java.util.Calendar;
-import java.util.Date;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.temporal.ChronoField;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -300,6 +302,11 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
         }
     }
 
+    public void pointAtSkyCoordinate(double ra, double dec) {
+        em.post(Events.CAMERA_MODE_CMD, CameraMode.Free_Camera);
+        em.post(Events.FREE_MODE_COORD_CMD, (float) ra, (float) dec);
+    }
+
     public void setCameraPositionAndFocus(IFocus focus, IFocus other, double rotation, double viewAngle) {
         assert viewAngle > 0 : "View angle must be larger than zero";
         assert focus != null : "Focus can't be null";
@@ -452,7 +459,25 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
     @Override
     public void setVisibility(final String key, final boolean visible) {
         Gdx.app.postRunnable(() -> {
-            em.post(Events.TOGGLE_VISIBILITY_CMD, key, false, visible);
+            if (key.equals("element.propermotions")) {
+                EventManager.instance.post(Events.PROPER_MOTIONS_CMD, key, visible);
+            } else {
+                em.post(Events.TOGGLE_VISIBILITY_CMD, key, false, visible);
+            }
+        });
+    }
+
+    @Override
+    public void setProperMotionsNumberFactor(float factor) {
+        Gdx.app.postRunnable(() -> {
+            EventManager.instance.post(Events.PM_NUM_FACTOR_CMD, MathUtilsd.lint(factor, Constants.MIN_SLIDER, Constants.MAX_SLIDER, Constants.MIN_PM_NUM_FACTOR, Constants.MAX_PM_NUM_FACTOR), false);
+        });
+    }
+
+    @Override
+    public void setProperMotionsLengthFactor(float factor) {
+        Gdx.app.postRunnable(() -> {
+            EventManager.instance.post(Events.PM_LEN_FACTOR_CMD, factor, false);
         });
     }
 
@@ -471,43 +496,37 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
         });
     }
 
-    private Date getDateObject(int year, int month, int day, int hour, int min, int sec, int millisec) {
-        Calendar c = Calendar.getInstance();
-        c.set(year, month - 1, day, hour, min, sec);
-        return new Date(c.getTime().getTime() + millisec);
-    }
-
     @Override
     public void setSimulationTime(int year, int month, int day, int hour, int min, int sec, int millisec) {
-        Date date = getDateObject(year, month, day, hour, min, sec, millisec);
-        em.post(Events.TIME_CHANGE_CMD, date);
+        LocalDateTime date = LocalDateTime.of(year, month, day, hour, min, sec, millisec);
+        em.post(Events.TIME_CHANGE_CMD, date.toInstant(ZoneOffset.UTC));
     }
 
     @Override
     public void setSimulationTime(final long time) {
         assert time > 0 : "Time can not be negative";
-        em.post(Events.TIME_CHANGE_CMD, new Date(time));
+        em.post(Events.TIME_CHANGE_CMD, Instant.ofEpochMilli(time));
     }
 
     @Override
     public long getSimulationTime() {
         ITimeFrameProvider time = GaiaSky.instance.time;
-        return time.getTime().getTime();
+        return time.getTime().toEpochMilli();
     }
 
     @Override
     public int[] getSimulationTimeArr() {
         ITimeFrameProvider time = GaiaSky.instance.time;
-        Calendar c = Calendar.getInstance();
-        c.setTime(time.getTime());
+        Instant instant = time.getTime();
+        LocalDateTime c = LocalDateTime.ofInstant(instant, ZoneOffset.UTC);
         int[] result = new int[7];
-        result[0] = c.get(Calendar.YEAR);
-        result[1] = c.get(Calendar.MONTH) + 1;
-        result[2] = c.get(Calendar.DAY_OF_MONTH);
-        result[3] = c.get(Calendar.HOUR_OF_DAY);
-        result[4] = c.get(Calendar.MINUTE);
-        result[5] = c.get(Calendar.SECOND);
-        result[6] = c.get(Calendar.MILLISECOND);
+        result[0] = c.get(ChronoField.YEAR_OF_ERA);
+        result[1] = c.getMonthValue();
+        result[2] = c.getDayOfMonth();
+        result[3] = c.getHour();
+        result[4] = c.getMinute();
+        result[5] = c.getSecond();
+        result[6] = c.get(ChronoField.MILLI_OF_SECOND);
         return result;
     }
 
@@ -533,12 +552,12 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
 
     @Override
     public void setTargetTime(long ms) {
-        em.post(Events.TARGET_TIME_CMD, new Date(ms));
+        em.post(Events.TARGET_TIME_CMD, Instant.ofEpochMilli(ms));
     }
 
     @Override
     public void setTargetTime(int year, int month, int day, int hour, int min, int sec, int millisec) {
-        em.post(Events.TARGET_TIME_CMD, getDateObject(year, month, day, hour, min, sec, millisec));
+        em.post(Events.TARGET_TIME_CMD, LocalDateTime.of(year, month, day, hour, min, sec, millisec).toInstant(ZoneOffset.UTC));
     }
 
     @Override
@@ -1362,7 +1381,7 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
             em.post(Events.CAMERA_MODE_CMD, CameraMode.Focus);
             em.post(Events.FOCUS_CHANGE_CMD, object);
 
-            // Wait til camera is facing focus or 
+            // Wait til camera is facing focus or
             if (waitTimeSeconds < 0) {
                 waitTimeSeconds = Float.MAX_VALUE;
             }
@@ -1424,6 +1443,22 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
         assert level >= 0d && level <= 2d : "Contrast level value must be in [0..2]: " + Double.toString(level);
         Gdx.app.postRunnable(() -> {
             em.post(Events.CONTRAST_CMD, (float) level, false);
+        });
+    }
+
+    @Override
+    public void setHueLevel(double level) {
+        assert level >= 0d && level <= 2d : "Hue level value must be in [0..2]: " + Double.toString(level);
+        Gdx.app.postRunnable(() -> {
+            em.post(Events.HUE_CMD, (float) level, false);
+        });
+    }
+
+    @Override
+    public void setSaturationLevel(double level) {
+        assert level >= 0d && level <= 2d : "Saturation level value must be in [0..2]: " + Double.toString(level);
+        Gdx.app.postRunnable(() -> {
+            em.post(Events.SATURATION_CMD, (float) level, false);
         });
     }
 

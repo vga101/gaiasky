@@ -3,6 +3,7 @@ package gaia.cu9.ari.gaiaorbit.desktop.util;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.time.Instant;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -108,7 +109,7 @@ public class Positions2DExtractor implements IObserver {
         bw.write("#t[ms] x[km] y[km] mass[kg]");
         bw.newLine();
         for (long t = inims; t < inims + MS_IN_YEAR; t += dtms) {
-            Date now = new Date(t);
+            Instant now = Instant.ofEpochMilli(t);
             // Sun
             bw.write(t + " 0.0 0.0 " + Mo);
             bw.newLine();

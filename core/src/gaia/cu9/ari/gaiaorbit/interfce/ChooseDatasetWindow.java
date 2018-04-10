@@ -29,10 +29,10 @@ import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextButton;
 public class ChooseDatasetWindow extends GenericDialog {
 
     private Map<Button, String> candidates;
-    private Button[] cbs;
+    private OwnTextButton[] cbs;
 
     public ChooseDatasetWindow(Stage stage, Skin skin) {
-        super("Choose a dataset", skin, stage);
+        super(txt("gui.dschooser.title"), skin, stage);
 
         candidates = new HashMap<Button, String>();
 
@@ -63,10 +63,10 @@ public class ChooseDatasetWindow extends GenericDialog {
         Comparator<FileHandle> byName = (FileHandle a, FileHandle b) -> a.name().compareTo(b.name());
         Arrays.sort(catalogFiles, byName);
 
-        cbs = new Button[catalogFiles.length];
+        cbs = new OwnTextButton[catalogFiles.length];
         int i = 0;
+        String[] currentSetting = GlobalConf.data.CATALOG_JSON_FILES.split("\\s*,\\s*");
         for (FileHandle catalogFile : catalogFiles) {
-            String currentSetting = GlobalConf.data.CATALOG_JSON_FILE;
             String candidate = catalogFile.path().substring(assetsLoc.length(), catalogFile.path().length());
 
             String name = null;
@@ -86,14 +86,14 @@ public class ChooseDatasetWindow extends GenericDialog {
 
             OwnTextButton cb = new OwnTextButton(name, skin, "toggle-big");
 
-            cb.setChecked(currentSetting.contains(catalogFile.name()));
+            cb.setChecked(contains(catalogFile.name(), currentSetting));
             cb.addListener(new TextTooltip(candidate, skin));
             content.add(cb).left().top().padRight(pad);
 
             // Description
             TextArea description = new OwnTextArea(desc, skin.get("regular", TextFieldStyle.class));
             description.setDisabled(true);
-            description.setPrefRows(3);
+            description.setPrefRows(2);
             description.setWidth(tawidth);
             content.add(description).left().top().padTop(pad).padLeft(pad).row();
 
@@ -102,7 +102,10 @@ public class ChooseDatasetWindow extends GenericDialog {
             cbs[i++] = cb;
 
         }
-        new ButtonGroup(cbs);
+        ButtonGroup<OwnTextButton> bg = new ButtonGroup<OwnTextButton>();
+        bg.setMinCheckCount(0);
+        bg.setMaxCheckCount(catalogFiles.length);
+        bg.add(cbs);
 
         float maxw = 0;
         for (Button b : cbs) {
@@ -114,13 +117,27 @@ public class ChooseDatasetWindow extends GenericDialog {
 
     }
 
+    private boolean contains(String name, String[] list) {
+        for (String candidate : list)
+            if (candidate.contains(name))
+                return true;
+        return false;
+    }
+
     @Override
     protected void accept() {
+        boolean first = true;
         // Update setting
+        GlobalConf.data.CATALOG_JSON_FILES = "";
         for (Button b : cbs) {
             if (b.isChecked()) {
-                GlobalConf.data.CATALOG_JSON_FILE = candidates.get(b);
-                break;
+                // Add all selected to list
+                if (!first) {
+                    GlobalConf.data.CATALOG_JSON_FILES += "," + candidates.get(b);
+                } else {
+                    GlobalConf.data.CATALOG_JSON_FILES += candidates.get(b);
+                    first = false;
+                }
             }
         }
         // No change to execute exit event, manually restore cursor to default

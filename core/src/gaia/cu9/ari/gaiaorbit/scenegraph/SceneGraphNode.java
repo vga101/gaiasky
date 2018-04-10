@@ -16,9 +16,6 @@ import gaia.cu9.ari.gaiaorbit.render.SceneGraphRenderer;
 import gaia.cu9.ari.gaiaorbit.scenegraph.octreewrapper.AbstractOctreeWrapper;
 import gaia.cu9.ari.gaiaorbit.util.ComponentTypes;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
-import gaia.cu9.ari.gaiaorbit.util.concurrent.IThreadLocal;
-import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadIndexer;
-import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadLocalFactory;
 import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector2d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
@@ -34,12 +31,30 @@ import gaia.cu9.ari.gaiaorbit.util.tree.IPosition;
 public class SceneGraphNode implements IStarContainer, IPosition {
     public static final String ROOT_NAME = "Universe";
 
-    @SuppressWarnings("unchecked")
-    protected static IThreadLocal<Vector3d> aux3d1 = ThreadLocalFactory.instance.get(Vector3d.class), aux3d2 = ThreadLocalFactory.instance.get(Vector3d.class), aux3d3 = ThreadLocalFactory.instance.get(Vector3d.class);
-    @SuppressWarnings("unchecked")
-    protected static IThreadLocal<Vector3> aux3f1 = ThreadLocalFactory.instance.get(Vector3.class), aux3f2 = ThreadLocalFactory.instance.get(Vector3.class), aux3f3 = ThreadLocalFactory.instance.get(Vector3.class), aux3f4 = ThreadLocalFactory.instance.get(Vector3.class);
-    @SuppressWarnings("unchecked")
-    protected static IThreadLocal<Vector2d> aux2d1 = ThreadLocalFactory.instance.get(Vector2d.class), aux2d2 = ThreadLocalFactory.instance.get(Vector2d.class), aux2d3 = ThreadLocalFactory.instance.get(Vector2d.class);
+    protected static class TLV3D extends ThreadLocal<Vector3d> {
+        @Override
+        protected Vector3d initialValue() {
+            return new Vector3d();
+        }
+    }
+
+    protected static class TLV3 extends ThreadLocal<Vector3> {
+        @Override
+        protected Vector3 initialValue() {
+            return new Vector3();
+        }
+    }
+
+    protected static class TLV2D extends ThreadLocal<Vector2d> {
+        @Override
+        protected Vector2d initialValue() {
+            return new Vector2d();
+        }
+    }
+
+    protected static TLV3D aux3d1 = new TLV3D(), aux3d2 = new TLV3D(), aux3d3 = new TLV3D();
+    protected static TLV3 aux3f1 = new TLV3(), aux3f2 = new TLV3(), aux3f3 = new TLV3(), aux3f4 = new TLV3();
+    protected static TLV2D aux2d1 = new TLV2D(), aux2d2 = new TLV2D(), aux2d3 = new TLV2D();
 
     /**
      * Describes to which render group this node belongs at a particular time
@@ -84,6 +99,8 @@ public class SceneGraphNode implements IStarContainer, IPosition {
         BILLBOARD_SPRITE(17),
         /** Line GPU **/
         LINE_GPU(18),
+        /** Particle positions from orbital elements **/
+        PARTICLE_ORBIT_ELEMENTS(19),
 
         /** None **/
         NONE(-1);
@@ -677,7 +694,7 @@ public class SceneGraphNode implements IStarContainer, IPosition {
     protected boolean addToRender(IRenderable renderable, RenderGroup rg) {
         boolean on = ct.intersects(SceneGraphRenderer.visible);
         if (on || (!on && SceneGraphRenderer.alphas[ct.getFirstOrdinal()] > 0)) {
-            SceneGraphRenderer.render_lists.get(rg).add(renderable, ThreadIndexer.i());
+            SceneGraphRenderer.render_lists.get(rg.ordinal()).add(renderable);
             return true;
         }
         return false;
@@ -693,11 +710,11 @@ public class SceneGraphNode implements IStarContainer, IPosition {
      * @return True if removed, false otherwise
      */
     protected boolean removeFromRender(IRenderable renderable, RenderGroup rg) {
-        return SceneGraphRenderer.render_lists.get(rg).remove(renderable);
+        return SceneGraphRenderer.render_lists.get(rg.ordinal()).removeValue(renderable, true);
     }
 
     protected boolean isInRender(IRenderable renderable, RenderGroup rg) {
-        return SceneGraphRenderer.render_lists.get(rg).contains(renderable, ThreadIndexer.i());
+        return SceneGraphRenderer.render_lists.get(rg.ordinal()).contains(renderable, true);
     }
 
     /**

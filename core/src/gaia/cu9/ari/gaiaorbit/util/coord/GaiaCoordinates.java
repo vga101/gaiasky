@@ -1,6 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.util.coord;
 
-import java.util.Date;
+import java.time.Instant;
 
 import gaia.cu9.ari.gaiaorbit.data.orbit.OrbitData;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
@@ -21,17 +21,17 @@ public class GaiaCoordinates extends AbstractOrbitCoordinates {
     }
 
     @Override
-    public Vector3d getEclipticCartesianCoordinates(Date date, Vector3d out) {
+    public Vector3d getEclipticCartesianCoordinates(Instant date, Vector3d out) {
         return null;
     }
 
     @Override
-    public Vector3d getEclipticSphericalCoordinates(Date date, Vector3d out) {
+    public Vector3d getEclipticSphericalCoordinates(Instant date, Vector3d out) {
         return null;
     }
 
     @Override
-    public Vector3d getEquatorialCartesianCoordinates(Date date, Vector3d out) {
+    public Vector3d getEquatorialCartesianCoordinates(Instant date, Vector3d out) {
         boolean inRange = data.loadPoint(out, date);
         // Rotate by solar longitude, and convert to equatorial.
         out.rotate(AstroUtils.getSunLongitude(date) + 180, 0, 1, 0).mul(Coordinates.eclToEq());

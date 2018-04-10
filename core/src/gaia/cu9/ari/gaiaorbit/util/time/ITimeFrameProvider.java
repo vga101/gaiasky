@@ -1,6 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.util.time;
 
-import java.util.Date;
+import java.time.Instant;
 
 /**
  * Basic interface for entities that provide an time frame in the scene
@@ -20,9 +20,9 @@ public interface ITimeFrameProvider {
     /**
      * Gets the current time
      * 
-     * @return The time as a date
+     * @return The time as an instant
      */
-    public Date getTime();
+    public Instant getTime();
 
     /**
      * Updates this time frame with the system time difference

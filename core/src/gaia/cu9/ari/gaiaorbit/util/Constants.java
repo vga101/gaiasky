@@ -78,8 +78,14 @@ public class Constants {
     /** Milliseconds to hours **/
     public static final double MS_TO_H = 1 / H_TO_MS;
 
+    /** Days to seconds **/
+    public static final double D_TO_S = 86400d;
+
+    /** Seconds to days **/
+    public static final double S_TO_D = 1 / D_TO_S;
+
     /** Days to milliseconds **/
-    public static final double D_TO_MS = 86400 * 1000;
+    public static final double D_TO_MS = 86400d * 1000d;
 
     /** Milliseconds to days **/
     public static final double MS_TO_D = 1 / D_TO_MS;
@@ -125,6 +131,12 @@ public class Constants {
      * Units to solar radius
      */
     public static final double U_TO_Ro = 1 / Ro_TO_U;
+
+    /** Multiplier for all KM values in the application **/
+    public static final double KM_MULTIPLIER = AstroUtils.KM_TO_PC * 1e9 * 5e-6;
+
+    /** Distance from Sun that marks the end of the solar system **/
+    public static final double SOLAR_SYSTEM_THRESHOLD = 5e9 * KM_MULTIPLIER;
 
     /**
      * Factor we need to use to get the real size of the star given its quad
@@ -211,6 +223,12 @@ public class Constants {
 
     public static final float MIN_CONTRAST = 0.0f;
     public static final float MAX_CONTRAST = 2.0f;
+
+    public static final float MIN_HUE = 0.0f;
+    public static final float MAX_HUE = 2.0f;
+
+    public static final float MIN_SATURATION = 0.0f;
+    public static final float MAX_SATURATION = 2.0f;
 
     // Max time, 5 Myr
     public static final long MAX_TIME_MS = 5000000l * (long) Y_TO_MS;

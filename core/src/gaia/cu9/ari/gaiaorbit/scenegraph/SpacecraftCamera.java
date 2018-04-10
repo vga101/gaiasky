@@ -181,7 +181,6 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
 
         // Update camera
         updatePerspectiveCamera();
-        updateFrustum(frustum, camera, pos, direction, up);
 
         // Broadcast nearest info
         String clname = null;
@@ -577,6 +576,11 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
     @Override
     public Vector3d getVelocity() {
         return scvel;
+    }
+
+    @Override
+    public double getTranslateUnits() {
+        return Math.max(0.001, scvel.len());
     }
 
 }

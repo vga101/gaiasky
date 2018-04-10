@@ -60,6 +60,7 @@ import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnLabel;
 public class FullGui extends AbstractGui {
 
     protected ControlsWindow controlsWindow;
+    protected MinimapWindow minimapWindow;
 
     protected Container<FocusInfoInterface> fi;
     protected FocusInfoInterface focusInterface;
@@ -107,7 +108,7 @@ public class FullGui extends AbstractGui {
         buildGui();
 
         // We must subscribe to the desired events
-        EventManager.instance.subscribe(this, Events.FOV_CHANGED_CMD, Events.SHOW_TUTORIAL_ACTION, Events.SHOW_SEARCH_ACTION, Events.REMOVE_KEYBOARD_FOCUS, Events.REMOVE_GUI_COMPONENT, Events.ADD_GUI_COMPONENT, Events.SHOW_ABOUT_ACTION, Events.RA_DEC_UPDATED, Events.LON_LAT_UPDATED, Events.POPUP_MENU_FOCUS, Events.SHOW_PREFERENCES_ACTION, Events.SHOW_LAND_AT_LOCATION_ACTION, Events.DISPLAY_POINTER_COORDS_CMD);
+        EventManager.instance.subscribe(this, Events.FOV_CHANGED_CMD, Events.SHOW_TUTORIAL_ACTION, Events.SHOW_SEARCH_ACTION, Events.REMOVE_KEYBOARD_FOCUS, Events.REMOVE_GUI_COMPONENT, Events.ADD_GUI_COMPONENT, Events.SHOW_ABOUT_ACTION, Events.RA_DEC_UPDATED, Events.LON_LAT_UPDATED, Events.POPUP_MENU_FOCUS, Events.SHOW_PREFERENCES_ACTION, Events.SHOW_LAND_AT_LOCATION_ACTION, Events.DISPLAY_POINTER_COORDS_CMD, Events.TOGGLE_MINIMAP);
     }
 
     protected void buildGui() {
@@ -123,6 +124,9 @@ public class FullGui extends AbstractGui {
             // CONTROLS WINDOW
             addControlsWindow();
         }
+
+        // MINIMAP
+        addMinimapWindow();
 
         nf = NumberFormatFactory.getFormatter("##0.##");
 
@@ -174,6 +178,7 @@ public class FullGui extends AbstractGui {
         // INVISIBLE IN STEREOSCOPIC MODE
         invisibleInStereoMode = new ArrayList<Actor>();
         invisibleInStereoMode.add(controlsWindow);
+        invisibleInStereoMode.add(minimapWindow);
         invisibleInStereoMode.add(fi);
         invisibleInStereoMode.add(messagesInterface);
         invisibleInStereoMode.add(runStateInterface);
@@ -198,6 +203,10 @@ public class FullGui extends AbstractGui {
                     controlsWindow.collapseInstant();
                 controlsWindow.setPosition(0, Gdx.graphics.getHeight() - controlsWindow.getHeight());
                 ui.addActor(controlsWindow);
+            }
+            if (minimapWindow != null) {
+                minimapWindow.setPosition(Gdx.graphics.getWidth() - minimapWindow.getWidth() * 2, 0);
+                ui.addActor(minimapWindow);
             }
             if (webglInterface != null)
                 ui.addActor(wgl);
@@ -331,8 +340,8 @@ public class FullGui extends AbstractGui {
             if (GlobalConf.program.DISPLAY_POINTER_COORDS) {
                 Double ra = (Double) data[0];
                 Double dec = (Double) data[1];
-                Integer x = (Integer) data[2];
-                Integer y = (Integer) data[3];
+                Integer x = (Integer) data[4];
+                Integer y = (Integer) data[5];
 
                 pointerXCoord.setText("RA/".concat(nf.format(ra)).concat("°"));
                 pointerXCoord.setPosition(x, GlobalConf.SCALE_FACTOR);
@@ -543,6 +552,11 @@ public class FullGui extends AbstractGui {
             popup.showMenu(ui, px, py);
 
             break;
+        case TOGGLE_MINIMAP:
+            if (minimapWindow != null) {
+                minimapWindow.setVisible(!minimapWindow.isVisible());
+            }
+            break;
         default:
             break;
         }
@@ -601,6 +615,11 @@ public class FullGui extends AbstractGui {
         controlsWindow.padBottom(5);
 
         controlsWindow.collapseInstant();
+    }
+
+    public void addMinimapWindow() {
+        minimapWindow = new MinimapWindow(ui, skin);
+        minimapWindow.setVisible(false);
     }
 
 }

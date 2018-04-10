@@ -1,6 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.util.coord;
 
-import java.util.Date;
+import java.time.Instant;
 
 import gaia.cu9.ari.gaiaorbit.data.orbit.OrbitData;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
@@ -28,7 +28,7 @@ public class OrbitLintCoordinates extends AbstractOrbitCoordinates {
     }
 
     @Override
-    public Vector3d getEclipticSphericalCoordinates(Date date, Vector3d out) {
+    public Vector3d getEclipticSphericalCoordinates(Instant date, Vector3d out) {
         getEquatorialCartesianCoordinates(date, out);
         out.mul(Coordinates.eqToEcl());
 
@@ -38,14 +38,14 @@ public class OrbitLintCoordinates extends AbstractOrbitCoordinates {
     }
 
     @Override
-    public Vector3d getEclipticCartesianCoordinates(Date date, Vector3d out) {
+    public Vector3d getEclipticCartesianCoordinates(Instant date, Vector3d out) {
         getEquatorialCartesianCoordinates(date, out);
         out.mul(Coordinates.eqToEcl());
         return out;
     }
 
     @Override
-    public Vector3d getEquatorialCartesianCoordinates(Date date, Vector3d out) {
+    public Vector3d getEquatorialCartesianCoordinates(Instant date, Vector3d out) {
         // Find out index
 
         // Number of periods occurred
@@ -69,13 +69,10 @@ public class OrbitLintCoordinates extends AbstractOrbitCoordinates {
         if (((CelestialBody) orbit.parent).orientation != null) {
             transf.set(((CelestialBody) orbit.parent).orientation);
         } else if (orbit.transformFunction != null) {
-            transf.set(orbit.transformFunction);
+            transf.set(orbit.transformFunction).rotate(0, 1, 0, 90);
         } else {
             transf.idt();
         }
-        transf.rotate(0, 1, 0, orbitalParams.argofpericenter);
-        transf.rotate(0, 0, 1, orbitalParams.i);
-        transf.rotate(0, 1, 0, orbitalParams.ascendingnode);
 
         out.mul(transf);
         return out;

@@ -13,7 +13,7 @@ public enum Events {
     /** Notifies of a change in the time, contains the Date object **/
     TIME_CHANGE_INFO,
     /**
-     * Issues a change time command, contains the Date object with the new time
+     * Issues a change time command, contains the Instant object with the new time
      **/
     TIME_CHANGE_CMD,
 
@@ -228,6 +228,16 @@ public enum Events {
      * indicating whether this comes from the interface
      **/
     CONTRAST_CMD,
+    /**
+     * Contains the hue level (float) in [0..2] and an optional boolean
+     * indicating whether this comes from the interface
+     **/
+    HUE_CMD,
+    /**
+     * Contains the saturation level (float) in [0..2] and an optional boolean
+     * indicating whether this comes from the interface
+     **/
+    SATURATION_CMD,
 
     /** Contains a float with the pace **/
     PACE_CHANGE_CMD,
@@ -399,6 +409,10 @@ public enum Events {
      **/
     CUBEMAP_RESOLUTION_CMD,
     /**
+     * Sets a new cubemap projection. Contains the CubemapProjection object.
+     */
+    CUBEMAP_PROJECTION_CMD,
+    /**
      * Enables and disables the planetarium mode. Contains a boolean with the
      * state and another boolean indicating whether it comes from the interface.
      */
@@ -422,6 +436,8 @@ public enum Events {
     UPDATEPAUSE_CHANGED,
     /** Graphics quality updated **/
     GRAPHICS_QUALITY_UPDATED,
+    /** Toggles minimap visibility **/
+    TOGGLE_MINIMAP,
     /**
      * Sets the vertical scroll position. Contains the scroll position in pixels
      **/
@@ -506,9 +522,9 @@ public enum Events {
     STAR_BRIGHTNESS_CMD,
     /** Frames per second info **/
     FPS_INFO,
-    /** Contains the number factor for pm vectors **/
+    /** Contains the number factor for pm vectors and a boolean indicating if this comes from the interface **/
     PM_NUM_FACTOR_CMD,
-    /** Contains the length factor for pm vectors **/
+    /** Contains the length factor for pm vectors and a boolean indicating if this comes from the interface **/
     PM_LEN_FACTOR_CMD,
     /**
      * Updates the screen mode according to whats in the

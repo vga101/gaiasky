@@ -1,6 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph;
 
-import java.util.Date;
+import java.time.Instant;
 
 import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
 
@@ -22,7 +22,7 @@ public class EclipticOrbit extends Orbit {
      * Override if your model contains more than just the position and size.
      */
     @Override
-    protected void updateLocalTransform(Date date) {
+    protected void updateLocalTransform(Instant date) {
         transform.getMatrix(localTransformD).rotate(0, 0, 1, AstroUtils.obliquity(AstroUtils.getJulianDate(date)));
     }
 }

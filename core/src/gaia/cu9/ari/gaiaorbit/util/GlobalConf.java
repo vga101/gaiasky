@@ -1,10 +1,11 @@
 package gaia.cu9.ari.gaiaorbit.util;
 
+import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import com.badlogic.gdx.math.MathUtils;
+import com.bitfire.postprocessing.effects.CubemapProjections.CubemapProjection;
 
 import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
@@ -12,7 +13,6 @@ import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.render.system.AbstractRenderSystem;
-import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadIndexer;
 import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory.DateType;
 import gaia.cu9.ari.gaiaorbit.util.format.IDateFormat;
@@ -50,6 +50,10 @@ public class GlobalConf {
         simple, redraw
     }
 
+    public static enum ImageFormat {
+        PNG, JPG
+    }
+
     public static class ScreenshotConf implements IConf {
 
         public static final int MIN_SCREENSHOT_SIZE = 50;
@@ -59,12 +63,16 @@ public class GlobalConf {
         public int SCREENSHOT_HEIGHT;
         public String SCREENSHOT_FOLDER;
         public ScreenshotMode SCREENSHOT_MODE;
+        public ImageFormat SCREENSHOT_FORMAT;
+        public float SCREENSHOT_QUALITY;
 
-        public void initialize(int sCREENSHOT_WIDTH, int sCREENSHOT_HEIGHT, String sCREENSHOT_FOLDER, ScreenshotMode sCREENSHOT_MODE) {
+        public void initialize(int sCREENSHOT_WIDTH, int sCREENSHOT_HEIGHT, String sCREENSHOT_FOLDER, ScreenshotMode sCREENSHOT_MODE, ImageFormat sCREENSHOT_FORMAT, float sCREENSHOT_QUALITY) {
             SCREENSHOT_WIDTH = sCREENSHOT_WIDTH;
             SCREENSHOT_HEIGHT = sCREENSHOT_HEIGHT;
             SCREENSHOT_FOLDER = sCREENSHOT_FOLDER;
             SCREENSHOT_MODE = sCREENSHOT_MODE;
+            SCREENSHOT_FORMAT = sCREENSHOT_FORMAT;
+            SCREENSHOT_QUALITY = sCREENSHOT_QUALITY;
         }
 
         public boolean isSimpleMode() {
@@ -96,7 +104,7 @@ public class GlobalConf {
          */
         public int NUMBER_THREADS() {
             if (NUMBER_THREADS <= 0)
-                return ThreadIndexer.instance.nthreads();
+                return Runtime.getRuntime().availableProcessors();
             else
                 return NUMBER_THREADS;
         }
@@ -148,13 +156,17 @@ public class GlobalConf {
         public float POSTPROCESS_BRIGHTNESS;
         /** Contrast level in [0..2]. Default is 1. **/
         public float POSTPROCESS_CONTRAST;
+        /** Hue level in [0..2]. Default is 1. **/
+        public float POSTPROCESS_HUE;
+        /** Saturation level in [0..2]. Default is 1. **/
+        public float POSTPROCESS_SATURATION;
 
         public PostprocessConf() {
-            EventManager.instance.subscribe(this, Events.BLOOM_CMD, Events.LENS_FLARE_CMD, Events.MOTION_BLUR_CMD, Events.LIGHT_SCATTERING_CMD, Events.FISHEYE_CMD, Events.BRIGHTNESS_CMD, Events.CONTRAST_CMD);
+            EventManager.instance.subscribe(this, Events.BLOOM_CMD, Events.LENS_FLARE_CMD, Events.MOTION_BLUR_CMD, Events.LIGHT_SCATTERING_CMD, Events.FISHEYE_CMD, Events.BRIGHTNESS_CMD, Events.CONTRAST_CMD, Events.HUE_CMD, Events.SATURATION_CMD);
         }
 
         public void initialize(Antialias POSTPROCESS_ANTIALIAS, float POSTPROCESS_BLOOM_INTENSITY, float POSTPROCESS_MOTION_BLUR, boolean POSTPROCESS_LENS_FLARE, boolean POSTPROCESS_LIGHT_SCATTERING,
-                boolean POSTPROCESS_FISHEYE, float POSTPROCESS_BRIGHTNESS, float POSTPROCESS_CONTRAST) {
+                boolean POSTPROCESS_FISHEYE, float POSTPROCESS_BRIGHTNESS, float POSTPROCESS_CONTRAST, float POSTPROCESS_HUE, float POSTPROCESS_SATURATION) {
             this.POSTPROCESS_ANTIALIAS = POSTPROCESS_ANTIALIAS;
             this.POSTPROCESS_BLOOM_INTENSITY = POSTPROCESS_BLOOM_INTENSITY;
             this.POSTPROCESS_MOTION_BLUR = POSTPROCESS_MOTION_BLUR;
@@ -163,6 +175,8 @@ public class GlobalConf {
             this.POSTPROCESS_FISHEYE = POSTPROCESS_FISHEYE;
             this.POSTPROCESS_BRIGHTNESS = POSTPROCESS_BRIGHTNESS;
             this.POSTPROCESS_CONTRAST = POSTPROCESS_CONTRAST;
+            this.POSTPROCESS_HUE = POSTPROCESS_HUE;
+            this.POSTPROCESS_SATURATION = POSTPROCESS_SATURATION;
         }
 
         @Override
@@ -356,6 +370,10 @@ public class GlobalConf {
         public boolean RENDER_OUTPUT = false;
         /** The frame output screenshot mode **/
         public ScreenshotMode FRAME_MODE;
+        /** Format **/
+        public ImageFormat FRAME_FORMAT;
+        /** Quality, in case format is JPG **/
+        public float FRAME_QUALITY;
 
         public FrameConf() {
             EventManager.instance.subscribe(this, Events.CONFIG_FRAME_OUTPUT, Events.FRAME_OUTPUT_CMD);
@@ -370,7 +388,7 @@ public class GlobalConf {
         }
 
         public void initialize(int rENDER_WIDTH, int rENDER_HEIGHT, int rENDER_TARGET_FPS, int cAMERA_REC_TARGET_FPS, boolean aUTO_FRAME_OUTPUT_CAMERA_PLAY, String rENDER_FOLDER,
-                String rENDER_FILE_NAME, boolean rENDER_SCREENSHOT_TIME, boolean rENDER_OUTPUT, ScreenshotMode fRAME_MODE) {
+                String rENDER_FILE_NAME, boolean rENDER_SCREENSHOT_TIME, boolean rENDER_OUTPUT, ScreenshotMode fRAME_MODE, ImageFormat fRAME_FORMAT, float fRAME_QUALITY) {
             RENDER_WIDTH = rENDER_WIDTH;
             RENDER_HEIGHT = rENDER_HEIGHT;
             RENDER_TARGET_FPS = rENDER_TARGET_FPS;
@@ -381,6 +399,8 @@ public class GlobalConf {
             RENDER_SCREENSHOT_TIME = rENDER_SCREENSHOT_TIME;
             RENDER_OUTPUT = rENDER_OUTPUT;
             FRAME_MODE = fRAME_MODE;
+            FRAME_FORMAT = fRAME_FORMAT;
+            FRAME_QUALITY = fRAME_QUALITY;
         }
 
         @Override
@@ -415,10 +435,10 @@ public class GlobalConf {
     public static class DataConf implements IConf {
 
         /** The json data file in case of local data source **/
-        public String OBJECTS_JSON_FILE;
+        public String OBJECTS_JSON_FILES;
 
         /** The json file with the catalogue(s) to load **/
-        public String CATALOG_JSON_FILE;
+        public String CATALOG_JSON_FILES;
 
         /**
          * High accuracy positions for planets and moon - use all terms of
@@ -437,22 +457,22 @@ public class GlobalConf {
 
         public void initialize(String cATALOG_JSON_FILE, String oBJECTS_JSON_FILE, float lIMIT_MAG_LOAD, boolean rEAL_GAIA_ATTITUDE, boolean hIGH_ACCURACY_POSITIONS) {
 
-            CATALOG_JSON_FILE = cATALOG_JSON_FILE;
-            OBJECTS_JSON_FILE = oBJECTS_JSON_FILE;
+            CATALOG_JSON_FILES = cATALOG_JSON_FILE;
+            OBJECTS_JSON_FILES = oBJECTS_JSON_FILE;
             LIMIT_MAG_LOAD = lIMIT_MAG_LOAD;
             REAL_GAIA_ATTITUDE = rEAL_GAIA_ATTITUDE;
             HIGH_ACCURACY_POSITIONS = hIGH_ACCURACY_POSITIONS;
         }
 
         public void initialize(String cATALOG_JSON_FILE, String oBJECTS_JSON_FILE, boolean dATA_SOURCE_LOCAL, float lIMIT_MAG_LOAD) {
-            this.CATALOG_JSON_FILE = cATALOG_JSON_FILE;
-            this.OBJECTS_JSON_FILE = oBJECTS_JSON_FILE;
+            this.CATALOG_JSON_FILES = cATALOG_JSON_FILE;
+            this.OBJECTS_JSON_FILES = oBJECTS_JSON_FILE;
             this.LIMIT_MAG_LOAD = lIMIT_MAG_LOAD;
         }
 
         public void initialize(String cATALOG_JSON_FILE, String dATA_JSON_FILE, boolean dATA_SOURCE_LOCAL, float lIMIT_MAG_LOAD, boolean rEAL_GAIA_ATTITUDE) {
-            this.CATALOG_JSON_FILE = cATALOG_JSON_FILE;
-            this.OBJECTS_JSON_FILE = dATA_JSON_FILE;
+            this.CATALOG_JSON_FILES = cATALOG_JSON_FILE;
+            this.OBJECTS_JSON_FILES = dATA_JSON_FILE;
             this.LIMIT_MAG_LOAD = lIMIT_MAG_LOAD;
             this.REAL_GAIA_ATTITUDE = rEAL_GAIA_ATTITUDE;
         }
@@ -509,7 +529,7 @@ public class GlobalConf {
         public String TUTORIAL_POINTER_SCRIPT_LOCATION;
         public String TUTORIAL_SCRIPT_LOCATION;
         public boolean SHOW_DEBUG_INFO;
-        public Date LAST_CHECKED;
+        public Instant LAST_CHECKED;
         public String LAST_VERSION_TIME;
         public String VERSION_CHECK_URL;
         public String UI_THEME;
@@ -519,6 +539,8 @@ public class GlobalConf {
         public boolean DISPLAY_HUD;
         public boolean DISPLAY_POINTER_COORDS;
         public boolean CUBEMAP360_MODE;
+        /** Cubemap projection **/
+        public CubemapProjection CUBEMAP_PROJECTION = CubemapProjection.EQUIRECTANGULAR;
         public boolean STEREOSCOPIC_MODE;
         /** Eye separation in stereoscopic mode in meters **/
         public float STEREOSCOPIC_EYE_SEPARATION_M = 0.06f;
@@ -529,10 +551,10 @@ public class GlobalConf {
         public boolean DISPLAY_DATASET_DIALOG;
 
         public ProgramConf() {
-            EventManager.instance.subscribe(this, Events.STEREOSCOPIC_CMD, Events.STEREO_PROFILE_CMD, Events.CUBEMAP360_CMD);
+            EventManager.instance.subscribe(this, Events.STEREOSCOPIC_CMD, Events.STEREO_PROFILE_CMD, Events.CUBEMAP360_CMD, Events.CUBEMAP_PROJECTION_CMD);
         }
 
-        public void initialize(boolean dISPLAY_TUTORIAL, String tUTORIAL_POINTER_SCRIPT_LOCATION, String tUTORIAL_SCRIPT_LOCATION, boolean sHOW_DEBUG_INFO, Date lAST_CHECKED, String lAST_VERSION_TIME,
+        public void initialize(boolean dISPLAY_TUTORIAL, String tUTORIAL_POINTER_SCRIPT_LOCATION, String tUTORIAL_SCRIPT_LOCATION, boolean sHOW_DEBUG_INFO, Instant lAST_CHECKED, String lAST_VERSION_TIME,
                 String vERSION_CHECK_URL, String uI_THEME, String sCRIPT_LOCATION, int rEST_PORT, String lOCALE, boolean sTEREOSCOPIC_MODE, StereoProfile sTEREO_PROFILE, boolean cUBEMAP360_MODE,
                 boolean aNALYTICS_ENABLED, boolean dISPLAY_HUD, boolean dISPLAY_POINTER_COORDS, boolean dISPLAY_DATASET_DIALOG) {
             DISPLAY_TUTORIAL = dISPLAY_TUTORIAL;
@@ -588,9 +610,13 @@ public class GlobalConf {
                 if (!GaiaSky.instance.cam.mode.isGaiaFov()) {
                     boolean stereomode = (Boolean) data[0];
                     STEREOSCOPIC_MODE = stereomode;
+                    if (STEREOSCOPIC_MODE && CUBEMAP360_MODE) {
+                        CUBEMAP360_MODE = false;
+                        EventManager.instance.post(Events.DISPLAY_GUI_CMD, I18n.bundle.get("notif.cleanmode"), true);
+                    }
 
-                    EventManager.instance.post(Events.POST_NOTIFICATION, "You have entered 3D mode. Go back to normal mode using <CTRL+S>");
-                    EventManager.instance.post(Events.POST_NOTIFICATION, "Switch between stereoscopic modes using <CTRL+SHIFT+S>");
+                    Logger.info("You have entered 3D mode. Go back to normal mode using <CTRL+S>");
+                    Logger.info("Switch between stereoscopic modes using <CTRL+SHIFT+S>");
                 }
                 break;
             case STEREO_PROFILE_CMD:
@@ -600,7 +626,12 @@ public class GlobalConf {
                 CUBEMAP360_MODE = (Boolean) data[0];
                 EventManager.instance.post(Events.DISPLAY_GUI_CMD, I18n.bundle.get("notif.cleanmode"), !CUBEMAP360_MODE);
 
-                EventManager.instance.post(Events.POST_NOTIFICATION, "You have entered the 360 mode.  Go back to normal mode using <CTRL+3>");
+                Logger.info("You have entered the 360 mode.  Go back to normal mode using <CTRL+K>");
+                Logger.info("Switch between cubemap projections using <CTRL+SHIFT+K>");
+                break;
+            case CUBEMAP_PROJECTION_CMD:
+                CUBEMAP_PROJECTION = (CubemapProjection) data[0];
+                Logger.info("Cubemap projection set to " + CUBEMAP_PROJECTION.toString());
                 break;
             default:
                 break;
@@ -625,12 +656,12 @@ public class GlobalConf {
 
     public static class VersionConf implements IConf {
         public String version;
-        public Date buildtime;
+        public Instant buildtime;
         public String builder;
         public String system;
         public String build;
 
-        public void initialize(String version, Date buildtime, String builder, String system, String build) {
+        public void initialize(String version, Instant buildtime, String builder, String system, String build) {
             this.version = version;
             this.buildtime = buildtime;
             this.builder = builder;

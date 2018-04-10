@@ -1,6 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph;
 
-import java.util.Date;
+import java.time.Instant;
 
 import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
 import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
@@ -24,7 +24,7 @@ public class HeliotropicOrbit extends Orbit {
      * necessary. Override if your model contains more than just the position
      * and size.
      */
-    protected void updateLocalTransform(Date date) {
+    protected void updateLocalTransform(Instant date) {
         angle = AstroUtils.getSunLongitude(date);
         transform.getMatrix(localTransformD).mul(Coordinates.eclToEq()).rotate(0, 1, 0, angle + 180);
 

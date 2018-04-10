@@ -1,6 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph;
 
-import java.util.Date;
+import java.time.Instant;
 
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.math.Matrix4;
@@ -12,6 +12,7 @@ import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.assets.OrbitDataLoader;
 import gaia.cu9.ari.gaiaorbit.data.orbit.IOrbitDataProvider;
 import gaia.cu9.ari.gaiaorbit.data.orbit.OrbitData;
+import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.render.system.LineRenderSystem;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.OrbitComponent;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
@@ -37,14 +38,18 @@ public class Orbit extends LineObject {
     protected Vector3d prev, curr;
     public double alpha;
     public Matrix4 localTransform;
-    public Matrix4d localTransformD, transformFunction;
+    public Matrix4d localTransformD, transformFunction, orbitalElementsTransform;
     protected String provider;
     protected Double multiplier = 1.0d;
     protected Class<? extends IOrbitDataProvider> providerClass;
     public OrbitComponent oc;
+    // Only adds the body, not the orbit
+    protected boolean onlybody = false;
 
     /** GPU rendering attributes **/
     public boolean inGpu = false;
+    /** Orbital elements in gpu, in case there is no body **/
+    public boolean elemsInGpu = false;
     public int offset;
     public int count;
 
@@ -54,52 +59,56 @@ public class Orbit extends LineObject {
         super();
         localTransform = new Matrix4();
         localTransformD = new Matrix4d();
+        orbitalElementsTransform = new Matrix4d();
         prev = new Vector3d();
         curr = new Vector3d();
     }
 
     @Override
     public void initialize() {
-        try {
-            providerClass = (Class<? extends IOrbitDataProvider>) ClassReflection.forName(provider);
-            // Orbit data
-            IOrbitDataProvider provider;
+        if (!onlybody)
             try {
-                provider = ClassReflection.newInstance(providerClass);
-                provider.load(oc.source, new OrbitDataLoader.OrbitDataLoaderParameter(name, providerClass, oc, multiplier));
-                orbitData = provider.getData();
-            } catch (Exception e) {
+                providerClass = (Class<? extends IOrbitDataProvider>) ClassReflection.forName(provider);
+                // Orbit data
+                IOrbitDataProvider provider;
+                try {
+                    provider = ClassReflection.newInstance(providerClass);
+                    provider.load(oc.source, new OrbitDataLoader.OrbitDataLoaderParameter(name, providerClass, oc, multiplier, 100));
+                    orbitData = provider.getData();
+                } catch (Exception e) {
+                    Logger.error(e, getClass().getSimpleName());
+                }
+            } catch (ReflectionException e) {
                 Logger.error(e, getClass().getSimpleName());
             }
-        } catch (ReflectionException e) {
-            Logger.error(e, getClass().getSimpleName());
-        }
     }
 
     @Override
     public void doneLoading(AssetManager manager) {
         alpha = cc[3];
-        int last = orbitData.getNumPoints() - 1;
-        Vector3d v = new Vector3d(orbitData.x.get(last), orbitData.y.get(last), orbitData.z.get(last));
-        this.size = (float) v.len() * 5;
+        if (!onlybody) {
+            int last = orbitData.getNumPoints() - 1;
+            Vector3d v = new Vector3d(orbitData.x.get(last), orbitData.y.get(last), orbitData.z.get(last));
+            this.size = (float) v.len() * 5;
+        } else {
+
+        }
     }
 
     @Override
     public void updateLocal(ITimeFrameProvider time, ICamera camera) {
         super.updateLocal(time, camera);
-        updateLocalTransform(time.getTime());
+        if (!onlybody)
+            updateLocalTransform(time.getTime());
     }
 
-    protected void updateLocalTransform(Date date) {
+    protected void updateLocalTransform(Instant date) {
         transform.getMatrix(localTransformD);
-        if (parent.orientation != null)
-            localTransformD.mul(parent.orientation);
-        if (transformFunction != null)
-            localTransformD.mul(transformFunction);
-
-        localTransformD.rotate(0, 1, 0, oc.argofpericenter);
-        localTransformD.rotate(0, 0, 1, oc.i);
-        localTransformD.rotate(0, 1, 0, oc.ascendingnode);
+        //if (parent.orientation != null)
+        //localTransformD.mul(parent.orientation);
+        if (transformFunction != null) {
+            localTransformD.mul(transformFunction).rotate(0, 1, 0, 90);
+        }
 
         localTransformD.putIn(localTransform);
 
@@ -111,7 +120,7 @@ public class Orbit extends LineObject {
 
     @Override
     protected void addToRenderLists(ICamera camera) {
-        if (GaiaSky.instance.isOn(ct)) {
+        if (!onlybody && GaiaSky.instance.isOn(ct)) {
             float angleLimit = ANGLE_LIMIT * camera.getFovFactor();
             if (viewAngle > angleLimit) {
                 if (viewAngle < angleLimit * SHADER_MODEL_OVERLAP_FACTOR) {
@@ -134,34 +143,40 @@ public class Orbit extends LineObject {
                 }
             }
         }
+        // Orbital elements renderer
+        if (body == null && oc != null && opacity > 0 && ct.get(ComponentType.Asteroids.ordinal()) && GaiaSky.instance.isOn(ComponentType.Asteroids)) {
+            addToRender(this, RenderGroup.PARTICLE_ORBIT_ELEMENTS);
+        }
 
     }
 
     @Override
     public void render(LineRenderSystem renderer, ICamera camera, float alpha) {
-        alpha *= this.alpha;
+        if (!onlybody) {
+            alpha *= this.alpha;
 
-        // Make origin Gaia
-        Vector3d parentPos = null;
-        if (parent instanceof Gaia) {
-            parentPos = ((Gaia) parent).unrotatedPos;
-        }
-
-        // This is so that the shape renderer does not mess up the z-buffer
-        for (int i = 1; i < orbitData.getNumPoints(); i++) {
-            orbitData.loadPoint(prev, i - 1);
-            orbitData.loadPoint(curr, i);
-
-            if (parentPos != null) {
-                prev.sub(parentPos);
-                curr.sub(parentPos);
+            // Make origin Gaia
+            Vector3d parentPos = null;
+            if (parent instanceof Gaia) {
+                parentPos = ((Gaia) parent).unrotatedPos;
             }
 
-            prev.mul(localTransformD);
-            curr.mul(localTransformD);
+            // This is so that the shape renderer does not mess up the z-buffer
+            for (int i = 1; i < orbitData.getNumPoints(); i++) {
+                orbitData.loadPoint(prev, i - 1);
+                orbitData.loadPoint(curr, i);
 
-            renderer.addLine((float) prev.x, (float) prev.y, (float) prev.z, (float) curr.x, (float) curr.y, (float) curr.z, cc[0], cc[1], cc[2], alpha);
+                if (parentPos != null) {
+                    prev.sub(parentPos);
+                    curr.sub(parentPos);
+                }
 
+                prev.mul(localTransformD);
+                curr.mul(localTransformD);
+
+                renderer.addLine((float) prev.x, (float) prev.y, (float) prev.z, (float) curr.x, (float) curr.y, (float) curr.z, cc[0], cc[1], cc[2], alpha);
+
+            }
         }
     }
 
@@ -206,6 +221,10 @@ public class Orbit extends LineObject {
         this.body = body;
         this.distUp = (float) Math.max(this.body.getRadius() * 200, 1000 * Constants.KM_TO_U);
         this.distDown = (float) Math.max(this.body.getRadius() * 50, 100 * Constants.KM_TO_U);
+    }
+
+    public void setOnlybody(Boolean onlybody) {
+        this.onlybody = onlybody;
     }
 
 }

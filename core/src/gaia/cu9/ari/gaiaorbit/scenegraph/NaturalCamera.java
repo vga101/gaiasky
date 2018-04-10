@@ -53,7 +53,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
     public Vector3d vrpos;
 
     /** Acceleration and velocity **/
-    public Vector3d accel, vel;
+    public Vector3d accel, vel, posbak;
     /** The force acting on the entity and the friction **/
     private Vector3d force, friction;
 
@@ -162,6 +162,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
         vel = new Vector3d();
         accel = new Vector3d();
         force = new Vector3d();
+        posbak = new Vector3d();
         initialize(assetManager);
 
     }
@@ -264,8 +265,11 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
             if (focus.withinMagLimit() && !focus.isCoordinatesTimeOverflow()) {
                 focusBak = focus;
                 focus = (IFocus) focus.getComputedAncestor();
-                focus.getAbsolutePosition(focusPos);
-
+                focus.getAbsolutePosition(aux4);
+                // Hack, fix this by understanding underlying problem
+                if (!aux4.hasNaN()) {
+                    focusPos.set(aux4);
+                }
                 dx.set(0, 0, 0);
 
                 if (GlobalConf.scene.FOCUS_LOCK) {
@@ -375,8 +379,13 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
         lastFwdTime += dt;
         lastMode = m;
 
+        if (pos.hasNaN()) {
+            pos.set(posbak);
+        } else {
+            posbak.set(pos);
+        }
+
         updatePerspectiveCamera();
-        updateFrustum(frustum, camera, vrpos, direction, up);
     }
 
     public void updateHUD(float dt) {
@@ -631,8 +640,8 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
      */
     public boolean stopMovement() {
         boolean stopped = (vel.len2() != 0 || yaw.y != 0 || pitch.y != 0 || roll.y != 0 || vertical.y != 0 || horizontal.y != 0);
-        force.scl(0f);
-        vel.scl(0f);
+        force.setZero();
+        vel.setZero();
         yaw.y = 0;
         pitch.y = 0;
         roll.y = 0;
@@ -649,38 +658,38 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
      */
     public boolean stopTotalMovement() {
         boolean stopped = (vel.len2() != 0 || yaw.y != 0 || pitch.y != 0 || roll.y != 0 || vertical.y != 0 || horizontal.y != 0);
-        force.scl(0f);
-        vel.scl(0f);
-        yaw.scl(0f);
-        pitch.scl(0f);
-        roll.scl(0f);
-        horizontal.scl(0f);
-        vertical.scl(0f);
+        force.setZero();
+        vel.setZero();
+        yaw.setZero();
+        pitch.setZero();
+        roll.setZero();
+        horizontal.setZero();
+        vertical.setZero();
         return stopped;
     }
 
     public boolean stopRotateMovement() {
         boolean stopped = (yaw.y != 0 || pitch.y != 0 || vertical.y != 0 || horizontal.y != 0);
-        yaw.scl(0f);
-        pitch.scl(0f);
-        horizontal.scl(0f);
-        vertical.scl(0f);
+        yaw.setZero();
+        pitch.setZero();
+        horizontal.setZero();
+        vertical.setZero();
         return stopped;
     }
 
     public boolean stopRollMovement() {
         boolean stopped = (roll.y != 0);
-        roll.scl(0f);
+        roll.setZero();
         return stopped;
     }
 
     public boolean stopTurnMovement() {
         boolean stopped = (yaw.y != 0 || pitch.y != 0 || roll.y != 0 || vertical.y != 0 || horizontal.y != 0);
-        yaw.scl(0f);
-        pitch.scl(0f);
-        roll.scl(0f);
-        horizontal.scl(0f);
-        vertical.scl(0f);
+        yaw.setZero();
+        pitch.setZero();
+        roll.setZero();
+        horizontal.setZero();
+        vertical.setZero();
         return stopped;
     }
 
@@ -692,9 +701,15 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
      */
     public boolean stopForwardMovement() {
         boolean stopped = (vel.len2() != 0);
-        force.scl(0f);
-        vel.scl(0f);
+        force.setZero();
+        vel.setZero();
         return stopped;
+    }
+
+    private void checkVel() {
+        if (vel.hasNaN()) {
+            int a = 3;
+        }
     }
 
     /**
@@ -740,8 +755,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 
             // Velocity changed direction
             if (lastvel.dot(vel) < 0) {
-                vel.scl(0);
-                force.scl(0);
+                vel.setZero();
             }
 
             velocity = vel.len();
@@ -759,9 +773,10 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
             // Aux2 contains the new position
             pos.add(aux1);
 
-            accel.scl(0);
+            accel.setZero();
 
             lastvel.set(vel);
+            force.setZero();
         }
         posinv.set(pos).add(vroffset).scl(-1);
     }
@@ -1145,8 +1160,9 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
      * @param force
      */
     protected void applyForce(Vector3d force) {
-        if (force != null)
+        if (force != null) {
             accel.add(force);
+        }
     }
 
     @Override
@@ -1226,12 +1242,12 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
     }
 
     public void resetState() {
-        pos.scl(0);
-        vroffset.scl(0);
-        posinv.scl(0);
+        pos.setZero();
+        posinv.setZero();
+        vroffset.setZero();
         direction.set(0, 0, -1);
         for (PerspectiveCamera cam : cameras) {
-            cam.position.scl(0);
+            cam.position.setZero();
             cam.direction.set(0, 0, -1);
             cam.update();
         }

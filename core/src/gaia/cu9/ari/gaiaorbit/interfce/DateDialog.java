@@ -1,6 +1,10 @@
 package gaia.cu9.ari.gaiaorbit.interfce;
 
-import java.util.Date;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.temporal.ChronoField;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Event;
@@ -43,12 +47,12 @@ public class DateDialog extends CollapsibleWindow {
         float pad = 5 * GlobalConf.SCALE_FACTOR;
 
         /** SET NOW **/
-        setNow = new OwnTextButton("Set current time", skin);
+        setNow = new OwnTextButton("Set current time (UTC)", skin);
         setNow.addListener(new EventListener() {
             @Override
             public boolean handle(Event event) {
                 if (event instanceof ChangeEvent) {
-                    updateTime(new Date());
+                    updateTime(Instant.now(), ZoneOffset.UTC);
                     return true;
                 }
                 return false;
@@ -193,16 +197,10 @@ public class DateDialog extends CollapsibleWindow {
 
                     if (cool) {
                         // Set the date
-                        Date date = new Date();
-                        date.setYear(Integer.parseInt(year.getText()) - 1900);
-                        date.setMonth(month.getSelectedIndex());
-                        date.setDate(Integer.parseInt(day.getText()));
-                        date.setHours(Integer.parseInt(hour.getText()));
-                        date.setMinutes(Integer.parseInt(min.getText()));
-                        date.setSeconds(Integer.parseInt(sec.getText()));
+                        LocalDateTime date = LocalDateTime.of(Integer.parseInt(year.getText()), month.getSelectedIndex() + 1, Integer.parseInt(day.getText()), Integer.parseInt(hour.getText()), Integer.parseInt(min.getText()), Integer.parseInt(sec.getText()));
 
                         // Send time change command
-                        EventManager.instance.post(Events.TIME_CHANGE_CMD, date);
+                        EventManager.instance.post(Events.TIME_CHANGE_CMD, date.toInstant(ZoneOffset.UTC));
 
                         me.remove();
                     }
@@ -272,14 +270,15 @@ public class DateDialog extends CollapsibleWindow {
     }
 
     /** Updates the time **/
-    public void updateTime(Date date) {
-        int year = date.getYear() + 1900;
-        int month = date.getMonth();
-        int day = date.getDate();
+    public void updateTime(Instant instant, ZoneId zid) {
+        LocalDateTime date = LocalDateTime.ofInstant(instant, zid);
+        int year = date.get(ChronoField.YEAR_OF_ERA);
+        int month = date.getMonthValue();
+        int day = date.getDayOfMonth();
 
-        int hour = date.getHours();
-        int min = date.getMinutes();
-        int sec = date.getSeconds();
+        int hour = date.getHour();
+        int min = date.getMinute();
+        int sec = date.getSecond();
 
         this.day.setText(String.valueOf(day));
         this.month.setSelectedIndex(month);

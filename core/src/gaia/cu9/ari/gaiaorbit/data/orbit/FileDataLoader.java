@@ -39,7 +39,7 @@ public class FileDataLoader {
                     Matrix4d transform = new Matrix4d();
                     transform.scl(Constants.KM_TO_U);
                     if (!t.equals(last)) {
-                        orbitData.time.add(t);
+                        orbitData.time.add(t.toInstant());
 
                         /* From Data coordinates to OpenGL world coordinates
                          * Z -> -X

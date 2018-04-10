@@ -303,7 +303,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
             // Update observations. Add if forward time, subtract if backward
             // time
             transits = Math.max(0, transits + (int) Math.signum(time.getDt()));
-            lastTransitIncrease = time.getTime().getTime();
+            lastTransitIncrease = time.getTime().toEpochMilli();
             // Update transit colour
             ColourUtils.long_rainbow(ColourUtils.normalize(transits, 0, 30), this.ccTransit);
         }
@@ -312,14 +312,14 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
     protected boolean timeCondition(ITimeFrameProvider time) {
         // 95 seconds minimum since last increase, this ensures we are not
         // increasing more than once in the same transit
-        if (time.getDt() < 0 && lastTransitIncrease - time.getTime().getTime() < 0) {
-            lastTransitIncrease = time.getTime().getTime();
+        if (time.getDt() < 0 && lastTransitIncrease - time.getTime().toEpochMilli() < 0) {
+            lastTransitIncrease = time.getTime().toEpochMilli();
             return true;
-        } else if (time.getDt() > 0 && time.getTime().getTime() - lastTransitIncrease < 0) {
-            lastTransitIncrease = time.getTime().getTime();
+        } else if (time.getDt() > 0 && time.getTime().toEpochMilli() - lastTransitIncrease < 0) {
+            lastTransitIncrease = time.getTime().toEpochMilli();
             return true;
         } else {
-            return (time.getDt() > 0 && time.getTime().getTime() - lastTransitIncrease > 90000) || (time.getDt() < 0 && lastTransitIncrease - time.getTime().getTime() > 90000);
+            return (time.getDt() > 0 && time.getTime().toEpochMilli() - lastTransitIncrease > 90000) || (time.getDt() < 0 && lastTransitIncrease - time.getTime().toEpochMilli() > 90000);
         }
     }
 
