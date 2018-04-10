@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -36,12 +37,15 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextArea;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.TextTooltip;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.JsonReader;
+import com.badlogic.gdx.utils.JsonValue;
 
 import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
@@ -55,6 +59,7 @@ import gaia.cu9.ari.gaiaorbit.util.ConfInit;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf.PostprocessConf.Antialias;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf.ScreenshotMode;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
@@ -93,7 +98,7 @@ public class PreferencesWindow extends GenericDialog {
 
     private INumberFormat nf3;
 
-    private CheckBox fullscreen, windowed, vsync, multithreadCb, lodFadeCb, cbAutoCamrec, tgas, real, nsl, report, inverty, highAccuracyPositions, shadowsCb, pointerCoords;
+    private CheckBox fullscreen, windowed, vsync, multithreadCb, lodFadeCb, cbAutoCamrec, real, nsl, report, inverty, highAccuracyPositions, shadowsCb, pointerCoords, datasetChooser;
     private OwnSelectBox<DisplayMode> fullscreenResolutions;
     private OwnSelectBox<ComboBoxBean> gquality, aa, orbitRenderer, lineRenderer, numThreads, screenshotMode, frameoutputMode, nshadows;
     private OwnSelectBox<LangComboBoxBean> lang;
@@ -102,6 +107,8 @@ public class PreferencesWindow extends GenericDialog {
     private OwnTextField widthField, heightField, sswidthField, ssheightField, frameoutputPrefix, frameoutputFps, fowidthField, foheightField, camrecFps, cmResolution, smResolution;
     private OwnSlider lodTransitions;
     private OwnTextButton screenshotsLocation, frameoutputLocation;
+    private OwnTextButton[] catalogs;
+    private Map<Button, String> candidates;
 
     public PreferencesWindow(Stage stage, Skin skin) {
         super(txt("gui.settings") + " - v" + GlobalConf.version.version + " - " + txt("gui.build", GlobalConf.version.build), skin, stage);
@@ -358,7 +365,7 @@ public class PreferencesWindow extends GenericDialog {
                 return false;
             }
         };
-        gquality.addListener(graphicsChangeListener);
+        //gquality.addListener(graphicsChangeListener);
 
         // Add to content
         contentGraphics.add(titleGraphics).left().padBottom(pad * 2).row();
@@ -737,12 +744,15 @@ public class PreferencesWindow extends GenericDialog {
 
         // Size
         final OwnLabel screenshotsSizeLabel = new OwnLabel(txt("gui.screenshots.size"), skin);
+        screenshotsSizeLabel.setDisabled(GlobalConf.screenshot.isSimpleMode());
         final OwnLabel xLabel = new OwnLabel("x", skin);
         screenshotsSizeValidator = new IntValidator(GlobalConf.ScreenshotConf.MIN_SCREENSHOT_SIZE, GlobalConf.ScreenshotConf.MAX_SCREENSHOT_SIZE);
         sswidthField = new OwnTextField(Integer.toString(MathUtils.clamp(GlobalConf.screenshot.SCREENSHOT_WIDTH, GlobalConf.ScreenshotConf.MIN_SCREENSHOT_SIZE, GlobalConf.ScreenshotConf.MAX_SCREENSHOT_SIZE)), skin, screenshotsSizeValidator);
         sswidthField.setWidth(textwidth);
+        sswidthField.setDisabled(GlobalConf.screenshot.isSimpleMode());
         ssheightField = new OwnTextField(Integer.toString(MathUtils.clamp(GlobalConf.screenshot.SCREENSHOT_HEIGHT, GlobalConf.ScreenshotConf.MIN_SCREENSHOT_SIZE, GlobalConf.ScreenshotConf.MAX_SCREENSHOT_SIZE)), skin, screenshotsSizeValidator);
         ssheightField.setWidth(textwidth);
+        ssheightField.setDisabled(GlobalConf.screenshot.isSimpleMode());
         HorizontalGroup ssSizeGroup = new HorizontalGroup();
         ssSizeGroup.space(pad * 2);
         ssSizeGroup.addActor(sswidthField);
@@ -866,12 +876,15 @@ public class PreferencesWindow extends GenericDialog {
 
         // Size
         final OwnLabel frameoutputSizeLabel = new OwnLabel(txt("gui.frameoutput.size"), skin);
+        frameoutputSizeLabel.setDisabled(GlobalConf.frame.isSimpleMode());
         final OwnLabel xLabelfo = new OwnLabel("x", skin);
         frameoutputSizeValidator = new IntValidator(GlobalConf.FrameConf.MIN_FRAME_SIZE, GlobalConf.FrameConf.MAX_FRAME_SIZE);
         fowidthField = new OwnTextField(Integer.toString(MathUtils.clamp(GlobalConf.frame.RENDER_WIDTH, GlobalConf.FrameConf.MIN_FRAME_SIZE, GlobalConf.FrameConf.MAX_FRAME_SIZE)), skin, frameoutputSizeValidator);
         fowidthField.setWidth(textwidth);
+        fowidthField.setDisabled(GlobalConf.frame.isSimpleMode());
         foheightField = new OwnTextField(Integer.toString(MathUtils.clamp(GlobalConf.frame.RENDER_HEIGHT, GlobalConf.FrameConf.MIN_FRAME_SIZE, GlobalConf.FrameConf.MAX_FRAME_SIZE)), skin, frameoutputSizeValidator);
         foheightField.setWidth(textwidth);
+        foheightField.setDisabled(GlobalConf.frame.isSimpleMode());
         HorizontalGroup foSizeGroup = new HorizontalGroup();
         foSizeGroup.space(pad * 2);
         foSizeGroup.addActor(fowidthField);
@@ -1033,23 +1046,74 @@ public class PreferencesWindow extends GenericDialog {
         OwnLabel titleData = new OwnLabel(txt("gui.data.source"), skin, "help-title");
         Table datasource = new Table(skin);
 
-        //        hyg = new OwnCheckBox(txt("gui.data.hyg"), skin, "radio", pad);
-        //        hyg.setChecked(GlobalConf.data.CATALOG_JSON_FILE.equals(GlobalConf.data.HYG_JSON_FILE));
-        tgas = new OwnCheckBox(txt("gui.data.tgas"), skin, "radio", pad);
-        tgas.setChecked(true);
-        //        dr2 = new OwnCheckBox(txt("gui.data.dr2"), skin, "radio", pad);
-        //        dr2.setChecked(GlobalConf.data.CATALOG_JSON_FILE.equals(GlobalConf.data.DR2_JSON_FILE));
+        String assetsLoc = System.getProperty("assets.location") != null ? System.getProperty("assets.location") : "";
+        FileHandle dataFolder = Gdx.files.absolute(assetsLoc + File.separatorChar + "data");
+        FileHandle[] catalogFiles = dataFolder.list(new FileFilter() {
+            @Override
+            public boolean accept(File pathname) {
+                return pathname.getName().startsWith("catalog-dr2-") && pathname.getName().endsWith(".json");
+            }
+        });
+        JsonReader reader = new JsonReader();
 
-        //new ButtonGroup<CheckBox>(hyg, tgas, dr2);
-        //new ButtonGroup<CheckBox>(hyg, tgas);
-        new ButtonGroup<CheckBox>(tgas);
+        // Sort by name
+        Comparator<FileHandle> byName = (FileHandle a, FileHandle b) -> a.name().compareTo(b.name());
+        Arrays.sort(catalogFiles, byName);
+        candidates = new HashMap<Button, String>();
+        catalogs = new OwnTextButton[catalogFiles.length];
+        i = 0;
+        String[] currentSetting = GlobalConf.data.CATALOG_JSON_FILES.split("\\s*,\\s*");
+        Table datasets = new Table();
+        for (FileHandle catalogFile : catalogFiles) {
+            String candidate = catalogFile.path().substring(assetsLoc.length(), catalogFile.path().length());
 
-        // Add to table
-        //datasource.add(hyg).left().padBottom(pad).row();
-        datasource.add(tgas).left().padBottom(pad).row();
-        //datasource.add(dr2).left().padBottom(pad).row();
+            String name = null;
+            String desc = null;
+            try {
+                JsonValue val = reader.parse(catalogFile);
+                if (val.has("description"))
+                    desc = val.get("description").asString();
+                if (val.has("name"))
+                    name = val.get("name").asString();
+            } catch (Exception e) {
+            }
+            if (desc == null)
+                desc = candidate;
+            if (name == null)
+                name = catalogFile.nameWithoutExtension();
+
+            OwnTextButton cb = new OwnTextButton(name, skin, "toggle-big");
+
+            cb.setChecked(contains(catalogFile.name(), currentSetting));
+            cb.addListener(new TextTooltip(candidate, skin));
+            datasets.add(cb).left().top().padRight(pad);
+
+            // Description
+            TextArea description = new OwnTextArea(desc, skin.get("regular", TextFieldStyle.class));
+            description.setDisabled(true);
+            description.setPrefRows(2);
+            description.setWidth(tawidth);
+            datasets.add(description).left().top().padTop(pad / 2).padLeft(pad).row();
+
+            candidates.put(cb, candidate);
+
+            catalogs[i++] = cb;
+        }
+        datasource.add(datasets).colspan(2).row();
+        ButtonGroup<OwnTextButton> bg = new ButtonGroup<OwnTextButton>();
+        bg.setMinCheckCount(0);
+        bg.setMaxCheckCount(1);
+        bg.add(catalogs);
+        float maxw = 0;
+        for (Button b : catalogs) {
+            if (b.getWidth() > maxw)
+                maxw = b.getWidth();
+        }
+        for (Button b : catalogs)
+            b.setWidth(maxw + 10 * GlobalConf.SCALE_FACTOR);
+
         final Cell<Actor> noticeDataCell = datasource.add();
-        noticeDataCell.colspan(2).left();
+        noticeDataCell.colspan(2).left().row();
 
         EventListener dataNoticeListener = new EventListener() {
             @Override
@@ -1070,15 +1134,18 @@ public class PreferencesWindow extends GenericDialog {
                 return false;
             }
         };
-        //hyg.addListener(dataNoticeListener);
-        tgas.addListener(dataNoticeListener);
-        //dr2.addListener(dataNoticeListener);
+        for (OwnTextButton cb : catalogs)
+            cb.addListener(dataNoticeListener);
+
+        datasetChooser = new OwnCheckBox(txt("gui.data.dschooser"), skin, pad);
+        datasetChooser.setChecked(GlobalConf.program.DISPLAY_DATASET_DIALOG);
 
         // Add to content
         contentData.add(titleGeneralData).left().padBottom(pad * 2).row();
         contentData.add(haGroup).left().padBottom(pad * 2).row();
         contentData.add(titleData).left().padBottom(pad * 2).row();
-        contentData.add(datasource).left();
+        contentData.add(datasource).left().padBottom(pad * 2).row();
+        contentData.add(datasetChooser).left();
 
         /**
          * ==== GAIA ====
@@ -1250,6 +1317,13 @@ public class PreferencesWindow extends GenericDialog {
 
     }
 
+    private boolean contains(String name, String[] list) {
+        for (String candidate : list)
+            if (candidate.contains(name))
+                return true;
+        return false;
+    }
+
     @Override
     protected void accept() {
         saveCurrentPreferences();
@@ -1339,6 +1413,7 @@ public class PreferencesWindow extends GenericDialog {
         // Graphics
         ComboBoxBean bean = gquality.getSelected();
         GlobalConf.scene.GRAPHICS_QUALITY = bean.value;
+        EventManager.instance.post(Events.GRAPHICS_QUALITY_UPDATED, bean.value);
 
         bean = aa.getSelected();
         GlobalConf.postprocess.POSTPROCESS_ANTIALIAS = GlobalConf.postprocess.getAntialias(bean.value);
@@ -1354,7 +1429,6 @@ public class PreferencesWindow extends GenericDialog {
         GlobalConf.scene.LINE_RENDERER = bean.value;
 
         // Shadow mapping
-        boolean deactivateShadows = GlobalConf.scene.SHADOW_MAPPING && !shadowsCb.isChecked();
         GlobalConf.scene.SHADOW_MAPPING = shadowsCb.isChecked();
         int newshadowres = Integer.parseInt(smResolution.getText());
         int newnshadows = nshadows.getSelected().value;
@@ -1392,15 +1466,30 @@ public class PreferencesWindow extends GenericDialog {
             // Event
             EventManager.instance.post(Events.HIGH_ACCURACY_CMD, GlobalConf.data.HIGH_ACCURACY_POSITIONS);
         }
+        GlobalConf.data.CATALOG_JSON_FILES = "";
+        boolean first = true;
+        for (Button b : catalogs) {
+            if (b.isChecked()) {
+                // Add all selected to list
+                if (!first) {
+                    GlobalConf.data.CATALOG_JSON_FILES += "," + candidates.get(b);
+                } else {
+                    GlobalConf.data.CATALOG_JSON_FILES += candidates.get(b);
+                    first = false;
+                }
+            }
+        }
+        GlobalConf.program.DISPLAY_DATASET_DIALOG = datasetChooser.isChecked();
 
         // Screenshots
         File ssfile = new File(screenshotsLocation.getText().toString());
         if (ssfile.exists() && ssfile.isDirectory())
             GlobalConf.screenshot.SCREENSHOT_FOLDER = ssfile.getAbsolutePath();
+        ScreenshotMode prev = GlobalConf.screenshot.SCREENSHOT_MODE;
         GlobalConf.screenshot.SCREENSHOT_MODE = GlobalConf.ScreenshotMode.values()[screenshotMode.getSelectedIndex()];
         int ssw = Integer.parseInt(sswidthField.getText());
         int ssh = Integer.parseInt(ssheightField.getText());
-        boolean ssupdate = ssw != GlobalConf.screenshot.SCREENSHOT_WIDTH || ssh != GlobalConf.screenshot.SCREENSHOT_HEIGHT;
+        boolean ssupdate = ssw != GlobalConf.screenshot.SCREENSHOT_WIDTH || ssh != GlobalConf.screenshot.SCREENSHOT_HEIGHT || !prev.equals(GlobalConf.screenshot.SCREENSHOT_MODE);
         GlobalConf.screenshot.SCREENSHOT_WIDTH = ssw;
         GlobalConf.screenshot.SCREENSHOT_HEIGHT = ssh;
         if (ssupdate)
@@ -1414,10 +1503,11 @@ public class PreferencesWindow extends GenericDialog {
         if (text.matches("^\\w+$")) {
             GlobalConf.frame.RENDER_FILE_NAME = text;
         }
+        prev = GlobalConf.frame.FRAME_MODE;
         GlobalConf.frame.FRAME_MODE = GlobalConf.ScreenshotMode.values()[frameoutputMode.getSelectedIndex()];
         int fow = Integer.parseInt(fowidthField.getText());
         int foh = Integer.parseInt(foheightField.getText());
-        boolean foupdate = fow != GlobalConf.frame.RENDER_WIDTH || foh != GlobalConf.frame.RENDER_HEIGHT;
+        boolean foupdate = fow != GlobalConf.frame.RENDER_WIDTH || foh != GlobalConf.frame.RENDER_HEIGHT || !prev.equals(GlobalConf.frame.FRAME_MODE);
         GlobalConf.frame.RENDER_WIDTH = fow;
         GlobalConf.frame.RENDER_HEIGHT = foh;
         GlobalConf.frame.RENDER_TARGET_FPS = Integer.parseInt(frameoutputFps.getText());
