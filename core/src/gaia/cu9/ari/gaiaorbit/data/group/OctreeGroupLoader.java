@@ -29,7 +29,7 @@ public class OctreeGroupLoader extends StreamingOctreeLoader {
     /**
      * Data will be pre-loaded at startup down to this octree depth.
      */
-    private static final int PRELOAD_DEPTH = 5;
+    private static final int PRELOAD_DEPTH = 2;
 
     /**
      * Whether to use the binary file format. If false, we use the java
