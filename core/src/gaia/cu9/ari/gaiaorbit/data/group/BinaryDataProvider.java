@@ -34,7 +34,7 @@ public class BinaryDataProvider extends AbstractStarGroupDataProvider {
     @Override
     public Array<? extends ParticleBean> loadData(String file, double factor) {
         Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.datafile", file));
-        loadDataMapped(SysUtilsFactory.getSysUtils().getTruePath(file), factor);
+        loadDataMapped(file, factor);
         Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.nodeloader", list.size, file));
 
         return list;

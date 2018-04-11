@@ -171,7 +171,7 @@ public class SGROpenVR extends SGRAbstract implements ISGR, IObserver {
             // Camera
             camera.render(rw, rh);
 
-            renderGui(infoGui.left());
+            //renderGui(infoGui.left());
 
             if (r) {
                 renderStubModels(modelBatch, camera, camera.getCamera(), controllerObjects, 0);
@@ -193,7 +193,7 @@ public class SGROpenVR extends SGRAbstract implements ISGR, IObserver {
             // Camera
             camera.render(rw, rh);
 
-            renderGui(infoGui.right());
+            //renderGui(infoGui.right());
 
             if (r) {
                 renderStubModels(modelBatch, camera, camera.getCamera(), controllerObjects, 1);
