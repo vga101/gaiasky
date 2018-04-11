@@ -113,10 +113,10 @@ public class NaturalControllerListener implements ControllerListener, IObserver 
 
         if (axisCode == mappings.getAxisRoll()) {
             if (cam.getMode().equals(CameraMode.Focus)) {
-                cam.setRoll(value * 1e-2f);
+                //cam.setRoll(value * 1e-2f);
             } else {
                 // Use this for lateral movement
-                cam.setHorizontalRotation(value);
+                //cam.setHorizontalRotation(value);
             }
             treated = true;
         } else if (axisCode == mappings.getAxisPitch()) {
@@ -136,7 +136,7 @@ public class NaturalControllerListener implements ControllerListener, IObserver 
         } else if (axisCode == mappings.getAxisMove()) {
             if (Math.abs(value) < 0.005)
                 value = 0;
-            cam.setVelocity(-value);
+            cam.setVelocity(value);
             treated = true;
         } else if (axisCode == mappings.getAxisVelocityUp()) {
             cam.setVelocity((value + 1f) / 2.0f);

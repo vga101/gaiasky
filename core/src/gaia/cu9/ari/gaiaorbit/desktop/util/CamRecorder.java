@@ -98,8 +98,9 @@ public class CamRecorder implements IObserver {
                         upp.set(Parser.parseDouble(tokens[7]), Parser.parseDouble(tokens[8]), Parser.parseDouble(tokens[9]));
 
                         position.set(Parser.parseDouble(tokens[1]), Parser.parseDouble(tokens[2]), Parser.parseDouble(tokens[3]));
-                        direction.set(dir);
-                        up.set(upp);
+                        // In VR mode, direction and up must not be modified
+                        //direction.set(dir);
+                        //up.set(upp);
 
                     } else {
                         // Finish off
