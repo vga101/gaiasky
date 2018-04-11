@@ -163,7 +163,8 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
         /** FUTURE POS OF SC **/
 
         // We use the simulation time for the integration
-        double sdt = time.getDt() * Constants.H_TO_S;
+        //double sdt = time.getDt() * Constants.H_TO_S;
+        double sdt = dt;
 
         scthrust.set(sc.thrust);
         scforce.set(sc.force);
@@ -214,7 +215,8 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
      * @param time
      */
     public void updateHard(double dt, ITimeFrameProvider time) {
-        double sdt = time.getDt() * Constants.H_TO_S;
+        //double sdt = time.getDt() * Constants.H_TO_S;
+        double sdt = dt;
 
         // POSITION
         double tgfac = targetDistance * sc.sizeFactor / fovFactor;
