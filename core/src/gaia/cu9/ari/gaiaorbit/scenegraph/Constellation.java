@@ -71,8 +71,7 @@ public class Constellation extends LineObject implements I3DTextRenderable {
 
     public void update(ITimeFrameProvider time, final Transform parentTransform, ICamera camera, float opacity) {
         // Recompute mean position
-
-        pos.scl(0);
+        pos.setZero();
         Vector3d p = aux3d1.get();
         int nstars = 0;
         for (int i = 0; i < lines.length; i++) {
