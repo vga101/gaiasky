@@ -271,7 +271,7 @@ public class CameraManager implements ICamera, IObserver {
         double panSpeed = lastDir.angle(current.getDirection()) / dt;
 
         // High speed?
-        if (speed > 5e1 || panSpeed > 40) {
+        if (speed > 5e6 || panSpeed > 40) {
             //System.out.println(panSpeed + " deg/s, " + speed + " km/h");
             StreamingOctreeLoader.clearQueue();
         }
@@ -504,7 +504,7 @@ public class CameraManager implements ICamera, IObserver {
     public Vector3d getShift() {
         return current.getShift();
     }
-    
+
     @Override
     public IStarFocus getClosestStar() {
         return current.getClosestStar();
