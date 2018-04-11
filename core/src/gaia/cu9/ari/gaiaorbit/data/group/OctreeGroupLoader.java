@@ -29,7 +29,7 @@ public class OctreeGroupLoader extends StreamingOctreeLoader {
     /**
      * Data will be pre-loaded at startup down to this octree depth.
      */
-    private static final int PRELOAD_DEPTH = 2;
+    private static final int PRELOAD_DEPTH = 4;
 
     /**
      * Whether to use the binary file format. If false, we use the java
@@ -56,7 +56,7 @@ public class OctreeGroupLoader extends StreamingOctreeLoader {
         Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.loading", metadata));
 
         MetadataBinaryIO metadataReader = new MetadataBinaryIO();
-        OctreeNode root = metadataReader.readMetadata(Gdx.files.internal(metadata).read());
+        OctreeNode root = metadataReader.readMetadataMapped(metadata);
 
         Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.nodeloader", root.numNodes(), metadata));
         Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.loading", particles));
@@ -88,7 +88,7 @@ public class OctreeGroupLoader extends StreamingOctreeLoader {
             return false;
         }
         @SuppressWarnings("unchecked")
-        Array<StarBean> data = (Array<StarBean>) particleReader.loadData(octantFile.read(), 1.0);
+        Array<StarBean> data = (Array<StarBean>) particleReader.loadDataMapped(octantFile.path(), 1.0);
         StarGroup sg = new StarGroup();
         sg.setName("stargroup-" + sg.id);
         sg.setFadeout(new double[] { 21e2, .5e5 });

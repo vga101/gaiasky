@@ -25,20 +25,18 @@ import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
 /**
  * Writes and reads the metadata to/from binary. The format is as follows:
  * 
- * - 32 bits (int) with the number of nodes, nNodes repeat the following nNodes times (for each node)
- * - 64 bits (long)
- * - pageId - The page id
- * - 64 bits (double) - centreX - The x component of the centre
- * - 64 bits (double) - centreY - The y component of the centre
- * - 64 bits (double) - centreZ - The z component of the centre
- * - 64 bits (double) - sx - The size in x
- * - 64 bits (double) - sy - The size in y
- * - 64 bits (double) - sz - The size in z
- * - 64 bits * 8 (long) - childrenIds - 8 longs with the ids of the children. If no child in the given position, the id is negative.
- * - 32 bits (int) - depth - The depth of the node
- * - 32 bits (int) - nObjects - The number of objects of this node and its descendants
- * - 32 bits (int) - ownObjects - The number of objects of this node
- * - 32 bits (int) - childCount - The number of children nodes
+ * - 32 bits (int) with the number of nodes, nNodes repeat the following nNodes
+ * times (for each node) - 64 bits (long) - pageId - The page id - 64 bits
+ * (double) - centreX - The x component of the centre - 64 bits (double) -
+ * centreY - The y component of the centre - 64 bits (double) - centreZ - The z
+ * component of the centre - 64 bits (double) - sx - The size in x - 64 bits
+ * (double) - sy - The size in y - 64 bits (double) - sz - The size in z - 64
+ * bits * 8 (long) - childrenIds - 8 longs with the ids of the children. If no
+ * child in the given position, the id is negative. - 32 bits (int) - depth -
+ * The depth of the node - 32 bits (int) - nObjects - The number of objects of
+ * this node and its descendants - 32 bits (int) - ownObjects - The number of
+ * objects of this node - 32 bits (int) - childCount - The number of children
+ * nodes
  * 
  * @author Toni Sagrista
  *
@@ -145,10 +143,10 @@ public class MetadataBinaryIO {
                 try {
                     // name_length, name, appmag, absmag, colorbv, ra, dec, dist
                     long pageId = mem.getInt();
-                    float x = mem.getFloat();
-                    float y = mem.getFloat();
-                    float z = mem.getFloat();
-                    float hsx = mem.getFloat() / 2f;
+                    float x = mem.getFloat() * (float) Constants.M_TO_U_CONV;
+                    float y = mem.getFloat() * (float) Constants.M_TO_U_CONV;
+                    float z = mem.getFloat() * (float) Constants.M_TO_U_CONV;
+                    float hsx = (mem.getFloat() / 2f) * (float) Constants.M_TO_U_CONV;
                     //float hsy = mem.getFloat() / 2f;
                     mem.position(mem.position() + 4); // skip hsy
                     float hsy = hsx;
