@@ -281,7 +281,7 @@ public class DateDialog extends CollapsibleWindow {
         int sec = date.getSecond();
 
         this.day.setText(String.valueOf(day));
-        this.month.setSelectedIndex(month);
+        this.month.setSelectedIndex(month - 1);
         this.year.setText(String.valueOf(year));
         this.hour.setText(String.valueOf(hour));
         this.min.setText(String.valueOf(min));
