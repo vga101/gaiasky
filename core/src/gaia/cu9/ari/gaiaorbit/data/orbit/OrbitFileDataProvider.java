@@ -37,6 +37,11 @@ public class OrbitFileDataProvider implements IOrbitDataProvider {
         }
     }
 
+    @Override
+    public void load(String file, OrbitDataLoaderParameter parameter, boolean newmethod) {
+        load(file, parameter);
+    }
+
     public OrbitData getData() {
         return data;
     }
