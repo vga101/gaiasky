@@ -32,9 +32,9 @@ public class TGASHYGDataProvider extends AbstractStarGroupDataProvider {
     }
 
     public void setParallaxErrorFactor(double parallaxErrorFactor) {
-        super.setParallaxErrorFactor(parallaxErrorFactor);
+        super.setParallaxErrorFactorFaint(parallaxErrorFactor);
         if (tgas != null)
-            tgas.setParallaxErrorFactor(parallaxErrorFactor);
+            tgas.setParallaxErrorFactorFaint(parallaxErrorFactor);
     }
 
     @Override

@@ -87,8 +87,11 @@ public class OctreeGroupGeneratorTest {
     @Parameter(names = "--serialized", description = "Use the java serialization method instead of the binary format to output the particle files")
     private boolean serialized = false;
 
-    @Parameter(names = "--pllxerrfac", description = "Parallax error factor, acceptance criteria as a percentage of parallax error with respect to parallax, in [0..1]")
-    private double pllxerrfac = 0.14;
+    @Parameter(names = "--pllxerrfaint", description = "Parallax error factor for faint (gmag>=13.1) stars, acceptance criteria as a percentage of parallax error with respect to parallax, in [0..1]")
+    private double pllxerrfaint = 0.125;
+
+    @Parameter(names = "--pllxerrbright", description = "Parallax error factor for bright (gmag<13.1) stars, acceptance criteria as a percentage of parallax error with respect to parallax, in [0..1]")
+    private double pllxerrbright = 0.25;
 
     @Parameter(names = "--adaptivepllx", description = "On by default, this enables the adaptive parallax criterion, which relaxes the threshold for bright stars to avoid artifacts")
     private boolean adaptivepllx = true;
@@ -188,7 +191,8 @@ public class OctreeGroupGeneratorTest {
         /** CATALOG **/
         String fullLoaderClass = "gaia.cu9.ari.gaiaorbit.data.group." + loaderClass;
         IStarGroupDataProvider loader = (IStarGroupDataProvider) Class.forName(fullLoaderClass).newInstance();
-        loader.setParallaxErrorFactor(pllxerrfac);
+        loader.setParallaxErrorFactorFaint(pllxerrfaint);
+        loader.setParallaxErrorFactorBright(pllxerrbright);
         loader.setParallaxZeroPoint(pllxzeropoint);
         loader.setFileNumberCap(fileNumCap);
         loader.setMagCorrections(magCorrections);

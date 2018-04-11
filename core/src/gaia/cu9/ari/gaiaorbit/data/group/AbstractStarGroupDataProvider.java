@@ -30,13 +30,22 @@ public abstract class AbstractStarGroupDataProvider implements IStarGroupDataPro
     /**
      * <p>
      * The loader will only load stars for which the parallax error is
-     * at most the percentage given here, in [0..1].
+     * at most the percentage given here, in [0..1]. Faint stars (gmag >= 13.1)
      * More specifically, the following must be met:
      * </p>
      * <code>pllx_err &lt; pllx * pllxErrFactor</code>
      **/
-    protected double parallaxErrorFactor = 0.14;
+    protected double parallaxErrorFactorFaint = 0.125;
 
+    /**
+     * <p>
+     * The loader will only load stars for which the parallax error is
+     * at most the percentage given here, in [0..1]. Bright stars (gmag < 13.1)
+     * More specifically, the following must be met:
+     * </p>
+     * <code>pllx_err &lt; pllx * pllxErrFactor</code>
+     **/
+    protected double parallaxErrorFactorBright = 0.25;
     /**
      * Whether to use an adaptive threshold which lets more
      * bright stars in to avoid artifacts.
@@ -187,8 +196,12 @@ public abstract class AbstractStarGroupDataProvider implements IStarGroupDataPro
         return colors;
     }
 
-    public void setParallaxErrorFactor(double parallaxErrorFactor) {
-        this.parallaxErrorFactor = parallaxErrorFactor;
+    public void setParallaxErrorFactorFaint(double parallaxErrorFactor) {
+        this.parallaxErrorFactorFaint = parallaxErrorFactor;
+    }
+
+    public void setParallaxErrorFactorBright(double parallaxErrorFactor) {
+        this.parallaxErrorFactorBright = parallaxErrorFactor;
     }
 
     public void setAdaptiveParallax(boolean adaptive) {

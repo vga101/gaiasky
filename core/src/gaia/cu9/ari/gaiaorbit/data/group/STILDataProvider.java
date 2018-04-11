@@ -187,7 +187,12 @@ public class STILDataProvider extends AbstractStarGroupDataProvider {
     }
 
     @Override
-    public void setParallaxErrorFactor(double parallaxErrorFactor) {
+    public void setParallaxErrorFactorFaint(double parallaxErrorFactor) {
+
+    }
+
+    @Override
+    public void setParallaxErrorFactorBright(double parallaxErrorFactor) {
 
     }
 
