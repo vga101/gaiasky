@@ -66,12 +66,19 @@ public class OrbitLintCoordinates extends AbstractOrbitCoordinates {
         aux.nor().scl(percent * len);
         out.add(aux);
 
-        if (((CelestialBody) orbit.parent).orientation != null) {
+        if (orbit.transformFunction == null && ((CelestialBody) orbit.parent).orientation != null) {
             transf.set(((CelestialBody) orbit.parent).orientation);
         } else if (orbit.transformFunction != null) {
-            transf.set(orbit.transformFunction).rotate(0, 1, 0, 90);
+            transf.set(orbit.transformFunction);
+            if (orbit.newmethod)
+                transf.rotate(0, 1, 0, 90);
         } else {
             transf.idt();
+        }
+        if (!orbit.newmethod) {
+            transf.rotate(0, 1, 0, orbitalParams.argofpericenter);
+            transf.rotate(0, 0, 1, orbitalParams.i);
+            transf.rotate(0, 1, 0, orbitalParams.ascendingnode);
         }
 
         out.mul(transf);

@@ -149,6 +149,11 @@ public class OrbitSamplerDataProvider implements IOrbitDataProvider, IObserver {
 
     }
 
+    @Override
+    public void load(String file, OrbitDataLoaderParameter parameter, boolean newmethod) {
+        load(file, parameter);
+    }
+
     public OrbitData getData() {
         return data;
     }

@@ -38,13 +38,15 @@ public class Orbit extends LineObject {
     protected Vector3d prev, curr;
     public double alpha;
     public Matrix4 localTransform;
-    public Matrix4d localTransformD, transformFunction, orbitalElementsTransform;
+    public Matrix4d localTransformD, transformFunction;
     protected String provider;
     protected Double multiplier = 1.0d;
     protected Class<? extends IOrbitDataProvider> providerClass;
     public OrbitComponent oc;
     // Only adds the body, not the orbit
     protected boolean onlybody = false;
+    // Use new method for orbital elements
+    public boolean newmethod = false;
 
     /** GPU rendering attributes **/
     public boolean inGpu = false;
@@ -59,7 +61,6 @@ public class Orbit extends LineObject {
         super();
         localTransform = new Matrix4();
         localTransformD = new Matrix4d();
-        orbitalElementsTransform = new Matrix4d();
         prev = new Vector3d();
         curr = new Vector3d();
     }
@@ -73,7 +74,7 @@ public class Orbit extends LineObject {
                 IOrbitDataProvider provider;
                 try {
                     provider = ClassReflection.newInstance(providerClass);
-                    provider.load(oc.source, new OrbitDataLoader.OrbitDataLoaderParameter(name, providerClass, oc, multiplier, 100));
+                    provider.load(oc.source, new OrbitDataLoader.OrbitDataLoaderParameter(name, providerClass, oc, multiplier, 100), newmethod);
                     orbitData = provider.getData();
                 } catch (Exception e) {
                     Logger.error(e, getClass().getSimpleName());
@@ -104,14 +105,21 @@ public class Orbit extends LineObject {
 
     protected void updateLocalTransform(Instant date) {
         transform.getMatrix(localTransformD);
-        //if (parent.orientation != null)
-        //localTransformD.mul(parent.orientation);
-        if (transformFunction != null) {
-            localTransformD.mul(transformFunction).rotate(0, 1, 0, 90);
+        if (newmethod) {
+            if (transformFunction != null) {
+                localTransformD.mul(transformFunction).rotate(0, 1, 0, 90);
+            }
+        } else {
+            if (transformFunction == null && parent.orientation != null)
+                localTransformD.mul(parent.orientation);
+            if (transformFunction != null)
+                localTransformD.mul(transformFunction);
+
+            localTransformD.rotate(0, 1, 0, oc.argofpericenter);
+            localTransformD.rotate(0, 0, 1, oc.i);
+            localTransformD.rotate(0, 1, 0, oc.ascendingnode);
         }
-
         localTransformD.putIn(localTransform);
-
     }
 
     @Override
@@ -225,6 +233,10 @@ public class Orbit extends LineObject {
 
     public void setOnlybody(Boolean onlybody) {
         this.onlybody = onlybody;
+    }
+
+    public void setNewmethod(Boolean newmethod) {
+        this.newmethod = newmethod;
     }
 
 }

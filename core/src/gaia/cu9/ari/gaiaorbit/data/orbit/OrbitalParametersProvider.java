@@ -23,7 +23,12 @@ public class OrbitalParametersProvider implements IOrbitDataProvider {
 
     @Override
     public void load(String file, OrbitDataLoaderParameter parameter) {
+        load(file, parameter, false);
+    }
 
+    @Override
+    public void load(String file, OrbitDataLoaderParameter parameter, boolean newmethod) {
+        if (newmethod) {
         OrbitComponent params = parameter.orbitalParamaters;
         try {
             // See https://downloads.rene-schwarz.com/download/M001-Keplerian_Orbit_Elements_to_Cartesian_State_Vectors.pdf
@@ -92,10 +97,13 @@ public class OrbitalParametersProvider implements IOrbitDataProvider {
             EventManager.instance.post(Events.ORBIT_DATA_LOADED, data, parameter.name);
         } catch (Exception e) {
             Logger.error(e);
+            }
+        } else {
+            loadOld(file, parameter);
         }
     }
 
-    public void load1(String file, OrbitDataLoaderParameter parameter) {
+    public void loadOld(String file, OrbitDataLoaderParameter parameter) {
         OrbitComponent params = parameter.orbitalParamaters;
         try {
             // Parameters of the ellipse

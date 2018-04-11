@@ -10,7 +10,7 @@
 		"provider" : "gaia.cu9.ari.gaiaorbit.data.orbit.OrbitalParametersProvider",
 		
 		"transformFunction" : "eclipticToEquatorial",
-			
+		"newmethod": true,	
 		"orbit" 		: {
 							// In days
 							"period" : 1325.85,
@@ -39,6 +39,7 @@
 		
 		"transformFunction" : "eclipticToEquatorial",
 			
+		"newmethod": true,	
 		"orbit" 		: {
 							// In days
 							"period" : 1681.63,
@@ -68,6 +69,7 @@
 		
 		"transformFunction" : "eclipticToEquatorial",
 			
+		"newmethod": true,	
 		"orbit" 		: {
 							// In days
 							"period" : 1685.371678,
@@ -97,6 +99,7 @@
 		
 		"transformFunction" : "eclipticToEquatorial",
 			
+		"newmethod": true,	
 		"orbit" 		: {
 							// In days
 							"period" : 2031.01,
