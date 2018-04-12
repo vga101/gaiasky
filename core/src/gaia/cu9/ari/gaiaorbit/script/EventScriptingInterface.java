@@ -197,6 +197,15 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
     }
 
     @Override
+    public void setCameraFocusInstantAndGo(final String focusName) {
+        assert focusName != null : "Focus name can't be null";
+
+        em.post(Events.CAMERA_MODE_CMD, CameraMode.Focus);
+        em.post(Events.FOCUS_CHANGE_CMD, focusName, true);
+        em.post(Events.GO_TO_OBJECT_CMD);
+    }
+
+    @Override
     public void setCameraLock(final boolean lock) {
         Gdx.app.postRunnable(() -> {
             em.post(Events.FOCUS_LOCK_CMD, I18n.bundle.get("gui.camera.lock"), lock);
@@ -1385,8 +1394,8 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
             if (waitTimeSeconds < 0) {
                 waitTimeSeconds = Float.MAX_VALUE;
             }
-            float start = System.currentTimeMillis();
-            float elapsedTimeMs;
+            long start = System.currentTimeMillis();
+            long elapsedTimeMs;
             while (!cam.facingFocus) {
                 elapsedTimeMs = System.currentTimeMillis() - start;
                 if (elapsedTimeMs / 1000f > waitTimeSeconds) {

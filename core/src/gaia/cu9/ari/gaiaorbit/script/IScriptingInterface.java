@@ -273,6 +273,13 @@ public interface IScriptingInterface {
     public void setCameraFocusInstant(final String focusName);
 
     /**
+     * Sets the camera in focus mode with the given focus object and instantly moves
+     * the camera next to the focus object.
+     * @param focusName
+     */
+    public void setCameraFocusInstantAndGo(final String focusName);
+
+    /**
      * Activates or deactivates the camera lock to the focus reference system
      * when in focus mode.
      * 
