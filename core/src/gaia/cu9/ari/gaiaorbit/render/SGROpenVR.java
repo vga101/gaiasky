@@ -13,6 +13,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.Pixmap.Format;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
@@ -67,6 +68,8 @@ public class SGROpenVR extends SGRAbstract implements ISGR, IObserver {
     private Map<VRDevice, StubModel> vrDeviceToModel;
     private Environment controllersEnv;
 
+    private SpriteBatch sb;
+
     // Focus info
     private VRGui infoGui;
 
@@ -79,6 +82,8 @@ public class SGROpenVR extends SGRAbstract implements ISGR, IObserver {
         this.vrContext = vrContext;
         // Model batch
         this.modelBatch = modelBatch;
+        // Sprite batch for screen rendering
+        this.sb = new SpriteBatch();
 
         if (vrContext != null) {
             // Left eye, fb and texture
@@ -204,6 +209,11 @@ public class SGROpenVR extends SGRAbstract implements ISGR, IObserver {
             /** SUBMIT TO VR COMPOSITOR **/
             VRCompositor.VRCompositor_Submit(VR.EVREye_Eye_Left, texLeft, null, VR.EVRSubmitFlags_Submit_Default);
             VRCompositor.VRCompositor_Submit(VR.EVREye_Eye_Right, texRight, null, VR.EVRSubmitFlags_Submit_Default);
+
+            /** Render to screen **/
+            sb.begin();
+            sb.draw(fbLeft.getColorBufferTexture(), 0, 0, rw, rh, 0, 0, rw, rh, false, true);
+            sb.end();
         }
 
     }
