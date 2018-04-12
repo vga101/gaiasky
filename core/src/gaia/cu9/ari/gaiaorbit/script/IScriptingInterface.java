@@ -574,7 +574,7 @@ public interface IScriptingInterface {
     public void setAmbientLight(float value);
 
     /**
-     * Sets the time of the application.
+     * Sets the time of the application, in UTC.
      * 
      * @param year
      *            The year to represent
@@ -606,14 +606,14 @@ public interface IScriptingInterface {
 
     /**
      * Returns the current simulation time as the number of milliseconds since
-     * Jan 1, 1970.
+     * Jan 1, 1970 GMT.
      * 
      * @return Number of milliseconds since the epoch (Jan 1, 1970)
      */
     public long getSimulationTime();
 
     /**
-     * Returns the current simulation time in an array.
+     * Returns the current UTC simulation time in an array.
      * 
      * @return The current simulation time in an array with the given indices.
      *         <ul>

@@ -405,11 +405,16 @@ public class GlobalConf {
         public void notify(Events event, Object... data) {
             switch (event) {
             case CONFIG_FRAME_OUTPUT:
+                boolean updateFrameSize = RENDER_WIDTH != (int) data[0] || RENDER_HEIGHT != (int) data[1];
                 RENDER_WIDTH = (int) data[0];
                 RENDER_HEIGHT = (int) data[1];
                 RENDER_TARGET_FPS = (int) data[2];
                 RENDER_FOLDER = (String) data[3];
                 RENDER_FILE_NAME = (String) data[4];
+
+                if (updateFrameSize) {
+                    EventManager.instance.post(Events.FRAME_SIZE_UDPATE, RENDER_WIDTH, RENDER_HEIGHT);
+                }
                 break;
             case FRAME_OUTPUT_CMD:
                 RENDER_OUTPUT = (Boolean) data[0];
