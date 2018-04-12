@@ -107,6 +107,8 @@ public class GaiaSkyDesktop implements IObserver {
 
             // Init global configuration
             ConfInit.initialize(new DesktopConfInit(ASSETS_LOC));
+            GlobalConf.screen.SCREEN_WIDTH = 1080;
+            GlobalConf.screen.SCREEN_HEIGHT = 1200;
 
             // Initialize i18n
             I18n.initialize(Gdx.files.internal("i18n/gsbundle"));
@@ -186,11 +188,9 @@ public class GaiaSkyDesktop implements IObserver {
     public void launchMainApp() {
         Lwjgl3ApplicationConfiguration cfg = new Lwjgl3ApplicationConfiguration();
         cfg.setTitle(GlobalConf.getFullApplicationName());
-        // Note that we disable VSync! The VRContext manages vsync with respect
-        // to
-        // the HMD
+        // Note that we disable VSync! The VRContext manages vsync with respect to the HMD
         cfg.useVsync(false);
-        cfg.setWindowedMode(1344, 1600);
+        cfg.setWindowedMode(GlobalConf.screen.SCREEN_WIDTH, GlobalConf.screen.SCREEN_HEIGHT);
 
         // Thread pool manager
         if (GlobalConf.performance.MULTITHREADING) {

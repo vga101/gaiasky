@@ -347,8 +347,12 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
             vrDeviceToModel = new HashMap<VRDevice, StubModel>();
 
             GlobalConf.runtime.OPENVR = true;
-            GlobalConf.screen.SCREEN_HEIGHT = vrContext.getHeight();
-            GlobalConf.screen.SCREEN_WIDTH = vrContext.getWidth();
+            if (false && GlobalConf.screen.SCREEN_WIDTH != vrContext.getWidth()) {
+                Logger.info("Warning, resizing according to VRSystem values:  [" + GlobalConf.screen.SCREEN_WIDTH + "x" + GlobalConf.screen.SCREEN_HEIGHT + "] -> [" + vrContext.getWidth() + "x" + vrContext.getHeight() + "]");
+                GlobalConf.screen.SCREEN_HEIGHT = vrContext.getHeight();
+                GlobalConf.screen.SCREEN_WIDTH = vrContext.getWidth();
+                this.resizeImmediate(vrContext.getWidth(), vrContext.getHeight(), true, true, true);
+            }
             GlobalConf.screen.VSYNC = false;
 
             Gdx.graphics.setWindowedMode(GlobalConf.screen.SCREEN_WIDTH, GlobalConf.screen.SCREEN_HEIGHT);
