@@ -117,7 +117,7 @@ public class BinaryDataProvider extends AbstractStarGroupDataProvider {
         // Double
         for (int i = 0; i < StarBean.I_APPMAG; i++) {
             data[i] = in.readDouble();
-            if (i < 3)
+            if (i < 6)
                 data[i] *= Constants.M_TO_U_CONV;
         }
         // Float
@@ -167,7 +167,7 @@ public class BinaryDataProvider extends AbstractStarGroupDataProvider {
         // Double
         for (int i = 0; i < StarBean.I_APPMAG; i++) {
             data[i] = mem.getDouble();
-            if (i < 3)
+            if (i < 6)
                 data[i] *= Constants.M_TO_U_CONV;
         }
         // Float

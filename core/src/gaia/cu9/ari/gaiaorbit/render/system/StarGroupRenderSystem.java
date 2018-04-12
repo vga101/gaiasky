@@ -1,6 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.render.system;
 
-import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Mesh;
@@ -118,12 +117,10 @@ public class StarGroupRenderSystem extends ImmediateRenderSystem implements IObs
 
     @Override
     public void renderStud(Array<IRenderable> renderables, ICamera camera, double t) {
-        if (Gdx.app.getType() == ApplicationType.Desktop) {
-            // Enable gl_PointCoord
-            Gdx.gl20.glEnable(34913);
-            // Enable point sizes
-            Gdx.gl20.glEnable(0x8642);
-        }
+        // Enable gl_PointCoord
+        Gdx.gl20.glEnable(34913);
+        // Enable point sizes
+        Gdx.gl20.glEnable(0x8642);
 
         // Additive blending
         Gdx.gl20.glBlendFunc(GL20.GL_ONE, GL20.GL_ONE);
@@ -179,6 +176,8 @@ public class StarGroupRenderSystem extends ImmediateRenderSystem implements IObs
                             shaderProgram.setUniform2fv("u_pointAlpha", pointAlpha, 0, 2);
                             shaderProgram.setUniformMatrix("u_projModelView", camera.getCamera().combined);
                             shaderProgram.setUniformf("u_camPos", camera.getCurrent().getPos().put(aux1));
+                            shaderProgram.setUniformf("u_camDir", camera.getCurrent().getCamera().direction);
+                            shaderProgram.setUniformi("u_cubemap", GlobalConf.program.CUBEMAP360_MODE ? 1 : 0);
 
                             // Relativistic effects
                             addEffectsUniforms(shaderProgram, camera);
@@ -194,20 +193,13 @@ public class StarGroupRenderSystem extends ImmediateRenderSystem implements IObs
                             shaderProgram.setUniformf("u_ar", GlobalConf.program.STEREOSCOPIC_MODE && (GlobalConf.program.STEREO_PROFILE != StereoProfile.HD_3DTV && GlobalConf.program.STEREO_PROFILE != StereoProfile.ANAGLYPHIC) ? 0.5f : 1f);
                             shaderProgram.setUniformf("u_thAnglePoint", (float) 1e-8);
 
-                            // Compute visibility (FOV and so)
-                            // u_fovcam contains 1, 2 or 3 if FOV mode on, else 0
-                            shaderProgram.setUniformi("u_fovcam", fovmode);
-                            if (fovmode > 0) {
-                                // Cam is Fov1 or Fov2
+                            // Update projection if fovmode is 3
+                            if (fovmode == 3) {
+                                // Cam is Fov1 & Fov2
                                 FovCamera cam = ((CameraManager) camera).fovCamera;
-                                shaderProgram.setUniformf("u_fovcam_angleedge", camera.getAngleEdge());
-                                shaderProgram.setUniformf("u_fovcam_dir", camera.getDirections()[cam.dirindex].put(aux2));
-
-                                if (fovmode == 3) {
-                                    // Update combined
-                                    PerspectiveCamera[] cams = camera.getFrontCameras();
-                                    shaderProgram.setUniformMatrix("u_projModelView", cams[cam.dirindex].combined);
-                                }
+                                // Update combined
+                                PerspectiveCamera[] cams = camera.getFrontCameras();
+                                shaderProgram.setUniformMatrix("u_projModelView", cams[cam.dirindex].combined);
                             }
                             try {
                                 curr.mesh.render(shaderProgram, ShapeType.Point.getGlType());

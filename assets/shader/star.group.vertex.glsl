@@ -14,6 +14,8 @@ attribute float a_size;
 uniform int u_t; // time in days since epoch
 uniform mat4 u_projModelView;
 uniform vec3 u_camPos;
+uniform vec3 u_camDir;
+uniform int u_cubemap;
 
 uniform vec2 u_pointAlpha;
 uniform float u_thAnglePoint;
@@ -38,10 +40,6 @@ uniform float u_thAnglePoint;
 // 2 - fov factor
 // 3 - star brightness
 uniform vec4 u_alphaSizeFovBr;
-// Fov observation
-uniform int u_fovcam; // 0.0 if regular camera, >0 if fov (1.0, 2.0 or 3.0)
-uniform float u_fovcam_angleedge;
-uniform vec3 u_fovcam_dir;
 
 // VARYINGS
 varying vec4 v_col;
@@ -57,6 +55,14 @@ void main() {
     
     // Distance to star
     float dist = length(pos);
+    
+    float sizefactor = 1.0;
+    if(u_cubemap == 1) {
+        // Cosine of angle between star position and camera direction
+        // Correct point primitive size error due to perspective projection
+        float cosphi = pow(dot(u_camDir, pos) / dist, 2.0);
+        sizefactor = 1.0 - cosphi * 0.65;
+    }
     
     #ifdef relativisticEffects
     	pos = computeRelativisticAberration(pos, dist, u_velDir, u_vc);
@@ -75,13 +81,6 @@ void main() {
 //        }
     #endif // gravitationalWaves
     
-    
-    // Compute fov observation if necessary (only Fov1, Fov2)
-    float observed = 1.0;
-    if(u_fovcam > 0) {
-        observed = in_view(pos, u_fovcam_dir, dist, u_fovcam_angleedge);
-    }
-    
     float viewAngleApparent = atan((a_size * u_alphaSizeFovBr.w) / dist) / u_alphaSizeFovBr.z;
     float opacity = pow(lint2(viewAngleApparent, 0.0, u_thAnglePoint, u_pointAlpha.x, u_pointAlpha.y), 1.2);
 
@@ -90,11 +89,11 @@ void main() {
 
 	// Discard vertex if too close or Gaia Fov1or2 and not observed
     float v_discard = 1.0;
-    if(dist < len0 || observed < 0.0) {
+    if(dist < len0) {
         v_discard = 0.0;
         v_col *= 0.0;
     }
 
     gl_Position = u_projModelView * vec4(pos, 0.0) * v_discard;
-    gl_PointSize = u_alphaSizeFovBr.y;
+    gl_PointSize = u_alphaSizeFovBr.y * sizefactor;
 }
