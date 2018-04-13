@@ -226,7 +226,8 @@ public class SpacecraftGui extends AbstractGui {
         stop = new OwnImageButton(skin, "sc-stop");
         stop.setProgrammaticChangeEvents(false);
         stop.setName("stop spacecraft");
-        stop.setChecked(sc.isStopping());
+        if (sc != null)
+            stop.setChecked(sc.isStopping());
         stop.addListener(new EventListener() {
             @Override
             public boolean handle(Event event) {

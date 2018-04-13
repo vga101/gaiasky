@@ -215,31 +215,32 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
      * @param time
      */
     public void updateHard(double dt, ITimeFrameProvider time) {
-        //double sdt = time.getDt() * Constants.H_TO_S;
-        double sdt = dt;
+        if (sc != null) {
+            //double sdt = time.getDt() * Constants.H_TO_S;
+            double sdt = dt;
 
-        // POSITION
-        double tgfac = targetDistance * sc.sizeFactor / fovFactor;
-        relpos.scl(sc.sizeFactor);
-        aux2.set(scup).nor().scl(tgfac / 8d);
-        desired.set(scdir).nor().scl(-tgfac).add(aux2);
-        todesired.set(desired).sub(relpos);
-        todesired.scl(sdt * GlobalConf.spacecraft.SC_RESPONSIVENESS / 1e6);
-        relpos.add(todesired);
-        pos.set(scpos).add(relpos);
-        relpos.scl(1 / sc.sizeFactor);
+            // POSITION
+            double tgfac = targetDistance * sc.sizeFactor / fovFactor;
+            relpos.scl(sc.sizeFactor);
+            aux2.set(scup).nor().scl(tgfac / 8d);
+            desired.set(scdir).nor().scl(-tgfac).add(aux2);
+            todesired.set(desired).sub(relpos);
+            todesired.scl(sdt * GlobalConf.spacecraft.SC_RESPONSIVENESS / 1e6);
+            relpos.add(todesired);
+            pos.set(scpos).add(relpos);
+            relpos.scl(1 / sc.sizeFactor);
 
-        // DIRECTION
-        aux1.set(scup).nor().scl(0.00001);
-        aux2.set(scdir).nor().scl(tgfac * 4).add(aux1);
-        direction.set(scpos).add(aux2).sub(pos).nor();
+            // DIRECTION
+            aux1.set(scup).nor().scl(0.00001);
+            aux2.set(scdir).nor().scl(tgfac * 4).add(aux1);
+            direction.set(scpos).add(aux2).sub(pos).nor();
 
-        // UP
-        desired.set(scup);
-        todesired.set(desired).sub(up);
-        todesired.scl(sdt * GlobalConf.spacecraft.SC_RESPONSIVENESS / 1e6);
-        up.add(todesired).nor();
-
+            // UP
+            desired.set(scup);
+            todesired.set(desired).sub(up);
+            todesired.scl(sdt * GlobalConf.spacecraft.SC_RESPONSIVENESS / 1e6);
+            up.add(todesired).nor();
+        }
     }
 
     public double convertAngle(double angle) {
@@ -269,7 +270,7 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
     @Override
     public void updateMode(CameraMode mode, boolean postEvent) {
         InputMultiplexer im = (InputMultiplexer) Gdx.input.getInputProcessor();
-        if (mode == CameraMode.Spacecraft) {
+        if (mode == CameraMode.Spacecraft && sc != null) {
             Gdx.app.postRunnable(() -> {
                 // Register input controller
                 if (!im.getProcessors().contains(inputController, true))
@@ -289,13 +290,14 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
                 }
             });
         } else {
-            Gdx.app.postRunnable(() -> {
-                // Unregister input controller
-                im.removeProcessor(inputController);
-                // Unregister controller listener
-                Controllers.removeListener(controllerListener);
-                sc.stopAllMovement();
-            });
+            if (sc != null)
+                Gdx.app.postRunnable(() -> {
+                    // Unregister input controller
+                    im.removeProcessor(inputController);
+                    // Unregister controller listener
+                    Controllers.removeListener(controllerListener);
+                    sc.stopAllMovement();
+                });
         }
     }
 
@@ -357,7 +359,7 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
 
         @Override
         public boolean keyDown(int keycode) {
-            if (GlobalConf.runtime.INPUT_ENABLED) {
+            if (sc != null && GlobalConf.runtime.INPUT_ENABLED) {
                 double step = 0.01;
                 switch (keycode) {
                 case Keys.W:
@@ -416,7 +418,7 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
 
         @Override
         public boolean keyUp(int keycode) {
-            if (GlobalConf.runtime.INPUT_ENABLED) {
+            if (sc != null && GlobalConf.runtime.INPUT_ENABLED) {
                 switch (keycode) {
                 case Keys.W:
                 case Keys.S:
@@ -500,43 +502,43 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
             // y = x^4
             // http://www.wolframalpha.com/input/?i=y+%3D+sign%28x%29+*+x%5E2+%28x+from+-1+to+1%29}
             value = Math.signum(value) * value * value * value * value;
+            if (sc != null)
+                switch (axisCode) {
+                case XBox360Mappings.AXIS_JOY2HOR:
+                    sc.setRollPower(-value);
+                    if (Math.abs(value) > 0.3)
+                        EventManager.instance.post(Events.SPACECRAFT_STABILISE_CMD, false);
+                    treated = true;
+                    break;
+                case XBox360Mappings.AXIS_JOY1VERT:
+                    sc.setPitchPower(value);
+                    if (Math.abs(value) > 0.3)
+                        EventManager.instance.post(Events.SPACECRAFT_STABILISE_CMD, false);
+                    treated = true;
+                    break;
+                case XBox360Mappings.AXIS_JOY1HOR:
+                    sc.setYawPower(-value);
+                    if (Math.abs(value) > 0.3)
+                        EventManager.instance.post(Events.SPACECRAFT_STABILISE_CMD, false);
+                    treated = true;
+                    break;
+                case XBox360Mappings.AXIS_JOY2VERT:
+                    treated = true;
+                    break;
+                case XBox360Mappings.AXIS_RT:
+                    sc.setEnginePower((value + 1) / 2);
+                    if (Math.abs(value) > 0.3)
+                        EventManager.instance.post(Events.SPACECRAFT_STOP_CMD, false);
+                    treated = true;
+                    break;
+                case XBox360Mappings.AXIS_LT:
+                    sc.setEnginePower(-(value + 1) / 2);
+                    if (Math.abs(value) > 0.3)
+                        EventManager.instance.post(Events.SPACECRAFT_STOP_CMD, false);
+                    treated = true;
+                    break;
 
-            switch (axisCode) {
-            case XBox360Mappings.AXIS_JOY2HOR:
-                sc.setRollPower(-value);
-                if (Math.abs(value) > 0.3)
-                    EventManager.instance.post(Events.SPACECRAFT_STABILISE_CMD, false);
-                treated = true;
-                break;
-            case XBox360Mappings.AXIS_JOY1VERT:
-                sc.setPitchPower(value);
-                if (Math.abs(value) > 0.3)
-                    EventManager.instance.post(Events.SPACECRAFT_STABILISE_CMD, false);
-                treated = true;
-                break;
-            case XBox360Mappings.AXIS_JOY1HOR:
-                sc.setYawPower(-value);
-                if (Math.abs(value) > 0.3)
-                    EventManager.instance.post(Events.SPACECRAFT_STABILISE_CMD, false);
-                treated = true;
-                break;
-            case XBox360Mappings.AXIS_JOY2VERT:
-                treated = true;
-                break;
-            case XBox360Mappings.AXIS_RT:
-                sc.setEnginePower((value + 1) / 2);
-                if (Math.abs(value) > 0.3)
-                    EventManager.instance.post(Events.SPACECRAFT_STOP_CMD, false);
-                treated = true;
-                break;
-            case XBox360Mappings.AXIS_LT:
-                sc.setEnginePower(-(value + 1) / 2);
-                if (Math.abs(value) > 0.3)
-                    EventManager.instance.post(Events.SPACECRAFT_STOP_CMD, false);
-                treated = true;
-                break;
-
-            }
+                }
             return treated;
         }
 
@@ -565,8 +567,9 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
     @Override
     public void checkClosest(CelestialBody cb) {
         super.checkClosest(cb);
-        if (closest2 == null || (closest2 != null && cb != sc && cb.distToCamera < closest2.distToCamera))
-            closest2 = cb;
+        if (sc != null)
+            if (closest2 == null || (closest2 != null && cb != sc && cb.distToCamera < closest2.distToCamera))
+                closest2 = cb;
     }
 
     @Override

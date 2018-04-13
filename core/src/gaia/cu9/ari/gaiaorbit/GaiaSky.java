@@ -396,10 +396,18 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         // Initialise frames
         frames = 0;
 
-        // Set focus to Earth
-        EventManager.instance.post(Events.CAMERA_MODE_CMD, CameraMode.Focus);
-        EventManager.instance.post(Events.FOCUS_CHANGE_CMD, sg.getNode("Earth"), true);
-        EventManager.instance.post(Events.GO_TO_OBJECT_CMD);
+        if (sg.containsNode("Earth")) {
+            // Set focus to Earth
+            EventManager.instance.post(Events.CAMERA_MODE_CMD, CameraMode.Focus);
+            EventManager.instance.post(Events.FOCUS_CHANGE_CMD, sg.getNode("Earth"), true);
+            EventManager.instance.post(Events.GO_TO_OBJECT_CMD);
+        } else {
+            // Origin
+            EventManager.instance.post(Events.CAMERA_MODE_CMD, CameraMode.Free_Camera);
+            EventManager.instance.post(Events.CAMERA_POS_CMD, new double[] { 0, 0, 0 });
+            EventManager.instance.post(Events.CAMERA_DIR_CMD, new double[] { 0, 1, 0 });
+            EventManager.instance.post(Events.CAMERA_UP_CMD, new double[] { 0, 0, 1 });
+        }
 
         initialized = true;
     }
