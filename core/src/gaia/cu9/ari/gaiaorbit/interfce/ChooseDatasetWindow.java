@@ -56,6 +56,7 @@ public class ChooseDatasetWindow extends GenericDialog {
         });
         float pad = 3 * GlobalConf.SCALE_FACTOR;
         float tawidth = 300 * GlobalConf.SCALE_FACTOR;
+        float taheight = GlobalConf.SCALE_FACTOR > 1 ? 50 : 35;
 
         JsonReader reader = new JsonReader();
 
@@ -95,6 +96,7 @@ public class ChooseDatasetWindow extends GenericDialog {
             description.setDisabled(true);
             description.setPrefRows(2);
             description.setWidth(tawidth);
+            description.setHeight(taheight);
             content.add(description).left().top().padTop(pad).padLeft(pad).row();
 
             candidates.put(cb, candidate);

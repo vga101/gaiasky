@@ -57,7 +57,7 @@ task run(dependsOn: jar, type: JavaExec, description: "Runs the desktop project 
     // CMS GC
     //jvmArgs = ['-server', '-Xms2g', '-Xmx3g', '-XX:+UseConcMarkSweepGC', '-XX:+UseParNewGC', '-XX:MaxGCPauseMillis=5', '-XX:+CMSParallelRemarkEnabled', '-XX:CMSInitiatingOccupancyFraction=60', '-XX:MaxTenuringThreshold=4', '-XX:MaxNewSize=384m', '-XX:NewSize=384m', '-XX:SurvivorRatio=12']
     // G1 GC
-    jvmArgs = ['-Xms2g', '-Xmx3g', '-XX:+UseG1GC']
+    jvmArgs = ['-Xms2g', '-Xmx4g', '-XX:+UseG1GC']
     // Verbose GC
     // jvmArgs = ['-verbose:gc']
     classpath = sourceSets.main.runtimeClasspath
@@ -188,7 +188,7 @@ task dist (dependsOn: gaiaskyJar, description: "Compiles the project, creates th
 			exclude "**/octree/tgas/group-bin-old"
 			exclude "**/hyg"
 			exclude "**/catalog"
-			exclude "**/octree/dr2"
+			exclude "**/octree"
 			
 			exclude "**/models/cassini"
 			exclude "**/models/rosetta"
@@ -203,15 +203,18 @@ task dist (dependsOn: gaiaskyJar, description: "Compiles the project, creates th
 			exclude "**/*-wgl.json"
 			exclude "**/*-wgl-fp.json"
 			
-			exclude "**/catalog-dr2*.json"
+			exclude "**/catalog-dr2-int6*.json"
 			exclude "**/catalog-hyg.json"
-			exclude "**/catalog-sun.json"
-			exclude "**/catalog-tgas-hyg-lod-old.json"
-			exclude "**/catalog-tgas.json"
-			exclude "**/catalog-wgl*.json"
+			exclude "**/catalog-tgas-hyg-lod.json"
+			exclude "**/catalog-tgas-hyg.json"
+			exclude "**/catalog-lmc-lod.json"
+			
+			exclude "meshes-dr2.json"
+			exclude "orbits_asteroids_extra.json"
+			exclude "orbits_asteroids_extra_sample.json"
 			
 			exclude "**/particles-dr2.json"
-			exclude "**/particles-wgl*.json"
+			exclude "**/particles-tgas.json"
 			
 			exclude "**/constel_id.csv"
 			

@@ -1062,6 +1062,7 @@ public class PreferencesWindow extends GenericDialog {
         candidates = new HashMap<Button, String>();
         catalogs = new OwnTextButton[catalogFiles.length];
         i = 0;
+        float taheight = GlobalConf.SCALE_FACTOR > 1 ? 50 : 35;
         String[] currentSetting = GlobalConf.data.CATALOG_JSON_FILES.split("\\s*,\\s*");
         Table datasets = new Table();
         for (FileHandle catalogFile : catalogFiles) {
@@ -1093,6 +1094,7 @@ public class PreferencesWindow extends GenericDialog {
             description.setDisabled(true);
             description.setPrefRows(2);
             description.setWidth(tawidth);
+            description.setHeight(taheight);
             datasets.add(description).left().top().padTop(pad / 2).padLeft(pad).row();
 
             candidates.put(cb, candidate);

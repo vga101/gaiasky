@@ -1,0 +1,9 @@
+{
+	"name" : "DR2 - 12%/1%",
+	"description" : "Gaia DR2 int6 (12%/1% bright/faint stars parallax error). 8.4M stars.",
+	"data" : [
+	{
+		"loader": "gaia.cu9.ari.gaiaorbit.data.group.OctreeGroupLoader",
+		"files": [ "data/octree/dr2-0.12-0.01/particles/", "data/octree/dr2-0.12-0.01/metadata.bin" ]
+}
+]}
