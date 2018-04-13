@@ -277,7 +277,7 @@ files will be loaded when needed and unloaded if necessary. This offers a conven
 to the main memory as the user explores the dataset. It also results in a very fast program startup.
 This loader is called ``OctreeMultiFileLoader`` and is implemented `here <https://github.com/langurmonkey/gaiasky/blob/master/core/src/gaia/cu9/ari/gaiaorbit/data/stars/OctreeMultiFileLoader.java>`__. 
 
-Some discussion on memory issues and the streaming loader can be found :ref:`here <data-streaming-lod>`__.
+Some discussion on memory issues and the streaming loader can be found :ref:`here <data-streaming-lod>`.
 
 STIL data provider
 ~~~~~~~~~~~~~~~~~~
