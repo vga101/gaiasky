@@ -20,6 +20,8 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.badlogic.gdx.backends.lwjgl.LwjglFiles;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.beust.jcommander.JCommander;
+import com.beust.jcommander.Parameter;
 import com.brsanthu.googleanalytics.GoogleAnalyticsResponse;
 
 import gaia.cu9.ari.gaiaorbit.GaiaSky;
@@ -72,8 +74,32 @@ public class GaiaSkyDesktop implements IObserver {
 
     private MemInfoWindow memInfoWindow;
 
-    public static void main(String[] args) {
+    /**
+     * Program arguments
+     * @author Toni Sagrista
+     *
+     */
+    private static class GaiaSkyArgs {
+        @Parameter(names = { "-h", "--help" }, help = true)
+        private boolean help = false;
 
+        @Parameter(names = { "-v", "--version" }, description = "Lists version and build inforamtion")
+        private boolean version = false;
+    }
+
+    public static void main(String[] args) {
+        GaiaSkyArgs gsargs = new GaiaSkyArgs();
+        try {
+            JCommander jc = new JCommander(gsargs, args);
+            jc.setProgramName("gaiasky");
+            if (gsargs.help) {
+                jc.usage();
+                return;
+            }
+        } catch (Exception e) {
+            System.out.println("Bad program arguments");
+            return;
+        }
         try {
             gsd = new GaiaSkyDesktop();
             // Assets location
@@ -102,7 +128,7 @@ public class GaiaSkyDesktop implements IObserver {
             // Init global configuration
             ConfInit.initialize(new DesktopConfInit(ASSETS_LOC));
 
-            if (args.length > 0 && (args[0].equals("-v") || args[0].equals("--version"))) {
+            if (gsargs.version) {
                 System.out.println(GlobalConf.APPLICATION_NAME + " " + GlobalConf.version.version);
                 System.out.println("   version name : " + GlobalConf.version.version);
                 System.out.println("   build        : " + GlobalConf.version.build);
