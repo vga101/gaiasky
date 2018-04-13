@@ -102,6 +102,16 @@ public class GaiaSkyDesktop implements IObserver {
             // Init global configuration
             ConfInit.initialize(new DesktopConfInit(ASSETS_LOC));
 
+            if (args.length > 0 && (args[0].equals("-v") || args[0].equals("--version"))) {
+                System.out.println(GlobalConf.APPLICATION_NAME + " " + GlobalConf.version.version);
+                System.out.println("   version name : " + GlobalConf.version.version);
+                System.out.println("   build        : " + GlobalConf.version.build);
+                System.out.println("   build time   : " + GlobalConf.version.buildtime);
+                System.out.println("   build system : " + GlobalConf.version.system);
+                System.out.println("   builder      : " + GlobalConf.version.builder);
+                return;
+            }
+
             // Initialize i18n
             I18n.initialize(Gdx.files.internal("i18n/gsbundle"));
 

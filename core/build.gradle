@@ -177,7 +177,7 @@ task dist (dependsOn: gaiaskyJar, description: "Compiles the project, creates th
 	        into "$distDir/conf"
 	    }
 	
-	    // Copy data
+	    // Copy data folder
 	    mkdir "$distDir/data"
 	    copy {
 	        from "../assets/data"
@@ -208,6 +208,8 @@ task dist (dependsOn: gaiaskyJar, description: "Compiles the project, creates th
 			exclude "**/catalog-tgas-hyg-lod.json"
 			exclude "**/catalog-tgas-hyg.json"
 			exclude "**/catalog-lmc-lod.json"
+		
+			exclude "**/meshes/dr2"
 			
 			exclude "meshes-dr2.json"
 			exclude "orbits_asteroids_extra.json"
@@ -223,6 +225,15 @@ task dist (dependsOn: gaiaskyJar, description: "Compiles the project, creates th
 			
 			exclude "dummyversion"
 	
+	    }
+
+	    // Copy DR2 catalog
+	    mkdir "$distDir/data/octree/dr2-0.12-0.01"
+	    copy {
+	        from "/media/tsagrista/Daten/Gaia/data/GDR2/dr2int6/out/40-adp-040000-0.12-0.01"
+	        into "$distDir/data/octree/dr2-0.12-0.01"
+	        
+	        exclude "log"
 	    }
 
 	    // Copy i18n files

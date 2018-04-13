@@ -1,6 +1,7 @@
 #!/bin/bash
 #
-# Removes the .desktop shortcut in Debian systems
+# Removes the desktop and run script links
 #
 
 rm /usr/share/applications/gaiasky.desktop
+rm /usr/bin/gaiasky
