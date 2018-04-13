@@ -12,15 +12,15 @@ System requirements
 Here are the minimum requirements to run this software:
 
 +------------------------+----------------------------------------------------------------------------------+
-| **Operating system**   | Windows 7+ / macOS X / Linux                                                     |
+| **Operating system**   | Linux / Windows 7+ / macOS                                                       |
 +========================+==================================================================================+
-| **CPU**                | Intel Core i3 3rd Generation or similar                                          |
+| **CPU**                | Intel Core i5 3rd Generation or similar                                          |
 +------------------------+----------------------------------------------------------------------------------+
 | **GPU**                | OpenGL 3.0 support / Intel HD 4000 / Nvidia GeForce 8400 GS, 1 GB VRAM           |
 +------------------------+----------------------------------------------------------------------------------+
-| **Memory**             | 4 GB RAM                                                                         |
+| **Memory**             | 4+ GB RAM                                                                        |
 +------------------------+----------------------------------------------------------------------------------+
-| **Hard drive**         | 400 MB of free disk space                                                        |
+| **Hard drive**         | 1 GB of free disk space                                                          |
 +------------------------+----------------------------------------------------------------------------------+
 
 Installation and uninstallation

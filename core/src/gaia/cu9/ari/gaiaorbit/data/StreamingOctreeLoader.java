@@ -22,6 +22,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.AbstractPositionEntity;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Constellation;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.octreewrapper.AbstractOctreeWrapper;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.tree.LoadStatus;
@@ -59,7 +60,7 @@ public abstract class StreamingOctreeLoader implements IObserver, ISceneGraphLoa
     /** Current number of stars that are loaded **/
     protected int nLoadedStars = 0;
     /** Max number of stars loaded at once **/
-    protected final int maxLoadedStars;
+    protected final long maxLoadedStars;
 
     /** The octant loading queue **/
     protected Queue<OctreeNode> toLoadQueue = null;
@@ -94,7 +95,8 @@ public abstract class StreamingOctreeLoader implements IObserver, ISceneGraphLoa
         // We assume 1Gb of graphics memory
         // GPU ~ 32 byte/star
         // CPU ~ 136 byte/star
-        maxLoadedStars = 15000000;
+        maxLoadedStars = GlobalConf.scene.MAX_LOADED_STARS;
+        Logger.info(this.getClass().getSimpleName(), "Maximum loaded stars setting: " + maxLoadedStars);
 
         Comparator<OctreeNode> depthComparator = (OctreeNode o1, OctreeNode o2) -> Integer.compare(o1.depth, o2.depth);
         toLoadQueue = new PriorityBlockingQueue<OctreeNode>(LOAD_QUEUE_MAX_SIZE, depthComparator);

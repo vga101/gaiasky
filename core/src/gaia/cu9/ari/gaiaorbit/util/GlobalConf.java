@@ -799,6 +799,15 @@ public class GlobalConf {
          **/
         public float OCTANT_THRESHOLD_1;
 
+        /**
+         * In the case of multifile LOD datasets (such as DR2+), this setting contains 
+         * the maximum number of stars loaded at a time. If the number of loaded stars 
+         * surpasses this setting, the system will start looking for the best candidates
+         * to be unloaded and start unloading data. Should not be set too low, and this should
+         * be balanced with the dataset and the draw distance.
+         */
+        public long MAX_LOADED_STARS;
+
         public SceneConf() {
             EventManager.instance.subscribe(this, Events.TOGGLE_VISIBILITY_CMD, Events.FOCUS_LOCK_CMD, Events.ORIENTATION_LOCK_CMD, Events.PROPER_MOTIONS_CMD, Events.STAR_BRIGHTNESS_CMD, Events.PM_LEN_FACTOR_CMD, Events.PM_NUM_FACTOR_CMD, Events.FOV_CHANGED_CMD, Events.CAMERA_SPEED_CMD, Events.ROTATION_SPEED_CMD, Events.TURNING_SPEED_CMD, Events.SPEED_LIMIT_CMD, Events.TRANSIT_COLOUR_CMD, Events.ONLY_OBSERVED_STARS_CMD, Events.COMPUTE_GAIA_SCAN_CMD, Events.OCTREE_PARTICLE_FADE_CMD, Events.STAR_POINT_SIZE_CMD, Events.STAR_POINT_SIZE_INCREASE_CMD, Events.STAR_POINT_SIZE_DECREASE_CMD, Events.STAR_POINT_SIZE_RESET_CMD, Events.STAR_MIN_OPACITY_CMD, Events.AMBIENT_LIGHT_CMD, Events.GALAXY_3D_CMD, Events.CROSSHAIR_CMD, Events.CAMERA_CINEMATIC_CMD, Events.CUBEMAP_RESOLUTION_CMD);
         }
@@ -808,7 +817,7 @@ public class GlobalConf {
                 double sTAR_TH_ANGLE_NONE, double sTAR_TH_ANGLE_POINT, double sTAR_TH_ANGLE_QUAD, float pOINT_ALPHA_MIN, float pOINT_ALPHA_MAX,
                 boolean oCTREE_PARTICLE_FADE, float oCTANT_TH_ANGLE_0, float oCTANT_TH_ANGLE_1, boolean pROPER_MOTION_VECTORS, float pM_NUM_FACTOR, float pM_LEN_FACTOR, float sTAR_POINT_SIZE,
                 boolean gALAXY_3D, int cUBEMAP_FACE_RESOLUTION, boolean cROSSHAIR, boolean cINEMATIC_CAMERA, boolean lAZY_TEXTURE_INIT, boolean fREE_CAMERA_TARGET_MODE_ON, boolean sHADOW_MAPPING,
-                int sHADOW_MAPPING_N_SHADOWS, int sHADOW_MAPPING_RESOLUTION) {
+                int sHADOW_MAPPING_N_SHADOWS, int sHADOW_MAPPING_RESOLUTION, long mAX_LOADED_STARS) {
             GRAPHICS_QUALITY = gRAPHICS_QUALITY;
             OBJECT_FADE_MS = oBJECT_FADE_MS;
             STAR_BRIGHTNESS = sTAR_BRIGHTNESS;
@@ -847,6 +856,7 @@ public class GlobalConf {
             SHADOW_MAPPING = sHADOW_MAPPING;
             SHADOW_MAPPING_N_SHADOWS = sHADOW_MAPPING_N_SHADOWS;
             SHADOW_MAPPING_RESOLUTION = sHADOW_MAPPING_RESOLUTION;
+            MAX_LOADED_STARS = mAX_LOADED_STARS;
         }
 
         public void updateSpeedLimit() {

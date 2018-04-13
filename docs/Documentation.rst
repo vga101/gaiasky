@@ -19,6 +19,7 @@ Documentation
    Performance
    Internal-reference-system
    Data-catalogs-formats
+   Data-streaming
    Scripting-with-python
    Capturing-videos
    Taking-screenshots
