@@ -85,10 +85,12 @@ public class HYGDataProvider extends AbstractStarGroupDataProvider {
 
                         double flux = Math.pow(10, -absmag / 2.5f);
                         double starsize = Math.min((Math.pow(flux, 0.5f) * Constants.PC_TO_U * 0.16f), 1e9f) / 1.5;
-
-                        Vector3d pos = Coordinates.sphericalToCartesian(Math.toRadians(ra), Math.toRadians(dec), dist, new Vector3d());
-                        Vector3d pm = Coordinates.sphericalToCartesian(Math.toRadians(ra + mualpha * AstroUtils.MILLARCSEC_TO_DEG), Math.toRadians(dec + mudelta * AstroUtils.MILLARCSEC_TO_DEG), dist + radvel * Constants.KM_TO_U * Constants.S_TO_Y, new Vector3d());
-                        pm.sub(pos);
+                        
+                        double rarad = Math.toRadians(ra);
+                        double decrad = Math.toRadians(dec);
+                        
+                        Vector3d pos = Coordinates.sphericalToCartesian(rarad, decrad, dist, new Vector3d());
+                        Vector3d pm = AstroUtils.properMotionsToCartesian(mualpha, mudelta, radvel, rarad, decrad, dist * Constants.U_TO_PC);
 
                         float[] rgb = ColourUtils.BVtoRGB(colorbv);
                         double col = Color.toFloatBits(rgb[0], rgb[1], rgb[2], 1.0f);

@@ -245,15 +245,14 @@ public class DR2DataProvider extends AbstractStarGroupDataProvider {
                 /** RA and DEC **/
                 double ra = Parser.parseDouble(tokens[indices[RA]]);
                 double dec = Parser.parseDouble(tokens[indices[DEC]]);
-                Vector3d pos = Coordinates.sphericalToCartesian(Math.toRadians(ra), Math.toRadians(dec), dist, new Vector3d());
+                double rarad = Math.toRadians(ra);
+                double decrad = Math.toRadians(dec);
+                Vector3d pos = Coordinates.sphericalToCartesian(rarad, decrad, dist, new Vector3d());
 
                 /** PROPER MOTIONS in mas/yr **/
-                double mualpha = Parser.parseDouble(tokens[indices[MUALPHA]]);
-                // mualpha /= Math.cos(Math.toRadians(dec));
+                double mualphastar = Parser.parseDouble(tokens[indices[MUALPHA]]);
                 double mudelta = Parser.parseDouble(tokens[indices[MUDELTA]]);
-
-                //mualpha -= 1.829;
-                //mudelta -= 0.395;
+                //double mualpha = mualphastar / Math.cos(decrad);
 
                 /** RADIAL VELOCITY in km/s **/
                 double radvel = Parser.parseDouble(tokens[indices[RADVEL]]);
@@ -261,9 +260,8 @@ public class DR2DataProvider extends AbstractStarGroupDataProvider {
                     radvel = 0;
                 }
 
-                /** PROPER MOTION VECTOR = (pos+dx) - pos **/
-                Vector3d pm = Coordinates.sphericalToCartesian(Math.toRadians(ra + mualpha * AstroUtils.MILLARCSEC_TO_DEG), Math.toRadians(dec + mudelta * AstroUtils.MILLARCSEC_TO_DEG), dist + radvel * Constants.KM_TO_U / Constants.S_TO_Y, new Vector3d());
-                pm.sub(pos);
+                /** PROPER MOTION VECTOR **/
+                Vector3d pm = AstroUtils.properMotionsToCartesian(mualphastar, mudelta, radvel, rarad, decrad, distpc);
 
                 // Line of sight extinction in the G band
                 double ag = 0;
@@ -342,7 +340,7 @@ public class DR2DataProvider extends AbstractStarGroupDataProvider {
                 point[StarBean.I_PMX] = pm.x;
                 point[StarBean.I_PMY] = pm.y;
                 point[StarBean.I_PMZ] = pm.z;
-                point[StarBean.I_MUALPHA] = mualpha;
+                point[StarBean.I_MUALPHA] = mualphastar;
                 point[StarBean.I_MUDELTA] = mudelta;
                 point[StarBean.I_RADVEL] = radvel;
                 point[StarBean.I_COL] = col;
