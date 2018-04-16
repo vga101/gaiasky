@@ -98,6 +98,35 @@ public abstract class AbstractStarGroupDataProvider implements IStarGroupDataPro
         colors = new HashMap<Long, float[]>();
     }
 
+    /**
+     * Checks whether the parallax is accepted or not.
+     * <p>
+     * <b>If adaptive is not enabled:</b>
+     * <pre>
+     * accepted = pllx > 0 && pllx_err < pllx * pllx_err_factor && pllx_err <= 1
+     * </pre>
+     * </p>
+     * <p>
+     * <b>If adaptive is enabled:</b>
+     * <pre>
+     * accepted = pllx > 0 && pllx_err < pllx * max(0.5, pllx_err_factor) && pllx_err <= 1, if apparent_magnitude < 13.2
+     * accepted = pllx > 0 && pllx_err < pllx * pllx_err_factor && pllx_err <= 1, otherwise
+     * </pre>
+     * </p>
+     * 
+     * @param appmag Apparent magnitude of star
+     * @param pllx Parallax of star
+     * @param pllxerr Parallax error of star
+     * @return True if parallax is accepted, false otherwise
+     */
+    protected boolean acceptParallax(double appmag, double pllx, double pllxerr) {
+        if (adaptiveParallax && appmag < 13.1) {
+            return pllx >= 0 && pllxerr < pllx * parallaxErrorFactorBright && pllxerr <= 1;
+        } else {
+            return pllx >= 0 && pllxerr < pllx * parallaxErrorFactorFaint && pllxerr <= 1;
+        }
+    }
+
     protected int countLines(FileHandle f) throws IOException {
         InputStream is = new BufferedInputStream(f.read());
         return countLines(is);

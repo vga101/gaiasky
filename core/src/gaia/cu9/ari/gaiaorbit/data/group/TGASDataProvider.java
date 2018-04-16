@@ -79,8 +79,10 @@ public class TGASDataProvider extends AbstractStarGroupDataProvider {
                     double distpc = (1000d / pllx);
                     double dist = distpc * Constants.PC_TO_U;
 
+                    double appmag = Parser.parseDouble(tokens[7]);
+
                     // Keep only stars with relevant parallaxes
-                    if (pllx >= 0 && pllxerr < pllx * parallaxErrorFactorFaint && pllxerr <= 1) {
+                    if (acceptParallax(appmag, pllx, pllxerr)) {
                         long sourceid = Parser.parseLong(tokens[0]);
 
                         /** INDEX **/
@@ -117,7 +119,7 @@ public class TGASDataProvider extends AbstractStarGroupDataProvider {
                         /** PROPER MOTIONS in mas/yr **/
                         double mualphastar = Parser.parseDouble(tokens[5]);
                         double mudelta = Parser.parseDouble(tokens[6]);
-                        double mualpha = mualphastar / Math.cos(Math.toRadians(dec));
+                        //double mualpha = mualphastar / Math.cos(Math.toRadians(dec));
 
                         /** RADIAL VELOCITY in km/s **/
                         double radvel = 0;
@@ -129,10 +131,8 @@ public class TGASDataProvider extends AbstractStarGroupDataProvider {
                         /**
                          * PROPER MOTION VECTOR = (pos+dx) - pos - [units/yr]
                          **/
-                        Vector3d pm = Coordinates.sphericalToCartesian(Math.toRadians(ra + mualpha * AstroUtils.MILLARCSEC_TO_DEG), Math.toRadians(dec + mudelta * AstroUtils.MILLARCSEC_TO_DEG), dist + radvel * Constants.KM_TO_U / Constants.S_TO_Y, new Vector3d());
-                        pm.sub(pos);
+                        Vector3d pm = AstroUtils.properMotionsToCartesian(mualphastar, mudelta, radvel, Math.toRadians(ra), Math.toRadians(dec), distpc);
 
-                        double appmag = Parser.parseDouble(tokens[7]);
                         double absmag = (appmag - 2.5 * Math.log10(Math.pow(distpc / 10d, 2d)));
                         double flux = Math.pow(10, -absmag / 2.5f);
                         double size = Math.min((Math.pow(flux, 0.5f) * Constants.PC_TO_U * 0.16f), 1e9f) / 1.5;
