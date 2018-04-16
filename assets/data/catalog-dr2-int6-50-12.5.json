@@ -1,6 +1,6 @@
 {
-	"name" : "DR2 int6 - 12.5%",
-	"description" : "Gaia DR2 int6 (12.5% error, adaptive). 96.6M stars.",
+	"name" : "DR2 int6 - 50%/12.5%",
+	"description" : "Gaia DR2 int6 (50%/12.5% error, adaptive). 96.6M stars.",
 	"data" : [
 	{
 		"loader": "gaia.cu9.ari.gaiaorbit.data.group.OctreeGroupLoader",
