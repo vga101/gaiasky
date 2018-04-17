@@ -87,6 +87,8 @@ public class FullGui extends AbstractGui {
 
     // Uncertainties disabled by default
     private boolean uncertainties = false;
+    // Rel effects off
+    private boolean releffects = false;
 
     public FullGui() {
         super();
@@ -508,38 +510,40 @@ public class FullGui extends AbstractGui {
                 popup.addSeparator();
             }
 
-            // Spawn gravitational waves
-            MenuItem gravWaveStart = new MenuItem(txt("context.startgravwave"), skin, "default");
-            gravWaveStart.addListener(new EventListener() {
-
-                @Override
-                public boolean handle(Event event) {
-                    if (event instanceof ChangeEvent) {
-                        EventManager.instance.post(Events.GRAV_WAVE_START, screenX, screenY);
-                        return true;
-                    }
-                    return false;
-                }
-
-            });
-            popup.addItem(gravWaveStart);
-
-            if (RelativisticEffectsManager.getInstance().gravWavesOn()) {
-                // Cancel gravitational waves
-                MenuItem gravWaveStop = new MenuItem(txt("context.stopgravwave"), skin, "default");
-                gravWaveStop.addListener(new EventListener() {
+            if (releffects) {
+                // Spawn gravitational waves
+                MenuItem gravWaveStart = new MenuItem(txt("context.startgravwave"), skin, "default");
+                gravWaveStart.addListener(new EventListener() {
 
                     @Override
                     public boolean handle(Event event) {
                         if (event instanceof ChangeEvent) {
-                            EventManager.instance.post(Events.GRAV_WAVE_STOP);
+                            EventManager.instance.post(Events.GRAV_WAVE_START, screenX, screenY);
                             return true;
                         }
                         return false;
                     }
 
                 });
-                popup.addItem(gravWaveStop);
+                popup.addItem(gravWaveStart);
+
+                if (RelativisticEffectsManager.getInstance().gravWavesOn()) {
+                    // Cancel gravitational waves
+                    MenuItem gravWaveStop = new MenuItem(txt("context.stopgravwave"), skin, "default");
+                    gravWaveStop.addListener(new EventListener() {
+
+                        @Override
+                        public boolean handle(Event event) {
+                            if (event instanceof ChangeEvent) {
+                                EventManager.instance.post(Events.GRAV_WAVE_STOP);
+                                return true;
+                            }
+                            return false;
+                        }
+
+                    });
+                    popup.addItem(gravWaveStop);
+                }
             }
 
             int mx = Gdx.input.getX();

@@ -227,11 +227,11 @@ task dist (dependsOn: gaiaskyJar, description: "Compiles the project, creates th
 	
 	    }
 
-	    // Copy DR2 catalog
-	    mkdir "$distDir/data/octree/dr2-0.12-0.01"
+	    // Copy DR2 default catalog - 20%/0.5%
+	    mkdir "$distDir/data/octree/dr2/dr2-0.2-0.005"
 	    copy {
-	        from "/media/tsagrista/Daten/Gaia/data/GDR2/dr2int6/out/40-adp-040000-0.12-0.01"
-	        into "$distDir/data/octree/dr2-0.12-0.01"
+	        from "/media/tsagrista/Daten/Gaia/data/GDR2/dr2int6/out/44-adp-060000-0.2-0.005"
+	        into "$distDir/data/octree/dr2/dr2-0.2-0.005"
 	        
 	        exclude "log"
 	    }
