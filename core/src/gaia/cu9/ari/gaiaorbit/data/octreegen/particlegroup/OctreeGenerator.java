@@ -160,7 +160,8 @@ public class OctreeGenerator {
 
             /** INTERSECT CATALOG WITH OCTANTS, COMPUTE PERCENTAGE **/
             int maxSublevelObjs = 0;
-            int minSubLevelObjs = Integer.MAX_VALUE;
+            double maxSublevelMag = Double.MAX_VALUE;
+            double minSublevelMag = 0;
             Map<OctreeNode, Array<StarBean>> lists = new HashMap<OctreeNode, Array<StarBean>>();
 
             for (OctreeNode octant : octantsPerLevel[level + 1]) {
@@ -169,8 +170,14 @@ public class OctreeGenerator {
                 if (list.size > maxSublevelObjs) {
                     maxSublevelObjs = list.size;
                 }
-                if (list.size < minSubLevelObjs) {
-                    minSubLevelObjs = list.size;
+                // Adapt levels by magnitude
+                for (StarBean sb : list) {
+                    if (sb.absmag() < maxSublevelMag) {
+                        maxSublevelMag = sb.absmag();
+                    }
+                    if (sb.absmag() > minSublevelMag) {
+                        minSublevelMag = sb.absmag();
+                    }
                 }
             }
             float sublevelPercentage = MathUtils.clamp((float) aggregation.getMaxPart() / (float) maxSublevelObjs, 0f, 1f);

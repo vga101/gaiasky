@@ -24,7 +24,7 @@ import com.beust.jcommander.Parameter;
 import gaia.cu9.ari.gaiaorbit.data.group.HYGDataProvider;
 import gaia.cu9.ari.gaiaorbit.data.group.IStarGroupDataProvider;
 import gaia.cu9.ari.gaiaorbit.data.octreegen.MetadataBinaryIO;
-import gaia.cu9.ari.gaiaorbit.data.octreegen.particlegroup.BrightestStarsSimple;
+import gaia.cu9.ari.gaiaorbit.data.octreegen.particlegroup.BrightestStars;
 import gaia.cu9.ari.gaiaorbit.data.octreegen.particlegroup.IAggregationAlgorithm;
 import gaia.cu9.ari.gaiaorbit.data.octreegen.particlegroup.IStarGroupIO;
 import gaia.cu9.ari.gaiaorbit.data.octreegen.particlegroup.OctreeGenerator;
@@ -181,7 +181,7 @@ public class OctreeGroupGeneratorTest {
     private OctreeNode generateOctree() throws IOException, InstantiationException, IllegalAccessException, ClassNotFoundException {
         long startMs = TimeUtils.millis();
 
-        IAggregationAlgorithm aggr = new BrightestStarsSimple(maxPart);
+        IAggregationAlgorithm aggr = new BrightestStars(25, maxPart, maxPart, false);
 
         OctreeGenerator og = new OctreeGenerator(aggr);
 
@@ -223,7 +223,7 @@ public class OctreeGroupGeneratorTest {
                 gaiahits++;
             }
         }
-        Logger.info(gaiahits + " of " + gaianum + " Gaia stars discarded due to being in matched to a HIP star");
+        Logger.info(gaiahits + " of " + gaianum + " Gaia stars discarded due to being matched to a HIP star");
 
         // Main list is listHip
         Array<StarBean> list = listHip;
