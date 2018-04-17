@@ -174,7 +174,7 @@ public class SGROpenVR extends SGRAbstract implements ISGR, IObserver {
             // Render scene
             sgr.renderScene(camera, t, rc);
             // Camera
-            camera.render(rw, rh);
+            camera.render(1080, 1200);
 
             //renderGui(infoGui.left());
 
@@ -196,7 +196,7 @@ public class SGROpenVR extends SGRAbstract implements ISGR, IObserver {
             // Render scene
             sgr.renderScene(camera, t, rc);
             // Camera
-            camera.render(rw, rh);
+            camera.render(1080, 1200);
 
             //renderGui(infoGui.right());
 
@@ -212,7 +212,7 @@ public class SGROpenVR extends SGRAbstract implements ISGR, IObserver {
 
             /** Render to screen **/
             sb.begin();
-            sb.draw(fbLeft.getColorBufferTexture(), 0, 0, rw, rh, 0, 0, rw, rh, false, true);
+            sb.draw(fbLeft.getColorBufferTexture(), 0, 0, rw, rh, 0, 0, fbRight.getWidth(), fbRight.getHeight(), false, true);
             sb.end();
         }
 

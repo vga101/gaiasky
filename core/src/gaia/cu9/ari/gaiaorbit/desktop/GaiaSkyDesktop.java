@@ -191,6 +191,7 @@ public class GaiaSkyDesktop implements IObserver {
         // Note that we disable VSync! The VRContext manages vsync with respect to the HMD
         cfg.useVsync(false);
         cfg.setWindowedMode(GlobalConf.screen.SCREEN_WIDTH, GlobalConf.screen.SCREEN_HEIGHT);
+        cfg.setResizable(true);
 
         // Thread pool manager
         if (GlobalConf.performance.MULTITHREADING) {

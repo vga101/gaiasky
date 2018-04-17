@@ -45,7 +45,7 @@ public class SGRAbstract {
         if (fb != null && postproc) {
             fb.begin();
         }
-        camera.render(rw, rh);
+        //camera.render(rw, rh);
         if (fb != null && postproc) {
             fb.end();
         }

@@ -353,7 +353,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
         case Free_Camera:
             updatePosition(dt, translateUnits, GlobalConf.scene.FREE_CAMERA_TARGET_MODE_ON ? realTransUnits : 1);
             if (!GlobalConf.runtime.OPENVR) {
-                
+
                 // If target is present, update direction
                 if (freeTargetOn) {
                     directionToTarget(dt, freeTargetPos, GlobalConf.scene.TURNING_SPEED / (GlobalConf.scene.CINEMATIC_CAMERA ? 1e3f : 1e2f));
@@ -361,7 +361,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
                         freeTargetOn = false;
                     }
                 }
-                
+
                 // Update direction with pitch, yaw, roll
                 updateRotationFree(dt, GlobalConf.scene.TURNING_SPEED);
                 updateRoll(dt, GlobalConf.scene.TURNING_SPEED);
