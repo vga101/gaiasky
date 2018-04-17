@@ -333,7 +333,7 @@ public class GaiaSkyDesktop implements IObserver {
         if (userFolderConfFile.exists()) {
             Properties userprops = new Properties();
             userprops.load(new FileInputStream(userFolderConfFile));
-            int internalversion = 150;
+            int internalversion = 200;
             if (internalFolderConfFile.exists()) {
                 Properties internalprops = new Properties();
                 internalprops.load(new FileInputStream(internalFolderConfFile));
@@ -342,6 +342,7 @@ public class GaiaSkyDesktop implements IObserver {
 
             // Check latest version
             if (!userprops.containsKey("properties.version") || (userprops.containsKey("properties.version") && Integer.parseInt(userprops.getProperty("properties.version")) < internalversion)) {
+                System.out.println("Properties file version mismatch, overwriting with new version: found " + Integer.parseInt(userprops.getProperty("properties.version")) + ", required " + internalversion);
                 overwrite = true;
             }
         }
