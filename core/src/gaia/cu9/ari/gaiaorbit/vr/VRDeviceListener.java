@@ -23,6 +23,16 @@ public interface VRDeviceListener {
     void buttonReleased(VRDevice device, int button);
 
     /**
+     * A button from {@link VRControllerButtons} was touched on the {@link VRDevice}
+     */
+    void buttonTouched(VRDevice device, int button);
+
+    /**
+     * A button from {@link VRControllerButtons} was untouched on the {@link VRDevice}
+     */
+    void buttonUntouched(VRDevice device, int button);
+
+    /**
      * Unhandled event on the {@link VRDevice}
      * 
      * @param code

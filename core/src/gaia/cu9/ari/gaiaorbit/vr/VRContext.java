@@ -42,6 +42,9 @@ import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import com.badlogic.gdx.utils.ObjectMap;
 
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
+import gaia.cu9.ari.gaiaorbit.util.Logger;
+
 /**
  * Responsible for initializing the VR system, managing rendering surfaces,
  * getting tracking device poses, submitting the rendering results to the HMD
@@ -531,6 +534,34 @@ public class VRContext implements Disposable {
                     l.buttonReleased(devices[index], button);
                 }
                 break;
+            case VR.EVREventType_VREvent_ButtonTouch:
+                if (devices[index] == null)
+                    continue;
+                button = event.data().controller().button();
+                devices[index].setButton(button, true);
+                for (VRDeviceListener l : listeners) {
+                    l.buttonTouched(devices[index], button);
+                }
+                break;
+            case VR.EVREventType_VREvent_ButtonUntouch:
+                if (devices[index] == null)
+                    continue;
+                button = event.data().controller().button();
+                devices[index].setButton(button, false);
+                for (VRDeviceListener l : listeners) {
+                    l.buttonUntouched(devices[index], button);
+                }
+                break;
+            case VR.EVREventType_VREvent_DualAnalog_Move:
+            case VR.EVREventType_VREvent_DualAnalog_Press:
+            case VR.EVREventType_VREvent_DualAnalog_Touch:
+            case VR.EVREventType_VREvent_DualAnalog_Unpress:
+            case VR.EVREventType_VREvent_DualAnalog_Untouch:
+                if (GlobalConf.controls.DEBUG_MODE) {
+                    Logger.info("Dual analog event: move/press/touch/unpress/untouch");
+                }
+                break;
+
             default:
                 for (VRDeviceListener l : listeners) {
                     l.event(event.eventType());

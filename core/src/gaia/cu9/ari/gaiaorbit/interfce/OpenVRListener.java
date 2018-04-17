@@ -55,7 +55,7 @@ public class OpenVRListener implements VRDeviceListener {
 
     public void buttonPressed(VRDevice device, int button) {
         if (GlobalConf.controls.DEBUG_MODE) {
-            Logger.info(device + " button pressed: " + button);
+            Logger.info("vr button up [device/code]: " + device.toString() + " / " + button);
         }
 
         if (button == VRControllerButtons.Grip) {
@@ -79,7 +79,7 @@ public class OpenVRListener implements VRDeviceListener {
 
     public void buttonReleased(VRDevice device, int button) {
         if (GlobalConf.controls.DEBUG_MODE) {
-            Logger.info(device + " button released: " + button);
+            Logger.info("vr button released [device/code]: " + device.toString() + " / " + button);
         }
 
         if (button == VRControllerButtons.SteamVR_Trigger) {
@@ -137,6 +137,20 @@ public class OpenVRListener implements VRDeviceListener {
     public void event(int code) {
         if (GlobalConf.controls.DEBUG_MODE) {
             Logger.info("Unhandled event: " + code);
+        }
+    }
+
+    @Override
+    public void buttonTouched(VRDevice device, int button) {
+        if (GlobalConf.controls.DEBUG_MODE) {
+            Logger.info("vr button touched [device/code]: " + device.toString() + " / " + button);
+        }
+    }
+
+    @Override
+    public void buttonUntouched(VRDevice device, int button) {
+        if (GlobalConf.controls.DEBUG_MODE) {
+            Logger.info("vr button untouched [device/code]: " + device.toString() + " / " + button);
         }
     }
 }
