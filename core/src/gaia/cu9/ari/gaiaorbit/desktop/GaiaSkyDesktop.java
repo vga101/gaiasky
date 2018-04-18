@@ -412,11 +412,12 @@ public class GaiaSkyDesktop implements IObserver {
             // Analytics stop event
             Future<GoogleAnalyticsResponse> f1 = AnalyticsReporting.getInstance().sendTimingAppReport();
 
-            try {
-                f1.get(2000, TimeUnit.MILLISECONDS);
-            } catch (Exception e) {
-                Logger.error(e);
-            }
+            if (f1 != null)
+                try {
+                    f1.get(2000, TimeUnit.MILLISECONDS);
+                } catch (Exception e) {
+                    Logger.error(e);
+                }
 
         }
     }
