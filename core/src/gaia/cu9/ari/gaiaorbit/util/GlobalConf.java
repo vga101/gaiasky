@@ -203,6 +203,12 @@ public class GlobalConf {
             case CONTRAST_CMD:
                 POSTPROCESS_CONTRAST = MathUtils.clamp((float) data[0], Constants.MIN_CONTRAST, Constants.MAX_CONTRAST);
                 break;
+            case HUE_CMD:
+                POSTPROCESS_HUE = MathUtils.clamp((float) data[0], Constants.MIN_HUE, Constants.MAX_HUE);
+                break;
+            case SATURATION_CMD:
+                POSTPROCESS_SATURATION = MathUtils.clamp((float) data[0], Constants.MIN_SATURATION, Constants.MAX_SATURATION);
+                break;
             default:
                 break;
             }
