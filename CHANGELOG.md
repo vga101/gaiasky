@@ -6,6 +6,11 @@
 
 **Implemented enhancements:**
 
+- Add hue and saturation to levels [\#263](https://github.com/langurmonkey/gaiasky/issues/263)
+- Add support for asteroind positions additionally to orbits [\#262](https://github.com/langurmonkey/gaiasky/issues/262)
+- Add Hammer-Aitoff and cylindrical projections to cubemap mode [\#260](https://github.com/langurmonkey/gaiasky/issues/260)
+- Expose dataset chooser to prefs window [\#259](https://github.com/langurmonkey/gaiasky/issues/259)
+- Add projection minimaps [\#255](https://github.com/langurmonkey/gaiasky/issues/255)
 - Add image format and quality for screenshots and frames to config [\#253](https://github.com/langurmonkey/gaiasky/issues/253)
 - Add reset time hotkey [\#252](https://github.com/langurmonkey/gaiasky/issues/252)
 - Apply graphics quality without restart [\#251](https://github.com/langurmonkey/gaiasky/issues/251)
@@ -54,6 +59,9 @@
 
 **Fixed bugs:**
 
+- Fix position discrepancy of stars in stereo mode \(points vs billboards\) [\#258](https://github.com/langurmonkey/gaiasky/issues/258)
+- Screenshot and frame mode switch from simple to advanced produces null pointer [\#257](https://github.com/langurmonkey/gaiasky/issues/257)
+- Refactor time [\#256](https://github.com/langurmonkey/gaiasky/issues/256)
 - Streaming catalog loader never attempts previously discarded pages [\#241](https://github.com/langurmonkey/gaiasky/issues/241)
 - Fix returning from panorama mode through stereo mode [\#238](https://github.com/langurmonkey/gaiasky/issues/238)
 - Add object scaling to scripting API [\#227](https://github.com/langurmonkey/gaiasky/issues/227)
@@ -77,6 +85,7 @@
 
 **Closed issues:**
 
+- Is this update also coming? [\#261](https://github.com/langurmonkey/gaiasky/issues/261)
 - Enable particle effects [\#254](https://github.com/langurmonkey/gaiasky/issues/254)
 - Add-ons [\#250](https://github.com/langurmonkey/gaiasky/issues/250)
 - Crash with TGAS GPU dataset [\#236](https://github.com/langurmonkey/gaiasky/issues/236)

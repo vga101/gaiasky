@@ -220,8 +220,8 @@ task dist (dependsOn: gaiaskyJar, description: "Compiles the project, creates th
 			
 			exclude "**/constel_id.csv"
 			
-			//exclude "**/tex/*-high.jpg"
-			//exclude "**/tex/*-high.png"
+			exclude "**/tex/*-high.jpg"
+			exclude "**/tex/*-high.png"
 			
 			exclude "dummyversion"
 	
