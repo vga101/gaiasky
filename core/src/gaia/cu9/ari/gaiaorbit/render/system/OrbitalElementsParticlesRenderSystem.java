@@ -20,7 +20,6 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.Orbit;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.OrbitComponent;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
-import gaia.cu9.ari.gaiaorbit.util.GlobalConf.ProgramConf.StereoProfile;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
 import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
@@ -130,15 +129,17 @@ public class OrbitalElementsParticlesRenderSystem extends ImmediateRenderSystem 
 
                 ShaderProgram shaderProgram = getShaderProgram();
 
+                boolean stereohw = GlobalConf.program.isStereoHalfWidth();
+
                 shaderProgram.begin();
                 shaderProgram.setUniformMatrix("u_projModelView", camera.getCamera().combined);
                 shaderProgram.setUniformMatrix("u_eclToEq", maux.setToRotation(0, 1, 0, -90).mul(Coordinates.equatorialToEclipticF()));
                 shaderProgram.setUniformf("u_camPos", camera.getCurrent().getPos().put(auxf1));
                 shaderProgram.setUniformf("u_alpha", alphas[first.ct.getFirstOrdinal()] * first.getOpacity());
-                shaderProgram.setUniformf("u_ar", GlobalConf.program.STEREOSCOPIC_MODE && (GlobalConf.program.STEREO_PROFILE != StereoProfile.HD_3DTV && GlobalConf.program.STEREO_PROFILE != StereoProfile.ANAGLYPHIC) ? 0.5f : 1f);
+                shaderProgram.setUniformf("u_ar", stereohw ? 0.5f : 1f);
                 shaderProgram.setUniformf("u_size", rc.scaleFactor);
-                shaderProgram.setUniformf("u_scaleFactor", GlobalConf.SCALE_FACTOR);
-                shaderProgram.setUniformf("u_ar", GlobalConf.program.STEREOSCOPIC_MODE && (GlobalConf.program.STEREO_PROFILE != StereoProfile.HD_3DTV && GlobalConf.program.STEREO_PROFILE != StereoProfile.ANAGLYPHIC) ? 0.5f : 1f);
+                shaderProgram.setUniformf("u_scaleFactor", GlobalConf.SCALE_FACTOR * (stereohw ? 2 : 1));
+                shaderProgram.setUniformf("u_ar", stereohw ? 0.5f : 1f);
                 shaderProgram.setUniformf("u_profileDecay", 0.1f);
                 double currt = AstroUtils.getJulianDate(GaiaSky.instance.time.getTime());
                 shaderProgram.setUniformf("u_t", (float) currt);
