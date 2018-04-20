@@ -271,7 +271,7 @@ public class DesktopConfInit extends ConfInit {
         boolean RENDER_SCREENSHOT_TIME = Boolean.parseBoolean(p.getProperty("graphics.render.time"));
 
         ScreenshotMode FRAME_MODE = ScreenshotMode.valueOf(p.getProperty("graphics.render.mode"));
-        ImageFormat FRAME_FORMAT = ImageFormat.valueOf(p.getProperty("graphcis.render.format", "jpg").toUpperCase());
+        ImageFormat FRAME_FORMAT = ImageFormat.valueOf(p.getProperty("graphics.render.format", "jpg").toUpperCase());
         float FRAME_QUALITY = Float.parseFloat(p.getProperty("graphics.render.quality", "0.93"));
         FrameConf fc = new FrameConf();
         fc.initialize(RENDER_WIDTH, RENDER_HEIGHT, RENDER_TARGET_FPS, CAMERA_REC_TARGET_FPS, AUTO_FRAME_OUTPUT_CAMERA_PLAY, RENDER_FOLDER, RENDER_FILE_NAME, RENDER_SCREENSHOT_TIME, RENDER_SCREENSHOT_TIME, FRAME_MODE, FRAME_FORMAT, FRAME_QUALITY);
