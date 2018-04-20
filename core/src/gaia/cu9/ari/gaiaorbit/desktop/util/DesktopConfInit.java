@@ -19,6 +19,7 @@ import com.badlogic.gdx.Gdx;
 import gaia.cu9.ari.gaiaorbit.desktop.GaiaSkyDesktop;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.util.ConfInit;
+import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf.ControlsConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf.DataConf;
@@ -316,7 +317,7 @@ public class DesktopConfInit extends ConfInit {
 
         /** SPACECRAFT CONF **/
         SpacecraftConf scc = new SpacecraftConf();
-        float sC_RESPONSIVENESS = Float.parseFloat(p.getProperty("spacecraft.responsiveness", "1.65e7"));
+        float sC_RESPONSIVENESS = MathUtilsd.lint(Float.parseFloat(p.getProperty("spacecraft.responsiveness", "0.1")), 0, 1, Constants.MIN_SC_RESPONSIVENESS, Constants.MAX_SC_RESPONSIVENESS);
         boolean sC_VEL_TO_DIRECTION = Boolean.parseBoolean(p.getProperty("spacecraft.velocity.direction", "false"));
         float sC_HANDLING_FRICTION = Float.parseFloat(p.getProperty("spacecraft.handling.friction", "0.37"));
         boolean sC_SHOW_AXES = Boolean.parseBoolean(p.getProperty("spacecraft.show.axes", "false"));
@@ -455,7 +456,7 @@ public class DesktopConfInit extends ConfInit {
         p.setProperty("controls.debugmode", Boolean.toString(GlobalConf.controls.DEBUG_MODE));
 
         /** SPACECRAFT **/
-        p.setProperty("spacecraft.responsiveness", Float.toString(GlobalConf.spacecraft.SC_RESPONSIVENESS));
+        p.setProperty("spacecraft.responsiveness", Float.toString(MathUtilsd.lint(GlobalConf.spacecraft.SC_RESPONSIVENESS, Constants.MIN_SC_RESPONSIVENESS, Constants.MAX_SC_RESPONSIVENESS, 0, 1)));
         p.setProperty("spacecraft.velocity.direction", Boolean.toString(GlobalConf.spacecraft.SC_VEL_TO_DIRECTION));
         p.setProperty("spacecraft.handling.friction", Float.toString(GlobalConf.spacecraft.SC_HANDLING_FRICTION));
         p.setProperty("spacecraft.show.axes", Boolean.toString(GlobalConf.spacecraft.SC_SHOW_AXES));
