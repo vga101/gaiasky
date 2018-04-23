@@ -104,6 +104,9 @@ public class OpenVRListener implements VRDeviceListener {
             // Change mode from free to focus and viceversa
             CameraMode cm = cam.getMode().equals(CameraMode.Focus) ? CameraMode.Free_Camera : CameraMode.Focus;
             EventManager.instance.post(Events.CAMERA_MODE_CMD, cm);
+        } else if (button == VRControllerButtons.B) {
+            // Toggle VR GUI
+            EventManager.instance.post(Events.DISPLAY_VR_GUI_CMD, "VR GUI");
         }
     }
 

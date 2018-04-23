@@ -35,6 +35,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.NaturalCamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
 import gaia.cu9.ari.gaiaorbit.scenegraph.StubModel;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.vr.VRContext;
 import gaia.cu9.ari.gaiaorbit.vr.VRContext.Space;
@@ -176,7 +177,8 @@ public class SGROpenVR extends SGRAbstract implements ISGR, IObserver {
             // Camera
             camera.render(1080, 1200);
 
-            //renderGui(infoGui.left());
+            if (GlobalConf.runtime.DISPLAY_VR_GUI)
+                renderGui(infoGui.left());
 
             if (r) {
                 renderStubModels(modelBatch, camera, camera.getCamera(), controllerObjects, 0);
@@ -198,7 +200,8 @@ public class SGROpenVR extends SGRAbstract implements ISGR, IObserver {
             // Camera
             camera.render(1080, 1200);
 
-            //renderGui(infoGui.right());
+            if (GlobalConf.runtime.DISPLAY_VR_GUI)
+                renderGui(infoGui.right());
 
             if (r) {
                 renderStubModels(modelBatch, camera, camera.getCamera(), controllerObjects, 1);

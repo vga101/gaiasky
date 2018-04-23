@@ -38,7 +38,7 @@ public abstract class StreamingOctreeLoader implements IObserver, ISceneGraphLoa
     /**
      * Data will be pre-loaded at startup down to this octree depth.
      */
-    protected static final int PRELOAD_DEPTH = 2;
+    protected static final int PRELOAD_DEPTH = 3;
     /**
      * Default load queue size in octants
      */
@@ -284,8 +284,8 @@ public abstract class StreamingOctreeLoader implements IObserver, ISceneGraphLoa
     }
 
     /**
-     * Tells the daemon to immediately stop the loading of 
-     * octants and wait for new data
+     * Tells the daemon to immediately stop the loading of octants and wait for
+     * new data
      */
     public void abortCurrentLoading() {
         daemon.abort();

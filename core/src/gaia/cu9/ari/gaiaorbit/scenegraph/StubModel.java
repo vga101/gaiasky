@@ -55,7 +55,7 @@ public class StubModel extends AbstractPositionEntity implements IModelRenderabl
         if (rg != null) {
             addToRender(this, rg);
         }
-        addToRender(this, RenderGroup.LINE);
+        addToRender(this, RenderGroup.LINE_VR);
     }
 
     @Override

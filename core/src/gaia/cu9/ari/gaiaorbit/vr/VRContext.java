@@ -118,6 +118,7 @@ public class VRContext implements Disposable {
         public static final int DPad_Right = 5;
         public static final int DPad_Down = 6;
         public static final int A = 7;
+        public static final int B = 1;
 
         public static final int ProximitySensor = 31;
 

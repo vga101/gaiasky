@@ -47,7 +47,7 @@ sourceSets {
 
 task run(dependsOn: jar, type: JavaExec, description: "Runs the desktop project in Linux and Windows systems") {
     main = project.mainClassName
-    systemProperties['properties.file'] = ''
+    systemProperties['properties.file'] = 'C:/Users/tsagrista/.gaiasky/global.vr.properties'
     systemProperties['assets.location'] = '../assets/'
     //systemProperties['org.slf4j.simpleLogger.defaultLogLevel'] = 'warn'  // logging levels (e.g. REST server warn, info, debug)
     //systemProperties['org.slf4j.simpleLogger.showThreadName'] = 'false'

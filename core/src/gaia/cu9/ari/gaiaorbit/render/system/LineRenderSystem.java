@@ -29,6 +29,7 @@ public class LineRenderSystem extends ImmediateRenderSystem {
     private Array<double[]> provisionalLines;
     private LineArraySorter sorter;
     private Pool<double[]> dpool;
+    private float lineWidth = 1f;
 
     protected Vector3 aux2;
 
@@ -75,6 +76,10 @@ public class LineRenderSystem extends ImmediateRenderSystem {
         return array;
     }
 
+    public void setLineWidth(float lw) {
+        this.lineWidth = lw;
+    }
+
     @Override
     public void renderStud(Array<IRenderable> renderables, ICamera camera, double t) {
         // Enable GL_LINE_SMOOTH
@@ -85,7 +90,7 @@ public class LineRenderSystem extends ImmediateRenderSystem {
         Gdx.gl20.glEnable(GL20.GL_BLEND);
         Gdx.gl20.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
         // Regular
-        Gdx.gl.glLineWidth(1f * GlobalConf.SCALE_FACTOR);
+        Gdx.gl.glLineWidth(lineWidth * GlobalConf.SCALE_FACTOR);
 
         this.camera = camera;
         int size = renderables.size;
