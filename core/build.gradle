@@ -57,7 +57,7 @@ task run(dependsOn: jar, type: JavaExec, description: "Runs the desktop project 
     // CMS GC
     // jvmArgs = ['-server', '-Xms2g', '-Xmx3g', '-XX:+UseConcMarkSweepGC', '-XX:+UseParNewGC', '-XX:MaxGCPauseMillis=5', '-XX:+CMSParallelRemarkEnabled', '-XX:CMSInitiatingOccupancyFraction=60', '-XX:MaxTenuringThreshold=4', '-XX:MaxNewSize=384m', '-XX:NewSize=384m', '-XX:SurvivorRatio=12']
     // G1 GC
-    jvmArgs = ['-Xms2g', '-Xmx4g', '-XX:+UseG1GC']
+    jvmArgs = ['-Xms4g', '-Xmx8g', '-XX:+UseG1GC']
     classpath = sourceSets.main.runtimeClasspath
     classpath += files(project.assetsDir)
     standardInput = System.in

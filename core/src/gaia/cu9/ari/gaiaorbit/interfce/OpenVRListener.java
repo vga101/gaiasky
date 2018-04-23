@@ -55,7 +55,7 @@ public class OpenVRListener implements VRDeviceListener {
 
     public void buttonPressed(VRDevice device, int button) {
         if (GlobalConf.controls.DEBUG_MODE) {
-            Logger.info("vr button up [device/code]: " + device.toString() + " / " + button);
+            Logger.info("vr button down [device/code]: " + device.toString() + " / " + button);
         }
 
         if (button == VRControllerButtons.Grip) {
