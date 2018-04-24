@@ -321,8 +321,8 @@ public class GaiaCatalogWindow extends CollapsibleWindow {
 
                 HorizontalGroup links = new HorizontalGroup();
                 links.align(Align.center);
-                links.pad(5, 5, 5, 5);
-                links.space(10);
+                links.pad(pad / 2f, pad / 2f, pad / 2f, pad / 2f);
+                links.space(pad);
 
                 if (hip)
                     links.addActor(new Link(txt("gui.data.json"), linkStyle, URL_HIP_JSON_SOURCE + st.getHip()));
@@ -337,7 +337,7 @@ public class GaiaCatalogWindow extends CollapsibleWindow {
 
                 table.add(new OwnLabel(txt("gui.data.name"), skin, "msg-17")).padLeft(pad * 2).left();
                 table.add(new OwnLabel(st.getName(), skin, "msg-17")).padLeft(pad * 2).padRight(pad * 2).left();
-                table.row();
+                table.row().padTop(pad * 2);
                 for (int col = 0; col < data[0].length; col++) {
                     Actor first = null;
 
@@ -355,8 +355,8 @@ public class GaiaCatalogWindow extends CollapsibleWindow {
 
                     }
 
-                    table.add(first).padLeft(10).left();
-                    table.add(new OwnLabel(data[1][col], skin, "ui-12")).padLeft(10).padRight(10).left();
+                    table.add(first).padLeft(pad * 2).left();
+                    table.add(new OwnLabel(data[1][col], skin, "ui-12")).padLeft(pad * 2).padRight(pad * 2).left();
                     left();
                     table.row();
                 }
