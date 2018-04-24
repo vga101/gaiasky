@@ -354,6 +354,27 @@ public class NaturalInputListener extends GestureDetector {
 
     }
 
+    public void updateKeys() {
+        if (isKeyPressed(Keys.UP)) {
+            camera.addForwardForce(1.0f);
+        }
+        if (isKeyPressed(Keys.DOWN)) {
+            camera.addForwardForce(-1.0f);
+        }
+        if (isKeyPressed(Keys.RIGHT)) {
+            if (camera.getMode().isFocus())
+                camera.addHorizontalRotation(-1.0f, true);
+            else
+                camera.addYaw(1.0f, true);
+        }
+        if (isKeyPressed(Keys.LEFT)) {
+            if (camera.getMode().isFocus())
+                camera.addHorizontalRotation(1.0f, true);
+            else
+                camera.addYaw(-1.0f, true);
+        }
+    }
+
     public boolean isKeyPressed(int keycode) {
         return pressedKeys.contains(keycode);
     }

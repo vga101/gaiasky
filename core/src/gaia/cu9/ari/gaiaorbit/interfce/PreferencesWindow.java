@@ -661,6 +661,15 @@ public class PreferencesWindow extends GenericDialog {
         controls.add(new OwnLabel(txt("gui.keymappings.action"), skin, "header")).left();
         controls.add(new OwnLabel(txt("gui.keymappings.keys"), skin, "header")).left().row();
 
+        controls.add(new OwnLabel(txt("action.forward"), skin)).left();
+        controls.add(new OwnLabel(Keys.toString(Keys.UP).toUpperCase(), skin)).left().row();
+        controls.add(new OwnLabel(txt("action.backward"), skin)).left();
+        controls.add(new OwnLabel(Keys.toString(Keys.DOWN).toUpperCase(), skin)).left().row();
+        controls.add(new OwnLabel(txt("action.left"), skin)).left();
+        controls.add(new OwnLabel(Keys.toString(Keys.LEFT).toUpperCase(), skin)).left().row();
+        controls.add(new OwnLabel(txt("action.right"), skin)).left();
+        controls.add(new OwnLabel(Keys.toString(Keys.RIGHT).toUpperCase(), skin)).left().row();
+
         // Controls
         for (String[] pair : data) {
             controls.add(new OwnLabel(pair[0], skin)).left();
