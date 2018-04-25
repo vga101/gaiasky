@@ -19,15 +19,18 @@ Heidelberg <http://uni-heidelberg.de>`__).
 
 .. image:: http://gaia.ari.uni-heidelberg.de/gaiasky/files/screenshots/dr2/thumbs/20180420_screenshot_00000.jpg
   :target: http://gaia.ari.uni-heidelberg.de/gaiasky/files/screenshots/dr2/20180420_screenshot_00000.png
-  :width: 27%
-
-.. image:: http://gaia.ari.uni-heidelberg.de/gaiasky/files/screenshots/dr2/20180420_screenshot_00002.png
   :width: 24%
 
-.. image:: http://gaia.ari.uni-heidelberg.de/gaiasky/files/screenshots/dr2/20180420_screenshot_00001.png
+.. image:: http://gaia.ari.uni-heidelberg.de/gaiasky/files/screenshots/dr2/thumbs/20180420_screenshot_00002.jpg
+  :target: http://gaia.ari.uni-heidelberg.de/gaiasky/files/screenshots/dr2/20180420_screenshot_00002.png
   :width: 24%
 
-.. image:: http://gaia.ari.uni-heidelberg.de/gaiasky/files/screenshots/dr2/20180420_screenshot_00014.png
+.. image:: http://gaia.ari.uni-heidelberg.de/gaiasky/files/screenshots/dr2/thumbs/20180420_screenshot_00001.jpg
+  :target: http://gaia.ari.uni-heidelberg.de/gaiasky/files/screenshots/dr2/20180420_screenshot_00001.png
+  :width: 24%
+
+.. image:: http://gaia.ari.uni-heidelberg.de/gaiasky/files/screenshots/dr2/thumbs/20180420_screenshot_00014.jpg
+  :target: http://gaia.ari.uni-heidelberg.de/gaiasky/files/screenshots/dr2/20180420_screenshot_00014.png
   :width: 24%
 
 *  Visit our `home page <http://www.zah.uni-heidelberg.de/gaia/outreach/gaiasky/>`__
