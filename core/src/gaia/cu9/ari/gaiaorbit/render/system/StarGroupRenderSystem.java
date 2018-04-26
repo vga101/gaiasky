@@ -211,7 +211,7 @@ public class StarGroupRenderSystem extends ImmediateRenderSystem implements IObs
                 }
             }
         }
-        // Restore
+        // Restore alpha blending
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
     }
 

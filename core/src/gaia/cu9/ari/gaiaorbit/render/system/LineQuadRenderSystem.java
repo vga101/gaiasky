@@ -1,5 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.render.system;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.VertexAttribute;
@@ -232,6 +233,9 @@ public class LineQuadRenderSystem extends LineRenderSystem {
         for (double[] l : provisionalLines)
             addLinePostproc(l[0], l[1], l[2], l[3], l[4], l[5], l[6], l[7], l[8], l[9], l[10], l[11], l[13]);
 
+        // Additive blending
+        Gdx.gl20.glBlendFunc(GL20.GL_ONE, GL20.GL_ONE);
+
         ShaderProgram shaderProgram = getShaderProgram();
 
         shaderProgram.begin();
@@ -250,6 +254,9 @@ public class LineQuadRenderSystem extends LineRenderSystem {
         }
 
         shaderProgram.end();
+
+        // Restore alpha blending
+        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 
         // Reset mesh index and current
         meshIdx = 1;
