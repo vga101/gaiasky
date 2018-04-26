@@ -108,7 +108,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
     private Array<IRenderSystem> renderProcesses;
 
-    RenderSystemRunnable blendNoDepthRunnable, blendDepthRunnable;
+    RenderSystemRunnable blendNoDepthRunnable, blendDepthRunnable, additiveBlendDepthRunnable, restoreRegularBlend;
 
     /** The particular current scene graph renderer **/
     private ISGR sgr;
@@ -221,6 +221,21 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
                 Gdx.gl.glEnable(GL20.GL_BLEND);
                 Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
                 Gdx.gl.glDepthMask(true);
+            }
+        };
+        additiveBlendDepthRunnable = new RenderSystemRunnable() {
+            @Override
+            public void run(AbstractRenderSystem renderSystem, Array<IRenderable> renderables, ICamera camera) {
+                Gdx.gl.glEnable(GL20.GL_BLEND);
+                Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
+                Gdx.gl.glBlendFunc(GL20.GL_ONE, GL20.GL_ONE);
+                Gdx.gl.glDepthMask(true);
+            }
+        };
+        restoreRegularBlend = new RenderSystemRunnable() {
+            @Override
+            public void run(AbstractRenderSystem renderSystem, Array<IRenderable> renderables, ICamera camera) {
+                Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
             }
         };
 
@@ -555,7 +570,8 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
         // BILLBOARD SSO
         AbstractRenderSystem billboardSSOProc = new BillboardStarRenderSystem(RenderGroup.BILLBOARD_SSO, alphas, starShaders, "img/sso.png", -1);
-        billboardSSOProc.setPreRunnable(blendDepthRunnable);
+        billboardSSOProc.setPreRunnable(additiveBlendDepthRunnable);
+        billboardSSOProc.setPostRunnable(restoreRegularBlend);
 
         // MODEL ATMOSPHERE
         AbstractRenderSystem modelAtmProc = new ModelBatchRenderSystem(RenderGroup.MODEL_ATM, alphas, modelBatchAtmosphere, true) {
@@ -1118,7 +1134,8 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         } else {
             // Quad
             sys = new LineQuadRenderSystem(RenderGroup.LINE, alphas, lineQuadShaders);
-            sys.setPreRunnable(blendDepthRunnable);
+            sys.setPreRunnable(additiveBlendDepthRunnable);
+            sys.setPostRunnable(restoreRegularBlend);
         }
         return sys;
     }
