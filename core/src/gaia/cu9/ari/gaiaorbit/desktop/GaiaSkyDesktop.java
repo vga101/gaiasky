@@ -263,7 +263,7 @@ public class GaiaSkyDesktop implements IObserver {
 
     /**
      * Initialises the configuration file. Tries to load first the file in
-     * <code>$HOME/.gaiasky/global.properties</code>. Checks the
+     * <code>$HOME/.gaiasky/global.vr.properties</code>. Checks the
      * <code>properties.version</code> key to determine whether the file is
      * compatible or not. If it is, it uses the existing file. If it is not, it
      * replaces it with the default file.
@@ -277,11 +277,11 @@ public class GaiaSkyDesktop implements IObserver {
         // Use user folder
         File userFolder = SysUtilsFactory.getSysUtils().getGSHomeDir();
         userFolder.mkdirs();
-        File userFolderConfFile = new File(userFolder, "global.properties");
+        File userFolderConfFile = new File(userFolder, "global.vr.properties");
 
         // Internal config
         File confFolder = new File("conf" + File.separator);
-        File internalFolderConfFile = new File(confFolder, "global.properties");
+        File internalFolderConfFile = new File(confFolder, "global.vr.properties");
 
         boolean overwrite = ow;
         if (userFolderConfFile.exists()) {
@@ -310,7 +310,7 @@ public class GaiaSkyDesktop implements IObserver {
                 if (!new File("../assets/conf" + File.separator).exists()) {
                     throw new IOException("File ../assets/conf does not exist!");
                 }
-                copyFile(new File("../assets/conf" + File.separator + "global.properties"), userFolderConfFile, overwrite);
+                copyFile(new File("../assets/conf" + File.separator + "global.vr.properties"), userFolderConfFile, overwrite);
             }
         }
         String props = userFolderConfFile.getAbsolutePath();

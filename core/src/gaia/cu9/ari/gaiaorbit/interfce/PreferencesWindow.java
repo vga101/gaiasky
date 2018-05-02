@@ -1336,11 +1336,11 @@ public class PreferencesWindow extends GenericDialog {
     private void reloadDefaultPreferences() {
         // User config file
         File userFolder = SysUtilsFactory.getSysUtils().getGSHomeDir();
-        File userFolderConfFile = new File(userFolder, "global.properties");
+        File userFolderConfFile = new File(userFolder, "global.vr.properties");
 
         // Internal config
         File confFolder = new File("conf" + File.separator);
-        File internalFolderConfFile = new File(confFolder, "global.properties");
+        File internalFolderConfFile = new File(confFolder, "global.vr.properties");
 
         // Delete current conf
         if (userFolderConfFile.exists()) {
@@ -1357,7 +1357,7 @@ public class PreferencesWindow extends GenericDialog {
                 if (!new File("../android/assets/conf" + File.separator).exists()) {
                     throw new IOException("File ../android/assets/conf does not exist!");
                 }
-                copyFile(new File("../android/assets/conf" + File.separator + "global.properties"), userFolderConfFile, true);
+                copyFile(new File("../android/assets/conf" + File.separator + "global.vr.properties"), userFolderConfFile, true);
             }
 
         } catch (Exception e) {

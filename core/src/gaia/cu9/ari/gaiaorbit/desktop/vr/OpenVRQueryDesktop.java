@@ -42,7 +42,7 @@ public class OpenVRQueryDesktop implements IObserver {
             // Initialize date format
             DateFormatFactory.initialize(new DesktopDateFormatFactory());
 
-            ConfInit.initialize(new DesktopConfInit(new FileInputStream(new File(ASSETS_LOC + "conf/global.properties")), new FileInputStream(new File(ASSETS_LOC + "data/dummyversion"))));
+            ConfInit.initialize(new DesktopConfInit(new FileInputStream(new File(ASSETS_LOC + "conf/global.vr.properties")), new FileInputStream(new File(ASSETS_LOC + "data/dummyversion"))));
 
             I18n.initialize(new FileHandle(ASSETS_LOC + "i18n/gsbundle"));
 

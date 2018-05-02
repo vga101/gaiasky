@@ -44,7 +44,7 @@ import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 
 /**
  * Desktop GlobalConf initialiser, where the configuration comes from a
- * global.properties file.
+ * global.vr.properties file.
  * 
  * @author tsagrista
  *
@@ -58,7 +58,7 @@ public class DesktopConfInit extends ConfInit {
     public DesktopConfInit(String assetsLocation) {
         super();
         try {
-            String propsFileProperty = System.getProperty("properties.file");
+            String propsFileProperty = System.getProperty("properties.vr.file");
             if (propsFileProperty == null || propsFileProperty.isEmpty()) {
                 propsFileProperty = initConfigFile(false);
             }
@@ -472,11 +472,11 @@ public class DesktopConfInit extends ConfInit {
         // Use user folder
         File userFolder = SysUtilsFactory.getSysUtils().getGSHomeDir();
         userFolder.mkdirs();
-        File userFolderConfFile = new File(userFolder, "global.properties");
+        File userFolderConfFile = new File(userFolder, "global.vr.properties");
 
         if (ow || !userFolderConfFile.exists()) {
             // Copy file
-            copyFile(new File("conf" + File.separator + "global.properties"), userFolderConfFile, ow);
+            copyFile(new File("conf" + File.separator + "global.vr.properties"), userFolderConfFile, ow);
         }
         String props = userFolderConfFile.getAbsolutePath();
         System.setProperty("properties.file", props);
