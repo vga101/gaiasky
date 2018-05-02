@@ -28,7 +28,6 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.StarGroup;
 import gaia.cu9.ari.gaiaorbit.scenegraph.StarGroup.StarBean;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
-import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.parse.Parser;
 import uk.ac.starlink.util.DataSource;
 import uk.ac.starlink.util.URLDataSource;
@@ -48,12 +47,8 @@ public class SAMPClient implements IObserver {
     private Map<String, String> mapIdUrl;
     private boolean preventProgrammaticEvents = false;
 
-    private Vector3d aux1, aux2;
-
     public SAMPClient() {
         super();
-        aux1 = new Vector3d();
-        aux2 = new Vector3d();
         EventManager.instance.subscribe(this, Events.FOCUS_CHANGED, Events.DISPOSE);
     }
 
@@ -199,26 +194,33 @@ public class SAMPClient implements IObserver {
             DataSource ds = new URLDataSource(new URL(url));
             @SuppressWarnings("unchecked")
             Array<StarBean> data = (Array<StarBean>) provider.loadData(ds, 1.0f);
-            StarGroup sg = new StarGroup();
-            sg.setName(id);
-            sg.setParent("Universe");
-            sg.setFadeout(new double[] { 21e2, 1e5 });
-            sg.setLabelcolor(new double[] { 1.0, 1.0, 1.0, 1.0 });
-            sg.setColor(new double[] { 1.0, 1.0, 1.0, 0.25 });
-            sg.setSize(6.0);
-            sg.setLabelposition(new double[] { 0.0, -5.0e7, -4e8 });
-            sg.setCt("Stars");
-            sg.setData(data);
 
-            mapIdSg.put(id, sg);
-            mapIdUrl.put(id, url);
+            if (data != null && data.size > 0) {
+                StarGroup sg = new StarGroup();
+                sg.setName(id);
+                sg.setParent("Universe");
+                sg.setFadeout(new double[] { 21e2, 1e5 });
+                sg.setLabelcolor(new double[] { 1.0, 1.0, 1.0, 1.0 });
+                sg.setColor(new double[] { 1.0, 1.0, 1.0, 0.25 });
+                sg.setSize(6.0);
+                sg.setLabelposition(new double[] { 0.0, -5.0e7, -4e8 });
+                sg.setCt("Stars");
+                sg.setData(data);
 
-            // Insert
-            Gdx.app.postRunnable(() -> {
-                sg.doneLoading(null);
-                GaiaSky.instance.sg.insert(sg, true);
-            });
-            return true;
+                mapIdSg.put(id, sg);
+                mapIdUrl.put(id, url);
+
+                // Insert
+                Gdx.app.postRunnable(() -> {
+                    sg.doneLoading(null);
+                    GaiaSky.instance.sg.insert(sg, true);
+                });
+                Logger.info(data.size + " objects loaded via SAMP");
+                return true;
+            } else {
+                // No data has been loaded
+                return false;
+            }
         } catch (Exception e) {
             Logger.error(e);
             return false;
