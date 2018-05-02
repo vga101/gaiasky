@@ -9,7 +9,7 @@
 [![GitHub tag](https://img.shields.io/github/tag/langurmonkey/gaiasky.svg)](https://github.com/langurmonkey/gaiasky/tags/)
 
 [**Gaia Sky**](https://zah.uni-heidelberg.de/gaia/outreach/gaiasky) is a real-time, 3D, astronomy visualisation software that
-runs on Windows, Linux and MacOS. It is developed in the framework of
+runs on Windows, Linux and macOS. It is developed in the framework of
 [ESA](http://www.esa.int/ESA)'s [Gaia mission](http://sci.esa.int/gaia) to chart about 1 billion stars of our Galaxy.
 To get the latest up-to-date and most complete information,
 
@@ -132,7 +132,7 @@ you can use the provided uninstaller in the Gaia Sky folder.
 #### 1.2.3 macOS
 
 For macOS we provide a `gaiasky_macos_<version>.dmg` file
-which is installed by unpacking into the Applications folder. Get it [here](https://zah.uni-heidelberg.de/gaia/outreach/gaiasky/downloads/). Once unpacked, you can run it by clicking on it.
+which is installed by double-clicking on it and following the on-screen instructions. Get it [here](https://zah.uni-heidelberg.de/gaia/outreach/gaiasky/downloads/). Once unpacked, you can run it by clicking on it.
 
 #### 1.2.4 Compressed (TGZ) package
 
@@ -190,7 +190,7 @@ file specified in the last column in the table (**Catalog file**).
 
 ### 2.4 Running
 
-Finally, run Gaia Sky (Linux, MacOS) with:
+Finally, run Gaia Sky (Linux, macOS) with:
 
 ```
 $  gradlew core:run
