@@ -40,6 +40,7 @@ public class CameraComponent extends GuiComponent implements IObserver {
     protected CheckBox focusLock, orientationLock, crosshair, cinematic;
     protected OwnTextIconButton button3d, buttonDome, buttonCubemap, buttonAnaglyph, button3dtv, buttonVR, buttonCrosseye;
     protected boolean fovFlag = true;
+    private boolean fieldLock = false;
 
     public CameraComponent(Skin skin, Stage stage) {
         super(skin, stage);
@@ -195,7 +196,7 @@ public class CameraComponent extends GuiComponent implements IObserver {
         cameraSpeed.setWidth(width);
         cameraSpeed.setValue((float) (GlobalConf.scene.CAMERA_SPEED * Constants.CAMERA_SPEED_FACTOR));
         cameraSpeed.addListener(event -> {
-            if (event instanceof ChangeEvent) {
+            if (!fieldLock && event instanceof ChangeEvent) {
                 EventManager.instance.post(Events.CAMERA_SPEED_CMD, cameraSpeed.getValue() / Constants.CAMERA_SPEED_FACTOR, true);
                 speed.setText(Integer.toString((int) cameraSpeed.getValue()));
                 return true;
@@ -211,7 +212,7 @@ public class CameraComponent extends GuiComponent implements IObserver {
         rotateSpeed.setWidth(width);
         rotateSpeed.setValue((float) MathUtilsd.lint(GlobalConf.scene.ROTATION_SPEED, Constants.MIN_ROT_SPEED, Constants.MAX_ROT_SPEED, Constants.MIN_SLIDER, Constants.MAX_SLIDER));
         rotateSpeed.addListener(event -> {
-            if (event instanceof ChangeEvent) {
+            if (!fieldLock && event instanceof ChangeEvent) {
                 EventManager.instance.post(Events.ROTATION_SPEED_CMD, (float) MathUtilsd.lint(rotateSpeed.getValue(), Constants.MIN_SLIDER, Constants.MAX_SLIDER, Constants.MIN_ROT_SPEED, Constants.MAX_ROT_SPEED), true);
                 rotate.setText(Integer.toString((int) rotateSpeed.getValue()));
                 return true;
@@ -227,7 +228,7 @@ public class CameraComponent extends GuiComponent implements IObserver {
         turnSpeed.setWidth(width);
         turnSpeed.setValue((float) MathUtilsd.lint(GlobalConf.scene.TURNING_SPEED, Constants.MIN_TURN_SPEED, Constants.MAX_TURN_SPEED, Constants.MIN_SLIDER, Constants.MAX_SLIDER));
         turnSpeed.addListener(event -> {
-            if (event instanceof ChangeEvent) {
+            if (!fieldLock && event instanceof ChangeEvent) {
                 EventManager.instance.post(Events.TURNING_SPEED_CMD, MathUtilsd.lint(turnSpeed.getValue(), Constants.MIN_SLIDER, Constants.MAX_SLIDER, Constants.MIN_TURN_SPEED, Constants.MAX_TURN_SPEED), true);
                 turn.setText(Integer.toString((int) turnSpeed.getValue()));
                 return true;
@@ -359,7 +360,9 @@ public class CameraComponent extends GuiComponent implements IObserver {
             if (!interf) {
                 float value = (Float) data[0];
                 value = MathUtilsd.lint(value, Constants.MIN_ROT_SPEED, Constants.MAX_ROT_SPEED, Constants.MIN_SLIDER, Constants.MAX_SLIDER);
+                fieldLock = true;
                 rotateSpeed.setValue(value);
+                fieldLock = false;
                 rotate.setText(Integer.toString((int) value));
             }
             break;
@@ -368,7 +371,9 @@ public class CameraComponent extends GuiComponent implements IObserver {
             if (!interf) {
                 float value = (Float) data[0];
                 value *= Constants.CAMERA_SPEED_FACTOR;
+                fieldLock = true;
                 cameraSpeed.setValue(value);
+                fieldLock = false;
                 speed.setText(Integer.toString((int) value));
             }
             break;
@@ -378,7 +383,9 @@ public class CameraComponent extends GuiComponent implements IObserver {
             if (!interf) {
                 float value = (Float) data[0];
                 value = MathUtilsd.lint(value, Constants.MIN_TURN_SPEED, Constants.MAX_TURN_SPEED, Constants.MIN_SLIDER, Constants.MAX_SLIDER);
+                fieldLock = true;
                 turnSpeed.setValue(value);
+                fieldLock = false;
                 turn.setText(Integer.toString((int) value));
             }
             break;

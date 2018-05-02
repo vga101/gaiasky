@@ -543,13 +543,13 @@ public interface IScriptingInterface {
      *            The visible value.
      */
     public void setVisibility(String key, boolean visible);
-    
+
     /**
      * Sets the number factor of proper motion vectors that are visible. In [1..100].
      * @param factor
      */
     public void setProperMotionsNumberFactor(float factor);
-    
+
     /**
      * Sets the length of the proper motion vectors, in [500..30000].
      * 
@@ -1287,5 +1287,13 @@ public interface IScriptingInterface {
      *            bloom.
      */
     public void setBloom(float value);
+
+    /**
+     * Sets the value of smooth lod transitions, allowing or disallowing octant fade-ins of 
+     * as they come into view.
+     * @param value
+     *            Activate (true) or deactivate (false)
+     */
+    public void setSmoothLodTransitions(boolean value);
 
 }
