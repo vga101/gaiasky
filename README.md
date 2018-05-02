@@ -183,6 +183,8 @@ the `tar` file corresponding to your version -- see table below.
 | TGAS gpu ([1.5.0](http://gaia.ari.uni-heidelberg.de/gaiasky/files/catalogs/tgas/20170731_tgas_gpu_gaiasky_1.5.0.tar.gz), [1.5.1](http://gaia.ari.uni-heidelberg.de/gaiasky/files/catalogs/tgas/20180416_tgas_gpu_gaiasky_1.5.1.tar.gz))  | TGAS catalog. 700 K stars. Version `1.5.1` contains a fix in proper motion and RAVE radial velocities.  | `gaiasky/assets/data/catalog` | [`data/catalog-tgas-hyg.json`](http://gaia.ari.uni-heidelberg.de/gaiasky/files/catalogs/tgas/catalog-tgas-hyg.json), [`data/particles-tgas.json`](http://gaia.ari.uni-heidelberg.de/gaiasky/files/catalogs/tgas/particles-tgas.json) | 
 | [Gaia DR2](http://gaia.ari.uni-heidelberg.de/gaiasky/files/catalogs/dr2/20180419_dr2-20-0.5.tar.gz)  | Gaia DR2 catalog, 9.5 M stars.  | `gaiasky/assets/data/octree/dr2` | [`data/catalog-dr2-default.json`](http://gaia.ari.uni-heidelberg.de/gaiasky/files/catalogs/dr2/catalog-dr2-default.json) | 
 
+Find more catalogs to download [here](https://zah.uni-heidelberg.de/institutes/ari/gaia/outreach/gaiasky/downloads/#dr2catalogs).
+
 First, choose the package corresponding to your Gaia Sky version and extract it into the specified **Extract location**. Then, download the catalog file(s) and put them in `gaiasky/assets/data` and you should be good to go. If you want to put the catalog files in another location, you need to update the path in the catalog files.
 
 Then, you need to point the key `data.json.catalog` in your `$HOME/.gaiasky/global.properties` file to the
