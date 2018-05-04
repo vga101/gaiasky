@@ -27,6 +27,7 @@ import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
 public class MeshObject extends FadeNode implements IModelRenderable, I3DTextRenderable {
 
+    private String description;
     private String transformName;
     private Matrix4 coordinateSystem;
     private Vector3 scale, axis, translate;
@@ -75,14 +76,14 @@ public class MeshObject extends FadeNode implements IModelRenderable, I3DTextRen
                 // Equatorial, nothing
             }
 
-            if (scale != null)
-                coordinateSystem.scl(scale);
             if (axis != null)
                 coordinateSystem.rotate(axis, degrees);
             if (translate != null) {
                 pos.set(translate);
-                coordinateSystem.translate(translate);
+                coordinateSystem.translate(translate.x, translate.y, translate.z);
             }
+            if (scale != null)
+                coordinateSystem.scale(scale.x, scale.y, scale.z);
         }
     }
 
@@ -110,27 +111,6 @@ public class MeshObject extends FadeNode implements IModelRenderable, I3DTextRen
     public void setToLocalTransform(Matrix4 localTransform, boolean forceUpdate) {
         if (forceUpdate) {
             float[] trnsltn = transform.getTranslationf();
-            if (transformName != null) {
-                Class<Coordinates> c = Coordinates.class;
-                try {
-                    Method m = ClassReflection.getMethod(c, transformName);
-                    Matrix4 trf = (Matrix4) m.invoke(null);
-                    coordinateSystem.set(trf);
-                } catch (ReflectionException e) {
-                    Logger.error(Grid.class.getName(), "Error getting/invoking method Coordinates." + transformName + "()");
-                }
-            } else {
-                // Equatorial, nothing
-            }
-
-            if (axis != null)
-                coordinateSystem.rotate(axis, degrees);
-            if (scale != null)
-                coordinateSystem.scale(scale.x, scale.y, scale.z);
-            if (translate != null) {
-                pos.set(translate);
-                coordinateSystem.translate(translate.x, translate.y, translate.z);
-            }
             localTransform.idt().translate(trnsltn[0], trnsltn[1], trnsltn[2]).scl((float) size).mul(coordinateSystem);
         } else {
             localTransform.set(this.localTransform);
@@ -162,6 +142,14 @@ public class MeshObject extends FadeNode implements IModelRenderable, I3DTextRen
             mc.updateRelativisticEffects(GaiaSky.instance.getICamera());
             modelBatch.render(mc.instance, mc.env);
         }
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getDescription() {
+        return this.description;
     }
 
     public void setModel(ModelComponent mc) {
@@ -247,4 +235,5 @@ public class MeshObject extends FadeNode implements IModelRenderable, I3DTextRen
     public boolean isLabel() {
         return true;
     }
+
 }

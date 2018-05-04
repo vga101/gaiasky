@@ -7,9 +7,12 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputEvent.Type;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
+import com.badlogic.gdx.scenes.scene2d.ui.TextTooltip;
 import com.badlogic.gdx.scenes.scene2d.ui.Tree;
 import com.badlogic.gdx.scenes.scene2d.ui.Tree.Node;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
@@ -32,6 +35,7 @@ import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.TwoWayHashmap;
 import gaia.cu9.ari.gaiaorbit.util.comp.CelestialBodyComparator;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnCheckBox;
+import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnImageButton;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnScrollPane;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextField;
 
@@ -215,6 +219,9 @@ public class ObjectsComponent extends GuiComponent implements IObserver {
 
             for (SceneGraphNode node : meshes) {
                 MeshObject mesh = (MeshObject) node;
+                HorizontalGroup meshGroup = new HorizontalGroup();
+                meshGroup.space(4 * GlobalConf.SCALE_FACTOR);
+                meshGroup.left();
                 OwnCheckBox meshCb = new OwnCheckBox(mesh.name, skin, 5 * GlobalConf.SCALE_FACTOR);
                 meshCb.setChecked(mesh.isVisibilityOn());
                 meshCb.addListener((event) -> {
@@ -225,7 +232,14 @@ public class ObjectsComponent extends GuiComponent implements IObserver {
                     }
                     return false;
                 });
-                meshesGroup.addActor(meshCb);
+                // Tooltips
+
+                ImageButton meshDescTooltip = new OwnImageButton(skin, "tooltip");
+                meshDescTooltip.addListener(new TextTooltip((mesh.getDescription() == null || mesh.getDescription().isEmpty() ? "No description" : mesh.getDescription()), skin));
+
+                meshGroup.addActor(meshCb);
+                meshGroup.addActor(meshDescTooltip);
+                meshesGroup.addActor(meshGroup);
             }
         }
 
