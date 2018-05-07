@@ -24,8 +24,8 @@
 					
 					"data/asteroids.json",
 					"data/orbits-asteroid.json",
-					//"data/asteroids-dr2.json",
-					//"data/orbits-asteroids-dr2.json"
+					"data/asteroids-dr2.json",
+					"data/orbits-asteroids-dr2.json"
 					]
 	},
 	{
