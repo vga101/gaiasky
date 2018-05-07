@@ -1,13 +1,13 @@
 {"objects" : [
 	{
-	"name" : "Very ionizing peaks",
-	"description" : "Isosurfaces of very ionizing peaks of hot OB stars",
-	"color" : [0.0, 1.0, 0.1, 0.3],
+	"name" : "Non ionizing ranges (between 25 and 50)",
+	"description" : "Isosurfaces of non ionizing ranges of hot OB stars",
+	"color" : [0.6, 0.6, 0.9, 0.4],
 	// Parsec to units
 	"size" :  3.0856775814913705E7,
-	"labelcolor" : [0.0, 1.0, 0.1, 1.0],
+	"labelcolor" : [0.6, 0.6, 0.9, 1.0],
 	// Position in parsecs
-	"labelposition" : [1000.0, 0.0, 0.0]
+	"labelposition" : [2000.0, 0.0, 0.0]
 	"ct" : Meshes,
 	
 	// Fade out in pc
@@ -25,18 +25,18 @@
 	"model"		: {
 					"args" : [true],
 					"staticlight" : True,
-					"model" : "data/meshes/dr2/meshes_hot/very_ionizing_peaks.g3db"
+					"model" : "data/meshes/dr2/meshes_hot/non_ionizing_ge25lt50_ranges.g3db"
 				}
 	},
 	{
-	"name" : "Very ionizing ranges",
-	"description" : "Isosurfaces of very ionizing ranges of hot OB stars",
-	"color" : [0.0, 1.0, 0.5, 0.3],
+	"name" : "Non ionizing peaks (between 25 and 50)",
+	"description" : "Isosurfaces of non ionizing peaks of hot OB stars",
+	"color" : [0.0, 0.0, 1.0, 0.6],
 	// Parsec to units
 	"size" :  3.0856775814913705E7,
-	"labelcolor" : [0.0, 1.0, 0.5, 1.0],
+	"labelcolor" : [0.0, 0.0, 1.0, 1.0],
 	// Position in parsecs
-	"labelposition" : [1000.0, 0.0, 0.0]
+	"labelposition" : [2000.0, 400.0, 0.0]
 	"ct" : Meshes,
 	
 	// Fade out in pc
@@ -54,7 +54,7 @@
 	"model"		: {
 					"args" : [true],
 					"staticlight" : True,
-					"model" : "data/meshes/dr2/meshes_hot/very_ionizing_ranges.g3db"
+					"model" : "data/meshes/dr2/meshes_hot/non_ionizing_ge25lt50_peaks.g3db"
 				}
 	}
 ]}	
