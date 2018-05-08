@@ -26,7 +26,9 @@ This file contains the following sections:
 
 ## 1. Running Gaia Sky VR
 
-The Gaia Sky VR project is the Virtual Reality version of Gaia Sky. At the moment, only [OpenVR](https://github.com/ValveSoftware/openvr) is supported, but nothing prevents us from supporting other APIs (like the Kronos Group's [OpenXR](https://www.khronos.org/openxr)) in the future if it makes sense. Our tests have only been carried out with the Oculus Rift CV1 headset in direct mode under Windows. Supporting Linux is a top priority for us, and the HTC Vive should work well under Linux, even though the state of OpenVR in the platform is a bit rough. Also, we want to point out that Linux support for the Oculus Rift was dropped for the CV1 and it is not expected to be continued any time soon, unfortunately.
+The Gaia Sky VR project is the Virtual Reality version of Gaia Sky. At the moment, only [OpenVR](https://github.com/ValveSoftware/openvr) is supported, but nothing prevents us from supporting other APIs (like the Kronos Group's [OpenXR](https://www.khronos.org/openxr)) in the future if it makes sense. Our tests have only been carried out with the Oculus Rift CV1 headset in direct mode under Windows. Supporting Linux is a top priority for us, and the HTC Vive should work well under Linux, even though the state of OpenVR in the platform is a bit rough. We have reports indicating that the HTC Vive VR controllers' mappings are not fully working.
+
+Also, we want to point out that Linux support for the Oculus Rift was dropped for the CV1 and it is not expected to be continued any time soon, unfortunately.
 
 Gaia Sky VR is heavily under development, and it is not guaranteed to work. Currently, no binaries are provided, but it can still be run by compiling the source. Just keep in mind that this is the developmen branch.
 
@@ -40,13 +42,15 @@ This guide is for running Gaia Sky VR with the Oculus Rift in Windows. You will 
 
 ### 1.2. Cloning the repository
 
-First, open the Git for Windows CLI and clone the [GitHub](https://github.com/langurmonkey/gaiasky) repository and checkout the `vr` branch:
+First, open the Git for Windows CLI and clone the [GitHub](https://github.com/langurmonkey/gaiasky) repository and checkout the `2.0.0-vr` tag. This should give you a working version:
 
 ```
 $  git clone https://github.com/langurmonkey/gaiasky.git
 $  cd gaiasky
-$  git checkout vr
+$  git checkout tags/2.0.0-vr
 ```
+
+You can also use the `vr` branch directly (`git checkout vr`), but since it is a development branch, it is not guaranteed to work.
 
 Make sure you have at least `JDK8` installed.
 
