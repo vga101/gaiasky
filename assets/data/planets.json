@@ -59,6 +59,7 @@
 	
 	"parent" : "Sol", 
 	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Planet",
+	"refplane" : "ecliptic",
 
 	"coordinates" : {
 					// This must implement gaia.cu9.ari.gaiaorbit.util.coord.IBodyCoordinates				
@@ -118,6 +119,7 @@
 	
 	"parent" : "Sol", 
 	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Planet",
+	"refplane" : "ecliptic",
 	
 	"locvamultiplier" : 3.0,
 	"locthoverfactor" : 8.0,
@@ -183,6 +185,7 @@
 	
 	"parent" : "Sol", 
 	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Planet",
+	"refplane" : "ecliptic",
 	
 	"coordinates" : {
 					// This must implement gaia.cu9.ari.gaiaorbit.util.coord.IBodyCoordinates				
@@ -194,7 +197,7 @@
 						// In hours			
 						"period" : 24.622962156,
 						// Angle between equatorial plane and orbital plane
-						"axialtilt" : 25.19,
+						"axialtilt" : -25.19,
 						// Inclination of orbit plane with respect to ecliptic
 						"inclination" : 1.850,
 						//"ascendingnode" : 47.68143,
@@ -244,6 +247,7 @@
 	
 	"parent" : "Sol", 
 	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Planet",
+	"refplane" : "ecliptic",
 	
 	"coordinates" : {
 					// This must implement gaia.cu9.ari.gaiaorbit.util.coord.IBodyCoordinates				
@@ -289,6 +293,7 @@
 	
 	"parent" : "Sol", 
 	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Planet",
+	"refplane" : "ecliptic",
 	
 	"coordinates" : {
 					// This must implement gaia.cu9.ari.gaiaorbit.util.coord.IBodyCoordinates				
@@ -339,6 +344,7 @@
 	
 	"parent" : "Sol", 
 	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Planet",
+	"refplane" : "ecliptic",
 	
 	"coordinates" : {
 					// This must implement gaia.cu9.ari.gaiaorbit.util.coord.IBodyCoordinates				
@@ -383,6 +389,7 @@
 	
 	"parent" : "Sol", 
 	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Planet",
+	"refplane" : "ecliptic",
 
 	"coordinates" : {
 					// This must implement gaia.cu9.ari.gaiaorbit.util.coord.IBodyCoordinates				
@@ -428,6 +435,7 @@
 	
 	"parent" : "Sol", 
 	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Planet",
+	"refplane" : "ecliptic",
 
 	"coordinates" : {
 				// This must implement gaia.cu9.ari.gaiaorbit.util.coord.IBodyCoordinates				
