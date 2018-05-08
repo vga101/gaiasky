@@ -20,7 +20,6 @@ import gaia.cu9.ari.gaiaorbit.render.RenderingContext;
 import gaia.cu9.ari.gaiaorbit.render.system.FontRenderSystem;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.ITransform;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
-import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
@@ -28,6 +27,7 @@ import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
 public class MeshObject extends FadeNode implements IModelRenderable, I3DTextRenderable {
 
+    private String description;
     private String transformName;
     private Matrix4 coordinateSystem;
     private Vector3 scale, axis, translate;
@@ -76,14 +76,14 @@ public class MeshObject extends FadeNode implements IModelRenderable, I3DTextRen
                 // Equatorial, nothing
             }
 
-            if (scale != null)
-                coordinateSystem.scl(scale);
             if (axis != null)
                 coordinateSystem.rotate(axis, degrees);
             if (translate != null) {
                 pos.set(translate);
-                coordinateSystem.translate(translate);
+                coordinateSystem.translate(translate.x, translate.y, translate.z);
             }
+            if (scale != null)
+                coordinateSystem.scale(scale.x, scale.y, scale.z);
         }
     }
 
@@ -142,6 +142,14 @@ public class MeshObject extends FadeNode implements IModelRenderable, I3DTextRen
             mc.updateRelativisticEffects(GaiaSky.instance.getICamera());
             modelBatch.render(mc.instance, mc.env);
         }
+    }
+    
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getDescription() {
+        return this.description;
     }
 
     /**
@@ -233,18 +241,6 @@ public class MeshObject extends FadeNode implements IModelRenderable, I3DTextRen
     @Override
     public boolean isLabel() {
         return true;
-    }
-
-    @Override
-    public void setSize(Double size) {
-        super.setSize(size);
-        this.size *= Constants.M_TO_U_CONV;
-    }
-
-    @Override
-    public void setSize(Long size) {
-        super.setSize(size);
-        this.size *= Constants.M_TO_U_CONV;
     }
 
 }

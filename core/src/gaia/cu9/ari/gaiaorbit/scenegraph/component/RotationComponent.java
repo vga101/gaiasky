@@ -2,7 +2,6 @@ package gaia.cu9.ari.gaiaorbit.scenegraph.component;
 
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
-import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
 /**
@@ -68,24 +67,24 @@ public class RotationComponent {
 
     /**
      * Sets the inclination, the angle between the orbital plane and the
-     * ecliptic
+     * reference plane
      * 
      * @param i
      *            Inclination in deg.
      */
     public void setInclination(Double i) {
-        inclination = i + Coordinates.OBLIQUITY_DEG_J2000;
+        inclination = i;
     }
 
     /**
      * Sets the inclination, the angle between the orbital plane and the
-     * ecliptic
+     * reference plane
      * 
      * @param i
      *            Inclination in deg.
      */
     public void setInclination(Long i) {
-        inclination = i + Coordinates.OBLIQUITY_DEG_J2000;
+        inclination = i;
     }
 
     /**

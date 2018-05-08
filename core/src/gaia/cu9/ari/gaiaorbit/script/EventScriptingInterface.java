@@ -184,16 +184,22 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
     public void setCameraFocusInstant(final String focusName) {
         assert focusName != null : "Focus name can't be null";
 
-        em.post(Events.CAMERA_MODE_CMD, CameraMode.Focus);
-        em.post(Events.FOCUS_CHANGE_CMD, focusName, true);
+        ISceneGraph sg = GaiaSky.instance.sg;
+        if (sg.containsNode(focusName.toLowerCase())) {
+            IFocus focus = sg.findFocus(focusName.toLowerCase());
+            em.post(Events.CAMERA_MODE_CMD, CameraMode.Focus);
+            em.post(Events.FOCUS_CHANGE_CMD, focus);
 
-        // Instantly set the camera direction to look towards the focus
-        double[] campos = getCameraPosition();
-        SceneGraphNode obj = getObject(focusName);
-        Vector3d dir = new Vector3d();
-        dir.set(obj.getPosition()).sub(campos[0], campos[1], campos[2]);
-        setCameraDirection(dir.values());
+            Gdx.app.postRunnable(() -> {
+                // Instantly set the camera direction to look towards the focus
+                double[] campos = GaiaSky.instance.cam.getPos().values();
+                Vector3d dir = new Vector3d();
+                focus.getAbsolutePosition(dir).sub(campos[0], campos[1], campos[2]);
+                double[] d = dir.nor().values();
+                em.post(Events.CAMERA_DIR_CMD, d);
 
+            });
+        }
     }
 
     @Override
@@ -1542,6 +1548,14 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
         Gdx.app.postRunnable(() -> {
             em.post(Events.BLOOM_CMD, value, false);
         });
+    }
+
+    @Override
+    public void setSmoothLodTransitions(boolean value) {
+        Gdx.app.postRunnable(() -> {
+            em.post(Events.OCTREE_PARTICLE_FADE_CMD, I18n.bundle.get("element.octreeparticlefade"), value);
+        });
+
     }
 
 }

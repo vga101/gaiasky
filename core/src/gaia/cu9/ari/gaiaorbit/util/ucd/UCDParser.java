@@ -22,23 +22,22 @@ public class UCDParser {
 
     // IDS
     public boolean hasid = false;
-    public UCD ID;
+    public Set<UCD> ID;
 
     // POSITIONS
     public boolean haspos = false;
-    public UCD POS1, POS2, POS3;
-    public PositionType postype;
+    public Set<UCD> POS1, POS2, POS3;
 
     // PROPER MOTIONS
     // TODO - not supported yet
 
     // MAGNITUDES
     public boolean hasmag = false;
-    public UCD MAG;
+    public Set<UCD> MAG;
 
     // COLORS
     public boolean hascol = false;
-    public UCD COL;
+    public Set<UCD> COL;
 
     // PHYSICAL PARAMS
     // TODO - not supported yet
@@ -46,6 +45,12 @@ public class UCDParser {
     public UCDParser() {
         super();
         ucdmap = new HashMap<UCDType, Set<UCD>>();
+        ID = new HashSet<UCD>();
+        POS1 = new HashSet<UCD>();
+        POS2 = new HashSet<UCD>();
+        POS3 = new HashSet<UCD>();
+        MAG = new HashSet<UCD>();
+        COL = new HashSet<UCD>();
     }
 
     /**
@@ -72,17 +77,16 @@ public class UCDParser {
         if (meta != null)
             for (UCD candidate : meta) {
                 if (candidate.ucdstrings[0].equals("meta.id")) {
-                    this.ID = candidate;
+                    this.ID.add(candidate);
                 }
             }
-        if (this.ID == null) {
-            this.ID = getByColNames("hip", "id", "source_id", "tycho2_id");
+        if (this.ID.isEmpty()) {
+            this.ID.addAll(getByColNames("hip", "id", "source_id", "tycho2_id"));
         }
         this.hasid = this.ID != null;
 
         /** POSITIONS **/
         Set<UCD> pos = ucdmap.get(UCDType.POS);
-        String pseudopostype = null, disttype = null;
         if (pos != null) {
             String posrefsys = getBestRefsys(pos);
             for (UCD candidate : pos) {
@@ -95,53 +99,48 @@ public class UCDParser {
                     case "eq":
                         switch (coord) {
                         case "ra":
-                            this.POS1 = candidate;
+                            this.POS1.add(candidate);
                             break;
                         case "dec":
-                            this.POS2 = candidate;
+                            this.POS2.add(candidate);
                             break;
                         }
-                        pseudopostype = "EQ_SPH_";
                         break;
                     case "ecliptic":
                     case "galactic":
                         switch (coord) {
                         case "lon":
-                            this.POS1 = candidate;
+                            this.POS1.add(candidate);
                             break;
                         case "lat":
-                            this.POS2 = candidate;
+                            this.POS2.add(candidate);
                             break;
                         }
-                        pseudopostype = meaning.equals("ecliptic") ? "ECL_SPH_" : "GAL_SPH_";
                         break;
                     case "cartesian":
                         switch (coord) {
                         case "x":
-                            this.POS1 = candidate;
+                            this.POS1.add(candidate);
                             break;
                         case "y":
-                            this.POS2 = candidate;
+                            this.POS2.add(candidate);
                             break;
                         case "z":
-                            this.POS3 = candidate;
+                            this.POS3.add(candidate);
                             break;
                         }
-                        this.postype = PositionType.EQ_XYZ;
                         break;
                     case "parallax":
-                        this.POS3 = candidate;
-                        disttype = "PLX";
+                        this.POS3.add(candidate);
                         break;
                     case "distance":
-                        this.POS3 = candidate;
-                        disttype = "DIST";
+                        this.POS3.add(candidate);
                         break;
                     }
                 }
             }
         }
-        if (this.POS1 == null || this.POS2 == null) {
+        if (this.POS1.isEmpty() || this.POS2.isEmpty()) {
             // Try to work out from names
             this.POS1 = getByColNames("ra", "right_ascension", "rightascension", "alpha");
             if (this.POS1 != null) {
@@ -149,18 +148,12 @@ public class UCDParser {
                 this.POS3 = getByColNames("dist", "distance");
                 if (this.POS3 == null) {
                     this.POS3 = getByColNames("plx", "parallax", "pllx");
-                    this.postype = PositionType.EQ_SPH_PLX;
                 } else {
-                    this.postype = PositionType.EQ_SPH_DIST;
                 }
             }
         }
-        if (this.postype == null && pseudopostype != null && disttype != null) {
-            // Construct from pseudopostype and disttype
-            this.postype = PositionType.valueOf(pseudopostype + disttype);
-        }
 
-        this.haspos = this.POS1 != null && this.POS2 != null;
+        this.haspos = !this.POS1.isEmpty() && !this.POS2.isEmpty();
 
         /** PROPER MOTIONS **/
         // TODO - not supported yet
@@ -171,12 +164,12 @@ public class UCDParser {
             for (UCD candidate : mag) {
                 if (candidate.ucd[0][1].equals("mag") && candidate.ucd[0].length < 3) {
                     if (candidate.ucd.length > 1) {
-                        if (candidate.ucdstrings[1].equals("stat.mean")) {
-                            this.MAG = candidate;
+                        if (candidate.ucdstrings[1].equals("stat.mean") || candidate.ucdstrings[1].toLowerCase().startsWith("em.opt.")) {
+                            this.MAG.add(candidate);
                         }
                     } else {
                         if (this.MAG == null)
-                            this.MAG = candidate;
+                            this.MAG.add(candidate);
                     }
                 }
             }
@@ -190,7 +183,7 @@ public class UCDParser {
         if (col != null)
             for (UCD candidate : col) {
                 if (candidate.ucd[0][1].equals("color")) {
-                    this.COL = candidate;
+                    this.COL.add(candidate);
                     break;
                 }
             }
@@ -204,22 +197,61 @@ public class UCDParser {
 
     }
 
-    private UCD getByColNames(String... colnames) {
+    public PositionType getPositionType(UCD pos1, UCD pos2, UCD pos3) {
+        String meaning = pos1.ucd[0][1];
+        String postypestr = null, disttype = null;
+        PositionType postype = null;
+        switch (meaning) {
+        case "eq":
+            postypestr = "EQ_SPH_";
+            break;
+        case "ecliptic":
+            postypestr = "ECL_SPH_";
+            break;
+        case "galactic":
+            postypestr = "GAL_SPH_";
+            break;
+        case "cartesian":
+            postype = PositionType.EQ_XYZ;
+            break;
+        }
+
+        meaning = pos3.ucd[0][1];
+        switch (meaning) {
+        case "parallax":
+            disttype = "PLX";
+            break;
+        case "distance":
+            disttype = "DIST";
+            break;
+        }
+
+        if (postype == null && postypestr != null && disttype != null) {
+            // Construct from postypestr and disttype
+            postype = PositionType.valueOf(postypestr + disttype);
+        }
+
+        return postype;
+    }
+
+    private Set<UCD> getByColNames(String... colnames) {
         return getByColNames(new UCDType[] { UCDType.UNKNOWN, UCDType.MISSING }, colnames);
     }
 
-    private UCD getByColNames(UCDType[] types, String... colnames) {
+    private Set<UCD> getByColNames(UCDType[] types, String... colnames) {
         Set<UCD> candidates = new HashSet<UCD>();
         for (UCDType type : types) {
-            if (ucdmap.containsKey(type))
-                candidates.addAll(ucdmap.get(type));
-        }
-        for (UCD candidate : candidates) {
-            if (contains(colnames, candidate.colname)) {
-                return candidate;
+            // Get all unknown and missing
+            if (ucdmap.containsKey(type)) {
+                Set<UCD> set = ucdmap.get(type);
+                // Check column names
+                for (UCD candidate : set) {
+                    if (contains(colnames, candidate.colname))
+                        candidates.add(candidate);
+                }
             }
         }
-        return null;
+        return candidates;
     }
 
     private String getBestRefsys(Set<UCD> ucds) {
