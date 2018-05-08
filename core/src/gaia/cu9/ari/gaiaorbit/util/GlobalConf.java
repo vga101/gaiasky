@@ -612,6 +612,14 @@ public class GlobalConf {
             return STEREOSCOPIC_MODE && STEREO_PROFILE != StereoProfile.ANAGLYPHIC;
         }
 
+        /**
+         * Returns whether the UI theme is in night mode
+         * @return
+         */
+        public boolean isUINightMode() {
+            return UI_THEME.contains("night");
+        }
+
         @Override
         public void notify(Events event, Object... data) {
             switch (event) {
