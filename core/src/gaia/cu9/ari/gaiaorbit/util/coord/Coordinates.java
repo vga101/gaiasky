@@ -1,5 +1,8 @@
 package gaia.cu9.ari.gaiaorbit.util.coord;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.badlogic.gdx.math.Matrix4;
 
 import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
@@ -34,8 +37,11 @@ public class Coordinates {
     private static final double Q = 27.12825;
     private static final double P = 192.85948;
 
-    private static Matrix4d equatorialToEcliptic, eclipticToEquatorial, equatorialToGalactic, galacticToEquatorial, eclipticToGalactic, galacticToEcliptic;
-    private static Matrix4 equatorialToEclipticF, eclipticToEquatorialF, equatorialToGalacticF, galacticToEquatorialF, eclipticToGalacticF, galacticToEclipticF;
+    private static Matrix4d equatorialToEcliptic, eclipticToEquatorial, equatorialToGalactic, galacticToEquatorial, eclipticToGalactic, galacticToEcliptic, mat4didt;
+    private static Matrix4 equatorialToEclipticF, eclipticToEquatorialF, equatorialToGalacticF, galacticToEquatorialF, eclipticToGalacticF, galacticToEclipticF, mat4fidt;
+
+    private static Map<String, Matrix4d> mapd;
+    private static Map<String, Matrix4> mapf;
 
     static {
         // Initialize matrices
@@ -63,6 +69,39 @@ public class Coordinates {
         // GAL -> ECL
         galacticToEcliptic = new Matrix4d(eclipticToEquatorial).mul(equatorialToGalactic);
         galacticToEclipticF = galacticToEcliptic.putIn(new Matrix4());
+
+        // Identities
+        mat4didt = new Matrix4d();
+        mat4fidt = new Matrix4();
+
+        // Init maps
+        mapd = new HashMap<String, Matrix4d>();
+        mapf = new HashMap<String, Matrix4>();
+
+        mapd.put("equatorialtoecliptic", equatorialToEcliptic);
+        mapd.put("eqtoecl", equatorialToEcliptic);
+        mapf.put("equatorialtoecliptic", equatorialToEclipticF);
+        mapf.put("eqtoecl", equatorialToEclipticF);
+
+        mapd.put("ecliptictoequatorial", eclipticToEquatorial);
+        mapd.put("ecltoeq", eclipticToEquatorial);
+        mapf.put("ecliptictoequatorial", eclipticToEquatorialF);
+        mapf.put("ecltoeq", eclipticToEquatorialF);
+
+        mapd.put("galactictoequatorial", galacticToEquatorial);
+        mapd.put("galtoeq", galacticToEquatorial);
+        mapf.put("galactictoequatorial", galacticToEquatorialF);
+        mapf.put("galtoeq", galacticToEquatorialF);
+
+        mapd.put("equatorialtogalactic", equatorialToGalactic);
+        mapd.put("eqtogal", equatorialToGalactic);
+        mapf.put("equatorialtogalactic", equatorialToGalacticF);
+        mapf.put("eqtogal", equatorialToGalacticF);
+
+        mapd.put("ecliptictogalactic", eclipticToGalactic);
+        mapd.put("ecltogal", eclipticToGalactic);
+        mapf.put("ecliptictogalactic", eclipticToGalacticF);
+        mapf.put("ecltogal", eclipticToGalacticF);
 
     }
 
@@ -386,6 +425,18 @@ public class Coordinates {
         out.y = delta;
         out.z = distance;
         return out;
+    }
+
+    public static Matrix4d getTransformD(String name) {
+        if (name == null || name.isEmpty() || !mapf.containsKey(name))
+            return mat4didt;
+        return mapd.get(name.toLowerCase());
+    }
+
+    public static Matrix4 getTransformF(String name) {
+        if (name == null || name.isEmpty() || !mapf.containsKey(name))
+            return mat4fidt;
+        return mapf.get(name.toLowerCase());
     }
 
 }

@@ -462,7 +462,7 @@ public class PreferencesWindow extends GenericDialog {
 
         // THEME
         OwnLabel themeLabel = new OwnLabel(txt("gui.ui.theme"), skin);
-        String[] themes = new String[] { "dark-green", "dark-green-x2", "dark-blue", "dark-blue-x2", "dark-orange", "dark-orange-x2", "bright-green", "bright-green-x2" };
+        String[] themes = new String[] { "dark-green", "dark-green-x2", "dark-blue", "dark-blue-x2", "dark-orange", "dark-orange-x2", "bright-green", "bright-green-x2", "night-red", "night-red-x2" };
         theme = new OwnSelectBox<String>(skin);
         theme.setWidth(textwidth * 3f);
         theme.setItems(themes);

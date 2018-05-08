@@ -20,6 +20,8 @@ public class OrbitComponent {
     public double argofpericenter;
     /** Mean anomaly at epoch, in degrees. **/
     public double meananomaly;
+    /** G*M of central body (gravitational constant). Defaults to the Sun's **/
+    public double mu = 1.32712440041e20;
 
     public OrbitComponent() {
 
@@ -59,6 +61,10 @@ public class OrbitComponent {
 
     public void setMeananomaly(Double meanAnomaly) {
         this.meananomaly = meanAnomaly;
+    }
+
+    public void setMu(Double mu) {
+        this.mu = mu;
     }
 
 }

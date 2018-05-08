@@ -109,6 +109,9 @@ public class Orbit extends LineObject {
             if (transformFunction != null) {
                 localTransformD.mul(transformFunction).rotate(0, 1, 0, 90);
             }
+            if (parent.getOrientation() != null) {
+                localTransformD.mul(parent.getOrientation()).rotate(0, 1, 0, 90);
+            }
         } else {
             if (transformFunction == null && parent.orientation != null)
                 localTransformD.mul(parent.orientation);

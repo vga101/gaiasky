@@ -72,6 +72,12 @@ public abstract class ModelBody extends CelestialBody {
 
     /** State flag; whether to render the shadow (number of times left) **/
     public int shadow;
+
+    /** Name of the reference plane for this object. Defaults to equator **/
+    public String refplane;
+    /** Name of the transformation to the reference plane **/
+    public String refplanetransform;
+
     /**
      * Array with shadow camera distance, cam near and cam far as a function of
      * the radius of the object
@@ -130,8 +136,8 @@ public abstract class ModelBody extends CelestialBody {
 
     public void setToLocalTransform(float sizeFactor, Matrix4 localTransform, boolean forceUpdate) {
         if (sizeFactor != 1 || forceUpdate) {
-            transform.getMatrix(localTransform).scl(size * sizeFactor).rotate(0, 1, 0, (float) rc.ascendingNode).rotate(0, 0, 1, (float) (rc.inclination + rc.axialTilt)).rotate(0, 1, 0, (float) rc.angle);
-            orientation.idt().rotate(0, 1, 0, (float) rc.ascendingNode).rotate(0, 0, 1, (float) (rc.inclination + rc.axialTilt));
+            transform.getMatrix(localTransform).scl(size * sizeFactor).mul(Coordinates.getTransformF(refplanetransform)).rotate(0, 1, 0, (float) rc.ascendingNode).rotate(0, 0, 1, (float) (rc.inclination + rc.axialTilt)).rotate(0, 1, 0, (float) rc.angle);
+            orientation.idt().mul(Coordinates.getTransformD(refplanetransform)).rotate(0, 0, 1, (float) (rc.inclination + rc.axialTilt)).rotate(0, 1, 0, (float) rc.ascendingNode);
         } else {
             localTransform.set(this.localTransform);
         }
@@ -428,5 +434,10 @@ public abstract class ModelBody extends CelestialBody {
 
     public void setSizescalefactor(Double sizescalefactor) {
         this.sizeScaleFactor = sizescalefactor.floatValue();
+    }
+
+    public void setRefplane(String refplane) {
+        this.refplane = refplane;
+        this.refplanetransform = refplane + "toequatorial";
     }
 }

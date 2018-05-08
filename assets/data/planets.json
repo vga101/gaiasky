@@ -12,6 +12,7 @@
 	
 	"parent" : "Sol", 
 	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Planet",
+	"refplane" : "ecliptic",
 	
 	"coordinates" : {
 					// This must implement gaia.cu9.ari.gaiaorbit.util.coord.IBodyCoordinates				
@@ -58,6 +59,7 @@
 	
 	"parent" : "Sol", 
 	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Planet",
+	"refplane" : "ecliptic",
 
 	"coordinates" : {
 					// This must implement gaia.cu9.ari.gaiaorbit.util.coord.IBodyCoordinates				
@@ -117,6 +119,7 @@
 	
 	"parent" : "Sol", 
 	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Planet",
+	"refplane" : "ecliptic",
 	
 	"locvamultiplier" : 3.0,
 	"locthoverfactor" : 8.0,
@@ -182,6 +185,7 @@
 	
 	"parent" : "Sol", 
 	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Planet",
+	"refplane" : "ecliptic",
 	
 	"coordinates" : {
 					// This must implement gaia.cu9.ari.gaiaorbit.util.coord.IBodyCoordinates				
@@ -243,6 +247,7 @@
 	
 	"parent" : "Sol", 
 	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Planet",
+	"refplane" : "ecliptic",
 	
 	"coordinates" : {
 					// This must implement gaia.cu9.ari.gaiaorbit.util.coord.IBodyCoordinates				
@@ -288,6 +293,7 @@
 	
 	"parent" : "Sol", 
 	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Planet",
+	"refplane" : "ecliptic",
 	
 	"coordinates" : {
 					// This must implement gaia.cu9.ari.gaiaorbit.util.coord.IBodyCoordinates				
@@ -338,6 +344,7 @@
 	
 	"parent" : "Sol", 
 	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Planet",
+	"refplane" : "ecliptic",
 	
 	"coordinates" : {
 					// This must implement gaia.cu9.ari.gaiaorbit.util.coord.IBodyCoordinates				
@@ -382,6 +389,7 @@
 	
 	"parent" : "Sol", 
 	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Planet",
+	"refplane" : "ecliptic",
 
 	"coordinates" : {
 					// This must implement gaia.cu9.ari.gaiaorbit.util.coord.IBodyCoordinates				
@@ -427,6 +435,7 @@
 	
 	"parent" : "Sol", 
 	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Planet",
+	"refplane" : "ecliptic",
 
 	"coordinates" : {
 				// This must implement gaia.cu9.ari.gaiaorbit.util.coord.IBodyCoordinates				
