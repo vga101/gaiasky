@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.io.PrintWriter;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,13 +25,13 @@ import com.beust.jcommander.Parameter;
 
 import gaia.cu9.ari.gaiaorbit.data.group.HYGDataProvider;
 import gaia.cu9.ari.gaiaorbit.data.group.IStarGroupDataProvider;
+import gaia.cu9.ari.gaiaorbit.data.octreegen.IStarGroupIO;
 import gaia.cu9.ari.gaiaorbit.data.octreegen.MetadataBinaryIO;
-import gaia.cu9.ari.gaiaorbit.data.octreegen.particlegroup.BrightestStars;
-import gaia.cu9.ari.gaiaorbit.data.octreegen.particlegroup.IAggregationAlgorithm;
-import gaia.cu9.ari.gaiaorbit.data.octreegen.particlegroup.IStarGroupIO;
-import gaia.cu9.ari.gaiaorbit.data.octreegen.particlegroup.OctreeGenerator;
-import gaia.cu9.ari.gaiaorbit.data.octreegen.particlegroup.StarGroupBinaryIO;
-import gaia.cu9.ari.gaiaorbit.data.octreegen.particlegroup.StarGroupSerializedIO;
+import gaia.cu9.ari.gaiaorbit.data.octreegen.StarGroupBinaryIO;
+import gaia.cu9.ari.gaiaorbit.data.octreegen.StarGroupSerializedIO;
+import gaia.cu9.ari.gaiaorbit.data.octreegen.generator.IOctreeGenerator;
+import gaia.cu9.ari.gaiaorbit.data.octreegen.generator.OctreeGeneratorMag;
+import gaia.cu9.ari.gaiaorbit.data.octreegen.generator.OctreeGeneratorParams;
 import gaia.cu9.ari.gaiaorbit.desktop.format.DesktopDateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.desktop.format.DesktopNumberFormatFactory;
 import gaia.cu9.ari.gaiaorbit.desktop.util.DesktopConfInit;
@@ -99,17 +101,20 @@ public class OctreeGeneratorRun {
     @Parameter(names = "--pllxzeropoint", description = "Zero point value for the parallax in mas")
     private double pllxzeropoint = 0d;
 
-    @Parameter(names = "--nfiles", description = "Caps the number of data files to load. Defaults to unlimited")
-    private int fileNumCap = -1;
-
-    @Parameter(names = "--xmatchfile", description = "Crossmatch file with source_id to hip")
-    private String xmatchFile = null;
-
     @Parameter(names = { "-c", "--magcorrections" }, description = "Flag to apply magnitude and color corrections for extinction and reddening")
     private boolean magCorrections = false;
 
     @Parameter(names = { "-s", "--suncentre", "--suncenter" }, description = "Make the Sun the centre of the octree")
     private boolean sunCentre = false;
+
+    @Parameter(names = "--nfiles", description = "Caps the number of data files to load. Defaults to unlimited")
+    private int fileNumCap = -1;
+
+    @Parameter(names = { "--hyg", "--addhyg" }, description = "Add the HYG catalog additionally to the provided by -l")
+    private boolean addHYG = true;
+
+    @Parameter(names = "--xmatchfile", description = "Crossmatch file with source_id to hip, only if --hyg is enabled")
+    private String xmatchFile = null;
 
     @Parameter(names = { "-h", "--help" }, help = true)
     private boolean help = false;
@@ -184,10 +189,9 @@ public class OctreeGeneratorRun {
     private OctreeNode generateOctree() throws IOException, InstantiationException, IllegalAccessException, ClassNotFoundException {
         long startMs = TimeUtils.millis();
 
-        IAggregationAlgorithm aggr = new BrightestStars(25, maxPart, maxPart, false);
-
-        OctreeGenerator og = new OctreeGenerator(aggr);
-        og.setSunCentre(sunCentre);
+        OctreeGeneratorParams ogp = new OctreeGeneratorParams(maxPart, sunCentre);
+        //IOctreeGenerator og = new OctreeGeneratorPart(ogp);
+        IOctreeGenerator og = new OctreeGeneratorMag(ogp);
 
         /** HIP **/
         HYGDataProvider hyg = new HYGDataProvider();
@@ -202,39 +206,46 @@ public class OctreeGeneratorRun {
         loader.setMagCorrections(magCorrections);
         long[] cpm = loader.getCountsPerMag();
 
-        /** LOAD HYG **/
-        Array<StarBean> listHip = hyg.loadData("data/hyg/hygxyz.bin");
-
         /** LOAD CATALOG **/
         @SuppressWarnings("unchecked")
         Array<StarBean> listGaia = (Array<StarBean>) loader.loadData(input);
+        Array<StarBean> list;
 
-        /** Check x-match file **/
-        Map<Long, Integer> xmatchTable = null;
-        if (xmatchFile != null && !xmatchFile.isEmpty()) {
-            // Load xmatchTable
-            xmatchTable = readXmatchTable(xmatchFile);
-        }
-        int gaianum = listGaia.size;
-        int gaiahits = 0;
-        for (StarBean s : listGaia) {
-            // Check if star is also in HYG catalog
-            if ((xmatchTable == null || (xmatchTable != null && !xmatchTable.containsKey(s.id)))) {
-                // No hit, add to main list
-                listHip.add(s);
-            } else {
-                // Keep HIP star, ignore Gaia star
-                gaiahits++;
+        if (addHYG) {
+            /** LOAD HYG **/
+            Array<StarBean> listHip = hyg.loadData("data/hyg/hygxyz.bin");
+            long[] cpmhyg = hyg.getCountsPerMag();
+            combineCpm(cpm, cpmhyg);
+
+            /** Check x-match file **/
+            Map<Long, Integer> xmatchTable = null;
+            if (xmatchFile != null && !xmatchFile.isEmpty()) {
+                // Load xmatchTable
+                xmatchTable = readXmatchTable(xmatchFile);
             }
+            int gaianum = listGaia.size;
+            int gaiahits = 0;
+            for (StarBean s : listGaia) {
+                // Check if star is also in HYG catalog
+                if ((xmatchTable == null || (xmatchTable != null && !xmatchTable.containsKey(s.id)))) {
+                    // No hit, add to main list
+                    listHip.add(s);
+                } else {
+                    // Keep HIP star, ignore Gaia star
+                    gaiahits++;
+                }
+            }
+            Logger.info(gaiahits + " of " + gaianum + " Gaia stars discarded due to being matched to a HIP star");
+
+            // Main list is listHip
+            list = listHip;
+
+            // Free some memory
+            listGaia.clear();
+            listGaia = null;
+        } else {
+            list = listGaia;
         }
-        Logger.info(gaiahits + " of " + gaianum + " Gaia stars discarded due to being matched to a HIP star");
-
-        // Main list is listHip
-        Array<StarBean> list = listHip;
-
-        // Free some memory
-        listGaia.clear();
-        listGaia = null;
 
         long loadingMs = TimeUtils.millis();
         double loadingSecs = ((loadingMs - startMs) / 1000.0);
@@ -252,7 +263,7 @@ public class OctreeGeneratorRun {
 
         /** NUMBERS **/
         Logger.info("Octree generated with " + octree.numNodes() + " octants and " + list.size + " particles");
-        Logger.info(aggr.getDiscarded() + " particles have been discarded due to density");
+        Logger.info(og.getDiscarded() + " particles have been discarded due to density");
 
         /** CLEAN CURRENT OUT DIR **/
         File metadataFile = new File(outFolder, "metadata.bin");
@@ -278,13 +289,13 @@ public class OctreeGeneratorRun {
         double totalSecs = loadingSecs + generatingSecs + writingSecs;
 
         int[][] stats = octree.stats();
-
+        NumberFormat formatter = new DecimalFormat("##########0.0000");
         if (cpm != null) {
             Logger.info("=================");
             Logger.info("STAR COUNTS STATS");
             Logger.info("=================");
             for (int level = 0; level < cpm.length; level++) {
-                Logger.info("Magnitude " + level + ": " + cpm[level] + " stars");
+                Logger.info("Magnitude " + level + ": " + cpm[level] + " stars (" + formatter.format((double) cpm[level] * 100d / (double) list.size) + "%)");
             }
             Logger.info();
         }
@@ -297,7 +308,7 @@ public class OctreeGeneratorRun {
         Logger.info("Depth: " + octree.getMaxDepth());
         int level = 0;
         for (int[] levelinfo : stats) {
-            Logger.info("   Level " + level + ": " + levelinfo[0] + " octants, " + levelinfo[1] + " stars");
+            Logger.info("   Level " + level + ": " + levelinfo[0] + " octants, " + levelinfo[1] + " stars (" + formatter.format((double) levelinfo[1] * 100d / (double) list.size) + "%)");
             level++;
         }
         Logger.info();
@@ -310,6 +321,18 @@ public class OctreeGeneratorRun {
         Logger.info("Total: " + totalSecs + " seconds");
 
         return octree;
+    }
+
+    private long[] combineCpm(long[] cpm1, long[] cpm2) {
+        if (cpm1 == null)
+            return cpm2;
+        else if (cpm2 == null)
+            return cpm1;
+        else {
+            for (int i = 0; i < cpm1.length; i++)
+                cpm1[i] += cpm2[i];
+        }
+        return cpm1;
     }
 
     private void writeParticlesToFiles(IStarGroupIO particleWriter, OctreeNode current) throws IOException {

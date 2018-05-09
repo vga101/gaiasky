@@ -54,7 +54,7 @@ public class OctreeNode implements ILineRenderable {
     /** The load status of this node **/
     private LoadStatus status;
     /** The unique page identifier **/
-    public final long pageId;
+    public long pageId;
     /** Contains the bottom-left-front position of the octant **/
     public final Vector3d blf;
     /** Contains the top-right-back position of the octant **/

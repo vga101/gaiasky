@@ -1,4 +1,4 @@
-package gaia.cu9.ari.gaiaorbit.data.octreegen.particlegroup;
+package gaia.cu9.ari.gaiaorbit.data.octreegen.generator;
 
 import com.badlogic.gdx.utils.Array;
 

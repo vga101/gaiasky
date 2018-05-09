@@ -14,7 +14,7 @@ import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 
 public class TGASHYGDataProvider extends AbstractStarGroupDataProvider {
-    private static boolean dumpToDisk = true;
+    private static boolean dumpToDisk = false;
     private static String format = "bin";
 
     public static void setDumpToDisk(boolean dump, String format) {

@@ -21,6 +21,7 @@ import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.color.ColourUtils;
 import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
 import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
+import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
 public class HYGDataProvider extends AbstractStarGroupDataProvider {
@@ -28,6 +29,7 @@ public class HYGDataProvider extends AbstractStarGroupDataProvider {
 
     public HYGDataProvider() {
         super();
+        countsPerMag = new long[22];
     }
 
     public Array<StarBean> loadData(String file) {
@@ -85,10 +87,10 @@ public class HYGDataProvider extends AbstractStarGroupDataProvider {
 
                         double flux = Math.pow(10, -absmag / 2.5f);
                         double starsize = Math.min((Math.pow(flux, 0.5f) * Constants.PC_TO_U * 0.16f), 1e9f) / 1.5;
-                        
+
                         double rarad = Math.toRadians(ra);
                         double decrad = Math.toRadians(dec);
-                        
+
                         Vector3d pos = Coordinates.sphericalToCartesian(rarad, decrad, dist, new Vector3d());
                         Vector3d pm = AstroUtils.properMotionsToCartesian(mualpha, mudelta, radvel, rarad, decrad, dist * Constants.U_TO_PC);
 
@@ -117,6 +119,9 @@ public class HYGDataProvider extends AbstractStarGroupDataProvider {
                         point[StarBean.I_ABSMAG] = absmag;
 
                         list.add(new StarBean(point, id, name));
+
+                        int appclmp = (int) MathUtilsd.clamp(appmag, 0, 21);
+                        countsPerMag[(int) appclmp] += 1;
                     }
                 } catch (EOFException eof) {
                     Logger.error(eof, HYGBinaryLoader.class.getSimpleName());

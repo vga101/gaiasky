@@ -184,8 +184,6 @@ public class DR2DataProvider extends AbstractStarGroupDataProvider {
         }
     }
 
-
-
     /**
      * Adds the star if it meets the criteria.
      * 
@@ -325,8 +323,8 @@ public class DR2DataProvider extends AbstractStarGroupDataProvider {
 
                 list.add(new StarBean(point, sourceid, name));
 
-                if ((int) appmag < countsPerMag.length)
-                    countsPerMag[(int) appmag] += 1;
+                int appclmp = (int) MathUtilsd.clamp(appmag, 0, 21);
+                countsPerMag[(int) appclmp] += 1;
                 return true;
             }
         }

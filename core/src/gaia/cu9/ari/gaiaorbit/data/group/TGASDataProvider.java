@@ -21,6 +21,7 @@ import gaia.cu9.ari.gaiaorbit.util.Pair;
 import gaia.cu9.ari.gaiaorbit.util.color.ColourUtils;
 import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
 import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
+import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.parse.Parser;
 
@@ -33,6 +34,7 @@ public class TGASDataProvider extends AbstractStarGroupDataProvider {
 
     public TGASDataProvider() {
         super();
+        countsPerMag = new long[22];
     }
 
     public Array<StarBean> loadData(String file) {
@@ -169,6 +171,9 @@ public class TGASDataProvider extends AbstractStarGroupDataProvider {
                         point[StarBean.I_ABSMAG] = absmag;
 
                         list.add(new StarBean(point, sourceid, name));
+
+                        int appclmp = (int) MathUtilsd.clamp(appmag, 0, 21);
+                        countsPerMag[(int) appclmp] += 1;
                     }
                 }
             }

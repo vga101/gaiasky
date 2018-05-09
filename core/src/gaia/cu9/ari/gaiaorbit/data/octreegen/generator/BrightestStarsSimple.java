@@ -1,9 +1,10 @@
-package gaia.cu9.ari.gaiaorbit.data.octreegen.particlegroup;
+package gaia.cu9.ari.gaiaorbit.data.octreegen.generator;
 
 import java.util.Comparator;
 
 import com.badlogic.gdx.utils.Array;
 
+import gaia.cu9.ari.gaiaorbit.data.octreegen.StarBrightnessComparator;
 import gaia.cu9.ari.gaiaorbit.scenegraph.StarGroup;
 import gaia.cu9.ari.gaiaorbit.scenegraph.StarGroup.StarBean;
 import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
