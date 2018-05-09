@@ -207,7 +207,9 @@ public class MilkyWayReal extends AbstractPositionEntity implements I3DTextRende
         Vector3d pos = aux3d1.get();
         textPosition(camera, pos);
         shader.setUniformf("u_viewAngle", 90f);
+        shader.setUniformf("u_viewAnglePow", 1f);
         shader.setUniformf("u_thOverFactor", 1f);
+        shader.setUniformf("u_thOverFactorScl", 1f);
         render3DLabel(batch, shader, sys.font3d, camera, rc, text(), pos, textScale(), textSize() * camera.getFovFactor());
     }
 

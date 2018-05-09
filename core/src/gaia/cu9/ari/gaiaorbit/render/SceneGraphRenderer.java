@@ -378,7 +378,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         spriteBatch.enableBlending();
 
         // Font batch
-        fontBatch = new SpriteBatch(1000, fontShader);
+        fontBatch = new SpriteBatch(2000, fontShader);
         fontBatch.enableBlending();
 
         ComponentType[] comps = ComponentType.values();
