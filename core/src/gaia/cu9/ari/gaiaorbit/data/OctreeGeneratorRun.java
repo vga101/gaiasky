@@ -108,7 +108,7 @@ public class OctreeGeneratorRun {
     @Parameter(names = { "-c", "--magcorrections" }, description = "Flag to apply magnitude and color corrections for extinction and reddening")
     private boolean magCorrections = false;
 
-    @Parameter(names = { "-s", "--suncentre" }, description = "Make the Sun the centre of the octree")
+    @Parameter(names = { "-s", "--suncentre", "--suncenter" }, description = "Make the Sun the centre of the octree")
     private boolean sunCentre = false;
 
     @Parameter(names = { "-h", "--help" }, help = true)
