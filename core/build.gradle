@@ -90,7 +90,7 @@ task runOctreeGeneratorParticles(dependsOn: jar, type: JavaExec, description: "R
 }
 
 task runOctreeGenerator(dependsOn: jar, type: JavaExec, description: "Runs the octree generator with star groups to create the lod structure from a base catalog") {
-    main = 'gaia.cu9.ari.gaiaorbit.data.OctreeGroupGeneratorTest'
+    main = 'gaia.cu9.ari.gaiaorbit.data.OctreeGeneratorRun'
     systemProperties['properties.file'] = '../..//assets/conf/global.properties'
     args = ["--input", "/media/tsagrista/Daten/Gaia/GDR2/earlydr2/data/", "--output", "/media/tsagrista/Daten/Gaia/GDR2/earlydr2/out/"]
     jvmArgs = ['-server', '-Xms10g', '-Xmx22g']

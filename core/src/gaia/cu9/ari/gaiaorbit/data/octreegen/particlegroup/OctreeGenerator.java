@@ -18,7 +18,7 @@ import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
 public class OctreeGenerator {
 
     /** Is the octree centred at the sun? **/
-    private static final boolean SUN_CENTRE = false;
+    private boolean SUN_CENTRE = false;
     /** Maximum distance in pc **/
     private static final double MAX_DISTANCE_CAP = 1e6;
 
@@ -212,6 +212,10 @@ public class OctreeGenerator {
 
     private Vector3d pos(double[] s, Vector3d p) {
         return p.set(s[StarBean.I_X], s[StarBean.I_Y], s[StarBean.I_Z]);
+    }
+
+    public void setSunCentre(boolean sunCentre) {
+        SUN_CENTRE = sunCentre;
     }
 
 }

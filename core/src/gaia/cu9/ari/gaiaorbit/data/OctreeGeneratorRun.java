@@ -56,13 +56,13 @@ import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
  * @author tsagrista
  *
  */
-public class OctreeGroupGeneratorTest {
+public class OctreeGeneratorRun {
     private static JCommander jc;
     private static String[] arguments;
 
     public static void main(String[] args) {
         arguments = args;
-        OctreeGroupGeneratorTest ogt = new OctreeGroupGeneratorTest();
+        OctreeGeneratorRun ogt = new OctreeGeneratorRun();
         jc = new JCommander(ogt, args);
         jc.setProgramName("OctreeGeneratorTest");
         if (ogt.help) {
@@ -108,6 +108,9 @@ public class OctreeGroupGeneratorTest {
     @Parameter(names = { "-c", "--magcorrections" }, description = "Flag to apply magnitude and color corrections for extinction and reddening")
     private boolean magCorrections = false;
 
+    @Parameter(names = { "-s", "--suncentre" }, description = "Make the Sun the centre of the octree")
+    private boolean sunCentre = false;
+
     @Parameter(names = { "-h", "--help" }, help = true)
     private boolean help = false;
 
@@ -115,7 +118,7 @@ public class OctreeGroupGeneratorTest {
 
     private NotificationsListener nl;
 
-    public OctreeGroupGeneratorTest() {
+    public OctreeGeneratorRun() {
         super();
         colors = new HashMap<Long, float[]>();
     }
@@ -184,6 +187,7 @@ public class OctreeGroupGeneratorTest {
         IAggregationAlgorithm aggr = new BrightestStars(25, maxPart, maxPart, false);
 
         OctreeGenerator og = new OctreeGenerator(aggr);
+        og.setSunCentre(sunCentre);
 
         /** HIP **/
         HYGDataProvider hyg = new HYGDataProvider();
