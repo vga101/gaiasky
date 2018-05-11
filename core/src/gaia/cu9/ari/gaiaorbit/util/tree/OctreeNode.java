@@ -360,7 +360,7 @@ public class OctreeNode implements ILineRenderable {
     public void removeChild(OctreeNode child) {
         if (children != null)
             for (int i = 0; i < children.length; i++) {
-                if (children[i] != null && children[i] == child && child.parent == this) {
+                if (children[i] != null && children[i] == child) {
                     child.parent = null;
                     children[i] = null;
                 }
