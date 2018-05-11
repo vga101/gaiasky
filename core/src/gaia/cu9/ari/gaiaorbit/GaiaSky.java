@@ -16,6 +16,7 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.FileHandleResolver;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.g3d.Model;
@@ -105,6 +106,9 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
      */
     private static boolean LOADING = false;
 
+    /** Config object **/
+    private LwjglApplicationConfiguration cfg;
+
     /** Attitude folder **/
     private static String ATTITUDE_FOLDER = "data/attitudexml/";
 
@@ -189,9 +193,10 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
     /**
      * Creates a GaiaSky instance.
      */
-    public GaiaSky() {
+    public GaiaSky(LwjglApplicationConfiguration cfg) {
         super();
         instance = this;
+        this.cfg = cfg;
     }
 
     public void setSceneGraph(ISceneGraph sg) {
@@ -773,6 +778,10 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
             }
         }
         return out;
+    }
+
+    public LwjglApplicationConfiguration getConfig() {
+        return this.cfg;
     }
 
     @Override

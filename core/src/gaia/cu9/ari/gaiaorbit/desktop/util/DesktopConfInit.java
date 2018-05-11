@@ -285,9 +285,10 @@ public class DesktopConfInit extends ConfInit {
         boolean FULLSCREEN = Boolean.parseBoolean(p.getProperty("graphics.screen.fullscreen"));
         boolean RESIZABLE = Boolean.parseBoolean(p.getProperty("graphics.screen.resizable"));
         boolean VSYNC = Boolean.parseBoolean(p.getProperty("graphics.screen.vsync"));
+        int LIMIT_FPS = Integer.parseInt(p.getProperty("graphics.limit.fps", "0"));
         boolean SCREEN_OUTPUT = Boolean.parseBoolean(p.getProperty("graphics.screen.screenoutput"));
         ScreenConf scrc = new ScreenConf();
-        scrc.initialize(SCREEN_WIDTH, SCREEN_HEIGHT, FULLSCREEN_WIDTH, FULLSCREEN_HEIGHT, FULLSCREEN, RESIZABLE, VSYNC, SCREEN_OUTPUT);
+        scrc.initialize(SCREEN_WIDTH, SCREEN_HEIGHT, FULLSCREEN_WIDTH, FULLSCREEN_HEIGHT, FULLSCREEN, RESIZABLE, VSYNC, SCREEN_OUTPUT, LIMIT_FPS);
 
         /** SCREENSHOT CONF **/
         String screenshotFolder = null;
@@ -383,6 +384,7 @@ public class DesktopConfInit extends ConfInit {
         p.setProperty("graphics.screen.fullscreen", Boolean.toString(Gdx.graphics.isFullscreen()));
         p.setProperty("graphics.screen.resizable", Boolean.toString(GlobalConf.screen.RESIZABLE));
         p.setProperty("graphics.screen.vsync", Boolean.toString(GlobalConf.screen.VSYNC));
+        p.setProperty("graphics.limit.fps", Integer.toString(GlobalConf.screen.LIMIT_FPS));
         p.setProperty("graphics.screen.screenoutput", Boolean.toString(GlobalConf.screen.SCREEN_OUTPUT));
 
         /** PROGRAM **/
