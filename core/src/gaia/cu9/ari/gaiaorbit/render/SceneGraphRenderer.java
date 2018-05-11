@@ -55,6 +55,7 @@ import gaia.cu9.ari.gaiaorbit.render.system.ParticleGroupRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.PixelRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.ShapeRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.StarGroupRenderSystem;
+import gaia.cu9.ari.gaiaorbit.scenegraph.AbstractPositionEntity;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ModelBody;
@@ -680,8 +681,10 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
                 // Render models
                 modelBatchOpaque.begin(camera.getCamera());
                 for (IRenderable model : models) {
-                    ModelBody mb = (ModelBody) model;
-                    mb.renderOpaque(modelBatchOpaque, 1, 0);
+                    if (model instanceof ModelBody) {
+                        ModelBody mb = (ModelBody) model;
+                        mb.renderOpaque(modelBatchOpaque, 1, 0);
+                    }
                 }
                 modelBatchOpaque.end();
             }
@@ -714,7 +717,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
              */
             Array<IRenderable> models = render_lists.get(RenderGroup.MODEL_NORMAL.ordinal());
             models.sort((a, b) -> {
-                return Double.compare(((ModelBody) a).getDistToCamera(), ((ModelBody) b).getDistToCamera());
+                return Double.compare(((AbstractPositionEntity) a).getDistToCamera(), ((AbstractPositionEntity) b).getDistToCamera());
             });
 
             int shadowNRender = GlobalConf.program.STEREOSCOPIC_MODE ? 2 : GlobalConf.program.CUBEMAP360_MODE ? 6 : 1;
@@ -723,13 +726,15 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
                 candidates.clear();
                 int num = 0;
                 for (int i = 0; i < models.size; i++) {
-                    ModelBody mr = (ModelBody) models.get(i);
-                    if (mr.isShadow()) {
-                        candidates.insert(num, mr);
-                        mr.shadow = 0;
-                        num++;
-                        if (num == GlobalConf.scene.SHADOW_MAPPING_N_SHADOWS)
-                            break;
+                    if (models.get(i) instanceof ModelBody) {
+                        ModelBody mr = (ModelBody) models.get(i);
+                        if (mr.isShadow()) {
+                            candidates.insert(num, mr);
+                            mr.shadow = 0;
+                            num++;
+                            if (num == GlobalConf.scene.SHADOW_MAPPING_N_SHADOWS)
+                                break;
+                        }
                     }
                 }
 

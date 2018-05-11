@@ -1,6 +1,6 @@
 {"objects" : [
 	{
-	"name" : "Non ionizing ranges (between 25 and 50)",
+	"name" : "Non ionizing ranges (25-50)",
 	"description" : "Isosurfaces of non ionizing ranges of hot OB stars",
 	"color" : [0.6, 0.6, 0.9, 0.4],
 	// Parsec to units
@@ -29,7 +29,7 @@
 				}
 	},
 	{
-	"name" : "Non ionizing peaks (between 25 and 50)",
+	"name" : "Non ionizing peaks (25-50)",
 	"description" : "Isosurfaces of non ionizing peaks of hot OB stars",
 	"color" : [0.0, 0.0, 1.0, 0.6],
 	// Parsec to units

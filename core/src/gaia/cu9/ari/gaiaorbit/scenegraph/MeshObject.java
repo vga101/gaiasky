@@ -140,6 +140,7 @@ public class MeshObject extends FadeNode implements IModelRenderable, I3DTextRen
             mc.touch();
             mc.setTransparency(alpha * opacity);
             mc.updateRelativisticEffects(GaiaSky.instance.getICamera());
+            modelBatch.getRenderContext().setDepthMask(true);
             modelBatch.render(mc.instance, mc.env);
         }
     }

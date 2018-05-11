@@ -8,19 +8,19 @@ There are several ways to contribute to the Gaia Sky project:
 
 ### Translations
 
-Right now we have translation files for English (UK and US), German, French, Catalan, Spanish and Slovenian. Some are incomplete (especially French, Solvenian and German) so they might benefit from a check up. Adding new translations is as easy as submitting a pull request. Translation files should go in the [i18n](gaiasky/tree/master/assets/i18n) folder.
-First, copy the default [gsbundle.properties](gaiasky/tree/master/assets/i18n/gsbundle.properties) file and use it as a template. The translation files must have the format `gsbundle_<language_code>[<_country_code>].properties`.
+Right now we have translation files for English (UK and US), German, French, Catalan, Spanish and Slovenian. Some are incomplete (especially French, Solvenian and German) so they might benefit from a check up. Adding new translations is as easy as submitting a pull request. Translation files should go in the [i18n](assets/i18n) folder.
+First, copy the default [gsbundle.properties](assets/i18n/gsbundle.properties) file and use it as a template. The translation files must have the format `gsbundle_<language_code>[<_country_code>].properties`.
 
 ### Data
 
-Contributing data files is always welcome. Have a look at the current data files in the [data](gaiasky/tree/master/assets/data) folder, most of them should be pretty self-explanatory. Also, you might want to have a look at the documentation on [data files and format](http://gaia-sky.readthedocs.io/en/latest/Data-catalogs-formats.html).
+Contributing data files is always welcome. Have a look at the current data files in the [data](assets/data) folder, most of them should be pretty self-explanatory. Also, you might want to have a look at the documentation on [data files and format](http://gaia-sky.readthedocs.io/en/latest/Data-catalogs-formats.html).
 
 ### Code
 
-Start by checking the official docs ([here](http://gaia-sky.readthedocs.io]) to get acquainted with the project. It may also help decide what part you want to contribute to. Pull requests should be accompanied with extensive comments. In case that changes in the documentations are needed, they should be also part of the pull request (folder [/docs](gaiasky/tree/master/docs)).
+Start by checking the official docs ([here](http://gaia-sky.readthedocs.io]) to get acquainted with the project. It may also help decide what part you want to contribute to. Pull requests should be accompanied with extensive comments. In case that changes in the documentations are needed, they should be also part of the pull request (folder [/docs](docs)).
 
 Pull requests should never contain configuration files unless totally necessary (do not commit your `conf/global.properties`). Also, make sure that the project compiles and all the dependencies are well specified in the `build.gradle`. 
 
-The format is available in the root of the project, [eclipse-formatter.xml](gaiasky/tree/master/eclipse-formatter.xml).
+The format is available in the root of the project, [eclipse-formatter.xml](eclipse-formatter.xml).
 
 
