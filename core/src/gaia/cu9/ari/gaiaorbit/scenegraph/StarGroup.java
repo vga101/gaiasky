@@ -270,7 +270,7 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
     private static BlockingQueue<Runnable> workQueue;
     static {
         workQueue = new LinkedBlockingQueue<Runnable>();
-        int nthreads = !GlobalConf.performance.MULTITHREADING ? 1 : GlobalConf.performance.NUMBER_THREADS();
+        int nthreads = !GlobalConf.performance.MULTITHREADING ? 1 : Math.max(1, GlobalConf.performance.NUMBER_THREADS() - 1);
         pool = new ThreadPoolExecutor(nthreads, nthreads, 5, TimeUnit.SECONDS, workQueue);
         pool.setThreadFactory(new DaemonThreadFactory());
     }

@@ -30,8 +30,11 @@ cause a major impact in CPU performance and explains how to tune them.
 Multithreading
 --------------
 
-As of version ``2.0.0``, Gaia Sky is multithreaded by default, so there is no way to
-turn off this feature.
+Gaia Sky uses background threads to index and update meta-information on the stars
+that are currently in view. The multithreading option controls the number of 
+threads devoted to these indexing and updating tasks. If multithreading is 
+disabled, only one background thread is used. Otherwise, it uses the defined
+number of threads in the setting.
 
 Limiting FPS
 ------------
