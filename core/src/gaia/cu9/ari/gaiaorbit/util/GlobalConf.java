@@ -496,9 +496,10 @@ public class GlobalConf {
         public boolean FULLSCREEN;
         public boolean RESIZABLE;
         public boolean VSYNC;
+        public int LIMIT_FPS;
         public boolean SCREEN_OUTPUT = true;
 
-        public void initialize(int sCREEN_WIDTH, int sCREEN_HEIGHT, int fULLSCREEN_WIDTH, int fULLSCREEN_HEIGHT, boolean fULLSCREEN, boolean rESIZABLE, boolean vSYNC, boolean sCREEN_OUTPUT) {
+        public void initialize(int sCREEN_WIDTH, int sCREEN_HEIGHT, int fULLSCREEN_WIDTH, int fULLSCREEN_HEIGHT, boolean fULLSCREEN, boolean rESIZABLE, boolean vSYNC, boolean sCREEN_OUTPUT, int lIMIT_FPS) {
             SCREEN_WIDTH = sCREEN_WIDTH;
             SCREEN_HEIGHT = sCREEN_HEIGHT;
             FULLSCREEN_WIDTH = fULLSCREEN_WIDTH;
@@ -507,6 +508,7 @@ public class GlobalConf {
             RESIZABLE = rESIZABLE;
             VSYNC = vSYNC;
             SCREEN_OUTPUT = sCREEN_OUTPUT;
+            LIMIT_FPS = lIMIT_FPS;
         }
 
         public int getScreenWidth() {

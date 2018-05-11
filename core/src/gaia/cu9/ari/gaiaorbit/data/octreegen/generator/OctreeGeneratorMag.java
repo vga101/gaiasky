@@ -28,6 +28,7 @@ public class OctreeGeneratorMag implements IOctreeGenerator {
     public OctreeNode generateOctree(Array<StarBean> catalog) {
         OctreeNode root = IOctreeGenerator.startGeneration(catalog, this.getClass(), params);
 
+        @SuppressWarnings("unchecked")
         Array<OctreeNode>[] octantsPerLevel = new Array[25];
         octantsPerLevel[0] = new Array<OctreeNode>(1);
         octantsPerLevel[0].add(root);

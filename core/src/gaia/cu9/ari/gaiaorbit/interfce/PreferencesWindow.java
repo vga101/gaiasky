@@ -94,17 +94,17 @@ public class PreferencesWindow extends GenericDialog {
     private Array<Table> contents;
     private Array<OwnLabel> labels;
 
-    private IValidator widthValidator, heightValidator, screenshotsSizeValidator, frameoutputSizeValidator;
+    private IValidator widthValidator, heightValidator, screenshotsSizeValidator, frameoutputSizeValidator, limitfpsValidator;
 
     private INumberFormat nf3;
 
-    private CheckBox fullscreen, windowed, vsync, multithreadCb, lodFadeCb, cbAutoCamrec, real, nsl, report, inverty, highAccuracyPositions, shadowsCb, pointerCoords, datasetChooser;
+    private CheckBox fullscreen, windowed, vsync, limitfpsCb, multithreadCb, lodFadeCb, cbAutoCamrec, real, nsl, report, inverty, highAccuracyPositions, shadowsCb, pointerCoords, datasetChooser;
     private OwnSelectBox<DisplayMode> fullscreenResolutions;
     private OwnSelectBox<ComboBoxBean> gquality, aa, orbitRenderer, lineRenderer, numThreads, screenshotMode, frameoutputMode, nshadows;
     private OwnSelectBox<LangComboBoxBean> lang;
     private OwnSelectBox<String> theme;
     private OwnSelectBox<FileComboBoxBean> controllerMappings;
-    private OwnTextField widthField, heightField, sswidthField, ssheightField, frameoutputPrefix, frameoutputFps, fowidthField, foheightField, camrecFps, cmResolution, smResolution;
+    private OwnTextField widthField, heightField, sswidthField, ssheightField, frameoutputPrefix, frameoutputFps, fowidthField, foheightField, camrecFps, cmResolution, smResolution, limitFps;
     private OwnSlider lodTransitions;
     private OwnTextButton screenshotsLocation, frameoutputLocation;
     private OwnTextButton[] catalogs;
@@ -275,11 +275,28 @@ public class PreferencesWindow extends GenericDialog {
         vsync = new OwnCheckBox(txt("gui.vsync"), skin, "default", pad);
         vsync.setChecked(GlobalConf.screen.VSYNC);
 
+        // LIMIT FPS
+        limitfpsValidator = new IntValidator(1, 1000);
+        limitFps = new OwnTextField(Integer.toString(MathUtils.clamp(GlobalConf.screen.LIMIT_FPS, 1, 1000)), skin, limitfpsValidator);
+        limitFps.setDisabled(GlobalConf.screen.LIMIT_FPS == 0);
+
+        limitfpsCb = new OwnCheckBox(txt("gui.limitfps"), skin, "default", pad);
+        limitfpsCb.setChecked(GlobalConf.screen.LIMIT_FPS > 0);
+        limitfpsCb.addListener((event) -> {
+            if (event instanceof ChangeEvent) {
+                enableComponents(limitfpsCb.isChecked(), limitFps);
+                return true;
+            }
+            return false;
+        });
+
         mode.add(fullscreen).left().padRight(pad * 2);
         mode.add(fullscreenResolutions).left().row();
         mode.add(windowed).left().padRight(pad * 2).padTop(pad * 2);
         mode.add(windowedResolutions).left().padTop(pad * 2).row();
-        mode.add(vsync).left().padTop(pad * 2).colspan(2);
+        mode.add(vsync).left().padTop(pad * 2).colspan(2).row();
+        mode.add(limitfpsCb).left().padRight(pad * 2);
+        mode.add(limitFps).left();
 
         // Add to content
         contentGraphics.add(titleResolution).left().padBottom(pad * 2).row();
@@ -1430,6 +1447,17 @@ public class PreferencesWindow extends GenericDialog {
         GlobalConf.postprocess.POSTPROCESS_ANTIALIAS = GlobalConf.postprocess.getAntialias(bean.value);
         EventManager.instance.post(Events.ANTIALIASING_CMD, GlobalConf.postprocess.POSTPROCESS_ANTIALIAS);
         GlobalConf.screen.VSYNC = vsync.isChecked();
+        Gdx.graphics.setVSync(GlobalConf.screen.VSYNC);
+
+        if (limitfpsCb.isChecked()) {
+            GlobalConf.screen.LIMIT_FPS = Integer.parseInt(limitFps.getText());
+        } else {
+            GlobalConf.screen.LIMIT_FPS = 0;
+        }
+        if (GaiaSky.instance.getConfig() != null) {
+            GaiaSky.instance.getConfig().foregroundFPS = GlobalConf.screen.LIMIT_FPS;
+            GaiaSky.instance.getConfig().backgroundFPS = GlobalConf.screen.LIMIT_FPS;
+        }
 
         // Orbit renderer
         GlobalConf.scene.ORBIT_RENDERER = orbitRenderer.getSelected().value;

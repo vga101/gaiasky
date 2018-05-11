@@ -229,13 +229,13 @@ public class GaiaSkyDesktop implements IObserver {
         cfg.height = GlobalConf.screen.getScreenHeight();
         cfg.samples = 0;
         cfg.vSyncEnabled = GlobalConf.screen.VSYNC;
-        cfg.foregroundFPS = 0;
-        cfg.backgroundFPS = 0;
+        cfg.foregroundFPS = GlobalConf.screen.LIMIT_FPS;
+        cfg.backgroundFPS = GlobalConf.screen.LIMIT_FPS;
         cfg.useHDPI = true;
         cfg.addIcon("icon/ic_launcher.png", Files.FileType.Internal);
 
         // Launch app
-        LwjglApplication app = new LwjglApplication(new GaiaSky(), cfg);
+        LwjglApplication app = new LwjglApplication(new GaiaSky(cfg), cfg);
         app.addLifecycleListener(new GaiaSkyWindowListener());
 
         EventManager.instance.unsubscribe(this, Events.POST_NOTIFICATION, Events.JAVA_EXCEPTION);
