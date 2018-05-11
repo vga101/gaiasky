@@ -30,23 +30,15 @@ cause a major impact in CPU performance and explains how to tune them.
 Multithreading
 --------------
 
-When multithreading is enabled the work of the update loop will be distributed
-to a number of threads (usually this number is defined by the number of cores/threads
-of the main CPU). In our tests, multithreading starts having a positive impact
-when more than 4 threads are available. Using a CPU which supports 8 threads 
-and enabling multithreading in Gaia Sky results in a significant performance boost.
-However, in the case of 4 threads or less, our tests yield that the multithreading
-overhead penalty is larger than the gain, resulting in lower FPS. Usually, with
-newer CPUs it is a good practice to enable multithreading.
+As of version ``2.0.0``, Gaia Sky is multithreaded by default, so there is no way to
+turn off this feature.
 
-Limiting magnitude
-------------------
+Limiting FPS
+------------
 
-You can modify the magnitude limit by setting the property ``data.limit.mag``
-in the configuration file. This will prevent the loading of stars whose magnitude
-is higher (they are fainter) than the specified magnitude, thus relieving the
-CPU of some processing. Also, take a look at the
-:ref:`data-properties` section.
+As of version ``2.0.1``, Gaia Sky offers a way to limit the frames per second. This will
+ease the CPU of some work, especially if the max FPS is set to a value lower than 60.
+To do it, just edit the value in the preferences dialog, performance tab.
 
 .. _draw-distance:
 
