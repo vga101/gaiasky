@@ -9,7 +9,9 @@ There are several ways to contribute to the Gaia Sky project:
 ### Translations
 
 Right now we have translation files for English (UK and US), German, French, Catalan, Spanish and Slovenian. Some are incomplete (especially French, Solvenian and German) so they might benefit from a check up. Adding new translations is as easy as submitting a pull request. Translation files should go in the [i18n](assets/i18n) folder.
-First, copy the default [gsbundle.properties](assets/i18n/gsbundle.properties) file and use it as a template. The translation files must have the format `gsbundle_<language_code>[<_country_code>].properties`.
+First, copy the default [gsbundle.properties](assets/i18n/gsbundle.properties) file and use it as a template. The translation files must have the format:
+
+`gsbundle_<language_code>[<_country_code>].properties`
 
 ### Data
 
