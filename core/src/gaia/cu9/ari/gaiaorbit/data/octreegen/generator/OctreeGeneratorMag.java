@@ -44,13 +44,16 @@ public class OctreeGeneratorMag implements IOctreeGenerator {
             Logger.info(this.getClass().getSimpleName(), "Generating level " + level);
             // Treat each level and set up the next
             Array<OctreeNode> levelOctants = octantsPerLevel[level];
-            Logger.info("        Distributing stars to " + levelOctants.size + " octants");
+            Logger.info("        " + (catalog.size - catalogIndex) + " stars left, " + levelOctants.size + " octants");
             while (catalogIndex < catalog.size) {
                 // Add star beans to octants till we reach max capacity
                 StarBean sb = catalog.get(catalogIndex++);
+                double x = sb.data[StarBean.I_X];
+                double y = sb.data[StarBean.I_Y];
+                double z = sb.data[StarBean.I_Z];
                 int addedNum = 0;
                 for (OctreeNode octant : levelOctants) {
-                    if (contained(sb, octant)) {
+                    if (contained(x, y, z, octant)) {
                         addedNum = addStarToNode(sb, octant, sbMap);
                         break;
                     }
@@ -128,14 +131,20 @@ public class OctreeGeneratorMag implements IOctreeGenerator {
 
     private int addStarToNode(StarBean sb, OctreeNode node, Map<OctreeNode, Array<StarBean>> map) {
         if (!map.containsKey(node)) {
-            map.put(node, new Array<StarBean>());
+            // Array of a quarter of max part
+            map.put(node, new Array<StarBean>(this.params.maxPart / 4));
         }
-        map.get(node).add(sb);
-        return map.get(node).size;
+        Array<StarBean> array = map.get(node);
+        array.add(sb);
+        return array.size;
     }
 
     private boolean contained(StarBean star, OctreeNode box) {
         return box.box.contains(star.data[StarBean.I_X], star.data[StarBean.I_Y], star.data[StarBean.I_Z]);
+    }
+
+    private boolean contained(double x, double y, double z, OctreeNode box) {
+        return box.box.contains(x, y, z);
     }
 
     @Override
