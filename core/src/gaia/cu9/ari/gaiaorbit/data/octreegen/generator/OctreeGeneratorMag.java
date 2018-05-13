@@ -131,8 +131,8 @@ public class OctreeGeneratorMag implements IOctreeGenerator {
 
     private int addStarToNode(StarBean sb, OctreeNode node, Map<OctreeNode, Array<StarBean>> map) {
         if (!map.containsKey(node)) {
-            // Array of a quarter of max part
-            map.put(node, new Array<StarBean>(this.params.maxPart / 4));
+            // Array of a fraction of max part (two array resizes gives max part)
+            map.put(node, new Array<StarBean>((int) Math.round(this.params.maxPart * 0.32653061224d)));
         }
         Array<StarBean> array = map.get(node);
         array.add(sb);
