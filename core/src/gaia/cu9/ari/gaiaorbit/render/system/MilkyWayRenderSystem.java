@@ -116,7 +116,7 @@ public class MilkyWayRenderSystem extends ImmediateRenderSystem implements IObse
                 /** STARS **/
                 curr.clear();
                 float density = GlobalConf.SCALE_FACTOR;
-                for (ParticleBean star : mw.pointData) {
+                for (ParticleBean star : mw.starData) {
                     // VERTEX
                     aux1.set((float) star.data[0], (float) star.data[1], (float) star.data[2]);
                     double distanceCenter = aux1.sub(center).len() / (mw.getRadius() * 2f);
@@ -159,6 +159,7 @@ public class MilkyWayRenderSystem extends ImmediateRenderSystem implements IObse
                     curr.vertexIdx += curr.vertexSize;
 
                 }
+                curr.mesh.setVertices(curr.vertices, 0, curr.vertexIdx);
 
                 /** QUADS **/
                 quad.clear();
@@ -267,6 +268,8 @@ public class MilkyWayRenderSystem extends ImmediateRenderSystem implements IObse
                     }
 
                 }
+                quad.mesh.setVertices(quad.vertices, 0, quad.vertexIdx);
+                quad.mesh.setIndices(quad.indices, 0, quad.indexIdx);
 
                 // Put flag down
                 UPDATE_POINTS = false;
@@ -297,8 +300,6 @@ public class MilkyWayRenderSystem extends ImmediateRenderSystem implements IObse
                     // Relativistic effects
                     addEffectsUniforms(nebulaProgram, camera);
 
-                    quad.mesh.setVertices(quad.vertices, 0, quad.vertexIdx);
-                    quad.mesh.setIndices(quad.indices, 0, quad.indexIdx);
                     quad.mesh.render(nebulaProgram, GL20.GL_TRIANGLES, 0, quad.indexIdx);
 
                     nebulaProgram.end();
@@ -326,7 +327,6 @@ public class MilkyWayRenderSystem extends ImmediateRenderSystem implements IObse
                     // Relativistic effects
                     addEffectsUniforms(shaderProgram, camera);
 
-                    curr.mesh.setVertices(curr.vertices, 0, curr.vertexIdx);
                     curr.mesh.render(shaderProgram, ShapeType.Point.getGlType());
                     shaderProgram.end();
 

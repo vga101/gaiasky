@@ -62,7 +62,8 @@
 				},
 	
 	"galaxydata" : {
-				"pointsource" : "data/galaxy/galaxy_40000particles.dat",
+				"starsource" : "data/galaxy/galaxy_40000particles.dat",
+				"dustsource" : "data/galaxy/galaxy_ArmDust.dat",
 				"nebulasource" : "data/galaxy/galaxy_80particles.dat"
 				},
 	"model" : {
@@ -84,6 +85,9 @@
 	"ct" : [MilkyWay],
 	"transformName" : galacticToEquatorial,
 	"label" : false,
+
+	// Fade out distances, in parsecs
+	"fadeout" : [1.0e2, 5.0e3],
 
 	"parent" : "Milky Way", 
 	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.BackgroundModel",

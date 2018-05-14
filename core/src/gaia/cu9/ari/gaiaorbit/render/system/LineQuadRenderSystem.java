@@ -70,7 +70,7 @@ public class LineQuadRenderSystem extends LineRenderSystem {
             currext.maxIndices = maxVertices + maxVertices / 2;
 
             VertexAttribute[] attribs = buildVertexAttributes();
-            currext.mesh = new Mesh(Mesh.VertexDataType.VertexArray, false, maxVertices, currext.maxIndices, attribs);
+            currext.mesh = new Mesh(false, maxVertices, currext.maxIndices, attribs);
 
             currext.indices = new short[currext.maxIndices];
             currext.vertexSize = currext.mesh.getVertexAttributes().vertexSize / 4;

@@ -232,6 +232,7 @@ public class GaiaSkyDesktop implements IObserver {
         cfg.foregroundFPS = GlobalConf.screen.LIMIT_FPS;
         cfg.backgroundFPS = GlobalConf.screen.LIMIT_FPS;
         cfg.useHDPI = true;
+        cfg.useGL30 = true;
         cfg.addIcon("icon/ic_launcher.png", Files.FileType.Internal);
 
         // Launch app

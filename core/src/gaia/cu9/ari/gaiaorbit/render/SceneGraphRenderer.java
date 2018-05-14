@@ -542,6 +542,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         modelBeamProc.setPreRunnable(blendDepthRunnable);
 
         // GALAXY
+        //AbstractRenderSystem galaxyProc = new MWModelRenderSystem(RenderGroup.GALAXY, alphas, mwPointShaders);
         AbstractRenderSystem galaxyProc = new MilkyWayRenderSystem(RenderGroup.GALAXY, alphas, modelBatchDefault, mwPointShaders, mwNebulaShaders);
         galaxyProc.setPreRunnable(blendNoDepthRunnable);
 
@@ -555,7 +556,8 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
         // STAR GROUP
         AbstractRenderSystem starGroupProc = new StarGroupRenderSystem(RenderGroup.STAR_GROUP, alphas, starGroupShaders);
-        starGroupProc.setPreRunnable(blendNoDepthRunnable);
+        starGroupProc.setPreRunnable(additiveBlendDepthRunnable);
+        starGroupProc.setPostRunnable(restoreRegularBlend);
 
         // ORBITAL ELEMENTS PARTICLES
         AbstractRenderSystem orbitElemProc = new OrbitalElementsParticlesRenderSystem(RenderGroup.PARTICLE_ORBIT_ELEMENTS, alphas, orbitElemShaders);

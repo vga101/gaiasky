@@ -4,46 +4,75 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g3d.ModelBatch;
-import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.reflect.ClassReflection;
 import com.badlogic.gdx.utils.reflect.Method;
 import com.badlogic.gdx.utils.reflect.ReflectionException;
 
 import gaia.cu9.ari.gaiaorbit.GaiaSky;
+import gaia.cu9.ari.gaiaorbit.data.group.PointDataProvider;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.render.I3DTextRenderable;
-import gaia.cu9.ari.gaiaorbit.render.IModelRenderable;
 import gaia.cu9.ari.gaiaorbit.render.RenderingContext;
 import gaia.cu9.ari.gaiaorbit.render.system.FontRenderSystem;
+import gaia.cu9.ari.gaiaorbit.scenegraph.ParticleGroup.ParticleBean;
+import gaia.cu9.ari.gaiaorbit.scenegraph.component.GalaxydataComponent;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
+import gaia.cu9.ari.gaiaorbit.util.gravwaves.RelativisticEffectsManager;
+import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
-public class MilkyWay extends Blob implements IModelRenderable, I3DTextRenderable {
+public class MilkyWay extends AbstractPositionEntity implements I3DTextRenderable {
     float[] labelColour = new float[] { 1f, 1f, 1f, 1f };
-    ModelComponent mc;
     String model, transformName;
     Matrix4 coordinateSystem;
+
+    public Array<? extends ParticleBean> starData, dustData;
+    protected String provider;
+    public GalaxydataComponent gc;
+
+    private Vector3d labelPosition;
+
+    /**
+     * Fade in low and high limits
+     */
+    private Vector2 fadeIn;
+
+    /**
+     * Fade out low and high limits
+     */
+    private Vector2 fadeOut;
+
+    /**
+     * The current distance at each cycle, in internal units
+     */
+    private double currentDistance;
 
     public MilkyWay() {
         super();
         localTransform = new Matrix4();
-        lowAngle = (float) Math.toRadians(60);
-        highAngle = (float) Math.toRadians(75.51);
     }
 
     public void initialize() {
-        mc.initialize();
-        mc.env.set(new ColorAttribute(ColorAttribute.AmbientLight, cc[0], cc[1], cc[2], 1));
+        /** Load data **/
+        PointDataProvider provider = new PointDataProvider();
+        try {
+            starData = provider.loadData(gc.starsource);
+            dustData = provider.loadData(gc.dustsource);
+        } catch (Exception e) {
+            Logger.error(e, getClass().getSimpleName());
+        }
+
     }
 
     @Override
@@ -53,45 +82,94 @@ public class MilkyWay extends Blob implements IModelRenderable, I3DTextRenderabl
         // Set static coordinates to position
         coordinates.getEquatorialCartesianCoordinates(null, pos);
 
-        // Initialize transform
+        // Initialise transform
         if (transformName != null) {
             Class<Coordinates> c = Coordinates.class;
             try {
                 Method m = ClassReflection.getMethod(c, transformName);
                 Matrix4d trf = (Matrix4d) m.invoke(null);
-                coordinateSystem = new Matrix4();
-                trf.putIn(coordinateSystem);
+
+                coordinateSystem = trf.putIn(new Matrix4());
+
             } catch (ReflectionException e) {
                 Logger.error(this.getClass().getName(), "Error getting/invoking method Coordinates." + transformName + "()");
             }
         } else {
             // Equatorial, nothing
         }
+
         // Model
-        mc.doneLoading(manager, localTransform, null);
+        Vector3 aux = new Vector3();
+        Vector3 pos3 = pos.toVector3();
+
+        // Transform all
+        for (int i = 0; i < starData.size; i++) {
+            double[] pointf = starData.get(i).data;
+
+            aux.set((float) pointf[0], (float) pointf[2], (float) pointf[1]);
+            aux.scl(size).rotate(-90, 0, 1, 0).mul(coordinateSystem).add(pos3);
+            pointf[0] = aux.x;
+            pointf[1] = aux.y;
+            pointf[2] = aux.z;
+        }
+
+        for (int i = 0; i < dustData.size; i++) {
+            double[] pointf = dustData.get(i).data;
+            aux.set((float) pointf[0], (float) pointf[2], (float) pointf[1]);
+            aux.scl(size).rotate(-90, 0, 1, 0).mul(coordinateSystem).add(pos3);
+            pointf[0] = aux.x;
+            pointf[1] = aux.y;
+            pointf[2] = aux.z;
+        }
+
     }
 
-    @Override
-    protected void addToRenderLists(ICamera camera) {
-        if (viewAngle <= highAngle) {
-            addToRender(this, RenderGroup.MODEL_NORMAL);
-            if (renderText()) {
-                addToRender(this, RenderGroup.FONT_LABEL);
+    public void update(ITimeFrameProvider time, final Transform parentTransform, ICamera camera, float opacity) {
+        this.opacity = opacity * this.opacity;
+        transform.set(parentTransform);
+        this.currentDistance = camera.getDistance() * camera.getFovFactor();
+
+        // Update with translation/rotation/etc
+        updateLocal(time, camera);
+
+        if (children != null && currentDistance < fadeIn.y) {
+            for (int i = 0; i < children.size; i++) {
+                float childOpacity = 1 - this.opacity;
+                SceneGraphNode child = children.get(i);
+                child.update(time, transform, camera, childOpacity);
             }
         }
     }
 
     @Override
+    public void update(ITimeFrameProvider time, Transform parentTransform, ICamera camera) {
+        update(time, parentTransform, camera, 1f);
+    }
+
+    @Override
     public void updateLocal(ITimeFrameProvider time, ICamera camera) {
         super.updateLocal(time, camera);
+
+        // Update alpha
+        this.opacity = 1;
+        if (fadeIn != null)
+            this.opacity *= MathUtilsd.lint((float) this.currentDistance, fadeIn.x, fadeIn.y, 0, 1);
+        if (fadeOut != null)
+            this.opacity *= MathUtilsd.lint((float) this.currentDistance, fadeOut.x, fadeOut.y, 1, 0);
+
         // Directional light comes from up
         updateLocalTransform();
-        if (mc != null) {
-            Vector3 d = aux3f1.get();
-            d.set(0, 1, 0);
-            d.mul(coordinateSystem);
 
-            mc.dlight.direction.set(d);
+    }
+
+    @Override
+    protected void addToRenderLists(ICamera camera) {
+        if ((fadeIn == null || fadeIn != null && currentDistance > fadeIn.x) && (fadeOut == null || fadeOut != null && currentDistance < fadeOut.y)) {
+
+            if (renderText()) {
+                addToRender(this, RenderGroup.FONT_LABEL);
+            }
+            addToRender(this, RenderGroup.GALAXY);
         }
 
     }
@@ -108,16 +186,6 @@ public class MilkyWay extends Blob implements IModelRenderable, I3DTextRenderabl
     }
 
     /**
-     * Model rendering.
-     */
-    @Override
-    public void render(ModelBatch modelBatch, float alpha, double t) {
-        mc.touch();
-        mc.setTransparency(alpha * cc[3] * opacity);
-        modelBatch.render(mc.instance, mc.env);
-    }
-
-    /**
      * Label rendering.
      */
     @Override
@@ -128,20 +196,11 @@ public class MilkyWay extends Blob implements IModelRenderable, I3DTextRenderabl
         shader.setUniformf("u_viewAnglePow", 1f);
         shader.setUniformf("u_thOverFactor", 1f);
         shader.setUniformf("u_thOverFactorScl", 1f);
-        render3DLabel(batch, shader, sys.font3d, camera, rc, text(), pos, textScale(), textSize());
-    }
-
-    @Override
-    public boolean hasAtmosphere() {
-        return false;
+        render3DLabel(batch, shader, sys.font3d, camera, rc, text(), pos, textScale(), textSize() * camera.getFovFactor());
     }
 
     public void setTransformName(String transformName) {
         this.transformName = transformName;
-    }
-
-    public void setModel(String model) {
-        this.model = model;
     }
 
     @Override
@@ -158,6 +217,18 @@ public class MilkyWay extends Blob implements IModelRenderable, I3DTextRenderabl
         this.size = (float) (size * Constants.KM_TO_U);
     }
 
+    public void setFadein(double[] fadein) {
+        fadeIn = new Vector2((float) (fadein[0] * Constants.PC_TO_U), (float) (fadein[1] * Constants.PC_TO_U));
+    }
+
+    public void setFadeout(double[] fadeout) {
+        fadeOut = new Vector2((float) (fadeout[0] * Constants.PC_TO_U), (float) (fadeout[1] * Constants.PC_TO_U));
+    }
+
+    public void setLabelposition(double[] labelposition) {
+        this.labelPosition = new Vector3d(labelposition[0] * Constants.PC_TO_U, labelposition[1] * Constants.PC_TO_U, labelposition[2] * Constants.PC_TO_U);
+    }
+
     @Override
     public float[] textColour() {
         return labelColour;
@@ -165,7 +236,7 @@ public class MilkyWay extends Blob implements IModelRenderable, I3DTextRenderabl
 
     @Override
     public float textSize() {
-        return (float) distToCamera * 3e-3f;
+        return (float) distToCamera * 2e-3f;
     }
 
     @Override
@@ -175,7 +246,9 @@ public class MilkyWay extends Blob implements IModelRenderable, I3DTextRenderabl
 
     @Override
     public void textPosition(ICamera cam, Vector3d out) {
-        transform.getTranslation(out);
+        out.set(labelPosition).add(cam.getInversePos());
+        GlobalResources.applyRelativisticAberration(out, cam);
+        RelativisticEffectsManager.getInstance().gravitationalWavePos(out);
     }
 
     @Override
@@ -189,10 +262,6 @@ public class MilkyWay extends Blob implements IModelRenderable, I3DTextRenderabl
         Gdx.gl.glDepthMask(false);
     }
 
-    public void setModel(ModelComponent mc) {
-        this.mc = mc;
-    }
-
     public void setLabelcolor(double[] labelcolor) {
         this.labelColour = GlobalResources.toFloatArray(labelcolor);
 
@@ -203,4 +272,32 @@ public class MilkyWay extends Blob implements IModelRenderable, I3DTextRenderabl
         return true;
     }
 
+    public String getProvider() {
+        return provider;
+    }
+
+    public void setProvider(String provider) {
+        this.provider = provider;
+    }
+
+    public void setGalaxydata(GalaxydataComponent gc) {
+        this.gc = gc;
+    }
+
+    /**
+     * Sets the size of this entity in kilometres
+     * 
+     * @param size
+     *            The diameter of the entity
+     */
+    public void setSize(Float size) {
+        this.size = (float) (size * Constants.KM_TO_U);
+    }
+
+    @Override
+    public void updateLocalValues(ITimeFrameProvider time, ICamera camera) {
+    }
+
+    public void setModel(ModelComponent mc) {
+    }
 }

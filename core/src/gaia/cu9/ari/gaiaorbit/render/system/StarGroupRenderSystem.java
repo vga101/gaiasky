@@ -1,7 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.render.system;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.VertexAttribute;
@@ -121,8 +120,6 @@ public class StarGroupRenderSystem extends ImmediateRenderSystem implements IObs
         // Enable point sizes
         Gdx.gl20.glEnable(0x8642);
 
-        // Additive blending
-        Gdx.gl20.glBlendFunc(GL20.GL_ONE, GL20.GL_ONE);
 
         //renderables.sort(comp);
         if (renderables.size > 0) {
@@ -211,8 +208,6 @@ public class StarGroupRenderSystem extends ImmediateRenderSystem implements IObs
                 }
             }
         }
-        // Restore alpha blending
-        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
     }
 
     protected VertexAttribute[] buildVertexAttributes() {

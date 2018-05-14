@@ -31,12 +31,11 @@ import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
  * @author tsagrista
  *
  */
-public class BackgroundModel extends AbstractPositionEntity implements IModelRenderable, I3DTextRenderable {
+public class BackgroundModel extends FadeNode implements IModelRenderable, I3DTextRenderable {
 
     private String transformName;
     public ModelComponent mc;
     private boolean label, label2d;
-    private Vector3d labelPosition;
 
     public BackgroundModel() {
         super();
@@ -195,16 +194,5 @@ public class BackgroundModel extends AbstractPositionEntity implements IModelRen
         return label;
     }
 
-    /**
-     * Sets the position of the label.
-     * If label2d is on, this is interpreted as [x, y, scale]. Otherwise,
-     * it is interpreted as the 3D position in the internal reference system, in parsecs.
-     * frame
-     * 
-     * @param labelposition
-     */
-    public void setLabelposition(double[] labelposition) {
-        this.labelPosition = new Vector3d(labelposition[0], labelposition[1], labelposition[2]);
-    }
 
 }

@@ -152,7 +152,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
         shader.setUniformf("u_radius", (float) getRadius());
 
         // Sprite.render
-        mesh.render(shader, GL20.GL_TRIANGLES, 0, 6);
+        mesh.render(shader, GL20.GL_TRIANGLES);
     }
 
     public float getFuzzyRenderSize(ICamera camera) {
