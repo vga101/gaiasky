@@ -60,6 +60,11 @@ public class Constants {
      */
     public static final double U_TO_PC = 1 / PC_TO_U;
 
+    /**
+     * Local unit to Kpc conversion.
+     */
+    public static final double U_TO_KPC = U_TO_PC / 1000d;
+
     /** Hours to seconds **/
     public static final double H_TO_S = 3600;
 

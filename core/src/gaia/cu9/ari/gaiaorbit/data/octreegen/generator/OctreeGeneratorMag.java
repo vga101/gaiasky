@@ -2,7 +2,6 @@ package gaia.cu9.ari.gaiaorbit.data.octreegen.generator;
 
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -31,10 +30,9 @@ public class OctreeGeneratorMag implements IOctreeGenerator {
     public OctreeNode generateOctree(Array<StarBean> catalog) {
         root = IOctreeGenerator.startGeneration(catalog, this.getClass(), params);
 
-        @SuppressWarnings("unchecked")
-        Array<OctreeNode>[] octantsPerLevel = new Array[25];
-        octantsPerLevel[0] = new Array<OctreeNode>(1);
-        octantsPerLevel[0].add(root);
+        // Holds all octree nodes indexed by id
+        Map<Long, OctreeNode> idMap = new HashMap<Long, OctreeNode>();
+        idMap.put(root.pageId, root);
 
         Map<OctreeNode, Array<StarBean>> sbMap = new HashMap<OctreeNode, Array<StarBean>>();
 
@@ -44,10 +42,7 @@ public class OctreeGeneratorMag implements IOctreeGenerator {
 
         int catalogIndex = 0;
         for (int level = 0; level < 25; level++) {
-            Logger.info(this.getClass().getSimpleName(), "Generating level " + level);
-            // Treat each level and set up the next
-            Array<OctreeNode> levelOctants = octantsPerLevel[level];
-            Logger.info("        " + (catalog.size - catalogIndex) + " stars left, " + levelOctants.size + " octants");
+            Logger.info(this.getClass().getSimpleName(), "Generating level " + level + " (" + (catalog.size - catalogIndex) + " stars left)");
             while (catalogIndex < catalog.size) {
                 // Add star beans to octants till we reach max capacity
                 StarBean sb = catalog.get(catalogIndex++);
@@ -55,13 +50,18 @@ public class OctreeGeneratorMag implements IOctreeGenerator {
                 double y = sb.data[StarBean.I_Y];
                 double z = sb.data[StarBean.I_Z];
                 int addedNum = 0;
-                for (OctreeNode octant : levelOctants) {
-                    if (contained(x, y, z, octant)) {
-                        addedNum = addStarToNode(sb, octant, sbMap);
-                        break;
-                    }
-                }
 
+                Long nodeId = getPositionOctantId(x, y, z, level);
+                if (!idMap.containsKey(nodeId)) {
+                    // Create octant and parents if necessary
+                    OctreeNode octant = createOctant(nodeId, x, y, z, level);
+                    // Add to idMap
+                    idMap.put(octant.pageId, octant);
+                }
+                // Add star to node
+                OctreeNode octant = idMap.get(nodeId);
+                addedNum = addStarToNode(sb, octant, sbMap);
+                
                 if (addedNum >= params.maxPart) {
                     // On to next level!
                     break;
@@ -71,42 +71,6 @@ public class OctreeGeneratorMag implements IOctreeGenerator {
             if (catalogIndex >= catalog.size) {
                 // All stars added -> FINISHED
                 break;
-            } else {
-                // Prepare next level (create nodes, etc.)
-                Iterator<OctreeNode> it = levelOctants.iterator();
-                while (it.hasNext()) {
-                    OctreeNode octant = it.next();
-                    if (sbMap.containsKey(octant) && sbMap.get(octant).size > 0) {
-                        // Generate 8 children per each level octant
-                        double hsx = octant.size.x / 4d;
-                        double hsy = octant.size.y / 4d;
-                        double hsz = octant.size.z / 4d;
-
-                        /** CREATE SUB-OCTANTS **/
-                        // Front - top - left
-                        addToOctantsPerLevel(octantsPerLevel, level + 1, new OctreeNode(octant.centre.x - hsx, octant.centre.y + hsy, octant.centre.z - hsz, hsx, hsy, hsz, octant.depth + 1, octant, 0));
-                        // Front - top - right
-                        addToOctantsPerLevel(octantsPerLevel, level + 1, new OctreeNode(octant.centre.x + hsx, octant.centre.y + hsy, octant.centre.z - hsz, hsx, hsy, hsz, octant.depth + 1, octant, 1));
-                        // Front - bottom - left
-                        addToOctantsPerLevel(octantsPerLevel, level + 1, new OctreeNode(octant.centre.x - hsx, octant.centre.y - hsy, octant.centre.z - hsz, hsx, hsy, hsz, octant.depth + 1, octant, 2));
-                        // Front - bottom - right
-                        addToOctantsPerLevel(octantsPerLevel, level + 1, new OctreeNode(octant.centre.x + hsx, octant.centre.y - hsy, octant.centre.z - hsz, hsx, hsy, hsz, octant.depth + 1, octant, 3));
-                        // Back - top - left
-                        addToOctantsPerLevel(octantsPerLevel, level + 1, new OctreeNode(octant.centre.x - hsx, octant.centre.y + hsy, octant.centre.z + hsz, hsx, hsy, hsz, octant.depth + 1, octant, 4));
-                        // Back - top - right
-                        addToOctantsPerLevel(octantsPerLevel, level + 1, new OctreeNode(octant.centre.x + hsx, octant.centre.y + hsy, octant.centre.z + hsz, hsx, hsy, hsz, octant.depth + 1, octant, 5));
-                        // Back - bottom - left
-                        addToOctantsPerLevel(octantsPerLevel, level + 1, new OctreeNode(octant.centre.x - hsx, octant.centre.y - hsy, octant.centre.z + hsz, hsx, hsy, hsz, octant.depth + 1, octant, 6));
-                        // Back - bottom - right
-                        addToOctantsPerLevel(octantsPerLevel, level + 1, new OctreeNode(octant.centre.x + hsx, octant.centre.y - hsy, octant.centre.z + hsz, hsx, hsy, hsz, octant.depth + 1, octant, 7));
-                    } else {
-                        // Remove octant from this world
-                        if (octant.parent != null) {
-                            octant.parent.removeChild(octant);
-                        }
-                        it.remove();
-                    }
-                }
             }
         }
 
@@ -125,11 +89,62 @@ public class OctreeGeneratorMag implements IOctreeGenerator {
         return root;
     }
 
-    private void addToOctantsPerLevel(Array<OctreeNode>[] octantsPerLevel, int level, OctreeNode node) {
-        if (octantsPerLevel[level] == null) {
-            octantsPerLevel[level] = new Array<OctreeNode>();
+    private OctreeNode createOctant(Long id, double x, double y, double z, int level) {
+        Vector3d min = new Vector3d();
+        OctreeNode current = root;
+        for (int l = 1; l <= level; l++) {
+            BoundingBoxd b = current.box;
+            double hs = b.getWidth() / 2d;
+            int idx;
+            if (x <= b.min.x + hs) {
+                if (y <= b.min.y + hs) {
+                    if (z <= b.min.z + hs) {
+                        idx = 0;
+                        min.set(b.min);
+                    } else {
+                        idx = 1;
+                        min.set(b.min.x, b.min.y, b.min.z + hs);
+                    }
+                } else {
+                    if (z <= b.min.z + hs) {
+                        idx = 2;
+                        min.set(b.min.x, b.min.y + hs, b.min.z);
+                    } else {
+                        idx = 3;
+                        min.set(b.min.x, b.min.y + hs, b.min.z + hs);
+                    }
+                }
+            } else {
+                if (y <= b.min.y + hs) {
+                    if (z <= b.min.z + hs) {
+                        idx = 4;
+                        min.set(b.min.x + hs, b.min.y, b.min.z);
+                    } else {
+                        idx = 5;
+                        min.set(b.min.x + hs, b.min.y, b.min.z + hs);
+                    }
+                } else {
+                    if (z <= b.min.z + hs) {
+                        idx = 6;
+                        min.set(b.min.x + hs, b.min.y + hs, b.min.z);
+                    } else {
+                        idx = 7;
+                        min.set(b.min.x + hs, b.min.y + hs, b.min.z + hs);
+                    }
+                }
+            }
+            if (current.children[idx] == null) {
+                // Create parent
+                double nhs = hs / 2d;
+                new OctreeNode(min.x + nhs, min.y + nhs, min.z + nhs, nhs, nhs, nhs, l, current, idx);
+            }
+            current = current.children[idx];
         }
-        octantsPerLevel[level].add(node);
+
+        if (current.pageId != id)
+            throw new RuntimeException("Given id and newly created node id do not match: " + id + " vs " + current.pageId);
+
+        return current;
     }
 
     private int addStarToNode(StarBean sb, OctreeNode node, Map<OctreeNode, Array<StarBean>> map) {
@@ -142,14 +157,6 @@ public class OctreeGeneratorMag implements IOctreeGenerator {
         return array.size;
     }
 
-    private boolean contained(StarBean star, OctreeNode box) {
-        return box.box.contains(star.data[StarBean.I_X], star.data[StarBean.I_Y], star.data[StarBean.I_Z]);
-    }
-
-    private boolean contained(double x, double y, double z, OctreeNode box) {
-        return box.box.contains(x, y, z);
-    }
-
     @Override
     public int getDiscarded() {
         return 0;
@@ -158,11 +165,26 @@ public class OctreeGeneratorMag implements IOctreeGenerator {
     Vector3d min = new Vector3d();
     Vector3d max = new Vector3d();
 
-    public BoundingBoxd getBoundingBox(double x, double y, double z, int level) {
+    /**
+     * Gets the id of the node which corresponds to the given xyz position
+     * @param x Position in x
+     * @param y Position in y
+     * @param z Position in z
+     * @param level Level
+     * @return Id of node which contains the position. The id is a long where the two least significant digits 
+     * indicate the level and the rest of digit positions indicate the index in the level of
+     * the position.
+     */
+    public Long getPositionOctantId(double x, double y, double z, int level) {
+        if (level == 0) {
+            // Level 0 always has only one node only
+            return root.pageId;
+        }
         min.set(root.box.min);
         max.set(root.box.max);
         // Half side
         double hs = (max.x - min.x) / 2d;
+        long id = level;
 
         for (int l = 1; l <= level; l++) {
             if (x <= min.x + hs) {
@@ -171,26 +193,33 @@ public class OctreeGeneratorMag implements IOctreeGenerator {
                         // Min stays the same!
                     } else {
                         min.set(min.x, min.y, min.z + hs);
+                        id += Math.pow(10, 1 + l) * 1;
                     }
                 } else {
                     if (z <= min.z + hs) {
                         min.set(min.x, min.y + hs, min.z);
+                        id += Math.pow(10, 1 + l) * 2;
                     } else {
                         min.set(min.x, min.y + hs, min.z + hs);
+                        id += Math.pow(10, 1 + l) * 3;
                     }
                 }
             } else {
                 if (y <= min.y + hs) {
                     if (z <= min.z + hs) {
                         min.set(min.x + hs, min.y, min.z);
+                        id += Math.pow(10, 1 + l) * 4;
                     } else {
                         min.set(min.x + hs, min.y, min.z + hs);
+                        id += Math.pow(10, 1 + l) * 5;
                     }
                 } else {
                     if (z <= min.z + hs) {
                         min.set(min.x + hs, min.y + hs, min.z);
+                        id += Math.pow(10, 1 + l) * 6;
                     } else {
                         min.set(min.x + hs, min.y + hs, min.z + hs);
+                        id += Math.pow(10, 1 + l) * 7;
                     }
 
                 }
@@ -200,7 +229,7 @@ public class OctreeGeneratorMag implements IOctreeGenerator {
             hs = hs / 2d;
         }
 
-        return new BoundingBoxd(min, max);
+        return id;
     }
 
 }

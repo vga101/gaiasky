@@ -104,7 +104,6 @@ public class OctreeNode implements ILineRenderable {
      * @param depth
      */
     public OctreeNode(double x, double y, double z, double hsx, double hsy, double hsz, int depth) {
-        this.pageId = hash(x, y, z);
         this.blf = new Vector3d(x - hsx, y - hsy, z - hsz);
         this.trb = new Vector3d(x + hsx, y + hsy, z + hsz);
         this.centre = new Vector3d(x, y, z);
@@ -163,6 +162,7 @@ public class OctreeNode implements ILineRenderable {
         this(x, y, z, hsx, hsy, hsz, depth);
         this.parent = parent;
         parent.children[i] = this;
+        this.pageId = computePageId();
     }
 
     /**
@@ -226,6 +226,29 @@ public class OctreeNode implements ILineRenderable {
         this.childrenCount = childrenCount;
         this.nObjects = nObjects;
         this.ownObjects = ownObjects;
+    }
+
+    public long computePageId() {
+        return computePageIdRec() + depth;
+    }
+
+    protected long computePageIdRec() {
+        if (depth == 0)
+            return 0;
+        return (long) (Math.pow(10, 1 + depth) * getParentIndex()) + (parent != null ? parent.computePageIdRec() : 0);
+    }
+
+    /** Gets the index of this node in the parent's list **/
+    protected int getParentIndex() {
+        if (parent != null) {
+            for (int i = 0; i < 8; i++) {
+                if (parent.children[i] == this)
+                    return i;
+            }
+            return 0;
+        } else {
+            return 0;
+        }
     }
 
     /**
