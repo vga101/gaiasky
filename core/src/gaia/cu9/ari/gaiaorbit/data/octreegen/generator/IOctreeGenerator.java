@@ -57,7 +57,7 @@ public interface IOctreeGenerator {
             /** THE CENTRE OF THE OCTREE IS THE SUN **/
             pos(furthest.data, pos0);
             double halfSize = Math.max(Math.max(pos0.x, pos0.y), pos0.z);
-            root = new OctreeNode(nextPageId(), 0, 0, 0, halfSize, halfSize, halfSize, 0);
+            root = new OctreeNode(0, 0, 0, halfSize, halfSize, halfSize, 0);
         } else {
             /** THE CENTRE OF THE OCTREE MAY BE ANYWHERE **/
             double volume = Double.MIN_VALUE;
@@ -75,7 +75,7 @@ public interface IOctreeGenerator {
                 }
             }
             double halfSize = Math.max(Math.max(box.getDepth(), box.getHeight()), box.getWidth()) / 2d;
-            root = new OctreeNode(nextPageId(), box.getCenterX(), box.getCenterY(), box.getCenterZ(), halfSize, halfSize, halfSize, 0);
+            root = new OctreeNode(box.getCenterX(), box.getCenterY(), box.getCenterZ(), halfSize, halfSize, halfSize, 0);
         }
         return root;
     }

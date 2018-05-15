@@ -76,21 +76,21 @@ public class OctreeGeneratorPart implements IOctreeGenerator {
 
                     /** CREATE SUB-OCTANTS **/
                     // Front - top - left
-                    octantsPerLevel[level + 1].add(new OctreeNode(IOctreeGenerator.nextPageId(), octant.centre.x - hsx, octant.centre.y + hsy, octant.centre.z - hsz, hsx, hsy, hsz, octant.depth + 1, octant, 0));
+                    octantsPerLevel[level + 1].add(new OctreeNode(octant.centre.x - hsx, octant.centre.y + hsy, octant.centre.z - hsz, hsx, hsy, hsz, octant.depth + 1, octant, 0));
                     // Front - top - right
-                    octantsPerLevel[level + 1].add(new OctreeNode(IOctreeGenerator.nextPageId(), octant.centre.x + hsx, octant.centre.y + hsy, octant.centre.z - hsz, hsx, hsy, hsz, octant.depth + 1, octant, 1));
+                    octantsPerLevel[level + 1].add(new OctreeNode(octant.centre.x + hsx, octant.centre.y + hsy, octant.centre.z - hsz, hsx, hsy, hsz, octant.depth + 1, octant, 1));
                     // Front - bottom - left
-                    octantsPerLevel[level + 1].add(new OctreeNode(IOctreeGenerator.nextPageId(), octant.centre.x - hsx, octant.centre.y - hsy, octant.centre.z - hsz, hsx, hsy, hsz, octant.depth + 1, octant, 2));
+                    octantsPerLevel[level + 1].add(new OctreeNode(octant.centre.x - hsx, octant.centre.y - hsy, octant.centre.z - hsz, hsx, hsy, hsz, octant.depth + 1, octant, 2));
                     // Front - bottom - right
-                    octantsPerLevel[level + 1].add(new OctreeNode(IOctreeGenerator.nextPageId(), octant.centre.x + hsx, octant.centre.y - hsy, octant.centre.z - hsz, hsx, hsy, hsz, octant.depth + 1, octant, 3));
+                    octantsPerLevel[level + 1].add(new OctreeNode(octant.centre.x + hsx, octant.centre.y - hsy, octant.centre.z - hsz, hsx, hsy, hsz, octant.depth + 1, octant, 3));
                     // Back - top - left
-                    octantsPerLevel[level + 1].add(new OctreeNode(IOctreeGenerator.nextPageId(), octant.centre.x - hsx, octant.centre.y + hsy, octant.centre.z + hsz, hsx, hsy, hsz, octant.depth + 1, octant, 4));
+                    octantsPerLevel[level + 1].add(new OctreeNode(octant.centre.x - hsx, octant.centre.y + hsy, octant.centre.z + hsz, hsx, hsy, hsz, octant.depth + 1, octant, 4));
                     // Back - top - right
-                    octantsPerLevel[level + 1].add(new OctreeNode(IOctreeGenerator.nextPageId(), octant.centre.x + hsx, octant.centre.y + hsy, octant.centre.z + hsz, hsx, hsy, hsz, octant.depth + 1, octant, 5));
+                    octantsPerLevel[level + 1].add(new OctreeNode(octant.centre.x + hsx, octant.centre.y + hsy, octant.centre.z + hsz, hsx, hsy, hsz, octant.depth + 1, octant, 5));
                     // Back - bottom - left
-                    octantsPerLevel[level + 1].add(new OctreeNode(IOctreeGenerator.nextPageId(), octant.centre.x - hsx, octant.centre.y - hsy, octant.centre.z + hsz, hsx, hsy, hsz, octant.depth + 1, octant, 6));
+                    octantsPerLevel[level + 1].add(new OctreeNode(octant.centre.x - hsx, octant.centre.y - hsy, octant.centre.z + hsz, hsx, hsy, hsz, octant.depth + 1, octant, 6));
                     // Back - bottom - right
-                    octantsPerLevel[level + 1].add(new OctreeNode(IOctreeGenerator.nextPageId(), octant.centre.x + hsx, octant.centre.y - hsy, octant.centre.z + hsz, hsx, hsy, hsz, octant.depth + 1, octant, 7));
+                    octantsPerLevel[level + 1].add(new OctreeNode(octant.centre.x + hsx, octant.centre.y - hsy, octant.centre.z + hsz, hsx, hsy, hsz, octant.depth + 1, octant, 7));
                 }
             }
         }

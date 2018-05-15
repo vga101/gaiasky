@@ -95,6 +95,31 @@ public class OctreeNode implements ILineRenderable {
     /**
      * Constructs an octree node
      * 
+     * @param x
+     * @param y
+     * @param z
+     * @param hsx
+     * @param hsy
+     * @param hsz
+     * @param depth
+     */
+    public OctreeNode(double x, double y, double z, double hsx, double hsy, double hsz, int depth) {
+        this.pageId = hash(x, y, z);
+        this.blf = new Vector3d(x - hsx, y - hsy, z - hsz);
+        this.trb = new Vector3d(x + hsx, y + hsy, z + hsz);
+        this.centre = new Vector3d(x, y, z);
+        this.size = new Vector3d(hsx * 2, hsy * 2, hsz * 2);
+        this.box = new BoundingBoxd(blf, trb);
+        this.aux3d1 = new Vector3d();
+        this.depth = depth;
+        this.transform = new Vector3d();
+        this.observed = false;
+        this.status = LoadStatus.NOT_LOADED;
+        this.radius = Math.sqrt(hsx * hsx + hsy * hsy + hsz * hsz);
+    }
+
+    /**
+     * Constructs an octree node
      * @param pageId
      * @param x
      * @param y
@@ -122,7 +147,6 @@ public class OctreeNode implements ILineRenderable {
     /**
      * Constructs an octree node
      * 
-     * @param pageId
      * @param x
      * @param y
      * @param z
@@ -135,8 +159,8 @@ public class OctreeNode implements ILineRenderable {
      * @param i
      *            The index in the parent's children
      */
-    public OctreeNode(long pageId, double x, double y, double z, double hsx, double hsy, double hsz, int depth, OctreeNode parent, int i) {
-        this(pageId, x, y, z, hsx, hsy, hsz, depth);
+    public OctreeNode(double x, double y, double z, double hsx, double hsy, double hsz, int depth, OctreeNode parent, int i) {
+        this(x, y, z, hsx, hsy, hsz, depth);
         this.parent = parent;
         parent.children[i] = this;
     }
@@ -144,8 +168,6 @@ public class OctreeNode implements ILineRenderable {
     /**
      * Constructs an octree node.
      * 
-     * @param pageId
-     *            The page id.
      * @param x
      *            The x coordinate of the center.
      * @param y
@@ -167,8 +189,40 @@ public class OctreeNode implements ILineRenderable {
      *            Number of objects contained in this node. Same as
      *            objects.size().
      */
-    public OctreeNode(long pageId, double x, double y, double z, double hsx, double hsy, double hsz, int childrenCount, int nObjects, int ownObjects, int depth) {
-        this(pageId, x, y, z, hsx, hsy, hsz, depth);
+    public OctreeNode(double x, double y, double z, double hsx, double hsy, double hsz, int childrenCount, int nObjects, int ownObjects, int depth) {
+        this(x, y, z, hsx, hsy, hsz, depth);
+        this.childrenCount = childrenCount;
+        this.nObjects = nObjects;
+        this.ownObjects = ownObjects;
+    }
+
+    /**
+     * Constructs an octree node.
+     * @param pageId
+     *            The octant id 
+     * @param x
+     *            The x coordinate of the center.
+     * @param y
+     *            The y coordinate of the center.
+     * @param z
+     *            The z coordinate of the center.
+     * @param hsx
+     *            The half-size in x.
+     * @param hsy
+     *            The half-size in y.
+     * @param hsz
+     *            The half-size in z.
+     * @param childrenCount
+     *            Number of children nodes. Same as non null positions in
+     *            children vector.
+     * @param nObjects
+     *            Number of objects contained in this node and its descendants.
+     * @param ownObjects
+     *            Number of objects contained in this node. Same as
+     *            objects.size().
+     */
+    public OctreeNode(long pageid, double x, double y, double z, double hsx, double hsy, double hsz, int childrenCount, int nObjects, int ownObjects, int depth) {
+        this(pageid, x, y, z, hsx, hsy, hsz, depth);
         this.childrenCount = childrenCount;
         this.nObjects = nObjects;
         this.ownObjects = ownObjects;
@@ -717,6 +771,26 @@ public class OctreeNode implements ILineRenderable {
     /** Draws a line **/
     private void line(LineRenderSystem sr, double x1, double y1, double z1, double x2, double y2, double z2, com.badlogic.gdx.graphics.Color col) {
         sr.addLine((float) x1, (float) y1, (float) z1, (float) x2, (float) y2, (float) z2, col);
+    }
+
+    public static long hash(double x, double y, double z) {
+        long result = 3;
+        result = result * 31 + hash(x);
+        result = result * 31 + hash(y);
+        result = result * 31 + hash(z);
+
+        return result;
+    }
+
+    /**
+     * Returns an integer hash code representing the given double value.
+     * 
+     * @param value the value to be hashed
+     * @return the hash code
+     */
+    public static long hash(double value) {
+        long bits = Double.doubleToLongBits(value);
+        return (bits ^ (bits >>> 32));
     }
 
 }

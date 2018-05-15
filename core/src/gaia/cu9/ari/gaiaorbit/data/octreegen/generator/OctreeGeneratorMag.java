@@ -12,12 +12,15 @@ import gaia.cu9.ari.gaiaorbit.data.octreegen.StarBrightnessComparator;
 import gaia.cu9.ari.gaiaorbit.scenegraph.StarGroup;
 import gaia.cu9.ari.gaiaorbit.scenegraph.StarGroup.StarBean;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
+import gaia.cu9.ari.gaiaorbit.util.math.BoundingBoxd;
+import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
 
 public class OctreeGeneratorMag implements IOctreeGenerator {
 
     private OctreeGeneratorParams params;
     private Comparator<StarBean> comp;
+    private OctreeNode root;
 
     public OctreeGeneratorMag(OctreeGeneratorParams params) {
         this.params = params;
@@ -26,7 +29,7 @@ public class OctreeGeneratorMag implements IOctreeGenerator {
 
     @Override
     public OctreeNode generateOctree(Array<StarBean> catalog) {
-        OctreeNode root = IOctreeGenerator.startGeneration(catalog, this.getClass(), params);
+        root = IOctreeGenerator.startGeneration(catalog, this.getClass(), params);
 
         @SuppressWarnings("unchecked")
         Array<OctreeNode>[] octantsPerLevel = new Array[25];
@@ -81,21 +84,21 @@ public class OctreeGeneratorMag implements IOctreeGenerator {
 
                         /** CREATE SUB-OCTANTS **/
                         // Front - top - left
-                        addToOctantsPerLevel(octantsPerLevel, level + 1, new OctreeNode(IOctreeGenerator.nextPageId(), octant.centre.x - hsx, octant.centre.y + hsy, octant.centre.z - hsz, hsx, hsy, hsz, octant.depth + 1, octant, 0));
+                        addToOctantsPerLevel(octantsPerLevel, level + 1, new OctreeNode(octant.centre.x - hsx, octant.centre.y + hsy, octant.centre.z - hsz, hsx, hsy, hsz, octant.depth + 1, octant, 0));
                         // Front - top - right
-                        addToOctantsPerLevel(octantsPerLevel, level + 1, new OctreeNode(IOctreeGenerator.nextPageId(), octant.centre.x + hsx, octant.centre.y + hsy, octant.centre.z - hsz, hsx, hsy, hsz, octant.depth + 1, octant, 1));
+                        addToOctantsPerLevel(octantsPerLevel, level + 1, new OctreeNode(octant.centre.x + hsx, octant.centre.y + hsy, octant.centre.z - hsz, hsx, hsy, hsz, octant.depth + 1, octant, 1));
                         // Front - bottom - left
-                        addToOctantsPerLevel(octantsPerLevel, level + 1, new OctreeNode(IOctreeGenerator.nextPageId(), octant.centre.x - hsx, octant.centre.y - hsy, octant.centre.z - hsz, hsx, hsy, hsz, octant.depth + 1, octant, 2));
+                        addToOctantsPerLevel(octantsPerLevel, level + 1, new OctreeNode(octant.centre.x - hsx, octant.centre.y - hsy, octant.centre.z - hsz, hsx, hsy, hsz, octant.depth + 1, octant, 2));
                         // Front - bottom - right
-                        addToOctantsPerLevel(octantsPerLevel, level + 1, new OctreeNode(IOctreeGenerator.nextPageId(), octant.centre.x + hsx, octant.centre.y - hsy, octant.centre.z - hsz, hsx, hsy, hsz, octant.depth + 1, octant, 3));
+                        addToOctantsPerLevel(octantsPerLevel, level + 1, new OctreeNode(octant.centre.x + hsx, octant.centre.y - hsy, octant.centre.z - hsz, hsx, hsy, hsz, octant.depth + 1, octant, 3));
                         // Back - top - left
-                        addToOctantsPerLevel(octantsPerLevel, level + 1, new OctreeNode(IOctreeGenerator.nextPageId(), octant.centre.x - hsx, octant.centre.y + hsy, octant.centre.z + hsz, hsx, hsy, hsz, octant.depth + 1, octant, 4));
+                        addToOctantsPerLevel(octantsPerLevel, level + 1, new OctreeNode(octant.centre.x - hsx, octant.centre.y + hsy, octant.centre.z + hsz, hsx, hsy, hsz, octant.depth + 1, octant, 4));
                         // Back - top - right
-                        addToOctantsPerLevel(octantsPerLevel, level + 1, new OctreeNode(IOctreeGenerator.nextPageId(), octant.centre.x + hsx, octant.centre.y + hsy, octant.centre.z + hsz, hsx, hsy, hsz, octant.depth + 1, octant, 5));
+                        addToOctantsPerLevel(octantsPerLevel, level + 1, new OctreeNode(octant.centre.x + hsx, octant.centre.y + hsy, octant.centre.z + hsz, hsx, hsy, hsz, octant.depth + 1, octant, 5));
                         // Back - bottom - left
-                        addToOctantsPerLevel(octantsPerLevel, level + 1, new OctreeNode(IOctreeGenerator.nextPageId(), octant.centre.x - hsx, octant.centre.y - hsy, octant.centre.z + hsz, hsx, hsy, hsz, octant.depth + 1, octant, 6));
+                        addToOctantsPerLevel(octantsPerLevel, level + 1, new OctreeNode(octant.centre.x - hsx, octant.centre.y - hsy, octant.centre.z + hsz, hsx, hsy, hsz, octant.depth + 1, octant, 6));
                         // Back - bottom - right
-                        addToOctantsPerLevel(octantsPerLevel, level + 1, new OctreeNode(IOctreeGenerator.nextPageId(), octant.centre.x + hsx, octant.centre.y - hsy, octant.centre.z + hsz, hsx, hsy, hsz, octant.depth + 1, octant, 7));
+                        addToOctantsPerLevel(octantsPerLevel, level + 1, new OctreeNode(octant.centre.x + hsx, octant.centre.y - hsy, octant.centre.z + hsz, hsx, hsy, hsz, octant.depth + 1, octant, 7));
                     } else {
                         // Remove octant from this world
                         if (octant.parent != null) {
@@ -150,6 +153,54 @@ public class OctreeGeneratorMag implements IOctreeGenerator {
     @Override
     public int getDiscarded() {
         return 0;
+    }
+
+    Vector3d min = new Vector3d();
+    Vector3d max = new Vector3d();
+
+    public BoundingBoxd getBoundingBox(double x, double y, double z, int level) {
+        min.set(root.box.min);
+        max.set(root.box.max);
+        // Half side
+        double hs = (max.x - min.x) / 2d;
+
+        for (int l = 1; l <= level; l++) {
+            if (x <= min.x + hs) {
+                if (y <= min.y + hs) {
+                    if (z <= min.z + hs) {
+                        // Min stays the same!
+                    } else {
+                        min.set(min.x, min.y, min.z + hs);
+                    }
+                } else {
+                    if (z <= min.z + hs) {
+                        min.set(min.x, min.y + hs, min.z);
+                    } else {
+                        min.set(min.x, min.y + hs, min.z + hs);
+                    }
+                }
+            } else {
+                if (y <= min.y + hs) {
+                    if (z <= min.z + hs) {
+                        min.set(min.x + hs, min.y, min.z);
+                    } else {
+                        min.set(min.x + hs, min.y, min.z + hs);
+                    }
+                } else {
+                    if (z <= min.z + hs) {
+                        min.set(min.x + hs, min.y + hs, min.z);
+                    } else {
+                        min.set(min.x + hs, min.y + hs, min.z + hs);
+                    }
+
+                }
+            }
+            // Max is always half side away from min
+            max.set(min.x + hs, min.y + hs, min.z + hs);
+            hs = hs / 2d;
+        }
+
+        return new BoundingBoxd(min, max);
     }
 
 }
