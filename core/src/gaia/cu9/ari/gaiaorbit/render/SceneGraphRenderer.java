@@ -47,6 +47,7 @@ import gaia.cu9.ari.gaiaorbit.render.system.IRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.LineGPURenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.LineQuadRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.LineRenderSystem;
+import gaia.cu9.ari.gaiaorbit.render.system.MWModelRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.MilkyWayRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.ModelBatchRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.OrbitalElementsParticlesRenderSystem;
@@ -140,6 +141,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
     Array<IRenderable> stars;
 
     AbstractRenderSystem billboardStarsProc;
+    MWModelRenderSystem mwrs;
 
     public SceneGraphRenderer() {
         super();
@@ -544,7 +546,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         // GALAXY
         //AbstractRenderSystem galaxyProc = new MWModelRenderSystem(RenderGroup.GALAXY, alphas, mwPointShaders);
         AbstractRenderSystem galaxyProc = new MilkyWayRenderSystem(RenderGroup.GALAXY, alphas, modelBatchDefault, mwPointShaders, mwNebulaShaders);
-        galaxyProc.setPreRunnable(blendNoDepthRunnable);
+        galaxyProc.setPreRunnable(blendDepthRunnable);
 
         // PARTICLE EFFECTS
         AbstractRenderSystem particleEffectsProc = new ParticleEffectsRenderSystem(null, alphas, particleEffectShaders);
@@ -593,7 +595,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
             @Override
             public void run(AbstractRenderSystem renderSystem, Array<IRenderable> renderables, ICamera camera) {
                 // Clear depth buffer before rendering things up close
-                Gdx.gl.glClear(GL20.GL_DEPTH_BUFFER_BIT);
+                //Gdx.gl.glClear(GL20.GL_DEPTH_BUFFER_BIT);
             }
         });
 
@@ -809,9 +811,9 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
         sgr.render(this, camera, t, rw, rh, fb, ppb);
 
-        //        spriteBatch.begin();
-        //        spriteBatch.draw(glowTex, 0, 0, 1080, 720);
-        //        spriteBatch.end();
+        // spriteBatch.begin();
+        // spriteBatch.draw(glowFb.getColorBufferTexture(), 0, 0, 1080, 720);
+        // spriteBatch.end();
 
     }
 

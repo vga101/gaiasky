@@ -10,12 +10,17 @@ uniform float u_alpha;
 varying vec4 v_col;
 
 void main() {
-	vec2 uv = vec2(gl_PointCoord.s, gl_PointCoord.t);
-	uv.y = uv.y / u_ar;
-	float dist = distance(vec2(0.5), uv) * 2.0;
-	if(dist > 0.9){
-		discard;
-	}
-    //gl_FragColor = vec4(v_col.rgb, v_col.a * u_alpha * pow(1.0 - dist, 6.0));
-    gl_FragColor = v_col * u_alpha * pow(1.0 - dist, 6.0);
+    vec2 uv = vec2(gl_PointCoord.s, gl_PointCoord.t);
+    uv.y = uv.y / u_ar;
+    float dist = distance(vec2(0.5), uv) * 2.0;
+    if(dist > 0.9){
+        discard;
+    }
+    float profile = pow(1.0 - dist, 4.0) + (1.0 - dist) * 0.5;
+    // Default blending
+    //gl_FragColor = vec4(v_col.rgb, v_col.a * u_alpha * profile);
+    //gl_FragColor = vec4(v_col.rgb, 1.0);
+
+    // Additive blending
+    gl_FragColor = v_col * u_alpha * profile;
 }

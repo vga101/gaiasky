@@ -2,7 +2,6 @@ package gaia.cu9.ari.gaiaorbit.render.system;
 
 import java.util.Random;
 
-import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -33,12 +32,12 @@ import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 public class MWModelRenderSystem extends ImmediateRenderSystem implements IObserver {
     private boolean UPDATE_POINTS = true;
 
-    Vector3 aux1;
-    int additionalOffset, pmOffset;
+    private Vector3 aux1;
+    private int additionalOffset;
 
-    ShaderProgram preShader;
-
+    private ShaderProgram postShader;
     private MeshData particlesMesh, postMesh;
+    private Random rand = new Random(24601);
 
     Texture accumTex, revealTex;
     FrameBuffer accumFb, revealFb;
@@ -50,12 +49,14 @@ public class MWModelRenderSystem extends ImmediateRenderSystem implements IObser
         accumTex = accumFb.getColorBufferTexture();
 
         FloatFrameBufferBuilder ffbb = new FloatFrameBufferBuilder(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        ffbb.addFloatAttachment(GL30.GL_R32F, GL30.GL_DEPTH_COMPONENT32F, GL30.GL_FLOAT, false);
+        //ffbb.addFloatAttachment(GL30.GL_R32F, GL30.GL_DEPTH_COMPONENT32F, GL30.GL_FLOAT, false);
+        //ffbb.addFloatAttachment(GL30.GL_R32F, GL30.GL_DEPTH_COMPONENT32F, GL30.GL_FLOAT, false);
+        //ffbb.addDepthRenderBuffer(GL30.GL_DEPTH_COMPONENT32F);
 
-        revealFb = ffbb.build();
-        revealTex = revealFb.getColorBufferTexture();
+        //revealFb = ffbb.build();
+        //revealTex = revealFb.getColorBufferTexture();
 
-        preShader = new ShaderProgram("shader/galaxy.post.vertex.glsl", "shader/galaxy.post.fragment.glsl");
+        postShader = new ShaderProgram("shader/galaxy.post.vertex.glsl", "shader/galaxy.post.fragment.glsl");
 
     }
 
@@ -71,154 +72,147 @@ public class MWModelRenderSystem extends ImmediateRenderSystem implements IObser
 
     @Override
     protected void initVertices() {
-        /** Particles **/
-        meshes = new MeshData[1];
         particlesMesh = new MeshData();
-        meshes[0] = particlesMesh;
+        initMesh(particlesMesh);
 
+        /** Post mesh **/
+        postMesh = new MeshData();
+
+        VertexAttribute[] attribs = buildVertexAttributesPost();
+        postMesh.mesh = new Mesh(true, 4, 0, attribs);
+        postMesh.vertices = new float[] { -1, -1, -1, 1, 1, -1, 1, 1 };
+        postMesh.vertexSize = postMesh.mesh.getVertexAttributes().vertexSize / 4;
+    }
+
+    private void initMesh(MeshData md) {
         aux1 = new Vector3();
 
         maxVertices = 5000000;
 
         VertexAttribute[] attribs = buildVertexAttributes();
-        particlesMesh.mesh = new Mesh(false, maxVertices, 0, attribs);
+        md.mesh = new Mesh(false, maxVertices, 0, attribs);
 
-        particlesMesh.vertices = new float[maxVertices * (particlesMesh.mesh.getVertexAttributes().vertexSize / 4)];
-        particlesMesh.vertexSize = particlesMesh.mesh.getVertexAttributes().vertexSize / 4;
-        particlesMesh.colorOffset = particlesMesh.mesh.getVertexAttribute(Usage.ColorPacked) != null ? particlesMesh.mesh.getVertexAttribute(Usage.ColorPacked).offset / 4 : 0;
-        pmOffset = particlesMesh.mesh.getVertexAttribute(Usage.Tangent) != null ? particlesMesh.mesh.getVertexAttribute(Usage.Tangent).offset / 4 : 0;
-        additionalOffset = particlesMesh.mesh.getVertexAttribute(Usage.Generic) != null ? particlesMesh.mesh.getVertexAttribute(Usage.Generic).offset / 4 : 0;
-
-        /** Post mesh **/
-        postMesh = new MeshData();
-
-        attribs = buildVertexAttributesPost();
-        postMesh.mesh = new Mesh(true, 4, 0, attribs);
-        postMesh.vertices = new float[] { -1, -1, -1, 1, 1, -1, 1, 1 };
-        postMesh.vertexSize = postMesh.mesh.getVertexAttributes().vertexSize / 4;
-
+        md.vertices = new float[maxVertices * (md.mesh.getVertexAttributes().vertexSize / 4)];
+        md.vertexSize = md.mesh.getVertexAttributes().vertexSize / 4;
+        md.colorOffset = md.mesh.getVertexAttribute(Usage.ColorPacked) != null ? md.mesh.getVertexAttribute(Usage.ColorPacked).offset / 4 : 0;
+        additionalOffset = md.mesh.getVertexAttribute(Usage.Generic) != null ? md.mesh.getVertexAttribute(Usage.Generic).offset / 4 : 0;
     }
 
     private void streamToGpu(MilkyWay mw) {
-        if (UPDATE_POINTS) {
-            Random rand = new Random(24601);
-            Vector3 center = mw.getPosition().toVector3();
+        Vector3 center = mw.getPosition().toVector3();
 
-            /** PARTICLES **/
-            particlesMesh.clear();
-            float density = GlobalConf.SCALE_FACTOR;
-            for (ParticleBean star : mw.starData) {
-                // VERTEX
-                aux1.set((float) star.data[0], (float) star.data[1], (float) star.data[2]);
-                double distanceCenter = aux1.sub(center).len() / (mw.getRadius() * 2f);
+        /** PARTICLES **/
+        particlesMesh.clear();
+        float density = GlobalConf.SCALE_FACTOR;
+        for (ParticleBean star : mw.starData) {
+            // VERTEX
+            aux1.set((float) star.data[0], (float) star.data[1], (float) star.data[2]);
+            double distanceCenter = aux1.sub(center).len() / (mw.getRadius() * 2f);
 
-                float[] col = new float[] { (float) (rand.nextGaussian() * 0.02f) + 0.93f, (float) (rand.nextGaussian() * 0.02) + 0.8f, (float) (rand.nextGaussian() * 0.02) + 0.97f, rand.nextFloat() * 0.5f + 0.6f };
+            float[] col = new float[] { (float) (rand.nextGaussian() * 0.02f) + 0.93f, (float) (rand.nextGaussian() * 0.02) + 0.8f, (float) (rand.nextGaussian() * 0.02) + 0.97f, rand.nextFloat() * 0.5f + 0.6f };
 
-                if (distanceCenter < 1f) {
-                    float add = (float) MathUtilsd.clamp(1f - distanceCenter, 0f, 1f) * 0.5f;
-                    col[0] = col[0] + add;
-                    col[1] = col[1] + add;
-                    col[2] = col[2] + add;
-                }
-
-                col[0] = MathUtilsd.clamp(col[0], 0f, 1f);
-                col[1] = MathUtilsd.clamp(col[1], 0f, 1f);
-                col[2] = MathUtilsd.clamp(col[2], 0f, 1f);
-
-                // COLOR
-                particlesMesh.vertices[particlesMesh.vertexIdx + particlesMesh.colorOffset] = Color.toFloatBits(col[0], col[1], col[2], col[3]);
-
-                // SIZE
-                double starSize = 0;
-                if (star.data.length > 3) {
-                    starSize = (star.data[3] * 5 + 1);
-                } else {
-                    starSize = (float) Math.abs(rand.nextGaussian()) * 8f + 1.0f;
-                }
-                particlesMesh.vertices[particlesMesh.vertexIdx + additionalOffset] = (float) (starSize * density * 2);
-                particlesMesh.vertices[particlesMesh.vertexIdx + additionalOffset + 1] = 0.7f;
-
-                // cb.transform.getTranslationf(aux);
-                // POSITION
-                aux1.set((float) star.data[0], (float) star.data[1], (float) star.data[2]);
-                final int idx = particlesMesh.vertexIdx;
-                particlesMesh.vertices[idx] = aux1.x;
-                particlesMesh.vertices[idx + 1] = aux1.y;
-                particlesMesh.vertices[idx + 2] = aux1.z;
-
-                particlesMesh.vertexIdx += particlesMesh.vertexSize;
-
-            }
-            for (ParticleBean dust : mw.dustData) {
-                // VERTEX
-                aux1.set((float) dust.data[0], (float) dust.data[1], (float) dust.data[2]);
-
-                float[] col = new float[] { (float) (rand.nextGaussian() * 0.02f) + 0.03f, (float) (rand.nextGaussian() * 0.02) + 0.03f, (float) (rand.nextGaussian() * 0.02) + 0.05f, rand.nextFloat() * 0.5f + 0.4f };
-
-                col[0] = MathUtilsd.clamp(col[0], 0f, 1f);
-                col[1] = MathUtilsd.clamp(col[1], 0f, 1f);
-                col[2] = MathUtilsd.clamp(col[2], 0f, 1f);
-
-                // COLOR
-                particlesMesh.vertices[particlesMesh.vertexIdx + particlesMesh.colorOffset] = Color.toFloatBits(col[0], col[1], col[2], col[3]);
-
-                // SIZE
-                double starSize = 0;
-                if (dust.data.length > 3) {
-                    starSize = (dust.data[3] * 3 + 1) /** (Constants.webgl ? 0.08f : 1f) */
-                    ;
-                } else {
-                    starSize = (float) Math.abs(rand.nextGaussian()) * 8f + 1.0f;
-                }
-                particlesMesh.vertices[particlesMesh.vertexIdx + additionalOffset] = (float) (starSize * density * 2);
-                particlesMesh.vertices[particlesMesh.vertexIdx + additionalOffset + 1] = 0.7f;
-
-                // cb.transform.getTranslationf(aux);
-                // POSITION
-                aux1.set((float) dust.data[0], (float) dust.data[1], (float) dust.data[2]);
-                final int idx = particlesMesh.vertexIdx;
-                particlesMesh.vertices[idx] = aux1.x;
-                particlesMesh.vertices[idx + 1] = aux1.y;
-                particlesMesh.vertices[idx + 2] = aux1.z;
-
-                particlesMesh.vertexIdx += particlesMesh.vertexSize;
-
-                particlesMesh.mesh.setVertices(particlesMesh.vertices, 0, particlesMesh.vertexIdx);
-
+            if (distanceCenter < 1f) {
+                float add = (float) MathUtilsd.clamp(1f - distanceCenter, 0f, 1f) * 0.5f;
+                col[0] = col[0] + add;
+                col[1] = col[1] + add;
+                col[2] = col[2] + add;
             }
 
-            // Put flag down
-            UPDATE_POINTS = false;
+            col[0] = MathUtilsd.clamp(col[0], 0f, 1f);
+            col[1] = MathUtilsd.clamp(col[1], 0f, 1f);
+            col[2] = MathUtilsd.clamp(col[2], 0f, 1f);
+
+            // COLOR
+            particlesMesh.vertices[particlesMesh.vertexIdx + particlesMesh.colorOffset] = Color.toFloatBits(col[0], col[1], col[2], col[3]);
+
+            // SIZE
+            double starSize = 0;
+            if (star.data.length > 3) {
+                starSize = (star.data[3] * 1 + 1);
+            } else {
+                starSize = (float) Math.abs(rand.nextGaussian()) * 8f + 1.0f;
+            }
+            particlesMesh.vertices[particlesMesh.vertexIdx + additionalOffset] = (float) (starSize * density * 2);
+            particlesMesh.vertices[particlesMesh.vertexIdx + additionalOffset + 1] = 0.7f;
+
+            // cb.transform.getTranslationf(aux);
+            // POSITION
+            aux1.set((float) star.data[0], (float) star.data[1], (float) star.data[2]);
+            final int idx = particlesMesh.vertexIdx;
+            particlesMesh.vertices[idx] = aux1.x;
+            particlesMesh.vertices[idx + 1] = aux1.y;
+            particlesMesh.vertices[idx + 2] = aux1.z;
+
+            particlesMesh.vertexIdx += particlesMesh.vertexSize;
+
         }
+        for (ParticleBean dust : mw.dustData) {
+            // VERTEX
+            aux1.set((float) dust.data[0], (float) dust.data[1], (float) dust.data[2]);
 
+            float[] col = new float[] { (float) (rand.nextGaussian() * 0.02f) + 0.03f, (float) (rand.nextGaussian() * 0.02) + 0.03f, (float) (rand.nextGaussian() * 0.02) + 0.05f, rand.nextFloat() * 0.5f + 0.4f };
+
+            col[0] = MathUtilsd.clamp(col[0], 0f, 1f);
+            col[1] = MathUtilsd.clamp(col[1], 0f, 1f);
+            col[2] = MathUtilsd.clamp(col[2], 0f, 1f);
+
+            // COLOR
+            particlesMesh.vertices[particlesMesh.vertexIdx + particlesMesh.colorOffset] = Color.toFloatBits(col[0], col[1], col[2], col[3]);
+
+            // SIZE
+            double starSize = 0;
+            if (dust.data.length > 3) {
+                starSize = (dust.data[3] * 3 + 1) /** (Constants.webgl ? 0.08f : 1f) */
+                ;
+            } else {
+                starSize = (float) Math.abs(rand.nextGaussian()) * 8f + 1.0f;
+            }
+            particlesMesh.vertices[particlesMesh.vertexIdx + additionalOffset] = (float) (starSize * density * 2);
+            particlesMesh.vertices[particlesMesh.vertexIdx + additionalOffset + 1] = 0.7f;
+
+            // cb.transform.getTranslationf(aux);
+            // POSITION
+            aux1.set((float) dust.data[0], (float) dust.data[1], (float) dust.data[2]);
+            final int idx = particlesMesh.vertexIdx;
+            particlesMesh.vertices[idx] = aux1.x;
+            particlesMesh.vertices[idx + 1] = aux1.y;
+            particlesMesh.vertices[idx + 2] = aux1.z;
+
+            particlesMesh.vertexIdx += particlesMesh.vertexSize;
+        }
+        particlesMesh.mesh.setVertices(particlesMesh.vertices, 0, particlesMesh.vertexIdx);
     }
 
     public void renderPrePasses(MilkyWay mw, ICamera camera) {
-        // Send data to GPU
-        streamToGpu(mw);
+        if (GlobalConf.scene.GALAXY_3D && UPDATE_POINTS) {
+            streamToGpu(mw);
+            // Put flag down
+            UPDATE_POINTS = false;
+        }
 
         /**
          * PARTICLES RENDERER
          */
         float alpha = getAlpha(mw);
         if (alpha > 0) {
-            if (Gdx.app.getType() == ApplicationType.Desktop) {
-                // Enable gl_PointCoord
-                Gdx.gl20.glEnable(34913);
-                // Enable point sizes
-                Gdx.gl20.glEnable(0x8642);
-            }
+            // Enable gl_PointCoord
+            Gdx.gl20.glEnable(34913);
+            // Enable point sizes
+            Gdx.gl20.glEnable(0x8642);
             Gdx.gl30.glEnable(GL30.GL_DEPTH_TEST);
             Gdx.gl30.glDepthMask(false);
             Gdx.gl30.glEnable(GL30.GL_BLEND);
 
+            // Set camera (hack)
+            camera.getCamera().near = .3e11f;
+            camera.getCamera().far = 1e22f;
+            camera.getCamera().update(false);
             /**
              * PASS 0
              */
             Gdx.gl20.glBlendFuncSeparate(GL30.GL_ONE, GL30.GL_ONE, GL30.GL_ONE, GL30.GL_ONE);
 
-
-            ShaderProgram shaderProgram = preShader;
+            ShaderProgram shaderProgram = getShaderProgram();
 
             accumFb.begin();
             Gdx.gl.glClearColor(0, 0, 0, 0);
@@ -260,9 +254,8 @@ public class MWModelRenderSystem extends ImmediateRenderSystem implements IObser
             Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
         }
     }
-
-    @Override
-    public void renderStud(Array<IRenderable> renderables, ICamera camera, double t) {
+    
+    public void renderStudNew(Array<IRenderable> renderables, ICamera camera, double t) {
         if (renderables.size > 0) {
             MilkyWay mw = (MilkyWay) renderables.get(0);
             // Send data to GPU
@@ -273,7 +266,7 @@ public class MWModelRenderSystem extends ImmediateRenderSystem implements IObser
             float alpha = getAlpha(mw);
             if (alpha > 0) {
 
-                ShaderProgram shaderProgram = preShader;
+                ShaderProgram shaderProgram = postShader;
 
                 shaderProgram.begin();
                 int t0 = GL30.GL_TEXTURE23 - GL30.GL_TEXTURE0;
@@ -293,55 +286,64 @@ public class MWModelRenderSystem extends ImmediateRenderSystem implements IObser
 
     }
 
-    public void renderStudOld(Array<IRenderable> renderables, ICamera camera, double t) {
+    @Override
+    public void renderStud(Array<IRenderable> renderables, ICamera camera, double t) {
         if (renderables.size > 0) {
             MilkyWay mw = (MilkyWay) renderables.get(0);
-            // Send data to GPU
-            streamToGpu(mw);
 
             /**
              * PARTICLES RENDERER
              */
+            if (GlobalConf.scene.GALAXY_3D && UPDATE_POINTS) {
+                streamToGpu(mw);
+                // Put flag down
+                UPDATE_POINTS = false;
+            }
             float alpha = getAlpha(mw);
             if (alpha > 0) {
-                /**
-                 * PARTICLES RENDERER
-                 */
-                if (Gdx.app.getType() == ApplicationType.Desktop) {
+                if (GlobalConf.scene.GALAXY_3D) {
+                    /**
+                     * PARTICLE RENDERER
+                     */
                     // Enable gl_PointCoord
                     Gdx.gl20.glEnable(34913);
                     // Enable point sizes
                     Gdx.gl20.glEnable(0x8642);
+
+                    // Multiplicative blending (RGBs * RBGd)
+                    //Gdx.gl20.glBlendFunc(GL20.GL_ZERO, GL20.GL_SRC_COLOR);
+
+                    // Additive blending (RGBs + RGBd)
+                    //Gdx.gl20.glBlendFunc(GL20.GL_ONE, GL20.GL_ONE);
+
+                    // Transparency blending - Order dependent transparency
+                    Gdx.gl20.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+
+                    ShaderProgram shaderProgram = getShaderProgram();
+
+                    camera.getCamera().near = .3e11f;
+                    camera.getCamera().far = 1e22f;
+                    camera.getCamera().update(false);
+
+                    shaderProgram.begin();
+                    shaderProgram.setUniformMatrix("u_projModelView", camera.getCamera().combined);
+                    shaderProgram.setUniformMatrix("u_view", camera.getCamera().view);
+                    shaderProgram.setUniformMatrix("u_projection", camera.getCamera().projection);
+
+                    shaderProgram.setUniformf("u_camPos", camera.getCurrent().getPos().put(aux1));
+                    shaderProgram.setUniformf("u_alpha", mw.opacity * alpha * 0.2f);
+                    shaderProgram.setUniformf("u_ar", GlobalConf.program.STEREOSCOPIC_MODE && (GlobalConf.program.STEREO_PROFILE != StereoProfile.HD_3DTV && GlobalConf.program.STEREO_PROFILE != StereoProfile.ANAGLYPHIC) ? 0.5f : 1f);
+
+                    // Relativistic effects
+                    addEffectsUniforms(shaderProgram, camera);
+
+                    particlesMesh.mesh.render(shaderProgram, ShapeType.Point.getGlType());
+                    shaderProgram.end();
+
+                    // Restore
+                    Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
                 }
-                // Multiplicative blending (RGBs * RBGd)
-                Gdx.gl20.glBlendFunc(GL20.GL_ZERO, GL20.GL_SRC_COLOR);
 
-                // Additive blending (RGBs + RGBd)
-                Gdx.gl20.glBlendFunc(GL20.GL_ONE, GL20.GL_ONE);
-
-                // Transparency blending - Order dependent transparency
-                //Gdx.gl20.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
-
-                ShaderProgram shaderProgram = getShaderProgram();
-
-                shaderProgram.begin();
-                shaderProgram.setUniformMatrix("u_projModelView", camera.getCamera().combined);
-                shaderProgram.setUniformMatrix("u_view", camera.getCamera().view);
-                shaderProgram.setUniformMatrix("u_projection", camera.getCamera().projection);
-
-                shaderProgram.setUniformf("u_camPos", camera.getCurrent().getPos().put(aux1));
-                shaderProgram.setUniformf("u_alpha", mw.opacity * alpha * 0.2f);
-                shaderProgram.setUniformf("u_ar", GlobalConf.program.STEREOSCOPIC_MODE && (GlobalConf.program.STEREO_PROFILE != StereoProfile.HD_3DTV && GlobalConf.program.STEREO_PROFILE != StereoProfile.ANAGLYPHIC) ? 0.5f : 1f);
-
-                // Relativistic effects
-                addEffectsUniforms(shaderProgram, camera);
-
-                particlesMesh.mesh.setVertices(particlesMesh.vertices, 0, particlesMesh.vertexIdx);
-                particlesMesh.mesh.render(shaderProgram, ShapeType.Point.getGlType());
-                shaderProgram.end();
-
-                // Restore
-                Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
             }
         }
 
