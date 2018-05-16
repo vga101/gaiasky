@@ -25,7 +25,7 @@
 	"model"		: {
 					"args" : [true],
 					"staticlight" : True,
-					"model" : "data/meshes/dr2/meshes_hot/non_ionizing_ge25lt50_ranges.g3db"
+					"model" : "data/meshes/dr2/meshes_hot/non_ionizing_25_50_ranges.g3db"
 				}
 	},
 	{
@@ -54,7 +54,7 @@
 	"model"		: {
 					"args" : [true],
 					"staticlight" : True,
-					"model" : "data/meshes/dr2/meshes_hot/non_ionizing_ge25lt50_peaks.g3db"
+					"model" : "data/meshes/dr2/meshes_hot/non_ionizing_25_50_peaks.g3db"
 				}
 	}
 ]}	

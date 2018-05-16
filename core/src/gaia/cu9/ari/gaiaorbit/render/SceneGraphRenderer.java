@@ -59,6 +59,7 @@ import gaia.cu9.ari.gaiaorbit.render.system.StarGroupRenderSystem;
 import gaia.cu9.ari.gaiaorbit.scenegraph.AbstractPositionEntity;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
+import gaia.cu9.ari.gaiaorbit.scenegraph.MilkyWay;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ModelBody;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
@@ -97,8 +98,8 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
     private ShaderProgram fontShader;
 
-    private ShaderProgram[] starGroupShaders, particleGroupShaders, particleEffectShaders, orbitElemShaders, lineShaders, lineQuadShaders, lineGpuShaders, mwPointShaders, mwNebulaShaders, pixelShaders, galShaders, spriteShaders, starShaders;
-    private AssetDescriptor<ShaderProgram>[] starGroupDesc, particleGroupDesc, particleEffectDesc, orbitElemDesc, lineDesc, lineQuadDesc, lineGpuDesc, mwPointDesc, mwNebulaDesc, pixelDesc, galDesc, spriteDesc, starDesc;
+    private ShaderProgram[] starGroupShaders, particleGroupShaders, particleEffectShaders, orbitElemShaders, lineShaders, lineQuadShaders, lineGpuShaders, mwPointShaders, mwOitShaders, mwNebulaShaders, pixelShaders, galShaders, spriteShaders, starShaders;
+    private AssetDescriptor<ShaderProgram>[] starGroupDesc, particleGroupDesc, particleEffectDesc, orbitElemDesc, lineDesc, lineQuadDesc, lineGpuDesc, mwPointDesc, mwOitDesc, mwNebulaDesc, pixelDesc, galDesc, spriteDesc, starDesc;
 
     private int maxTexSize;
 
@@ -179,6 +180,8 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         spriteDesc = loadShader(manager, "shader/sprite.vertex.glsl", "shader/sprite.fragment.glsl", new String[] { "sprite", "spriteRel", "spriteGrav", "spriteRelGrav" }, new String[] { "", "#define relativisticEffects\n", "#define gravitationalWaves\n", "#define relativisticEffects\n#define gravitationalWaves\n" });
         pixelDesc = loadShader(manager, "shader/point.vertex.glsl", "shader/point.fragment.glsl", new String[] { "pixel", "pixelRel", "pixelGrav", "pixelRelGrav" }, new String[] { "", "#define relativisticEffects\n", "#define gravitationalWaves\n", "#define relativisticEffects\n#define gravitationalWaves\n" });
         mwPointDesc = loadShader(manager, "shader/point.galaxy.vertex.glsl", "shader/point.galaxy.fragment.glsl", new String[] { "pointGal", "pointGalRel", "pointGalGrav", "pointGalRelGrav" }, new String[] { "", "#define relativisticEffects\n", "#define gravitationalWaves\n", "#define relativisticEffects\n#define gravitationalWaves\n" });
+        mwOitDesc = loadShader(manager, "shader/galaxy.oit.vertex.glsl", "shader/galaxy.oit.fragment.glsl", new String[] { "galOit", "galOitRel", "galOitGrav", "galOitRelGrav" }, new String[] { "", "#define relativisticEffects\n", "#define gravitationalWaves\n", "#define relativisticEffects\n#define gravitationalWaves\n" });
+
         mwNebulaDesc = loadShader(manager, "shader/nebula.vertex.glsl", "shader/nebula.fragment.glsl", new String[] { "nebula", "nebulaRel", "nebulaGrav", "nebulaRelGrav" }, new String[] { "", "#define relativisticEffects\n", "#define gravitationalWaves\n", "#define relativisticEffects\n#define gravitationalWaves\n" });
         lineDesc = loadShader(manager, "shader/line.vertex.glsl", "shader/line.fragment.glsl", new String[] { "line", "lineRel", "lineGrav", "lineRelGrav" }, new String[] { "", "#define relativisticEffects\n", "#define gravitationalWaves\n", "#define relativisticEffects\n#define gravitationalWaves\n" });
         lineQuadDesc = loadShader(manager, "shader/line.quad.vertex.glsl", "shader/line.quad.fragment.glsl", new String[] { "lineQuad", "lineQuadRel", "lineQuadGrav", "lineQuadRelGrav" }, new String[] { "", "#define relativisticEffects\n", "#define gravitationalWaves\n", "#define relativisticEffects\n#define gravitationalWaves\n" });
@@ -320,6 +323,11 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
          * MW POINTS
          */
         mwPointShaders = fetchShaderProgram(manager, mwPointDesc, "MW point", "MW point (rel)", "MW point (grav)");
+
+        /**
+         * MW Order-Independent Transparency
+         */
+        mwOitShaders = fetchShaderProgram(manager, mwOitDesc, "Gal OIT", "Gal OIT (rel)", "Gal OIT (grav)");
 
         /**
          * MW NEBULAE
@@ -544,7 +552,8 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         modelBeamProc.setPreRunnable(blendDepthRunnable);
 
         // GALAXY
-        //AbstractRenderSystem galaxyProc = new MWModelRenderSystem(RenderGroup.GALAXY, alphas, mwPointShaders);
+        //mwrs = new MWModelRenderSystem(RenderGroup.GALAXY, alphas, mwOitShaders);
+        //AbstractRenderSystem galaxyProc = mwrs;
         AbstractRenderSystem galaxyProc = new MilkyWayRenderSystem(RenderGroup.GALAXY, alphas, modelBatchDefault, mwPointShaders, mwNebulaShaders);
         galaxyProc.setPreRunnable(blendDepthRunnable);
 
@@ -797,6 +806,14 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         }
     }
 
+    private void renderMWPrePass(ICamera camera) {
+        if (mwrs != null) {
+            Array<IRenderable> arr = render_lists.get(RenderGroup.GALAXY.ordinal());
+            if (arr != null && arr.size > 0)
+                mwrs.renderPrePasses((MilkyWay) arr.get(0), camera);
+        }
+    }
+
     @Override
     public void render(ICamera camera, double t, int rw, int rh, FrameBuffer fb, PostProcessBean ppb) {
         if (sgr == null)
@@ -809,11 +826,15 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         if (!GlobalConf.program.STEREOSCOPIC_MODE && !GlobalConf.program.CUBEMAP360_MODE)
             renderGlowPass(camera);
 
+        renderMWPrePass(camera);
+
         sgr.render(this, camera, t, rw, rh, fb, ppb);
 
-        // spriteBatch.begin();
-        // spriteBatch.draw(glowFb.getColorBufferTexture(), 0, 0, 1080, 720);
-        // spriteBatch.end();
+        if (mwrs != null) {
+            spriteBatch.begin();
+            spriteBatch.draw(mwrs.revealFb.getColorBufferTexture(), 0, 0, 756, 504);
+            spriteBatch.end();
+        }
 
     }
 

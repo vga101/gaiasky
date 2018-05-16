@@ -4,6 +4,7 @@
 	"data" : [
 	{
 		"loader": "gaia.cu9.ari.gaiaorbit.data.group.OctreeGroupLoader",
-		"files": [ "/media/tsagrista/Daten/Gaia/data/GDR2/dr2int6/out/47-adp-080000-0.9-0.0/particles/", "/media/tsagrista/Daten/Gaia/data/GDR2/dr2int6/out/47-adp-080000-0.9-0.0/metadata.bin" ]
+		//"files": [ "/media/tsagrista/Daten/Gaia/data/GDR2/dr2int6/out/47-adp-080000-0.9-0.0/particles/", "/media/tsagrista/Daten/Gaia/data/GDR2/dr2int6/out/47-adp-080000-0.9-0.0/metadata.bin" ]
+		"files": [ "/media/tsagrista/Daten/Gaia/data/GDR2/dr2int6/out/56-mag-100000-0.9-0.0/particles/", "/media/tsagrista/Daten/Gaia/data/GDR2/dr2int6/out/56-mag-100000-0.9-0.0/metadata.bin" ]
 }
 ]}
