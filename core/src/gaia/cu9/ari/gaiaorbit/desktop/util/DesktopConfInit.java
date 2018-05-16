@@ -109,6 +109,7 @@ public class DesktopConfInit extends ConfInit {
 
     @Override
     public void initGlobalConf() throws Exception {
+        String ARCH = System.getProperty("sun.arch.data.model");
 
         /** VERSION CONF **/
         VersionConf vc = new VersionConf();
@@ -226,6 +227,12 @@ public class DesktopConfInit extends ConfInit {
         boolean OCTREE_PARTICLE_FADE = Boolean.parseBoolean(p.getProperty("scene.octree.particle.fade"));
         float OCTANT_THRESHOLD_0 = Float.parseFloat(p.getProperty("scene.octant.threshold.0"));
         float OCTANT_THRESHOLD_1 = Float.parseFloat(p.getProperty("scene.octant.threshold.1"));
+        // Limiting draw distance in 32-bit JVM
+        if (ARCH.equals("32")) {
+            float delta = Math.abs(OCTANT_THRESHOLD_1 - OCTANT_THRESHOLD_0);
+            OCTANT_THRESHOLD_0 = (float) Math.toRadians(80);
+            OCTANT_THRESHOLD_1 = OCTANT_THRESHOLD_0 + delta;
+        }
         boolean PROPER_MOTION_VECTORS = Boolean.parseBoolean(p.getProperty("scene.propermotion.vectors", "true"));
         float PM_NUM_FACTOR = Float.parseFloat(p.getProperty("scene.propermotion.numfactor", "20f"));
         float PM_LEN_FACTOR = Float.parseFloat(p.getProperty("scene.propermotion.lenfactor", "1E1f"));
@@ -238,6 +245,10 @@ public class DesktopConfInit extends ConfInit {
         int SHADOW_MAPPING_N_SHADOWS = MathUtilsd.clamp(Integer.parseInt(p.getProperty("scene.shadowmapping.nshadows", "2")), 0, 4);
         int SHADOW_MAPPING_RESOLUTION = Integer.parseInt(p.getProperty("scene.shadowmapping.resolution", "512"));
         long MAX_LOADED_STARS = Long.parseLong(p.getProperty("scene.octree.maxstars", "10000000"));
+        // Limiting number of stars in 32-bit JVM
+        if (ARCH.equals("32")) {
+            MAX_LOADED_STARS = 1500000;
+        }
 
         // Visibility of components
         ComponentType[] cts = ComponentType.values();
