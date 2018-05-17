@@ -262,7 +262,7 @@ public class OctreeGeneratorRun {
         Logger.info("TIME STATS: Octree generated in " + generatingSecs + " seconds");
 
         /** NUMBERS **/
-        Logger.info("Octree generated with " + octree.numNodes() + " octants and " + list.size + " particles");
+        Logger.info("Octree generated with " + octree.numNodes() + " octants and " + octree.nObjects + " particles");
         Logger.info(og.getDiscarded() + " particles have been discarded due to density");
 
         /** CLEAN CURRENT OUT DIR **/

@@ -552,10 +552,10 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         modelBeamProc.setPreRunnable(blendDepthRunnable);
 
         // GALAXY
-        //mwrs = new MWModelRenderSystem(RenderGroup.GALAXY, alphas, mwOitShaders);
+        //mwrs = new MWModelRenderSystem(RenderGroup.GALAXY, alphas, /*mwOitShaders*/ mwPointShaders);
         //AbstractRenderSystem galaxyProc = mwrs;
         AbstractRenderSystem galaxyProc = new MilkyWayRenderSystem(RenderGroup.GALAXY, alphas, modelBatchDefault, mwPointShaders, mwNebulaShaders);
-        galaxyProc.setPreRunnable(blendDepthRunnable);
+        galaxyProc.setPreRunnable(blendNoDepthRunnable);
 
         // PARTICLE EFFECTS
         AbstractRenderSystem particleEffectsProc = new ParticleEffectsRenderSystem(null, alphas, particleEffectShaders);
@@ -830,7 +830,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
         sgr.render(this, camera, t, rw, rh, fb, ppb);
 
-        if (mwrs != null) {
+        if (mwrs != null && mwrs.oit) {
             spriteBatch.begin();
             spriteBatch.draw(mwrs.revealFb.getColorBufferTexture(), 0, 0, 756, 504);
             spriteBatch.end();

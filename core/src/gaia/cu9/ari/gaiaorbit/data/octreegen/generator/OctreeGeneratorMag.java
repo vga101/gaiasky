@@ -1,5 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.data.octreegen.generator;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
@@ -184,42 +185,44 @@ public class OctreeGeneratorMag implements IOctreeGenerator {
         max.set(root.box.max);
         // Half side
         double hs = (max.x - min.x) / 2d;
-        long id = level;
+        int[] hashv = new int[25];
+        hashv[0] = level;
 
         for (int l = 1; l <= level; l++) {
             if (x <= min.x + hs) {
                 if (y <= min.y + hs) {
                     if (z <= min.z + hs) {
                         // Min stays the same!
+                        hashv[l] = 0;
                     } else {
                         min.set(min.x, min.y, min.z + hs);
-                        id += Math.pow(10, 1 + l) * 1;
+                        hashv[l] = 1;
                     }
                 } else {
                     if (z <= min.z + hs) {
                         min.set(min.x, min.y + hs, min.z);
-                        id += Math.pow(10, 1 + l) * 2;
+                        hashv[l] = 2;
                     } else {
                         min.set(min.x, min.y + hs, min.z + hs);
-                        id += Math.pow(10, 1 + l) * 3;
+                        hashv[l] = 3;
                     }
                 }
             } else {
                 if (y <= min.y + hs) {
                     if (z <= min.z + hs) {
                         min.set(min.x + hs, min.y, min.z);
-                        id += Math.pow(10, 1 + l) * 4;
+                        hashv[l] = 4;
                     } else {
                         min.set(min.x + hs, min.y, min.z + hs);
-                        id += Math.pow(10, 1 + l) * 5;
+                        hashv[l] = 5;
                     }
                 } else {
                     if (z <= min.z + hs) {
                         min.set(min.x + hs, min.y + hs, min.z);
-                        id += Math.pow(10, 1 + l) * 6;
+                        hashv[l] = 6;
                     } else {
                         min.set(min.x + hs, min.y + hs, min.z + hs);
-                        id += Math.pow(10, 1 + l) * 7;
+                        hashv[l] = 7;
                     }
 
                 }
@@ -229,7 +232,8 @@ public class OctreeGeneratorMag implements IOctreeGenerator {
             hs = hs / 2d;
         }
 
-        return id;
+        //return id;
+        return (long) Arrays.hashCode(hashv);
     }
 
 }

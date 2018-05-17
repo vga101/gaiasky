@@ -4,6 +4,9 @@ public class GalaxydataComponent {
     /** Star positions/sizes **/
     public String starsource;
 
+    /** Bulge **/
+    public String bulgesource;
+
     /** Dust positions/sizes **/
     public String dustsource;
 
@@ -26,4 +29,7 @@ public class GalaxydataComponent {
         this.nebulasource = nebulasource;
     }
 
+    public void setBulgesource(String bulgesource) {
+        this.bulgesource = bulgesource;
+    }
 }

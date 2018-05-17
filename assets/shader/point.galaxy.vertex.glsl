@@ -1,9 +1,4 @@
-#version 120
-
-#ifdef GL_ES
-precision mediump float;
-precision mediump int;
-#endif
+#version 330 core
 
 <INCLUDE shader/lib_math.glsl>
 <INCLUDE shader/lib_geometry.glsl>
@@ -35,7 +30,7 @@ uniform vec3 u_camPos;
     <INCLUDE shader/lib_gravwaves.glsl>
 #endif // gravitationalWaves
 
-varying vec4 v_col;
+out vec4 v_col;
 
 void main() {
     vec3 pos = a_position.xyz - u_camPos;
@@ -51,7 +46,7 @@ void main() {
     
     float distNorm = dist / 800000000000.0;
 
-    v_col = vec4(a_color.rgb, a_color.a);
+    v_col = a_color;
 
     gl_Position = u_projModelView * vec4(pos, a_position.w);
     gl_PointSize = a_additional.x / distNorm;

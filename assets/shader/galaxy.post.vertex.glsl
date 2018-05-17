@@ -1,3 +1,5 @@
+#version 330 core
+
 #ifdef GL_ES
 	#define PRECISION mediump
 	precision PRECISION float;
@@ -7,10 +9,11 @@
 
 attribute vec4 a_position;
 attribute vec2 a_texCoord0;
-varying vec2 v_texcoord;
+
+out vec2 TexCoord;
 
 void main()
 {
-	v_texcoord = a_texCoord0;
+	TexCoord = a_texCoord0;
 	gl_Position = a_position;
 }

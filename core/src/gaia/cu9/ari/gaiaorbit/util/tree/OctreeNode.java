@@ -229,14 +229,21 @@ public class OctreeNode implements ILineRenderable {
     }
 
     public long computePageId() {
-        return computePageIdRec() + depth;
+        int[] hashv = new int[25];
+        hashv[0] = depth;
+        computePageIdRec(hashv);
+        return (long) Arrays.hashCode(hashv);
     }
 
-    protected long computePageIdRec() {
+    protected void computePageIdRec(int[] hashv) {
         if (depth == 0)
-            return 0;
-        return (long) (Math.pow(10, 1 + depth) * getParentIndex()) + (parent != null ? parent.computePageIdRec() : 0);
+            return;
+        hashv[depth] = getParentIndex();
+        if (parent != null) {
+            parent.computePageIdRec(hashv);
+        }
     }
+
 
     /** Gets the index of this node in the parent's list **/
     protected int getParentIndex() {
@@ -266,7 +273,7 @@ public class OctreeNode implements ILineRenderable {
         long[] childrenIds = me.getSecond();
         int i = 0;
         for (long childId : childrenIds) {
-            if (childId >= 0) {
+            if (childId != -1) {
                 // Child exists
                 OctreeNode child = map.get(childId).getFirst();
                 children[i] = child;

@@ -11,7 +11,6 @@ import com.badlogic.gdx.utils.Array;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ParticleGroup.ParticleBean;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
-import gaia.cu9.ari.gaiaorbit.util.parse.Parser;
 
 /**
  * This provider loads point data in the internal reference system format, [x,
@@ -51,7 +50,8 @@ public class PointDataProvider implements IParticleGroupDataProvider {
                     tokenslen = tokens.length;
                     double[] point = new double[tokenslen];
                     for (int j = 0; j < tokenslen; j++) {
-                        point[j] = Parser.parseDouble(tokens[j]) * factor;
+                        // We use regular parser because of scientific notation
+                        point[j] = Double.parseDouble(tokens[j]) * factor;
                     }
                     pointData.add(new ParticleBean(point));
                 }

@@ -1,5 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.data.group;
 
+import java.io.File;
 import java.io.IOException;
 
 import com.badlogic.gdx.Gdx;
@@ -54,6 +55,26 @@ public class OctreeGroupLoader extends StreamingOctreeLoader {
         MetadataBinaryIO metadataReader = new MetadataBinaryIO();
         OctreeNode root = metadataReader.readMetadataMapped(metadata);
 
+        /*
+        File partfold = new File(particles);
+        String[] partfiles = partfold.list();
+        int count = 0;
+        int i = 0;
+        for (String partfile : partfiles) {
+            try {
+                count += particleReader.loadDataMapped(particles + partfile, 1).size;
+                String strid = partfile.substring(10, partfile.length() - 4);
+                long id = Long.parseLong(strid);
+                if (!metadataReader.nodesMap.containsKey(id)) {
+                    Logger.error("Key not found: " + strid + " - " + id);
+                    return null;
+                }
+                Logger.info("done " + ++i + " / " + partfiles.length + " - count: " + count);
+            } catch (Exception e) {
+                Logger.error(e);
+            }
+        }
+        */
         Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.nodeloader", root.numNodes(), metadata));
         Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.loading", particles));
 

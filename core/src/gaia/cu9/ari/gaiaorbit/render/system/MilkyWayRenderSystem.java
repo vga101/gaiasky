@@ -319,6 +319,7 @@ public class MilkyWayRenderSystem extends ImmediateRenderSystem implements IObse
                     ShaderProgram shaderProgram = getShaderProgram();
 
                     shaderProgram.begin();
+                    shaderProgram.setUniformi("u_blending", 1);
                     shaderProgram.setUniformMatrix("u_projModelView", camera.getCamera().combined);
                     shaderProgram.setUniformf("u_camPos", camera.getCurrent().getPos().put(aux1));
                     shaderProgram.setUniformf("u_alpha", mw.opacity * alpha * 0.2f);

@@ -29,6 +29,7 @@ import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
 import gaia.cu9.ari.gaiaorbit.util.gravwaves.RelativisticEffectsManager;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
+import gaia.cu9.ari.gaiaorbit.util.math.Vector2d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
@@ -37,7 +38,8 @@ public class MilkyWay extends AbstractPositionEntity implements I3DTextRenderabl
     String model, transformName;
     Matrix4 coordinateSystem;
 
-    public Array<? extends ParticleBean> starData, dustData;
+    public Array<? extends ParticleBean> starData, bulgeData, dustData;
+    public int[] dustPartition;
     protected String provider;
     public GalaxydataComponent gc;
 
@@ -67,8 +69,13 @@ public class MilkyWay extends AbstractPositionEntity implements I3DTextRenderabl
         /** Load data **/
         PointDataProvider provider = new PointDataProvider();
         try {
+            if (gc.starsource != null)
             starData = provider.loadData(gc.starsource);
+            if (gc.bulgesource != null)
+            bulgeData = provider.loadData(gc.bulgesource);
+            if (gc.dustsource != null)
             dustData = provider.loadData(gc.dustsource);
+            dustPartition = new int[dustData.size];
         } catch (Exception e) {
             Logger.error(e, getClass().getSimpleName());
         }
@@ -103,24 +110,42 @@ public class MilkyWay extends AbstractPositionEntity implements I3DTextRenderabl
         Vector3 pos3 = pos.toVector3();
 
         // Transform all
-        for (int i = 0; i < starData.size; i++) {
-            double[] pointf = starData.get(i).data;
+        if (starData != null)
+            for (int i = 0; i < starData.size; i++) {
+                double[] pointf = starData.get(i).data;
 
-            aux.set((float) pointf[0], (float) pointf[2], (float) pointf[1]);
-            aux.scl(size).rotate(-90, 0, 1, 0).mul(coordinateSystem).add(pos3);
-            pointf[0] = aux.x;
-            pointf[1] = aux.y;
-            pointf[2] = aux.z;
-        }
+                aux.set((float) pointf[0], (float) pointf[2], (float) pointf[1]);
+                aux.scl(size).rotate(-90, 0, 1, 0).mul(coordinateSystem).add(pos3);
+                pointf[0] = aux.x;
+                pointf[1] = aux.y;
+                pointf[2] = aux.z;
+            }
+        if (bulgeData != null)
+            for (int i = 0; i < bulgeData.size; i++) {
+                double[] pointf = bulgeData.get(i).data;
 
-        for (int i = 0; i < dustData.size; i++) {
-            double[] pointf = dustData.get(i).data;
-            aux.set((float) pointf[0], (float) pointf[2], (float) pointf[1]);
-            aux.scl(size).rotate(-90, 0, 1, 0).mul(coordinateSystem).add(pos3);
-            pointf[0] = aux.x;
-            pointf[1] = aux.y;
-            pointf[2] = aux.z;
-        }
+                aux.set((float) pointf[0], (float) pointf[2], (float) pointf[1]);
+                aux.scl(size).rotate(-90, 0, 1, 0).mul(coordinateSystem).add(pos3);
+                pointf[0] = aux.x;
+                pointf[1] = aux.y;
+                pointf[2] = aux.z;
+            }
+
+        Vector2d v = new Vector2d();
+        if (dustData != null)
+            for (int i = 0; i < dustData.size; i++) {
+                double[] pointf = dustData.get(i).data;
+                aux.set((float) pointf[0], (float) pointf[2], (float) pointf[1]);
+
+                v.set(pointf[0], pointf[1]);
+                int idx = (int) ((v.angle() % 360) / (360d / 32d));
+                dustPartition[i] = idx;
+
+                aux.scl(size).rotate(-90, 0, 1, 0).mul(coordinateSystem).add(pos3);
+                pointf[0] = aux.x;
+                pointf[1] = aux.y;
+                pointf[2] = aux.z;
+            }
 
     }
 
