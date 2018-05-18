@@ -70,12 +70,13 @@ public class MilkyWay extends AbstractPositionEntity implements I3DTextRenderabl
         PointDataProvider provider = new PointDataProvider();
         try {
             if (gc.starsource != null)
-            starData = provider.loadData(gc.starsource);
+                starData = provider.loadData(gc.starsource);
             if (gc.bulgesource != null)
-            bulgeData = provider.loadData(gc.bulgesource);
-            if (gc.dustsource != null)
-            dustData = provider.loadData(gc.dustsource);
-            dustPartition = new int[dustData.size];
+                bulgeData = provider.loadData(gc.bulgesource);
+            if (gc.dustsource != null) {
+                dustData = provider.loadData(gc.dustsource);
+                dustPartition = new int[dustData.size];
+            }
         } catch (Exception e) {
             Logger.error(e, getClass().getSimpleName());
         }

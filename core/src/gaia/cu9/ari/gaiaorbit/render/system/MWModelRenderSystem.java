@@ -9,7 +9,6 @@ import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
-import com.badlogic.gdx.graphics.glutils.FloatFrameBuffer;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.GLFrameBuffer.FloatFrameBufferBuilder;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
@@ -32,6 +31,7 @@ import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
 public class MWModelRenderSystem extends ImmediateRenderSystem implements IObserver {
+    public static final boolean oit = false;
     private boolean UPDATE_POINTS = true;
 
     private Vector3 aux3f1;
@@ -39,13 +39,11 @@ public class MWModelRenderSystem extends ImmediateRenderSystem implements IObser
     private int additionalOffset;
 
     private ShaderProgram postShader;
-    private MeshData particlesMesh;
     private FullscreenQuad postMesh;
     private Random rand = new Random(24601);
 
-    public FrameBuffer accumFb, revealFb;
+    public FrameBuffer oitFb;
     private int accumLoc, revealLoc;
-    public boolean oit = false;
 
     private class Chunk {
         public MeshData data;
@@ -79,15 +77,11 @@ public class MWModelRenderSystem extends ImmediateRenderSystem implements IObser
         chunks = new Array<Chunk>();
 
         if (oit) {
-            accumFb = new FloatFrameBuffer(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
-
             FloatFrameBufferBuilder ffbb = new FloatFrameBufferBuilder(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-            ffbb.addFloatAttachment(GL30.GL_R32F, GL30.GL_DEPTH_COMPONENT32F, GL30.GL_FLOAT, false);
-            //ffbb.addFloatAttachment(GL30.GL_R32F, GL30.GL_DEPTH_COMPONENT32F, GL30.GL_FLOAT, false);
-            //ffbb.addDepthRenderBuffer(GL30.GL_DEPTH_COMPONENT32F);
-
-            revealFb = new FloatFrameBuffer(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
-            //revealFb = ffbb.build();
+            ffbb.addFloatAttachment(GL30.GL_RGBA32F, GL30.GL_RGBA, GL30.GL_FLOAT, false);
+            ffbb.addFloatAttachment(GL30.GL_RGBA32F, GL30.GL_RGBA, GL30.GL_FLOAT, false);
+            ffbb.addDepthRenderBuffer(GL30.GL_DEPTH_COMPONENT16);
+            oitFb = ffbb.build();
 
             postShader = new ShaderProgram(Gdx.files.internal("shader/galaxy.post.vertex.glsl"), Gdx.files.internal("shader/galaxy.post.fragment.glsl"));
             if (!postShader.isCompiled()) {
@@ -101,6 +95,9 @@ public class MWModelRenderSystem extends ImmediateRenderSystem implements IObser
             postShader.setUniformi("tex_accum", accumLoc);
             postShader.setUniformi("tex_reveal", revealLoc);
             postShader.end();
+            
+            /** Post mesh **/
+            postMesh = new FullscreenQuad();
         }
 
     }
@@ -152,7 +149,7 @@ public class MWModelRenderSystem extends ImmediateRenderSystem implements IObser
             aux3f1.set((float) star.data[0], (float) star.data[1], (float) star.data[2]);
             double distanceCenter = aux3f1.sub(center).len() / (mw.getRadius() * 2f);
 
-            float[] col = new float[] { (float) (rand.nextGaussian() * 0.02f) + 0.93f, (float) (rand.nextGaussian() * 0.02) + 0.8f, (float) (rand.nextGaussian() * 0.02) + 0.97f, 0.01f };
+            float[] col = new float[] { (float) (rand.nextGaussian() * 0.02f) + 0.93f, (float) (rand.nextGaussian() * 0.02) + 0.8f, (float) (rand.nextGaussian() * 0.02) + 0.97f, 0.2f };
 
             if (distanceCenter < 1f) {
                 float add = (float) MathUtilsd.clamp(1f - distanceCenter, 0f, 1f) * 0.5f;
@@ -262,27 +259,27 @@ public class MWModelRenderSystem extends ImmediateRenderSystem implements IObser
                 Gdx.gl20.glEnable(34913);
                 // Enable point sizes
                 Gdx.gl20.glEnable(0x8642);
-                Gdx.gl30.glEnable(GL30.GL_DEPTH_TEST);
+
+                Gdx.gl30.glDisable(GL30.GL_DEPTH_TEST);
                 Gdx.gl30.glDepthMask(false);
                 Gdx.gl30.glEnable(GL30.GL_BLEND);
 
                 // Set camera (hack)
-                camera.getCamera().near = .3e11f;
-                camera.getCamera().far = 1e22f;
-                camera.getCamera().update(false);
+                //camera.getCamera().near = .3e11f;
+                //camera.getCamera().far = 1e22f;
+                //camera.getCamera().update(false);
                 /**
                  * PASS 0
                  */
-                Gdx.gl20.glBlendFunc(GL30.GL_ONE, GL30.GL_ONE);
 
                 ShaderProgram shaderProgram = getShaderProgram();
 
-                accumFb.begin();
-                Gdx.gl.glClearColor(0, 0, 0, 0);
-                Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
+                oitFb.begin();
+                Gdx.gl30.glClearColor(0, 0, 0, 1);
+                Gdx.gl30.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
+                Gdx.gl30.glBlendFuncSeparate(GL30.GL_ONE, GL30.GL_ONE, GL30.GL_COLOR, GL30.GL_ONE_MINUS_SRC_COLOR);
 
                 shaderProgram.begin();
-
                 shaderProgram.setUniformMatrix("u_projModelView", camera.getCamera().combined);
                 shaderProgram.setUniformMatrix("u_view", camera.getCamera().view);
                 shaderProgram.setUniformf("u_camPos", camera.getCurrent().getPos().put(aux3f1));
@@ -292,25 +289,11 @@ public class MWModelRenderSystem extends ImmediateRenderSystem implements IObser
                 // Relativistic effects
                 addEffectsUniforms(shaderProgram, camera);
 
-                shaderProgram.setUniformf("u_pass", 0.0f);
-                particlesMesh.mesh.render(shaderProgram, ShapeType.Point.getGlType());
+                for (Chunk chunk : chunks)
+                    chunk.data.mesh.render(shaderProgram, ShapeType.Point.getGlType());
                 shaderProgram.end();
-                accumFb.end();
+                oitFb.end();
 
-                /**
-                 * PASS 1
-                 */
-                Gdx.gl20.glBlendFunc(GL30.GL_ZERO, GL30.GL_ONE_MINUS_SRC_COLOR);
-
-                revealFb.begin();
-                Gdx.gl.glClearColor(1, 1, 1, 1);
-                Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
-
-                shaderProgram.begin();
-                shaderProgram.setUniformf("u_pass", 1.0f);
-                particlesMesh.mesh.render(shaderProgram, ShapeType.Point.getGlType());
-                shaderProgram.end();
-                revealFb.end();
 
                 // Restore
                 Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
@@ -341,8 +324,8 @@ public class MWModelRenderSystem extends ImmediateRenderSystem implements IObser
                 ShaderProgram shaderProgram = postShader;
 
                 shaderProgram.begin();
-                accumFb.getColorBufferTexture().bind(accumLoc);
-                revealFb.getColorBufferTexture().bind(revealLoc);
+                oitFb.getTextureAttachments().get(0).bind(accumLoc);
+                oitFb.getTextureAttachments().get(1).bind(revealLoc);
                 Gdx.gl20.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
                 postMesh.render(shaderProgram);
                 shaderProgram.end();

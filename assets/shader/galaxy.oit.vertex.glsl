@@ -1,10 +1,5 @@
 #version 120
 
-#ifdef GL_ES
-precision mediump float;
-precision mediump int;
-#endif
-
 <INCLUDE shader/lib_math.glsl>
 <INCLUDE shader/lib_geometry.glsl>
 
@@ -19,7 +14,6 @@ uniform float u_starBrightness;
 uniform mat4 u_projModelView;
 uniform vec3 u_camPos;
 
-uniform float u_pass;
 uniform mat4 u_view;
 
 #ifdef relativisticEffects
@@ -60,7 +54,6 @@ void main() {
 
     v_col = vec4(a_color.rgb, a_color.a);
     v_depth = -dist * u_to_kpc;
-    v_pass = u_pass;
 
     gl_Position = u_projModelView * vec4(pos, 1.0);
     gl_PointSize = a_additional.x / distNorm;

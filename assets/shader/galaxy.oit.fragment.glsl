@@ -10,7 +10,6 @@ uniform float u_alpha;
 
 varying float v_depth;
 varying vec4 v_col;
-varying float v_pass;
 
 void main() {
     vec2 uv = vec2(gl_PointCoord.s, gl_PointCoord.t);
@@ -22,12 +21,8 @@ void main() {
     float profile = pow(1.0 - dist, 4.0) + (1.0 - dist) * 0.5;
     float alpha = v_col.a * u_alpha * profile;
     float w = alpha * pow(1.0 - v_depth, 3.0);
-    // Default blending
-    if(v_pass < 0.5) {
-        // accum
-        gl_FragData[0] = vec4(v_col.rgb, alpha);
-    } else {
-        // reveal
-        gl_FragData[0].r = alpha;
-    }
+    // accum
+    gl_FragData[0] = vec4(v_col.rgb, alpha);
+    // reveal
+    gl_FragData[1].r = alpha;
 }

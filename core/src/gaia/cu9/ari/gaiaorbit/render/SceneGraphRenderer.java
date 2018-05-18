@@ -10,6 +10,7 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.BitmapFontLoader.BitmapFontParameter;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
@@ -193,6 +194,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         orbitElemDesc = loadShader(manager, "shader/orbitelem.vertex.glsl", "shader/particle.group.fragment.glsl", new String[] { "orbitElem", "orbitElemRel", "orbitElemGrav", "orbitElemRelGrav" }, new String[] { "", "#define relativisticEffects\n", "#define gravitationalWaves\n", "#define relativisticEffects\n#define gravitationalWaves\n" });
 
         manager.load("atmgrounddefault", GroundShaderProvider.class, new GroundShaderProviderParameter("shader/default.vertex.glsl", "shader/default.fragment.glsl"));
+        manager.load("additive", RelativisticShaderProvider.class, new RelativisticShaderProviderParameter("shader/default.vertex.glsl", "shader/default.additive.fragment.glsl"));
         manager.load("spsurface", RelativisticShaderProvider.class, new RelativisticShaderProviderParameter("shader/starsurface.vertex.glsl", "shader/starsurface.fragment.glsl"));
         manager.load("spbeam", RelativisticShaderProvider.class, new RelativisticShaderProviderParameter("shader/default.vertex.glsl", "shader/beam.fragment.glsl"));
         manager.load("spdepth", RelativisticShaderProvider.class, new RelativisticShaderProviderParameter("shader/normal.vertex.glsl", "shader/depth.fragment.glsl"));
@@ -233,9 +235,9 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
             @Override
             public void run(AbstractRenderSystem renderSystem, Array<IRenderable> renderables, ICamera camera) {
                 Gdx.gl.glEnable(GL20.GL_BLEND);
-                Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
+                Gdx.gl.glDisable(GL20.GL_DEPTH_TEST);
                 Gdx.gl.glBlendFunc(GL20.GL_ONE, GL20.GL_ONE);
-                Gdx.gl.glDepthMask(true);
+                Gdx.gl.glDepthMask(false);
             }
         };
         restoreRegularBlend = new RenderSystemRunnable() {
@@ -366,6 +368,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         }
 
         ShaderProvider sp = manager.get("atmgrounddefault");
+        ShaderProvider spadditive = manager.get("additive");
         ShaderProvider spnormal = Constants.webgl ? sp : manager.get("atmground");
         ShaderProvider spatm = manager.get("atm");
         ShaderProvider spsurface = manager.get("spsurface");
@@ -381,7 +384,10 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         };
 
         ModelBatch modelBatchDefault = new ModelBatch(sp, noSorter);
-        ModelBatch modelBatchNormal = Constants.webgl ? new ModelBatch(sp, noSorter) : new ModelBatch(spnormal, noSorter);
+        ModelBatch modelBatchMesh = new ModelBatch(spadditive, noSorter);
+        modelBatchMesh.getRenderContext().setBlending(true, GL30.GL_ONE, GL30.GL_ONE);
+        modelBatchMesh.getRenderContext().setDepthTest(GL30.GL_LEQUAL, 1e11f, 1e13f);
+        ModelBatch modelBatchNormal = new ModelBatch(spnormal, noSorter);
         ModelBatch modelBatchAtmosphere = new ModelBatch(spatm, noSorter);
         ModelBatch modelBatchStar = new ModelBatch(spsurface, noSorter);
         ModelBatch modelBatchBeam = new ModelBatch(spbeam, noSorter);
@@ -543,16 +549,20 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         AbstractRenderSystem lineGpuProc = new LineGPURenderSystem(RenderGroup.LINE_GPU, alphas, lineGpuShaders);
         lineGpuProc.setPreRunnable(blendDepthRunnable);
 
+        // MODEL MESH
+        AbstractRenderSystem modelMeshProc = new ModelBatchRenderSystem(RenderGroup.MODEL_MESH, alphas, modelBatchMesh, false, false);
+        modelFrontBackProc.setPreRunnable(blendDepthRunnable);
+
         // MODEL FRONT
         AbstractRenderSystem modelFrontProc = new ModelBatchRenderSystem(RenderGroup.MODEL_NORMAL, alphas, modelBatchNormal, false);
         modelFrontProc.setPreRunnable(blendDepthRunnable);
 
         // MODEL BEAM
-        AbstractRenderSystem modelBeamProc = new ModelBatchRenderSystem(RenderGroup.MODEL_BEAM, alphas, modelBatchBeam, false);
+        AbstractRenderSystem modelBeamProc = new ModelBatchRenderSystem(RenderGroup.MODEL_BEAM, alphas, modelBatchBeam, false, false);
         modelBeamProc.setPreRunnable(blendDepthRunnable);
 
         // GALAXY
-        //mwrs = new MWModelRenderSystem(RenderGroup.GALAXY, alphas, /*mwOitShaders*/ mwPointShaders);
+        //mwrs = new MWModelRenderSystem(RenderGroup.GALAXY, alphas, MWModelRenderSystem.oit ? mwOitShaders : mwPointShaders);
         //AbstractRenderSystem galaxyProc = mwrs;
         AbstractRenderSystem galaxyProc = new MilkyWayRenderSystem(RenderGroup.GALAXY, alphas, modelBatchDefault, mwPointShaders, mwNebulaShaders);
         galaxyProc.setPreRunnable(blendNoDepthRunnable);
@@ -633,8 +643,9 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         renderProcesses.add(billboardSpritesProc);
 
         renderProcesses.add(modelFrontProc);
-
         renderProcesses.add(modelBeamProc);
+        renderProcesses.add(modelMeshProc);
+
         renderProcesses.add(labelsProc);
         renderProcesses.add(lineProc);
         renderProcesses.add(lineGpuProc);
@@ -830,9 +841,9 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
         sgr.render(this, camera, t, rw, rh, fb, ppb);
 
-        if (mwrs != null && mwrs.oit) {
+        if (mwrs != null && MWModelRenderSystem.oit) {
             spriteBatch.begin();
-            spriteBatch.draw(mwrs.revealFb.getColorBufferTexture(), 0, 0, 756, 504);
+            spriteBatch.draw(mwrs.oitFb.getTextureAttachments().get(0), 0, 0, 756, 504);
             spriteBatch.end();
         }
 

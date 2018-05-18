@@ -101,6 +101,8 @@ public class SceneGraphNode implements IStarContainer, IPosition {
         LINE_GPU(18),
         /** Particle positions from orbital elements **/
         PARTICLE_ORBIT_ELEMENTS(19),
+        /** Transparent meshes **/
+        MODEL_MESH(1),
 
         /** None **/
         NONE(-1);
