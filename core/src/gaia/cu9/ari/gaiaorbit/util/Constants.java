@@ -40,10 +40,20 @@ public class Constants {
      */
     public static final double U_TO_AU = 1 / AU_TO_U;
 
+    /** 
+     * Parsecs to km conversion 
+     */
+    public static final double PC_TO_KM = AstroUtils.PC_TO_KM;
+
+    /**
+     * Km to parsecs conversion
+     */
+    public static final double KM_TO_PC = AstroUtils.KM_TO_PC;
+
     /**
      * Parsec to local unit conversion. Multiply this by all values in pc.
      */
-    public static final double PC_TO_U = AstroUtils.PC_TO_KM * KM_TO_U;
+    public static final double PC_TO_U = PC_TO_KM * KM_TO_U;
 
     /**
      * Kiloparsec to local unit conversion. Multiply this by all values in Kpc.

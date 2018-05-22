@@ -1445,6 +1445,30 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
     }
 
     @Override
+    public double[] equatorialToGalactic(double[] eq) {
+        aux1.set(eq).mul(Coordinates.eqToGal());
+        return aux1.values();
+    }
+
+    @Override
+    public double[] equatorialToEcliptic(double[] eq) {
+        aux1.set(eq).mul(Coordinates.eqToEcl());
+        return aux1.values();
+    }
+
+    @Override
+    public double[] galacticToEquatorial(double[] gal) {
+        aux1.set(gal).mul(Coordinates.galToEq());
+        return aux1.values();
+    }
+
+    @Override
+    public double[] eclipticToEquatorial(double[] ecl) {
+        aux1.set(ecl).mul(Coordinates.eclToEq());
+        return aux1.values();
+    }
+
+    @Override
     public void setBrightnessLevel(double level) {
         assert level >= -1d && level <= 1d : "Brightness level value must be in [-1..1]: " + Double.toString(level);
         Gdx.app.postRunnable(() -> {
