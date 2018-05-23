@@ -139,20 +139,6 @@
 	},
 	
 	{
-		"name" : "Planck CMB hook",
-		"position" : [0.0, 0.0, 0.0],
-	
-		"ct" : Galaxies,
-	
-		// Fade distances, in parsecs
-		"fadein" : [1.0e9, 20.0e9],
-		
-	
-		"parent" : "Universe", 
-		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.FadeNode",
-	},
-	
-	{
 		"name" : "Cosmic Microwave Background",
 		"color" : [1.0, 1.0, 1.0, 0.5],
 		"size" : 1e4,
@@ -162,8 +148,11 @@
 		"label2d" : true,
 		// x, y, scale
 		"labelposition" : [200.0, 200.0, 2.0],
+
+		// Fade distances, in parsecs
+		"fadein" : [1.0e9, 20.0e9],
 		
-		"parent" : "Planck CMB hook", 
+		"parent" : "Universe", 
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.BackgroundModel",
 	
 		"coordinates" : {
