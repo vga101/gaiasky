@@ -4,9 +4,9 @@ import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 
 import gaia.cu9.ari.gaiaorbit.render.IPostProcessor.PostProcessBean;
 import gaia.cu9.ari.gaiaorbit.render.system.StarGroupRenderSystem;
-import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager;
-import gaia.cu9.ari.gaiaorbit.scenegraph.FovCamera;
-import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
+import gaia.cu9.ari.gaiaorbit.scenegraph.camera.CameraManager;
+import gaia.cu9.ari.gaiaorbit.scenegraph.camera.FovCamera;
+import gaia.cu9.ari.gaiaorbit.scenegraph.camera.ICamera;
 
 /**
  * Renders the Gaia Field of View camera mode. Positions two cameras inside

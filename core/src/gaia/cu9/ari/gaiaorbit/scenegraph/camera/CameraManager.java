@@ -1,4 +1,4 @@
-package gaia.cu9.ari.gaiaorbit.scenegraph;
+package gaia.cu9.ari.gaiaorbit.scenegraph.camera;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
@@ -10,6 +10,10 @@ import gaia.cu9.ari.gaiaorbit.data.StreamingOctreeLoader;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
+import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
+import gaia.cu9.ari.gaiaorbit.scenegraph.IFocus;
+import gaia.cu9.ari.gaiaorbit.scenegraph.IStarFocus;
+import gaia.cu9.ari.gaiaorbit.scenegraph.Planet;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.TwoWayHashmap;
@@ -31,6 +35,8 @@ public class CameraManager implements ICamera, IObserver {
         Free_Camera,
         /** Focus **/
         Focus,
+        /** Relativistic camera **/
+        Relativistic,
         /** Gaia Scene **/
         Gaia_Scene,
         /** Spacecraft **/
@@ -47,6 +53,7 @@ public class CameraManager implements ICamera, IObserver {
         static {
             String fc = "Free camera";
             String foc = "Focus object";
+            String rel = "Relativistic camera";
             String gs = "Gaia scene";
             String sc = "Spacecraft";
             String f1 = "Gaia FoV 1";
@@ -56,6 +63,7 @@ public class CameraManager implements ICamera, IObserver {
             equivalences = new TwoWayHashmap<String, CameraMode>();
             equivalences.add(fc, Free_Camera);
             equivalences.add(foc, Focus);
+            equivalences.add(foc, Relativistic);
             equivalences.add(gs, Gaia_Scene);
             equivalences.add(sc, Spacecraft);
             equivalences.add(f1, Gaia_FOV1);
@@ -129,6 +137,7 @@ public class CameraManager implements ICamera, IObserver {
     public NaturalCamera naturalCamera;
     public FovCamera fovCamera;
     public SpacecraftCamera spacecraftCamera;
+    public RelativisticCamera relativisticCamera;
 
     private ICamera[] cameras;
 
@@ -149,6 +158,7 @@ public class CameraManager implements ICamera, IObserver {
         naturalCamera = new NaturalCamera(manager, this);
         fovCamera = new FovCamera(manager, this);
         spacecraftCamera = new SpacecraftCamera(manager, this);
+        relativisticCamera = new RelativisticCamera(manager, this);
 
         cameras = new ICamera[] { naturalCamera, fovCamera, spacecraftCamera };
 
@@ -170,23 +180,37 @@ public class CameraManager implements ICamera, IObserver {
         EventManager.instance.subscribe(this, Events.CAMERA_MODE_CMD, Events.FOV_CHANGE_NOTIFICATION);
     }
 
-    public void updateCurrentCamera(CameraMode previousMode) {
+    private AbstractCamera backupCam(ICamera current) {
+        if (current instanceof AbstractCamera)
+            return (AbstractCamera) current;
+        else
+            return null;
+    }
 
+    private void restoreCam(AbstractCamera cam, AbstractCamera copy) {
+        if (copy != null)
+            cam.copyParamsFrom(copy);
+    }
+
+    public void updateCurrentCamera(CameraMode previousMode) {
+        AbstractCamera aux = null;
         // Update
         switch (mode) {
         case Free_Camera:
         case Focus:
         case Gaia_Scene:
+            aux = backupCam(current);
             current = naturalCamera;
-            // Copy
-            if (previousMode == CameraMode.Spacecraft)
-                naturalCamera.copyParamsFrom(spacecraftCamera);
+            restoreCam(naturalCamera, aux);
             break;
+        case Relativistic:
+            aux = backupCam(current);
+            current = relativisticCamera;
+            restoreCam(relativisticCamera, aux);
         case Spacecraft:
+            aux = backupCam(current);
             current = spacecraftCamera;
-            // Copy
-            if (previousMode == CameraMode.Free_Camera || previousMode == CameraMode.Focus || previousMode == CameraMode.Gaia_Scene)
-                spacecraftCamera.copyParamsFrom(naturalCamera);
+            restoreCam(spacecraftCamera, aux);
             break;
         case Gaia_FOV1:
         case Gaia_FOV2:

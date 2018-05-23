@@ -1,5 +1,7 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph;
 
+import gaia.cu9.ari.gaiaorbit.scenegraph.camera.ICamera;
+
 /**
  * A generic spacecraft
  * 

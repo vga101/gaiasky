@@ -11,6 +11,7 @@ import com.badlogic.gdx.math.Vector3;
 import gaia.cu9.ari.gaiaorbit.render.I3DTextRenderable;
 import gaia.cu9.ari.gaiaorbit.render.RenderingContext;
 import gaia.cu9.ari.gaiaorbit.render.RenderingContext.CubemapSide;
+import gaia.cu9.ari.gaiaorbit.scenegraph.camera.ICamera;
 import gaia.cu9.ari.gaiaorbit.util.DecalUtils;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
@@ -77,7 +78,7 @@ public abstract class AbstractPositionEntity extends SceneGraphNode {
     /**
      * Is this just a copy?
      */
-    protected boolean copy = false;
+    public boolean copy = false;
 
     /** The id of the octant it belongs to, if any **/
     public Long octantId;

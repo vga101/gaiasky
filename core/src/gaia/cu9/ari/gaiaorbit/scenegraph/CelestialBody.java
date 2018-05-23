@@ -18,6 +18,9 @@ import gaia.cu9.ari.gaiaorbit.render.IQuadRenderable;
 import gaia.cu9.ari.gaiaorbit.render.PostProcessorFactory;
 import gaia.cu9.ari.gaiaorbit.render.RenderingContext;
 import gaia.cu9.ari.gaiaorbit.render.system.FontRenderSystem;
+import gaia.cu9.ari.gaiaorbit.scenegraph.camera.FovCamera;
+import gaia.cu9.ari.gaiaorbit.scenegraph.camera.ICamera;
+import gaia.cu9.ari.gaiaorbit.scenegraph.camera.NaturalCamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.RotationComponent;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
@@ -297,7 +300,7 @@ public abstract class CelestialBody extends AbstractPositionEntity implements I3
      * @param visible
      * @param time
      */
-    protected void updateTransitNumber(boolean visible, ITimeFrameProvider time, FovCamera fcamera) {
+    public void updateTransitNumber(boolean visible, ITimeFrameProvider time, FovCamera fcamera) {
         if (GlobalConf.scene.COMPUTE_GAIA_SCAN && visible && timeCondition(time)) {
             // Update observations. Add if forward time, subtract if backward
             // time

@@ -93,6 +93,8 @@ public class JythonFactory extends ScriptingFactory implements IObserver {
     public void runJythonScript(final PyCode code, String path, boolean async) {
         if (currentScripts.size() < maxScripts) {
             Thread run = new ScriptRunnable(code, path);
+            // Maximum priority to script
+            run.setPriority(Thread.MAX_PRIORITY);
 
             if (async) {
                 run.start();
