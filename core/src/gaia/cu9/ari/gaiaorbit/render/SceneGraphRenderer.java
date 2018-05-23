@@ -62,9 +62,9 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.MilkyWay;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ModelBody;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
-import gaia.cu9.ari.gaiaorbit.scenegraph.camera.ICamera;
-import gaia.cu9.ari.gaiaorbit.scenegraph.camera.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
+import gaia.cu9.ari.gaiaorbit.scenegraph.camera.CameraManager.CameraMode;
+import gaia.cu9.ari.gaiaorbit.scenegraph.camera.ICamera;
 import gaia.cu9.ari.gaiaorbit.util.ComponentTypes;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
@@ -729,14 +729,14 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
              * <ul>
              * <li>Extract model bodies (front)</li>
              * <li>Work out light direction</li>
-             * <li>Set orthographic camera at set distance from bodies, direction of
-             * light, clip planes</li>
+             * <li>Set orthographic camera at set distance from bodies,
+             * direction of light, clip planes</li>
              * <li>Render depth map to frame buffer (fb)</li>
-             * <li>Send frame buffer texture in to ModelBatchRenderSystem along with
-             * light position, direction, clip planes and light camera combined
-             * matrix</li>
-             * <li>Compare real distance from light to texture sample, render shadow
-             * if different</li>
+             * <li>Send frame buffer texture in to ModelBatchRenderSystem along
+             * with light position, direction, clip planes and light camera
+             * combined matrix</li>
+             * <li>Compare real distance from light to texture sample, render
+             * shadow if different</li>
              * </ul>
              */
             Array<IRenderable> models = render_lists.get(RenderGroup.MODEL_NORMAL.ordinal());
@@ -1175,8 +1175,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         } else {
             // Quad
             sys = new LineQuadRenderSystem(RenderGroup.LINE, alphas, lineQuadShaders);
-            sys.setPreRunnable(additiveBlendDepthRunnable);
-            sys.setPostRunnable(restoreRegularBlend);
+            sys.setPreRunnable(blendDepthRunnable);
         }
         return sys;
     }

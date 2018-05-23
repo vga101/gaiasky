@@ -1447,7 +1447,12 @@ public class PreferencesWindow extends GenericDialog {
         GlobalConf.postprocess.POSTPROCESS_ANTIALIAS = GlobalConf.postprocess.getAntialias(bean.value);
         EventManager.instance.post(Events.ANTIALIASING_CMD, GlobalConf.postprocess.POSTPROCESS_ANTIALIAS);
         GlobalConf.screen.VSYNC = vsync.isChecked();
-        Gdx.graphics.setVSync(GlobalConf.screen.VSYNC);
+        try {
+            // Windows backend crashes for some reason
+            Gdx.graphics.setVSync(GlobalConf.screen.VSYNC);
+        } catch (Exception e) {
+            Logger.error(e, this.getClass().getSimpleName());
+        }
 
         if (limitfpsCb.isChecked()) {
             GlobalConf.screen.LIMIT_FPS = Integer.parseInt(limitFps.getText());

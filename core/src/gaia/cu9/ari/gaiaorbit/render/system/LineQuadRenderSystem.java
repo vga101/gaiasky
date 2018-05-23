@@ -53,7 +53,6 @@ public class LineQuadRenderSystem extends LineRenderSystem {
         vec = new Vector3d();
     }
 
-
     @Override
     protected void initVertices() {
         meshes = new MeshDataExt[1000];
@@ -144,7 +143,7 @@ public class LineQuadRenderSystem extends LineRenderSystem {
             l[10] = dist0;
             l[11] = dist1;
             l[12] = (dist0 + dist1) / 2d;
-            l[13] = widthAngleTan;
+            l[13] = widthAngleTan * GlobalConf.SCALE_FACTOR;
             provisionalLines.add(l);
         }
     }
@@ -224,7 +223,7 @@ public class LineQuadRenderSystem extends LineRenderSystem {
             if (renderable instanceof Particle && !GlobalConf.scene.PROPER_MOTION_VECTORS)
                 rend = false;
             if (rend)
-            renderable.render(this, camera, getAlpha(renderable));
+                renderable.render(this, camera, getAlpha(renderable));
         }
 
         // Sort phase
