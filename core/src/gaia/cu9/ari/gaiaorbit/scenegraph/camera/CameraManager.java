@@ -63,7 +63,7 @@ public class CameraManager implements ICamera, IObserver {
             equivalences = new TwoWayHashmap<String, CameraMode>();
             equivalences.add(fc, Free_Camera);
             equivalences.add(foc, Focus);
-            equivalences.add(foc, Relativistic);
+            equivalences.add(rel, Relativistic);
             equivalences.add(gs, Gaia_Scene);
             equivalences.add(sc, Spacecraft);
             equivalences.add(f1, Gaia_FOV1);
