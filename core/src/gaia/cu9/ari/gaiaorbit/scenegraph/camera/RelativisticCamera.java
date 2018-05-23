@@ -1,14 +1,18 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph.camera;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 
 import gaia.cu9.ari.gaiaorbit.scenegraph.IFocus;
 import gaia.cu9.ari.gaiaorbit.scenegraph.camera.CameraManager.CameraMode;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
 public class RelativisticCamera extends AbstractCamera {
+
+    public Vector3d direction, up;
 
     public RelativisticCamera(CameraManager parent) {
         super(parent);
@@ -22,7 +26,14 @@ public class RelativisticCamera extends AbstractCamera {
     }
 
     private void initialize(AssetManager manager) {
+        camera = new PerspectiveCamera(GlobalConf.scene.CAMERA_FOV, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        camera.near = (float) CAM_NEAR;
+        camera.far = (float) CAM_FAR;
 
+        fovFactor = camera.fieldOfView / 40f;
+
+        up = new Vector3d(1, 0, 0);
+        direction = new Vector3d(0, 1, 0);
     }
 
     @Override

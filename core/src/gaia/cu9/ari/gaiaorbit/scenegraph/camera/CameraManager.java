@@ -36,7 +36,7 @@ public class CameraManager implements ICamera, IObserver {
         /** Focus **/
         Focus,
         /** Relativistic camera **/
-        Relativistic,
+        //Relativistic,
         /** Gaia Scene **/
         Gaia_Scene,
         /** Spacecraft **/
@@ -53,7 +53,7 @@ public class CameraManager implements ICamera, IObserver {
         static {
             String fc = "Free camera";
             String foc = "Focus object";
-            String rel = "Relativistic camera";
+            //String rel = "Relativistic camera";
             String gs = "Gaia scene";
             String sc = "Spacecraft";
             String f1 = "Gaia FoV 1";
@@ -63,7 +63,7 @@ public class CameraManager implements ICamera, IObserver {
             equivalences = new TwoWayHashmap<String, CameraMode>();
             equivalences.add(fc, Free_Camera);
             equivalences.add(foc, Focus);
-            equivalences.add(rel, Relativistic);
+            //equivalences.add(rel, Relativistic);
             equivalences.add(gs, Gaia_Scene);
             equivalences.add(sc, Spacecraft);
             equivalences.add(f1, Gaia_FOV1);
@@ -203,10 +203,10 @@ public class CameraManager implements ICamera, IObserver {
             current = naturalCamera;
             restoreCam(naturalCamera, aux);
             break;
-        case Relativistic:
-            aux = backupCam(current);
-            current = relativisticCamera;
-            restoreCam(relativisticCamera, aux);
+        // case Relativistic:
+        //     aux = backupCam(current);
+        //     current = relativisticCamera;
+        //     restoreCam(relativisticCamera, aux);
         case Spacecraft:
             aux = backupCam(current);
             current = spacecraftCamera;
