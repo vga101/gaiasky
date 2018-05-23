@@ -11,8 +11,8 @@ import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.render.I3DTextRenderable;
 import gaia.cu9.ari.gaiaorbit.render.IAnnotationsRenderable;
 import gaia.cu9.ari.gaiaorbit.render.IRenderable;
-import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
+import gaia.cu9.ari.gaiaorbit.scenegraph.camera.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Text2D;
 import gaia.cu9.ari.gaiaorbit.util.comp.DistToCameraComparator;
 

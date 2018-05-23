@@ -10,9 +10,9 @@ import com.badlogic.gdx.utils.Pool;
 
 import gaia.cu9.ari.gaiaorbit.render.ILineRenderable;
 import gaia.cu9.ari.gaiaorbit.render.IRenderable;
-import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
+import gaia.cu9.ari.gaiaorbit.scenegraph.camera.ICamera;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
@@ -52,7 +52,6 @@ public class LineQuadRenderSystem extends LineRenderSystem {
         point = new Vector3d();
         vec = new Vector3d();
     }
-
 
     @Override
     protected void initVertices() {
@@ -144,7 +143,7 @@ public class LineQuadRenderSystem extends LineRenderSystem {
             l[10] = dist0;
             l[11] = dist1;
             l[12] = (dist0 + dist1) / 2d;
-            l[13] = widthAngleTan;
+            l[13] = widthAngleTan * GlobalConf.SCALE_FACTOR;
             provisionalLines.add(l);
         }
     }
@@ -224,7 +223,7 @@ public class LineQuadRenderSystem extends LineRenderSystem {
             if (renderable instanceof Particle && !GlobalConf.scene.PROPER_MOTION_VECTORS)
                 rend = false;
             if (rend)
-            renderable.render(this, camera, getAlpha(renderable));
+                renderable.render(this, camera, getAlpha(renderable));
         }
 
         // Sort phase

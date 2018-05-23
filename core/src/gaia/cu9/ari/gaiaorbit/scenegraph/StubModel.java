@@ -13,6 +13,7 @@ import gaia.cu9.ari.gaiaorbit.render.ILineRenderable;
 import gaia.cu9.ari.gaiaorbit.render.IModelRenderable;
 import gaia.cu9.ari.gaiaorbit.render.RenderingContext;
 import gaia.cu9.ari.gaiaorbit.render.system.LineRenderSystem;
+import gaia.cu9.ari.gaiaorbit.scenegraph.camera.ICamera;
 import gaia.cu9.ari.gaiaorbit.util.ComponentTypes;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 import gaia.cu9.ari.gaiaorbit.vr.VRContext.VRDevice;
@@ -71,7 +72,6 @@ public class StubModel extends AbstractPositionEntity implements IModelRenderabl
     /**
      * Occlusion rendering
      */
-    @Override
     public void renderOpaque(ModelBatch modelBatch, float alpha, double t) {
         setTransparency(alpha);
         modelBatch.render(instance, env);

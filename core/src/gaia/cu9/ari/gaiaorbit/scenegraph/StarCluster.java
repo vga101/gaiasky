@@ -30,6 +30,8 @@ import gaia.cu9.ari.gaiaorbit.render.IModelRenderable;
 import gaia.cu9.ari.gaiaorbit.render.IQuadRenderable;
 import gaia.cu9.ari.gaiaorbit.render.RenderingContext;
 import gaia.cu9.ari.gaiaorbit.render.system.FontRenderSystem;
+import gaia.cu9.ari.gaiaorbit.scenegraph.camera.ICamera;
+import gaia.cu9.ari.gaiaorbit.scenegraph.camera.NaturalCamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.RotationComponent;
 import gaia.cu9.ari.gaiaorbit.util.ComponentTypes;
@@ -212,13 +214,6 @@ public class StarCluster extends AbstractPositionEntity implements IFocus, IProp
         mc.setTransparency(alpha * opacity * fadeAlpha);
         mc.instance.transform.set(this.localTransform);
         modelBatch.render(mc.instance, mc.env);
-    }
-
-    /**
-     * Occlusion rendering
-     */
-    @Override
-    public void renderOpaque(ModelBatch modelBatch, float alpha, double t) {
     }
 
     /**

@@ -15,7 +15,7 @@ import gaia.cu9.ari.gaiaorbit.interfce.RenderGui;
 import gaia.cu9.ari.gaiaorbit.render.IMainRenderer;
 import gaia.cu9.ari.gaiaorbit.render.IPostProcessor.PostProcessBean;
 import gaia.cu9.ari.gaiaorbit.render.IPostProcessor.RenderType;
-import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
+import gaia.cu9.ari.gaiaorbit.scenegraph.camera.ICamera;
 import gaia.cu9.ari.gaiaorbit.screenshot.ImageRenderer.ImageType;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 

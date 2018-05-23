@@ -8,6 +8,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -319,12 +320,16 @@ public class AboutWindow extends GenericDialog {
         Label glslversion = new OwnLabel(Gdx.gl.glGetString(GL20.GL_SHADING_LANGUAGE_VERSION), skin);
 
         Label glextensionstitle = new OwnLabel(txt("gui.help.glextensions"), skin);
-        String glextensionsstr = Gdx.gl.glGetString(GL20.GL_EXTENSIONS).replace(' ', '\r');
-        lines = GlobalResources.countOccurrences(glextensionsstr, '\r') + 1;
         IntBuffer buf = BufferUtils.newIntBuffer(16);
+        Gdx.gl.glGetIntegerv(GL30.GL_NUM_EXTENSIONS, buf);
+        int next = buf.get(0);
+        String[] extensionsstr = new String[next];
+        for (int i = 0; i < next; i++) {
+            extensionsstr[i] = Gdx.gl30.glGetStringi(GL30.GL_EXTENSIONS, i);
+        }
         Gdx.gl.glGetIntegerv(GL20.GL_MAX_TEXTURE_SIZE, buf);
         int maxSize = buf.get(0);
-        TextArea glextensions = new TextArea("Max texture size: " + maxSize + "\r" + glextensionsstr, skin, "no-disabled");
+        TextArea glextensions = new TextArea("Max texture size: " + maxSize + "\r" + arrayToStr(extensionsstr), skin, "no-disabled");
         glextensions.setDisabled(true);
         glextensions.setPrefRows(lines);
         glextensions.clearListeners();
@@ -452,6 +457,14 @@ public class AboutWindow extends GenericDialog {
         tabs.add(tabSystem);
         tabs.add(tabUpdates);
 
+    }
+
+    private String arrayToStr(String[] arr) {
+        StringBuffer buff = new StringBuffer();
+        for (int i = 0; i < arr.length; i++) {
+            buff.append(arr[i] + '\n');
+        }
+        return buff.toString();
     }
 
     @Override

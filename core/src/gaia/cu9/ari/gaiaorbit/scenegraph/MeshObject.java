@@ -3,6 +3,7 @@ package gaia.cu9.ari.gaiaorbit.scenegraph;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
@@ -18,6 +19,7 @@ import gaia.cu9.ari.gaiaorbit.render.I3DTextRenderable;
 import gaia.cu9.ari.gaiaorbit.render.IModelRenderable;
 import gaia.cu9.ari.gaiaorbit.render.RenderingContext;
 import gaia.cu9.ari.gaiaorbit.render.system.FontRenderSystem;
+import gaia.cu9.ari.gaiaorbit.scenegraph.camera.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.ITransform;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
@@ -125,7 +127,7 @@ public class MeshObject extends FadeNode implements IModelRenderable, I3DTextRen
     @Override
     protected void addToRenderLists(ICamera camera) {
         if (GaiaSky.instance.isOn(ct) && opacity > 0) {
-            addToRender(this, RenderGroup.MODEL_DEFAULT);
+            addToRender(this, RenderGroup.MODEL_MESH);
             addToRender(this, RenderGroup.FONT_LABEL);
         }
 
@@ -138,25 +140,19 @@ public class MeshObject extends FadeNode implements IModelRenderable, I3DTextRen
     public void render(ModelBatch modelBatch, float alpha, double t, RenderingContext rc) {
         if (mc != null) {
             mc.touch();
-            mc.setTransparency(alpha * opacity);
+            mc.setTransparency(alpha * opacity, GL20.GL_ONE, GL20.GL_ONE);
             mc.updateRelativisticEffects(GaiaSky.instance.getICamera());
+            modelBatch.getRenderContext().setBlending(true, GL30.GL_ONE, GL30.GL_ONE);
             modelBatch.render(mc.instance, mc.env);
         }
     }
-    
+
     public void setDescription(String description) {
         this.description = description;
     }
 
     public String getDescription() {
         return this.description;
-    }
-
-    /**
-     * Occlusion rendering
-     */
-    @Override
-    public void renderOpaque(ModelBatch modelBatch, float alpha, double t) {
     }
 
     public void setModel(ModelComponent mc) {

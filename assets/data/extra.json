@@ -42,7 +42,7 @@
 	// Position in parsecs
 	"labelposition" : [5.0e3, 5.0e2, 5.0e3]
 	"size" : 3.0e17,
-	"ct" : [MilkyWay, Galaxies],
+	"ct" : [MilkyWay],
 	"transformName" : galacticToEquatorial,
 
 	// Fade in distances, in parsecs
@@ -81,9 +81,12 @@
 	"name" : "MW",
 	"color" : [1.0, 1.0, 1.0, 0.6],
 	"size" : 1.6e12,
-	"ct" : [MilkyWay, Galaxies],
+	"ct" : [MilkyWay],
 	"transformName" : galacticToEquatorial,
 	"label" : false,
+
+	// Fade out distances, in parsecs
+	"fadeout" : [1.0e2, 5.0e3],
 
 	"parent" : "Milky Way", 
 	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.BackgroundModel",
@@ -134,20 +137,6 @@
 	},
 	
 	{
-		"name" : "Planck CMB hook",
-		"position" : [0.0, 0.0, 0.0],
-	
-		"ct" : Galaxies,
-	
-		// Fade distances, in parsecs
-		"fadein" : [1.0e9, 20.0e9],
-		
-	
-		"parent" : "Universe", 
-		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.FadeNode",
-	},
-	
-	{
 		"name" : "Cosmic Microwave Background",
 		"color" : [1.0, 1.0, 1.0, 0.5],
 		"size" : 1e4,
@@ -157,8 +146,11 @@
 		"label2d" : true,
 		// x, y, scale
 		"labelposition" : [200.0, 200.0, 2.0],
+
+		// Fade distances, in parsecs
+		"fadein" : [1.0e9, 20.0e9],
 		
-		"parent" : "Planck CMB hook", 
+		"parent" : "Universe", 
 		"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.BackgroundModel",
 	
 		"coordinates" : {

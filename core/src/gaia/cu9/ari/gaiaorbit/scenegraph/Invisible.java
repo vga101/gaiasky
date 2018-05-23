@@ -3,6 +3,7 @@ package gaia.cu9.ari.gaiaorbit.scenegraph;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 
 import gaia.cu9.ari.gaiaorbit.render.RenderingContext;
+import gaia.cu9.ari.gaiaorbit.scenegraph.camera.ICamera;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
@@ -32,13 +33,6 @@ public class Invisible extends CelestialBody {
      */
     @Override
     public void render(ModelBatch modelBatch, float alpha, double t, RenderingContext rc) {
-    }
-
-    /**
-     * Occlusion rendering
-     */
-    @Override
-    public void renderOpaque(ModelBatch modelBatch, float alpha, double t) {
     }
 
     @Override

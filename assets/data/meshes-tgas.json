@@ -2,9 +2,9 @@
 
 	{
 	"name" : "Hot Iso 40%",
-	"color" : [0.1, 0.3, 0.85, 0.4],
+	"color" : [0.1, 0.3, 0.85, 0.2],
 	// Parsec to units
-	"size" :  3.0856775814913705E7,
+	"size" :  3.0856775814913705E10,
 	"labelcolor" : [0.1, 0.3, 0.85, 0.0],
 	// Position in parsecs
 	"labelposition" : [-60.0, -100.0, -40.0]
@@ -25,15 +25,15 @@
 	"model"		: {
 					"args" : [true],
 					"staticlight" : True,
-					"model" : "data/meshes/iso_40_percent_filtered_reduced_separated.g3db"
+					"model" : "data/meshes/tgas/iso_40_percent_filtered_reduced_separated.g3db"
 				}
 	},
 	
 	{
 	"name" : "Hot Iso 50%",
-	"color" : [0.2, 0.9, 0.4, 0.5],
+	"color" : [0.2, 0.9, 0.4, 0.2],
 	// Parsec to units
-	"size" :  3.0856775814913705E7,
+	"size" :  3.0856775814913705E10,
 	"labelcolor" : [0.2, 0.9, 0.4, 0.0],
 	// Position in parsecs
 	"labelposition" : [60.0, -100.0, -40.0]
@@ -54,15 +54,15 @@
 	"model"		: {
 					"args" : [true],
 					"staticlight" : True,
-					"model" : "data/meshes/iso_50_percent_filtered_reduced_separated.g3db"
+					"model" : "data/meshes/tgas/iso_50_percent_filtered_reduced_separated.g3db"
 				}
 	},
 	
 	{
 	"name" : "Hot Iso 60%",
-	"color" : [0.9, 0.9, 0.1, 0.6],
+	"color" : [0.9, 0.9, 0.1, 0.2],
 	// Parsec to units
-	"size" :  3.0856775814913705E7,
+	"size" :  3.0856775814913705E10,
 	"labelcolor" : [0.9, 0.9, 0.1, 0.0],
 	// Position in parsecs
 	"labelposition" : [60.0, -100.0, -40.0]
@@ -83,15 +83,15 @@
 	"model"		: {
 					"args" : [true],
 					"staticlight" : True,
-					"model" : "data/meshes/iso_60_percent_filtered_reduced_separated.g3db"
+					"model" : "data/meshes/tgas/iso_60_percent_filtered_reduced_separated.g3db"
 				}
 	},
 	
 	{
 	"name" : "Hot Iso 70%",
-	"color" : [0.9, 0.2, 0.1, 0.6],
+	"color" : [0.9, 0.2, 0.1, 0.2],
 	// Parsec to units
-	"size" :  3.0856775814913705E7,
+	"size" :  3.0856775814913705E10,
 	"labelcolor" : [0.9, 0.2, 0.1, 0.0],
 	// Position in parsecs
 	"labelposition" : [60.0, -100.0, -40.0]
@@ -112,15 +112,15 @@
 	"model"		: {
 					"args" : [true],
 					"staticlight" : True,
-					"model" : "data/meshes/iso_70_percent_filtered_reduced_separated.g3db"
+					"model" : "data/meshes/tgas/iso_70_percent_filtered_reduced_separated.g3db"
 				}
 	},
 	
 	{
 	"name" : "Hot Iso 80%",
-	"color" : [1.0, 0.5, 0.0, 0.65],
+	"color" : [1.0, 0.5, 0.0, 0.2],
 	// Parsec to units
-	"size" :  3.0856775814913705E7,
+	"size" :  3.0856775814913705E10,
 	"labelcolor" : [1.0, 0.5, 0.0, 0.0],
 	// Position in parsecs
 	"labelposition" : [60.0, -100.0, -40.0]
@@ -141,15 +141,15 @@
 	"model"		: {
 					"args" : [true],
 					"staticlight" : True,
-					"model" : "data/meshes/iso_80_percent_filtered_reduced_separated.g3db"
+					"model" : "data/meshes/tgas/iso_80_percent_filtered_reduced_separated.g3db"
 				}
 	},
 	
 	{
 	"name" : "Hot Iso 90%",
-	"color" : [0.9, 0.1, 0.8, 0.65],
+	"color" : [0.9, 0.1, 0.8, 0.2],
 	// Parsec to units
-	"size" :  3.0856775814913705E7,
+	"size" :  3.0856775814913705E10,
 	"labelcolor" : [0.9, 0.1, 0.8, 0.0],
 	// Position in parsecs
 	"labelposition" : [60.0, -100.0, -40.0]
@@ -170,7 +170,7 @@
 	"model"		: {
 					"args" : [true],
 					"staticlight" : True,
-					"model" : "data/meshes/iso_90_percent_filtered_reduced_separated.g3db"
+					"model" : "data/meshes/tgas/iso_90_percent_filtered_reduced_separated.g3db"
 				}
 	}
 ]}

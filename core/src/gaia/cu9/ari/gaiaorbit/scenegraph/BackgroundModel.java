@@ -17,6 +17,7 @@ import gaia.cu9.ari.gaiaorbit.render.I3DTextRenderable;
 import gaia.cu9.ari.gaiaorbit.render.IModelRenderable;
 import gaia.cu9.ari.gaiaorbit.render.RenderingContext;
 import gaia.cu9.ari.gaiaorbit.render.system.FontRenderSystem;
+import gaia.cu9.ari.gaiaorbit.scenegraph.camera.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
@@ -32,12 +33,11 @@ import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
  * @author tsagrista
  *
  */
-public class BackgroundModel extends AbstractPositionEntity implements IModelRenderable, I3DTextRenderable {
+public class BackgroundModel extends FadeNode implements IModelRenderable, I3DTextRenderable {
 
     private String transformName;
     public ModelComponent mc;
     private boolean label, label2d;
-    private Vector3d labelPosition;
 
     public BackgroundModel() {
         super();
@@ -111,13 +111,6 @@ public class BackgroundModel extends AbstractPositionEntity implements IModelRen
         mc.setTransparency(alpha * cc[3] * opacity);
         mc.updateRelativisticEffects(GaiaSky.instance.getICamera());
         modelBatch.render(mc.instance, mc.env);
-    }
-
-    /**
-     * Occlusion rendering
-     */
-    @Override
-    public void renderOpaque(ModelBatch modelBatch, float alpha, double t) {
     }
 
     /**
@@ -201,17 +194,6 @@ public class BackgroundModel extends AbstractPositionEntity implements IModelRen
     @Override
     public boolean isLabel() {
         return label;
-    }
-
-    /**
-     * Sets the position of the label. If label2d is on, this is interpreted as
-     * [x, y, scale]. Otherwise, it is interpreted as the 3D position in the
-     * internal reference system, in parsecs. frame
-     * 
-     * @param labelposition
-     */
-    public void setLabelposition(double[] labelposition) {
-        this.labelPosition = new Vector3d(labelposition[0], labelposition[1], labelposition[2]);
     }
 
 }

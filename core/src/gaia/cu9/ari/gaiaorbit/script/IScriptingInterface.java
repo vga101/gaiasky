@@ -543,13 +543,13 @@ public interface IScriptingInterface {
      *            The visible value.
      */
     public void setVisibility(String key, boolean visible);
-    
+
     /**
      * Sets the number factor of proper motion vectors that are visible. In [1..100].
      * @param factor
      */
     public void setProperMotionsNumberFactor(float factor);
-    
+
     /**
      * Sets the length of the proper motion vectors, in [500..30000].
      * 
@@ -1159,6 +1159,38 @@ public interface IScriptingInterface {
      *         position.
      */
     public double[] internalCartesianToEquatorial(double x, double y, double z);
+
+    /**
+     * Converts equatorial cartesian coordinates (in the internal reference system)
+     * to galactic cartesian coordinates.
+     * @param eq Vector with [x, y, z] equatorial cartesian coordinates
+     * @return Vector with [x, y, z] galactic cartesian coordinates
+     */
+    public double[] equatorialToGalactic(double[] eq);
+
+    /**
+     * Converts equatorial cartesian coordinates (in the internal reference system)
+     * to ecliptic cartesian coordinates.
+     * @param eq Vector with [x, y, z] equatorial cartesian coordinates
+     * @return Vector with [x, y, z] ecliptic cartesian coordinates
+     */
+    public double[] equatorialToEcliptic(double[] eq);
+
+    /**
+     * Converts galactic cartesian coordinates (in the internal reference system)
+     * to equatorial cartesian coordinates.
+     * @param gal Vector with [x, y, z] galactic cartesian coordinates
+     * @return Vector with [x, y, z] equatorial cartesian coordinates
+     */
+    public double[] galacticToEquatorial(double[] gal);
+
+    /**
+     * Converts ecliptic cartesian coordinates (in the internal reference system)
+     * to equatorial cartesian coordinates.
+     * @param ecl Vector with [x, y, z] ecliptic cartesian coordinates
+     * @return Vector with [x, y, z] equatorial cartesian coordinates
+     */
+    public double[] eclipticToEquatorial(double[] ecl);
 
     /**
      * Sets the brightness level of the render system.

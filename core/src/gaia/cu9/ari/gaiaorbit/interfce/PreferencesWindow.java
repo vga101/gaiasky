@@ -54,7 +54,7 @@ import gaia.cu9.ari.gaiaorbit.interfce.KeyBindings.ProgramAction;
 import gaia.cu9.ari.gaiaorbit.interfce.beans.ComboBoxBean;
 import gaia.cu9.ari.gaiaorbit.interfce.beans.FileComboBoxBean;
 import gaia.cu9.ari.gaiaorbit.interfce.beans.LangComboBoxBean;
-import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager;
+import gaia.cu9.ari.gaiaorbit.scenegraph.camera.CameraManager;
 import gaia.cu9.ari.gaiaorbit.util.ConfInit;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
@@ -1062,6 +1062,7 @@ public class PreferencesWindow extends GenericDialog {
         candidates = new HashMap<Button, String>();
         catalogs = new OwnTextButton[catalogFiles.length];
         i = 0;
+        float taheight = GlobalConf.SCALE_FACTOR > 1 ? 50 : 35;
         String[] currentSetting = GlobalConf.data.CATALOG_JSON_FILES.split("\\s*,\\s*");
         Table datasets = new Table();
         for (FileHandle catalogFile : catalogFiles) {
@@ -1093,6 +1094,7 @@ public class PreferencesWindow extends GenericDialog {
             description.setDisabled(true);
             description.setPrefRows(2);
             description.setWidth(tawidth);
+            description.setHeight(taheight);
             datasets.add(description).left().top().padTop(pad / 2).padLeft(pad).row();
 
             candidates.put(cb, candidate);
@@ -1419,6 +1421,12 @@ public class PreferencesWindow extends GenericDialog {
         GlobalConf.postprocess.POSTPROCESS_ANTIALIAS = GlobalConf.postprocess.getAntialias(bean.value);
         EventManager.instance.post(Events.ANTIALIASING_CMD, GlobalConf.postprocess.POSTPROCESS_ANTIALIAS);
         GlobalConf.screen.VSYNC = vsync.isChecked();
+        try {
+            // Windows backend crashes for some reason
+            Gdx.graphics.setVSync(GlobalConf.screen.VSYNC);
+        } catch (Exception e) {
+            Logger.error(e, this.getClass().getSimpleName());
+        }
 
         // Orbit renderer
         GlobalConf.scene.ORBIT_RENDERER = orbitRenderer.getSelected().value;

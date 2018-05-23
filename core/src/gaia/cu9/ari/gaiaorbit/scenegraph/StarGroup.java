@@ -39,13 +39,14 @@ import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.data.group.IStarGroupDataProvider;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
-import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.render.ILineRenderable;
 import gaia.cu9.ari.gaiaorbit.render.IModelRenderable;
 import gaia.cu9.ari.gaiaorbit.render.IQuadRenderable;
 import gaia.cu9.ari.gaiaorbit.render.RenderingContext;
 import gaia.cu9.ari.gaiaorbit.render.system.FontRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.LineRenderSystem;
+import gaia.cu9.ari.gaiaorbit.scenegraph.camera.FovCamera;
+import gaia.cu9.ari.gaiaorbit.scenegraph.camera.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
@@ -198,7 +199,7 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
     // Camera dx threshold
     private static final double CAM_DX_TH = 100 * Constants.AU_TO_U;
     // Min update time
-    private static final double MIN_UPDATE_TIME_MS = 50;
+    private static final double MIN_UPDATE_TIME_MS = 100;
     // Sequence id
     private static long idseq = 0;
     /** Star model **/
@@ -270,7 +271,7 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
     private static BlockingQueue<Runnable> workQueue;
     static {
         workQueue = new LinkedBlockingQueue<Runnable>();
-        int nthreads = !GlobalConf.performance.MULTITHREADING ? 1 : GlobalConf.performance.NUMBER_THREADS();
+        int nthreads = !GlobalConf.performance.MULTITHREADING ? 1 : Math.max(1, GlobalConf.performance.NUMBER_THREADS() - 1);
         pool = new ThreadPoolExecutor(nthreads, nthreads, 5, TimeUnit.SECONDS, workQueue);
         pool.setThreadFactory(new DaemonThreadFactory());
     }
@@ -672,13 +673,6 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
             mc.updateRelativisticEffects(GaiaSky.instance.getICamera());
             modelBatch.render(mc.instance, mc.env);
         }
-    }
-
-    /**
-     * Occlusion rendering
-     */
-    @Override
-    public void renderOpaque(ModelBatch modelBatch, float alpha, double t) {
     }
 
     /**

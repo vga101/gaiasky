@@ -6,8 +6,8 @@ import com.badlogic.gdx.utils.Array;
 
 import gaia.cu9.ari.gaiaorbit.render.IRenderable;
 import gaia.cu9.ari.gaiaorbit.render.IShapeRenderable;
-import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
+import gaia.cu9.ari.gaiaorbit.scenegraph.camera.ICamera;
 
 public class ShapeRenderSystem extends AbstractRenderSystem {
 

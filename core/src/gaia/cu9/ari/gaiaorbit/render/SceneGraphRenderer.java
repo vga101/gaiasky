@@ -10,6 +10,7 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.BitmapFontLoader.BitmapFontParameter;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
@@ -55,13 +56,13 @@ import gaia.cu9.ari.gaiaorbit.render.system.ParticleGroupRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.PixelRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.ShapeRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.StarGroupRenderSystem;
-import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
-import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ModelBody;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Star;
 import gaia.cu9.ari.gaiaorbit.scenegraph.StubModel;
+import gaia.cu9.ari.gaiaorbit.scenegraph.camera.CameraManager.CameraMode;
+import gaia.cu9.ari.gaiaorbit.scenegraph.camera.ICamera;
 import gaia.cu9.ari.gaiaorbit.util.ComponentTypes;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
@@ -110,7 +111,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
     private Array<IRenderSystem> renderProcesses;
 
-    RenderSystemRunnable blendNoDepthRunnable, blendDepthRunnable;
+    RenderSystemRunnable blendNoDepthRunnable, blendDepthRunnable, additiveBlendNoDepthRunnable, restoreRegularBlend;
 
     /** The particular current scene graph renderer **/
     private ISGR sgr;
@@ -193,6 +194,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         orbitElemDesc = loadShader(manager, "shader/orbitelem.vertex.glsl", "shader/particle.group.fragment.glsl", new String[] { "orbitElem", "orbitElemRel", "orbitElemGrav", "orbitElemRelGrav" }, new String[] { "", "#define relativisticEffects\n", "#define gravitationalWaves\n", "#define relativisticEffects\n#define gravitationalWaves\n" });
 
         manager.load("atmgrounddefault", GroundShaderProvider.class, new GroundShaderProviderParameter("shader/default.vertex.glsl", "shader/default.fragment.glsl"));
+        manager.load("additive", RelativisticShaderProvider.class, new RelativisticShaderProviderParameter("shader/default.vertex.glsl", "shader/default.additive.fragment.glsl"));
         manager.load("spsurface", RelativisticShaderProvider.class, new RelativisticShaderProviderParameter("shader/starsurface.vertex.glsl", "shader/starsurface.fragment.glsl"));
         manager.load("spbeam", RelativisticShaderProvider.class, new RelativisticShaderProviderParameter("shader/default.vertex.glsl", "shader/beam.fragment.glsl"));
         manager.load("spdepth", RelativisticShaderProvider.class, new RelativisticShaderProviderParameter("shader/normal.vertex.glsl", "shader/depth.fragment.glsl"));
@@ -227,6 +229,21 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
                 Gdx.gl.glEnable(GL20.GL_BLEND);
                 Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
                 Gdx.gl.glDepthMask(true);
+            }
+        };
+        additiveBlendNoDepthRunnable = new RenderSystemRunnable() {
+            @Override
+            public void run(AbstractRenderSystem renderSystem, Array<IRenderable> renderables, ICamera camera) {
+                Gdx.gl.glEnable(GL20.GL_BLEND);
+                Gdx.gl.glDisable(GL20.GL_DEPTH_TEST);
+                Gdx.gl.glBlendFunc(GL20.GL_ONE, GL20.GL_ONE);
+                Gdx.gl.glDepthMask(false);
+            }
+        };
+        restoreRegularBlend = new RenderSystemRunnable() {
+            @Override
+            public void run(AbstractRenderSystem renderSystem, Array<IRenderable> renderables, ICamera camera) {
+                Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
             }
         };
 
@@ -346,6 +363,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         }
 
         ShaderProvider sp = manager.get("atmgrounddefault");
+        ShaderProvider spadditive = manager.get("additive");
         ShaderProvider spnormal = Constants.webgl ? sp : manager.get("atmground");
         ShaderProvider spatm = manager.get("atm");
         ShaderProvider spsurface = manager.get("spsurface");
@@ -361,6 +379,9 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         };
 
         ModelBatch modelBatchDefault = new ModelBatch(sp, noSorter);
+        ModelBatch modelBatchMesh = new ModelBatch(spadditive, noSorter);
+        modelBatchMesh.getRenderContext().setBlending(true, GL30.GL_ONE, GL30.GL_ONE);
+        modelBatchMesh.getRenderContext().setDepthTest(GL30.GL_LEQUAL, 1e11f, 1e13f);
         ModelBatch modelBatchNormal = Constants.webgl ? new ModelBatch(sp, noSorter) : new ModelBatch(spnormal, noSorter);
         ModelBatch modelBatchAtmosphere = new ModelBatch(spatm, noSorter);
         ModelBatch modelBatchStar = new ModelBatch(spsurface, noSorter);
@@ -525,6 +546,10 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         AbstractRenderSystem lineGpuProc = new LineGPURenderSystem(RenderGroup.LINE_GPU, alphas, lineGpuShaders);
         lineGpuProc.setPreRunnable(blendDepthRunnable);
 
+        // MODEL MESH
+        AbstractRenderSystem modelMeshProc = new ModelBatchRenderSystem(RenderGroup.MODEL_MESH, alphas, modelBatchMesh, false, false);
+        modelFrontBackProc.setPreRunnable(blendDepthRunnable);
+        
         // LINES VR LASER
         LineRenderSystem lineVRProc = new LineRenderSystem(RenderGroup.LINE_VR, alphas, lineShaders);
         lineVRProc.setLineWidth(4f);
@@ -616,12 +641,13 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         renderProcesses.add(billboardSpritesProc);
 
         renderProcesses.add(modelFrontProc);
-
         renderProcesses.add(modelBeamProc);
+        renderProcesses.add(modelMeshProc);
+
+        renderProcesses.add(labelsProc);
         renderProcesses.add(lineProc);
         renderProcesses.add(lineGpuProc);
         renderProcesses.add(lineVRProc);
-        renderProcesses.add(labelsProc);
         renderProcesses.add(billboardSSOProc);
 
         renderProcesses.add(modelStarsProc);
@@ -701,13 +727,20 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
             // Render billboard stars
             billboardStarsProc.renderStud(stars, camera, 0);
 
-            // Render models
-            modelBatchOpaque.begin(camera.getCamera());
-            for (IRenderable model : models) {
-                IModelRenderable mb = (IModelRenderable) model;
-                mb.renderOpaque(modelBatchOpaque, 1, 0);
+            if (!GlobalConf.program.CUBEMAP360_MODE) {
+                // Render billboard stars
+                billboardStarsProc.renderStud(stars, camera, 0);
+
+                // Render models
+                modelBatchOpaque.begin(camera.getCamera());
+                for (IRenderable model : models) {
+                    if (model instanceof ModelBody) {
+                        ModelBody mb = (ModelBody) model;
+                        mb.renderOpaque(modelBatchOpaque, 1, 0);
+                    }
+                }
+                modelBatchOpaque.end();
             }
-            modelBatchOpaque.end();
 
             if (vrContext != null) {
                 copyCamera(camera.getCamera(), camaux);

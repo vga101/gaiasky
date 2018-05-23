@@ -21,6 +21,8 @@ import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.render.IAnnotationsRenderable;
 import gaia.cu9.ari.gaiaorbit.render.IModelRenderable;
 import gaia.cu9.ari.gaiaorbit.render.RenderingContext;
+import gaia.cu9.ari.gaiaorbit.scenegraph.camera.ICamera;
+import gaia.cu9.ari.gaiaorbit.scenegraph.camera.NaturalCamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
@@ -125,13 +127,6 @@ public class Grid extends AbstractPositionEntity implements IModelRenderable, IA
         mc.setTransparencyColor(alpha * cc[3] * opacity);
         mc.updateRelativisticEffects(GaiaSky.instance.getICamera());
         modelBatch.render(mc.instance, mc.env);
-    }
-
-    /**
-     * Occlusion rendering
-     */
-    @Override
-    public void renderOpaque(ModelBatch modelBatch, float alpha, double t) {
     }
 
     /**

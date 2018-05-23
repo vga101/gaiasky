@@ -24,7 +24,6 @@ import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.interfce.ControlsWindow;
 import gaia.cu9.ari.gaiaorbit.interfce.IGui;
 import gaia.cu9.ari.gaiaorbit.scenegraph.AbstractPositionEntity;
-import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
 import gaia.cu9.ari.gaiaorbit.scenegraph.IFocus;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
@@ -32,9 +31,10 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.IStarFocus;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Invisible;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Loc;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ModelBody;
-import gaia.cu9.ari.gaiaorbit.scenegraph.NaturalCamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Planet;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
+import gaia.cu9.ari.gaiaorbit.scenegraph.camera.NaturalCamera;
+import gaia.cu9.ari.gaiaorbit.scenegraph.camera.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
@@ -1442,6 +1442,30 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
         Vector3d out = new Vector3d();
         Coordinates.cartesianToSpherical(in, out);
         return new double[] { out.x * AstroUtils.TO_DEG, out.y * AstroUtils.TO_DEG, in.len() };
+    }
+
+    @Override
+    public double[] equatorialToGalactic(double[] eq) {
+        aux1.set(eq).mul(Coordinates.eqToGal());
+        return aux1.values();
+    }
+
+    @Override
+    public double[] equatorialToEcliptic(double[] eq) {
+        aux1.set(eq).mul(Coordinates.eqToEcl());
+        return aux1.values();
+    }
+
+    @Override
+    public double[] galacticToEquatorial(double[] gal) {
+        aux1.set(gal).mul(Coordinates.galToEq());
+        return aux1.values();
+    }
+
+    @Override
+    public double[] eclipticToEquatorial(double[] ecl) {
+        aux1.set(ecl).mul(Coordinates.eclToEq());
+        return aux1.values();
     }
 
     @Override

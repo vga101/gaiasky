@@ -17,7 +17,8 @@ import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.render.ILineRenderable;
 import gaia.cu9.ari.gaiaorbit.render.RenderingContext;
 import gaia.cu9.ari.gaiaorbit.render.system.LineRenderSystem;
-import gaia.cu9.ari.gaiaorbit.scenegraph.CameraManager.CameraMode;
+import gaia.cu9.ari.gaiaorbit.scenegraph.camera.ICamera;
+import gaia.cu9.ari.gaiaorbit.scenegraph.camera.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
 import gaia.cu9.ari.gaiaorbit.util.ComponentTypes;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
@@ -407,7 +408,7 @@ public class Spacecraft extends GenericSpacecraft implements ILineRenderable, IO
             setYawPower(yawp - powerStep);
     }
 
-    protected void stopAllMovement() {
+    public void stopAllMovement() {
         setEnginePower(0);
         //vel.set(0, 0, 0);
 

@@ -5,7 +5,7 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 import gaia.cu9.ari.gaiaorbit.render.IPostProcessor.PostProcessBean;
-import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
+import gaia.cu9.ari.gaiaorbit.scenegraph.camera.ICamera;
 
 /**
  * Abstract implementation with some useful methods for all SGRs.

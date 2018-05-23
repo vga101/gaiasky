@@ -7,8 +7,8 @@ import com.badlogic.gdx.utils.Array;
 import gaia.cu9.ari.gaiaorbit.render.IAtmosphereRenderable;
 import gaia.cu9.ari.gaiaorbit.render.IModelRenderable;
 import gaia.cu9.ari.gaiaorbit.render.IRenderable;
-import gaia.cu9.ari.gaiaorbit.scenegraph.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
+import gaia.cu9.ari.gaiaorbit.scenegraph.camera.ICamera;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.comp.ModelComparator;
 
@@ -21,6 +21,7 @@ import gaia.cu9.ari.gaiaorbit.util.comp.ModelComparator;
 public class ModelBatchRenderSystem extends AbstractRenderSystem {
     private ModelBatch batch;
     private boolean atmosphere;
+    private boolean sort = true;
 
     /**
      * Creates a new model batch render component.
@@ -41,9 +42,15 @@ public class ModelBatchRenderSystem extends AbstractRenderSystem {
         comp = new ModelComparator<IRenderable>();
     }
 
+    public ModelBatchRenderSystem(RenderGroup rg, float[] alphas, ModelBatch batch, boolean atm, boolean sort) {
+        this(rg, alphas, batch, atm);
+        this.sort = sort;
+    }
+
     @Override
     public void renderStud(Array<IRenderable> renderables, ICamera camera, double t) {
-        renderables.sort(comp);
+        if (sort)
+            renderables.sort(comp);
         Gdx.gl.glLineWidth(1.2f * GlobalConf.SCALE_FACTOR);
         if (mustRender()) {
             batch.begin(camera.getCamera());
