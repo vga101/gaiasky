@@ -1,5 +1,4 @@
 {"objects" : [
-
 	{
 	"name" : "Equatorial grid",
 	"color" : [8.0, 0.0, 0.0, 0.5],
@@ -27,7 +26,6 @@
 							}
 				}
 	},
-	
 	
 	{
 	"name" : "Ecliptic grid",
@@ -58,7 +56,6 @@
 				}
 	},
 	
-	
 	{
 	"name" : "Galactic grid",
 	"color" : [0.2, 0.4, 8.0, 0.5],
@@ -87,7 +84,6 @@
 							}
 				}
 	},
-	
 	
 	{
 	"name" : "Milky Way",
