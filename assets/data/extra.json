@@ -179,9 +179,9 @@
 		"name" : "Oort cloud",
 		"position" : [0.0, 0.0, 0.0],
 		// Color of particles
-		"color" : [0.6, 0.8, 0.95, 0.5],
+		"color" : [0.6, 0.6, 0.65, 0.8],
 		// Size of particles
-		"size" : 4.0,
+		"size" : 1.5,
 		"labelcolor" : [0.3, 0.6, 1.0, 1.0],
 		// Position in parsecs
 		"labelposition" : [0.0484814, 0.0, 0.0484814]
@@ -191,7 +191,7 @@
 		"fadein" : [0.0004, 0.004],
 		"fadeout" : [0.1, 1.8],
 		
-		"profiledecay" : 0.7,
+		"profiledecay" : 0.1,
 		
 	
 		"parent" : "Universe", 
