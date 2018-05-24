@@ -1336,7 +1336,7 @@ public interface IScriptingInterface {
      * @param angle Angle in degrees
      * @return The new vector, rotated
      */
-    public double[] rotateVector3(double[] vector, double[] axis, double angle);
+    public double[] rotate3(double[] vector, double[] axis, double angle);
 
     /**
      * Rotates a 2D vector by the specified angle in degrees, counter-clockwise assuming that
@@ -1344,22 +1344,22 @@ public interface IScriptingInterface {
      * @param vector Vector to rotate, with at least 2 components
      * @return The new vector, rotated
      */
-    public double[] rotateVector2(double[] vector, double angle);
+    public double[] rotate2(double[] vector, double angle);
 
     /**
-     * Computes the cross product between the two vectors.
-     * @param vec1 Vector 1
-     * @param vec2 Vector 2
-     * @return Cross product vector
+     * Computes the cross product between the two 3D vectors.
+     * @param vec1 First 3D vector
+     * @param vec2 Second 3D vector
+     * @return Cross product 3D vector
      */
-    public double[] cross(double[] vec1, double[] vec2);
+    public double[] cross3(double[] vec1, double[] vec2);
 
     /**
-     * Computes the dot product between the two vectors.
-     * @param vec1 Vector 1
-     * @param vec2 Vector 2
+     * Computes the dot product between the two 3D vectors.
+     * @param vec1 First 3D vector
+     * @param vec2 Second 3D vector
      * @return The dot product scalar
      */
-    public double dot(double[] vec1, double[] vec2);
+    public double dot3(double[] vec1, double[] vec2);
 
 }

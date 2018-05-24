@@ -1587,25 +1587,25 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
     }
 
     @Override
-    public double[] rotateVector3(double[] vector, double[] axis, double angle) {
+    public double[] rotate3(double[] vector, double[] axis, double angle) {
         Vector3d v = aux3d1.set(vector);
         Vector3d a = aux3d2.set(axis);
         return v.rotate(a, angle).values();
     }
 
     @Override
-    public double[] rotateVector2(double[] vector, double angle) {
+    public double[] rotate2(double[] vector, double angle) {
         Vector2d v = aux2d1.set(vector);
         return v.rotate(angle).values();
     }
 
     @Override
-    public double[] cross(double[] vec1, double[] vec2) {
+    public double[] cross3(double[] vec1, double[] vec2) {
         return aux3d1.set(vec1).crs(aux3d2.set(vec2)).values();
     }
 
     @Override
-    public double dot(double[] vec1, double[] vec2) {
+    public double dot3(double[] vec1, double[] vec2) {
         return aux3d1.set(vec1).dot(aux3d2.set(vec2));
     }
 
