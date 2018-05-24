@@ -1328,4 +1328,38 @@ public interface IScriptingInterface {
      */
     public void setSmoothLodTransitions(boolean value);
 
+    /**
+     * Rotates a 3D vector around the given axis by the specified angle in degrees.
+     * Vectors are arrays with 3 components. If more components are there, they are ignored.
+     * @param vector Vector to rotate, with at least 3 components
+     * @param axis The axis, with at least 3 components
+     * @param angle Angle in degrees
+     * @return The new vector, rotated
+     */
+    public double[] rotateVector3(double[] vector, double[] axis, double angle);
+
+    /**
+     * Rotates a 2D vector by the specified angle in degrees, counter-clockwise assuming that
+     * the y axis points up.
+     * @param vector Vector to rotate, with at least 2 components
+     * @return The new vector, rotated
+     */
+    public double[] rotateVector2(double[] vector, double angle);
+
+    /**
+     * Computes the cross product between the two vectors.
+     * @param vec1 Vector 1
+     * @param vec2 Vector 2
+     * @return Cross product vector
+     */
+    public double[] cross(double[] vec1, double[] vec2);
+
+    /**
+     * Computes the dot product between the two vectors.
+     * @param vec1 Vector 1
+     * @param vec2 Vector 2
+     * @return The dot product scalar
+     */
+    public double dot(double[] vec1, double[] vec2);
+
 }
