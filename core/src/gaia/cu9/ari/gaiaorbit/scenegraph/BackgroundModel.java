@@ -35,7 +35,7 @@ import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
  */
 public class BackgroundModel extends FadeNode implements IModelRenderable, I3DTextRenderable {
 
-    private String transformName;
+    protected String transformName;
     public ModelComponent mc;
     private boolean label, label2d;
 

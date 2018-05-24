@@ -2,7 +2,7 @@
 
 	{
 	"name" : "Equatorial grid",
-	"color" : [1.0, 0.0, 0.0, 0.6],
+	"color" : [8.0, 0.0, 0.0, 0.5],
 	"size" : 1.2e12,
 	"ct" : Equatorial,
 	"label" : false,
@@ -31,7 +31,7 @@
 	
 	{
 	"name" : "Ecliptic grid",
-	"color" : [0.0, 1.0, 0.0, 0.5],
+	"color" : [0.0, 8.0, 0.0, 0.5],
 	"size" : 1.3e12,
 	"ct" : Ecliptic,
 	"label" : false,
@@ -61,7 +61,7 @@
 	
 	{
 	"name" : "Galactic grid",
-	"color" : [0.3, 0.5, 1.0, 0.5],
+	"color" : [0.2, 0.4, 8.0, 0.5],
 	"size" : 1.4e12,
 	"ct" : Galactic,
 	"label" : false,
