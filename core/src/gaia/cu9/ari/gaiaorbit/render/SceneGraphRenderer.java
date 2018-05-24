@@ -195,6 +195,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
         manager.load("atmgrounddefault", GroundShaderProvider.class, new GroundShaderProviderParameter("shader/default.vertex.glsl", "shader/default.fragment.glsl"));
         manager.load("additive", RelativisticShaderProvider.class, new RelativisticShaderProviderParameter("shader/default.vertex.glsl", "shader/default.additive.fragment.glsl"));
+        manager.load("grids", RelativisticShaderProvider.class, new RelativisticShaderProviderParameter("shader/default.vertex.glsl", "shader/default.grid.fragment.glsl"));
         manager.load("spsurface", RelativisticShaderProvider.class, new RelativisticShaderProviderParameter("shader/starsurface.vertex.glsl", "shader/starsurface.fragment.glsl"));
         manager.load("spbeam", RelativisticShaderProvider.class, new RelativisticShaderProviderParameter("shader/default.vertex.glsl", "shader/beam.fragment.glsl"));
         manager.load("spdepth", RelativisticShaderProvider.class, new RelativisticShaderProviderParameter("shader/normal.vertex.glsl", "shader/depth.fragment.glsl"));
@@ -369,6 +370,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
         ShaderProvider sp = manager.get("atmgrounddefault");
         ShaderProvider spadditive = manager.get("additive");
+        ShaderProvider spgrids = manager.get("grids");
         ShaderProvider spnormal = Constants.webgl ? sp : manager.get("atmground");
         ShaderProvider spatm = manager.get("atm");
         ShaderProvider spsurface = manager.get("spsurface");
@@ -387,6 +389,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         ModelBatch modelBatchMesh = new ModelBatch(spadditive, noSorter);
         modelBatchMesh.getRenderContext().setBlending(true, GL30.GL_ONE, GL30.GL_ONE);
         modelBatchMesh.getRenderContext().setDepthTest(GL30.GL_LEQUAL, 1e11f, 1e13f);
+        ModelBatch modelBatchGrids = new ModelBatch(spgrids, noSorter);
         ModelBatch modelBatchNormal = new ModelBatch(spnormal, noSorter);
         ModelBatch modelBatchAtmosphere = new ModelBatch(spatm, noSorter);
         ModelBatch modelBatchStar = new ModelBatch(spsurface, noSorter);
@@ -457,6 +460,17 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         AbstractRenderSystem modelFrontBackProc = new ModelBatchRenderSystem(RenderGroup.MODEL_DEFAULT, alphas, modelBatchDefault, false);
         modelFrontBackProc.setPreRunnable(blendDepthRunnable);
         modelFrontBackProc.setPostRunnable(new RenderSystemRunnable() {
+            @Override
+            public void run(AbstractRenderSystem renderSystem, Array<IRenderable> renderables, ICamera camera) {
+                // This always goes at the back, clear depth buffer
+                Gdx.gl.glClear(GL20.GL_DEPTH_BUFFER_BIT);
+            }
+        });
+
+        // MODEL GRID
+        AbstractRenderSystem modelGridsProc = new ModelBatchRenderSystem(RenderGroup.MODEL_GRIDS, alphas, modelBatchGrids, false);
+        modelGridsProc.setPreRunnable(blendDepthRunnable);
+        modelGridsProc.setPostRunnable(new RenderSystemRunnable() {
             @Override
             public void run(AbstractRenderSystem renderSystem, Array<IRenderable> renderables, ICamera camera) {
                 // This always goes at the back, clear depth buffer
@@ -551,7 +565,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
         // MODEL MESH
         AbstractRenderSystem modelMeshProc = new ModelBatchRenderSystem(RenderGroup.MODEL_MESH, alphas, modelBatchMesh, false, false);
-        modelFrontBackProc.setPreRunnable(blendDepthRunnable);
+        modelMeshProc.setPreRunnable(blendDepthRunnable);
 
         // MODEL FRONT
         AbstractRenderSystem modelFrontProc = new ModelBatchRenderSystem(RenderGroup.MODEL_NORMAL, alphas, modelBatchNormal, false);
@@ -628,6 +642,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
         // Add components to set
         renderProcesses.add(modelFrontBackProc);
+        renderProcesses.add(modelGridsProc);
         renderProcesses.add(pixelStarProc);
         renderProcesses.add(starGroupProc);
         renderProcesses.add(orbitElemProc);

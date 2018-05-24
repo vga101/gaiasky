@@ -2,12 +2,30 @@
 
 	{
 	"name" : "Equatorial grid",
-	"color" : [1.0, 0.0, 0.0, 0.5],
+	"color" : [1.0, 0.0, 0.0, 0.6],
 	"size" : 1.2e12,
 	"ct" : Equatorial,
+	"label" : false,
+	"labelcolor": [1.0, 0.5, 0.5, 1.0],
 
 	"parent" : "Universe", 
-	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Grid"
+	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Grid",
+	
+	"coordinates" : {
+				// This must implement gaia.cu9.ari.gaiaorbit.util.coord.IBodyCoordinates				
+				"impl" : "gaia.cu9.ari.gaiaorbit.util.coord.StaticCoordinates",
+				"position" : [0.0, 0.0, 0.0]
+				},
+	
+ 	"model" : {
+				"args" : [true],
+				"type" : "sphere",
+				"params" : {
+							"quality" : 90,
+							"diameter" : 1.0,
+							"flip" : true
+							}
+				}
 	},
 	
 	
@@ -16,10 +34,28 @@
 	"color" : [0.0, 1.0, 0.0, 0.5],
 	"size" : 1.3e12,
 	"ct" : Ecliptic,
+	"label" : false,
+	"labelcolor": [0.5, 1.0, 0.5, 1.0],
 	"transformName" : eclipticToEquatorial,
 
 	"parent" : "Universe", 
 	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Grid"
+
+	"coordinates" : {
+				// This must implement gaia.cu9.ari.gaiaorbit.util.coord.IBodyCoordinates				
+				"impl" : "gaia.cu9.ari.gaiaorbit.util.coord.StaticCoordinates",
+				"position" : [0.0, 0.0, 0.0]
+				},
+	
+ 	"model" : {
+				"args" : [true],
+				"type" : "sphere",
+				"params" : {
+							"quality" : 90,
+							"diameter" : 1.0,
+							"flip" : true
+							}
+				}
 	},
 	
 	
@@ -28,10 +64,28 @@
 	"color" : [0.3, 0.5, 1.0, 0.5],
 	"size" : 1.4e12,
 	"ct" : Galactic,
+	"label" : false,
+	"labelcolor": [0.8, 0.8, 1.0, 1.0],
 	"transformName" : galacticToEquatorial,
 
 	"parent" : "Universe", 
 	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Grid"
+
+	"coordinates" : {
+				// This must implement gaia.cu9.ari.gaiaorbit.util.coord.IBodyCoordinates				
+				"impl" : "gaia.cu9.ari.gaiaorbit.util.coord.StaticCoordinates",
+				"position" : [0.0, 0.0, 0.0]
+				},
+	
+ 	"model" : {
+				"args" : [true],
+				"type" : "sphere",
+				"params" : {
+							"quality" : 90,
+							"diameter" : 1.0,
+							"flip" : true
+							}
+				}
 	},
 	
 	

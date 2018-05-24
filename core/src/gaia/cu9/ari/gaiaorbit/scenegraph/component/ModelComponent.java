@@ -105,7 +105,7 @@ public class ModelComponent implements Disposable, IObserver {
             AssetBean.addAsset(modelFile, Model.class);
         }
 
-        if (forceinit || !GlobalConf.scene.LAZY_TEXTURE_INIT && tc != null) {
+        if ((forceinit || !GlobalConf.scene.LAZY_TEXTURE_INIT) && tc != null) {
             tc.initialize();
         }
 
@@ -158,7 +158,7 @@ public class ModelComponent implements Disposable, IObserver {
             materials.get("base").clear();
 
         // INITIALIZE MATERIAL
-        if (forceinit || !GlobalConf.scene.LAZY_TEXTURE_INIT && tc != null) {
+        if ((forceinit || !GlobalConf.scene.LAZY_TEXTURE_INIT) && tc != null) {
             tc.initMaterial(manager, materials, cc, culling);
         }
 

@@ -1,51 +1,30 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph;
 
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g3d.Material;
-import com.badlogic.gdx.graphics.g3d.Model;
-import com.badlogic.gdx.graphics.g3d.ModelBatch;
-import com.badlogic.gdx.graphics.g3d.ModelInstance;
-import com.badlogic.gdx.graphics.g3d.attributes.BlendingAttribute;
-import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.reflect.ClassReflection;
-import com.badlogic.gdx.utils.reflect.Method;
-import com.badlogic.gdx.utils.reflect.ReflectionException;
 
-import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.render.IAnnotationsRenderable;
-import gaia.cu9.ari.gaiaorbit.render.IModelRenderable;
 import gaia.cu9.ari.gaiaorbit.scenegraph.camera.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
-import gaia.cu9.ari.gaiaorbit.util.Logger;
-import gaia.cu9.ari.gaiaorbit.util.ModelCache;
 import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
-import gaia.cu9.ari.gaiaorbit.util.g3d.MeshPartBuilder2;
-import gaia.cu9.ari.gaiaorbit.util.g3d.ModelBuilder2;
 import gaia.cu9.ari.gaiaorbit.util.gravwaves.RelativisticEffectsManager;
-import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
-import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
-public class Grid extends AbstractPositionEntity implements IModelRenderable, IAnnotationsRenderable {
+public class Grid extends BackgroundModel implements IAnnotationsRenderable {
     private static final float ANNOTATIONS_ALPHA = 0.8f;
 
     private static final int divisionsU = 36;
     private static final int divisionsV = 18;
 
     private BitmapFont font;
-    private String transformName;
     public ModelComponent mc;
     private Vector3 auxf;
     private Vector3d auxd;
-    private float[] labelColor;
 
     public Grid() {
         super();
@@ -54,51 +33,10 @@ public class Grid extends AbstractPositionEntity implements IModelRenderable, IA
         auxd = new Vector3d();
     }
 
-    @Override
-    public void initialize() {
-        mc = new ModelComponent();
-        mc.initialize();
-    }
 
     @Override
     public void doneLoading(AssetManager manager) {
-        Material material = new Material(new BlendingAttribute(cc[3]), new ColorAttribute(ColorAttribute.Diffuse, cc[0], cc[1], cc[2], cc[3]));
-        // Load model
-        ModelBuilder2 modelBuilder = ModelCache.cache.mb;
-        modelBuilder.begin();
-        // create part
-        MeshPartBuilder2 bPartBuilder = modelBuilder.part("sph", GL20.GL_LINES, Usage.Position, material);
-        bPartBuilder.sphere(1, 1, 1, divisionsU, divisionsV);
-
-        Model model = (modelBuilder.end());
-        // Initialize transform
-        localTransform.scl(size);
-        if (transformName != null) {
-            Class<Coordinates> c = Coordinates.class;
-            try {
-                Method m = ClassReflection.getMethod(c, transformName);
-                Matrix4d trf = (Matrix4d) m.invoke(null);
-                Matrix4 aux = new Matrix4();
-                trf.putIn(aux);
-                localTransform.mul(aux);
-            } catch (ReflectionException e) {
-                Logger.error(Grid.class.getName(), "Error getting/invoking method Coordinates." + transformName + "()");
-            }
-        } else {
-            // Equatorial, nothing
-        }
-        mc.instance = new ModelInstance(model, this.localTransform);
-
-        // Relativistic effects
-        if (GlobalConf.runtime.RELATIVISTIC_ABERRATION)
-            mc.rec.setUpRelativisticEffectsMaterial(mc.instance.materials);
-        // Grav waves
-        if (GlobalConf.runtime.GRAVITATIONAL_WAVES)
-            mc.rec.setUpGravitationalWavesMaterial(mc.instance.materials);
-
-        float pl = .5f;
-        labelColor = new float[] { Math.min(1, cc[0] + pl), Math.min(1, cc[1] + pl), Math.min(1, cc[2] + pl), Math.min(1, cc[3] + pl) };
-
+        super.doneLoading(manager);
         font = GlobalResources.skin.getFont("grid-annotation");
 
     }
@@ -107,24 +45,10 @@ public class Grid extends AbstractPositionEntity implements IModelRenderable, IA
     protected void addToRenderLists(ICamera camera) {
         // Render group never changes
         // Add to toRender list
-        addToRender(this, RenderGroup.MODEL_DEFAULT);
+        addToRender(this, RenderGroup.MODEL_GRIDS);
         addToRender(this, RenderGroup.FONT_ANNOTATION);
     }
 
-    @Override
-    public void updateLocalValues(ITimeFrameProvider time, ICamera camera) {
-    }
-
-    /**
-     * Model rendering.
-     */
-    @Override
-    public void render(ModelBatch modelBatch, float alpha, double t) {
-        mc.touch();
-        mc.setTransparencyColor(alpha * cc[3] * opacity);
-        mc.updateRelativisticEffects(GaiaSky.instance.getICamera());
-        modelBatch.render(mc.instance, mc.env);
-    }
 
     /**
      * Annotation rendering
@@ -136,7 +60,7 @@ public class Grid extends AbstractPositionEntity implements IModelRenderable, IA
         float stepAngle = 360 / divisionsU;
         alpha *= ANNOTATIONS_ALPHA;
 
-        font.setColor(labelColor[0], labelColor[1], labelColor[2], labelColor[3] * alpha);
+        font.setColor(labelColour[0], labelColour[1], labelColour[2], labelColour[3] * alpha);
 
         for (int angle = 0; angle < 360; angle += stepAngle) {
             auxf.set(Coordinates.sphericalToCartesian(Math.toRadians(angle), 0, 1f, auxd).valuesf()).mul(localTransform).nor();
@@ -190,15 +114,6 @@ public class Grid extends AbstractPositionEntity implements IModelRenderable, IA
             RelativisticEffectsManager.getInstance().gravitationalWavePos(auxd);
             auxd.put(auxf);
         }
-    }
-
-    public void setTransformName(String transformName) {
-        this.transformName = transformName;
-    }
-
-    @Override
-    public boolean hasAtmosphere() {
-        return false;
     }
 
 }
