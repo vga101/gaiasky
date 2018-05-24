@@ -25,7 +25,7 @@ vec4 spherical(vec2 tc) {
     float highlight = (smoothstep(0.001, 0.0, norm.x) + smoothstep(0.999, 1.0, norm.x) + smoothstep(0.001, 0.0, norm.y)) * 0.35;
     
     coord = cos(PI * coord);
-    vec4 result = u_diffuseColor * smoothstep(0.997, 1.0, max(coord.x, coord.y));
+    vec4 result = u_diffuseColor * smoothstep(0.998, 1.0, max(coord.x, coord.y));
     result = clamp(result + highlight, 0.0, 1.0);
     result.a *= pow(1.0 - abs((v_texCoords0.y * 2.0) - 1.0), 0.25) * v_opacity;
     return result;
