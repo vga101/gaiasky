@@ -62,7 +62,7 @@ public class OctreeGeneratorMag implements IOctreeGenerator {
                 // Add star to node
                 OctreeNode octant = idMap.get(nodeId);
                 addedNum = addStarToNode(sb, octant, sbMap);
-                
+
                 if (addedNum >= params.maxPart) {
                     // On to next level!
                     break;
@@ -75,7 +75,43 @@ public class OctreeGeneratorMag implements IOctreeGenerator {
             }
         }
 
-        // Create all star groups
+        if (params.postprocessEmpty) {
+            long mergedNodes = 0;
+            long mergedObjects = 0;
+            // We merge low-count nodes (<=100) with parents, if parents' count is <=1000
+            final int CHILD_COUNT = 100;
+            final int PARENT_COUNT = 1000;
+            Object[] nodes = sbMap.keySet().toArray();
+            // Sort by descending depth
+            Arrays.sort(nodes, (node1, node2) -> {
+                OctreeNode n1 = (OctreeNode) node1;
+                OctreeNode n2 = (OctreeNode) node2;
+                return Integer.compare(n1.depth, n2.depth);
+            });
+
+            int n = sbMap.size();
+            for (int i = n - 1; i >= 0; i--) {
+                OctreeNode current = (OctreeNode) nodes[i];
+                if (current.parent != null && sbMap.containsKey(current) && sbMap.containsKey(current.parent)) {
+                    Array<StarBean> childrenArr = sbMap.get(current);
+                    Array<StarBean> parentArr = sbMap.get(current.parent);
+                    if (childrenArr.size <= CHILD_COUNT && parentArr.size <= PARENT_COUNT) {
+                        // Merge children nodes with parent nodes, remove children
+                        parentArr.addAll(childrenArr);
+                        sbMap.remove(current);
+                        current.remove();
+                        mergedNodes++;
+                        mergedObjects += childrenArr.size;
+                    }
+                }
+            }
+
+            Logger.info("POSTPROCESS EMPTY STATS:");
+            Logger.info("    Merged nodes:    " + mergedNodes);
+            Logger.info("    Merged objects:  " + mergedObjects);
+        }
+
+        // Tree is ready, create star groups
         Set<OctreeNode> nodes = sbMap.keySet();
         for (OctreeNode node : nodes) {
             Array<StarBean> list = sbMap.get(node);

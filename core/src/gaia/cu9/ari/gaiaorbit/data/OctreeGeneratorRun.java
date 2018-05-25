@@ -104,6 +104,9 @@ public class OctreeGeneratorRun {
     @Parameter(names = { "-c", "--magcorrections" }, description = "Flag to apply magnitude and color corrections for extinction and reddening")
     private boolean magCorrections = false;
 
+    @Parameter(names = { "-p", "--postprocempty" }, description = "Low object count nodes (<=100) will be merged with their parents if parents have less than 1000 objects. Avoids very large and mostly empty subtrees")
+    private boolean postprocEmpty = false;
+
     @Parameter(names = { "-s", "--suncentre", "--suncenter" }, description = "Make the Sun the centre of the octree")
     private boolean sunCentre = false;
 
@@ -189,7 +192,7 @@ public class OctreeGeneratorRun {
     private OctreeNode generateOctree() throws IOException, InstantiationException, IllegalAccessException, ClassNotFoundException {
         long startMs = TimeUtils.millis();
 
-        OctreeGeneratorParams ogp = new OctreeGeneratorParams(maxPart, sunCentre);
+        OctreeGeneratorParams ogp = new OctreeGeneratorParams(maxPart, sunCentre, postprocEmpty);
         //IOctreeGenerator og = new OctreeGeneratorPart(ogp);
         IOctreeGenerator og = new OctreeGeneratorMag(ogp);
 

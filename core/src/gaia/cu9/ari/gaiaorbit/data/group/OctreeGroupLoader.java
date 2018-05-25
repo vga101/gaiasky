@@ -54,6 +54,8 @@ public class OctreeGroupLoader extends StreamingOctreeLoader {
         MetadataBinaryIO metadataReader = new MetadataBinaryIO();
         OctreeNode root = metadataReader.readMetadataMapped(metadata);
 
+        System.out.println(root.toString(true));
+
         Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.nodeloader", root.numNodes(), metadata));
         Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.loading", particles));
 
