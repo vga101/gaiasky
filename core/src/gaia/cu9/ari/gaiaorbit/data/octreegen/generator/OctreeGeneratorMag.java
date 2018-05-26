@@ -75,12 +75,10 @@ public class OctreeGeneratorMag implements IOctreeGenerator {
             }
         }
 
-        if (params.postprocessEmpty) {
+        if (params.postprocess) {
             long mergedNodes = 0;
             long mergedObjects = 0;
-            // We merge low-count nodes (<=100) with parents, if parents' count is <=1000
-            final int CHILD_COUNT = 100;
-            final int PARENT_COUNT = 1000;
+            // We merge low-count nodes (<= childcount) with parents, if parents' count is <= parentcount
             Object[] nodes = sbMap.keySet().toArray();
             // Sort by descending depth
             Arrays.sort(nodes, (node1, node2) -> {
@@ -95,7 +93,7 @@ public class OctreeGeneratorMag implements IOctreeGenerator {
                 if (current.parent != null && sbMap.containsKey(current) && sbMap.containsKey(current.parent)) {
                     Array<StarBean> childrenArr = sbMap.get(current);
                     Array<StarBean> parentArr = sbMap.get(current.parent);
-                    if (childrenArr.size <= CHILD_COUNT && parentArr.size <= PARENT_COUNT) {
+                    if (childrenArr.size <= params.childCount && parentArr.size <= params.parentCount) {
                         // Merge children nodes with parent nodes, remove children
                         parentArr.addAll(childrenArr);
                         sbMap.remove(current);
