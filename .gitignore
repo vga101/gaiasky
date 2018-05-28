@@ -22,11 +22,11 @@
  *.tar
  *.zip
   
-  # Logs and databases #
-  ######################
-  *.log
-  *.sql
-  *.sqlite
+# Logs and databases #
+######################
+*.log
+*.sql
+*.sqlite
 nohup.out
 
 # OS generated files #
