@@ -26,6 +26,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.Spacecraft;
 import gaia.cu9.ari.gaiaorbit.scenegraph.camera.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
+import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.Pair;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
@@ -111,7 +112,7 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
         controllerListener = new SpacecraftControllerListener();
 
         // Init sprite batch for crosshair and cockpit
-        spriteBatch = new SpriteBatch();
+        spriteBatch = new SpriteBatch(1000, GlobalResources.spriteShader);
         crosshairTex = new Texture(Gdx.files.internal("img/crosshair-sc-yellow.png"));
         chw2 = crosshairTex.getWidth() / 2f;
         chh2 = crosshairTex.getHeight() / 2f;

@@ -190,7 +190,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
         controllerListener = new NaturalControllerListener(this, GlobalConf.controls.CONTROLLER_MAPPINGS_FILE);
 
         // Init sprite batch for crosshair
-        spriteBatch = new SpriteBatch();
+        spriteBatch = new SpriteBatch(1000, GlobalResources.spriteShader);
 
         // Focus crosshair
         focusCrosshair = new Texture(Gdx.files.internal("img/crosshair-green.png"));

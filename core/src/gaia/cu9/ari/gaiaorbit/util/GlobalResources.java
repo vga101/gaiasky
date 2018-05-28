@@ -392,7 +392,7 @@ public class GlobalResources {
         int height = tex.getRegionWidth();
 
         //Create a SpriteBatch to handle the drawing.
-        SpriteBatch sb = new SpriteBatch();
+        SpriteBatch sb = new SpriteBatch(1000, GlobalResources.spriteShader);
 
         //Set the projection matrix for the SpriteBatch.
         Matrix4 projectionMatrix = new Matrix4();
