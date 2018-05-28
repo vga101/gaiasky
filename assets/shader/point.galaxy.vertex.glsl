@@ -1,4 +1,4 @@
-#version 330 core
+#version 120
 
 <INCLUDE shader/lib_math.glsl>
 <INCLUDE shader/lib_geometry.glsl>
@@ -30,7 +30,7 @@ uniform vec3 u_camPos;
     <INCLUDE shader/lib_gravwaves.glsl>
 #endif // gravitationalWaves
 
-out vec4 v_col;
+varying vec4 v_col;
 
 void main() {
     vec3 pos = a_position.xyz - u_camPos;

@@ -1,11 +1,10 @@
-#version 330 core
+#version 120
 
 uniform float u_ar;
 uniform float u_alpha;
 uniform int u_blending = 1;
 
-in vec4 v_col;
-out vec4 FragColor;
+varying vec4 v_col;
 
 void main() {
     vec2 uv = vec2(gl_PointCoord.s, gl_PointCoord.t);
@@ -17,10 +16,9 @@ void main() {
     float profile = pow(1.0 - dist, 4.0);
     if(u_blending == 0) {
         // Default blending
-        FragColor = vec4(v_col.rgb, v_col.a * u_alpha * profile);
-        // FragColor = vec4(v_col.rgb, 1.0);
+        gl_FragColor = vec4(v_col.rgb, v_col.a * u_alpha * profile);
     } else {
         // Additive blending
-        FragColor = v_col * u_alpha * profile;
+        gl_FragColor = v_col * u_alpha * profile;
     }
 }
