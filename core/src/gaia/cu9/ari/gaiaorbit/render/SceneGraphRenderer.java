@@ -673,6 +673,10 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         // renderProcesses.add(cloudsProc);
         // renderProcesses.add(modelCloseUpProc);
 
+        // Use Direct3D [0..1] depth range instead of OpenGL default's [-1..1]
+        //ARBClipControl.glClipControl(ARBClipControl.GL_LOWER_LEFT, ARBClipControl.GL_ZERO_TO_ONE);
+        //Gdx.gl30.glDepthRangef(0, 1);
+
         EventManager.instance.subscribe(this, Events.TOGGLE_VISIBILITY_CMD, Events.PIXEL_RENDERER_UPDATE, Events.LINE_RENDERER_UPDATE, Events.STEREOSCOPIC_CMD, Events.CAMERA_MODE_CMD, Events.CUBEMAP360_CMD, Events.REBUILD_SHADOW_MAP_DATA_CMD, Events.LIGHT_SCATTERING_CMD);
 
     }

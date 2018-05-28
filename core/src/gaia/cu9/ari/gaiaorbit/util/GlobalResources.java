@@ -17,6 +17,7 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -37,6 +38,7 @@ import net.jafama.FastMath;
  */
 public class GlobalResources {
 
+    public static ShaderProgram spriteShader;
     /** Global all-purpose sprite batch **/
     public static SpriteBatch spriteBatch;
     /** Cursor file **/
@@ -54,9 +56,10 @@ public class GlobalResources {
     public static final String atmModelLocation = "models/atm/atm-uv.g3db";
 
     public static void initialize(AssetManager manager) {
-
+        // Sprite shader
+        spriteShader = new ShaderProgram(Gdx.files.internal("shader/spritebatch.vertex.glsl"), Gdx.files.internal("shader/spritebatch.fragment.glsl"));
         // Sprite batch
-        spriteBatch = new SpriteBatch();
+        spriteBatch = new SpriteBatch(1000, spriteShader);
 
         // Create skin right now, it is needed.
         if (GlobalConf.program.UI_THEME.endsWith("-x2")) {
