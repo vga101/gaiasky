@@ -54,28 +54,33 @@ public class OctreeGroupLoader extends StreamingOctreeLoader {
         MetadataBinaryIO metadataReader = new MetadataBinaryIO();
         OctreeNode root = metadataReader.readMetadataMapped(metadata);
 
-        Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.nodeloader", root.numNodes(), metadata));
-        Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.loading", particles));
+        if (root != null) {
+            Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.nodeloader", root.numNodes(), metadata));
+            Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.loading", particles));
 
-        /**
-         * CREATE OCTREE WRAPPER WITH ROOT NODE - particle group is by default
-         * parallel, so we never use OctreeWrapperConcurrent
-         */
-        AbstractOctreeWrapper octreeWrapper = new OctreeWrapper("Universe", root);
+            /**
+             * CREATE OCTREE WRAPPER WITH ROOT NODE - particle group is by default
+             * parallel, so we never use OctreeWrapperConcurrent
+             */
+            AbstractOctreeWrapper octreeWrapper = new OctreeWrapper("Universe", root);
 
-        /**
-         * LOAD LOD LEVELS - LOAD PARTICLE DATA
-         */
+            /**
+             * LOAD LOD LEVELS - LOAD PARTICLE DATA
+             */
 
-        try {
-            int depthLevel = Math.min(OctreeNode.maxDepth, PRELOAD_DEPTH);
-            loadLod(depthLevel, octreeWrapper);
-            flushLoadedIds();
-        } catch (IOException e) {
-            Logger.error(e);
+            try {
+                int depthLevel = Math.min(OctreeNode.maxDepth, PRELOAD_DEPTH);
+                loadLod(depthLevel, octreeWrapper);
+                flushLoadedIds();
+            } catch (IOException e) {
+                Logger.error(e);
+            }
+
+            return octreeWrapper;
+        } else {
+            Logger.info("Dataset not found: " + metadata + " - " + particles);
+            return null;
         }
-
-        return octreeWrapper;
     }
 
     public boolean loadOctant(final OctreeNode octant, final AbstractOctreeWrapper octreeWrapper, boolean fullinit) throws IOException {

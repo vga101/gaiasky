@@ -121,34 +121,39 @@ public abstract class StreamingOctreeLoader implements IObserver, ISceneGraphLoa
     @Override
     public Array<? extends SceneGraphNode> loadData() throws FileNotFoundException {
         AbstractOctreeWrapper octreeWrapper = loadOctreeData();
-        /**
-         * INITIALIZE DAEMON LOADER THREAD
-         */
-        daemon = new DaemonLoader(octreeWrapper, this);
-        daemon.setDaemon(true);
-        daemon.setName("daemon-octree-loader");
-        daemon.setPriority(Thread.MIN_PRIORITY);
-        daemon.start();
 
-        /**
-         * INITIALIZE TIMER TO FLUSH THE QUEUE AT REGULAR INTERVALS
-         */
-        Timer timer = new Timer();
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                flushLoadQueue();
-            }
+        if (octreeWrapper != null) {
+            /**
+             * INITIALIZE DAEMON LOADER THREAD
+             */
+            daemon = new DaemonLoader(octreeWrapper, this);
+            daemon.setDaemon(true);
+            daemon.setName("daemon-octree-loader");
+            daemon.setPriority(Thread.MIN_PRIORITY);
+            daemon.start();
 
-        }, 1000, 1000);
+            /**
+             * INITIALIZE TIMER TO FLUSH THE QUEUE AT REGULAR INTERVALS
+             */
+            Timer timer = new Timer();
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    flushLoadQueue();
+                }
 
-        // Add octreeWrapper to result list and return
-        Array<SceneGraphNode> result = new Array<SceneGraphNode>(1);
-        result.add(octreeWrapper);
+            }, 1000, 1000);
 
-        Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.catalog.init", octreeWrapper.root.countObjects()));
+            // Add octreeWrapper to result list and return
+            Array<SceneGraphNode> result = new Array<SceneGraphNode>(1);
+            result.add(octreeWrapper);
 
-        return result;
+            Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.catalog.init", octreeWrapper.root.countObjects()));
+
+            return result;
+        } else {
+            return new Array<SceneGraphNode>(1);
+        }
     }
 
     protected void addLoadedInfo(long id, int nobjects) {
@@ -183,7 +188,7 @@ public abstract class StreamingOctreeLoader implements IObserver, ISceneGraphLoa
      * @param octant
      */
     public static void queue(OctreeNode octant) {
-        if (instance != null) {
+        if (instance != null && instance.daemon != null) {
             instance.addToQueue(octant);
         }
     }
@@ -192,7 +197,7 @@ public abstract class StreamingOctreeLoader implements IObserver, ISceneGraphLoa
      * Clears the current load queue
      */
     public static void clearQueue() {
-        if (instance != null) {
+        if (instance != null && instance.daemon != null) {
             if (TimeUtils.millis() - instance.lastQueueClearMs > MIN_QUEUE_CLEAR_MS) {
                 instance.emptyLoadQueue();
                 instance.lastQueueClearMs = TimeUtils.millis();
@@ -202,7 +207,7 @@ public abstract class StreamingOctreeLoader implements IObserver, ISceneGraphLoa
     }
 
     public static int getLoadQueueSize() {
-        if (instance != null) {
+        if (instance != null && instance.daemon != null) {
             return instance.toLoadQueue.size();
         } else {
             return -1;
@@ -210,7 +215,7 @@ public abstract class StreamingOctreeLoader implements IObserver, ISceneGraphLoa
     }
 
     public static int getNLoadedStars() {
-        if (instance != null) {
+        if (instance != null && instance.daemon != null) {
             return instance.nLoadedStars;
         } else {
             return -1;
@@ -223,7 +228,7 @@ public abstract class StreamingOctreeLoader implements IObserver, ISceneGraphLoa
      * @param octant
      */
     public static void touch(OctreeNode octant) {
-        if (instance != null) {
+        if (instance != null && instance.daemon != null) {
             instance.touchOctant(octant);
         }
     }
