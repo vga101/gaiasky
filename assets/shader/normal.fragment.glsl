@@ -1,9 +1,4 @@
-#ifdef GL_ES
-#define LOWP lowp
-precision mediump float;
-#else
-#define LOWP 
-#endif
+#version 120
 
 #define TEXTURE_LOD_BIAS 0.2
 

@@ -2,6 +2,8 @@ package gaia.cu9.ari.gaiaorbit.render.system;
 
 import java.util.Comparator;
 
+import org.lwjgl.opengl.GL11;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -78,9 +80,10 @@ public class LineRenderSystem extends ImmediateRenderSystem {
     @Override
     public void renderStud(Array<IRenderable> renderables, ICamera camera, double t) {
         // Enable GL_LINE_SMOOTH
-        Gdx.gl20.glEnable(0xB20);
+        Gdx.gl20.glEnable(GL11.GL_LINE_SMOOTH);
+        Gdx.gl.glHint(GL20.GL_NICEST, GL11.GL_LINE_SMOOTH_HINT);
         // Enable GL_LINE_WIDTH
-        Gdx.gl20.glEnable(0xB21);
+        Gdx.gl20.glEnable(GL20.GL_LINE_WIDTH);
         Gdx.gl20.glEnable(GL20.GL_DEPTH_TEST);
         Gdx.gl20.glEnable(GL20.GL_BLEND);
         Gdx.gl20.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
