@@ -19,6 +19,7 @@ import com.badlogic.gdx.Gdx;
 import gaia.cu9.ari.gaiaorbit.desktop.GaiaSkyDesktop;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.util.ConfInit;
+import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf.ControlsConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf.DataConf;
@@ -108,6 +109,7 @@ public class DesktopConfInit extends ConfInit {
 
     @Override
     public void initGlobalConf() throws Exception {
+        String ARCH = System.getProperty("sun.arch.data.model");
 
         /** VERSION CONF **/
         VersionConf vc = new VersionConf();
@@ -225,6 +227,12 @@ public class DesktopConfInit extends ConfInit {
         boolean OCTREE_PARTICLE_FADE = Boolean.parseBoolean(p.getProperty("scene.octree.particle.fade"));
         float OCTANT_THRESHOLD_0 = Float.parseFloat(p.getProperty("scene.octant.threshold.0"));
         float OCTANT_THRESHOLD_1 = Float.parseFloat(p.getProperty("scene.octant.threshold.1"));
+        // Limiting draw distance in 32-bit JVM
+        if (ARCH.equals("32")) {
+            float delta = Math.abs(OCTANT_THRESHOLD_1 - OCTANT_THRESHOLD_0);
+            OCTANT_THRESHOLD_0 = (float) Math.toRadians(80);
+            OCTANT_THRESHOLD_1 = OCTANT_THRESHOLD_0 + delta;
+        }
         boolean PROPER_MOTION_VECTORS = Boolean.parseBoolean(p.getProperty("scene.propermotion.vectors", "true"));
         float PM_NUM_FACTOR = Float.parseFloat(p.getProperty("scene.propermotion.numfactor", "20f"));
         float PM_LEN_FACTOR = Float.parseFloat(p.getProperty("scene.propermotion.lenfactor", "1E1f"));
@@ -236,6 +244,12 @@ public class DesktopConfInit extends ConfInit {
         boolean SHADOW_MAPPING = Boolean.parseBoolean(p.getProperty("scene.shadowmapping", "true"));
         int SHADOW_MAPPING_N_SHADOWS = MathUtilsd.clamp(Integer.parseInt(p.getProperty("scene.shadowmapping.nshadows", "2")), 0, 4);
         int SHADOW_MAPPING_RESOLUTION = Integer.parseInt(p.getProperty("scene.shadowmapping.resolution", "512"));
+        long MAX_LOADED_STARS = Long.parseLong(p.getProperty("scene.octree.maxstars", "10000000"));
+        // Limiting number of stars in 32-bit JVM
+        if (ARCH.equals("32")) {
+            MAX_LOADED_STARS = 1500000;
+        }
+
         // Visibility of components
         ComponentType[] cts = ComponentType.values();
         boolean[] VISIBILITY = new boolean[cts.length];
@@ -248,7 +262,7 @@ public class DesktopConfInit extends ConfInit {
         float STAR_POINT_SIZE = Float.parseFloat(p.getProperty("scene.star.point.size", "-1"));
         boolean LAZY_TEXTURE_INIT = false;
         SceneConf sc = new SceneConf();
-        sc.initialize(GRAPHICS_QUALITY, OBJECT_FADE_MS, STAR_BRIGHTNESS, AMBIENT_LIGHT, CAMERA_FOV, CAMERA_SPEED, TURNING_SPEED, ROTATION_SPEED, CAMERA_SPEED_LIMIT_IDX, FOCUS_LOCK, FOCUS_LOCK_ORIENTATION, LABEL_NUMBER_FACTOR, VISIBILITY, ORBIT_RENDERER, LINE_RENDERER, STAR_TH_ANGLE_NONE, STAR_TH_ANGLE_POINT, STAR_TH_ANGLE_QUAD, POINT_ALPHA_MIN, POINT_ALPHA_MAX, OCTREE_PARTICLE_FADE, OCTANT_THRESHOLD_0, OCTANT_THRESHOLD_1, PROPER_MOTION_VECTORS, PM_NUM_FACTOR, PM_LEN_FACTOR, STAR_POINT_SIZE, GALAXY_3D, CUBEMAP_FACE_RESOLUTION, CROSSHAIR, CINEMATIC_CAMERA, LAZY_TEXTURE_INIT, FREE_CAMERA_TARGET_MODE_ON, SHADOW_MAPPING, SHADOW_MAPPING_N_SHADOWS, SHADOW_MAPPING_RESOLUTION);
+        sc.initialize(GRAPHICS_QUALITY, OBJECT_FADE_MS, STAR_BRIGHTNESS, AMBIENT_LIGHT, CAMERA_FOV, CAMERA_SPEED, TURNING_SPEED, ROTATION_SPEED, CAMERA_SPEED_LIMIT_IDX, FOCUS_LOCK, FOCUS_LOCK_ORIENTATION, LABEL_NUMBER_FACTOR, VISIBILITY, ORBIT_RENDERER, LINE_RENDERER, STAR_TH_ANGLE_NONE, STAR_TH_ANGLE_POINT, STAR_TH_ANGLE_QUAD, POINT_ALPHA_MIN, POINT_ALPHA_MAX, OCTREE_PARTICLE_FADE, OCTANT_THRESHOLD_0, OCTANT_THRESHOLD_1, PROPER_MOTION_VECTORS, PM_NUM_FACTOR, PM_LEN_FACTOR, STAR_POINT_SIZE, GALAXY_3D, CUBEMAP_FACE_RESOLUTION, CROSSHAIR, CINEMATIC_CAMERA, LAZY_TEXTURE_INIT, FREE_CAMERA_TARGET_MODE_ON, SHADOW_MAPPING, SHADOW_MAPPING_N_SHADOWS, SHADOW_MAPPING_RESOLUTION, MAX_LOADED_STARS);
 
         /** FRAME CONF **/
         String renderFolder = null;
@@ -269,7 +283,7 @@ public class DesktopConfInit extends ConfInit {
         boolean RENDER_SCREENSHOT_TIME = Boolean.parseBoolean(p.getProperty("graphics.render.time"));
 
         ScreenshotMode FRAME_MODE = ScreenshotMode.valueOf(p.getProperty("graphics.render.mode"));
-        ImageFormat FRAME_FORMAT = ImageFormat.valueOf(p.getProperty("graphcis.render.format", "jpg").toUpperCase());
+        ImageFormat FRAME_FORMAT = ImageFormat.valueOf(p.getProperty("graphics.render.format", "jpg").toUpperCase());
         float FRAME_QUALITY = Float.parseFloat(p.getProperty("graphics.render.quality", "0.93"));
         FrameConf fc = new FrameConf();
         fc.initialize(RENDER_WIDTH, RENDER_HEIGHT, RENDER_TARGET_FPS, CAMERA_REC_TARGET_FPS, AUTO_FRAME_OUTPUT_CAMERA_PLAY, RENDER_FOLDER, RENDER_FILE_NAME, RENDER_SCREENSHOT_TIME, RENDER_SCREENSHOT_TIME, FRAME_MODE, FRAME_FORMAT, FRAME_QUALITY);
@@ -282,9 +296,10 @@ public class DesktopConfInit extends ConfInit {
         boolean FULLSCREEN = Boolean.parseBoolean(p.getProperty("graphics.screen.fullscreen"));
         boolean RESIZABLE = Boolean.parseBoolean(p.getProperty("graphics.screen.resizable"));
         boolean VSYNC = Boolean.parseBoolean(p.getProperty("graphics.screen.vsync"));
+        int LIMIT_FPS = Integer.parseInt(p.getProperty("graphics.limit.fps", "0"));
         boolean SCREEN_OUTPUT = Boolean.parseBoolean(p.getProperty("graphics.screen.screenoutput"));
         ScreenConf scrc = new ScreenConf();
-        scrc.initialize(SCREEN_WIDTH, SCREEN_HEIGHT, FULLSCREEN_WIDTH, FULLSCREEN_HEIGHT, FULLSCREEN, RESIZABLE, VSYNC, SCREEN_OUTPUT);
+        scrc.initialize(SCREEN_WIDTH, SCREEN_HEIGHT, FULLSCREEN_WIDTH, FULLSCREEN_HEIGHT, FULLSCREEN, RESIZABLE, VSYNC, SCREEN_OUTPUT, LIMIT_FPS);
 
         /** SCREENSHOT CONF **/
         String screenshotFolder = null;
@@ -314,7 +329,7 @@ public class DesktopConfInit extends ConfInit {
 
         /** SPACECRAFT CONF **/
         SpacecraftConf scc = new SpacecraftConf();
-        float sC_RESPONSIVENESS = Float.parseFloat(p.getProperty("spacecraft.responsiveness", "1.65e7"));
+        float sC_RESPONSIVENESS = MathUtilsd.lint(Float.parseFloat(p.getProperty("spacecraft.responsiveness", "0.1")), 0, 1, Constants.MIN_SC_RESPONSIVENESS, Constants.MAX_SC_RESPONSIVENESS);
         boolean sC_VEL_TO_DIRECTION = Boolean.parseBoolean(p.getProperty("spacecraft.velocity.direction", "false"));
         float sC_HANDLING_FRICTION = Float.parseFloat(p.getProperty("spacecraft.handling.friction", "0.37"));
         boolean sC_SHOW_AXES = Boolean.parseBoolean(p.getProperty("spacecraft.show.axes", "false"));
@@ -380,6 +395,7 @@ public class DesktopConfInit extends ConfInit {
         p.setProperty("graphics.screen.fullscreen", Boolean.toString(Gdx.graphics.isFullscreen()));
         p.setProperty("graphics.screen.resizable", Boolean.toString(GlobalConf.screen.RESIZABLE));
         p.setProperty("graphics.screen.vsync", Boolean.toString(GlobalConf.screen.VSYNC));
+        p.setProperty("graphics.limit.fps", Integer.toString(GlobalConf.screen.LIMIT_FPS));
         p.setProperty("graphics.screen.screenoutput", Boolean.toString(GlobalConf.screen.SCREEN_OUTPUT));
 
         /** PROGRAM **/
@@ -436,6 +452,7 @@ public class DesktopConfInit extends ConfInit {
         p.setProperty("scene.shadowmapping", Boolean.toString(GlobalConf.scene.SHADOW_MAPPING));
         p.setProperty("scene.shadowmapping.nshadows", Integer.toString(GlobalConf.scene.SHADOW_MAPPING_N_SHADOWS));
         p.setProperty("scene.shadowmapping.resolution", Integer.toString(GlobalConf.scene.SHADOW_MAPPING_RESOLUTION));
+        p.setProperty("scene.octree.maxstars", Long.toString(GlobalConf.scene.MAX_LOADED_STARS));
 
         // Visibility of components
         int idx = 0;
@@ -452,7 +469,7 @@ public class DesktopConfInit extends ConfInit {
         p.setProperty("controls.debugmode", Boolean.toString(GlobalConf.controls.DEBUG_MODE));
 
         /** SPACECRAFT **/
-        p.setProperty("spacecraft.responsiveness", Float.toString(GlobalConf.spacecraft.SC_RESPONSIVENESS));
+        p.setProperty("spacecraft.responsiveness", Float.toString(MathUtilsd.lint(GlobalConf.spacecraft.SC_RESPONSIVENESS, Constants.MIN_SC_RESPONSIVENESS, Constants.MAX_SC_RESPONSIVENESS, 0, 1)));
         p.setProperty("spacecraft.velocity.direction", Boolean.toString(GlobalConf.spacecraft.SC_VEL_TO_DIRECTION));
         p.setProperty("spacecraft.handling.friction", Float.toString(GlobalConf.spacecraft.SC_HANDLING_FRICTION));
         p.setProperty("spacecraft.show.axes", Boolean.toString(GlobalConf.spacecraft.SC_SHOW_AXES));

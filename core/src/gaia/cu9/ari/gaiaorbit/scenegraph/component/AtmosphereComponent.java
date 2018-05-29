@@ -17,6 +17,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.Transform;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.ModelCache;
 import gaia.cu9.ari.gaiaorbit.util.Pair;
+import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.override.AtmosphereAttribute;
 import gaia.cu9.ari.gaiaorbit.util.override.Vector3Attribute;
@@ -191,7 +192,7 @@ public class AtmosphereComponent {
         // Planet position
         if (ground) {
             // Camera position must be corrected using the rotation angle of the planet
-            aux3.rotate(rc.ascendingNode, 0, 1, 0).rotate(-rc.inclination - rc.axialTilt, 0, 0, 1).rotate(-rc.angle, 0, 1, 0);
+            aux3.mul(Coordinates.getTransformD(planet.inverseRefPlaneTransform)).mul(Coordinates.equatorialToEcliptic()).rotate(rc.ascendingNode, 0, 1, 0).rotate(-rc.inclination - rc.axialTilt, 0, 0, 1).rotate(-rc.angle, 0, 1, 0);
         }
         ((Vector3Attribute) mat.get(Vector3Attribute.PlanetPos)).value.set(aux3.put(aux));
         // CameraPos = -PlanetPos
@@ -203,7 +204,7 @@ public class AtmosphereComponent {
         sol.transform.addTranslationTo(aux3).nor();
         if (ground) {
             // Camera position must be corrected using the rotation angle of the planet
-            aux3.rotate(rc.ascendingNode, 0, 1, 0).rotate(-rc.inclination - rc.axialTilt, 0, 0, 1).rotate(-rc.angle, 0, 1, 0);
+            aux3.mul(Coordinates.getTransformD(planet.inverseRefPlaneTransform)).rotate(rc.ascendingNode, 0, 1, 0).rotate(-rc.inclination - rc.axialTilt, 0, 0, 1).rotate(-rc.angle, 0, 1, 0);
         }
         ((Vector3Attribute) mat.get(Vector3Attribute.LightPos)).value.set(aux3.put(aux));
 
