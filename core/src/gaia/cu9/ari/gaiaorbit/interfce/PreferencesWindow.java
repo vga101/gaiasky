@@ -1440,12 +1440,18 @@ public class PreferencesWindow extends GenericDialog {
 
         // Graphics
         ComboBoxBean bean = gquality.getSelected();
-        GlobalConf.scene.GRAPHICS_QUALITY = bean.value;
-        EventManager.instance.post(Events.GRAPHICS_QUALITY_UPDATED, bean.value);
+        if (GlobalConf.scene.GRAPHICS_QUALITY != bean.value) {
+            GlobalConf.scene.GRAPHICS_QUALITY = bean.value;
+            EventManager.instance.post(Events.GRAPHICS_QUALITY_UPDATED, bean.value);
+        }
 
         bean = aa.getSelected();
-        GlobalConf.postprocess.POSTPROCESS_ANTIALIAS = GlobalConf.postprocess.getAntialias(bean.value);
-        EventManager.instance.post(Events.ANTIALIASING_CMD, GlobalConf.postprocess.POSTPROCESS_ANTIALIAS);
+        Antialias newaa = GlobalConf.postprocess.getAntialias(bean.value);
+        if (GlobalConf.postprocess.POSTPROCESS_ANTIALIAS != newaa) {
+            GlobalConf.postprocess.POSTPROCESS_ANTIALIAS = GlobalConf.postprocess.getAntialias(bean.value);
+            EventManager.instance.post(Events.ANTIALIASING_CMD, GlobalConf.postprocess.POSTPROCESS_ANTIALIAS);
+        }
+
         GlobalConf.screen.VSYNC = vsync.isChecked();
         try {
             // Windows backend crashes for some reason
@@ -1458,10 +1464,6 @@ public class PreferencesWindow extends GenericDialog {
             GlobalConf.screen.LIMIT_FPS = Integer.parseInt(limitFps.getText());
         } else {
             GlobalConf.screen.LIMIT_FPS = 0;
-        }
-        if (GaiaSky.instance.getConfig() != null) {
-            GaiaSky.instance.getConfig().foregroundFPS = GlobalConf.screen.LIMIT_FPS;
-            GaiaSky.instance.getConfig().backgroundFPS = GlobalConf.screen.LIMIT_FPS;
         }
 
         // Orbit renderer

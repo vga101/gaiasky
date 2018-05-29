@@ -73,6 +73,7 @@ public class FullGui extends AbstractGui {
 
     protected SearchDialog searchDialog;
     protected AboutWindow aboutWindow;
+    protected LogWindow logWindow;
     protected PreferencesWindow preferencesWindow;
     protected VisualEffectsComponent visualEffectsComponent;
 
@@ -89,6 +90,7 @@ public class FullGui extends AbstractGui {
     private boolean uncertainties = false;
     // Rel effects off
     private boolean releffects = false;
+
 
     public FullGui() {
         super();
@@ -110,7 +112,7 @@ public class FullGui extends AbstractGui {
         buildGui();
 
         // We must subscribe to the desired events
-        EventManager.instance.subscribe(this, Events.FOV_CHANGED_CMD, Events.SHOW_TUTORIAL_ACTION, Events.SHOW_SEARCH_ACTION, Events.REMOVE_KEYBOARD_FOCUS, Events.REMOVE_GUI_COMPONENT, Events.ADD_GUI_COMPONENT, Events.SHOW_ABOUT_ACTION, Events.RA_DEC_UPDATED, Events.LON_LAT_UPDATED, Events.POPUP_MENU_FOCUS, Events.SHOW_PREFERENCES_ACTION, Events.SHOW_LAND_AT_LOCATION_ACTION, Events.DISPLAY_POINTER_COORDS_CMD, Events.TOGGLE_MINIMAP);
+        EventManager.instance.subscribe(this, Events.FOV_CHANGED_CMD, Events.SHOW_TUTORIAL_ACTION, Events.SHOW_SEARCH_ACTION, Events.REMOVE_KEYBOARD_FOCUS, Events.REMOVE_GUI_COMPONENT, Events.ADD_GUI_COMPONENT, Events.SHOW_ABOUT_ACTION, Events.SHOW_LOG_ACTION, Events.RA_DEC_UPDATED, Events.LON_LAT_UPDATED, Events.POPUP_MENU_FOCUS, Events.SHOW_PREFERENCES_ACTION, Events.SHOW_LAND_AT_LOCATION_ACTION, Events.DISPLAY_POINTER_COORDS_CMD, Events.TOGGLE_MINIMAP);
     }
 
     protected void buildGui() {
@@ -142,7 +144,7 @@ public class FullGui extends AbstractGui {
         fi.pad(0, 0, 10, 10);
 
         // NOTIFICATIONS INTERFACE - BOTTOM LEFT
-        notificationsInterface = new NotificationsInterface(skin, lock, true);
+        notificationsInterface = new NotificationsInterface(skin, lock, true, true, true, true);
         notificationsInterface.setFillParent(true);
         notificationsInterface.left().bottom();
         notificationsInterface.pad(0, 5, 5, 0);
@@ -308,6 +310,13 @@ public class FullGui extends AbstractGui {
                 aboutWindow = new AboutWindow(ui, skin);
             }
             aboutWindow.show(ui);
+            break;
+        case SHOW_LOG_ACTION:
+            if (logWindow == null) {
+                logWindow = new LogWindow(ui, skin);
+            }
+            logWindow.update();
+            logWindow.show(ui);
             break;
         case SHOW_PREFERENCES_ACTION:
             preferencesWindow = new PreferencesWindow(ui, skin);

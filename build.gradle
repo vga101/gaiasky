@@ -120,7 +120,7 @@ project(":core") {
     }
 
     dependencies {
-    	//compile "com.badlogicgames.gdx:gdx-tools:$gdxVersion"
+    	compile "com.badlogicgames.gdx:gdx-tools:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
         compile "org.lwjgl.lwjgl:lwjgl:$lwjglVersion"
         compile "com.badlogicgames.gdx:gdx:$gdxVersion"

@@ -32,7 +32,7 @@ public class LoadingGui extends AbstractGui {
     protected Table center, bottom;
     protected Container<Button> screenMode;
 
-    protected NotificationsInterface notificationsInterface;
+    public NotificationsInterface notificationsInterface;
 
     public LoadingGui() {
         super();
@@ -81,7 +81,7 @@ public class LoadingGui extends AbstractGui {
         screenMode.setActor(screenModeButton);
 
         // MESSAGE INTERFACE - BOTTOM
-        notificationsInterface = new NotificationsInterface(skin, lock, false, false, false);
+        notificationsInterface = new NotificationsInterface(skin, lock, false, false, false, true);
         center.add(notificationsInterface);
         interfaces.add(notificationsInterface);
 

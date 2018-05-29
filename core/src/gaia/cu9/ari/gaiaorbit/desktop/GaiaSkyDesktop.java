@@ -207,7 +207,7 @@ public class GaiaSkyDesktop implements IObserver {
 
     public GaiaSkyDesktop() {
         super();
-        EventManager.instance.subscribe(this, Events.SHOW_ABOUT_ACTION, Events.SHOW_RUNSCRIPT_ACTION, Events.JAVA_EXCEPTION, Events.SHOW_PLAYCAMERA_ACTION, Events.DISPLAY_MEM_INFO_WINDOW);
+        EventManager.instance.subscribe(this, Events.SHOW_RUNSCRIPT_ACTION, Events.JAVA_EXCEPTION, Events.SHOW_PLAYCAMERA_ACTION, Events.DISPLAY_MEM_INFO_WINDOW);
         EventManager.instance.subscribe(this, Events.SCENE_GRAPH_LOADED, Events.DISPOSE);
     }
 
@@ -229,8 +229,8 @@ public class GaiaSkyDesktop implements IObserver {
         cfg.height = GlobalConf.screen.getScreenHeight();
         cfg.samples = 0;
         cfg.vSyncEnabled = GlobalConf.screen.VSYNC;
-        cfg.foregroundFPS = GlobalConf.screen.LIMIT_FPS;
-        cfg.backgroundFPS = GlobalConf.screen.LIMIT_FPS;
+        cfg.foregroundFPS = 0;
+        cfg.backgroundFPS = 0;
         cfg.useHDPI = true;
         cfg.useGL30 = false;
         cfg.addIcon("icon/ic_launcher.png", Files.FileType.Internal);

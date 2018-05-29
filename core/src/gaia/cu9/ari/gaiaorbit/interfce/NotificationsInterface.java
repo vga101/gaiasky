@@ -32,13 +32,14 @@ import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnLabel;
 public class NotificationsInterface extends Table implements IObserver, IGuiInterface {
     private static final long DEFAULT_TIMEOUT = 5000;
     private static final String TAG_SEPARATOR = " - ";
+    static LinkedList<MessageBean> historical = new LinkedList<MessageBean>();
     IDateFormat df;
     long msTimeout;
     Label message1;
     Label message2;
-    LinkedList<MessageBean> historical;
     boolean displaying = false;
     boolean consoleLog = true;
+    boolean historicalLog = false;
     boolean permanent = false;
     boolean multiple = false;
     boolean writeDates = true;
@@ -77,6 +78,27 @@ public class NotificationsInterface extends Table implements IObserver, IGuiInte
      *            Allow multiple messages?
      * @param writeDates
      *            Write dates with messages?
+     * @param consoleLog
+     *            Log to console
+     * @param historicalLog
+     *            Save logs to historical list
+     */
+    public NotificationsInterface(Skin skin, Object lock, boolean multiple, boolean writeDates, boolean consoleLog, boolean historicalLog) {
+        this(skin, lock, multiple, writeDates, consoleLog);
+        this.historicalLog = historicalLog;
+    }
+
+    /**
+     * Initializes the notifications interface.
+     * 
+     * @param skin
+     *            The skin.
+     * @param lock
+     *            The lock object.
+     * @param multiple
+     *            Allow multiple messages?
+     * @param writeDates
+     *            Write dates with messages?
      */
     public NotificationsInterface(Skin skin, Object lock, boolean multiple, boolean writeDates) {
         this(skin, lock, multiple);
@@ -94,20 +116,37 @@ public class NotificationsInterface extends Table implements IObserver, IGuiInte
      *            Allow multiple messages?
      */
     public NotificationsInterface(Skin skin, Object lock, boolean multiple) {
-        this(DEFAULT_TIMEOUT, skin, multiple);
+        this(null, DEFAULT_TIMEOUT, skin, multiple);
         this.lock = lock;
 
     }
 
     /**
      * Initializes the notifications interface.
-     * 
+     * @param logs
+     *            Loading logs. 
+     * @param skin
+     *            The skin.
+     * @param lock
+     *            The lock object.
+     * @param multiple
+     *            Allow multiple messages?
+     */
+    public NotificationsInterface(List<MessageBean> logs, Skin skin, Object lock, boolean multiple) {
+        this(logs, DEFAULT_TIMEOUT, skin, multiple);
+        this.lock = lock;
+
+    }
+
+    /**
+     * Initializes the notifications interface.
+     * @param logs Current logs
      * @param msTimeout
      *            The timeout in ms.
      * @param skin
      *            The skin.
      */
-    public NotificationsInterface(long msTimeout, Skin skin, boolean multiple) {
+    public NotificationsInterface(List<MessageBean> logs, long msTimeout, Skin skin, boolean multiple) {
         super(skin);
         this.msTimeout = msTimeout;
         this.multiple = multiple;
@@ -120,7 +159,7 @@ public class NotificationsInterface extends Table implements IObserver, IGuiInte
         // Create message
         message1 = new OwnLabel("", skin, "hud-med");
         this.add(message1).left();
-        this.historical = new LinkedList<MessageBean>();
+
         this.df = DateFormatFactory.getFormatter(I18n.locale, DateType.TIME);
         EventManager.instance.subscribe(this, Events.POST_NOTIFICATION, Events.FOCUS_CHANGED, Events.TOGGLE_TIME_CMD, Events.TOGGLE_VISIBILITY_CMD, Events.CAMERA_MODE_CMD, Events.PACE_CHANGED_INFO, Events.FOCUS_LOCK_CMD, Events.TOGGLE_AMBIENT_LIGHT, Events.FOV_CHANGE_NOTIFICATION, Events.JAVA_EXCEPTION, Events.ORBIT_DATA_LOADED, Events.SCREENSHOT_INFO, Events.COMPUTE_GAIA_SCAN_CMD, Events.ONLY_OBSERVED_STARS_CMD, Events.TRANSIT_COLOUR_CMD, Events.LIMIT_MAG_CMD, Events.STEREOSCOPIC_CMD, Events.DISPLAY_GUI_CMD, Events.FRAME_OUTPUT_CMD, Events.STEREO_PROFILE_CMD, Events.OCTREE_PARTICLE_FADE_CMD);
     }
@@ -143,12 +182,14 @@ public class NotificationsInterface extends Table implements IObserver, IGuiInte
         // Set 1
         this.message1.setText(formatMessage(messageBean));
 
-        this.historical.add(messageBean);
         this.displaying = true;
         this.permanent = permanent;
-        if (consoleLog && Gdx.graphics != null) {
-            Gdx.app.log(df.format(messageBean.date), msg);
-        }
+
+        if (historicalLog)
+            historical.add(messageBean);
+        if (consoleLog && Gdx.graphics != null)
+                Gdx.app.log(df.format(messageBean.date), msg);
+
     }
 
     private String formatMessage(MessageBean msgBean) {

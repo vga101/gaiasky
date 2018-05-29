@@ -65,8 +65,8 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.camera.CameraManager;
-import gaia.cu9.ari.gaiaorbit.scenegraph.camera.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.camera.CameraManager.CameraMode;
+import gaia.cu9.ari.gaiaorbit.scenegraph.camera.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
 import gaia.cu9.ari.gaiaorbit.script.HiddenHelperUser;
 import gaia.cu9.ari.gaiaorbit.util.ComponentTypes;
@@ -310,6 +310,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         // Dispose of initial and loading GUIs
         initialGui.dispose();
         initialGui = null;
+        
         loadingGui.dispose();
         loadingGui = null;
 
@@ -592,6 +593,10 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
                     sgr.clearLists();
                     // Number of frames
                     frames++;
+                    
+                    if (GlobalConf.screen.LIMIT_FPS > 0) {
+                        sleep(GlobalConf.screen.LIMIT_FPS);
+                    }
 
                     /** DEBUG - each 1 secs **/
                     if (TimeUtils.millis() - lastDebugTime > 1000) {
@@ -604,6 +609,22 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         } catch (Throwable t) {
             EventManager.instance.post(Events.JAVA_EXCEPTION, t);
             // TODO implement error reporting?
+        }
+    }
+
+    private long diff, start = System.currentTimeMillis();
+
+    public void sleep(int fps) {
+        if (fps > 0) {
+            diff = System.currentTimeMillis() - start;
+            long targetDelay = 1000 / fps;
+            if (diff < targetDelay) {
+                try {
+                    Thread.sleep(targetDelay - diff);
+                } catch (InterruptedException e) {
+                }
+            }
+            start = System.currentTimeMillis();
         }
     }
 

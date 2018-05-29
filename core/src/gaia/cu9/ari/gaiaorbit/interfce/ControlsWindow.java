@@ -253,12 +253,23 @@ public class ControlsWindow extends CollapsibleWindow implements IObserver {
                 return false;
             }
         });
+        Image logImg = new Image(skin.getDrawable("log-icon"));
+        Button showLog = new OwnTextIconButton("", logImg, skin);
+        showLog.setName("show log");
+        showLog.addListener(new TextTooltip(txt("gui.log.tooltip"), skin));
+        showLog.addListener((event) -> {
+            if (event instanceof ChangeEvent) {
+                EventManager.instance.post(Events.SHOW_LOG_ACTION);
+            }
+            return false;
+        });
 
         buttonsTable = new Table(skin);
         buttonsTable.add(runScript).pad(1).top().left();
         //buttonsTable.add(tutorial).pad(1).top().left();
         buttonsTable.add(preferences).pad(1).top().left();
         buttonsTable.add(about).pad(1).top().left();
+        buttonsTable.add(showLog).pad(1).top().left();
 
         buttonsTable.pack();
 
