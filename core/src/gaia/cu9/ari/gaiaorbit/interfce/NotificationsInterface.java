@@ -1,6 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.interfce;
 
-import java.time.Instant;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -187,8 +186,9 @@ public class NotificationsInterface extends Table implements IObserver, IGuiInte
 
         if (historicalLog)
             historical.add(messageBean);
+
         if (consoleLog && Gdx.graphics != null)
-                Gdx.app.log(df.format(messageBean.date), msg);
+            Gdx.app.log(df.format(messageBean.date), msg);
 
     }
 
@@ -319,26 +319,6 @@ public class NotificationsInterface extends Table implements IObserver, IGuiInte
 
     public List<MessageBean> getHistorical() {
         return historical;
-    }
-
-    public class MessageBean {
-        String msg;
-        Instant date;
-
-        public MessageBean(String msg) {
-            this.msg = msg;
-            this.date = Instant.now();
-        }
-
-        /** Has the message finished given the timeout? **/
-        public boolean finished(long timeout) {
-            return Instant.now().toEpochMilli() - date.toEpochMilli() > timeout;
-        }
-
-        @Override
-        public String toString() {
-            return formatMessage(this);
-        }
     }
 
     public void dispose() {

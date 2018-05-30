@@ -29,6 +29,7 @@ public class ConsoleLogger implements IObserver {
     IDateFormat df;
     long msTimeout;
     boolean writeDates = true;
+    boolean useHistorical = true;
 
     /**
      * Initializes the notifications interface.
@@ -36,8 +37,9 @@ public class ConsoleLogger implements IObserver {
      * @param writeDates
      *            Log the date and time.
      */
-    public ConsoleLogger(boolean writeDates) {
+    public ConsoleLogger(boolean writeDates, boolean useHistorical) {
         this.msTimeout = DEFAULT_TIMEOUT;
+        this.useHistorical = useHistorical;
 
         this.df = DateFormatFactory.getFormatter(I18n.locale, DateType.DATETIME);
         EventManager.instance.subscribe(this, Events.POST_NOTIFICATION, Events.FOCUS_CHANGED, Events.TOGGLE_TIME_CMD, Events.TOGGLE_VISIBILITY_CMD, Events.CAMERA_MODE_CMD, Events.PACE_CHANGED_INFO, Events.FOCUS_LOCK_CMD, Events.TOGGLE_AMBIENT_LIGHT, Events.FOV_CHANGE_NOTIFICATION, Events.JAVA_EXCEPTION, Events.ORBIT_DATA_LOADED, Events.SCREENSHOT_INFO, Events.COMPUTE_GAIA_SCAN_CMD, Events.ONLY_OBSERVED_STARS_CMD, Events.TRANSIT_COLOUR_CMD, Events.LIMIT_MAG_CMD, Events.STEREOSCOPIC_CMD, Events.DISPLAY_GUI_CMD, Events.FRAME_OUTPUT_CMD, Events.STEREO_PROFILE_CMD, Events.OCTREE_PARTICLE_FADE_CMD);
@@ -48,14 +50,22 @@ public class ConsoleLogger implements IObserver {
     }
 
     private void addMessage(String msg) {
-        Gdx.app.log(df.format(Instant.now()), msg);
+        Instant date = Instant.now();
+        Gdx.app.log(df.format(date), msg);
+        if (useHistorical) {
+            NotificationsInterface.historical.add(new MessageBean(date, msg));
+        }
     }
 
     private void addMessage(String msg, boolean debug) {
+        Instant date = Instant.now();
         if (debug)
-            Gdx.app.debug(df.format(Instant.now()), msg);
+            Gdx.app.debug(df.format(date), msg);
         else
-            Gdx.app.log(df.format(Instant.now()), msg);
+            Gdx.app.log(df.format(date), msg);
+        if (useHistorical) {
+            NotificationsInterface.historical.add(new MessageBean(date, msg));
+        }
     }
 
     @Override
@@ -63,10 +73,8 @@ public class ConsoleLogger implements IObserver {
         switch (event) {
         case POST_NOTIFICATION:
             String message = "";
-            boolean perm = false;
             for (int i = 0; i < data.length; i++) {
                 if (i == data.length - 1 && data[i] instanceof Boolean) {
-                    perm = (Boolean) data[i];
                 } else {
                     message += (String) data[i];
                     if (i < data.length - 1 && !(i == data.length - 2 && data[data.length - 1] instanceof Boolean)) {

@@ -49,7 +49,6 @@ import gaia.cu9.ari.gaiaorbit.interfce.IGui;
 import gaia.cu9.ari.gaiaorbit.interfce.InitialGui;
 import gaia.cu9.ari.gaiaorbit.interfce.KeyInputController;
 import gaia.cu9.ari.gaiaorbit.interfce.LoadingGui;
-import gaia.cu9.ari.gaiaorbit.interfce.MobileGui;
 import gaia.cu9.ari.gaiaorbit.interfce.SpacecraftGui;
 import gaia.cu9.ari.gaiaorbit.interfce.StereoGui;
 import gaia.cu9.ari.gaiaorbit.render.AbstractRenderer;
@@ -207,7 +206,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
     public void create() {
         startTime = TimeUtils.millis();
         Gdx.app.setLogLevel(Application.LOG_INFO);
-        clogger = new ConsoleLogger(true);
+        clogger = new ConsoleLogger(true, true);
 
         fbmap = new HashMap<String, FrameBuffer>();
 
@@ -310,7 +309,11 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         // Dispose of initial and loading GUIs
         initialGui.dispose();
         initialGui = null;
-        
+
+        // Destroy console logger
+        clogger.dispose();
+        clogger = null;
+
         loadingGui.dispose();
         loadingGui = null;
 
@@ -352,9 +355,6 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         // Initialise input handlers
         inputMultiplexer = new InputMultiplexer();
 
-        // Destroy console logger
-        clogger.dispose();
-        clogger = null;
         // Init GUIs, step 2
         reinitialiseGUI2();
 
@@ -428,13 +428,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
             guis.clear();
         }
 
-        if (Constants.desktop || Constants.webgl) {
-            // Full GUI for desktop
-            mainGui = new FullGui();
-        } else if (Constants.mobile) {
-            // Reduced GUI for android/iOS/...
-            mainGui = new MobileGui();
-        }
+        mainGui = new FullGui();
         mainGui.initialize(manager);
 
         debugGui = new DebugGui();
@@ -593,7 +587,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
                     sgr.clearLists();
                     // Number of frames
                     frames++;
-                    
+
                     if (GlobalConf.screen.LIMIT_FPS > 0) {
                         sleep(GlobalConf.screen.LIMIT_FPS);
                     }

@@ -62,7 +62,6 @@ com.badlogic.gdx.scenes.scene2d.ui.ImageButton$ImageButtonStyle: {
 	audio-playpause: { imageUp: audio-play, imageChecked: audio-pause },
 	audio-fwd: {imageUp: audio-fwd },
 	audio-bwd: {imageUp: audio-bwd },
-	gaiasky-logo: {imageUp: gaiasky-logo },
 	reload: {imageUp: reload },
 	plus: {imageUp: tree-plus},
 	minus: {imageUp: tree-minus},
