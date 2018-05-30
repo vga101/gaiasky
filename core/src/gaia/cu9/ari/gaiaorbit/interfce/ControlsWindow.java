@@ -265,9 +265,8 @@ public class ControlsWindow extends CollapsibleWindow implements IObserver {
         });
 
         buttonsTable = new Table(skin);
-        buttonsTable.add(runScript).pad(1).top().left();
-        //buttonsTable.add(tutorial).pad(1).top().left();
         buttonsTable.add(preferences).pad(1).top().left();
+        buttonsTable.add(runScript).pad(1).top().left();
         buttonsTable.add(about).pad(1).top().left();
         buttonsTable.add(showLog).pad(1).top().left();
 

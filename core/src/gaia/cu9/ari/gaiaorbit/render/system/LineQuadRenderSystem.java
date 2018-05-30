@@ -17,6 +17,12 @@ import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
+/**
+ * Renders lines as Polyline Quadstrips (Polyboards).
+ * Slower but higher quality.
+ * @author tsagrista
+ *
+ */
 public class LineQuadRenderSystem extends LineRenderSystem {
     private MeshDataExt currext;
     private Array<double[]> provisionalLines;
