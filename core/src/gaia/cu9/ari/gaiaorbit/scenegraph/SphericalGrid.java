@@ -21,7 +21,7 @@ import gaia.cu9.ari.gaiaorbit.util.gravwaves.RelativisticEffectsManager;
 import gaia.cu9.ari.gaiaorbit.util.math.Matrix4d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
-public class Grid extends BackgroundModel implements IAnnotationsRenderable {
+public class SphericalGrid extends BackgroundModel implements IAnnotationsRenderable {
     private static final float ANNOTATIONS_ALPHA = 0.8f;
 
     private static final int divisionsU = 36;
@@ -33,7 +33,7 @@ public class Grid extends BackgroundModel implements IAnnotationsRenderable {
     private Vector3d auxd;
     private Matrix4 annotTransform;
 
-    public Grid() {
+    public SphericalGrid() {
         super();
         annotTransform = new Matrix4();
         auxf = new Vector3();
@@ -55,7 +55,7 @@ public class Grid extends BackgroundModel implements IAnnotationsRenderable {
                 trf.putIn(aux);
                 annotTransform.mul(aux);
             } catch (ReflectionException e) {
-                Logger.error(Grid.class.getName(), "Error getting/invoking method Coordinates." + transformName + "()");
+                Logger.error(SphericalGrid.class.getName(), "Error getting/invoking method Coordinates." + transformName + "()");
             }
         } else {
             // Equatorial, nothing

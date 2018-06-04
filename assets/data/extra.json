@@ -8,7 +8,7 @@
 	"labelcolor": [1.0, 0.5, 0.5, 1.0],
 
 	"parent" : "Universe", 
-	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Grid",
+	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.SphericalGrid",
 	
 	"coordinates" : {
 				// This must implement gaia.cu9.ari.gaiaorbit.util.coord.IBodyCoordinates				
@@ -37,7 +37,7 @@
 	"transformName" : eclipticToEquatorial,
 
 	"parent" : "Universe", 
-	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Grid"
+	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.SphericalGrid"
 
 	"coordinates" : {
 				// This must implement gaia.cu9.ari.gaiaorbit.util.coord.IBodyCoordinates				
@@ -66,7 +66,7 @@
 	"transformName" : galacticToEquatorial,
 
 	"parent" : "Universe", 
-	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.Grid"
+	"impl" : "gaia.cu9.ari.gaiaorbit.scenegraph.SphericalGrid"
 
 	"coordinates" : {
 				// This must implement gaia.cu9.ari.gaiaorbit.util.coord.IBodyCoordinates				
