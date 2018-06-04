@@ -105,7 +105,7 @@ public class ModelComponent implements Disposable, IObserver {
             AssetBean.addAsset(modelFile, Model.class);
         }
 
-        if (forceinit || !GlobalConf.scene.LAZY_TEXTURE_INIT && tc != null) {
+        if ((forceinit || !GlobalConf.scene.LAZY_TEXTURE_INIT) && tc != null) {
             tc.initialize();
         }
 
@@ -158,7 +158,7 @@ public class ModelComponent implements Disposable, IObserver {
             materials.get("base").clear();
 
         // INITIALIZE MATERIAL
-        if (forceinit || !GlobalConf.scene.LAZY_TEXTURE_INIT && tc != null) {
+        if ((forceinit || !GlobalConf.scene.LAZY_TEXTURE_INIT) && tc != null) {
             tc.initMaterial(manager, materials, cc, culling);
         }
 
@@ -344,13 +344,13 @@ public class ModelComponent implements Disposable, IObserver {
     public void updateRelativisticEffects(Material mat, ICamera camera, float vc) {
         if (GlobalConf.runtime.RELATIVISTIC_ABERRATION) {
             rec.updateRelativisticEffectsMaterial(mat, camera, vc);
-        } else if(rec.hasRelativisticEffects(mat)){
+        } else if (rec.hasRelativisticEffects(mat)) {
             rec.removeRelativisticEffectsMaterial(mat);
         }
 
         if (GlobalConf.runtime.GRAVITATIONAL_WAVES) {
             rec.updateGravitationalWavesMaterial(mat);
-        } else if(rec.hasGravitationalWaves(mat)){
+        } else if (rec.hasGravitationalWaves(mat)) {
             rec.removeGravitationalWavesMaterial(mat);
         }
     }

@@ -111,7 +111,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
     private Array<IRenderSystem> renderProcesses;
 
-    RenderSystemRunnable blendNoDepthRunnable, blendDepthRunnable, additiveBlendNoDepthRunnable, restoreRegularBlend;
+    RenderSystemRunnable blendNoDepthRunnable, blendDepthRunnable, additiveBlendDepthRunnable, restoreRegularBlend;
 
     /** The particular current scene graph renderer **/
     private ISGR sgr;
@@ -195,6 +195,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
         manager.load("atmgrounddefault", GroundShaderProvider.class, new GroundShaderProviderParameter("shader/default.vertex.glsl", "shader/default.fragment.glsl"));
         manager.load("additive", RelativisticShaderProvider.class, new RelativisticShaderProviderParameter("shader/default.vertex.glsl", "shader/default.additive.fragment.glsl"));
+        manager.load("grids", RelativisticShaderProvider.class, new RelativisticShaderProviderParameter("shader/default.vertex.glsl", "shader/default.grid.fragment.glsl"));
         manager.load("spsurface", RelativisticShaderProvider.class, new RelativisticShaderProviderParameter("shader/starsurface.vertex.glsl", "shader/starsurface.fragment.glsl"));
         manager.load("spbeam", RelativisticShaderProvider.class, new RelativisticShaderProviderParameter("shader/default.vertex.glsl", "shader/beam.fragment.glsl"));
         manager.load("spdepth", RelativisticShaderProvider.class, new RelativisticShaderProviderParameter("shader/normal.vertex.glsl", "shader/depth.fragment.glsl"));
@@ -231,13 +232,13 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
                 Gdx.gl.glDepthMask(true);
             }
         };
-        additiveBlendNoDepthRunnable = new RenderSystemRunnable() {
+        additiveBlendDepthRunnable = new RenderSystemRunnable() {
             @Override
             public void run(AbstractRenderSystem renderSystem, Array<IRenderable> renderables, ICamera camera) {
                 Gdx.gl.glEnable(GL20.GL_BLEND);
-                Gdx.gl.glDisable(GL20.GL_DEPTH_TEST);
+                Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
                 Gdx.gl.glBlendFunc(GL20.GL_ONE, GL20.GL_ONE);
-                Gdx.gl.glDepthMask(false);
+                Gdx.gl.glDepthMask(true);
             }
         };
         restoreRegularBlend = new RenderSystemRunnable() {
@@ -364,6 +365,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
         ShaderProvider sp = manager.get("atmgrounddefault");
         ShaderProvider spadditive = manager.get("additive");
+        ShaderProvider spgrids = manager.get("grids");
         ShaderProvider spnormal = Constants.webgl ? sp : manager.get("atmground");
         ShaderProvider spatm = manager.get("atm");
         ShaderProvider spsurface = manager.get("spsurface");
@@ -382,7 +384,8 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         ModelBatch modelBatchMesh = new ModelBatch(spadditive, noSorter);
         modelBatchMesh.getRenderContext().setBlending(true, GL30.GL_ONE, GL30.GL_ONE);
         modelBatchMesh.getRenderContext().setDepthTest(GL30.GL_LEQUAL, 1e11f, 1e13f);
-        ModelBatch modelBatchNormal = Constants.webgl ? new ModelBatch(sp, noSorter) : new ModelBatch(spnormal, noSorter);
+        ModelBatch modelBatchGrids = new ModelBatch(spgrids, noSorter);
+        ModelBatch modelBatchNormal = new ModelBatch(spnormal, noSorter);
         ModelBatch modelBatchAtmosphere = new ModelBatch(spatm, noSorter);
         ModelBatch modelBatchStar = new ModelBatch(spsurface, noSorter);
         ModelBatch modelBatchBeam = new ModelBatch(spbeam, noSorter);
@@ -460,8 +463,19 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
             }
         });
 
+        // MODEL GRID
+        AbstractRenderSystem modelGridsProc = new ModelBatchRenderSystem(RenderGroup.MODEL_GRIDS, alphas, modelBatchGrids, false);
+        modelGridsProc.setPreRunnable(blendDepthRunnable);
+        modelGridsProc.setPostRunnable(new RenderSystemRunnable() {
+            @Override
+            public void run(AbstractRenderSystem renderSystem, Array<IRenderable> renderables, ICamera camera) {
+                // This always goes at the back, clear depth buffer
+                Gdx.gl.glClear(GL20.GL_DEPTH_BUFFER_BIT);
+            }
+        });
+
         // VOLUMETRIC CLOUDS
-        //        AbstractRenderSystem cloudsProc = new VolumeCloudsRenderSystem( alphas);
+        //        AbstractRenderSystem cloudsProc = new VolumeCloudsRenderSystem(alphas);
         //        cloudsProc.setPreRunnable(blendNoDepthRunnable);
 
         // ANNOTATIONS
@@ -593,7 +607,8 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
         // BILLBOARD SSO
         AbstractRenderSystem billboardSSOProc = new BillboardStarRenderSystem(RenderGroup.BILLBOARD_SSO, alphas, starShaders, "img/sso.png", -1);
-        billboardSSOProc.setPreRunnable(blendDepthRunnable);
+        billboardSSOProc.setPreRunnable(additiveBlendDepthRunnable);
+        billboardSSOProc.setPostRunnable(restoreRegularBlend);
 
         // MODEL ATMOSPHERE
         AbstractRenderSystem modelAtmProc = new ModelBatchRenderSystem(RenderGroup.MODEL_ATM, alphas, modelBatchAtmosphere, true) {
@@ -612,7 +627,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
             @Override
             public void run(AbstractRenderSystem renderSystem, Array<IRenderable> renderables, ICamera camera) {
                 // Clear depth buffer before rendering things up close
-                Gdx.gl.glClear(GL20.GL_DEPTH_BUFFER_BIT);
+                //Gdx.gl.glClear(GL20.GL_DEPTH_BUFFER_BIT);
             }
         });
 
@@ -626,6 +641,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
         // Add components to set
         renderProcesses.add(modelFrontBackProc);
+        renderProcesses.add(modelGridsProc);
         renderProcesses.add(pixelStarProc);
         renderProcesses.add(starGroupProc);
         renderProcesses.add(orbitElemProc);
@@ -656,6 +672,10 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         renderProcesses.add(particleEffectsProc);
         // renderProcesses.add(cloudsProc);
         // renderProcesses.add(modelCloseUpProc);
+
+        // Use Direct3D [0..1] depth range instead of OpenGL default's [-1..1]
+        //ARBClipControl.glClipControl(ARBClipControl.GL_LOWER_LEFT, ARBClipControl.GL_ZERO_TO_ONE);
+        //Gdx.gl30.glDepthRangef(0, 1);
 
         EventManager.instance.subscribe(this, Events.TOGGLE_VISIBILITY_CMD, Events.PIXEL_RENDERER_UPDATE, Events.LINE_RENDERER_UPDATE, Events.STEREOSCOPIC_CMD, Events.CAMERA_MODE_CMD, Events.CUBEMAP360_CMD, Events.REBUILD_SHADOW_MAP_DATA_CMD, Events.LIGHT_SCATTERING_CMD);
 

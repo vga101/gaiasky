@@ -1,9 +1,4 @@
-#ifdef GL_ES
-#define LOWP lowp
-precision mediump float;
-#else
-#define LOWP 
-#endif
+#version 120
 
 #define TEXTURE_LOD_BIAS 0.2
 
@@ -285,8 +280,7 @@ void main() {
     float selfShadow = saturate(4.0 * NL);
 
     // Edge gets larger as the angle between view and normal vectors gets larger. Self shadow mutes it.
-    //float edge = pow(1.0 - dot(V, N), 4.0) * 0.45 * min(1.0, selfShadow + 0.17);
-    float edge = 0.0;
+    float edge = pow(1.0 - dot(V, N), 4.0) * 0.45 * min(1.0, selfShadow + 0.17);
 
     #ifdef environmentCubemapFlag
 		vec3 environment = textureCube(u_environmentCubemap, reflectDir).rgb;

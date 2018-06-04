@@ -26,11 +26,8 @@ uniform mat3 u_normalMatrix;
 varying vec3 v_normal;
 #endif // normalFlag
 
-#ifdef textureFlag
 attribute vec2 a_texCoord0;
 varying vec2 v_texCoords0;
-#endif // textureFlag
-
 
 uniform mat4 u_worldTrans;
 
@@ -230,9 +227,7 @@ varying vec3 v_atmosphereColor;
 void main() {
 	v_atmosphereColor = calculateAtmosphereGroundColor();
 	v_time = u_shininess;
-	#ifdef textureFlag
-		v_texCoords0 = a_texCoord0;
-	#endif // textureFlag
+	v_texCoords0 = a_texCoord0;
 
 	#if defined(colorFlag)
 		v_color = a_color;
