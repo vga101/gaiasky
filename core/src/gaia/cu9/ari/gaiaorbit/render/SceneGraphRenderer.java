@@ -563,7 +563,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         // MODEL MESH
         AbstractRenderSystem modelMeshProc = new ModelBatchRenderSystem(RenderGroup.MODEL_MESH, alphas, modelBatchMesh, false, false);
         modelFrontBackProc.setPreRunnable(blendDepthRunnable);
-        
+
         // LINES VR LASER
         LineRenderSystem lineVRProc = new LineRenderSystem(RenderGroup.LINE_VR, alphas, lineShaders);
         lineVRProc.setLineWidth(4f);

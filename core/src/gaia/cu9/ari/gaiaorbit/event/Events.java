@@ -413,6 +413,8 @@ public enum Events {
      * Toggles VR GUI display. Contains a name and a boolean with the state
      */
     DISPLAY_VR_GUI_CMD,
+    /** Displays VR Controller hints **/
+    DISPLAY_VR_CONTROLLER_HINT_CMD,
     /**
      * Informs the UI theme has been reloaded. Contains the new skin.
      */

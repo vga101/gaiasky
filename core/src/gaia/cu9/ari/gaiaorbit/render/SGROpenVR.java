@@ -28,13 +28,14 @@ import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.interfce.IGui;
+import gaia.cu9.ari.gaiaorbit.interfce.VRControllerInfoGui;
 import gaia.cu9.ari.gaiaorbit.interfce.VRGui;
 import gaia.cu9.ari.gaiaorbit.interfce.VRInfoGui;
 import gaia.cu9.ari.gaiaorbit.render.IPostProcessor.PostProcessBean;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
+import gaia.cu9.ari.gaiaorbit.scenegraph.StubModel;
 import gaia.cu9.ari.gaiaorbit.scenegraph.camera.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.camera.NaturalCamera;
-import gaia.cu9.ari.gaiaorbit.scenegraph.StubModel;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.vr.VRContext;
@@ -73,6 +74,7 @@ public class SGROpenVR extends SGRAbstract implements ISGR, IObserver {
 
     // Focus info
     private VRGui infoGui;
+    private VRGui controllerHintGui;
 
     private Vector3 auxf1;
     private Vector3d auxd1;
@@ -106,7 +108,7 @@ public class SGROpenVR extends SGRAbstract implements ISGR, IObserver {
 
             // Env
             controllersEnv = new Environment();
-            controllersEnv.set(new ColorAttribute(ColorAttribute.AmbientLight, 1f, 1f, 1f, 1f));
+            controllersEnv.set(new ColorAttribute(ColorAttribute.AmbientLight, .5f, .1f, .1f, 1f));
             DirectionalLight dlight = new DirectionalLight();
             dlight.color.set(1f, 0f, 0f, 1f);
             dlight.direction.set(0, 1, 0);
@@ -121,6 +123,9 @@ public class SGROpenVR extends SGRAbstract implements ISGR, IObserver {
 
             infoGui = new VRGui(VRInfoGui.class, 100);
             infoGui.initialize(null);
+
+            controllerHintGui = new VRGui(VRControllerInfoGui.class, -100);
+            controllerHintGui.initialize(null);
 
             EventManager.instance.subscribe(this, Events.FRAME_SIZE_UDPATE, Events.SCREENSHOT_SIZE_UDPATE, Events.VR_DEVICE_CONNECTED, Events.VR_DEVICE_DISCONNECTED);
         }
@@ -179,6 +184,7 @@ public class SGROpenVR extends SGRAbstract implements ISGR, IObserver {
 
             if (GlobalConf.runtime.DISPLAY_VR_GUI)
                 renderGui(infoGui.left());
+            renderGui(controllerHintGui.left());
 
             if (r) {
                 renderStubModels(modelBatch, camera, camera.getCamera(), controllerObjects, 0);
@@ -202,6 +208,7 @@ public class SGROpenVR extends SGRAbstract implements ISGR, IObserver {
 
             if (GlobalConf.runtime.DISPLAY_VR_GUI)
                 renderGui(infoGui.right());
+            renderGui(controllerHintGui.right());
 
             if (r) {
                 renderStubModels(modelBatch, camera, camera.getCamera(), controllerObjects, 1);

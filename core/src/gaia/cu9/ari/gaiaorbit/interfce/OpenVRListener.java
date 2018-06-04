@@ -2,17 +2,20 @@ package gaia.cu9.ari.gaiaorbit.interfce;
 
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.TimeUtils;
 
 import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.scenegraph.IFocus;
 import gaia.cu9.ari.gaiaorbit.scenegraph.StubModel;
-import gaia.cu9.ari.gaiaorbit.scenegraph.camera.NaturalCamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.camera.CameraManager.CameraMode;
+import gaia.cu9.ari.gaiaorbit.scenegraph.camera.NaturalCamera;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.comp.ViewAngleComparator;
@@ -31,11 +34,17 @@ public class OpenVRListener implements VRDeviceListener {
     /** Aux vectors **/
     private Vector3d p0, p1;
 
+    private boolean vrControllerHint = false;
+    private long lastDoublePress = 0l;
+
+    private Set<Integer> pressedButtons;
+
     public OpenVRListener(NaturalCamera cam) {
         this.cam = cam;
         this.comp = new ViewAngleComparator<IFocus>();
         this.p0 = new Vector3d();
         this.p1 = new Vector3d();
+        pressedButtons = new HashSet<Integer>();
     }
 
     private void lazyInit() {
@@ -53,12 +62,35 @@ public class OpenVRListener implements VRDeviceListener {
         EventManager.instance.post(Events.VR_DEVICE_DISCONNECTED, device);
     }
 
+    /**
+     * True if only the given button is pressed
+     * @param button
+     * @return
+     */
+    private boolean isPressed(int button) {
+        return pressedButtons.contains(button);
+    }
+
+    /**
+     * Returns true if all given buttons are pressed
+     * @param buttons
+     * @return
+     */
+    private boolean arePressed(int... buttons) {
+        boolean result = true;
+        for (int i = 0; i < buttons.length; i++)
+            result = result && pressedButtons.contains(buttons[i]);
+        return result;
+    }
+
     public void buttonPressed(VRDevice device, int button) {
         if (GlobalConf.controls.DEBUG_MODE) {
             Logger.info("vr button down [device/code]: " + device.toString() + " / " + button);
         }
+        // Add to pressed
+        pressedButtons.add(button);
 
-        if (button == VRControllerButtons.Grip) {
+        if (isPressed(VRControllerButtons.SteamVR_Trigger)) {
             // Forward
             lazyInit();
             StubModel sm = vrDeviceToModel.get(device);
@@ -66,7 +98,7 @@ public class OpenVRListener implements VRDeviceListener {
                 // Direct direction
                 cam.setVelocityVR(sm.getBeamP0(), sm.getBeamP1(), 1);
             }
-        } else if (button == VRControllerButtons.SteamVR_Touchpad) {
+        } else if (isPressed(VRControllerButtons.Grip)) {
             // Backward
             lazyInit();
             StubModel sm = vrDeviceToModel.get(device);
@@ -75,6 +107,12 @@ public class OpenVRListener implements VRDeviceListener {
                 cam.setVelocityVR(sm.getBeamP0(), sm.getBeamP1(), -1);
             }
         }
+
+        // VR controller hint
+        if (arePressed(VRControllerButtons.A, VRControllerButtons.B)) {
+            EventManager.instance.post(Events.DISPLAY_VR_CONTROLLER_HINT_CMD, true);
+            vrControllerHint = true;
+        }
     }
 
     public void buttonReleased(VRDevice device, int button) {
@@ -82,31 +120,44 @@ public class OpenVRListener implements VRDeviceListener {
             Logger.info("vr button released [device/code]: " + device.toString() + " / " + button);
         }
 
-        if (button == VRControllerButtons.SteamVR_Trigger) {
-            lazyInit();
-            // Selection
-            StubModel sm = vrDeviceToModel.get(device);
-            if (sm != null) {
-                p0.set(sm.getBeamP0());
-                p1.set(sm.getBeamP1());
-                IFocus hit = getBestHit(p0, p1);
-                if (hit != null) {
-                    EventManager.instance.post(Events.FOCUS_CHANGE_CMD, hit);
-                    EventManager.instance.post(Events.CAMERA_MODE_CMD, CameraMode.Focus);
+        // Removed from pressed
+        pressedButtons.remove(button);
+
+        if (TimeUtils.millis() - lastDoublePress > 250) {
+            // Give some time to recover from double press
+
+            if (button == VRControllerButtons.SteamVR_Touchpad) {
+                lazyInit();
+                // Selection
+                StubModel sm = vrDeviceToModel.get(device);
+                if (sm != null) {
+                    p0.set(sm.getBeamP0());
+                    p1.set(sm.getBeamP1());
+                    IFocus hit = getBestHit(p0, p1);
+                    if (hit != null) {
+                        EventManager.instance.post(Events.FOCUS_CHANGE_CMD, hit);
+                        EventManager.instance.post(Events.CAMERA_MODE_CMD, CameraMode.Focus);
+                    }
+                } else {
+                    Logger.info("Model corresponding to device not found");
                 }
-            } else {
-                Logger.info("Model corresponding to device not found");
+            } else if (button == VRControllerButtons.Grip || button == VRControllerButtons.SteamVR_Trigger) {
+                // Stop
+                cam.clearVelocityVR();
             }
-        } else if (button == VRControllerButtons.Grip || button == VRControllerButtons.SteamVR_Touchpad) {
-            // Stop
-            cam.clearVelocityVR();
-        } else if (button == VRControllerButtons.A) {
-            // Change mode from free to focus and viceversa
-            CameraMode cm = cam.getMode().equals(CameraMode.Focus) ? CameraMode.Free_Camera : CameraMode.Focus;
-            EventManager.instance.post(Events.CAMERA_MODE_CMD, cm);
-        } else if (button == VRControllerButtons.B) {
-            // Toggle VR GUI
-            EventManager.instance.post(Events.DISPLAY_VR_GUI_CMD, "VR GUI");
+
+            if (vrControllerHint && !arePressed(VRControllerButtons.A, VRControllerButtons.B)) {
+                EventManager.instance.post(Events.DISPLAY_VR_CONTROLLER_HINT_CMD, false);
+                vrControllerHint = false;
+                lastDoublePress = TimeUtils.millis();
+            } else if (button == VRControllerButtons.A) {
+                // Change mode from free to focus and viceversa
+                CameraMode cm = cam.getMode().equals(CameraMode.Focus) ? CameraMode.Free_Camera : CameraMode.Focus;
+                EventManager.instance.post(Events.CAMERA_MODE_CMD, cm);
+            } else if (button == VRControllerButtons.B) {
+                // Toggle VR GUI
+                EventManager.instance.post(Events.DISPLAY_VR_GUI_CMD, "VR GUI");
+            }
         }
     }
 
