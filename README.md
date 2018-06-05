@@ -15,7 +15,7 @@ To get the latest up-to-date and most complete information,
 
 *  Visit our [**home page**](https://zah.uni-heidelberg.de/gaia/outreach/gaiasky)
 *  Read the [**Documentation**](http://gaia-sky.readthedocs.io)
-*  Submit a [**bug** or a **feature request**](https://github.com/langurmonkey/gaiasky/issues)
+*  Submit a [**bug** or a **feature request**](https://gitlab.com/langurmonkey/gaiasky/issues)
 *  Follow development news at [@GaiaSky_Dev](https://twitter.com/GaiaSky_Dev)
 
 This file contains the following sections:
@@ -162,10 +162,10 @@ make sure to substitute this in the commands below.
 
 ### 2.2 Running from source
 
-First, clone the [GitHub](https://github.com/langurmonkey/gaiasky) repository:
+First, clone the [GitHub](https://gitlab.com/langurmonkey/gaiasky) repository:
 
 ```
-$  git clone https://github.com/langurmonkey/gaiasky.git
+$  git clone https://gitlab.com/langurmonkey/gaiasky.git
 $  cd gaiasky
 ```
 
@@ -222,7 +222,7 @@ The most up-to-date documentation of Gaia Sky is always in [gaia-sky.readthedocs
 
 This software is published and distributed under the MPL 2.0
 (Mozilla Public License 2.0). You can find the full license
-text here https://github.com/langurmonkey/gaiasky/blob/master/LICENSE.md
+text here https://gitlab.com/langurmonkey/gaiasky/blob/master/LICENSE.md
 or visiting https://opensource.org/licenses/MPL-2.0
 
 ##  5. Contact information
@@ -233,8 +233,8 @@ the latest versions and the latest information on Gaia Sky.
 
 ##  6. Acknowledgements
 
-The latest acknowledgements are always in the [ACKNOWLEDGEMENTS.md](https://github.com/langurmonkey/gaiasky/blob/master/ACKNOWLEDGEMENTS.md) file.
+The latest acknowledgements are always in the [ACKNOWLEDGEMENTS.md](https://gitlab.com/langurmonkey/gaiasky/blob/master/ACKNOWLEDGEMENTS.md) file.
 
 ##  7. Gaia Sky VR
 
-There exists a development version of Gaia Sky which works with the VR headsets supporting OpenVR. More information on this is available in the [README.md file on the vr branch](https://github.com/langurmonkey/gaiasky/blob/vr/README.md).
+There exists a development version of Gaia Sky which works with the VR headsets supporting OpenVR. More information on this is available in the [README.md file on the vr branch](https://gitlab.com/langurmonkey/gaiasky/blob/vr/README.md).
