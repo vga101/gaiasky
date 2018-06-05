@@ -26,6 +26,7 @@ import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 public class LineQuadRenderSystem extends LineRenderSystem {
     private MeshDataExt currext;
     private Array<double[]> provisionalLines;
+    private Array<Line> provLines;
     private LineArraySorter sorter;
     private Pool<double[]> dpool;
 
@@ -41,6 +42,27 @@ public class LineQuadRenderSystem extends LineRenderSystem {
         }
     }
 
+    private class Line {
+        public float r, g, b, a;
+        public double widthAngleTan;
+        public double[][] points;
+        public double[] dists;
+
+        public Line() {
+            super();
+        }
+
+        public Line(double[][] points, double[] dists, float r, float g, float b, float a, double wat) {
+            this.points = points;
+            this.dists = dists;
+            this.r = r;
+            this.g = g;
+            this.b = b;
+            this.a = a;
+            this.widthAngleTan = wat;
+        }
+    }
+
     Vector3d line, camdir0, camdir1, camdir15, point, vec;
     final static double widthAngle = Math.toRadians(0.05);
     final static double widthAngleTan = Math.tan(widthAngle);
@@ -49,6 +71,7 @@ public class LineQuadRenderSystem extends LineRenderSystem {
         super(rg, alphas, shaders);
         dpool = new DPool(INI_DPOOL_SIZE, MAX_DPOOL_SIZE, 14);
         provisionalLines = new Array<double[]>();
+        provLines = new Array<Line>();
         sorter = new LineArraySorter(12);
         glType = GL20.GL_TRIANGLES;
         line = new Vector3d();
@@ -118,6 +141,25 @@ public class LineQuadRenderSystem extends LineRenderSystem {
         addLineInternal(x0, y0, z0, x1, y1, z1, r, g, b, a, widthAngleTan, true);
     }
 
+    public void addLineInternal(double[][] xyz, float r, float g, float b, float a, double widthAngleTan) {
+        Line l = new Line();
+        double[] dists = new double[xyz.length];
+        for (int i = 0; i < xyz.length; i++) {
+            double[] p = xyz[i];
+            dists[i] = Math.sqrt(p[0] * p[0] + p[1] * p[1] + p[2] * p[2]);
+        }
+        double[][] points = xyz;
+        l.points = points;
+        l.dists = dists;
+        l.r = r;
+        l.g = g;
+        l.b = b;
+        l.a = a;
+        l.widthAngleTan = widthAngleTan;
+
+        provLines.add(l);
+    }
+
     public void addLineInternal(double x0, double y0, double z0, double x1, double y1, double z1, float r, float g, float b, float a, double widthAngleTan, boolean rec) {
         double distToSegment = MathUtilsd.distancePointSegment(x0, y0, z0, x1, y1, z1, 0, 0, 0);
 
@@ -130,8 +172,8 @@ public class LineQuadRenderSystem extends LineRenderSystem {
             // Projection falls in line, split line
             p15 = MathUtilsd.getClosestPoint2(x0, y0, z0, x1, y1, z1, 0, 0, 0);
 
-            addLineInternal(x0, y0, z0, p15.x, p15.y, p15.z, r, g, b, a, widthAngleTan, false);
-            addLineInternal(p15.x, p15.y, p15.z, x1, y1, z1, r, g, b, a, widthAngleTan, false);
+            addLineInternal(x0, y0, z0, p15.x, p15.y, p15.z, r, g, b, a, widthAngleTan, true);
+            addLineInternal(p15.x, p15.y, p15.z, x1, y1, z1, r, g, b, a, widthAngleTan, true);
         } else {
             // Add line to list
             // x0 y0 z0 x1 y1 z1 r g b a dist0 dist1 distMean
@@ -154,9 +196,56 @@ public class LineQuadRenderSystem extends LineRenderSystem {
         }
     }
 
+    public void addLinePostproc(Line l) {
+        int npoints = l.points.length;
+        // Check if npoints more indices fit
+        if (currext.numVertices + npoints > shortLimit)
+            initVertices(meshIdx++);
+
+        for (int i = 1; i < npoints; i++) {
+            if (i == 1) {
+                // Line from 0 to 1
+                line.set(l.points[1][0] - l.points[0][0], l.points[1][1] - l.points[0][1], l.points[1][2] - l.points[0][2]);
+            } else if (i == npoints - 1) {
+                // Line from npoints-1 to npoints
+                line.set(l.points[npoints - 1][0] - l.points[npoints - 2][0], l.points[npoints - 1][1] - l.points[npoints - 2][1], l.points[npoints - 1][2] - l.points[npoints - 2][2]);
+            } else {
+                // Line from i-1 to i+1
+                line.set(l.points[i + 1][0] - l.points[i - 1][0], l.points[i + 1][1] - l.points[i - 1][1], l.points[i + 1][2] - l.points[i - 1][2]);
+            }
+            camdir0.set(l.points[i]);
+            camdir0.crs(line);
+            camdir0.setLength(l.widthAngleTan * l.dists[i] * camera.getFovFactor());
+
+            // P1
+            point.set(l.points[i]).add(camdir0);
+            color(l.r, l.g, l.b, l.a);
+            uv(i / (npoints - 1), 0);
+            vertex((float) point.x, (float) point.y, (float) point.z);
+
+            // P2
+            point.set(l.points[i]).sub(camdir0);
+            color(l.r, l.g, l.b, l.a);
+            uv(i / (npoints - 1), 1);
+            vertex((float) point.x, (float) point.y, (float) point.z);
+
+            // Indices
+            if (i > 1) {
+                index((short) (currext.numVertices - 4));
+                index((short) (currext.numVertices - 2));
+                index((short) (currext.numVertices - 3));
+
+                index((short) (currext.numVertices - 2));
+                index((short) (currext.numVertices - 1));
+                index((short) (currext.numVertices - 3));
+            }
+
+        }
+    }
+
     public void addLinePostproc(double x0, double y0, double z0, double x1, double y1, double z1, double r, double g, double b, double a, double dist0, double dist1, double widthTan) {
 
-        // Check if 6 more indices fit
+        // Check if 3 more indices fit
         if (currext.numVertices + 3 >= shortLimit) {
             // We need to open a new MeshDataExt!
             initVertices(meshIdx++);
@@ -264,6 +353,15 @@ public class LineQuadRenderSystem extends LineRenderSystem {
         for (int i = 0; i < n; i++)
             dpool.free(provisionalLines.get(i));
         provisionalLines.clear();
+
+        // Reset mesh index, current and lines
+        meshIdx = 1;
+        currext = (MeshDataExt) meshes[0];
+        curr = currext;
+        n = provLines.size;
+        //for (int i = 0; i < n; i++)
+        //    lpool.free(provLines.get(i));
+        provLines.clear();
     }
 
 }

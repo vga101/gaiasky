@@ -26,7 +26,6 @@ import gaia.cu9.ari.gaiaorbit.util.color.ColourUtils;
 import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
-import net.jafama.FastMath;
 
 /**
  * A point particle which may represent a star, a galaxy, etc.
@@ -316,7 +315,7 @@ public class Particle extends CelestialBody implements IStarFocus, IPointRendera
 
     @Override
     public float textScale() {
-        return (float) FastMath.atan(labelMax()) * labelFactor() * 1e3f;
+        return 5e-1f;
     }
 
     @Override

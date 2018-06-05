@@ -35,7 +35,7 @@ public class AstroUtils {
      * Julian date of the Gaia DR2 reference epoch, J2015.5 = JD2455197.5 =
      * 2015-01-01T00:00:00
      **/
-    static final public double JD_J2015_5 = JD_J2015 + 365.25 / 2;
+    static final public double JD_J2015_5 = JD_J2015 + 365.25 / 2.0;
 
     /** Julian date of TGAS epoch 2010-01-01T00:00:00 **/
     static final public double JD_J2010 = 2455197.5;

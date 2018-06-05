@@ -197,7 +197,7 @@ public class MeshObject extends FadeNode implements IModelRenderable, I3DTextRen
         shader.setUniformf("u_viewAnglePow", 1f);
         shader.setUniformf("u_thOverFactor", 1f);
         shader.setUniformf("u_thOverFactorScl", 1f);
-        render3DLabel(batch, shader, sys.font3d, camera, rc, text(), pos, textScale(), textSize());
+        render3DLabel(batch, shader, sys.font3d, camera, rc, text(), pos, textScale() * camera.getFovFactor(), textSize());
     }
 
     @Override
@@ -212,7 +212,7 @@ public class MeshObject extends FadeNode implements IModelRenderable, I3DTextRen
 
     @Override
     public float textScale() {
-        return 1;
+        return 0.2f;
     }
 
     @Override
