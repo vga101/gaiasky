@@ -162,7 +162,7 @@ make sure to substitute this in the commands below.
 
 ### 2.2 Running from source
 
-First, clone the [GitHub](https://gitlab.com/langurmonkey/gaiasky) repository:
+First, clone the [GitLab](https://gitlab.com/langurmonkey/gaiasky) repository:
 
 ```
 $  git clone https://gitlab.com/langurmonkey/gaiasky.git
