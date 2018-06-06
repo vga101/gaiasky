@@ -37,10 +37,12 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.component.RotationComponent;
 import gaia.cu9.ari.gaiaorbit.util.ComponentTypes;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
+import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.ModelCache;
 import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
 import gaia.cu9.ari.gaiaorbit.util.g3d.MeshPartBuilder2;
 import gaia.cu9.ari.gaiaorbit.util.g3d.ModelBuilder2;
+import gaia.cu9.ari.gaiaorbit.util.gravwaves.RelativisticEffectsManager;
 import gaia.cu9.ari.gaiaorbit.util.math.Intersectord;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Quaterniond;
@@ -57,7 +59,7 @@ public class StarCluster extends AbstractPositionEntity implements IFocus, IProp
     private static Texture clusterTex;
 
     // Label and model colors
-    private static float[] col = new float[] { 0.9f, 0.9f, 0.2f, 1.0f };
+    private static float[] col = new float[] { 0.9f, 0.9f, 0.2f, 0.5f };
 
     private ModelComponent mc;
 
@@ -113,7 +115,7 @@ public class StarCluster extends AbstractPositionEntity implements IFocus, IProp
             clusterTex.setFilter(TextureFilter.MipMapLinearNearest, TextureFilter.Linear);
         }
         if (model == null) {
-            Material mat = new Material(new BlendingAttribute(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA), new ColorAttribute(ColorAttribute.Diffuse, col[0], col[1], col[2], col[3]));
+            Material mat = new Material(new BlendingAttribute(GL20.GL_ONE, GL20.GL_ONE), new ColorAttribute(ColorAttribute.Diffuse, col[0], col[1], col[2], col[3]));
             ModelBuilder2 modelBuilder = ModelCache.cache.mb;
             modelBuilder.begin();
             // create part
@@ -125,6 +127,7 @@ public class StarCluster extends AbstractPositionEntity implements IFocus, IProp
         }
 
         mc = new ModelComponent(false);
+        mc.initialize();
         mc.dlight = new DirectionalLight();
         mc.dlight.set(1, 1, 1, 1, 1, 1);
         mc.env = new Environment();
@@ -132,6 +135,13 @@ public class StarCluster extends AbstractPositionEntity implements IFocus, IProp
         mc.env.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.4f, 0.4f, 0.4f, 1f));
         mc.env.set(new FloatAttribute(FloatAttribute.Shininess, 0.2f));
         mc.instance = new ModelInstance(model, modelTransform);
+
+        // Relativistic effects
+        if (GlobalConf.runtime.RELATIVISTIC_ABERRATION)
+            mc.rec.setUpRelativisticEffectsMaterial(mc.instance.materials);
+        // Gravitational waves
+        if (GlobalConf.runtime.GRAVITATIONAL_WAVES)
+            mc.rec.setUpGravitationalWavesMaterial(mc.instance.materials);
 
     }
 
@@ -182,7 +192,7 @@ public class StarCluster extends AbstractPositionEntity implements IFocus, IProp
     protected void addToRenderLists(ICamera camera) {
         if (this.opacity > 0) {
             if (this.viewAngleApparent > TH_ANGLE) {
-                addToRender(this, RenderGroup.MODEL_DEFAULT);
+                addToRender(this, RenderGroup.MODEL_MESH);
                 addToRender(this, RenderGroup.FONT_LABEL);
             }
 
@@ -211,9 +221,11 @@ public class StarCluster extends AbstractPositionEntity implements IFocus, IProp
     @Override
     public void render(ModelBatch modelBatch, float alpha, double t, RenderingContext rc) {
         mc.touch();
-        mc.setTransparency(alpha * opacity * fadeAlpha);
+        mc.setTransparency(alpha * opacity * fadeAlpha, GL20.GL_ONE, GL20.GL_ONE);
         mc.instance.transform.set(this.localTransform);
+        mc.updateRelativisticEffects(GaiaSky.instance.getICamera());
         modelBatch.render(mc.instance, mc.env);
+
     }
 
     /**
@@ -232,7 +244,7 @@ public class StarCluster extends AbstractPositionEntity implements IFocus, IProp
         Vector3 aux = aux3f1.get();
         shader.setUniformf("u_pos", transform.getTranslationf(aux));
         shader.setUniformf("u_size", size);
-        shader.setUniformf("u_color", col[0] * fa, col[1] * fa, col[2] * fa, col[3] * alpha * opacity * 4f);
+        shader.setUniformf("u_color", col[0] * fa, col[1] * fa, col[2] * fa, col[3] * alpha * opacity * 8f);
         // Sprite.render
         mesh.render(shader, GL20.GL_TRIANGLES, 0, 6);
     }
@@ -249,7 +261,7 @@ public class StarCluster extends AbstractPositionEntity implements IFocus, IProp
         shader.setUniformf("u_thOverFactor", 1f);
         shader.setUniformf("u_thOverFactorScl", 1f);
 
-        render3DLabel(batch, shader, sys.font3d, camera, rc, text(), pos, textScale(), textSize() * camera.getFovFactor());
+        render3DLabel(batch, shader, sys.font3d, camera, rc, text(), pos, textScale() * camera.getFovFactor(), textSize() * camera.getFovFactor());
     }
 
     @Override
@@ -275,7 +287,7 @@ public class StarCluster extends AbstractPositionEntity implements IFocus, IProp
 
     @Override
     public float textScale() {
-        return 1;
+        return 0.2f;
     }
 
     @Override
@@ -294,6 +306,8 @@ public class StarCluster extends AbstractPositionEntity implements IFocus, IProp
         aux.add(cam.getUp()).nor().scl(dist);
 
         out.add(aux);
+        GlobalResources.applyRelativisticAberration(out, cam);
+        RelativisticEffectsManager.getInstance().gravitationalWavePos(out);
     }
 
     @Override
