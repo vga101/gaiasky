@@ -12,18 +12,15 @@ variables:
   GRADLE_OPTS: "-Dorg.gradle.daemon=false"
 
 before_script:
-  - chmod u+x gradlew
+  - export GRADLE_USER_HOME=`pwd`/.gradle
 
 build:
   stage: build
-  script: 
-    - ./gradlew core:gaiaskyJar
-
+  script: gradle core:gaiaskyJar
   cache:
     key: "$CI_COMMIT_REF_NAME"
     policy: push
     paths:
       - build
       - .gradle
-
 
