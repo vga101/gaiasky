@@ -112,7 +112,7 @@
 				},
 	
 	"galaxydata" : {
-				//"starsource" : "data/galaxy/galaxy_BulgeMain.dat",
+				//"starsource" : "data/galaxy/galaxy_Bulge_Main.dat",
 				//"dustsource" : "data/galaxy/galaxy_ArmDust.dat",
 				"starsource" : "data/galaxy/galaxy_40000particles.dat",
 				"nebulasource" : "data/galaxy/galaxy_80particles.dat"
