@@ -192,7 +192,7 @@ public class AtmosphereComponent {
         // Planet position
         if (ground) {
             // Camera position must be corrected using the rotation angle of the planet
-            aux3.mul(Coordinates.getTransformD(planet.inverseRefPlaneTransform)).mul(Coordinates.equatorialToEcliptic()).rotate(rc.ascendingNode, 0, 1, 0).rotate(-rc.inclination - rc.axialTilt, 0, 0, 1).rotate(-rc.angle, 0, 1, 0);
+            aux3.mul(Coordinates.getTransformD(planet.inverseRefPlaneTransform)).rotate(rc.ascendingNode, 0, 1, 0).rotate(-rc.inclination - rc.axialTilt, 0, 0, 1).rotate(-rc.angle, 0, 1, 0);
         }
         ((Vector3Attribute) mat.get(Vector3Attribute.PlanetPos)).value.set(aux3.put(aux));
         // CameraPos = -PlanetPos
