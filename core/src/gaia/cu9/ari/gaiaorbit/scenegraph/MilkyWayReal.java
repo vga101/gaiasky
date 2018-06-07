@@ -211,7 +211,7 @@ public class MilkyWayReal extends AbstractPositionEntity implements I3DTextRende
         shader.setUniformf("u_viewAnglePow", 1f);
         shader.setUniformf("u_thOverFactor", 1f);
         shader.setUniformf("u_thOverFactorScl", 1f);
-        render3DLabel(batch, shader, sys.font3d, camera, rc, text(), pos, textScale(), textSize() * camera.getFovFactor());
+        render3DLabel(batch, shader, sys.font3d, camera, rc, text(), pos, textScale() * camera.getFovFactor(), textSize() * camera.getFovFactor());
     }
 
     public void setTransformName(String transformName) {
@@ -251,7 +251,7 @@ public class MilkyWayReal extends AbstractPositionEntity implements I3DTextRende
 
     @Override
     public float textSize() {
-        return (float) distToCamera * 2e-3f;
+        return (float) distToCamera * 1e-3f;
     }
 
     @Override

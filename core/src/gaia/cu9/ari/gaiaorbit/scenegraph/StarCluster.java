@@ -281,7 +281,7 @@ public class StarCluster extends AbstractPositionEntity implements IFocus, IProp
 
     @Override
     public float textSize() {
-        return (float) distToCamera * .6e-3f;
+        return (float) distToCamera * .5e-3f;
     }
 
     @Override

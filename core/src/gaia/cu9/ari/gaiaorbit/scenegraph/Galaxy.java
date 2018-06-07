@@ -164,7 +164,7 @@ public class Galaxy extends Particle {
 
     @Override
     protected float labelMax() {
-        return 0.00010f;
+        return 0.00004f;
     }
 
 }

@@ -182,7 +182,7 @@ public class Constellation extends LineObject implements I3DTextRenderable {
 
     @Override
     public float textSize() {
-        return .3e7f;
+        return .2e7f;
     }
 
     @Override

@@ -325,7 +325,7 @@ public class Particle extends CelestialBody implements IStarFocus, IPointRendera
 
     @Override
     protected float labelMax() {
-        return 0.015f;
+        return 0.01f;
     }
 
     public float getFuzzyRenderSize(ICamera camera) {
