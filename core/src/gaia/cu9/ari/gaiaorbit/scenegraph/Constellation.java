@@ -39,7 +39,7 @@ public class Constellation extends LineObject implements I3DTextRenderable {
         }
     }
 
-    float alpha = .8f;
+    float alpha = .5f;
     float constalpha;
     boolean allLoaded = false;
 
@@ -52,7 +52,7 @@ public class Constellation extends LineObject implements I3DTextRenderable {
 
     public Constellation() {
         super();
-        cc = new float[] { .9f, 1f, .9f, alpha };
+        cc = new float[] { .5f, 1f, .5f, alpha };
     }
 
     public Constellation(String name, String parentName) {
@@ -159,7 +159,7 @@ public class Constellation extends LineObject implements I3DTextRenderable {
         shader.setUniformf("u_viewAnglePow", 1);
         shader.setUniformf("u_thOverFactor", 1);
         shader.setUniformf("u_thOverFactorScl", 1);
-        render3DLabel(batch, shader, sys.font3d, camera, rc, text(), pos, textScale(), textSize() * camera.getFovFactor());
+        render3DLabel(batch, shader, sys.font3d, camera, rc, text(), pos, textScale() * camera.getFovFactor(), textSize() * camera.getFovFactor());
     }
 
     @Override
@@ -182,12 +182,12 @@ public class Constellation extends LineObject implements I3DTextRenderable {
 
     @Override
     public float textSize() {
-        return .3e7f;
+        return .2e7f;
     }
 
     @Override
     public float textScale() {
-        return .8f;
+        return .3f;
     }
 
     @Override

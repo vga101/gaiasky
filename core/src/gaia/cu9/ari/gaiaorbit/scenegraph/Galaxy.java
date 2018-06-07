@@ -159,7 +159,7 @@ public class Galaxy extends Particle {
 
     @Override
     public float labelSizeConcrete() {
-        return super.labelSizeConcrete() * .5e2f;
+        return super.labelSizeConcrete() * 1e6f;
     }
 
     @Override
@@ -169,7 +169,7 @@ public class Galaxy extends Particle {
 
     @Override
     protected float labelMax() {
-        return 1e1f;
+        return 0.00004f;
     }
 
 }

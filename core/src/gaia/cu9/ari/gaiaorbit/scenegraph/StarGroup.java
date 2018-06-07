@@ -723,7 +723,7 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
     @Override
     public void render(SpriteBatch batch, ShaderProgram shader, FontRenderSystem sys, RenderingContext rc, ICamera camera) {
         float thOverFactor = (float) (GlobalConf.scene.STAR_THRESHOLD_POINT / GlobalConf.scene.LABEL_NUMBER_FACTOR / camera.getFovFactor());
-        float textScale = 1f;
+        float textScale = 2e-1f;
 
         if (camera.getCurrent() instanceof FovCamera) {
             int n = Math.min(pointData.size, N_CLOSEUP_STARS * 5);
@@ -755,8 +755,8 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
                     shader.setUniformf("u_thOverFactorScl", camera.getFovFactor());
                     float textSize = (float) FastMath.tanh(viewAngle) * distToCamera * 1e5f;
                     float alpha = Math.min((float) FastMath.atan(textSize / distToCamera), 1.e-3f);
-                    textSize = (float) FastMath.tan(alpha) * distToCamera * 0.7f;
-                    render3DLabel(batch, shader, sys.font3d, camera, rc, star.name, lpos, textScale, textSize * camera.getFovFactor());
+                    textSize = (float) FastMath.tan(alpha) * distToCamera * 0.5f;
+                    render3DLabel(batch, shader, sys.font3d, camera, rc, star.name, lpos, textScale * camera.getFovFactor(), textSize * camera.getFovFactor());
 
                 }
             }
@@ -1007,7 +1007,7 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
     protected Vector3d fetchPosition(ParticleBean pb, Vector3d campos, Vector3d dest, double deltaYears) {
         StarBean sb = (StarBean) pb;
         Vector3d pm = aux.set(sb.pmx(), sb.pmy(), sb.pmz()).scl(deltaYears);
-        if (campos != null)
+        if (campos != null && !campos.hasNaN())
             return dest.set(pb.data[0], pb.data[1], pb.data[2]).sub(campos).add(pm);
         else
             return dest.set(pb.data[0], pb.data[1], pb.data[2]).add(pm);

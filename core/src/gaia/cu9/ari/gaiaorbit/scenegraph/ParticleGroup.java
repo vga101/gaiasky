@@ -248,7 +248,7 @@ public class ParticleGroup extends FadeNode implements I3DTextRenderable, IFocus
         shader.setUniformf("u_viewAnglePow", 1f);
         shader.setUniformf("u_thOverFactor", 1f);
         shader.setUniformf("u_thOverFactorScl", 1f);
-        render3DLabel(batch, shader, sys.font3d, camera, rc, text(), pos, textScale(), textSize() * camera.getFovFactor());
+        render3DLabel(batch, shader, sys.font3d, camera, rc, text(), pos, textScale() * camera.getFovFactor(), textSize() * camera.getFovFactor());
     }
 
     /**
@@ -283,12 +283,12 @@ public class ParticleGroup extends FadeNode implements I3DTextRenderable, IFocus
 
     @Override
     public float textSize() {
-        return (float) distToCamera * 2e-3f;
+        return (float) distToCamera * 1e-3f;
     }
 
     @Override
     public float textScale() {
-        return 1f;
+        return 0.5f;
     }
 
     @Override

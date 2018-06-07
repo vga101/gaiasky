@@ -25,18 +25,20 @@ import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
 /**
  * Writes and reads the metadata to/from binary. The format is as follows:
  * 
- * - 32 bits (int) with the number of nodes, nNodes repeat the following nNodes
- * times (for each node) - 64 bits (long) - pageId - The page id - 64 bits
- * (double) - centreX - The x component of the centre - 64 bits (double) -
- * centreY - The y component of the centre - 64 bits (double) - centreZ - The z
- * component of the centre - 64 bits (double) - sx - The size in x - 64 bits
- * (double) - sy - The size in y - 64 bits (double) - sz - The size in z - 64
- * bits * 8 (long) - childrenIds - 8 longs with the ids of the children. If no
- * child in the given position, the id is negative. - 32 bits (int) - depth -
- * The depth of the node - 32 bits (int) - nObjects - The number of objects of
- * this node and its descendants - 32 bits (int) - ownObjects - The number of
- * objects of this node - 32 bits (int) - childCount - The number of children
- * nodes
+ * - 32 bits (int) with the number of nodes, nNodes repeat the following nNodes times (for each node)
+ * - 64 bits (long)
+ * - pageId - The page id
+ * - 64 bits (double) - centreX - The x component of the centre
+ * - 64 bits (double) - centreY - The y component of the centre
+ * - 64 bits (double) - centreZ - The z component of the centre
+ * - 64 bits (double) - sx - The size in x
+ * - 64 bits (double) - sy - The size in y
+ * - 64 bits (double) - sz - The size in z
+ * - 64 bits * 8 (long) - childrenIds - 8 longs with the ids of the children. If no child in the given position, the id is negative.
+ * - 32 bits (int) - depth - The depth of the node
+ * - 32 bits (int) - nObjects - The number of objects of this node and its descendants
+ * - 32 bits (int) - ownObjects - The number of objects of this node
+ * - 32 bits (int) - childCount - The number of children nodes
  * 
  * @author Toni Sagrista
  *
