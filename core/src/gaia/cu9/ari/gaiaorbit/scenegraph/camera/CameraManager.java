@@ -137,7 +137,7 @@ public class CameraManager implements ICamera, IObserver {
     private ICamera[] cameras;
 
     /** Last position, for working out velocity **/
-    private Vector3d lastPos, lastDir, out, in;
+    private Vector3d lastPos, out, in;
     private Vector3 vec, v0, v1, isec;
     private Matrix4 localTransformInv;
 
@@ -158,7 +158,6 @@ public class CameraManager implements ICamera, IObserver {
 
         this.mode = mode;
         lastPos = new Vector3d();
-        lastDir = new Vector3d();
         in = new Vector3d();
         out = new Vector3d();
         vec = new Vector3();
@@ -271,11 +270,8 @@ public class CameraManager implements ICamera, IObserver {
         velocitynor.set(velocity).nor();
         speed = (velocity.len() * Constants.U_TO_KM) / (dt * Constants.S_TO_H);
 
-        // Pan speed (direction) in deg/sec
-        double panSpeed = lastDir.angle(current.getDirection()) / dt;
-
         // High speed?
-        if (speed > 5e6 || panSpeed > 40) {
+        if (speed > 5e6) {
             //System.out.println(panSpeed + " deg/s, " + speed + " km/h");
             StreamingOctreeLoader.clearQueue();
         }
@@ -285,7 +281,6 @@ public class CameraManager implements ICamera, IObserver {
 
         // Update last pos and dir
         lastPos.set(current.getPos());
-        lastDir.set(current.getDirection());
 
         int screenX = Gdx.input.getX();
         int screenY = Gdx.input.getY();

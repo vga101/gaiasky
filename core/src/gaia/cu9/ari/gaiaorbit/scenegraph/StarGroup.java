@@ -39,6 +39,7 @@ import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.data.group.IStarGroupDataProvider;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
+import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.render.ILineRenderable;
 import gaia.cu9.ari.gaiaorbit.render.IModelRenderable;
 import gaia.cu9.ari.gaiaorbit.render.IQuadRenderable;
@@ -69,7 +70,7 @@ import net.jafama.FastMath;
  * @author tsagrista
  *
  */
-public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFocus, IQuadRenderable, IModelRenderable {
+public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFocus, IQuadRenderable, IModelRenderable, IObserver {
 
     /**
      * Contains info on one star
@@ -261,7 +262,6 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
             t.setDaemon(true);
             return t;
         }
-
     }
 
     /**

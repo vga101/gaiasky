@@ -21,7 +21,7 @@ import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 import net.jafama.FastMath;
 
 public class Loc extends AbstractPositionEntity implements I3DTextRenderable {
-    private static final float LOWER_LIMIT = 3e-7f;
+    private static final float LOWER_LIMIT = 3e-6f;
     private static final float UPPER_LIMIT = 3e-3f;
 
     /** The display name **/
@@ -56,6 +56,7 @@ public class Loc extends AbstractPositionEntity implements I3DTextRenderable {
 
     @Override
     public void updateLocal(ITimeFrameProvider time, ICamera camera) {
+
         if (((ModelBody) parent).viewAngle > ((ModelBody) parent).THRESHOLD_QUAD() * 30f) {
             updateLocalValues(time, camera);
 
@@ -77,7 +78,7 @@ public class Loc extends AbstractPositionEntity implements I3DTextRenderable {
         ModelBody papa = (ModelBody) parent;
         papa.setToLocalTransform(distFactor, localTransform, false);
 
-        location3d.set(0, 0, -0.51f);
+        location3d.set(0, 0, -.5f);
         // Latitude [-90..90]
         location3d.rotate(location.y, 1, 0, 0);
         // Longitude [0..360]
@@ -112,13 +113,14 @@ public class Loc extends AbstractPositionEntity implements I3DTextRenderable {
      */
     @Override
     public void render(SpriteBatch batch, ShaderProgram shader, FontRenderSystem sys, RenderingContext rc, ICamera camera) {
+
         Vector3d pos = aux3d1.get();
         textPosition(camera, pos);
         shader.setUniformf("u_viewAngle", (float) (viewAngleApparent * ((ModelBody) parent).locVaMultiplier * Constants.U_TO_KM));
         shader.setUniformf("u_viewAnglePow", 1f);
-        shader.setUniformf("u_thOverFactor", ((ModelBody) parent).locThOverFactor * 1e-3f);
+        shader.setUniformf("u_thOverFactor", ((ModelBody) parent).locThOverFactor);
         shader.setUniformf("u_thOverFactorScl", 1f);
-        render3DLabel(batch, shader, sys.font3d, camera, rc, text(), pos, textScale(), textSize());
+        render3DLabel(batch, shader, sys.font3d, camera, rc, text(), pos, textScale() * camera.getFovFactor(), textSize() * camera.getFovFactor());
     }
 
     @Override
@@ -150,7 +152,7 @@ public class Loc extends AbstractPositionEntity implements I3DTextRenderable {
 
     @Override
     public void textDepthBuffer() {
-        Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
+        Gdx.gl.glDisable(GL20.GL_DEPTH_TEST);
         Gdx.gl.glDepthMask(true);
     }
 
@@ -179,7 +181,7 @@ public class Loc extends AbstractPositionEntity implements I3DTextRenderable {
     @Override
     public void setName(String name) {
         this.name = name;
-        this.displayName = " " + name;
+        this.displayName = '\u02D9' + " " + name;
     }
 
 }

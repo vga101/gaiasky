@@ -279,9 +279,6 @@ void main() {
     float spec = min(1.0, pow(NH, 40.0) * specOpacity);
     float selfShadow = saturate(4.0 * NL);
 
-    // Edge gets larger as the angle between view and normal vectors gets larger. Self shadow mutes it.
-    float edge = pow(1.0 - dot(V, N), 4.0) * 0.45 * min(1.0, selfShadow + 0.17);
-
     #ifdef environmentCubemapFlag
 		vec3 environment = textureCube(u_environmentCubemap, reflectDir).rgb;
 		specular *= environment;
@@ -308,7 +305,7 @@ void main() {
     gl_FragColor.rgb += (vec3(1.0) - exp(v_atmosphereColor.rgb * -exposure)) * v_atmosphereColor.a;
     
     // Prevent saturation
-    gl_FragColor = clamp(gl_FragColor + edge, 0.0, 1.0);
+    gl_FragColor = clamp(gl_FragColor, 0.0, 1.0);
     gl_FragColor.rgb *= 0.95;
     
 
