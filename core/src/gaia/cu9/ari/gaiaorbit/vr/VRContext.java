@@ -502,6 +502,20 @@ public class VRContext implements Disposable {
             int button = 0;
 
             switch (event.eventType()) {
+            case VR.EVREventType_VREvent_DualAnalog_Move:
+            case VR.EVREventType_VREvent_DualAnalog_Press:
+            case VR.EVREventType_VREvent_DualAnalog_Touch:
+            case VR.EVREventType_VREvent_DualAnalog_Unpress:
+            case VR.EVREventType_VREvent_DualAnalog_Untouch:
+            case VR.EVREventType_VREvent_DualAnalog_Cancel:
+            case VR.EVREventType_VREvent_DualAnalog_ModeSwitch1:
+            case VR.EVREventType_VREvent_DualAnalog_ModeSwitch2:
+                if (GlobalConf.controls.DEBUG_MODE) {
+                    Logger.info("Dual analog event: move/press/touch/unpress/untouch");
+                }
+                for (VRDeviceListener l : listeners)
+                    l.event(event.eventType());
+                break;
             case VR.EVREventType_VREvent_TrackedDeviceActivated:
                 createDevice(index);
                 for (VRDeviceListener l : listeners) {
@@ -553,24 +567,20 @@ public class VRContext implements Disposable {
                     l.buttonUntouched(devices[index], button);
                 }
                 break;
-            case VR.EVREventType_VREvent_DualAnalog_Move:
-            case VR.EVREventType_VREvent_DualAnalog_Press:
-            case VR.EVREventType_VREvent_DualAnalog_Touch:
-            case VR.EVREventType_VREvent_DualAnalog_Unpress:
-            case VR.EVREventType_VREvent_DualAnalog_Untouch:
-            case VR.EVREventType_VREvent_DualAnalog_Cancel:
-            case VR.EVREventType_VREvent_DualAnalog_ModeSwitch1:
-            case VR.EVREventType_VREvent_DualAnalog_ModeSwitch2:
-                if (GlobalConf.controls.DEBUG_MODE) {
-                    Logger.info("Dual analog event: move/press/touch/unpress/untouch");
-                }
-                for (VRDeviceListener l : listeners)
-                    l.event(event.eventType());
-                break;
             default:
                 for (VRDeviceListener l : listeners)
                     l.event(event.eventType());
                 break;
+            }
+        }
+
+        // Axes
+        for (VRDevice device : devices) {
+            for (int axis = 0; axis <= 4; axis++) {
+                if (device != null && device.getType().equals(VRDeviceType.Controller) && device.pollAxis(axis)) {
+                    for (VRDeviceListener l : listeners)
+                        l.axisMoved(device, axis, device.axes[axis][0], device.axes[axis][1]);
+                }
             }
         }
     }
@@ -752,6 +762,10 @@ public class VRContext implements Disposable {
         private final Vector3 yAxisWorld = new Vector3();
         private final Vector3 zAxisWorld = new Vector3();
 
+        // axes state, only for controllers
+        // [axis][x,y]
+        float[][] axes;
+
         private final Matrix4 matTmp = new Matrix4();
 
         VRDevice(VRDevicePose pose, VRDeviceType type, VRControllerRole role) {
@@ -762,6 +776,8 @@ public class VRContext implements Disposable {
             this.modelInstance = model != null ? new ModelInstance(model) : null;
             if (model != null)
                 this.modelInstance.transform.set(pose.transform);
+            if (type.equals(VRDeviceType.Controller))
+                axes = new float[5][2];
         }
 
         /**
@@ -977,6 +993,24 @@ public class VRContext implements Disposable {
         @Override
         public String toString() {
             return "VRDevice[manufacturer=" + getStringProperty(VRDeviceProperty.ManufacturerName_String) + ", renderModel=" + getStringProperty(VRDeviceProperty.RenderModelName_String) + ", index=" + pose.index + ", type=" + type + ", role=" + role + "]";
+        }
+
+        /**
+         * Updates the axis values and returns whether the values changed.
+         * @param axis The axis
+         * @return Whether the values of this axis changed
+         */
+        public boolean pollAxis(int axis) {
+            if (axes != null) {
+                float currx = this.axes[axis][0];
+                float curry = this.axes[axis][1];
+
+                this.axes[axis][0] = getAxisX(axis);
+                this.axes[axis][1] = getAxisY(axis);
+
+                return currx != this.axes[axis][0] || curry != this.axes[axis][1];
+            }
+            return false;
         }
     }
 

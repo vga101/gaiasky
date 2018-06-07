@@ -1,5 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.vr;
 
+import gaia.cu9.ari.gaiaorbit.vr.VRContext.VRControllerAxes;
 import gaia.cu9.ari.gaiaorbit.vr.VRContext.VRControllerButtons;
 import gaia.cu9.ari.gaiaorbit.vr.VRContext.VRDevice;
 
@@ -31,6 +32,11 @@ public interface VRDeviceListener {
      * A button from {@link VRControllerButtons} was untouched on the {@link VRDevice}
      */
     void buttonUntouched(VRDevice device, int button);
+
+    /**
+     * An axis from {@link VRControllerAxes} was moved on the {@link VRDevice}
+     */
+    void axisMoved(VRDevice device, int axis, float valueX, float valueY);
 
     /**
      * Unhandled event on the {@link VRDevice}
