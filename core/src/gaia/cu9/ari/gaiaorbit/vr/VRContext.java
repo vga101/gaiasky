@@ -558,15 +558,18 @@ public class VRContext implements Disposable {
             case VR.EVREventType_VREvent_DualAnalog_Touch:
             case VR.EVREventType_VREvent_DualAnalog_Unpress:
             case VR.EVREventType_VREvent_DualAnalog_Untouch:
+            case VR.EVREventType_VREvent_DualAnalog_Cancel:
+            case VR.EVREventType_VREvent_DualAnalog_ModeSwitch1:
+            case VR.EVREventType_VREvent_DualAnalog_ModeSwitch2:
                 if (GlobalConf.controls.DEBUG_MODE) {
                     Logger.info("Dual analog event: move/press/touch/unpress/untouch");
                 }
-                break;
-
-            default:
-                for (VRDeviceListener l : listeners) {
+                for (VRDeviceListener l : listeners)
                     l.event(event.eventType());
-                }
+                break;
+            default:
+                for (VRDeviceListener l : listeners)
+                    l.event(event.eventType());
                 break;
             }
         }
