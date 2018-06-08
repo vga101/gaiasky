@@ -92,6 +92,14 @@ Remember that the master branch is the development branch and therefore intrinsi
 
 The most up-to-date documentation of Gaia Sky is always in [gaia-sky.readthedocs.io](http://gaia-sky.readthedocs.io).
 
+###  2.1 Controls
+
+Unfortunately, only the Oculus VR controllers are supported. When I get a chance to borrow an HTC Vive, I'll add mappings for it too.
+
+Here are the current controller mappings:
+
+![Gaia Sky VR controls](assets/img/controller/controller-info.png)
+
 ##  3. Copyright and licensing information
 
 This software is published and distributed under the MPL 2.0
