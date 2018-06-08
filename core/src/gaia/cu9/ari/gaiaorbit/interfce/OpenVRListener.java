@@ -20,6 +20,7 @@ import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.comp.ViewAngleComparator;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
+import gaia.cu9.ari.gaiaorbit.vr.VRContext.VRControllerAxes;
 import gaia.cu9.ari.gaiaorbit.vr.VRContext.VRControllerButtons;
 import gaia.cu9.ari.gaiaorbit.vr.VRContext.VRDevice;
 import gaia.cu9.ari.gaiaorbit.vr.VRDeviceListener;
@@ -87,32 +88,9 @@ public class OpenVRListener implements VRDeviceListener {
         if (GlobalConf.controls.DEBUG_MODE) {
             Logger.info("vr button down [device/code]: " + device.toString() + " / " + button);
         }
+        lazyInit();
         // Add to pressed
         pressedButtons.add(button);
-
-        if (isPressed(VRControllerButtons.SteamVR_Trigger)) {
-            // Forward
-            lazyInit();
-            StubModel sm = vrDeviceToModel.get(device);
-            if (sm != null) {
-                // Direct direction
-                cam.setVelocityVR(sm.getBeamP0(), sm.getBeamP1(), 1);
-            }
-        } else if (isPressed(VRControllerButtons.Grip)) {
-            // Backward
-            lazyInit();
-            StubModel sm = vrDeviceToModel.get(device);
-            if (sm != null) {
-                // Invert direction
-                cam.setVelocityVR(sm.getBeamP0(), sm.getBeamP1(), -1);
-            }
-        }
-
-        // VR controller hint
-        if (arePressed(VRControllerButtons.A, VRControllerButtons.B)) {
-            EventManager.instance.post(Events.DISPLAY_VR_CONTROLLER_HINT_CMD, true);
-            vrControllerHint = true;
-        }
     }
 
     public void buttonReleased(VRDevice device, int button) {
@@ -125,9 +103,8 @@ public class OpenVRListener implements VRDeviceListener {
 
         if (TimeUtils.millis() - lastDoublePress > 250) {
             // Give some time to recover from double press
-
+            lazyInit();
             if (button == VRControllerButtons.SteamVR_Touchpad) {
-                lazyInit();
                 // Selection
                 StubModel sm = vrDeviceToModel.get(device);
                 if (sm != null) {
@@ -206,5 +183,33 @@ public class OpenVRListener implements VRDeviceListener {
         if (GlobalConf.controls.DEBUG_MODE) {
             Logger.info("vr button untouched [device/code]: " + device.toString() + " / " + button);
         }
+    }
+
+    @Override
+    public void axisMoved(VRDevice device, int axis, float valueX, float valueY) {
+        if (GlobalConf.controls.DEBUG_MODE) {
+            Logger.info("axis moved: [device/axis/x/y]: " + device.toString() + " / " + axis + " / " + valueX + " / " + valueY);
+        }
+        lazyInit();
+
+        switch (axis) {
+        case VRControllerAxes.Axis1:
+            // Forward
+            StubModel sm = vrDeviceToModel.get(device);
+            if (sm != null) {
+                // Direct direction
+                cam.setVelocityVR(sm.getBeamP0(), sm.getBeamP1(), valueX);
+            }
+            break;
+        case VRControllerAxes.Axis2:
+            // Backward
+            sm = vrDeviceToModel.get(device);
+            if (sm != null) {
+                // Invert direction
+                cam.setVelocityVR(sm.getBeamP0(), sm.getBeamP1(), -valueX);
+            }
+            break;
+        }
+
     }
 }
