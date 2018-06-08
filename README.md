@@ -98,8 +98,7 @@ Unfortunately, only the Oculus VR controllers are supported. When I get a chance
 
 Here are the current controller mappings:
 
-![Gaia Sky VR controls](assets/img/controller/controller-info.png)
-<img src="assets/img/controller/controller-info.png" alt="Gaia Sky VR controls" width="400px" />
+<img src="assets/img/controller/controller-info.png" alt="Gaia Sky VR controls" width="500px" />
 
 ##  3. Copyright and licensing information
 
