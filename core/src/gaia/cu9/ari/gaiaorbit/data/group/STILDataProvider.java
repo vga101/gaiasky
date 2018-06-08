@@ -131,7 +131,8 @@ public class STILDataProvider extends AbstractStarGroupDataProvider {
                         Pair<UCD, Double> b = getDoubleUcd(ucdp.POS2, row);
                         Pair<UCD, Double> c;
                         String unitc;
-                        if (ucdp.POS3.isEmpty()) {
+
+                        if (ucdp.POS3.isEmpty() || getDoubleUcd(ucdp.POS3, row) == null) {
                             c = new Pair<UCD, Double>(null, 0.04);
                             unitc = "mas";
                         } else {
@@ -210,6 +211,7 @@ public class STILDataProvider extends AbstractStarGroupDataProvider {
 
                         list.add(new StarBean(point, id, name));
                     } catch (Exception e) {
+                        Logger.error(e);
                         Logger.error("Exception parsing row " + i + ": skipping");
                     }
 
