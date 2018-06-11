@@ -6,6 +6,8 @@
 
 **Implemented enhancements:**
 
+- Improve DR2 catalogs [\#283](https://github.com/langurmonkey/gaiasky/issues/283)
+- Add support for new galaxy meshes [\#282](https://github.com/langurmonkey/gaiasky/issues/282)
 - Fix Gaia Sky logo resolution [\#279](https://github.com/langurmonkey/gaiasky/issues/279)
 - Add utility to see logs [\#278](https://github.com/langurmonkey/gaiasky/issues/278)
 - Improve grid rendering [\#277](https://github.com/langurmonkey/gaiasky/issues/277)
