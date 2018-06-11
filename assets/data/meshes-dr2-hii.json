@@ -2,7 +2,7 @@
 	{
 	"name" : "HII regions",
 	"description" : "HII regions, clouds of partially ionized gas",
-	"color" : [0.95, 0.1, 0.1, 0.2],
+	"color" : [0.95, 0.2, 0.2, 0.5],
 	// Parsec to units
 	"size" :  3.0856775814913705E7,
 	"labelcolor" : [0.95, 0.1, 0.1, 1.0],

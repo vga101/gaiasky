@@ -209,9 +209,11 @@ task dist (dependsOn: gaiaskyJar, description: "Compiles the project, creates th
 			exclude "**/catalog-tgas-hyg.json"
 			exclude "**/catalog-lmc-lod.json"
 		
-			exclude "**/meshes/dr2"
+			exclude "**/meshes/dr2/meshes-hot/non_ionizing_25_50_peaks.g3db"
+			exclude "**/meshes/dr2/meshes-hot/non_ionizing_25_50_ranges.g3db"
+			exclude "**/meshes/tgas"
 			
-			exclude "meshes-dr2.json"
+			exclude "meshes-tgas.json"
 			exclude "orbits_asteroids_extra.json"
 			exclude "orbits_asteroids_extra_sample.json"
 			
