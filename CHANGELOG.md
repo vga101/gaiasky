@@ -1,8 +1,7 @@
 # Change Log
 
-## [Unreleased](https://github.com/langurmonkey/gaiasky/tree/HEAD)
-
-[Full Changelog](https://github.com/langurmonkey/gaiasky/compare/2.0.0-vr...HEAD)
+## [2.0.1](https://github.com/langurmonkey/gaiasky/tree/2.0.1) (2018-06-12)
+[Full Changelog](https://github.com/langurmonkey/gaiasky/compare/2.0.0-vr...2.0.1)
 
 **Implemented enhancements:**
 
