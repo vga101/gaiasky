@@ -153,7 +153,7 @@ public class AtmosphereComponent {
         transform.getTranslation(aux3);
         // Distance to planet
         float camHeight = (float) (aux3.len());
-        float m_ESun = 15f;
+        float m_ESun = 10f;
         float camHeightGr = camHeight - m_fInnerRadius;
         float atmFactor = (m_fAtmosphereHeight - camHeightGr) / m_fAtmosphereHeight;
 
