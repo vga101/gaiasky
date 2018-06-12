@@ -1,7 +1,7 @@
 {"objects" : [
 	{
 	"name" : "Dust 15%",
-	"description" : "Dust isosurfaces for the 15% density level",
+	"description" : "Dust isosurface for the 15% density level",
 	"color" : [0.0, 0.7, 0.5, 0.15],
 	// Parsec to units
 	"size" :  3.0856775814913705E7,
@@ -30,7 +30,7 @@
 	},
 	{
 	"name" : "Dust 60%",
-	"description" : "Dust isosurfaces for the 60% density level",
+	"description" : "Dust isosurface for the 60% density level",
 	"color" : [0.0, 0.8, 0.0, 0.2],
 	// Parsec to units
 	"size" :  3.0856775814913705E7,
