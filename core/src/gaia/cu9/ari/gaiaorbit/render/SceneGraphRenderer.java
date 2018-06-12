@@ -425,7 +425,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         alphas = new float[comps.length];
         for (int i = 0; i < comps.length; i++) {
             times[i] = -20000l;
-            alphas[i] = 1f;
+            alphas[i] = 0f;
         }
 
         /**

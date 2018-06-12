@@ -48,7 +48,7 @@ public class MeshObject extends FadeNode implements IModelRenderable, I3DTextRen
 
     public void initialize() {
         if (mc != null) {
-            mc.initialize();
+            mc.initialize(true);
         }
     }
 
@@ -57,7 +57,7 @@ public class MeshObject extends FadeNode implements IModelRenderable, I3DTextRen
         super.doneLoading(manager);
         if (mc != null) {
             try {
-                mc.doneLoading(manager, localTransform, cc);
+                mc.doneLoading(manager, localTransform, cc, true);
             } catch (Exception e) {
                 mc = null;
             }
@@ -126,7 +126,7 @@ public class MeshObject extends FadeNode implements IModelRenderable, I3DTextRen
 
     @Override
     protected void addToRenderLists(ICamera camera) {
-        if (GaiaSky.instance.isOn(ct) && opacity > 0) {
+        if (GaiaSky.instance.isInitialised() && GaiaSky.instance.isOn(ct) & opacity > 0) {
             addToRender(this, RenderGroup.MODEL_MESH);
             addToRender(this, RenderGroup.FONT_LABEL);
         }
@@ -139,11 +139,13 @@ public class MeshObject extends FadeNode implements IModelRenderable, I3DTextRen
     @Override
     public void render(ModelBatch modelBatch, float alpha, double t) {
         if (mc != null) {
-            mc.touch();
-            mc.setTransparency(alpha * opacity, GL20.GL_ONE, GL20.GL_ONE);
-            mc.updateRelativisticEffects(GaiaSky.instance.getICamera());
-            modelBatch.getRenderContext().setBlending(true, GL30.GL_ONE, GL30.GL_ONE);
-            modelBatch.render(mc.instance, mc.env);
+            mc.touch(localTransform);
+            if (mc.instance != null) {
+                mc.setTransparency(alpha * opacity, GL20.GL_ONE, GL20.GL_ONE);
+                mc.updateRelativisticEffects(GaiaSky.instance.getICamera());
+                modelBatch.getRenderContext().setBlending(true, GL30.GL_ONE, GL30.GL_ONE);
+                modelBatch.render(mc.instance, mc.env);
+            }
         }
     }
 

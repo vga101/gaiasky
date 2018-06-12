@@ -915,4 +915,8 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
 
     }
 
+    public boolean isInitialised() {
+        return initialized;
+    }
+
 }

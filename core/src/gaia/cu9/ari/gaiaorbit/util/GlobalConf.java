@@ -777,6 +777,9 @@ public class GlobalConf {
         /** Lazy texture initialisation - textures are loaded only if needed **/
         public boolean LAZY_TEXTURE_INIT;
 
+        /** Initializes meshes lazily **/
+        public boolean LAZY_MESH_INIT = true;
+
         /** Whether to show crosshair in focus mode **/
         public boolean CROSSHAIR;
 

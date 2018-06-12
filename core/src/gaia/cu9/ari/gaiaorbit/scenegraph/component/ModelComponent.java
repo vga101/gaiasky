@@ -71,7 +71,8 @@ public class ModelComponent implements Disposable, IObserver {
 
     public double scale = 1d;
     public boolean culling = true;
-    private boolean initialised, loading;
+    private boolean texInitialised, texLoading;
+    private boolean modelInitialised, modelLoading;
     private boolean useColor = true;
 
     private AssetManager manager;
@@ -101,8 +102,18 @@ public class ModelComponent implements Disposable, IObserver {
     }
 
     public void initialize() {
-        if (modelFile != null && Gdx.files.internal(modelFile).exists()) {
-            AssetBean.addAsset(modelFile, Model.class);
+        this.initialize(false);
+    }
+
+    public void initialize(boolean mesh) {
+        if (mesh) {
+            if (!GlobalConf.scene.LAZY_MESH_INIT && modelFile != null && Gdx.files.internal(modelFile).exists()) {
+                AssetBean.addAsset(modelFile, Model.class);
+            }
+        } else {
+            if (modelFile != null && Gdx.files.internal(modelFile).exists()) {
+                AssetBean.addAsset(modelFile, Model.class);
+            }
         }
 
         if ((forceinit || !GlobalConf.scene.LAZY_TEXTURE_INIT) && tc != null) {
@@ -113,6 +124,10 @@ public class ModelComponent implements Disposable, IObserver {
     }
 
     public void doneLoading(AssetManager manager, Matrix4 localTransform, float[] cc) {
+        doneLoading(manager, localTransform, cc, false);
+    }
+
+    public void doneLoading(AssetManager manager, Matrix4 localTransform, float[] cc, boolean mesh) {
         this.manager = manager;
         this.cc = cc;
 
@@ -127,6 +142,40 @@ public class ModelComponent implements Disposable, IObserver {
             env.set(alight);
         }
 
+        if (!mesh || (mesh && !GlobalConf.scene.LAZY_MESH_INIT)) {
+            Pair<Model, Map<String, Material>> modmat = initModelFile();
+            model = modmat.getFirst();
+            materials = modmat.getSecond();
+        }
+
+        // INITIALIZE MATERIAL
+        if ((forceinit || !GlobalConf.scene.LAZY_TEXTURE_INIT) && tc != null) {
+            tc.initMaterial(manager, materials, cc, culling);
+        }
+
+        // CREATE MAIN MODEL INSTANCE
+        if (!mesh || (mesh && !GlobalConf.scene.LAZY_MESH_INIT)) {
+            instance = new ModelInstance(model, localTransform);
+        }
+
+        // COLOR IF NO TEXTURE
+        if (tc == null && instance != null) {
+            addColorToMat();
+        }
+        // Subscribe to new graphics quality setting event
+        EventManager.instance.subscribe(this, Events.GRAPHICS_QUALITY_UPDATED);
+        // Initialised
+        texInitialised = !GlobalConf.scene.LAZY_TEXTURE_INIT;
+        // Loading
+        texLoading = false;
+
+        modelInitialised = !GlobalConf.scene.LAZY_MESH_INIT;
+        modelLoading = false;
+    }
+
+    private Pair<Model, Map<String, Material>> initModelFile() {
+        Model model = null;
+        Map<String, Material> materials = null;
         if (modelFile != null && manager.isLoaded(modelFile)) {
             // Model comes from file (probably .obj or .g3db)
             model = manager.get(modelFile, Model.class);
@@ -157,55 +206,66 @@ public class ModelComponent implements Disposable, IObserver {
         if (materials.containsKey("base"))
             materials.get("base").clear();
 
-        // INITIALIZE MATERIAL
-        if ((forceinit || !GlobalConf.scene.LAZY_TEXTURE_INIT) && tc != null) {
-            tc.initMaterial(manager, materials, cc, culling);
-        }
+        return new Pair<Model, Map<String, Material>>(model, materials);
+    }
 
-        // CREATE MAIN MODEL INSTANCE
-        instance = new ModelInstance(model, localTransform);
-
-        // COLOR IF NO TEXTURE
-        if (tc == null) {
-            addColorToMat();
-        }
-        // Subscribe to new graphics quality setting event
-        EventManager.instance.subscribe(this, Events.GRAPHICS_QUALITY_UPDATED);
-        // Initialised
-        initialised = !GlobalConf.scene.LAZY_TEXTURE_INIT;
-        // Loading
-        loading = false;
+    public void touch() {
+        touch(null);
     }
 
     /**
      * Initialises the texture if it is not initialised yet
      */
-    public void touch() {
-        if (GlobalConf.scene.LAZY_TEXTURE_INIT && !initialised) {
+    public void touch(Matrix4 localTransform) {
+        if (GlobalConf.scene.LAZY_TEXTURE_INIT && !texInitialised) {
 
             if (tc != null) {
-                if (!loading) {
+                if (!texLoading) {
                     Logger.info(I18n.bundle.format("notif.loading", tc.base));
                     tc.initialize(manager);
                     // Set to loading
-                    loading = true;
+                    texLoading = true;
                 } else if (tc.isFinishedLoading(manager)) {
                     Gdx.app.postRunnable(() -> {
                         tc.initMaterial(manager, instance, cc, culling);
                     });
 
                     // Set to initialised
-                    initialised = true;
-                    loading = false;
+                    texInitialised = true;
+                    texLoading = false;
                 }
-            } else {
+            } else if (localTransform == null) {
                 // Use color if necessary
                 addColorToMat();
                 // Set to initialised
-                initialised = true;
-                loading = false;
+                texInitialised = true;
+                texLoading = false;
             }
 
+        }
+
+        if (localTransform != null && GlobalConf.scene.LAZY_MESH_INIT && !modelInitialised) {
+            if (!modelLoading) {
+                Logger.info(I18n.bundle.format("notif.loading", modelFile));
+                AssetBean.addAsset(modelFile, Model.class);
+                modelLoading = true;
+            } else if (manager.isLoaded(modelFile)) {
+                Model model = null;
+                Map<String, Material> materials = null;
+                Pair<Model, Map<String, Material>> modmat = initModelFile();
+                model = modmat.getFirst();
+                materials = modmat.getSecond();
+                instance = new ModelInstance(model, localTransform);
+
+                // COLOR IF NO TEXTURE
+                if (tc == null && instance != null) {
+                    addColorToMat();
+                }
+
+                modelInitialised = true;
+                modelLoading = false;
+
+            }
         }
 
     }
@@ -359,10 +419,10 @@ public class ModelComponent implements Disposable, IObserver {
     public void notify(Events event, Object... data) {
         switch (event) {
         case GRAPHICS_QUALITY_UPDATED:
-            if (initialised) {
+            if (texInitialised) {
                 // Remove current textures
                 // TODO
-                initialised = false;
+                texInitialised = false;
                 if (tc != null)
                     tc.disposeTextures(this.manager);
 
