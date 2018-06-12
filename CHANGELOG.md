@@ -1,18 +1,11 @@
 # Change Log
 
-## [Unreleased](https://github.com/langurmonkey/gaiasky/tree/HEAD)
-
-[Full Changelog](https://github.com/langurmonkey/gaiasky/compare/2.0.1...HEAD)
-
-**Implemented enhancements:**
-
-- Lazy mesh initialization [\#284](https://github.com/langurmonkey/gaiasky/issues/284)
-
 ## [2.0.1](https://github.com/langurmonkey/gaiasky/tree/2.0.1) (2018-06-12)
 [Full Changelog](https://github.com/langurmonkey/gaiasky/compare/2.0.0-vr...2.0.1)
 
 **Implemented enhancements:**
 
+- Lazy mesh initialization [\#284](https://github.com/langurmonkey/gaiasky/issues/284)
 - Improve DR2 catalogs [\#283](https://github.com/langurmonkey/gaiasky/issues/283)
 - Add support for new galaxy meshes [\#282](https://github.com/langurmonkey/gaiasky/issues/282)
 - Fix Gaia Sky logo resolution [\#279](https://github.com/langurmonkey/gaiasky/issues/279)
