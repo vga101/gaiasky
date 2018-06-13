@@ -92,9 +92,9 @@
 						},
 	"atmosphere" 	: {
 						"size" : 6150.0,
-						"wavelengths" : [0.5, 0.6, 0.6],
+						"wavelengths" : [0.55, 0.6, 0.65],
 						"m_Kr" : 0.0025,
-						"m_Km" : 0.001,
+						"m_Km" : 0.004,
 						"correctground" : true,
 						
 						"params" : {
@@ -158,9 +158,9 @@
 									
 	"atmosphere" 	: {
 						"size" : 6450.0,
-						"wavelengths" : [0.650, 0.570, 0.475],
-						"m_Kr" : 0.0025,
-						"m_Km" : 0.001,
+						"wavelengths" : [0.55, 0.52, 0.4],
+						"m_Kr" : 0.0012,
+						"m_Km" : 0.004,
 						"correctground" : true,
 						
 						"params" : {
@@ -220,9 +220,9 @@
 						},
 	"atmosphere" 	: {
 						"size" : 3490.0,
-						"wavelengths" : [0.600, 0.7, 0.7],
-						"m_Kr" : 0.0025,
-						"m_Km" : 0.001,
+						"wavelengths" : [0.55, 0.7, 0.7],
+						"m_Kr" : 0.0015,
+						"m_Km" : 0.004,
 						"correctground" : false,
 						
 						"params" : {
