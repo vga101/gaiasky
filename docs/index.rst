@@ -3,7 +3,7 @@
 
 |Build status| |License|
 
-.. note:: 2018/04/25 -- Version 2.0.0 is out now with GDR2 data!
+.. note:: 2018/06/14 -- Version 2.0.1 is out now!
 
 What is Gaia Sky
 ================
