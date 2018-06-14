@@ -3,7 +3,6 @@ package gaia.cu9.ari.gaiaorbit.scenegraph;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
@@ -143,7 +142,6 @@ public class MeshObject extends FadeNode implements IModelRenderable, I3DTextRen
             if (mc.instance != null) {
                 mc.setTransparency(alpha * opacity, GL20.GL_ONE, GL20.GL_ONE);
                 mc.updateRelativisticEffects(GaiaSky.instance.getICamera());
-                modelBatch.getRenderContext().setBlending(true, GL30.GL_ONE, GL30.GL_ONE);
                 modelBatch.render(mc.instance, mc.env);
             }
         }
