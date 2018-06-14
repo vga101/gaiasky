@@ -338,7 +338,6 @@
 **Closed issues:**
 
 - Set time pace to a factor of real time [\#58](https://github.com/langurmonkey/gaiasky/issues/58)
-- Add graphics mode selector [\#57](https://github.com/langurmonkey/gaiasky/issues/57)
 - Fix the looks for HiDPI screens [\#56](https://github.com/langurmonkey/gaiasky/issues/56)
 - App fails to start OS X [\#54](https://github.com/langurmonkey/gaiasky/issues/54)
 
@@ -369,6 +368,10 @@
 - Motion blur not working with FXAA or NFAA [\#36](https://github.com/langurmonkey/gaiasky/issues/36)
 - Fix night/day blending in shader  [\#33](https://github.com/langurmonkey/gaiasky/issues/33)
 - Screenshot action \(F5\) not working well with motion blur [\#27](https://github.com/langurmonkey/gaiasky/issues/27)
+
+**Closed issues:**
+
+- Add graphics mode selector [\#57](https://github.com/langurmonkey/gaiasky/issues/57)
 
 ## [0.706b](https://github.com/langurmonkey/gaiasky/tree/0.706b) (2015-05-05)
 [Full Changelog](https://github.com/langurmonkey/gaiasky/compare/0.705b...0.706b)
