@@ -2,10 +2,10 @@ package gaia.cu9.ari.gaiaorbit.data.group;
 
 import java.io.InputStream;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.ObjectIntMap;
 
 import gaia.cu9.ari.gaiaorbit.scenegraph.ParticleGroup.ParticleBean;
 import gaia.cu9.ari.gaiaorbit.scenegraph.StarGroup;
@@ -50,8 +50,8 @@ public class TGASHYGDataProvider extends AbstractStarGroupDataProvider {
         Array<StarBean> hygdata = hyg.loadData("data/hyg/hygxyz.bin");
 
         StarGroup aux = new StarGroup();
-        Map<String, Integer> tgasindex = aux.generateIndex(tgasdata);
-        Map<String, Integer> hygindex = aux.generateIndex(hygdata);
+        ObjectIntMap<String> tgasindex = aux.generateIndex(tgasdata);
+        ObjectIntMap<String> hygindex = aux.generateIndex(hygdata);
 
         // Merge everything, discarding hyg stars already in tgas
         // Contains removed HIP numbers
@@ -75,7 +75,7 @@ public class TGASHYGDataProvider extends AbstractStarGroupDataProvider {
             } else {
                 // Use proper name
                 if (tgasindex.containsKey("HIP " + i)) {
-                    int oldidx = tgasindex.get("HIP " + i);
+                    int oldidx = tgasindex.get("HIP " + i, -1);
                     tgasdata.get(oldidx).name = curr.name;
                 }
             }

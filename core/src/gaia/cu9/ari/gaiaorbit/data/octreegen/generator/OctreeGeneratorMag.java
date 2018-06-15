@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Set;
 
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.LongMap;
 
 import gaia.cu9.ari.gaiaorbit.data.octreegen.StarBrightnessComparator;
 import gaia.cu9.ari.gaiaorbit.scenegraph.StarGroup;
@@ -32,7 +33,7 @@ public class OctreeGeneratorMag implements IOctreeGenerator {
         root = IOctreeGenerator.startGeneration(catalog, this.getClass(), params);
 
         // Holds all octree nodes indexed by id
-        Map<Long, OctreeNode> idMap = new HashMap<Long, OctreeNode>();
+        LongMap<OctreeNode> idMap = new LongMap<OctreeNode>();
         idMap.put(root.pageId, root);
 
         Map<OctreeNode, Array<StarBean>> sbMap = new HashMap<OctreeNode, Array<StarBean>>();
