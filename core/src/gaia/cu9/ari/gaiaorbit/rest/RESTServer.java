@@ -115,6 +115,12 @@ public class RESTServer {
 
 
     /**
+     * REST server static files location.
+     * Defined by a system property.
+     */
+    private static String rest_static_location = System.getProperty("rest-static.location");
+
+    /**
      * Reference to Logger.
      */
     private static final Logger logger = LoggerFactory.getLogger("[RESTServer]");
@@ -126,11 +132,13 @@ public class RESTServer {
      * Prints startup warning and current log level of SimpleLogger.
      */
     private static void printStartupInfo() {
+        System.out.println("*** Warning: REST API server may permit remote code execution! "
+                + "Only use this functionality in a trusted environment! ***");
+        if (rest_static_location == null) {
+            System.out.println("Error: rest-static.location not set. REST server inactive.");
+        }
         String s = System.getProperty("org.slf4j.simpleLogger.defaultLogLevel");
         System.out.println("Simple Logger defaultLogLevel = " + s);
-        System.out.println("*** Warning: REST API server allows remote code execution! "
-                + "Only use this functionality in a trusted environment! ***");
-
 
     }
 
@@ -504,20 +512,19 @@ public class RESTServer {
     public static void initialize(Integer port) {
 
         /* Check for valid TCP port (otherwise considered as "disabled") */
-        if (port < 0) {
+        printStartupInfo();
+        if (port < 0 || rest_static_location == null) {
             return;
         }
 
         try {
-            printStartupInfo();
-
             logger.info("Starting REST API server on port {}", port);
             port(port);
             logger.info("Setting routes");
 
             /* Static file location */
-            /* (add static HTML files with API use examples, a folder in the class path) */
-            staticFiles.location("/rest-static");
+            /* (add static HTML files with API use examples) */
+            staticFiles.externalLocation(rest_static_location);
 
             /* Route mapping */
             get("/api", (request, response) -> {
