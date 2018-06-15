@@ -115,6 +115,13 @@ public class RESTServer {
 
 
     /**
+     * REST server port.
+     * TCP port the server is listening on. It is set on initialization.
+     */
+    private static Integer port = -1;
+
+
+    /**
      * REST server static files location.
      * Defined by a system property.
      */
@@ -132,14 +139,10 @@ public class RESTServer {
      * Prints startup warning and current log level of SimpleLogger.
      */
     private static void printStartupInfo() {
-        System.out.println("*** Warning: REST API server may permit remote code execution! "
-                + "Only use this functionality in a trusted environment! ***");
-        if (rest_static_location == null) {
-            System.out.println("Error: rest-static.location not set. REST server inactive.");
-        }
         String s = System.getProperty("org.slf4j.simpleLogger.defaultLogLevel");
         System.out.println("Simple Logger defaultLogLevel = " + s);
-
+        System.out.println("*** Warning: REST API server may permit remote code execution! "
+                + "Only use this functionality in a trusted environment! ***");
     }
 
 
@@ -509,16 +512,22 @@ public class RESTServer {
      *
      * Sets the routes and then passes the call to the handler.
      */
-    public static void initialize(Integer port) {
+    public static void initialize(Integer rest_port) {
 
         /* Check for valid TCP port (otherwise considered as "disabled") */
+        port = rest_port;
         printStartupInfo();
-        if (port < 0 || rest_static_location == null) {
+        if (port < 0) {
+            System.out.println("Error: invalid port. REST API inactive.");
+            return;
+        }
+        if (rest_static_location == null) {
+            System.out.println("Error: rest-static.location not set. REST API inactive.");
             return;
         }
 
         try {
-            logger.info("Starting REST API server on port {}", port);
+            logger.warn("Starting REST API server on http://localhost:{}", port);
             port(port);
             logger.info("Setting routes");
 
