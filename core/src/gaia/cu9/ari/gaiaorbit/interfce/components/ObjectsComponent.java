@@ -217,13 +217,25 @@ public class ObjectsComponent extends GuiComponent implements IObserver {
             Label meshesLabel = new Label(txt("gui.meshes"), skin, "header");
             meshesGroup.addActor(meshesLabel);
 
+            VerticalGroup meshesVertical = new VerticalGroup();
+            meshesVertical.left();
+            meshesVertical.columnLeft();
+            meshesVertical.space(4 * GlobalConf.SCALE_FACTOR);
+            OwnScrollPane meshesScroll = new OwnScrollPane(meshesVertical);
+            meshesScroll.setScrollingDisabled(false, true);
+            meshesScroll.setForceScroll(true, false);
+            meshesScroll.setFadeScrollBars(false);
+            meshesScroll.setOverscroll(false, false);
+            meshesScroll.setSmoothScrolling(true);
+            meshesScroll.setWidth(componentWidth + 12 * GlobalConf.SCALE_FACTOR);
+
             for (SceneGraphNode node : meshes) {
                 MeshObject mesh = (MeshObject) node;
                 HorizontalGroup meshGroup = new HorizontalGroup();
                 meshGroup.space(4 * GlobalConf.SCALE_FACTOR);
                 meshGroup.left();
                 OwnCheckBox meshCb = new OwnCheckBox(mesh.name, skin, 5 * GlobalConf.SCALE_FACTOR);
-                meshCb.setChecked(mesh.isVisibilityOn());
+                meshCb.setChecked(true);
                 meshCb.addListener((event) -> {
                     if (event instanceof ChangeEvent) {
                         Gdx.app.postRunnable(() -> {
@@ -239,8 +251,9 @@ public class ObjectsComponent extends GuiComponent implements IObserver {
 
                 meshGroup.addActor(meshCb);
                 meshGroup.addActor(meshDescTooltip);
-                meshesGroup.addActor(meshGroup);
+                meshesVertical.addActor(meshGroup);
             }
+            meshesGroup.addActor(meshesScroll);
         }
 
         VerticalGroup objectsGroup = new VerticalGroup().align(Align.left).columnAlign(Align.left).space(3 * GlobalConf.SCALE_FACTOR);
