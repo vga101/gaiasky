@@ -64,9 +64,8 @@ public class LineQuadRenderSystem extends LineRenderSystem {
     }
 
     Vector3d line, camdir0, camdir1, camdir15, point, vec;
-    final static double widthAngle = Math.toRadians(0.05);
+    final static double widthAngle = Math.toRadians(0.1);
     final static double widthAngleTan = Math.tan(widthAngle);
-
     public LineQuadRenderSystem(RenderGroup rg, float[] alphas, ShaderProgram[] shaders) {
         super(rg, alphas, shaders);
         dpool = new DPool(INI_DPOOL_SIZE, MAX_DPOOL_SIZE, 14);
@@ -191,7 +190,7 @@ public class LineQuadRenderSystem extends LineRenderSystem {
             l[10] = dist0;
             l[11] = dist1;
             l[12] = (dist0 + dist1) / 2d;
-            l[13] = widthAngleTan * GlobalConf.SCALE_FACTOR;
+            l[13] = widthAngleTan;
             provisionalLines.add(l);
         }
     }
