@@ -82,7 +82,7 @@ public class Area extends AbstractPositionEntity implements ILineRenderable {
         float angleHigh = (float) ((ModelBody) parent).THRESHOLD_QUAD() * camera.getFovFactor() * 200f;
 
         if (isVisibilityOn() && ((ModelBody) parent).viewAngleApparent > angleLow) {
-            ModelBody papa = (ModelBody) parent;
+            //ModelBody papa = (ModelBody) parent;
             localTransform.idt();
             toCartesian(loc2d[0][0][0], loc2d[0][0][1], cart0, localTransform);
 
