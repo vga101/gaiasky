@@ -216,6 +216,7 @@ public class UCDParser {
             break;
         }
 
+        if (pos3 != null) {
         meaning = pos3.ucd[0][1];
         switch (meaning) {
         case "parallax":
@@ -224,6 +225,9 @@ public class UCDParser {
         case "distance":
             disttype = "DIST";
             break;
+        }
+        } else {
+            disttype = "PLX";
         }
 
         if (postype == null && postypestr != null && disttype != null) {
