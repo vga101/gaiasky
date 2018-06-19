@@ -125,6 +125,12 @@ public class OctreeGeneratorRun {
     @Parameter(names = "--xmatchfile", description = "Crossmatch file with source_id to hip, only if --hyg is enabled")
     private String xmatchFile = null;
 
+    @Parameter(names = "--geodistfile", description = "Use this file or directory to lookup distances. Argument is a file or directory with files of of <sourceid, dist[pc]>. If this argument is used, both --pllxerrfaint and --pllxerrbright are ignored")
+    private String geodistFile = null;
+
+    @Parameter(names = "--distcap", description = "Specifies a maximum distance in parsecs. Stars beyond this distance are not loaded")
+    private double distcap = Long.MAX_VALUE;
+
     @Parameter(names = { "-h", "--help" }, help = true)
     private boolean help = false;
 

@@ -3,12 +3,12 @@ package gaia.cu9.ari.gaiaorbit.data.group;
 import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.LongMap;
 
 import gaia.cu9.ari.gaiaorbit.scenegraph.ParticleGroup.ParticleBean;
 import gaia.cu9.ari.gaiaorbit.scenegraph.StarGroup.StarBean;
@@ -243,7 +243,7 @@ public class STILDataProvider extends AbstractStarGroupDataProvider {
     }
 
     @Override
-    public Map<Long, float[]> getColors() {
+    public LongMap<float[]> getColors() {
         return null;
     }
 

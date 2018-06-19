@@ -78,102 +78,110 @@ public class TGASDataProvider extends AbstractStarGroupDataProvider {
                     double pllx = Parser.parseDouble(tokens[3]);
                     double pllxerr = Parser.parseDouble(tokens[4]);
 
-                    double distpc = (1000d / pllx);
-                    double dist = distpc * Constants.PC_TO_U;
-
                     double appmag = Parser.parseDouble(tokens[7]);
 
                     // Keep only stars with relevant parallaxes
                     if (acceptParallax(appmag, pllx, pllxerr)) {
+                        /** ID **/
                         long sourceid = Parser.parseLong(tokens[0]);
 
-                        /** INDEX **/
-                        int tyc1 = -1, tyc2 = -1, tyc3 = -1;
-                        String tyc = "";
-                        if (tokens.length > 9) {
-                            tyc = tokens[9].replace("\"", "");
-                            String[] tycgroups = tyc.split("-");
-                            tyc1 = !tyc.isEmpty() ? Integer.parseInt(tycgroups[0]) : -1;
-                            tyc2 = !tyc.isEmpty() ? Integer.parseInt(tycgroups[1]) : -1;
-                            tyc3 = !tyc.isEmpty() ? Integer.parseInt(tycgroups[2]) : -1;
-                        }
+                        /** DISTANCE **/
+                        double distpc = (1000d / pllx);
+                        double geodistpc = getGeoDistance(sourceid);
+                        distpc = geodistpc > 0 ? geodistpc : distpc;
 
-                        int hip = Parser.parseInt(tokens[8]);
-                        if (hip <= 0 && extra.getSecond().containsKey(tyc)) {
-                            hip = extra.getSecond().get(tyc);
-                        }
+                        if (acceptDistance(distpc)) {
 
-                        /** NAME **/
-                        String name;
-                        if (tyc1 > 0) {
-                            name = "TYC " + tyc;
-                        } else if (hip > 0) {
-                            name = "HIP " + hip;
-                        } else {
-                            name = String.valueOf((long) sourceid);
-                        }
+                            double dist = distpc * Constants.PC_TO_U;
 
-                        /** RA and DEC **/
-                        double ra = Parser.parseDouble(tokens[1]);
-                        double dec = Parser.parseDouble(tokens[2]);
-                        Vector3d pos = Coordinates.sphericalToCartesian(Math.toRadians(ra), Math.toRadians(dec), dist, new Vector3d());
-
-                        /** PROPER MOTIONS in mas/yr **/
-                        double mualphastar = Parser.parseDouble(tokens[5]);
-                        double mudelta = Parser.parseDouble(tokens[6]);
-                        //double mualpha = mualphastar / Math.cos(Math.toRadians(dec));
-
-                        /** RADIAL VELOCITY in km/s **/
-                        double radvel = 0;
-                        if (radialVelocities != null && radialVelocities.containsKey(sourceid)) {
-                            radvel = radialVelocities.get(sourceid);
-                            raveStars++;
-                        }
-
-                        /**
-                         * PROPER MOTION VECTOR = (pos+dx) - pos - [units/yr]
-                         **/
-                        Vector3d pm = AstroUtils.properMotionsToCartesian(mualphastar, mudelta, radvel, Math.toRadians(ra), Math.toRadians(dec), distpc);
-
-                        double absmag = (appmag - 2.5 * Math.log10(Math.pow(distpc / 10d, 2d)));
-                        double flux = Math.pow(10, -absmag / 2.5f);
-                        double size = Math.min((Math.pow(flux, 0.5f) * Constants.PC_TO_U * 0.16f), 1e9f) / 1.5;
-
-                        /** COLOR, we use the tycBV map if present **/
-                        double colorbv = 0;
-                        if (extra.getFirst() != null) {
-                            if (extra.getFirst().containsKey(tyc)) {
-                                colorbv = extra.getFirst().get(tyc);
+                            /** INDEX **/
+                            int tyc1 = -1, tyc2 = -1, tyc3 = -1;
+                            String tyc = "";
+                            if (tokens.length > 9) {
+                                tyc = tokens[9].replace("\"", "");
+                                String[] tycgroups = tyc.split("-");
+                                tyc1 = !tyc.isEmpty() ? Integer.parseInt(tycgroups[0]) : -1;
+                                tyc2 = !tyc.isEmpty() ? Integer.parseInt(tycgroups[1]) : -1;
+                                tyc3 = !tyc.isEmpty() ? Integer.parseInt(tycgroups[2]) : -1;
                             }
+
+                            int hip = Parser.parseInt(tokens[8]);
+                            if (hip <= 0 && extra.getSecond().containsKey(tyc)) {
+                                hip = extra.getSecond().get(tyc);
+                            }
+
+                            /** NAME **/
+                            String name;
+                            if (tyc1 > 0) {
+                                name = "TYC " + tyc;
+                            } else if (hip > 0) {
+                                name = "HIP " + hip;
+                            } else {
+                                name = String.valueOf((long) sourceid);
+                            }
+
+                            /** RA and DEC **/
+                            double ra = Parser.parseDouble(tokens[1]);
+                            double dec = Parser.parseDouble(tokens[2]);
+                            Vector3d pos = Coordinates.sphericalToCartesian(Math.toRadians(ra), Math.toRadians(dec), dist, new Vector3d());
+
+                            /** PROPER MOTIONS in mas/yr **/
+                            double mualphastar = Parser.parseDouble(tokens[5]);
+                            double mudelta = Parser.parseDouble(tokens[6]);
+                            //double mualpha = mualphastar / Math.cos(Math.toRadians(dec));
+
+                            /** RADIAL VELOCITY in km/s **/
+                            double radvel = 0;
+                            if (radialVelocities != null && radialVelocities.containsKey(sourceid)) {
+                                radvel = radialVelocities.get(sourceid);
+                                raveStars++;
+                            }
+
+                            /**
+                             * PROPER MOTION VECTOR = (pos+dx) - pos - [units/yr]
+                             **/
+                            Vector3d pm = AstroUtils.properMotionsToCartesian(mualphastar, mudelta, radvel, Math.toRadians(ra), Math.toRadians(dec), distpc);
+
+                            double absmag = (appmag - 2.5 * Math.log10(Math.pow(distpc / 10d, 2d)));
+                            double flux = Math.pow(10, -absmag / 2.5f);
+                            double size = Math.min((Math.pow(flux, 0.5f) * Constants.PC_TO_U * 0.16f), 1e9f) / 1.5;
+
+                            /** COLOR, we use the tycBV map if present **/
+                            double colorbv = 0;
+                            if (extra.getFirst() != null) {
+                                if (extra.getFirst().containsKey(tyc)) {
+                                    colorbv = extra.getFirst().get(tyc);
+                                }
+                            }
+
+                            float[] rgb = ColourUtils.BVtoRGB(colorbv);
+                            double col = Color.toFloatBits(rgb[0], rgb[1], rgb[2], 1.0f);
+                            colors.put(sourceid, rgb);
+                            sphericalPositions.put(sourceid, new double[] { ra, dec, dist });
+
+                            point[StarBean.I_HIP] = hip;
+                            point[StarBean.I_TYC1] = tyc1;
+                            point[StarBean.I_TYC2] = tyc2;
+                            point[StarBean.I_TYC3] = tyc3;
+                            point[StarBean.I_X] = pos.x;
+                            point[StarBean.I_Y] = pos.y;
+                            point[StarBean.I_Z] = pos.z;
+                            point[StarBean.I_PMX] = pm.x;
+                            point[StarBean.I_PMY] = pm.y;
+                            point[StarBean.I_PMZ] = pm.z;
+                            point[StarBean.I_MUALPHA] = mualphastar;
+                            point[StarBean.I_MUDELTA] = mudelta;
+                            point[StarBean.I_RADVEL] = radvel;
+                            point[StarBean.I_COL] = col;
+                            point[StarBean.I_SIZE] = size;
+                            point[StarBean.I_APPMAG] = appmag;
+                            point[StarBean.I_ABSMAG] = absmag;
+
+                            list.add(new StarBean(point, sourceid, name));
+
+                            int appclmp = (int) MathUtilsd.clamp(appmag, 0, 21);
+                            countsPerMag[(int) appclmp] += 1;
                         }
-
-                        float[] rgb = ColourUtils.BVtoRGB(colorbv);
-                        double col = Color.toFloatBits(rgb[0], rgb[1], rgb[2], 1.0f);
-                        colors.put(sourceid, rgb);
-                        sphericalPositions.put(sourceid, new double[] { ra, dec, dist });
-
-                        point[StarBean.I_HIP] = hip;
-                        point[StarBean.I_TYC1] = tyc1;
-                        point[StarBean.I_TYC2] = tyc2;
-                        point[StarBean.I_TYC3] = tyc3;
-                        point[StarBean.I_X] = pos.x;
-                        point[StarBean.I_Y] = pos.y;
-                        point[StarBean.I_Z] = pos.z;
-                        point[StarBean.I_PMX] = pm.x;
-                        point[StarBean.I_PMY] = pm.y;
-                        point[StarBean.I_PMZ] = pm.z;
-                        point[StarBean.I_MUALPHA] = mualphastar;
-                        point[StarBean.I_MUDELTA] = mudelta;
-                        point[StarBean.I_RADVEL] = radvel;
-                        point[StarBean.I_COL] = col;
-                        point[StarBean.I_SIZE] = size;
-                        point[StarBean.I_APPMAG] = appmag;
-                        point[StarBean.I_ABSMAG] = absmag;
-
-                        list.add(new StarBean(point, sourceid, name));
-
-                        int appclmp = (int) MathUtilsd.clamp(appmag, 0, 21);
-                        countsPerMag[(int) appclmp] += 1;
                     }
                 }
             }

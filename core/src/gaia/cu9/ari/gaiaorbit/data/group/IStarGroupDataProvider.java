@@ -1,6 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.data.group;
 
-import java.util.Map;
+import com.badlogic.gdx.utils.LongMap;
 
 /**
  * Data provider for a star group, which contains an index map with the names
@@ -10,7 +10,7 @@ import java.util.Map;
  *
  */
 public interface IStarGroupDataProvider extends IParticleGroupDataProvider {
-    public Map<Long, float[]> getColors();
+    public LongMap<float[]> getColors();
 
     /**
      * <p>
@@ -63,6 +63,19 @@ public interface IStarGroupDataProvider extends IParticleGroupDataProvider {
      *            Whether to apply the corrections
      */
     public void setMagCorrections(boolean magCorrections);
+
+    /**
+     * Sets the location of the geometric distances file or directory
+     * @param geoDistFile
+     *            File or directory with geometric distances per sourceId
+     */
+    public void setGeoDistancesFile(String geoDistFile);
+
+    /**
+     * Sets a distance cap. Stars beyond this distance will not be loaded
+     * @param distCap The distance cap, in parsecs
+     */
+    public void setDistanceCap(double distCap);
 
     /** Gets the star counts per magnitude **/
     public long[] getCountsPerMag();
