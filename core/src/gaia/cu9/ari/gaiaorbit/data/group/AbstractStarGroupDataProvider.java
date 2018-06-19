@@ -2,6 +2,7 @@ package gaia.cu9.ari.gaiaorbit.data.group;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -41,10 +42,14 @@ public abstract class AbstractStarGroupDataProvider implements IStarGroupDataPro
     protected String geoDistFile = null;
 
     /**
+     * Errors (negative or nan values) reading geometric distance files
+     */
+    protected long geoDistErrors = 0;
+
+    /**
      * Distance cap in parsecs
      */
     protected double distCap = Double.MAX_VALUE;
-
 
     /**
      * <p>
@@ -306,27 +311,25 @@ public abstract class AbstractStarGroupDataProvider implements IStarGroupDataPro
 
     private void loadGeometricDistances() {
         geoDistances = new LongMap<Double>();
+        geoDistErrors = 0;
 
         Logger.info("Loading geometric distances from " + geoDistFile);
 
         Path f = Paths.get(geoDistFile);
         loadGeometricDistances(f);
 
-        Logger.info(geoDistances.size + " geometric distances loaded");
+        Logger.info(geoDistances.size + " geometric distances loaded (" + geoDistErrors + " negative or nan values)");
     }
 
     private void loadGeometricDistances(Path f) {
         if (Files.isDirectory(f, LinkOption.NOFOLLOW_LINKS)) {
-            try {
-                Files.list(f).peek((e) -> {
-                    loadGeometricDistances(e);
-                });
-            } catch (IOException e) {
-                Logger.error(e, "Listing failed: " + f.toString());
+            File[] files = f.toFile().listFiles();
+            for (File file : files) {
+                loadGeometricDistances(file.toPath());
             }
         } else {
             try {
-            loadGeometricDistanceFile(f);
+                loadGeometricDistanceFile(f);
             } catch (Exception e) {
                 Logger.error(e, "Loading failed: " + f.toString());
             }
@@ -339,16 +342,18 @@ public abstract class AbstractStarGroupDataProvider implements IStarGroupDataPro
         // Skip header
         br.readLine();
         String line;
+        int i = 0;
         while ((line = br.readLine()) != null) {
             String[] tokens = line.split("\\s+");
             Long sourceId = Parser.parseLong(tokens[0].trim());
             Double dist = Parser.parseDouble(tokens[1].trim());
-            if (dist >= 0) {
+            if (!dist.isNaN() && dist >= 0) {
                 geoDistances.put(sourceId, dist);
             } else {
-                br.close();
-                throw new RuntimeException("Distance is negative: " + dist);
+                Logger.debug("Distance " + i + " is NaN or negative: " + dist + " (file " + f.toString() + ")");
+                geoDistErrors++;
             }
+            i++;
         }
         br.close();
     }

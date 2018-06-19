@@ -219,6 +219,8 @@ public class OctreeGeneratorRun {
         loader.setParallaxZeroPoint(pllxzeropoint);
         loader.setFileNumberCap(fileNumCap);
         loader.setMagCorrections(magCorrections);
+        loader.setDistanceCap(distcap);
+        loader.setGeoDistancesFile(geodistFile);
         long[] cpm = loader.getCountsPerMag();
 
         /** LOAD CATALOG **/
