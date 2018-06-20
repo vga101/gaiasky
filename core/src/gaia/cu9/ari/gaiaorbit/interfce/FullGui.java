@@ -89,7 +89,7 @@ public class FullGui extends AbstractGui {
     // Uncertainties disabled by default
     private boolean uncertainties = false;
     // Rel effects off
-    private boolean releffects = false;
+    private boolean releffects = true;
 
 
     public FullGui() {

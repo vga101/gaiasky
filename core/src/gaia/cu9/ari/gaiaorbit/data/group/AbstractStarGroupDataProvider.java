@@ -335,8 +335,15 @@ public abstract class AbstractStarGroupDataProvider implements IStarGroupDataPro
     private void loadGeometricDistances(Path f) {
         if (Files.isDirectory(f, LinkOption.NOFOLLOW_LINKS)) {
             File[] files = f.toFile().listFiles();
+            int nfiles = files.length;
+            int mod = nfiles / 20;
+            int i = 1;
             for (File file : files) {
+                if(i % mod == 0){
+                    Logger.info("Loading file " + i + "/" + nfiles;
+                }
                 loadGeometricDistances(file.toPath());
+                i++;
             }
         } else {
             try {
