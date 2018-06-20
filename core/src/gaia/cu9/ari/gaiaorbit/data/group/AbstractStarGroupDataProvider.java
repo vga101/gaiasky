@@ -340,7 +340,7 @@ public abstract class AbstractStarGroupDataProvider implements IStarGroupDataPro
             int i = 1;
             for (File file : files) {
                 if(i % mod == 0){
-                    Logger.info("Loading file " + i + "/" + nfiles;
+                    Logger.info("Loading file " + i + "/" + nfiles);
                 }
                 loadGeometricDistances(file.toPath());
                 i++;
