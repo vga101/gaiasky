@@ -176,6 +176,17 @@ public abstract class AbstractStarGroupDataProvider implements IStarGroupDataPro
         return distance <= distCap;
     }
 
+
+    protected boolean hasGeoDistance(long sourceId) {
+        if (geoDistances != null && geoDistances.containsKey(sourceId))
+            return true;
+        return false;
+    } 
+
+    protected boolean hasGeoDistances() {
+        return geoDistances != null && geoDistances.size > 0;
+    }
+
     protected int countLines(FileHandle f) throws IOException {
         InputStream is = new BufferedInputStream(f.read());
         return countLines(is);
