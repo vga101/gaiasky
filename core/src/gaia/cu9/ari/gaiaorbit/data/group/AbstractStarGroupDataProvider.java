@@ -23,6 +23,7 @@ import com.badlogic.gdx.utils.LongMap;
 
 import gaia.cu9.ari.gaiaorbit.scenegraph.StarGroup.StarBean;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
+import gaia.cu9.ari.gaiaorbit.util.LargeLongMap;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
@@ -34,7 +35,7 @@ public abstract class AbstractStarGroupDataProvider implements IStarGroupDataPro
     protected LongMap<double[]> sphericalPositions;
     protected LongMap<float[]> colors;
     protected long[] countsPerMag;
-    protected LongMap<Double> geoDistances = null;
+    protected LargeLongMap<Double> geoDistances = null;
 
     /**
      * Points to the location of a file or directory which contains a set of <sourceId, distance[pc]>
@@ -176,15 +177,14 @@ public abstract class AbstractStarGroupDataProvider implements IStarGroupDataPro
         return distance <= distCap;
     }
 
-
     protected boolean hasGeoDistance(long sourceId) {
         if (geoDistances != null && geoDistances.containsKey(sourceId))
             return true;
         return false;
-    } 
+    }
 
     protected boolean hasGeoDistances() {
-        return geoDistances != null && geoDistances.size > 0;
+        return geoDistances != null && !geoDistances.isEmpty();
     }
 
     protected int countLines(FileHandle f) throws IOException {
@@ -321,7 +321,7 @@ public abstract class AbstractStarGroupDataProvider implements IStarGroupDataPro
     }
 
     private void loadGeometricDistances() {
-        geoDistances = new LongMap<Double>();
+        geoDistances = new LargeLongMap<Double>(10);
         geoDistErrors = 0;
 
         Logger.info("Loading geometric distances from " + geoDistFile);
@@ -329,7 +329,7 @@ public abstract class AbstractStarGroupDataProvider implements IStarGroupDataPro
         Path f = Paths.get(geoDistFile);
         loadGeometricDistances(f);
 
-        Logger.info(geoDistances.size + " geometric distances loaded (" + geoDistErrors + " negative or nan values)");
+        Logger.info(geoDistances.size() + " geometric distances loaded (" + geoDistErrors + " negative or nan values)");
     }
 
     private void loadGeometricDistances(Path f) {
@@ -354,18 +354,23 @@ public abstract class AbstractStarGroupDataProvider implements IStarGroupDataPro
         br.readLine();
         String line;
         int i = 0;
-        while ((line = br.readLine()) != null) {
-            String[] tokens = line.split("\\s+");
-            Long sourceId = Parser.parseLong(tokens[0].trim());
-            Double dist = Parser.parseDouble(tokens[1].trim());
-            if (!dist.isNaN() && dist >= 0) {
-                geoDistances.put(sourceId, dist);
-            } else {
-                Logger.debug("Distance " + i + " is NaN or negative: " + dist + " (file " + f.toString() + ")");
-                geoDistErrors++;
+        try {
+            while ((line = br.readLine()) != null) {
+                String[] tokens = line.split("\\s+");
+                Long sourceId = Parser.parseLong(tokens[0].trim());
+                Double dist = Parser.parseDouble(tokens[1].trim());
+                if (!dist.isNaN() && dist >= 0) {
+                    geoDistances.put(sourceId, dist);
+                } else {
+                    Logger.debug("Distance " + i + " is NaN or negative: " + dist + " (file " + f.toString() + ")");
+                    geoDistErrors++;
+                }
+                i++;
             }
-            i++;
+            br.close();
+        } catch (Exception e) {
+            Logger.error(e);
+            br.close();
         }
-        br.close();
     }
 }
