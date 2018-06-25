@@ -138,7 +138,7 @@ public class OrbitalElementsParticlesRenderSystem extends ImmediateRenderSystem 
                 shaderProgram.setUniformf("u_alpha", alphas[first.ct.getFirstOrdinal()] * first.getOpacity());
                 shaderProgram.setUniformf("u_ar", stereohw ? 0.5f : 1f);
                 shaderProgram.setUniformf("u_size", rc.scaleFactor);
-                shaderProgram.setUniformf("u_scaleFactor", GlobalConf.SCALE_FACTOR * (stereohw ? 2 : 1));
+                shaderProgram.setUniformf("u_scaleFactor", 2 * (stereohw ? 2 : 1));
                 shaderProgram.setUniformf("u_ar", stereohw ? 0.5f : 1f);
                 shaderProgram.setUniformf("u_profileDecay", 0.1f);
                 double currt = AstroUtils.getJulianDate(GaiaSky.instance.time.getTime());
