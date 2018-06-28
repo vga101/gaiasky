@@ -91,6 +91,12 @@ public class OpenVRListener implements VRDeviceListener {
         lazyInit();
         // Add to pressed
         pressedButtons.add(button);
+
+        // VR controller hint
+        if (arePressed(VRControllerButtons.A, VRControllerButtons.B)) {
+            EventManager.instance.post(Events.DISPLAY_VR_CONTROLLER_HINT_CMD, true);
+            vrControllerHint = true;
+        }
     }
 
     public void buttonReleased(VRDevice device, int button) {
@@ -104,7 +110,7 @@ public class OpenVRListener implements VRDeviceListener {
         if (TimeUtils.millis() - lastDoublePress > 250) {
             // Give some time to recover from double press
             lazyInit();
-            if (button == VRControllerButtons.SteamVR_Touchpad) {
+            if (button == VRControllerButtons.A) {
                 // Selection
                 StubModel sm = vrDeviceToModel.get(device);
                 if (sm != null) {
@@ -127,7 +133,7 @@ public class OpenVRListener implements VRDeviceListener {
                 EventManager.instance.post(Events.DISPLAY_VR_CONTROLLER_HINT_CMD, false);
                 vrControllerHint = false;
                 lastDoublePress = TimeUtils.millis();
-            } else if (button == VRControllerButtons.A) {
+            } else if (button == VRControllerButtons.SteamVR_Touchpad) {
                 // Change mode from free to focus and viceversa
                 CameraMode cm = cam.getMode().equals(CameraMode.Focus) ? CameraMode.Free_Camera : CameraMode.Focus;
                 EventManager.instance.post(Events.CAMERA_MODE_CMD, cm);
@@ -208,6 +214,14 @@ public class OpenVRListener implements VRDeviceListener {
                 // Invert direction
                 cam.setVelocityVR(sm.getBeamP0(), sm.getBeamP1(), -valueX);
             }
+            break;
+        case VRControllerAxes.Axis0:
+            // Joystick for forward/backward movement
+            sm = vrDeviceToModel.get(device);
+            if (sm != null) {
+                cam.setVelocityVR(sm.getBeamP0(), sm.getBeamP1(), valueY);
+            }
+
             break;
         }
 
