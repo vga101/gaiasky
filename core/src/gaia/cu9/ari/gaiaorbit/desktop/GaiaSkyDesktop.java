@@ -334,7 +334,7 @@ public class GaiaSkyDesktop implements IObserver {
         if (userFolderConfFile.exists()) {
             Properties userprops = new Properties();
             userprops.load(new FileInputStream(userFolderConfFile));
-            int internalversion = 200;
+            int internalversion = 250;
             if (internalFolderConfFile.exists()) {
                 Properties internalprops = new Properties();
                 internalprops.load(new FileInputStream(internalFolderConfFile));

@@ -21,8 +21,8 @@ import gaia.cu9.ari.gaiaorbit.util.scene2d.Separator;
 
 public class VisualEffectsComponent extends GuiComponent implements IObserver {
 
-    protected Slider starBrightness, starSize, starOpacity, ambientLight;
-    protected OwnLabel starbrightnessl, size, opacity, ambient, bloomLabel;
+    protected Slider starBrightness, starSize, starOpacity, ambientLight, labelSize;
+    protected OwnLabel starbrightnessl, size, opacity, ambient, bloomLabel, labels;
 
     boolean flag = true;
 
@@ -116,6 +116,26 @@ public class VisualEffectsComponent extends GuiComponent implements IObserver {
         ambientGroup.addActor(ambientLight);
         ambientGroup.addActor(ambient);
 
+        /** Label size **/
+        Label labelSizeLabel = new Label(txt("gui.label.size"), skin, "default");
+        labels = new OwnLabel(Integer.toString((int) MathUtilsd.lint(GlobalConf.scene.LABEL_SIZE_FACTOR, Constants.MIN_LABEL_SIZE, Constants.MAX_LABEL_SIZE, Constants.MIN_SLIDER, Constants.MAX_SLIDER)), skin);
+        labelSize = new OwnSlider(Constants.MIN_SLIDER, Constants.MAX_SLIDER, 1, false, skin);
+        labelSize.setName("label size");
+        labelSize.setWidth(sliderWidth);
+        labelSize.setValue(MathUtilsd.lint(GlobalConf.scene.LABEL_SIZE_FACTOR, Constants.MIN_LABEL_SIZE, Constants.MAX_LABEL_SIZE, Constants.MIN_SLIDER, Constants.MAX_SLIDER));
+        labelSize.addListener(event -> {
+            if (event instanceof ChangeEvent) {
+                float val = MathUtilsd.lint(labelSize.getValue(), Constants.MIN_SLIDER, Constants.MAX_SLIDER, Constants.MIN_LABEL_SIZE, Constants.MAX_LABEL_SIZE);
+                EventManager.instance.post(Events.LABEL_SIZE_CMD, val, true);
+                labels.setText(Integer.toString((int) labelSize.getValue()));
+                return true;
+            }
+            return false;
+        });
+        HorizontalGroup labelSizeGroup = new HorizontalGroup();
+        labelSizeGroup.space(space3);
+        labelSizeGroup.addActor(labelSize);
+        labelSizeGroup.addActor(labels);
 
         VerticalGroup lightingGroup = new VerticalGroup().align(Align.left).columnAlign(Align.left);
         lightingGroup.space(space2);
@@ -130,6 +150,9 @@ public class VisualEffectsComponent extends GuiComponent implements IObserver {
         lightingGroup.addActor(new Separator(skin));
         lightingGroup.addActor(ambientLightLabel);
         lightingGroup.addActor(ambientGroup);
+        lightingGroup.addActor(new Separator(skin));
+        lightingGroup.addActor(labelSizeLabel);
+        lightingGroup.addActor(labelSizeGroup);
 
         component = lightingGroup;
 

@@ -393,6 +393,11 @@ public enum Events {
     STAR_MIN_OPACITY_CMD,
 
     /**
+     * Set label size. Contains the new label size [0.2, 5]
+     */
+    LABEL_SIZE_CMD,
+
+    /**
      * Stereoscopic vision, side by side rendering. Contains the state boolean
      * and another boolean indicating whether it comes from the interface.
      **/
