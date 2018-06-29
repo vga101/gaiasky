@@ -1,7 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.interfce.components;
 
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
 import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -22,10 +21,8 @@ import gaia.cu9.ari.gaiaorbit.util.scene2d.Separator;
 
 public class VisualEffectsComponent extends GuiComponent implements IObserver {
 
-    protected Slider starBrightness, starSize, starOpacity, bloomEffect, ambientLight, brightness, contrast, hue, saturation;
-    protected OwnLabel starbrightnessl, size, opacity, bloom, ambient, brightnessl, contrastl, huel, saturationl, bloomLabel, motionBlurLabel, brightnessLabel, contrastLabel, hueLabel, saturationLabel;
-    protected CheckBox lensFlare, lightScattering, motionBlur;
-    private HorizontalGroup bloomGroup, brightnessGroup, contrastGroup, hueGroup, saturationGroup;
+    protected Slider starBrightness, starSize, starOpacity, ambientLight;
+    protected OwnLabel starbrightnessl, size, opacity, ambient, bloomLabel;
 
     boolean flag = true;
 
@@ -119,149 +116,6 @@ public class VisualEffectsComponent extends GuiComponent implements IObserver {
         ambientGroup.addActor(ambientLight);
         ambientGroup.addActor(ambient);
 
-        if (Constants.desktop) {
-            /** Bloom **/
-            bloomLabel = new OwnLabel(txt("gui.bloom"), skin, "default");
-            bloom = new OwnLabel(Integer.toString((int) (GlobalConf.postprocess.POSTPROCESS_BLOOM_INTENSITY * 10)), skin);
-            bloomEffect = new OwnSlider(Constants.MIN_SLIDER, Constants.MAX_SLIDER, 1, false, skin);
-            bloomEffect.setName("bloom effect");
-            bloomEffect.setWidth(sliderWidth);
-            bloomEffect.setValue(GlobalConf.postprocess.POSTPROCESS_BLOOM_INTENSITY * 10f);
-            bloomEffect.addListener(event -> {
-                if (event instanceof ChangeEvent) {
-                    EventManager.instance.post(Events.BLOOM_CMD, bloomEffect.getValue() / 10f, true);
-                    bloom.setText(Integer.toString((int) bloomEffect.getValue()));
-                    return true;
-                }
-                return false;
-            });
-
-            bloomGroup = new HorizontalGroup();
-            bloomGroup.space(space3);
-            bloomGroup.addActor(bloomEffect);
-            bloomGroup.addActor(bloom);
-
-            /** Brightness **/
-            brightnessl = new OwnLabel(txt("gui.brightness"), skin, "default");
-            brightnessLabel = new OwnLabel(Integer.toString((int) MathUtilsd.lint(GlobalConf.postprocess.POSTPROCESS_BRIGHTNESS, Constants.MIN_BRIGHTNESS, Constants.MAX_BRIGHTNESS, Constants.MIN_SLIDER, Constants.MAX_SLIDER)), skin);
-            brightness = new OwnSlider(Constants.MIN_SLIDER, Constants.MAX_SLIDER, 1, false, skin);
-            brightness.setName("brightness");
-            brightness.setWidth(sliderWidth);
-            brightness.setValue(MathUtilsd.lint(GlobalConf.postprocess.POSTPROCESS_BRIGHTNESS, Constants.MIN_BRIGHTNESS, Constants.MAX_BRIGHTNESS, Constants.MIN_SLIDER, Constants.MAX_SLIDER));
-            brightness.addListener(event -> {
-                if (event instanceof ChangeEvent && hackProgrammaticChangeEvents) {
-                    EventManager.instance.post(Events.BRIGHTNESS_CMD, MathUtilsd.lint(brightness.getValue(), Constants.MIN_SLIDER, Constants.MAX_SLIDER, Constants.MIN_BRIGHTNESS, Constants.MAX_BRIGHTNESS), true);
-                    brightnessLabel.setText(Integer.toString((int) brightness.getValue()));
-                    return true;
-                }
-                return false;
-            });
-
-            brightnessGroup = new HorizontalGroup();
-            brightnessGroup.space(space3);
-            brightnessGroup.addActor(brightness);
-            brightnessGroup.addActor(brightnessLabel);
-
-            /** Contrast **/
-            contrastl = new OwnLabel(txt("gui.contrast"), skin, "default");
-            contrastLabel = new OwnLabel(Integer.toString((int) MathUtilsd.lint(GlobalConf.postprocess.POSTPROCESS_CONTRAST, Constants.MIN_CONTRAST, Constants.MAX_CONTRAST, Constants.MIN_SLIDER, Constants.MAX_SLIDER)), skin);
-            contrast = new OwnSlider(Constants.MIN_SLIDER, Constants.MAX_SLIDER, 1, false, skin);
-            contrast.setName("contrast");
-            contrast.setWidth(sliderWidth);
-            contrast.setValue(MathUtilsd.lint(GlobalConf.postprocess.POSTPROCESS_CONTRAST, Constants.MIN_CONTRAST, Constants.MAX_CONTRAST, Constants.MIN_SLIDER, Constants.MAX_SLIDER));
-            contrast.addListener(event -> {
-                if (event instanceof ChangeEvent && hackProgrammaticChangeEvents) {
-                    EventManager.instance.post(Events.CONTRAST_CMD, MathUtilsd.lint(contrast.getValue(), Constants.MIN_SLIDER, Constants.MAX_SLIDER, Constants.MIN_CONTRAST, Constants.MAX_CONTRAST), true);
-                    contrastLabel.setText(Integer.toString((int) contrast.getValue()));
-                    return true;
-                }
-                return false;
-            });
-
-            contrastGroup = new HorizontalGroup();
-            contrastGroup.space(space3);
-            contrastGroup.addActor(contrast);
-            contrastGroup.addActor(contrastLabel);
-
-            /** Hue **/
-            huel = new OwnLabel(txt("gui.hue"), skin, "default");
-            hueLabel = new OwnLabel(Integer.toString((int) MathUtilsd.lint(GlobalConf.postprocess.POSTPROCESS_HUE, Constants.MIN_HUE, Constants.MAX_HUE, Constants.MIN_SLIDER, Constants.MAX_SLIDER)), skin);
-            hue = new OwnSlider(Constants.MIN_SLIDER, Constants.MAX_SLIDER, 1, false, skin);
-            hue.setName("hue");
-            hue.setWidth(sliderWidth);
-            hue.setValue(MathUtilsd.lint(GlobalConf.postprocess.POSTPROCESS_HUE, Constants.MIN_HUE, Constants.MAX_HUE, Constants.MIN_SLIDER, Constants.MAX_SLIDER));
-            hue.addListener(event -> {
-                if (event instanceof ChangeEvent && hackProgrammaticChangeEvents) {
-                    EventManager.instance.post(Events.HUE_CMD, MathUtilsd.lint(hue.getValue(), Constants.MIN_SLIDER, Constants.MAX_SLIDER, Constants.MIN_HUE, Constants.MAX_HUE), true);
-                    hueLabel.setText(Integer.toString((int) hue.getValue()));
-                    return true;
-                }
-                return false;
-            });
-
-            hueGroup = new HorizontalGroup();
-            hueGroup.space(space3);
-            hueGroup.addActor(hue);
-            hueGroup.addActor(hueLabel);
-
-            /** Saturation **/
-            saturationl = new OwnLabel(txt("gui.saturation"), skin, "default");
-            saturationLabel = new OwnLabel(Integer.toString((int) MathUtilsd.lint(GlobalConf.postprocess.POSTPROCESS_SATURATION, Constants.MIN_SATURATION, Constants.MAX_SATURATION, Constants.MIN_SLIDER, Constants.MAX_SLIDER)), skin);
-            saturation = new OwnSlider(Constants.MIN_SLIDER, Constants.MAX_SLIDER, 1, false, skin);
-            saturation.setName("saturation");
-            saturation.setWidth(sliderWidth);
-            saturation.setValue(MathUtilsd.lint(GlobalConf.postprocess.POSTPROCESS_SATURATION, Constants.MIN_SATURATION, Constants.MAX_SATURATION, Constants.MIN_SLIDER, Constants.MAX_SLIDER));
-            saturation.addListener(event -> {
-                if (event instanceof ChangeEvent && hackProgrammaticChangeEvents) {
-                    EventManager.instance.post(Events.SATURATION_CMD, MathUtilsd.lint(saturation.getValue(), Constants.MIN_SLIDER, Constants.MAX_SLIDER, Constants.MIN_SATURATION, Constants.MAX_SATURATION), true);
-                    saturationLabel.setText(Integer.toString((int) saturation.getValue()));
-                    return true;
-                }
-                return false;
-            });
-
-            saturationGroup = new HorizontalGroup();
-            saturationGroup.space(space3);
-            saturationGroup.addActor(saturation);
-            saturationGroup.addActor(saturationLabel);
-
-            /** Motion blur **/
-            motionBlur = new CheckBox(" " + txt("gui.motionblur"), skin);
-            motionBlur.setName("motion blur");
-            motionBlur.setChecked(GlobalConf.postprocess.POSTPROCESS_MOTION_BLUR != 0);
-            motionBlur.addListener(event -> {
-                if (event instanceof ChangeEvent) {
-                    EventManager.instance.post(Events.MOTION_BLUR_CMD, motionBlur.isChecked() ? Constants.MOTION_BLUR_VALUE : 0.0f, true);
-                    return true;
-                }
-                return false;
-            });
-
-            /** Lens flare **/
-            lensFlare = new CheckBox(" " + txt("gui.lensflare"), skin);
-            lensFlare.setName("lens flare");
-            lensFlare.addListener(event -> {
-                if (event instanceof ChangeEvent) {
-                    EventManager.instance.post(Events.LENS_FLARE_CMD, lensFlare.isChecked(), true);
-                    return true;
-                }
-                return false;
-            });
-            lensFlare.setChecked(GlobalConf.postprocess.POSTPROCESS_LENS_FLARE);
-
-            /** Light scattering **/
-            lightScattering = new CheckBox(" " + txt("gui.lightscattering"), skin);
-            lightScattering.setName("light scattering");
-            lightScattering.setChecked(GlobalConf.postprocess.POSTPROCESS_LIGHT_SCATTERING);
-            lightScattering.addListener(event -> {
-                if (event instanceof ChangeEvent) {
-                    EventManager.instance.post(Events.LIGHT_SCATTERING_CMD, lightScattering.isChecked(), true);
-                    return true;
-                }
-                return false;
-            });
-
-        }
 
         VerticalGroup lightingGroup = new VerticalGroup().align(Align.left).columnAlign(Align.left);
         lightingGroup.space(space2);
@@ -276,31 +130,10 @@ public class VisualEffectsComponent extends GuiComponent implements IObserver {
         lightingGroup.addActor(new Separator(skin));
         lightingGroup.addActor(ambientLightLabel);
         lightingGroup.addActor(ambientGroup);
-        lightingGroup.addActor(new Separator(skin));
-        if (Constants.desktop) {
-            lightingGroup.addActor(bloomLabel);
-            lightingGroup.addActor(bloomGroup);
-            lightingGroup.addActor(new Separator(skin));
-            lightingGroup.addActor(brightnessl);
-            lightingGroup.addActor(brightnessGroup);
-            lightingGroup.addActor(new Separator(skin));
-            lightingGroup.addActor(contrastl);
-            lightingGroup.addActor(contrastGroup);
-            lightingGroup.addActor(new Separator(skin));
-            lightingGroup.addActor(huel);
-            lightingGroup.addActor(hueGroup);
-            lightingGroup.addActor(new Separator(skin));
-            lightingGroup.addActor(saturationl);
-            lightingGroup.addActor(saturationGroup);
-            lightingGroup.addActor(new Separator(skin));
-            lightingGroup.addActor(motionBlur);
-            lightingGroup.addActor(lensFlare);
-            lightingGroup.addActor(lightScattering);
-        }
 
         component = lightingGroup;
 
-        EventManager.instance.subscribe(this, Events.STAR_POINT_SIZE_CMD, Events.STAR_BRIGHTNESS_CMD, Events.BRIGHTNESS_CMD, Events.CONTRAST_CMD, Events.HUE_CMD, Events.SATURATION_CMD, Events.MOTION_BLUR_CMD, Events.LENS_FLARE_CMD, Events.LIGHT_SCATTERING_CMD, Events.BLOOM_CMD, Events.STAR_MIN_OPACITY_CMD);
+        EventManager.instance.subscribe(this, Events.STAR_POINT_SIZE_CMD, Events.STAR_BRIGHTNESS_CMD, Events.LIGHT_SCATTERING_CMD, Events.STAR_MIN_OPACITY_CMD);
     }
 
     @Override
@@ -333,83 +166,6 @@ public class VisualEffectsComponent extends GuiComponent implements IObserver {
                 starOpacity.setValue(sliderValue);
                 opacity.setText(Integer.toString((int) sliderValue));
                 hackProgrammaticChangeEvents = true;
-            }
-            break;
-        case BRIGHTNESS_CMD:
-            if (!(boolean) data[1]) {
-                // Update UI element
-                float level = (Float) data[0];
-                float sliderLevel = MathUtilsd.lint(level, Constants.MIN_BRIGHTNESS, Constants.MAX_BRIGHTNESS, Constants.MIN_SLIDER, Constants.MAX_SLIDER);
-                hackProgrammaticChangeEvents = false;
-                brightness.setValue(sliderLevel);
-                brightnessLabel.setText(Integer.toString((int) sliderLevel));
-                hackProgrammaticChangeEvents = true;
-            }
-            break;
-        case CONTRAST_CMD:
-            if (!(boolean) data[1]) {
-                // Update UI element
-                float level = (Float) data[0];
-                float sliderLevel = MathUtilsd.lint(level, Constants.MIN_CONTRAST, Constants.MAX_CONTRAST, Constants.MIN_SLIDER, Constants.MAX_SLIDER);
-                hackProgrammaticChangeEvents = false;
-                contrast.setValue(sliderLevel);
-                contrastLabel.setText(Integer.toString((int) sliderLevel));
-                hackProgrammaticChangeEvents = true;
-            }
-            break;
-        case HUE_CMD:
-            if (!(boolean) data[1]) {
-                // Update UI element
-                float level = (Float) data[0];
-                float sliderLevel = MathUtilsd.lint(level, Constants.MIN_HUE, Constants.MAX_HUE, Constants.MIN_SLIDER, Constants.MAX_SLIDER);
-                hackProgrammaticChangeEvents = false;
-                hue.setValue(sliderLevel);
-                hueLabel.setText(Integer.toString((int) sliderLevel));
-                hackProgrammaticChangeEvents = true;
-            }
-            break;
-        case SATURATION_CMD:
-            if (!(boolean) data[1]) {
-                // Update UI element
-                float level = (Float) data[0];
-                float sliderLevel = MathUtilsd.lint(level, Constants.MIN_SATURATION, Constants.MAX_SATURATION, Constants.MIN_SLIDER, Constants.MAX_SLIDER);
-                hackProgrammaticChangeEvents = false;
-                saturation.setValue(sliderLevel);
-                saturationLabel.setText(Integer.toString((int) sliderLevel));
-                hackProgrammaticChangeEvents = true;
-            }
-            break;
-        case BLOOM_CMD:
-            if (!(boolean) data[1]) {
-                // Update UI element
-                float level = (float) data[0];
-                hackProgrammaticChangeEvents = false;
-                bloomEffect.setValue(level);
-                bloom.setText(Integer.toString((int) level));
-                hackProgrammaticChangeEvents = true;
-            }
-            break;
-        case MOTION_BLUR_CMD:
-            if (!(boolean) data[1]) {
-                float level = (Float) data[0];
-                motionBlur.setProgrammaticChangeEvents(false);
-                motionBlur.setChecked(level != 0);
-                motionBlur.setProgrammaticChangeEvents(true);
-            }
-            break;
-
-        case LIGHT_SCATTERING_CMD:
-            if (!(boolean) data[1]) {
-                lightScattering.setProgrammaticChangeEvents(false);
-                lightScattering.setChecked((boolean) data[0]);
-                lightScattering.setProgrammaticChangeEvents(true);
-            }
-            break;
-        case LENS_FLARE_CMD:
-            if (!(boolean) data[1]) {
-                lensFlare.setProgrammaticChangeEvents(false);
-                lensFlare.setChecked((boolean) data[0]);
-                lensFlare.setProgrammaticChangeEvents(true);
             }
             break;
         default:

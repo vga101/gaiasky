@@ -34,6 +34,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextArea;
@@ -91,7 +92,7 @@ import gaia.cu9.ari.gaiaorbit.util.validator.RegexpValidator;
  */
 public class PreferencesWindow extends GenericDialog {
 
-    private Array<Table> contents;
+    private Array<Actor> contents;
     private Array<OwnLabel> labels;
 
     private IValidator widthValidator, heightValidator, screenshotsSizeValidator, frameoutputSizeValidator, limitfpsValidator;
@@ -110,10 +111,14 @@ public class PreferencesWindow extends GenericDialog {
     private OwnTextButton[] catalogs;
     private Map<Button, String> candidates;
 
+    // Backup values
+    private float brightnessBak, contrastBak, hueBak, saturationBak, motionblurBak, bloomBak;
+    private boolean lensflareBak, lightglowBak;
+
     public PreferencesWindow(Stage stage, Skin skin) {
         super(txt("gui.settings") + " - v" + GlobalConf.version.version + " - " + txt("gui.build", GlobalConf.version.build), skin, stage);
 
-        this.contents = new Array<Table>();
+        this.contents = new Array<Actor>();
         this.labels = new Array<OwnLabel>();
 
         this.nf3 = NumberFormatFactory.getFormatter("0.000");
@@ -132,8 +137,10 @@ public class PreferencesWindow extends GenericDialog {
         final float tawidth = 400 * GlobalConf.SCALE_FACTOR;
         float tabwidth = 180 * GlobalConf.SCALE_FACTOR;
         float textwidth = 65 * GlobalConf.SCALE_FACTOR;
-        float scrollw = 410 * GlobalConf.SCALE_FACTOR;
-        float scrollh = 250 * GlobalConf.SCALE_FACTOR;
+        float scrollh = 330 * GlobalConf.SCALE_FACTOR;
+        float controlsscrollw = 410 * GlobalConf.SCALE_FACTOR;
+        float controllsscrollh = 250 * GlobalConf.SCALE_FACTOR;
+        float sliderWidth = textwidth * 3;
 
         // Create the tab buttons
         VerticalGroup group = new VerticalGroup();
@@ -193,9 +200,13 @@ public class PreferencesWindow extends GenericDialog {
         /**
          * ==== GRAPHICS ====
          **/
-        final Table contentGraphics = new Table(skin);
+        final Table contentGraphicsTable = new Table(skin);
+        final OwnScrollPane contentGraphics = new OwnScrollPane(contentGraphicsTable, skin, "minimalist-nobg");
+        contentGraphics.setHeight(scrollh);
+        contentGraphics.setScrollingDisabled(true, false);
+        contentGraphics.setFadeScrollBars(false);
         contents.add(contentGraphics);
-        contentGraphics.align(Align.top | Align.left);
+        contentGraphicsTable.align(Align.top | Align.left);
 
         // RESOLUTION/MODE
         Label titleResolution = new OwnLabel(txt("gui.resolutionmode"), skin, "help-title");
@@ -299,8 +310,8 @@ public class PreferencesWindow extends GenericDialog {
         mode.add(limitFps).left();
 
         // Add to content
-        contentGraphics.add(titleResolution).left().padBottom(pad * 2).row();
-        contentGraphics.add(mode).left().padBottom(pad * 4).row();
+        contentGraphicsTable.add(titleResolution).left().padBottom(pad * 2).row();
+        contentGraphicsTable.add(mode).left().padBottom(pad * 4).row();
 
         // GRAPHICS SETTINGS
         Label titleGraphics = new OwnLabel(txt("gui.graphicssettings"), skin, "help-title");
@@ -347,8 +358,64 @@ public class PreferencesWindow extends GenericDialog {
         lineRenderer.setWidth(textwidth * 3f);
         lineRenderer.setSelected(lineRenderers[GlobalConf.scene.LINE_RENDERER]);
 
+        // BLOOM
+        bloomBak = GlobalConf.postprocess.POSTPROCESS_BLOOM_INTENSITY;
+        OwnLabel bloomLabel = new OwnLabel(txt("gui.bloom"), skin, "default");
+        OwnLabel bloom = new OwnLabel(Integer.toString((int) (GlobalConf.postprocess.POSTPROCESS_BLOOM_INTENSITY * 10)), skin);
+        Slider bloomEffect = new OwnSlider(Constants.MIN_SLIDER, Constants.MAX_SLIDER, 1, false, skin);
+        bloomEffect.setName("bloom effect");
+        bloomEffect.setWidth(sliderWidth);
+        bloomEffect.setValue(GlobalConf.postprocess.POSTPROCESS_BLOOM_INTENSITY * 10f);
+        bloomEffect.addListener(event -> {
+            if (event instanceof ChangeEvent) {
+                EventManager.instance.post(Events.BLOOM_CMD, bloomEffect.getValue() / 10f, true);
+                bloom.setText(Integer.toString((int) bloomEffect.getValue()));
+                return true;
+            }
+            return false;
+        });
+
         // LABELS
-        labels.addAll(gqualityLabel, aaLabel, orbitsLabel, lrLabel);
+        labels.addAll(gqualityLabel, aaLabel, orbitsLabel, lrLabel, bloomLabel);
+
+        // LENS FLARE
+        lensflareBak = GlobalConf.postprocess.POSTPROCESS_LENS_FLARE;
+        CheckBox lensFlare = new CheckBox(" " + txt("gui.lensflare"), skin);
+        lensFlare.setName("lens flare");
+        lensFlare.addListener(event -> {
+            if (event instanceof ChangeEvent) {
+                EventManager.instance.post(Events.LENS_FLARE_CMD, lensFlare.isChecked(), true);
+                return true;
+            }
+            return false;
+        });
+        lensFlare.setChecked(GlobalConf.postprocess.POSTPROCESS_LENS_FLARE);
+
+        // LIGHT GLOW
+        lightglowBak = GlobalConf.postprocess.POSTPROCESS_LIGHT_SCATTERING;
+        CheckBox lightGlow = new CheckBox(" " + txt("gui.lightscattering"), skin);
+        lightGlow.setName("light scattering");
+        lightGlow.setChecked(GlobalConf.postprocess.POSTPROCESS_LIGHT_SCATTERING);
+        lightGlow.addListener(event -> {
+            if (event instanceof ChangeEvent) {
+                EventManager.instance.post(Events.LIGHT_SCATTERING_CMD, lightGlow.isChecked(), true);
+                return true;
+            }
+            return false;
+        });
+
+        // MOTION BLUR
+        motionblurBak = GlobalConf.postprocess.POSTPROCESS_MOTION_BLUR;
+        CheckBox motionBlur = new CheckBox(" " + txt("gui.motionblur"), skin);
+        motionBlur.setName("motion blur");
+        motionBlur.setChecked(GlobalConf.postprocess.POSTPROCESS_MOTION_BLUR != 0);
+        motionBlur.addListener(event -> {
+            if (event instanceof ChangeEvent) {
+                EventManager.instance.post(Events.MOTION_BLUR_CMD, motionBlur.isChecked() ? Constants.MOTION_BLUR_VALUE : 0.0f, true);
+                return true;
+            }
+            return false;
+        });
 
         graphics.add(gqualityLabel).left().padRight(pad * 4).padBottom(pad);
         graphics.add(gquality).left().padRight(pad * 2).padBottom(pad);
@@ -362,6 +429,12 @@ public class PreferencesWindow extends GenericDialog {
         graphics.add(orbitRenderer).colspan(2).left().padBottom(pad).row();
         graphics.add(lrLabel).left().padRight(pad * 4).padBottom(pad);
         graphics.add(lineRenderer).colspan(2).left().padBottom(pad).row();
+        graphics.add(bloomLabel).left().padRight(pad * 4).padBottom(pad);
+        graphics.add(bloomEffect).left().padBottom(pad);
+        graphics.add(bloom).left().padBottom(pad).row();
+        graphics.add(lensFlare).colspan(3).left().padBottom(pad).row();
+        graphics.add(lightGlow).colspan(3).left().padBottom(pad).row();
+        graphics.add(motionBlur).colspan(3).left().padBottom(pad).row();
 
         EventListener graphicsChangeListener = new EventListener() {
             @Override
@@ -385,8 +458,8 @@ public class PreferencesWindow extends GenericDialog {
         //gquality.addListener(graphicsChangeListener);
 
         // Add to content
-        contentGraphics.add(titleGraphics).left().padBottom(pad * 2).row();
-        contentGraphics.add(graphics).left().padBottom(pad * 4).row();
+        contentGraphicsTable.add(titleGraphics).left().padBottom(pad * 2).row();
+        contentGraphicsTable.add(graphics).left().padBottom(pad * 4).row();
 
         // SHADOWS
         Label titleShadows = new OwnLabel(txt("gui.graphics.shadows"), skin, "help-title");
@@ -432,9 +505,105 @@ public class PreferencesWindow extends GenericDialog {
         shadows.add(nshadows).left().padRight(pad * 2).padBottom(pad);
 
         // Add to content
-        contentGraphics.add(titleShadows).left().padBottom(pad * 2).row();
-        contentGraphics.add(shadows).left();
+        contentGraphicsTable.add(titleShadows).left().padBottom(pad * 2).row();
+        contentGraphicsTable.add(shadows).left().padBottom(pad * 4).row();
 
+        // DISPLAY SETTINGS
+        Label titleDisplay = new OwnLabel(txt("gui.graphics.imglevels"), skin, "help-title");
+        Table display = new Table();
+
+
+        brightnessBak = GlobalConf.postprocess.POSTPROCESS_BRIGHTNESS;
+        contrastBak = GlobalConf.postprocess.POSTPROCESS_CONTRAST;
+        hueBak = GlobalConf.postprocess.POSTPROCESS_HUE;
+        saturationBak = GlobalConf.postprocess.POSTPROCESS_SATURATION;
+
+        /** Brightness **/
+        OwnLabel brightnessl = new OwnLabel(txt("gui.brightness"), skin, "default");
+        Label brightnessLabel = new OwnLabel(Integer.toString((int) MathUtilsd.lint(GlobalConf.postprocess.POSTPROCESS_BRIGHTNESS, Constants.MIN_BRIGHTNESS, Constants.MAX_BRIGHTNESS, Constants.MIN_SLIDER, Constants.MAX_SLIDER)), skin);
+        Slider brightness = new OwnSlider(Constants.MIN_SLIDER, Constants.MAX_SLIDER, 1, false, skin);
+        brightness.setName("brightness");
+        brightness.setWidth(sliderWidth);
+        brightness.setValue(MathUtilsd.lint(GlobalConf.postprocess.POSTPROCESS_BRIGHTNESS, Constants.MIN_BRIGHTNESS, Constants.MAX_BRIGHTNESS, Constants.MIN_SLIDER, Constants.MAX_SLIDER));
+        brightness.addListener(event -> {
+            if (event instanceof ChangeEvent) {
+                EventManager.instance.post(Events.BRIGHTNESS_CMD, MathUtilsd.lint(brightness.getValue(), Constants.MIN_SLIDER, Constants.MAX_SLIDER, Constants.MIN_BRIGHTNESS, Constants.MAX_BRIGHTNESS), true);
+                brightnessLabel.setText(Integer.toString((int) brightness.getValue()));
+                return true;
+            }
+            return false;
+        });
+
+        display.add(brightnessl).left().padRight(pad * 4).padBottom(pad);
+        display.add(brightness).left().padRight(pad * 2).padBottom(pad);
+        display.add(brightnessLabel).row();
+
+        /** Contrast **/
+        OwnLabel contrastl = new OwnLabel(txt("gui.contrast"), skin, "default");
+        Label contrastLabel = new OwnLabel(Integer.toString((int) MathUtilsd.lint(GlobalConf.postprocess.POSTPROCESS_CONTRAST, Constants.MIN_CONTRAST, Constants.MAX_CONTRAST, Constants.MIN_SLIDER, Constants.MAX_SLIDER)), skin);
+        Slider contrast = new OwnSlider(Constants.MIN_SLIDER, Constants.MAX_SLIDER, 1, false, skin);
+        contrast.setName("contrast");
+        contrast.setWidth(sliderWidth);
+        contrast.setValue(MathUtilsd.lint(GlobalConf.postprocess.POSTPROCESS_CONTRAST, Constants.MIN_CONTRAST, Constants.MAX_CONTRAST, Constants.MIN_SLIDER, Constants.MAX_SLIDER));
+        contrast.addListener(event -> {
+            if (event instanceof ChangeEvent) {
+                EventManager.instance.post(Events.CONTRAST_CMD, MathUtilsd.lint(contrast.getValue(), Constants.MIN_SLIDER, Constants.MAX_SLIDER, Constants.MIN_CONTRAST, Constants.MAX_CONTRAST), true);
+                contrastLabel.setText(Integer.toString((int) contrast.getValue()));
+                return true;
+            }
+            return false;
+        });
+
+        display.add(contrastl).left().padRight(pad * 4).padBottom(pad);
+        display.add(contrast).left().padRight(pad * 2).padBottom(pad);
+        display.add(contrastLabel).row();
+
+        /** Hue **/
+        OwnLabel huel = new OwnLabel(txt("gui.hue"), skin, "default");
+        Label hueLabel = new OwnLabel(Integer.toString((int) MathUtilsd.lint(GlobalConf.postprocess.POSTPROCESS_HUE, Constants.MIN_HUE, Constants.MAX_HUE, Constants.MIN_SLIDER, Constants.MAX_SLIDER)), skin);
+        Slider hue = new OwnSlider(Constants.MIN_SLIDER, Constants.MAX_SLIDER, 1, false, skin);
+        hue.setName("hue");
+        hue.setWidth(sliderWidth);
+        hue.setValue(MathUtilsd.lint(GlobalConf.postprocess.POSTPROCESS_HUE, Constants.MIN_HUE, Constants.MAX_HUE, Constants.MIN_SLIDER, Constants.MAX_SLIDER));
+        hue.addListener(event -> {
+            if (event instanceof ChangeEvent) {
+                EventManager.instance.post(Events.HUE_CMD, MathUtilsd.lint(hue.getValue(), Constants.MIN_SLIDER, Constants.MAX_SLIDER, Constants.MIN_HUE, Constants.MAX_HUE), true);
+                hueLabel.setText(Integer.toString((int) hue.getValue()));
+                return true;
+            }
+            return false;
+        });
+
+        display.add(huel).left().padRight(pad * 4).padBottom(pad);
+        display.add(hue).left().padRight(pad * 2).padBottom(pad);
+        display.add(hueLabel).row();
+
+        /** Saturation **/
+        OwnLabel saturationl = new OwnLabel(txt("gui.saturation"), skin, "default");
+        Label saturationLabel = new OwnLabel(Integer.toString((int) MathUtilsd.lint(GlobalConf.postprocess.POSTPROCESS_SATURATION, Constants.MIN_SATURATION, Constants.MAX_SATURATION, Constants.MIN_SLIDER, Constants.MAX_SLIDER)), skin);
+        Slider saturation = new OwnSlider(Constants.MIN_SLIDER, Constants.MAX_SLIDER, 1, false, skin);
+        saturation.setName("saturation");
+        saturation.setWidth(sliderWidth);
+        saturation.setValue(MathUtilsd.lint(GlobalConf.postprocess.POSTPROCESS_SATURATION, Constants.MIN_SATURATION, Constants.MAX_SATURATION, Constants.MIN_SLIDER, Constants.MAX_SLIDER));
+        saturation.addListener(event -> {
+            if (event instanceof ChangeEvent) {
+                EventManager.instance.post(Events.SATURATION_CMD, MathUtilsd.lint(saturation.getValue(), Constants.MIN_SLIDER, Constants.MAX_SLIDER, Constants.MIN_SATURATION, Constants.MAX_SATURATION), true);
+                saturationLabel.setText(Integer.toString((int) saturation.getValue()));
+                return true;
+            }
+            return false;
+        });
+
+        display.add(saturationl).left().padRight(pad * 4).padBottom(pad);
+        display.add(saturation).left().padRight(pad * 2).padBottom(pad);
+        display.add(saturationLabel).row();
+
+        // LABELS
+        labels.addAll(brightnessl, contrastl, huel, saturationl);
+
+        // Add to content
+        contentGraphicsTable.add(titleDisplay).left().padBottom(pad * 2).row();
+        contentGraphicsTable.add(display).left();
         /**
          * ==== UI ====
          **/
@@ -694,8 +863,8 @@ public class PreferencesWindow extends GenericDialog {
         }
 
         OwnScrollPane controlsScroll = new OwnScrollPane(controls, skin, "default-nobg");
-        controlsScroll.setWidth(scrollw);
-        controlsScroll.setHeight(scrollh);
+        controlsScroll.setWidth(controlsscrollw);
+        controlsScroll.setHeight(controllsscrollh);
         controlsScroll.setForceScroll(false, true);
         controlsScroll.setSmoothScrolling(true);
         controlsScroll.setFadeScrollBars(false);
@@ -1051,9 +1220,13 @@ public class PreferencesWindow extends GenericDialog {
         /**
          * ==== DATA ====
          **/
-        final Table contentData = new Table(skin);
+        final Table contentDataTable = new Table(skin);
+        contentDataTable.align(Align.top | Align.left);
+        final OwnScrollPane contentData = new OwnScrollPane(contentDataTable, skin, "minimalist-nobg");
+        contentData.setHeight(scrollh);
+        contentData.setScrollingDisabled(true, false);
+        contentData.setFadeScrollBars(false);
         contents.add(contentData);
-        contentData.align(Align.top | Align.left);
 
         // GENERAL OPTIONS
         OwnLabel titleGeneralData = new OwnLabel(txt("gui.data.options"), skin, "help-title");
@@ -1169,11 +1342,11 @@ public class PreferencesWindow extends GenericDialog {
         datasetChooser.setChecked(GlobalConf.program.DISPLAY_DATASET_DIALOG);
 
         // Add to content
-        contentData.add(titleGeneralData).left().padBottom(pad * 2).row();
-        contentData.add(haGroup).left().padBottom(pad * 2).row();
-        contentData.add(titleData).left().padBottom(pad * 2).row();
-        contentData.add(datasource).left().padBottom(pad * 2).row();
-        contentData.add(datasetChooser).left();
+        contentDataTable.add(titleGeneralData).left().padBottom(pad * 2).row();
+        contentDataTable.add(haGroup).left().padBottom(pad * 2).row();
+        contentDataTable.add(titleData).left().padBottom(pad * 2).row();
+        contentDataTable.add(datasource).left().padBottom(pad * 2).row();
+        contentDataTable.add(datasetChooser).left();
 
         /**
          * ==== GAIA ====
@@ -1359,6 +1532,7 @@ public class PreferencesWindow extends GenericDialog {
 
     @Override
     protected void cancel() {
+        revertLivePreferences();
     }
 
     private void reloadDefaultPreferences() {
@@ -1613,6 +1787,20 @@ public class PreferencesWindow extends GenericDialog {
             reloadUI();
         }
 
+    }
+
+    /**
+     * Reverts preferences which have been modified live. It needs backup values.
+     */
+    private void revertLivePreferences() {
+        EventManager.instance.post(Events.BRIGHTNESS_CMD, brightnessBak, true);
+        EventManager.instance.post(Events.CONTRAST_CMD, contrastBak, true);
+        EventManager.instance.post(Events.HUE_CMD, hueBak, true);
+        EventManager.instance.post(Events.SATURATION_CMD, saturationBak, true);
+        EventManager.instance.post(Events.MOTION_BLUR_CMD, motionblurBak, true);
+        EventManager.instance.post(Events.LENS_FLARE_CMD, lensflareBak, true);
+        EventManager.instance.post(Events.LIGHT_SCATTERING_CMD, lightglowBak, true);
+        EventManager.instance.post(Events.BLOOM_CMD, bloomBak, true);
     }
 
     private void reloadUI() {

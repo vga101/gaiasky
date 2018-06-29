@@ -58,7 +58,7 @@ public class StarCluster extends AbstractPositionEntity implements IFocus, IProp
     private static Texture clusterTex;
 
     // Label and model colors
-    private static float[] col = new float[] { 0.9f, 0.9f, 0.2f, 0.5f };
+    private static float[] col = new float[] { 0.9f, 0.9f, 0.2f, 0.6f };
 
     private ModelComponent mc;
 

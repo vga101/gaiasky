@@ -547,10 +547,10 @@ public class OctreeNode implements ILineRenderable {
             // Compute distance and view angle
             distToCamera = auxD1.set(centre).add(cam.getInversePos()).len();
             // View angle is normalized to 40 degrees when the octant is exactly the size of the screen height, regardless of the camera fov
-            viewAngle = Math.atan(radius / distToCamera) * 2 / cam.getFovFactor();
+            viewAngle = Math.atan(radius / distToCamera) * 2;
 
-            float th0 = GlobalConf.scene.OCTANT_THRESHOLD_0 / cam.getFovFactor();
-            float th1 = GlobalConf.scene.OCTANT_THRESHOLD_1 / cam.getFovFactor();
+            float th0 = GlobalConf.scene.OCTANT_THRESHOLD_0;
+            float th1 = GlobalConf.scene.OCTANT_THRESHOLD_1;
 
             if (viewAngle < th0) {
                 // Not observed
@@ -558,7 +558,7 @@ public class OctreeNode implements ILineRenderable {
                 setChildrenObserved(false);
             } else {
                 nOctantsObserved++;
-                //int L_DEPTH = 8;
+                //int L_DEPTH = 5;
                 /**
                  * Load lists of pages
                  */

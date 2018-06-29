@@ -221,10 +221,10 @@ public class ObjectsComponent extends GuiComponent implements IObserver {
             meshesVertical.left();
             meshesVertical.columnLeft();
             meshesVertical.space(4 * GlobalConf.SCALE_FACTOR);
-            OwnScrollPane meshesScroll = new OwnScrollPane(meshesVertical);
+            OwnScrollPane meshesScroll = new OwnScrollPane(meshesVertical, skin, "minimalist-nobg");
             meshesScroll.setScrollingDisabled(false, true);
             meshesScroll.setForceScroll(true, false);
-            meshesScroll.setFadeScrollBars(false);
+            meshesScroll.setFadeScrollBars(true);
             meshesScroll.setOverscroll(false, false);
             meshesScroll.setSmoothScrolling(true);
             meshesScroll.setWidth(componentWidth + 12 * GlobalConf.SCALE_FACTOR);
