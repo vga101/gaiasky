@@ -97,7 +97,7 @@ public class PreferencesWindow extends GenericDialog {
 
     private IValidator widthValidator, heightValidator, screenshotsSizeValidator, frameoutputSizeValidator, limitfpsValidator;
 
-    private INumberFormat nf3;
+    private INumberFormat nf3, nf1;
 
     private CheckBox fullscreen, windowed, vsync, limitfpsCb, multithreadCb, lodFadeCb, cbAutoCamrec, real, nsl, report, inverty, highAccuracyPositions, shadowsCb, pointerCoords, datasetChooser;
     private OwnSelectBox<DisplayMode> fullscreenResolutions;
@@ -112,7 +112,7 @@ public class PreferencesWindow extends GenericDialog {
     private Map<Button, String> candidates;
 
     // Backup values
-    private float brightnessBak, contrastBak, hueBak, saturationBak, motionblurBak, bloomBak;
+    private float brightnessBak, contrastBak, hueBak, saturationBak, gammaBak, motionblurBak, bloomBak;
     private boolean lensflareBak, lightglowBak;
 
     public PreferencesWindow(Stage stage, Skin skin) {
@@ -121,6 +121,7 @@ public class PreferencesWindow extends GenericDialog {
         this.contents = new Array<Actor>();
         this.labels = new Array<OwnLabel>();
 
+        this.nf1 = NumberFormatFactory.getFormatter("0.0");
         this.nf3 = NumberFormatFactory.getFormatter("0.000");
 
         setAcceptText(txt("gui.saveprefs"));
@@ -517,6 +518,7 @@ public class PreferencesWindow extends GenericDialog {
         contrastBak = GlobalConf.postprocess.POSTPROCESS_CONTRAST;
         hueBak = GlobalConf.postprocess.POSTPROCESS_HUE;
         saturationBak = GlobalConf.postprocess.POSTPROCESS_SATURATION;
+        gammaBak = GlobalConf.postprocess.POSTPROCESS_GAMMA;
 
         /** Brightness **/
         OwnLabel brightnessl = new OwnLabel(txt("gui.brightness"), skin, "default");
@@ -525,6 +527,7 @@ public class PreferencesWindow extends GenericDialog {
         brightness.setName("brightness");
         brightness.setWidth(sliderWidth);
         brightness.setValue(MathUtilsd.lint(GlobalConf.postprocess.POSTPROCESS_BRIGHTNESS, Constants.MIN_BRIGHTNESS, Constants.MAX_BRIGHTNESS, Constants.MIN_SLIDER, Constants.MAX_SLIDER));
+        brightnessLabel.setText(Integer.toString((int) brightness.getValue()));
         brightness.addListener(event -> {
             if (event instanceof ChangeEvent) {
                 EventManager.instance.post(Events.BRIGHTNESS_CMD, MathUtilsd.lint(brightness.getValue(), Constants.MIN_SLIDER, Constants.MAX_SLIDER, Constants.MIN_BRIGHTNESS, Constants.MAX_BRIGHTNESS), true);
@@ -545,6 +548,7 @@ public class PreferencesWindow extends GenericDialog {
         contrast.setName("contrast");
         contrast.setWidth(sliderWidth);
         contrast.setValue(MathUtilsd.lint(GlobalConf.postprocess.POSTPROCESS_CONTRAST, Constants.MIN_CONTRAST, Constants.MAX_CONTRAST, Constants.MIN_SLIDER, Constants.MAX_SLIDER));
+        contrastLabel.setText(Integer.toString((int) contrast.getValue()));
         contrast.addListener(event -> {
             if (event instanceof ChangeEvent) {
                 EventManager.instance.post(Events.CONTRAST_CMD, MathUtilsd.lint(contrast.getValue(), Constants.MIN_SLIDER, Constants.MAX_SLIDER, Constants.MIN_CONTRAST, Constants.MAX_CONTRAST), true);
@@ -565,6 +569,7 @@ public class PreferencesWindow extends GenericDialog {
         hue.setName("hue");
         hue.setWidth(sliderWidth);
         hue.setValue(MathUtilsd.lint(GlobalConf.postprocess.POSTPROCESS_HUE, Constants.MIN_HUE, Constants.MAX_HUE, Constants.MIN_SLIDER, Constants.MAX_SLIDER));
+        hueLabel.setText(Integer.toString((int) hue.getValue()));
         hue.addListener(event -> {
             if (event instanceof ChangeEvent) {
                 EventManager.instance.post(Events.HUE_CMD, MathUtilsd.lint(hue.getValue(), Constants.MIN_SLIDER, Constants.MAX_SLIDER, Constants.MIN_HUE, Constants.MAX_HUE), true);
@@ -585,6 +590,7 @@ public class PreferencesWindow extends GenericDialog {
         saturation.setName("saturation");
         saturation.setWidth(sliderWidth);
         saturation.setValue(MathUtilsd.lint(GlobalConf.postprocess.POSTPROCESS_SATURATION, Constants.MIN_SATURATION, Constants.MAX_SATURATION, Constants.MIN_SLIDER, Constants.MAX_SLIDER));
+        saturationLabel.setText(Integer.toString((int) saturation.getValue()));
         saturation.addListener(event -> {
             if (event instanceof ChangeEvent) {
                 EventManager.instance.post(Events.SATURATION_CMD, MathUtilsd.lint(saturation.getValue(), Constants.MIN_SLIDER, Constants.MAX_SLIDER, Constants.MIN_SATURATION, Constants.MAX_SATURATION), true);
@@ -598,8 +604,29 @@ public class PreferencesWindow extends GenericDialog {
         display.add(saturation).left().padRight(pad * 2).padBottom(pad);
         display.add(saturationLabel).row();
 
+        /** Gamma **/
+        OwnLabel gammal = new OwnLabel(txt("gui.gamma"), skin, "default");
+        Label gammaLabel = new OwnLabel(nf1.format(GlobalConf.postprocess.POSTPROCESS_HUE), skin);
+        Slider gamma = new OwnSlider(Constants.MIN_GAMMA, Constants.MAX_GAMMA, 0.1f, false, skin);
+        gamma.setName("gamma");
+        gamma.setWidth(sliderWidth);
+        gamma.setValue(GlobalConf.postprocess.POSTPROCESS_GAMMA);
+        gammaLabel.setText(nf1.format(gamma.getValue()));
+        gamma.addListener(event -> {
+            if (event instanceof ChangeEvent) {
+                EventManager.instance.post(Events.GAMMA_CMD, gamma.getValue(), true);
+                gammaLabel.setText(nf1.format(gamma.getValue()));
+                return true;
+            }
+            return false;
+        });
+
+        display.add(gammal).left().padRight(pad * 4).padBottom(pad);
+        display.add(gamma).left().padRight(pad * 2).padBottom(pad);
+        display.add(gammaLabel).row();
+
         // LABELS
-        labels.addAll(brightnessl, contrastl, huel, saturationl);
+        labels.addAll(brightnessl, contrastl, huel, saturationl, gammal);
 
         // Add to content
         contentGraphicsTable.add(titleDisplay).left().padBottom(pad * 2).row();
@@ -1797,6 +1824,7 @@ public class PreferencesWindow extends GenericDialog {
         EventManager.instance.post(Events.CONTRAST_CMD, contrastBak, true);
         EventManager.instance.post(Events.HUE_CMD, hueBak, true);
         EventManager.instance.post(Events.SATURATION_CMD, saturationBak, true);
+        EventManager.instance.post(Events.GAMMA_CMD, gammaBak, true);
         EventManager.instance.post(Events.MOTION_BLUR_CMD, motionblurBak, true);
         EventManager.instance.post(Events.LENS_FLARE_CMD, lensflareBak, true);
         EventManager.instance.post(Events.LIGHT_SCATTERING_CMD, lightglowBak, true);

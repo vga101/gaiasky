@@ -233,6 +233,13 @@ public enum Events {
      * indicating whether this comes from the interface
      **/
     HUE_CMD,
+
+    /**
+     * Contains the gamma level (float) in [0..3] and an optional boolean
+     * indicating whether this comes from the interface
+     */
+    GAMMA_CMD,
+
     /**
      * Contains the saturation level (float) in [0..2] and an optional boolean
      * indicating whether this comes from the interface
