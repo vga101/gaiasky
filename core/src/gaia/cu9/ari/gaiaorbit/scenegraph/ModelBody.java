@@ -138,6 +138,10 @@ public abstract class ModelBody extends CelestialBody {
     }
 
     public void setToLocalTransform(float sizeFactor, Matrix4 localTransform, boolean forceUpdate) {
+        setToLocalTransform(size, sizeFactor, localTransform, forceUpdate);
+    }
+
+    public void setToLocalTransform(float size, float sizeFactor, Matrix4 localTransform, boolean forceUpdate) {
         if (sizeFactor != 1 || forceUpdate) {
             
             // NEW

@@ -19,8 +19,6 @@ public interface IAtmosphereRenderable extends IRenderable {
      *            The opacity.
      * @param t
      *            The time in seconds since the start.
-     * @param atm
-     *            Render atmosphere.
      */
-    public void render(ModelBatch modelBatch, float alpha, double t, boolean atm);
+    public void renderAtmosphere(ModelBatch modelBatch, float alpha, double t);
 }

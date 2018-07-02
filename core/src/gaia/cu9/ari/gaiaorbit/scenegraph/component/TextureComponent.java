@@ -248,6 +248,7 @@ public class TextureComponent {
         this.coloriftex = coloriftex;
     }
 
+
     /** Disposes all currently loaded textures **/
     public void disposeTextures(AssetManager manager) {
         if (base != null && manager.containsAsset(baseT)) {

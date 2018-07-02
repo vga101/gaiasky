@@ -10,11 +10,13 @@ import com.badlogic.gdx.math.Vector3;
 import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.render.IAtmosphereRenderable;
+import gaia.cu9.ari.gaiaorbit.render.ICloudRenderable;
 import gaia.cu9.ari.gaiaorbit.render.ILineRenderable;
 import gaia.cu9.ari.gaiaorbit.render.system.LineRenderSystem;
 import gaia.cu9.ari.gaiaorbit.scenegraph.camera.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.camera.NaturalCamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.AtmosphereComponent;
+import gaia.cu9.ari.gaiaorbit.scenegraph.component.CloudComponent;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.camera.CameraUtils;
 import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
@@ -23,7 +25,7 @@ import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
-public class Planet extends ModelBody implements IAtmosphereRenderable, ILineRenderable {
+public class Planet extends ModelBody implements IAtmosphereRenderable, ICloudRenderable, ILineRenderable {
     private static final double TH_ANGLE_NONE = ModelBody.TH_ANGLE_POINT / 1e6;
     private static final double TH_ANGLE_POINT = ModelBody.TH_ANGLE_POINT / 2e4;
     private static final double TH_ANGLE_QUAD = ModelBody.TH_ANGLE_POINT / 2f;
@@ -56,6 +58,9 @@ public class Planet extends ModelBody implements IAtmosphereRenderable, ILineRen
     /** ATMOSPHERE **/
     AtmosphereComponent ac;
 
+    /** CLOUDS **/
+    CloudComponent clc;
+
     public Planet() {
         super();
     }
@@ -63,7 +68,8 @@ public class Planet extends ModelBody implements IAtmosphereRenderable, ILineRen
     @Override
     public void initialize() {
         super.initialize();
-
+        if (clc != null)
+            clc.initialize(false);
     }
 
     protected void setColor2Data() {
@@ -89,6 +95,11 @@ public class Planet extends ModelBody implements IAtmosphereRenderable, ILineRen
             ac.doneLoading(mc.instance.materials.first(), this.size);
         }
 
+        // INITIALIZE CLOUDS
+        if (clc != null) {
+            clc.doneLoading(manager);
+        }
+
     }
 
     @Override
@@ -102,6 +113,10 @@ public class Planet extends ModelBody implements IAtmosphereRenderable, ILineRen
         super.updateLocalTransform();
         if (ac != null) {
             ac.update(transform);
+        }
+        if (clc != null) {
+            clc.update(transform);
+            setToLocalTransform(clc.size, 1, clc.localTransform, true);
         }
 
     }
@@ -130,51 +145,57 @@ public class Planet extends ModelBody implements IAtmosphereRenderable, ILineRen
      */
     @Override
     public void render(ModelBatch modelBatch, float alpha, double t) {
+        // Regular planet, render model normally
+        compalpha = alpha;
+        if (ac != null) {
+            // If atmosphere ground params are present, set them
+            float atmopacity = (float) MathUtilsd.lint(viewAngle, 0.01745329f, 0.03490659f, 0f, 1f);
+            if (GlobalConf.scene.VISIBILITY[ComponentType.Atmospheres.ordinal()] && atmopacity > 0) {
+                ac.updateAtmosphericScatteringParams(mc.instance.materials.first(), alpha * atmopacity, true, this);
+            } else {
+                ac.removeAtmosphericScattering(mc.instance.materials.first());
+            }
+        }
+
+        ICamera cam = GaiaSky.instance.getICamera();
+        prepareShadowEnvironment();
         mc.touch();
         mc.setTransparency(alpha * opacity);
-        mc.updateRelativisticEffects(GaiaSky.instance.getICamera());
-        render(modelBatch, alpha, t, false);
+        mc.updateRelativisticEffects(cam);
+        modelBatch.render(mc.instance, mc.env);
     }
 
     /**
-     * Renders the model
+     * Renders the atmosphere
      */
     @Override
-    public void render(ModelBatch modelBatch, float alpha, double t, boolean atm) {
+    public void renderAtmosphere(ModelBatch modelBatch, float alpha, double t) {
         // Atmosphere fades in between 1 and 2 degrees of view angle apparent
         ICamera cam = GaiaSky.instance.getICamera();
-        if (!atm) {
-            // Regular planet, render model normally
-            compalpha = alpha;
-            if (ac != null) {
-                // If atmosphere params are present, set them
-                float atmopacity = (float) MathUtilsd.lint(viewAngle, 0.01745329f, 0.03490659f, 0f, 1f);
-                if (GlobalConf.scene.VISIBILITY[ComponentType.Atmospheres.ordinal()] && atmopacity > 0) {
-                    ac.updateAtmosphericScatteringParams(mc.instance.materials.first(), alpha * atmopacity, true, this);
-                } else {
-                    ac.removeAtmosphericScattering(mc.instance.materials.first());
-                }
-            }
-
-            prepareShadowEnvironment();
-            mc.touch();
-            mc.setTransparency(alpha * opacity);
-            mc.updateRelativisticEffects(cam);
-            modelBatch.render(mc.instance, mc.env);
-        } else {
-            // We are an atmosphere :_D
-            float near = cam.getCamera().near;
-            float nearopacity = 1f;
-            if (near < 1e-3f && cam.getClosest() != this) {
-                nearopacity = MathUtilsd.lint(near, 1e-5f, 1e-3f, 0f, 1f);
-            }
-            float atmopacity = (float) MathUtilsd.lint(viewAngle, 0.01745329f, 0.03490659f, 0f, 1f) * nearopacity;
-            if (atmopacity > 0) {
-                ac.updateAtmosphericScatteringParams(ac.mc.instance.materials.first(), alpha * atmopacity, false, this);
-                ac.mc.updateRelativisticEffects(cam);
-                modelBatch.render(ac.mc.instance, mc.env);
-            }
+        // We are an atmosphere :_D
+        float near = cam.getCamera().near;
+        float nearopacity = 1f;
+        if (near < 1e-3f && cam.getClosest() != this) {
+            nearopacity = MathUtilsd.lint(near, 1e-5f, 1e-3f, 0f, 1f);
         }
+        float atmopacity = (float) MathUtilsd.lint(viewAngle, 0.01745329f, 0.03490659f, 0f, 1f) * nearopacity;
+        if (atmopacity > 0) {
+            ac.updateAtmosphericScatteringParams(ac.mc.instance.materials.first(), alpha * atmopacity, false, this);
+            ac.mc.updateRelativisticEffects(cam);
+            modelBatch.render(ac.mc.instance, mc.env);
+        }
+    }
+
+    /**
+     * Renders the clouds
+     */
+    @Override
+    public void renderClouds(ModelBatch modelBatch, float alpha, double t) {
+        clc.touch();
+        ICamera cam = GaiaSky.instance.getICamera();
+        clc.mc.updateRelativisticEffects(cam);
+        clc.mc.setTransparency(alpha * opacity);
+        modelBatch.render(clc.mc.instance, mc.env);
     }
 
     @Override
@@ -183,6 +204,10 @@ public class Planet extends ModelBody implements IAtmosphereRenderable, ILineRen
         // Add atmosphere to default render group if necessary
         if (ac != null && isInRender(this, RenderGroup.MODEL_NORMAL) && !coordinatesTimeOverflow) {
             addToRender(this, RenderGroup.MODEL_ATM);
+        }
+        // Cloud
+        if (clc != null && isInRender(this, RenderGroup.MODEL_NORMAL) && !coordinatesTimeOverflow) {
+            addToRender(this, RenderGroup.MODEL_CLOUD);
         }
     }
 
@@ -193,6 +218,10 @@ public class Planet extends ModelBody implements IAtmosphereRenderable, ILineRen
 
     public void setAtmosphere(AtmosphereComponent ac) {
         this.ac = ac;
+    }
+
+    public void setCloud(CloudComponent clc) {
+        this.clc = clc;
     }
 
     @Override

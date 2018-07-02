@@ -601,7 +601,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
 
             }
         } catch (Throwable t) {
-            EventManager.instance.post(Events.JAVA_EXCEPTION, t);
+            Logger.error(t);
             // TODO implement error reporting?
         }
     }

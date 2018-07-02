@@ -58,7 +58,7 @@ public class VisibilityComponent extends GuiComponent implements IObserver {
     }
 
     public void initialize() {
-        int visTableCols = 4;
+        int visTableCols = 5;
         final Table visibilityTable = new Table(skin);
         visibilityTable.setName("visibility table");
         visibilityTable.top().left();
@@ -188,7 +188,6 @@ public class VisibilityComponent extends GuiComponent implements IObserver {
         //        for (Button b : buttons) {
         //            b.setSize(25 * GlobalConf.SCALE_FACTOR, 25 * GlobalConf.SCALE_FACTOR);
         //        }
-        visibilityTable.pack();
 
         visibilityTable.row().padBottom(3 * GlobalConf.SCALE_FACTOR);
         visibilityTable.add(pmGroup).padTop(3 * GlobalConf.SCALE_FACTOR).align(Align.left).colspan(visTableCols);

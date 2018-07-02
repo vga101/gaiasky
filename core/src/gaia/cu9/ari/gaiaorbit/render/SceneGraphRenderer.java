@@ -51,6 +51,7 @@ import gaia.cu9.ari.gaiaorbit.render.system.LineRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.MWModelRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.MilkyWayRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.ModelBatchRenderSystem;
+import gaia.cu9.ari.gaiaorbit.render.system.ModelBatchRenderSystem.ModelRenderType;
 import gaia.cu9.ari.gaiaorbit.render.system.OrbitalElementsParticlesRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.ParticleEffectsRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.ParticleGroupRenderSystem;
@@ -202,6 +203,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         manager.load("spopaque", RelativisticShaderProvider.class, new RelativisticShaderProviderParameter("shader/normal.vertex.glsl", "shader/opaque.fragment.glsl"));
         manager.load("atm", AtmosphereShaderProvider.class, new AtmosphereShaderProviderParameter("shader/atm.vertex.glsl", "shader/atm.fragment.glsl"));
         manager.load("atmground", GroundShaderProvider.class, new GroundShaderProviderParameter("shader/normal.vertex.glsl", "shader/normal.fragment.glsl"));
+        manager.load("cloud", GroundShaderProvider.class, new GroundShaderProviderParameter("shader/cloud.vertex.glsl", "shader/cloud.fragment.glsl"));
 
         BitmapFontParameter bfp = new BitmapFontParameter();
         bfp.magFilter = TextureFilter.Linear;
@@ -371,8 +373,9 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         ShaderProvider sp = manager.get("atmgrounddefault");
         ShaderProvider spadditive = manager.get("additive");
         ShaderProvider spgrids = manager.get("grids");
-        ShaderProvider spnormal = Constants.webgl ? sp : manager.get("atmground");
+        ShaderProvider spnormal = manager.get("atmground");
         ShaderProvider spatm = manager.get("atm");
+        ShaderProvider spcloud = manager.get("cloud");
         ShaderProvider spsurface = manager.get("spsurface");
         ShaderProvider spbeam = manager.get("spbeam");
         ShaderProvider spdepth = manager.get("spdepth");
@@ -392,6 +395,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         ModelBatch modelBatchGrids = new ModelBatch(spgrids, noSorter);
         ModelBatch modelBatchNormal = new ModelBatch(spnormal, noSorter);
         ModelBatch modelBatchAtmosphere = new ModelBatch(spatm, noSorter);
+        ModelBatch modelBatchCloud = new ModelBatch(spcloud, noSorter);
         ModelBatch modelBatchStar = new ModelBatch(spsurface, noSorter);
         ModelBatch modelBatchBeam = new ModelBatch(spbeam, noSorter);
         modelBatchDepth = new ModelBatch(spdepth, noSorter);
@@ -457,7 +461,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         pixelStarProc.setPreRunnable(blendNoDepthRunnable);
 
         // MODEL FRONT-BACK - NO CULL FACE
-        AbstractRenderSystem modelFrontBackProc = new ModelBatchRenderSystem(RenderGroup.MODEL_DEFAULT, alphas, modelBatchDefault, false);
+        AbstractRenderSystem modelFrontBackProc = new ModelBatchRenderSystem(RenderGroup.MODEL_DEFAULT, alphas, modelBatchDefault, ModelRenderType.NORMAL);
         modelFrontBackProc.setPreRunnable(blendDepthRunnable);
         modelFrontBackProc.setPostRunnable(new RenderSystemRunnable() {
             @Override
@@ -468,7 +472,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         });
 
         // MODEL GRID
-        AbstractRenderSystem modelGridsProc = new ModelBatchRenderSystem(RenderGroup.MODEL_GRIDS, alphas, modelBatchGrids, false);
+        AbstractRenderSystem modelGridsProc = new ModelBatchRenderSystem(RenderGroup.MODEL_GRIDS, alphas, modelBatchGrids, ModelRenderType.NORMAL);
         modelGridsProc.setPreRunnable(blendDepthRunnable);
         modelGridsProc.setPostRunnable(new RenderSystemRunnable() {
             @Override
@@ -564,15 +568,15 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         lineGpuProc.setPreRunnable(blendDepthRunnable);
 
         // MODEL MESH
-        AbstractRenderSystem modelMeshProc = new ModelBatchRenderSystem(RenderGroup.MODEL_MESH, alphas, modelBatchMesh, false, false);
+        AbstractRenderSystem modelMeshProc = new ModelBatchRenderSystem(RenderGroup.MODEL_MESH, alphas, modelBatchMesh, ModelRenderType.NORMAL, false);
         modelMeshProc.setPreRunnable(blendDepthRunnable);
 
         // MODEL FRONT
-        AbstractRenderSystem modelFrontProc = new ModelBatchRenderSystem(RenderGroup.MODEL_NORMAL, alphas, modelBatchNormal, false);
+        AbstractRenderSystem modelFrontProc = new ModelBatchRenderSystem(RenderGroup.MODEL_NORMAL, alphas, modelBatchNormal, ModelRenderType.NORMAL);
         modelFrontProc.setPreRunnable(blendDepthRunnable);
 
         // MODEL BEAM
-        AbstractRenderSystem modelBeamProc = new ModelBatchRenderSystem(RenderGroup.MODEL_BEAM, alphas, modelBatchBeam, false, false);
+        AbstractRenderSystem modelBeamProc = new ModelBatchRenderSystem(RenderGroup.MODEL_BEAM, alphas, modelBatchBeam, ModelRenderType.NORMAL, false);
         modelBeamProc.setPreRunnable(blendDepthRunnable);
 
         // GALAXY
@@ -599,7 +603,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         orbitElemProc.setPreRunnable(blendNoDepthRunnable);
 
         // MODEL STARS
-        AbstractRenderSystem modelStarsProc = new ModelBatchRenderSystem(RenderGroup.MODEL_STAR, alphas, modelBatchStar, false);
+        AbstractRenderSystem modelStarsProc = new ModelBatchRenderSystem(RenderGroup.MODEL_STAR, alphas, modelBatchStar, ModelRenderType.NORMAL);
         modelStarsProc.setPreRunnable(blendDepthRunnable);
 
         // LABELS
@@ -612,7 +616,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         billboardSSOProc.setPostRunnable(restoreRegularBlend);
 
         // MODEL ATMOSPHERE
-        AbstractRenderSystem modelAtmProc = new ModelBatchRenderSystem(RenderGroup.MODEL_ATM, alphas, modelBatchAtmosphere, true) {
+        AbstractRenderSystem modelAtmProc = new ModelBatchRenderSystem(RenderGroup.MODEL_ATM, alphas, modelBatchAtmosphere, ModelRenderType.ATMOSPHERE) {
             @Override
             public float getAlpha(IRenderable s) {
                 return alphas[ComponentType.Atmospheres.ordinal()] * (float) Math.pow(alphas[s.getComponentType().getFirstOrdinal()], 2);
@@ -631,6 +635,9 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
                 //Gdx.gl.glClear(GL20.GL_DEPTH_BUFFER_BIT);
             }
         });
+
+        // MODEL CLOUDS
+        AbstractRenderSystem modelCloudProc = new ModelBatchRenderSystem(RenderGroup.MODEL_CLOUD, alphas, modelBatchCloud, ModelRenderType.CLOUD);
 
         // SHAPES
         AbstractRenderSystem shapeProc = new ShapeRenderSystem(RenderGroup.SHAPE, alphas);
@@ -668,6 +675,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
         renderProcesses.add(modelStarsProc);
         renderProcesses.add(modelAtmProc);
+        renderProcesses.add(modelCloudProc);
         renderProcesses.add(shapeProc);
         renderProcesses.add(particleEffectsProc);
         // renderProcesses.add(cloudsProc);
