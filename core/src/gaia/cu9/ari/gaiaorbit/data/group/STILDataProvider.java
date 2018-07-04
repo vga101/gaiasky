@@ -211,8 +211,8 @@ public class STILDataProvider extends AbstractStarGroupDataProvider {
 
                         list.add(new StarBean(point, id, name));
                     } catch (Exception e) {
-                        Logger.error(e);
-                        Logger.error("Exception parsing row " + i + ": skipping");
+                        Logger.debug(e);
+                        Logger.debug("Exception parsing row " + i + ": skipping");
                     }
 
                 }

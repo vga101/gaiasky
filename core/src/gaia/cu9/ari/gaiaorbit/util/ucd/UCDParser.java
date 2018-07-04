@@ -18,6 +18,14 @@ import uk.ac.starlink.table.StarTable;
  */
 public class UCDParser {
 
+    private static String[] idcolnames = new String[] { "hip", "id", "source_id", "tycho2_id" };
+    private static String[] pos1colnames = new String[] { "ra", "right_ascension", "rightascension", "alpha" };
+    private static String[] pos2colnames = new String[] { "dec", "declination", "delta" };
+    private static String[] distcolnames = new String[] { "dist", "distance" };
+    private static String[] pllxcolnames = new String[] { "plx", "parallax", "pllx" };
+    private static String[] magcolnames = new String[] { "phot_g_mean_mag", "mag", "bmag", "gmag" };
+    private static String[] colorcolnames = new String[] { "b_v", "v_i", "bp_rp", "bp_g", "g_rp" };
+
     public Map<UCDType, Set<UCD>> ucdmap;
 
     // IDS
@@ -81,7 +89,7 @@ public class UCDParser {
                 }
             }
         if (this.ID.isEmpty()) {
-            this.ID.addAll(getByColNames("hip", "id", "source_id", "tycho2_id"));
+            this.ID.addAll(getByColNames(idcolnames));
         }
         this.hasid = this.ID != null;
 
@@ -142,12 +150,12 @@ public class UCDParser {
         }
         if (this.POS1.isEmpty() || this.POS2.isEmpty()) {
             // Try to work out from names
-            this.POS1 = getByColNames("ra", "right_ascension", "rightascension", "alpha");
+            this.POS1 = getByColNames(pos1colnames, "deg");
             if (this.POS1 != null) {
-                this.POS2 = getByColNames("dec", "declination", "delta");
-                this.POS3 = getByColNames("dist", "distance");
-                if (this.POS3 == null) {
-                    this.POS3 = getByColNames("plx", "parallax", "pllx");
+                this.POS2 = getByColNames(pos2colnames, "deg");
+                this.POS3 = getByColNames(distcolnames, "pc");
+                if (this.POS3 == null || this.POS3.isEmpty()) {
+                    this.POS3 = getByColNames(pllxcolnames, "mas");
                 } else {
                 }
             }
@@ -173,10 +181,10 @@ public class UCDParser {
                     }
                 }
             }
-        if (this.MAG == null) {
-            this.MAG = getByColNames("mag", "bmag", "gmag", "phot_g_mean_mag");
+        if (this.MAG == null || this.MAG.isEmpty()) {
+            this.MAG = getByColNames(magcolnames, "mag");
         }
-        this.hasmag = this.MAG != null;
+        this.hasmag = this.MAG != null && !this.MAG.isEmpty();
 
         /** COLORS **/
         Set<UCD> col = ucdmap.get(UCDType.PHOT);
@@ -187,10 +195,10 @@ public class UCDParser {
                     break;
                 }
             }
-        if (this.COL == null) {
-            this.COL = getByColNames("b_v", "v_i", "bp_rp", "bp_g", "g_rp");
+        if (this.COL == null || this.COL.isEmpty()) {
+            this.COL = getByColNames(colorcolnames);
         }
-        this.hascol = this.COL != null;
+        this.hascol = this.COL != null && !this.COL.isEmpty();
 
         /** PHYSICAL QUANTITIES **/
         // TODO - not supported yet
@@ -198,6 +206,9 @@ public class UCDParser {
     }
 
     public PositionType getPositionType(UCD pos1, UCD pos2, UCD pos3) {
+        if (pos1.ucd == null || pos2.ucd == null || pos3.ucd == null) {
+            return PositionType.valueOf("EQ_SPH_" + (contains(distcolnames, pos3.colname) ? "DIST" : "PLX"));
+        }
         String meaning = pos1.ucd[0][1];
         String postypestr = null, disttype = null;
         PositionType postype = null;
@@ -238,11 +249,14 @@ public class UCDParser {
         return postype;
     }
 
-    private Set<UCD> getByColNames(String... colnames) {
-        return getByColNames(new UCDType[] { UCDType.UNKNOWN, UCDType.MISSING }, colnames);
+    private Set<UCD> getByColNames(String[] colnames) {
+        return getByColNames(colnames, null);
+    }
+    private Set<UCD> getByColNames(String[] colnames, String defaultunit) {
+        return getByColNames(new UCDType[] { UCDType.UNKNOWN, UCDType.MISSING }, colnames, defaultunit);
     }
 
-    private Set<UCD> getByColNames(UCDType[] types, String... colnames) {
+    private Set<UCD> getByColNames(UCDType[] types, String[] colnames, String defaultunit) {
         Set<UCD> candidates = new HashSet<UCD>();
         for (UCDType type : types) {
             // Get all unknown and missing
@@ -250,8 +264,11 @@ public class UCDParser {
                 Set<UCD> set = ucdmap.get(type);
                 // Check column names
                 for (UCD candidate : set) {
-                    if (contains(colnames, candidate.colname))
+                    if (contains(colnames, candidate.colname)) {
+                        if (defaultunit != null && (candidate.unit == null || candidate.unit.isEmpty()))
+                            candidate.unit = defaultunit;
                         candidates.add(candidate);
+                    }
                 }
             }
         }
