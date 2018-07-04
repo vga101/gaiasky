@@ -94,6 +94,13 @@ public abstract class AbstractPositionEntity extends SceneGraphNode {
         posSph = new Vector2();
     }
 
+    public AbstractPositionEntity(String name, SceneGraphNode parent) {
+        super(name, parent);
+        // Positions
+        pos = new Vector3d();
+        posSph = new Vector2();
+    }
+
     public AbstractPositionEntity(SceneGraphNode parent) {
         super(parent);
         // Positions
@@ -104,6 +111,7 @@ public abstract class AbstractPositionEntity extends SceneGraphNode {
     public AbstractPositionEntity(String name) {
         super(name);
     }
+
 
     @Override
     public void doneLoading(AssetManager manager) {

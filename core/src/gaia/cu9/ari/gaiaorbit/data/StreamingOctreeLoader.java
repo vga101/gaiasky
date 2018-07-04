@@ -70,6 +70,9 @@ public abstract class StreamingOctreeLoader implements IObserver, ISceneGraphLoa
 
     /** Last time of a queue clear event went through **/
     protected long lastQueueClearMs = 0;
+    
+    // Dataset name and description
+    protected String name, description;
 
     /**
      * This queue is sorted ascending by access date, so that we know which
@@ -541,4 +544,11 @@ public abstract class StreamingOctreeLoader implements IObserver, ISceneGraphLoa
 
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 }

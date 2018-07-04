@@ -129,4 +129,12 @@ public class GeoJsonLoader<T extends SceneGraphNode> implements ISceneGraphLoade
             return 1;
         }
     }
+
+    @Override
+    public void setName(String name) {
+    }
+
+    @Override
+    public void setDescription(String description) {
+    }
 }

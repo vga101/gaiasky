@@ -13,6 +13,8 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.StarGroup;
 import gaia.cu9.ari.gaiaorbit.scenegraph.StarGroup.StarBean;
 import gaia.cu9.ari.gaiaorbit.scenegraph.octreewrapper.AbstractOctreeWrapper;
 import gaia.cu9.ari.gaiaorbit.scenegraph.octreewrapper.OctreeWrapper;
+import gaia.cu9.ari.gaiaorbit.util.CatalogInfo;
+import gaia.cu9.ari.gaiaorbit.util.CatalogInfo.CatalogInfoType;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.tree.LoadStatus;
@@ -63,6 +65,10 @@ public class OctreeGroupLoader extends StreamingOctreeLoader {
              * parallel, so we never use OctreeWrapperConcurrent
              */
             AbstractOctreeWrapper octreeWrapper = new OctreeWrapper("Universe", root);
+            // Catalog info
+            String name = this.name != null ? this.name : "LOD data";
+            String description = this.description != null ? this.description : "Octree-based LOD dataset";
+            new CatalogInfo(name, description, null, CatalogInfoType.LOD, octreeWrapper);
 
             /**
              * LOAD LOD LEVELS - LOAD PARTICLE DATA

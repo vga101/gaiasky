@@ -766,6 +766,9 @@ public enum Events {
     /** Stops gravitational wave **/
     GRAV_WAVE_STOP,
 
+    /** A new catalog has been loaded. Contains the new catalog info object **/
+    ADD_CATALOG_INFO,
+
     /** Dispose all resources, app is shutting down **/
     DISPOSE;
 

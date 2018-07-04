@@ -14,6 +14,7 @@ import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.render.system.AbstractRenderSystem;
 import gaia.cu9.ari.gaiaorbit.scenegraph.AbstractPositionEntity;
+import gaia.cu9.ari.gaiaorbit.scenegraph.FadeNode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.IFocus;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Transform;
@@ -32,7 +33,7 @@ import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
  * @author Toni Sagrista
  *
  */
-public abstract class AbstractOctreeWrapper extends SceneGraphNode implements Iterable<OctreeNode> {
+public abstract class AbstractOctreeWrapper extends FadeNode implements Iterable<OctreeNode> {
 
     public OctreeNode root;
     /** Roulette list with the objects to process **/
@@ -123,7 +124,7 @@ public abstract class AbstractOctreeWrapper extends SceneGraphNode implements It
             int obj = root.countObjects();
             root.updateNumbers();
 
-            root.update(transform, camera, roulette, 1f);
+            root.update(transform, camera, roulette, opacity);
 
             if (OctreeNode.nObjectsObserved != lastNumberObjects) {
                 // Need to update the points in renderer

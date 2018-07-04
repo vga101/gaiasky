@@ -197,4 +197,8 @@ public class VisualEffectsComponent extends GuiComponent implements IObserver {
 
     }
 
+    @Override
+    public void dispose() {
+        EventManager.instance.removeAllSubscriptions(this);
+    }
 }

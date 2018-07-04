@@ -26,6 +26,8 @@ import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.scenegraph.StarGroup;
 import gaia.cu9.ari.gaiaorbit.scenegraph.StarGroup.StarBean;
 import gaia.cu9.ari.gaiaorbit.scenegraph.camera.CameraManager.CameraMode;
+import gaia.cu9.ari.gaiaorbit.util.CatalogInfo;
+import gaia.cu9.ari.gaiaorbit.util.CatalogInfo.CatalogInfoType;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.parse.Parser;
@@ -206,6 +208,9 @@ public class SAMPClient implements IObserver {
                 sg.setLabelposition(new double[] { 0.0, -5.0e7, -4e8 });
                 sg.setCt("Stars");
                 sg.setData(data);
+
+                // Catalog info
+                new CatalogInfo(name, url, null, CatalogInfoType.SAMP, sg);
 
                 mapIdSg.put(id, sg);
                 mapIdUrl.put(id, url);

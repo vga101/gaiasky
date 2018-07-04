@@ -116,6 +116,10 @@ public class MusicComponent extends GuiComponent implements IObserver {
         default:
             break;
         }
+    }
 
+    @Override
+    public void dispose() {
+        EventManager.instance.removeAllSubscriptions(this);
     }
 }

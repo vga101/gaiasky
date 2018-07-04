@@ -28,6 +28,7 @@ import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
 public class OctreeSingleFileLoader implements ISceneGraphLoader {
 
     String metadata, particles;
+    String name, description;
 
     @Override
     public Array<? extends SceneGraphNode> loadData() throws FileNotFoundException {
@@ -83,6 +84,14 @@ public class OctreeSingleFileLoader implements ISceneGraphLoader {
         }
         particles = files[0];
         metadata = files[1];
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
 }

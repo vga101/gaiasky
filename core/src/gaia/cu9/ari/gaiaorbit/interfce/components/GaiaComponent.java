@@ -66,4 +66,8 @@ public class GaiaComponent extends GuiComponent {
 
     }
 
+    @Override
+    public void dispose() {
+    }
+
 }

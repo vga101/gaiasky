@@ -27,6 +27,7 @@ import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.interfce.components.CameraComponent;
+import gaia.cu9.ari.gaiaorbit.interfce.components.DatasetsComponent;
 import gaia.cu9.ari.gaiaorbit.interfce.components.MusicComponent;
 import gaia.cu9.ari.gaiaorbit.interfce.components.ObjectsComponent;
 import gaia.cu9.ari.gaiaorbit.interfce.components.TimeComponent;
@@ -168,6 +169,15 @@ public class ControlsWindow extends CollapsibleWindow implements IObserver {
         visualEffects.align(Align.left);
         mainActors.add(visualEffects);
         panes.put(visualEffectsComponent.getClass().getSimpleName(), visualEffects);
+
+        /** ----DATASETS---- **/
+        DatasetsComponent datasetsComponent = new DatasetsComponent(skin, ui);
+        datasetsComponent.initialize();
+
+        CollapsiblePane datasets = new CollapsiblePane(ui, "Datasets", datasetsComponent.getActor(), skin, false);
+        datasets.align(Align.left);
+        mainActors.add(datasets);
+        panes.put(datasetsComponent.getClass().getSimpleName(), datasets);
 
         /** ----OBJECTS TREE---- **/
         ObjectsComponent objectsComponent = new ObjectsComponent(skin, ui);

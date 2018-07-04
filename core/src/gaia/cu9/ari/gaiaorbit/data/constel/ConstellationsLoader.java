@@ -101,4 +101,12 @@ public class ConstellationsLoader<T extends SceneGraphNode> implements ISceneGra
         Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.constellations.init", constellations.size));
         return constellations;
     }
+
+    @Override
+    public void setName(String name) {
+    }
+
+    @Override
+    public void setDescription(String description) {
+    }
 }

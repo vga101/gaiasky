@@ -98,4 +98,12 @@ public class ConstelBoundariesLoader<T extends SceneGraphNode> implements IScene
 
         return boundaries;
     }
+
+    @Override
+    public void setName(String name) {
+    }
+
+    @Override
+    public void setDescription(String description) {
+    }
 }

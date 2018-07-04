@@ -295,4 +295,12 @@ public class JsonLoader<T extends SceneGraphNode> implements ISceneGraphLoader {
         }
         return valueClass;
     }
+
+    @Override
+    public void setName(String name) {
+    }
+
+    @Override
+    public void setDescription(String description) {
+    }
 }
