@@ -113,7 +113,7 @@ public abstract class AbstractSceneGraph implements ISceneGraph {
     }
 
     public void remove(SceneGraphNode node, boolean removeFromIndex) {
-        if (node != null) {
+        if (node != null && node.parent != null) {
             node.parent.removeChild(node, true);
 
             if (removeFromIndex) {

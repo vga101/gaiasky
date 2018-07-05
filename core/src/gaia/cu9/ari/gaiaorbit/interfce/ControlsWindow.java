@@ -174,7 +174,7 @@ public class ControlsWindow extends CollapsibleWindow implements IObserver {
         DatasetsComponent datasetsComponent = new DatasetsComponent(skin, ui);
         datasetsComponent.initialize();
 
-        CollapsiblePane datasets = new CollapsiblePane(ui, "Datasets", datasetsComponent.getActor(), skin, false);
+        CollapsiblePane datasets = new CollapsiblePane(ui, txt("gui.datasets.title"), datasetsComponent.getActor(), skin, false);
         datasets.align(Align.left);
         mainActors.add(datasets);
         panes.put(datasetsComponent.getClass().getSimpleName(), datasets);

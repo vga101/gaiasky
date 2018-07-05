@@ -754,11 +754,17 @@ public enum Events {
     /** Empty event which informs that background loading is active **/
     BACKGROUND_LOADING_INFO,
 
+    /** Informs the octree has been disposed **/
+    OCTREE_DISPOSED,
+
     /** Update external GUIs signal. Contains the dt in seconds. **/
     UPDATE_GUI,
 
-    /** Contains an the index of the mesh to be cleared **/
+    /** Contains an the index of the star group mesh to be cleared **/
     DISPOSE_STAR_GROUP_GPU_MESH,
+
+    /** Contains an index to the particle group mesh to be cleared **/
+    DISPOSE_PARTICLE_GROUP_GPU_MESH,
 
     /** Start gravitational wave. Contains on-screen position (x,y) of source as two integer parameters **/
     GRAV_WAVE_START,

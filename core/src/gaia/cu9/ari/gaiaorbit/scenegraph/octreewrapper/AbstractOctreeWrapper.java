@@ -114,49 +114,51 @@ public abstract class AbstractOctreeWrapper extends FadeNode implements Iterable
         this.opacity = opacity;
         transform.set(parentTransform);
 
-        // Update octants
-        if (!copy) {
+        // Fade node visibility applies here
+        if (this.isVisible()) {
+            // Update octants
+            if (!copy) {
 
-            // Compute observed octants and fill roulette list
-            OctreeNode.nOctantsObserved = 0;
-            OctreeNode.nObjectsObserved = 0;
+                // Compute observed octants and fill roulette list
+                OctreeNode.nOctantsObserved = 0;
+                OctreeNode.nObjectsObserved = 0;
 
-            int obj = root.countObjects();
-            root.updateNumbers();
+                root.updateNumbers();
 
-            root.update(transform, camera, roulette, opacity);
+                root.update(transform, camera, roulette, opacity);
 
-            if (OctreeNode.nObjectsObserved != lastNumberObjects) {
-                // Need to update the points in renderer
-                AbstractRenderSystem.POINT_UPDATE_FLAG = true;
-                lastNumberObjects = OctreeNode.nObjectsObserved;
-            }
-
-            updateLocal(time, camera);
-
-            // Broadcast the number of objects that we will try to render
-            EventManager.instance.post(Events.DEBUG3, "On display: " + OctreeNode.nObjectsObserved + ", Total loaded: " + StreamingOctreeLoader.getNLoadedStars());
-
-            // Call the update method of all entities in the roulette list. This
-            // is implemented in the subclass.
-            updateOctreeObjects(time, transform, camera);
-
-            // Reset mask
-            roulette.clear();
-
-            // Update focus, just in case
-            IFocus focus = camera.getFocus();
-            if (focus != null) {
-                SceneGraphNode star = focus.getFirstStarAncestor();
-                OctreeNode parent = parenthood.get(star);
-                if (parent != null && !parent.isObserved()) {
-                    star.update(time, star.parent.transform, camera);
+                if (OctreeNode.nObjectsObserved != lastNumberObjects) {
+                    // Need to update the points in renderer
+                    AbstractRenderSystem.POINT_UPDATE_FLAG = true;
+                    lastNumberObjects = OctreeNode.nObjectsObserved;
                 }
-            }
-        } else {
-            // Just update children
-            for (SceneGraphNode node : children) {
-                node.update(time, transform, camera);
+
+                updateLocal(time, camera);
+
+                // Broadcast the number of objects that we will try to render
+                EventManager.instance.post(Events.DEBUG3, "On display: " + OctreeNode.nObjectsObserved + ", Total loaded: " + StreamingOctreeLoader.getNLoadedStars());
+
+                // Call the update method of all entities in the roulette list. This
+                // is implemented in the subclass.
+                updateOctreeObjects(time, transform, camera);
+
+                // Reset mask
+                roulette.clear();
+
+                // Update focus, just in case
+                IFocus focus = camera.getFocus();
+                if (focus != null) {
+                    SceneGraphNode star = focus.getFirstStarAncestor();
+                    OctreeNode parent = parenthood.get(star);
+                    if (parent != null && !parent.isObserved()) {
+                        star.update(time, star.parent.transform, camera);
+                    }
+                }
+            } else {
+                // Just update children
+                for (SceneGraphNode node : children) {
+                    node.update(time, transform, camera);
+                }
             }
         }
 
@@ -232,5 +234,20 @@ public abstract class AbstractOctreeWrapper extends FadeNode implements Iterable
         }
         return null;
     }
+
+    @Override
+    public void dispose() {
+        sg.remove(this, true);
+        root.dispose();
+        parenthood.clear();
+        roulette.clear();
+        root = null;
+        OctreeNode.maxDepth = 0;
+        OctreeNode.nObjectsObserved = 0;
+        OctreeNode.nOctantsObserved = 0;
+        EventManager.instance.post(Events.DEBUG3, "On display: " + 0 + ", Total loaded: " + 0);
+        EventManager.instance.post(Events.OCTREE_DISPOSED);
+    }
+
 
 }

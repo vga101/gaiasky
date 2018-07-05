@@ -3,10 +3,15 @@ package gaia.cu9.ari.gaiaorbit.interfce.components;
 import java.util.Iterator;
 
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextTooltip;
 import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
@@ -14,6 +19,8 @@ import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.util.CatalogInfo;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
+import gaia.cu9.ari.gaiaorbit.util.Logger;
+import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnImageButton;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnLabel;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnScrollPane;
 
@@ -32,6 +39,7 @@ public class DatasetsComponent extends GuiComponent implements IObserver {
 
         group = new VerticalGroup();
         group.space(pad);
+        group.align(Align.left);
 
         Array<CatalogInfo> cis = CatalogInfo.catalogs;
 
@@ -48,21 +56,62 @@ public class DatasetsComponent extends GuiComponent implements IObserver {
     }
 
     private void addCatalogInfo(CatalogInfo ci) {
+
+
         Table t = new Table();
-        t.add(new OwnLabel("Type: " + ci.type.toString(), skin, "hud-subheader")).left().row();
-        t.add(new OwnLabel(ci.name, skin)).left().row();
+        t.add(new OwnLabel(ci.name, skin, "hud-subheader")).left().row();
+        t.add(new OwnLabel(txt("gui.dataset.type") + ": " + ci.type.toString(), skin)).left().row();
         t.add(new OwnLabel(ci.description, skin)).left().padBottom(pad).row();
 
+        HorizontalGroup ciGroup = new HorizontalGroup();
+        ciGroup.space(pad);
+
+        // Info
         ScrollPane scroll = new OwnScrollPane(t, skin, "minimalist-nobg");
         scroll.setScrollingDisabled(false, true);
         scroll.setForceScroll(false, false);
         scroll.setFadeScrollBars(false);
         scroll.setOverscroll(false, false);
         scroll.setSmoothScrolling(true);
-        scroll.setWidth(170 * GlobalConf.SCALE_FACTOR);
+        scroll.setWidth(155 * GlobalConf.SCALE_FACTOR);
         scroll.setHeight(GlobalConf.SCALE_FACTOR > 1 ? 90 : 50);
 
-        group.addActor(scroll);
+        // Controls
+        VerticalGroup controls = new VerticalGroup();
+        controls.space(pad);
+        ImageButton eye = new OwnImageButton(skin, "eye-toggle");
+        eye.addListener(new TextTooltip(txt("gui.dataset.tooltip.toggle"), skin));
+        eye.addListener((event) -> {
+            if (event instanceof ChangeEvent) {
+                // Toggle visibility
+                if (ci.object != null) {
+                    boolean newvis = !ci.object.isVisible();
+                    ci.object.setVisible(newvis);
+                    Logger.info(txt("notif.visibility." + (newvis ? "on" : "off"), ci.name));
+                }
+                return true;
+            }
+            return false;
+        });
+        ImageButton rubbish = new OwnImageButton(skin, "rubbish-bin");
+        rubbish.addListener(new TextTooltip(txt("gui.dataset.tooltip.remove"), skin));
+        rubbish.addListener((event) -> {
+            if (event instanceof ChangeEvent) {
+                // Remove dataset
+                ci.removeCatalog();
+                ciGroup.remove();
+                return true;
+            }
+            return false;
+        });
+
+        controls.addActor(eye);
+        controls.addActor(rubbish);
+
+        ciGroup.addActor(controls);
+        ciGroup.addActor(scroll);
+
+        group.addActor(ciGroup);
     }
 
     @Override

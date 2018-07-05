@@ -390,11 +390,6 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         // Set current date
         EventManager.instance.post(Events.TIME_CHANGE_CMD, Instant.now());
 
-        if (Constants.focalplane) {
-            // Activate time
-            EventManager.instance.post(Events.TOGGLE_TIME_CMD, true, false);
-        }
-
         // Resize GUIs to current size
         for (IGui gui : guis)
             gui.resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());

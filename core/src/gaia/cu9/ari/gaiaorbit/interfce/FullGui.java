@@ -68,8 +68,6 @@ public class FullGui extends AbstractGui {
     protected MessagesInterface messagesInterface;
     protected CustomInterface customInterface;
     protected RunStateInterface runStateInterface;
-    protected Container<WebGLInterface> wgl;
-    protected WebGLInterface webglInterface;
 
     protected SearchDialog searchDialog;
     protected AboutWindow aboutWindow;
@@ -90,7 +88,6 @@ public class FullGui extends AbstractGui {
     private boolean uncertainties = false;
     // Rel effects off
     private boolean releffects = true;
-
 
     public FullGui() {
         super();
@@ -121,13 +118,8 @@ public class FullGui extends AbstractGui {
             ct.getName();
         }
 
-        if (Constants.focalplane) {
-            // WEBGL INTERFACE - TOP LEFT
-            addWebglInterface();
-        } else {
-            // CONTROLS WINDOW
-            addControlsWindow();
-        }
+        // CONTROLS WINDOW
+        addControlsWindow();
 
         // MINIMAP
         addMinimapWindow();
@@ -212,8 +204,6 @@ public class FullGui extends AbstractGui {
                 minimapWindow.setPosition(Gdx.graphics.getWidth() - minimapWindow.getWidth() * 2, 0);
                 ui.addActor(minimapWindow);
             }
-            if (webglInterface != null)
-                ui.addActor(wgl);
             if (notificationsInterface != null)
                 ui.addActor(notificationsInterface);
             if (messagesInterface != null)
@@ -588,23 +578,6 @@ public class FullGui extends AbstractGui {
         this.visible = new boolean[vals.length];
         for (int i = 0; i < vals.length; i++)
             this.visible[i] = visible.get(vals[i].ordinal());
-    }
-
-    public void removeWebglInterface() {
-        if (webglInterface != null) {
-            webglInterface.remove();
-            webglInterface = null;
-            wgl.remove();
-            wgl = null;
-        }
-    }
-
-    public void addWebglInterface() {
-        webglInterface = new WebGLInterface(skin, GaiaSky.instance.time);
-        wgl = new Container<WebGLInterface>(webglInterface);
-        wgl.setFillParent(true);
-        wgl.left().bottom();
-        wgl.pad(0, 5, 45, 0);
     }
 
     public void removeControlsWindow() {

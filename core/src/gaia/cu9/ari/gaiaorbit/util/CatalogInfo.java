@@ -46,4 +46,14 @@ public class CatalogInfo {
             this.object.setVisible(visibility);
         }
     }
+
+    /**
+     * Unloads and removes the catalog described by this catalog info
+     */
+    public void removeCatalog() {
+        if (this.object != null) {
+            Logger.info("Removing dataset " + name);
+            this.object.dispose();
+        }
+    }
 }

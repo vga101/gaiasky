@@ -29,10 +29,10 @@ import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
 
 public class StarGroupRenderSystem extends ImmediateRenderSystem implements IObserver {
     private final double BRIGHTNESS_FACTOR;
-    /** Hopefully we won't have more than 5000 star groups at once **/
+    /** Hopefully we won't have more than 50000 star groups at once **/
     private final int N_MESHES = 50000;
 
-    private Vector3 aux1, aux2;
+    private Vector3 aux1;
     private int sizeOffset, pmOffset;
     private float[] pointAlpha, alphaSizeFovBr;
 
@@ -42,7 +42,6 @@ public class StarGroupRenderSystem extends ImmediateRenderSystem implements IObs
         this.comp = new DistToCameraComparator<IRenderable>();
         this.alphaSizeFovBr = new float[4];
         aux1 = new Vector3();
-        aux2 = new Vector3();
         EventManager.instance.subscribe(this, Events.STAR_MIN_OPACITY_CMD, Events.DISPOSE_STAR_GROUP_GPU_MESH);
     }
 

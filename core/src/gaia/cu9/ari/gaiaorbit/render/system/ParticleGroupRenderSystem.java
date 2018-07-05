@@ -13,6 +13,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 
+import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.render.IRenderable;
@@ -31,12 +32,12 @@ public class ParticleGroupRenderSystem extends ImmediateRenderSystem implements 
     int additionalOffset, pmOffset;
     Random rand;
 
-
     public ParticleGroupRenderSystem(RenderGroup rg, float[] alphas, ShaderProgram[] shaders) {
         super(rg, alphas, shaders);
         comp = new DistToCameraComparator<IRenderable>();
         rand = new Random(123);
         aux1 = new Vector3();
+        EventManager.instance.subscribe(this, Events.DISPOSE_PARTICLE_GROUP_GPU_MESH);
     }
 
     @Override
@@ -84,6 +85,25 @@ public class ParticleGroupRenderSystem extends ImmediateRenderSystem implements 
         pmOffset = curr.mesh.getVertexAttribute(Usage.Tangent) != null ? curr.mesh.getVertexAttribute(Usage.Tangent).offset / 4 : 0;
         additionalOffset = curr.mesh.getVertexAttribute(Usage.Generic) != null ? curr.mesh.getVertexAttribute(Usage.Generic).offset / 4 : 0;
         return mdi;
+    }
+
+    /**
+     * Clears the mesh data at the index i
+     * 
+     * @param i
+     *            The index
+     */
+    public void clearMeshData(int i) {
+        assert i >= 0 && i < meshes.length : "Mesh data index out of bounds: " + i + " (n meshes = " + N_MESHES + ")";
+
+        MeshData md = meshes[i];
+
+        if (md != null && md.mesh != null) {
+            md.mesh.dispose();
+            md.vertices = null;
+            md.indices = null;
+            meshes[i] = null;
+        }
     }
 
     @Override
@@ -172,6 +192,13 @@ public class ParticleGroupRenderSystem extends ImmediateRenderSystem implements 
 
     @Override
     public void notify(Events event, Object... data) {
+        switch (event) {
+        case DISPOSE_PARTICLE_GROUP_GPU_MESH:
+            Integer meshIdx = (Integer) data[0];
+            clearMeshData(meshIdx);
+            break;
+
+        }
     }
 
 }

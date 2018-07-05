@@ -288,7 +288,6 @@ public class Constants {
     public static boolean mobile = false;
     public static boolean webgl = false;
     public static boolean desktop = false;
-    public static boolean focalplane = false;
 
     static {
         if (Gdx.app != null) {

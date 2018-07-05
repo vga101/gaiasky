@@ -244,7 +244,6 @@ public class OctreeNode implements ILineRenderable {
         }
     }
 
-
     /** Gets the index of this node in the parent's list **/
     protected int getParentIndex() {
         if (parent != null) {
@@ -822,6 +821,22 @@ public class OctreeNode implements ILineRenderable {
     public static long hash(double value) {
         long bits = Double.doubleToLongBits(value);
         return (bits ^ (bits >>> 32));
+    }
+
+    /**
+     * Disposes this octree node (and all children nodes recursively)
+     */
+    public void dispose() {
+        if (objects != null)
+            for (SceneGraphNode object : objects) {
+                if (object != null)
+                    object.dispose();
+            }
+        if (children != null)
+            for (OctreeNode child : children) {
+                if (child != null)
+                    child.dispose();
+            }
     }
 
 }

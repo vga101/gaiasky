@@ -92,11 +92,11 @@ public class RunStateInterface extends Table implements IObserver, IGuiInterface
         frameoutputImgCell = this.add().right().padTop(pad);
         frameoutputImgCell.row();
 
-        EventManager.instance.subscribe(this, Events.INPUT_ENABLED_CMD, Events.NUM_RUNNING_SCRIPTS, Events.CAMERA_PLAY_INFO, Events.BACKGROUND_LOADING_INFO, Events.FRAME_OUTPUT_CMD);
+        EventManager.instance.subscribe(this, Events.INPUT_ENABLED_CMD, Events.NUM_RUNNING_SCRIPTS, Events.CAMERA_PLAY_INFO, Events.BACKGROUND_LOADING_INFO, Events.FRAME_OUTPUT_CMD, Events.OCTREE_DISPOSED);
     }
 
     private void unsubscribe() {
-        EventManager.instance.unsubscribe(this, Events.INPUT_ENABLED_CMD, Events.NUM_RUNNING_SCRIPTS, Events.CAMERA_PLAY_INFO, Events.BACKGROUND_LOADING_INFO, Events.FRAME_OUTPUT_CMD);
+        EventManager.instance.removeAllSubscriptions(this);
     }
 
     @Override
@@ -151,6 +151,13 @@ public class RunStateInterface extends Table implements IObserver, IGuiInterface
             Gdx.app.postRunnable(() -> {
                 if (pauseBgCell.getActor() == null)
                     pauseBgCell.setActor(bgLoading);
+            });
+            break;
+        case OCTREE_DISPOSED:
+            Gdx.app.postRunnable(() -> {
+                if (pauseBgCell.getActor() != null) {
+                    pauseBgCell.clearActor();
+                }
             });
             break;
         default:

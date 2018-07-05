@@ -22,6 +22,7 @@ import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.render.I3DTextRenderable;
 import gaia.cu9.ari.gaiaorbit.render.RenderingContext;
 import gaia.cu9.ari.gaiaorbit.render.system.FontRenderSystem;
+import gaia.cu9.ari.gaiaorbit.scenegraph.camera.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.camera.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.camera.NaturalCamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.RotationComponent;
@@ -130,6 +131,9 @@ public class ParticleGroup extends FadeNode implements I3DTextRenderable, IFocus
      */
     ParticleBean focus;
 
+    // Has been disposed
+    public boolean disposed = false;
+
     public ParticleGroup() {
         super();
         inGpu = false;
@@ -190,7 +194,7 @@ public class ParticleGroup extends FadeNode implements I3DTextRenderable, IFocus
     }
 
     public void update(ITimeFrameProvider time, final Transform parentTransform, ICamera camera, float opacity) {
-        if (pointData != null) {
+        if (pointData != null && this.isVisible()) {
             this.opacity = 1;
             super.update(time, parentTransform, camera, opacity);
 
@@ -640,5 +644,23 @@ public class ParticleGroup extends FadeNode implements I3DTextRenderable, IFocus
     @Override
     public boolean isCoordinatesTimeOverflow() {
         return false;
+    }
+
+
+    @Override
+    public void dispose() {
+        this.disposed = true;
+        sg.remove(this, true);
+        // Unsubscribe from all events
+        EventManager.instance.removeAllSubscriptions(this);
+        // Dispose of GPU data
+        EventManager.instance.post(Events.DISPOSE_PARTICLE_GROUP_GPU_MESH, this.offset);
+        // Data to be gc'd
+        this.pointData = null;
+        // Remove focus if needed
+        if (GaiaSky.instance.getCameraManager().getFocus() != null && GaiaSky.instance.getCameraManager().getFocus() == this) {
+            this.setFocusIndex(-1);
+            EventManager.instance.post(Events.CAMERA_MODE_CMD, CameraMode.Free_Camera);
+        }
     }
 }

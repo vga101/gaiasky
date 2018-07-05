@@ -46,6 +46,7 @@ import gaia.cu9.ari.gaiaorbit.render.IQuadRenderable;
 import gaia.cu9.ari.gaiaorbit.render.RenderingContext;
 import gaia.cu9.ari.gaiaorbit.render.system.FontRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.LineRenderSystem;
+import gaia.cu9.ari.gaiaorbit.scenegraph.camera.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.camera.FovCamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.camera.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
@@ -211,8 +212,6 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
     private static double radVelLineWidth = 0.002;
     private static double noRadVelLineWidth = 0.0006;
 
-    // Has been disposed
-    public boolean disposed = false;
 
     /** Epoch in julian days **/
     private double epoch_jd = AstroUtils.JD_J2015_5;
@@ -456,29 +455,32 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
     }
 
     public void update(ITimeFrameProvider time, final Transform parentTransform, ICamera camera, float opacity) {
-        // Delta years
-        currDeltaYears = AstroUtils.getMsSince(time.getTime(), epoch_jd) * Constants.MS_TO_Y;
+        // Fade node visibility
+        if (this.isVisible()) {
+            // Delta years
+            currDeltaYears = AstroUtils.getMsSince(time.getTime(), epoch_jd) * Constants.MS_TO_Y;
 
-        super.update(time, parentTransform, camera, opacity);
+            super.update(time, parentTransform, camera, opacity);
 
-        // Update closest star
-        StarBean closestStar = (StarBean) pointData.get(active[0]);
+            // Update closest star
+            StarBean closestStar = (StarBean) pointData.get(active[0]);
 
-        closestPm.set(closestStar.pmx(), closestStar.pmy(), closestStar.pmz()).scl(currDeltaYears);
-        closestPos.set(closestStar.x(), closestStar.y(), closestStar.z()).sub(camera.getPos()).add(closestPm);
-        closestDist = closestPos.len() - getRadius(active[0]);
-        Color c = new Color();
-        Color.abgr8888ToColor(c, (float) closestStar.col());
-        closestCol[0] = c.r;
-        closestCol[1] = c.g;
-        closestCol[2] = c.b;
-        closestCol[3] = c.a;
-        closestSize = getSize(active[0]);
-        closestName = closestStar.name;
-        camera.setClosestStar(this);
+            closestPm.set(closestStar.pmx(), closestStar.pmy(), closestStar.pmz()).scl(currDeltaYears);
+            closestPos.set(closestStar.x(), closestStar.y(), closestStar.z()).sub(camera.getPos()).add(closestPm);
+            closestDist = closestPos.len() - getRadius(active[0]);
+            Color c = new Color();
+            Color.abgr8888ToColor(c, (float) closestStar.col());
+            closestCol[0] = c.r;
+            closestCol[1] = c.g;
+            closestCol[2] = c.b;
+            closestCol[3] = c.a;
+            closestSize = getSize(active[0]);
+            closestName = closestStar.name;
+            camera.setClosestStar(this);
 
-        // Model dist
-        modelDist = 172.4643429 * getRadius(active[0]);
+            // Model dist
+            modelDist = 172.4643429 * getRadius(active[0]);
+        }
 
     }
 
@@ -991,18 +993,6 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
         return pointData.size;
     }
 
-    @Override
-    public void dispose() {
-        this.disposed = true;
-        // Unsubscribe from all events
-        EventManager.instance.unsubscribe(this, Events.CAMERA_MOTION_UPDATED, Events.GRAPHICS_QUALITY_UPDATED);
-        // Shut down pool
-        if (pool != null && !pool.isShutdown()) {
-            pool.shutdown();
-        }
-        // Dispose of GPU data
-        EventManager.instance.post(Events.DISPOSE_STAR_GROUP_GPU_MESH, this.offset);
-    }
 
     @Override
     protected Vector3d fetchPosition(ParticleBean pb, Vector3d campos, Vector3d dest, double deltaYears) {
@@ -1038,4 +1028,24 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
         return this.epoch_jd;
     }
 
+    @Override
+    public void dispose() {
+        this.disposed = true;
+        sg.remove(this, true);
+        // Unsubscribe from all events
+        EventManager.instance.removeAllSubscriptions(this);
+        // Shut down pool
+        if (pool != null && !pool.isShutdown()) {
+            pool.shutdown();
+        }
+        // Dispose of GPU data
+        EventManager.instance.post(Events.DISPOSE_STAR_GROUP_GPU_MESH, this.offset);
+        // Data to be gc'd
+        this.pointData = null;
+        // Remove focus if needed
+        if (GaiaSky.instance.getCameraManager().getFocus() != null && GaiaSky.instance.getCameraManager().getFocus() == this) {
+            this.setFocusIndex(-1);
+            EventManager.instance.post(Events.CAMERA_MODE_CMD, CameraMode.Free_Camera);
+        }
+    }
 }
