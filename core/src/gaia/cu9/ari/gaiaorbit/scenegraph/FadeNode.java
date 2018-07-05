@@ -1,5 +1,7 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph;
 
+import java.util.Map;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.math.Vector2;
@@ -7,6 +9,7 @@ import com.badlogic.gdx.math.Vector2;
 import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.scenegraph.camera.ICamera;
 import gaia.cu9.ari.gaiaorbit.util.CatalogInfo;
+import gaia.cu9.ari.gaiaorbit.util.CatalogInfo.CatalogInfoType;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
@@ -199,6 +202,10 @@ public class FadeNode extends AbstractPositionEntity {
 
     public CatalogInfo getCatalogInfo() {
         return this.catalogInfo;
+    }
+
+    public void setCataloginfo(Map<String, String> map) {
+        this.catalogInfo = new CatalogInfo(map.get("name"), map.get("description"), map.get("source"), CatalogInfoType.valueOf(map.get("type")), this);
     }
 
 }
