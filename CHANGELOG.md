@@ -2,11 +2,17 @@
 
 ## [Unreleased](https://github.com/langurmonkey/gaiasky/tree/HEAD)
 
-[Full Changelog](https://github.com/langurmonkey/gaiasky/compare/2.0.1...HEAD)
+[Full Changelog](https://github.com/langurmonkey/gaiasky/compare/2.0.2...HEAD)
 
 **Implemented enhancements:**
 
 - Add controls to manage datasets [\#290](https://github.com/langurmonkey/gaiasky/issues/290)
+
+## [2.0.2](https://github.com/langurmonkey/gaiasky/tree/2.0.2) (2018-07-05)
+[Full Changelog](https://github.com/langurmonkey/gaiasky/compare/2.0.1...2.0.2)
+
+**Implemented enhancements:**
+
 - Separate base texture from clouds texture [\#289](https://github.com/langurmonkey/gaiasky/issues/289)
 - Add gamma correction [\#288](https://github.com/langurmonkey/gaiasky/issues/288)
 - Add label size control [\#287](https://github.com/langurmonkey/gaiasky/issues/287)

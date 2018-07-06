@@ -206,7 +206,7 @@ public class UCDParser {
     }
 
     public PositionType getPositionType(UCD pos1, UCD pos2, UCD pos3) {
-        if (pos1.ucd == null || pos2.ucd == null || pos3.ucd == null) {
+        if (pos1.ucd == null || pos2.ucd == null) {
             return PositionType.valueOf("EQ_SPH_" + (contains(distcolnames, pos3.colname) ? "DIST" : "PLX"));
         }
         String meaning = pos1.ucd[0][1];
