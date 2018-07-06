@@ -3,11 +3,19 @@
 
 |Build status| |License|
 
+
 These are the official documentation pages of Gaia Sky. Find below the contents table to navigate around.
 
-*  Visit our `home page <http://www.zah.uni-heidelberg.de/gaia/outreach/gaiasky/>`__
-*  `Download Gaia Sky <http://www.zah.uni-heidelberg.de/gaia/outreach/gaiasky/downloads/>`__
-*  Submit a `bug or a feature request <https://github.com/langurmonkey/gaiasky/issues>`__
+-  Visit our `home page <http://www.zah.uni-heidelberg.de/gaia/outreach/gaiasky/>`__
+-  `Download Gaia Sky <http://www.zah.uni-heidelberg.de/gaia/outreach/gaiasky/downloads/>`__
+-  Submit a `bug or a feature request <https://github.com/langurmonkey/gaiasky/issues>`__
+
+
+.. |Build status| image:: https://circleci.com/gh/langurmonkey/gaiasky.svg?style=shield&circle-token=:circle-token
+   :target: https://circleci.com/gh/langurmonkey/gaiasky/tree/master
+
+.. |License| image:: https://img.shields.io/badge/License-MPL%202.0-brightgreen.svg
+   :target: https://opensource.org/licenses/MPL-2.0
 
 Contents
 ========
