@@ -63,7 +63,9 @@ the corresponding `tar` file — see table below.
 | **Catalog** | **Description** | **Extract location** | **Catalog file** |
 |---------|-------------|----------|----------|
 | [TGAS](http://gaia.ari.uni-heidelberg.de/gaiasky/files/catalogs/tgas/20171204_tgas_gpu_gaiasky_1.5.1.tar.gz)  | TGAS catalog. ~700 K stars. | `gaiasky/assets/data/catalog` | `data/catalog-tgas-hyg.json` | 
-| [Gaia DR2](http://gaia.ari.uni-heidelberg.de/gaiasky/files/catalogs/dr2/20180419_dr2-20-0.5.tar.gz)  | Gaia DR2 catalog. ~9.5 M stars.  | `gaiasky/assets/data/octree/dr2` | [`data/catalog-dr2-default.json`](http://gaia.ari.uni-heidelberg.de/gaiasky/files/catalogs/dr2/catalog-dr2-default.json) | 
+| [Gaia DR2](http://gaia.ari.uni-heidelberg.de/gaiasky/files/catalogs/dr2/20180618/dr2-20-0.5.tar.gz)  | Gaia DR2 catalog (20%/0.5%). ~7.5 M stars.  | `gaiasky/assets/data/octree/dr2` | [`data/catalog-dr2-default.json`](http://gaia.ari.uni-heidelberg.de/gaiasky/files/catalogs/dr2/20180618/catalog-dr2-default.json) | 
+
+Find more catalogs to download [here](https://zah.uni-heidelberg.de/institutes/ari/gaia/outreach/gaiasky/downloads/#dr2catalogs).
 
 First, choose the package corresponding to your desired catalog and extract it into the specified **Extract location**. 
 Then, you need to point the key `data.json.catalog` in your `$HOME/.gaiasky/global.vr.properties` file to the
