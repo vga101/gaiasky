@@ -121,14 +121,14 @@ public class NaturalControllerListener implements ControllerListener, IObserver 
             treated = true;
         } else if (axisCode == mappings.getAxisPitch()) {
             if (cam.getMode().equals(CameraMode.Focus)) {
-                cam.setVerticalRotation(value * 0.1);
+                cam.setVerticalRotation((GlobalConf.controls.INVERT_FOCUS_XY_AXIS ? -1 : 1) * value * 0.1);
             } else {
                 cam.setPitch((GlobalConf.controls.INVERT_LOOK_Y_AXIS ? 1 : -1) * value * 3e-2f);
             }
             treated = true;
         } else if (axisCode == mappings.getAxisYaw()) {
             if (cam.getMode().equals(CameraMode.Focus)) {
-                cam.setHorizontalRotation(value * 0.1);
+                cam.setHorizontalRotation((GlobalConf.controls.INVERT_FOCUS_XY_AXIS ? -1 : 1) * value * 0.1);
             } else {
                 cam.setYaw(value * 3e-2f);
             }
