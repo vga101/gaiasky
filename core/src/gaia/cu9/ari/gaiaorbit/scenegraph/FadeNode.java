@@ -192,7 +192,7 @@ public class FadeNode extends AbstractPositionEntity {
     }
 
     public boolean isVisible() {
-        return this.visible;
+        return this.visible || this.msSinceStateChange <= GlobalConf.scene.OBJECT_FADE_MS;
     }
 
     public void setCatalogInfo(CatalogInfo info) {

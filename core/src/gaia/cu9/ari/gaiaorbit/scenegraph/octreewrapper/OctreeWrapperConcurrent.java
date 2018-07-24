@@ -65,7 +65,7 @@ public class OctreeWrapperConcurrent extends AbstractOctreeWrapper {
                 if (copy)
                     sgn.update(time, transform, camera);
                 else
-                    sgn.update(time, transform, camera, ((AbstractPositionEntity) sgn).octant.opacity);
+                    sgn.update(time, transform, camera, this.opacity * ((AbstractPositionEntity) sgn).octant.opacity);
             }
         }
 

@@ -173,18 +173,6 @@ public abstract class AbstractOctreeWrapper extends FadeNode implements Iterable
      */
     protected abstract void updateOctreeObjects(ITimeFrameProvider time, final Transform parentTransform, ICamera camera);
 
-    /**
-     * Adds the octants to the render lists.
-     * 
-     * @param time
-     */
-    @Override
-    public void updateLocal(ITimeFrameProvider time, ICamera camera) {
-        if (!copy) {
-            addToRenderLists(camera, root);
-        }
-    }
-
     public void addToRenderLists(ICamera camera, OctreeNode octant) {
         if (GlobalConf.runtime.DRAW_OCTREE && octant.observed && this.opacity > 0) {
             boolean added = addToRender(octant, RenderGroup.LINE);
@@ -248,6 +236,5 @@ public abstract class AbstractOctreeWrapper extends FadeNode implements Iterable
         EventManager.instance.post(Events.DEBUG3, "On display: " + 0 + ", Total loaded: " + 0);
         EventManager.instance.post(Events.OCTREE_DISPOSED);
     }
-
 
 }

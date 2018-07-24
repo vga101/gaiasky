@@ -32,7 +32,7 @@ public class OctreeWrapper extends AbstractOctreeWrapper {
         int size = roulette.size;
         for (int i = 0; i < size; i++) {
             SceneGraphNode sgn = roulette.get(i);
-            sgn.update(time, parentTransform, camera, ((AbstractPositionEntity) sgn).octant.opacity);
+            sgn.update(time, parentTransform, camera, this.opacity * ((AbstractPositionEntity) sgn).octant.opacity);
         }
     }
 
