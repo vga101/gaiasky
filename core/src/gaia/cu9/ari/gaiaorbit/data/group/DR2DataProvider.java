@@ -213,7 +213,7 @@ public class DR2DataProvider extends AbstractStarGroupDataProvider {
                 double geodistpc = getGeoDistance(sourceid);
 
                 // If we have geometric distances, we only accept those, otherwise, accept all
-                if (!hasGeoDistances() || (hasGeoDistances() && hasGeoDistance(sourceid))){
+                if (!hasGeoDistances() || (hasGeoDistances() && hasGeoDistance(sourceid))) {
                     distpc = geodistpc > 0 ? geodistpc : distpc;
 
                     if (acceptDistance(distpc)) {
@@ -373,9 +373,9 @@ public class DR2DataProvider extends AbstractStarGroupDataProvider {
     public Array<? extends ParticleBean> loadDataMapped(String file, double factor, int fileNumber) {
         //Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.datafile", fh.path()));
         boolean gz = file.endsWith(".gz");
-
+        FileChannel fc = null;
         try {
-            FileChannel fc = new RandomAccessFile(file, "r").getChannel();
+            fc = new RandomAccessFile(file, "r").getChannel();
             MappedByteBuffer mem = fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size());
             InputStream data = new ByteBufferInputStream(mem);
 
@@ -391,11 +391,16 @@ public class DR2DataProvider extends AbstractStarGroupDataProvider {
             loadFileIs(data, factor, addedStars, discardedStars);
             Logger.info(this.getClass().getSimpleName(), fileNumber + " - " + file + " --> " + addedStars.value + "/" + (addedStars.value + discardedStars.value) + " stars (" + (100 * addedStars.value / (addedStars.value + discardedStars.value)) + "%)");
 
-            fc.close();
-
             return list;
         } catch (Exception e) {
             Logger.error(e);
+        } finally {
+            if (fc != null)
+                try {
+                    fc.close();
+                } catch (Exception e) {
+                    Logger.error(e);
+                }
         }
         return null;
     }
