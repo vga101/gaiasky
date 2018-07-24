@@ -91,7 +91,7 @@ public class UCDParser {
         if (this.ID.isEmpty()) {
             this.ID.addAll(getByColNames(idcolnames));
         }
-        this.hasid = this.ID != null;
+        this.hasid = this.ID != null && !this.ID.isEmpty();
 
         /** POSITIONS **/
         Set<UCD> pos = ucdmap.get(UCDType.POS);
@@ -207,7 +207,7 @@ public class UCDParser {
 
     public PositionType getPositionType(UCD pos1, UCD pos2, UCD pos3) {
         if (pos1.ucd == null || pos2.ucd == null) {
-            return PositionType.valueOf("EQ_SPH_" + (contains(distcolnames, pos3.colname) ? "DIST" : "PLX"));
+            return PositionType.valueOf("EQ_SPH_" + (pos3 == null ? "PLX" : (contains(distcolnames, pos3.colname) ? "DIST" : "PLX")));
         }
         String meaning = pos1.ucd[0][1];
         String postypestr = null, disttype = null;
