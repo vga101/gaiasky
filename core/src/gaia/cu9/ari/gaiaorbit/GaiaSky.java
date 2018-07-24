@@ -53,7 +53,6 @@ import gaia.cu9.ari.gaiaorbit.interfce.IGui;
 import gaia.cu9.ari.gaiaorbit.interfce.InitialGui;
 import gaia.cu9.ari.gaiaorbit.interfce.KeyInputController;
 import gaia.cu9.ari.gaiaorbit.interfce.LoadingGui;
-import gaia.cu9.ari.gaiaorbit.interfce.MobileGui;
 import gaia.cu9.ari.gaiaorbit.interfce.SpacecraftGui;
 import gaia.cu9.ari.gaiaorbit.interfce.StereoGui;
 import gaia.cu9.ari.gaiaorbit.interfce.VRGui;
@@ -71,8 +70,8 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.StubModel;
 import gaia.cu9.ari.gaiaorbit.scenegraph.camera.CameraManager;
-import gaia.cu9.ari.gaiaorbit.scenegraph.camera.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.camera.CameraManager.CameraMode;
+import gaia.cu9.ari.gaiaorbit.scenegraph.camera.ICamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
 import gaia.cu9.ari.gaiaorbit.script.HiddenHelperUser;
 import gaia.cu9.ari.gaiaorbit.util.ComponentTypes;
@@ -228,7 +227,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
     public void create() {
         startTime = TimeUtils.millis();
         Gdx.app.setLogLevel(Application.LOG_INFO);
-        clogger = new ConsoleLogger(true);
+        clogger = new ConsoleLogger(true, true);
 
         fbmap = new HashMap<String, FrameBuffer>();
 
@@ -397,6 +396,11 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         // Dispose of initial and loading GUIs
         initialGui.dispose();
         initialGui = null;
+
+        // Destroy console logger
+        clogger.dispose();
+        clogger = null;
+
         loadingGui.dispose();
         loadingGui = null;
 
@@ -454,9 +458,6 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         // Initialise input handlers
         inputMultiplexer = new InputMultiplexer();
 
-        // Destroy console logger
-        clogger.dispose();
-        clogger = null;
         // Init GUIs, step 2
         reinitialiseGUI2();
 
@@ -492,11 +493,6 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         // Set current date
         EventManager.instance.post(Events.TIME_CHANGE_CMD, Instant.now());
 
-        if (Constants.focalplane) {
-            // Activate time
-            EventManager.instance.post(Events.TOGGLE_TIME_CMD, true, false);
-        }
-
         // Resize GUIs to current size
         for (IGui gui : guis)
             gui.resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -504,10 +500,18 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         // Initialise frames
         frames = 0;
 
-        // Set focus to Earth
-        EventManager.instance.post(Events.CAMERA_MODE_CMD, CameraMode.Focus);
-        EventManager.instance.post(Events.FOCUS_CHANGE_CMD, sg.getNode("Earth"), true);
-        EventManager.instance.post(Events.GO_TO_OBJECT_CMD);
+        if (sg.containsNode("Earth")) {
+            // Set focus to Earth
+            EventManager.instance.post(Events.CAMERA_MODE_CMD, CameraMode.Focus);
+            EventManager.instance.post(Events.FOCUS_CHANGE_CMD, sg.getNode("Earth"), true);
+            EventManager.instance.post(Events.GO_TO_OBJECT_CMD);
+        } else {
+            // Origin
+            EventManager.instance.post(Events.CAMERA_MODE_CMD, CameraMode.Free_Camera);
+            EventManager.instance.post(Events.CAMERA_POS_CMD, new double[] { 0, 0, 0 });
+            EventManager.instance.post(Events.CAMERA_DIR_CMD, new double[] { 0, 1, 0 });
+            EventManager.instance.post(Events.CAMERA_UP_CMD, new double[] { 0, 0, 1 });
+        }
 
         initialized = true;
     }
@@ -522,13 +526,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
             guis.clear();
         }
 
-        if (Constants.desktop || Constants.webgl) {
-            // Full GUI for desktop
-            mainGui = new FullGui();
-        } else if (Constants.mobile) {
-            // Reduced GUI for android/iOS/...
-            mainGui = new MobileGui();
-        }
+        mainGui = new FullGui();
         mainGui.initialize(manager);
 
         debugGui = new DebugGui();
@@ -618,70 +616,95 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
 
     @Override
     public void render() {
-        if (!DSCHOSEN) {
-            renderGui(initialGui);
-        } else if (LOADING) {
-            if (manager.update()) {
-                doneLoading();
+        try {
+            if (!DSCHOSEN) {
+                renderGui(initialGui);
+            } else if (LOADING) {
+                if (manager.update()) {
+                    doneLoading();
 
-                LOADING = false;
-            } else {
-                // Display loading screen
-                renderGui(loadingGui);
-                if (GlobalConf.runtime.OPENVR) {
-                    vrContext.pollEvents();
+                    LOADING = false;
+                } else {
+                    // Display loading screen
+                    renderGui(loadingGui);
+                    if (GlobalConf.runtime.OPENVR) {
+                        vrContext.pollEvents();
 
-                    vrLoadingLeftFb.begin();
-                    renderGui(((VRGui) loadingGuiVR).left());
-                    vrLoadingLeftFb.end();
+                        vrLoadingLeftFb.begin();
+                        renderGui(((VRGui) loadingGuiVR).left());
+                        vrLoadingLeftFb.end();
 
-                    vrLoadingRightFb.begin();
-                    renderGui(((VRGui) loadingGuiVR).right());
-                    vrLoadingRightFb.end();
+                        vrLoadingRightFb.begin();
+                        renderGui(((VRGui) loadingGuiVR).right());
+                        vrLoadingRightFb.end();
 
-                    /** SUBMIT TO VR COMPOSITOR **/
-                    VRCompositor.VRCompositor_Submit(VR.EVREye_Eye_Left, vrLoadingLeftTex, null, VR.EVRSubmitFlags_Submit_Default);
-                    VRCompositor.VRCompositor_Submit(VR.EVREye_Eye_Right, vrLoadingRightTex, null, VR.EVRSubmitFlags_Submit_Default);
+                        /** SUBMIT TO VR COMPOSITOR **/
+                        VRCompositor.VRCompositor_Submit(VR.EVREye_Eye_Left, vrLoadingLeftTex, null, VR.EVRSubmitFlags_Submit_Default);
+                        VRCompositor.VRCompositor_Submit(VR.EVREye_Eye_Right, vrLoadingRightTex, null, VR.EVRSubmitFlags_Submit_Default);
+                    }
                 }
-            }
-        } else {
+            } else {
 
-            // Asynchronous load of textures and resources
-            manager.update();
+                // Asynchronous load of textures and resources
+                manager.update();
 
-            if (!GlobalConf.runtime.UPDATE_PAUSE) {
+                if (!GlobalConf.runtime.UPDATE_PAUSE) {
 
-                /**
-                 * UPDATE
-                 */
-                update(Gdx.graphics.getDeltaTime());
+                    /**
+                     * UPDATE
+                     */
+                    update(Gdx.graphics.getDeltaTime());
 
-                /**
-                 * SCREEN OUTPUT
-                 */
-                if (GlobalConf.screen.SCREEN_OUTPUT) {
-                    /** RENDER THE SCENE **/
-                    preRenderScene();
-                    renderSgr(cam, t, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), null, pp.getPostProcessBean(RenderType.screen));
+                    /**
+                     * SCREEN OUTPUT
+                     */
+                    if (GlobalConf.screen.SCREEN_OUTPUT) {
+                        /** RENDER THE SCENE **/
+                        preRenderScene();
+                        renderSgr(cam, t, Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), null, pp.getPostProcessBean(RenderType.screen));
 
-                    if (GlobalConf.runtime.DISPLAY_GUI) {
-                        // Render the GUI, setting the viewport
-                        GuiRegistry.render(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+                        if (GlobalConf.runtime.DISPLAY_GUI) {
+                            // Render the GUI, setting the viewport
+                            GuiRegistry.render(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+                        }
+
+                    }
+                    // Clean lists
+                    sgr.clearLists();
+                    // Number of frames
+                    frames++;
+
+                    if (GlobalConf.screen.LIMIT_FPS > 0) {
+                        sleep(GlobalConf.screen.LIMIT_FPS);
                     }
 
+                    /** DEBUG - each 1 secs **/
+                    if (TimeUtils.millis() - lastDebugTime > 1000) {
+                        Gdx.app.postRunnable(debugTask);
+                        lastDebugTime = TimeUtils.millis();
+                    }
                 }
-                // Clean lists
-                sgr.clearLists();
-                // Number of frames
-                frames++;
 
-                /** DEBUG - each 1 secs **/
-                if (TimeUtils.millis() - lastDebugTime > 1000) {
-                    Gdx.app.postRunnable(debugTask);
-                    lastDebugTime = TimeUtils.millis();
+            }
+        } catch (Throwable t) {
+            Logger.error(t);
+            // TODO implement error reporting?
+        }
+    }
+
+    private long diff, start = System.currentTimeMillis();
+
+    public void sleep(int fps) {
+        if (fps > 0) {
+            diff = System.currentTimeMillis() - start;
+            long targetDelay = 1000 / fps;
+            if (diff < targetDelay) {
+                try {
+                    Thread.sleep(targetDelay - diff);
+                } catch (InterruptedException e) {
                 }
             }
-
+            start = System.currentTimeMillis();
         }
     }
 
@@ -983,6 +1006,10 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
             break;
         }
 
+    }
+
+    public boolean isInitialised() {
+        return initialized;
     }
 
 }
