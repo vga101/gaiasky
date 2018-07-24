@@ -1,16 +1,20 @@
 package gaia.cu9.ari.gaiaorbit.interfce;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Container;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
@@ -19,7 +23,6 @@ import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
-import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnImageButton;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextIconButton;
 
 /**
@@ -29,18 +32,13 @@ import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextIconButton;
  *
  */
 public class LoadingGui extends AbstractGui {
-    protected Table center;
+    protected Table center, bottom;
     protected Container<Button> screenMode;
 
-    protected NotificationsInterface notificationsInterface;
+    public NotificationsInterface notificationsInterface;
 
     public LoadingGui() {
-        this(0);
-    }
-
-    public LoadingGui(int hoffset) {
         super();
-        this.hoffset = hoffset;
     }
 
     @Override
@@ -55,44 +53,43 @@ public class LoadingGui extends AbstractGui {
         center = new Table();
         center.setFillParent(true);
         center.center();
-        if (hoffset > 0)
-            center.padLeft(hoffset);
-        else if (hoffset < 0)
-            center.padRight(-hoffset);
 
-        ImageButton logo = new OwnImageButton(skin, "gaiasky-logo");
-        logo.setDisabled(true);
+        FileHandle gslogo = Gdx.files.internal("img/gaiasky-logo.png");
+        Texture logotex = new Texture(gslogo);
+        logotex.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+        Image logoimg = new Image(logotex);
+        float scl = GlobalConf.SCALE_FACTOR / 2.5f;
+        logoimg.setScale(scl);
+        logoimg.setOrigin(Align.center);
 
-        center.add(logo).center();
+        center.add(logoimg).center();
         center.row().padBottom(pad30);
         center.add(new Label(I18n.bundle.get("notif.loading.wait"), skin, "header"));
         center.row();
 
-        if (hoffset == 0) {
-            // SCREEN MODE BUTTON - TOP RIGHT - ONLY NO VR
-            screenMode = new Container<Button>();
-            screenMode.setFillParent(true);
-            screenMode.top().right();
-            screenMode.pad(pad10);
-            Image smImg = new Image(skin.getDrawable("screen-mode"));
-            OwnTextIconButton screenModeButton = new OwnTextIconButton("", smImg, skin);
-            screenModeButton.setCursor(GlobalResources.linkCursor);
-            screenModeButton.addListener(new EventListener() {
-                @Override
-                public boolean handle(Event event) {
-                    if (event instanceof ChangeEvent) {
-                        GlobalConf.screen.FULLSCREEN = !GlobalConf.screen.FULLSCREEN;
-                        EventManager.instance.post(Events.SCREEN_MODE_CMD);
-                        return true;
-                    }
-                    return false;
+        // SCREEN MODE BUTTON - TOP RIGHT
+        screenMode = new Container<Button>();
+        screenMode.setFillParent(true);
+        screenMode.top().right();
+        screenMode.pad(pad10);
+        Image smImg = new Image(skin.getDrawable("screen-mode"));
+        OwnTextIconButton screenModeButton = new OwnTextIconButton("", smImg, skin);
+        screenModeButton.setCursor(GlobalResources.linkCursor);
+        screenModeButton.addListener(new EventListener() {
+            @Override
+            public boolean handle(Event event) {
+                if (event instanceof ChangeEvent) {
+                    GlobalConf.screen.FULLSCREEN = !GlobalConf.screen.FULLSCREEN;
+                    EventManager.instance.post(Events.SCREEN_MODE_CMD);
+                    return true;
                 }
-            });
-            screenMode.setActor(screenModeButton);
-        }
+                return false;
+            }
+        });
+        screenMode.setActor(screenModeButton);
 
         // MESSAGE INTERFACE - BOTTOM
-        notificationsInterface = new NotificationsInterface(skin, lock, false, false, false);
+        notificationsInterface = new NotificationsInterface(skin, lock, false, false, false, false);
         center.add(notificationsInterface);
         interfaces.add(notificationsInterface);
 
@@ -107,8 +104,7 @@ public class LoadingGui extends AbstractGui {
     public void rebuildGui() {
         if (ui != null) {
             ui.clear();
-            if (screenMode != null)
-                ui.addActor(screenMode);
+            ui.addActor(screenMode);
             ui.addActor(center);
         }
     }

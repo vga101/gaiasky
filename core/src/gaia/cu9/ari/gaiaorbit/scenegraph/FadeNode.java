@@ -1,11 +1,15 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph;
 
+import java.util.Map;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.math.Vector2;
 
 import gaia.cu9.ari.gaiaorbit.GaiaSky;
 import gaia.cu9.ari.gaiaorbit.scenegraph.camera.ICamera;
+import gaia.cu9.ari.gaiaorbit.util.CatalogInfo;
+import gaia.cu9.ari.gaiaorbit.util.CatalogInfo.CatalogInfoType;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
@@ -66,6 +70,19 @@ public class FadeNode extends AbstractPositionEntity {
      * Elapsed milliseconds since this node visibility was last changed.
      */
     private long msSinceStateChange = Long.MAX_VALUE;
+
+    /**
+     * Information on the catalog this fade node represents (particle group, octree, etc.)
+     */
+    protected CatalogInfo catalogInfo = null;
+
+    public FadeNode() {
+        super();
+    }
+
+    public FadeNode(String name, SceneGraphNode parent) {
+        super(name, parent);
+    }
 
     @Override
     public void doneLoading(AssetManager manager) {
@@ -175,7 +192,20 @@ public class FadeNode extends AbstractPositionEntity {
     }
 
     public boolean isVisible() {
-        return this.visible;
+        return this.visible || this.msSinceStateChange <= GlobalConf.scene.OBJECT_FADE_MS;
+    }
+
+    public void setCatalogInfo(CatalogInfo info) {
+        this.catalogInfo = info;
+        this.catalogInfo.object = this;
+    }
+
+    public CatalogInfo getCatalogInfo() {
+        return this.catalogInfo;
+    }
+
+    public void setCataloginfo(Map<String, String> map) {
+        this.catalogInfo = new CatalogInfo(map.get("name"), map.get("description"), map.get("source"), CatalogInfoType.valueOf(map.get("type")), this);
     }
 
 }

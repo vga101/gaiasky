@@ -106,6 +106,9 @@ public class SceneGraphNode implements IStarContainer, IPosition {
         MODEL_MESH(20),
         /** Grids shader **/
         MODEL_GRIDS(21),
+        /** Clouds **/
+        MODEL_CLOUD(22),
+        
         /** Line VR **/
         LINE_VR(25),
 

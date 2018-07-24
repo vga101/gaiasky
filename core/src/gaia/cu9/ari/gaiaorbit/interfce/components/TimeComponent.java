@@ -178,4 +178,8 @@ public class TimeComponent extends GuiComponent implements IObserver {
         return getFormattedTimeWarp(GaiaSky.instance.time.getWarpFactor());
     }
 
+    @Override
+    public void dispose() {
+        EventManager.instance.removeAllSubscriptions(this);
+    }
 }

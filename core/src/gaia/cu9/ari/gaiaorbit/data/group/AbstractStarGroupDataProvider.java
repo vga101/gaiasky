@@ -1,39 +1,81 @@
 package gaia.cu9.ari.gaiaorbit.data.group;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.LinkOption;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.LongMap;
 
 import gaia.cu9.ari.gaiaorbit.scenegraph.StarGroup.StarBean;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
+import gaia.cu9.ari.gaiaorbit.util.LargeLongMap;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
+import gaia.cu9.ari.gaiaorbit.util.parse.Parser;
 
 public abstract class AbstractStarGroupDataProvider implements IStarGroupDataProvider {
 
     protected Array<StarBean> list;
-    protected Map<Long, double[]> sphericalPositions;
-    protected Map<Long, float[]> colors;
+    protected LongMap<double[]> sphericalPositions;
+    protected LongMap<float[]> colors;
+    protected long[] countsPerMag;
+    protected LargeLongMap<Double> geoDistances = null;
+
+    /**
+     * Points to the location of a file or directory which contains a set of <sourceId, distance[pc]>
+     */
+    protected String geoDistFile = null;
+
+    /**
+     * Errors (negative or nan values) reading geometric distance files
+     */
+    protected long geoDistErrors = 0;
+
+    /**
+     * Distance cap in parsecs
+     */
+    protected double distCap = Double.MAX_VALUE;
+
     /**
      * <p>
      * The loader will only load stars for which the parallax error is
-     * at most the percentage given here, in [0..1].
+     * at most the percentage given here, in [0..1]. Faint stars (gmag >= 13.1)
      * More specifically, the following must be met:
      * </p>
      * <code>pllx_err &lt; pllx * pllxErrFactor</code>
      **/
-    protected double parallaxErrorFactor = 0.14;
+    protected double parallaxErrorFactorFaint = 0.125;
+
+    /**
+     * <p>
+     * The loader will only load stars for which the parallax error is
+     * at most the percentage given here, in [0..1]. Bright stars (gmag < 13.1)
+     * More specifically, the following must be met:
+     * </p>
+     * <code>pllx_err &lt; pllx * pllxErrFactor</code>
+     **/
+    protected double parallaxErrorFactorBright = 0.25;
+    /**
+     * Whether to use an adaptive threshold which lets more
+     * bright stars in to avoid artifacts.
+     */
+    protected boolean adaptiveParallax = true;
 
     /**
      * The zero point for the parallaxes in mas. Gets added to all loaded
@@ -77,8 +119,72 @@ public abstract class AbstractStarGroupDataProvider implements IStarGroupDataPro
 
     protected void initLists() {
         initLists(1000);
-        sphericalPositions = new HashMap<Long, double[]>();
-        colors = new HashMap<Long, float[]>();
+        sphericalPositions = new LongMap<double[]>();
+        colors = new LongMap<float[]>();
+    }
+
+    /**
+     * Checks whether the parallax is accepted or not.
+     * <p>
+     * <b>If adaptive is not enabled:</b>
+     * <pre>
+     * accepted = pllx > 0 && pllx_err < pllx * pllx_err_factor && pllx_err <= 1
+     * </pre>
+     * </p>
+     * <p>
+     * <b>If adaptive is enabled:</b>
+     * <pre>
+     * accepted = pllx > 0 && pllx_err < pllx * max(0.5, pllx_err_factor) && pllx_err <= 1, if apparent_magnitude < 13.2
+     * accepted = pllx > 0 && pllx_err < pllx * pllx_err_factor && pllx_err <= 1, otherwise
+     * </pre>
+     * </p>
+     * 
+     * @param appmag Apparent magnitude of star
+     * @param pllx Parallax of star
+     * @param pllxerr Parallax error of star
+     * @return True if parallax is accepted, false otherwise
+     */
+    protected boolean acceptParallax(double appmag, double pllx, double pllxerr) {
+        // If geometric distances are present, always accept, we use distances directly
+        if (geoDistances != null)
+            return true;
+
+        if (adaptiveParallax && appmag < 13.1) {
+            return pllx >= 0 && pllxerr < pllx * parallaxErrorFactorBright && pllxerr <= 1;
+        } else {
+            return pllx >= 0 && pllxerr < pllx * parallaxErrorFactorFaint && pllxerr <= 1;
+        }
+    }
+
+    /**
+     * Gets the distance in parsecs to the star from the geometric distances
+     * map, if it exists. Otherwise, it returns a negative value.
+     * @param sourceId The source id of the source
+     * @return The geometric distance in parsecs if it exists, -1 otherwise.
+     */
+    protected double getGeoDistance(long sourceId) {
+        if (geoDistances != null && geoDistances.containsKey(sourceId))
+            return geoDistances.get(sourceId);
+        return -1;
+    }
+
+    /**
+     * Checks whether to accept the distance
+     * @param distance Distance in parsecs
+     * @return Whether to accept the distance or not
+     */
+    protected boolean acceptDistance(double distance) {
+        return distance <= distCap;
+    }
+
+    protected boolean hasGeoDistance(long sourceId) {
+        if (geoDistances != null && geoDistances.containsKey(sourceId))
+            return true;
+        return false;
+    }
+
+    protected boolean hasGeoDistances() {
+        return geoDistances != null && !geoDistances.isEmpty();
     }
 
     protected int countLines(FileHandle f) throws IOException {
@@ -175,12 +281,20 @@ public abstract class AbstractStarGroupDataProvider implements IStarGroupDataPro
     }
 
     @Override
-    public Map<Long, float[]> getColors() {
+    public LongMap<float[]> getColors() {
         return colors;
     }
 
-    public void setParallaxErrorFactor(double parallaxErrorFactor) {
-        this.parallaxErrorFactor = parallaxErrorFactor;
+    public void setParallaxErrorFactorFaint(double parallaxErrorFactor) {
+        this.parallaxErrorFactorFaint = parallaxErrorFactor;
+    }
+
+    public void setParallaxErrorFactorBright(double parallaxErrorFactor) {
+        this.parallaxErrorFactorBright = parallaxErrorFactor;
+    }
+
+    public void setAdaptiveParallax(boolean adaptive) {
+        this.adaptiveParallax = adaptive;
     }
 
     public void setParallaxZeroPoint(double parallaxZeroPoint) {
@@ -189,5 +303,81 @@ public abstract class AbstractStarGroupDataProvider implements IStarGroupDataPro
 
     public void setMagCorrections(boolean magCorrections) {
         this.magCorrections = magCorrections;
+    }
+
+    public long[] getCountsPerMag() {
+        return this.countsPerMag;
+    }
+
+    @Override
+    public void setGeoDistancesFile(String geoDistFile) {
+        this.geoDistFile = geoDistFile;
+        loadGeometricDistances();
+    }
+
+    @Override
+    public void setDistanceCap(double distCap) {
+        this.distCap = distCap;
+    }
+
+    private void loadGeometricDistances() {
+        geoDistances = new LargeLongMap<Double>(10);
+        geoDistErrors = 0;
+
+        Logger.info("Loading geometric distances from " + geoDistFile);
+
+        Path f = Paths.get(geoDistFile);
+        loadGeometricDistances(f);
+
+        Logger.info(geoDistances.size() + " geometric distances loaded (" + geoDistErrors + " negative or nan values)");
+    }
+
+    private void loadGeometricDistances(Path f) {
+        if (Files.isDirectory(f, LinkOption.NOFOLLOW_LINKS)) {
+            File[] files = f.toFile().listFiles();
+            int nfiles = files.length;
+            int mod = nfiles / 20;
+            int i = 1;
+            for (File file : files) {
+                if(i % mod == 0){
+                    Logger.info("Loading file " + i + "/" + nfiles);
+                }
+                loadGeometricDistances(file.toPath());
+                i++;
+            }
+        } else {
+            try {
+                loadGeometricDistanceFile(f);
+            } catch (Exception e) {
+                Logger.error(e, "Loading failed: " + f.toString());
+            }
+        }
+    }
+
+    private void loadGeometricDistanceFile(Path f) throws IOException, RuntimeException {
+        InputStream data = new FileInputStream(f.toFile());
+        BufferedReader br = new BufferedReader(new InputStreamReader(data));
+        // Skip header
+        br.readLine();
+        String line;
+        int i = 0;
+        try {
+            while ((line = br.readLine()) != null) {
+                String[] tokens = line.split("\\s+");
+                Long sourceId = Parser.parseLong(tokens[0].trim());
+                Double dist = Parser.parseDouble(tokens[1].trim());
+                if (!dist.isNaN() && dist >= 0) {
+                    geoDistances.put(sourceId, dist);
+                } else {
+                    Logger.debug("Distance " + i + " is NaN or negative: " + dist + " (file " + f.toString() + ")");
+                    geoDistErrors++;
+                }
+                i++;
+            }
+            br.close();
+        } catch (Exception e) {
+            Logger.error(e);
+            br.close();
+        }
     }
 }

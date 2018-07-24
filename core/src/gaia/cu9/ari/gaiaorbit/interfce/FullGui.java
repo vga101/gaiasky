@@ -68,11 +68,10 @@ public class FullGui extends AbstractGui {
     protected MessagesInterface messagesInterface;
     protected CustomInterface customInterface;
     protected RunStateInterface runStateInterface;
-    protected Container<WebGLInterface> wgl;
-    protected WebGLInterface webglInterface;
 
     protected SearchDialog searchDialog;
     protected AboutWindow aboutWindow;
+    protected LogWindow logWindow;
     protected PreferencesWindow preferencesWindow;
     protected VisualEffectsComponent visualEffectsComponent;
 
@@ -87,6 +86,8 @@ public class FullGui extends AbstractGui {
 
     // Uncertainties disabled by default
     private boolean uncertainties = false;
+    // Rel effects off
+    private boolean releffects = true;
 
     public FullGui() {
         super();
@@ -108,7 +109,7 @@ public class FullGui extends AbstractGui {
         buildGui();
 
         // We must subscribe to the desired events
-        EventManager.instance.subscribe(this, Events.FOV_CHANGED_CMD, Events.SHOW_TUTORIAL_ACTION, Events.SHOW_SEARCH_ACTION, Events.REMOVE_KEYBOARD_FOCUS, Events.REMOVE_GUI_COMPONENT, Events.ADD_GUI_COMPONENT, Events.SHOW_ABOUT_ACTION, Events.RA_DEC_UPDATED, Events.LON_LAT_UPDATED, Events.POPUP_MENU_FOCUS, Events.SHOW_PREFERENCES_ACTION, Events.SHOW_LAND_AT_LOCATION_ACTION, Events.DISPLAY_POINTER_COORDS_CMD, Events.TOGGLE_MINIMAP);
+        EventManager.instance.subscribe(this, Events.FOV_CHANGED_CMD, Events.SHOW_TUTORIAL_ACTION, Events.SHOW_SEARCH_ACTION, Events.REMOVE_KEYBOARD_FOCUS, Events.REMOVE_GUI_COMPONENT, Events.ADD_GUI_COMPONENT, Events.SHOW_ABOUT_ACTION, Events.SHOW_LOG_ACTION, Events.RA_DEC_UPDATED, Events.LON_LAT_UPDATED, Events.POPUP_MENU_FOCUS, Events.SHOW_PREFERENCES_ACTION, Events.SHOW_LAND_AT_LOCATION_ACTION, Events.DISPLAY_POINTER_COORDS_CMD, Events.TOGGLE_MINIMAP);
     }
 
     protected void buildGui() {
@@ -117,13 +118,8 @@ public class FullGui extends AbstractGui {
             ct.getName();
         }
 
-        if (Constants.focalplane) {
-            // WEBGL INTERFACE - TOP LEFT
-            addWebglInterface();
-        } else {
-            // CONTROLS WINDOW
-            addControlsWindow();
-        }
+        // CONTROLS WINDOW
+        addControlsWindow();
 
         // MINIMAP
         addMinimapWindow();
@@ -140,7 +136,7 @@ public class FullGui extends AbstractGui {
         fi.pad(0, 0, 10, 10);
 
         // NOTIFICATIONS INTERFACE - BOTTOM LEFT
-        notificationsInterface = new NotificationsInterface(skin, lock, true);
+        notificationsInterface = new NotificationsInterface(skin, lock, true, true, true, true);
         notificationsInterface.setFillParent(true);
         notificationsInterface.left().bottom();
         notificationsInterface.pad(0, 5, 5, 0);
@@ -208,8 +204,6 @@ public class FullGui extends AbstractGui {
                 minimapWindow.setPosition(Gdx.graphics.getWidth() - minimapWindow.getWidth() * 2, 0);
                 ui.addActor(minimapWindow);
             }
-            if (webglInterface != null)
-                ui.addActor(wgl);
             if (notificationsInterface != null)
                 ui.addActor(notificationsInterface);
             if (messagesInterface != null)
@@ -306,6 +300,13 @@ public class FullGui extends AbstractGui {
                 aboutWindow = new AboutWindow(ui, skin);
             }
             aboutWindow.show(ui);
+            break;
+        case SHOW_LOG_ACTION:
+            if (logWindow == null) {
+                logWindow = new LogWindow(ui, skin);
+            }
+            logWindow.update();
+            logWindow.show(ui);
             break;
         case SHOW_PREFERENCES_ACTION:
             preferencesWindow = new PreferencesWindow(ui, skin);
@@ -508,38 +509,40 @@ public class FullGui extends AbstractGui {
                 popup.addSeparator();
             }
 
-            // Spawn gravitational waves
-            MenuItem gravWaveStart = new MenuItem(txt("context.startgravwave"), skin, "default");
-            gravWaveStart.addListener(new EventListener() {
-
-                @Override
-                public boolean handle(Event event) {
-                    if (event instanceof ChangeEvent) {
-                        EventManager.instance.post(Events.GRAV_WAVE_START, screenX, screenY);
-                        return true;
-                    }
-                    return false;
-                }
-
-            });
-            popup.addItem(gravWaveStart);
-
-            if (RelativisticEffectsManager.getInstance().gravWavesOn()) {
-                // Cancel gravitational waves
-                MenuItem gravWaveStop = new MenuItem(txt("context.stopgravwave"), skin, "default");
-                gravWaveStop.addListener(new EventListener() {
+            if (releffects) {
+                // Spawn gravitational waves
+                MenuItem gravWaveStart = new MenuItem(txt("context.startgravwave"), skin, "default");
+                gravWaveStart.addListener(new EventListener() {
 
                     @Override
                     public boolean handle(Event event) {
                         if (event instanceof ChangeEvent) {
-                            EventManager.instance.post(Events.GRAV_WAVE_STOP);
+                            EventManager.instance.post(Events.GRAV_WAVE_START, screenX, screenY);
                             return true;
                         }
                         return false;
                     }
 
                 });
-                popup.addItem(gravWaveStop);
+                popup.addItem(gravWaveStart);
+
+                if (RelativisticEffectsManager.getInstance().gravWavesOn()) {
+                    // Cancel gravitational waves
+                    MenuItem gravWaveStop = new MenuItem(txt("context.stopgravwave"), skin, "default");
+                    gravWaveStop.addListener(new EventListener() {
+
+                        @Override
+                        public boolean handle(Event event) {
+                            if (event instanceof ChangeEvent) {
+                                EventManager.instance.post(Events.GRAV_WAVE_STOP);
+                                return true;
+                            }
+                            return false;
+                        }
+
+                    });
+                    popup.addItem(gravWaveStop);
+                }
             }
 
             int mx = Gdx.input.getX();
@@ -575,23 +578,6 @@ public class FullGui extends AbstractGui {
         this.visible = new boolean[vals.length];
         for (int i = 0; i < vals.length; i++)
             this.visible[i] = visible.get(vals[i].ordinal());
-    }
-
-    public void removeWebglInterface() {
-        if (webglInterface != null) {
-            webglInterface.remove();
-            webglInterface = null;
-            wgl.remove();
-            wgl = null;
-        }
-    }
-
-    public void addWebglInterface() {
-        webglInterface = new WebGLInterface(skin, GaiaSky.instance.time);
-        wgl = new Container<WebGLInterface>(webglInterface);
-        wgl.setFillParent(true);
-        wgl.left().bottom();
-        wgl.pad(0, 5, 45, 0);
     }
 
     public void removeControlsWindow() {

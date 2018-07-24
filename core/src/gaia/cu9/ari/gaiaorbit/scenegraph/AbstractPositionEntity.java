@@ -13,6 +13,7 @@ import gaia.cu9.ari.gaiaorbit.render.RenderingContext;
 import gaia.cu9.ari.gaiaorbit.render.RenderingContext.CubemapSide;
 import gaia.cu9.ari.gaiaorbit.scenegraph.camera.ICamera;
 import gaia.cu9.ari.gaiaorbit.util.DecalUtils;
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.coord.IBodyCoordinates;
@@ -93,6 +94,13 @@ public abstract class AbstractPositionEntity extends SceneGraphNode {
         posSph = new Vector2();
     }
 
+    public AbstractPositionEntity(String name, SceneGraphNode parent) {
+        super(name, parent);
+        // Positions
+        pos = new Vector3d();
+        posSph = new Vector2();
+    }
+
     public AbstractPositionEntity(SceneGraphNode parent) {
         super(parent);
         // Positions
@@ -103,6 +111,7 @@ public abstract class AbstractPositionEntity extends SceneGraphNode {
     public AbstractPositionEntity(String name) {
         super(name);
     }
+
 
     @Override
     public void doneLoading(AssetManager manager) {
@@ -389,7 +398,9 @@ public abstract class AbstractPositionEntity extends SceneGraphNode {
 
     protected void render3DLabel(SpriteBatch batch, ShaderProgram shader, BitmapFont font, ICamera camera, RenderingContext rc, String label, Vector3d pos, float scale, float size) {
         // The smoothing scale must be set according to the distance
-        shader.setUniformf("u_scale", scale / camera.getFovFactor());
+        shader.setUniformf("u_scale", GlobalConf.scene.LABEL_SIZE_FACTOR * scale / camera.getFovFactor());
+
+        size *= GlobalConf.scene.LABEL_SIZE_FACTOR;
 
         double len = pos.len();
         pos.clamp(0, len - size);

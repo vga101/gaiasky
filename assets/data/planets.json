@@ -92,9 +92,9 @@
 						},
 	"atmosphere" 	: {
 						"size" : 6150.0,
-						"wavelengths" : [0.5, 0.6, 0.6],
+						"wavelengths" : [0.55, 0.6, 0.65],
 						"m_Kr" : 0.0025,
-						"m_Km" : 0.001,
+						"m_Km" : 0.004,
 						"correctground" : true,
 						
 						"params" : {
@@ -152,15 +152,26 @@
 									"base" : "data/tex/earth-day*.jpg",
 									"specular" : "data/tex/earth-specular*.jpg",
 									"normal" : "data/tex/earth-normal*.jpg",
-									"night" : "data/tex/earth-night*.jpg"
+									"night" : "data/tex/earth-night*.jpg",
 									}
 						},
+						
+	"cloud"         : {
+						"size" : 6390.0,
+						"cloud" : "data/tex/earth-cloud.jpg",
+
+						"params" : {
+									"quality" : 180,
+									"diameter" : 2.0,
+									"flip" : false
+									}
+					},
 									
 	"atmosphere" 	: {
 						"size" : 6450.0,
-						"wavelengths" : [0.650, 0.570, 0.475],
+						"wavelengths" : [0.65, 0.57, 0.475],
 						"m_Kr" : 0.0025,
-						"m_Km" : 0.001,
+						"m_Km" : 0.0015,
 						"correctground" : true,
 						
 						"params" : {
@@ -197,7 +208,7 @@
 						// In hours			
 						"period" : 24.622962156,
 						// Angle between equatorial plane and orbital plane
-						"axialtilt" : -25.19,
+						"axialtilt" : 25.19,
 						// Inclination of orbit plane with respect to ecliptic
 						"inclination" : 1.850,
 						//"ascendingnode" : 47.68143,
@@ -220,9 +231,9 @@
 						},
 	"atmosphere" 	: {
 						"size" : 3490.0,
-						"wavelengths" : [0.600, 0.7, 0.7],
-						"m_Kr" : 0.0025,
-						"m_Km" : 0.001,
+						"wavelengths" : [0.55, 0.7, 0.7],
+						"m_Kr" : 0.0015,
+						"m_Km" : 0.004,
 						"correctground" : false,
 						
 						"params" : {

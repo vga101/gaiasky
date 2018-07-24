@@ -245,6 +245,12 @@ public class Constants {
     public static final float MIN_SATURATION = 0.0f;
     public static final float MAX_SATURATION = 2.0f;
 
+    public static final float MIN_GAMMA = 0.0f;
+    public static final float MAX_GAMMA = 3.0f;
+
+    public static final float MIN_LABEL_SIZE = 0.5f;
+    public static final float MAX_LABEL_SIZE = 2.3f;
+   
     // Max time, 5 Myr
     public static final long MAX_TIME_MS = 5000000l * (long) Y_TO_MS;
     // Min time, -5 Myr

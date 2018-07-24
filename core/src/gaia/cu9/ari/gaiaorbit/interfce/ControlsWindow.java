@@ -27,6 +27,7 @@ import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.interfce.components.CameraComponent;
+import gaia.cu9.ari.gaiaorbit.interfce.components.DatasetsComponent;
 import gaia.cu9.ari.gaiaorbit.interfce.components.MusicComponent;
 import gaia.cu9.ari.gaiaorbit.interfce.components.ObjectsComponent;
 import gaia.cu9.ari.gaiaorbit.interfce.components.TimeComponent;
@@ -42,7 +43,6 @@ import gaia.cu9.ari.gaiaorbit.util.scene2d.CollapsiblePane;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.CollapsibleWindow;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnImageButton;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnScrollPane;
-import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextButton;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextIconButton;
 
 public class ControlsWindow extends CollapsibleWindow implements IObserver {
@@ -170,6 +170,15 @@ public class ControlsWindow extends CollapsibleWindow implements IObserver {
         mainActors.add(visualEffects);
         panes.put(visualEffectsComponent.getClass().getSimpleName(), visualEffects);
 
+        /** ----DATASETS---- **/
+        DatasetsComponent datasetsComponent = new DatasetsComponent(skin, ui);
+        datasetsComponent.initialize();
+
+        CollapsiblePane datasets = new CollapsiblePane(ui, txt("gui.dataset.title"), datasetsComponent.getActor(), skin, false);
+        datasets.align(Align.left);
+        mainActors.add(datasets);
+        panes.put(datasetsComponent.getClass().getSimpleName(), datasets);
+
         /** ----OBJECTS TREE---- **/
         ObjectsComponent objectsComponent = new ObjectsComponent(skin, ui);
         objectsComponent.setSceneGraph(sg);
@@ -190,94 +199,88 @@ public class ControlsWindow extends CollapsibleWindow implements IObserver {
         //	panes.put(gaiaComponent.getClass().getSimpleName(), gaia);
 
         /** ----MUSIC GROUP---- **/
-        if (Constants.desktop) {
-            MusicComponent musicComponent = new MusicComponent(skin, ui);
-            musicComponent.initialize();
+        MusicComponent musicComponent = new MusicComponent(skin, ui);
+        musicComponent.initialize();
 
-            Actor[] musicActors = MusicActorsManager.getMusicActors() != null ? MusicActorsManager.getMusicActors().getActors(skin) : null;
+        Actor[] musicActors = MusicActorsManager.getMusicActors() != null ? MusicActorsManager.getMusicActors().getActors(skin) : null;
 
-            CollapsiblePane music = new CollapsiblePane(ui, txt("gui.music"), musicComponent.getActor(), skin, false, musicActors);
-            music.align(Align.left);
-            mainActors.add(music);
-            panes.put(musicComponent.getClass().getSimpleName(), music);
-        }
-
-        /** ----BACK TO WEBGL LINK---- **/
-        Button switchWebgl = new OwnTextButton(txt("gui.webgl.back"), skin, "link");
-        switchWebgl.addListener(event -> {
-            if (event instanceof ChangeEvent) {
-                // Remove webgl, add controls window
-                EventManager.instance.post(Events.REMOVE_GUI_COMPONENT, "controlsWindow");
-                EventManager.instance.post(Events.ADD_GUI_COMPONENT, "webglInterface");
-            }
-            return true;
-        });
-        mainActors.add(switchWebgl);
+        CollapsiblePane music = new CollapsiblePane(ui, txt("gui.music"), musicComponent.getActor(), skin, false, musicActors);
+        music.align(Align.left);
+        mainActors.add(music);
+        panes.put(musicComponent.getClass().getSimpleName(), music);
 
         Table buttonsTable = null;
-        if (Constants.desktop) {
-            /** BUTTONS **/
-            Image prefsImg = new Image(skin.getDrawable("prefs-icon"));
-            Button preferences = new OwnTextIconButton("", prefsImg, skin);
-            preferences.setName("preferences");
-            preferences.addListener(new TextTooltip(txt("gui.preferences"), skin));
-            preferences.addListener(new EventListener() {
-                @Override
-                public boolean handle(Event event) {
-                    if (event instanceof ChangeEvent) {
-                        EventManager.instance.post(Events.SHOW_PREFERENCES_ACTION);
-                    }
-                    return false;
+        /** BUTTONS **/
+        Image prefsImg = new Image(skin.getDrawable("prefs-icon"));
+        Button preferences = new OwnTextIconButton("", prefsImg, skin);
+        preferences.setName("preferences");
+        preferences.addListener(new TextTooltip(txt("gui.preferences"), skin));
+        preferences.addListener(new EventListener() {
+            @Override
+            public boolean handle(Event event) {
+                if (event instanceof ChangeEvent) {
+                    EventManager.instance.post(Events.SHOW_PREFERENCES_ACTION);
                 }
-            });
-            Image tutImg = new Image(skin.getDrawable("tutorial-icon"));
-            Button tutorial = new OwnTextIconButton("", tutImg, skin);
-            tutorial.setName("tutorial");
-            tutorial.addListener(new TextTooltip(txt("gui.tutorial"), skin));
-            tutorial.addListener(new EventListener() {
-                @Override
-                public boolean handle(Event event) {
-                    if (event instanceof ChangeEvent) {
-                        EventManager.instance.post(Events.SHOW_TUTORIAL_ACTION);
-                    }
-                    return false;
+                return false;
+            }
+        });
+        Image tutImg = new Image(skin.getDrawable("tutorial-icon"));
+        Button tutorial = new OwnTextIconButton("", tutImg, skin);
+        tutorial.setName("tutorial");
+        tutorial.addListener(new TextTooltip(txt("gui.tutorial"), skin));
+        tutorial.addListener(new EventListener() {
+            @Override
+            public boolean handle(Event event) {
+                if (event instanceof ChangeEvent) {
+                    EventManager.instance.post(Events.SHOW_TUTORIAL_ACTION);
                 }
-            });
-            Image helpImg = new Image(skin.getDrawable("help-icon"));
-            Button about = new OwnTextIconButton("", helpImg, skin);
-            about.setName("about");
-            about.addListener(new TextTooltip(txt("gui.help"), skin));
-            about.addListener(new EventListener() {
-                @Override
-                public boolean handle(Event event) {
-                    if (event instanceof ChangeEvent) {
-                        EventManager.instance.post(Events.SHOW_ABOUT_ACTION);
-                    }
-                    return false;
+                return false;
+            }
+        });
+        Image helpImg = new Image(skin.getDrawable("help-icon"));
+        Button about = new OwnTextIconButton("", helpImg, skin);
+        about.setName("about");
+        about.addListener(new TextTooltip(txt("gui.help"), skin));
+        about.addListener(new EventListener() {
+            @Override
+            public boolean handle(Event event) {
+                if (event instanceof ChangeEvent) {
+                    EventManager.instance.post(Events.SHOW_ABOUT_ACTION);
                 }
-            });
-            Image carImg = new Image(skin.getDrawable("car-icon"));
-            Button runScript = new OwnTextIconButton("", carImg, skin);
-            runScript.setName("run script");
-            runScript.addListener(new TextTooltip(txt("gui.script.runscript"), skin));
-            runScript.addListener(new EventListener() {
-                @Override
-                public boolean handle(Event event) {
-                    if (event instanceof ChangeEvent) {
-                        EventManager.instance.post(Events.SHOW_RUNSCRIPT_ACTION, ui, skin);
-                    }
-                    return false;
+                return false;
+            }
+        });
+        Image carImg = new Image(skin.getDrawable("car-icon"));
+        Button runScript = new OwnTextIconButton("", carImg, skin);
+        runScript.setName("run script");
+        runScript.addListener(new TextTooltip(txt("gui.script.runscript"), skin));
+        runScript.addListener(new EventListener() {
+            @Override
+            public boolean handle(Event event) {
+                if (event instanceof ChangeEvent) {
+                    EventManager.instance.post(Events.SHOW_RUNSCRIPT_ACTION, ui, skin);
                 }
-            });
+                return false;
+            }
+        });
+        Image logImg = new Image(skin.getDrawable("log-icon"));
+        Button showLog = new OwnTextIconButton("", logImg, skin);
+        showLog.setName("show log");
+        showLog.addListener(new TextTooltip(txt("gui.log.tooltip"), skin));
+        showLog.addListener((event) -> {
+            if (event instanceof ChangeEvent) {
+                EventManager.instance.post(Events.SHOW_LOG_ACTION);
+            }
+            return false;
+        });
 
-            buttonsTable = new Table(skin);
-            buttonsTable.add(runScript).pad(1).top().left();
-            //buttonsTable.add(tutorial).pad(1).top().left();
-            buttonsTable.add(preferences).pad(1).top().left();
-            buttonsTable.add(about).pad(1).top().left();
+        buttonsTable = new Table(skin);
+        buttonsTable.add(preferences).pad(1).top().left();
+        buttonsTable.add(runScript).pad(1).top().left();
+        buttonsTable.add(about).pad(1).top().left();
+        buttonsTable.add(showLog).pad(1).top().left();
 
-            buttonsTable.pack();
-        }
+        buttonsTable.pack();
 
         /** ADD GROUPS TO VERTICAL LAYOUT **/
 

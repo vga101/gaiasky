@@ -1,10 +1,9 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph;
 
-import java.util.HashMap;
-
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.IntMap;
+import com.badlogic.gdx.utils.ObjectMap;
 
 import gaia.cu9.ari.gaiaorbit.scenegraph.camera.ICamera;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
@@ -100,7 +99,7 @@ public interface ISceneGraph extends Disposable {
      * 
      * @return The index
      */
-    public HashMap<String, SceneGraphNode> getStringToNodeMap();
+    public ObjectMap<String, SceneGraphNode> getStringToNodeMap();
 
     /**
      * Gets a star map: HIP -&gt; IPosition It only contains the stars with HIP

@@ -35,7 +35,7 @@ public class AstroUtils {
      * Julian date of the Gaia DR2 reference epoch, J2015.5 = JD2455197.5 =
      * 2015-01-01T00:00:00
      **/
-    static final public double JD_J2015_5 = JD_J2015 + 365.25 / 2;
+    static final public double JD_J2015_5 = JD_J2015 + 365.25 / 2.0;
 
     /** Julian date of TGAS epoch 2010-01-01T00:00:00 **/
     static final public double JD_J2010 = 2455197.5;
@@ -68,6 +68,7 @@ public class AstroUtils {
     public static final double MILLARCSEC_TO_DEG = 1 / DEG_TO_MILLARCSEC;
     public static final double RAD_TO_MILLARCSEC = TO_DEG * DEG_TO_MILLARCSEC;
     public static final double MILLARCSEC_TO_RAD = MILLARCSEC_TO_DEG * TO_RAD;
+    public static final double MILLIARCSEC_TO_ARCSEC = 1d / 1000d;
 
     // Distance units
     public static final double PC_TO_KM = 3.08567758149137e13d;
@@ -691,7 +692,7 @@ public class AstroUtils {
     public static double obliquity(double julianDate) {
         // JPL's fundamental ephemerides have been continually updated. The
         // Astronomical Almanac for 2010 specifies:
-        // E = 23� 26′ 21″.406 − 46″.836769 T − 0″.0001831 T2 + 0″.00200340 T3 −
+        // E = 23° 26′ 21″.406 − 46″.836769 T − 0″.0001831 T2 + 0″.00200340 T3 −
         // 0″.576×10−6 T4 − 4″.34×10−8 T5
         double T = T(julianDate);
         /*
@@ -718,5 +719,39 @@ public class AstroUtils {
 
     public static double tau(double julianDate) {
         return (julianDate - 2451545) / 365250;
+    }
+
+    /**
+     * Converts proper motions + radial velocity into a cartesian vector
+     * @param mualphastar Mu alpha star, in mas/yr
+     * @param mudelta Mu delta, in mas/yr
+     * @param ra Right ascension in radians
+     * @param dec Declination in radians
+     * @param distpc Distance in parsecs to the star
+     * @return The proper motion vector in internal_units/year
+     */
+    public static Vector3d properMotionsToCartesian(double mualphastar, double mudelta, double radvel, double ra, double dec, double distpc) {
+        double ma = mualphastar * AstroUtils.MILLIARCSEC_TO_ARCSEC;
+        double md = mudelta * AstroUtils.MILLIARCSEC_TO_ARCSEC;
+
+        // Multiply arcsec/yr with distance in parsecs gives a linear velocity. The factor 4.74 converts result to km/s
+        double vta = ma * distpc * 4.74d;
+        double vtd = md * distpc * 4.74d;
+
+        double cosalpha = Math.cos(ra);
+        double sinalpha = Math.sin(ra);
+        double cosdelta = Math.cos(dec);
+        double sindelta = Math.sin(dec);
+
+        // +x to delta=0, alpha=0
+        // +y to delta=0, alpha=90
+        // +z to delta=90
+        // components in km/s
+        double vx = (radvel * cosdelta * cosalpha) - (vta * sinalpha) - (vtd * sindelta * cosalpha);
+        double vy = (radvel * cosdelta * sinalpha) + (vta * cosalpha) - (vtd * sindelta * sinalpha);
+        double vz = (radvel * sinalpha) + (vtd * cosdelta);
+
+        return (new Vector3d(vy, vz, vx)).scl(Constants.KM_TO_U / Constants.S_TO_Y);
+
     }
 }

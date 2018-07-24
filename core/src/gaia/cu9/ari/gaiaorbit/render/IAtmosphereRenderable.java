@@ -23,8 +23,6 @@ public interface IAtmosphereRenderable extends IRenderable {
      *            The time in seconds since the start.
      * @param vroffset
      *            Positional offset in vr mode, if any.
-     * @param atm
-     *            Render atmosphere.
      */
-    public void render(ModelBatch modelBatch, float alpha, double t, Vector3d vroffset, boolean atm);
+    public void renderAtmosphere(ModelBatch modelBatch, float alpha, double t, Vector3d vroffset);
 }

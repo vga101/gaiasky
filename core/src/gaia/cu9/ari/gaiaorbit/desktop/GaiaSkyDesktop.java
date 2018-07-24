@@ -19,6 +19,8 @@ import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Files;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.beust.jcommander.JCommander;
+import com.beust.jcommander.Parameter;
 import com.brsanthu.googleanalytics.GoogleAnalyticsResponse;
 
 import gaia.cu9.ari.gaiaorbit.GaiaSky;
@@ -26,9 +28,6 @@ import gaia.cu9.ari.gaiaorbit.analytics.AnalyticsPermission;
 import gaia.cu9.ari.gaiaorbit.analytics.AnalyticsReporting;
 import gaia.cu9.ari.gaiaorbit.data.DesktopSceneGraphImplementationProvider;
 import gaia.cu9.ari.gaiaorbit.data.SceneGraphImplementationProvider;
-import gaia.cu9.ari.gaiaorbit.desktop.concurrent.MultiThreadIndexer;
-import gaia.cu9.ari.gaiaorbit.desktop.concurrent.MultiThreadLocalFactory;
-import gaia.cu9.ari.gaiaorbit.desktop.concurrent.ThreadPoolManager;
 import gaia.cu9.ari.gaiaorbit.desktop.format.DesktopDateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.desktop.format.DesktopNumberFormatFactory;
 import gaia.cu9.ari.gaiaorbit.desktop.render.DesktopPostProcessorFactory;
@@ -58,10 +57,6 @@ import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.MusicManager;
 import gaia.cu9.ari.gaiaorbit.util.SysUtilsFactory;
-import gaia.cu9.ari.gaiaorbit.util.concurrent.SingleThreadIndexer;
-import gaia.cu9.ari.gaiaorbit.util.concurrent.SingleThreadLocalFactory;
-import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadIndexer;
-import gaia.cu9.ari.gaiaorbit.util.concurrent.ThreadLocalFactory;
 import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.math.MathManager;
@@ -78,8 +73,32 @@ public class GaiaSkyDesktop implements IObserver {
 
     private MemInfoWindow memInfoWindow;
 
-    public static void main(String[] args) {
+    /**
+     * Program arguments
+     * @author Toni Sagrista
+     *
+     */
+    private static class GaiaSkyArgs {
+        @Parameter(names = { "-h", "--help" }, help = true)
+        private boolean help = false;
 
+        @Parameter(names = { "-v", "--version" }, description = "Lists version and build inforamtion")
+        private boolean version = false;
+    }
+
+    public static void main(String[] args) {
+        GaiaSkyArgs gsargs = new GaiaSkyArgs();
+        try {
+            JCommander jc = new JCommander(gsargs, args);
+            jc.setProgramName("gaiasky");
+            if (gsargs.help) {
+                jc.usage();
+                return;
+            }
+        } catch (Exception e) {
+            System.out.println("Bad program arguments");
+            return;
+        }
         try {
             gsd = new GaiaSkyDesktop();
             // Assets location
@@ -109,6 +128,16 @@ public class GaiaSkyDesktop implements IObserver {
             ConfInit.initialize(new DesktopConfInit(ASSETS_LOC));
             GlobalConf.screen.SCREEN_WIDTH = 1080;
             GlobalConf.screen.SCREEN_HEIGHT = 1200;
+
+            if (gsargs.version) {
+                System.out.println(GlobalConf.APPLICATION_NAME + " " + GlobalConf.version.version);
+                System.out.println("   version name : " + GlobalConf.version.version);
+                System.out.println("   build        : " + GlobalConf.version.build);
+                System.out.println("   build time   : " + GlobalConf.version.buildtime);
+                System.out.println("   build system : " + GlobalConf.version.system);
+                System.out.println("   builder      : " + GlobalConf.version.builder);
+                return;
+            }
 
             // Initialize i18n
             I18n.initialize(Gdx.files.internal("i18n/gsbundle"));
@@ -174,7 +203,7 @@ public class GaiaSkyDesktop implements IObserver {
 
     public GaiaSkyDesktop() {
         super();
-        EventManager.instance.subscribe(this, Events.SHOW_ABOUT_ACTION, Events.SHOW_RUNSCRIPT_ACTION, Events.JAVA_EXCEPTION, Events.SHOW_PLAYCAMERA_ACTION, Events.DISPLAY_MEM_INFO_WINDOW);
+        EventManager.instance.subscribe(this, Events.SHOW_RUNSCRIPT_ACTION, Events.JAVA_EXCEPTION, Events.SHOW_PLAYCAMERA_ACTION, Events.DISPLAY_MEM_INFO_WINDOW);
     }
 
     private void init() {
@@ -192,16 +221,6 @@ public class GaiaSkyDesktop implements IObserver {
         cfg.useVsync(false);
         cfg.setWindowedMode(GlobalConf.screen.SCREEN_WIDTH, GlobalConf.screen.SCREEN_HEIGHT);
         cfg.setResizable(true);
-
-        // Thread pool manager
-        if (GlobalConf.performance.MULTITHREADING) {
-            ThreadIndexer.initialize(new MultiThreadIndexer());
-            ThreadPoolManager.initialize(GlobalConf.performance.NUMBER_THREADS());
-            ThreadLocalFactory.initialize(new MultiThreadLocalFactory());
-        } else {
-            ThreadIndexer.initialize(new SingleThreadIndexer());
-            ThreadLocalFactory.initialize(new SingleThreadLocalFactory());
-        }
 
         // Launch app
         Lwjgl3Application app = new Lwjgl3Application(new GaiaSky(), cfg);
@@ -287,7 +306,7 @@ public class GaiaSkyDesktop implements IObserver {
         if (userFolderConfFile.exists()) {
             Properties userprops = new Properties();
             userprops.load(new FileInputStream(userFolderConfFile));
-            int internalversion = 150;
+            int internalversion = 250;
             if (internalFolderConfFile.exists()) {
                 Properties internalprops = new Properties();
                 internalprops.load(new FileInputStream(internalFolderConfFile));
@@ -296,6 +315,7 @@ public class GaiaSkyDesktop implements IObserver {
 
             // Check latest version
             if (!userprops.containsKey("properties.version") || (userprops.containsKey("properties.version") && Integer.parseInt(userprops.getProperty("properties.version")) < internalversion)) {
+                System.out.println("Properties file version mismatch, overwriting with new version: found " + Integer.parseInt(userprops.getProperty("properties.version")) + ", required " + internalversion);
                 overwrite = true;
             }
         }
@@ -365,11 +385,12 @@ public class GaiaSkyDesktop implements IObserver {
             // Analytics stop event
             Future<GoogleAnalyticsResponse> f1 = AnalyticsReporting.getInstance().sendTimingAppReport();
 
-            try {
-                f1.get(2000, TimeUnit.MILLISECONDS);
-            } catch (Exception e) {
-                Logger.error(e);
-            }
+            if (f1 != null)
+                try {
+                    f1.get(2000, TimeUnit.MILLISECONDS);
+                } catch (Exception e) {
+                    Logger.error(e);
+                }
 
         }
     }

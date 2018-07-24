@@ -3,12 +3,12 @@ package gaia.cu9.ari.gaiaorbit.data.group;
 import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.LongMap;
 
 import gaia.cu9.ari.gaiaorbit.scenegraph.ParticleGroup.ParticleBean;
 import gaia.cu9.ari.gaiaorbit.scenegraph.StarGroup.StarBean;
@@ -131,7 +131,8 @@ public class STILDataProvider extends AbstractStarGroupDataProvider {
                         Pair<UCD, Double> b = getDoubleUcd(ucdp.POS2, row);
                         Pair<UCD, Double> c;
                         String unitc;
-                        if (ucdp.POS3.isEmpty()) {
+
+                        if (ucdp.POS3.isEmpty() || getDoubleUcd(ucdp.POS3, row) == null) {
                             c = new Pair<UCD, Double>(null, 0.04);
                             unitc = "mas";
                         } else {
@@ -210,7 +211,8 @@ public class STILDataProvider extends AbstractStarGroupDataProvider {
 
                         list.add(new StarBean(point, id, name));
                     } catch (Exception e) {
-                        Logger.error("Exception parsing row " + i + ": skipping");
+                        Logger.debug(e);
+                        Logger.debug("Exception parsing row " + i + ": skipping");
                     }
 
                 }
@@ -241,8 +243,18 @@ public class STILDataProvider extends AbstractStarGroupDataProvider {
     }
 
     @Override
-    public Map<Long, float[]> getColors() {
+    public LongMap<float[]> getColors() {
         return null;
+    }
+
+    @Override
+    public void setParallaxErrorFactorFaint(double parallaxErrorFactor) {
+
+    }
+
+    @Override
+    public void setParallaxErrorFactorBright(double parallaxErrorFactor) {
+
     }
 
     @Override

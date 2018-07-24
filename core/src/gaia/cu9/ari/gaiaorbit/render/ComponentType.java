@@ -6,28 +6,33 @@ import java.util.Map;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 
 public enum ComponentType {
-    Stars("icon-elem-stars"), // 0000 0000 0000 0000 0001
-    Planets("icon-elem-planets"), // 0000 0000 0000 0000 0010
-    Moons("icon-elem-moons"), // 0000 0000 0000 0000 0100
-    Satellites("icon-elem-satellites"), // 0000 0000 0000 0000 1000
-    Asteroids("icon-elem-asteroids"), // 0000 0000 0000 0001 0000
-    Clusters("icon-elem-clusters"), // 0000 0000 0000 0010 0000
-    Labels("icon-elem-labels"), // 0000 0000 0000 0100 0000
-    Equatorial("icon-elem-equatorial"), // 0000 0000 0000 0100 0000
-    Ecliptic("icon-elem-ecliptic"), // 0000 0000 0000 1000 0000
-    Galactic("icon-elem-galactic"), // 0000 0000 0001 0000 0000
-    Orbits("icon-elem-orbits"), // 0000 0000 0010 0000 0000
-    Atmospheres("icon-elem-atmospheres"), // 0000 0000 0100 0000 0000
-    Constellations("icon-elem-constellations"), // 0000 0000 1000 0000 0000
-    Boundaries("icon-elem-boundaries"), // 0000 0001 0000 0000 0000
-    MilkyWay("icon-elem-milkyway"), // 0000 0010 0000 0000 0000
-    Galaxies("icon-elem-galaxies"), // 0000 0100 0000 0000 0000
-    Countries("icon-elem-countries"), // 0000 1000 0000 0000 0000
-    Locations("icon-elem-locations"), // 0001 0000 0000 0000 0000
-    Meshes("icon-elem-meshes"), // 0010 0000 0000 0000 0000
-    Effects("icon-elem-effects"), // 0100 0000 0000 0000 0000
-    Titles("icon-elem-titles"), // 1000 0000 0000 0000 0000
-    Others("icon-elem-others"); // 0001 0000 0000 0000 0000 0000
+    Stars("icon-elem-stars"),
+    Planets("icon-elem-planets"),
+    Moons("icon-elem-moons"),
+    Satellites("icon-elem-satellites"),
+    Asteroids("icon-elem-asteroids"),
+
+    Clusters("icon-elem-clusters"),
+    MilkyWay("icon-elem-milkyway"),
+    Galaxies("icon-elem-galaxies"),
+    Meshes("icon-elem-meshes"),
+    Effects("icon-elem-effects"),
+
+    Labels("icon-elem-labels"),
+    Titles("icon-elem-titles"),
+    Orbits("icon-elem-orbits"),
+    Locations("icon-elem-locations"),
+    Countries("icon-elem-countries"),
+
+    Constellations("icon-elem-constellations"),
+    Boundaries("icon-elem-boundaries"),
+    Equatorial("icon-elem-equatorial"),
+    Ecliptic("icon-elem-ecliptic"),
+    Galactic("icon-elem-galactic"),
+
+    Atmospheres("icon-elem-atmospheres"),
+    Clouds("icon-elem-clouds"),
+    Others("icon-elem-others");
 
     private static Map<String, ComponentType> keysMap = new HashMap<String, ComponentType>();
 

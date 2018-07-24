@@ -1,11 +1,13 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph;
 
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Set;
 
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.IntMap;
+import com.badlogic.gdx.utils.ObjectIntMap;
+import com.badlogic.gdx.utils.ObjectMap;
+import com.badlogic.gdx.utils.ObjectMap.Keys;
+import com.badlogic.gdx.utils.ObjectSet;
 
 import gaia.cu9.ari.gaiaorbit.render.system.PixelRenderSystem;
 import gaia.cu9.ari.gaiaorbit.scenegraph.StarGroup.StarBean;
@@ -22,7 +24,7 @@ public abstract class AbstractSceneGraph implements ISceneGraph {
     /** The root of the tree **/
     public SceneGraphNode root;
     /** Quick lookup map. Name to node. **/
-    HashMap<String, SceneGraphNode> stringToNode;
+    ObjectMap<String, SceneGraphNode> stringToNode;
     /**
      * Map from integer to position with all hipparcos stars, for the
      * constellations
@@ -69,7 +71,7 @@ public abstract class AbstractSceneGraph implements ISceneGraph {
         this.hasStarGroup = hasStarGroup;
 
         // Initialize stringToNode and starMap maps
-        stringToNode = new HashMap<String, SceneGraphNode>(nodes.size * 2);
+        stringToNode = new ObjectMap<String, SceneGraphNode>(nodes.size * 2);
         stringToNode.put(root.name, root);
         hipMap = new IntMap<IPosition>();
         for (SceneGraphNode node : nodes) {
@@ -111,7 +113,7 @@ public abstract class AbstractSceneGraph implements ISceneGraph {
     }
 
     public void remove(SceneGraphNode node, boolean removeFromIndex) {
-        if (node != null) {
+        if (node != null && node.parent != null) {
             node.parent.removeChild(node, true);
 
             if (removeFromIndex) {
@@ -172,7 +174,7 @@ public abstract class AbstractSceneGraph implements ISceneGraph {
         }
     }
 
-    private void addToIndex(SceneGraphNode node, HashMap<String, SceneGraphNode> map) {
+    private void addToIndex(SceneGraphNode node, ObjectMap<String, SceneGraphNode> map) {
         if (node.name != null && !node.name.isEmpty()) {
             map.put(node.name, node);
             map.put(node.name.toLowerCase(), node);
@@ -197,7 +199,7 @@ public abstract class AbstractSceneGraph implements ISceneGraph {
             } else if (node instanceof StarGroup) {
                 StarGroup sg = (StarGroup) node;
                 if (sg.index != null) {
-                    Set<String> keys = sg.index.keySet();
+                    ObjectIntMap.Keys<String> keys = sg.index.keys();
                     for (String key : keys) {
                         map.put(key, sg);
                     }
@@ -207,7 +209,7 @@ public abstract class AbstractSceneGraph implements ISceneGraph {
         }
     }
 
-    private void removeFromIndex(SceneGraphNode node, HashMap<String, SceneGraphNode> map) {
+    private void removeFromIndex(SceneGraphNode node, ObjectMap<String, SceneGraphNode> map) {
         if (node.name != null && !node.name.isEmpty()) {
             map.remove(node.name);
             map.remove(node.name.toLowerCase());
@@ -232,7 +234,7 @@ public abstract class AbstractSceneGraph implements ISceneGraph {
             } else if (node instanceof StarGroup) {
                 StarGroup sg = (StarGroup) node;
                 if (sg.index != null) {
-                    Set<String> keys = sg.index.keySet();
+                    ObjectIntMap.Keys<String> keys = sg.index.keys();
                     for (String key : keys) {
                         map.remove(key);
                     }
@@ -251,8 +253,8 @@ public abstract class AbstractSceneGraph implements ISceneGraph {
     }
 
     public synchronized void removeFromStringToNode(SceneGraphNode node) {
-        Set<String> keys = stringToNode.keySet();
-        Set<String> hits = new HashSet<String>();
+        Keys<String> keys = stringToNode.keys();
+        ObjectSet<String> hits = new ObjectSet<String>();
         for (String key : keys) {
             if (stringToNode.get(key) == node)
                 hits.add(key);
@@ -269,7 +271,7 @@ public abstract class AbstractSceneGraph implements ISceneGraph {
         }
     }
 
-    public HashMap<String, SceneGraphNode> getStringToNodeMap() {
+    public ObjectMap<String, SceneGraphNode> getStringToNodeMap() {
         return stringToNode;
     }
 

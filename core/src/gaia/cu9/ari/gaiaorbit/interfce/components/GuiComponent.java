@@ -44,4 +44,9 @@ public abstract class GuiComponent {
     protected String txt(String key, Object... params) {
         return I18n.bundle.format(key, params);
     }
+
+    /**
+     * Disposes the component
+     */
+    public abstract void dispose();
 }

@@ -139,9 +139,19 @@ public abstract class ModelBody extends CelestialBody {
     }
 
     public void setToLocalTransform(float sizeFactor, Matrix4 localTransform, boolean forceUpdate) {
+        setToLocalTransform(size, sizeFactor, localTransform, forceUpdate);
+    }
+
+    public void setToLocalTransform(float size, float sizeFactor, Matrix4 localTransform, boolean forceUpdate) {
         if (sizeFactor != 1 || forceUpdate) {
+            
+            // NEW
             transform.getMatrix(localTransform).scl(size * sizeFactor).mul(Coordinates.getTransformF(refPlaneTransform)).rotate(0, 1, 0, (float) rc.ascendingNode).rotate(0, 0, 1, (float) (rc.inclination + rc.axialTilt)).rotate(0, 1, 0, (float) rc.angle);
             orientation.idt().mul(Coordinates.getTransformD(refPlaneTransform)).rotate(0, 0, 1, (float) (rc.inclination + rc.axialTilt)).rotate(0, 1, 0, (float) rc.ascendingNode);
+            
+            // OLD
+            //transform.getMatrix(localTransform).scl(size * sizeFactor).rotate(0, 1, 0, (float) rc.ascendingNode).rotate(0, 0, 1, (float) (rc.inclination + rc.axialTilt)).rotate(0, 1, 0, (float) rc.angle);
+            //orientation.idt().rotate(0, 1, 0, (float) rc.ascendingNode).rotate(0, 0, 1, (float) (rc.inclination + rc.axialTilt));
         } else {
             localTransform.set(this.localTransform);
         }
@@ -224,9 +234,7 @@ public abstract class ModelBody extends CelestialBody {
         mesh.render(shader, GL20.GL_TRIANGLES, 0, 6);
     }
 
-    /**
-     * Model rendering
-     **/
+    /** Model rendering **/
     @Override
     public void render(ModelBatch modelBatch, float alpha, double t, RenderingContext rc) {
         prepareShadowEnvironment();
@@ -236,9 +244,7 @@ public abstract class ModelBody extends CelestialBody {
         modelBatch.render(mc.instance, mc.env);
     }
 
-    /**
-     * Occlusion rendering
-     **/
+    /** Model opaque rendering. Disable shadow mapping **/
     public void renderOpaque(ModelBatch modelBatch, float alpha, double t) {
         mc.touch();
         mc.setTransparency(alpha * fadeOpacity);

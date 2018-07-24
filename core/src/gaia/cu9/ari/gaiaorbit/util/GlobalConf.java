@@ -160,13 +160,15 @@ public class GlobalConf {
         public float POSTPROCESS_HUE;
         /** Saturation level in [0..2]. Default is 1. **/
         public float POSTPROCESS_SATURATION;
+        /** Gamma correction value in [0.1..3] **/
+        public float POSTPROCESS_GAMMA;
 
         public PostprocessConf() {
-            EventManager.instance.subscribe(this, Events.BLOOM_CMD, Events.LENS_FLARE_CMD, Events.MOTION_BLUR_CMD, Events.LIGHT_SCATTERING_CMD, Events.FISHEYE_CMD, Events.BRIGHTNESS_CMD, Events.CONTRAST_CMD, Events.HUE_CMD, Events.SATURATION_CMD);
+            EventManager.instance.subscribe(this, Events.BLOOM_CMD, Events.LENS_FLARE_CMD, Events.MOTION_BLUR_CMD, Events.LIGHT_SCATTERING_CMD, Events.FISHEYE_CMD, Events.BRIGHTNESS_CMD, Events.CONTRAST_CMD, Events.HUE_CMD, Events.SATURATION_CMD, Events.GAMMA_CMD);
         }
 
         public void initialize(Antialias POSTPROCESS_ANTIALIAS, float POSTPROCESS_BLOOM_INTENSITY, float POSTPROCESS_MOTION_BLUR, boolean POSTPROCESS_LENS_FLARE, boolean POSTPROCESS_LIGHT_SCATTERING,
-                boolean POSTPROCESS_FISHEYE, float POSTPROCESS_BRIGHTNESS, float POSTPROCESS_CONTRAST, float POSTPROCESS_HUE, float POSTPROCESS_SATURATION) {
+                boolean POSTPROCESS_FISHEYE, float POSTPROCESS_BRIGHTNESS, float POSTPROCESS_CONTRAST, float POSTPROCESS_HUE, float POSTPROCESS_SATURATION, float POSTPROCESS_GAMMA) {
             this.POSTPROCESS_ANTIALIAS = POSTPROCESS_ANTIALIAS;
             this.POSTPROCESS_BLOOM_INTENSITY = POSTPROCESS_BLOOM_INTENSITY;
             this.POSTPROCESS_MOTION_BLUR = POSTPROCESS_MOTION_BLUR;
@@ -177,6 +179,7 @@ public class GlobalConf {
             this.POSTPROCESS_CONTRAST = POSTPROCESS_CONTRAST;
             this.POSTPROCESS_HUE = POSTPROCESS_HUE;
             this.POSTPROCESS_SATURATION = POSTPROCESS_SATURATION;
+            this.POSTPROCESS_GAMMA = POSTPROCESS_GAMMA;
         }
 
         @Override
@@ -208,6 +211,9 @@ public class GlobalConf {
                 break;
             case SATURATION_CMD:
                 POSTPROCESS_SATURATION = MathUtils.clamp((float) data[0], Constants.MIN_SATURATION, Constants.MAX_SATURATION);
+                break;
+            case GAMMA_CMD:
+                POSTPROCESS_GAMMA = MathUtils.clamp((float) data[0], Constants.MIN_GAMMA, Constants.MAX_GAMMA);
                 break;
             default:
                 break;
@@ -747,6 +753,7 @@ public class GlobalConf {
         public boolean FOCUS_LOCK;
         public boolean FOCUS_LOCK_ORIENTATION;
         public boolean CINEMATIC_CAMERA;
+        public float LABEL_SIZE_FACTOR;
         public float LABEL_NUMBER_FACTOR;
         /** Visibility of component types **/
         public boolean[] VISIBILITY;
@@ -788,6 +795,9 @@ public class GlobalConf {
 
         /** Lazy texture initialisation - textures are loaded only if needed **/
         public boolean LAZY_TEXTURE_INIT;
+
+        /** Initializes meshes lazily **/
+        public boolean LAZY_MESH_INIT = true;
 
         /** Whether to show crosshair in focus mode **/
         public boolean CROSSHAIR;
@@ -837,11 +847,11 @@ public class GlobalConf {
         public long MAX_LOADED_STARS;
 
         public SceneConf() {
-            EventManager.instance.subscribe(this, Events.TOGGLE_VISIBILITY_CMD, Events.FOCUS_LOCK_CMD, Events.ORIENTATION_LOCK_CMD, Events.PROPER_MOTIONS_CMD, Events.STAR_BRIGHTNESS_CMD, Events.PM_LEN_FACTOR_CMD, Events.PM_NUM_FACTOR_CMD, Events.FOV_CHANGED_CMD, Events.CAMERA_SPEED_CMD, Events.ROTATION_SPEED_CMD, Events.TURNING_SPEED_CMD, Events.SPEED_LIMIT_CMD, Events.TRANSIT_COLOUR_CMD, Events.ONLY_OBSERVED_STARS_CMD, Events.COMPUTE_GAIA_SCAN_CMD, Events.OCTREE_PARTICLE_FADE_CMD, Events.STAR_POINT_SIZE_CMD, Events.STAR_POINT_SIZE_INCREASE_CMD, Events.STAR_POINT_SIZE_DECREASE_CMD, Events.STAR_POINT_SIZE_RESET_CMD, Events.STAR_MIN_OPACITY_CMD, Events.AMBIENT_LIGHT_CMD, Events.GALAXY_3D_CMD, Events.CROSSHAIR_CMD, Events.CAMERA_CINEMATIC_CMD, Events.CUBEMAP_RESOLUTION_CMD);
+            EventManager.instance.subscribe(this, Events.TOGGLE_VISIBILITY_CMD, Events.FOCUS_LOCK_CMD, Events.ORIENTATION_LOCK_CMD, Events.PROPER_MOTIONS_CMD, Events.STAR_BRIGHTNESS_CMD, Events.PM_LEN_FACTOR_CMD, Events.PM_NUM_FACTOR_CMD, Events.FOV_CHANGED_CMD, Events.CAMERA_SPEED_CMD, Events.ROTATION_SPEED_CMD, Events.TURNING_SPEED_CMD, Events.SPEED_LIMIT_CMD, Events.TRANSIT_COLOUR_CMD, Events.ONLY_OBSERVED_STARS_CMD, Events.COMPUTE_GAIA_SCAN_CMD, Events.OCTREE_PARTICLE_FADE_CMD, Events.STAR_POINT_SIZE_CMD, Events.STAR_POINT_SIZE_INCREASE_CMD, Events.STAR_POINT_SIZE_DECREASE_CMD, Events.STAR_POINT_SIZE_RESET_CMD, Events.STAR_MIN_OPACITY_CMD, Events.AMBIENT_LIGHT_CMD, Events.GALAXY_3D_CMD, Events.CROSSHAIR_CMD, Events.CAMERA_CINEMATIC_CMD, Events.CUBEMAP_RESOLUTION_CMD, Events.LABEL_SIZE_CMD);
         }
 
         public void initialize(int gRAPHICS_QUALITY, long oBJECT_FADE_MS, float sTAR_BRIGHTNESS, float aMBIENT_LIGHT, int cAMERA_FOV, float cAMERA_SPEED, float tURNING_SPEED, float rOTATION_SPEED,
-                int cAMERA_SPEED_LIMIT_IDX, boolean fOCUS_LOCK, boolean fOCUS_LOCK_ORIENTATION, float lABEL_NUMBER_FACTOR, boolean[] vISIBILITY, int oRBIT_RENDERER, int lINE_RENDERER,
+                int cAMERA_SPEED_LIMIT_IDX, boolean fOCUS_LOCK, boolean fOCUS_LOCK_ORIENTATION, float lABEL_SIZE_FACTOR, float lABEL_NUMBER_FACTOR, boolean[] vISIBILITY, int oRBIT_RENDERER, int lINE_RENDERER,
                 double sTAR_TH_ANGLE_NONE, double sTAR_TH_ANGLE_POINT, double sTAR_TH_ANGLE_QUAD, float pOINT_ALPHA_MIN, float pOINT_ALPHA_MAX,
                 boolean oCTREE_PARTICLE_FADE, float oCTANT_TH_ANGLE_0, float oCTANT_TH_ANGLE_1, boolean pROPER_MOTION_VECTORS, float pM_NUM_FACTOR, float pM_LEN_FACTOR, float sTAR_POINT_SIZE,
                 boolean gALAXY_3D, int cUBEMAP_FACE_RESOLUTION, boolean cROSSHAIR, boolean cINEMATIC_CAMERA, boolean lAZY_TEXTURE_INIT, boolean fREE_CAMERA_TARGET_MODE_ON, boolean sHADOW_MAPPING,
@@ -859,6 +869,7 @@ public class GlobalConf {
             this.updateSpeedLimit();
             FOCUS_LOCK = fOCUS_LOCK;
             FOCUS_LOCK_ORIENTATION = fOCUS_LOCK_ORIENTATION;
+            LABEL_SIZE_FACTOR = lABEL_SIZE_FACTOR;
             LABEL_NUMBER_FACTOR = lABEL_NUMBER_FACTOR;
             VISIBILITY = vISIBILITY;
             ORBIT_RENDERER = oRBIT_RENDERER;
@@ -1047,6 +1058,9 @@ public class GlobalConf {
                 break;
             case CUBEMAP_RESOLUTION_CMD:
                 CUBEMAP_FACE_RESOLUTION = (int) data[0];
+                break;
+            case LABEL_SIZE_CMD:
+                LABEL_SIZE_FACTOR = MathUtilsd.clamp((float) data[0], Constants.MIN_LABEL_SIZE, Constants.MAX_LABEL_SIZE);
                 break;
             default:
                 break;

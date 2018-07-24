@@ -1,7 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.interfce.components;
 
-import com.badlogic.gdx.scenes.scene2d.Event;
-import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -66,6 +64,10 @@ public class GaiaComponent extends GuiComponent {
 
         component = gaiaGroup;
 
+    }
+
+    @Override
+    public void dispose() {
     }
 
 }

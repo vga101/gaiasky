@@ -4,11 +4,14 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.utils.Array;
 
+import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.render.IAtmosphereRenderable;
+import gaia.cu9.ari.gaiaorbit.render.ICloudRenderable;
 import gaia.cu9.ari.gaiaorbit.render.IModelRenderable;
 import gaia.cu9.ari.gaiaorbit.render.IRenderable;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
 import gaia.cu9.ari.gaiaorbit.scenegraph.camera.ICamera;
+import gaia.cu9.ari.gaiaorbit.util.ComponentTypes;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.comp.ModelComparator;
 
@@ -19,9 +22,16 @@ import gaia.cu9.ari.gaiaorbit.util.comp.ModelComparator;
  *
  */
 public class ModelBatchRenderSystem extends AbstractRenderSystem {
+
+    public enum ModelRenderType {
+        NORMAL, ATMOSPHERE, CLOUD
+    }
+
+    private ComponentTypes ctAtm, ctClouds;
+
     private ModelBatch batch;
-    private boolean atmosphere;
     private boolean sort = true;
+    private ModelRenderType type;
 
     /**
      * Creates a new model batch render component.
@@ -32,18 +42,21 @@ public class ModelBatchRenderSystem extends AbstractRenderSystem {
      *            The alphas list.
      * @param batch
      *            The model batch.
-     * @param atmosphere
-     *            Atmosphere rendering.
+     * @param type
+     *            The model render type
      */
-    public ModelBatchRenderSystem(RenderGroup rg, float[] alphas, ModelBatch batch, boolean atmosphere) {
+    public ModelBatchRenderSystem(RenderGroup rg, float[] alphas, ModelBatch batch, ModelRenderType type) {
         super(rg, alphas, null);
         this.batch = batch;
-        this.atmosphere = atmosphere;
+        this.type = type;
         comp = new ModelComparator<IRenderable>();
+
+        this.ctAtm = new ComponentTypes(ComponentType.Atmospheres);
+        this.ctClouds = new ComponentTypes(ComponentType.Clouds);
     }
 
-    public ModelBatchRenderSystem(RenderGroup rg, float[] alphas, ModelBatch batch, boolean atm, boolean sort) {
-        this(rg, alphas, batch, atm);
+    public ModelBatchRenderSystem(RenderGroup rg, float[] alphas, ModelBatch batch, ModelRenderType type, boolean sort) {
+        this(rg, alphas, batch, type);
         this.sort = sort;
     }
 
@@ -58,10 +71,17 @@ public class ModelBatchRenderSystem extends AbstractRenderSystem {
             int size = renderables.size;
             for (int i = 0; i < size; i++) {
                 IModelRenderable s = (IModelRenderable) renderables.get(i);
-                if (!atmosphere) {
+                // Route to correct interface
+                switch (type) {
+                case NORMAL:
                     s.render(batch, getAlpha(s), t, rc);
-                } else {
-                    ((IAtmosphereRenderable) s).render(batch, getAlpha(s), t, rc.vroffset, atmosphere);
+                    break;
+                case ATMOSPHERE:
+                    ((IAtmosphereRenderable) s).renderAtmosphere(batch, getAlpha(ctAtm), t, rc.vroffset);
+                    break;
+                case CLOUD:
+                    ((ICloudRenderable) s).renderClouds(batch, getAlpha(ctClouds), t);
+                    break;
                 }
             }
             batch.end();

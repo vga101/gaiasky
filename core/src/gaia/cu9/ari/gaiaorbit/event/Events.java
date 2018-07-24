@@ -13,8 +13,7 @@ public enum Events {
     /** Notifies of a change in the time, contains the Date object **/
     TIME_CHANGE_INFO,
     /**
-     * Issues a change time command, contains the Instant object with the new
-     * time
+     * Issues a change time command, contains the Instant object with the new time
      **/
     TIME_CHANGE_CMD,
 
@@ -51,11 +50,28 @@ public enum Events {
     /** Contains the new turning speed **/
     TURNING_SPEED_CMD,
     /**
-     * Contains the speed limit index as in: 0 - 100 km/h 1 - 0.5 * c 2 - 0.8 *
-     * c 3 - 0.9 * c 4 - 0.99 * c 5 - 0.99999 * c 6 - c (3e8 m/s) 7 - 2*c 8 -
-     * 10*c 9 - 1000*c 10 - 1 AU/s 11 - 10 AU/s 12 - 1000 AU/s 13 - 10000 AU/s
-     * 14 - 1 pc/s 15 - 2 pc/s 16 - 10 pc/s 17 - 1000 pc/s 18 - No limit It also
-     * contains a boolean indicating whether this comes from the interface.
+     * Contains the speed limit index as in: 
+     * 0 - 100 km/h 
+     * 1 - 0.5 * c
+     * 2 - 0.8 * c
+     * 3 - 0.9 * c
+     * 4 - 0.99 * c
+     * 5 - 0.99999 * c
+     * 6 - c (3e8 m/s) 
+     * 7 - 2*c
+     * 8 - 10*c
+     * 9 - 1000*c
+     * 10 - 1 AU/s
+     * 11 - 10 AU/s
+     * 12 - 1000 AU/s
+     * 13 - 10000 AU/s
+     * 14 - 1 pc/s
+     * 15 - 2 pc/s
+     * 16 - 10 pc/s
+     * 17 - 1000 pc/s
+     * 18 - No limit
+     * It also contains a boolean indicating whether this comes from
+     * the interface.
      **/
     SPEED_LIMIT_CMD,
     /** Contains the value between 0 and 1 **/
@@ -98,10 +114,10 @@ public enum Events {
      * ascension in deg [2], declination in deg [3] and the distance to Sol [4]
      **/
     FOCUS_INFO_UPDATED,
-    /**
+    /** 
      * Posts the coordinates of the free mode focus.
      * <ul>
-     * <li>[0] - ra [deg]</li>
+     * <li>[0] - ra  [deg]</li>
      * <li>[1] - dec [deg]</li>
      * </ul>
      */
@@ -116,15 +132,14 @@ public enum Events {
     LON_LAT_UPDATED,
 
     /**
-     * Updates the position of the pointer and the view in equatorial
-     * coordinates.
+     * Updates the position of the pointer and the view in equatorial coordinates.
      * <ul>
-     * <li>[0] - pointer ra [deg]</li>
+     * <li>[0] - pointer ra  [deg]</li>
      * <li>[1] - pointer dec [deg]</li>
-     * <li>[2] - view ra [deg]</li>
-     * <li>[3] - view dec [deg]</li>
-     * <li>[4] - pointer x [pixels]</li>
-     * <li>[5] - pointer y [pixels]</li>
+     * <li>[2] - view ra     [deg]</li>
+     * <li>[3] - view dec    [deg]</li>
+     * <li>[4] - pointer x   [pixels]</li>
+     * <li>[5] - pointer y   [pixels]</li>
      * </ul>
      **/
     RA_DEC_UPDATED,
@@ -218,6 +233,13 @@ public enum Events {
      * indicating whether this comes from the interface
      **/
     HUE_CMD,
+
+    /**
+     * Contains the gamma level (float) in [0..3] and an optional boolean
+     * indicating whether this comes from the interface
+     */
+    GAMMA_CMD,
+
     /**
      * Contains the saturation level (float) in [0..2] and an optional boolean
      * indicating whether this comes from the interface
@@ -331,6 +353,7 @@ public enum Events {
      **/
     SHOW_DEBUG_CMD,
     SHOW_ABOUT_ACTION,
+    SHOW_LOG_ACTION,
     SHOW_TUTORIAL_ACTION,
     SHOW_PREFERENCES_ACTION,
     SHOW_RUNSCRIPT_ACTION,
@@ -375,6 +398,11 @@ public enum Events {
      * whether it comes from the interface
      **/
     STAR_MIN_OPACITY_CMD,
+
+    /**
+     * Set label size. Contains the new label size [0.2, 5]
+     */
+    LABEL_SIZE_CMD,
 
     /**
      * Stereoscopic vision, side by side rendering. Contains the state boolean
@@ -513,15 +541,9 @@ public enum Events {
     STAR_BRIGHTNESS_CMD,
     /** Frames per second info **/
     FPS_INFO,
-    /**
-     * Contains the number factor for pm vectors and a boolean indicating if
-     * this comes from the interface
-     **/
+    /** Contains the number factor for pm vectors and a boolean indicating if this comes from the interface **/
     PM_NUM_FACTOR_CMD,
-    /**
-     * Contains the length factor for pm vectors and a boolean indicating if
-     * this comes from the interface
-     **/
+    /** Contains the length factor for pm vectors and a boolean indicating if this comes from the interface **/
     PM_LEN_FACTOR_CMD,
     /**
      * Updates the screen mode according to whats in the
@@ -738,20 +760,26 @@ public enum Events {
     /** Empty event which informs that background loading is active **/
     BACKGROUND_LOADING_INFO,
 
+    /** Informs the octree has been disposed **/
+    OCTREE_DISPOSED,
+
     /** Update external GUIs signal. Contains the dt in seconds. **/
     UPDATE_GUI,
 
-    /** Contains an the index of the mesh to be cleared **/
+    /** Contains an the index of the star group mesh to be cleared **/
     DISPOSE_STAR_GROUP_GPU_MESH,
 
-    /**
-     * Start gravitational wave. Contains on-screen position (x,y) of source as
-     * two integer parameters
-     **/
+    /** Contains an index to the particle group mesh to be cleared **/
+    DISPOSE_PARTICLE_GROUP_GPU_MESH,
+
+    /** Start gravitational wave. Contains on-screen position (x,y) of source as two integer parameters **/
     GRAV_WAVE_START,
 
     /** Stops gravitational wave **/
     GRAV_WAVE_STOP,
+
+    /** A new catalog has been loaded. Contains the new catalog info object **/
+    ADD_CATALOG_INFO,
 
     /** New VR device connected. Contains the VRDevice object. **/
     VR_DEVICE_CONNECTED,

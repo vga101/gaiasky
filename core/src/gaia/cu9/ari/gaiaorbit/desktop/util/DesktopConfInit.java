@@ -148,7 +148,8 @@ public class DesktopConfInit extends ConfInit {
         float POSTPROCESS_CONTRAST = Float.parseFloat(p.getProperty("postprocess.contrast", "1"));
         float POSTPROCESS_HUE = Float.parseFloat(p.getProperty("postprocess.hue", "1"));
         float POSTPROCESS_SATURATION = Float.parseFloat(p.getProperty("postprocess.saturation", "1"));
-        ppc.initialize(POSTPROCESS_ANTIALIAS, POSTPROCESS_BLOOM_INTENSITY, POSTPROCESS_MOTION_BLUR, POSTPROCESS_LENS_FLARE, POSTPROCESS_LIGHT_SCATTERING, POSTPROCESS_FISHEYE, POSTPROCESS_BRIGHTNESS, POSTPROCESS_CONTRAST, POSTPROCESS_HUE, POSTPROCESS_SATURATION);
+        float POSTPROCESS_GAMMA = Float.parseFloat(p.getProperty("postprocess.gamma", "1"));
+        ppc.initialize(POSTPROCESS_ANTIALIAS, POSTPROCESS_BLOOM_INTENSITY, POSTPROCESS_MOTION_BLUR, POSTPROCESS_LENS_FLARE, POSTPROCESS_LIGHT_SCATTERING, POSTPROCESS_FISHEYE, POSTPROCESS_BRIGHTNESS, POSTPROCESS_CONTRAST, POSTPROCESS_HUE, POSTPROCESS_SATURATION, POSTPROCESS_GAMMA);
 
         /** RUNTIME CONF **/
         RuntimeConf rc = new RuntimeConf();
@@ -216,7 +217,8 @@ public class DesktopConfInit extends ConfInit {
         boolean FOCUS_LOCK_ORIENTATION = Boolean.parseBoolean(p.getProperty("scene.focuslock.orientation", "false"));
         float TURNING_SPEED = Float.parseFloat(p.getProperty("scene.camera.turn.vel"));
         float ROTATION_SPEED = Float.parseFloat(p.getProperty("scene.camera.rotate.vel"));
-        float LABEL_NUMBER_FACTOR = Float.parseFloat(p.getProperty("scene.labelfactor"));
+        float LABEL_SIZE_FACTOR = Float.parseFloat(p.getProperty("scene.label.size"));
+        float LABEL_NUMBER_FACTOR = Float.parseFloat(p.getProperty("scene.label.number"));
         double STAR_TH_ANGLE_QUAD = Double.parseDouble(p.getProperty("scene.star.threshold.quad"));
         double STAR_TH_ANGLE_POINT = Double.parseDouble(p.getProperty("scene.star.threshold.point"));
         double STAR_TH_ANGLE_NONE = Double.parseDouble(p.getProperty("scene.star.threshold.none"));
@@ -262,7 +264,7 @@ public class DesktopConfInit extends ConfInit {
         float STAR_POINT_SIZE = Float.parseFloat(p.getProperty("scene.star.point.size", "-1"));
         boolean LAZY_TEXTURE_INIT = false;
         SceneConf sc = new SceneConf();
-        sc.initialize(GRAPHICS_QUALITY, OBJECT_FADE_MS, STAR_BRIGHTNESS, AMBIENT_LIGHT, CAMERA_FOV, CAMERA_SPEED, TURNING_SPEED, ROTATION_SPEED, CAMERA_SPEED_LIMIT_IDX, FOCUS_LOCK, FOCUS_LOCK_ORIENTATION, LABEL_NUMBER_FACTOR, VISIBILITY, ORBIT_RENDERER, LINE_RENDERER, STAR_TH_ANGLE_NONE, STAR_TH_ANGLE_POINT, STAR_TH_ANGLE_QUAD, POINT_ALPHA_MIN, POINT_ALPHA_MAX, OCTREE_PARTICLE_FADE, OCTANT_THRESHOLD_0, OCTANT_THRESHOLD_1, PROPER_MOTION_VECTORS, PM_NUM_FACTOR, PM_LEN_FACTOR, STAR_POINT_SIZE, GALAXY_3D, CUBEMAP_FACE_RESOLUTION, CROSSHAIR, CINEMATIC_CAMERA, LAZY_TEXTURE_INIT, FREE_CAMERA_TARGET_MODE_ON, SHADOW_MAPPING, SHADOW_MAPPING_N_SHADOWS, SHADOW_MAPPING_RESOLUTION, MAX_LOADED_STARS);
+        sc.initialize(GRAPHICS_QUALITY, OBJECT_FADE_MS, STAR_BRIGHTNESS, AMBIENT_LIGHT, CAMERA_FOV, CAMERA_SPEED, TURNING_SPEED, ROTATION_SPEED, CAMERA_SPEED_LIMIT_IDX, FOCUS_LOCK, FOCUS_LOCK_ORIENTATION, LABEL_SIZE_FACTOR, LABEL_NUMBER_FACTOR, VISIBILITY, ORBIT_RENDERER, LINE_RENDERER, STAR_TH_ANGLE_NONE, STAR_TH_ANGLE_POINT, STAR_TH_ANGLE_QUAD, POINT_ALPHA_MIN, POINT_ALPHA_MAX, OCTREE_PARTICLE_FADE, OCTANT_THRESHOLD_0, OCTANT_THRESHOLD_1, PROPER_MOTION_VECTORS, PM_NUM_FACTOR, PM_LEN_FACTOR, STAR_POINT_SIZE, GALAXY_3D, CUBEMAP_FACE_RESOLUTION, CROSSHAIR, CINEMATIC_CAMERA, LAZY_TEXTURE_INIT, FREE_CAMERA_TARGET_MODE_ON, SHADOW_MAPPING, SHADOW_MAPPING_N_SHADOWS, SHADOW_MAPPING_RESOLUTION, MAX_LOADED_STARS);
 
         /** FRAME CONF **/
         String renderFolder = null;
@@ -366,6 +368,7 @@ public class DesktopConfInit extends ConfInit {
         p.setProperty("postprocess.contrast", Float.toString(GlobalConf.postprocess.POSTPROCESS_CONTRAST));
         p.setProperty("postprocess.hue", Float.toString(GlobalConf.postprocess.POSTPROCESS_HUE));
         p.setProperty("postprocess.saturation", Float.toString(GlobalConf.postprocess.POSTPROCESS_SATURATION));
+        p.setProperty("postprocess.gamma", Float.toString(GlobalConf.postprocess.POSTPROCESS_GAMMA));
 
         /** FRAME CONF **/
         p.setProperty("graphics.render.folder", GlobalConf.frame.RENDER_FOLDER);
@@ -429,7 +432,8 @@ public class DesktopConfInit extends ConfInit {
         p.setProperty("scene.camera.rotate.vel", Double.toString(GlobalConf.scene.ROTATION_SPEED));
         p.setProperty("scene.focuslock", Boolean.toString(GlobalConf.scene.FOCUS_LOCK));
         p.setProperty("scene.focuslock.orientation", Boolean.toString(GlobalConf.scene.FOCUS_LOCK_ORIENTATION));
-        p.setProperty("scene.labelfactor", Float.toString(GlobalConf.scene.LABEL_NUMBER_FACTOR));
+        p.setProperty("scene.label.size", Float.toString(GlobalConf.scene.LABEL_SIZE_FACTOR));
+        p.setProperty("scene.label.number", Float.toString(GlobalConf.scene.LABEL_NUMBER_FACTOR));
         p.setProperty("scene.star.threshold.quad", Double.toString(GlobalConf.scene.STAR_THRESHOLD_QUAD));
         p.setProperty("scene.star.threshold.point", Double.toString(GlobalConf.scene.STAR_THRESHOLD_POINT));
         p.setProperty("scene.star.threshold.none", Double.toString(GlobalConf.scene.STAR_THRESHOLD_NONE));

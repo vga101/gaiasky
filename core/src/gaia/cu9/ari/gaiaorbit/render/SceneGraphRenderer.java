@@ -48,14 +48,18 @@ import gaia.cu9.ari.gaiaorbit.render.system.IRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.LineGPURenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.LineQuadRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.LineRenderSystem;
+import gaia.cu9.ari.gaiaorbit.render.system.MWModelRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.MilkyWayRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.ModelBatchRenderSystem;
+import gaia.cu9.ari.gaiaorbit.render.system.ModelBatchRenderSystem.ModelRenderType;
 import gaia.cu9.ari.gaiaorbit.render.system.OrbitalElementsParticlesRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.ParticleEffectsRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.ParticleGroupRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.PixelRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.ShapeRenderSystem;
 import gaia.cu9.ari.gaiaorbit.render.system.StarGroupRenderSystem;
+import gaia.cu9.ari.gaiaorbit.scenegraph.AbstractPositionEntity;
+import gaia.cu9.ari.gaiaorbit.scenegraph.MilkyWay;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ModelBody;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
@@ -98,8 +102,8 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
     private ShaderProgram fontShader;
 
-    private ShaderProgram[] starGroupShaders, particleGroupShaders, particleEffectShaders, orbitElemShaders, lineShaders, lineQuadShaders, lineGpuShaders, mwPointShaders, mwNebulaShaders, pixelShaders, galShaders, spriteShaders, starShaders;
-    private AssetDescriptor<ShaderProgram>[] starGroupDesc, particleGroupDesc, particleEffectDesc, orbitElemDesc, lineDesc, lineQuadDesc, lineGpuDesc, mwPointDesc, mwNebulaDesc, pixelDesc, galDesc, spriteDesc, starDesc;
+    private ShaderProgram[] starGroupShaders, particleGroupShaders, particleEffectShaders, orbitElemShaders, lineShaders, lineQuadShaders, lineGpuShaders, mwPointShaders, mwOitShaders, mwNebulaShaders, pixelShaders, galShaders, spriteShaders, starShaders;
+    private AssetDescriptor<ShaderProgram>[] starGroupDesc, particleGroupDesc, particleEffectDesc, orbitElemDesc, lineDesc, lineQuadDesc, lineGpuDesc, mwPointDesc, mwOitDesc, mwNebulaDesc, pixelDesc, galDesc, spriteDesc, starDesc;
 
     private int maxTexSize;
 
@@ -139,12 +143,13 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
     private Vector3 aux1;
     private Vector3d aux1d;
 
-    private Array<IRenderable> stars;
-
-    private AbstractRenderSystem billboardStarsProc;
-
     // VRContext, may be null
     private VRContext vrContext;
+    
+    Array<IRenderable> stars;
+
+    AbstractRenderSystem billboardStarsProc;
+    MWModelRenderSystem mwrs;
 
     public SceneGraphRenderer(VRContext vrContext) {
         super();
@@ -183,6 +188,8 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         spriteDesc = loadShader(manager, "shader/sprite.vertex.glsl", "shader/sprite.fragment.glsl", new String[] { "sprite", "spriteRel", "spriteGrav", "spriteRelGrav" }, new String[] { "", "#define relativisticEffects\n", "#define gravitationalWaves\n", "#define relativisticEffects\n#define gravitationalWaves\n" });
         pixelDesc = loadShader(manager, "shader/point.vertex.glsl", "shader/point.fragment.glsl", new String[] { "pixel", "pixelRel", "pixelGrav", "pixelRelGrav" }, new String[] { "", "#define relativisticEffects\n", "#define gravitationalWaves\n", "#define relativisticEffects\n#define gravitationalWaves\n" });
         mwPointDesc = loadShader(manager, "shader/point.galaxy.vertex.glsl", "shader/point.galaxy.fragment.glsl", new String[] { "pointGal", "pointGalRel", "pointGalGrav", "pointGalRelGrav" }, new String[] { "", "#define relativisticEffects\n", "#define gravitationalWaves\n", "#define relativisticEffects\n#define gravitationalWaves\n" });
+        mwOitDesc = loadShader(manager, "shader/galaxy.oit.vertex.glsl", "shader/galaxy.oit.fragment.glsl", new String[] { "galOit", "galOitRel", "galOitGrav", "galOitRelGrav" }, new String[] { "", "#define relativisticEffects\n", "#define gravitationalWaves\n", "#define relativisticEffects\n#define gravitationalWaves\n" });
+
         mwNebulaDesc = loadShader(manager, "shader/nebula.vertex.glsl", "shader/nebula.fragment.glsl", new String[] { "nebula", "nebulaRel", "nebulaGrav", "nebulaRelGrav" }, new String[] { "", "#define relativisticEffects\n", "#define gravitationalWaves\n", "#define relativisticEffects\n#define gravitationalWaves\n" });
         lineDesc = loadShader(manager, "shader/line.vertex.glsl", "shader/line.fragment.glsl", new String[] { "line", "lineRel", "lineGrav", "lineRelGrav" }, new String[] { "", "#define relativisticEffects\n", "#define gravitationalWaves\n", "#define relativisticEffects\n#define gravitationalWaves\n" });
         lineQuadDesc = loadShader(manager, "shader/line.quad.vertex.glsl", "shader/line.quad.fragment.glsl", new String[] { "lineQuad", "lineQuadRel", "lineQuadGrav", "lineQuadRelGrav" }, new String[] { "", "#define relativisticEffects\n", "#define gravitationalWaves\n", "#define relativisticEffects\n#define gravitationalWaves\n" });
@@ -202,6 +209,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         manager.load("spopaque", RelativisticShaderProvider.class, new RelativisticShaderProviderParameter("shader/normal.vertex.glsl", "shader/opaque.fragment.glsl"));
         manager.load("atm", AtmosphereShaderProvider.class, new AtmosphereShaderProviderParameter("shader/atm.vertex.glsl", "shader/atm.fragment.glsl"));
         manager.load("atmground", GroundShaderProvider.class, new GroundShaderProviderParameter("shader/normal.vertex.glsl", "shader/normal.fragment.glsl"));
+        manager.load("cloud", GroundShaderProvider.class, new GroundShaderProviderParameter("shader/cloud.vertex.glsl", "shader/cloud.fragment.glsl"));
 
         BitmapFontParameter bfp = new BitmapFontParameter();
         bfp.magFilter = TextureFilter.Linear;
@@ -328,6 +336,11 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         mwPointShaders = fetchShaderProgram(manager, mwPointDesc, "MW point", "MW point (rel)", "MW point (grav)");
 
         /**
+         * MW Order-Independent Transparency
+         */
+        mwOitShaders = fetchShaderProgram(manager, mwOitDesc, "Gal OIT", "Gal OIT (rel)", "Gal OIT (grav)");
+
+        /**
          * MW NEBULAE
          */
         mwNebulaShaders = fetchShaderProgram(manager, mwNebulaDesc, "MW nebula", "MW nebula (rel)", "MW nebula (grav)");
@@ -366,8 +379,9 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         ShaderProvider sp = manager.get("atmgrounddefault");
         ShaderProvider spadditive = manager.get("additive");
         ShaderProvider spgrids = manager.get("grids");
-        ShaderProvider spnormal = Constants.webgl ? sp : manager.get("atmground");
+        ShaderProvider spnormal = manager.get("atmground");
         ShaderProvider spatm = manager.get("atm");
+        ShaderProvider spcloud = manager.get("cloud");
         ShaderProvider spsurface = manager.get("spsurface");
         ShaderProvider spbeam = manager.get("spbeam");
         ShaderProvider spdepth = manager.get("spdepth");
@@ -387,6 +401,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         ModelBatch modelBatchGrids = new ModelBatch(spgrids, noSorter);
         ModelBatch modelBatchNormal = new ModelBatch(spnormal, noSorter);
         ModelBatch modelBatchAtmosphere = new ModelBatch(spatm, noSorter);
+        ModelBatch modelBatchCloud = new ModelBatch(spcloud, noSorter);
         ModelBatch modelBatchStar = new ModelBatch(spsurface, noSorter);
         ModelBatch modelBatchBeam = new ModelBatch(spbeam, noSorter);
         modelBatchDepth = new ModelBatch(spdepth, noSorter);
@@ -420,7 +435,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         alphas = new float[comps.length];
         for (int i = 0; i < comps.length; i++) {
             times[i] = -20000l;
-            alphas[i] = 1f;
+            alphas[i] = 0f;
         }
 
         /**
@@ -453,7 +468,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         pixelStarProc.setPreRunnable(blendNoDepthRunnable);
 
         // MODEL FRONT-BACK - NO CULL FACE
-        AbstractRenderSystem modelFrontBackProc = new ModelBatchRenderSystem(RenderGroup.MODEL_DEFAULT, alphas, modelBatchDefault, false);
+        AbstractRenderSystem modelFrontBackProc = new ModelBatchRenderSystem(RenderGroup.MODEL_DEFAULT, alphas, modelBatchDefault, ModelRenderType.NORMAL);
         modelFrontBackProc.setPreRunnable(blendDepthRunnable);
         modelFrontBackProc.setPostRunnable(new RenderSystemRunnable() {
             @Override
@@ -464,7 +479,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         });
 
         // MODEL GRID
-        AbstractRenderSystem modelGridsProc = new ModelBatchRenderSystem(RenderGroup.MODEL_GRIDS, alphas, modelBatchGrids, false);
+        AbstractRenderSystem modelGridsProc = new ModelBatchRenderSystem(RenderGroup.MODEL_GRIDS, alphas, modelBatchGrids, ModelRenderType.NORMAL);
         modelGridsProc.setPreRunnable(blendDepthRunnable);
         modelGridsProc.setPostRunnable(new RenderSystemRunnable() {
             @Override
@@ -561,8 +576,8 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         lineGpuProc.setPreRunnable(blendDepthRunnable);
 
         // MODEL MESH
-        AbstractRenderSystem modelMeshProc = new ModelBatchRenderSystem(RenderGroup.MODEL_MESH, alphas, modelBatchMesh, false, false);
-        modelFrontBackProc.setPreRunnable(blendDepthRunnable);
+        AbstractRenderSystem modelMeshProc = new ModelBatchRenderSystem(RenderGroup.MODEL_MESH, alphas, modelBatchMesh, ModelRenderType.NORMAL, false);
+        modelMeshProc.setPreRunnable(blendDepthRunnable);
 
         // LINES VR LASER
         LineRenderSystem lineVRProc = new LineRenderSystem(RenderGroup.LINE_VR, alphas, lineShaders);
@@ -570,14 +585,16 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         lineVRProc.setPreRunnable(blendDepthRunnable);
 
         // MODEL FRONT
-        AbstractRenderSystem modelFrontProc = new ModelBatchRenderSystem(RenderGroup.MODEL_NORMAL, alphas, modelBatchNormal, false);
+        AbstractRenderSystem modelFrontProc = new ModelBatchRenderSystem(RenderGroup.MODEL_NORMAL, alphas, modelBatchNormal, ModelRenderType.NORMAL);
         modelFrontProc.setPreRunnable(blendDepthRunnable);
 
         // MODEL BEAM
-        AbstractRenderSystem modelBeamProc = new ModelBatchRenderSystem(RenderGroup.MODEL_BEAM, alphas, modelBatchBeam, false);
+        AbstractRenderSystem modelBeamProc = new ModelBatchRenderSystem(RenderGroup.MODEL_BEAM, alphas, modelBatchBeam, ModelRenderType.NORMAL, false);
         modelBeamProc.setPreRunnable(blendDepthRunnable);
 
         // GALAXY
+        //mwrs = new MWModelRenderSystem(RenderGroup.GALAXY, alphas, MWModelRenderSystem.oit ? mwOitShaders : mwPointShaders);
+        //AbstractRenderSystem galaxyProc = mwrs;
         AbstractRenderSystem galaxyProc = new MilkyWayRenderSystem(RenderGroup.GALAXY, alphas, modelBatchDefault, mwPointShaders, mwNebulaShaders);
         galaxyProc.setPreRunnable(blendNoDepthRunnable);
 
@@ -591,14 +608,15 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
         // STAR GROUP
         AbstractRenderSystem starGroupProc = new StarGroupRenderSystem(RenderGroup.STAR_GROUP, alphas, starGroupShaders);
-        starGroupProc.setPreRunnable(blendNoDepthRunnable);
+        starGroupProc.setPreRunnable(additiveBlendDepthRunnable);
+        starGroupProc.setPostRunnable(restoreRegularBlend);
 
         // ORBITAL ELEMENTS PARTICLES
         AbstractRenderSystem orbitElemProc = new OrbitalElementsParticlesRenderSystem(RenderGroup.PARTICLE_ORBIT_ELEMENTS, alphas, orbitElemShaders);
         orbitElemProc.setPreRunnable(blendNoDepthRunnable);
 
         // MODEL STARS
-        AbstractRenderSystem modelStarsProc = new ModelBatchRenderSystem(RenderGroup.MODEL_STAR, alphas, modelBatchStar, false);
+        AbstractRenderSystem modelStarsProc = new ModelBatchRenderSystem(RenderGroup.MODEL_STAR, alphas, modelBatchStar, ModelRenderType.NORMAL);
         modelStarsProc.setPreRunnable(blendDepthRunnable);
 
         // LABELS
@@ -611,7 +629,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         billboardSSOProc.setPostRunnable(restoreRegularBlend);
 
         // MODEL ATMOSPHERE
-        AbstractRenderSystem modelAtmProc = new ModelBatchRenderSystem(RenderGroup.MODEL_ATM, alphas, modelBatchAtmosphere, true) {
+        AbstractRenderSystem modelAtmProc = new ModelBatchRenderSystem(RenderGroup.MODEL_ATM, alphas, modelBatchAtmosphere, ModelRenderType.ATMOSPHERE) {
             @Override
             public float getAlpha(IRenderable s) {
                 return alphas[ComponentType.Atmospheres.ordinal()] * (float) Math.pow(alphas[s.getComponentType().getFirstOrdinal()], 2);
@@ -630,6 +648,9 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
                 //Gdx.gl.glClear(GL20.GL_DEPTH_BUFFER_BIT);
             }
         });
+
+        // MODEL CLOUDS
+        AbstractRenderSystem modelCloudProc = new ModelBatchRenderSystem(RenderGroup.MODEL_CLOUD, alphas, modelBatchCloud, ModelRenderType.CLOUD);
 
         // SHAPES
         AbstractRenderSystem shapeProc = new ShapeRenderSystem(RenderGroup.SHAPE, alphas);
@@ -668,6 +689,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
         renderProcesses.add(modelStarsProc);
         renderProcesses.add(modelAtmProc);
+        renderProcesses.add(modelCloudProc);
         renderProcesses.add(shapeProc);
         renderProcesses.add(particleEffectsProc);
         // renderProcesses.add(cloudsProc);
@@ -796,7 +818,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
              */
             Array<IRenderable> models = render_lists.get(RenderGroup.MODEL_NORMAL.ordinal());
             models.sort((a, b) -> {
-                return Double.compare(((ModelBody) a).getDistToCamera(), ((ModelBody) b).getDistToCamera());
+                return Double.compare(((AbstractPositionEntity) a).getDistToCamera(), ((AbstractPositionEntity) b).getDistToCamera());
             });
 
             int shadowNRender = (GlobalConf.program.STEREOSCOPIC_MODE || GlobalConf.runtime.OPENVR) ? 2 : GlobalConf.program.CUBEMAP360_MODE ? 6 : 1;
@@ -805,13 +827,15 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
                 candidates.clear();
                 int num = 0;
                 for (int i = 0; i < models.size; i++) {
-                    ModelBody mr = (ModelBody) models.get(i);
-                    if (mr.isShadow()) {
-                        candidates.insert(num, mr);
-                        mr.shadow = 0;
-                        num++;
-                        if (num == GlobalConf.scene.SHADOW_MAPPING_N_SHADOWS)
-                            break;
+                    if (models.get(i) instanceof ModelBody) {
+                        ModelBody mr = (ModelBody) models.get(i);
+                        if (mr.isShadow()) {
+                            candidates.insert(num, mr);
+                            mr.shadow = 0;
+                            num++;
+                            if (num == GlobalConf.scene.SHADOW_MAPPING_N_SHADOWS)
+                                break;
+                        }
                     }
                 }
 
@@ -870,6 +894,14 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         }
     }
 
+    private void renderMWPrePass(ICamera camera) {
+        if (mwrs != null) {
+            Array<IRenderable> arr = render_lists.get(RenderGroup.GALAXY.ordinal());
+            if (arr != null && arr.size > 0)
+                mwrs.renderPrePasses((MilkyWay) arr.get(0), camera);
+        }
+    }
+
     @Override
     public void render(ICamera camera, double t, int rw, int rh, FrameBuffer fb, PostProcessBean ppb) {
         if (sgr == null)
@@ -881,12 +913,16 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         // In stereo and cubemap modes, the glow pass is rendered in the SGR itself
         if (!GlobalConf.program.STEREOSCOPIC_MODE && !GlobalConf.program.CUBEMAP360_MODE && !GlobalConf.runtime.OPENVR)
             renderGlowPass(camera);
+        
+        renderMWPrePass(camera);
 
         sgr.render(this, camera, t, rw, rh, fb, ppb);
 
-        //        spriteBatch.begin();
-        //        spriteBatch.draw(glowTex, 0, 0, 1080, 720);
-        //        spriteBatch.end();
+        if (mwrs != null && MWModelRenderSystem.oit) {
+            spriteBatch.begin();
+            spriteBatch.draw(mwrs.oitFb.getTextureAttachments().get(0), 0, 0, 756, 504);
+            spriteBatch.end();
+        }
 
     }
 

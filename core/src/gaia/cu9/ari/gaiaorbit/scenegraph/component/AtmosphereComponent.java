@@ -82,7 +82,7 @@ public class AtmosphereComponent {
         float camHeight = 1f;
         float m_Kr4PI = m_Kr * 4.0f * (float) Math.PI;
         float m_Km4PI = m_Km * 4.0f * (float) Math.PI;
-        float m_ESun = 15.0f; // Sun brightness (almost) constant
+        float m_ESun = 10.0f; // Sun brightness (almost) constant
         float m_g = -0.95f; // The Mie phase asymmetry factor
         m_fInnerRadius = planetSize / 2f;
         m_fOuterRadius = ground ? (float) (this.size + 150 * Constants.KM_TO_U) : this.size;
@@ -160,7 +160,7 @@ public class AtmosphereComponent {
 
         // Distance to planet
         float camHeight = (float) (aux3.len());
-        float m_ESun = 15f;
+        float m_ESun = 10f;
         float camHeightGr = camHeight - m_fInnerRadius;
         float atmFactor = (m_fAtmosphereHeight - camHeightGr) / m_fAtmosphereHeight;
 

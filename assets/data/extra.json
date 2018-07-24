@@ -112,8 +112,10 @@
 				},
 	
 	"galaxydata" : {
-				"pointsource" : "data/galaxy/galaxy_40000particles.dat",
-				"nebulasource" : "data/galaxy/galaxy_bar0.9_4arms_160particles_2.5radius_0.04ratio_140.0deg.txt"
+				//"starsource" : "data/galaxy/galaxy_Bulge_Main.dat",
+				//"dustsource" : "data/galaxy/galaxy_ArmDust.dat",
+				"starsource" : "data/galaxy/galaxy_40000particles.dat",
+				"nebulasource" : "data/galaxy/galaxy_80particles.dat"
 				},
 	"model" : {
 				"args" : [true],	
