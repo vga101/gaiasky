@@ -47,7 +47,7 @@ First, open the Git for Windows CLI and clone the [GitHub](https://github.com/la
 ```
 $  git clone https://github.com/langurmonkey/gaiasky.git
 $  cd gaiasky
-$  git checkout tags/2.0.0-vr
+$  git checkout tags/2.0.2-vr
 ```
 
 You can also use the `vr` branch directly (`git checkout vr`), but since it is a development branch, it is not guaranteed to work.
@@ -67,10 +67,17 @@ the corresponding `tar` file — see table below.
 
 Find more catalogs to download [here](https://zah.uni-heidelberg.de/institutes/ari/gaia/outreach/gaiasky/downloads/#dr2catalogs).
 
-First, choose the package corresponding to your desired catalog and extract it into the specified **Extract location**. 
-Then, you need to point the key `data.json.catalog` in your `$HOME/.gaiasky/global.vr.properties` file to the
-file specified in the last column in the table (**Catalog file**). So download that file, save it in `assets/data` and select it in the data tab or edit the config file.
+To set up the catalog, first download the catalog data file (first column, **Catalog**) and extract it into the specified **Extract location** column. 
+Then, download the catalog descriptor file from the **Catalog file** column in the downloads table and save it in `assets/data`.
+Finally, open the file `$HOME/.gaiasky/global.vr.properties` (probably in C:/Users/[username]/.gaiasky in Windows) and edit the
+line that starts with `data.json.catalog` so that it points to the descriptor file you just downloaded, so if you are using the default
+Gaia DR2 catalog, it should look like this:
 
+```
+[...]
+data.json.catalog=data/catalog-dr2-default.json
+[...]
+```
 
 ### 1.4. Running
 
