@@ -83,7 +83,7 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
         if (GlobalConf.frame.isRedrawMode())
             pps[RenderType.frame.index] = newPostProcessor(getWidth(RenderType.frame), getHeight(RenderType.frame), manager);
 
-        EventManager.instance.subscribe(this, Events.SCREENSHOT_SIZE_UDPATE, Events.FRAME_SIZE_UDPATE, Events.BLOOM_CMD, Events.LENS_FLARE_CMD, Events.MOTION_BLUR_CMD, Events.LIGHT_POS_2D_UPDATED, Events.LIGHT_SCATTERING_CMD, Events.FISHEYE_CMD, Events.CAMERA_MOTION_UPDATED, Events.CUBEMAP360_CMD, Events.ANTIALIASING_CMD, Events.BRIGHTNESS_CMD, Events.CONTRAST_CMD, Events.STEREO_PROFILE_CMD, Events.STEREOSCOPIC_CMD, Events.FPS_INFO, Events.FOV_CHANGE_NOTIFICATION);
+        EventManager.instance.subscribe(this, Events.SCREENSHOT_SIZE_UDPATE, Events.FRAME_SIZE_UDPATE, Events.BLOOM_CMD, Events.LENS_FLARE_CMD, Events.MOTION_BLUR_CMD, Events.LIGHT_POS_2D_UPDATED, Events.LIGHT_SCATTERING_CMD, Events.FISHEYE_CMD, Events.CAMERA_MOTION_UPDATED, Events.CUBEMAP360_CMD, Events.ANTIALIASING_CMD, Events.BRIGHTNESS_CMD, Events.CONTRAST_CMD, Events.HUE_CMD, Events.SATURATION_CMD, Events.STEREO_PROFILE_CMD, Events.STEREOSCOPIC_CMD, Events.FPS_INFO, Events.FOV_CHANGE_NOTIFICATION);
     }
 
     private int getWidth(RenderType type) {
@@ -120,6 +120,7 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
         // LIGHT GLOW
         int lgw, lgh;
         Texture glow;
+        // TODO Listen to GRAPHICS_QUALITY_CHANGED and apply new settings on the fly
         if (GlobalConf.scene.isHighQuality()) {
             lglowNSamples = 12;
             lgw = 1280;
@@ -149,14 +150,7 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
         ppb.pp.addEffect(ppb.lglow);
 
         // LENS FLARE
-        float lensFboScale;
-        if (GlobalConf.scene.isHighQuality()) {
-            lensFboScale = 0.5f;
-        } else if (GlobalConf.scene.isNormalQuality()) {
-            lensFboScale = 0.3f;
-        } else {
-            lensFboScale = 0.2f;
-        }
+        float lensFboScale = 0.2f;
         Texture lcol = manager.get("data/tex/lenscolor.png");
         lcol.setFilter(TextureFilter.Linear, TextureFilter.Linear);
         Texture ldirt = GlobalConf.scene.isHighQuality() ? manager.get("data/tex/lensdirt.jpg") : manager.get("data/tex/lensdirt_s.jpg");
@@ -170,10 +164,10 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
         ppb.lens.setLensDirtTexture(ldirt);
         ppb.lens.setLensStarburstTexture(lburst);
         ppb.lens.setFlareIntesity(GlobalConf.postprocess.POSTPROCESS_LENS_FLARE ? flareIntensity : 0f);
-        ppb.lens.setFlareSaturation(0.7f);
+        ppb.lens.setFlareSaturation(0.6f);
         ppb.lens.setBaseIntesity(1f);
         ppb.lens.setBias(-0.98f);
-        ppb.lens.setBlurPasses(30);
+        ppb.lens.setBlurPasses(35);
         ppb.lens.setEnabled(true);
         ppb.pp.addEffect(ppb.lens);
 
@@ -218,6 +212,8 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
         ppb.levels = new Levels();
         ppb.levels.setBrightness(GlobalConf.postprocess.POSTPROCESS_BRIGHTNESS);
         ppb.levels.setContrast(GlobalConf.postprocess.POSTPROCESS_CONTRAST);
+        ppb.levels.setHue(GlobalConf.postprocess.POSTPROCESS_HUE);
+        ppb.levels.setSaturation(GlobalConf.postprocess.POSTPROCESS_SATURATION);
         ppb.pp.addEffect(ppb.levels);
     }
 
@@ -482,6 +478,24 @@ public class DesktopPostProcessor implements IPostProcessor, IObserver {
                 if (pps[i] != null) {
                     PostProcessBean ppb = pps[i];
                     ppb.levels.setContrast(cn);
+                }
+            }
+            break;
+        case HUE_CMD:
+            float hue = (Float) data[0];
+            for (int i = 0; i < RenderType.values().length; i++) {
+                if (pps[i] != null) {
+                    PostProcessBean ppb = pps[i];
+                    ppb.levels.setHue(hue);
+                }
+            }
+            break;
+        case SATURATION_CMD:
+            float sat = (Float) data[0];
+            for (int i = 0; i < RenderType.values().length; i++) {
+                if (pps[i] != null) {
+                    PostProcessBean ppb = pps[i];
+                    ppb.levels.setSaturation(sat);
                 }
             }
             break;
