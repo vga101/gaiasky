@@ -513,7 +513,6 @@ public class PreferencesWindow extends GenericDialog {
         Label titleDisplay = new OwnLabel(txt("gui.graphics.imglevels"), skin, "help-title");
         Table display = new Table();
 
-
         brightnessBak = GlobalConf.postprocess.POSTPROCESS_BRIGHTNESS;
         contrastBak = GlobalConf.postprocess.POSTPROCESS_CONTRAST;
         hueBak = GlobalConf.postprocess.POSTPROCESS_HUE;
@@ -606,7 +605,7 @@ public class PreferencesWindow extends GenericDialog {
 
         /** Gamma **/
         OwnLabel gammal = new OwnLabel(txt("gui.gamma"), skin, "default");
-        Label gammaLabel = new OwnLabel(nf1.format(GlobalConf.postprocess.POSTPROCESS_HUE), skin);
+        Label gammaLabel = new OwnLabel(nf1.format(GlobalConf.postprocess.POSTPROCESS_GAMMA), skin);
         Slider gamma = new OwnSlider(Constants.MIN_GAMMA, Constants.MAX_GAMMA, 0.1f, false, skin);
         gamma.setName("gamma");
         gamma.setWidth(sliderWidth);
