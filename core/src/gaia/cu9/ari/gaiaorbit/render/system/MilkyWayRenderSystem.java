@@ -39,12 +39,10 @@ public class MilkyWayRenderSystem extends ImmediateRenderSystem implements IObse
     private MeshData quad;
     private Texture[] nebulatextures;
 
-    private ModelBatch modelBatch;
 
     public MilkyWayRenderSystem(RenderGroup rg, float[] alphas, ModelBatch modelBatch, ShaderProgram[] pointShaders, ShaderProgram[] nebulaShaders) {
         super(rg, alphas, pointShaders);
         this.nebulaShaders = nebulaShaders;
-        this.modelBatch = modelBatch;
     }
 
     @Override
@@ -122,10 +120,10 @@ public class MilkyWayRenderSystem extends ImmediateRenderSystem implements IObse
                     aux1.set((float) star.data[0], (float) star.data[1], (float) star.data[2]);
                     double distanceCenter = aux1.sub(center).len() / (mw.getRadius() * 2f);
 
-                    float[] col = new float[] { (float) (rand.nextGaussian() * 0.02f) + 0.93f, (float) (rand.nextGaussian() * 0.02) + 0.8f, (float) (rand.nextGaussian() * 0.02) + 0.97f, rand.nextFloat() * 0.5f + 0.4f };
+                    float[] col = new float[] { (float) (rand.nextGaussian() * 0.02f) + 0.9f, (float) (rand.nextGaussian() * 0.02) + 0.7f, (float) (rand.nextGaussian() * 0.02) + 0.97f, rand.nextFloat() * 0.5f + 0.4f };
 
                     if (distanceCenter < 1f) {
-                        float add = (float) MathUtilsd.clamp(1f - distanceCenter, 0f, 1f) * 0.5f;
+                        float add = (float) MathUtilsd.clamp(1f - distanceCenter, 0f, 1f) * 0.3f;
                         col[0] = col[0] + add;
                         col[1] = col[1] + add;
                         col[2] = col[2] + add;
@@ -160,7 +158,6 @@ public class MilkyWayRenderSystem extends ImmediateRenderSystem implements IObse
                     curr.vertexIdx += curr.vertexSize;
 
                 }
-                curr.mesh.setVertices(curr.vertices, 0, curr.vertexIdx);
 
                 /** QUADS **/
                 quad.clear();
@@ -183,7 +180,7 @@ public class MilkyWayRenderSystem extends ImmediateRenderSystem implements IObse
                         } else {
                             texnum = rand.nextInt(4);
                         }
-                        quadsize = qp.data.length > 3 ? (float) (qp.data[3] + 1.0f) * .46e11f : (float) (rand.nextFloat() + 1.0f) * 2e11f;
+                        quadsize = (float) ((qp.data.length > 3 ? (qp.data[3] + 0.7f) * .2e11f : (rand.nextFloat() + 1.0f) * 0.7e11f) * Constants.M_TO_U_CONV);
                         alphamultiplier = MathUtilsd.lint(quadpointdist, 0, mw.size * 3, 6.0f, 1.0f);
 
                         rotaxis.set(rand.nextFloat(), rand.nextFloat(), rand.nextFloat());
@@ -269,8 +266,6 @@ public class MilkyWayRenderSystem extends ImmediateRenderSystem implements IObse
                     }
 
                 }
-                quad.mesh.setVertices(quad.vertices, 0, quad.vertexIdx);
-                quad.mesh.setIndices(quad.indices, 0, quad.indexIdx);
 
                 // Put flag down
                 UPDATE_POINTS = false;
@@ -301,7 +296,14 @@ public class MilkyWayRenderSystem extends ImmediateRenderSystem implements IObse
                     // Relativistic effects
                     addEffectsUniforms(nebulaProgram, camera);
 
+                    quad.mesh.setVertices(quad.vertices, 0, quad.vertexIdx);
+                    quad.mesh.setIndices(quad.indices, 0, quad.indexIdx);
                     quad.mesh.render(nebulaProgram, GL20.GL_TRIANGLES, 0, quad.indexIdx);
+
+                    for (int i = 100; i < 104; i++) {
+                        int idx = i - 100;
+                        nebulatextures[idx].bind(0);
+                    }
 
                     nebulaProgram.end();
 
@@ -323,12 +325,13 @@ public class MilkyWayRenderSystem extends ImmediateRenderSystem implements IObse
                     shaderProgram.setUniformi("u_blending", 1);
                     shaderProgram.setUniformMatrix("u_projModelView", camera.getCamera().combined);
                     shaderProgram.setUniformf("u_camPos", camera.getCurrent().getPos().put(aux1));
-                    shaderProgram.setUniformf("u_alpha", mw.opacity * alpha * 0.2f);
+                    shaderProgram.setUniformf("u_alpha", mw.opacity * alpha * 0.25f);
                     shaderProgram.setUniformf("u_ar", GlobalConf.program.STEREOSCOPIC_MODE && (GlobalConf.program.STEREO_PROFILE != StereoProfile.HD_3DTV && GlobalConf.program.STEREO_PROFILE != StereoProfile.ANAGLYPHIC) ? 0.5f : 1f);
 
                     // Relativistic effects
                     addEffectsUniforms(shaderProgram, camera);
 
+                    curr.mesh.setVertices(curr.vertices, 0, curr.vertexIdx);
                     curr.mesh.render(shaderProgram, ShapeType.Point.getGlType());
                     shaderProgram.end();
 

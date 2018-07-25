@@ -505,6 +505,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
             EventManager.instance.post(Events.CAMERA_MODE_CMD, CameraMode.Focus);
             EventManager.instance.post(Events.FOCUS_CHANGE_CMD, sg.getNode("Earth"), true);
             EventManager.instance.post(Events.GO_TO_OBJECT_CMD);
+            EventManager.instance.post(Events.CAMERA_MODE_CMD, CameraMode.Free_Camera);
         } else {
             // Origin
             EventManager.instance.post(Events.CAMERA_MODE_CMD, CameraMode.Free_Camera);

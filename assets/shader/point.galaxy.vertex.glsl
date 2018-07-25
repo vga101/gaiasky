@@ -1,10 +1,5 @@
 #version 120
 
-#ifdef GL_ES
-precision mediump float;
-precision mediump int;
-#endif
-
 <INCLUDE shader/lib_math.glsl>
 <INCLUDE shader/lib_geometry.glsl>
 
@@ -15,7 +10,6 @@ attribute vec4 a_additional;
 
 uniform float u_pointAlphaMin;
 uniform float u_pointAlphaMax;
-uniform float u_fovFactor;
 uniform float u_starBrightness;
 uniform mat4 u_projModelView;
 uniform vec3 u_camPos;
@@ -52,7 +46,7 @@ void main() {
     
     float distNorm = dist / 1e15;
 
-    v_col = vec4(a_color.rgb, a_color.a);
+    v_col = a_color;
 
     gl_Position = u_projModelView * vec4(pos, a_position.w);
     gl_PointSize = a_additional.x / distNorm;

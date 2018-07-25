@@ -178,11 +178,9 @@ float getShadow()
 
 
 // AMBIENT LIGHT
-
 varying vec3 v_ambientLight;
 
 // COLOR DIFFUSE
-
 #if defined(diffuseTextureFlag) && defined(diffuseColorFlag)
     #define fetchColorDiffuseTD(texture, texCoord, defaultValue) texture2D(texture, texCoord, TEXTURE_LOD_BIAS) * u_diffuseColor
 #elif defined(diffuseTextureFlag)

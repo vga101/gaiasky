@@ -110,7 +110,7 @@ public class OpenVRListener implements VRDeviceListener {
         if (TimeUtils.millis() - lastDoublePress > 250) {
             // Give some time to recover from double press
             lazyInit();
-            if (button == VRControllerButtons.A) {
+            if (button == VRControllerButtons.SteamVR_Trigger) {
                 // Selection
                 StubModel sm = vrDeviceToModel.get(device);
                 if (sm != null) {
@@ -124,9 +124,6 @@ public class OpenVRListener implements VRDeviceListener {
                 } else {
                     Logger.info("Model corresponding to device not found");
                 }
-            } else if (button == VRControllerButtons.Grip || button == VRControllerButtons.SteamVR_Trigger) {
-                // Stop
-                cam.clearVelocityVR();
             }
 
             if (vrControllerHint && !arePressed(VRControllerButtons.A, VRControllerButtons.B)) {
@@ -136,6 +133,8 @@ public class OpenVRListener implements VRDeviceListener {
             } else if (button == VRControllerButtons.SteamVR_Touchpad) {
                 // Change mode from free to focus and viceversa
                 CameraMode cm = cam.getMode().equals(CameraMode.Focus) ? CameraMode.Free_Camera : CameraMode.Focus;
+                // Stop
+                cam.clearVelocityVR();
                 EventManager.instance.post(Events.CAMERA_MODE_CMD, cm);
             } else if (button == VRControllerButtons.B) {
                 // Toggle VR GUI
@@ -198,22 +197,23 @@ public class OpenVRListener implements VRDeviceListener {
         }
         lazyInit();
 
+        StubModel sm;
         switch (axis) {
         case VRControllerAxes.Axis1:
             // Forward
-            StubModel sm = vrDeviceToModel.get(device);
-            if (sm != null) {
-                // Direct direction
-                cam.setVelocityVR(sm.getBeamP0(), sm.getBeamP1(), valueX);
-            }
+            //StubModel sm = vrDeviceToModel.get(device);
+            //if (sm != null) {
+            //    // Direct direction
+            //   cam.setVelocityVR(sm.getBeamP0(), sm.getBeamP1(), valueX);
+            //}
             break;
         case VRControllerAxes.Axis2:
             // Backward
-            sm = vrDeviceToModel.get(device);
-            if (sm != null) {
-                // Invert direction
-                cam.setVelocityVR(sm.getBeamP0(), sm.getBeamP1(), -valueX);
-            }
+            //sm = vrDeviceToModel.get(device);
+            //if (sm != null) {
+            //    // Invert direction
+            //    cam.setVelocityVR(sm.getBeamP0(), sm.getBeamP1(), -valueX);
+            //}
             break;
         case VRControllerAxes.Axis0:
             // Joystick for forward/backward movement
