@@ -32,13 +32,18 @@ import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextIconButton;
  *
  */
 public class LoadingGui extends AbstractGui {
-    protected Table center, bottom;
+    protected Table center;
     protected Container<Button> screenMode;
 
     public NotificationsInterface notificationsInterface;
 
     public LoadingGui() {
+        this(0);
+    }
+
+    public LoadingGui(int hoffset) {
         super();
+        this.hoffset = hoffset;
     }
 
     @Override
@@ -53,6 +58,10 @@ public class LoadingGui extends AbstractGui {
         center = new Table();
         center.setFillParent(true);
         center.center();
+        if (hoffset > 0)
+            center.padLeft(hoffset);
+        else if (hoffset < 0)
+            center.padRight(-hoffset);
 
         FileHandle gslogo = Gdx.files.internal("img/gaiasky-logo.png");
         Texture logotex = new Texture(gslogo);

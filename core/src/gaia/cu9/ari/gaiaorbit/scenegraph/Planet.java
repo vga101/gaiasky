@@ -227,7 +227,7 @@ public class Planet extends ModelBody implements IAtmosphereRenderable, ICloudRe
 
     @Override
     protected float labelFactor() {
-        return 1.5e1f;
+        return 1.5e3f;
     }
 
     public void dispose() {
