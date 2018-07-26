@@ -948,6 +948,41 @@ public interface IScriptingInterface {
     public double getDistanceTo(String name);
 
     /**
+     * Adds a new polyline with the given name, points and color. The polyline will
+     * be created with the 'Others' component type, so you need to enable the
+     * visibility of 'Others' in order to see it.
+     * @param name 
+     *            The name to identify the polyline, to possibly remove it later.
+     * @param points
+     *            The points of the polyline. It is an array containing all the 
+     *            points as in [x0, y0, z0, x1, y1, z1, ..., xn, yn, zn].
+     * @param color
+     *            A 4D array with the RGBA color, where each element is in [0..1].
+     */
+    public void addPolyline(String name, double[] points, double[] color);
+
+    /**
+     * <p>
+     * Removes the model object identified by the given name from the internal
+     * scene graph model of Gaia Sky, if it exists. 
+     * If the object has children, they are removed recursively.
+     * Be careful with this function, as it can have unexpected side effects
+     * depending on what objects are removed.
+     * For example,
+     * </p>
+     * 
+     * <code>
+     * gs.removeModelObject("Earth")
+     * </code>
+     * 
+     * <p>
+     * removes the Earth, the Moon, Gaia and any dependent object from Gaia Sky.
+     * </p>
+     * @param name The name of the object to remove.
+     */
+    public void removeModelObject(String name);
+
+    /**
      * Sets the vertical scroll position in the GUI.
      * 
      * @param pixelY

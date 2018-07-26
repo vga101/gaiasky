@@ -37,7 +37,7 @@ import gaia.cu9.ari.gaiaorbit.assets.SGLoader;
 import gaia.cu9.ari.gaiaorbit.assets.SGLoader.SGLoaderParameter;
 import gaia.cu9.ari.gaiaorbit.data.AssetBean;
 import gaia.cu9.ari.gaiaorbit.data.StreamingOctreeLoader;
-import gaia.cu9.ari.gaiaorbit.data.orbit.OrbitData;
+import gaia.cu9.ari.gaiaorbit.data.orbit.PolylineData;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
@@ -238,7 +238,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         manager = new AssetManager(resolver);
         //manager.setLoader(Model.class, ".obj", new AdvancedObjLoader(resolver));
         manager.setLoader(ISceneGraph.class, new SGLoader(resolver));
-        manager.setLoader(OrbitData.class, new OrbitDataLoader(resolver));
+        manager.setLoader(PolylineData.class, new OrbitDataLoader(resolver));
         manager.setLoader(GaiaAttitudeServer.class, new GaiaAttitudeLoader(resolver));
         manager.setLoader(ShaderProgram.class, new ShaderProgramProvider(resolver, ".vertex.glsl", ".fragment.glsl"));
         //manager.setLoader(DefaultShaderProvider.class, new DefaultShaderProviderLoader<>(resolver));

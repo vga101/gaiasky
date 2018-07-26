@@ -32,6 +32,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.Invisible;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Loc;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ModelBody;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Planet;
+import gaia.cu9.ari.gaiaorbit.scenegraph.Polyline;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.camera.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.camera.NaturalCamera;
@@ -69,7 +70,7 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
     }
 
     private Vector3d aux3d1, aux3d2, aux3d3, aux3d4, aux3d5, aux3d6;
-    private Vector2d aux2d1, aux2d2;
+    private Vector2d aux2d1;
 
     private Set<AtomicBoolean> stops;
 
@@ -86,7 +87,6 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
         aux3d5 = new Vector3d();
         aux3d6 = new Vector3d();
         aux2d1 = new Vector2d();
-        aux2d2 = new Vector2d();
 
         em.subscribe(this, Events.INPUT_EVENT, Events.DISPOSE);
     }
@@ -1607,6 +1607,31 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
     @Override
     public double dot3(double[] vec1, double[] vec2) {
         return aux3d1.set(vec1).dot(aux3d2.set(vec2));
+    }
+
+    @Override
+    public void addPolyline(String name, double[] points, double[] color) {
+        Polyline pl = new Polyline();
+        pl.setCt("Others");
+        pl.setColor(color);
+        pl.setName(name);
+        pl.setPoints(points);
+        pl.setParent("Universe");
+        pl.initialize();
+
+        Gdx.app.postRunnable(() -> {
+            GaiaSky.instance.sg.insert(pl, true);
+        });
+    }
+
+    @Override
+    public void removeModelObject(String name) {
+        Gdx.app.postRunnable(() -> {
+            SceneGraphNode sgn = GaiaSky.instance.sg.getNode(name);
+            if (sgn != null) {
+                GaiaSky.instance.sg.remove(sgn, true);
+            }
+        });
     }
 
 }
