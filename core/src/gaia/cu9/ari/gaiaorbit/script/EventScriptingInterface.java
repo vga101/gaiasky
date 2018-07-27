@@ -23,7 +23,6 @@ import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.interfce.ControlsWindow;
 import gaia.cu9.ari.gaiaorbit.interfce.IGui;
-import gaia.cu9.ari.gaiaorbit.scenegraph.AbstractPositionEntity;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
 import gaia.cu9.ari.gaiaorbit.scenegraph.IFocus;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
@@ -1079,12 +1078,27 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
         ISceneGraph sg = GaiaSky.instance.sg;
         if (sg.containsNode(namelc)) {
             SceneGraphNode object = sg.getNode(namelc);
-            if (object instanceof AbstractPositionEntity) {
-                AbstractPositionEntity ape = (AbstractPositionEntity) object;
-                return (ape.distToCamera - ape.getRadius()) * Constants.U_TO_KM;
+            if (object instanceof IFocus) {
+                IFocus obj = (IFocus) object;
+                return (obj.getDistToCamera() - obj.getRadius()) * Constants.U_TO_KM;
             }
         }
         return -1;
+    }
+
+    @Override
+    public double[] getObjectPosition(String name) {
+        String namelc = name.toLowerCase();
+        ISceneGraph sg = GaiaSky.instance.sg;
+        if (sg.containsNode(namelc)) {
+            SceneGraphNode object = sg.getNode(namelc);
+            if (object instanceof IFocus) {
+                IFocus obj = (IFocus) object;
+                obj.getAbsolutePosition(namelc, aux3d1);
+                return new double[] { aux3d1.x, aux3d1.y, aux3d1.z };
+            }
+        }
+        return null;
     }
 
     @Override

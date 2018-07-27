@@ -948,6 +948,16 @@ public interface IScriptingInterface {
     public double getDistanceTo(String name);
 
     /**
+     * Gets the current position of the object identified by <code>name</code> in
+     * the internal coordinate system and internal units. If the object does not exist,
+     * it returns null
+     * @param name 
+     *            The name or id (HIP, TYC, sourceId) of the object.
+     * @return A 3-vector with the object's position in the internal reference system.
+     */
+    public double[] getObjectPosition(String name);
+
+    /**
      * Adds a new polyline with the given name, points and color. The polyline will
      * be created with the 'Others' component type, so you need to enable the
      * visibility of 'Others' in order to see it.

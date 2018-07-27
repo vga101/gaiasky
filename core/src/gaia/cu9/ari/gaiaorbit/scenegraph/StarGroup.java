@@ -993,15 +993,25 @@ public class StarGroup extends ParticleGroup implements ILineRenderable, IStarFo
         return pointData.size;
     }
 
+    public Vector3d getAbsolutePosition(String name, Vector3d aux) {
+        if (index.containsKey(name)) {
+            int idx = index.get(name, 0);
+            StarBean sb = (StarBean) pointData.get(idx);
+            aux.set(sb.x(), sb.y(), sb.z());
+            return aux;
+        } else {
+            return null;
+        }
+    }
 
     @Override
     protected Vector3d fetchPosition(ParticleBean pb, Vector3d campos, Vector3d dest, double deltaYears) {
         StarBean sb = (StarBean) pb;
         Vector3d pm = aux.set(sb.pmx(), sb.pmy(), sb.pmz()).scl(deltaYears);
         if (campos != null && !campos.hasNaN())
-            return dest.set(pb.data[0], pb.data[1], pb.data[2]).sub(campos).add(pm);
+            return dest.set(sb.x(), sb.y(), sb.z()).sub(campos).add(pm);
         else
-            return dest.set(pb.data[0], pb.data[1], pb.data[2]).add(pm);
+            return dest.set(sb.x(), sb.y(), sb.z()).add(pm);
     }
 
     @Override
