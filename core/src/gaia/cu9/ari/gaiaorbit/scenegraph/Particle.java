@@ -384,8 +384,7 @@ public class Particle extends CelestialBody implements IStarFocus, IPointRendera
         final double mumin = -80;
         final double mumax = 80;
         final double maxmin = mumax - mumin;
-        renderer.addLine(p1.x, p1.y, p1.z, p2.x, p2.y, p2.z, (float) ((pmSph.x - mumin) / maxmin) * 0.8f + 0.2f, (float) ((pmSph.y - mumin) / maxmin) * 0.8f + 0.2f, (float) pmSph.z * 0.8f
-                + 0.2f, alpha * this.opacity);
+        renderer.addLine(this, p1.x, p1.y, p1.z, p2.x, p2.y, p2.z, (float) ((pmSph.x - mumin) / maxmin) * 0.8f + 0.2f, (float) ((pmSph.y - mumin) / maxmin) * 0.8f + 0.2f, (float) pmSph.z * 0.8f + 0.2f, alpha * this.opacity);
     }
 
     protected float getThOverFactorScl() {
@@ -461,4 +460,8 @@ public class Particle extends CelestialBody implements IStarFocus, IPointRendera
             return 0;
     }
 
+    @Override
+    public float getLineWidth() {
+        return 1;
+    }
 }

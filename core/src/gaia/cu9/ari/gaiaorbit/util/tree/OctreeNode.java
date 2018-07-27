@@ -800,7 +800,7 @@ public class OctreeNode implements ILineRenderable {
 
     /** Draws a line **/
     private void line(LineRenderSystem sr, double x1, double y1, double z1, double x2, double y2, double z2, com.badlogic.gdx.graphics.Color col) {
-        sr.addLine((float) x1, (float) y1, (float) z1, (float) x2, (float) y2, (float) z2, col);
+        sr.addLine(this, (float) x1, (float) y1, (float) z1, (float) x2, (float) y2, (float) z2, col);
     }
 
     public static long hash(double x, double y, double z) {
@@ -837,6 +837,11 @@ public class OctreeNode implements ILineRenderable {
                 if (child != null)
                     child.dispose();
             }
+    }
+
+    @Override
+    public float getLineWidth() {
+        return 1;
     }
 
 }

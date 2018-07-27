@@ -592,12 +592,12 @@ public class Spacecraft extends GenericSpacecraft implements ILineRenderable, IO
         // Direction
         Vector3d d = aux3d1.get().set(direction);
         d.nor().scl(.5e-4 * sizeFactor);
-        renderer.addLine(posf.x, posf.y, posf.z, posf.x + d.x, posf.y + d.y, posf.z + d.z, 1, 0, 0, 1);
+        renderer.addLine(this, posf.x, posf.y, posf.z, posf.x + d.x, posf.y + d.y, posf.z + d.z, 1, 0, 0, 1);
 
         // Up
         Vector3d u = aux3d1.get().set(up);
         u.nor().scl(.2e-4 * sizeFactor);
-        renderer.addLine(posf.x, posf.y, posf.z, posf.x + u.x, posf.y + u.y, posf.z + u.z, 0, 0, 1, 1);
+        renderer.addLine(this, posf.x, posf.y, posf.z, posf.x + u.x, posf.y + u.y, posf.z + u.z, 0, 0, 1, 1);
 
     }
 
@@ -655,6 +655,11 @@ public class Spacecraft extends GenericSpacecraft implements ILineRenderable, IO
     @Override
     protected boolean mustUpdatePosition(ITimeFrameProvider time) {
         return true;
+    }
+
+    @Override
+    public float getLineWidth() {
+        return 1;
     }
 
 }

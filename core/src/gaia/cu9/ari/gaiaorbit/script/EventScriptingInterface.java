@@ -1625,11 +1625,17 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
 
     @Override
     public void addPolyline(String name, double[] points, double[] color) {
+        addPolyline(name, points, color, 1f);
+    }
+
+    @Override
+    public void addPolyline(String name, double[] points, double[] color, float lineWidth) {
         Polyline pl = new Polyline();
         pl.setCt("Others");
         pl.setColor(color);
         pl.setName(name);
         pl.setPoints(points);
+        pl.setLineWidth(lineWidth);
         pl.setParent("Universe");
         pl.initialize();
 

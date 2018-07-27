@@ -1,5 +1,6 @@
 package gaia.cu9.ari.gaiaorbit.render.system;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.VertexAttribute;
@@ -52,15 +53,6 @@ public class LineQuadRenderSystem extends LineRenderSystem {
             super();
         }
 
-        public Line(double[][] points, double[] dists, float r, float g, float b, float a, double wat) {
-            this.points = points;
-            this.dists = dists;
-            this.r = r;
-            this.g = g;
-            this.b = b;
-            this.a = a;
-            this.widthAngleTan = wat;
-        }
     }
 
     Vector3d line, camdir0, camdir1, camdir15, point, vec;
@@ -128,38 +120,21 @@ public class LineQuadRenderSystem extends LineRenderSystem {
         currext.vertices[currext.vertexIdx + currext.uvOffset + 1] = v;
     }
 
-    public void addLine(double x0, double y0, double z0, double x1, double y1, double z1, float r, float g, float b, float a) {
-        addLine(x0, y0, z0, x1, y1, z1, r, g, b, a, widthAngleTan);
+    @Override
+    public void addLine(ILineRenderable lr, double x0, double y0, double z0, double x1, double y1, double z1, Color c) {
+        addLine(lr, x0, y0, z0, x1, y1, z1, c);
     }
 
-    public void addLine(double x0, double y0, double z0, double x1, double y1, double z1, float r, float g, float b, float a, double widthAngleTan) {
-        addLineInternal(x0, y0, z0, x1, y1, z1, r, g, b, a, widthAngleTan);
+    @Override
+    public void addLine(ILineRenderable lr, double x0, double y0, double z0, double x1, double y1, double z1, float r, float g, float b, float a) {
+        addLineInternal(x0, y0, z0, x1, y1, z1, r, g, b, a, lr.getLineWidth() * widthAngleTan);
     }
 
-    public void addLineInternal(double x0, double y0, double z0, double x1, double y1, double z1, float r, float g, float b, float a, double widthAngleTan) {
+    private void addLineInternal(double x0, double y0, double z0, double x1, double y1, double z1, float r, float g, float b, float a, double widthAngleTan) {
         addLineInternal(x0, y0, z0, x1, y1, z1, r, g, b, a, widthAngleTan, true);
     }
 
-    public void addLineInternal(double[][] xyz, float r, float g, float b, float a, double widthAngleTan) {
-        Line l = new Line();
-        double[] dists = new double[xyz.length];
-        for (int i = 0; i < xyz.length; i++) {
-            double[] p = xyz[i];
-            dists[i] = Math.sqrt(p[0] * p[0] + p[1] * p[1] + p[2] * p[2]);
-        }
-        double[][] points = xyz;
-        l.points = points;
-        l.dists = dists;
-        l.r = r;
-        l.g = g;
-        l.b = b;
-        l.a = a;
-        l.widthAngleTan = widthAngleTan;
-
-        provLines.add(l);
-    }
-
-    public void addLineInternal(double x0, double y0, double z0, double x1, double y1, double z1, float r, float g, float b, float a, double widthAngleTan, boolean rec) {
+    private void addLineInternal(double x0, double y0, double z0, double x1, double y1, double z1, float r, float g, float b, float a, double widthAngleTan, boolean rec) {
         double distToSegment = MathUtilsd.distancePointSegment(x0, y0, z0, x1, y1, z1, 0, 0, 0);
 
         double dist0 = Math.sqrt(x0 * x0 + y0 * y0 + z0 * z0);

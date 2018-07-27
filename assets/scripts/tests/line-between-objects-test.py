@@ -24,10 +24,10 @@ mercuryp = gs.getObjectPosition("Mercury")
 arcturusp = gs.getObjectPosition("Arcturus")
 achernarp = gs.getObjectPosition("Achernar")
 
-gs.addPolyline("Line0", earthp + moonp, [ 1., .2, .2, .8 ] )
-gs.addPolyline("Line1", earthp + solp, [ .2, 1., .2, .8 ] )
-gs.addPolyline("Line2", earthp + mercuryp, [ 2., .2, 1., .8 ] )
-gs.addPolyline("Line3", arcturusp + achernarp, [ 1., 1., .2, .8 ] )
+gs.addPolyline("Line0", earthp + moonp, [ 1., .2, .2, .8 ], 1 )
+gs.addPolyline("Line1", earthp + solp, [ .2, 1., .2, .8 ], 2 )
+gs.addPolyline("Line2", earthp + mercuryp, [ 2., .2, 1., .8 ], 3 )
+gs.addPolyline("Line3", arcturusp + achernarp, [ 1., 1., .2, .8 ], 2 )
 
 print("Lines added, you have 30 seconds")
 
