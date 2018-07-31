@@ -4,10 +4,10 @@ stages:
     - compile
 
 before_script:
-    - gradlew init
+    - ./gradlew init
 
 compile:
     stage: compile
     script:
-        - gradlew clean
-        - gradlew compileJava
+        - ./gradlew clean
+        - ./gradlew compileJava
