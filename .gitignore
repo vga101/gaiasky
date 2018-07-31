@@ -76,3 +76,4 @@ pickled_dict
 # Gradle cache #
 ################
 **/.gradle
+.gitchangelog.rc
