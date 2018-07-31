@@ -169,7 +169,7 @@ $  git clone https://gitlab.com/langurmonkey/gaiasky.git
 $  cd gaiasky
 ```
 
-Make sure you have at least `JDK8` installed.
+Make sure you have the `JDK8+` installed.
 
 ### 2.3 Getting the data
 
