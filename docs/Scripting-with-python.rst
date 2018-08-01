@@ -14,15 +14,6 @@ An interface is provided in order to encapsulate some complex-behaviour
 functions and to make scripting easier. This scripting interface is
 described in the following section.
 
-Important notes on the scripting engine
-=======================================
-
-The scripting engine spawns a new thread for each script. Even though the thread is given maximum priority, this system is 
-non-deterministic by nature, so no one can guarantee when the thread will run and when the API calls will be issued. Simply put, 
-the scripts are not run in sync with the main loop. Instead, API calls are (for the most part) queued up and run after the
-current loop cycle, which updates the model and renders the frame. This prevents leaving the model in an inconsistent state by 
-updating it from two threads at the same time.
-
 
 The scripting API
 =================
@@ -77,6 +68,68 @@ Now, we can start executing functions.
     gs.setHeadlineMessage("Welcome to the Gaia Sky")
     gs.setSubheadMessage("Explore Gaia, the Solar System and the whole Galaxy!")
     [...]
+
+
+Synchronizing with the main loop cycles
+---------------------------------------
+
+Sometimes, when updating animations or creating camera paths, it is necessary to 
+sync the execution of scripts with the thread which runs the main loop (main thread). 
+However, the scripting engine runs scripts in separate threads asynchronously, 
+making it a non-obvious task to achieve this synchronization.
+In order to fix this, a new mechanism has been added in Gaia Sky ``2.0.3``. Now, runnables
+can be parked so that they run at the end of the update-render processing of each loop
+cycle. A runnable is a class which extends ``java.lang.Runnable``, and implements 
+a very simple ``public void run()`` method.
+
+Runnables can be **posted**, meaning that they are run only once at the end fo the current
+cycle, or **parked**, meaning that they run until they stop or they are unparked. Parked
+runnables must provide a name identifier in order to be later accessed and unparked.
+
+Let's see an example:
+
+.. code:: python
+
+    from gaia.cu9.ari.gaiaorbit.script import EventScriptingInterface
+    from java.lang import Runnable
+
+    class PrintRunnable(Runnable):
+        def run(self):
+            print("I RUN!")
+
+    class FrameCounterRunnable(Runnable):
+        def __init__(self):
+            self.n = 0
+
+        def run(self):
+            self.n = self.n + 1
+            if self.n % 30 == 0:
+                print "Number of frames: %d" % self.n
+
+
+    gs = EventScriptingInterface.instance()
+    # We post a simple runnable which prints "I RUN!" once
+    gs.postRunnable(PrintRunnable())
+    # We park a runnable which counts the frames and prints the current number 
+    # of frames every 30 of them
+    gs.parkRunnable("frame_counter", FrameCounterRunnable())
+    gs.sleep(30.0)
+    # We unpark the frame counter
+    gs.unparkRunnable("frame_counter")
+    print "Exiting script"
+
+
+In this example, we create two runnables. The first, which only prints 'I RUN!" on
+the console, is posted using ``postRunnable(Runnable)``, so it only runs once. The
+second, which counts frames, is parked with ``parkRunnable(String, Runnable)``, so it
+runs until we unpark it with ``unparkRunnable(String)``. The parked runnable is run
+every cycle, so it is able to count the frames and print its progress every
+30th execution.
+
+A more useful example can be found `here <https://gitlab.com/langurmonkey/gaiasky/blob/master/assets/scripts/showcases/line-objects-update.py>`__. In this script, a polyline is created between the Earth and the Moon. Then, a
+parked runnable is used to update the line points with the new postions of the bodies. Finally,
+time is started so that the bodies start moving and the line positions are updated correctly and in
+synch with the main thread.
 
 More examples
 -------------
