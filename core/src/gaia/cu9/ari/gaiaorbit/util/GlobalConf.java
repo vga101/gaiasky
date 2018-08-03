@@ -1002,6 +1002,10 @@ public class GlobalConf {
                 // No limit
                 CAMERA_SPEED_LIMIT = -1;
                 break;
+            case 19:
+                // 100 c
+                CAMERA_SPEED_LIMIT = 100.0 * Constants.C * Constants.M_TO_U;
+                break;
 
             }
         }
