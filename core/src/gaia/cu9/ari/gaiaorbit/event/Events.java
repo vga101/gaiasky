@@ -70,6 +70,7 @@ public enum Events {
      * 16 - 10 pc/s
      * 17 - 1000 pc/s
      * 18 - No limit
+     * 19 - 100*c
      * It also contains a boolean indicating whether this comes from
      * the interface.
      **/

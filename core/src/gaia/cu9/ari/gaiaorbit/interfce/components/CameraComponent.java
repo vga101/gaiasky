@@ -155,7 +155,7 @@ public class CameraComponent extends GuiComponent implements IObserver {
         fov = new OwnLabel(Integer.toString((int) GlobalConf.scene.CAMERA_FOV) + "°", skin, "default");
 
         /** CAMERA SPEED LIMIT **/
-        String[] speedLimits = new String[19];
+        String[] speedLimits = new String[20];
         speedLimits[0] = txt("gui.camera.speedlimit.100kmh");
         speedLimits[1] = txt("gui.camera.speedlimit.cfactor", "0.5");
         speedLimits[2] = txt("gui.camera.speedlimit.cfactor", "0.8");
@@ -175,6 +175,7 @@ public class CameraComponent extends GuiComponent implements IObserver {
         speedLimits[16] = txt("gui.camera.speedlimit.pcs", 10);
         speedLimits[17] = txt("gui.camera.speedlimit.pcs", 1000);
         speedLimits[18] = txt("gui.camera.speedlimit.nolimit");
+        speedLimits[19] = txt("gui.camera.speedlimit.cfactor", 100);
 
         cameraSpeedLimit = new OwnSelectBox<String>(skin);
         cameraSpeedLimit.setName("camera speed limit");
