@@ -27,6 +27,7 @@ import gaia.cu9.ari.gaiaorbit.util.math.Intersectord;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Rayd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
+import net.jafama.FastMath;
 
 /**
  * Octree node implementation which contains a list of {@link IPosition} objects
@@ -46,7 +47,7 @@ public class OctreeNode implements ILineRenderable {
      * Since OctreeNode is not to be parallelised, these can be static.
      **/
     private static BoundingBoxd boxcopy = new BoundingBoxd(new Vector3d(), new Vector3d());
-    private static Vector3d auxD1 = new Vector3d(), auxD3 = new Vector3d(), auxD4 = new Vector3d();
+    private static Vector3d auxD1 = new Vector3d(), auxD2 = new Vector3d(), auxD3 = new Vector3d(), auxD4 = new Vector3d();
     private static Rayd ray = new Rayd(new Vector3d(), new Vector3d());
 
     private Vector3d aux3d1;
@@ -642,6 +643,33 @@ public class OctreeNode implements ILineRenderable {
         }
 
         return observed;
+    }
+    
+    /**
+     * Second method, which uses a simplification.
+     * @param cam The camera
+     * @return Whether the octant is observed
+     */
+    private boolean computeObserved2(ICamera cam) {
+        return /*GlobalConf.program.CUBEMAP360_MODE ||*/ cam.getMode().isGaiaFov() || computeObservedFast(cam);
+    }
+
+    /**
+     * Simplification to compute octant visibility. Angle between camera direction and octant centre
+     * must be smaller than fov/2 plus a correction (for octant size, assuming sphere)
+     * @param cam The camera
+     * @return Whether the octant is observed
+     */
+    private boolean computeObservedFast(ICamera cam) {
+        Vector3d cpospos = auxD1.set(centre).sub(cam.getPos());
+        double dist = cpospos.len();
+        ray.origin.set(cam.getPos());
+        ray.direction.set(cam.getDirection());
+        if (dist < radius || Intersectord.intersectRayBoundsFast(ray, box.getCenter(auxD3), box.getDimensions(auxD4)))
+            return true;
+        double angleOverlap = FastMath.acos(radius / dist);
+        double ang = cam.getDirection().angle(cpospos);
+        return ang < cam.getCamera().fieldOfView + angleOverlap;
     }
 
     public LoadStatus getStatus() {
