@@ -543,56 +543,54 @@ public class OctreeNode implements ILineRenderable {
         this.opacity = opacity;
         this.observed = true;
 
-        if (observed) {
-            // Compute distance and view angle
-            distToCamera = auxD1.set(centre).add(cam.getInversePos()).len();
-            // View angle is normalized to 40 degrees when the octant is exactly the size of the screen height, regardless of the camera fov
-            viewAngle = Math.atan(radius / distToCamera) * 2;
+        // Compute distance and view angle
+        distToCamera = auxD1.set(centre).add(cam.getInversePos()).len();
+        // View angle is normalized to 40 degrees when the octant is exactly the size of the screen height, regardless of the camera fov
+        viewAngle = Math.atan(radius / distToCamera) * 2;
 
-            float th0 = GlobalConf.scene.OCTANT_THRESHOLD_0;
-            float th1 = GlobalConf.scene.OCTANT_THRESHOLD_1;
+        float th0 = GlobalConf.scene.OCTANT_THRESHOLD_0;
+        float th1 = GlobalConf.scene.OCTANT_THRESHOLD_1;
 
-            if (viewAngle < th0) {
-                // Not observed
-                this.observed = false;
-                setChildrenObserved(false);
-            } else {
-                nOctantsObserved++;
-                //int L_DEPTH = 5;
-                /**
-                 * Load lists of pages
-                 */
-                if (status == LoadStatus.NOT_LOADED && LOAD_ACTIVE /*&& depth == L_DEPTH*/) {
-                    // Add to load and go on
-                    StreamingOctreeLoader.queue(this);
-                } else if (status == LoadStatus.LOADED) {
-                    // Visited last!
-                    StreamingOctreeLoader.touch(this);
+        if (viewAngle < th0) {
+            // Not observed
+            this.observed = false;
+            setChildrenObserved(false);
+        } else {
+            nOctantsObserved++;
+            //int L_DEPTH = 5;
+            /**
+             * Load lists of pages
+             */
+            if (status == LoadStatus.NOT_LOADED && LOAD_ACTIVE /*&& depth == L_DEPTH*/) {
+                // Add to load and go on
+                StreamingOctreeLoader.queue(this);
+            } else if (status == LoadStatus.LOADED) {
+                // Visited last!
+                StreamingOctreeLoader.touch(this);
 
-                    // Break down tree, fade in until th2
-                    double alpha = 1;
-                    if (GlobalConf.scene.OCTREE_PARTICLE_FADE && viewAngle < th1) {
-                        AbstractRenderSystem.POINT_UPDATE_FLAG = true;
-                        alpha = MathUtilsd.clamp(MathUtilsd.lint(viewAngle, th0, th1, 0d, 1d), 0f, 1f);
-                    }
-                    this.opacity *= alpha;
-
-                    // Add objects
-                    //if (depth == L_DEPTH)
-                    addObjectsTo(roulette);
-                } else if (status == LoadStatus.QUEUED) {
-                    // What do? Move first in queue?
+                // Break down tree, fade in until th2
+                double alpha = 1;
+                if (GlobalConf.scene.OCTREE_PARTICLE_FADE && viewAngle < th1) {
+                    AbstractRenderSystem.POINT_UPDATE_FLAG = true;
+                    alpha = MathUtilsd.clamp(MathUtilsd.lint(viewAngle, th0, th1, 0d, 1d), 0f, 1f);
                 }
+                this.opacity *= alpha;
 
-                // Update children
-                for (int i = 0; i < 8; i++) {
-                    OctreeNode child = children[i];
-                    if (child != null /*&& child.depth <= L_DEPTH*/) {
-                        child.update(parentTransform, cam, roulette, this.opacity);
-                    }
-                }
-
+                // Add objects
+                //if (depth == L_DEPTH)
+                addObjectsTo(roulette);
+            } else if (status == LoadStatus.QUEUED) {
+                // What do? Move first in queue?
             }
+
+            // Update children
+            for (int i = 0; i < 8; i++) {
+                OctreeNode child = children[i];
+                if (child != null /*&& child.depth <= L_DEPTH*/) {
+                    child.update(parentTransform, cam, roulette, this.opacity);
+                }
+            }
+
         }
     }
 
@@ -644,7 +642,7 @@ public class OctreeNode implements ILineRenderable {
 
         return observed;
     }
-    
+
     /**
      * Second method, which uses a simplification.
      * @param cam The camera

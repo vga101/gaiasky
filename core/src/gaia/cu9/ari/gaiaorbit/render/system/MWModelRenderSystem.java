@@ -284,7 +284,7 @@ public class MWModelRenderSystem extends ImmediateRenderSystem implements IObser
                 shaderProgram.setUniformMatrix("u_view", camera.getCamera().view);
                 shaderProgram.setUniformf("u_camPos", camera.getCurrent().getPos().put(aux3f1));
                 shaderProgram.setUniformf("u_alpha", mw.opacity * alpha);
-                shaderProgram.setUniformf("u_ar", GlobalConf.program.STEREOSCOPIC_MODE && (GlobalConf.program.STEREO_PROFILE != StereoProfile.HD_3DTV && GlobalConf.program.STEREO_PROFILE != StereoProfile.ANAGLYPHIC) ? 0.5f : 1f);
+                shaderProgram.setUniformf("u_ar", GlobalConf.program.STEREOSCOPIC_MODE && (GlobalConf.program.STEREO_PROFILE != StereoProfile.HD_3DTV_HORIZONTAL && GlobalConf.program.STEREO_PROFILE != StereoProfile.ANAGLYPHIC) ? 0.5f : 1f);
 
                 // Relativistic effects
                 addEffectsUniforms(shaderProgram, camera);
@@ -383,7 +383,7 @@ public class MWModelRenderSystem extends ImmediateRenderSystem implements IObser
 
                 shaderProgram.setUniformf("u_camPos", camera.getCurrent().getPos().put(aux3f1));
                 shaderProgram.setUniformf("u_alpha", mw.opacity * alpha);
-                shaderProgram.setUniformf("u_ar", GlobalConf.program.STEREOSCOPIC_MODE && (GlobalConf.program.STEREO_PROFILE != StereoProfile.HD_3DTV && GlobalConf.program.STEREO_PROFILE != StereoProfile.ANAGLYPHIC) ? 0.5f : 1f);
+                shaderProgram.setUniformf("u_ar", GlobalConf.program.STEREOSCOPIC_MODE && (GlobalConf.program.STEREO_PROFILE != StereoProfile.HD_3DTV_HORIZONTAL && GlobalConf.program.STEREO_PROFILE != StereoProfile.ANAGLYPHIC) ? 0.5f : 1f);
                 // Relativistic effects
                 addEffectsUniforms(shaderProgram, camera);
 

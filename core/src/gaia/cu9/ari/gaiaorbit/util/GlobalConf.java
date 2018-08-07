@@ -533,13 +533,27 @@ public class GlobalConf {
             /** Left image -> left eye, distortion **/
             VR_HEADSET,
             /** Left image -> left eye, distortion **/
-            HD_3DTV,
+            HD_3DTV_HORIZONTAL,
+            /** Top-bottom **/
+            HD_3DTV_VERTICAL,
             /** Left image -> right eye, no distortion **/
             CROSSEYE,
             /** Left image -> left eye, no distortion **/
             PARALLEL_VIEW,
             /** Red-cyan anaglyphic 3D mode **/
-            ANAGLYPHIC
+            ANAGLYPHIC;
+
+            public boolean isHorizontal() {
+                return this.equals(VR_HEADSET) || this.equals(HD_3DTV_HORIZONTAL) || this.equals(CROSSEYE) || this.equals(PARALLEL_VIEW);
+            }
+
+            public boolean isVertical() {
+                return this.equals(HD_3DTV_VERTICAL);
+            }
+
+            public boolean isAnaglyphic() {
+                return this.equals(ANAGLYPHIC);
+            }
         }
 
         public boolean DISPLAY_TUTORIAL;
@@ -609,7 +623,7 @@ public class GlobalConf {
         }
 
         public boolean isStereoHalfWidth() {
-            return STEREOSCOPIC_MODE && (STEREO_PROFILE != StereoProfile.HD_3DTV && STEREO_PROFILE != StereoProfile.ANAGLYPHIC);
+            return STEREOSCOPIC_MODE && (STEREO_PROFILE != StereoProfile.HD_3DTV_HORIZONTAL && STEREO_PROFILE != StereoProfile.ANAGLYPHIC);
         }
 
         public boolean isStereoFullWidth() {
