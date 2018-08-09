@@ -18,6 +18,7 @@ import java.util.Set;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import gaia.cu9.ari.gaiaorbit.script.EventScriptingInterface;
 import gaia.cu9.ari.gaiaorbit.script.IScriptingInterface;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 
@@ -462,7 +463,7 @@ public class RESTServer {
             try {
                 Logger.debug("Invoking method...");
                 // note: invoke may return null explicitly or because is void type
-                Object retobj = matchMethod.invoke(IScriptingInterface.instance(), arguments);
+                Object retobj = matchMethod.invoke(EventScriptingInterface.instance(), arguments);
                 if (retobj == null) {
                     Logger.info("Method returned: '{}', return type is {}",
                         retobj,
