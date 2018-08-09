@@ -34,13 +34,14 @@ some distance before or after the actual image so that each eye receives the
 correct image. In cross-eye this case the right images goes to the left eye and
 the left image goes to the right eye. The opposite is true for parallel view images.
 
-In order to manage all these parameters, we have created 5 stereoscopic
+In order to manage all these parameters, we have created 6 stereoscopic
 profiles which can be selected by the user and are described below.
 
 -  ``VR_HEADSET`` -- The **left** image goes to the **left** eye. Lens distortion is applied to be viewed with VR glasses.
 -  ``Crosseye`` -- The **left** image goes to the **right** eye. No distortion is applied.
 -  ``Parallel view`` -- The **left** image goes to the **left** eye. No distortion is applied.
--  ``3DTV`` -- The **left** image goes to the **left** eye. The left and right images are strecthed to fit in a half of the screen.
+-  ``3DTV Horizontal`` -- The **left** image goes to the **left** eye. The left and right images are strecthed to fit in a half of the screen.
+-  ``3DTV Vertical`` -- The **top** image goes to the **left** eye. Top and bottom images are stretched to fit in half of the screen.
 -  ``Anaglyph 3D`` -- To use with red-cyan glasses. Displays both the left and right images at full resolution. Left image contains the **red** channel, right image contains the **green** and **blue** channels.
 
 .. hint:: ``L-CTRL`` + ``L-SHIFT`` + ``S`` -- Switch between 3D profiles
@@ -54,7 +55,9 @@ profiles which can be selected by the user and are described below.
 +-------------------+----------+
 | **Parallel view** | |PARA|   |
 +-------------------+----------+
-| **3DTV**          | |3DTV|   |
+| **3DTV H**        | |3DTV|   |
++-------------------+----------+
+| **3DTV V**        | |3DTV|   |
 +-------------------+----------+
 | **Anaglyph**      | |ANAG|   |
 +-------------------+----------+
