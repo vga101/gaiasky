@@ -1,28 +1,25 @@
 package gaia.cu9.ari.gaiaorbit.rest;
 
-import gaia.cu9.ari.gaiaorbit.script.EventScriptingInterface;
-import gaia.cu9.ari.gaiaorbit.script.IScriptingInterface;
+import static spark.Spark.get;
+import static spark.Spark.port;
+import static spark.Spark.post;
+import static spark.Spark.staticFiles;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import static spark.Spark.get;
-import static spark.Spark.port;
-import static spark.Spark.post;
-import static spark.Spark.staticFiles;
-import static spark.Spark.stop;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import gaia.cu9.ari.gaiaorbit.script.IScriptingInterface;
+import gaia.cu9.ari.gaiaorbit.util.Logger;
 
 
 /**
@@ -127,11 +124,6 @@ public class RESTServer {
      */
     private static String rest_static_location = System.getProperty("rest-static.location");
 
-    /**
-     * Reference to Logger.
-     */
-    private static final Logger logger = LoggerFactory.getLogger("[RESTServer]");
-
 
     /* Methods: */
 
@@ -181,7 +173,7 @@ public class RESTServer {
         /* request body */
         Gson gson = new GsonBuilder().serializeNulls().create();
         responseString = gson.toJson(ret);
-        logger.debug("HTTP response body: {}.", responseString);
+        Logger.debug("HTTP response body: {}.", responseString);
         return responseString;
     }
 
@@ -190,31 +182,31 @@ public class RESTServer {
      * Log information on the request.
      */
     private static void loggerRequestInfo(spark.Request request) {
-        logger.info("======== Handling API call via HTTP {}: ========", request.requestMethod());
-        logger.info("* Parameter extracted:");
-        logger.info("  command = {}", request.params(":cmd"));
-        logger.info("* Request:");
-        logger.info("  client IP = {}", request.ip());
-        logger.info("  host = {}", request.host());
-        logger.info("  userAgent = {}", request.userAgent());
-        logger.info("  pathInfo = {}", request.pathInfo());
-        logger.info("  servletPath = {}", request.servletPath());
-        logger.info("  contextPath = {}", request.contextPath());
-        logger.info("  url = {}", request.url());
-        logger.info("  uri = {}", request.uri());
-        logger.info("  protocol = {}", request.protocol());
-        logger.info("* Body");
-        logger.info("  contentType() = '{}'", request.contentType());
-        logger.info("  params() = '{}'", request.params());
-        logger.info("  body contentLenght() = {}", request.contentLength());
+        Logger.info("======== Handling API call via HTTP {}: ========", request.requestMethod());
+        Logger.info("* Parameter extracted:");
+        Logger.info("  command = {}", request.params(":cmd"));
+        Logger.info("* Request:");
+        Logger.info("  client IP = {}", request.ip());
+        Logger.info("  host = {}", request.host());
+        Logger.info("  userAgent = {}", request.userAgent());
+        Logger.info("  pathInfo = {}", request.pathInfo());
+        Logger.info("  servletPath = {}", request.servletPath());
+        Logger.info("  contextPath = {}", request.contextPath());
+        Logger.info("  url = {}", request.url());
+        Logger.info("  uri = {}", request.uri());
+        Logger.info("  protocol = {}", request.protocol());
+        Logger.info("* Body");
+        Logger.info("  contentType() = '{}'", request.contentType());
+        Logger.info("  params() = '{}'", request.params());
+        Logger.info("  body contentLenght() = {}", request.contentLength());
         // NOTE: when calling method body(), the body is consumed and queryParams() doesn't find
         // the parameters anymore!
-        // logger.info("body() = '{}'", request.body());
-        logger.info("* Query parameters");
-        logger.info("  queryString() = '{}'", request.queryString());
-        logger.info("  queryParams = {}", request.queryParams());
+        // Logger.info("body() = '{}'", request.body());
+        Logger.info("* Query parameters");
+        Logger.info("  queryString() = '{}'", request.queryString());
+        Logger.info("  queryParams = {}", request.queryParams());
         for (String s : request.queryParams()) {
-            logger.info("    '{}' => '{}'", s, request.queryParams(s));
+            Logger.info("    '{}' => '{}'", s, request.queryParams(s));
         }
     }
 
@@ -243,7 +235,7 @@ public class RESTServer {
      * To get a list of all method declarations, use empty string for methodname.
      */
     private static String[] getMethodDeclarationStrings(String methodname) {
-        Class cisi = IScriptingInterface.class;
+        Class<IScriptingInterface> cisi = IScriptingInterface.class;
         Method[] allMethods = cisi.getDeclaredMethods();
 
         List<String> matchMethodsDeclarations = new ArrayList<String>();
@@ -271,7 +263,7 @@ public class RESTServer {
             return arrayString.substring(1,len-1).split(",");
         } else {
             // probably an array should never be empty
-            logger.warn("splitArrayString: '{}' is parsed as empty array!", arrayString);
+            Logger.warn("splitArrayString: '{}' is parsed as empty array!", arrayString);
             throw new IllegalArgumentException();
             // emtpy array
             //return new String[0];
@@ -303,7 +295,7 @@ public class RESTServer {
         // Only process API calls if already activated (GUI launched).
         if (!activated) {
             String msg = "GUI not yet initialized. Please wait...";
-            logger.warn(msg);
+            Logger.warn(msg);
             ret.put("text", msg);
             return responseData(request, response, ret, false);
         }
@@ -315,32 +307,32 @@ public class RESTServer {
         Set<String> queryParams = request.queryParams();
 
         // get set of permitted API commands
-        Class cisi = IScriptingInterface.class;
+        Class<IScriptingInterface> cisi = IScriptingInterface.class;
         Method[] allMethods = cisi.getDeclaredMethods();
 
         /* Special-treatment commands */
         if ("help".equals(cmd)) {
-            logger.info("Help command received");
+            Logger.info("Help command received");
             ret.put("text", "Help: see 'cmd_syntax' for command reference. "
                 + "Vectors are comma-separated.");
             ret.put("cmd_syntax", getMethodDeclarationStrings(""));
             return responseData(request, response, ret, true);
         } else if ("debugCall".equals(cmd)) {
-            logger.info("debugCall received. What to do now?");
+            Logger.info("debugCall received. What to do now?");
             ret.put("text", "debugCall data");
             return responseData(request, response, ret, true);
         }
 
         /* Method matching (name and parameters) */
-        logger.info("Method matching...");
+        Logger.info("Method matching...");
         int matchIndex = -1;
         boolean methodNameMatches = false;
         for (int i = 0; i < allMethods.length; i++) {
-            logger.debug("match check cmd={} with method={}...", cmd, allMethods[i].getName());
+            Logger.debug("match check cmd={} with method={}...", cmd, allMethods[i].getName());
 
             // name matches, but parameters may be different
             if (allMethods[i].getName().equals(cmd)) {
-                logger.info("  [+] name matches");
+                Logger.info("  [+] name matches");
                 methodNameMatches = true;
                 Parameter[] methodParams = allMethods[i].getParameters();
 
@@ -349,14 +341,14 @@ public class RESTServer {
                 for (Parameter p : methodParams) {
                     if (!queryParams.contains(p.getName())) {
                         allParamsFound = false;
-                        logger.info("  [+] method parameters not present");
+                        Logger.info("  [+] method parameters not present");
                         break;  // no need to continue checking
                     }
                     // could test for parameter type here...
                 }
 
                 if (allParamsFound) {
-                    logger.info("  [+] method parameters ok");
+                    Logger.info("  [+] method parameters ok");
                     matchIndex = i;
                     break;  // no need to continue checking: the the first match
                 }
@@ -366,26 +358,26 @@ public class RESTServer {
         /* Handle matching result */
         if (matchIndex >= 0) {
             /* Found suitable method */
-            logger.info("Suitable method found: {}",
+            Logger.info("Suitable method found: {}",
                 methodDeclarationString(allMethods[matchIndex]));
 
             Method matchMethod = allMethods[matchIndex];
             Parameter[] matchParameters = matchMethod.getParameters();
-            Class matchReturnType = matchMethod.getReturnType();
+            Class<?> matchReturnType = matchMethod.getReturnType();
 
             Object[] arguments = new Object[matchParameters.length];
-            Class[] types = new Class[matchParameters.length];
+            Class<?>[] types = new Class[matchParameters.length];
 
             /* Prepare method arguments */
-            logger.info("Preparing method arguments...");
+            Logger.info("Preparing method arguments...");
             for (int i = 0; i < matchParameters.length; i++) {
                 Parameter p = matchParameters[i];
                 String stringValue = request.queryParams(p.getName());
-                logger.info("  [+] handling parameter '{}'", p.getName());
+                Logger.info("  [+] handling parameter '{}'", p.getName());
 
                 // Set type
                 types[i] = p.getType();
-                logger.info("  [+] parameter getType='{}', isPrimitive={}",
+                Logger.info("  [+] parameter getType='{}', isPrimitive={}",
                         p.getType().getSimpleName(),
                         p.getType().isPrimitive());
 
@@ -396,70 +388,70 @@ public class RESTServer {
                  */
                 try {
                     if (Integer.TYPE.equals(types[i]) || Integer.class.equals(types[i])) {
-                        logger.info("  [+] handling parameter as type int");
+                        Logger.info("  [+] handling parameter as type int");
                         arguments[i] = Integer.parseInt(stringValue);
 
                     } else if (Long.TYPE.equals(types[i]) || Long.class.equals(types[i])) {
-                        logger.info("  [+] handling parameter as type long");
+                        Logger.info("  [+] handling parameter as type long");
                         arguments[i] = Long.parseLong(stringValue);
 
                     } else if (Float.TYPE.equals(types[i]) || Float.class.equals(types[i])) {
-                        logger.info("  [+] handling parameter as type float");
+                        Logger.info("  [+] handling parameter as type float");
                         arguments[i] = Float.parseFloat(stringValue);
 
                     } else if (Double.TYPE.equals(types[i]) || Double.class.equals(types[i])) {
-                        logger.info("  [+] handling parameter as type double");
+                        Logger.info("  [+] handling parameter as type double");
                         arguments[i] = Double.parseDouble(stringValue);
 
                     } else if (Boolean.TYPE.equals(types[i]) || Boolean.class.equals(types[i])) {
-                        logger.info("  [+] handling parameter as type boolean");
+                        Logger.info("  [+] handling parameter as type boolean");
                         arguments[i] = Boolean.parseBoolean(stringValue);
 
                     } else if (int[].class.equals(types[i]) || Integer[].class.equals(types[i])) {
-                        logger.info("handling parameter as type int[]");
+                        Logger.info("handling parameter as type int[]");
                         String[] svec = splitArrayString(stringValue);
                         int[] dvec = new int[svec.length];
                         for (int vi = 0; vi < svec.length; vi++) {
                             dvec[vi] = Integer.parseInt(svec[vi]);
                         }
                         arguments[i] = dvec;
-                        logger.info("  [+] argument={}", Arrays.toString(dvec));
+                        Logger.info("  [+] argument={}", Arrays.toString(dvec));
 
                     } else if (float[].class.equals(types[i]) || Float[].class.equals(types[i])) {
-                        logger.info("  [+] handling parameter as type float[]");
+                        Logger.info("  [+] handling parameter as type float[]");
                         String[] svec = splitArrayString(stringValue);
                         float[] dvec = new float[svec.length];
                         for (int vi = 0; vi < svec.length; vi++) {
                             dvec[vi] = Float.parseFloat(svec[vi]);
                         }
                         arguments[i] = dvec;
-                        logger.info("  [+] argument={}", Arrays.toString(dvec));
+                        Logger.info("  [+] argument={}", Arrays.toString(dvec));
 
                     } else if (double[].class.equals(types[i]) || Double[].class.equals(types[i])) {
-                        logger.info("  [+] handling parameter as type double[]");
+                        Logger.info("  [+] handling parameter as type double[]");
                         String[] svec = splitArrayString(stringValue);
                         double[] dvec = new double[svec.length];
                         for (int vi = 0; vi < svec.length; vi++) {
                             dvec[vi] = Double.parseDouble(svec[vi]);
                         }
                         arguments[i] = dvec;
-                        logger.info("  [+] argument={}", Arrays.toString(dvec));
+                        Logger.info("  [+] argument={}", Arrays.toString(dvec));
 
                     } else if (String[].class.equals(types[i])) {
-                        logger.info("  [+] handling parameter as type String[]");
+                        Logger.info("  [+] handling parameter as type String[]");
                         String[] svec = splitArrayString(stringValue);
                         arguments[i] = svec;
-                        logger.info("  [+] argument={}", Arrays.toString(svec));
+                        Logger.info("  [+] argument={}", Arrays.toString(svec));
 
                     } else {
-                        logger.info("  [+] handling parameter as type String");
+                        Logger.info("  [+] handling parameter as type String");
                         // String also if it is some other, will raise exception
                         arguments[i] = stringValue;
                     }
 
                 } catch (IllegalArgumentException e) {
                     String msg = String.format("Argument failure with parameter '%s'", p.getName());
-                    logger.warn(msg);
+                    Logger.warn(msg);
                     ret.put("text", msg);
                     ret.put("cmd_syntax", getMethodDeclarationStrings(cmd));
                     return responseData(request, response, ret, false);
@@ -468,15 +460,15 @@ public class RESTServer {
 
             /* Invoke method */
             try {
-                logger.debug("Invoking method...");
+                Logger.debug("Invoking method...");
                 // note: invoke may return null explicitly or because is void type
-                Object retobj = matchMethod.invoke(EventScriptingInterface.instance(), arguments);
+                Object retobj = matchMethod.invoke(IScriptingInterface.instance(), arguments);
                 if (retobj == null) {
-                    logger.info("Method returned: '{}', return type is {}",
+                    Logger.info("Method returned: '{}', return type is {}",
                         retobj,
                         matchReturnType);
                 } else {
-                    logger.info("Method returned: '{}', isArray={}",
+                    Logger.info("Method returned: '{}', isArray={}",
                         retobj,
                         retobj.getClass().isArray());
                 }
@@ -488,7 +480,7 @@ public class RESTServer {
 
         } else {
             /* No match: could not find matching method */
-            logger.info("No suitable method found.");
+            Logger.info("No suitable method found.");
 
             String msg;
             if (methodNameMatches) {
@@ -500,7 +492,7 @@ public class RESTServer {
                     + "See syntax in 'cmd_syntax'.", cmd);
                 ret.put("cmd_syntax", getMethodDeclarationStrings(""));
             }
-            logger.warn(msg);
+            Logger.warn(msg);
             ret.put("text", msg);
             return responseData(request, response, ret, false);
         }
@@ -527,9 +519,9 @@ public class RESTServer {
         }
 
         try {
-            logger.warn("Starting REST API server on http://localhost:{}", port);
+            Logger.warn("Starting REST API server on http://localhost:{}", port);
             port(port);
-            logger.info("Setting routes");
+            Logger.info("Setting routes");
 
             /* Static file location */
             /* (add static HTML files with API use examples) */
@@ -549,10 +541,10 @@ public class RESTServer {
                 return handleApiCall(request, response);
             });
 
-            logger.info("Startup finished.");
+            Logger.info("Startup finished.");
 
         } catch (Exception e) {
-           logger.error("Caught an exception during initialization:");
+           Logger.error("Caught an exception during initialization:");
            e.printStackTrace(System.err);
         }
     }
@@ -572,9 +564,9 @@ public class RESTServer {
         try {
             if (!shutdownTriggered) {
                 shutdownTriggered = true;
-                logger.info("Stopping server gracefully...");
+                Logger.info("Stopping server gracefully...");
                 stop();
-                logger.info("Server now stopped.");
+                Logger.info("Server now stopped.");
             }
         } catch (Exception e) {
             e.printStackTrace(System.err);

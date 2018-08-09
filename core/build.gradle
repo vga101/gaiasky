@@ -135,7 +135,6 @@ task copyToLib (dependsOn: createDistDir, description: "Copies the runtime depen
 	            into project.distLib
 	            exclude "**/data"
 	            exclude "**/assets-bak"
-	            exclude "**/core-1.0.jar"
 	            exclude "**/core-" + version + ".jar"
 	        }
 	    }
