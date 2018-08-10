@@ -1,0 +1,27 @@
+# https://gaia-sky.readthedocs.io/en/latest/Controls.html#gamepad-controls
+# add controls.debugmode=true in the $HOME/.gaiasky/global.properties to get more controller activity info
+
+# AXES
+
+# left-right
+axis.yaw=0
+
+# forward-backward
+axis.pitch=1
+
+# BUTTONS
+
+# left button
+button.velocityup=0
+
+# right button
+button.velocitydown=1
+
+# NOT PRESENT
+axis.roll=90
+axis.move=91
+axis.velocityup=92
+axis.velocitydown=93
+button.velocitytenth=94
+button.velocityhalf=95
+
