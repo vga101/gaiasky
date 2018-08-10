@@ -183,31 +183,31 @@ public class RESTServer {
      * Log information on the request.
      */
     private static void loggerRequestInfo(spark.Request request) {
-        Logger.info("======== Handling API call via HTTP {}: ========", request.requestMethod());
-        Logger.info("* Parameter extracted:");
-        Logger.info("  command = {}", request.params(":cmd"));
-        Logger.info("* Request:");
-        Logger.info("  client IP = {}", request.ip());
-        Logger.info("  host = {}", request.host());
-        Logger.info("  userAgent = {}", request.userAgent());
-        Logger.info("  pathInfo = {}", request.pathInfo());
-        Logger.info("  servletPath = {}", request.servletPath());
-        Logger.info("  contextPath = {}", request.contextPath());
-        Logger.info("  url = {}", request.url());
-        Logger.info("  uri = {}", request.uri());
-        Logger.info("  protocol = {}", request.protocol());
-        Logger.info("* Body");
-        Logger.info("  contentType() = '{}'", request.contentType());
-        Logger.info("  params() = '{}'", request.params());
-        Logger.info("  body contentLenght() = {}", request.contentLength());
+        Logger.infoparse("======== Handling API call via HTTP {}: ========", request.requestMethod());
+        Logger.infoparse("* Parameter extracted:");
+        Logger.infoparse("  command = ", request.params(":cmd"));
+        Logger.infoparse("* Request:");
+        Logger.infoparse("  client IP = {}", request.ip());
+        Logger.infoparse("  host = {}", request.host());
+        Logger.infoparse("  userAgent = {}", request.userAgent());
+        Logger.infoparse("  pathInfo = {}", request.pathInfo());
+        Logger.infoparse("  servletPath = {}", request.servletPath());
+        Logger.infoparse("  contextPath = {}", request.contextPath());
+        Logger.infoparse("  url = {}", request.url());
+        Logger.infoparse("  uri = {}", request.uri());
+        Logger.infoparse("  protocol = {}", request.protocol());
+        Logger.infoparse("* Body");
+        Logger.infoparse("  contentType() = '{}'", request.contentType());
+        Logger.infoparse("  params() = '{}'", request.params());
+        Logger.infoparse("  body contentLenght() = {}", request.contentLength());
         // NOTE: when calling method body(), the body is consumed and queryParams() doesn't find
         // the parameters anymore!
-        // Logger.info("body() = '{}'", request.body());
-        Logger.info("* Query parameters");
-        Logger.info("  queryString() = '{}'", request.queryString());
-        Logger.info("  queryParams = {}", request.queryParams());
+        // Logger.infoparse("body() = '{}'", request.body());
+        Logger.infoparse("* Query parameters");
+        Logger.infoparse("  queryString() = '{}'", request.queryString());
+        Logger.infoparse("  queryParams = {}", request.queryParams());
         for (String s : request.queryParams()) {
-            Logger.info("    '{}' => '{}'", s, request.queryParams(s));
+            Logger.infoparse("    '{}' => '{}'", s, request.queryParams(s));
         }
     }
 
@@ -374,11 +374,11 @@ public class RESTServer {
             for (int i = 0; i < matchParameters.length; i++) {
                 Parameter p = matchParameters[i];
                 String stringValue = request.queryParams(p.getName());
-                Logger.info("  [+] handling parameter '{}'", p.getName());
+                Logger.infoparse("  [+] handling parameter '{}'", p.getName());
 
                 // Set type
                 types[i] = p.getType();
-                Logger.info("  [+] parameter getType='{}', isPrimitive={}",
+                Logger.infoparse("  [+] parameter getType='{}', isPrimitive={}",
                         p.getType().getSimpleName(),
                         p.getType().isPrimitive());
 
@@ -416,7 +416,7 @@ public class RESTServer {
                             dvec[vi] = Integer.parseInt(svec[vi]);
                         }
                         arguments[i] = dvec;
-                        Logger.info("  [+] argument={}", Arrays.toString(dvec));
+                        Logger.infoparse("  [+] argument={}", Arrays.toString(dvec));
 
                     } else if (float[].class.equals(types[i]) || Float[].class.equals(types[i])) {
                         Logger.info("  [+] handling parameter as type float[]");
@@ -426,7 +426,7 @@ public class RESTServer {
                             dvec[vi] = Float.parseFloat(svec[vi]);
                         }
                         arguments[i] = dvec;
-                        Logger.info("  [+] argument={}", Arrays.toString(dvec));
+                        Logger.infoparse("  [+] argument={}", Arrays.toString(dvec));
 
                     } else if (double[].class.equals(types[i]) || Double[].class.equals(types[i])) {
                         Logger.info("  [+] handling parameter as type double[]");
@@ -436,13 +436,13 @@ public class RESTServer {
                             dvec[vi] = Double.parseDouble(svec[vi]);
                         }
                         arguments[i] = dvec;
-                        Logger.info("  [+] argument={}", Arrays.toString(dvec));
+                        Logger.infoparse("  [+] argument={}", Arrays.toString(dvec));
 
                     } else if (String[].class.equals(types[i])) {
                         Logger.info("  [+] handling parameter as type String[]");
                         String[] svec = splitArrayString(stringValue);
                         arguments[i] = svec;
-                        Logger.info("  [+] argument={}", Arrays.toString(svec));
+                        Logger.infoparse("  [+] argument={}", Arrays.toString(svec));
 
                     } else {
                         Logger.info("  [+] handling parameter as type String");
@@ -465,11 +465,11 @@ public class RESTServer {
                 // note: invoke may return null explicitly or because is void type
                 Object retobj = matchMethod.invoke(EventScriptingInterface.instance(), arguments);
                 if (retobj == null) {
-                    Logger.info("Method returned: '{}', return type is {}",
+                    Logger.infoparse("Method returned: '{}', return type is {}",
                         retobj,
                         matchReturnType);
                 } else {
-                    Logger.info("Method returned: '{}', isArray={}",
+                    Logger.infoparse("Method returned: '{}', isArray={}",
                         retobj,
                         retobj.getClass().isArray());
                 }
@@ -520,7 +520,7 @@ public class RESTServer {
         }
 
         try {
-            Logger.warn("Starting REST API server on http://localhost:{}", port);
+            Logger.warnparse("Starting REST API server on http://localhost:{}", port);
             port(port);
             Logger.info("Setting routes");
 
