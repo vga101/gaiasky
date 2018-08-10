@@ -11,6 +11,7 @@ import com.badlogic.gdx.Net.HttpResponse;
 import com.badlogic.gdx.Net.HttpResponseListener;
 import com.badlogic.gdx.net.HttpParametersUtils;
 import com.badlogic.gdx.net.HttpStatus;
+import com.badlogic.gdx.utils.Array;
 
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
@@ -37,16 +38,32 @@ public class MasterManager implements IObserver {
 			MasterManager.instance = new MasterManager();
 	}
 
+	// Slave list
+	private Array<String> slaves;
+
+	// Parameters maps
 	private Map<String, String> camStateTimeParams, camStateParams, params;
+
+	// HTTP request objects
 	private HttpRequest request, evtrequest;
+
+	// Response object
 	private MasterResponseListener responseListener;
 
 	public MasterManager() {
 		super();
+
+		// Slave objects
+		slaves = new Array<String>();
+		slaves.add("http://localhost:8080/api/");
+		slaves.add("http://localhost:8081/api/");
+
+		// Create parameter maps
 		camStateTimeParams = new HashMap<String, String>();
 		camStateParams = new HashMap<String, String>();
 		params = new HashMap<String, String>();
 
+		// Create request and response objects
 		request = new HttpRequest(HttpMethods.POST);
 		evtrequest = new HttpRequest(HttpMethods.POST);
 		responseListener = new MasterResponseListener();
@@ -71,27 +88,29 @@ public class MasterManager implements IObserver {
 		camStateTimeParams.put("arg3", Long.toString(time.getTime().toEpochMilli()));
 		String paramString = HttpParametersUtils.convertHttpParameters(camStateTimeParams);
 
-		request.setUrl(URL + "setCameraStateAndTime");
-		request.setContent(paramString);
-		Gdx.net.sendHttpRequest(request, new HttpResponseListener() {
-			@Override
-			public void handleHttpResponse(HttpResponse httpResponse) {
-				if (httpResponse.getStatus().getStatusCode() == HttpStatus.SC_OK) {
-				} else {
-					Logger.error("Ko");
+		for (String slave : slaves) {
+			request.setUrl(slave + "setCameraStateAndTime");
+			request.setContent(paramString);
+			Gdx.net.sendHttpRequest(request, new HttpResponseListener() {
+				@Override
+				public void handleHttpResponse(HttpResponse httpResponse) {
+					if (httpResponse.getStatus().getStatusCode() == HttpStatus.SC_OK) {
+					} else {
+						Logger.error("Ko");
+					}
 				}
-			}
 
-			@Override
-			public void failed(Throwable t) {
-				Logger.error(t);
-			}
+				@Override
+				public void failed(Throwable t) {
+					Logger.error(t);
+				}
 
-			@Override
-			public void cancelled() {
-				Logger.info("Cancelled");
-			}
-		});
+				@Override
+				public void cancelled() {
+					Logger.info("Cancelled");
+				}
+			});
+		}
 	}
 
 	/**
@@ -107,9 +126,11 @@ public class MasterManager implements IObserver {
 		camStateParams.put("arg2", Arrays.toString(up.values()));
 		String paramString = HttpParametersUtils.convertHttpParameters(camStateParams);
 
-		request.setUrl(URL + "setCameraState");
-		request.setContent(paramString);
-		Gdx.net.sendHttpRequest(request, responseListener);
+		for (String slave : slaves) {
+			request.setUrl(slave + "setCameraState");
+			request.setContent(paramString);
+			Gdx.net.sendHttpRequest(request, responseListener);
+		}
 	}
 
 	@Override
@@ -119,9 +140,11 @@ public class MasterManager implements IObserver {
 		case FOV_CHANGED_CMD:
 			params.put("arg0", Float.toString((float) data[0]));
 			String paramString = HttpParametersUtils.convertHttpParameters(params);
-			evtrequest.setUrl(URL + "setFov");
+			for(String slave : slaves) {
+			evtrequest.setUrl(slave + "setFov");
 			evtrequest.setContent(paramString);
 			Gdx.net.sendHttpRequest(evtrequest, responseListener);
+			}
 			break;
 		case TOGGLE_VISIBILITY_CMD:
 			String key = (String) data[0];
@@ -136,35 +159,50 @@ public class MasterManager implements IObserver {
 			params.put("arg0", key);
 			params.put("arg1", state.toString());
 			paramString = HttpParametersUtils.convertHttpParameters(params);
-			evtrequest.setUrl(URL + "setVisibility");
+			
+			for(String slave : slaves) {
+			evtrequest.setUrl(slave + "setVisibility");
 			evtrequest.setContent(paramString);
 			Gdx.net.sendHttpRequest(evtrequest, responseListener);
+			}
 			break;
 		case STAR_BRIGHTNESS_CMD:
 			float brightness = MathUtilsd.lint((float) data[0], Constants.MIN_STAR_BRIGHT, Constants.MAX_STAR_BRIGHT,
 					Constants.MIN_SLIDER, Constants.MAX_SLIDER);
 			params.put("arg0", Float.toString(brightness));
 			paramString = HttpParametersUtils.convertHttpParameters(params);
-			evtrequest.setUrl(URL + "setStarBrightness");
+			
+			
+			for(String slave : slaves) {
+			evtrequest.setUrl(slave + "setStarBrightness");
 			evtrequest.setContent(paramString);
 			Gdx.net.sendHttpRequest(evtrequest, responseListener);
+			}
 			break;
 		case STAR_POINT_SIZE_CMD:
 			float size = MathUtilsd.lint((float) data[0], Constants.MIN_STAR_POINT_SIZE, Constants.MAX_STAR_POINT_SIZE,
 					Constants.MIN_SLIDER, Constants.MAX_SLIDER);
 			params.put("arg0", Float.toString(size));
 			paramString = HttpParametersUtils.convertHttpParameters(params);
-			evtrequest.setUrl(URL + "setStarSize");
+			
+			
+			for(String slave : slaves) {
+			evtrequest.setUrl(slave + "setStarSize");
 			evtrequest.setContent(paramString);
 			Gdx.net.sendHttpRequest(evtrequest, responseListener);
+			}
 			break;
 		case STAR_MIN_OPACITY_CMD:
-                float opacity = MathUtilsd.lint((float)data[0], Constants.MIN_STAR_MIN_OPACITY, Constants.MAX_STAR_MIN_OPACITY, Constants.MIN_SLIDER, Constants.MAX_SLIDER);
+			float opacity = MathUtilsd.lint((float) data[0], Constants.MIN_STAR_MIN_OPACITY,
+					Constants.MAX_STAR_MIN_OPACITY, Constants.MIN_SLIDER, Constants.MAX_SLIDER);
 			params.put("arg0", Float.toString(opacity));
 			paramString = HttpParametersUtils.convertHttpParameters(params);
-			evtrequest.setUrl(URL + "setStarMinOpacity");
+			
+			for(String slave : slaves) {
+			evtrequest.setUrl(slave + "setStarMinOpacity");
 			evtrequest.setContent(paramString);
 			Gdx.net.sendHttpRequest(evtrequest, responseListener);
+			}
 			break;
 		default:
 			break;
