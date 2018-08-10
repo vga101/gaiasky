@@ -556,6 +556,8 @@ public class GlobalConf {
             }
         }
 
+        public boolean NET_SLAVE = false;
+        public boolean NET_MASTER = false;
         public boolean DISPLAY_TUTORIAL;
         public String TUTORIAL_POINTER_SCRIPT_LOCATION;
         public String TUTORIAL_SCRIPT_LOCATION;
@@ -587,7 +589,7 @@ public class GlobalConf {
 
         public void initialize(boolean dISPLAY_TUTORIAL, String tUTORIAL_POINTER_SCRIPT_LOCATION, String tUTORIAL_SCRIPT_LOCATION, boolean sHOW_DEBUG_INFO, Instant lAST_CHECKED, String lAST_VERSION_TIME,
                 String vERSION_CHECK_URL, String uI_THEME, String sCRIPT_LOCATION, int rEST_PORT, String lOCALE, boolean sTEREOSCOPIC_MODE, StereoProfile sTEREO_PROFILE, boolean cUBEMAP360_MODE,
-                boolean aNALYTICS_ENABLED, boolean dISPLAY_HUD, boolean dISPLAY_POINTER_COORDS, boolean dISPLAY_DATASET_DIALOG) {
+                boolean aNALYTICS_ENABLED, boolean dISPLAY_HUD, boolean dISPLAY_POINTER_COORDS, boolean dISPLAY_DATASET_DIALOG, boolean nET_MASTER, boolean nET_SLAVE) {
             DISPLAY_TUTORIAL = dISPLAY_TUTORIAL;
             TUTORIAL_POINTER_SCRIPT_LOCATION = tUTORIAL_POINTER_SCRIPT_LOCATION;
             TUTORIAL_SCRIPT_LOCATION = tUTORIAL_SCRIPT_LOCATION;
@@ -606,6 +608,8 @@ public class GlobalConf {
             DISPLAY_HUD = dISPLAY_HUD;
             DISPLAY_POINTER_COORDS = dISPLAY_POINTER_COORDS;
             DISPLAY_DATASET_DIALOG = dISPLAY_DATASET_DIALOG;
+            NET_MASTER = nET_MASTER;
+            NET_SLAVE = nET_SLAVE;
         }
 
         public void initialize(boolean dISPLAY_TUTORIAL, boolean sHOW_DEBUG_INFO, String uI_THEME, String lOCALE, boolean sTEREOSCOPIC_MODE, StereoProfile sTEREO_PROFILE) {
@@ -640,6 +644,14 @@ public class GlobalConf {
          */
         public boolean isUINightMode() {
             return UI_THEME.contains("night");
+        }
+        
+        public String getNetName() {
+        	if(NET_MASTER)
+        		return " MASTER";
+        	else if(NET_SLAVE)
+        		return " SLAVE";
+        	return "";
         }
 
         @Override
@@ -1157,7 +1169,7 @@ public class GlobalConf {
     }
 
     public static String getFullApplicationName() {
-        return APPLICATION_NAME + " - " + version.version;
+        return APPLICATION_NAME + program.getNetName() + " - " + version.version;
     }
 
 }

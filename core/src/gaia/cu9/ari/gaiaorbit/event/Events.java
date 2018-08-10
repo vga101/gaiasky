@@ -781,6 +781,9 @@ public enum Events {
     /** Unposts a runnable. Contains the identifier (String) **/
     UNPOST_RUNNABLE,
 
+    // INPUT LISTENER EVENTS
+    TOUCH_DOWN, TOUCH_UP, TOUCH_DRAGGED, SCROLLED, KEY_DOWN, KEY_UP,
+    
     /** Dispose all resources, app is shutting down **/
     DISPOSE;
 

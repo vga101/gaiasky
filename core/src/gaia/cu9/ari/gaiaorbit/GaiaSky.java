@@ -75,6 +75,7 @@ import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
+import gaia.cu9.ari.gaiaorbit.util.MasterManager;
 import gaia.cu9.ari.gaiaorbit.util.MemInfo;
 import gaia.cu9.ari.gaiaorbit.util.ModelCache;
 import gaia.cu9.ari.gaiaorbit.util.MusicManager;
@@ -257,6 +258,9 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
 
         // Init global resources
         GlobalResources.initialize(manager);
+        
+        // Initialise master manager
+        MasterManager.initialize();
 
         // Initialise Cameras
         cam = new CameraManager(manager, CameraMode.Focus);

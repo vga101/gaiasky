@@ -22,7 +22,6 @@ import gaia.cu9.ari.gaiaorbit.script.EventScriptingInterface;
 import gaia.cu9.ari.gaiaorbit.script.IScriptingInterface;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 
-
 /**
  * REST API for remote procedure calls
  *
@@ -80,499 +79,479 @@ import gaia.cu9.ari.gaiaorbit.util.Logger;
  * curl "http://localhost:8080/api/setHeadlineMessage" --data headline='Hi, how are you?'
  */
 
-
 /**
  * REST Server class to implement the REST API
+ * 
  * @author Volker Gaibler
  *
- * Implemented with Spark, which launches an embedded jetty.
- * Spark recommends static context.
+ *         Implemented with Spark, which launches an embedded jetty. Spark
+ *         recommends static context.
  *
- * This gets initialized in core/src/gaia/cu9/ari/gaiaorbit/desktop/GaiaSkyDesktop.java
- * with some lazy initialization since Spark wants be be used in static context.
+ *         This gets initialized in
+ *         core/src/gaia/cu9/ari/gaiaorbit/desktop/GaiaSkyDesktop.java with some
+ *         lazy initialization since Spark wants be be used in static context.
  */
 public class RESTServer {
 
-    /* Class variables: */
-
-    /**
-     * "Shutdown already triggered" flag.
-     * stop() can be called multiple times (multiple events), but only processed once.
-     */
-    private static boolean shutdownTriggered = false;
-
-
-    /**
-     * Activated flag.
-     * Calling API methods generally requires the GUI to be fully started and
-     * all objects initialized, indicated by the "activated" flag. This flag is
-     * set true through the activate() method that needs to be called
-     * externally once the GUI is ready.
-     */
-    private static boolean activated = false;
-
-
-    /**
-     * REST server port.
-     * TCP port the server is listening on. It is set on initialization.
-     */
-    private static Integer port = -1;
-
-
-    /**
-     * REST server static files location.
-     * Defined by a system property.
-     */
-    private static String rest_static_location = System.getProperty("rest-static.location");
-
-
-    /* Methods: */
-
-    /**
-     * Prints startup warning and current log level of SimpleLogger.
-     */
-    private static void printStartupInfo() {
-        String s = System.getProperty("org.slf4j.simpleLogger.defaultLogLevel");
-        System.out.println("Simple Logger defaultLogLevel = " + s);
-        System.out.println("*** Warning: REST API server may permit remote code execution! "
-                + "Only use this functionality in a trusted environment! ***");
-    }
-
-
-    /**
-     * Sets the HTTP response in JSON format.
-     * - Return values are returned under the "value" key.
-     * - Additional keys may provide further data or information.
-     * - The "text" key is encouraged for human-readable information.
-     */
-    private static String responseData(spark.Request request,
-                                       spark.Response response,
-                                       Map<String, Object> ret,
-                                       boolean success) {
-
-        String responseString;
-
-        /* Content-Type */
-        response.type("application/json");
-
-        /* return value is null for void methods */
-        ret.putIfAbsent("value", null);
-
-        /* success key and HTTP status code */
-        ret.put("success", success);
-        if (success == true) {
-            response.status(200);  // 200 OK
-            ret.putIfAbsent("text", "OK");
-        } else {
-            response.status(400);  // 400 Bad Request
-            ret.putIfAbsent("text", "Failed");
-        }
-
-        /* header */
-        //response.header("FOO", "bar");
-
-        /* request body */
-        Gson gson = new GsonBuilder().serializeNulls().create();
-        responseString = gson.toJson(ret);
-        Logger.debug("HTTP response body: {}.", responseString);
-        return responseString;
-    }
-
-
-    /**
-     * Log information on the request.
-     */
-    private static void loggerRequestInfo(spark.Request request) {
-        Logger.info("======== Handling API call via HTTP {}: ========", request.requestMethod());
-        Logger.info("* Parameter extracted:");
-        Logger.info("  command = ", request.params(":cmd"));
-        Logger.info("* Request:");
-        Logger.info("  client IP = {}", request.ip());
-        Logger.info("  host = {}", request.host());
-        Logger.info("  userAgent = {}", request.userAgent());
-        Logger.info("  pathInfo = {}", request.pathInfo());
-        Logger.info("  servletPath = {}", request.servletPath());
-        Logger.info("  contextPath = {}", request.contextPath());
-        Logger.info("  url = {}", request.url());
-        Logger.info("  uri = {}", request.uri());
-        Logger.info("  protocol = {}", request.protocol());
-        Logger.info("* Body");
-        Logger.info("  contentType() = '{}'", request.contentType());
-        Logger.info("  params() = '{}'", request.params());
-        Logger.info("  body contentLenght() = {}", request.contentLength());
-        // NOTE: when calling method body(), the body is consumed and queryParams() doesn't find
-        // the parameters anymore!
-        // Logger.info("body() = '{}'", request.body());
-        Logger.info("* Query parameters");
-        Logger.info("  queryString() = '{}'", request.queryString());
-        Logger.info("  queryParams = {}", request.queryParams());
-        for (String s : request.queryParams()) {
-            Logger.info("    '{}' => '{}'", s, request.queryParams(s));
-        }
-    }
-
-
-    /**
-     * Returns a declaration string for the given method.
-     */
-    private static String methodDeclarationString(Method method) {
-        Parameter[] methodParams = method.getParameters();
-
-        String ret = method.getName();
-        for (int i = 0; i < methodParams.length; i++) {
-            Parameter p = methodParams[i];
-            ret += String.format("%s%s=(%s)", ((i == 0) ? "?" : "&"),
-                p.getName(),
-                p.getType().getSimpleName());
-        }
-        // \u27F6 is "⟶"
-        ret += String.format(" \u27F6 %s", method.getReturnType().getSimpleName());
-        return ret;
-    }
-
-
-    /**
-     * Returns a list of all matching method declaration strings.
-     * To get a list of all method declarations, use empty string for methodname.
-     */
-    private static String[] getMethodDeclarationStrings(String methodname) {
-        Class<IScriptingInterface> cisi = IScriptingInterface.class;
-        Method[] allMethods = cisi.getDeclaredMethods();
-
-        List<String> matchMethodsDeclarations = new ArrayList<String>();
-        for (int i = 0; i < allMethods.length; i++) {
-            if (methodname.length() == 0 || methodname.equals(allMethods[i].getName())) {
-                String declaration = methodDeclarationString(allMethods[i]);
-                matchMethodsDeclarations.add(declaration);
-            }
-        }
-        Collections.sort(matchMethodsDeclarations);
-        String[] ret = matchMethodsDeclarations.toArray(new String[0]);
-        return ret;
-    }
-
-
-    /**
-     * Converts an array-representing string and returns it as array of strings.
-     * This defines how array need to be passed as HTTP request parameters:
-     * comma-separated and enclosed in square brackets, e.g. "[var1,var2,var3]"
-     */
-    private static String[] splitArrayString(String arrayString) {
-        int len = arrayString.length();
-        if (len >= 2 && "[".equals(arrayString.substring(0,1))
-                     && "]".equals(arrayString.substring(len-1,len))) {
-            return arrayString.substring(1,len-1).split(",");
-        } else {
-            // probably an array should never be empty
-            Logger.warn("splitArrayString: '{}' is parsed as empty array!", arrayString);
-            throw new IllegalArgumentException();
-            // emtpy array
-            //return new String[0];
-        }
-    }
-
-
-    /**
-     * Handles the API call.
-     *
-     * This is implemented via Java Reflections and gives access to all methods from
-     * IScriptingInterface (core/src/gaia/cu9/ari/gaiaorbit/script/IScriptingInterface.java).
-     * Additionally, it provides "special-purpose commands", see commented source block.
-     *
-     * Since HTTP request variables are all strings and do provide neither argument indices
-     * nor argument types, there cannot be a direct translation to Java without adding
-     * additional information (which would make the HTTP request harder to read and write.
-     * If this ever becomes an issue, we could get optionally add a type to the parameters,
-     * e.g. "distance_float=0.3f" and split by the underscore.
-     */
-    private static String handleApiCall(spark.Request request, spark.Response response) {
-
-        // Logging basic request information
-        loggerRequestInfo(request);
-
-        // map containing information for http return response
-        Map<String, Object> ret = new HashMap<String, Object>();
-
-        // Only process API calls if already activated (GUI launched).
-        if (!activated) {
-            String msg = "GUI not yet initialized. Please wait...";
-            Logger.warn(msg);
-            ret.put("text", msg);
-            return responseData(request, response, ret, false);
-        }
-
-        // Extract command from http request
-        String cmd = request.params(":cmd");
-
-        // params
-        Set<String> queryParams = request.queryParams();
-
-        // get set of permitted API commands
-        Class<IScriptingInterface> cisi = IScriptingInterface.class;
-        Method[] allMethods = cisi.getDeclaredMethods();
-
-        /* Special-treatment commands */
-        if ("help".equals(cmd)) {
-            Logger.info("Help command received");
-            ret.put("text", "Help: see 'cmd_syntax' for command reference. "
-                + "Vectors are comma-separated.");
-            ret.put("cmd_syntax", getMethodDeclarationStrings(""));
-            return responseData(request, response, ret, true);
-        } else if ("debugCall".equals(cmd)) {
-            Logger.info("debugCall received. What to do now?");
-            ret.put("text", "debugCall data");
-            return responseData(request, response, ret, true);
-        }
-
-        /* Method matching (name and parameters) */
-        Logger.info("Method matching...");
-        int matchIndex = -1;
-        boolean methodNameMatches = false;
-        for (int i = 0; i < allMethods.length; i++) {
-            Logger.debug("match check cmd={} with method={}...", cmd, allMethods[i].getName());
-
-            // name matches, but parameters may be different
-            if (allMethods[i].getName().equals(cmd)) {
-                Logger.info("  [+] name matches");
-                methodNameMatches = true;
-                Parameter[] methodParams = allMethods[i].getParameters();
-
-                // check if parameters present (and optionally type fits?)
-                boolean allParamsFound = true;
-                for (Parameter p : methodParams) {
-                    if (!queryParams.contains(p.getName())) {
-                        allParamsFound = false;
-                        Logger.info("  [+] method parameters not present");
-                        break;  // no need to continue checking
-                    }
-                    // could test for parameter type here...
-                }
-
-                if (allParamsFound) {
-                    Logger.info("  [+] method parameters ok");
-                    matchIndex = i;
-                    break;  // no need to continue checking: the the first match
-                }
-            }
-        }
-
-        /* Handle matching result */
-        if (matchIndex >= 0) {
-            /* Found suitable method */
-            Logger.info("Suitable method found: {}",
-                methodDeclarationString(allMethods[matchIndex]));
-
-            Method matchMethod = allMethods[matchIndex];
-            Parameter[] matchParameters = matchMethod.getParameters();
-            Class<?> matchReturnType = matchMethod.getReturnType();
-
-            Object[] arguments = new Object[matchParameters.length];
-            Class<?>[] types = new Class[matchParameters.length];
-
-            /* Prepare method arguments */
-            Logger.info("Preparing method arguments...");
-            for (int i = 0; i < matchParameters.length; i++) {
-                Parameter p = matchParameters[i];
-                String stringValue = request.queryParams(p.getName());
-                Logger.info("  [+] handling parameter '{}'", p.getName());
-
-                // Set type
-                types[i] = p.getType();
-                Logger.info("  [+] parameter getType = '{}', isPrimitive = {}",
-                        p.getType().getSimpleName(),
-                        p.getType().isPrimitive());
-
-                /*
-                 * Set argument value, handling depends on type:
-                 * We test against both primitives (.TYPE) and objects (.class).
-                 * You might need to add more in the future if you trigger exceptions here...
-                 */
-                try {
-                    if (Integer.TYPE.equals(types[i]) || Integer.class.equals(types[i])) {
-                        Logger.info("  [+] handling parameter as type int");
-                        arguments[i] = Integer.parseInt(stringValue);
-
-                    } else if (Long.TYPE.equals(types[i]) || Long.class.equals(types[i])) {
-                        Logger.info("  [+] handling parameter as type long");
-                        arguments[i] = Long.parseLong(stringValue);
-
-                    } else if (Float.TYPE.equals(types[i]) || Float.class.equals(types[i])) {
-                        Logger.info("  [+] handling parameter as type float");
-                        arguments[i] = Float.parseFloat(stringValue);
-
-                    } else if (Double.TYPE.equals(types[i]) || Double.class.equals(types[i])) {
-                        Logger.info("  [+] handling parameter as type double");
-                        arguments[i] = Double.parseDouble(stringValue);
-
-                    } else if (Boolean.TYPE.equals(types[i]) || Boolean.class.equals(types[i])) {
-                        Logger.info("  [+] handling parameter as type boolean");
-                        arguments[i] = Boolean.parseBoolean(stringValue);
-
-                    } else if (int[].class.equals(types[i]) || Integer[].class.equals(types[i])) {
-                        Logger.info("handling parameter as type int[]");
-                        String[] svec = splitArrayString(stringValue);
-                        int[] dvec = new int[svec.length];
-                        for (int vi = 0; vi < svec.length; vi++) {
-                            dvec[vi] = Integer.parseInt(svec[vi]);
-                        }
-                        arguments[i] = dvec;
-                        Logger.info("  [+] argument={}", Arrays.toString(dvec));
-
-                    } else if (float[].class.equals(types[i]) || Float[].class.equals(types[i])) {
-                        Logger.info("  [+] handling parameter as type float[]");
-                        String[] svec = splitArrayString(stringValue);
-                        float[] dvec = new float[svec.length];
-                        for (int vi = 0; vi < svec.length; vi++) {
-                            dvec[vi] = Float.parseFloat(svec[vi]);
-                        }
-                        arguments[i] = dvec;
-                        Logger.info("  [+] argument={}", Arrays.toString(dvec));
-
-                    } else if (double[].class.equals(types[i]) || Double[].class.equals(types[i])) {
-                        Logger.info("  [+] handling parameter as type double[]");
-                        String[] svec = splitArrayString(stringValue);
-                        double[] dvec = new double[svec.length];
-                        for (int vi = 0; vi < svec.length; vi++) {
-                            dvec[vi] = Double.parseDouble(svec[vi]);
-                        }
-                        arguments[i] = dvec;
-                        Logger.info("  [+] argument={}", Arrays.toString(dvec));
-
-                    } else if (String[].class.equals(types[i])) {
-                        Logger.info("  [+] handling parameter as type String[]");
-                        String[] svec = splitArrayString(stringValue);
-                        arguments[i] = svec;
-                        Logger.info("  [+] argument={}", Arrays.toString(svec));
-
-                    } else {
-                        Logger.info("  [+] handling parameter as type String");
-                        // String also if it is some other, will raise exception
-                        arguments[i] = stringValue;
-                    }
-
-                } catch (IllegalArgumentException e) {
-                    String msg = String.format("Argument failure with parameter '%s'", p.getName());
-                    Logger.warn(msg);
-                    ret.put("text", msg);
-                    ret.put("cmd_syntax", getMethodDeclarationStrings(cmd));
-                    return responseData(request, response, ret, false);
-                }
-            }
-
-            /* Invoke method */
-            try {
-                Logger.debug("Invoking method...");
-                // note: invoke may return null explicitly or because is void type
-                Object retobj = matchMethod.invoke(EventScriptingInterface.instance(), arguments);
-                if (retobj == null) {
-                    Logger.info("Method returned: '{}', return type is {}",
-                        retobj,
-                        matchReturnType);
-                } else {
-                    Logger.info("Method returned: '{}', isArray={}",
-                        retobj,
-                        retobj.getClass().isArray());
-                }
-                ret.put("value", retobj);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return responseData(request, response, ret, true);
-
-        } else {
-            /* No match: could not find matching method */
-            Logger.info("No suitable method found.");
-
-            String msg;
-            if (methodNameMatches) {
-                msg = String.format("Failed: command name '%s' found, "
-                    + "but arguments not compatible.See syntax in 'cmd_syntax'.", cmd);
-                ret.put("cmd_syntax", getMethodDeclarationStrings(cmd));
-            } else {
-                msg = String.format("Failed: command name '%s' not found. "
-                    + "See syntax in 'cmd_syntax'.", cmd);
-                ret.put("cmd_syntax", getMethodDeclarationStrings(""));
-            }
-            Logger.warn(msg);
-            ret.put("text", msg);
-            return responseData(request, response, ret, false);
-        }
-    }
-
-
-    /**
-     * Initialize the REST server.
-     *
-     * Sets the routes and then passes the call to the handler.
-     */
-    public static void initialize(Integer rest_port) {
-
-        /* Check for valid TCP port (otherwise considered as "disabled") */
-        port = rest_port;
-        printStartupInfo();
-        if (port < 0) {
-            System.out.println("Error: invalid port. REST API inactive.");
-            return;
-        }
-        if (rest_static_location == null) {
-            System.out.println("Error: rest-static.location not set. REST API inactive.");
-            return;
-        }
-
-        try {
-            Logger.warn("Starting REST API server on http://localhost:{}", port);
-            port(port);
-            Logger.info("Setting routes");
-
-            /* Static file location */
-            /* (add static HTML files with API use examples) */
-            staticFiles.externalLocation(rest_static_location);
-
-            /* Route mapping */
-            get("/api", (request, response) -> {
-                response.redirect("/api/help");
-                return response;
-            });
-
-            get("/api/:cmd", (request, response) -> {
-                return handleApiCall(request, response);
-            });
-
-            post("/api/:cmd", (request, response) -> {
-                return handleApiCall(request, response);
-            });
-
-            Logger.info("Startup finished.");
-
-        } catch (Exception e) {
-           Logger.error("Caught an exception during initialization:");
-           e.printStackTrace(System.err);
-        }
-    }
-
-    /**
-     * Activate.
-     * Set the "activated" flag for the server.
-     */
-    public static void activate() {
-        activated = true;
-    }
-
-    /**
-     * Stops the REST server gracefully.
-     */
-    public static void stop() {
-        try {
-            if (!shutdownTriggered) {
-                shutdownTriggered = true;
-                Logger.info("Stopping server gracefully...");
-                stop();
-                Logger.info("Server now stopped.");
-            }
-        } catch (Exception e) {
-            e.printStackTrace(System.err);
-        }
-
-    }
+	/* Class variables: */
+
+	/**
+	 * "Shutdown already triggered" flag. stop() can be called multiple times
+	 * (multiple events), but only processed once.
+	 */
+	private static boolean shutdownTriggered = false;
+
+	/**
+	 * Activated flag. Calling API methods generally requires the GUI to be fully
+	 * started and all objects initialized, indicated by the "activated" flag. This
+	 * flag is set true through the activate() method that needs to be called
+	 * externally once the GUI is ready.
+	 */
+	private static boolean activated = false;
+
+	/**
+	 * REST server port. TCP port the server is listening on. It is set on
+	 * initialization.
+	 */
+	private static Integer port = -1;
+
+	/**
+	 * REST server static files location. Defined by a system property.
+	 */
+	private static String rest_static_location = System.getProperty("rest-static.location");
+
+	/* Methods: */
+
+	/**
+	 * Prints startup warning and current log level of SimpleLogger.
+	 */
+	private static void printStartupInfo() {
+		String s = System.getProperty("org.slf4j.simpleLogger.defaultLogLevel");
+		System.out.println("Simple Logger defaultLogLevel = " + s);
+		System.out.println("*** Warning: REST API server may permit remote code execution! "
+				+ "Only use this functionality in a trusted environment! ***");
+	}
+
+	/**
+	 * Sets the HTTP response in JSON format. - Return values are returned under the
+	 * "value" key. - Additional keys may provide further data or information. - The
+	 * "text" key is encouraged for human-readable information.
+	 */
+	private static String responseData(spark.Request request, spark.Response response, Map<String, Object> ret,
+			boolean success) {
+
+		String responseString;
+
+		/* Content-Type */
+		response.type("application/json");
+
+		/* return value is null for void methods */
+		ret.putIfAbsent("value", null);
+
+		/* success key and HTTP status code */
+		ret.put("success", success);
+		if (success == true) {
+			response.status(200); // 200 OK
+			ret.putIfAbsent("text", "OK");
+		} else {
+			response.status(400); // 400 Bad Request
+			ret.putIfAbsent("text", "Failed");
+		}
+
+		/* header */
+		// response.header("FOO", "bar");
+
+		/* request body */
+		Gson gson = new GsonBuilder().serializeNulls().create();
+		responseString = gson.toJson(ret);
+		Logger.debug("HTTP response body: {}.", responseString);
+		return responseString;
+	}
+
+	/**
+	 * Log information on the request.
+	 */
+	private static void loggerRequestInfo(spark.Request request) {
+		Logger.debug("======== Handling API call via HTTP {}: ========", request.requestMethod());
+		Logger.debug("* Parameter extracted:");
+		Logger.debug("  command = ", request.params(":cmd"));
+		Logger.debug("* Request:");
+		Logger.debug("  client IP = {}", request.ip());
+		Logger.debug("  host = {}", request.host());
+		Logger.debug("  userAgent = {}", request.userAgent());
+		Logger.debug("  pathInfo = {}", request.pathInfo());
+		Logger.debug("  servletPath = {}", request.servletPath());
+		Logger.debug("  contextPath = {}", request.contextPath());
+		Logger.debug("  url = {}", request.url());
+		Logger.debug("  uri = {}", request.uri());
+		Logger.debug("  protocol = {}", request.protocol());
+		Logger.debug("* Body");
+		Logger.debug("  contentType() = '{}'", request.contentType());
+		Logger.debug("  params() = '{}'", request.params());
+		Logger.debug("  body contentLenght() = {}", request.contentLength());
+		// NOTE: when calling method body(), the body is consumed and queryParams()
+		// doesn't find
+		// the parameters anymore!
+		// Logger.debug("body() = '{}'", request.body());
+		Logger.debug("* Query parameters");
+		Logger.debug("  queryString() = '{}'", request.queryString());
+		Logger.debug("  queryParams = {}", request.queryParams());
+		for (String s : request.queryParams()) {
+			Logger.debug("    '{}' => '{}'", s, request.queryParams(s));
+		}
+	}
+
+	/**
+	 * Returns a declaration string for the given method.
+	 */
+	private static String methodDeclarationString(Method method) {
+		Parameter[] methodParams = method.getParameters();
+
+		String ret = method.getName();
+		for (int i = 0; i < methodParams.length; i++) {
+			Parameter p = methodParams[i];
+			ret += String.format("%s%s=(%s)", ((i == 0) ? "?" : "&"), p.getName(), p.getType().getSimpleName());
+		}
+		// \u27F6 is "⟶"
+		ret += String.format(" \u27F6 %s", method.getReturnType().getSimpleName());
+		return ret;
+	}
+
+	/**
+	 * Returns a list of all matching method declaration strings. To get a list of
+	 * all method declarations, use empty string for methodname.
+	 */
+	private static String[] getMethodDeclarationStrings(String methodname, Class<?> clazz) {
+		Class<?> cisi = clazz;
+		Method[] allMethods = cisi.getDeclaredMethods();
+
+		List<String> matchMethodsDeclarations = new ArrayList<String>();
+		for (int i = 0; i < allMethods.length; i++) {
+			if (methodname.length() == 0 || methodname.equals(allMethods[i].getName())) {
+				String declaration = methodDeclarationString(allMethods[i]);
+				matchMethodsDeclarations.add(declaration);
+			}
+		}
+		Collections.sort(matchMethodsDeclarations);
+		String[] ret = matchMethodsDeclarations.toArray(new String[0]);
+		return ret;
+	}
+
+	/**
+	 * Converts an array-representing string and returns it as array of strings.
+	 * This defines how array need to be passed as HTTP request parameters:
+	 * comma-separated and enclosed in square brackets, e.g. "[var1,var2,var3]"
+	 */
+	private static String[] splitArrayString(String arrayString) {
+		int len = arrayString.length();
+		if (len >= 2 && "[".equals(arrayString.substring(0, 1)) && "]".equals(arrayString.substring(len - 1, len))) {
+			return arrayString.substring(1, len - 1).split(",");
+		} else {
+			// probably an array should never be empty
+			Logger.warn("splitArrayString: '{}' is parsed as empty array!", arrayString);
+			throw new IllegalArgumentException();
+			// emtpy array
+			// return new String[0];
+		}
+	}
+
+	/**
+	 * Handles the API call.
+	 *
+	 * This is implemented via Java Reflections and gives access to all methods from
+	 * IScriptingInterface
+	 * (core/src/gaia/cu9/ari/gaiaorbit/script/IScriptingInterface.java).
+	 * Additionally, it provides "special-purpose commands", see commented source
+	 * block.
+	 *
+	 * Since HTTP request variables are all strings and do provide neither argument
+	 * indices nor argument types, there cannot be a direct translation to Java
+	 * without adding additional information (which would make the HTTP request
+	 * harder to read and write. If this ever becomes an issue, we could get
+	 * optionally add a type to the parameters, e.g. "distance_float=0.3f" and split
+	 * by the underscore.
+	 */
+	private static String handleApiCall(spark.Request request, spark.Response response) {
+
+		// Logging basic request information
+		loggerRequestInfo(request);
+
+		// map containing information for http return response
+		Map<String, Object> ret = new HashMap<String, Object>();
+
+		// Only process API calls if already activated (GUI launched).
+		if (!activated) {
+			String msg = "GUI not yet initialized. Please wait...";
+			Logger.warn(msg);
+			ret.put("text", msg);
+			return responseData(request, response, ret, false);
+		}
+
+		// Extract command from http request
+		String cmd = request.params(":cmd");
+
+		// params
+		Set<String> queryParams = request.queryParams();
+
+		// get set of permitted API commands
+		Class<IScriptingInterface> cisi = IScriptingInterface.class;
+		Method[] allMethods = cisi.getDeclaredMethods();
+
+		/* Special-treatment commands */
+		if ("help".equals(cmd)) {
+			Logger.debug("Help command received");
+			ret.put("text", "Help: see 'cmd_syntax' for command reference. " + "Vectors are comma-separated.");
+			ret.put("cmd_syntax", getMethodDeclarationStrings("", IScriptingInterface.class));
+			return responseData(request, response, ret, true);
+		} else if ("debugCall".equals(cmd)) {
+			Logger.debug("debugCall received. What to do now?");
+			ret.put("text", "debugCall data");
+			return responseData(request, response, ret, true);
+		}
+
+		/* Method matching (name and parameters) */
+		Logger.debug("Method matching...");
+		int matchIndex = -1;
+		boolean methodNameMatches = false;
+		for (int i = 0; i < allMethods.length; i++) {
+			Logger.debug("match check cmd={} with method={}...", cmd, allMethods[i].getName());
+
+			// name matches, but parameters may be different
+			if (allMethods[i].getName().equals(cmd)) {
+				Logger.debug("  [+] name matches");
+				methodNameMatches = true;
+				Parameter[] methodParams = allMethods[i].getParameters();
+
+				// check if parameters present (and optionally type fits?)
+				boolean allParamsFound = true;
+				for (Parameter p : methodParams) {
+					if (!queryParams.contains(p.getName())) {
+						allParamsFound = false;
+						Logger.debug("  [+] method parameters not present");
+						break; // no need to continue checking
+					}
+					// could test for parameter type here...
+				}
+
+				if (allParamsFound) {
+					Logger.debug("  [+] method parameters ok");
+					matchIndex = i;
+					break; // no need to continue checking: the the first match
+				}
+			}
+		}
+
+		/* Handle matching result */
+		if (matchIndex >= 0) {
+			/* Found suitable method */
+			Logger.debug("Suitable method found: {}", methodDeclarationString(allMethods[matchIndex]));
+
+			Method matchMethod = allMethods[matchIndex];
+			Parameter[] matchParameters = matchMethod.getParameters();
+			Class<?> matchReturnType = matchMethod.getReturnType();
+
+			Object[] arguments = new Object[matchParameters.length];
+			Class<?>[] types = new Class[matchParameters.length];
+
+			/* Prepare method arguments */
+			Logger.debug("Preparing method arguments...");
+			for (int i = 0; i < matchParameters.length; i++) {
+				Parameter p = matchParameters[i];
+				String stringValue = request.queryParams(p.getName());
+				Logger.debug("  [+] handling parameter '{}'", p.getName());
+
+				// Set type
+				types[i] = p.getType();
+				Logger.debug("  [+] parameter getType = '{}', isPrimitive = {}", p.getType().getSimpleName(),
+						p.getType().isPrimitive());
+
+				/*
+				 * Set argument value, handling depends on type: We test against both primitives
+				 * (.TYPE) and objects (.class). You might need to add more in the future if you
+				 * trigger exceptions here...
+				 */
+				try {
+					if (Integer.TYPE.equals(types[i]) || Integer.class.equals(types[i])) {
+						Logger.debug("  [+] handling parameter as type int");
+						arguments[i] = Integer.parseInt(stringValue);
+
+					} else if (Long.TYPE.equals(types[i]) || Long.class.equals(types[i])) {
+						Logger.debug("  [+] handling parameter as type long");
+						arguments[i] = Long.parseLong(stringValue);
+
+					} else if (Float.TYPE.equals(types[i]) || Float.class.equals(types[i])) {
+						Logger.debug("  [+] handling parameter as type float");
+						arguments[i] = Float.parseFloat(stringValue);
+
+					} else if (Double.TYPE.equals(types[i]) || Double.class.equals(types[i])) {
+						Logger.debug("  [+] handling parameter as type double");
+						arguments[i] = Double.parseDouble(stringValue);
+
+					} else if (Boolean.TYPE.equals(types[i]) || Boolean.class.equals(types[i])) {
+						Logger.debug("  [+] handling parameter as type boolean");
+						arguments[i] = Boolean.parseBoolean(stringValue);
+
+					} else if (int[].class.equals(types[i]) || Integer[].class.equals(types[i])) {
+						Logger.debug("handling parameter as type int[]");
+						String[] svec = splitArrayString(stringValue);
+						int[] dvec = new int[svec.length];
+						for (int vi = 0; vi < svec.length; vi++) {
+							dvec[vi] = Integer.parseInt(svec[vi]);
+						}
+						arguments[i] = dvec;
+						Logger.debug("  [+] argument={}", Arrays.toString(dvec));
+
+					} else if (float[].class.equals(types[i]) || Float[].class.equals(types[i])) {
+						Logger.debug("  [+] handling parameter as type float[]");
+						String[] svec = splitArrayString(stringValue);
+						float[] dvec = new float[svec.length];
+						for (int vi = 0; vi < svec.length; vi++) {
+							dvec[vi] = Float.parseFloat(svec[vi]);
+						}
+						arguments[i] = dvec;
+						Logger.debug("  [+] argument={}", Arrays.toString(dvec));
+
+					} else if (double[].class.equals(types[i]) || Double[].class.equals(types[i])) {
+						Logger.debug("  [+] handling parameter as type double[]");
+						String[] svec = splitArrayString(stringValue);
+						double[] dvec = new double[svec.length];
+						for (int vi = 0; vi < svec.length; vi++) {
+							dvec[vi] = Double.parseDouble(svec[vi]);
+						}
+						arguments[i] = dvec;
+						Logger.debug("  [+] argument={}", Arrays.toString(dvec));
+
+					} else if (String[].class.equals(types[i])) {
+						Logger.debug("  [+] handling parameter as type String[]");
+						String[] svec = splitArrayString(stringValue);
+						arguments[i] = svec;
+						Logger.debug("  [+] argument={}", Arrays.toString(svec));
+
+					} else {
+						Logger.debug("  [+] handling parameter as type String");
+						// String also if it is some other, will raise exception
+						arguments[i] = stringValue;
+					}
+
+				} catch (IllegalArgumentException e) {
+					String msg = String.format("Argument failure with parameter '%s'", p.getName());
+					Logger.warn(msg);
+					ret.put("text", msg);
+					ret.put("cmd_syntax", getMethodDeclarationStrings(cmd, IScriptingInterface.class));
+					return responseData(request, response, ret, false);
+				}
+			}
+
+			/* Invoke method */
+			try {
+				Logger.debug("Invoking method...");
+				// note: invoke may return null explicitly or because is void type
+				Object retobj = matchMethod.invoke(EventScriptingInterface.instance(), arguments);
+				if (retobj == null) {
+					Logger.debug("Method returned: '{}', return type is {}", retobj, matchReturnType);
+				} else {
+					Logger.debug("Method returned: '{}', isArray={}", retobj, retobj.getClass().isArray());
+				}
+				ret.put("value", retobj);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			return responseData(request, response, ret, true);
+
+		} else {
+			/* No match: could not find matching method */
+			Logger.debug("No suitable method found.");
+
+			String msg;
+			if (methodNameMatches) {
+				msg = String.format("Failed: command name '%s' found, "
+						+ "but arguments not compatible.See syntax in 'cmd_syntax'.", cmd);
+				ret.put("cmd_syntax", getMethodDeclarationStrings(cmd, IScriptingInterface.class));
+			} else {
+				msg = String.format("Failed: command name '%s' not found. " + "See syntax in 'cmd_syntax'.", cmd);
+				ret.put("cmd_syntax", getMethodDeclarationStrings("", IScriptingInterface.class));
+			}
+			Logger.warn(msg);
+			ret.put("text", msg);
+			return responseData(request, response, ret, false);
+		}
+	}
+
+
+	/**
+	 * Initialize the REST server.
+	 *
+	 * Sets the routes and then passes the call to the handler.
+	 * 
+	 * @param rest_port The port to use for the REST server
+	 */
+	public static void initialize(Integer rest_port) {
+
+		/* Check for valid TCP port (otherwise considered as "disabled") */
+		port = rest_port;
+		printStartupInfo();
+		if (port < 0) {
+			System.out.println("Error: invalid port. REST API inactive.");
+			return;
+		}
+		if (rest_static_location == null) {
+			System.out.println("Error: rest-static.location not set. REST API inactive.");
+			return;
+		}
+
+		try {
+			Logger.warn("Starting REST API server on http://localhost:{}", port);
+			port(port);
+			Logger.info("Setting routes");
+
+			/* Static file location */
+			/* (add static HTML files with API use examples) */
+			staticFiles.externalLocation(rest_static_location);
+
+			/* Scripting API mapping */
+			get("/api", (request, response) -> {
+				response.redirect("/api/help");
+				return response;
+			});
+
+			get("/api/:cmd", (request, response) -> {
+				return handleApiCall(request, response);
+			});
+
+			post("/api/:cmd", (request, response) -> {
+				return handleApiCall(request, response);
+			});
+
+			Logger.info("Startup finished.");
+
+		} catch (Exception e) {
+			Logger.error("Caught an exception during initialization:");
+			e.printStackTrace(System.err);
+		}
+	}
+
+	/**
+	 * Activate. Set the "activated" flag for the server.
+	 */
+	public static void activate() {
+		activated = true;
+	}
+
+	/**
+	 * Stops the REST server gracefully.
+	 */
+	public static void stop() {
+		try {
+			if (!shutdownTriggered) {
+				shutdownTriggered = true;
+				Logger.info("Stopping server gracefully...");
+				stop();
+				Logger.info("Server now stopped.");
+			}
+		} catch (Exception e) {
+			e.printStackTrace(System.err);
+		}
+
+	}
 
 }

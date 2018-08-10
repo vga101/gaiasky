@@ -530,6 +530,25 @@ public interface IScriptingInterface {
      */
     public void setFov(float newFov);
 
+  
+    /**
+     * Sets the camera state (position, direction and up vector).
+     * @param pos The position of the camera in internal units, not Km
+     * @param dir The direction of the camera
+     * @param up The up vector of the camera
+     */
+    public void setCameraState(double[] pos, double[] dir, double[] up);
+    
+    /**
+     * Sets the camera state (position, direction and up vector) plus the current time.
+     * @param pos The position of the camera in internal units, not Km
+     * @param dir The direction of the camera
+     * @param up The up vector of the camera
+     * @param time The new time of the camera as the
+     *            number of milliseconds since the epoch (Jan 1, 1970)
+     */
+    public void setCameraStateAndTime(double[] pos, double[] dir, double[] up, long time);
+    
     /**
      * Sets the component described by the given name visible or invisible.
      * 
