@@ -1,5 +1,7 @@
 package gaia.cu9.ari.gaiaorbit.util;
 
+import org.python.bouncycastle.util.Arrays;
+
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 
@@ -50,28 +52,30 @@ public class Logger {
 
 	public static void warn(Object... messages) {
 		if (inLevel(LoggerLevel.WARN))
-			EventManager.instance.post(Events.POST_NOTIFICATION, messages);
-	}
-
-	public static void warnparse(String msg, Object... args) {
-		if (inLevel(LoggerLevel.WARN)) {
-			msg = parse(msg, args);
-			EventManager.instance.post(Events.POST_NOTIFICATION, new Object[] { msg });
-		}
-
+			log(messages);
 	}
 
 	public static void info(Object... messages) {
-		if (inLevel(LoggerLevel.INFO))
-			EventManager.instance.post(Events.POST_NOTIFICATION, messages);
-	}
-
-	public static void infoparse(String msg, Object... args) {
-		if (inLevel(LoggerLevel.INFO)) {
-			msg = parse(msg, args);
-			EventManager.instance.post(Events.POST_NOTIFICATION, new Object[] { msg });
+		if (inLevel(LoggerLevel.INFO)){
+			log(messages);
 		}
-
+	}
+	
+	private static void log(Object... messages) {
+			if(messages.length > 1 && messages[0] != null && messages[0] instanceof String && ((String)messages[0]).contains("{}")){
+				String msg = parse((String)messages[0], removeFirst(messages));
+				EventManager.instance.post(Events.POST_NOTIFICATION, new Object[] {msg});
+			}else {
+				EventManager.instance.post(Events.POST_NOTIFICATION, messages);
+			}
+			
+	}
+	
+	private static Object[] removeFirst(Object[] arr) {
+		Object[] res = new Object[arr.length-1];
+		for(int i =0; i < arr.length-1; i++)
+			res[i] = arr[i+1];
+		return res;
 	}
 
 	private static String parse(String msg, Object... args) {
