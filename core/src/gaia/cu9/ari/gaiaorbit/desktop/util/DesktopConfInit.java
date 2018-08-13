@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.LinkedList;
 import java.util.Locale;
 import java.util.Properties;
 
@@ -215,10 +216,19 @@ public class DesktopConfInit extends ConfInit {
 		boolean NET_MASTER = Boolean.parseBoolean(p.getProperty("program.net.master", "false"));
 		boolean NET_SLAVE = Boolean.parseBoolean(p.getProperty("program.net.slave", "false"));
 
+		LinkedList<String> NET_MASTER_SLAVES = null;
+		if (NET_MASTER) {
+			NET_MASTER_SLAVES = new LinkedList<String>();
+			String value;
+			for (int i = 0; (value = p.getProperty("program.net.master.slaves." + i)) != null; i++) {
+				NET_MASTER_SLAVES.add(value);
+			}
+		}
+
 		prc.initialize(DISPLAY_TUTORIAL, TUTORIAL_POINTER_SCRIPT_LOCATION, TUTORIAL_SCRIPT_LOCATION, SHOW_DEBUG_INFO,
 				LAST_CHECKED, LAST_VERSION, VERSION_CHECK_URL, UI_THEME, SCRIPT_LOCATION, REST_PORT, LOCALE,
 				STEREOSCOPIC_MODE, STEREO_PROFILE, CUBEMAPE360_MODE, ANALYTICS_ENABLED, DISPLAY_HUD,
-				DISPLAY_POINTER_COORDS, DISPLAY_DATASET_DIALOG, NET_MASTER, NET_SLAVE);
+				DISPLAY_POINTER_COORDS, DISPLAY_DATASET_DIALOG, NET_MASTER, NET_SLAVE, NET_MASTER_SLAVES);
 
 		/** SCENE CONF **/
 		int GRAPHICS_QUALITY = Integer.parseInt(p.getProperty("scene.graphics.quality"));
@@ -459,6 +469,12 @@ public class DesktopConfInit extends ConfInit {
 		p.setProperty("program.cubemap360", Boolean.toString(GlobalConf.program.CUBEMAP360_MODE));
 		p.setProperty("program.dataset.dialog", Boolean.toString(GlobalConf.program.DISPLAY_DATASET_DIALOG));
 		p.setProperty("program.net.master", Boolean.toString(GlobalConf.program.NET_MASTER));
+		int i = 0;
+		if (GlobalConf.program.NET_MASTER_SLAVES != null)
+			for (String slave : GlobalConf.program.NET_MASTER_SLAVES) {
+				p.setProperty("program.net.master.slaves." + i, slave);
+				i++;
+			}
 		p.setProperty("program.net.slave", Boolean.toString(GlobalConf.program.NET_SLAVE));
 
 		/** SCENE **/

@@ -2,6 +2,7 @@ package gaia.cu9.ari.gaiaorbit.util;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.badlogic.gdx.Gdx;
@@ -11,7 +12,7 @@ import com.badlogic.gdx.Net.HttpResponse;
 import com.badlogic.gdx.Net.HttpResponseListener;
 import com.badlogic.gdx.net.HttpParametersUtils;
 import com.badlogic.gdx.net.HttpStatus;
-import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.TimeUtils;
 
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
@@ -29,8 +30,10 @@ import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
  *
  */
 public class MasterManager implements IObserver {
-	private static final String URL = "http://localhost:8080/api/";
-
+	/** Will attempt reconnection to offline slaves with this frequency **/
+	private static final long RECONNECT_TIME_MS = 10000;
+	
+	// Singleton instance
 	public static MasterManager instance;
 
 	public static void initialize() {
@@ -39,7 +42,18 @@ public class MasterManager implements IObserver {
 	}
 
 	// Slave list
-	private Array<String> slaves;
+	private List<String> slaves;
+	/**
+	 * Vector with slave states
+	 * <ul>
+	 * <li>0 - ok</li>
+	 * <li>-1 - error</li>
+	 * <li>1 - retrying</li>
+	 * </ul>
+	 */
+	private byte[] slaveStates;
+	/** Last ping times for each slave **/
+	private long[] slavePingTimes;
 
 	// Parameters maps
 	private Map<String, String> camStateTimeParams, camStateParams, params;
@@ -48,15 +62,21 @@ public class MasterManager implements IObserver {
 	private HttpRequest request, evtrequest;
 
 	// Response object
-	private MasterResponseListener responseListener;
+	private MasterResponseListener[] responseListeners;
 
-	public MasterManager() {
+	private MasterManager() {
 		super();
 
 		// Slave objects
-		slaves = new Array<String>();
-		slaves.add("http://localhost:8080/api/");
-		slaves.add("http://localhost:8081/api/");
+		slaves = GlobalConf.program.NET_MASTER_SLAVES;
+		if (slaves != null && slaves.size() > 0) {
+			slaveStates = new byte[slaves.size()];
+			slavePingTimes = new long[slaves.size()];
+			for (int i = 0; i < slaveStates.length; i++) {
+				slaveStates[i] = 0;
+				slavePingTimes[i] = 0l;
+			}
+		}
 
 		// Create parameter maps
 		camStateTimeParams = new HashMap<String, String>();
@@ -66,7 +86,11 @@ public class MasterManager implements IObserver {
 		// Create request and response objects
 		request = new HttpRequest(HttpMethods.POST);
 		evtrequest = new HttpRequest(HttpMethods.POST);
-		responseListener = new MasterResponseListener();
+		if (slaves != null && slaves.size() > 0) {
+			responseListeners = new MasterResponseListener[slaves.size()];
+			for (int i = 0; i < slaveStates.length; i++)
+				responseListeners[i] = new MasterResponseListener(i);
+		}
 
 		// Subscribe to events that need to be broadcasted
 		EventManager.instance.subscribe(this, Events.FOV_CHANGED_CMD, Events.TOGGLE_VISIBILITY_CMD,
@@ -88,29 +112,30 @@ public class MasterManager implements IObserver {
 		camStateTimeParams.put("arg3", Long.toString(time.getTime().toEpochMilli()));
 		String paramString = HttpParametersUtils.convertHttpParameters(camStateTimeParams);
 
+		boolean slaveOffline = false;
+		int i = 0;
 		for (String slave : slaves) {
-			request.setUrl(slave + "setCameraStateAndTime");
-			request.setContent(paramString);
-			Gdx.net.sendHttpRequest(request, new HttpResponseListener() {
-				@Override
-				public void handleHttpResponse(HttpResponse httpResponse) {
-					if (httpResponse.getStatus().getStatusCode() == HttpStatus.SC_OK) {
-					} else {
-						Logger.error("Ko");
-					}
-				}
-
-				@Override
-				public void failed(Throwable t) {
-					Logger.error(t);
-				}
-
-				@Override
-				public void cancelled() {
-					Logger.info("Cancelled");
-				}
-			});
+			if (slaveStates[i] == 0) {
+				request.setUrl(slave + "setCameraStateAndTime");
+				request.setContent(paramString);
+				Gdx.net.sendHttpRequest(request, responseListeners[i]);
+				i++;
+			}else {
+				slaveOffline = true;
+			}
 		}
+		
+		// Retry connections after RECONNECT_TIME_MS milliseconds
+		if(slaveOffline) {
+			long now = System.currentTimeMillis();
+			for(i =0; i < slaveStates.length; i++) {
+				if(slaveStates[i] < 0 && now - slavePingTimes[i] > RECONNECT_TIME_MS) {
+					slaveStates[i] = 0;
+				}
+			}
+			
+		}
+		
 	}
 
 	/**
@@ -126,10 +151,13 @@ public class MasterManager implements IObserver {
 		camStateParams.put("arg2", Arrays.toString(up.values()));
 		String paramString = HttpParametersUtils.convertHttpParameters(camStateParams);
 
+		int i = 0;
 		for (String slave : slaves) {
-			request.setUrl(slave + "setCameraState");
-			request.setContent(paramString);
-			Gdx.net.sendHttpRequest(request, responseListener);
+			if (slaveStates[i] == 0) {
+				request.setUrl(slave + "setCameraState");
+				request.setContent(paramString);
+				Gdx.net.sendHttpRequest(request, responseListeners[i++]);
+			}
 		}
 	}
 
@@ -140,10 +168,13 @@ public class MasterManager implements IObserver {
 		case FOV_CHANGED_CMD:
 			params.put("arg0", Float.toString((float) data[0]));
 			String paramString = HttpParametersUtils.convertHttpParameters(params);
-			for(String slave : slaves) {
-			evtrequest.setUrl(slave + "setFov");
-			evtrequest.setContent(paramString);
-			Gdx.net.sendHttpRequest(evtrequest, responseListener);
+			int i = 0;
+			for (String slave : slaves) {
+				if (slaveStates[i] == 0) {
+					evtrequest.setUrl(slave + "setFov");
+					evtrequest.setContent(paramString);
+					Gdx.net.sendHttpRequest(evtrequest, responseListeners[i++]);
+				}
 			}
 			break;
 		case TOGGLE_VISIBILITY_CMD:
@@ -159,11 +190,13 @@ public class MasterManager implements IObserver {
 			params.put("arg0", key);
 			params.put("arg1", state.toString());
 			paramString = HttpParametersUtils.convertHttpParameters(params);
-			
-			for(String slave : slaves) {
-			evtrequest.setUrl(slave + "setVisibility");
-			evtrequest.setContent(paramString);
-			Gdx.net.sendHttpRequest(evtrequest, responseListener);
+			i = 0;
+			for (String slave : slaves) {
+				if (slaveStates[i] == 0) {
+					evtrequest.setUrl(slave + "setVisibility");
+					evtrequest.setContent(paramString);
+					Gdx.net.sendHttpRequest(evtrequest, responseListeners[i++]);
+				}
 			}
 			break;
 		case STAR_BRIGHTNESS_CMD:
@@ -171,12 +204,13 @@ public class MasterManager implements IObserver {
 					Constants.MIN_SLIDER, Constants.MAX_SLIDER);
 			params.put("arg0", Float.toString(brightness));
 			paramString = HttpParametersUtils.convertHttpParameters(params);
-			
-			
-			for(String slave : slaves) {
-			evtrequest.setUrl(slave + "setStarBrightness");
-			evtrequest.setContent(paramString);
-			Gdx.net.sendHttpRequest(evtrequest, responseListener);
+			i = 0;
+			for (String slave : slaves) {
+				if (slaveStates[i] == 0) {
+					evtrequest.setUrl(slave + "setStarBrightness");
+					evtrequest.setContent(paramString);
+					Gdx.net.sendHttpRequest(evtrequest, responseListeners[i++]);
+				}
 			}
 			break;
 		case STAR_POINT_SIZE_CMD:
@@ -184,12 +218,13 @@ public class MasterManager implements IObserver {
 					Constants.MIN_SLIDER, Constants.MAX_SLIDER);
 			params.put("arg0", Float.toString(size));
 			paramString = HttpParametersUtils.convertHttpParameters(params);
-			
-			
-			for(String slave : slaves) {
-			evtrequest.setUrl(slave + "setStarSize");
-			evtrequest.setContent(paramString);
-			Gdx.net.sendHttpRequest(evtrequest, responseListener);
+			i = 0;
+			for (String slave : slaves) {
+				if (slaveStates[i] == 0) {
+					evtrequest.setUrl(slave + "setStarSize");
+					evtrequest.setContent(paramString);
+					Gdx.net.sendHttpRequest(evtrequest, responseListeners[i++]);
+				}
 			}
 			break;
 		case STAR_MIN_OPACITY_CMD:
@@ -197,11 +232,13 @@ public class MasterManager implements IObserver {
 					Constants.MAX_STAR_MIN_OPACITY, Constants.MIN_SLIDER, Constants.MAX_SLIDER);
 			params.put("arg0", Float.toString(opacity));
 			paramString = HttpParametersUtils.convertHttpParameters(params);
-			
-			for(String slave : slaves) {
-			evtrequest.setUrl(slave + "setStarMinOpacity");
-			evtrequest.setContent(paramString);
-			Gdx.net.sendHttpRequest(evtrequest, responseListener);
+			i = 0;
+			for (String slave : slaves) {
+				if (slaveStates[i] == 0) {
+					evtrequest.setUrl(slave + "setStarMinOpacity");
+					evtrequest.setContent(paramString);
+					Gdx.net.sendHttpRequest(evtrequest, responseListeners[i++]);
+				}
 			}
 			break;
 		default:
@@ -210,22 +247,38 @@ public class MasterManager implements IObserver {
 	}
 
 	private class MasterResponseListener implements HttpResponseListener {
+		private int index;
+
+		public MasterResponseListener(int index) {
+			super();
+			this.index = index;
+		}
+
 		@Override
 		public void handleHttpResponse(HttpResponse httpResponse) {
 			if (httpResponse.getStatus().getStatusCode() == HttpStatus.SC_OK) {
 			} else {
-				Logger.error("Ko");
+				Logger.error("HTTP status not ok for slave " + index);
+				markSlaveOffline(index);
 			}
 		}
 
 		@Override
 		public void failed(Throwable t) {
 			Logger.error(t);
+			markSlaveOffline(index);
+			Logger.error("Connection failed for slave " + index + " (" + slaves.get(index) + ")");
 		}
 
 		@Override
 		public void cancelled() {
-			Logger.info("Cancelled");
+			markSlaveOffline(index);
+			Logger.info("Cancelled request for slave " + 0);
 		}
+	}
+	
+	private void markSlaveOffline(int index) {
+		slaveStates[index] = -1;
+		slavePingTimes[index] = System.currentTimeMillis();
 	}
 }
