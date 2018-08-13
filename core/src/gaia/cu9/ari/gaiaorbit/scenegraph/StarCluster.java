@@ -164,15 +164,15 @@ public class StarCluster extends AbstractPositionEntity implements IFocus, IProp
     @Override
     public void updateLocal(ITimeFrameProvider time, ICamera camera) {
         // Update pos, local transform
-        this.transform.translate(pos);
+        this.transform.add(pos);
         ySinceEpoch = AstroUtils.getMsSince(time.getTime(), AstroUtils.JD_J2015_5) * Constants.MS_TO_Y;
         Vector3d pmv = aux3d1.get().set(pm).scl(ySinceEpoch);
-        this.transform.position.add(pmv);
+        this.transform.add(pmv);
 
-        this.localTransform.idt().translate(this.transform.position.put(aux3f1.get())).scl(this.size);
+        this.localTransform.idt().translate(this.transform.put(aux3f1.get())).scl(this.size);
 
         Vector3d aux = aux3d1.get();
-        this.distToCamera = (float) transform.getTranslation(aux).len();
+        this.distToCamera = (float) aux.set(transform).len();
         this.viewAngle = (float) FastMath.atan(size / distToCamera);
         this.viewAngleApparent = this.viewAngle / camera.getFovFactor();
         if (!copy) {
@@ -241,7 +241,7 @@ public class StarCluster extends AbstractPositionEntity implements IFocus, IProp
         float fa = 1 - fadeAlpha;
 
         Vector3 aux = aux3f1.get();
-        shader.setUniformf("u_pos", transform.getTranslationf(aux));
+        shader.setUniformf("u_pos", transform.put(aux));
         shader.setUniformf("u_size", size);
         shader.setUniformf("u_color", col[0] * fa, col[1] * fa, col[2] * fa, col[3] * alpha * opacity * 8f);
         // Sprite.render
@@ -291,7 +291,7 @@ public class StarCluster extends AbstractPositionEntity implements IFocus, IProp
 
     @Override
     public void textPosition(ICamera cam, Vector3d out) {
-        transform.getTranslation(out);
+        out.set(transform);
         double len = out.len();
         out.clamp(0, len - getRadius()).scl(0.9f);
 

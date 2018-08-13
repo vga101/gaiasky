@@ -113,7 +113,7 @@ public abstract class ModelBody extends CelestialBody {
         super.updateLocal(time, camera);
         // Update light with global position
         if (mc != null) {
-            mc.dlight.direction.set(transform.getTranslationf());
+            transform.put(mc.dlight.direction);
             IStarFocus sf = camera.getClosestStar();
             if (sf != null) {
                 float[] col = sf.getClosestCol();
@@ -215,7 +215,7 @@ public abstract class ModelBody extends CelestialBody {
         float size = getFuzzyRenderSize(camera);
 
         Vector3 aux = aux3f1.get();
-        shader.setUniformf("u_pos", transform.getTranslationf(aux));
+        shader.setUniformf("u_pos", transform.put(aux));
         shader.setUniformf("u_size", size);
 
         shader.setUniformf("u_color", cc[0], cc[1], cc[2], alpha * (1 - fadeOpacity));
@@ -392,7 +392,7 @@ public abstract class ModelBody extends CelestialBody {
                 Vector3d aux3d = aux3d3.get();
 
                 // aux1d contains the position of the body in the camera ref sys
-                aux1d.set(transform.position);
+                aux1d.set(transform);
                 auxf.set(aux1d.valuesf());
 
                 if (camera.direction.dot(aux1d) > 0) {

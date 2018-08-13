@@ -92,7 +92,7 @@ public class FadeNode extends AbstractPositionEntity {
         }
     }
 
-    public void update(ITimeFrameProvider time, final Transform parentTransform, ICamera camera, float opacity) {
+    public void update(ITimeFrameProvider time, final Vector3d parentTransform, ICamera camera, float opacity) {
         this.opacity = opacity * this.opacity;
         transform.set(parentTransform);
         Vector3d aux = aux3d1.get();

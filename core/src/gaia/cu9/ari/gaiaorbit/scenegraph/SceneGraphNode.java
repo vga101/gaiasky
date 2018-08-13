@@ -174,7 +174,7 @@ public class SceneGraphNode implements IStarContainer, IPosition {
      * Transform object. Contains the transformations that will be applied to
      * the children.
      */
-    public Transform transform;
+    public Vector3d transform;
 
     /**
      * Local transform matrix. Contains the transform matrix and the
@@ -233,8 +233,7 @@ public class SceneGraphNode implements IStarContainer, IPosition {
 
     public SceneGraphNode() {
         // Identity
-        this.transform = new Transform();
-        this.transform.position = new Vector3d();
+        this.transform = new Vector3d();
     }
 
     public SceneGraphNode(int id) {
@@ -465,11 +464,11 @@ public class SceneGraphNode implements IStarContainer, IPosition {
         return null;
     }
 
-    public void update(ITimeFrameProvider time, final Transform parentTransform, ICamera camera) {
+    public void update(ITimeFrameProvider time, final Vector3d parentTransform, ICamera camera) {
         update(time, parentTransform, camera, 1f);
     }
 
-    public void update(ITimeFrameProvider time, final Transform parentTransform, ICamera camera, float opacity) {
+    public void update(ITimeFrameProvider time, final Vector3d parentTransform, ICamera camera, float opacity) {
         this.opacity = opacity;
         transform.set(parentTransform);
 

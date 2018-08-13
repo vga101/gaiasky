@@ -156,7 +156,7 @@ public abstract class AbstractPositionEntity extends SceneGraphNode {
             AbstractPositionEntity fc = (AbstractPositionEntity) this;
             AbstractPositionEntity fccopy = fc.getLineCopy();
             SceneGraphNode root = fccopy.getRoot();
-            root.transform.position.set(camera.getInversePos());
+            root.transform.set(camera.getInversePos());
             root.update(time, root.transform, camera);
 
             fccopy.getAbsolutePosition(aux);
@@ -226,10 +226,10 @@ public abstract class AbstractPositionEntity extends SceneGraphNode {
     public void updateLocal(ITimeFrameProvider time, ICamera camera) {
         updateLocalValues(time, camera);
 
-        this.transform.translate(pos);
+        this.transform.add(pos);
 
         Vector3d aux = aux3d1.get();
-        this.distToCamera = (float) transform.getTranslation(aux).len();
+        this.distToCamera = (float) aux.set(transform).len();
         this.viewAngle = (float) FastMath.atan(size / distToCamera);
         this.viewAngleApparent = this.viewAngle;
         if (!copy) {

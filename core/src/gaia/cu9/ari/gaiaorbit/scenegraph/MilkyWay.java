@@ -151,7 +151,7 @@ public class MilkyWay extends AbstractPositionEntity implements I3DTextRenderabl
 
     }
 
-    public void update(ITimeFrameProvider time, final Transform parentTransform, ICamera camera, float opacity) {
+    public void update(ITimeFrameProvider time, final Vector3d parentTransform, ICamera camera, float opacity) {
         this.opacity = opacity * this.opacity;
         transform.set(parentTransform);
         this.currentDistance = camera.getDistance() * camera.getFovFactor();
@@ -169,7 +169,7 @@ public class MilkyWay extends AbstractPositionEntity implements I3DTextRenderabl
     }
 
     @Override
-    public void update(ITimeFrameProvider time, Transform parentTransform, ICamera camera) {
+    public void update(ITimeFrameProvider time, Vector3d parentTransform, ICamera camera) {
         update(time, parentTransform, camera, 1f);
     }
 

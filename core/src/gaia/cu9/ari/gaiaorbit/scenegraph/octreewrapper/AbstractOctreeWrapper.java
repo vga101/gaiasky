@@ -17,12 +17,12 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.AbstractPositionEntity;
 import gaia.cu9.ari.gaiaorbit.scenegraph.FadeNode;
 import gaia.cu9.ari.gaiaorbit.scenegraph.IFocus;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
-import gaia.cu9.ari.gaiaorbit.scenegraph.Transform;
 import gaia.cu9.ari.gaiaorbit.scenegraph.camera.ICamera;
 import gaia.cu9.ari.gaiaorbit.util.ComponentTypes;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.MyPools;
+import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
 
@@ -106,11 +106,11 @@ public abstract class AbstractOctreeWrapper extends FadeNode implements Iterable
         parenthood.remove(child);
     }
 
-    public void update(ITimeFrameProvider time, final Transform parentTransform, ICamera camera) {
+    public void update(ITimeFrameProvider time, final Vector3d parentTransform, ICamera camera) {
         update(time, parentTransform, camera, 1f);
     }
 
-    public void update(ITimeFrameProvider time, final Transform parentTransform, ICamera camera, float opacity) {
+    public void update(ITimeFrameProvider time, final Vector3d parentTransform, ICamera camera, float opacity) {
         this.opacity = opacity;
         transform.set(parentTransform);
 
@@ -171,7 +171,7 @@ public abstract class AbstractOctreeWrapper extends FadeNode implements Iterable
      * @param parentTransform
      * @param camera
      */
-    protected abstract void updateOctreeObjects(ITimeFrameProvider time, final Transform parentTransform, ICamera camera);
+    protected abstract void updateOctreeObjects(ITimeFrameProvider time, final Vector3d parentTransform, ICamera camera);
 
     /**
      * Adds the octants to the render lists.

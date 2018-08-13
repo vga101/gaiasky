@@ -370,9 +370,9 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 				entity3 = (CelestialBody) GaiaSky.instance.sg.getNode("Mars");
 			}
 			AbstractPositionEntity fccopy = entity1.getLineCopy();
-			fccopy.getRoot().transform.position.set(0f, 0f, 0f);
+			fccopy.getRoot().transform.set(0f, 0f, 0f);
 			fccopy.getRoot().update(time, null, this);
-			this.pos.set(fccopy.transform.getTranslation());
+			this.pos.set(fccopy.transform);
 
 			this.pos.add(0, 0, entity1.getRadius() * 5);
 			this.posinv.set(this.pos).scl(-1);

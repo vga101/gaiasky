@@ -16,7 +16,6 @@ import gaia.cu9.ari.gaiaorbit.render.system.LineRenderSystem;
 import gaia.cu9.ari.gaiaorbit.scenegraph.AbstractPositionEntity;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ParticleGroup;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode;
-import gaia.cu9.ari.gaiaorbit.scenegraph.Transform;
 import gaia.cu9.ari.gaiaorbit.scenegraph.camera.ICamera;
 import gaia.cu9.ari.gaiaorbit.util.ComponentTypes;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
@@ -538,8 +537,8 @@ public class OctreeNode implements ILineRenderable {
      * @param opacity
      *            The opacity to set.
      */
-    public void update(Transform parentTransform, ICamera cam, Array<SceneGraphNode> roulette, float opacity) {
-        parentTransform.getTranslation(transform);
+    public void update(Vector3d parentTransform, ICamera cam, Array<SceneGraphNode> roulette, float opacity) {
+        parentTransform.put(transform);
         this.opacity = opacity;
         this.observed = true;
 
@@ -622,7 +621,7 @@ public class OctreeNode implements ILineRenderable {
      * @param parentTransform
      * @param cam
      */
-    private boolean computeObserved1(Transform parentTransform, Frustumd frustum) {
+    private boolean computeObserved1(Vector3d parentTransform, Frustumd frustum) {
         boxcopy.set(box);
         // boxcopy.mul(boxtransf.idt().translate(parentTransform.getTranslation()));
 
