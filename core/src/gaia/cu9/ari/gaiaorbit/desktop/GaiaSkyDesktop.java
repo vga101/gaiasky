@@ -71,6 +71,8 @@ import gaia.cu9.ari.gaiaorbit.util.math.MathManager;
  *
  */
 public class GaiaSkyDesktop implements IObserver {
+    /* Configuration file version of the source code */
+    private static int SOURCE_CONF_VERSION = 250;
 	private static GaiaSkyDesktop gsd;
 	public static String ASSETS_LOC;
 	private static boolean REST_ENABLED = false;
@@ -357,7 +359,7 @@ public class GaiaSkyDesktop implements IObserver {
 		if (userFolderConfFile.exists()) {
 			Properties userprops = new Properties();
 			userprops.load(new FileInputStream(userFolderConfFile));
-			int internalversion = 250;
+            int internalversion = SOURCE_CONF_VERSION;
 			if (internalFolderConfFile.exists()) {
 				Properties internalprops = new Properties();
 				internalprops.load(new FileInputStream(internalFolderConfFile));
