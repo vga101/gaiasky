@@ -213,12 +213,12 @@ public class Particle extends CelestialBody implements IStarFocus, IPointRendera
     public void update(ITimeFrameProvider time, final Vector3d parentTransform, ICamera camera, float opacity) {
         if (appmag <= GlobalConf.runtime.LIMIT_MAG_RUNTIME) {
             this.opacity = opacity;
-            transform.set(parentTransform).add(pos);
+            translation.set(parentTransform).add(pos);
             if (hasPm) {
                 Vector3d pmv = aux3d1.get().set(pm).scl(AstroUtils.getMsSince(time.getTime(), AstroUtils.JD_J2015_5) * Constants.MS_TO_Y);
-                transform.add(pmv);
+                translation.add(pmv);
             }
-            distToCamera = transform.len();
+            distToCamera = translation.len();
 
             if (!copy) {
                 camera.setClosestStar(this);
@@ -373,7 +373,7 @@ public class Particle extends CelestialBody implements IStarFocus, IPointRendera
      */
     @Override
     public void render(LineRenderSystem renderer, ICamera camera, float alpha) {
-        Vector3 p1 = transform.setVector3(aux3f1.get());
+        Vector3 p1 = translation.setVector3(aux3f1.get());
         Vector3 ppm = aux3f2.get().set(pm).scl(GlobalConf.scene.PM_LEN_FACTOR);
         Vector3 p2 = ppm.add(p1);
 
@@ -423,7 +423,7 @@ public class Particle extends CelestialBody implements IStarFocus, IPointRendera
 
     @Override
     public Vector3d getClosestPos(Vector3d out) {
-        return transform.put(out);
+        return translation.put(out);
     }
 
     @Override

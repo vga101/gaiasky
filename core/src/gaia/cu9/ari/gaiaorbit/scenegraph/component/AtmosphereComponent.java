@@ -146,7 +146,7 @@ public class AtmosphereComponent {
      *            The planet itself, holder of this atmosphere
      */
     public void updateAtmosphericScatteringParams(Material mat, float alpha, boolean ground, Planet planet) {
-        Vector3d transform = planet.transform;
+        Vector3d transform = planet.translation;
         RotationComponent rc = planet.rc;
         SceneGraphNode sol = planet.parent;
         transform.put(aux3);
@@ -193,7 +193,7 @@ public class AtmosphereComponent {
         ((Vector3Attribute) mat.get(Vector3Attribute.CameraPos)).value.set(aux3.put(aux));
 
         // Light position respect the earth: LightPos = SunPos - EarthPos
-        aux3.add(sol.transform).nor();
+        aux3.add(sol.translation).nor();
         if (ground) {
             // Camera position must be corrected using the rotation angle of the planet
             aux3.mul(Coordinates.getTransformD(planet.inverseRefPlaneTransform)).rotate(rc.ascendingNode, 0, 1, 0).rotate(-rc.inclination - rc.axialTilt, 0, 0, 1).rotate(-rc.angle, 0, 1, 0);

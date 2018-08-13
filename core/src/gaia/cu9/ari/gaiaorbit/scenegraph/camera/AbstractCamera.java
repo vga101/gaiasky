@@ -143,7 +143,7 @@ public abstract class AbstractCamera implements ICamera {
 
     @Override
     public boolean isVisible(ITimeFrameProvider time, CelestialBody cb) {
-        return isVisible(time, cb.viewAngle, cb.transform, cb.distToCamera);
+        return isVisible(time, cb.viewAngle, cb.translation, cb.distToCamera);
     }
 
     @Override
@@ -167,13 +167,13 @@ public abstract class AbstractCamera implements ICamera {
         if (GlobalConf.scene.COMPUTE_GAIA_SCAN && !fcamera.interpolatedDirections.isEmpty()) {
             // We need to interpolate...
             for (Vector3d[] interpolatedDirection : fcamera.interpolatedDirections) {
-                visible = visible || GlobalResources.isInView(cb.transform, cb.distToCamera, fcamera.angleEdgeRad, interpolatedDirection[0]) || GlobalResources.isInView(cb.transform, cb.distToCamera, fcamera.angleEdgeRad, interpolatedDirection[1]);
+                visible = visible || GlobalResources.isInView(cb.translation, cb.distToCamera, fcamera.angleEdgeRad, interpolatedDirection[0]) || GlobalResources.isInView(cb.translation, cb.distToCamera, fcamera.angleEdgeRad, interpolatedDirection[1]);
                 if (visible)
                     return true;
             }
         }
         dirs = fcamera.directions;
-        visible = visible || GlobalResources.isInView(cb.transform, cb.distToCamera, fcamera.angleEdgeRad, dirs[0]) || GlobalResources.isInView(cb.transform, cb.distToCamera, fcamera.angleEdgeRad, dirs[1]);
+        visible = visible || GlobalResources.isInView(cb.translation, cb.distToCamera, fcamera.angleEdgeRad, dirs[0]) || GlobalResources.isInView(cb.translation, cb.distToCamera, fcamera.angleEdgeRad, dirs[1]);
         return visible;
     }
 

@@ -92,8 +92,8 @@ public class Galaxy extends Particle {
     public void update(ITimeFrameProvider time, final Vector3d parentTransform, ICamera camera, float opacity) {
         if (appmag <= GlobalConf.runtime.LIMIT_MAG_RUNTIME) {
             TH_OVER_FACTOR = (float) (THRESHOLD_POINT() / GlobalConf.scene.LABEL_NUMBER_FACTOR);
-            transform.set(parentTransform).add(pos);
-            distToCamera = transform.len();
+            translation.set(parentTransform).add(pos);
+            distToCamera = translation.len();
 
             this.opacity = opacity;
 
@@ -136,7 +136,7 @@ public class Galaxy extends Particle {
         float size = getFuzzyRenderSize(camera);
 
         Vector3 aux = aux3f1.get();
-        shader.setUniformf("u_pos", transform.put(aux));
+        shader.setUniformf("u_pos", translation.put(aux));
         shader.setUniformf("u_size", size);
 
         shader.setUniformf("u_color", ccPale[0], ccPale[1], ccPale[2], alpha);

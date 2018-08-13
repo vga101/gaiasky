@@ -112,7 +112,7 @@ public abstract class AbstractOctreeWrapper extends FadeNode implements Iterable
 
     public void update(ITimeFrameProvider time, final Vector3d parentTransform, ICamera camera, float opacity) {
         this.opacity = opacity;
-        transform.set(parentTransform);
+        translation.set(parentTransform);
 
         // Fade node visibility applies here
         if (this.isVisible()) {
@@ -125,7 +125,7 @@ public abstract class AbstractOctreeWrapper extends FadeNode implements Iterable
 
                 root.updateNumbers();
 
-                root.update(transform, camera, roulette, opacity);
+                root.update(translation, camera, roulette, opacity);
 
                 if (OctreeNode.nObjectsObserved != lastNumberObjects) {
                     // Need to update the points in renderer
@@ -140,7 +140,7 @@ public abstract class AbstractOctreeWrapper extends FadeNode implements Iterable
 
                 // Call the update method of all entities in the roulette list. This
                 // is implemented in the subclass.
-                updateOctreeObjects(time, transform, camera);
+                updateOctreeObjects(time, translation, camera);
 
                 // Reset mask
                 roulette.clear();
@@ -151,13 +151,13 @@ public abstract class AbstractOctreeWrapper extends FadeNode implements Iterable
                     SceneGraphNode star = focus.getFirstStarAncestor();
                     OctreeNode parent = parenthood.get(star);
                     if (parent != null && !parent.isObserved()) {
-                        star.update(time, star.parent.transform, camera);
+                        star.update(time, star.parent.translation, camera);
                     }
                 }
             } else {
                 // Just update children
                 for (SceneGraphNode node : children) {
-                    node.update(time, transform, camera);
+                    node.update(time, translation, camera);
                 }
             }
         }
@@ -223,7 +223,7 @@ public abstract class AbstractOctreeWrapper extends FadeNode implements Iterable
             AbstractOctreeWrapper instance = pool.obtain();
             instance.copy = true;
             instance.name = this.name;
-            instance.transform.set(this.transform);
+            instance.translation.set(this.translation);
             instance.ct = this.ct;
             if (this.localTransform != null)
                 instance.localTransform.set(this.localTransform);

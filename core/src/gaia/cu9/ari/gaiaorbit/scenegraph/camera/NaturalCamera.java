@@ -258,7 +258,6 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 		case Focus:
 			if (focus.withinMagLimit() && !focus.isCoordinatesTimeOverflow()) {
 				focusBak = focus;
-				focus = (IFocus) focus.getComputedAncestor();
 				focus.getAbsolutePosition(aux4);
 				// Hack, fix this by understanding underlying problem
 				if (!aux4.hasNaN()) {
@@ -370,9 +369,9 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 				entity3 = (CelestialBody) GaiaSky.instance.sg.getNode("Mars");
 			}
 			AbstractPositionEntity fccopy = entity1.getLineCopy();
-			fccopy.getRoot().transform.set(0f, 0f, 0f);
+			fccopy.getRoot().translation.set(0f, 0f, 0f);
 			fccopy.getRoot().update(time, null, this);
-			this.pos.set(fccopy.transform);
+			this.pos.set(fccopy.translation);
 
 			this.pos.add(0, 0, entity1.getRadius() * 5);
 			this.posinv.set(this.pos).scl(-1);
@@ -951,11 +950,9 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 	public double getTranslateUnits() {
 		double dist;
 		if (parent.mode == CameraMode.Focus && focus != null) {
-			AbstractPositionEntity ancestor = focus.getComputedAncestor();
-			dist = ancestor.getDistToCamera() - (ancestor.getRadius() + MIN_DIST);
+			dist = focus.getDistToCamera() - (focus.getRadius() + MIN_DIST);
 		} else if (parent.mode == CameraMode.Free_Camera && closest != null) {
-			AbstractPositionEntity ancestor = closest.getComputedAncestor();
-			dist = ancestor.getDistToCamera() - (ancestor.getRadius() + MIN_DIST);
+			dist = closest.getDistToCamera() - (closest.getRadius() + MIN_DIST);
 		} else {
 			dist = distance;
 		}
@@ -970,7 +967,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 	public double getRotationUnits() {
 		double dist;
 		if (parent.mode == CameraMode.Focus) {
-			AbstractPositionEntity ancestor = focus.getComputedAncestor();
+			AbstractPositionEntity ancestor = (AbstractPositionEntity)focus;
 			dist = ancestor.distToCamera - ancestor.getRadius();
 		} else {
 			dist = distance;
@@ -1274,7 +1271,7 @@ public class NaturalCamera extends AbstractCamera implements IObserver {
 			} else if (getMode().equals(CameraMode.Free_Camera) && closest != null) {
 				// Orange
 				spriteBatch.setColor(1f, .7f, .2f, 1f);
-				chFocus = (IFocus) closest.getComputedAncestor();
+				chFocus = (IFocus) closest;
 			}
 
 			if (chFocus != null) {

@@ -289,7 +289,7 @@ public class Star extends Particle {
         ((ColorAttribute) mc.env.get(ColorAttribute.AmbientLight)).color.set(col[0], col[1], col[2], 1f);
         ((FloatAttribute) mc.env.get(FloatAttribute.Shininess)).value = (float) t;
         // Local transform
-        transform.getMatrix(mc.instance.transform).scl((float) (getRadius() * 2d));
+        translation.getMatrix(mc.instance.transform).scl((float) (getRadius() * 2d));
         mc.updateRelativisticEffects(GaiaSky.instance.getICamera());
         modelBatch.render(mc.instance, mc.env);
     }
