@@ -97,7 +97,6 @@ public class Area extends AbstractPositionEntity implements ILineRenderable {
 
             this.opacity = (float) MathUtilsd.lint(((ModelBody) parent).viewAngleApparent, angleLow, angleHigh, 0, 1);
 
-            Vector3d aux = aux3d1.get();
             this.distToCamera = (float) translation.len();
             this.viewAngle = (float) FastMath.atan(size / distToCamera) / camera.getFovFactor();
             this.viewAngleApparent = this.viewAngle;

@@ -70,7 +70,7 @@ public class MWModelRenderSystem extends ImmediateRenderSystem implements IObser
     private Array<Chunk> chunks;
 
     public MWModelRenderSystem(RenderGroup rg, float[] alphas, ShaderProgram[] starShaders) {
-        super(rg, alphas, starShaders);
+        super(rg, alphas, starShaders, 250000);
 
         aux3f1 = new Vector3();
         aux3d1 = new Vector3d();

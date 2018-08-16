@@ -41,7 +41,7 @@ public class MilkyWayRenderSystem extends ImmediateRenderSystem implements IObse
     private ModelBatch modelBatch;
 
     public MilkyWayRenderSystem(RenderGroup rg, float[] alphas, ModelBatch modelBatch, ShaderProgram[] pointShaders, ShaderProgram[] nebulaShaders) {
-        super(rg, alphas, pointShaders);
+        super(rg, alphas, pointShaders, 450000);
         this.nebulaShaders = nebulaShaders;
         this.modelBatch = modelBatch;
     }

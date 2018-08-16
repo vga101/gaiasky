@@ -46,7 +46,7 @@ public abstract class ImmediateRenderSystem extends AbstractRenderSystem {
 	protected int maxVertices;
 
 	protected ImmediateRenderSystem(RenderGroup rg, float[] alphas, ShaderProgram[] programs) {
-		this(rg, alphas, programs, DEFAULT_VERTICES_SIZE);
+		this(rg, alphas, programs, -1);
 	}
 
 	protected ImmediateRenderSystem(RenderGroup rg, float[] alphas, ShaderProgram[] programs, int numVertices) {
