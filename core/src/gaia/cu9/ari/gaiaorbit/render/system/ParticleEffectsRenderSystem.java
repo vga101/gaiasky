@@ -37,7 +37,7 @@ public class ParticleEffectsRenderSystem extends ImmediateRenderSystem {
     private long baset;
 
     public ParticleEffectsRenderSystem(RenderGroup rg, float[] alphas, ShaderProgram[] programs) {
-        super(rg, alphas, programs);
+        super(rg, alphas, programs, -1);
         aux1f = new Vector3();
         aux1 = new Vector3d();
         aux2 = new Vector3d();
