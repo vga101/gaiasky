@@ -99,7 +99,7 @@ public class PreferencesWindow extends GenericDialog {
 
     private INumberFormat nf3, nf1;
 
-    private CheckBox fullscreen, windowed, vsync, limitfpsCb, multithreadCb, lodFadeCb, cbAutoCamrec, real, nsl, report, inverty, highAccuracyPositions, shadowsCb, pointerCoords, datasetChooser;
+    private CheckBox fullscreen, windowed, vsync, limitfpsCb, multithreadCb, lodFadeCb, cbAutoCamrec, real, nsl, report, inverty, highAccuracyPositions, shadowsCb, pointerCoords, datasetChooser, debugInfo;
     private OwnSelectBox<DisplayMode> fullscreenResolutions;
     private OwnSelectBox<ComboBoxBean> gquality, aa, orbitRenderer, lineRenderer, numThreads, screenshotMode, frameoutputMode, nshadows;
     private OwnSelectBox<LangComboBoxBean> lang;
@@ -113,7 +113,7 @@ public class PreferencesWindow extends GenericDialog {
 
     // Backup values
     private float brightnessBak, contrastBak, hueBak, saturationBak, gammaBak, motionblurBak, bloomBak;
-    private boolean lensflareBak, lightglowBak;
+    private boolean lensflareBak, lightglowBak, debugInfoBak;
 
     public PreferencesWindow(Stage stage, Skin skin) {
         super(txt("gui.settings") + " - v" + GlobalConf.version.version + " - " + txt("gui.build", GlobalConf.version.build), skin, stage);
@@ -1435,6 +1435,17 @@ public class PreferencesWindow extends GenericDialog {
         OwnLabel titleStats = new OwnLabel(txt("gui.system.reporting"), skin, "help-title");
         Table stats = new Table(skin);
 
+        debugInfoBak = GlobalConf.program.SHOW_DEBUG_INFO;
+        debugInfo = new OwnCheckBox(txt("gui.system.debuginfo"), skin, pad);
+        debugInfo.setChecked(GlobalConf.program.SHOW_DEBUG_INFO);
+        debugInfo.addListener((event) -> {
+            if (event instanceof ChangeEvent) {
+                EventManager.instance.post(Events.SHOW_DEBUG_CMD, !GlobalConf.program.SHOW_DEBUG_INFO);
+                return true;
+            }
+            return false;
+        });
+
         report = new OwnCheckBox(txt("gui.system.allowreporting"), skin, pad);
         report.setChecked(GlobalConf.program.ANALYTICS_ENABLED);
 
@@ -1461,6 +1472,7 @@ public class PreferencesWindow extends GenericDialog {
         OwnLabel warningLabel = new OwnLabel(txt("gui.system.reloaddefaults.warn"), skin, "default-red");
 
         // Add to table
+        stats.add(debugInfo).left().padBottom(pad).row();
         stats.add(report).left().padBottom(pad * 5).row();
         stats.add(warningLabel).left().padBottom(pad).row();
         stats.add(reloadDefaults).left();
@@ -1782,6 +1794,9 @@ public class PreferencesWindow extends GenericDialog {
 
         // System
         GlobalConf.program.ANALYTICS_ENABLED = report.isChecked();
+        if (GlobalConf.program.SHOW_DEBUG_INFO != debugInfoBak) {
+            EventManager.instance.post(Events.SHOW_DEBUG_CMD, !debugInfoBak);
+        }
 
         // Save configuration
         ConfInit.instance.persistGlobalConf(new File(System.getProperty("properties.file")));
@@ -1828,6 +1843,7 @@ public class PreferencesWindow extends GenericDialog {
         EventManager.instance.post(Events.LENS_FLARE_CMD, lensflareBak, true);
         EventManager.instance.post(Events.LIGHT_SCATTERING_CMD, lightglowBak, true);
         EventManager.instance.post(Events.BLOOM_CMD, bloomBak, true);
+        EventManager.instance.post(Events.SHOW_DEBUG_CMD, debugInfoBak);
     }
 
     private void reloadUI() {

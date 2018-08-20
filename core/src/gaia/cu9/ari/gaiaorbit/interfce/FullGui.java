@@ -150,10 +150,11 @@ public class FullGui extends AbstractGui {
         interfaces.add(messagesInterface);
 
         // INPUT STATE
-        runStateInterface = new RunStateInterface(skin);
+        runStateInterface = new RunStateInterface(skin, true);
         runStateInterface.setFillParent(true);
-        runStateInterface.right().top();
-        runStateInterface.pad(GlobalConf.SCALE_FACTOR == 1 ? 135 : 200, 0, 0, 5);
+        runStateInterface.center().bottom();
+        //runStateInterface.pad(GlobalConf.SCALE_FACTOR == 1 ? 135 : 200, 0, 0, 5);
+        runStateInterface.pad(0,0, 5, 0);
         interfaces.add(runStateInterface);
 
         // CUSTOM OBJECTS INTERFACE

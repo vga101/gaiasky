@@ -32,6 +32,10 @@ public class RunStateInterface extends Table implements IObserver, IGuiInterface
     private boolean loadingPaused = false;
 
     public RunStateInterface(Skin skin) {
+        this(skin, false);
+    }
+
+    public RunStateInterface(Skin skin, boolean horizontal) {
         super(skin);
 
         float pad = 2 * GlobalConf.SCALE_FACTOR;
@@ -81,16 +85,26 @@ public class RunStateInterface extends Table implements IObserver, IGuiInterface
             return false;
         });
 
-        pauseBgCell = this.add().right().padTop(pad);
-        pauseBgCell.row();
-        stopScriptCell = this.add().right().padTop(pad);
-        stopScriptCell.row();
-        stopCameraCell = this.add().right().padTop(pad);
-        stopCameraCell.row();
-        keyboardImgCell = this.add().right().padTop(pad);
-        keyboardImgCell.row();
-        frameoutputImgCell = this.add().right().padTop(pad);
-        frameoutputImgCell.row();
+        if (horizontal) {
+            // Horizontal cells, centered
+            pauseBgCell = this.add().bottom();
+            stopScriptCell = this.add().bottom().padLeft(pad);
+            stopCameraCell = this.add().bottom().padLeft(pad);
+            keyboardImgCell = this.add().bottom().padLeft(pad);
+            frameoutputImgCell = this.add().bottom().padLeft(pad);
+        } else {
+            // Vertical cells, aligned right
+            pauseBgCell = this.add().right().padTop(pad);
+            pauseBgCell.row();
+            stopScriptCell = this.add().right().padTop(pad);
+            stopScriptCell.row();
+            stopCameraCell = this.add().right().padTop(pad);
+            stopCameraCell.row();
+            keyboardImgCell = this.add().right().padTop(pad);
+            keyboardImgCell.row();
+            frameoutputImgCell = this.add().right().padTop(pad);
+            frameoutputImgCell.row();
+        }
 
         EventManager.instance.subscribe(this, Events.INPUT_ENABLED_CMD, Events.NUM_RUNNING_SCRIPTS, Events.CAMERA_PLAY_INFO, Events.BACKGROUND_LOADING_INFO, Events.FRAME_OUTPUT_CMD, Events.OCTREE_DISPOSED);
     }
