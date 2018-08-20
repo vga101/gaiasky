@@ -140,8 +140,8 @@ com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
 	headline:   { font: ui-25, fontColor: red},
 	subhead:   { font: ui-18, fontColor: red},
 	
-	hud:	 { font: ui-18, fontColor: red },
-	hud-med:	 { font: ui-17-bold, fontColor: red },
+	hud:	 { font: ui-16, fontColor: red },
+	hud-med:	 { font: ui-17, fontColor: red },
 	hud-big:	 { font: ui-19, fontColor: red },
 	hud-header:	 { font: ui-25, fontColor: red },
 	hud-subheader:	 { font: ui-17, fontColor: red },
