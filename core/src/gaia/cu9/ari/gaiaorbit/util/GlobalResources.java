@@ -25,7 +25,6 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
 
 import gaia.cu9.ari.gaiaorbit.scenegraph.camera.ICamera;
-import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import net.jafama.FastMath;
@@ -137,15 +136,15 @@ public class GlobalResources {
             // m
             return new Pair<Double, String>((d * 1000), "m");
         }
-        if (Math.abs(d) < AstroUtils.AU_TO_KM) {
+        if (Math.abs(d) < Nature.AU_TO_KM) {
             // km
             return new Pair<Double, String>(d, "km");
-        } else if (Math.abs(d) < AstroUtils.PC_TO_KM) {
+        } else if (Math.abs(d) < Nature.PC_TO_KM) {
             // AU
-            return new Pair<Double, String>(d * AstroUtils.KM_TO_AU, "AU");
+            return new Pair<Double, String>(d * Nature.KM_TO_AU, "AU");
         } else {
             // pc
-            return new Pair<Double, String>((d * AstroUtils.KM_TO_PC), "pc");
+            return new Pair<Double, String>((d * Nature.KM_TO_PC), "pc");
         }
     }
 

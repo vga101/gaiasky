@@ -19,7 +19,7 @@ import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
-import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
+import gaia.cu9.ari.gaiaorbit.util.Nature;
 import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.parse.Parser;
@@ -115,8 +115,8 @@ public class HipparcosLoader extends AbstractCatalogLoader implements ISceneGrap
                     Vector3d pos = Coordinates.sphericalToCartesian(Math.toRadians(ra), Math.toRadians(dec), dist, new Vector3d());
 
                     /** PROPER MOTIONS in mas/yr **/
-                    double mualpha = Parser.parseDouble(st[MUALPHA].trim()) * AstroUtils.MILLARCSEC_TO_DEG;
-                    double mudelta = Parser.parseDouble(st[MUDELTA].trim()) * AstroUtils.MILLARCSEC_TO_DEG;
+                    double mualpha = Parser.parseDouble(st[MUALPHA].trim()) * Nature.MILLARCSEC_TO_DEG;
+                    double mudelta = Parser.parseDouble(st[MUDELTA].trim()) * Nature.MILLARCSEC_TO_DEG;
 
                     /** PROPER MOTION VECTOR = (pos+dx) - pos **/
                     Vector3d pm = Coordinates.sphericalToCartesian(Math.toRadians(ra + mualpha), Math.toRadians(dec + mudelta), dist, new Vector3d());

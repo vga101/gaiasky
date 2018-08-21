@@ -1,7 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.util;
 
-import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
-
 public class Constants {
 
     /**
@@ -30,7 +28,7 @@ public class Constants {
     /**
      * AU to local units conversion.
      */
-    public static final double AU_TO_U = AstroUtils.AU_TO_KM * KM_TO_U;
+    public static final double AU_TO_U = Nature.AU_TO_KM * KM_TO_U;
 
     /**
      * Local unit to AU conversion.
@@ -40,7 +38,7 @@ public class Constants {
     /**
      * Parsec to local unit conversion. Multiply this by all values in pc.
      */
-    public static final double PC_TO_U = AstroUtils.PC_TO_KM * KM_TO_U;
+    public static final double PC_TO_U = Nature.PC_TO_KM * KM_TO_U;
 
     /**
      * Kiloparsec to local unit conversion. Multiply this by all values in Kpc.
@@ -94,7 +92,7 @@ public class Constants {
     public static final double U_TO_Ro = 1 / Ro_TO_U;
 
     /** Multiplier for all KM values in the application **/
-    public static final double KM_MULTIPLIER = AstroUtils.KM_TO_PC * 1e9 * SCENE_SCALE_FACTOR;
+    public static final double KM_MULTIPLIER = Nature.KM_TO_PC * 1e9 * SCENE_SCALE_FACTOR;
 
     /** Distance from Sun that marks the end of the solar system **/
     public static final double SOLAR_SYSTEM_THRESHOLD = 5e9 * KM_MULTIPLIER;
@@ -198,12 +196,12 @@ public class Constants {
     public static final float MAX_LABEL_SIZE = 2.3f;
 
     // Max time, 5 Myr
-    public static final long MAX_TIME_MS = 5000000l * (long) AstroUtils.Y_TO_MS;
+    public static final long MAX_TIME_MS = 5000000l * (long) Nature.Y_TO_MS;
     // Min time, -5 Myr
     public static final long MIN_TIME_MS = -MAX_TIME_MS;
 
     // Max time for VSOP87 algorithms
-    public static final long MAX_VSOP_TIME_MS = 50000l * (long) AstroUtils.Y_TO_MS;
+    public static final long MAX_VSOP_TIME_MS = 50000l * (long) Nature.Y_TO_MS;
 
     // Min time for VSOP87 algorithms
     public static final long MIN_VSOP_TIME_MS = -MAX_VSOP_TIME_MS;

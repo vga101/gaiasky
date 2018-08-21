@@ -20,7 +20,7 @@ import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
-import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
+import gaia.cu9.ari.gaiaorbit.util.Nature;
 import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.parse.Parser;
@@ -163,15 +163,15 @@ public class TGASLoader extends AbstractCatalogLoader implements ISceneGraphLoad
                 Vector3d pos = Coordinates.sphericalToCartesian(Math.toRadians(ra), Math.toRadians(dec), dist, new Vector3d());
 
                 /** PROPER MOTIONS in mas/yr **/
-                double mualphastar = Parser.parseDouble(st[indices[MUALPHA]].trim()) * AstroUtils.MILLARCSEC_TO_DEG;
-                double mudelta = Parser.parseDouble(st[indices[MUDELTA]].trim()) * AstroUtils.MILLARCSEC_TO_DEG;
+                double mualphastar = Parser.parseDouble(st[indices[MUALPHA]].trim()) * Nature.MILLARCSEC_TO_DEG;
+                double mudelta = Parser.parseDouble(st[indices[MUDELTA]].trim()) * Nature.MILLARCSEC_TO_DEG;
                 double mualpha = mualphastar / Math.cos(Math.toRadians(dec));
 
                 /** RADIAL VELOCITY in km/s, convert to u/ur **/
                 double radvel = radialVelocities != null && radialVelocities.containsKey(sourceid) ? radialVelocities.get(sourceid) : 0;
 
                 /** PROPER MOTION VECTOR = (pos+dx) - pos **/
-                Vector3d pm = Coordinates.sphericalToCartesian(Math.toRadians(ra + mualpha), Math.toRadians(dec + mudelta), dist + radvel * Constants.KM_TO_U / AstroUtils.S_TO_Y, new Vector3d());
+                Vector3d pm = Coordinates.sphericalToCartesian(Math.toRadians(ra + mualpha), Math.toRadians(dec + mudelta), dist + radvel * Constants.KM_TO_U / Nature.S_TO_Y, new Vector3d());
                 pm.sub(pos);
 
                 Vector3 pmfloat = pm.toVector3();

@@ -16,9 +16,9 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.IStarFocus;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Planet;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
+import gaia.cu9.ari.gaiaorbit.util.Nature;
 import gaia.cu9.ari.gaiaorbit.util.TwoWayHashmap;
 import gaia.cu9.ari.gaiaorbit.util.camera.CameraUtils;
-import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
 import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
@@ -288,7 +288,7 @@ public class CameraManager implements ICamera, IObserver {
         // Speed = dx/dt
         velocity.set(lastPos).sub(current.getPos());
         velocitynor.set(velocity).nor();
-        speed = (velocity.len() * Constants.U_TO_KM) / (dt * AstroUtils.S_TO_H);
+        speed = (velocity.len() * Constants.U_TO_KM) / (dt * Nature.S_TO_H);
 
         // High speed?
         if (speed > 5e3) {
@@ -320,8 +320,8 @@ public class CameraManager implements ICamera, IObserver {
         in.set(vec);
         Coordinates.cartesianToSpherical(in, out);
 
-        double pointerRA = out.x * AstroUtils.TO_DEG;
-        double pointerDEC = out.y * AstroUtils.TO_DEG;
+        double pointerRA = out.x * Nature.TO_DEG;
+        double pointerDEC = out.y * Nature.TO_DEG;
 
         // View
         vec.set(viewX, viewY, 0.5f);
@@ -329,8 +329,8 @@ public class CameraManager implements ICamera, IObserver {
         in.set(vec);
         Coordinates.cartesianToSpherical(in, out);
 
-        double viewRA = out.x * AstroUtils.TO_DEG;
-        double viewDEC = out.y * AstroUtils.TO_DEG;
+        double viewRA = out.x * Nature.TO_DEG;
+        double viewDEC = out.y * Nature.TO_DEG;
 
         EventManager.instance.post(Events.RA_DEC_UPDATED, pointerRA, pointerDEC, viewRA, viewDEC, pointerX, pointerY);
 

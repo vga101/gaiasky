@@ -7,6 +7,7 @@ import java.time.temporal.ChronoField;
 
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.LruCache;
+import gaia.cu9.ari.gaiaorbit.util.Nature;
 import gaia.cu9.ari.gaiaorbit.util.coord.vsop87.VSOP87;
 import gaia.cu9.ari.gaiaorbit.util.coord.vsop87.iVSOP87;
 import gaia.cu9.ari.gaiaorbit.util.math.ITrigonometry;
@@ -53,67 +54,6 @@ public class AstroUtils {
     /** Julian date cache, since most dates are used more than once **/
     private static LruCache<Long, Double> jdcache = new LruCache<Long, Double>(50);
 
-    // Time units
-    /** Hours to seconds **/
-    public static final double H_TO_S = 3600;
-
-    /** Seconds to hours **/
-    public static final double S_TO_H = 1 / H_TO_S;
-
-    /** Hours to milliseconds **/
-    public static final double H_TO_MS = H_TO_S * 1000;
-
-    /** Milliseconds to hours **/
-    public static final double MS_TO_H = 1 / H_TO_MS;
-
-    /** Days to seconds **/
-    public static final double D_TO_S = 86400d;
-
-    /** Seconds to days **/
-    public static final double S_TO_D = 1 / D_TO_S;
-
-    /** Days to milliseconds **/
-    public static final double D_TO_MS = 86400d * 1000d;
-
-    /** Milliseconds to days **/
-    public static final double MS_TO_D = 1 / D_TO_MS;
-
-    /** Days to nanoseconds **/
-    public static final double D_TO_NS = 86400e9;
-    
-    /** Nanoseconds to days **/
-    public static final double NS_TO_D = 1 / D_TO_NS;
-
-    /** Years to seconds **/
-    public static final double Y_TO_S = 31557600;
-
-    /** Seconds to years **/
-    public static final double S_TO_Y = 1 / Y_TO_S;
-
-    /** Years to milliseconds **/
-    public static final double Y_TO_MS = Y_TO_S * 1000;
-
-    /** Milliseconds to year **/
-    public static final double MS_TO_Y = 1 / Y_TO_MS;
-
-    // Angle conversion
-    public static final double TO_RAD = Math.PI / 180;
-    public static final double TO_DEG = 180 / Math.PI;
-    public static final double DEG_TO_ARCSEC = 3600;
-    public static final double ARCSEC_TO_DEG = 1 / DEG_TO_ARCSEC;
-    public static final double ARCSEC_TO_RAD = ARCSEC_TO_DEG * TO_RAD;
-    public static final double DEG_TO_MILLARCSEC = DEG_TO_ARCSEC * 1000;
-    public static final double MILLARCSEC_TO_DEG = 1 / DEG_TO_MILLARCSEC;
-    public static final double RAD_TO_MILLARCSEC = TO_DEG * DEG_TO_MILLARCSEC;
-    public static final double MILLARCSEC_TO_RAD = MILLARCSEC_TO_DEG * TO_RAD;
-    public static final double MILLIARCSEC_TO_ARCSEC = 1d / 1000d;
-
-    // Distance units
-    public static final double PC_TO_KM = 3.08567758149137e13d;
-    public static final double KM_TO_PC = 1 / PC_TO_KM;
-    public static final double AU_TO_KM = 149597871d;
-    public static final double KM_TO_AU = 1 / AU_TO_KM;
-
     // Earth equatorial radius in Km
     public static final float EARTH_RADIUS = 6378.1370f;
 
@@ -148,7 +88,7 @@ public class AstroUtils {
         double v = M + C;
 
         double R = (1.000001018 * (1 - e * e)) / (1 + e * Math.cos(Math.toRadians(v)));
-        return R * AU_TO_KM;
+        return R * Nature.AU_TO_KM;
     }
 
     private static Instant cacheSunLongitudeDate = Instant.now();
@@ -327,7 +267,7 @@ public class AstroUtils {
 
         double r = 40.72 + 6.68 * trigo.sin(P) + 6.90 * trigo.cos(P) - 1.18 * trigo.sin(2 * P) - 0.03 * trigo.cos(2 * P) + 0.15 * trigo.sin(3 * P) - 0.14 * trigo.cos(3 * P);
 
-        return out.set(Math.toRadians(lonecl), Math.toRadians(latecl), AstroUtils.AU_TO_KM * r);
+        return out.set(Math.toRadians(lonecl), Math.toRadians(latecl), Nature.AU_TO_KM * r);
     }
 
     /**
@@ -531,7 +471,7 @@ public class AstroUtils {
      * @return The elapsed milliseconds
      */
     public static double getMsSinceJ2010(Instant date) {
-        return (getJulianDateCache(date) - JD_J2010) * D_TO_MS;
+        return (getJulianDateCache(date) - JD_J2010) * Nature.D_TO_MS;
     }
 
     /**
@@ -543,7 +483,7 @@ public class AstroUtils {
      * @return The elapsed milliseconds
      */
     public static double getMsSinceJ2000(Instant date) {
-        return (getJulianDateCache(date) - JD_J2000) * D_TO_MS;
+        return (getJulianDateCache(date) - JD_J2000) * Nature.D_TO_MS;
     }
 
     /**
@@ -567,7 +507,7 @@ public class AstroUtils {
      * @return The elapsed milliseconds
      */
     public static double getMsSinceJ2015(Instant date) {
-        return (getJulianDateCache(date) - JD_J2015) * D_TO_MS;
+        return (getJulianDateCache(date) - JD_J2015) * Nature.D_TO_MS;
     }
 
     /**
@@ -581,7 +521,7 @@ public class AstroUtils {
      * @return The elapsed milliseconds
      */
     public static double getMsSince(Instant date, double epoch_jd) {
-        return (getJulianDateCache(date) - epoch_jd) * D_TO_MS;
+        return (getJulianDateCache(date) - epoch_jd) * Nature.D_TO_MS;
     }
 
     /**
@@ -754,7 +694,6 @@ public class AstroUtils {
         return (julianDate - 2451545) / 36525;
     }
 
-
     public static double tau(double julianDate) {
         return (julianDate - 2451545) / 365250;
     }
@@ -769,8 +708,8 @@ public class AstroUtils {
      * @return The proper motion vector in internal_units/year
      */
     public static Vector3d properMotionsToCartesian(double mualphastar, double mudelta, double radvel, double ra, double dec, double distpc) {
-        double ma = mualphastar * AstroUtils.MILLIARCSEC_TO_ARCSEC;
-        double md = mudelta * AstroUtils.MILLIARCSEC_TO_ARCSEC;
+        double ma = mualphastar * Nature.MILLIARCSEC_TO_ARCSEC;
+        double md = mudelta * Nature.MILLIARCSEC_TO_ARCSEC;
 
         // Multiply arcsec/yr with distance in parsecs gives a linear velocity. The factor 4.74 converts result to km/s
         double vta = ma * distpc * 4.74d;
@@ -789,7 +728,7 @@ public class AstroUtils {
         double vy = (radvel * cosdelta * sinalpha) + (vta * cosalpha) - (vtd * sindelta * sinalpha);
         double vz = (radvel * sinalpha) + (vtd * cosdelta);
 
-        return (new Vector3d(vy, vz, vx)).scl(Constants.KM_TO_U / S_TO_Y);
+        return (new Vector3d(vy, vz, vx)).scl(Constants.KM_TO_U / Nature.S_TO_Y);
 
     }
 }

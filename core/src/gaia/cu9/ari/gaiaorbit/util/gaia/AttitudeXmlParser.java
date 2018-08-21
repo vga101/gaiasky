@@ -18,6 +18,7 @@ import com.badlogic.gdx.utils.XmlReader;
 import gaia.cu9.ari.gaiaorbit.util.BinarySearchTree;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
+import gaia.cu9.ari.gaiaorbit.util.Nature;
 import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
 import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.format.IDateFormat;
@@ -108,7 +109,7 @@ public class AttitudeXmlParser {
                 } else {
                     long elapsed = date.toEpochMilli() - lastDate.toEpochMilli();
 
-                    Duration d = new Hours(elapsed * AstroUtils.MS_TO_H);
+                    Duration d = new Hours(elapsed * Nature.MS_TO_H);
                     durationMap.put(lastFH, d);
                 }
             }
@@ -121,7 +122,7 @@ public class AttitudeXmlParser {
             durationMap.put(lastFH, d);
         } else {
             long elapsed = endOfMission.toEpochMilli() - lastDate.toEpochMilli();
-            Duration d = new Hours(elapsed * AstroUtils.MS_TO_H);
+            Duration d = new Hours(elapsed * Nature.MS_TO_H);
             durationMap.put(lastFH, d);
         }
 
@@ -174,14 +175,14 @@ public class AttitudeXmlParser {
         String name = model.get("name");
         String className = model.get("classname");
         String activTime = model.get("starttime");
-        double startTimeNsSince2010 = (AstroUtils.getJulianDate(activationTime) - AstroUtils.JD_J2010) * AstroUtils.D_TO_NS;
+        double startTimeNsSince2010 = (AstroUtils.getJulianDate(activationTime) - AstroUtils.JD_J2010) * Nature.D_TO_NS;
 
         /** SCAN LAW ELEMENT **/
         XmlReader.Element scanlaw = model.getChildByName("scanlaw");
         String epochRef = scanlaw.getAttribute("epochref");
         Instant refEpochDate = getDate(epochRef);
-        double refEpoch = AstroUtils.getJulianDate(refEpochDate) * AstroUtils.D_TO_NS;
-        double refEpochJ2010 = refEpoch - AstroUtils.JD_J2010 * AstroUtils.D_TO_NS;
+        double refEpoch = AstroUtils.getJulianDate(refEpochDate) * Nature.D_TO_NS;
+        double refEpochJ2010 = refEpoch - AstroUtils.JD_J2010 * Nature.D_TO_NS;
 
         // Spin phase
         XmlReader.Element spinphase = scanlaw.getChildByName("spinphase");
