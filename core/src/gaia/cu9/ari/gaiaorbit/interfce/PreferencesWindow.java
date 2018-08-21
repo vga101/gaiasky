@@ -116,7 +116,7 @@ public class PreferencesWindow extends GenericDialog {
     private boolean lensflareBak, lightglowBak, debugInfoBak;
 
     public PreferencesWindow(Stage stage, Skin skin) {
-        super(txt("gui.settings") + " - v" + GlobalConf.version.version + " - " + txt("gui.build", GlobalConf.version.build), skin, stage);
+        super(txt("gui.settings") + " - " + GlobalConf.version.version + " - " + txt("gui.build", GlobalConf.version.build), skin, stage);
 
         this.contents = new Array<Actor>();
         this.labels = new Array<OwnLabel>();

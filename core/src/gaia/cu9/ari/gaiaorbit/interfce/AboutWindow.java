@@ -60,7 +60,7 @@ public class AboutWindow extends GenericDialog {
     private OwnLabel checkLabel;
 
     public AboutWindow(Stage stage, Skin skin) {
-        super(txt("gui.help.help") + " - v" + GlobalConf.version.version + " - " + txt("gui.build", GlobalConf.version.build), skin, stage);
+        super(txt("gui.help.help") + " - " + GlobalConf.version.version + " - " + txt("gui.build", GlobalConf.version.build), skin, stage);
         this.linkStyle = skin.get("link", LabelStyle.class);
 
         setCancelText(txt("gui.close"));
