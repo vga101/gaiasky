@@ -16,7 +16,7 @@ import gaia.cu9.ari.gaiaorbit.util.math.Vector2d;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
 /**
- * Some astronomical algorithms to get the position of the Sun, Moon, work out
+ * Some astronomical goodies to get the position of the Sun, Moon, work out
  * Julian dates, etc.
  * 
  * @author Toni Sagrista

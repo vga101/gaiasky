@@ -3,7 +3,8 @@ package gaia.cu9.ari.gaiaorbit.util;
 /**
  * This class contains various unit conversion constants for
  * angles, distance and time units
- * @author tsagrista
+ * 
+ * @author Toni Sagrista
  *
  */
 public class Nature {

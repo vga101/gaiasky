@@ -30,7 +30,7 @@ import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import net.jafama.FastMath;
 
 /**
- * Holds and initializes resources utilized globally.
+ * Holds and initialises resources utilised globally.
  * 
  * @author Toni Sagrista
  *
