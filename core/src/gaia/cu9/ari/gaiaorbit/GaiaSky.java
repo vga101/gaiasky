@@ -495,7 +495,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
     @Override
     public void dispose() {
 
-        if (Constants.desktop && savestate)
+        if (savestate)
             ConfInit.instance.persistGlobalConf(new File(System.getProperty("properties.file")));
 
         // Flush frames

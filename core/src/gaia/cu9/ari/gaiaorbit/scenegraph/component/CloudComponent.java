@@ -32,9 +32,9 @@ public class CloudComponent {
     protected static final TextureParameter textureParams;
     static {
         textureParams = new TextureParameter();
-        textureParams.genMipMaps = !Constants.webgl;
+        textureParams.genMipMaps = true;
         textureParams.magFilter = TextureFilter.Linear;
-        textureParams.minFilter = Constants.webgl ? TextureFilter.Linear : TextureFilter.MipMapLinearNearest;
+        textureParams.minFilter = TextureFilter.MipMapLinearNearest;
     }
     private AssetManager manager;
     public int quality;
@@ -77,17 +77,6 @@ public class CloudComponent {
         return manager.isLoaded(tex);
     }
 
-    /**
-     * Adds the texture to load and unpacks any star (*) with the current
-     * quality setting.
-     * 
-     * @param tex
-     */
-    private void addToLoad(String tex, AssetManager manager) {
-        if (tex == null)
-            return;
-        manager.load(tex, Texture.class, textureParams);
-    }
 
     /**
      * Adds the texture to load and unpacks any star (*) with the current

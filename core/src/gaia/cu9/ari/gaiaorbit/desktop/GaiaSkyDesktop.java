@@ -179,7 +179,6 @@ public class GaiaSkyDesktop implements IObserver {
 			PostProcessorFactory.initialize(new DesktopPostProcessorFactory());
 
 			// Key mappings
-			Constants.desktop = true;
 			KeyBindings.initialize();
 
 			// Scene graph implementation provider

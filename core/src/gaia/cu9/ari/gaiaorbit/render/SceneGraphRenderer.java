@@ -366,7 +366,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
 
         RenderGroup[] renderGroups = RenderGroup.values();
         render_lists = new Array<Array<IRenderable>>(renderGroups.length);
-        for (RenderGroup rg : renderGroups) {
+        for (int i = 0; i < renderGroups.length; i++) {
             render_lists.add(new Array<IRenderable>(40000));
         }
 
@@ -520,7 +520,7 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
                         IRenderable s = renderables.get(i);
                         if (s instanceof Particle) {
                             Particle p = (Particle) s;
-                            if (!Constants.webgl && lightIndex < Glow.N && (GlobalConf.program.CUBEMAP360_MODE || GaiaSky.instance.cam.getDirection().angle(p.translation) < angleEdgeDeg)) {
+                            if (lightIndex < Glow.N && (GlobalConf.program.CUBEMAP360_MODE || GaiaSky.instance.cam.getDirection().angle(p.translation) < angleEdgeDeg)) {
                                 Vector3d pos3d = p.translation.put(auxd);
 
                                 // Aberration

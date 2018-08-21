@@ -143,8 +143,7 @@ public class MilkyWayRenderSystem extends ImmediateRenderSystem implements IObse
                     // SIZE
                     double starSize = 0;
                     if (star.data.length > 3) {
-                        starSize = (star.data[3] * 3 + 1) /** (Constants.webgl ? 0.08f : 1f) */
-                        ;
+                        starSize = (star.data[3] * 3 + 1);
                     } else {
                         starSize = (float) Math.abs(rand.nextGaussian()) * 8f + 1.0f;
                     }

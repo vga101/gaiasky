@@ -30,9 +30,9 @@ public class TextureComponent {
     protected static final TextureParameter textureParams;
     static {
         textureParams = new TextureParameter();
-        textureParams.genMipMaps = !Constants.webgl;
+        textureParams.genMipMaps = true;
         textureParams.magFilter = TextureFilter.Linear;
-        textureParams.minFilter = Constants.webgl ? TextureFilter.Linear : TextureFilter.MipMapLinearNearest;
+        textureParams.minFilter = TextureFilter.MipMapLinearNearest;
     }
 
     public String base, specular, normal, night, ring;

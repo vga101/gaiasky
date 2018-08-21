@@ -36,7 +36,7 @@ import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 public class Particle extends CelestialBody implements IStarFocus, IPointRenderable, ILineRenderable {
 
     private static final float DISC_FACTOR = 1.5f;
-    private static final float LABEL_FACTOR = Constants.webgl ? 3f : 1f;
+    private static final float LABEL_FACTOR = 1f;
 
     private static Random rnd = new Random();
 

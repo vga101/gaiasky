@@ -211,7 +211,7 @@ public class FullGui extends AbstractGui {
                 ui.addActor(messagesInterface);
             if (focusInterface != null && !GlobalConf.runtime.STRIPPED_FOV_MODE)
                 ui.addActor(fi);
-            if (runStateInterface != null && Constants.desktop) {
+            if (runStateInterface != null) {
                 ui.addActor(runStateInterface);
             }
             if (pointerXCoord != null && pointerYCoord != null) {

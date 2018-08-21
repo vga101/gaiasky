@@ -281,23 +281,6 @@ public class Constants {
     }
 
     /**
-     * 
-     * SYSTEM-DEPENDENT STUFF
-     * 
-     */
-    public static boolean mobile = false;
-    public static boolean webgl = false;
-    public static boolean desktop = false;
-
-    static {
-        if (Gdx.app != null) {
-            mobile = (Gdx.app.getType() == ApplicationType.Android || Gdx.app.getType() == ApplicationType.iOS) && !ConfInit.instance.webgl;
-            desktop = Gdx.app.getType() == ApplicationType.Desktop && !ConfInit.instance.webgl;
-            webgl = Gdx.app.getType() == ApplicationType.WebGL || ConfInit.instance.webgl;
-        }
-    }
-
-    /**
      * Nature
      */
     public static class Nature {
