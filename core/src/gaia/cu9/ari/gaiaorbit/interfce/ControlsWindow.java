@@ -35,7 +35,6 @@ import gaia.cu9.ari.gaiaorbit.interfce.components.VisibilityComponent;
 import gaia.cu9.ari.gaiaorbit.interfce.components.VisualEffectsComponent;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ISceneGraph;
-import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;

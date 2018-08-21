@@ -54,16 +54,54 @@ public class AstroUtils {
     private static LruCache<Long, Double> jdcache = new LruCache<Long, Double>(50);
 
     // Time units
-    public static final double DAY_TO_NS = 86400e9;
-    public static final double DAY_TO_MS = 86400e3;
-    public static final double NS_TO_DAY = 1 / DAY_TO_NS;
+    /** Hours to seconds **/
+    public static final double H_TO_S = 3600;
+
+    /** Seconds to hours **/
+    public static final double S_TO_H = 1 / H_TO_S;
+
+    /** Hours to milliseconds **/
+    public static final double H_TO_MS = H_TO_S * 1000;
+
+    /** Milliseconds to hours **/
+    public static final double MS_TO_H = 1 / H_TO_MS;
+
+    /** Days to seconds **/
+    public static final double D_TO_S = 86400d;
+
+    /** Seconds to days **/
+    public static final double S_TO_D = 1 / D_TO_S;
+
+    /** Days to milliseconds **/
+    public static final double D_TO_MS = 86400d * 1000d;
+
+    /** Milliseconds to days **/
+    public static final double MS_TO_D = 1 / D_TO_MS;
+
+    /** Days to nanoseconds **/
+    public static final double D_TO_NS = 86400e9;
+    
+    /** Nanoseconds to days **/
+    public static final double NS_TO_D = 1 / D_TO_NS;
+
+    /** Years to seconds **/
+    public static final double Y_TO_S = 31557600;
+
+    /** Seconds to years **/
+    public static final double S_TO_Y = 1 / Y_TO_S;
+
+    /** Years to milliseconds **/
+    public static final double Y_TO_MS = Y_TO_S * 1000;
+
+    /** Milliseconds to year **/
+    public static final double MS_TO_Y = 1 / Y_TO_MS;
 
     // Angle conversion
     public static final double TO_RAD = Math.PI / 180;
     public static final double TO_DEG = 180 / Math.PI;
-
     public static final double DEG_TO_ARCSEC = 3600;
     public static final double ARCSEC_TO_DEG = 1 / DEG_TO_ARCSEC;
+    public static final double ARCSEC_TO_RAD = ARCSEC_TO_DEG * TO_RAD;
     public static final double DEG_TO_MILLARCSEC = DEG_TO_ARCSEC * 1000;
     public static final double MILLARCSEC_TO_DEG = 1 / DEG_TO_MILLARCSEC;
     public static final double RAD_TO_MILLARCSEC = TO_DEG * DEG_TO_MILLARCSEC;
@@ -493,7 +531,7 @@ public class AstroUtils {
      * @return The elapsed milliseconds
      */
     public static double getMsSinceJ2010(Instant date) {
-        return (getJulianDateCache(date) - JD_J2010) * DAY_TO_MS;
+        return (getJulianDateCache(date) - JD_J2010) * D_TO_MS;
     }
 
     /**
@@ -505,7 +543,7 @@ public class AstroUtils {
      * @return The elapsed milliseconds
      */
     public static double getMsSinceJ2000(Instant date) {
-        return (getJulianDateCache(date) - JD_J2000) * DAY_TO_MS;
+        return (getJulianDateCache(date) - JD_J2000) * D_TO_MS;
     }
 
     /**
@@ -529,7 +567,7 @@ public class AstroUtils {
      * @return The elapsed milliseconds
      */
     public static double getMsSinceJ2015(Instant date) {
-        return (getJulianDateCache(date) - JD_J2015) * DAY_TO_MS;
+        return (getJulianDateCache(date) - JD_J2015) * D_TO_MS;
     }
 
     /**
@@ -543,7 +581,7 @@ public class AstroUtils {
      * @return The elapsed milliseconds
      */
     public static double getMsSince(Instant date, double epoch_jd) {
-        return (getJulianDateCache(date) - epoch_jd) * DAY_TO_MS;
+        return (getJulianDateCache(date) - epoch_jd) * D_TO_MS;
     }
 
     /**
@@ -751,7 +789,7 @@ public class AstroUtils {
         double vy = (radvel * cosdelta * sinalpha) + (vta * cosalpha) - (vtd * sindelta * sinalpha);
         double vz = (radvel * sinalpha) + (vtd * cosdelta);
 
-        return (new Vector3d(vy, vz, vx)).scl(Constants.KM_TO_U / Constants.S_TO_Y);
+        return (new Vector3d(vy, vz, vx)).scl(Constants.KM_TO_U / S_TO_Y);
 
     }
 }

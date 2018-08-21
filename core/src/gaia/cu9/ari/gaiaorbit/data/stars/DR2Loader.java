@@ -179,7 +179,7 @@ public class DR2Loader extends AbstractCatalogLoader implements ISceneGraphLoade
                 }
 
                 /** PROPER MOTION VECTOR = (pos+dx) - pos **/
-                Vector3d pm = Coordinates.sphericalToCartesian(Math.toRadians(ra + mualpha), Math.toRadians(dec + mudelta), dist + radvel * Constants.KM_TO_U / Constants.S_TO_Y, new Vector3d());
+                Vector3d pm = Coordinates.sphericalToCartesian(Math.toRadians(ra + mualpha), Math.toRadians(dec + mudelta), dist + radvel * Constants.KM_TO_U / AstroUtils.S_TO_Y, new Vector3d());
                 pm.sub(pos);
 
                 Vector3 pmfloat = pm.toVector3();

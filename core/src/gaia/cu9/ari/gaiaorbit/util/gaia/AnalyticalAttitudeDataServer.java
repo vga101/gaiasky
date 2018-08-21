@@ -121,7 +121,7 @@ public abstract class AnalyticalAttitudeDataServer extends BaseAttitudeDataServe
         // nativeTimeContext = TimeContext.TCB;
 
         // Default reference epoch - 2010
-        setRefTime((long) (AstroUtils.JD_J2010 * AstroUtils.DAY_TO_NS));
+        setRefTime((long) (AstroUtils.JD_J2010 * AstroUtils.D_TO_NS));
 
         // Default reference solar aspect angle [rad]
         setXiRef(Math.toRadians(Satellite.SOLARASPECTANGLE_NOMINAL));

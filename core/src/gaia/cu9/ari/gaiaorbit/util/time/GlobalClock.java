@@ -6,6 +6,7 @@ import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
+import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
 
 /**
  * Keeps pace of the simulation time vs real time and holds the global clock. It
@@ -69,10 +70,10 @@ public class GlobalClock implements IObserver, ITimeFrameProvider {
 			}
 
 			int sign = (int) Math.signum(timeWarp);
-			double h = Math.abs(dt * timeWarp * Constants.S_TO_H);
+			double h = Math.abs(dt * timeWarp * AstroUtils.S_TO_H);
 			hdiff = h * sign;
 
-			double ms = sign * h * Constants.H_TO_MS;
+			double ms = sign * h * AstroUtils.H_TO_MS;
 
 			long currentTime = time.toEpochMilli();
 			lastTime = currentTime;
@@ -95,7 +96,7 @@ public class GlobalClock implements IObserver, ITimeFrameProvider {
 				newTime = Constants.MAX_TIME_MS;
 				if (currentTime < Constants.MAX_TIME_MS) {
 					EventManager.instance.post(Events.POST_NOTIFICATION,
-							"Maximum time reached (" + (Constants.MAX_TIME_MS * Constants.MS_TO_Y) + " years)!");
+							"Maximum time reached (" + (Constants.MAX_TIME_MS * AstroUtils.MS_TO_Y) + " years)!");
 					// Turn off time
 					EventManager.instance.post(Events.TOGGLE_TIME_CMD, false, false);
 				}
@@ -107,7 +108,7 @@ public class GlobalClock implements IObserver, ITimeFrameProvider {
 				newTime = Constants.MIN_TIME_MS;
 				if (currentTime > Constants.MIN_TIME_MS) {
 					EventManager.instance.post(Events.POST_NOTIFICATION,
-							"Minimum time reached (" + (Constants.MIN_TIME_MS * Constants.MS_TO_Y) + " years)!");
+							"Minimum time reached (" + (Constants.MIN_TIME_MS * AstroUtils.MS_TO_Y) + " years)!");
 					// Turn off time
 					EventManager.instance.post(Events.TOGGLE_TIME_CMD, false, false);
 				}
@@ -185,13 +186,13 @@ public class GlobalClock implements IObserver, ITimeFrameProvider {
 			if (newt > Constants.MAX_TIME_MS) {
 				newt = Constants.MAX_TIME_MS;
 				EventManager.instance.post(Events.POST_NOTIFICATION,
-						"Time overflow, set to maximum (" + (Constants.MIN_TIME_MS * Constants.MS_TO_Y) + " years)");
+						"Time overflow, set to maximum (" + (Constants.MIN_TIME_MS * AstroUtils.MS_TO_Y) + " years)");
 				updt = true;
 			}
 			if (newt < Constants.MIN_TIME_MS) {
 				newt = Constants.MIN_TIME_MS;
 				EventManager.instance.post(Events.POST_NOTIFICATION,
-						"Time overflow, set to minimum (" + (Constants.MIN_TIME_MS * Constants.MS_TO_Y) + " years)");
+						"Time overflow, set to minimum (" + (Constants.MIN_TIME_MS * AstroUtils.MS_TO_Y) + " years)");
 				updt = true;
 			}
 			if (updt) {

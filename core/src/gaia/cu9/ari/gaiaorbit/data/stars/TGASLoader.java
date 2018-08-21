@@ -171,7 +171,7 @@ public class TGASLoader extends AbstractCatalogLoader implements ISceneGraphLoad
                 double radvel = radialVelocities != null && radialVelocities.containsKey(sourceid) ? radialVelocities.get(sourceid) : 0;
 
                 /** PROPER MOTION VECTOR = (pos+dx) - pos **/
-                Vector3d pm = Coordinates.sphericalToCartesian(Math.toRadians(ra + mualpha), Math.toRadians(dec + mudelta), dist + radvel * Constants.KM_TO_U / Constants.S_TO_Y, new Vector3d());
+                Vector3d pm = Coordinates.sphericalToCartesian(Math.toRadians(ra + mualpha), Math.toRadians(dec + mudelta), dist + radvel * Constants.KM_TO_U / AstroUtils.S_TO_Y, new Vector3d());
                 pm.sub(pos);
 
                 Vector3 pmfloat = pm.toVector3();

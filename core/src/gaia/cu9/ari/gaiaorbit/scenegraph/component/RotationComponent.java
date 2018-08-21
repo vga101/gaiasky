@@ -1,6 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.scenegraph.component;
 
-import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
 
@@ -47,7 +46,7 @@ public class RotationComponent {
 
     public void update(ITimeFrameProvider time) {
         double t = time.getTime().toEpochMilli() - AstroUtils.J2000_MS;
-        angle = (meridianAngle + angularVelocity * t * Constants.MS_TO_H) % 360d;
+        angle = (meridianAngle + angularVelocity * t * AstroUtils.MS_TO_H) % 360d;
     }
 
     /**

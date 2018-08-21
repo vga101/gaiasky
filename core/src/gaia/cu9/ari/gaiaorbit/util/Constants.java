@@ -1,8 +1,5 @@
 package gaia.cu9.ari.gaiaorbit.util;
 
-import com.badlogic.gdx.Application.ApplicationType;
-import com.badlogic.gdx.Gdx;
-
 import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
 
 public class Constants {
@@ -41,19 +38,9 @@ public class Constants {
     public static final double U_TO_AU = 1 / AU_TO_U;
 
     /**
-     * Parsecs to km conversion
-     */
-    public static final double PC_TO_KM = AstroUtils.PC_TO_KM;
-
-    /**
-     * Km to parsecs conversion
-     */
-    public static final double KM_TO_PC = AstroUtils.KM_TO_PC;
-
-    /**
      * Parsec to local unit conversion. Multiply this by all values in pc.
      */
-    public static final double PC_TO_U = PC_TO_KM * KM_TO_U;
+    public static final double PC_TO_U = AstroUtils.PC_TO_KM * KM_TO_U;
 
     /**
      * Kiloparsec to local unit conversion. Multiply this by all values in Kpc.
@@ -75,41 +62,6 @@ public class Constants {
      */
     public static final double U_TO_KPC = U_TO_PC / 1000d;
 
-    /** Hours to seconds **/
-    public static final double H_TO_S = 3600;
-
-    /** Seconds to hours **/
-    public static final double S_TO_H = 1 / H_TO_S;
-
-    /** Hours to milliseconds **/
-    public static final double H_TO_MS = H_TO_S * 1000;
-
-    /** Milliseconds to hours **/
-    public static final double MS_TO_H = 1 / H_TO_MS;
-
-    /** Days to seconds **/
-    public static final double D_TO_S = 86400d;
-
-    /** Seconds to days **/
-    public static final double S_TO_D = 1 / D_TO_S;
-
-    /** Days to milliseconds **/
-    public static final double D_TO_MS = 86400d * 1000d;
-
-    /** Milliseconds to days **/
-    public static final double MS_TO_D = 1 / D_TO_MS;
-
-    /** Years to seconds **/
-    public static final double Y_TO_S = 31557600;
-
-    /** Seconds to years **/
-    public static final double S_TO_Y = 1 / Y_TO_S;
-
-    /** Years to milliseconds **/
-    public static final double Y_TO_MS = Y_TO_S * 1000;
-
-    /** Milliseconds to year **/
-    public static final double MS_TO_Y = 1 / Y_TO_MS;
 
     /**
      * Speed of light in m/s
@@ -246,12 +198,12 @@ public class Constants {
     public static final float MAX_LABEL_SIZE = 2.3f;
 
     // Max time, 5 Myr
-    public static final long MAX_TIME_MS = 5000000l * (long) Y_TO_MS;
+    public static final long MAX_TIME_MS = 5000000l * (long) AstroUtils.Y_TO_MS;
     // Min time, -5 Myr
     public static final long MIN_TIME_MS = -MAX_TIME_MS;
 
     // Max time for VSOP87 algorithms
-    public static final long MAX_VSOP_TIME_MS = 50000l * (long) Y_TO_MS;
+    public static final long MAX_VSOP_TIME_MS = 50000l * (long) AstroUtils.Y_TO_MS;
 
     // Min time for VSOP87 algorithms
     public static final long MIN_VSOP_TIME_MS = -MAX_VSOP_TIME_MS;
@@ -278,33 +230,6 @@ public class Constants {
      */
     public static boolean withinVSOPTime(long time) {
         return time <= Constants.MAX_VSOP_TIME_MS && time >= Constants.MIN_VSOP_TIME_MS;
-    }
-
-    /**
-     * Nature
-     */
-    public static class Nature {
-        /** Number of seconds per day */
-        public static final double DAY_SECOND = 86400.0D;
-        /** One degree in units of radians */
-        public static final double DEGREE_RADIAN = 0.0174532925199433D;
-        /** One radian in units of degrees */
-        public static final double RADIAN_DEGREE = 57.2957795130823D;
-        /** One arcsecond in units of radians */
-        public static final double ARCSECOND_RADIAN = 4.84813681109536E-6D;
-        /** Number of days per Julian year */
-        public static final double JULIANYEAR_DAY = 365.25D;
-        /**
-         * Mean (geometric) longitude rate of the nominal Sun for use in
-         * simulations of the NSL (mean ecliptic orbital elements, at the
-         * standard epoch J2000.0). Note that a value of 1295977422.83429 /
-         * (1.0E3 * 365.25 * 3600.0) = 0.98560911 degrees day^-1 is given in
-         * Section 5.8.3 of J.L. Simon, P. Bretagnon, J. Chapront, M.
-         * Chapront-Touze, G. Francou, J. Laskar, 1994, \'Numerical expressions
-         * for precession formulae and mean elements for the Moon and the
-         * planets\', A\&A, 282, 663 (1994A\&A...282..663S)
-         */
-        public static final double NOMINALSUN_MEANLONGITUDERATE_J2000 = 0.98560903D;
     }
 
 }

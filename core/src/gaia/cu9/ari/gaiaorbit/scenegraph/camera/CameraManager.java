@@ -288,7 +288,7 @@ public class CameraManager implements ICamera, IObserver {
         // Speed = dx/dt
         velocity.set(lastPos).sub(current.getPos());
         velocitynor.set(velocity).nor();
-        speed = (velocity.len() * Constants.U_TO_KM) / (dt * Constants.S_TO_H);
+        speed = (velocity.len() * Constants.U_TO_KM) / (dt * AstroUtils.S_TO_H);
 
         // High speed?
         if (speed > 5e3) {

@@ -52,7 +52,7 @@ public class NslSun {
     // GaiaParam.Nature.ABERRATION_CONSTANT_J2000;
 
     private final double timeOriginDaysFromJ2000 = missionReferenceEpoch - (AstroUtils.JD_J2000 - AstroUtils.JD_J2010);
-    private final double timeOriginNsFromJ2000 = missionReferenceEpoch - (AstroUtils.JD_J2000 - AstroUtils.JD_J2010) * AstroUtils.DAY_TO_NS;
+    private final double timeOriginNsFromJ2000 = missionReferenceEpoch - (AstroUtils.JD_J2000 - AstroUtils.JD_J2010) * AstroUtils.D_TO_NS;
 
 
     /** Unit vectors **/
@@ -76,7 +76,7 @@ public class NslSun {
      * @param julianDate The julian date.
      */
     public void setTime(double julianDate) {
-        long tNs = (long) ((julianDate - AstroUtils.JD_J2000) * AstroUtils.DAY_TO_NS);
+        long tNs = (long) ((julianDate - AstroUtils.JD_J2000) * AstroUtils.D_TO_NS);
         setTime(tNs);
     }
 
@@ -89,7 +89,7 @@ public class NslSun {
      *            time in [ns] since the time origin
      */
     public void setTime(long tNs) {
-        final double daysFromJ2000 = timeOriginDaysFromJ2000 + (double) tNs * AstroUtils.NS_TO_DAY;
+        final double daysFromJ2000 = timeOriginDaysFromJ2000 + (double) tNs * AstroUtils.NS_TO_D;
 
         // Mean apparent Sun longitude:
         final double xl = NOMINALSUN_MEANLONGITUDE_J2000

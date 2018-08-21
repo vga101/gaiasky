@@ -215,7 +215,7 @@ public class Particle extends CelestialBody implements IStarFocus, IPointRendera
             this.opacity = opacity;
             translation.set(parentTransform).add(pos);
             if (hasPm) {
-                Vector3d pmv = aux3d1.get().set(pm).scl(AstroUtils.getMsSince(time.getTime(), AstroUtils.JD_J2015_5) * Constants.MS_TO_Y);
+                Vector3d pmv = aux3d1.get().set(pm).scl(AstroUtils.getMsSince(time.getTime(), AstroUtils.JD_J2015_5) * AstroUtils.MS_TO_Y);
                 translation.add(pmv);
             }
             distToCamera = translation.len();

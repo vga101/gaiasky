@@ -54,7 +54,6 @@ import gaia.cu9.ari.gaiaorbit.screenshot.ScreenshotsManager;
 import gaia.cu9.ari.gaiaorbit.script.JythonFactory;
 import gaia.cu9.ari.gaiaorbit.script.ScriptingFactory;
 import gaia.cu9.ari.gaiaorbit.util.ConfInit;
-import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;

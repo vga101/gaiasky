@@ -66,7 +66,7 @@ public class Nsl37 extends AnalyticalAttitudeDataServer {
      * @return The attidue object
      */
     public Attitude getAttitudeNative(double julianDate) {
-        long tNs = (long) ((julianDate - AstroUtils.JD_J2010) * AstroUtils.DAY_TO_NS);
+        long tNs = (long) ((julianDate - AstroUtils.JD_J2010) * AstroUtils.D_TO_NS);
         return getAttitudeNative(tNs);
     }
 
@@ -157,7 +157,7 @@ public class Nsl37 extends AnalyticalAttitudeDataServer {
         this.scanPerNs = this.getTargetScanPeriod();
 
         NslSun sun0 = new NslSun();
-        sun0.setTime(getRefTime() * AstroUtils.NS_TO_DAY);
+        sun0.setTime(getRefTime() * AstroUtils.NS_TO_D);
         this.lSunRef = sun0.getSolarLongitude();
 
         sx = Math.sin(xi);

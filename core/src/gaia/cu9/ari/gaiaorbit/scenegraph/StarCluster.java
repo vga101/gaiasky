@@ -35,7 +35,6 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.camera.NaturalCamera;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
 import gaia.cu9.ari.gaiaorbit.scenegraph.component.RotationComponent;
 import gaia.cu9.ari.gaiaorbit.util.ComponentTypes;
-import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.ModelCache;
@@ -165,7 +164,7 @@ public class StarCluster extends AbstractPositionEntity implements IFocus, IProp
     public void updateLocal(ITimeFrameProvider time, ICamera camera) {
         // Update pos, local transform
         this.translation.add(pos);
-        ySinceEpoch = AstroUtils.getMsSince(time.getTime(), AstroUtils.JD_J2015_5) * Constants.MS_TO_Y;
+        ySinceEpoch = AstroUtils.getMsSince(time.getTime(), AstroUtils.JD_J2015_5) * AstroUtils.MS_TO_Y;
         Vector3d pmv = aux3d1.get().set(pm).scl(ySinceEpoch);
         this.translation.add(pmv);
 

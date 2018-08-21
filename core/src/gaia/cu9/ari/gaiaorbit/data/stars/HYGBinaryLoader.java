@@ -90,7 +90,7 @@ public class HYGBinaryLoader extends AbstractCatalogLoader implements ISceneGrap
                         if (appmag < GlobalConf.data.LIMIT_MAG_LOAD) {
                             Vector3d pos = Coordinates.sphericalToCartesian(Math.toRadians(ra), Math.toRadians(dec), dist, new Vector3d());
                             Vector3 pmSph = new Vector3(mualpha, mudelta, radvel);
-                            Vector3d pm = Coordinates.sphericalToCartesian(Math.toRadians(ra + mualpha * AstroUtils.MILLARCSEC_TO_DEG), Math.toRadians(dec + mudelta * AstroUtils.MILLARCSEC_TO_DEG), dist + radvel * Constants.KM_TO_U * Constants.S_TO_Y, new Vector3d());
+                            Vector3d pm = Coordinates.sphericalToCartesian(Math.toRadians(ra + mualpha * AstroUtils.MILLARCSEC_TO_DEG), Math.toRadians(dec + mudelta * AstroUtils.MILLARCSEC_TO_DEG), dist + radvel * Constants.KM_TO_U * AstroUtils.S_TO_Y, new Vector3d());
                             pm.sub(pos);
                             Vector3 pmfloat = pm.toVector3();
 

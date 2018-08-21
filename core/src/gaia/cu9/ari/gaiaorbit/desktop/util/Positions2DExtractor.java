@@ -21,6 +21,7 @@ import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.SysUtilsFactory;
+import gaia.cu9.ari.gaiaorbit.util.coord.AstroUtils;
 import gaia.cu9.ari.gaiaorbit.util.coord.MoonAACoordinates;
 import gaia.cu9.ari.gaiaorbit.util.coord.vsop87.AbstractVSOP87;
 import gaia.cu9.ari.gaiaorbit.util.coord.vsop87.VSOP87;
@@ -64,7 +65,7 @@ public class Positions2DExtractor implements IObserver {
     double Mm = 7.34767309e22;
 
     int steps = 1000;
-    long MS_IN_YEAR = (long) Constants.Y_TO_S * 1000l;
+    long MS_IN_YEAR = (long) AstroUtils.Y_TO_S * 1000l;
 
     public void process() throws IOException {
 

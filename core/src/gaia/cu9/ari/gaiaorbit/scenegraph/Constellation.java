@@ -87,7 +87,7 @@ public class Constellation extends LineObject implements I3DTextRenderable {
         pos.nor().scl(100 * Constants.PC_TO_U);
         addToRenderLists(camera);
 
-        deltaYears = AstroUtils.getMsSince(time.getTime(), AstroUtils.JD_J2015_5) * Constants.MS_TO_Y;
+        deltaYears = AstroUtils.getMsSince(time.getTime(), AstroUtils.JD_J2015_5) * AstroUtils.MS_TO_Y;
 
     }
 

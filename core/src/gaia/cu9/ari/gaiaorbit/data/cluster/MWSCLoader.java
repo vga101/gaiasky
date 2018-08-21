@@ -71,7 +71,7 @@ public class MWSCLoader extends AbstractCatalogLoader implements ISceneGraphLoad
                             int nstars = Parser.parseInt(tokens[8]);
 
                             Vector3d pos = Coordinates.sphericalToCartesian(Math.toRadians(ra), Math.toRadians(dec), dist, new Vector3d());
-                            Vector3d pm = Coordinates.sphericalToCartesian(Math.toRadians(ra + mualpha), Math.toRadians(dec + mudelta), dist + radvel * Constants.KM_TO_U / Constants.S_TO_Y, new Vector3d());
+                            Vector3d pm = Coordinates.sphericalToCartesian(Math.toRadians(ra + mualpha), Math.toRadians(dec + mudelta), dist + radvel * Constants.KM_TO_U / AstroUtils.S_TO_Y, new Vector3d());
                             pm.sub(pos);
 
                             Vector3d posSph = new Vector3d((float) ra, (float) dec, (float) dist);

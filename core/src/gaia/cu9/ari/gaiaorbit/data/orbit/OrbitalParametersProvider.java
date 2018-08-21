@@ -48,7 +48,7 @@ public class OrbitalParametersProvider implements IOrbitDataProvider {
                 double t_step = period / parameter.numSamples;
                 for (double t = 0; t <= period; t += t_step) {
                     // 1
-                    double deltat = t * Constants.D_TO_S;
+                    double deltat = t * AstroUtils.D_TO_S;
                     double M = M0 + deltat * Math.sqrt(mu / Math.pow(a, 3d));
 
                     // 2

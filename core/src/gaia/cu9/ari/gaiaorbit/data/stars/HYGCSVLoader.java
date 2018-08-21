@@ -129,7 +129,7 @@ public class HYGCSVLoader extends AbstractCatalogLoader implements ISceneGraphLo
                 float[] pmf = pmMap.get(hip);
                 double mualpha = pmf[0] * AstroUtils.MILLARCSEC_TO_DEG;
                 double mudelta = pmf[1] * AstroUtils.MILLARCSEC_TO_DEG;
-                double radvel = pmf[2] * Constants.KM_TO_U * Constants.S_TO_Y;
+                double radvel = pmf[2] * Constants.KM_TO_U * AstroUtils.S_TO_Y;
 
                 // Proper motion vector = (pos+dx) - pos
                 Vector3d pm = Coordinates.sphericalToCartesian(Math.toRadians(ra + mualpha), Math.toRadians(dec + mudelta), dist + radvel, new Vector3d());
