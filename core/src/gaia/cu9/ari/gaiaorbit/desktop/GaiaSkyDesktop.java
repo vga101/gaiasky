@@ -43,6 +43,7 @@ import gaia.cu9.ari.gaiaorbit.desktop.util.DesktopSysUtilsFactory;
 import gaia.cu9.ari.gaiaorbit.desktop.util.MemInfoWindow;
 import gaia.cu9.ari.gaiaorbit.desktop.util.RunCameraWindow;
 import gaia.cu9.ari.gaiaorbit.desktop.util.RunScriptWindow;
+import gaia.cu9.ari.gaiaorbit.desktop.util.SysUtils;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
@@ -72,398 +73,423 @@ import gaia.cu9.ari.gaiaorbit.util.math.MathManager;
 public class GaiaSkyDesktop implements IObserver {
     /* Configuration file version of the source code */
     private static int SOURCE_CONF_VERSION = 250;
-	private static GaiaSkyDesktop gsd;
-	public static String ASSETS_LOC;
-	private static boolean REST_ENABLED = false;
-	private static Class<?> REST_SERVER_CLASS = null;
+    private static GaiaSkyDesktop gsd;
+    public static String ASSETS_LOC;
+    private static boolean REST_ENABLED = false;
+    private static Class<?> REST_SERVER_CLASS = null;
 
-	private MemInfoWindow memInfoWindow;
+    private MemInfoWindow memInfoWindow;
 
-	/**
-	 * Program arguments
-	 * 
-	 * @author Toni Sagrista
-	 *
-	 */
-	private static class GaiaSkyArgs {
-		@Parameter(names = { "-h", "--help" }, help = true)
-		private boolean help = false;
+    /**
+    	 * Program arguments
+    	 * 
+    	 * @author Toni Sagrista
+    	 *
+    	 */
+    private static class GaiaSkyArgs {
+        @Parameter(names = { "-h", "--help" }, help = true)
+        private boolean help = false;
 
-		@Parameter(names = { "-v", "--version" }, description = "Lists version and build inforamtion")
-		private boolean version = false;
-	}
+        @Parameter(names = { "-v", "--version" }, description = "Lists version and build inforamtion")
+        private boolean version = false;
+    }
 
-	public static void main(String[] args) {
-		GaiaSkyArgs gsargs = new GaiaSkyArgs();
-		try {
-			JCommander jc = new JCommander(gsargs, args);
-			jc.setProgramName("gaiasky");
-			if (gsargs.help) {
-				jc.usage();
-				return;
-			}
-		} catch (Exception e) {
-			System.out.println("Bad program arguments");
-			return;
-		}
-		try {
-			gsd = new GaiaSkyDesktop();
-			// Assets location
-			ASSETS_LOC = (System.getProperty("assets.location") != null ? System.getProperty("assets.location") : "");
+    public static void main(String[] args) {
+        GaiaSkyArgs gsargs = new GaiaSkyArgs();
+        try {
+            JCommander jc = new JCommander(gsargs, args);
+            jc.setProgramName("gaiasky");
+            if (gsargs.help) {
+                jc.usage();
+                return;
+            }
+        } catch (Exception e) {
+            System.out.println("Bad program arguments");
+            return;
+        }
+        try {
+            // Check java version
+            javaVersionCheck();
 
-			Gdx.files = new LwjglFiles();
+            gsd = new GaiaSkyDesktop();
+            // Assets location
+            ASSETS_LOC = (System.getProperty("assets.location") != null ? System.getProperty("assets.location") : "");
 
-			// Sys utils
-			SysUtilsFactory.initialize(new DesktopSysUtilsFactory());
+            Gdx.files = new LwjglFiles();
 
-			// Initialize number format
-			NumberFormatFactory.initialize(new DesktopNumberFormatFactory());
+            // Sys utils
+            SysUtilsFactory.initialize(new DesktopSysUtilsFactory());
 
-			// Initialize date format
-			DateFormatFactory.initialize(new DesktopDateFormatFactory());
+            // Initialize number format
+            NumberFormatFactory.initialize(new DesktopNumberFormatFactory());
 
-			// Init .gaiasky folder in user's home folder
-			initUserDirectory();
+            // Initialize date format
+            DateFormatFactory.initialize(new DesktopDateFormatFactory());
 
-			// Init properties file
-			String props = System.getProperty("properties.file");
-			if (props == null || props.isEmpty()) {
-				props = initConfigFile(false);
-			}
+            // Init .gaiasky folder in user's home folder
+            initUserDirectory();
 
-			// Init global configuration
-			ConfInit.initialize(new DesktopConfInit(ASSETS_LOC));
+            // Init properties file
+            String props = System.getProperty("properties.file");
+            if (props == null || props.isEmpty()) {
+                props = initConfigFile(false);
+            }
 
-			if (gsargs.version) {
-				System.out.println(GlobalConf.APPLICATION_NAME + " " + GlobalConf.version.version);
-				System.out.println("   version name : " + GlobalConf.version.version);
-				System.out.println("   build        : " + GlobalConf.version.build);
-				System.out.println("   build time   : " + GlobalConf.version.buildtime);
-				System.out.println("   build system : " + GlobalConf.version.system);
-				System.out.println("   builder      : " + GlobalConf.version.builder);
-				return;
-			}
+            // Init global configuration
+            ConfInit.initialize(new DesktopConfInit(ASSETS_LOC));
 
-			// Initialize i18n
-			I18n.initialize(Gdx.files.internal("i18n/gsbundle"));
+            if (gsargs.version) {
+                System.out.println(GlobalConf.APPLICATION_NAME + " " + GlobalConf.version.version);
+                System.out.println("   version name : " + GlobalConf.version.version);
+                System.out.println("   build        : " + GlobalConf.version.build);
+                System.out.println("   build time   : " + GlobalConf.version.buildtime);
+                System.out.println("   build system : " + GlobalConf.version.system);
+                System.out.println("   builder      : " + GlobalConf.version.builder);
+                return;
+            }
 
-			// Dev mode
-			I18n.initialize(Gdx.files.absolute(ASSETS_LOC + "i18n/gsbundle"));
+            // Initialize i18n
+            I18n.initialize(Gdx.files.internal("i18n/gsbundle"));
 
-			// Jython
-			ScriptingFactory.initialize(JythonFactory.getInstance());
+            // Dev mode
+            I18n.initialize(Gdx.files.absolute(ASSETS_LOC + "i18n/gsbundle"));
 
-			// REST API server
-			REST_ENABLED = GlobalConf.program.REST_PORT >= 0 && checkRestDepsInClasspath();
-			if (REST_ENABLED) {
-				REST_SERVER_CLASS = Class.forName("gaia.cu9.ari.gaiaorbit.rest.RESTServer");
-				Method init = REST_SERVER_CLASS.getMethod("initialize", Integer.class);
-				init.invoke(null, GlobalConf.program.REST_PORT);
-			}
+            // Jython
+            ScriptingFactory.initialize(JythonFactory.getInstance());
 
-			// Fullscreen command
-			ScreenModeCmd.initialize();
+            // REST API server
+            REST_ENABLED = GlobalConf.program.REST_PORT >= 0 && checkRestDepsInClasspath();
+            if (REST_ENABLED) {
+                REST_SERVER_CLASS = Class.forName("gaia.cu9.ari.gaiaorbit.rest.RESTServer");
+                Method init = REST_SERVER_CLASS.getMethod("initialize", Integer.class);
+                init.invoke(null, GlobalConf.program.REST_PORT);
+            }
 
-			// Init cam recorder
-			CamRecorder.initialize();
+            // Fullscreen command
+            ScreenModeCmd.initialize();
 
-			// Music actors
-			MusicActorsManager.initialize(new DesktopMusicActors());
+            // Init cam recorder
+            CamRecorder.initialize();
 
-			// Init music manager
-			MusicManager.initialize(Gdx.files.absolute(ASSETS_LOC + "music"),
-					Gdx.files.absolute(SysUtilsFactory.getSysUtils().getDefaultMusicDir().getAbsolutePath()));
+            // Music actors
+            MusicActorsManager.initialize(new DesktopMusicActors());
 
-			// Initialize post processor factory
-			PostProcessorFactory.initialize(new DesktopPostProcessorFactory());
+            // Init music manager
+            MusicManager.initialize(Gdx.files.absolute(ASSETS_LOC + "music"), Gdx.files.absolute(SysUtilsFactory.getSysUtils().getDefaultMusicDir().getAbsolutePath()));
 
-			// Key mappings
-			KeyBindings.initialize();
+            // Initialize post processor factory
+            PostProcessorFactory.initialize(new DesktopPostProcessorFactory());
 
-			// Scene graph implementation provider
-			SceneGraphImplementationProvider.initialize(new DesktopSceneGraphImplementationProvider());
+            // Key mappings
+            KeyBindings.initialize();
 
-			// Initialize screenshots manager
-			ScreenshotsManager.initialize();
+            // Scene graph implementation provider
+            SceneGraphImplementationProvider.initialize(new DesktopSceneGraphImplementationProvider());
 
-			// Network checker
-			NetworkCheckerManager.initialize(new DesktopNetworkChecker());
+            // Initialize screenshots manager
+            ScreenshotsManager.initialize();
 
-			// Analytics
-			AnalyticsReporting.initialize(new AnalyticsPermission());
-			AnalyticsReporting.getInstance().sendStartAppReport();
+            // Network checker
+            NetworkCheckerManager.initialize(new DesktopNetworkChecker());
 
-			// Math
-			MathManager.initialize();
+            // Analytics
+            AnalyticsReporting.initialize(new AnalyticsPermission());
+            AnalyticsReporting.getInstance().sendStartAppReport();
 
-			gsd.init();
-		} catch (Exception e) {
-			e.printStackTrace(System.err);
-		}
+            // Math
+            MathManager.initialize();
 
-	}
+            gsd.init();
+        } catch (Exception e) {
+            e.printStackTrace(System.err);
+        }
 
-	public static void setUIFont(javax.swing.plaf.FontUIResource f) {
-		java.util.Enumeration<Object> keys = UIManager.getDefaults().keys();
-		while (keys.hasMoreElements()) {
-			Object key = keys.nextElement();
-			Object value = UIManager.get(key);
-			if (value != null && value instanceof javax.swing.plaf.FontUIResource
-					&& ((FontUIResource) value).getSize() > f.getSize()) {
-				UIManager.put(key, f);
-			}
-		}
-	}
+    }
 
-	public GaiaSkyDesktop() {
-		super();
-		EventManager.instance.subscribe(this, Events.SHOW_RUNSCRIPT_ACTION, Events.JAVA_EXCEPTION,
-				Events.SHOW_PLAYCAMERA_ACTION, Events.DISPLAY_MEM_INFO_WINDOW);
-		EventManager.instance.subscribe(this, Events.SCENE_GRAPH_LOADED, Events.DISPOSE);
-	}
+    public static void setUIFont(javax.swing.plaf.FontUIResource f) {
+        java.util.Enumeration<Object> keys = UIManager.getDefaults().keys();
+        while (keys.hasMoreElements()) {
+            Object key = keys.nextElement();
+            Object value = UIManager.get(key);
+            if (value != null && value instanceof javax.swing.plaf.FontUIResource
+                    && ((FontUIResource) value).getSize() > f.getSize()) {
+                UIManager.put(key, f);
+            }
+        }
+    }
 
-	private void init() {
-		launchMainApp();
-	}
+    public GaiaSkyDesktop() {
+        super();
+        EventManager.instance.subscribe(this, Events.SHOW_RUNSCRIPT_ACTION, Events.JAVA_EXCEPTION, Events.SHOW_PLAYCAMERA_ACTION, Events.DISPLAY_MEM_INFO_WINDOW);
+        EventManager.instance.subscribe(this, Events.SCENE_GRAPH_LOADED, Events.DISPOSE);
+    }
 
-	public void terminate() {
-		System.exit(0);
-	}
+    private void init() {
+        launchMainApp();
+    }
 
-	public void launchMainApp() {
-		LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
-		LwjglApplicationConfiguration.disableAudio = false;
-		cfg.title = GlobalConf.getFullApplicationName();
-		cfg.fullscreen = GlobalConf.screen.FULLSCREEN;
-		cfg.resizable = GlobalConf.screen.RESIZABLE;
-		cfg.width = GlobalConf.screen.getScreenWidth();
-		cfg.height = GlobalConf.screen.getScreenHeight();
-		cfg.samples = 0;
-		cfg.vSyncEnabled = GlobalConf.screen.VSYNC;
-		cfg.foregroundFPS = 0;
-		cfg.backgroundFPS = 0;
-		cfg.useHDPI = true;
-		cfg.useGL30 = false;
-		cfg.addIcon("icon/ic_launcher.png", Files.FileType.Internal);
+    public void terminate() {
+        System.exit(0);
+    }
 
-		// Launch app
-		LwjglApplication app = new LwjglApplication(new GaiaSky(cfg), cfg);
-		app.addLifecycleListener(new GaiaSkyWindowListener());
+    public void launchMainApp() {
+        LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
+        LwjglApplicationConfiguration.disableAudio = false;
+        cfg.title = GlobalConf.getFullApplicationName();
+        cfg.fullscreen = GlobalConf.screen.FULLSCREEN;
+        cfg.resizable = GlobalConf.screen.RESIZABLE;
+        cfg.width = GlobalConf.screen.getScreenWidth();
+        cfg.height = GlobalConf.screen.getScreenHeight();
+        cfg.samples = 0;
+        cfg.vSyncEnabled = GlobalConf.screen.VSYNC;
+        cfg.foregroundFPS = 0;
+        cfg.backgroundFPS = 0;
+        cfg.useHDPI = true;
+        cfg.useGL30 = false;
+        cfg.addIcon("icon/ic_launcher.png", Files.FileType.Internal);
 
-		EventManager.instance.unsubscribe(this, Events.POST_NOTIFICATION, Events.JAVA_EXCEPTION);
-	}
+        // Launch app
+        LwjglApplication app = new LwjglApplication(new GaiaSky(cfg), cfg);
+        app.addLifecycleListener(new GaiaSkyWindowListener());
 
-	RunScriptWindow scriptWindow = null;
-	RunCameraWindow cameraWindow = null;
+        EventManager.instance.unsubscribe(this, Events.POST_NOTIFICATION, Events.JAVA_EXCEPTION);
+    }
 
-	@Override
-	public void notify(Events event, final Object... data) {
-		switch (event) {
-		case SHOW_PLAYCAMERA_ACTION:
-			Gdx.app.postRunnable(new Runnable() {
-				@Override
-				public void run() {
-					if (cameraWindow == null)
-						cameraWindow = new RunCameraWindow((Stage) data[0], (Skin) data[1]);
-					cameraWindow.display();
-				}
-			});
-			break;
-		case SHOW_RUNSCRIPT_ACTION:
-			Gdx.app.postRunnable(new Runnable() {
-				@Override
-				public void run() {
-					if (scriptWindow == null)
-						scriptWindow = new RunScriptWindow((Stage) data[0], (Skin) data[1]);
-					scriptWindow.display();
-				}
-			});
+    RunScriptWindow scriptWindow = null;
+    RunCameraWindow cameraWindow = null;
 
-			break;
-		case DISPLAY_MEM_INFO_WINDOW:
-			if (memInfoWindow == null) {
-				memInfoWindow = new MemInfoWindow((Stage) data[0], (Skin) data[1]);
-			}
-			memInfoWindow.show((Stage) data[0]);
-			break;
-		case JAVA_EXCEPTION:
-			((Throwable) data[0]).printStackTrace(System.err);
-			break;
-		case SCENE_GRAPH_LOADED:
-			if (REST_ENABLED) {
-				/*
-				 * Notify REST server that GUI is loaded and everything should be in a
-				 * well-defined state
-				 */
-				Method activate;
-				try {
-					activate = REST_SERVER_CLASS.getMethod("activate");
-					activate.invoke(null, new Object[0]);
-				} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
-						| InvocationTargetException e) {
-					Logger.error(e);
-				}
-			}
-			break;
-		case DISPOSE:
-			if (REST_ENABLED) {
-				/* Shutdown REST server thread on termination */
-				try {
-					Method stop = REST_SERVER_CLASS.getMethod("stop");
-					stop.invoke(null, new Object[0]);
-				} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
-						| InvocationTargetException e) {
-					Logger.error(e);
-				}
-			}
-			break;
-		default:
-			break;
-		}
+    @Override
+    public void notify(Events event, final Object... data) {
+        switch (event) {
+        case SHOW_PLAYCAMERA_ACTION:
+            Gdx.app.postRunnable(new Runnable() {
+                @Override
+                public void run() {
+                    if (cameraWindow == null)
+                        cameraWindow = new RunCameraWindow((Stage) data[0], (Skin) data[1]);
+                    cameraWindow.display();
+                }
+            });
+            break;
+        case SHOW_RUNSCRIPT_ACTION:
+            Gdx.app.postRunnable(new Runnable() {
+                @Override
+                public void run() {
+                    if (scriptWindow == null)
+                        scriptWindow = new RunScriptWindow((Stage) data[0], (Skin) data[1]);
+                    scriptWindow.display();
+                }
+            });
 
-	}
+            break;
+        case DISPLAY_MEM_INFO_WINDOW:
+            if (memInfoWindow == null) {
+                memInfoWindow = new MemInfoWindow((Stage) data[0], (Skin) data[1]);
+            }
+            memInfoWindow.show((Stage) data[0]);
+            break;
+        case JAVA_EXCEPTION:
+            ((Throwable) data[0]).printStackTrace(System.err);
+            break;
+        case SCENE_GRAPH_LOADED:
+            if (REST_ENABLED) {
+                /*
+                				 * Notify REST server that GUI is loaded and everything should be in a
+                				 * well-defined state
+                				 */
+                Method activate;
+                try {
+                    activate = REST_SERVER_CLASS.getMethod("activate");
+                    activate.invoke(null, new Object[0]);
+                } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
+                        | InvocationTargetException e) {
+                    Logger.error(e);
+                }
+            }
+            break;
+        case DISPOSE:
+            if (REST_ENABLED) {
+                /* Shutdown REST server thread on termination */
+                try {
+                    Method stop = REST_SERVER_CLASS.getMethod("stop");
+                    stop.invoke(null, new Object[0]);
+                } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
+                        | InvocationTargetException e) {
+                    Logger.error(e);
+                }
+            }
+            break;
+        default:
+            break;
+        }
 
-	private static void initUserDirectory() {
-		SysUtilsFactory.getSysUtils().getGSHomeDir().mkdirs();
-		SysUtilsFactory.getSysUtils().getDefaultFramesDir().mkdirs();
-		SysUtilsFactory.getSysUtils().getDefaultScreenshotsDir().mkdirs();
-		SysUtilsFactory.getSysUtils().getDefaultMusicDir().mkdirs();
-		SysUtilsFactory.getSysUtils().getDefaultScriptDir().mkdirs();
-		SysUtilsFactory.getSysUtils().getDefaultCameraDir().mkdirs();
-	}
+    }
 
-	/**
-	 * Initialises the configuration file. Tries to load first the file in
-	 * <code>$HOME/.gaiasky/global.properties</code>. Checks the
-	 * <code>properties.version</code> key to determine whether the file is
-	 * compatible or not. If it is, it uses the existing file. If it is not, it
-	 * replaces it with the default file.
-	 * 
-	 * @param ow Whether to overwrite
-	 * @return The path of the file used
-	 * @throws IOException
-	 */
-	private static String initConfigFile(boolean ow) throws IOException {
-		// Use user folder
-		File userFolder = SysUtilsFactory.getSysUtils().getGSHomeDir();
-		userFolder.mkdirs();
-		File userFolderConfFile = new File(userFolder, "global.properties");
+    private static void initUserDirectory() {
+        SysUtilsFactory.getSysUtils().getGSHomeDir().mkdirs();
+        SysUtilsFactory.getSysUtils().getDefaultFramesDir().mkdirs();
+        SysUtilsFactory.getSysUtils().getDefaultScreenshotsDir().mkdirs();
+        SysUtilsFactory.getSysUtils().getDefaultMusicDir().mkdirs();
+        SysUtilsFactory.getSysUtils().getDefaultScriptDir().mkdirs();
+        SysUtilsFactory.getSysUtils().getDefaultCameraDir().mkdirs();
+    }
 
-		// Internal config
-		File confFolder = new File("conf" + File.separator);
-		File internalFolderConfFile = new File(confFolder, "global.properties");
+    /**
+    	 * Initialises the configuration file. Tries to load first the file in
+    	 * <code>$HOME/.gaiasky/global.properties</code>. Checks the
+    	 * <code>properties.version</code> key to determine whether the file is
+    	 * compatible or not. If it is, it uses the existing file. If it is not, it
+    	 * replaces it with the default file.
+    	 * 
+    	 * @param ow Whether to overwrite
+    	 * @return The path of the file used
+    	 * @throws IOException
+    	 */
+    private static String initConfigFile(boolean ow) throws IOException {
+        // Use user folder
+        File userFolder = SysUtilsFactory.getSysUtils().getGSHomeDir();
+        userFolder.mkdirs();
+        File userFolderConfFile = new File(userFolder, "global.properties");
 
-		boolean overwrite = ow;
-		if (userFolderConfFile.exists()) {
-			Properties userprops = new Properties();
-			userprops.load(new FileInputStream(userFolderConfFile));
+        // Internal config
+        File confFolder = new File("conf" + File.separator);
+        File internalFolderConfFile = new File(confFolder, "global.properties");
+
+        boolean overwrite = ow;
+        if (userFolderConfFile.exists()) {
+            Properties userprops = new Properties();
+            userprops.load(new FileInputStream(userFolderConfFile));
             int internalversion = SOURCE_CONF_VERSION;
-			if (internalFolderConfFile.exists()) {
-				Properties internalprops = new Properties();
-				internalprops.load(new FileInputStream(internalFolderConfFile));
-				internalversion = Integer.parseInt(internalprops.getProperty("properties.version"));
-			}
+            if (internalFolderConfFile.exists()) {
+                Properties internalprops = new Properties();
+                internalprops.load(new FileInputStream(internalFolderConfFile));
+                internalversion = Integer.parseInt(internalprops.getProperty("properties.version"));
+            }
 
-			// Check latest version
-			if (!userprops.containsKey("properties.version") || (userprops.containsKey("properties.version")
-					&& Integer.parseInt(userprops.getProperty("properties.version")) < internalversion)) {
-				System.out.println("Properties file version mismatch, overwriting with new version: found "
-						+ Integer.parseInt(userprops.getProperty("properties.version")) + ", required "
-						+ internalversion);
-				overwrite = true;
-			}
-		}
+            // Check latest version
+            if (!userprops.containsKey("properties.version") || (userprops.containsKey("properties.version")
+                    && Integer.parseInt(userprops.getProperty("properties.version")) < internalversion)) {
+                System.out.println("Properties file version mismatch, overwriting with new version: found "
+                        + Integer.parseInt(userprops.getProperty("properties.version")) + ", required "
+                        + internalversion);
+                overwrite = true;
+            }
+        }
 
-		if (overwrite || !userFolderConfFile.exists()) {
-			// Copy file
-			if (confFolder.exists() && confFolder.isDirectory()) {
-				// Running released package
-				copyFile(internalFolderConfFile, userFolderConfFile, overwrite);
-			} else {
-				// Running from code?
-				if (!new File("../assets/conf" + File.separator).exists()) {
-					throw new IOException("File ../assets/conf does not exist!");
-				}
-				copyFile(new File("../assets/conf" + File.separator + "global.properties"), userFolderConfFile,
-						overwrite);
-			}
-		}
-		String props = userFolderConfFile.getAbsolutePath();
-		System.setProperty("properties.file", props);
-		return props;
-	}
+        if (overwrite || !userFolderConfFile.exists()) {
+            // Copy file
+            if (confFolder.exists() && confFolder.isDirectory()) {
+                // Running released package
+                copyFile(internalFolderConfFile, userFolderConfFile, overwrite);
+            } else {
+                // Running from code?
+                if (!new File("../assets/conf" + File.separator).exists()) {
+                    throw new IOException("File ../assets/conf does not exist!");
+                }
+                copyFile(new File("../assets/conf" + File.separator + "global.properties"), userFolderConfFile, overwrite);
+            }
+        }
+        String props = userFolderConfFile.getAbsolutePath();
+        System.setProperty("properties.file", props);
+        return props;
+    }
 
-	/**
-	 * Checks whether the REST server dependencies are in the classpath.
-	 * 
-	 * @return True if REST dependencies are loaded.
-	 */
-	private static boolean checkRestDepsInClasspath() {
-		try {
-			Class.forName("com.google.gson.Gson");
-			Class.forName("spark.Spark");
-			Class.forName("gaia.cu9.ari.gaiaorbit.rest.RESTServer");
-			return true;
-		} catch (ClassNotFoundException e) {
-			// my class isn't there!
-			return false;
-		}
-	}
+    /**
+    	 * Checks whether the REST server dependencies are in the classpath.
+    	 * 
+    	 * @return True if REST dependencies are loaded.
+    	 */
+    private static boolean checkRestDepsInClasspath() {
+        try {
+            Class.forName("com.google.gson.Gson");
+            Class.forName("spark.Spark");
+            Class.forName("gaia.cu9.ari.gaiaorbit.rest.RESTServer");
+            return true;
+        } catch (ClassNotFoundException e) {
+            // my class isn't there!
+            return false;
+        }
+    }
 
-	private static void copyFile(File sourceFile, File destFile, boolean ow) throws IOException {
-		if (destFile.exists()) {
-			if (ow) {
-				// Overwrite, delete file
-				destFile.delete();
-			} else {
-				return;
-			}
-		}
-		// Create new
-		destFile.createNewFile();
+    private static void copyFile(File sourceFile, File destFile, boolean ow) throws IOException {
+        if (destFile.exists()) {
+            if (ow) {
+                // Overwrite, delete file
+                destFile.delete();
+            } else {
+                return;
+            }
+        }
+        // Create new
+        destFile.createNewFile();
 
-		FileChannel source = null;
-		FileChannel destination = null;
-		try {
-			source = new FileInputStream(sourceFile).getChannel();
-			destination = new FileOutputStream(destFile).getChannel();
-			destination.transferFrom(source, 0, source.size());
-		} finally {
-			if (source != null) {
-				source.close();
-			}
-			if (destination != null) {
-				destination.close();
-			}
-		}
-	}
+        FileChannel source = null;
+        FileChannel destination = null;
+        try {
+            source = new FileInputStream(sourceFile).getChannel();
+            destination = new FileOutputStream(destFile).getChannel();
+            destination.transferFrom(source, 0, source.size());
+        } finally {
+            if (source != null) {
+                source.close();
+            }
+            if (destination != null) {
+                destination.close();
+            }
+        }
+    }
 
-	private class GaiaSkyWindowListener implements LifecycleListener {
+    /**
+     * Checks for incompatibilities between the java version and the OS. Prints the necessary warnings for known issues.
+     */
+    private static void javaVersionCheck() {
+        double jv = getVersion();
+        SysUtils sys = new SysUtils();
+        boolean linux = sys.isLinux();
+        boolean gnome = sys.checkGnome();
+        if (jv >= 10 && linux && gnome) {
+            System.out.println("======================================= WARNING ========================================");
+            System.out.println("It looks like you are running Gaia Sky with java " + jv + " in Linux with Gnome.\n"
+                    + "This version may crash. If it does, comment out the property\n"
+                    + "'assistive_technologies' in the '/etc/java-[version]/accessibility.properties' file.");
+            System.out.println("========================================================================================");
+            System.out.println();
+        }
+    }
 
-		@Override
-		public void pause() {
+    private static double getVersion() {
+        String version = System.getProperty("java.version");
+        int pos = version.indexOf('.');
+        pos = version.indexOf('.', pos + 1);
+        return Double.parseDouble(version.substring(0, pos));
+    }
 
-		}
+    private class GaiaSkyWindowListener implements LifecycleListener {
 
-		@Override
-		public void resume() {
+        @Override
+        public void pause() {
 
-		}
+        }
 
-		@Override
-		public void dispose() {
-			// Terminate here
+        @Override
+        public void resume() {
 
-			// Analytics stop event
-			Future<GoogleAnalyticsResponse> f1 = AnalyticsReporting.getInstance().sendTimingAppReport();
+        }
 
-			if (f1 != null)
-				try {
-					f1.get(2000, TimeUnit.MILLISECONDS);
-				} catch (Exception e) {
-					Logger.error(e);
-				}
+        @Override
+        public void dispose() {
+            // Terminate here
 
-		}
-	}
+            // Analytics stop event
+            Future<GoogleAnalyticsResponse> f1 = AnalyticsReporting.getInstance().sendTimingAppReport();
+
+            if (f1 != null)
+                try {
+                    f1.get(2000, TimeUnit.MILLISECONDS);
+                } catch (Exception e) {
+                    Logger.error(e);
+                }
+
+        }
+    }
 }
