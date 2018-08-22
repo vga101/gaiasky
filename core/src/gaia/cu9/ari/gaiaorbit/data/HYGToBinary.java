@@ -17,9 +17,9 @@ import gaia.cu9.ari.gaiaorbit.desktop.format.DesktopDateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.desktop.format.DesktopNumberFormatFactory;
 import gaia.cu9.ari.gaiaorbit.desktop.util.DesktopConfInit;
 import gaia.cu9.ari.gaiaorbit.desktop.util.DesktopSysUtilsFactory;
+import gaia.cu9.ari.gaiaorbit.desktop.util.LogWriter;
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
-import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.scenegraph.AbstractPositionEntity;
 import gaia.cu9.ari.gaiaorbit.scenegraph.CelestialBody;
 import gaia.cu9.ari.gaiaorbit.scenegraph.Particle;
@@ -43,7 +43,7 @@ import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
  * 
  * @author Toni Sagrista
  */
-public class HYGToBinary implements IObserver {
+public class HYGToBinary { 
 
     static String fileIn = "/home/tsagrista/git/gaiasky/android/assets-bak/data/hygxyz.csv";
     static String fileInPm = "/home/tsagrista/git/gaiasky/android/assets-bak/data/hip_pm.csv";
@@ -56,6 +56,10 @@ public class HYGToBinary implements IObserver {
             // Assets location
             String ASSETS_LOC = (System.getProperty("assets.location") != null ? System.getProperty("assets.location") : "");
 
+            // Init logger
+            new LogWriter();
+            
+            // Init files
             Gdx.files = new LwjglFiles();
 
             // Sys utils
@@ -72,8 +76,6 @@ public class HYGToBinary implements IObserver {
             I18n.initialize(new FileHandle(ASSETS_LOC + "i18n/gsbundle"));
 
             GlobalConf.data.LIMIT_MAG_LOAD = 20;
-
-            EventManager.instance.subscribe(hyg, Events.POST_NOTIFICATION, Events.JAVA_EXCEPTION);
 
             //hyg.compareCSVtoBinary(fileIn, fileOut);
 
@@ -165,29 +167,6 @@ public class HYGToBinary implements IObserver {
         }
     }
 
-    @Override
-    public void notify(Events event, Object... data) {
-        switch (event) {
-        case POST_NOTIFICATION:
-            StringBuilder sb = new StringBuilder();
-            int i = 0;
-            for (Object ob : data) {
-                sb.append(ob);
-                if (i < data.length - 1) {
-                    sb.append(" - ");
-                }
-                i++;
-            }
-            System.out.println(sb);
-            break;
-        case JAVA_EXCEPTION:
-            ((Throwable) data[0]).printStackTrace(System.err);
-            break;
-        default:
-            break;
-        }
-
-    }
 
     private boolean equals(CelestialBody s1, CelestialBody s2) {
         return s1.id == s2.id && s1.posSph.x == s2.posSph.x && s1.posSph.y == s2.posSph.y && s1.pos.x == s2.pos.x && s1.pos.y == s2.pos.y && s1.pos.z == s2.pos.z && s1.absmag == s2.absmag;

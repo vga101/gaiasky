@@ -2,11 +2,10 @@ package gaia.cu9.ari.gaiaorbit.util.gaia;
 
 import java.util.Date;
 
-import gaia.cu9.ari.gaiaorbit.event.EventManager;
-import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.util.BinarySearchTree;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
+import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.math.Quaterniond;
 
 /**
@@ -65,7 +64,7 @@ public class GaiaAttitudeServer {
 
                 if (prevAttitude != null && !att.equals(prevAttitude)) {
                     // Change!
-                    EventManager.instance.post(Events.POST_NOTIFICATION, I18n.bundle.format("notif.attitude.changed", att.toString(), att.activationTime));
+                    Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.attitude.changed", att.toString(), att.activationTime));
                 }
 
                 prevAttitude = att;

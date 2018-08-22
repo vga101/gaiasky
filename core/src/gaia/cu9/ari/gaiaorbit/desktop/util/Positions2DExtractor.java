@@ -29,11 +29,11 @@ import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
-public class Positions2DExtractor implements IObserver {
+public class Positions2DExtractor {
 
     public static void main(String[] args) throws IOException {
         Positions2DExtractor p2d = new Positions2DExtractor();
-        EventManager.instance.subscribe(p2d, Events.POST_NOTIFICATION, Events.JAVA_EXCEPTION);
+        new LogWriter();
 
         I18n.initialize(new FileHandle("/home/tsagrista/git/gaiasandbox/android/assets/i18n/gsbundle"));
 
@@ -131,27 +131,6 @@ public class Positions2DExtractor implements IObserver {
         }
 
         bw.close();
-    }
-
-    @Override
-    public void notify(Events event, Object... data) {
-        switch (event) {
-        case POST_NOTIFICATION:
-            StringBuilder sb = new StringBuilder();
-            int i = 0;
-            for (Object ob : data) {
-                sb.append(ob);
-                if (i < data.length - 1) {
-                    sb.append(" - ");
-                }
-                i++;
-            }
-            System.out.println(sb);
-            break;
-        case JAVA_EXCEPTION:
-            ((Throwable) data[0]).printStackTrace(System.err);
-        }
-
     }
 
 }

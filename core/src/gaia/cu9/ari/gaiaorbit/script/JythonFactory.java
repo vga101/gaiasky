@@ -18,6 +18,7 @@ import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
+import gaia.cu9.ari.gaiaorbit.util.Logger;
 
 /**
  * Factory class to create, execute and cancel Jython scripts.
@@ -102,7 +103,7 @@ public class JythonFactory extends ScriptingFactory implements IObserver {
                 run.run();
             }
         } else {
-            EventManager.instance.post(Events.POST_NOTIFICATION, I18n.bundle.format("notif.script.max", maxScripts));
+            Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.script.max", maxScripts));
         }
     }
 
@@ -216,7 +217,7 @@ public class JythonFactory extends ScriptingFactory implements IObserver {
         public void run() {
             if (currentScripts.size() < maxScripts) {
                 if (currentScripts.containsKey(path)) {
-                    EventManager.instance.post(Events.POST_NOTIFICATION, I18n.bundle.format("notif.script.already", path));
+                    Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.script.already", path));
                     return;
                 }
                 currentScripts.put(path, this);
@@ -226,9 +227,9 @@ public class JythonFactory extends ScriptingFactory implements IObserver {
                     cleanup();
                 } catch (Exception e) {
                     if (e.getCause() instanceof ThreadDeath) {
-                        EventManager.instance.post(Events.POST_NOTIFICATION, "Script stopped");
+                        Logger.info(this.getClass().getSimpleName(), "Script stopped");
                     } else {
-                        EventManager.instance.post(Events.JAVA_EXCEPTION, e);
+                        Logger.error(e, this.getClass().getSimpleName());
                     }
                 }
             }

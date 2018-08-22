@@ -22,6 +22,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.component.ModelComponent;
 import gaia.cu9.ari.gaiaorbit.util.ComponentTypes;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
+import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.Pair;
 import gaia.cu9.ari.gaiaorbit.util.math.Intersectord;
 import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
@@ -261,7 +262,7 @@ public class Spacecraft extends GenericSpacecraft implements ILineRenderable, IO
             double twoRadiuses = closest.getRadius() + this.getRadius();
             // d1 is the new distance to the centre of the object
             if (!vel.isZero() && Intersectord.distanceSegmentPoint(pos, position, closest.pos) < twoRadiuses) {
-                EventManager.instance.post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), "Crashed against " + closest.name + "!");
+                Logger.info(this.getClass().getSimpleName(), "Crashed against " + closest.name + "!");
 
                 Array<Vector3d> intersections = Intersectord.intersectRaySphere(pos, position, closest.pos, twoRadiuses);
 
@@ -467,7 +468,7 @@ public class Spacecraft extends GenericSpacecraft implements ILineRenderable, IO
 
     public void increaseThrustFactorIndex(boolean broadcast) {
         thrustFactorIndex = (thrustFactorIndex + 1) % thrustFactor.length;
-        EventManager.instance.post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), "Thrust factor: " + thrustFactor[thrustFactorIndex]);
+        Logger.info(this.getClass().getSimpleName(), "Thrust factor: " + thrustFactor[thrustFactorIndex]);
         if (broadcast)
             EventManager.instance.post(Events.SPACECRAFT_THRUST_INFO, thrustFactorIndex);
     }
@@ -476,7 +477,7 @@ public class Spacecraft extends GenericSpacecraft implements ILineRenderable, IO
         thrustFactorIndex = thrustFactorIndex - 1;
         if (thrustFactorIndex < 0)
             thrustFactorIndex = thrustFactor.length - 1;
-        EventManager.instance.post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), "Thrust factor: " + thrustFactor[thrustFactorIndex]);
+        Logger.info(this.getClass().getSimpleName(), "Thrust factor: " + thrustFactor[thrustFactorIndex]);
         if (broadcast)
             EventManager.instance.post(Events.SPACECRAFT_THRUST_INFO, thrustFactorIndex);
     }
@@ -484,7 +485,7 @@ public class Spacecraft extends GenericSpacecraft implements ILineRenderable, IO
     public void setThrustFactorIndex(int i, boolean broadcast) {
         assert i >= 0 && i < thrustFactor.length : "Index " + i + " out of range of thrustFactor vector: [0.." + (thrustFactor.length - 1);
         thrustFactorIndex = i;
-        EventManager.instance.post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), "Thrust factor: " + thrustFactor[thrustFactorIndex]);
+        Logger.info(this.getClass().getSimpleName(), "Thrust factor: " + thrustFactor[thrustFactorIndex]);
         if (broadcast)
             EventManager.instance.post(Events.SPACECRAFT_THRUST_INFO, thrustFactorIndex);
     }

@@ -31,7 +31,7 @@ import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
 
-public class ConstellationHIPUpdater implements IObserver {
+public class ConstellationHIPUpdater  {
 
     public static void main(String[] args) {
         try {
@@ -48,7 +48,7 @@ public class ConstellationHIPUpdater implements IObserver {
             I18n.initialize(new FileHandle("/home/tsagrista/git/gaiasandbox/android/assets/i18n/gsbundle"));
 
             // Add notif watch
-            EventManager.instance.subscribe(new ConstellationHIPUpdater(), Events.POST_NOTIFICATION, Events.JAVA_EXCEPTION);
+            new LogWriter();
 
             updateConstellations();
 
@@ -151,31 +151,6 @@ public class ConstellationHIPUpdater implements IObserver {
         bw.close();
 
         Logger.info("Constellations written to " + constelfile.getAbsolutePath());
-
-    }
-
-    @Override
-    public void notify(Events event, Object... data) {
-        switch (event) {
-        case POST_NOTIFICATION:
-            String message = "";
-            for (int i = 0; i < data.length; i++) {
-                if (!(i == data.length - 1 && data[i] instanceof Boolean)) {
-                    message += (String) data[i];
-                    if (i < data.length - 1 && !(i == data.length - 2 && data[data.length - 1] instanceof Boolean)) {
-                        message += " - ";
-                    }
-                }
-            }
-            System.out.println(message);
-            break;
-        case JAVA_EXCEPTION:
-            Exception e = (Exception) data[0];
-            e.printStackTrace(System.err);
-            break;
-        default:
-            break;
-        }
 
     }
 

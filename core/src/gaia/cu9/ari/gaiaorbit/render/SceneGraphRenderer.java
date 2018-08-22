@@ -432,13 +432,6 @@ public class SceneGraphRenderer extends AbstractRenderer implements IProcessRend
         }
 
         /**
-         * DEPTH BUFFER BITS
-         */
-        intBuffer = BufferUtils.newIntBuffer(16);
-        Gdx.gl.glGetIntegerv(GL20.GL_DEPTH_BITS, intBuffer);
-        Logger.info(this.getClass().getSimpleName(), "Depth buffer size: " + intBuffer.get() + " bits");
-
-        /**
          * INITIALIZE SGRs
          */
         sgrs = new ISGR[4];

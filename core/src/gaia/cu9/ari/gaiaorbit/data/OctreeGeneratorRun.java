@@ -36,14 +36,12 @@ import gaia.cu9.ari.gaiaorbit.desktop.format.DesktopDateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.desktop.format.DesktopNumberFormatFactory;
 import gaia.cu9.ari.gaiaorbit.desktop.util.DesktopConfInit;
 import gaia.cu9.ari.gaiaorbit.desktop.util.DesktopSysUtilsFactory;
-import gaia.cu9.ari.gaiaorbit.event.EventManager;
-import gaia.cu9.ari.gaiaorbit.event.Events;
+import gaia.cu9.ari.gaiaorbit.desktop.util.LogWriter;
 import gaia.cu9.ari.gaiaorbit.scenegraph.StarGroup.StarBean;
 import gaia.cu9.ari.gaiaorbit.util.ConfInit;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
-import gaia.cu9.ari.gaiaorbit.util.NotificationsListener;
 import gaia.cu9.ari.gaiaorbit.util.SysUtilsFactory;
 import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
@@ -136,7 +134,7 @@ public class OctreeGeneratorRun {
 
     protected Map<Long, float[]> colors;
 
-    private NotificationsListener nl;
+    private LogWriter lw;
 
     public OctreeGeneratorRun() {
         super();
@@ -175,7 +173,7 @@ public class OctreeGeneratorRun {
             I18n.initialize(new FileHandle(ASSETS_LOC + "i18n/gsbundle"));
 
             // Add notification watch
-            EventManager.instance.subscribe((nl = new NotificationsListener()), Events.POST_NOTIFICATION, Events.JAVA_EXCEPTION);
+            lw = new LogWriter();
 
             generateOctree();
 
@@ -188,7 +186,7 @@ public class OctreeGeneratorRun {
                 out.print(argstr);
                 out.println();
                 out.println();
-                for (String msg : nl.logMessages) {
+                for (String msg : lw.logMessages) {
                     out.println(msg);
                 }
             }

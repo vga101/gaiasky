@@ -40,6 +40,7 @@ import gaia.cu9.ari.gaiaorbit.desktop.util.DesktopConfInit;
 import gaia.cu9.ari.gaiaorbit.desktop.util.DesktopMusicActors;
 import gaia.cu9.ari.gaiaorbit.desktop.util.DesktopNetworkChecker;
 import gaia.cu9.ari.gaiaorbit.desktop.util.DesktopSysUtilsFactory;
+import gaia.cu9.ari.gaiaorbit.desktop.util.LogWriter;
 import gaia.cu9.ari.gaiaorbit.desktop.util.MemInfoWindow;
 import gaia.cu9.ari.gaiaorbit.desktop.util.RunCameraWindow;
 import gaia.cu9.ari.gaiaorbit.desktop.util.RunScriptWindow;
@@ -218,9 +219,12 @@ public class GaiaSkyDesktop implements IObserver {
         }
     }
 
+    private LogWriter lw;
+
     public GaiaSkyDesktop() {
         super();
-        EventManager.instance.subscribe(this, Events.SHOW_RUNSCRIPT_ACTION, Events.JAVA_EXCEPTION, Events.SHOW_PLAYCAMERA_ACTION, Events.DISPLAY_MEM_INFO_WINDOW);
+        lw = new LogWriter();
+        EventManager.instance.subscribe(this, Events.SHOW_RUNSCRIPT_ACTION, Events.SHOW_PLAYCAMERA_ACTION, Events.DISPLAY_MEM_INFO_WINDOW);
         EventManager.instance.subscribe(this, Events.SCENE_GRAPH_LOADED, Events.DISPOSE);
     }
 
@@ -252,7 +256,8 @@ public class GaiaSkyDesktop implements IObserver {
         LwjglApplication app = new LwjglApplication(new GaiaSky(cfg), cfg);
         app.addLifecycleListener(new GaiaSkyWindowListener());
 
-        EventManager.instance.unsubscribe(this, Events.POST_NOTIFICATION, Events.JAVA_EXCEPTION);
+        if (lw != null)
+            EventManager.instance.removeAllSubscriptions(lw);
     }
 
     RunScriptWindow scriptWindow = null;

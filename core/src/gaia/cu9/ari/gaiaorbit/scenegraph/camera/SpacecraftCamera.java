@@ -27,6 +27,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.camera.CameraManager.CameraMode;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
+import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.Pair;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
@@ -468,12 +469,12 @@ public class SpacecraftCamera extends AbstractCamera implements IObserver {
 
         @Override
         public void connected(Controller controller) {
-            EventManager.instance.post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), "Controller connected: " + controller.getName());
+            Logger.info(this.getClass().getSimpleName(), "Controller connected: " + controller.getName());
         }
 
         @Override
         public void disconnected(Controller controller) {
-            EventManager.instance.post(Events.POST_NOTIFICATION, this.getClass().getSimpleName(), "Controller disconnected: " + controller.getName());
+            Logger.info(this.getClass().getSimpleName(), "Controller disconnected: " + controller.getName());
         }
 
         @Override
