@@ -57,10 +57,10 @@ OPTS="$OPTS -XX:+UseG1GC"
 OPTS="$OPTS -Dassets.location=\"$GSDIR/\""
 
 # REST server static files location
-#OPTS="$OPTS -Drest-static.location=\"$GSDIR/rest-static/\""
+OPTS="$OPTS -Drest-static.location=\"$GSDIR/rest-static/\""
 
 # SimpleLogger defaults 
-#OPTS="$OPTS -Dorg.slf4j.simpleLogger.defaultLogLevel=warn -Dorg.slf4j.simpleLogger.showThreadName=false"
+OPTS="$OPTS -Dorg.slf4j.simpleLogger.defaultLogLevel=warn -Dorg.slf4j.simpleLogger.showThreadName=false"
 
 #
 # Run.

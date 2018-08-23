@@ -89,11 +89,11 @@ for i, line in enumerate(fcl):
     else:
         blanks += 1
 
-print "STATS"
-print "Total lines %i" % total
-print "Matches %i" % matches
-print "No matches %i" % nomatches
-print "Blanks %i" % blanks
-print "Output lines %i" % outputlines
+print("STATS")
+print("Total lines %i" % total)
+print("Matches %i" % matches)
+print("No matches %i" % nomatches)
+print("Blanks %i" % blanks)
+print("Output lines %i" % outputlines)
 
 

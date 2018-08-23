@@ -9,7 +9,7 @@ sourceSets {
         java {
             srcDir 'src'
             // Only enable when building desktop Gaia Sky
-            exclude '**/rest/**'
+            //exclude '**/rest/**'
        }
    }
 }
