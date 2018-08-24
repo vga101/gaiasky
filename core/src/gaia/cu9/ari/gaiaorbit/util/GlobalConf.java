@@ -449,6 +449,9 @@ public class GlobalConf {
      */
     public static class DataConf implements IConf {
 
+        /** Locations to look for catalog files additionally to internal **/
+        public String[] CATALOG_LOCATIONS;
+        
         /** The json data file in case of local data source **/
         public String OBJECTS_JSON_FILES;
 
@@ -470,8 +473,9 @@ public class GlobalConf {
          **/
         public boolean REAL_GAIA_ATTITUDE;
 
-        public void initialize(String cATALOG_JSON_FILE, String oBJECTS_JSON_FILE, float lIMIT_MAG_LOAD, boolean rEAL_GAIA_ATTITUDE, boolean hIGH_ACCURACY_POSITIONS) {
+        public void initialize(String[] cATALOG_LOCATIONS, String cATALOG_JSON_FILE, String oBJECTS_JSON_FILE, float lIMIT_MAG_LOAD, boolean rEAL_GAIA_ATTITUDE, boolean hIGH_ACCURACY_POSITIONS) {
 
+            CATALOG_LOCATIONS = cATALOG_LOCATIONS;
             CATALOG_JSON_FILES = cATALOG_JSON_FILE;
             OBJECTS_JSON_FILES = oBJECTS_JSON_FILE;
             LIMIT_MAG_LOAD = lIMIT_MAG_LOAD;

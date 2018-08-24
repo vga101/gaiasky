@@ -21,7 +21,7 @@
 		"cataloginfo" : {
 			"name" : "TGAS+HYG",
 			"description" : "Tycho-Gaia Astrometric Solution. 1.5 million stars.",
-			"type" : "INTERNAL"
+			"type" : "DEFAULT"
 		},
 		
 		// Extends IParticleGroupDataProvider

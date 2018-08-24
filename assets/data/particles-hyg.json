@@ -21,7 +21,7 @@
 		"cataloginfo" : {
 			"name" : "HYG",
 			"description" : "Hipparcos + Yale bright stars + Gliese nearby stars. 120K stars.",
-			"type" : "INTERNAL"
+			"type" : "DEFAULT"
 		},
 		
 		// Extends IParticleGroupDataProvider

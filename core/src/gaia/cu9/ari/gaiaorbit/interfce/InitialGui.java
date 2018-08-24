@@ -36,12 +36,15 @@ public class InitialGui extends AbstractGui {
     public void doneLoading(AssetManager assetManager) {
     }
 
-    protected void rebuildGui() {
+    public void rebuildGui() {
         if (ui != null) {
             ui.clear();
+        }
+        if(cdw != null) {
+            cdw.remove();
         }
         cdw = new ChooseDatasetWindow(ui, skin);
         cdw.show(ui);
     }
-
+    
 }

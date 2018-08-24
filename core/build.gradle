@@ -232,18 +232,16 @@ task dist (dependsOn: gaiaskyJar, description: "Compiles the project, creates th
             exclude "**/*-wgl.json"
             exclude "**/*-wgl-fp.json"
 
-            exclude "**/catalog-dr2-int6*.json"
-            exclude "**/catalog-hyg.json"
-            exclude "**/catalog-tgas-hyg-lod.json"
-            exclude "**/catalog-tgas-hyg.json"
-            exclude "**/catalog-lmc-lod.json"
+            exclude "**/catalog-*.json"
+            
+            exclude "**/music"
 
-            exclude "**/meshes/dr2/meshes-hot/non_ionizing_25_50_peaks.g3db"
-            exclude "**/meshes/dr2/meshes-hot/non_ionizing_25_50_ranges.g3db"
+            exclude "**/meshes/dr2/meshes_hot/"
             exclude "**/meshes/dr2/**/source/"
             exclude "**/meshes/tgas"
 
             exclude "meshes-tgas.json"
+            exclude "meshes-dr2-hot-*.json"
             exclude "orbits_asteroids_extra.json"
             exclude "orbits_asteroids_extra_sample.json"
 
@@ -257,15 +255,6 @@ task dist (dependsOn: gaiaskyJar, description: "Compiles the project, creates th
 
             exclude "dummyversion"
 
-        }
-
-        // Copy DR2 default catalog - 20%/0.5%
-        mkdir "$distDir/data/octree/dr2/dr2-0.2-0.005"
-        copy {
-            from "/media/tsagrista/Daten/Gaia/data/GDR2/dr2int6/out/66-mag-100000-0.2-0.005"
-            into "$distDir/data/octree/dr2/dr2-0.2-0.005"
-
-            exclude "log"
         }
 
         // Copy i18n files

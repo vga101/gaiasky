@@ -39,6 +39,7 @@ allprojects {
         sparkjavaVersion = '2.7.2'
         gsonVersion = '2.8.0'
         jafamaVersion = '2.1.0'
+        compressVersion = '1.18'
     }
 
     repositories {
@@ -139,6 +140,7 @@ project(":core") {
         compile "com.beust:jcommander:$jcommanderVersion"
         compile "com.brsanthu:google-analytics-java:$googleanalyticsjavaVersion"
         compile "net.jafama:jafama:$jafamaVersion"
+        //compile "org.apache.commons:commons-compress:$compressVersion"
 
 
         // ****************

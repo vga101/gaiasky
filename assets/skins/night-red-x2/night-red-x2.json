@@ -46,6 +46,7 @@ com.badlogic.gdx.scenes.scene2d.ui.Button$ButtonStyle: {
 },
 com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle: {
 	default: { down: default-round-down, up: default-round, font: ui-18, fontColor: red },
+	download: { down: default-round-down, up: default-round, font: ui-21, fontColor: red },
 	toggle: { down: default-round-down, up: default-round, checked: default-round-down, font: ui-18, fontColor: red, downFontColor: red },
 	toggle-big: { down: default-round-down, up: default-round, checked: default-round-down, font: ui-21, fontColor: red, downFontColor: red },
 	link: { font: ui-18, fontColor: blue, downFontColor: red }

@@ -21,7 +21,7 @@
 		"cataloginfo" : {
 			"name" : "White Dwarfs",
 			"description" : "White Dwarfs catalog",
-			"type" : "INTERNAL"
+			"type" : "DEFAULT"
 		},
 		
 		// Extends IParticleGroupDataProvider

@@ -2,42 +2,66 @@ package gaia.cu9.ari.gaiaorbit.interfce;
 
 import java.io.File;
 import java.io.FileFilter;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.RandomAccessFile;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+
+import org.python.apache.commons.compress.archivers.tar.TarArchiveEntry;
+import org.python.apache.commons.compress.archivers.tar.TarArchiveInputStream;
+import org.python.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
+import org.python.apache.commons.compress.utils.IOUtils;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Net.HttpMethods;
+import com.badlogic.gdx.Net.HttpRequest;
+import com.badlogic.gdx.Net.HttpResponse;
+import com.badlogic.gdx.Net.HttpResponseListener;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Cursor.SystemCursor;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
-import com.badlogic.gdx.scenes.scene2d.ui.ButtonGroup;
+import com.badlogic.gdx.scenes.scene2d.ui.Cell;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.TextArea;
-import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldStyle;
-import com.badlogic.gdx.scenes.scene2d.ui.TextTooltip;
-import com.badlogic.gdx.utils.JsonReader;
-import com.badlogic.gdx.utils.JsonValue;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
+import com.badlogic.gdx.utils.Array;
 
 import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
-import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextArea;
+import gaia.cu9.ari.gaiaorbit.util.ISysUtils;
+import gaia.cu9.ari.gaiaorbit.util.Logger;
+import gaia.cu9.ari.gaiaorbit.util.SysUtilsFactory;
+import gaia.cu9.ari.gaiaorbit.util.format.INumberFormat;
+import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
+import gaia.cu9.ari.gaiaorbit.util.scene2d.FileChooser;
+import gaia.cu9.ari.gaiaorbit.util.scene2d.FileChooser.ResultListener;
+import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnLabel;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextButton;
 
 public class ChooseDatasetWindow extends GenericDialog {
+    private static final String DEFAULT_CATALOG_URL = "http://gaia.ari.uni-heidelberg.de/gaiasky/files/catalogs/dr2/dr2-20-0.5.tar.gz";
+    //private static final String DEFAULT_CATALOG_URL = "http://gaia.ari.uni-heidelberg.de/gaiasky/files/catalogs/dr2/test.tar.gz";
 
-    private Map<Button, String> candidates;
-    private OwnTextButton[] cbs;
+    private DatasetsWidget dw;
+    private String assetsLoc;
+    private INumberFormat nf;
 
     public ChooseDatasetWindow(Stage stage, Skin skin) {
         super(txt("gui.dschooser.title"), skin, stage);
+        assetsLoc = System.getProperty("assets.location") != null ? System.getProperty("assets.location") : "";
+        nf = NumberFormatFactory.getFormatter("##0.0");
 
-        candidates = new HashMap<Button, String>();
-
-        setCancelText(txt("gui.cancel"));
-        setAcceptText(txt("gui.ok"));
+        setCancelText(txt("gui.exit"));
+        setAcceptText(txt("gui.start"));
 
         // Build
         buildSuper();
@@ -45,100 +69,251 @@ public class ChooseDatasetWindow extends GenericDialog {
 
     @Override
     protected void build() {
-        // Discover datasets, add as buttons
-        String assetsLoc = System.getProperty("assets.location") != null ? System.getProperty("assets.location") : "";
-        FileHandle dataFolder = Gdx.files.absolute(assetsLoc + File.separatorChar + "data");
-        FileHandle[] catalogFiles = dataFolder.list(new FileFilter() {
-            @Override
-            public boolean accept(File pathname) {
-                return pathname.getName().startsWith("catalog-") && pathname.getName().endsWith(".json");
+        float pad = 10 * GlobalConf.SCALE_FACTOR;
+        float buttonpad = 1 * GlobalConf.SCALE_FACTOR;
+
+        Cell<Actor> topCell = content.add((Actor) null);
+        topCell.row();
+        Cell<Actor> bottomCell = content.add((Actor) null);
+
+        dw = new DatasetsWidget(skin, assetsLoc);
+        Array<FileHandle> catalogFiles = dw.buildCatalogFiles();
+
+        if (catalogFiles.size == 0) {
+            this.getTitleLabel().setText(txt("gui.dsdownload.title"));
+            // Offer downloads
+            Table downloadTable = new Table(skin);
+
+            OwnLabel catalogsLocLabel = new OwnLabel(txt("gui.dsdownload.location") + ":", skin);
+
+            downloadTable.add(new OwnLabel(txt("gui.dsdownload.info"), skin)).left().colspan(2).padBottom(pad).row();
+            downloadTable.add(catalogsLocLabel).left().padBottom(pad);
+
+            ISysUtils su = SysUtilsFactory.getSysUtils();
+            su.getDefaultCatalogsDir().mkdirs();
+            String catLoc;
+            if (GlobalConf.data.CATALOG_LOCATIONS == null || GlobalConf.data.CATALOG_LOCATIONS.length == 0) {
+                catLoc = su.getDefaultCatalogsDir().getAbsolutePath();
+                GlobalConf.data.CATALOG_LOCATIONS = new String[] { catLoc };
+            } else {
+                catLoc = GlobalConf.data.CATALOG_LOCATIONS[0];
             }
-        });
-        float pad = 3 * GlobalConf.SCALE_FACTOR;
-        float tawidth = 300 * GlobalConf.SCALE_FACTOR;
-        float taheight = GlobalConf.SCALE_FACTOR > 1 ? 50 : 35;
+            OwnTextButton catalogsLoc = new OwnTextButton(catLoc, skin);
+            catalogsLoc.pad(buttonpad * 4);
+            catalogsLoc.setMinWidth(GlobalConf.SCALE_FACTOR == 1 ? 450 : 650);
+            downloadTable.add(catalogsLoc).left().padLeft(pad).padBottom(pad).row();
+            Cell<Actor> notice = downloadTable.add((Actor) null).colspan(2).padBottom(pad);
+            notice.row();
 
-        JsonReader reader = new JsonReader();
+            OwnTextButton downloadNow = new OwnTextButton(txt("gui.dsdownload.download"), skin, "download");
+            downloadNow.pad(buttonpad * 4);
+            downloadNow.setMinWidth(catalogsLoc.getWidth() + catalogsLocLabel.getWidth() + pad);
+            downloadTable.add(downloadNow).center().colspan(2);
 
-        // Sort by name
-        Comparator<FileHandle> byName = (FileHandle a, FileHandle b) -> a.name().compareTo(b.name());
-        Arrays.sort(catalogFiles, byName);
+            catalogsLoc.addListener((event) -> {
+                if (event instanceof ChangeEvent) {
+                    FileChooser fc = FileChooser.createPickDialog(txt("gui.dsdownload.pickloc"), skin, Gdx.files.absolute(GlobalConf.data.CATALOG_LOCATIONS[0]));
+                    fc.setResultListener(new ResultListener() {
+                        @Override
+                        public boolean result(boolean success, FileHandle result) {
+                            if (success) {
+                                if (result.file().canRead() && result.file().canWrite()) {
+                                    // do stuff with result
+                                    catalogsLoc.setText(result.path());
+                                    GlobalConf.data.CATALOG_LOCATIONS = new String[] { result.path() };
+                                    me.pack();
+                                } else {
+                                    Label warn = new OwnLabel(txt("gui.dsdownload.pickloc.permissions"), skin);
+                                    warn.setColor(1f, .4f, .4f, 1f);
+                                    notice.setActor(warn);
+                                    return false;
+                                }
+                            }
+                            notice.clearActor();
+                            return true;
+                        }
+                    });
+                    fc.setOkButtonText(txt("gui.ok"));
+                    fc.setCancelButtonText(txt("gui.cancel"));
+                    fc.setFilter(new FileFilter() {
+                        @Override
+                        public boolean accept(File pathname) {
+                            return pathname.isDirectory();
+                        }
+                    });
+                    fc.show(stage);
 
-        cbs = new OwnTextButton[catalogFiles.length];
-        int i = 0;
-        String[] currentSetting = GlobalConf.data.CATALOG_JSON_FILES.split("\\s*,\\s*");
-        for (FileHandle catalogFile : catalogFiles) {
-            String candidate = catalogFile.path().substring(assetsLoc.length(), catalogFile.path().length());
+                    return true;
+                }
+                return false;
+            });
 
-            String name = null;
-            String desc = null;
-            try {
-                JsonValue val = reader.parse(catalogFile);
-                if (val.has("description"))
-                    desc = val.get("description").asString();
-                if (val.has("name"))
-                    name = val.get("name").asString();
-            } catch (Exception e) {
-            }
-            if (desc == null)
-                desc = candidate;
-            if (name == null)
-                name = catalogFile.nameWithoutExtension();
+            downloadNow.addListener((event) -> {
+                if (event instanceof ChangeEvent) {
+                    if (!downloadNow.isDisabled()) {
+                        downloadNow.setDisabled(true);
+                        // Make a GET request
+                        HttpRequest request = new HttpRequest(HttpMethods.GET);
+                        request.setTimeOut(2500);
+                        request.setUrl(DEFAULT_CATALOG_URL);
 
-            OwnTextButton cb = new OwnTextButton(name, skin, "toggle-big");
+                        FileHandle archiveFile = Gdx.files.absolute(GlobalConf.data.CATALOG_LOCATIONS[0] + "/temp.tar.gz");
 
-            cb.setChecked(contains(catalogFile.name(), currentSetting));
-            cb.addListener(new TextTooltip(candidate, skin));
-            content.add(cb).left().top().padRight(pad);
+                        // Send the request, listen for the response
+                        Gdx.net.sendHttpRequest(request, new HttpResponseListener() {
+                            @Override
+                            public void handleHttpResponse(HttpResponse httpResponse) {
+                                // Determine how much we have to download
+                                long length = Long.parseLong(httpResponse.getHeader("Content-Length"));
 
-            // Description
-            TextArea description = new OwnTextArea(desc, skin.get("regular", TextFieldStyle.class));
-            description.setDisabled(true);
-            description.setPrefRows(2);
-            description.setWidth(tawidth);
-            description.setHeight(taheight);
-            content.add(description).left().top().padTop(pad).padLeft(pad).row();
+                                // We're going to download the file to external storage, create the streams
+                                InputStream is = httpResponse.getResultAsStream();
+                                OutputStream os = archiveFile.write(false);
 
-            candidates.put(cb, candidate);
+                                byte[] bytes = new byte[1024];
+                                int count = -1;
+                                long read = 0;
+                                try {
+                                    me.acceptButton.setDisabled(true);
+                                    Logger.info("Started download of file : " + DEFAULT_CATALOG_URL);
+                                    // Keep reading bytes and storing them until there are no more.
+                                    while ((count = is.read(bytes, 0, bytes.length)) != -1) {
+                                        os.write(bytes, 0, count);
+                                        read += count;
 
-            cbs[i++] = cb;
+                                        // Update the UI with the download progress
+                                        final double progress = ((double) read / (double) length) * 100;
+                                        final String progressString = progress >= 100 ? txt("gui.done") : txt("gui.dsdownload.downloading", nf.format(progress));
 
+                                        // Since we are downloading on a background thread, post a runnable to touch UI
+                                        Gdx.app.postRunnable(() -> {
+                                            if (progress == 100) {
+                                                downloadNow.setDisabled(true);
+                                            }
+                                            downloadNow.setText(progressString);
+                                        });
+                                    }
+                                    is.close();
+                                    os.close();
+                                    Logger.info(txt("gui.dsdownload.finished", archiveFile.path()));
+
+                                    // Unpack
+                                    decompress(archiveFile.path(), new File(GlobalConf.data.CATALOG_LOCATIONS[0]), downloadNow);
+                                    // Remove archive
+                                    archiveFile.file().delete();
+
+                                    // Descriptor file
+                                    FileHandle descFile = Gdx.files.absolute(GlobalConf.data.CATALOG_LOCATIONS[0] + "/catalog-dr2-default.json");
+                                    String descStr = "{\n" +
+                                            "\"name\" : \"DR2 - default\",\n" +
+                                            "\"description\" : \"Gaia DR2 (20%/0.5% bright/faint error). 7.5M stars.\",\n" +
+                                            "\"data\" : [\n" +
+                                            "{\n" +
+                                            "\"loader\": \"gaia.cu9.ari.gaiaorbit.data.group.OctreeGroupLoader\",\n" +
+                                            "\"files\": [ \"@PATH@/66-mag-100000-0.2-0.005/particles/\", \"@PATH@/66-mag-100000-0.2-0.005/metadata.bin\" ]\n" +
+                                            "}\n" +
+                                            "]}";
+                                    descStr = descStr.replaceAll("@PATH@", GlobalConf.data.CATALOG_LOCATIONS[0]);
+                                    descFile.writeString(descStr, false);
+
+                                    // Done
+                                    Gdx.app.postRunnable(() -> {
+                                        downloadNow.setText(txt("gui.done"));
+                                    });
+
+                                    GlobalConf.data.CATALOG_JSON_FILES = descFile.path();
+                                    me.acceptButton.setDisabled(false);
+                                } catch (Exception e) {
+                                    Logger.error(e, txt("gui.dsdownload.wrong"));
+                                    downloadNow.setText(txt("gui.dsdownload.wrong"));
+                                }
+                            }
+
+                            @Override
+                            public void failed(Throwable t) {
+                                Logger.error(t, txt("gui.dsdownload.fail"));
+                                Gdx.app.postRunnable(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        downloadNow.setText(txt("gui.dsdownload.fail"));
+                                    }
+                                });
+                            }
+
+                            @Override
+                            public void cancelled() {
+                                Gdx.app.postRunnable(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        downloadNow.setText(txt("gui.dsdownload.cancel"));
+                                    }
+                                });
+                            }
+                        });
+                        return true;
+                    }
+                }
+                return false;
+            });
+
+            topCell.setActor(downloadTable);
+        } else {
+            bottomCell.clearActor();
+            bottomCell.space(3 * GlobalConf.SCALE_FACTOR);
+            bottomCell.setActor(dw.buildDatasetsWidget(catalogFiles));
         }
-        ButtonGroup<OwnTextButton> bg = new ButtonGroup<OwnTextButton>();
-        bg.setMinCheckCount(0);
-        bg.setMaxCheckCount(catalogFiles.length);
-        bg.add(cbs);
-
-        float maxw = 0;
-        for (Button b : cbs) {
-            if (b.getWidth() > maxw)
-                maxw = b.getWidth();
-        }
-        for (Button b : cbs)
-            b.setWidth(maxw + 10 * GlobalConf.SCALE_FACTOR);
 
     }
 
-    private boolean contains(String name, String[] list) {
-        for (String candidate : list)
-            if (candidate.contains(name))
-                return true;
-        return false;
+    private void decompress(String in, File out, OwnTextButton b) throws Exception {
+        try (TarArchiveInputStream fin = new TarArchiveInputStream(new GzipCompressorInputStream(new FileInputStream(in)))) {
+            String bytes = nf.format(uncompressedSize(in) / 1000d);
+            TarArchiveEntry entry;
+            while ((entry = fin.getNextTarEntry()) != null) {
+                if (entry.isDirectory()) {
+                    continue;
+                }
+                File curfile = new File(out, entry.getName());
+                File parent = curfile.getParentFile();
+                if (!parent.exists()) {
+                    parent.mkdirs();
+                }
+                IOUtils.copy(fin, new FileOutputStream(curfile));
+                Gdx.app.postRunnable(() -> {
+                    b.setText(txt("gui.dsdownload.extracting", nf.format(fin.getBytesRead() / 1000d) + "/" + bytes + " Kb"));
+                });
+            }
+        }
+    }
+
+    private int uncompressedSize(String inputFilePath) throws Exception {
+        RandomAccessFile raf = new RandomAccessFile(inputFilePath, "r");
+        raf.seek(raf.length() - 4);
+        byte[] bytes = new byte[4];
+        raf.read(bytes);
+        int fileSize = ByteBuffer.wrap(bytes).order(ByteOrder.LITTLE_ENDIAN).getInt();
+        if (fileSize < 0)
+            fileSize += (1L << 32);
+        raf.close();
+        return fileSize;
     }
 
     @Override
     protected void accept() {
         boolean first = true;
         // Update setting
-        GlobalConf.data.CATALOG_JSON_FILES = "";
-        for (Button b : cbs) {
-            if (b.isChecked()) {
-                // Add all selected to list
-                if (!first) {
-                    GlobalConf.data.CATALOG_JSON_FILES += "," + candidates.get(b);
-                } else {
-                    GlobalConf.data.CATALOG_JSON_FILES += candidates.get(b);
-                    first = false;
+        if (dw != null && dw.cbs != null) {
+            GlobalConf.data.CATALOG_JSON_FILES = "";
+            for (Button b : dw.cbs) {
+                if (b.isChecked()) {
+                    // Add all selected to list
+                    String candidate = dw.candidates.get(b);
+                    if (!first) {
+                        GlobalConf.data.CATALOG_JSON_FILES += "," + candidate;
+                    } else {
+                        GlobalConf.data.CATALOG_JSON_FILES += candidate;
+                        first = false;
+                    }
                 }
             }
         }

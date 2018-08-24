@@ -119,6 +119,7 @@ public class SysUtils implements ISysUtils {
     private static final String SCRIPT_DIR_NAME = "script";
     private static final String MUSIC_DIR_NAME = "music";
     private static final String MAPPINGS_DIR_NAME = "mappings";
+    private static final String CATALOGS_DIR_NAME = "catalogs";
 
     /**
      * Gets a file pointer to the $HOME/.gaiasky/camera directory.
@@ -173,6 +174,15 @@ public class SysUtils implements ISysUtils {
      */
     public File getDefaultMappingsDir() {
         return new File(System.getProperty("user.home") + File.separator + GAIASKY_DIR_NAME + File.separator + MAPPINGS_DIR_NAME + File.separator);
+    }
+
+    /**
+     * Gets a file pointer to the $HOME/.gaiasky/catalogs directory.
+     * 
+     * @return A pointer to the Gaia Sky catalogs directory in the user's home.
+     */
+    public File getDefaultCatalogsDir() {
+        return new File(System.getProperty("user.home") + File.separator + GAIASKY_DIR_NAME + File.separator + CATALOGS_DIR_NAME + File.separator);
     }
 
     public static void main(String[] args) {

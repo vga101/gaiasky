@@ -29,6 +29,9 @@ public interface ISysUtils {
     public File getDefaultMusicDir();
 
     public File getDefaultMappingsDir();
+    
+    public File getDefaultCatalogsDir();
+
 
     public boolean isLinux();
 

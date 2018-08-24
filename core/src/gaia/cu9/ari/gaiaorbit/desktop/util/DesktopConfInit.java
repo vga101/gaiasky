@@ -15,6 +15,8 @@ import java.util.LinkedList;
 import java.util.Locale;
 import java.util.Properties;
 
+import org.python.antlr.op.In;
+
 import com.badlogic.gdx.Gdx;
 
 import gaia.cu9.ari.gaiaorbit.desktop.GaiaSkyDesktop;
@@ -164,6 +166,14 @@ public class DesktopConfInit extends ConfInit {
 		/** DATA CONF **/
 		DataConf dc = new DataConf();
 
+                String[] CATALOG_LOCATIONS;
+                String cloc = p.getProperty("data.catalog.locations");
+                if(cloc == null || cloc.isEmpty()) {
+                    CATALOG_LOCATIONS = new String[] {};
+                }else {
+                    CATALOG_LOCATIONS = cloc.replaceAll(" ", "").split(",");
+                }
+
 		String CATALOG_JSON_FILE = p.getProperty("data.json.catalog");
 
 		String OBJECTS_JSON_FILE = p.getProperty("data.json.objects");
@@ -177,7 +187,7 @@ public class DesktopConfInit extends ConfInit {
 		} else {
 			LIMIT_MAG_LOAD = Float.MAX_VALUE;
 		}
-		dc.initialize(CATALOG_JSON_FILE, OBJECTS_JSON_FILE, LIMIT_MAG_LOAD, REAL_GAIA_ATTITUDE,
+		dc.initialize(CATALOG_LOCATIONS, CATALOG_JSON_FILE, OBJECTS_JSON_FILE, LIMIT_MAG_LOAD, REAL_GAIA_ATTITUDE,
 				HIGH_ACCURACY_POSITIONS);
 
 		/** PROGRAM CONF **/
@@ -428,6 +438,7 @@ public class DesktopConfInit extends ConfInit {
 		p.setProperty("graphics.render.quality", Float.toString(GlobalConf.frame.FRAME_QUALITY));
 
 		/** DATA **/
+                p.setProperty("data.catalog.locations", stringArrayToString(GlobalConf.data.CATALOG_LOCATIONS, ","));
 		p.setProperty("data.json.catalog", GlobalConf.data.CATALOG_JSON_FILES);
 		p.setProperty("data.json.objects", GlobalConf.data.OBJECTS_JSON_FILES);
 		p.setProperty("data.limit.mag", Float.toString(GlobalConf.data.LIMIT_MAG_LOAD));
@@ -593,5 +604,18 @@ public class DesktopConfInit extends ConfInit {
 				destinationFis.close();
 		}
 	}
+
+        private String stringArrayToString(String[] in, String sep) {
+            if(in == null || in.length == 0 || sep == null)
+                return "";
+            StringBuilder sb = new StringBuilder();
+            int i = 0;
+            for(String str : in) {
+                if(i > 0)
+                    sb.append(sep);
+                sb.append(str);
+            }
+            return sb.toString();
+        }
 
 }
