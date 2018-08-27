@@ -23,6 +23,7 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.IFocus;
 import gaia.cu9.ari.gaiaorbit.scenegraph.IStarFocus;
 import gaia.cu9.ari.gaiaorbit.scenegraph.ModelBody;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
+import gaia.cu9.ari.gaiaorbit.util.Logger.Log;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.Link;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextButton;
 
@@ -32,6 +33,7 @@ public class DesktopNetworkChecker extends Thread implements INetworkChecker {
     private static String URL_WIKIPEDIA = "https://en.wikipedia.org/wiki/";
 
     private static int TIMEOUT_MS = 5000;
+    private static Log logger = Logger.getLogger(DesktopNetworkChecker.class);
 
     private boolean running = true;
 
@@ -124,7 +126,7 @@ public class DesktopNetworkChecker extends Thread implements INetworkChecker {
 
                 Gdx.app.postRunnable(() -> {
                     if (focus != null) {
-                        Logger.debug(this.getClass().getSimpleName(), "Looking up network resources for '" + focus.getName() + "'");
+                        logger.debug(this.getClass().getSimpleName(), "Looking up network resources for '" + focus.getName() + "'");
 
                         // Add table
                         if (focus instanceof IStarFocus) {
@@ -225,7 +227,7 @@ public class DesktopNetworkChecker extends Thread implements INetworkChecker {
             }
 
         } catch (Exception e) {
-            Logger.error(e);
+            logger.error(e);
             listener.ko(null);
         }
 

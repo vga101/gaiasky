@@ -21,6 +21,7 @@ import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
+import gaia.cu9.ari.gaiaorbit.util.Logger.Log;
 import gaia.cu9.ari.gaiaorbit.util.Nature;
 import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
@@ -37,7 +38,7 @@ import gaia.cu9.ari.gaiaorbit.util.parse.Parser;
  *
  */
 public class DR2Loader extends AbstractCatalogLoader implements ISceneGraphLoader {
-
+    private static final Log logger = Logger.getLogger(DR2Loader.class);
     private static final String comma = ",";
     private static final String comment = "#";
 
@@ -89,8 +90,8 @@ public class DR2Loader extends AbstractCatalogLoader implements ISceneGraphLoade
 
         }
 
-        Logger.info(this.getClass().getSimpleName(), "SourceId matched to HIP in " + sidhipfound + " stars");
-        Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.catalog.init", stars.size));
+        logger.info("SourceId matched to HIP in " + sidhipfound + " stars");
+        logger.info(I18n.bundle.format("notif.catalog.init", stars.size));
         return stars;
     }
 
@@ -113,7 +114,7 @@ public class DR2Loader extends AbstractCatalogLoader implements ISceneGraphLoade
                 try {
                     data = new GZIPInputStream(data);
                 } catch (IOException e) {
-                    Logger.error(e);
+                    logger.error(e);
                     return;
                 }
             }
@@ -131,18 +132,18 @@ public class DR2Loader extends AbstractCatalogLoader implements ISceneGraphLoade
                     }
                 }
             } catch (IOException e) {
-                Logger.error(e);
+                logger.error(e);
             } finally {
                 try {
                     br.close();
                 } catch (IOException e) {
-                    Logger.error(e);
+                    logger.error(e);
                 }
 
             }
-            Logger.warn(this.getClass().getSimpleName(), "File loaded: " + f.path() + " - Objects: " + i);
+            logger.warn("File loaded: " + f.path() + " - Objects: " + i);
         } else {
-            Logger.warn(this.getClass().getSimpleName(), "File skipped: " + f.path());
+            logger.warn("File skipped: " + f.path());
         }
     }
 

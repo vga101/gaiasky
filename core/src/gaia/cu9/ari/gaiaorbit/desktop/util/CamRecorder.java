@@ -19,6 +19,7 @@ import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
+import gaia.cu9.ari.gaiaorbit.util.Logger.Log;
 import gaia.cu9.ari.gaiaorbit.util.SysUtilsFactory;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.parse.Parser;
@@ -36,6 +37,7 @@ import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
  *
  */
 public class CamRecorder implements IObserver {
+    private static final Log logger = Logger.getLogger(CamRecorder.class);
     /** Singleton **/
     public static CamRecorder instance;
     private static final String sep = " ";
@@ -82,7 +84,7 @@ public class CamRecorder implements IObserver {
                     os.append(sep).append(Double.toString(up.x)).append(sep).append(Double.toString(up.y)).append(sep).append(Double.toString(up.z));
                     os.append("\n");
                 } catch (IOException e) {
-                    Logger.error(e);
+                    logger.error(e);
                 }
             }
             break;
@@ -109,7 +111,7 @@ public class CamRecorder implements IObserver {
                         // Stop camera
                         EventManager.instance.post(Events.CAMERA_STOP);
                         // Post notification
-                        Logger.info(I18n.bundle.get("notif.cameraplay.done"));
+                        logger.info(I18n.bundle.get("notif.cameraplay.done"));
 
                         // Issue message informing playing has stopped
                         EventManager.instance.post(Events.CAMERA_PLAY_INFO, false);
@@ -118,7 +120,7 @@ public class CamRecorder implements IObserver {
                         EventManager.instance.post(Events.FRAME_OUTPUT_CMD, false);
                     }
                 } catch (IOException e) {
-                    Logger.error(e);
+                    logger.error(e);
                 }
             }
             break;
@@ -148,7 +150,7 @@ public class CamRecorder implements IObserver {
             if (m == RecorderMode.RECORDING) {
                 // We start recording, prepare buffer!
                 if (mode == RecorderMode.RECORDING) {
-                    Logger.info(I18n.bundle.get("error.camerarecord.already"));
+                    logger.info(I18n.bundle.get("error.camerarecord.already"));
                     return;
                 }
                 // Annotate by date
@@ -160,10 +162,10 @@ public class CamRecorder implements IObserver {
                     f.createNewFile();
                     os = new BufferedWriter(new FileWriter(f));
                 } catch (IOException e) {
-                    Logger.error(e);
+                    logger.error(e);
                     return;
                 }
-                Logger.info(I18n.bundle.get("notif.camerarecord.start"));
+                logger.info(I18n.bundle.get("notif.camerarecord.start"));
                 startMs = System.currentTimeMillis();
                 time = 0;
                 mode = RecorderMode.RECORDING;
@@ -177,20 +179,20 @@ public class CamRecorder implements IObserver {
                 try {
                     os.close();
                 } catch (IOException e) {
-                    Logger.error(e);
+                    logger.error(e);
                 }
                 os = null;
                 long elapsed = System.currentTimeMillis() - startMs;
                 startMs = 0;
                 float secs = elapsed / 1000f;
-                Logger.info(I18n.bundle.format("notif.camerarecord.done", f.getAbsolutePath(), secs));
+                logger.info(I18n.bundle.format("notif.camerarecord.done", f.getAbsolutePath(), secs));
                 f = null;
                 mode = RecorderMode.IDLE;
             }
             break;
         case PLAY_CAMERA_CMD:
             if (is != null) {
-                Logger.warn("Hey, we are already playing another movie!");
+                logger.warn("Hey, we are already playing another movie!");
             }
             if (mode != RecorderMode.IDLE) {
                 throw new RuntimeException("The recorder is busy! The current mode is " + mode);
@@ -199,7 +201,7 @@ public class CamRecorder implements IObserver {
 
             is = new BufferedReader(new InputStreamReader(file.read()));
 
-            Logger.info(I18n.bundle.format("notif.cameraplay.start", file.path()));
+            logger.info(I18n.bundle.format("notif.cameraplay.start", file.path()));
             mode = RecorderMode.PLAYING;
 
             // Issue message informing playing has started
@@ -224,7 +226,7 @@ public class CamRecorder implements IObserver {
             // Stop camera
             EventManager.instance.post(Events.CAMERA_STOP);
             // Post notification
-            Logger.info(I18n.bundle.get("notif.cameraplay.done"));
+            logger.info(I18n.bundle.get("notif.cameraplay.done"));
 
             // Issue message informing playing has stopped
             EventManager.instance.post(Events.CAMERA_PLAY_INFO, false);

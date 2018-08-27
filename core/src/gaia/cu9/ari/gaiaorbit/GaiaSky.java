@@ -75,6 +75,7 @@ import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
+import gaia.cu9.ari.gaiaorbit.util.Logger.Log;
 import gaia.cu9.ari.gaiaorbit.util.MasterManager;
 import gaia.cu9.ari.gaiaorbit.util.MemInfo;
 import gaia.cu9.ari.gaiaorbit.util.ModelCache;
@@ -100,7 +101,8 @@ import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
  *
  */
 public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
-
+    private static final Log logger = Logger.getLogger(GaiaSky.class);
+    
     /**
      * Private state boolean indicating whether we are still loading resources.
      */
@@ -220,7 +222,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         EventManager.instance.post(Events.INPUT_ENABLED_CMD, false);
 
         if (!GlobalConf.initialized()) {
-            Logger.error(new RuntimeException("FATAL: Global configuration not initlaized"));
+            logger.error(new RuntimeException("FATAL: Global configuration not initlaized"));
             return;
         }
 
@@ -299,9 +301,9 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         initialGui.initialize(manager);
         Gdx.input.setInputProcessor(initialGui.getGuiStage());
 
-        Logger.info(this.getClass().getSimpleName(), GlobalConf.version.version + " - " + I18n.bundle.format("gui.build", GlobalConf.version.build));
-        Logger.info(this.getClass().getSimpleName(), "Display mode set to " + Gdx.graphics.getWidth() + "x" + Gdx.graphics.getHeight() + ", fullscreen: " + Gdx.graphics.isFullscreen());
-        Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.glslversion", Gdx.gl.glGetString(GL20.GL_SHADING_LANGUAGE_VERSION)));
+        logger.info(GlobalConf.version.version + " - " + I18n.bundle.format("gui.build", GlobalConf.version.build));
+        logger.info("Display mode set to " + Gdx.graphics.getWidth() + "x" + Gdx.graphics.getHeight() + ", fullscreen: " + Gdx.graphics.isFullscreen());
+        logger.info(I18n.bundle.format("notif.glslversion", Gdx.gl.glGetString(GL20.GL_SHADING_LANGUAGE_VERSION)));
     }
 
     /**
@@ -601,7 +603,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
 
             }
         } catch (Throwable t) {
-            Logger.error(t);
+            logger.error(t);
             // TODO implement error reporting?
         }
     }

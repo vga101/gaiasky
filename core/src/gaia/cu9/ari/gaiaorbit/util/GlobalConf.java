@@ -13,6 +13,7 @@ import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.event.IObserver;
 import gaia.cu9.ari.gaiaorbit.render.ComponentType;
 import gaia.cu9.ari.gaiaorbit.render.system.AbstractRenderSystem;
+import gaia.cu9.ari.gaiaorbit.util.Logger.Log;
 import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory.DateType;
 import gaia.cu9.ari.gaiaorbit.util.format.IDateFormat;
@@ -25,6 +26,7 @@ import gaia.cu9.ari.gaiaorbit.util.math.MathUtilsd;
  *
  */
 public class GlobalConf {
+    private static final Log logger = Logger.getLogger(GlobalConf.class);
     public static final String APPLICATION_NAME = "Gaia Sky";
     public static final String WEBPAGE = "https://www.zah.uni-heidelberg.de/gaia/outreach/gaiasky";
     public static final String WEBPAGE_DOWNLOADS = "https://www.zah.uni-heidelberg.de/gaia/outreach/gaiasky/downloads";
@@ -40,7 +42,7 @@ public class GlobalConf {
 
     public static void updateScaleFactor(float sf) {
         SCALE_FACTOR = sf;
-        Logger.debug(GlobalConf.class.getSimpleName(), "GUI scale factor set to " + GlobalConf.SCALE_FACTOR);
+        logger.debug("GUI scale factor set to " + GlobalConf.SCALE_FACTOR);
     }
 
     public static interface IConf {
