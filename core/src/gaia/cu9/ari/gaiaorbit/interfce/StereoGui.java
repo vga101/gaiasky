@@ -42,7 +42,7 @@ public class StereoGui extends AbstractGui {
      * Constructs the interface
      */
     public void doneLoading(AssetManager assetManager) {
-        Logger.info(txt("notif.gui.init"));
+        Logger.getLogger(this.getClass()).info(txt("notif.gui.init"));
 
         interfaces = new Array<IGuiInterface>();
 

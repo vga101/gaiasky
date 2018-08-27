@@ -39,6 +39,7 @@ import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
+import gaia.cu9.ari.gaiaorbit.util.Logger.Log;
 import gaia.cu9.ari.gaiaorbit.util.LruCache;
 import gaia.cu9.ari.gaiaorbit.util.Nature;
 import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
@@ -55,6 +56,8 @@ import gaia.cu9.ari.gaiaorbit.util.time.ITimeFrameProvider;
  *
  */
 public class EventScriptingInterface implements IScriptingInterface, IObserver {
+        private static final Log logger = Logger.getLogger(EventScriptingInterface.class);
+        
 	private EventManager em;
 	private AssetManager manager;
 	private LruCache<String, Texture> textures;
@@ -690,14 +693,14 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
 	public void setObjectSizeScaling(String name, double scalingFactor) {
 		SceneGraphNode sgn = getObject(name);
 		if (sgn == null) {
-			Logger.error("Object '" + name + "' does not exist");
+			logger.error("Object '" + name + "' does not exist");
 			return;
 		}
 		if (sgn instanceof ModelBody) {
 			ModelBody m = (ModelBody) sgn;
 			m.setSizescalefactor(scalingFactor);
 		} else {
-			Logger.error("Object '" + name + "' is not a model object");
+			logger.error("Object '" + name + "' is not a model object");
 			return;
 		}
 	}
@@ -951,7 +954,7 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
 				landOnObjectLocation(object, location.getLocation().x, location.getLocation().y, stop);
 				return;
 			}
-			Logger.info("Location '" + locationName + "' not found on object '" + object.getCandidateName() + "'");
+			logger.info("Location '" + locationName + "' not found on object '" + object.getCandidateName() + "'");
 		}
 	}
 
@@ -1564,7 +1567,7 @@ public class EventScriptingInterface implements IScriptingInterface, IObserver {
 				em.post(Events.CUBEMAP_RESOLUTION_CMD, resolution);
 			});
 		} else {
-			Logger.error("Cubemap resolution must be 20 <= resolution <= 15000");
+			logger.error("Cubemap resolution must be 20 <= resolution <= 15000");
 		}
 	}
 

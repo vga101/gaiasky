@@ -22,8 +22,6 @@ import com.badlogic.gdx.Net.HttpResponse;
 import com.badlogic.gdx.Net.HttpResponseListener;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Cursor.SystemCursor;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Cell;
@@ -33,11 +31,11 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
-import com.badlogic.gdx.utils.Align;
 
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.ISysUtils;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
+import gaia.cu9.ari.gaiaorbit.util.Logger.Log;
 import gaia.cu9.ari.gaiaorbit.util.SysUtilsFactory;
 import gaia.cu9.ari.gaiaorbit.util.format.INumberFormat;
 import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
@@ -47,6 +45,7 @@ import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnLabel;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextButton;
 
 public class DownloadCatalogWindow extends GenericDialog {
+    private static final Log logger = Logger.getLogger(DownloadCatalogWindow.class);
     private INumberFormat nf;
 
     public DownloadCatalogWindow(Stage stage, Skin skin) {
@@ -169,7 +168,7 @@ public class DownloadCatalogWindow extends GenericDialog {
                             long read = 0;
                             try {
                                 me.acceptButton.setDisabled(true);
-                                Logger.info("Started download of file : " + GlobalConf.program.DEFAULT_CATALOG_URL);
+                                logger.info("Started download of file : " + GlobalConf.program.DEFAULT_CATALOG_URL);
                                 // Keep reading bytes and storing them until there are no more.
                                 while ((count = is.read(bytes, 0, bytes.length)) != -1) {
                                     os.write(bytes, 0, count);
@@ -189,7 +188,7 @@ public class DownloadCatalogWindow extends GenericDialog {
                                 }
                                 is.close();
                                 os.close();
-                                Logger.info(txt("gui.dsdownload.finished", archiveFile.path()));
+                                logger.info(txt("gui.dsdownload.finished", archiveFile.path()));
 
                                 // Unpack
                                 decompress(archiveFile.path(), new File(GlobalConf.data.CATALOG_LOCATIONS[0]), downloadNow);
@@ -219,14 +218,14 @@ public class DownloadCatalogWindow extends GenericDialog {
                                 GlobalConf.data.CATALOG_JSON_FILES = descFile.path();
                                 me.acceptButton.setDisabled(false);
                             } catch (Exception e) {
-                                Logger.error(e, txt("gui.dsdownload.wrong"));
+                                logger.error(e, txt("gui.dsdownload.wrong"));
                                 downloadNow.setText(txt("gui.dsdownload.wrong"));
                             }
                         }
 
                         @Override
                         public void failed(Throwable t) {
-                            Logger.error(t, txt("gui.dsdownload.fail"));
+                            logger.error(t, txt("gui.dsdownload.fail"));
                             Gdx.app.postRunnable(new Runnable() {
                                 @Override
                                 public void run() {

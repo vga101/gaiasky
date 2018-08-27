@@ -73,7 +73,7 @@ public class StarGroupRenderSystem extends ImmediateRenderSystem implements IObs
         }
 
         if (mdi >= N_MESHES) {
-            Logger.error(this.getClass().getSimpleName(), "No more free meshes!");
+            logger.error("No more free meshes!");
             return -1;
         }
 
@@ -200,7 +200,7 @@ public class StarGroupRenderSystem extends ImmediateRenderSystem implements IObs
                             try {
                                 curr.mesh.render(shaderProgram, ShapeType.Point.getGlType());
                             } catch (IllegalArgumentException e) {
-                                Logger.error("Render exception");
+                                logger.error("Render exception");
                             }
                             shaderProgram.end();
                         }

@@ -85,8 +85,8 @@ public class MWModelRenderSystem extends ImmediateRenderSystem implements IObser
 
             postShader = new ShaderProgram(Gdx.files.internal("shader/galaxy.post.vertex.glsl"), Gdx.files.internal("shader/galaxy.post.fragment.glsl"));
             if (!postShader.isCompiled()) {
-                Logger.error("Galaxy post shader compilation failed:");
-                Logger.error(postShader.getLog());
+                logger.error("Galaxy post shader compilation failed:");
+                logger.error(postShader.getLog());
             }
 
             postShader.begin();

@@ -17,7 +17,6 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.Gaia;
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
 import gaia.cu9.ari.gaiaorbit.scenegraph.camera.ICamera;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
-import gaia.cu9.ari.gaiaorbit.util.Logger;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 
 /**
@@ -63,7 +62,7 @@ public class LineGPURenderSystem extends ImmediateRenderSystem {
 		}
 
 		if (mdi >= N_MESHES) {
-			Logger.error(this.getClass().getSimpleName(), "No more free meshes!");
+			logger.error("No more free meshes!");
 			return -1;
 		}
 

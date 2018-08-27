@@ -17,6 +17,7 @@ import gaia.cu9.ari.gaiaorbit.util.CatalogInfo;
 import gaia.cu9.ari.gaiaorbit.util.CatalogInfo.CatalogInfoType;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
+import gaia.cu9.ari.gaiaorbit.util.Logger.Log;
 import gaia.cu9.ari.gaiaorbit.util.tree.LoadStatus;
 import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
 
@@ -28,6 +29,7 @@ import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
  * @author tsagrista
  */
 public class OctreeGroupLoader extends StreamingOctreeLoader {
+    private static final Log logger = Logger.getLogger(OctreeGroupLoader.class);
 
     /**
      * Whether to use the binary file format. If false, we use the java
@@ -51,14 +53,14 @@ public class OctreeGroupLoader extends StreamingOctreeLoader {
          * LOAD METADATA
          */
 
-        Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.loading", metadata));
+        logger.info(I18n.bundle.format("notif.loading", metadata));
 
         MetadataBinaryIO metadataReader = new MetadataBinaryIO();
         OctreeNode root = metadataReader.readMetadataMapped(metadata);
 
         if (root != null) {
-            Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.nodeloader", root.numNodes(), metadata));
-            Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.loading", particles));
+            logger.info(I18n.bundle.format("notif.nodeloader", root.numNodes(), metadata));
+            logger.info(I18n.bundle.format("notif.loading", particles));
 
             /**
              * CREATE OCTREE WRAPPER WITH ROOT NODE - particle group is by default
@@ -79,12 +81,12 @@ public class OctreeGroupLoader extends StreamingOctreeLoader {
                 loadLod(depthLevel, octreeWrapper);
                 flushLoadedIds();
             } catch (IOException e) {
-                Logger.error(e);
+                logger.error(e);
             }
 
             return octreeWrapper;
         } else {
-            Logger.info("Dataset not found: " + metadata + " - " + particles);
+            logger.info("Dataset not found: " + metadata + " - " + particles);
             return null;
         }
     }

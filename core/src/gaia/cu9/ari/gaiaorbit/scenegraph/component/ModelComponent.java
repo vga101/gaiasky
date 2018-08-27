@@ -27,10 +27,13 @@ import gaia.cu9.ari.gaiaorbit.scenegraph.camera.ICamera;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
+import gaia.cu9.ari.gaiaorbit.util.Logger.Log;
 import gaia.cu9.ari.gaiaorbit.util.ModelCache;
 import gaia.cu9.ari.gaiaorbit.util.Pair;
 
 public class ModelComponent implements Disposable, IObserver {
+    private static final Log logger = Logger.getLogger(ModelComponent.class);
+    
     public boolean forceinit = false;
     private static ColorAttribute ambient;
     /**
@@ -200,7 +203,7 @@ public class ModelComponent implements Disposable, IObserver {
             materials = pair.getSecond();
         } else {
             // Data error!
-            Logger.error(new RuntimeException("The 'model' element must contain either a 'type' or a 'model' attribute"));
+            logger.error(new RuntimeException("The 'model' element must contain either a 'type' or a 'model' attribute"));
         }
         // Clear base material
         if (materials.containsKey("base"))
@@ -221,7 +224,7 @@ public class ModelComponent implements Disposable, IObserver {
 
             if (tc != null) {
                 if (!texLoading) {
-                    Logger.info(I18n.bundle.format("notif.loading", tc.base));
+                    logger.info(I18n.bundle.format("notif.loading", tc.base));
                     tc.initialize(manager);
                     // Set to loading
                     texLoading = true;
@@ -246,7 +249,7 @@ public class ModelComponent implements Disposable, IObserver {
 
         if (localTransform != null && GlobalConf.scene.LAZY_MESH_INIT && !modelInitialised) {
             if (!modelLoading) {
-                Logger.info(I18n.bundle.format("notif.loading", modelFile));
+                logger.info(I18n.bundle.format("notif.loading", modelFile));
                 AssetBean.addAsset(modelFile, Model.class);
                 modelLoading = true;
             } else if (manager.isLoaded(modelFile)) {

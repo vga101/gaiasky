@@ -21,13 +21,15 @@ import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
+import gaia.cu9.ari.gaiaorbit.util.Logger.Log;
 import gaia.cu9.ari.gaiaorbit.util.ModelCache;
 import gaia.cu9.ari.gaiaorbit.util.Pair;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
 import gaia.cu9.ari.gaiaorbit.util.override.AtmosphereAttribute;
 
 public class CloudComponent {
-
+    private static final Log logger = Logger.getLogger(CloudComponent.class);
+        
     /** Default texture parameters **/
     protected static final TextureParameter textureParams;
     static {
@@ -114,9 +116,9 @@ public class CloudComponent {
 
             if (!texLoading) {
                 if (cloud != null)
-                    Logger.info(I18n.bundle.format("notif.loading", cloud));
+                    logger.info(I18n.bundle.format("notif.loading", cloud));
                 if (cloudtrans != null)
-                    Logger.info(I18n.bundle.format("notif.loading", cloudtrans));
+                    logger.info(I18n.bundle.format("notif.loading", cloudtrans));
                 initialize(true);
                 // Set to loading
                 texLoading = true;

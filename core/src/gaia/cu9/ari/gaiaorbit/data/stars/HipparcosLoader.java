@@ -19,6 +19,7 @@ import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
+import gaia.cu9.ari.gaiaorbit.util.Logger.Log;
 import gaia.cu9.ari.gaiaorbit.util.Nature;
 import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
@@ -34,7 +35,8 @@ import gaia.cu9.ari.gaiaorbit.util.parse.Parser;
  *
  */
 public class HipparcosLoader extends AbstractCatalogLoader implements ISceneGraphLoader {
-
+    private static final Log logger = Logger.getLogger(HipparcosLoader.class);
+    
     // Version to load; 0 - old, 1 - new
     public static int VERSION = 1;
 
@@ -82,14 +84,14 @@ public class HipparcosLoader extends AbstractCatalogLoader implements ISceneGrap
                 try {
                     br.close();
                 } catch (IOException e) {
-                    Logger.error(e);
+                    logger.error(e);
                 }
 
             }
         }
 
-        Logger.info(this.getClass().getSimpleName(), "SourceId matched to HIP in " + sidhipfound + " stars");
-        Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.catalog.init", stars.size));
+        logger.info("SourceId matched to HIP in " + sidhipfound + " stars");
+        logger.info(I18n.bundle.format("notif.catalog.init", stars.size));
         return stars;
     }
 
@@ -140,7 +142,7 @@ public class HipparcosLoader extends AbstractCatalogLoader implements ISceneGrap
 
             }
         } catch (Exception e) {
-            Logger.error(this.getClass().getSimpleName(), "Error adding star");
+            logger.error("Error adding star");
         }
     }
 

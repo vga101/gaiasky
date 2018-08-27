@@ -41,6 +41,7 @@ import gaia.cu9.ari.gaiaorbit.util.ComponentTypes;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
+import gaia.cu9.ari.gaiaorbit.util.Logger.Log;
 import gaia.cu9.ari.gaiaorbit.util.camera.CameraUtils;
 import gaia.cu9.ari.gaiaorbit.util.format.INumberFormat;
 import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
@@ -57,7 +58,8 @@ import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnLabel;
  *
  */
 public class FullGui extends AbstractGui {
-
+    private static final Log logger = Logger.getLogger(FullGui.class);
+    
     protected ControlsWindow controlsWindow;
     protected MinimapWindow minimapWindow;
 
@@ -100,7 +102,7 @@ public class FullGui extends AbstractGui {
 
     @Override
     public void doneLoading(AssetManager assetManager) {
-        Logger.info(txt("notif.gui.init"));
+        logger.info(txt("notif.gui.init"));
 
         skin = GlobalResources.skin;
         interfaces = new Array<IGuiInterface>();
@@ -322,7 +324,7 @@ public class FullGui extends AbstractGui {
                 Method m = ClassReflection.getMethod(this.getClass(), method);
                 m.invoke(this);
             } catch (ReflectionException e) {
-                Logger.error(e);
+                logger.error(e);
             }
             rebuildGui();
             break;
@@ -333,7 +335,7 @@ public class FullGui extends AbstractGui {
                 Method m = ClassReflection.getMethod(this.getClass(), method);
                 m.invoke(this);
             } catch (ReflectionException e) {
-                Logger.error(e);
+                logger.error(e);
             }
             rebuildGui();
             break;

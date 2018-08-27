@@ -75,7 +75,7 @@ public class MeshObject extends FadeNode implements IModelRenderable, I3DTextRen
                     Matrix4 trf = (Matrix4) m.invoke(null);
                     coordinateSystem.set(trf);
                 } catch (ReflectionException e) {
-                    Logger.error(SphericalGrid.class.getName(), "Error getting/invoking method Coordinates." + transformName + "()");
+                    Logger.getLogger(this.getClass()).error("Error getting/invoking method Coordinates." + transformName + "()");
                 }
             } else {
                 // Equatorial, nothing

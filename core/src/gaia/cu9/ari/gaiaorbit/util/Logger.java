@@ -44,7 +44,7 @@ public class Logger {
             }
     }
 
-    public static void error(Object... messages) {
+    private static void error(Object... messages) {
         if (inLevel(LoggerLevel.ERROR))
             log(messages);
     }

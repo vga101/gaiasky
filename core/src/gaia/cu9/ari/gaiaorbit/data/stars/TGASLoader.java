@@ -20,6 +20,7 @@ import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
+import gaia.cu9.ari.gaiaorbit.util.Logger.Log;
 import gaia.cu9.ari.gaiaorbit.util.Nature;
 import gaia.cu9.ari.gaiaorbit.util.coord.Coordinates;
 import gaia.cu9.ari.gaiaorbit.util.math.Vector3d;
@@ -40,6 +41,7 @@ import gaia.cu9.ari.gaiaorbit.util.parse.Parser;
  *
  */
 public class TGASLoader extends AbstractCatalogLoader implements ISceneGraphLoader {
+    private static final Log logger = Logger.getLogger(TGASLoader.class);
 
     // Version to load; 0 - old, 1 - new
     public static int VERSION = 1;
@@ -95,7 +97,7 @@ public class TGASLoader extends AbstractCatalogLoader implements ISceneGraphLoad
             separator = separator_new;
             indices = indices_new;
         } else {
-            Logger.error("VERSION number not recognized");
+            logger.error("VERSION number not recognized");
             return null;
         }
 
@@ -121,14 +123,14 @@ public class TGASLoader extends AbstractCatalogLoader implements ISceneGraphLoad
                 try {
                     br.close();
                 } catch (IOException e) {
-                    Logger.error(e);
+                    logger.error(e);
                 }
 
             }
         }
 
-        Logger.info(this.getClass().getSimpleName(), "SourceId matched to HIP in " + sidhipfound + " stars");
-        Logger.info(this.getClass().getSimpleName(), I18n.bundle.format("notif.catalog.init", stars.size));
+        logger.info("SourceId matched to HIP in " + sidhipfound + " stars");
+        logger.info(I18n.bundle.format("notif.catalog.init", stars.size));
         return stars;
     }
 
@@ -231,7 +233,7 @@ public class TGASLoader extends AbstractCatalogLoader implements ISceneGraphLoad
             try {
                 br.close();
             } catch (IOException e) {
-                Logger.error(e);
+                logger.error(e);
             }
 
         }
@@ -267,7 +269,7 @@ public class TGASLoader extends AbstractCatalogLoader implements ISceneGraphLoad
             try {
                 br.close();
             } catch (IOException e) {
-                Logger.error(e);
+                logger.error(e);
             }
 
         }

@@ -66,7 +66,7 @@ public class ParticleGroupRenderSystem extends ImmediateRenderSystem implements 
         }
 
         if (mdi >= N_MESHES) {
-            Logger.error(this.getClass().getSimpleName(), "No more free meshes!");
+            logger.error("No more free meshes!");
             return -1;
         }
 

@@ -42,6 +42,7 @@ import gaia.cu9.ari.gaiaorbit.util.ConfInit;
 import gaia.cu9.ari.gaiaorbit.util.Constants;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
+import gaia.cu9.ari.gaiaorbit.util.Logger.Log;
 import gaia.cu9.ari.gaiaorbit.util.SysUtilsFactory;
 import gaia.cu9.ari.gaiaorbit.util.format.DateFormatFactory;
 import gaia.cu9.ari.gaiaorbit.util.format.NumberFormatFactory;
@@ -57,6 +58,8 @@ import gaia.cu9.ari.gaiaorbit.util.tree.OctreeNode;
  *
  */
 public class OctreeGeneratorRun {
+    private static final Log logger = Logger.getLogger(OctreeGeneratorRun.class);
+    
     private static JCommander jc;
     private static String[] arguments;
 
@@ -250,7 +253,7 @@ public class OctreeGeneratorRun {
                     gaiahits++;
                 }
             }
-            Logger.info(gaiahits + " of " + gaianum + " Gaia stars discarded due to being matched to a HIP star");
+            logger.info(gaiahits + " of " + gaianum + " Gaia stars discarded due to being matched to a HIP star");
 
             // Main list is listHip
             list = listHip;
@@ -264,9 +267,9 @@ public class OctreeGeneratorRun {
 
         long loadingMs = TimeUtils.millis();
         double loadingSecs = ((loadingMs - startMs) / 1000.0);
-        Logger.info("TIME STATS: Data loaded in " + loadingSecs + " seconds");
+        logger.info("TIME STATS: Data loaded in " + loadingSecs + " seconds");
 
-        Logger.info("Generating octree with " + list.size + " actual stars");
+        logger.info("Generating octree with " + list.size + " actual stars");
 
         OctreeNode octree = og.generateOctree(list);
 
@@ -274,11 +277,11 @@ public class OctreeGeneratorRun {
 
         long generatingMs = TimeUtils.millis();
         double generatingSecs = ((generatingMs - loadingMs) / 1000.0);
-        Logger.info("TIME STATS: Octree generated in " + generatingSecs + " seconds");
+        logger.info("TIME STATS: Octree generated in " + generatingSecs + " seconds");
 
         /** NUMBERS **/
-        Logger.info("Octree generated with " + octree.numNodes() + " octants and " + octree.nObjects + " particles");
-        Logger.info(og.getDiscarded() + " particles have been discarded due to density");
+        logger.info("Octree generated with " + octree.numNodes() + " octants and " + octree.nObjects + " particles");
+        logger.info(og.getDiscarded() + " particles have been discarded due to density");
 
         /** CLEAN CURRENT OUT DIR **/
         File metadataFile = new File(outFolder, "metadata.bin");
@@ -289,7 +292,7 @@ public class OctreeGeneratorRun {
         /** WRITE METADATA **/
         metadataFile.createNewFile();
 
-        Logger.info("Writing metadata (" + octree.numNodes() + " nodes): " + metadataFile.getAbsolutePath());
+        logger.info("Writing metadata (" + octree.numNodes() + " nodes): " + metadataFile.getAbsolutePath());
 
         MetadataBinaryIO metadataWriter = new MetadataBinaryIO();
         metadataWriter.writeMetadata(octree, new FileOutputStream(metadataFile));
@@ -306,34 +309,34 @@ public class OctreeGeneratorRun {
         int[][] stats = octree.stats();
         NumberFormat formatter = new DecimalFormat("##########0.0000");
         if (cpm != null) {
-            Logger.info("=================");
-            Logger.info("STAR COUNTS STATS");
-            Logger.info("=================");
+            logger.info("=================");
+            logger.info("STAR COUNTS STATS");
+            logger.info("=================");
             for (int level = 0; level < cpm.length; level++) {
-                Logger.info("Magnitude " + level + ": " + cpm[level] + " stars (" + formatter.format((double) cpm[level] * 100d / (double) list.size) + "%)");
+                logger.info("Magnitude " + level + ": " + cpm[level] + " stars (" + formatter.format((double) cpm[level] * 100d / (double) list.size) + "%)");
             }
-            Logger.info();
+            logger.info();
         }
 
-        Logger.info("============");
-        Logger.info("OCTREE STATS");
-        Logger.info("============");
-        Logger.info("Octants: " + octree.numNodes());
-        Logger.info("Particles: " + list.size);
-        Logger.info("Depth: " + octree.getMaxDepth());
+        logger.info("============");
+        logger.info("OCTREE STATS");
+        logger.info("============");
+        logger.info("Octants: " + octree.numNodes());
+        logger.info("Particles: " + list.size);
+        logger.info("Depth: " + octree.getMaxDepth());
         int level = 0;
         for (int[] levelinfo : stats) {
-            Logger.info("   Level " + level + ": " + levelinfo[0] + " octants, " + levelinfo[1] + " stars (" + formatter.format((double) levelinfo[1] * 100d / (double) list.size) + "%)");
+            logger.info("   Level " + level + ": " + levelinfo[0] + " octants, " + levelinfo[1] + " stars (" + formatter.format((double) levelinfo[1] * 100d / (double) list.size) + "%)");
             level++;
         }
-        Logger.info();
-        Logger.info("================");
-        Logger.info("FINAL TIME STATS");
-        Logger.info("================");
-        Logger.info("Loading: " + loadingSecs + " seconds");
-        Logger.info("Generating: " + generatingSecs + " seconds");
-        Logger.info("Writing: " + writingSecs + " seconds");
-        Logger.info("Total: " + totalSecs + " seconds");
+        logger.info();
+        logger.info("================");
+        logger.info("FINAL TIME STATS");
+        logger.info("================");
+        logger.info("Loading: " + loadingSecs + " seconds");
+        logger.info("Generating: " + generatingSecs + " seconds");
+        logger.info("Writing: " + writingSecs + " seconds");
+        logger.info("Total: " + totalSecs + " seconds");
 
         return octree;
     }
@@ -354,7 +357,7 @@ public class OctreeGeneratorRun {
         // Write current
         if (current.ownObjects > 0) {
             File particles = new File(outFolder + "/particles/", "particles_" + String.format("%06d", current.pageId) + ".bin");
-            Logger.info("Writing " + current.ownObjects + " particles of node " + current.pageId + " to " + particles.getAbsolutePath());
+            logger.info("Writing " + current.ownObjects + " particles of node " + current.pageId + " to " + particles.getAbsolutePath());
             particleWriter.writeParticles(current.objects, new BufferedOutputStream(new FileOutputStream(particles)));
         }
 
@@ -384,10 +387,10 @@ public class OctreeGeneratorRun {
                 br.close();
                 return map;
             } catch (Exception e) {
-                Logger.error(e);
+                logger.error(e);
             }
         } else {
-            Logger.error("Cross-match file '" + xmatchFile + "' does not exist");
+            logger.error("Cross-match file '" + xmatchFile + "' does not exist");
         }
         return null;
     }
@@ -415,7 +418,7 @@ public class OctreeGeneratorRun {
             }
             writer.close();
         } catch (Exception e) {
-            Logger.error(e);
+            logger.error(e);
         }
     }
 }

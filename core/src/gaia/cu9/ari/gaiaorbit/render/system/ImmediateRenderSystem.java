@@ -6,9 +6,12 @@ import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 
 import gaia.cu9.ari.gaiaorbit.scenegraph.SceneGraphNode.RenderGroup;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
+import gaia.cu9.ari.gaiaorbit.util.Logger.Log;
 
 public abstract class ImmediateRenderSystem extends AbstractRenderSystem {
-	protected static final int DEFAULT_VERTICES_SIZE = 1500000;
+        protected static final Log logger = Logger.getLogger(ImmediateRenderSystem.class);
+
+        protected static final int DEFAULT_VERTICES_SIZE = 1500000;
 	protected static final int shortLimit = (int) Math.pow(2, 2 * 8);
 
 	protected int meshIdx;

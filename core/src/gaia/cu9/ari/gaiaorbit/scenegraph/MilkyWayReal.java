@@ -98,7 +98,7 @@ public class MilkyWayReal extends AbstractPositionEntity implements I3DTextRende
                 coordinateSystem = trf.putIn(new Matrix4());
 
             } catch (ReflectionException e) {
-                Logger.error(this.getClass().getName(), "Error getting/invoking method Coordinates." + transformName + "()");
+                Logger.getLogger(this.getClass()).error("Error getting/invoking method Coordinates." + transformName + "()");
             }
         } else {
             // Equatorial, nothing
