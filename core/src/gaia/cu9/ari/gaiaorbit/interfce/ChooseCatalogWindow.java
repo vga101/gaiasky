@@ -14,12 +14,12 @@ import gaia.cu9.ari.gaiaorbit.event.EventManager;
 import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 
-public class ChooseDatasetWindow extends GenericDialog {
+public class ChooseCatalogWindow extends GenericDialog {
 
     private DatasetsWidget dw;
     private String assetsLoc;
 
-    public ChooseDatasetWindow(Stage stage, Skin skin) {
+    public ChooseCatalogWindow(Stage stage, Skin skin) {
         super(txt("gui.dschooser.title"), skin, stage);
         assetsLoc = System.getProperty("assets.location") != null ? System.getProperty("assets.location") : "";
 

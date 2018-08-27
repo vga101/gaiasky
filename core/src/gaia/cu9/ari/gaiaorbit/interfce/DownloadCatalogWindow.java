@@ -47,12 +47,12 @@ import gaia.cu9.ari.gaiaorbit.util.scene2d.FileChooser.ResultListener;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnLabel;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextButton;
 
-public class DownloadDatasetWindow extends GenericDialog {
+public class DownloadCatalogWindow extends GenericDialog {
     private static final String DEFAULT_CATALOG_URL = "http://gaia.ari.uni-heidelberg.de/gaiasky/files/catalogs/dr2/dr2-20-0.5.tar.gz";
 
     private INumberFormat nf;
 
-    public DownloadDatasetWindow(Stage stage, Skin skin) {
+    public DownloadCatalogWindow(Stage stage, Skin skin) {
         super(txt("gui.dsdownload.title"), skin, stage);
         this.nf = NumberFormatFactory.getFormatter("##0.0");
 

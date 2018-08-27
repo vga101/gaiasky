@@ -19,8 +19,8 @@ import gaia.cu9.ari.gaiaorbit.util.GlobalResources;
  */
 public class InitialGui extends AbstractGui {
 
-    protected DownloadDatasetWindow ddw;
-    protected ChooseDatasetWindow cdw;
+    protected DownloadCatalogWindow ddw;
+    protected ChooseCatalogWindow cdw;
 
     /** Lock object for synchronisation **/
 
@@ -67,7 +67,7 @@ public class InitialGui extends AbstractGui {
 
     private void addDatasetDownloader() {
         if (ddw == null) {
-            ddw = new DownloadDatasetWindow(ui, skin);
+            ddw = new DownloadCatalogWindow(ui, skin);
             ddw.setAcceptRunnable(() -> {
                 displayChooser();
             });
@@ -77,7 +77,7 @@ public class InitialGui extends AbstractGui {
 
     private void addDatasetChooser() {
         if (cdw == null)
-            cdw = new ChooseDatasetWindow(ui, skin);
+            cdw = new ChooseCatalogWindow(ui, skin);
         cdw.show(ui);
     }
 
