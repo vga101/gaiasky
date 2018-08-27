@@ -48,8 +48,6 @@ import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnLabel;
 import gaia.cu9.ari.gaiaorbit.util.scene2d.OwnTextButton;
 
 public class DownloadCatalogWindow extends GenericDialog {
-    private static final String DEFAULT_CATALOG_URL = "http://gaia.ari.uni-heidelberg.de/gaiasky/files/catalogs/dr2/dr2-20-0.5.tar.gz";
-
     private INumberFormat nf;
 
     public DownloadCatalogWindow(Stage stage, Skin skin) {
@@ -145,7 +143,7 @@ public class DownloadCatalogWindow extends GenericDialog {
                     // Make a GET request
                     HttpRequest request = new HttpRequest(HttpMethods.GET);
                     request.setTimeOut(2500);
-                    request.setUrl(DEFAULT_CATALOG_URL);
+                    request.setUrl(GlobalConf.program.DEFAULT_CATALOG_URL);
 
                     FileHandle archiveFile = Gdx.files.absolute(GlobalConf.data.CATALOG_LOCATIONS[0] + "/temp.tar.gz");
 
@@ -165,7 +163,7 @@ public class DownloadCatalogWindow extends GenericDialog {
                             long read = 0;
                             try {
                                 me.acceptButton.setDisabled(true);
-                                Logger.info("Started download of file : " + DEFAULT_CATALOG_URL);
+                                Logger.info("Started download of file : " + GlobalConf.program.DEFAULT_CATALOG_URL);
                                 // Keep reading bytes and storing them until there are no more.
                                 while ((count = is.read(bytes, 0, bytes.length)) != -1) {
                                     os.write(bytes, 0, count);

@@ -206,7 +206,8 @@ public class DesktopConfInit extends ConfInit {
 			LAST_CHECKED = null;
 		}
 		String LAST_VERSION = p.getProperty("program.lastversion", "0.0.0");
-		String VERSION_CHECK_URL = p.getProperty("program.versioncheckurl");
+		String VERSION_CHECK_URL = p.getProperty("program.url.versioncheck");
+		String DEFAULT_CATALOG_URL = p.getProperty("program.url.catalog.default");
 		String UI_THEME = p.getProperty("program.ui.theme");
 		// Update scale factor according to theme - for HiDPI screens
 		GlobalConf.updateScaleFactor(UI_THEME.endsWith("x2") ? 2f : 1f);
@@ -236,7 +237,7 @@ public class DesktopConfInit extends ConfInit {
 		}
 
 		prc.initialize(DISPLAY_TUTORIAL, TUTORIAL_POINTER_SCRIPT_LOCATION, TUTORIAL_SCRIPT_LOCATION, SHOW_DEBUG_INFO,
-				LAST_CHECKED, LAST_VERSION, VERSION_CHECK_URL, UI_THEME, SCRIPT_LOCATION, REST_PORT, LOCALE,
+				LAST_CHECKED, LAST_VERSION, VERSION_CHECK_URL, DEFAULT_CATALOG_URL, UI_THEME, SCRIPT_LOCATION, REST_PORT, LOCALE,
 				STEREOSCOPIC_MODE, STEREO_PROFILE, CUBEMAPE360_MODE, ANALYTICS_ENABLED, DISPLAY_HUD,
 				DISPLAY_POINTER_COORDS, DISPLAY_DATASET_DIALOG, NET_MASTER, NET_SLAVE, NET_MASTER_SLAVES);
 
@@ -470,7 +471,8 @@ public class DesktopConfInit extends ConfInit {
 		p.setProperty("program.debuginfo", Boolean.toString(GlobalConf.program.SHOW_DEBUG_INFO));
 		p.setProperty("program.lastchecked",
 				GlobalConf.program.LAST_CHECKED != null ? df.format(GlobalConf.program.LAST_CHECKED) : "");
-		p.setProperty("program.versioncheckurl", GlobalConf.program.VERSION_CHECK_URL);
+		p.setProperty("program.url.versioncheck", GlobalConf.program.VERSION_CHECK_URL);
+		p.setProperty("program.url.catalog.default", GlobalConf.program.DEFAULT_CATALOG_URL);
 		p.setProperty("program.ui.theme", GlobalConf.program.UI_THEME);
 		p.setProperty("program.scriptlocation", GlobalConf.program.SCRIPT_LOCATION);
 		p.setProperty("program.restport", Integer.toString(GlobalConf.program.REST_PORT));

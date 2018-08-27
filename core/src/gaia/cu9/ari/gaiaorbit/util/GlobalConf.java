@@ -583,6 +583,7 @@ public class GlobalConf {
         public Instant LAST_CHECKED;
         public String LAST_VERSION_TIME;
         public String VERSION_CHECK_URL;
+        public String DEFAULT_CATALOG_URL;
         public String UI_THEME;
         public String SCRIPT_LOCATION;
         public int REST_PORT;
@@ -606,7 +607,7 @@ public class GlobalConf {
         }
 
         public void initialize(boolean dISPLAY_TUTORIAL, String tUTORIAL_POINTER_SCRIPT_LOCATION, String tUTORIAL_SCRIPT_LOCATION, boolean sHOW_DEBUG_INFO, Instant lAST_CHECKED, String lAST_VERSION_TIME,
-                String vERSION_CHECK_URL, String uI_THEME, String sCRIPT_LOCATION, int rEST_PORT, String lOCALE, boolean sTEREOSCOPIC_MODE, StereoProfile sTEREO_PROFILE, boolean cUBEMAP360_MODE,
+                String vERSION_CHECK_URL, String dEFAULT_CATALOG_URL, String uI_THEME, String sCRIPT_LOCATION, int rEST_PORT, String lOCALE, boolean sTEREOSCOPIC_MODE, StereoProfile sTEREO_PROFILE, boolean cUBEMAP360_MODE,
                 boolean aNALYTICS_ENABLED, boolean dISPLAY_HUD, boolean dISPLAY_POINTER_COORDS, boolean dISPLAY_DATASET_DIALOG, boolean nET_MASTER, boolean nET_SLAVE, List<String> nET_MASTER_SLAVES) {
             DISPLAY_TUTORIAL = dISPLAY_TUTORIAL;
             TUTORIAL_POINTER_SCRIPT_LOCATION = tUTORIAL_POINTER_SCRIPT_LOCATION;
@@ -615,6 +616,7 @@ public class GlobalConf {
             LAST_CHECKED = lAST_CHECKED;
             LAST_VERSION_TIME = lAST_VERSION_TIME;
             VERSION_CHECK_URL = vERSION_CHECK_URL;
+            DEFAULT_CATALOG_URL = dEFAULT_CATALOG_URL;
             UI_THEME = uI_THEME;
             SCRIPT_LOCATION = sCRIPT_LOCATION;
             REST_PORT = rEST_PORT;
