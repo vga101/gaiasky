@@ -28,6 +28,7 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.TimeUtils;
 
+import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.I18n;
 
 public class FileChooser extends Dialog {
@@ -84,13 +85,13 @@ public class FileChooser extends Dialog {
 
         final Table content = getContentTable();
         content.top().left();
-        content.defaults().space(5);
-        this.padLeft(10);
-        this.padRight(10);
+        content.defaults().space(5 * GlobalConf.SCALE_FACTOR);
+        this.padLeft(10 * GlobalConf.SCALE_FACTOR);
+        this.padRight(10 * GlobalConf.SCALE_FACTOR);
 
         // In windows, we need to be able to change drives
         driveButtonsList = new HorizontalGroup();
-        driveButtonsList.left().space(10);
+        driveButtonsList.left().space(10 * GlobalConf.SCALE_FACTOR);
         File[] drives = File.listRoots();
         driveButtons = new Array<TextButton>(drives.length);
         for (File drive : drives) {
@@ -124,11 +125,11 @@ public class FileChooser extends Dialog {
 
         ok = new OwnTextButton(I18n.bundle.get("gui.select"), skin);
         button(ok, true);
-        ok.setWidth(150);
+        ok.setWidth(150 * GlobalConf.SCALE_FACTOR);
 
         cancel = new OwnTextButton(I18n.bundle.get("gui.cancel"), skin);
         button(cancel, false);
-        cancel.setWidth(150);
+        cancel.setWidth(150 * GlobalConf.SCALE_FACTOR);
 
         key(Keys.ENTER, true);
         key(Keys.ESCAPE, false);
@@ -220,7 +221,7 @@ public class FileChooser extends Dialog {
         final Table content = getContentTable();
         content.add(driveButtonsList).top().left().expandX().fillX().row();
         content.add(fileListLabel).top().left().expandX().fillX().row();
-        content.add(new ScrollPane(fileList, skin)).size(300, 150).fill().expand().row();
+        content.add(new ScrollPane(fileList, skin)).size(300 * GlobalConf.SCALE_FACTOR, 200 * GlobalConf.SCALE_FACTOR).fill().expand().row();
 
         if (fileNameEnabled) {
             content.add(fileNameLabel).fillX().expandX().row();

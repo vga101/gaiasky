@@ -121,8 +121,6 @@ public class DownloadCatalogWindow extends GenericDialog {
                         return true;
                     }
                 });
-                fc.setOkButtonText(txt("gui.ok"));
-                fc.setCancelButtonText(txt("gui.cancel"));
                 fc.setFilter(new FileFilter() {
                     @Override
                     public boolean accept(File pathname) {
