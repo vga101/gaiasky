@@ -223,7 +223,7 @@ public class DesktopConfInit extends ConfInit {
 		boolean ANALYTICS_ENABLED = Boolean.parseBoolean(p.getProperty("program.analytics", "true"));
 		boolean DISPLAY_HUD = Boolean.parseBoolean(p.getProperty("program.displayhud", "false"));
 		boolean DISPLAY_POINTER_COORDS = Boolean.parseBoolean(p.getProperty("program.displaypointercoords", "true"));
-		boolean DISPLAY_DATASET_DIALOG = Boolean.parseBoolean(p.getProperty("program.dataset.dialog", "false"));
+		boolean DISPLAY_DATASET_DIALOG = Boolean.parseBoolean(p.getProperty("program.catalog.chooser", "false"));
 		boolean NET_MASTER = Boolean.parseBoolean(p.getProperty("program.net.master", "false"));
 		boolean NET_SLAVE = Boolean.parseBoolean(p.getProperty("program.net.slave", "false"));
 
@@ -480,7 +480,7 @@ public class DesktopConfInit extends ConfInit {
 		p.setProperty("program.stereoscopic", Boolean.toString(GlobalConf.program.STEREOSCOPIC_MODE));
 		p.setProperty("program.stereoscopic.profile", Integer.toString(GlobalConf.program.STEREO_PROFILE.ordinal()));
 		p.setProperty("program.cubemap360", Boolean.toString(GlobalConf.program.CUBEMAP360_MODE));
-		p.setProperty("program.dataset.dialog", Boolean.toString(GlobalConf.program.DISPLAY_DATASET_DIALOG));
+		p.setProperty("program.catalog.chooser", Boolean.toString(GlobalConf.program.DISPLAY_DATASET_DIALOG));
 		p.setProperty("program.net.master", Boolean.toString(GlobalConf.program.NET_MASTER));
 		int i = 0;
 		if (GlobalConf.program.NET_MASTER_SLAVES != null)
