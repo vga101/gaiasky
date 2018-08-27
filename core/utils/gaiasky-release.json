@@ -24,7 +24,6 @@
 		"core/exe/gaiasky" : {
 		  "commentchar" : "#",
 		  "tocomment" : [
-			  "OPTS=\"$OPTS -Drest-static.location=\\\"$GSDIR/rest-static/\\\"\"",
 			  "OPTS=\"$OPTS -Dorg.slf4j.simpleLogger.defaultLogLevel=warn -Dorg.slf4j.simpleLogger.showThreadName=false\""
 			]
 		}

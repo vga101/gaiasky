@@ -116,9 +116,9 @@ public class RESTServer {
 	private static Integer port = -1;
 
 	/**
-	 * REST server static files location. Defined by a system property.
+	 * REST server static files location.
 	 */
-	private static String rest_static_location = System.getProperty("rest-static.location");
+	private static String rest_static_location = System.getProperty("assets.location") + "rest-static";
 
 	/* Methods: */
 
@@ -494,18 +494,18 @@ public class RESTServer {
 			System.out.println("Error: invalid port. REST API inactive.");
 			return;
 		}
-		if (rest_static_location == null) {
-			System.out.println("Error: rest-static.location not set. REST API inactive.");
-			return;
-		}
 
 		try {
 			Logger.warn("Starting REST API server on http://localhost:{}", port);
 			port(port);
 			Logger.info("Setting routes");
 
-			/* Static file location */
-			/* (add static HTML files with API use examples) */
+			/*
+			 * Static file location:
+			 * add static HTML files with API use examples.
+			 * Note: this logs the value of spark.staticfiles.StaticFilesFolder 
+			 * on warn level for information.
+			 */
 			staticFiles.externalLocation(rest_static_location);
 
 			/* Scripting API mapping */

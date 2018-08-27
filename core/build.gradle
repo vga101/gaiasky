@@ -57,7 +57,6 @@ task run(dependsOn: jar, type: JavaExec, description: "Runs the desktop project 
     main = project.mainClassName
     systemProperties['properties.file'] = ''
     systemProperties['assets.location'] = '../assets/'
-    systemProperties['rest-static.location'] = '../assets/rest-static/'
     systemProperties['org.slf4j.simpleLogger.defaultLogLevel'] = 'warn'  // logging levels (e.g. REST server warn, info, debug)
     systemProperties['org.slf4j.simpleLogger.showThreadName'] = 'false'
 
