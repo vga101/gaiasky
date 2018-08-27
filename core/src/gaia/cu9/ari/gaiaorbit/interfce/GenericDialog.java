@@ -42,6 +42,8 @@ public abstract class GenericDialog extends CollapsibleWindow {
     private String acceptText = null, cancelText = null;
     protected TextButton acceptButton, cancelButton;
 
+    private Runnable acceptRunnable, cancelRunnable;
+
     private Actor previousKeyboardFocus, previousScrollFocus;
     private FocusListener focusListener;
 
@@ -98,6 +100,8 @@ public abstract class GenericDialog extends CollapsibleWindow {
                 public boolean handle(Event event) {
                     if (event instanceof ChangeEvent) {
                         accept();
+                        if (acceptRunnable != null)
+                            acceptRunnable.run();
                         me.hide();
                         return true;
                     }
@@ -115,6 +119,8 @@ public abstract class GenericDialog extends CollapsibleWindow {
                 public boolean handle(Event event) {
                     if (event instanceof ChangeEvent) {
                         cancel();
+                        if (cancelRunnable != null)
+                            cancelRunnable.run();
                         me.hide();
                         return true;
                     }
@@ -145,11 +151,15 @@ public abstract class GenericDialog extends CollapsibleWindow {
                         case Keys.ESCAPE:
                             // Exit
                             cancel();
+                            if (cancelRunnable != null)
+                                cancelRunnable.run();
                             me.hide();
                             return true;
                         case Keys.ENTER:
                             // Exit
                             accept();
+                            if (acceptRunnable != null)
+                                acceptRunnable.run();
                             me.hide();
                             return true;
                         default:
@@ -304,6 +314,22 @@ public abstract class GenericDialog extends CollapsibleWindow {
 
         // Enable input
         EventManager.instance.post(Events.INPUT_ENABLED_CMD, true);
+    }
+
+    /**
+     * Sets the runnable which runs when accept is clicked
+     * @param r The runnable
+     */
+    public void setAcceptRunnable(Runnable r) {
+        this.acceptRunnable = r;
+    }
+
+    /**
+     * Sets the runnable which runs when cancel is clicked
+     * @param r The runnable
+     */
+    public void setCancelRunnable(Runnable r) {
+        this.cancelRunnable = r;
     }
 
     /**

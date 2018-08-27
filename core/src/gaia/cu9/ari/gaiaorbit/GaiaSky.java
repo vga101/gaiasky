@@ -124,16 +124,13 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
     // Data load string
     private String dataLoadString;
 
-    /**
-     * Whether the dataset has been chosen. If this is set to false, a window
-     * will prompt at startup asking for the dataset to use.
-     */
-    private boolean DSCHOSEN;
-
     public ISceneGraph sg;
     // TODO make this private again
     public SceneGraphRenderer sgr;
     private IPostProcessor pp;
+    
+    // Initial gui
+    private boolean INITGUI = true;
 
     // Start time
     private long startTime;
@@ -222,8 +219,6 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         // Disable all kinds of input
         EventManager.instance.post(Events.INPUT_ENABLED_CMD, false);
 
-        DSCHOSEN = !GlobalConf.program.DISPLAY_DATASET_DIALOG;
-
         if (!GlobalConf.initialized()) {
             Logger.error(new RuntimeException("FATAL: Global configuration not initlaized"));
             return;
@@ -303,10 +298,6 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
         initialGui = new InitialGui();
         initialGui.initialize(manager);
         Gdx.input.setInputProcessor(initialGui.getGuiStage());
-
-        if (DSCHOSEN) {
-            EventManager.instance.post(Events.LOAD_DATA_CMD);
-        }
 
         Logger.info(this.getClass().getSimpleName(), GlobalConf.version.version + " - " + I18n.bundle.format("gui.build", GlobalConf.version.build));
         Logger.info(this.getClass().getSimpleName(), "Display mode set to " + Gdx.graphics.getWidth() + "x" + Gdx.graphics.getHeight() + ", fullscreen: " + Gdx.graphics.isFullscreen());
@@ -546,7 +537,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
     @Override
     public void render() {
         try {
-            if (!DSCHOSEN) {
+            if (INITGUI) {
                 renderGui(initialGui);
             } else if (LOADING) {
                 if (manager.update()) {
@@ -822,7 +813,7 @@ public class GaiaSky implements ApplicationListener, IObserver, IMainRenderer {
             loadingGui = new LoadingGui();
             loadingGui.initialize(manager);
             Gdx.input.setInputProcessor(loadingGui.getGuiStage());
-            DSCHOSEN = true;
+            INITGUI = false;
             LOADING = true;
 
             /** LOAD SCENE GRAPH **/
