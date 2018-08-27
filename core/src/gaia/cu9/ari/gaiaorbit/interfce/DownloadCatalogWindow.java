@@ -3,9 +3,7 @@ package gaia.cu9.ari.gaiaorbit.interfce;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.RandomAccessFile;
@@ -24,18 +22,19 @@ import com.badlogic.gdx.Net.HttpResponse;
 import com.badlogic.gdx.Net.HttpResponseListener;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Cursor.SystemCursor;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Cell;
+import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
-import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Align;
 
-import gaia.cu9.ari.gaiaorbit.event.EventManager;
-import gaia.cu9.ari.gaiaorbit.event.Events;
 import gaia.cu9.ari.gaiaorbit.util.GlobalConf;
 import gaia.cu9.ari.gaiaorbit.util.ISysUtils;
 import gaia.cu9.ari.gaiaorbit.util.Logger;
@@ -73,8 +72,16 @@ public class DownloadCatalogWindow extends GenericDialog {
         Table downloadTable = new Table(skin);
 
         OwnLabel catalogsLocLabel = new OwnLabel(txt("gui.dsdownload.location") + ":", skin);
+        
 
-        downloadTable.add(new OwnLabel(txt("gui.dsdownload.info"), skin)).left().colspan(2).padBottom(pad).row();
+        HorizontalGroup hg = new HorizontalGroup();
+        hg.space(15 * GlobalConf.SCALE_FACTOR);
+        Image system = new Image(skin.getDrawable("tooltip-icon"));    
+        OwnLabel downloadInfo = new OwnLabel(txt("gui.dsdownload.info"), skin);
+        hg.addActor(system);
+        hg.addActor(downloadInfo);
+        
+        downloadTable.add(hg).left().colspan(2).padBottom(pad).row();
         downloadTable.add(catalogsLocLabel).left().padBottom(pad);
 
         ISysUtils su = SysUtilsFactory.getSysUtils();
@@ -93,9 +100,10 @@ public class DownloadCatalogWindow extends GenericDialog {
         Cell<Actor> notice = downloadTable.add((Actor) null).colspan(2).padBottom(pad);
         notice.row();
 
-        OwnTextButton downloadNow = new OwnTextButton(txt("gui.dsdownload.download"), skin, "download");
+        OwnTextButton downloadNow = new OwnTextButton(txt("gui.dsdownload.download").toUpperCase(), skin, "download");
         downloadNow.pad(buttonpad * 4);
-        downloadNow.setMinWidth(catalogsLoc.getWidth() + catalogsLocLabel.getWidth() + pad);
+        downloadNow.setMinWidth(catalogsLoc.getWidth());
+        downloadNow.setMinHeight(50 * GlobalConf.SCALE_FACTOR);
         downloadTable.add(downloadNow).center().colspan(2);
 
         catalogsLoc.addListener((event) -> {

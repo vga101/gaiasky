@@ -80,6 +80,10 @@ public class OwnTextButton extends TextButton {
         super.setHeight(height);
     }
 
+    public void setMinHeight(float height) {
+        this.setHeight(Math.max(height, getHeight()));
+    }
+
     @Override
     public void setSize(float width, float height) {
         ownwidth = width;
